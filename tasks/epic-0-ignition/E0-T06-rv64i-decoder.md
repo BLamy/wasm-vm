@@ -3,7 +3,7 @@ id: E0-T06
 epic: 0
 title: RV64I instruction decoder covering all six base encoding formats
 priority: 6
-status: in-progress
+status: implemented
 depends_on: [E0-T01]
 estimate: L
 capstone: false
@@ -56,4 +56,28 @@ at Level 0 — confirm both. (5) Verify sign extension by decoding `addi x1, x0,
 imm == -1i64, not 4095.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commit 29dbd40 (branch task/e0-t06-rv64i-decoder, stacked on e0-t05)
+Deliverables: crates/core/src/decode.rs — const fn decode(u32) -> Result<Instr,
+IllegalInstr>, 47 mnemonics across all six formats, immediates sign-extended to i64 at
+decode (I/S/B/U/J extractors documented against spec bit layouts). Level-0 policy in
+module doc: compressed space illegal; FENCE decodes for ALL fm/pred/succ (incl.
+fence.tso, fm=8) but FENCE.I illegal; SYSTEM exact-word ECALL/EBREAK only; M-ext/CSR/
+privileged illegal; RV64 shamt6 for SLLI/SRLI/SRAI (top6 selects), shamt5 W-forms with
+insn[25]=1 illegal per spec.
+GOLDEN TABLE PROVENANCE (anti-self-licking, per the E0-T05 lesson): all 70 positive
+words produced by clang -target riscv64-unknown-elf -march=rv64i -mno-relax +
+llvm-objdump -d -M no-aliases (alpine docker); branch/JAL immediates are REAL label
+distances; B/J range extremes (+4094/-4096, +1048574/-1048576) constructed via
+.skip-separated labels so the assembler emitted the boundary words itself (they matched
+my independent hand-computations exactly). Source: scratchpad/golden.s + golden.dump;
+command line recorded in the test header for reproduction.
+Tests: golden_table_decodes_exactly (70, >= 60 required), negative_table (30, >= 20),
+compressed_space sweep (300k), sweep_never_panics (1M random + 65k strided full-range,
+miri-reduced via SWEEP const), const-context evaluation. 3 wasm32 mirrors (13-entry
+subset incl. edges, negatives, 200k sweep). miri clean on the suite (1.4s reduced).
+Gates: fmt / clippy -D warnings exit 0 (captured directly) / native green / no_std
+wasm32 / wasm-pack test --node (5 suites) / CI green run 28604047843.
+Follow-up per angle 1: objdump cross-decode of the E0-T14 hello ELF recorded for
+E0-T14/E0-T20 (binary does not exist yet).
+rr: SKIPPED locally (macOS/no PMU per AGENTS.md); deterministic+miri+wasm+CI layers.
