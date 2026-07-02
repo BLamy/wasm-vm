@@ -10,3 +10,9 @@ docker run --rm -v "$PWD:/w" alpine:latest sh -c '
   llvm-objdump -s /w/minimal.elf > /w/minimal.objdump.txt
   llvm-readelf -s /w/minimal.elf >> /w/minimal.readelf.txt
 '
+
+# genuine/i386.elf — real class32+machine=3 ELF for class-vs-machine error precision
+# (E0-T10 re-verification residual gap). Rebuild:
+#   docker run --rm -v "$PWD:/w" alpine sh -c 'apk add clang lld && \
+#     clang -target i386-unknown-elf -m32 -c -o /w/i386.o /w/genuine/i386.s && \
+#     ld.lld -m elf_i386 -e _start -o /w/genuine/i386.elf /w/i386.o'

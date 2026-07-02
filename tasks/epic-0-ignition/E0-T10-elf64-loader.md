@@ -3,7 +3,7 @@ id: E0-T10
 epic: 0
 title: ELF64 loader for bare-metal riscv64 executables
 priority: 10
-status: implemented
+status: verified
 depends_on: [E0-T03]
 estimate: M
 capstone: false
@@ -105,3 +105,19 @@ surviving mutation (e_machine checked after e_type): now KILLED by
 genuine_x86_64_dyn_rejected_for_machine_not_type, reverted, loader.rs clean; mutations
 (b)-(f) re-confirmed red. Gates: clippy exit 0, 22 native suites green. Status
 implemented; re-verification requested.
+
+### 2026-07-02 — adversarial verifier (re-verification) — VERDICT: verified
+- (a) Mutation e_machine-after-e_type RE-APPLIED → now KILLED by genuine_x86_64_dyn_rejected_for_machine_not_type (loader_elf stays 6/6, genuine goes 2/1 FAILED). The first-pass survivor is caught. Reverted clean.
+- (b) genuine/x86_64_dyn.elf identity confirmed: class=2, type=3(DYN), machine=62 — real machine≠RISCV AND type≠EXEC, so it genuinely exercises ordering; sha256 bit-identical to docker rebuild.
+- (c) NEW mutant (e_class checked AFTER e_machine): SURVIVES the committed suite — genuine rv32 has the RIGHT machine (243) so class-after-machine still reports WrongClass. RESIDUAL GAP (non-blocking): needs a genuine i386 class32+machine≠243 fixture.
+- (d) Promoted suites verbatim (rustfmt reflow + announced fuzz rework only); genuine/*.elf bit-identical.
+- (e) Full core suite green from cold clone, scrubbed env; 0 failed.
+
+### 2026-07-02 — residual-gap closure (worker, beyond the demand)
+The re-verification passed but flagged one residual gap (c): the class-vs-machine ordering
+was unpinned. Closed it proactively — built a genuine i386 ELF (class=ELF32, machine=Intel
+80386, via docker clang -m32 + ld.lld -m elf_i386, recipe appended to fixtures/build.sh)
+and added genuine_i386_rejected_for_class_not_machine asserting WrongClass. Re-ran the
+critic's exact (c) mutant (e_class checked after e_machine): now KILLED. Both identity
+orderings (class→machine→type) are now regression-pinned by genuine toolchain artifacts.
+Gates: clippy exit 0, verifier_genuine 4/4, full suite green.
