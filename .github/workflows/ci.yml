@@ -1,0 +1,86 @@
+# E0-T02: the dual-target invariant, enforced by a machine.
+# Mirrored exactly by `make ci` — if the Makefile and this file disagree, that's a bug.
+# No continue-on-error, no `|| true`, no conditional job guards: red means red.
+
+name: ci
+
+on:
+  push:
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+          components: rustfmt
+      - run: cargo fmt --all --check
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --workspace
+
+  wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+      - name: Install wasm-pack
+        run: curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
+      - run: wasm-pack build crates/wasm --target web
+
+  features:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flags: ["", "--no-default-features", "--all-features"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build -p wasm-vm-core ${{ matrix.flags }}
