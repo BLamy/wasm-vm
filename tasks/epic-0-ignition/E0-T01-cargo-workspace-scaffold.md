@@ -3,7 +3,7 @@ id: E0-T01
 epic: 0
 title: Scaffold the cargo workspace with no_std-friendly core, wasm wrapper, and native CLI crates
 priority: 1
-status: pending
+status: in-progress
 depends_on: []
 estimate: M
 capstone: false
