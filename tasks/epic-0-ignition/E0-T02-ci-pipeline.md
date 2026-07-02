@@ -3,7 +3,7 @@ id: E0-T02
 epic: 0
 title: CI pipeline running rustfmt, clippy, native tests, and the wasm32 build on every push
 priority: 2
-status: in-progress
+status: implemented
 depends_on: [E0-T01]
 estimate: S
 capstone: false
@@ -50,4 +50,29 @@ preinstalled — it must either install it or fail loudly, not skip; (5) confirm
 poisoning can't fake green: rerun the wasm job with caches disabled.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — branch task/e0-t02-ci-pipeline (stacked on e0-t01)
+Deliverables: `.github/workflows/ci.yml` (jobs fmt/clippy/test/wasm/features-matrix;
+toolchain pin sed-read from rust-toolchain.toml into dtolnay/rust-toolchain so the pin has
+one source of truth; Swatinem/rust-cache; zero continue-on-error/`|| true`/if-guards) and
+`Makefile` `ci` target mirroring the exact commands. `make ci` green locally end-to-end
+(incl. wasm-pack 0.13.1 building crates/wasm --target web).
+Recorded CI evidence — green: run 28584207034 (task branch; note this was the repo's FIRST
+run, i.e. cache-cold, so the green is cache-independent). Red demos, one per acceptance
+attack, each turning its targeted job red:
+- fmt violation → run 28584287918 (fmt job red; clippy also tripped — over-delivery)
+- clippy warning (needless_return) → run 28584287682 (clippy job red, only)
+- failing test → run 28584287849 (test job red, only)
+- wasm breakage → run 28584287981 (wasm job red at the wasm-pack step; clippy also tripped)
+All at https://github.com/BLamy/wasm-vm/actions/runs/<id>. Scratch branches deleted; runs persist.
+FINDING (task assumption falsified): `std::fs` alone COMPILES on wasm32-unknown-unknown —
+std ships stubs that error at runtime — proven locally before pushing. The real
+compile-breaker used in the wasm red demo is `use std::os::unix::io::RawFd`, absent on
+wasm32, present on native (so only the wasm job reds out). Demo commit documents this.
+History note: four earlier all-green scratch runs (28584267xxx) were an accidental push of
+base-identical branches (wrong cwd) — they demonstrate nothing and were superseded.
+rr: still no local recording (macOS, no PMU); this task creates the Linux CI substrate rr
+needs. Deliberately NOT wired into ci.yml to keep it free of failure-masking constructs —
+rr recording belongs in E0-T20/E0-T25 verify recipes per AGENTS.md.
+Acceptance nuance: "green on current main" is unsatisfiable until the stack merges (main
+predates the workspace); green is proven on the stacked branch = main + PR#1 + this.
