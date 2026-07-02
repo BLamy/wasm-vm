@@ -275,3 +275,32 @@ fn store_then_load_roundtrip_through_instructions() {
     assert_eq!(h.regs.read(1), 0xDEAD_BEEF_CAFE_F00D);
     assert_eq!(h.regs.pc, CODE + 4);
 }
+
+#[test]
+fn successful_store_leaves_all_registers_untouched() {
+    // Verifier demand (E0-T08 refutation): a mutant making a SUCCESSFUL store write
+    // a register through the retire path survived the whole suite — store tests
+    // checked memory bytes but never re-read the register file. This closes that.
+    for f3 in [0b000u32, 0b001, 0b010, 0b011] {
+        let mut bus = fresh_bus();
+        let mut hart = Hart::new();
+        hart.regs.pc = CODE;
+        bus.store32(CODE, s_type(0, 3, 2, f3)).unwrap();
+        for n in 1..32u8 {
+            hart.regs.write(n, 0xA11C_E000_0000_0000 | u64::from(n)); // sentinels
+        }
+        hart.regs.write(2, DATA);
+        hart.regs.write(3, 0x0123_4567_89AB_CDEF);
+        let expected = format!("{}", hart.regs); // pc still CODE in this dump
+        hart.step(&mut bus).unwrap();
+        // pc advanced by exactly 4; every register (incl. x0) byte-identical.
+        assert_eq!(hart.regs.pc, CODE + 4, "f3={f3:#b}");
+        let after = format!("{}", hart.regs);
+        let strip = |d: &str| d.lines().skip(1).collect::<Vec<_>>().join("\n");
+        assert_eq!(
+            strip(&after),
+            strip(&expected),
+            "f3={f3:#b}: a successful store mutated the register file"
+        );
+    }
+}

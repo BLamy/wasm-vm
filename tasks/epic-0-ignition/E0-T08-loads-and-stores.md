@@ -80,3 +80,24 @@ Gates: fmt / clippy -D warnings exit 0 / 98 native + 21 wasm tests green / no_st
 build / CI green run 28624358764.
 rr: SKIPPED locally (macOS/no PMU); deterministic+wasm+CI layers; Spike differential is
 angle 1 for the verifier (spec-first substitute precedent from E0-T07).
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: refuted
+- P1 program differential vs spec-first model — HELD. 41-instruction program (all 11 memory ops, negative load AND store offsets, rd==rs1 chains, deps through loaded values): full regfile + 48-byte data window + final pc exact match vs independent Python RV64I model.
+- P2 suite-edit audit (verifier_e0t07_angles.rs) — HELD. Edit minimal (X2_SENTINEL const + comments + the two lb/sd entries); X2_SENTINEL hand-verified = seeded x2 = 0x5EAF_02D7_0202_0202, unmapped, causes 5/7 + tval=ea spec-correct; purity loop untouched — no weakening. APPROVED.
+- P3 negative offset — HELD. rs1=DRAM_BASE imm=-1 → cause 5 tval=0x7FFF_FFFF at four shapes; with a RecordingDevice at [DRAM_BASE-0x100, DRAM_BASE), straddling ld/sd at DRAM_BASE-1 faults 5/7 with the device NEVER invoked.
+- P4 boundary sweep, verifier bases — HELD. Last slot from rs1=last-w imm=+w succeeds; ea=last+1 from ABOVE (rs1=RAM_END, negative imm) faults with tval=last+1, every width, both directions.
+- P5 fault purity full-dump — HELD. 18 fault shapes, 31 sentinels, full dump + whole-RAM compare bit-identical. Device write Err propagates as cause 7 tval=ea, pure, exactly one invocation; device loads mask-to-width then extend correctly through the hart.
+- P6 wrap acceptance — HELD. Wrapped tval=0x8, no panic, native and wasm.
+- rr — SKIPPED loud (macOS/no PMU). Mitigation: cold-clone suite + spec-first model + miri (11/11 hart_memory) + wasm + CI.
+- COVERAGE: 6 mutations, 5 killed, 1 SURVIVED: successful sb writing (rd=3, 0xBAD) through the retire path stays green across all 98 committed tests — store tests check memory via fresh harts and never re-read registers; purity suites only cover faults. DEMAND: successful-store register-purity test, or adopt promoted verifier_e0t08_diff.rs (kills the class via final full-regfile compare).
+- MOCK/HONESTY: clean — counts exact (98 native / 21 wasm), CI 28624358764 success at 917e7fa, claim commit tasks-only, no self-licking goldens (model recomputed every expected value).
+- NOVEL: device-through-hart — faulting device write pure + single invocation; successful sw passes exact (offset,width,value); device returning stray high bits cannot corrupt lb/lbu/lw (masking + extension verified through the hart). All held.
+- SUITE: promote verifier_e0t08_diff.rs + model.py + verifier_e0t08_attacks.rs; rework hart_memory.rs (the demanded test); approve the verifier_e0t07_angles edit as committed.
+
+### 2026-07-02 — rework after refutation (worker)
+Applied all demands: (1) promoted verifier_e0t08_diff.rs + verifier_e0t08_attacks.rs
+verbatim and model.py as tests/data/model_e0t08.py (generator provenance);
+(2) added hart_memory::successful_store_leaves_all_registers_untouched — every store
+width, 31 sentinels, full-dump compare + pc==CODE+4; (3) re-ran the exact surviving
+mutant (successful sb → (3, 0xBAD)): KILLED, reverted, hart/mod.rs clean. Gates:
+clippy exit 0, 16 native suites green. Status implemented; re-verification requested.
