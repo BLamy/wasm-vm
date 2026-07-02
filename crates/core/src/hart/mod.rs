@@ -8,12 +8,16 @@
 //! CSR-based trap delivery without renumbering.
 //!
 //! Scope ledger (each arm is replaced by its owning task):
-//! - Computational ops (LUI/AUIPC/OP-IMM/OP-IMM-32/OP/OP-32): executed HERE (E0-T07).
+//! - Computational ops (LUI/AUIPC/OP-IMM/OP-IMM-32/OP/OP-32): executed (E0-T07).
+//! - Loads/stores (LB..LWU, SB..SD): executed (E0-T08). Misaligned-data POLICY: the
+//!   bus requires natural alignment (E0-T03), so misaligned data accesses trap with
+//!   causes 4/6 — matching Spike's default (no `--misaligned`); qemu-riscv64
+//!   silently emulates them, a documented differential asymmetry for E0-T20.
 //! - FENCE: retires as a no-op — architecturally correct for a single in-order hart
 //!   with no devices reordering memory; revisited when it matters (E4 JIT, E6 SMP).
-//! - Loads/stores: E0-T08. Control flow (JAL/JALR/branches): E0-T09.
-//!   ECALL/EBREAK: E0-T11. Until then those decode fine but raise
-//!   `IllegalInstruction` as an explicit placeholder (documented, tested as such).
+//! - Control flow (JAL/JALR/branches): E0-T09. ECALL/EBREAK: E0-T11. Until then
+//!   those decode fine but raise `IllegalInstruction` as an explicit placeholder
+//!   (documented, tested as such).
 
 pub mod regs;
 
@@ -66,6 +70,38 @@ const fn sext32(x: u32) -> u64 {
     x as i32 as i64 as u64
 }
 
+/// The one effective-address formula for every memory op (§2.6): base plus
+/// sign-extended immediate in wrapping two's-complement u64 arithmetic.
+#[inline(always)]
+const fn ea(base: u64, imm: i64) -> u64 {
+    base.wrapping_add(imm as u64)
+}
+
+/// Map a bus fault on a LOAD to its architectural cause (4 misaligned / 5 access),
+/// `tval` = the effective address (including wrapped addresses).
+#[inline(always)]
+const fn load_fault(f: BusFault, addr: u64) -> Trap {
+    Trap {
+        cause: match f {
+            BusFault::Misaligned => Exception::LoadAddrMisaligned,
+            BusFault::Access => Exception::LoadAccessFault,
+        },
+        tval: addr,
+    }
+}
+
+/// Map a bus fault on a STORE to its architectural cause (6 misaligned / 7 access).
+#[inline(always)]
+const fn store_fault(f: BusFault, addr: u64) -> Trap {
+    Trap {
+        cause: match f {
+            BusFault::Misaligned => Exception::StoreAddrMisaligned,
+            BusFault::Access => Exception::StoreAccessFault,
+        },
+        tval: addr,
+    }
+}
+
 impl Hart {
     pub fn new() -> Self {
         Self::default()
@@ -97,12 +133,12 @@ impl Hart {
                 tval: insn as u64,
             });
         };
-        self.execute(instr, insn)
+        self.execute(bus, instr, insn)
     }
 
     /// Execute a decoded instruction. Every arm either fully retires (writeback +
     /// PC advance) or returns a trap having touched nothing.
-    fn execute(&mut self, instr: Instr, raw: u32) -> Result<(), Trap> {
+    fn execute(&mut self, bus: &mut impl Bus, instr: Instr, raw: u32) -> Result<(), Trap> {
         use Instr::*;
         let r = &mut self.regs;
         let pc = r.pc;
@@ -160,6 +196,75 @@ impl Hart {
             // at Level 0. Write to x0 so it flows through the common retire path.
             Fence { .. } => (0, 0),
 
+            // Loads (E0-T08): effective address = rs1 + sext(imm), wrapping.
+            // A bus fault maps to cause 4/5 with tval = the effective address; the
+            // `?` returns BEFORE writeback, so rd (even when rd == rs1) and PC are
+            // untouched on fault. LB/LH/LW sign-extend; LBU/LHU/LWU zero-extend.
+            Lb { rd, rs1, imm } => {
+                let a = ea(r.read(rs1), imm);
+                (
+                    rd,
+                    bus.load8(a).map_err(|f| load_fault(f, a))? as i8 as i64 as u64,
+                )
+            }
+            Lh { rd, rs1, imm } => {
+                let a = ea(r.read(rs1), imm);
+                (
+                    rd,
+                    bus.load16(a).map_err(|f| load_fault(f, a))? as i16 as i64 as u64,
+                )
+            }
+            Lw { rd, rs1, imm } => {
+                let a = ea(r.read(rs1), imm);
+                (
+                    rd,
+                    bus.load32(a).map_err(|f| load_fault(f, a))? as i32 as i64 as u64,
+                )
+            }
+            Ld { rd, rs1, imm } => {
+                let a = ea(r.read(rs1), imm);
+                (rd, bus.load64(a).map_err(|f| load_fault(f, a))?)
+            }
+            Lbu { rd, rs1, imm } => {
+                let a = ea(r.read(rs1), imm);
+                (rd, u64::from(bus.load8(a).map_err(|f| load_fault(f, a))?))
+            }
+            Lhu { rd, rs1, imm } => {
+                let a = ea(r.read(rs1), imm);
+                (rd, u64::from(bus.load16(a).map_err(|f| load_fault(f, a))?))
+            }
+            Lwu { rd, rs1, imm } => {
+                let a = ea(r.read(rs1), imm);
+                (rd, u64::from(bus.load32(a).map_err(|f| load_fault(f, a))?))
+            }
+
+            // Stores (E0-T08): cause 6/7 with tval = effective address. A faulting
+            // bus store writes nothing (E0-T03), so purity holds; on success the
+            // bus write IS the side effect and retirement is a no-op write to x0.
+            Sb { rs1, rs2, imm } => {
+                let a = ea(r.read(rs1), imm);
+                bus.store8(a, r.read(rs2) as u8)
+                    .map_err(|f| store_fault(f, a))?;
+                (0, 0)
+            }
+            Sh { rs1, rs2, imm } => {
+                let a = ea(r.read(rs1), imm);
+                bus.store16(a, r.read(rs2) as u16)
+                    .map_err(|f| store_fault(f, a))?;
+                (0, 0)
+            }
+            Sw { rs1, rs2, imm } => {
+                let a = ea(r.read(rs1), imm);
+                bus.store32(a, r.read(rs2) as u32)
+                    .map_err(|f| store_fault(f, a))?;
+                (0, 0)
+            }
+            Sd { rs1, rs2, imm } => {
+                let a = ea(r.read(rs1), imm);
+                bus.store64(a, r.read(rs2)).map_err(|f| store_fault(f, a))?;
+                (0, 0)
+            }
+
             // Owned by later tasks — explicit placeholders (see module doc). They
             // trap BEFORE any state is touched, preserving trap purity.
             Jal { .. }
@@ -170,17 +275,6 @@ impl Hart {
             | Bge { .. }
             | Bltu { .. }
             | Bgeu { .. }
-            | Lb { .. }
-            | Lh { .. }
-            | Lw { .. }
-            | Ld { .. }
-            | Lbu { .. }
-            | Lhu { .. }
-            | Lwu { .. }
-            | Sb { .. }
-            | Sh { .. }
-            | Sw { .. }
-            | Sd { .. }
             | Ecall
             | Ebreak => {
                 return Err(Trap {

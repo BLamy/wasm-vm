@@ -162,13 +162,12 @@ fn illegal_instruction_cause_and_tval() {
 
 #[test]
 fn not_yet_implemented_ops_trap_as_documented_placeholders() {
-    // Owned by E0-T08/T09/T11 — currently placeholder IllegalInstruction traps.
+    // Owned by E0-T09/T11 — currently placeholder IllegalInstruction traps.
+    // (lb/sb left this list at E0-T08 when loads/stores began executing.)
     for word in [
         0x008000EFu32, // jal
         0x00008067,    // jalr (ret)
         0x00208463,    // beq
-        0x00010083,    // lb
-        0x00110023,    // sb
         0x00000073,    // ecall
         0x00100073,    // ebreak
     ] {
