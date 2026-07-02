@@ -3,7 +3,7 @@ id: E0-T03
 epic: 0
 title: Guest physical RAM model and system bus trait with 1, 2, 4, and 8-byte accessors
 priority: 3
-status: pending
+status: in-progress
 depends_on: [E0-T01]
 estimate: M
 capstone: false
