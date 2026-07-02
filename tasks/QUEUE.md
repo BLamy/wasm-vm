@@ -18,7 +18,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 - [x] `  1` [E0-T01](epic-0-ignition/E0-T01-cargo-workspace-scaffold.md) — Scaffold the cargo workspace with no_std-friendly core, wasm wrapper, and native CLI crates *(deps: —)*
 - [x] `  2` [E0-T02](epic-0-ignition/E0-T02-ci-pipeline.md) — CI pipeline running rustfmt, clippy, native tests, and the wasm32 build on every push *(deps: E0-T01)*
-- [~] `  3` [E0-T03](epic-0-ignition/E0-T03-guest-ram-and-bus-trait.md) — Guest physical RAM model and system bus trait with 1, 2, 4, and 8-byte accessors *(deps: E0-T01)*
+- [?] `  3` [E0-T03](epic-0-ignition/E0-T03-guest-ram-and-bus-trait.md) — Guest physical RAM model and system bus trait with 1, 2, 4, and 8-byte accessors *(deps: E0-T01)*
 - [ ] `  4` [E0-T04](epic-0-ignition/E0-T04-mmio-dispatch.md) — MMIO dispatch layer routing bus windows to memory-mapped devices *(deps: E0-T03)*
 - [ ] `  5` [E0-T05](epic-0-ignition/E0-T05-register-file-and-pc.md) — Integer register file and PC with hardwired-zero x0 semantics *(deps: E0-T01)*
 - [ ] `  6` [E0-T06](epic-0-ignition/E0-T06-rv64i-decoder.md) — RV64I instruction decoder covering all six base encoding formats *(deps: E0-T01)*

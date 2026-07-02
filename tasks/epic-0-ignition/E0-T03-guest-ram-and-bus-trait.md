@@ -3,7 +3,7 @@ id: E0-T03
 epic: 0
 title: Guest physical RAM model and system bus trait with 1, 2, 4, and 8-byte accessors
 priority: 3
-status: in-progress
+status: implemented
 depends_on: [E0-T01]
 estimate: M
 capstone: false
@@ -50,4 +50,24 @@ wasm tests actually execute (check `wasm-pack test --node` output lists the boun
 not 0 tests); (6) check `Ram::new(0)` and absurd sizes fail cleanly.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commit 3b61fa4 (branch task/e0-t03-ram-bus, stacked on e0-t02)
+Deliverables complete: `bus.rs` (Bus trait with fallible LE load/store at 8/16/32/64,
+BusFault{Access,Misaligned}, mmap::DRAM_BASE=0x8000_0000 + DRAM_SIZE_DEFAULT=128MiB),
+`ram.rs` (Ram::new/with_base through try_reserve_exact so absurd sizes are Err(OutOfMemory)
+not aborts; read_slice/write_slice loader escape hatches; all bounds checks in checked u64).
+POLICY DECISION locked in bus.rs docs: fault precedence Access-beats-Misaligned — required
+for the acceptance pair (straddling load64 at base+size-4 → Access even though that address
+is also 8-misaligned; in-range misaligned → Misaligned). Loads take &mut self (device reads
+have side effects; E0-T04 MMIO implements the same trait).
+Evidence, all green locally: cargo fmt/clippy(-D warnings)/test (12 native tests: round-trip
+all widths at base and last slot, straddle→Access, misaligned→Misaligned per width, LE byte
+order EF BE AD DE, extreme addrs 0x0/0x7FFF_FFFF_FFFF_FFF8/u64::MAX-7/u64::MAX with
+debug_assertions on, faulting-store-leaves-RAM-identical, slice hatches, Ram::new(0) +
+Ram::new(usize::MAX)→OutOfMemory); wasm-pack test --node crates/wasm (6 mirror tests
+executed on wasm32/Node — count visible in output, not 0); cargo +nightly-2026-05-06 miri
+test -p wasm-vm-core → 12/12, zero UB findings (73s).
+Lockstep extension of E0-T02 deliverables: `wasm-pack test --node crates/wasm` appended to
+BOTH ci.yml wasm job and Makefile wasm target (command-set parity preserved).
+rr: SKIPPED locally (macOS/no PMU per AGENTS.md); deterministic native+miri+wasm test
+output is the evidence layer; CI (Linux) run linked in PR.
