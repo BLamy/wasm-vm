@@ -3,7 +3,7 @@ id: E0-T10
 epic: 0
 title: ELF64 loader for bare-metal riscv64 executables
 priority: 10
-status: pending
+status: in-progress
 depends_on: [E0-T03]
 estimate: M
 capstone: false
