@@ -54,6 +54,7 @@ impl Ram {
     /// `checked_add` rejects `addr + width` wrapping past `u64::MAX`, and the final
     /// compare rejects anything past the end. Range faults take precedence over
     /// alignment faults (see `bus.rs` policy).
+    #[inline(always)]
     fn index(&self, addr: u64, width: u64) -> Result<usize, BusFault> {
         let off = addr.checked_sub(self.base).ok_or(BusFault::Access)?;
         let end = off.checked_add(width).ok_or(BusFault::Access)?;
@@ -67,6 +68,7 @@ impl Ram {
     }
 
     /// Range-check (no alignment requirement) for byte-granular slice access.
+    #[inline]
     fn range(&self, addr: u64, len: u64) -> Result<usize, BusFault> {
         let off = addr.checked_sub(self.base).ok_or(BusFault::Access)?;
         let end = off.checked_add(len).ok_or(BusFault::Access)?;
@@ -95,6 +97,7 @@ impl Ram {
 
 macro_rules! impl_load {
     ($name:ident, $ty:ty) => {
+        #[inline(always)]
         fn $name(&mut self, addr: u64) -> Result<$ty, BusFault> {
             const W: usize = size_of::<$ty>();
             let i = self.index(addr, W as u64)?;
@@ -106,6 +109,7 @@ macro_rules! impl_load {
 
 macro_rules! impl_store {
     ($name:ident, $ty:ty) => {
+        #[inline(always)]
         fn $name(&mut self, addr: u64, val: $ty) -> Result<(), BusFault> {
             const W: usize = size_of::<$ty>();
             let i = self.index(addr, W as u64)?;

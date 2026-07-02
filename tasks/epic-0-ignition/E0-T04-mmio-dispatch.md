@@ -51,4 +51,39 @@ claim. (4) Check width forwarding: a `store16` must arrive as B2, not two B1 cal
 — panics refute.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — branch task/e0-t04-mmio-dispatch (stacked on e0-t03)
+Deliverables: `crates/core/src/mmio.rs` — MmioDevice trait (width-explicit read/write,
+Width{B1,B2,B4,B8}), SystemBus with attach() rejecting zero-length windows
+(ZeroLength), end-overflow (AddressOverflow, checked_add; a window containing byte
+u64::MAX is unattachable by design, documented), and overlap with RAM or devices
+(Overlap, u128 math exact even for E0-T03's past-u64::MAX RAM tail); RecordingDevice
+test double (Rc<RefCell<RecordingLog>> handle, always compiled so wasm tests and
+verifiers share it); 12 native unit tests + 5 wasm-bindgen-test mirrors; criterion
+bench (benches/mmio_dispatch.rs) + paired perf test (tests/hot_path.rs).
+ROUTING POLICY (documented in module doc): full containment or no device invocation
+(straddles fault Access with ZERO device calls — RecordingDevice-asserted); fault
+precedence unchanged from E0-T03 (range then alignment); device read results masked to
+width; RAM-first dispatch — Ram's own checked bounds double as the routing test
+(Err(Access) ⇔ not RAM), device scan is a #[cold] split-borrow free fn taking only
+&mut [Window] so the optimizer can prove ram survives fallback calls.
+HOT-PATH EVIDENCE (adversarial angle 3) — full disclosure of the measurement journey:
+sequential criterion runs on this host swing 3-6x between runs (unusable at ±10%); a
+naive paired 2-arm harness reported +76.7% which was LLVM store-forwarding the bare-Ram
+workload into nothing (fixed with per-iteration black_box of the bus ref); the fixed
+2-arm harness then reported +24.5% IDENTICAL (±0.1%) across three dispatch
+implementations — that constancy exposed fixed-order position bias (confirmed by a
+bare-vs-bare control arm reading 0.91 and arm medians increasing monotonically in
+measurement order). Final harness (tests/hot_path.rs): 4 arms (bare, bare-control,
+bus0, bus100), 301 rotation-debiased interleaved rounds, control-gated. Result:
+control 1.0013/0.9980 (sub-1% resolution proven), instruction-shaped workload bus100 =
+1.084 (+8.4%, within the 10% budget), pure-streaming bus100 = 1.015 (+1.5%), and
+bus0 ≈ bus100 (registered devices add nothing to RAM traffic, as designed).
+Reproduce: cargo test --release -p wasm-vm-core --test hot_path -- --ignored --nocapture
+(the test hard-fails if the control arm shows the host cannot resolve the budget).
+Cross-task perf touch: #[inline]/(always) attributes added to E0-T03's Ram accessors
+(no semantic change; full E0-T03 suite incl. fuzz re-run green).
+Gates: fmt/clippy(-D warnings)/test --workspace/no_std wasm32/wasm-pack test --node
+(11 wasm tests: 5 mmio + 6 e0-t03)/miri green — see PR for CI run.
+rr: SKIPPED locally (macOS/no PMU per AGENTS.md); deterministic tests + miri + CI Linux
+are the evidence layer.

@@ -10,6 +10,7 @@
 extern crate alloc;
 
 pub mod bus;
+pub mod mmio;
 pub mod ram;
 
 use alloc::vec;

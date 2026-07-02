@@ -14,3 +14,10 @@ std = []
 [dependencies]
 # Web/JS crates (wasm-bindgen, js-sys, web-sys) are FORBIDDEN here — that is the
 # crate boundary this workspace exists to enforce (ROADMAP.md, architectural bet #2).
+
+[dev-dependencies]
+criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }
+
+[[bench]]
+name = "mmio_dispatch"
+harness = false
