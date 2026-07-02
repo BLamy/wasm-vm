@@ -3,7 +3,7 @@ id: E0-T01
 epic: 0
 title: Scaffold the cargo workspace with no_std-friendly core, wasm wrapper, and native CLI crates
 priority: 1
-status: in-progress
+status: implemented
 depends_on: []
 estimate: M
 capstone: false
@@ -49,4 +49,15 @@ active-toolchain` inside the repo; (5) build on macOS *and* Linux (or the T13 Do
 — platform-specific breakage refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commit c38ee3f (branch task/e0-t01-cargo-workspace)
+Three-crate workspace scaffolded per deliverables. Commands run, all green:
+`cargo fmt --all --check` · `cargo clippy --workspace --all-targets -- -D warnings` ·
+`cargo build --workspace` · `cargo test --workspace` (3 tests in core) ·
+`cargo build -p wasm-vm-core --no-default-features` (native + wasm32) ·
+`cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown` ·
+`cargo tree -p wasm-vm-core -e normal,build` → core has zero dependencies ·
+`cargo run -p wasm-vm-cli -- --ram-bytes 1048576` prints version + RAM size.
+Toolchain pin exercised for real: first build downloaded 1.96.0 + wasm32 target via
+rust-toolchain.toml. Evidence layer: deterministic test output only (early Epic 0 — no
+guest trace infra yet, rr unavailable on this macOS host per AGENTS.md platform table).

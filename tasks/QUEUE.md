@@ -12,7 +12,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Epic 0 — `epic-0-ignition`
 
-- [~] `  1` [E0-T01](epic-0-ignition/E0-T01-cargo-workspace-scaffold.md) — Scaffold the cargo workspace with no_std-friendly core, wasm wrapper, and native CLI crates *(deps: —)*
+- [?] `  1` [E0-T01](epic-0-ignition/E0-T01-cargo-workspace-scaffold.md) — Scaffold the cargo workspace with no_std-friendly core, wasm wrapper, and native CLI crates *(deps: —)*
 - [ ] `  2` [E0-T02](epic-0-ignition/E0-T02-ci-pipeline.md) — CI pipeline running rustfmt, clippy, native tests, and the wasm32 build on every push *(deps: E0-T01)*
 - [ ] `  3` [E0-T03](epic-0-ignition/E0-T03-guest-ram-and-bus-trait.md) — Guest physical RAM model and system bus trait with 1, 2, 4, and 8-byte accessors *(deps: E0-T01)*
 - [ ] `  4` [E0-T04](epic-0-ignition/E0-T04-mmio-dispatch.md) — MMIO dispatch layer routing bus windows to memory-mapped devices *(deps: E0-T03)*
