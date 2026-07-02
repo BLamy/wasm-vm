@@ -3,7 +3,7 @@ id: E0-T05
 epic: 0
 title: Integer register file and PC with hardwired-zero x0 semantics
 priority: 5
-status: implemented
+status: verified
 depends_on: [E0-T01]
 estimate: S
 capstone: false
@@ -92,3 +92,11 @@ ABI_NAMES): dump_format_is_byte_stable goes RED (1 failed), previously all-green
 Gates re-earned: fmt / clippy exit 0 (captured directly) / 33+9+7+8 native tests /
 wasm-pack test --node 4 suites ok. Status back to implemented; re-verification requested
 from the refuting verifier session.
+
+### 2026-07-02 — adversarial verifier (re-verification) — VERDICT: verified
+- (a) MUT a3/a4 re-run — RED as demanded. `test result: FAILED. 8 passed; 1 failed` in a fresh clone of 88550c1; the previously-surviving mutation is now killed.
+- (b) two NEW swaps, literal-only-protected names — both RED. s4/s5: FAILED, failing test `hart::regs::tests::dump_format_is_byte_stable` — the pinned literal itself is the killer, not a spot check. t3/t4: FAILED. regs.rs restored clean after each.
+- (c) promoted suite — GREEN and faithful. verifier_e0t05.rs diffs against the original verifier_attack.rs only in rustfmt line-wrapping; runs ok, 7 passed.
+- (d) full crate regression — GREEN. lib 33 + verifier_e0t04 9 + verifier_e0t05 7 + fuzz 8, 0 failures.
+- Rework audit: git show 88550c1 confirms the reconstruction loop deleted, replaced by assert_eq!(dump, golden) with the 32-register-line pinned literal; only remaining ABI_NAMES mention in the test is a comment. Commit touches only regs.rs, the promoted test, and the task log.
+Commands: fresh clone2 of 88550c1; git show 88550c1; diff verifier_attack.rs vs verifier_e0t05.rs; 3 swap mutations + cargo test + revert each; cargo test --test verifier_e0t05; cargo test -p wasm-vm-core; cargo clean. Env scrubbed.
