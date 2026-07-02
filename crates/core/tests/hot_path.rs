@@ -14,13 +14,12 @@
 //!   data traffic — the shape of the interpreter loop this dispatch actually sits
 //!   under (task Context: "RAM access during fetch/execute"). This is the budget.
 //! - **pure-streaming** (REPORTED): back-to-back bus ops with zero compute between
-//!   them, ~2.5 cycles/op. Adversarially tight: at that scale the mere *reachability*
-//!   of the #[cold] device-fallback call (caller-saved-register discipline at five
-//!   potential call sites per iteration) costs ~25% regardless of dispatch strategy —
-//!   measured identical (±0.1%) across three implementations: width-funneled,
-//!   width-specialized, and split-borrow free functions. No emulator loop looks like
-//!   this; the number is published for transparency and re-checked against real
-//!   interpreter traffic in E0-T24 (IPS baseline).
+//!   them, ~2.5 cycles/op. History: earlier 2-arm fixed-order versions of this harness
+//!   reported ~25% streaming overhead, identical across three dispatch implementations
+//!   — that number was a measurement artifact (fixed measurement order on a drifting
+//!   host), not dispatch cost; with rotation + the control gate the same workload reads
+//!   ~1-2%, independently reproduced by the E0-T04 adversarial verifier. Kept as a
+//!   reported diagnostic and re-checked against real interpreter traffic in E0-T24.
 
 use std::time::Instant;
 

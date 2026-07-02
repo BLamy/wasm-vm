@@ -3,7 +3,7 @@ id: E0-T04
 epic: 0
 title: MMIO dispatch layer routing bus windows to memory-mapped devices
 priority: 4
-status: implemented
+status: verified
 depends_on: [E0-T03]
 estimate: S
 capstone: false
@@ -87,3 +87,25 @@ Gates: fmt/clippy(-D warnings)/test --workspace/no_std wasm32/wasm-pack test --n
 (11 wasm tests: 5 mmio + 6 e0-t03)/miri green — see PR for CI run.
 rr: SKIPPED locally (macOS/no PMU per AGENTS.md); deterministic tests + miri + CI Linux
 are the evidence layer.
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: verified
+- P1 ram.rs cross-task touch — HELD. Predicted attribute-only delta + E0-T03 suites green; observed exactly 4 added #[inline]/(always) lines, zero semantic hunks, and in the cold clone the full E0-T03 suite green: 9 ram unit tests, 8/8 verifier_fuzz (+1 explicitly-ignored alloc test), 6 wasm ram_bus tests.
+- P2 RAM-overlap aliasing — HELD. Predicted Err(Overlap) for DRAM_BASE-4/len 8, window-inside-RAM, window==RAM-extent, window-ending-at-RAM-last; Ok for adjacent-before/after; observed all six (verifier_e0t04::p2_ram_overlap_attacks). Zero-size RAM: window over DRAM range attaches and routes. Ram::with_base(u64::MAX-0xFFF, 0x2000) — RAM tail past u64::MAX as u128 — still rejects overlapping attaches, u128 math exact.
+- P3 straddle silence — HELD. Predicted Access + zero device calls for load64/load16/store64 whose first byte is the window's last byte; observed 0 reads + 0 writes in RecordingLog. Adjacent-windows case (not in worker's tests): 8-aligned load64/store64 spanning two fully-mapped touching windows → Access, BOTH logs empty.
+- P4 hot-path budget — HELD. (a) Worker harness as-is, 3 runs: instr control 1.0007/0.9993/1.0000 (sub-1% resolution confirmed), instr bus100 1.0874/1.0792/1.0878 — ≤1.10 every run, matching the claimed 1.084; streaming bus100 1.0138/1.0158/1.0157 ≈ claimed 1.015; bus0 ≈ bus100 as claimed. (b) Fixed-order copy (rotation removed): position-bias artifact NOT reproduced — control read 1.0014/0.9994 even under 6-way `yes` load; the worker's 0.91 diagnosis is plausible (host-state-dependent; 20% absolute swings observed BETWEEN process invocations) but unconfirmed today. Not a refutation: rotation is harmless insurance and the control GATE — the actual safety mechanism — is verified working. (c) Workload audit: instr shape is bus-heavier than a real interpreter, i.e. conservative; black_box placement symmetric. Skeptic workloads: pure-load64 bus100 = 0.952 (faster than bare), dependent-address chain = 0.995/1.006 — the worker's own gated workload is the WORST case of everything measured; nothing tuned to hide overhead. (d) Criterion bench confirmed unresolving: run-to-run change estimate [-1.0%,+45.7%] p=0.09 — cannot resolve ±10% on this host, as disclosed.
+- P5 width forwarding — HELD. One call per op at exact width for all 8 Bus ops with correct (offset,width,value); load8 of all-ones device = 0xFF. Mask-removal sabotage: no test goes red — analyzed as an EQUIVALENT mutant: `v as $ty` in sysbus_load! truncates identically, so the observable no-stray-bits behavior is enforced and tested regardless; `& width.mask()` is redundant defense-in-depth on a private path. Note only, no demand.
+- P6 zero-length / overflow attach — HELD. Typed errors, no panics: ZeroLength; AddressOverflow for base=u64::MAX-2 len=8, for base+len==2^64 exactly (matches the documented design), for base=u64::MAX len=1; len=u64::MAX → Overlap with RAM present, Ok over empty RAM and routable to its last byte, with Misaligned precedence intact at the u64::MAX edge.
+- rr — SKIPPED loudly: macOS/Apple Silicon, rr unsupported per AGENTS.md. Mitigation: deterministic tests + miri + green Linux CI 28593201900.
+- miri — HELD (scoped). Full-crate run exceeds a 10-min window on this host; decision-relevant targets green: all 12 mmio unit tests and all 9 verifier attack tests UB-clean — every Rc/RefCell RecordingDevice path executes under both.
+- COVERAGE: attach/overlap hunks — killed (M2 RAM-overlap-removed, M4 wrapping_add → tests red); contains/routing hunks — killed (M1 first-byte-only containment → straddle test red); store width path — killed (M3 store16→2×B1 → two tests red); mask expression — surviving but equivalent (P5), waived; ram.rs #[inline] hunks — waived (attributes); Cargo.toml/lib.rs/Cargo.lock — waived (build plumbing); bench + hot_path harness — executed in P4. All mutations reverted; clone clean.
+- MOCK/HONESTY: RecordingDevice is a declared test double, compiled unconditionally — no cfg(test) semantics leak; no golden values computed by code under test. Claimed numbers reproduce in spirit (control 1.0013/0.9980 vs verifier 1.0007–1.0000; +8.4% vs +7.9–8.8%; +1.5% vs +1.4–1.6%). Commit hygiene: 64d539a−c2cbbbe is tasks-only; CI 28593201900 exists, headSha=c2cbbbe, 7/7 jobs green, test-job log shows all 12 mmio tests running. Perf-journey disclosure audited: criterion-unusable and store-forwarding claims verified; position-bias story internally consistent but not reproducible today. ONE stale artifact: hot_path.rs module doc still attributed ~25% streaming cost to #[cold] reachability — misleading doc, behavior unaffected — demand: fix in follow-up commit.
+- NOVEL: (1) adjacent-windows aligned straddle — Access, zero calls on both devices; (2) device-window→RAM boundary straddle at DRAM_BASE-4 — Access, zero device calls, RAM head byte-identical after the faulting store; (3) window at base 0xFFFF_FFFF_0000_0000 — offsets stay window-relative at extreme bases, and device-chosen faults (incl. Misaligned from a write) propagate verbatim; (4) [0, u64::MAX) window over empty RAM — routable to last byte with fault precedence intact. All held.
+- SUITE: promote crates/core/tests/verifier_e0t04.rs (9 deterministic tests, miri-clean, incl. two behaviors no worker test covers). Discard hot_path_fixed.rs (bias rig, host-state-dependent) and hot_path_skeptic.rs (workloads read ≤1.0; kept in scratch for E0-T24 reference). Worker's 12 native + 5 wasm tests: keep — mutation-kill evidence proves they bite.
+Commands: cold clone (env scrubbed); fmt/clippy/test --workspace; cargo test --test verifier_e0t04; hot_path x3 (+1 under 6-way load); hot_path_fixed x2 (+1 under load); hot_path_skeptic x2; criterion bench x2; 5 mutations (each reverted); wasm-pack test --node (11 tests by name); miri (mmio lib + verifier_e0t04); gh run view 28593201900 (+ test-job log grep).
+
+### 2026-07-02 — post-verdict actions (worker)
+Applied the verifier's demand: hot_path.rs module doc rewritten — the ~25% streaming
+number is now correctly attributed to fixed-order measurement bias (refuted by both
+parties' debiased runs), not #[cold] reachability. Promoted verifier_e0t04.rs verbatim
+into crates/core/tests/. Gates re-earned: fmt + clippy -D warnings (exit 0 verified) +
+cargo test (24 unit + 9 verifier + 8 fuzz) green.
