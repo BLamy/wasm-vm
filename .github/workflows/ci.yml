@@ -68,6 +68,7 @@ jobs:
       - name: Install wasm-pack
         run: curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
       - run: wasm-pack build crates/wasm --target web
+      - run: wasm-pack test --node crates/wasm
 
   features:
     runs-on: ubuntu-latest
