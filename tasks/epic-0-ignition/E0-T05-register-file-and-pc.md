@@ -3,7 +3,7 @@ id: E0-T05
 epic: 0
 title: Integer register file and PC with hardwired-zero x0 semantics
 priority: 5
-status: in-progress
+status: implemented
 depends_on: [E0-T01]
 estimate: S
 capstone: false
@@ -47,4 +47,25 @@ CLI emits later — any drift refutes the "stable format" claim. (5) Confirm `De
 zeroing on wasm32 (fresh instance in `wasm-pack test --node`).
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commit 974d719 (branch task/e0-t05-register-file, stacked on e0-t04)
+Deliverables: crates/core/src/hart/regs.rs — XRegs { regs: [u64;32] (PRIVATE — the
+compiler enforces angle 1's unbypassability), pub pc }; read/write with the x0 invariant
+in write() alone; debug_assert on r>=32 plus release-mode bounds-check panic (documented:
+can never silently alias); ABI_NAMES per psABI; Display dump byte-stable, golden-tested
+against both a pinned literal prefix AND full reconstruction, pc line first + 32 register
+lines, format `x{n:02}({abi:>4}) = 0x{v:016x}`.
+Tests: 9 native unit (golden dump, should_panic OOB read+write, psABI spot checks,
+roundtrip x1-x31, x0 discard incl. u64::MAX, default zeroing) + proptest (200-op
+arbitrary interleavings vs an index-0-re-zeroing oracle; #[cfg_attr(miri, ignore)] with
+a 10k-op LCG-vs-oracle twin that DOES run under miri) + 3 wasm32 mirrors (fresh-instance
+zeroing per angle 5, 10k LCG on wasm32, dump stability).
+Gates: fmt / clippy -D warnings (exit code captured directly this time — two real lints
+caught and fixed: derivable Default impl, field-reassign-with-default) / 33 native tests
+/ no_std wasm32 build / wasm-pack test --node (14 tests across 4 suites) / miri scoped to
+hart (8 passed, proptest ignored by design there). CI: see PR.
+Follow-ups logged per the task's own attack list: angle 2 (execute addi/lui/jal writing
+x0 through the real executor) re-checked at E0-T07; angle 4 (CLI dump drift) re-checked
+at E0-T18.
+rr: SKIPPED locally (macOS/no PMU per AGENTS.md); deterministic native+miri+wasm+CI
+evidence layers.
