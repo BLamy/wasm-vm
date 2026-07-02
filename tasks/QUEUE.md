@@ -23,7 +23,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] `  4` [E0-T04](epic-0-ignition/E0-T04-mmio-dispatch.md) — MMIO dispatch layer routing bus windows to memory-mapped devices *(deps: E0-T03)*
 - [x] `  5` [E0-T05](epic-0-ignition/E0-T05-register-file-and-pc.md) — Integer register file and PC with hardwired-zero x0 semantics *(deps: E0-T01)*
 - [x] `  6` [E0-T06](epic-0-ignition/E0-T06-rv64i-decoder.md) — RV64I instruction decoder covering all six base encoding formats *(deps: E0-T01)*
-- [~] `  7` [E0-T07](epic-0-ignition/E0-T07-hart-step-loop-and-traps.md) — Hart fetch-decode-execute step loop, trap enum, and RV64I computational instructions *(deps: E0-T03, E0-T05, E0-T06)*
+- [?] `  7` [E0-T07](epic-0-ignition/E0-T07-hart-step-loop-and-traps.md) — Hart fetch-decode-execute step loop, trap enum, and RV64I computational instructions *(deps: E0-T03, E0-T05, E0-T06)*
 - [ ] `  8` [E0-T08](epic-0-ignition/E0-T08-loads-and-stores.md) — RV64I loads and stores with misaligned and access-fault trap semantics *(deps: E0-T07)*
 - [ ] `  9` [E0-T09](epic-0-ignition/E0-T09-control-flow.md) — Control flow — JAL, JALR, conditional branches, FENCE, and target-misalignment traps *(deps: E0-T07)*
 - [ ] ` 10` [E0-T10](epic-0-ignition/E0-T10-elf64-loader.md) — ELF64 loader for bare-metal riscv64 executables *(deps: E0-T03)*
