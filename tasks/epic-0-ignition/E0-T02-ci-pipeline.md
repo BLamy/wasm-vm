@@ -3,7 +3,7 @@ id: E0-T02
 epic: 0
 title: CI pipeline running rustfmt, clippy, native tests, and the wasm32 build on every push
 priority: 2
-status: pending
+status: in-progress
 depends_on: [E0-T01]
 estimate: S
 capstone: false
