@@ -3,7 +3,7 @@ id: E0-T10
 epic: 0
 title: ELF64 loader for bare-metal riscv64 executables
 priority: 10
-status: in-progress
+status: implemented
 depends_on: [E0-T03]
 estimate: M
 capstone: false
@@ -56,4 +56,29 @@ and byte-compare loaded RAM against `riscv64-unknown-elf-objcopy -O binary` outp
 unreproducible binary blob in-tree refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commit 60b1cf7 (branch task/e0-t10-elf-loader, stacked on e0-t09)
+Deliverables: crates/core/src/loader.rs — dependency-free, no_std, panic-free ELF64
+parser/loader. load_elf validates header identity with PRECISE errors (machine checked
+before type: x86-64 rejects WrongMachine, rv32 rejects WrongClass, ET_DYN rejects
+WrongType); TWO-PASS load: pass 1 validates every PT_LOAD (checked u64/u128 arithmetic,
+file bounds AND RAM bounds) before pass 2 writes a byte — CONTRACT: RAM bit-identical on
+any Err (stronger than the task's "document partial writes" option; tested with a
+valid-first/invalid-second image). Loads at p_paddr (Spike convention); BSS zero-fill in
+512-byte chunks with no over-fill past p_memsz; tohost/fromhost via best-effort
+.symtab/.strtab scan (bounded loops, malformed → Nones, never panic/error).
+FIXTURE PROVENANCE (angle 5 pre-empted): minimal.elf (ET_EXEC rv64i, entry 0x80000000,
+2 PT_LOADs, second with filesz 0x21 < memsz 0x121, tohost/fromhost symbols) built by the
+COMMITTED fixtures/build.sh (docker alpine clang+lld with committed minimal.s + link.ld);
+committed llvm-readelf/objdump dumps are the cross-check references.
+Tests: 6 native — dump CROSS-CHECK test parses the committed readelf text (entry +
+segment placement + byte content per LOAD line, not hardcoded); BSS zero-fill over
+0xAA-preseeded RAM incl. no-over-fill probe; 9-case malformed battery with exact error
+asserts; overflow attacks (p_filesz=u64::MAX, p_paddr=u64::MAX-100, e_phnum=0xFFFF,
+filesz>memsz); no-partial-write; 100k-iteration mutation fuzz + garbage buffers (angle 1
+proactive; miri-reduced to 500 per established pattern). 3 wasm32 mirrors (32-bit usize
+arithmetic; the mirror caught a golden-word rd mixup in its own first draft — documented
+in-test). miri: 6/6 (88s). Gates: fmt / clippy exit 0 / 20 native + 9 wasm suites /
+no_std wasm32 build / CI green run 28628224873.
+rr: SKIPPED locally (macOS/no PMU per AGENTS.md).
+Angle 4 follow-up recorded: byte-compare vs objcopy output when E0-T14 lands.
