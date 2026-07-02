@@ -47,8 +47,10 @@ mod tests {
 
     #[test]
     fn version_matches_manifest() {
-        assert_eq!(version(), env!("CARGO_PKG_VERSION"));
-        assert!(!version().is_empty());
+        // Golden value, not env!("CARGO_PKG_VERSION") — comparing version() against the
+        // same macro it returns is a tautology that can never fail (verifier finding,
+        // 2026-07-02). Bump this literal when the workspace version bumps.
+        assert_eq!(version(), "0.0.1");
     }
 
     #[test]
