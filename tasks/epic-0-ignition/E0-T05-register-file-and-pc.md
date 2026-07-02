@@ -3,7 +3,7 @@ id: E0-T05
 epic: 0
 title: Integer register file and PC with hardwired-zero x0 semantics
 priority: 5
-status: pending
+status: in-progress
 depends_on: [E0-T01]
 estimate: S
 capstone: false
