@@ -3,7 +3,7 @@ id: E0-T11
 epic: 0
 title: ECALL and EBREAK execution plus the HTIF tohost exit convention
 priority: 11
-status: pending
+status: in-progress
 depends_on: [E0-T08, E0-T10]
 estimate: M
 capstone: false
