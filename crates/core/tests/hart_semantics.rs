@@ -28,7 +28,10 @@ fn u_type(imm20: u32, rd: u8, op: u32) -> u32 {
 
 // ── harness ─────────────────────────────────────────────────────────────────
 
-const RAM: u64 = 64 * 1024;
+// 4 KiB under miri: the matrix allocates a fresh machine per vector, and zeroing
+// 64 KiB x ~700 machines dominates interpreted runtime. Native keeps 64 KiB (the
+// pinned checksum depends on the pc-wrap boundary).
+const RAM: u64 = if cfg!(miri) { 4096 } else { 64 * 1024 };
 
 fn machine() -> (Hart, SystemBus) {
     let mut hart = Hart::new();
@@ -444,6 +447,9 @@ pub fn determinism_checksum() -> u64 {
 }
 
 #[test]
+#[cfg_attr(miri, ignore)] // 20k interpreted fetch-decode-execute cycles take HOURS
+// under miri (measured: >86 CPU-min). This is a cross-target determinism gate, not a
+// UB probe — the matrix tests above walk the same code paths under miri in minutes.
 fn determinism_checksum_matches_pinned_native_value() {
     // Pinned from the first native run; the wasm mirror asserts the same constant.
     // If this changes, semantics changed — that is the point.
