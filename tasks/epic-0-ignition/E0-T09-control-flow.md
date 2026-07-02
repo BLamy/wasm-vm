@@ -3,7 +3,7 @@ id: E0-T09
 epic: 0
 title: Control flow — JAL, JALR, conditional branches, FENCE, and target-misalignment traps
 priority: 9
-status: pending
+status: in-progress
 depends_on: [E0-T07]
 estimate: M
 capstone: false
