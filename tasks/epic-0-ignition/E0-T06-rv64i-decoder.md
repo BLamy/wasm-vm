@@ -3,7 +3,7 @@ id: E0-T06
 epic: 0
 title: RV64I instruction decoder covering all six base encoding formats
 priority: 6
-status: pending
+status: in-progress
 depends_on: [E0-T01]
 estimate: L
 capstone: false
