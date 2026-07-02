@@ -23,7 +23,12 @@ fake: the verify targets encode each task's acceptance criteria as commands with
 exit codes; the cold-clone wrapper eliminates "works on the implementer's machine" as a
 category; the runbook standardizes Verification log entries (what was attempted, exact
 commands, observed output, verdict). These targets also become the per-epic regression
-suite: `make verify-all` is what Epic 1 runs before touching the hart.
+suite: `make verify-all` is what Epic 1 runs before touching the hart. The repo-level
+protocol already exists — roles, predict-then-verify, evidence layers, and rr usage live
+in `AGENTS.md` and `tools/rr/` — so the runbook operationalizes that per-task (which
+verify target, which traces to record/replay, which attack angles) rather than restating
+it; on Linux runners the verify recipes should record their final run via
+`tools/rr/record-test.sh` so refutation attempts have a trace to interrogate.
 
 ## Deliverables
 - `Makefile`: one `verify-E0-Tnn` target per Epic 0 task (composed from shared recipes:

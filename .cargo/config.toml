@@ -1,0 +1,16 @@
+# Workspace-wide cargo config. Written before E0-T01 lands so the workspace scaffold
+# inherits it; E0-T01's implementer should keep these settings.
+#
+# Full debug info in EVERY profile: rr/gdb time-travel sessions (tools/rr/) inspect
+# release-built runs too, and a trace without symbols is evidence nobody can interrogate.
+# Cost: larger native artifacts (fine). For shipped wasm32 artifacts, strip at packaging
+# time (wasm-opt --strip-debug) — never by lowering debuginfo here.
+
+[profile.dev]
+debug = 2
+
+[profile.release]
+debug = 2
+
+[profile.bench]
+debug = 2

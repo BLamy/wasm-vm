@@ -7,6 +7,8 @@ and self-hosting.
 
 - **`ROADMAP.md`** — the guiding trajectory: seven stacked levels (a Kardashev scale for
   in-browser Linux), what each level gets you, and the capstone threshold that gates each.
+- **`AGENTS.md`** — how agents drive the repo: the worker/verifier loop, what counts as
+  evidence (rr traces + guest instruction traces), and the verifier charter.
 - **`tasks/`** — the full work breakdown: one folder per epic, one file per task,
   `tasks/QUEUE.md` as the global priority queue.
 - **`tools/build_queue.py`** — regenerates `tasks/QUEUE.md` from task frontmatter.

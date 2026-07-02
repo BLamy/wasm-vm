@@ -1,0 +1,14 @@
+# build artifacts
+/target
+**/*.rs.bk
+
+# rr traces are evidence, not source — they move via artifact upload, not git
+rr-traces/
+
+# python
+__pycache__/
+*.pyc
+
+# web
+node_modules/
+dist/
