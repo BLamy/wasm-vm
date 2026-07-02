@@ -3,7 +3,7 @@ id: E0-T09
 epic: 0
 title: Control flow — JAL, JALR, conditional branches, FENCE, and target-misalignment traps
 priority: 9
-status: implemented
+status: verified
 depends_on: [E0-T07]
 estimate: M
 capstone: false
@@ -82,3 +82,22 @@ Gates: fmt / clippy exit 0 / 17 native + 8 wasm suites green / miri hart_control
 cfg(miri) RAM shrink per the E0-T07-established pattern, rationale in-file) / CI green
 run 28626903893.
 rr: SKIPPED locally (macOS/no PMU); spec-first-model precedent for angle 1 differential.
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: verified
+- P1 cold-clone gates — HELD. fmt/clippy clean, 17 native suites, 118 tests, hart_control 12/12, scrubbed env.
+- P2 suite-edit audit — HELD. The removed placeholder words retire per new semantics; replacement words hand-decoded from both scrambles AND via the project decoder (Beq{0,0,+2}; Jalr{1,2,+1} with target (X2_SENTINEL+1)&!1 = X2_SENTINEL ≡ 2 mod 4); purity-loop assertions unweakened.
+- P3 angle-1 branch torture — HELD. 63-instruction blob (3-level nested loops, jal-anchored computed jump table, 3-deep call/return, 10-row predicate battery): 124 retirements, PC trace identical instruction-by-instruction vs spec-first Python model, all 32 final regs equal, x5=297 matches hand computation.
+- P4 angle-2 misalignment ordering — HELD. Taken misaligned jal/jalr/all six predicates: cause 0, tval=target, pc=jump's address, full dump pure, link (incl. rd==rs1 jalr) unwritten; not-taken six retire pc+4 with the same encodings.
+- P5 angle-3 range edges — HELD. Verifier encoder reproduces E0-T06 golden extremes bit-exact; +4094/+1048574 trap cause 0 with exact tval; -4096/-1048576/+1048572 land at exact pc.
+- P6 angle-4 cause 0 vs 1 — HELD. jalr to aligned-unmapped retires (link written) then next fetch faults 1; jalr to odd-unmapped traps 0 immediately, link unwritten — alignment at the jump, mapping at the fetch, even when both would apply.
+- P8 wasm+miri — HELD. 8 wasm suites green; miri 11/1 ignored in 299s; ignore rationale judged honest (±1MiB target physically cannot land in 64KiB miri RAM; scramble arithmetic miri-covered elsewhere).
+- rr — SKIPPED loud (macOS/no PMU); Spike — SKIPPED per precedent, re-runs at E0-T13 with spec_model.py as seed.
+- COVERAGE: 7/7 mutants KILLED by the COMMITTED suites alone (taken-falls-through, over-eager not-taken, no bit-0 clear, link-before-target, link-on-trap, blt↔bge flip, cause 1-not-0). Retire-restructure audit: all 40+ non-control arms uniformly pc4; single retirement point preserved.
+- MOCK/HONESTY: both flagged audits pass; no self-licking goldens (encodings re-derived independently + cross-checked vs E0-T06 golden words); CI 28626903893 success at 831d0d1; claim commit tasks-only; all claimed counts reproduce.
+- NOVEL: jalr bit-0 RESCUE (odd rs1 + imm 3 must LAND — wrong check order would trap) + wrapping targets (jalr to pc=0 → cause 1; jal -1MiB below RAM retires then cause 1). All held.
+- SUITE: promote verifier_e0t09_angles.rs + torture_data.rs; promote spec_model.py as E0-T13 differential seed; discard mutate.py (campaign recorded here).
+
+### 2026-07-02 — post-verdict actions (worker)
+Promoted verifier_e0t09_angles.rs (6 tests) + torture_data.rs verbatim; spec_model.py
+committed as tests/data/spec_model_e0t09.py (E0-T13 Spike-differential seed). Gates
+re-earned: clippy exit 0, all native suites green (18 suites incl. the promotion).
