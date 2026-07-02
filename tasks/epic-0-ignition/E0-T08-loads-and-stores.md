@@ -3,7 +3,7 @@ id: E0-T08
 epic: 0
 title: RV64I loads and stores with misaligned and access-fault trap semantics
 priority: 8
-status: pending
+status: in-progress
 depends_on: [E0-T07]
 estimate: M
 capstone: false
