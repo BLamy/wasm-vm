@@ -3,7 +3,7 @@ id: E0-T04
 epic: 0
 title: MMIO dispatch layer routing bus windows to memory-mapped devices
 priority: 4
-status: pending
+status: in-progress
 depends_on: [E0-T03]
 estimate: S
 capstone: false
