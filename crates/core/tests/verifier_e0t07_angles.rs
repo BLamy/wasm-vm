@@ -29,13 +29,12 @@ fn seeded_hart(pc: u64) -> Hart {
 #[test]
 fn all_reachable_traps_leave_state_untouched() {
     // (description, pc, word-to-plant (None = pc unmapped), expected cause, expected tval)
-    let jal = 0x008000EFu32;
+    let _jal_retires_now = 0x008000EFu32; // kept for provenance
     let lb = 0x00010083u32;
     let sd = 0x00113023u32; // sd x1, 0(x2)
     let ecall = 0x00000073u32;
     let ebreak = 0x00100073u32;
-    let beq = 0x00208463u32;
-    let jalr = 0x00008067u32;
+
     let cases: &[(&str, u64, Option<u32>, Exception, u64)] = &[
         (
             "fetch access (unmapped low)",
@@ -86,26 +85,24 @@ fn all_reachable_traps_leave_state_untouched() {
             Exception::IllegalInstruction,
             0xFFFF_FFFF,
         ),
+        // E0-T09 UPDATE (worker edit, marked for the E0-T09 critic's audit):
+        // jal/jalr/beq left the placeholder set when control flow landed — the jal/
+        // jalr/beq words above now RETIRE, so they cannot sit in a trap table. The
+        // purity property transfers to the new §2.5 misaligned-target traps
+        // (cause 0, tval = target, link register unwritten):
         (
-            "placeholder jal",
+            "taken beq to pc+2: instr-misaligned (was: placeholder beq)",
             DRAM_BASE,
-            Some(jal),
-            Exception::IllegalInstruction,
-            jal as u64,
+            Some(0x0000_0163), // beq x0, x0, +2 — always taken, target % 4 == 2
+            Exception::InstrAddrMisaligned,
+            DRAM_BASE + 2,
         ),
         (
-            "placeholder jalr",
+            "jalr to odd sentinel: instr-misaligned (was: placeholder jal/jalr)",
             DRAM_BASE,
-            Some(jalr),
-            Exception::IllegalInstruction,
-            jalr as u64,
-        ),
-        (
-            "placeholder beq",
-            DRAM_BASE,
-            Some(beq),
-            Exception::IllegalInstruction,
-            beq as u64,
+            Some(0x0011_00E7), // jalr x1, 1(x2): target = (X2_SENTINEL+1) & !1 ≡ 2 mod 4
+            Exception::InstrAddrMisaligned,
+            X2_SENTINEL,
         ),
         // E0-T08 UPDATE (worker edit to critic-authored suite, re-verified by the
         // E0-T08 critic): lb/sd left the placeholder set when loads/stores landed.
