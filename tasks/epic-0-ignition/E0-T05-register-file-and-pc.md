@@ -69,3 +69,26 @@ x0 through the real executor) re-checked at E0-T07; angle 4 (CLI dump drift) re-
 at E0-T18.
 rr: SKIPPED locally (macOS/no PMU per AGENTS.md); deterministic native+miri+wasm+CI
 evidence layers.
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: refuted
+- P1 accessor-bypass — HELD. Zero `regs[`/`.regs` hits outside regs.rs; pub surface = {ABI_NAMES, pc, read, write}; both a struct literal with regs set AND the FRU form rejected with E0451 from an external test file (compile attack). FRU is compiler-blocked — stronger than assumed; only external constructors are Default and Clone-of-valid.
+- P2 own-seed oracle — HELD. 20k xorshift64 ops (verifier seed 0x0B5E_77A4_17C0_FFEE, forced x0 writes every 16 ops, full 32-register probe per op) vs re-zeroing oracle: 0 divergences native debug, native release, AND miri (7 passed, 104s).
+- P3 golden format vs TASK spec — HELD. All 33 lines hand-parsed against the spec format (width-4 right-aligned abi, exactly 16 lowercase hex); names equal an independently transcribed psABI table; x08 = s0, no fp drift.
+- P4 OOB panics — HELD. read/write of 32 and 255 panic in BOTH debug and release (bounds check), 4 should_panic tests green in both profiles.
+- P5 MUT-B2 ABI-name swap — FAILED. Swapping "a3"/"a4" passed the worker's ENTIRE suite (33 passed) and is invisible to the wasm mirrors. Root cause: the golden test's "full reconstruction" builds expected from ABI_NAMES itself — self-licking for names — and the pinned literal covers only 4 of 33 lines (indices 3-7,9,11-16,18-26,28-30 unprotected). DEMAND: pin the complete 33-line golden literal or assert against an independent psABI table; verifier_attack.rs offered for promotion (kills it instantly).
+- P6 wasm mirrors — HELD. 3 named tests green under wasm-pack test --node incl. fresh-instance zeroing (angle 5).
+- rr — SKIPPED loud: macOS, no PMU. Mitigation: miri on the 20k oracle + native/release/wasm in scrubbed cold clone + CI.
+- COVERAGE: all hunks executed. Mutation kills: guard removal → 3 red; ra/sp swap → 2 red; dropped space → golden red; Default pc=1 → red. MUT-B2 SURVIVED (the refutation). proptest dep waived (manifest).
+- MOCK/HONESTY: pinned literal load-bearing but partial (4/33 lines); reconstruction half shares ABI_NAMES with impl. Counts exact (33 native / 14 wasm; "9 unit" is 8 unit + 1 proptest — minor phrasing). 80f3957−974d719 tasks-only. CI 28599251822 green with regs tests in both jobs. No cfg(test) leaks, no env dependence.
+- NOVEL: Clone-laundering attack (clone a valid XRegs, hammer the clone incl. write(0, u64::MAX), assert deep-copy independence + x0=0 both) — HELD, native+release+miri.
+- SUITE: promote verifier_attack.rs (7 tests: spec-derived dump parser w/ independent psABI table, 20k own-seed oracle, 255-index OOB, clone-laundering). rework dump_format_is_byte_stable → full 33-line pinned literal. keep all other worker tests (proven killers). discard nothing.
+
+### 2026-07-02 — rework after refutation (worker)
+Applied both demands: (1) dump_format_is_byte_stable now pins the COMPLETE 33-line golden
+literal — no reconstruction, every ABI name and format byte independent of the impl;
+(2) promoted the verifier's suite verbatim as crates/core/tests/verifier_e0t05.rs.
+Kill confirmed by re-running the verifier's exact surviving mutation (a3/a4 swap in
+ABI_NAMES): dump_format_is_byte_stable goes RED (1 failed), previously all-green.
+Gates re-earned: fmt / clippy exit 0 (captured directly) / 33+9+7+8 native tests /
+wasm-pack test --node 4 suites ok. Status back to implemented; re-verification requested
+from the refuting verifier session.

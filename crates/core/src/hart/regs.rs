@@ -71,7 +71,6 @@ impl fmt::Display for XRegs {
 mod tests {
     use super::*;
     use alloc::format;
-    use alloc::string::String;
 
     #[test]
     fn default_is_all_zero_including_pc() {
@@ -144,18 +143,44 @@ mod tests {
         r.write(2, 0x8000_1000);
         r.write(31, u64::MAX);
         let dump = format!("{r}");
-        let mut expected = String::from("pc        = 0x0000000080000000\n");
-        for n in 0..32u8 {
-            let v = r.read(n);
-            expected.push_str(&format!(
-                "x{n:02}({:>4}) = {v:#018x}\n",
-                ABI_NAMES[n as usize]
-            ));
-        }
-        // Golden prefix pinned literally (belt) + full reconstruction (suspenders):
-        assert!(dump.starts_with("pc        = 0x0000000080000000\nx00(zero) = 0x0000000000000000\nx01(  ra) = 0x00000000deadbeef\nx02(  sp) = 0x0000000080001000\n"));
-        assert!(dump.ends_with("x31(  t6) = 0xffffffffffffffff\n"));
-        assert_eq!(dump, expected);
+        // FULL 33-line pinned literal. The earlier version reconstructed the expected
+        // string from ABI_NAMES — self-licking for register names, refuted by the
+        // E0-T05 verifier (an a3/a4 swap survived the whole suite). Every byte of the
+        // format and every ABI name is now pinned independently of the implementation.
+        let golden = "pc        = 0x0000000080000000\n\
+                      x00(zero) = 0x0000000000000000\n\
+                      x01(  ra) = 0x00000000deadbeef\n\
+                      x02(  sp) = 0x0000000080001000\n\
+                      x03(  gp) = 0x0000000000000000\n\
+                      x04(  tp) = 0x0000000000000000\n\
+                      x05(  t0) = 0x0000000000000000\n\
+                      x06(  t1) = 0x0000000000000000\n\
+                      x07(  t2) = 0x0000000000000000\n\
+                      x08(  s0) = 0x0000000000000000\n\
+                      x09(  s1) = 0x0000000000000000\n\
+                      x10(  a0) = 0x0000000000000000\n\
+                      x11(  a1) = 0x0000000000000000\n\
+                      x12(  a2) = 0x0000000000000000\n\
+                      x13(  a3) = 0x0000000000000000\n\
+                      x14(  a4) = 0x0000000000000000\n\
+                      x15(  a5) = 0x0000000000000000\n\
+                      x16(  a6) = 0x0000000000000000\n\
+                      x17(  a7) = 0x0000000000000000\n\
+                      x18(  s2) = 0x0000000000000000\n\
+                      x19(  s3) = 0x0000000000000000\n\
+                      x20(  s4) = 0x0000000000000000\n\
+                      x21(  s5) = 0x0000000000000000\n\
+                      x22(  s6) = 0x0000000000000000\n\
+                      x23(  s7) = 0x0000000000000000\n\
+                      x24(  s8) = 0x0000000000000000\n\
+                      x25(  s9) = 0x0000000000000000\n\
+                      x26( s10) = 0x0000000000000000\n\
+                      x27( s11) = 0x0000000000000000\n\
+                      x28(  t3) = 0x0000000000000000\n\
+                      x29(  t4) = 0x0000000000000000\n\
+                      x30(  t5) = 0x0000000000000000\n\
+                      x31(  t6) = 0xffffffffffffffff\n";
+        assert_eq!(dump, golden);
         assert_eq!(dump.lines().count(), 33); // pc + 32 registers
     }
 
