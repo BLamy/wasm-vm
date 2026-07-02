@@ -3,7 +3,7 @@ id: E0-T08
 epic: 0
 title: RV64I loads and stores with misaligned and access-fault trap semantics
 priority: 8
-status: in-progress
+status: implemented
 depends_on: [E0-T07]
 estimate: M
 capstone: false
@@ -53,4 +53,30 @@ misaligned-policy documentation exists and matches behavior — undocumented div
 Spike's default refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commit 917e7fa (branch task/e0-t08-loads-stores, stacked on e0-t07)
+Deliverables: load/store arms in Hart::execute (bus now threaded through execute) —
+LB/LH/LW/LD sign-extend, LBU/LHU/LWU zero-extend, SB/SH/SW/SD; ONE effective-address
+helper `ea(base, imm) = base.wrapping_add(imm as u64)` shared by all 11 arms; bus-fault
+mapping via load_fault/store_fault helpers (Misaligned→4/6, Access→5/7, tval = effective
+address incl. wrapped); every fault path returns via `?` BEFORE writeback → rd (even when
+rd==rs1), RAM, and PC untouched. Misaligned-data policy documented in the module scope
+ledger with the Spike-default vs qemu asymmetry noted for E0-T20 (angle 5 satisfied).
+Tests (tests/hart_memory.rs, 11): acceptance anchors (lw sext / lwu zext of 0xFFFF_FFFF;
+ld/sd at addr%8==4 → causes 4/6 tval=addr; wrap rs1=0xFFFF_FFFF_FFFF_FFF8 imm=+16 →
+Access with WRAPPED tval=0x8; faulting load leaves rd sentinel + full-RAM digest compare
+across 3 fault shapes; rd==rs1 load yields the VALUE); extension matrix over bytes
+0x80/0x7F/0xFF at every width; store widths verified byte-wise incl. no-write-past-width;
+misaligned at every width both directions; negative-offset DRAM_BASE-1 (angle 3, proactive);
+boundary sweep last-slot-succeeds/one-past-faults at every width (angle 4, proactive);
+pc-unmoved battery; instruction-level store→load roundtrip. 2 wasm32 mirrors (extension,
+faults+purity+wrap on 32-bit usize host).
+SUITE EVOLUTION (flagged for the verifier): lb/sb left the E0-T07 placeholder lists in
+hart_semantics.rs; verifier_e0t07_angles.rs (critic-authored) updated — its two lb/sd
+placeholder entries became load/store access-fault entries with sentinel-address tval
+asserts (X2_SENTINEL const documents the formula); the purity property is preserved and
+now covers the REAL memory fault paths. Edit is marked in-file; audit requested.
+Gates: fmt / clippy -D warnings exit 0 / 98 native + 21 wasm tests green / no_std wasm32
+build / CI green run 28624358764.
+rr: SKIPPED locally (macOS/no PMU); deterministic+wasm+CI layers; Spike differential is
+angle 1 for the verifier (spec-first substitute precedent from E0-T07).
