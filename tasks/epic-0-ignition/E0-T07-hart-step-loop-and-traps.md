@@ -3,7 +3,7 @@ id: E0-T07
 epic: 0
 title: Hart fetch-decode-execute step loop, trap enum, and RV64I computational instructions
 priority: 7
-status: pending
+status: in-progress
 depends_on: [E0-T03, E0-T05, E0-T06]
 estimate: L
 capstone: false
