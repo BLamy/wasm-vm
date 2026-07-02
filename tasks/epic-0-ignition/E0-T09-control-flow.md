@@ -3,7 +3,7 @@ id: E0-T09
 epic: 0
 title: Control flow — JAL, JALR, conditional branches, FENCE, and target-misalignment traps
 priority: 9
-status: in-progress
+status: implemented
 depends_on: [E0-T07]
 estimate: M
 capstone: false
@@ -54,4 +54,31 @@ last word of RAM targeting `ram_end + 4` — expect the *next* step to fetch-fau
 call/return chain 3 deep, compare final register file with Spike.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commit 831d0d1 (branch task/e0-t09-control-flow, stacked on e0-t08)
+Deliverables: control-flow arms in Hart::execute — retire path restructured to
+(rd, value, next_pc) with the single retirement point preserved. JAL: target=pc+imm;
+JALR: target=(old_rs1+sext(imm)) & !1 (bit-0 clear BEFORE alignment check; rd==rs1 uses
+the old rs1 because the link is written at retirement); both trap cause 0 tval=target
+with NO link write on misaligned targets. Branches via one shared branch() helper: only
+TAKEN transfers can trap on misalignment (§2.5); not-taken retires regardless of encoded
+target. FENCE already retired as nop (E0-T07), re-asserted at three fm/pred/succ values.
+The hart now executes the complete RV64I set except ECALL/EBREAK (E0-T11).
+Tests (tests/hart_control.rs, 12): all six acceptance criteria as anchors (jal link+jump;
+jal x0,0 1000-step stable self-loop; jalr x1,3(x2) bit-0-clear→trap cause 0 tval=x2+2
+link unwritten; jalr x5,0(x5) old-value target then self-link; BLT/BLTU 8-row boundary
+table incl. i64::MIN vs u64::MAX both ways; FENCE pc+4); §2.5 ordering (taken-vs-not-taken
+SAME encoding; trap fires on the JAL itself with full state snapshot); cause-0-vs-cause-1
+distinction at RAM end (angle 4 proactive: aligned out-of-RAM target retires, NEXT fetch
+faults 1); B/J range edges (aligned extremes land: +4092/-4096, +1048572/-1048576; odd
+extremes +4094/+1048574 trap cause 0 — angle 3 proactive); 3-deep call/return chain via
+jal ra + ret; countdown loop with exact retirement count. 2 wasm32 mirrors.
+Suite evolution (flagged for audit): jal/jalr/beq left both placeholder lists;
+verifier_e0t07_angles.rs placeholder entries replaced with cause-0 misalignment purity
+cases (taken beq→pc+2; jalr to odd sentinel target=X2_SENTINEL) — purity property
+preserved and extended to the new trap paths; edit marked in-file.
+Gates: fmt / clippy exit 0 / 17 native + 8 wasm suites green / miri hart_control 11/11
+(+1 ignored: branch_and_jal_range_edges needs 4MiB native RAM for ±1MiB J-targets;
+cfg(miri) RAM shrink per the E0-T07-established pattern, rationale in-file) / CI green
+run 28626903893.
+rr: SKIPPED locally (macOS/no PMU); spec-first-model precedent for angle 1 differential.
