@@ -406,13 +406,7 @@ pub fn determinism_checksum() -> u64 {
         let word = match (state >> 33) % 3 {
             0 => {
                 let f7 = match f3 {
-                    0b000 | 0b101 => {
-                        if state & 1 == 1 {
-                            0b0100000
-                        } else {
-                            0
-                        }
-                    }
+                    0b000 | 0b101 if state & 1 == 1 => 0b0100000,
                     _ => 0,
                 };
                 r_type(f7, rs2, rs1, f3, rd, 0b0110011)
