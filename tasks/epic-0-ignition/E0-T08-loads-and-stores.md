@@ -3,7 +3,7 @@ id: E0-T08
 epic: 0
 title: RV64I loads and stores with misaligned and access-fault trap semantics
 priority: 8
-status: implemented
+status: verified
 depends_on: [E0-T07]
 estimate: M
 capstone: false
@@ -101,3 +101,11 @@ verbatim and model.py as tests/data/model_e0t08.py (generator provenance);
 width, 31 sentinels, full-dump compare + pc==CODE+4; (3) re-ran the exact surviving
 mutant (successful sb → (3, 0xBAD)): KILLED, reverted, hart/mod.rs clean. Gates:
 clippy exit 0, 16 native suites green. Status implemented; re-verification requested.
+
+### 2026-07-02 — adversarial verifier (re-verification) — VERDICT: verified
+- (a) Original survivor (successful sb → retire (3, 0xBAD)) re-applied at 066eb10 — RED: killed by hart_memory::successful_store_leaves_all_registers_untouched AND verifier_e0t08_diff::program_differential_vs_spec_model.
+- (b) Same mutant on Sh/Sw/Sd — all RED, same two killers each time; each reverted cleanly.
+- (c) Novel retire-path mutant: successful lw additionally writes x5=0xDEAD — RED, killed by the promoted spec-first differential's final full-regfile compare.
+- (d) Promoted suites semantically verbatim (rustfmt reflow only); model_e0t08.py byte-identical; demanded test faithful (4 widths, 31 sentinels, full-dump, pc+4 exact).
+- (e) Full suite in fresh clone of 066eb10, scrubbed env: 106 passed / 0 failed.
+Commands: fresh clone at 066eb10; suite diffs; cargo test --workspace --no-fail-fast (baseline + 5 mutants, reverted each); promoted suites standalone.
