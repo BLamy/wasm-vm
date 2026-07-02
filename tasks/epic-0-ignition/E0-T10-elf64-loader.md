@@ -82,3 +82,26 @@ in-test). miri: 6/6 (88s). Gates: fmt / clippy exit 0 / 20 native + 9 wasm suite
 no_std wasm32 build / CI green run 28628224873.
 rr: SKIPPED locally (macOS/no PMU per AGENTS.md).
 Angle 4 follow-up recorded: byte-compare vs objcopy output when E0-T14 lands.
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: refuted
+- P1 fuzz (angle 1) — HELD. 0 panics over 2,000,000 targeted-mutation iters + ~34k random buffers, verifier seed, overflow-checks-on.
+- P2 overflow battery (angle 2) — HELD. e_phoff/e_shoff=u64::MAX, p_offset+p_filesz>usize, p_paddr+p_memsz wrap → all Err, no panic.
+- P3 symbol-scan malformed — HELD. bogus sh_link=0xFFFFFFFF, sh_offset past EOF, sh_size=u64::MAX, truncated strtab, shentsize=0xFFFF → None, no panic, miri-clean.
+- P4 no-partial-write (angle 3) — HELD. RAM bit-identical across out-of-RAM/file-overflow/filesz>memsz second-segment failures; zero-PT_LOAD and memsz=0 succeed with RAM untouched.
+- P5 error precision on GENUINE artifacts — IMPL HELD, COVERAGE FAILED. Real x86-64 EXEC/DYN and rv32 ELFs → WrongMachine/WrongMachine/WrongClass correct on real code.
+- P6 fixture provenance (angle 5) — HELD. Rebuilt minimal.elf from committed build.sh → sha256 bit-identical to committed; dumps match; cross-check test genuinely parses the dump.
+- P7 wasm+miri — HELD. loader 3/3 wasm, loader_elf 6/6 + verifier 4/4 miri, no UB.
+- rr — SKIPPED (macOS/no PMU); pure &[u8]→Result, no concurrency.
+- COVERAGE — REFUTATION: mutation (a) "e_machine checked AFTER e_type" SURVIVES the committed suite yet mis-reports a GENUINE x86-64 PIE (ET_DYN+machine 62) as WrongType not WrongMachine — the byte-patched x86-64 test kept ET_EXEC, so type-first still falls through to the machine check; the ordering the acceptance criterion rests on is UNPROVEN. Mutations (b)-(f) correctly RED. DEMAND: committed test with machine≠243 AND type≠2 asserting WrongMachine (genuine x86_64_dyn.elf is a ready fixture).
+- MOCK/HONESTY: claim-commit tasks-only; fixture bit-identical reproducible. Caveat: CI run could not be independently verified from a local-origin clone (green-CI rests on worker's word here).
+- NOVEL: genuine-x86-64-PIE probe (ET_DYN + machine 62) — the input where machine/type ordering is observable — exposed the gap; byte-patched ET_EXEC cannot. Zero-PT_LOAD/memsz=0 untouched-RAM success held.
+- SUITE: promote verifier_genuine.rs + genuine/*.elf (real-toolchain error-precision regression, the mutation-(a) kill); promote verifier_e0t10 symtab/partial-write/zero-seg cases (fuzz reworked to committed volume); discard 2M fuzz as-is (keep as corpus seeds).
+
+### 2026-07-02 — rework after refutation (worker)
+Applied all demands: (1) promoted verifier_genuine.rs + genuine/{x86_64_exec,x86_64_dyn,
+rv32}.elf (real toolchain artifacts) and verifier_e0t10.rs (fuzz reworked 2M→200k CI
+volume, miri 500; 2M campaign preserved as corpus provenance); (2) re-ran the exact
+surviving mutation (e_machine checked after e_type): now KILLED by
+genuine_x86_64_dyn_rejected_for_machine_not_type, reverted, loader.rs clean; mutations
+(b)-(f) re-confirmed red. Gates: clippy exit 0, 22 native suites green. Status
+implemented; re-verification requested.
