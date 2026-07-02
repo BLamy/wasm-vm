@@ -3,7 +3,7 @@ id: E0-T07
 epic: 0
 title: Hart fetch-decode-execute step loop, trap enum, and RV64I computational instructions
 priority: 7
-status: implemented
+status: verified
 depends_on: [E0-T03, E0-T05, E0-T06]
 estimate: L
 capstone: false
@@ -119,3 +119,11 @@ surviving mutants (d: placeholder writes x10 before trap; e: pc advanced before 
 match; g: Misaligned cause corrupted) re-run against the full suite: each KILLED, each
 reverted, hart/mod.rs byte-identical after. Status: implemented, re-verification
 requested from the refuting verifier session.
+
+### 2026-07-02 — adversarial verifier (re-verification) — VERDICT: verified
+- (a) mutants d/e/g re-applied at 67f20a8 in a fresh clone — ALL RED, each killed by all_reachable_traps_leave_state_untouched (verifier_e0t07_angles). Each reverted; git status clean after.
+- (b) TWO new same-family mutants, both RED: (h) fetch-Access tval set to pc+4 → killed by fetch_fault_purity_acceptance (tval assert); (i) placeholder arm advances pc in-arm without register write → killed by all_reachable_traps_leave_state_untouched.
+- (c) promoted suites semantically verbatim — diff vs originals shows only rustfmt reflow + the declared type alias; every vector, seed, expected value, assertion message identical; all three green in the fresh clone.
+- (d) miri fix honest: rationale judged sound (determinism gate, not UB probe; matrices walk the same product code paths under miri; 4KiB shrink is cfg!(miri)-only, pinned checksum unaffected — native checksum test passed). Observed 14 passed / 1 ignored / 0 UB, bounded (~15 min cold clone incl. compile).
+- (e) full cargo test at 67f20a8: 87 passed / 0 failed / 2 pre-existing ignored — matches corrected claim; 19 wasm confirmed earlier.
+Commands: fresh clone at 67f20a8; suite diffs; cargo test; remutate.sh (5 mutants, reverted); miri hart_semantics; cargo clean.
