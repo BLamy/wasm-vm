@@ -1,0 +1,5 @@
+[toolchain]
+# Pinned stable — bump deliberately, never implicitly (E0-T01).
+channel = "1.96.0"
+components = ["rustfmt", "clippy"]
+targets = ["wasm32-unknown-unknown"]

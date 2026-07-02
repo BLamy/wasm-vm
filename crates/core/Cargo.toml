@@ -1,0 +1,16 @@
+[package]
+name = "wasm-vm-core"
+description = "The emulator core: pure Rust, no_std-friendly, zero web dependencies"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[features]
+default = ["std"]
+std = []
+
+[dependencies]
+# Web/JS crates (wasm-bindgen, js-sys, web-sys) are FORBIDDEN here — that is the
+# crate boundary this workspace exists to enforce (ROADMAP.md, architectural bet #2).

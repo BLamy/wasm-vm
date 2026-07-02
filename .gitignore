@@ -12,3 +12,4 @@ __pycache__/
 # web
 node_modules/
 dist/
+pkg/
