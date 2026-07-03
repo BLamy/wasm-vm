@@ -3,7 +3,7 @@ id: E1-T06
 epic: 1
 title: RV64F single-precision FPU with NaN-boxing, rounding modes, and fcsr
 priority: 106
-status: pending
+status: implemented
 depends_on: [E1-T05, E1-T02]
 estimate: L
 capstone: false
@@ -60,4 +60,44 @@ leave fflags and f-regs untouched (dump before/after). Compare a 50k random-inst
 F-only stream against Spike lockstep — first divergence refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — worker (implementation claim)
+Full RV64F execution built on the T05 softfloat backend:
+- **`crates/core/src/hart/fregs.rs`** — FLEN=64 f-register file with NaN-boxing: `read_f32`
+  returns the canonical qNaN for any non-boxed value (upper 32 bits ≠ all-ones), `write_f32`
+  boxes. `f0` is ordinary (not hardwired zero).
+- **`crates/core/src/csr.rs`** — fflags(0x001)/frm(0x002)/fcsr(0x003) with aliasing
+  (fcsr = frm<<5 | fflags); a write to any marks mstatus.FS Dirty. `mstatus.FS` accessors +
+  `mark_fp_dirty` (sets FS=3 and SD bit 63) + `accrue_fflags` (sticky) + `resolve_rm`
+  (rm=7→frm, reserved→None). FS=Off makes fcsr access illegal. Added stvec(0x105) and
+  mnstatus(0x744) as WARL-stored — the rv64uf p-env's machine-init writes them (the stub
+  build was lenient; the real CSR file is strict).
+- **`crates/core/src/decode.rs`** — 13 variants across 7 opcodes (LOAD-FP/STORE-FP funct3=010,
+  OP-FP, the 4 fused opcodes). rm-carrying ops decode with any rm value (reserved traps at
+  *execution*); FSQRT/FMV/FCLASS/FCVT-to-int require rs2=0/width; fused fmt=00 (double is
+  E1-T07). Round-trip + reserved-encoding proptests added.
+- **`crates/core/src/hart/mod.rs`** — execute arms via `F32::{add,sub,mul,div,sqrt,fma,eq,lt,le}`
+  + `f32_minmax`/`fclass_f32`/`f32_to_int`/`f32_from_int` (softfloat). FS!=Off checked once
+  before any state read (trap purity). FMV.X.W/FSW use raw bits; compute/convert/sgnj use
+  NaN-box-checked operands; results boxed. FCVT-to-int saturates (NaN→max, ±ovf→bound) with
+  NV, sign-extends W/WU.
+
+Evidence (local, macOS + reference toolchain):
+- **Official riscv-tests rv64uf-p: all 11 ELFs pass** via `tohost` under the REAL-CSR build
+  (`crates/core/tests/riscv_tests_f.rs::rv64uf_p_suite_all_pass`; fadd/fclass/fcmp/fcvt/
+  fcvt_w/fdiv/fmadd/fmin/ldst/move/recoding). Built by `tools/riscv-tests/build-rv64uf.sh`
+  (`-march=rv64if_zicsr`), committed. rv64ui/um/ua still pass.
+- `crates/core/tests/rv64f.rs` — 6 acceptance tests: non-boxed operand → qNaN (FADD/FEQ);
+  FCVT.W.S NaN→0x7FFFFFFF+NV / -inf→0x80000000+NV (sign-extended); reserved static rm=5/6 &
+  DYN-with-frm=5 trap at execution; FMIN(-0,+0)=-0, FMAX(sNaN,1.0)=1.0+NV; FS=Off traps FLW
+  and fflags read, FP op → FS Dirty + SD; fflags sticky, cleared only by explicit write.
+- `crates/core/src/hart/fregs.rs` — 4 NaN-box unit tests.
+- wasm32: `crates/wasm/tests/rv64f.rs` bit-identical to native under both feature builds.
+- Decoder space: exhaustive 2^32 sweep passes with the analytic tally **282,053,637**
+  (brute-force verified; +F contributions documented in the table). decode_props FP
+  round-trip (incl. all rm values) + reserved-encoding negatives pass.
+- Gate: fmt clean, clippy 0 warnings, `cargo test --workspace` 0 FAILED, both wasm builds
+  0 FAILED.
+
+Pending: adversarial verification (TestFloat/Spike lockstep over the decoded FP path;
+NaN-boxing, FS-tracking, FCLASS, and flag-accumulation attacks).
