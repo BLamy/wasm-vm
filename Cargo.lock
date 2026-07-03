@@ -1208,6 +1208,7 @@ dependencies = [
  "env_logger",
  "log",
  "predicates",
+ "serde_json",
  "tempfile",
  "wasm-vm-core",
 ]

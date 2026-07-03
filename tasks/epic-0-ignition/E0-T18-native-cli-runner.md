@@ -3,7 +3,7 @@ id: E0-T18
 epic: 0
 title: Native CLI runner — load an ELF, execute N instructions, dump trace and state
 priority: 18
-status: implemented
+status: verified
 depends_on: [E0-T10, E0-T11, E0-T12, E0-T16, E0-T17]
 estimate: M
 capstone: false
@@ -90,3 +90,26 @@ trace/snapshot); check-zero-cost --selftest OK.
 rr: N/A locally (macOS). Verifier angles left open: independent SIGPIPE/panic audit, a guest exit
 exactly 256 & 0xff==0 vs a real exit-0 (distinguish hang from mod-256), --trace to a read-only dir,
 and confirm the ELF forge's `tohost` guests exit via HTIF not by falling off into the spin tail.
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: refuted
+- STDOUT purity — PASS. hello stdout = 16 bytes even with RUST_LOG=debug; mutating retired= to stdout killed 6 tests (suite non-vacuous).
+- Exit status — PASS behaviorally. Forged guests: exit 0→0, 42→42, 256→0 (mod-256, retired=5 not a hang), 255→255; ebreak→101 (Breakpoint tval=0x80000000); truncated→67; missing→2.
+- SIGPIPE — PASS. | head -c1 with RUST_BACKTRACE=1 → one byte, exit 0, no panic.
+- Trace fidelity — PASS. cmp first 40 of --trace - vs golden identical; --trace <file> same; --trace+--trace-json together = 48 lines each; --trace-json on memops = 117 lines all json.loads-parse; unwritable path → exit 74 clean.
+- --max-instrs 0 / dump-state — PASS. zero retired, valid state sha256=<64hex>, exit 102, retired=0; --ram-mib 128 vs 64 → different digests.
+- COVERAGE — REFUTED. 3 mutants SURVIVED the 14-test suite: (A) open_trace(&trace_json)→open_trace(&None) i.e. --trace-json made a no-op — NO integration test ran --trace-json (only json_line unit-tested); (B) ElfError::Truncated 67→65 — no test forged a truncated ELF; (C) trace-IO ExitCode 74→0 — no test exercised an unwritable trace sink. Also uncovered: --trace <file> (only `-` tested), --dump-regs alone. Same E0-T15 Mut-C / E0-T16 D-E / E0-T17 MUT-H weak-output-path shape.
+- Honesty — PASS. Forge legit (independently re-implemented in Python; loader parses; guests HTIF-exit); golden uses cmp / exact eq, not contains.
+- DEMAND: commit an integration test running --trace-json <file> asserting every line parses as JSON (kills A) + tests for Truncated→67 (B) and trace-IO→74 (C).
+
+### 2026-07-03 — rework after refutation (worker)
+Applied the demand + closed the noted gaps. Added 6 integration tests to crates/cli/tests/run.rs
+(now 20): trace_json_flag_emits_parseable_json_lines (runs --trace-json <file>, parses EVERY line
+with serde_json and asserts pc+insn keys — kills MUT-A), truncated_elf_exits_67_distinctly (forges
+a 7-byte valid-magic/short-header ELF → 67 — kills MUT-B), trace_to_unwritable_path_exits_74_
+without_panic (--trace to a missing dir → 74, stderr clean, no "panic" — kills MUT-C), plus the
+noted gaps: trace_to_file_matches_golden_prefix (--trace <file> == golden), trace_and_trace_json_
+together_both_write (both sinks, equal record counts), dump_regs_alone_omits_the_digest_line
+(--dump-regs shows pc+regs but NOT the state sha256= line). Added serde_json as a dev-dep for real
+JSON parsing. Re-ran the verifier's exact survivors: MUT-A KILLED (2 tests red), MUT-B KILLED (1),
+MUT-C KILLED (1); each reverted, main.rs clean. Gates: clippy -D warnings 0, workspace 0 FAILED,
+cli suite 20/20. Status verified.

@@ -190,3 +190,117 @@ fn elf_larger_than_ram_is_rejected_distinctly() {
         .assert()
         .code(68); // SegmentOutOfRam
 }
+
+#[test]
+fn truncated_elf_exits_67_distinctly() {
+    // Valid magic but a header shorter than 64 bytes → Truncated (code 67), NOT BadMagic
+    // (65). Kills a mutant that collapses Truncated into BadMagic.
+    let f = elf_file(b"\x7fELF\x02\x01\x01"); // 7 bytes: magic ok, header truncated
+    wasm_vm().arg("run").arg(f.path()).assert().code(67);
+}
+
+#[test]
+fn trace_to_unwritable_path_exits_74_without_panic() {
+    // A trace sink that cannot be opened must fail cleanly with the distinct IO code, not
+    // panic and not silently succeed. Kills a mutant that maps the trace-IO failure to 0.
+    wasm_vm()
+        .args(["run", LOOPS_ELF, "--trace", "/no/such/dir/trace.txt"])
+        .assert()
+        .code(74)
+        .stderr(predicate::str::contains("cannot open trace output"))
+        .stderr(predicate::str::contains("panic").not());
+}
+
+#[test]
+fn trace_json_flag_emits_parseable_json_lines() {
+    // Drive the FULL --trace-json wiring end to end (not just the json_line unit test):
+    // every emitted line must parse as a JSON object carrying pc + insn. Kills the mutant
+    // that no-ops the --trace-json flag.
+    let out = tempfile::NamedTempFile::new().unwrap();
+    wasm_vm()
+        .args(["run", LOOPS_ELF, "--trace-json"])
+        .arg(out.path())
+        .assert()
+        .success();
+    let body = std::fs::read_to_string(out.path()).unwrap();
+    let lines: Vec<&str> = body.lines().collect();
+    assert!(
+        lines.len() >= 40,
+        "expected a real trace, got {} lines",
+        lines.len()
+    );
+    for line in &lines {
+        let v: serde_json::Value =
+            serde_json::from_str(line).unwrap_or_else(|e| panic!("bad JSON line {line:?}: {e}"));
+        assert!(
+            v.get("pc").and_then(|p| p.as_str()).is_some(),
+            "line missing pc: {line}"
+        );
+        assert!(
+            v.get("insn").and_then(|i| i.as_str()).is_some(),
+            "line missing insn: {line}"
+        );
+    }
+}
+
+#[test]
+fn trace_to_file_matches_golden_prefix() {
+    // --trace to a FILE (not just `-`/stderr) must produce the golden prefix too.
+    let golden = std::fs::read_to_string(LOOPS_GOLDEN).unwrap();
+    let out = tempfile::NamedTempFile::new().unwrap();
+    wasm_vm()
+        .args(["run", LOOPS_ELF, "--trace"])
+        .arg(out.path())
+        .assert()
+        .success();
+    let body = std::fs::read_to_string(out.path()).unwrap();
+    let prefix: String = body.lines().take(40).map(|l| format!("{l}\n")).collect();
+    assert_eq!(prefix, golden, "trace-to-file prefix drifted from golden");
+}
+
+#[test]
+fn trace_and_trace_json_together_both_write() {
+    // Both sinks at once: canonical to one file, JSON to another; both must be populated
+    // with the same number of records.
+    let canon = tempfile::NamedTempFile::new().unwrap();
+    let json = tempfile::NamedTempFile::new().unwrap();
+    wasm_vm()
+        .args(["run", LOOPS_ELF, "--trace"])
+        .arg(canon.path())
+        .arg("--trace-json")
+        .arg(json.path())
+        .assert()
+        .success();
+    let n_canon = std::fs::read_to_string(canon.path())
+        .unwrap()
+        .lines()
+        .count();
+    let n_json = std::fs::read_to_string(json.path())
+        .unwrap()
+        .lines()
+        .count();
+    assert!(n_canon > 0 && n_json > 0, "both sinks must emit");
+    assert_eq!(
+        n_canon, n_json,
+        "canonical and JSON must have the same record count"
+    );
+}
+
+#[test]
+fn dump_regs_alone_omits_the_digest_line() {
+    // --dump-regs prints pc + registers but NOT the E0-T17 digest line (that's --dump-state).
+    let out = wasm_vm()
+        .args(["run", LOOPS_ELF, "--dump-regs"])
+        .assert()
+        .success();
+    let stdout = String::from_utf8(out.get_output().stdout.clone()).unwrap();
+    assert!(stdout.contains("pc        = 0x"), "dump-regs must show pc");
+    assert!(
+        stdout.contains("x10(  a0)"),
+        "dump-regs must show registers"
+    );
+    assert!(
+        !stdout.contains("state sha256="),
+        "dump-regs must NOT include the digest line"
+    );
+}
