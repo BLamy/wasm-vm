@@ -115,3 +115,19 @@ mutated copy, and made the Spike-normalize step fail gracefully (empty log → e
 "native stdout == 'Hello from RV64' FAIL got 'Hello from XV64'" → "E0 CAPSTONE: FAIL", exit 1;
 the clean run still PASSes exit 0; cmp -s unchanged; self_check green. The apparatus now goes RED
 on the mutation. Status verified.
+
+### 2026-07-03 — adversarial verifier (re-verification, 859a2c7) — VERDICT: verified
+- (a) Exact mutation (byte 4219 R→X) → "native stdout FAIL got 'Hello from XV64'", "E0 CAPSTONE: FAIL", EXIT 1. Subshell bug fixed; all 9 checks gate via parent-shell bad().
+- (b) Defeat attempts: R→X caught by stdout pin; an instruction-immediate mutation (auipc sp 0x2117→0x3117) changed the digest (f4456897) but not stdout/count/engine-consistency → stayed EXIT 0. NOT a refutation (the mutated program still meets every stated criterion) but a noted coverage caveat: golden-less three-engine cross-check can't catch self-consistent trace drift.
+- (c) Clean run deterministic: two runs EXIT 0, digest df49…, 83/83/83.
+- (d) make verify-all GREEN (26/26, 5m23s, self_check clean, no recursion). Browser (fresh Chrome via playwright): Run → exited code=0 retired=83, "Hello from RV64" rendered, take_trace() byte-for-byte == native (SHA fadba0ee…, 5273 bytes), digest df49… matches. Docker/Spike up + used.
+- VERIFIED — gate bites on the mutation, epic regression green, browser trace identical.
+
+### 2026-07-03 — caveat closed (worker, post-verdict strengthening)
+Closed the verifier's noted coverage caveat by adding a FROZEN content anchor to e0.sh: assert the
+native digest == the committed golden df49438130a9…5ceb05 (hello.elf @ 128 MiB, E0-T17). The
+critic's exact self-consistent mutation (auipc imm 0x2117→0x3117, digest f4456897, unchanged
+stdout/count) now FAILs the golden check → "E0 CAPSTONE: FAIL", exit 1; the clean run still passes
+the anchor and exits 0; self_check green. The capstone is now anchored to a frozen reference, not
+only engine-mutual-consistency — so trace/state drift that keeps all three engines self-consistent
+is also caught. EPIC 0 CLOSED.

@@ -21,6 +21,11 @@ cd "${repo_root}"
 # a one-byte-mutated copy (it MUST then go RED).
 hello="${CAPSTONE_ELF:-guest/prebuilt/hello.elf}"
 expected_stdout="Hello from RV64"
+# FROZEN content anchor (E0-T17): hello.elf's SHA-256 over 128 MiB of guest RAM at exit.
+# The three-engine cross-check alone is golden-less — it would pass a mutation that keeps
+# all engines mutually consistent and preserves stdout+count (verifier caveat). Pinning the
+# digest to this committed constant catches such trace/state drift too.
+golden_digest="df49438130a9da1733bd689ccf2327837ac09385f8e91ea685359f1b915ceb05"
 work="$(mktemp -d)"
 trap 'rm -rf "${work}"' EXIT
 nat="${work}/native.trace"
@@ -107,6 +112,11 @@ if [ "${nat_retired}" = "${node_retired}" ]; then ok "retired native==node" "(${
   else bad "retired native==node" "${nat_retired} vs ${node_retired}"; fi
 if [ "${nat_digest}" = "${node_digest}" ]; then ok "digest native==node" "${nat_digest}"; \
   else bad "digest native==node" "${nat_digest} vs ${node_digest}"; fi
+# Frozen content anchor — catches self-consistent trace/state drift the golden-less
+# cross-check would miss. (Only meaningful for the canonical hello.elf; a deliberate
+# CAPSTONE_ELF override for the sensitivity test is expected to diverge here.)
+if [ "${nat_digest}" = "${golden_digest}" ]; then ok "digest == frozen golden (E0-T17)"; \
+  else bad "digest == frozen golden (E0-T17)" "${nat_digest}"; fi
 
 echo
 if [ "${pass}" -eq 0 ]; then
