@@ -3,7 +3,24 @@
 //! Rule of the house: this crate adapts types and marshals calls. Emulator logic that
 //! sneaks in here can't be tested natively and doesn't survive review.
 
+use core::sync::atomic::{AtomicBool, Ordering};
+
 use wasm_bindgen::prelude::*;
+
+/// One-time browser diagnostics setup: route `log` to the JS console and install the
+/// panic hook that turns Rust panics into readable console errors. Idempotent — the
+/// guard makes a second call a no-op, since `console_log::init` and the panic hook both
+/// misbehave if run twice.
+#[wasm_bindgen(js_name = initLogging)]
+pub fn init_logging() {
+    static DONE: AtomicBool = AtomicBool::new(false);
+    if DONE.swap(true, Ordering::SeqCst) {
+        return;
+    }
+    console_error_panic_hook::set_once();
+    // Ignore the Err if a host already installed a logger.
+    let _ = console_log::init_with_level(log::Level::Debug);
+}
 
 /// The core crate version, exposed to JS.
 #[wasm_bindgen]

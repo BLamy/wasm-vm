@@ -7,13 +7,23 @@ rust-version.workspace = true
 repository.workspace = true
 license.workspace = true
 
+# Feature matrix (documented in lib.rs crate docs):
+#   {}          no_std, no tracing  — the leanest embed/wasm build
+#   std         host integration (default)
+#   trace       compile in the instruction-trace hooks (E0-T16)
+#   std,trace   full host + tracing
+# `trace` gates only DATA-cost machinery; the per-instruction hook is a generic
+# TraceSink whose NullSink monomorphizes to nothing, so trace-OFF is zero cost.
 [features]
 default = ["std"]
-std = []
+std = ["log/std"]
+trace = []
 
 [dependencies]
 # Web/JS crates (wasm-bindgen, js-sys, web-sys) are FORBIDDEN here — that is the
 # crate boundary this workspace exists to enforce (ROADMAP.md, architectural bet #2).
+# `log` is the no_std-friendly diagnostics facade (no default features → no_std).
+log = { version = "0.4", default-features = false }
 
 [dev-dependencies]
 criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }
