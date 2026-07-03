@@ -104,4 +104,3 @@ advances through its vectored-interrupt + S-mode-entry + WFI stages (T11) to TES
 satp / TVM — E1-T15/T16), confirming the T11 machinery it exercises works; it stays excluded pending
 virtual memory. Local gate green: fmt clean; clippy 0 (real + zicsr-stub, all-targets); `cargo test
 --workspace` 0 `test result: FAILED`; both wasm builds 0 FAILED. Awaiting adversarial verification.
-(empty)
