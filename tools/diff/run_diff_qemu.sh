@@ -41,5 +41,7 @@ sed -E 's/^core 0: (0x[0-9a-f]+) .*/\1/' "${work}/ours.trace" > "${work}/ours.pc
   > "${work}/qemu.raw" 2>/dev/null || true
 python3 "${here}/normalize_qemu.py" --entry "${entry}" < "${work}/qemu.raw" 2>/dev/null > "${work}/qemu.pc"
 
-python3 "${here}/report.py" "${work}/ours.pc" "${work}/qemu.pc" --level commit \
+# Both files are already bare "0x{pc}" lines; --level pc is the honest label (QEMU carries
+# no insn/rd, so this is a pc-only check).
+python3 "${here}/report.py" "${work}/ours.pc" "${work}/qemu.pc" --level pc \
   ${max_arg[@]+"${max_arg[@]}"}

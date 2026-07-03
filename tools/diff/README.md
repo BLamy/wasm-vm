@@ -44,6 +44,14 @@ Neither Spike nor QEMU halts on our HTIF `tohost` write; both spin on the guest'
 post-exit tail. Our trace ends at the HTIF exit, so comparing our trace as a **prefix** of
 Spike's covers every instruction we retire.
 
+**A prefix match is only a MATCH if our trace ended legitimately.** Our trace can also end
+because the emulator *trapped* (e.g. an rv64ui-p binary hits `csrr mhartid` and the
+stubless CLI raises IllegalInstruction). `run_diff.sh` captures the CLI exit code (never
+masks it) and passes `--ours-trapped` on exit 101; `report.py` then reports a **divergence**
+("our emulator TRAPPED where Spike continued") instead of accepting the crash-truncated
+prefix as a MATCH. So the harness exits nonzero whenever our execution diverges — including
+by crashing — not only on a mismatched line.
+
 ## QEMU secondary check (pc-level only)
 
 ```

@@ -34,6 +34,14 @@ def main() -> int:
     ap.add_argument("spike")
     ap.add_argument("--level", choices=("pc", "commit"), default="commit")
     ap.add_argument("--max", type=int, default=None)
+    ap.add_argument(
+        "--ours-trapped",
+        action="store_true",
+        help="Our CLI exited via a TRAP (exit 101), not an HTIF halt — so our trace ended "
+        "because the emulator could not execute the next instruction, NOT because the "
+        "guest finished. A prefix-match is then a DIVERGENCE (we crashed where Spike "
+        "kept going), never a MATCH.",
+    )
     args = ap.parse_args()
 
     ours = load(args.ours, args.level, args.max)
@@ -62,6 +70,28 @@ def main() -> int:
         print("--- next 5 (ours) ---", file=sys.stderr)
         for j in range(i + 1, min(i + 6, len(ours))):
             print(f"  {ours[j]}", file=sys.stderr)
+        print("--- next 5 (spike) ---", file=sys.stderr)
+        for j in range(i + 1, min(i + 6, len(spike))):
+            print(f"  {spike[j]}", file=sys.stderr)
+        return 1
+
+    # Every one of our instructions matched Spike's prefix. That is only a MATCH if our
+    # trace ended for a legitimate reason (HTIF halt or the --max/budget cutoff). If our
+    # emulator TRAPPED, the trace is crash-truncated: our execution diverged at the very
+    # next instruction, which Spike executed but we could not.
+    if args.ours_trapped and len(ours) < len(spike):
+        i = len(ours)  # 0-based index of the instruction we failed to execute
+        print(
+            f"DIVERGENCE at instruction {i + 1} (level={args.level}): our emulator TRAPPED "
+            f"(no record) where Spike continued", file=sys.stderr
+        )
+        lo = max(0, i - 20)
+        print(f"--- last {i - lo} matching line(s) ---", file=sys.stderr)
+        for j in range(lo, i):
+            print(f"  {ours[j]}", file=sys.stderr)
+        print("--- ours   > | spike  < ---", file=sys.stderr)
+        print("> (our emulator trapped — instruction not executed)", file=sys.stderr)
+        print(f"< {spike[i]}", file=sys.stderr)
         print("--- next 5 (spike) ---", file=sys.stderr)
         for j in range(i + 1, min(i + 6, len(spike))):
             print(f"  {spike[j]}", file=sys.stderr)

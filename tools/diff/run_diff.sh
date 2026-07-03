@@ -45,7 +45,15 @@ spike_norm="${work}/spike.trace"
 
 # Build our runner once, then trace to a FILE (keeps stdout/stderr diagnostics out).
 cargo build --release -p wasm-vm-cli >/dev/null 2>&1
-"${repo_root}/target/release/wasm-vm" run "${elf}" --trace "${ours}" >/dev/null 2>&1 || true
+# Capture the CLI exit WITHOUT masking it: exit 101 means our emulator TRAPPED (the trace
+# ended because we could not execute the next instruction, not because the guest halted).
+# A crash-truncated trace must never be accepted as a valid prefix (E0-T20 verifier bug).
+set +e
+"${repo_root}/target/release/wasm-vm" run "${elf}" --trace "${ours}" >/dev/null 2>&1
+cli_exit=$?
+set -e
+ours_trapped=()
+[ "${cli_exit}" -eq 101 ] && ours_trapped=(--ours-trapped)
 
 # Spike: map only DRAM (its default device owns the UART page); --log-commits to stderr.
 # rel path so the container's /work bind-mount resolves it.
@@ -57,4 +65,4 @@ rel_elf="$(python3 -c 'import os,sys; print(os.path.relpath(os.path.abspath(sys.
 python3 "${here}/normalize_spike.py" --entry "${entry}" < "${spike_raw}" > "${spike_norm}"
 
 python3 "${here}/report.py" "${ours}" "${spike_norm}" --level "${level}" \
-  ${max_arg[@]+"${max_arg[@]}"}
+  ${max_arg[@]+"${max_arg[@]}"} ${ours_trapped[@]+"${ours_trapped[@]}"}

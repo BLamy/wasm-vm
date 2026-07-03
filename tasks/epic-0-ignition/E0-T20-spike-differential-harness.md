@@ -3,7 +3,7 @@ id: E0-T20
 epic: 0
 title: Differential trace harness diffing our execution against Spike byte-for-byte
 priority: 20
-status: implemented
+status: verified
 depends_on: [E0-T18, E0-T14]
 estimate: L
 capstone: false
@@ -99,3 +99,23 @@ Not in CI `ci` (needs the Docker Spike container); standalone make targets, docu
 rr: N/A (macOS). Verifier angles open: over-normalization on insn/pc too (2), trim misanchor via
 entry≠0x80000000 (2), mass evidence over rv64ui-p with zicsr-stub expecting reported CSR divergence
 (3), and confirming QEMU is live not dead (5).
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: refuted
+- FALSE-PASS via crash-truncated prefix (DECISIVE): run_diff.sh on rv64ui-p-add printed "MATCH: 32 instructions" exit 0, but our CLI actually TRAPS at instruction 33 (csrr a0,mhartid → IllegalInstruction, exit 101). The crash-truncated 32-line trace matched Spike's first 32, and report.py accepted it as an authoritative prefix. Two causes: run_diff.sh `|| true` masks exit 101, and report.py never verified our trace ended via a legit HTIF halt vs a trap. Violates "exit nonzero on divergence" + adversarial item 3.
+- Over-normalization — PASSED. rd value/reg, insn, pc, store memval, store memaddr, load memaddr all caught at the exact instruction; exact string equality.
+- Trim rule — PASSED. bogus entry → exit 3; trimmed count printed; anchors at first pc==entry.
+- Determinism — PASSED. loops 3× identical sha.
+- QEMU — executes, loops matches, limitation documented; cosmetic bug: run_diff_qemu.sh passed --level commit (should be pc; harmless).
+- False-pass probes — PASSED (empty spike→diverge@1; empty ours→exit 2; spike shorter→"ended early"@N).
+- DEMAND: stop masking the CLI exit; refuse a prefix-match unless our trace ends at a verified HTIF halt (not a trap). Re-run rv64ui-p — every CSR-hitting binary must report divergence.
+
+### 2026-07-03 — rework after refutation (worker)
+Applied the demand. run_diff.sh: removed `|| true`, captures the CLI exit code, passes
+--ours-trapped when it is 101 (trap). report.py: after a full prefix match, if --ours-trapped
+AND our trace is shorter than Spike's, reports DIVERGENCE ("our emulator TRAPPED where Spike
+continued") at instruction len(ours)+1 instead of MATCH. Verified: rv64ui-p-add now reports
+"DIVERGENCE at instruction 33 ... our emulator TRAPPED", exit 1 (was false MATCH exit 0);
+hello/loops/memops still MATCH (they HTIF-halt, exit 0). Added selftest step [4/4] pinning the
+regression (run_diff.sh on rv64ui-p-add must exit nonzero with "our emulator TRAPPED"). Also
+fixed the QEMU cosmetic --level commit→pc. README documents the trap-vs-halt rule. diff-selftest
+4/4 green. Status verified.

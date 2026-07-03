@@ -29,7 +29,7 @@ spike_norm() { # <elf> <out-spike-norm> <out-ours>
     python3 "${here}/normalize_spike.py" --entry "${entry}" 2>/dev/null > "${outs}"
 }
 
-echo "[1/3] loops.elf genuine match + golden pin"
+echo "[1/4] loops.elf genuine match + golden pin"
 spike_norm "${repo_root}/guest/prebuilt/loops.elf" "${work}/loops.spike" "${work}/loops.ours"
 python3 "${here}/report.py" "${work}/loops.ours" "${work}/loops.spike" --level commit >/dev/null
 if ! cmp -s <(head -48 "${work}/loops.spike") "${repo_root}/tools/diff/golden/loops.spike.trace"; then
@@ -38,7 +38,7 @@ if ! cmp -s <(head -48 "${work}/loops.spike") "${repo_root}/tools/diff/golden/lo
 fi
 echo "  ok: loops matches Spike and the golden is unchanged"
 
-echo "[2/3] memops.elf clean match reports > 100 compared lines"
+echo "[2/4] memops.elf clean match reports > 100 compared lines"
 spike_norm "${repo_root}/guest/prebuilt/memops.elf" "${work}/m.spike" "${work}/m.ours"
 msg="$(python3 "${here}/report.py" "${work}/m.ours" "${work}/m.spike" --level commit)"
 echo "  ${msg}"
@@ -48,7 +48,7 @@ if [ "${count}" -le 100 ]; then
   exit 1
 fi
 
-echo "[3/3] a single corrupted line is detected at the exact instruction"
+echo "[3/4] a single corrupted line is detected at the exact instruction"
 target_line=50
 sed "${target_line}s/.*/core 0: 0xdeadbeefdeadbeef (0xdeadbeef)/" "${work}/m.spike" > "${work}/m.bad"
 if python3 "${here}/report.py" "${work}/m.ours" "${work}/m.bad" --level commit >/dev/null 2>"${work}/err"; then
@@ -61,5 +61,27 @@ if ! grep -q "DIVERGENCE at instruction ${target_line} " "${work}/err"; then
   exit 1
 fi
 echo "  ok: divergence detected at instruction ${target_line}"
+
+echo "[4/4] a crash-truncated trace is NOT a false MATCH"
+# rv64ui-p-add hits `csrr mhartid` early; our stubless release CLI traps (exit 101). The
+# crash-truncated trace matches Spike's prefix, but the harness MUST report divergence
+# (our emulator diverged by trapping where Spike executed), never MATCH. Regression pin
+# for the E0-T20 verifier's decisive false-pass finding.
+add_elf="${repo_root}/tests/riscv-tests-bin/rv64ui-p-add"
+if [ -f "${add_elf}" ]; then
+  if "${here}/run_diff.sh" "${add_elf}" --level commit >"${work}/add.out" 2>&1; then
+    echo "FAIL: harness reported MATCH on a trap-crashed run:" >&2
+    cat "${work}/add.out" >&2
+    exit 1
+  fi
+  if ! grep -q "our emulator TRAPPED" "${work}/add.out"; then
+    echo "FAIL: trap-truncated run not reported as a trap divergence:" >&2
+    cat "${work}/add.out" >&2
+    exit 1
+  fi
+  echo "  ok: trap-crashed run reported as divergence, not MATCH"
+else
+  echo "  skip: rv64ui-p-add not built (run tools/riscv-tests/build.sh)"
+fi
 
 echo "diff-selftest OK"
