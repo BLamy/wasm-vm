@@ -3,7 +3,7 @@ id: E0-T23
 epic: 0
 title: Browser demo page wiring the wasm machine to an xterm.js console
 priority: 23
-status: implemented
+status: verified
 depends_on: [E0-T22]
 estimate: M
 capstone: false
@@ -91,3 +91,12 @@ rr: N/A (browser/web). Verifier angles open: cold clone in a FRESH chrome profil
 DevTools cache-disabled + throttled (1), 100 MB junk file via the picker → graceful error no OOM (2),
 5× rapid Run serialization (3, byte tap = clean multiples here), Firefox application/wasm streaming
 fallback (4), and 0x00–0xFF binary-output byte-delivery tap vs CLI (5).
+
+### 2026-07-03 — adversarial verifier (fresh session, REAL browser) — VERDICT: verified
+- Cold-clone reproducibility (1): fresh clone 704c225, make web-build OK (wasm-pack 0.13.1 + npm ci from lockfile, offline); git clean -fdx + rebuild OK. CDN grep: only the "no CDN" comment; xterm loaded from ./node_modules. No CDN dependency.
+- Asset MIME (2): all 8 assets 200; pkg/wasm_vm_wasm_bg.wasm = application/wasm (Firefox streaming). Served on :8099 (not 8080), killed after.
+- LIVE BROWSER (3, ran real Chrome): __ready reached; Run → __consoleBytes = 16 bytes = "Hello from RV64\n"; status "exited code=0 retired=83" (== native); console 0 errors/warnings (only DEBUG digest lines).
+- Determinism (4): browser digest df49438130a9…5ceb05 == native --dump-state; loops re-derived in browser retired=48 digest 117685ca…aa60 == native; RAM_MIB=128 == CLI default.
+- Error-in-terminal (5): non-ELF via picker → terminal rendered red "garbage.bin: load_elf failed: BadMagic" (screenshot), page stayed functional (re-ran hello → retired=83).
+- Robustness (6): 100 MB junk → caught BadMagic no OOM; rapid 5× Run atomic (no interleave, run() has no await between guard and completion); binary passthrough term.write(Uint8Array.of(b)) uninterpreted on the real callback.
+- Honesty (7): __consoleBytes is the genuine callback tap; status from the real run() object; Reset = fresh machine, no stale state. No unimplemented claim. VERIFIED — no rework required.
