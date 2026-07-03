@@ -3,7 +3,7 @@ id: E0-T18
 epic: 0
 title: Native CLI runner — load an ELF, execute N instructions, dump trace and state
 priority: 18
-status: pending
+status: implemented
 depends_on: [E0-T10, E0-T11, E0-T12, E0-T16, E0-T17]
 estimate: M
 capstone: false
@@ -53,4 +53,40 @@ force SIGPIPE mid-output — a panic backtrace refutes (broken-pipe must be hand
 (trace accidentally buffered when no `--trace` given) refutes.
 
 ## Verification log
-(empty)
+### 2026-07-03 — worker claim — branch task/e0-t18-cli-runner (stacked on e0-t17)
+Deliverables: crates/cli/src/main.rs — clap-derive `run <elf>` subcommand with --max-instrs
+(default 100M), --ram-mib (default 128), --trace <path|-> (canonical), --trace-json <path|->
+(JSON lines), --dump-regs, --dump-state. Assembles Machine + Uart0Stub on stdout + HTIF (via
+load_elf's tohost symbol), executes with a counting CliSink that also drives the trace writer(s),
+prints retired=<n> to stderr at exit. Core: added Machine::run_traced<T:TraceSink>(max, sink) —
+the ONE run-loop / HTIF state machine — and made run() delegate to it with trace::NullSink, so a
+traced and untraced run can never diverge in termination and the zero-cost NullSink path is
+preserved (check-zero-cost --selftest still green).
+CONTRACTS: stdout byte-clean (guest console bytes only; all diagnostics + retired= + trap/max
+messages to stderr). Exit status: Exited(c)→(c&0xff) [documented mod-256: guest exit 256→process 0];
+Trapped→101 with cause on stderr; MaxInstrs→102. Bad inputs get DISTINCT codes: unreadable file 2,
+BadMagic 65, Wrong{Class,Endian,Machine,Type} 66, Truncated 67, SegmentOutOfRam 68, trace-open/IO
+74. Broken pipe (SIGPIPE→BrokenPipe since Rust sets SIG_IGN) latches a `broken` flag and stops
+output cleanly — no panic/backtrace; dumps skipped when the pipe is gone.
+TESTS: crates/cli/tests/run.rs (14, assert_cmd + predicates + tempfile) + 2 trace_json unit tests.
+A no-toolchain ELF forge (crates/cli/tests/common/mod.rs) synthesizes exit-code/ebreak/spinner/
+print-all-256 guests as minimal RV64 ET_EXEC images with a .symtab/.strtab carrying `tohost`, so
+the whole suite runs on a COLD CLONE with only Rust (prebuilt hello/loops ELFs cover the rest).
+Coverage: hello byte-exact stdout + exit 0; retired=83; guest exit 42→code 42; guest exit 256→
+code 0 (mod-256); ebreak→101 + "Breakpoint" on stderr; --max-instrs 10 on a spinner→102 +
+retired=10; --max-instrs 0 + --dump-state→still a valid dump (pc + state sha256=) + retired=0;
+--trace - first 40 lines == E0-T16 golden byte-for-byte; STDOUT PURITY: print-all-256 guest yields
+exactly bytes 0..=255 (no leakage/BOM/newline-translation); --dump-state final line matches the
+E0-T17 regex ^state sha256=[0-9a-f]{64}$; missing file→2, non-ELF→65, rv32 (EI_CLASS flipped)→66,
+too-big-for-0-MiB-RAM→68.
+Adversarial angles pre-checked by hand: (4) --trace to /no/such/dir → exit 74, clean message, no
+panic; (5) stdout | head -c1 (SIGPIPE) → no panic/backtrace (RUST_BACKTRACE=1 stderr clean); (6)
+--max-instrs 50_000_000 no --trace → RSS bounded by the RAM allocation (~137 MB = 128 MiB), no
+trace buffering (CliSink allocates nothing per-record when both writers are None).
+Gates: fmt clean; clippy --workspace --all-targets --all-features -D warnings exit 0 (collapsed two
+if-lets into let-chains); workspace tests 0 FAILED; core trace 0 FAILED; all 4 core native + wasm32
+feature combos build; wasm-pack test --node green (run_traced refactor didn't perturb wasm
+trace/snapshot); check-zero-cost --selftest OK.
+rr: N/A locally (macOS). Verifier angles left open: independent SIGPIPE/panic audit, a guest exit
+exactly 256 & 0xff==0 vs a real exit-0 (distinguish hang from mod-256), --trace to a read-only dir,
+and confirm the ELF forge's `tohost` guests exit via HTIF not by falling off into the spin tail.
