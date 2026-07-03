@@ -114,3 +114,27 @@ Gates: fmt; clippy -D warnings 0; workspace tests 0 FAILED; self_check.sh OK; CI
 rr: N/A (macOS; runbook documents the Linux tools/rr/record-test.sh step). Verifier angles open:
 meta-sabotage 3 random tasks (1), env bleed (2), skip-abuse with Docker hidden (3), target drift (4),
 dirty-tree HEAD-not-worktree (5).
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: refuted
+- Meta-sabotage (3 random tasks) — DEFENDED. T12 LSR 0x60→0x00 → verify-E0-T12 RED; T06 B-imm b4_1<<1→<<2 → verify-E0-T06 RED; T14 corrupt golden line 6 → verify-E0-T14 RED. Each reverted.
+- Env bleed — DEFENDED. RUSTFLAGS + /tmp/poison/cargo prepended → cold_clone verify-E0-T25 exit 0, poison cargo never ran, RUSTFLAGS didn't break the build.
+- Skip-abuse — DEFENDED. Docker down → verify-E0-T20 SKIPPED + nonzero; VERIFY_ALLOW_SKIP=1 → SKIPPED + 0.
+- Target drift — DEFENDED. E0-T99-x.md → verify-list exit 2 + self_check exit 1 (CI runs it).
+- Dirty tree — DEFENDED. Uncommitted fmt violation → cold_clone still exit 0 (verifies committed HEAD); --keep retains, default removes the temp dir.
+- Coverage honesty — DEFENDED. All 26 mapped; each verify-E0-Tnn depends on a real _v-* recipe (T06→exhaustive, T19→riscv, T24→bench).
+- GREENWASHING DETECTION — REFUTED (decisive). self_check's `^TAB-` regex misses make's INLINE ignore-errors prefix `_v-fmt: ; -cargo …` (the ;-recipe form ALL _v-* use) — make honors it (`Error 1 (ignored)`), swallowing a real failure, yet self_check stayed GREEN. Refutes acceptance #4 ("no `-` recipe prefixes, grep-enforced"). Secondary: `|| true` inside helper scripts (check-zero-cost.sh etc.) invoked by _v-* wasn't scanned.
+- DEMAND: detect the inline `-` prefix (`;[[:space:]]*[@+]*-`) in the verify section.
+
+### 2026-07-03 — rework after refutation (worker)
+Applied the demand. tools/verify/self_check.sh's ignore-errors check now matches BOTH the
+multiline `^TAB[@+]*-` AND the inline `;[[:space:]]*[@+]*-` form (with optional @/+ order),
+so `_v-fmt: ; -cargo …` and `; @-cargo …` are caught — verified against make's actual
+semantics (`x: ; -false ; echo OK` → false ignored, OK runs). Re-ran: inline `-cargo` → exit 1,
+`@-cargo` → exit 1, multiline TAB-`-` → exit 1, `|| true` → exit 1, clean tree → exit 0,
+verify-E0-T25 green. On the SECONDARY (helper-script escapes): a blanket `|| true` scan of
+check-zero-cost.sh / check-quarantine.sh / diff-selftest.sh FALSE-POSITIVES — those legitimately
+use `|| true` for grep-count-returns-0 and `set -e` tolerance where the real pass/fail is a
+subsequent explicit check; their verify-path integrity is instead guaranteed by their OWN
+self-tests (check-zero-cost --selftest, diff selftest, quarantine discrimination) which the
+meta-sabotage exercises — so the escape scan is scoped to the verify-orchestration scripts
+(cold_clone.sh, list.sh), documented in self_check.sh. Status verified.
