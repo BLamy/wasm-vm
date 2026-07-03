@@ -4,9 +4,9 @@
 //! and `mret`s — so a pass means our delivery machinery matches what real trap-handler code
 //! expects, byte for byte.
 //!
-//! SCOPE: this suite is scoped to the exceptions T10 owns. We run the trap-delivery tests
-//! (scall, sbreak, ma_addr, ma_fetch, the six load/store-misaligned cases, csr, mcsr) and
-//! deliberately EXCLUDE three ELFs the upstream suite ships that reach past T10:
+//! SCOPE: the rv64mi-p ELFs covered by the machine trap + counter machinery landed so far
+//! (E1-T10 trap delivery, E1-T14 Zicntr counters). Three ELFs the upstream suite ships still
+//! reach past what's implemented and are EXCLUDED:
 //!
 //! - `illegal` — a kitchen-sink M-mode test. With E1-T11 landed it now clears the
 //!   illegal-instruction case (bad2), the vectored-interrupt sub-test, S-mode entry and WFI, then
@@ -17,9 +17,11 @@
 //!   E1-T17 instruction, NOT an interrupt/delegation bug.) Its illegal-instruction *mtval* checks
 //!   are covered in `precise_exceptions.rs`; the vectored M-interrupt path in `interrupts.rs`.
 //! - `breakpoint` — exercises the debug-spec trigger CSRs (tdata1/tdata2), not implemented.
-//! - `instret_overflow` — needs the `instret` counter (E1-T14).
+//! - `instret_overflow` — needs the Sscofpmf counter-OVERFLOW local interrupt (LCOFI), a
+//!   separate extension beyond the basic Zicntr counters E1-T14 lands.
 //!
-//! These are built by `tools/riscv-tests/build-rv64mi.sh` but not run here; they light up as
+//! (`zicntr` — cycle/time/instret + mcounteren/scounteren — now PASSES and is run below, E1-T14.)
+//! All three excluded ELFs are built by `tools/riscv-tests/build-rv64mi.sh`; they light up as
 //! their owning tasks land.
 #![cfg(not(feature = "zicsr-stub"))]
 
@@ -30,8 +32,10 @@ use wasm_vm_core::{Machine, RunOutcome};
 
 const SYS_EXIT: u64 = 93;
 
-/// The rv64mi-p ELFs whose exceptions are delivered entirely by E1-T10's machinery.
-const T10_SUBSET: &[&str] = &[
+/// The rv64mi-p ELFs covered by the machine trap + counter machinery landed so far (E1-T10
+/// trap delivery, E1-T14 Zicntr counters). `zicntr` needs the `time` counter, so run_one enables
+/// the CLINT (inert for the others: mtimecmp resets to u64::MAX, so no timer interrupt fires).
+const MI_SUBSET: &[&str] = &[
     "scall",
     "sbreak",
     "ma_addr",
@@ -44,6 +48,7 @@ const T10_SUBSET: &[&str] = &[
     "sw-misaligned",
     "csr",
     "mcsr",
+    "zicntr", // E1-T14: cycle/time/instret + mcounteren/scounteren
 ];
 
 fn bin_dir() -> PathBuf {
@@ -59,6 +64,7 @@ enum Verdict {
 fn run_one(path: &std::path::Path) -> Verdict {
     let elf = std::fs::read(path).unwrap();
     let mut m = Machine::new(64 * 1024 * 1024);
+    m.enable_clint(1); // for the `time` counter (rv64mi-p-zicntr); inert for the rest
     m.load_elf(&elf).unwrap();
     match m.run(5_000_000) {
         RunOutcome::Exited(0) => Verdict::Pass,
@@ -97,7 +103,7 @@ fn rv64mi_p_trap_delivery_subset_all_pass() {
     );
     let mut failures = Vec::new();
     let mut ran = 0;
-    for name in T10_SUBSET {
+    for name in MI_SUBSET {
         let path = dir.join(format!("rv64mi-p-{name}"));
         assert!(path.is_file(), "missing ELF {path:?} — run build-rv64mi.sh");
         ran += 1;
@@ -107,7 +113,7 @@ fn rv64mi_p_trap_delivery_subset_all_pass() {
             Verdict::Other(why) => failures.push(format!("rv64mi-p-{name}: {why}")),
         }
     }
-    assert_eq!(ran, T10_SUBSET.len(), "ran the full T10 subset");
+    assert_eq!(ran, MI_SUBSET.len(), "ran the full MI subset");
     assert!(
         failures.is_empty(),
         "{} rv64mi-p test(s) failed:\n{}",

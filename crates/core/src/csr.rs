@@ -58,6 +58,19 @@ pub const MVENDORID: u16 = 0xF11;
 pub const MARCHID: u16 = 0xF12;
 pub const MIMPID: u16 = 0xF13;
 pub const MHARTID: u16 = 0xF14;
+/// Zicntr counters (E1-T14). M-mode backing `mcycle`/`minstret` are writable; the unprivileged
+/// `cycle`/`time`/`instret` are read-only shadows gated by `mcounteren`/`scounteren`.
+pub const MCYCLE: u16 = 0xB00;
+pub const MINSTRET: u16 = 0xB02;
+pub const MCOUNTEREN: u16 = 0x306;
+pub const SCOUNTEREN: u16 = 0x106;
+pub const CYCLE: u16 = 0xC00;
+pub const TIME: u16 = 0xC01;
+pub const INSTRET: u16 = 0xC02;
+/// `mcounteren`/`scounteren` writable bits: CY(0)/TM(1)/IR(2). HPM bits 3..31 are read-only 0
+/// until hardware performance monitors exist, so the corresponding hpmcounter reads always trap
+/// from S/U (their counteren bit can never be set).
+const COUNTEREN_WMASK: u64 = 0b111;
 /// Test-only probe CSR with an observable read/write hook (side-effect suppression tests).
 pub const PROBE: u16 = 0x7C0; // custom M-mode read/write space
 
@@ -182,6 +195,13 @@ pub struct Csrs {
     pub frm: u8,
     /// Flat WARL storage for the other writable CSRs (mepc, mtvec, mie, satp, …).
     warl: Vec<(u16, u64)>,
+    /// Zicntr (E1-T14): `mcycle`/`minstret` — writable 64-bit M-CSRs incremented once per
+    /// retired instruction; `cycle`/`instret` are read-only shadows of these.
+    mcycle: u64,
+    minstret: u64,
+    /// Shadow of the CLINT `mtime` for the unprivileged `time` counter — the machine refreshes
+    /// it each instruction boundary (there is no `mtime` CSR; `time` is a window onto the CLINT).
+    time: u64,
     /// Observable hooks for the test PROBE CSR.
     pub probe_reads: u64,
     pub probe_value: u64,
@@ -205,9 +225,27 @@ impl Csrs {
             fflags: 0,
             frm: 0,
             warl: Vec::new(),
+            mcycle: 0,
+            minstret: 0,
+            time: 0,
             probe_reads: 0,
             probe_value: 0,
         }
+    }
+
+    /// Zicntr (E1-T14): advance the retired-instruction counters. Called once per successfully
+    /// retired instruction, AFTER `execute` — so a `csrr` reading `minstret`/`mcycle` observes
+    /// the count as it stood BEFORE that instruction retired (matching Spike). Our interpreter
+    /// retires one instruction per step, so `mcycle` tracks `minstret` (documented; no IPC claim).
+    pub fn retire_tick(&mut self) {
+        self.mcycle = self.mcycle.wrapping_add(1);
+        self.minstret = self.minstret.wrapping_add(1);
+    }
+
+    /// Refresh the `time` counter's window onto the CLINT `mtime` (E1-T14). The machine calls
+    /// this each instruction boundary from the CLINT state, so `time` reads track `mtime`.
+    pub fn set_time(&mut self, mtime: u64) {
+        self.time = mtime;
     }
 
     // ── hardwired identification (read-only) ────────────────────────────────
@@ -516,6 +554,10 @@ impl Csrs {
             MIE => MIE_WMASK,
             MIDELEG => MIDELEG_WMASK,
             MEDELEG => MEDELEG_WMASK,
+            // Zicntr (E1-T14): mcycle/minstret are fully-writable 64-bit M-CSRs; mcounteren/
+            // scounteren expose only CY/TM/IR (bits [2:0]) — HPM enable bits read-only 0.
+            MCYCLE | MINSTRET => !0,
+            MCOUNTEREN | SCOUNTEREN => COUNTEREN_WMASK,
             MSTATUS | MCAUSE | MSCRATCH | MTVAL | MIP | SATP
             | MNSTATUS | PMPCFG0 | PMPADDR0 | PROBE
             // S-mode CSRs (E1-T09): sstatus/sie/sip are masked *views* handled in
@@ -580,6 +622,11 @@ impl Csrs {
                 self.probe_reads += 1;
                 self.probe_value
             }
+            // Zicntr (E1-T14): the M-mode backing counters and their unprivileged shadows.
+            MCYCLE | CYCLE => self.mcycle,
+            MINSTRET | INSTRET => self.minstret,
+            TIME => self.time,
+            // hpmcounter3..31 (0xC03..) are unimplemented HPMs → read 0.
             0xC00..=0xC1F => 0,
             other => self
                 .warl
@@ -632,6 +679,10 @@ impl Csrs {
                 self.mark_fp_dirty();
             }
             PROBE => self.probe_value = v,
+            // Zicntr (E1-T14): mcycle/minstret are writable (the unprivileged cycle/instret are
+            // read-only shadows, rejected before reaching write_raw by the read_only encoding).
+            MCYCLE => self.mcycle = v,
+            MINSTRET => self.minstret = v,
             MISA | MHARTID | MVENDORID | MARCHID | MIMPID => {} // hardwired
             0xC00..=0xC1F => {}
             other => match self.warl.iter_mut().find(|(a, _)| *a == other) {
@@ -665,6 +716,21 @@ impl Csrs {
         let meta = Csrs::meta(addr).ok_or_else(illegal)?;
         if self.mode < meta.min_priv {
             return Err(illegal()); // access above current privilege
+        }
+        // Zicntr counter gating (E1-T14, §3.1.10/§4.1.5): an S/U access to cycle/time/instret
+        // (and any hpmcounter) is illegal unless the matching mcounteren bit is set; U also needs
+        // the scounteren bit. M-mode is never gated. HPM bits 3..31 of counteren are read-only 0,
+        // so hpmcounter3..31 always trap from S/U.
+        if (CYCLE..=0xC1F).contains(&addr) && !matches!(self.mode, Priv::M) {
+            let bit = 1u64 << (addr - CYCLE);
+            let m_ok = self.warl_get(MCOUNTEREN) & bit != 0;
+            let permitted = match self.mode {
+                Priv::S => m_ok,
+                _ => m_ok && (self.warl_get(SCOUNTEREN) & bit != 0), // U-mode
+            };
+            if !permitted {
+                return Err(illegal());
+            }
         }
         // With mstatus.FS=Off, the FP CSRs are inaccessible (E1-T06) — the access itself is
         // an illegal instruction, exactly like an FP compute op.

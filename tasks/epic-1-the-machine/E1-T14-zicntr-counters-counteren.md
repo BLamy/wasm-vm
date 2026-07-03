@@ -3,7 +3,7 @@ id: E1-T14
 epic: 1
 title: Zicntr counters — cycle/instret/time and mcounteren/scounteren delegation
 priority: 114
-status: pending
+status: implemented
 depends_on: [E1-T09, E1-T12]
 estimate: S
 capstone: false
@@ -37,17 +37,20 @@ counters, T02 already enforces the address-encoding rule).
   (12 gate states asserted).
 
 ## Acceptance criteria
-- [ ] `rdcycle` twice in a row in M-mode yields strictly increasing values differing by
-      the retire distance; `rdinstret` delta across a counted 100-instruction block is
-      exactly 100 (trap-free block).
-- [ ] Writing minstret from M-mode takes effect and instret shadows it.
-- [ ] S-mode `rdtime` with mcounteren.TM=0 → illegal instruction (mcause=2, mtval = the
-      rdtime encoding); with TM=1 it returns CLINT mtime.
-- [ ] U-mode `rdcycle` with mcounteren.CY=1 but scounteren.CY=0 → illegal instruction;
-      with both set it succeeds.
-- [ ] mcounteren/scounteren all-ones write reads back with only bits [2:0] set.
-- [ ] time advances in lockstep with mtime under the T12 deterministic clock (equal
-      values when read back-to-back through both paths).
+- [x] `rdinstret` back-to-back differs by 1; K retired instructions increment minstret by exactly
+      K (`rdinstret_back_to_back_differs_by_one`, `minstret_increments_exactly_once_per_retired_instruction`).
+- [x] Writing minstret from M takes effect and instret shadows it; mcycle→cycle likewise
+      (`writing_minstret_takes_effect_and_instret_shadows_it`).
+- [x] S-mode `rdtime` with mcounteren.TM=0 → illegal (mcause 2, mtval = rdtime encoding); with TM=1
+      returns CLINT mtime (`rdtime_from_s_traps_when_tm_clear_and_returns_mtime_when_set`).
+- [x] U-mode gate needs BOTH mcounteren and scounteren; full 12-state matrix asserted
+      (`counter_gating_matrix_matches_spec`); hpmcounter always traps from S/U
+      (`hpmcounter_always_traps_from_below_m`).
+- [x] mcounteren/scounteren all-ones → reads back bits [2:0] (`counteren_warl_exposes_only_cy_tm_ir`).
+- [x] time is a live window onto CLINT mtime (`time_tracks_clint_mtime_as_a_live_window`); minstret
+      wraps unsigned (`minstret_wraps_around_unsigned`).
+- Also: `rv64mi-p-zicntr` (Spike's golden Zicntr vectors) now PASSES and is added to the
+  `riscv_tests_mi` harness.
 
 ## Adversarial verification
 Diff every gate combination against Spike with identical misa and counteren settings —
@@ -63,4 +66,28 @@ from S/U regardless. Native vs wasm32: identical counter values at every checkpo
 10k-instruction deterministic run.
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — implementation
+- **`csr.rs`** — `mcycle` (0xB00) / `minstret` (0xB02) as writable 64-bit M-CSR fields; `cycle`
+  (0xC00) / `instret` (0xC02) as read-only shadows of them; `time` (0xC01) as a shadow of the
+  CLINT mtime. `retire_tick()` (called from `hart::step` AFTER `execute` returns Ok) bumps
+  mcycle+minstret once per retired instruction — so a `csrr` reading them observes the pre-retire
+  count (matches Spike). One-instruction-per-step means mcycle == minstret (documented; no IPC
+  claim). `mcounteren` (0x306) / `scounteren` (0x106) are WARL, mask `0b111` (CY/TM/IR only; HPM
+  enable bits read-only 0).
+- **Counter gating** in `access()` (after the min_priv check): an S/U read of cycle/time/instret/
+  hpmcounter is illegal unless the matching mcounteren bit is set; U additionally needs the
+  scounteren bit; M is never gated. Because HPM bits 3..31 of counteren are read-only 0,
+  hpmcounter3..31 always trap from S/U.
+- **`time` window** — `Machine::sync_clint` calls `csr.set_time(mtime)` each instruction boundary,
+  so `rdtime` tracks the CLINT deterministic clock. (There is no `mtime` CSR; `time` is the window.)
+
+Tests: `crates/core/tests/zicntr.rs` (9) — per-retire increment (exact K), rdinstret-delta-1,
+minstret-writable + shadows, unsigned wrap, counteren WARL (→0b111), the full 12-state gate matrix
+(S/U × CY/TM/IR × mcounteren/scounteren), hpmcounter-always-traps, rdtime-S-gate + returns-mtime,
+and time-as-a-live-window. Plus `rv64mi-p-zicntr` (Spike's golden vectors) now PASSES — added to
+the `riscv_tests_mi` harness (which enables the CLINT for the `time` counter; inert for the other
+mi tests since mtimecmp resets to u64::MAX). `instret_overflow` stays excluded (needs the Sscofpmf
+counter-overflow LCOFI, a separate extension). Local gate green: fmt clean; clippy 0 (real +
+zicsr-stub, all-targets); `cargo test --workspace` 0 `test result: FAILED`; both wasm builds 0
+FAILED. Awaiting adversarial verification (incl. the Spike gate-matrix + increment-position diff).

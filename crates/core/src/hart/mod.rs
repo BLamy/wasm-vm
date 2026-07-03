@@ -411,6 +411,9 @@ impl Hart {
             }
         };
         let (rd, value, mem) = self.execute(bus, instr, insn_len, u64::from(trace_insn))?;
+        // E1-T14: the instruction retired (execute returned Ok) — advance mcycle/minstret AFTER
+        // execute, so a `csrr` that just read them observed the pre-retire count (matches Spike).
+        self.csr.retire_tick();
         // Retirement hook — reached only when execute() returns Ok, so no record is
         // emitted for a faulting instruction (trap-purity contract). Built and passed
         // generically; with NullSink the optimizer erases all of this (E0-T15 proof).

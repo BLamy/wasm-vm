@@ -245,6 +245,9 @@ impl Machine {
             let s = *clint.borrow();
             self.hart.csr.set_mip_bit(7, s.mtip()); // MTIP
             self.hart.csr.set_mip_bit(3, s.msip); // MSIP
+            // E1-T14: the unprivileged `time` counter is a window onto the CLINT mtime — refresh
+            // its shadow each instruction boundary so `rdtime` tracks the deterministic clock.
+            self.hart.csr.set_time(s.mtime);
         }
     }
 
