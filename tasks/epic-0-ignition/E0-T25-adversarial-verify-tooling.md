@@ -3,7 +3,7 @@ id: E0-T25
 epic: 0
 title: Adversarial-verification tooling — verifier runbook and make verify-E0-Tnn entry points
 priority: 25
-status: pending
+status: implemented
 depends_on: [E0-T02, E0-T18, E0-T20]
 estimate: M
 capstone: false
@@ -72,4 +72,45 @@ fails. (5) Run `cold_clone.sh` on a dirty working tree — it must verify HEAD, 
 uncommitted state; confirm by breaking a file without committing.
 
 ## Verification log
-(empty)
+### 2026-07-03 — worker claim — branch task/e0-t25-verify-tooling (stacked on e0-t24)
+Deliverables: the verification protocol is now executable.
+- Makefile: one verify-E0-Tnn target for EACH of the 26 epic-0 task files, composed from shared
+  _v-* recipes (fmt/clippy/test/features/wasm/exhaustive/zerocost/riscv/diff/web/bench/toolchain/
+  fuzz), each exiting NONZERO on failure. verify-all depends on all 26 (make builds each _v-*
+  prerequisite once per invocation, so it runs the union). verify-list prints the target↔task map.
+  Skip-needing recipes (_v-wasm/_v-diff/_v-web/_v-toolchain/_v-fuzz) print "SKIPPED: <reason>" and
+  exit nonzero unless VERIFY_ALLOW_SKIP=1 — silence forbidden.
+- tools/verify/cold_clone.sh [--keep] <target>: clones the COMMITTED HEAD into mktemp, scrubs
+  RUSTFLAGS/RUSTDOCFLAGS/RUST_LOG + every CARGO_*, PREPENDS trusted toolchain dirs (~/.cargo/bin +
+  system bins) so a poisoned PATH shim is outranked while real tools further down (container
+  runtime) still resolve, runs bash --noprofile --norc, reports, cleans up.
+- tools/verify/self_check.sh (verify-E0-T25's _v-meta) + tools/verify/list.sh: coverage check
+  (every task file has a target) + no-green-washing grep (|| true / continue-on-error / TAB-dash
+  recipe prefix) over the verify Makefile section + scripts (comments stripped, detector+docs
+  excluded). Wired into CI (.github/workflows/ci.yml test job).
+- tools/verify/runbook.md: cold-clone-first protocol, attack-angle checklist, the Verification-log
+  entry template (matches the "### DATE — adversarial verifier — VERDICT: verified|refuted" format
+  at the bottom of every task file), rr recording note, and status-flip rules.
+SELF-VERIFIED (each acceptance + adversarial angle):
+- verify-list names a target for all 26 tasks (exit 0); ADDING a dummy E0-T99-x.md → verify-list
+  exit 2 (angle 4 target-drift caught).
+- cold_clone.sh verify-E0-T03 and verify-E0-T18 PASS from a pristine clone. verify-E0-T20 needs the
+  Docker daemon (currently DOWN in this env) → correctly SKIPs (see skip-abuse below); with the
+  daemon up it runs the Spike diff selftest.
+- SABOTAGE SENSITIVITY, one per shared recipe: fmt error → _v-fmt red; failing test / corrupted
+  golden (docs/golden/loops.trace.txt line 6) → cargo test --workspace red (the CLI golden-prefix
+  test); broken wasm (syntax error) → _v-wasm red (wasm-pack exit 1). Each reverted.
+- NO green-washing (acceptance 4): self_check greps the verify path — injecting "|| true" into a
+  _v-* recipe makes self_check exit 1; clean tree exit 0.
+- Angle 2 ENV BLEED: RUSTFLAGS="--cfg never" + PATH="/tmp/poison(fake cargo):$PATH" before
+  cold_clone → the poisoned cargo NEVER runs (outranked by trusted ~/.cargo/bin), verify passes on
+  the real toolchain.
+- Angle 3 SKIP-ABUSE: with Docker down, make verify-E0-T20 → "SKIPPED: Docker unavailable" + make
+  Error 1 (nonzero, no silent pass); VERIFY_ALLOW_SKIP=1 → SKIPPED printed + OK (0).
+- Angle 5 DIRTY TREE: breaking crates/core/src/lib.rs WITHOUT committing, then cold_clone → still
+  PASSES (verifies committed HEAD, not the working tree).
+- Runbook template matches the task-file verification-log convention (acceptance 5).
+Gates: fmt; clippy -D warnings 0; workspace tests 0 FAILED; self_check.sh OK; CI runs it.
+rr: N/A (macOS; runbook documents the Linux tools/rr/record-test.sh step). Verifier angles open:
+meta-sabotage 3 random tasks (1), env bleed (2), skip-abuse with Docker hidden (3), target drift (4),
+dirty-tree HEAD-not-worktree (5).
