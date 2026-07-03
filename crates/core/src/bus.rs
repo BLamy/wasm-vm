@@ -31,6 +31,11 @@ pub mod mmap {
     pub const DRAM_BASE: u64 = 0x8000_0000;
     /// Default guest DRAM size: 128 MiB.
     pub const DRAM_SIZE_DEFAULT: u64 = 128 * 1024 * 1024;
+    /// UART0 base — the 16550 THR on the QEMU `virt` board (E0-T12 stub;
+    /// E2 replaces it with a full 16550 at the same address, no relink).
+    pub const UART0_BASE: u64 = 0x1000_0000;
+    /// UART0 MMIO window length.
+    pub const UART0_LEN: u64 = 0x100;
 }
 
 /// Fallible little-endian accessors at every RV64 access width.
