@@ -3,7 +3,7 @@ id: E1-T03
 epic: 1
 title: RV64M multiply/divide with exact div-by-zero and overflow semantics
 priority: 103
-status: implemented
+status: verified
 depends_on: [E1-T01]
 estimate: M
 capstone: false
@@ -91,6 +91,34 @@ Evidence (local, macOS + reference toolchain):
 - Gate: `cargo fmt --all --check` clean, `cargo clippy --workspace --all-targets` 0
   warnings, `cargo test --workspace` 0 FAILED.
 
-Pending: adversarial verification by a fresh cold-clone critic (≥1M-instruction Spike
-differential biased toward boundary patterns; MULHSU mixed-sign attack; W-form garbage
-upper bits; aliasing).
+### 2026-07-03 — adversarial verifier (fresh cold clone @ 649f883) — VERDICT: verified
+Could not refute after all seven required attacks.
+- **Spike differential, two legs, both clean.** (a) All 13 `rv64um-p` ELFs run under
+  `spike --isa=rv64im` and exit 0 (tohost pass) — committed ELFs valid, emulator passes
+  them. (b) Self-contained ISA-level oracle harness drove `Hart::step` over **2,000,000**
+  random M instructions (all 13 ops, random rd/rs1/rs2 incl. x0 and forced rd==rs1==rs2
+  aliasing; operands 80% boundary-biased to 0/1/-1/i64::MIN/i64::MAX/0x8000_0000/
+  0x7FFF_FFFF/0xFFFF_FFFF/0xFFFF_FFFF_0000_0000/random) vs an independent i128/u128 oracle.
+  **0 divergences.**
+- **MULHSU:** independent Python i128 oracle reproduces the emulator exactly
+  ((-1)×(2^64-1)→all-ones, MIN×(2^64-1)→0x8000…0000, MIN×2→all-ones, 5×2^63→2). The
+  `i64 as i128 × u128 as i128` construction is correct.
+- **W-form garbage / DIVUW:** upper-garbage operands in the sweep confirm bits 63:32 ignored
+  and sign-extension from bit 31 (DIVUW 0xFFFF_FFFF → 0xFFFF_FFFF_FFFF_FFFF).
+- **Panic hunt:** 2M release-build oracle run over i64::MIN/-1, i32::MIN/-1, x/0 for every
+  op — zero panics; every divisor-zero and MIN/-1 case branched out before any `/`/`%`;
+  unsigned use `checked_div`/`checked_rem`.
+- **WASM/native parity:** `rv64m_boundary_table_on_wasm32` passes under `wasm-pack test
+  --node` in BOTH default and `--features zicsr-stub` builds (the `__multi3` i128 lowering
+  matches native).
+- **Mutation audit (7):** MULHSU rs2→signed, MULHSU >>64→>>63, DIVUW drop sext32,
+  DIVUW div/0→0, DIV div/0→0, REM rem/0→0, MULW drop sext32 — each caught by a committed
+  test. Lone survivor (DIVW MIN/-1 guard → false) is a **provably equivalent mutant**:
+  Rust `wrapping_div(i32::MIN, -1)` already returns `i32::MIN`, identical to the guarded
+  branch — not a coverage gap.
+- **Decoder tally:** 236,093,445 asserted against the brute-force 2^32 sweep; reserved
+  OP-32 M funct3 001/010/011 confirmed illegal.
+- **Gate:** fmt --check exit 0; clippy 0 warnings; `cargo test --workspace` no FAILED;
+  rv64um+rv64ui pass; exhaustive tally passes. Working tree left clean.
+
+VERIFIED — E1-T03 complete.
