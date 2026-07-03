@@ -3,7 +3,7 @@ id: E1-T01
 epic: 1
 title: Spec-correct machine reset and initial architectural state
 priority: 101
-status: pending
+status: implemented
 depends_on: [E0]
 estimate: S
 capstone: false
@@ -52,4 +52,36 @@ or pc due to 64-bit constant truncation through the bindgen boundary. Any single
 differing from the documented reset state, or between native and WASM, is a refutation.
 
 ## Verification log
-(empty)
+### 2026-07-03 — worker claim — branch task/e1-t01-machine-reset (stacked on e0-t26, opens Epic 1)
+Deliverables: the single authoritative reset state.
+- crates/core/src/csr.rs (NEW, real CSR state — begins replacing E0-T19's quarantined zicsr-stub):
+  Priv enum (U/S/M, Default=M via #[default]); Csrs{ mode, mstatus, mcause } with at_reset() (M,
+  0, 0) + hardwired read-only accessors misa()/mhartid()/mvendorid()/marchid()/mimpid() and
+  mie()/mprv() bit readers. MISA_RV64GC_SU = 0x800000000014112D (MXL=2; A C D F I M S U — decoded
+  bit-by-bit and asserted).
+- Hart gains a non-gated `pub csr: Csrs` field. Hart::reset(reset_vector): regs=XRegs::default()
+  (all x 0), regs.pc=reset_vector, csr=Csrs::at_reset(), and (under zicsr-stub) csrs=default. ALL
+  constructors funnel through it: Hart::default() resets to DRAM_BASE (0x8000_0000), Hart::new()=
+  default(). x0 stays hardwired (enforced in XRegs::write, E0-T05).
+- Hart/XRegs/CsrFile derive PartialEq,Eq so the determinism test compares whole harts.
+- crate::csr registered in lib.rs.
+TESTS: crates/core/tests/reset.rs (4): fresh-hart-in-reset-state (pc, all x0, M-mode, mstatus=0,
+MIE=0, MPRV=0, mcause=0, misa=0x800000000014112D, mhartid/vendor/arch/imp=0) at DRAM_BASE and an
+explicit vector; x0 stays zero after add x0,x1,x2; reset-is-bit-identical-from-any-prior-state
+(dirty EVERY field incl mstatus=u64::MAX/mode=U/mcause, reset, assert == fresh Hart); reset-after-
+10k-instructions (run loops.elf to exit + churn 10k arbitrary words through the real bus, reset,
+assert == fresh — no execution state leaks). crates/wasm/tests/reset.rs (wasm32): same reset-state
++ determinism, explicitly asserting misa>>62==2 (MXL high bits NOT truncated through the bindgen/
+64-bit boundary — verifier angle 3).
+COMPAT: Hart::new() now starts pc at DRAM_BASE (was 0); safe — only XRegs-default and an execution-
+wrap test referenced pc==0, and running from pc<DRAM_BASE always fetch-faulted anyway. Full
+workspace 0 FAILED; E0-T19 riscv-tests still green; all 4 feature combos + wasm32 build; zero-cost
+--selftest OK.
+misa note: 0x800000000014112D is our DELIBERATE WARL config (RV64GC + S/U), matching the
+acceptance's exact value; the universal reset fields (M-mode, mstatus=0, mcause=0, pc=vector,
+mhartid=0, x0=0) match Spike/Sail from instruction zero (Spike's misa depends on its --isa flag).
+Gates: fmt; clippy --workspace --all-targets --all-features -D warnings 0 (derived Priv Default);
+workspace tests 0 FAILED; reset 4/4 native + 1/1 wasm; feature matrix + zero-cost green.
+rr: N/A (macOS). Verifier angles open: reset-visible divergence vs Spike/Sail (dump misa/mhartid/
+mstatus/mcause), dirty-state leakage incl FS/FP/satp (1 — mstatus=u64::MAX dirtied here), x0 via
+compressed/CSR rd=x0 (2), and wasm misa/pc 64-bit truncation (3, misa>>62==2 asserted).

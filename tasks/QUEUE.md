@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E1-T01** — Spec-correct machine reset and initial architectural state
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -42,7 +41,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Epic 1 — `epic-1-the-machine`
 
-- [ ] `101` [E1-T01](epic-1-the-machine/E1-T01-machine-reset-state.md) — Spec-correct machine reset and initial architectural state *(deps: E0)*
+- [?] `101` [E1-T01](epic-1-the-machine/E1-T01-machine-reset-state.md) — Spec-correct machine reset and initial architectural state *(deps: E0)*
 - [ ] `102` [E1-T02](epic-1-the-machine/E1-T02-zicsr-csr-file.md) — Zicsr CSR file with WARL/WLRL masking, privilege checks, and Zifencei *(deps: E1-T01)*
 - [ ] `103` [E1-T03](epic-1-the-machine/E1-T03-rv64m-multiply-divide.md) — RV64M multiply/divide with exact div-by-zero and overflow semantics *(deps: E1-T01)*
 - [ ] `104` [E1-T04](epic-1-the-machine/E1-T04-rv64a-atomics.md) — RV64A atomics — LR/SC reservation semantics and all AMO operations *(deps: E1-T01)*
