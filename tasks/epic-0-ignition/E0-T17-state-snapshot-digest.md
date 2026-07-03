@@ -3,7 +3,7 @@ id: E0-T17
 epic: 0
 title: Machine state snapshot and deterministic digest for test assertions
 priority: 17
-status: pending
+status: implemented
 depends_on: [E0-T07]
 estimate: S
 capstone: false
@@ -56,4 +56,36 @@ run. (5) Verify `sha2` is compiled with `default-features = false` in the no_std
 (`cargo tree -p wasm-vm-core --no-default-features -e features`).
 
 ## Verification log
-(empty)
+### 2026-07-03 — worker claim — branch task/e0-t17-snapshot (stacked on e0-t16)
+Deliverables: crates/core/src/snapshot.rs — Snapshot{pc:u64, xregs:[u64;32], mem_digest:[u8;32]}
+(Clone, PartialEq, Eq, Debug-as-hex), Machine::snapshot() (&self, pure), Snapshot::hex_digest()
+-> String (alloc, always avail — crate links alloc unconditionally, no feature gate), and
+Snapshot::state_sha256_line() = "state sha256=<64 hex>" (frozen final line the CLI --dump-state
+prints after the E0-T05 XRegs dump; flag wiring is the E0-T18 integration point, mirroring how
+E0-T16 shipped the trace serializer and deferred --trace). Ram::as_bytes() added as the canonical
+digest input (whole byte array in address order; device+hart state are struct fields, NOT digest
+input). Digest = SHA-256 via sha2 0.10 default-features=false (no_std; crypto hash chosen over a
+fast one because cross-platform bit-stability is the whole point of an assertion helper).
+KNOWN-ANSWER independence: KAT digests computed OUTSIDE the crate in Python (hashlib.sha256): 1 MiB
+of byte[i]=i%251 -> 631b8402...e4f769; 1 MiB zeros -> 30e14955...9fcb58.
+Tests (crates/core/tests/snapshot.rs, 6): (1) KAT — fresh 1 MiB hashes to the zero-buffer answer,
+seeded mod-251 to the committed Python answer, hex_digest==mem_digest; (2) flip-sensitivity — 100
+offsets incl. 0 and size-1, each single-byte flip changes the digest and restore returns it; (3)
+tail coverage — poking the LAST RAM byte changes the digest (kills digest-only-loaded-segments);
+(4) stability — two zero-step snapshots identical, x0 image always 0; (5) cross-build golden —
+loops.elf @ 1 MiB -> exact pc/all-32-xregs/digest (0a18330c...376a48), asserted identically by the
+wasm32 test so native==wasm transitively; (6) PURITY — loops traced uninterrupted vs. snapshot()
+every 100 steps: identical retired-instruction trace AND identical final Snapshot.
+wasm crates/wasm/tests/snapshot.rs asserts the same 1-MiB golden on wasm32 (pc 0x80000040, x2=sp
+0x80002090, x10=1, digest 0a18330c…).
+sha2 no_std: cargo tree --no-default-features shows sha2 pulled WITHOUT its std/asm features.
+128 MiB digest timing (informational, no threshold): ~0.55 s release; documented in snapshot.rs.
+Gates: fmt clean; clippy --workspace --all-targets --all-features -D warnings exit 0 (fixed a
+manual-is_multiple_of lint); native default 0 FAILED; native trace 0 FAILED; workspace 0 FAILED;
+snapshot suite 6/6; wasm-pack test --node all green incl. the wasm snapshot golden; all 4 native +
+2 wasm32 feature combos build; check-zero-cost --selftest OK.
+rr: N/A locally (macOS); no unsafe introduced (Ram::as_bytes is &self.data) so miri adds nothing
+over the suite and CI runs no miri step. Verifier angles left open: independent shasum -a 256 of a
+RAM dump vs mem_digest (angle 1), 10k-instr memops native-vs-wasm Snapshot (angle 3), and a
+partial-coverage mutation (digest only loaded segments / skip last page) — flip+tail tests target
+exactly that.
