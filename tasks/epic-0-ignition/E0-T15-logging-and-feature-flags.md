@@ -3,7 +3,7 @@ id: E0-T15
 epic: 0
 title: Logging and cargo feature-flag infrastructure with zero-cost trace-off
 priority: 15
-status: in-progress
+status: implemented
 depends_on: [E0-T01]
 estimate: S
 capstone: false
@@ -57,4 +57,30 @@ enforcement catches it. (4) Verify `log` statements are genuinely no_std (`cargo
 `console_error_panic_hook` is initialized exactly once (double-init panics in some setups).
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — worker claim — commit d3eb3da (branch task/e0-t15-logging, stacked on e0-t14)
+Deliverables: core Cargo.toml feature matrix — default=["std"], std=["log/std"], trace=[];
+documented in lib.rs with a 4-row table. `log` (default-features=false → no_std) wired into
+core at HTIF command-ignores (lib.rs run loop) and UART unused-offset writes (console.rs,
+log-once via the change-detected mask). env_logger in CLI (RUST_LOG honored — VERIFIED
+default run shows 0 debug lines, RUST_LOG=debug shows the core diagnostic); console_log +
+console_error_panic_hook in wasm, wrapped in initLogging() guarded by an AtomicBool swap so
+double-init is a no-op (angle 5). ZERO-COST: trace::TraceSink generic trait + NullSink
+(empty #[inline(always)] on_retire); Hart::step is now #[inline] step_traced(bus, &mut
+NullSink) — every existing caller unchanged (all 14 prior tasks' tests green), the hook
+monomorphizes away. Retire hook fires only after execute() returns Ok, so no record for a
+faulting instruction (trap-purity contract preserved). Proof harness examples/zerocost.rs +
+tools/check-zero-cost.sh: emits release asm (codegen-units=1) for step_nullsink_probe and
+asserts NO on_retire/TraceRecord/RecordingSink refs in its body; --selftest asserts the
+recording-sink probe DOES reference on_retire (so the detector can't pass vacuously) — both
+pass. Enforcement: tests/no_stdout_in_core.rs greps core for println!/eprintln!/print!/
+eprint! (comment-stripped) → none. CI: `features` job is now an explicit {std,trace}
+powerset (4 native combos), new `features-wasm` job builds {} and trace for wasm32; Makefile
+`features` target updated in parity (E0-T02 invariant).
+VERIFIED locally: all 4 native combos + 2 wasm32 combos build (angle 2 incl. no_std+trace);
+zero-cost check + selftest pass (angle 1 asm inspection); RUST_LOG default-silent/debug-on
+(angle 3-ish); no-println test green; clippy -D warnings exit 0; full crate 0 FAILED; wasm
+0 FAILED. CI green run 28637684830 (all jobs incl. the 6 feature builds).
+rr: N/A (build/logging infra). Perf-delta zero-cost bench is angle 1's stronger form —
+lands at E0-T24 (bench NullSink trace-off vs trace-compiled-in, >2% refutes); the asm proof
+stands until then.
