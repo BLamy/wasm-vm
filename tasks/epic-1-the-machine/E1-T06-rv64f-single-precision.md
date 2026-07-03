@@ -3,7 +3,7 @@ id: E1-T06
 epic: 1
 title: RV64F single-precision FPU with NaN-boxing, rounding modes, and fcsr
 priority: 106
-status: implemented
+status: verified
 depends_on: [E1-T05, E1-T02]
 estimate: L
 capstone: false
@@ -99,5 +99,34 @@ Evidence (local, macOS + reference toolchain):
 - Gate: fmt clean, clippy 0 warnings, `cargo test --workspace` 0 FAILED, both wasm builds
   0 FAILED.
 
-Pending: adversarial verification (TestFloat/Spike lockstep over the decoded FP path;
-NaN-boxing, FS-tracking, FCLASS, and flag-accumulation attacks).
+### 2026-07-03 — adversarial verifier (fresh cold clone) — VERDICT: verified
+Could not refute after all ten attacks (Spike `--isa=rv64if`, 1.1.1-dev).
+- **rv64uf-p:** all 11 ELFs exit 0 under Spike AND pass the harness.
+- **Decoded-path differential, 150,000** random F instructions (all ops, NaN/inf/±0/
+  subnormal-biased operands, random rm + frm + pre-loaded fflags) vs an independent oracle
+  (independent boxing/sign-ext/fsgnj/fmv/sticky-accrual; T05 backend for arithmetic) —
+  **0 divergences.**
+- **Spike lockstep, 7,727** boundary cases (FCLASS, FMV.X.W, FMIN/FMAX ±zero/NaN/sNaN,
+  FCVT both directions all 5 modes at 2^31/2^63/2^64/NaN/inf/subnormal, NaN-injected
+  arith) via `-l --log-commits` — **0 divergences** (the true oracle for saturation
+  direction, ±0 tie-break, canonical NaN, fflags).
+- **NaN-boxing:** non-boxed → 0x7fc00000; FLW/FMV.W.X box; FSW/FMV.X.W move raw low-32
+  (FSW stored a poisoned 0xcafebabe uncanonicalized); FMV.X.W sign-extends bit 31; boxed
+  NaN payload passes through.
+- **FCLASS.S:** all 10 reps + subnormal boundaries + ±0/±inf/sNaN/qNaN matched Spike.
+- **FS tracking:** FS=Off traps FLW/FSW/FADD/FCLASS/FCVT + `csrr fflags`, fflags/f-regs
+  byte-identical, SD unset; FS on → compute ops flip Dirty + SD; FCLASS/FMV.X.W don't
+  dirty (matches Spike's commit log — not a divergence).
+- **rm plumbing:** static rm=5/6 decode ok but trap at execution (fflags untouched);
+  DYN with frm∈{5,6,7} traps; directed rm changes bits (FDIV 1/3 RTZ vs RUP).
+- **Flags:** sticky |= accrual (pre-loaded fflags); FMIN/FMAX sNaN→NV/qNaN→none; FEQ NV
+  only on sNaN, FLT/FLE on any NaN.
+- **Panic hunt:** none across 150k debug ops + 7727 boundary cases + release sweep.
+- **Mutation audit (7):** read_f32-skips-box, FCVT NaN→min, FMV.X.W no-sign-ext, FMIN
+  +0/−0, drop FS-off guard, fflags `=` vs `|=`, FSGNJN uses rs1 sign — each caught by a
+  committed test. No survivors.
+- **native vs wasm32 parity:** both feature builds identical (8 passed each).
+- **Gate:** fmt/clippy clean, workspace 0 FAILED, riscv_tests_f ok, rv64ui/um/ua ok,
+  exhaustive ok, no-host-float OK. Tree left clean.
+
+VERIFIED — E1-T06 complete.
