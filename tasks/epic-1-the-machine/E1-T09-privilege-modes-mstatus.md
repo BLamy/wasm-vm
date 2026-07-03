@@ -3,7 +3,7 @@ id: E1-T09
 epic: 1
 title: M/S/U privilege modes and the mstatus state machine
 priority: 109
-status: implemented
+status: verified
 depends_on: [E1-T02]
 estimate: L
 capstone: false
@@ -160,3 +160,24 @@ delegate SSIP only, M-mode drives the UNdelegated STIP+SEIP into mip, assert `si
 confirmed the mutation (d) revert (`SIP => self.warl_get(MIP)`, gate dropped) now FAILs the
 suite. Full mutation battery (a–e) now all CAUGHT. Gate green: fmt/clippy clean, workspace 0
 FAILED. Re-verifying.
+
+### 2026-07-03 — adversarial verifier (round 4) — VERDICT: verified
+Fresh cold clone at HEAD 76c9dc7. Spike 1.1.1-dev (riscv-isa-sim `55b4658`, `--isa=rv64gc`).
+- **Spike S-view matrix — all match.** For mideleg ∈ {0, 0x2, 0x20, 0x200, 0x222, ~0}, the
+  sequence `csrw mie,0; mip,0; sie,-1; sip,-1` gives identical sie/mie/sip/mip to Spike in every
+  row (Spike mip masked of the CLINT MTIP bit7, M-only, per charter).
+- **Both read-visibility directions match Spike:** undelegated STIP/SEIP driven into mip →
+  `sip=0` (masked); delegated → `sip=0x220` (readable but not writable via sip); sie read-gate
+  (seed mie=0x222, delegate SSIP only) → `sie=0x2`. The write asymmetry is confirmed: `csrw
+  sip,-1` sets only SSIP (mip=0x2) while `sie` writes all of SSIE/STIE/SEIE.
+- **Mutation battery — no survivors.** All 5 charter mutants (a–e) plus 3 the critic invented —
+  (f) sie read uses sip_write_mask (mask swap), (g) SIE_SIP_SMASK off-by-one, (h) SIP_SSIP
+  off-by-one — are CAUGHT by `sie_sip_are_mideleg_gated`.
+- **Full gate green:** fmt clean; clippy 0 warnings; `cargo test --workspace` → 341 passed,
+  `grep 'test result: FAILED'` no matches; both wasm builds FAILED-count 0. Regression spot-check:
+  all 10 privilege tests pass; mstatus WARL `csrw mstatus,-1 → 0x8000000a007e79aa` matches
+  `legalize_mstatus`. No other Spike-groundable divergence found.
+
+VERDICT: **verified** — the M/S/U privilege modes, mstatus/sstatus state machine, xRET restore,
+ecall-cause-by-mode, WFI/TW trap, and mideleg-gated sie/sip views are Spike-correct and fully
+mutation-covered.
