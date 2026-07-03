@@ -3,7 +3,7 @@ id: E0-T13
 epic: 0
 title: Provision the riscv64 cross-toolchain, Spike, and QEMU with a reproducible Docker path
 priority: 13
-status: implemented
+status: verified
 depends_on: [E0-T01]
 estimate: M
 capstone: false
@@ -86,3 +86,22 @@ CI: ci.yml green run 28635157699 (rust build unaffected; toolchain is a local/ve
 — not wired into CI to avoid a multi-minute Spike build per run; E0-T14/E0-T20 consume it).
 rr: N/A (build tooling, no emulator runtime). Cross-task payoff: E0-T13 arms the Spike
 differential ("angle 1") deferred across E0-T06..T12 — re-runs recorded there land at E0-T20.
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: verified
+- P1 cold reproducibility (headline) — HELD. A real `docker build --no-cache` from a fresh copy produced gcc 13.2.0-11ubuntu1+12, Spike 1.1.1-dev @ 55b4658, QEMU 8.2.2 — all identical to versions.env. The `git checkout SHA && git rev-parse HEAD | grep -qx SHA` guard demonstrably fired (build reached Spike compile only after passing); enforces an EXACT commit (branch/tag fails the grep, missing SHA fails checkout under &&).
+- P2 pin completeness — HELD. grep found only the legit git-rev-parse guard + comments, no latest/master. gcc/qemu carry =exact pins; build-essential/dtc/git/ca-certificates/python3 unpinned but don't affect produced versions. Spike SHA is a real 2026-06-26 commit.
+- P3 robustness — HELD. run.sh from "dir with spaces" and non-repo cwd both mounted the real repo and ran under /bin/bash 3.2.57; build.sh empty-array guard correct for no-arg AND --no-cache under bash 3.2 + set -u.
+- P4 smoke fails-when-it-should — HELD. Clean-fail tohost=3 → spike "*** FAILED *** (tohost=1)" exit 1 → smoke.sh propagated. Bad-opcode .word 0 → HANG confirmed (12s), matching the worker's documented "traps-loops/hangs; bound with timeout" note. Characterization accurate + disclosed.
+- P5 macOS native docs — HELD (primary path), minor fallback nit. qemu is a real core formula; tap riscv-software-src/homebrew-riscv exists with riscv-tools.rb invoking riscv64-unknown-elf-gcc. DEMAND (non-blocking): the fallback note mis-attributed riscv64-elf-gcc/binutils to the tap — they're homebrew-core with riscv64-elf-* binary names. FIXED.
+- ACCEPTANCE MATRIX — HELD. All three tools --version/--help via run.sh; SPIKE_COMMIT == versions.env; smoke exit 0; artifacts owned by brettlamy uid 501 (Docker Desktop maps ownership even without --user; the flag is what makes it correct on Linux — platform caveat).
+- MOCK/HONESTY: no mocks; claimed versions/SPIKE_COMMIT/versions.env all match built images (both :local and cold rebuild). CI 28635157699 is a genuine green Rust ci; toolchain honestly NOT wired into CI, as disclosed.
+- NOVEL: apt-pin durability probe — the exact pins resolve against Ubuntu's LIVE archive (prunes superseded versions); reproduced today; if superseded later the build HARD-FAILS (fail-loud, no silent drift) — correct, but a multi-year durability caveat (snapshot the debs). DOCUMENTED in versions.env.
+- rr: N/A (build tooling).
+- SUITE: promote — reproduces exactly, all acceptance holds. Rework (minor, applied): README fallback formula attribution. Consider (future): a CI job asserting run.sh SPIKE_COMMIT == versions.env + the three --version strings to catch pin drift.
+
+### 2026-07-02 — post-verdict actions (worker)
+Applied both non-blocking items: (1) corrected the README fallback brew-formula
+attribution (homebrew-core, riscv64-elf-* binary prefix); (2) documented the apt-pin
+durability property in versions.env (fail-loud on Ubuntu archive pruning; snapshot debs
+for multi-year reproducibility). No code/Dockerfile change — the toolchain reproduces
+exactly as verified.

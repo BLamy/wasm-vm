@@ -59,7 +59,10 @@ export PATH="$HOME/.local/riscv/bin:$PATH"
 ```
 
 > Formula note: if `riscv-tools` is unavailable in your tap snapshot, the individual
-> formulae are `riscv64-elf-gcc` and `riscv64-elf-binutils` in `riscv-software-src/riscv`.
+> cross-compiler formulae `riscv64-elf-gcc` and `riscv64-elf-binutils` are in
+> **homebrew-core** (install plain, no tap). They expose `riscv64-elf-gcc` etc. —
+> note the binary prefix is `riscv64-elf-`, *not* `riscv64-unknown-elf-`, so adjust
+> commands accordingly (or symlink).
 
 ### Linux (Ubuntu 24.04, apt)
 
