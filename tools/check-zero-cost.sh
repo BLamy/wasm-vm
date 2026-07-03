@@ -45,7 +45,7 @@ probe_body() {
 # A trace call would show up as a call/branch to an on_retire / TraceRecord / record
 # symbol. NullSink's on_retire is empty+inline, so the null probe body must have none.
 trace_refs() {
-  printf '%s\n' "$1" | grep -iE 'on_retire|TraceRecord|record_retire|RecordingSink' || true
+  printf '%s\n' "$1" | grep -iE 'retire|TraceRecord|RecordingSink' || true
 }
 
 null_body="$(probe_body step_nullsink_probe || true)"
@@ -55,7 +55,7 @@ if [ -z "${null_body}" ]; then
   echo "check-zero-cost: probe label not found in asm; falling back to symbol scan" >&2
   rlib="$(find target/release -name 'libwasm_vm_core-*.rlib' | head -n1)"
   if command -v llvm-nm >/dev/null 2>&1; then NM=llvm-nm; else NM=nm; fi
-  if "${NM}" "${rlib}" 2>/dev/null | grep -iq 'NullSink.*on_retire'; then
+  if "${NM}" "${rlib}" 2>/dev/null | grep -iq 'NullSink.*retire'; then
     echo "check-zero-cost FAILED: NullSink::on_retire is a real (non-inlined) symbol" >&2
     exit 1
   fi

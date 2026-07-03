@@ -12,7 +12,7 @@ name = "wasm-vm"
 path = "src/main.rs"
 
 [dependencies]
-wasm-vm-core = { workspace = true, features = ["std"] }
+wasm-vm-core = { workspace = true, features = ["std", "trace"] }
 clap = { workspace = true }
 log = { workspace = true }
 env_logger = { workspace = true }

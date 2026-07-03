@@ -130,6 +130,24 @@ impl Machine {
         self.htif_commands
     }
 
+    /// Step one instruction with a [`trace::TraceSink`] hook (E0-T16). Does NOT consult
+    /// HTIF — the caller drives termination (e.g. via [`Self::htif_exit`]); use this to
+    /// trace a run instruction-by-instruction. `step_traced(&mut NullSink)` is exactly
+    /// [`Self::run`]'s per-step behavior.
+    pub fn step_traced<T: trace::TraceSink>(&mut self, sink: &mut T) -> Result<(), hart::Trap> {
+        self.hart.step_traced(&mut self.bus, sink)
+    }
+
+    /// If HTIF is armed and `tohost` currently requests exit, the exit code; else `None`.
+    /// A read-only peek for trace loops (does not affect the "logged once" command watch).
+    pub fn htif_exit(&mut self) -> Option<u64> {
+        let htif = self.htif?;
+        match htif.check(&mut self.bus) {
+            HtifStatus::Exit(e) => Some(e.code),
+            _ => None,
+        }
+    }
+
     /// Step up to `max_instrs` instructions, consulting HTIF after each. Returns
     /// on the first guest exit, the first escaping trap, or after exactly
     /// `max_instrs` retirements — whichever comes first.

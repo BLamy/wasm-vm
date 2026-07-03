@@ -174,18 +174,34 @@ impl Hart {
                 tval: insn as u64,
             });
         };
-        self.execute(bus, instr)?;
+        let (rd, value, mem) = self.execute(bus, instr)?;
         // Retirement hook — reached only when execute() returns Ok, so no record is
-        // emitted for a faulting instruction (trap-purity contract).
-        sink.on_retire(pc, insn);
+        // emitted for a faulting instruction (trap-purity contract). Built and passed
+        // generically; with NullSink the optimizer erases all of this (E0-T15 proof).
+        sink.retire(&crate::trace::TraceRecord {
+            pc,
+            insn,
+            // x0 / no-write instructions omit the register field.
+            rd: (rd != 0).then_some((rd, value)),
+            mem,
+        });
         Ok(())
     }
 
-    /// Execute a decoded instruction. Every arm either fully retires (writeback +
-    /// PC advance) or returns a trap having touched nothing.
-    fn execute(&mut self, bus: &mut impl Bus, instr: Instr) -> Result<(), Trap> {
+    /// Execute a decoded instruction. Returns the retire info `(rd, value, mem)` for the
+    /// trace record — `(rd, value)` is what was written to the register file (rd == 0
+    /// meaning no architectural write) and `mem` the memory op if any. Every arm either
+    /// fully retires (writeback + PC advance) or returns a trap having touched nothing.
+    fn execute(
+        &mut self,
+        bus: &mut impl Bus,
+        instr: Instr,
+    ) -> Result<(u8, u64, Option<crate::trace::MemOp>), Trap> {
+        use crate::trace::MemOp;
         use Instr::*;
         let r = &mut self.regs;
+        // Memory op captured by the load/store arms; None for everything else.
+        let mut mem: Option<MemOp> = None;
         let pc = r.pc;
         let pc4 = pc.wrapping_add(4);
         // Per-op result and successor PC; applied at the single retirement point
@@ -271,6 +287,12 @@ impl Hart {
             // untouched on fault. LB/LH/LW sign-extend; LBU/LHU/LWU zero-extend.
             Lb { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 1,
+                    is_store: false,
+                    value: 0,
+                });
                 (
                     rd,
                     bus.load8(a).map_err(|f| load_fault(f, a))? as i8 as i64 as u64,
@@ -279,6 +301,12 @@ impl Hart {
             }
             Lh { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 2,
+                    is_store: false,
+                    value: 0,
+                });
                 (
                     rd,
                     bus.load16(a).map_err(|f| load_fault(f, a))? as i16 as i64 as u64,
@@ -287,6 +315,12 @@ impl Hart {
             }
             Lw { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 4,
+                    is_store: false,
+                    value: 0,
+                });
                 (
                     rd,
                     bus.load32(a).map_err(|f| load_fault(f, a))? as i32 as i64 as u64,
@@ -295,10 +329,22 @@ impl Hart {
             }
             Ld { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 8,
+                    is_store: false,
+                    value: 0,
+                });
                 (rd, bus.load64(a).map_err(|f| load_fault(f, a))?, pc4)
             }
             Lbu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 1,
+                    is_store: false,
+                    value: 0,
+                });
                 (
                     rd,
                     u64::from(bus.load8(a).map_err(|f| load_fault(f, a))?),
@@ -307,6 +353,12 @@ impl Hart {
             }
             Lhu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 2,
+                    is_store: false,
+                    value: 0,
+                });
                 (
                     rd,
                     u64::from(bus.load16(a).map_err(|f| load_fault(f, a))?),
@@ -315,6 +367,12 @@ impl Hart {
             }
             Lwu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 4,
+                    is_store: false,
+                    value: 0,
+                });
                 (
                     rd,
                     u64::from(bus.load32(a).map_err(|f| load_fault(f, a))?),
@@ -327,24 +385,48 @@ impl Hart {
             // bus write IS the side effect and retirement is a no-op write to x0.
             Sb { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 1,
+                    is_store: true,
+                    value: r.read(rs2),
+                });
                 bus.store8(a, r.read(rs2) as u8)
                     .map_err(|f| store_fault(f, a))?;
                 (0, 0, pc4)
             }
             Sh { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 2,
+                    is_store: true,
+                    value: r.read(rs2),
+                });
                 bus.store16(a, r.read(rs2) as u16)
                     .map_err(|f| store_fault(f, a))?;
                 (0, 0, pc4)
             }
             Sw { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 4,
+                    is_store: true,
+                    value: r.read(rs2),
+                });
                 bus.store32(a, r.read(rs2) as u32)
                     .map_err(|f| store_fault(f, a))?;
                 (0, 0, pc4)
             }
             Sd { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 8,
+                    is_store: true,
+                    value: r.read(rs2),
+                });
                 bus.store64(a, r.read(rs2)).map_err(|f| store_fault(f, a))?;
                 (0, 0, pc4)
             }
@@ -402,6 +484,6 @@ impl Hart {
         // Single retirement point: x0-discard is enforced by XRegs::write.
         r.write(rd, value);
         r.pc = next_pc;
-        Ok(())
+        Ok((rd, value, mem))
     }
 }

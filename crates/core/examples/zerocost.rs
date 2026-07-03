@@ -9,7 +9,7 @@ use wasm_vm_core::bus::mmap::DRAM_BASE;
 use wasm_vm_core::hart::Hart;
 use wasm_vm_core::mmio::SystemBus;
 use wasm_vm_core::ram::Ram;
-use wasm_vm_core::trace::{NullSink, TraceSink};
+use wasm_vm_core::trace::{NullSink, TraceRecord, TraceSink};
 
 /// A sink that does observable work per retirement — the opposite of NullSink, so the
 /// detector can confirm it SEES trace code when trace code is present.
@@ -19,9 +19,9 @@ struct RecordingSink {
 }
 impl TraceSink for RecordingSink {
     #[inline(never)]
-    fn on_retire(&mut self, pc: u64, insn: u32) {
+    fn retire(&mut self, r: &TraceRecord) {
         // Distinctive, non-elidable body so the symbol/call survives optimization.
-        self.last_pc = pc ^ (insn as u64).rotate_left(7);
+        self.last_pc = r.pc ^ (r.insn as u64).rotate_left(7);
         self.count = self.count.wrapping_add(1);
     }
 }
