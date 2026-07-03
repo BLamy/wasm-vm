@@ -123,19 +123,24 @@ fn all_reachable_traps_leave_state_untouched() {
             Exception::StoreAccessFault,
             X2_SENTINEL,
         ),
+        // E0-T11 UPDATE (worker edit to critic-authored suite): ecall/ebreak left
+        // the placeholder set when E0-T11 gave them real semantics. They still trap
+        // purely (no state change) — the property this suite checks — now with their
+        // architectural causes: ecall → EcallFromM (tval 0), ebreak → Breakpoint
+        // (tval = pc). The purity loop below is unchanged.
         (
-            "placeholder ecall",
+            "ecall trap purity",
             DRAM_BASE,
             Some(ecall),
-            Exception::IllegalInstruction,
-            ecall as u64,
+            Exception::EcallFromM,
+            0,
         ),
         (
-            "placeholder ebreak",
+            "ebreak trap purity",
             DRAM_BASE,
             Some(ebreak),
-            Exception::IllegalInstruction,
-            ebreak as u64,
+            Exception::Breakpoint,
+            DRAM_BASE,
         ),
     ];
     for &(desc, pc, word, cause, tval) in cases {
