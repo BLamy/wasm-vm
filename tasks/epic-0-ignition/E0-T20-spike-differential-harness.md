@@ -119,3 +119,10 @@ hello/loops/memops still MATCH (they HTIF-halt, exit 0). Added selftest step [4/
 regression (run_diff.sh on rv64ui-p-add must exit nonzero with "our emulator TRAPPED"). Also
 fixed the QEMU cosmetic --level commit→pc. README documents the trap-vs-halt rule. diff-selftest
 4/4 green. Status verified.
+
+### 2026-07-03 — adversarial verifier (re-verification, c048af5) — VERDICT: verified
+- (a) Original finding fixed: run_diff.sh rv64ui-p-add now "DIVERGENCE at instruction 33 ... our emulator TRAPPED", exit 1 (Spike line 33 = csrr mhartid) — was false MATCH exit 0.
+- (b) Mass rv64ui-p: 7 binaries (sub/xor/lw/and/or/sll/bne) all exit 1 DIVERGENCE@33, none MATCH.
+- (c) True-positive intact: hello/loops/memops still MATCH exit 0 (HTIF halt).
+- (d) `|| true` masking removed and CLI exit captured; no reachable false-MATCH (empty-ours still exit 2; trap-divergence fires when len(ours)<len(spike), always true for a real crash). Non-blocking notes: trap detection keyed to exit==101; a residual `|| true` on the Spike run is backstopped by normalize_spike's exit-3 hard-error; --max below the trap index reports MATCH (defensible — user bounded the window).
+- (e) selftest 4/4 green incl. new [4/4] crash-truncation regression; determinism 3× identical; over-normalization rd-edit caught @2; QEMU --level pc fixed. VERIFIED.
