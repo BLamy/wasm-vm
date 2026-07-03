@@ -310,6 +310,19 @@ fn sie_sip_are_mideleg_gated() {
         (1 << 5) | (1 << 9),
         "delegated STIP/SEIP are visible through sip (read), even if not writable via sip"
     );
+
+    // sip READ-side mideleg gate (symmetric to the sie read case above; kills the mutation
+    // where `sip` read drops `& s_int_mask()`): delegate SSIP only, then M-mode drives the
+    // UNdelegated STIP+SEIP straight into mip — sip read MUST mask them to zero.
+    // (Spike: mideleg=0x2, mip=STIP|SEIP → `csrr sip` reads 0.)
+    let mut c = Csrs::at_reset();
+    wr(&mut c, A_MIDELEG, 1 << 1); // delegate SSIP only
+    wr(&mut c, A_MIP, (1 << 5) | (1 << 9)); // undelegated STIP+SEIP pending in mip
+    assert_eq!(
+        rd(&mut c, A_SIP),
+        0,
+        "sip READ masks undelegated STIP/SEIP to zero (mideleg-gated read)"
+    );
 }
 
 // ── the ONLY paths to a mode change are trap-entry and xRET ─────────────────────

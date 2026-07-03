@@ -140,3 +140,23 @@ STIP+SEIP into mip and sip reads them back (read-visible but not sip-writable). 
 both the mutation-(a) revert (sie read unconditional) and the sip-write-mask revert (sip write =
 s_int_mask) now FAIL the committed suite. Gate green; all six riscv suites + exhaustive pass.
 Re-verifying.
+
+### 2026-07-03 — adversarial verifier (round 3) — VERDICT: refuted (coverage only)
+The critic re-ran the Spike differential (`spike --isa=rv64gc --log-commits`, Spike 1.1.1-dev)
+over mideleg ∈ {0, 0x2, 0x20, 0x200, 0x222, all-ones} and confirmed **our sie/sip match Spike
+EXACTLY in every case** — the round-2 sip write-mask fix is behaviorally correct, and both
+STIP/SEIP directions verified (write via sip never latches them; delegated STIP/SEIP driven into
+mip are read-visible through sip). The implementation code is correct. BUT the mutation battery
+exposed a coverage hole: mutation **(d) — `sip` READ drops `& s_int_mask()` — SURVIVED** the
+committed test. The test only ever seeded pending bits into mip when mideleg=0x222 (all
+delegated), so it never exercised the sip read mask against an UNdelegated pending bit. The sie
+read path had exactly this test; the symmetric sip case was missing. Grounded: Spike with
+mideleg=0x2 and STIP+SEIP driven into mip reads `sip=0`, while the mutant returns raw mip bits.
+
+### 2026-07-03 — rework (round 3, test-only)
+Added the symmetric sip read-gate assertion to `privilege.rs::sie_sip_are_mideleg_gated`:
+delegate SSIP only, M-mode drives the UNdelegated STIP+SEIP into mip, assert `sip` reads 0
+(matches Spike). No production-code change — the code was already Spike-correct. Independently
+confirmed the mutation (d) revert (`SIP => self.warl_get(MIP)`, gate dropped) now FAILs the
+suite. Full mutation battery (a–e) now all CAUGHT. Gate green: fmt/clippy clean, workspace 0
+FAILED. Re-verifying.
