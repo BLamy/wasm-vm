@@ -3,7 +3,7 @@ id: E0-T19
 epic: 0
 title: Run the riscv-tests rv64ui-p suite as a smoke gate with quarantined Zicsr stubs
 priority: 19
-status: pending
+status: implemented
 depends_on: [E0-T18, E0-T13]
 estimate: M
 capstone: false
@@ -61,4 +61,40 @@ binaries from the pinned SHA and `cmp` against the cached ones. (5) Run one test
 skipped) — silently skipping instructions would desync future differential traces.
 
 ## Verification log
-(empty)
+### 2026-07-03 — worker claim — branch task/e0-t19-riscv-tests (stacked on e0-t18)
+Deliverables: the official riscv-tests rv64ui-p suite runs green under a cargo harness.
+- PINNED: tools/toolchain/versions.env gains RISCV_TESTS_SHA=34e6b6d1… + RISCV_TEST_ENV_SHA=
+  6de71edb…. tools/riscv-tests/build.sh clones both at those exact SHAs IN THE T13 CONTAINER
+  and compiles every isa/rv64ui/*.S against env/p, writing rv64ui-p-* ELFs to
+  tests/riscv-tests-bin/ (COMMITTED — 54 ELFs, 716K — so the cargo harness needs NO Docker;
+  documented in build.sh header). -march=rv64i_zicsr_zifencei so the p-env's CSR startup +
+  fence_i assemble; the emulator still runs pure rv64i + the quarantined stub.
+- REPRODUCIBLE: two-step compile-to-fixed-input.o then link (a one-step build leaks the random
+  temp .o name into .strtab — same E0-T14 pitfall), + -ffile-prefix-map, -frandom-seed=rv64ui-
+  <name>, -Wl,--build-id=none, SOURCE_DATE_EPOCH=0. Verified: two clean rebuilds are BYTE-
+  IDENTICAL (shasum of all ELFs matches; .strtab has no temp-.o name).
+- STUB: crates/core/src/zicsr_stub.rs behind feature=zicsr-stub, module doc declares deletion in
+  Epic 1. CsrFile (flat u64 map, mhartid reads 0), execute() handles CSRRW/S/C + immediate forms
+  (rd←OLD csr, set/clear with x0 source is a no-write) and MRET (pc←mepc) / WFI (nop). Hooks in at
+  the ONE point the base decoder returns Err(IllegalInstr) for CSR/xRET, only under the feature —
+  default builds are byte-for-byte unchanged. Executed CSR ops RETIRE and are traced (not skipped).
+  Hart gains a cfg-gated csrs field.
+- COMPLETION convention: the env exits via `li a7,93; ecall` (Level-0 EcallFromM): a0==0 pass,
+  a0=(n<<1)|1 fails case n; the harness reports the case number. (A direct tohost write / Exited is
+  also honored.)
+- HARNESS: crates/core/tests/riscv_tests.rs (#![cfg(feature=zicsr-stub)]) reads the committed ELFs
+  via std::fs, runs each, asserts pass, SKIP list = {fence_i: Zifencei; ma_data: exercises MISALIGNED
+  access succeeding, which Level 0 deliberately faults per E0-T08 — correct behavior, documented}.
+  52 run green, 2 skipped. crates/wasm/tests/riscv_tests.rs (generated, include_bytes the same 52
+  ELFs, #![cfg(all(wasm32, zicsr-stub))]) passes under wasm-pack test --node --features zicsr-stub.
+- QUARANTINE: tools/riscv-tests/check-quarantine.sh — default release build has 0 `zicsr` symbols
+  (nm), feature build has 2 (proves the check discriminates). make test-riscv runs native+wasm; CI
+  ci.yml test job runs the native suite + quarantine, wasm job runs the wasm suite.
+- SENSITIVITY (self-checked): SRA→SRL mutation → rv64ui-p-sra FAILS at case #3; reverted. The suite
+  catches decoder bugs and names the case (verifier angle 1).
+Gates: fmt; clippy --workspace --all-targets --all-features -D warnings 0; workspace tests 0 FAILED
+(riscv cfg'd out of the default run); riscv native suite ok (52 pass, 2 skip); quarantine OK; wasm
+riscv ok; zero-cost --selftest OK; feature matrix builds.
+rr: N/A (macOS). Verifier angles open: mutation trio SRA/SRL + B-imm bit-11 + LWU-sign (angle 1),
+full set incl. skips diffed vs SKIP (2), mret not masking a wrong trap cause (3), rebuild+cmp vs
+committed (4, byte-identical here), and --trace of a test showing the stub's CSR ops retired (5).

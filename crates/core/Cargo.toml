@@ -18,6 +18,9 @@ license.workspace = true
 default = ["std"]
 std = ["log/std"]
 trace = []
+# QUARANTINED Zicsr/privilege scaffolding for the riscv-tests p-env (E0-T19). Off by
+# default and out of the E0-T20 differential config; Epic 1 deletes it. See zicsr_stub.rs.
+zicsr-stub = []
 
 [dependencies]
 # Web/JS crates (wasm-bindgen, js-sys, web-sys) are FORBIDDEN here — that is the
