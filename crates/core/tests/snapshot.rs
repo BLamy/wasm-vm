@@ -49,6 +49,52 @@ fn known_answer_digest_matches_independent_python() {
 }
 
 #[test]
+fn state_sha256_line_is_the_frozen_dump_state_contract() {
+    // MUT-H guard: state_sha256_line() is the --dump-state final line (E0-T18 wires the
+    // flag). Its format is a frozen contract, so pin it BOTH by literal prefix and by the
+    // exact digest — a refactor to "state XXHACKED=" or a different digest must go red.
+    let mut m = Machine::new(MIB);
+    seed_mod251(&mut m, MIB);
+    let snap = m.snapshot();
+    let line = snap.state_sha256_line();
+    assert_eq!(
+        line,
+        format!("state sha256={KAT_1MIB_MOD251}"),
+        "the --dump-state line format is frozen: 'state sha256=<64 hex>'"
+    );
+    assert!(
+        line.starts_with("state sha256="),
+        "literal prefix is part of the contract"
+    );
+    // Independently: the 64 hex chars after the prefix ARE the memory digest.
+    assert_eq!(&line["state sha256=".len()..], snap.hex_digest());
+    assert_eq!(
+        line.len(),
+        "state sha256=".len() + 64,
+        "exactly 64 hex digits"
+    );
+}
+
+#[test]
+fn debug_impl_shows_pc_and_full_hex_digest() {
+    // MUT-I guard: the Debug rendering must surface the real pc and the full memory
+    // digest hex (diagnostics leaning on Debug would otherwise silently lie).
+    let mut m = Machine::new(MIB);
+    seed_mod251(&mut m, MIB);
+    m.hart_mut().regs.pc = DRAM_BASE + 0x1234;
+    let snap = m.snapshot();
+    let dbg = format!("{snap:?}");
+    assert!(
+        dbg.contains("0x0000000080001234"),
+        "Debug must show the real pc: {dbg}"
+    );
+    assert!(
+        dbg.contains(KAT_1MIB_MOD251),
+        "Debug must show the full digest hex: {dbg}"
+    );
+}
+
+#[test]
 fn flipping_any_single_byte_changes_the_digest() {
     let mut m = Machine::new(MIB);
     seed_mod251(&mut m, MIB);

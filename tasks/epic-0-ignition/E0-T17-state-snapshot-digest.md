@@ -3,7 +3,7 @@ id: E0-T17
 epic: 0
 title: Machine state snapshot and deterministic digest for test assertions
 priority: 17
-status: implemented
+status: verified
 depends_on: [E0-T07]
 estimate: S
 capstone: false
@@ -89,3 +89,23 @@ over the suite and CI runs no miri step. Verifier angles left open: independent 
 RAM dump vs mem_digest (angle 1), 10k-instr memops native-vs-wasm Snapshot (angle 3), and a
 partial-coverage mutation (digest only loaded segments / skip last page) — flip+tail tests target
 exactly that.
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: refuted
+- Independent recomputation — HELD. Python hashlib reproduced both KATs (mod-251 631b8402…, zero 30e14955…); dumped post-run loops RAM to disk + system `shasum -a 256` = 0a18330c…376a48 (full 1 MiB dumped → digest covers ALL RAM, not just ELF segments). Truthful.
+- Mutation testing — 7 KILLED, 2 SURVIVED. KILLED: truncate-last-4096 (poking_the_last_ram_byte + 3), empty-slice (4), hash-xregs-into-digest (KAT), base-into-digest (KAT), snapshot-bumps-pc (stable + purity), register-off-by-one (loops golden + stable). SURVIVED MUT-H: rewriting state_sha256_line() format "state sha256=" → "state XXHACKED=" stays GREEN — the method is a self-declared frozen --dump-state contract referenced by ZERO tests (E0-T15 Mutation-C / E0-T16 D-E shape: output path guarded only by its own definition). SURVIVED MUT-I: breaking the Debug mem_digest field survives.
+- Cross-build — HELD + EXECUTED. wasm-pack test --node ran loops_snapshot_matches_native_golden_on_wasm32 → ok; wasm32 pc/xregs/digest byte-identical to native golden.
+- Purity — STRONG. Purity test compares BOTH full retired-instruction trace AND final Snapshot; kills any perturbation.
+- no_std — HELD. sha2 default-features=false; cargo tree --no-default-features shows only cpufeatures/default + digest/default, no std/asm; wasm32 no-default build succeeds.
+- Honesty — clean. KATs genuinely independent (Python-reproduced); loops golden hand-verifiable (external shasum + wasm both confirm); no vacuous assertions.
+- DEMAND: commit a test pinning state_sha256_line() to "state sha256=<64 hex>"; secondarily a Debug-format assertion (MUT-I).
+
+### 2026-07-03 — rework after refutation (worker)
+Applied the demand. Added two tests to crates/core/tests/snapshot.rs:
+state_sha256_line_is_the_frozen_dump_state_contract — pins the --dump-state line to the exact
+format `state sha256=<64 hex>` (literal-prefix check + full string equality to
+`state sha256=<KAT>` + the 64 chars after the prefix == hex_digest() + length == prefix+64);
+debug_impl_shows_pc_and_full_hex_digest — asserts Debug surfaces the real pc (0x…1234) and the
+full digest hex. Re-ran the verifier's exact survivors: MUT-H (format → "state XXHACKED=") KILLED
+by the frozen-contract test; MUT-I (Debug mem_digest → literal) KILLED by the Debug test; each
+reverted, snapshot.rs clean. Gates: clippy -D warnings exit 0, native + workspace 0 FAILED,
+snapshot suite 8/8. Status verified.
