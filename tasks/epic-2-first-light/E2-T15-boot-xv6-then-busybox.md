@@ -1,7 +1,7 @@
 ---
 id: E2-T15
 epic: 2
-title: Milestone — unmodified Linux boots to an interactive busybox shell (native CLI)
+title: Milestone — boot xv6-riscv to its shell, then unmodified Linux to a busybox shell (native CLI)
 priority: 215
 status: pending
 depends_on: [E2-T02, E2-T06, E2-T07, E2-T13, E2-T14]
@@ -10,9 +10,14 @@ capstone: false
 ---
 
 ## Goal
-The first light itself, minimal form: the pinned unmodified kernel + busybox initramfs
-boots on the native CLI build to an interactive shell on ttyS0 — proving entry contract,
-DTB, SBI (all extensions), CLINT/PLIC, and UART work together as a system.
+The first light itself, in two named steps. **Step 1 — xv6-riscv:** boot the tiny,
+self-contained xv6-riscv kernel (github.com/mit-pdos/xv6-riscv) to its `$` shell on the
+native CLI build. xv6 needs only Layer A + a minimal Layer B (16550 UART, virtio-blk for
+its filesystem, CLINT timer), so it is the cleanest possible proof that the machine boots a
+real OS — reachable with far less than the full Linux platform, which is exactly why it is
+the opening milestone (it straddles E1/E2). **Step 2 — Linux:** the pinned unmodified Linux
+kernel + busybox initramfs boots to an interactive shell on ttyS0 — proving entry contract,
+DTB, SBI (all extensions), CLINT/PLIC, and UART work together as a full system.
 
 ## Context
 This is an integration task: expect zero new device code and days of debugging existing
@@ -29,6 +34,9 @@ it). Fix bugs where they live (upstream task's crate) and append what was found 
 task's log — this task's diff should be mostly glue and fixes, not features.
 
 ## Deliverables
+- `tools/boot-xv6.sh`: builds/fetches the pinned xv6-riscv kernel + fs.img and boots it to
+  the `$` shell on the native CLI (the minimal-platform proof), with a scripted smoke test
+  that runs `ls`, `echo`, and a `usertests` subset.
 - Working `wasm-vm boot` CLI path + a `tools/boot-busybox.sh` one-liner using released
   artifacts.
 - An expect-style scripted smoke test (`tests/boot_busybox.rs` driving the CLI pty):
@@ -36,6 +44,9 @@ task's log — this task's diff should be mostly glue and fixes, not features.
 - Bug notes in this file's log for every upstream fix made (traceability).
 
 ## Acceptance criteria
+- [ ] Cold `tools/boot-xv6.sh` boots xv6-riscv to `$`; `ls` lists the fs, `echo hi` echoes,
+      and the scripted `usertests` subset passes (proves traps, virtio-blk, and the timer
+      on the minimal platform).
 - [ ] Cold `tools/boot-busybox.sh` reaches a shell prompt; scripted smoke test passes.
 - [ ] dmesg shows SBI v2.0 detected with TIME/IPI/RFENCE/HSM/DBCN probe lines, zero
       WARN/BUG/Oops/"unhandled" lines, zero rcu stall warnings.

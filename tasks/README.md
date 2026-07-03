@@ -1,8 +1,11 @@
 # wasm-vm Task System
 
-All work on wasm-vm is decomposed into task files in this directory, organized into seven
-epic folders (`epic-0-ignition/` … `epic-6-transcendence/`) that stack like a Kardashev
-scale — see `../ROADMAP.md` for what each level means and gets you.
+All work on wasm-vm is decomposed into task files in this directory, organized into epic
+folders (`epic-0-ignition/` … `epic-8-chrome-in-chrome/`) that stack like a Kardashev
+scale and ladder toward named, runnable milestones (xv6, busybox+QuickJS+Node, fast Node,
+GUI apps, x86_64-via-box64 + a desktop, and a time-travelable stock Chromium) — see
+`../ROADMAP.md` for the capability stack (Layers A–G), the targets→epic map, and what each
+level gets you.
 
 ## The priority queue
 

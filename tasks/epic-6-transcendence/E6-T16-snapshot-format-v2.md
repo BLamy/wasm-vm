@@ -12,7 +12,11 @@ capstone: false
 ## Goal
 A versioned, compressed, integrity-checked snapshot container replacing Epic 3's v1
 format — designed for the sharing and cloud-sync tasks that follow: chunked for ranged
-fetch, self-describing enough to migrate forward, and honest about compatibility.
+fetch, self-describing enough to migrate forward, and honest about compatibility. This is
+also the **Layer G (determinism & record/replay) hardening milestone**: these snapshots are
+the *keyframes* Level 8's time-travel replay seeks to before replaying forward, so the
+format's integrity and fast, deterministic restore are load-bearing for "Chrome in Chrome"
+being time-travelable (E8-T06/T07).
 
 ## Context
 v1 (Epic 3) was a working-format: uncompressed, implicitly versioned by code revision.

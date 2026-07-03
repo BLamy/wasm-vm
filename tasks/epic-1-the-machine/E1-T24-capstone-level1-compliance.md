@@ -21,7 +21,10 @@ T19 built the riscv-tests wall and T20 the RISCOF flow, each tolerating a docume
 allowlist during development. The capstone burns both allowlists to zero and freezes the
 result as the epic's demonstrable threshold. Per tasks/README.md, a capstone must be
 demonstrated from a cold start: fresh clone, fresh browser profile, no development
-residue. The demo is one command plus one page: `tools/level1_gate.sh` runs native
+residue. The reward waiting on the far side of this gate is the first real OS kernel:
+**xv6-riscv** needs only this Layer-A machine plus a minimal slice of Epic 2's platform
+(UART, virtio-blk, a timer), so xv6 straddles the E1/E2 boundary and is Epic 2's opening
+milestone (E2-T15). The demo is one command plus one page: `tools/level1_gate.sh` runs native
 riscv-tests, native RISCOF, the wasm riscv-tests job, and the wasm signature-equivalence
 check, and writes a single consolidated report; a static page shows the wasm leg running
 live in a browser tab (the ROADMAP's "in both native and WASM builds", made visible).
