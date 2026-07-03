@@ -1,7 +1,7 @@
 ---
 id: E3-T28
 epic: 3
-title: Capstone - persistent networked Alpine at webvm parity
+title: "Capstone: a real userland — busybox + QuickJS + interpreted Node.js on a persistent, networked Alpine (webvm parity)"
 priority: 328
 status: pending
 depends_on: [E3-T11, E3-T18, E3-T25, E3-T26, E3-T27]
@@ -10,11 +10,16 @@ capstone: true
 ---
 
 ## Goal
-The Level 3 threshold, demonstrated end-to-end from a cold start: load the page in a fresh
-browser profile, `apk add python3` against a real Alpine mirror through our network stack,
-write a Python script in the guest, reload the tab, and the script is still there and runs —
-with the whole flow feeling comparable to webvm.io/alpine.html. This is the epic's exit
-gate and the project's first release with standalone product value.
+The Level 3 threshold — a **real userland** — demonstrated end-to-end from a cold start:
+load the page in a fresh browser profile, drop into an interactive **busybox** shell,
+`apk add nodejs quickjs` against a real Alpine mirror through our network stack, run a
+**QuickJS** program (`qjs`) and a **Node.js** script (interpreted — slow is fine; this
+proves the userland ABI, not speed), write a file in the guest, reload the tab, and the
+runtimes and the file are still there and still run — the whole flow comparable to
+webvm.io/alpine.html. Node is the ABI stress test: futex, large `mmap`, W^X page flips, TLS,
+signals all get exercised, so a running interpreted Node is the proof the userland is
+correct. This is the epic's exit gate and the project's first release with standalone
+product value; Level 4 only has to make this *fast*.
 
 ## Context
 Everything in Epic 3 converges here; the capstone adds no new subsystems — it is the
@@ -28,23 +33,27 @@ is bounded by T27's recorded go/no-go tolerances — cite them, don't re-litigat
 ## Deliverables
 - `docs/capstone-e3.md`: the exact cold-start procedure — clean checkout, build, deploy,
   browser steps, expected outputs at each step, and the T27 tolerance citations.
-- Automated headless E2E (`tests/e2e/capstone_e3.*`) executing: cold boot → `apk update`
-  → `apk add python3` → `cat > /root/hello.py` (heredoc writing a script that prints a
-  computed value, e.g. `print(sum(range(100)))`) → `python3 /root/hello.py` asserted →
-  `sync` → tab close → new tab, same profile → `python3 /root/hello.py` asserted again →
-  `ls /root/hello.py` timestamp intact.
+- Automated headless E2E (`tests/e2e/capstone_e3.*`) executing: cold boot → busybox shell →
+  `apk update` → `apk add nodejs quickjs` → `cat > /root/hello.js` (heredoc writing a script
+  that prints a computed value, e.g. `console.log([...Array(100).keys()].reduce((a,b)=>a+b))`)
+  → `qjs /root/hello.js` asserted → `node /root/hello.js` asserted → `sync` → tab close →
+  new tab, same profile → `node /root/hello.js` asserted again → `ls /root/hello.js`
+  timestamp intact.
 - Glue fixes discovered during integration, each with a regression test in its home task's
   area.
 - Screen recording of the human-paced demo linked from the README.
 
 ## Acceptance criteria
-- [ ] The automated E2E passes from a clean checkout on CI-equivalent settings: script
-      output `4950` appears both before and after the reload, with zero manual
-      intervention between page load and assertions.
+- [ ] The automated E2E passes from a clean checkout on CI-equivalent settings: both `qjs`
+      and `node` print `4950`, and the `node` output `4950` appears both before and after
+      the reload, with zero manual intervention between page load and assertions.
+- [ ] Interpreted Node.js actually executes a non-trivial script (e.g. a small `http`
+      one-liner or a JSON round-trip) without crashing — proving the userland ABI (futex,
+      mmap, W^X, signals) is correct; slow wall-clock is explicitly acceptable at this level.
 - [ ] Cold-load to usable prompt and reload-to-usable-prompt times are within the T27
       go/no-go tolerances (numbers recorded in the log alongside the T27 baselines).
 - [ ] The reload boots via the fast path (T24 resume or warm cold-boot per design) and
-      python3 runs without `apk fix` or any repair step — the install was durable per T08
+      node runs without `apk fix` or any repair step — the install was durable per T08
       semantics (`sync` honored).
 - [ ] The full flow runs with CSP enforced, cross-origin isolation on (T26), and the
       relay requiring auth (T19) — no dev-mode relaxations (asserted by the E2E checking

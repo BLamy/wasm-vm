@@ -1,7 +1,7 @@
 ---
 id: E5-T28
 epic: 5
-title: "Capstone: a real Linux desktop in the tab — type, hear, drag"
+title: "Capstone: a browser rendering surface + real GUI apps — type, hear, drag"
 priority: 528
 status: pending
 depends_on: [E5-T13, E5-T15, E5-T18, E5-T20, E5-T24, E5-T25]
@@ -10,10 +10,14 @@ capstone: true
 ---
 
 ## Goal
-The Level 5 threshold, demonstrated end-to-end from a cold start: the page boots
-unmodified Alpine riscv64 to a graphical desktop; a terminal emulator opens *inside the
-guest desktop*; real keyboard typing works in it; a sound audibly plays; and a window
-drags at usable FPS — one continuous session, no cherry-picked clips.
+The Level 5 threshold — a **browser rendering surface** with **real GUI applications** on
+it, Layer E — demonstrated end-to-end from a cold start: the page boots unmodified Alpine
+riscv64 to a graphical surface (a compositor + at least one real GUI app, e.g. a terminal
+emulator and a second graphical application); real keyboard typing works in it; a sound
+audibly plays; and a window drags at usable FPS — one continuous session, no cherry-picked
+clips. This proves the pixels-out / input-in path and the compositor. The full multi-app
+*desktop* — especially one compositing x86_64 apps under box64 — is Level 7's (Babel) job;
+Level 5 delivers the surface those levels paint on.
 
 ## Context
 Every piece exists and is individually verified; the capstone proves they hold

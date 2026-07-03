@@ -1,7 +1,7 @@
 ---
 id: E4-T28
 epic: 4
-title: Capstone — 10x CoreMark, sub-5-second boot, interactive gcc, zero regressions
+title: "Capstone: interactive/fast Node.js (Bun stretch), 10x CoreMark, sub-5s boot, zero regressions"
 priority: 428
 status: pending
 depends_on: [E4-T24, E4-T26, E4-T27]
@@ -10,11 +10,18 @@ capstone: true
 ---
 
 ## Goal
-The Level 4 threshold demonstrated end-to-end from a cold start: in-browser CoreMark ≥ 10x
-the recorded Level 3 interpreter baseline, unmodified Alpine kernel boot to login in under
-5 seconds, `gcc -O2` of the pinned non-trivial C file completing in-guest at interactive
-speed, and the full compliance suite green under JIT — the moment the machine crosses from
-"toy shell" to "you can develop software inside it."
+The Level 4 threshold demonstrated end-to-end from a cold start. The headline named target
+is **interactive, fast Node.js**: the same runtime that crawled at Level 3 (E3-T28), now
+responsive — a REPL that echoes and evaluates without perceptible lag, and a real
+`node`-driven workload (e.g. a small HTTP server handling requests, or `npm`-style script
+execution) that feels usable. Because V8 emits machine code at runtime, this is also the
+proof that **FENCE.I i-cache coherence** (E4-T16) works: the guest's own JIT is writing code
+into pages we have translated. Supporting gates: in-browser CoreMark ≥ 10x the recorded
+Level 3 interpreter baseline, unmodified Alpine kernel boot to login under 5 seconds, and the
+full compliance suite green under JIT. **Bun** is a documented *stretch*: attempt it, but its
+JavaScriptCore backend has a much weaker/immature RISC-V JIT, so a Bun result is recorded as
+bonus/gap data, never a gate. This is the moment the machine crosses from "toy shell" to
+"you can develop software inside it."
 
 ## Context
 This capstone is arithmetic against numbers already in the ledger: the denominators are
@@ -40,6 +47,11 @@ threshold, chain depth) — but no new subsystems.
   stopwatch and interleaved interactive typing.
 
 ## Acceptance criteria
+- [ ] Interactive Node.js in the browser: a `node` REPL echoes keystrokes with p95 < 100 ms
+      and a scripted `node` HTTP workload serves N requests at a recorded throughput ≥ 10x
+      its Level 3 interpreted baseline; the session runs clean under JIT (no i-cache/FENCE.I
+      coherence faults from V8's own code generation). Bun attempted; result or gap recorded
+      in the results JSON as non-gating.
 - [ ] CoreMark (browser, default config, cold profile): ≥ 10x the ledgered
       `level3-interpreter` browser baseline.
 - [ ] Kernel boot (OpenSBI first byte → `login:`, E4-T04 definition): < 5.0 s median of 3,
