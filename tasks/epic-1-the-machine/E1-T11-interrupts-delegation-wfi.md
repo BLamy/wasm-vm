@@ -3,7 +3,7 @@ id: E1-T11
 epic: 1
 title: Interrupt architecture — mie/mip, mideleg/medeleg trap delegation, priority, WFI
 priority: 111
-status: pending
+status: implemented
 depends_on: [E1-T10]
 estimate: L
 capstone: false
@@ -43,17 +43,21 @@ completes when any locally-enabled-and-pending interrupt exists even if globally
   {mode, MIE/SIE, mideleg} combination and asserting which trap fires and where.
 
 ## Acceptance criteria
-- [ ] With mideleg[5]=1 (STIP delegated), a pending-enabled supervisor timer interrupt in
-      U-mode traps to stvec with scause = 0x8000_0000_0000_0005 and sstatus.SPP=0.
-- [ ] The same interrupt while in M-mode does NOT fire (M > delegated target S).
-- [ ] All six lines pending+enabled in M with MIE=1 → MEIP wins; clear it → MSIP; etc.,
-      full priority chain asserted.
-- [ ] mepc after an interrupt points at the first unexecuted instruction; the interrupted
-      instruction either fully retired or didn't run (no mid-instruction state).
-- [ ] WFI with mstatus.MIE=0 but mie.MTIE=1 returns when MTIP goes pending (no trap taken,
-      execution continues after WFI).
-- [ ] Vectored stvec: interrupt cause 5 enters at BASE+20; synchronous still at BASE.
-- [ ] Writes to mip.MTIP from software are ignored (readback unchanged).
+- [x] mideleg[5]=1 STIP delegated → U-mode S timer traps to stvec, scause = 0x8000…0005,
+      SPP=0 (`interrupts::delegated_interrupt_delivers_to_stvec_with_scause_and_spp`).
+- [x] Same interrupt in M-mode does NOT fire (`delegated_stimer_fires_in_u_not_in_m`).
+- [x] Full priority chain MEI>MSI>MTI>SEI>SSI>STI in M with MIE=1
+      (`full_priority_chain_in_m_with_mie`); untakeable-higher-skipped
+      (`higher_priority_but_untakeable_is_skipped`).
+- [x] mepc = first unexecuted instruction; the interrupted instr fully retired or didn't run
+      (`interrupt_taken_after_an_instruction_retires_precise_mepc`).
+- [x] WFI with MIE=0 but MTIE=1 + MTIP pending → no trap, execution continues after WFI
+      (`wfi_with_mie_clear_and_mtip_pending_continues_no_trap`).
+- [x] Vectored: interrupt cause 5 → BASE+20; synchronous → BASE
+      (`vectored_stvec_interrupt_enters_at_base_plus_4x_cause`); vectored M-SSI → BASE+4
+      (`vectored_mtvec_m_interrupt_ssi_enters_at_base_plus_4` — the rv64mi illegal.S path).
+- [x] mip.MTIP software-write ignored; device-driven bit survives an RMW `csrw`
+      (`mip_mtip_software_write_ignored_device_bit_survives`).
 
 ## Adversarial verification
 Refute with delegation corner cases diffed against Spike/QEMU: mideleg bit set while the
@@ -69,4 +73,35 @@ sequence to native given the same injection point in the instruction stream). An
 divergence from Spike on the priority matrix or any hang in the WFI idiom refutes.
 
 ## Verification log
+
+### 2026-07-03 — implementation
+Built on E1-T10's precise delivery:
+- **`Csrs::next_interrupt()`** — the loop-top sampler: `mip & mie`, priority order MEI>MSI>MTI>
+  SEI>SSI>STI, per-line target (mideleg → S else M), and the take rule "current < target, OR
+  current == target with xIE". M-interrupts are never maskable from below; a higher-priority but
+  untakeable interrupt is skipped so a takeable lower one fires. Returns the mcause + to-S flag.
+- **Delegation**: `delegates_to_s(cause, is_interrupt)` — delegated only when the deleg bit is set
+  AND running below M (a trap taken in M never goes downward). `take_trap` now routes exceptions
+  through medeleg (→ `deliver_trap_s`/stvec) and `take_interrupt` routes interrupts through
+  mideleg. `deliver_trap_s` writes sepc/scause/stval + `trap_to_s`. Vectored (MODE=1) interrupts
+  enter at BASE + 4×cause via `m/s_handler_entry`; synchronous traps ignore MODE.
+- **WARL masks**: mie → 0xAAA (six implemented bits); mideleg → 0x222 (S-interrupts only —
+  M-interrupt bits read-only 0); medeleg → {0..=9,12,13,15} with cause 11 (ecall-from-M) and
+  reserved 10/14 hardwired 0. mip software write (`csrw mip` from M) is an RMW over SSIP/STIP/SEIP
+  only — MSIP/MTIP/MEIP are read-only to software and driven by `set_mip_bit` (the CLINT/PLIC and
+  test hardware path).
+- **Run loop**: samples `next_interrupt()` at the top of each iteration (instruction boundary,
+  precise) and delivers before fetching; taking the trap clears xIE so a pending line does not
+  re-fire under its own handler. The unhandled-trap escape now checks the *target* tvec (stvec for
+  a delegated exception, mtvec otherwise) so a guest with only stvec set delivers rather than escapes.
+- **WFI** stays a spec-compliant hint-NOP (retires; the loop-top sampler provides the wakeup), with
+  the E1-T09 TW trap honored — the MIE=0/poll-mip idiom cannot hang.
+
+Tests: `crates/core/tests/interrupts.rs` (12) — priority chain, MIE/SIE gating, delegation to S vs
+M, untakeable-skip, WARL masks, mip device-bit RMW, end-to-end delivery to stvec (scause/sepc/SPP),
+vectored S- and M-interrupts, WFI idiom, precise-mepc-after-retire. The rv64mi-p `illegal` ELF now
+advances through its vectored-interrupt + S-mode-entry + WFI stages (T11) to TESTNUM 5 (SFENCE.VMA /
+satp / TVM — E1-T15/T16), confirming the T11 machinery it exercises works; it stays excluded pending
+virtual memory. Local gate green: fmt clean; clippy 0 (real + zicsr-stub, all-targets); `cargo test
+--workspace` 0 `test result: FAILED`; both wasm builds 0 FAILED. Awaiting adversarial verification.
 (empty)

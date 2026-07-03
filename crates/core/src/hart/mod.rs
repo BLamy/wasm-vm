@@ -434,8 +434,31 @@ impl Hart {
     /// of a trapping instruction, so mepc/mcause/mtval are exact and RAM/regs are pristine.
     /// (medeleg delegation to S-mode lands in E1-T11; until then every trap is taken in M.)
     pub fn take_trap(&mut self, trap: Trap, epc: u64) {
-        self.csr.deliver_trap_m(epc, trap.cause as u64, trap.tval);
-        self.regs.pc = self.csr.mtvec_base();
+        let cause = trap.cause as u64;
+        // E1-T11: an exception delegated by medeleg (and taken below M) enters S-mode; else M.
+        if self.csr.delegates_to_s(cause, false) {
+            self.csr.deliver_trap_s(epc, cause, trap.tval);
+            self.regs.pc = self.csr.s_handler_entry(cause, false);
+        } else {
+            self.csr.deliver_trap_m(epc, cause, trap.tval);
+            self.regs.pc = self.csr.m_handler_entry(cause, false);
+        }
+    }
+
+    /// Deliver a pending asynchronous interrupt (E1-T11) at an instruction boundary. `epc` is
+    /// the pc of the NEXT unexecuted instruction — interrupts are precise: the interrupted
+    /// instruction fully retired or never ran, so mepc/sepc points at the resume address.
+    /// `cause` is the full mcause (Interrupt bit 63 set); `to_s` routes to S-mode (per mideleg).
+    /// stval/mtval is 0 for an interrupt. Vectored MODE=1 enters at BASE + 4×cause_num.
+    pub fn take_interrupt(&mut self, cause: u64, to_s: bool, epc: u64) {
+        let cause_num = cause & !(1u64 << 63);
+        if to_s {
+            self.csr.deliver_trap_s(epc, cause, 0);
+            self.regs.pc = self.csr.s_handler_entry(cause_num, true);
+        } else {
+            self.csr.deliver_trap_m(epc, cause, 0);
+            self.regs.pc = self.csr.m_handler_entry(cause_num, true);
+        }
     }
 
     /// Execute a decoded instruction. Returns the retire info `(rd, value, mem)` for the
