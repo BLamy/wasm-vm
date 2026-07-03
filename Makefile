@@ -15,6 +15,7 @@ clippy:
 
 test:
 	cargo test --workspace
+	bash tools/ci/no-host-float.sh
 
 # The wasm32 target itself is guaranteed by rust-toolchain.toml (rustup installs the
 # pinned toolchain with its targets on first use); a non-rustup cargo fails loudly with

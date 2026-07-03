@@ -51,6 +51,8 @@ jobs:
           toolchain: ${{ steps.pin.outputs.toolchain }}
       - uses: Swatinem/rust-cache@v2
       - run: cargo test --workspace
+      # E1-T05: no host float arithmetic in the guest FP datapath (softfloat backend only).
+      - run: bash tools/ci/no-host-float.sh
       # riscv-tests rv64ui-p smoke gate (E0-T19) over the committed ELFs — no Docker.
       - run: cargo test -p wasm-vm-core --features zicsr-stub --test riscv_tests
       - run: bash tools/riscv-tests/check-quarantine.sh
