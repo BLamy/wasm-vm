@@ -113,3 +113,10 @@ together_both_write (both sinks, equal record counts), dump_regs_alone_omits_the
 JSON parsing. Re-ran the verifier's exact survivors: MUT-A KILLED (2 tests red), MUT-B KILLED (1),
 MUT-C KILLED (1); each reverted, main.rs clean. Gates: clippy -D warnings 0, workspace 0 FAILED,
 cli suite 20/20. Status verified.
+
+### 2026-07-03 — adversarial verifier (re-verification) — VERDICT: verified
+- (a) MUT-A (--trace-json → no-op) — RED (18/2), killed by trace_json_flag_emits_parseable_json_lines + trace_and_trace_json_together_both_write.
+- (b) MUT-B (Truncated 67→65) — RED (19/1), killed by truncated_elf_exits_67_distinctly.
+- (c) MUT-C (trace-IO 74→0) — RED (19/1), killed by trace_to_unwritable_path_exits_74_without_panic.
+- (d) New same-family: MUT-D (Truncated 67→68, collide with SegmentOutOfRam) — RED (codes pinned distinctly, not just nonzero); MUT-E (json_line drops "insn") — RED on BOTH unit json_line_shapes and integration trace_json test (proves it asserts the key, not just parseability). No residual.
+- (e) Non-vacuity + regression: --trace-json test green at baseline, red under MUT-A/MUT-E, really parses JSON; full suite 20+2 green; earlier retired=→stdout control still kills purity tests (14/6). VERIFIED at 713dc47.
