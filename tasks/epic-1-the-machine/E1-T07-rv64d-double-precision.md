@@ -3,7 +3,7 @@ id: E1-T07
 epic: 1
 title: RV64D double-precision extension and F/D interaction semantics
 priority: 107
-status: pending
+status: verified
 depends_on: [E1-T06]
 estimate: M
 capstone: false
@@ -54,4 +54,60 @@ with NaN-payload-rich seeds; compare full f-reg file + fcsr each retire. Any nat
 divergence in result bits or flags refutes (this is the pre-test for T22).
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — worker (implementation claim)
+Full RV64D execution, a near-exact parallel of T06 for f64 on the existing infrastructure:
+- **Decode** (`crates/core/src/decode.rs`): 15 D variants (FLD/FSD funct3=011; OP-FP fmt=01
+  arms; fused fmt=01; FMV.X.D/FMV.D.X; the two format conversions FCVT.S.D/FCVT.D.S). The
+  F handling is untouched; D adds new funct7 arms. `FcvtDS` stores its (ignored) rm for
+  round-trip fidelity.
+- **f64 helpers** (`softfloat.rs`): `fclass_f64`/`f64_minmax`/`f64_to_int`/`f64_from_int`
+  mirror the f32 ones; the FCVT.S.D/FCVT.D.S pair reuses the existing `f64_to_f32`/
+  `f32_to_f64`.
+- **Execute** (`hart/mod.rs`): D arms via `F64::{...}`. **f64 fills the register — NO
+  NaN-boxing**: operands/results use `read_raw`/`write_raw`. FMV.X.D/FMV.D.X are raw 64-bit
+  moves. FCVT.S.D narrows (rounds, result boxed via `write_f32`); FCVT.D.S widens (exact,
+  input `read_f32`-checked). Every D op is in the `is_fp` FS guard.
+
+Evidence (local):
+- **Official riscv-tests rv64ud-p: all 12 ELFs pass** via `tohost` under the real-CSR
+  harness (`riscv_tests_f.rs::rv64ud_p_suite_all_pass`; fadd/fclass/fcmp/fcvt/fcvt_w/fdiv/
+  fmadd/fmin/ldst/move/recoding/structural). Built by `tools/riscv-tests/build-rv64ud.sh`
+  (`-march=rv64ifd_zicsr`), committed. rv64uf/ui/um/ua still pass.
+- `crates/core/tests/rv64d.rs` (6): FCVT.D.S(box-violating)→f64 canonical qNaN; FCVT.S.D
+  result NaN-boxed (via FMV.X.D) + 1e300→+inf with OF|NX; **FCVT.D.S flag-clean over 200k
+  random finite f32**; FCVT.L.D(NaN)→i64::MAX+NV, FCVT.LU.D(-1.0)→0+NV; FMIN/FMAX.D two-qNaN
+  → canonical; F/D register aliasing (f64 seen as qNaN by f32 ops; boxed f32 seen as a NaN
+  by FCLASS.D).
+- wasm32: `crates/wasm/tests/rv64d.rs` bit-identical to native under both feature builds
+  (the T22 determinism pre-test).
+- Decoder space: exhaustive 2^32 sweep passes with the analytic tally **325,400,581**
+  (brute-force verified; D contributions documented). decode_props FP-D round-trip (all rm)
+  + the fmt=10-reserved negative pass.
+- Gate: fmt clean, clippy 0 warnings, `cargo test --workspace` 0 FAILED, both wasm builds
+  0 FAILED, no-host-float OK.
+
+### 2026-07-03 — adversarial verifier (fresh cold clone) — VERDICT: verified
+Could not refute after all ten attacks (real Spike `--isa=rv64ifd` + an independent host-f64
+oracle harness built outside the repo).
+- **rv64ud-p:** all 12 ELFs exit 0 under Spike; emulator `riscv_tests_f` 2 passed (ud+uf, no
+  F regression).
+- **Decoded-path differential: 13,800,000 checks** (300k iters × ~46 ops incl. all D compute/
+  sgnj/min-max/cmp/class/FCVT both directions/FMV/FCVT.S.D/FCVT.D.S, NaN/inf/±0/subnormal/
+  2^53-biased, all 5 rounding modes incl. DYN) vs an independent oracle — **0 divergences**.
+  Directed rounding closed against Spike commit-log (fdiv/fsqrt/fadd/fmadd × RNE/RTZ/RDN/RUP/
+  RMM) 10/10 exact on bits+fflags.
+- **F/D aliasing:** f32-op/FCLASS.S on an f64-filled reg → canonical qNaN; boxed f32 read as
+  f64 → full 64-bit NaN classification; FMV raw.
+- **Conversion boundaries (vs Spike):** FCVT.D.L(2^53+1)+NX; FCVT.D.W(i32::MIN) exact;
+  FCVT.S.D(1e300)=+inf NaN-boxed OF|NX.
+- **FCLASS.D / saturation (vs Spike):** sNaN/qNaN/subnormal classes; NaN→max, -ovf→min,
+  neg→0(unsigned) all +NV across widths/modes.
+- **Panic hunt:** 13.8M release + 4.6M debug-assert ops, 0 panics.
+- **Mutation audit (7):** FpArithD-reads-f32, FCVT.S.D-write_raw, FCVT.D.S-read_raw,
+  FMV.X.D-canonicalizes, f64_minmax +0-over-−0, fclass sNaN-bit-swap, drop-fmt=01-fused —
+  each caught by a committed test. No survivors.
+- **Tally:** 325,400,581 matches the 2^32 sweep; reserved fmt=10/11 illegal (OP-FP + fused).
+- **native/wasm parity:** rv64d wasm test bit-identical under both feature builds. Gate green.
+
+VERIFIED — E1-T07 complete. The FPU is functionally complete for RV64GC.

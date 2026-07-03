@@ -3,7 +3,7 @@ id: E0-T12
 epic: 0
 title: Stub MMIO console device for guest putchar output
 priority: 12
-status: pending
+status: verified
 depends_on: [E0-T04]
 estimate: S
 capstone: false
@@ -54,4 +54,43 @@ under `wasm-pack test --node` and byte-compare captured output — divergence re
 writing to all 255 unused offsets in a loop.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commit f331f8a (branch task/e0-t12-console, stacked on e0-t11)
+Deliverables: crates/core/src/dev/console.rs — ConsoleSink{put_byte(&mut,u8)} CORE trait
+(bet #2, browser-ignorant); Uart0Stub<S: ConsoleSink> impls MmioDevice; mmap::UART0_BASE=
+0x1000_0000, UART0_LEN=0x100 (added to bus::mmap alongside DRAM_BASE). Semantics: writes to
+THR (offset 0) emit the LOW byte at ANY access width (documented; sd of an 8-byte word →
+ONE byte); writes to other offsets ignored + noted-once via a bounded [u64;4] bitmask (256
+bits, no growth — a hostile guest hammering all 255 unused offsets costs O(1) device state,
+angle 5); reads return 0 except LSR (offset 5) → 0x60 = THR-empty|tx-idle so naive
+`while(!(lsr&0x20));` loops terminate; reads and writes NEVER fault. VecSink test double
+(Rc<RefCell<Vec<u8>>> capture, crate-level so wasm mirrors + verifiers share it). Note for
+E0-T20: Spike maps this page as RAM (spike -m) so traces align; output only on our side.
+Tests: 3 core unit (low-byte-every-width, LSR-ready/THR-zero/no-faults incl. the misaligned
+word-at-offset-5 fault, other-offset-ignored-logged-once) + 6 integration (binary-safe
+Hi\n\0\xFF → 48 69 0A 00 FF; ALL 256 byte values byte-exact vs (0..=255).collect, angle 1
+proactive; every-width-one-low-byte with len==4; one-past-window UART0_BASE+0x100 access
+fault vs last-offset-ignored, angle 3; 1M flood + all-offsets hammer with device state
+bounded; a GUEST PROGRAM printing "Hi!\n" via an li/sb loop stepped through the real hart)
++ 3 wasm32 mirrors. miri 11/11 lib + 6/6 integration (flood cfg(miri)-reduced 1M→5k).
+Gates: fmt / clippy exit 0 / all native suites 0 FAILED (grep-checked per the local-gate
+lesson) + wasm 0 FAILED / no_std wasm32 / CI green run 28631679218.
+rr: SKIPPED locally (macOS/no PMU). Angle 4 (CLI vs wasm byte-compare) recorded for
+E0-T18/E0-T22 when the stdout + JS sinks land.
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: verified
+- P1 byte-exactness — HELD. All 256 values 0..=255 captured with zero translation vs an independently-built expected (one 0x0D + one 0x0A, no CRLF); interleaved null/newline/high-byte payload byte-exact. VecSink pushes `value as u8` raw — no UTF-8/newline path exists.
+- P2 width — HELD. sd → single low byte, one byte per store across B1/B2/B4/B8 with high garbage; store16 at off 0 → one low byte; stores at off 1/4/5/0xFF emit nothing.
+- P3 boundary — HELD. UART0_BASE+0x100 and store64@+0xFC → BusFault::Access, device never invoked (RecordingDevice log empty). Full-containment routing.
+- P5 bounded logging — HELD. [u64;4] mask, offset&0xFF indexing always in-range; 2.55M-store hammer leaves sink empty; sizeof(Uart0Stub) ≤ 64; no Vec/HashMap.
+- P6 LSR/read — HELD. offset 5 → 0x60 == bits 5|6 exactly, every other offset 0, load16@5 → Misaligned (bus), reads never fault. A real lbu/andi 0x20/beq polling loop stepped through the actual Hart TERMINATED in <100 steps and printed 'Z'.
+- rr — SKIPPED loud (macOS/no PMU; pure device logic, no unsafe/threads). Mitigation: real-hart polling-loop + guest sb-loop exercise decoder→hart→bus→device end to end.
+- COVERAGE: all 7 mutations KILLED by the worker's OWN suite — full-width-emit, LSR 0x20, LSR@6, non-THR-also-emits, note_offset always-true, reads-fault, THR@offset1. No survivor. Every changed hunk executed.
+- MOCK/HONESTY: VecSink capture genuine (write→put_byte on the Rc<RefCell> shared buffer, no shortcut). Claim commit tasks-only. miri lib 3/3 + integration 6/6 clean (flood honestly cfg(miri)-reduced), verifier 12/13 under miri (hammer skipped for cost). wasm 3/3.
+- NOVEL: store16 at offset 4 (covers LSR byte 5 write-side) emits nothing; Uart0Stub base-agnostic — attached at 0x9000_0000 still emits + reports LSR 0x60 (bus routes, device holds no base). Both held.
+- SUITE: promote verifier_e0t12.rs (13 attacks incl. own-built 256-byte expected, RecordingDevice boundary-uninvoked proof, real-hart polling-loop termination, base-agnostic). Worker suite mutation-adequate (kills 6/7 alone).
+
+### 2026-07-02 — post-verdict actions (worker)
+Promoted verifier_e0t12.rs (13 attacks) verbatim. Gates re-earned: clippy exit 0,
+full crate 0 FAILED (verifier suite 13/13). First-pass verify — no coverage gap; the
+worker suite already killed all 7 mutations.

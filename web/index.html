@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>wasm-vm — RV64 in the browser</title>
+    <link rel="stylesheet" href="./node_modules/@xterm/xterm/css/xterm.css" />
+    <style>
+      :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+      body { margin: 0; background: #0b0e14; color: #cdd6f4; }
+      header { padding: 12px 16px; border-bottom: 1px solid #1c2230; }
+      h1 { font-size: 15px; margin: 0; font-weight: 600; }
+      .controls { display: flex; gap: 8px; align-items: center; padding: 10px 16px; flex-wrap: wrap; }
+      button { background: #313857; color: #cdd6f4; border: 0; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 13px; }
+      button:disabled { opacity: .5; cursor: not-allowed; }
+      #status { font-family: ui-monospace, monospace; font-size: 12px; color: #a6adc8; margin-left: auto; }
+      #term { padding: 8px 16px 16px; }
+      label.file { font-size: 13px; }
+      input[type="file"] { font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <header><h1>wasm-vm — a from-scratch RV64 emulator, running in your browser</h1></header>
+    <div class="controls">
+      <button id="run">Run</button>
+      <button id="reset">Reset</button>
+      <button id="bench">Bench</button>
+      <label class="file">ELF: <input id="file" type="file" /></label>
+      <span id="status">initializing…</span>
+    </div>
+    <div id="term"></div>
+
+    <!-- xterm.js UMD build (pinned via package-lock.json + npm ci — no CDN). -->
+    <script src="./node_modules/@xterm/xterm/lib/xterm.js"></script>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+[package]
+name = "wasm-vm-core"
+description = "The emulator core: pure Rust, no_std-friendly, zero web dependencies"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
+
+# Feature matrix (documented in lib.rs crate docs):
+#   {}          no_std, no tracing  — the leanest embed/wasm build
+#   std         host integration (default)
+#   trace       compile in the instruction-trace hooks (E0-T16)
+#   std,trace   full host + tracing
+# `trace` gates only DATA-cost machinery; the per-instruction hook is a generic
+# TraceSink whose NullSink monomorphizes to nothing, so trace-OFF is zero cost.
+[features]
+default = ["std"]
+std = ["log/std"]
+trace = []
+# QUARANTINED Zicsr/privilege scaffolding for the riscv-tests p-env (E0-T19). Off by
+# default and out of the E0-T20 differential config; Epic 1 deletes it. See zicsr_stub.rs.
+zicsr-stub = []
+
+[dependencies]
+# Web/JS crates (wasm-bindgen, js-sys, web-sys) are FORBIDDEN here — that is the
+# crate boundary this workspace exists to enforce (ROADMAP.md, architectural bet #2).
+# `log` is the no_std-friendly diagnostics facade (no default features → no_std).
+log = { version = "0.4", default-features = false }
+rustc_apfloat = "0.2"
+# SHA-256 for the deterministic machine-state digest (E0-T17). default-features = false
+# keeps it no_std (drops std-only helpers) — cross-platform digest stability is the whole
+# point of choosing a crypto hash here over a fast non-cryptographic one.
+sha2 = { version = "0.10", default-features = false }
+
+[dev-dependencies]
+criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }
+proptest = "1"
+# Parallelizes the exhaustive 2^32 decode sweep (E0-T21); native-only, test-scoped.
+rayon = "1"
+
+[[bench]]
+name = "mmio_dispatch"
+harness = false
+
+[[bench]]
+name = "softfloat_bench"
+harness = false

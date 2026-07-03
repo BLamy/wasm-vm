@@ -1,0 +1,27 @@
+[package]
+name = "wasm-vm-wasm"
+description = "The wasm-bindgen boundary: everything browser-specific, nothing emulator-specific"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-vm-core = { workspace = true, features = ["trace"] }
+wasm-bindgen = { workspace = true }
+js-sys = "0.3"
+log = { workspace = true }
+console_log = { workspace = true }
+console_error_panic_hook = { workspace = true }
+
+[features]
+# Forwards the quarantined E0-T19 CSR stub so the wasm riscv-tests harness can run the
+# p-env binaries: `wasm-pack test --node crates/wasm --features zicsr-stub`. Off by default.
+zicsr-stub = ["wasm-vm-core/zicsr-stub"]
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"

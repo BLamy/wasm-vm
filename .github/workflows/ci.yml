@@ -1,0 +1,125 @@
+# E0-T02: the dual-target invariant, enforced by a machine.
+# Mirrored exactly by `make ci` — if the Makefile and this file disagree, that's a bug.
+# No continue-on-error, no `|| true`, no conditional job guards: red means red.
+
+name: ci
+
+on:
+  push:
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+          components: rustfmt
+      - run: cargo fmt --all --check
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --workspace
+      # E1-T05: no host float arithmetic in the guest FP datapath (softfloat backend only).
+      - run: bash tools/ci/no-host-float.sh
+      # riscv-tests rv64ui-p smoke gate (E0-T19) over the committed ELFs — no Docker.
+      - run: cargo test -p wasm-vm-core --features zicsr-stub --test riscv_tests
+      - run: bash tools/riscv-tests/check-quarantine.sh
+      # Exhaustive 2^32 decode sweep (E0-T21): no panic + legal count == analytic tally.
+      - run: cargo test -p wasm-vm-core --release --test exhaustive -- --ignored
+      # Verify tooling integrity (E0-T25): every task has a verify target, no green-washing.
+      - run: bash tools/verify/self_check.sh
+
+  wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+      - name: Install wasm-pack
+        run: curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
+      - run: wasm-pack build crates/wasm --target web
+      - run: wasm-pack test --node crates/wasm
+      # Same rv64ui-p ELFs under wasm32 (E0-T19).
+      - run: wasm-pack test --node crates/wasm --features zicsr-stub
+
+  # Explicit feature powerset for wasm-vm-core (E0-T15): every combination of
+  # {std, trace} must build natively; {} and trace must build for wasm32.
+  features:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flags:
+          - "--no-default-features"
+          - "--no-default-features --features std"
+          - "--no-default-features --features trace"
+          - "--no-default-features --features std,trace"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build -p wasm-vm-core ${{ matrix.flags }}
+
+  # The two no_std feature builds must also compile for wasm32.
+  features-wasm:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flags:
+          - "--no-default-features"
+          - "--no-default-features --features trace"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build -p wasm-vm-core ${{ matrix.flags }} --target wasm32-unknown-unknown
