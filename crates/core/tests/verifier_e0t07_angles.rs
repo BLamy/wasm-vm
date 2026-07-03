@@ -64,12 +64,15 @@ fn all_reachable_traps_leave_state_untouched() {
             Exception::InstrAddrMisaligned,
             DRAM_BASE + 1,
         ),
+        // E1-T08: a 2-byte-aligned PC is a VALID instruction address under IALIGN=16 (no
+        // fetch-misalignment). The uninitialized RAM there is the all-zeros 16-bit parcel,
+        // which is the reserved/illegal compressed encoding → IllegalInstruction, mtval=0.
         (
-            "fetch misaligned (pc+2 in ram)",
+            "all-zeros compressed parcel is illegal, mtval=0",
             DRAM_BASE + 2,
             None,
-            Exception::InstrAddrMisaligned,
-            DRAM_BASE + 2,
+            Exception::IllegalInstruction,
+            0,
         ),
         (
             "decode illegal all-zero",
@@ -85,24 +88,21 @@ fn all_reachable_traps_leave_state_untouched() {
             Exception::IllegalInstruction,
             0xFFFF_FFFF,
         ),
-        // E0-T09 UPDATE (worker edit, marked for the E0-T09 critic's audit):
-        // jal/jalr/beq left the placeholder set when control flow landed — the jal/
-        // jalr/beq words above now RETIRE, so they cannot sit in a trap table. The
-        // purity property transfers to the new §2.5 misaligned-target traps
-        // (cause 0, tval = target, link register unwritten):
+        // E0-T09/E1-T08: the taken-beq-to-pc+2 misalignment case that lived here is gone —
+        // under IALIGN=16 a 2-mod-4 branch target is legal and RETIRES (covered positively
+        // in hart_control.rs). The purity property now rides on the illegal-instruction
+        // traps below.
+        // E1-T08 UPDATE: with the C extension IALIGN=16, a 2-mod-4 jump target is LEGAL, so
+        // the old jalr-misaligned purity case is unreachable (JALR clears bit 0; JAL/branch
+        // immediates are even — an odd target can never arise). The same purity property now
+        // rides on an illegal-instruction trap (all-ones word), which is still a reachable
+        // trap that must leave every register and the PC untouched.
         (
-            "taken beq to pc+2: instr-misaligned (was: placeholder beq)",
+            "illegal-instruction purity (2-mod-4 targets legal under IALIGN=16)",
             DRAM_BASE,
-            Some(0x0000_0163), // beq x0, x0, +2 — always taken, target % 4 == 2
-            Exception::InstrAddrMisaligned,
-            DRAM_BASE + 2,
-        ),
-        (
-            "jalr to odd sentinel: instr-misaligned (was: placeholder jal/jalr)",
-            DRAM_BASE,
-            Some(0x0011_00E7), // jalr x1, 1(x2): target = (X2_SENTINEL+1) & !1 ≡ 2 mod 4
-            Exception::InstrAddrMisaligned,
-            X2_SENTINEL,
+            Some(0xFFFF_FFFF),
+            Exception::IllegalInstruction,
+            0xFFFF_FFFF,
         ),
         // E0-T08 UPDATE (worker edit to critic-authored suite, re-verified by the
         // E0-T08 critic): lb/sd left the placeholder set when loads/stores landed.

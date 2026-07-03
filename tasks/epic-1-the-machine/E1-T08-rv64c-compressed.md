@@ -3,7 +3,7 @@ id: E1-T08
 epic: 1
 title: RV64C compressed instruction decoding — all quadrants, expansion, PC alignment
 priority: 108
-status: pending
+status: implemented
 depends_on: [E1-T01]
 estimate: M
 capstone: false
@@ -61,4 +61,35 @@ place a C instruction in the last halfword of a memory region followed by unmapp
 snippet trace against Spike with C enabled.
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — worker (implementation claim)
+Expansion-based RV64C: `crates/core/src/decode_c.rs::expand_c(u16) -> Result<u32, IllegalInstr>`
+maps every legal compressed encoding to its 32-bit base word, which flows through the SAME
+`decode`+execute path — so a compressed op is byte-identical to its expansion (the strongest
+equivalence guarantee; no separate C execute arms).
+- **Fetch path** (`hart/mod.rs::step_traced`): read the low 16-bit parcel; if `[1:0]!=0b11`
+  expand (pc len 2), else fetch the upper parcel as a SEPARATE `load16` (a straddling second
+  half faults precisely, cause 1 at pc+2) and combine (len 4). `insn_len` (2/4) threaded
+  through `execute` — `pc_next = pc + insn_len` (renamed from `pc4`), so sequential ops,
+  JAL/JALR links (C.JALR writes **pc+2**), and not-taken branches advance by the true length.
+- **IALIGN=16**: misaligned-target checks changed `& 3` → `& 1`; a 2-mod-4 branch/jump target
+  is now LEGAL and lands (an odd target can't arise — JALR clears bit 0, JAL/branch imms are
+  even), so the cause-0 trap is effectively unreachable. Updated the E0-T09 control-flow tests
+  (hart_control.rs, verifier_e0t07/e0t09_angles.rs, wasm hart_ctrl.rs) to the new semantics.
+- **mepc** WARL mask `!1` (bit 0 masked, IALIGN=16). misa.C already reported.
+
+Evidence (local):
+- **Official riscv-tests rv64uc-p passes** (`riscv_tests_f.rs::rv64uc_p_suite_all_pass`;
+  the `rvc` test exercises every quadrant). rv64ui/um/ua/uf/ud all still pass.
+- `crates/core/tests/rv64c.rs` (7): expansions match **toolchain ground-truth**
+  (c.addi4spn/addi16sp/lui/jalr/lwsp/ld — pins the immediate scrambles); reserved/illegal
+  encodings (all-zeros, q0 f3=100, C.LWSP/LDSP rd=0, C.JR rs1=0, C.ADDIW rd=0); the
+  **exhaustive 65536-pattern sweep** (never panics, every Ok expansion decodes, legal count =
+  **46743** of 49152); C.JALR writes pc+2; compressed advances pc by 2; a straddling 32-bit
+  op faults on the second parcel.
+- `crates/wasm/tests/rv64c.rs`: expansion + pc+2 identical on wasm32.
+- Exhaustive 2^32 (32-bit) sweep unchanged (325,400,581 — decode() still rejects 16-bit space;
+  C lives in the fetch path). Gate: fmt clean, clippy 0, workspace + both wasm builds 0 FAILED.
+
+Pending: adversarial verification (independent Spike/riscv-opcodes reference for all 65536
+patterns; expansion-equivalence; hint no-ops; straddling fetch; compressed-heavy trace vs Spike).

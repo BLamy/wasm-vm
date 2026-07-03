@@ -111,7 +111,7 @@ fn warl_write_all_ones_reads_back_only_legal_values() {
         "misa write is ignored (WARL hardwired)"
     );
     // Fully-writable WARL registers keep the value.
-    for addr in [MSTATUS, MCAUSE, MEPC, MTVEC] {
+    for addr in [MSTATUS, MCAUSE, MTVEC] {
         c.access(addr, CsrOp::Write, u64::MAX, false, false, 0)
             .unwrap();
         assert_eq!(
@@ -120,6 +120,15 @@ fn warl_write_all_ones_reads_back_only_legal_values() {
             "{addr:#x} is fully writable WARL"
         );
     }
+    // mepc masks bit 0 (WARL, IALIGN=16 with the C extension — E1-T08): all-ones reads back
+    // with bit 0 cleared.
+    c.access(MEPC, CsrOp::Write, u64::MAX, false, false, 0)
+        .unwrap();
+    assert_eq!(
+        c.access(MEPC, CsrOp::Set, 0, true, false, 0).unwrap(),
+        !1u64,
+        "mepc bit 0 is masked"
+    );
 }
 
 // ── decode + execute integration (the acceptance's exact patterns) ────────────
