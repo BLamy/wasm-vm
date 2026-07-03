@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E0-T22** — wasm-bindgen wrapper — machine handle, step and run, console callback into JS
 1. **E0-T24** — Instructions-per-second benchmark scaffold and recorded interpreter baseline
 1. **E0-T25** — Adversarial-verification tooling — verifier runbook and make verify-E0-Tnn entry points
 
@@ -36,7 +35,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] ` 19` [E0-T19](epic-0-ignition/E0-T19-riscv-tests-smoke-subset.md) — Run the riscv-tests rv64ui-p suite as a smoke gate with quarantined Zicsr stubs *(deps: E0-T18, E0-T13)*
 - [x] ` 20` [E0-T20](epic-0-ignition/E0-T20-spike-differential-harness.md) — Differential trace harness diffing our execution against Spike byte-for-byte *(deps: E0-T18, E0-T14)*
 - [x] ` 21` [E0-T21](epic-0-ignition/E0-T21-decoder-property-fuzz.md) — Property tests, exhaustive sweep, and fuzz scaffold for the decoder *(deps: E0-T06)*
-- [ ] ` 22` [E0-T22](epic-0-ignition/E0-T22-wasm-bindgen-wrapper.md) — wasm-bindgen wrapper — machine handle, step and run, console callback into JS *(deps: E0-T02, E0-T11, E0-T12, E0-T16, E0-T17)*
+- [?] ` 22` [E0-T22](epic-0-ignition/E0-T22-wasm-bindgen-wrapper.md) — wasm-bindgen wrapper — machine handle, step and run, console callback into JS *(deps: E0-T02, E0-T11, E0-T12, E0-T16, E0-T17)*
 - [ ] ` 23` [E0-T23](epic-0-ignition/E0-T23-browser-demo-xtermjs.md) — Browser demo page wiring the wasm machine to an xterm.js console *(deps: E0-T22)*
 - [ ] ` 24` [E0-T24](epic-0-ignition/E0-T24-ips-benchmark-baseline.md) — Instructions-per-second benchmark scaffold and recorded interpreter baseline *(deps: E0-T18, E0-T14, E0-T15)*
 - [ ] ` 25` [E0-T25](epic-0-ignition/E0-T25-adversarial-verify-tooling.md) — Adversarial-verification tooling — verifier runbook and make verify-E0-Tnn entry points *(deps: E0-T02, E0-T18, E0-T20)*
