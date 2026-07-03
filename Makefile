@@ -3,7 +3,7 @@
 # disagree, that's a bug (E0-T02).
 
 .PHONY: ci fmt clippy test wasm features test-riscv diff-all diff-selftest diff-qemu \
-        exhaustive fuzz-decode-smoke web-build web-serve
+        exhaustive fuzz-decode-smoke web-build web-serve bench
 
 ci: fmt clippy test wasm features test-riscv
 
@@ -93,3 +93,8 @@ web-build:
 web-serve:
 	@echo "serving http://localhost:8080  (Ctrl-C to stop)"
 	python3 -m http.server 8080 --directory web
+
+# Interpreter MIPS baseline (E0-T24). Regenerates the native rows of docs/baselines.md;
+# the node/browser rows come from web/bench-node.mjs and the demo page's Bench button.
+bench:
+	cargo bench -p wasm-vm-cli --bench interp

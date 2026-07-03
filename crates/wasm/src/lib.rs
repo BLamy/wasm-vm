@@ -42,6 +42,38 @@ pub fn version() -> String {
     wasm_vm_core::version().into()
 }
 
+/// The E0-T14 golden `loops.elf` (the pinned benchmark workload) and its retired count.
+const BENCH_ELF: &[u8] = include_bytes!("../../../guest/prebuilt/loops.elf");
+const BENCH_RETIRED_PER_RUN: u64 = 48;
+
+/// Instructions-per-second baseline (E0-T24), node + browser side. Runs `loops.elf` on the
+/// trace-off (`run`) path repeatedly until at least `target_instrs` instructions have
+/// retired (`≥ 10^7` keeps JS↔wasm boundary chatter out of the measurement), and returns a
+/// `{ retired, ms }` object timed with `Date.now()`. MIPS = `retired / ms / 1000`. Each run
+/// retires exactly the golden count (a reload is a clean reset), so `retired` is exact.
+#[wasm_bindgen]
+pub fn bench(target_instrs: u32) -> Result<JsValue, JsError> {
+    let mut machine =
+        Machine::try_new(1024 * 1024).map_err(|_| JsError::new("cannot allocate bench RAM"))?;
+    let target = target_instrs as u64;
+    let start = js_sys::Date::now();
+    let mut retired = 0u64;
+    while retired < target {
+        machine
+            .load_elf(BENCH_ELF)
+            .map_err(|e| JsError::new(&format!("bench load_elf: {e:?}")))?;
+        // trace-off path; each run retires exactly the golden count (verified natively).
+        let _ = machine.run(1000);
+        retired += BENCH_RETIRED_PER_RUN;
+    }
+    let ms = js_sys::Date::now() - start;
+
+    let obj = js_sys::Object::new();
+    let _ = js_sys::Reflect::set(&obj, &"retired".into(), &JsValue::from_f64(retired as f64));
+    let _ = js_sys::Reflect::set(&obj, &"ms".into(), &JsValue::from_f64(ms));
+    Ok(obj.into())
+}
+
 /// A console sink that forwards each byte to a JS callback stored in a shared slot. The
 /// slot is `Rc`-shared with [`WasmMachine`] so `set_console` can swap the callback without
 /// re-attaching the device. The callback is cloned out before invocation, so no borrow of

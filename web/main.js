@@ -3,7 +3,7 @@
 // the page imports directly; xterm.js is the UMD global `Terminal` from the pinned
 // node_modules copy. Errors render IN THE TERMINAL, never only in the JS console.
 
-import init, { WasmMachine, version } from "./pkg/wasm_vm_wasm.js";
+import init, { WasmMachine, version, bench } from "./pkg/wasm_vm_wasm.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 
@@ -114,8 +114,36 @@ fileInput.addEventListener("change", async (ev) => {
   }
 });
 
+// E0-T24: MIPS baseline in the browser. Runs >= 10^7 retired instructions of loops.elf on
+// the trace-off path and reports MIPS = retired / ms / 1000.
+const benchBtn = document.getElementById("bench");
+function runBench() {
+  if (running) return;
+  running = true;
+  runBtn.disabled = resetBtn.disabled = benchBtn.disabled = true;
+  setStatus("benchmarking…");
+  // Defer so the disabled/label paint before the synchronous bench blocks the thread.
+  setTimeout(() => {
+    try {
+      const { retired, ms } = bench(10_000_000);
+      const mips = retired / ms / 1000;
+      const line = `browser MIPS=${mips.toFixed(1)} (retired=${retired}, ${ms.toFixed(0)} ms)`;
+      term.writeln(`\x1b[36m${line}\x1b[0m`);
+      setStatus(line);
+      console.debug(`[wasm-vm] bench ${line}`);
+    } catch (e) {
+      term.writeln(`\x1b[31mbench error: ${e.message || e}\x1b[0m`);
+      setStatus("bench error");
+    } finally {
+      running = false;
+      runBtn.disabled = resetBtn.disabled = benchBtn.disabled = false;
+    }
+  }, 0);
+}
+
 runBtn.addEventListener("click", run);
 resetBtn.addEventListener("click", reset);
+benchBtn.addEventListener("click", runBench);
 
 // Boot: init the wasm module, then fetch the embedded default hello.elf.
 (async () => {

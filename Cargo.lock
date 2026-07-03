@@ -1250,6 +1250,7 @@ version = "0.0.1"
 dependencies = [
  "assert_cmd",
  "clap",
+ "criterion",
  "env_logger",
  "log",
  "predicates",
