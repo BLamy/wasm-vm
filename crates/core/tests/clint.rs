@@ -121,6 +121,85 @@ fn msip_write_sets_and_clears_mip_msip() {
     assert_eq!(rd_csr(&mut m, MIP) & MSIP_BIT, 0, "msip=0 → mip.MSIP clear");
 }
 
+#[test]
+fn msip_only_bit0_is_significant() {
+    // Only bit 0 of msip is implemented (the rest is WPRI/0): writing 0xFFFF_FFFE (bit 0 clear)
+    // leaves MSIP clear; 0xFFFF_FFFF (bit 0 set) sets it. (Kills the mutation that honors any
+    // nonzero write.)
+    let mut m = Machine::new(64 * 1024);
+    let _clint = m.enable_clint(1_000_000);
+    set_csr(&mut m, MTVEC, CsrOp::Write, HANDLER);
+    m.bus_mut().store32(CODE, 0x0000_0013).unwrap(); // nop
+    m.bus_mut().store32(CODE + 4, 0x0000_0013).unwrap();
+    m.hart_mut().regs.pc = CODE;
+
+    m.bus_mut()
+        .store32(CLINT_BASE + O_MSIP, 0xFFFF_FFFE)
+        .unwrap(); // bit 0 clear
+    m.run(1);
+    assert_eq!(
+        rd_csr(&mut m, MIP) & MSIP_BIT,
+        0,
+        "msip with bit 0 clear does not raise MSIP"
+    );
+    m.bus_mut()
+        .store32(CLINT_BASE + O_MSIP, 0xFFFF_FFFF)
+        .unwrap(); // bit 0 set
+    m.run(1);
+    assert_ne!(rd_csr(&mut m, MIP) & MSIP_BIT, 0, "bit 0 set raises MSIP");
+}
+
+// ── the clock ticks only on a real retirement ────────────────────────────────────
+
+#[test]
+fn clock_does_not_tick_on_a_delivered_trap() {
+    // A trapping instruction retires NOTHING, so the retire-count clock must not advance for
+    // that iteration. (Kills the mutation that ticks unconditionally after a step.)
+    let mut m = Machine::new(64 * 1024);
+    let clint = m.enable_clint(1); // one tick per retirement
+    set_csr(&mut m, MTVEC, CsrOp::Write, HANDLER);
+    // An illegal instruction (reserved opcode 0x7F) → delivered to mtvec, no retirement.
+    m.bus_mut().store32(CODE, 0x0000_007F).unwrap();
+    m.hart_mut().regs.pc = CODE;
+    assert_eq!(clint.borrow().mtime, 0, "clock starts at 0");
+    m.run(1); // the illegal is taken (delivered), retiring nothing
+    assert_eq!(m.hart().regs.pc, HANDLER, "trap was delivered");
+    assert_eq!(
+        clint.borrow().mtime,
+        0,
+        "a delivered trap does not advance the clock (no retirement)"
+    );
+    // A real retirement DOES tick: put a nop at the handler and step once.
+    m.bus_mut().store32(HANDLER, 0x0000_0013).unwrap(); // nop
+    m.run(1);
+    assert_eq!(
+        clint.borrow().mtime,
+        1,
+        "a retired instruction ticks the clock"
+    );
+}
+
+#[test]
+fn clock_does_not_tick_on_a_taken_interrupt() {
+    // Taking an interrupt at the loop boundary retires nothing → no tick for that iteration.
+    let mut m = Machine::new(64 * 1024);
+    let clint = m.enable_clint(1);
+    set_csr(&mut m, MTVEC, CsrOp::Write, HANDLER);
+    set_csr(&mut m, MIE, CsrOp::Write, MSIP_BIT); // MSIE
+    set_csr(&mut m, MSTATUS, CsrOp::Set, MIE_GLOBAL);
+    m.bus_mut().store32(CLINT_BASE + O_MSIP, 1).unwrap(); // raise a software interrupt
+    m.bus_mut().store32(CODE, 0x0000_0013).unwrap(); // nop (never reached this iteration)
+    m.hart_mut().regs.pc = CODE;
+    assert_eq!(clint.borrow().mtime, 0);
+    m.run(1); // the interrupt fires at the top; the nop does not run
+    assert_eq!(m.hart().regs.pc, HANDLER, "interrupt was taken");
+    assert_eq!(
+        clint.borrow().mtime,
+        0,
+        "a taken interrupt does not advance the clock (no retirement)"
+    );
+}
+
 // ── memory-mapped register semantics ─────────────────────────────────────────────
 
 #[test]

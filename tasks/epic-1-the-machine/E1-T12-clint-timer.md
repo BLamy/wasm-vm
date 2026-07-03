@@ -3,7 +3,7 @@ id: E1-T12
 epic: 1
 title: CLINT — mtime/mtimecmp/msip, machine timer and software interrupts
 priority: 112
-status: implemented
+status: verified
 depends_on: [E1-T11]
 estimate: S
 capstone: false
@@ -88,4 +88,31 @@ Tests: `crates/core/tests/clint.rs` (9) — exact retire-boundary fire (mcause 0
 resume pc), level-clear, msip set/clear, mtime/mtimecmp memory, 32-bit halves, glitch-free program,
 unsigned rollover, WFI-wakes-on-timer, 100× determinism (div=3/mtimecmp=40 → 120 retirements).
 Local gate green: fmt clean; clippy 0 (real + zicsr-stub, all-targets); `cargo test --workspace` 0
-`test result: FAILED`; both wasm builds 0 FAILED. Awaiting adversarial verification.
+`test result: FAILED`; both wasm builds 0 FAILED.
+
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: verified (with 2 coverage gaps)
+Fresh cold clone at HEAD ce115f5. Spike 1.1.1-dev (`wasm-vm-toolchain:local`).
+- **Level semantics (§3.2.1)**: `mtip()` = `mtime >= mtimecmp` re-sampled every iteration → a live
+  LEVEL. Lowering mtime / raising mtimecmp clears MTIP with no CSR access; `csrw mip` cannot set
+  MTIP/MSIP (device-owned). **Unsigned rollover** confirmed both directions.
+- **Determinism + arithmetic**: loop order sync → sample → step → advance-only-on-`is_ok()`. Hand-
+  traced div=3/mtimecmp=40 → mtime=floor(R/3) hits 40 at R=120; the 121st `run(1)` vectors →
+  index 120, mepc = resume pc. 100× invariant. A taken interrupt / delivered trap does NOT tick.
+- **msip / width / window / non-regression** all correct (bit-0-only, little-endian halves, glitch-
+  free high-low-high, edge faults Access, unmapped interior reads 0; a Machine without `enable_clint`
+  never advances a clock or touches mip; CLINT_BASE collides with nothing).
+- **Full gate green**; E1-T09/T10/T11 + rv64uf/ud/uc/mi pass; stub `decode_props::roundtrip_csr`
+  confirmed pre-existing/ungated.
+- **Mutations 5/7 caught**; 2 SURVIVORS were **coverage gaps, not defects** (critic-probed correct):
+  (e) msip honoring non-bit-0 writes — no test wrote 0xFFFF_FFFE; (c) advance_clock ticking on a
+  non-retiring step — no test drove a mid-run trap/taken-interrupt.
+
+### 2026-07-03 — rework (round 1, test-only)
+Closed both gaps: `msip_only_bit0_is_significant` (0xFFFF_FFFE → MSIP clear, 0xFFFF_FFFF → set) and
+`clock_does_not_tick_on_a_delivered_trap` / `clock_does_not_tick_on_a_taken_interrupt` (mtime stays
+0 across a delivered illegal / a taken software interrupt; a subsequent retirement ticks to 1).
+Independently confirmed each revert — msip `value != 0` and advance_clock unconditional — now FAILs.
+No production change. Gate re-green (12 clint tests pass, fmt/clippy clean).
+
+VERDICT: **verified** — the CLINT (timer level, unsigned compare, deterministic clock, msip, MMIO
+width/window) is spec-correct and now fully mutation-covered.
