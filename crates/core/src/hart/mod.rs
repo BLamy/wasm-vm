@@ -22,11 +22,35 @@
 //! - ECALL/EBREAK: executed (E0-T11) as precise traps (cause 11 / cause 3). The
 //!   complete RV64I execution set now retires or traps — no placeholder arms remain.
 
+pub mod fregs;
 pub mod regs;
 
 use crate::bus::{Bus, BusFault};
 use crate::decode::{Instr, decode};
+use crate::softfloat::{F32, SoftFloat};
 use regs::XRegs;
+
+/// Every F/D instruction requires `mstatus.FS != Off` (E1-T06); this identifies them so the
+/// check happens once, before any architectural state is read.
+const fn is_fp(i: &Instr) -> bool {
+    use Instr::*;
+    matches!(
+        i,
+        Flw { .. }
+            | Fsw { .. }
+            | FpArithS { .. }
+            | FsqrtS { .. }
+            | FpFusedS { .. }
+            | FsgnjS { .. }
+            | FminmaxS { .. }
+            | FpCmpS { .. }
+            | FclassS { .. }
+            | FmvXW { .. }
+            | FmvWX { .. }
+            | FcvtToIntS { .. }
+            | FcvtFromIntS { .. }
+    )
+}
 
 /// Exception causes, numbered exactly as `mcause` (Privileged ISA Table 3.6).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -64,6 +88,8 @@ pub struct Hart {
     /// load-reserved, consumed/cleared by SC. Also invalidated by an overlapping store,
     /// and by MRET/WFI (our documented conservative policy — see the execute arms).
     pub resv: Option<(u64, u8)>,
+    /// Floating-point register file (F/D extensions, E1-T06): FLEN=64 with NaN-boxing.
+    pub fregs: fregs::FRegs,
     /// QUARANTINED CSR scaffolding for the riscv-tests p-env (E0-T19). Present only under
     /// `feature = "zicsr-stub"`; Epic 1 replaces it with the real CSR file above.
     #[cfg(feature = "zicsr-stub")]
@@ -78,6 +104,7 @@ impl Default for Hart {
             regs: XRegs::default(),
             csr: crate::csr::Csrs::at_reset(),
             resv: None,
+            fregs: fregs::FRegs::default(),
             #[cfg(feature = "zicsr-stub")]
             csrs: crate::zicsr_stub::CsrFile::default(),
         };
@@ -257,6 +284,7 @@ impl Hart {
         self.regs.pc = reset_vector;
         self.csr = crate::csr::Csrs::at_reset();
         self.resv = None;
+        self.fregs = fregs::FRegs::default();
         #[cfg(feature = "zicsr-stub")]
         {
             self.csrs = crate::zicsr_stub::CsrFile::default();
@@ -352,6 +380,14 @@ impl Hart {
     ) -> Result<(u8, u64, Option<crate::trace::MemOp>), Trap> {
         use crate::trace::MemOp;
         use Instr::*;
+        // F/D: every FP instruction requires mstatus.FS != Off (E1-T06). Checked before any
+        // architectural read, so an FS=Off trap leaves fflags and the f-registers untouched.
+        if is_fp(&instr) && self.csr.fp_off() {
+            return Err(Trap {
+                cause: Exception::IllegalInstruction,
+                tval: insn as u64,
+            });
+        }
         let r = &mut self.regs;
         // Memory op captured by the load/store arms; None for everything else.
         let mut mem: Option<MemOp> = None;
@@ -953,6 +989,204 @@ impl Hart {
                     insn as u64,
                 )?;
                 (rd, old, pc4)
+            }
+
+            // ── F extension (E1-T06) ────────────────────────────────────────
+            // FS!=Off already checked at the top. Ops that write FP state (an f-register or
+            // fflags) mark FS Dirty; FSW/FMV.X.W/FCLASS.S do not (they write memory/x-regs
+            // only). rm-carrying ops resolve the rounding mode and trap on a reserved value.
+            Flw { rd, rs1, imm } => {
+                let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 4,
+                    is_store: false,
+                    value: 0,
+                });
+                let v = bus.load32(a).map_err(|f| load_fault(f, a))?;
+                self.fregs.write_f32(rd, v);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            Fsw { rs1, rs2, imm } => {
+                let a = ea(r.read(rs1), imm);
+                let v = self.fregs.read_raw(rs2) as u32; // raw low 32 bits
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 4,
+                    is_store: true,
+                    value: u64::from(v),
+                });
+                bus.store32(a, v).map_err(|f| store_fault(f, a))?;
+                (0, 0, pc4)
+            }
+            FpArithS {
+                op,
+                rd,
+                rs1,
+                rs2,
+                rm,
+            } => {
+                let round = match self.csr.resolve_rm(rm) {
+                    Some(x) => x,
+                    None => {
+                        return Err(Trap {
+                            cause: Exception::IllegalInstruction,
+                            tval: insn as u64,
+                        });
+                    }
+                };
+                let (a, b) = (self.fregs.read_f32(rs1), self.fregs.read_f32(rs2));
+                use crate::decode::FpArithOp::*;
+                let (res, flags) = match op {
+                    Add => F32::add(a, b, round),
+                    Sub => F32::sub(a, b, round),
+                    Mul => F32::mul(a, b, round),
+                    Div => F32::div(a, b, round),
+                };
+                self.fregs.write_f32(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FsqrtS { rd, rs1, rm } => {
+                let round = match self.csr.resolve_rm(rm) {
+                    Some(x) => x,
+                    None => {
+                        return Err(Trap {
+                            cause: Exception::IllegalInstruction,
+                            tval: insn as u64,
+                        });
+                    }
+                };
+                let (res, flags) = F32::sqrt(self.fregs.read_f32(rs1), round);
+                self.fregs.write_f32(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FpFusedS {
+                op,
+                rd,
+                rs1,
+                rs2,
+                rs3,
+                rm,
+            } => {
+                let round = match self.csr.resolve_rm(rm) {
+                    Some(x) => x,
+                    None => {
+                        return Err(Trap {
+                            cause: Exception::IllegalInstruction,
+                            tval: insn as u64,
+                        });
+                    }
+                };
+                let a = self.fregs.read_f32(rs1);
+                let b = self.fregs.read_f32(rs2);
+                let c = self.fregs.read_f32(rs3);
+                use crate::decode::FpFusedOp::*;
+                // Negate a operand by flipping its sign bit; the fused product/sum sign
+                // follows. (a*b)±c with the four sign patterns.
+                let neg = 0x8000_0000u32;
+                let (aa, cc) = match op {
+                    Madd => (a, c),
+                    Msub => (a, c ^ neg),
+                    Nmsub => (a ^ neg, c),
+                    Nmadd => (a ^ neg, c ^ neg),
+                };
+                let (res, flags) = F32::fma(aa, b, cc, round);
+                self.fregs.write_f32(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FsgnjS { op, rd, rs1, rs2 } => {
+                let a = self.fregs.read_f32(rs1);
+                let b = self.fregs.read_f32(rs2);
+                use crate::decode::FpSgnjOp::*;
+                let sign = match op {
+                    J => b & 0x8000_0000,
+                    Jn => !b & 0x8000_0000,
+                    Jx => (a ^ b) & 0x8000_0000,
+                };
+                self.fregs.write_f32(rd, (a & 0x7FFF_FFFF) | sign);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FminmaxS {
+                is_max,
+                rd,
+                rs1,
+                rs2,
+            } => {
+                let (res, flags) = crate::softfloat::f32_minmax(
+                    self.fregs.read_f32(rs1),
+                    self.fregs.read_f32(rs2),
+                    is_max,
+                );
+                self.fregs.write_f32(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FpCmpS { op, rd, rs1, rs2 } => {
+                let a = self.fregs.read_f32(rs1);
+                let b = self.fregs.read_f32(rs2);
+                use crate::decode::FpCmpOp::*;
+                let (res, flags) = match op {
+                    Eq => F32::eq(a, b),
+                    Lt => F32::lt(a, b),
+                    Le => F32::le(a, b),
+                };
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (rd, res as u64, pc4)
+            }
+            FclassS { rd, rs1 } => {
+                let mask = crate::softfloat::fclass_f32(self.fregs.read_f32(rs1));
+                (rd, mask, pc4)
+            }
+            FmvXW { rd, rs1 } => {
+                // Raw low-32-bit move, sign-extended (no NaN-box canonicalization).
+                (rd, sext32(self.fregs.read_raw(rs1) as u32), pc4)
+            }
+            FmvWX { rd, rs1 } => {
+                self.fregs.write_f32(rd, r.read(rs1) as u32);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FcvtToIntS { width, rd, rs1, rm } => {
+                let round = match self.csr.resolve_rm(rm) {
+                    Some(x) => x,
+                    None => {
+                        return Err(Trap {
+                            cause: Exception::IllegalInstruction,
+                            tval: insn as u64,
+                        });
+                    }
+                };
+                let (res, flags) =
+                    crate::softfloat::f32_to_int(self.fregs.read_f32(rs1), width, round);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (rd, res, pc4)
+            }
+            FcvtFromIntS { width, rd, rs1, rm } => {
+                let round = match self.csr.resolve_rm(rm) {
+                    Some(x) => x,
+                    None => {
+                        return Err(Trap {
+                            cause: Exception::IllegalInstruction,
+                            tval: insn as u64,
+                        });
+                    }
+                };
+                let (res, flags) = crate::softfloat::f32_from_int(r.read(rs1), width, round);
+                self.fregs.write_f32(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
             }
         };
         // A-extension reservation invalidation (E1-T04): a *successful* store that

@@ -248,6 +248,149 @@ pub fn f64_to_f32(bits: u64, rm: RoundMode) -> (u32, Flags) {
     (out, f)
 }
 
+// ── F-extension helpers: classify, min/max, float↔int (E1-T06) ──────────────────
+
+#[inline]
+const fn f32_is_nan(b: u32) -> bool {
+    (b >> 23) & 0xFF == 0xFF && (b & 0x7F_FFFF) != 0
+}
+#[inline]
+const fn f32_is_snan(b: u32) -> bool {
+    f32_is_nan(b) && (b >> 22) & 1 == 0
+}
+
+/// FCLASS.S: the 10-bit class mask (bit 0 = −∞, 1 = −normal, 2 = −subnormal, 3 = −0,
+/// 4 = +0, 5 = +subnormal, 6 = +normal, 7 = +∞, 8 = sNaN, 9 = qNaN). Pure integer.
+pub const fn fclass_f32(b: u32) -> u64 {
+    let sign = b >> 31;
+    let exp = (b >> 23) & 0xFF;
+    let frac = b & 0x7F_FFFF;
+    let bit = if exp == 0xFF {
+        if frac == 0 {
+            if sign == 1 { 0 } else { 7 }
+        } else if (frac >> 22) & 1 == 0 {
+            8
+        } else {
+            9
+        }
+    } else if exp == 0 {
+        if frac == 0 {
+            if sign == 1 { 3 } else { 4 }
+        } else if sign == 1 {
+            2
+        } else {
+            5
+        }
+    } else if sign == 1 {
+        1
+    } else {
+        6
+    };
+    1u64 << bit
+}
+
+/// FMIN.S / FMAX.S. sNaN input raises NV; a NaN operand is dropped in favor of the other;
+/// two NaNs yield the canonical qNaN; −0.0 is treated as less than +0.0.
+pub fn f32_minmax(a: u32, b: u32, is_max: bool) -> (u32, Flags) {
+    let flags = if f32_is_snan(a) || f32_is_snan(b) {
+        Flags(Flags::NV)
+    } else {
+        Flags::NONE
+    };
+    let (an, bn) = (f32_is_nan(a), f32_is_nan(b));
+    let res = if an && bn {
+        F32::canonical_nan()
+    } else if an {
+        b
+    } else if bn {
+        a
+    } else {
+        let x = Single::from_bits(a as u128);
+        let y = Single::from_bits(b as u128);
+        match x.partial_cmp(&y) {
+            Some(core::cmp::Ordering::Less) => {
+                if is_max {
+                    b
+                } else {
+                    a
+                }
+            }
+            Some(core::cmp::Ordering::Greater) => {
+                if is_max {
+                    a
+                } else {
+                    b
+                }
+            }
+            // Equal ⇒ ±0: min picks −0, max picks +0 (choose by sign bit).
+            _ => {
+                let a_neg = a >> 31 == 1;
+                if is_max == a_neg { b } else { a }
+            }
+        }
+    };
+    (res, flags)
+}
+
+/// FCVT.{W,WU,L,LU}.S — convert f32 to an integer, RISC-V saturating semantics: NaN → the
+/// maximum value (not min); out-of-range saturates to the nearest bound; both set NV. The
+/// signed/32-bit results are sign-extended into the returned u64.
+pub fn f32_to_int(bits: u32, width: crate::decode::FpIntWidth, rm: RoundMode) -> (u64, Flags) {
+    use crate::decode::FpIntWidth::*;
+    let x = Single::from_bits(bits as u128);
+    let round = rm.to_apfloat();
+    let mut exact = true;
+    let (raw, status) = match width {
+        W => {
+            let r = x.to_i128_r(32, round, &mut exact);
+            (r.value as i32 as i64 as u64, r.status)
+        }
+        L => {
+            let r = x.to_i128_r(64, round, &mut exact);
+            (r.value as i64 as u64, r.status)
+        }
+        Wu => {
+            let r = x.to_u128_r(32, round, &mut exact);
+            (r.value as u32 as i32 as i64 as u64, r.status) // sign-extend 32→64
+        }
+        Lu => {
+            let r = x.to_u128_r(64, round, &mut exact);
+            (r.value as u64, r.status)
+        }
+    };
+    let is_nan = f32_is_nan(bits);
+    let result = if is_nan {
+        match width {
+            W => 0x0000_0000_7FFF_FFFF,
+            Wu => 0xFFFF_FFFF_FFFF_FFFF, // sign-extended 0xFFFFFFFF
+            L => 0x7FFF_FFFF_FFFF_FFFF,
+            Lu => 0xFFFF_FFFF_FFFF_FFFF,
+        }
+    } else {
+        raw
+    };
+    let mut f = 0u8;
+    if is_nan || status.contains(Status::INVALID_OP) {
+        f |= Flags::NV; // NaN/overflow — RISC-V does not additionally set NX
+    } else if status.contains(Status::INEXACT) {
+        f |= Flags::NX;
+    }
+    (result, Flags(f))
+}
+
+/// FCVT.S.{W,WU,L,LU} — convert an integer (from an x-register) to f32, rounding per `rm`.
+pub fn f32_from_int(val: u64, width: crate::decode::FpIntWidth, rm: RoundMode) -> (u32, Flags) {
+    use crate::decode::FpIntWidth::*;
+    let round = rm.to_apfloat();
+    let r = match width {
+        W => Single::from_i128_r(val as i32 as i128, round),
+        Wu => Single::from_u128_r(u128::from(val as u32), round),
+        L => Single::from_i128_r(i128::from(val as i64), round),
+        Lu => Single::from_u128_r(u128::from(val), round),
+    };
+    (r.value.to_bits() as u32, Flags::from_status(r.status))
+}
+
 // ── correctly-rounded integer-only sqrt ─────────────────────────────────────────
 
 /// Bit length (position of the highest set bit, 0 for `v == 0`).

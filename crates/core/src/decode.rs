@@ -35,6 +35,56 @@ pub enum AmoOp {
     Maxu,
 }
 
+/// Two-operand single-precision arithmetic (OP-FP), E1-T06.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FpArithOp {
+    Add,
+    Sub,
+    Mul,
+    Div,
+}
+/// Fused multiply-add family (MADD/MSUB/NMSUB/NMADD opcodes), E1-T06.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FpFusedOp {
+    /// `+(rs1*rs2)+rs3`
+    Madd,
+    /// `+(rs1*rs2)-rs3`
+    Msub,
+    /// `-(rs1*rs2)+rs3`
+    Nmsub,
+    /// `-(rs1*rs2)-rs3`
+    Nmadd,
+}
+/// Sign-injection variant (FSGNJ/FSGNJN/FSGNJX), E1-T06.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FpSgnjOp {
+    /// take rs2's sign
+    J,
+    /// take ¬rs2's sign
+    Jn,
+    /// xor the signs
+    Jx,
+}
+/// Ordered FP comparison writing an integer 0/1 (FLE/FLT/FEQ), E1-T06.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FpCmpOp {
+    Le,
+    Lt,
+    Eq,
+}
+/// Integer width for float↔int conversions (`.W/.WU/.L/.LU`), E1-T06.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FpIntWidth {
+    /// signed 32-bit
+    W,
+    /// unsigned 32-bit
+    Wu,
+    /// signed 64-bit
+    L,
+    /// unsigned 64-bit
+    Lu,
+}
+
 /// A decoded RV64I instruction. All immediates are sign-extended to `i64` at decode
 /// time; register fields are 5-bit (0..=31) by construction.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -461,6 +511,91 @@ pub enum Instr {
     Mret,
     /// Wait-for-interrupt — retires as a no-op here.
     Wfi,
+    // ── F extension (single precision), E1-T06 ──────────────────────────────
+    /// `f[rd] = mem[rs1+imm]` (32-bit load, NaN-boxed into the f-register).
+    Flw {
+        rd: u8,
+        rs1: u8,
+        imm: i64,
+    },
+    /// `mem[rs1+imm] = f[rs2]` (low 32 bits).
+    Fsw {
+        rs1: u8,
+        rs2: u8,
+        imm: i64,
+    },
+    /// FADD/FSUB/FMUL/FDIV.S. `rm` is the raw 3-bit field (validated at execution).
+    FpArithS {
+        op: FpArithOp,
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+        rm: u8,
+    },
+    FsqrtS {
+        rd: u8,
+        rs1: u8,
+        rm: u8,
+    },
+    /// FMADD/FMSUB/FNMSUB/FNMADD.S.
+    FpFusedS {
+        op: FpFusedOp,
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+        rs3: u8,
+        rm: u8,
+    },
+    /// FSGNJ[N,X].S — pure bit ops, no flags.
+    FsgnjS {
+        op: FpSgnjOp,
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    /// FMIN.S / FMAX.S.
+    FminmaxS {
+        is_max: bool,
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    /// FEQ/FLT/FLE.S — result is written to integer register `rd`.
+    FpCmpS {
+        op: FpCmpOp,
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    /// FCLASS.S — 10-bit class mask to integer register `rd`.
+    FclassS {
+        rd: u8,
+        rs1: u8,
+    },
+    /// FMV.X.W — bit-move f→x (sign-extends bit 31).
+    FmvXW {
+        rd: u8,
+        rs1: u8,
+    },
+    /// FMV.W.X — bit-move x→f (NaN-boxed).
+    FmvWX {
+        rd: u8,
+        rs1: u8,
+    },
+    /// FCVT.{W,WU,L,LU}.S — float → integer register `rd`.
+    FcvtToIntS {
+        width: FpIntWidth,
+        rd: u8,
+        rs1: u8,
+        rm: u8,
+    },
+    /// FCVT.S.{W,WU,L,LU} — integer register `rs1` → float `rd`.
+    FcvtFromIntS {
+        width: FpIntWidth,
+        rd: u8,
+        rs1: u8,
+        rm: u8,
+    },
 }
 
 // ── field extractors (spec §2.2/§2.3 bit layouts) ───────────────────────────
@@ -597,6 +732,195 @@ const fn decode_amo(insn: u32) -> Result<Instr, IllegalInstr> {
             }
         }
     }
+}
+
+/// OP-FP (`0b1010011`), single-precision F extension (E1-T06). `funct7` selects the op;
+/// `funct3` is the rounding mode for arithmetic/convert ops (any of the 8 values decodes —
+/// a reserved mode traps at *execution*), or an op selector for sign-inject/min-max/compare/
+/// move/classify. `rs2 == 0` is required for FSQRT and the move/classify/convert-to-int ops.
+const fn decode_op_fp(insn: u32) -> Result<Instr, IllegalInstr> {
+    let rd = ((insn >> 7) & 0x1F) as u8;
+    let rs1 = ((insn >> 15) & 0x1F) as u8;
+    let rs2 = ((insn >> 20) & 0x1F) as u8;
+    let f3 = funct3(insn);
+    let rm = f3 as u8;
+    match funct7(insn) {
+        0b0000000 => Ok(Instr::FpArithS {
+            op: FpArithOp::Add,
+            rd,
+            rs1,
+            rs2,
+            rm,
+        }),
+        0b0000100 => Ok(Instr::FpArithS {
+            op: FpArithOp::Sub,
+            rd,
+            rs1,
+            rs2,
+            rm,
+        }),
+        0b0001000 => Ok(Instr::FpArithS {
+            op: FpArithOp::Mul,
+            rd,
+            rs1,
+            rs2,
+            rm,
+        }),
+        0b0001100 => Ok(Instr::FpArithS {
+            op: FpArithOp::Div,
+            rd,
+            rs1,
+            rs2,
+            rm,
+        }),
+        0b0101100 => {
+            if rs2 == 0 {
+                Ok(Instr::FsqrtS { rd, rs1, rm })
+            } else {
+                Err(IllegalInstr)
+            }
+        }
+        0b0010000 => match f3 {
+            0b000 => Ok(Instr::FsgnjS {
+                op: FpSgnjOp::J,
+                rd,
+                rs1,
+                rs2,
+            }),
+            0b001 => Ok(Instr::FsgnjS {
+                op: FpSgnjOp::Jn,
+                rd,
+                rs1,
+                rs2,
+            }),
+            0b010 => Ok(Instr::FsgnjS {
+                op: FpSgnjOp::Jx,
+                rd,
+                rs1,
+                rs2,
+            }),
+            _ => Err(IllegalInstr),
+        },
+        0b0010100 => match f3 {
+            0b000 => Ok(Instr::FminmaxS {
+                is_max: false,
+                rd,
+                rs1,
+                rs2,
+            }),
+            0b001 => Ok(Instr::FminmaxS {
+                is_max: true,
+                rd,
+                rs1,
+                rs2,
+            }),
+            _ => Err(IllegalInstr),
+        },
+        0b1010000 => match f3 {
+            0b000 => Ok(Instr::FpCmpS {
+                op: FpCmpOp::Le,
+                rd,
+                rs1,
+                rs2,
+            }),
+            0b001 => Ok(Instr::FpCmpS {
+                op: FpCmpOp::Lt,
+                rd,
+                rs1,
+                rs2,
+            }),
+            0b010 => Ok(Instr::FpCmpS {
+                op: FpCmpOp::Eq,
+                rd,
+                rs1,
+                rs2,
+            }),
+            _ => Err(IllegalInstr),
+        },
+        0b1100000 => match rs2 {
+            0 => Ok(Instr::FcvtToIntS {
+                width: FpIntWidth::W,
+                rd,
+                rs1,
+                rm,
+            }),
+            1 => Ok(Instr::FcvtToIntS {
+                width: FpIntWidth::Wu,
+                rd,
+                rs1,
+                rm,
+            }),
+            2 => Ok(Instr::FcvtToIntS {
+                width: FpIntWidth::L,
+                rd,
+                rs1,
+                rm,
+            }),
+            3 => Ok(Instr::FcvtToIntS {
+                width: FpIntWidth::Lu,
+                rd,
+                rs1,
+                rm,
+            }),
+            _ => Err(IllegalInstr),
+        },
+        0b1101000 => match rs2 {
+            0 => Ok(Instr::FcvtFromIntS {
+                width: FpIntWidth::W,
+                rd,
+                rs1,
+                rm,
+            }),
+            1 => Ok(Instr::FcvtFromIntS {
+                width: FpIntWidth::Wu,
+                rd,
+                rs1,
+                rm,
+            }),
+            2 => Ok(Instr::FcvtFromIntS {
+                width: FpIntWidth::L,
+                rd,
+                rs1,
+                rm,
+            }),
+            3 => Ok(Instr::FcvtFromIntS {
+                width: FpIntWidth::Lu,
+                rd,
+                rs1,
+                rm,
+            }),
+            _ => Err(IllegalInstr),
+        },
+        0b1110000 => match f3 {
+            0b000 if rs2 == 0 => Ok(Instr::FmvXW { rd, rs1 }),
+            0b001 if rs2 == 0 => Ok(Instr::FclassS { rd, rs1 }),
+            _ => Err(IllegalInstr),
+        },
+        0b1111000 => {
+            if f3 == 0b000 && rs2 == 0 {
+                Ok(Instr::FmvWX { rd, rs1 })
+            } else {
+                Err(IllegalInstr)
+            }
+        }
+        _ => Err(IllegalInstr),
+    }
+}
+
+/// A fused multiply-add opcode (MADD/MSUB/NMSUB/NMADD). `fmt = insn[26:25]` selects the
+/// format; `00` = single-precision (E1-T06), `01` = double (E1-T07), else illegal.
+const fn decode_fused(insn: u32, op: FpFusedOp) -> Result<Instr, IllegalInstr> {
+    if (insn >> 25) & 0b11 != 0b00 {
+        return Err(IllegalInstr);
+    }
+    Ok(Instr::FpFusedS {
+        op,
+        rd: ((insn >> 7) & 0x1F) as u8,
+        rs1: ((insn >> 15) & 0x1F) as u8,
+        rs2: ((insn >> 20) & 0x1F) as u8,
+        rs3: ((insn >> 27) & 0x1F) as u8,
+        rm: ((insn >> 12) & 0x7) as u8,
+    })
 }
 
 /// I-type: `imm[11:0] = insn[31:20]`, sign-extended.
@@ -1023,6 +1347,29 @@ pub const fn decode(insn: u32) -> Result<Instr, IllegalInstr> {
             _ => Err(IllegalInstr),
         },
         0b0101111 => decode_amo(insn),
+        // F extension (E1-T06). LOAD-FP/STORE-FP funct3=010 is the single-precision width
+        // (011 = double, E1-T07).
+        0b0000111 => match funct3(insn) {
+            0b010 => Ok(Instr::Flw {
+                rd: d,
+                rs1: s1,
+                imm: imm_i(insn),
+            }),
+            _ => Err(IllegalInstr),
+        },
+        0b0100111 => match funct3(insn) {
+            0b010 => Ok(Instr::Fsw {
+                rs1: s1,
+                rs2: s2,
+                imm: imm_s(insn),
+            }),
+            _ => Err(IllegalInstr),
+        },
+        0b1010011 => decode_op_fp(insn),
+        0b1000011 => decode_fused(insn, FpFusedOp::Madd),
+        0b1000111 => decode_fused(insn, FpFusedOp::Msub),
+        0b1001011 => decode_fused(insn, FpFusedOp::Nmsub),
+        0b1001111 => decode_fused(insn, FpFusedOp::Nmadd),
         0b1110011 => decode_system(insn),
         _ => Err(IllegalInstr),
     }
