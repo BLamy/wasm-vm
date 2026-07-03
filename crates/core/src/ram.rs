@@ -86,6 +86,13 @@ impl Ram {
         Ok(())
     }
 
+    /// The whole RAM byte array in address order (offset 0 == guest addr `base`).
+    /// The canonical digest input for [`crate::snapshot::Snapshot`] (E0-T17) — device
+    /// and hart state live in struct fields, never in this buffer.
+    pub fn as_bytes(&self) -> &[u8] {
+        &self.data
+    }
+
     /// Loader escape hatch: copy `data` into RAM starting at `addr`.
     /// Byte-granular; fails `Access` without partial writes.
     pub fn write_slice(&mut self, addr: u64, data: &[u8]) -> Result<(), BusFault> {
