@@ -108,3 +108,35 @@ Case A: mideleg=0 → sie/mie read 0). Added `privilege.rs::sie_sip_are_mideleg_
 (mideleg=0 → sie/sip read-only 0 + no mie/mip leak; mideleg=SBITS → visible/writable; partial
 delegation exposes only the delegated bit and leaves M-only mie bits untouched). Gate green;
 all six riscv suites + exhaustive still pass. Re-verifying.
+
+### 2026-07-03 — adversarial verifier (round 2) — VERDICT: refuted
+The critic re-ran the sie/sip vs Spike matrix (oracle `spike --isa=rv64gc --log-commits`) over
+mideleg ∈ {0, 0x222, 0x2, 0x20, 0x200, all-ones}. **sie now matches Spike in every case** — the
+round-1 mideleg gate is genuinely fixed. But two of this task's own refute criteria still trip:
+1. **sip writable mask wrong.** Per Priv §4.1.3 only **SSIP (bit 1)** is software-writable via
+   the `sip` view; **STIP (bit 5) and SEIP (bit 9) are read-only in sip** (driven by the timer /
+   external controller through `mip`). Ours reused the full delegated S-mask as the sip *write*
+   mask, so `csrw sip,-1` with mideleg=0x222 gave `sip=0x222` where Spike gives `0x2` (only SSIP
+   latches; Spike `mip` confirms STIP/SEIP never set). Confirmed for mideleg ∈ {0x222,0x20,0x200,
+   all-ones}. (The critic correctly excluded Spike's CLINT-driven MTIP bit 7 — M-only, outside
+   the sip S-view.)
+2. **Mutation (a) survived.** Dropping `& s_int_mask()` from the sie *read* path left all 10
+   committed tests passing — the read-side mideleg mask was untested (no test seeded an
+   undelegated S-bit straight into mie via `csrw mie`, then read sie).
+
+(The critic's initial finding #3 — web/* churn as scope creep — was retracted: those are Brett's
+intentional hand edits, not part of this fix.)
+
+### 2026-07-03 — rework (round 2)
+`csr.rs`: split the sip **write** mask from the read mask. New `sip_write_mask() = SIP_SSIP &
+mideleg` (SSIP-only, still delegation-gated) governs `sip` writes; STIP/SEIP are now read-only in
+the sip view. The sip **read** path keeps `s_int_mask()` so delegated STIP/SEIP driven into `mip`
+by M-mode remain *visible* through sip (readable, just not writable via sip). `sie` is unchanged
+(STIE/SEIE are legitimately writable there). Extended `privilege.rs::sie_sip_are_mideleg_gated`
+with: (1) a READ-gate case — seed all three S-enable bits into mie via `csrw mie` under
+mideleg=SSI-only, assert `sie` reads back only SSIE (kills mutation a); (2) a sip-write case —
+`csrw sip,-1` under mideleg=0x222 yields `sip=0x2`/`mip=0x2` (matches Spike), then M-mode drives
+STIP+SEIP into mip and sip reads them back (read-visible but not sip-writable). Verified locally:
+both the mutation-(a) revert (sie read unconditional) and the sip-write-mask revert (sip write =
+s_int_mask) now FAIL the committed suite. Gate green; all six riscv suites + exhaustive pass.
+Re-verifying.

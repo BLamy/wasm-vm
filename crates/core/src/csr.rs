@@ -125,6 +125,8 @@ const SSTATUS_RMASK: u64 = M_SIE | M_SPIE | M_SPP | M_FS | M_SUM | M_MXR | M_UXL
 const SSTATUS_WMASK: u64 = M_SIE | M_SPIE | M_SPP | M_FS | M_SUM | M_MXR;
 /// S-visible interrupt-enable/-pending bits (SSIE/STIE/SEIE at 1/5/9).
 const SIE_SIP_SMASK: u64 = (1 << 1) | (1 << 5) | (1 << 9);
+/// SSIP alone — the sole `sip` bit software may write through the S-view (Priv §4.1.3).
+const SIP_SSIP: u64 = 1 << 1;
 
 /// Legalize a candidate `mstatus` value: keep only writable bits, force `MPP=0b10` (reserved)
 /// to `U`, hardwire `UXL`/`SXL`=0b10 (RV64), and recompute the read-only `SD` from `FS`.
@@ -320,6 +322,15 @@ impl Csrs {
     fn s_int_mask(&self) -> u64 {
         SIE_SIP_SMASK & self.warl_get(MIDELEG)
     }
+    /// The `sip` bits that are software-*writable* through the S-view. Per Priv §4.1.3 only
+    /// SSIP (bit 1) is writable via `sip`; STIP (bit 5) and SEIP (bit 9) are read-only in the
+    /// `sip` view (they are driven by the timer / external controller and set through `mip`).
+    /// So the sip *write* mask is SSIP-only, still gated on delegation. Reads, by contrast,
+    /// expose every delegated S-pending bit — that path stays `s_int_mask()`. (`sie` differs:
+    /// STIE/SEIE *are* writable there, so `sie` writes keep using `s_int_mask()`.)
+    fn sip_write_mask(&self) -> u64 {
+        SIP_SSIP & self.warl_get(MIDELEG)
+    }
 
     /// Metadata for an implemented CSR address, or `None` if unimplemented (→ illegal).
     /// Privilege is `addr[9:8]`; read-only is `addr[11:10]==0b11`.
@@ -417,9 +428,10 @@ impl Csrs {
         match addr {
             MSTATUS => self.mstatus = legalize_mstatus(v),
             MCAUSE => self.mcause = v,
-            // S-mode views (E1-T09): route through the masked mstatus/mie/mip. Only the
-            // *delegated* S-interrupt bits (SIE_SIP_SMASK & mideleg) are writable via sie/sip;
-            // undelegated bits are read-only zero and a write leaves mie/mip untouched.
+            // S-mode views (E1-T09): route through the masked mstatus/mie/mip. `sie` writes the
+            // delegated S-interrupt-enable bits (SIE_SIP_SMASK & mideleg); `sip` writes ONLY the
+            // delegated SSIP (STIP/SEIP are read-only in the sip view). Undelegated bits are
+            // read-only zero and a write leaves mie/mip untouched.
             SSTATUS => self.sstatus_write(v),
             SIE => {
                 let m = self.s_int_mask();
@@ -427,7 +439,7 @@ impl Csrs {
                 self.warl_set(MIE, new);
             }
             SIP => {
-                let m = self.s_int_mask();
+                let m = self.sip_write_mask();
                 let new = (self.warl_get(MIP) & !m) | (v & m);
                 self.warl_set(MIP, new);
             }

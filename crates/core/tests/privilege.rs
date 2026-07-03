@@ -274,6 +274,42 @@ fn sie_sip_are_mideleg_gated() {
         1 << 1,
         "only the delegated SSI is visible"
     );
+
+    // READ-side gate (kills the mutation where `sie` read drops `& s_int_mask()`): seed an
+    // UNdelegated S-interrupt-enable bit straight into mie via `csrw mie`, then read sie — it
+    // must read zero because that bit is not delegated, even though it is present in mie.
+    let mut c = Csrs::at_reset();
+    wr(&mut c, A_MIDELEG, 1 << 1); // delegate SSI only
+    wr(&mut c, A_MIE, SBITS); // but seed ALL three S-enable bits into mie directly
+    assert_eq!(
+        rd(&mut c, A_SIE),
+        1 << 1,
+        "sie READ masks undelegated STIE/SEIE to zero (mideleg-gated read)"
+    );
+
+    // sip WRITE mask is SSIP-only (Priv §4.1.3): STIP/SEIP are read-only in the sip view.
+    // Match Spike — mideleg=0x222, `csrw sip,-1` sets only SSIP, so sip reads 0x2 (not 0x222).
+    let mut c = Csrs::at_reset();
+    wr(&mut c, A_MIDELEG, SBITS); // delegate all three
+    wr(&mut c, A_SIP, u64::MAX); // try to set SSIP+STIP+SEIP through sip
+    assert_eq!(
+        rd(&mut c, A_SIP),
+        1 << 1,
+        "sip write sets only SSIP; STIP/SEIP are read-only in the sip view"
+    );
+    assert_eq!(
+        rd(&mut c, A_MIP),
+        1 << 1,
+        "the sip write reached mip only for SSIP"
+    );
+    // But STIP/SEIP ARE readable through sip when M-mode drives them into mip (they are just
+    // not writable *via* sip): set them directly in mip, then read sip.
+    wr(&mut c, A_MIP, (1 << 5) | (1 << 9)); // M-mode sets STIP+SEIP in mip
+    assert_eq!(
+        rd(&mut c, A_SIP),
+        (1 << 5) | (1 << 9),
+        "delegated STIP/SEIP are visible through sip (read), even if not writable via sip"
+    );
 }
 
 // ── the ONLY paths to a mode change are trap-entry and xRET ─────────────────────
