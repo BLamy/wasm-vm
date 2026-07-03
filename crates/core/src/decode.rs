@@ -509,6 +509,8 @@ pub enum Instr {
     },
     /// Return from M-mode trap (`pc = mepc`).
     Mret,
+    /// Return from S-mode trap (`pc = sepc`, mstatus SIE/SPIE/SPP restore). E1-T09.
+    Sret,
     /// Wait-for-interrupt — retires as a no-op here.
     Wfi,
     // ── F extension (single precision), E1-T06 ──────────────────────────────
@@ -719,6 +721,9 @@ const fn decode_system(insn: u32) -> Result<Instr, IllegalInstr> {
     {
         if insn == 0x3020_0073 {
             return Ok(Instr::Mret);
+        }
+        if insn == 0x1020_0073 {
+            return Ok(Instr::Sret);
         }
         if insn == 0x1050_0073 {
             return Ok(Instr::Wfi);

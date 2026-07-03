@@ -6,29 +6,306 @@
     <title>wasm-vm — RV64 in the browser</title>
     <link rel="stylesheet" href="./node_modules/@xterm/xterm/css/xterm.css" />
     <style>
-      :root { color-scheme: dark; font-family: system-ui, sans-serif; }
-      body { margin: 0; background: #0b0e14; color: #cdd6f4; }
-      header { padding: 12px 16px; border-bottom: 1px solid #1c2230; }
-      h1 { font-size: 15px; margin: 0; font-weight: 600; }
-      .controls { display: flex; gap: 8px; align-items: center; padding: 10px 16px; flex-wrap: wrap; }
-      button { background: #313857; color: #cdd6f4; border: 0; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 13px; }
-      button:disabled { opacity: .5; cursor: not-allowed; }
-      #status { font-family: ui-monospace, monospace; font-size: 12px; color: #a6adc8; margin-left: auto; }
-      #term { padding: 8px 16px 16px; }
-      label.file { font-size: 13px; }
-      input[type="file"] { font-size: 12px; }
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        --bg: #090b0f;
+        --panel: #10141b;
+        --panel-2: #151a22;
+        --line: #242b36;
+        --text: #eef2f7;
+        --muted: #9aa6b2;
+        --green: #36d399;
+        --red: #ff6b6b;
+        --amber: #f2c94c;
+        --cyan: #53d4ff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--line);
+        background: #0d1015;
+      }
+      h1, h2 { letter-spacing: 0; }
+      h1 {
+        font-size: 16px;
+        margin: 0;
+        font-weight: 650;
+      }
+      .version {
+        color: var(--muted);
+        font: 12px ui-monospace, monospace;
+        white-space: nowrap;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(420px, 1fr) minmax(360px, 44vw);
+        min-height: calc(100vh - 49px);
+      }
+      section {
+        min-width: 0;
+      }
+      .suite {
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .suite-head, .console-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      h2 {
+        font-size: 13px;
+        margin: 0;
+        text-transform: uppercase;
+      }
+      .suite-count {
+        color: var(--muted);
+        font: 12px ui-monospace, monospace;
+        margin-top: 4px;
+      }
+      .actions, .controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      button, select {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #1b222d;
+        color: var(--text);
+        font-size: 13px;
+        min-height: 32px;
+      }
+      button {
+        padding: 6px 12px;
+        cursor: pointer;
+      }
+      button.primary {
+        border-color: #287555;
+        background: #143c31;
+      }
+      button.danger {
+        border-color: #803b3b;
+        background: #3b1c1f;
+      }
+      button:disabled, select:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+      }
+      select {
+        padding: 5px 8px;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-bottom: 1px solid var(--line);
+      }
+      .metric {
+        padding: 12px 16px;
+        border-right: 1px solid var(--line);
+      }
+      .metric:last-child { border-right: 0; }
+      .metric span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+      .metric strong {
+        display: block;
+        margin-top: 4px;
+        font: 650 24px ui-monospace, monospace;
+      }
+      .metric.pass strong { color: var(--green); }
+      .metric.fail strong { color: var(--red); }
+      .metric.run strong { color: var(--cyan); }
+      .progress {
+        height: 8px;
+        background: #1c2129;
+        border-bottom: 1px solid var(--line);
+      }
+      #suite-progress-bar {
+        display: block;
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, var(--green), var(--cyan));
+        transition: width 120ms ease-out;
+      }
+      .suite-tools {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .table-wrap {
+        max-height: calc(100vh - 254px);
+        overflow: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      th, td {
+        padding: 9px 16px;
+        border-bottom: 1px solid #1f2630;
+        text-align: left;
+        vertical-align: middle;
+      }
+      th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: #111820;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+      td.name {
+        font-family: ui-monospace, monospace;
+        color: #dbe5ef;
+      }
+      td.result {
+        width: 118px;
+        white-space: nowrap;
+      }
+      td.retired {
+        width: 92px;
+        color: var(--muted);
+        font-family: ui-monospace, monospace;
+      }
+      td.detail {
+        color: var(--muted);
+        min-width: 180px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 650;
+      }
+      .badge.pending { color: var(--muted); }
+      .badge.running { color: var(--cyan); }
+      .badge.pass { color: var(--green); }
+      .badge.fail, .badge.error { color: var(--red); }
+      tr[data-status="pass"] { background: rgba(54, 211, 153, .035); }
+      tr[data-status="fail"], tr[data-status="error"] { background: rgba(255, 107, 107, .055); }
+      tr.hidden { display: none; }
+      .console {
+        background: #0b0e14;
+      }
+      .controls {
+        justify-content: flex-end;
+      }
+      #status {
+        color: var(--muted);
+        font: 12px ui-monospace, monospace;
+        width: 100%;
+        text-align: right;
+      }
+      label.file {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      input[type="file"] {
+        max-width: 170px;
+        font-size: 12px;
+      }
+      #term {
+        padding: 10px 16px 16px;
+      }
+      @media (max-width: 900px) {
+        header { align-items: flex-start; flex-direction: column; }
+        main { grid-template-columns: 1fr; }
+        .suite { border-right: 0; }
+        .table-wrap { max-height: 58vh; }
+        .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .console-head { align-items: flex-start; flex-direction: column; }
+        .controls { justify-content: flex-start; }
+        #status { text-align: left; }
+      }
     </style>
   </head>
   <body>
-    <header><h1>wasm-vm — a from-scratch RV64 emulator, running in your browser</h1></header>
-    <div class="controls">
-      <button id="run">Run</button>
-      <button id="reset">Reset</button>
-      <button id="bench">Bench</button>
-      <label class="file">ELF: <input id="file" type="file" /></label>
-      <span id="status">initializing…</span>
-    </div>
-    <div id="term"></div>
+    <header>
+      <h1>wasm-vm — RV64 in the browser</h1>
+      <span id="version" class="version">initializing...</span>
+    </header>
+    <main>
+      <section class="suite" aria-labelledby="suite-title">
+        <div class="suite-head">
+          <div>
+            <h2 id="suite-title">RISC-V compliance</h2>
+            <div id="suite-count" class="suite-count">110 riscv-tests binaries</div>
+          </div>
+          <div class="actions">
+            <button id="suite-run" class="primary" disabled>Run suite</button>
+            <button id="suite-stop" class="danger" disabled>Stop</button>
+          </div>
+        </div>
+        <div class="metrics" aria-live="polite">
+          <div class="metric"><span>Total</span><strong id="metric-total">0</strong></div>
+          <div class="metric pass"><span>Passed</span><strong id="metric-pass">0</strong></div>
+          <div class="metric fail"><span>Failed</span><strong id="metric-fail">0</strong></div>
+          <div class="metric run"><span>Done</span><strong id="metric-done">0</strong></div>
+        </div>
+        <div class="progress" aria-hidden="true"><span id="suite-progress-bar"></span></div>
+        <div class="suite-tools">
+          <span id="suite-status">waiting for wasm</span>
+          <label>Rows <select id="suite-filter">
+            <option value="all">All</option>
+            <option value="fail">Failed</option>
+            <option value="pass">Passed</option>
+            <option value="pending">Pending</option>
+          </select></label>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Test</th>
+                <th>Result</th>
+                <th>Retired</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody id="suite-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="console" aria-labelledby="console-title">
+        <div class="console-head">
+          <h2 id="console-title">Console</h2>
+          <div class="controls">
+            <button id="run">Run ELF</button>
+            <button id="reset">Reset</button>
+            <button id="bench">Bench</button>
+            <label class="file">ELF <input id="file" type="file" /></label>
+            <span id="status">initializing...</span>
+          </div>
+        </div>
+        <div id="term"></div>
+      </section>
+    </main>
 
     <!-- xterm.js UMD build (pinned via package-lock.json + npm ci — no CDN). -->
     <script src="./node_modules/@xterm/xterm/lib/xterm.js"></script>

@@ -3,7 +3,7 @@ id: E1-T09
 epic: 1
 title: M/S/U privilege modes and the mstatus state machine
 priority: 109
-status: pending
+status: implemented
 depends_on: [E1-T02]
 estimate: L
 capstone: false
@@ -61,4 +61,37 @@ refute if implementation contradicts documentation. Attempt to reach a privilege
 by any path other than trap/xRET (e.g. CSR write) — success refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — worker (implementation claim)
+The M/S/U privilege state machine on top of the T02 CSR file.
+- **`crates/core/src/csr.rs`**: mstatus field bit consts (§3.1.6); `legalize_mstatus` (field-WARL:
+  reserved MPP=0b10→U, UXL/SXL hardwired 0b10, SD read-only-computed from FS, WPRI bits 0) —
+  applied on every mstatus write and by the state-machine transitions. Transition methods
+  `trap_to_m`/`trap_to_s` (MPIE←MIE/SPIE←SIE, I-enable←0, xPP←prior) and `mret`/`sret`
+  (I-enable←xPIE, xPIE←1, mode←xPP, xPP←U, MPRV←0 if returning below M). `sstatus` is a masked
+  **view** of mstatus (SSTATUS_RMASK read / SSTATUS_WMASK write); `sie`/`sip` masked views of
+  `mie`/`mip` (SSIE/STIE/SEIE). `tsr`/`tw`/`tvm` accessors. S-CSRs added (sstatus/sie/sscratch/
+  sepc/scause/stval/sip; sepc masks bit 0 like mepc).
+- **`crates/core/src/decode.rs`**: SRET (0x10200073) decoded (not-stub, like MRET); exhaustive
+  tally +1 (325,400,582), reserved-SYSTEM negatives updated.
+- **`crates/core/src/hart/mod.rs`**: MRET does the full mstatus restore + mode change (illegal
+  below M); SRET added (illegal below S, or in S with TSR=1); WFI illegal below M when TW=1;
+  ECALL cause is now mode-dependent (U→8/S→9/M→11, added `EcallFromS`). Mode changes ONLY via
+  trap-entry / MRET / SRET.
+
+Behavior change surfaced + fixed: with real MRET honoring MPP, the rv64u*-p p-env's `mret`
+(MPP=U) now drops the test body to U-mode, so its exit ecall is EcallFromU — updated
+`riscv_tests_f.rs`'s `run_one` to accept the exit from any mode (trap delivery lands in T10).
+
+Evidence (local):
+- `crates/core/tests/privilege.rs` (9): trap_to_m↔mret and trap_to_s↔sret field shuffles
+  (bit-exact snapshots); MRET→U clears MPRV then M-CSR-from-U traps; MRET below M / SRET below S
+  / SRET-in-S-with-TSR / WFI-with-TW illegal; ECALL cause per mode; sstatus-all-ones touches only
+  S-bits (M bits untouched); mode never changes via a plain csrw. csr.rs WARL test extended
+  (MPP=0b10→U, UXL/SXL=2, SD from FS).
+- wasm32 `crates/wasm/tests/privilege.rs`: state machine identical to native.
+- rv64ui/um/ua/uf/ud/uc all still pass; exhaustive 2^32 sweep passes (tally 325,400,582).
+- Gate: fmt clean, clippy 0, workspace + both wasm builds 0 FAILED.
+
+Pending: adversarial verification (Spike mstatus/sstatus lifecycle differential across M→U/S
+transitions; WARL edge readbacks; TSR/TW/TVM; the trap/xRET field shuffles).

@@ -29,7 +29,16 @@ fn run_one(path: &std::path::Path) -> Verdict {
     match m.run(2_000_000) {
         RunOutcome::Exited(0) => Verdict::Pass,
         RunOutcome::Exited(n) => Verdict::Fail(n),
-        RunOutcome::Trapped(t) if t.cause == Exception::EcallFromM => {
+        // The exit ecall may come from ANY mode: with real MRET (E1-T09) the p-env's `mret`
+        // (MPP=U) drops the test body to U-mode, so its exit is EcallFromU (cause 8), not M.
+        // Trap DELIVERY (jump to mtvec) lands in E1-T10; until then the ecall escapes `run`
+        // and we read a7/a0 directly, regardless of originating privilege.
+        RunOutcome::Trapped(t)
+            if matches!(
+                t.cause,
+                Exception::EcallFromU | Exception::EcallFromS | Exception::EcallFromM
+            ) =>
+        {
             let a7 = m.hart().regs.read(17);
             let a0 = m.hart().regs.read(10);
             if a7 == SYS_EXIT {

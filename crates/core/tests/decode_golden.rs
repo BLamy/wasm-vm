@@ -126,7 +126,8 @@ const NEGATIVE: &[u32] = &[
     0x40004033, // OP funct7=0100000 on XOR slot (only ADD/SRL take 0100000)
     0x4000403B, // OP-32 funct7=0100000 on invalid slot
     0x0000203B, // OP-32 funct3=010 (no SLTW exists)
-    0x10200073, // SRET — privileged, illegal at Level 0
+    // SRET (0x10200073) is now LEGAL (E1-T09). A reserved SYSTEM funct3=000 word stays illegal:
+    0x20200073, // funct7=0010000 SYSTEM funct3=000 — not a defined privileged encoding
     0x0000002F, // AMO opcode, funct3=000 — bad width (A ext needs 010/011), still illegal
     0x2820302F, // AMO funct5=00101 (reserved) at a valid width — illegal (E1-T04)
     0x00000007, // LOAD-FP opcode (F extension)

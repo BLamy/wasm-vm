@@ -82,13 +82,15 @@ fuzz-decode-smoke:
 	cd fuzz && cargo +nightly fuzz run decode -- -runs=10000000 -max_total_time=180
 
 # Browser demo (E0-T23): build the wasm ES module into web/pkg, install the pinned
-# xterm.js (offline, no CDN), and copy the default guest ELFs. Reproducible from a cold
-# clone with only Rust + wasm-pack + npm.
+# xterm.js (offline, no CDN), and copy the browser-run guest ELFs. Reproducible from a
+# cold clone with only Rust + wasm-pack + npm.
 web-build:
-	wasm-pack build crates/wasm --target web --out-dir ../../web/pkg
+	wasm-pack build crates/wasm --target web --features=zicsr-stub
 	cd web && npm ci --no-audit --no-fund
-	mkdir -p web/assets
+	mkdir -p web/pkg web/assets/riscv-tests
+	cp crates/wasm/pkg/* web/pkg/
 	cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
+	cp tests/riscv-tests-bin/* web/assets/riscv-tests/
 
 # Serve web/ over HTTP (wasm streaming + ES module MIME rules break file://).
 web-serve:
