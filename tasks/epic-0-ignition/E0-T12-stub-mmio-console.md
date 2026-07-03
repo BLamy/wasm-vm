@@ -3,7 +3,7 @@ id: E0-T12
 epic: 0
 title: Stub MMIO console device for guest putchar output
 priority: 12
-status: implemented
+status: verified
 depends_on: [E0-T04]
 estimate: S
 capstone: false
@@ -77,3 +77,20 @@ Gates: fmt / clippy exit 0 / all native suites 0 FAILED (grep-checked per the lo
 lesson) + wasm 0 FAILED / no_std wasm32 / CI green run 28631679218.
 rr: SKIPPED locally (macOS/no PMU). Angle 4 (CLI vs wasm byte-compare) recorded for
 E0-T18/E0-T22 when the stdout + JS sinks land.
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: verified
+- P1 byte-exactness — HELD. All 256 values 0..=255 captured with zero translation vs an independently-built expected (one 0x0D + one 0x0A, no CRLF); interleaved null/newline/high-byte payload byte-exact. VecSink pushes `value as u8` raw — no UTF-8/newline path exists.
+- P2 width — HELD. sd → single low byte, one byte per store across B1/B2/B4/B8 with high garbage; store16 at off 0 → one low byte; stores at off 1/4/5/0xFF emit nothing.
+- P3 boundary — HELD. UART0_BASE+0x100 and store64@+0xFC → BusFault::Access, device never invoked (RecordingDevice log empty). Full-containment routing.
+- P5 bounded logging — HELD. [u64;4] mask, offset&0xFF indexing always in-range; 2.55M-store hammer leaves sink empty; sizeof(Uart0Stub) ≤ 64; no Vec/HashMap.
+- P6 LSR/read — HELD. offset 5 → 0x60 == bits 5|6 exactly, every other offset 0, load16@5 → Misaligned (bus), reads never fault. A real lbu/andi 0x20/beq polling loop stepped through the actual Hart TERMINATED in <100 steps and printed 'Z'.
+- rr — SKIPPED loud (macOS/no PMU; pure device logic, no unsafe/threads). Mitigation: real-hart polling-loop + guest sb-loop exercise decoder→hart→bus→device end to end.
+- COVERAGE: all 7 mutations KILLED by the worker's OWN suite — full-width-emit, LSR 0x20, LSR@6, non-THR-also-emits, note_offset always-true, reads-fault, THR@offset1. No survivor. Every changed hunk executed.
+- MOCK/HONESTY: VecSink capture genuine (write→put_byte on the Rc<RefCell> shared buffer, no shortcut). Claim commit tasks-only. miri lib 3/3 + integration 6/6 clean (flood honestly cfg(miri)-reduced), verifier 12/13 under miri (hammer skipped for cost). wasm 3/3.
+- NOVEL: store16 at offset 4 (covers LSR byte 5 write-side) emits nothing; Uart0Stub base-agnostic — attached at 0x9000_0000 still emits + reports LSR 0x60 (bus routes, device holds no base). Both held.
+- SUITE: promote verifier_e0t12.rs (13 attacks incl. own-built 256-byte expected, RecordingDevice boundary-uninvoked proof, real-hart polling-loop termination, base-agnostic). Worker suite mutation-adequate (kills 6/7 alone).
+
+### 2026-07-02 — post-verdict actions (worker)
+Promoted verifier_e0t12.rs (13 attacks) verbatim. Gates re-earned: clippy exit 0,
+full crate 0 FAILED (verifier suite 13/13). First-pass verify — no coverage gap; the
+worker suite already killed all 7 mutations.
