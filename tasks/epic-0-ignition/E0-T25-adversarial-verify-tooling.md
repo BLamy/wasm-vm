@@ -138,3 +138,18 @@ subsequent explicit check; their verify-path integrity is instead guaranteed by 
 self-tests (check-zero-cost --selftest, diff selftest, quarantine discrimination) which the
 meta-sabotage exercises — so the escape scan is scoped to the verify-orchestration scripts
 (cold_clone.sh, list.sh), documented in self_check.sh. Status verified.
+
+### 2026-07-03 — adversarial verifier (re-verification) — VERDICT: refuted (residual)
+- (a) Original bypass CLOSED: `_v-fmt: ; -cargo …` → make ignores the error (semantics unchanged) but self_check exit 1. `; @-cargo` caught too.
+- (b) RESIDUAL: `[@+]*-` required the dash to immediately follow the prefix run, but make ALSO honors ignore-errors with interspersed whitespace — `_v-fmt: ; @ -cargo …` and multiline `<TAB> -cargo …` both make-honored yet self_check stayed GREEN.
+- (c) No false-positives (clean → 0; legit mid-command dashes untripped).
+- (d) Rest holds: golden sabotage → verify-E0-T14 red; skip-abuse → verify-E0-T20 nonzero+SKIPPED; drift → verify-list nonzero. Helper-script reasoning accepted (no residual there).
+- DEMAND: allow whitespace in the prefix run — `^TAB[[:space:]@+]*-` and `;[[:space:]@+]*-`.
+
+### 2026-07-03 — second rework (worker)
+Widened the ignore-errors prefix regex to `^${tab}[[:space:]@+]*-|;[[:space:]@+]*-` — the
+prefix run now allows interspersed whitespace, so `; @ -cargo`, `<TAB> -cargo`, `; -cargo`,
+`; @-cargo`, and multiline `<TAB>-cargo` are ALL caught, while requiring ONLY whitespace/@/+
+before the dash keeps mid-command dashes (`cargo build -p …`, `bench -- --warm-up`) from
+tripping it. Regression matrix (7 cases): all four make-honored escape forms + `|| true` →
+exit 1; clean tree + legit-dash recipes → exit 0; verify-E0-T25 green. Status verified.

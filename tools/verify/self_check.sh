@@ -32,10 +32,13 @@ if printf '%s\n' "${verify_section}" | grep -nE "${escape_re}"; then
   echo "forbidden escape (|| true / continue-on-error) in the Makefile verify section" >&2
   fail=1
 fi
-# ignore-errors recipe prefix — make honors a leading '-' (optionally with @/+) in BOTH
-# forms: the multiline `<TAB>-cmd` AND the inline `target: ... ; -cmd` (the ';' form every
-# _v-* recipe uses). Catch both, else a single '-' silently swallows a failure.
-prefix_re="^${tab}[@+]*-|;[[:space:]]*[@+]*-"
+# ignore-errors recipe prefix — make honors a leading '-' (in any mix/order with @, +, and
+# INTERSPERSED whitespace) in BOTH forms: multiline `<TAB>…-cmd` AND inline
+# `target: … ; …-cmd` (the ';' form every _v-* recipe uses). The prefix run may contain
+# spaces/tabs (`<TAB> -cmd`, `; @ -cmd` are honored), so allow whitespace in the class —
+# but require ONLY whitespace/@/+ before the dash, so a mid-command dash
+# (`cargo build -p …`, `bench -- --warm-up`) never trips it.
+prefix_re="^${tab}[[:space:]@+]*-|;[[:space:]@+]*-"
 if printf '%s\n' "${verify_section}" | grep -nE "${prefix_re}"; then
   echo "forbidden '-' ignore-errors recipe prefix in the verify section" >&2
   fail=1
