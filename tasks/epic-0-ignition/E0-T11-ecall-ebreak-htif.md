@@ -3,7 +3,7 @@ id: E0-T11
 epic: 0
 title: ECALL and EBREAK execution plus the HTIF tohost exit convention
 priority: 11
-status: implemented
+status: verified
 depends_on: [E0-T08, E0-T10]
 estimate: M
 capstone: false
@@ -102,3 +102,17 @@ untouched). Re-ran the critic's exact mutation (d) FAITHFULLY (HTIF check moved 
 the step): now KILLED by exit_on_final_budgeted_instruction_is_observed (11 passed/1
 failed), reverted, lib.rs clean. Gates: clippy exit 0, full crate 0 FAILED. Status
 implemented; re-verification requested.
+
+### 2026-07-02 — adversarial verifier (re-verification) — VERDICT: verified
+- (a) Mutation (d) re-applied faithfully (HTIF check moved BEFORE step, after-check removed): RED — exit_on_final_budgeted_instruction_is_observed FAILED (11/1). The promoted boundary test kills the exact named mutant. Reverts clean.
+- (b) Promoted suite semantically verbatim — diff vs original shows only rustfmt reflow + the announced #[allow(dead_code)] + one parenthesization; every assertion byte-identical; 12/12 green.
+- (c) stripped.elf genuinely stripped: readelf -sW → 0 tohost symbols, -SW → 0 symtab sections (minimal.elf still has 1). The stripped_elf test genuinely drives the tohost=None path (load ok, MaxInstrs, cmd_count 0, no panic).
+- (d) Two invented mutants: N1 command-count saturate-to-1 → KILLED (even_then_different_even_counts_twice + reset_recounts, 10/2). N2 skip HTIF check on FIRST iteration → SURVIVED (contrived: exit-at-index-0 under run(1)); residual noted non-blocking, hardening line suggested.
+- (e) Full workspace green (grep FAILED == 0), clippy --workspace --all-targets -D warnings clean.
+
+### 2026-07-02 — residual-gap closure (worker, beyond the demand)
+Closed the non-blocking N2 residual proactively: added htif_run::exit_at_index_0_under_run_1_is_observed
+(a single sd that exits as instruction 0 under run(1)). Re-ran the critic's exact N2 mutant
+(skip HTIF check on the first loop iteration): now KILLED. Both budget-boundary interactions
+(exit-at-last-instruction and exit-at-index-0) are now regression-pinned. Gates: clippy exit 0,
+full crate 0 FAILED (10 htif_run tests).

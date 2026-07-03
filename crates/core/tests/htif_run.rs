@@ -198,3 +198,22 @@ fn loads_elf_fixture_and_arms_htif() {
     // The fixture loops forever (jal 1b) with tohost=0 → MaxInstrs, no exit, no panic.
     assert_eq!(m.run(100), RunOutcome::MaxInstrs);
 }
+
+#[test]
+fn exit_at_index_0_under_run_1_is_observed() {
+    // Residual pin (E0-T11 re-verification, mutant N2): a single store that exits
+    // and IS instruction 0 must be seen under run(1). Guards against a mutant that
+    // skips the HTIF check on the first loop iteration.
+    let sd_to_tohost = s_type(0, 5, 6, 0b011); // sd x5, 0(x6)
+    let mut m = Machine::new(64 * 1024);
+    m.bus_mut().store32(CODE, sd_to_tohost).unwrap();
+    m.hart_mut().regs.pc = CODE;
+    m.hart_mut().regs.write(5, 1); // (0 << 1) | 1 → exit 0
+    m.hart_mut().regs.write(6, TOHOST);
+    m.set_htif(TOHOST);
+    assert_eq!(
+        m.run(1),
+        RunOutcome::Exited(0),
+        "exit on the first (index-0) instruction"
+    );
+}
