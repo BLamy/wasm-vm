@@ -109,3 +109,10 @@ full digest hex. Re-ran the verifier's exact survivors: MUT-H (format → "state
 by the frozen-contract test; MUT-I (Debug mem_digest → literal) KILLED by the Debug test; each
 reverted, snapshot.rs clean. Gates: clippy -D warnings exit 0, native + workspace 0 FAILED,
 snapshot suite 8/8. Status verified.
+
+### 2026-07-03 — adversarial verifier (re-verification) — VERDICT: verified
+- (a) MUT-H re-applied ("state sha256=" → "state XXHACKED=") — RED, killed by state_sha256_line_is_the_frozen_dump_state_contract (7 passed/1 failed).
+- (b) MUT-I re-applied (Debug mem_digest → literal) — RED, killed by debug_impl_shows_pc_and_full_hex_digest.
+- (c) NEW same-family both RED: Debug omits pc → killed by the Debug test's contains(0x…1234); state_sha256_line uppercases the hex → killed by the contract test (full-equality + slice==hex_digest). No residual on these output methods.
+- (d) Non-vacuity confirmed 3 ways: each new test flips RED only under a mutation of its target method (green at baseline); test 1 pins to the INDEPENDENT Python KAT (external oracle, not an echo); the truncate-page mutation also breaks both new tests (they seed real mod-251 RAM + assert live output).
+- (e) Suite 8/8 green; spot-checked truncate-last-4096 still RED (poking_the_last_ram_byte + KAT + both new tests). Coverage intact. No impl changed. VERIFIED.
