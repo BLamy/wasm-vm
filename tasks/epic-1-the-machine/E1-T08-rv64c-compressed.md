@@ -3,7 +3,7 @@ id: E1-T08
 epic: 1
 title: RV64C compressed instruction decoding — all quadrants, expansion, PC alignment
 priority: 108
-status: implemented
+status: verified
 depends_on: [E1-T01]
 estimate: M
 capstone: false
@@ -91,5 +91,27 @@ Evidence (local):
 - Exhaustive 2^32 (32-bit) sweep unchanged (325,400,581 — decode() still rejects 16-bit space;
   C lives in the fetch path). Gate: fmt clean, clippy 0, workspace + both wasm builds 0 FAILED.
 
-Pending: adversarial verification (independent Spike/riscv-opcodes reference for all 65536
-patterns; expansion-equivalence; hint no-ops; straddling fetch; compressed-heavy trace vs Spike).
+### 2026-07-03 — adversarial verifier (fresh cold clone) — VERDICT: verified
+Could not refute after all ten attack classes.
+- **rv64uc-p:** `rv64uc-p-rvc` exits 0 under `spike --isa=rv64gc` and passes the harness; no
+  regression (rv64ui/um/ua/uf/ud all ok).
+- **THE key attack — 65536-pattern independent Spike differential:** dumped `expand_c` for
+  all 49152 compressed patterns, independently disassembled every pattern AND every expansion
+  through `spike-dasm`, canonicalized both to raw base-op tuples, compared operand-for-operand.
+  **All 46743 legal expansions match Spike — 0 mismatches, 0 unparsed.** The critic
+  independently derived the legal count: 49152 − unknown(1168) − Zcb/Zcmp(1008) − Zcmop(8) −
+  c.unimp(1) − constraint-reserved(224) = **46743**, exactly the committed number. (Our
+  rejection of Zcb/Zcmp/Zcmt/Zcmop — which base RV64C reserves — is correct.)
+- **Expansion-equivalence:** 8000 random legal patterns executed via `Hart::step` vs their
+  32-bit expansions from identical seeded state (all x/f-regs, pc, 64KB RAM) — **0 refutations**;
+  the only differences are the legitimate pc/link +2 (compressed) vs +4. **C.JALR link=pc+2**.
+- **Hints** (c.addi/slli/li x0, c.nop-with-imm) retire, don't trap. **Fetch path:** last-halfword
+  compressed op doesn't touch the next region; unmapped upper parcel → InstrAccessFault at pc+2
+  (two `load16`); all-zeros → IllegalInstruction mtval=0. **IALIGN=16**, misa.C set, mepc bit-0
+  masked. **Panic hunt:** none. **native/wasm parity** holds.
+- **Mutation audit — no survivors (6):** insn_len 2→4, drop ADDI4SPN nzuimm=0, CJ-offset
+  scramble, IALIGN &1→&3, ADDI16SP/LUI rd==2→rd==3, two-load16→load32 — each caught by a
+  committed test (the CJ scramble by the rv64uc-p suite).
+- **Gate** green (fmt/clippy/workspace/exhaustive/wasm both builds). Tree left clean.
+
+VERIFIED — E1-T08 complete. The RV64GC ISA is now fully decoded and executed.
