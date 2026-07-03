@@ -3,7 +3,7 @@ id: E0-T19
 epic: 0
 title: Run the riscv-tests rv64ui-p suite as a smoke gate with quarantined Zicsr stubs
 priority: 19
-status: implemented
+status: verified
 depends_on: [E0-T18, E0-T13]
 estimate: M
 capstone: false
@@ -98,3 +98,13 @@ riscv ok; zero-cost --selftest OK; feature matrix builds.
 rr: N/A (macOS). Verifier angles open: mutation trio SRA/SRL + B-imm bit-11 + LWU-sign (angle 1),
 full set incl. skips diffed vs SKIP (2), mret not masking a wrong trap cause (3), rebuild+cmp vs
 committed (4, byte-identical here), and --trace of a test showing the stub's CSR ops retired (5).
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: verified
+- Baseline: harness runs 52 non-skip ELFs (54 − fence_i/ma_data), asserts ran>=40.
+- Mutation (a) SRA→SRL — RED, rv64ui-p-sra FAIL case #3. (b) B-imm bit-11→bit-10 — RED, 46 tests fail (InstrAccessFault from mis-targeted branches). (c) LWU sign-extend — RED, rv64ui-p-lwu FAIL case #3. (d, invented) ADDI→XORI — RED, all 52 fail. Gate is genuinely mutation-sensitive.
+- Skip-list honesty: full 54 with SKIP disabled → EXACTLY 2 fail: fence_i (IllegalInstruction tval=0x100F = the fence.i word) and ma_data (LoadAddrMisaligned). No undocumented failure; neither skip actually passes. Exact.
+- Stub can't mask bugs: interception fires ONLY on decode()==Err, execute() returns None for anything but SYSTEM CSR/MRET/WFI → SRET/M-ext/other illegal encodings still trap IllegalInstruction; handled ops RETIRE + are traced (not skipped); trap/budget-exhaustion never slips through as pass.
+- Quarantine: check-quarantine.sh "0 zicsr symbols default, 2 with feature"; independent nm: --no-default-features 0, --features 2. Module + Hart.csrs genuinely #[cfg]-gated, not dead code.
+- Reproducibility: rebuilt all 54 ELFs in the container from the pinned real SHAs → git status 0 changed, shasum -c 0 mismatches. Byte-identical.
+- Wasm parity: wasm-pack test --node --features zicsr-stub → rv64ui_p_suite_passes_on_wasm32 ok; TESTS has 52 include_bytes (same set, not a subset).
+- CI wiring: native suite + check-quarantine + wasm suite all in ci.yml. VERIFIED — no rework required.
