@@ -309,6 +309,70 @@ fn encode(instr: &Instr) -> u32 {
         FmvWX { rd, rs1 } => opfp(0b1111000, 0b000, rd, rs1, 0),
         FcvtToIntS { width, rd, rs1, rm } => opfp(0b1100000, rm as u32, rd, rs1, cvt_idx(width)),
         FcvtFromIntS { width, rd, rs1, rm } => opfp(0b1101000, rm as u32, rd, rs1, cvt_idx(width)),
+        // D extension (E1-T07). funct7 = the F value with the fmt bit (bit25) set.
+        Fld { rd, rs1, imm } => i_enc(0b0000111, 0b011, rd, rs1, imm),
+        Fsd { rs1, rs2, imm } => s_enc(0b0100111, 0b011, rs1, rs2, imm),
+        FpArithD {
+            op,
+            rd,
+            rs1,
+            rs2,
+            rm,
+        } => {
+            let f7 = match op {
+                FpArithOp::Add => 0b0000001,
+                FpArithOp::Sub => 0b0000101,
+                FpArithOp::Mul => 0b0001001,
+                FpArithOp::Div => 0b0001101,
+            };
+            opfp(f7, rm as u32, rd, rs1, rs2)
+        }
+        FsqrtD { rd, rs1, rm } => opfp(0b0101101, rm as u32, rd, rs1, 0),
+        FpFusedD {
+            op,
+            rd,
+            rs1,
+            rs2,
+            rs3,
+            rm,
+        } => {
+            let opcode = match op {
+                FpFusedOp::Madd => 0b1000011,
+                FpFusedOp::Msub => 0b1000111,
+                FpFusedOp::Nmsub => 0b1001011,
+                FpFusedOp::Nmadd => 0b1001111,
+            };
+            fused(opcode, rs3, rs2, rs1, rm as u32, rd) | (0b01 << 25) // fmt = 01 (double)
+        }
+        FsgnjD { op, rd, rs1, rs2 } => {
+            let f3 = match op {
+                FpSgnjOp::J => 0b000,
+                FpSgnjOp::Jn => 0b001,
+                FpSgnjOp::Jx => 0b010,
+            };
+            opfp(0b0010001, f3, rd, rs1, rs2)
+        }
+        FminmaxD {
+            is_max,
+            rd,
+            rs1,
+            rs2,
+        } => opfp(0b0010101, u32::from(is_max), rd, rs1, rs2),
+        FpCmpD { op, rd, rs1, rs2 } => {
+            let f3 = match op {
+                FpCmpOp::Le => 0b000,
+                FpCmpOp::Lt => 0b001,
+                FpCmpOp::Eq => 0b010,
+            };
+            opfp(0b1010001, f3, rd, rs1, rs2)
+        }
+        FclassD { rd, rs1 } => opfp(0b1110001, 0b001, rd, rs1, 0),
+        FmvXD { rd, rs1 } => opfp(0b1110001, 0b000, rd, rs1, 0),
+        FmvDX { rd, rs1 } => opfp(0b1111001, 0b000, rd, rs1, 0),
+        FcvtToIntD { width, rd, rs1, rm } => opfp(0b1100001, rm as u32, rd, rs1, cvt_idx(width)),
+        FcvtFromIntD { width, rd, rs1, rm } => opfp(0b1101001, rm as u32, rd, rs1, cvt_idx(width)),
+        FcvtSD { rd, rs1, rm } => opfp(0b0100000, rm as u32, rd, rs1, 1), // S out, source D
+        FcvtDS { rd, rs1, rm } => opfp(0b0100001, rm as u32, rd, rs1, 0), // D out, source S
     }
 }
 
@@ -502,6 +566,37 @@ prop_compose! {
 }
 roundtrip!(roundtrip_fp, fp_ops());
 
+// D extension (E1-T07): the fmt=01 parallel plus the format conversions.
+prop_compose! {
+    fn fp_d_ops()(
+        which in 0u8..18,
+        rd in reg(), rs1 in reg(), rs2 in reg(), rs3 in reg(),
+        rm in 0u32..8, sel in 0u32..4, imm in -2048i64..2048,
+    ) -> u32 {
+        match which {
+            0 => i_enc(0b0000111, 0b011, rd, rs1, imm),   // fld
+            1 => s_enc(0b0100111, 0b011, rs1, rs2, imm),  // fsd
+            2 => opfp(0b0000001, rm, rd, rs1, rs2),       // fadd.d
+            3 => opfp(0b0000101, rm, rd, rs1, rs2),       // fsub.d
+            4 => opfp(0b0001001, rm, rd, rs1, rs2),       // fmul.d
+            5 => opfp(0b0001101, rm, rd, rs1, rs2),       // fdiv.d
+            6 => opfp(0b0101101, rm, rd, rs1, 0),         // fsqrt.d
+            7 => fused(0b1000011, rs3, rs2, rs1, rm, rd) | (0b01 << 25), // fmadd.d
+            8 => fused(0b1000111, rs3, rs2, rs1, rm, rd) | (0b01 << 25), // fmsub.d
+            9 => opfp(0b0010001, rm % 3, rd, rs1, rs2),   // fsgnj[n,x].d
+            10 => opfp(0b0010101, rm % 2, rd, rs1, rs2),  // fmin/fmax.d
+            11 => opfp(0b1010001, rm % 3, rd, rs1, rs2),  // feq/flt/fle.d
+            12 => opfp(0b1100001, rm, rd, rs1, sel as u8),// fcvt.{w..lu}.d
+            13 => opfp(0b1101001, rm, rd, rs1, sel as u8),// fcvt.d.{w..lu}
+            14 => opfp(0b1110001, sel % 2, rd, rs1, 0),   // fmv.x.d / fclass.d
+            15 => opfp(0b1111001, 0b000, rd, rs1, 0),     // fmv.d.x
+            16 => opfp(0b0100000, rm, rd, rs1, 1),        // fcvt.s.d
+            _ => opfp(0b0100001, rm, rd, rs1, 0),         // fcvt.d.s
+        }
+    }
+}
+roundtrip!(roundtrip_fp_d, fp_d_ops());
+
 // A few reserved OP-FP encodings must decode illegal.
 proptest! {
     #![proptest_config(config())]
@@ -512,9 +607,9 @@ proptest! {
         prop_assert!(decode(opfp(0b1110000, 0b000, rd, rs1, 5)).is_err(), "fmv.x.w rs2!=0");
         prop_assert!(decode(opfp(0b0011111, 0, rd, rs1, 0)).is_err(), "reserved funct7");
         prop_assert!(decode(opfp(0b0010000, 0b011, rd, rs1, 0)).is_err(), "fsgnj funct3=3");
-        // A double-precision fused op (fmt=01) is not decoded yet (E1-T07).
-        let dfused = fused(0b1000011, 0, 0, rs1, 0, rd) | (0b01 << 25);
-        prop_assert!(decode(dfused).is_err(), "fmt=01 (double) fused illegal pre-E1-T07");
+        // A fused op with fmt=10 (reserved for the Q/half extensions) is illegal.
+        let qfused = fused(0b1000011, 0, 0, rs1, 0, rd) | (0b10 << 25);
+        prop_assert!(decode(qfused).is_err(), "fmt=10 (reserved) fused illegal");
     }
 }
 

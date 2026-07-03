@@ -27,7 +27,7 @@ pub mod regs;
 
 use crate::bus::{Bus, BusFault};
 use crate::decode::{Instr, decode};
-use crate::softfloat::{F32, SoftFloat};
+use crate::softfloat::{F32, F64, SoftFloat};
 use regs::XRegs;
 
 /// Every F/D instruction requires `mstatus.FS != Off` (E1-T06); this identifies them so the
@@ -49,6 +49,21 @@ const fn is_fp(i: &Instr) -> bool {
             | FmvWX { .. }
             | FcvtToIntS { .. }
             | FcvtFromIntS { .. }
+            | Fld { .. }
+            | Fsd { .. }
+            | FpArithD { .. }
+            | FsqrtD { .. }
+            | FpFusedD { .. }
+            | FsgnjD { .. }
+            | FminmaxD { .. }
+            | FpCmpD { .. }
+            | FclassD { .. }
+            | FmvXD { .. }
+            | FmvDX { .. }
+            | FcvtToIntD { .. }
+            | FcvtFromIntD { .. }
+            | FcvtSD { .. }
+            | FcvtDS { .. }
     )
 }
 
@@ -1184,6 +1199,225 @@ impl Hart {
                 };
                 let (res, flags) = crate::softfloat::f32_from_int(r.read(rs1), width, round);
                 self.fregs.write_f32(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+
+            // ── D extension (E1-T07) ────────────────────────────────────────
+            // f64 fills the register (NO NaN-boxing); operands/results use read_raw/write_raw.
+            Fld { rd, rs1, imm } => {
+                let a = ea(r.read(rs1), imm);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 8,
+                    is_store: false,
+                    value: 0,
+                });
+                let v = bus.load64(a).map_err(|f| load_fault(f, a))?;
+                self.fregs.write_raw(rd, v);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            Fsd { rs1, rs2, imm } => {
+                let a = ea(r.read(rs1), imm);
+                let v = self.fregs.read_raw(rs2);
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 8,
+                    is_store: true,
+                    value: v,
+                });
+                bus.store64(a, v).map_err(|f| store_fault(f, a))?;
+                (0, 0, pc4)
+            }
+            FpArithD {
+                op,
+                rd,
+                rs1,
+                rs2,
+                rm,
+            } => {
+                let round = match self.csr.resolve_rm(rm) {
+                    Some(x) => x,
+                    None => {
+                        return Err(Trap {
+                            cause: Exception::IllegalInstruction,
+                            tval: insn as u64,
+                        });
+                    }
+                };
+                let (a, b) = (self.fregs.read_raw(rs1), self.fregs.read_raw(rs2));
+                use crate::decode::FpArithOp::*;
+                let (res, flags) = match op {
+                    Add => F64::add(a, b, round),
+                    Sub => F64::sub(a, b, round),
+                    Mul => F64::mul(a, b, round),
+                    Div => F64::div(a, b, round),
+                };
+                self.fregs.write_raw(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FsqrtD { rd, rs1, rm } => {
+                let round = match self.csr.resolve_rm(rm) {
+                    Some(x) => x,
+                    None => {
+                        return Err(Trap {
+                            cause: Exception::IllegalInstruction,
+                            tval: insn as u64,
+                        });
+                    }
+                };
+                let (res, flags) = F64::sqrt(self.fregs.read_raw(rs1), round);
+                self.fregs.write_raw(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FpFusedD {
+                op,
+                rd,
+                rs1,
+                rs2,
+                rs3,
+                rm,
+            } => {
+                let round = match self.csr.resolve_rm(rm) {
+                    Some(x) => x,
+                    None => {
+                        return Err(Trap {
+                            cause: Exception::IllegalInstruction,
+                            tval: insn as u64,
+                        });
+                    }
+                };
+                let a = self.fregs.read_raw(rs1);
+                let b = self.fregs.read_raw(rs2);
+                let c = self.fregs.read_raw(rs3);
+                use crate::decode::FpFusedOp::*;
+                let neg = 0x8000_0000_0000_0000u64;
+                let (aa, cc) = match op {
+                    Madd => (a, c),
+                    Msub => (a, c ^ neg),
+                    Nmsub => (a ^ neg, c),
+                    Nmadd => (a ^ neg, c ^ neg),
+                };
+                let (res, flags) = F64::fma(aa, b, cc, round);
+                self.fregs.write_raw(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FsgnjD { op, rd, rs1, rs2 } => {
+                let a = self.fregs.read_raw(rs1);
+                let b = self.fregs.read_raw(rs2);
+                use crate::decode::FpSgnjOp::*;
+                let sign = match op {
+                    J => b & 0x8000_0000_0000_0000,
+                    Jn => !b & 0x8000_0000_0000_0000,
+                    Jx => (a ^ b) & 0x8000_0000_0000_0000,
+                };
+                self.fregs.write_raw(rd, (a & 0x7FFF_FFFF_FFFF_FFFF) | sign);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FminmaxD {
+                is_max,
+                rd,
+                rs1,
+                rs2,
+            } => {
+                let (res, flags) = crate::softfloat::f64_minmax(
+                    self.fregs.read_raw(rs1),
+                    self.fregs.read_raw(rs2),
+                    is_max,
+                );
+                self.fregs.write_raw(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FpCmpD { op, rd, rs1, rs2 } => {
+                let a = self.fregs.read_raw(rs1);
+                let b = self.fregs.read_raw(rs2);
+                use crate::decode::FpCmpOp::*;
+                let (res, flags) = match op {
+                    Eq => F64::eq(a, b),
+                    Lt => F64::lt(a, b),
+                    Le => F64::le(a, b),
+                };
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (rd, res as u64, pc4)
+            }
+            FclassD { rd, rs1 } => {
+                let mask = crate::softfloat::fclass_f64(self.fregs.read_raw(rs1));
+                (rd, mask, pc4)
+            }
+            FmvXD { rd, rs1 } => {
+                // Raw 64-bit move f→x (no canonicalization).
+                (rd, self.fregs.read_raw(rs1), pc4)
+            }
+            FmvDX { rd, rs1 } => {
+                self.fregs.write_raw(rd, r.read(rs1));
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            FcvtToIntD { width, rd, rs1, rm } => {
+                let round = match self.csr.resolve_rm(rm) {
+                    Some(x) => x,
+                    None => {
+                        return Err(Trap {
+                            cause: Exception::IllegalInstruction,
+                            tval: insn as u64,
+                        });
+                    }
+                };
+                let (res, flags) =
+                    crate::softfloat::f64_to_int(self.fregs.read_raw(rs1), width, round);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (rd, res, pc4)
+            }
+            FcvtFromIntD { width, rd, rs1, rm } => {
+                let round = match self.csr.resolve_rm(rm) {
+                    Some(x) => x,
+                    None => {
+                        return Err(Trap {
+                            cause: Exception::IllegalInstruction,
+                            tval: insn as u64,
+                        });
+                    }
+                };
+                let (res, flags) = crate::softfloat::f64_from_int(r.read(rs1), width, round);
+                self.fregs.write_raw(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            // FCVT.S.D — narrow f64 → f32, rounds, result NaN-boxed.
+            FcvtSD { rd, rs1, rm } => {
+                let round = match self.csr.resolve_rm(rm) {
+                    Some(x) => x,
+                    None => {
+                        return Err(Trap {
+                            cause: Exception::IllegalInstruction,
+                            tval: insn as u64,
+                        });
+                    }
+                };
+                let (res, flags) = crate::softfloat::f64_to_f32(self.fregs.read_raw(rs1), round);
+                self.fregs.write_f32(rd, res);
+                self.csr.accrue_fflags(flags.0);
+                self.csr.mark_fp_dirty();
+                (0, 0, pc4)
+            }
+            // FCVT.D.S — widen f32 → f64, exact; the f32 input is NaN-box checked.
+            FcvtDS { rd, rs1, rm: _ } => {
+                let (res, flags) = crate::softfloat::f32_to_f64(self.fregs.read_f32(rs1));
+                self.fregs.write_raw(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
                 (0, 0, pc4)
