@@ -3,7 +3,7 @@ id: E0-T13
 epic: 0
 title: Provision the riscv64 cross-toolchain, Spike, and QEMU with a reproducible Docker path
 priority: 13
-status: pending
+status: in-progress
 depends_on: [E0-T01]
 estimate: M
 capstone: false
