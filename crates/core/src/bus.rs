@@ -39,6 +39,9 @@ pub mod mmap {
     /// CLINT base — the SiFive/QEMU-virt Core-Local Interruptor (E1-T12): msip / mtimecmp /
     /// mtime for the machine timer + software interrupt.
     pub const CLINT_BASE: u64 = 0x0200_0000;
+    /// PLIC base — the QEMU-virt Platform-Level Interrupt Controller (E1-T13): external
+    /// interrupt routing to mip.MEIP / mip.SEIP.
+    pub const PLIC_BASE: u64 = 0x0C00_0000;
 }
 
 /// Fallible little-endian accessors at every RV64 access width.

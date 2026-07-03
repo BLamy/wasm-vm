@@ -2,3 +2,4 @@
 
 pub mod clint;
 pub mod console;
+pub mod plic;
