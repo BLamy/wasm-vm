@@ -3,7 +3,7 @@ id: E0-T15
 epic: 0
 title: Logging and cargo feature-flag infrastructure with zero-cost trace-off
 priority: 15
-status: pending
+status: in-progress
 depends_on: [E0-T01]
 estimate: S
 capstone: false
