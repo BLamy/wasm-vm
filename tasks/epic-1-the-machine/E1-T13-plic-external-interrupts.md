@@ -3,7 +3,7 @@ id: E1-T13
 epic: 1
 title: PLIC — priorities, enables, thresholds, claim/complete, M and S contexts
 priority: 113
-status: implemented
+status: verified
 depends_on: [E1-T11]
 estimate: M
 capstone: false
@@ -88,5 +88,30 @@ priority tie → lowest id, claim-nothing → 0, gateway re-pend-after-complete,
 out-of-range complete ignored, end-to-end MEIP-through-mtvec + claim/complete, SEIP-through-stvec via
 mideleg[9] (scause 0x8000…0009), MEI > MTI end-to-end, and threshold-raise-drops-EIP-without-claim.
 Local gate green: fmt clean; clippy 0 (real + zicsr-stub, all-targets); `cargo test --workspace` 0
-`test result: FAILED`; both wasm builds 0 FAILED. Awaiting adversarial verification (incl. the live
-QEMU-virt register-map differential).
+`test result: FAILED`; both wasm builds 0 FAILED.
+
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: verified
+Fresh cold clone at HEAD d002590. Offsets checked against the documented QEMU-virt `sifive_plic`
+map (no live qemu in the toolchain image).
+- **Register map matches QEMU-virt exactly**: priority +4i (<0x1000), pending +0x1000 (RO, word 0),
+  enable +0x2000+0x80·ctx, threshold +0x200000+0x1000·ctx, claim/complete +4, `PLIC_LEN=0x600000`.
+  Source 0 priority read-only 0, never enable-able/selectable; out-of-range offsets read 0 / no-op.
+- **Threshold strict-greater** (both EIP and claim); **tie-break lowest id**; **level-triggered
+  gateway** (claim closes / complete reopens, per-context guard blocks wrong-context/stale/OOR
+  completes, double-claim returns the next id); **EIP recomputed live** (raising threshold /
+  zeroing priority / clearing enable all drop EIP with no claim; no stuck-EIP path).
+- **T11 integration**: MEIP→mtvec (mcause 0x800…b), SEIP→stvec via mideleg[9] from U (scause
+  0x800…9), MEI>MTI — all pass. MEIP is device-owned (not in MIP_SW_WMASK).
+- **Full gate green**; E1-T09/T10/T11/T12 + rv64uf/ud/uc/mi pass; stub `decode_props::roundtrip_csr`
+  failure pre-existing/ungated (T13 doesn't touch decode_props.rs); the wasm hart_ctrl unused-import
+  warning is pre-existing (E1-T08), not from T13.
+- **Mutations (a)–(f) caught**; (g) enable-allows-source-0 is an **EQUIVALENT mutant** (source 0 is
+  unreachable — `set_level` rejects id 0 and `best_source` starts at 1 — so the `& !1` mask is inert
+  defense-in-depth; no test can distinguish it, and none needs to).
+- **Noted simplification** (now documented in `sync_plic`): SEIP is OVERWRITTEN by the PLIC signal
+  rather than OR-ed with the software-writable bit (Priv §3.1.9). The PLIC owns the S-external line,
+  so no real guest flow changes; a full OR would matter only for a guest that injects SEIP via
+  `csrs mip` while also using the PLIC, which does not occur here.
+
+VERDICT: **verified** — the PLIC (priorities, per-context enables/thresholds, claim/complete gateway,
+MEIP/SEIP routing) is spec-correct and mutation-covered.

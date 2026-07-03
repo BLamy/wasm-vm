@@ -251,6 +251,15 @@ impl Machine {
     /// E1-T13: mirror the PLIC external-interrupt levels into `mip`: MEIP (bit 11) from the
     /// M-mode context (0), SEIP (bit 9) from the S-mode context (1) — device-owned bits. A no-op
     /// when no PLIC is attached.
+    ///
+    /// SIMPLIFICATION: strictly, `mip.SEIP` is `software_SEIP | controller_SEIP` (Priv §3.1.9) —
+    /// SEIP is writable by M-mode (E1-T11 keeps bit 9 in `MIP_SW_WMASK`) AND driven by the
+    /// interrupt controller. Here the PLIC OWNS the S-external line, so we OVERWRITE SEIP with the
+    /// controller signal rather than OR-ing it with a software-injected bit. Every PLIC-driven
+    /// guest (OpenSBI/Linux) drives SEIP through the controller, so this changes no real flow; a
+    /// full OR would matter only for a guest that injects SEIP via `csrs mip` while also using the
+    /// PLIC, which does not occur in this system. (MEIP is not software-writable, so it has no such
+    /// interaction.)
     #[cfg(not(feature = "zicsr-stub"))]
     fn sync_plic(&mut self) {
         if let Some(plic) = &self.plic {
@@ -259,7 +268,7 @@ impl Machine {
             let seip = s.eip(1);
             drop(s);
             self.hart.csr.set_mip_bit(11, meip); // MEIP ← M context
-            self.hart.csr.set_mip_bit(9, seip); // SEIP ← S context
+            self.hart.csr.set_mip_bit(9, seip); // SEIP ← S context (see SIMPLIFICATION above)
         }
     }
 
