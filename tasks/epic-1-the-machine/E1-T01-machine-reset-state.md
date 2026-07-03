@@ -3,7 +3,7 @@ id: E1-T01
 epic: 1
 title: Spec-correct machine reset and initial architectural state
 priority: 101
-status: implemented
+status: verified
 depends_on: [E0]
 estimate: S
 capstone: false
@@ -85,3 +85,12 @@ workspace tests 0 FAILED; reset 4/4 native + 1/1 wasm; feature matrix + zero-cos
 rr: N/A (macOS). Verifier angles open: reset-visible divergence vs Spike/Sail (dump misa/mhartid/
 mstatus/mcause), dirty-state leakage incl FS/FP/satp (1 — mstatus=u64::MAX dirtied here), x0 via
 compressed/CSR rd=x0 (2), and wasm misa/pc 64-bit truncation (3, misa>>62==2 asserted).
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: verified
+- misa independent decode: 0x800000000014112D = MXL bits[63:62]=2 (RV64) + exactly {A,C,D,F,I,M,S,U}, no extra/missing, bits[61:26]=0. Matches MISA_RV64GC_SU + misa().
+- reset-field mutation coverage: every field mutation RED — mcause=1, mode=U, mstatus MIE set (mie() assert live), mstatus MPRV set (mprv() live), misa 112D→112C (hard-literal, non-vacuous), pc-not-set. All x0..x31 checked.
+- determinism incl. stub: reset_is_bit_identical dirties regs/pc/mode/mstatus/mcause, compares WHOLE hart via Hart PartialEq; removing self.csr reset FAILs (PartialEq compares csr); removing self.csrs (stub) reset RED under --features zicsr-stub (10k churn dirties stub csrs).
+- x0 hardwired: single XRegs::write authority, private array; no path to write x0 nonzero.
+- wasm 64-bit: wasm-pack node green, misa>>62==2 + full 0x800000000014112D, no truncation; native==wasm on every field.
+- Spike cross-check: Spike 1.1.1 boots vector 0x80000000 (==DRAM_BASE), ISA rv64i_m_a_f_d_c_zicsr, M-mode; no universal field disagreed (couldn't script per-CSR dump but §3.4 values are Spike invariants).
+- compat: workspace 0 failed; riscv-tests 1 passed. Non-vacuous. VERIFIED — no rework.
