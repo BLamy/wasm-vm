@@ -3,7 +3,7 @@ id: E0-T25
 epic: 0
 title: Adversarial-verification tooling — verifier runbook and make verify-E0-Tnn entry points
 priority: 25
-status: implemented
+status: verified
 depends_on: [E0-T02, E0-T18, E0-T20]
 estimate: M
 capstone: false
@@ -153,3 +153,9 @@ prefix run now allows interspersed whitespace, so `; @ -cargo`, `<TAB> -cargo`, 
 before the dash keeps mid-command dashes (`cargo build -p …`, `bench -- --warm-up`) from
 tripping it. Regression matrix (7 cases): all four make-honored escape forms + `|| true` →
 exit 1; clean tree + legit-dash recipes → exit 0; verify-E0-T25 green. Status verified.
+
+### 2026-07-03 — adversarial verifier (re-verification #2) — VERDICT: verified
+- (a) Both whitespace residuals CLOSED: `; @ -cargo` and multiline `<TAB> -cargo` → make ignores the error but self_check exit 1.
+- (b) 22-form prefix matrix (inline + multiline; -, @-, @ -, + -, +-, tab-separated, multi-space, -@, --, @ + -, verify-target body, etc.): EVERY make-honored form now caught; lexical class exhausted. Only a deliberate variable-indirection decoy (IGN=-; $(IGN)cargo) evades — inherent grep limitation, glaring in review, no legit recipe does it.
+- (c) No false-positive: clean → 0; legit dashes (clippy -- -D warnings, build -p --no-default-features, bench -- --warm-up, --ignored) untripped.
+- (d) Rest holds: golden sabotage → verify-E0-T14 exit 2; skip-abuse → verify-E0-T20 nonzero+SKIPPED (override→0); drift → verify-list exit 2. VERIFIED on f0755b3.
