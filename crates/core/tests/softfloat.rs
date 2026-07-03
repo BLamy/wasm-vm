@@ -427,4 +427,20 @@ fn add_and_fma_directed_modes() {
     let fup = F64::fma(third, seven, zero, RoundMode::Rup).0;
     assert!(ftz <= fup, "fma RTZ ≤ RUP on a positive inexact result");
     assert_ne!(ftz, fup, "fma honors the rounding mode (RTZ ≠ RUP here)");
+
+    // Exact HALFWAY tie to pin RMM (ties-away) vs RNE (ties-even) — the one mapping the
+    // directed sweeps can't reach (they hit no ties). 1.0 + 2^-53 sits exactly between 1.0
+    // (even mantissa) and 1.0 + 2^-52. RNE → 1.0; RMM → 1.0 + 2^-52 (away from zero).
+    let half_ulp = 2.0f64.powi(-53).to_bits(); // 2^-53
+    let one_b = 1.0f64.to_bits();
+    assert_eq!(
+        F64::add(one_b, half_ulp, RoundMode::Rne).0,
+        one_b,
+        "tie → even (1.0)"
+    );
+    assert_eq!(
+        F64::add(one_b, half_ulp, RoundMode::Rmm).0,
+        one_b + 1, // 1.0 + 2^-52
+        "tie → away (RMM) distinguishes it from RNE"
+    );
 }

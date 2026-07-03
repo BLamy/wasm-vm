@@ -3,7 +3,7 @@ id: E1-T05
 epic: 1
 title: Softfloat strategy — evaluate, decide, and scaffold the FP arithmetic backend
 priority: 105
-status: implemented
+status: verified
 depends_on: [E1-T01]
 estimate: M
 capstone: false
@@ -121,3 +121,21 @@ Added directed-mode ARITHMETIC coverage to `crates/core/tests/softfloat.rs`:
   (RTZ/RDN=…333, RUP/RMM=…334) and `1/3` (RUP=…556, RTZ=…555), plus an fma RTZ≠RUP check.
 Confirmed both critic mutations now FAIL these tests (2 failures each); reverted → 11/11
 green. No production code changed (impl was already correct). Re-verifying.
+
+### 2026-07-03 — adversarial verifier (round 2) — VERDICT: verified
+Re-checked the coverage fix from a fresh cold clone. Confirmed: the rework commit is
+**test-only** (`git show f7f5bdf --stat` — no production `softfloat.rs` change); the new
+oracle is **non-circular** (derives expected directed results from host RNE + exact integer
+residual, never from the impl's own directed output). Per-mutation: M1 swap Rdn↔Rup →
+CAUGHT; M2 Rtz→RNE → CAUGHT; M4 Rne→RTZ (sanity) → CAUGHT; M3 Rmm→RNE → *survived* (RMM
+==RNE except on ties, which the sweeps didn't hit) — flagged as minor non-blocking
+under-coverage. Regression re-confirmed: committed suite 11/11, `cargo test --workspace`
+0 FAILED, sqrt 300k×5-mode sweep clean; gate green (fmt/clippy/wasm32/no-host-float).
+
+### 2026-07-03 — RMM hardening (test-only)
+Closed the round-2 minor observation: added an exact HALFWAY-tie case (`1.0 + 2^-53`, the
+midpoint of 1.0 and 1.0+2^-52) — RNE ties-to-even → 1.0, RMM ties-away → 1.0+2^-52. Now all
+FIVE `to_apfloat` mode mappings are mutation-locked; verified the Rmm→RNE mutation is caught
+(`add_and_fma_directed_modes` fails), reverted → 11/11 green. fmt/clippy clean.
+
+VERIFIED — E1-T05 complete.
