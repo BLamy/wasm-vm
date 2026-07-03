@@ -3,7 +3,7 @@ id: E0-T12
 epic: 0
 title: Stub MMIO console device for guest putchar output
 priority: 12
-status: in-progress
+status: implemented
 depends_on: [E0-T04]
 estimate: S
 capstone: false
@@ -54,4 +54,26 @@ under `wasm-pack test --node` and byte-compare captured output — divergence re
 writing to all 255 unused offsets in a loop.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commit f331f8a (branch task/e0-t12-console, stacked on e0-t11)
+Deliverables: crates/core/src/dev/console.rs — ConsoleSink{put_byte(&mut,u8)} CORE trait
+(bet #2, browser-ignorant); Uart0Stub<S: ConsoleSink> impls MmioDevice; mmap::UART0_BASE=
+0x1000_0000, UART0_LEN=0x100 (added to bus::mmap alongside DRAM_BASE). Semantics: writes to
+THR (offset 0) emit the LOW byte at ANY access width (documented; sd of an 8-byte word →
+ONE byte); writes to other offsets ignored + noted-once via a bounded [u64;4] bitmask (256
+bits, no growth — a hostile guest hammering all 255 unused offsets costs O(1) device state,
+angle 5); reads return 0 except LSR (offset 5) → 0x60 = THR-empty|tx-idle so naive
+`while(!(lsr&0x20));` loops terminate; reads and writes NEVER fault. VecSink test double
+(Rc<RefCell<Vec<u8>>> capture, crate-level so wasm mirrors + verifiers share it). Note for
+E0-T20: Spike maps this page as RAM (spike -m) so traces align; output only on our side.
+Tests: 3 core unit (low-byte-every-width, LSR-ready/THR-zero/no-faults incl. the misaligned
+word-at-offset-5 fault, other-offset-ignored-logged-once) + 6 integration (binary-safe
+Hi\n\0\xFF → 48 69 0A 00 FF; ALL 256 byte values byte-exact vs (0..=255).collect, angle 1
+proactive; every-width-one-low-byte with len==4; one-past-window UART0_BASE+0x100 access
+fault vs last-offset-ignored, angle 3; 1M flood + all-offsets hammer with device state
+bounded; a GUEST PROGRAM printing "Hi!\n" via an li/sb loop stepped through the real hart)
++ 3 wasm32 mirrors. miri 11/11 lib + 6/6 integration (flood cfg(miri)-reduced 1M→5k).
+Gates: fmt / clippy exit 0 / all native suites 0 FAILED (grep-checked per the local-gate
+lesson) + wasm 0 FAILED / no_std wasm32 / CI green run 28631679218.
+rr: SKIPPED locally (macOS/no PMU). Angle 4 (CLI vs wasm byte-compare) recorded for
+E0-T18/E0-T22 when the stdout + JS sinks land.
