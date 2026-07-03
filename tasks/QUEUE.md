@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E0-T26** — Capstone — Hello from RV64 in a browser tab with a byte-for-byte Spike trace match
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -38,7 +37,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] ` 23` [E0-T23](epic-0-ignition/E0-T23-browser-demo-xtermjs.md) — Browser demo page wiring the wasm machine to an xterm.js console *(deps: E0-T22)*
 - [x] ` 24` [E0-T24](epic-0-ignition/E0-T24-ips-benchmark-baseline.md) — Instructions-per-second benchmark scaffold and recorded interpreter baseline *(deps: E0-T18, E0-T14, E0-T15)*
 - [x] ` 25` [E0-T25](epic-0-ignition/E0-T25-adversarial-verify-tooling.md) — Adversarial-verification tooling — verifier runbook and make verify-E0-Tnn entry points *(deps: E0-T02, E0-T18, E0-T20)*
-- [ ] ` 26` [E0-T26](epic-0-ignition/E0-T26-capstone-hello-rv64-spike-match.md) — Capstone — Hello from RV64 in a browser tab with a byte-for-byte Spike trace match **[CAPSTONE]** *(deps: E0-T17, E0-T19, E0-T20, E0-T21, E0-T23, E0-T24, E0-T25)*
+- [?] ` 26` [E0-T26](epic-0-ignition/E0-T26-capstone-hello-rv64-spike-match.md) — Capstone — Hello from RV64 in a browser tab with a byte-for-byte Spike trace match **[CAPSTONE]** *(deps: E0-T17, E0-T19, E0-T20, E0-T21, E0-T23, E0-T24, E0-T25)*
 
 ## Epic 1 — `epic-1-the-machine`
 

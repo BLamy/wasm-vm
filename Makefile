@@ -3,7 +3,7 @@
 # disagree, that's a bug (E0-T02).
 
 .PHONY: ci fmt clippy test wasm features test-riscv diff-all diff-selftest diff-qemu \
-        exhaustive fuzz-decode-smoke web-build web-serve bench
+        exhaustive fuzz-decode-smoke web-build web-serve bench capstone-e0
 
 ci: fmt clippy test wasm features test-riscv
 
@@ -99,6 +99,17 @@ web-serve:
 bench:
 	cargo bench -p wasm-vm-cli --bench interp
 
+# E0 capstone (E0-T26): the automated proof — Hello from RV64 with native == node-wasm ==
+# Spike traces byte-for-byte — then the manual browser checklist. Run from a cold clone
+# via `tools/verify/cold_clone.sh capstone-e0`. Needs Docker (Spike), wasm-pack, node.
+capstone-e0:
+	tools/capstone/e0.sh
+	@echo
+	@echo "── manual browser step (see docs/capstone-e0.md) ──"
+	@echo "  make web-build web-serve, then in a FRESH Chrome AND Firefox profile open"
+	@echo "  http://localhost:8080 : Run -> 'Hello from RV64', status 'exited code=0',"
+	@echo "  retired=83, zero console errors; save take_trace() and cmp against native."
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Adversarial-verification tooling (E0-T25). Each `verify-E0-Tnn` runs that task's
 # acceptance checks mechanically and exits NONZERO on any failure. Composed from the
@@ -109,7 +120,7 @@ bench:
 # ─────────────────────────────────────────────────────────────────────────────
 .PHONY: verify-all verify-list \
         _v-fmt _v-clippy _v-test _v-features _v-wasm _v-exhaustive _v-zerocost \
-        _v-riscv _v-diff _v-web _v-bench _v-toolchain _v-fuzz _v-meta
+        _v-riscv _v-diff _v-web _v-bench _v-toolchain _v-fuzz _v-meta _v-capstone
 
 # skip helper: $(call v_skip,<reason>) — used inside an else branch.
 v_skip = echo "SKIPPED: $(1)"; [ "$(VERIFY_ALLOW_SKIP)" = "1" ] || exit 1
@@ -154,6 +165,12 @@ _v-fuzz:
 	  cd fuzz && cargo +nightly fuzz run decode -- -runs=2000000 -max_total_time=25; \
 	else $(call v_skip,nightly + cargo-fuzz not installed); fi
 
+_v-capstone:
+	@if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1 \
+	    && command -v wasm-pack >/dev/null 2>&1 && command -v node >/dev/null 2>&1; then \
+	  CAPSTONE_SKIP_VERIFY_ALL=1 tools/capstone/e0.sh; \
+	else $(call v_skip,Docker + wasm-pack + node needed for the capstone trace proof); fi
+
 _v-meta: ; bash tools/verify/self_check.sh
 
 # ── per-task targets (one per file in tasks/epic-0-ignition/) ────────────────
@@ -182,7 +199,7 @@ verify-E0-T22: _v-fmt _v-clippy _v-test _v-wasm ; @echo "verify-E0-T22 (wasm-bin
 verify-E0-T23: _v-web ; @echo "verify-E0-T23 (browser demo): OK"
 verify-E0-T24: _v-fmt _v-clippy _v-test _v-bench ; @echo "verify-E0-T24 (IPS benchmark): OK"
 verify-E0-T25: _v-fmt _v-clippy _v-meta ; @echo "verify-E0-T25 (verify tooling): OK"
-verify-E0-T26: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T26 (capstone — base checks): OK"
+verify-E0-T26: _v-fmt _v-clippy _v-capstone ; @echo "verify-E0-T26 (capstone): OK"
 
 verify-all: verify-E0-T01 verify-E0-T02 verify-E0-T03 verify-E0-T04 verify-E0-T05 \
             verify-E0-T06 verify-E0-T07 verify-E0-T08 verify-E0-T09 verify-E0-T10 \

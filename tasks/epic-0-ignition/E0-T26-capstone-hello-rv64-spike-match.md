@@ -3,7 +3,7 @@ id: E0-T26
 epic: 0
 title: Capstone — Hello from RV64 in a browser tab with a byte-for-byte Spike trace match
 priority: 26
-status: pending
+status: implemented
 depends_on: [E0-T17, E0-T19, E0-T20, E0-T21, E0-T23, E0-T24, E0-T25]
 estimate: L
 capstone: true
@@ -67,4 +67,33 @@ reload the page — a CDN dependency sneaking in refutes the pinned-assets claim
 refutes; (6) attempt the demo on the other OS (Linux if verified on macOS) and record it.
 
 ## Verification log
-(empty)
+### 2026-07-03 — worker claim — branch task/e0-t26-capstone (stacked on e0-t25)
+The Level 0 threshold, proven end-to-end.
+- tools/capstone/e0.sh + tools/capstone/trace-node.mjs: automated portion. Runs `make verify-all`
+  (the whole-epic regression), builds the release CLI + wasm pkg, then executes hello.elf through
+  THREE engines and captures each E0-T16 canonical trace: native (wasm-vm run --trace; also asserts
+  stdout=="Hello from RV64" + exit 0), node-wasm (WasmMachine.setTrace/takeTrace via trace-node.mjs),
+  and Spike (spike -l --log-commits → normalize_spike.py --entry, trimmed to our authoritative
+  length since Spike spins post-exit). cmp-s (exact, never diff -w) all three PAIRWISE at commit
+  level, asserting equal non-zero line counts, and prints a PASS/FAIL summary. make capstone-e0 runs
+  it then prints the manual browser checklist; run cold via tools/verify/cold_clone.sh capstone-e0.
+- docs/capstone-e0.md: the manual browser procedure — fresh-profile launch for Chrome AND Firefox,
+  make web-build web-serve, the observable checklist (terminal "Hello from RV64", status "exited
+  code=0 retired=83", zero console errors, offline hard-reload), and the take_trace()-vs-native cmp.
+- Makefile: capstone-e0 target; verify-E0-T26 now runs the capstone trace proof via _v-capstone
+  (Docker/wasm-pack/node-guarded, CAPSTONE_SKIP_VERIFY_ALL=1 to avoid verify-all recursion).
+MEASURED (Apple M2, cold Docker image rebuilt this run):
+- e0.sh: native/node/spike trace = 83/83/83 lines; native==node-wasm cmp 0 differing bytes;
+  native==Spike-normalized cmp 0 differing bytes; node==Spike cmp 0 differing bytes; retired 83/83;
+  digest native==node df49438130a9…5ceb05. "E0 CAPSTONE: PASS", exit 0.
+- BROWSER (real Chrome 150, fresh page): setTrace+run(hello)+takeTrace → 83 lines, retired=83,
+  exited code=0, and take_trace() is BYTE-FOR-BYTE identical to the native trace (5273 bytes, in-page
+  fetch+compare byte_for_byte_equal=true, first_diff=-1). Browser digest == native.
+- make verify-all: ALL 26 verify targets PASS (E0-T01..E0-T26 incl. toolchain smoke, Spike
+  differential, capstone) — "every Epic 0 verify target passed" (acceptance 5).
+cmp not diff-w: e0.sh uses cmp -s exclusively. Determinism: the digest/retired/trace are identical
+across native/node/browser/Spike (SHA of deterministic RAM).
+rr: N/A (macOS; docs/capstone-e0.md notes the Linux fresh-VM path). Verifier angles open: cold clone
++ fresh browser profile (mandatory), 1-byte hello.elf mutation → trace diff RED at that instruction
+(1), cmp-not-diff-w audit (2), independent Spike retired recount (3), offline reload no-CDN (4),
+run-twice determinism (5), other-OS (6).
