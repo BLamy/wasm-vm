@@ -15,8 +15,8 @@
         --line: #242b36;
         --text: #eef2f7;
         --muted: #9aa6b2;
-        --green: #36d399;
-        --red: #ff6b6b;
+        --green: #2ea043;
+        --red: #f85149;
         --amber: #f2c94c;
         --cyan: #53d4ff;
       }
@@ -155,60 +155,129 @@
         color: var(--muted);
         font-size: 12px;
       }
-      .table-wrap {
-        max-height: calc(100vh - 254px);
-        overflow: auto;
+      .legend {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
       }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13px;
-      }
-      th, td {
-        padding: 9px 16px;
-        border-bottom: 1px solid #1f2630;
-        text-align: left;
-        vertical-align: middle;
-      }
-      th {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-        background: #111820;
-        color: var(--muted);
-        font-size: 11px;
-        text-transform: uppercase;
-      }
-      td.name {
-        font-family: ui-monospace, monospace;
-        color: #dbe5ef;
-      }
-      td.result {
-        width: 118px;
-        white-space: nowrap;
-      }
-      td.retired {
-        width: 92px;
-        color: var(--muted);
-        font-family: ui-monospace, monospace;
-      }
-      td.detail {
-        color: var(--muted);
-        min-width: 180px;
-      }
-      .badge {
+      .legend-item {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        font-weight: 650;
+        gap: 5px;
       }
-      .badge.pending { color: var(--muted); }
-      .badge.running { color: var(--cyan); }
-      .badge.pass { color: var(--green); }
-      .badge.fail, .badge.error { color: var(--red); }
-      tr[data-status="pass"] { background: rgba(54, 211, 153, .035); }
-      tr[data-status="fail"], tr[data-status="error"] { background: rgba(255, 107, 107, .055); }
-      tr.hidden { display: none; }
+      .legend-swatch {
+        width: 11px;
+        height: 11px;
+        border-radius: 3px;
+        border: 1px solid #303844;
+      }
+      .legend-swatch.pass { background: var(--green); border-color: var(--green); }
+      .legend-swatch.fail { background: var(--red); border-color: var(--red); }
+      .legend-swatch.pending { background: #242b35; }
+      .heatmap-wrap {
+        position: relative;
+        max-height: calc(100vh - 254px);
+        overflow: auto;
+        padding: 12px 16px 18px;
+      }
+      .heatmap {
+        display: grid;
+        gap: 11px;
+        min-width: 440px;
+      }
+      .test-group {
+        display: grid;
+        grid-template-columns: 86px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+      }
+      .group-label {
+        padding-top: 2px;
+        color: #dbe5ef;
+        font: 12px ui-monospace, monospace;
+      }
+      .group-meta {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font: 11px ui-monospace, monospace;
+      }
+      .dot-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      .test-dot {
+        position: relative;
+        width: 16px;
+        height: 16px;
+        padding: 0;
+        min-height: 0;
+        border-radius: 4px;
+        border: 1px solid #303844;
+        background: #242b35;
+        cursor: default;
+      }
+      .test-dot:focus-visible {
+        outline: 2px solid var(--cyan);
+        outline-offset: 2px;
+      }
+      .test-dot[data-status="pending"] {
+        background: #242b35;
+      }
+      .test-dot[data-status="running"] {
+        border-color: #5f6b7a;
+        background:
+          linear-gradient(110deg, #242b35 20%, #566170 42%, #242b35 64%);
+        background-size: 220% 100%;
+        animation: shimmer 900ms linear infinite;
+      }
+      .test-dot[data-status="pass"] {
+        border-color: var(--green);
+        background: var(--green);
+      }
+      .test-dot[data-status="fail"],
+      .test-dot[data-status="error"] {
+        border-color: var(--red);
+        background: var(--red);
+      }
+      @keyframes shimmer {
+        from { background-position: 160% 0; }
+        to { background-position: -60% 0; }
+      }
+      .hover-card {
+        position: fixed;
+        z-index: 20;
+        width: min(320px, calc(100vw - 24px));
+        padding: 10px 12px;
+        border: 1px solid #374151;
+        border-radius: 8px;
+        background: #0d1117;
+        box-shadow: 0 18px 48px rgba(0, 0, 0, .42);
+        color: var(--text);
+        pointer-events: none;
+      }
+      .hover-card[hidden] { display: none; }
+      .hover-name {
+        font: 650 13px ui-monospace, monospace;
+        overflow-wrap: anywhere;
+      }
+      .hover-status {
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .hover-detail {
+        margin-top: 6px;
+        color: #c9d1d9;
+        font: 12px ui-monospace, monospace;
+        overflow-wrap: anywhere;
+      }
+      .hover-status.pass { color: var(--green); }
+      .hover-status.fail,
+      .hover-status.error { color: var(--red); }
+      .hover-status.running { color: var(--cyan); }
       .console {
         background: #0b0e14;
       }
@@ -236,7 +305,9 @@
         header { align-items: flex-start; flex-direction: column; }
         main { grid-template-columns: 1fr; }
         .suite { border-right: 0; }
-        .table-wrap { max-height: 58vh; }
+        .heatmap-wrap { max-height: 58vh; }
+        .test-group { grid-template-columns: 74px minmax(0, 1fr); }
+        .test-dot { width: 15px; height: 15px; }
         .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .console-head { align-items: flex-start; flex-direction: column; }
         .controls { justify-content: flex-start; }
@@ -257,7 +328,7 @@
             <div id="suite-count" class="suite-count">110 riscv-tests binaries</div>
           </div>
           <div class="actions">
-            <button id="suite-run" class="primary" disabled>Run suite</button>
+            <button id="suite-run" class="primary" disabled>Rerun</button>
             <button id="suite-stop" class="danger" disabled>Stop</button>
           </div>
         </div>
@@ -270,25 +341,19 @@
         <div class="progress" aria-hidden="true"><span id="suite-progress-bar"></span></div>
         <div class="suite-tools">
           <span id="suite-status">waiting for wasm</span>
-          <label>Rows <select id="suite-filter">
-            <option value="all">All</option>
-            <option value="fail">Failed</option>
-            <option value="pass">Passed</option>
-            <option value="pending">Pending</option>
-          </select></label>
+          <div class="legend" aria-hidden="true">
+            <span class="legend-item"><span class="legend-swatch pending"></span>Queued</span>
+            <span class="legend-item"><span class="legend-swatch pass"></span>Passed</span>
+            <span class="legend-item"><span class="legend-swatch fail"></span>Failed</span>
+          </div>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Test</th>
-                <th>Result</th>
-                <th>Retired</th>
-                <th>Detail</th>
-              </tr>
-            </thead>
-            <tbody id="suite-body"></tbody>
-          </table>
+        <div class="heatmap-wrap">
+          <div id="suite-heatmap" class="heatmap"></div>
+          <div id="hover-card" class="hover-card" hidden>
+            <div id="hover-name" class="hover-name"></div>
+            <div id="hover-status" class="hover-status"></div>
+            <div id="hover-detail" class="hover-detail"></div>
+          </div>
         </div>
       </section>
 

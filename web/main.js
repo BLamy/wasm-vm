@@ -26,15 +26,20 @@ const statusEl = document.getElementById("status");
 const versionEl = document.getElementById("version");
 const suiteRunBtn = document.getElementById("suite-run");
 const suiteStopBtn = document.getElementById("suite-stop");
-const suiteBody = document.getElementById("suite-body");
+const suiteHeatmap = document.getElementById("suite-heatmap");
 const suiteStatus = document.getElementById("suite-status");
-const suiteFilter = document.getElementById("suite-filter");
 const suiteCount = document.getElementById("suite-count");
 const metricTotal = document.getElementById("metric-total");
 const metricPass = document.getElementById("metric-pass");
 const metricFail = document.getElementById("metric-fail");
 const metricDone = document.getElementById("metric-done");
 const suiteProgressBar = document.getElementById("suite-progress-bar");
+const hoverCard = document.getElementById("hover-card");
+const hoverName = document.getElementById("hover-name");
+const hoverStatus = document.getElementById("hover-status");
+const hoverDetail = document.getElementById("hover-detail");
+
+const GROUP_ORDER = ["rv64ui-p", "rv64um-p", "rv64ua-p", "rv64uf-p", "rv64ud-p", "rv64uc-p"];
 
 // A test tap: every byte delivered to the terminal is also recorded here so an automated
 // check can assert byte-exact delivery independent of how xterm.js renders it (angle 5).
@@ -47,8 +52,11 @@ let suiteRunning = false;
 let suiteStopRequested = false;
 let wasmReady = false;
 
-const suiteRows = new Map();
+const suiteDots = new Map();
 const suiteResults = new Map();
+const suiteGroups = new Map();
+const suiteGroupMeta = new Map();
+window.__suiteResults = suiteResults;
 
 function setStatus(text) {
   statusEl.textContent = text;
@@ -67,53 +75,101 @@ function yieldToPaint() {
   return new Promise((resolve) => requestAnimationFrame(resolve));
 }
 
-function resultLabel(status) {
-  if (status === "pass") return "✓ Passed";
-  if (status === "fail") return "× Failed";
-  if (status === "error") return "! Error";
-  if (status === "running") return "… Running";
-  return "• Pending";
+function statusLabel(status) {
+  if (status === "pass") return "Passed";
+  if (status === "fail") return "Failed";
+  if (status === "error") return "Error";
+  if (status === "running") return "Running";
+  return "Queued";
 }
 
-function renderSuiteRows() {
+function testGroup(name) {
+  const match = name.match(/^(rv\d+[a-z]+-p)-/);
+  return match ? match[1] : "other";
+}
+
+function groupIndex(group) {
+  const index = GROUP_ORDER.indexOf(group);
+  return index === -1 ? GROUP_ORDER.length : index;
+}
+
+function groupTests() {
+  const grouped = new Map();
+  for (const name of RISCV_TESTS) {
+    const group = testGroup(name);
+    if (!grouped.has(group)) grouped.set(group, []);
+    grouped.get(group).push(name);
+  }
+  return [...grouped.entries()].sort((a, b) => {
+    const order = groupIndex(a[0]) - groupIndex(b[0]);
+    return order || a[0].localeCompare(b[0]);
+  });
+}
+
+function renderSuiteHeatmap() {
   suiteCount.textContent = `${RISCV_TESTS.length} riscv-tests binaries`;
   metricTotal.textContent = String(RISCV_TESTS.length);
-  suiteBody.replaceChildren();
-  for (const name of RISCV_TESTS) {
-    const row = document.createElement("tr");
-    row.dataset.status = "pending";
-    row.innerHTML = `
-      <td class="name"></td>
-      <td class="result"><span class="badge pending">• Pending</span></td>
-      <td class="retired">-</td>
-      <td class="detail">-</td>
-    `;
-    row.children[0].textContent = name;
-    suiteBody.append(row);
-    suiteRows.set(name, row);
-    suiteResults.set(name, { status: "pending", retired: null, detail: "" });
+  suiteHeatmap.replaceChildren();
+  suiteDots.clear();
+  suiteResults.clear();
+  suiteGroups.clear();
+  suiteGroupMeta.clear();
+
+  for (const [group, names] of groupTests()) {
+    suiteGroups.set(group, names);
+    const groupRow = document.createElement("div");
+    groupRow.className = "test-group";
+    groupRow.dataset.group = group;
+
+    const label = document.createElement("div");
+    label.className = "group-label";
+    label.textContent = group;
+    const meta = document.createElement("span");
+    meta.className = "group-meta";
+    meta.textContent = `${names.length} tests`;
+    label.append(meta);
+    suiteGroupMeta.set(group, meta);
+
+    const grid = document.createElement("div");
+    grid.className = "dot-grid";
+    for (const name of names) {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "test-dot";
+      dot.dataset.status = "pending";
+      dot.dataset.name = name;
+      dot.setAttribute("aria-label", `${name}: queued`);
+      dot.addEventListener("mouseenter", () => showHoverCard(name, dot));
+      dot.addEventListener("focus", () => showHoverCard(name, dot));
+      dot.addEventListener("mouseleave", hideHoverCard);
+      dot.addEventListener("blur", hideHoverCard);
+      grid.append(dot);
+      suiteDots.set(name, dot);
+      suiteResults.set(name, { status: "pending", retired: null, detail: "" });
+    }
+
+    groupRow.append(label, grid);
+    suiteHeatmap.append(groupRow);
   }
   updateSuiteSummary();
 }
 
-function updateSuiteRow(name, result) {
+function updateSuiteDot(name, result) {
   suiteResults.set(name, result);
-  const row = suiteRows.get(name);
-  if (!row) return;
-  row.dataset.status = result.status;
-  const badge = row.querySelector(".badge");
-  badge.className = `badge ${result.status}`;
-  badge.textContent = resultLabel(result.status);
-  row.querySelector(".retired").textContent =
-    result.retired == null ? "-" : result.retired.toLocaleString();
-  row.querySelector(".detail").textContent = result.detail || "-";
-  applySuiteFilter();
+  const dot = suiteDots.get(name);
+  if (!dot) return;
+  dot.dataset.status = result.status;
+  dot.setAttribute("aria-label", `${name}: ${statusLabel(result.status)}`);
   updateSuiteSummary();
+  if (!hoverCard.hidden && hoverCard.dataset.name === name) {
+    renderHoverCard(name);
+  }
 }
 
-function resetSuiteRows() {
+function resetSuiteDots() {
+  hideHoverCard();
   for (const name of RISCV_TESTS) {
-    updateSuiteRow(name, { status: "pending", retired: null, detail: "" });
+    updateSuiteDot(name, { status: "pending", retired: null, detail: "" });
   }
 }
 
@@ -132,17 +188,24 @@ function updateSuiteSummary() {
   metricFail.textContent = String(fail);
   metricDone.textContent = String(done);
   suiteProgressBar.style.width = `${(done / RISCV_TESTS.length) * 100}%`;
-}
 
-function applySuiteFilter() {
-  const filter = suiteFilter.value;
-  for (const [name, row] of suiteRows) {
-    const status = suiteResults.get(name).status;
-    const visible =
-      filter === "all" ||
-      status === filter ||
-      (filter === "fail" && status === "error");
-    row.classList.toggle("hidden", !visible);
+  for (const [group, names] of suiteGroups) {
+    let groupPass = 0;
+    let groupFail = 0;
+    let groupDone = 0;
+    for (const name of names) {
+      const status = suiteResults.get(name).status;
+      if (status === "pass") groupPass += 1;
+      if (status === "fail" || status === "error") groupFail += 1;
+      if (status === "pass" || status === "fail" || status === "error") groupDone += 1;
+    }
+    const meta = suiteGroupMeta.get(group);
+    if (meta) {
+      meta.textContent =
+        groupDone === names.length
+          ? `${groupPass} pass, ${groupFail} fail`
+          : `${groupDone}/${names.length} done`;
+    }
   }
 }
 
@@ -154,6 +217,43 @@ function setInteractiveState() {
   fileInput.disabled = busy || !wasmReady;
   suiteRunBtn.disabled = busy || !wasmReady;
   suiteStopBtn.disabled = !suiteRunning;
+}
+
+function renderHoverCard(name) {
+  const result = suiteResults.get(name) || { status: "pending", retired: null, detail: "" };
+  hoverCard.dataset.name = name;
+  hoverName.textContent = name;
+  hoverStatus.className = `hover-status ${result.status}`;
+  hoverStatus.textContent = statusLabel(result.status);
+  const retired = result.retired == null ? "retired: -" : `retired: ${result.retired.toLocaleString()}`;
+  hoverDetail.textContent = result.detail ? `${retired}; ${result.detail}` : retired;
+}
+
+function placeHoverCard(target) {
+  const rect = target.getBoundingClientRect();
+  const gap = 8;
+  const width = hoverCard.offsetWidth || 320;
+  const height = hoverCard.offsetHeight || 92;
+  const maxX = window.innerWidth - width - 12;
+  let left = Math.min(Math.max(12, rect.left), Math.max(12, maxX));
+  let top = rect.bottom + gap;
+  if (top + height > window.innerHeight - 12) {
+    top = rect.top - height - gap;
+  }
+  if (top < 12) top = 12;
+  hoverCard.style.left = `${left}px`;
+  hoverCard.style.top = `${top}px`;
+}
+
+function showHoverCard(name, target) {
+  renderHoverCard(name);
+  hoverCard.hidden = false;
+  placeHoverCard(target);
+}
+
+function hideHoverCard() {
+  hoverCard.hidden = true;
+  hoverCard.removeAttribute("data-name");
 }
 
 function classifyRiscvTest(machine, status) {
@@ -183,7 +283,7 @@ function classifyRiscvTest(machine, status) {
 }
 
 async function runRiscvTest(name) {
-  updateSuiteRow(name, { status: "running", retired: null, detail: "loading" });
+  updateSuiteDot(name, { status: "running", retired: null, detail: "loading" });
   await yieldToPaint();
 
   let machine;
@@ -195,7 +295,7 @@ async function runRiscvTest(name) {
     const elf = new Uint8Array(await res.arrayBuffer());
     machine = new WasmMachine(TEST_RAM_MIB);
     machine.loadElf(elf);
-    updateSuiteRow(name, { status: "running", retired: null, detail: "running" });
+    updateSuiteDot(name, { status: "running", retired: null, detail: "running" });
     await yieldToPaint();
     const status = machine.run(TEST_MAX_INSTRS);
     const result = classifyRiscvTest(machine, status);
@@ -220,7 +320,7 @@ async function runSuite() {
   suiteRunning = true;
   suiteStopRequested = false;
   setInteractiveState();
-  resetSuiteRows();
+  resetSuiteDots();
   term.writeln("\x1b[36mrunning riscv-tests in browser wasm\x1b[0m");
   const started = performance.now();
   try {
@@ -231,7 +331,7 @@ async function runSuite() {
       }
       setSuiteStatus(`${index + 1}/${RISCV_TESTS.length} ${name}`);
       const result = await runRiscvTest(name);
-      updateSuiteRow(name, result);
+      updateSuiteDot(name, result);
       if (result.status !== "pass") {
         term.writeln(`\x1b[31m${name}: ${result.detail}\x1b[0m`);
       }
@@ -359,8 +459,7 @@ suiteStopBtn.addEventListener("click", () => {
   suiteStopRequested = true;
   setSuiteStatus("stopping...");
 });
-suiteFilter.addEventListener("change", applySuiteFilter);
-renderSuiteRows();
+renderSuiteHeatmap();
 setInteractiveState();
 
 // Boot: init the wasm module, then fetch the embedded default hello.elf.
@@ -379,5 +478,9 @@ setInteractiveState();
     window.__ready = true; // signal for automated tests
   } catch (e) {
     setStatus(`failed to load hello.elf: ${e}`);
+  } finally {
+    setTimeout(() => {
+      void runSuite();
+    }, 80);
   }
 })();

@@ -315,6 +315,11 @@ impl Csrs {
         let merged = (self.mstatus & !SSTATUS_WMASK) | (v & SSTATUS_WMASK);
         self.mstatus = legalize_mstatus(merged);
     }
+    /// The S-interrupt bits (SSIE/STIE/SEIE) currently visible through `sie`/`sip` — those in
+    /// the S-subset that are *delegated* to S-mode by `mideleg` (Priv §4.1.3).
+    fn s_int_mask(&self) -> u64 {
+        SIE_SIP_SMASK & self.warl_get(MIDELEG)
+    }
 
     /// Metadata for an implemented CSR address, or `None` if unimplemented (→ illegal).
     /// Privilege is `addr[9:8]`; read-only is `addr[11:10]==0b11`.
@@ -385,9 +390,11 @@ impl Csrs {
             MSTATUS => self.mstatus,
             MCAUSE => self.mcause,
             // S-mode views (E1-T09): sstatus/sie/sip expose the S-subset of mstatus/mie/mip.
+            // Per Priv §4.1.3, an S-interrupt bit is visible/maskable via sie/sip ONLY when it
+            // is delegated (mideleg bit set); undelegated bits are read-only zero.
             SSTATUS => self.sstatus_read(),
-            SIE => self.warl_get(MIE) & SIE_SIP_SMASK,
-            SIP => self.warl_get(MIP) & SIE_SIP_SMASK,
+            SIE => self.warl_get(MIE) & self.s_int_mask(),
+            SIP => self.warl_get(MIP) & self.s_int_mask(),
             // FP CSR aliasing: fcsr = frm[7:5] | fflags[4:0].
             FFLAGS => u64::from(self.fflags),
             FRM => u64::from(self.frm),
@@ -410,14 +417,18 @@ impl Csrs {
         match addr {
             MSTATUS => self.mstatus = legalize_mstatus(v),
             MCAUSE => self.mcause = v,
-            // S-mode views (E1-T09): route through the masked mstatus/mie/mip.
+            // S-mode views (E1-T09): route through the masked mstatus/mie/mip. Only the
+            // *delegated* S-interrupt bits (SIE_SIP_SMASK & mideleg) are writable via sie/sip;
+            // undelegated bits are read-only zero and a write leaves mie/mip untouched.
             SSTATUS => self.sstatus_write(v),
             SIE => {
-                let new = (self.warl_get(MIE) & !SIE_SIP_SMASK) | (v & SIE_SIP_SMASK);
+                let m = self.s_int_mask();
+                let new = (self.warl_get(MIE) & !m) | (v & m);
                 self.warl_set(MIE, new);
             }
             SIP => {
-                let new = (self.warl_get(MIP) & !SIE_SIP_SMASK) | (v & SIE_SIP_SMASK);
+                let m = self.s_int_mask();
+                let new = (self.warl_get(MIP) & !m) | (v & m);
                 self.warl_set(MIP, new);
             }
             // FP CSR writes (value already WARL-masked). Writing any of the three marks FP

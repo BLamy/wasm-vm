@@ -93,5 +93,18 @@ Evidence (local):
 - rv64ui/um/ua/uf/ud/uc all still pass; exhaustive 2^32 sweep passes (tally 325,400,582).
 - Gate: fmt clean, clippy 0, workspace + both wasm builds 0 FAILED.
 
-Pending: adversarial verification (Spike mstatus/sstatus lifecycle differential across M→U/S
-transitions; WARL edge readbacks; TSR/TW/TVM; the trap/xRET field shuffles).
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: refuted
+The critic diffed a 19-value mstatus WARL battery, sstatus masking, the trap/xRET field
+shuffles, and MRET/SRET against Spike (`--isa=rv64gc`, matching misa) — all matched. But it
+found a real bug: **sie/sip masked views ignored `mideleg`.** Per Priv §4.1.3 the SSIE/STIE/
+SEIE bits are read-only-zero when the interrupt is NOT delegated; Spike returns `sie=0x0`
+(mideleg=0) where ours returned `0x222`, and a write through sie/sip leaked to mie/mip. Also a
+COVERAGE gap: no committed test exercised the sie/sip CSR view at all.
+
+### 2026-07-03 — rework
+`csr.rs`: `sie`/`sip` read and write now gate on `s_int_mask() = SIE_SIP_SMASK & mideleg` —
+undelegated S-interrupt bits are read-only zero and writes don't reach mie/mip (matching Spike
+Case A: mideleg=0 → sie/mie read 0). Added `privilege.rs::sie_sip_are_mideleg_gated`
+(mideleg=0 → sie/sip read-only 0 + no mie/mip leak; mideleg=SBITS → visible/writable; partial
+delegation exposes only the delegated bit and leaves M-only mie bits untouched). Gate green;
+all six riscv suites + exhaustive still pass. Re-verifying.

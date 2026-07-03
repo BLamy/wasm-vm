@@ -217,6 +217,65 @@ fn sstatus_write_touches_only_s_bits() {
     assert_eq!(s & SIE, SIE);
 }
 
+// ── sie/sip are gated on mideleg (Priv §4.1.3) ──────────────────────────────────
+
+#[test]
+fn sie_sip_are_mideleg_gated() {
+    // CSR addresses (kept local so they don't clash with the bit-mask consts above).
+    const A_MIDELEG: u16 = 0x303;
+    const A_MIE: u16 = 0x304;
+    const A_MIP: u16 = 0x344;
+    const A_SIE: u16 = 0x104;
+    const A_SIP: u16 = 0x144;
+    const SBITS: u64 = (1 << 1) | (1 << 5) | (1 << 9); // SSIE/STIE/SEIE
+
+    // mideleg = 0: NO S-interrupt is delegated → sie/sip are read-only zero and a write
+    // through them does not reach mie/mip.
+    let mut c = Csrs::at_reset();
+    wr(&mut c, A_MIDELEG, 0);
+    wr(&mut c, A_SIE, u64::MAX);
+    assert_eq!(rd(&mut c, A_SIE), 0, "sie read-only zero when mideleg=0");
+    assert_eq!(
+        rd(&mut c, A_MIE),
+        0,
+        "sie write did not reach mie (undelegated)"
+    );
+    wr(&mut c, A_SIP, u64::MAX);
+    assert_eq!(rd(&mut c, A_SIP), 0, "sip read-only zero when mideleg=0");
+    assert_eq!(rd(&mut c, A_MIP), 0, "sip write did not reach mip");
+
+    // Delegate all S-interrupts: now sie/sip expose and mask those bits, and a write lands
+    // in mie/mip.
+    let mut c = Csrs::at_reset();
+    wr(&mut c, A_MIDELEG, SBITS);
+    wr(&mut c, A_SIE, u64::MAX);
+    assert_eq!(
+        rd(&mut c, A_SIE),
+        SBITS,
+        "delegated S-interrupt enables visible"
+    );
+    assert_eq!(
+        rd(&mut c, A_MIE),
+        SBITS,
+        "sie write reached mie for delegated bits"
+    );
+    // Only the delegated bits move: an M-only interrupt bit in mie is untouched via sie.
+    let mut c = Csrs::at_reset();
+    wr(&mut c, A_MIDELEG, 1 << 1); // delegate only SSI
+    wr(&mut c, A_MIE, 1 << 3); // MTIE (M-only) preset in mie
+    wr(&mut c, A_SIE, u64::MAX);
+    assert_eq!(
+        rd(&mut c, A_MIE) & (1 << 3),
+        1 << 3,
+        "sie write left MTIE untouched"
+    );
+    assert_eq!(
+        rd(&mut c, A_SIE),
+        1 << 1,
+        "only the delegated SSI is visible"
+    );
+}
+
 // ── the ONLY paths to a mode change are trap-entry and xRET ─────────────────────
 
 #[test]
