@@ -100,7 +100,10 @@ Built on E1-T10's precise delivery:
 Tests: `crates/core/tests/interrupts.rs` (12) — priority chain, MIE/SIE gating, delegation to S vs
 M, untakeable-skip, WARL masks, mip device-bit RMW, end-to-end delivery to stvec (scause/sepc/SPP),
 vectored S- and M-interrupts, WFI idiom, precise-mepc-after-retire. The rv64mi-p `illegal` ELF now
-advances through its vectored-interrupt + S-mode-entry + WFI stages (T11) to TESTNUM 5 (SFENCE.VMA /
-satp / TVM — E1-T15/T16), confirming the T11 machinery it exercises works; it stays excluded pending
-virtual memory. Local gate green: fmt clean; clippy 0 (real + zicsr-stub, all-targets); `cargo test
---workspace` 0 `test result: FAILED`; both wasm builds 0 FAILED. Awaiting adversarial verification.
+clears its illegal-instruction case (bad2), the vectored-interrupt sub-test, S-mode entry and WFI
+(all T11 machinery) — a PC trace shows it then fails on the `sfence.vma` at 0x80000200
+(0x1200_0073), which we do not decode yet (E1-T17 TLB/SFENCE.VMA) so it raises a spurious illegal.
+That confirms the T11 path it exercises works; it stays excluded pending SFENCE.VMA. (The test keeps
+TESTNUM=2 across those stages, so its exit code alone doesn't localize the failure — the trace does.)
+Local gate green: fmt clean; clippy 0 (real + zicsr-stub, all-targets); `cargo test --workspace` 0
+`test result: FAILED`; both wasm builds 0 FAILED. Awaiting adversarial verification.
