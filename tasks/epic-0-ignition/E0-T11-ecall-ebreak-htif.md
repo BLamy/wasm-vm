@@ -80,3 +80,25 @@ Gates: fmt / clippy exit 0 / 23 native suites (0 FAILED, verified) + 10 wasm / n
 CI green run 28629640389.
 rr: SKIPPED locally (macOS/no PMU); Spike exit-code differential is angle 1 for the verifier,
 lands at E0-T13.
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: refuted
+- P1 exit-code decode — HELD. Exited(code) for tohost=(code<<1)|1 across {0,42,255,1000,0x7FFF_FFFF,0xDEAD_BEEF,1<<62}, incl. direct 64-bit writes; green in miri + wasm.
+- P2 watch mechanism — HELD. sb odd→low-byte exits; sb→+7 high-byte = command no-exit; even-then-same-even counts once; even-then-different-even counts 2; command-then-exit still exits; zero-reset-then-same-even re-counts. Zero ambiguity vs htif.rs doc.
+- P3 run-loop off-by-one — HELD. 4000×addi x1,x1,1: after run(N) x1==N exactly for N∈{0,1,2,1000}.
+- P4 ECALL/EBREAK purity — HELD. 31-reg + RAM sentinels identical across trapping step; ECALL cause 11/tval 0, EBREAK cause 3/tval=pc, PC unmoved; miri-clean.
+- P5 stripped-symtab + tohost-outside-RAM — HELD. llvm-strip fixture loads, HTIF unarmed, run→MaxInstrs cmd_count 0 no panic; bogus tohost → BusFault decodes Idle, never exits.
+- rr — SKIPPED loud (macOS/no PMU); Spike exit-code differential at E0-T13.
+- COVERAGE — REFUTED. Mutation (d) run-loop checks HTIF BEFORE step SURVIVED the worker's 9-test suite. Not equivalent: a 2-instr exit blob under run(2) returns Exited(0) on step-then-check but MaxInstrs on the mutant — an exit written on the exactly-last budgeted instruction is silently dropped. exit_on_final_budgeted_instruction_is_observed passes on HEAD, FAILS on the mutant. Worker tested MaxInstrs off-by-one AND exit-under-generous-budget but never the exit×budget boundary. Mutations (a)EcallFromU (b)EBREAK tval 0 (c)even-as-exit (e)change-detect-removed (f)0..=max (g)code=v all KILLED. DEMAND: promote the boundary test.
+- MOCK/HONESTY: claim commit tasks-only; fix commit touches exactly the two disclosed stale files — RED-first disclosure truthful. Machine-growth audit: new()/ram_len() preserved (33 lib tests green), WasmMachine compiles+works, Machine::new .expect()s Ram::new = equivalent to old vec![0;n] OOM-abort (not a regression); no `_ =>` in wasm/cli. Suite-edit audit: verifier_e0t07_angles purity loop byte-identical, only the two case cause/tval tuples changed — property not weakened.
+- NOVEL: "exit on exactly the last budgeted instruction" boundary attack (run(2) on addi;sd) — the concrete input exposing mutation (d); "even→reset-to-0→same-even re-counts" change-detection edge. Both pass on HEAD.
+- SUITE: promote verifier_e0t11_attacks.rs (11 tests incl. boundary + watch-mechanism matrix); discard nothing.
+
+### 2026-07-02 — rework after refutation (worker)
+Applied the demand: promoted verifier_e0t11_attacks.rs (12 tests incl.
+exit_on_final_budgeted_instruction_is_observed and the full watch-mechanism matrix) +
+the stripped.elf fixture (provenance appended to fixtures/build.sh) verbatim (one
+#[allow(dead_code)] on an unused helper + a parenthesization for clippy, assertions
+untouched). Re-ran the critic's exact mutation (d) FAITHFULLY (HTIF check moved BEFORE
+the step): now KILLED by exit_on_final_budgeted_instruction_is_observed (11 passed/1
+failed), reverted, lib.rs clean. Gates: clippy exit 0, full crate 0 FAILED. Status
+implemented; re-verification requested.
