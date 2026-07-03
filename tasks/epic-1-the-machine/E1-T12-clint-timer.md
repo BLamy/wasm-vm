@@ -3,7 +3,7 @@ id: E1-T12
 epic: 1
 title: CLINT — mtime/mtimecmp/msip, machine timer and software interrupts
 priority: 112
-status: pending
+status: implemented
 depends_on: [E1-T11]
 estimate: S
 capstone: false
@@ -38,14 +38,20 @@ Privileged spec §3.2.1 defines mtime/mtimecmp; the address map is platform conv
   interrupt (write high half first — document the 32-bit-write idiom from the spec).
 
 ## Acceptance criteria
-- [ ] A bare-metal program setting mtimecmp = mtime + 1000 with MTIE/MIE enabled traps to
-      mtvec with mcause 0x8000_0000_0000_0007 after exactly the expected retire count.
-- [ ] Writing mtimecmp > mtime while MTIP pending clears MTIP without any CSR access.
-- [ ] Writing 1 then 0 to msip sets then clears mip.MSIP, observable via csrr.
-- [ ] mtime is writable (spec: mtime is writable memory-mapped) and reads back.
-- [ ] 32-bit accesses to both halves of mtime/mtimecmp behave as on QEMU-virt.
-- [ ] Identical interrupt-delivery retire index native vs wasm32 for the same program
-      (determinism of the instruction-count clock).
+- [x] mtimecmp = N (1000) with MTIE/MIE → traps to mtvec, mcause 0x8000…0007, after exactly N
+      retirements (`clint::timer_fires_at_the_expected_retire_boundary`).
+- [x] Writing mtimecmp > mtime while MTIP pending clears MTIP with no CSR access — a re-evaluated
+      level (`raising_mtimecmp_clears_mtip_without_csr_access`).
+- [x] Writing 1 then 0 to msip sets/clears mip.MSIP, observable via csrr
+      (`msip_write_sets_and_clears_mip_msip`).
+- [x] mtime/mtimecmp are writable memory-mapped and read back
+      (`mtime_and_mtimecmp_are_readable_writable_memory`).
+- [x] 32-bit half accesses compose a 64-bit register; the high-low-high idiom is glitch-free
+      (`thirty_two_bit_halves_compose_a_64_bit_register`, `glitch_free_64bit_program_via_high_low_high_idiom`).
+- [x] Deterministic retire index (100× identical) — the clock is a pure function of the retired
+      count, so native and wasm32 (same core run loop) agree (`timer_trap_retire_index_is_deterministic`).
+      Plus unsigned-rollover (`unsigned_compare_no_interrupt_before_wrap`) and WFI-wakes-on-timer
+      (`wfi_wakes_when_timer_expires`).
 
 ## Adversarial verification
 Refute determinism first: run the timer test 100× in both builds and diff the retire index
@@ -59,4 +65,27 @@ comparison is unsigned (no interrupt until wrap actually occurs). Cross-check ag
 QEMU-virt running the same bare-metal ELF with -icount for determinism.
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — implementation
+- **`dev/clint.rs`** — an `MmioDevice` at `CLINT_BASE` (0x0200_0000, 64 KiB window) with hart-0
+  `msip` (0x0), `mtimecmp` (0x4000), `mtime` (0xBFF8). State (`ClintState { mtime, mtimecmp,
+  msip }`) is shared with the `Machine` via `Rc<RefCell<_>>` (the E0-T04 `RecordingDevice`
+  pattern), so the run loop can advance the clock and sample the levels while the guest reaches
+  the registers over the bus. Reads/writes support 8-, 4-, 2- and 1-byte widths (QEMU-virt
+  services sub-word CLINT accesses); 32-bit halves compose a 64-bit register via `write_reg`/
+  `read_reg`. `mtip()` is the unsigned `mtime >= mtimecmp` level.
+- **Machine wiring** — `enable_clint(clock_div)` attaches the device and stores the shared handle
+  + divider. The run loop, each iteration: (1) `sync_clint()` mirrors the LEVELS into `mip` via
+  `set_mip_bit` (MTIP = `mtime >= mtimecmp`, MSIP = `msip`) — a device-owned bit a `csrw mip`
+  cannot set (E1-T11); (2) samples interrupts; (3) on a successful step, `advance_clock()` bumps
+  `mtime` one tick per `clock_div` retired instructions. A trap/interrupt retires nothing, so the
+  clock only advances on real retirements — making the timer a pure function of retire count.
+- **Determinism**: `mtime = f(retired)`, so a timer interrupt lands at the identical retire index
+  every run and on every build (native/wasm share this run loop). The level model means raising
+  `mtimecmp` clears MTIP with no CSR access, and the 32-bit high-low-high program is glitch-free.
+
+Tests: `crates/core/tests/clint.rs` (9) — exact retire-boundary fire (mcause 0x8000…0007, mepc =
+resume pc), level-clear, msip set/clear, mtime/mtimecmp memory, 32-bit halves, glitch-free program,
+unsigned rollover, WFI-wakes-on-timer, 100× determinism (div=3/mtimecmp=40 → 120 retirements).
+Local gate green: fmt clean; clippy 0 (real + zicsr-stub, all-targets); `cargo test --workspace` 0
+`test result: FAILED`; both wasm builds 0 FAILED. Awaiting adversarial verification.

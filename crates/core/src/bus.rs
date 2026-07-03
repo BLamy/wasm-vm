@@ -36,6 +36,9 @@ pub mod mmap {
     pub const UART0_BASE: u64 = 0x1000_0000;
     /// UART0 MMIO window length.
     pub const UART0_LEN: u64 = 0x100;
+    /// CLINT base — the SiFive/QEMU-virt Core-Local Interruptor (E1-T12): msip / mtimecmp /
+    /// mtime for the machine timer + software interrupt.
+    pub const CLINT_BASE: u64 = 0x0200_0000;
 }
 
 /// Fallible little-endian accessors at every RV64 access width.

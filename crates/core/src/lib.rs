@@ -76,6 +76,13 @@ pub struct Machine {
     last_tohost: u64,
     /// Count of unsupported (LSB-clear, non-zero) command writes seen.
     htif_commands: u64,
+    /// CLINT shared state (E1-T12), present when [`Self::enable_clint`] attached the device.
+    /// The run loop advances `mtime` from the retire count and samples MTIP/MSIP into `mip`.
+    clint: Option<alloc::rc::Rc<core::cell::RefCell<dev::clint::ClintState>>>,
+    /// `mtime` advances one tick per `clock_div` retired instructions (deterministic clock).
+    clock_div: u64,
+    /// Sub-divider remainder: retirements not yet worth a whole `mtime` tick.
+    tick_accum: u64,
 }
 
 impl Machine {
@@ -96,7 +103,33 @@ impl Machine {
             htif: None,
             last_tohost: 0,
             htif_commands: 0,
+            clint: None,
+            clock_div: 1,
+            tick_accum: 0,
         })
+    }
+
+    /// Attach a CLINT (E1-T12) at [`bus::mmap::CLINT_BASE`] and drive its `mtime` from the
+    /// retired-instruction count: one tick per `clock_div` retirements (a deterministic clock
+    /// — native and wasm agree). `clock_div` is clamped to at least 1. The run loop then
+    /// samples MTIP (`mtime >= mtimecmp`) and MSIP into `mip` at every instruction boundary.
+    /// Returns the shared state handle so tests/hosts can inspect or drive the registers.
+    pub fn enable_clint(
+        &mut self,
+        clock_div: u64,
+    ) -> alloc::rc::Rc<core::cell::RefCell<dev::clint::ClintState>> {
+        let (device, state) = dev::clint::Clint::new();
+        self.bus
+            .attach(
+                bus::mmap::CLINT_BASE,
+                dev::clint::CLINT_LEN,
+                alloc::boxed::Box::new(device),
+            )
+            .expect("CLINT window overlaps RAM or another device");
+        self.clock_div = clock_div.max(1);
+        self.tick_accum = 0;
+        self.clint = Some(alloc::rc::Rc::clone(&state));
+        state
     }
 
     /// Size of guest RAM in bytes.
@@ -182,12 +215,45 @@ impl Machine {
         self.run_traced(max_instrs, &mut trace::NullSink)
     }
 
+    /// E1-T12: mirror the CLINT interrupt LEVELS into `mip`. MTIP (bit 7) tracks
+    /// `mtime >= mtimecmp` and MSIP (bit 3) tracks `msip` — device-owned bits software cannot
+    /// set. A no-op when no CLINT is attached.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn sync_clint(&mut self) {
+        if let Some(clint) = &self.clint {
+            let s = *clint.borrow();
+            self.hart.csr.set_mip_bit(7, s.mtip()); // MTIP
+            self.hart.csr.set_mip_bit(3, s.msip); // MSIP
+        }
+    }
+
+    /// E1-T12: advance `mtime` by one tick per `clock_div` retired instructions — the
+    /// deterministic clock source (native and wasm retire identically, so a timer interrupt
+    /// lands at the same retire index). A no-op when no CLINT is attached.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn advance_clock(&mut self) {
+        if let Some(clint) = &self.clint {
+            self.tick_accum += 1;
+            if self.tick_accum >= self.clock_div {
+                let ticks = self.tick_accum / self.clock_div;
+                self.tick_accum %= self.clock_div;
+                let mut s = clint.borrow_mut();
+                s.mtime = s.mtime.wrapping_add(ticks);
+            }
+        }
+    }
+
     /// Like [`Self::run`], but feeds every retired instruction to `sink` (E0-T18's
     /// `--trace`). Termination and the "logged once" HTIF command watch are identical to
     /// `run` — the ONE place the run-loop / HTIF state machine lives, so a traced run and
     /// an untraced run can never diverge in when they stop.
     pub fn run_traced<T: trace::TraceSink>(&mut self, max_instrs: u64, sink: &mut T) -> RunOutcome {
         for _ in 0..max_instrs {
+            // E1-T12: refresh the CLINT-driven interrupt LEVELS (MTIP = mtime >= mtimecmp, MSIP
+            // = msip) into `mip` before sampling — a continuously re-evaluated level, so a
+            // just-crossed timer fires and a raised `mtimecmp` clears MTIP with no CSR access.
+            #[cfg(not(feature = "zicsr-stub"))]
+            self.sync_clint();
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
             // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the
             // next instruction — sepc/mepc then points at the resume address (the interrupted
@@ -199,7 +265,14 @@ impl Machine {
                 self.hart.take_interrupt(cause, to_s, epc);
                 continue;
             }
-            if let Err(trap) = self.hart.step_traced(&mut self.bus, sink) {
+            let step_result = self.hart.step_traced(&mut self.bus, sink);
+            // E1-T12: an instruction retired iff the step succeeded — advance the deterministic
+            // retire-count clock ONLY then (a delivered trap or a taken interrupt retires nothing).
+            #[cfg(not(feature = "zicsr-stub"))]
+            if step_result.is_ok() {
+                self.advance_clock();
+            }
+            if let Err(trap) = step_result {
                 // E1-T10: DELIVER the trap through the CSR machinery (mepc/mcause/mtval +
                 // mtvec vector) and keep running — a guest with a handler installed resumes
                 // at mtvec. `step`/`execute` stay pure (they returned Err having touched
