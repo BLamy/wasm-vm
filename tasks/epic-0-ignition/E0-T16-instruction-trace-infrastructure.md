@@ -3,7 +3,7 @@ id: E0-T16
 epic: 0
 title: Instruction-level trace records — structured, toggleable, canonically serializable
 priority: 16
-status: in-progress
+status: implemented
 depends_on: [E0-T08, E0-T09, E0-T15]
 estimate: M
 capstone: false
@@ -59,4 +59,33 @@ refutes (this replay tool is a legitimate verifier one-off). (5) Byte-compare na
 wasm canonical output for all three golden binaries, not just the tested blob.
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — worker claim — commit 35209e2 (branch task/e0-t16-trace-records, stacked on e0-t15)
+Deliverables: trace.rs evolves the E0-T15 hook into full records — TraceRecord{pc,insn,
+rd:Option<(u8,u64)>,mem:Option<MemOp>}, MemOp{addr,len,is_store,value}, TraceSink::retire(
+&TraceRecord), NullSink (always), and behind feature=trace: VecSink, WriteSink<W:io::Write>
+(std+trace), fmt_canonical (no_std alloc-free Display wrapper). Hart::execute now returns
+(rd,value,Option<MemOp>) — the 11 load/store arms capture the MemOp (addr+len+is_store+
+value); step_traced builds the record and calls retire ONLY after execute()==Ok (no record
+for a faulting instruction — trap-purity). Machine gained step_traced<T> + htif_exit for
+trace-driven runs. ZERO-COST PRESERVED across the trait evolution: check-zero-cost.sh
+--selftest still passes (null-sink step erases the whole record build incl. mem capture).
+CANONICAL FORMAT frozen + versioned in docs/trace-format.md: `core 0: 0x{pc:016x}
+(0x{insn:08x})[ x{rd} 0x{val:016x}][ mem 0x{addr:016x}[ 0x{sval width 2*len}]]`; rules:
+faults omit line, x0/no-write omit register field, store value width-masked to 2*len hex,
+loads addr-only, field order pc/insn/rd/mem, lowercase zero-padded (cmp not diff).
+GOLDEN docs/golden/loops.trace.txt = first 40 retired instrs of loops.elf, HAND-VERIFIED
+against loops.S (auipc sp / bss-zero loop / jal main / li a0,0 / sum loop add;addi;blt with
+branches correctly emitting no rd). CLI JSON-lines serializer (crates/cli/src/trace_json.rs,
+hand-rolled — serde stays out of core; --trace wiring is E0-T18).
+Tests: trace_golden.rs (6) — byte-for-byte golden (cmp), x0-omit, load rd-then-mem-no-value,
+store-value width-masked at all 4 widths char-exact, OBSERVER PROPERTY (memops.elf trace-on
+VecSink vs trace-off NullSink → identical register dump + console output), 1M-record run;
+wasm trace.rs — wasm32 canonical trace == committed golden (native==wasm transitively);
+CLI json_line shape tests (3 record shapes) + newline-separated sink. E0-T15 trace_retire.rs
++ zerocost.rs migrated to retire(&TraceRecord). Feature matrix intact (all 4 native + 2
+wasm32 combos build). Gates: fmt/clippy -D warnings exit 0 / native default+trace 0 FAILED /
+wasm 0 FAILED / CI green run 28638769751.
+rr: N/A locally (macOS); the trace IS the observability layer rr/Spike diffing (E0-T20)
+consumes. Angle 4 (trace-replay lie-detector) + angle 5 (native vs wasm all-3-goldens) are
+for the verifier.
