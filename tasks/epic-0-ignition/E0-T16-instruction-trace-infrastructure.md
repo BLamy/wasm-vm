@@ -89,3 +89,26 @@ wasm 0 FAILED / CI green run 28638769751.
 rr: N/A locally (macOS); the trace IS the observability layer rr/Spike diffing (E0-T20)
 consumes. Angle 4 (trace-replay lie-detector) + angle 5 (native vs wasm all-3-goldens) are
 for the verifier.
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: refuted
+- P1 format-drift — HELD. Regen byte-identical to committed golden (cmp), git clean; trace_golden 6/6.
+- P2 observer (all 3 goldens) — HELD. trace-on (VecSink+step_traced) == trace-off (NullSink via run) on regs+console+exit for hello/loops/memops (identical dumps, console bytes, Exited(0)).
+- P3 store-value width grammar — HELD. Char-by-char mask value&((1<<8*len)-1), width 2*len; sb 0x00→"0x00", sd 0x5→16 digits; confirmed LIVE in memops trace (sb 0x80/sh 0xbeef/sw 0xdeadbeef/sd 0x0123456789abcdef).
+- P4 LIE DETECTION — HELD (records truthful). 248 real retired instrs (hello 83, loops 48, memops 117) all truthful via independent reg-diff (rd) + opcode-decode/memory-readback (mem). ld x14,0x5c(x14) (rd==rs1) logs LOADED value not address; 25 stores/18 loads consistent; x0-target + branches correct.
+- P5/P6 native vs wasm all 3 — HELD. native==wasm for hello(83)/memops(117)/loops(golden).
+- P7 zero-cost — HELD. --selftest exit 0; null-probe asm has ZERO call/bl; no MemOp/TraceRecord leaked into the NullSink path.
+- COVERAGE — REFUTED. Mutations: (a) unmask store value → RED; (b) always-emit x0 → RED; (c) fire-on-trap → RED (trace_retire.rs). SURVIVORS: (D) store logs ADDRESS not value → committed suite GREEN; (E) drop mem field on stores → committed suite GREEN. Root cause: NO committed test EXECUTES a load/store and asserts the emitted record's mem field — store_value_is_masked/load_emits_rd_then_mem operate on HAND-BUILT records (test fmt_canonical, not the hart's 11 capture arms); loops.trace has no mem lines; observer/1M execute the path but assert nothing about mem. Same shape as E0-T15 Mutation C. DEMAND: execution-level mem golden/assertion.
+- MOCK/HONESTY — clean. Golden spot-check vs Docker objdump (auipc sp / addi t0→0x68 / add a0,a0,t0 / blt-no-rd) all match; no self-licking; CLI json shapes match doc; cold clone scrubbed.
+- NOVEL — independent replay lie-detector (reg-diff for rd, opcode-decode+readback for mem, never reusing the crate decoder) + exit-code observer arm + all-3 wasm parity. All held; exposed D/E.
+- SUITE: promote an execution-level mem assertion (memops golden OR the lie-detector probe) — makes D/E red. discard nothing.
+
+### 2026-07-03 — rework after refutation (worker)
+Applied the demand: added crates/core/tests/trace_mem_exec.rs (feature=trace) — EXECUTES
+sb/sh/sw/sd through the hart and asserts the emitted MemOp{addr,len,is_store,value} at
+every width; executes ld (incl. rd==rs1) and asserts rd=loaded-value + mem=non-store at
+the effective addr; loads at every width; a compute op asserts mem=None. Re-ran the
+verifier's exact survivors: Mutation D (sd logs address) KILLED, Mutation E (sd drops mem)
+KILLED, plus a load-drops-mem variant KILLED; each reverted, hart/mod.rs clean. The
+hand-built-record fmt tests remain (correctly scoped as fmt_canonical unit tests). Gates:
+clippy exit 0, full crate (default + trace) 0 FAILED. Status implemented; re-verification
+requested.
