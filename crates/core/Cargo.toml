@@ -35,6 +35,8 @@ sha2 = { version = "0.10", default-features = false }
 [dev-dependencies]
 criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }
 proptest = "1"
+# Parallelizes the exhaustive 2^32 decode sweep (E0-T21); native-only, test-scoped.
+rayon = "1"
 
 [[bench]]
 name = "mmio_dispatch"
