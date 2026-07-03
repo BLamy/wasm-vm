@@ -3,7 +3,7 @@ id: E0-T11
 epic: 0
 title: ECALL and EBREAK execution plus the HTIF tohost exit convention
 priority: 11
-status: in-progress
+status: implemented
 depends_on: [E0-T08, E0-T10]
 estimate: M
 capstone: false
@@ -54,4 +54,29 @@ trapping step. (5) Strip the symbol table from a test ELF (`riscv64-unknown-elf-
 and confirm graceful `MaxInstrs` behavior with a clear diagnostic, not a panic.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commits 344f652+fix (branch task/e0-t11-ecall-htif, stacked on e0-t10)
+Deliverables: hart — ECALL → Trap{cause 11 EcallFromM (our only mode), tval 0}; EBREAK →
+Trap{cause 3 Breakpoint, tval pc}. The RV64I execution set is now COMPLETE — no placeholder
+arms remain (dead `raw` param removed from execute()). crates/core/src/htif.rs — Htif watches
+tohost; HtifStatus::decode(v): v==0→Idle, v&1==1→Exit(v>>1), else Command(v); check() is
+panic-free on unmapped tohost (Err→Idle). Machine GROWN from the E0-T01 placeholder into
+hart+SystemBus+Option<Htif> — the verified new()/ram_len() surface preserved exactly (E0-T01
+tests + wasm wrapper unbroken; documented). load_elf sets pc=entry, arms HTIF from the symbol
+(None → never exits via HTIF). run(max_instrs) → RunOutcome::{Exited(code),Trapped(Trap),
+MaxInstrs}, exhaustive enum (no _ => swallow). WATCH RULE documented + tested: check reads the
+FULL 64-bit tohost word after each step, change-detected so command writes log ONCE.
+Tests (tests/htif_run.rs, 9): exit-0 (sd 1), exit-42 (sd 85), sw-of-odd exits / sd-of-even
+logs-once (htif_command_count==1), tohost+4-only no-exit, ecall/ebreak causes+tval+PC-unmoved,
+EBREAK full-dump+RAM-digest purity, MaxInstrs off-by-one incl. budget 0 (exact count), no-HTIF
+graceful MaxInstrs, ELF-fixture load arms HTIF. 3 wasm32 mirrors. miri 9/9 (117s).
+Documented RV64 gotcha (in-test): building the tohost pointer with `lui 0x80001` sign-extends
+to 0xFFFFFFFF_80001000, so the blob helper seeds x6 directly.
+PROCESS NOTE (honest): first push RED-CI'd — two stale placeholder tests (hart_semantics +
+critic-authored verifier_e0t07_angles) still asserted ecall/ebreak trap IllegalInstruction;
+local gate had used `grep -c "test result: ok"` which masks FAILED lines. Fixed forward (real
+causes, purity intact; angles edit documented in-file), gate discipline corrected.
+Gates: fmt / clippy exit 0 / 23 native suites (0 FAILED, verified) + 10 wasm / no_std wasm32 /
+CI green run 28629640389.
+rr: SKIPPED locally (macOS/no PMU); Spike exit-code differential is angle 1 for the verifier,
+lands at E0-T13.

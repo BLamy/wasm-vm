@@ -27,7 +27,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] `  8` [E0-T08](epic-0-ignition/E0-T08-loads-and-stores.md) — RV64I loads and stores with misaligned and access-fault trap semantics *(deps: E0-T07)*
 - [x] `  9` [E0-T09](epic-0-ignition/E0-T09-control-flow.md) — Control flow — JAL, JALR, conditional branches, FENCE, and target-misalignment traps *(deps: E0-T07)*
 - [x] ` 10` [E0-T10](epic-0-ignition/E0-T10-elf64-loader.md) — ELF64 loader for bare-metal riscv64 executables *(deps: E0-T03)*
-- [~] ` 11` [E0-T11](epic-0-ignition/E0-T11-ecall-ebreak-htif.md) — ECALL and EBREAK execution plus the HTIF tohost exit convention *(deps: E0-T08, E0-T10)*
+- [?] ` 11` [E0-T11](epic-0-ignition/E0-T11-ecall-ebreak-htif.md) — ECALL and EBREAK execution plus the HTIF tohost exit convention *(deps: E0-T08, E0-T10)*
 - [ ] ` 12` [E0-T12](epic-0-ignition/E0-T12-stub-mmio-console.md) — Stub MMIO console device for guest putchar output *(deps: E0-T04)*
 - [ ] ` 13` [E0-T13](epic-0-ignition/E0-T13-toolchain-and-spike-provisioning.md) — Provision the riscv64 cross-toolchain, Spike, and QEMU with a reproducible Docker path *(deps: E0-T01)*
 - [ ] ` 14` [E0-T14](epic-0-ignition/E0-T14-golden-guest-binaries.md) — Golden bare-metal guest binaries with crt0, linker script, and reproducible builds *(deps: E0-T13, E0-T11, E0-T12)*
