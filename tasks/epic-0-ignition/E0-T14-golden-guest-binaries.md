@@ -3,7 +3,7 @@ id: E0-T14
 epic: 0
 title: Golden bare-metal guest binaries with crt0, linker script, and reproducible builds
 priority: 14
-status: pending
+status: in-progress
 depends_on: [E0-T13, E0-T11, E0-T12]
 estimate: M
 capstone: false
