@@ -18,3 +18,4 @@ pkg/
 web/node_modules/
 web/pkg/
 web/assets/*.elf
+.claude/worktrees/
