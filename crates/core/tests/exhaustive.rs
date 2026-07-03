@@ -32,19 +32,24 @@ use wasm_vm_core::decode::decode;
 /// | OP-IMM-32 srliw/sraiw | 2 · 2^15         | funct3=101, funct7∈{0000000,0100000}      |
 /// | OP-32 base            | 5 · 2^15         | addw/sllw/srlw + subw/sraw                |
 /// | OP-32 M-ext           | 5 · 2^15         | mulw/divw/divuw/remw/remuw (E1-T03)       |
+/// | AMO LR.W/LR.D         | 2 · 2^12         | rd+rs1+aq+rl free, rs2 reserved=0 (E1-T04)|
+/// | AMO SC.W/SC.D         | 2 · 2^17         | rd+rs1+rs2+aq+rl free (E1-T04)            |
+/// | AMO ops (9 × W/D)     | 18 · 2^17        | swap/add/xor/and/or/min/max/minu/maxu     |
 /// | MISC-MEM FENCE        | 2^22             | funct3=000, all fm/pred/succ valid        |
 /// | MISC-MEM FENCE.I      | 1                | canonical 0x0000100F only (E1-T02)        |
 /// | SYSTEM CSR ops        | 6 · 2^22         | funct3∈{1,2,3,5,6,7}, any rd/rs1/csr (E1-T02)|
 /// | SYSTEM ECALL/EBREAK/MRET/WFI | 4         | four exact words (E1-T02 adds MRET, WFI)  |
 ///
 /// The 2^15 groups now total OP(10) + OP M(8) + slliw(1) + srliw/sraiw(2) + OP-32(5) +
-/// OP-32 M(5) = 31. Sum = 56·2^22 + 3·2^16 + 31·2^15 + 5 = 236_093_445.
+/// OP-32 M(5) = 31; the 2^17 groups total SC(2) + AMO(18) = 20. Sum =
+/// 56·2^22 + 20·2^17 + 3·2^16 + 31·2^15 + 2^13 + 5 = 238_723_077.
 ///
 /// NOTE: the CSR ops / FENCE.I / MRET / WFI (the 56·2^22 tail + the +5 exact words) belong to
 /// the DEFAULT (Zicsr) decoder; under `feature = "zicsr-stub"` they route to the E0-T19 stub
-/// and are not decoded. The M-extension is NOT feature-gated — legal in both builds. This
-/// sweep runs with default features.
-pub const EXPECTED_LEGAL: u64 = 56 * (1 << 22) + 3 * (1 << 16) + 31 * (1 << 15) + 5;
+/// and are not decoded. The M and A extensions are NOT feature-gated — legal in both builds.
+/// This sweep runs with default features.
+pub const EXPECTED_LEGAL: u64 =
+    56 * (1 << 22) + 20 * (1 << 17) + 3 * (1 << 16) + 31 * (1 << 15) + (1 << 13) + 5;
 
 #[test]
 #[ignore = "exhaustive 2^32 sweep — minutes; run with --release --ignored"]

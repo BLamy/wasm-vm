@@ -20,6 +20,21 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct IllegalInstr;
 
+/// The read-modify-write operation of an AMO instruction (A extension, E1-T04). The
+/// funct5 selector; the width (W/D) is carried by the `AmoW`/`AmoD` [`Instr`] variant.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AmoOp {
+    Swap,
+    Add,
+    Xor,
+    And,
+    Or,
+    Min,
+    Max,
+    Minu,
+    Maxu,
+}
+
 /// A decoded RV64I instruction. All immediates are sign-extended to `i64` at decode
 /// time; register fields are 5-bit (0..=31) by construction.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -345,6 +360,54 @@ pub enum Instr {
         rs1: u8,
         rs2: u8,
     },
+    // ── A extension (AMO opcode 0b0101111), E1-T04 ──────────────────────────
+    // `aq`/`rl` are decoded and preserved for the Epic 6 SMP future; they are no-ops
+    // for a single in-order hart. All four aq/rl combinations are legal.
+    /// Load-reserved word/doubleword: `rd = sext(mem[rs1])`, sets the reservation.
+    LrW {
+        rd: u8,
+        rs1: u8,
+        aq: bool,
+        rl: bool,
+    },
+    LrD {
+        rd: u8,
+        rs1: u8,
+        aq: bool,
+        rl: bool,
+    },
+    /// Store-conditional: `rd = 0` and store on a valid reservation, else `rd = 1`.
+    ScW {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+        aq: bool,
+        rl: bool,
+    },
+    ScD {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+        aq: bool,
+        rl: bool,
+    },
+    /// Atomic memory operation word/doubleword: `rd = sext(old); mem[rs1] = op(old, rs2)`.
+    AmoW {
+        op: AmoOp,
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+        aq: bool,
+        rl: bool,
+    },
+    AmoD {
+        op: AmoOp,
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+        aq: bool,
+        rl: bool,
+    },
     // ── MISC-MEM / SYSTEM ───────────────────────────────────────────────────
     /// Fields preserved verbatim; all fm/pred/succ values are valid (incl. TSO).
     Fence {
@@ -453,6 +516,87 @@ const fn decode_system(insn: u32) -> Result<Instr, IllegalInstr> {
 }
 const fn funct7(i: u32) -> u32 {
     i >> 25
+}
+
+/// AMO opcode (`0b0101111`), A extension (E1-T04). funct3 selects width (010=W, 011=D);
+/// funct5 (`insn[31:27]`) selects the op; `aq=insn[26]`, `rl=insn[25]`. LR's rs2 field is
+/// reserved and must be zero (a nonzero rs2 is illegal — keeps decode injective). Every
+/// aq/rl combination is legal (including aq=rl=1).
+const fn decode_amo(insn: u32) -> Result<Instr, IllegalInstr> {
+    let is_d = match funct3(insn) {
+        0b010 => false,
+        0b011 => true,
+        _ => return Err(IllegalInstr),
+    };
+    let funct5 = insn >> 27;
+    let aq = (insn >> 26) & 1 == 1;
+    let rl = (insn >> 25) & 1 == 1;
+    let (rd, rs1, rs2) = (rd(insn), rs1(insn), rs2(insn));
+    match funct5 {
+        // LR: rs2 is a reserved field, must be zero.
+        0b00010 => {
+            if rs2 != 0 {
+                return Err(IllegalInstr);
+            }
+            if is_d {
+                Ok(Instr::LrD { rd, rs1, aq, rl })
+            } else {
+                Ok(Instr::LrW { rd, rs1, aq, rl })
+            }
+        }
+        0b00011 => {
+            if is_d {
+                Ok(Instr::ScD {
+                    rd,
+                    rs1,
+                    rs2,
+                    aq,
+                    rl,
+                })
+            } else {
+                Ok(Instr::ScW {
+                    rd,
+                    rs1,
+                    rs2,
+                    aq,
+                    rl,
+                })
+            }
+        }
+        _ => {
+            let op = match funct5 {
+                0b00001 => AmoOp::Swap,
+                0b00000 => AmoOp::Add,
+                0b00100 => AmoOp::Xor,
+                0b01100 => AmoOp::And,
+                0b01000 => AmoOp::Or,
+                0b10000 => AmoOp::Min,
+                0b10100 => AmoOp::Max,
+                0b11000 => AmoOp::Minu,
+                0b11100 => AmoOp::Maxu,
+                _ => return Err(IllegalInstr),
+            };
+            if is_d {
+                Ok(Instr::AmoD {
+                    op,
+                    rd,
+                    rs1,
+                    rs2,
+                    aq,
+                    rl,
+                })
+            } else {
+                Ok(Instr::AmoW {
+                    op,
+                    rd,
+                    rs1,
+                    rs2,
+                    aq,
+                    rl,
+                })
+            }
+        }
+    }
 }
 
 /// I-type: `imm[11:0] = insn[31:20]`, sign-extended.
@@ -878,6 +1022,7 @@ pub const fn decode(insn: u32) -> Result<Instr, IllegalInstr> {
             0b001 if insn == 0x0000_100F => Ok(Instr::FenceI),
             _ => Err(IllegalInstr),
         },
+        0b0101111 => decode_amo(insn),
         0b1110011 => decode_system(insn),
         _ => Err(IllegalInstr),
     }

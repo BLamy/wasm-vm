@@ -157,3 +157,49 @@ fn rv64um_p_suite_all_pass() {
         failures.join("\n")
     );
 }
+
+/// E1-T04: the full rv64ua-p (A-extension) suite — all 18 AMO tests plus `lrsc`. No
+/// documented skips: LR/SC and every AMO are implemented. Atomics decode in every build;
+/// the p-env CSR startup runs via the same `zicsr-stub` scaffolding.
+#[test]
+fn rv64ua_p_suite_all_pass() {
+    let dir = bin_dir();
+    assert!(
+        dir.is_dir(),
+        "run tools/riscv-tests/build-rv64ua.sh: {dir:?}"
+    );
+    let mut entries: Vec<_> = std::fs::read_dir(&dir)
+        .unwrap()
+        .map(|e| e.unwrap().path())
+        .filter(|p| {
+            p.file_name()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .starts_with("rv64ua-p-")
+        })
+        .collect();
+    entries.sort();
+
+    let mut failures = Vec::new();
+    for path in &entries {
+        let name = path.file_name().unwrap().to_str().unwrap();
+        match run_one(path) {
+            Verdict::Pass => {}
+            Verdict::Fail(n) => failures.push(format!("{name}: FAIL riscv-tests case #{n}")),
+            Verdict::Other(why) => failures.push(format!("{name}: {why}")),
+        }
+    }
+
+    assert_eq!(
+        entries.len(),
+        19,
+        "expected all 19 rv64ua-p ELFs (18 AMO*_w/_d + lrsc)"
+    );
+    assert!(
+        failures.is_empty(),
+        "{} rv64ua-p test(s) failed:\n{}",
+        failures.len(),
+        failures.join("\n")
+    );
+}

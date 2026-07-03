@@ -60,6 +60,10 @@ pub struct Hart {
     /// Reset-relevant control/status registers (E1-T01): misa, mstatus, mcause, mhartid,
     /// privilege mode. The single source of architectural reset state.
     pub csr: crate::csr::Csrs,
+    /// LR/SC reservation (A extension, E1-T04): `Some((addr, width_bytes))` after a
+    /// load-reserved, consumed/cleared by SC. Also invalidated by an overlapping store,
+    /// and by MRET/WFI (our documented conservative policy — see the execute arms).
+    pub resv: Option<(u64, u8)>,
     /// QUARANTINED CSR scaffolding for the riscv-tests p-env (E0-T19). Present only under
     /// `feature = "zicsr-stub"`; Epic 1 replaces it with the real CSR file above.
     #[cfg(feature = "zicsr-stub")]
@@ -73,6 +77,7 @@ impl Default for Hart {
         let mut h = Hart {
             regs: XRegs::default(),
             csr: crate::csr::Csrs::at_reset(),
+            resv: None,
             #[cfg(feature = "zicsr-stub")]
             csrs: crate::zicsr_stub::CsrFile::default(),
         };
@@ -100,6 +105,96 @@ const fn sext32(x: u32) -> u64 {
 #[inline(always)]
 const fn ea(base: u64, imm: i64) -> u64 {
     base.wrapping_add(imm as u64)
+}
+
+/// AMO read-modify-write on the 32-bit (W) value: MIN/MAX are 32-bit comparisons
+/// (signed for MIN/MAX, unsigned for MINU/MAXU), NOT 64-bit (A-extension spec).
+#[inline(always)]
+const fn amo_w(op: crate::decode::AmoOp, old: u32, rhs: u32) -> u32 {
+    use crate::decode::AmoOp::*;
+    match op {
+        Swap => rhs,
+        Add => old.wrapping_add(rhs),
+        Xor => old ^ rhs,
+        And => old & rhs,
+        Or => old | rhs,
+        Min => {
+            if (old as i32) < (rhs as i32) {
+                old
+            } else {
+                rhs
+            }
+        }
+        Max => {
+            if (old as i32) > (rhs as i32) {
+                old
+            } else {
+                rhs
+            }
+        }
+        Minu => {
+            if old < rhs {
+                old
+            } else {
+                rhs
+            }
+        }
+        Maxu => {
+            if old > rhs {
+                old
+            } else {
+                rhs
+            }
+        }
+    }
+}
+
+/// AMO read-modify-write on the 64-bit (D) value.
+#[inline(always)]
+const fn amo_d(op: crate::decode::AmoOp, old: u64, rhs: u64) -> u64 {
+    use crate::decode::AmoOp::*;
+    match op {
+        Swap => rhs,
+        Add => old.wrapping_add(rhs),
+        Xor => old ^ rhs,
+        And => old & rhs,
+        Or => old | rhs,
+        Min => {
+            if (old as i64) < (rhs as i64) {
+                old
+            } else {
+                rhs
+            }
+        }
+        Max => {
+            if (old as i64) > (rhs as i64) {
+                old
+            } else {
+                rhs
+            }
+        }
+        Minu => {
+            if old < rhs {
+                old
+            } else {
+                rhs
+            }
+        }
+        Maxu => {
+            if old > rhs {
+                old
+            } else {
+                rhs
+            }
+        }
+    }
+}
+
+/// Do the store range `[addr, addr+len)` and the reservation `(ra, rw)` overlap? An
+/// overlapping ordinary store invalidates the LR/SC reservation (A-extension spec).
+#[inline(always)]
+const fn overlaps(addr: u64, len: u64, ra: u64, rw: u64) -> bool {
+    addr < ra.wrapping_add(rw) && ra < addr.wrapping_add(len)
 }
 
 /// Map a bus fault on a LOAD to its architectural cause (4 misaligned / 5 access),
@@ -161,6 +256,7 @@ impl Hart {
         self.regs = XRegs::default();
         self.regs.pc = reset_vector;
         self.csr = crate::csr::Csrs::at_reset();
+        self.resv = None;
         #[cfg(feature = "zicsr-stub")]
         {
             self.csrs = crate::zicsr_stub::CsrFile::default();
@@ -430,6 +526,134 @@ impl Hart {
                 (rd, sext32(a.checked_rem(b).unwrap_or(a)), pc4)
             }
 
+            // ── A extension (E1-T04) ────────────────────────────────────────
+            // aq/rl are decoded but no-ops for a single in-order hart. LR/SC/AMO require
+            // natural alignment: a misaligned LR faults cause 4 (load), a misaligned
+            // SC/AMO faults cause 6 (store/AMO) — checked before any memory touch, so a
+            // misalignment trap leaves memory and the reservation unchanged.
+            LrW { rd, rs1, .. } => {
+                let a = r.read(rs1);
+                let v = bus.load32(a).map_err(|f| load_fault(f, a))?;
+                self.resv = Some((a, 4));
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 4,
+                    is_store: false,
+                    value: 0,
+                });
+                (rd, sext32(v), pc4)
+            }
+            LrD { rd, rs1, .. } => {
+                let a = r.read(rs1);
+                let v = bus.load64(a).map_err(|f| load_fault(f, a))?;
+                self.resv = Some((a, 8));
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 8,
+                    is_store: false,
+                    value: 0,
+                });
+                (rd, v, pc4)
+            }
+            // SC succeeds only against a valid reservation for the SAME address AND width
+            // (a width mismatch, e.g. LR.W then SC.D, fails — never a wrong-width write).
+            // Success writes memory and rd=0; failure writes nothing and rd=1. Either way
+            // the reservation is consumed. Misalignment is checked first (reservation
+            // preserved on that trap).
+            ScW { rd, rs1, rs2, .. } => {
+                let a = r.read(rs1);
+                if !a.is_multiple_of(4) {
+                    return Err(Trap {
+                        cause: Exception::StoreAddrMisaligned,
+                        tval: a,
+                    });
+                }
+                let success = self.resv == Some((a, 4));
+                self.resv = None;
+                if success {
+                    let val = r.read(rs2);
+                    bus.store32(a, val as u32).map_err(|f| store_fault(f, a))?;
+                    mem = Some(MemOp {
+                        addr: a,
+                        len: 4,
+                        is_store: true,
+                        value: val,
+                    });
+                    (rd, 0, pc4)
+                } else {
+                    (rd, 1, pc4)
+                }
+            }
+            ScD { rd, rs1, rs2, .. } => {
+                let a = r.read(rs1);
+                if !a.is_multiple_of(8) {
+                    return Err(Trap {
+                        cause: Exception::StoreAddrMisaligned,
+                        tval: a,
+                    });
+                }
+                let success = self.resv == Some((a, 8));
+                self.resv = None;
+                if success {
+                    let val = r.read(rs2);
+                    bus.store64(a, val).map_err(|f| store_fault(f, a))?;
+                    mem = Some(MemOp {
+                        addr: a,
+                        len: 8,
+                        is_store: true,
+                        value: val,
+                    });
+                    (rd, 0, pc4)
+                } else {
+                    (rd, 1, pc4)
+                }
+            }
+            // AMO: atomic load → op → store (single-threaded, so a plain RMW). rd gets the
+            // OLD value (sign-extended for W). AMO faults are store/AMO-class (cause 6/7).
+            // Alignment is pre-checked, so the load/store legs only ever access-fault.
+            AmoW {
+                op, rd, rs1, rs2, ..
+            } => {
+                let a = r.read(rs1);
+                if !a.is_multiple_of(4) {
+                    return Err(Trap {
+                        cause: Exception::StoreAddrMisaligned,
+                        tval: a,
+                    });
+                }
+                let old = bus.load32(a).map_err(|f| store_fault(f, a))?;
+                let new = amo_w(op, old, r.read(rs2) as u32);
+                bus.store32(a, new).map_err(|f| store_fault(f, a))?;
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 4,
+                    is_store: true,
+                    value: new as u64,
+                });
+                (rd, sext32(old), pc4)
+            }
+            AmoD {
+                op, rd, rs1, rs2, ..
+            } => {
+                let a = r.read(rs1);
+                if !a.is_multiple_of(8) {
+                    return Err(Trap {
+                        cause: Exception::StoreAddrMisaligned,
+                        tval: a,
+                    });
+                }
+                let old = bus.load64(a).map_err(|f| store_fault(f, a))?;
+                let new = amo_d(op, old, r.read(rs2));
+                bus.store64(a, new).map_err(|f| store_fault(f, a))?;
+                mem = Some(MemOp {
+                    addr: a,
+                    len: 8,
+                    is_store: true,
+                    value: new,
+                });
+                (rd, old, pc4)
+            }
+
             // FENCE retires as a no-op: single in-order hart, no reordering agents
             // at Level 0. Write to x0 so it flows through the common retire path.
             Fence { .. } => (0, 0, pc4),
@@ -637,8 +861,12 @@ impl Hart {
             // ── Zicsr / Zifencei / xRET (E1-T02) ────────────────────────────
             // FENCE.I is a no-op for an in-order interpreter (no store buffer / i-cache).
             FenceI => (0, 0, pc4),
-            // Wait-for-interrupt retires as a no-op (no interrupts at this level).
-            Wfi => (0, 0, pc4),
+            // Wait-for-interrupt retires as a no-op (no interrupts at this level). Per our
+            // conservative A-extension policy it drops any LR/SC reservation (E1-T04).
+            Wfi => {
+                self.resv = None;
+                (0, 0, pc4)
+            }
             // Return from trap: pc ← mepc. (Full mstatus.MPP/MPIE restore lands with trap
             // delivery; here we transfer control, which is what the p-env needs.)
             Mret => {
@@ -650,6 +878,8 @@ impl Hart {
                     false,
                     insn as u64,
                 )?;
+                // xRET drops any LR/SC reservation (E1-T04, conservative documented policy).
+                self.resv = None;
                 (0, 0, target)
             }
             // CSR read/modify/write with spec side-effect suppression, delegated to the
@@ -725,6 +955,17 @@ impl Hart {
                 (rd, old, pc4)
             }
         };
+        // A-extension reservation invalidation (E1-T04): a *successful* store that
+        // overlaps the reservation granule clears it. Centralized here so every store
+        // path (ordinary SB..SD and the AMO writes) is covered once; runs only on Ok, so
+        // a faulting store never invalidates. SC manages its own reservation inside its
+        // arm (and its successful store also lands here, harmlessly re-clearing None).
+        if let (Some(m), Some((ra, rw))) = (&mem, self.resv)
+            && m.is_store
+            && overlaps(m.addr, m.len as u64, ra, rw as u64)
+        {
+            self.resv = None;
+        }
         // Single retirement point: x0-discard is enforced by XRegs::write.
         r.write(rd, value);
         r.pc = next_pc;

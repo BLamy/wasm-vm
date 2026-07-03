@@ -8,7 +8,7 @@
 #![cfg(not(target_arch = "wasm32"))]
 
 use proptest::prelude::*;
-use wasm_vm_core::decode::{Instr, decode};
+use wasm_vm_core::decode::{AmoOp, Instr, decode};
 
 // ── independent encoder (spec-derived; the round-trip oracle) ─────────────────
 
@@ -54,6 +54,30 @@ fn shift(op: u32, f3: u32, f6or7_hi: u32, rd: u8, rs1: u8, shamt: u8) -> u32 {
     // op-imm shifts: insn[31:26]=f6, shamt[5:0]. op-imm-32 shifts: insn[31:25]=f7,
     // shamt[4:0]. `f6or7_hi` is the pre-positioned high field, `shamt` already masked.
     f6or7_hi | ((shamt as u32) << 20) | ((rs1 as u32) << 15) | (f3 << 12) | ((rd as u32) << 7) | op
+}
+
+fn amo_word(funct5: u32, aq: bool, rl: bool, funct3: u32, rd: u8, rs1: u8, rs2: u8) -> u32 {
+    (funct5 << 27)
+        | ((aq as u32) << 26)
+        | ((rl as u32) << 25)
+        | ((rs2 as u32) << 20)
+        | ((rs1 as u32) << 15)
+        | (funct3 << 12)
+        | ((rd as u32) << 7)
+        | 0b0101111
+}
+fn amo_funct5(op: AmoOp) -> u32 {
+    match op {
+        AmoOp::Swap => 0b00001,
+        AmoOp::Add => 0b00000,
+        AmoOp::Xor => 0b00100,
+        AmoOp::And => 0b01100,
+        AmoOp::Or => 0b01000,
+        AmoOp::Min => 0b10000,
+        AmoOp::Max => 0b10100,
+        AmoOp::Minu => 0b11000,
+        AmoOp::Maxu => 0b11100,
+    }
 }
 
 fn csr_word(f3: u32, rd: u8, rs1_or_uimm: u8, csr: u16) -> u32 {
@@ -151,6 +175,39 @@ fn encode(instr: &Instr) -> u32 {
                 | ((rd as u32) << 7)
                 | 0b0001111
         }
+        // A extension (E1-T04). funct3 = 010 (W) / 011 (D).
+        LrW { rd, rs1, aq, rl } => amo_word(0b00010, aq, rl, 0b010, rd, rs1, 0),
+        LrD { rd, rs1, aq, rl } => amo_word(0b00010, aq, rl, 0b011, rd, rs1, 0),
+        ScW {
+            rd,
+            rs1,
+            rs2,
+            aq,
+            rl,
+        } => amo_word(0b00011, aq, rl, 0b010, rd, rs1, rs2),
+        ScD {
+            rd,
+            rs1,
+            rs2,
+            aq,
+            rl,
+        } => amo_word(0b00011, aq, rl, 0b011, rd, rs1, rs2),
+        AmoW {
+            op,
+            rd,
+            rs1,
+            rs2,
+            aq,
+            rl,
+        } => amo_word(amo_funct5(op), aq, rl, 0b010, rd, rs1, rs2),
+        AmoD {
+            op,
+            rd,
+            rs1,
+            rs2,
+            aq,
+            rl,
+        } => amo_word(amo_funct5(op), aq, rl, 0b011, rd, rs1, rs2),
         Ecall => 0x0000_0073,
         Ebreak => 0x0010_0073,
         // Zicsr / Zifencei / xRET (E1-T02).
@@ -305,6 +362,24 @@ prop_compose! {
     ) -> u32 { csr_word(f3, rd, rs1, csr) }
 }
 roundtrip!(roundtrip_csr, csr_ops());
+
+// A extension (E1-T04): every legal AMO word (LR/SC/AMO × W/D × all aq/rl) round-trips.
+prop_compose! {
+    fn amo_ops()(
+        funct5 in prop::sample::select(vec![
+            0b00010u32, 0b00011, // LR, SC
+            0b00001, 0b00000, 0b00100, 0b01100, 0b01000, // swap add xor and or
+            0b10000, 0b10100, 0b11000, 0b11100, // min max minu maxu
+        ]),
+        funct3 in prop::sample::select(vec![0b010u32, 0b011]),
+        rd in reg(), rs1 in reg(), rs2 in reg(), aq in any::<bool>(), rl in any::<bool>(),
+    ) -> u32 {
+        // LR's rs2 field is reserved and must be zero.
+        let rs2 = if funct5 == 0b00010 { 0 } else { rs2 };
+        amo_word(funct5, aq, rl, funct3, rd, rs1, rs2)
+    }
+}
+roundtrip!(roundtrip_amo, amo_ops());
 
 // ── REVERSE round-trip: decode(encode(instr)) == instr, with NEGATIVE immediates ──
 // The word round-trip encode(decode(w))==w is structurally BLIND to immediate value /
@@ -472,6 +547,28 @@ proptest! {
         prop_assert!(decode(b_enc(0b1100011, 0b011, rs1, rs2, imm & !1)).is_err());
         prop_assert!(decode(i_enc(0b0000011, 0b111, rd, rs1, imm)).is_err()); // load 111
         prop_assert!(decode(s_enc(0b0100011, 0b100, rs1, rs2, imm)).is_err()); // store 100
+    }
+
+    /// AMO with a bad width (funct3 ∉ {010,011}), a reserved funct5, or LR with a nonzero
+    /// (reserved) rs2 field must all decode illegal.
+    #[test]
+    fn reserved_amo_encodings_are_illegal(
+        rd in reg(), rs1 in reg(), rs2 in reg(), aq in any::<bool>(), rl in any::<bool>(),
+    ) {
+        // Bad width: funct3 = 000 / 100 with an otherwise-valid AMOADD funct5.
+        for f3 in [0b000u32, 0b001, 0b100, 0b111] {
+            prop_assert!(decode(amo_word(0b00000, aq, rl, f3, rd, rs1, rs2)).is_err(),
+                "AMO funct3={:03b} must be illegal", f3);
+        }
+        // Reserved funct5 (e.g. 00101, 11111) at a valid width.
+        for f5 in [0b00101u32, 0b00110, 0b01010, 0b11111] {
+            prop_assert!(decode(amo_word(f5, aq, rl, 0b010, rd, rs1, rs2)).is_err(),
+                "AMO funct5={:05b} must be illegal", f5);
+        }
+        // LR (funct5=00010) with a NONZERO reserved rs2 field is illegal.
+        let bad_rs2 = if rs2 == 0 { 1 } else { rs2 };
+        prop_assert!(decode(amo_word(0b00010, aq, rl, 0b010, rd, rs1, bad_rs2)).is_err(),
+            "LR.W with rs2={} (reserved!=0) must be illegal", bad_rs2);
     }
 
     /// SYSTEM words other than the exact ECALL/EBREAK encodings are illegal at Level 0
