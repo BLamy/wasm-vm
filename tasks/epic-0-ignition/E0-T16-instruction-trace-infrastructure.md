@@ -3,7 +3,7 @@ id: E0-T16
 epic: 0
 title: Instruction-level trace records — structured, toggleable, canonically serializable
 priority: 16
-status: pending
+status: in-progress
 depends_on: [E0-T08, E0-T09, E0-T15]
 estimate: M
 capstone: false
