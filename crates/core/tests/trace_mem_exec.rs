@@ -61,18 +61,21 @@ fn executed_stores_record_masked_value_at_every_width() {
         (0b010, 4, 0x1122_3344_DEAD_BEEF, 0xDEAD_BEEF), // sw
         (0b011, 8, 0x0123_4567_89AB_CDEF, 0x0123_4567_89AB_CDEF), // sd
     ];
+    // Non-zero immediate so the captured addr must be ea(base,imm), not the bare base —
+    // kills a "capture r.read(rs1) instead of the effective address" mutation.
+    const IMM: i32 = 0x20;
     for &(f3, len, regval, masked) in cases {
-        // sd/sw/sh/sb rs2=x5, rs1=x6(=DATA), imm=0
-        let rec = step_one(s_type(0, 5, 6, f3), &[(5, regval), (6, DATA)]);
+        // sd/sw/sh/sb rs2=x5, rs1=x6(=DATA), imm=IMM
+        let rec = step_one(s_type(IMM, 5, 6, f3), &[(5, regval), (6, DATA)]);
         assert_eq!(
             rec.mem,
             Some(MemOp {
-                addr: DATA,
+                addr: DATA + IMM as u64,
                 len,
                 is_store: true,
                 value: regval
             }),
-            "store f3={f3:#b}: mem must be the store with the FULL reg value (fmt masks to {masked:#x})"
+            "store f3={f3:#b}: mem must be the store at ea(base,imm) with the FULL reg value (fmt masks to {masked:#x})"
         );
         // rd field absent for stores.
         assert_eq!(rec.rd, None, "stores write no register");
@@ -112,17 +115,19 @@ fn executed_load_records_mem_and_loaded_value_incl_rd_equals_rs1() {
 
 #[test]
 fn executed_load_widths_record_correct_len_and_non_store() {
+    // Non-zero immediate: captured addr must be ea(base,imm), not the bare base.
+    const IMM: i32 = 0x18;
     for (f3, len) in [(0b000u32, 1u8), (0b001, 2), (0b010, 4), (0b011, 8)] {
-        let rec = step_one(i_type(0, 6, f3, 1, 0b0000011), &[(6, DATA)]);
+        let rec = step_one(i_type(IMM, 6, f3, 1, 0b0000011), &[(6, DATA)]);
         assert_eq!(
             rec.mem,
             Some(MemOp {
-                addr: DATA,
+                addr: DATA + IMM as u64,
                 len,
                 is_store: false,
                 value: 0
             }),
-            "load f3={f3:#b}: len {len}, non-store, addr = DATA"
+            "load f3={f3:#b}: len {len}, non-store, addr = ea(base,imm)"
         );
     }
 }

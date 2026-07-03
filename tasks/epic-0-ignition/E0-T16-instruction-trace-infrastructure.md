@@ -3,7 +3,7 @@ id: E0-T16
 epic: 0
 title: Instruction-level trace records — structured, toggleable, canonically serializable
 priority: 16
-status: implemented
+status: verified
 depends_on: [E0-T08, E0-T09, E0-T15]
 estimate: M
 capstone: false
@@ -112,3 +112,16 @@ KILLED, plus a load-drops-mem variant KILLED; each reverted, hart/mod.rs clean. 
 hand-built-record fmt tests remain (correctly scoped as fmt_canonical unit tests). Gates:
 clippy exit 0, full crate (default + trace) 0 FAILED. Status implemented; re-verification
 requested.
+
+### 2026-07-03 — adversarial verifier (re-verification) — VERDICT: verified
+- (a) Mutation D (stores log addr `a` not the reg value) — RED, killed by executed_stores_record_masked_value_at_every_width; Mutation E (drop mem on all 4 store arms) — RED, same test. Both reverted clean.
+- (b) Invented Mut 1 (Sh captures len:4 not len:2 — width lie) — RED, same test. Invented Mut 2 (store addr drops the immediate: capture r.read(rs1) not ea(base,imm)) — SURVIVED at imm=0 only; benign single-source (one `a=ea(base,imm)` feeds both capture and bus access). RESIDUAL noted.
+- (c) trace_mem_exec.rs genuinely executes: hand-encodes i_type/s_type words into RAM and calls hart.step_traced, capturing via the One sink — binds to the real capture arms (impl-only mutants flip it red), not hand-built records.
+- (d) fmt tests in trace_golden.rs correctly scoped as fmt_canonical unit tests (TraceRecord literals); no double-count with execution coverage.
+- (e) cargo test --features trace fully green (0 FAILED workspace-wide: trace_mem_exec 4/4, trace_golden 6/6, trace_retire 3/3); check-zero-cost --selftest exit 0, null path still trace-free.
+
+### 2026-07-03 — residual closed (worker)
+Hardened trace_mem_exec.rs: store cases now use imm=0x20 and the load-widths case imm=0x18,
+asserting addr == ea(base,imm) = DATA+imm. This kills the one benign survivor (capture base
+instead of the effective address). Re-ran: trace_mem_exec 4/4, full --features trace 0 FAILED.
+E0-T16 VERIFIED.
