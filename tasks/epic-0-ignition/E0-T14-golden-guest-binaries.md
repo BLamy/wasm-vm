@@ -3,7 +3,7 @@ id: E0-T14
 epic: 0
 title: Golden bare-metal guest binaries with crt0, linker script, and reproducible builds
 priority: 14
-status: implemented
+status: verified
 depends_on: [E0-T13, E0-T11, E0-T12]
 estimate: M
 capstone: false
@@ -93,3 +93,21 @@ Gates: fmt / clippy exit 0 / all native suites 0 FAILED (grep-checked) / CI gree
 28636616766.
 rr: N/A for the guest build; the golden_run.rs emulator tests are the runtime evidence
 (host-layer rr on Linux CI arrives with E0-T20).
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: verified
+- P1 reproducibility — HELD. Cold container rebuild sha256-identical to all three committed prebuilt ELFs; two independent rebuilds identical. Root-cause confirmed: one-step build DIFFERS at char 4481 and leaks ccihY9Bi.o into .strtab; committed has no cc-temp. No host paths (strings | grep /work|/tmp|/Users empty).
+- P2 ISA purity — HELD. objdump scan of all three: zero mul|div|rem|csr|amo|lr|sc|fence.i|c.<x>, zero ecall|ebreak; crt0 exit is sd a0,0(tohost) then j ., no ecall.
+- P3 headers/stack — HELD. EM_RISCV/ET_EXEC/entry 0x80000000; tohost+fromhost 8-aligned all three; memops __stack_top 0x80002150 far above __bss_end 0x80000110, no overlap.
+- P4 loops determinism — HELD with caveat. 56 both runs, the two -l logs byte-identical, all 56 are `core 0:` retire lines. CAVEAT: 56 is a WHOLE-RUN count incl. ~6 Spike boot-ROM instrs (entry 0x1000, csrr mhartid) before the jump to 0x80000000; our emulator enters directly at e_entry with no boot ROM so its guest-only count is ~6 lower. E0-T24 must compare guest-region counts, not raw 56. FIXED in guest/README.md.
+- P6 check-reproducible sensitivity — HELD. byte-flip → exit 1 naming hello.elf; strip loops.elf → exit 1 naming loops.elf; restored → exit 0.
+- RUST TEST — HELD. golden_run 4/4; assertions exact (bytes + Exited(0)); ELFs include_bytes! from prebuilt/; mutation Hello→Goodbye fails loudly with real emulator output bytes.
+- COVERAGE/DIFFERENTIAL — HELD, NO DIVERGENCE. Spike vs our Machine byte-identical: hello→"Hello from RV64\n", memops→"memops done\n", loops→empty; exit codes all 0 = Exited(0). Cross-checked on a MODIFIED binary too (NOVEL).
+- MOCK/HONESTY — clean. git ls-files shows all three prebuilt genuinely committed; match the container build this run (sha256); README honestly documents medany, temp-.o root cause, spike ns16550-UART / -m overlap. CI 28636616766 not verifiable in the sandbox (SKIPPED non-blocking; local evidence decisive).
+- NOVEL — tight 3-instr budget → MaxInstrs, no false Exited. Byte-patch differential: patching rodata byte 4208 changed nothing (root-caused: -O2 hoisted 'H' to li a4,72 and reads rest from rodata+1, so 4208 never runtime-read); re-patched byte 4209 'e'→'Y': BOTH Spike and our emulator print "HYllo from RV64" — real memory-backed execution AND Spike agreement on a novel binary. No fault.
+- SUITE: golden_run.rs is a genuine loader→hart→console+HTIF integration test bound to the audited artifact; reproducibility + Spike agreement verified from a cold clone.
+
+### 2026-07-02 — post-verdict actions (worker)
+Applied the verifier's one caveat: guest/README.md now documents that the "56" loops count
+is a whole-run Spike figure including ~6 boot-ROM instructions, so E0-T24 must compare
+guest-region counts (our emulator enters directly at e_entry with no boot ROM). No
+code/binary change — the golden ELFs and emulator-vs-Spike agreement stand as verified.

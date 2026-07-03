@@ -11,7 +11,7 @@ cross compiler. The same ELFs feed the Spike differential harness (E0-T20), the 
 | Program | Exercises | Expected exit |
 |---|---|---|
 | `hello.c`  | rodata + the UART0-stub console store path; prints `Hello from RV64\n` | 0 |
-| `loops.S`  | pure-RV64I counted-loop arithmetic (sums 1..10); no memory, no libgcc — the **golden retired-instruction count is 56** under Spike (metric for E0-T24) | 0 |
+| `loops.S`  | pure-RV64I counted-loop arithmetic (sums 1..10); no memory, no libgcc — Spike retires **56 instructions total** (deterministic; metric for E0-T24, see caveat below) | 0 |
 | `memops.c` | every load/store width and sign mode (sb/sh/sw/sd, lb/lbu/lh/lw/ld) via typed volatile pointers; prints `memops done\n` | 0 |
 
 All exit via `crt0`'s HTIF convention: `tohost = (main's return << 1) | 1`.
@@ -51,3 +51,9 @@ tools/toolchain/run.sh -- spike --isa=rv64i -m0x80000000:0x8000000 guest/prebuil
 > The task sketch's `-m0x10000000:0x1000,...` predates this Spike's built-in UART and now
 > *overlaps* it (Spike errors "devices … overlap"); the single-region form above is correct
 > for the pinned Spike and prints the output.
+
+> **E0-T24 caveat (verifier finding):** Spike's `-l` count of **56** is a *whole-run* count
+> that includes ~6 instructions of Spike's reset boot-ROM (entry at `0x1000`,
+> `csrr a0, mhartid`, …) before the jump to `0x80000000`. Our emulator enters directly at
+> `e_entry = 0x80000000` with no boot ROM, so its guest-only retired count is ~6 lower.
+> The benchmark harness must compare *guest-region* counts, not raw `56`.
