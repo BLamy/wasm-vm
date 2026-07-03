@@ -19,3 +19,5 @@ web/node_modules/
 web/pkg/
 web/assets/*.elf
 .claude/worktrees/
+.DS_Store
+**/.DS_Store
