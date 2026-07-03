@@ -3,7 +3,7 @@ id: E1-T11
 epic: 1
 title: Interrupt architecture — mie/mip, mideleg/medeleg trap delegation, priority, WFI
 priority: 111
-status: implemented
+status: verified
 depends_on: [E1-T10]
 estimate: L
 capstone: false
@@ -106,4 +106,34 @@ clears its illegal-instruction case (bad2), the vectored-interrupt sub-test, S-m
 That confirms the T11 path it exercises works; it stays excluded pending SFENCE.VMA. (The test keeps
 TESTNUM=2 across those stages, so its exit code alone doesn't localize the failure — the trace does.)
 Local gate green: fmt clean; clippy 0 (real + zicsr-stub, all-targets); `cargo test --workspace` 0
-`test result: FAILED`; both wasm builds 0 FAILED. Awaiting adversarial verification.
+`test result: FAILED`; both wasm builds 0 FAILED.
+
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: verified (with a coverage gap)
+Fresh cold clone at HEAD 17a211d. Spike 1.1.1-dev (`--isa=rv64gc`, `wasm-vm-toolchain:local`).
+- **Priority/delegation/masking** match Priv §3.1.8–3.1.9/§4.1.3 on every attacked axis: order
+  MEI>MSI>MTI>SEI>SSI>STI; M never maskable from below; delegated-S never taken in M; higher-
+  priority-untakeable skipped; global MIE/SIE gating; WARL readbacks 0xAAA/0x222/{0..9,12,13,15};
+  `csrw mip` RMW preserves device bits. All 12 interrupt tests pass.
+- **Spike anchor**: `riscv_tests_mi` passes Spike's golden rv64mi-p vectors. (Autonomous mip-driving
+  is the CLINT/PLIC — E1-T12/T13; T11 injects via `set_mip_bit`, matching the design.)
+- **illegal exclusion confirmed honest**: SFENCE.VMA (0x12000073) genuinely undecoded (no `Sfence`
+  variant; SYSTEM arm falls through to IllegalInstruction) — an E1-T17 gap, not an interrupt bug.
+- **WFI**: TW=1 below-M → illegal; MIE=0/MTIE=1/MTIP idiom doesn't hang, no trap; a pending
+  interrupt is taken on the boundary after WFI retires.
+- **Mutations 7/8 caught** — (a) priority swap, (c) M maskable-from-below, (d) mideleg→!0,
+  (e) medeleg[11], (f) mip drops RMW, (g) vectored offset on synchronous, (h) ignore global MIE/SIE.
+  **Survivor (b)**: removing the `< M` guard in `delegates_to_s` passed the whole suite — the guard
+  IS present and spec-correct (§3.1.8: an M-mode exception is never delegated downward), but no test
+  asserted it. A COVERAGE gap, not a defect.
+- **Full gate green**; E1-T09/T10 non-regression confirmed; stub `decode_props::roundtrip_csr`
+  failure confirmed pre-existing/ungated (file untouched by T11).
+
+### 2026-07-03 — rework (round 1, test-only)
+Closed the coverage gap with `interrupts::m_mode_exception_is_never_delegated_downward`: in M-mode
+with medeleg[2]=1, an illegal instruction vectors to mtvec (mode stays M, mcause set, scause
+untouched). Independently confirmed the mutation-(b) revert (drop the `< M` guard) now FAILs the
+suite; the full battery (a–h) is now caught. No production change — the code was already correct.
+Gate re-green (fmt/clippy clean, 13 interrupt tests pass).
+
+VERDICT: **verified** — the interrupt architecture (enable/pending, delegation, priority, boundary
+sampling, vectored dispatch, WFI) is Spike-correct and fully mutation-covered.

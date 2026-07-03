@@ -194,6 +194,37 @@ fn set_csr(m: &mut Machine, addr: u16, op: CsrOp, v: u64) {
 }
 
 #[test]
+fn m_mode_exception_is_never_delegated_downward() {
+    // Priv §3.1.8: a trap taken while executing in M-mode is ALWAYS taken in M, even when its
+    // medeleg bit is set — delegation only routes traps to a LOWER privilege. Set medeleg[2]
+    // (illegal-instruction) and raise an illegal from M: it must vector to mtvec with mcause
+    // (not scause), mode staying M. (Kills the mutation that drops the `< M` guard in
+    // delegates_to_s.)
+    const MHANDLER: u64 = DRAM_BASE + 0x3000;
+    const SHANDLER: u64 = DRAM_BASE + 0x5000;
+    let mut m = machine();
+    set_csr(&mut m, MTVEC, CsrOp::Write, MHANDLER);
+    set_csr(&mut m, STVEC, CsrOp::Write, SHANDLER);
+    set_csr(&mut m, MEDELEG, CsrOp::Write, 1 << 2); // delegate illegal-instruction
+    // A reserved 32-bit encoding (opcode 0x7F) → illegal; we are in M (reset).
+    m.bus_mut().store32(CODE, 0x0000_007F).unwrap();
+    m.hart_mut().regs.pc = CODE;
+    let _ = m.run(1);
+    assert_eq!(
+        m.hart().csr.mode,
+        Priv::M,
+        "M-mode trap stays in M despite medeleg"
+    );
+    assert_eq!(m.hart().regs.pc, MHANDLER, "vectored to mtvec, not stvec");
+    assert_eq!(m.hart_mut().csr.read(0x342), 2, "mcause = illegal (M path)");
+    assert_eq!(
+        m.hart_mut().csr.read(0x142),
+        0,
+        "scause untouched (not delegated)"
+    );
+}
+
+#[test]
 fn delegated_interrupt_delivers_to_stvec_with_scause_and_spp() {
     // mideleg[5]=1; in U-mode a pending S timer vectors to stvec, scause = 0x8000…0005, SPP=0.
     const HANDLER: u64 = DRAM_BASE + 0x3000;
