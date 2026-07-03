@@ -100,13 +100,15 @@ const GOLDEN: &[(u32, Instr)] = &[
 
 /// Reserved / garbage / not-yet-implemented encodings — all must be IllegalInstr.
 #[rustfmt::skip]
+// NOTE: FENCE.I (0x0000100F), CSRRW (0x00101073), and WFI (0x10500073) moved OUT of this
+// table in E1-T02 — they are now LEGAL in the default Zicsr decoder (still illegal under
+// feature=zicsr-stub, exercised by the E0-T19 rv64ui-p path).
 const NEGATIVE: &[u32] = &[
     0x00000000, // all zeros (defined illegal)
     0xFFFFFFFF, // all ones (defined illegal)
     0x00000001, // compressed space: insn[1:0] == 01
     0x00000002, // compressed space: insn[1:0] == 10
     0x00008062, // compressed space with plausible upper bits
-    0x0000100F, // FENCE.I — Zifencei, illegal at Level 0 (angle 4)
     0x0000200F, // MISC-MEM funct3=010 (reserved)
     0x02208033, // MUL — M extension (OP funct7=0000001), illegal until E1-T03
     0x02209033, // MULH
@@ -123,9 +125,7 @@ const NEGATIVE: &[u32] = &[
     0x40004033, // OP funct7=0100000 on XOR slot (only ADD/SRL take 0100000)
     0x4000403B, // OP-32 funct7=0100000 on invalid slot
     0x0000203B, // OP-32 funct3=010 (no SLTW exists)
-    0x00101073, // CSRRW — Zicsr, illegal at Level 0
     0x10200073, // SRET — privileged, illegal at Level 0
-    0x10500073, // WFI — privileged, illegal at Level 0
     0x0000002F, // AMO opcode (A extension)
     0x00000007, // LOAD-FP opcode (F extension)
     0x0000006B, // reserved opcode 1101011

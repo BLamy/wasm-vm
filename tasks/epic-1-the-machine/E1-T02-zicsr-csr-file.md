@@ -3,7 +3,7 @@ id: E1-T02
 epic: 1
 title: Zicsr CSR file with WARL/WLRL masking, privilege checks, and Zifencei
 priority: 102
-status: pending
+status: implemented
 depends_on: [E1-T01]
 estimate: L
 capstone: false
@@ -55,4 +55,40 @@ hardwired — write must not change it). Finally check FENCE.I with a self-modif
 test: store a new instruction, fence.i, execute — stale execution is a refutation.
 
 ## Verification log
-(empty)
+### 2026-07-03 — worker claim — branch task/e1-t02-zicsr (stacked on e1-t01)
+Deliverables: the real table-driven Zicsr CSR subsystem.
+- csr.rs: Csrs::access(addr, op, src, src_is_zero, rd_is_zero, illegal_tval) is the ONE authority.
+  Metadata derived per address (Privileged §2.1): min-priv = addr[9:8], read-only = addr[11:10]==0b11;
+  a per-addr WARL mask (misa mask 0 = hardwired; mstatus/mcause/mepc/mtvec/mie/mip/medeleg/mideleg/
+  mscratch/mtval/satp/pmp* mask !0; mvendorid/marchid/mimpid/mhartid + user counters 0xC00-0xC1F
+  read-only). Unimplemented addr → IllegalInstruction. WLRL (mcause codes) left fully writable
+  (documented). Side-effect suppression: CSRRW writes always, reads only if rd!=x0; CSRRS/C write
+  only if src!=0 (rs1!=x0 / uimm!=0). Illegal traps carry cause=IllegalInstruction (mcause=2) and
+  tval = faulting instruction word.
+- decode.rs: new Instr variants FenceI, Csrrw/s/c, Csrrwi/si/ci, Mret, Wfi. decode_system() decodes
+  SYSTEM funct3 1/2/3/5/6/7 → CSR ops, plus MRET/WFI as exact words; FENCE.I = canonical 0x0000100F
+  ONLY (reserved-zero fields keep decode injective for the round-trip oracle). CRITICAL: the CSR/
+  FENCE.I/MRET/WFI decode is gated #[cfg(not(feature="zicsr-stub"))] so E0-T19's rv64ui-p stub path
+  is byte-identical — CSR space still decode-fails → stub there.
+- hart/mod.rs: execute() gains insn: u32 (for tval) + arms for FenceI/Wfi (no-op retire), Mret
+  (pc←mepc via access), and the six CSR ops (old value retires into rd; the CSR side effect happens
+  in access()). Disjoint borrow of self.regs (r) and self.csr.
+DECODER-SPACE UPDATES (E1-T02 legitimately extends the decoder): exhaustive tally recomputed +
+derivation updated to 56·2^22 + 3·2^16 + 18·2^15 + 5 = 235_667_461 (adds 6·2^22 CSR + 1 FenceI +
+2 MRET/WFI; sweep matches). decode_props encode() + a csr_ops round-trip strategy added (21/21).
+E0 illegal-word assertions that became legal updated: decode_golden NEGATIVE (removed FENCE.I/CSRRW/
+WFI), verifier_e0t06 fence policy (canonical FENCE.I now Ok), hart_semantics illegal probe (→0x200F),
+wasm decode negatives. All noted as "legal in default Zicsr; still illegal under zicsr-stub".
+TESTS: crates/core/tests/csr.rs (8) — full side-effect suppression matrix (6 ops × rd/src zero/
+nonzero via the PROBE read-hook CSR); privilege check (U-mode → mtvec illegal, mcause=2, tval=insn);
+read-only 0xC00-0xC1F + mhartid writes trap, csrrs rs1=x0 reads ok; unimplemented CSR traps; WARL
+write-all-ones round-trip (misa legalizes to the const, others keep the value); decode+execute:
+csrrw x0/csrrs x0 suppression, fence.i/wfi no-op retire, mret→mepc. crates/wasm/tests/csr.rs (wasm32):
+same suppression/priv/WARL + a decode+execute check (full 64-bit misa, no bindgen truncation).
+Gates: fmt; clippy --workspace --all-targets --all-features -D warnings 0; workspace 0 FAILED;
+exhaustive tally == analytic; wasm-pack node all green; feature matrix (default + zicsr-stub +
+wasm32) builds; zero-cost --selftest OK; E0-T19 riscv-tests (stub) still green; E0-T25 self_check
+green; E0-T20 Spike diff hello still MATCH 83 (decoder change transparent to CSR-free guests).
+rr: N/A (macOS). Verifier angles open: 4096-CSR-address sweep vs Spike (which addrs trap), side-
+effect suppression on side-effectful CSRs (csrrsi x0/csrrw x0 satp patterns), degenerate encodings
+(csrrwi uimm=31), misa WARL hardwired (write must not change it), FENCE.I self-modifying-code test.
