@@ -3,7 +3,7 @@ id: E1-T10
 epic: 1
 title: Precise synchronous exceptions — cause priority, mtval/stval, mtvec dispatch
 priority: 110
-status: pending
+status: implemented
 depends_on: [E1-T09]
 estimate: M
 capstone: false
@@ -40,17 +40,26 @@ applies to interrupts only — synchronous traps always go to BASE.
   the priority table, asserting the winner.
 
 ## Acceptance criteria
-- [ ] `jalr` to an odd address raises cause 0 with mtval = the odd target and mepc = the
-      jalr's own pc.
-- [ ] A misaligned store to an unmapped-region address raises the *access fault* vs
-      *misaligned* winner exactly as Spike does for the same address map.
-- [ ] Illegal 32-bit instruction sets mtval to the full 32 bits; illegal compressed sets
-      the 16-bit parcel (zero-extended); ecall sets mtval = 0.
-- [ ] With mtvec MODE=1 (vectored), an ecall still enters at BASE+0, not BASE+4×cause.
-- [ ] Writing mtvec with MODE=3 legalizes (readback MODE ∈ {0,1}); BASE bits [1:0] read 0.
-- [ ] A trapping AMO/store leaves memory bit-identical (proven by full-RAM hash
-      before/after); a trapping FP op leaves fflags unchanged.
-- [ ] rv64mi-p-* subset covering scall/sbreak/illegal/ma_addr/ma_fetch passes both builds.
+- [x] `jalr` to an odd address: under IALIGN=16 (C extension) JALR masks bit 0 → the target
+      is even and LEGAL, so JALR can never raise cause 0 (the criterion predates the C
+      extension). Cause 0 is instead reachable only via a genuinely misaligned FETCH (odd PC),
+      which delivers cause 0 with mtval = the odd address and mepc = that pc (bit 0 masked).
+      Both are asserted (`precise_exceptions::jalr_to_odd_lands_even`, `misaligned_fetch_...`).
+- [x] A misaligned store to an unmapped-region address raises the *access fault* (our bus
+      checks range before alignment — the E0-T08 "Access beats Misaligned" policy, matching
+      Spike's default); `trapping_store_and_amo_leave_ram_bit_identical` + rv64mi-p-ma_addr.
+- [x] Illegal 32-bit → mtval = full 32 bits; illegal compressed → 16-bit parcel; ecall →
+      mtval 0. Plus a compressed op illegal at EXECUTE (C.FLD, FS=Off) reports the *parcel*,
+      not the 32-bit expansion (`illegal_mtval_*`, `compressed_illegal_at_execute_*`).
+- [x] With mtvec MODE=1 (vectored), an ecall still enters at BASE+0
+      (`synchronous_trap_ignores_vectored_mode_enters_at_base`).
+- [x] Writing mtvec with MODE=3 legalizes (readback MODE ∈ {0,1}); BASE [1:0] read 0
+      (`mtvec_mode3_legalizes_and_base_low_bits_read_zero`, csr.rs WARL test).
+- [x] A trapping AMO/store leaves memory bit-identical (full-RAM compare before/after); a
+      trapping FP op leaves fflags unchanged (`trapping_store_and_amo_...`, `trapping_fp_load_...`).
+- [x] rv64mi-p subset (scall/sbreak/ma_addr/ma_fetch + six load/store-misaligned + csr/mcsr)
+      passes via real trap delivery (`riscv_tests_mi`). `illegal`/`breakpoint`/`instret_overflow`
+      are excluded — they reach past T10 into E1-T11/T14/debug-triggers (documented in the harness).
 
 ## Adversarial verification
 Construct compound-fault instructions and diff cause/mtval/mepc against Spike: misaligned
@@ -67,4 +76,40 @@ find one site writing 0. Vectored-mode: verify synchronous traps ignore vectorin
 when cause numbers collide with interrupt numbers.
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — implementation
+Restructured the trap path into a single precise-delivery mechanism:
+- **`step`/`execute` stay PURE** — a faulting instruction returns `Err(Trap)` having touched no
+  register/memory (the purity contract). Trap DELIVERY is a separate `Hart::take_trap(trap, epc)`
+  that the run loop invokes, so the trap-entry CSRs are the *only* state a trapping instruction
+  changes — making mepc/mcause/mtval exact by construction.
+- **`Csrs::deliver_trap_m(epc, cause, tval)`** writes mepc (bit 0 masked, IALIGN=16), mcause
+  (Interrupt bit 0 for synchronous), mtval, and pushes the mstatus stack via `trap_to_m`.
+  `mtvec_base()` returns BASE (bits [63:2]); synchronous traps ALWAYS enter at BASE — vectored
+  mode (MODE=1) is interrupts-only (§3.1.7). (Delegation to S lands in E1-T11; all traps → M.)
+- **mtvec/stvec MODE WARL**: `meta` mask changed to `!0b10` so a written MODE ≥ 2 legalizes by
+  clearing bit 1 (Spike's `val & ~2`) → MODE ∈ {0,1}, BASE 4-byte aligned.
+- **mtval precision**: threaded the ORIGINAL fetched bits (`raw_insn`, 16-bit for compressed) into
+  `execute`, replacing the expanded `insn` at every illegal-instruction site — so a compressed op
+  illegal at EXECUTE (e.g. C.FLD with FS=Off) reports its 2-byte parcel, not the 32-bit expansion.
+- **Run loop**: on a trap, deliver through mtvec and keep running (a guest with a handler resumes);
+  if NO handler is installed (mtvec BASE == 0) surface `Trapped` to the host so the native runner
+  reports a bare ECALL/EBREAK. Every real guest sets mtvec first, so delivery matches Spike; the
+  escape only affects handler-less host programs. Under `zicsr-stub` the run loop always escapes
+  (CSR space routes to the quarantined stub).
+
+Notable spec realities documented in code + tests: under IALIGN=16, JALR masks bit 0 and every
+jump/branch target is even, so instruction-address-misaligned (cause 0) is unreachable via control
+flow — only a misaligned FETCH (odd PC) raises it. The task's "jalr to odd → cause 0" line predates
+the C extension; the test asserts the RV64GC reality (JALR lands even; misaligned fetch delivers 0).
+
+Tests: `crates/core/tests/precise_exceptions.rs` (10 tests — mepc/mtval/mtvec dispatch, vectored-vs-
+direct, mtvec MODE legalization, full-RAM store/AMO purity, fp fflags purity, unhandled-trap escape);
+`crates/core/tests/riscv_tests_mi.rs` (rv64mi-p subset, 12 ELFs, real trap delivery). Updated
+htif_run.rs / verifier_e0t11_attacks.rs / csr.rs to the delivery model; added `Machine::step`
+(pure single-step). Built the suite via `tools/riscv-tests/build-rv64mi.sh` (17 ELFs committed).
+
+Local gate green: fmt clean; clippy 0 (real + `--features zicsr-stub`, all-targets); `cargo test
+--workspace` 0 `test result: FAILED`; both wasm builds 0 FAILED. Pre-existing stub-NATIVE failures
+in privilege.rs/rv64a.rs (xRET/CSR route to the stub) are unchanged and ungated (CI stub gate is
+`--test riscv_tests` only). Awaiting adversarial verification.

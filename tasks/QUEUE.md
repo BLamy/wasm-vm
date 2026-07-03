@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E1-T10** — Precise synchronous exceptions — cause priority, mtval/stval, mtvec dispatch
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -51,7 +50,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] `107` [E1-T07](epic-1-the-machine/E1-T07-rv64d-double-precision.md) — RV64D double-precision extension and F/D interaction semantics *(deps: E1-T06)*
 - [x] `108` [E1-T08](epic-1-the-machine/E1-T08-rv64c-compressed.md) — RV64C compressed instruction decoding — all quadrants, expansion, PC alignment *(deps: E1-T01)*
 - [x] `109` [E1-T09](epic-1-the-machine/E1-T09-privilege-modes-mstatus.md) — M/S/U privilege modes and the mstatus state machine *(deps: E1-T02)*
-- [ ] `110` [E1-T10](epic-1-the-machine/E1-T10-precise-exceptions.md) — Precise synchronous exceptions — cause priority, mtval/stval, mtvec dispatch *(deps: E1-T09)*
+- [?] `110` [E1-T10](epic-1-the-machine/E1-T10-precise-exceptions.md) — Precise synchronous exceptions — cause priority, mtval/stval, mtvec dispatch *(deps: E1-T09)*
 - [ ] `111` [E1-T11](epic-1-the-machine/E1-T11-interrupts-delegation-wfi.md) — Interrupt architecture — mie/mip, mideleg/medeleg trap delegation, priority, WFI *(deps: E1-T10)*
 - [ ] `112` [E1-T12](epic-1-the-machine/E1-T12-clint-timer.md) — CLINT — mtime/mtimecmp/msip, machine timer and software interrupts *(deps: E1-T11)*
 - [ ] `113` [E1-T13](epic-1-the-machine/E1-T13-plic-external-interrupts.md) — PLIC — priorities, enables, thresholds, claim/complete, M and S contexts *(deps: E1-T11)*

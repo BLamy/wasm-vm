@@ -1,11 +1,13 @@
 //! The hart (hardware thread): architectural CPU state and the fetch-decode-execute
 //! step loop (E0-T07).
 //!
-//! Trap model at Level 0: a trap *returns* from [`Hart::step`] with the PC still
-//! pointing at the faulting instruction and no other architectural state modified —
-//! the host decides what happens next. Cause codes mirror the privileged spec's
-//! `mcause` numbering (Privileged ISA 20211203, Table 3.6) so Level 1 can graft
-//! CSR-based trap delivery without renumbering.
+//! Trap model: [`Hart::step`] stays PURE — a trap *returns* `Err(Trap)` with the PC still
+//! pointing at the faulting instruction and no other architectural state modified. E1-T10
+//! layers precise DELIVERY on top via [`Hart::take_trap`]: the run loop takes the trap
+//! (mepc/mcause/mtval + the mstatus stack) and vectors to mtvec. Keeping `step` pure is what
+//! makes delivery precise — the faulting instruction has zero side effects, so the trap-entry
+//! CSRs are the only state that changes. Cause codes mirror the privileged spec's `mcause`
+//! numbering (Privileged ISA 20211203, Table 3.6).
 //!
 //! Scope ledger (each arm is replaced by its owning task):
 //! - Computational ops (LUI/AUIPC/OP-IMM/OP-IMM-32/OP/OP-32): executed (E0-T07).
@@ -15,12 +17,12 @@
 //!   silently emulates them, a documented differential asymmetry for E0-T20.
 //! - FENCE: retires as a no-op — architecturally correct for a single in-order hart
 //!   with no devices reordering memory; revisited when it matters (E4 JIT, E6 SMP).
-//! - Control flow (JAL/JALR/branches): executed (E0-T09). §2.5 semantics: the
-//!   misaligned-target trap (cause 0, tval = target) is raised by the TAKEN
-//!   jump/branch itself with no link write; a not-taken branch with a misaligned
-//!   target retires normally. IALIGN=32 until the C extension (E1-T08).
-//! - ECALL/EBREAK: executed (E0-T11) as precise traps (cause 11 / cause 3). The
-//!   complete RV64I execution set now retires or traps — no placeholder arms remain.
+//! - Control flow (JAL/JALR/branches): executed (E0-T09). §2.5 semantics: a misaligned
+//!   target would raise cause 0 (tval = target) from the TAKEN jump with no link write. With
+//!   IALIGN=16 (C extension, E1-T08) every jump/branch target is even and JALR masks bit 0,
+//!   so cause 0 is only reachable via a genuinely misaligned FETCH (an odd PC) — see E1-T10.
+//! - ECALL/EBREAK: executed (E0-T11) as precise traps (cause 11 / cause 3). E1-T10 delivers
+//!   them (and every other synchronous exception) through mtvec via [`Hart::take_trap`].
 
 pub mod fregs;
 pub mod regs;
@@ -408,7 +410,7 @@ impl Hart {
                 });
             }
         };
-        let (rd, value, mem) = self.execute(bus, instr, insn, insn_len)?;
+        let (rd, value, mem) = self.execute(bus, instr, insn_len, u64::from(trace_insn))?;
         // Retirement hook — reached only when execute() returns Ok, so no record is
         // emitted for a faulting instruction (trap-purity contract). Built and passed
         // generically; with NullSink the optimizer erases all of this (E0-T15 proof).
@@ -422,6 +424,20 @@ impl Hart {
         Ok(())
     }
 
+    /// Deliver a synchronous exception (E1-T10): the single trap-entry path. `step`/`execute`
+    /// stay PURE — they return `Err(Trap)` having touched no architectural state — and the
+    /// caller (the run loop, or a test) invokes this to actually *take* the trap: record
+    /// mepc (= `epc`, the faulting pc), mcause, and mtval, push the mstatus interrupt stack,
+    /// and vector the PC to the M-mode handler. Synchronous traps ALWAYS enter at mtvec BASE
+    /// regardless of MODE — vectored dispatch (BASE + 4×cause) is interrupts-only (§3.1.7).
+    /// Because `execute` never partially retires, the state written here is the *only* effect
+    /// of a trapping instruction, so mepc/mcause/mtval are exact and RAM/regs are pristine.
+    /// (medeleg delegation to S-mode lands in E1-T11; until then every trap is taken in M.)
+    pub fn take_trap(&mut self, trap: Trap, epc: u64) {
+        self.csr.deliver_trap_m(epc, trap.cause as u64, trap.tval);
+        self.regs.pc = self.csr.mtvec_base();
+    }
+
     /// Execute a decoded instruction. Returns the retire info `(rd, value, mem)` for the
     /// trace record — `(rd, value)` is what was written to the register file (rd == 0
     /// meaning no architectural write) and `mem` the memory op if any. Every arm either
@@ -430,8 +446,14 @@ impl Hart {
         &mut self,
         bus: &mut impl Bus,
         instr: Instr,
-        insn: u32,
         insn_len: u64,
+        // The mtval payload for an ILLEGAL-INSTRUCTION trap: the ORIGINAL fetched bits,
+        // zero-extended — 16 bits for a compressed op, 32 for a full one (Priv §3.1.16 /
+        // E1-T10). Not `insn`, which is the 32-bit *expansion* of a compressed instruction;
+        // a compressed op that is illegal at execute (e.g. C.FLD with FS=Off) must report its
+        // 2-byte parcel, not the expansion. (Compressed ops never expand to CSR/xRET, so the
+        // CSR-access sites below where this equals `insn` are unaffected.)
+        raw_insn: u64,
     ) -> Result<(u8, u64, Option<crate::trace::MemOp>), Trap> {
         use crate::trace::MemOp;
         use Instr::*;
@@ -440,7 +462,7 @@ impl Hart {
         if is_fp(&instr) && self.csr.fp_off() {
             return Err(Trap {
                 cause: Exception::IllegalInstruction,
-                tval: insn as u64,
+                tval: raw_insn,
             });
         }
         let r = &mut self.regs;
@@ -976,7 +998,7 @@ impl Hart {
                 if self.csr.tw() && self.csr.mode < crate::csr::Priv::M {
                     return Err(Trap {
                         cause: Exception::IllegalInstruction,
-                        tval: insn as u64,
+                        tval: raw_insn,
                     });
                 }
                 self.resv = None;
@@ -989,7 +1011,7 @@ impl Hart {
                 if self.csr.mode < crate::csr::Priv::M {
                     return Err(Trap {
                         cause: Exception::IllegalInstruction,
-                        tval: insn as u64,
+                        tval: raw_insn,
                     });
                 }
                 let target = self.csr.read(crate::csr::MEPC);
@@ -1004,7 +1026,7 @@ impl Hart {
                 if m < crate::csr::Priv::S || (matches!(m, crate::csr::Priv::S) && self.csr.tsr()) {
                     return Err(Trap {
                         cause: Exception::IllegalInstruction,
-                        tval: insn as u64,
+                        tval: raw_insn,
                     });
                 }
                 let target = self.csr.read(crate::csr::SEPC);
@@ -1023,7 +1045,7 @@ impl Hart {
                     src,
                     false,
                     rd == 0,
-                    insn as u64,
+                    raw_insn,
                 )?;
                 (rd, old, pc_next)
             }
@@ -1035,7 +1057,7 @@ impl Hart {
                     src,
                     rs1 == 0,
                     rd == 0,
-                    insn as u64,
+                    raw_insn,
                 )?;
                 (rd, old, pc_next)
             }
@@ -1047,7 +1069,7 @@ impl Hart {
                     src,
                     rs1 == 0,
                     rd == 0,
-                    insn as u64,
+                    raw_insn,
                 )?;
                 (rd, old, pc_next)
             }
@@ -1058,7 +1080,7 @@ impl Hart {
                     uimm as u64,
                     false,
                     rd == 0,
-                    insn as u64,
+                    raw_insn,
                 )?;
                 (rd, old, pc_next)
             }
@@ -1069,7 +1091,7 @@ impl Hart {
                     uimm as u64,
                     uimm == 0,
                     rd == 0,
-                    insn as u64,
+                    raw_insn,
                 )?;
                 (rd, old, pc_next)
             }
@@ -1080,7 +1102,7 @@ impl Hart {
                     uimm as u64,
                     uimm == 0,
                     rd == 0,
-                    insn as u64,
+                    raw_insn,
                 )?;
                 (rd, old, pc_next)
             }
@@ -1126,7 +1148,7 @@ impl Hart {
                     None => {
                         return Err(Trap {
                             cause: Exception::IllegalInstruction,
-                            tval: insn as u64,
+                            tval: raw_insn,
                         });
                     }
                 };
@@ -1149,7 +1171,7 @@ impl Hart {
                     None => {
                         return Err(Trap {
                             cause: Exception::IllegalInstruction,
-                            tval: insn as u64,
+                            tval: raw_insn,
                         });
                     }
                 };
@@ -1172,7 +1194,7 @@ impl Hart {
                     None => {
                         return Err(Trap {
                             cause: Exception::IllegalInstruction,
-                            tval: insn as u64,
+                            tval: raw_insn,
                         });
                     }
                 };
@@ -1256,7 +1278,7 @@ impl Hart {
                     None => {
                         return Err(Trap {
                             cause: Exception::IllegalInstruction,
-                            tval: insn as u64,
+                            tval: raw_insn,
                         });
                     }
                 };
@@ -1272,7 +1294,7 @@ impl Hart {
                     None => {
                         return Err(Trap {
                             cause: Exception::IllegalInstruction,
-                            tval: insn as u64,
+                            tval: raw_insn,
                         });
                     }
                 };
@@ -1322,7 +1344,7 @@ impl Hart {
                     None => {
                         return Err(Trap {
                             cause: Exception::IllegalInstruction,
-                            tval: insn as u64,
+                            tval: raw_insn,
                         });
                     }
                 };
@@ -1345,7 +1367,7 @@ impl Hart {
                     None => {
                         return Err(Trap {
                             cause: Exception::IllegalInstruction,
-                            tval: insn as u64,
+                            tval: raw_insn,
                         });
                     }
                 };
@@ -1368,7 +1390,7 @@ impl Hart {
                     None => {
                         return Err(Trap {
                             cause: Exception::IllegalInstruction,
-                            tval: insn as u64,
+                            tval: raw_insn,
                         });
                     }
                 };
@@ -1450,7 +1472,7 @@ impl Hart {
                     None => {
                         return Err(Trap {
                             cause: Exception::IllegalInstruction,
-                            tval: insn as u64,
+                            tval: raw_insn,
                         });
                     }
                 };
@@ -1466,7 +1488,7 @@ impl Hart {
                     None => {
                         return Err(Trap {
                             cause: Exception::IllegalInstruction,
-                            tval: insn as u64,
+                            tval: raw_insn,
                         });
                     }
                 };
@@ -1483,7 +1505,7 @@ impl Hart {
                     None => {
                         return Err(Trap {
                             cause: Exception::IllegalInstruction,
-                            tval: insn as u64,
+                            tval: raw_insn,
                         });
                     }
                 };

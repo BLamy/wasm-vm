@@ -8,7 +8,7 @@
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
 use wasm_vm_core::csr::{
-    CsrOp, Csrs, MCAUSE, MEPC, MHARTID, MISA, MISA_RV64GC_SU, MSTATUS, MTVEC, PROBE, Priv,
+    CsrOp, Csrs, MCAUSE, MEPC, MHARTID, MISA, MISA_RV64GC_SU, MSTATUS, MTVEC, PROBE, Priv, STVEC,
 };
 use wasm_vm_core::hart::{Exception, Hart};
 use wasm_vm_core::mmio::SystemBus;
@@ -110,14 +110,24 @@ fn warl_write_all_ones_reads_back_only_legal_values() {
         MISA_RV64GC_SU,
         "misa write is ignored (WARL hardwired)"
     );
-    // Fully-writable WARL registers keep the value.
-    for addr in [MCAUSE, MTVEC] {
+    // mcause is fully-writable WARL: all-ones reads back unchanged.
+    c.access(MCAUSE, CsrOp::Write, u64::MAX, false, false, 0)
+        .unwrap();
+    assert_eq!(
+        c.access(MCAUSE, CsrOp::Set, 0, true, false, 0).unwrap(),
+        u64::MAX,
+        "mcause is fully writable WARL"
+    );
+    // mtvec/stvec MODE (bits [1:0]) is WARL: MODE ≥ 2 legalizes by clearing bit 1 (Spike's
+    // `val & ~2`), so all-ones reads back with bit 1 cleared — MODE=0b11→0b01 (Vectored) and
+    // BASE (bits [63:2]) preserved (E1-T10).
+    for addr in [MTVEC, STVEC] {
         c.access(addr, CsrOp::Write, u64::MAX, false, false, 0)
             .unwrap();
         assert_eq!(
             c.access(addr, CsrOp::Set, 0, true, false, 0).unwrap(),
-            u64::MAX,
-            "{addr:#x} is fully writable WARL"
+            !0b10,
+            "{addr:#x} MODE legalizes bit 1 to 0 (WARL)"
         );
     }
     // mstatus is field-WARL (E1-T09): writing all-ones legalizes — reserved/WPRI bits stay 0,
