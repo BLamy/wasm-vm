@@ -274,3 +274,157 @@ fn sqrt_subnormals_and_tiny() {
         );
     }
 }
+
+// ── directed-mode ARITHMETIC rounding (RTZ/RDN/RUP/RMM) ──────────────────────────
+// The RNE-only assertions above leave the directed-mode `to_apfloat` mapping untested — a
+// swapped RDN↔RUP or an RTZ→RNE mapping would ship silently. These lock it down with an
+// INDEPENDENT oracle: host float gives the correctly-rounded RNE result, and the exact
+// residual (true product/quotient vs the RNE result, computed in u128 integers) tells us
+// which of the two adjacent floats is the floor/ceil for the directed modes. Positive
+// operands ⇒ positive result, so RDN=RTZ=lo, RUP=hi.
+
+fn decompose_pos_f64(bits: u64) -> (u128, i32) {
+    let exp = ((bits >> 52) & 0x7ff) as i32;
+    let frac = (bits & ((1u64 << 52) - 1)) as u128;
+    if exp == 0 {
+        (frac, 1 - 1023 - 52)
+    } else {
+        ((1u128 << 52) | frac, exp - 1023 - 52)
+    }
+}
+
+/// Compare `a·2^ea` vs `b·2^eb` for non-negative a,b (exponents are close for our use).
+fn cmp_scaled(a: u128, ea: i32, b: u128, eb: i32) -> core::cmp::Ordering {
+    use core::cmp::Ordering::*;
+    if a == 0 || b == 0 {
+        return a.cmp(&b);
+    }
+    let lo = ea.min(eb);
+    let sa = (ea - lo) as u32;
+    let sb = (eb - lo) as u32;
+    match (a.checked_shl(sa), b.checked_shl(sb)) {
+        (Some(x), Some(y)) => x.cmp(&y),
+        (None, Some(_)) => Greater,
+        (Some(_), None) => Less,
+        (None, None) => (sa + (128 - a.leading_zeros())).cmp(&(sb + (128 - b.leading_zeros()))),
+    }
+}
+
+#[test]
+fn mul_div_directed_modes_match_independent_oracle() {
+    let mut rng = Rng(0x0705_2026_D1EC_7ED0);
+    let mut checked = 0u64;
+    for _ in 0..150_000 {
+        // Positive normal operands in a mid exponent range (products/quotients stay normal
+        // and finite — keeps next_up/next_down a simple ±1 on the bit pattern).
+        let mk = |r: u64| -> u64 {
+            let frac = r & ((1u64 << 52) - 1);
+            let exp = 0x380 + (r >> 55) % 0x100; // exponent field ~[0x380,0x480)
+            (exp << 52) | frac
+        };
+        let a = mk(rng.next());
+        let b = mk(rng.next());
+        let (sa, ea) = decompose_pos_f64(a);
+        let (sb, eb) = decompose_pos_f64(b);
+
+        for op in 0..2 {
+            // Host RNE (correctly rounded) is the independent nearest-value oracle.
+            let host = if op == 0 {
+                f64::from_bits(a) * f64::from_bits(b)
+            } else {
+                f64::from_bits(a) / f64::from_bits(b)
+            };
+            if !host.is_normal() || host <= 0.0 {
+                continue;
+            }
+            let rne = host.to_bits();
+            let (sr, er) = decompose_pos_f64(rne);
+            // Residual sign of the TRUE result vs rne, exact:
+            //   mul: true = sa·sb·2^(ea+eb)          vs rne = sr·2^er
+            //   div: true>rne ⇔ a > rne·b ⇔ sa·2^ea vs (sr·sb)·2^(er+eb)
+            let ord = if op == 0 {
+                cmp_scaled(sa * sb, ea + eb, sr, er)
+            } else {
+                cmp_scaled(sa, ea, sr * sb, er + eb)
+            };
+            let (lo, hi) = match ord {
+                core::cmp::Ordering::Equal => (rne, rne),
+                core::cmp::Ordering::Greater => (rne, rne + 1), // true > rne ⇒ rne is floor
+                core::cmp::Ordering::Less => (rne - 1, rne),    // true < rne ⇒ rne is ceil
+            };
+            let f = |rm| {
+                if op == 0 {
+                    F64::mul(a, b, rm).0
+                } else {
+                    F64::div(a, b, rm).0
+                }
+            };
+            let name = if op == 0 { "mul" } else { "div" };
+            assert_eq!(f(RoundMode::Rne), rne, "{name} RNE {a:#018x},{b:#018x}");
+            assert_eq!(f(RoundMode::Rtz), lo, "{name} RTZ {a:#018x},{b:#018x}");
+            assert_eq!(
+                f(RoundMode::Rdn),
+                lo,
+                "{name} RDN (toward -inf, +result=floor)"
+            );
+            assert_eq!(f(RoundMode::Rup), hi, "{name} RUP (toward +inf = ceil)");
+            checked += 1;
+        }
+    }
+    assert!(
+        checked > 200_000,
+        "swept {checked} directed-mode arith cases"
+    );
+}
+
+#[test]
+fn add_and_fma_directed_modes() {
+    // 0.1 + 0.2: the exact sum sits between two doubles; RNE rounds UP to ...334, so RTZ/RDN
+    // (toward zero / −∞, positive) truncate DOWN to ...333, RUP/RMM = ...334. An RTZ→RNE or
+    // RDN↔RUP mapping bug flips these. Values independently known (the classic case).
+    let a = 0.1f64.to_bits();
+    let b = 0.2f64.to_bits();
+    assert_eq!(F64::add(a, b, RoundMode::Rne).0, 0x3fd3_3333_3333_3334);
+    assert_eq!(
+        F64::add(a, b, RoundMode::Rtz).0,
+        0x3fd3_3333_3333_3333,
+        "RTZ down"
+    );
+    assert_eq!(
+        F64::add(a, b, RoundMode::Rdn).0,
+        0x3fd3_3333_3333_3333,
+        "RDN floor"
+    );
+    assert_eq!(
+        F64::add(a, b, RoundMode::Rup).0,
+        0x3fd3_3333_3333_3334,
+        "RUP ceil"
+    );
+    assert_eq!(
+        F64::add(a, b, RoundMode::Rmm).0,
+        0x3fd3_3333_3333_3334,
+        "RMM nearest"
+    );
+
+    // 1.0/3.0 lies just above the RNE result ...555, so RUP = ...556, RTZ/RDN = ...555.
+    let (one, three) = (1.0f64.to_bits(), 3.0f64.to_bits());
+    assert_eq!(
+        F64::div(one, three, RoundMode::Rup).0,
+        0x3fd5_5555_5555_5556,
+        "1/3 RUP up"
+    );
+    assert_eq!(
+        F64::div(one, three, RoundMode::Rtz).0,
+        0x3fd5_5555_5555_5555,
+        "1/3 RTZ trunc"
+    );
+
+    // fma must also honor the rounding mode on an inexact fused result.
+    let third = 0x3fd5_5555_5555_5555u64; // < 1/3
+    let seven = 7.0f64.to_bits();
+    let zero = 0.0f64.to_bits();
+    let ftz = F64::fma(third, seven, zero, RoundMode::Rtz).0;
+    let fup = F64::fma(third, seven, zero, RoundMode::Rup).0;
+    assert!(ftz <= fup, "fma RTZ ≤ RUP on a positive inexact result");
+    assert_ne!(ftz, fup, "fma honors the rounding mode (RTZ ≠ RUP here)");
+}

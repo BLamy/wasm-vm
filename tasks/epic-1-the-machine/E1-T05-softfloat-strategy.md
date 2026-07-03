@@ -103,5 +103,21 @@ Evidence (local):
 - Gate: fmt clean, clippy 0 warnings (float_arithmetic deny active), workspace 0 FAILED,
   `tools/ci/no-host-float.sh` OK, exhaustive tally unchanged.
 
-Pending: adversarial verification (TestFloat-level differential vs SoftFloat-3e across all
-rounding modes; NaN/subnormal fma corpus; native/wasm flag+result trace diff).
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: refuted (coverage)
+The critic could NOT fault the implementation (F64 1,106,134 + F32 1,112,069 sqrt inputs ×5
+modes = ~11.1M checks, 0 mismatches; add/sub/mul/div 600k NaN-heavy pairs ×5 modes each,
+0 mismatches; fma fused-witness distinct in 3,686/200k; native==wasm32 FNV checksum over
+~3M results+flags; no host float; no panics; 4/6 mutations caught). BUT it found a **coverage
+hole**: the committed tests asserted only **RNE** for arithmetic ops, so two `to_apfloat`
+mutations survived the whole suite — (1) swap `Rdn`↔`Rup`; (2) `Rtz`→`NearestTiesToEven`.
+Per the task's own criterion ("a mutation the committed tests miss is a REFUTATION"), valid.
+
+### 2026-07-03 — rework
+Added directed-mode ARITHMETIC coverage to `crates/core/tests/softfloat.rs`:
+- `mul_div_directed_modes_match_independent_oracle` — 200k+ mul/div cases ×{RTZ,RDN,RUP}
+  vs an INDEPENDENT oracle (host correctly-rounded RNE + exact-integer u128 residual to pick
+  floor/ceil). This exercises the full `to_apfloat` mapping (shared by every op).
+- `add_and_fma_directed_modes` — independently-known directed results for `0.1+0.2`
+  (RTZ/RDN=…333, RUP/RMM=…334) and `1/3` (RUP=…556, RTZ=…555), plus an fma RTZ≠RUP check.
+Confirmed both critic mutations now FAIL these tests (2 failures each); reverted → 11/11
+green. No production code changed (impl was already correct). Re-verifying.
