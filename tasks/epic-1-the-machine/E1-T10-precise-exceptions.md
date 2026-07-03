@@ -3,7 +3,7 @@ id: E1-T10
 epic: 1
 title: Precise synchronous exceptions — cause priority, mtval/stval, mtvec dispatch
 priority: 110
-status: implemented
+status: verified
 depends_on: [E1-T09]
 estimate: M
 capstone: false
@@ -111,5 +111,32 @@ htif_run.rs / verifier_e0t11_attacks.rs / csr.rs to the delivery model; added `M
 
 Local gate green: fmt clean; clippy 0 (real + `--features zicsr-stub`, all-targets); `cargo test
 --workspace` 0 `test result: FAILED`; both wasm builds 0 FAILED. Pre-existing stub-NATIVE failures
-in privilege.rs/rv64a.rs (xRET/CSR route to the stub) are unchanged and ungated (CI stub gate is
-`--test riscv_tests` only). Awaiting adversarial verification.
+(xRET/CSR route to the stub; the critic pinned the exact one as `decode_props::roundtrip_csr`) are
+unchanged and ungated (CI stub gate is `--features zicsr-stub --test riscv_tests` only).
+
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: verified
+Fresh cold clone at HEAD 979d706. Spike 1.1.1-dev (`--isa=rv64gc`, image `wasm-vm-toolchain:local`).
+- **rv64mi-p differential**: committed `riscv_tests_mi` harness passes all 12 subset ELFs; independent
+  `spike --isa=rv64gc` on scall/ma_addr/ma_fetch/sd-misaligned agrees (HTIF pass). The p-env handlers
+  bake Spike/spec-expected mcause/mepc/mtval into their pass/fail asserts, so an exact pass IS the CSR
+  cross-check. **Exclusions confirmed honest**: ran `rv64mi-p-illegal` — it passes the illegal-instruction
+  case (`bad2`, TESTNUM 2) and the following mstatus sub-test, then spins at `test_vectored_interrupts`
+  (MSIP wait) which needs E1-T11 software interrupts — a genuine post-T10 stage.
+- **mtval exactness**: compressed-at-execute reports the PARCEL (not expansion) across ALL RV64 compressed-FP
+  ops — C.FLD/C.FSD/C.FLDSP/C.FSDSP with FS=Off. An **exhaustive 16-bit sweep** confirms all 10,601 trapping
+  parcels report `tval ≤ 0xFFFF && == parcel` — zero expansion leaks. 32-bit illegal / bad rm / unimplemented
+  CSR / RO-CSR write → full 32-bit word; ecall → 0; load/store fault → VA (Access-beats-Misaligned).
+- **mepc**: compressed faulting instr → mepc = its 2-byte pc (not `&~3`); bit-0 masked; always the faulting
+  instruction. **mtvec**: vectored MODE=1 enters at BASE+0; MODE=3 legalizes to 0b01, BASE[1:0]=0.
+- **Purity**: trapping SD/AMOADD.D leave full RAM bit-identical; trapping FLD leaves fflags pristine; purity
+  fuzz shows zero writes before a trap. **Run loop**: escape when mtvec_base==0 else deliver — sound.
+- **Mutations**: 5/6 caught — (a) drop mepc bit-0 mask, (c) mtval uses expansion not raw_insn, (d) +4×cause
+  offset, (e) MTVEC mask → !0, (f) Interrupt bit set. The 1 survivor — (b) `mtvec_base` mask !0b11→!0b1 — is
+  BENIGN: the MTVEC WARL mask (!0b10) already zeroes bit 1 in every stored value, so the extra mask in
+  `mtvec_base` is unobservable redundant defense, not a gap.
+- **Full gate green**: fmt clean; clippy 0 (real + stub, all-targets); `cargo test --workspace` no
+  `test result: FAILED` (75 ok); both wasm builds green. Stub-native `decode_props::roundtrip_csr` failure
+  confirmed PRE-EXISTING at parent 9b65ae3 and ungated.
+
+VERDICT: **verified** — precise synchronous exceptions (cause priority, mtval/mepc/mcause exactness, mtvec
+direct/vectored dispatch, trap delivery, and trap purity) are Spike-correct and mutation-covered.
