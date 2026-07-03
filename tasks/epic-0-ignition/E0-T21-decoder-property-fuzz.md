@@ -119,3 +119,10 @@ value_roundtrip_i_imm AND negative_immediates_decode_... ; reverted, 20/20 green
 same negative-immediate concrete check to the wasm subset (it shared the masking encoder's
 blindness). Gates: clippy -D warnings 0, workspace 0 FAILED, decode_props 20/20, wasm green.
 Status verified.
+
+### 2026-07-03 — adversarial verifier (re-verification, 7dc42b7) — VERDICT: verified
+- (a) Mutation C (imm_i zero-extend) re-applied → RED (18 passed/2 failed), killed by value_roundtrip_i_imm + negative_immediates_decode_... (imm:-1 vs +4095). Hole closed.
+- (b) Same sign mutation on imm_s/imm_b/imm_j — each caught (2 failed apiece): store/branch/j value-roundtrip + concrete test. Whole immediate class covered.
+- (c) 6 concrete constants independently assembler-confirmed (riscv64-unknown-elf-as): addi -1=0xfff10093, addi -2048=0x80000293, sd -8=0xfe613c23, bne -8=0xfe419ce3, lui 0x80000=0x800000b7(→-2^31), jal -4=0xffdff06f. Correct.
+- (d) Reverse round-trip non-vacuous (green baseline, red under every sign mutation); JALR now value-covered via i_imm_instr which=8.
+- (e) Full suite green: exhaustive tally 210,501,634 unchanged; decode_props 20/20; wasm subset green incl. new negative check; fuzz 10^7/0-crash (~222k eps). VERIFIED.
