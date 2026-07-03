@@ -334,6 +334,102 @@ impl Hart {
                 pc4,
             ),
 
+            // ── M extension (E1-T03) ────────────────────────────────────────
+            // Products use wide intermediates; the div/rem edge cases are the spec's
+            // trap-free definitions (Unprivileged ISA "M" chapter) — Rust's own
+            // divide-by-zero and MIN/-1 overflow panics must never be reached, so every
+            // divisor-zero and overflow case is branched out BEFORE the `/` or `%`.
+            Mul { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_mul(r.read(rs2)), pc4),
+            // MULH: high 64 of the signed×signed 128-bit product.
+            Mulh { rd, rs1, rs2 } => {
+                let p = (r.read(rs1) as i64 as i128) * (r.read(rs2) as i64 as i128);
+                (rd, (p >> 64) as u64, pc4)
+            }
+            // MULHSU: high 64 of signed(rs1) × unsigned(rs2). The tricky one: rs1 is
+            // sign-extended into i128 (may be negative); rs2 is ZERO-extended (u64→u128,
+            // always in 0..2^64, so non-negative) then viewed as i128. Their exact
+            // product fits in i128 (|i64|·u64 < 2^127); an arithmetic >>64 keeps the sign.
+            Mulhsu { rd, rs1, rs2 } => {
+                let p = (r.read(rs1) as i64 as i128) * (r.read(rs2) as u128 as i128);
+                (rd, (p >> 64) as u64, pc4)
+            }
+            // MULHU: high 64 of the unsigned×unsigned 128-bit product.
+            Mulhu { rd, rs1, rs2 } => {
+                let p = (r.read(rs1) as u128) * (r.read(rs2) as u128);
+                (rd, (p >> 64) as u64, pc4)
+            }
+            Div { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as i64, r.read(rs2) as i64);
+                let q = if b == 0 {
+                    -1i64 // div by zero → all ones
+                } else if a == i64::MIN && b == -1 {
+                    i64::MIN // signed overflow → dividend
+                } else {
+                    a.wrapping_div(b)
+                };
+                (rd, q as u64, pc4)
+            }
+            // Unsigned div/rem: checked_* returns None ONLY on divisor zero (no unsigned
+            // overflow case), giving the spec's all-ones / dividend results panic-free.
+            Divu { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1), r.read(rs2));
+                (rd, a.checked_div(b).unwrap_or(u64::MAX), pc4)
+            }
+            Rem { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as i64, r.read(rs2) as i64);
+                let rem = if b == 0 {
+                    a // rem by zero → dividend
+                } else if a == i64::MIN && b == -1 {
+                    0 // overflow → 0
+                } else {
+                    a.wrapping_rem(b)
+                };
+                (rd, rem as u64, pc4)
+            }
+            Remu { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1), r.read(rs2));
+                (rd, a.checked_rem(b).unwrap_or(a), pc4)
+            }
+            // W forms: operate on the low 32 bits (upper bits of the sources are
+            // ignored per spec), then sign-extend the 32-bit result to 64.
+            Mulw { rd, rs1, rs2 } => (
+                rd,
+                sext32((r.read(rs1) as u32).wrapping_mul(r.read(rs2) as u32)),
+                pc4,
+            ),
+            Divw { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as i32, r.read(rs2) as i32);
+                let q = if b == 0 {
+                    -1i32
+                } else if a == i32::MIN && b == -1 {
+                    i32::MIN
+                } else {
+                    a.wrapping_div(b)
+                };
+                (rd, sext32(q as u32), pc4)
+            }
+            // DIVUW: unsigned 32-bit divide, result STILL sign-extended from bit 31
+            // (so a 0xFFFF_FFFF quotient reads back as 0xFFFF_FFFF_FFFF_FFFF).
+            Divuw { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as u32, r.read(rs2) as u32);
+                (rd, sext32(a.checked_div(b).unwrap_or(u32::MAX)), pc4)
+            }
+            Remw { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as i32, r.read(rs2) as i32);
+                let rem = if b == 0 {
+                    a
+                } else if a == i32::MIN && b == -1 {
+                    0
+                } else {
+                    a.wrapping_rem(b)
+                };
+                (rd, sext32(rem as u32), pc4)
+            }
+            Remuw { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as u32, r.read(rs2) as u32);
+                (rd, sext32(a.checked_rem(b).unwrap_or(a)), pc4)
+            }
+
             // FENCE retires as a no-op: single in-order hart, no reordering agents
             // at Level 0. Write to x0 so it flows through the common retire path.
             Fence { .. } => (0, 0, pc4),

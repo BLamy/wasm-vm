@@ -3,7 +3,7 @@ id: E1-T03
 epic: 1
 title: RV64M multiply/divide with exact div-by-zero and overflow semantics
 priority: 103
-status: pending
+status: implemented
 depends_on: [E1-T01]
 estimate: M
 capstone: false
@@ -54,4 +54,43 @@ i128 paths (wasm has no native i128) and re-run the boundary table — any nativ
 mismatch is a refutation. A Rust panic or abort on any input is also a refutation.
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — worker (implementation claim)
+Implemented all 13 RV64M ops as decode variants + execute arms (`crates/core/src/decode.rs`,
+`crates/core/src/hart/mod.rs`). Design notes:
+- **Not feature-gated** (unlike Zicsr): the M decode is legal in both the default and
+  `zicsr-stub` builds. The rv64ui-p stub path never executes M ops, so this is inert there —
+  confirmed by rv64ui-p still passing under the stub.
+- **No Rust panic paths**: every divisor-zero and signed-overflow case is branched out
+  BEFORE the `/`/`%`. Signed div/rem use an explicit `b==0 → -1/dividend` and
+  `MIN/-1 → dividend/0` guard; unsigned use `checked_div`/`checked_rem` (which return `None`
+  only on divisor zero — no unsigned overflow case).
+- **MULHSU**: `(rs1 as i64 as i128) * (rs2 as u128 as i128)` — rs1 sign-extended, rs2
+  zero-extended (always non-negative), exact product in i128, arithmetic `>>64`. Derivation
+  documented in-line. A dedicated test contrasts MULHU vs MULHSU on (-1,-1) to prove the
+  sign of rs1 flips the high word.
+- **W forms** operate on the low 32 bits and sign-extend the 32-bit result — including
+  DIVUW/REMUW, whose *unsigned* results are still sign-extended from bit 31.
+
+Evidence (local, macOS + reference toolchain):
+- `cargo test -p wasm-vm-core --test rv64m` — 12/12 (products, div/rem-by-zero over 6
+  dividends, signed overflow, truncate-toward-zero, W upper-bits-ignored, DIVUW/REMUW
+  sign-extension, rd==rs1==rs2 aliasing, boundary-biased no-panic sweep).
+- **Official riscv-tests rv64um-p: all 13 ELFs pass** via `tohost` (`cargo test -p
+  wasm-vm-core --features zicsr-stub --test riscv_tests` → `rv64um_p_suite_all_pass` +
+  `rv64ui_p_suite_...` both green). Built reproducibly with `tools/riscv-tests/build-rv64um.sh`
+  (`-march=rv64im_zicsr`, committed to `tests/riscv-tests-bin/`).
+- wasm32: `crates/wasm/tests/rv64m.rs` boundary table passes under BOTH `wasm-pack test
+  --node crates/wasm` and `--features zicsr-stub` — forces the `__multi3` i128 lowering
+  (no native i128 on wasm) and matches native bit-for-bit.
+- Decoder space: exhaustive 2^32 release sweep passes with the updated analytic tally
+  **236,093,445** (= 56·2^22 + 3·2^16 + 31·2^15 + 5; +13·2^15 for the new M encodings);
+  `decode_props` round-trip extended to all 13 M ops + the reserved-funct7 sweep now
+  excludes 0000001; `decode_golden`/wasm negatives updated (MUL/MULH/REMUW now legal, a
+  reserved M *W funct3 kept as the illegal probe).
+- Gate: `cargo fmt --all --check` clean, `cargo clippy --workspace --all-targets` 0
+  warnings, `cargo test --workspace` 0 FAILED.
+
+Pending: adversarial verification by a fresh cold-clone critic (≥1M-instruction Spike
+differential biased toward boundary patterns; MULHSU mixed-sign attack; W-form garbage
+upper bits; aliasing).

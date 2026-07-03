@@ -122,6 +122,20 @@ fn encode(instr: &Instr) -> u32 {
         Sllw { rd, rs1, rs2 } => r(OP32, 0b001, 0, rd, rs1, rs2),
         Srlw { rd, rs1, rs2 } => r(OP32, 0b101, 0, rd, rs1, rs2),
         Sraw { rd, rs1, rs2 } => r(OP32, 0b101, 0b0100000, rd, rs1, rs2),
+        // M extension (funct7 = 0000001), E1-T03.
+        Mul { rd, rs1, rs2 } => r(OP, 0b000, 0b0000001, rd, rs1, rs2),
+        Mulh { rd, rs1, rs2 } => r(OP, 0b001, 0b0000001, rd, rs1, rs2),
+        Mulhsu { rd, rs1, rs2 } => r(OP, 0b010, 0b0000001, rd, rs1, rs2),
+        Mulhu { rd, rs1, rs2 } => r(OP, 0b011, 0b0000001, rd, rs1, rs2),
+        Div { rd, rs1, rs2 } => r(OP, 0b100, 0b0000001, rd, rs1, rs2),
+        Divu { rd, rs1, rs2 } => r(OP, 0b101, 0b0000001, rd, rs1, rs2),
+        Rem { rd, rs1, rs2 } => r(OP, 0b110, 0b0000001, rd, rs1, rs2),
+        Remu { rd, rs1, rs2 } => r(OP, 0b111, 0b0000001, rd, rs1, rs2),
+        Mulw { rd, rs1, rs2 } => r(OP32, 0b000, 0b0000001, rd, rs1, rs2),
+        Divw { rd, rs1, rs2 } => r(OP32, 0b100, 0b0000001, rd, rs1, rs2),
+        Divuw { rd, rs1, rs2 } => r(OP32, 0b101, 0b0000001, rd, rs1, rs2),
+        Remw { rd, rs1, rs2 } => r(OP32, 0b110, 0b0000001, rd, rs1, rs2),
+        Remuw { rd, rs1, rs2 } => r(OP32, 0b111, 0b0000001, rd, rs1, rs2),
         Fence {
             rd,
             rs1,
@@ -163,6 +177,9 @@ prop_compose! {
         f in prop::sample::select(vec![
             (0b000u32, 0u32), (0b001, 0), (0b010, 0), (0b011, 0), (0b100, 0),
             (0b101, 0), (0b110, 0), (0b111, 0), (0b000, 0b0100000), (0b101, 0b0100000),
+            // M extension: funct7 = 0000001 legal for every funct3 (E1-T03).
+            (0b000, 0b0000001), (0b001, 0b0000001), (0b010, 0b0000001), (0b011, 0b0000001),
+            (0b100, 0b0000001), (0b101, 0b0000001), (0b110, 0b0000001), (0b111, 0b0000001),
         ]),
         rd in reg(), rs1 in reg(), rs2 in reg(),
     ) -> u32 { r(0b0110011, f.0, f.1, rd, rs1, rs2) }
@@ -172,6 +189,9 @@ prop_compose! {
     fn op32_type()(
         f in prop::sample::select(vec![
             (0b000u32, 0u32), (0b001, 0), (0b101, 0), (0b000, 0b0100000), (0b101, 0b0100000),
+            // M extension *W forms: funct3 000/100/101/110/111 at funct7=0000001 (E1-T03).
+            (0b000, 0b0000001), (0b100, 0b0000001), (0b101, 0b0000001),
+            (0b110, 0b0000001), (0b111, 0b0000001),
         ]),
         rd in reg(), rs1 in reg(), rs2 in reg(),
     ) -> u32 { r(0b0111011, f.0, f.1, rd, rs1, rs2) }
@@ -432,12 +452,13 @@ proptest! {
         }
     }
 
-    /// OP with an undefined funct7 (anything but 0000000 / 0100000) is illegal, incl. the
-    /// M-extension funct7 = 0000001.
+    /// OP with an undefined funct7 (anything but 0000000 / 0100000 / 0000001) is illegal.
+    /// funct7 = 0000001 is the M extension (E1-T03), legal for every funct3, so it is
+    /// excluded from this reserved-funct7 sweep.
     #[test]
     fn op_with_undefined_funct7_is_illegal(
         f3 in 0u32..8, rd in reg(), rs1 in reg(), rs2 in reg(),
-        f7 in (0u32..128).prop_filter("legal funct7", |f| *f != 0 && *f != 0b0100000),
+        f7 in (0u32..128).prop_filter("legal funct7", |f| *f != 0 && *f != 0b0100000 && *f != 0b0000001),
     ) {
         let w = r(0b0110011, f3, f7, rd, rs1, rs2);
         prop_assert!(decode(w).is_err(), "OP funct7={:#09b} must be illegal: {:#010x}", f7, w);
