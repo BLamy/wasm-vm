@@ -42,7 +42,7 @@ fn get_num(v: &JsValue, key: &str) -> Option<f64> {
 
 #[wasm_bindgen_test]
 fn hello_console_bytes_and_exit_status() {
-    let m = WasmMachine::new(128);
+    let m = WasmMachine::new(128).unwrap();
     let out = capture(&m);
     m.load_elf(HELLO).unwrap();
     let status = m.run(1_000_000).unwrap();
@@ -60,7 +60,7 @@ fn hello_console_bytes_and_exit_status() {
 
 #[wasm_bindgen_test]
 fn loops_trace_first_40_lines_match_golden() {
-    let m = WasmMachine::new(1);
+    let m = WasmMachine::new(1).unwrap();
     m.set_trace(true).unwrap();
     m.load_elf(LOOPS).unwrap();
     m.run(1_000_000).unwrap();
@@ -74,7 +74,7 @@ fn loops_trace_first_40_lines_match_golden() {
 
 #[wasm_bindgen_test]
 fn malformed_elf_throws_named_error_and_machine_survives() {
-    let m = WasmMachine::new(1);
+    let m = WasmMachine::new(1).unwrap();
     let err: JsValue = m.load_elf(b"not an ELF at all").unwrap_err().into();
     let msg = get_str(&err, "message").unwrap_or_default();
     assert!(
@@ -89,7 +89,7 @@ fn malformed_elf_throws_named_error_and_machine_survives() {
 
 #[wasm_bindgen_test]
 fn run_before_load_and_after_exit_throw() {
-    let m = WasmMachine::new(1);
+    let m = WasmMachine::new(1).unwrap();
     assert!(m.run(10).is_err(), "run before load_elf must throw");
     m.load_elf(LOOPS).unwrap();
     m.run(1_000_000).unwrap(); // runs to HTIF exit
@@ -99,7 +99,7 @@ fn run_before_load_and_after_exit_throw() {
 
 #[wasm_bindgen_test]
 fn state_digest_matches_native_dump_state() {
-    let m = WasmMachine::new(128);
+    let m = WasmMachine::new(128).unwrap();
     m.load_elf(HELLO).unwrap();
     m.run(1_000_000).unwrap();
     assert_eq!(m.state_digest().unwrap(), HELLO_DIGEST_128MIB);
@@ -107,7 +107,7 @@ fn state_digest_matches_native_dump_state() {
 
 #[wasm_bindgen_test]
 fn registers_expose_pc_and_32_gprs() {
-    let m = WasmMachine::new(1);
+    let m = WasmMachine::new(1).unwrap();
     m.load_elf(LOOPS).unwrap();
     m.run(1_000_000).unwrap();
     let regs = m.registers().unwrap();
@@ -119,7 +119,7 @@ fn registers_expose_pc_and_32_gprs() {
 fn reentrant_console_callback_is_a_caught_error_not_an_abort() {
     // A console callback that calls back into the machine must get a thrown, catchable
     // error — never a wasm `unreachable` abort (which would crash this test).
-    let m = Rc::new(WasmMachine::new(128));
+    let m = Rc::new(WasmMachine::new(128).unwrap());
     let m_cb = m.clone();
     let saw_error = Rc::new(RefCell::new(None::<bool>));
     let record = saw_error.clone();
@@ -137,5 +137,15 @@ fn reentrant_console_callback_is_a_caught_error_not_an_abort() {
         *saw_error.borrow(),
         Some(true),
         "re-entrant step() must return a caught error"
+    );
+}
+
+#[wasm_bindgen_test]
+fn hostile_ram_size_throws_instead_of_aborting() {
+    // A ram_mib too large to allocate must be a caught JsError, not a wasm `unreachable`
+    // abort that poisons the module (E0-T22 verifier hardening).
+    assert!(
+        WasmMachine::new(u32::MAX).is_err(),
+        "u32::MAX MiB must not be allocatable"
     );
 }

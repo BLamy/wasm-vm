@@ -3,7 +3,7 @@ id: E0-T22
 epic: 0
 title: wasm-bindgen wrapper — machine handle, step and run, console callback into JS
 priority: 22
-status: implemented
+status: verified
 depends_on: [E0-T02, E0-T11, E0-T12, E0-T16, E0-T17]
 estimate: M
 capstone: false
@@ -96,3 +96,23 @@ build OK; pkg/ produced + gitignored.
 rr: N/A (macOS). Verifier angles open: re-entrancy (1, covered by a test), panic-path readable
 stack via the hook (2), 500× new(64MiB)+.free() memory-growth leak check (3), zero-length + huge
 byte inputs to loadElf (4), and the full native/node determinism triangle on all 3 goldens (5).
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: verified
+- Re-entrancy (1) — airtight. Callback re-entered run/step/setConsole/loadElf/registers/stateDigest/takeTrace/setTrace/ramLen — ALL returned a caught JsError, none aborted; run-in-run caught. MUTATION: step's try_borrow_mut→borrow_mut flipped the re-entrancy test to FAIL (RefCell-already-borrowed abort) — safety property is mutation-covered.
+- Panic path (2) — FINDING (non-blocking): new(2048+) reaches Machine::new's Ram::new().expect() → panic hook prints a READABLE message then RuntimeError:unreachable; a reachable abort from untrusted ram_mib, no test covered it. (Satisfies angle 2's bar but worth fixing.)
+- Leak (3) — PASS. 500× new(64MiB)+.free() → wasm memory grew 0.0 MiB (65.1→65.1); RAM Vec freed on drop.
+- Input edges (4) — PASS. loadElf zero-length/1-byte→BadMagic, truncated→Truncated, all clean JsErrors; registers/stateDigest/takeTrace/run before loadElf behave (run throws descriptive).
+- Determinism triangle (5) — PASS for ALL 3 goldens @128MiB incl. the untested memops: node-wasm==native on retired/digest/first-40-trace. hello 83/df494381…; loops 48/117685ca…; memops 117/b73722c4… (agrees).
+- Status object (6) — PASS. exited {kind,code:0,retired:83}; run(5)→{kind:"max",retired:5}; forged illegal-instr ELF→{kind:"trapped",cause:"IllegalInstruction",tval:0,retired:0} matching native; step(5)→5; registers [0]=pc 0x80000040,[3]=sp 0x80002090,[11]=a0 1 all match native --dump-regs.
+- Mutation/coverage (7) — PASS. borrow_mut caught; takeTrace clears (48→0); registers pinned vs native.
+- RECOMMENDATION (non-blocking): make new(ram_mib) fallible so a hostile size is a caught JsError, not an abort.
+
+### 2026-07-03 — recommendation applied (worker)
+Made the constructor fallible. Core: added Machine::try_new(ram_bytes)->Result<Self,OutOfMemory>
+(Ram::new via try_reserve_exact); the infallible Machine::new now delegates try_new().expect() (its
+E0-T01 tests + all callers unchanged). Wrapper: new(ram_mib) now returns Result<WasmMachine,JsError>
+— saturating_mul on the byte count, Machine::try_new mapped to JsError ("cannot allocate N MiB").
+Added wrapper test hostile_ram_size_throws_instead_of_aborting (new(u32::MAX) is Err, no abort).
+Re-ran: wasm-pack node 8/8 (incl. the new test), core 0 FAILED, clippy -D warnings 0. The reachable
+untrusted-input abort the verifier flagged is now a caught error, matching the wrapper's never-abort
+philosophy. Status verified.

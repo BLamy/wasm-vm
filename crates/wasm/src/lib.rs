@@ -99,11 +99,15 @@ fn reentrant() -> JsError {
 #[wasm_bindgen]
 impl WasmMachine {
     /// Construct a machine with `ram_mib` MiB of zeroed guest RAM and a UART0 console
-    /// wired to a (initially unset) JS callback.
+    /// wired to a (initially unset) JS callback. A `ram_mib` too large to allocate throws
+    /// a catchable `JsError` — never a wasm `unreachable` abort that would poison the
+    /// module (the allocation goes through `try_reserve_exact`).
     #[wasm_bindgen(constructor)]
-    pub fn new(ram_mib: u32) -> WasmMachine {
+    pub fn new(ram_mib: u32) -> Result<WasmMachine, JsError> {
         init_diagnostics();
-        let mut machine = Machine::new(ram_mib as usize * 1024 * 1024);
+        let bytes = (ram_mib as usize).saturating_mul(1024 * 1024);
+        let mut machine = Machine::try_new(bytes)
+            .map_err(|_| JsError::new(&format!("cannot allocate {ram_mib} MiB of guest RAM")))?;
         let console = std::rc::Rc::new(RefCell::new(None));
         // The console device is always attached: guests store to UART0 to print, and an
         // unmapped store would trap. Until set_console runs, bytes are simply dropped.
@@ -117,7 +121,7 @@ impl WasmMachine {
                 })),
             )
             .expect("UART0 sits in a fixed, un-contended MMIO slot");
-        WasmMachine {
+        Ok(WasmMachine {
             inner: RefCell::new(Inner {
                 machine,
                 console,
@@ -126,7 +130,7 @@ impl WasmMachine {
                 trace_on: false,
                 trace: String::new(),
             }),
-        }
+        })
     }
 
     /// Size of guest RAM in bytes.
