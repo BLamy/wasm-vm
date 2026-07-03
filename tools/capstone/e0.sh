@@ -17,7 +17,9 @@ here="$(cd "$(dirname "$0")" && pwd)"
 repo_root="$(cd "${here}/../.." && pwd)"
 cd "${repo_root}"
 
-hello="guest/prebuilt/hello.elf"
+# The workload ELF — overridable so the sensitivity test can point the whole apparatus at
+# a one-byte-mutated copy (it MUST then go RED).
+hello="${CAPSTONE_ELF:-guest/prebuilt/hello.elf}"
 expected_stdout="Hello from RV64"
 work="$(mktemp -d)"
 trap 'rm -rf "${work}"' EXIT
@@ -27,6 +29,13 @@ spk="${work}/spike.trace"
 
 pass=0
 row() { printf '  %-32s %s\n' "$1" "$2"; }
+# gate(): print PASS/FAIL for a boolean check and set `pass` IN THE PARENT SHELL. Callers
+# pass the check as already-evaluated `$?` via `if`, never inside `$(...)` — a `pass=1`
+# inside a command substitution runs in a subshell and is silently lost (E0-T26 verifier
+# bug: it made the stdout/exit/retired/digest rows cosmetic). Usage:
+#   if <condition>; then ok "<label>" "<detail>"; else bad "<label>" "<detail>"; fi
+ok()  { row "$1" "PASS${2:+ $2}"; }
+bad() { row "$1" "FAIL${2:+ $2}"; pass=1; }
 
 echo "== E0 capstone: epic regression =="
 if [ "${CAPSTONE_SKIP_VERIFY_ALL:-}" = "1" ]; then
@@ -66,33 +75,38 @@ rel_hello="$(python3 -c 'import os,sys;print(os.path.relpath(os.path.abspath(sys
 "${repo_root}/tools/toolchain/run.sh" -- bash -c \
   "spike --isa=rv64i -m0x80000000:0x8000000 -l --log-commits '${rel_hello}' 2>&1 >/dev/null" \
   > "${work}/spike.raw" 2>/dev/null || true
+# Tolerate a failed Spike leg (e.g. empty log → normalizer exit 3): let the resulting
+# empty/short spike trace fail the line-count / cmp gates in the summary rather than abort
+# the whole run here.
 python3 "${repo_root}/tools/diff/normalize_spike.py" --entry "${entry}" \
-  < "${work}/spike.raw" > "${work}/spike.full" 2>/dev/null
-head -n "${n}" "${work}/spike.full" > "${spk}"
+  < "${work}/spike.raw" > "${work}/spike.full" 2>/dev/null || true
+head -n "${n}" "${work}/spike.full" > "${spk}" 2>/dev/null || : > "${spk}"
 
 # ── comparisons ──────────────────────────────────────────────────────────────
 echo
 echo "== E0 capstone summary =="
-row "native stdout == 'Hello from RV64'" "$([ "${nat_out}" = "${expected_stdout}" ] && echo PASS || { echo FAIL; pass=1; })"
-row "native exit code == 0" "$([ "${nat_rc:-0}" -eq 0 ] && echo PASS || { echo FAIL; pass=1; })"
+# Every check below runs its condition in the PARENT shell (via if), so bad() actually
+# sets `pass` and fails the run. Never `pass=1` inside `$(...)`.
+if [ "${nat_out}" = "${expected_stdout}" ]; then ok "native stdout == 'Hello from RV64'"; \
+  else bad "native stdout == 'Hello from RV64'" "got '${nat_out}'"; fi
+if [ "${nat_rc:-1}" -eq 0 ]; then ok "native exit code == 0"; else bad "native exit code == 0" "rc=${nat_rc}"; fi
 
 ln="$(wc -l < "${nat}" | tr -d ' ')"; lo="$(wc -l < "${node}" | tr -d ' ')"; ls="$(wc -l < "${spk}" | tr -d ' ')"
 row "trace line counts (native/node/spike)" "${ln}/${lo}/${ls}"
-if [ "${ln}" -gt 0 ] && [ "${ln}" = "${lo}" ] && [ "${ln}" = "${ls}" ]; then
-  row "line counts equal and > 0" "PASS"
-else
-  row "line counts equal and > 0" "FAIL"; pass=1
-fi
+if [ "${ln}" -gt 0 ] && [ "${ln}" = "${lo}" ] && [ "${ln}" = "${ls}" ]; then \
+  ok "line counts equal and > 0"; else bad "line counts equal and > 0"; fi
 
-cmp_row() { # <label> <a> <b>
-  if cmp -s "$2" "$3"; then row "$1" "PASS (cmp, 0 differing bytes)"; else row "$1" "FAIL"; pass=1; fi
-}
-cmp_row "native  ==  node-wasm  (cmp)" "${nat}" "${node}"
-cmp_row "native  ==  spike-norm (cmp)" "${nat}" "${spk}"
-cmp_row "node    ==  spike-norm (cmp)" "${node}" "${spk}"
+if cmp -s "${nat}" "${node}"; then ok "native  ==  node-wasm  (cmp)" "0 differing bytes"; \
+  else bad "native  ==  node-wasm  (cmp)"; fi
+if cmp -s "${nat}" "${spk}"; then ok "native  ==  spike-norm (cmp)" "0 differing bytes"; \
+  else bad "native  ==  spike-norm (cmp)"; fi
+if cmp -s "${node}" "${spk}"; then ok "node    ==  spike-norm (cmp)" "0 differing bytes"; \
+  else bad "node    ==  spike-norm (cmp)"; fi
 
-row "retired (native/node)" "${nat_retired}/${node_retired} $([ "${nat_retired}" = "${node_retired}" ] && echo PASS || { echo FAIL; pass=1; })"
-row "digest  (native/node)" "$([ "${nat_digest}" = "${node_digest}" ] && echo "PASS ${nat_digest}" || { echo "FAIL ${nat_digest} vs ${node_digest}"; pass=1; })"
+if [ "${nat_retired}" = "${node_retired}" ]; then ok "retired native==node" "(${nat_retired})"; \
+  else bad "retired native==node" "${nat_retired} vs ${node_retired}"; fi
+if [ "${nat_digest}" = "${node_digest}" ]; then ok "digest native==node" "${nat_digest}"; \
+  else bad "digest native==node" "${nat_digest} vs ${node_digest}"; fi
 
 echo
 if [ "${pass}" -eq 0 ]; then
