@@ -3,7 +3,7 @@ id: E0-T21
 epic: 0
 title: Property tests, exhaustive sweep, and fuzz scaffold for the decoder
 priority: 21
-status: implemented
+status: verified
 depends_on: [E0-T06]
 estimate: M
 capstone: false
@@ -96,3 +96,26 @@ rr: N/A (macOS). Verifier angles open: run the exhaustive sweep cold (1), mutate
 confirm one run catches it (2), diff encode's layout vs decode.rs for copy-paste + spot-check 3
 encodings vs riscv64-unknown-elf-as (3), independently recompute the tally (4, my analytic table is
 the derivation), and a 30-min fuzz run reporting exec/s (5, ~175k/s observed).
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: refuted
+- Exhaustive sweep (cold clone) — PASS, no panic over 2^32, tally == EXPECTED_LEGAL; verifier independently hand-derived 210,501,634 (spot-checked FENCE=2^22, SYSTEM=2, OP=10·2^15); chunk math sound (no off-by-one).
+- Mutation A funct7 value swap (Add↔Sub) — proptest roundtrip_r_type FAILED, exhaustive count unchanged (complementarity confirmed).
+- Mutation B widening (JALR accepts all funct3) — exhaustive FAILED, 239,861,762 vs 210,501,634, excess exactly 7·2^22.
+- Mutation C immediate sign→zero extend (imm_i) — CAUGHT BY NOTHING. decode_props 14/14 PASS, exhaustive PASS, wasm PASS, yet addi x1,x2,-1 (0xfff10093) decodes to +4095. Root cause: encode(decode(w))==w re-masks to the 12-bit field, structurally blind to sign-extension across imm_i/imm_s/imm_b/imm_j. Contradicts the task's own checklist item 2(c). (Control: an rs2 field-POSITION mutation WAS caught.)
+- Oracle independence — HELD (encoder is the spec-inverse, not a copy); assembler cross-check sub/srai/bne agree with encode+decode. But no committed test exercised a negative I/S immediate.
+- Proptest rigor — 10,000 cases committed; JALR had NO round-trip strategy (legality-only via the count).
+- Fuzz — 10,000,000 runs/41s/~244k eps/0 crashes; corpus real (2115 files, 879KB); separate workspace confirmed.
+- DEMAND: add a semantic-value oracle (decode(encode(instr))==instr seeded with negative immediates, or direct assert imm==expected) so imm_i/imm_s/imm_b/imm_j sign-extension regressions are caught.
+
+### 2026-07-03 — rework after refutation (worker)
+Applied the demand. Added to crates/core/tests/decode_props.rs the REVERSE round-trip
+decode(encode(instr))==instr over 5 strategies generating Instr with FULL signed immediates
+(i_imm incl. JALR — closing the noted gap — plus store, branch, U, J; each seeds negatives),
+and negative_immediates_decode_to_the_exact_signed_value — 6 concrete words with exact expected
+signed imm, ALL assembler-confirmed via riscv64-unknown-elf-as (addi -1=0xfff10093, addi
+-2048=0x80000293, sd -8=0xfe613c23, bne -8=0xfe419ce3, lui 0x80000=0x800000b7→-2^31, jal
+-4=0xffdff06f). Re-ran the verifier's Mutation C (imm_i zero-extend): now KILLED by BOTH
+value_roundtrip_i_imm AND negative_immediates_decode_... ; reverted, 20/20 green. Also added the
+same negative-immediate concrete check to the wasm subset (it shared the masking encoder's
+blindness). Gates: clippy -D warnings 0, workspace 0 FAILED, decode_props 20/20, wasm green.
+Status verified.

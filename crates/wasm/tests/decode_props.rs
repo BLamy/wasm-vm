@@ -80,3 +80,36 @@ fn decoder_round_trips_1000_cases_on_wasm32() {
         );
     }
 }
+
+/// Semantic-value check on wasm32: the word round-trip above re-masks to the architectural
+/// field and is blind to immediate sign-extension, so pin a few negative immediates to
+/// their exact decoded value (words hand-assembled from the spec; assembler-confirmed).
+#[wasm_bindgen_test]
+fn negative_immediates_decode_signed_on_wasm32() {
+    use Instr::*;
+    assert_eq!(
+        decode(0xfff1_0093),
+        Ok(Addi {
+            rd: 1,
+            rs1: 2,
+            imm: -1
+        })
+    );
+    assert_eq!(
+        decode(0x8000_0293),
+        Ok(Addi {
+            rd: 5,
+            rs1: 0,
+            imm: -2048
+        })
+    );
+    assert_eq!(
+        decode(0xfe61_3c23),
+        Ok(Sd {
+            rs1: 2,
+            rs2: 6,
+            imm: -8
+        })
+    );
+    assert_eq!(decode(0xffdf_f06f), Ok(Jal { rd: 0, imm: -4 }));
+}

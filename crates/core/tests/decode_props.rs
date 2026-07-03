@@ -259,6 +259,136 @@ roundtrip!(roundtrip_shifts, shifts());
 roundtrip!(roundtrip_addiw, i_addiw());
 roundtrip!(roundtrip_fence, fence());
 
+// ── REVERSE round-trip: decode(encode(instr)) == instr, with NEGATIVE immediates ──
+// The word round-trip encode(decode(w))==w is structurally BLIND to immediate value /
+// sign-extension bugs: the encoder re-masks to the architectural field, so a decoder that
+// zero-extends imm_i (e.g. addi x1,x2,-1 → +4095) still re-encodes to the same word. This
+// direction seeds instructions carrying full signed immediates and asserts the decoded
+// Instr — whose imm is the architectural i64 value — equals the original, catching sign
+// errors in imm_i/imm_s/imm_b/imm_j. (Also gives JALR its only value round-trip.)
+
+prop_compose! {
+    fn i_imm_instr()(rd in reg(), rs1 in reg(), imm in -2048i64..2048, which in 0u8..9) -> Instr {
+        use Instr::*;
+        match which {
+            0 => Addi { rd, rs1, imm },
+            1 => Slti { rd, rs1, imm },
+            2 => Sltiu { rd, rs1, imm },
+            3 => Xori { rd, rs1, imm },
+            4 => Ori { rd, rs1, imm },
+            5 => Andi { rd, rs1, imm },
+            6 => Lw { rd, rs1, imm },
+            7 => Addiw { rd, rs1, imm },
+            _ => Jalr { rd, rs1, imm },
+        }
+    }
+}
+prop_compose! {
+    fn s_imm_instr()(rs1 in reg(), rs2 in reg(), imm in -2048i64..2048, sd in prop::bool::ANY) -> Instr {
+        if sd { Instr::Sd { rs1, rs2, imm } } else { Instr::Sw { rs1, rs2, imm } }
+    }
+}
+prop_compose! {
+    fn b_imm_instr()(rs1 in reg(), rs2 in reg(), imm in -4096i64..4096, which in 0u8..6) -> Instr {
+        use Instr::*;
+        let imm = imm & !1; // B-type imm[0] is always 0
+        match which {
+            0 => Beq { rs1, rs2, imm },
+            1 => Bne { rs1, rs2, imm },
+            2 => Blt { rs1, rs2, imm },
+            3 => Bge { rs1, rs2, imm },
+            4 => Bltu { rs1, rs2, imm },
+            _ => Bgeu { rs1, rs2, imm },
+        }
+    }
+}
+prop_compose! {
+    // U-type: imm = sign_extend(v << 12); v's top bit makes it negative.
+    fn u_imm_instr()(rd in reg(), v in 0u32..(1 << 20), auipc in prop::bool::ANY) -> Instr {
+        let imm = ((v << 12) as i32) as i64;
+        if auipc { Instr::Auipc { rd, imm } } else { Instr::Lui { rd, imm } }
+    }
+}
+prop_compose! {
+    fn j_imm_instr()(rd in reg(), imm in -(1i64 << 20)..(1 << 20)) -> Instr {
+        Instr::Jal { rd, imm: imm & !1 } // J-type imm[0] is always 0
+    }
+}
+
+macro_rules! reverse_roundtrip {
+    ($name:ident, $strat:expr) => {
+        proptest! {
+            #![proptest_config(config())]
+            #[test]
+            fn $name(instr in $strat) {
+                // decode of the assembled word must reproduce the EXACT Instr, immediates
+                // (incl. sign) and all.
+                prop_assert_eq!(decode(encode(&instr)), Ok(instr), "value round-trip for {:?}", instr);
+            }
+        }
+    };
+}
+
+reverse_roundtrip!(value_roundtrip_i_imm, i_imm_instr());
+reverse_roundtrip!(value_roundtrip_store, s_imm_instr());
+reverse_roundtrip!(value_roundtrip_branch, b_imm_instr());
+reverse_roundtrip!(value_roundtrip_u, u_imm_instr());
+reverse_roundtrip!(value_roundtrip_j, j_imm_instr());
+
+/// Concrete negative-immediate words with their exact expected decoded value — a direct,
+/// non-vacuous semantic check independent of the encoder (words assembled by hand from the
+/// spec bit layout). A zero-extending decoder fails these immediately.
+#[test]
+fn negative_immediates_decode_to_the_exact_signed_value() {
+    use Instr::*;
+    // addi x1, x2, -1  = 0xfff10093
+    assert_eq!(
+        decode(0xfff1_0093),
+        Ok(Addi {
+            rd: 1,
+            rs1: 2,
+            imm: -1
+        })
+    );
+    // addi x5, x0, -2048 (most-negative I-imm) = 0x80000293
+    assert_eq!(
+        decode(0x8000_0293),
+        Ok(Addi {
+            rd: 5,
+            rs1: 0,
+            imm: -2048
+        })
+    );
+    // sd x6, -8(x2)  = 0xfe613c23  (S-imm = -8)
+    assert_eq!(
+        decode(0xfe61_3c23),
+        Ok(Sd {
+            rs1: 2,
+            rs2: 6,
+            imm: -8
+        })
+    );
+    // bne x3, x4, -8 = 0xfe419ce3  (B-imm = -8; assembler-confirmed)
+    assert_eq!(
+        decode(0xfe41_9ce3),
+        Ok(Bne {
+            rs1: 3,
+            rs2: 4,
+            imm: -8
+        })
+    );
+    // lui x1, 0x80000 → imm sign-extends to 0xffffffff_80000000 = -2147483648
+    assert_eq!(
+        decode(0x8000_00b7),
+        Ok(Lui {
+            rd: 1,
+            imm: -2_147_483_648
+        })
+    );
+    // jal x0, -4 = 0xffdff06f
+    assert_eq!(decode(0xffdf_f06f), Ok(Jal { rd: 0, imm: -4 }));
+}
+
 // ── reserved / illegal encodings must decode to IllegalInstr ──────────────────
 
 proptest! {
