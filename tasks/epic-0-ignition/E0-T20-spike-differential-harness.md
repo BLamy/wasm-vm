@@ -3,7 +3,7 @@ id: E0-T20
 epic: 0
 title: Differential trace harness diffing our execution against Spike byte-for-byte
 priority: 20
-status: pending
+status: implemented
 depends_on: [E0-T18, E0-T14]
 estimate: L
 capstone: false
@@ -62,4 +62,40 @@ any run-to-run diff in normalized output refutes. (5) Confirm the QEMU path actu
 executes (not a dead code path) and documents its pc-level-only limitation.
 
 ## Verification log
-(empty)
+### 2026-07-03 — worker claim — branch task/e0-t20-spike-diff (stacked on e0-t19)
+Deliverables: one command diffs our execution against Spike byte-for-byte.
+- tools/diff/normalize_spike.py (stdin→stdout, pure): keeps ONLY Spike commit lines
+  (distinguished by the privilege digit), re-emits the E0-T16 canonical grammar. Owns the two
+  Spike quirks: (a) BOOT-ROM TRIM — output starts at the first commit with pc==--entry, prints
+  the trimmed count to stderr, and HARD-ERRORS (exit 3) if entry never appears (verified: bogus
+  entry → exit 3, "refusing to emit a possibly-misanchored trace"); (b) disassembly discarded,
+  only pc/insn/rd/mem survive, values passed through byte-for-byte.
+- tools/diff/report.py: our trace is authoritative on length (guest halts via HTIF; Spike/QEMU
+  spin on the post-exit tail), so it compares our trace as a PREFIX of Spike's, exact string
+  equality (cmp-grade, never whitespace-fuzzy). Levels: commit (pc+insn+rd+mem, default/capstone
+  bar) and pc (pc+insn only). First divergence printed with last 20 matching + both divergent
+  lines + 5 lookahead each. Exit 0 match / 1 diverge / 2 usage.
+- tools/diff/run_diff.sh <elf> [--level pc|commit] [--max N]: builds our CLI, traces to a FILE
+  (keeps diagnostics out), runs Spike via tools/toolchain/run.sh (cold-clone: Docker+Rust only),
+  normalizes, reports. Spike: --isa=rv64i -m0x80000000:0x8000000 (UART page left to Spike's own
+  default device — mapping RAM over it errors) -l --log-commits.
+- make diff-all: hello/loops/memops ALL MATCH at commit level (83/48/117 instrs, 0 divergence).
+- make diff-selftest (tools/diff/selftest.sh): (1) loops genuine match + normalized trace ==
+  committed golden tools/diff/golden/loops.spike.trace; (2) memops clean match reports >100
+  compared lines (117); (3) a single corrupted normalized line is DETECTED at exactly that
+  instruction (#50). NOTE: the acceptance's ">100 for loops.elf" is carried by memops (117) — the
+  E0-T14 loops.elf retires only 48 instructions (short program); the harness reports the true
+  count for each guest.
+- QEMU secondary pc-level-only cross-check (tools/diff/run_diff_qemu.sh, normalize_qemu.py, make
+  diff-qemu): -M virt -bios none -accel tcg,one-insn-per-tb=on -d exec,nochain; bounded by head
+  +timeout (QEMU spins too). EXECUTES (not dead code): loops MATCHES on pc; hello/memops diverge
+  at the UART polling loop (0x54↔0x60) because QEMU models a real ns16550 with different THR-empty
+  timing than our always-ready stub — a DOCUMENTED device-model limitation of the secondary check,
+  and the harness REPORTS it rather than masking. tools/diff/README.md documents all of this.
+Self-checked adversarial: (1) over-normalization — editing an rd VALUE in the Spike trace is caught
+at the exact instruction (#2), exit 1 (values are not dropped); (4) determinism — normalizing loops
+3× yields byte-identical output (same shasum). Golden committed. cmp (not diff -w) is the equality.
+Not in CI `ci` (needs the Docker Spike container); standalone make targets, documented.
+rr: N/A (macOS). Verifier angles open: over-normalization on insn/pc too (2), trim misanchor via
+entry≠0x80000000 (2), mass evidence over rv64ui-p with zicsr-stub expecting reported CSR divergence
+(3), and confirming QEMU is live not dead (5).
