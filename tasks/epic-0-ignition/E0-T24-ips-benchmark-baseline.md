@@ -3,7 +3,7 @@ id: E0-T24
 epic: 0
 title: Instructions-per-second benchmark scaffold and recorded interpreter baseline
 priority: 24
-status: implemented
+status: verified
 depends_on: [E0-T18, E0-T14, E0-T15]
 estimate: S
 capstone: false
@@ -86,3 +86,11 @@ workspace tests 0 FAILED; cargo bench prints MIPS; wasm build + node bench green
 rr: N/A (perf/macOS). Verifier angles open: dead-code (1, black_box + recompile-loops-with-more-work
 → MIPS ~constant), battery variance (2), bench()≥10^7 (3, =1e7), recompute MIPS by hand from
 criterion ns (4: 48 instrs / 687.88 ns = 69.8 Melem/s ✓), docs SHA vs HEAD (5).
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: verified
+- Dead-code (key): committed consume is black_box(hart.regs.pc), cheap (the SHA-1MiB bug is gone). Byte-patched loops' loop limit (11→311→2000): loops(48)=634ns/75.7MIPS, more(948)=10249ns/92.5MIPS, huge(6015)=66562ns/90.4MIPS — wall scales ~105× with real work, MIPS PLATEAUS ~91 (does NOT rise). Counter+timer honest. (Reload-per-iter makes the 48-instr ~71 MIPS understate steady-state ~91 by ~20% — conservative, by design.)
+- Count verified: verify_retired asserts retired==48; mutating GOLDEN_RETIRED→47 PANICS the bench; independent Count sink measured 48 → Throughput::Elements(48) correct. wasm bench() retires 10,000,032 = 208334×48 (≥10^7).
+- Ran it: 3 cargo bench trace_off 71.73/71.82/71.69 Melem/s, spread 0.19% (<10%). By hand 48/669.15ns = 71.7 Melem/s == criterion (arithmetic correct).
+- wasm/node: node ×3 = 42.6/37.6/38.8 MIPS retired=10,000,032; native÷node 1.8× (in band). Headless Chromium: retired=10,000,032 MIPS=38.8, native/browser 1.85×. Real wasm loaded, not a stub.
+- Zero-cost: trace_off vs nullsink −0.5/+1.0/+2.2% (mean ~1%, ≤2%); run()==run_traced(NullSink) confirmed; check-zero-cost.sh passes both assertions.
+- Docs fidelity: native 71.7/71.8/71.7 reproduces doc 71.5/70.8/70.6; SHA honestly labeled branch base, interpreter unchanged. VERIFIED — no rework.
