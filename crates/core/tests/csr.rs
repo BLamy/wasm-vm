@@ -1,5 +1,9 @@
 //! E1-T02: the Zicsr CSR subsystem — side-effect suppression, privilege/read-only checks,
-//! WARL legalization. The same assertions run under wasm32 (crates/wasm/tests/csr.rs).
+//! WARL legalization. The same assertions run under wasm32 (crates/wasm/tests/csr.rs). The
+//! decode+execute cases need the real Zicsr decode path, which exists only in the default
+//! build (under `zicsr-stub` CSR space routes to the E0-T19 stub), so this file is scoped out
+//! there.
+#![cfg(not(feature = "zicsr-stub"))]
 
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;

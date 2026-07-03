@@ -1,5 +1,8 @@
-//! E1-T02: the CSR subsystem's core semantics must hold identically on wasm32.
-#![cfg(target_arch = "wasm32")]
+//! E1-T02: the CSR subsystem's core semantics must hold identically on wasm32. The Zicsr
+//! decode path (and thus decode+execute of CSR ops) exists only in the default build — under
+//! the throwaway `zicsr-stub` (E0-T19 rv64ui-p path) CSR space routes to the stub, so this
+//! file is scoped out there.
+#![cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 
 use wasm_bindgen_test::wasm_bindgen_test;
 use wasm_vm_core::bus::Bus;

@@ -3,7 +3,7 @@ id: E1-T02
 epic: 1
 title: Zicsr CSR file with WARL/WLRL masking, privilege checks, and Zifencei
 priority: 102
-status: implemented
+status: verified
 depends_on: [E1-T01]
 estimate: L
 capstone: false
@@ -92,3 +92,22 @@ green; E0-T20 Spike diff hello still MATCH 83 (decoder change transparent to CSR
 rr: N/A (macOS). Verifier angles open: 4096-CSR-address sweep vs Spike (which addrs trap), side-
 effect suppression on side-effectful CSRs (csrrsi x0/csrrw x0 satp patterns), degenerate encodings
 (csrrwi uimm=31), misa WARL hardwired (write must not change it), FENCE.I self-modifying-code test.
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: verified
+- Suppression: PROBE hook genuine; csrrw x0 → no read (write happens); csrrs x5,·,x0 → read, no write; CSRRWI writes even with uimm=0 (src_is_zero=false, spec-correct). 6 mutations (force read / force write / corrupt PROBE / read_only=false / disable priv check / misa writable) each caught by committed tests.
+- Privilege/read-only: min_priv=addr[9:8], read_only=addr[11:10]==0b11 match §2.1; satp→S, mtvec→M, mhartid/cycle→RO, PROBE→RW/M; U-mode mtvec write → IllegalInstruction mcause=2 tval=insn; 0xC00-0xC1F/mhartid writes trap, csrrs rs1=x0 → Ok(0).
+- WARL/misa: write-all-ones round-trip passes; misa doubly hardwired (making it writable fails the test). Caveat (explicitly deferred): other CSRs mask !0 (no WPRI/mepc-align/mtvec-mode legalization yet).
+- FENCE.I SMC: fresh addi executed after fence.i → runs; strict decode (0x0000100F Ok, garnished Err).
+- CSR sweep: raw 4096 vs Spike meaningless (minimal set); rigorous static encoding→{trap} check, no divergence.
+- Stub path: riscv_tests(stub) 1 passed; same CSR word decodes Ok default / Err under zicsr-stub — E0-T19 byte-preserved.
+- Decoder-space: analytic tally 235,667,461 recomputed + brute-force matches; workspace 0 failed; decode_props 21 passed (CSR round-trip).
+- MRET reads real mepc (consistent with csrw mepc); WFI no-op. insn threaded → real tval. VERIFIED.
+
+### 2026-07-03 — CI fix (worker, test-only)
+CI runs the wasm crate under BOTH default AND --features zicsr-stub (the E0-T19 wasm step). The
+wasm/native csr.rs decode+execute cases assume the real Zicsr decode path, which does not exist
+under zicsr-stub (CSR space routes to the stub), so they failed there. Fix: scoped both csr test
+files to #![cfg(not(feature = "zicsr-stub"))] — the CSR subsystem IS the default build; the stub
+build's CSR path is the stub, covered by riscv_tests. NO production code changed. Re-ran the exact
+failing step (wasm-pack test --node crates/wasm --features zicsr-stub) → green; default wasm + native
+csr 8/8 + workspace 0 FAILED unchanged.
