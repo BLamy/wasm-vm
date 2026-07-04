@@ -3,7 +3,7 @@ id: E1-T17
 epic: 1
 title: TLB with ASID tagging and SFENCE.VMA — all four operand combinations
 priority: 117
-status: in_progress
+status: verified
 depends_on: [E1-T16]
 estimate: M
 capstone: false
@@ -114,3 +114,38 @@ itself is covered directly by the 4 end-to-end `tlb.rs` tests.
 
 Local gate: fmt clean; clippy 0 (workspace + zicsr-stub, all-targets); `cargo test --workspace`
 0 `test result: FAILED`; both wasm32 builds (no_std, +trace) clean.
+
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: verified
+Fresh cold clone at be3d7cb. Oracle: the sanctioned independent-oracle fallback — the pure walk
+`mmu::translate` (no TLB) re-encoding Sv39 + Svade + SUM/MXR/priv as the differential oracle
+against `translate_cached` (Spike + qemu both absent from PATH).
+- **Independent gate**: fmt clean; clippy 0 (workspace + zicsr-stub, all-targets); `cargo test
+  --workspace` **0 FAILED** (40 suites all ok; T17 `tlb` = 15 passed); both wasm32 builds Finished.
+- **Invisibility differential (headline)**: 40 seeds × 400 steps = **16000 accesses** over randomized
+  Sv39 tables (4K/2M/1G leaves, global/non-global, A=0/D=0, U/S pages; fetch/load/store at S+U;
+  SUM/MXR/priv/ASID mutated mid-stream WITHOUT a fence; PTEs mutated WITH a VA-fence), each run
+  through `translate` (oracle) and `translate_cached`. **0 divergences** in (ok/fault, cause, PA);
+  5103 hits, 2074 ok / 13926 fault. `Tlb::disabled()` over a 2nd corpus: **0 divergences, 0 hits** —
+  equals the oracle exactly.
+- **Flush-scope precision**: 3 ASIDs × {global,non-global} + a superpage case; exact surviving sets
+  via walk counters — `(None,None)`→∅ (incl. global); `(None,Some asid)`→ only non-global that ASID
+  (global + other ASIDs spared); `(Some va,None)`→ the covering entry across ALL ASIDs incl. global
+  (others spared); `(Some va,Some asid)`→ exactly the one targeted entry. A "flush-everything" fake
+  fails these survivor assertions.
+- **Svade / superpage / aliasing / determinism / privilege**: store never served by a load-filled
+  D=0 entry (walk unchanged); 1 GiB entry serves its range from one walk + a VA-fence of any 4K VA
+  inside a 2M superpage removes it via the level tag; alias survives a fence of its pair; replacement
+  is a fixed `[16][4]` round-robin (no HashMap/Instant/random) with a reproducible trace; U→illegal,
+  S+TVM=1→illegal, S+TVM=0→NOP, M→retire; `csr.rs` has zero TLB refs and the TLB lives in `Hart`, so
+  satp writes structurally cannot flush.
+- **Mutations 11/12 caught**: asid-fence-drops-global-exemption, VA-fence-ignores-level, lookup-
+  ignores-global, fill-never-global, finish_leaf-not-re-run-on-hit, drop-canonical-check, sfence-asid
+  off-by-one, superpage-PA-mask off-by-one, fill-ignores-level, sfence-not-wired, U-sfence-not-illegal.
+  **1 benign survivor (M5 fill-on-fault)** — provably correctness-neutral: because `finish_leaf`
+  re-runs on every hit, a cached would-fault entry re-derives the identical fault; the 16000-step
+  differential (13926 faults) passes unchanged under M5. "Fill-on-success only" is a cleanliness
+  choice, not a load-bearing correctness property — a strength of the re-validate-on-every-hit design.
+
+VERDICT: **verified** — the TLB is architecturally invisible modulo legal staleness (0 divergences
+over a 16000-access differential), all four SFENCE.VMA scopes are exact, the gate is green, and
+mutation coverage is complete (lone survivor correctness-neutral).
