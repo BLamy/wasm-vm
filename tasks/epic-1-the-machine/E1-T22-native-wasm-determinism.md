@@ -3,7 +3,7 @@ id: E1-T22
 epic: 1
 title: Native-vs-WASM determinism — identical traces for identical programs
 priority: 122
-status: in_progress
+status: verified
 depends_on: [E1-T19]
 estimate: M
 capstone: false
@@ -118,3 +118,41 @@ wasm32 builds clean; native+wasm determinism green; hazard grep clean.
   codegen target already agrees).
 - **Interrupt-storm / FP-torture corpora** (acceptance #3) beyond the pinned hazard set are a
   natural corpus extension; the mechanism (deterministic CLINT clock, HashSink) already supports them.
+
+### 2026-07-04 — adversarial verifier (round 1) — VERDICT: verified
+Fresh cold clone at c6794da; **wasm-pack + node present, so the wasm leg was actually run**.
+- **Gate**: fmt clean; clippy 0; `cargo test --test determinism --skip full_corpus` 2 passed;
+  **`wasm-pack test --node crates/wasm --test determinism` passed** — ran the real
+  `determinism-*.wasm`; the wasm32 build reproduces the native golden trace-hashes, RAM digests,
+  AND final-state hashes bit-for-bit; hazard grep clean.
+- **Divergent-but-green f-reg (the killer) — CLOSED**: ran `rv64ud-p-fadd`, flipped one bit of a
+  final f-register never moved to an x-reg/memory → the trace hash stayed at golden
+  `0x3bb60ebc5c7fab18` but `final_state_hash` changed `0xc1e6bc3355fc6807 → 0x094869ac58bb29a6`.
+  The FP-never-read-back gap the trace hash misses IS caught by `final_state_hash` (folds all 32
+  f-regs).
+- **Injected host-float fault (acceptance #2)**: a host-`f64` injection in the D-add arm of
+  `hart/mod.rs` was **caught by the dynamic fingerprint** (`rv64ud-p-fadd` trace-hash drift, test
+  FAILED); an injection inside `softfloat.rs` was caught by BOTH static layers (clippy
+  `float_arithmetic` deny + `no-host-float.sh`). Per acceptance #2 (caught by static AND/OR hash)
+  this is satisfied — not a refutation.
+- **Harness separation**: a `#[cfg(target_arch="wasm32")] compile_error!` made the wasm build fail
+  → the wasm file genuinely compiles for wasm32, not the native binary.
+- **Golden/shared-folder integrity**: both harnesses `include!` the SAME golden + `final_state_hash`;
+  flipping one hex digit failed BOTH legs (wasm trace showed `wasm-function[…]` frames, confirming
+  wasm execution).
+- **Determinism basics**: native pinned run 3× → identical. **HashSink soundness**: field-sensitivity
+  test covers pc/insn/rd-index/rd-value/None-vs-Some/mem; high-tagged rd/None sentinels prevent
+  index↔value or None↔zero-store collisions; no trivial collision found. **Hazard grep both
+  directions**: a real `use std::collections::HashMap;` injection failed the grep; the tlb.rs
+  comment mention is correctly ignored.
+
+**Advisory (non-blocking, not a refutation)**: the STATIC host-float guard covers only
+`softfloat.rs`, not the hart FP execute arms (the dynamic fingerprint does) — the `no-host-float.sh`
+header already flags adding those files; worth doing for defense-in-depth. And `final_state_hash`
+includes pmpcfg0 but not pmpaddr0 — a completeness note for the mutation-catching role, not a
+native-vs-wasm split (CSRs are identical integer storage on both builds).
+
+VERDICT: **verified** — native==wasm32 determinism holds and the wasm leg genuinely runs `.wasm`;
+`final_state_hash` closes the FP-never-read-back gap; host-float injection caught dynamically;
+golden shared-file, harness separation, 3× determinism, HashSink soundness, and hazard-grep
+both-directions all confirmed.
