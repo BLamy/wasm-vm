@@ -10,7 +10,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 1. **E1-T20** — RISCOF architectural compliance — DUT plugin, Sail reference, signature diff
 1. **E1-T21** — Differential fuzzing — random instruction streams lockstep against Spike
-1. **E1-T22** — Native-vs-WASM determinism — identical traces for identical programs
 1. **E1-T23** — Interpreter performance baseline — documented MIPS, native and in-browser
 
 

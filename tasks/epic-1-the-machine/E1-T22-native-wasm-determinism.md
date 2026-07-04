@@ -3,7 +3,7 @@ id: E1-T22
 epic: 1
 title: Native-vs-WASM determinism — identical traces for identical programs
 priority: 122
-status: pending
+status: in_progress
 depends_on: [E1-T19]
 estimate: M
 capstone: false
@@ -70,4 +70,51 @@ file must be provably outside guest reach (host UI, benchmarks); an allowlisted 
 file refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-04 — implementation
+- **`crates/core/src/trace.rs`** — new `HashSink`: a rolling FNV-1a-64 fold over every retire
+  record `{pc, insn, rd idx+val, mem {addr,len,is_store,value}}`, ALWAYS compiled and
+  allocation-free (unlike `VecSink`), so it fingerprints a multi-million-instruction run in
+  constant memory. Only wrapping integer ops — no host float, no `usize`, no container iteration —
+  so the hash is bit-identical native vs wasm32 by construction. `None`/`Some` sentinels keep
+  "wrote x0=0" ≠ "no write" and "load" ≠ "store".
+- **Two-part fingerprint** (the trace hash alone can miss a divergent value that is never read
+  back): the determinism harness pairs the `HashSink` trace hash with a **final-state hash** —
+  `final_state_hash()` in `tests/golden/determinism_golden.rs` folds the final **f-registers**
+  (the FP-never-read-back gap the adversarial section calls out — an FP result reaches no
+  `TraceRecord.rd`), **fcsr, privilege mode, and the key privileged CSRs** (mstatus/mtvec/mepc/
+  mcause/mtval/mscratch/mie/mip/mideleg/medeleg/satp/counteren/pmpcfg) — plus the `Snapshot` RAM
+  SHA-256. Together they cover executed effects, final FP/CSR state, and final memory.
+- **`tests/golden/determinism_golden.rs`** — the frozen `(name, trace_hash, retired, RAM_sha256,
+  state_hash)` contract for a hazard-prone corpus (i128 `mulh`, softfloat `fadd`, atomics
+  `amoadd_d`, compressed `rvc`) + the shared `final_state_hash` folder, `include!`d by BOTH
+  harnesses so the folding is bit-identical.
+- **`crates/core/tests/determinism.rs`** (native) — asserts the pinned corpus matches the golden;
+  a `#[ignore]` full-corpus leg runs every `-p` ELF TWICE asserting byte-identical fingerprints
+  (global no-nondeterminism guarantee); and `hash_sink_distinguishes_every_field` proves the hash
+  is sensitive to each field.
+- **`crates/wasm/tests/determinism.rs`** (wasm32) — embeds the pinned ELFs and asserts the SAME
+  golden constants; passing it is the native==wasm equality proof.
+- **Static enforcement**: `tools/ci/determinism-hazards.sh` bans HashMap/HashSet/host-clock/rand
+  in `crates/core/src` (host float already covered by `no-host-float.sh` + the softfloat deny).
+- **`tools/determinism_check.sh`** runs native + wasm legs (`--full` adds the corpus leg); a CI
+  `determinism` job + a `make determinism` target (folded into `make ci`) + the hazard grep added
+  to the `test` job.
+
+**Verified live in this environment** (wasm-pack + node present): `wasm-pack test --node crates/wasm
+--test determinism` **passes** — the wasm32 build reproduces the native golden trace-hashes, RAM
+digests, AND final-state hashes bit-for-bit across the hazard corpus. So native == wasm32 is proven,
+not just asserted.
+
+Local gate: fmt clean; clippy 0 (workspace, all-targets); `cargo test --workspace` 0 FAILED; both
+wasm32 builds clean; native+wasm determinism green; hazard grep clean.
+
+### Scope / follow-on (honest)
+- The **divergence localizer** (acceptance #4 — 64k-retire checkpointing to name the first
+  differing retire in < 60 s) is not yet built; the current harness localizes to the *program* and
+  to *which* of {trace, RAM, final-state} differs. A per-chunk checkpoint stream is the follow-on.
+- **Two different host arches** (acceptance #5, x86_64 + aarch64) can't be exercised on one machine;
+  the wasm32==native equality (verified) is the stronger implication (a 32-bit-pointer, different-
+  codegen target already agrees).
+- **Interrupt-storm / FP-torture corpora** (acceptance #3) beyond the pinned hazard set are a
+  natural corpus extension; the mechanism (deterministic CLINT clock, HashSink) already supports them.

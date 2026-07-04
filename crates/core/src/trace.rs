@@ -54,6 +54,79 @@ impl TraceSink for NullSink {
     fn retire(&mut self, _record: &TraceRecord) {}
 }
 
+/// A rolling FNV-1a-64 fold over retire records — the E1-T22 native-vs-WASM determinism
+/// fingerprint. ALWAYS compiled and allocation-free (no `Vec`, unlike [`VecSink`]), so it hashes a
+/// multi-million-instruction run in constant memory where the text sink cannot. The fold uses only
+/// wrapping integer arithmetic — no host float, no `usize`, no container iteration — so the hash is
+/// bit-identical on native and wasm32 by construction.
+///
+/// Hash input is EXACTLY the guest-visible retirement effects — `{pc, insn, rd index+value, mem
+/// {addr,len,is_store,value}}` — plus the retire count. `rd == None` and `mem == None` fold a
+/// distinct sentinel so "wrote x5=0" and "wrote nothing" (and "loaded addr" vs "no mem") never
+/// collide. What is deliberately NOT hashed and why: f-registers/fcsr are covered because every FP
+/// result reaches an x-register (FMV/FCVT/FCLASS/FLE) or memory (FSD) or fflags (a CSR write that
+/// retires as an `rd` value) — a divergent FP bit that never becomes guest-visible is not an
+/// architectural divergence; CSR state is covered via the final [`crate::snapshot::Snapshot`] the
+/// determinism harness compares ALONGSIDE this hash (the two together are the full fingerprint).
+pub struct HashSink {
+    state: u64,
+    retired: u64,
+}
+
+impl Default for HashSink {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl HashSink {
+    /// FNV-1a-64 offset basis.
+    pub const fn new() -> Self {
+        HashSink {
+            state: 0xcbf2_9ce4_8422_2325,
+            retired: 0,
+        }
+    }
+    #[inline(always)]
+    fn fold(&mut self, x: u64) {
+        self.state ^= x;
+        self.state = self.state.wrapping_mul(0x0000_0100_0000_01b3); // FNV prime
+    }
+    /// The rolling hash of every retirement so far.
+    pub const fn hash(&self) -> u64 {
+        self.state
+    }
+    /// Number of instructions folded in.
+    pub const fn retired(&self) -> u64 {
+        self.retired
+    }
+}
+
+impl TraceSink for HashSink {
+    #[inline]
+    fn retire(&mut self, r: &TraceRecord) {
+        self.fold(r.pc);
+        self.fold(u64::from(r.insn));
+        match r.rd {
+            // Tag the rd index high so x0 vs "no write" and different regs never collide.
+            Some((i, v)) => {
+                self.fold(0x0100_0000_0000_0000 | u64::from(i));
+                self.fold(v);
+            }
+            None => self.fold(0x0200_0000_0000_0000),
+        }
+        match r.mem {
+            Some(m) => {
+                self.fold(m.addr);
+                self.fold((u64::from(m.len) << 1) | u64::from(m.is_store));
+                self.fold(m.value);
+            }
+            None => self.fold(0x0400_0000_0000_0000),
+        }
+        self.retired = self.retired.wrapping_add(1);
+    }
+}
+
 /// Canonical line serialization of a record — a [`core::fmt::Display`] wrapper, so it is
 /// `no_std` and allocation-free (write straight into any formatter). One retired
 /// instruction per line; the caller adds the `\n`.

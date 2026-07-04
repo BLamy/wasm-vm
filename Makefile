@@ -2,10 +2,10 @@
 # parallel; locally they run in the order listed under `ci`. If this file and ci.yml
 # disagree, that's a bug (E0-T02).
 
-.PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite diff-all diff-selftest diff-qemu \
+.PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke web-build web-serve bench capstone-e0
 
-ci: fmt clippy test wasm features test-riscv riscv-tests-suite
+ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism
 
 fmt:
 	cargo fmt --all --check
@@ -16,6 +16,7 @@ clippy:
 test:
 	cargo test --workspace
 	bash tools/ci/no-host-float.sh
+	bash tools/ci/determinism-hazards.sh
 
 # The wasm32 target itself is guaranteed by rust-toolchain.toml (rustup installs the
 # pinned toolchain with its targets on first use); a non-rustup cargo fails loudly with
@@ -54,6 +55,11 @@ test-riscv:
 # Mirrors ci.yml's `riscv-tests` job.
 riscv-tests-suite:
 	bash tools/run_riscv_tests.sh
+
+# E1-T22: native==wasm determinism proof — both builds assert the same golden fingerprints.
+# Mirrors ci.yml's `determinism` job. `make determinism FULL=--full` adds the whole-corpus leg.
+determinism:
+	bash tools/determinism_check.sh $(FULL)
 
 # Spike differential harness (E0-T20): run every prebuilt guest under wasm-vm-cli AND
 # Spike, normalize both into the E0-T16 canonical grammar, byte-compare at commit level.
