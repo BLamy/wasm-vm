@@ -333,6 +333,10 @@ impl Hart {
         bus: &mut impl Bus,
         sink: &mut T,
     ) -> Result<(), Trap> {
+        // E1-T14: arm the Zicntr counter-write suppression for this instruction — only a
+        // `csrw mcycle`/`csrw minstret` performed during THIS step's execute suppresses its own
+        // retirement increment (clears any stale flag from a host-side/direct CSR write).
+        self.csr.arm_counters();
         let pc = self.regs.pc;
         // Fetch the low 16-bit parcel (C extension: `parcel[1:0] != 0b11` ⇒ a 16-bit
         // compressed instruction; else a 32-bit instruction whose upper half is a SEPARATE

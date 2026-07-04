@@ -91,3 +91,32 @@ mi tests since mtimecmp resets to u64::MAX). `instret_overflow` stays excluded (
 counter-overflow LCOFI, a separate extension). Local gate green: fmt clean; clippy 0 (real +
 zicsr-stub, all-targets); `cargo test --workspace` 0 `test result: FAILED`; both wasm builds 0
 FAILED. Awaiting adversarial verification (incl. the Spike gate-matrix + increment-position diff).
+
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: refuted (real bug)
+Spike 1.1.1-dev (`spike --isa=rv64gc_zicntr`, commit-log diff). The **increment position** — "the
+classic divergence" — was wrong: a guest `csrw mcycle`/`csrw minstret` read back **written+1**
+because `retire_tick()` unconditionally incremented the counter the writing instruction had just
+written. Spike suppresses that instruction's own increment (the written value stands):
+
+| sequence | Spike | ours (buggy) |
+|---|---|---|
+| `csrw minstret,100; csrr a0,minstret` | 100 | 101 |
+| `csrw mcycle,500; csrr a0,mcycle` | 500 | 501 |
+| `csrw minstret,0; nop; csrr a0,minstret` | 1 | 2 |
+
+Everything else the critic checked was clean: the 12-state gate matrix matched Spike cell-for-cell
+(both returned 0b101011010), the delta forms (`csrr;csrr`→1, `mcycle` over 5 nops→6) matched,
+rv64mi-p-zicntr passed with the other mi tests unperturbed, shadow/wrap/counteren-WARL/hpm all
+correct, and all 7 charter mutations were caught. The coverage gap: every committed write went
+through the `set_csr` HELPER (a direct `Csrs::access`), never a guest `csrw` through `hart::step`/
+`retire_tick`, so the writing-instruction's own increment was never exercised.
+
+### 2026-07-03 — rework (round 1)
+Suppress the writing instruction's own increment for the counter it wrote. Added per-step flags
+`wrote_mcycle`/`wrote_minstret` (Csrs): set in `write_raw` for MCYCLE/MINSTRET, ARMED (cleared) at
+each step start via `arm_counters()` (called at the top of `hart::step_traced` — so a stale flag
+from a host-side/direct write can't leak into a run), and consumed in `retire_tick` (skip the
+written counter). Added `guest_csrw_counter_does_not_count_its_own_retirement` (csrrw minstret,x5
+then csrr → 100, not 101; csrw mcycle,500 stands at 500) — independently confirmed the revert
+(unconditional retire_tick) now FAILs it. Gate re-green (10 zicntr tests; fmt/clippy clean; mi +
+snapshot pass).

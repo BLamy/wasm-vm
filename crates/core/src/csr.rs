@@ -199,6 +199,11 @@ pub struct Csrs {
     /// retired instruction; `cycle`/`instret` are read-only shadows of these.
     mcycle: u64,
     minstret: u64,
+    /// Per-instruction suppression: set when THIS instruction wrote mcycle/minstret, so its own
+    /// retirement does not also increment that counter (Spike: the written value stands). Armed
+    /// (cleared) at each step start and consumed by `retire_tick`.
+    wrote_mcycle: bool,
+    wrote_minstret: bool,
     /// Shadow of the CLINT `mtime` for the unprivileged `time` counter — the machine refreshes
     /// it each instruction boundary (there is no `mtime` CSR; `time` is a window onto the CLINT).
     time: u64,
@@ -227,19 +232,35 @@ impl Csrs {
             warl: Vec::new(),
             mcycle: 0,
             minstret: 0,
+            wrote_mcycle: false,
+            wrote_minstret: false,
             time: 0,
             probe_reads: 0,
             probe_value: 0,
         }
     }
 
+    /// Zicntr (E1-T14): clear the per-instruction counter-write suppression flags. Called at the
+    /// START of each step so only writes performed DURING this instruction's execute suppress its
+    /// own retirement increment (a stale flag from a direct/host-side write can't leak into a run).
+    pub fn arm_counters(&mut self) {
+        self.wrote_mcycle = false;
+        self.wrote_minstret = false;
+    }
+
     /// Zicntr (E1-T14): advance the retired-instruction counters. Called once per successfully
     /// retired instruction, AFTER `execute` — so a `csrr` reading `minstret`/`mcycle` observes
     /// the count as it stood BEFORE that instruction retired (matching Spike). Our interpreter
     /// retires one instruction per step, so `mcycle` tracks `minstret` (documented; no IPC claim).
+    /// If THIS instruction wrote a counter (`csrw mcycle`/`csrw minstret`), that counter is NOT
+    /// also incremented — the written value stands, exactly as Spike does.
     pub fn retire_tick(&mut self) {
-        self.mcycle = self.mcycle.wrapping_add(1);
-        self.minstret = self.minstret.wrapping_add(1);
+        if !self.wrote_mcycle {
+            self.mcycle = self.mcycle.wrapping_add(1);
+        }
+        if !self.wrote_minstret {
+            self.minstret = self.minstret.wrapping_add(1);
+        }
     }
 
     /// Refresh the `time` counter's window onto the CLINT `mtime` (E1-T14). The machine calls
@@ -681,8 +702,15 @@ impl Csrs {
             PROBE => self.probe_value = v,
             // Zicntr (E1-T14): mcycle/minstret are writable (the unprivileged cycle/instret are
             // read-only shadows, rejected before reaching write_raw by the read_only encoding).
-            MCYCLE => self.mcycle = v,
-            MINSTRET => self.minstret = v,
+            // Flag the write so this instruction's own retirement does not re-increment it.
+            MCYCLE => {
+                self.mcycle = v;
+                self.wrote_mcycle = true;
+            }
+            MINSTRET => {
+                self.minstret = v;
+                self.wrote_minstret = true;
+            }
             MISA | MHARTID | MVENDORID | MARCHID | MIMPID => {} // hardwired
             0xC00..=0xC1F => {}
             other => match self.warl.iter_mut().find(|(a, _)| *a == other) {

@@ -68,6 +68,41 @@ fn rdinstret_back_to_back_differs_by_one() {
 }
 
 #[test]
+fn guest_csrw_counter_does_not_count_its_own_retirement() {
+    // Spike: a `csrw minstret, X` writes X and does NOT also count that instruction's own
+    // retirement — the written value stands (the classic increment-position divergence). A
+    // subsequent `csrr` observes X, and the NEXT instruction increments to X+1.
+    // `csrrwi minstret, 0` via a scratch would be awkward; use `csrrw minstret, x5` with x5=100.
+    let mut m = Machine::new(1024 * 1024);
+    m.hart_mut().regs.write(5, 100);
+    // csrrw x0, minstret, x5  (write minstret = x5 = 100, discard old)
+    let csrw = (u32::from(MINSTRET) << 20) | (5 << 15) | (0b001 << 12) | 0x73;
+    m.bus_mut().store32(CODE, csrw).unwrap();
+    m.bus_mut()
+        .store32(CODE + 4, csrr(6, MINSTRET as u32))
+        .unwrap(); // csrr x6, minstret
+    m.hart_mut().regs.pc = CODE;
+    m.run(2);
+    assert_eq!(
+        m.hart().regs.read(6),
+        100,
+        "csrw minstret,100 stands at 100 (no self-count); the csrr reads it pre-retire (matches Spike)"
+    );
+    // The written value itself stood at 100 immediately after the csrw (not 101).
+    let mut m2 = Machine::new(1024 * 1024);
+    m2.hart_mut().regs.write(5, 500);
+    let csrw_c = (u32::from(MCYCLE) << 20) | (5 << 15) | (0b001 << 12) | 0x73;
+    m2.bus_mut().store32(CODE, csrw_c).unwrap();
+    m2.hart_mut().regs.pc = CODE;
+    m2.run(1); // just the csrw
+    assert_eq!(
+        rd(&mut m2, MCYCLE),
+        500,
+        "csrw mcycle,500 stands at 500, not 501"
+    );
+}
+
+#[test]
 fn writing_minstret_takes_effect_and_instret_shadows_it() {
     let mut m = Machine::new(64 * 1024);
     set_csr(&mut m, MINSTRET, CsrOp::Write, 0x1234_5678);
