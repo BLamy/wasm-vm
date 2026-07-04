@@ -3,7 +3,7 @@ id: E1-T20
 epic: 1
 title: RISCOF architectural compliance — DUT plugin, Sail reference, signature diff
 priority: 120
-status: pending
+status: in_progress
 depends_on: [E1-T19]
 estimate: L
 capstone: false
