@@ -83,7 +83,9 @@ fi
 tail -3 "$A_LOG"
 
 # --- Leg B: native RISCOF ---------------------------------------------------------------------
-section "Leg B — native RISCOF (vs Spike)"
+# Reference model — Sail by default (E1-T26); mirrors run_riscof.sh's RISCOF_REF default.
+REF="${RISCOF_REF:-sail}"
+section "Leg B — RISCOF (vs ${REF})"
 if [ -x "$REPO/compliance/.venv/bin/riscof" ] && docker image inspect wasm-vm-toolchain:local >/dev/null 2>&1; then
   B_LOG="$(mktemp)"
   if bash tools/run_riscof.sh >"$B_LOG" 2>&1; then
@@ -154,7 +156,7 @@ fi
   echo "| leg | what | status | detail |"
   echo "|---|---|---|---|"
   echo "| A | native riscv-tests | ${A_STATUS} | ${A_DETAIL} |"
-  echo "| B | native RISCOF vs Spike | ${B_STATUS} | ${B_DETAIL} |"
+  echo "| B | RISCOF vs ${REF} | ${B_STATUS} | ${B_DETAIL} |"
   echo "| C | native==wasm equality | ${C_STATUS} | ${C_DETAIL} |"
   echo "| D | wasm artifact identity | ${D_STATUS} | ${D_DETAIL} |"
   echo
@@ -164,10 +166,11 @@ fi
   echo "- RISCOF exclusions (\`compliance/EXCLUSIONS.md\`): **${EXCL_N}**"
   echo "- **total deferred: ${DEFERRED_TOTAL}**"
   echo
-  echo "Remaining deferrals map to these Level-1-out-of-scope features (each its own follow-on task):"
-  echo "Sv57 5-level paging (38) · 64-region PMP (4) · exception-priority §3.7.1 (1) ·"
-  echo "unaligned-access mode / \`ma_data\` (1) · debug triggers tdata1/2 / \`breakpoint\` (1)."
-  echo
+  if [ "$DEFERRED_TOTAL" -gt 0 ]; then
+    echo "Remaining deferrals are Level-1-out-of-scope features, each its own follow-on task"
+    echo "(Sv57 paging · 64-region PMP · exception-priority · unaligned-access · debug triggers)."
+    echo
+  fi
   echo "## Pins (reproducibility)"
   echo
   echo "- wasm artifact sha256: \`${WASM_SHA}\`"

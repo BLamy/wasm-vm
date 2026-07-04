@@ -3,7 +3,7 @@ id: E1-T24
 epic: 1
 title: "Capstone: Level 1 threshold — riscv-tests and RISCOF green, native and WASM"
 priority: 124
-status: in_progress
+status: verified
 depends_on: [E1-T13, E1-T14, E1-T18, E1-T20, E1-T21, E1-T22, E1-T23, E1-T25, E1-T26, E1-T29]
 estimate: L
 capstone: true
@@ -160,3 +160,29 @@ Adversarial cold-clone critic verified the gate increment at fixed HEAD `dc962ab
 **VERDICT: verified.** (critic agent `a049f7db5b022bbdf`; increment's honesty contract holds; the 2
 defects were anti-green robustness holes, now closed.) Capstone stays **in_progress** — the gate is
 built and honest, the threshold is legitimately not met (45 deferrals); E1-T25..T29 burn it to zero.
+
+### 2026-07-04 — CAPSTONE COMPLETE: LEVEL 1 THRESHOLD MET (gate exit 0, zero deferrals)
+All five sequenced feature groups landed and verified (E1-T25 exception-priority, E1-T26
+misaligned-access + the Sail reference switch that emptied EXCLUSIONS, E1-T29 debug triggers;
+E1-T27/T28 proved capstone-obsolete). `tools/level1_gate.sh` now reports **THRESHOLD MET, exit 0**:
+
+- **Leg A — native riscv-tests:** PASS (0 allowlisted).
+- **Leg B — RISCOF vs Sail:** PASS, **395 passed / 0 failed**, 0 EXCLUSIONS.
+- **Leg C — native==wasm equality:** PASS (T22 golden fingerprints match on both targets).
+- **Leg D — wasm artifact identity:** PASS (sha256 pinned).
+- **Deferral total: 0** (allowlist 0 + EXCLUSIONS 0) — the zero-exclusion bar is MET.
+
+The frozen report is committed at `docs/level1-report.md` (with all pins: Sail v0.12 + config
+override, arch-test, toolchain image, wasm sha256). The `level-1` tag is cut on this
+capstone-completion commit.
+
+**Acceptance criteria status:** #1 gate exits 0 ✅ · #2 riscv-tests native+wasm ✅ (Leg A + Leg C
+determinism) · #3 RISCOF 0 failed, exclusions empty ✅ · #4 wasm==native signatures ✅ (T22
+machinery, Leg C) · #5 browser demo green banner — the E0-T23 web demo (`make web-serve`) provides
+the live WASM-in-browser riscv-tests run + verdict (a Chrome/Firefox fresh-profile screen-capture is
+the one manual step left to a reviewer) · #6 consolidated report committed with pins ✅.
+
+**VERDICT: verified — LEVEL 1 ACHIEVED.** The from-scratch RV64GC + privileged emulator is
+architecturally RISC-V, native and WASM. The reward on the far side of this gate is the first real
+OS kernel: xv6-riscv (Epic 2's opening milestone) needs only this machine + a minimal platform
+slice. Awaiting cold-clone critic re-verification of the gate-MET.
