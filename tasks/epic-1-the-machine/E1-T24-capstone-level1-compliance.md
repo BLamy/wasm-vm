@@ -186,3 +186,26 @@ the one manual step left to a reviewer) · #6 consolidated report committed with
 architecturally RISC-V, native and WASM. The reward on the far side of this gate is the first real
 OS kernel: xv6-riscv (Epic 2's opening milestone) needs only this machine + a minimal platform
 slice. Awaiting cold-clone critic re-verification of the gate-MET.
+
+### 2026-07-04 — critic round 1: VERIFIED (cold clone at `9576e78`) — LEVEL 1 CONFIRMED
+Epic-defining cold-clone critic attacked every claim; all survived. Clone clean, tag untouched.
+
+- **Gate MET honestly (exit 0):** full `level1_gate.sh` → `A=PASS B=PASS C=PASS D=PASS`, deferrals 0,
+  `LEVEL 1 THRESHOLD MET`. Exit-0 logic confirmed sound (`GREEN && COMPLETE && DEFERRED==0`; cannot
+  green while a leg skips/fails or a deferral remains; leg B rejects a vacuous 0-test pass).
+- **RISCOF 395/0 vs Sail + Sail is a REAL reference (the decisive check):** baseline 395/0 exit 0;
+  the critic injected its OWN bug (`Slt` signed→unsigned) → `UNEXCUSED FAILURE: slt-01.S`, **394/1,
+  RISCOF exit 1**. Reverted. Sail reddens on a real CPU bug — the green is earned, not false.
+- **Zero exclusions honest:** allowlist 0, EXCLUSIONS 0; previously-excluded tests genuinely PASS with
+  non-trivial signatures (vm_sv57 34, misalign* 29, pmpm 4). Config-override only disables extensions
+  the DUT treats as reserved + aligns misaligned-atomic causes — does not neuter Sail.
+- **native==wasm real:** `cargo test --workspace` 91 ok-suites / 0 FAILED; fmt/clippy clean;
+  `determinism_check.sh` exit 0 (native AND `..._on_wasm` match the SAME golden).
+- **Report + tag honest:** `docs/level1-report.md` matches the live gate; `level-1` tag at HEAD. Caveat
+  (addressed): the pinned wasm sha256 is a per-build fingerprint, not byte-reproducible across
+  toolchain versions — the reproducible native==wasm proof is Leg C's determinism fingerprints. The
+  report now says so explicitly.
+
+**VERDICT: verified — LEVEL 1 ACHIEVED.** (critic agent `a6899d809463b854c`, 38 tool-uses, cold clone,
+no push.) The Epic-1 capstone is COMPLETE: a from-scratch RV64GC + privileged emulator, architecturally
+RISC-V native and WASM, riscv-tests + RISCOF 395/0 vs the canonical Sail reference, zero exclusions.

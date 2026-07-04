@@ -33,6 +33,10 @@ not (E1-T26), and debug triggers → `rv64mi-p-breakpoint` (E1-T29).
   (rv64gc + S/U + Sv39/Sv48; misaligned scalar supported; Svnapot/Svpbmt/Sv57/Svrsw60t59b off).
   Spike fallback: `RISCOF_REF=spike` (a reference-capability gap, documented, not a DUT bug).
 - wasm artifact sha256: `3d2b86c1aa68466d2d4c5488a0e8189a878fe6e1353229b00a701c25c55808db`
+  — a fingerprint of THIS build's `web/pkg/*_bg.wasm`, not a cross-toolchain-reproducible pin
+  (wasm-opt/rustc/wasm-bindgen versions make the bytes machine-specific). The *reproducible*
+  native==wasm equivalence proof is Leg C's frozen determinism fingerprints, which match on
+  both targets regardless of the artifact bytes.
 - toolchain image: `wasm-vm-toolchain:local` (gcc + Spike; see `tools/toolchain/versions.env`)
 - riscv-arch-test: pinned by `compliance/provision.sh` (`riscof arch-test --clone`)
 
