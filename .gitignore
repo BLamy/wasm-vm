@@ -29,3 +29,4 @@ web/assets/riscv-tests/
 compliance/.venv/
 compliance/riscv-arch-test/
 compliance/riscof_work/
+compliance/config.ini

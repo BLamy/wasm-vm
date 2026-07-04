@@ -76,3 +76,20 @@ gitignored `riscof_work/`; do NOT commit the raw scaffold — commit the ADAPTED
    --env=riscv-arch-test/riscv-test-suite/env` — start rv64i_m, iterate gcc flags then per-test
    signature diffs → EXCLUSIONS.md (spec-cited). Then `make riscof` + CI + wasm leg + mutation
    (LWU sign-ext → sig mismatch) → open the PR.
+
+## Status: pipeline wired; blocked on a RISCOF-ecosystem version skew (increment 4)
+DONE this pass: `compliance/wasmvm/` (DUT plugin — class `wasmvm`, gcc via `run_samepath.sh`, run =
+host-native `wasm-vm-cli run --signature=.. --signature-granularity=4 ..`) and `compliance/spike/`
+(reference — gcc + spike via `run_samepath.sh`, granularity 4 to match), both from `spike_simple`.
+`wasmvm_isa.yaml` = RV64IMAFDCSU_Zicsr_Zifencei, misa `0x800000000014112D` (matches E1-T01) — **passes
+`riscof validateyaml`**. `config.ini` is generated (machine-absolute paths; gitignored — a `make
+riscof` target will emit it).
+
+**BLOCKER:** `riscof run` reaches `framework.run` then `KeyError: 'PMP'`. `pip install riscof` pulled
+riscof 1.25.3 + riscv-config 3.18.3 + riscv-isac 0.18.0, which are mutually incompatible: riscv-config
+3.18.3 renamed the ISA-yaml PMP field to `pmp_granularity` (rejects the old `PMP:` as unknown), but
+riscof/isac still index `['PMP']`. **NEXT: pin a mutually-compatible RISCOF trio in `provision.sh`**
+(e.g. an older `riscof==1.25.x`/`riscv-config==3.x` pair from the RISCOF release matrix, or the set the
+arch-test `ctp-release` was cut against) so the checked yaml carries the key riscof expects. Then the
+compile→DUT-run→spike-run→signature-diff proceeds; iterate per-test → EXCLUSIONS.md → make riscof +
+CI + wasm leg + mutation → PR.
