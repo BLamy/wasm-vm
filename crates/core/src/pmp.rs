@@ -35,7 +35,7 @@ const CFG_WMASK: u8 = CFG_R | CFG_W | CFG_X | CFG_A | CFG_L;
 /// pmpaddr holds physical address[55:2] — 54 bits; [63:54] read 0.
 const ADDR_MASK: u64 = (1 << 54) - 1;
 /// Number of PMP entries.
-pub const NUM_ENTRIES: usize = 16;
+pub const NUM_ENTRIES: usize = 64;
 
 /// The 16-entry PMP unit. `cfg[i]` is entry i's configuration byte; `addr[i]` is its raw pmpaddr
 /// value (address[55:2]).
@@ -62,10 +62,11 @@ impl Pmp {
     }
 
     // ── CSR views ─────────────────────────────────────────────────────────────────
-    /// Read `pmpcfg0` (bank 0 → entries 0..8) or `pmpcfg2` (bank 2 → entries 8..16): eight cfg
-    /// bytes packed little-endian into the 64-bit CSR (RV64 has no odd pmpcfg CSRs).
+    /// Read an even pmpcfg CSR (`pmpcfg{0,2,4,…,14}` on RV64 — odd CSRs are illegal). `bank` is
+    /// the CSR index, so bank `2b` maps to entries `[8b, 8b+8)`: eight cfg bytes packed
+    /// little-endian into the 64-bit CSR. (64 entries → 8 even banks, 0..=14.)
     pub fn read_cfg(&self, bank: usize) -> u64 {
-        let base = if bank == 0 { 0 } else { 8 };
+        let base = bank * 4; // bank 0→0, 2→8, 4→16, …, 14→56
         let mut v = 0u64;
         for k in 0..8 {
             v |= u64::from(self.cfg[base + k]) << (k * 8);
@@ -75,7 +76,7 @@ impl Pmp {
     /// Write a pmpcfg bank. Each byte is WARL-legalized (reserved bits cleared) and skipped if
     /// its entry is LOCKED (L=1) — a locked cfg/addr can't change until reset.
     pub fn write_cfg(&mut self, bank: usize, v: u64) {
-        let base = if bank == 0 { 0 } else { 8 };
+        let base = bank * 4;
         for k in 0..8 {
             let i = base + k;
             if self.cfg[i] & CFG_L != 0 {

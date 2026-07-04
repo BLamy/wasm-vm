@@ -207,6 +207,65 @@ fn lowest_numbered_matching_entry_wins() {
 // ── CSR WARL ─────────────────────────────────────────────────────────────────────
 
 #[test]
+fn all_64_entries_configurable_and_enforced_e1t27() {
+    // E1-T27: PMP has 64 entries (pmpaddr0..63, even pmpcfg0..14). Configure a HIGH entry (40)
+    // as a NAPOT RW region via its CSRs and confirm it matches + enforces; and the top bank
+    // (pmpcfg14 / entry 56) and last entry (pmpaddr63) read/write round-trip.
+    const PMPADDR40: u16 = 0x3B0 + 40;
+    const PMPCFG10: u16 = 0x3AA; // bank 10 → entries [40, 48); entry 40 = byte 0
+    const PMPCFG14: u16 = 0x3AE; // bank 14 → entries [56, 64)
+    const PMPADDR63: u16 = 0x3EF;
+    let mut c = Csrs::at_reset();
+    let region = DRAM_BASE + 0x2000;
+    // entry 40: NAPOT 4 KiB RW at `region`.
+    c.access(
+        PMPADDR40,
+        CsrOp::Write,
+        napot(region, 0x1000),
+        false,
+        false,
+        0,
+    )
+    .unwrap();
+    let cfg = u64::from(rw_napot_cfg());
+    c.access(PMPCFG10, CsrOp::Write, cfg, false, false, 0)
+        .unwrap();
+    // S-mode read inside the region is granted by entry 40; outside, no entry matches → S denied.
+    assert!(
+        c.pmp.check(region, 8, PmpAccess::Read, Priv::S),
+        "entry 40 grants R inside"
+    );
+    assert!(
+        c.pmp.check(region, 8, PmpAccess::Write, Priv::S),
+        "entry 40 grants W inside"
+    );
+    assert!(
+        !c.pmp.check(region + 0x1000, 8, PmpAccess::Read, Priv::S),
+        "outside entry 40 → S denied"
+    );
+    // Top bank + last entry round-trip through the CSR file (proves banks up to 14 + addr 63).
+    c.access(PMPCFG14, CsrOp::Write, 0x07, false, false, 0)
+        .unwrap(); // entry 56 = R|W|X, A=OFF
+    assert_eq!(
+        c.access(PMPCFG14, CsrOp::Set, 0, true, false, 0).unwrap() & 0xFF,
+        0x07,
+        "pmpcfg14 byte0 R|W|X"
+    );
+    c.access(PMPADDR63, CsrOp::Write, 0x1234, false, false, 0)
+        .unwrap();
+    assert_eq!(
+        c.access(PMPADDR63, CsrOp::Set, 0, true, false, 0).unwrap(),
+        0x1234,
+        "pmpaddr63 round-trip"
+    );
+}
+
+/// cfg byte: NAPOT (A=3) with R+W — for the high-entry match test.
+fn rw_napot_cfg() -> u8 {
+    (1 << 0) | (1 << 1) | (0b11 << 3) // R | W | A=NAPOT
+}
+
+#[test]
 fn odd_pmpcfg_is_illegal_and_pmpaddr_high_bits_read_zero() {
     let mut c = Csrs::at_reset();
     // pmpcfg1 (0x3A1) / pmpcfg3 (0x3A3) do not exist in RV64 → illegal instruction.
@@ -217,6 +276,15 @@ fn odd_pmpcfg_is_illegal_and_pmpaddr_high_bits_read_zero() {
     assert!(
         c.access(0x3A3, CsrOp::Set, 0, true, false, 0).is_err(),
         "pmpcfg3 illegal"
+    );
+    // pmpcfg15 (0x3AF, odd) is also illegal; pmpcfg14 (0x3AE, even) is legal.
+    assert!(
+        c.access(0x3AF, CsrOp::Set, 0, true, false, 0).is_err(),
+        "pmpcfg15 (odd) illegal"
+    );
+    assert!(
+        c.access(0x3AE, CsrOp::Set, 0, true, false, 0).is_ok(),
+        "pmpcfg14 (even) legal"
     );
     // pmpaddr bits [63:54] read back zero (only address[55:2] = 54 bits).
     c.access(PMPADDR0, CsrOp::Write, u64::MAX, false, false, 0)

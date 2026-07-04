@@ -51,4 +51,35 @@ map: `pmpcfg1/3/…` (odd) must remain illegal on RV64. Re-run the full PMP arch
 from a cold clone.
 
 ## Verification log
-(empty)
+
+### 2026-07-04 — implemented: PMP expanded 16 → 64 entries (DUT + unit-tested)
+Per the user's "implement T27/T28 as real features" decision (Level 1 already met; these are
+now capability features, not capstone-blockers). The PMP unit now has **64 entries**.
+
+**Core (`crates/core`):**
+- `pmp.rs`: `NUM_ENTRIES 16 → 64`; `read_cfg`/`write_cfg` bank base generalized `bank*4` (even
+  banks 0,2,…,14). The matching/lock/priority logic already iterates `NUM_ENTRIES`, so it
+  scales unchanged; the ADDR_MASK, TOR-neighbor-lock, and lowest-entry-wins semantics are
+  identical for all 64.
+- `csr.rs`: added `pmpaddr16..63` (0x3C0..0x3EF) and the even `pmpcfg4..14` (0x3A4..0x3AE);
+  dispatch is now range-based (`PMPADDR0..=PMPADDR63`, `PMPCFG0..=PMPCFG14 if even`). Odd pmpcfg
+  CSRs (0x3A1/…/0x3AF) still fail the even guard → `meta` None → illegal instruction (RV64).
+
+**Genuine test:** new `pmp.rs::all_64_entries_configurable_and_enforced_e1t27` — configures a
+HIGH entry (40) as a NAPOT RW region via its own CSRs and asserts it matches + enforces R/W for
+S-mode inside and denies outside; round-trips the top cfg bank (`pmpcfg14`, entry 56) and the last
+entry (`pmpaddr63`). Directly exercises the >16 entries the 16-entry build couldn't. All prior PMP
+tests (16-entry semantics) still pass unchanged.
+
+**Gate:** `cargo fmt`/`clippy` clean; `cargo test --workspace` 91 ok-suites, 0 FAILED (pmp suite
+now 12); `rv64mi-p-pmpaddr` still passes; `RISCOF_REF=sail make riscof` stays 395/0 (unaffected).
+
+**Honest scope note — RISCOF 64-region arch-test SELECTION is a documented follow-up.** The
+`pmpm_all_entries_check` arch-test's 64-region case (RVTEST_CASE gated on `verify (PMP['pmp-writable']
+== 64)`) is currently NOT selected (our DUT isa yaml declares no PMP block → `pmp-writable != 64`),
+so it passes trivially either way. Making riscof genuinely SELECT + run the 64-region case requires
+declaring `pmp-writable == 64` in the DUT isa yaml AND setting Sail's `pmp.count: 64` (default 16) in
+the config-override — the exact riscof `PMP['pmp-writable']` derivation from the normalized yaml needs
+more investigation (each experiment is a ~5-min RISCOF run). Deferred to avoid a rabbit-hole; the
+64-entry feature itself is genuinely implemented and directly tested by the unit test above. This is
+a capability feature off the critical path (Level 1 is already MET), so it does not block anything.
