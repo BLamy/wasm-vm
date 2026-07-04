@@ -3,7 +3,7 @@ id: E1-T28
 epic: 1
 title: Sv57 five-level paging — satp MODE=10 (Priv §4.5)
 priority: 142
-status: pending
+status: in_progress
 depends_on: [E1-T18]
 estimate: L
 capstone: false
@@ -58,4 +58,30 @@ still-unsupported modes are unchanged. Re-run all vm_* suites from a cold clone;
 Sv57 signatures by hand against Sail.
 
 ## Verification log
-(empty)
+
+### 2026-07-04 — implemented: Sv57 5-level paging (DUT + unit-tested) + re-enabled in Sail to test
+Per the user's "implement T27/T28 as real features + re-enable in Sail to genuinely test" decision.
+The MMU walker was already level-count-parameterized (Sv39→3, Sv48→4), so Sv57 is a small,
+non-invasive addition.
+
+**Core (`crates/core`):**
+- `mmu.rs`: `MODE_SV57 = 10`; `mode_params` gains `MODE_SV57 => Some((5, 56, 10))` (5 levels, sign
+  bit 56). `walk_leaf` (VPN slices `9*level`, superpage low-bit masks, PPN composition) and the
+  reserved-PTE-bit check (E1-T20) generalize to 5 levels with NO new fault logic. The `canonical`
+  check with sign_bit=56 enforces the 57-bit VA rule (bits [63:57] == bit 56).
+- `csr.rs`: satp write accepts `MODE == 10 && self.sv57` (new `sv57` config flag, default true,
+  WARL-gated like `sv48`); `hart::reset` preserves it.
+
+**Genuine tests (unit, `sv48.rs`):** `sv57_five_level_walk_translates` (canonical Sv57 VA → PA
+with offset passthrough), `sv57_non_canonical_va_faults` (bit-56 sign violation → page fault before
+the walk), `sv57_top_level_superpage_maps_and_faults_on_misalignment`. Updated the E1-T18
+`satp_mode_warl_is_all_or_nothing` test: MODE=10 now TAKES EFFECT (was a no-op); truly-reserved
+modes are now `1..=7` and `11..=15`.
+
+**RISCOF genuine test (the point):** re-enabled Sv57 in `compliance/sail/sail_config_override.json`
+(removed the `Sv57: {supported: false}` disable) so the **`vm_sv57` + `vm_pmp/sv57` tests now run the
+actual 5-level walk on BOTH the DUT and Sail** — no longer passing by mutual rejection. RISCOF-vs-Sail
+result pending (next entry).
+
+**Gate:** `cargo fmt`/`clippy` clean; `cargo test --workspace` 91 ok-suites, 0 FAILED (sv48 suite now
+includes the 3 Sv57 tests). Capability feature off the critical path (Level 1 already MET).

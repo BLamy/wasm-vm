@@ -5,12 +5,13 @@
     "Svnapot": { "supported": false },
     "//Svpbmt": "our DUT treats PTE bits 62:61 (PBMT) / [60:54] as reserved and page-faults them (E1-T20); disable so Sail does too (fixes vm_*_pte_reserved_field).",
     "Svpbmt": { "supported": false },
-    "//Sv57": "our DUT implements up to Sv48 and WARL-rejects satp MODE=10 (E1-T18); disable Sv57 in the reference to match.",
-    "Sv57": { "supported": false },
+    "//Sv57": "E1-T28: our DUT now IMPLEMENTS Sv57 (5-level paging, satp MODE=10) — leave it ENABLED in the reference (Sail default) so the vm_sv57 tests genuinely run the 5-level walk against BOTH.",
     "//Svrsw60t59b": "our DUT treats PTE bits [63:54] (incl. 60:59) as reserved and page-faults them (E1-T20, PTE_RESERVED_HI); disable this reserved-for-SW extension so Sail faults 60:59 too (fixes vm_*_pte_reserved_field).",
     "Svrsw60t59b": { "supported": false }
   },
   "memory": {
+    "//pmp": "E1-T27/T28: our DUT implements 64 PMP entries — match the reference so the pmpm_all_entries_check 64-region tests genuinely run 64 entries on BOTH (Sail default is 16).",
+    "pmp": { "count": 64 },
     "misaligned": {
       "//": "Scalar misaligned already proceeds (default) — matches our DUT. Atomics require alignment: our DUT raises *AddrMisaligned (cause 4/6 = AlignmentException), not Sail's default AccessFault.",
       "exceptions": {
