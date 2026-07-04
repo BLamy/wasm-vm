@@ -30,3 +30,6 @@ compliance/.venv/
 compliance/riscv-arch-test/
 compliance/riscof_work/
 compliance/config.ini
+
+# E1-T21 differential fuzzer scratch (generated .S/.elf per run)
+tools/fuzz/.work/

@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E1-T21** — Differential fuzzing — random instruction streams lockstep against Spike
 
 
 ## Epic 0 — `epic-0-ignition`
