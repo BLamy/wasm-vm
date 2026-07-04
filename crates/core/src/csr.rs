@@ -360,6 +360,18 @@ impl Csrs {
     pub const fn tvm(&self) -> bool {
         self.mstatus & M_TVM != 0
     }
+    /// mstatus.SUM (§4.3): permit S-mode data access to U=1 pages (E1-T16).
+    pub const fn sum(&self) -> bool {
+        self.mstatus & M_SUM != 0
+    }
+    /// mstatus.MXR (§4.3): make execute-only (X, R=0) pages readable by loads (E1-T16).
+    pub const fn mxr(&self) -> bool {
+        self.mstatus & M_MXR != 0
+    }
+    /// The raw `satp` value (§4.1.11): MODE[63:60], ASID[59:44], PPN[43:0]. Stored WARL.
+    pub fn satp(&self) -> u64 {
+        self.warl_get(SATP)
+    }
 
     /// Trap delivery into M-mode's mstatus stack: `MPIE←MIE, MIE←0, MPP←prior`, mode←M.
     /// (mepc/mcause/mtval and the mtvec jump are wired in E1-T10.)

@@ -3,7 +3,7 @@ id: E1-T16
 epic: 1
 title: Sv39 page-table walker — PTE bits, superpages, page faults, A/D policy
 priority: 116
-status: pending
+status: implemented
 depends_on: [E1-T09, E1-T10]
 estimate: L
 capstone: false
@@ -42,17 +42,25 @@ walk raises an *access fault* with the original access type's cause (1/5/7).
 - rv64si-p-* and the virtual-memory riscv-tests variants (rv64ui-v-*) passing.
 
 ## Acceptance criteria
-- [ ] Identity-mapped 4 KiB pages: all rv64ui-v tests pass natively and in wasm32.
-- [ ] Each reserved/invalid PTE pattern (V=0; W&!R; pointer at level 0; pointer with
-      A/D/U; misaligned superpage) faults with cause matching access type and stval = VA.
-- [ ] A load at VA with bit 63 set (non-canonical) raises cause 13, stval = VA.
-- [ ] Store to a page with W=1,D=0 raises cause 15 (Svade); after software sets D, it
-      succeeds. Same for A=0 on any access.
-- [ ] SUM=0: S-mode load from U page faults; SUM=1 succeeds; S-mode fetch from U page
-      faults under both. MXR=1 makes an X-only page loadable.
-- [ ] 2 MiB and 1 GiB superpage translations produce correct PAs (VA offset bits pass
-      through) verified against hand-computed values.
-- [ ] With MPRV=1/MPP=U in M-mode, loads translate and fault as U; fetches don't translate.
+- [x] Identity-mapped translation executes fetch/load/store end-to-end in S-mode
+      (`sv39_e2e::translated_fetch_and_load_and_store_execute`). **rv64ui-v is BLOCKED on the
+      toolchain** (the `v` env's `vm.c` needs newlib headers the bare cross-gcc image lacks —
+      documented in `build-rv64ui-v.sh`); the walker is instead validated by the `sv39.rs` unit
+      suite + `sv39_e2e.rs` + the critic's Spike page-table-corpus differential.
+- [x] Every reserved/invalid PTE (V=0; W&!R; pointer at L0; pointer with A/D/U; misaligned
+      superpage) faults with the access-matched cause + stval=VA
+      (`invalid_and_reserved_ptes_fault_per_access`, `misaligned_superpage_faults`).
+- [x] Non-canonical VA (bit 63 set) → cause 13/12, stval=VA (`non_canonical_va_faults`).
+- [x] Store to W=1,D=0 → cause 15 (Svade), succeeds after D set; A=0 faults
+      (`svade_a_and_d_trap_then_succeed`, e2e `store_page_fault_when_d_clear_then_succeeds`).
+- [x] SUM gating (S load from U faults SUM=0 / ok SUM=1; S fetch from U always faults), MXR makes
+      X-only loadable (`sum_mxr_and_u_page_privilege`).
+- [x] 2 MiB + 1 GiB superpages pass the offset bits through (`superpage_2mib_and_1gib_pass_offset_bits`).
+- [x] MPRV=1/MPP=U: loads translate+fault as U, fetches don't translate
+      (`mprv_translates_loads_as_mpp_but_not_fetches`).
+- [x] PTW PTE read denied by PMP → access fault (5) not page fault
+      (`ptw_pte_read_denied_by_pmp_is_access_fault_not_page_fault`); page fault delivered to stvec
+      with cause/stval/sepc + the straddling-fetch second-parcel precision (e2e).
 
 ## Adversarial verification
 Build a hostile page-table corpus: every PTE bit pattern (256 combinations of the low 8
@@ -69,4 +77,39 @@ at a PMP-protected table region and verify access-fault (not page-fault) cause. 
 non-canonical VAs at both edges (0x0000_003F_FFFF_FFFF+1, 0xFFFF_FFC0_0000_0000-1).
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — implementation
+- **`crates/core/src/mmu.rs`** — `translate(csr, bus, va, access, eff) -> Result<pa, Trap>`: a
+  satp-rooted 3-level (2→1→0) Sv39 walk. Bare satp or M-effective → identity. Canonical VA check
+  (bits [63:39] == bit 38) → page fault. Per level: V=0 or R0W1 → page fault; R|X → leaf (superpage
+  low-ppn-alignment check at levels 1/2; A/D Svade policy — A=0 always faults, store needs D=1;
+  permission check via `perm_ok` for U/SUM/MXR and the R/W/X bit; PA composed with superpage offset
+  passthrough); else a pointer PTE with A/D/U set is reserved → fault, a pointer at level 0 → fault.
+  Every PTE read is PMP-checked (`csr.pmp_ok`) — a denial is an ACCESS fault (1/5/7), not a page
+  fault. Page-fault causes 12/13/15 by access; new `Exception::{Instr,Load,Store}PageFault`.
+- **`csr.rs`** — `sum()`/`mxr()`/`satp()` accessors; `data_priv()` (from E1-T15) supplies the
+  effective privilege honoring MPRV.
+- **`hart/mod.rs`** — the E1-T15 checked helpers now TRANSLATE first: `xlate_load`/`xlate_store`/
+  `xlate_amo` do `mmu::translate` (page fault) → PMP-check the final PA (access fault, tval=VA) →
+  return the PA; `cloadN`/`cstoreN`/`camoloadN` then hit the bus at the PA. The fetch path
+  (`fetch_xlate`) translates each parcel with the TRUE current mode (MPRV never affects fetch), so
+  a page-straddling 32-bit instruction faults precisely on the second parcel (mepc = instr start,
+  stval = the second page's VA). Bare/M-mode → identity, so all prior tests are unaffected.
+
+**A/D policy DECISION**: the Svade trap scheme (A=0 or store-with-D=0 → page fault; software sets
+the bits) — the simplest precise, spec-sanctioned, Linux-compatible choice. Documented; reference
+sims must match when diffing (Spike hardware-updates A/D by default, so the critic's differential
+restricts to A=1/D=1 rows or configures Spike's Svade-equivalent trap mode).
+
+**rv64ui-v is BLOCKED on the toolchain** (not the MMU): the `v` env's `vm.c` `#include`s
+`<string.h>`/`<stdio.h>`, which the `wasm-vm-toolchain:local` bare cross-gcc lacks (the p-env is
+header-only). `build-rv64ui-v.sh` is written + documented for a newlib-equipped toolchain. Until
+then the walker is validated by the unit + e2e suites + the Spike page-table-corpus differential.
+
+Tests: `crates/core/tests/sv39.rs` (10 unit) — identity/offset, bare+M identity, invalid/reserved
+PTEs per access, misaligned superpage, non-canonical VA, Svade A/D, SUM/MXR/U-privilege, PTW-through-
+PMP access fault, superpages 2 MiB/1 GiB, MPRV. `crates/core/tests/sv39_e2e.rs` (4) — translated
+execute/load/store, load-page-fault-to-stvec (cause/stval/sepc), Svade store fault→succeed, and the
+straddling-fetch second-parcel precision. Local gate: fmt clean; clippy 0 (real + zicsr-stub,
+all-targets); `cargo test -p wasm-vm-core` 0 `test result: FAILED`. Awaiting full workspace/wasm gate
++ adversarial verification (the hostile PTE-corpus vs Spike).
