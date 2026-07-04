@@ -95,4 +95,26 @@ Tests: `crates/core/tests/pmp.rs` (9) — NAPOT grant + default-deny, no-armed-e
 R-only + straddle + store-fault + M-bypass, lock-applies-to-M + freeze + TOR-neighbor freeze, NA4
 exactly-4-bytes, lowest-numbered-match-wins, odd-pmpcfg-illegal + pmpaddr-WARL, U-mode-fetch-fault,
 MPRV-load-as-MPP-not-fetch. Local gate: fmt clean; `cargo test -p wasm-vm-core` 0 `test result:
-FAILED`. Awaiting clippy/wasm gate + adversarial verification (incl. the Spike PMP-verdict fuzz).
+FAILED`.
+
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: refuted (real bug)
+Spike 1.1.1-dev (oracle: bare-metal M-mode probe under `spike -d --isa=rv64gc --pmpregions=16`,
+CSR readback via `reg 0`). Found a Spike-confirmed verdict+cause divergence: **`write_cfg` did not
+legalize the reserved pmpcfg combo R=0,W=1.** Spike legalizes it by clearing W (region neither
+readable nor writable); ours kept W=1 (`CFG_WMASK` includes W with no R-gating), so a store to such
+a region was wrongly ALLOWED.
+
+| write pmpcfg0 byte0 | Spike readback | ours (buggy) |
+|---|---|---|
+| 0x02 (R0,W1,OFF) | 0x00 | 0x02 |
+| 0x12 (R0,W1,NA4) | 0x10 | 0x12 |
+
+Semantic: entry0 NA4 cfg=0x12, then an **S-mode 4-byte store** → Spike DENIES (cause 7), ours
+ALLOWED. Everything else the critic spot-checked matched Spike (NAPOT whole-space decode, pmpaddr
+[63:54]→0, `csrw pmpcfg0,-1`→0x9F reserved-bit clearing, no-match S/U deny).
+
+### 2026-07-03 — rework (round 1)
+`pmp.rs::write_cfg`: after the WARL mask, if a cfg byte has W=1 and R=0, clear W (matching Spike).
+Added `reserved_r0_w1_cfg_is_legalized_to_w0` (write 0x12 → readback 0x10; an S-mode store/read to
+the region is denied). Independently confirmed the revert now FAILs it. Gate re-green (10 pmp tests;
+fmt/clippy clean). Re-verifying.

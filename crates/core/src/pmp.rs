@@ -81,7 +81,14 @@ impl Pmp {
             if self.cfg[i] & CFG_L != 0 {
                 continue; // locked
             }
-            self.cfg[i] = ((v >> (k * 8)) as u8) & CFG_WMASK;
+            let mut c = ((v >> (k * 8)) as u8) & CFG_WMASK;
+            // R=0,W=1 is a RESERVED encoding (§3.7.1); Spike legalizes it by clearing W (so the
+            // region is neither readable nor writable). Match that — otherwise a store to such a
+            // region would be wrongly ALLOWED.
+            if c & CFG_W != 0 && c & CFG_R == 0 {
+                c &= !CFG_W;
+            }
+            self.cfg[i] = c;
         }
     }
     /// Read `pmpaddr[i]` (address[55:2]; [63:54] read 0).

@@ -228,6 +228,34 @@ fn odd_pmpcfg_is_illegal_and_pmpaddr_high_bits_read_zero() {
     );
 }
 
+#[test]
+fn reserved_r0_w1_cfg_is_legalized_to_w0() {
+    // R=0,W=1 is reserved (§3.7.1): Spike legalizes it by clearing W, so the region is neither
+    // readable nor writable. Ours must too — otherwise a store to it would be wrongly allowed.
+    let base = 0x8000_0000u64;
+    let p = pmp_with(&[(W | A_NA4, base >> 2)]); // cfg byte 0x12: R=0,W=1,NA4
+    // Readback via a CSR probe: W cleared → the stored cfg byte is just A=NA4 (0x10).
+    let mut c = Csrs::at_reset();
+    c.access(PMPADDR0, CsrOp::Write, base >> 2, false, false, 0)
+        .unwrap();
+    c.access(PMPCFG0, CsrOp::Write, u64::from(W | A_NA4), false, false, 0)
+        .unwrap();
+    assert_eq!(
+        c.access(PMPCFG0, CsrOp::Set, 0, true, false, 0).unwrap() & 0xFF,
+        u64::from(A_NA4),
+        "R=0,W=1 legalized: W cleared, only A=NA4 remains"
+    );
+    // Semantic: an S-mode store to the region is DENIED (no W after legalization).
+    assert!(
+        !p.check(base, 4, PmpAccess::Write, Priv::S),
+        "store to a legalized R0W1 region faults (W was cleared)"
+    );
+    assert!(
+        !p.check(base, 4, PmpAccess::Read, Priv::S),
+        "and it's not readable either"
+    );
+}
+
 // ── end-to-end: U-mode fetch faults without a grant ──────────────────────────────
 
 #[test]
