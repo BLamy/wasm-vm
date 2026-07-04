@@ -2,7 +2,7 @@
 # parallel; locally they run in the order listed under `ci`. If this file and ci.yml
 # disagree, that's a bug (E0-T02).
 
-.PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke bench-l1 diff-all diff-selftest diff-qemu \
+.PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke web-build web-serve bench capstone-e0
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
@@ -233,3 +233,8 @@ verify-all: verify-E0-T01 verify-E0-T02 verify-E0-T03 verify-E0-T04 verify-E0-T0
 	@echo "verify-all: every Epic 0 verify target passed"
 
 verify-list: ; @bash tools/verify/list.sh
+
+# E1-T20: RISCOF architectural compliance (DUT=wasm-vm vs Spike). Needs `bash compliance/provision.sh`
+# first (riscof venv + arch-test) + the Docker toolchain image (Spike). Enforces compliance/EXCLUSIONS.md.
+riscof:
+	bash tools/run_riscof.sh
