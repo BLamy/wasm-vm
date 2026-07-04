@@ -3,7 +3,7 @@ id: E1-T23
 epic: 1
 title: Interpreter performance baseline — documented MIPS, native and in-browser
 priority: 123
-status: in_progress
+status: verified
 depends_on: [E1-T19]
 estimate: S
 capstone: false
@@ -98,3 +98,33 @@ exhaustive tally still balances; `cargo test --workspace` compiles the harness (
 - **Dhrystone / CoreMark** bare-metal rv64gc need a newlib toolchain the image lacks (the E1-T16
   block); the microbenchmarks isolate the same subsystems meanwhile.
 - **Flamegraph / hot-spot profile** needs a native profiler pass — follow-on.
+
+### 2026-07-04 — adversarial verifier (round 1) — VERDICT: verified
+Fresh cold clone; host = Apple M2 aarch64 (same class as the doc).
+- **Gate**: fmt clean; clippy 0; `perf_smoke_alu_above_floor` passes (alu 30.6 MIPS ≥ 15); `report`
+  reproduced.
+- **Reproduced MIPS vs doc** (same M2, all within the doc's 25% bar, ~3–5% low): alu 30.6 (doc
+  32.3), branch 33.6 (34.8), memory 26.2 (27.0), fp 28.3 (29.4); spreads 1.5–2.2%. Every doc cell
+  has a live code path — no fabricated cell.
+- **Metric honesty (the killer)**: `measure()` numerator is BUDGET and asserts BOTH
+  `RunOutcome::MaxInstrs` AND `minstret == BUDGET`; `retire_tick` fires once per instruction only
+  after `execute()` returns Ok (a trap/interrupt returns early without ticking), so the two
+  assertions together guarantee exactly BUDGET *architectural* retires — not a loop-iteration
+  estimate and not an early-exit-then-report-BUDGET fake. Independent cross-check via a second
+  `TraceSink` retire counter: `sink_retires == minstret == BUDGET` for every workload.
+- **Workload integrity**: loops truly infinite (backward jal/bltu); decodes match claims; **fp is
+  NOT trapping** — `build()` sets mstatus.FS=Dirty and the trace counter shows real fadd.d/fmul.d
+  retires (⅓ each), so FS-Off illegal traps are ruled out; `memory` really does sd+ld (⅔ of retires
+  are mem ops).
+- **CI floor catches 3× and doesn't flake**: an injected per-retire spin dropped alu to 7.4 MIPS
+  (~4.1×) → smoke FAILED (7.4 < 15); a bare 3× (~10) also lands below 15 → red. Injection reverted.
+  Unmodified smoke 5×: 33.0/33.0/33.1/32.9/33.0 — all green; floor sits ~2.2× under baseline so
+  noise never trips it. Non-flaky.
+- **Determinism/config**: default reset config (no CLINT armed → inert guest timing); medians
+  stable. **Deferral honesty**: x86_64/Chrome/Firefox/Dhrystone/CoreMark/flamegraph explicitly
+  deferred with justifications; the table has ONLY the 4 measured aarch64 rows — nothing fabricated;
+  the "fp is not the slow one" finding is disclosed.
+
+VERDICT: **verified** — MIPS is genuinely `minstret ÷ wall` (retires==BUDGET cross-checked three
+ways, MaxInstrs asserted), all four loops do real subsystem work, the 15-MIPS floor goes red under a
+3–4× slowdown yet stays green across noise, and the deferred cells are honest, not fabricated.
