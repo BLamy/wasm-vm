@@ -166,3 +166,39 @@ exclusions if Sail is configured to reject them identically — to be verified).
 State at checkpoint: T26 CORE is complete and correct (misaligned RAM support; `cargo test
 --workspace` 90/0; ma_data passes; determinism GREEN native+wasm). RISCOF is RED pending the Sail
 config-override above. Committed as WIP on the branch; NOT opened as a PR until RISCOF is green.
+
+### 2026-07-04 — Sail diagnostic: 8 misalign-* now PASS; Sail caught a real §3.7.1 bug (5 left)
+Ran the full RISCOF against Sail (default config): **352 passed / 43 failed, 5 UNEXCUSED** — the
+**8 privilege/misalign-* tests now PASS against Sail** (the whole point). The 5 remaining unexcused
+failures split into two kinds:
+
+**(a) Sail-config mismatch (4 tests) — fix with a `--config-override`:**
+`vm_sv39/48 reserved_svnapot` and `vm_sv39/48 pte_reserved_field`. Sail's DEFAULT config has
+**Svnapot/Svpbmt enabled**, so Sail ACCEPTS PTE bit 63 (N) / bits 62:61 (PBMT) / reserved [60:54]
+where our DUT correctly page-faults (E1-T20). Authoring `compliance/sail/sail_config_override.json`
+disabling `extensions.Svnapot`/`Svpbmt` (and Sv57, and pinning misa) makes Sail reject them too. The
+plugin already layers this file when present.
+
+**(b) A REAL correctness bug in OUR misaligned impl that Sail exposed (1 test → but it's a class):**
+`vm_sv39 VA_all_zeros` — a MISALIGNED access to an UNMAPPED page. Sail reports **page-fault**; our
+DUT reports `*AddrMisaligned`. Per Priv §3.7.1, a machine that SUPPORTS misaligned (which we now do)
+must NOT raise a misaligned exception for the misaligned-ness — the access proceeds and the
+translation page-faults, so **page-fault is correct**. Our `misaligned_ram_base` does
+`translate(...).ok()?` → `None` → blanket `*AddrMisaligned`, SWALLOWING the real page/access fault.
+That is a bug: for a misaligned-supporting machine the priority flips (misaligned no longer outranks
+page-fault, because there IS no misaligned exception). **This is the genuine value of switching to
+the canonical Sail reference — it caught a §3.7.1 subtlety the trapping-Spike reference could not.**
+
+**Required core fix (next pass — this is why T26 stays WIP):** rework `misaligned_load`/
+`misaligned_store` so that when a byte's translation or access FAULTS, the real trap (page-fault
+12/13/15, or access-fault 5/7) is PROPAGATED — not converted to `*AddrMisaligned`. Only genuinely
+misaligned-unsupported *regions* (per a policy decision) would raise `*AddrMisaligned`. This ripples
+back into the E1-T25-updated e0t08/hart_memory straddle tests (a misaligned straddle past RAM_END is
+now an access-fault on the out-of-range byte, not `*AddrMisaligned`), and must respect store
+atomicity (no partial write before a faulting byte — gate the whole range first, as the current code
+already does for the RAM case; extend the gate to classify the fault). Then re-run RISCOF vs Sail →
+expect GREEN with the 8 misalign-* passing and NO new exclusions, and re-verify the workspace.
+
+Net once complete: allowlist −1 (ma_data), RISCOF exclusions unchanged (Sail validates misalign-*
+without exclusions) → **capstone deferrals 44 → 43**, as intended. T26 remains WIP (RISCOF red) until
+the core §3.7.1 fix + Sail config-override land and validate.
