@@ -3,7 +3,7 @@ id: E1-T29
 epic: 1
 title: Debug triggers — tdata1/tdata2 breakpoint CSRs (Debug spec §5)
 priority: 129
-status: in_progress
+status: verified
 depends_on: [E1-T10]
 estimate: M
 capstone: false
@@ -118,3 +118,30 @@ idle-guarded so compliance is unaffected).
 
 **This clears the FINAL Level-1-capstone deferral.** After this, E1-T24's gate (allowlist + EXCLUSIONS
 both empty) can flip to green and the epic can complete.
+
+### 2026-07-04 — critic round 1: VERIFIED (cold clone at `5d445f0`)
+Cold-clone critic attacked every claim; all survived. Clone left clean, nothing pushed.
+
+- **breakpoint passes non-vacuously:** real statically-linked RV64 ELF; runner asserts `path.is_file()`
+  + `Exited(0)` + `ran == MI_SUBSET.len()`. `--test riscv_tests_mi` 1 passed; the bidirectional wall
+  `--test riscv_tests_suite` 5 passed INCLUDING the negative controls (corrupted-binary-doesn't-pass,
+  empty-dir-not-green, allowlist-match). Allowlist 0 failure entries.
+- **Correctness:** `trigger_fires` gates on type==2, kind bit, mode gate (M needs m-bit AND
+  `tcontrol.mte`), action==0/match==0, `tdata2==addr`. Execute check returns Breakpoint/tval=pc BEFORE
+  fetch (mepc=pc, pc unmoved); load/store checks precede the alignment branch AND the bus write (no
+  partial store — `triggers.rs` asserts `bus.load64==Ok(0)`); mte gate present; tselect WARL clamps to
+  0; tdata1 forces type=2, clears dmode. The 7 `triggers.rs` tests are non-vacuous (assert cause==3,
+  exact tval, pc-unmoved, no-commit, mte gate, load-only-ignores-store, tselect clamp, type-force).
+- **Idle guard proven:** reset `tdata1 = 2<<60` → `triggers_armed=false` → `triggers_idle()` true;
+  every trigger site is behind `!triggers_idle()`, so no false breakpoint on normal code. Since no
+  RISCOF arch-test writes tdata1, triggers are inert for the entire run and cannot change any
+  signature → compliance provably unchanged from 395/0 (main session independently re-confirmed 395/0).
+- **Gate:** `cargo test --workspace` 0 FAILED, **91 ok-suites**; fmt exit 0; clippy no warnings.
+- **Deferrals:** allowlist 0, EXCLUSIONS 0 `.S` → zero-deferral capstone bar met.
+- **Lone non-refuting coverage gap:** the AMO read half (`camoload32/64`) calls `xlate_amo`+`bus.load*`
+  directly, bypassing `checked_load`, so an AMO does not fire a *Load* trigger (its store half fires a
+  Store trigger; LR/SC + misaligned are covered). Spec-permissible, untested by rv64mi-p-breakpoint.
+  Documented as a minor future completeness item, NOT a Level-1 blocker.
+
+**VERDICT: verified.** (critic agent `a7a2faec3b65023dc`, cold clone, no push.) **This clears the
+FINAL Level-1-capstone deferral — allowlist + EXCLUSIONS both empty. E1-T24 can now complete.**
