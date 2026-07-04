@@ -67,4 +67,21 @@ values against the spec) to confirm signatures encode real trap state, not zeroe
 memory. Finally re-run everything from a fresh clone on a second machine.
 
 ## Verification log
-(empty)
+
+### 2026-07-04 — provisioning (increment 1 of N; task IN PROGRESS)
+The tooling blocker is cleared and self-provisionable here (no manual setup): **Spike** is already in
+the `wasm-vm-toolchain:local` Docker image (`tools/toolchain/run.sh -- spike` → 1.1.1-dev) and is the
+spec-sanctioned **reference** (Sail fallback — no opam build); pypi + github are reachable, so
+`riscof==1.25.3` (venv) and `riscv-arch-test` (pinned `df886adb…`) install cleanly.
+- **`compliance/provision.sh`** — hermetic, pinned, idempotent provisioning (venv + arch-test +
+  Spike sanity). **`compliance/README.md`** — reference choice, signature-dump contract, remaining
+  deliverables. Heavy artifacts gitignored (`compliance/.venv`, `riscv-arch-test`, `riscof_work`).
+
+**Remaining (next work sessions, in order):** (1) signature-dump exit path — extend the loader to
+expose `begin_signature`/`end_signature` (it already scans `.symtab` for `tohost`, loader.rs:246),
+a core dump of RAM[begin..end) as 4-byte LE hex words, and a CLI `run --signature=FILE
+--signature-granularity=4`; (2) DUT plugin `riscof_wasmvm.py` + `wasmvm_isa.yaml` (matches E1-T01
+misa) + platform yaml + `env/model_test.h` + `link.ld` (compile via Docker gcc, run via native
+`wasm-vm-cli`); (3) Spike reference plugin; (4) `config.ini` + `make riscof` + CI job + `EXCLUSIONS.md`;
+(5) wasm32 DUT leg (byte-identical signatures, leans on E1-T22); (6) mutation check. PR opens once
+`make riscof` is green (or only EXCLUSIONS-listed) against Spike.
