@@ -307,6 +307,29 @@ fn mprv_applies_pmp_as_mpp_for_loads_but_not_fetches() {
     );
 }
 
+#[test]
+fn mprv_does_not_affect_fetch_end_to_end() {
+    // Drive a real step(): in M-mode with MPRV=1/MPP=S and NO PMP grant, a `lw` at CODE must
+    // FETCH successfully (fetch uses the TRUE mode M → M bypasses) but its LOAD is checked as S
+    // → LoadAccessFault (cause 5), NOT an instruction-access fault (cause 1). A fetch that
+    // wrongly used the MPRV effective mode (S) would fault cause 1 here.
+    let mut m = Machine::new(1024 * 1024);
+    // lw x1, 0(x2): opcode LOAD(0x03), funct3=010, rs1=x2, rd=x1.
+    let lw = (2u32 << 15) | (0b010 << 12) | (1 << 7) | 0x03;
+    m.bus_mut().store32(CODE, lw).unwrap();
+    m.hart_mut().regs.write(2, DRAM_BASE + 0x100); // load address (also ungranted)
+    // mstatus.MPRV=1, MPP=S; mode stays M.
+    set_csr(&mut m, MSTATUS, CsrOp::Set, (1 << 17) | (0b01 << 11));
+    m.hart_mut().regs.pc = CODE;
+    match m.step() {
+        Err(t) => assert_eq!(
+            t.cause as u64, 5,
+            "fetch (M) passed; the load (MPRV→S) faulted cause 5 — not cause 1"
+        ),
+        Ok(()) => panic!("the MPRV=S load should fault without a grant"),
+    }
+}
+
 fn set_csr(m: &mut Machine, addr: u16, op: CsrOp, v: u64) {
     m.hart_mut()
         .csr

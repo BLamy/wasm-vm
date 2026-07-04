@@ -3,7 +3,7 @@ id: E1-T15
 epic: 1
 title: PMP — pmpcfg/pmpaddr with TOR/NA4/NAPOT, locking, enough for OpenSBI
 priority: 115
-status: implemented
+status: verified
 depends_on: [E1-T10]
 estimate: M
 capstone: false
@@ -118,3 +118,33 @@ ALLOWED. Everything else the critic spot-checked matched Spike (NAPOT whole-spac
 Added `reserved_r0_w1_cfg_is_legalized_to_w0` (write 0x12 → readback 0x10; an S-mode store/read to
 the region is denied). Independently confirmed the revert now FAILs it. Gate re-green (10 pmp tests;
 fmt/clippy clean). Re-verifying.
+
+### 2026-07-03 — adversarial verifier (round 2) — VERDICT: verified
+Fresh cold clone at HEAD 007770e. Spike 1.1.1-dev; oracle = a faithful independent re-encoding of
+Spike's `mmu.cc::pmp_lookup`/`pmp_ok` + `csrs.cc::match4`/`napot_mask`/`pmpcfg unlogged_write`
+(mml=0, 4-byte granule, 16 entries), cross-checked against the committed `rv64mi-p-pmpaddr` probe.
+- **R0W1 fix confirmed vs Spike** across all A-types × {X,L}: our readback == Spike legalization;
+  R=1,W=1 and R=1,W=0 UNCHANGED; `csrw pmpcfg0,-1`→0x9F/byte. Legalized R0W1 denies S store AND read.
+- **Spike PMP-verdict FUZZ**: **32,000 aligned-access tuples + 64,000 legalization/mask checks →
+  0 divergences** (NAPOT all sizes incl. whole-space & 8B, NA4, TOR entry-0, straddles, multi-entry
+  priority, locks, R0W1). Proved our exact-byte-range check ≡ Spike's 4B-granule stepping on the
+  aligned domain (all region boundaries 4B-aligned).
+- **Locks** (L→M, freeze, TOR-neighbor freeze AND its converse), **CSR WARL** (pmpcfg1/3 illegal,
+  [63:54]→0, [6:5]→0, pmpcfg2→entries 8–15), **cause codes** (fetch 1 via TRUE mode, load 5, store/
+  AMO 7 needing R∧W), **MPRV** (S for data, M for fetch) all correct.
+- **Mutations 7/8 caught by the committed suite**; mutation (h) fetch-uses-data_priv SURVIVED (a
+  coverage gap — code at hart/mod.rs correctly uses the true mode). CLOSED this round with
+  `mprv_does_not_affect_fetch_end_to_end` (M-mode MPRV=1/MPP=S, ungranted `lw`: fetch passes as M,
+  the load faults cause 5 — mutation-h now flips it to cause 1 and FAILs). Also added `rv64mi-p-pmpaddr`
+  (which the critic confirmed passes) to the `riscv_tests_mi` harness.
+- **Full gate green**; rv64uf/ud/uc + rv64mi-p subset pass; stub `decode_props::roundtrip_csr` pre-existing.
+
+**Known limitation (out of PMP-verdict scope; documented follow-up):** the PMP check runs *before* the
+bus alignment check, so a MISALIGNED data access that ALSO fails PMP reports access-fault (5/7) where
+Spike reports address-misaligned (4/6) — misaligned has higher exception priority (Table 3.7). This
+is unreachable in the aligned fuzz domain and is orthogonal to the PMP verdict logic; it belongs to a
+later exception-priority refinement (it interacts with the E0-T08 range/alignment ordering). Recorded
+so E1-T16+ can address the load/store fault-priority ordering holistically.
+
+VERDICT: **verified** — the PMP unit (OFF/TOR/NA4/NAPOT matching, R/W/X + R0W1 legalization, locks incl.
+TOR-neighbor, the S/U default-deny, MPRV, and cause codes) matches Spike across a 32k-tuple fuzz.

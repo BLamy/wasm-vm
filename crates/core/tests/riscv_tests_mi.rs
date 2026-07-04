@@ -48,7 +48,8 @@ const MI_SUBSET: &[&str] = &[
     "sw-misaligned",
     "csr",
     "mcsr",
-    "zicntr", // E1-T14: cycle/time/instret + mcounteren/scounteren
+    "zicntr",  // E1-T14: cycle/time/instret + mcounteren/scounteren
+    "pmpaddr", // E1-T15: PMP pmpaddr/pmpcfg WARL + region behavior
 ];
 
 fn bin_dir() -> PathBuf {
