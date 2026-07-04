@@ -196,6 +196,7 @@ fn rdtime_from_s_traps_when_tm_clear_and_returns_mtime_when_set() {
     clint.borrow_mut().mtime = 12345;
     let word = csrr(5, TIME as u32); // rdtime x5
     m.bus_mut().store32(CODE, word).unwrap();
+    m.hart_mut().csr.pmp.allow_all(); // E1-T15: grant S-mode fetch/access to RAM
     m.hart_mut().csr.mode = Priv::S;
     // mcounteren.TM = 0 (reset). Pure step surfaces the raw trap.
     m.hart_mut().regs.pc = CODE;

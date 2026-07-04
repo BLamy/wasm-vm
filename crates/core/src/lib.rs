@@ -34,6 +34,7 @@ pub mod hart;
 pub mod htif;
 pub mod loader;
 pub mod mmio;
+pub mod pmp;
 pub mod ram;
 pub mod snapshot;
 pub mod softfloat;

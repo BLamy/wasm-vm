@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E1-T15** — PMP — pmpcfg/pmpaddr with TOR/NA4/NAPOT, locking, enough for OpenSBI
 1. **E1-T16** — Sv39 page-table walker — PTE bits, superpages, page faults, A/D policy
 
 
@@ -57,7 +56,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] `112` [E1-T12](epic-1-the-machine/E1-T12-clint-timer.md) — CLINT — mtime/mtimecmp/msip, machine timer and software interrupts *(deps: E1-T11)*
 - [x] `113` [E1-T13](epic-1-the-machine/E1-T13-plic-external-interrupts.md) — PLIC — priorities, enables, thresholds, claim/complete, M and S contexts *(deps: E1-T11)*
 - [x] `114` [E1-T14](epic-1-the-machine/E1-T14-zicntr-counters-counteren.md) — Zicntr counters — cycle/instret/time and mcounteren/scounteren delegation *(deps: E1-T09, E1-T12)*
-- [ ] `115` [E1-T15](epic-1-the-machine/E1-T15-pmp-basics.md) — PMP — pmpcfg/pmpaddr with TOR/NA4/NAPOT, locking, enough for OpenSBI *(deps: E1-T10)*
+- [?] `115` [E1-T15](epic-1-the-machine/E1-T15-pmp-basics.md) — PMP — pmpcfg/pmpaddr with TOR/NA4/NAPOT, locking, enough for OpenSBI *(deps: E1-T10)*
 - [ ] `116` [E1-T16](epic-1-the-machine/E1-T16-sv39-page-table-walker.md) — Sv39 page-table walker — PTE bits, superpages, page faults, A/D policy *(deps: E1-T09, E1-T10)*
 - [ ] `117` [E1-T17](epic-1-the-machine/E1-T17-tlb-asid-sfence-vma.md) — TLB with ASID tagging and SFENCE.VMA — all four operand combinations *(deps: E1-T16)*
 - [ ] `118` [E1-T18](epic-1-the-machine/E1-T18-satp-modes-sv48.md) — satp mode switching (Bare/Sv39/Sv48) with config-gated Sv48 support *(deps: E1-T15, E1-T17)*

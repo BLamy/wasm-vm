@@ -287,6 +287,113 @@ const fn store_fault(f: BusFault, addr: u64) -> Trap {
     }
 }
 
+// ── PMP-checked physical accesses (E1-T15) ──────────────────────────────────────────
+// Every data access first clears the Physical Memory Protection check for the DATA effective
+// privilege (`data_priv`, which honors MPRV), then goes to the bus. A PMP denial is an access
+// fault (load cause 5 / store-AMO cause 7). These are free functions taking `&Csrs` so they
+// compose with `execute`'s `&mut self.regs` borrow (disjoint fields). Fetch checks (cause 1) are
+// inline in `step_traced`, using the TRUE current mode (MPRV never affects fetches).
+use crate::csr::Csrs;
+use crate::pmp::PmpAccess;
+
+macro_rules! checked_load {
+    ($name:ident, $busfn:ident, $ty:ty, $len:expr, $acc:expr, $fault:ident, $cause:expr) => {
+        #[inline]
+        fn $name(csr: &Csrs, bus: &mut impl Bus, a: u64) -> Result<$ty, Trap> {
+            if !csr.pmp_ok(a, $len, $acc, csr.data_priv()) {
+                return Err(Trap {
+                    cause: $cause,
+                    tval: a,
+                });
+            }
+            bus.$busfn(a).map_err(|f| $fault(f, a))
+        }
+    };
+}
+macro_rules! checked_store {
+    ($name:ident, $busfn:ident, $ty:ty, $len:expr) => {
+        #[inline]
+        fn $name(csr: &Csrs, bus: &mut impl Bus, a: u64, v: $ty) -> Result<(), Trap> {
+            if !csr.pmp_ok(a, $len, PmpAccess::Write, csr.data_priv()) {
+                return Err(Trap {
+                    cause: Exception::StoreAccessFault,
+                    tval: a,
+                });
+            }
+            bus.$busfn(a, v).map_err(|f| store_fault(f, a))
+        }
+    };
+}
+
+// Ordinary loads (incl. LR): need Read; a PMP denial is a LoadAccessFault.
+checked_load!(
+    cload8,
+    load8,
+    u8,
+    1,
+    PmpAccess::Read,
+    load_fault,
+    Exception::LoadAccessFault
+);
+checked_load!(
+    cload16,
+    load16,
+    u16,
+    2,
+    PmpAccess::Read,
+    load_fault,
+    Exception::LoadAccessFault
+);
+checked_load!(
+    cload32,
+    load32,
+    u32,
+    4,
+    PmpAccess::Read,
+    load_fault,
+    Exception::LoadAccessFault
+);
+checked_load!(
+    cload64,
+    load64,
+    u64,
+    8,
+    PmpAccess::Read,
+    load_fault,
+    Exception::LoadAccessFault
+);
+/// The read half of an AMO (and LR/SC's atomic region): needs BOTH Read and Write; a PMP denial
+/// is a StoreAMOAccessFault. The subsequent store half re-checks Write via `cstoreN`.
+fn camo_ok(csr: &Csrs, a: u64, len: u64) -> bool {
+    let m = csr.data_priv();
+    csr.pmp_ok(a, len, PmpAccess::Read, m) && csr.pmp_ok(a, len, PmpAccess::Write, m)
+}
+#[inline]
+fn camoload32(csr: &Csrs, bus: &mut impl Bus, a: u64) -> Result<u32, Trap> {
+    if !camo_ok(csr, a, 4) {
+        return Err(Trap {
+            cause: Exception::StoreAccessFault,
+            tval: a,
+        });
+    }
+    bus.load32(a).map_err(|f| store_fault(f, a))
+}
+#[inline]
+fn camoload64(csr: &Csrs, bus: &mut impl Bus, a: u64) -> Result<u64, Trap> {
+    if !camo_ok(csr, a, 8) {
+        return Err(Trap {
+            cause: Exception::StoreAccessFault,
+            tval: a,
+        });
+    }
+    bus.load64(a).map_err(|f| store_fault(f, a))
+}
+// Stores (incl. SC and the write half of an AMO): need Write.
+checked_store!(cstore8, store8, u8, 1);
+checked_store!(cstore16, store16, u16, 2);
+checked_store!(cstore32, store32, u32, 4);
+checked_store!(cstore64, store64, u64, 8);
+
 impl Hart {
     /// A hart in the spec reset state, PC at the `virt`/Spike vector `DRAM_BASE`.
     pub fn new() -> Self {
@@ -338,6 +445,14 @@ impl Hart {
         // retirement increment (clears any stale flag from a host-side/direct CSR write).
         self.csr.arm_counters();
         let pc = self.regs.pc;
+        // E1-T15: PMP execute-permission check on the fetch, using the TRUE current mode (MPRV
+        // never affects fetches). A denial is an instruction-access fault (cause 1).
+        if !self.csr.pmp_ok(pc, 2, PmpAccess::Exec, self.csr.mode) {
+            return Err(Trap {
+                cause: Exception::InstrAccessFault,
+                tval: pc,
+            });
+        }
         // Fetch the low 16-bit parcel (C extension: `parcel[1:0] != 0b11` ⇒ a 16-bit
         // compressed instruction; else a 32-bit instruction whose upper half is a SEPARATE
         // access, so a straddling second half can fault precisely).
@@ -371,6 +486,16 @@ impl Hart {
                 }
             }
         } else {
+            // E1-T15: the upper parcel is a separate physical access — PMP-check it too.
+            if !self
+                .csr
+                .pmp_ok(pc.wrapping_add(2), 2, PmpAccess::Exec, self.csr.mode)
+            {
+                return Err(Trap {
+                    cause: Exception::InstrAccessFault,
+                    tval: pc.wrapping_add(2),
+                });
+            }
             let hi = match bus.load16(pc.wrapping_add(2)) {
                 Ok(w) => w,
                 Err(BusFault::Access) => {
@@ -678,7 +803,7 @@ impl Hart {
             // misalignment trap leaves memory and the reservation unchanged.
             LrW { rd, rs1, .. } => {
                 let a = r.read(rs1);
-                let v = bus.load32(a).map_err(|f| load_fault(f, a))?;
+                let v = cload32(&self.csr, bus, a)?;
                 self.resv = Some((a, 4));
                 mem = Some(MemOp {
                     addr: a,
@@ -690,7 +815,7 @@ impl Hart {
             }
             LrD { rd, rs1, .. } => {
                 let a = r.read(rs1);
-                let v = bus.load64(a).map_err(|f| load_fault(f, a))?;
+                let v = cload64(&self.csr, bus, a)?;
                 self.resv = Some((a, 8));
                 mem = Some(MemOp {
                     addr: a,
@@ -717,7 +842,7 @@ impl Hart {
                 self.resv = None;
                 if success {
                     let val = r.read(rs2);
-                    bus.store32(a, val as u32).map_err(|f| store_fault(f, a))?;
+                    cstore32(&self.csr, bus, a, val as u32)?;
                     mem = Some(MemOp {
                         addr: a,
                         len: 4,
@@ -741,7 +866,7 @@ impl Hart {
                 self.resv = None;
                 if success {
                     let val = r.read(rs2);
-                    bus.store64(a, val).map_err(|f| store_fault(f, a))?;
+                    cstore64(&self.csr, bus, a, val)?;
                     mem = Some(MemOp {
                         addr: a,
                         len: 8,
@@ -766,9 +891,9 @@ impl Hart {
                         tval: a,
                     });
                 }
-                let old = bus.load32(a).map_err(|f| store_fault(f, a))?;
+                let old = camoload32(&self.csr, bus, a)?;
                 let new = amo_w(op, old, r.read(rs2) as u32);
-                bus.store32(a, new).map_err(|f| store_fault(f, a))?;
+                cstore32(&self.csr, bus, a, new)?;
                 mem = Some(MemOp {
                     addr: a,
                     len: 4,
@@ -787,9 +912,9 @@ impl Hart {
                         tval: a,
                     });
                 }
-                let old = bus.load64(a).map_err(|f| store_fault(f, a))?;
+                let old = camoload64(&self.csr, bus, a)?;
                 let new = amo_d(op, old, r.read(rs2));
-                bus.store64(a, new).map_err(|f| store_fault(f, a))?;
+                cstore64(&self.csr, bus, a, new)?;
                 mem = Some(MemOp {
                     addr: a,
                     len: 8,
@@ -815,11 +940,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (
-                    rd,
-                    bus.load8(a).map_err(|f| load_fault(f, a))? as i8 as i64 as u64,
-                    pc_next,
-                )
+                (rd, cload8(&self.csr, bus, a)? as i8 as i64 as u64, pc_next)
             }
             Lh { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -831,7 +952,7 @@ impl Hart {
                 });
                 (
                     rd,
-                    bus.load16(a).map_err(|f| load_fault(f, a))? as i16 as i64 as u64,
+                    cload16(&self.csr, bus, a)? as i16 as i64 as u64,
                     pc_next,
                 )
             }
@@ -845,7 +966,7 @@ impl Hart {
                 });
                 (
                     rd,
-                    bus.load32(a).map_err(|f| load_fault(f, a))? as i32 as i64 as u64,
+                    cload32(&self.csr, bus, a)? as i32 as i64 as u64,
                     pc_next,
                 )
             }
@@ -857,7 +978,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (rd, bus.load64(a).map_err(|f| load_fault(f, a))?, pc_next)
+                (rd, cload64(&self.csr, bus, a)?, pc_next)
             }
             Lbu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -867,11 +988,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (
-                    rd,
-                    u64::from(bus.load8(a).map_err(|f| load_fault(f, a))?),
-                    pc_next,
-                )
+                (rd, u64::from(cload8(&self.csr, bus, a)?), pc_next)
             }
             Lhu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -881,11 +998,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (
-                    rd,
-                    u64::from(bus.load16(a).map_err(|f| load_fault(f, a))?),
-                    pc_next,
-                )
+                (rd, u64::from(cload16(&self.csr, bus, a)?), pc_next)
             }
             Lwu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -895,11 +1008,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (
-                    rd,
-                    u64::from(bus.load32(a).map_err(|f| load_fault(f, a))?),
-                    pc_next,
-                )
+                (rd, u64::from(cload32(&self.csr, bus, a)?), pc_next)
             }
 
             // Stores (E0-T08): cause 6/7 with tval = effective address. A faulting
@@ -913,8 +1022,7 @@ impl Hart {
                     is_store: true,
                     value: r.read(rs2),
                 });
-                bus.store8(a, r.read(rs2) as u8)
-                    .map_err(|f| store_fault(f, a))?;
+                cstore8(&self.csr, bus, a, r.read(rs2) as u8)?;
                 (0, 0, pc_next)
             }
             Sh { rs1, rs2, imm } => {
@@ -925,8 +1033,7 @@ impl Hart {
                     is_store: true,
                     value: r.read(rs2),
                 });
-                bus.store16(a, r.read(rs2) as u16)
-                    .map_err(|f| store_fault(f, a))?;
+                cstore16(&self.csr, bus, a, r.read(rs2) as u16)?;
                 (0, 0, pc_next)
             }
             Sw { rs1, rs2, imm } => {
@@ -937,8 +1044,7 @@ impl Hart {
                     is_store: true,
                     value: r.read(rs2),
                 });
-                bus.store32(a, r.read(rs2) as u32)
-                    .map_err(|f| store_fault(f, a))?;
+                cstore32(&self.csr, bus, a, r.read(rs2) as u32)?;
                 (0, 0, pc_next)
             }
             Sd { rs1, rs2, imm } => {
@@ -949,7 +1055,7 @@ impl Hart {
                     is_store: true,
                     value: r.read(rs2),
                 });
-                bus.store64(a, r.read(rs2)).map_err(|f| store_fault(f, a))?;
+                cstore64(&self.csr, bus, a, r.read(rs2))?;
                 (0, 0, pc_next)
             }
 
@@ -1149,7 +1255,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                let v = bus.load32(a).map_err(|f| load_fault(f, a))?;
+                let v = cload32(&self.csr, bus, a)?;
                 self.fregs.write_f32(rd, v);
                 self.csr.mark_fp_dirty();
                 (0, 0, pc_next)
@@ -1163,7 +1269,7 @@ impl Hart {
                     is_store: true,
                     value: u64::from(v),
                 });
-                bus.store32(a, v).map_err(|f| store_fault(f, a))?;
+                cstore32(&self.csr, bus, a, v)?;
                 (0, 0, pc_next)
             }
             FpArithS {
@@ -1345,7 +1451,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                let v = bus.load64(a).map_err(|f| load_fault(f, a))?;
+                let v = cload64(&self.csr, bus, a)?;
                 self.fregs.write_raw(rd, v);
                 self.csr.mark_fp_dirty();
                 (0, 0, pc_next)
@@ -1359,7 +1465,7 @@ impl Hart {
                     is_store: true,
                     value: v,
                 });
-                bus.store64(a, v).map_err(|f| store_fault(f, a))?;
+                cstore64(&self.csr, bus, a, v)?;
                 (0, 0, pc_next)
             }
             FpArithD {

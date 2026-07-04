@@ -53,7 +53,11 @@ pub const SIP: u16 = 0x144;
 /// WARL; its NMI semantics are out of scope until an interrupt task.
 pub const MNSTATUS: u16 = 0x744;
 pub const PMPCFG0: u16 = 0x3A0;
+/// pmpcfg2 packs entries 8..16 (RV64 has no odd pmpcfg CSRs — 0x3A1/0x3A3 are illegal).
+pub const PMPCFG2: u16 = 0x3A2;
+/// pmpaddr0..15 at 0x3B0..0x3BF (E1-T15).
 pub const PMPADDR0: u16 = 0x3B0;
+pub const PMPADDR15: u16 = 0x3BF;
 pub const MVENDORID: u16 = 0xF11;
 pub const MARCHID: u16 = 0xF12;
 pub const MIMPID: u16 = 0xF13;
@@ -207,6 +211,8 @@ pub struct Csrs {
     /// Shadow of the CLINT `mtime` for the unprivileged `time` counter — the machine refreshes
     /// it each instruction boundary (there is no `mtime` CSR; `time` is a window onto the CLINT).
     time: u64,
+    /// Physical Memory Protection unit (E1-T15): 16 entries checked on every physical access.
+    pub pmp: crate::pmp::Pmp,
     /// Observable hooks for the test PROBE CSR.
     pub probe_reads: u64,
     pub probe_value: u64,
@@ -235,6 +241,7 @@ impl Csrs {
             wrote_mcycle: false,
             wrote_minstret: false,
             time: 0,
+            pmp: crate::pmp::Pmp::default(),
             probe_reads: 0,
             probe_value: 0,
         }
@@ -267,6 +274,31 @@ impl Csrs {
     /// this each instruction boundary from the CLINT state, so `time` reads track `mtime`.
     pub fn set_time(&mut self, mtime: u64) {
         self.time = mtime;
+    }
+
+    /// The effective privilege for a DATA access (load/store/AMO): with `mstatus.MPRV=1` the
+    /// access is checked as though from `MPP` instead of the current mode (Priv §3.1.6.3).
+    /// Instruction FETCHES always use the true current mode (MPRV never affects them).
+    pub fn data_priv(&self) -> Priv {
+        if self.mstatus & M_MPRV != 0 {
+            match (self.mstatus >> 11) & 0b11 {
+                0b11 => Priv::M,
+                0b01 => Priv::S,
+                _ => Priv::U,
+            }
+        } else {
+            self.mode
+        }
+    }
+
+    /// PMP permission check (E1-T15): is a `len`-byte `access` at `addr` by `mode` allowed?
+    /// Fast path: with no armed entry, an M access passes and an S/U access is denied (≥1 entry
+    /// is implemented, so an unmatched S/U access fails per §3.7).
+    pub fn pmp_ok(&self, addr: u64, len: u64, access: crate::pmp::PmpAccess, mode: Priv) -> bool {
+        if !self.pmp.any_armed() {
+            return matches!(mode, Priv::M);
+        }
+        self.pmp.check(addr, len, access, mode)
     }
 
     // ── hardwired identification (read-only) ────────────────────────────────
@@ -579,8 +611,13 @@ impl Csrs {
             // scounteren expose only CY/TM/IR (bits [2:0]) — HPM enable bits read-only 0.
             MCYCLE | MINSTRET => !0,
             MCOUNTEREN | SCOUNTEREN => COUNTEREN_WMASK,
+            // PMP (E1-T15): pmpcfg0/pmpcfg2 and pmpaddr0..15. The module does its own WARL
+            // legalization + lock enforcement in write_raw, so the mask here is !0. Odd pmpcfg
+            // CSRs (0x3A1/0x3A3) are NOT listed → `meta` returns None → illegal instruction.
+            PMPCFG0 | PMPCFG2 => !0,
+            PMPADDR0..=PMPADDR15 => !0,
             MSTATUS | MCAUSE | MSCRATCH | MTVAL | MIP | SATP
-            | MNSTATUS | PMPCFG0 | PMPADDR0 | PROBE
+            | MNSTATUS | PROBE
             // S-mode CSRs (E1-T09): sstatus/sie/sip are masked *views* handled in
             // read_raw/write_raw; the mask here is !0 (the view logic does the masking).
             | SSTATUS | SIE | SIP | SSCRATCH | SCAUSE | STVAL => !0,
@@ -647,6 +684,10 @@ impl Csrs {
             MCYCLE | CYCLE => self.mcycle,
             MINSTRET | INSTRET => self.minstret,
             TIME => self.time,
+            // PMP (E1-T15): pmpcfg0/2 pack 8 entries each; pmpaddr0..15 are per-entry.
+            PMPCFG0 => self.pmp.read_cfg(0),
+            PMPCFG2 => self.pmp.read_cfg(2),
+            PMPADDR0..=PMPADDR15 => self.pmp.read_addr((addr - PMPADDR0) as usize),
             // hpmcounter3..31 (0xC03..) are unimplemented HPMs → read 0.
             0xC00..=0xC1F => 0,
             other => self
@@ -711,6 +752,10 @@ impl Csrs {
                 self.minstret = v;
                 self.wrote_minstret = true;
             }
+            // PMP (E1-T15): route to the unit, which applies WARL legalization + lock enforcement.
+            PMPCFG0 => self.pmp.write_cfg(0, v),
+            PMPCFG2 => self.pmp.write_cfg(2, v),
+            PMPADDR0..=PMPADDR15 => self.pmp.write_addr((addr - PMPADDR0) as usize, v),
             MISA | MHARTID | MVENDORID | MARCHID | MIMPID => {} // hardwired
             0xC00..=0xC1F => {}
             other => match self.warl.iter_mut().find(|(a, _)| *a == other) {
