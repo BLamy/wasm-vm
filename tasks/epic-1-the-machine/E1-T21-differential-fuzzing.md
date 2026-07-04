@@ -3,7 +3,7 @@ id: E1-T21
 epic: 1
 title: Differential fuzzing — random instruction streams lockstep against Spike
 priority: 121
-status: in_progress
+status: verified
 depends_on: [E1-T19]
 estimate: L
 capstone: false
@@ -129,3 +129,34 @@ already-verified comparator/minimizer.
 Local gate: `cargo fmt --all --check` clean; `cargo clippy --workspace --all-targets`
 clean; `cargo test --workspace` green (fuzz crate adds 15 unit tests). fmt/clippy/tests all
 pass before push.
+
+### 2026-07-04 — critic round 1: VERIFIED (cold clone at `adf98f9`)
+Adversarial cold-clone critic ran the full battery at fixed HEAD `adf98f9`; all attacks passed,
+clone left clean, nothing pushed.
+
+- **Independent gate:** `cargo fmt --all --check` exit 0 clean; `cargo clippy --workspace
+  --all-targets` exit 0, zero warnings; `cargo test --workspace` exit 0 — **90 `test result: ok`
+  suites, 0 FAILED**. New fuzz suites present: 15 unit + (8 passed, 1 ignored).
+- **Rig runs OUR binary vs REAL Spike (not vacuous, not Spike-for-both):** `harness.rs` → `run_diff.sh`;
+  DUT = `target/release/wasm-vm run <elf> --trace`, ref = `spike --isa=${isa} -l --log-commits`.
+  Dynamic proof: ours.trace = 93 lines; spike.log = 5100 lines of genuine Spike commit log (boot-ROM
+  `auipc t0` @0x1000); verdict `MATCH: 93 instruction(s)` (our trace a prefix of Spike's). `report.py`
+  guards non-vacuity (empty ours → exit 2; trap-truncation → divergence).
+- **Mutation 1 (documented div-by-zero `-1i64`→`0i64`, hart/mod.rs:760):** rebuilt, `campaign 0..8
+  --count 128` → **8/8 divergences**; seed 0 minimized to **2 instructions**; standalone reproducer
+  re-ran → DIVERGENCE (deterministic).
+- **Mutation 2 (critic's OWN — MULH signedness `rs1 as i64`→`as u64`, hart/mod.rs:741):** a different
+  instruction path. `campaign 0..12` → **5/12 divergences**, minimized to 1–3 instructions; seed 2
+  isolated a single `mulh t0,t6,t0`. Refutes the "generator only exercises the one hard-coded path"
+  concern — the rig catches an independently-chosen bug.
+- **No false positives:** after reverting each mutation, `campaign` over 0..8 then 0..12 → **0
+  divergences** both times. The mutation was the sole cause.
+- **Minimizer soundness:** `minimize.rs` tests are non-vacuous (`preserves_a_two_line_dependency`
+  asserts exactly the interdependent pair kept). Generator-safety tests loop 50 seeds × 300 instrs
+  asserting shamt < width and imm ∈ [-2048, 2047].
+- **Honesty:** `tests/fuzz-regressions/` holds only the README honestly stating zero real bugs found;
+  the deferred list (loads/stores, branches, F/D/C, U-mode+Sv39 trap events, nightly ≥1M tier, wasm32
+  leg) is explicitly labeled deferred. No status claimed that wasn't earned. The checked-in
+  `sensitivity/div_by_zero.S` matches what the critic independently reproduced — genuine, not fabricated.
+
+**VERDICT: verified.** (critic agent `a4e16445a0e268068`, 42 tool-uses, cold clone, no push.)
