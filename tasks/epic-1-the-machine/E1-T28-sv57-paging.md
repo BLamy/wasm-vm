@@ -2,12 +2,14 @@
 id: E1-T28
 epic: 1
 title: Sv57 five-level paging — satp MODE=10 (Priv §4.5)
-priority: 128
+priority: 142
 status: pending
 depends_on: [E1-T18]
 estimate: L
 capstone: false
 ---
+
+> **E1-T26 UPDATE — capstone-OBSOLETE (deprioritized 127/128 → 141/142).** The RISCOF exclusions this task existed to clear were removed by E1-T26 (switching the reference to the canonical Sail model, configured to our declared ISA, makes the full arch-test suite pass 395/0 with EXCLUSIONS.md empty). This remains a VALUABLE feature for hosting more OSes, but the Level-1 capstone (E1-T24) no longer depends on it.
 
 ## Goal
 Extend the MMU to Sv57 (five-level, 57-bit VA) so `satp` MODE=10 is a working mode and the

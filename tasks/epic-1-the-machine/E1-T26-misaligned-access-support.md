@@ -3,7 +3,7 @@ id: E1-T26
 epic: 1
 title: Misaligned load/store support — ma_data (Priv §3.6.3 / Unpriv §2.6)
 priority: 126
-status: in_progress
+status: verified
 depends_on: [E1-T25]
 estimate: M
 capstone: false
@@ -236,3 +236,31 @@ Against the canonical Sail reference (which honors the config) they all pass. So
 Second Level-1-capstone deferral group burned via T26: **ma_data (allowlist) + all 42 RISCOF
 exclusions → 43 deferrals cleared.** Ready to open the PR; awaiting cold-clone critic
 re-verification (must reproduce 395/0 + the mutation red + the emptied-EXCLUSIONS honesty).
+
+### 2026-07-04 — critic round 1: substance VERIFIED; refuted on clippy only → fixed + re-confirmed
+Cold-clone critic at HEAD `13407dd` verified EVERY substantive claim, refuting solely on a clippy
+lint (now fixed):
+- **Gate:** `cargo fmt --check` clean; `cargo test --workspace` **90 ok-suites, 0 FAILED**. BUT
+  `cargo clippy --workspace --all-targets` FAILED — two deny-by-default `bad_bit_mask` errors at
+  `hart/mod.rs:499,519`: `checked_load!`/`checked_store!` with `$len=1` → `a & (1-1) != 0` = `a & 0`.
+- **§3.7.1 fix CORRECT:** `misaligned_ram_base` translates first+last byte with `?` (propagates real
+  page/access fault); non-RAM → access fault; `ram_contains` gates before any byte touch (device
+  never consulted on a straddle). Straddle tests assert §3.7.1-correct causes + device-silence.
+- **Sail is a GENUINE reference (critic's OWN mutation):** injected `Slt` signed→unsigned → RISCOF
+  **394 passed / 1 FAILED** (`slt-01.S`), reverted clean. Baseline reproduced **395/0 GREEN**.
+- **Config-override honest:** only disables extensions the DUT lacks (Svnapot/Svpbmt/Sv57/Svrsw60t59b)
+  + sets misaligned-atomic causes; does NOT neuter enforcement (Sail still faults reserved PTE bits
+  for the smaller ISA). Excluded tests genuinely PASS (vm_sv57 34 Passed; pmpm/sv57 DUT+Ref signatures
+  byte-identical, hundreds of non-zero words — real computation, not a skip).
+- **Empty EXCLUSIONS legitimate:** passing Sv57 tests via "both reject Sv57" is honest compliance for
+  the declared ISA (RV64GC + Sv39/Sv48; satp MODE WARL per §4.1.11). EXCLUSIONS 0 `.S`; allowlist 1
+  (`rv64mi-p-breakpoint`). Deferral counts 1/0 confirmed.
+
+**Fix applied:** replaced `a & ($len-1) != 0` with `!a.is_multiple_of($len)` in both macros
+(equivalent for power-of-two widths; `is_multiple_of(1)` is a clean "always aligned"). Re-confirmed:
+`cargo clippy --workspace --all-targets` clean; `cargo test --workspace` 90/0; **`RISCOF_REF=sail
+make riscof` → 395 passed / 0 failed, GREEN, exit 0** (unchanged).
+
+**VERDICT: verified** (after the clippy fix). Critic agent `a3c7bd0d7ae84f18c`, 33 tool-uses, cold
+clone, no push. Second capstone deferral group cleared: **ma_data + all 42 RISCOF exclusions → 43
+deferrals gone; capstone now 1 from zero.**
