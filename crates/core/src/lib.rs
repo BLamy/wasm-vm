@@ -39,6 +39,7 @@ pub mod pmp;
 pub mod ram;
 pub mod snapshot;
 pub mod softfloat;
+pub mod tlb;
 pub mod trace;
 #[cfg(feature = "zicsr-stub")]
 pub mod zicsr_stub;

@@ -6,3 +6,4 @@
 # everyone who runs the test benefits from these saved cases.
 cc 2e7414c4ac2fbcead808014ed6e300fb4ec09e5fa4e8c7d9e6d169aaa95b5c2d # shrinks to w = 1073741875
 cc e25b650490be0144f4f127e0862a10c1c84f1526c98a0248eb1cff32aaa3cd59 # shrinks to w = 755634291
+cc 14b1dafecb82cebf73aa7de08de015a7c753064c3ec7eb8d878987b72bd10181 # shrinks to rd = 0, rs1 = 0, rest = 3514704160

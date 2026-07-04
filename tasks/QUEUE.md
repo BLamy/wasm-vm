@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E1-T17** — TLB with ASID tagging and SFENCE.VMA — all four operand combinations
 
 
 ## Epic 0 — `epic-0-ignition`

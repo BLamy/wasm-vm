@@ -513,6 +513,13 @@ pub enum Instr {
     Sret,
     /// Wait-for-interrupt — retires as a no-op here.
     Wfi,
+    /// Supervisor fence: flush address-translation caches (E1-T17, Priv §4.2.1). `rs1 = x0`
+    /// means "all VAs", `rs2 = x0` means "all ASIDs"; the four combinations select the flush
+    /// scope. Illegal in U-mode and in S-mode when `mstatus.TVM = 1`.
+    SfenceVma {
+        rs1: u8,
+        rs2: u8,
+    },
     // ── F extension (single precision), E1-T06 ──────────────────────────────
     /// `f[rd] = mem[rs1+imm]` (32-bit load, NaN-boxed into the f-register).
     Flw {
@@ -730,7 +737,12 @@ const fn decode_system(insn: u32) -> Result<Instr, IllegalInstr> {
         }
         let rd = ((insn >> 7) & 0x1F) as u8;
         let rs1 = ((insn >> 15) & 0x1F) as u8;
+        let rs2 = ((insn >> 20) & 0x1F) as u8;
         let csr = ((insn >> 20) & 0xFFF) as u16;
+        // SFENCE.VMA: funct7 = 0001001, funct3 = 000, rd = 0 (rs1/rs2 are the operands).
+        if funct7(insn) == 0b000_1001 && funct3(insn) == 0b000 && rd == 0 {
+            return Ok(Instr::SfenceVma { rs1, rs2 });
+        }
         match funct3(insn) {
             0b001 => Ok(Instr::Csrrw { rd, rs1, csr }),
             0b010 => Ok(Instr::Csrrs { rd, rs1, csr }),

@@ -3,7 +3,7 @@ id: E1-T17
 epic: 1
 title: TLB with ASID tagging and SFENCE.VMA — all four operand combinations
 priority: 117
-status: pending
+status: in_progress
 depends_on: [E1-T16]
 estimate: M
 capstone: false
@@ -69,4 +69,48 @@ determinism: TLB replacement must be identical native vs wasm32 (trace hash equa
 thrashing workload exceeding TLB capacity).
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — implementation
+- **`crates/core/src/tlb.rs`** (NEW) — `Tlb`: a fixed `[16 sets][4 ways]` array (no HashMap),
+  ASID+VA+level+global tagged, unified I/D. **Design (documented in the module):** we cache the
+  WALK (the page-table memory reads), never the permission decision — on a hit the caller re-runs
+  `mmu::finish_leaf` (U/SUM/MXR + R/W/X + Svade A/D) against the CACHED leaf PTE and live CSR
+  state. Consequences: a store served from a load-filled clean (D=0) page still faults; SUM/MXR/
+  privilege changes need no flush; and "fill on success only" (never on a fault) gives the
+  "entry only for A=1" invariant + no negative caching. **Superpages:** an entry is stored under
+  its level-aligned VPN and `lookup` probes all 3 page sizes, so a 2 MiB/1 GiB entry serves its
+  whole range from one walk. **Determinism:** per-set round-robin victim (`victim[set]`), no
+  hashing/iteration-order — identical native vs wasm32 (T22). `Tlb::disabled()` is the
+  walk-every-access differential oracle. Stats: `hits`/`walks`(=misses)/`flush_count` for T23.
+- **`crates/core/src/mmu.rs`** — split translation so the TLB caches exactly the expensive part:
+  `walk_leaf` (memory-touching table walk → leaf `(pte, level)`; structural faults), `finish_leaf`
+  (pure: permission + Svade + PA compose; re-run on every hit), `translate` (their composition,
+  no TLB — the direct-test + oracle path, behavior byte-identical to T16), and `translate_cached`
+  (canonical-check → TLB lookup → on hit `finish_leaf`, on miss `walk_leaf`+`finish_leaf`+fill).
+  Canonical check runs BEFORE the TLB so a non-canonical VA can't alias a cached page.
+- **`hart/mod.rs`** — `pub tlb: Tlb` field (reset flushes it); the T15/T16 checked helpers
+  (`xlate_load`/`store`/`amo`, `cloadN`/`cstoreN`/`camoloadN`, `fetch_xlate`) thread `&mut self.tlb`
+  (disjoint from `&mut self.regs`) and call `translate_cached`. New `SfenceVma { rs1, rs2 }`
+  execute arm: illegal in U-mode / in S with mstatus.TVM=1 (checked before any effect), else maps
+  the four rs1/rs2 forms to `tlb.sfence(va, asid)`. satp writes do NOT flush (spec) — only
+  SFENCE.VMA does.
+- **`decode.rs`** — decode SFENCE.VMA (funct7=0001001, funct3=000, rd=0); `decode_props`
+  roundtrip + the reserved-SYSTEM proptest updated to admit it.
+
+**Tests** (`crates/core/tests/tlb.rs`, 15): staleness proves caching + addr-fence re-walk; ASID
+flush spares global + other ASIDs; full flush empties incl. global; 2 MiB superpage serves its
+whole range from one walk; faulting VA never cached (two walks); store-not-served-by-load-filled-
+clean-D=0 (Svade); live permission re-check on a privilege change without flush; aliasing (two VAs
+one PA, fence one spares the other); VA-form flushes a global entry; disabled-TLB walks every
+access; deterministic replacement under capacity thrash; and end-to-end SFENCE.VMA {U illegal,
+S+TVM illegal, S retires, executed fence flushes only the targeted VA while the code page stays
+cached} — all via the walk-count hook.
+
+**rv64mi-p-illegal note:** T17 fixes the SFENCE.VMA decode that previously blocked this suite (it
+no longer spuriously traps at 0x80000200), but the test then reaches a broader TVM/TSR trap-
+virtualization matrix (satp/sfence/xRET gated to M with precise mepc/mtval bookkeeping) that is
+beyond T17's scope, so it stays excluded (exclusion note updated in `riscv_tests_mi.rs`). SFENCE.VMA
+itself is covered directly by the 4 end-to-end `tlb.rs` tests.
+
+Local gate: fmt clean; clippy 0 (workspace + zicsr-stub, all-targets); `cargo test --workspace`
+0 `test result: FAILED`; both wasm32 builds (no_std, +trace) clean.
