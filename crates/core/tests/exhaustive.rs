@@ -39,6 +39,7 @@ use wasm_vm_core::decode::decode;
 /// | MISC-MEM FENCE.I      | 1                | canonical 0x0000100F only (E1-T02)        |
 /// | SYSTEM CSR ops        | 6 · 2^22         | funct3∈{1,2,3,5,6,7}, any rd/rs1/csr (E1-T02)|
 /// | SYSTEM ECALL/EBREAK/MRET/SRET/WFI | 5      | five exact words (E1-T09 adds SRET)      |
+/// | SYSTEM SFENCE.VMA     | 2^10             | funct7=0001001,funct3=000,rd=0; rs1/rs2 free (E1-T17) |
 ///
 /// E1-T06 adds the F extension (all decode as legal; a reserved rounding mode traps at
 /// *execution*, not decode, so every rm value is a legal encoding). Contributions:
@@ -59,7 +60,7 @@ use wasm_vm_core::decode::decode;
 /// format conversions FCVT.S.D + FCVT.D.S (2·2^13). Folding: 2^22 66→76; 2^18 4→8;
 /// 2^15 39→47; 2^13 10→21; 2^10 3→6.
 ///
-/// Sum = 76·2^22 + 8·2^18 + 20·2^17 + 3·2^16 + 47·2^15 + 21·2^13 + 6·2^10 + 6 = 325_400_582 (E1-T09 SRET adds one exact word).
+/// Sum = 76·2^22 + 8·2^18 + 20·2^17 + 3·2^16 + 47·2^15 + 21·2^13 + 6·2^10 + 2^10 (E1-T17 SFENCE.VMA) + 6 = 325_401_606.
 ///
 /// NOTE: the CSR ops / FENCE.I / MRET / WFI belong to the DEFAULT (Zicsr) decoder; under
 /// `feature = "zicsr-stub"` they route to the E0-T19 stub. M/A/F/D are NOT feature-gated.
@@ -71,6 +72,7 @@ pub const EXPECTED_LEGAL: u64 = 76 * (1 << 22)
     + 47 * (1 << 15)
     + 21 * (1 << 13)
     + 6 * (1 << 10)
+    + (1 << 10) // SFENCE.VMA (E1-T17): funct7=0001001,funct3=000,rd=0; rs1/rs2 free
     + 6;
 
 #[test]
