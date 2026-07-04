@@ -48,7 +48,7 @@ class wasmvm(pluginTemplate):
         # absolute paths resolve inside the container; the DUT itself runs host-native.
         self.repo_root = os.path.abspath(os.path.join(self.pluginpath, '..', '..'))
         self.run_samepath = os.path.join(self.repo_root, 'tools', 'toolchain', 'run_samepath.sh') + ' --'
-        self.dut_exe = os.path.join(self.repo_root, 'target', 'release', 'wasm-vm-cli')
+        self.dut_exe = os.path.join(self.repo_root, 'target', 'release', 'wasm-vm')  # [[bin]] name
 
         # Collect the paths to the  riscv-config based ISA and platform yaml files. One can choose
         # to hardcode these here itself instead of picking it from the config.ini file.
