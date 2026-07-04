@@ -3,6 +3,7 @@
 //! natively — so the two builds are the same machine (native == wasm32) transitively, the whole
 //! premise of "debug natively, ship WASM". Run by `wasm-pack test --node crates/wasm`.
 #![cfg(target_arch = "wasm32")]
+#![cfg(not(feature = "zicsr-stub"))] // golden is the real-CSR build; the stub CSR path diverges
 
 use wasm_bindgen_test::wasm_bindgen_test;
 use wasm_vm_core::Machine;
