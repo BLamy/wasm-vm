@@ -57,4 +57,15 @@ pub trait Bus {
     fn store16(&mut self, addr: u64, val: u16) -> Result<(), BusFault>;
     fn store32(&mut self, addr: u64, val: u32) -> Result<(), BusFault>;
     fn store64(&mut self, addr: u64, val: u64) -> Result<(), BusFault>;
+
+    /// True iff `[addr, addr + len)` lies entirely within a region that supports MISALIGNED
+    /// accesses — i.e. main memory (RAM). The E1-T26 misaligned-access path uses this to
+    /// decide whether a misaligned data access may be handled by byte decomposition (RAM) or
+    /// must trap `*AddrMisaligned` per §3.7.1 (MMIO / cross-region / unmapped). The default is
+    /// conservative (`false`: nothing supports misaligned) so a bus that forgets to override
+    /// simply keeps the strict-alignment behavior. `len` is a power-of-two access width.
+    fn ram_contains(&self, addr: u64, len: u64) -> bool {
+        let _ = (addr, len);
+        false
+    }
 }

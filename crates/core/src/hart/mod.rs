@@ -395,10 +395,101 @@ fn xlate_amo(
     Ok(pa)
 }
 
+// ── Misaligned data-access support (E1-T26) ──────────────────────────────────────────
+// Misaligned loads/stores are handled ONLY for main memory (RAM); MMIO, cross-region,
+// cross-page, and unmapped misaligned accesses keep the §3.7.1 `*AddrMisaligned` trap
+// (E1-T25). Atomics (AMO/LR/SC) never reach here — they require natural alignment and
+// pre-check it themselves. Handled accesses are decomposed into byte operations, so a
+// misaligned access can never partially touch a device (the device is never consulted on a
+// straddle, preserving the E0-T08 device-silence invariant).
+
+/// Supportability gate shared by misaligned load and store: translate the first and last
+/// byte of `[a, a+len)` and return the physical base address IFF the range maps to
+/// CONTIGUOUS RAM that PMP permits — the only case a misaligned access is handled instead of
+/// trapped. `None` = "not supported → trap `*AddrMisaligned`": a translation fault, a
+/// non-contiguous or cross-page mapping, a range not entirely in RAM, or a PMP denial.
+#[inline]
+fn misaligned_ram_base(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &mut impl Bus,
+    a: u64,
+    len: u64,
+    access: Access,
+    pmp: PmpAccess,
+) -> Option<u64> {
+    let eff = csr.data_priv();
+    let a_last = a.checked_add(len - 1)?;
+    let pa0 = mmu::translate_cached(csr, tlb, bus, a, access, eff).ok()?;
+    let pa_last = mmu::translate_cached(csr, tlb, bus, a_last, access, eff).ok()?;
+    if pa_last == pa0.checked_add(len - 1)?
+        && bus.ram_contains(pa0, len)
+        && csr.pmp_ok(pa0, len, pmp, eff)
+    {
+        Some(pa0)
+    } else {
+        None
+    }
+}
+
+/// Handle a misaligned LOAD: assemble `len` little-endian bytes from the contiguous RAM
+/// range (gated by [`misaligned_ram_base`]). Returns the raw value in a `u64`; the caller
+/// truncates to width and sign/zero-extends. Trap = `LoadAddrMisaligned` when unsupported.
+#[inline]
+fn misaligned_load(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &mut impl Bus,
+    a: u64,
+    len: u64,
+) -> Result<u64, Trap> {
+    let pa0 =
+        misaligned_ram_base(csr, tlb, bus, a, len, Access::Load, PmpAccess::Read).ok_or(Trap {
+            cause: Exception::LoadAddrMisaligned,
+            tval: a,
+        })?;
+    let mut val = 0u64;
+    for i in 0..len {
+        let b = bus.load8(pa0 + i).map_err(|f| load_fault(f, a))?;
+        val |= u64::from(b) << (8 * i);
+    }
+    Ok(val)
+}
+
+/// Handle a misaligned STORE: write `len` little-endian bytes of `v` to the contiguous RAM
+/// range (gated by [`misaligned_ram_base`]). Trap = `StoreAddrMisaligned` when unsupported;
+/// because the gate runs BEFORE any byte is written, an unsupported store mutates nothing.
+#[inline]
+fn misaligned_store(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &mut impl Bus,
+    a: u64,
+    len: u64,
+    v: u64,
+) -> Result<(), Trap> {
+    let pa0 = misaligned_ram_base(csr, tlb, bus, a, len, Access::Store, PmpAccess::Write).ok_or(
+        Trap {
+            cause: Exception::StoreAddrMisaligned,
+            tval: a,
+        },
+    )?;
+    for i in 0..len {
+        bus.store8(pa0 + i, (v >> (8 * i)) as u8)
+            .map_err(|f| store_fault(f, a))?;
+    }
+    Ok(())
+}
+
 macro_rules! checked_load {
     ($name:ident, $busfn:ident, $ty:ty, $len:expr) => {
         #[inline]
         fn $name(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<$ty, Trap> {
+            if a & ($len - 1) != 0 {
+                // Misaligned: handled for RAM (E1-T26), else *AddrMisaligned. The assembled
+                // LE value is truncated to width here; `execute` sign/zero-extends.
+                return misaligned_load(csr, tlb, bus, a, $len).map(|v| v as $ty);
+            }
             let pa = xlate_load(csr, tlb, bus, a, $len)?;
             bus.$busfn(pa).map_err(|f| load_fault(f, a))
         }
@@ -414,6 +505,9 @@ macro_rules! checked_store {
             a: u64,
             v: $ty,
         ) -> Result<(), Trap> {
+            if a & ($len - 1) != 0 {
+                return misaligned_store(csr, tlb, bus, a, $len, v as u64);
+            }
             let pa = xlate_store(csr, tlb, bus, a, $len)?;
             bus.$busfn(pa, v).map_err(|f| store_fault(f, a))
         }
@@ -862,6 +956,15 @@ impl Hart {
             // misalignment trap leaves memory and the reservation unchanged.
             LrW { rd, rs1, .. } => {
                 let a = r.read(rs1);
+                // LR requires natural alignment (Unpriv §8.2). This was implicit while the
+                // load path faulted ALL misaligned accesses; E1-T26 made ordinary loads
+                // support misaligned RAM, so LR must pre-check alignment itself (mirrors SC).
+                if !a.is_multiple_of(4) {
+                    return Err(Trap {
+                        cause: Exception::LoadAddrMisaligned,
+                        tval: a,
+                    });
+                }
                 let v = cload32(&self.csr, &mut self.tlb, bus, a)?;
                 self.resv = Some((a, 4));
                 mem = Some(MemOp {
@@ -874,6 +977,12 @@ impl Hart {
             }
             LrD { rd, rs1, .. } => {
                 let a = r.read(rs1);
+                if !a.is_multiple_of(8) {
+                    return Err(Trap {
+                        cause: Exception::LoadAddrMisaligned,
+                        tval: a,
+                    });
+                }
                 let v = cload64(&self.csr, &mut self.tlb, bus, a)?;
                 self.resv = Some((a, 8));
                 mem = Some(MemOp {

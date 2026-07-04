@@ -263,7 +263,9 @@ fn every_memory_fault_shape_leaves_full_dump_untouched() {
         // access fault: rs1=x9 seeded to an unmapped hole
         cases.push((load(f3, 1, 9, 0), Exception::LoadAccessFault));
         if mis {
-            // misaligned: rs1=x10 = DATA, imm=1 (odd => misaligned at every width >1)
+            // E1-T26: in-RAM misaligned now SUCCEEDS, so the misaligned-FAULT case uses
+            // rs1=x10 = RAM_END-2, imm=1 → ea=RAM_END-1: misaligned AND straddling past RAM
+            // (not decomposable) → *AddrMisaligned at every width >1.
             cases.push((load(f3, 1, 10, 1), Exception::LoadAddrMisaligned));
         }
     }
@@ -286,7 +288,7 @@ fn every_memory_fault_shape_leaves_full_dump_untouched() {
 
         let mut h = seeded(CODE);
         h.regs.write(9, 0x4000); // unmapped hole
-        h.regs.write(10, DATA); // aligned base; imm=1 forces misalignment
+        h.regs.write(10, RAM_END - 2); // imm=1 → ea=RAM_END-1: misaligned + straddles past RAM
         let dump = format!("{}", h.regs);
         let t = h.step(&mut bus).unwrap_err();
         assert_eq!(t.cause, cause, "{word:#010x}");

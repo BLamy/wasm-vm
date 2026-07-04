@@ -11,10 +11,21 @@ SUITE="${RISCOF_SUITE:-riscv-arch-test/riscv-test-suite/rv64i_m}"
 [ -x "$VENV/bin/riscof" ] || { echo "error: run 'bash compliance/provision.sh' first" >&2; exit 1; }
 
 cargo build --release -p wasm-vm-cli
+# Reference model: SAIL by default (E1-T26 — Sail honors hw_data_misaligned_support, so it can
+# validate our misaligned support; Spike-1.1.1 hardcodes misaligned trapping). Override with
+# RISCOF_REF=spike to use the Spike fallback.
+REF="${RISCOF_REF:-sail}"
+if [ "$REF" = "spike" ]; then
+  REF_ISPEC="$REPO/compliance/spike/spike_simple_isa.yaml"
+  REF_PSPEC="$REPO/compliance/spike/spike_simple_platform.yaml"
+else
+  REF_ISPEC="$REPO/compliance/sail/sail_isa.yaml"
+  REF_PSPEC="$REPO/compliance/sail/sail_platform.yaml"
+fi
 cat > compliance/config.ini <<CFG
 [RISCOF]
-ReferencePlugin=spike
-ReferencePluginPath=$REPO/compliance/spike
+ReferencePlugin=$REF
+ReferencePluginPath=$REPO/compliance/$REF
 DUTPlugin=wasmvm
 DUTPluginPath=$REPO/compliance/wasmvm
 
@@ -24,10 +35,10 @@ ispec=$REPO/compliance/wasmvm/wasmvm_isa.yaml
 pspec=$REPO/compliance/wasmvm/wasmvm_platform.yaml
 target_run=1
 
-[spike]
-pluginpath=$REPO/compliance/spike
-ispec=$REPO/compliance/spike/spike_simple_isa.yaml
-pspec=$REPO/compliance/spike/spike_simple_platform.yaml
+[$REF]
+pluginpath=$REPO/compliance/$REF
+ispec=$REF_ISPEC
+pspec=$REF_PSPEC
 target_run=1
 CFG
 

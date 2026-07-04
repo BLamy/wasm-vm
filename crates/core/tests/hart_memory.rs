@@ -58,15 +58,39 @@ fn lw_sign_extends_lwu_zero_extends_acceptance() {
 }
 
 #[test]
-fn misaligned_ld_sd_causes_4_and_6_acceptance() {
+fn misaligned_ld_sd_in_ram_succeed_e1t26() {
+    // E1-T26: misaligned loads/stores to RAM now SUCCEED (byte-decomposed), where E0-T08
+    // used to fault them. Round-trip a distinct-byte value through a misaligned sd/ld.
     let mut bus = fresh_bus();
-    let addr = DATA + 4; // % 8 == 4
-    let t = exec(&mut bus, load(0b011, 1, 2, 4), &[(2, DATA)]).unwrap_err(); // ld
+    let val = 0x0123_4567_89AB_CDEFu64;
+    exec(&mut bus, s_type(4, 3, 2, 0b011), &[(2, DATA), (3, val)]).unwrap(); // sd x3, 4(x2)
+    let h = exec(&mut bus, load(0b011, 1, 2, 4), &[(2, DATA)]).unwrap(); // ld x1, 4(x2)
+    assert_eq!(h.regs.read(1), val, "misaligned sd→ld round-trip");
+    // Byte-exact little-endian: each byte landed at DATA+4+i.
+    for i in 0..8u64 {
+        let h = exec(&mut bus, load(0b100, 1, 2, (4 + i) as i32), &[(2, DATA)]).unwrap(); // lbu
+        assert_eq!(h.regs.read(1), (val >> (8 * i)) & 0xFF, "byte {i}");
+    }
+}
+
+#[test]
+fn misaligned_causes_4_and_6_when_unsupported_e1t26() {
+    // The *AddrMisaligned causes (4/6) now arise for UNSUPPORTED misaligned accesses only —
+    // e.g. an 8-byte access at RAM_END-1 that is both misaligned AND straddles past RAM_END
+    // (not entirely in RAM → not decomposable).
+    let mut bus = fresh_bus();
+    let straddle = RAM_END - 1;
+    let t = exec(&mut bus, load(0b011, 1, 2, 0), &[(2, straddle)]).unwrap_err(); // ld
     assert_eq!(t.cause, Exception::LoadAddrMisaligned);
-    assert_eq!(t.tval, addr);
-    let t = exec(&mut bus, s_type(4, 3, 2, 0b011), &[(2, DATA), (3, 0xAB)]).unwrap_err(); // sd
+    assert_eq!(t.tval, straddle);
+    let t = exec(
+        &mut bus,
+        s_type(0, 3, 2, 0b011),
+        &[(2, straddle), (3, 0xAB)],
+    )
+    .unwrap_err(); // sd
     assert_eq!(t.cause, Exception::StoreAddrMisaligned);
-    assert_eq!(t.tval, addr);
+    assert_eq!(t.tval, straddle);
 }
 
 #[test]
@@ -116,8 +140,10 @@ fn faulting_load_leaves_rd_faulting_store_leaves_ram_acceptance() {
     );
     assert_eq!(hart.regs.pc, CODE);
 
-    // Faulting stores at hole, straddle, and misaligned-in-ram.
-    for (rs1, imm) in [(0x4000u64, 0), (RAM_END - 4, 0), (DATA + 1, 0)] {
+    // Faulting stores that must NOT mutate RAM: unmapped hole, and two misaligned straddles
+    // past RAM_END (E1-T26: a misaligned store WITHIN ram now succeeds, so the faulting cases
+    // are the straddles that leave RAM — RAM_END-4 and RAM_END-1, both 8-byte).
+    for (rs1, imm) in [(0x4000u64, 0), (RAM_END - 4, 0), (RAM_END - 1, 0)] {
         let _ = exec(
             &mut bus,
             s_type(imm, 3, 2, 0b011),
@@ -197,21 +223,37 @@ fn store_matrix_verified_bytewise_through_bus() {
 // ── fault-cause matrix ──────────────────────────────────────────────────────
 
 #[test]
-fn misaligned_traps_at_every_width_and_negative_offset_faults() {
+fn misaligned_in_ram_succeeds_at_every_width_negative_offset_still_faults() {
+    // E1-T26: in-RAM misaligned accesses SUCCEED at every width and misalignment. Store then
+    // read back (aligned) to confirm the exact bytes landed — proving the little-endian
+    // byte-decomposition, not the old "misaligned always traps" behavior.
     let mut bus = fresh_bus();
-    // loads: cause 4 with tval = ea
-    for (f3, mis) in [(0b001u32, 1i32), (0b010, 2), (0b011, 4)] {
-        let t = exec(&mut bus, load(f3, 1, 2, mis), &[(2, DATA)]).unwrap_err();
-        assert_eq!(t.cause, Exception::LoadAddrMisaligned, "load f3={f3:#b}");
-        assert_eq!(t.tval, DATA + mis as u64);
+    // (funct3, width, misalignment) for sh/sw/sd at a misaligned offset within RAM.
+    for (sf3, width, mis) in [(0b001u32, 2usize, 1i32), (0b010, 4, 2), (0b011, 8, 4)] {
+        bus.ram_mut().write_slice(DATA, &[0u8; 16]).unwrap();
+        let val = 0x1122_3344_5566_7788u64;
+        exec(&mut bus, s_type(mis, 3, 2, sf3), &[(2, DATA), (3, val)]).unwrap();
+        let mut got = [0u8; 16];
+        bus.ram().read_slice(DATA, &mut got).unwrap();
+        let want = val.to_le_bytes();
+        let off = mis as usize;
+        assert_eq!(
+            &got[off..off + width],
+            &want[..width],
+            "misaligned store width {width}"
+        );
+        // and nothing outside [off, off+width) was touched
+        assert!(
+            got[..off].iter().all(|&b| b == 0),
+            "wrote before offset, width {width}"
+        );
+        assert!(
+            got[off + width..].iter().all(|&b| b == 0),
+            "wrote past width {width}"
+        );
     }
-    // stores: cause 6
-    for (f3, mis) in [(0b001u32, 1i32), (0b010, 2), (0b011, 4)] {
-        let t = exec(&mut bus, s_type(mis, 3, 2, f3), &[(2, DATA), (3, 1)]).unwrap_err();
-        assert_eq!(t.cause, Exception::StoreAddrMisaligned, "store f3={f3:#b}");
-        assert_eq!(t.tval, DATA + mis as u64);
-    }
-    // negative offset off the RAM base: DRAM_BASE - 1 (adversarial angle 3)
+    // A byte load one below the RAM base is ALIGNED (1-byte) and simply out of range →
+    // LoadAccessFault (unchanged; not a misalignment case).
     let t = exec(&mut bus, load(0b000, 1, 2, -1), &[(2, DRAM_BASE)]).unwrap_err();
     assert_eq!(t.cause, Exception::LoadAccessFault);
     assert_eq!(t.tval, DRAM_BASE - 1);
@@ -271,18 +313,20 @@ fn boundary_sweep_last_slot_succeeds_one_past_faults() {
 #[test]
 fn pc_unmoved_after_every_memory_fault() {
     let mut bus = fresh_bus();
+    // E1-T26: misaligned-in-RAM no longer faults, so the misaligned fault cases use an
+    // 8-byte access at RAM_END-1 (x5) which is misaligned AND straddles past RAM.
     for word in [
-        load(0b011, 1, 2, 4),   // misaligned ld (x2=DATA)
+        load(0b011, 1, 5, 0),   // misaligned-straddle ld (x5=RAM_END-1)
         load(0b011, 1, 3, 0),   // access ld (x3=hole)
-        s_type(4, 3, 2, 0b011), // misaligned sd
+        s_type(0, 3, 5, 0b011), // misaligned-straddle sd
         s_type(0, 3, 4, 0b011), // access sd (x4=hole)
     ] {
         let mut hart = Hart::new();
         hart.regs.pc = CODE;
         bus.store32(CODE, word).unwrap();
-        hart.regs.write(2, DATA);
         hart.regs.write(3, 0x4000);
         hart.regs.write(4, 0x4000);
+        hart.regs.write(5, RAM_END - 1);
         hart.step(&mut bus).unwrap_err();
         assert_eq!(hart.regs.pc, CODE, "{word:#010x}: pc moved on fault");
     }
