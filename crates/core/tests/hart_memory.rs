@@ -233,12 +233,23 @@ fn boundary_sweep_last_slot_succeeds_one_past_faults() {
         exec(&mut bus, load(lf3, 1, 2, 0), &[(2, last)]).unwrap();
         // store at last valid slot succeeds
         exec(&mut bus, s_type(0, 3, 2, sf3), &[(2, last), (3, 7)]).unwrap();
-        // one byte past: straddles the end → Access (range beats alignment, E0-T03)
+        // one byte past (offset +1): the address is misaligned for w>1. Priv §3.7.1 ranks
+        // address-misaligned ABOVE access-fault (E1-T20 corrected the old E0-T03 "range beats
+        // alignment" simplification to match Spike/RISCOF), so w>1 reports misaligned; the aligned
+        // byte case (w=1) is a pure out-of-range access fault.
+        let (lcause, scause) = if w == 1 {
+            (Exception::LoadAccessFault, Exception::StoreAccessFault)
+        } else {
+            (
+                Exception::LoadAddrMisaligned,
+                Exception::StoreAddrMisaligned,
+            )
+        };
         let t = exec(&mut bus, load(lf3, 1, 2, 1), &[(2, last)]).unwrap_err();
-        assert_eq!(t.cause, Exception::LoadAccessFault, "w={w}");
+        assert_eq!(t.cause, lcause, "w={w}");
         assert_eq!(t.tval, last + 1);
         let t = exec(&mut bus, s_type(1, 3, 2, sf3), &[(2, last), (3, 7)]).unwrap_err();
-        assert_eq!(t.cause, Exception::StoreAccessFault, "w={w}");
+        assert_eq!(t.cause, scause, "w={w}");
     }
 }
 
