@@ -3,7 +3,7 @@ id: E1-T14
 epic: 1
 title: Zicntr counters — cycle/instret/time and mcounteren/scounteren delegation
 priority: 114
-status: implemented
+status: verified
 depends_on: [E1-T09, E1-T12]
 estimate: S
 capstone: false
@@ -120,3 +120,25 @@ written counter). Added `guest_csrw_counter_does_not_count_its_own_retirement` (
 then csrr → 100, not 101; csrw mcycle,500 stands at 500) — independently confirmed the revert
 (unconditional retire_tick) now FAILs it. Gate re-green (10 zicntr tests; fmt/clippy clean; mi +
 snapshot pass).
+
+### 2026-07-03 — adversarial verifier (round 2) — VERDICT: verified
+Fresh cold clone at HEAD 3d763d8. Spike 1.1.1-dev (`--isa=rv64gc_zicntr`), 9 bare-ELF commit-log
+diffs.
+- **Write-then-read now matches Spike exactly**: `csrw minstret,100; csrr → 100`, `csrw mcycle,500
+  → 500`, `csrw minstret,0; nop; csrr → 1`. Set/clear WRITE forms (`csrrs`/`csrrc` with nonzero
+  src) also suppress the self-increment (read 0x11/0x14, not 0x12/0x15) — because any Set/Clear
+  routing through write_raw sets the flag. A read-only `csrrs minstret,x0` (src zero → no write)
+  still counts normally (back-to-back delta 1). Suppression is WRITE-only.
+- **Flag-leak / arming correct** (the fix's critical risk): `csrw minstret,50; nop; nop; csrr → 52`
+  (only the writer's own increment suppressed, not the next); a host-side `set_csr` write's flag is
+  cleared by `arm_counters()` at the next step top, so a run's real increment is unaffected
+  (`minstret_wraps_around_unsigned` passes). Non-write delta positions unchanged.
+- **Full gate green**; rv64mi-p-zicntr + mi suite pass; snapshot/exhaustive unperturbed by
+  `arm_counters()`; stub `decode_props::roundtrip_csr` failure pre-existing (identical on the parent).
+- **Mutations all caught**: (a) arm_counters not called, (b) retire_tick ignores flags (round-1
+  bug), (c) wrong flag set, (d) arm_counters no-op — plus re-checked round-1 machinery mutations
+  (retire_tick emptied, counteren gating removed, instret shadow broken). No survivors.
+
+VERDICT: **verified** — the Zicntr counters (mcycle/minstret + cycle/instret shadows, time window,
+mcounteren/scounteren gating, and the Spike-exact increment position incl. write-self-suppression)
+are correct and mutation-covered.
