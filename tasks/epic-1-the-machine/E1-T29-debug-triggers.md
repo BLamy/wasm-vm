@@ -3,7 +3,7 @@ id: E1-T29
 epic: 1
 title: Debug triggers — tdata1/tdata2 breakpoint CSRs (Debug spec §5)
 priority: 129
-status: pending
+status: in_progress
 depends_on: [E1-T10]
 estimate: M
 capstone: false
@@ -85,3 +85,36 @@ UNIMPLEMENTED (illegal-instruction trap on first access), so the test fails. `cs
 
 After T29: allowlist + EXCLUSIONS both empty → **E1-T24 capstone can complete** (gate green, tag
 `level-1`, Epic 1 done). Branch `task/e1-t29-debug-triggers` is set up off the verified T26 branch.
+
+### 2026-07-04 — implemented: mcontrol triggers → rv64mi-p-breakpoint passes (0 deferrals)
+Debug-spec `mcontrol` (type 2) trigger implemented — a single trigger (index 0) that fires a
+`Breakpoint` (mcause 3) on an execute/load/store address match. **`rv64mi-p-breakpoint` now
+passes end-to-end**, removing the last allowlist entry → **zero capstone deferrals**.
+
+**CSR side (`csr.rs`):** `tselect`(0x7a0), `tdata1`(0x7a1, mcontrol), `tdata2`(0x7a2),
+`tdata3`(0x7a3), `tinfo`(0x7a4), `tcontrol`(0x7a5) added to `meta()` (M-mode, writable) — no
+longer illegal. WARL: `tselect` clamps to the single trigger (index 0), so `tselect=1` reads back
+0; `tdata1` forces the type field to mcontrol(2) and clears dmode (bit 59, debug-mode-only);
+`tinfo` advertises type-2 (bit 2); `tcontrol` keeps mte(3)/mpte(7). New `TrigKind` enum +
+`trigger_fires(addr, kind)` (checks type=2, the kind bit, mode gate — M needs `tcontrol.mte` —
+match==0/action==0, `tdata2==addr`).
+
+**Hot-path evaluation (`hart/mod.rs`), zero-cost when idle:** a `triggers_armed` flag (recomputed
+on each tdata write) gates a single `triggers_idle()` bool test on the hot path; only when a
+trigger is armed is `trigger_fires` called. Execute trigger checked at the top of `step_traced`
+(fires BEFORE fetch, mepc=pc); load/store triggers checked at the top of `checked_load`/
+`checked_store` (fires before the access, tval = data address, no partial store).
+
+**Coverage:** `rv64mi-p-breakpoint` in the MI subset (exercises execute + load + store triggers,
+the tselect-clamp, and tdata1 WARL round-trip end-to-end). Plus `crates/core/tests/triggers.rs`
+(7 focused unit tests): execute fires on matching PC (pc unmoved); load fires on the data address
+(not PC); store fires and does NOT commit; a load-only trigger ignores a store; a disabled trigger
+never fires (idle guard); M-mode needs `tcontrol.mte`; tselect clamp + tdata1 type-force + tinfo.
+
+**Gate:** `cargo fmt --check` clean; `cargo clippy --workspace --all-targets` clean; `cargo test
+--workspace` → **91 ok-suites, 0 FAILED** (+ the new triggers suite). Allowlist = 0 entries,
+EXCLUSIONS = 0 → **capstone deferral total 1 → 0.** RISCOF-vs-Sail re-confirm pending (triggers are
+idle-guarded so compliance is unaffected).
+
+**This clears the FINAL Level-1-capstone deferral.** After this, E1-T24's gate (allowlist + EXCLUSIONS
+both empty) can flip to green and the epic can complete.
