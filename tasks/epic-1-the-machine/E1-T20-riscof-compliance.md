@@ -77,10 +77,14 @@ spec-sanctioned **reference** (Sail fallback — no opam build); pypi + github a
   Spike sanity). **`compliance/README.md`** — reference choice, signature-dump contract, remaining
   deliverables. Heavy artifacts gitignored (`compliance/.venv`, `riscv-arch-test`, `riscof_work`).
 
-**Remaining (next work sessions, in order):** (1) signature-dump exit path — extend the loader to
-expose `begin_signature`/`end_signature` (it already scans `.symtab` for `tohost`, loader.rs:246),
-a core dump of RAM[begin..end) as 4-byte LE hex words, and a CLI `run --signature=FILE
---signature-granularity=4`; (2) DUT plugin `riscof_wasmvm.py` + `wasmvm_isa.yaml` (matches E1-T01
+### 2026-07-04 — increment 2: signature-dump exit path (DONE, tested)
+`loader.rs` `find_symbols` now exposes `begin_signature`/`end_signature` on `LoadedImage`;
+`Machine::load_elf` returns the image; `Machine::signature(begin,end,4)` formats RAM[begin..end) as
+LE lowercase hex words; CLI `run --signature=FILE --signature-granularity=4` writes it. Tests
+(`crates/core/tests/signature.rs`, 4) + **validated end-to-end**: a Docker-gcc `sigtest.elf` run
+through the CLI produced exactly `cafef00d\n00000042\n`. fmt/clippy clean.
+
+**Remaining (next, in order):** ~~(1) signature-dump~~ DONE. (2) DUT plugin `riscof_wasmvm.py` + `wasmvm_isa.yaml` (matches E1-T01
 misa) + platform yaml + `env/model_test.h` + `link.ld` (compile via Docker gcc, run via native
 `wasm-vm-cli`); (3) Spike reference plugin; (4) `config.ini` + `make riscof` + CI job + `EXCLUSIONS.md`;
 (5) wasm32 DUT leg (byte-identical signatures, leans on E1-T22); (6) mutation check. PR opens once
