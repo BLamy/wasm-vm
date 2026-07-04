@@ -3,7 +3,7 @@ id: E1-T16
 epic: 1
 title: Sv39 page-table walker — PTE bits, superpages, page faults, A/D policy
 priority: 116
-status: implemented
+status: verified
 depends_on: [E1-T09, E1-T10]
 estimate: L
 capstone: false
@@ -111,5 +111,32 @@ PTEs per access, misaligned superpage, non-canonical VA, Svade A/D, SUM/MXR/U-pr
 PMP access fault, superpages 2 MiB/1 GiB, MPRV. `crates/core/tests/sv39_e2e.rs` (4) — translated
 execute/load/store, load-page-fault-to-stvec (cause/stval/sepc), Svade store fault→succeed, and the
 straddling-fetch second-parcel precision. Local gate: fmt clean; clippy 0 (real + zicsr-stub,
-all-targets); `cargo test -p wasm-vm-core` 0 `test result: FAILED`. Awaiting full workspace/wasm gate
-+ adversarial verification (the hostile PTE-corpus vs Spike).
+all-targets); `cargo test -p wasm-vm-core` 0 `test result: FAILED`; both wasm builds 0 FAILED.
+
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: verified
+Fresh cold clone. Oracle: an INDEPENDENT re-encoding of Priv §4.3.1/§4.3.2 + the Svade trap rules
+(Spike was not on PATH — the charter's sanctioned fallback, and the right oracle for the Svade rows
+regardless since Spike hardware-updates A/D by default).
+- **Hostile leaf-PTE corpus (headline)**: all 256 low-8 PTE combos × {Fetch,Load,Store} × {S,U} ×
+  {SUM 0/1} × {MXR 0/1} = **6144 cells**, our `mmu::translate` vs the oracle → **0 divergences**.
+  Corners confirmed: R0W1-reserved faults; X-only+MXR loadable; S-fetch-from-U always faults;
+  S-data-from-U needs SUM; U confined to U pages; leaf-needs-R|X; A=0/store-D=0 Svade traps.
+- **Walk**: superpage offset bit-exact (2 MiB→VA[20:0], 1 GiB→VA[29:0]); pointer-with-A/D/U → fault;
+  misaligned superpage → fault; pointer-at-L0 → fault; canonical edges + a non-canonical alias
+  (low-39 bits equal to a mapped VA) → fault, not aliased.
+- **Integration**: cause 12/13/15; straddling fetch faults on the 2nd parcel (stval=2nd-page VA,
+  sepc=instr start); PTW PMP-denial → access fault 5 (not page fault); MPRV loads translate as MPP,
+  M-fetch identity; AMO needs R∧W. **Purity**: a faulting store leaves the table pages byte-identical
+  and NO A/D writeback exists (Svade — software updates).
+- **Gate green**: 83 suites 0 FAILED; clippy clean (workspace + zicsr-stub, all-targets); both wasm
+  builds clean; fmt clean. rv64ui-v toolchain-block confirmed honest (v-env vm.c needs newlib).
+- **Mutations 12/12 caught**: canonical-drop, R0W1-not-reserved, leaf-R&X, superpage-no-passthrough,
+  A-drop, D-drop, SUM-invert, S-fetch-from-U-allow, MXR-affects-fetch, PTW-PMP→pagefault,
+  fetch-uses-MPRV, pointer-U-not-faulted.
+- **Non-refuting note**: faulting a NON-leaf PTE with reserved A/D/U set is stricter than Spike's
+  default (which ignores them on pointers) but spec-permissible (§4.4: those bits "must be cleared by
+  software … or else a page-fault exception is raised") — the documented author's choice.
+
+VERDICT: **verified** — the Sv39 walker (3-level translation, all PTE bits, superpages, SUM/MXR,
+Svade A/D, non-canonical VAs, PTW-through-PMP, precise cause/stval/sepc) matches the spec across a
+6144-cell corpus and is mutation-covered.
