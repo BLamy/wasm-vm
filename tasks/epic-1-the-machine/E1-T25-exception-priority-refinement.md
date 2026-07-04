@@ -3,7 +3,7 @@ id: E1-T25
 epic: 1
 title: Exception-priority refinement — misaligned vs access/page fault (Priv §3.7.1)
 priority: 125
-status: in_progress
+status: verified
 depends_on: [E1-T20]
 estimate: M
 capstone: false
@@ -92,3 +92,27 @@ Removed `vm_sv39/src/vm_VA_all_zeros_S_mode.S` from `compliance/EXCLUSIONS.md` (
 too, a bonus from the same fix); tally **353 passed / 42 failed** (was 352/43), every failure still
 EXCLUSIONS-listed. The first of the 45 capstone deferrals (E1-T24) is burned to zero. Only
 `vm_sv57 … VA_all_zeros` still fails — correctly, it's in the Sv57 block (E1-T28's scope).
+
+### 2026-07-04 — critic round 1: VERIFIED (cold clone at `57c03ad`)
+Cold-clone critic verified at fixed HEAD `57c03ad`; all five attack vectors survived; clone clean.
+
+- **Gate:** `cargo fmt --check` exit 0; `cargo clippy --workspace --all-targets` exit 0; `cargo test
+  --workspace` exit 0, **0 FAILED, 90 ok-suites**.
+- **Pre-check §3.7.1-correct, BOTH directions test-proven:** all three pre-checks sit BEFORE
+  `translate_cached`, return `*AddrMisaligned` with tval=va, check `va & (len-1)`. (a) fires on
+  misaligned (hart_memory `last+1` w>1, e0t08 `RAM_END-w+1` w>1 → `*AddrMisaligned`); (b) does NOT
+  over-fire — the ADDED aligned-past case (`ea=RAM_END`, w-aligned) still reports `*AccessFault`, a
+  real test not reasoning; w==1 (`len-1==0`) never fires → byte access still routes to translate.
+- **Test updates honest (per-file §3.7.1 derivation):** e0t07 `X2_SENTINEL` low byte 0x02 → lb(1B)
+  aligned → LoadAccessFault, sd(8B) misaligned → StoreAddrMisaligned, purity KEPT; e0t08 device-silence
+  (`writes.is_empty()`) KEPT on both load+store straddle; "aligned access can't straddle an aligned
+  boundary" reasoning sound. No assertion changed to a §3.7.1-incorrect cause; no check dropped.
+- **No regression:** `misaligned_ld_sd_causes_4_and_6` ok (in-RAM misaligned still 4/6, tval unchanged);
+  `misaligned_amo_and_sc_trap_store_cause_no_partial_write` ok (AMO still faults StoreAddrMisaligned).
+- **Exclusion removal real:** diff removes exactly one `.S` line → 43→42; file has 42 `.S` entries.
+- **RISCOF (provisioned + run once, exit 0):** **353 passed / 42 failed, GREEN**; `vm_sv39 VA_all_zeros
+  … Passed` (and vm_sv48); only `vm_sv57 VA_all_zeros` fails (correctly in the excluded Sv57 block);
+  all 42 failures EXCLUSIONS-listed, no new unexcused failure.
+
+**VERDICT: verified.** (critic agent `a63255a26aa46187d`, 17 tool-uses, cold clone, no push.) First of
+the 45 Level-1-capstone (E1-T24) deferrals burned to zero: 45 → 44 remaining.
