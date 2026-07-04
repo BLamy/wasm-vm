@@ -111,3 +111,23 @@ a `make riscof` target (generates config.ini + runs) + CI job + the isa-yaml-vs-
 (acceptance #2) + the wasm-signature-equivalence leg + a seeded-mutation check (LWU sign-ext →
 mismatch). Note: Docker-gcc-per-test is slow — for CI wall-time, consider a host riscv-gcc or a
 batched/persistent compile. Then open the PR with the RISCOF report as evidence.
+
+### 2026-07-04 — 2 real gaps FIXED (344→352) + full triage of the remaining 43
+Committed the reserved-PTE-bit (mmu.rs) + TVM-on-satp (csr.rs) fixes; re-ran RISCOF → the 8 sv39/sv48
+tests flip to PASS (**352/395**). ALL 43 remaining failures triaged from the signature diffs:
+- **38 Sv57** (`vm_sv57` + `vm_pmp/sv57` + the sv57 variants of svnapot/svpbmt/reserved/tvm) —
+  unimplemented; we implement to Sv48 (E1-T18), `satp` MODE=10 correctly rejected. → `EXCLUSIONS.md`.
+- **1 `vm_sv39 VA_all_zeros`** — 8-line diff: our cause **5** (LoadAccessFault) + tval vs Spike's
+  cause **4** (LoadAddrMisaligned) + tval∓1. The DOCUMENTED exception-priority gap (misaligned should
+  outrank access-fault, but our load/store path checks translate/PMP before alignment — the deferred
+  E0-T08/E1-T15 refinement). → fix (reorder the misaligned check ahead of translate/PMP) OR exclude.
+- **4 `pmp/pmpm_all_entries_check-01..04`** — LARGE diffs (528/560/560/48 lines; extra cause-2 entries)
+  — a genuine PMP divergence when all 16 entries are configured (a real bug to investigate). → fix or
+  exclude with justification.
+
+**Remaining → PR:** decide fix-vs-exclude for the 5 (the exception-priority reorder is tractable; the
+pmpm-16-entries needs a debug pass); `compliance/EXCLUSIONS.md` (Sv57 + any deferred, spec-cited); a
+`make riscof` target (generate config.ini + run + report) + CI job + the isa-yaml-vs-misa cross-check
+(acceptance #2) + wasm-signature-equivalence leg + a seeded-mutation check (LWU sign-ext). Docker-gcc-
+per-test is slow (~min/suite) — for CI, a host riscv-gcc or batched compile. Then open the PR with the
+report as evidence.
