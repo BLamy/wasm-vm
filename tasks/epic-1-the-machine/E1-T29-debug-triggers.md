@@ -53,4 +53,35 @@ tdata1 must read back as disabled, not as the written value. Re-run the rv64mi s
 cold clone.
 
 ## Verification log
-(empty)
+
+### 2026-07-04 — scoped (branch set up; the LAST Level-1-capstone deferral)
+After E1-T26 emptied `compliance/EXCLUSIONS.md` (Sail reference), **`rv64mi-p-breakpoint` is the
+single remaining capstone deferral** (allowlist = 1 entry). Clearing it + running the capstone
+gate = Level 1 done.
+
+**Investigation (breakpoint ELF present, disassembled):** the test uses exactly the debug-spec
+trigger CSRs — `tselect` (0x7a0), `tdata1` (0x7a1), `tdata2` (0x7a2) (writes tselect=0, reads it
+back; writes tdata2 then tdata1 (mcontrol), reads tdata1 back; repeats). These CSRs are currently
+UNIMPLEMENTED (illegal-instruction trap on first access), so the test fails. `csr.rs` has no
+`tselect/tdata*/tinfo` handling yet.
+
+**Minimal implementation plan (next pass — hot-path, implement carefully):**
+1. Trigger CSR file in `csr.rs`: `tselect` (0x7a0, WARL index — support ≥1 trigger), `tdata1`
+   (0x7a1, mcontrol/mcontrol6 layout: type[63:60], dmode, action, match, m/s/u, execute/load/store,
+   select, size), `tdata2` (0x7a2, compare value), `tinfo` (0x7a4, supported types bitmap), `tcontrol`
+   if the test needs it. WARL: unsupported trigger types read back as disabled (type=0).
+2. Trigger evaluation: on FETCH (pc match) and load/store (data-address match), with the trigger
+   enabled + mode bits gated, action=0 (exception) → raise `Breakpoint` (mcause 3) BEFORE the access
+   commits, with the spec'd tval, at the correct §3.7.1 priority. Zero-cost when no trigger is armed
+   (a fast "any trigger enabled?" guard so the hot path pays nothing with triggers off — mirror the
+   E0-T15/T16 zero-cost tracer pattern).
+3. Remove `rv64mi-p-breakpoint` from `tests/riscv-tests-allowlist.txt` (→ 0 allowlist entries) AND
+   re-add `breakpoint` to `riscv_tests_mi.rs` MI_SUBSET.
+4. Regression tests: execute-trigger fires on matching PC; load/store triggers on the matching data
+   address (not the PC); a disabled trigger never fires; mode bits gate; §3.7.1 priority vs
+   misaligned/page-fault; WARL rejects unsupported types.
+5. Gate: `rv64mi-p-breakpoint` passes; `cargo test --workspace`; `RISCOF_REF=sail make riscof` stays
+   395/0; the no-trigger-armed hot path shows no perf regression (check-zero-cost style).
+
+After T29: allowlist + EXCLUSIONS both empty → **E1-T24 capstone can complete** (gate green, tag
+`level-1`, Epic 1 done). Branch `task/e1-t29-debug-triggers` is set up off the verified T26 branch.
