@@ -17,17 +17,18 @@ ARCHTEST_DIR="${ARCHTEST_DIR:-$PWD/compliance/riscv-arch-test}"  # gitignored
 "$VENV/bin/pip" install --quiet --upgrade pip
 "$VENV/bin/pip" install --quiet "riscof==${RISCOF_VERSION}"
 
-# 2) riscv-arch-test at a pinned commit.
-if [ ! -d "$ARCHTEST_DIR/.git" ]; then
-  git clone --quiet https://github.com/riscv-non-isa/riscv-arch-test.git "$ARCHTEST_DIR"
-fi
-git -C "$ARCHTEST_DIR" fetch --quiet origin "$ARCHTEST_COMMIT" 2>/dev/null || true
-git -C "$ARCHTEST_DIR" checkout --quiet "$ARCHTEST_COMMIT"
+# 2) riscv-arch-test via RISCOF's own cloner — it pins a RISCOF-COMPATIBLE ref (the
+#    `riscv-test-suite/` + `env/arch_test.h` layout). The repo's current `main` reorganized to a
+#    `tests/` layout RISCOF 1.25.3 cannot consume, so do NOT `git clone` main directly.
+"$VENV/bin/riscof" arch-test --clone --dir="$ARCHTEST_DIR" >/dev/null 2>&1 \
+  || "$VENV/bin/riscof" arch-test --update --dir="$ARCHTEST_DIR" >/dev/null 2>&1 || true
+# The shipped reference plugins (riscof-plugins/rv64/spike_simple) are the base for compliance/spike
+# and compliance/wasmvm.
 
 # 3) Sanity: Spike (reference) reachable via the Docker toolchain image.
 tools/toolchain/run.sh -- spike --help >/dev/null 2>&1 || {
   echo "error: Spike not reachable — build the toolchain image: tools/toolchain/build.sh" >&2; exit 1; }
 
-echo "provisioned: riscof ${RISCOF_VERSION}, riscv-arch-test @ ${ARCHTEST_COMMIT}, Spike (Docker) OK"
+echo "provisioned: riscof ${RISCOF_VERSION}, riscv-arch-test (RISCOF-pinned ctp-release @ 281d71ef), Spike (Docker) OK"
 echo "  venv:      $VENV"
 echo "  arch-test: $ARCHTEST_DIR"
