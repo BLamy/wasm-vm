@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E1-T25** — Exception-priority refinement — misaligned vs access/page fault (Priv §3.7.1)
 1. **E1-T27** — 64-region PMP — pmpaddr0..63 / pmpcfg0..14 (Priv §3.7)
 1. **E1-T28** — Sv57 five-level paging — satp MODE=10 (Priv §4.5)
 1. **E1-T29** — Debug triggers — tdata1/tdata2 breakpoint CSRs (Debug spec §5)

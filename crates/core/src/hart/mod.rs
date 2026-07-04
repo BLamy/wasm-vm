@@ -317,6 +317,18 @@ fn xlate_load(
     va: u64,
     len: u64,
 ) -> Result<u64, Trap> {
+    // §3.7.1 exception priority: address-misaligned outranks access-fault and page-fault.
+    // The old path let misalignment surface at the BUS (after translate+PMP), so an access
+    // that was BOTH misaligned and untranslatable/PMP-denied reported the wrong (lower-
+    // priority) cause. Check natural alignment FIRST (`len` is a power of two). NOTE: until
+    // E1-T26 lands misaligned-RAM support, every misaligned data access faults here — same
+    // as before, only the PRIORITY (and tval anchoring on the VA) is now spec-correct.
+    if va & (len - 1) != 0 {
+        return Err(Trap {
+            cause: Exception::LoadAddrMisaligned,
+            tval: va,
+        });
+    }
     let eff = csr.data_priv();
     let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Load, eff)?;
     if !csr.pmp_ok(pa, len, PmpAccess::Read, eff) {
@@ -336,6 +348,14 @@ fn xlate_store(
     va: u64,
     len: u64,
 ) -> Result<u64, Trap> {
+    // §3.7.1: store/AMO address-misaligned outranks store access-fault and page-fault. See
+    // the xlate_load note. Check natural alignment before translate+PMP.
+    if va & (len - 1) != 0 {
+        return Err(Trap {
+            cause: Exception::StoreAddrMisaligned,
+            tval: va,
+        });
+    }
     let eff = csr.data_priv();
     let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Store, eff)?;
     if !csr.pmp_ok(pa, len, PmpAccess::Write, eff) {
@@ -355,6 +375,15 @@ fn xlate_amo(
     va: u64,
     len: u64,
 ) -> Result<u64, Trap> {
+    // AMOs require natural alignment (Unpriv §8.2); a misaligned AMO is StoreAddrMisaligned,
+    // and §3.7.1 gives it priority over the translate/PMP faults below. E1-T26's misaligned-
+    // RAM support explicitly does NOT extend to atomics, so this pre-check is permanent.
+    if va & (len - 1) != 0 {
+        return Err(Trap {
+            cause: Exception::StoreAddrMisaligned,
+            tval: va,
+        });
+    }
     let eff = csr.data_priv();
     let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Store, eff)?;
     if !(csr.pmp_ok(pa, len, PmpAccess::Read, eff) && csr.pmp_ok(pa, len, PmpAccess::Write, eff)) {

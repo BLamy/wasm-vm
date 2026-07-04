@@ -233,12 +233,38 @@ fn boundary_sweep_last_slot_succeeds_one_past_faults() {
         exec(&mut bus, load(lf3, 1, 2, 0), &[(2, last)]).unwrap();
         // store at last valid slot succeeds
         exec(&mut bus, s_type(0, 3, 2, sf3), &[(2, last), (3, 7)]).unwrap();
-        // one byte past: straddles the end → Access (range beats alignment, E0-T03)
-        let t = exec(&mut bus, load(lf3, 1, 2, 1), &[(2, last)]).unwrap_err();
-        assert_eq!(t.cause, Exception::LoadAccessFault, "w={w}");
-        assert_eq!(t.tval, last + 1);
-        let t = exec(&mut bus, s_type(1, 3, 2, sf3), &[(2, last), (3, 7)]).unwrap_err();
-        assert_eq!(t.cause, Exception::StoreAccessFault, "w={w}");
+        // E1-T25 (§3.7.1): an ALIGNED access one full width past the end faults Access —
+        // it is entirely out of range and has no misalignment to outrank the access fault.
+        // (RAM_END is 8-aligned, so `last + w == RAM_END` is w-aligned.)
+        let past = w as i32;
+        let t = exec(&mut bus, load(lf3, 1, 2, past), &[(2, last)]).unwrap_err();
+        assert_eq!(t.cause, Exception::LoadAccessFault, "aligned-past w={w}");
+        assert_eq!(t.tval, last + w);
+        let t = exec(&mut bus, s_type(past, 3, 2, sf3), &[(2, last), (3, 7)]).unwrap_err();
+        assert_eq!(
+            t.cause,
+            Exception::StoreAccessFault,
+            "aligned-past store w={w}"
+        );
+        // E1-T25 (§3.7.1): for w>1, one BYTE past is a MISALIGNED access that also straddles
+        // the end — misaligned OUTRANKS access-fault, so the cause flips to *AddrMisaligned
+        // (the priority correction this task lands). For w==1 the +1 access is byte-aligned,
+        // so it coincides with the aligned-past Access case above (nothing misaligned to test).
+        if w > 1 {
+            let t = exec(&mut bus, load(lf3, 1, 2, 1), &[(2, last)]).unwrap_err();
+            assert_eq!(
+                t.cause,
+                Exception::LoadAddrMisaligned,
+                "misaligned-straddle w={w}"
+            );
+            assert_eq!(t.tval, last + 1);
+            let t = exec(&mut bus, s_type(1, 3, 2, sf3), &[(2, last), (3, 7)]).unwrap_err();
+            assert_eq!(
+                t.cause,
+                Exception::StoreAddrMisaligned,
+                "misaligned-straddle store w={w}"
+            );
+        }
     }
 }
 
