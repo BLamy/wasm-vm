@@ -23,6 +23,11 @@ pub struct LoadedImage {
     pub tohost: Option<u64>,
     /// Address of the `fromhost` symbol, when present.
     pub fromhost: Option<u64>,
+    /// RISCOF signature region bounds (E1-T20): the `begin_signature`/`end_signature` symbols
+    /// bracket the memory the compliance harness dumps and diffs against the reference. `None`
+    /// when absent (non-arch-test binaries).
+    pub begin_signature: Option<u64>,
+    pub end_signature: Option<u64>,
 }
 
 /// Why an image was rejected. Precision matters: an x86-64 ELF must be rejected for
@@ -180,24 +185,31 @@ pub fn load_elf(bytes: &[u8], ram: &mut Ram) -> Result<LoadedImage, ElfError> {
     }
 
     // ── best-effort symbol lookup (never errors, never panics) ──────────────
-    let (tohost, fromhost) = find_htif_symbols(bytes, e_shoff, e_shentsize, e_shnum);
+    let syms = find_symbols(bytes, e_shoff, e_shentsize, e_shnum);
 
     Ok(LoadedImage {
         entry,
-        tohost,
-        fromhost,
+        tohost: syms.tohost,
+        fromhost: syms.fromhost,
+        begin_signature: syms.begin_signature,
+        end_signature: syms.end_signature,
     })
 }
 
-/// Scan `.symtab`/`.strtab` for `tohost`/`fromhost`. Any inconsistency → `None`s.
-fn find_htif_symbols(
-    bytes: &[u8],
-    e_shoff: u64,
-    e_shentsize: u64,
-    e_shnum: u64,
-) -> (Option<u64>, Option<u64>) {
+/// Symbols the loader extracts best-effort from `.symtab` (HTIF + RISCOF signature).
+#[derive(Default)]
+struct Symbols {
+    tohost: Option<u64>,
+    fromhost: Option<u64>,
+    begin_signature: Option<u64>,
+    end_signature: Option<u64>,
+}
+
+/// Scan `.symtab`/`.strtab` for `tohost`/`fromhost` (HTIF) and `begin_signature`/`end_signature`
+/// (RISCOF). Any inconsistency → all `None`.
+fn find_symbols(bytes: &[u8], e_shoff: u64, e_shentsize: u64, e_shnum: u64) -> Symbols {
     if e_shentsize < 64 {
-        return (None, None);
+        return Symbols::default();
     }
     let sh = |i: u64, field: usize| -> Option<u64> {
         let off = e_shoff.checked_add(i.checked_mul(e_shentsize)?)?;
@@ -210,23 +222,22 @@ fn find_htif_symbols(
         u32le(bytes, off.checked_add(field)?).ok()
     };
 
-    let mut tohost = None;
-    let mut fromhost = None;
+    let mut syms = Symbols::default();
     for i in 0..e_shnum.min(256) {
         if sh32(i, 4) != Some(SHT_SYMTAB) {
             continue;
         }
         let (Some(sym_off), Some(sym_size), Some(link)) = (sh(i, 24), sh(i, 32), sh32(i, 40))
         else {
-            return (None, None);
+            return Symbols::default();
         };
         // The linked string table section.
         let (Some(str_off), Some(str_size)) = (sh(u64::from(link), 24), sh(u64::from(link), 32))
         else {
-            return (None, None);
+            return Symbols::default();
         };
         let Ok((str_a, str_b)) = file_range(bytes, str_off, str_size) else {
-            return (None, None);
+            return Symbols::default();
         };
         let strtab = &bytes[str_a..str_b];
 
@@ -241,15 +252,16 @@ fn find_htif_symbols(
             let (Ok(name_off), Ok(value)) = (u32le(bytes, a), u64le(bytes, a + 8)) else {
                 break;
             };
-            let name = name_at(strtab, name_off as usize);
-            match name {
-                Some(b"tohost") => tohost = Some(value),
-                Some(b"fromhost") => fromhost = Some(value),
+            match name_at(strtab, name_off as usize) {
+                Some(b"tohost") => syms.tohost = Some(value),
+                Some(b"fromhost") => syms.fromhost = Some(value),
+                Some(b"begin_signature") => syms.begin_signature = Some(value),
+                Some(b"end_signature") => syms.end_signature = Some(value),
                 _ => {}
             }
         }
     }
-    (tohost, fromhost)
+    syms
 }
 
 /// NUL-terminated name at `off` inside a string table; `None` if unterminated.

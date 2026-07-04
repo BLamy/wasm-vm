@@ -163,15 +163,17 @@ impl Machine {
 
     /// Load an ELF image: copy segments into RAM, set the PC to `e_entry`, and
     /// arm the HTIF watch on `tohost` if the symbol is present. A missing `tohost`
-    /// leaves HTIF unarmed → the guest can only end via trap or `MaxInstrs`.
-    pub fn load_elf(&mut self, bytes: &[u8]) -> Result<(), ElfError> {
+    /// leaves HTIF unarmed → the guest can only end via trap or `MaxInstrs`. Returns the
+    /// [`loader::LoadedImage`] (entry + HTIF + RISCOF signature symbols) — existing callers
+    /// that ignore it are unaffected.
+    pub fn load_elf(&mut self, bytes: &[u8]) -> Result<loader::LoadedImage, ElfError> {
         let img = loader::load_elf(bytes, self.bus.ram_mut())?;
         self.hart.regs.pc = img.entry;
         self.htif = img.tohost.map(Htif::new);
         self.last_tohost = self
             .htif
             .map_or(0, |h| h.check(&mut self.bus).raw_or_zero());
-        Ok(())
+        Ok(img)
     }
 
     /// Borrow the hart / bus for test rigs and the CLI (seeding instructions,
@@ -184,6 +186,29 @@ impl Machine {
     }
     pub fn hart(&self) -> &Hart {
         &self.hart
+    }
+
+    /// RISCOF signature dump (E1-T20): the memory region `[begin, end)` formatted as the
+    /// arch-test signature — one `granularity`-byte little-endian value per line, lowercase
+    /// hex, zero-padded to `2*granularity` digits. Only `granularity == 4` (the RISCOF default)
+    /// is supported. Reads through the bus (so it goes through the same physical map the guest
+    /// wrote); a byte outside RAM reads 0. `end` is rounded up to the next word.
+    pub fn signature(&mut self, begin: u64, end: u64, granularity: u32) -> Result<String, String> {
+        use crate::bus::Bus;
+        use core::fmt::Write as _;
+        if granularity != 4 {
+            return Err(format!(
+                "unsupported --signature-granularity {granularity} (only 4)"
+            ));
+        }
+        let mut out = String::new();
+        let mut a = begin & !3; // word-align the start
+        while a < end {
+            let w = self.bus.load32(a).unwrap_or(0);
+            let _ = writeln!(out, "{w:08x}");
+            a += 4;
+        }
+        Ok(out)
     }
 
     /// Arm the HTIF watch directly (for blobs assembled in-memory without an ELF).
