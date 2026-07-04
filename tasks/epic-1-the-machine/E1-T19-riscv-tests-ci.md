@@ -3,7 +3,7 @@ id: E1-T19
 epic: 1
 title: riscv-tests suite integration in CI with per-test pass/fail reporting
 priority: 119
-status: in_progress
+status: verified
 depends_on: [E1-T03, E1-T04, E1-T07, E1-T08, E1-T12, E1-T17]
 estimate: M
 capstone: false
@@ -103,3 +103,30 @@ allowlisted); report byte-identical across two runs.
   determinism — identical traces), whose entire charter is establishing wasm==native; T19 wires the
   native wall + report format E1-T22 consumes. The wasm build itself is CI-guarded already.
 - **CI wall-time ≤ 15 min (acceptance #6)** is a CI-runtime property, not locally measurable.
+
+### 2026-07-04 — adversarial verifier (round 1) — VERDICT: verified
+Fresh cold clone at 215067f. This is a harness/CI task, so the attack surface is harness HONESTY.
+- **Independent gate**: fmt clean; clippy 0 (workspace, all-targets); `cargo test --test
+  riscv_tests_suite` 5 passed; `tools/run_riscv_tests.sh` writes the report, 124/127 (3 allowlisted).
+- **Mutation matrix — every extension wired to the CPU, each caught with the expected test named**
+  (real emulator-source mutation → wall run → reverted): (a) `Slt`→unsigned → `rv64ui-p-slt FAIL`;
+  (b) `Mulh >>64`→`>>63` → `rv64um-p-mulh FAIL`; (c) `amo_d Add`→`Swap` → `rv64ua-p-amoadd_d FAIL`;
+  (d) `FpArithD add`→`sub` → `rv64ud-p-fadd FAIL`; (e) `C.ADDI` expansion off-by-one →
+  `rv64uc-p-rvc FAIL`; (f) `m_handler_entry base`→`base+4` → `rv64mi-p-* RED`. An uncaught mutation
+  would have meant the suite wasn't exercising that unit — none escaped.
+- **Honesty**: `fail_exit_code_is_reported_as_fail` and `corrupted_binary_does_not_pass` read (not
+  name-trusted) and confirmed; end-to-end, real fail codes turn the wall red. Empty corpus (127 ELFs
+  moved aside) → the wall PANICS "an empty run is NEVER a green report" (`!elfs.is_empty()` is
+  load-bearing). Allowlist BOTH directions: removing `ma_data` → RED (unlisted failure); adding
+  passing `rv64ui-p-add` → RED (stale entry).
+- **Determinism (acceptance #5)**: two runs → byte-identical `report.json`; contains git_rev +
+  FNV-1a corpus_fingerprint; no timestamp tokens.
+- **Coverage/manifest**: `shasum -a256 -c MANIFEST.sha256` → all 127 OK; per-suite counts sum to 127.
+- **Deferral honesty confirmed**: `-v`/`rv64si` ELFs genuinely absent (0 files) and documented as
+  "not built"; wasm==native deferred to E1-T22; the CI `riscv-tests` job and `make ci` both invoke
+  the runner.
+
+VERDICT: **verified** — an honest, deterministic, CPU-wired regression wall; all six extension
+mutations caught by name, empty-corpus errors, allowlist enforced both directions, 127-ELF manifest
+verified, deferrals real. (Scope note: the native wall is complete; `-v`/`rv64si` await the newlib
+toolchain and the wasm report-equality is E1-T22's charter — both documented, not hidden.)
