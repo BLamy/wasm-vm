@@ -396,18 +396,24 @@ fn xlate_amo(
 }
 
 // ── Misaligned data-access support (E1-T26) ──────────────────────────────────────────
-// Misaligned loads/stores are handled ONLY for main memory (RAM); MMIO, cross-region,
-// cross-page, and unmapped misaligned accesses keep the §3.7.1 `*AddrMisaligned` trap
-// (E1-T25). Atomics (AMO/LR/SC) never reach here — they require natural alignment and
-// pre-check it themselves. Handled accesses are decomposed into byte operations, so a
-// misaligned access can never partially touch a device (the device is never consulted on a
-// straddle, preserving the E0-T08 device-silence invariant).
+// We SUPPORT hardware misaligned scalar load/store to main memory (RAM). Because misaligned
+// IS supported, a misaligned scalar access raises NO misaligned exception (Priv §3.7.1): the
+// access proceeds, and any translation/PMP/range fault it hits is reported AS-IS (page fault,
+// or access fault) — the same fault an aligned access to that address would raise. This is
+// the key correctness point the Sail reference exposed: a misaligned access to an UNMAPPED
+// page is a PAGE FAULT, not `*AddrMisaligned`. Only atomics (AMO/LR/SC) still require natural
+// alignment and raise `*AddrMisaligned` (they pre-check it themselves and never reach here).
+//
+// Handled accesses are byte-decomposed over a range first proven to be CONTIGUOUS RAM, so a
+// misaligned store never partially writes before discovering a fault, and a misaligned access
+// never partially touches a device (device-silence preserved).
 
-/// Supportability gate shared by misaligned load and store: translate the first and last
-/// byte of `[a, a+len)` and return the physical base address IFF the range maps to
-/// CONTIGUOUS RAM that PMP permits — the only case a misaligned access is handled instead of
-/// trapped. `None` = "not supported → trap `*AddrMisaligned`": a translation fault, a
-/// non-contiguous or cross-page mapping, a range not entirely in RAM, or a PMP denial.
+/// Supportability gate shared by misaligned load and store: translate the first and last byte
+/// of `[a, a+len)`, PROPAGATING any translation fault (page/access) — a misaligned-supporting
+/// machine reports the real fault, never a misaligned exception. On success returns the RAM
+/// physical base iff the range is contiguous RAM that PMP permits, or `None` meaning "reached
+/// a non-RAM / non-contiguous region" (the caller reports that as an access fault, not
+/// misaligned).
 #[inline]
 fn misaligned_ram_base(
     csr: &Csrs,
@@ -417,24 +423,26 @@ fn misaligned_ram_base(
     len: u64,
     access: Access,
     pmp: PmpAccess,
-) -> Option<u64> {
+) -> Result<Option<u64>, Trap> {
     let eff = csr.data_priv();
-    let a_last = a.checked_add(len - 1)?;
-    let pa0 = mmu::translate_cached(csr, tlb, bus, a, access, eff).ok()?;
-    let pa_last = mmu::translate_cached(csr, tlb, bus, a_last, access, eff).ok()?;
-    if pa_last == pa0.checked_add(len - 1)?
+    let a_last = a.wrapping_add(len - 1);
+    // `?` PROPAGATES a page/access fault from translation — this is the §3.7.1 fix.
+    let pa0 = mmu::translate_cached(csr, tlb, bus, a, access, eff)?;
+    let pa_last = mmu::translate_cached(csr, tlb, bus, a_last, access, eff)?;
+    if pa_last == pa0.wrapping_add(len - 1)
         && bus.ram_contains(pa0, len)
         && csr.pmp_ok(pa0, len, pmp, eff)
     {
-        Some(pa0)
+        Ok(Some(pa0))
     } else {
-        None
+        Ok(None)
     }
 }
 
-/// Handle a misaligned LOAD: assemble `len` little-endian bytes from the contiguous RAM
-/// range (gated by [`misaligned_ram_base`]). Returns the raw value in a `u64`; the caller
-/// truncates to width and sign/zero-extends. Trap = `LoadAddrMisaligned` when unsupported.
+/// Handle a misaligned LOAD: assemble `len` little-endian bytes from the contiguous RAM range.
+/// Returns the raw value in a `u64` (caller truncates + sign/zero-extends). A translation
+/// fault propagates as page/access fault; a non-RAM/non-contiguous range is a `LoadAccessFault`
+/// (never `LoadAddrMisaligned`, since misaligned is supported).
 #[inline]
 fn misaligned_load(
     csr: &Csrs,
@@ -444,8 +452,8 @@ fn misaligned_load(
     len: u64,
 ) -> Result<u64, Trap> {
     let pa0 =
-        misaligned_ram_base(csr, tlb, bus, a, len, Access::Load, PmpAccess::Read).ok_or(Trap {
-            cause: Exception::LoadAddrMisaligned,
+        misaligned_ram_base(csr, tlb, bus, a, len, Access::Load, PmpAccess::Read)?.ok_or(Trap {
+            cause: Exception::LoadAccessFault,
             tval: a,
         })?;
     let mut val = 0u64;
@@ -457,8 +465,9 @@ fn misaligned_load(
 }
 
 /// Handle a misaligned STORE: write `len` little-endian bytes of `v` to the contiguous RAM
-/// range (gated by [`misaligned_ram_base`]). Trap = `StoreAddrMisaligned` when unsupported;
-/// because the gate runs BEFORE any byte is written, an unsupported store mutates nothing.
+/// range. A translation fault propagates as page/access fault; a non-RAM/non-contiguous range
+/// is a `StoreAccessFault`. Because the gate runs BEFORE any byte is written, a faulting store
+/// mutates nothing (no partial write).
 #[inline]
 fn misaligned_store(
     csr: &Csrs,
@@ -468,12 +477,14 @@ fn misaligned_store(
     len: u64,
     v: u64,
 ) -> Result<(), Trap> {
-    let pa0 = misaligned_ram_base(csr, tlb, bus, a, len, Access::Store, PmpAccess::Write).ok_or(
+    let pa0 = misaligned_ram_base(csr, tlb, bus, a, len, Access::Store, PmpAccess::Write)?.ok_or(
         Trap {
-            cause: Exception::StoreAddrMisaligned,
+            cause: Exception::StoreAccessFault,
             tval: a,
         },
     )?;
+    // The range is proven contiguous RAM, so these byte stores cannot partially fault — no
+    // partial write is observable (the gate ran before any store).
     for i in 0..len {
         bus.store8(pa0 + i, (v >> (8 * i)) as u8)
             .map_err(|f| store_fault(f, a))?;

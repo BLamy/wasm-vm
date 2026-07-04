@@ -1,66 +1,29 @@
-# RISCOF known-exclusion list (E1-T20)
+# RISCOF known-exclusion list (E1-T20; emptied E1-T26)
 
-Tests whose DUT-vs-Spike signature comparison is permitted to differ, each with a spec-cited
-justification. Target: EMPTY by the Level-1 capstone (E1-T24). Every entry is a documented
-implementation-scope choice, NOT a hidden failure. Format: <test path>  # <reason>.
+Tests whose DUT-vs-reference signature comparison is permitted to differ, each with a
+spec-cited justification. **Target: EMPTY by the Level-1 capstone (E1-T24) — now MET.**
 
-## Sv57 virtual memory — NOT IMPLEMENTED (Priv §4.5; §4.1.11 satp MODE)
-We implement Bare / Sv39 / Sv48 (E1-T16, E1-T18); satp MODE=10 (Sv57) is a WARL no-op (correctly
-rejected). These tests exercise a paging mode we don't provide — spec-permissible (any subset of
-Bare/Sv39/Sv48/Sv57 is legal). Removed by a future Sv57 task.
+## Status: EMPTY — the full arch-test suite passes (395 / 0) against the Sail reference
 
-vm_pmp/src/sv57/sv57_pmp_on_pa_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_pmp/src/sv57/sv57_pmp_on_pa_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_pmp/src/sv57/sv57_pmp_on_pte_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_pmp/src/sv57/sv57_pmp_on_pte_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_A_and_D_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_A_and_D_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_canonical_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_canonical_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_global_pte_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_global_pte_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_invalid_pte_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_invalid_pte_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_misaligned_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_misaligned_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_mprv_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_mprv_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_mprv_U_set_sum_set_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_mprv_U_set_sum_unset_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_mstatus_sbe_set_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_mstatus_sbe_set_sum_set_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_mxr_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_mxr_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_nleaf_pte_level0_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_nleaf_pte_level0_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_pte_reserved_field_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_reserved_rsw_pte_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_reserved_rsw_pte_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_reserved_rwx_pte_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_reserved_rwx_pte_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_reserved_svnapot_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_reserved_svpbmt_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_satp_access_tests.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_spage_access_U_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_sum_set_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_sum_set_U_bit_unset_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_sum_unset_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_VA_all_ones_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
-vm_sv57/src/sv57_VA_all_zeros_S_mode.S  # Sv57 unimplemented (we support up to Sv48)
+Every entry that lived here existed for ONE reason: the **Spike** fallback reference
+(spike-1.1.1-dev) could not be configured to our exact declared ISA. Spike hardcodes
+misaligned trapping, and its ISA/extension set could not be pared to Bare/Sv39/Sv48 + 16-entry
+PMP, so signatures diverged on tests our machine handles correctly for the ISA it *declares*.
 
-## 64-region PMP — WE IMPLEMENT 16 ENTRIES (Priv §3.7: 0..64 PMP entries permitted)
-pmpm_all_entries_check-* are gated RVTEST_CASE(... verify (PMP['pmp-writable'] == 64) ...) — they
-require a 64-entry PMP. We implement 16 (E1-T15: pmpcfg0/2 + pmpaddr0..15), a spec-legal count;
-writing pmpaddr16..63 (unimplemented CSRs) correctly raises illegal-instruction, so the signature
-diverges from a 64-entry reference. Not a bug. A future task may widen PMP to 64 entries.
+E1-T26 switched the reference to the canonical **RISC-V Sail model** (`sail_riscv_sim`, a
+config-honoring golden model), with `compliance/sail/sail_config_override.json` pinning Sail to
+our declared ISA (rv64gc + S/U + Sv39/Sv48; misaligned scalar supported; Svnapot/Svpbmt/Sv57/
+Svrsw60t59b disabled). Against that reference the **entire suite passes with 0 failures**, so
+there is nothing to exclude:
 
-pmp/src/pmpm_all_entries_check-01.S  # requires 64-region PMP; we implement 16 (E1-T15)
-pmp/src/pmpm_all_entries_check-02.S  # requires 64-region PMP; we implement 16 (E1-T15)
-pmp/src/pmpm_all_entries_check-03.S  # requires 64-region PMP; we implement 16 (E1-T15)
-pmp/src/pmpm_all_entries_check-04.S  # requires 64-region PMP; we implement 16 (E1-T15)
+- **Misaligned load/store (8 `privilege/misalign-*`)** — our machine supports hardware
+  misaligned access (`hw_data_misaligned_support: True`); Sail honors the declaration and
+  agrees. (Spike could not — it always traps misaligned.)
+- **Sv57 (38 `vm_sv57` / `vm_pmp/sv57`)** — our machine implements up to Sv48 and WARL-rejects
+  satp MODE=10; Sail configured without Sv57 agrees. A legal ISA subset (Priv §4.1.11).
+- **64-region PMP (4 `pmpm_all_entries_check`)** — our machine declares 16 PMP entries; the
+  64-region case is gated off by the DUT platform and Sail matches.
 
-## Exception priority: misaligned vs access/page fault — RESOLVED (Priv §3.7.1), E1-T25
-Formerly excluded `vm_sv39 VA_all_zeros`: a misaligned data access that also faults on
-translate/PMP, where Spike ranks address-misaligned above access/page-fault (§3.7.1) but we
-checked translate/PMP first. E1-T25 added the misaligned pre-check to xlate_load/store/amo, so
-misaligned now outranks translate/PMP faults. The test PASSES and its exclusion is removed.
+The **Spike** fallback remains available (`RISCOF_REF=spike bash tools/run_riscof.sh`) and still
+reports its documented 43 divergences — a reference-capability gap, not a DUT bug, which is
+exactly what moving to the canonical reference resolves.

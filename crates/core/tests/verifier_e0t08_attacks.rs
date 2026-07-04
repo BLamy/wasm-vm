@@ -103,13 +103,12 @@ fn negative_offset_straddling_device_edge_faults_without_invoking_device() {
     let mut h = seeded(CODE);
     h.regs.write(2, DRAM_BASE);
     let t = h.step(&mut bus).unwrap_err();
-    // E1-T25 (§3.7.1): DRAM_BASE-1 is byte-misaligned for an 8-byte ld, and misaligned
-    // OUTRANKS the range/access fault — so the cause is LoadAddrMisaligned. The invariant
-    // this test really guards is UNCHANGED and if anything stronger: the device is never
-    // consulted, now because the misaligned pre-check fires before any bus/device access.
-    // (A naturally-aligned access CANNOT straddle the aligned DRAM_BASE boundary, so every
-    // straddle of it is necessarily misaligned.)
-    assert_eq!(t.cause, Exception::LoadAddrMisaligned);
+    // E1-T26 (§3.7.1, misaligned SUPPORTED): DRAM_BASE-1 with an 8-byte ld is misaligned and
+    // straddles below the RAM base. Since misaligned raises no exception, the access proceeds
+    // and the out-of-range part faults ACCESS (LoadAccessFault). Device-silence STILL holds and
+    // is if anything stronger: the misaligned-support gate rejects the non-RAM range BEFORE any
+    // byte access, so the device is never consulted.
+    assert_eq!(t.cause, Exception::LoadAccessFault);
     assert_eq!(t.tval, DRAM_BASE - 1);
     assert_eq!(h.regs.pc, CODE, "pc moved");
     assert!(
@@ -118,12 +117,12 @@ fn negative_offset_straddling_device_edge_faults_without_invoking_device() {
     );
     assert!(log.borrow().writes.is_empty());
 
-    // sd at DRAM_BASE-1 likewise: misaligned (§3.7.1) → cause 6, device silent.
+    // sd at DRAM_BASE-1 likewise: misaligned proceeds → out-of-range → StoreAccessFault, silent.
     bus.store32(CODE, s_type(-1, 3, 2, 0b011)).unwrap();
     let mut h = seeded(CODE);
     h.regs.write(2, DRAM_BASE);
     let t = h.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::StoreAddrMisaligned);
+    assert_eq!(t.cause, Exception::StoreAccessFault);
     assert_eq!(t.tval, DRAM_BASE - 1);
     assert!(log.borrow().writes.is_empty(), "device write on straddle");
 }
@@ -263,16 +262,16 @@ fn every_memory_fault_shape_leaves_full_dump_untouched() {
         // access fault: rs1=x9 seeded to an unmapped hole
         cases.push((load(f3, 1, 9, 0), Exception::LoadAccessFault));
         if mis {
-            // E1-T26: in-RAM misaligned now SUCCEEDS, so the misaligned-FAULT case uses
-            // rs1=x10 = RAM_END-2, imm=1 → ea=RAM_END-1: misaligned AND straddling past RAM
-            // (not decomposable) → *AddrMisaligned at every width >1.
-            cases.push((load(f3, 1, 10, 1), Exception::LoadAddrMisaligned));
+            // E1-T26 (misaligned SUPPORTED): in-RAM misaligned SUCCEEDS; the misaligned-FAULT
+            // case uses rs1=x10 = RAM_END-2, imm=1 → ea=RAM_END-1: misaligned AND straddling
+            // past RAM. Misaligned raises no exception → the out-of-range byte faults ACCESS.
+            cases.push((load(f3, 1, 10, 1), Exception::LoadAccessFault));
         }
     }
     for &(f3, mis) in stores {
         cases.push((s_type(0, 3, 9, f3), Exception::StoreAccessFault));
         if mis {
-            cases.push((s_type(1, 3, 10, f3), Exception::StoreAddrMisaligned));
+            cases.push((s_type(1, 3, 10, f3), Exception::StoreAccessFault));
         }
     }
 
@@ -329,15 +328,10 @@ fn boundary_sweep_verifier_bases() {
         let mut h = seeded(CODE);
         h.regs.write(2, RAM_END);
         let t = h.step(&mut bus).unwrap_err();
-        // E1-T25 (§3.7.1): ea = RAM_END - w + 1. For w>1 this is misaligned (RAM_END is
-        // 8-aligned) → LoadAddrMisaligned OUTRANKS the past-end access fault; for w==1 the
-        // access is byte-aligned and simply past the end → LoadAccessFault.
-        let expect_load = if w > 1 {
-            Exception::LoadAddrMisaligned
-        } else {
-            Exception::LoadAccessFault
-        };
-        assert_eq!(t.cause, expect_load, "w={w}");
+        // E1-T26 (misaligned SUPPORTED): ea = RAM_END - w + 1 is past the end (and misaligned
+        // for w>1). Misaligned raises no exception → the access proceeds and the out-of-range
+        // byte faults ACCESS, at every width. tval = the effective address.
+        assert_eq!(t.cause, Exception::LoadAccessFault, "w={w}");
         assert_eq!(t.tval, last + 1, "w={w}");
         // store variants
         bus.store32(CODE, s_type(w as i32, 3, 2, sf3)).unwrap();
@@ -350,14 +344,9 @@ fn boundary_sweep_verifier_bases() {
         let mut h = seeded(CODE);
         h.regs.write(2, RAM_END);
         let t = h.step(&mut bus).unwrap_err();
-        // §3.7.1, mirror of the load: w>1 misaligned straddle → StoreAddrMisaligned;
-        // w==1 aligned-past → StoreAccessFault.
-        let expect_store = if w > 1 {
-            Exception::StoreAddrMisaligned
-        } else {
-            Exception::StoreAccessFault
-        };
-        assert_eq!(t.cause, expect_store, "w={w}");
+        // E1-T26, mirror of the load: past-end (misaligned for w>1) → StoreAccessFault at
+        // every width (misaligned proceeds, the out-of-range byte access-faults).
+        assert_eq!(t.cause, Exception::StoreAccessFault, "w={w}");
         assert_eq!(t.tval, last + 1, "w={w}");
     }
 }

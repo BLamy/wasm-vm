@@ -202,3 +202,37 @@ expect GREEN with the 8 misalign-* passing and NO new exclusions, and re-verify 
 Net once complete: allowlist −1 (ma_data), RISCOF exclusions unchanged (Sail validates misalign-*
 without exclusions) → **capstone deferrals 44 → 43**, as intended. T26 remains WIP (RISCOF red) until
 the core §3.7.1 fix + Sail config-override land and validate.
+
+### 2026-07-04 — COMPLETE: §3.7.1 fixed, RISCOF-vs-Sail GREEN 395/0, EXCLUSIONS emptied
+The §3.7.1 correctness fix (misaligned-supporting machine PROPAGATES the real page/access
+fault, never a spurious `*AddrMisaligned`) + the Sail config-override landed. Results:
+
+- **`cargo test --workspace`**: 90 ok-suites, 0 FAILED (fmt/clippy clean). The e0t07/e0t08/
+  hart_memory straddle tests were re-derived: a misaligned access straddling out of RAM now
+  faults ACCESS (the out-of-range byte), not `*AddrMisaligned` — device-silence still preserved
+  (the RAM-containment gate rejects the range before any byte access).
+- **`RISCOF_REF=sail make riscof`: 395 passed / 0 failed, GREEN, exit 0.** The ENTIRE arch-test
+  suite validates against the canonical Sail model configured to our declared ISA
+  (`compliance/sail/sail_config_override.json`: rv64gc + S/U + Sv39/Sv48; misaligned scalar
+  supported; Svnapot/Svpbmt/Sv57/Svrsw60t59b disabled).
+- **Mutation sensitivity (proves Sail is a REAL independent reference, not trivially matching):**
+  injected ADD→SUB into `hart/mod.rs`, rebuilt, re-ran → **224 passed / 171 FAILED** (the buggy
+  DUT even hit `--max-instrs` on a test). Reverted → clean. So 395/0 is a genuine green, and a
+  real CPU bug reddens it.
+
+**MAJOR PLAN IMPACT — `compliance/EXCLUSIONS.md` is now EMPTY.** Every one of the 42 prior
+exclusions existed ONLY because the Spike fallback couldn't be configured to our exact ISA
+(Spike hardcodes misaligned trapping; its extension set couldn't be pared to Sv48-max/16-PMP).
+Against the canonical Sail reference (which honors the config) they all pass. So:
+- **Capstone deferrals: 44 → 1** (only `rv64mi-p-breakpoint` remains, cleared by E1-T29).
+- **E1-T27 (64-region PMP) and E1-T28 (Sv57) are now capstone-OBSOLETE** — their exclusions are
+  gone (the tests pass: our machine correctly WARL-rejects Sv57 / declares 16 PMP, and Sail
+  configured to match agrees, a legal ISA subset per Priv §4.1.11). They remain valuable
+  *features* for hosting real OSes, but the Level-1 capstone no longer needs them. Net path to
+  capstone-zero: **T26 (this) + T29 (breakpoint)**.
+- The Spike fallback stays available (`RISCOF_REF=spike`) and still reports its 43 divergences —
+  a reference-capability gap, documented, not a DUT bug.
+
+Second Level-1-capstone deferral group burned via T26: **ma_data (allowlist) + all 42 RISCOF
+exclusions → 43 deferrals cleared.** Ready to open the PR; awaiting cold-clone critic
+re-verification (must reproduce 395/0 + the mutation red + the emptied-EXCLUSIONS honesty).

@@ -74,14 +74,14 @@ fn misaligned_ld_sd_in_ram_succeed_e1t26() {
 }
 
 #[test]
-fn misaligned_causes_4_and_6_when_unsupported_e1t26() {
-    // The *AddrMisaligned causes (4/6) now arise for UNSUPPORTED misaligned accesses only —
-    // e.g. an 8-byte access at RAM_END-1 that is both misaligned AND straddles past RAM_END
-    // (not entirely in RAM → not decomposable).
+fn misaligned_straddling_out_of_ram_faults_access_not_misaligned_e1t26() {
+    // Because misaligned is SUPPORTED (§3.7.1), a misaligned scalar access raises NO misaligned
+    // exception — it proceeds and the out-of-range byte faults ACCESS (5/7), not *AddrMisaligned.
+    // An 8-byte access at RAM_END-1 is misaligned AND straddles past RAM_END (not all-RAM).
     let mut bus = fresh_bus();
     let straddle = RAM_END - 1;
     let t = exec(&mut bus, load(0b011, 1, 2, 0), &[(2, straddle)]).unwrap_err(); // ld
-    assert_eq!(t.cause, Exception::LoadAddrMisaligned);
+    assert_eq!(t.cause, Exception::LoadAccessFault);
     assert_eq!(t.tval, straddle);
     let t = exec(
         &mut bus,
@@ -89,7 +89,7 @@ fn misaligned_causes_4_and_6_when_unsupported_e1t26() {
         &[(2, straddle), (3, 0xAB)],
     )
     .unwrap_err(); // sd
-    assert_eq!(t.cause, Exception::StoreAddrMisaligned);
+    assert_eq!(t.cause, Exception::StoreAccessFault);
     assert_eq!(t.tval, straddle);
 }
 
@@ -288,22 +288,22 @@ fn boundary_sweep_last_slot_succeeds_one_past_faults() {
             Exception::StoreAccessFault,
             "aligned-past store w={w}"
         );
-        // E1-T25 (§3.7.1): for w>1, one BYTE past is a MISALIGNED access that also straddles
-        // the end — misaligned OUTRANKS access-fault, so the cause flips to *AddrMisaligned
-        // (the priority correction this task lands). For w==1 the +1 access is byte-aligned,
-        // so it coincides with the aligned-past Access case above (nothing misaligned to test).
+        // E1-T26 (§3.7.1, misaligned SUPPORTED): for w>1, one BYTE past is a MISALIGNED access
+        // that straddles the end. Since misaligned raises no exception, the access proceeds and
+        // the out-of-range byte faults ACCESS (5/7) — not *AddrMisaligned. (For w==1 the +1
+        // access is byte-aligned, coinciding with the aligned-past Access case above.)
         if w > 1 {
             let t = exec(&mut bus, load(lf3, 1, 2, 1), &[(2, last)]).unwrap_err();
             assert_eq!(
                 t.cause,
-                Exception::LoadAddrMisaligned,
+                Exception::LoadAccessFault,
                 "misaligned-straddle w={w}"
             );
             assert_eq!(t.tval, last + 1);
             let t = exec(&mut bus, s_type(1, 3, 2, sf3), &[(2, last), (3, 7)]).unwrap_err();
             assert_eq!(
                 t.cause,
-                Exception::StoreAddrMisaligned,
+                Exception::StoreAccessFault,
                 "misaligned-straddle store w={w}"
             );
         }
