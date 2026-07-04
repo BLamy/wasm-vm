@@ -3,8 +3,8 @@ id: E1-T24
 epic: 1
 title: "Capstone: Level 1 threshold — riscv-tests and RISCOF green, native and WASM"
 priority: 124
-status: pending
-depends_on: [E1-T13, E1-T14, E1-T18, E1-T20, E1-T21, E1-T22, E1-T23]
+status: in_progress
+depends_on: [E1-T13, E1-T14, E1-T18, E1-T20, E1-T21, E1-T22, E1-T23, E1-T25, E1-T26, E1-T27, E1-T28, E1-T29]
 estimate: L
 capstone: true
 ---
@@ -73,4 +73,59 @@ mid-run and reload: the demo must restart cleanly (no wedged state), else the co
 claim is refuted.
 
 ## Verification log
-(empty)
+
+### 2026-07-04 — increment 1: honest Level-1 gate built; caught a real no_std regression
+Per the "build gate now, sequence features" plan, this increment lands the measurement
+harness — NOT the green threshold (which requires burning 45 documented deferrals to zero;
+those are sequenced as E1-T25..T29 below). The gate is deliberately honest: it never reports
+a Level 1 it did not earn.
+
+**`tools/level1_gate.sh` (+ `make level1-gate`)** — runs four legs and emits one consolidated
+report (`target/level1-report.md`); exits 0 ONLY when every leg is green AND both deferral
+lists are empty:
+- **Leg A — native riscv-tests**: PASS (in-crate `riscv_tests` suite + `run_riscv_tests.sh`;
+  2 allowlisted, deferred).
+- **Leg B — native RISCOF vs Spike**: runs `run_riscof.sh` when provisioned (venv + Docker
+  `wasm-vm-toolchain:local`); green (0 unexcused), 43 EXCLUSIONS entries deferred. SKIPs
+  honestly (→ INCOMPLETE, never green) when unprovisioned.
+- **Leg C — native==wasm equality**: PASS — `determinism_check.sh` proves native and wasm32
+  builds match the frozen T22 golden fingerprints (`pinned_fingerprints_match_golden` native
+  AND `..._on_wasm`).
+- **Leg D — wasm artifact identity**: PASS — sha256 of `web/pkg/*_bg.wasm` recorded in the
+  report pins for the browser leg.
+
+The report records git rev, per-leg status, the **deferral accounting** (allowlist N +
+EXCLUSIONS N → total; must reach zero), and reproducibility pins.
+
+**A REAL REGRESSION the gate caught (the gate's first payoff):** E1-T20's `Machine::signature()`
+(the RISCOF signature dump) used the bare prelude `format!`/`String`, which resolve under
+`std` but NOT under the `no_std` wasm build — so `make wasm` (and the wasm determinism leg)
+had been **broken since T20 landed**. The T20 critic only ran native `cargo test --workspace`,
+which is why it slipped through. Fixed in `crates/core/src/lib.rs` by fully-qualifying
+`alloc::string::String` / `alloc::format!` (compiles in both configs). Verified: `cargo build
+-p wasm-vm-core --no-default-features --target wasm32-unknown-unknown` green; `wasm-vm-wasm`
+wasm32 build green; native `signature` test 4/4; the wasm determinism fingerprint now matches
+golden again.
+
+**Browser compliance demo (deliverable):** substantially pre-exists as the E0-T23 web demo
+(`web/index.html` + `main.js`): it loads the wasm module and runs the riscv-tests set live
+with a per-test pass/fail heatmap, metrics, and a verdict — exactly the capstone's "live
+per-test table + green/red banner". Referenced rather than duplicated; a dedicated
+`www/compliance.html` rename is a cosmetic follow-on.
+
+**Deferrals → follow-on tasks (the "sequence features" plan; capstone `depends_on` now
+includes all five):** the 45 remaining deferrals map to five Level-1-out-of-scope features,
+each now a task that removes its own allowlist/EXCLUSIONS entries:
+- **E1-T25** exception-priority §3.7.1 (removes 1: `vm_sv39 VA_all_zeros`)
+- **E1-T26** misaligned-access support (removes 1: `rv64ui-p-ma_data`; depends on T25)
+- **E1-T27** 64-region PMP (removes 4: `pmpm_all_entries_check-01..04`)
+- **E1-T28** Sv57 five-level paging (removes 38: `vm_sv57` + `vm_pmp/sv57`)
+- **E1-T29** debug triggers tdata1/2 (removes 1: `rv64mi-p-breakpoint`)
+
+When all five land and the gate's deferral total hits zero with every leg green, the capstone
+flips to verified, the report is committed, and the `level-1` tag is cut (a step reserved for
+that increment — not taken now).
+
+**Local gate for THIS increment:** the no_std fix restores `make wasm`; `cargo test -p
+wasm-vm-core --test signature` 4/4; determinism native+wasm green. Full `cargo fmt`/`clippy`/
+`cargo test --workspace` re-run before push.
