@@ -24,3 +24,8 @@ web/assets/riscv-tests/
 .claude/worktrees/
 .DS_Store
 **/.DS_Store
+
+# E1-T20 RISCOF (provisioned by compliance/provision.sh; not vendored)
+compliance/.venv/
+compliance/riscv-arch-test/
+compliance/riscof_work/
