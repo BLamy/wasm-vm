@@ -89,3 +89,25 @@ misa) + platform yaml + `env/model_test.h` + `link.ld` (compile via Docker gcc, 
 `wasm-vm-cli`); (3) Spike reference plugin; (4) `config.ini` + `make riscof` + CI job + `EXCLUSIONS.md`;
 (5) wasm32 DUT leg (byte-identical signatures, leans on E1-T22); (6) mutation check. PR opens once
 `make riscof` is green (or only EXCLUSIONS-listed) against Spike.
+
+### 2026-07-04 — RISCOF FLOW WORKING END-TO-END (increment 4/5)
+`riscof run` completes the full rv64i_m suite (DUT = our `wasm-vm` binary via `--signature`; reference
+= Spike via `run_samepath.sh`) and generates the HTML report. **Result: 344 passed / 51 failed.**
+- **PASS**: I(50) M(13) A(18) F(18) D(33) C(33) Zifencei privilege(21) pmp(61) vm_sv39(31) vm_sv48(32)
+  hints — the whole RV64GC + privileged + Sv39/Sv48 stack is architecturally compliant vs Spike.
+- **FAIL (expected → EXCLUSIONS.md)**: 38 Sv57 (`vm_sv57` + `vm_pmp/sv57`) — we implement to Sv48
+  (E1-T18); `satp` MODE=10 correctly rejected.
+- **FAIL (13 real compliance gaps RISCOF surfaced)** — the genuine value of this task:
+  1. **Reserved PTE bits** (svnapot bit 63 / svpbmt 62:61 / reserved fields) must page-fault when the
+     extension is unimplemented — T16 `walk_leaf` doesn't reject them (6 tests: sv39/48 ×
+     {svnapot, svpbmt, pte_reserved_field}).
+  2. **TVM-on-satp** — `mstatus.TVM=1` must trap a `satp` CSR *access* in S-mode (we do SFENCE.VMA in
+     T17 but not satp-access virtualization) (2 tests: sv39/48 mstatus_tvm_test).
+  3. Edge cases: `vm_sv39 VA_all_zeros`, `pmp/pmpm_all_entries_check-01..04` (5).
+
+**Remaining (increment 5 → PR):** fix (1) reserved-PTE-bit checks in `mmu.rs` + (2) TVM-satp gate in
+`csr.rs` (small, add regression tests); triage (3); write `compliance/EXCLUSIONS.md` (Sv57 spec-cited);
+a `make riscof` target (generates config.ini + runs) + CI job + the isa-yaml-vs-misa cross-check
+(acceptance #2) + the wasm-signature-equivalence leg + a seeded-mutation check (LWU sign-ext →
+mismatch). Note: Docker-gcc-per-test is slow — for CI wall-time, consider a host riscv-gcc or a
+batched/persistent compile. Then open the PR with the RISCOF report as evidence.
