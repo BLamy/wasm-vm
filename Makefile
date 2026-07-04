@@ -2,10 +2,10 @@
 # parallel; locally they run in the order listed under `ci`. If this file and ci.yml
 # disagree, that's a bug (E0-T02).
 
-.PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism diff-all diff-selftest diff-qemu \
+.PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke bench-l1 diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke web-build web-serve bench capstone-e0
 
-ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism
+ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
 fmt:
 	cargo fmt --all --check
@@ -60,6 +60,14 @@ riscv-tests-suite:
 # Mirrors ci.yml's `determinism` job. `make determinism FULL=--full` adds the whole-corpus leg.
 determinism:
 	bash tools/determinism_check.sh $(FULL)
+
+# E1-T23: perf-smoke (release ALU MIPS ≥ floor) — mirrors ci.yml's `perf-smoke` job.
+perf-smoke:
+	cargo test -p wasm-vm-core --release --test perf_baseline perf_smoke_alu_above_floor -- --ignored --nocapture
+
+# E1-T23: regenerate the native Level-1 MIPS baseline table.
+bench-l1:
+	bash tools/bench.sh
 
 # Spike differential harness (E0-T20): run every prebuilt guest under wasm-vm-cli AND
 # Spike, normalize both into the E0-T16 canonical grammar, byte-compare at commit level.
