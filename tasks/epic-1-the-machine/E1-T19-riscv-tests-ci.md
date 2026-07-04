@@ -3,7 +3,7 @@ id: E1-T19
 epic: 1
 title: riscv-tests suite integration in CI with per-test pass/fail reporting
 priority: 119
-status: pending
+status: in_progress
 depends_on: [E1-T03, E1-T04, E1-T07, E1-T08, E1-T12, E1-T17]
 estimate: M
 capstone: false
@@ -64,4 +64,42 @@ wired to that unit. Finally re-run the full thing from a clean clone (no cached
 toolchain) to refute hermeticity claims.
 
 ## Verification log
-(empty)
+
+### 2026-07-04 — implementation (native regression wall)
+Key discovery: with the E1 CSR file complete (T01–T18), the ENTIRE vendored `-p` corpus now runs
+under the **real** build (no `zicsr-stub` scaffold) — 124/127 pass, the only 3 non-passers being
+the documented `ma_data` (misaligned), `mi-breakpoint` (debug triggers), and `mi-illegal` (TVM/TSR
+matrix). So the unified runner is one default-build command, no stub split.
+
+- **`crates/core/tests/riscv_tests_suite.rs`** — discovers every vendored `rv64*` ELF, runs each
+  under the real CSR file with a 5M-instruction budget (exhaustion → **TIMEOUT**, never a pass),
+  classifies via the HTIF exit convention (`Exited`/`ecall a7=93`), records the retire count
+  (`minstret`), and writes `target/riscv-tests-report.{md,json}` — deterministic (sorted names, no
+  timestamps; includes our git rev + an FNV-1a corpus fingerprint, so two runs at the same revs are
+  byte-identical). It then **enforces `tests/riscv-tests-allowlist.txt`**: a non-allowlisted failure
+  fails the job, AND a listed test that now passes fails the job (stale entries must go — target is
+  an empty allowlist by the E1 capstone).
+- **Harness-honesty tests** (the adversarial section, self-applied): a FAIL exit code is reported
+  FAIL (not pass); a corrupted binary never reports PASS; an empty directory is an error (never a
+  green zero-test run); discovered per-suite counts match the vendored manifest (a silently dropped
+  suite fails).
+- **`tests/riscv-tests-allowlist.txt`** — the 3 known non-passers with justifications + follow-up
+  pointers, and a documented "not built" section for the toolchain-blocked suites.
+- **`tests/riscv-tests-bin/MANIFEST.sha256`** — sha256 lockfile of all 127 vendored ELFs (pinned
+  binaries / hermeticity).
+- **`tools/run_riscv_tests.sh`**, a `riscv-tests` CI job (uploads the report artifact, enforces the
+  allowlist), and a `riscv-tests-suite` Makefile target folded into `make ci` (the CI mirror).
+
+Local gate: fmt clean; clippy 0 (workspace, all-targets); the suite is green (124/127, 3
+allowlisted); report byte-identical across two runs.
+
+### Scope / deferred (honest, mirroring E1-T16's rv64ui-v handling)
+- **`-v` (virtual-memory) and `rv64si` suites** are NOT vendored — building them needs a
+  newlib-equipped `riscv64-unknown-elf` toolchain the `wasm-vm-toolchain:local` image lacks
+  (documented in E1-T16 / `tools/riscv-tests/build-rv64ui-v.sh`). They are on the allowlist's
+  "not built" section and light up when that toolchain lands. The runner is already mode-agnostic
+  (real CSR file, Sv39/Sv48 from T16–T18), so they need only the binaries.
+- **wasm job report == native (acceptance #3)** is delegated to **E1-T22** (Native-vs-WASM
+  determinism — identical traces), whose entire charter is establishing wasm==native; T19 wires the
+  native wall + report format E1-T22 consumes. The wasm build itself is CI-guarded already.
+- **CI wall-time ≤ 15 min (acceptance #6)** is a CI-runtime property, not locally measurable.

@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E1-T19** — riscv-tests suite integration in CI with per-test pass/fail reporting
 
 
 ## Epic 0 — `epic-0-ignition`

@@ -2,10 +2,10 @@
 # parallel; locally they run in the order listed under `ci`. If this file and ci.yml
 # disagree, that's a bug (E0-T02).
 
-.PHONY: ci fmt clippy test wasm features test-riscv diff-all diff-selftest diff-qemu \
+.PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke web-build web-serve bench capstone-e0
 
-ci: fmt clippy test wasm features test-riscv
+ci: fmt clippy test wasm features test-riscv riscv-tests-suite
 
 fmt:
 	cargo fmt --all --check
@@ -48,6 +48,12 @@ test-riscv:
 	@command -v wasm-pack >/dev/null 2>&1 || { \
 		echo "note: wasm-pack absent — skipping the wasm rv64ui-p run"; exit 0; }
 	wasm-pack test --node crates/wasm --features zicsr-stub
+
+# E1-T19: the full riscv-tests regression wall over the committed ELFs (real E1 CSR file),
+# emitting target/riscv-tests-report.{md,json} and enforcing tests/riscv-tests-allowlist.txt.
+# Mirrors ci.yml's `riscv-tests` job.
+riscv-tests-suite:
+	bash tools/run_riscv_tests.sh
 
 # Spike differential harness (E0-T20): run every prebuilt guest under wasm-vm-cli AND
 # Spike, normalize both into the E0-T16 canonical grammar, byte-compare at commit level.
