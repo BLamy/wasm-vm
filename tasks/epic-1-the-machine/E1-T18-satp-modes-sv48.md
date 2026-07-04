@@ -3,7 +3,7 @@ id: E1-T18
 epic: 1
 title: satp mode switching (Bare/Sv39/Sv48) with config-gated Sv48 support
 priority: 118
-status: pending
+status: verified
 depends_on: [E1-T15, E1-T17]
 estimate: M
 capstone: false
@@ -99,3 +99,34 @@ flows through the parameterized path).
 
 Local gate: fmt clean; clippy 0 (workspace + zicsr-stub, all-targets); `cargo test --workspace`
 0 `test result: FAILED`; both wasm32 builds (no_std, +trace) clean.
+
+### 2026-07-04 — adversarial verifier (round 1) — VERDICT: verified
+Fresh cold clone at 14b775b. Oracle: the sanctioned independent-oracle fallback — an independent
+re-encoding of Priv §4.3/§4.5 + Svade for FOUR levels (Spike/qemu both absent from PATH).
+- **Independent gate**: fmt clean; clippy 0 (workspace + zicsr-stub, all-targets); `cargo test
+  --workspace` **0 FAILED** (84 ok-suites); both wasm32 builds Finished.
+- **Linux-probe / all-or-nothing WARL**: all 16 MODE values × both gate legs, each with distinct
+  ASID+PPN. Supported (0/8, + 9 iff gate on) → readback == written; every unsupported MODE → satp
+  **bit-identical** with explicit asserts that **ASID and PPN are BOTH unchanged** (the partial-
+  legalization attack). Gate-off leg: MODE=9 is a total no-op.
+- **Sv48 hostile-PTE corpus (headline)**: leaf at levels 0/1/2/3, low-8 PTE bits × aligned/
+  misaligned PPN × {S,U} × {SUM} × {MXR} × {Fetch,Load,Store} vs the 4-level oracle — **checked
+  49,152, diverged 0**. Covers R0W1-reserved, pointer-at-L0, pointer-with-A/D/U, superpage
+  misalignment at levels 1/2/**3 (512 GiB)**, Svade A=0/store-D=0, SUM/MXR/U, and 2M/1G/512G
+  offset passthrough.
+- **Canonical boundary**: bit-47 edges (canonical→translate, non-canonical→fault at both ends) all
+  match the oracle; a VA canonical in Sv48 but not Sv39 translates under Sv48 yet faults under Sv39.
+- **Mode-switch staleness**: shared TLB + `translate_cached` — Sv39 walk (walks=1) → switch to
+  Sv48 without SFENCE → returns pa48, walks=2 (fresh walk, no cross-mode hit) → switch back →
+  returns pa39, walks still 2 (surviving mode-tagged entry, not a flush).
+- **Bare zero-PTW**: a load-counting bus proves satp=0 (and M-effective Sv48) translate high
+  addresses Sv39 rejects as identity with **0 page-table loads**.
+- **Mode tag / VPN width / reset**: two Sv48 VAs differing only at VPN bit 27 don't alias (full
+  36-bit tag); the `sv48` config bit survives `Hart::reset` in both gate states.
+- **Mutations 10/10 caught**: partial/accept-all WARL, gate-ignored, Sv48-hard-coded-3-levels,
+  canonical-bit-38-for-Sv48, lookup-mode-tag-dropped, fill-mode-tag-dropped, VPN_MASK-27-bits,
+  reset-drops-sv48, level-3-superpage-misalignment-unchecked, true-partial-WARL. No survivors.
+
+VERDICT: **verified** — Sv48 satp-mode switching is spec-correct across all six attack classes
+(all-or-nothing WARL both gates, 4-level walk over a 49k-cell corpus, per-mode canonical, mode-
+tagged TLB staleness, Bare zero-PTW), and mutation coverage is complete.
