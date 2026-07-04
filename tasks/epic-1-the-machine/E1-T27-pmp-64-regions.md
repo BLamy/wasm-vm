@@ -3,7 +3,7 @@ id: E1-T27
 epic: 1
 title: 64-region PMP — pmpaddr0..63 / pmpcfg0..14 (Priv §3.7)
 priority: 141
-status: pending
+status: verified
 depends_on: [E1-T15]
 estimate: M
 capstone: false
@@ -83,3 +83,21 @@ the config-override — the exact riscof `PMP['pmp-writable']` derivation from t
 more investigation (each experiment is a ~5-min RISCOF run). Deferred to avoid a rabbit-hole; the
 64-entry feature itself is genuinely implemented and directly tested by the unit test above. This is
 a capability feature off the critical path (Level 1 is already MET), so it does not block anything.
+
+### 2026-07-04 — critic round 1: VERIFIED (cold clone at `1526e609`)
+Cold-clone critic; all attacks survived; clone clean, nothing pushed.
+- **Gate:** `cargo test --workspace` 0 FAILED, 91 ok-suites, pmp 12/12; fmt exit 0; clippy no warnings.
+- **64 entries work:** `region()`/`check()` byte-for-byte UNCHANGED → 16-entry semantics (TOR-neighbor
+  lock, lowest-wins, NAPOT/NA4/TOR, R0W1, no-match default) untouched. cfg-bank math correct:
+  `base = bank*4` tiles `[0,8),[8,16),…,[56,64)` with no gap/overlap; pmpcfg14→entries[56,64),
+  pmpcfg10→entry 40 at byte 0. High-entry enforcement proven by the non-vacuous unit test (entry 40
+  grants inside / denies outside; pmpcfg14/pmpaddr63 round-trip). Odd pmpcfg (0x3A1/0x3A3/0x3AF)
+  illegal, 0x3AE legal.
+- **No regression;** RISCOF reasoned unaffected (395/0; the additive change leaves core matching
+  untouched and the 64-region case isn't selected).
+- **Scope-note HONEST:** the task explicitly states the 64-region arch-test is not selected (passes
+  trivially), explains what genuine selection needs, defers it, leaves the RISCOF acceptance item
+  UNCHECKED. No dishonest "fully done via RISCOF" claim.
+
+**VERDICT: verified.** (critic agent `a27e5626e083ee9d4`, cold clone, no push.) 64-entry PMP is a real,
+directly-tested capability feature; the RISCOF 64-region-case SELECTION remains a documented follow-up.
