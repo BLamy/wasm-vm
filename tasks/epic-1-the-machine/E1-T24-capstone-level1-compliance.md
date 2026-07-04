@@ -129,3 +129,34 @@ that increment — not taken now).
 **Local gate for THIS increment:** the no_std fix restores `make wasm`; `cargo test -p
 wasm-vm-core --test signature` 4/4; determinism native+wasm green. Full `cargo fmt`/`clippy`/
 `cargo test --workspace` re-run before push.
+
+### 2026-07-04 — critic round 1: VERIFIED (cold clone at `dc962ab`) + 2 latent gate defects fixed
+Adversarial cold-clone critic verified the gate increment at fixed HEAD `dc962ab`; clone left clean.
+
+- **Workspace gate:** `cargo fmt --check` exit 0; `cargo clippy --workspace --all-targets` exit 0;
+  `cargo test --workspace` → **90 ok-suites, 0 FAILED** (grepped), 473 tests passed.
+- **no_std regression real, fix correct:** provenance `git log -S'fn signature'` → introduced by the
+  E1-T20 wip commit (parent carries the identical bare `Result<String,String>`/`format!`); reverting
+  the `alloc::` fix makes `cargo build -p wasm-vm-core --no-default-features --target
+  wasm32-unknown-unknown` FAIL (`cannot find macro format`, `cannot find type String`); with the fix
+  it builds; native unaffected (`--test signature` 4/4).
+- **Gate honesty (read line-by-line + ran it):** exit 0 gated on `GREEN && COMPLETE && DEFERRED==0`;
+  at 45 deferrals it CANNOT report MET — verdicts `❌/⏳ NOT MET`, exit 1. Leg-B plumbing truthful:
+  `config.ini` DUT=wasmvm / ref=spike; `riscof_wasmvm.py` invokes `target/release/wasm-vm run
+  --signature=…` (the exact regression path); a fully-provisioned run produced 395 real DUT-*.signature
+  files vs the arch-test suite (genuine differential, not Spike-for-both).
+- **T25–T29 arithmetic:** 1+1+4+38+1 = **45**, partitioning exactly into 43 EXCLUSIONS + 2 allowlist;
+  every named entry confirmed present in the actual files.
+
+**Two latent gate defects the critic found (neither faked a MET verdict — both fixed in this commit):**
+1. **zero-count arithmetic** — `grep -c … || echo 0` emits `"0\n0"` when a count is *legitimately
+   zero*, breaking `$((…))` on the FUTURE zero-deferral MET path. Fixed: `… || true; VAR=${VAR:-0}`.
+   Verified the empty-file case now arithmetics to 0 (so the capstone-completion increment can actually
+   flip MET). This was the important one — it would have sabotaged the very path this whole task builds toward.
+2. **leg-B zero-coverage PASS** — `run_riscof.sh` with `passed=0, unexcused=0` recorded `B=PASS … 0
+   passed` (vacuous, from an errored/half-provisioned run). Fixed: leg B now requires `passed > 0`,
+   else records FAIL "RISCOF ran 0 tests (vacuous)". No longer rubber-stamps zero coverage.
+
+**VERDICT: verified.** (critic agent `a049f7db5b022bbdf`; increment's honesty contract holds; the 2
+defects were anti-green robustness holes, now closed.) Capstone stays **in_progress** — the gate is
+built and honest, the threshold is legitimately not met (45 deferrals); E1-T25..T29 burn it to zero.

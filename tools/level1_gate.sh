@@ -56,8 +56,12 @@ GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
 # --- deferral accounting (the crux of the honesty contract) -----------------------------------
 ALLOW_FILE="$REPO/tests/riscv-tests-allowlist.txt"
 EXCL_FILE="$REPO/compliance/EXCLUSIONS.md"
-ALLOW_N=$(grep -vcE '^\s*#|^\s*$' "$ALLOW_FILE" 2>/dev/null || echo 0)
-EXCL_N=$(grep -cE '\.S($|\s|#)' "$EXCL_FILE" 2>/dev/null || echo 0)
+# `grep -c` prints "0" AND exits 1 on zero matches; a `|| echo 0` would then append a SECOND
+# "0" ("0\n0"), which breaks `$((…))` exactly on the future zero-deferral MET path. Swallow
+# grep's exit with `|| true` (keeps its printed count) and default an unreadable/missing file
+# to 0 via `${VAR:-0}` — so a legitimately-zero count arithmetics cleanly.
+ALLOW_N=$(grep -vcE '^\s*#|^\s*$' "$ALLOW_FILE" 2>/dev/null || true); ALLOW_N=${ALLOW_N:-0}
+EXCL_N=$(grep -cE '\.S($|\s|#)' "$EXCL_FILE" 2>/dev/null || true); EXCL_N=${EXCL_N:-0}
 DEFERRED_TOTAL=$((ALLOW_N + EXCL_N))
 
 # --- Leg A: native riscv-tests ----------------------------------------------------------------
@@ -83,8 +87,15 @@ section "Leg B — native RISCOF (vs Spike)"
 if [ -x "$REPO/compliance/.venv/bin/riscof" ] && docker image inspect wasm-vm-toolchain:local >/dev/null 2>&1; then
   B_LOG="$(mktemp)"
   if bash tools/run_riscof.sh >"$B_LOG" 2>&1; then
-    passed=$(grep -oE '[0-9]+ passed' "$B_LOG" | tail -1 | grep -oE '[0-9]+' || echo '?')
-    record B PASS "RISCOF green (0 unexcused); ${EXCL_N} EXCLUSIONS entries (deferred); ${passed} passed"
+    passed=$(grep -oE '[0-9]+ passed' "$B_LOG" | tail -1 | grep -oE '[0-9]+' || true)
+    passed=${passed:-0}
+    # A "green" RISCOF run that actually ran ZERO tests (missing suite path, half-provision)
+    # is vacuous, not a PASS — require positive coverage so leg B can't rubber-stamp nothing.
+    if [ "$passed" -gt 0 ] 2>/dev/null; then
+      record B PASS "RISCOF green (0 unexcused); ${EXCL_N} EXCLUSIONS entries (deferred); ${passed} passed"
+    else
+      record B FAIL "RISCOF ran 0 tests (vacuous — suite path / provisioning issue), not a real pass"
+    fi
   else
     record B FAIL "RISCOF reported an UNEXCUSED failure (see log)"
   fi
