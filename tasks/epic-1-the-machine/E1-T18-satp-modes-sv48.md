@@ -68,4 +68,34 @@ bus counters (a walker that "walks" bare mode refutes). Confirm both CI matrix l
 config claim.
 
 ## Verification log
-(empty)
+
+### 2026-07-04 — implementation
+- **`crates/core/src/csr.rs`** — `satp` write is now **all-or-nothing WARL** (a new `SATP` arm in
+  `write_raw`): a write whose MODE is unsupported (anything but Bare/Sv39, plus Sv48 iff configured)
+  leaves the ENTIRE register — MODE, ASID, and PPN — at its old value, exactly what Linux's
+  `set_satp_mode` probe reads back. New `pub sv48: bool` config field (default true) gates MODE=9;
+  it is a hardware config bit, so `Hart::reset` PRESERVES it across a reset (not architectural
+  state). A mode change does NOT flush the TLB (SFENCE.VMA required, T17).
+- **`crates/core/src/mmu.rs`** — the walker is now **level-count-parameterized**, shared by
+  Sv39/Sv48. `mode_params(csr, eff) -> Option<(levels, sign_bit, mode_tag)>` returns `(3, 38, 8)`
+  for Sv39, `(4, 47, 9)` for Sv48, and `None` (identity) for Bare / unsupported MODE / M-effective.
+  `canonical(va, sign_bit)` parameterizes the sign-extension check (bit 38 vs bit 47). `walk_leaf`
+  takes `levels` and iterates `(0..levels).rev()`; the per-level VPN slices, superpage low-bit
+  masks, and PA composition already generalize, so Sv48 adds level-3 (512 GiB) superpages for free.
+- **`crates/core/src/tlb.rs`** — entries carry a **`mode` tag** (satp MODE, 8/9); `lookup`/`fill`
+  thread it and a hit requires a mode match, so a Sv39→Sv48 switch WITHOUT an SFENCE.VMA can never
+  serve a cross-mode stale entry (and switching back still hits the surviving Sv39 entry — a tag,
+  not a flush). `VPN_MASK` widened to 36 bits (Sv48 VPN width; an Sv39 VA's upper VPN bits are its
+  sign extension, so no conflation) and `LEVELS` to 4 (Sv48 probes level 3; Sv39 simply misses it).
+
+**Tests** (`crates/core/tests/sv48.rs`, 8): all-or-nothing WARL (Sv39/Sv48 take effect gated on;
+MODE=10 and every reserved MODE 1..7/10..15 are total no-ops incl. ASID/PPN); Sv48 write is a
+no-op gated off (readback == old); Bare identity for high addresses Sv39 rejects; Sv48 4-level walk
+with offset passthrough; the canonical rule differs by mode (a VA Sv48 admits but Sv39 rejects);
+Sv48 non-canonical (bit-48) fault; Sv48 superpages at 2 MiB/1 GiB/512 GiB with offset passthrough +
+misalignment faults; and the mode-tagged staleness test (Sv39→Sv48 without fence re-walks to the
+Sv48 mapping, and back still hits the Sv39 entry). All prior Sv39/TLB suites unchanged (Sv39 now
+flows through the parameterized path).
+
+Local gate: fmt clean; clippy 0 (workspace + zicsr-stub, all-targets); `cargo test --workspace`
+0 `test result: FAILED`; both wasm32 builds (no_std, +trace) clean.

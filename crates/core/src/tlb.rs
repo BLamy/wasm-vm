@@ -23,23 +23,27 @@
 //! until software issues SFENCE.VMA. OS context-switch code relies on this — it fences (or
 //! switches to a fresh ASID) precisely because the hardware does not.
 
-/// Sv39 VPN is 27 bits (VA bits [38:12]); the page tag is masked to that width so a
-/// non-canonical VA (rejected before lookup) can never alias a cached page.
-const VPN_MASK: u64 = (1 << 27) - 1;
+/// The VPN page tag is masked to the widest scheme (Sv48 VPN = 36 bits, VA[47:12]); an Sv39 VA's
+/// upper VPN bits are its sign extension (all equal to bit 38 when canonical), so the mask never
+/// conflates two distinct canonical Sv39 pages, and the `mode` tag separates the two schemes.
+const VPN_MASK: u64 = (1 << 36) - 1;
 const NSETS: usize = 16;
 const WAYS: usize = 4;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 struct Slot {
     valid: bool,
-    /// The 27-bit VPN (page number) this entry maps.
+    /// The VPN (page number) this entry maps, masked to [`VPN_MASK`].
     vpn: u64,
     asid: u64,
     /// The leaf PTE the walk validated (permission + PPN + A/D/G bits).
     pte: u64,
-    /// Leaf level: 0 → 4 KiB, 1 → 2 MiB, 2 → 1 GiB.
+    /// Leaf level: 0 → 4 KiB, 1 → 2 MiB, 2 → 1 GiB, 3 → 512 GiB (Sv48).
     level: u8,
     global: bool,
+    /// The satp MODE the entry was walked under (8 = Sv39, 9 = Sv48). A lookup requires a mode
+    /// match, so a mode switch without SFENCE.VMA (T18) never serves a cross-mode stale hit.
+    mode: u8,
 }
 
 impl Slot {
@@ -50,6 +54,7 @@ impl Slot {
         pte: 0,
         level: 0,
         global: false,
+        mode: 0,
     };
 }
 
@@ -105,8 +110,9 @@ impl Tlb {
         (vpn as usize) & (NSETS - 1)
     }
 
-    /// Sv39 has three page sizes (level 0 → 4 KiB, 1 → 2 MiB, 2 → 1 GiB).
-    const LEVELS: u8 = 3;
+    /// The most page sizes any supported scheme has (Sv48: level 0..=3). Sv39 never fills level
+    /// 3, so probing it there simply misses.
+    const LEVELS: u8 = 4;
 
     /// The superpage-aligned page number: `vpn` with its low `9 * level` bits cleared. A leaf at
     /// `level` is tagged and indexed by this so ANY 4 KiB page inside the superpage finds it.
@@ -115,10 +121,11 @@ impl Tlb {
         (vpn >> sh) << sh
     }
 
-    /// Look up a cached leaf for `vpn` (masked to 27 bits) under `asid`; a global entry matches
-    /// any ASID. Probes each page size (a superpage entry serves its whole range). Counts a hit
-    /// or a miss — a miss is exactly one page-table walk (see `walks`).
-    pub fn lookup(&mut self, vpn: u64, asid: u64) -> Option<Hit> {
+    /// Look up a cached leaf for `vpn` under `asid` in translation `mode` (8 = Sv39, 9 = Sv48); a
+    /// global entry matches any ASID. Probes each page size (a superpage entry serves its whole
+    /// range) and requires a mode match. Counts a hit or a miss — a miss is exactly one page-table
+    /// walk (see `walks`).
+    pub fn lookup(&mut self, vpn: u64, asid: u64, mode: u8) -> Option<Hit> {
         if !self.enabled {
             self.misses += 1;
             return None;
@@ -129,7 +136,12 @@ impl Tlb {
             let set = Self::index(tag);
             for way in 0..WAYS {
                 let s = self.sets[set][way];
-                if s.valid && s.level == level && s.vpn == tag && (s.global || s.asid == asid) {
+                if s.valid
+                    && s.mode == mode
+                    && s.level == level
+                    && s.vpn == tag
+                    && (s.global || s.asid == asid)
+                {
                     self.hits += 1;
                     return Some(Hit {
                         pte: s.pte,
@@ -142,10 +154,10 @@ impl Tlb {
         None
     }
 
-    /// Insert a validated leaf. A superpage is stored under its aligned page number so the whole
-    /// range hits. Reuses a matching entry, then an invalid way, then evicts the round-robin
-    /// victim — all deterministic. Called only after a translation fully succeeds.
-    pub fn fill(&mut self, vpn: u64, asid: u64, pte: u64, level: u8, global: bool) {
+    /// Insert a validated leaf walked in `mode`. A superpage is stored under its aligned page
+    /// number so the whole range hits. Reuses a matching entry, then an invalid way, then evicts
+    /// the round-robin victim — all deterministic. Called only after a translation fully succeeds.
+    pub fn fill(&mut self, vpn: u64, asid: u64, pte: u64, level: u8, global: bool, mode: u8) {
         if !self.enabled {
             return;
         }
@@ -158,10 +170,17 @@ impl Tlb {
             pte,
             level,
             global,
+            mode,
         };
         for way in 0..WAYS {
             let s = self.sets[set][way];
-            if s.valid && s.level == level && s.vpn == vpn && s.asid == asid && s.global == global {
+            if s.valid
+                && s.mode == mode
+                && s.level == level
+                && s.vpn == vpn
+                && s.asid == asid
+                && s.global == global
+            {
                 self.sets[set][way] = slot;
                 return;
             }

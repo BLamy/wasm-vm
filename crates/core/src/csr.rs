@@ -213,6 +213,11 @@ pub struct Csrs {
     time: u64,
     /// Physical Memory Protection unit (E1-T15): 16 entries checked on every physical access.
     pub pmp: crate::pmp::Pmp,
+    /// Sv48 support (E1-T18): a hardware CONFIG bit (not resettable architectural state — the
+    /// hart either implements Sv48 or it doesn't). When false, a `satp` write with MODE=Sv48 (9)
+    /// is an all-or-nothing no-op (the Linux `set_satp_mode` probe reads back the old value).
+    /// Preserved across `Hart::reset`.
+    pub sv48: bool,
     /// Observable hooks for the test PROBE CSR.
     pub probe_reads: u64,
     pub probe_value: u64,
@@ -242,6 +247,7 @@ impl Csrs {
             wrote_minstret: false,
             time: 0,
             pmp: crate::pmp::Pmp::default(),
+            sv48: true, // Sv48 supported by default; a Machine/harness may gate it off.
             probe_reads: 0,
             probe_value: 0,
         }
@@ -768,6 +774,17 @@ impl Csrs {
             PMPCFG0 => self.pmp.write_cfg(0, v),
             PMPCFG2 => self.pmp.write_cfg(2, v),
             PMPADDR0..=PMPADDR15 => self.pmp.write_addr((addr - PMPADDR0) as usize, v),
+            // satp (E1-T18, §4.1.11): WARL MODE legalization is ALL-OR-NOTHING — a write whose
+            // MODE field is unsupported leaves the ENTIRE register (MODE, ASID, and PPN) at its old
+            // value, NOT just the MODE. Linux's `set_satp_mode` relies on exactly this to probe
+            // Sv48/Sv57 support. Supported MODEs: Bare (0), Sv39 (8), and Sv48 (9) iff configured.
+            // A mode change does NOT flush the TLB (SFENCE.VMA is required, T17).
+            SATP => {
+                let mode = v >> 60;
+                if mode == 0 || mode == 8 || (mode == 9 && self.sv48) {
+                    self.warl_set(SATP, v);
+                }
+            }
             MISA | MHARTID | MVENDORID | MARCHID | MIMPID => {} // hardwired
             0xC00..=0xC1F => {}
             other => match self.warl.iter_mut().find(|(a, _)| *a == other) {
