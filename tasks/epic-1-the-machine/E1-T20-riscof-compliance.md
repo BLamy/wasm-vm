@@ -131,3 +131,17 @@ pmpm-16-entries needs a debug pass); `compliance/EXCLUSIONS.md` (Sv57 + any defe
 (acceptance #2) + wasm-signature-equivalence leg + a seeded-mutation check (LWU sign-ext). Docker-gcc-
 per-test is slow (~min/suite) — for CI, a host riscv-gcc or batched compile. Then open the PR with the
 report as evidence.
+
+### 2026-07-04 — critic round 1: REFUTED (stale allowlist) → fixed; exception-priority DEFERRED
+The cold-clone critic REFUTED on the independent gate: `cargo test --workspace` was RED because the
+TVM-on-satp fix made `rv64mi-p-illegal` PASS, but its (now-stale) `tests/riscv-tests-allowlist.txt`
+entry was left in place → the T19 empty-target regression wall failed. Fixed: removed the stale
+allowlist line; a nice bonus — the TVM-on-satp virtualization was exactly what `rv64mi-p-illegal`
+needed (blocked since E1-T11), so it's re-added to the `riscv_tests_mi.rs` MI_SUBSET (passes end-to-end).
+
+Also, on re-running the full workspace, the **misaligned-priority fix** (3rd gap) rippled through
+several tests that codified the old E0-T08/E0-T03 "range beats alignment" ordering (hart_memory,
+verifier_e0t07, pmp). Reordering exception priority is a cross-cutting change deserving its own task,
+so it is **REVERTED and DEFERRED** — `vm_sv39 VA_all_zeros` is added to `EXCLUSIONS.md` with the §3.7.1
+justification. The two clean fixes (reserved PTE bits, TVM-on-satp) stay. New tally: **352/395**, 43
+excluded (38 Sv57 + 4 64-region-PMP + 1 exception-priority). `cargo test --workspace` green again.

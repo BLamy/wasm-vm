@@ -317,15 +317,6 @@ fn xlate_load(
     va: u64,
     len: u64,
 ) -> Result<u64, Trap> {
-    // Misaligned is a property of the VA and outranks access/page faults (Priv §3.7.1) — check it
-    // BEFORE translate/PMP so a misaligned + would-also-fault access reports misaligned, matching
-    // Spike/RISCOF (E1-T20 fix to the deferred E0-T08/E1-T15 ordering).
-    if va & (len - 1) != 0 {
-        return Err(Trap {
-            cause: Exception::LoadAddrMisaligned,
-            tval: va,
-        });
-    }
     let eff = csr.data_priv();
     let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Load, eff)?;
     if !csr.pmp_ok(pa, len, PmpAccess::Read, eff) {
@@ -345,13 +336,6 @@ fn xlate_store(
     va: u64,
     len: u64,
 ) -> Result<u64, Trap> {
-    // Misaligned outranks access/page faults (see xlate_load); check the VA before translate/PMP.
-    if va & (len - 1) != 0 {
-        return Err(Trap {
-            cause: Exception::StoreAddrMisaligned,
-            tval: va,
-        });
-    }
     let eff = csr.data_priv();
     let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Store, eff)?;
     if !csr.pmp_ok(pa, len, PmpAccess::Write, eff) {

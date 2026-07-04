@@ -58,3 +58,12 @@ pmp/src/pmpm_all_entries_check-01.S  # requires 64-region PMP; we implement 16 (
 pmp/src/pmpm_all_entries_check-02.S  # requires 64-region PMP; we implement 16 (E1-T15)
 pmp/src/pmpm_all_entries_check-03.S  # requires 64-region PMP; we implement 16 (E1-T15)
 pmp/src/pmpm_all_entries_check-04.S  # requires 64-region PMP; we implement 16 (E1-T15)
+
+## Exception priority: misaligned vs access/page fault — DEFERRED (Priv §3.7.1)
+vm_sv39/48 VA_all_zeros probe a misaligned data access that ALSO faults on translate/PMP. Spike
+ranks address-misaligned above access/page-fault (§3.7.1); we currently check translate/PMP first
+(the documented E0-T08/E0-T03 "range beats alignment" simplification), so we report access-fault
+where Spike reports misaligned. Correcting this is a cross-cutting exception-priority change (it
+ripples through the whole load/store fault model + many tests) that deserves its own task — deferred
+here rather than bundled into the compliance work.
+vm_sv39/src/vm_VA_all_zeros_S_mode.S  # exception-priority (misaligned vs access) deferred, Priv §3.7.1

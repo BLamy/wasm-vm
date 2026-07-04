@@ -10,7 +10,6 @@
 
 rv64ui-p-ma_data     Exercises MISALIGNED loads/stores succeeding; our bus deliberately faults misaligned access (E0-T08 policy), so the trap is correct behavior. Passes once an unaligned-access mode lands — tracked for a future misaligned-access task.
 rv64mi-p-breakpoint  Exercises the debug-spec trigger CSRs (tdata1/tdata2), not implemented at Level 1. Deferred to a debug-trigger task in a later epic.
-rv64mi-p-illegal     Reaches a broad TVM/TSR trap-virtualization matrix (satp/sfence/xRET gated to M with precise mepc/mtval) past E1-T17's SFENCE.VMA decode. SFENCE.VMA itself is covered by tlb.rs; the remaining virtualization is a follow-up privileged-CSR task.
 
 # Suites NOT YET BUILT (toolchain-blocked — the -v/virtual-memory env and rv64si need a
 # newlib-equipped riscv64-unknown-elf toolchain; the wasm-vm-toolchain:local image is bare
