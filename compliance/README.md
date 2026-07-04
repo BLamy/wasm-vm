@@ -55,3 +55,24 @@ gitignored `riscof_work/`; do NOT commit the raw scaffold — commit the ADAPTED
    $ARCHTEST/riscv-test-suite/rv64i_m --env=$ARCHTEST/riscv-test-suite/env` (the current arch-test
    layout is `tests/`—confirm the suite path), iterate until signatures match Spike. Then `make
    riscof`, CI job, EXCLUSIONS.md, wasm leg, mutation check → open the PR.
+
+## Concrete plugin recipe (increment 4 — next; all pieces identified)
+1. `bash compliance/provision.sh` → riscof 1.25.3 + arch-test (RISCOF-pinned ctp-release @ 281d71ef,
+   with `riscv-test-suite/rv64i_m` + `riscv-test-suite/env/arch_test.h`) + the shipped
+   `riscof-plugins/rv64/spike_simple` reference (base for both plugins).
+2. `compliance/spike/` (reference) = copy spike_simple → rename file `riscof_spike.py`, class
+   `spike_simple`→`spike`; wrap its gcc compile AND the `spike ...` run in
+   `tools/toolchain/run_samepath.sh -- ...` (Docker); keep its env + isa/platform yaml.
+3. `compliance/wasmvm/` (DUT) = copy spike_simple → rename file `riscof_wasmvm.py`, class→`wasmvm`;
+   wrap the gcc compile in `run_samepath.sh`; change the run `simcmd` to the HOST-native release CLI:
+   `target/release/wasm-vm-cli run --signature={sig_file} --signature-granularity=4 {elf}` (NO Docker
+   for the run). Copy spike_simple `env/{model_test.h,link.ld}` (halt=tohost, begin/end_signature —
+   already matched by our loader). **`wasmvm_isa.yaml`: TRIM to what we implement** —
+   `RV64IMAFDCZicsr_Zifencei` (+ S U), `misa.reset-val: 0x8000000000014112D` (E1-T01); delete the
+   spike yaml's V/Zb*/Zk*/Zc* extension blocks; validate with `riscof validateyaml`. (acceptance #2:
+   isa yaml must match misa.)
+4. `compliance/config.ini`: DUTPlugin=wasmvm / ReferencePlugin=spike, absolute plugin paths.
+5. `cd compliance && .venv/bin/riscof run --config=config.ini --suite=riscv-arch-test/riscv-test-suite
+   --env=riscv-arch-test/riscv-test-suite/env` — start rv64i_m, iterate gcc flags then per-test
+   signature diffs → EXCLUSIONS.md (spec-cited). Then `make riscof` + CI + wasm leg + mutation
+   (LWU sign-ext → sig mismatch) → open the PR.
