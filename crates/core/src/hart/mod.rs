@@ -496,9 +496,12 @@ macro_rules! checked_load {
     ($name:ident, $busfn:ident, $ty:ty, $len:expr) => {
         #[inline]
         fn $name(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<$ty, Trap> {
-            if a & ($len - 1) != 0 {
-                // Misaligned: handled for RAM (E1-T26), else *AddrMisaligned. The assembled
-                // LE value is truncated to width here; `execute` sign/zero-extends.
+            // `is_multiple_of` (not `a & (len-1)`) so the byte case (`$len == 1`) is a clean
+            // "always aligned" without a `& 0` mask (clippy `bad_bit_mask`).
+            if !a.is_multiple_of($len) {
+                // Misaligned: handled for RAM (E1-T26); a fault propagates as page/access
+                // fault. The assembled LE value is truncated to width here; `execute`
+                // sign/zero-extends.
                 return misaligned_load(csr, tlb, bus, a, $len).map(|v| v as $ty);
             }
             let pa = xlate_load(csr, tlb, bus, a, $len)?;
@@ -516,7 +519,8 @@ macro_rules! checked_store {
             a: u64,
             v: $ty,
         ) -> Result<(), Trap> {
-            if a & ($len - 1) != 0 {
+            // `is_multiple_of` avoids the `& 0` mask for the byte case (`$len == 1`).
+            if !a.is_multiple_of($len) {
                 return misaligned_store(csr, tlb, bus, a, $len, v as u64);
             }
             let pa = xlate_store(csr, tlb, bus, a, $len)?;
