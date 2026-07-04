@@ -3,7 +3,7 @@ id: E1-T20
 epic: 1
 title: RISCOF architectural compliance — DUT plugin, Sail reference, signature diff
 priority: 120
-status: in_progress
+status: verified
 depends_on: [E1-T19]
 estimate: L
 capstone: false
@@ -145,3 +145,31 @@ verifier_e0t07, pmp). Reordering exception priority is a cross-cutting change de
 so it is **REVERTED and DEFERRED** — `vm_sv39 VA_all_zeros` is added to `EXCLUSIONS.md` with the §3.7.1
 justification. The two clean fixes (reserved PTE bits, TVM-on-satp) stay. New tally: **352/395**, 43
 excluded (38 Sv57 + 4 64-region-PMP + 1 exception-priority). `cargo test --workspace` green again.
+
+### 2026-07-04 — critic round 2: VERIFIED (cold clone at `e3f8535`)
+Re-verification on a fresh cold clone at `task/e1-t20-riscof-compliance` HEAD `e3f8535`. All six
+attacks passed; every mutation reverted, `git status` clean.
+
+- **Independent gate (was the refutation — now GREEN):** `cargo fmt --check` clean; `cargo clippy
+  --workspace --all-targets` clean; `cargo test --workspace` → **0 `test result: FAILED`, 89 ok-suites,
+  exit 0**. The exact stale-`rv64mi-p-illegal` regression that was RED is now green.
+- **Attack 1 — DUT runs OUR binary (dynamic proof):** provisioned riscof 1.25.3 / arch-test @ 281d71ef
+  / Spike Docker. `make riscof` baseline reproduced **352 passed / 43 excused / exit 0**. Injected a
+  real CPU bug (`hart/mod.rs:687` register-ADD `wrapping_add`→`wrapping_sub`), rebuilt release, ran the
+  `I` subset → **RED**: `UNEXCUSED FAILURE: I/src/add-01.S`, exit 2. Reverted → GREEN (50/0). Static
+  confirm: `riscof_wasmvm.py:51 dut_exe = target/release/wasm-vm`, `:221 simcmd = dut_exe + ' run
+  --signature='`; reference plugin is Spike. Not fake-green, not Spike-for-both.
+- **Attack 2 — both kept fixes real:** neutering `mmu.rs:190` reserved-PTE-bits check → `sv39.rs:432
+  reserved_high_pte_bits_page_fault` FAILS; neutering `csr.rs:824` TVM-on-satp → `privilege.rs:352
+  tvm_makes_satp_access_illegal_in_s_mode` FAILS. Restored → both pass.
+- **Attack 3 — the revert is real:** `xlate_load`/`xlate_store` do translate-then-PMP with NO early
+  `va & (len-1)` check; `hart_memory.rs::boundary_sweep_last_slot_succeeds_one_past_faults` expects
+  `LoadAccessFault` (old ordering restored). Exception-priority legitimately deferred, not broken.
+- **Attack 4 — EXCLUSIONS.md (43) legit:** 38 Sv57 (satp MODE 10 WARL-rejected, `csr.rs:784`), 4
+  `pmpm_all_entries_check` (16-entry PMP), 1 `vm_sv39 VA_all_zeros` (§3.7.1 deferral). None hides an
+  I/M/A/F/D/C bug. `check_isa_yaml.sh`: misa == yaml == **0x800000000014112d**.
+- **Attack 5 — rv64mi-p-illegal passes, allowlist clean:** `illegal` in `MI_SUBSET` passes; allowlist
+  now lists only `rv64ui-p-ma_data` + `rv64mi-p-breakpoint`; unified suite enforces bidirectionally.
+- **Attack 6 — reproducibility:** full `make riscof` → **352 passed, 43 excused, GREEN, exit 0**.
+
+**VERDICT: verified.** (critic agent `af6a85b8d8061f1a3`, 49 tool-uses, cold clone, no push.)
