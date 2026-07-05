@@ -51,6 +51,9 @@ pub trait BlockBackend {
 /// Shared validation: buffer must be sector-aligned and `[sector, sector+n)` in capacity.
 /// Returns the BYTE offset as u64 — the caller converts to `usize` only after its own
 /// storage-length bound. All math checked; a wrap is `OutOfRange`, never silent.
+/// (Quirk, critic-noted: for absurd capacities where `capacity * 512` itself exceeds u64 —
+/// >16 EiB — sectors ≥ 2^55 reject as `OutOfRange` via the checked multiply rather than
+/// wrapping. A clean rejection of an unreachable tail, never a wrap or panic.)
 pub fn check_range(capacity_sectors: u64, sector: u64, buf_len: usize) -> Result<u64, BlockError> {
     if !buf_len.is_multiple_of(SECTOR_SIZE) {
         return Err(BlockError::Unaligned);

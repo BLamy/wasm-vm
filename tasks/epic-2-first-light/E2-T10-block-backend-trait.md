@@ -3,7 +3,7 @@ id: E2-T10
 epic: 2
 title: Pluggable block backend trait — mmap'd file (native) and ArrayBuffer image (browser)
 priority: 210
-status: implemented
+status: verified
 depends_on: [E2-T01]
 estimate: S
 capstone: false
@@ -84,3 +84,23 @@ Epic-3 lazy-overlay shape). `crates/cli/src/file_backend.rs`: memmap2-backed Fil
 - Gates: fmt, clippy ±--all-features, both wasm legs 0 FAILED.
 - Copy-cost measurement for the ArrayBuffer path: noted for E2-T21 per the task text (the
   wasm constructor that receives the JS buffer lands with the browser rootfs task).
+
+### 2026-07-05 — verifier (cold critic) — CONFIRMED
+
+All 6 attack angles executed against committed code. (1) Overflow hunt:
+SparseMemBackend::new(u64::MAX) — zero panics/wraps (sectors ≥2^55 reject cleanly via the
+checked multiply; quirk now documented); cap=u64::MAX/512's top sector (byte offset
+2^64−512) works and does NOT alias sector 0; MemBackend::new at len 0/1/511/…/4113 all
+safe; zero-length buffers consistent across all THREE backends (Ok at cap, OOR past, RO
+first); committed wasm32 tests re-run by the critic on real 32-bit usize. (2) Kill-loop ×5
+with 100 page-straddling multi-sector unflushed writes then abort mid-loop: **torn=0 in
+all 5 runs** (61–64/64 sectors kept by the page cache — loss-or-keep acceptable, zero
+tears). (3) RO storm: SHA-256 identical before/after 10,000 fuzzed writes/flushes;
+structurally the Ro(Mmap) arm has no DerefMut — RO writes unrepresentable in the type
+system. (4) 100,000-op fuzz vs a BTreeMap model at 5 GiB (45k writes/45k reads/9.4k OOR,
+straddling written/unwritten hotspots incl. CAP−16): zero divergences, exact zero-fill,
+resident=140. (5) Box<dyn BlockBackend> holds all three backends through one fn;
+FileBackend bound against the real core trait. (6) All gates green (cli bin-target tests
+included). Deferral to E2-T21 verified honest (that task's text owns the copy-cost
+measurement). Path notes: block.rs & crates/cli are the codebase-convention actuals for
+the task header's block/mod.rs & crates/native.
