@@ -28,6 +28,7 @@ extern crate alloc;
 pub mod bus;
 pub mod csr;
 pub mod decode;
+pub mod decode_c;
 pub mod dev;
 pub mod hart;
 pub mod htif;

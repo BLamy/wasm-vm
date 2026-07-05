@@ -78,23 +78,22 @@ fn jal_x0_zero_self_loops_forever_acceptance() {
 }
 
 #[test]
-fn jalr_bit0_clear_then_misaligned_trap_acceptance() {
-    // jalr x1, 3(x2) with even x2: target = (x2 + 3) & !1 = x2 + 2 → % 4 == 2
-    // when x2 % 4 == 0 → cause 0, tval = x2 + 2, x1 UNmodified, pc unmoved.
+fn jalr_bit0_clear_to_2mod4_target_lands_under_ialign16() {
+    // jalr x1, 3(x2) with x2 4-aligned: target = (x2 + 3) & !1 = x2 + 2 (2-mod-4). With the
+    // C extension IALIGN=16 (E1-T08), a 2-mod-4 target is LEGAL — the jump lands (bit 0 is
+    // still cleared per JALR) and writes the link. (An odd target can never arise: JALR
+    // masks bit 0, and JAL/branch immediates are even.)
     let (mut hart, mut bus) = machine();
     let x2 = DRAM_BASE + 0x100; // 4-aligned
-    hart.regs.write(1, 0xC0DE);
     hart.regs.write(2, x2);
     bus.store32(CODE, jalr(1, 2, 3)).unwrap();
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAddrMisaligned);
-    assert_eq!(t.tval, x2 + 2, "tval = post-bit0-clear target");
+    hart.step(&mut bus).unwrap();
     assert_eq!(
-        hart.regs.read(1),
-        0xC0DE,
-        "link must NOT be written on trap"
+        hart.regs.pc,
+        x2 + 2,
+        "lands at the bit-0-cleared 2-mod-4 target"
     );
-    assert_eq!(hart.regs.pc, CODE);
+    assert_eq!(hart.regs.read(1), CODE + 4, "link = pc + 4");
 }
 
 #[test]
@@ -148,19 +147,19 @@ fn fence_retires_pc_plus_4_acceptance() {
 // ── §2.5 misalignment ordering ──────────────────────────────────────────────
 
 #[test]
-fn taken_branch_to_pc_plus_2_traps_not_taken_retires() {
-    // Same encoding, taken vs not-taken: beq x2, x3, +2.
+fn taken_branch_to_pc_plus_2_lands_not_taken_retires() {
+    // beq x2, x3, +2. With IALIGN=16 the taken branch LANDS at pc+2 (a legal target).
     let word = b_type(0b000, 2, 3, 2);
-    // taken: x2 == x3 → cause 0, tval = pc + 2, nothing written
     let (mut hart, mut bus) = machine();
     hart.regs.write(2, 7);
     hart.regs.write(3, 7);
     bus.store32(CODE, word).unwrap();
-    let before = format!("{}", hart.regs);
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAddrMisaligned);
-    assert_eq!(t.tval, CODE + 2);
-    assert_eq!(format!("{}", hart.regs), before, "trap mutated state");
+    hart.step(&mut bus).unwrap();
+    assert_eq!(
+        hart.regs.pc,
+        CODE + 2,
+        "taken branch to pc+2 lands (IALIGN=16)"
+    );
     // not taken: x2 != x3 → retires normally, pc += 4
     let (mut hart, mut bus) = machine();
     hart.regs.write(2, 7);
@@ -171,19 +170,13 @@ fn taken_branch_to_pc_plus_2_traps_not_taken_retires() {
 }
 
 #[test]
-fn jal_to_misaligned_traps_on_the_jal_itself() {
+fn jal_to_2mod4_target_lands_under_ialign16() {
+    // JAL to a 2-mod-4 target is legal with IALIGN=16 — it lands and writes the link.
     let (mut hart, mut bus) = machine();
-    hart.regs.write(1, 0xC0DE);
-    bus.store32(CODE, jal(1, 6)).unwrap(); // target % 4 == 2
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(
-        t.cause,
-        Exception::InstrAddrMisaligned,
-        "raised by the JAL, not a fetch"
-    );
-    assert_eq!(t.tval, CODE + 6);
-    assert_eq!(hart.regs.read(1), 0xC0DE, "link unwritten");
-    assert_eq!(hart.regs.pc, CODE, "trap state PC = the JAL's address");
+    bus.store32(CODE, jal(1, 6)).unwrap(); // target = pc + 6 (2-mod-4)
+    hart.step(&mut bus).unwrap();
+    assert_eq!(hart.regs.pc, CODE + 6, "lands (IALIGN=16)");
+    assert_eq!(hart.regs.read(1), CODE + 4, "link = pc + 4");
 }
 
 #[test]
@@ -224,23 +217,25 @@ fn branch_and_jal_range_edges() {
         hart.step(&mut bus).unwrap();
         assert_eq!(hart.regs.pc, CODE.wrapping_add(imm as u64), "B imm={imm}");
     }
-    // The odd extremes (+4094 ≡ 2 mod 4) must trap cause 0 when taken.
+    // The 2-mod-4 extreme (+4094) is a LEGAL target under IALIGN=16 → it lands.
     let (mut hart, mut bus) = machine();
     bus.store32(CODE, b_type(0b000, 0, 0, 4094)).unwrap();
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAddrMisaligned);
-    assert_eq!(t.tval, CODE + 4094);
+    hart.step(&mut bus).unwrap();
+    assert_eq!(
+        hart.regs.pc,
+        CODE + 4094,
+        "2-mod-4 branch target lands (IALIGN=16)"
+    );
 
-    // J-type ±1 MiB: -1048576 aligned → lands; +1048574 ≡ 2 mod 4 → cause 0.
+    // J-type ±1 MiB: -1048576 and +1048574 (2-mod-4) both land under IALIGN=16.
     let (mut hart, mut bus) = machine();
     bus.store32(CODE, jal(0, -1048576)).unwrap();
     hart.step(&mut bus).unwrap();
     assert_eq!(hart.regs.pc, CODE - 1048576);
     let (mut hart, mut bus) = machine();
     bus.store32(CODE, jal(0, 1048574)).unwrap();
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAddrMisaligned);
-    assert_eq!(t.tval, CODE + 1048574);
+    hart.step(&mut bus).unwrap();
+    assert_eq!(hart.regs.pc, CODE + 1048574, "2-mod-4 jal target lands");
     // +1048572: max positive ALIGNED J target lands.
     let (mut hart, mut bus) = machine();
     bus.store32(CODE, jal(0, 1048572)).unwrap();

@@ -77,23 +77,24 @@ fn jal_jalr_and_loop_on_wasm32() {
 }
 
 #[wasm_bindgen_test]
-fn misaligned_target_semantics_on_wasm32() {
-    // taken beq to pc+2 traps cause 0; link-free, pc unmoved
+fn target_alignment_semantics_on_wasm32() {
+    // IALIGN=16 (C extension, E1-T08): a taken beq to pc+2 (2-mod-4) is a LEGAL target and
+    // LANDS — it no longer traps.
     let (mut hart, mut bus) = machine();
     bus.store32(CODE, b_type(0b000, 0, 0, 2)).unwrap();
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAddrMisaligned);
-    assert_eq!(t.tval, CODE + 2);
-    assert_eq!(hart.regs.pc, CODE);
+    hart.step(&mut bus).unwrap();
+    assert_eq!(hart.regs.pc, CODE + 2, "2-mod-4 branch target lands");
 
-    // jalr bit-0 clear then trap, link unwritten
+    // jalr bit-0 clear to a 2-mod-4 target also lands and writes the link.
     let (mut hart, mut bus) = machine();
-    hart.regs.write(1, 0xC0DE);
     hart.regs.write(2, DRAM_BASE + 0x100);
     bus.store32(CODE, i_type(3, 2, 0b000, 1, 0b1100111))
         .unwrap();
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAddrMisaligned);
-    assert_eq!(t.tval, DRAM_BASE + 0x102);
-    assert_eq!(hart.regs.read(1), 0xC0DE);
+    hart.step(&mut bus).unwrap();
+    assert_eq!(
+        hart.regs.pc,
+        DRAM_BASE + 0x102,
+        "lands at bit-0-cleared 2-mod-4 target"
+    );
+    assert_eq!(hart.regs.read(1), CODE + 4, "link = pc + 4");
 }

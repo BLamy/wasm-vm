@@ -132,3 +132,44 @@ fn rv64ud_p_suite_all_pass() {
         failures.join("\n")
     );
 }
+
+/// E1-T08: the rv64uc-p (C compressed) suite. Compressed instructions expand to their base
+/// form and run through the same path — the official RVC test exercises every quadrant.
+#[test]
+fn rv64uc_p_suite_all_pass() {
+    let dir = bin_dir();
+    assert!(
+        dir.is_dir(),
+        "run tools/riscv-tests/build-rv64uc.sh: {dir:?}"
+    );
+    let mut entries: Vec<_> = std::fs::read_dir(&dir)
+        .unwrap()
+        .map(|e| e.unwrap().path())
+        .filter(|p| {
+            p.file_name()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .starts_with("rv64uc-p-")
+        })
+        .collect();
+    entries.sort();
+
+    let mut failures = Vec::new();
+    for path in &entries {
+        let name = path.file_name().unwrap().to_str().unwrap();
+        match run_one(path) {
+            Verdict::Pass => {}
+            Verdict::Fail(n) => failures.push(format!("{name}: FAIL riscv-tests case #{n}")),
+            Verdict::Other(why) => failures.push(format!("{name}: {why}")),
+        }
+    }
+
+    assert!(!entries.is_empty(), "expected the rv64uc-p test (rvc)");
+    assert!(
+        failures.is_empty(),
+        "{} rv64uc-p test(s) failed:\n{}",
+        failures.len(),
+        failures.join("\n")
+    );
+}

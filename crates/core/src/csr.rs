@@ -183,8 +183,11 @@ impl Csrs {
             FFLAGS => 0x1F,
             FRM => 0x07,
             FCSR => 0xFF,
-            MSTATUS | MCAUSE | MEDELEG | MIDELEG | MIE | MTVEC | MSCRATCH | MEPC | MTVAL | MIP
-            | SATP | STVEC | MNSTATUS | PMPCFG0 | PMPADDR0 | PROBE => !0,
+            // mepc: bit 0 is masked (WARL) — IALIGN=16 with the C extension means only bit 0
+            // is forced to zero, not bits [1:0] (E1-T08). A write clears it; reads see it.
+            MEPC => !1,
+            MSTATUS | MCAUSE | MEDELEG | MIDELEG | MIE | MTVEC | MSCRATCH | MTVAL | MIP | SATP
+            | STVEC | MNSTATUS | PMPCFG0 | PMPADDR0 | PROBE => !0,
             MVENDORID | MARCHID | MIMPID | MHARTID => 0, // RO const 0
             // Read-only user counters cycle/time/instret and hpm (0xC00–0xC1F): reads
             // return 0, writes trap (read_only by encoding).

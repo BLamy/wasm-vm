@@ -116,9 +116,12 @@ fn torture_blob_full_pc_trace_matches_spec_model() {
     }
 }
 
-// ── ANGLE 2: misaligned-trap ordering, all six predicates + jal + jalr ──────
+// ── ANGLE 2: 2-mod-4 targets LAND under IALIGN=16 (C extension, E1-T08) ──────
+// Before C, a taken branch/jump to a 2-mod-4 target trapped cause 0. With IALIGN=16 those
+// targets are legal and RETIRE; a misaligned (odd) target can never arise (JALR clears
+// bit 0; JAL/branch immediates are even), so the cause-0 trap is effectively unreachable.
 #[test]
-fn taken_misaligned_traps_purely_all_predicates_and_jumps() {
+fn taken_2mod4_targets_land_all_predicates_and_jumps() {
     // operand pairs chosen so each predicate is TAKEN
     let taken: &[(u32, u64, u64)] = &[
         (0b000, 9, 9),        // beq
@@ -132,15 +135,11 @@ fn taken_misaligned_traps_purely_all_predicates_and_jumps() {
         let (mut hart, mut bus) = machine();
         hart.regs.write(6, a);
         hart.regs.write(7, b);
-        bus.store32(CODE, b_enc(f3, 6, 7, 0x156)).unwrap(); // +342 ≡ 2 mod 4
-        let before = format!("{}", hart.regs);
-        let t = hart.step(&mut bus).expect_err("must trap");
-        assert_eq!(t.cause, Exception::InstrAddrMisaligned, "f3={f3:#b}");
-        assert_eq!(t.tval, CODE + 0x156, "f3={f3:#b} tval = target");
-        assert_eq!(hart.regs.pc, CODE, "f3={f3:#b} pc = branch's own address");
-        assert_eq!(format!("{}", hart.regs), before, "f3={f3:#b} state mutated");
+        bus.store32(CODE, b_enc(f3, 6, 7, 0x156)).unwrap(); // +342 ≡ 2 mod 4 → now legal
+        hart.step(&mut bus).expect("2-mod-4 branch target lands");
+        assert_eq!(hart.regs.pc, CODE + 0x156, "f3={f3:#b} lands at the target");
     }
-    // not-taken with the SAME misaligned encodings: swap operands per predicate
+    // not-taken: falls through pc+4.
     let not_taken: &[(u32, u64, u64)] = &[
         (0b000, 9, 8),
         (0b001, 9, 9),
@@ -158,27 +157,19 @@ fn taken_misaligned_traps_purely_all_predicates_and_jumps() {
             .unwrap_or_else(|t| panic!("not-taken f3={f3:#b} trapped: {t:?}"));
         assert_eq!(hart.regs.pc, CODE + 4, "f3={f3:#b} falls through");
     }
-    // jal: link register must keep its OLD value through the trap
+    // jal to a 2-mod-4 target lands and writes the link = pc + 4.
     let (mut hart, mut bus) = machine();
-    hart.regs.write(3, 0xFEED);
     bus.store32(CODE, jal_enc(3, 0x15A)).unwrap(); // ≡ 2 mod 4
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAddrMisaligned);
-    assert_eq!(t.tval, CODE + 0x15A);
-    assert_eq!(hart.regs.read(3), 0xFEED);
-    assert_eq!(hart.regs.pc, CODE);
-    // jalr rd==rs1 on the TRAP path: rs1 must survive untouched
+    hart.step(&mut bus).unwrap();
+    assert_eq!(hart.regs.pc, CODE + 0x15A);
+    assert_eq!(hart.regs.read(3), CODE + 4, "link = pc + 4");
+    // jalr rd==rs1 to a 2-mod-4 target lands; the link overwrites rd.
     let (mut hart, mut bus) = machine();
     hart.regs.write(9, CODE + 0x202); // even, ≡ 2 mod 4
     bus.store32(CODE, jalr_enc(9, 9, 0)).unwrap();
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAddrMisaligned);
-    assert_eq!(t.tval, CODE + 0x202);
-    assert_eq!(
-        hart.regs.read(9),
-        CODE + 0x202,
-        "rd==rs1 unmodified on trap"
-    );
+    hart.step(&mut bus).unwrap();
+    assert_eq!(hart.regs.pc, CODE + 0x202, "lands at target");
+    assert_eq!(hart.regs.read(9), CODE + 4, "rd (==rs1) got the link");
 }
 
 // ── ANGLE 3: range edges via hand-derived + golden encodings ────────────────
@@ -190,9 +181,9 @@ fn range_edges_via_golden_words() {
     assert_eq!(b_enc(0, 0, 0, 4094), 0x7E00_0FE3, "encoder vs golden word");
     let (mut hart, mut bus) = machine();
     bus.store32(CODE, 0x7E00_0FE3).unwrap();
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAddrMisaligned);
-    assert_eq!(t.tval, CODE + 4094);
+    // +4094 ≡ 2 mod 4 → legal under IALIGN=16 → lands.
+    hart.step(&mut bus).unwrap();
+    assert_eq!(hart.regs.pc, CODE + 4094, "2-mod-4 branch target lands");
 
     // -4096: imm12=1 only → 0x80000063. Aligned → lands exactly. Place pc so
     // the target is mapped: pc = DRAM_BASE + 0x2000.
@@ -204,13 +195,12 @@ fn range_edges_via_golden_words() {
     hart.step(&mut bus).unwrap();
     assert_eq!(hart.regs.pc, pc - 4096);
 
-    // JAL +1048574 = 0x7FFFF06F (golden): odd extreme → cause 0, exact tval.
+    // JAL +1048574 = 0x7FFFF06F (golden): 2-mod-4 extreme → lands under IALIGN=16.
     assert_eq!(jal_enc(0, 1048574), 0x7FFF_F06F);
     let (mut hart, mut bus) = machine();
     bus.store32(CODE, 0x7FFF_F06F).unwrap();
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAddrMisaligned);
-    assert_eq!(t.tval, CODE + 1048574);
+    hart.step(&mut bus).unwrap();
+    assert_eq!(hart.regs.pc, CODE + 1048574, "2-mod-4 jal target lands");
 
     // JAL -1048576 = 0x8000006F (golden): aligned extreme lands exactly.
     assert_eq!(jal_enc(0, -1048576), 0x8000_006F);
@@ -228,35 +218,26 @@ fn range_edges_via_golden_words() {
     assert_eq!(hart.regs.pc, CODE + 1048572);
 }
 
-// ── ANGLE 4: cause 0 vs cause 1 with JALR, incl. unmapped+misaligned ────────
+// ── ANGLE 4: JALR to an unmapped target always faults cause 1 under IALIGN=16 ──
+// With IALIGN=16 a 2-mod-4 target is legal, so the old "2-mod-4 unmapped → cause 0 at the
+// jump" case is gone: the JALR RETIRES to any even target (bit 0 is always cleared), and the
+// unmapped-ness surfaces only on the NEXT fetch as cause 1.
 #[test]
-fn jalr_cause0_vs_cause1_even_when_target_unmapped() {
-    let unmapped_aligned = 0x4000u64; // in the hole, 4-aligned
-    let unmapped_odd = 0x4002u64; // in the hole, ≡ 2 mod 4
-
-    // aligned unmapped: the JALR RETIRES (link written, pc moved); the NEXT
-    // step fetch-faults cause 1 at the target.
-    let (mut hart, mut bus) = machine();
-    hart.regs.write(2, unmapped_aligned);
-    bus.store32(CODE, jalr_enc(1, 2, 0)).unwrap();
-    hart.step(&mut bus).unwrap();
-    assert_eq!(hart.regs.pc, unmapped_aligned, "jump itself retires");
-    assert_eq!(hart.regs.read(1), CODE + 4, "link written");
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAccessFault, "fetch faults cause 1");
-    assert_eq!(t.tval, unmapped_aligned);
-
-    // odd unmapped: alignment is checked AT THE JUMP → cause 0 immediately,
-    // link unwritten, pc unmoved — mapping never consulted.
-    let (mut hart, mut bus) = machine();
-    hart.regs.write(1, 0xC0DE);
-    hart.regs.write(2, unmapped_odd);
-    bus.store32(CODE, jalr_enc(1, 2, 0)).unwrap();
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::InstrAddrMisaligned, "cause 0, not 1");
-    assert_eq!(t.tval, unmapped_odd);
-    assert_eq!(hart.regs.read(1), 0xC0DE);
-    assert_eq!(hart.regs.pc, CODE);
+fn jalr_to_unmapped_target_faults_cause1_aligned_and_2mod4() {
+    for target in [
+        0x4000u64, /* 4-aligned */
+        0x4002,    /* ≡ 2 mod 4 */
+    ] {
+        let (mut hart, mut bus) = machine();
+        hart.regs.write(2, target);
+        bus.store32(CODE, jalr_enc(1, 2, 0)).unwrap();
+        hart.step(&mut bus).unwrap();
+        assert_eq!(hart.regs.pc, target, "jump retires to the (even) target");
+        assert_eq!(hart.regs.read(1), CODE + 4, "link written");
+        let t = hart.step(&mut bus).unwrap_err();
+        assert_eq!(t.cause, Exception::InstrAccessFault, "fetch faults cause 1");
+        assert_eq!(t.tval, target);
+    }
 }
 
 // ── NOVEL: jalr bit-0 clear must RESCUE an odd rs1 (spec's &!1 is not a trap

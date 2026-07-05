@@ -256,10 +256,11 @@ const fn load_fault(f: BusFault, addr: u64) -> Trap {
 /// cause 0 with tval = target when the target is not IALIGN-aligned; not taken →
 /// fall through. Returns the retire tuple (no link register for branches).
 #[inline(always)]
-const fn branch(taken: bool, pc: u64, imm: i64) -> Result<(u8, u64, u64), Trap> {
+const fn branch(taken: bool, pc: u64, imm: i64, insn_len: u64) -> Result<(u8, u64, u64), Trap> {
     if taken {
         let target = pc.wrapping_add(imm as u64);
-        if target & 3 != 0 {
+        // IALIGN=16 (C extension always present): only an ODD target is misaligned.
+        if target & 1 != 0 {
             return Err(Trap {
                 cause: Exception::InstrAddrMisaligned,
                 tval: target,
@@ -267,7 +268,7 @@ const fn branch(taken: bool, pc: u64, imm: i64) -> Result<(u8, u64, u64), Trap> 
         }
         Ok((0, 0, target))
     } else {
-        Ok((0, 0, pc.wrapping_add(4)))
+        Ok((0, 0, pc.wrapping_add(insn_len)))
     }
 }
 
@@ -330,7 +331,10 @@ impl Hart {
         sink: &mut T,
     ) -> Result<(), Trap> {
         let pc = self.regs.pc;
-        let insn = match bus.load32(pc) {
+        // Fetch the low 16-bit parcel (C extension: `parcel[1:0] != 0b11` ⇒ a 16-bit
+        // compressed instruction; else a 32-bit instruction whose upper half is a SEPARATE
+        // access, so a straddling second half can fault precisely).
+        let lo = match bus.load16(pc) {
             Ok(w) => w,
             Err(BusFault::Access) => {
                 return Err(Trap {
@@ -345,19 +349,53 @@ impl Hart {
                 });
             }
         };
+        // `insn` is the word fed to decode/execute (the 32-bit expansion for a compressed
+        // op); `trace_insn` is the raw fetched bits for the trace; `insn_len` is 2 or 4.
+        let (insn, insn_len, trace_insn): (u32, u64, u32) = if lo & 0b11 != 0b11 {
+            match crate::decode_c::expand_c(lo) {
+                Ok(w) => (w, 2, u32::from(lo)),
+                // A reserved compressed encoding (incl. the all-zeros parcel) is illegal;
+                // mtval is the 16-bit pattern.
+                Err(_) => {
+                    return Err(Trap {
+                        cause: Exception::IllegalInstruction,
+                        tval: u64::from(lo),
+                    });
+                }
+            }
+        } else {
+            let hi = match bus.load16(pc.wrapping_add(2)) {
+                Ok(w) => w,
+                Err(BusFault::Access) => {
+                    return Err(Trap {
+                        cause: Exception::InstrAccessFault,
+                        tval: pc.wrapping_add(2),
+                    });
+                }
+                Err(BusFault::Misaligned) => {
+                    return Err(Trap {
+                        cause: Exception::InstrAddrMisaligned,
+                        tval: pc.wrapping_add(2),
+                    });
+                }
+            };
+            let w = (u32::from(hi) << 16) | u32::from(lo);
+            (w, 4, w)
+        };
         let instr = match decode(insn) {
             Ok(instr) => instr,
             Err(_) => {
                 // The base decoder rejects CSR/xRET encodings. With the quarantined
                 // zicsr-stub feature on, try to execute them there (they retire and are
                 // traced — never silently skipped). Otherwise it is an illegal insn.
+                // (Compressed ops never expand to CSR/xRET, so this path is 32-bit only.)
                 #[cfg(feature = "zicsr-stub")]
                 if let Some((rd, value)) =
                     crate::zicsr_stub::execute(&mut self.regs, &mut self.csrs, insn)
                 {
                     sink.retire(&crate::trace::TraceRecord {
                         pc,
-                        insn,
+                        insn: trace_insn,
                         rd: (rd != 0).then_some((rd, value)),
                         mem: None,
                     });
@@ -365,17 +403,17 @@ impl Hart {
                 }
                 return Err(Trap {
                     cause: Exception::IllegalInstruction,
-                    tval: insn as u64,
+                    tval: u64::from(trace_insn),
                 });
             }
         };
-        let (rd, value, mem) = self.execute(bus, instr, insn)?;
+        let (rd, value, mem) = self.execute(bus, instr, insn, insn_len)?;
         // Retirement hook — reached only when execute() returns Ok, so no record is
         // emitted for a faulting instruction (trap-purity contract). Built and passed
         // generically; with NullSink the optimizer erases all of this (E0-T15 proof).
         sink.retire(&crate::trace::TraceRecord {
             pc,
-            insn,
+            insn: trace_insn,
             // x0 / no-write instructions omit the register field.
             rd: (rd != 0).then_some((rd, value)),
             mem,
@@ -392,6 +430,7 @@ impl Hart {
         bus: &mut impl Bus,
         instr: Instr,
         insn: u32,
+        insn_len: u64,
     ) -> Result<(u8, u64, Option<crate::trace::MemOp>), Trap> {
         use crate::trace::MemOp;
         use Instr::*;
@@ -407,78 +446,80 @@ impl Hart {
         // Memory op captured by the load/store arms; None for everything else.
         let mut mem: Option<MemOp> = None;
         let pc = r.pc;
-        let pc4 = pc.wrapping_add(4);
+        let pc_next = pc.wrapping_add(insn_len);
         // Per-op result and successor PC; applied at the single retirement point
         // below (x0-discard and PC update live in one place).
         let (rd, value, next_pc): (u8, u64, u64) = match instr {
-            Lui { rd, imm } => (rd, imm as u64, pc4),
-            Auipc { rd, imm } => (rd, pc.wrapping_add(imm as u64), pc4),
+            Lui { rd, imm } => (rd, imm as u64, pc_next),
+            Auipc { rd, imm } => (rd, pc.wrapping_add(imm as u64), pc_next),
 
-            Addi { rd, rs1, imm } => (rd, r.read(rs1).wrapping_add(imm as u64), pc4),
-            Slti { rd, rs1, imm } => (rd, ((r.read(rs1) as i64) < imm) as u64, pc4),
-            Sltiu { rd, rs1, imm } => (rd, (r.read(rs1) < imm as u64) as u64, pc4),
-            Xori { rd, rs1, imm } => (rd, r.read(rs1) ^ imm as u64, pc4),
-            Ori { rd, rs1, imm } => (rd, r.read(rs1) | imm as u64, pc4),
-            Andi { rd, rs1, imm } => (rd, r.read(rs1) & imm as u64, pc4),
-            Slli { rd, rs1, shamt } => (rd, r.read(rs1) << shamt, pc4),
-            Srli { rd, rs1, shamt } => (rd, r.read(rs1) >> shamt, pc4),
-            Srai { rd, rs1, shamt } => (rd, ((r.read(rs1) as i64) >> shamt) as u64, pc4),
+            Addi { rd, rs1, imm } => (rd, r.read(rs1).wrapping_add(imm as u64), pc_next),
+            Slti { rd, rs1, imm } => (rd, ((r.read(rs1) as i64) < imm) as u64, pc_next),
+            Sltiu { rd, rs1, imm } => (rd, (r.read(rs1) < imm as u64) as u64, pc_next),
+            Xori { rd, rs1, imm } => (rd, r.read(rs1) ^ imm as u64, pc_next),
+            Ori { rd, rs1, imm } => (rd, r.read(rs1) | imm as u64, pc_next),
+            Andi { rd, rs1, imm } => (rd, r.read(rs1) & imm as u64, pc_next),
+            Slli { rd, rs1, shamt } => (rd, r.read(rs1) << shamt, pc_next),
+            Srli { rd, rs1, shamt } => (rd, r.read(rs1) >> shamt, pc_next),
+            Srai { rd, rs1, shamt } => (rd, ((r.read(rs1) as i64) >> shamt) as u64, pc_next),
 
-            Addiw { rd, rs1, imm } => {
-                (rd, sext32(r.read(rs1).wrapping_add(imm as u64) as u32), pc4)
-            }
-            Slliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) << shamt), pc4),
-            Srliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) >> shamt), pc4),
+            Addiw { rd, rs1, imm } => (
+                rd,
+                sext32(r.read(rs1).wrapping_add(imm as u64) as u32),
+                pc_next,
+            ),
+            Slliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) << shamt), pc_next),
+            Srliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) >> shamt), pc_next),
             Sraiw { rd, rs1, shamt } => (
                 rd,
                 sext32((((r.read(rs1) as u32) as i32) >> shamt) as u32),
-                pc4,
+                pc_next,
             ),
 
-            Add { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_add(r.read(rs2)), pc4),
-            Sub { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_sub(r.read(rs2)), pc4),
+            Add { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_add(r.read(rs2)), pc_next),
+            Sub { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_sub(r.read(rs2)), pc_next),
             // Register shifts: RV64 uses rs2[5:0]; the *W forms use rs2[4:0] (Ch. 5).
-            Sll { rd, rs1, rs2 } => (rd, r.read(rs1) << (r.read(rs2) & 0x3F), pc4),
+            Sll { rd, rs1, rs2 } => (rd, r.read(rs1) << (r.read(rs2) & 0x3F), pc_next),
             Slt { rd, rs1, rs2 } => (
                 rd,
                 ((r.read(rs1) as i64) < (r.read(rs2) as i64)) as u64,
-                pc4,
+                pc_next,
             ),
-            Sltu { rd, rs1, rs2 } => (rd, (r.read(rs1) < r.read(rs2)) as u64, pc4),
-            Xor { rd, rs1, rs2 } => (rd, r.read(rs1) ^ r.read(rs2), pc4),
-            Srl { rd, rs1, rs2 } => (rd, r.read(rs1) >> (r.read(rs2) & 0x3F), pc4),
+            Sltu { rd, rs1, rs2 } => (rd, (r.read(rs1) < r.read(rs2)) as u64, pc_next),
+            Xor { rd, rs1, rs2 } => (rd, r.read(rs1) ^ r.read(rs2), pc_next),
+            Srl { rd, rs1, rs2 } => (rd, r.read(rs1) >> (r.read(rs2) & 0x3F), pc_next),
             Sra { rd, rs1, rs2 } => (
                 rd,
                 ((r.read(rs1) as i64) >> (r.read(rs2) & 0x3F)) as u64,
-                pc4,
+                pc_next,
             ),
-            Or { rd, rs1, rs2 } => (rd, r.read(rs1) | r.read(rs2), pc4),
-            And { rd, rs1, rs2 } => (rd, r.read(rs1) & r.read(rs2), pc4),
+            Or { rd, rs1, rs2 } => (rd, r.read(rs1) | r.read(rs2), pc_next),
+            And { rd, rs1, rs2 } => (rd, r.read(rs1) & r.read(rs2), pc_next),
 
             Addw { rd, rs1, rs2 } => (
                 rd,
                 sext32((r.read(rs1) as u32).wrapping_add(r.read(rs2) as u32)),
-                pc4,
+                pc_next,
             ),
             Subw { rd, rs1, rs2 } => (
                 rd,
                 sext32((r.read(rs1) as u32).wrapping_sub(r.read(rs2) as u32)),
-                pc4,
+                pc_next,
             ),
             Sllw { rd, rs1, rs2 } => (
                 rd,
                 sext32((r.read(rs1) as u32) << (r.read(rs2) & 0x1F)),
-                pc4,
+                pc_next,
             ),
             Srlw { rd, rs1, rs2 } => (
                 rd,
                 sext32((r.read(rs1) as u32) >> (r.read(rs2) & 0x1F)),
-                pc4,
+                pc_next,
             ),
             Sraw { rd, rs1, rs2 } => (
                 rd,
                 sext32((((r.read(rs1) as u32) as i32) >> (r.read(rs2) & 0x1F)) as u32),
-                pc4,
+                pc_next,
             ),
 
             // ── M extension (E1-T03) ────────────────────────────────────────
@@ -486,11 +527,11 @@ impl Hart {
             // trap-free definitions (Unprivileged ISA "M" chapter) — Rust's own
             // divide-by-zero and MIN/-1 overflow panics must never be reached, so every
             // divisor-zero and overflow case is branched out BEFORE the `/` or `%`.
-            Mul { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_mul(r.read(rs2)), pc4),
+            Mul { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_mul(r.read(rs2)), pc_next),
             // MULH: high 64 of the signed×signed 128-bit product.
             Mulh { rd, rs1, rs2 } => {
                 let p = (r.read(rs1) as i64 as i128) * (r.read(rs2) as i64 as i128);
-                (rd, (p >> 64) as u64, pc4)
+                (rd, (p >> 64) as u64, pc_next)
             }
             // MULHSU: high 64 of signed(rs1) × unsigned(rs2). The tricky one: rs1 is
             // sign-extended into i128 (may be negative); rs2 is ZERO-extended (u64→u128,
@@ -498,12 +539,12 @@ impl Hart {
             // product fits in i128 (|i64|·u64 < 2^127); an arithmetic >>64 keeps the sign.
             Mulhsu { rd, rs1, rs2 } => {
                 let p = (r.read(rs1) as i64 as i128) * (r.read(rs2) as u128 as i128);
-                (rd, (p >> 64) as u64, pc4)
+                (rd, (p >> 64) as u64, pc_next)
             }
             // MULHU: high 64 of the unsigned×unsigned 128-bit product.
             Mulhu { rd, rs1, rs2 } => {
                 let p = (r.read(rs1) as u128) * (r.read(rs2) as u128);
-                (rd, (p >> 64) as u64, pc4)
+                (rd, (p >> 64) as u64, pc_next)
             }
             Div { rd, rs1, rs2 } => {
                 let (a, b) = (r.read(rs1) as i64, r.read(rs2) as i64);
@@ -514,13 +555,13 @@ impl Hart {
                 } else {
                     a.wrapping_div(b)
                 };
-                (rd, q as u64, pc4)
+                (rd, q as u64, pc_next)
             }
             // Unsigned div/rem: checked_* returns None ONLY on divisor zero (no unsigned
             // overflow case), giving the spec's all-ones / dividend results panic-free.
             Divu { rd, rs1, rs2 } => {
                 let (a, b) = (r.read(rs1), r.read(rs2));
-                (rd, a.checked_div(b).unwrap_or(u64::MAX), pc4)
+                (rd, a.checked_div(b).unwrap_or(u64::MAX), pc_next)
             }
             Rem { rd, rs1, rs2 } => {
                 let (a, b) = (r.read(rs1) as i64, r.read(rs2) as i64);
@@ -531,18 +572,18 @@ impl Hart {
                 } else {
                     a.wrapping_rem(b)
                 };
-                (rd, rem as u64, pc4)
+                (rd, rem as u64, pc_next)
             }
             Remu { rd, rs1, rs2 } => {
                 let (a, b) = (r.read(rs1), r.read(rs2));
-                (rd, a.checked_rem(b).unwrap_or(a), pc4)
+                (rd, a.checked_rem(b).unwrap_or(a), pc_next)
             }
             // W forms: operate on the low 32 bits (upper bits of the sources are
             // ignored per spec), then sign-extend the 32-bit result to 64.
             Mulw { rd, rs1, rs2 } => (
                 rd,
                 sext32((r.read(rs1) as u32).wrapping_mul(r.read(rs2) as u32)),
-                pc4,
+                pc_next,
             ),
             Divw { rd, rs1, rs2 } => {
                 let (a, b) = (r.read(rs1) as i32, r.read(rs2) as i32);
@@ -553,13 +594,13 @@ impl Hart {
                 } else {
                     a.wrapping_div(b)
                 };
-                (rd, sext32(q as u32), pc4)
+                (rd, sext32(q as u32), pc_next)
             }
             // DIVUW: unsigned 32-bit divide, result STILL sign-extended from bit 31
             // (so a 0xFFFF_FFFF quotient reads back as 0xFFFF_FFFF_FFFF_FFFF).
             Divuw { rd, rs1, rs2 } => {
                 let (a, b) = (r.read(rs1) as u32, r.read(rs2) as u32);
-                (rd, sext32(a.checked_div(b).unwrap_or(u32::MAX)), pc4)
+                (rd, sext32(a.checked_div(b).unwrap_or(u32::MAX)), pc_next)
             }
             Remw { rd, rs1, rs2 } => {
                 let (a, b) = (r.read(rs1) as i32, r.read(rs2) as i32);
@@ -570,11 +611,11 @@ impl Hart {
                 } else {
                     a.wrapping_rem(b)
                 };
-                (rd, sext32(rem as u32), pc4)
+                (rd, sext32(rem as u32), pc_next)
             }
             Remuw { rd, rs1, rs2 } => {
                 let (a, b) = (r.read(rs1) as u32, r.read(rs2) as u32);
-                (rd, sext32(a.checked_rem(b).unwrap_or(a)), pc4)
+                (rd, sext32(a.checked_rem(b).unwrap_or(a)), pc_next)
             }
 
             // ── A extension (E1-T04) ────────────────────────────────────────
@@ -592,7 +633,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (rd, sext32(v), pc4)
+                (rd, sext32(v), pc_next)
             }
             LrD { rd, rs1, .. } => {
                 let a = r.read(rs1);
@@ -604,7 +645,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (rd, v, pc4)
+                (rd, v, pc_next)
             }
             // SC succeeds only against a valid reservation for the SAME address AND width
             // (a width mismatch, e.g. LR.W then SC.D, fails — never a wrong-width write).
@@ -630,9 +671,9 @@ impl Hart {
                         is_store: true,
                         value: val,
                     });
-                    (rd, 0, pc4)
+                    (rd, 0, pc_next)
                 } else {
-                    (rd, 1, pc4)
+                    (rd, 1, pc_next)
                 }
             }
             ScD { rd, rs1, rs2, .. } => {
@@ -654,9 +695,9 @@ impl Hart {
                         is_store: true,
                         value: val,
                     });
-                    (rd, 0, pc4)
+                    (rd, 0, pc_next)
                 } else {
-                    (rd, 1, pc4)
+                    (rd, 1, pc_next)
                 }
             }
             // AMO: atomic load → op → store (single-threaded, so a plain RMW). rd gets the
@@ -681,7 +722,7 @@ impl Hart {
                     is_store: true,
                     value: new as u64,
                 });
-                (rd, sext32(old), pc4)
+                (rd, sext32(old), pc_next)
             }
             AmoD {
                 op, rd, rs1, rs2, ..
@@ -702,12 +743,12 @@ impl Hart {
                     is_store: true,
                     value: new,
                 });
-                (rd, old, pc4)
+                (rd, old, pc_next)
             }
 
             // FENCE retires as a no-op: single in-order hart, no reordering agents
             // at Level 0. Write to x0 so it flows through the common retire path.
-            Fence { .. } => (0, 0, pc4),
+            Fence { .. } => (0, 0, pc_next),
 
             // Loads (E0-T08): effective address = rs1 + sext(imm), wrapping.
             // A bus fault maps to cause 4/5 with tval = the effective address; the
@@ -724,7 +765,7 @@ impl Hart {
                 (
                     rd,
                     bus.load8(a).map_err(|f| load_fault(f, a))? as i8 as i64 as u64,
-                    pc4,
+                    pc_next,
                 )
             }
             Lh { rd, rs1, imm } => {
@@ -738,7 +779,7 @@ impl Hart {
                 (
                     rd,
                     bus.load16(a).map_err(|f| load_fault(f, a))? as i16 as i64 as u64,
-                    pc4,
+                    pc_next,
                 )
             }
             Lw { rd, rs1, imm } => {
@@ -752,7 +793,7 @@ impl Hart {
                 (
                     rd,
                     bus.load32(a).map_err(|f| load_fault(f, a))? as i32 as i64 as u64,
-                    pc4,
+                    pc_next,
                 )
             }
             Ld { rd, rs1, imm } => {
@@ -763,7 +804,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (rd, bus.load64(a).map_err(|f| load_fault(f, a))?, pc4)
+                (rd, bus.load64(a).map_err(|f| load_fault(f, a))?, pc_next)
             }
             Lbu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -776,7 +817,7 @@ impl Hart {
                 (
                     rd,
                     u64::from(bus.load8(a).map_err(|f| load_fault(f, a))?),
-                    pc4,
+                    pc_next,
                 )
             }
             Lhu { rd, rs1, imm } => {
@@ -790,7 +831,7 @@ impl Hart {
                 (
                     rd,
                     u64::from(bus.load16(a).map_err(|f| load_fault(f, a))?),
-                    pc4,
+                    pc_next,
                 )
             }
             Lwu { rd, rs1, imm } => {
@@ -804,7 +845,7 @@ impl Hart {
                 (
                     rd,
                     u64::from(bus.load32(a).map_err(|f| load_fault(f, a))?),
-                    pc4,
+                    pc_next,
                 )
             }
 
@@ -821,7 +862,7 @@ impl Hart {
                 });
                 bus.store8(a, r.read(rs2) as u8)
                     .map_err(|f| store_fault(f, a))?;
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             Sh { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -833,7 +874,7 @@ impl Hart {
                 });
                 bus.store16(a, r.read(rs2) as u16)
                     .map_err(|f| store_fault(f, a))?;
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             Sw { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -845,7 +886,7 @@ impl Hart {
                 });
                 bus.store32(a, r.read(rs2) as u32)
                     .map_err(|f| store_fault(f, a))?;
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             Sd { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -856,7 +897,7 @@ impl Hart {
                     value: r.read(rs2),
                 });
                 bus.store64(a, r.read(rs2)).map_err(|f| store_fault(f, a))?;
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
 
             // Jumps (E0-T09, §2.5): target computed FIRST (so jalr rd==rs1 uses the
@@ -864,33 +905,43 @@ impl Hart {
             // traps cause 0 with tval = target and writes nothing.
             Jal { rd, imm } => {
                 let target = pc.wrapping_add(imm as u64);
-                if target & 3 != 0 {
+                if target & 1 != 0 {
                     return Err(Trap {
                         cause: Exception::InstrAddrMisaligned,
                         tval: target,
                     });
                 }
-                (rd, pc4, target)
+                (rd, pc_next, target)
             }
             Jalr { rd, rs1, imm } => {
                 let target = ea(r.read(rs1), imm) & !1; // spec: clear bit 0
-                if target & 3 != 0 {
+                if target & 1 != 0 {
                     return Err(Trap {
                         cause: Exception::InstrAddrMisaligned,
                         tval: target,
                     });
                 }
-                (rd, pc4, target)
+                (rd, pc_next, target)
             }
 
             // Branches (E0-T09): only a TAKEN branch can trap on target misalignment;
             // not-taken retires normally regardless of the encoded target.
-            Beq { rs1, rs2, imm } => branch(r.read(rs1) == r.read(rs2), pc, imm)?,
-            Bne { rs1, rs2, imm } => branch(r.read(rs1) != r.read(rs2), pc, imm)?,
-            Blt { rs1, rs2, imm } => branch((r.read(rs1) as i64) < (r.read(rs2) as i64), pc, imm)?,
-            Bge { rs1, rs2, imm } => branch((r.read(rs1) as i64) >= (r.read(rs2) as i64), pc, imm)?,
-            Bltu { rs1, rs2, imm } => branch(r.read(rs1) < r.read(rs2), pc, imm)?,
-            Bgeu { rs1, rs2, imm } => branch(r.read(rs1) >= r.read(rs2), pc, imm)?,
+            Beq { rs1, rs2, imm } => branch(r.read(rs1) == r.read(rs2), pc, imm, insn_len)?,
+            Bne { rs1, rs2, imm } => branch(r.read(rs1) != r.read(rs2), pc, imm, insn_len)?,
+            Blt { rs1, rs2, imm } => branch(
+                (r.read(rs1) as i64) < (r.read(rs2) as i64),
+                pc,
+                imm,
+                insn_len,
+            )?,
+            Bge { rs1, rs2, imm } => branch(
+                (r.read(rs1) as i64) >= (r.read(rs2) as i64),
+                pc,
+                imm,
+                insn_len,
+            )?,
+            Bltu { rs1, rs2, imm } => branch(r.read(rs1) < r.read(rs2), pc, imm, insn_len)?,
+            Bgeu { rs1, rs2, imm } => branch(r.read(rs1) >= r.read(rs2), pc, imm, insn_len)?,
 
             // ECALL / EBREAK (E0-T11): precise traps, PC left at the instruction's
             // own address, nothing else mutated. ECALL → cause 11 (env-call-from-M,
@@ -911,12 +962,12 @@ impl Hart {
 
             // ── Zicsr / Zifencei / xRET (E1-T02) ────────────────────────────
             // FENCE.I is a no-op for an in-order interpreter (no store buffer / i-cache).
-            FenceI => (0, 0, pc4),
+            FenceI => (0, 0, pc_next),
             // Wait-for-interrupt retires as a no-op (no interrupts at this level). Per our
             // conservative A-extension policy it drops any LR/SC reservation (E1-T04).
             Wfi => {
                 self.resv = None;
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             // Return from trap: pc ← mepc. (Full mstatus.MPP/MPIE restore lands with trap
             // delivery; here we transfer control, which is what the p-env needs.)
@@ -946,7 +997,7 @@ impl Hart {
                     rd == 0,
                     insn as u64,
                 )?;
-                (rd, old, pc4)
+                (rd, old, pc_next)
             }
             Csrrs { rd, rs1, csr } => {
                 let src = r.read(rs1);
@@ -958,7 +1009,7 @@ impl Hart {
                     rd == 0,
                     insn as u64,
                 )?;
-                (rd, old, pc4)
+                (rd, old, pc_next)
             }
             Csrrc { rd, rs1, csr } => {
                 let src = r.read(rs1);
@@ -970,7 +1021,7 @@ impl Hart {
                     rd == 0,
                     insn as u64,
                 )?;
-                (rd, old, pc4)
+                (rd, old, pc_next)
             }
             Csrrwi { rd, uimm, csr } => {
                 let old = self.csr.access(
@@ -981,7 +1032,7 @@ impl Hart {
                     rd == 0,
                     insn as u64,
                 )?;
-                (rd, old, pc4)
+                (rd, old, pc_next)
             }
             Csrrsi { rd, uimm, csr } => {
                 let old = self.csr.access(
@@ -992,7 +1043,7 @@ impl Hart {
                     rd == 0,
                     insn as u64,
                 )?;
-                (rd, old, pc4)
+                (rd, old, pc_next)
             }
             Csrrci { rd, uimm, csr } => {
                 let old = self.csr.access(
@@ -1003,7 +1054,7 @@ impl Hart {
                     rd == 0,
                     insn as u64,
                 )?;
-                (rd, old, pc4)
+                (rd, old, pc_next)
             }
 
             // ── F extension (E1-T06) ────────────────────────────────────────
@@ -1021,7 +1072,7 @@ impl Hart {
                 let v = bus.load32(a).map_err(|f| load_fault(f, a))?;
                 self.fregs.write_f32(rd, v);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             Fsw { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -1033,7 +1084,7 @@ impl Hart {
                     value: u64::from(v),
                 });
                 bus.store32(a, v).map_err(|f| store_fault(f, a))?;
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FpArithS {
                 op,
@@ -1062,7 +1113,7 @@ impl Hart {
                 self.fregs.write_f32(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FsqrtS { rd, rs1, rm } => {
                 let round = match self.csr.resolve_rm(rm) {
@@ -1078,7 +1129,7 @@ impl Hart {
                 self.fregs.write_f32(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FpFusedS {
                 op,
@@ -1114,7 +1165,7 @@ impl Hart {
                 self.fregs.write_f32(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FsgnjS { op, rd, rs1, rs2 } => {
                 let a = self.fregs.read_f32(rs1);
@@ -1127,7 +1178,7 @@ impl Hart {
                 };
                 self.fregs.write_f32(rd, (a & 0x7FFF_FFFF) | sign);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FminmaxS {
                 is_max,
@@ -1143,7 +1194,7 @@ impl Hart {
                 self.fregs.write_f32(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FpCmpS { op, rd, rs1, rs2 } => {
                 let a = self.fregs.read_f32(rs1);
@@ -1156,20 +1207,20 @@ impl Hart {
                 };
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (rd, res as u64, pc4)
+                (rd, res as u64, pc_next)
             }
             FclassS { rd, rs1 } => {
                 let mask = crate::softfloat::fclass_f32(self.fregs.read_f32(rs1));
-                (rd, mask, pc4)
+                (rd, mask, pc_next)
             }
             FmvXW { rd, rs1 } => {
                 // Raw low-32-bit move, sign-extended (no NaN-box canonicalization).
-                (rd, sext32(self.fregs.read_raw(rs1) as u32), pc4)
+                (rd, sext32(self.fregs.read_raw(rs1) as u32), pc_next)
             }
             FmvWX { rd, rs1 } => {
                 self.fregs.write_f32(rd, r.read(rs1) as u32);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FcvtToIntS { width, rd, rs1, rm } => {
                 let round = match self.csr.resolve_rm(rm) {
@@ -1185,7 +1236,7 @@ impl Hart {
                     crate::softfloat::f32_to_int(self.fregs.read_f32(rs1), width, round);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (rd, res, pc4)
+                (rd, res, pc_next)
             }
             FcvtFromIntS { width, rd, rs1, rm } => {
                 let round = match self.csr.resolve_rm(rm) {
@@ -1201,7 +1252,7 @@ impl Hart {
                 self.fregs.write_f32(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
 
             // ── D extension (E1-T07) ────────────────────────────────────────
@@ -1217,7 +1268,7 @@ impl Hart {
                 let v = bus.load64(a).map_err(|f| load_fault(f, a))?;
                 self.fregs.write_raw(rd, v);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             Fsd { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -1229,7 +1280,7 @@ impl Hart {
                     value: v,
                 });
                 bus.store64(a, v).map_err(|f| store_fault(f, a))?;
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FpArithD {
                 op,
@@ -1258,7 +1309,7 @@ impl Hart {
                 self.fregs.write_raw(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FsqrtD { rd, rs1, rm } => {
                 let round = match self.csr.resolve_rm(rm) {
@@ -1274,7 +1325,7 @@ impl Hart {
                 self.fregs.write_raw(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FpFusedD {
                 op,
@@ -1308,7 +1359,7 @@ impl Hart {
                 self.fregs.write_raw(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FsgnjD { op, rd, rs1, rs2 } => {
                 let a = self.fregs.read_raw(rs1);
@@ -1321,7 +1372,7 @@ impl Hart {
                 };
                 self.fregs.write_raw(rd, (a & 0x7FFF_FFFF_FFFF_FFFF) | sign);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FminmaxD {
                 is_max,
@@ -1337,7 +1388,7 @@ impl Hart {
                 self.fregs.write_raw(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FpCmpD { op, rd, rs1, rs2 } => {
                 let a = self.fregs.read_raw(rs1);
@@ -1350,20 +1401,20 @@ impl Hart {
                 };
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (rd, res as u64, pc4)
+                (rd, res as u64, pc_next)
             }
             FclassD { rd, rs1 } => {
                 let mask = crate::softfloat::fclass_f64(self.fregs.read_raw(rs1));
-                (rd, mask, pc4)
+                (rd, mask, pc_next)
             }
             FmvXD { rd, rs1 } => {
                 // Raw 64-bit move f→x (no canonicalization).
-                (rd, self.fregs.read_raw(rs1), pc4)
+                (rd, self.fregs.read_raw(rs1), pc_next)
             }
             FmvDX { rd, rs1 } => {
                 self.fregs.write_raw(rd, r.read(rs1));
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             FcvtToIntD { width, rd, rs1, rm } => {
                 let round = match self.csr.resolve_rm(rm) {
@@ -1379,7 +1430,7 @@ impl Hart {
                     crate::softfloat::f64_to_int(self.fregs.read_raw(rs1), width, round);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (rd, res, pc4)
+                (rd, res, pc_next)
             }
             FcvtFromIntD { width, rd, rs1, rm } => {
                 let round = match self.csr.resolve_rm(rm) {
@@ -1395,7 +1446,7 @@ impl Hart {
                 self.fregs.write_raw(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             // FCVT.S.D — narrow f64 → f32, rounds, result NaN-boxed.
             FcvtSD { rd, rs1, rm } => {
@@ -1412,7 +1463,7 @@ impl Hart {
                 self.fregs.write_f32(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
             // FCVT.D.S — widen f32 → f64, exact; the f32 input is NaN-box checked.
             FcvtDS { rd, rs1, rm: _ } => {
@@ -1420,7 +1471,7 @@ impl Hart {
                 self.fregs.write_raw(rd, res);
                 self.csr.accrue_fflags(flags.0);
                 self.csr.mark_fp_dirty();
-                (0, 0, pc4)
+                (0, 0, pc_next)
             }
         };
         // A-extension reservation invalidation (E1-T04): a *successful* store that
