@@ -384,9 +384,15 @@ pub fn build_virt_dtb(platform: &Platform, bootargs: &str, initrd: Option<Initrd
 /// Where to place a DTB of `dtb_len` bytes in DRAM: at the top, 8-byte aligned downward —
 /// outside the kernel image (loaded at the bottom of DRAM) and below nothing else. Returns
 /// `None` if the blob doesn't fit.
+///
+/// `DTB_SLACK` bytes of headroom are left ABOVE the blob: firmware fixups edit the DTB in
+/// place and grow it (OpenSBI's reserved-memory fixup — the ADR 0002 option-(b) probe took a
+/// store access fault 21 bytes past top-of-RAM when the DTB sat flush against the end).
+pub const DTB_SLACK: u64 = 16 * 1024;
+
 pub fn dtb_placement(platform: &Platform, dtb_len: u64) -> Option<u64> {
     let dram_end = virt::DRAM_BASE.checked_add(platform.dram_size())?;
-    let addr = dram_end.checked_sub(dtb_len)? & !7;
+    let addr = dram_end.checked_sub(dtb_len.checked_add(DTB_SLACK)?)? & !7;
     if addr < virt::DRAM_BASE {
         return None;
     }
