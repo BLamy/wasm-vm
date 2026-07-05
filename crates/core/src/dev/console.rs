@@ -70,8 +70,9 @@ impl<S: ConsoleSink> MmioDevice for Uart0Stub<S> {
         // emits ONE byte). Other offsets: ignored, noted once. Writes never fault.
         if offset == THR {
             self.sink.put_byte(value as u8);
-        } else {
-            let _first = self.note_offset(offset); // E0-T15 will log on `_first`
+        } else if self.note_offset(offset) {
+            // First write to this unused UART offset — logged once, then ignored.
+            log::debug!("UART0 stub: ignored write to unused offset {offset:#x}");
         }
         Ok(())
     }

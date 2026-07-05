@@ -70,11 +70,17 @@ jobs:
       - run: wasm-pack build crates/wasm --target web
       - run: wasm-pack test --node crates/wasm
 
+  # Explicit feature powerset for wasm-vm-core (E0-T15): every combination of
+  # {std, trace} must build natively; {} and trace must build for wasm32.
   features:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flags: ["", "--no-default-features", "--all-features"]
+        flags:
+          - "--no-default-features"
+          - "--no-default-features --features std"
+          - "--no-default-features --features trace"
+          - "--no-default-features --features std,trace"
     steps:
       - uses: actions/checkout@v4
       - name: Read toolchain pin
@@ -83,5 +89,26 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ steps.pin.outputs.toolchain }}
+          targets: wasm32-unknown-unknown
       - uses: Swatinem/rust-cache@v2
       - run: cargo build -p wasm-vm-core ${{ matrix.flags }}
+
+  # The two no_std feature builds must also compile for wasm32.
+  features-wasm:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flags:
+          - "--no-default-features"
+          - "--no-default-features --features trace"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build -p wasm-vm-core ${{ matrix.flags }} --target wasm32-unknown-unknown

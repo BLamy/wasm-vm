@@ -4,6 +4,22 @@
 //! free of every browser- and JS-facing dependency. Anything that talks to the web
 //! belongs in `wasm-vm-wasm`; anything that talks to a host OS belongs in `wasm-vm-cli`
 //! or behind the `std` feature here.
+//!
+//! # Feature matrix
+//!
+//! | Features     | `std` | Tracing | Notes                                         |
+//! |--------------|-------|---------|-----------------------------------------------|
+//! | *(none)*     | no    | off     | leanest `no_std` build (embed / wasm)         |
+//! | `std`        | yes   | off     | default; host integration                     |
+//! | `trace`      | no    | on      | `no_std` + instruction-trace hooks (E0-T16)   |
+//! | `std,trace`  | yes   | on      | full host + tracing                           |
+//!
+//! Diagnostics route through the [`log`] facade (never `println!`), so hosts choose the
+//! backend (`env_logger` in the CLI, `console_log` in wasm). **Tracing is zero-cost when
+//! off**: it is a generic [`trace::TraceSink`] type parameter whose [`trace::NullSink`]
+//! has empty `#[inline(always)]` methods, so a release build erases the hook entirely
+//! (proven by `tools/check-zero-cost.sh`). Only genuine data-cost machinery is gated by
+//! `#[cfg(feature = "trace")]`.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
@@ -17,6 +33,7 @@ pub mod htif;
 pub mod loader;
 pub mod mmio;
 pub mod ram;
+pub mod trace;
 
 use hart::{Hart, Trap};
 use htif::{Htif, HtifStatus};
@@ -129,7 +146,10 @@ impl Machine {
                     self.last_tohost = raw;
                     match HtifStatus::decode(raw) {
                         HtifStatus::Exit(e) => return RunOutcome::Exited(e.code),
-                        HtifStatus::Command(_) => self.htif_commands += 1,
+                        HtifStatus::Command(v) => {
+                            log::debug!("HTIF command ignored: tohost={v:#018x}");
+                            self.htif_commands += 1;
+                        }
                         HtifStatus::Idle => {}
                     }
                 }

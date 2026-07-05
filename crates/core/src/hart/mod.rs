@@ -132,7 +132,26 @@ impl Hart {
     /// Fetch at PC, decode, execute one instruction. On `Ok`, the instruction
     /// retired and PC advanced. On `Err(trap)`, PC and all registers are exactly
     /// as they were before the call (trap purity — asserted by tests).
+    ///
+    /// Non-generic and unchanged for all callers: it is exactly [`step_traced`] with
+    /// the zero-cost [`NullSink`], which the optimizer erases the hook from.
+    #[inline]
     pub fn step(&mut self, bus: &mut impl Bus) -> Result<(), Trap> {
+        self.step_traced(bus, &mut crate::trace::NullSink)
+    }
+
+    /// Like [`step`], plus a [`TraceSink`] hook fired AFTER a successful retirement
+    /// (never on a trapping step — a faulting instruction produces no retire record).
+    /// With `sink = &mut NullSink` this monomorphizes to exactly the old `step`.
+    ///
+    /// [`step`]: Self::step
+    /// [`TraceSink`]: crate::trace::TraceSink
+    #[inline]
+    pub fn step_traced<T: crate::trace::TraceSink>(
+        &mut self,
+        bus: &mut impl Bus,
+        sink: &mut T,
+    ) -> Result<(), Trap> {
         let pc = self.regs.pc;
         let insn = match bus.load32(pc) {
             Ok(w) => w,
@@ -155,7 +174,11 @@ impl Hart {
                 tval: insn as u64,
             });
         };
-        self.execute(bus, instr)
+        self.execute(bus, instr)?;
+        // Retirement hook — reached only when execute() returns Ok, so no record is
+        // emitted for a faulting instruction (trap-purity contract).
+        sink.on_retire(pc, insn);
+        Ok(())
     }
 
     /// Execute a decoded instruction. Every arm either fully retires (writeback +
