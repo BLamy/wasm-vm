@@ -60,6 +60,13 @@ struct RunArgs {
     /// Like `--dump-regs`, plus the E0-T17 `state sha256=<hex>` line.
     #[arg(long)]
     dump_state: bool,
+    /// RISCOF (E1-T20): after the run, write the `begin_signature`..`end_signature` region here as
+    /// the arch-test signature (one little-endian word per line, lowercase hex).
+    #[arg(long)]
+    signature: Option<PathBuf>,
+    /// Signature word size in bytes (RISCOF default 4; only 4 is supported).
+    #[arg(long, default_value_t = 4)]
+    signature_granularity: u32,
 }
 
 /// Guest console → this process's stdout, streamed (no unbounded buffering). A closed
@@ -165,10 +172,13 @@ fn run(a: RunArgs) -> ExitCode {
         .attach(UART0_BASE, UART0_LEN, Box::new(Uart0Stub::new(console)))
         .expect("UART0 sits in a fixed, un-contended MMIO slot");
 
-    if let Err(e) = m.load_elf(&bytes) {
-        eprintln!("wasm-vm: {}: {e:?}", a.elf.display());
-        return ExitCode::from(elf_error_code(&e));
-    }
+    let img = match m.load_elf(&bytes) {
+        Ok(img) => img,
+        Err(e) => {
+            eprintln!("wasm-vm: {}: {e:?}", a.elf.display());
+            return ExitCode::from(elf_error_code(&e));
+        }
+    };
 
     let (canonical, json) = match (open_trace(&a.trace), open_trace(&a.trace_json)) {
         (Ok(c), Ok(j)) => (c, j),
@@ -212,6 +222,32 @@ fn run(a: RunArgs) -> ExitCode {
     }
 
     eprintln!("retired={}", sink.count);
+
+    // RISCOF signature dump (E1-T20): write the begin_signature..end_signature region after the
+    // run. Required for the arch-test flow; a run that asked for it but lacks the symbols is a hard
+    // error (a non-arch-test ELF), not a silent empty file.
+    if let Some(path) = &a.signature {
+        match (img.begin_signature, img.end_signature) {
+            (Some(begin), Some(end)) => match m.signature(begin, end, a.signature_granularity) {
+                Ok(sig) => {
+                    if let Err(e) = std::fs::write(path, sig) {
+                        eprintln!("wasm-vm: cannot write signature {}: {e}", path.display());
+                        return ExitCode::from(74);
+                    }
+                }
+                Err(e) => {
+                    eprintln!("wasm-vm: {e}");
+                    return ExitCode::from(2);
+                }
+            },
+            _ => {
+                eprintln!(
+                    "wasm-vm: --signature given but begin_signature/end_signature symbols are absent"
+                );
+                return ExitCode::from(2);
+            }
+        }
+    }
 
     if trace_io_failed {
         return ExitCode::from(74);

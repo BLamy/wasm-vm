@@ -7,6 +7,7 @@
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
 use wasm_vm_core::csr::{Csrs, Priv};
+use wasm_vm_core::hart::Exception;
 use wasm_vm_core::mmio::SystemBus;
 use wasm_vm_core::mmu::{self, Access};
 use wasm_vm_core::ram::Ram;
@@ -421,5 +422,40 @@ fn mprv_translates_loads_as_mpp_but_not_fetches() {
         mmu::translate(&c, &mut bus, va, Access::Fetch, Priv::M).unwrap(),
         va,
         "M-effective fetch is not translated"
+    );
+}
+
+/// E1-T20 (RISCOF vm reserved-bit tests): a leaf PTE with any reserved high bit set — N (63,
+/// Svnapot), PBMT (62:61, Svpbmt), or the reserved field (60:54) — must page-fault, since we
+/// implement neither Svnapot nor Svpbmt (§4.4.1).
+#[test]
+fn reserved_high_pte_bits_page_fault() {
+    let va = 0x1234_5000u64;
+    let pa = DRAM_BASE + 0x8000;
+    for (name, bad) in [
+        ("Svnapot N (63)", 1u64 << 63),
+        ("Svpbmt PBMT hi (62)", 1u64 << 62),
+        ("Svpbmt PBMT lo (61)", 1u64 << 61),
+        ("reserved (60)", 1u64 << 60),
+        ("reserved (54)", 1u64 << 54),
+    ] {
+        let mut bus = ram();
+        let c = s_mode_csrs();
+        map_4k(&mut bus, va, pa, V | R | W | X | A | D | bad);
+        assert_eq!(
+            mmu::translate(&c, &mut bus, va, Access::Load, Priv::S)
+                .unwrap_err()
+                .cause,
+            Exception::LoadPageFault,
+            "{name}: a set reserved high bit must page-fault"
+        );
+    }
+    // Sanity: with all reserved high bits clear the same mapping translates fine.
+    let mut bus = ram();
+    let c = s_mode_csrs();
+    map_4k(&mut bus, va, pa, V | R | W | X | A | D);
+    assert_eq!(
+        mmu::translate(&c, &mut bus, va, Access::Load, Priv::S).unwrap(),
+        pa
     );
 }

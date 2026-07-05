@@ -64,6 +64,9 @@ const PTE_U: u64 = 1 << 4;
 const PTE_G: u64 = 1 << 5;
 const PTE_A: u64 = 1 << 6;
 const PTE_D: u64 = 1 << 7;
+/// PTE bits [63:54]: N (Svnapot, 63), PBMT (Svpbmt, 62:61), and the reserved field (60:54). We
+/// implement neither Svnapot nor Svpbmt, so any set bit here is a reserved encoding → page fault.
+const PTE_RESERVED_HI: u64 = 0xFFC0_0000_0000_0000;
 
 /// True if `va` is canonical for a `sign_bit`-indexed scheme: bits [63:sign_bit+1] all equal
 /// bit `sign_bit` (Sv39 → 38, Sv48 → 47).
@@ -178,6 +181,13 @@ fn walk_leaf(
 
         // V=0, or R=0&W=1 (reserved) → page fault.
         if pte & PTE_V == 0 || (pte & PTE_R == 0 && pte & PTE_W != 0) {
+            return Err(fault(access.page_fault()));
+        }
+
+        // Reserved high bits [63:54] — N (63, Svnapot), PBMT (62:61, Svpbmt), and the reserved
+        // field (60:54) — must be zero: we implement neither Svnapot nor Svpbmt, so a set bit is a
+        // reserved encoding and raises a page fault (§4.4.1; RISCOF vm reserved-bit tests, E1-T20).
+        if pte & PTE_RESERVED_HI != 0 {
             return Err(fault(access.page_fault()));
         }
 

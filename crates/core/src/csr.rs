@@ -819,6 +819,11 @@ impl Csrs {
         if self.mode < meta.min_priv {
             return Err(illegal()); // access above current privilege
         }
+        // TVM (E1-T20, §3.1.6.5): with mstatus.TVM=1, a `satp` CSR access in S-mode is illegal —
+        // the hypervisor-intercept partner of the SFENCE.VMA-in-S trap (E1-T17). M is unaffected.
+        if addr == SATP && matches!(self.mode, Priv::S) && self.tvm() {
+            return Err(illegal());
+        }
         // Zicntr counter gating (E1-T14, §3.1.10/§4.1.5): an S/U access to cycle/time/instret
         // (and any hpmcounter) is illegal unless the matching mcounteren bit is set; U also needs
         // the scounteren bit. M-mode is never gated. HPM bits 3..31 of counteren are read-only 0,

@@ -6,7 +6,7 @@
 
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
-use wasm_vm_core::csr::{CsrOp, Csrs, MEPC, MSTATUS, Priv, SEPC, SSTATUS};
+use wasm_vm_core::csr::{CsrOp, Csrs, MEPC, MSTATUS, Priv, SATP, SEPC, SSTATUS};
 use wasm_vm_core::hart::{Exception, Hart};
 use wasm_vm_core::mmio::SystemBus;
 use wasm_vm_core::ram::Ram;
@@ -342,5 +342,41 @@ fn mode_never_changes_via_plain_csr_write() {
         c.mode,
         Priv::M,
         "csrw mstatus does not change privilege mode"
+    );
+}
+
+/// E1-T20 (RISCOF vm mstatus_tvm tests, §3.1.6.5): with mstatus.TVM=1, a `satp` CSR access in
+/// S-mode is illegal (the hypervisor-intercept partner of the SFENCE.VMA-in-S trap, E1-T17).
+/// M-mode is unaffected; TVM=0 leaves satp accessible in S.
+#[test]
+fn tvm_makes_satp_access_illegal_in_s_mode() {
+    let (mut hart, _bus) = machine();
+    wr(&mut hart.csr, MSTATUS, 1 << 20); // set TVM while still in M
+    hart.csr.mode = Priv::S;
+    for op in [CsrOp::Set, CsrOp::Write, CsrOp::Clear] {
+        assert_eq!(
+            hart.csr
+                .access(SATP, op, 0, true, false, 0xbeef)
+                .unwrap_err()
+                .cause,
+            Exception::IllegalInstruction,
+            "satp {op:?} in S with TVM=1 must be illegal"
+        );
+    }
+    // M-mode is unaffected even with TVM set.
+    hart.csr.mode = Priv::M;
+    assert!(
+        hart.csr
+            .access(SATP, CsrOp::Write, 0, false, false, 0)
+            .is_ok()
+    );
+
+    // A fresh hart with TVM=0: satp is accessible in S.
+    let (mut h2, _b2) = machine();
+    h2.csr.mode = Priv::S;
+    assert!(
+        h2.csr
+            .access(SATP, CsrOp::Write, 0, false, false, 0)
+            .is_ok()
     );
 }
