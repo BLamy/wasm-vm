@@ -53,20 +53,24 @@ use wasm_vm_core::decode::decode;
 /// | FCVT.{to,from}-int.S  | 8 · 2^13         | rs2∈{0..3} width; rd+rs1+rm free           |
 /// | FMV.X.W/FCLASS.S/FMV.W.X | 3 · 2^10      | funct3+rs2 fixed; rd+rs1 free              |
 ///
-/// Folding 2·2^22 + 4·2^23 (=8·2^22) into the 2^22 term (56→66); 8·2^15 into 31→39; 2^13
-/// (FSQRT) + 8·2^13 (FCVT) into 1→10. Sum =
-/// 66·2^22 + 4·2^18 + 20·2^17 + 3·2^16 + 39·2^15 + 10·2^13 + 3·2^10 + 5 = 282_053_637.
+/// E1-T07 adds the D extension, a near-exact parallel of F (fmt bit set): FLD/FSD (2·2^22),
+/// fused D (4·2^23=8·2^22), FADD..FDIV.D (4·2^18), FSQRT.D (2^13), FSGNJ/FMIN,MAX/FCMP.D
+/// (8·2^15), FCVT.{to,from}-int.D (8·2^13), FMV.X.D/FCLASS.D/FMV.D.X (3·2^10), and the two
+/// format conversions FCVT.S.D + FCVT.D.S (2·2^13). Folding: 2^22 66→76; 2^18 4→8;
+/// 2^15 39→47; 2^13 10→21; 2^10 3→6.
+///
+/// Sum = 76·2^22 + 8·2^18 + 20·2^17 + 3·2^16 + 47·2^15 + 21·2^13 + 6·2^10 + 5 = 325_400_581.
 ///
 /// NOTE: the CSR ops / FENCE.I / MRET / WFI belong to the DEFAULT (Zicsr) decoder; under
-/// `feature = "zicsr-stub"` they route to the E0-T19 stub. M/A/F are NOT feature-gated. This
-/// sweep runs with default features.
-pub const EXPECTED_LEGAL: u64 = 66 * (1 << 22)
-    + 4 * (1 << 18)
+/// `feature = "zicsr-stub"` they route to the E0-T19 stub. M/A/F/D are NOT feature-gated.
+/// This sweep runs with default features.
+pub const EXPECTED_LEGAL: u64 = 76 * (1 << 22)
+    + 8 * (1 << 18)
     + 20 * (1 << 17)
     + 3 * (1 << 16)
-    + 39 * (1 << 15)
-    + 10 * (1 << 13)
-    + 3 * (1 << 10)
+    + 47 * (1 << 15)
+    + 21 * (1 << 13)
+    + 6 * (1 << 10)
     + 5;
 
 #[test]

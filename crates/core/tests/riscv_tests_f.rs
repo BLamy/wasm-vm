@@ -88,3 +88,47 @@ fn rv64uf_p_suite_all_pass() {
         failures.join("\n")
     );
 }
+
+/// E1-T07: the rv64ud-p (D extension) suite, same real-CSR harness.
+#[test]
+fn rv64ud_p_suite_all_pass() {
+    let dir = bin_dir();
+    assert!(
+        dir.is_dir(),
+        "run tools/riscv-tests/build-rv64ud.sh: {dir:?}"
+    );
+    let mut entries: Vec<_> = std::fs::read_dir(&dir)
+        .unwrap()
+        .map(|e| e.unwrap().path())
+        .filter(|p| {
+            p.file_name()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .starts_with("rv64ud-p-")
+        })
+        .collect();
+    entries.sort();
+
+    let mut failures = Vec::new();
+    for path in &entries {
+        let name = path.file_name().unwrap().to_str().unwrap();
+        match run_one(path) {
+            Verdict::Pass => {}
+            Verdict::Fail(n) => failures.push(format!("{name}: FAIL riscv-tests case #{n}")),
+            Verdict::Other(why) => failures.push(format!("{name}: {why}")),
+        }
+    }
+
+    assert!(
+        entries.len() >= 11,
+        "expected the rv64ud-p set, found {}",
+        entries.len()
+    );
+    assert!(
+        failures.is_empty(),
+        "{} rv64ud-p test(s) failed:\n{}",
+        failures.len(),
+        failures.join("\n")
+    );
+}

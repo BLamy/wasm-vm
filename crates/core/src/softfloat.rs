@@ -391,6 +391,144 @@ pub fn f32_from_int(val: u64, width: crate::decode::FpIntWidth, rm: RoundMode) -
     (r.value.to_bits() as u32, Flags::from_status(r.status))
 }
 
+// ── D-extension helpers (E1-T07): the f64 mirror of the f32 helpers above ────────
+
+#[inline]
+const fn f64_is_nan(b: u64) -> bool {
+    (b >> 52) & 0x7FF == 0x7FF && (b & 0xF_FFFF_FFFF_FFFF) != 0
+}
+#[inline]
+const fn f64_is_snan(b: u64) -> bool {
+    f64_is_nan(b) && (b >> 51) & 1 == 0
+}
+
+/// FCLASS.D: the 10-bit class mask (same bit meanings as [`fclass_f32`]). Pure integer.
+pub const fn fclass_f64(b: u64) -> u64 {
+    let sign = b >> 63;
+    let exp = (b >> 52) & 0x7FF;
+    let frac = b & 0xF_FFFF_FFFF_FFFF;
+    let bit = if exp == 0x7FF {
+        if frac == 0 {
+            if sign == 1 { 0 } else { 7 }
+        } else if (frac >> 51) & 1 == 0 {
+            8
+        } else {
+            9
+        }
+    } else if exp == 0 {
+        if frac == 0 {
+            if sign == 1 { 3 } else { 4 }
+        } else if sign == 1 {
+            2
+        } else {
+            5
+        }
+    } else if sign == 1 {
+        1
+    } else {
+        6
+    };
+    1u64 << bit
+}
+
+/// FMIN.D / FMAX.D — same rules as the f32 variant.
+pub fn f64_minmax(a: u64, b: u64, is_max: bool) -> (u64, Flags) {
+    let flags = if f64_is_snan(a) || f64_is_snan(b) {
+        Flags(Flags::NV)
+    } else {
+        Flags::NONE
+    };
+    let (an, bn) = (f64_is_nan(a), f64_is_nan(b));
+    let res = if an && bn {
+        F64::canonical_nan()
+    } else if an {
+        b
+    } else if bn {
+        a
+    } else {
+        let x = Double::from_bits(a as u128);
+        let y = Double::from_bits(b as u128);
+        match x.partial_cmp(&y) {
+            Some(core::cmp::Ordering::Less) => {
+                if is_max {
+                    b
+                } else {
+                    a
+                }
+            }
+            Some(core::cmp::Ordering::Greater) => {
+                if is_max {
+                    a
+                } else {
+                    b
+                }
+            }
+            _ => {
+                let a_neg = a >> 63 == 1;
+                if is_max == a_neg { b } else { a }
+            }
+        }
+    };
+    (res, flags)
+}
+
+/// FCVT.{W,WU,L,LU}.D — f64 → integer, RISC-V saturating (NaN → max; ±ovf → bound; NV).
+pub fn f64_to_int(bits: u64, width: crate::decode::FpIntWidth, rm: RoundMode) -> (u64, Flags) {
+    use crate::decode::FpIntWidth::*;
+    let x = Double::from_bits(bits as u128);
+    let round = rm.to_apfloat();
+    let mut exact = true;
+    let (raw, status) = match width {
+        W => {
+            let r = x.to_i128_r(32, round, &mut exact);
+            (r.value as i32 as i64 as u64, r.status)
+        }
+        L => {
+            let r = x.to_i128_r(64, round, &mut exact);
+            (r.value as i64 as u64, r.status)
+        }
+        Wu => {
+            let r = x.to_u128_r(32, round, &mut exact);
+            (r.value as u32 as i32 as i64 as u64, r.status)
+        }
+        Lu => {
+            let r = x.to_u128_r(64, round, &mut exact);
+            (r.value as u64, r.status)
+        }
+    };
+    let is_nan = f64_is_nan(bits);
+    let result = if is_nan {
+        match width {
+            W => 0x0000_0000_7FFF_FFFF,
+            Wu => 0xFFFF_FFFF_FFFF_FFFF,
+            L => 0x7FFF_FFFF_FFFF_FFFF,
+            Lu => 0xFFFF_FFFF_FFFF_FFFF,
+        }
+    } else {
+        raw
+    };
+    let mut f = 0u8;
+    if is_nan || status.contains(Status::INVALID_OP) {
+        f |= Flags::NV;
+    } else if status.contains(Status::INEXACT) {
+        f |= Flags::NX;
+    }
+    (result, Flags(f))
+}
+
+/// FCVT.D.{W,WU,L,LU} — integer → f64. W/WU are exact; L/LU may round.
+pub fn f64_from_int(val: u64, width: crate::decode::FpIntWidth, rm: RoundMode) -> (u64, Flags) {
+    use crate::decode::FpIntWidth::*;
+    let round = rm.to_apfloat();
+    let r = match width {
+        W => Double::from_i128_r(val as i32 as i128, round),
+        Wu => Double::from_u128_r(u128::from(val as u32), round),
+        L => Double::from_i128_r(i128::from(val as i64), round),
+        Lu => Double::from_u128_r(u128::from(val), round),
+    };
+    (r.value.to_bits() as u64, Flags::from_status(r.status))
+}
+
 // ── correctly-rounded integer-only sqrt ─────────────────────────────────────────
 
 /// Bit length (position of the highest set bit, 0 for `v == 0`).
