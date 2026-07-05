@@ -370,10 +370,10 @@ impl WasmMachine {
 /// sources for determinism. This is the minimal "wire the trait" shim; E2-T23 owns the real
 /// browser timekeeping policy (drift, throttling, suspend/resume recovery) that will build on
 /// it. wasm-only: `js_sys::Date::now` links nowhere else.
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 pub struct JsWallClock;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 impl wasm_vm_core::dev::rtc::WallClock for JsWallClock {
     fn now_ns(&self) -> u64 {
         // Date.now() is f64 milliseconds; ×1e6 → ns. Negative (pre-1970) reads back as 0.
@@ -393,13 +393,13 @@ impl wasm_vm_core::dev::rtc::WallClock for JsWallClock {
 /// `ttyS0`) accumulates in a buffer that each `runChunk` flushes to a JS callback as one
 /// `Uint8Array`; host keystrokes queued via `sendInput` feed the 16550 RX. The JS host drives
 /// the machine off `requestAnimationFrame`/`setTimeout` (workers/SAB are Epic 4).
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 #[wasm_bindgen]
 pub struct WasmLinux {
     inner: RefCell<LinuxInner>,
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 struct LinuxInner {
     machine: Machine,
     uart: std::rc::Rc<RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
@@ -410,18 +410,18 @@ struct LinuxInner {
 }
 
 /// Console sink that accumulates guest bytes into a shared buffer (drained per `runChunk`).
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 struct BufSink {
     buf: std::rc::Rc<RefCell<Vec<u8>>>,
 }
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 impl ConsoleSink for BufSink {
     fn put_byte(&mut self, b: u8) {
         self.buf.borrow_mut().push(b);
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 #[wasm_bindgen]
 impl WasmLinux {
     /// Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
