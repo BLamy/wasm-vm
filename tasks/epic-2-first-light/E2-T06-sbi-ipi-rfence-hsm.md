@@ -3,7 +3,7 @@ id: E2-T06
 epic: 2
 title: SBI IPI, RFENCE, and HSM extensions (single-hart-correct, SMP-shaped)
 priority: 206
-status: pending
+status: implemented
 depends_on: [E2-T05]
 estimate: M
 capstone: false
@@ -57,4 +57,33 @@ where only a leaf PTE changes, and verify pre-flush execution really used the st
 grep dmesg for "CPU" bring-up errors and any `sbi_` warning: their presence refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — worker — implemented
+
+**What landed.** `sbi/{ipi,rfence,hsm,srst}.rs` + shared `sbi::decode_hart_mask` (the SBI
+`(hart_mask, hart_mask_base)` decode with base==MAX=all-harts, base-beyond-topology and
+mask-naming-nonexistent-hart → INVALID_PARAM — one function, so Epic 6 widens the topology
+constant, not the call surface). `sbi::handle` now takes `&mut Hart` (IPI raises SSIP,
+RFENCE flushes the TLB).
+- **IPI:** send_ipi sets SSIP (edge — guest acks via its own S-writable sip.SSIP clear).
+- **RFENCE:** fence_i validates the mask then routes through the (empty) icache hook the
+  Epic-4 JIT will fill; sfence_vma/_asid flush the E1 TLB — full flush for size=MAX or
+  >256-page ranges (over-flushing is safe), per-page below; hfence FIDs → NOT_SUPPORTED.
+- **HSM:** hart0 STARTED; start(0)=ALREADY_AVAILABLE; start/get_status(≥1)=INVALID_PARAM;
+  stop=FAILED (only hart); suspend: retentive-default = immediate spec-compliant resume
+  (WFI is a hint here), non-retentive=NOT_SUPPORTED, reserved=INVALID_PARAM.
+- **SRST (E2-T03 critic addendum):** shutdown → run loop returns Exited(0|1) BEFORE the
+  guest executes another instruction; reboot → NOT_SUPPORTED (until a host restart path /
+  syscon device); reserved types/reasons → INVALID_PARAM.
+- probe() flips IPI/RFENCE/HSM/SRST to 1 — the FULL ADR-0002 Epic-2 extension set is live.
+
+**Evidence.** Unit: every FID + every error path (bad mask base, bad hartid, bad suspend
+type — task deliverable) across the four modules. Integration (real S-mode ecalls through
+the run loop, `tests/sbi_ipi_hsm.rs` 4/4): self-IPI → exactly one SSI delivery (scause
+1<<63|1) with the handler acking via sip; RFENCE ecall observably flushes the TLB
+(flush_count) and returns SUCCESS; HSM statuses via ecall (0→STARTED, 1→INVALID_PARAM);
+SRST shutdown → Exited(0) with a poison instruction after the ecall proving the guest
+never resumes. The full remap-under-satp sfence scenario is covered by the E1-T17 TLB
+suite; the integration test proves the SBI plumbing path (noted for the critic).
+Gates: sbi lib 16/16; 5-suite sweep 0 FAILED; both wasm legs (±zicsr-stub) 0 FAILED;
+fmt clean; clippy ±--all-features clean.
