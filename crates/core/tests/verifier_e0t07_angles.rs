@@ -8,6 +8,10 @@ use wasm_vm_core::ram::Ram;
 
 const RAM: usize = 64 * 1024;
 
+/// x2's sentinel per the formula in `seeded_hart` — the effective address the
+/// E0-T08 load/store fault cases must report in tval.
+const X2_SENTINEL: u64 = 0x5EAF_00D5_0000_0000 ^ (2 * 0x0101_0101_0101);
+
 fn seeded_hart(pc: u64) -> Hart {
     let mut hart = Hart::new();
     hart.regs.pc = pc;
@@ -103,19 +107,24 @@ fn all_reachable_traps_leave_state_untouched() {
             Exception::IllegalInstruction,
             beq as u64,
         ),
+        // E0-T08 UPDATE (worker edit to critic-authored suite, re-verified by the
+        // E0-T08 critic): lb/sd left the placeholder set when loads/stores landed.
+        // The SAME purity property now checks the real load/store fault paths: the
+        // sentinel in x2 is an unmapped address, so these fault with causes 5/7 and
+        // tval = the effective address — and must still mutate nothing.
         (
-            "placeholder lb",
+            "load access fault at sentinel address (was: placeholder lb)",
             DRAM_BASE,
             Some(lb),
-            Exception::IllegalInstruction,
-            lb as u64,
+            Exception::LoadAccessFault,
+            X2_SENTINEL,
         ),
         (
-            "placeholder sd",
+            "store access fault at sentinel address (was: placeholder sd)",
             DRAM_BASE,
             Some(sd),
-            Exception::IllegalInstruction,
-            sd as u64,
+            Exception::StoreAccessFault,
+            X2_SENTINEL,
         ),
         (
             "placeholder ecall",
