@@ -12,6 +12,9 @@
 //! The map was verified byte-for-byte against a real QEMU `virt` DTB (see `docs/platform.md`
 //! for the dump command, the full table, and the explicit list of deviations from QEMU).
 
+use alloc::vec;
+use alloc::vec::Vec;
+
 /// Canonical constants for the `virt` platform. Addresses and IRQs match `qemu-system-riscv64
 /// -machine virt` (QEMU 8.2) unless noted in `docs/platform.md`.
 pub mod virt {
