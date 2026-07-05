@@ -31,6 +31,7 @@ pub mod csr;
 pub mod decode;
 pub mod decode_c;
 pub mod dev;
+pub mod diag;
 pub mod fdt;
 pub mod hart;
 pub mod htif;
@@ -131,6 +132,12 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::rtc::GoldfishRtc>>,
         dev::plic::IrqLine,
     )>,
+    /// E2-T20: always-on interrupt/trap counters + the sliding-window storm detector and WFI
+    /// watchdog. Plain increments; the detector runs only on the quantum boundary.
+    irqstats: diag::irqstats::IrqStats,
+    /// E2-T20: storm detection armed (default on). When on, the run loop checks the detector
+    /// each quantum and prints a diagnosis to the log on a fire.
+    storm_detect: bool,
     /// E2-T17: the syscon test finisher's shared reset latch, when [`Self::enable_syscon`]
     /// attached it. The run loop drains it and returns [`RunOutcome::Reset`]. (Only read on
     /// the real-CSR path; the quarantined zicsr-stub build compiles the drain + `enable_syscon`
@@ -179,6 +186,8 @@ impl Machine {
             sbi_state: sbi::SbiState::default(),
             uart: None,
             rtc: None,
+            irqstats: diag::irqstats::IrqStats::new(),
+            storm_detect: true,
             syscon: None,
             virtio: alloc::vec::Vec::new(),
             blk: None,
@@ -334,6 +343,27 @@ impl Machine {
             .expect("RTC window overlaps RAM or another device");
         self.rtc = Some((alloc::rc::Rc::clone(&cell), line));
         cell
+    }
+
+    /// E2-T20: the interrupt/trap counters + storm/WFI diagnostics ([`diag::irqstats::IrqStats`]).
+    /// Read after a run for `--stats`, or exposed through the wasm boundary.
+    pub fn irq_stats(&self) -> &diag::irqstats::IrqStats {
+        &self.irqstats
+    }
+
+    /// E2-T20: turn the always-on storm/WFI detectors on or off (default on). Off makes the
+    /// per-trap `storm_check` a single early-return branch.
+    pub fn set_storm_detect(&mut self, on: bool) {
+        self.storm_detect = on;
+    }
+
+    /// E2-T20 `--stats`: the counter dump, with the latest PLIC claim counts synced in first
+    /// (they otherwise only refresh when the storm detector runs).
+    pub fn stats_dump(&mut self) -> alloc::string::String {
+        if let Some(plic) = &self.plic {
+            self.irqstats.claims = *plic.borrow().claim_counts();
+        }
+        self.irqstats.dump()
     }
 
     /// E2-T19 `--blk-log`: start recording virtio-blk requests (a no-op if no blk device is
@@ -666,6 +696,65 @@ impl Machine {
         }
     }
 
+    /// E2-T20: run the sliding-window interrupt-storm detector. Called only when a trap lands
+    /// (event-driven, so zero cost while quiet — a trap during normal operation is rare, and
+    /// during a storm the detector is exactly what we want running). Syncs the PLIC claim
+    /// counters in, then checks for `>5000 traps / 10^6 retired` sustained over 3 windows.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn storm_check(&mut self) {
+        if !self.storm_detect {
+            return;
+        }
+        if let Some(plic) = &self.plic {
+            self.irqstats.claims = *plic.borrow().claim_counts();
+        }
+        if let Some(r) = self.irqstats.check_storm(1_000_000, 5_000, 3) {
+            let hot = match r.hot_irq {
+                Some((id, n)) => alloc::format!("hottest PLIC irq {id} ({n} claims)"),
+                None => alloc::string::String::from("no external PLIC irq is hot"),
+            };
+            log::warn!(
+                "E2-T20 INTERRUPT STORM: {} traps in {} retired instrs — {hot}\n{}",
+                r.window_traps,
+                r.window_retired,
+                self.irqstats.dump(),
+            );
+        }
+    }
+
+    /// E2-T20: the WFI-deadlock watchdog. Called right after a `WFI` retires; if no wakeup can
+    /// ever arrive (nothing pending+enabled in `mip`&`mie`, no armed timer deadline), the guest
+    /// will idle forever — report it once instead of spinning silently.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn wfi_watchdog_check(&mut self) {
+        if !self.storm_detect {
+            return;
+        }
+        let armed = self.any_wakeup_armed();
+        if let Some(msg) = self.irqstats.wfi_watchdog(true, armed) {
+            log::warn!("E2-T20 {msg}\n{}", self.irqstats.dump());
+        }
+    }
+
+    /// E2-T20: could any interrupt ever wake a WFI? True if something is already pending AND
+    /// enabled (`mip & mie != 0` — this already reflects a PLIC line held high, which
+    /// `sync_plic` mirrors into `mip.SEIP`), OR a timer deadline is armed in the future (CLINT
+    /// `mtimecmp` or the SBI S-timer `stimecmp` below `u64::MAX`) — a future deadline is not in
+    /// `mip` yet but WILL fire, so it counts as an armed wakeup.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn any_wakeup_armed(&self) -> bool {
+        if self.hart.csr.mip_and_mie_nonzero() {
+            return true;
+        }
+        if self.sbi_state.stimecmp != u64::MAX {
+            return true;
+        }
+        if let Some(clint) = &self.clint {
+            return clint.borrow().any_timer_armed();
+        }
+        false
+    }
+
     /// Like [`Self::run`], but feeds every retired instruction to `sink` (E0-T18's
     /// `--trace`). Termination and the "logged once" HTIF command watch are identical to
     /// `run` — the ONE place the run-loop / HTIF state machine lives, so a traced run and
@@ -720,6 +809,7 @@ impl Machine {
             if let Some((cause, to_s)) = self.hart.csr.next_interrupt() {
                 let epc = self.hart.regs.pc;
                 self.hart.take_interrupt(cause, to_s, epc);
+                self.irqstats.on_interrupt(cause); // E2-T20 storm counter
                 continue;
             }
             let step_result = self.hart.step_traced(&mut self.bus, sink);
@@ -728,6 +818,12 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             if step_result.is_ok() {
                 self.advance_clock();
+                self.irqstats.on_retire(); // E2-T20 progress denominator
+                if self.hart.last_was_wfi {
+                    self.irqstats.on_wfi();
+                    self.hart.last_was_wfi = false;
+                    self.wfi_watchdog_check(); // deadlock watchdog (WFI + no wakeup armed)
+                }
             }
             if let Err(trap) = step_result {
                 // E2-T03 (ADR 0002): with the built-in SBI enabled, `ecall` from S-mode is a
@@ -802,6 +898,8 @@ impl Machine {
                     }
                     let epc = self.hart.regs.pc;
                     self.hart.take_trap(trap, epc);
+                    self.irqstats.on_exception(trap.cause as u64); // E2-T20 storm counter
+                    self.storm_check(); // livelock/storm: a trap just landed — cheap to check
                 }
                 #[cfg(feature = "zicsr-stub")]
                 {

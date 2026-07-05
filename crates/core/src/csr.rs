@@ -612,6 +612,13 @@ impl Csrs {
     /// M-targeted interrupts are never taken while in M with MIE=0, and never below-target masks
     /// a higher privilege's interrupt; a higher-priority interrupt that cannot be taken in the
     /// current mode is skipped so a takeable lower one can fire.
+    /// E2-T20: is any interrupt pending AND enabled (`mip & mie != 0`)? A wakeup that could
+    /// fire the moment global `xIE` opens — used by the WFI-deadlock watchdog. (Ignores the
+    /// global `mstatus.xIE` gates: a WFI wakes on a pending+enabled line even with `xIE=0`.)
+    pub fn mip_and_mie_nonzero(&self) -> bool {
+        (self.warl_get(MIP) & self.warl_get(MIE)) != 0
+    }
+
     pub fn next_interrupt(&self) -> Option<(u64, bool)> {
         let pend = self.warl_get(MIP) & self.warl_get(MIE);
         if pend == 0 {

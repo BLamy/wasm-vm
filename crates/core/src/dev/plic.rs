@@ -56,6 +56,16 @@ pub struct PlicState {
     level: u32,
     /// Per-context "currently claimed, awaiting complete" bitmap — the closed gateways.
     claimed: [u32; NUM_CONTEXTS],
+    /// E2-T20: per-source CLAIM counts (index by source id) — the storm detector's "which
+    /// line is hot" signal. Plain increment; never affects behaviour.
+    claim_count: [u64; NUM_SOURCES],
+}
+
+impl PlicState {
+    /// E2-T20: per-source CLAIM counts (for the interrupt-storm diagnosis).
+    pub fn claim_counts(&self) -> &[u64; NUM_SOURCES] {
+        &self.claim_count
+    }
 }
 
 impl Default for PlicState {
@@ -66,6 +76,7 @@ impl Default for PlicState {
             threshold: [0; NUM_CONTEXTS],
             level: 0,
             claimed: [0; NUM_CONTEXTS],
+            claim_count: [0; NUM_SOURCES],
         }
     }
 }
@@ -124,6 +135,7 @@ impl PlicState {
         let id = self.best_source(context);
         if id != 0 {
             self.claimed[context] |= 1u32 << id;
+            self.claim_count[id] += 1; // E2-T20: storm "hot line" counter
         }
         id as u32
     }
