@@ -116,6 +116,13 @@ impl Uart16550 {
         self.timeout_latched = false;
     }
 
+    /// Free slots in the 16-byte RX FIFO — how many bytes [`Self::push_input`] can accept
+    /// right now without dropping (setting LSR.OE). Hosts feeding scripted input use this to
+    /// rate-limit to the guest's drain speed instead of flooding the FIFO.
+    pub fn rx_free(&self) -> usize {
+        FIFO_DEPTH.saturating_sub(self.rx.len())
+    }
+
     /// Drain everything the guest transmitted since the last call.
     pub fn take_output(&mut self) -> Vec<u8> {
         core::mem::take(&mut self.out)

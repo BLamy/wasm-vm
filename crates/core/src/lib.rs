@@ -280,6 +280,20 @@ impl Machine {
         (alloc::rc::Rc::clone(&slots[0]), state)
     }
 
+    /// E2-T15: attach the goldfish RTC (a boot-time read-only stub, epoch 0 → 1970) at
+    /// [`platform::virt::RTC_BASE`], matching the `google,goldfish-rtc` node the DTB
+    /// advertises. Without it the kernel's `rtc-goldfish` probe takes a load access fault on
+    /// the unbacked window. E2-T16 upgrades the stub to a real host clock.
+    pub fn enable_rtc(&mut self) {
+        self.bus
+            .attach(
+                platform::virt::RTC_BASE,
+                platform::virt::RTC_LEN,
+                alloc::boxed::Box::new(dev::rtc::GoldfishRtc::new()),
+            )
+            .expect("RTC window overlaps RAM or another device");
+    }
+
     /// E2-T03 (ADR 0002): route `ecall`-from-S to the built-in Rust SBI ([`sbi::dispatch`])
     /// instead of delivering it as an architectural trap. Enable together with
     /// [`Self::boot_supervisor`] for the emulator-as-firmware boot path.
@@ -353,6 +367,31 @@ impl Machine {
             .htif
             .map_or(0, |h| h.check(&mut self.bus).raw_or_zero());
         Ok(img)
+    }
+
+    /// E2-T15: load a flat kernel `Image` (the Linux/RISC-V boot format — a raw binary, NOT
+    /// an ELF) at [`platform::virt::KERNEL_BASE`] and return `kernel_end` — one past the last
+    /// byte the RUNNING kernel occupies, which is what the initrd/DTB must be placed above.
+    ///
+    /// Crucially this is NOT `KERNEL_BASE + file_len`: the Image file omits `.bss`/init, but
+    /// the kernel reserves that memory at runtime. The RISC-V Image header (arch/riscv/kernel/
+    /// head.S) carries `image_size` at byte offset 16 (LE u64), the total memory footprint;
+    /// when the `RISCV\0\0\0`→`RSC\x05` magic at offset 0x38 is present and `image_size`
+    /// exceeds the file, we honour it. Placing the initrd at `KERNEL_BASE + file_len` instead
+    /// lands it inside `.bss` → the kernel logs "overlaps in-use memory region — disabling
+    /// initrd" and boots without a rootfs. Fails `Access` if the image doesn't fit in RAM.
+    pub fn load_kernel_image(&mut self, bytes: &[u8]) -> Result<u64, bus::BusFault> {
+        self.bus
+            .ram_mut()
+            .write_slice(platform::virt::KERNEL_BASE, bytes)?;
+        let footprint = kernel_image_footprint(bytes);
+        Ok(platform::virt::KERNEL_BASE + footprint)
+    }
+
+    /// E2-T15: place a blob (initrd, DTB) at an absolute guest-physical address in RAM.
+    /// A thin wrapper over the RAM loader escape hatch used by the boot assembler.
+    pub fn load_blob(&mut self, addr: u64, bytes: &[u8]) -> Result<(), bus::BusFault> {
+        self.bus.ram_mut().write_slice(addr, bytes)
     }
 
     /// Borrow the hart / bus for test rigs and the CLI (seeding instructions,
@@ -673,9 +712,50 @@ impl Machine {
     }
 }
 
+/// The memory footprint (bytes from `KERNEL_BASE`) of a RISC-V Linux `Image`. Returns
+/// `image_size` from the Image header when the header is valid and larger than the file;
+/// otherwise the raw file length (a kernel without the header, or a truncated/foreign blob,
+/// still loads and the caller gets a safe lower bound).
+///
+/// Header layout (arch/riscv/kernel/head.S `_start`): `code0`(4) `code1`(4) `text_offset`(8)
+/// `image_size`(8) `flags`(8) `version`(4) `res1`(4) `res2`(8) `magic`(8, deprecated
+/// `"RISCV\0\0\0"` at 0x30) then the 4-byte `magic2 = "RSC\x05"` at offset **0x38**. We key
+/// off `magic2`, which is stable across the header revisions that carry `image_size`.
+fn kernel_image_footprint(bytes: &[u8]) -> u64 {
+    let file_len = bytes.len() as u64;
+    if bytes.len() >= 0x3c && &bytes[0x38..0x3c] == b"RSC\x05" {
+        let image_size = u64::from_le_bytes(bytes[16..24].try_into().unwrap());
+        if image_size > file_len {
+            return image_size;
+        }
+    }
+    file_len
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn kernel_footprint_honours_image_size() {
+        // A minimal header: image_size at offset 16, RSC\x05 magic at 0x3c.
+        let mut img = alloc::vec![0u8; 0x3c];
+        img[16..24].copy_from_slice(&0x0011_4d00u64.to_le_bytes());
+        img[0x38..0x3c].copy_from_slice(b"RSC\x05");
+        assert_eq!(kernel_image_footprint(&img), 0x0011_4d00);
+    }
+
+    #[test]
+    fn kernel_footprint_falls_back_to_file_len() {
+        // No magic → use the file length (never place initrd below the raw image).
+        let img = alloc::vec![0u8; 0x200];
+        assert_eq!(kernel_image_footprint(&img), 0x200);
+        // Magic present but image_size smaller than the file → still the file length.
+        let mut small = alloc::vec![0u8; 0x400];
+        small[16..24].copy_from_slice(&0x100u64.to_le_bytes());
+        small[0x38..0x3c].copy_from_slice(b"RSC\x05");
+        assert_eq!(kernel_image_footprint(&small), 0x400);
+    }
 
     #[test]
     fn version_matches_manifest() {

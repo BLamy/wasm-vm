@@ -11,6 +11,13 @@ license.workspace = true
 name = "wasm-vm"
 path = "src/main.rs"
 
+[features]
+# Passthrough of core's quarantined zicsr-stub (E0-T19). Declaring it here means
+# `--all-features` (what CI clippy runs) enables it on THIS crate too, so the boot
+# subcommand — which needs the S-mode/SBI methods zicsr-stub compiles out — is cfg'd off
+# consistently instead of calling methods that no longer exist. See src/boot.rs.
+zicsr-stub = ["wasm-vm-core/zicsr-stub"]
+
 [dependencies]
 wasm-vm-core = { workspace = true, features = ["std", "trace"] }
 clap = { workspace = true }
