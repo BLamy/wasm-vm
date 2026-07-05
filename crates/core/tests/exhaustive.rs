@@ -31,10 +31,16 @@ use wasm_vm_core::decode::decode;
 /// | OP-IMM-32 srliw/sraiw | 2 · 2^15         | funct3=101, funct7∈{0000000,0100000}      |
 /// | OP-32                 | 5 · 2^15         | addw/sllw/srlw + subw/sraw                |
 /// | MISC-MEM FENCE        | 2^22             | funct3=000, all fm/pred/succ valid        |
-/// | SYSTEM                | 2                | ECALL, EBREAK exactly                     |
+/// | MISC-MEM FENCE.I      | 1                | canonical 0x0000100F only (E1-T02)        |
+/// | SYSTEM CSR ops        | 6 · 2^22         | funct3∈{1,2,3,5,6,7}, any rd/rs1/csr (E1-T02)|
+/// | SYSTEM ECALL/EBREAK/MRET/WFI | 4         | four exact words (E1-T02 adds MRET, WFI)  |
 ///
-/// Sum = 50·2^22 + 3·2^16 + 18·2^15 + 2 = 210_501_634.
-pub const EXPECTED_LEGAL: u64 = 50 * (1 << 22) + 3 * (1 << 16) + 18 * (1 << 15) + 2;
+/// Sum = 56·2^22 + 3·2^16 + 18·2^15 + 5 = 235_667_461.
+///
+/// NOTE: this is the DEFAULT (Zicsr) decoder. Under `feature = "zicsr-stub"` the CSR ops /
+/// FENCE.I / MRET / WFI are NOT decoded (routed to the E0-T19 stub), so the tally there is
+/// the earlier 50·2^22 + 3·2^16 + 18·2^15 + 2 — but this sweep runs with default features.
+pub const EXPECTED_LEGAL: u64 = 56 * (1 << 22) + 3 * (1 << 16) + 18 * (1 << 15) + 5;
 
 #[test]
 #[ignore = "exhaustive 2^32 sweep — minutes; run with --release --ignored"]

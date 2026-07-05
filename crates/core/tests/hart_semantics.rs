@@ -154,10 +154,12 @@ fn illegal_instruction_cause_and_tval() {
     assert_eq!(hart.regs.pc, DRAM_BASE);
     assert_eq!(format!("{}", hart.regs), before);
 
-    bus.store32(DRAM_BASE, 0x0000_100F).unwrap(); // FENCE.I
+    // 0x0000200F = MISC-MEM funct3=010, a reserved encoding (FENCE.I 0x0000100F became a
+    // legal no-op in E1-T02, so it is no longer a valid illegal-instruction probe here).
+    bus.store32(DRAM_BASE, 0x0000_200F).unwrap();
     let trap = hart.step(&mut bus).unwrap_err();
     assert_eq!(trap.cause, Exception::IllegalInstruction);
-    assert_eq!(trap.tval, 0x100F);
+    assert_eq!(trap.tval, 0x200F);
 }
 
 #[test]

@@ -120,8 +120,10 @@ fn angle4_fence_policy() {
             succ: 3
         })
     );
-    // FENCE.I (funct3=001) illegal at Level 0 — canonical word and a garnished one
-    assert!(decode(0x0000100f).is_err());
+    // FENCE.I (funct3=001): the CANONICAL word 0x0000100F is a legal no-op in the default
+    // Zicsr decoder (E1-T02); a garnished (non-canonical) variant stays illegal — the
+    // reserved-zero fields keep decode injective for the round-trip oracle.
+    assert_eq!(decode(0x0000100f), Ok(Instr::FenceI));
     assert!(decode(0xffff100f).is_err());
     // exotic fm + nonzero rd/rs1 still FENCE per spec forward-compat (fields ignored)
     assert_eq!(

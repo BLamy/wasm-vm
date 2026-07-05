@@ -104,10 +104,11 @@ fn negatives_on_wasm32() {
         0x00000000u32,
         0xFFFFFFFF,
         0x00000001,
-        0x0000100F, // FENCE.I
-        0x02208033, // MUL
+        // FENCE.I (0x0000100F) and CSRRW (0x00101073) became LEGAL in the default Zicsr
+        // decoder (E1-T02) — no longer illegal probes here.
+        0x02208033, // MUL — still illegal until E1-T03
         0x0201109B, // SLLIW imm[5]=1
-        0x00101073, // CSRRW
+        0x0000200F, // MISC-MEM funct3=010, reserved
     ] {
         assert!(decode(w).is_err(), "{w:#010x} must be illegal");
     }

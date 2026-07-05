@@ -287,6 +287,48 @@ pub enum Instr {
     },
     Ecall,
     Ebreak,
+    // ── Zicsr + Zifencei + xRET (E1-T02) ────────────────────────────────────
+    /// Instruction-fetch fence (Zifencei) — a no-op for an in-order interpreter, but it
+    /// must decode and retire.
+    FenceI,
+    /// `rd = csr; csr = rs1` (read side effect suppressed when `rd == x0`).
+    Csrrw {
+        rd: u8,
+        rs1: u8,
+        csr: u16,
+    },
+    /// `rd = csr; csr |= rs1` (write suppressed when `rs1 == x0`).
+    Csrrs {
+        rd: u8,
+        rs1: u8,
+        csr: u16,
+    },
+    /// `rd = csr; csr &= ~rs1` (write suppressed when `rs1 == x0`).
+    Csrrc {
+        rd: u8,
+        rs1: u8,
+        csr: u16,
+    },
+    /// Immediate forms: `uimm` is the 5-bit zero-extended `insn[19:15]`.
+    Csrrwi {
+        rd: u8,
+        uimm: u8,
+        csr: u16,
+    },
+    Csrrsi {
+        rd: u8,
+        uimm: u8,
+        csr: u16,
+    },
+    Csrrci {
+        rd: u8,
+        uimm: u8,
+        csr: u16,
+    },
+    /// Return from M-mode trap (`pc = mepc`).
+    Mret,
+    /// Wait-for-interrupt — retires as a no-op here.
+    Wfi,
 }
 
 // ── field extractors (spec §2.2/§2.3 bit layouts) ───────────────────────────
@@ -302,6 +344,43 @@ const fn rs2(i: u32) -> u8 {
 }
 const fn funct3(i: u32) -> u32 {
     (i >> 12) & 0x7
+}
+
+/// SYSTEM (opcode `0b1110011`): ECALL/EBREAK always; the Zicsr CSR ops, MRET, and WFI are
+/// decoded only when the throwaway `zicsr-stub` is OFF — E0-T19's rv64ui-p path routes CSR
+/// space through the stub, so decode must keep returning `IllegalInstr` there.
+const fn decode_system(insn: u32) -> Result<Instr, IllegalInstr> {
+    match insn {
+        0x0000_0073 => return Ok(Instr::Ecall),
+        0x0010_0073 => return Ok(Instr::Ebreak),
+        _ => {}
+    }
+    #[cfg(feature = "zicsr-stub")]
+    {
+        Err(IllegalInstr)
+    }
+    #[cfg(not(feature = "zicsr-stub"))]
+    {
+        if insn == 0x3020_0073 {
+            return Ok(Instr::Mret);
+        }
+        if insn == 0x1050_0073 {
+            return Ok(Instr::Wfi);
+        }
+        let rd = ((insn >> 7) & 0x1F) as u8;
+        let rs1 = ((insn >> 15) & 0x1F) as u8;
+        let csr = ((insn >> 20) & 0xFFF) as u16;
+        match funct3(insn) {
+            0b001 => Ok(Instr::Csrrw { rd, rs1, csr }),
+            0b010 => Ok(Instr::Csrrs { rd, rs1, csr }),
+            0b011 => Ok(Instr::Csrrc { rd, rs1, csr }),
+            0b101 => Ok(Instr::Csrrwi { rd, uimm: rs1, csr }),
+            0b110 => Ok(Instr::Csrrsi { rd, uimm: rs1, csr }),
+            0b111 => Ok(Instr::Csrrci { rd, uimm: rs1, csr }),
+            // funct3 = 000 (non-ecall/ebreak/mret/wfi) or 100 is reserved.
+            _ => Err(IllegalInstr),
+        }
+    }
 }
 const fn funct7(i: u32) -> u32 {
     i >> 25
@@ -654,15 +733,16 @@ pub const fn decode(insn: u32) -> Result<Instr, IllegalInstr> {
                 pred: ((insn >> 24) & 0xF) as u8,
                 succ: ((insn >> 20) & 0xF) as u8,
             }),
-            // funct3=001 is FENCE.I (Zifencei) — illegal at Level 0.
+            // funct3=001 is FENCE.I (Zifencei) — only the canonical encoding (rd=rs1=imm=0,
+            // i.e. exactly 0x0000_100F); its fields are reserved-zero, so a nonzero variant
+            // stays illegal (keeps decode injective for the round-trip oracle). Decoded by
+            // the real Zicsr subsystem (E1-T02); under the throwaway `zicsr-stub` (E0-T19
+            // rv64ui-p path) it stays illegal, matching that suite's documented fence_i skip.
+            #[cfg(not(feature = "zicsr-stub"))]
+            0b001 if insn == 0x0000_100F => Ok(Instr::FenceI),
             _ => Err(IllegalInstr),
         },
-        0b1110011 => match insn {
-            0x0000_0073 => Ok(Instr::Ecall),
-            0x0010_0073 => Ok(Instr::Ebreak),
-            // CSR space, xRET, WFI etc. arrive with E1 (Zicsr / privilege).
-            _ => Err(IllegalInstr),
-        },
+        0b1110011 => decode_system(insn),
         _ => Err(IllegalInstr),
     }
 }

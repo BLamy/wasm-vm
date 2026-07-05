@@ -230,7 +230,7 @@ impl Hart {
                 });
             }
         };
-        let (rd, value, mem) = self.execute(bus, instr)?;
+        let (rd, value, mem) = self.execute(bus, instr, insn)?;
         // Retirement hook — reached only when execute() returns Ok, so no record is
         // emitted for a faulting instruction (trap-purity contract). Built and passed
         // generically; with NullSink the optimizer erases all of this (E0-T15 proof).
@@ -252,6 +252,7 @@ impl Hart {
         &mut self,
         bus: &mut impl Bus,
         instr: Instr,
+        insn: u32,
     ) -> Result<(u8, u64, Option<crate::trace::MemOp>), Trap> {
         use crate::trace::MemOp;
         use Instr::*;
@@ -535,6 +536,97 @@ impl Hart {
                     cause: Exception::Breakpoint,
                     tval: pc,
                 });
+            }
+
+            // ── Zicsr / Zifencei / xRET (E1-T02) ────────────────────────────
+            // FENCE.I is a no-op for an in-order interpreter (no store buffer / i-cache).
+            FenceI => (0, 0, pc4),
+            // Wait-for-interrupt retires as a no-op (no interrupts at this level).
+            Wfi => (0, 0, pc4),
+            // Return from trap: pc ← mepc. (Full mstatus.MPP/MPIE restore lands with trap
+            // delivery; here we transfer control, which is what the p-env needs.)
+            Mret => {
+                let target = self.csr.access(
+                    crate::csr::MEPC,
+                    crate::csr::CsrOp::Set,
+                    0,
+                    true, // src==0 ⇒ read-only access, no write
+                    false,
+                    insn as u64,
+                )?;
+                (0, 0, target)
+            }
+            // CSR read/modify/write with spec side-effect suppression, delegated to the
+            // one CSR authority. `value` (the old CSR value) retires into rd; the CSR side
+            // effect happened inside access().
+            Csrrw { rd, rs1, csr } => {
+                let src = r.read(rs1);
+                let old = self.csr.access(
+                    csr,
+                    crate::csr::CsrOp::Write,
+                    src,
+                    false,
+                    rd == 0,
+                    insn as u64,
+                )?;
+                (rd, old, pc4)
+            }
+            Csrrs { rd, rs1, csr } => {
+                let src = r.read(rs1);
+                let old = self.csr.access(
+                    csr,
+                    crate::csr::CsrOp::Set,
+                    src,
+                    rs1 == 0,
+                    rd == 0,
+                    insn as u64,
+                )?;
+                (rd, old, pc4)
+            }
+            Csrrc { rd, rs1, csr } => {
+                let src = r.read(rs1);
+                let old = self.csr.access(
+                    csr,
+                    crate::csr::CsrOp::Clear,
+                    src,
+                    rs1 == 0,
+                    rd == 0,
+                    insn as u64,
+                )?;
+                (rd, old, pc4)
+            }
+            Csrrwi { rd, uimm, csr } => {
+                let old = self.csr.access(
+                    csr,
+                    crate::csr::CsrOp::Write,
+                    uimm as u64,
+                    false,
+                    rd == 0,
+                    insn as u64,
+                )?;
+                (rd, old, pc4)
+            }
+            Csrrsi { rd, uimm, csr } => {
+                let old = self.csr.access(
+                    csr,
+                    crate::csr::CsrOp::Set,
+                    uimm as u64,
+                    uimm == 0,
+                    rd == 0,
+                    insn as u64,
+                )?;
+                (rd, old, pc4)
+            }
+            Csrrci { rd, uimm, csr } => {
+                let old = self.csr.access(
+                    csr,
+                    crate::csr::CsrOp::Clear,
+                    uimm as u64,
+                    uimm == 0,
+                    rd == 0,
+                    insn as u64,
+                )?;
+                (rd, old, pc4)
             }
         };
         // Single retirement point: x0-discard is enforced by XRegs::write.

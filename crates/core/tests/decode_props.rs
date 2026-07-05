@@ -56,6 +56,14 @@ fn shift(op: u32, f3: u32, f6or7_hi: u32, rd: u8, rs1: u8, shamt: u8) -> u32 {
     f6or7_hi | ((shamt as u32) << 20) | ((rs1 as u32) << 15) | (f3 << 12) | ((rd as u32) << 7) | op
 }
 
+fn csr_word(f3: u32, rd: u8, rs1_or_uimm: u8, csr: u16) -> u32 {
+    ((csr as u32) << 20)
+        | ((rs1_or_uimm as u32) << 15)
+        | (f3 << 12)
+        | ((rd as u32) << 7)
+        | 0b1110011
+}
+
 /// Reassemble the exact 32-bit word for a decoded instruction. Any bit decode dropped or
 /// misplaced makes this differ from the input word.
 fn encode(instr: &Instr) -> u32 {
@@ -131,6 +139,16 @@ fn encode(instr: &Instr) -> u32 {
         }
         Ecall => 0x0000_0073,
         Ebreak => 0x0010_0073,
+        // Zicsr / Zifencei / xRET (E1-T02).
+        FenceI => 0x0000_100F,
+        Mret => 0x3020_0073,
+        Wfi => 0x1050_0073,
+        Csrrw { rd, rs1, csr } => csr_word(0b001, rd, rs1, csr),
+        Csrrs { rd, rs1, csr } => csr_word(0b010, rd, rs1, csr),
+        Csrrc { rd, rs1, csr } => csr_word(0b011, rd, rs1, csr),
+        Csrrwi { rd, uimm, csr } => csr_word(0b101, rd, uimm, csr),
+        Csrrsi { rd, uimm, csr } => csr_word(0b110, rd, uimm, csr),
+        Csrrci { rd, uimm, csr } => csr_word(0b111, rd, uimm, csr),
     }
 }
 
@@ -258,6 +276,15 @@ roundtrip!(roundtrip_u_j, u_or_j());
 roundtrip!(roundtrip_shifts, shifts());
 roundtrip!(roundtrip_addiw, i_addiw());
 roundtrip!(roundtrip_fence, fence());
+
+// Zicsr (E1-T02): all 6 CSR ops with any rd/rs1(uimm)/csr must round-trip.
+prop_compose! {
+    fn csr_ops()(
+        f3 in prop::sample::select(vec![0b001u32, 0b010, 0b011, 0b101, 0b110, 0b111]),
+        rd in reg(), rs1 in reg(), csr in 0u16..4096,
+    ) -> u32 { csr_word(f3, rd, rs1, csr) }
+}
+roundtrip!(roundtrip_csr, csr_ops());
 
 // ── REVERSE round-trip: decode(encode(instr)) == instr, with NEGATIVE immediates ──
 // The word round-trip encode(decode(w))==w is structurally BLIND to immediate value /
@@ -429,8 +456,17 @@ proptest! {
     /// SYSTEM words other than the exact ECALL/EBREAK encodings are illegal at Level 0
     /// (CSR space, xRET, WFI).
     #[test]
-    fn non_ecall_ebreak_system_is_illegal(w in any::<u32>().prop_map(|w| (w & !0x7f) | 0b1110011)
-        .prop_filter("not ecall/ebreak", |w| *w != 0x0000_0073 && *w != 0x0010_0073)) {
-        prop_assert!(decode(w).is_err(), "SYSTEM {:#010x} must be illegal", w);
+    /// SYSTEM funct3=000 words other than the four exact privileged encodings (ECALL,
+    /// EBREAK, MRET, WFI) are reserved, and funct3=100 is reserved. (funct3∈{1,2,3,5,6,7}
+    /// are the legal CSR ops — E1-T02.)
+    fn reserved_system_funct3_000_and_100_are_illegal(rd in reg(), rs1 in reg(), rest in any::<u32>()) {
+        // funct3 = 100 with arbitrary rd/rs1/csr — always reserved.
+        let w100 = ((rest & 0xFFF) << 20) | ((rs1 as u32) << 15) | (0b100 << 12) | ((rd as u32) << 7) | 0b1110011;
+        prop_assert!(decode(w100).is_err(), "SYSTEM funct3=100 {:#010x} must be illegal", w100);
+        // funct3 = 000 word that is NOT one of the four exact privileged encodings.
+        let w000 = ((rest & 0xFFF) << 20) | ((rs1 as u32) << 15) | ((rd as u32) << 7) | 0b1110011;
+        if w000 != 0x0000_0073 && w000 != 0x0010_0073 && w000 != 0x3020_0073 && w000 != 0x1050_0073 {
+            prop_assert!(decode(w000).is_err(), "reserved SYSTEM funct3=000 {:#010x} must be illegal", w000);
+        }
     }
 }
