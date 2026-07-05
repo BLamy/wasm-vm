@@ -13,3 +13,6 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 wasm-vm-core = { workspace = true }
 wasm-bindgen = { workspace = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"

@@ -25,6 +25,7 @@ wasm:
 		echo "  install with: cargo install wasm-pack   (or: brew install wasm-pack)"; \
 		exit 1; }
 	wasm-pack build crates/wasm --target web
+	wasm-pack test --node crates/wasm
 
 features:
 	cargo build -p wasm-vm-core

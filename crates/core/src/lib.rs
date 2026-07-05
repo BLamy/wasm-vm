@@ -9,6 +9,9 @@
 
 extern crate alloc;
 
+pub mod bus;
+pub mod ram;
+
 use alloc::vec;
 use alloc::vec::Vec;
 
