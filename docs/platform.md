@@ -36,6 +36,31 @@ dtc -I dtb -O dts virt.dtb            # decompile to source
 
 UART reference clock (`clock-frequency`) = 3 686 400 Hz (`UART_CLOCK_HZ`), matching QEMU virt.
 
+## DRAM layout at boot (E2-T13)
+
+The emulator loads three payloads into DRAM before entering S-mode; the DTB's `/chosen`
+`linux,initrd-start`/`linux,initrd-end` (u64) tell the kernel where the initramfs is, and
+the initrd region sits **above** the kernel and **below** the DTB so nothing is clobbered
+before the kernel unpacks it.
+
+```
+0x8000_0000  ┌────────────────────────── DRAM_BASE
+             │ (firmware/low reserved)
+0x8020_0000  ├────────────────────────── KERNEL_BASE  ── kernel Image loads here
+             │ kernel image + BSS + early alloc ...
+             │
+     ↑ initrd├────────────────────────── initrd_start (8-byte aligned, above the kernel)
+             │ initramfs.cpio.gz          initrd_end
+             │
+     ↓ DTB   ├────────────────────────── dtb (top of DRAM − blob − DTB_SLACK, see fdt.rs)
+             │ device tree blob
+0x8000_0000  └────────────────────────── + dram_size  (top of DRAM)
+   +size
+```
+
+The DTB placement (`fdt::dtb_placement`) already reserves 16 KiB of headroom above the
+blob (E2-T03); initrd placement mirrors that discipline and is documented in the loader.
+
 ## Hart layout & boot contract
 
 - **Harts:** 1 (hart 0) for Epic 2 (`NUM_HARTS`); SMP arrives in Epic 6. `BOOT_HART = 0`.

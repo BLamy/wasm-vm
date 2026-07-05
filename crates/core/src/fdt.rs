@@ -399,6 +399,22 @@ pub fn dtb_placement(platform: &Platform, dtb_len: u64) -> Option<u64> {
     Some(addr)
 }
 
+/// Where to place an initramfs of `initrd_len` bytes (E2-T13): ABOVE the kernel image
+/// (which loads at `KERNEL_BASE` and grows up) and BELOW `dtb_addr` (the DTB, near the top of
+/// DRAM), 8-byte aligned. `kernel_end` is one past the last byte the kernel occupies. The
+/// returned `(start, end)` are the `linux,initrd-start`/`-end` values for `/chosen` — see
+/// [`Initrd`]. Returns `None` if it doesn't fit in the gap `[kernel_end, dtb_addr)`.
+///
+/// Layout (docs/platform.md): `KERNEL_BASE …kernel… | initrd | …gap… | DTB | top`.
+pub fn initrd_placement(kernel_end: u64, dtb_addr: u64, initrd_len: u64) -> Option<Initrd> {
+    let start = (kernel_end + 7) & !7; // 8-byte aligned, just above the kernel
+    let end = start.checked_add(initrd_len)?;
+    if end > dtb_addr {
+        return None; // would collide with the DTB
+    }
+    Some(Initrd { start, end })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -534,6 +550,26 @@ mod tests {
         assert!(props.iter().any(|p| p == "linux,initrd-start"));
         let (_, props_no) = walk(&a);
         assert!(!props_no.iter().any(|p| p == "linux,initrd-start"));
+    }
+
+    #[test]
+    fn initrd_placement_between_kernel_and_dtb() {
+        let p = Platform::default();
+        let blob = build_virt_dtb(&p, "x", None);
+        let dtb = dtb_placement(&p, blob.len() as u64).unwrap();
+        let kernel_end = virt::KERNEL_BASE + 8 * 1024 * 1024; // pretend an 8 MiB kernel
+        let rd = initrd_placement(kernel_end, dtb, 2 * 1024 * 1024).unwrap();
+        assert_eq!(rd.start % 8, 0, "8-byte aligned");
+        assert!(rd.start >= kernel_end, "above the kernel");
+        assert!(rd.end <= dtb, "below the DTB");
+        assert_eq!(rd.end - rd.start, 2 * 1024 * 1024);
+        // A too-big initrd that would overrun the DTB → None.
+        assert!(initrd_placement(kernel_end, dtb, p.dram_size()).is_none());
+        // The DTB actually carries the initrd props when the region is passed.
+        let with = build_virt_dtb(&p, "x", Some(rd));
+        let (_, props) = walk(&with);
+        assert!(props.iter().any(|q| q == "linux,initrd-start"));
+        assert!(props.iter().any(|q| q == "linux,initrd-end"));
     }
 
     #[test]

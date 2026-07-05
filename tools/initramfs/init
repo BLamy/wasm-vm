@@ -1,0 +1,21 @@
+#!/bin/busybox sh
+# E2-T13 initramfs PID 1. Mount the pseudo-filesystems, then hand off to an interactive
+# shell with a REAL controlling TTY (cttyhack) inside a fresh session (setsid) — so job
+# control and ^C work and don't kill PID 1.
+/bin/busybox --install -s /bin
+
+mount -t proc     proc     /proc
+mount -t sysfs    sysfs    /sys
+mount -t devtmpfs devtmpfs /dev 2>/dev/null || mount -t tmpfs tmpfs /dev
+
+echo
+echo "wasm-vm initramfs: busybox userland up (PID 1 = $$)"
+echo
+
+# Interactive shell in its OWN session with a real controlling TTY (cttyhack), spawned as a
+# CHILD of /init — NOT exec'd — so the shell's PID is not 1 and ^C reaches the shell's
+# foreground group instead of killing PID 1. Respawn on exit; poweroff if it can't run.
+while true; do
+    setsid cttyhack sh || break
+done
+poweroff -f
