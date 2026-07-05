@@ -3,7 +3,7 @@ id: E2-T08
 epic: 2
 title: virtio-mmio v2 transport — register file, device lifecycle, feature negotiation
 priority: 208
-status: implemented
+status: verified
 depends_on: [E2-T01]
 estimate: M
 capstone: false
@@ -86,3 +86,24 @@ slot-0 used-ring interrupt → PLIC IRQ 1 → S-mode claim → transport ACK →
 settles. wasm32 mirror 1/1. Gates: fmt, clippy ±--all-features, both wasm legs 0 FAILED.
 Linux-boot-log check (acceptance #4) explicitly deferred to the boot tasks per its own
 wording.
+
+### 2026-07-05 — verifier (cold critic) — CONFIRMED + 3 advisories (all fixed same-day)
+
+All 6 angles executed against the OASIS virtio-1.2 spec source and QEMU's virtio-mmio.c:
+spec conformance verified register-by-register (FeaturesSel>1, QueueNumMax=0 out-of-range,
+ConfigGeneration, full-reset scope, QueueReady readback, DeviceID-0 contract); QEMU
+differential — InterruptACK mask-clear identical, sub-width policy behaviorally identical,
+FEATURES_OK timing identical, NEEDS_RESET degradation sanctioned by the task charter
+(QEMU merely accepts; Linux never emits the sequence); extended fuzz (2×10^6 full-window
+ops, 8-byte border straddles at 0xFC/0x104, read-only-register writes, 10k lifecycle→reset
+loops, hostile QueueSel, sel≥2 feature writes) — no panic, no corruption; lifecycle attacks
+(QueueReady=1 desc=0, reset-mid-request over the real bus) — no wedge; wiring matches the
+E2-T02 golden DTB exactly; gates: native 554/0, both wasm legs 0 FAILED, fmt/clippy clean.
+
+**Advisories → fixed + pinned by `critic_advisories_pinned` (9th unit test):**
+1. Out-of-range QueueSel aliased via `% MAX_QUEUES` (demonstrated live: sel=4 mutated
+   queue 0's num) → queue-register reads/writes now gated on `queue_sel_valid()`, and
+   `num_queues` capped at MAX_QUEUES so a >4-queue backend can't alias either.
+2. Spec §2.1 MUST: config-change notification now raised when degrading to NEEDS_RESET.
+3. SHM region registers (0x0ac–0x0bc) now answer the spec's "no region" values
+   (len/base all-ones, matching QEMU) instead of 0.

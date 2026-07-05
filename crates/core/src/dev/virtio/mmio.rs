@@ -45,6 +45,11 @@ const QUEUE_DRIVER_LOW: u64 = 0x090;
 const QUEUE_DRIVER_HIGH: u64 = 0x094;
 const QUEUE_DEVICE_LOW: u64 = 0x0a0;
 const QUEUE_DEVICE_HIGH: u64 = 0x0a4;
+const SHM_SEL: u64 = 0x0ac;
+const SHM_LEN_LOW: u64 = 0x0b0;
+const SHM_LEN_HIGH: u64 = 0x0b4;
+const SHM_BASE_LOW: u64 = 0x0b8;
+const SHM_BASE_HIGH: u64 = 0x0bc;
 const CONFIG_GENERATION: u64 = 0x0fc;
 const CONFIG_SPACE: u64 = 0x100;
 
@@ -153,9 +158,11 @@ impl VirtioMmio {
     }
 
     fn queue_sel_valid(&self) -> bool {
+        // Enforce the transport's MAX_QUEUES cap too (critic advisory): a backend
+        // advertising more queues than the transport can index must not alias.
         self.dev
             .as_ref()
-            .is_some_and(|d| self.queue_sel < d.num_queues())
+            .is_some_and(|d| self.queue_sel < d.num_queues().min(MAX_QUEUES as u32))
     }
 
     /// Full device reset (Status write of 0), §4.2.2.1: tear down EVERYTHING.
@@ -196,7 +203,20 @@ impl VirtioMmio {
                     0
                 }
             }
-            QUEUE_READY => self.sel_queue_ro().ready as u32,
+            QUEUE_READY => {
+                // Out-of-range QueueSel must never alias onto a real queue (critic
+                // advisory: QEMU guards the sel write; we guard the accesses).
+                if self.queue_sel_valid() {
+                    self.sel_queue_ro().ready as u32
+                } else {
+                    0
+                }
+            }
+            SHM_LEN_LOW | SHM_LEN_HIGH | SHM_BASE_LOW | SHM_BASE_HIGH => {
+                // No shared-memory regions exist: spec says length -1 / base all-ones
+                // for a nonexistent region (QEMU agrees; critic advisory).
+                0xFFFF_FFFF
+            }
             INTERRUPT_STATUS => self.int_status,
             STATUS => self.status,
             CONFIG_GENERATION => self.config_gen,
@@ -227,8 +247,12 @@ impl VirtioMmio {
                 _ => {}
             },
             QUEUE_SEL => self.queue_sel = v,
-            QUEUE_NUM => self.sel_queue_mut().num = v,
-            QUEUE_READY => self.sel_queue_mut().ready = v & 1 != 0,
+            QUEUE_NUM if self.queue_sel_valid() => self.sel_queue_mut().num = v,
+            QUEUE_READY if self.queue_sel_valid() => {
+                self.sel_queue_mut().ready = v & 1 != 0;
+            }
+            QUEUE_NUM | QUEUE_READY => {} // out-of-range sel: never alias (critic advisory)
+            SHM_SEL => {}                 // no shared-memory regions; selector accepted and ignored
             QUEUE_NOTIFY => {
                 self.last_notify = Some(v);
                 self.notify_count += 1;
@@ -251,18 +275,33 @@ impl VirtioMmio {
                     new &= !STATUS_FEATURES_OK;
                 }
                 // DRIVER_OK without FEATURES_OK: the driver skipped negotiation — degrade
-                // to NEEDS_RESET (charter: never wedge, fail loudly).
+                // to NEEDS_RESET (charter: never wedge, fail loudly). Spec §2.1: after
+                // setting NEEDS_RESET with DRIVER_OK set, the device MUST send a config
+                // change notification (critic advisory).
                 if new & STATUS_DRIVER_OK != 0 && new & STATUS_FEATURES_OK == 0 {
                     new |= STATUS_NEEDS_RESET;
+                    self.status = new;
+                    self.raise_config_irq();
+                    return;
                 }
                 self.status = new;
             }
-            QUEUE_DESC_LOW => set_low(&mut self.sel_queue_mut().desc, v),
-            QUEUE_DESC_HIGH => set_high(&mut self.sel_queue_mut().desc, v),
-            QUEUE_DRIVER_LOW => set_low(&mut self.sel_queue_mut().driver, v),
-            QUEUE_DRIVER_HIGH => set_high(&mut self.sel_queue_mut().driver, v),
-            QUEUE_DEVICE_LOW => set_low(&mut self.sel_queue_mut().device, v),
-            QUEUE_DEVICE_HIGH => set_high(&mut self.sel_queue_mut().device, v),
+            QUEUE_DESC_LOW if self.queue_sel_valid() => set_low(&mut self.sel_queue_mut().desc, v),
+            QUEUE_DESC_HIGH if self.queue_sel_valid() => {
+                set_high(&mut self.sel_queue_mut().desc, v)
+            }
+            QUEUE_DRIVER_LOW if self.queue_sel_valid() => {
+                set_low(&mut self.sel_queue_mut().driver, v)
+            }
+            QUEUE_DRIVER_HIGH if self.queue_sel_valid() => {
+                set_high(&mut self.sel_queue_mut().driver, v)
+            }
+            QUEUE_DEVICE_LOW if self.queue_sel_valid() => {
+                set_low(&mut self.sel_queue_mut().device, v)
+            }
+            QUEUE_DEVICE_HIGH if self.queue_sel_valid() => {
+                set_high(&mut self.sel_queue_mut().device, v)
+            }
             _ => {} // read-only / reserved: ignored
         }
     }
@@ -526,6 +565,42 @@ mod tests {
             "late-arriving bit survives the ACK — no lost interrupt"
         );
         assert!(m.irq_level());
+    }
+
+    /// Critic advisories, pinned: out-of-range QueueSel never aliases; NEEDS_RESET
+    /// degradation raises a config-change notification; SHM registers answer "no region".
+    #[test]
+    fn critic_advisories_pinned() {
+        let mut m = slot();
+        // Configure queue 0, then attack via out-of-range sel.
+        w32(&mut m, QUEUE_SEL, 0);
+        w32(&mut m, QUEUE_NUM, 64);
+        w32(&mut m, QUEUE_READY, 1);
+        w32(&mut m, QUEUE_SEL, 4); // aliases to index 0 pre-fix
+        assert_eq!(r32(&mut m, QUEUE_READY), 0, "no alias on read");
+        w32(&mut m, QUEUE_NUM, 7); // must NOT touch queue 0
+        w32(&mut m, QUEUE_DESC_LOW, 0xDEAD_0000);
+        w32(&mut m, QUEUE_SEL, 0);
+        assert_eq!(m.queue(0).num, 64, "queue 0 num intact");
+        assert_eq!(m.queue(0).desc, 0, "queue 0 desc intact");
+        // NEEDS_RESET degradation raises config-change (spec §2.1 MUST).
+        let mut m2 = slot();
+        w32(
+            &mut m2,
+            STATUS,
+            STATUS_ACKNOWLEDGE | STATUS_DRIVER | STATUS_DRIVER_OK,
+        );
+        assert_ne!(r32(&mut m2, STATUS) & STATUS_NEEDS_RESET, 0);
+        assert_ne!(
+            r32(&mut m2, INTERRUPT_STATUS) & INT_CONFIG_CHANGE,
+            0,
+            "config-change notification sent with NEEDS_RESET"
+        );
+        // SHM: no region => len/base all-ones (spec + QEMU).
+        for off in [SHM_LEN_LOW, SHM_LEN_HIGH, SHM_BASE_LOW, SHM_BASE_HIGH] {
+            assert_eq!(r32(&mut m, off), 0xFFFF_FFFF, "SHM off {off:#x}");
+        }
+        w32(&mut m, SHM_SEL, 3); // accepted, ignored
     }
 
     /// Charter fuzz: 10^6 random-width random-offset ops over 0x000–0x1FF — no panic,
