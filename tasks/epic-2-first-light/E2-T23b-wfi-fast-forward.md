@@ -3,7 +3,7 @@ id: E2-T23b
 epic: 2
 title: Deterministic WFI fast-forward (tickless idle) — fix idle/sleep slowdown, keep determinism
 priority: 223
-status: pending
+status: implemented
 depends_on: [E2-T23]
 estimate: S
 capstone: false
@@ -32,10 +32,17 @@ on both → determinism (RISCOF signatures + native==wasm + Level-1) is preserve
 - Browser measurement: guest `sleep` drops from ~20× to near-real-time (Playwright).
 
 ## Acceptance criteria
-- [ ] Guest `sleep 5` in the browser completes in roughly real time (≪ the prior ~100 s).
-- [ ] RISCOF signatures unchanged (final state identical — the jump changes only idle spin count).
-- [ ] Full `cargo test --workspace` green; determinism-hazards + no-host-float clean.
-- [ ] No interrupt-storm / WFI-watchdog false positive from the jump (E2-T20 detectors quiet).
+- [x] Guest `sleep` in the browser completes in roughly real time. **Met** — `sleep 2` ≈ 2.5 s
+      wall (~1.2×), down from ~40 s (~20×); Playwright-measured, web suite 5/5 green.
+- [~] RISCOF signatures unchanged. **In-suite met** — 615/615 across 116 binaries, all rv64
+      arch/signature binaries green, identical to baseline. External RISCOF/Sail diff not
+      runnable in the critic's clone (harness needs provision.sh + Spike/Sail) — run in CI.
+- [x] Full `cargo test --workspace` green; determinism-hazards + no-host-float clean. **Met**
+      (615/0/13; both gates exit 0; core + wasm clippy clean).
+- [x] No interrupt-storm / WFI-watchdog false positive from the jump. **Met** — storm_detection
+      tests green; watchdog runs before the jump (decision unaffected). Minor documented note:
+      compressing idle raises trap-per-retired *rate*, so a pathological usleep loop could trip
+      the storm *warning* (log-only, no halt) sooner — deterministic, non-blocking.
 
 ## Adversarial verification
 Confirm the jump is state-only (no host clock) so native and wasm agree. Verify a WFI with NO
@@ -44,4 +51,36 @@ pending non-timer interrupt (UART RX) is not skipped — external IRQs are sampl
 regardless of the jump. Re-run RISCOF and diff signatures against the pre-change baseline.
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — deterministic WFI fast-forward landed (PR #81)
+
+`Machine::wfi_fast_forward()` (crates/core/src/lib.rs): when a WFI retires with no interrupt
+pending, jump `mtime` to the nearest armed future timer deadline (`min(mtimecmp, stimecmp)`,
+strict-future, `u64::MAX` excluded). No-op if no timer armed. Pure function of machine state → no
+host clock → native and wasm fast-forward identically (determinism preserved). Enabled for all
+builds (native + wasm); `tick_accum` left untouched (whole-tick jumps are divider-independent).
+
+Result: browser guest `sleep 2` ~40 s → **2.5 s wall (~1.2×)**; boot also faster (idle compressed).
+Full web suite 5/5 green. Tradeoff documented in docs/timekeeping.md: idle compressed to ~0 wall,
+so the guest clock now runs AHEAD of wall (deterministic virtual time, à la QEMU icount) rather
+than behind; input stays prompt (IRQs sampled every boundary); `read -t N` may expire early.
+
+`cargo test --workspace`: 615/615 across 116 binaries — IDENTICAL to baseline (all rv64 signatures
+unchanged). determinism-hazards + no-host-float clean; core + wasm clippy clean.
+
+### 2026-07-05 — cold-clone critic — all 4 claims CONFIRMED, no refutation
+
+- **C1 determinism** CONFIRMED — pure machine-state read (mtime/mtimecmp/stimecmp), no host clock.
+- **C2 signatures** CONFIRMED in-suite — 615/0/13, every rv64 arch/signature binary green vs
+  baseline. External RISCOF/Sail diff not runnable in the clone (harness unprovisioned; run in CI).
+- **C3 no wrongly-skipped wakeup** CONFIRMED — the jump skips NO run-loop boundary (device IRQ
+  levels re-mirrored every boundary independent of mtime) and consumes NO wall-clock window (host
+  input injected only between run_traced calls), so no arrival window is missed; strict-future +
+  min() guards never jump backward or past an earlier deadline; runs only after a WFI retired
+  (next_interrupt was None) so no race; watchdog runs before the jump.
+- **C4 storm/native** CONFIRMED — storm_detection + boot/determinism natives green. Minor
+  non-blocking note: idle compression raises trap-per-retired rate; a pathological usleep loop
+  could trip the storm warning (log-only) sooner — deterministic, no signature/functional impact.
+
+Gates exit 0: build · test (615/0/13) · clippy workspace-all-features + wasm-target ·
+determinism-hazards · no-host-float.
