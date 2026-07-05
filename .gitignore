@@ -20,6 +20,7 @@ pkg/
 web/node_modules/
 web/pkg/
 web/assets/*.elf
+web/assets/riscv-tests/
 .claude/worktrees/
 .DS_Store
 **/.DS_Store

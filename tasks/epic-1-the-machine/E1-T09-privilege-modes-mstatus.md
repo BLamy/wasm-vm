@@ -3,7 +3,7 @@ id: E1-T09
 epic: 1
 title: M/S/U privilege modes and the mstatus state machine
 priority: 109
-status: pending
+status: verified
 depends_on: [E1-T02]
 estimate: L
 capstone: false
@@ -61,4 +61,123 @@ refute if implementation contradicts documentation. Attempt to reach a privilege
 by any path other than trap/xRET (e.g. CSR write) — success refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — worker (implementation claim)
+The M/S/U privilege state machine on top of the T02 CSR file.
+- **`crates/core/src/csr.rs`**: mstatus field bit consts (§3.1.6); `legalize_mstatus` (field-WARL:
+  reserved MPP=0b10→U, UXL/SXL hardwired 0b10, SD read-only-computed from FS, WPRI bits 0) —
+  applied on every mstatus write and by the state-machine transitions. Transition methods
+  `trap_to_m`/`trap_to_s` (MPIE←MIE/SPIE←SIE, I-enable←0, xPP←prior) and `mret`/`sret`
+  (I-enable←xPIE, xPIE←1, mode←xPP, xPP←U, MPRV←0 if returning below M). `sstatus` is a masked
+  **view** of mstatus (SSTATUS_RMASK read / SSTATUS_WMASK write); `sie`/`sip` masked views of
+  `mie`/`mip` (SSIE/STIE/SEIE). `tsr`/`tw`/`tvm` accessors. S-CSRs added (sstatus/sie/sscratch/
+  sepc/scause/stval/sip; sepc masks bit 0 like mepc).
+- **`crates/core/src/decode.rs`**: SRET (0x10200073) decoded (not-stub, like MRET); exhaustive
+  tally +1 (325,400,582), reserved-SYSTEM negatives updated.
+- **`crates/core/src/hart/mod.rs`**: MRET does the full mstatus restore + mode change (illegal
+  below M); SRET added (illegal below S, or in S with TSR=1); WFI illegal below M when TW=1;
+  ECALL cause is now mode-dependent (U→8/S→9/M→11, added `EcallFromS`). Mode changes ONLY via
+  trap-entry / MRET / SRET.
+
+Behavior change surfaced + fixed: with real MRET honoring MPP, the rv64u*-p p-env's `mret`
+(MPP=U) now drops the test body to U-mode, so its exit ecall is EcallFromU — updated
+`riscv_tests_f.rs`'s `run_one` to accept the exit from any mode (trap delivery lands in T10).
+
+Evidence (local):
+- `crates/core/tests/privilege.rs` (9): trap_to_m↔mret and trap_to_s↔sret field shuffles
+  (bit-exact snapshots); MRET→U clears MPRV then M-CSR-from-U traps; MRET below M / SRET below S
+  / SRET-in-S-with-TSR / WFI-with-TW illegal; ECALL cause per mode; sstatus-all-ones touches only
+  S-bits (M bits untouched); mode never changes via a plain csrw. csr.rs WARL test extended
+  (MPP=0b10→U, UXL/SXL=2, SD from FS).
+- wasm32 `crates/wasm/tests/privilege.rs`: state machine identical to native.
+- rv64ui/um/ua/uf/ud/uc all still pass; exhaustive 2^32 sweep passes (tally 325,400,582).
+- Gate: fmt clean, clippy 0, workspace + both wasm builds 0 FAILED.
+
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: refuted
+The critic diffed a 19-value mstatus WARL battery, sstatus masking, the trap/xRET field
+shuffles, and MRET/SRET against Spike (`--isa=rv64gc`, matching misa) — all matched. But it
+found a real bug: **sie/sip masked views ignored `mideleg`.** Per Priv §4.1.3 the SSIE/STIE/
+SEIE bits are read-only-zero when the interrupt is NOT delegated; Spike returns `sie=0x0`
+(mideleg=0) where ours returned `0x222`, and a write through sie/sip leaked to mie/mip. Also a
+COVERAGE gap: no committed test exercised the sie/sip CSR view at all.
+
+### 2026-07-03 — rework
+`csr.rs`: `sie`/`sip` read and write now gate on `s_int_mask() = SIE_SIP_SMASK & mideleg` —
+undelegated S-interrupt bits are read-only zero and writes don't reach mie/mip (matching Spike
+Case A: mideleg=0 → sie/mie read 0). Added `privilege.rs::sie_sip_are_mideleg_gated`
+(mideleg=0 → sie/sip read-only 0 + no mie/mip leak; mideleg=SBITS → visible/writable; partial
+delegation exposes only the delegated bit and leaves M-only mie bits untouched). Gate green;
+all six riscv suites + exhaustive still pass. Re-verifying.
+
+### 2026-07-03 — adversarial verifier (round 2) — VERDICT: refuted
+The critic re-ran the sie/sip vs Spike matrix (oracle `spike --isa=rv64gc --log-commits`) over
+mideleg ∈ {0, 0x222, 0x2, 0x20, 0x200, all-ones}. **sie now matches Spike in every case** — the
+round-1 mideleg gate is genuinely fixed. But two of this task's own refute criteria still trip:
+1. **sip writable mask wrong.** Per Priv §4.1.3 only **SSIP (bit 1)** is software-writable via
+   the `sip` view; **STIP (bit 5) and SEIP (bit 9) are read-only in sip** (driven by the timer /
+   external controller through `mip`). Ours reused the full delegated S-mask as the sip *write*
+   mask, so `csrw sip,-1` with mideleg=0x222 gave `sip=0x222` where Spike gives `0x2` (only SSIP
+   latches; Spike `mip` confirms STIP/SEIP never set). Confirmed for mideleg ∈ {0x222,0x20,0x200,
+   all-ones}. (The critic correctly excluded Spike's CLINT-driven MTIP bit 7 — M-only, outside
+   the sip S-view.)
+2. **Mutation (a) survived.** Dropping `& s_int_mask()` from the sie *read* path left all 10
+   committed tests passing — the read-side mideleg mask was untested (no test seeded an
+   undelegated S-bit straight into mie via `csrw mie`, then read sie).
+
+(The critic's initial finding #3 — web/* churn as scope creep — was retracted: those are Brett's
+intentional hand edits, not part of this fix.)
+
+### 2026-07-03 — rework (round 2)
+`csr.rs`: split the sip **write** mask from the read mask. New `sip_write_mask() = SIP_SSIP &
+mideleg` (SSIP-only, still delegation-gated) governs `sip` writes; STIP/SEIP are now read-only in
+the sip view. The sip **read** path keeps `s_int_mask()` so delegated STIP/SEIP driven into `mip`
+by M-mode remain *visible* through sip (readable, just not writable via sip). `sie` is unchanged
+(STIE/SEIE are legitimately writable there). Extended `privilege.rs::sie_sip_are_mideleg_gated`
+with: (1) a READ-gate case — seed all three S-enable bits into mie via `csrw mie` under
+mideleg=SSI-only, assert `sie` reads back only SSIE (kills mutation a); (2) a sip-write case —
+`csrw sip,-1` under mideleg=0x222 yields `sip=0x2`/`mip=0x2` (matches Spike), then M-mode drives
+STIP+SEIP into mip and sip reads them back (read-visible but not sip-writable). Verified locally:
+both the mutation-(a) revert (sie read unconditional) and the sip-write-mask revert (sip write =
+s_int_mask) now FAIL the committed suite. Gate green; all six riscv suites + exhaustive pass.
+Re-verifying.
+
+### 2026-07-03 — adversarial verifier (round 3) — VERDICT: refuted (coverage only)
+The critic re-ran the Spike differential (`spike --isa=rv64gc --log-commits`, Spike 1.1.1-dev)
+over mideleg ∈ {0, 0x2, 0x20, 0x200, 0x222, all-ones} and confirmed **our sie/sip match Spike
+EXACTLY in every case** — the round-2 sip write-mask fix is behaviorally correct, and both
+STIP/SEIP directions verified (write via sip never latches them; delegated STIP/SEIP driven into
+mip are read-visible through sip). The implementation code is correct. BUT the mutation battery
+exposed a coverage hole: mutation **(d) — `sip` READ drops `& s_int_mask()` — SURVIVED** the
+committed test. The test only ever seeded pending bits into mip when mideleg=0x222 (all
+delegated), so it never exercised the sip read mask against an UNdelegated pending bit. The sie
+read path had exactly this test; the symmetric sip case was missing. Grounded: Spike with
+mideleg=0x2 and STIP+SEIP driven into mip reads `sip=0`, while the mutant returns raw mip bits.
+
+### 2026-07-03 — rework (round 3, test-only)
+Added the symmetric sip read-gate assertion to `privilege.rs::sie_sip_are_mideleg_gated`:
+delegate SSIP only, M-mode drives the UNdelegated STIP+SEIP into mip, assert `sip` reads 0
+(matches Spike). No production-code change — the code was already Spike-correct. Independently
+confirmed the mutation (d) revert (`SIP => self.warl_get(MIP)`, gate dropped) now FAILs the
+suite. Full mutation battery (a–e) now all CAUGHT. Gate green: fmt/clippy clean, workspace 0
+FAILED. Re-verifying.
+
+### 2026-07-03 — adversarial verifier (round 4) — VERDICT: verified
+Fresh cold clone at HEAD 76c9dc7. Spike 1.1.1-dev (riscv-isa-sim `55b4658`, `--isa=rv64gc`).
+- **Spike S-view matrix — all match.** For mideleg ∈ {0, 0x2, 0x20, 0x200, 0x222, ~0}, the
+  sequence `csrw mie,0; mip,0; sie,-1; sip,-1` gives identical sie/mie/sip/mip to Spike in every
+  row (Spike mip masked of the CLINT MTIP bit7, M-only, per charter).
+- **Both read-visibility directions match Spike:** undelegated STIP/SEIP driven into mip →
+  `sip=0` (masked); delegated → `sip=0x220` (readable but not writable via sip); sie read-gate
+  (seed mie=0x222, delegate SSIP only) → `sie=0x2`. The write asymmetry is confirmed: `csrw
+  sip,-1` sets only SSIP (mip=0x2) while `sie` writes all of SSIE/STIE/SEIE.
+- **Mutation battery — no survivors.** All 5 charter mutants (a–e) plus 3 the critic invented —
+  (f) sie read uses sip_write_mask (mask swap), (g) SIE_SIP_SMASK off-by-one, (h) SIP_SSIP
+  off-by-one — are CAUGHT by `sie_sip_are_mideleg_gated`.
+- **Full gate green:** fmt clean; clippy 0 warnings; `cargo test --workspace` → 341 passed,
+  `grep 'test result: FAILED'` no matches; both wasm builds FAILED-count 0. Regression spot-check:
+  all 10 privilege tests pass; mstatus WARL `csrw mstatus,-1 → 0x8000000a007e79aa` matches
+  `legalize_mstatus`. No other Spike-groundable divergence found.
+
+VERDICT: **verified** — the M/S/U privilege modes, mstatus/sstatus state machine, xRET restore,
+ecall-cause-by-mode, WFI/TW trap, and mideleg-gated sie/sip views are Spike-correct and fully
+mutation-covered.

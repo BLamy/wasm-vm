@@ -111,7 +111,7 @@ fn warl_write_all_ones_reads_back_only_legal_values() {
         "misa write is ignored (WARL hardwired)"
     );
     // Fully-writable WARL registers keep the value.
-    for addr in [MSTATUS, MCAUSE, MTVEC] {
+    for addr in [MCAUSE, MTVEC] {
         c.access(addr, CsrOp::Write, u64::MAX, false, false, 0)
             .unwrap();
         assert_eq!(
@@ -120,6 +120,24 @@ fn warl_write_all_ones_reads_back_only_legal_values() {
             "{addr:#x} is fully writable WARL"
         );
     }
+    // mstatus is field-WARL (E1-T09): writing all-ones legalizes — reserved/WPRI bits stay 0,
+    // UXL/SXL hardwire to 0b10 (RV64), SD is read-only-computed from FS, MPP=0b11 (M) survives.
+    c.access(MSTATUS, CsrOp::Write, u64::MAX, false, false, 0)
+        .unwrap();
+    let ms = c.access(MSTATUS, CsrOp::Set, 0, true, false, 0).unwrap();
+    assert_eq!(ms & 1, 0, "mstatus bit 0 is WPRI/0");
+    assert_eq!((ms >> 32) & 0b11, 0b10, "UXL hardwired 64-bit");
+    assert_eq!((ms >> 34) & 0b11, 0b10, "SXL hardwired 64-bit");
+    assert_ne!(ms & (1 << 63), 0, "SD set (FS=Dirty from all-ones)");
+    assert_eq!((ms >> 11) & 0b11, 0b11, "MPP=M is legal and preserved");
+    // MPP=0b10 is reserved → legalized to U (0b00).
+    c.access(MSTATUS, CsrOp::Write, 0b10 << 11, false, false, 0)
+        .unwrap();
+    assert_eq!(
+        (c.access(MSTATUS, CsrOp::Set, 0, true, false, 0).unwrap() >> 11) & 0b11,
+        0,
+        "reserved MPP=0b10 legalizes to U"
+    );
     // mepc masks bit 0 (WARL, IALIGN=16 with the C extension — E1-T08): all-ones reads back
     // with bit 0 cleared.
     c.access(MEPC, CsrOp::Write, u64::MAX, false, false, 0)

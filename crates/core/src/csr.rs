@@ -38,8 +38,17 @@ pub const MCAUSE: u16 = 0x342;
 pub const MTVAL: u16 = 0x343;
 pub const MIP: u16 = 0x344;
 pub const SATP: u16 = 0x180;
+/// Supervisor CSRs (E1-T09). `sstatus`/`sie`/`sip` are masked *views* over
+/// `mstatus`/`mie`/`mip` (single backing storage); the rest are WARL-stored.
+pub const SSTATUS: u16 = 0x100;
+pub const SIE: u16 = 0x104;
 /// Supervisor trap vector (WARL-stored here; full S-mode semantics arrive with the MMU).
 pub const STVEC: u16 = 0x105;
+pub const SSCRATCH: u16 = 0x140;
+pub const SEPC: u16 = 0x141;
+pub const SCAUSE: u16 = 0x142;
+pub const STVAL: u16 = 0x143;
+pub const SIP: u16 = 0x144;
 /// `mnstatus` (Smrnmi) — the riscv-tests p-env writes it during machine-mode init. Stored
 /// WARL; its NMI semantics are out of scope until an interrupt task.
 pub const MNSTATUS: u16 = 0x744;
@@ -72,6 +81,65 @@ pub enum CsrOp {
     Set,
     /// CSRRC/CSRRCI — clear bits.
     Clear,
+}
+
+// ── mstatus field bits (Privileged §3.1.6, RV64) ───────────────────────────────
+const M_SIE: u64 = 1 << 1;
+const M_MIE: u64 = 1 << 3;
+const M_SPIE: u64 = 1 << 5;
+const M_MPIE: u64 = 1 << 7;
+const M_SPP: u64 = 1 << 8;
+const M_MPP: u64 = 0b11 << 11;
+const M_FS: u64 = 0b11 << 13;
+const M_MPRV: u64 = 1 << 17;
+const M_SUM: u64 = 1 << 18;
+const M_MXR: u64 = 1 << 19;
+const M_TVM: u64 = 1 << 20;
+const M_TW: u64 = 1 << 21;
+const M_TSR: u64 = 1 << 22;
+const M_UXL: u64 = 0b11 << 32;
+const M_SXL: u64 = 0b11 << 34;
+const M_SD: u64 = 1 << 63;
+
+/// Software-writable `mstatus` bits (everything else is WPRI/read-only). `UXL`/`SXL` are
+/// hardwired 0b10 and `SD` is read-only-computed, so they are excluded here and re-derived
+/// in [`legalize_mstatus`].
+const MSTATUS_WMASK: u64 = M_SIE
+    | M_MIE
+    | M_SPIE
+    | M_MPIE
+    | M_SPP
+    | M_MPP
+    | M_FS
+    | M_MPRV
+    | M_SUM
+    | M_MXR
+    | M_TVM
+    | M_TW
+    | M_TSR;
+
+/// Bits visible when *reading* `sstatus` (§4.1.1): the S-subset of `mstatus` + read-only
+/// UXL and SD.
+const SSTATUS_RMASK: u64 = M_SIE | M_SPIE | M_SPP | M_FS | M_SUM | M_MXR | M_UXL | M_SD;
+/// Bits a write *through* `sstatus` may change (never the M-level bits).
+const SSTATUS_WMASK: u64 = M_SIE | M_SPIE | M_SPP | M_FS | M_SUM | M_MXR;
+/// S-visible interrupt-enable/-pending bits (SSIE/STIE/SEIE at 1/5/9).
+const SIE_SIP_SMASK: u64 = (1 << 1) | (1 << 5) | (1 << 9);
+/// SSIP alone — the sole `sip` bit software may write through the S-view (Priv §4.1.3).
+const SIP_SSIP: u64 = 1 << 1;
+
+/// Legalize a candidate `mstatus` value: keep only writable bits, force `MPP=0b10` (reserved)
+/// to `U`, hardwire `UXL`/`SXL`=0b10 (RV64), and recompute the read-only `SD` from `FS`.
+const fn legalize_mstatus(v: u64) -> u64 {
+    let mut s = v & MSTATUS_WMASK;
+    if s & M_MPP == (0b10 << 11) {
+        s &= !M_MPP; // reserved MPP=0b10 → U (documented WARL choice)
+    }
+    s |= (M_UXL & (0b10 << 32)) | (M_SXL & (0b10 << 34)); // UXL = SXL = 2 (64-bit), hardwired
+    if s & M_FS == M_FS {
+        s |= M_SD; // SD = (FS == Dirty)  [| VS | XS, none yet]
+    }
+    s
 }
 
 /// The reset-defined + Zicsr CSR file. Hardwired identification/`misa` are accessors; the
@@ -168,6 +236,102 @@ impl Csrs {
         crate::softfloat::RoundMode::from_bits(eff)
     }
 
+    // ── privilege / mstatus state machine (E1-T09, Privileged §3.1.6, §3.3.2) ──
+    pub const fn tsr(&self) -> bool {
+        self.mstatus & M_TSR != 0
+    }
+    pub const fn tw(&self) -> bool {
+        self.mstatus & M_TW != 0
+    }
+    pub const fn tvm(&self) -> bool {
+        self.mstatus & M_TVM != 0
+    }
+
+    /// Trap delivery into M-mode's mstatus stack: `MPIE←MIE, MIE←0, MPP←prior`, mode←M.
+    /// (mepc/mcause/mtval and the mtvec jump are wired in E1-T10.)
+    pub fn trap_to_m(&mut self, prior: Priv) {
+        let mie = (self.mstatus >> 3) & 1;
+        let mut s = self.mstatus & !(M_MPIE | M_MIE | M_MPP);
+        s |= mie << 7; // MPIE = MIE ; MIE = 0
+        s |= (prior as u64) << 11; // MPP = prior mode
+        self.mstatus = legalize_mstatus(s);
+        self.mode = Priv::M;
+    }
+
+    /// Trap delivery into S-mode: `SPIE←SIE, SIE←0, SPP←(from S?1:0)`, mode←S.
+    pub fn trap_to_s(&mut self, prior: Priv) {
+        let sie = (self.mstatus >> 1) & 1;
+        let mut s = self.mstatus & !(M_SPIE | M_SIE | M_SPP);
+        s |= sie << 5; // SPIE = SIE ; SIE = 0
+        if matches!(prior, Priv::S) {
+            s |= M_SPP; // SPP = 1 from S, 0 from U
+        }
+        self.mstatus = legalize_mstatus(s);
+        self.mode = Priv::S;
+    }
+
+    /// MRET: `MIE←MPIE, MPIE←1, mode←MPP, MPP←U`, and `MPRV←0` if the new mode ≠ M.
+    pub fn mret(&mut self) {
+        let mpie = (self.mstatus >> 7) & 1;
+        let new_mode = match (self.mstatus >> 11) & 0b11 {
+            3 => Priv::M,
+            1 => Priv::S,
+            _ => Priv::U,
+        };
+        let mut s = self.mstatus;
+        s = (s & !M_MIE) | (mpie << 3); // MIE = MPIE
+        s |= M_MPIE; // MPIE = 1
+        s &= !M_MPP; // MPP = U (lowest supported)
+        if !matches!(new_mode, Priv::M) {
+            s &= !M_MPRV; // MPRV cleared when returning below M
+        }
+        self.mstatus = legalize_mstatus(s);
+        self.mode = new_mode;
+    }
+
+    /// SRET: `SIE←SPIE, SPIE←1, mode←SPP, SPP←U`, and `MPRV←0` if the new mode ≠ M.
+    pub fn sret(&mut self) {
+        let spie = (self.mstatus >> 5) & 1;
+        let new_mode = if self.mstatus & M_SPP != 0 {
+            Priv::S
+        } else {
+            Priv::U
+        };
+        let mut s = self.mstatus;
+        s = (s & !M_SIE) | (spie << 1); // SIE = SPIE
+        s |= M_SPIE; // SPIE = 1
+        s &= !M_SPP; // SPP = U
+        if !matches!(new_mode, Priv::M) {
+            s &= !M_MPRV;
+        }
+        self.mstatus = legalize_mstatus(s);
+        self.mode = new_mode;
+    }
+
+    /// `sstatus` is a masked read view of `mstatus` (S-visible bits only).
+    pub const fn sstatus_read(&self) -> u64 {
+        self.mstatus & SSTATUS_RMASK
+    }
+    /// A write through `sstatus` touches only the S-visible writable bits of `mstatus`.
+    pub fn sstatus_write(&mut self, v: u64) {
+        let merged = (self.mstatus & !SSTATUS_WMASK) | (v & SSTATUS_WMASK);
+        self.mstatus = legalize_mstatus(merged);
+    }
+    /// The S-interrupt bits (SSIE/STIE/SEIE) currently visible through `sie`/`sip` — those in
+    /// the S-subset that are *delegated* to S-mode by `mideleg` (Priv §4.1.3).
+    fn s_int_mask(&self) -> u64 {
+        SIE_SIP_SMASK & self.warl_get(MIDELEG)
+    }
+    /// The `sip` bits that are software-*writable* through the S-view. Per Priv §4.1.3 only
+    /// SSIP (bit 1) is writable via `sip`; STIP (bit 5) and SEIP (bit 9) are read-only in the
+    /// `sip` view (they are driven by the timer / external controller and set through `mip`).
+    /// So the sip *write* mask is SSIP-only, still gated on delegation. Reads, by contrast,
+    /// expose every delegated S-pending bit — that path stays `s_int_mask()`. (`sie` differs:
+    /// STIE/SEIE *are* writable there, so `sie` writes keep using `s_int_mask()`.)
+    fn sip_write_mask(&self) -> u64 {
+        SIP_SSIP & self.warl_get(MIDELEG)
+    }
+
     /// Metadata for an implemented CSR address, or `None` if unimplemented (→ illegal).
     /// Privilege is `addr[9:8]`; read-only is `addr[11:10]==0b11`.
     fn meta(addr: u16) -> Option<Meta> {
@@ -185,9 +349,12 @@ impl Csrs {
             FCSR => 0xFF,
             // mepc: bit 0 is masked (WARL) — IALIGN=16 with the C extension means only bit 0
             // is forced to zero, not bits [1:0] (E1-T08). A write clears it; reads see it.
-            MEPC => !1,
+            MEPC | SEPC => !1,
             MSTATUS | MCAUSE | MEDELEG | MIDELEG | MIE | MTVEC | MSCRATCH | MTVAL | MIP | SATP
-            | STVEC | MNSTATUS | PMPCFG0 | PMPADDR0 | PROBE => !0,
+            | STVEC | MNSTATUS | PMPCFG0 | PMPADDR0 | PROBE
+            // S-mode CSRs (E1-T09): sstatus/sie/sip are masked *views* handled in
+            // read_raw/write_raw; the mask here is !0 (the view logic does the masking).
+            | SSTATUS | SIE | SIP | SSCRATCH | SCAUSE | STVAL => !0,
             MVENDORID | MARCHID | MIMPID | MHARTID => 0, // RO const 0
             // Read-only user counters cycle/time/instret and hpm (0xC00–0xC1F): reads
             // return 0, writes trap (read_only by encoding).
@@ -201,6 +368,27 @@ impl Csrs {
         })
     }
 
+    /// Unchecked raw read of a CSR (no privilege/side-effect logic) — for the hart's own use
+    /// (reading mepc/sepc during MRET/SRET).
+    pub fn read(&mut self, addr: u16) -> u64 {
+        self.read_raw(addr)
+    }
+
+    /// Read the flat WARL store for `addr` (0 if never written).
+    fn warl_get(&self, addr: u16) -> u64 {
+        self.warl
+            .iter()
+            .find(|(a, _)| *a == addr)
+            .map_or(0, |(_, v)| *v)
+    }
+    /// Write the flat WARL store for `addr`.
+    fn warl_set(&mut self, addr: u16, v: u64) {
+        match self.warl.iter_mut().find(|(a, _)| *a == addr) {
+            Some(e) => e.1 = v,
+            None => self.warl.push((addr, v)),
+        }
+    }
+
     /// Raw read of an implemented CSR's current value (no privilege check). PROBE bumps its
     /// read counter — the observable hook for suppression tests.
     fn read_raw(&mut self, addr: u16) -> u64 {
@@ -212,6 +400,12 @@ impl Csrs {
             MIMPID => self.mimpid(),
             MSTATUS => self.mstatus,
             MCAUSE => self.mcause,
+            // S-mode views (E1-T09): sstatus/sie/sip expose the S-subset of mstatus/mie/mip.
+            // Per Priv §4.1.3, an S-interrupt bit is visible/maskable via sie/sip ONLY when it
+            // is delegated (mideleg bit set); undelegated bits are read-only zero.
+            SSTATUS => self.sstatus_read(),
+            SIE => self.warl_get(MIE) & self.s_int_mask(),
+            SIP => self.warl_get(MIP) & self.s_int_mask(),
             // FP CSR aliasing: fcsr = frm[7:5] | fflags[4:0].
             FFLAGS => u64::from(self.fflags),
             FRM => u64::from(self.frm),
@@ -232,8 +426,23 @@ impl Csrs {
     /// Raw write of a legalized value (no checks; caller applied the WARL mask).
     fn write_raw(&mut self, addr: u16, v: u64) {
         match addr {
-            MSTATUS => self.mstatus = v,
+            MSTATUS => self.mstatus = legalize_mstatus(v),
             MCAUSE => self.mcause = v,
+            // S-mode views (E1-T09): route through the masked mstatus/mie/mip. `sie` writes the
+            // delegated S-interrupt-enable bits (SIE_SIP_SMASK & mideleg); `sip` writes ONLY the
+            // delegated SSIP (STIP/SEIP are read-only in the sip view). Undelegated bits are
+            // read-only zero and a write leaves mie/mip untouched.
+            SSTATUS => self.sstatus_write(v),
+            SIE => {
+                let m = self.s_int_mask();
+                let new = (self.warl_get(MIE) & !m) | (v & m);
+                self.warl_set(MIE, new);
+            }
+            SIP => {
+                let m = self.sip_write_mask();
+                let new = (self.warl_get(MIP) & !m) | (v & m);
+                self.warl_set(MIP, new);
+            }
             // FP CSR writes (value already WARL-masked). Writing any of the three marks FP
             // state Dirty. fcsr splits into {frm, fflags}.
             FFLAGS => {

@@ -80,6 +80,7 @@ pub enum Exception {
     StoreAddrMisaligned = 6,
     StoreAccessFault = 7,
     EcallFromU = 8,
+    EcallFromS = 9,
     EcallFromM = 11,
 }
 
@@ -948,10 +949,14 @@ impl Hart {
             // our only mode at Level 0), tval 0. EBREAK → cause 3 (breakpoint),
             // tval = pc. The host decides what happens next.
             Ecall => {
-                return Err(Trap {
-                    cause: Exception::EcallFromM,
-                    tval: 0,
-                });
+                // Environment-call cause depends on the originating privilege mode (E1-T09):
+                // U→8, S→9, M→11. tval is 0.
+                let cause = match self.csr.mode {
+                    crate::csr::Priv::U => Exception::EcallFromU,
+                    crate::csr::Priv::S => Exception::EcallFromS,
+                    crate::csr::Priv::M => Exception::EcallFromM,
+                };
+                return Err(Trap { cause, tval: 0 });
             }
             Ebreak => {
                 return Err(Trap {
@@ -966,21 +971,44 @@ impl Hart {
             // Wait-for-interrupt retires as a no-op (no interrupts at this level). Per our
             // conservative A-extension policy it drops any LR/SC reservation (E1-T04).
             Wfi => {
+                // TW=1 makes WFI in a mode below M illegal (E1-T09; a bounded timeout is a
+                // no-op for us since there are no wakeups yet — T11).
+                if self.csr.tw() && self.csr.mode < crate::csr::Priv::M {
+                    return Err(Trap {
+                        cause: Exception::IllegalInstruction,
+                        tval: insn as u64,
+                    });
+                }
                 self.resv = None;
                 (0, 0, pc_next)
             }
-            // Return from trap: pc ← mepc. (Full mstatus.MPP/MPIE restore lands with trap
-            // delivery; here we transfer control, which is what the p-env needs.)
+            // Return from M-mode trap (E1-T09): illegal below M; restores the mstatus stack
+            // (MIE←MPIE, MPIE←1, mode←MPP, MPP←U, MPRV cleared if returning below M) and
+            // transfers to mepc.
             Mret => {
-                let target = self.csr.access(
-                    crate::csr::MEPC,
-                    crate::csr::CsrOp::Set,
-                    0,
-                    true, // src==0 ⇒ read-only access, no write
-                    false,
-                    insn as u64,
-                )?;
-                // xRET drops any LR/SC reservation (E1-T04, conservative documented policy).
+                if self.csr.mode < crate::csr::Priv::M {
+                    return Err(Trap {
+                        cause: Exception::IllegalInstruction,
+                        tval: insn as u64,
+                    });
+                }
+                let target = self.csr.read(crate::csr::MEPC);
+                self.csr.mret();
+                self.resv = None; // xRET drops any LR/SC reservation (E1-T04)
+                (0, 0, target)
+            }
+            // Return from S-mode trap (E1-T09): illegal below S, and illegal in S when
+            // mstatus.TSR=1. Restores the S stack and transfers to sepc.
+            Sret => {
+                let m = self.csr.mode;
+                if m < crate::csr::Priv::S || (matches!(m, crate::csr::Priv::S) && self.csr.tsr()) {
+                    return Err(Trap {
+                        cause: Exception::IllegalInstruction,
+                        tval: insn as u64,
+                    });
+                }
+                let target = self.csr.read(crate::csr::SEPC);
+                self.csr.sret();
                 self.resv = None;
                 (0, 0, target)
             }

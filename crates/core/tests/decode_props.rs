@@ -240,6 +240,7 @@ fn encode(instr: &Instr) -> u32 {
         // Zicsr / Zifencei / xRET (E1-T02).
         FenceI => 0x0000_100F,
         Mret => 0x3020_0073,
+        Sret => 0x1020_0073,
         Wfi => 0x1050_0073,
         Csrrw { rd, rs1, csr } => csr_word(0b001, rd, rs1, csr),
         Csrrs { rd, rs1, csr } => csr_word(0b010, rd, rs1, csr),
@@ -813,9 +814,10 @@ proptest! {
         // funct3 = 100 with arbitrary rd/rs1/csr — always reserved.
         let w100 = ((rest & 0xFFF) << 20) | ((rs1 as u32) << 15) | (0b100 << 12) | ((rd as u32) << 7) | 0b1110011;
         prop_assert!(decode(w100).is_err(), "SYSTEM funct3=100 {:#010x} must be illegal", w100);
-        // funct3 = 000 word that is NOT one of the four exact privileged encodings.
+        // funct3 = 000 word that is NOT one of the five exact privileged encodings
+        // (ECALL, EBREAK, MRET, SRET, WFI).
         let w000 = ((rest & 0xFFF) << 20) | ((rs1 as u32) << 15) | ((rd as u32) << 7) | 0b1110011;
-        if w000 != 0x0000_0073 && w000 != 0x0010_0073 && w000 != 0x3020_0073 && w000 != 0x1050_0073 {
+        if ![0x0000_0073, 0x0010_0073, 0x3020_0073, 0x1020_0073, 0x1050_0073].contains(&w000) {
             prop_assert!(decode(w000).is_err(), "reserved SYSTEM funct3=000 {:#010x} must be illegal", w000);
         }
     }
