@@ -57,5 +57,27 @@ disabled and diff boot time vs enabled — overhead above the documented figure 
 Check the baseline doc's numbers were produced by the checked-in script, not hand-edited
 (re-run and compare).
 
+## Design decision (2026-07-05, pre-implementation)
+
+**Timing must NOT live in `crates/core/src`.** `tools/ci/determinism-hazards.sh` greps ALL of
+`crates/core/src` for `std::time|SystemTime|Instant::|Date::now` (etc.) regardless of `#[cfg]`, so
+a `profile`-feature block using a host clock in core would fail the gate. Therefore:
+- **Core** exposes only DETERMINISTIC counters (gate-safe): instructions retired (already in
+  `irqstats`), and NEW per-device MMIO access counts (UART/virtio-blk/RTC/PLIC/CLINT) — plain
+  `u64` counters incremented in the bus dispatch. No host time in core.
+- **The CPU / device / host-I/O TIME split** comes from an EXTERNAL profiler — `cargo flamegraph`
+  / `samply` over a native boot (the task already specifies this) — attributing wall time to
+  functions (CPU dispatch vs each device handler vs block-backend I/O). Per-device MMIO *counts*
+  (from core) cross-check the flamegraph's per-device *time*.
+- **Phase wall-times + MIPS** come from the CLI `--profile-boot` harness watching the guest printk
+  phase markers (SBI-probe / earlycon / VFS-mount-root / getty-exec) and stamping host time in the
+  CLI layer (allowed — not core), plus total retired / total wall = MIPS.
+- **Browser**: `performance.mark`/`measure` around run quanta + boot total, in the wasm/JS layer.
+
+This keeps determinism intact (core stays host-clock-free) while still producing the CPU/device/IO
+split the acceptance criteria require. NOTE: the measurement runs are heavy — each Alpine boot is
+~5-7 min, and acceptance needs native+browser × busybox+Alpine × 3-run variance, so the full
+measurement pass is a ~30-45 min job (like E2-T24's nightly reality).
+
 ## Verification log
 (empty)
