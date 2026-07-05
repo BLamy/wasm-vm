@@ -152,9 +152,22 @@ impl Machine {
     /// Step up to `max_instrs` instructions, consulting HTIF after each. Returns
     /// on the first guest exit, the first escaping trap, or after exactly
     /// `max_instrs` retirements — whichever comes first.
+    ///
+    /// Zero-cost: delegates to [`Self::run_traced`] with a [`trace::NullSink`], whose
+    /// empty `#[inline(always)]` `retire` erases the hook entirely (same monomorphization
+    /// the E0-T16 zero-cost proof covers), so this is identical to a hand-written
+    /// `hart.step` loop.
     pub fn run(&mut self, max_instrs: u64) -> RunOutcome {
+        self.run_traced(max_instrs, &mut trace::NullSink)
+    }
+
+    /// Like [`Self::run`], but feeds every retired instruction to `sink` (E0-T18's
+    /// `--trace`). Termination and the "logged once" HTIF command watch are identical to
+    /// `run` — the ONE place the run-loop / HTIF state machine lives, so a traced run and
+    /// an untraced run can never diverge in when they stop.
+    pub fn run_traced<T: trace::TraceSink>(&mut self, max_instrs: u64, sink: &mut T) -> RunOutcome {
         for _ in 0..max_instrs {
-            if let Err(trap) = self.hart.step(&mut self.bus) {
+            if let Err(trap) = self.hart.step_traced(&mut self.bus, sink) {
                 return RunOutcome::Trapped(trap);
             }
             // Consult HTIF only when it is armed and the word CHANGED — this is
