@@ -1,0 +1,16 @@
+[package]
+name = "wasm-vm-cli"
+description = "Native runner for the emulator core — full-speed testing without a browser"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "wasm-vm"
+path = "src/main.rs"
+
+[dependencies]
+wasm-vm-core = { workspace = true, features = ["std"] }
+clap = { workspace = true }

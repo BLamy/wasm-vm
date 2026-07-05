@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = ["crates/core", "crates/wasm", "crates/cli"]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.96.0"
+repository = "https://github.com/BLamy/wasm-vm"
+license = "MIT OR Apache-2.0"
+
+[workspace.dependencies]
+wasm-vm-core = { path = "crates/core", default-features = false }
+wasm-bindgen = "0.2"
+clap = { version = "4", features = ["derive"] }
