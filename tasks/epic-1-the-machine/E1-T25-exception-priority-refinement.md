@@ -3,7 +3,7 @@ id: E1-T25
 epic: 1
 title: Exception-priority refinement — misaligned vs access/page fault (Priv §3.7.1)
 priority: 125
-status: pending
+status: verified
 depends_on: [E1-T20]
 estimate: M
 capstone: false
@@ -59,4 +59,60 @@ test whose expected cause changed must have a §3.7.1 citation, not a silent fli
 pass.
 
 ## Verification log
-(empty)
+
+### 2026-07-04 — §3.7.1 misaligned pre-check landed; ripple was 3 tests, not "many"
+Added an address-misaligned pre-check to `xlate_load`, `xlate_store`, and `xlate_amo`
+(`crates/core/src/hart/mod.rs`): `if va & (len-1) != 0 { return *AddrMisaligned }` BEFORE
+translate/PMP. Previously misalignment surfaced at the BUS (after translate+PMP), so an access
+that was both misaligned and untranslatable/PMP-denied reported the lower-priority cause;
+§3.7.1 ranks address-misaligned above access-fault and page-fault. `len` is a power of two so
+`len-1` is the alignment mask; for `len==1` it never fires. tval anchors on the (misaligned) VA.
+
+**The ripple was exactly 3 test files** (the earlier "many tests" estimate was pessimistic —
+the codebase's boundary tests concentrate the old ordering in a few places). Each updated with a
+§3.7.1 citation, none weakened:
+- `hart_memory.rs::boundary_sweep_last_slot_succeeds_one_past_faults` — the "one byte past" case
+  at `RAM_END-w+1` is misaligned for w>1 (RAM_END is 8-aligned), so it now faults `*AddrMisaligned`;
+  I also ADDED an aligned-one-width-past case that still faults `*AccessFault` (so both the
+  misaligned-straddle and the aligned-past-end paths are covered).
+- `verifier_e0t07_angles.rs::all_reachable_traps_leave_state_untouched` — the sentinel-address
+  store case uses `sd` (8-byte) at a byte-misaligned sentinel → now `StoreAddrMisaligned`; the `lb`
+  case stays `LoadAccessFault` (1-byte is always aligned). Purity property unchanged.
+- `verifier_e0t08_attacks.rs::{negative_offset_straddling_device_edge…, boundary_sweep_verifier_bases}`
+  — straddling an aligned region boundary is ALWAYS misaligned (a naturally-aligned access can't
+  straddle a same-or-coarser-aligned boundary), so these now fault `*AddrMisaligned`. Crucially the
+  **device-silence invariant is preserved and strengthened**: the pre-check fires before any bus/
+  device access, so the device is still never consulted on a straddle.
+
+**Gate:** `cargo test --workspace` → **90 ok-suites, 0 FAILED**; `cargo fmt --check` clean;
+`cargo clippy --workspace --all-targets` clean.
+
+Removed `vm_sv39/src/vm_VA_all_zeros_S_mode.S` from `compliance/EXCLUSIONS.md` (43 → 42 entries).
+**RISCOF confirms it (exit 0, GREEN):** `vm_sv39 … VA_all_zeros … Passed` (and `vm_sv48` VA_all_zeros
+too, a bonus from the same fix); tally **353 passed / 42 failed** (was 352/43), every failure still
+EXCLUSIONS-listed. The first of the 45 capstone deferrals (E1-T24) is burned to zero. Only
+`vm_sv57 … VA_all_zeros` still fails — correctly, it's in the Sv57 block (E1-T28's scope).
+
+### 2026-07-04 — critic round 1: VERIFIED (cold clone at `57c03ad`)
+Cold-clone critic verified at fixed HEAD `57c03ad`; all five attack vectors survived; clone clean.
+
+- **Gate:** `cargo fmt --check` exit 0; `cargo clippy --workspace --all-targets` exit 0; `cargo test
+  --workspace` exit 0, **0 FAILED, 90 ok-suites**.
+- **Pre-check §3.7.1-correct, BOTH directions test-proven:** all three pre-checks sit BEFORE
+  `translate_cached`, return `*AddrMisaligned` with tval=va, check `va & (len-1)`. (a) fires on
+  misaligned (hart_memory `last+1` w>1, e0t08 `RAM_END-w+1` w>1 → `*AddrMisaligned`); (b) does NOT
+  over-fire — the ADDED aligned-past case (`ea=RAM_END`, w-aligned) still reports `*AccessFault`, a
+  real test not reasoning; w==1 (`len-1==0`) never fires → byte access still routes to translate.
+- **Test updates honest (per-file §3.7.1 derivation):** e0t07 `X2_SENTINEL` low byte 0x02 → lb(1B)
+  aligned → LoadAccessFault, sd(8B) misaligned → StoreAddrMisaligned, purity KEPT; e0t08 device-silence
+  (`writes.is_empty()`) KEPT on both load+store straddle; "aligned access can't straddle an aligned
+  boundary" reasoning sound. No assertion changed to a §3.7.1-incorrect cause; no check dropped.
+- **No regression:** `misaligned_ld_sd_causes_4_and_6` ok (in-RAM misaligned still 4/6, tval unchanged);
+  `misaligned_amo_and_sc_trap_store_cause_no_partial_write` ok (AMO still faults StoreAddrMisaligned).
+- **Exclusion removal real:** diff removes exactly one `.S` line → 43→42; file has 42 `.S` entries.
+- **RISCOF (provisioned + run once, exit 0):** **353 passed / 42 failed, GREEN**; `vm_sv39 VA_all_zeros
+  … Passed` (and vm_sv48); only `vm_sv57 VA_all_zeros` fails (correctly in the excluded Sv57 block);
+  all 42 failures EXCLUSIONS-listed, no new unexcused failure.
+
+**VERDICT: verified.** (critic agent `a63255a26aa46187d`, 17 tool-uses, cold clone, no push.) First of
+the 45 Level-1-capstone (E1-T24) deferrals burned to zero: 45 → 44 remaining.

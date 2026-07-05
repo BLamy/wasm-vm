@@ -107,20 +107,25 @@ fn all_reachable_traps_leave_state_untouched() {
         // E0-T08 UPDATE (worker edit to critic-authored suite, re-verified by the
         // E0-T08 critic): lb/sd left the placeholder set when loads/stores landed.
         // The SAME purity property now checks the real load/store fault paths: the
-        // sentinel in x2 is an unmapped address, so these fault with causes 5/7 and
-        // tval = the effective address — and must still mutate nothing.
+        // sentinel in x2 is an unmapped address, and both must still mutate nothing.
+        // E1-T25 UPDATE (§3.7.1 priority): the two cases now diverge in CAUSE because
+        // X2_SENTINEL is byte-misaligned (low byte 0x02):
+        //   - lb is 1-byte → always aligned → the unmapped access is LoadAccessFault (5).
+        //   - sd is 8-byte → the address is MISALIGNED, and misaligned OUTRANKS the
+        //     access fault, so the store now traps StoreAddrMisaligned (6), not
+        //     StoreAccessFault (7). tval is the same effective (misaligned) VA.
         (
-            "load access fault at sentinel address (was: placeholder lb)",
+            "load access fault at sentinel address (aligned lb → access fault)",
             DRAM_BASE,
             Some(lb),
             Exception::LoadAccessFault,
             X2_SENTINEL,
         ),
         (
-            "store access fault at sentinel address (was: placeholder sd)",
+            "store MISALIGNED at sentinel address (§3.7.1: misaligned beats access)",
             DRAM_BASE,
             Some(sd),
-            Exception::StoreAccessFault,
+            Exception::StoreAddrMisaligned,
             X2_SENTINEL,
         ),
         // E0-T11 UPDATE (worker edit to critic-authored suite): ecall/ebreak left
