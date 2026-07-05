@@ -84,6 +84,10 @@ pub enum Exception {
     EcallFromU = 8,
     EcallFromS = 9,
     EcallFromM = 11,
+    // Sv39 page faults (E1-T16).
+    InstrPageFault = 12,
+    LoadPageFault = 13,
+    StorePageFault = 15,
 }
 
 /// A trap: why, plus the `mtval`-equivalent payload (faulting address or raw
@@ -287,26 +291,64 @@ const fn store_fault(f: BusFault, addr: u64) -> Trap {
     }
 }
 
-// ── PMP-checked physical accesses (E1-T15) ──────────────────────────────────────────
-// Every data access first clears the Physical Memory Protection check for the DATA effective
-// privilege (`data_priv`, which honors MPRV), then goes to the bus. A PMP denial is an access
-// fault (load cause 5 / store-AMO cause 7). These are free functions taking `&Csrs` so they
-// compose with `execute`'s `&mut self.regs` borrow (disjoint fields). Fetch checks (cause 1) are
-// inline in `step_traced`, using the TRUE current mode (MPRV never affects fetches).
+// ── Translated + PMP-checked physical accesses (E1-T15 / E1-T16) ─────────────────────
+// Every data access `a` is a VIRTUAL address: it is (1) TRANSLATED through the Sv39 MMU for the
+// data effective privilege (`data_priv`, honoring MPRV) — a translation-rule violation is a page
+// fault, a PMP-denied PTE read is an access fault; then (2) the resulting PHYSICAL address is
+// PMP-checked for the access; then (3) it goes to the bus. A PMP denial on the final access is an
+// access fault (load 5 / store-AMO 7) with `tval = the VIRTUAL address`. These are free functions
+// taking `&Csrs` so they compose with `execute`'s `&mut self.regs` borrow (disjoint fields). The
+// fetch path (page fault 12 / access fault 1, TRUE current mode) is inline in `step_traced`.
 use crate::csr::Csrs;
+use crate::mmu::{self, Access};
 use crate::pmp::PmpAccess;
 
+/// Translate a data VA and PMP-check the final PA for a LOAD; returns the physical address.
+#[inline]
+fn xlate_load(csr: &Csrs, bus: &mut impl Bus, va: u64, len: u64) -> Result<u64, Trap> {
+    let eff = csr.data_priv();
+    let pa = mmu::translate(csr, bus, va, Access::Load, eff)?;
+    if !csr.pmp_ok(pa, len, PmpAccess::Read, eff) {
+        return Err(Trap {
+            cause: Exception::LoadAccessFault,
+            tval: va,
+        });
+    }
+    Ok(pa)
+}
+/// Translate a data VA and PMP-check the final PA for a STORE (incl. SC / AMO write half).
+#[inline]
+fn xlate_store(csr: &Csrs, bus: &mut impl Bus, va: u64, len: u64) -> Result<u64, Trap> {
+    let eff = csr.data_priv();
+    let pa = mmu::translate(csr, bus, va, Access::Store, eff)?;
+    if !csr.pmp_ok(pa, len, PmpAccess::Write, eff) {
+        return Err(Trap {
+            cause: Exception::StoreAccessFault,
+            tval: va,
+        });
+    }
+    Ok(pa)
+}
+/// The read half of an AMO: translated as a STORE (needs W + D), PMP-checked for BOTH R and W.
+#[inline]
+fn xlate_amo(csr: &Csrs, bus: &mut impl Bus, va: u64, len: u64) -> Result<u64, Trap> {
+    let eff = csr.data_priv();
+    let pa = mmu::translate(csr, bus, va, Access::Store, eff)?;
+    if !(csr.pmp_ok(pa, len, PmpAccess::Read, eff) && csr.pmp_ok(pa, len, PmpAccess::Write, eff)) {
+        return Err(Trap {
+            cause: Exception::StoreAccessFault,
+            tval: va,
+        });
+    }
+    Ok(pa)
+}
+
 macro_rules! checked_load {
-    ($name:ident, $busfn:ident, $ty:ty, $len:expr, $acc:expr, $fault:ident, $cause:expr) => {
+    ($name:ident, $busfn:ident, $ty:ty, $len:expr) => {
         #[inline]
         fn $name(csr: &Csrs, bus: &mut impl Bus, a: u64) -> Result<$ty, Trap> {
-            if !csr.pmp_ok(a, $len, $acc, csr.data_priv()) {
-                return Err(Trap {
-                    cause: $cause,
-                    tval: a,
-                });
-            }
-            bus.$busfn(a).map_err(|f| $fault(f, a))
+            let pa = xlate_load(csr, bus, a, $len)?;
+            bus.$busfn(pa).map_err(|f| load_fault(f, a))
         }
     };
 }
@@ -314,85 +356,49 @@ macro_rules! checked_store {
     ($name:ident, $busfn:ident, $ty:ty, $len:expr) => {
         #[inline]
         fn $name(csr: &Csrs, bus: &mut impl Bus, a: u64, v: $ty) -> Result<(), Trap> {
-            if !csr.pmp_ok(a, $len, PmpAccess::Write, csr.data_priv()) {
-                return Err(Trap {
-                    cause: Exception::StoreAccessFault,
-                    tval: a,
-                });
-            }
-            bus.$busfn(a, v).map_err(|f| store_fault(f, a))
+            let pa = xlate_store(csr, bus, a, $len)?;
+            bus.$busfn(pa, v).map_err(|f| store_fault(f, a))
         }
     };
 }
 
-// Ordinary loads (incl. LR): need Read; a PMP denial is a LoadAccessFault.
-checked_load!(
-    cload8,
-    load8,
-    u8,
-    1,
-    PmpAccess::Read,
-    load_fault,
-    Exception::LoadAccessFault
-);
-checked_load!(
-    cload16,
-    load16,
-    u16,
-    2,
-    PmpAccess::Read,
-    load_fault,
-    Exception::LoadAccessFault
-);
-checked_load!(
-    cload32,
-    load32,
-    u32,
-    4,
-    PmpAccess::Read,
-    load_fault,
-    Exception::LoadAccessFault
-);
-checked_load!(
-    cload64,
-    load64,
-    u64,
-    8,
-    PmpAccess::Read,
-    load_fault,
-    Exception::LoadAccessFault
-);
-/// The read half of an AMO (and LR/SC's atomic region): needs BOTH Read and Write; a PMP denial
-/// is a StoreAMOAccessFault. The subsequent store half re-checks Write via `cstoreN`.
-fn camo_ok(csr: &Csrs, a: u64, len: u64) -> bool {
-    let m = csr.data_priv();
-    csr.pmp_ok(a, len, PmpAccess::Read, m) && csr.pmp_ok(a, len, PmpAccess::Write, m)
-}
+// Ordinary loads (incl. LR): translated as Load.
+checked_load!(cload8, load8, u8, 1);
+checked_load!(cload16, load16, u16, 2);
+checked_load!(cload32, load32, u32, 4);
+checked_load!(cload64, load64, u64, 8);
+// The read half of an AMO (its store half re-translates via cstoreN).
 #[inline]
 fn camoload32(csr: &Csrs, bus: &mut impl Bus, a: u64) -> Result<u32, Trap> {
-    if !camo_ok(csr, a, 4) {
-        return Err(Trap {
-            cause: Exception::StoreAccessFault,
-            tval: a,
-        });
-    }
-    bus.load32(a).map_err(|f| store_fault(f, a))
+    let pa = xlate_amo(csr, bus, a, 4)?;
+    bus.load32(pa).map_err(|f| store_fault(f, a))
 }
 #[inline]
 fn camoload64(csr: &Csrs, bus: &mut impl Bus, a: u64) -> Result<u64, Trap> {
-    if !camo_ok(csr, a, 8) {
-        return Err(Trap {
-            cause: Exception::StoreAccessFault,
-            tval: a,
-        });
-    }
-    bus.load64(a).map_err(|f| store_fault(f, a))
+    let pa = xlate_amo(csr, bus, a, 8)?;
+    bus.load64(pa).map_err(|f| store_fault(f, a))
 }
-// Stores (incl. SC and the write half of an AMO): need Write.
+// Stores (incl. SC and the write half of an AMO): translated as Store.
 checked_store!(cstore8, store8, u8, 1);
 checked_store!(cstore16, store16, u16, 2);
 checked_store!(cstore32, store32, u32, 4);
 checked_store!(cstore64, store64, u64, 8);
+
+/// Translate + PMP-check a 2-byte instruction FETCH at virtual address `va` (TRUE current mode —
+/// MPRV never affects fetches). Returns the physical address; a translation-rule violation is an
+/// instruction page fault (12), a PMP-denied fetch/PTE-read is an instruction access fault (1),
+/// both with `tval = va`.
+#[inline]
+fn fetch_xlate(csr: &Csrs, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
+    let pa = mmu::translate(csr, bus, va, Access::Fetch, csr.mode)?;
+    if !csr.pmp_ok(pa, 2, PmpAccess::Exec, csr.mode) {
+        return Err(Trap {
+            cause: Exception::InstrAccessFault,
+            tval: va,
+        });
+    }
+    Ok(pa)
+}
 
 impl Hart {
     /// A hart in the spec reset state, PC at the `virt`/Spike vector `DRAM_BASE`.
@@ -445,18 +451,13 @@ impl Hart {
         // retirement increment (clears any stale flag from a host-side/direct CSR write).
         self.csr.arm_counters();
         let pc = self.regs.pc;
-        // E1-T15: PMP execute-permission check on the fetch, using the TRUE current mode (MPRV
-        // never affects fetches). A denial is an instruction-access fault (cause 1).
-        if !self.csr.pmp_ok(pc, 2, PmpAccess::Exec, self.csr.mode) {
-            return Err(Trap {
-                cause: Exception::InstrAccessFault,
-                tval: pc,
-            });
-        }
+        // E1-T16/T15: translate + PMP-check the fetch of the low parcel (Sv39 page fault 12 /
+        // instruction access fault 1, TRUE current mode). Fetch the 16-bit parcel from the PA.
+        let lo_pa = fetch_xlate(&self.csr, bus, pc)?;
         // Fetch the low 16-bit parcel (C extension: `parcel[1:0] != 0b11` ⇒ a 16-bit
         // compressed instruction; else a 32-bit instruction whose upper half is a SEPARATE
         // access, so a straddling second half can fault precisely).
-        let lo = match bus.load16(pc) {
+        let lo = match bus.load16(lo_pa) {
             Ok(w) => w,
             Err(BusFault::Access) => {
                 return Err(Trap {
@@ -486,17 +487,12 @@ impl Hart {
                 }
             }
         } else {
-            // E1-T15: the upper parcel is a separate physical access — PMP-check it too.
-            if !self
-                .csr
-                .pmp_ok(pc.wrapping_add(2), 2, PmpAccess::Exec, self.csr.mode)
-            {
-                return Err(Trap {
-                    cause: Exception::InstrAccessFault,
-                    tval: pc.wrapping_add(2),
-                });
-            }
-            let hi = match bus.load16(pc.wrapping_add(2)) {
+            // E1-T16/T15: the upper parcel is a SEPARATE physical access — translate + PMP-check
+            // it independently, so a 32-bit instruction straddling a page boundary faults
+            // precisely on the second parcel (tval = the second page's VA; mepc stays the
+            // instruction start).
+            let hi_pa = fetch_xlate(&self.csr, bus, pc.wrapping_add(2))?;
+            let hi = match bus.load16(hi_pa) {
                 Ok(w) => w,
                 Err(BusFault::Access) => {
                     return Err(Trap {
