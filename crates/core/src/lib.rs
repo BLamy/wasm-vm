@@ -321,8 +321,10 @@ impl Machine {
     /// would hand off to a kernel. Sets, precisely:
     /// - privilege = **S-mode**, `pc = platform::virt::KERNEL_BASE` (0x8020_0000);
     /// - `a0 = hartid`, `a1 = dtb_addr` (the standard Linux/SBI convention);
-    /// - `mideleg = 0x222` (SSI/STI/SEI to S), `medeleg = 0xB109` (misaligned-fetch,
-    ///   breakpoint, ecall-from-U, and the three page-faults to S — OpenSBI's own set);
+    /// - `mideleg = 0x222` (SSI/STI/SEI to S), `medeleg = 0xB1FF` (OpenSBI's full set: causes
+    ///   0..=8 incl. illegal-instruction and load/store access faults, + I/L/S page faults to
+    ///   S — wide by necessity, since with no guest M-mode firmware `mtvec` stays 0 and any
+    ///   non-delegated trap would abort the whole machine instead of reaching the kernel);
     /// - `satp = 0` (Bare; the kernel builds its own tables), `sstatus.SIE = 0`
     ///   (interrupts masked until the kernel opts in) — both reset defaults, restated here
     ///   as part of the contract;
@@ -337,9 +339,18 @@ impl Machine {
             .csr
             .access(MIDELEG, CsrOp::Write, 0x222, false, false, 0)
             .expect("mideleg write from M cannot fail");
+        // medeleg = 0xB1FF — OpenSBI's full delegation set: causes 0..=8 (misaligned-fetch,
+        // fetch-access, ILLEGAL-INSTRUCTION, breakpoint, misaligned/access load & store,
+        // ecall-from-U) plus the three page-faults (12/13/15). This MUST be the wide set, not
+        // a minimal one: there is no guest M-mode firmware here (SBI is Rust) and Linux runs
+        // in S-mode, so it only ever programs `stvec` — `mtvec` stays 0 forever. Any cause we
+        // DON'T delegate therefore traps to M-mode, finds no handler (mtvec==0), and aborts
+        // the whole machine (RunOutcome::Trapped) instead of reaching the kernel. With the
+        // wide set, a userspace illegal instruction becomes SIGILL and a bad access becomes
+        // SIGSEGV/SIGBUS in just that process — exactly as on real hardware + OpenSBI.
         self.hart
             .csr
-            .access(MEDELEG, CsrOp::Write, 0xB109, false, false, 0)
+            .access(MEDELEG, CsrOp::Write, 0xB1FF, false, false, 0)
             .expect("medeleg write from M cannot fail");
         // E2-T05: grant S-mode the CY/TM/IR counters (mcounteren = 0x7) — the kernel's
         // sched_clock reads `time` via rdtime, which traps without this (OpenSBI grants the
@@ -379,13 +390,22 @@ impl Machine {
     /// when the `RISCV\0\0\0`→`RSC\x05` magic at offset 0x38 is present and `image_size`
     /// exceeds the file, we honour it. Placing the initrd at `KERNEL_BASE + file_len` instead
     /// lands it inside `.bss` → the kernel logs "overlaps in-use memory region — disabling
-    /// initrd" and boots without a rootfs. Fails `Access` if the image doesn't fit in RAM.
+    /// initrd" and boots without a rootfs. Fails `Access` if the image — or its full runtime
+    /// footprint (`.bss` and all) — does not fit above `KERNEL_BASE` in RAM.
     pub fn load_kernel_image(&mut self, bytes: &[u8]) -> Result<u64, bus::BusFault> {
+        let footprint = kernel_image_footprint(bytes);
+        let kernel_end = platform::virt::KERNEL_BASE + footprint;
+        // The RUNTIME footprint (not just the file) must fit: the no-initrd boot path has no
+        // later placement check to catch a `.bss` that overflows top-of-RAM, so guard here so
+        // the doc's "fails Access if it doesn't fit" is actually true.
+        let ram_top = self.bus.ram().base() + self.bus.ram().len() as u64;
+        if kernel_end > ram_top {
+            return Err(bus::BusFault::Access);
+        }
         self.bus
             .ram_mut()
             .write_slice(platform::virt::KERNEL_BASE, bytes)?;
-        let footprint = kernel_image_footprint(bytes);
-        Ok(platform::virt::KERNEL_BASE + footprint)
+        Ok(kernel_end)
     }
 
     /// E2-T15: place a blob (initrd, DTB) at an absolute guest-physical address in RAM.
@@ -721,6 +741,11 @@ impl Machine {
 /// `image_size`(8) `flags`(8) `version`(4) `res1`(4) `res2`(8) `magic`(8, deprecated
 /// `"RISCV\0\0\0"` at 0x30) then the 4-byte `magic2 = "RSC\x05"` at offset **0x38**. We key
 /// off `magic2`, which is stable across the header revisions that carry `image_size`.
+///
+/// Limitation: a pre-4.6 kernel (or one built without CONFIG) can leave `image_size == 0`
+/// ("unbounded"); we then fall back to `file_len`, which under-reports the `.bss` footprint
+/// and could mis-place the initrd. Every kernel we ship (6.6.63) sets it, and the boot glue's
+/// RAM ceiling still prevents an overflow — but an image_size-0 kernel is unsupported here.
 fn kernel_image_footprint(bytes: &[u8]) -> u64 {
     let file_len = bytes.len() as u64;
     if bytes.len() >= 0x3c && &bytes[0x38..0x3c] == b"RSC\x05" {

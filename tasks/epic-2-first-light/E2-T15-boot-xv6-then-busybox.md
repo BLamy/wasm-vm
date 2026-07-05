@@ -132,3 +132,38 @@ Deliverables landed: `wasm-vm boot` CLI path, `tools/boot-busybox.sh`,
 adversarial pass (QEMU isn't installed on the dev host — runs in Docker via the E2-T12
 image). Booting *unmodified Linux* to a working shell is the strictly harder proof and is
 done; the checklist boxes below reflect exactly what is verified.
+
+### 2026-07-05 — TWO independent cold-clone critics — 1 REFUTATION fixed, findings folded in
+
+Ran two separate adversarial critics (the first took 14 min but did NOT stall — it returned a
+full review). They **independently converged** on the same top issue, which is the strongest
+signal a finding is real:
+
+- **REFUTATION (both critics): `medeleg=0xB109` under-delegates → a non-delegated exception
+  aborts the WHOLE VM.** There is no guest M-mode firmware (SBI is Rust) and Linux only ever
+  programs `stvec`, so `mtvec` stays 0 forever. Any cause we don't delegate (illegal-instr 2,
+  load/store access 5/7, misaligned 4/6) traps to M-mode, finds `mtvec==0`, and returns
+  `RunOutcome::Trapped` → the emulator dies with exit 101 instead of the kernel turning it
+  into a per-process SIGILL/SIGSEGV/SIGBUS. The current pinned boot never hits these, but a
+  *different* initramfs whose userland uses an unimplemented insn (Zbb, vector…) or touches an
+  unbacked MMIO window would kill the machine. **Fixed:** `boot_supervisor` now writes
+  `medeleg=0xB1FF` — OpenSBI's own full set (causes 0..=8 + page faults 12/13/15) — so those
+  faults reach the kernel exactly as on real hw + OpenSBI. Updated the boot_contract test
+  (0xB109→0xB1FF), the doc comment, and ADR 0002. **Re-verified the full boot still reaches
+  the shell after the change.**
+- **ADVISORY (both): `load_kernel_image` never bounded the runtime footprint against RAM** (the
+  doc claimed it did). A large kernel + small `--ram-mib` on the no-initrd path let `.bss`
+  overflow RAM silently; a corrupt huge `image_size` could wrap `initrd_floor` low and place
+  the initrd over the kernel. **Fixed:** ceiling check (`KERNEL_BASE + footprint <= top-of-RAM`
+  → `BusFault::Access`) + `checked_add` on the 2 MiB `initrd_floor` round-up.
+- **ADVISORY (critic 1): `--max-instrs` counts run-loop steps, not exact retirements** →
+  relabelled the message "~N steps" (no longer over-claims "retired N").
+- **ADVISORY (critic 2): `image_size==0` (pre-4.6 kernels) falls back to file_len** → documented
+  as an unsupported case (our 6.6.63 sets it; the new RAM ceiling still prevents overflow).
+- **CONFIRMED by both:** header offsets (magic @0x38, image_size @16); the 2 MiB rounding never
+  silently drops the initrd (explicit error if it won't fit); RTC register map vs rtc-goldfish
+  + epoch-0 coherency; RX-FIFO rate-limit loses/reorders nothing; the DTB probe-length
+  invariant (`prop_u64` fixed-width) so the release-compiled-out `debug_assert` is safe; final
+  UART drain loses no output; cfg gating (clippy ±`--all-features`, core 86, fmt) all green;
+  the smoke test is correctly `#[ignore]`d, deadline-bounded (can't hang), and asserts on real
+  command output (can't pass on a dead boot).

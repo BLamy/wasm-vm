@@ -179,8 +179,18 @@ pub fn boot(a: BootArgs) -> ExitCode {
     // against `image_size` still falls inside that rounded-up reservation → the kernel logs
     // "overlaps in-use memory region" and disables it. Start the initrd on the 2 MiB boundary
     // above the kernel so it clears the reservation entirely.
+    // `load_kernel_image` already rejects a `kernel_end` past top-of-RAM, so the round-up
+    // below cannot wrap for any real image; `checked_add` keeps that true even for a corrupt
+    // header that slipped through — a wrapped-low floor could otherwise place the initrd over
+    // the kernel.
     const PMD_SIZE: u64 = 2 * 1024 * 1024;
-    let initrd_floor = (kernel_end + (PMD_SIZE - 1)) & !(PMD_SIZE - 1);
+    let Some(initrd_floor) = kernel_end
+        .checked_add(PMD_SIZE - 1)
+        .map(|v| v & !(PMD_SIZE - 1))
+    else {
+        eprintln!("wasm-vm: kernel_end {kernel_end:#x} too large to align an initrd above");
+        return ExitCode::from(2);
+    };
 
     let (dtb, dtb_addr, placed_initrd) = match &initrd {
         Some(bytes) => {
@@ -300,8 +310,11 @@ pub fn boot(a: BootArgs) -> ExitCode {
             ExitCode::from(101)
         }
         RunOutcome::MaxInstrs => {
+            // `total` is the sum of quantum sizes run, i.e. run-loop steps — very close to
+            // retired instructions but not exact (a quantum that delivers an interrupt spends
+            // a step retiring nothing), so it's labelled "steps", not "retired".
             eprintln!(
-                "wasm-vm: reached --max-instrs {} (retired {total})",
+                "wasm-vm: reached --max-instrs {} (~{total} steps)",
                 a.max_instrs
             );
             ExitCode::from(102)
