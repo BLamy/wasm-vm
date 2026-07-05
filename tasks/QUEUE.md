@@ -8,8 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E1-T28** — Sv57 five-level paging — satp MODE=10 (Priv §4.5)
-1. **E2-T01** — Define the "wasm-vm virt" machine platform — memory map, hart layout, boot contract
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -75,7 +73,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Epic 2 — `epic-2-first-light`
 
-- [ ] `201` [E2-T01](epic-2-first-light/E2-T01-machine-platform-definition.md) — Define the "wasm-vm virt" machine platform — memory map, hart layout, boot contract *(deps: E1)*
+- [?] `201` [E2-T01](epic-2-first-light/E2-T01-machine-platform-definition.md) — Define the "wasm-vm virt" machine platform — memory map, hart layout, boot contract *(deps: E1)*
 - [ ] `202` [E2-T02](epic-2-first-light/E2-T02-fdt-devicetree-builder.md) — FDT/devicetree builder in Rust emitting a dtc-clean DTB for the virt platform *(deps: E2-T01)*
 - [ ] `203` [E2-T03](epic-2-first-light/E2-T03-firmware-strategy-decision.md) — Firmware decision — built-in SBI in the emulator vs OpenSBI as guest payload *(deps: E2-T01)*
 - [ ] `204` [E2-T04](epic-2-first-light/E2-T04-sbi-base-and-debug-console.md) — SBI Base extension + DBCN debug console + legacy console putchar/getchar *(deps: E2-T03)*
