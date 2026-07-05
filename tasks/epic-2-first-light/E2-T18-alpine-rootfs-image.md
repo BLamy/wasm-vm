@@ -98,3 +98,31 @@ the dev host; the QEMU `-device virtio-blk-device` cross-check is documented for
 #2 (fsck clean, ≤512 MiB) ✓. #3 (reproducible: pinned version + MANIFEST lock; mtime caveat
 documented) ✓. #4 (no privileged ops) ✓. Interactive root-login + `apk --version` is the
 E2-T19 capstone (which boots this exact image to an interactive login).
+
+### 2026-07-05 — cold-clone critic — supply-chain refutations fixed
+
+The critic confirmed the image boots but landed real REFUTATIONS on the reproducibility /
+supply-chain claims (the honestly-weakest part). All fixed:
+
+- **REFUTATION #1 — `--allow-untrusted` disabled Alpine signature verification.** Real hole. The
+  reason it "seemed needed": the riscv64 v3.20 APKINDEX is signed by key `60ac2099`, which is
+  NOT in the container's default `/etc/apk/keys` (the critic's "same keys" premise was wrong for
+  riscv64) — but it DOES ship, verified, in `alpine-keys` under `/usr/share/apk/keys/riscv64`.
+  **Fixed:** `--keys-dir /usr/share/apk/keys/riscv64`, dropped `--allow-untrusted`; the build now
+  verifies signatures and fails closed on a tampered mirror (confirmed: install runs with no
+  `UNTRUSTED` warning).
+- **REFUTATION #2 — committed ext4 `SHA256SUMS` was an unverifiable pin.** The image is
+  gitignored + non-byte-reproducible (per-build mtimes), so a committed image hash fails
+  `shasum -c` on every honest rebuild. **Fixed:** `SHA256SUMS` now covers only the reproducible
+  `MANIFEST.txt`; docs state plainly the `.ext4` is not hash-pinned and why.
+- **REFUTATION #3 — "pinned/reproducible/lock" was overstated** (versions float within v3.20;
+  `FROM alpine:3.20` was a floating tag). **Fixed:** Dockerfile pins the base by **digest** +
+  tools by exact version; and a **MANIFEST drift gate** in `build-rootfs.sh` diffs the freshly
+  resolved package set against the committed lock and **fails on drift** (verified: a tampered
+  lock line is caught and errors; `UPDATE_MANIFEST=1` accepts an intentional bump).
+- **ADVISORY #6 — foreign-ELF scan was a blacklist.** **Fixed:** inverted to an allow-list (flag
+  any ELF that is not `RISC-V`), so ppc/s390/32-bit-ARM/etc. are caught too.
+- **ADVISORY #4 — container-vs-target busybox version assumed equal.** **Fixed:** the build now
+  asserts the container busybox version equals the target's and fails on skew.
+- CONFIRMED by the critic: passwordless-root-on-securetty, the fsck gate, the applet skip-guard,
+  gitignore coherence, and 512M sizing all correct. (#5 getty-storm is non-blocking given #4.)

@@ -7,11 +7,16 @@ ROOT=/rootfs
 mkdir -p "$ROOT"
 
 # 1. Cross-install the riscv64 root (unpack only; --no-scripts avoids riscv64 execution).
-apk.static --arch riscv64 -X "$MIRROR" -U --allow-untrusted \
+# Signatures ARE verified: --keys-dir points at the riscv64 signing keys that ship (verified)
+# in the build image's alpine-keys package. The riscv64 v3.20 APKINDEX is signed by key
+# 60ac2099, which lives under /usr/share/apk/keys/riscv64 (NOT the default /etc/apk/keys), so
+# without this apk reports "UNTRUSTED signature". We do NOT use --allow-untrusted (critic #1):
+# a MITM/mirror-compromise now fails closed.
+apk.static --arch riscv64 -X "$MIRROR" --keys-dir /usr/share/apk/keys/riscv64 -U \
   --root "$ROOT" --initdb --no-scripts add $PKGS
 
-# Record exactly what landed (pinned-input evidence for reproducibility + supply chain).
-apk.static --root "$ROOT" info -v | sort > /out/MANIFEST.txt
+# Record exactly what landed → drift lock (host diffs this against the committed manifest).
+apk.static --root "$ROOT" info -v | sort > /out/MANIFEST.new
 
 # 1b. Recreate the busybox applet symlinks. `apk --no-scripts` skipped the package's
 # `busybox --install` trigger, so /sbin/init, /sbin/getty, /bin/login, /bin/mount … are ALL
@@ -22,6 +27,14 @@ BB=/bin/busybox
 if [ -e "$ROOT/bin/busybox.suid" ]; then SUID=/bin/busybox.suid; else SUID="$BB"; fi
 SUID_APPLETS=" login su passwd mount umount crontab ping ping6 traceroute traceroute6 vlock wall "
 test -e "$ROOT$BB" || { echo "no $BB in root — busybox not installed?"; exit 1; }
+# The applet SET comes from the container's busybox — assert it's the SAME version as the
+# target's, else the recreated symlink set could be wrong (critic #4). Both are pinned, so this
+# only fires if someone bumps one without the other.
+CBB_VER=$(busybox 2>&1 | sed -n '1s/.*v\([0-9.]*\).*/\1/p')
+TBB_VER=$(grep -oE '^busybox-[0-9][^ ]*' /out/MANIFEST.new | head -1 | sed 's/^busybox-//; s/-r.*//')
+if [ -n "$TBB_VER" ] && [ "$CBB_VER" != "$TBB_VER" ]; then
+  echo "busybox version skew: container $CBB_VER vs target $TBB_VER — applet set may differ"; exit 1
+fi
 for applet in $(busybox --list-full); do
   path="$ROOT/$applet"
   # Skip anything already present — real file OR symlink (even dangling, e.g. /sbin/ifdown from
@@ -100,8 +113,10 @@ mke2fs -q -t ext4 -L root -U "$FS_UUID" -d "$ROOT" -E root_owner=0:0 /out/alpine
 echo "--- fsck.ext4 -f -n ---"
 fsck.ext4 -f -n /out/alpine-rootfs.ext4
 
-# 5. Supply-chain / arch sanity: no x86/amd64/arm ELF binaries snuck in (all must be riscv64).
-echo "--- foreign-ELF scan (must be empty) ---"
-bad=$(find "$ROOT" -type f -exec file {} + | grep -E "ELF.*(x86-64|Intel 80386|ARM aarch64)" || true)
-if [ -n "$bad" ]; then echo "FOREIGN BINARIES FOUND:"; echo "$bad"; exit 1; fi
+# 5. Supply-chain / arch sanity: every ELF must be RISC-V. This is an ALLOW-list (flag any ELF
+# that is NOT RISC-V), not a blacklist of known-bad arches (critic #6) — so x86/ARM/ppc/s390/…
+# are all caught, not just the three we thought to name.
+echo "--- foreign-ELF scan (every ELF must be RISC-V) ---"
+bad=$(find "$ROOT" -type f -exec file {} + | grep -E "\bELF\b" | grep -v "RISC-V" || true)
+if [ -n "$bad" ]; then echo "NON-RISC-V BINARIES FOUND:"; echo "$bad"; exit 1; fi
 echo "  (clean — riscv64 only)"

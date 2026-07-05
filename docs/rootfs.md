@@ -19,11 +19,15 @@ mounts, no `qemu-user`/binfmt.
 We take **path (b)** from the task (apk.static cross-bootstrap), not path (a)
 (binfmt/`qemu-user`), because it needs **no riscv64 execution**:
 
-1. A host-arch Alpine container (`tools/rootfs.Dockerfile`) runs
-   `apk.static --arch riscv64 … --root /rootfs --initdb --no-scripts add alpine-base
-   busybox-suid openrc`. `apk.static` only *unpacks* the riscv64 packages into a directory —
-   it never runs a riscv64 binary — so no emulator is needed and the build is fast and
-   deterministic. Pinned to Alpine **v3.20** and the `dl-cdn.alpinelinux.org` mirror.
+1. A host-arch Alpine container (`tools/rootfs.Dockerfile`, pinned by image **digest** and
+   each tool by exact version) runs `apk.static --arch riscv64 --keys-dir
+   /usr/share/apk/keys/riscv64 … --root /rootfs --initdb --no-scripts add alpine-base
+   busybox-suid openrc`. `apk.static` only *unpacks* the riscv64 packages into a directory — it
+   never runs a riscv64 binary — so no emulator is needed. **Signatures are verified:** the
+   riscv64 v3.20 APKINDEX is signed by key `60ac2099`, which ships (itself verified) in the
+   build image's `alpine-keys` under `/usr/share/apk/keys/riscv64` — NOT the default
+   `/etc/apk/keys`, so `--keys-dir` is required and `--allow-untrusted` is **not** used (the
+   build fails closed on a tampered mirror). Pinned to Alpine **v3.20**.
 2. **`busybox --install` is redone by hand.** `--no-scripts` skips the busybox trigger that
    creates the `/sbin/init`, `/sbin/getty`, `/bin/login`, `/bin/mount`, … applet symlinks —
    without them the kernel finds no `/sbin/init` and falls through to `/bin/sh`. The build
@@ -47,15 +51,29 @@ We take **path (b)** from the task (apk.static cross-bootstrap), not path (a)
 | `/etc/hostname` | `wasm-vm`. |
 | `/etc/runlevels/*` | OpenRC service symlinks for a headless boot (sysinit: devfs/sysfs/…; boot: bootmisc/hostname/syslog/sysctl/…). Created tolerantly (skipped if a package-set change drops a service). `/dev` is auto-populated by the kernel (`CONFIG_DEVTMPFS_MOUNT`), so `devfs` is belt-and-suspenders. |
 
-## Reproducibility
+## Reproducibility & the supply-chain lock
 
-Pinned: Alpine branch `v3.20`, the fixed fs UUID `a11ce000-…-f50000000018`, and
-`SOURCE_DATE_EPOCH`. `MANIFEST.txt` records the exact resolved package name+version set (the
-supply-chain lock). A clean-clone rebuild is **functionally identical** — same file list and
-package set. Note the mtime caveat: `apk`/`mke2fs` stamp file mtimes from package metadata and
-the source tree, so the raw image bytes (and its SHA256) can differ across rebuilds even when
-the *contents* match; compare with `debugfs -R 'ls -l /'` or by diffing extracted trees, not by
-image hash. The SHA256 in `SHA256SUMS` pins one specific build's bytes for CI caching.
+What is pinned, and how drift is *detected* (not just hoped for):
+
+- **Builder**: `tools/rootfs.Dockerfile` pins the base by **digest**
+  (`alpine@sha256:d9e853…`), not the floating `:3.20` tag, and pins `apk-tools-static`,
+  `e2fsprogs`, and `file` to exact versions — so the builder (including its busybox, whose
+  applet list we reuse) cannot drift.
+- **Package set**: `apk` resolves "latest within v3.20", so a mirror-side point-release bump
+  (e.g. `busybox -r31→-r32`, a `libcrypto3` CVE patch) *would* change the image. The build
+  writes the freshly-resolved set to `MANIFEST.new` and **`build-rootfs.sh` diffs it against the
+  committed `releases/rootfs/MANIFEST.txt` lock and FAILS on any drift** — so a silent bump is
+  caught and must be reviewed. `UPDATE_MANIFEST=1 bash tools/build-rootfs.sh` accepts a bump and
+  refreshes the lock. `SHA256SUMS` covers `MANIFEST.txt` (the lock is git-tracked and
+  reproducible).
+- **The `.ext4` is intentionally NOT hash-pinned.** Its bytes are build-instance-specific:
+  `apk`/`mke2fs` stamp file mtimes from package metadata and the build time, so a legitimate
+  rebuild produces different bytes even with an identical file tree. A committed image hash
+  would therefore be an *unverifiable* pin that fails `shasum -c` on every honest rebuild.
+  Instead the integrity guarantees are the **verified signatures** + the **MANIFEST drift gate**
+  + the in-container **fsck** and **foreign-ELF** checks. Compare two builds' *contents* with
+  `debugfs -R 'ls -l /'` or by diffing extracted trees — not by image hash. (Fixed fs UUID and
+  `SOURCE_DATE_EPOCH` reduce, but do not eliminate, byte drift.)
 
 ## Inspecting / modifying the image
 

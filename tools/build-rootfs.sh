@@ -39,8 +39,30 @@ docker run --rm \
   -e ALPINE_BRANCH="$ALPINE_BRANCH" \
   "$IMG_TAG" /rootfs-inner.sh
 
-# Hashes host-side over the copied-out artifacts.
-(cd "$OUT" && shasum -a 256 alpine-rootfs.ext4 MANIFEST.txt > SHA256SUMS)
-echo "Alpine riscv64 rootfs built:"
+# MANIFEST drift gate (critic #3): apk resolves "latest within v3.20", so a mirror-side
+# point-release bump (busybox -r31→-r32, a libcrypto CVE patch, …) silently changes the image.
+# The build wrote the freshly-resolved set to MANIFEST.new; diff it against the committed lock
+# and FAIL on drift so the change is reviewed. UPDATE_MANIFEST=1 accepts + refreshes the lock.
+NEW="$OUT/MANIFEST.new"; LOCK="$OUT/MANIFEST.txt"
+if [ -f "$LOCK" ] && ! diff -q "$LOCK" "$NEW" >/dev/null 2>&1; then
+  if [ "${UPDATE_MANIFEST:-0}" = 1 ]; then
+    echo "MANIFEST drift ACCEPTED (UPDATE_MANIFEST=1):"; diff "$LOCK" "$NEW" || true
+    mv "$NEW" "$LOCK"
+  else
+    echo "ERROR: resolved package set drifted from the committed MANIFEST.txt lock:" >&2
+    diff "$LOCK" "$NEW" >&2 || true
+    echo "Review the diff; re-run with UPDATE_MANIFEST=1 to accept it." >&2
+    exit 1
+  fi
+else
+  mv "$NEW" "$LOCK"
+fi
+
+# Hash ONLY the reproducible MANIFEST lock. The .ext4 is deliberately NOT hash-pinned here: it
+# is gitignored and its bytes are build-instance-specific (per-build mtimes/metadata — see
+# docs/rootfs.md), so a committed image hash would be an unverifiable pin (critic #2). The
+# MANIFEST lock + in-container fsck/foreign-ELF gates ARE the integrity guarantees.
+(cd "$OUT" && shasum -a 256 MANIFEST.txt > SHA256SUMS)
+echo "Alpine riscv64 rootfs built (signatures verified, package lock enforced):"
 cat "$OUT/SHA256SUMS"
 ls -la "$OUT/alpine-rootfs.ext4"
