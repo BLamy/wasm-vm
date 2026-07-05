@@ -41,3 +41,7 @@ compliance/sail-riscv/
 # `bash tools/build-rootfs.sh` and pinned by releases/rootfs/SHA256SUMS, so it's not tracked.
 releases/rootfs/*.ext4
 releases/rootfs/MANIFEST.new
+
+# Playwright test artifacts (E2-T21)
+web/test-results/
+web/playwright-report/
