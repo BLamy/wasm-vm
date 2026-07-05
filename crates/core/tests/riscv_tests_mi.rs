@@ -6,13 +6,14 @@
 //!
 //! SCOPE: the rv64mi-p ELFs covered by the machine trap + counter machinery landed so far
 //! (E1-T10 trap delivery, E1-T14 Zicntr counters). Three ELFs the upstream suite ships still
-//! reach past what is implemented and are EXCLUDED (breakpoint, instret_overflow):
+//! reach past what is implemented. One remains EXCLUDED (instret_overflow):
 //!
 //! - `illegal` — NOW PASSES (E1-T20): the TVM-on-satp CSR-access virtualization that this
 //!   kitchen-sink test needs landed with the RISCOF compliance work, so it runs end-to-end and is
 //!   back in the subset above.
 //!
-//! - `breakpoint` — exercises the debug-spec trigger CSRs (tdata1/tdata2), not implemented.
+//! - `breakpoint` — NOW PASSES (E1-T29): the debug-spec mcontrol triggers (tselect/tdata1/tdata2)
+//!   landed, so it runs end-to-end and is in the subset above.
 //! - `instret_overflow` — needs the Sscofpmf counter-OVERFLOW local interrupt (LCOFI), a
 //!   separate extension beyond the basic Zicntr counters E1-T14 lands.
 //!
@@ -44,9 +45,10 @@ const MI_SUBSET: &[&str] = &[
     "sw-misaligned",
     "csr",
     "mcsr",
-    "zicntr",  // E1-T14: cycle/time/instret + mcounteren/scounteren
-    "pmpaddr", // E1-T15: PMP pmpaddr/pmpcfg WARL + region behavior
-    "illegal", // E1-T20: TVM-on-satp virtualization landed → this now passes end-to-end
+    "zicntr",     // E1-T14: cycle/time/instret + mcounteren/scounteren
+    "pmpaddr",    // E1-T15: PMP pmpaddr/pmpcfg WARL + region behavior
+    "illegal",    // E1-T20: TVM-on-satp virtualization landed → this now passes end-to-end
+    "breakpoint", // E1-T29: debug-spec mcontrol triggers (tselect/tdata1/tdata2) landed
 ];
 
 fn bin_dir() -> PathBuf {

@@ -8,7 +8,9 @@
 #
 # Format: <elf-name>  <SPACE>  <justification incl. a task id>
 
-rv64mi-p-breakpoint  Exercises the debug-spec trigger CSRs (tdata1/tdata2), not implemented at Level 1. Deferred to a debug-trigger task in a later epic.
+# EMPTY (E1-T29): rv64mi-p-breakpoint was the last entry — the debug-spec mcontrol triggers
+# (tselect/tdata1/tdata2) landed, so it now passes and is removed. Zero known-failure entries;
+# the E1-T24 capstone's empty-allowlist bar is met.
 
 # Suites NOT YET BUILT (toolchain-blocked — the -v/virtual-memory env and rv64si need a
 # newlib-equipped riscv64-unknown-elf toolchain; the wasm-vm-toolchain:local image is bare

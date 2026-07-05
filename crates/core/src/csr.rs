@@ -52,6 +52,15 @@ pub const SIP: u16 = 0x144;
 /// `mnstatus` (Smrnmi) — the riscv-tests p-env writes it during machine-mode init. Stored
 /// WARL; its NMI semantics are out of scope until an interrupt task.
 pub const MNSTATUS: u16 = 0x744;
+/// Debug-spec trigger CSRs (E1-T29): a single `mcontrol` trigger (index 0). `tselect` picks
+/// the trigger, `tdata1` holds its mcontrol config, `tdata2` the compare value, `tcontrol.mte`
+/// gates M-mode firing, `tinfo` advertises the supported trigger type.
+pub const TSELECT: u16 = 0x7A0;
+pub const TDATA1: u16 = 0x7A1;
+pub const TDATA2: u16 = 0x7A2;
+pub const TDATA3: u16 = 0x7A3;
+pub const TINFO: u16 = 0x7A4;
+pub const TCONTROL: u16 = 0x7A5;
 pub const PMPCFG0: u16 = 0x3A0;
 /// pmpcfg2 packs entries 8..16 (RV64 has no odd pmpcfg CSRs — 0x3A1/0x3A3 are illegal).
 pub const PMPCFG2: u16 = 0x3A2;
@@ -221,6 +230,24 @@ pub struct Csrs {
     /// Observable hooks for the test PROBE CSR.
     pub probe_reads: u64,
     pub probe_value: u64,
+    /// Debug triggers (E1-T29): a single mcontrol trigger (index 0). `trig_tdata1` is the
+    /// mcontrol register (type in [63:60], mode/timing/match/action + execute/store/load bits);
+    /// `trig_tdata2` the compare value; `trig_tcontrol.mte` (bit 3) gates M-mode firing.
+    /// `triggers_armed` is a fast "any trigger could fire?" flag so the fetch/mem hot path pays
+    /// nothing when no trigger is configured to match.
+    trig_select: u64,
+    trig_tdata1: u64,
+    trig_tdata2: u64,
+    trig_tcontrol: u64,
+    triggers_armed: bool,
+}
+
+/// Which access kind is checking a trigger (mcontrol execute/store/load bits).
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum TrigKind {
+    Execute,
+    Load,
+    Store,
 }
 
 /// Static metadata for an implemented CSR, derived per address.
@@ -250,7 +277,64 @@ impl Csrs {
             sv48: true, // Sv48 supported by default; a Machine/harness may gate it off.
             probe_reads: 0,
             probe_value: 0,
+            // Triggers reset disabled: tdata1 reads back type=2 (mcontrol) with no match bits.
+            trig_select: 0,
+            trig_tdata1: 2 << 60,
+            trig_tdata2: 0,
+            trig_tcontrol: 0,
+            triggers_armed: false,
         }
+    }
+
+    /// mcontrol type field [63:60] == 2, i.e. `tdata1` currently holds an mcontrol trigger.
+    const MCONTROL_TYPE: u64 = 2;
+
+    /// Recompute the fast-path "a trigger could fire" flag: true iff the mcontrol trigger is
+    /// type-2 with at least one of execute/store/load selected. Called after any tdata write.
+    fn recompute_triggers_armed(&mut self) {
+        let td1 = self.trig_tdata1;
+        self.triggers_armed = (td1 >> 60) & 0xF == Self::MCONTROL_TYPE && (td1 & 0b111) != 0;
+    }
+
+    /// True iff no trigger is configured to fire — the hot-path guard the hart checks before
+    /// evaluating any trigger. When this is true, `trigger_fires` is never called.
+    #[inline(always)]
+    pub const fn triggers_idle(&self) -> bool {
+        !self.triggers_armed
+    }
+
+    /// Does the configured mcontrol trigger fire for an access of `kind` to `addr` in the
+    /// CURRENT privilege mode? (Priv §5, Debug spec mcontrol.) Only the equal-match (`match==0`),
+    /// action==0 (breakpoint-exception) mcontrol is modeled — what rv64mi-p-breakpoint uses.
+    /// M-mode firing additionally requires `tcontrol.mte` (bit 3).
+    pub fn trigger_fires(&self, addr: u64, kind: TrigKind) -> bool {
+        let td1 = self.trig_tdata1;
+        if (td1 >> 60) & 0xF != Self::MCONTROL_TYPE {
+            return false;
+        }
+        // execute=bit2, store=bit1, load=bit0.
+        let kind_selected = match kind {
+            TrigKind::Execute => td1 & 0b100 != 0,
+            TrigKind::Store => td1 & 0b010 != 0,
+            TrigKind::Load => td1 & 0b001 != 0,
+        };
+        if !kind_selected {
+            return false;
+        }
+        // Mode gate: m=bit6, s=bit4, u=bit3. M-mode also needs tcontrol.mte (bit 3).
+        let mode_ok = match self.mode {
+            Priv::M => td1 & (1 << 6) != 0 && self.trig_tcontrol & (1 << 3) != 0,
+            Priv::S => td1 & (1 << 4) != 0,
+            Priv::U => td1 & (1 << 3) != 0,
+        };
+        if !mode_ok {
+            return false;
+        }
+        // action ([15:12]) == 0 (breakpoint exception) and match ([10:7]) == 0 (equal).
+        if (td1 >> 12) & 0xF != 0 || (td1 >> 7) & 0xF != 0 {
+            return false;
+        }
+        self.trig_tdata2 == addr
     }
 
     /// Zicntr (E1-T14): clear the per-instruction counter-write suppression flags. Called at the
@@ -636,9 +720,13 @@ impl Csrs {
             PMPADDR0..=PMPADDR15 => !0,
             MSTATUS | MCAUSE | MSCRATCH | MTVAL | MIP | SATP
             | MNSTATUS | PROBE
+            // Debug triggers (E1-T29): tselect/tdata1/tdata2/tdata3/tcontrol legalize in
+            // write_raw (mcontrol WARL + single-trigger clamp), so the mask here is !0.
+            | TSELECT | TDATA1 | TDATA2 | TDATA3 | TCONTROL
             // S-mode CSRs (E1-T09): sstatus/sie/sip are masked *views* handled in
             // read_raw/write_raw; the mask here is !0 (the view logic does the masking).
             | SSTATUS | SIE | SIP | SSCRATCH | SCAUSE | STVAL => !0,
+            TINFO => 0, // read-only trigger-type info (writes ignored)
             MVENDORID | MARCHID | MIMPID | MHARTID => 0, // RO const 0
             // Read-only user counters cycle/time/instret and hpm (0xC00–0xC1F): reads
             // return 0, writes trap (read_only by encoding).
@@ -708,6 +796,13 @@ impl Csrs {
             PMPADDR0..=PMPADDR15 => self.pmp.read_addr((addr - PMPADDR0) as usize),
             // hpmcounter3..31 (0xC03..) are unimplemented HPMs → read 0.
             0xC00..=0xC1F => 0,
+            // Debug triggers (E1-T29). tinfo advertises type-2 (mcontrol) support (bit 2).
+            TSELECT => self.trig_select,
+            TDATA1 => self.trig_tdata1,
+            TDATA2 => self.trig_tdata2,
+            TDATA3 => 0,
+            TINFO => 1 << (Self::MCONTROL_TYPE),
+            TCONTROL => self.trig_tcontrol,
             other => self
                 .warl
                 .iter()
@@ -787,6 +882,23 @@ impl Csrs {
             }
             MISA | MHARTID | MVENDORID | MARCHID | MIMPID => {} // hardwired
             0xC00..=0xC1F => {}
+            // Debug triggers (E1-T29):
+            // - tselect: only trigger 0 exists → any write clamps to 0.
+            // - tdata1: mcontrol WARL — force type=2, clear dmode (bit 59, debug-mode-only);
+            //   keep the modeled control bits (mode/timing/match/action + execute/store/load).
+            // - tdata2: the compare value (full 64 bits).
+            // - tcontrol: only mte (bit 3) / mpte (bit 7) are modeled.
+            TSELECT => self.trig_select = 0,
+            TDATA1 => {
+                self.trig_tdata1 = (v & !(0xFu64 << 60) & !(1u64 << 59)) | (2u64 << 60);
+                self.recompute_triggers_armed();
+            }
+            TDATA2 => {
+                self.trig_tdata2 = v;
+                self.recompute_triggers_armed();
+            }
+            TDATA3 => {}
+            TCONTROL => self.trig_tcontrol = v & ((1 << 3) | (1 << 7)),
             other => match self.warl.iter_mut().find(|(a, _)| *a == other) {
                 Some(e) => e.1 = v,
                 None => self.warl.push((other, v)),

@@ -496,6 +496,13 @@ macro_rules! checked_load {
     ($name:ident, $busfn:ident, $ty:ty, $len:expr) => {
         #[inline]
         fn $name(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<$ty, Trap> {
+            // E1-T29: a load (data-address) trigger set on `a` fires a Breakpoint before the load.
+            if !csr.triggers_idle() && csr.trigger_fires(a, crate::csr::TrigKind::Load) {
+                return Err(Trap {
+                    cause: Exception::Breakpoint,
+                    tval: a,
+                });
+            }
             // `is_multiple_of` (not `a & (len-1)`) so the byte case (`$len == 1`) is a clean
             // "always aligned" without a `& 0` mask (clippy `bad_bit_mask`).
             if !a.is_multiple_of($len) {
@@ -519,6 +526,13 @@ macro_rules! checked_store {
             a: u64,
             v: $ty,
         ) -> Result<(), Trap> {
+            // E1-T29: a store (data-address) trigger set on `a` fires a Breakpoint before the store.
+            if !csr.triggers_idle() && csr.trigger_fires(a, crate::csr::TrigKind::Store) {
+                return Err(Trap {
+                    cause: Exception::Breakpoint,
+                    tval: a,
+                });
+            }
             // `is_multiple_of` avoids the `& 0` mask for the byte case (`$len == 1`).
             if !a.is_multiple_of($len) {
                 return misaligned_store(csr, tlb, bus, a, $len, v as u64);
@@ -623,6 +637,15 @@ impl Hart {
         // retirement increment (clears any stale flag from a host-side/direct CSR write).
         self.csr.arm_counters();
         let pc = self.regs.pc;
+        // E1-T29: an execute (instruction-address) trigger set on `pc` fires a Breakpoint BEFORE
+        // the instruction is fetched/executed (mcontrol "before" timing, action=exception). The
+        // hot path pays a single `triggers_idle()` bool test when no trigger is armed.
+        if !self.csr.triggers_idle() && self.csr.trigger_fires(pc, crate::csr::TrigKind::Execute) {
+            return Err(Trap {
+                cause: Exception::Breakpoint,
+                tval: pc,
+            });
+        }
         // E1-T16/T15: translate + PMP-check the fetch of the low parcel (Sv39 page fault 12 /
         // instruction access fault 1, TRUE current mode). Fetch the 16-bit parcel from the PA.
         let lo_pa = fetch_xlate(&self.csr, &mut self.tlb, bus, pc)?;
