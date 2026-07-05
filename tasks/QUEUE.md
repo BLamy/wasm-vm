@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E2-T10** — Pluggable block backend trait — mmap'd file (native) and ArrayBuffer image (browser)
 1. **E2-T12** — Pinned riscv64 kernel build — documented .config, Docker cross-compile, artifacts
 
 
@@ -84,7 +83,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] `207` [E2-T07](epic-2-first-light/E2-T07-uart-16550.md) — 16550A UART — full register set, FIFOs, interrupt state machine, PLIC wiring *(deps: E2-T01)*
 - [x] `208` [E2-T08](epic-2-first-light/E2-T08-virtio-mmio-transport.md) — virtio-mmio v2 transport — register file, device lifecycle, feature negotiation *(deps: E2-T01)*
 - [x] `209` [E2-T09](epic-2-first-light/E2-T09-virtqueue-split-rings.md) — Virtqueue implementation — split rings, descriptor chain walking, used-ring notify *(deps: E2-T08)*
-- [ ] `210` [E2-T10](epic-2-first-light/E2-T10-block-backend-trait.md) — Pluggable block backend trait — mmap'd file (native) and ArrayBuffer image (browser) *(deps: E2-T01)*
+- [?] `210` [E2-T10](epic-2-first-light/E2-T10-block-backend-trait.md) — Pluggable block backend trait — mmap'd file (native) and ArrayBuffer image (browser) *(deps: E2-T01)*
 - [ ] `211` [E2-T11](epic-2-first-light/E2-T11-virtio-blk-device.md) — virtio-blk device — request parsing, config space, status semantics *(deps: E2-T09, E2-T10)*
 - [ ] `212` [E2-T12](epic-2-first-light/E2-T12-kernel-build-recipe.md) — Pinned riscv64 kernel build — documented .config, Docker cross-compile, artifacts *(deps: E2-T01)*
 - [ ] `213` [E2-T13](epic-2-first-light/E2-T13-busybox-initramfs.md) — Static busybox initramfs — minimal userland for first boot *(deps: E2-T12)*
