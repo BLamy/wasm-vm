@@ -1,5 +1,10 @@
 # wasm-vm
 
+**✅ Level 1 — architecturally RISC-V (native + WASM).** The complete RV64GC + privileged
+machine passes the full riscv-tests suites AND RISCOF architectural compliance (395/0) against
+the canonical RISC-V **Sail** reference, with zero allowlist/exclusion entries. Reproduce:
+`make level1-gate` (report: [`docs/level1-report.md`](docs/level1-report.md); tag `level-1`).
+
 A from-scratch virtual machine in Rust, compiled to WebAssembly, that boots real unmodified
 Linux (Alpine riscv64) in a browser tab — target experience: a complete clone of
 [webvm.io/alpine.html](https://webvm.io/alpine.html), then beyond it to a full GUI desktop
