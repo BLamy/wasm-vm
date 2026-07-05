@@ -15,9 +15,12 @@
 //!   silently emulates them, a documented differential asymmetry for E0-T20.
 //! - FENCE: retires as a no-op — architecturally correct for a single in-order hart
 //!   with no devices reordering memory; revisited when it matters (E4 JIT, E6 SMP).
-//! - Control flow (JAL/JALR/branches): E0-T09. ECALL/EBREAK: E0-T11. Until then
-//!   those decode fine but raise `IllegalInstruction` as an explicit placeholder
-//!   (documented, tested as such).
+//! - Control flow (JAL/JALR/branches): executed (E0-T09). §2.5 semantics: the
+//!   misaligned-target trap (cause 0, tval = target) is raised by the TAKEN
+//!   jump/branch itself with no link write; a not-taken branch with a misaligned
+//!   target retires normally. IALIGN=32 until the C extension (E1-T08).
+//! - ECALL/EBREAK: E0-T11. Until then they decode fine but raise
+//!   `IllegalInstruction` as an explicit placeholder (documented, tested as such).
 
 pub mod regs;
 
@@ -90,6 +93,25 @@ const fn load_fault(f: BusFault, addr: u64) -> Trap {
     }
 }
 
+/// Resolve a conditional branch (§2.5): taken → transfer to `pc + imm`, trapping
+/// cause 0 with tval = target when the target is not IALIGN-aligned; not taken →
+/// fall through. Returns the retire tuple (no link register for branches).
+#[inline(always)]
+const fn branch(taken: bool, pc: u64, imm: i64) -> Result<(u8, u64, u64), Trap> {
+    if taken {
+        let target = pc.wrapping_add(imm as u64);
+        if target & 3 != 0 {
+            return Err(Trap {
+                cause: Exception::InstrAddrMisaligned,
+                tval: target,
+            });
+        }
+        Ok((0, 0, target))
+    } else {
+        Ok((0, 0, pc.wrapping_add(4)))
+    }
+}
+
 /// Map a bus fault on a STORE to its architectural cause (6 misaligned / 7 access).
 #[inline(always)]
 const fn store_fault(f: BusFault, addr: u64) -> Trap {
@@ -142,59 +164,83 @@ impl Hart {
         use Instr::*;
         let r = &mut self.regs;
         let pc = r.pc;
-        // Value computed per-op; written to rd at the single retirement point below
-        // (keeps the x0-discard and PC-advance logic in one place).
-        let (rd, value): (u8, u64) = match instr {
-            Lui { rd, imm } => (rd, imm as u64),
-            Auipc { rd, imm } => (rd, pc.wrapping_add(imm as u64)),
+        let pc4 = pc.wrapping_add(4);
+        // Per-op result and successor PC; applied at the single retirement point
+        // below (x0-discard and PC update live in one place).
+        let (rd, value, next_pc): (u8, u64, u64) = match instr {
+            Lui { rd, imm } => (rd, imm as u64, pc4),
+            Auipc { rd, imm } => (rd, pc.wrapping_add(imm as u64), pc4),
 
-            Addi { rd, rs1, imm } => (rd, r.read(rs1).wrapping_add(imm as u64)),
-            Slti { rd, rs1, imm } => (rd, ((r.read(rs1) as i64) < imm) as u64),
-            Sltiu { rd, rs1, imm } => (rd, (r.read(rs1) < imm as u64) as u64),
-            Xori { rd, rs1, imm } => (rd, r.read(rs1) ^ imm as u64),
-            Ori { rd, rs1, imm } => (rd, r.read(rs1) | imm as u64),
-            Andi { rd, rs1, imm } => (rd, r.read(rs1) & imm as u64),
-            Slli { rd, rs1, shamt } => (rd, r.read(rs1) << shamt),
-            Srli { rd, rs1, shamt } => (rd, r.read(rs1) >> shamt),
-            Srai { rd, rs1, shamt } => (rd, ((r.read(rs1) as i64) >> shamt) as u64),
+            Addi { rd, rs1, imm } => (rd, r.read(rs1).wrapping_add(imm as u64), pc4),
+            Slti { rd, rs1, imm } => (rd, ((r.read(rs1) as i64) < imm) as u64, pc4),
+            Sltiu { rd, rs1, imm } => (rd, (r.read(rs1) < imm as u64) as u64, pc4),
+            Xori { rd, rs1, imm } => (rd, r.read(rs1) ^ imm as u64, pc4),
+            Ori { rd, rs1, imm } => (rd, r.read(rs1) | imm as u64, pc4),
+            Andi { rd, rs1, imm } => (rd, r.read(rs1) & imm as u64, pc4),
+            Slli { rd, rs1, shamt } => (rd, r.read(rs1) << shamt, pc4),
+            Srli { rd, rs1, shamt } => (rd, r.read(rs1) >> shamt, pc4),
+            Srai { rd, rs1, shamt } => (rd, ((r.read(rs1) as i64) >> shamt) as u64, pc4),
 
-            Addiw { rd, rs1, imm } => (rd, sext32(r.read(rs1).wrapping_add(imm as u64) as u32)),
-            Slliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) << shamt)),
-            Srliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) >> shamt)),
-            Sraiw { rd, rs1, shamt } => {
-                (rd, sext32((((r.read(rs1) as u32) as i32) >> shamt) as u32))
+            Addiw { rd, rs1, imm } => {
+                (rd, sext32(r.read(rs1).wrapping_add(imm as u64) as u32), pc4)
             }
+            Slliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) << shamt), pc4),
+            Srliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) >> shamt), pc4),
+            Sraiw { rd, rs1, shamt } => (
+                rd,
+                sext32((((r.read(rs1) as u32) as i32) >> shamt) as u32),
+                pc4,
+            ),
 
-            Add { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_add(r.read(rs2))),
-            Sub { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_sub(r.read(rs2))),
+            Add { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_add(r.read(rs2)), pc4),
+            Sub { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_sub(r.read(rs2)), pc4),
             // Register shifts: RV64 uses rs2[5:0]; the *W forms use rs2[4:0] (Ch. 5).
-            Sll { rd, rs1, rs2 } => (rd, r.read(rs1) << (r.read(rs2) & 0x3F)),
-            Slt { rd, rs1, rs2 } => (rd, ((r.read(rs1) as i64) < (r.read(rs2) as i64)) as u64),
-            Sltu { rd, rs1, rs2 } => (rd, (r.read(rs1) < r.read(rs2)) as u64),
-            Xor { rd, rs1, rs2 } => (rd, r.read(rs1) ^ r.read(rs2)),
-            Srl { rd, rs1, rs2 } => (rd, r.read(rs1) >> (r.read(rs2) & 0x3F)),
-            Sra { rd, rs1, rs2 } => (rd, ((r.read(rs1) as i64) >> (r.read(rs2) & 0x3F)) as u64),
-            Or { rd, rs1, rs2 } => (rd, r.read(rs1) | r.read(rs2)),
-            And { rd, rs1, rs2 } => (rd, r.read(rs1) & r.read(rs2)),
+            Sll { rd, rs1, rs2 } => (rd, r.read(rs1) << (r.read(rs2) & 0x3F), pc4),
+            Slt { rd, rs1, rs2 } => (
+                rd,
+                ((r.read(rs1) as i64) < (r.read(rs2) as i64)) as u64,
+                pc4,
+            ),
+            Sltu { rd, rs1, rs2 } => (rd, (r.read(rs1) < r.read(rs2)) as u64, pc4),
+            Xor { rd, rs1, rs2 } => (rd, r.read(rs1) ^ r.read(rs2), pc4),
+            Srl { rd, rs1, rs2 } => (rd, r.read(rs1) >> (r.read(rs2) & 0x3F), pc4),
+            Sra { rd, rs1, rs2 } => (
+                rd,
+                ((r.read(rs1) as i64) >> (r.read(rs2) & 0x3F)) as u64,
+                pc4,
+            ),
+            Or { rd, rs1, rs2 } => (rd, r.read(rs1) | r.read(rs2), pc4),
+            And { rd, rs1, rs2 } => (rd, r.read(rs1) & r.read(rs2), pc4),
 
             Addw { rd, rs1, rs2 } => (
                 rd,
                 sext32((r.read(rs1) as u32).wrapping_add(r.read(rs2) as u32)),
+                pc4,
             ),
             Subw { rd, rs1, rs2 } => (
                 rd,
                 sext32((r.read(rs1) as u32).wrapping_sub(r.read(rs2) as u32)),
+                pc4,
             ),
-            Sllw { rd, rs1, rs2 } => (rd, sext32((r.read(rs1) as u32) << (r.read(rs2) & 0x1F))),
-            Srlw { rd, rs1, rs2 } => (rd, sext32((r.read(rs1) as u32) >> (r.read(rs2) & 0x1F))),
+            Sllw { rd, rs1, rs2 } => (
+                rd,
+                sext32((r.read(rs1) as u32) << (r.read(rs2) & 0x1F)),
+                pc4,
+            ),
+            Srlw { rd, rs1, rs2 } => (
+                rd,
+                sext32((r.read(rs1) as u32) >> (r.read(rs2) & 0x1F)),
+                pc4,
+            ),
             Sraw { rd, rs1, rs2 } => (
                 rd,
                 sext32((((r.read(rs1) as u32) as i32) >> (r.read(rs2) & 0x1F)) as u32),
+                pc4,
             ),
 
             // FENCE retires as a no-op: single in-order hart, no reordering agents
             // at Level 0. Write to x0 so it flows through the common retire path.
-            Fence { .. } => (0, 0),
+            Fence { .. } => (0, 0, pc4),
 
             // Loads (E0-T08): effective address = rs1 + sext(imm), wrapping.
             // A bus fault maps to cause 4/5 with tval = the effective address; the
@@ -205,6 +251,7 @@ impl Hart {
                 (
                     rd,
                     bus.load8(a).map_err(|f| load_fault(f, a))? as i8 as i64 as u64,
+                    pc4,
                 )
             }
             Lh { rd, rs1, imm } => {
@@ -212,6 +259,7 @@ impl Hart {
                 (
                     rd,
                     bus.load16(a).map_err(|f| load_fault(f, a))? as i16 as i64 as u64,
+                    pc4,
                 )
             }
             Lw { rd, rs1, imm } => {
@@ -219,23 +267,36 @@ impl Hart {
                 (
                     rd,
                     bus.load32(a).map_err(|f| load_fault(f, a))? as i32 as i64 as u64,
+                    pc4,
                 )
             }
             Ld { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                (rd, bus.load64(a).map_err(|f| load_fault(f, a))?)
+                (rd, bus.load64(a).map_err(|f| load_fault(f, a))?, pc4)
             }
             Lbu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                (rd, u64::from(bus.load8(a).map_err(|f| load_fault(f, a))?))
+                (
+                    rd,
+                    u64::from(bus.load8(a).map_err(|f| load_fault(f, a))?),
+                    pc4,
+                )
             }
             Lhu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                (rd, u64::from(bus.load16(a).map_err(|f| load_fault(f, a))?))
+                (
+                    rd,
+                    u64::from(bus.load16(a).map_err(|f| load_fault(f, a))?),
+                    pc4,
+                )
             }
             Lwu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
-                (rd, u64::from(bus.load32(a).map_err(|f| load_fault(f, a))?))
+                (
+                    rd,
+                    u64::from(bus.load32(a).map_err(|f| load_fault(f, a))?),
+                    pc4,
+                )
             }
 
             // Stores (E0-T08): cause 6/7 with tval = effective address. A faulting
@@ -245,38 +306,62 @@ impl Hart {
                 let a = ea(r.read(rs1), imm);
                 bus.store8(a, r.read(rs2) as u8)
                     .map_err(|f| store_fault(f, a))?;
-                (0, 0)
+                (0, 0, pc4)
             }
             Sh { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
                 bus.store16(a, r.read(rs2) as u16)
                     .map_err(|f| store_fault(f, a))?;
-                (0, 0)
+                (0, 0, pc4)
             }
             Sw { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
                 bus.store32(a, r.read(rs2) as u32)
                     .map_err(|f| store_fault(f, a))?;
-                (0, 0)
+                (0, 0, pc4)
             }
             Sd { rs1, rs2, imm } => {
                 let a = ea(r.read(rs1), imm);
                 bus.store64(a, r.read(rs2)).map_err(|f| store_fault(f, a))?;
-                (0, 0)
+                (0, 0, pc4)
             }
 
-            // Owned by later tasks — explicit placeholders (see module doc). They
+            // Jumps (E0-T09, §2.5): target computed FIRST (so jalr rd==rs1 uses the
+            // old rs1), link = pc+4 written only on success; a misaligned target
+            // traps cause 0 with tval = target and writes nothing.
+            Jal { rd, imm } => {
+                let target = pc.wrapping_add(imm as u64);
+                if target & 3 != 0 {
+                    return Err(Trap {
+                        cause: Exception::InstrAddrMisaligned,
+                        tval: target,
+                    });
+                }
+                (rd, pc4, target)
+            }
+            Jalr { rd, rs1, imm } => {
+                let target = ea(r.read(rs1), imm) & !1; // spec: clear bit 0
+                if target & 3 != 0 {
+                    return Err(Trap {
+                        cause: Exception::InstrAddrMisaligned,
+                        tval: target,
+                    });
+                }
+                (rd, pc4, target)
+            }
+
+            // Branches (E0-T09): only a TAKEN branch can trap on target misalignment;
+            // not-taken retires normally regardless of the encoded target.
+            Beq { rs1, rs2, imm } => branch(r.read(rs1) == r.read(rs2), pc, imm)?,
+            Bne { rs1, rs2, imm } => branch(r.read(rs1) != r.read(rs2), pc, imm)?,
+            Blt { rs1, rs2, imm } => branch((r.read(rs1) as i64) < (r.read(rs2) as i64), pc, imm)?,
+            Bge { rs1, rs2, imm } => branch((r.read(rs1) as i64) >= (r.read(rs2) as i64), pc, imm)?,
+            Bltu { rs1, rs2, imm } => branch(r.read(rs1) < r.read(rs2), pc, imm)?,
+            Bgeu { rs1, rs2, imm } => branch(r.read(rs1) >= r.read(rs2), pc, imm)?,
+
+            // Owned by E0-T11 — explicit placeholders (see module doc). They
             // trap BEFORE any state is touched, preserving trap purity.
-            Jal { .. }
-            | Jalr { .. }
-            | Beq { .. }
-            | Bne { .. }
-            | Blt { .. }
-            | Bge { .. }
-            | Bltu { .. }
-            | Bgeu { .. }
-            | Ecall
-            | Ebreak => {
+            Ecall | Ebreak => {
                 return Err(Trap {
                     cause: Exception::IllegalInstruction,
                     tval: raw as u64,
@@ -285,7 +370,7 @@ impl Hart {
         };
         // Single retirement point: x0-discard is enforced by XRegs::write.
         r.write(rd, value);
-        r.pc = pc.wrapping_add(4);
+        r.pc = next_pc;
         Ok(())
     }
 }
