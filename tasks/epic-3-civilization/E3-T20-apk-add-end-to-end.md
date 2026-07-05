@@ -1,7 +1,7 @@
 ---
 id: E3-T20
 epic: 3
-title: apk add end-to-end against a real Alpine mirror
+title: apk add end-to-end against a real Alpine mirror — install and run the userland targets (QuickJS, Node.js)
 priority: 320
 status: pending
 depends_on: [E3-T15, E3-T16, E3-T17]
@@ -13,7 +13,10 @@ capstone: false
 `apk update && apk add <pkg>` works in the browser-hosted guest against a real Alpine
 riscv64 mirror through the full stack — DHCP lease, DNS via the forwarder, TCP through the
 configured transport, signature verification by apk, package installed and runnable. This is
-the integration milestone the entire networking arc exists for.
+the integration milestone the entire networking arc exists for — and the delivery vehicle
+for Epic 3's **named userland targets**: `apk add` is how **QuickJS** (`quickjs`) and
+**Node.js** (`nodejs`) arrive in the guest. Getting them installed here sets up E3-T28's
+capstone, which proves they actually *run* (interpreted — correctness now, speed at E4).
 
 ## Context
 This task is mostly integration debugging, so scope it as such: no new subsystems, but fix
@@ -48,8 +51,9 @@ that curls the mirror and prints a diagnosis for support purposes.
 - [ ] apk signature verification is actually on (`apk add` of a deliberately
       hash-corrupted package via a tampering test proxy fails with a signature/integrity
       error — proving we didn't ship `--allow-untrusted` anywhere).
-- [ ] `apk add python3` (the capstone package, ~50 MB with deps) completes in under 5
-      minutes on a normal connection; time recorded.
+- [ ] `apk add nodejs quickjs` (the capstone userland runtimes) completes over the network,
+      `node --version` and `qjs --help` both run; wall-clock recorded. (`apk add python3` as
+      an additional ~50 MB-with-deps stress case also completes in under 5 minutes.)
 - [ ] `apk-net-check` prints PASS on a healthy stack and a specific failing layer (DNS /
       TCP / HTTP) when the verifier disables each in turn.
 

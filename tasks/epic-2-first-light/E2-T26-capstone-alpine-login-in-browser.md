@@ -10,10 +10,12 @@ capstone: true
 ---
 
 ## Goal
-The Level 2 threshold, demonstrated end-to-end: a browser tab loads the WASM machine,
-fetches the pinned kernel and Alpine ext4 image, boots unmodified Linux from virtio-blk
-to a `login:` prompt in xterm.js; a human logs in, uses `vi`, `top`, and shell scripts,
-and runs `poweroff` to a clean, UI-acknowledged halt. Real Linux in the tab.
+The Level 2 threshold, demonstrated end-to-end. First the minimal-platform proof: the
+browser tab boots **xv6-riscv** to its `$` shell (Layer A + minimal Layer B). Then the full
+milestone: the same page loads the WASM machine, fetches the pinned Linux kernel and Alpine
+ext4 image, boots unmodified Linux from virtio-blk to a `login:` prompt in xterm.js; a human
+logs in, uses `vi`, `top`, and shell scripts, and runs `poweroff` to a clean, UI-acknowledged
+halt. Real OS kernels — tiny and full — in the tab.
 
 ## Context
 Integration of everything in this epic: T21's loader feeds T10's MemBackend and boots the
@@ -38,6 +40,7 @@ a public URL is not required, `tools/serve-dev.sh` is.
 - Updated `README.md` top-level: how to run Level 2 in your own browser.
 
 ## Acceptance criteria
+- [ ] Fresh clone + documented commands → the browser boots xv6-riscv to `$` and runs `ls`.
 - [ ] Fresh clone + documented commands → browser shows Alpine `login:`; root login works.
 - [ ] In the browser: `vi /root/hello.sh` — write a 3-line script with a loop, save;
       `sh /root/hello.sh` produces correct output; `top` renders and updates live; ^C
