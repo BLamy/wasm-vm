@@ -107,6 +107,13 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::uart16550::Uart16550>>,
         dev::plic::IrqLine,
     )>,
+    /// E2-T08: the eight virtio-mmio slots + their PLIC lines (IRQ 1..=8), when
+    /// [`Self::enable_virtio_slots`] attached them. The run loop mirrors each slot's
+    /// InterruptStatus level.
+    virtio: alloc::vec::Vec<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        dev::plic::IrqLine,
+    )>,
 }
 
 impl Machine {
@@ -134,6 +141,7 @@ impl Machine {
             builtin_sbi: false,
             sbi_state: sbi::SbiState::default(),
             uart: None,
+            virtio: alloc::vec::Vec::new(),
         })
     }
 
@@ -205,6 +213,45 @@ impl Machine {
             .expect("UART window overlaps RAM or another device");
         self.uart = Some((alloc::rc::Rc::clone(&cell), line));
         cell
+    }
+
+    /// E2-T08: attach the eight virtio-mmio slots (spec 1.2 §4.2.2, Version=2) at
+    /// [`platform::virt::VIRTIO_BASE`]`+ i*stride`, each wired to PLIC IRQ `1+i`. Slot 0
+    /// gets `slot0` as its backend (E2-T11 plugs the real blk device in); slots 1..=7 are
+    /// EMPTY (`DeviceID` 0 — the kernel skips them silently). Requires
+    /// [`Self::enable_plic`] first. Returns the slot handles (tests/backends raise
+    /// used/config interrupts and inspect queue state through them).
+    pub fn enable_virtio_slots(
+        &mut self,
+        slot0: Option<alloc::boxed::Box<dyn dev::virtio::VirtioDevice>>,
+    ) -> alloc::vec::Vec<alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>> {
+        use dev::virtio::mmio::VirtioMmio;
+        let plic = self
+            .plic
+            .as_ref()
+            .expect("enable_plic before enable_virtio_slots");
+        let mut handles = alloc::vec::Vec::new();
+        let mut slot0 = slot0;
+        for i in 0..platform::virt::VIRTIO_COUNT {
+            let slot = match (i, slot0.take()) {
+                (0, Some(d)) => VirtioMmio::new(d),
+                _ => VirtioMmio::empty(),
+            };
+            let cell = alloc::rc::Rc::new(core::cell::RefCell::new(slot));
+            let line = dev::plic::Plic::irq_line(plic, platform::Platform::virtio_irq(i) as usize);
+            self.bus
+                .attach(
+                    platform::Platform::virtio_base(i),
+                    platform::virt::VIRTIO_LEN,
+                    alloc::boxed::Box::new(dev::virtio::mmio::SharedVirtioMmio(
+                        alloc::rc::Rc::clone(&cell),
+                    )),
+                )
+                .expect("virtio window overlaps RAM or another device");
+            self.virtio.push((alloc::rc::Rc::clone(&cell), line));
+            handles.push(cell);
+        }
+        handles
     }
 
     /// E2-T03 (ADR 0002): route `ecall`-from-S to the built-in Rust SBI ([`sbi::dispatch`])
@@ -470,6 +517,10 @@ impl Machine {
                     let mut u = uart.borrow_mut();
                     u.tick();
                     line.set(u.irq_level());
+                }
+                // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
+                for (slot, line) in &self.virtio {
+                    line.set(slot.borrow().irq_level());
                 }
                 // E1-T13: refresh the PLIC-driven MEIP/SEIP levels too, before sampling.
                 self.sync_plic();
