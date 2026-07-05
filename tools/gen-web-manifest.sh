@@ -22,7 +22,11 @@ for e in "${entries[@]}"; do
   size=$(stat -f '%z' "$f")
   [ "$first" = 1 ] || json+=',\n'
   first=0
-  json+="    \"$role\": { \"url\": \"/releases/$rel\", \"sha256\": \"$sha\", \"size\": $size }"
+  # RELATIVE url (no leading slash) so it resolves against the page's base — works at the Pages
+  # site root (/wasm-vm/) AND under a PR preview (/wasm-vm/pr-N/), not just the dev-server root.
+  # The artifacts are copied into web/releases/ by `make web-build`; the dev server also maps
+  # /releases/* to the repo releases/ dir, so a page served at / resolves the same file locally.
+  json+="    \"$role\": { \"url\": \"releases/$rel\", \"sha256\": \"$sha\", \"size\": $size }"
 done
 json+='\n  }\n}\n'
 

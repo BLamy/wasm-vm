@@ -45,3 +45,6 @@ releases/rootfs/MANIFEST.new
 # Playwright test artifacts (E2-T21)
 web/test-results/
 web/playwright-report/
+
+# Boot artifacts copied under web/ for Pages deploy (source of truth is releases/)
+web/releases/
