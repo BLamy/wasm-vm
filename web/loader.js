@@ -100,9 +100,20 @@ export async function startLinuxBoot(opts = {}) {
 
     let stopped = false;
     let paused = false;
+    // Exactly one `tick` may be pending at a time. `resume()` guarding only on `paused` is not
+    // enough: a rapid pause→resume while a tick is already pending would schedule a SECOND chain,
+    // and both would then self-perpetuate (two concurrent loops, double CPU). This flag makes
+    // scheduling idempotent so there is always at most one pending tick. (E2-T23 critic C3.)
+    let tickScheduled = false;
     let resolveDone;
     const whenDone = new Promise((r) => (resolveDone = r));
+    const schedule = () => {
+      if (tickScheduled || stopped || paused) return;
+      tickScheduled = true;
+      setTimeout(tick, 0);
+    };
     const tick = () => {
+      tickScheduled = false;
       if (stopped || paused) return;
       let res;
       try {
@@ -119,9 +130,9 @@ export async function startLinuxBoot(opts = {}) {
         return;
       }
       // Yield to the event loop so the page stays responsive (no main-thread freeze).
-      setTimeout(tick, 0);
+      schedule();
     };
-    setTimeout(tick, 0);
+    schedule();
 
     return {
       sendInput: (bytes) => {
@@ -142,7 +153,7 @@ export async function startLinuxBoot(opts = {}) {
       resume: () => {
         if (paused && !stopped) {
           paused = false;
-          setTimeout(tick, 0);
+          schedule(); // idempotent — never spawns a second loop even if a tick is still pending
         }
       },
       isPaused: () => paused,

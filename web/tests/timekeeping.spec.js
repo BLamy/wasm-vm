@@ -67,28 +67,28 @@ test("two-clock model: RTC wall-correct, mtime execution-paced, suspend-safe", a
   const sleepWall = (Date.now() - s0) / 1000;
   console.log(`[timekeeping] guest 'sleep 2' completed in ${sleepWall.toFixed(1)}s wall (≈${(sleepWall / 2).toFixed(0)}× real time)`);
 
-  // (C) Suspend-safety: pause the executor (as a hidden tab does), hold ~12s wall, resume.
-  const upBeforePause = parseFloat(await readGuest(page, "cut -d' ' -f1 /proc/uptime"));
-  const dateBeforePause = parseInt(await readGuest(page, "date +%s"), 10);
+  // (C) Suspend-safety, proven by a DIRECT freeze-probe (E2-T23 critic C4). Bounding the uptime
+  // delta against raw wall time is vacuous — at the idle ratio (~0.05) the guest advances < 1s over
+  // a 12s window even if the pause did nothing. Instead: type a uniquely-tagged command WHILE
+  // paused. If the executor is truly frozen, no runChunk runs, the RX FIFO is never fed, and the
+  // tty never echoes or executes it — so the tag must be ABSENT from the screen throughout the
+  // pause, and APPEAR only after resume. This assertion fails if pause is a no-op (the command
+  // would run and echo during the "pause"), so it actually proves execution froze.
+  const tag = `FROZENPROBE_${++seq}`;
   await page.evaluate(() => window.__linux.pause());
   expect(await page.evaluate(() => window.__linux.isPaused())).toBe(true);
+  await page.evaluate((c) => window.__term.typeBytes(new TextEncoder().encode(c + "\r")), `echo ${tag}`);
   const pw0 = Date.now();
-  await page.waitForTimeout(12000);
+  await page.waitForTimeout(6000); // 6s real time, still paused
+  // The probe must NOT have executed or even echoed — the executor is frozen.
+  expect(await page.locator(rows).textContent()).not.toContain(tag);
   await page.evaluate(() => window.__linux.resume());
   const pausedWall = (Date.now() - pw0) / 1000;
+  // On resume the queued command runs (input was buffered, not lost) → the tag appears.
+  await expect(page.locator(rows)).toContainText(tag, { timeout: 30000 });
+  console.log(`[timekeeping] executor frozen for ${pausedWall.toFixed(1)}s wall (probe absent), ran on resume`);
 
-  // Guest health after resume: shell responsive within a beat.
+  // Shell fully responsive after resume, and no kernel stall/lockup/storm from the freeze.
   expect(await readGuest(page, "echo 42")).toBe("42");
-  // Guest monotonic time FROZE during the pause → uptime advanced far less than the wall gap.
-  const upAfter = parseFloat(await readGuest(page, "cut -d' ' -f1 /proc/uptime"));
-  const upDelta = upAfter - upBeforePause;
-  // The software clock also froze with execution → it advanced far less than the wall gap.
-  const dateAfter = parseInt(await readGuest(page, "date +%s"), 10);
-  const dateDelta = dateAfter - dateBeforePause;
-  console.log(`[timekeeping] paused ${pausedWall.toFixed(1)}s wall → guest uptime advanced ${upDelta.toFixed(2)}s, guest date advanced ${dateDelta}s`);
-  expect(upDelta).toBeLessThan(pausedWall); // monotonic clock froze during the pause
-  expect(dateDelta).toBeLessThan(pausedWall); // software wall clock froze too (execution-paced)
-  // No kernel stall/lockup/storm surfaced by the freeze — the whole point of a retire-count clock.
-  const screen = await page.locator(rows).textContent();
-  expect(screen).not.toMatch(/rcu[^\n]*stall|soft lockup|watchdog: BUG/i);
+  expect(await page.locator(rows).textContent()).not.toMatch(/rcu[^\n]*stall|soft lockup|watchdog: BUG/i);
 });
