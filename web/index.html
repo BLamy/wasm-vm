@@ -469,9 +469,11 @@
             <button id="reset">Reset</button>
             <button id="bench">Bench</button>
             <button id="boot-linux">Boot Linux</button>
+            <button id="term-fit" title="Re-fit the terminal to the panel and copy the matching stty command">Fit</button>
             <label class="file">ELF <input id="file" type="file" /></label>
             <span id="status">initializing...</span>
             <span id="boot-progress" class="version"></span>
+            <span id="stty-hint" class="version"></span>
           </div>
         </div>
         <div id="term"></div>
@@ -493,8 +495,9 @@
       <div id="roadmap-grid" class="roadmap-grid"></div>
     </section>
 
-    <!-- xterm.js UMD build (pinned via package-lock.json + npm ci — no CDN). -->
+    <!-- xterm.js UMD build + fit addon (pinned via package-lock.json + npm ci — no CDN). -->
     <script src="./node_modules/@xterm/xterm/lib/xterm.js"></script>
+    <script src="./node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
     <script type="module" src="./main.js"></script>
   </body>
 </html>

@@ -482,19 +482,34 @@ impl WasmLinux {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         if inner.finished.is_none() {
             let mut sink = wasm_vm_core::trace::NullSink;
-            let outcome = inner.machine.run_traced(max_instrs as u64, &mut sink);
+            // Interleave RX refills with execution. The 16550 RX FIFO is 16 bytes; feeding it only
+            // once per budget caps host→guest throughput at ~16 bytes per chunk and wastes the rest
+            // of the budget on a near-empty FIFO. Instead, when input is queued, run in short slices
+            // and top up the FIFO between them so the guest drains it many times within one budget
+            // (bulk paste / held-key autorepeat throughput ~ slices × FIFO depth). When nothing is
+            // queued this collapses to a single full-budget run — the quiet path pays nothing.
+            const INPUT_SLICE: u64 = 16_384;
+            let mut remaining = max_instrs as u64;
+            let outcome = loop {
+                // Feed queued host input into the RX FIFO, up to its free space (no overrun).
+                if !inner.pending.is_empty() {
+                    let free = inner.uart.borrow().rx_free();
+                    let n = free.min(inner.pending.len());
+                    if n > 0 {
+                        let batch: Vec<u8> = inner.pending.drain(..n).collect();
+                        inner.uart.borrow_mut().push_input(&batch);
+                    }
+                }
+                let step = if inner.pending.is_empty() { remaining } else { INPUT_SLICE.min(remaining) };
+                let oc = inner.machine.run_traced(step, &mut sink);
+                remaining -= step;
+                if remaining == 0 || !matches!(oc, RunOutcome::MaxInstrs) {
+                    break oc;
+                }
+            };
             // Drain the 16550 TX into the console buffer.
             let uart_out = inner.uart.borrow_mut().take_output();
             inner.out.borrow_mut().extend_from_slice(&uart_out);
-            // Feed queued host input into the RX FIFO, up to its free space (no overrun).
-            if !inner.pending.is_empty() {
-                let free = inner.uart.borrow().rx_free();
-                let n = free.min(inner.pending.len());
-                if n > 0 {
-                    let batch: Vec<u8> = inner.pending.drain(..n).collect();
-                    inner.uart.borrow_mut().push_input(&batch);
-                }
-            }
             inner.finished = match outcome {
                 RunOutcome::Reset(wasm_vm_core::ExitReason::PowerOff) => Some("poweroff".into()),
                 RunOutcome::Reset(wasm_vm_core::ExitReason::Reboot) => Some("reboot".into()),

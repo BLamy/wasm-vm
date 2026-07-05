@@ -7,19 +7,17 @@ import init, { WasmMachine, version, bench } from "./pkg/wasm_vm_wasm.js";
 import { RISCV_TESTS } from "./riscv-tests.js";
 import { ROADMAP } from "./roadmap.js";
 import { startLinuxBoot } from "./loader.js";
+import { createLinuxTerminal } from "./terminal.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
 const TEST_MAX_INSTRS = 1_000_000;
 const SYS_EXIT = 93n;
 
-const term = new Terminal({
-  convertEol: true, // a bare \n from the guest moves to column 0 (raw UART has no \r)
-  fontFamily: "ui-monospace, monospace",
-  fontSize: 13,
-  theme: { background: "#0b0e14", foreground: "#cdd6f4" },
-});
-term.open(document.getElementById("term"));
+// E2-T22: the terminal + its UART input bridge (fit addon, backpressure queue, key policy) live
+// in terminal.js. `term` is the raw xterm.js instance the ELF-console paths keep writing to.
+const ui = createLinuxTerminal(document.getElementById("term"));
+const term = ui.term;
 
 const runBtn = document.getElementById("run");
 const resetBtn = document.getElementById("reset");
@@ -44,18 +42,23 @@ if (bootLinuxBtn) {
           pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;
           bootProgressEl.textContent = Object.entries(pct).map(([k, v]) => `${k} ${v}`).join("  ");
         },
-        onOutput: (u8) => term.write(u8),
+        onOutput: (u8) => ui.write(u8),
         onError: (e) => term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`),
       });
       linuxCtl.whenDone.then((state) => {
         setStatus(`linux: ${state}`);
+        ui.detachSink();
         bootLinuxBtn.disabled = false;
         linuxCtl = null;
       });
-      // Route terminal keystrokes to the guest's ttyS0.
-      term.onData((data) => {
-        if (linuxCtl) linuxCtl.sendInput(new TextEncoder().encode(data));
+      // Route terminal keystrokes/paste to the guest's ttyS0 via the backpressure bridge.
+      ui.attachSink((bytes) => {
+        if (linuxCtl) linuxCtl.sendInput(bytes);
       });
+      // Fit the rendered grid to the page now that the terminal is the active view, and print
+      // the matching stty hint so the guest can be told its real window size (serial has no winsize).
+      const { cols, rows } = ui.fitNow();
+      term.writeln(`\x1b[90m[terminal ${cols}x${rows} — click "Fit" then run: ${ui.sttyHint()}]\x1b[0m`);
     } catch (e) {
       term.writeln(`\x1b[31mcannot boot linux: ${e.message || e}\x1b[0m`);
       bootLinuxBtn.disabled = false;
@@ -63,6 +66,22 @@ if (bootLinuxBtn) {
     }
   });
 }
+// E2-T22: "Fit" re-fits the rendered grid to the panel and surfaces the matching `stty` line.
+// A serial console carries no out-of-band winsize, so resize is cooperative: if a guest is live
+// the button types the `stty rows R cols C` straight into it, so vi/top use the full area.
+const termFitBtn = document.getElementById("term-fit");
+const sttyHintEl = document.getElementById("stty-hint");
+if (termFitBtn) {
+  termFitBtn.addEventListener("click", () => {
+    ui.fitNow();
+    const hint = ui.sttyHint();
+    if (sttyHintEl) sttyHintEl.textContent = hint;
+    if (linuxCtl) ui.typeBytes(new TextEncoder().encode(hint + "\n"));
+  });
+}
+// Test hook: Playwright drives keyboard input + reads the backpressure high-water via this.
+window.__term = ui;
+
 const statusEl = document.getElementById("status");
 const versionEl = document.getElementById("version");
 const suiteRunBtn = document.getElementById("suite-run");
