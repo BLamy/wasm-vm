@@ -3,7 +3,7 @@ id: E2-T02
 epic: 2
 title: FDT/devicetree builder in Rust emitting a dtc-clean DTB for the virt platform
 priority: 202
-status: implemented
+status: verified
 depends_on: [E2-T01]
 estimate: M
 capstone: false
@@ -81,3 +81,25 @@ it). Golden `.dts` snapshot: `crates/core/tests/golden/virt.dts`.
 - Native `--lib fdt` 4/4; wasm32 mirror `crates/wasm/tests/fdt.rs` 3/3 (acceptance #4);
   fmt clean; clippy -D warnings clean.
 - Kernel-parse check (charter final): deferred to E2-T04+ (earlycon boot) as the task notes.
+
+### 2026-07-05 — verifier (cold critic) — CONFIRMED
+
+All 8 attack angles executed, none refuted: (1) fresh-emitted blob through `dtc -f`,
+dtb→dtb recompile, `-Wunit_address_vs_reg`, fdtdump — all RC=0 zero-warning (the only
+warnings anywhere were 4 `interrupts_extended_property` notes on recompiling the DECOMPILED
+dts, reproduced identically with QEMU's own dumped DTB → dtc artifact, not a blob defect);
+(2) interrupt wiring structurally identical to QEMU virt modulo phandle numbering (clint
+<intc 3, intc 7>, plic <intc 11, intc 9> + ndev 0x5f, uart 0xa / rtc 0xb / virtio 1..8 all
+parented to PLIC, poweroff/reboot rooted with regmap→syscon), omissions all documented in
+docs/platform.md 1–6; (3) corrupt-input probe: UART0_IRQ=13 → serial `interrupts = <0xd>`
+(restored) — constants flow, no stale hardcoding; (4) alignment audit + critic's own
+adversarial scratch test (odd-length names, 1/3/5-byte values, dedup, real reservation):
+all 10 header fields exact, adversarial blob dtc -f clean; (5) placement arithmetic safe
+(`(end-len)&!7` ≤ end-len; checked ops; None below DRAM_BASE; len==dram_size → DRAM_BASE);
+(6) timebase single-source (0x989680 == TIMEBASE_FREQ_HZ; no other frequency hardcode);
+(7) all suites pass (lib 4/4, wasm 3/3, fmt, clippy -D warnings); (8) snapshot regenerated
+byte-identical. Kernel-boot deferral honestly logged. **Latent weakness fixed post-verdict:**
+fixed node names (serial@…, clint@…) were literal strings while reg derived from constants —
+now all unit addresses `format!` from platform::virt (blob byte-identical; dtc -f clean;
+snapshot unchanged). Critic's placement note (dtb_placement doesn't take kernel/initrd
+ranges) carried to E2-T04.

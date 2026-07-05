@@ -249,7 +249,10 @@ pub fn build_virt_dtb(platform: &Platform, bootargs: &str, initrd: Option<Initrd
     // /chosen — boot arguments + console. stdout-path names the UART node by path.
     f.begin_node("chosen");
     f.prop_str("bootargs", bootargs);
-    f.prop_str("stdout-path", "/soc/serial@10000000");
+    f.prop_str(
+        "stdout-path",
+        &alloc::format!("/soc/serial@{:x}", virt::UART0_BASE),
+    );
     if let Some(rd) = initrd {
         f.prop_u64("linux,initrd-start", rd.start);
         f.prop_u64("linux,initrd-end", rd.end);
@@ -257,7 +260,7 @@ pub fn build_virt_dtb(platform: &Platform, bootargs: &str, initrd: Option<Initrd
     f.end_node();
 
     // /memory@80000000
-    f.begin_node("memory@80000000");
+    f.begin_node(&alloc::format!("memory@{:x}", virt::DRAM_BASE));
     f.prop_str("device_type", "memory");
     f.prop_cells(
         "reg",
@@ -311,14 +314,14 @@ pub fn build_virt_dtb(platform: &Platform, bootargs: &str, initrd: Option<Initrd
     };
 
     // syscon test device (poweroff/reboot target).
-    f.begin_node("test@100000");
+    f.begin_node(&alloc::format!("test@{:x}", virt::TEST_BASE));
     f.prop_str_list("compatible", &["sifive,test1", "sifive,test0", "syscon"]);
     f.prop_cells("reg", &reg2(virt::TEST_BASE, virt::TEST_LEN));
     f.prop_u32("phandle", PHANDLE_TEST);
     f.end_node();
 
     // goldfish-rtc.
-    f.begin_node("rtc@101000");
+    f.begin_node(&alloc::format!("rtc@{:x}", virt::RTC_BASE));
     f.prop_str("compatible", "google,goldfish-rtc");
     f.prop_cells("reg", &reg2(virt::RTC_BASE, virt::RTC_LEN));
     f.prop_cells("interrupts", &[virt::RTC_IRQ]);
@@ -326,7 +329,7 @@ pub fn build_virt_dtb(platform: &Platform, bootargs: &str, initrd: Option<Initrd
     f.end_node();
 
     // CLINT — M-mode soft + timer lines into the cpu-intc.
-    f.begin_node("clint@2000000");
+    f.begin_node(&alloc::format!("clint@{:x}", virt::CLINT_BASE));
     f.prop_str_list("compatible", &["sifive,clint0", "riscv,clint0"]);
     f.prop_cells("reg", &reg2(virt::CLINT_BASE, virt::CLINT_LEN));
     f.prop_cells(
@@ -336,7 +339,7 @@ pub fn build_virt_dtb(platform: &Platform, bootargs: &str, initrd: Option<Initrd
     f.end_node();
 
     // PLIC — external interrupt controller; contexts = hart0 M-ext + hart0 S-ext.
-    f.begin_node("plic@c000000");
+    f.begin_node(&alloc::format!("plic@{:x}", virt::PLIC_BASE));
     f.prop_str_list("compatible", &["sifive,plic-1.0.0", "riscv,plic0"]);
     f.prop_cells("reg", &reg2(virt::PLIC_BASE, virt::PLIC_LEN));
     f.prop_u32("#interrupt-cells", 1);
@@ -351,7 +354,7 @@ pub fn build_virt_dtb(platform: &Platform, bootargs: &str, initrd: Option<Initrd
     f.end_node();
 
     // UART — ns16550a on the PLIC.
-    f.begin_node("serial@10000000");
+    f.begin_node(&alloc::format!("serial@{:x}", virt::UART0_BASE));
     f.prop_str("compatible", "ns16550a");
     f.prop_cells("reg", &reg2(virt::UART0_BASE, virt::UART0_LEN));
     f.prop_u32("clock-frequency", virt::UART_CLOCK_HZ);
