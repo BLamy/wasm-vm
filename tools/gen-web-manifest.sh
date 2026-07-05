@@ -19,7 +19,7 @@ for e in "${entries[@]}"; do
   f="releases/$rel"
   [ -f "$f" ] || { echo "gen-web-manifest: missing $f" >&2; exit 1; }
   sha=$(shasum -a 256 "$f" | awk '{print $1}')
-  size=$(stat -f '%z' "$f")
+  size=$(wc -c < "$f" | tr -d ' ')  # portable byte count (GNU stat -c%s / BSD stat -f%z differ)
   [ "$first" = 1 ] || json+=',\n'
   first=0
   # RELATIVE url (no leading slash) so it resolves against the page's base — works at the Pages
