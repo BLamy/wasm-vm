@@ -9,7 +9,11 @@ use std::collections::VecDeque;
 use wasm_vm_core::trace::{TraceRecord, TraceSink};
 
 /// Captures a PC-frequency histogram and/or a ring buffer of the last N retired records.
-/// Either is enabled independently; both are cheap enough to leave on across a full boot.
+/// Either is enabled independently. The histogram is a per-instruction `HashMap` bump; the
+/// ring is a `VecDeque` push/pop — cheap in absolute terms, but on a spin of *trivial*
+/// instructions the ring push can rival the interpreter step (worst case ~2× at
+/// N=100000). On real, heavier instructions the relative cost is far lower (see
+/// docs/boot-debugging.md).
 #[derive(Default)]
 pub struct DebugSink {
     histogram: Option<HashMap<u64, u64>>,

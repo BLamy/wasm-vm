@@ -98,7 +98,7 @@ subsystem printing around it.
 | Flag | What it does |
 |---|---|
 | `--pc-histogram N` | after the run, prints the N hottest PCs (spin site = row 0). Pipe through `tools/symbolize.py <System.map> -` to name them. |
-| `--trace-last N` | keeps a ring buffer of the last N retired `(pc, insn)` and dumps it on exit/hang — the instructions leading INTO the hang. Overhead ≈ 2% at N=100000 over a full run (measured: 0.95s vs 0.93s on loops.elf @5M). |
+| `--trace-last N` | keeps a ring buffer of the last N retired `(pc, insn)` and dumps it on exit/hang — the instructions leading INTO the hang. Overhead scales with N and INVERSELY with per-instruction work: worst case ~2× on a trivial-instruction spin (measured `spin.elf` @50M: ~2.35s → ~5.29s at N=100000, where the ring push rivals the whole interpreter step). On a real Linux boot — MMU walks, CSRs, MMIO per instruction — the relative cost is far lower; a precise boot figure awaits E2-T15. Keep N modest (10k–100k is plenty of pre-hang context). |
 | `--hang-watchdog Q` | runs in Q-instruction quanta; if a full quantum retires with the pc + integer registers **unchanged** (a spin loop), aborts with `HANG — no forward progress at pc=…`, dumps `--trace-last`, and exits **103** (distinct from the plain budget-exhausted 102). It deliberately ignores memory/CSRs — a `j .` touches neither, and hashing RAM every quantum would dwarf a boot. A device-polling busy-wait that mutates a register each iteration is NOT flagged (it is making progress by this definition). |
 
 `tools/symbolize.py System.map <hexpc>...` prints `symbol+0xoffset` for each PC; with `-` it

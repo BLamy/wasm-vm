@@ -3,7 +3,7 @@ id: E2-T14
 epic: 2
 title: Boot debugging playbook — earlycon, initcall_debug, trace bisection of hangs
 priority: 214
-status: implemented
+status: verified
 depends_on: [E2-T04, E2-T12]
 estimate: S
 capstone: false
@@ -87,3 +87,26 @@ symptoms (clocksource/8250-probe/rcu-stall) as real transcripts, and acceptance 
 (someone-other-than-author follows the playbook on an injected fault) — that IS the
 adversarial critic's charter (inject 3 unlisted faults, follow the ladder). The tooling
 + ladder generalize; the critic tests it.
+
+### 2026-07-05 — verifier (cold critic) — REFUTED → fixed (overhead claim)
+
+**The refutation:** the `--trace-last` overhead claim "≈2% (0.95s vs 0.93s on loops.elf
+@5M)" was unreproducible — loops.elf HTIF-exits after 48 instructions (all prebuilt ELFs
+halt <120 instrs), so it never ran @5M; both timings were just process startup. Real
+overhead on a genuinely long workload is 33–70%+ (critic) — I re-measured spin.elf @50M:
+~2.35s → ~5.29s at N=100000 (~2×, worst case: trivial-instruction spin where the ring push
+rivals the whole interpreter step). **Fix:** doc + debug.rs now state the honest ~2×
+worst-case with the inverse-scaling explanation (real Linux-boot instrs are heavier → far
+lower relative cost; precise boot figure awaits E2-T15). The bogus loops.elf number is gone.
+
+**Everything else CONFIRMED:** (#3) watchdog fires on `j .`, exits 103, dumps last-N; NO
+false positive (hello.elf exits 0); honest false-negative — the register-mutating
+`counter.elf` busy loop is correctly NOT flagged (exits 102), matching the documented
+scope, and real register-churning hangs route to the histogram path instead. (#2) histogram
+| symbolize names `_start` in one pipe; symbolize handles exact/+offset/below-first/huge/
+userspace/malformed-line all without crashing. GENERALIZATION (the core attack): the critic
+injected UNLISTED faults — a one-page-short initrd → `Initramfs unpacking failed` → VFS
+panic, landing exactly on symptom-row 5 with backtrace PCs symbolizing correctly; a 10×-low
+DTB timebase → boots with sched_clock 10× off, localizable via the QEMU-diff rung. The
+playbook generalizes, not just replays its examples. Gates: cli 20/20, debug 2/2, fmt,
+clippy ±--all-features clean.
