@@ -21,7 +21,7 @@ pub const ABI_NAMES: [&str; 32] = [
 /// decode can never produce an out-of-range index. Passing `r >= 32` anyway is a caller
 /// bug: `debug_assert!` fires in debug builds, and the array bounds check aborts in
 /// release builds too — it can never silently alias another register.
-#[derive(Clone, Default)]
+#[derive(Clone, Default, PartialEq, Eq)]
 pub struct XRegs {
     /// `regs[0]` is never written; the x0 invariant lives in [`Self::write`] alone.
     regs: [u64; 32],

@@ -54,13 +54,31 @@ pub struct Trap {
 
 /// One RV64 hart. The PC lives inside [`XRegs`] (single authority, E0-T05);
 /// `regs.pc` is the architectural PC.
-#[derive(Default)]
+#[derive(PartialEq, Eq)]
 pub struct Hart {
     pub regs: XRegs,
+    /// Reset-relevant control/status registers (E1-T01): misa, mstatus, mcause, mhartid,
+    /// privilege mode. The single source of architectural reset state.
+    pub csr: crate::csr::Csrs,
     /// QUARANTINED CSR scaffolding for the riscv-tests p-env (E0-T19). Present only under
-    /// `feature = "zicsr-stub"`; Epic 1 replaces it with the real CSR file.
+    /// `feature = "zicsr-stub"`; Epic 1 replaces it with the real CSR file above.
     #[cfg(feature = "zicsr-stub")]
     pub csrs: crate::zicsr_stub::CsrFile,
+}
+
+impl Default for Hart {
+    /// Every constructor funnels through [`Self::reset`] so there is ONE authoritative
+    /// initial state (E1-T01). Default resets to the `virt`/Spike vector `DRAM_BASE`.
+    fn default() -> Self {
+        let mut h = Hart {
+            regs: XRegs::default(),
+            csr: crate::csr::Csrs::at_reset(),
+            #[cfg(feature = "zicsr-stub")]
+            csrs: crate::zicsr_stub::CsrFile::default(),
+        };
+        h.reset(crate::bus::mmap::DRAM_BASE);
+        h
+    }
 }
 
 impl core::fmt::Debug for Hart {
@@ -129,8 +147,24 @@ const fn store_fault(f: BusFault, addr: u64) -> Trap {
 }
 
 impl Hart {
+    /// A hart in the spec reset state, PC at the `virt`/Spike vector `DRAM_BASE`.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Return the hart to the privileged-spec §3.4 reset state with `pc = reset_vector`:
+    /// all integer registers 0, M-mode, `mstatus = 0` (MIE=0, MPRV=0), `mcause = 0`, and
+    /// the hardwired `misa`/`mhartid`. THE single authority for initial state — every
+    /// constructor, harness, and (future) power-on-reset funnels through here, so two
+    /// resets from any prior state are bit-identical.
+    pub fn reset(&mut self, reset_vector: u64) {
+        self.regs = XRegs::default();
+        self.regs.pc = reset_vector;
+        self.csr = crate::csr::Csrs::at_reset();
+        #[cfg(feature = "zicsr-stub")]
+        {
+            self.csrs = crate::zicsr_stub::CsrFile::default();
+        }
     }
 
     /// Fetch at PC, decode, execute one instruction. On `Ok`, the instruction

@@ -26,7 +26,7 @@ const WFI: u32 = 0x1050_0073;
 
 /// A flat, non-architectural CSR map. `mhartid` reads 0 and ignores writes; everything
 /// else is plain read/write storage — enough for the p-env's setup-then-`mret` dance.
-#[derive(Default, Clone)]
+#[derive(Default, Clone, PartialEq, Eq)]
 pub struct CsrFile {
     entries: Vec<(u16, u64)>,
 }
