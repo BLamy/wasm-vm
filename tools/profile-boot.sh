@@ -35,7 +35,8 @@ done
 
 # Pretty-print run 1 and, for N>1, per-phase wall-time relative std dev (jq if present, else raw).
 echo "=== profile (run 1) ==="
-sed -n '/=== E2-T25 boot profile ===/,/PROFILE_JSON/{/PROFILE_JSON/!p}' "$OUT/${TARGET}.run1.log"
+# Print the pretty block (header → just before the PROFILE_JSON line). awk, not sed, for BSD/GNU parity.
+awk '/=== E2-T25 boot profile ===/{f=1} /^PROFILE_JSON /{f=0} f' "$OUT/${TARGET}.run1.log"
 if [ "$RUNS" -gt 1 ] && command -v jq >/dev/null; then
   echo "=== wall-time variance across $RUNS runs (retired + device counts are deterministic) ==="
   for p in kernel-entry console-up rootfs-mounted init-handoff busybox-userland getty-login; do
