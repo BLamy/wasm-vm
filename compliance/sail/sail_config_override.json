@@ -10,8 +10,8 @@
     "Svrsw60t59b": { "supported": false }
   },
   "memory": {
-    "//pmp": "E1-T27/T28: our DUT implements 64 PMP entries — match the reference so the pmpm_all_entries_check 64-region tests genuinely run 64 entries on BOTH (Sail default is 16).",
-    "pmp": { "count": 64 },
+    "//pmp": "E1-T27/T28: our DUT implements 64 PMP entries — match the reference so the pmpm_all_entries_check 64-region tests genuinely run 64 entries on BOTH (Sail default is 16). BOTH count AND usable_count must be 64: Sail treats entries above usable_count as read-only-zero, so leaving usable_count at its default 16 made pmpaddr16..63/pmpcfg legalize to 0 and Sail allowed M-mode stores our (correct) DUT trapped — the pmpm-01/02/03 divergence.",
+    "pmp": { "count": 64, "usable_count": 64 },
     "misaligned": {
       "//": "Scalar misaligned already proceeds (default) — matches our DUT. Atomics require alignment: our DUT raises *AddrMisaligned (cause 4/6 = AlignmentException), not Sail's default AccessFault.",
       "exceptions": {
