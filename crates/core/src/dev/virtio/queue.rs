@@ -17,8 +17,10 @@
 //! - A readable segment AFTER a writable one is a violation — mirrors QEMU's
 //!   "Incorrect order for descriptors" (the spec says drivers never do this; rejecting
 //!   loudly beats silently mis-executing a request).
-//! - Zero-length descriptors are tolerated (QEMU maps them empty); their `addr` is not
-//!   bounds-checked because no byte is touched.
+//! - Zero-length descriptors are REJECTED ([`Violation::ZeroLenBuffer`]) — true QEMU
+//!   parity: virtio.c's `virtqueue_map_desc` errors "zero sized buffers are not allowed"
+//!   and marks the device broken. (Round-1 critic falsified the earlier "QEMU maps them
+//!   empty" claim against the actual source; Linux never submits zero-len SG entries.)
 //!
 //! Single-threaded wasm makes "barriers" ordering discipline: used-ring publication is two
 //! named fence-point methods — [`Virtqueue::write_used_element`] THEN
@@ -57,6 +59,8 @@ pub enum Violation {
     BadAddress,
     /// A device-readable segment followed a device-writable one (QEMU: incorrect order).
     BadOrder,
+    /// A zero-length descriptor (QEMU: "zero sized buffers are not allowed").
+    ZeroLenBuffer,
 }
 
 /// One buffer segment of a popped chain.
@@ -185,8 +189,11 @@ impl Virtqueue {
             } else if seen_writable {
                 return Err(Violation::BadOrder); // readable after writable (QEMU contract)
             }
-            // Zero-length segments touch no byte — tolerated without an addr check.
-            if len > 0 && !Self::dram_ok(bus, addr, u64::from(len)) {
+            // QEMU parity: zero-sized buffers are not allowed (virtqueue_map_desc).
+            if len == 0 {
+                return Err(Violation::ZeroLenBuffer);
+            }
+            if !Self::dram_ok(bus, addr, u64::from(len)) {
                 return Err(Violation::BadAddress);
             }
             segments.push(Segment {
@@ -232,6 +239,9 @@ impl Virtqueue {
     /// FENCE POINT 2: increment and publish used.idx — the element written by fence point
     /// 1 becomes visible to the driver ONLY here (§2.7.13 write ordering).
     pub fn publish_used_idx(&mut self, bus: &mut SystemBus) -> Result<(), Violation> {
+        // On Err the shadow used_idx has already advanced past guest memory — harmless:
+        // a publication failure is a Violation, the device goes NEEDS_RESET and the queue
+        // is rebuilt from QueueState before reuse (critic advisory, documented).
         self.used_idx = self.used_idx.wrapping_add(1);
         let idx_addr = self.used.wrapping_add(2);
         if !Self::dram_ok(bus, idx_addr, 2) {

@@ -3,7 +3,7 @@ id: E2-T09
 epic: 2
 title: Virtqueue implementation — split rings, descriptor chain walking, used-ring notify
 priority: 209
-status: implemented
+status: verified
 depends_on: [E2-T08]
 estimate: M
 capstone: false
@@ -92,3 +92,33 @@ policy).
 - Deferred honestly: QEMU virtio_queue_pop semantics were mirrored from its documented
   behavior (zero-len, order error) — the critic should verify against the actual source;
   dd/ext4 written-len stress → E2-T19 per the charter.
+
+### 2026-07-05 — verifier (cold critic) — REFUTED → fixed (QEMU zero-len parity)
+
+**The refutation:** the landed docs/tests/log claimed "zero-length descriptors are
+tolerated (QEMU maps them empty)" — the critic fetched hw/virtio/virtio.c and falsified
+it: `virtqueue_map_desc` errors "zero sized buffers are not allowed" and marks the device
+broken. Not Linux-observable (blk never submits zero-len SG), but the justification
+asserted the opposite of QEMU's real behavior in three places. **Fix: true QEMU parity —
+`Violation::ZeroLenBuffer`**, test flipped to `zero_length_descriptor_rejected_like_qemu`,
+docs corrected.
+
+**Everything else CONFIRMED by the critic:**
+- QEMU differential all-match: BadOrder ≙ "Incorrect order" (same NEEDS_RESET+config class
+  via virtio_error), chain guard boundary identical (max = vring.num), fill/flush ≙ our
+  write_used_element/publish_used_idx split (QEMU smp_wmb between), num_heads/get_head
+  boundaries ≙ AvailIdxJump/BadDescIndex, unmappable addr ≙ BadAddress.
+- Byte-precise §2.7.6 test: pop reads exactly AVAIL+4+2*slot and writes ZERO ring bytes;
+  push_used touches exactly USED+2..4 and USED+4+8*slot..+8 with LE layout {id,len} —
+  every other byte proven untouched.
+- Persistent-queue fuzz: ONE queue, 10^5 rounds, cumulative seq across the 2^16 wrap,
+  interleaved hostile mutations (idx backward, +size+7 jumps, mid-stream desc rewrites,
+  rings at DRAM edges/overlapping) — invariant used.idx == push count mod 2^16 held every
+  round; misaligned bases → BadAddress; no panic/hang/OOB.
+- Violation semantics: last_avail_idx not advanced on error — deterministic re-error and
+  correct resume after ring repair (consistent with NEEDS_RESET rebuild).
+- Advisories fixed same commit: publish_used_idx shadow-divergence-on-Err documented;
+  protocol_violation() now pinned by a committed transport test
+  (`protocol_violation_degrades_loudly`: NEEDS_RESET + CONFIG_CHANGE + line high +
+  generation bump + reset recovery).
+- Gates green (both wasm legs re-verified with case-sensitive FAILED grep).

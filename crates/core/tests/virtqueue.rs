@@ -205,17 +205,17 @@ fn malformed_ring_matrix() {
     );
 }
 
-/// Zero-length descriptor: tolerated (QEMU maps it empty), any addr, chain still pops.
+/// Zero-length descriptor: REJECTED — true QEMU parity (virtqueue_map_desc: "zero sized
+/// buffers are not allowed" → device broken). Round-1 critic falsified the previous
+/// "QEMU tolerates" claim against the actual source.
 #[test]
-fn zero_length_descriptor_tolerated() {
+fn zero_length_descriptor_rejected_like_qemu() {
     let mut b = bus();
     let mut q = Virtqueue::new(&qs(8), 256).unwrap();
-    wdesc(&mut b, 0, 0xDEAD_BEEF_0000, 0, F_NEXT, 1); // len 0: addr unchecked
-    wdesc(&mut b, 1, DATA, 4, F_WRITE, 0);
+    wdesc(&mut b, 0, DATA, 0, F_NEXT, 1);
+    wdesc(&mut b, 1, DATA + 0x100, 4, F_WRITE, 0);
     publish(&mut b, 8, 0, 0);
-    let chain = q.pop(&mut b).unwrap().unwrap();
-    assert_eq!(chain.segments.len(), 2);
-    assert_eq!(chain.segments[0].len, 0);
+    assert_eq!(q.pop(&mut b), Err(Violation::ZeroLenBuffer));
 }
 
 /// Max-length chain (== qsz) pops fine; qsz+1 is impossible (loop guard fires first).
