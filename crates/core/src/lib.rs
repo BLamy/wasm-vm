@@ -33,6 +33,7 @@ pub mod htif;
 pub mod loader;
 pub mod mmio;
 pub mod ram;
+pub mod snapshot;
 pub mod trace;
 
 use hart::{Hart, Trap};

@@ -24,6 +24,10 @@ trace = []
 # crate boundary this workspace exists to enforce (ROADMAP.md, architectural bet #2).
 # `log` is the no_std-friendly diagnostics facade (no default features → no_std).
 log = { version = "0.4", default-features = false }
+# SHA-256 for the deterministic machine-state digest (E0-T17). default-features = false
+# keeps it no_std (drops std-only helpers) — cross-platform digest stability is the whole
+# point of choosing a crypto hash here over a fast non-cryptographic one.
+sha2 = { version = "0.10", default-features = false }
 
 [dev-dependencies]
 criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }

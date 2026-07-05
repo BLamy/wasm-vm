@@ -3,7 +3,7 @@ id: E0-T17
 epic: 0
 title: Machine state snapshot and deterministic digest for test assertions
 priority: 17
-status: pending
+status: verified
 depends_on: [E0-T07]
 estimate: S
 capstone: false
@@ -56,4 +56,63 @@ run. (5) Verify `sha2` is compiled with `default-features = false` in the no_std
 (`cargo tree -p wasm-vm-core --no-default-features -e features`).
 
 ## Verification log
-(empty)
+### 2026-07-03 — worker claim — branch task/e0-t17-snapshot (stacked on e0-t16)
+Deliverables: crates/core/src/snapshot.rs — Snapshot{pc:u64, xregs:[u64;32], mem_digest:[u8;32]}
+(Clone, PartialEq, Eq, Debug-as-hex), Machine::snapshot() (&self, pure), Snapshot::hex_digest()
+-> String (alloc, always avail — crate links alloc unconditionally, no feature gate), and
+Snapshot::state_sha256_line() = "state sha256=<64 hex>" (frozen final line the CLI --dump-state
+prints after the E0-T05 XRegs dump; flag wiring is the E0-T18 integration point, mirroring how
+E0-T16 shipped the trace serializer and deferred --trace). Ram::as_bytes() added as the canonical
+digest input (whole byte array in address order; device+hart state are struct fields, NOT digest
+input). Digest = SHA-256 via sha2 0.10 default-features=false (no_std; crypto hash chosen over a
+fast one because cross-platform bit-stability is the whole point of an assertion helper).
+KNOWN-ANSWER independence: KAT digests computed OUTSIDE the crate in Python (hashlib.sha256): 1 MiB
+of byte[i]=i%251 -> 631b8402...e4f769; 1 MiB zeros -> 30e14955...9fcb58.
+Tests (crates/core/tests/snapshot.rs, 6): (1) KAT — fresh 1 MiB hashes to the zero-buffer answer,
+seeded mod-251 to the committed Python answer, hex_digest==mem_digest; (2) flip-sensitivity — 100
+offsets incl. 0 and size-1, each single-byte flip changes the digest and restore returns it; (3)
+tail coverage — poking the LAST RAM byte changes the digest (kills digest-only-loaded-segments);
+(4) stability — two zero-step snapshots identical, x0 image always 0; (5) cross-build golden —
+loops.elf @ 1 MiB -> exact pc/all-32-xregs/digest (0a18330c...376a48), asserted identically by the
+wasm32 test so native==wasm transitively; (6) PURITY — loops traced uninterrupted vs. snapshot()
+every 100 steps: identical retired-instruction trace AND identical final Snapshot.
+wasm crates/wasm/tests/snapshot.rs asserts the same 1-MiB golden on wasm32 (pc 0x80000040, x2=sp
+0x80002090, x10=1, digest 0a18330c…).
+sha2 no_std: cargo tree --no-default-features shows sha2 pulled WITHOUT its std/asm features.
+128 MiB digest timing (informational, no threshold): ~0.55 s release; documented in snapshot.rs.
+Gates: fmt clean; clippy --workspace --all-targets --all-features -D warnings exit 0 (fixed a
+manual-is_multiple_of lint); native default 0 FAILED; native trace 0 FAILED; workspace 0 FAILED;
+snapshot suite 6/6; wasm-pack test --node all green incl. the wasm snapshot golden; all 4 native +
+2 wasm32 feature combos build; check-zero-cost --selftest OK.
+rr: N/A locally (macOS); no unsafe introduced (Ram::as_bytes is &self.data) so miri adds nothing
+over the suite and CI runs no miri step. Verifier angles left open: independent shasum -a 256 of a
+RAM dump vs mem_digest (angle 1), 10k-instr memops native-vs-wasm Snapshot (angle 3), and a
+partial-coverage mutation (digest only loaded segments / skip last page) — flip+tail tests target
+exactly that.
+
+### 2026-07-03 — adversarial verifier (fresh session) — VERDICT: refuted
+- Independent recomputation — HELD. Python hashlib reproduced both KATs (mod-251 631b8402…, zero 30e14955…); dumped post-run loops RAM to disk + system `shasum -a 256` = 0a18330c…376a48 (full 1 MiB dumped → digest covers ALL RAM, not just ELF segments). Truthful.
+- Mutation testing — 7 KILLED, 2 SURVIVED. KILLED: truncate-last-4096 (poking_the_last_ram_byte + 3), empty-slice (4), hash-xregs-into-digest (KAT), base-into-digest (KAT), snapshot-bumps-pc (stable + purity), register-off-by-one (loops golden + stable). SURVIVED MUT-H: rewriting state_sha256_line() format "state sha256=" → "state XXHACKED=" stays GREEN — the method is a self-declared frozen --dump-state contract referenced by ZERO tests (E0-T15 Mutation-C / E0-T16 D-E shape: output path guarded only by its own definition). SURVIVED MUT-I: breaking the Debug mem_digest field survives.
+- Cross-build — HELD + EXECUTED. wasm-pack test --node ran loops_snapshot_matches_native_golden_on_wasm32 → ok; wasm32 pc/xregs/digest byte-identical to native golden.
+- Purity — STRONG. Purity test compares BOTH full retired-instruction trace AND final Snapshot; kills any perturbation.
+- no_std — HELD. sha2 default-features=false; cargo tree --no-default-features shows only cpufeatures/default + digest/default, no std/asm; wasm32 no-default build succeeds.
+- Honesty — clean. KATs genuinely independent (Python-reproduced); loops golden hand-verifiable (external shasum + wasm both confirm); no vacuous assertions.
+- DEMAND: commit a test pinning state_sha256_line() to "state sha256=<64 hex>"; secondarily a Debug-format assertion (MUT-I).
+
+### 2026-07-03 — rework after refutation (worker)
+Applied the demand. Added two tests to crates/core/tests/snapshot.rs:
+state_sha256_line_is_the_frozen_dump_state_contract — pins the --dump-state line to the exact
+format `state sha256=<64 hex>` (literal-prefix check + full string equality to
+`state sha256=<KAT>` + the 64 chars after the prefix == hex_digest() + length == prefix+64);
+debug_impl_shows_pc_and_full_hex_digest — asserts Debug surfaces the real pc (0x…1234) and the
+full digest hex. Re-ran the verifier's exact survivors: MUT-H (format → "state XXHACKED=") KILLED
+by the frozen-contract test; MUT-I (Debug mem_digest → literal) KILLED by the Debug test; each
+reverted, snapshot.rs clean. Gates: clippy -D warnings exit 0, native + workspace 0 FAILED,
+snapshot suite 8/8. Status verified.
+
+### 2026-07-03 — adversarial verifier (re-verification) — VERDICT: verified
+- (a) MUT-H re-applied ("state sha256=" → "state XXHACKED=") — RED, killed by state_sha256_line_is_the_frozen_dump_state_contract (7 passed/1 failed).
+- (b) MUT-I re-applied (Debug mem_digest → literal) — RED, killed by debug_impl_shows_pc_and_full_hex_digest.
+- (c) NEW same-family both RED: Debug omits pc → killed by the Debug test's contains(0x…1234); state_sha256_line uppercases the hex → killed by the contract test (full-equality + slice==hex_digest). No residual on these output methods.
+- (d) Non-vacuity confirmed 3 ways: each new test flips RED only under a mutation of its target method (green at baseline); test 1 pins to the INDEPENDENT Python KAT (external oracle, not an echo); the truncate-page mutation also breaks both new tests (they seed real mod-251 RAM + assert live output).
+- (e) Suite 8/8 green; spot-checked truncate-last-4096 still RED (poking_the_last_ram_byte + KAT + both new tests). Coverage intact. No impl changed. VERIFIED.
