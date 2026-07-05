@@ -40,16 +40,34 @@ use wasm_vm_core::decode::decode;
 /// | SYSTEM CSR ops        | 6 · 2^22         | funct3∈{1,2,3,5,6,7}, any rd/rs1/csr (E1-T02)|
 /// | SYSTEM ECALL/EBREAK/MRET/WFI | 4         | four exact words (E1-T02 adds MRET, WFI)  |
 ///
-/// The 2^15 groups now total OP(10) + OP M(8) + slliw(1) + srliw/sraiw(2) + OP-32(5) +
-/// OP-32 M(5) = 31; the 2^17 groups total SC(2) + AMO(18) = 20. Sum =
-/// 56·2^22 + 20·2^17 + 3·2^16 + 31·2^15 + 2^13 + 5 = 238_723_077.
+/// E1-T06 adds the F extension (all decode as legal; a reserved rounding mode traps at
+/// *execution*, not decode, so every rm value is a legal encoding). Contributions:
 ///
-/// NOTE: the CSR ops / FENCE.I / MRET / WFI (the 56·2^22 tail + the +5 exact words) belong to
-/// the DEFAULT (Zicsr) decoder; under `feature = "zicsr-stub"` they route to the E0-T19 stub
-/// and are not decoded. The M and A extensions are NOT feature-gated — legal in both builds.
-/// This sweep runs with default features.
-pub const EXPECTED_LEGAL: u64 =
-    56 * (1 << 22) + 20 * (1 << 17) + 3 * (1 << 16) + 31 * (1 << 15) + (1 << 13) + 5;
+/// | F group               | count            | reason                                     |
+/// |-----------------------|------------------|--------------------------------------------|
+/// | FLW, FSW              | 2 · 2^22         | funct3=010, rd/rs1(/rs2)+imm free          |
+/// | FMADD/MSUB/NMSUB/NMADD | 4 · 2^23        | fmt=00, rs3+rs2+rs1+rd+rm free             |
+/// | FADD/FSUB/FMUL/FDIV.S | 4 · 2^18         | rd+rs1+rs2+rm free                          |
+/// | FSQRT.S               | 2^13             | rs2=0; rd+rs1+rm free                       |
+/// | FSGNJ[N,X]/FMIN,MAX/FEQ,LT,LE | 8 · 2^15 | funct3-selected; rd+rs1+rs2 free           |
+/// | FCVT.{to,from}-int.S  | 8 · 2^13         | rs2∈{0..3} width; rd+rs1+rm free           |
+/// | FMV.X.W/FCLASS.S/FMV.W.X | 3 · 2^10      | funct3+rs2 fixed; rd+rs1 free              |
+///
+/// Folding 2·2^22 + 4·2^23 (=8·2^22) into the 2^22 term (56→66); 8·2^15 into 31→39; 2^13
+/// (FSQRT) + 8·2^13 (FCVT) into 1→10. Sum =
+/// 66·2^22 + 4·2^18 + 20·2^17 + 3·2^16 + 39·2^15 + 10·2^13 + 3·2^10 + 5 = 282_053_637.
+///
+/// NOTE: the CSR ops / FENCE.I / MRET / WFI belong to the DEFAULT (Zicsr) decoder; under
+/// `feature = "zicsr-stub"` they route to the E0-T19 stub. M/A/F are NOT feature-gated. This
+/// sweep runs with default features.
+pub const EXPECTED_LEGAL: u64 = 66 * (1 << 22)
+    + 4 * (1 << 18)
+    + 20 * (1 << 17)
+    + 3 * (1 << 16)
+    + 39 * (1 << 15)
+    + 10 * (1 << 13)
+    + 3 * (1 << 10)
+    + 5;
 
 #[test]
 #[ignore = "exhaustive 2^32 sweep — minutes; run with --release --ignored"]

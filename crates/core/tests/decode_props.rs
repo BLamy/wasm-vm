@@ -8,7 +8,34 @@
 #![cfg(not(target_arch = "wasm32"))]
 
 use proptest::prelude::*;
-use wasm_vm_core::decode::{AmoOp, Instr, decode};
+use wasm_vm_core::decode::{
+    AmoOp, FpArithOp, FpCmpOp, FpFusedOp, FpIntWidth, FpSgnjOp, Instr, decode,
+};
+
+fn opfp(funct7: u32, funct3: u32, rd: u8, rs1: u8, rs2: u8) -> u32 {
+    (funct7 << 25)
+        | ((rs2 as u32) << 20)
+        | ((rs1 as u32) << 15)
+        | (funct3 << 12)
+        | ((rd as u32) << 7)
+        | 0b1010011
+}
+fn fused(opcode: u32, rs3: u8, rs2: u8, rs1: u8, rm: u32, rd: u8) -> u32 {
+    ((rs3 as u32) << 27)
+        | ((rs2 as u32) << 20)
+        | ((rs1 as u32) << 15)
+        | (rm << 12)
+        | ((rd as u32) << 7)
+        | opcode // fmt (bits 26:25) = 00 for single
+}
+fn cvt_idx(w: FpIntWidth) -> u8 {
+    match w {
+        FpIntWidth::W => 0,
+        FpIntWidth::Wu => 1,
+        FpIntWidth::L => 2,
+        FpIntWidth::Lu => 3,
+    }
+}
 
 // ── independent encoder (spec-derived; the round-trip oracle) ─────────────────
 
@@ -220,6 +247,68 @@ fn encode(instr: &Instr) -> u32 {
         Csrrwi { rd, uimm, csr } => csr_word(0b101, rd, uimm, csr),
         Csrrsi { rd, uimm, csr } => csr_word(0b110, rd, uimm, csr),
         Csrrci { rd, uimm, csr } => csr_word(0b111, rd, uimm, csr),
+        // F extension (E1-T06).
+        Flw { rd, rs1, imm } => i_enc(0b0000111, 0b010, rd, rs1, imm),
+        Fsw { rs1, rs2, imm } => s_enc(0b0100111, 0b010, rs1, rs2, imm),
+        FpArithS {
+            op,
+            rd,
+            rs1,
+            rs2,
+            rm,
+        } => {
+            let f7 = match op {
+                FpArithOp::Add => 0b0000000,
+                FpArithOp::Sub => 0b0000100,
+                FpArithOp::Mul => 0b0001000,
+                FpArithOp::Div => 0b0001100,
+            };
+            opfp(f7, rm as u32, rd, rs1, rs2)
+        }
+        FsqrtS { rd, rs1, rm } => opfp(0b0101100, rm as u32, rd, rs1, 0),
+        FpFusedS {
+            op,
+            rd,
+            rs1,
+            rs2,
+            rs3,
+            rm,
+        } => {
+            let opcode = match op {
+                FpFusedOp::Madd => 0b1000011,
+                FpFusedOp::Msub => 0b1000111,
+                FpFusedOp::Nmsub => 0b1001011,
+                FpFusedOp::Nmadd => 0b1001111,
+            };
+            fused(opcode, rs3, rs2, rs1, rm as u32, rd)
+        }
+        FsgnjS { op, rd, rs1, rs2 } => {
+            let f3 = match op {
+                FpSgnjOp::J => 0b000,
+                FpSgnjOp::Jn => 0b001,
+                FpSgnjOp::Jx => 0b010,
+            };
+            opfp(0b0010000, f3, rd, rs1, rs2)
+        }
+        FminmaxS {
+            is_max,
+            rd,
+            rs1,
+            rs2,
+        } => opfp(0b0010100, u32::from(is_max), rd, rs1, rs2),
+        FpCmpS { op, rd, rs1, rs2 } => {
+            let f3 = match op {
+                FpCmpOp::Le => 0b000,
+                FpCmpOp::Lt => 0b001,
+                FpCmpOp::Eq => 0b010,
+            };
+            opfp(0b1010000, f3, rd, rs1, rs2)
+        }
+        FclassS { rd, rs1 } => opfp(0b1110000, 0b001, rd, rs1, 0),
+        FmvXW { rd, rs1 } => opfp(0b1110000, 0b000, rd, rs1, 0),
+        FmvWX { rd, rs1 } => opfp(0b1111000, 0b000, rd, rs1, 0),
+        FcvtToIntS { width, rd, rs1, rm } => opfp(0b1100000, rm as u32, rd, rs1, cvt_idx(width)),
+        FcvtFromIntS { width, rd, rs1, rm } => opfp(0b1101000, rm as u32, rd, rs1, cvt_idx(width)),
     }
 }
 
@@ -380,6 +469,54 @@ prop_compose! {
     }
 }
 roundtrip!(roundtrip_amo, amo_ops());
+
+// F extension (E1-T06): every legal single-precision encoding round-trips, including all
+// rounding-mode field values (reserved rm 5/6/7 still DECODE — they trap at execution).
+prop_compose! {
+    fn fp_ops()(
+        which in 0u8..18,
+        rd in reg(), rs1 in reg(), rs2 in reg(), rs3 in reg(),
+        rm in 0u32..8, sel in 0u32..4, imm in -2048i64..2048,
+    ) -> u32 {
+        match which {
+            0 => i_enc(0b0000111, 0b010, rd, rs1, imm),   // flw
+            1 => s_enc(0b0100111, 0b010, rs1, rs2, imm),  // fsw
+            2 => opfp(0b0000000, rm, rd, rs1, rs2),       // fadd.s
+            3 => opfp(0b0000100, rm, rd, rs1, rs2),       // fsub.s
+            4 => opfp(0b0001000, rm, rd, rs1, rs2),       // fmul.s
+            5 => opfp(0b0001100, rm, rd, rs1, rs2),       // fdiv.s
+            6 => opfp(0b0101100, rm, rd, rs1, 0),         // fsqrt.s (rs2=0)
+            7 => fused(0b1000011, rs3, rs2, rs1, rm, rd), // fmadd.s
+            8 => fused(0b1000111, rs3, rs2, rs1, rm, rd), // fmsub.s
+            9 => fused(0b1001011, rs3, rs2, rs1, rm, rd), // fnmsub.s
+            10 => fused(0b1001111, rs3, rs2, rs1, rm, rd),// fnmadd.s
+            11 => opfp(0b0010000, rm % 3, rd, rs1, rs2),  // fsgnj[n,x].s
+            12 => opfp(0b0010100, rm % 2, rd, rs1, rs2),  // fmin/fmax.s
+            13 => opfp(0b1010000, rm % 3, rd, rs1, rs2),  // feq/flt/fle.s
+            14 => opfp(0b1100000, rm, rd, rs1, sel as u8),// fcvt.{w,wu,l,lu}.s
+            15 => opfp(0b1101000, rm, rd, rs1, sel as u8),// fcvt.s.{w,wu,l,lu}
+            16 => opfp(0b1110000, sel % 2, rd, rs1, 0),   // fmv.x.w (0) / fclass.s (1)
+            _ => opfp(0b1111000, 0b000, rd, rs1, 0),      // fmv.w.x
+        }
+    }
+}
+roundtrip!(roundtrip_fp, fp_ops());
+
+// A few reserved OP-FP encodings must decode illegal.
+proptest! {
+    #![proptest_config(config())]
+    #[test]
+    fn reserved_op_fp_is_illegal(rd in reg(), rs1 in reg()) {
+        // FSQRT with rs2 != 0; FMV.X.W with a nonzero rs2; a reserved funct7; FSGNJ funct3=3.
+        prop_assert!(decode(opfp(0b0101100, 0, rd, rs1, 1)).is_err(), "fsqrt rs2!=0");
+        prop_assert!(decode(opfp(0b1110000, 0b000, rd, rs1, 5)).is_err(), "fmv.x.w rs2!=0");
+        prop_assert!(decode(opfp(0b0011111, 0, rd, rs1, 0)).is_err(), "reserved funct7");
+        prop_assert!(decode(opfp(0b0010000, 0b011, rd, rs1, 0)).is_err(), "fsgnj funct3=3");
+        // A double-precision fused op (fmt=01) is not decoded yet (E1-T07).
+        let dfused = fused(0b1000011, 0, 0, rs1, 0, rd) | (0b01 << 25);
+        prop_assert!(decode(dfused).is_err(), "fmt=01 (double) fused illegal pre-E1-T07");
+    }
+}
 
 // ── REVERSE round-trip: decode(encode(instr)) == instr, with NEGATIVE immediates ──
 // The word round-trip encode(decode(w))==w is structurally BLIND to immediate value /
