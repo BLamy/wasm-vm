@@ -98,6 +98,9 @@ pub struct Machine {
     /// (Only read on the real-CSR path; the quarantined zicsr-stub build has no S-mode.)
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     builtin_sbi: bool,
+    /// SBI console state (E2-T04): host output sink + input queue for DBCN/legacy console.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    sbi_state: sbi::SbiState,
 }
 
 impl Machine {
@@ -123,6 +126,7 @@ impl Machine {
             tick_accum: 0,
             plic: None,
             builtin_sbi: false,
+            sbi_state: sbi::SbiState::default(),
         })
     }
 
@@ -177,6 +181,21 @@ impl Machine {
     #[cfg(not(feature = "zicsr-stub"))]
     pub fn enable_builtin_sbi(&mut self) {
         self.builtin_sbi = true;
+    }
+
+    /// E2-T04: where SBI console output (DBCN + legacy putchar) goes — the same
+    /// [`dev::console::ConsoleSink`] trait the UART stub uses, so hosts wire both channels
+    /// to one terminal. Without a sink, SBI console output is dropped (machine still runs).
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn sbi_set_console(&mut self, sink: alloc::boxed::Box<dyn dev::console::ConsoleSink>) {
+        self.sbi_state.console_out = Some(sink);
+    }
+
+    /// E2-T04: queue host input bytes for SBI console reads (DBCN `console_read` / legacy
+    /// `getchar`). Non-blocking semantics are the callee's: an empty queue reads 0 / -1.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn sbi_push_input(&mut self, bytes: &[u8]) {
+        self.sbi_state.console_in.extend(bytes.iter().copied());
     }
 
     /// E2-T03 boot contract (ADR 0002): enter a supervisor payload the way OpenSBI `fw_jump`
@@ -426,9 +445,12 @@ impl Machine {
                         self.hart.regs.read(14),
                         self.hart.regs.read(15),
                     ];
-                    let ret = sbi::dispatch(eid, fid, &args);
+                    let ret = sbi::handle(&mut self.sbi_state, &mut self.bus, eid, fid, &args);
                     self.hart.regs.write(10, ret.error as u64); // a0
-                    self.hart.regs.write(11, ret.value as u64); // a1
+                    // Legacy extensions (EID < 0x10) clobber ONLY a0 (SBI v0.1 convention).
+                    if !sbi::is_legacy(eid) {
+                        self.hart.regs.write(11, ret.value as u64); // a1
+                    }
                     self.hart.regs.pc = self.hart.regs.pc.wrapping_add(4);
                     continue;
                 }

@@ -16,7 +16,7 @@ use wasm_vm_core::csr::{CsrOp, MEDELEG, MIDELEG, Priv, SATP, SSTATUS};
 use wasm_vm_core::dev::console::{Uart0Stub, VecSink};
 use wasm_vm_core::fdt::{build_virt_dtb, dtb_placement};
 use wasm_vm_core::platform::{Platform, virt};
-use wasm_vm_core::sbi::SBI_ERR_NOT_SUPPORTED;
+use wasm_vm_core::sbi::base::SPEC_VERSION;
 use wasm_vm_core::{Machine, RunOutcome};
 
 const RAM: usize = 128 * 1024 * 1024;
@@ -79,12 +79,18 @@ fn builtin_sbi_first_call_and_reset_state() {
         RunOutcome::MaxInstrs,
         "parked in `j .`, no escaping trap"
     );
+    // E2-T03 skeleton answered NOT_SUPPORTED here; E2-T04 implements Base, so the kernel's
+    // first call now gets the real answer: SUCCESS + spec version 2.0.
     assert_eq!(
-        m.hart().regs.read(10) as i64,
-        SBI_ERR_NOT_SUPPORTED,
-        "first SBI call answered NOT_SUPPORTED by the skeleton (a0)"
+        m.hart().regs.read(10),
+        0,
+        "Base get_spec_version: SBI_SUCCESS in a0"
     );
-    assert_eq!(m.hart().regs.read(11), 0, "a1 (value) = 0");
+    assert_eq!(
+        m.hart().regs.read(11) as i64,
+        SPEC_VERSION,
+        "a1 = spec version 2.0 (0x2000000)"
+    );
     assert_eq!(
         m.hart().regs.read(1),
         42,
