@@ -95,6 +95,8 @@ pub struct Machine {
     /// E2-T03 (ADR 0002): when set, the emulator IS the M-mode firmware — `ecall` from S-mode
     /// is answered by [`sbi::dispatch`] in Rust instead of being delivered to a guest M-mode
     /// handler. Off by default (bare-metal tests and RISCOF keep architectural delivery).
+    /// (Only read on the real-CSR path; the quarantined zicsr-stub build has no S-mode.)
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     builtin_sbi: bool,
 }
 
