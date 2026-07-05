@@ -99,10 +99,11 @@ export async function startLinuxBoot(opts = {}) {
     const machine = new WasmLinux(ramMib, kernel, initramfs, bootargs, (u8) => onOutput(u8));
 
     let stopped = false;
+    let paused = false;
     let resolveDone;
     const whenDone = new Promise((r) => (resolveDone = r));
     const tick = () => {
-      if (stopped) return;
+      if (stopped || paused) return;
       let res;
       try {
         res = machine.runChunk(quantum);
@@ -130,6 +131,21 @@ export async function startLinuxBoot(opts = {}) {
         stopped = true;
         resolveDone("stopped");
       },
+      // E2-T23: pause/resume the executor. Because guest `mtime` is a DETERMINISTIC retire-count
+      // clock (not a wall clock), pausing simply stops retiring instructions → guest monotonic
+      // time freezes and continues seamlessly on resume. No slew clamp, catch-up storm, or
+      // deadline reconciliation is possible — the "giant jump on resume" that wall-clock designs
+      // fear cannot occur here. The goldfish RTC (Date.now) keeps true wall time across the pause,
+      // so on resume `date` is correct while `uptime` reflects only executed time. See
+      // docs/timekeeping.md. main.js drives these from `visibilitychange` to idle a hidden tab.
+      pause: () => { paused = true; },
+      resume: () => {
+        if (paused && !stopped) {
+          paused = false;
+          setTimeout(tick, 0);
+        }
+      },
+      isPaused: () => paused,
       whenDone,
     };
   } catch (e) {
