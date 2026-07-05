@@ -3,7 +3,7 @@ id: E2-T09
 epic: 2
 title: Virtqueue implementation — split rings, descriptor chain walking, used-ring notify
 priority: 209
-status: pending
+status: implemented
 depends_on: [E2-T08]
 estimate: M
 capstone: false
@@ -58,4 +58,37 @@ run `dd` stress and verify used `len` fields match what ext4 expects (a wrong wr
 shows up as blk request retries in dmesg — grep for it; presence refutes).
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — worker — implemented
+
+**What landed.** `crates/core/src/dev/virtio/queue.rs` (dev/ is the codebase convention):
+`Virtqueue` (built from the T08 transport QueueState; size must be a nonzero power of two
+≤ max), `pop() -> Result<Option<DescriptorChain>, Violation>`, split fence-point used
+publication — `write_used_element` THEN `publish_used_idx` (named for the §2.7.13 ordering;
+`push_used` composes them), `interrupt_needed()` honoring avail.flags NO_INTERRUPT.
+`DescriptorChain` exposes readable()/writable() segment iterators + writable_len(); every
+segment is bounds-checked against DRAM through the bus. Policy documented in the module
+docs: INDIRECT not offered → Violation; EVENT_IDX not offered; readable-after-writable →
+Violation (mirrors QEMU "Incorrect order for descriptors"); zero-length descriptors
+tolerated with unchecked addr (no byte touched — QEMU maps them empty). Violation → the
+transport's new `protocol_violation()` (NEEDS_RESET + config-change, the documented T08
+policy).
+
+**Evidence (native 8/8, wasm mirror 1/1):**
+- normal chain pop/used publication with driver-order segments + counts;
+- fence ordering asserted via the split methods (element visible, idx unchanged, then idx);
+- **2^16 wrap: 70,000 buffers through a size-8 queue** (used.idx == 70000 mod 65536);
+- NO_INTERRUPT suppression + delivery when clear;
+- **full malformed matrix**: self-loop→ChainTooLong, next/head ≥ qsz→BadDescIndex, addr
+  past DRAM & addr+len wrapping 2^64→BadAddress, avail.idx jump > qsz→AvailIdxJump,
+  INDIRECT→Indirect, readable-after-writable→BadOrder, size 0/6/512→BadQueueSize;
+- zero-length + max-length (== qsz) chains;
+- **charter fuzzer**: 10^5 rounds, ~50% hostile tables (random addr/len/flags/next) vs
+  ~50% valid random chains — no panic, no hang (pop is ≤ qsz hops by construction), no OOB
+  (all access via the checked bus); sanity: >1000 pops AND >1000 rejections. (Round-1
+  self-catch: the fuzz driver itself had an AvailIdxJump bug — fresh queue vs cumulative
+  seq — fixed in the driver, not the engine.)
+- Gates: fmt, clippy ±--all-features, both wasm legs 0 FAILED.
+- Deferred honestly: QEMU virtio_queue_pop semantics were mirrored from its documented
+  behavior (zero-len, order error) — the critic should verify against the actual source;
+  dd/ext4 written-len stress → E2-T19 per the charter.

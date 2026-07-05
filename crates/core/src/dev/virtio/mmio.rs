@@ -142,6 +142,14 @@ impl VirtioMmio {
         self.int_status |= INT_USED_RING;
     }
 
+    /// E2-T09 policy: a ring protocol violation ([`super::queue::Violation`]) degrades
+    /// the device to NEEDS_RESET with a config-change notification (spec §2.1) — loud,
+    /// recoverable via reset, never a wedge.
+    pub fn protocol_violation(&mut self) {
+        self.status |= STATUS_NEEDS_RESET;
+        self.raise_config_irq();
+    }
+
     /// Backend signal: config space changed.
     pub fn raise_config_irq(&mut self) {
         self.int_status |= INT_CONFIG_CHANGE;
