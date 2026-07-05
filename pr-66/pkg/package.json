@@ -1,0 +1,21 @@
+{
+  "name": "wasm-vm-wasm",
+  "type": "module",
+  "description": "The wasm-bindgen boundary: everything browser-specific, nothing emulator-specific",
+  "version": "0.0.1",
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BLamy/wasm-vm"
+  },
+  "files": [
+    "wasm_vm_wasm_bg.wasm",
+    "wasm_vm_wasm.js",
+    "wasm_vm_wasm.d.ts"
+  ],
+  "main": "wasm_vm_wasm.js",
+  "types": "wasm_vm_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
