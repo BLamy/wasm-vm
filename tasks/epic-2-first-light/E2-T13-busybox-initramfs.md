@@ -3,7 +3,7 @@ id: E2-T13
 epic: 2
 title: Static busybox initramfs — minimal userland for first boot
 priority: 213
-status: implemented
+status: verified
 depends_on: [E2-T12]
 estimate: M
 capstone: false
@@ -85,3 +85,17 @@ emits `linux,initrd-start/end` from `Initrd` (E2-T02/T03) — unit-tested.
 **Deferred honestly:** the corrupt-byte "Initramfs unpacking failed" attack + the actual
 in-emulator initrd LOAD (Machine placing the cpio in RAM + reserving the region) land with
 E2-T15's boot; the placement math + DTB props are here and tested.
+
+### 2026-07-05 — verifier (cold critic) — CONFIRMED
+
+All 6 angles executed independently, none refuted. (1) Reproducibility: critic deleted the
+build volume AND cached tarball, rebuilt from scratch — both hashes byte-identical to
+committed (cpio.gz 35a74c93…, busybox 9958179c…). (2) Pinning: BBSHA256 b8cc24c9… matches
+busybox.net's published .sha256 exactly; fetch aborts on mismatch under set -e. (3) Boot:
+reaches `~ #`, shell $$=33 (not 1), ^C prints SURVIVED_CTRLC (system alive), ps shows PID 1
+= /init and the shell PID 33 = sh, clean Power down. (4) CHARTER DELIVERY ATTACK: flipped
+byte @575798 → kernel fails to unpack the initrd and panics `VFS: Unable to mount root fs`,
+never reaching the shell — proving the userland genuinely comes from `-initrd`, not a
+baked-in image. (5) cttyhack/setsid/vi/ps/mount all present in busybox --list. (6) shasum -c
+OK, static ELF, cpio -t clean, fdt tests 5/5, fmt/clippy ±--all-features clean, tree clean.
+E2-T15 deferral (reserved-region + in-emulator load) confirmed honest.
