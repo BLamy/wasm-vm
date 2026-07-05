@@ -193,15 +193,24 @@ impl Machine {
     /// hex, zero-padded to `2*granularity` digits. Only `granularity == 4` (the RISCOF default)
     /// is supported. Reads through the bus (so it goes through the same physical map the guest
     /// wrote); a byte outside RAM reads 0. `end` is rounded up to the next word.
-    pub fn signature(&mut self, begin: u64, end: u64, granularity: u32) -> Result<String, String> {
+    pub fn signature(
+        &mut self,
+        begin: u64,
+        end: u64,
+        granularity: u32,
+    ) -> Result<alloc::string::String, alloc::string::String> {
         use crate::bus::Bus;
         use core::fmt::Write as _;
+        // `String`/`format!` come from `alloc`, not the prelude, under the `no_std` (wasm)
+        // build — fully-qualify so this compiles in BOTH configs (E1-T24 gate caught a
+        // latent no_std break here: the E1-T20 signature dump used the bare prelude names,
+        // which silently broke `make wasm` until the Level-1 gate exercised the wasm leg).
         if granularity != 4 {
-            return Err(format!(
+            return Err(alloc::format!(
                 "unsupported --signature-granularity {granularity} (only 4)"
             ));
         }
-        let mut out = String::new();
+        let mut out = alloc::string::String::new();
         let mut a = begin & !3; // word-align the start
         while a < end {
             let w = self.bus.load32(a).unwrap_or(0);

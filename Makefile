@@ -3,7 +3,7 @@
 # disagree, that's a bug (E0-T02).
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke bench-l1 riscof diff-all diff-selftest diff-qemu \
-        exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve bench capstone-e0
+        exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve bench capstone-e0 level1-gate
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
