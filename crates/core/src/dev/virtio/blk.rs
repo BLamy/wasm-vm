@@ -44,6 +44,19 @@ pub const VIRTIO_BLK_F_FLUSH: u64 = 1 << 9;
 /// The 20-byte GET_ID serial (stable; zero-padded).
 pub const SERIAL: &[u8; 20] = b"wasmvm-blk0\0\0\0\0\0\0\0\0\0";
 
+/// E2-T19 `--blk-log`: one serviced virtio-blk request, for debugging fs corruption/stalls.
+#[derive(Debug, Clone, Copy)]
+pub struct BlkReq {
+    /// Request type: 0=IN(read) 1=OUT(write) 4=FLUSH 8=GET_ID, else the raw value.
+    pub rtype: u32,
+    /// Starting sector (512-byte units).
+    pub sector: u64,
+    /// Data bytes transferred (excludes the status byte).
+    pub len: u32,
+    /// virtio-blk status byte: 0=OK 1=IOERR 2=UNSUPP.
+    pub status: u8,
+}
+
 /// Shared blk state: the storage backend + the deferred kick flag.
 pub struct BlkState {
     pub backend: Box<dyn BlockBackend>,
@@ -55,6 +68,25 @@ pub struct BlkState {
     reset_pending: bool,
     /// FLUSH requests actually forwarded to the backend (lie-detector for F_FLUSH).
     pub flush_count: u64,
+    /// E2-T19: when `Some`, each serviced request is appended here for `--blk-log`. Off by
+    /// default (no cost, and no host-visible allocation on the hot path when disabled).
+    blk_log: Option<alloc::vec::Vec<BlkReq>>,
+}
+
+impl BlkState {
+    /// E2-T19: start recording serviced requests for `--blk-log`.
+    pub fn enable_log(&mut self) {
+        if self.blk_log.is_none() {
+            self.blk_log = Some(alloc::vec::Vec::new());
+        }
+    }
+    /// E2-T19: take + clear the recorded requests (the host drains + prints these).
+    pub fn take_log(&mut self) -> alloc::vec::Vec<BlkReq> {
+        self.blk_log
+            .as_mut()
+            .map(core::mem::take)
+            .unwrap_or_default()
+    }
 }
 
 /// Transport-facing half (owned by the VirtioMmio slot).
@@ -104,6 +136,7 @@ pub fn new(backend: Box<dyn BlockBackend>) -> (VirtioBlkDev, Rc<RefCell<BlkState
         kicked: false,
         reset_pending: false,
         flush_count: 0,
+        blk_log: None,
     }));
     (
         VirtioBlkDev {
@@ -284,6 +317,16 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
         }
         _ => (S_UNSUPP, 0), // DISCARD / WRITE_ZEROES / garbage types
     };
+
+    // E2-T19 --blk-log: record the serviced request (type/sector/len/status) when enabled.
+    if let Some(log) = state.blk_log.as_mut() {
+        log.push(BlkReq {
+            rtype,
+            sector,
+            len: data_written,
+            status,
+        });
+    }
 
     write_status(chain, bus, status_pos, status);
     Some(data_written + 1)

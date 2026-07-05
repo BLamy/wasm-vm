@@ -80,14 +80,10 @@ fi
 # 2e. Hostname.
 echo wasm-vm > "$ROOT/etc/hostname"
 
-# 2e2. Loopback-only networking. Without /etc/network/interfaces the `networking` service
-# crashes ("ifquery: could not parse …"); a loopback stanza lets it start cleanly (there is no
-# NIC until a later epic). Keeps `rc-status` free of crashed services.
-mkdir -p "$ROOT/etc/network"
-cat > "$ROOT/etc/network/interfaces" <<'IFACES'
-auto lo
-iface lo inet loopback
-IFACES
+# 2e2. NO networking. The E2-T12 kernel is built without CONFIG_NET (no network stack until a
+# later epic), so the `networking` service is not linked into any runlevel below — running it
+# on a netless kernel is pointless work that only slows the boot and litters the log with
+# `net.* unknown key` sysctl errors. (A NIC + networking arrives with the network epic.)
 
 # 2f. OpenRC runlevels — symlink the services a headless serial boot needs, tolerantly (only if
 # the init script exists, so a package-set change never breaks the build). /dev is auto-mounted
@@ -102,7 +98,7 @@ link_svc() { # $1=runlevel $2=service
   fi
 }
 for s in devfs dmesg mdev sysfs hwdrivers; do link_svc sysinit "$s"; done
-for s in modules hwclock swap hostname bootmisc syslog sysctl seedrng networking; do link_svc boot "$s"; done
+for s in modules hwclock swap hostname bootmisc syslog seedrng; do link_svc boot "$s"; done
 for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
 
 # 3. Pack into a reproducible ext4 (fixed UUID; mke2fs -d needs no privileges/loop mounts).

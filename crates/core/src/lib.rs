@@ -336,6 +336,23 @@ impl Machine {
         cell
     }
 
+    /// E2-T19 `--blk-log`: start recording virtio-blk requests (a no-op if no blk device is
+    /// attached). The host drains them with [`Self::drain_blk_log`].
+    pub fn enable_blk_log(&mut self) {
+        if let Some((state, _)) = &self.blk {
+            state.borrow_mut().enable_log();
+        }
+    }
+
+    /// E2-T19: take the virtio-blk request log recorded since the last drain (empty if
+    /// logging is off or no blk device is attached).
+    pub fn drain_blk_log(&mut self) -> alloc::vec::Vec<dev::virtio::blk::BlkReq> {
+        self.blk
+            .as_ref()
+            .map(|(s, _)| s.borrow_mut().take_log())
+            .unwrap_or_default()
+    }
+
     /// E2-T17: attach the syscon test finisher (`sifive,test0`) at
     /// [`platform::virt::TEST_BASE`], matching the DTB's `test@…` node + its
     /// `syscon-poweroff`/`syscon-reboot` children. A recognized write (`0x5555` poweroff,
