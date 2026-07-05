@@ -7,7 +7,7 @@
 use wasm_vm_core::Machine;
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
-use wasm_vm_core::csr::{CsrOp, MTVEC};
+use wasm_vm_core::csr::{CsrOp, MIE, MSTATUS, MTVEC};
 
 const CODE: u64 = DRAM_BASE;
 
@@ -43,6 +43,36 @@ fn exception_storm_fires_and_is_counted() {
         storm.window_traps > 5_000,
         "the firing window was hot: {} traps",
         storm.window_traps
+    );
+}
+
+/// An INTERRUPT storm (critic #1: these were structurally undetectable before — `storm_check`
+/// was wired only to the exception path). A CLINT timer with `mtimecmp=0` keeps MTIP pending
+/// forever; the handler is just `mret`, so every return re-takes the timer interrupt. The
+/// detector must fire, and the timer-interrupt (mcause 7) counter must be large.
+#[test]
+fn timer_interrupt_storm_is_detected() {
+    const HANDLER: u64 = DRAM_BASE + 0x2000;
+    let mut m = Machine::new(1024 * 1024);
+    let clint = m.enable_clint(1); // mtime advances one tick per retire
+    clint.borrow_mut().mtimecmp = 0; // MTIP = (mtime >= 0) = always pending
+    set_csr(&mut m, MTVEC, HANDLER);
+    set_csr(&mut m, MIE, 1 << 7); // MTIE
+    set_csr(&mut m, MSTATUS, 1 << 3); // mstatus.MIE
+    m.bus_mut().store32(HANDLER, 0x3020_0073).unwrap(); // mret → re-takes the pending timer
+    m.bus_mut().store32(CODE, 0x0000_006F).unwrap(); // jal x0,0 (never actually runs)
+    m.hart_mut().regs.pc = CODE;
+    // 3M retires (mrets) needed to fire; each cycle is [timer-int]+[mret] = 2 iterations.
+    let _ = m.run(8_000_000);
+    let s = m.irq_stats();
+    assert!(
+        s.int[7] > 1_000_000,
+        "timer (mcause 7) interrupt storm counted: int[7]={}",
+        s.int[7]
+    );
+    assert!(
+        s.last_storm.is_some(),
+        "an INTERRUPT storm fires the detector (was undetectable — critic #1)"
     );
 }
 

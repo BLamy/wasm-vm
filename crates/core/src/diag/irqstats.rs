@@ -53,6 +53,9 @@ pub struct IrqStats {
     window_traps: u64,
     window_start_retired: u64,
     consecutive_hot: u32,
+    /// PLIC claim counts at the start of the current window — subtracted from the live counts to
+    /// name the line hot IN THIS window (not the all-time leader; critic #2).
+    claims_window_start: [u64; NUM_IRQ],
 }
 
 impl Default for IrqStats {
@@ -69,6 +72,7 @@ impl Default for IrqStats {
             window_traps: 0,
             window_start_retired: 0,
             consecutive_hot: 0,
+            claims_window_start: [0; NUM_IRQ],
         }
     }
 }
@@ -115,7 +119,8 @@ impl IrqStats {
         self.wfi += 1;
     }
 
-    /// The PLIC source with the most claims, or `None` if no external IRQ has fired.
+    /// The PLIC source with the most CUMULATIVE claims (for the `--stats` dump). The storm
+    /// detector does NOT use this for naming — it uses per-window deltas (see `check_storm`).
     pub fn hottest_irq(&self) -> Option<(usize, u64)> {
         self.claims
             .iter()
@@ -125,11 +130,26 @@ impl IrqStats {
             .map(|(i, &c)| (i, c))
     }
 
-    /// Sliding-window storm check — call on the dispatch-quantum boundary (NOT per
-    /// instruction). A window closes once `window` instructions have retired; if it carried
-    /// more than `threshold` traps, that is a "hot" window. `needed` consecutive hot windows
-    /// fire a [`StormReport`] (and reset the streak so one storm reports once). Windows with
-    /// too few retirements to close yet are left open (returns `None`).
+    /// The PLIC source that claimed the MOST in the current window (live `claims` minus the
+    /// window-start snapshot) — this is what names a storming line correctly even if some other
+    /// line has a bigger lifetime total (critic #2).
+    fn hottest_irq_in_window(&self) -> Option<(usize, u64)> {
+        self.claims
+            .iter()
+            .zip(self.claims_window_start.iter())
+            .enumerate()
+            .map(|(i, (&now, &start))| (i, now.saturating_sub(start)))
+            .filter(|&(_, d)| d > 0)
+            .max_by_key(|&(_, d)| d)
+    }
+
+    /// Sliding-window storm check — call when a trap lands (interrupt OR exception). A window
+    /// closes once `window` instructions have retired; the trap RATE (`traps` normalized to the
+    /// window's actual retired length, since traps may be sparse) exceeding `threshold / window`
+    /// makes it a "hot" window. `needed` consecutive hot windows fire a [`StormReport`] naming
+    /// the line hot IN the firing window, and reset the streak (one storm reports once). Windows
+    /// too short to close yet return `None`. Callers should sync live PLIC claims into
+    /// [`Self::claims`] before calling so the naming is current.
     pub fn check_storm(&mut self, window: u64, threshold: u64, needed: u32) -> Option<StormReport> {
         let window = window.max(1);
         let retired_in_window = self.retired.saturating_sub(self.window_start_retired);
@@ -137,17 +157,23 @@ impl IrqStats {
             return None; // window still open
         }
         let traps = self.window_traps;
-        // Close the window.
+        let hot = self.hottest_irq_in_window();
+        // Close the window: reset trap count, advance retired baseline, snapshot claims.
         self.window_start_retired = self.retired;
         self.window_traps = 0;
-        if traps > threshold {
+        self.claims_window_start = self.claims;
+        // Rate normalization (critic #5): compare traps/retired to threshold/window without
+        // division — `traps * window > threshold * retired_in_window`.
+        let hot_window =
+            (traps as u128) * (window as u128) > (threshold as u128) * (retired_in_window as u128);
+        if hot_window {
             self.consecutive_hot += 1;
             if self.consecutive_hot >= needed {
                 self.consecutive_hot = 0;
                 let report = StormReport {
                     window_traps: traps,
                     window_retired: retired_in_window,
-                    hot_irq: self.hottest_irq(),
+                    hot_irq: hot,
                 };
                 self.last_storm = Some(report.clone());
                 return Some(report);
@@ -226,12 +252,17 @@ mod tests {
             for _ in 0..100 {
                 s.on_interrupt(9); // S-external
             }
-            s.on_claim(10); // UART line hot
+            s.on_claim(10); // UART claims once THIS window
             let r = s.check_storm(1000, 50, 3);
             // Only the 3rd window (3 consecutive hot) fires.
             if s.retired == 3000 {
                 let r = r.expect("storm fires on the 3rd consecutive hot window");
-                assert_eq!(r.hot_irq, Some((10, 3)), "names IRQ 10 as the hot line");
+                // Per-WINDOW delta (critic #2): 1 claim in the firing window, not the cumulative 3.
+                assert_eq!(
+                    r.hot_irq,
+                    Some((10, 1)),
+                    "names IRQ 10 as the hot line (this window)"
+                );
                 assert!(r.window_traps >= 100);
             } else {
                 assert!(r.is_none(), "no fire before 3 consecutive hot windows");
@@ -308,6 +339,36 @@ mod tests {
             "not idling → silent"
         );
         assert!(s.wfi_watchdog(true, true).is_none(), "timer armed → silent");
+    }
+
+    #[test]
+    fn naming_uses_the_window_not_the_lifetime_leader() {
+        // Critic #2: IRQ 10 claims heavily in windows 0-1 then goes quiet; IRQ 11 storms in
+        // windows 2-4. The firing window must name IRQ 11 (this-window delta), NOT IRQ 10
+        // (which still has the larger lifetime total).
+        let mut s = IrqStats::new();
+        let claim_pattern = [(10, 500), (10, 500), (11, 10), (11, 10), (11, 10)];
+        let mut fired = None;
+        for &(irq, n) in &claim_pattern {
+            for _ in 0..1000 {
+                s.on_retire();
+            }
+            for _ in 0..100 {
+                s.on_exception(2); // keep every window "hot" so the streak builds
+            }
+            for _ in 0..n {
+                s.on_claim(irq);
+            }
+            if let Some(r) = s.check_storm(1000, 50, 3) {
+                fired = Some(r);
+            }
+        }
+        let r = fired.expect("storm fired");
+        assert_eq!(
+            r.hot_irq.map(|(id, _)| id),
+            Some(11),
+            "names the line hot IN the firing window (11), not the lifetime leader (10)"
+        );
     }
 
     #[test]
