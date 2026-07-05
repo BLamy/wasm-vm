@@ -1,4 +1,25 @@
 export const RISCV_TESTS = [
+  // rv64mi-p — Machine-mode trap / CSR / PMP / misaligned suite. Runs on the REAL Epic-1 CSR
+  // file (the demo dropped the deprecated E0 `zicsr-stub`). Proves precise trap delivery
+  // (mcause/mepc/mtval + mret), Zicntr counters, PMP WARL, TVM/illegal-CSR virtualization,
+  // misaligned scalar load/store, and debug-spec mcontrol triggers — live in the browser.
+  // (rv64mi-p-instret_overflow is omitted: it needs the Sscofpmf LCOFI overflow interrupt.)
+  "rv64mi-p-breakpoint",
+  "rv64mi-p-csr",
+  "rv64mi-p-illegal",
+  "rv64mi-p-ld-misaligned",
+  "rv64mi-p-lh-misaligned",
+  "rv64mi-p-lw-misaligned",
+  "rv64mi-p-ma_addr",
+  "rv64mi-p-ma_fetch",
+  "rv64mi-p-mcsr",
+  "rv64mi-p-pmpaddr",
+  "rv64mi-p-sbreak",
+  "rv64mi-p-scall",
+  "rv64mi-p-sd-misaligned",
+  "rv64mi-p-sh-misaligned",
+  "rv64mi-p-sw-misaligned",
+  "rv64mi-p-zicntr",
   "rv64ua-p-amoadd_d",
   "rv64ua-p-amoadd_w",
   "rv64ua-p-amoand_d",

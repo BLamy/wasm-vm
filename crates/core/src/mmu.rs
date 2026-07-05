@@ -53,9 +53,10 @@ impl Access {
     }
 }
 
-/// satp.MODE values (§4.1.11): Bare = 0, Sv39 = 8, Sv48 = 9 (E1-T18).
+/// satp.MODE values (§4.1.11): Bare = 0, Sv39 = 8, Sv48 = 9 (E1-T18), Sv57 = 10 (E1-T28).
 const MODE_SV39: u64 = 8;
 const MODE_SV48: u64 = 9;
+const MODE_SV57: u64 = 10;
 const PTE_V: u64 = 1 << 0;
 const PTE_R: u64 = 1 << 1;
 const PTE_W: u64 = 1 << 2;
@@ -77,8 +78,10 @@ const fn canonical(va: u64, sign_bit: u32) -> bool {
 
 /// Translation parameters for the active mode, or `None` when the access is the identity (a
 /// Bare satp, an unsupported MODE, or an M-mode effective access). Returns
-/// `(levels, sign_bit, mode_tag)`: Sv39 → (3, 38, 8), Sv48 → (4, 47, 9). `mode_tag` tags TLB
-/// entries so a mode switch without an SFENCE.VMA can never serve a cross-mode stale hit.
+/// `(levels, sign_bit, mode_tag)`: Sv39 → (3, 38, 8), Sv48 → (4, 47, 9), Sv57 → (5, 56, 10).
+/// `mode_tag` tags TLB entries so a mode switch without an SFENCE.VMA can never serve a
+/// cross-mode stale hit. (satp MODE is WARL-gated in `csr.rs`, so only supported modes reach
+/// here — an unsupported MODE never got written to satp and falls to Bare/identity.)
 fn mode_params(csr: &Csrs, eff: Priv) -> Option<(usize, u32, u8)> {
     if matches!(eff, Priv::M) {
         return None;
@@ -86,6 +89,7 @@ fn mode_params(csr: &Csrs, eff: Priv) -> Option<(usize, u32, u8)> {
     match csr.satp() >> 60 {
         MODE_SV39 => Some((3, 38, MODE_SV39 as u8)),
         MODE_SV48 => Some((4, 47, MODE_SV48 as u8)),
+        MODE_SV57 => Some((5, 56, MODE_SV57 as u8)),
         _ => None, // Bare (0) or any unsupported MODE → identity
     }
 }

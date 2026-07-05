@@ -113,7 +113,7 @@ fuzz-diff-smoke:
 # xterm.js (offline, no CDN), and copy the browser-run guest ELFs. Reproducible from a
 # cold clone with only Rust + wasm-pack + npm.
 web-build:
-	wasm-pack build crates/wasm --target web --features=zicsr-stub
+	wasm-pack build crates/wasm --target web
 	cd web && npm ci --no-audit --no-fund
 	mkdir -p web/pkg web/assets/riscv-tests
 	cp crates/wasm/pkg/* web/pkg/

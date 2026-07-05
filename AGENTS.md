@@ -56,6 +56,20 @@ in-flight at a time; a task's `depends_on` must all be `verified` before startin
 3. **Implement.** Gates in ascending cost, any failure returns to the top:
    `cargo fmt --check` → `cargo clippy -- -D warnings` → native tests →
    `cargo build --target wasm32-unknown-unknown` (+ wasm tests where they exist).
+3a. **Browser-impacting work ⇒ prove it in the browser, and show it on the demo.** If a change
+   touches anything a user can reach through the demo (the wasm surface, a new ISA capability,
+   an epic's completion, an MMIO device, the console/boot path), you MUST:
+   (a) **Update `web/` to surface the new capability** so the demo page keeps proving the whole
+       machine works. Add the new live riscv-tests binaries to `web/riscv-tests.js`, and update
+       the roadmap panel manifest `web/roadmap.js` (flip a capability to `verified`, add a `group`/
+       `filter` so it lights up **live** from the in-browser suite, or move an epic's status). The
+       demo is the at-a-glance monitor — it must never silently fall behind what's landed.
+   (b) **Playwright-verify the built page**: `make web-build`, serve `web/`, load it with the
+       Playwright MCP, assert **zero console errors** (a favicon 404 is fine), the suite reaches
+       `126 passed, 0 failed` (or the new total), and the roadmap pips you touched show
+       `live`/`verified` — one screenshot for the record. Keep it to a single load-and-assert
+       pass; don't rebuild the world. Cite the result in your Verification log entry.
+   Non-browser work (pure tooling, compliance harness, docs) skips this gate.
 4. **Self-validate freely.** Drive the code however you want — ad-hoc runs, printf, scratch
    binaries. This inner loop is yours; nothing here is evidence.
 5. **Record the final happy run.** When satisfied, run the *same* validation one more time

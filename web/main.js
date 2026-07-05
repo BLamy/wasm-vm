@@ -5,6 +5,7 @@
 
 import init, { WasmMachine, version, bench } from "./pkg/wasm_vm_wasm.js";
 import { RISCV_TESTS } from "./riscv-tests.js";
+import { ROADMAP } from "./roadmap.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -39,7 +40,7 @@ const hoverName = document.getElementById("hover-name");
 const hoverStatus = document.getElementById("hover-status");
 const hoverDetail = document.getElementById("hover-detail");
 
-const GROUP_ORDER = ["rv64ui-p", "rv64um-p", "rv64ua-p", "rv64uf-p", "rv64ud-p", "rv64uc-p"];
+const GROUP_ORDER = ["rv64ui-p", "rv64um-p", "rv64ua-p", "rv64uf-p", "rv64ud-p", "rv64uc-p", "rv64mi-p"];
 
 // A test tap: every byte delivered to the terminal is also recorded here so an automated
 // check can assert byte-exact delivery independent of how xterm.js renders it (angle 5).
@@ -205,6 +206,103 @@ function updateSuiteSummary() {
         groupDone === names.length
           ? `${groupPass} pass, ${groupFail} fail`
           : `${groupDone}/${names.length} done`;
+    }
+  }
+
+  refreshRoadmapLive();
+}
+
+// ── Roadmap progress panel ──────────────────────────────────────────────────
+// Renders the 9-epic capability manifest (roadmap.js). Capabilities bound to a live
+// riscv-tests group re-derive their status from the browser suite results after a run:
+// a static "verified" row is promoted to "live" (all bound tests passed here) or flagged
+// "regressed" (any failed). Rows with no bound group keep their offline evidence (RISCOF/CI).
+const roadmapGrid = document.getElementById("roadmap-grid");
+const roadmapSub = document.getElementById("roadmap-sub");
+const roadmapCaps = [];
+
+function makeEl(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+// The live riscv-tests binaries a capability is proven by: names under its group prefix,
+// optionally narrowed to those whose name includes one of `filter`.
+function capLiveNames(cap) {
+  if (!cap.group) return [];
+  return RISCV_TESTS.filter((name) => {
+    if (!name.startsWith(cap.group)) return false;
+    if (!cap.filter) return true;
+    return cap.filter.some((f) => name.includes(f));
+  });
+}
+
+function renderRoadmap() {
+  const doneEpics = ROADMAP.filter((e) => e.status === "done").length;
+  roadmapSub.textContent =
+    `${doneEpics} / ${ROADMAP.length} epics complete · bound capabilities light up live as the suite runs`;
+  roadmapGrid.replaceChildren();
+  roadmapCaps.length = 0;
+
+  for (const epic of ROADMAP) {
+    const card = makeEl("div", `epic-card ${epic.status}`);
+    const head = makeEl("div", "epic-head");
+    head.append(
+      makeEl("span", "epic-tag", epic.epic),
+      makeEl("span", "epic-name", epic.title),
+      makeEl("span", "epic-state",
+        epic.status === "done" ? "complete" : epic.status === "next" ? "in progress" : "planned"),
+    );
+    const list = makeEl("ul", "cap-list");
+    for (const cap of epic.caps) {
+      const row = makeEl("li", "cap");
+      const pip = makeEl("span", `cap-pip ${cap.status}`);
+      const body = makeEl("div");
+      body.append(makeEl("span", "cap-name", cap.name));
+      const evEl = cap.evidence ? makeEl("span", "cap-ev", cap.evidence) : null;
+      if (evEl) body.append(evEl);
+      row.append(pip, body);
+      list.append(row);
+      roadmapCaps.push({
+        pip,
+        evEl,
+        base: { status: cap.status, evidence: cap.evidence },
+        names: capLiveNames(cap),
+      });
+    }
+    card.append(head, makeEl("div", "epic-blurb", epic.blurb), list);
+    roadmapGrid.append(card);
+  }
+}
+
+function refreshRoadmapLive() {
+  for (const rc of roadmapCaps) {
+    if (rc.names.length === 0) continue; // no live binding — keep static evidence
+    let pass = 0;
+    let done = 0;
+    for (const name of rc.names) {
+      const status = suiteResults.get(name)?.status;
+      if (status === "pass") { pass += 1; done += 1; }
+      else if (status === "fail" || status === "error") { done += 1; }
+    }
+    let cls = rc.base.status;
+    let ev = rc.base.evidence;
+    let evCls = "cap-ev";
+    if (done > 0 && pass < done) {
+      cls = "regressed";
+      ev = `${done - pass} of ${rc.names.length} FAILED in-browser`;
+      evCls = "cap-ev regressed";
+    } else if (done === rc.names.length && done > 0) {
+      cls = "live";
+      ev = `${pass}/${rc.names.length} passing · live in browser`;
+      evCls = "cap-ev live";
+    }
+    rc.pip.className = `cap-pip ${cls}`;
+    if (rc.evEl) {
+      rc.evEl.textContent = ev;
+      rc.evEl.className = evCls;
     }
   }
 }
@@ -460,6 +558,7 @@ suiteStopBtn.addEventListener("click", () => {
   setSuiteStatus("stopping...");
 });
 renderSuiteHeatmap();
+renderRoadmap();
 setInteractiveState();
 
 // Boot: init the wasm module, then fetch the embedded default hello.elf.

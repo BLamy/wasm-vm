@@ -595,10 +595,13 @@ impl Hart {
     pub fn reset(&mut self, reset_vector: u64) {
         self.regs = XRegs::default();
         self.regs.pc = reset_vector;
-        // Sv48 support is a hardware config bit, not architectural state — carry it over a reset.
+        // Sv48/Sv57 support are hardware config bits, not architectural state — carry them over
+        // a reset (E1-T18/T28).
         let sv48 = self.csr.sv48;
+        let sv57 = self.csr.sv57;
         self.csr = crate::csr::Csrs::at_reset();
         self.csr.sv48 = sv48;
+        self.csr.sv57 = sv57;
         self.resv = None;
         self.fregs = fregs::FRegs::default();
         // Reset flushes the TLB — the walker will re-fill it from the reset page tables.

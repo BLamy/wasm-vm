@@ -1,5 +1,5 @@
-//! Software TLB (E1-T17): an ASID-tagged, set-associative cache in front of the Sv39 walker
-//! (E1-T16) that makes translation amortized-O(1) across the Linux context-switch hot path,
+//! Software TLB (E1-T17): an ASID-tagged, set-associative cache in front of the Sv39/Sv48/Sv57
+//! walker (E1-T16) that makes translation amortized-O(1) across the Linux context-switch hot path,
 //! plus the invalidation scopes SFENCE.VMA drives.
 //!
 //! Design choices (documented per the task charter, Priv §4.2.1):
@@ -23,10 +23,11 @@
 //! until software issues SFENCE.VMA. OS context-switch code relies on this — it fences (or
 //! switches to a fresh ASID) precisely because the hardware does not.
 
-/// The VPN page tag is masked to the widest scheme (Sv48 VPN = 36 bits, VA[47:12]); an Sv39 VA's
-/// upper VPN bits are its sign extension (all equal to bit 38 when canonical), so the mask never
-/// conflates two distinct canonical Sv39 pages, and the `mode` tag separates the two schemes.
-const VPN_MASK: u64 = (1 << 36) - 1;
+/// The VPN page tag is masked to the widest scheme (Sv57 VPN = 45 bits, VA[56:12]); a narrower
+/// scheme's upper VPN bits are its sign extension (all equal to the top canonical bit), so the
+/// mask never conflates two distinct canonical pages, and the `mode` tag separates the schemes.
+/// (Was `1<<36` for Sv48 — too narrow for Sv57, which aliased VAs differing only in VA[56:48].)
+const VPN_MASK: u64 = (1 << 45) - 1;
 const NSETS: usize = 16;
 const WAYS: usize = 4;
 
@@ -38,10 +39,10 @@ struct Slot {
     asid: u64,
     /// The leaf PTE the walk validated (permission + PPN + A/D/G bits).
     pte: u64,
-    /// Leaf level: 0 → 4 KiB, 1 → 2 MiB, 2 → 1 GiB, 3 → 512 GiB (Sv48).
+    /// Leaf level: 0 → 4 KiB, 1 → 2 MiB, 2 → 1 GiB, 3 → 512 GiB, 4 → 256 TiB (Sv57).
     level: u8,
     global: bool,
-    /// The satp MODE the entry was walked under (8 = Sv39, 9 = Sv48). A lookup requires a mode
+    /// The satp MODE the entry was walked under (8 = Sv39, 9 = Sv48, 10 = Sv57). A lookup requires a mode
     /// match, so a mode switch without SFENCE.VMA (T18) never serves a cross-mode stale hit.
     mode: u8,
 }
@@ -110,9 +111,10 @@ impl Tlb {
         (vpn as usize) & (NSETS - 1)
     }
 
-    /// The most page sizes any supported scheme has (Sv48: level 0..=3). Sv39 never fills level
-    /// 3, so probing it there simply misses.
-    const LEVELS: u8 = 4;
+    /// The most page sizes any supported scheme has (Sv57: level 0..=4). A narrower scheme never
+    /// fills the top levels, so probing them there simply misses. (Was 4 for Sv48 — one short of
+    /// Sv57's level-4 256 TiB superpage, so those leaves never served a hit and re-walked.)
+    const LEVELS: u8 = 5;
 
     /// The superpage-aligned page number: `vpn` with its low `9 * level` bits cleared. A leaf at
     /// `level` is tagged and indexed by this so ANY 4 KiB page inside the superpage finds it.
@@ -121,7 +123,7 @@ impl Tlb {
         (vpn >> sh) << sh
     }
 
-    /// Look up a cached leaf for `vpn` under `asid` in translation `mode` (8 = Sv39, 9 = Sv48); a
+    /// Look up a cached leaf for `vpn` under `asid` in translation `mode` (8 = Sv39, 9 = Sv48, 10 = Sv57); a
     /// global entry matches any ASID. Probes each page size (a superpage entry serves its whole
     /// range) and requires a mode match. Counts a hit or a miss — a miss is exactly one page-table
     /// walk (see `walks`).

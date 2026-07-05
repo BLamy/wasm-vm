@@ -228,6 +228,9 @@ pub struct Csrs {
     /// is an all-or-nothing no-op (the Linux `set_satp_mode` probe reads back the old value).
     /// Preserved across `Hart::reset`.
     pub sv48: bool,
+    /// Whether Sv57 (5-level paging, satp MODE=10) is supported (E1-T28). Like `sv48`, a WARL
+    /// switch: when false a `satp` write with MODE=10 is a no-op. Preserved across `Hart::reset`.
+    pub sv57: bool,
     /// Observable hooks for the test PROBE CSR.
     pub probe_reads: u64,
     pub probe_value: u64,
@@ -276,6 +279,7 @@ impl Csrs {
             time: 0,
             pmp: crate::pmp::Pmp::default(),
             sv48: true, // Sv48 supported by default; a Machine/harness may gate it off.
+            sv57: true, // Sv57 supported by default (E1-T28).
             probe_reads: 0,
             probe_value: 0,
             // Triggers reset disabled: tdata1 reads back type=2 (mcontrol) with no match bits.
@@ -879,8 +883,11 @@ impl Csrs {
             // Sv48/Sv57 support. Supported MODEs: Bare (0), Sv39 (8), and Sv48 (9) iff configured.
             // A mode change does NOT flush the TLB (SFENCE.VMA is required, T17).
             SATP => {
+                // satp MODE is WARL (§4.1.11): only supported modes commit; an unsupported MODE
+                // leaves satp unchanged (Bare/previous). Bare(0), Sv39(8), Sv48(9, if enabled),
+                // Sv57(10, if enabled — E1-T28).
                 let mode = v >> 60;
-                if mode == 0 || mode == 8 || (mode == 9 && self.sv48) {
+                if mode == 0 || mode == 8 || (mode == 9 && self.sv48) || (mode == 10 && self.sv57) {
                     self.warl_set(SATP, v);
                 }
             }
