@@ -89,6 +89,33 @@ pub enum ExitReason {
     Fail(u16),
 }
 
+/// E2-T21: why laying out a Linux boot triple failed. Returned by [`Machine::place_and_boot`]
+/// so every host (CLI, wasm) reports the same specific cause instead of re-deriving placement.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BootError {
+    /// The `--ram-mib` size produced an invalid platform map.
+    PlatformInvalid,
+    /// The kernel's runtime footprint (`.bss` included) does not fit above `KERNEL_BASE`.
+    KernelTooBig,
+    /// `kernel_end` is so large that 2 MiB-aligning the initrd above it would wrap.
+    KernelEndOverflow,
+    /// The initrd does not fit in the gap between the kernel and the DTB.
+    InitrdNoFit,
+    /// The DTB does not fit near the top of RAM.
+    DtbNoFit,
+    /// A blob write (initrd/DTB) hit a bus fault.
+    Load(bus::BusFault),
+}
+
+/// E2-T21: where the boot triple landed in DRAM (for host-side diagnostics/logging).
+#[derive(Debug, Clone, Copy)]
+pub struct BootLayout {
+    pub kernel_end: u64,
+    pub initrd: Option<fdt::Initrd>,
+    pub dtb_addr: u64,
+    pub dtb_len: usize,
+}
+
 /// A full Level-0 machine: one hart on a system bus, plus optional HTIF exit
 /// watching. Grown from the E0-T01 placeholder — the `new`/`ram_len` surface is
 /// preserved (E0-T01's verified tests and the wasm wrapper depend on it).
@@ -524,6 +551,73 @@ impl Machine {
     /// A thin wrapper over the RAM loader escape hatch used by the boot assembler.
     pub fn load_blob(&mut self, addr: u64, bytes: &[u8]) -> Result<(), bus::BusFault> {
         self.bus.ram_mut().write_slice(addr, bytes)
+    }
+
+    /// E2-T21: lay out the Linux boot triple in DRAM and enter it — the SHARED assembly both
+    /// the native CLI and the wasm boundary call, so the (subtle, drift-prone) placement lives
+    /// in exactly one place. Loads the kernel `Image` at `KERNEL_BASE`, places the initrd on
+    /// the 2 MiB PMD boundary above the kernel's runtime footprint (clearing the memblock
+    /// reservation — see [`Self::load_kernel_image`]), builds + places the DTB near the top of
+    /// RAM (probing its length with a placeholder initrd so its address is stable), writes both
+    /// blobs, and calls [`Self::boot_supervisor`] with `a1 = dtb_addr`. Device wiring
+    /// (clint/plic/uart/rtc/virtio/syscon/SBI) is the CALLER's job — do it before this. Returns
+    /// the [`BootLayout`] for logging.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn place_and_boot(
+        &mut self,
+        kernel: &[u8],
+        initrd: Option<&[u8]>,
+        bootargs: &str,
+    ) -> Result<BootLayout, BootError> {
+        let plat = platform::Platform::try_new(self.ram_len() as u64)
+            .map_err(|_| BootError::PlatformInvalid)?;
+        let kernel_end = self
+            .load_kernel_image(kernel)
+            .map_err(|_| BootError::KernelTooBig)?;
+        const PMD_SIZE: u64 = 2 * 1024 * 1024;
+        let initrd_floor = kernel_end
+            .checked_add(PMD_SIZE - 1)
+            .map(|v| v & !(PMD_SIZE - 1))
+            .ok_or(BootError::KernelEndOverflow)?;
+
+        let (dtb, dtb_addr, placed) = match initrd {
+            Some(bytes) => {
+                // Probe the DTB length with placeholder initrd props (same props → identical
+                // length), place the DTB, then the initrd below it, then rebuild with real vals.
+                let probe =
+                    fdt::build_virt_dtb(&plat, bootargs, Some(fdt::Initrd { start: 0, end: 0 }));
+                let dtb_addr =
+                    fdt::dtb_placement(&plat, probe.len() as u64).ok_or(BootError::DtbNoFit)?;
+                let place = fdt::initrd_placement(initrd_floor, dtb_addr, bytes.len() as u64)
+                    .ok_or(BootError::InitrdNoFit)?;
+                let dtb = fdt::build_virt_dtb(&plat, bootargs, Some(place));
+                debug_assert_eq!(
+                    dtb.len(),
+                    probe.len(),
+                    "DTB length changed with real initrd"
+                );
+                (dtb, dtb_addr, Some(place))
+            }
+            None => {
+                let dtb = fdt::build_virt_dtb(&plat, bootargs, None);
+                let dtb_addr =
+                    fdt::dtb_placement(&plat, dtb.len() as u64).ok_or(BootError::DtbNoFit)?;
+                (dtb, dtb_addr, None)
+            }
+        };
+
+        if let (Some(place), Some(bytes)) = (placed, initrd) {
+            self.load_blob(place.start, bytes)
+                .map_err(BootError::Load)?;
+        }
+        self.load_blob(dtb_addr, &dtb).map_err(BootError::Load)?;
+        self.boot_supervisor(0, dtb_addr);
+        Ok(BootLayout {
+            kernel_end,
+            initrd: placed,
+            dtb_addr,
+            dtb_len: dtb.len(),
+        })
     }
 
     /// Borrow the hart / bus for test rigs and the CLI (seeding instructions,

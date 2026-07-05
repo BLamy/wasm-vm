@@ -21,7 +21,7 @@ use std::sync::mpsc;
 
 use clap::Args;
 use wasm_vm_core::dev::console::ConsoleSink;
-use wasm_vm_core::{Machine, RunOutcome, fdt, platform};
+use wasm_vm_core::{Machine, RunOutcome, platform};
 
 use crate::file_backend;
 
@@ -216,13 +216,6 @@ fn assemble(
     ExitCode,
 > {
     let ram_bytes = a.ram_mib.saturating_mul(1024 * 1024);
-    let plat = match platform::Platform::try_new(ram_bytes as u64) {
-        Ok(p) => p,
-        Err(e) => {
-            eprintln!("wasm-vm: invalid platform ({} MiB RAM): {e:?}", a.ram_mib);
-            return Err(ExitCode::from(2));
-        }
-    };
     let mut m = Machine::new(ram_bytes);
     m.set_storm_detect(!a.no_storm_detect); // E2-T20
 
@@ -273,101 +266,50 @@ fn assemble(
     m.sbi_set_console(Box::new(console.clone()));
 
     // --- lay out the boot triple: Image @ KERNEL_BASE, then initrd, then DTB near top ---
-    let kernel_end = match m.load_kernel_image(kernel) {
-        Ok(end) => end,
+    // Lay out kernel + initrd + DTB and enter S-mode via the SHARED core assembler (same code
+    // the wasm boundary uses — the placement lives in exactly one place).
+    let initrd_slice = initrd.as_deref();
+    let layout = match m.place_and_boot(kernel, initrd_slice, &a.append) {
+        Ok(l) => l,
         Err(e) => {
-            eprintln!(
-                "wasm-vm: kernel ({} bytes) does not fit in {} MiB RAM: {e:?}",
-                kernel.len(),
-                a.ram_mib
-            );
+            let msg = match e {
+                wasm_vm_core::BootError::KernelTooBig => format!(
+                    "kernel ({} bytes) runtime footprint does not fit in {} MiB RAM",
+                    kernel.len(),
+                    a.ram_mib
+                ),
+                wasm_vm_core::BootError::InitrdNoFit => format!(
+                    "initrd ({} bytes) does not fit between the kernel and the DTB — grow --ram-mib",
+                    initrd_slice.map_or(0, |b| b.len())
+                ),
+                wasm_vm_core::BootError::DtbNoFit => "DTB does not fit in RAM".to_string(),
+                wasm_vm_core::BootError::KernelEndOverflow => {
+                    "kernel_end too large to align an initrd above".to_string()
+                }
+                wasm_vm_core::BootError::PlatformInvalid => {
+                    format!("invalid platform for {} MiB RAM", a.ram_mib)
+                }
+                wasm_vm_core::BootError::Load(f) => format!("blob placement failed: {f:?}"),
+            };
+            eprintln!("wasm-vm: {msg}");
             return Err(ExitCode::from(2));
         }
     };
-
-    // The DTB grows by a fixed amount when initrd props are present, so probe its length with
-    // a placeholder initrd (same props → identical length), place it, place the initrd below
-    // it, then rebuild with the real start/end.
-    // RISC-V maps and RESERVES the kernel image in 2 MiB (PMD) granules, so its memblock
-    // reservation rounds `kernel_end` up to the next 2 MiB boundary. An initrd placed flush
-    // against `image_size` still falls inside that rounded-up reservation → the kernel logs
-    // "overlaps in-use memory region" and disables it. Start the initrd on the 2 MiB boundary
-    // above the kernel so it clears the reservation entirely.
-    // `load_kernel_image` already rejects a `kernel_end` past top-of-RAM, so the round-up
-    // below cannot wrap for any real image; `checked_add` keeps that true even for a corrupt
-    // header that slipped through — a wrapped-low floor could otherwise place the initrd over
-    // the kernel.
-    const PMD_SIZE: u64 = 2 * 1024 * 1024;
-    let Some(initrd_floor) = kernel_end
-        .checked_add(PMD_SIZE - 1)
-        .map(|v| v & !(PMD_SIZE - 1))
-    else {
-        eprintln!("wasm-vm: kernel_end {kernel_end:#x} too large to align an initrd above");
-        return Err(ExitCode::from(2));
-    };
-
-    let (dtb, dtb_addr, placed_initrd) = match &initrd {
-        Some(bytes) => {
-            let probe =
-                fdt::build_virt_dtb(&plat, &a.append, Some(fdt::Initrd { start: 0, end: 0 }));
-            let Some(dtb_addr) = fdt::dtb_placement(&plat, probe.len() as u64) else {
-                eprintln!("wasm-vm: DTB does not fit in RAM");
-                return Err(ExitCode::from(2));
-            };
-            let Some(place) = fdt::initrd_placement(initrd_floor, dtb_addr, bytes.len() as u64)
-            else {
-                eprintln!(
-                    "wasm-vm: initrd ({} bytes) does not fit between kernel_end={kernel_end:#x} and DTB={dtb_addr:#x} — grow --ram-mib",
-                    bytes.len()
-                );
-                return Err(ExitCode::from(2));
-            };
-            let dtb = fdt::build_virt_dtb(&plat, &a.append, Some(place));
-            debug_assert_eq!(
-                dtb.len(),
-                probe.len(),
-                "DTB length changed with real initrd"
-            );
-            (dtb, dtb_addr, Some(place))
-        }
-        None => {
-            let dtb = fdt::build_virt_dtb(&plat, &a.append, None);
-            let Some(dtb_addr) = fdt::dtb_placement(&plat, dtb.len() as u64) else {
-                eprintln!("wasm-vm: DTB does not fit in RAM");
-                return Err(ExitCode::from(2));
-            };
-            (dtb, dtb_addr, None)
-        }
-    };
-
-    if let Some(place) = placed_initrd {
-        let bytes = initrd.as_ref().expect("initrd present when placed");
-        if let Err(e) = m.load_blob(place.start, bytes) {
-            eprintln!("wasm-vm: cannot place initrd at {:#x}: {e:?}", place.start);
-            return Err(ExitCode::from(2));
-        }
-    }
-    if let Err(e) = m.load_blob(dtb_addr, &dtb) {
-        eprintln!("wasm-vm: cannot place DTB at {dtb_addr:#x}: {e:?}");
-        return Err(ExitCode::from(2));
-    }
 
     eprintln!(
-        "wasm-vm: booting kernel={} bytes @ {:#x} (footprint_end={kernel_end:#x}), initrd={} bytes @ {}, dtb={} bytes @ {:#x}, {} MiB RAM",
+        "wasm-vm: booting kernel={} bytes @ {:#x} (footprint_end={:#x}), initrd={} bytes @ {}, dtb={} bytes @ {:#x}, {} MiB RAM",
         kernel.len(),
         platform::virt::KERNEL_BASE,
+        layout.kernel_end,
         initrd.as_ref().map_or(0, |b| b.len()),
-        placed_initrd.map_or("none".to_string(), |p| format!(
+        layout.initrd.map_or("none".to_string(), |p| format!(
             "{:#x}..{:#x}",
             p.start, p.end
         )),
-        dtb.len(),
-        dtb_addr,
+        layout.dtb_len,
+        layout.dtb_addr,
         a.ram_mib,
     );
-
-    // Enter S-mode at KERNEL_BASE with a0=hartid, a1=DTB (ADR 0002 boot contract).
-    m.boot_supervisor(0, dtb_addr);
     Ok((m, uart))
 }
 
