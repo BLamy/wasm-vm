@@ -3,7 +3,7 @@ id: E2-T04
 epic: 2
 title: SBI Base extension + DBCN debug console + legacy console putchar/getchar
 priority: 204
-status: implemented
+status: verified
 depends_on: [E2-T03]
 estimate: M
 capstone: false
@@ -85,3 +85,20 @@ NEVER blocks; run loop writes ONLY a0 for EID<0x10 — `sbi::is_legacy`). Machin
   test suffices here").
 - Gates: fmt clean; clippy --workspace --all-targets (both with and WITHOUT --all-features)
   clean; wasm32 mirror (base probe / dbcn validation / legacy semantics) 3/3.
+
+### 2026-07-05 — verifier (cold critic) — CONFIRMED
+
+Six angles executed, none refuted. (1) Spec sources fetched: DBCN chapter's own error table
+says INVALID_PARAM for bad buffers (matches; current OpenSBI master agrees); probe/spec_version/
+partial-write/getchar -1 all match the ratified text. (2) Critic's own biased fuzz: 200,000
+REAL S-mode ecalls through the run loop (EIDs biased to implemented exts × adversarial args,
+sink attached, input queued) with per-call invariants incl. a byte-exact console-length check —
+zero violations. (3) OpenSBI differential: hand-assembled probing stub run against BOTH real
+OpenSBI v1.3 (booted on this emulator) and the built-in SBI — matching on probe(DBCN)=1,
+probe(PMU)=0+SUCCESS, unknown-FID=-2; divergences adjudicated: spec 2.0-vs-1.0 (version skew,
+the call's purpose), DBCN MMIO/wrap acceptance (OpenSBI v1.3 root-domain catch-all ACCEPTS
+hostile buffers — read our UART regs! — current OpenSBI master rejects like we do; task
+charter mandates rejection), legacy getchar (UART-stub artifact, ours matches Linux's v0.1
+convention). (4) a1-clobber + validation-precedes-emission audited in code AND fuzz. (5) All
+gates green (full core suite zero FAILED, fmt, clippy ±all-features, wasm 3/3). (6) probe()
+confirmed single-source, plan pinned by test, earlycon deferral honest.
