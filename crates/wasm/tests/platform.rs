@@ -39,7 +39,15 @@ fn irq_layout_on_wasm32() {
         assert_eq!(Platform::virtio_base(i), 0x1000_1000 + i * 0x1000);
     }
     // A crafted overlap is detected on wasm32 too.
-    let a = Region { name: "a", base: 0x1000, len: 0x1000 };
-    let b = Region { name: "b", base: 0x1800, len: 0x1000 };
+    let a = Region {
+        name: "a",
+        base: 0x1000,
+        len: 0x1000,
+    };
+    let b = Region {
+        name: "b",
+        base: 0x1800,
+        len: 0x1000,
+    };
     assert!(a.overlaps(&b));
 }

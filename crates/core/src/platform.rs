@@ -198,11 +198,31 @@ impl Platform {
     /// consult when attaching to the bus.
     pub fn regions(&self) -> Vec<Region> {
         let mut v = vec![
-            Region { name: "test", base: virt::TEST_BASE, len: virt::TEST_LEN },
-            Region { name: "rtc", base: virt::RTC_BASE, len: virt::RTC_LEN },
-            Region { name: "clint", base: virt::CLINT_BASE, len: virt::CLINT_LEN },
-            Region { name: "plic", base: virt::PLIC_BASE, len: virt::PLIC_LEN },
-            Region { name: "uart0", base: virt::UART0_BASE, len: virt::UART0_LEN },
+            Region {
+                name: "test",
+                base: virt::TEST_BASE,
+                len: virt::TEST_LEN,
+            },
+            Region {
+                name: "rtc",
+                base: virt::RTC_BASE,
+                len: virt::RTC_LEN,
+            },
+            Region {
+                name: "clint",
+                base: virt::CLINT_BASE,
+                len: virt::CLINT_LEN,
+            },
+            Region {
+                name: "plic",
+                base: virt::PLIC_BASE,
+                len: virt::PLIC_LEN,
+            },
+            Region {
+                name: "uart0",
+                base: virt::UART0_BASE,
+                len: virt::UART0_LEN,
+            },
         ];
         for i in 0..virt::VIRTIO_COUNT {
             v.push(Region {
@@ -215,6 +235,12 @@ impl Platform {
         v
     }
 }
+
+// Compile-time IRQ-map invariants (all-const, so kept out of the runtime tests where clippy would
+// flag the constant comparisons): no virtio source id collides with UART/RTC, and `riscv,ndev` is
+// large enough to route every source we use.
+const _: () = assert!(virt::UART0_IRQ > virt::VIRTIO_IRQ_BASE + (virt::VIRTIO_COUNT as u32 - 1));
+const _: () = assert!(virt::PLIC_NDEV >= virt::RTC_IRQ);
 
 #[cfg(test)]
 mod tests {
@@ -254,10 +280,22 @@ mod tests {
     /// of the map, can collide). Refutes adversarial check (2).
     #[test]
     fn overlap_and_overflow_are_caught() {
-        let a = Region { name: "a", base: 0x1000, len: 0x1000 };
-        let b = Region { name: "b", base: 0x1800, len: 0x1000 }; // straddles a's end
+        let a = Region {
+            name: "a",
+            base: 0x1000,
+            len: 0x1000,
+        };
+        let b = Region {
+            name: "b",
+            base: 0x1800,
+            len: 0x1000,
+        }; // straddles a's end
         assert!(a.overlaps(&b) && b.overlaps(&a));
-        let c = Region { name: "c", base: 0x2000, len: 0x1000 }; // touches a end-to-base
+        let c = Region {
+            name: "c",
+            base: 0x2000,
+            len: 0x1000,
+        }; // touches a end-to-base
         assert!(!a.overlaps(&c), "adjacent (touching) is not overlap");
 
         assert_eq!(Platform::try_new(0), Err(PlatformError::DramSize(0)));
@@ -279,9 +317,5 @@ mod tests {
         // Slot 7 (last) is IRQ 8, base 0x1000_8000 — matches QEMU virt.
         assert_eq!(Platform::virtio_irq(7), 8);
         assert_eq!(Platform::virtio_base(7), 0x1000_8000);
-        // No virtio IRQ collides with UART/RTC.
-        assert!(virt::UART0_IRQ > virt::VIRTIO_IRQ_BASE + (virt::VIRTIO_COUNT as u32 - 1));
-        // ndev is large enough to route every source we use.
-        assert!(virt::PLIC_NDEV >= virt::RTC_IRQ);
     }
 }
