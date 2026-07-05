@@ -9,7 +9,7 @@ use wasm_vm_core::bus::mmap::DRAM_BASE;
 use wasm_vm_core::hart::Hart;
 use wasm_vm_core::mmio::SystemBus;
 use wasm_vm_core::ram::Ram;
-use wasm_vm_core::trace::TraceSink;
+use wasm_vm_core::trace::{TraceRecord, TraceSink};
 
 /// Records every retirement it is told about.
 #[derive(Default)]
@@ -17,8 +17,8 @@ struct Counter {
     events: Vec<(u64, u32)>,
 }
 impl TraceSink for Counter {
-    fn on_retire(&mut self, pc: u64, insn: u32) {
-        self.events.push((pc, insn));
+    fn retire(&mut self, r: &TraceRecord) {
+        self.events.push((r.pc, r.insn));
     }
 }
 

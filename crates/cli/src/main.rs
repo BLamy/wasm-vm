@@ -1,3 +1,6 @@
+#[allow(dead_code)]
+mod trace_json;
+
 use clap::Parser;
 
 /// Native runner for the wasm-vm emulator core.

@@ -11,7 +11,7 @@ license.workspace = true
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-wasm-vm-core = { workspace = true }
+wasm-vm-core = { workspace = true, features = ["trace"] }
 wasm-bindgen = { workspace = true }
 log = { workspace = true }
 console_log = { workspace = true }
