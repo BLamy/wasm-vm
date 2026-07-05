@@ -32,23 +32,37 @@ execution time. This is expected, not a bug. To realign, the guest reads the RTC
 
 Numbers are environment-dependent (they scale with interpreter speed); the *shape* is the point.
 
-| Measurement | Observed | Meaning |
-|---|---|---|
-| `date` drift behind host, just after boot | **~12 s** | boot's wall time far exceeded guest execution time |
-| foreground guest/wall ratio, at the idle prompt | **~0.05** | at the near-idle prompt the guest is mostly in `WFI`, retiring little, so its clock advances at ~5% of wall (higher under CPU-bound load) |
-| guest `sleep 2` | **~40 s wall (~20×)** | a timer sleep spins `WFI` until retire-count `mtime` reaches the deadline; **there is no WFI fast-forward**, so idle guest-seconds cost ~20× wall here |
-| pause 12.4 s wall (tab hidden) | uptime **+0.30 s**, date **+0 s** | both guest clocks **froze** with execution — no jump, no catch-up |
+Two regimes, before and after the **WFI fast-forward** (E2-T23b, below):
 
-### The `sleep` slowness is the one real limitation
-Because there is no idle fast-forward, a sleeping/idle guest's clock crawls, so `sleep N` costs
-roughly `N / ratio` wall-seconds (~20× at idle in this environment). Native builds run near the
-calibrated rate (~100 MIPS ≈ 10 MHz × `clock_div`), so native `sleep` is close to real-time; the
-browser interpreter is ~20× slower, which is where the gap comes from. **Recommended follow-up:**
-a *deterministic* WFI fast-forward (tickless idle) — when the hart executes `WFI` with only a
-timer wakeup armed, advance `mtime` straight to the nearest armed deadline instead of spinning.
-This keeps native and wasm in lock-step (both fast-forward by the same state-derived amount, so
-the interrupt still lands at the same retire index) while making `sleep`/idle near-real-time. It
-is out of scope here (a core run-loop change needing RISCOF re-verification) but is the clean fix.
+| Measurement | Before fast-forward | After fast-forward (current) |
+|---|---|---|
+| guest `sleep 2` | ~40 s wall (**~20×**) | **~2.5 s wall (~1.2×)** — near real time |
+| guest `date` vs host after boot | ~12 s **behind** | ~**ahead** (idle compressed to ~0 wall) |
+| guest/wall ratio while idle | ~0.05 (clock crawls in `WFI`) | ≫1 (idle skipped; virtual time runs ahead) |
+| pause (tab hidden) | both clocks freeze | both clocks freeze (unchanged) |
+
+### The WFI fast-forward (E2-T23b) — fixes idle/sleep slowness, keeps determinism
+Originally there was no idle fast-forward, so a sleeping/idle guest's clock crawled: `sleep N` spun
+`WFI` until the retire-count `mtime` reached the deadline, costing ~`N / ratio` wall-seconds (~20× in
+the browser). `Machine::wfi_fast_forward()` (`crates/core/src/lib.rs`) fixes this: when a `WFI`
+retires with no interrupt pending, `mtime` jumps straight to the nearest armed timer deadline
+(`min(mtimecmp, stimecmp)`) so the timer fires the next boundary and the guest wakes immediately in
+wall-clock terms.
+
+This **keeps determinism**: the jump is a pure function of machine state (`mtime`, `mtimecmp`,
+`stimecmp`) with no host clock, so native and wasm fast-forward by the identical amount and every
+timer still lands at the same retire index on both. RISCOF signatures are unchanged (the jump alters
+only the idle spin count, not final state — verified: full suite 615/615, all rv64 architectural
+tests green). When no timer is armed (a genuine deadlock, caught by the WFI watchdog) it is a no-op.
+
+**Consequence — deterministic virtual time (like QEMU `icount`):** because idle is now compressed to
+~0 wall time, the guest clock runs *ahead* of real wall time instead of behind (measured ~118× the
+wall rate while idle). This is the inherent tradeoff of a *deterministic* fast-forward: making the
+guest track real wall time during idle would require a host-clock reference, which would break
+determinism (the rejected `performance.now()` design). Practical effects: `sleep`/idle are
+near-real-time and interactive; explicit timed waits like `read -t N` may expire early in wall-clock
+terms; `date` runs fast (resync with `hwclock -s`). Input remains prompt — host keystrokes/IRQs are
+sampled every run-loop boundary regardless of the clock jump.
 
 ## Suspend / background policy
 
@@ -64,7 +78,7 @@ Because `mtime` is a **retire-count** clock, this is trivially safe:
 - No slew clamp, catch-up budget, or `notify_resumed()` reconciliation is needed. The measured
   resume delivered zero stalls/lockups and a responsive shell (verified in the spec).
 - The goldfish RTC keeps true wall time across the gap (it is `Date.now()`), so on resume the RTC
-  reads correctly even though `date` (the execution-paced software clock) is still behind.
+  reads correctly even though `date` (the execution-paced software clock) has drifted from wall time.
 
 ## Acceptance-criteria reconciliation (honest)
 
@@ -72,8 +86,9 @@ The task file was written assuming a `performance.now()`-derived `mtime`; the pr
 **keep the deterministic retire-count clock** (determinism > wall-accurate time). Against that
 choice:
 
-- **#1 `sleep 5` in 5 s ±100 ms wall — NOT met by design.** Sleep is execution-paced (~20× at idle
-  here). Documented, not promised. The WFI fast-forward above is the path to meeting it.
+- **#1 `sleep 5` in ~5 s wall — met (loosely) by the WFI fast-forward.** A guest `sleep` is now
+  near-real-time (`sleep 2` ≈ 2.5 s, ~1.2×) instead of ~20×. It is not held to ±100 ms — the clock
+  is deterministic virtual time, not wall-locked — but the slowdown is gone.
 - **#2 background 60 s → no stall/storm, shell responsive, RTC correct — met.** Pause/resume froze
   both clocks cleanly; no rcu-stall/soft-lockup/storm; RTC (`Date.now`) unaffected.
 - **#3 `uptime` after background reflects the policy — met.** It reflects *executed* time (frozen

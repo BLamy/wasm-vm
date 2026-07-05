@@ -36,15 +36,15 @@ test("two-clock model: RTC wall-correct, mtime execution-paced, suspend-safe", a
   await expect(page.locator(rows)).toContainText("busybox userland up", { timeout: 180_000 });
   await expect(page.locator(rows)).toContainText("~ #");
 
-  // (A) The guest software clock (`date`) is EXECUTION-PACED, not wall-paced: Linux seeds it from
-  // the RTC at boot then advances it by the retire-count clocksource, so it runs BEHIND real wall
-  // time (never ahead). We assert it's behind and log the drift for docs/timekeeping.md — this is
-  // the documented consequence of the deterministic clock, not a defect.
+  // (A) The guest software clock (`date`) is EXECUTION-PACED via the deterministic retire-count
+  // clocksource. With the E2-T23b WFI fast-forward, idle is compressed to ~0 wall time, so the
+  // guest clock now runs AHEAD of real wall time (deterministic virtual time, à la QEMU icount) —
+  // the opposite of the pre-fast-forward lag. We only log the (signed) drift for docs; direction
+  // is a property of interpreter/idle ratio, not a correctness bound.
   const guestEpoch = parseInt(await readGuest(page, "date +%s"), 10);
   const hostEpoch = Math.floor(Date.now() / 1000);
-  const bootDrift = hostEpoch - guestEpoch;
-  console.log(`[timekeeping] guest \`date\` drift behind host after boot = ${bootDrift}s`);
-  expect(guestEpoch).toBeLessThanOrEqual(hostEpoch + 1); // never ahead of wall time
+  const signedDrift = guestEpoch - hostEpoch; // >0 ⇒ guest ahead of wall
+  console.log(`[timekeeping] guest \`date\` vs host after boot = ${signedDrift >= 0 ? "+" : ""}${signedDrift}s (>0 = ahead)`);
 
   // (B) Foreground guest/wall ratio: how much guest monotonic time passes per wall second while
   // running. Logged for the policy doc; asserted only monotonic + positive (the exact ratio is
@@ -65,7 +65,10 @@ test("two-clock model: RTC wall-correct, mtime execution-paced, suspend-safe", a
   const s0 = Date.now();
   expect(await readGuest(page, "sleep 2 && echo 99", 90000)).toBe("99");
   const sleepWall = (Date.now() - s0) / 1000;
-  console.log(`[timekeeping] guest 'sleep 2' completed in ${sleepWall.toFixed(1)}s wall (≈${(sleepWall / 2).toFixed(0)}× real time)`);
+  console.log(`[timekeeping] guest 'sleep 2' completed in ${sleepWall.toFixed(1)}s wall (≈${(sleepWall / 2).toFixed(1)}× real time)`);
+  // E2-T23b: the WFI fast-forward must make a guest sleep near-real-time. Pre-fix this was ~40 s
+  // (~20×); assert it now completes well under that (generous bound absorbs boot/interp variance).
+  expect(sleepWall).toBeLessThan(15);
 
   // (C) Suspend-safety, proven by a DIRECT freeze-probe (E2-T23 critic C4). Bounding the uptime
   // delta against raw wall time is vacuous — at the idle ratio (~0.05) the guest advances < 1s over

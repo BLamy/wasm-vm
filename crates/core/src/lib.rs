@@ -790,6 +790,47 @@ impl Machine {
         }
     }
 
+    /// E2-T23b: deterministic idle fast-forward ("tickless idle"). Called right after a `WFI`
+    /// retires with no interrupt pending (the boundary's `next_interrupt()` returned `None`).
+    /// Without this, an idle/sleeping guest spins `WFI`, and because `mtime` is the retire-count
+    /// clock it advances only one tick per `clock_div` WFI retirements — so a guest `sleep`
+    /// burns `deadline_ticks * clock_div` instructions of pure spin (≈20× real time in the slow
+    /// browser interpreter). Instead, jump `mtime` straight to the nearest armed timer deadline
+    /// (machine `mtimecmp` or the SBI S-timer `stimecmp`), so the timer fires on the very next
+    /// boundary and the guest wakes immediately in wall-clock terms.
+    ///
+    /// This preserves determinism: the jump is a pure function of machine state
+    /// (`mtime`, `mtimecmp`, `stimecmp`) with no host clock, so native and wasm fast-forward by
+    /// the identical amount and the timer still lands at the same retire index on both. Only the
+    /// *number of idle spin retirements* shrinks; the guest-visible `mtime` reaches the same
+    /// deadline it would have, just without the spin. When no timer is armed (a genuine deadlock,
+    /// caught by [`Self::wfi_watchdog_check`]) there is no deadline to jump to and this is a no-op.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn wfi_fast_forward(&mut self) {
+        let Some(clint) = &self.clint else { return };
+        // Nearest armed FUTURE deadline. A deadline already <= mtime is "due" — its interrupt is
+        // pending and WFI wakes next boundary anyway, so there is nothing to skip. `u64::MAX` is
+        // the "cancelled" sentinel for both compares.
+        let mut deadline: Option<u64> = None;
+        let mtime = {
+            let c = clint.borrow();
+            if c.mtimecmp != u64::MAX && c.mtimecmp > c.mtime {
+                deadline = Some(c.mtimecmp);
+            }
+            c.mtime
+        };
+        let stimecmp = self.sbi_state.stimecmp;
+        if stimecmp != u64::MAX && stimecmp > mtime {
+            deadline = Some(deadline.map_or(stimecmp, |d| d.min(stimecmp)));
+        }
+        if let Some(d) = deadline {
+            // Jump the machine clock to the deadline; next boundary re-evaluates MTIP/STIP as a
+            // level (mtime >= cmp) and delivers the timer. tick_accum (sub-tick remainder from
+            // retirements) is left untouched — whole-tick jumps are independent of the divider.
+            clint.borrow_mut().mtime = d;
+        }
+    }
+
     /// E2-T20: run the sliding-window interrupt-storm detector. Called only when a trap lands
     /// (event-driven, so zero cost while quiet — a trap during normal operation is rare, and
     /// during a storm the detector is exactly what we want running). Syncs the PLIC claim
@@ -922,6 +963,11 @@ impl Machine {
                     self.irqstats.on_wfi();
                     self.hart.last_was_wfi = false;
                     self.wfi_watchdog_check(); // deadlock watchdog (WFI + no wakeup armed)
+                    // E2-T23b: no interrupt was pending this boundary (next_interrupt returned
+                    // None above), so this WFI is a real idle wait. Skip the idle spin by jumping
+                    // mtime to the nearest armed timer deadline — deterministic, so native and
+                    // wasm agree. Turns a ~20× `sleep` into near-real-time. No-op if no timer armed.
+                    self.wfi_fast_forward();
                 }
             }
             if let Err(trap) = step_result {
