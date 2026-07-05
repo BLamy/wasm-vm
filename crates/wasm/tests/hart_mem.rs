@@ -64,30 +64,34 @@ fn extension_and_roundtrip_on_wasm32() {
 }
 
 #[wasm_bindgen_test]
-fn fault_causes_and_purity_on_wasm32() {
+fn misaligned_ram_succeeds_and_fault_purity_on_wasm32() {
+    // E1-T26: misaligned scalar loads/stores to RAM now SUCCEED on wasm too (byte-decomposed),
+    // identical to native — this test used to expect *AddrMisaligned faults.
     let (mut hart, mut bus) = machine();
     hart.regs.write(2, DATA);
-    hart.regs.write(1, 0xC0DE); // rd sentinel
-
-    // misaligned ld → cause 4, tval = ea, rd + pc untouched
+    hart.regs.write(3, 0x0123_4567_89AB_CDEF);
+    bus.store32(CODE, s_type(4, 3, 2, 0b011)).unwrap(); // sd x3, 4(x2) — misaligned, in RAM
+    hart.step(&mut bus).unwrap();
+    hart.regs.pc = CODE;
     bus.store32(CODE, i_type(4, 2, 0b011, 1, 0b0000011))
-        .unwrap();
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::LoadAddrMisaligned);
-    assert_eq!(t.tval, DATA + 4);
-    assert_eq!(hart.regs.read(1), 0xC0DE);
-    assert_eq!(hart.regs.pc, CODE);
+        .unwrap(); // ld x1, 4(x2) — misaligned
+    hart.step(&mut bus).unwrap();
+    assert_eq!(
+        hart.regs.read(1),
+        0x0123_4567_89AB_CDEF,
+        "misaligned sd→ld round-trip on wasm"
+    );
 
-    // misaligned sd → cause 6
-    bus.store32(CODE, s_type(4, 3, 2, 0b011)).unwrap();
-    let t = hart.step(&mut bus).unwrap_err();
-    assert_eq!(t.cause, Exception::StoreAddrMisaligned);
-
-    // wrap: rs1 = MAX-7, imm = +16 → wrapped tval, no panic (32-bit usize host)
+    // Purity on a GENUINE fault: an ALIGNED, out-of-range (wrapped) access faults ACCESS and
+    // leaves rd + pc untouched (rs1 = MAX-7, imm = +16 → wraps to 0x8, unmapped).
+    let (mut hart, mut bus) = machine();
+    hart.regs.write(1, 0xC0DE); // rd sentinel
     hart.regs.write(2, 0xFFFF_FFFF_FFFF_FFF8);
     bus.store32(CODE, i_type(16, 2, 0b011, 1, 0b0000011))
         .unwrap();
     let t = hart.step(&mut bus).unwrap_err();
     assert_eq!(t.cause, Exception::LoadAccessFault);
     assert_eq!(t.tval, 0x8);
+    assert_eq!(hart.regs.read(1), 0xC0DE, "rd untouched on fault");
+    assert_eq!(hart.regs.pc, CODE, "pc untouched on fault");
 }
