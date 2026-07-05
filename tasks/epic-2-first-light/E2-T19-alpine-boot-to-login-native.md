@@ -88,18 +88,32 @@ rootfs fix (`tools/rootfs-inner.sh`): dropped the `networking` + `sysctl` OpenRC
 are pure waste on our `CONFIG_NET`-off kernel (they slowed the boot and littered the log with
 `net.* unknown key` errors).
 
-**⚠️ Discovered bug (this is where "the guest becomes the test harness" pays off):** `bootmisc`
-fails during boot with `can't create /var/log/wtmp: Bad message` — an **ext4 EBADMSG** on a
-`metadata_csum`-checked block while creating a new inode under sustained boot-time virtio-blk
-load. General file I/O works (the `/root/marker.txt` write above succeeds), so this is a subtle
-**metadata read-after-write / FLUSH-ordering coherency** issue — exactly the failure surface
-this task predicts ("sustained virtio-blk traffic under real ext4 journaling"). `--blk-log` is
-the tool built to chase it (correlate the failing block's write vs read). It does NOT block the
-login capstone (boot continues to a working shell), but it is a real defect to root-cause.
+**Bug found & FIXED — ext4 `metadata_csum`, NOT the emulator (critic corrected my first
+diagnosis).** First boots showed `bootmisc` failing with `can't create /var/log/wtmp: Bad
+message` (ext4 EBADMSG creating a new inode). My initial write-up blamed a "virtio-blk
+read-after-write / FLUSH-ordering coherency bug under load" — **that was wrong.** The cold-clone
+critic refuted it from the code: the block device is **single-threaded, synchronous, and has no
+cache** — a write goes straight to the backing `Vec`/`mmap` and the next read reads the same
+bytes (proven by `virtio_blk.rs::out_then_in_roundtrip`, a byte-exact read-after-write test), so
+a coherency/ordering bug is *structurally impossible*. And the failure was **deterministic** —
+the same file every boot from a freshly-copied pristine image — which cannot be random runtime
+corruption; it points at data baked into the image. The critic named the cheap experiment
+(rebuild `-O ^metadata_csum`); I ran it:
+
+```
+# metadata_csum ON  → * Creating user login records .../var/log/wtmp: Bad message  [bootmisc FAILS]
+# metadata_csum OFF → * Creating user login records ... [ ok ]   →  wasm-vm login:   [CLEAN]
+```
+
+**Root cause:** the `mke2fs` 1.47 default `metadata_csum`(+`_seed`) produces checksums the 6.6.63
+kernel rejects on a new-inode allocation. **Fix:** `tools/rootfs-inner.sh` now builds the image
+with `-O ^metadata_csum` (plain ext4, the QEMU-rootfs convention). The whole OpenRC boot is then
+clean — no crashed services (only the benign mdev `hotplug` warning from `CONFIG_UEVENT_HELPER`
+being off). The emulator's block path is exonerated.
 
 **Acceptance status:** login capstone (boot→login→working root shell, ext4 root on virtio-blk,
-file I/O) **✓**. Remaining, gated on the `wtmp` EBADMSG root-cause: #2 (OpenRC free of crashed
-services — `bootmisc` currently fails), the corruption-hunt adversarial pass, and multi-run
-determinism. Wrong-password rejection + persistence-across-boot are quick follow-ups once the
-metadata coherency bug is fixed. QEMU-diff deferred (QEMU not on the dev host). Gates: core 95,
-virtio_blk 8 (incl. blk-log), clippy ±`--all-features`, fmt, determinism — all green.
+file I/O) **✓**; #2 (OpenRC free of crashed services) **✓** after the metadata_csum fix. Remaining:
+the corruption-hunt adversarial pass, multi-run determinism, wrong-password rejection, and
+persistence-across-boot — mechanical follow-ups (the fs is now clean). QEMU-diff deferred (QEMU
+not on the dev host). Gates: core 95, virtio_blk 8 (incl. blk-log), clippy ±`--all-features`,
+fmt, determinism — all green.

@@ -123,6 +123,11 @@ pub fn boot(a: BootArgs) -> ExitCode {
         None => None,
     };
 
+    // E2-T19 critic advisory: --blk-log without --drive can't trace anything (no blk device).
+    if a.blk_log && a.drive.is_none() {
+        eprintln!("wasm-vm: --blk-log has no effect without --drive (no virtio-blk device)");
+    }
+
     // Console + stdin reader are created ONCE and shared across reboots; only the Machine (RAM
     // + devices) is rebuilt fresh each boot. The `--drive` file is re-opened per boot, so block
     // state persists across reboot (documented) while RAM does not.

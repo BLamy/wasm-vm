@@ -102,8 +102,14 @@ for s in modules hwclock swap hostname bootmisc syslog seedrng; do link_svc boot
 for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
 
 # 3. Pack into a reproducible ext4 (fixed UUID; mke2fs -d needs no privileges/loop mounts).
+# `-O ^metadata_csum`: disable ext4 metadata checksums. mke2fs 1.47 enables them by default,
+# but a freshly-built csum image deterministically fails `EBADMSG` (Bad message) when the 6.6.63
+# kernel allocates a new inode (e.g. bootmisc creating /var/log/wtmp) — a metadata_csum(_seed)
+# build-vs-kernel interaction, NOT an emulator fault (the block backend is synchronous, no cache,
+# so a write is byte-visible to the next read; verified by the block/virtio-blk tests). Plain
+# ext4 without metadata_csum is what QEMU rootfs images conventionally use.
 rm -f /out/alpine-rootfs.ext4
-mke2fs -q -t ext4 -L root -U "$FS_UUID" -d "$ROOT" -E root_owner=0:0 /out/alpine-rootfs.ext4 "$IMG_SIZE"
+mke2fs -q -t ext4 -O ^metadata_csum -L root -U "$FS_UUID" -d "$ROOT" -E root_owner=0:0 /out/alpine-rootfs.ext4 "$IMG_SIZE"
 
 # 4. fsck must report the freshly built image CLEAN (no orphan inodes from the build).
 echo "--- fsck.ext4 -f -n ---"

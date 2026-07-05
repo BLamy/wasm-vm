@@ -35,8 +35,14 @@ We take **path (b)** from the task (apk.static cross-bootstrap), not path (a)
    authoritative applet set; we symlink each applet to `/bin/busybox` (suid-needing ones —
    `login`, `su`, `passwd`, `mount`, … — to `/bin/busybox.suid` from `busybox-suid`).
 3. The tree is configured for a headless serial console (see below).
-4. `mke2fs -d /rootfs -t ext4 -U <fixed-uuid> image.ext4 512M` packs the directory straight
-   into an ext4 image — no privileged loop mount, works in CI.
+4. `mke2fs -d /rootfs -t ext4 -O ^metadata_csum -U <fixed-uuid> image.ext4 512M` packs the
+   directory straight into an ext4 image — no privileged loop mount, works in CI.
+   **`-O ^metadata_csum`** (E2-T19): mke2fs 1.47 enables ext4 metadata checksums by default,
+   but a freshly-built csum image deterministically fails `EBADMSG` ("Bad message") when the
+   6.6.63 kernel allocates a new inode (bootmisc creating `/var/log/wtmp`) — a
+   `metadata_csum`(_seed) build-vs-kernel interaction, not an emulator fault (the block backend
+   is synchronous with no cache, so a write is byte-visible to the next read). Plain ext4 (the
+   QEMU-rootfs convention) boots cleanly.
 5. `fsck.ext4 -f -n` asserts the fresh image is **clean** (no build-orphaned inodes), and a
    `find … -exec file` scan asserts **no foreign (x86/aarch64) ELF** binaries slipped in.
 
