@@ -390,7 +390,10 @@ mod tests {
         let hits = bus.device_hits();
         assert_eq!(hits.len(), 1, "one device window");
         assert_eq!(hits[0].0, WIN_BASE, "reported base is the window base");
-        assert_eq!(hits[0].1, 6, "5 aligned + 1 misaligned window accesses counted, RAM/unmapped excluded");
+        assert_eq!(
+            hits[0].1, 6,
+            "5 aligned + 1 misaligned window accesses counted, RAM/unmapped excluded"
+        );
     }
 
     #[test]
