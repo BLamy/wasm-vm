@@ -3,7 +3,7 @@ id: E2-T23
 epic: 2
 title: Browser timekeeping — mtime from performance.now, throttling, suspend recovery
 priority: 223
-status: pending
+status: implemented
 depends_on: [E2-T16, E2-T21]
 estimate: M
 capstone: false
@@ -63,4 +63,35 @@ behavior refutes the doc too. Run the same soak natively and diff `sleep` accura
 browser may be looser but must be within the documented factor.
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — deterministic two-clock model documented + verified (PR #80)
+
+**Decision:** kept the deterministic retire-count `mtime` clock (determinism > wall-accuracy);
+rejected the task's `performance.now`/slew-clamp/`notify_resumed` design. No core change.
+`docs/timekeeping.md` records the model + measured numbers; `web/loader.js` adds pause/resume
+driven by `main.js` on `visibilitychange`; `web/tests/timekeeping.spec.js` verifies it.
+
+Two clocks (never derived from each other): mtime/clocksource = retired-instruction count
+(clock_div=10, 10 MHz timebase), execution-paced + deterministic; goldfish RTC = Date.now (E2-T16).
+Suspend-safe by construction: pausing freezes both clocks cleanly, no jump/storm/stall on resume.
+
+Measured (headless Chromium): `date` drifts ~12 s behind wall after boot; idle guest/wall ratio
+~0.05; guest `sleep 2` ~40 s wall (~20×) — no WFI fast-forward. Pause 6–12 s wall → executor
+genuinely frozen (freeze-probe: a command typed while paused stays absent, runs on resume).
+
+**Acceptance (honest):** #1 `sleep 5`=5 s±100 ms NOT met by design (execution-paced) — the
+deterministic WFI fast-forward follow-up (maintainer-requested: "fix the slowdown, keep the
+determinism") is the fix; #2 suspend health met; #3 uptime reflects executed time (policy); #4
+`date` monotonic met.
+
+### 2026-07-05 — cold-clone critic — C1/C2 CONFIRMED, C3/C4 found + fixed
+
+Critic confirmed doc accuracy against source (C1 two-clock mechanisms; C2 drift/no-resume-jump
+account) and REFUTED two of my claims — both fixed:
+- **C3** pause/resume double-schedule race (`resume()` guarded only on `paused` → a rapid
+  pause→resume while a tick was pending spawned a second concurrent loop). Fixed with a
+  `tickScheduled` idempotence flag.
+- **C4** the suspend assertions were vacuous (idle ratio ~0.05 → guest advances <1 s over a 12 s
+  window even if pause did nothing). Replaced with a direct freeze-probe that fails if pause is a
+  no-op. Verified green.
+Gates exit 0 (build/determinism/no-host-float/node --check); 0 files under crates/; web suite 5/5.
