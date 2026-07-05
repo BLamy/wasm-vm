@@ -41,7 +41,7 @@ mod tests {
         let reader = sink.clone();
         let mut st = SbiState {
             console_out: Some(Box::new(sink)),
-            console_in: Default::default(),
+            ..Default::default()
         };
         let r = handle(&mut st, EID_LEGACY_PUTCHAR, &[b'Z' as u64, 0, 0, 0, 0, 0]);
         assert_eq!((r.error, r.value), (0, 0));

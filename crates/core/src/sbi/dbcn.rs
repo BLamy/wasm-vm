@@ -81,7 +81,7 @@ mod tests {
         let reader = sink.clone();
         let state = SbiState {
             console_out: Some(Box::new(sink)),
-            console_in: Default::default(),
+            ..Default::default()
         };
         (state, SystemBus::new(Ram::new(RAM).unwrap()), reader)
     }

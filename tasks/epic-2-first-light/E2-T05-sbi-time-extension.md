@@ -3,7 +3,7 @@ id: E2-T05
 epic: 2
 title: SBI TIME extension — set_timer semantics driving the S-mode timer interrupt
 priority: 205
-status: pending
+status: implemented
 depends_on: [E2-T04]
 estimate: S
 capstone: false
@@ -51,4 +51,34 @@ test: boot Linux (once E2-T15 exists) and check `sleep 1` wall time and that
 or 0 (dead). A hang at "clocksource: riscv_clocksource" during any boot attempt refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — worker — implemented
+
+**Design.** `sbi/time.rs` set_timer stores the deadline in `SbiState::stimecmp` (reset
+u64::MAX = never). Delivery is a LEVEL the run loop derives EVERY instruction boundary
+(`Machine::sync_sbi_timer`): `mip.STIP = (mtime >= stimecmp)` — exactly the MTIP pattern.
+Consequences, all tested end-to-end via real S-mode guests (stvec handler counts deliveries,
+captures scause, sret):
+- past deadline → fires at the very next boundary (`past_deadline_fires_immediately_once`:
+  exactly 1 delivery, scause = 1<<63|5, back in S after sret);
+- u64::MAX cancel → zero deliveries over a 500k-instruction idle run, INCLUDING the charter
+  race (arm +1 tick then cancel immediately — `cancel_wins_the_race_zero_deliveries`);
+- back-to-back set_timer REPLACES (unit `set_timer_replaces_and_cancels`);
+- "clears pending STIP" is automatic and guest-visible: STIP pends with SIE off, a future
+  set_timer clears it before the guest's next instruction, sip never written by the guest
+  (`set_timer_clears_pending_stip`); STIP not guest-forgeable (`guest_cannot_forge_stip`);
+- +1000-tick deadline fires in the (5k, 15k]-instruction window at CLOCK_DIV=10
+  (`future_deadline_fires_on_schedule` — latency bounded in instructions).
+- `boot_supervisor` now grants `mcounteren = 0x7` (CY/TM/IR) — kernels rdtime for
+  sched_clock; OpenSBI grants the same (guests rdtime in these tests prove it works).
+- Deadline-aware stepping: the interpreter's per-boundary level check IS the event loop —
+  no busy-poll beyond the existing per-instruction boundary work (documented in
+  sync_sbi_timer).
+- Timebase single-source (acceptance #4): `dtb_timebase_is_the_single_constant` asserts the
+  DTB blob carries be32(virt::TIMEBASE_FREQ_HZ); fdt.rs consumes the same constant by name.
+- probe(TIME) flipped to 1 (single-source `sbi::probe`; base + mod tests updated).
+
+**Gates:** native sbi lib 12/12; sbi_timer 6/6; wasm32 mirror (same guests) 2/2;
+interrupts/privilege/boot_contract/sbi_console regression 4 suites 0 FAILED; fmt clean;
+clippy ±--all-features clean. QEMU+OpenSBI interrupt-count diff + Linux /proc/interrupts:
+critic charter / E2-T15.

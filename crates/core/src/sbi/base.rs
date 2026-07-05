@@ -66,7 +66,7 @@ mod tests {
         for (eid, want) in [
             (EID_BASE, 1i64),
             (EID_DBCN, 1),
-            (EID_TIME, 0),
+            (EID_TIME, 1), // E2-T05
             (EID_HSM, 0),
             (0x0A, 0),
             (0x4442_0000, 0),

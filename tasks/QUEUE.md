@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E2-T05** — SBI TIME extension — set_timer semantics driving the S-mode timer interrupt
 1. **E2-T07** — 16550A UART — full register set, FIFOs, interrupt state machine, PLIC wiring
 1. **E2-T08** — virtio-mmio v2 transport — register file, device lifecycle, feature negotiation
 1. **E2-T10** — Pluggable block backend trait — mmap'd file (native) and ArrayBuffer image (browser)
@@ -82,7 +81,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] `202` [E2-T02](epic-2-first-light/E2-T02-fdt-devicetree-builder.md) — FDT/devicetree builder in Rust emitting a dtc-clean DTB for the virt platform *(deps: E2-T01)*
 - [x] `203` [E2-T03](epic-2-first-light/E2-T03-firmware-strategy-decision.md) — Firmware decision — built-in SBI in the emulator vs OpenSBI as guest payload *(deps: E2-T01)*
 - [x] `204` [E2-T04](epic-2-first-light/E2-T04-sbi-base-and-debug-console.md) — SBI Base extension + DBCN debug console + legacy console putchar/getchar *(deps: E2-T03)*
-- [ ] `205` [E2-T05](epic-2-first-light/E2-T05-sbi-time-extension.md) — SBI TIME extension — set_timer semantics driving the S-mode timer interrupt *(deps: E2-T04)*
+- [?] `205` [E2-T05](epic-2-first-light/E2-T05-sbi-time-extension.md) — SBI TIME extension — set_timer semantics driving the S-mode timer interrupt *(deps: E2-T04)*
 - [ ] `206` [E2-T06](epic-2-first-light/E2-T06-sbi-ipi-rfence-hsm.md) — SBI IPI, RFENCE, and HSM extensions (single-hart-correct, SMP-shaped) *(deps: E2-T05)*
 - [ ] `207` [E2-T07](epic-2-first-light/E2-T07-uart-16550.md) — 16550A UART — full register set, FIFOs, interrupt state machine, PLIC wiring *(deps: E2-T01)*
 - [ ] `208` [E2-T08](epic-2-first-light/E2-T08-virtio-mmio-transport.md) — virtio-mmio v2 transport — register file, device lifecycle, feature negotiation *(deps: E2-T01)*
