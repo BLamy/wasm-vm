@@ -48,6 +48,11 @@ pub const SERIAL: &[u8; 20] = b"wasmvm-blk0\0\0\0\0\0\0\0\0\0";
 pub struct BlkState {
     pub backend: Box<dyn BlockBackend>,
     kicked: bool,
+    /// Transport reset seen (Status=0) — the run-loop service must DROP its cached ring
+    /// view before touching anything (critic round-1: a stale Virtqueue survived reset,
+    /// leaving the device silently deaf after a legitimate reset + re-setup — the Linux
+    /// reboot/driver-reload path — or corrupting guest memory if the rings moved).
+    reset_pending: bool,
     /// FLUSH requests actually forwarded to the backend (lie-detector for F_FLUSH).
     pub flush_count: u64,
 }
@@ -85,7 +90,9 @@ impl VirtioDevice for VirtioBlkDev {
         v
     }
     fn reset(&mut self) {
-        self.state.borrow_mut().kicked = false;
+        let mut st = self.state.borrow_mut();
+        st.kicked = false;
+        st.reset_pending = true; // run loop drops the cached ring view (critic round-1)
     }
 }
 
@@ -95,6 +102,7 @@ pub fn new(backend: Box<dyn BlockBackend>) -> (VirtioBlkDev, Rc<RefCell<BlkState
     let state = Rc::new(RefCell::new(BlkState {
         backend,
         kicked: false,
+        reset_pending: false,
         flush_count: 0,
     }));
     (
@@ -305,6 +313,12 @@ pub fn service(
 ) {
     {
         let mut st = state.borrow_mut();
+        // Reset tear-down happens even without a kick: the stale ring view must never
+        // survive a Status=0 write (critic round-1 refutation).
+        if st.reset_pending {
+            st.reset_pending = false;
+            *vq = None;
+        }
         if !st.kicked {
             return;
         }

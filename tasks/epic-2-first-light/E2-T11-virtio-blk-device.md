@@ -3,7 +3,7 @@ id: E2-T11
 epic: 2
 title: virtio-blk device — request parsing, config space, status semantics
 priority: 211
-status: implemented
+status: verified
 depends_on: [E2-T09, E2-T10]
 estimate: M
 capstone: false
@@ -86,3 +86,28 @@ wasm32 mirror 1/1. Gates: fmt, clippy ±--all-features, both wasm legs 0 FAILED.
 acceptance text itself ("with E2-T15's kernel"). The QEMU differential (identical guest
 script both sides) is likewise post-T15; the critic should attack the request engine
 directly today.
+
+### 2026-07-05 — verifier (cold critic) — REFUTED → fixed (stale ring view after reset)
+
+**The refutation (real bug, Linux reboot/driver-reload path):** the Machine's cached
+Virtqueue survived a transport reset — after Status=0 + full re-setup, the stale
+last_avail_idx made pop() report idle and requests vanished SILENTLY (status byte stayed
+at poison, no NEEDS_RESET); with relocated rings it would read freed ring memory and write
+status bytes into whatever now lives there. The "reset rebuilds" claims in the module doc
+and task log were written, not tested (the committed test's recovery clause was never
+exercised). **Fix:** `BlkState::reset_pending` set by the transport-half reset, consumed
+FIRST in service() (even without a kick) → cached view dropped; the critic's full
+reset+re-setup repro is now a committed regression (`virtio_blk_torture.rs`, adopted
+8-test suite).
+
+**Confirmed by the critic:** spec §2.7.8.2 used.len conformance (ours = bytes written;
+QEMU over-reports full writable size — known non-conformance, not Linux-observable since
+virtio_blk ignores len); GET_ID both 21 full / short-room prefix+OK matching QEMU's
+MIN(iov,20); FLUSH sector≠0 divergence acceptable (driver-side MUST; Linux always sends 0);
+RO/OOR/unaligned → IOERR both sides. Torture 7/8 (the 8th being the refutation): 1+1+14
+three-way split header; OUT across 5 odd-sized descriptors byte-exact; status straddling
+descriptors; capacity-crossing IOERR with last-sector still readable; short GET_ID.
+Kick semantics: kick-before-ready safe; N publishes+1 kick → all N; 1 publish+N kicks →
+exactly one (no double execution). --drive: rw/ro boot hello.elf to exit 0; garbage/missing
+→ clean exit 2. All gates green (34 wasm suites, 0 FAILED). Deferrals honest (mkfs/fsck/
+serial/dmesg conditioned on E2-T15 by the acceptance text itself).
