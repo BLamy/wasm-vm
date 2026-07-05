@@ -394,9 +394,16 @@ impl BootProfiler {
                 }
             }
         }
-        // Keep only a short tail so a marker split across quanta still matches, without unbounded growth.
+        // Keep only a short tail so a marker split across quanta still matches, without unbounded
+        // growth. Snap the cut to a char boundary: `from_utf8_lossy` yields valid UTF-8, but a
+        // multibyte char (e.g. a U+FFFD from a non-ASCII dmesg byte) straddling `len-256` would make
+        // `split_off` PANIC — a profiling flag must never be able to crash the emulator.
         if self.tail.len() > 512 {
-            self.tail = self.tail.split_off(self.tail.len() - 256);
+            let mut cut = self.tail.len() - 256;
+            while cut < self.tail.len() && !self.tail.is_char_boundary(cut) {
+                cut += 1;
+            }
+            self.tail = self.tail.split_off(cut);
         }
     }
 
