@@ -1288,6 +1288,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasm-vm-fuzz"
+version = "0.0.1"
+dependencies = [
+ "clap",
+]
+
+[[package]]
 name = "wasm-vm-wasm"
 version = "0.0.1"
 dependencies = [

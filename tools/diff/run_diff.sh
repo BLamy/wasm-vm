@@ -15,11 +15,13 @@ here="$(cd "$(dirname "$0")" && pwd)"
 repo_root="$(cd "${here}/../.." && pwd)"
 
 level="commit"
+isa="rv64i"   # Spike ISA string; override for extension streams (E1-T21 fuzzer: rv64im, …)
 max_arg=()
 elf=""
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --level) level="$2"; shift 2 ;;
+    --isa) isa="$2"; shift 2 ;;
     --max) max_arg=(--max "$2"); shift 2 ;;
     -*) echo "run_diff: unknown flag $1" >&2; exit 2 ;;
     *) elf="$1"; shift ;;
@@ -59,7 +61,7 @@ ours_trapped=()
 # rel path so the container's /work bind-mount resolves it.
 rel_elf="$(python3 -c 'import os,sys; print(os.path.relpath(os.path.abspath(sys.argv[1]), sys.argv[2]))' "${elf}" "${repo_root}")"
 "${repo_root}/tools/toolchain/run.sh" -- bash -c \
-  "spike --isa=rv64i -m0x80000000:0x8000000 -l --log-commits '${rel_elf}' 2>&1 >/dev/null" \
+  "spike --isa=${isa} -m0x80000000:0x8000000 -l --log-commits '${rel_elf}' 2>&1 >/dev/null" \
   > "${spike_raw}" 2>/dev/null || true
 
 python3 "${here}/normalize_spike.py" --entry "${entry}" < "${spike_raw}" > "${spike_norm}"

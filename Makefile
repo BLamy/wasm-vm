@@ -3,7 +3,7 @@
 # disagree, that's a bug (E0-T02).
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke bench-l1 riscof diff-all diff-selftest diff-qemu \
-        exhaustive fuzz-decode-smoke web-build web-serve bench capstone-e0
+        exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve bench capstone-e0
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -100,6 +100,14 @@ exhaustive:
 # + cargo-fuzz (`cargo install cargo-fuzz`); seed corpus in fuzz/corpus/decode/.
 fuzz-decode-smoke:
 	cd fuzz && cargo +nightly fuzz run decode -- -runs=10000000 -max_total_time=180
+
+# Differential fuzz smoke (E1-T21): sweep a fixed seed range of constrained-random RV64IM
+# streams in lockstep against Spike. Needs Docker (toolchain image) + a release CLI. Fails
+# (exit 3) on ANY divergence, which auto-minimizes to a reproducer in tests/fuzz-regressions/.
+# Fixed seeds ⇒ reproducible; widen --to for a deeper campaign.
+fuzz-diff-smoke:
+	cargo build --release -p wasm-vm-cli
+	cargo run -p wasm-vm-fuzz -- campaign --from 0 --to 32 --count 128 --isa rv64im
 
 # Browser demo (E0-T23): build the wasm ES module into web/pkg, install the pinned
 # xterm.js (offline, no CDN), and copy the browser-run guest ELFs. Reproducible from a
