@@ -56,6 +56,8 @@ jobs:
       - run: bash tools/riscv-tests/check-quarantine.sh
       # Exhaustive 2^32 decode sweep (E0-T21): no panic + legal count == analytic tally.
       - run: cargo test -p wasm-vm-core --release --test exhaustive -- --ignored
+      # Verify tooling integrity (E0-T25): every task has a verify target, no green-washing.
+      - run: bash tools/verify/self_check.sh
 
   wasm:
     runs-on: ubuntu-latest

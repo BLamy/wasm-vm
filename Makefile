@@ -98,3 +98,98 @@ web-serve:
 # the node/browser rows come from web/bench-node.mjs and the demo page's Bench button.
 bench:
 	cargo bench -p wasm-vm-cli --bench interp
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Adversarial-verification tooling (E0-T25). Each `verify-E0-Tnn` runs that task's
+# acceptance checks mechanically and exits NONZERO on any failure. Composed from the
+# shared _v-* recipes below. `verify-all` runs the union once (make builds each
+# prerequisite at most once per invocation); `verify-list` maps targets↔tasks and fails
+# if any task file lacks a target. Tools that are missing SKIP loudly and exit nonzero
+# unless VERIFY_ALLOW_SKIP=1 — silence is forbidden.
+# ─────────────────────────────────────────────────────────────────────────────
+.PHONY: verify-all verify-list \
+        _v-fmt _v-clippy _v-test _v-features _v-wasm _v-exhaustive _v-zerocost \
+        _v-riscv _v-diff _v-web _v-bench _v-toolchain _v-fuzz _v-meta
+
+# skip helper: $(call v_skip,<reason>) — used inside an else branch.
+v_skip = echo "SKIPPED: $(1)"; [ "$(VERIFY_ALLOW_SKIP)" = "1" ] || exit 1
+
+_v-fmt: ; cargo fmt --all --check
+_v-clippy: ; cargo clippy --workspace --all-targets --all-features -- -D warnings
+_v-test: ; cargo test --workspace
+_v-features:
+	cargo build -p wasm-vm-core --no-default-features
+	cargo build -p wasm-vm-core --no-default-features --features std,trace
+_v-exhaustive: ; cargo test -p wasm-vm-core --release --test exhaustive -- --ignored
+_v-zerocost: ; bash tools/check-zero-cost.sh --selftest
+_v-riscv:
+	cargo test -p wasm-vm-core --features zicsr-stub --test riscv_tests
+	bash tools/riscv-tests/check-quarantine.sh
+
+_v-wasm:
+	@if command -v wasm-pack >/dev/null 2>&1; then \
+	  wasm-pack test --node crates/wasm; \
+	else $(call v_skip,wasm-pack not installed); fi
+
+_v-diff:
+	@if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then \
+	  tools/diff/selftest.sh; \
+	else $(call v_skip,Docker unavailable for the Spike differential); fi
+
+_v-web:
+	@if command -v wasm-pack >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then \
+	  $(MAKE) web-build; \
+	else $(call v_skip,wasm-pack or npm not installed); fi
+
+_v-bench:
+	cargo bench -p wasm-vm-cli --bench interp -- --warm-up-time 1 --measurement-time 1 --sample-size 10
+
+_v-toolchain:
+	@if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then \
+	  tools/toolchain/run.sh -- tools/toolchain/smoke.sh; \
+	else $(call v_skip,Docker unavailable for the reference toolchain); fi
+
+_v-fuzz:
+	@if command -v cargo-fuzz >/dev/null 2>&1 && rustup toolchain list 2>/dev/null | grep -q nightly; then \
+	  cd fuzz && cargo +nightly fuzz run decode -- -runs=2000000 -max_total_time=25; \
+	else $(call v_skip,nightly + cargo-fuzz not installed); fi
+
+_v-meta: ; bash tools/verify/self_check.sh
+
+# ── per-task targets (one per file in tasks/epic-0-ignition/) ────────────────
+verify-E0-T01: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T01 (cargo workspace): OK"
+verify-E0-T02: _v-fmt _v-clippy _v-test _v-features _v-wasm ; @echo "verify-E0-T02 (CI pipeline): OK"
+verify-E0-T03: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T03 (ram + bus): OK"
+verify-E0-T04: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T04 (mmio dispatch): OK"
+verify-E0-T05: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T05 (register file): OK"
+verify-E0-T06: _v-fmt _v-clippy _v-test _v-exhaustive ; @echo "verify-E0-T06 (decoder): OK"
+verify-E0-T07: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T07 (hart step): OK"
+verify-E0-T08: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T08 (loads/stores): OK"
+verify-E0-T09: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T09 (control flow): OK"
+verify-E0-T10: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T10 (ELF loader): OK"
+verify-E0-T11: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T11 (ecall/HTIF): OK"
+verify-E0-T12: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T12 (console): OK"
+verify-E0-T13: _v-toolchain ; @echo "verify-E0-T13 (toolchain): OK"
+verify-E0-T14: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T14 (golden binaries): OK"
+verify-E0-T15: _v-fmt _v-clippy _v-test _v-zerocost ; @echo "verify-E0-T15 (logging/zero-cost): OK"
+verify-E0-T16: _v-fmt _v-clippy _v-test _v-wasm ; @echo "verify-E0-T16 (trace records): OK"
+verify-E0-T17: _v-fmt _v-clippy _v-test _v-wasm ; @echo "verify-E0-T17 (snapshot digest): OK"
+verify-E0-T18: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T18 (CLI runner): OK"
+verify-E0-T19: _v-fmt _v-clippy _v-test _v-riscv ; @echo "verify-E0-T19 (riscv-tests): OK"
+verify-E0-T20: _v-diff ; @echo "verify-E0-T20 (Spike differential): OK"
+verify-E0-T21: _v-fmt _v-clippy _v-test _v-exhaustive _v-fuzz ; @echo "verify-E0-T21 (decoder fuzz): OK"
+verify-E0-T22: _v-fmt _v-clippy _v-test _v-wasm ; @echo "verify-E0-T22 (wasm-bindgen): OK"
+verify-E0-T23: _v-web ; @echo "verify-E0-T23 (browser demo): OK"
+verify-E0-T24: _v-fmt _v-clippy _v-test _v-bench ; @echo "verify-E0-T24 (IPS benchmark): OK"
+verify-E0-T25: _v-fmt _v-clippy _v-meta ; @echo "verify-E0-T25 (verify tooling): OK"
+verify-E0-T26: _v-fmt _v-clippy _v-test ; @echo "verify-E0-T26 (capstone — base checks): OK"
+
+verify-all: verify-E0-T01 verify-E0-T02 verify-E0-T03 verify-E0-T04 verify-E0-T05 \
+            verify-E0-T06 verify-E0-T07 verify-E0-T08 verify-E0-T09 verify-E0-T10 \
+            verify-E0-T11 verify-E0-T12 verify-E0-T13 verify-E0-T14 verify-E0-T15 \
+            verify-E0-T16 verify-E0-T17 verify-E0-T18 verify-E0-T19 verify-E0-T20 \
+            verify-E0-T21 verify-E0-T22 verify-E0-T23 verify-E0-T24 verify-E0-T25 \
+            verify-E0-T26
+	@echo "verify-all: every Epic 0 verify target passed"
+
+verify-list: ; @bash tools/verify/list.sh
