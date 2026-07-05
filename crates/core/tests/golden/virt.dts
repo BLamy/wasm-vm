@@ -1,0 +1,155 @@
+/dts-v1/;
+
+/ {
+	#address-cells = <0x02>;
+	#size-cells = <0x02>;
+	compatible = "riscv-virtio";
+	model = "riscv-virtio,qemu";
+
+	poweroff {
+		compatible = "syscon-poweroff";
+		regmap = <0x03>;
+		offset = <0x00>;
+		value = <0x5555>;
+	};
+
+	reboot {
+		compatible = "syscon-reboot";
+		regmap = <0x03>;
+		offset = <0x00>;
+		value = <0x7777>;
+	};
+
+	chosen {
+		bootargs = "console=ttyS0 earlycon=sbi";
+		stdout-path = "/soc/serial@10000000";
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0x00 0x80000000 0x00 0x8000000>;
+	};
+
+	cpus {
+		#address-cells = <0x01>;
+		#size-cells = <0x00>;
+		timebase-frequency = <0x989680>;
+
+		cpu@0 {
+			device_type = "cpu";
+			reg = <0x00>;
+			status = "okay";
+			compatible = "riscv";
+			riscv,isa = "rv64imafdc";
+			mmu-type = "riscv,sv57";
+
+			interrupt-controller {
+				#interrupt-cells = <0x01>;
+				interrupt-controller;
+				compatible = "riscv,cpu-intc";
+				phandle = <0x01>;
+			};
+		};
+	};
+
+	soc {
+		#address-cells = <0x02>;
+		#size-cells = <0x02>;
+		compatible = "simple-bus";
+		ranges;
+
+		test@100000 {
+			compatible = "sifive,test1\0sifive,test0\0syscon";
+			reg = <0x00 0x100000 0x00 0x1000>;
+			phandle = <0x03>;
+		};
+
+		rtc@101000 {
+			compatible = "google,goldfish-rtc";
+			reg = <0x00 0x101000 0x00 0x1000>;
+			interrupts = <0x0b>;
+			interrupt-parent = <0x02>;
+		};
+
+		clint@2000000 {
+			compatible = "sifive,clint0\0riscv,clint0";
+			reg = <0x00 0x2000000 0x00 0x10000>;
+			interrupts-extended = <0x01 0x03 0x01 0x07>;
+		};
+
+		plic@c000000 {
+			compatible = "sifive,plic-1.0.0\0riscv,plic0";
+			reg = <0x00 0xc000000 0x00 0x600000>;
+			#interrupt-cells = <0x01>;
+			#address-cells = <0x00>;
+			interrupt-controller;
+			riscv,ndev = <0x5f>;
+			interrupts-extended = <0x01 0x0b 0x01 0x09>;
+			phandle = <0x02>;
+		};
+
+		serial@10000000 {
+			compatible = "ns16550a";
+			reg = <0x00 0x10000000 0x00 0x100>;
+			clock-frequency = "\08@";
+			interrupts = <0x0a>;
+			interrupt-parent = <0x02>;
+		};
+
+		virtio_mmio@10001000 {
+			compatible = "virtio,mmio";
+			reg = <0x00 0x10001000 0x00 0x1000>;
+			interrupts = <0x01>;
+			interrupt-parent = <0x02>;
+		};
+
+		virtio_mmio@10002000 {
+			compatible = "virtio,mmio";
+			reg = <0x00 0x10002000 0x00 0x1000>;
+			interrupts = <0x02>;
+			interrupt-parent = <0x02>;
+		};
+
+		virtio_mmio@10003000 {
+			compatible = "virtio,mmio";
+			reg = <0x00 0x10003000 0x00 0x1000>;
+			interrupts = <0x03>;
+			interrupt-parent = <0x02>;
+		};
+
+		virtio_mmio@10004000 {
+			compatible = "virtio,mmio";
+			reg = <0x00 0x10004000 0x00 0x1000>;
+			interrupts = <0x04>;
+			interrupt-parent = <0x02>;
+		};
+
+		virtio_mmio@10005000 {
+			compatible = "virtio,mmio";
+			reg = <0x00 0x10005000 0x00 0x1000>;
+			interrupts = <0x05>;
+			interrupt-parent = <0x02>;
+		};
+
+		virtio_mmio@10006000 {
+			compatible = "virtio,mmio";
+			reg = <0x00 0x10006000 0x00 0x1000>;
+			interrupts = <0x06>;
+			interrupt-parent = <0x02>;
+		};
+
+		virtio_mmio@10007000 {
+			compatible = "virtio,mmio";
+			reg = <0x00 0x10007000 0x00 0x1000>;
+			interrupts = <0x07>;
+			interrupt-parent = <0x02>;
+		};
+
+		virtio_mmio@10008000 {
+			compatible = "virtio,mmio";
+			reg = <0x00 0x10008000 0x00 0x1000>;
+			interrupts = <0x08>;
+			interrupt-parent = <0x02>;
+		};
+	};
+};

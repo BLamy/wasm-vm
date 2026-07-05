@@ -72,6 +72,11 @@ pub mod virt {
     pub const BOOT_A0_IS_HARTID: bool = true;
     /// UART reference clock QEMU virt advertises (`clock-frequency`), Hz.
     pub const UART_CLOCK_HZ: u32 = 3_686_400;
+    /// Guest timebase (`/cpus` `timebase-frequency`, Hz): the rate `mtime` is DEFINED to tick
+    /// at, matching QEMU virt's 10 MHz. Single source: the DTB builder (E2-T02) advertises it
+    /// and timer calibration (E2-T05) converts wall/instruction time with it — nothing else
+    /// may hardcode a timebase.
+    pub const TIMEBASE_FREQ_HZ: u32 = 10_000_000;
 }
 
 /// A named physical-address window `[base, base + len)`.

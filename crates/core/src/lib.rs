@@ -30,6 +30,7 @@ pub mod csr;
 pub mod decode;
 pub mod decode_c;
 pub mod dev;
+pub mod fdt;
 pub mod hart;
 pub mod htif;
 pub mod loader;
