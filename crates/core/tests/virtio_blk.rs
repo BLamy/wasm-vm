@@ -6,7 +6,7 @@
 use wasm_vm_core::block::{BlockBackend, MemBackend, SECTOR_SIZE};
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::dev::virtio::blk::SERIAL;
-use wasm_vm_core::platform::{Platform, virt};
+use wasm_vm_core::platform::virt;
 use wasm_vm_core::{Machine, RunOutcome};
 
 const RAM: usize = 8 * 1024 * 1024;
@@ -64,7 +64,6 @@ fn machine(image: Vec<u8>, ro: bool) -> (Machine, blkctx::Ctx) {
 }
 
 mod blkctx {
-    use super::*;
     use std::cell::RefCell;
     use std::rc::Rc;
     use wasm_vm_core::dev::virtio::blk::BlkState;

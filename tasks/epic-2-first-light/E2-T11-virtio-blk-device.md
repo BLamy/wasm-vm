@@ -3,7 +3,7 @@ id: E2-T11
 epic: 2
 title: virtio-blk device — request parsing, config space, status semantics
 priority: 211
-status: pending
+status: implemented
 depends_on: [E2-T09, E2-T10]
 estimate: M
 capstone: false
@@ -56,4 +56,33 @@ F_FLUSH claim. Kill the emulator mid-`dd` and fsck the image: metadata corruptio
 journal replay refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — worker — implemented
+
+**What landed.** `dev/virtio/blk.rs` (DeviceID 2; T08 transport + T09 rings + T10
+storage): request engine parsing header/data/status via byte-stream cursors over the
+chain's readable/writable segment lists (NO segmentation assumption — 4+12 split headers
+parse identically, unit-proven). IN/OUT/FLUSH/GET_ID; DISCARD/WRITE_ZEROES/garbage →
+UNSUPP; unaligned/OOR → IOERR never panic; no-writable-byte chain → transport
+protocol_violation (NEEDS_RESET). used.len = device-written bytes. Features F_FLUSH +
+F_RO-when-RO; config capacity le64 byte-granular. FLUSH enforces sector==0 + counts
+backend flushes (the charter's lie-detector hook, exposed as BlkState::flush_count).
+KICK PLUMBING: queue_notify fires inside a bus store → flag only; the run loop services
+at the next boundary (deferred pattern); ring Violations degrade the slot and drop the
+ring view; reset rebuilds. Machine::enable_virtio_blk; CLI --drive file=IMG[,ro] (mmap
+FileBackend, CLINT+PLIC auto-enabled).
+
+**Evidence:** 7 native full-stack tests (real rings in guest RAM, lifecycle over real
+registers, kicks via the QueueNotify MMIO register, service through Machine::run):
+OUT→IN round-trip with used.len bookkeeping + used-ring IRQ; segmented 4+12 header
+(acceptance); GET_ID stable serial + used.len 21; FLUSH ok/sector≠0-IOERR + counter;
+RO: F_RO offered, OUT→IOERR, image intact, reads still served; charter torture — 10^4
+hostile requests (garbage type→UNSUPP, OOR sector→IOERR, unaligned IN→IOERR) interleaved
+with valid INs, device never wedges, zero-data IN → IOERR; no-status-byte → NEEDS_RESET.
+wasm32 mirror 1/1. Gates: fmt, clippy ±--all-features, both wasm legs 0 FAILED.
+
+**Deferred honestly (acceptance #1/#2/#3 guest legs):** mkfs/mount/fsck under Linux,
+/sys/block/vda/serial, and dmesg I/O-error checks require E2-T15's kernel boot — per the
+acceptance text itself ("with E2-T15's kernel"). The QEMU differential (identical guest
+script both sides) is likewise post-T15; the critic should attack the request engine
+directly today.

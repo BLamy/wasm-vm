@@ -211,7 +211,10 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
     let (status, data_written) = match rtype {
         T_IN => {
             let data_len = status_pos; // all writable bytes except the status byte
-            if data_len == 0 || data_len % SECTOR_SIZE as u64 != 0 || data_len > u32::MAX as u64 {
+            if data_len == 0
+                || !data_len.is_multiple_of(SECTOR_SIZE as u64)
+                || data_len > u32::MAX as u64
+            {
                 (S_IOERR, 0)
             } else {
                 let mut buf = vec![0u8; data_len as usize];
@@ -229,7 +232,10 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
             }
         }
         T_OUT => {
-            if out_len == 0 || out_len % SECTOR_SIZE as u64 != 0 || out_len > u32::MAX as u64 {
+            if out_len == 0
+                || !out_len.is_multiple_of(SECTOR_SIZE as u64)
+                || out_len > u32::MAX as u64
+            {
                 (S_IOERR, 0)
             } else {
                 let mut buf = vec![0u8; out_len as usize];
