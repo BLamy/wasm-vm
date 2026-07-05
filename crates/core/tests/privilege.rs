@@ -27,7 +27,11 @@ fn rd(c: &mut Csrs, addr: u16) -> u64 {
     v
 }
 fn machine() -> (Hart, SystemBus) {
-    (Hart::new(), SystemBus::new(Ram::new(64 * 1024).unwrap()))
+    let mut hart = Hart::new();
+    // E1-T15: these tests exercise xRET/ecall/WFI in S/U mode; grant all-RAM PMP so the
+    // instruction FETCH isn't denied before the privilege logic under test runs.
+    hart.csr.pmp.allow_all();
+    (hart, SystemBus::new(Ram::new(64 * 1024).unwrap()))
 }
 /// `csrrs rd, csr, x0` — a pure CSR read (used to probe privilege-checked access).
 fn csrr(rd: u8, csr: u16) -> u32 {

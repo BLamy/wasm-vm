@@ -45,7 +45,11 @@ fn sw(rs1: u8, rs2: u8) -> u32 {
 }
 
 fn machine() -> (Hart, SystemBus) {
-    (Hart::new(), SystemBus::new(Ram::new(1024 * 1024).unwrap()))
+    let mut hart = Hart::new();
+    // E1-T15: some tests MRET into U-mode (MPP=0) and keep executing; grant all-RAM PMP so the
+    // U-mode fetch of the following instruction isn't denied before the atomic under test runs.
+    hart.csr.pmp.allow_all();
+    (hart, SystemBus::new(Ram::new(1024 * 1024).unwrap()))
 }
 fn load_code(bus: &mut SystemBus, instrs: &[u32]) {
     for (i, w) in instrs.iter().enumerate() {

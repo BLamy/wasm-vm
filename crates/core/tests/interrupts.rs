@@ -288,6 +288,7 @@ fn vectored_stvec_interrupt_enters_at_base_plus_4x_cause() {
     let mut m = machine();
     set_csr(&mut m, STVEC, CsrOp::Write, HANDLER | 1);
     set_csr(&mut m, MEDELEG, CsrOp::Write, 1 << 8);
+    m.hart_mut().csr.pmp.allow_all(); // E1-T15: grant U-mode fetch/access to RAM
     m.hart_mut().csr.mode = Priv::U;
     m.bus_mut().store32(CODE, 0x0000_0073).unwrap(); // ecall
     m.hart_mut().regs.pc = CODE;
