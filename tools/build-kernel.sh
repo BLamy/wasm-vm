@@ -53,7 +53,11 @@ docker run --rm \
     make defconfig
     scripts/kconfig/merge_config.sh -m .config /cfg/wasm-vm.config
     make olddefconfig
-    make -j\$(nproc) Image
+    # Pin the link counter so a warm rebuild links as '#1' like a clean tree does — without
+    # this the kernel banner (and the build-id SHA1 derived from the image) drift between a
+    # clean-volume build and a re-link, breaking byte-reproducibility (critic round-1).
+    echo 1 > .version
+    make -j\$(nproc) KBUILD_BUILD_VERSION=1 Image
     # `cat >` avoids cp's fallocate/deallocate dance, which errors on Docker Desktop's
     # virtiofs output mount even though the bytes copy fine.
     cat arch/riscv/boot/Image  > /out/Image
