@@ -301,6 +301,110 @@
       #term {
         padding: 10px 16px 16px;
       }
+      /* ── Roadmap progress panel ─────────────────────────────────────── */
+      .roadmap {
+        border-top: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .roadmap-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      .roadmap-legend {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .roadmap-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 12px;
+        padding: 16px;
+      }
+      .epic-card {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--panel-2);
+        overflow: hidden;
+      }
+      .epic-card.done { border-color: #22503a; }
+      .epic-card.next { border-color: #2c4a63; }
+      .epic-head {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        padding: 11px 13px 8px;
+      }
+      .epic-tag {
+        font: 650 12px ui-monospace, monospace;
+        color: #0b0e14;
+        background: var(--muted);
+        border-radius: 5px;
+        padding: 1px 6px;
+      }
+      .epic-card.done .epic-tag { background: var(--green); }
+      .epic-card.next .epic-tag { background: var(--cyan); }
+      .epic-name { font-size: 14px; font-weight: 650; }
+      .epic-state {
+        margin-left: auto;
+        font: 11px ui-monospace, monospace;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .epic-card.done .epic-state { color: var(--green); }
+      .epic-card.next .epic-state { color: var(--cyan); }
+      .epic-blurb {
+        padding: 0 13px 10px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      .cap-list { list-style: none; margin: 0; padding: 0 6px 8px; }
+      .cap {
+        display: grid;
+        grid-template-columns: 14px minmax(0, 1fr);
+        gap: 9px;
+        align-items: start;
+        padding: 6px 7px;
+        border-radius: 6px;
+      }
+      .cap:hover { background: #10151d; }
+      .cap-pip {
+        width: 11px;
+        height: 11px;
+        margin-top: 3px;
+        border-radius: 50%;
+        border: 1px solid #303844;
+        background: #242b35;
+      }
+      .cap-pip.verified { background: var(--green); border-color: var(--green); }
+      .cap-pip.live {
+        background: var(--green);
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px rgba(46, 160, 67, .22);
+      }
+      .cap-pip.partial { background: var(--amber); border-color: var(--amber); }
+      .cap-pip.pending { background: #242b35; }
+      .cap-pip.regressed { background: var(--red); border-color: var(--red); }
+      .cap-name { font-size: 12.5px; color: #dbe5ef; }
+      .cap-ev {
+        display: block;
+        margin-top: 1px;
+        color: var(--muted);
+        font: 11px ui-monospace, monospace;
+        overflow-wrap: anywhere;
+      }
+      .cap-ev.live { color: var(--green); }
+      .cap-ev.regressed { color: var(--red); }
+
       @media (max-width: 900px) {
         header { align-items: flex-start; flex-direction: column; }
         main { grid-template-columns: 1fr; }
@@ -371,6 +475,21 @@
         <div id="term"></div>
       </section>
     </main>
+
+    <section class="roadmap" aria-labelledby="roadmap-title">
+      <div class="roadmap-head">
+        <div>
+          <h2 id="roadmap-title">Roadmap progress</h2>
+          <div id="roadmap-sub" class="suite-count">where we are across the 9-epic roadmap</div>
+        </div>
+        <div class="roadmap-legend" aria-hidden="true">
+          <span class="legend-item"><span class="cap-pip verified"></span>verified</span>
+          <span class="legend-item"><span class="cap-pip live"></span>live-proven this run</span>
+          <span class="legend-item"><span class="cap-pip pending"></span>pending</span>
+        </div>
+      </div>
+      <div id="roadmap-grid" class="roadmap-grid"></div>
+    </section>
 
     <!-- xterm.js UMD build (pinned via package-lock.json + npm ci — no CDN). -->
     <script src="./node_modules/@xterm/xterm/lib/xterm.js"></script>
