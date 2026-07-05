@@ -151,6 +151,15 @@ impl Machine {
         self.hart.step_traced(&mut self.bus, sink)
     }
 
+    /// One PURE step (E1-T10): fetch-decode-execute a single instruction WITHOUT trap
+    /// delivery. On `Err(trap)` the PC and all architectural state are exactly as before —
+    /// the faulting instruction's raw `Trap` is surfaced, not vectored through mtvec. The
+    /// run loop layers delivery on top; this is the primitive tests use to inspect a raw
+    /// trap or prove execute-purity.
+    pub fn step(&mut self) -> Result<(), hart::Trap> {
+        self.hart.step_traced(&mut self.bus, &mut trace::NullSink)
+    }
+
     /// If HTIF is armed and `tohost` currently requests exit, the exit code; else `None`.
     /// A read-only peek for trace loops (does not affect the "logged once" command watch).
     pub fn htif_exit(&mut self) -> Option<u64> {
@@ -180,7 +189,32 @@ impl Machine {
     pub fn run_traced<T: trace::TraceSink>(&mut self, max_instrs: u64, sink: &mut T) -> RunOutcome {
         for _ in 0..max_instrs {
             if let Err(trap) = self.hart.step_traced(&mut self.bus, sink) {
-                return RunOutcome::Trapped(trap);
+                // E1-T10: DELIVER the trap through the CSR machinery (mepc/mcause/mtval +
+                // mtvec vector) and keep running — a guest with a handler installed resumes
+                // at mtvec. `step`/`execute` stay pure (they returned Err having touched
+                // nothing), so `take_trap` writes the ONLY architectural effect.
+                //
+                // HOST CONVENTION: if NO handler is installed (mtvec BASE == 0, its reset
+                // value), the trap is UNHANDLED — vectoring to address 0 would just re-trap
+                // forever. Surface it to the host as `Trapped` instead, so the native runner
+                // can report the cause and a bare ECALL/EBREAK is observable. Every real guest
+                // (OpenSBI, the riscv-tests p-env, Linux) sets mtvec before it can trap, so
+                // this only affects handler-less host-level programs and never changes the
+                // architectural delivery those guests see. Under the quarantined zicsr-stub
+                // there is no real CSR file, so it always escapes (the rv64ui/um/ua harnesses
+                // read a7/a0 from the ECALL). Delegation to S-mode arrives in E1-T11.
+                #[cfg(not(feature = "zicsr-stub"))]
+                {
+                    if self.hart.csr.mtvec_base() == 0 {
+                        return RunOutcome::Trapped(trap);
+                    }
+                    let epc = self.hart.regs.pc;
+                    self.hart.take_trap(trap, epc);
+                }
+                #[cfg(feature = "zicsr-stub")]
+                {
+                    return RunOutcome::Trapped(trap);
+                }
             }
             // Consult HTIF only when it is armed and the word CHANGED — this is
             // what makes command writes "logged once" rather than re-counted.

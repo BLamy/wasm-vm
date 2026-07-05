@@ -2,6 +2,8 @@
 
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
+#[cfg(not(feature = "zicsr-stub"))]
+use wasm_vm_core::csr::{CsrOp, MCAUSE, MEPC, MTVAL, MTVEC};
 use wasm_vm_core::hart::Exception;
 use wasm_vm_core::{Machine, RunOutcome};
 
@@ -104,28 +106,50 @@ fn store_to_tohost_plus_4_only_does_not_exit() {
 
 #[test]
 fn ecall_traps_cause_11_ebreak_cause_3_acceptance() {
+    // The raw trap (pure `step`, no delivery): ecall from M → cause 11, tval 0; PC unmoved.
     let mut m = Machine::new(64 * 1024);
     m.bus_mut().store32(CODE, 0x0000_0073).unwrap(); // ecall
     m.hart_mut().regs.pc = CODE;
-    let out = m.run(10);
-    match out {
-        RunOutcome::Trapped(t) => {
+    match m.step() {
+        Err(t) => {
             assert_eq!(t.cause, Exception::EcallFromM);
             assert_eq!(t.tval, 0);
         }
-        other => panic!("expected ECALL trap, got {other:?}"),
+        Ok(()) => panic!("expected ECALL trap"),
     }
-    assert_eq!(m.hart().regs.pc, CODE, "PC left at the ECALL");
+    assert_eq!(m.hart().regs.pc, CODE, "pure step leaves PC at the ECALL");
 
+    // Delivery (E1-T10): with a handler installed, `run` vectors ECALL through mtvec and
+    // records the trap CSRs. mepc = the ECALL's pc, mcause = 11, mtval = 0, PC → mtvec BASE.
+    // (Only the real CSR build delivers; under the quarantined zicsr-stub the run loop keeps
+    // the Level-0 escape and CSR space routes to the stub, so this block is real-build only.)
+    #[cfg(not(feature = "zicsr-stub"))]
+    {
+        const HANDLER: u64 = DRAM_BASE + 0x2000;
+        let mut m = Machine::new(64 * 1024);
+        m.hart_mut()
+            .csr
+            .access(MTVEC, CsrOp::Write, HANDLER, false, false, 0)
+            .unwrap();
+        m.bus_mut().store32(CODE, 0x0000_0073).unwrap(); // ecall
+        m.hart_mut().regs.pc = CODE;
+        let _ = m.run(1); // exactly one step: the ecall is taken and delivered
+        assert_eq!(m.hart_mut().csr.read(MCAUSE), 11, "mcause = ECALL-from-M");
+        assert_eq!(m.hart_mut().csr.read(MEPC), CODE, "mepc = ECALL pc");
+        assert_eq!(m.hart_mut().csr.read(MTVAL), 0, "ECALL mtval = 0");
+        assert_eq!(m.hart().regs.pc, HANDLER, "PC vectored to mtvec BASE");
+    }
+
+    // EBREAK: raw trap → cause 3, tval = pc.
     let mut m = Machine::new(64 * 1024);
     m.bus_mut().store32(CODE, 0x0010_0073).unwrap(); // ebreak
     m.hart_mut().regs.pc = CODE;
-    match m.run(10) {
-        RunOutcome::Trapped(t) => {
+    match m.step() {
+        Err(t) => {
             assert_eq!(t.cause, Exception::Breakpoint);
             assert_eq!(t.tval, CODE, "EBREAK tval = pc");
         }
-        other => panic!("expected EBREAK trap, got {other:?}"),
+        Ok(()) => panic!("expected EBREAK trap"),
     }
 }
 
@@ -151,7 +175,10 @@ fn ebreak_purity_full_dump_and_ram_identical() {
         .read_slice(DRAM_BASE + 0x800, &mut ram_before[..64])
         .unwrap();
 
-    let _ = m.run(1);
+    // Pure step: the faulting EBREAK retires nothing — GPRs, PC, and RAM are untouched (the
+    // execute-purity contract). Trap delivery (which DOES move PC/mstatus) is layered on by
+    // the run loop and tested separately; here we prove the instruction itself is inert.
+    let _ = m.step();
 
     assert_eq!(
         format!("{}", m.hart().regs),

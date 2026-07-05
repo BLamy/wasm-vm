@@ -188,12 +188,15 @@ fn ecall_ebreak_purity_own_sentinels() {
             .read_slice(DRAM_BASE + 0x2000, &mut ram_before)
             .unwrap();
 
-        match m.run(1) {
-            RunOutcome::Trapped(t) => {
+        // Pure `step` (no delivery): the faulting instruction is inert — the raw trap is
+        // surfaced and PC/GPRs/RAM are byte-identical. (Delivery, which moves PC and pushes
+        // mstatus, is the run loop's job and is tested via the CSR state in htif_run.rs.)
+        match m.step() {
+            Err(t) => {
                 assert_eq!(t.cause, cause);
                 assert_eq!(t.tval, if expect_tval_pc { CODE } else { 0 });
             }
-            o => panic!("expected trap, got {o:?}"),
+            Ok(()) => panic!("expected trap"),
         }
         assert_eq!(format!("{}", m.hart().regs), regs_before, "regs mutated");
         assert_eq!(m.hart().regs.pc, CODE, "PC moved");

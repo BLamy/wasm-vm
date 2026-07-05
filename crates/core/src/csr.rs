@@ -308,6 +308,27 @@ impl Csrs {
         self.mode = new_mode;
     }
 
+    /// Deliver a synchronous exception into M-mode (E1-T10): record mepc/mcause/mtval and
+    /// push the mstatus interrupt stack (`trap_to_m`). `cause` is the raw mcause value —
+    /// bit 63 (Interrupt) is 0 for every synchronous exception. mepc keeps the faulting pc
+    /// with only bit 0 forced to zero (IALIGN=16 with the C extension). Delegation to S-mode
+    /// (medeleg) lands in E1-T11; until then every trap is taken in M. Returns nothing — the
+    /// caller reads [`Self::mtvec_base`] for the handler entry PC.
+    pub fn deliver_trap_m(&mut self, epc: u64, cause: u64, tval: u64) {
+        let prior = self.mode;
+        self.warl_set(MEPC, epc & !1);
+        self.mcause = cause;
+        self.warl_set(MTVAL, tval);
+        self.trap_to_m(prior);
+    }
+
+    /// The mtvec BASE address (bits [63:2]); the low two bits are the MODE field, never part
+    /// of the target address. Synchronous traps ALWAYS enter here regardless of MODE — the
+    /// vectored offset (BASE + 4×cause) applies to interrupts only (Priv §3.1.7).
+    pub fn mtvec_base(&self) -> u64 {
+        self.warl_get(MTVEC) & !0b11
+    }
+
     /// `sstatus` is a masked read view of `mstatus` (S-visible bits only).
     pub const fn sstatus_read(&self) -> u64 {
         self.mstatus & SSTATUS_RMASK
@@ -350,8 +371,13 @@ impl Csrs {
             // mepc: bit 0 is masked (WARL) — IALIGN=16 with the C extension means only bit 0
             // is forced to zero, not bits [1:0] (E1-T08). A write clears it; reads see it.
             MEPC | SEPC => !1,
-            MSTATUS | MCAUSE | MEDELEG | MIDELEG | MIE | MTVEC | MSCRATCH | MTVAL | MIP | SATP
-            | STVEC | MNSTATUS | PMPCFG0 | PMPADDR0 | PROBE
+            // mtvec/stvec MODE (bits [1:0]) is WARL: only Direct(0) and Vectored(1) are
+            // legal; a written MODE ≥ 2 legalizes by clearing bit 1 (matches Spike's
+            // `val & ~2`), so MODE ∈ {0,1} always reads back and BASE stays 4-byte aligned
+            // (its low two bits ARE the MODE field). Synchronous traps ignore MODE (E1-T10).
+            MTVEC | STVEC => !0b10,
+            MSTATUS | MCAUSE | MEDELEG | MIDELEG | MIE | MSCRATCH | MTVAL | MIP | SATP
+            | MNSTATUS | PMPCFG0 | PMPADDR0 | PROBE
             // S-mode CSRs (E1-T09): sstatus/sie/sip are masked *views* handled in
             // read_raw/write_raw; the mask here is !0 (the view logic does the masking).
             | SSTATUS | SIE | SIP | SSCRATCH | SCAUSE | STVAL => !0,
