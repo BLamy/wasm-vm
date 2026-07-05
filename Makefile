@@ -2,7 +2,7 @@
 # parallel; locally they run in the order listed under `ci`. If this file and ci.yml
 # disagree, that's a bug (E0-T02).
 
-.PHONY: ci fmt clippy test wasm features test-riscv
+.PHONY: ci fmt clippy test wasm features test-riscv diff-all diff-selftest diff-qemu
 
 ci: fmt clippy test wasm features test-riscv
 
@@ -46,3 +46,25 @@ test-riscv:
 	@command -v wasm-pack >/dev/null 2>&1 || { \
 		echo "note: wasm-pack absent — skipping the wasm rv64ui-p run"; exit 0; }
 	wasm-pack test --node crates/wasm --features zicsr-stub
+
+# Spike differential harness (E0-T20): run every prebuilt guest under wasm-vm-cli AND
+# Spike, normalize both into the E0-T16 canonical grammar, byte-compare at commit level.
+# Needs the E0-T13 container (Spike); not in `ci` for that reason. Exits nonzero on any
+# divergence.
+diff-all:
+	@for elf in guest/prebuilt/*.elf; do \
+		echo "== diff $$elf =="; \
+		tools/diff/run_diff.sh $$elf --level commit || exit 1; \
+	done
+
+# Proves the harness DETECTS divergence (injected corruption) and pins the normalizer
+# against the committed golden.
+diff-selftest:
+	tools/diff/selftest.sh
+
+# Secondary pc-level-only cross-check against QEMU. Matches for compute-only guests
+# (loops); console guests diverge at the UART polling loop because QEMU models a real
+# ns16550 with different THR-empty timing than our always-ready stub (Spike sidesteps
+# this by mapping the UART page as plain RAM). Documented limitation, not a CPU bug.
+diff-qemu:
+	tools/diff/run_diff_qemu.sh guest/prebuilt/loops.elf
