@@ -188,6 +188,17 @@ impl Machine {
     /// an untraced run can never diverge in when they stop.
     pub fn run_traced<T: trace::TraceSink>(&mut self, max_instrs: u64, sink: &mut T) -> RunOutcome {
         for _ in 0..max_instrs {
+            // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
+            // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the
+            // next instruction — sepc/mepc then points at the resume address (the interrupted
+            // instruction fully retired or never ran). Taking the trap clears xIE, so a pending
+            // line does not re-fire while its handler runs. (No real CSR file under zicsr-stub.)
+            #[cfg(not(feature = "zicsr-stub"))]
+            if let Some((cause, to_s)) = self.hart.csr.next_interrupt() {
+                let epc = self.hart.regs.pc;
+                self.hart.take_interrupt(cause, to_s, epc);
+                continue;
+            }
             if let Err(trap) = self.hart.step_traced(&mut self.bus, sink) {
                 // E1-T10: DELIVER the trap through the CSR machinery (mepc/mcause/mtval +
                 // mtvec vector) and keep running — a guest with a handler installed resumes
@@ -205,7 +216,17 @@ impl Machine {
                 // read a7/a0 from the ECALL). Delegation to S-mode arrives in E1-T11.
                 #[cfg(not(feature = "zicsr-stub"))]
                 {
-                    if self.hart.csr.mtvec_base() == 0 {
+                    // "No handler installed" is judged against the tvec the trap will actually
+                    // use: a medeleg-delegated exception taken below M vectors through stvec, so
+                    // check THAT base — otherwise a guest with only stvec set (mtvec==0) would
+                    // wrongly escape (E1-T11).
+                    let to_s = self.hart.csr.delegates_to_s(trap.cause as u64, false);
+                    let handler = if to_s {
+                        self.hart.csr.stvec_base()
+                    } else {
+                        self.hart.csr.mtvec_base()
+                    };
+                    if handler == 0 {
                         return RunOutcome::Trapped(trap);
                     }
                     let epc = self.hart.regs.pc;

@@ -128,6 +128,29 @@ const SIE_SIP_SMASK: u64 = (1 << 1) | (1 << 5) | (1 << 9);
 /// SSIP alone — the sole `sip` bit software may write through the S-view (Priv §4.1.3).
 const SIP_SSIP: u64 = 1 << 1;
 
+// ── mip/mie interrupt bit positions (Priv §3.1.9) ──────────────────────────────
+const IP_SSI: u64 = 1 << 1; // supervisor software
+const IP_MSI: u64 = 1 << 3; // machine software
+const IP_STI: u64 = 1 << 5; // supervisor timer
+const IP_MTI: u64 = 1 << 7; // machine timer
+const IP_SEI: u64 = 1 << 9; // supervisor external
+const IP_MEI: u64 = 1 << 11; // machine external
+/// All six implemented interrupt-enable bits — `mie` is fully writable over these (WARL: the
+/// reserved bits read 0).
+const MIE_WMASK: u64 = IP_SSI | IP_MSI | IP_STI | IP_MTI | IP_SEI | IP_MEI;
+/// `mip` bits SOFTWARE may write from M-mode: only the S-mode pending bits. MSIP/MTIP/MEIP are
+/// read-only to software — the CLINT (T12) and PLIC (T13) drive them via [`Csrs::set_mip_bit`].
+const MIP_SW_WMASK: u64 = IP_SSI | IP_STI | IP_SEI;
+/// `mideleg` writable bits: only S-mode interrupts can be delegated (the M-interrupt bits are
+/// read-only 0 — a machine interrupt always targets M).
+const MIDELEG_WMASK: u64 = IP_SSI | IP_STI | IP_SEI;
+/// `medeleg` writable bits: the implementable exception causes {0..=9, 12, 13, 15}. Cause 11
+/// (ecall-from-M) is hardwired 0 — an M trap is never delegated downward — as are the reserved
+/// causes 10/14. (Matches Spike's delegable set.)
+const MEDELEG_WMASK: u64 = 0x3FF | (1 << 12) | (1 << 13) | (1 << 15);
+/// Interrupt priority, highest first: MEI > MSI > MTI > SEI > SSI > STI (Priv §3.1.9).
+const INT_PRIORITY: [u64; 6] = [11, 3, 7, 9, 1, 5];
+
 /// Legalize a candidate `mstatus` value: keep only writable bits, force `MPP=0b10` (reserved)
 /// to `U`, hardwire `UXL`/`SXL`=0b10 (RV64), and recompute the read-only `SD` from `FS`.
 const fn legalize_mstatus(v: u64) -> u64 {
@@ -329,6 +352,115 @@ impl Csrs {
         self.warl_get(MTVEC) & !0b11
     }
 
+    /// Deliver a trap into S-mode (E1-T11): record sepc/scause/stval and push the S half of the
+    /// mstatus stack (`trap_to_s`). Used for exceptions delegated by `medeleg` and interrupts
+    /// delegated by `mideleg`. `cause` is the raw scause value (Interrupt bit 63 set for an
+    /// interrupt). sepc keeps the faulting/next pc with bit 0 masked.
+    pub fn deliver_trap_s(&mut self, epc: u64, cause: u64, tval: u64) {
+        let prior = self.mode;
+        self.warl_set(SEPC, epc & !1);
+        self.warl_set(SCAUSE, cause);
+        self.warl_set(STVAL, tval);
+        self.trap_to_s(prior);
+    }
+
+    /// The stvec BASE address (bits [63:2]); MODE lives in the low two bits.
+    pub fn stvec_base(&self) -> u64 {
+        self.warl_get(STVEC) & !0b11
+    }
+
+    /// The M-mode handler entry for a trap: BASE always, plus — for an INTERRUPT when mtvec
+    /// MODE == 1 (Vectored) — the `BASE + 4×cause` offset. Synchronous traps ignore MODE.
+    pub fn m_handler_entry(&self, cause_num: u64, is_interrupt: bool) -> u64 {
+        let t = self.warl_get(MTVEC);
+        let base = t & !0b11;
+        if is_interrupt && (t & 0b11) == 1 {
+            base.wrapping_add(4 * cause_num)
+        } else {
+            base
+        }
+    }
+    /// The S-mode handler entry, mirroring [`Self::m_handler_entry`] for stvec.
+    pub fn s_handler_entry(&self, cause_num: u64, is_interrupt: bool) -> u64 {
+        let t = self.warl_get(STVEC);
+        let base = t & !0b11;
+        if is_interrupt && (t & 0b11) == 1 {
+            base.wrapping_add(4 * cause_num)
+        } else {
+            base
+        }
+    }
+
+    /// Should a trap with mcause number `cause_num` be delegated to S-mode given the current
+    /// privilege (E1-T11)? Delegated ONLY when the deleg bit is set AND we are running below M
+    /// (S or U) — a trap taken while executing in M always stays in M, never downward (§3.1.8).
+    pub fn delegates_to_s(&self, cause_num: u64, is_interrupt: bool) -> bool {
+        if matches!(self.mode, Priv::M) {
+            return false;
+        }
+        let deleg = if is_interrupt {
+            self.warl_get(MIDELEG)
+        } else {
+            self.warl_get(MEDELEG)
+        };
+        deleg & (1 << cause_num) != 0
+    }
+
+    /// The highest-priority interrupt to take right now, or `None` (E1-T11). Returns the mcause
+    /// value (Interrupt bit 63 set) and whether it targets S-mode. Considers pending&enabled
+    /// (`mip & mie`), delegation (`mideleg`), the current privilege, and the global-enable rules
+    /// (mstatus.MIE for M-targeted, mstatus.SIE for S-targeted). Priority: MEI>MSI>MTI>SEI>SSI>STI.
+    /// An interrupt targeting mode x is taken when: current mode < x, OR (current == x AND xIE).
+    /// M-targeted interrupts are never taken while in M with MIE=0, and never below-target masks
+    /// a higher privilege's interrupt; a higher-priority interrupt that cannot be taken in the
+    /// current mode is skipped so a takeable lower one can fire.
+    pub fn next_interrupt(&self) -> Option<(u64, bool)> {
+        let pend = self.warl_get(MIP) & self.warl_get(MIE);
+        if pend == 0 {
+            return None;
+        }
+        let mideleg = self.warl_get(MIDELEG);
+        let mie_glob = self.mstatus & M_MIE != 0;
+        let sie_glob = self.mstatus & M_SIE != 0;
+        for &i in &INT_PRIORITY {
+            if pend & (1 << i) == 0 {
+                continue;
+            }
+            let to_s = mideleg & (1 << i) != 0;
+            let takeable = if to_s {
+                // S-targeted: taken in U always; in S iff SIE; never while in M (M > S).
+                match self.mode {
+                    Priv::U => true,
+                    Priv::S => sie_glob,
+                    Priv::M => false,
+                }
+            } else {
+                // M-targeted: taken in S/U always (can't be masked from below); in M iff MIE.
+                match self.mode {
+                    Priv::M => mie_glob,
+                    _ => true,
+                }
+            };
+            if takeable {
+                return Some(((1u64 << 63) | i, to_s));
+            }
+        }
+        None
+    }
+
+    /// Device-facing (CLINT/PLIC, and tests until those land): set or clear a `mip` PENDING bit
+    /// DIRECTLY, bypassing the software read-only masking. MSIP/MTIP/MEIP are software-read-only
+    /// but hardware-driven — this is the hardware path.
+    pub fn set_mip_bit(&mut self, bit: u64, on: bool) {
+        let mut v = self.warl_get(MIP);
+        if on {
+            v |= 1 << bit;
+        } else {
+            v &= !(1 << bit);
+        }
+        self.warl_set(MIP, v);
+    }
+
     /// `sstatus` is a masked read view of `mstatus` (S-visible bits only).
     pub const fn sstatus_read(&self) -> u64 {
         self.mstatus & SSTATUS_RMASK
@@ -376,7 +508,15 @@ impl Csrs {
             // `val & ~2`), so MODE ∈ {0,1} always reads back and BASE stays 4-byte aligned
             // (its low two bits ARE the MODE field). Synchronous traps ignore MODE (E1-T10).
             MTVEC | STVEC => !0b10,
-            MSTATUS | MCAUSE | MEDELEG | MIDELEG | MIE | MSCRATCH | MTVAL | MIP | SATP
+            // Interrupt WARL masks (E1-T11): mie is writable over the six implemented bits;
+            // mideleg only over the S-interrupt bits; medeleg over the implementable exception
+            // causes (ecall-from-M / reserved excluded). mip's software-write masking is a
+            // read-modify-write done in write_raw (device bits are read-only there), so its
+            // mask here stays !0.
+            MIE => MIE_WMASK,
+            MIDELEG => MIDELEG_WMASK,
+            MEDELEG => MEDELEG_WMASK,
+            MSTATUS | MCAUSE | MSCRATCH | MTVAL | MIP | SATP
             | MNSTATUS | PMPCFG0 | PMPADDR0 | PROBE
             // S-mode CSRs (E1-T09): sstatus/sie/sip are masked *views* handled in
             // read_raw/write_raw; the mask here is !0 (the view logic does the masking).
@@ -467,6 +607,13 @@ impl Csrs {
             SIP => {
                 let m = self.sip_write_mask();
                 let new = (self.warl_get(MIP) & !m) | (v & m);
+                self.warl_set(MIP, new);
+            }
+            // A raw `csrw mip` from M writes only the S-mode pending bits (SSIP/STIP/SEIP);
+            // MSIP/MTIP/MEIP are read-only to software (device-driven via set_mip_bit). RMW so
+            // the device-driven bits survive (E1-T11).
+            MIP => {
+                let new = (self.warl_get(MIP) & !MIP_SW_WMASK) | (v & MIP_SW_WMASK);
                 self.warl_set(MIP, new);
             }
             // FP CSR writes (value already WARL-masked). Writing any of the three marks FP

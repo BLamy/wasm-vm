@@ -8,10 +8,14 @@
 //! (scall, sbreak, ma_addr, ma_fetch, the six load/store-misaligned cases, csr, mcsr) and
 //! deliberately EXCLUDE three ELFs the upstream suite ships that reach past T10:
 //!
-//! - `illegal` — a kitchen-sink M-mode test: after the illegal-instruction case it exercises
-//!   vectored interrupts, S-mode entry, WFI, SFENCE.VMA and satp/paging (E1-T11 / E1-T16). It
-//!   loops at those stages. Its illegal-instruction *mtval* checks are covered directly in
-//!   `precise_exceptions.rs`.
+//! - `illegal` — a kitchen-sink M-mode test. With E1-T11 landed it now clears the
+//!   illegal-instruction case (bad2), the vectored-interrupt sub-test, S-mode entry and WFI, then
+//!   fails on the `sfence.vma` at 0x80000200 (encoding 0x1200_0073): we don't decode SFENCE.VMA
+//!   yet — it lands in E1-T17 (TLB/SFENCE.VMA) — so it raises a spurious illegal-instruction trap
+//!   the test's handler doesn't expect. (The test keeps TESTNUM=2 across all these stages, so its
+//!   exit code doesn't pinpoint the stage; a PC trace does — the divergence is the SFENCE.VMA, an
+//!   E1-T17 instruction, NOT an interrupt/delegation bug.) Its illegal-instruction *mtval* checks
+//!   are covered in `precise_exceptions.rs`; the vectored M-interrupt path in `interrupts.rs`.
 //! - `breakpoint` — exercises the debug-spec trigger CSRs (tdata1/tdata2), not implemented.
 //! - `instret_overflow` — needs the `instret` counter (E1-T14).
 //!
