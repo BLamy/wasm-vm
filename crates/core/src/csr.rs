@@ -61,12 +61,13 @@ pub const TDATA2: u16 = 0x7A2;
 pub const TDATA3: u16 = 0x7A3;
 pub const TINFO: u16 = 0x7A4;
 pub const TCONTROL: u16 = 0x7A5;
+/// pmpcfg: 64 entries → the EVEN CSRs pmpcfg0,2,4,…,14 at 0x3A0,0x3A2,…,0x3AE (RV64 has no odd
+/// pmpcfg CSRs — 0x3A1/0x3A3/… are illegal). Bank `2b` packs entries `[8b, 8b+8)` (E1-T15/T27).
 pub const PMPCFG0: u16 = 0x3A0;
-/// pmpcfg2 packs entries 8..16 (RV64 has no odd pmpcfg CSRs — 0x3A1/0x3A3 are illegal).
-pub const PMPCFG2: u16 = 0x3A2;
-/// pmpaddr0..15 at 0x3B0..0x3BF (E1-T15).
+pub const PMPCFG14: u16 = 0x3AE;
+/// pmpaddr0..63 at 0x3B0..0x3EF (E1-T15 = 16, extended to 64 in E1-T27).
 pub const PMPADDR0: u16 = 0x3B0;
-pub const PMPADDR15: u16 = 0x3BF;
+pub const PMPADDR63: u16 = 0x3EF;
 pub const MVENDORID: u16 = 0xF11;
 pub const MARCHID: u16 = 0xF12;
 pub const MIMPID: u16 = 0xF13;
@@ -713,11 +714,12 @@ impl Csrs {
             // scounteren expose only CY/TM/IR (bits [2:0]) — HPM enable bits read-only 0.
             MCYCLE | MINSTRET => !0,
             MCOUNTEREN | SCOUNTEREN => COUNTEREN_WMASK,
-            // PMP (E1-T15): pmpcfg0/pmpcfg2 and pmpaddr0..15. The module does its own WARL
-            // legalization + lock enforcement in write_raw, so the mask here is !0. Odd pmpcfg
-            // CSRs (0x3A1/0x3A3) are NOT listed → `meta` returns None → illegal instruction.
-            PMPCFG0 | PMPCFG2 => !0,
-            PMPADDR0..=PMPADDR15 => !0,
+            // PMP (E1-T15 = 16, E1-T27 = 64): the EVEN pmpcfg CSRs (pmpcfg0,2,…,14) and
+            // pmpaddr0..63. The module does its own WARL legalization + lock enforcement in
+            // write_raw, so the mask is !0. Odd pmpcfg CSRs fail the guard → `meta` returns None
+            // → illegal instruction (RV64 has no odd pmpcfg).
+            PMPCFG0..=PMPCFG14 if (addr - PMPCFG0).is_multiple_of(2) => !0,
+            PMPADDR0..=PMPADDR63 => !0,
             MSTATUS | MCAUSE | MSCRATCH | MTVAL | MIP | SATP
             | MNSTATUS | PROBE
             // Debug triggers (E1-T29): tselect/tdata1/tdata2/tdata3/tcontrol legalize in
@@ -791,9 +793,10 @@ impl Csrs {
             MINSTRET | INSTRET => self.minstret,
             TIME => self.time,
             // PMP (E1-T15): pmpcfg0/2 pack 8 entries each; pmpaddr0..15 are per-entry.
-            PMPCFG0 => self.pmp.read_cfg(0),
-            PMPCFG2 => self.pmp.read_cfg(2),
-            PMPADDR0..=PMPADDR15 => self.pmp.read_addr((addr - PMPADDR0) as usize),
+            PMPCFG0..=PMPCFG14 if (addr - PMPCFG0).is_multiple_of(2) => {
+                self.pmp.read_cfg((addr - PMPCFG0) as usize)
+            }
+            PMPADDR0..=PMPADDR63 => self.pmp.read_addr((addr - PMPADDR0) as usize),
             // hpmcounter3..31 (0xC03..) are unimplemented HPMs → read 0.
             0xC00..=0xC1F => 0,
             // Debug triggers (E1-T29). tinfo advertises type-2 (mcontrol) support (bit 2).
@@ -866,9 +869,10 @@ impl Csrs {
                 self.wrote_minstret = true;
             }
             // PMP (E1-T15): route to the unit, which applies WARL legalization + lock enforcement.
-            PMPCFG0 => self.pmp.write_cfg(0, v),
-            PMPCFG2 => self.pmp.write_cfg(2, v),
-            PMPADDR0..=PMPADDR15 => self.pmp.write_addr((addr - PMPADDR0) as usize, v),
+            PMPCFG0..=PMPCFG14 if (addr - PMPCFG0).is_multiple_of(2) => {
+                self.pmp.write_cfg((addr - PMPCFG0) as usize, v)
+            }
+            PMPADDR0..=PMPADDR63 => self.pmp.write_addr((addr - PMPADDR0) as usize, v),
             // satp (E1-T18, §4.1.11): WARL MODE legalization is ALL-OR-NOTHING — a write whose
             // MODE field is unsupported leaves the ENTIRE register (MODE, ASID, and PPN) at its old
             // value, NOT just the MODE. Linux's `set_satp_mode` relies on exactly this to probe
