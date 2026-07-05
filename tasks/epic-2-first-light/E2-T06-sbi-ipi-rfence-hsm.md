@@ -10,6 +10,9 @@ capstone: false
 ---
 
 ## Goal
+*(Scope addendum from the E2-T03 critic: also implement **SRST** (EID 0x53525354, system
+reset) here — Linux 6.6 probes it at init for reboot/poweroff handlers; the syscon
+sifive_test device is the backend. Cheap alongside HSM.)*
 Complete the SBI v2.0 surface Linux probes at boot: IPI (EID 0x735049), RFENCE
 (EID 0x52464E43), and HSM (EID 0x48534D), implemented correctly for our single hart while
 keeping the interfaces shaped for Epic 6 SMP.

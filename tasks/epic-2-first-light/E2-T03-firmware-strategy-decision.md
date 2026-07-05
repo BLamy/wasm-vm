@@ -3,7 +3,7 @@ id: E2-T03
 epic: 2
 title: Firmware decision — built-in SBI in the emulator vs OpenSBI as guest payload
 priority: 203
-status: implemented
+status: verified
 depends_on: [E2-T01]
 estimate: S
 capstone: false
@@ -87,3 +87,19 @@ kept as a STANDING M-mode compliance testcase (probe re-runnable at any time). A
 interception (default OFF — bare-metal/RISCOF delivery unchanged); `Machine::boot_supervisor`
 (the contract, acceptance #2); `platform::virt::KERNEL_BASE`; `fdt::DTB_SLACK`.
 Gates: fmt clean, clippy -D warnings clean, boot_contract + privilege suites green.
+
+### 2026-07-05 — verifier (cold critic) — CONFIRMED
+
+All 6 attack angles executed. (1) Prototype (a) re-run: reset-state table matches ADR
+exactly (incl. PMP allow_all == "entry 0 R/W/X NAPOT"). (2) Critic re-ran the OpenSBI probe
+ITSELF (308s): byte-identical 2197-byte transcript — banner, platform report from our DTB,
+PMP Count 64, mideleg 0x222/medeleg 0xB109, clean S-mode handoff to 0x80200000; evidence
+neither stale nor shallow. (3) Linux 6.6 arch/riscv/kernel/sbi.c fetched: no minimum spec
+version enforced; init probes TIME/IPI/RFENCE/SRST; DBCN absent in 6.6 (ADR makes no such
+claim; legacy 0x01/0x02 is the 6.6 console fallback and is in the list) — acceptance #4
+complete for boot. (4) Interception matches EcallFromS ONLY (U/M-ecalls deliver
+architecturally; medeleg bit 8 → S); pc+=4 safe (no c.ecall exists); flag default-off at
+the sole constructor. (5) Regressions flag-off: privilege 13/0, riscv_tests_mi 12/0,
+interrupts 11/0, pmp green. (6) OpenSBI-as-testcase deliverable satisfied (script + ignored
+test committed, critic re-ran both); fmt/clippy clean. **Critic finding folded in: SRST
+(EID 0x53525354) — Linux 6.6 probes it at init; now scoped into E2-T06 + ADR table.**

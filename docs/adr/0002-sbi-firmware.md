@@ -154,6 +154,7 @@ unimplemented EID → `SBI_ERR_NOT_SUPPORTED (-2)`, never a trap** (asserted by
 | IPI (sPI) | `0x735049` | E2-T06 |
 | RFENCE (RFNC) | `0x52464E43` | E2-T06 |
 | HSM | `0x48534D` | E2-T06 |
+| SRST (system reset; Linux 6.6 probes at init — critic finding) | `0x53525354` | E2-T06 |
 
 ## Revisit conditions
 
