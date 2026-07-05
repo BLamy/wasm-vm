@@ -282,6 +282,19 @@ impl Uart16550 {
     }
 }
 
+/// Bus adapter: the Machine shares the UART with the run loop (tick + irq level) via
+/// `Rc<RefCell<_>>`, the same pattern as CLINT/PLIC shared state.
+pub struct SharedUart(pub alloc::rc::Rc<core::cell::RefCell<Uart16550>>);
+
+impl MmioDevice for SharedUart {
+    fn read(&mut self, offset: u64, width: Width) -> Result<u64, BusFault> {
+        self.0.borrow_mut().read(offset, width)
+    }
+    fn write(&mut self, offset: u64, width: Width, value: u64) -> Result<(), BusFault> {
+        self.0.borrow_mut().write(offset, width, value)
+    }
+}
+
 impl MmioDevice for Uart16550 {
     fn read(&mut self, offset: u64, _width: Width) -> Result<u64, BusFault> {
         Ok(u64::from(self.read_reg(offset & 0x7)))
