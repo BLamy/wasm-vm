@@ -77,16 +77,23 @@ pub struct Machine {
 
 impl Machine {
     /// Create a machine with `ram_bytes` of zeroed guest RAM at `DRAM_BASE`, an
-    /// empty hart (PC 0), and no HTIF watch. Infallible for the sizes E0-T01
-    /// exercises (0 and small); `Ram::new` only errs on allocation failure.
+    /// empty hart (PC 0), and no HTIF watch. Panics only on allocation failure — use
+    /// [`Self::try_new`] when the size comes from untrusted input (e.g. the wasm wrapper).
     pub fn new(ram_bytes: usize) -> Self {
-        Self {
+        Self::try_new(ram_bytes).expect("guest RAM allocation failed")
+    }
+
+    /// Fallible constructor: returns [`ram::OutOfMemory`] instead of panicking when the
+    /// allocation is refused, so a hostile RAM size becomes a caught error rather than a
+    /// process abort. `Ram::new` allocates through `try_reserve_exact`.
+    pub fn try_new(ram_bytes: usize) -> Result<Self, ram::OutOfMemory> {
+        Ok(Self {
             hart: Hart::new(),
-            bus: SystemBus::new(Ram::new(ram_bytes).expect("guest RAM allocation failed")),
+            bus: SystemBus::new(Ram::new(ram_bytes)?),
             htif: None,
             last_tohost: 0,
             htif_commands: 0,
-        }
+        })
     }
 
     /// Size of guest RAM in bytes.

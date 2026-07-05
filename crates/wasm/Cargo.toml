@@ -13,6 +13,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 wasm-vm-core = { workspace = true, features = ["trace"] }
 wasm-bindgen = { workspace = true }
+js-sys = "0.3"
 log = { workspace = true }
 console_log = { workspace = true }
 console_error_panic_hook = { workspace = true }
