@@ -9,12 +9,16 @@ Reproduce every number here with `tools/profile-boot.sh` (native) — do not han
   kernel` → busybox `userland up` / getty `login:`) and stamps **host wall time + retired-instruction
   count** at each first sighting. Host time lives in the CLI, never in `crates/core` (the determinism
   gate bans host clocks there), so this adds nothing non-deterministic to the emulator.
-- **Host-relative counters (deterministic)** — `SystemBus::device_hits()` gives per-device MMIO
-  **access counts** (UART/CLINT/PLIC/RTC/virtio), byte-identical native and wasm.
+- **Host-relative counters** — `SystemBus::device_hits()` gives per-device MMIO **access counts**
+  (UART/CLINT/PLIC/RTC/virtio). The counter itself is deterministic given identical execution, but
+  **a full native boot is NOT bit-reproducible**: the CLI goldfish-RTC reads host wall time
+  (`SystemClock`), and the profiler's boot→userland stop is quantum-granular, so the total retired
+  count and per-device counts **drift by ~±1 quantum (≈200 k retired, a handful of UART accesses)
+  run-to-run**. The numbers below are therefore *representative to ~1 %*, not byte-identical
+  invariants. (A bit-reproducible run would need the deterministic-clock RTC path, not the host clock.)
 - **The CPU-vs-device-vs-I/O TIME split** comes from an **external sampling profiler**
   (`cargo flamegraph` / `samply` over a native boot), which attributes wall time to functions. The
-  deterministic per-device *counts* above cross-check the flamegraph's per-device *time*. Absolute
-  wall-ms and MIPS are host-speed-dependent; the *retired counts and MMIO counts are the invariant*.
+  per-device *counts* here measure device **traffic**, not device **time** — see the finding below.
 
 ## Native baseline — busybox initramfs (release, this dev machine)
 `tools/profile-boot.sh` (stops at userland, so the total is boot time, not idle spin):
@@ -26,18 +30,27 @@ Reproduce every number here with `tools/profile-boot.sh` (native) — do not han
 | busybox-userland (`userland up`) | 51 245 | 16 598 755 | 6.1 |
 | **total (boot → userland)** | **51 245** | **308 790 206** | **~6.0** |
 
-**Per-device MMIO accesses over the boot:** `uart16550` **2 582** ≫ `plic` 316 ≫ `goldfish-rtc` 9 ≫
-each `virtio-mmio` slot 3, `clint` 0. Every UART access is an MMIO exit, so the long **console-up**
-phase (267 M retired, ~87 % of the boot) is dominated by kernel dmesg being pushed a byte at a time
-through the 16550 — the predicted "console-heavy phases look device-bound" finding, quantified: the
-console device sees ~8× the traffic of every other device combined.
+**Per-device MMIO accesses over the boot (representative — varies ~±1 %, see above):** `uart16550`
+**~2 570** ≫ `plic` ~313 ≫ `goldfish-rtc` 9 ≫ each `virtio-mmio` slot 3, `clint` 0. The console sees
+**~8× the traffic of every other device combined** — but this is *traffic, not time*: ~2 570 UART
+accesses against 309 M retired instructions is a rounding error on execution.
+
+**What the numbers actually say — the boot is interpreter-DISPATCH-bound, not device-bound.** Every
+phase runs at a **uniform ~6 MIPS** (console-up, init-handoff, userland all ~6.0). If any phase were
+device/MMIO-bound its MIPS would sag; none does. So the boot cost is fetch/decode/execute dispatch
+across 309 M instructions, spread evenly — the UART just happens to be the busiest *device*. (The
+authoritative CPU-vs-device *time* split still needs the external flamegraph; these counts only
+establish that device MMIO is a tiny fraction of the instruction stream.)
 
 ### The MIPS baseline Epic 4 must beat 10×
-The interpreter retires **~6.0 MIPS** on this MMIO/trap-heavy boot workload (far below the pure-ALU
-`perf-smoke` floor — boot is not ALU-bound). **Epic 4's JIT target is ≥ 60 MIPS on the same boot.**
+The interpreter retires **~6.0 MIPS** on this boot workload. **Epic 4's JIT target is ≥ 60 MIPS on
+the same boot.**
 
 ## Native baseline — Alpine rootfs (virtio-blk ext4, release)
-`TARGET=alpine tools/profile-boot.sh` (stops at the getty `login:` marker):
+`TARGET=alpine tools/profile-boot.sh` (stops at the getty `login:` marker). A single representative
+~7 min run (not repeated); like busybox it varies ~±1 % run-to-run. Caveat: the getty terminal marker
+is the loose substring `login:` — if an earlier OpenRC line contained it the boot would stop early
+(none did here; the busybox `userland up` marker is a safer custom string).
 
 | phase | wall_ms (cumulative) | Δretired | phase MIPS |
 |---|---|---|---|
