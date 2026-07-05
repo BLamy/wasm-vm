@@ -234,7 +234,9 @@ fn ecall_once(m: &mut Machine, eid: u64, fid: u64, args: &[u64; 6]) -> Option<(i
     m.hart_mut().regs.pc = 0x8020_0000;
     set_ecall(m, eid, fid, &args[..]);
     match m.run(2) {
-        wasm_vm_core::RunOutcome::Exited(_) => None, // machine shut down
+        // Machine ended: a shutdown (Exited) OR — since E2-T17 — an SRST reboot (Reset). Both
+        // return before a0/a1 are written, so there is no SBI return value to read.
+        wasm_vm_core::RunOutcome::Exited(_) | wasm_vm_core::RunOutcome::Reset(_) => None,
         _ => Some((m.hart().regs.read(10) as i64, m.hart().regs.read(11) as i64)),
     }
 }
@@ -271,10 +273,12 @@ fn adversarial_grid_fuzz_invariants() {
                         // flush loop; the fix full-flushes on range overflow — UNMASKED.)
                         let args = [start, a1, start, a3, a1, 0];
                         let Some((err, _val)) = ecall_once(&mut m, eid, fid, &args) else {
-                            // Run ended: only legal for a VALID SRST shutdown.
+                            // Run ended: only legal for a VALID SRST reset — shutdown (type 0)
+                            // or, since E2-T17, reboot (type 1/2 = cold/warm) — with a valid
+                            // reason (<=1). Any other SBI call ending the machine is a bug.
                             assert!(
-                                eid == EID_SRST && fid == 0 && args[0] == 0 && args[1] <= 1,
-                                "INVALID SRST args ({:#x},{:#x}) fid {fid} shut the machine down",
+                                eid == EID_SRST && fid == 0 && args[0] <= 2 && args[1] <= 1,
+                                "INVALID SRST args ({:#x},{:#x}) fid {fid} ended the machine",
                                 args[0],
                                 args[1]
                             );
