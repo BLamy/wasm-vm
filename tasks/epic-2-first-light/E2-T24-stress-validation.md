@@ -94,3 +94,24 @@ tool timeout — so it was verified in segments + one fully-detached run.
 
 **Scope:** the full 10×/256 MB/≥5-kill acceptance battery is a multi-hour nightly job (harness
 supports it via env); this PR verifies the harness works end-to-end at smoke scope.
+
+### 2026-07-05 — cold-clone critic — harness was VACUOUS; 4 defects found + fixed
+
+The critic caught that the harness reported green while testing almost nothing (its whole purpose):
+- **C1 command-echo vacuity:** the guest tty echoes the typed command, so needles that were
+  substrings of the command matched the echo, not the output — `disk_md5` PASSed even on a
+  checksum mismatch; login/write-steps/parallel/interactivity all vacuous. **Fixed:** every
+  success needle is output-only (`echo TOK$((6*7))` → `TOK42`); `disk_md5` now drops caches
+  between md5sums (real device re-read); interactivity now times real execution (525 ms under
+  load, not a vacuous ~0). Bonus: boot expect now FAILs on eof (early exit no longer PASSes).
+- **C2 kill-inject self-poisoning:** the dmesg-scan command contained the ext4-error regex, was
+  echoed into the log, and the host recovery grep matched its own command → always "RECOVERY
+  FAILED". **Fixed:** FS health decided in-guest → output-only verdict token (FSOK42/FSBAD).
+- **C3 repro diff over-strict:** normalized transcript kept the varying echo_latency_ms →
+  false-fail. **Fixed:** blanked in `normalize`.
+- **Substrate CONFIRMED real:** `--drive file=` persists writes via MAP_SHARED mmap surviving
+  SIGKILL; kill targets the emulator mid-write; boot/poweroff/procstorm were genuine all along.
+
+Post-fix smoke on the real Alpine boot: all scenarios genuinely PASS (disk_md5 with real
+drop-caches coherency; interactivity a real 525 ms; clean poweroff). Also hardened a poweroff
+false-FAIL (expect -timeout is total-not-inactivity; now matches the `reboot: Power down` marker).
