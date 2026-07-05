@@ -89,3 +89,19 @@ explicit QEMU-`virt` deviation list. DRAM size is a construction parameter, neve
 **Ran (native):** `cargo test -p wasm-vm-core --lib platform` → 4/4; `cargo clippy` clean;
 `cargo test --workspace` green (the `mmap` re-export touches 60 call sites — no regressions).
 **wasm32:** `crates/wasm/tests/platform.rs` mirrors the checks (`wasm-pack test --node`).
+
+### 2026-07-05 — verifier (cold critic) — round 1: REFUTED → fixed
+
+Critic independently dumped its own QEMU 8.2.2 virt DTB and attacked all 4 charter angles.
+**Code map held everywhere** (every base/size/IRQ byte-for-byte: DRAM, test, rtc/IRQ11,
+CLINT/64K, PLIC/6M/ndev=95, UART/IRQ10/clock 3686400, 8×virtio IRQ1-8; `try_new` unforgeable —
+no colliding-but-accepted layout constructible; overlaps() overflow-safe, adjacent-disjoint;
+re-exports value-identical vs pre-task baseline 6a43af5; native 4/4, wasm32 3/3, fmt+clippy
+clean). **REFUTED on acceptance #2 (doc completeness):** the deviations list claimed "every
+difference" but omitted two reg-bearing DTB nodes the critic found — `fw-cfg@10100000`
+(0x1010_0000/0x18) and `platform-bus@4000000` (0x0400_0000/32MiB); this log's own round-1
+claim "only PCIe/pflash unmatched" was factually false. **Fix:** both added to
+`docs/platform.md` deviations (5, 6) with rationale, plus a non-map note on
+`timebase-frequency`. Critic's nit (boundary test probes Region arithmetic, not live
+SystemBus reads at PLIC_BASE-1/UART_BASE+8) noted as a follow-up for E2-T07/T08 device
+attach tests, where those windows gain real devices.

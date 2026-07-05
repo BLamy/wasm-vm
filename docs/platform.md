@@ -58,6 +58,16 @@ Every difference between our map and the dumped QEMU DTB, with rationale:
    this is only the default; callers pass whatever size they need.
 4. **Reserved-memory / mmode-resv nodes** QEMU emits for OpenSBI are firmware-specific and are
    materialised by E2-T02 (DTB builder) / E2-T03 (firmware), not by the base map.
+5. **No fw-cfg** (QEMU: `fw-cfg@10100000`, `qemu,fw-cfg-mmio`, base `0x1010_0000`, len `0x18`).
+   fw-cfg is QEMU's host↔guest configuration channel (used by its BIOS/UEFI paths to fetch
+   kernels, ACPI tables, etc.). Our firmware strategy (E2-T03) loads the payload directly, so
+   there is nothing to fetch; Linux boots on `virt` without it.
+6. **No platform-bus** (QEMU: `platform-bus@4000000`, `simple-bus`, base `0x0400_0000`, 32 MiB).
+   A QEMU window for dynamically instantiated sysbus devices (`-device` on the command line);
+   we have no dynamic-device mechanism, and nothing in the Epic 2 boot path binds to it.
+
+(Non-map note: QEMU's `cpus` node advertises `timebase-frequency` = 10 MHz; our timebase is the
+CLINT `mtime` tick documented by E1-T12/E2-T02 — the DTB builder, not the memory map, owns it.)
 
 Everything else (every base address, window size, and IRQ for the devices we implement) matches
 QEMU `virt` byte-for-byte, verified against the dump above.
