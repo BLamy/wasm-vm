@@ -3,7 +3,7 @@
 # disagree, that's a bug (E0-T02).
 
 .PHONY: ci fmt clippy test wasm features test-riscv diff-all diff-selftest diff-qemu \
-        exhaustive fuzz-decode-smoke
+        exhaustive fuzz-decode-smoke web-build web-serve
 
 ci: fmt clippy test wasm features test-riscv
 
@@ -79,3 +79,17 @@ exhaustive:
 # + cargo-fuzz (`cargo install cargo-fuzz`); seed corpus in fuzz/corpus/decode/.
 fuzz-decode-smoke:
 	cd fuzz && cargo +nightly fuzz run decode -- -runs=10000000 -max_total_time=180
+
+# Browser demo (E0-T23): build the wasm ES module into web/pkg, install the pinned
+# xterm.js (offline, no CDN), and copy the default guest ELFs. Reproducible from a cold
+# clone with only Rust + wasm-pack + npm.
+web-build:
+	wasm-pack build crates/wasm --target web --out-dir ../../web/pkg
+	cd web && npm ci --no-audit --no-fund
+	mkdir -p web/assets
+	cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
+
+# Serve web/ over HTTP (wasm streaming + ES module MIME rules break file://).
+web-serve:
+	@echo "serving http://localhost:8080  (Ctrl-C to stop)"
+	python3 -m http.server 8080 --directory web

@@ -3,7 +3,7 @@ id: E0-T23
 epic: 0
 title: Browser demo page wiring the wasm machine to an xterm.js console
 priority: 23
-status: pending
+status: verified
 depends_on: [E0-T22]
 estimate: M
 capstone: false
@@ -61,4 +61,42 @@ rendering may differ; byte delivery to `term.write` must not, assert via a tap t
 records callback bytes).
 
 ## Verification log
-(empty)
+### 2026-07-03 — worker claim — branch task/e0-t23-browser-demo (stacked on e0-t22)
+Deliverables: web/ static page — no bundler. index.html includes the pinned xterm.js UMD build
+(node_modules/@xterm/xterm/lib/xterm.js + css/xterm.css, NO CDN) and main.js (ES module). main.js:
+init the wasm-pack --target web module, create an xterm.js Terminal, wire setConsole(b =>
+term.write(Uint8Array.of(b))) [byte-exact, uninterpreted], Run/Reset buttons, ELF file picker via
+File.arrayBuffer(), status line fed from the run() status object. Errors (bad ELF, trap) render IN
+THE TERMINAL (ANSI red), never only the JS console. Every Run builds a FRESH WasmMachine (Reset is
+automatic — no stale state), and a `running` guard + the synchronous run body serialize rapid
+clicks (no interleaving). web/package.json + package-lock.json pin @xterm/xterm 5.5.0 (npm ci,
+offline). web/assets/*.elf copied from guest/prebuilt by web-build (gitignored, regenerated).
+web/README.md: Chrome+Firefox support + the HTTP requirement. Makefile: web-build (wasm-pack +
+npm ci + mkdir+cp assets) and web-serve (python3 -m http.server :8080). web/pkg + node_modules +
+assets gitignored.
+BROWSER-VERIFIED in live Chrome (served via web-serve, http://localhost:8080):
+- Run → xterm.js renders "Hello from RV64" (screenshot confirmed) + status "exited code=0
+  retired=83" (retired == native CLI). A byte tap (window.__consoleBytes) recorded EXACTLY the 16
+  bytes "Hello from RV64\n" delivered to term.write (angle 5 byte-passthrough).
+- Browser console: ZERO errors, ZERO warnings — only our own console.debug digest lines; the
+  browser digest df49438130a9…5ceb05 == the native --dump-state digest.
+- Non-ELF bytes → "load_elf failed: BadMagic" surfaced (message names the ElfError variant); the
+  page stays functional.
+- Reset then Run → identical output "Hello from RV64\n" + status "exited code=0 retired=83".
+- Rapid 5× Run → 80 bytes = five CLEAN, non-interleaved copies (serialized, not garbled).
+Reproducibility: rm -rf web/{pkg,node_modules,assets} && make web-build regenerates all artifacts
+(wasm-pack Done + npm ci + assets) from committed source + lockfile; all HTTP assets serve 200 with
+correct MIME (wasm = application/wasm for streaming).
+rr: N/A (browser/web). Verifier angles open: cold clone in a FRESH chrome profile (--user-data-dir),
+DevTools cache-disabled + throttled (1), 100 MB junk file via the picker → graceful error no OOM (2),
+5× rapid Run serialization (3, byte tap = clean multiples here), Firefox application/wasm streaming
+fallback (4), and 0x00–0xFF binary-output byte-delivery tap vs CLI (5).
+
+### 2026-07-03 — adversarial verifier (fresh session, REAL browser) — VERDICT: verified
+- Cold-clone reproducibility (1): fresh clone 704c225, make web-build OK (wasm-pack 0.13.1 + npm ci from lockfile, offline); git clean -fdx + rebuild OK. CDN grep: only the "no CDN" comment; xterm loaded from ./node_modules. No CDN dependency.
+- Asset MIME (2): all 8 assets 200; pkg/wasm_vm_wasm_bg.wasm = application/wasm (Firefox streaming). Served on :8099 (not 8080), killed after.
+- LIVE BROWSER (3, ran real Chrome): __ready reached; Run → __consoleBytes = 16 bytes = "Hello from RV64\n"; status "exited code=0 retired=83" (== native); console 0 errors/warnings (only DEBUG digest lines).
+- Determinism (4): browser digest df49438130a9…5ceb05 == native --dump-state; loops re-derived in browser retired=48 digest 117685ca…aa60 == native; RAM_MIB=128 == CLI default.
+- Error-in-terminal (5): non-ELF via picker → terminal rendered red "garbage.bin: load_elf failed: BadMagic" (screenshot), page stayed functional (re-ran hello → retired=83).
+- Robustness (6): 100 MB junk → caught BadMagic no OOM; rapid 5× Run atomic (no interleave, run() has no await between guard and completion); binary passthrough term.write(Uint8Array.of(b)) uninterpreted on the real callback.
+- Honesty (7): __consoleBytes is the genuine callback tap; status from the real run() object; Reset = fresh machine, no stale state. No unimplemented claim. VERIFIED — no rework required.
