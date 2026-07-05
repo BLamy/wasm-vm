@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E2-T12** — Pinned riscv64 kernel build — documented .config, Docker cross-compile, artifacts
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -85,7 +84,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] `209` [E2-T09](epic-2-first-light/E2-T09-virtqueue-split-rings.md) — Virtqueue implementation — split rings, descriptor chain walking, used-ring notify *(deps: E2-T08)*
 - [x] `210` [E2-T10](epic-2-first-light/E2-T10-block-backend-trait.md) — Pluggable block backend trait — mmap'd file (native) and ArrayBuffer image (browser) *(deps: E2-T01)*
 - [x] `211` [E2-T11](epic-2-first-light/E2-T11-virtio-blk-device.md) — virtio-blk device — request parsing, config space, status semantics *(deps: E2-T09, E2-T10)*
-- [ ] `212` [E2-T12](epic-2-first-light/E2-T12-kernel-build-recipe.md) — Pinned riscv64 kernel build — documented .config, Docker cross-compile, artifacts *(deps: E2-T01)*
+- [?] `212` [E2-T12](epic-2-first-light/E2-T12-kernel-build-recipe.md) — Pinned riscv64 kernel build — documented .config, Docker cross-compile, artifacts *(deps: E2-T01)*
 - [ ] `213` [E2-T13](epic-2-first-light/E2-T13-busybox-initramfs.md) — Static busybox initramfs — minimal userland for first boot *(deps: E2-T12)*
 - [ ] `214` [E2-T14](epic-2-first-light/E2-T14-boot-debugging-playbook.md) — Boot debugging playbook — earlycon, initcall_debug, trace bisection of hangs *(deps: E2-T04, E2-T12)*
 - [ ] `215` [E2-T15](epic-2-first-light/E2-T15-boot-xv6-then-busybox.md) — Milestone — boot xv6-riscv to its shell, then unmodified Linux to a busybox shell (native CLI) *(deps: E2-T02, E2-T06, E2-T07, E2-T13, E2-T14)*

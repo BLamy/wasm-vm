@@ -3,7 +3,7 @@ id: E2-T12
 epic: 2
 title: Pinned riscv64 kernel build — documented .config, Docker cross-compile, artifacts
 priority: 212
-status: pending
+status: implemented
 depends_on: [E2-T01]
 estimate: M
 capstone: false
@@ -56,4 +56,34 @@ DTB indicates config/DTB mismatch worth logging. Verify every fragment symbol su
 claims — check `CONFIG_RTC_DRV_GOLDFISH` and `CONFIG_POWER_RESET_SYSCON` especially).
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — worker — implemented
+
+**What landed.** `tools/build-kernel.sh` (one command, Docker-only host) +
+`tools/kernel.Dockerfile` (Debian bookworm + `gcc-riscv64-linux-gnu` + host gcc) +
+`configs/wasm-vm.config` (riscv defconfig fragment, merged via merge_config.sh) →
+`releases/kernel/6.6.63/{Image,System.map,config,SHA256SUMS}` (checked in). `docs/kernel.md`
+documents every fragment symbol + the version-bump procedure. `tools/check-kernel-config.sh`
+(fragment-honored + no-modules audit) and `tools/boot-test-kernel.sh` (QEMU sanity).
+
+Linux **6.6.63** (6.6 LTS), tarball pinned by sha256 (fetch aborts on mismatch). Build runs
+in a container-native Docker VOLUME — Docker Desktop's macOS bind mount (virtiofs) can't
+survive a parallel kernel build's open-file churn ("Too many open files" even at
+nofile=1M), so only the tarball comes in read-only and only the 3 artifacts go out; `cat >`
+avoids cp's fallocate/deallocate quirk on the output mount.
+
+**Acceptance evidence:**
+- #1 reproducible: built TWICE, `SHA256SUMS` byte-identical (Image
+  `0d66ca2b…`). Levers: pinned tarball + fixed `KBUILD_BUILD_TIMESTAMP` +
+  fixed `KBUILD_BUILD_USER/HOST`.
+- #2 boots on stock qemu: `qemu-system-riscv64 -M virt -nographic -kernel Image` reaches
+  `Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)` (banner
+  "Linux version 6.6.63", "Hardware name: riscv-virtio,qemu (DT)", ext4 in the bdev list) —
+  artifact sane independent of our emulator. (Found+fixed: defconfig omits
+  `SERIAL_EARLYCON_RISCV_SBI`/`HVC_RISCV_SBI`, so a serial-less early boot is SILENT; added
+  to the fragment — it's exactly the SBI console channel our E2-T04 legacy console
+  implements.)
+- #3 config matches fragment: `check-kernel-config.sh` green (every `=y` present; every `=n`
+  present as `# ... is not set`). IKCONFIG_PROC=y so `/proc/config.gz` is auditable at
+  runtime.
+- #4 no modules: `grep =m` on the final config is empty (MODULES=n).
