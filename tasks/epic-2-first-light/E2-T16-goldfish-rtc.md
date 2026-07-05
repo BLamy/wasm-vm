@@ -91,3 +91,24 @@ storm) → CLEAR_INTERRUPT deasserts; IRQ gated by enable.
 proven at boot; #3 (rollover) covered by the latch unit test; #4 (`date -s` persists) covered
 by the offset unit test. `hwclock -r` / a live interactive `date` diff can be added to the
 smoke test if desired.
+
+### 2026-07-05 — cold-clone critic — 1 REFUTATION fixed + 1 advisory
+
+- **REFUTATION: `date -s` was wrong by up to ~4.29 s — inverted write order, masked by a
+  vacuous test.** The impl used stash-on-`TIME_LOW`/commit-on-`TIME_HIGH`, but the Linux
+  driver `goldfish_rtc_set_time` (confirmed at System.map `ffffffff805fa94a`) writes
+  **`TIME_HIGH` then `TIME_LOW`** — so the commit ran with a stale low word and the real low
+  word was discarded, keeping only the high 32 bits (~4 s resolution). The test wrote LOW→HIGH
+  (the impl's own convention) so it passed while the real driver would break. **Fixed** to
+  QEMU's order-independent scheme: each 32-bit write splices its half into the current guest
+  count and re-derives `offset`, so write order is irrelevant. Added
+  `time_set_is_write_order_independent` (asserts both orders land the exact same time) and
+  changed `guest_set_time…` to the driver's HIGH→LOW order with both halves non-trivial.
+- **ADVISORY fixed: `ALARM_LOW/HIGH` now read back the programmed value after the alarm fires**
+  (split `alarm_deadline: Option` into `alarm: u64` + `alarm_armed: bool`; only the armed flag
+  clears on fire, matching QEMU). Added `alarm_value_readable_after_fire`.
+- **CONFIRMED by the critic:** the LOW/HIGH read latch and its test are correct and NON-vacuous
+  (at `i=0` a missing latch gives `abs_diff == 2^32`, failing the assert); alarm/IRQ level
+  semantics, arm-in-past-fires-now, no-storm, PLIC-mirror-before-sync ordering, `enable_plic`
+  ordering, RefCell safety, determinism gate, and the wasm cfg-gating all hold. RTC unit tests
+  now 7/7; core lib 91.

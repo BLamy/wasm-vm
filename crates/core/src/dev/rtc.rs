@@ -10,9 +10,10 @@
 //!
 //! **Register map** (drivers/rtc/rtc-goldfish.c, QEMU hw/rtc/goldfish_rtc.c):
 //! - `TIME_LOW` @0x00 — read: sample `now`, latch its high word, return the low word; write:
-//!   stash the low word of a time-set.
+//!   splice this low word into the guest count and re-derive `offset` (order-independent).
 //! - `TIME_HIGH` @0x04 — read: the high word latched by the last `TIME_LOW` read; write:
-//!   commit a time-set — `offset = (hi<<32|low) - clock.now_ns()`.
+//!   splice this high word into the guest count and re-derive `offset`. The Linux driver
+//!   writes HIGH then LOW; making each write independent (QEMU's scheme) makes order moot.
 //! - `ALARM_LOW` @0x08 — write: arm the alarm at `(alarm_high<<32|low)`; read: alarm low word.
 //! - `ALARM_HIGH` @0x0c — write: stash the alarm high word; read: alarm high word.
 //! - `IRQ_ENABLED` @0x10 — write: gate the interrupt; read back the flag.
@@ -63,10 +64,11 @@ pub struct GoldfishRtc {
     offset: u64,
     /// High word latched by the last `TIME_LOW` read (read-coherency contract).
     time_high_latch: u32,
-    /// Low word stashed by a `TIME_LOW` write, consumed by the committing `TIME_HIGH` write.
-    time_low_write: u32,
-    /// Alarm deadline in guest-ns; `None` when disarmed.
-    alarm_deadline: Option<u64>,
+    /// Last-programmed alarm deadline (guest-ns); readable back via ALARM_LOW/HIGH even after
+    /// the alarm has fired (QEMU keeps the register value; only `alarm_armed` clears).
+    alarm: u64,
+    /// Whether the alarm will still fire (cleared on fire or by CLEAR_ALARM).
+    alarm_armed: bool,
     /// High word stashed by an `ALARM_HIGH` write, consumed by the arming `ALARM_LOW` write.
     alarm_high_write: u32,
     /// Interrupt enable gate.
@@ -81,8 +83,8 @@ impl GoldfishRtc {
             clock,
             offset: 0,
             time_high_latch: 0,
-            time_low_write: 0,
-            alarm_deadline: None,
+            alarm: 0,
+            alarm_armed: false,
             alarm_high_write: 0,
             irq_enabled: false,
             alarm_fired: false,
@@ -98,10 +100,8 @@ impl GoldfishRtc {
     /// deadline. Called every run-loop boundary by the machine; idempotent. Returns the
     /// current interrupt level (`alarm_fired && irq_enabled`).
     pub fn poll(&mut self) -> bool {
-        if let Some(deadline) = self.alarm_deadline
-            && self.now() >= deadline
-        {
-            self.alarm_deadline = None; // one-shot
+        if self.alarm_armed && self.now() >= self.alarm {
+            self.alarm_armed = false; // one-shot
             self.alarm_fired = true;
         }
         self.irq_level()
@@ -122,10 +122,10 @@ impl MmioDevice for GoldfishRtc {
                 now as u32
             }
             TIME_HIGH => self.time_high_latch,
-            ALARM_LOW => self.alarm_deadline.unwrap_or(0) as u32,
-            ALARM_HIGH => (self.alarm_deadline.unwrap_or(0) >> 32) as u32,
+            ALARM_LOW => self.alarm as u32,
+            ALARM_HIGH => (self.alarm >> 32) as u32,
             IRQ_ENABLED => u32::from(self.irq_enabled),
-            ALARM_STATUS => u32::from(self.alarm_deadline.is_some()),
+            ALARM_STATUS => u32::from(self.alarm_armed),
             _ => 0,
         };
         Ok(u64::from(val))
@@ -134,20 +134,30 @@ impl MmioDevice for GoldfishRtc {
     fn write(&mut self, offset: u64, _width: Width, value: u64) -> Result<(), BusFault> {
         let v = value as u32;
         match offset {
-            // Time-set: LOW stashes, HIGH commits offset = requested - host_now.
-            TIME_LOW => self.time_low_write = v,
-            TIME_HIGH => {
-                let requested = (u64::from(v) << 32) | u64::from(self.time_low_write);
-                self.offset = requested.wrapping_sub(self.clock.now_ns());
+            // Time-set: ORDER-INDEPENDENT, like QEMU. Each 32-bit write splices its half into
+            // the current guest count and re-derives the offset, so it doesn't matter that the
+            // Linux driver writes TIME_HIGH *then* TIME_LOW (goldfish_rtc_set_time). A stash/
+            // commit scheme keyed on one register would drop the other half under the driver's
+            // order — writing back only ~4 s of resolution.
+            TIME_LOW => {
+                let now = self.now();
+                let new = (now & 0xffff_ffff_0000_0000) | u64::from(v);
+                self.offset = self.offset.wrapping_add(new.wrapping_sub(now));
             }
-            // Alarm: HIGH stashes, LOW arms at (high<<32|low).
+            TIME_HIGH => {
+                let now = self.now();
+                let new = (now & 0x0000_0000_ffff_ffff) | (u64::from(v) << 32);
+                self.offset = self.offset.wrapping_add(new.wrapping_sub(now));
+            }
+            // Alarm: HIGH stashes, LOW arms at (high<<32|low) — driver writes HIGH then LOW.
             ALARM_HIGH => self.alarm_high_write = v,
             ALARM_LOW => {
-                self.alarm_deadline = Some((u64::from(self.alarm_high_write) << 32) | u64::from(v));
+                self.alarm = (u64::from(self.alarm_high_write) << 32) | u64::from(v);
+                self.alarm_armed = true;
                 self.poll(); // an already-past deadline fires immediately
             }
             IRQ_ENABLED => self.irq_enabled = v != 0,
-            CLEAR_ALARM => self.alarm_deadline = None,
+            CLEAR_ALARM => self.alarm_armed = false, // disarm; keep the value for readback
             CLEAR_INTERRUPT => self.alarm_fired = false,
             _ => {}
         }
@@ -223,16 +233,72 @@ mod tests {
     fn guest_set_time_offsets_without_touching_host() {
         let host = alloc::rc::Rc::new(Cell::new(1_000_000_000)); // host = 1s
         let mut rtc = rtc_at(alloc::rc::Rc::clone(&host));
-        // Guest sets time to 9_000_000_000 ns (9s): write LOW then HIGH.
-        let target = 9_000_000_000u64;
+        // The Linux driver writes TIME_HIGH THEN TIME_LOW (goldfish_rtc_set_time). Use that
+        // order, with BOTH halves non-trivial, so a stash/commit impl keyed on the wrong
+        // register (dropping the low word) would be caught.
+        let target = (2u64 << 32) | 0x1234_5678;
+        rtc.write(TIME_HIGH, Width::B4, target >> 32).unwrap();
         rtc.write(TIME_LOW, Width::B4, target & 0xffff_ffff)
             .unwrap();
-        rtc.write(TIME_HIGH, Width::B4, target >> 32).unwrap();
-        assert_eq!(read64(&mut rtc), target, "guest sees the set time");
+        assert_eq!(
+            read64(&mut rtc),
+            target,
+            "guest sees the exact set time (both halves)"
+        );
         assert_eq!(host.get(), 1_000_000_000, "host clock untouched");
         // Host advances by 5s → guest advances by 5s too (offset preserved).
         host.set(host.get() + 5_000_000_000);
         assert_eq!(read64(&mut rtc), target + 5_000_000_000, "offset persists");
+    }
+
+    #[test]
+    fn time_set_is_write_order_independent() {
+        // Both driver order (HIGH,LOW) and the reverse must land the exact same time — the
+        // QEMU order-independent contract. Regression guard for the critic's finding.
+        let target = (7u64 << 32) | 0xABCD_1234;
+        for order in [[TIME_HIGH, TIME_LOW], [TIME_LOW, TIME_HIGH]] {
+            let host = alloc::rc::Rc::new(Cell::new(3_000_000_000));
+            let mut rtc = rtc_at(alloc::rc::Rc::clone(&host));
+            for &reg in &order {
+                let half = if reg == TIME_HIGH {
+                    target >> 32
+                } else {
+                    target & 0xffff_ffff
+                };
+                rtc.write(reg, Width::B4, half).unwrap();
+            }
+            assert_eq!(
+                read64(&mut rtc),
+                target,
+                "order {order:?} must set the same time"
+            );
+        }
+    }
+
+    #[test]
+    fn alarm_value_readable_after_fire() {
+        // ALARM_LOW/HIGH read back the programmed value even after the alarm fired (QEMU keeps
+        // the register; only ALARM_STATUS clears).
+        let t = alloc::rc::Rc::new(Cell::new(0));
+        let mut rtc = rtc_at(alloc::rc::Rc::clone(&t));
+        let deadline = (1u64 << 32) | 0x99;
+        rtc.write(ALARM_HIGH, Width::B4, deadline >> 32).unwrap();
+        rtc.write(ALARM_LOW, Width::B4, deadline & 0xffff_ffff)
+            .unwrap();
+        t.set(deadline + 1);
+        rtc.poll(); // fires, disarms
+        assert_eq!(
+            rtc.read(ALARM_STATUS, Width::B4).unwrap(),
+            0,
+            "disarmed after fire"
+        );
+        let lo = rtc.read(ALARM_LOW, Width::B4).unwrap();
+        let hi = rtc.read(ALARM_HIGH, Width::B4).unwrap();
+        assert_eq!(
+            (hi << 32) | lo,
+            deadline,
+            "alarm value still readable after fire"
+        );
     }
 
     #[test]
