@@ -61,6 +61,28 @@ jobs:
       # Verify tooling integrity (E0-T25): every task has a verify target, no green-washing.
       - run: bash tools/verify/self_check.sh
 
+  # E1-T19: the full riscv-tests regression wall over the committed ELFs, with the report
+  # uploaded as an artifact and the reviewed allowlist enforced (a non-allowlisted failure or a
+  # stale allowlist entry is red). Hermetic — no Docker/network.
+  riscv-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read toolchain pin
+        id: pin
+        run: echo "toolchain=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.pin.outputs.toolchain }}
+      - uses: Swatinem/rust-cache@v2
+      - run: bash tools/run_riscv_tests.sh
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: riscv-tests-report
+          path: target/riscv-tests-report.*
+
   wasm:
     runs-on: ubuntu-latest
     steps:

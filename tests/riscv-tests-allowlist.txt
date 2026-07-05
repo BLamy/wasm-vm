@@ -1,0 +1,21 @@
+# riscv-tests known-failure allowlist (E1-T19).
+#
+# One ELF name per line that is permitted to NOT pass, each with a justification and the
+# task id that will remove it. The unified runner (crates/core/tests/riscv_tests_suite.rs)
+# diffs the observed failure set against THIS file: an UNLISTED failure fails the job, and a
+# LISTED test that unexpectedly PASSES also fails the job (a stale allowlist entry must be
+# removed). Target: empty by the E1 capstone (E1-T24).
+#
+# Format: <elf-name>  <SPACE>  <justification incl. a task id>
+
+rv64ui-p-ma_data     Exercises MISALIGNED loads/stores succeeding; our bus deliberately faults misaligned access (E0-T08 policy), so the trap is correct behavior. Passes once an unaligned-access mode lands — tracked for a future misaligned-access task.
+rv64mi-p-breakpoint  Exercises the debug-spec trigger CSRs (tdata1/tdata2), not implemented at Level 1. Deferred to a debug-trigger task in a later epic.
+rv64mi-p-illegal     Reaches a broad TVM/TSR trap-virtualization matrix (satp/sfence/xRET gated to M with precise mepc/mtval) past E1-T17's SFENCE.VMA decode. SFENCE.VMA itself is covered by tlb.rs; the remaining virtualization is a follow-up privileged-CSR task.
+
+# Suites NOT YET BUILT (toolchain-blocked — the -v/virtual-memory env and rv64si need a
+# newlib-equipped riscv64-unknown-elf toolchain; the wasm-vm-toolchain:local image is bare
+# cross-gcc, documented in E1-T16 / tools/riscv-tests/build-rv64ui-v.sh). These are not run
+# failures — the ELFs are absent — so the runner reports them as MISSING, not FAIL, and this
+# section records why. They light up when the newlib toolchain lands.
+#   rv64ui-v-*, rv64um-v-*, rv64ua-v-*, rv64uf-v-*, rv64ud-v-*, rv64uc-v-*  — v-env needs newlib
+#   rv64si-p-*                                                              — S-mode env needs newlib
