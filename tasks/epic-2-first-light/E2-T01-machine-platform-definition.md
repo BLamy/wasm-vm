@@ -3,7 +3,7 @@ id: E2-T01
 epic: 2
 title: Define the "wasm-vm virt" machine platform — memory map, hart layout, boot contract
 priority: 201
-status: implemented
+status: verified
 depends_on: [E1]
 estimate: S
 capstone: false
