@@ -83,6 +83,9 @@ pub struct Machine {
     clock_div: u64,
     /// Sub-divider remainder: retirements not yet worth a whole `mtime` tick.
     tick_accum: u64,
+    /// PLIC shared state (E1-T13), present when [`Self::enable_plic`] attached the device. The
+    /// run loop samples the per-context EIP levels into `mip.MEIP`/`mip.SEIP`.
+    plic: Option<alloc::rc::Rc<core::cell::RefCell<dev::plic::PlicState>>>,
 }
 
 impl Machine {
@@ -106,6 +109,7 @@ impl Machine {
             clint: None,
             clock_div: 1,
             tick_accum: 0,
+            plic: None,
         })
     }
 
@@ -129,6 +133,23 @@ impl Machine {
         self.clock_div = clock_div.max(1);
         self.tick_accum = 0;
         self.clint = Some(alloc::rc::Rc::clone(&state));
+        state
+    }
+
+    /// Attach a PLIC (E1-T13) at [`bus::mmap::PLIC_BASE`] and drive `mip.MEIP` (hart-0 M context
+    /// 0) / `mip.SEIP` (hart-0 S context 1) from its external-interrupt levels each instruction
+    /// boundary. Returns the shared state handle so tests/devices can program registers and
+    /// obtain [`dev::plic::IrqLine`]s.
+    pub fn enable_plic(&mut self) -> alloc::rc::Rc<core::cell::RefCell<dev::plic::PlicState>> {
+        let (device, state) = dev::plic::Plic::new();
+        self.bus
+            .attach(
+                bus::mmap::PLIC_BASE,
+                dev::plic::PLIC_LEN,
+                alloc::boxed::Box::new(device),
+            )
+            .expect("PLIC window overlaps RAM or another device");
+        self.plic = Some(alloc::rc::Rc::clone(&state));
         state
     }
 
@@ -227,6 +248,30 @@ impl Machine {
         }
     }
 
+    /// E1-T13: mirror the PLIC external-interrupt levels into `mip`: MEIP (bit 11) from the
+    /// M-mode context (0), SEIP (bit 9) from the S-mode context (1) — device-owned bits. A no-op
+    /// when no PLIC is attached.
+    ///
+    /// SIMPLIFICATION: strictly, `mip.SEIP` is `software_SEIP | controller_SEIP` (Priv §3.1.9) —
+    /// SEIP is writable by M-mode (E1-T11 keeps bit 9 in `MIP_SW_WMASK`) AND driven by the
+    /// interrupt controller. Here the PLIC OWNS the S-external line, so we OVERWRITE SEIP with the
+    /// controller signal rather than OR-ing it with a software-injected bit. Every PLIC-driven
+    /// guest (OpenSBI/Linux) drives SEIP through the controller, so this changes no real flow; a
+    /// full OR would matter only for a guest that injects SEIP via `csrs mip` while also using the
+    /// PLIC, which does not occur in this system. (MEIP is not software-writable, so it has no such
+    /// interaction.)
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn sync_plic(&mut self) {
+        if let Some(plic) = &self.plic {
+            let s = plic.borrow();
+            let meip = s.eip(0);
+            let seip = s.eip(1);
+            drop(s);
+            self.hart.csr.set_mip_bit(11, meip); // MEIP ← M context
+            self.hart.csr.set_mip_bit(9, seip); // SEIP ← S context (see SIMPLIFICATION above)
+        }
+    }
+
     /// E1-T12: advance `mtime` by one tick per `clock_div` retired instructions — the
     /// deterministic clock source (native and wasm retire identically, so a timer interrupt
     /// lands at the same retire index). A no-op when no CLINT is attached.
@@ -253,7 +298,11 @@ impl Machine {
             // = msip) into `mip` before sampling — a continuously re-evaluated level, so a
             // just-crossed timer fires and a raised `mtimecmp` clears MTIP with no CSR access.
             #[cfg(not(feature = "zicsr-stub"))]
-            self.sync_clint();
+            {
+                self.sync_clint();
+                // E1-T13: refresh the PLIC-driven MEIP/SEIP levels too, before sampling.
+                self.sync_plic();
+            }
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
             // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the
             // next instruction — sepc/mepc then points at the resume address (the interrupted
