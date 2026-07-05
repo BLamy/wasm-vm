@@ -32,7 +32,9 @@ mkdir -p "$OUT"
 # Normalize a transcript for reproducibility diffing: drop kernel timestamps [   1.234567], the
 # spawn PID line, and hex addresses/pointers that legitimately vary run-to-run. What remains is
 # the guest-visible text + our RESULT lines, which MUST be byte-identical across deterministic runs.
-normalize() { sed -E 's/\[[[:space:]]*[0-9]+\.[0-9]+\]//g; s/spawn .*//; s/0x[0-9a-fA-F]+/0xADDR/g; s/\r//g'; }
+# Also blank the interactivity latency (host wall-clock, legitimately varies run-to-run — critic
+# C3: leaving it in made the transcript diff false-fail on reproducible guest runs).
+normalize() { sed -E 's/\[[[:space:]]*[0-9]+\.[0-9]+\]//g; s/spawn .*//; s/0x[0-9a-fA-F]+/0xADDR/g; s/echo_latency_ms=[0-9]+/echo_latency_ms=N/g; s/\r//g'; }
 
 declare -a run_pass run_results
 overall=0

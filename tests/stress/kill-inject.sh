@@ -58,18 +58,23 @@ EXP
       --append "root=/dev/vda rw console=ttyS0 earlycon=sbi" --max-instrs 40000000000
     expect { -timeout [ge STRESS_BOOT_TO 900] "login:" {} timeout { puts "RECOVER_FAIL no-login"; exit 3 } }
     send "root\r"; sleep 3; send "\r"; sleep 2
-    send "echo REC_OK\r"; expect { -timeout 90 "REC_OK" {} timeout { puts "RECOVER_FAIL no-shell"; exit 4 } }
-    # Filesystem must be consistent: check dmesg for ext4 errors and that / is still rw ext4.
-    send "dmesg | grep -iE 'ext4.*error|remount.*read-only|JBD2.*Error' | head; echo DMESG_SCAN_DONE\r"
-    expect { -timeout 60 "DMESG_SCAN_DONE" {} timeout {} }
-    send "mount | grep ' / '; echo MOUNTCHK\r"; expect { -timeout 60 "MOUNTCHK" {} timeout {} }
-    send "poweroff\r"; expect { -timeout 300 eof {} timeout {} }
+    # Output-only tokens (echo $((6*7))=42), so the host-side greps below match SHELL OUTPUT, not
+    # the echoed command text — that self-poisoning always-red bug is what critic C2 caught.
+    send "echo REC\$((6*7))\r"; expect { -timeout 90 "REC42" {} timeout { puts "RECOVER_FAIL no-shell"; exit 4 } }
+    # Decide FS health IN-GUEST → an output-only verdict token. FSOK42 = clean journal replay;
+    # FSBAD = ext4/JBD2 errors or a read-only remount in the ring buffer.
+    send "if dmesg | grep -qiE 'ext4.*error|remount.*read-only|JBD2.*Error'; then echo FSBAD; else echo FSOK\$((6*7)); fi\r"
+    expect { -timeout 90 "FSOK42" {} "FSBAD" {} timeout {} }
+    send "mount | grep ' / '; echo MNT\$((6*7))\r"; expect { -timeout 60 "MNT42" {} timeout {} }
+    send "poweroff\r"; expect { -timeout [ge STRESS_BOOT_TO 900] eof {} timeout {} }
 EXP
   rc2=$?
   p2="$OUT/kill${k}.phase2.log"
-  # Recovered iff: reached shell (REC_OK), no ext4 error/remount-ro lines, and / still mounted rw ext4.
-  if [ "$rc2" -eq 0 ] && grep -q "REC_OK" "$p2" \
-     && ! grep -qiE "ext4.*error|remount.*read-only|JBD2.*Error" "$p2" \
+  # Recovered iff: reached shell (REC42), the guest's own FS verdict was clean (FSOK42, not FSBAD),
+  # and / is still mounted rw ext4 (a string that appears only in `mount` OUTPUT). All four greps
+  # target OUTPUT-ONLY tokens, so none can match an echoed command (critic C2 fix).
+  if [ "$rc2" -eq 0 ] && grep -q "REC42" "$p2" \
+     && grep -q "FSOK42" "$p2" && ! grep -q "FSBAD" "$p2" \
      && grep -qE "on / type ext4 \(rw" "$p2"; then
     echo "kill $k: RECOVERED (clean journal replay, / rw ext4)" >&2
   else
