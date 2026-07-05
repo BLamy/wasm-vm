@@ -35,7 +35,12 @@ pub fn handle(state: &mut SbiState, fid: u64, args: &[u64; 6]) -> SbiRet {
                     // this value is never guest-visible (spec: no return on success).
                     SbiRet::ok(0)
                 }
-                TYPE_COLD_REBOOT | TYPE_WARM_REBOOT => SbiRet::not_supported(),
+                TYPE_COLD_REBOOT | TYPE_WARM_REBOOT => {
+                    // E2-T17: signal the run loop to re-boot (the host re-inits the machine).
+                    // Like shutdown, system_reset does not return on success.
+                    state.reboot = true;
+                    SbiRet::ok(0)
+                }
                 _ => SbiRet::invalid_param(), // reserved/vendor type
             }
         }
@@ -46,7 +51,7 @@ pub fn handle(state: &mut SbiState, fid: u64, args: &[u64; 6]) -> SbiRet {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::sbi::{SBI_ERR_INVALID_PARAM, SBI_ERR_NOT_SUPPORTED};
+    use crate::sbi::SBI_ERR_INVALID_PARAM;
 
     #[test]
     fn shutdown_reboot_and_error_paths() {
@@ -60,12 +65,21 @@ mod tests {
             &[TYPE_SHUTDOWN, REASON_SYSTEM_FAILURE, 0, 0, 0, 0],
         );
         assert_eq!(st.shutdown, Some(1));
+        // E2-T17: cold/warm reboot is now SUPPORTED — returns OK and flags a reboot request
+        // (the run loop turns it into RunOutcome::Reset(Reboot)); it must NOT shut down.
         let mut st = SbiState::default();
         assert_eq!(
             handle(&mut st, 0, &[TYPE_COLD_REBOOT, 0, 0, 0, 0, 0]).error,
-            SBI_ERR_NOT_SUPPORTED
+            0
         );
+        assert!(st.reboot, "cold reboot flags a reboot request");
         assert_eq!(st.shutdown, None, "reboot must not shut down");
+        let mut st = SbiState::default();
+        assert_eq!(
+            handle(&mut st, 0, &[TYPE_WARM_REBOOT, 0, 0, 0, 0, 0]).error,
+            0
+        );
+        assert!(st.reboot, "warm reboot flags a reboot request");
         assert_eq!(
             handle(&mut st, 0, &[TYPE_SHUTDOWN, 99, 0, 0, 0, 0]).error,
             SBI_ERR_INVALID_PARAM

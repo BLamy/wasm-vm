@@ -107,6 +107,10 @@ pub struct SbiState {
     /// E2-T06 SRST: a requested shutdown (`Some(exit_code)`) — the run loop returns
     /// `RunOutcome::Exited(code)` before the guest executes another instruction.
     pub(crate) shutdown: Option<u64>,
+    /// E2-T17 SRST: a requested cold/warm reboot — the run loop returns
+    /// `RunOutcome::Reset(ExitReason::Reboot)`. Linux tries SBI SRST reboot before the syscon
+    /// device, so this is the primary reboot path.
+    pub(crate) reboot: bool,
 }
 
 impl Default for SbiState {
@@ -116,6 +120,7 @@ impl Default for SbiState {
             console_in: VecDeque::new(),
             stimecmp: u64::MAX, // reset: no timer programmed — never fires
             shutdown: None,
+            reboot: false,
         }
     }
 }

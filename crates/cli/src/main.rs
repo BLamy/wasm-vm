@@ -153,6 +153,16 @@ fn open_trace(spec: &Option<String>) -> io::Result<Option<Box<dyn Write>>> {
     }
 }
 
+/// E2-T17: exit code for a platform reset in the bare-metal `run` path (which is one-shot —
+/// it does not re-boot on reboot; the `boot` subcommand owns the reboot loop). PowerOff and
+/// Reboot are clean (0); Fail carries the guest's code.
+fn reset_exit_code(r: wasm_vm_core::ExitReason) -> u8 {
+    match r {
+        wasm_vm_core::ExitReason::PowerOff | wasm_vm_core::ExitReason::Reboot => 0,
+        wasm_vm_core::ExitReason::Fail(code) => (code & 0xff) as u8,
+    }
+}
+
 /// A distinct nonzero exit per ELF-rejection reason, so scripts can tell "not an ELF"
 /// from "wrong arch" from "too big for RAM".
 fn elf_error_code(e: &ElfError) -> u8 {
@@ -286,6 +296,7 @@ fn run(a: RunArgs) -> ExitCode {
         eprintln!("retired={retired}");
         return match outcome {
             RunOutcome::Exited(code) => ExitCode::from((code & 0xFF) as u8),
+            RunOutcome::Reset(r) => ExitCode::from(reset_exit_code(r)),
             RunOutcome::Trapped(_) => ExitCode::from(101),
             RunOutcome::MaxInstrs if hang_pc.is_some() => ExitCode::from(103), // distinct: hang
             RunOutcome::MaxInstrs => ExitCode::from(102),
@@ -358,6 +369,7 @@ fn run(a: RunArgs) -> ExitCode {
     }
     match outcome {
         RunOutcome::Exited(code) => ExitCode::from((code & 0xff) as u8),
+        RunOutcome::Reset(r) => ExitCode::from(reset_exit_code(r)),
         RunOutcome::Trapped(t) => {
             eprintln!("wasm-vm: trap {:?} (tval={:#x})", t.cause, t.tval);
             ExitCode::from(101)

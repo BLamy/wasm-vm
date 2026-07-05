@@ -88,6 +88,8 @@ fn run_elf(path: &Path) -> (Status, u64) {
         }
         RunOutcome::Trapped(t) => Status::Error(format!("escaped trap {:?}", t.cause)),
         RunOutcome::MaxInstrs => Status::Timeout,
+        // E2-T17: arch-test ELFs never touch the syscon finisher; a Reset here is a harness error.
+        RunOutcome::Reset(r) => Status::Error(format!("unexpected platform reset {r:?}")),
     };
     (status, retired)
 }

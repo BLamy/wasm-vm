@@ -141,3 +141,83 @@ fn boots_to_interactive_busybox_shell() {
     drop(stdin);
     let _ = reader.join();
 }
+
+/// E2-T17: `reboot -f` must produce a SECOND full boot in the same process, and `poweroff -f`
+/// must then exit cleanly (code 0). Two boots + a clean exit in one child.
+#[test]
+#[ignore = "two full Linux boots: ~2-3 min, needs a release build + pinned artifacts"]
+fn reboot_produces_second_boot_then_poweroff() {
+    let root = repo_root();
+    let bin = root.join("target/release/wasm-vm");
+    let kernel = root.join("releases/kernel/6.6.63/Image");
+    let initrd = root.join("releases/initramfs/initramfs.cpio.gz");
+    for f in [&bin, &kernel, &initrd] {
+        assert!(f.exists(), "missing {}", f.display());
+    }
+
+    let mut child = Command::new(&bin)
+        .args(["boot", "--kernel"])
+        .arg(&kernel)
+        .arg("--initrd")
+        .arg(&initrd)
+        .args(["--max-instrs", "40000000000"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped()) // the "reboot #1" / "powered off" banners go here
+        .spawn()
+        .expect("spawn wasm-vm boot");
+
+    let mut stdin = child.stdin.take().unwrap();
+    let stdout = child.stdout.take().unwrap();
+    let stderr = child.stderr.take().unwrap();
+
+    // Merge stdout (dmesg) + stderr (the "reboot #1" / "powered off" banners) into one
+    // transcript. A generic reader thread drains any `Read + Send` stream.
+    let transcript = Arc::new(Mutex::new(String::new()));
+    fn spawn_reader<R: Read + Send + 'static>(
+        mut r: R,
+        t: Arc<Mutex<String>>,
+    ) -> std::thread::JoinHandle<()> {
+        std::thread::spawn(move || {
+            let mut chunk = [0u8; 512];
+            while let Ok(n) = r.read(&mut chunk) {
+                if n == 0 {
+                    break;
+                }
+                t.lock()
+                    .unwrap()
+                    .push_str(&String::from_utf8_lossy(&chunk[..n]));
+            }
+        })
+    }
+    let r1 = spawn_reader(stdout, Arc::clone(&transcript));
+    let r2 = spawn_reader(stderr, Arc::clone(&transcript));
+
+    // First boot → reboot.
+    assert!(
+        wait_for(&transcript, "busybox userland up", 180),
+        "first boot never reached userspace"
+    );
+    assert!(wait_for(&transcript, "~ # ", 30), "first boot no prompt");
+    writeln!(stdin, "reboot -f").unwrap();
+    stdin.flush().ok();
+    // The reboot banner + a SECOND userspace.
+    assert!(
+        wait_for(&transcript, "reboot #1", 60),
+        "reboot did not restart the machine"
+    );
+    assert!(
+        wait_for(&transcript, "busybox userland up", 180),
+        "second boot never reached userspace after reboot"
+    );
+    assert!(wait_for(&transcript, "~ # ", 30), "second boot no prompt");
+    // Poweroff → clean exit.
+    writeln!(stdin, "poweroff -f").unwrap();
+    stdin.flush().ok();
+
+    let status = child.wait().expect("child exits after poweroff");
+    assert!(status.success(), "poweroff must exit 0, got {status:?}");
+    drop(stdin);
+    let _ = r1.join();
+    let _ = r2.join();
+}
