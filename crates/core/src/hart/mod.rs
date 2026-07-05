@@ -57,6 +57,10 @@ pub struct Trap {
 #[derive(Default)]
 pub struct Hart {
     pub regs: XRegs,
+    /// QUARANTINED CSR scaffolding for the riscv-tests p-env (E0-T19). Present only under
+    /// `feature = "zicsr-stub"`; Epic 1 replaces it with the real CSR file.
+    #[cfg(feature = "zicsr-stub")]
+    pub csrs: crate::zicsr_stub::CsrFile,
 }
 
 impl core::fmt::Debug for Hart {
@@ -168,11 +172,29 @@ impl Hart {
                 });
             }
         };
-        let Ok(instr) = decode(insn) else {
-            return Err(Trap {
-                cause: Exception::IllegalInstruction,
-                tval: insn as u64,
-            });
+        let instr = match decode(insn) {
+            Ok(instr) => instr,
+            Err(_) => {
+                // The base decoder rejects CSR/xRET encodings. With the quarantined
+                // zicsr-stub feature on, try to execute them there (they retire and are
+                // traced — never silently skipped). Otherwise it is an illegal insn.
+                #[cfg(feature = "zicsr-stub")]
+                if let Some((rd, value)) =
+                    crate::zicsr_stub::execute(&mut self.regs, &mut self.csrs, insn)
+                {
+                    sink.retire(&crate::trace::TraceRecord {
+                        pc,
+                        insn,
+                        rd: (rd != 0).then_some((rd, value)),
+                        mem: None,
+                    });
+                    return Ok(());
+                }
+                return Err(Trap {
+                    cause: Exception::IllegalInstruction,
+                    tval: insn as u64,
+                });
+            }
         };
         let (rd, value, mem) = self.execute(bus, instr)?;
         // Retirement hook — reached only when execute() returns Ok, so no record is

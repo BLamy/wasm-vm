@@ -2,9 +2,9 @@
 # parallel; locally they run in the order listed under `ci`. If this file and ci.yml
 # disagree, that's a bug (E0-T02).
 
-.PHONY: ci fmt clippy test wasm features
+.PHONY: ci fmt clippy test wasm features test-riscv
 
-ci: fmt clippy test wasm features
+ci: fmt clippy test wasm features test-riscv
 
 fmt:
 	cargo fmt --all --check
@@ -36,3 +36,13 @@ features:
 	cargo build -p wasm-vm-core --no-default-features --features std,trace
 	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
 	cargo build -p wasm-vm-core --no-default-features --features trace --target wasm32-unknown-unknown
+
+# riscv-tests rv64ui-p smoke gate (E0-T19). Uses the COMMITTED ELFs under
+# tests/riscv-tests-bin/ (no Docker needed); rebuild them with
+# `tools/toolchain/run.sh -- tools/riscv-tests/build.sh`. Native runs always; the wasm
+# side runs only when wasm-pack is present.
+test-riscv:
+	cargo test -p wasm-vm-core --features zicsr-stub --test riscv_tests
+	@command -v wasm-pack >/dev/null 2>&1 || { \
+		echo "note: wasm-pack absent — skipping the wasm rv64ui-p run"; exit 0; }
+	wasm-pack test --node crates/wasm --features zicsr-stub

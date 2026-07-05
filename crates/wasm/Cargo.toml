@@ -17,5 +17,10 @@ log = { workspace = true }
 console_log = { workspace = true }
 console_error_panic_hook = { workspace = true }
 
+[features]
+# Forwards the quarantined E0-T19 CSR stub so the wasm riscv-tests harness can run the
+# p-env binaries: `wasm-pack test --node crates/wasm --features zicsr-stub`. Off by default.
+zicsr-stub = ["wasm-vm-core/zicsr-stub"]
+
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
