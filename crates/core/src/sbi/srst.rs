@@ -20,17 +20,25 @@ const REASON_SYSTEM_FAILURE: u64 = 1;
 
 pub fn handle(state: &mut SbiState, fid: u64, args: &[u64; 6]) -> SbiRet {
     match fid {
-        FID_SYSTEM_RESET => match (args[0], args[1]) {
-            (TYPE_SHUTDOWN, reason @ (REASON_NONE | REASON_SYSTEM_FAILURE)) => {
-                state.shutdown = Some(if reason == REASON_NONE { 0 } else { 1 });
-                // The run loop exits before the guest executes another instruction; this
-                // return value is never guest-visible (spec: does not return on success).
-                SbiRet::ok(0)
+        FID_SYSTEM_RESET => {
+            let (rtype, reason) = (args[0], args[1]);
+            // Spec (critic finding): INVALID_PARAM when EITHER reset_type or reset_reason
+            // is reserved — validate the reason before deciding type support, matching
+            // OpenSBI's ordering.
+            if reason > REASON_SYSTEM_FAILURE {
+                return SbiRet::invalid_param();
             }
-            (TYPE_COLD_REBOOT | TYPE_WARM_REBOOT, _) => SbiRet::not_supported(),
-            (TYPE_SHUTDOWN, _) => SbiRet::invalid_param(), // reserved reason
-            _ => SbiRet::invalid_param(),                  // reserved/vendor type
-        },
+            match rtype {
+                TYPE_SHUTDOWN => {
+                    state.shutdown = Some(if reason == REASON_NONE { 0 } else { 1 });
+                    // The run loop exits before the guest executes another instruction;
+                    // this value is never guest-visible (spec: no return on success).
+                    SbiRet::ok(0)
+                }
+                TYPE_COLD_REBOOT | TYPE_WARM_REBOOT => SbiRet::not_supported(),
+                _ => SbiRet::invalid_param(), // reserved/vendor type
+            }
+        }
         _ => SbiRet::not_supported(),
     }
 }
@@ -60,6 +68,12 @@ mod tests {
         assert_eq!(st.shutdown, None, "reboot must not shut down");
         assert_eq!(
             handle(&mut st, 0, &[TYPE_SHUTDOWN, 99, 0, 0, 0, 0]).error,
+            SBI_ERR_INVALID_PARAM
+        );
+        // Reboot with a RESERVED reason (critic round-1 finding): reason validates FIRST
+        // -> INVALID_PARAM, not NOT_SUPPORTED.
+        assert_eq!(
+            handle(&mut st, 0, &[TYPE_COLD_REBOOT, 99, 0, 0, 0, 0]).error,
             SBI_ERR_INVALID_PARAM
         );
         assert_eq!(

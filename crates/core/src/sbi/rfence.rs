@@ -14,13 +14,18 @@ const FID_SFENCE_VMA_ASID: u64 = 2;
 /// is always architecturally safe, and Linux's flush_tlb_range batches are small.
 const RANGE_FLUSH_CAP_PAGES: u64 = 256;
 
-/// Range flush: `start=0, size=usize::MAX` (and any huge range) = full flush.
+/// Range flush: `start=0, size=usize::MAX` (and any huge range) = full flush. A range whose
+/// end would overflow 2^64 also full-flushes — pages past the top of the address space don't
+/// exist, and the critic showed `start + i*4096` panics in debug builds on exactly that
+/// guest-controllable input (top-of-space VAs are canonical Sv39 kernel addresses).
 fn sfence_range(hart: &mut Hart, start: u64, size: u64, asid: Option<u64>) {
     let pages = size.div_ceil(4096);
-    if size == u64::MAX || pages > RANGE_FLUSH_CAP_PAGES {
+    if size == u64::MAX || pages > RANGE_FLUSH_CAP_PAGES || start.checked_add(size).is_none() {
         hart.tlb.sfence(None, asid);
         return;
     }
+    // start + size doesn't overflow and the last page base is < start + size, so this
+    // arithmetic is now provably in range.
     for i in 0..pages {
         hart.tlb.sfence(Some(start + i * 4096), asid);
     }

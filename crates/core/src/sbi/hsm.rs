@@ -46,14 +46,17 @@ pub fn handle(fid: u64, args: &[u64; 6]) -> SbiRet {
         }
         FID_HART_SUSPEND => {
             let suspend_type = args[0]; // (a0 is the suspend type for FID 3)
-            if suspend_type == SUSPEND_RETENTIVE_DEFAULT {
-                // Retentive suspend resumes on interrupt; WFI is a legal no-op hint on
+            match suspend_type {
+                // Retentive default: resumes on interrupt; WFI is a legal no-op hint on
                 // this machine, so an immediate spec-compliant return IS the resume.
-                SbiRet::ok(0)
-            } else if suspend_type & 0x8000_0000 != 0 {
-                SbiRet::not_supported() // non-retentive: needs a resume address path
-            } else {
-                SbiRet::invalid_param() // reserved retentive types
+                SUSPEND_RETENTIVE_DEFAULT => SbiRet::ok(0),
+                // Non-retentive default: needs a resume-address path we don't have.
+                0x8000_0000 => SbiRet::not_supported(),
+                // Reserved bands (0x1..=0x7FFFFFFF retentive, 0x80000001..=0x8FFFFFFF
+                // non-retentive): spec + OpenSBI say INVALID_PARAM (critic finding).
+                0x1..=0x7FFF_FFFF | 0x8000_0001..=0x8FFF_FFFF => SbiRet::invalid_param(),
+                // Platform-specific bands: unimplemented here.
+                _ => SbiRet::not_supported(),
             }
         }
         _ => SbiRet::not_supported(),
@@ -98,6 +101,16 @@ mod tests {
         assert_eq!(
             handle(FID_HART_SUSPEND, &[0x1234, 0, 0, 0, 0, 0]).error,
             SBI_ERR_INVALID_PARAM
+        );
+        // Reserved NON-RETENTIVE band (critic round-1 finding): INVALID_PARAM, not -2.
+        assert_eq!(
+            handle(FID_HART_SUSPEND, &[0x8000_0001, 0, 0, 0, 0, 0]).error,
+            SBI_ERR_INVALID_PARAM
+        );
+        // Platform-specific band: unimplemented -> NOT_SUPPORTED (matches OpenSBI).
+        assert_eq!(
+            handle(FID_HART_SUSPEND, &[0xDEAD_BEEF, 0, 0, 0, 0, 0]).error,
+            SBI_ERR_NOT_SUPPORTED
         );
         assert_eq!(handle(9, &[0; 6]), SbiRet::not_supported());
     }
