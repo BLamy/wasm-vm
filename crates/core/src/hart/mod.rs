@@ -333,6 +333,10 @@ impl Hart {
         bus: &mut impl Bus,
         sink: &mut T,
     ) -> Result<(), Trap> {
+        // E1-T14: arm the Zicntr counter-write suppression for this instruction — only a
+        // `csrw mcycle`/`csrw minstret` performed during THIS step's execute suppresses its own
+        // retirement increment (clears any stale flag from a host-side/direct CSR write).
+        self.csr.arm_counters();
         let pc = self.regs.pc;
         // Fetch the low 16-bit parcel (C extension: `parcel[1:0] != 0b11` ⇒ a 16-bit
         // compressed instruction; else a 32-bit instruction whose upper half is a SEPARATE
@@ -411,6 +415,9 @@ impl Hart {
             }
         };
         let (rd, value, mem) = self.execute(bus, instr, insn_len, u64::from(trace_insn))?;
+        // E1-T14: the instruction retired (execute returned Ok) — advance mcycle/minstret AFTER
+        // execute, so a `csrr` that just read them observed the pre-retire count (matches Spike).
+        self.csr.retire_tick();
         // Retirement hook — reached only when execute() returns Ok, so no record is
         // emitted for a faulting instruction (trap-purity contract). Built and passed
         // generically; with NullSink the optimizer erases all of this (E0-T15 proof).

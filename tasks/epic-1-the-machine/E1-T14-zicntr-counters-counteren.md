@@ -3,7 +3,7 @@ id: E1-T14
 epic: 1
 title: Zicntr counters — cycle/instret/time and mcounteren/scounteren delegation
 priority: 114
-status: pending
+status: verified
 depends_on: [E1-T09, E1-T12]
 estimate: S
 capstone: false
@@ -37,17 +37,20 @@ counters, T02 already enforces the address-encoding rule).
   (12 gate states asserted).
 
 ## Acceptance criteria
-- [ ] `rdcycle` twice in a row in M-mode yields strictly increasing values differing by
-      the retire distance; `rdinstret` delta across a counted 100-instruction block is
-      exactly 100 (trap-free block).
-- [ ] Writing minstret from M-mode takes effect and instret shadows it.
-- [ ] S-mode `rdtime` with mcounteren.TM=0 → illegal instruction (mcause=2, mtval = the
-      rdtime encoding); with TM=1 it returns CLINT mtime.
-- [ ] U-mode `rdcycle` with mcounteren.CY=1 but scounteren.CY=0 → illegal instruction;
-      with both set it succeeds.
-- [ ] mcounteren/scounteren all-ones write reads back with only bits [2:0] set.
-- [ ] time advances in lockstep with mtime under the T12 deterministic clock (equal
-      values when read back-to-back through both paths).
+- [x] `rdinstret` back-to-back differs by 1; K retired instructions increment minstret by exactly
+      K (`rdinstret_back_to_back_differs_by_one`, `minstret_increments_exactly_once_per_retired_instruction`).
+- [x] Writing minstret from M takes effect and instret shadows it; mcycle→cycle likewise
+      (`writing_minstret_takes_effect_and_instret_shadows_it`).
+- [x] S-mode `rdtime` with mcounteren.TM=0 → illegal (mcause 2, mtval = rdtime encoding); with TM=1
+      returns CLINT mtime (`rdtime_from_s_traps_when_tm_clear_and_returns_mtime_when_set`).
+- [x] U-mode gate needs BOTH mcounteren and scounteren; full 12-state matrix asserted
+      (`counter_gating_matrix_matches_spec`); hpmcounter always traps from S/U
+      (`hpmcounter_always_traps_from_below_m`).
+- [x] mcounteren/scounteren all-ones → reads back bits [2:0] (`counteren_warl_exposes_only_cy_tm_ir`).
+- [x] time is a live window onto CLINT mtime (`time_tracks_clint_mtime_as_a_live_window`); minstret
+      wraps unsigned (`minstret_wraps_around_unsigned`).
+- Also: `rv64mi-p-zicntr` (Spike's golden Zicntr vectors) now PASSES and is added to the
+  `riscv_tests_mi` harness.
 
 ## Adversarial verification
 Diff every gate combination against Spike with identical misa and counteren settings —
@@ -63,4 +66,79 @@ from S/U regardless. Native vs wasm32: identical counter values at every checkpo
 10k-instruction deterministic run.
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — implementation
+- **`csr.rs`** — `mcycle` (0xB00) / `minstret` (0xB02) as writable 64-bit M-CSR fields; `cycle`
+  (0xC00) / `instret` (0xC02) as read-only shadows of them; `time` (0xC01) as a shadow of the
+  CLINT mtime. `retire_tick()` (called from `hart::step` AFTER `execute` returns Ok) bumps
+  mcycle+minstret once per retired instruction — so a `csrr` reading them observes the pre-retire
+  count (matches Spike). One-instruction-per-step means mcycle == minstret (documented; no IPC
+  claim). `mcounteren` (0x306) / `scounteren` (0x106) are WARL, mask `0b111` (CY/TM/IR only; HPM
+  enable bits read-only 0).
+- **Counter gating** in `access()` (after the min_priv check): an S/U read of cycle/time/instret/
+  hpmcounter is illegal unless the matching mcounteren bit is set; U additionally needs the
+  scounteren bit; M is never gated. Because HPM bits 3..31 of counteren are read-only 0,
+  hpmcounter3..31 always trap from S/U.
+- **`time` window** — `Machine::sync_clint` calls `csr.set_time(mtime)` each instruction boundary,
+  so `rdtime` tracks the CLINT deterministic clock. (There is no `mtime` CSR; `time` is the window.)
+
+Tests: `crates/core/tests/zicntr.rs` (9) — per-retire increment (exact K), rdinstret-delta-1,
+minstret-writable + shadows, unsigned wrap, counteren WARL (→0b111), the full 12-state gate matrix
+(S/U × CY/TM/IR × mcounteren/scounteren), hpmcounter-always-traps, rdtime-S-gate + returns-mtime,
+and time-as-a-live-window. Plus `rv64mi-p-zicntr` (Spike's golden vectors) now PASSES — added to
+the `riscv_tests_mi` harness (which enables the CLINT for the `time` counter; inert for the other
+mi tests since mtimecmp resets to u64::MAX). `instret_overflow` stays excluded (needs the Sscofpmf
+counter-overflow LCOFI, a separate extension). Local gate green: fmt clean; clippy 0 (real +
+zicsr-stub, all-targets); `cargo test --workspace` 0 `test result: FAILED`; both wasm builds 0
+FAILED. Awaiting adversarial verification (incl. the Spike gate-matrix + increment-position diff).
+
+### 2026-07-03 — adversarial verifier (round 1) — VERDICT: refuted (real bug)
+Spike 1.1.1-dev (`spike --isa=rv64gc_zicntr`, commit-log diff). The **increment position** — "the
+classic divergence" — was wrong: a guest `csrw mcycle`/`csrw minstret` read back **written+1**
+because `retire_tick()` unconditionally incremented the counter the writing instruction had just
+written. Spike suppresses that instruction's own increment (the written value stands):
+
+| sequence | Spike | ours (buggy) |
+|---|---|---|
+| `csrw minstret,100; csrr a0,minstret` | 100 | 101 |
+| `csrw mcycle,500; csrr a0,mcycle` | 500 | 501 |
+| `csrw minstret,0; nop; csrr a0,minstret` | 1 | 2 |
+
+Everything else the critic checked was clean: the 12-state gate matrix matched Spike cell-for-cell
+(both returned 0b101011010), the delta forms (`csrr;csrr`→1, `mcycle` over 5 nops→6) matched,
+rv64mi-p-zicntr passed with the other mi tests unperturbed, shadow/wrap/counteren-WARL/hpm all
+correct, and all 7 charter mutations were caught. The coverage gap: every committed write went
+through the `set_csr` HELPER (a direct `Csrs::access`), never a guest `csrw` through `hart::step`/
+`retire_tick`, so the writing-instruction's own increment was never exercised.
+
+### 2026-07-03 — rework (round 1)
+Suppress the writing instruction's own increment for the counter it wrote. Added per-step flags
+`wrote_mcycle`/`wrote_minstret` (Csrs): set in `write_raw` for MCYCLE/MINSTRET, ARMED (cleared) at
+each step start via `arm_counters()` (called at the top of `hart::step_traced` — so a stale flag
+from a host-side/direct write can't leak into a run), and consumed in `retire_tick` (skip the
+written counter). Added `guest_csrw_counter_does_not_count_its_own_retirement` (csrrw minstret,x5
+then csrr → 100, not 101; csrw mcycle,500 stands at 500) — independently confirmed the revert
+(unconditional retire_tick) now FAILs it. Gate re-green (10 zicntr tests; fmt/clippy clean; mi +
+snapshot pass).
+
+### 2026-07-03 — adversarial verifier (round 2) — VERDICT: verified
+Fresh cold clone at HEAD 3d763d8. Spike 1.1.1-dev (`--isa=rv64gc_zicntr`), 9 bare-ELF commit-log
+diffs.
+- **Write-then-read now matches Spike exactly**: `csrw minstret,100; csrr → 100`, `csrw mcycle,500
+  → 500`, `csrw minstret,0; nop; csrr → 1`. Set/clear WRITE forms (`csrrs`/`csrrc` with nonzero
+  src) also suppress the self-increment (read 0x11/0x14, not 0x12/0x15) — because any Set/Clear
+  routing through write_raw sets the flag. A read-only `csrrs minstret,x0` (src zero → no write)
+  still counts normally (back-to-back delta 1). Suppression is WRITE-only.
+- **Flag-leak / arming correct** (the fix's critical risk): `csrw minstret,50; nop; nop; csrr → 52`
+  (only the writer's own increment suppressed, not the next); a host-side `set_csr` write's flag is
+  cleared by `arm_counters()` at the next step top, so a run's real increment is unaffected
+  (`minstret_wraps_around_unsigned` passes). Non-write delta positions unchanged.
+- **Full gate green**; rv64mi-p-zicntr + mi suite pass; snapshot/exhaustive unperturbed by
+  `arm_counters()`; stub `decode_props::roundtrip_csr` failure pre-existing (identical on the parent).
+- **Mutations all caught**: (a) arm_counters not called, (b) retire_tick ignores flags (round-1
+  bug), (c) wrong flag set, (d) arm_counters no-op — plus re-checked round-1 machinery mutations
+  (retire_tick emptied, counteren gating removed, instret shadow broken). No survivors.
+
+VERDICT: **verified** — the Zicntr counters (mcycle/minstret + cycle/instret shadows, time window,
+mcounteren/scounteren gating, and the Spike-exact increment position incl. write-self-suppression)
+are correct and mutation-covered.
