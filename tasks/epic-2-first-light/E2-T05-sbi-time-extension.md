@@ -3,7 +3,7 @@ id: E2-T05
 epic: 2
 title: SBI TIME extension — set_timer semantics driving the S-mode timer interrupt
 priority: 205
-status: implemented
+status: verified
 depends_on: [E2-T04]
 estimate: S
 capstone: false
@@ -82,3 +82,35 @@ captures scause, sret):
 interrupts/privilege/boot_contract/sbi_console regression 4 suites 0 FAILED; fmt clean;
 clippy ±--all-features clean. QEMU+OpenSBI interrupt-count diff + Linux /proc/interrupts:
 critic charter / E2-T15.
+
+### 2026-07-05 — verifier (cold critic) — REFUTED → fixed in parallel → effectively CONFIRMED
+
+**The refutation:** committed HEAD 8f3731e failed its own wasm gate — the probe(TIME)=1 and
+stub-gate updates to the two wasm mirror files existed only in the working tree (the exact
+[[wasm-vm-local-gate-lesson]] failure mode). The worker independently caught the same defect
+via the red `wasm` CI job and committed the fix (b9dc8d3) while the critic was auditing;
+the critic's verdict text itself says "once the two wasm test files are committed, this
+flips to CONFIRMED" — they were, before the verdict landed.
+
+**All behavioral angles CONFIRMED by the critic:**
+- Hostile guest, 10^6 REAL ecalls (random past/now/near/far/MAX deadlines, random idle,
+  handler counts/cancels/sret): expected=700113, actual=700113 — zero spurious, zero
+  missing over ~6×10^8 instructions; scause always 0x8000000000000005.
+- Races: past-then-immediate-cancel delivers exactly once (spec-consistent — an armed past
+  deadline IS pending); deadline==now delivers exactly once; the committed race's margin is
+  deterministic (cancel retires at 16, deadline crosses at 20), re-verified at the literal
+  10^8-cycle idle of acceptance #2 → 0 deliveries.
+- Priv §4.1.3: csrc sip cannot clear pending STIP (SIP write mask SSIP-only), csrs cannot
+  forge it.
+- mcounteren grant scoped exactly: S rdtime OK, scounteren=0, U rdtime traps.
+- Timebase: be32(10^7) appears EXACTLY once in the DTB (assertion not vacuous).
+- OpenSBI differential: same S-mode stub under real OpenSBI v1.3 (real mtimecmp/MTIP→
+  mideleg path) vs built-in SBI — both deliver exactly 1, same scause, same sip view,
+  OpenSBI's cancel leaves mtimecmp=u64::MAX (cancel semantics agree).
+- Gates all green incl. the full regression sweep.
+
+**Adopted:** the critic's fuzz + OpenSBI-diff scratch tests are now committed as
+`tests/sbi_timer_fuzz.rs` (fast races default-run incl. the 10^8-cycle idle; the 10^6-ecall
+fuzz #[ignore]d for --release runs) and `tests/sbi_timer_opensbi_diff.rs` (#[ignore]d,
+needs fw_dynamic.elf). Critic's stub-writing lesson noted: zero observation registers at
+handoff (its first OpenSBI run read junk from uninitialized x28).
