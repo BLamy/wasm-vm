@@ -242,6 +242,10 @@ fn encode(instr: &Instr) -> u32 {
         Mret => 0x3020_0073,
         Sret => 0x1020_0073,
         Wfi => 0x1050_0073,
+        // SFENCE.VMA (E1-T17): funct7=0001001, funct3=000, rd=0.
+        SfenceVma { rs1, rs2 } => {
+            (0b000_1001 << 25) | ((rs2 as u32) << 20) | ((rs1 as u32) << 15) | 0b111_0011
+        }
         Csrrw { rd, rs1, csr } => csr_word(0b001, rd, rs1, csr),
         Csrrs { rd, rs1, csr } => csr_word(0b010, rd, rs1, csr),
         Csrrc { rd, rs1, csr } => csr_word(0b011, rd, rs1, csr),
@@ -815,9 +819,12 @@ proptest! {
         let w100 = ((rest & 0xFFF) << 20) | ((rs1 as u32) << 15) | (0b100 << 12) | ((rd as u32) << 7) | 0b1110011;
         prop_assert!(decode(w100).is_err(), "SYSTEM funct3=100 {:#010x} must be illegal", w100);
         // funct3 = 000 word that is NOT one of the five exact privileged encodings
-        // (ECALL, EBREAK, MRET, SRET, WFI).
+        // (ECALL, EBREAK, MRET, SRET, WFI) and NOT an SFENCE.VMA (funct7=0001001, rd=0, E1-T17).
         let w000 = ((rest & 0xFFF) << 20) | ((rs1 as u32) << 15) | ((rd as u32) << 7) | 0b1110011;
-        if ![0x0000_0073, 0x0010_0073, 0x3020_0073, 0x1020_0073, 0x1050_0073].contains(&w000) {
+        let is_sfence_vma = (w000 >> 25) == 0b000_1001 && rd == 0;
+        if !is_sfence_vma
+            && ![0x0000_0073, 0x0010_0073, 0x3020_0073, 0x1020_0073, 0x1050_0073].contains(&w000)
+        {
             prop_assert!(decode(w000).is_err(), "reserved SYSTEM funct3=000 {:#010x} must be illegal", w000);
         }
     }

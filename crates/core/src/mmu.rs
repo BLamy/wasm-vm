@@ -1,6 +1,7 @@
 //! Sv39 virtual-memory translation (E1-T16, Priv §4.3–4.4): a satp-rooted three-level
 //! page-table walk turning a 39-bit virtual address into a physical address, enforcing every PTE
-//! permission bit and raising precise page faults.
+//! permission bit and raising precise page faults. E1-T17 adds a software TLB in front (see
+//! [`translate_cached`] and [`crate::tlb`]).
 //!
 //! Applies to fetch/load/store/AMO in S/U mode (and MPRV-modified M data accesses) when
 //! `satp.MODE == Sv39`; a Bare satp or an M-mode (effective) access is the identity. Every PTE
@@ -12,11 +13,19 @@
 //! simplest precise, spec-sanctioned, Linux-compatible choice; reference simulators must be
 //! configured to match when diffing (Spike: it hardware-updates by default, so diffs restrict to
 //! A=1/D=1 rows or use `--misaligned`-style Svade config / the Sail model for the trap rows).
+//!
+//! Translation is factored into three pieces so the TLB can cache exactly the expensive part:
+//! [`walk_leaf`] does the memory-touching table walk and returns the leaf PTE + level;
+//! [`finish_leaf`] is pure computation (permission + Svade + PA composition) re-run on every
+//! access, including TLB hits; [`translate`] composes them (no TLB) and [`translate_cached`]
+//! interposes the TLB. Because `finish_leaf` runs on every hit, cached entries stay correct
+//! across SUM/MXR/privilege changes and a store can never be served by a load-filled D=0 entry.
 
 use crate::bus::Bus;
 use crate::csr::{Csrs, Priv};
 use crate::hart::{Exception, Trap};
 use crate::pmp::PmpAccess;
+use crate::tlb::Tlb;
 
 /// The access class being translated — selects the required PTE permission bit, the PMP access
 /// kind, and the page-fault / access-fault cause codes.
@@ -51,13 +60,24 @@ const PTE_R: u64 = 1 << 1;
 const PTE_W: u64 = 1 << 2;
 const PTE_X: u64 = 1 << 3;
 const PTE_U: u64 = 1 << 4;
+const PTE_G: u64 = 1 << 5;
 const PTE_A: u64 = 1 << 6;
 const PTE_D: u64 = 1 << 7;
 
-/// Translate `va` for `access` at effective privilege `eff` (the caller resolves MPRV/MPP for
-/// data; fetches always pass the true mode). Returns the physical address, or a `Trap` (page
-/// fault on a translation-rule violation with `stval = va`; access fault if a PTE read is
-/// PMP-denied). `len` is only used by the caller's subsequent PMP check on the final PA.
+/// True if `va` is a canonical Sv39 address: bits [63:39] all equal bit 38.
+const fn canonical(va: u64) -> bool {
+    let sext = ((va as i64) << (63 - 38)) >> (63 - 38);
+    sext as u64 == va
+}
+
+/// Is this access even translated? Bare satp or an M-mode (effective) access is the identity.
+fn identity(csr: &Csrs, eff: Priv) -> bool {
+    csr.satp() >> 60 != MODE_SV39 || matches!(eff, Priv::M)
+}
+
+/// Translate `va` for `access` at effective privilege `eff` WITHOUT a TLB — the single-shot
+/// pure walk (the direct-test entry point and the "TLB hard-disabled" differential oracle). See
+/// [`translate_cached`] for the TLB-interposed path used by the running hart.
 pub fn translate(
     csr: &Csrs,
     bus: &mut impl Bus,
@@ -65,20 +85,68 @@ pub fn translate(
     access: Access,
     eff: Priv,
 ) -> Result<u64, Trap> {
-    let satp = csr.satp();
-    // Bare, or any M-mode (effective) access → no translation (identity).
-    if satp >> 60 != MODE_SV39 || matches!(eff, Priv::M) {
+    if identity(csr, eff) {
         return Ok(va);
     }
-    let fault = |e: Exception| Trap { cause: e, tval: va };
-
-    // Sv39 VA is 39 bits: bits [63:39] must all equal bit 38 (canonical) or it's a page fault.
-    let sext = ((va as i64) << (63 - 38)) >> (63 - 38);
-    if sext as u64 != va {
-        return Err(fault(access.page_fault()));
+    if !canonical(va) {
+        return Err(Trap {
+            cause: access.page_fault(),
+            tval: va,
+        });
     }
+    let (pte, level) = walk_leaf(csr, bus, va, access, eff)?;
+    finish_leaf(csr, va, access, eff, pte, level)
+}
 
-    // Walk levels 2 → 1 → 0. `table` is the current page-table base physical address.
+/// Translate `va` through the software TLB (E1-T17). Identical to [`translate`] modulo legal
+/// staleness: a hit skips the table walk but still runs [`finish_leaf`] (permission + Svade)
+/// against live CSR state; a miss walks, and — only on full success — caches the leaf.
+pub fn translate_cached(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &mut impl Bus,
+    va: u64,
+    access: Access,
+    eff: Priv,
+) -> Result<u64, Trap> {
+    if identity(csr, eff) {
+        return Ok(va);
+    }
+    // Canonical check BEFORE the TLB so a non-canonical VA faults and can never alias a cached
+    // page (the 27-bit VPN tag would otherwise collide with a legitimately mapped page).
+    if !canonical(va) {
+        return Err(Trap {
+            cause: access.page_fault(),
+            tval: va,
+        });
+    }
+    let satp = csr.satp();
+    let asid = (satp >> 44) & 0xFFFF;
+    let vpn = va >> 12;
+    if let Some(hit) = tlb.lookup(vpn, asid) {
+        return finish_leaf(csr, va, access, eff, hit.pte, hit.level as usize);
+    }
+    // Miss → a real walk. A walk fault is NOT cached (no negative caching → re-walks).
+    let (pte, level) = walk_leaf(csr, bus, va, access, eff)?;
+    let pa = finish_leaf(csr, va, access, eff, pte, level)?;
+    // Cache only on full success: guarantees A=1 and a permitted, well-formed leaf.
+    tlb.fill(vpn, asid, pte, level as u8, pte & PTE_G != 0);
+    Ok(pa)
+}
+
+/// The memory-touching part of translation: walk levels 2 → 1 → 0 and return the leaf `(pte,
+/// level)`. Faults on the structural rules (V=0/R0W1, misaligned superpage, reserved pointer,
+/// pointer at L0) and on a PMP-denied PTE read (access fault). Precondition: `va` is canonical
+/// and the access is translated (not identity). This is the unit the TLB caches.
+fn walk_leaf(
+    csr: &Csrs,
+    bus: &mut impl Bus,
+    va: u64,
+    access: Access,
+    eff: Priv,
+) -> Result<(u64, usize), Trap> {
+    let fault = |e: Exception| Trap { cause: e, tval: va };
+    let satp = csr.satp();
     let mut table = (satp & ((1 << 44) - 1)) << 12;
     for level in (0..3usize).rev() {
         let vpn = (va >> (12 + level * 9)) & 0x1FF;
@@ -98,30 +166,14 @@ pub fn translate(
 
         let ppn = (pte >> 10) & ((1 << 44) - 1);
         if pte & (PTE_R | PTE_X) != 0 {
-            // ── Leaf PTE ──
-            // Superpage: at level > 0 the low ppn fields must be zero (misaligned superpage).
+            // ── Leaf PTE ── at level > 0 the low ppn fields must be zero (misaligned superpage).
             if level > 0 {
                 let low = (1u64 << (9 * level)) - 1;
                 if ppn & low != 0 {
                     return Err(fault(access.page_fault()));
                 }
             }
-            // Permission check (U/SUM/MXR and the required R/W/X bit).
-            if !perm_ok(csr, pte, access, eff) {
-                return Err(fault(access.page_fault()));
-            }
-            // Svade A/D: A=0 always faults; a store needs D=1.
-            if pte & PTE_A == 0 || (access == Access::Store && pte & PTE_D == 0) {
-                return Err(fault(access.page_fault()));
-            }
-            // Compose the PA: a superpage passes the low VA bits through the ppn.
-            let phys_ppn = if level == 0 {
-                ppn
-            } else {
-                let low = (1u64 << (9 * level)) - 1;
-                (ppn & !low) | ((va >> 12) & low)
-            };
-            return Ok((phys_ppn << 12) | (va & 0xFFF));
+            return Ok((pte, level));
         }
 
         // ── Pointer PTE (R=0, X=0) ──: a pointer with A/D/U set is reserved → fault; a pointer
@@ -132,6 +184,36 @@ pub fn translate(
         table = ppn << 12;
     }
     unreachable!("the level-0 pointer case returns a fault above");
+}
+
+/// The pure part of translation, re-run on every access (walk AND TLB hit): check the leaf's
+/// permission (U/SUM/MXR + R/W/X) and the Svade A/D policy for `access` at `eff`, then compose
+/// the physical address (superpages pass the low VA bits through). Faults with `tval = va`.
+fn finish_leaf(
+    csr: &Csrs,
+    va: u64,
+    access: Access,
+    eff: Priv,
+    pte: u64,
+    level: usize,
+) -> Result<u64, Trap> {
+    let fault = |e: Exception| Trap { cause: e, tval: va };
+    // Permission (U/SUM/MXR and the required R/W/X bit).
+    if !perm_ok(csr, pte, access, eff) {
+        return Err(fault(access.page_fault()));
+    }
+    // Svade A/D: A=0 always faults; a store needs D=1.
+    if pte & PTE_A == 0 || (access == Access::Store && pte & PTE_D == 0) {
+        return Err(fault(access.page_fault()));
+    }
+    let ppn = (pte >> 10) & ((1 << 44) - 1);
+    let phys_ppn = if level == 0 {
+        ppn
+    } else {
+        let low = (1u64 << (9 * level)) - 1;
+        (ppn & !low) | ((va >> 12) & low)
+    };
+    Ok((phys_ppn << 12) | (va & 0xFFF))
 }
 
 /// Do the leaf PTE's permission bits allow `access` at effective privilege `eff`?

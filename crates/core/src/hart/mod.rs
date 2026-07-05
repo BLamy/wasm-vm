@@ -112,6 +112,9 @@ pub struct Hart {
     pub resv: Option<(u64, u8)>,
     /// Floating-point register file (F/D extensions, E1-T06): FLEN=64 with NaN-boxing.
     pub fregs: fregs::FRegs,
+    /// Software TLB (E1-T17): ASID-tagged cache in front of the Sv39 walker. Microarchitectural
+    /// state — NOT part of the architectural snapshot; SFENCE.VMA is its only invalidation.
+    pub tlb: crate::tlb::Tlb,
     /// QUARANTINED CSR scaffolding for the riscv-tests p-env (E0-T19). Present only under
     /// `feature = "zicsr-stub"`; Epic 1 replaces it with the real CSR file above.
     #[cfg(feature = "zicsr-stub")]
@@ -127,6 +130,7 @@ impl Default for Hart {
             csr: crate::csr::Csrs::at_reset(),
             resv: None,
             fregs: fregs::FRegs::default(),
+            tlb: crate::tlb::Tlb::new(),
             #[cfg(feature = "zicsr-stub")]
             csrs: crate::zicsr_stub::CsrFile::default(),
         };
@@ -302,12 +306,19 @@ const fn store_fault(f: BusFault, addr: u64) -> Trap {
 use crate::csr::Csrs;
 use crate::mmu::{self, Access};
 use crate::pmp::PmpAccess;
+use crate::tlb::Tlb;
 
 /// Translate a data VA and PMP-check the final PA for a LOAD; returns the physical address.
 #[inline]
-fn xlate_load(csr: &Csrs, bus: &mut impl Bus, va: u64, len: u64) -> Result<u64, Trap> {
+fn xlate_load(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &mut impl Bus,
+    va: u64,
+    len: u64,
+) -> Result<u64, Trap> {
     let eff = csr.data_priv();
-    let pa = mmu::translate(csr, bus, va, Access::Load, eff)?;
+    let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Load, eff)?;
     if !csr.pmp_ok(pa, len, PmpAccess::Read, eff) {
         return Err(Trap {
             cause: Exception::LoadAccessFault,
@@ -318,9 +329,15 @@ fn xlate_load(csr: &Csrs, bus: &mut impl Bus, va: u64, len: u64) -> Result<u64, 
 }
 /// Translate a data VA and PMP-check the final PA for a STORE (incl. SC / AMO write half).
 #[inline]
-fn xlate_store(csr: &Csrs, bus: &mut impl Bus, va: u64, len: u64) -> Result<u64, Trap> {
+fn xlate_store(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &mut impl Bus,
+    va: u64,
+    len: u64,
+) -> Result<u64, Trap> {
     let eff = csr.data_priv();
-    let pa = mmu::translate(csr, bus, va, Access::Store, eff)?;
+    let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Store, eff)?;
     if !csr.pmp_ok(pa, len, PmpAccess::Write, eff) {
         return Err(Trap {
             cause: Exception::StoreAccessFault,
@@ -331,9 +348,15 @@ fn xlate_store(csr: &Csrs, bus: &mut impl Bus, va: u64, len: u64) -> Result<u64,
 }
 /// The read half of an AMO: translated as a STORE (needs W + D), PMP-checked for BOTH R and W.
 #[inline]
-fn xlate_amo(csr: &Csrs, bus: &mut impl Bus, va: u64, len: u64) -> Result<u64, Trap> {
+fn xlate_amo(
+    csr: &Csrs,
+    tlb: &mut Tlb,
+    bus: &mut impl Bus,
+    va: u64,
+    len: u64,
+) -> Result<u64, Trap> {
     let eff = csr.data_priv();
-    let pa = mmu::translate(csr, bus, va, Access::Store, eff)?;
+    let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Store, eff)?;
     if !(csr.pmp_ok(pa, len, PmpAccess::Read, eff) && csr.pmp_ok(pa, len, PmpAccess::Write, eff)) {
         return Err(Trap {
             cause: Exception::StoreAccessFault,
@@ -346,8 +369,8 @@ fn xlate_amo(csr: &Csrs, bus: &mut impl Bus, va: u64, len: u64) -> Result<u64, T
 macro_rules! checked_load {
     ($name:ident, $busfn:ident, $ty:ty, $len:expr) => {
         #[inline]
-        fn $name(csr: &Csrs, bus: &mut impl Bus, a: u64) -> Result<$ty, Trap> {
-            let pa = xlate_load(csr, bus, a, $len)?;
+        fn $name(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<$ty, Trap> {
+            let pa = xlate_load(csr, tlb, bus, a, $len)?;
             bus.$busfn(pa).map_err(|f| load_fault(f, a))
         }
     };
@@ -355,8 +378,14 @@ macro_rules! checked_load {
 macro_rules! checked_store {
     ($name:ident, $busfn:ident, $ty:ty, $len:expr) => {
         #[inline]
-        fn $name(csr: &Csrs, bus: &mut impl Bus, a: u64, v: $ty) -> Result<(), Trap> {
-            let pa = xlate_store(csr, bus, a, $len)?;
+        fn $name(
+            csr: &Csrs,
+            tlb: &mut Tlb,
+            bus: &mut impl Bus,
+            a: u64,
+            v: $ty,
+        ) -> Result<(), Trap> {
+            let pa = xlate_store(csr, tlb, bus, a, $len)?;
             bus.$busfn(pa, v).map_err(|f| store_fault(f, a))
         }
     };
@@ -369,13 +398,13 @@ checked_load!(cload32, load32, u32, 4);
 checked_load!(cload64, load64, u64, 8);
 // The read half of an AMO (its store half re-translates via cstoreN).
 #[inline]
-fn camoload32(csr: &Csrs, bus: &mut impl Bus, a: u64) -> Result<u32, Trap> {
-    let pa = xlate_amo(csr, bus, a, 4)?;
+fn camoload32(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<u32, Trap> {
+    let pa = xlate_amo(csr, tlb, bus, a, 4)?;
     bus.load32(pa).map_err(|f| store_fault(f, a))
 }
 #[inline]
-fn camoload64(csr: &Csrs, bus: &mut impl Bus, a: u64) -> Result<u64, Trap> {
-    let pa = xlate_amo(csr, bus, a, 8)?;
+fn camoload64(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<u64, Trap> {
+    let pa = xlate_amo(csr, tlb, bus, a, 8)?;
     bus.load64(pa).map_err(|f| store_fault(f, a))
 }
 // Stores (incl. SC and the write half of an AMO): translated as Store.
@@ -389,8 +418,8 @@ checked_store!(cstore64, store64, u64, 8);
 /// instruction page fault (12), a PMP-denied fetch/PTE-read is an instruction access fault (1),
 /// both with `tval = va`.
 #[inline]
-fn fetch_xlate(csr: &Csrs, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
-    let pa = mmu::translate(csr, bus, va, Access::Fetch, csr.mode)?;
+fn fetch_xlate(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
+    let pa = mmu::translate_cached(csr, tlb, bus, va, Access::Fetch, csr.mode)?;
     if !csr.pmp_ok(pa, 2, PmpAccess::Exec, csr.mode) {
         return Err(Trap {
             cause: Exception::InstrAccessFault,
@@ -417,6 +446,8 @@ impl Hart {
         self.csr = crate::csr::Csrs::at_reset();
         self.resv = None;
         self.fregs = fregs::FRegs::default();
+        // Reset flushes the TLB — the walker will re-fill it from the reset page tables.
+        self.tlb = crate::tlb::Tlb::new();
         #[cfg(feature = "zicsr-stub")]
         {
             self.csrs = crate::zicsr_stub::CsrFile::default();
@@ -453,7 +484,7 @@ impl Hart {
         let pc = self.regs.pc;
         // E1-T16/T15: translate + PMP-check the fetch of the low parcel (Sv39 page fault 12 /
         // instruction access fault 1, TRUE current mode). Fetch the 16-bit parcel from the PA.
-        let lo_pa = fetch_xlate(&self.csr, bus, pc)?;
+        let lo_pa = fetch_xlate(&self.csr, &mut self.tlb, bus, pc)?;
         // Fetch the low 16-bit parcel (C extension: `parcel[1:0] != 0b11` ⇒ a 16-bit
         // compressed instruction; else a 32-bit instruction whose upper half is a SEPARATE
         // access, so a straddling second half can fault precisely).
@@ -491,7 +522,7 @@ impl Hart {
             // it independently, so a 32-bit instruction straddling a page boundary faults
             // precisely on the second parcel (tval = the second page's VA; mepc stays the
             // instruction start).
-            let hi_pa = fetch_xlate(&self.csr, bus, pc.wrapping_add(2))?;
+            let hi_pa = fetch_xlate(&self.csr, &mut self.tlb, bus, pc.wrapping_add(2))?;
             let hi = match bus.load16(hi_pa) {
                 Ok(w) => w,
                 Err(BusFault::Access) => {
@@ -799,7 +830,7 @@ impl Hart {
             // misalignment trap leaves memory and the reservation unchanged.
             LrW { rd, rs1, .. } => {
                 let a = r.read(rs1);
-                let v = cload32(&self.csr, bus, a)?;
+                let v = cload32(&self.csr, &mut self.tlb, bus, a)?;
                 self.resv = Some((a, 4));
                 mem = Some(MemOp {
                     addr: a,
@@ -811,7 +842,7 @@ impl Hart {
             }
             LrD { rd, rs1, .. } => {
                 let a = r.read(rs1);
-                let v = cload64(&self.csr, bus, a)?;
+                let v = cload64(&self.csr, &mut self.tlb, bus, a)?;
                 self.resv = Some((a, 8));
                 mem = Some(MemOp {
                     addr: a,
@@ -838,7 +869,7 @@ impl Hart {
                 self.resv = None;
                 if success {
                     let val = r.read(rs2);
-                    cstore32(&self.csr, bus, a, val as u32)?;
+                    cstore32(&self.csr, &mut self.tlb, bus, a, val as u32)?;
                     mem = Some(MemOp {
                         addr: a,
                         len: 4,
@@ -862,7 +893,7 @@ impl Hart {
                 self.resv = None;
                 if success {
                     let val = r.read(rs2);
-                    cstore64(&self.csr, bus, a, val)?;
+                    cstore64(&self.csr, &mut self.tlb, bus, a, val)?;
                     mem = Some(MemOp {
                         addr: a,
                         len: 8,
@@ -887,9 +918,9 @@ impl Hart {
                         tval: a,
                     });
                 }
-                let old = camoload32(&self.csr, bus, a)?;
+                let old = camoload32(&self.csr, &mut self.tlb, bus, a)?;
                 let new = amo_w(op, old, r.read(rs2) as u32);
-                cstore32(&self.csr, bus, a, new)?;
+                cstore32(&self.csr, &mut self.tlb, bus, a, new)?;
                 mem = Some(MemOp {
                     addr: a,
                     len: 4,
@@ -908,9 +939,9 @@ impl Hart {
                         tval: a,
                     });
                 }
-                let old = camoload64(&self.csr, bus, a)?;
+                let old = camoload64(&self.csr, &mut self.tlb, bus, a)?;
                 let new = amo_d(op, old, r.read(rs2));
-                cstore64(&self.csr, bus, a, new)?;
+                cstore64(&self.csr, &mut self.tlb, bus, a, new)?;
                 mem = Some(MemOp {
                     addr: a,
                     len: 8,
@@ -936,7 +967,11 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (rd, cload8(&self.csr, bus, a)? as i8 as i64 as u64, pc_next)
+                (
+                    rd,
+                    cload8(&self.csr, &mut self.tlb, bus, a)? as i8 as i64 as u64,
+                    pc_next,
+                )
             }
             Lh { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -948,7 +983,7 @@ impl Hart {
                 });
                 (
                     rd,
-                    cload16(&self.csr, bus, a)? as i16 as i64 as u64,
+                    cload16(&self.csr, &mut self.tlb, bus, a)? as i16 as i64 as u64,
                     pc_next,
                 )
             }
@@ -962,7 +997,7 @@ impl Hart {
                 });
                 (
                     rd,
-                    cload32(&self.csr, bus, a)? as i32 as i64 as u64,
+                    cload32(&self.csr, &mut self.tlb, bus, a)? as i32 as i64 as u64,
                     pc_next,
                 )
             }
@@ -974,7 +1009,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (rd, cload64(&self.csr, bus, a)?, pc_next)
+                (rd, cload64(&self.csr, &mut self.tlb, bus, a)?, pc_next)
             }
             Lbu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -984,7 +1019,11 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (rd, u64::from(cload8(&self.csr, bus, a)?), pc_next)
+                (
+                    rd,
+                    u64::from(cload8(&self.csr, &mut self.tlb, bus, a)?),
+                    pc_next,
+                )
             }
             Lhu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -994,7 +1033,11 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (rd, u64::from(cload16(&self.csr, bus, a)?), pc_next)
+                (
+                    rd,
+                    u64::from(cload16(&self.csr, &mut self.tlb, bus, a)?),
+                    pc_next,
+                )
             }
             Lwu { rd, rs1, imm } => {
                 let a = ea(r.read(rs1), imm);
@@ -1004,7 +1047,11 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                (rd, u64::from(cload32(&self.csr, bus, a)?), pc_next)
+                (
+                    rd,
+                    u64::from(cload32(&self.csr, &mut self.tlb, bus, a)?),
+                    pc_next,
+                )
             }
 
             // Stores (E0-T08): cause 6/7 with tval = effective address. A faulting
@@ -1018,7 +1065,7 @@ impl Hart {
                     is_store: true,
                     value: r.read(rs2),
                 });
-                cstore8(&self.csr, bus, a, r.read(rs2) as u8)?;
+                cstore8(&self.csr, &mut self.tlb, bus, a, r.read(rs2) as u8)?;
                 (0, 0, pc_next)
             }
             Sh { rs1, rs2, imm } => {
@@ -1029,7 +1076,7 @@ impl Hart {
                     is_store: true,
                     value: r.read(rs2),
                 });
-                cstore16(&self.csr, bus, a, r.read(rs2) as u16)?;
+                cstore16(&self.csr, &mut self.tlb, bus, a, r.read(rs2) as u16)?;
                 (0, 0, pc_next)
             }
             Sw { rs1, rs2, imm } => {
@@ -1040,7 +1087,7 @@ impl Hart {
                     is_store: true,
                     value: r.read(rs2),
                 });
-                cstore32(&self.csr, bus, a, r.read(rs2) as u32)?;
+                cstore32(&self.csr, &mut self.tlb, bus, a, r.read(rs2) as u32)?;
                 (0, 0, pc_next)
             }
             Sd { rs1, rs2, imm } => {
@@ -1051,7 +1098,7 @@ impl Hart {
                     is_store: true,
                     value: r.read(rs2),
                 });
-                cstore64(&self.csr, bus, a, r.read(rs2))?;
+                cstore64(&self.csr, &mut self.tlb, bus, a, r.read(rs2))?;
                 (0, 0, pc_next)
             }
 
@@ -1134,6 +1181,24 @@ impl Hart {
                     });
                 }
                 self.resv = None;
+                (0, 0, pc_next)
+            }
+            // Supervisor fence (E1-T17, Priv §4.2.1): invalidate the software TLB per the four
+            // rs1/rs2 operand forms. Illegal in U-mode; illegal in S-mode when mstatus.TVM=1
+            // (a hypervisor trap so a guest OS's SFENCE.VMA is intercepted). Checked before any
+            // effect, so a trap leaves the TLB untouched. satp itself does NOT flush — only this.
+            SfenceVma { rs1, rs2 } => {
+                let m = self.csr.mode;
+                if m < crate::csr::Priv::S || (matches!(m, crate::csr::Priv::S) && self.csr.tvm()) {
+                    return Err(Trap {
+                        cause: Exception::IllegalInstruction,
+                        tval: raw_insn,
+                    });
+                }
+                // rs1 = x0 → all VAs; rs2 = x0 → all ASIDs (the ASID is the low 16 bits of rs2).
+                let va = (rs1 != 0).then(|| r.read(rs1));
+                let asid = (rs2 != 0).then(|| r.read(rs2) & 0xFFFF);
+                self.tlb.sfence(va, asid);
                 (0, 0, pc_next)
             }
             // Return from M-mode trap (E1-T09): illegal below M; restores the mstatus stack
@@ -1251,7 +1316,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                let v = cload32(&self.csr, bus, a)?;
+                let v = cload32(&self.csr, &mut self.tlb, bus, a)?;
                 self.fregs.write_f32(rd, v);
                 self.csr.mark_fp_dirty();
                 (0, 0, pc_next)
@@ -1265,7 +1330,7 @@ impl Hart {
                     is_store: true,
                     value: u64::from(v),
                 });
-                cstore32(&self.csr, bus, a, v)?;
+                cstore32(&self.csr, &mut self.tlb, bus, a, v)?;
                 (0, 0, pc_next)
             }
             FpArithS {
@@ -1447,7 +1512,7 @@ impl Hart {
                     is_store: false,
                     value: 0,
                 });
-                let v = cload64(&self.csr, bus, a)?;
+                let v = cload64(&self.csr, &mut self.tlb, bus, a)?;
                 self.fregs.write_raw(rd, v);
                 self.csr.mark_fp_dirty();
                 (0, 0, pc_next)
@@ -1461,7 +1526,7 @@ impl Hart {
                     is_store: true,
                     value: v,
                 });
-                cstore64(&self.csr, bus, a, v)?;
+                cstore64(&self.csr, &mut self.tlb, bus, a, v)?;
                 (0, 0, pc_next)
             }
             FpArithD {

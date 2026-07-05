@@ -8,14 +8,15 @@
 //! (E1-T10 trap delivery, E1-T14 Zicntr counters). Three ELFs the upstream suite ships still
 //! reach past what's implemented and are EXCLUDED:
 //!
-//! - `illegal` — a kitchen-sink M-mode test. With E1-T11 landed it now clears the
-//!   illegal-instruction case (bad2), the vectored-interrupt sub-test, S-mode entry and WFI, then
-//!   fails on the `sfence.vma` at 0x80000200 (encoding 0x1200_0073): we don't decode SFENCE.VMA
-//!   yet — it lands in E1-T17 (TLB/SFENCE.VMA) — so it raises a spurious illegal-instruction trap
-//!   the test's handler doesn't expect. (The test keeps TESTNUM=2 across all these stages, so its
-//!   exit code doesn't pinpoint the stage; a PC trace does — the divergence is the SFENCE.VMA, an
-//!   E1-T17 instruction, NOT an interrupt/delegation bug.) Its illegal-instruction *mtval* checks
-//!   are covered in `precise_exceptions.rs`; the vectored M-interrupt path in `interrupts.rs`.
+//! - `illegal` — a kitchen-sink S/M-mode trap-virtualization test. E1-T17 landed SFENCE.VMA, so
+//!   the `sfence.vma` at 0x80000200 no longer spuriously traps; but the test keeps going into a
+//!   broader matrix of TVM/TSR-gated sub-tests (SFENCE.VMA / satp / xRET virtualized to M with
+//!   precise mepc/mtval bookkeeping across multiple staged illegal instructions) and still
+//!   diverges past that first SFENCE.VMA, keeping TESTNUM=2 (so its exit code doesn't pinpoint the
+//!   stage). Those remaining sub-tests need CSR-access virtualization beyond E1-T17's scope, so it
+//!   stays excluded. Its illegal-instruction *mtval* checks are covered in `precise_exceptions.rs`;
+//!   the vectored M-interrupt path in `interrupts.rs`; SFENCE.VMA decode/execute/TVM-trap and the
+//!   four flush scopes in `tlb.rs`.
 //! - `breakpoint` — exercises the debug-spec trigger CSRs (tdata1/tdata2), not implemented.
 //! - `instret_overflow` — needs the Sscofpmf counter-OVERFLOW local interrupt (LCOFI), a
 //!   separate extension beyond the basic Zicntr counters E1-T14 lands.
