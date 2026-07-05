@@ -53,8 +53,9 @@ impl Access {
     }
 }
 
-/// satp.MODE for Sv39 (§4.1.11). (Bare = 0; Sv48 = 9 arrives in E1-T18.)
+/// satp.MODE values (§4.1.11): Bare = 0, Sv39 = 8, Sv48 = 9 (E1-T18).
 const MODE_SV39: u64 = 8;
+const MODE_SV48: u64 = 9;
 const PTE_V: u64 = 1 << 0;
 const PTE_R: u64 = 1 << 1;
 const PTE_W: u64 = 1 << 2;
@@ -64,15 +65,26 @@ const PTE_G: u64 = 1 << 5;
 const PTE_A: u64 = 1 << 6;
 const PTE_D: u64 = 1 << 7;
 
-/// True if `va` is a canonical Sv39 address: bits [63:39] all equal bit 38.
-const fn canonical(va: u64) -> bool {
-    let sext = ((va as i64) << (63 - 38)) >> (63 - 38);
+/// True if `va` is canonical for a `sign_bit`-indexed scheme: bits [63:sign_bit+1] all equal
+/// bit `sign_bit` (Sv39 → 38, Sv48 → 47).
+const fn canonical(va: u64, sign_bit: u32) -> bool {
+    let sext = ((va as i64) << (63 - sign_bit)) >> (63 - sign_bit);
     sext as u64 == va
 }
 
-/// Is this access even translated? Bare satp or an M-mode (effective) access is the identity.
-fn identity(csr: &Csrs, eff: Priv) -> bool {
-    csr.satp() >> 60 != MODE_SV39 || matches!(eff, Priv::M)
+/// Translation parameters for the active mode, or `None` when the access is the identity (a
+/// Bare satp, an unsupported MODE, or an M-mode effective access). Returns
+/// `(levels, sign_bit, mode_tag)`: Sv39 → (3, 38, 8), Sv48 → (4, 47, 9). `mode_tag` tags TLB
+/// entries so a mode switch without an SFENCE.VMA can never serve a cross-mode stale hit.
+fn mode_params(csr: &Csrs, eff: Priv) -> Option<(usize, u32, u8)> {
+    if matches!(eff, Priv::M) {
+        return None;
+    }
+    match csr.satp() >> 60 {
+        MODE_SV39 => Some((3, 38, MODE_SV39 as u8)),
+        MODE_SV48 => Some((4, 47, MODE_SV48 as u8)),
+        _ => None, // Bare (0) or any unsupported MODE → identity
+    }
 }
 
 /// Translate `va` for `access` at effective privilege `eff` WITHOUT a TLB — the single-shot
@@ -85,16 +97,16 @@ pub fn translate(
     access: Access,
     eff: Priv,
 ) -> Result<u64, Trap> {
-    if identity(csr, eff) {
+    let Some((levels, sign_bit, _mode)) = mode_params(csr, eff) else {
         return Ok(va);
-    }
-    if !canonical(va) {
+    };
+    if !canonical(va, sign_bit) {
         return Err(Trap {
             cause: access.page_fault(),
             tval: va,
         });
     }
-    let (pte, level) = walk_leaf(csr, bus, va, access, eff)?;
+    let (pte, level) = walk_leaf(csr, bus, va, access, eff, levels)?;
     finish_leaf(csr, va, access, eff, pte, level)
 }
 
@@ -109,12 +121,12 @@ pub fn translate_cached(
     access: Access,
     eff: Priv,
 ) -> Result<u64, Trap> {
-    if identity(csr, eff) {
+    let Some((levels, sign_bit, mode)) = mode_params(csr, eff) else {
         return Ok(va);
-    }
+    };
     // Canonical check BEFORE the TLB so a non-canonical VA faults and can never alias a cached
-    // page (the 27-bit VPN tag would otherwise collide with a legitimately mapped page).
-    if !canonical(va) {
+    // page (the VPN tag would otherwise collide with a legitimately mapped page).
+    if !canonical(va, sign_bit) {
         return Err(Trap {
             cause: access.page_fault(),
             tval: va,
@@ -123,32 +135,37 @@ pub fn translate_cached(
     let satp = csr.satp();
     let asid = (satp >> 44) & 0xFFFF;
     let vpn = va >> 12;
-    if let Some(hit) = tlb.lookup(vpn, asid) {
+    // The mode tag ensures a Sv39-tagged entry is never served after a switch to Sv48 (or back).
+    if let Some(hit) = tlb.lookup(vpn, asid, mode) {
         return finish_leaf(csr, va, access, eff, hit.pte, hit.level as usize);
     }
     // Miss → a real walk. A walk fault is NOT cached (no negative caching → re-walks).
-    let (pte, level) = walk_leaf(csr, bus, va, access, eff)?;
+    let (pte, level) = walk_leaf(csr, bus, va, access, eff, levels)?;
     let pa = finish_leaf(csr, va, access, eff, pte, level)?;
     // Cache only on full success: guarantees A=1 and a permitted, well-formed leaf.
-    tlb.fill(vpn, asid, pte, level as u8, pte & PTE_G != 0);
+    tlb.fill(vpn, asid, pte, level as u8, pte & PTE_G != 0, mode);
     Ok(pa)
 }
 
-/// The memory-touching part of translation: walk levels 2 → 1 → 0 and return the leaf `(pte,
-/// level)`. Faults on the structural rules (V=0/R0W1, misaligned superpage, reserved pointer,
-/// pointer at L0) and on a PMP-denied PTE read (access fault). Precondition: `va` is canonical
-/// and the access is translated (not identity). This is the unit the TLB caches.
+/// The memory-touching part of translation: walk `levels` levels (Sv39 → 3, Sv48 → 4) top-down
+/// and return the leaf `(pte, level)`. Faults on the structural rules (V=0/R0W1, misaligned
+/// superpage, reserved pointer, pointer at L0) and on a PMP-denied PTE read (access fault).
+/// Precondition: `va` is canonical and the access is translated (not identity). The per-level
+/// arithmetic (`9 * level` VPN slices, superpage low-bit masks, PA composition) generalizes
+/// across both schemes — this is the shared, level-count-parameterized walk. It is the unit the
+/// TLB caches.
 fn walk_leaf(
     csr: &Csrs,
     bus: &mut impl Bus,
     va: u64,
     access: Access,
     eff: Priv,
+    levels: usize,
 ) -> Result<(u64, usize), Trap> {
     let fault = |e: Exception| Trap { cause: e, tval: va };
     let satp = csr.satp();
     let mut table = (satp & ((1 << 44) - 1)) << 12;
-    for level in (0..3usize).rev() {
+    for level in (0..levels).rev() {
         let vpn = (va >> (12 + level * 9)) & 0x1FF;
         let pte_addr = table + vpn * 8;
         // The PTE read is a physical access → PMP; a denial is an ACCESS fault (original kind).
