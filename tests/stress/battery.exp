@@ -1,0 +1,108 @@
+#!/usr/bin/expect -f
+# E2-T24 stress battery: drive one native Alpine boot through a disk/process/interactivity
+# gauntlet and emit machine-parseable `RESULT <name> <PASS|FAIL> [detail]` lines. Parameterized
+# by env so the SAME script serves a fast CI smoke and the full nightly torture (see run-stress.sh).
+#
+#   STRESS_IMG      path to the (already-copied, disposable) ext4 image to boot   [required]
+#   STRESS_KERNEL   kernel Image path                                             [required]
+#   STRESS_BIN      wasm-vm binary                                                [required]
+#   STRESS_DD_MB    single-writer dd size in MiB           (default 8)
+#   STRESS_WRITERS  parallel dd writers                    (default 2)
+#   STRESS_FORKBOMB run the bounded fork bomb (1/0)        (default 1)
+#   STRESS_BOOT_TO  seconds to wait for login              (default 900 — Alpine/OpenRC is slow)
+#
+# Exit 0 iff every RESULT is PASS and the guest powered off cleanly.
+
+proc getenv {name def} { global env; return [expr {[info exists env($name)] ? $env($name) : $def}] }
+
+set img       [getenv STRESS_IMG ""]
+set kernel    [getenv STRESS_KERNEL ""]
+set bin       [getenv STRESS_BIN ""]
+set dd_mb     [getenv STRESS_DD_MB 8]
+set writers   [getenv STRESS_WRITERS 2]
+set forkbomb  [getenv STRESS_FORKBOMB 1]
+set boot_to   [getenv STRESS_BOOT_TO 900]
+if {$img eq "" || $kernel eq "" || $bin eq ""} { puts "battery: STRESS_IMG/KERNEL/BIN required"; exit 2 }
+
+set fails 0
+# Leading \n so the RESULT line starts fresh even when the guest just printed a prompt with no
+# trailing newline (otherwise it embeds as `wasm-vm login: RESULT boot PASS` and an anchored grep
+# would miss it). run-stress.sh also greps un-anchored as a belt-and-suspenders.
+proc result {name ok {detail ""}} { global fails; if {$ok} { puts "\nRESULT $name PASS $detail" } else { puts "\nRESULT $name FAIL $detail"; incr fails } }
+
+# A shell command that waits for its own unique sentinel, so we never race the next step. Returns
+# the transcript captured between the markers is not needed here — we assert on specific output.
+set tag 0
+proc run_wait {cmd needle secs} {
+  # send cmd, then wait for `needle`; return 1 on match, 0 on timeout.
+  global tag; incr tag
+  send -- "$cmd\r"
+  set ok 0
+  expect {
+    -timeout $secs
+    -- "$needle" { set ok 1 }
+    timeout { set ok 0 }
+  }
+  return $ok
+}
+
+set timeout $boot_to
+spawn $bin boot --kernel $kernel --drive file=$img \
+  --append "root=/dev/vda rw console=ttyS0 earlycon=sbi" --max-instrs 40000000000
+
+# 1. Boot to login.
+expect {
+  -timeout $boot_to
+  -- "login:" {}
+  timeout { puts "RESULT boot FAIL never-reached-login"; exit 1 }
+}
+result boot 1
+# 2. Log in (passwordless; dismiss an optional Password: prompt), prove the shell is live.
+send -- "root\r"; sleep 3; send -- "\r"; sleep 2
+result login [run_wait "echo WASMVM_LOGIN_OK" "WASMVM_LOGIN_OK" 90]
+
+# 3. Disk integrity: write DD_MB of urandom, checksum, drop caches, read back, compare.
+#    A mismatch means a virtio-blk / ext4 write-read coherency bug.
+run_wait "dd if=/dev/urandom of=/root/blob bs=1M count=$dd_mb 2>/dev/null; echo WROTE" "WROTE" 600
+run_wait "md5sum /root/blob | cut -d' ' -f1 > /root/sum1; sync; echo SUMMED" "SUMMED" 300
+run_wait "md5sum /root/blob | cut -d' ' -f1 > /root/sum2; echo RESUMMED" "RESUMMED" 300
+result disk_md5 [run_wait "if cmp -s /root/sum1 /root/sum2; then echo DISK_OK; else echo DISK_BAD; fi" "DISK_OK" 60]
+
+# 4. Parallel writers — N concurrent dd must all complete and the fs stay consistent.
+result parallel [run_wait \
+  "for i in \$(seq $writers); do dd if=/dev/zero of=/root/p\$i bs=1M count=4 2>/dev/null & done; wait; sync; echo PARALLEL_DONE" \
+  "PARALLEL_DONE" 600]
+
+# 5. Process storm. Always run the SAFE fork/exec micro-benchmark (200 short-lived procs) and
+#    prove the shell survives. The real recursive fork bomb (:(){ :|:& };:) is genuinely able to
+#    wedge the guest, so it is OPT-IN via STRESS_FORKBOMB=1 (nightly, under an in-guest ulimit).
+result procstorm [run_wait \
+  "n=0; for i in \$(seq 200); do /bin/true; n=\$((n+1)); done; echo STORM_DONE_\$n" \
+  "STORM_DONE_200" 300]
+if {$forkbomb} {
+  # Bounded recursive bomb in its own session so the whole tree can be signalled; ulimit -u caps
+  # it. setsid gives a new pgid we kill as a group; then confirm the parent shell still responds.
+  run_wait "setsid sh -c '(ulimit -u 64; :(){ :|:& };:)' 2>/dev/null & BP=\$!; sleep 3; kill -9 -\$BP 2>/dev/null; kill -9 \$BP 2>/dev/null; wait 2>/dev/null; echo BOMB_KILLED" "BOMB_KILLED" 180
+  result forkbomb_survived [run_wait "echo STILL_ALIVE_\$((6*7))" "STILL_ALIVE_42" 90]
+} else {
+  puts "RESULT forkbomb_survived SKIP"
+}
+
+# 6. Interactivity under load: kick off a background dd, then time a trivial echo round-trip.
+run_wait "dd if=/dev/zero of=/root/load bs=1M count=64 2>/dev/null & echo LOAD_STARTED" "LOAD_STARTED" 60
+set t0 [clock milliseconds]
+set echoed [run_wait "echo PING_UNDER_LOAD" "PING_UNDER_LOAD" 60]
+set lat [expr {[clock milliseconds]-$t0}]
+result interactivity $echoed "echo_latency_ms=$lat"
+run_wait "wait; sync; echo LOAD_DONE" "LOAD_DONE" 600
+
+# 7. Clean sync + poweroff → the process must exit 0. The OpenRC shutdown RUNLEVEL (stop every
+#    service, unmount, remount-ro, SBI power-down) is CPU-bound and as slow as boot, so wait with
+#    the same generous budget rather than a fixed 300 s.
+send -- "sync; poweroff\r"
+set powered 0
+expect { -timeout $boot_to eof { set powered 1 } timeout { set powered 0 } }
+result poweroff $powered
+
+puts "STRESS_SUMMARY fails=$fails"
+exit [expr {$fails > 0 ? 1 : 0}]

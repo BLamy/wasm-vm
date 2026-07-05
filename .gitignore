@@ -48,3 +48,6 @@ web/playwright-report/
 
 # Boot artifacts copied under web/ for Pages deploy (source of truth is releases/)
 web/releases/
+
+# E2-T24 stress-run artifacts (per-run images, logs, summary)
+tests/stress/out/
