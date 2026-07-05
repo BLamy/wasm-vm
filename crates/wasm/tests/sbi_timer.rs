@@ -2,7 +2,7 @@
 //! behave identically under wasm (`wasm-pack test --node`) — deterministic, instruction-
 //! driven clock, so counts match native exactly.
 
-#![cfg(target_arch = "wasm32")]
+#![cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 
 use wasm_bindgen_test::wasm_bindgen_test;
 use wasm_vm_core::bus::Bus;
