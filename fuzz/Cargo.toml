@@ -1,0 +1,26 @@
+# E0-T21 fuzz scaffold (cargo-fuzz / libFuzzer, nightly). Its own workspace so the parent
+# (core/wasm/cli) never pulls the nightly-only libfuzzer-sys into normal builds.
+[package]
+name = "wasm-vm-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.wasm-vm-core]
+path = "../crates/core"
+
+[[bin]]
+name = "decode"
+path = "fuzz_targets/decode.rs"
+test = false
+doc = false
+bench = false
+
+# Detach from the parent workspace (cargo-fuzz convention).
+[workspace]

@@ -2,7 +2,8 @@
 # parallel; locally they run in the order listed under `ci`. If this file and ci.yml
 # disagree, that's a bug (E0-T02).
 
-.PHONY: ci fmt clippy test wasm features test-riscv diff-all diff-selftest diff-qemu
+.PHONY: ci fmt clippy test wasm features test-riscv diff-all diff-selftest diff-qemu \
+        exhaustive fuzz-decode-smoke
 
 ci: fmt clippy test wasm features test-riscv
 
@@ -68,3 +69,13 @@ diff-selftest:
 # this by mapping the UART page as plain RAM). Documented limitation, not a CPU bug.
 diff-qemu:
 	tools/diff/run_diff_qemu.sh guest/prebuilt/loops.elf
+
+# Exhaustive 2^32 decode sweep (E0-T21): decode never panics + legal count == the analytic
+# tally. Release + rayon; ~3s on a modern machine but heavy, so it is #[ignore] by default.
+exhaustive:
+	cargo test -p wasm-vm-core --release --test exhaustive -- --ignored
+
+# 10^7-exec bounded libFuzzer smoke over the decoder (E0-T21). Needs the nightly toolchain
+# + cargo-fuzz (`cargo install cargo-fuzz`); seed corpus in fuzz/corpus/decode/.
+fuzz-decode-smoke:
+	cd fuzz && cargo +nightly fuzz run decode -- -runs=10000000 -max_total_time=180

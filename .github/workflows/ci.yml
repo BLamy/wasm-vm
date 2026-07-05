@@ -54,6 +54,8 @@ jobs:
       # riscv-tests rv64ui-p smoke gate (E0-T19) over the committed ELFs — no Docker.
       - run: cargo test -p wasm-vm-core --features zicsr-stub --test riscv_tests
       - run: bash tools/riscv-tests/check-quarantine.sh
+      # Exhaustive 2^32 decode sweep (E0-T21): no panic + legal count == analytic tally.
+      - run: cargo test -p wasm-vm-core --release --test exhaustive -- --ignored
 
   wasm:
     runs-on: ubuntu-latest
