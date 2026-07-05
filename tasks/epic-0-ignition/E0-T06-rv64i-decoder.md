@@ -3,7 +3,7 @@ id: E0-T06
 epic: 0
 title: RV64I instruction decoder covering all six base encoding formats
 priority: 6
-status: pending
+status: verified
 depends_on: [E0-T01]
 estimate: L
 capstone: false
@@ -56,4 +56,47 @@ at Level 0 — confirm both. (5) Verify sign extension by decoding `addi x1, x0,
 imm == -1i64, not 4095.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commit 29dbd40 (branch task/e0-t06-rv64i-decoder, stacked on e0-t05)
+Deliverables: crates/core/src/decode.rs — const fn decode(u32) -> Result<Instr,
+IllegalInstr>, 52 mnemonics across all six formats (log corrected per verifier: initial claim undercounted at 47), immediates sign-extended to i64 at
+decode (I/S/B/U/J extractors documented against spec bit layouts). Level-0 policy in
+module doc: compressed space illegal; FENCE decodes for ALL fm/pred/succ (incl.
+fence.tso, fm=8) but FENCE.I illegal; SYSTEM exact-word ECALL/EBREAK only; M-ext/CSR/
+privileged illegal; RV64 shamt6 for SLLI/SRLI/SRAI (top6 selects), shamt5 W-forms with
+insn[25]=1 illegal per spec.
+GOLDEN TABLE PROVENANCE (anti-self-licking, per the E0-T05 lesson): all 70 positive
+words produced by clang -target riscv64-unknown-elf -march=rv64i -mno-relax +
+llvm-objdump -d -M no-aliases (alpine docker); branch/JAL immediates are REAL label
+distances; B/J range extremes (+4094/-4096, +1048574/-1048576) constructed via
+.skip-separated labels so the assembler emitted the boundary words itself (they matched
+my independent hand-computations exactly). Source: scratchpad/golden.s + golden.dump;
+command line recorded in the test header for reproduction.
+Tests: golden_table_decodes_exactly (70, >= 60 required), negative_table (30, >= 20),
+compressed_space sweep (300k), sweep_never_panics (1M random + 65k strided full-range,
+miri-reduced via SWEEP const), const-context evaluation. 3 wasm32 mirrors (13-entry
+subset incl. edges, negatives, 200k sweep). miri clean on the suite (1.4s reduced).
+Gates: fmt / clippy -D warnings exit 0 (captured directly) / native green / no_std
+wasm32 / wasm-pack test --node (5 suites) / CI green run 28604047843.
+Follow-up per angle 1: objdump cross-decode of the E0-T14 hello ELF recorded for
+E0-T14/E0-T20 (binary does not exist yet).
+rr: SKIPPED locally (macOS/no PMU per AGENTS.md); deterministic+miri+wasm+CI layers.
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: verified
+- P1 golden-table provenance — HELD. Claimed clang/llvm-objdump pipeline reproduced golden.dump byte-identically; all 70 test pairs machine-checked against the dump (mnemonics, ABI→number mapping, immediates, branch/JAL offsets recomputed from dump addresses). Label-distance extremes verified: beq 0x10c→0x110a = +4094, jal 0x202114→0x102114 = −1048576.
+- P2 verifier's own golden table — HELD. 87/87 pass (verifier.s: all 52 mnemonics, lui 0x80000→−2^31, jalr −2048, five branches with imm[11] set incl. +2048 exact, slli shamt 31/32/33, x0-saturated operands, B/J extremes on nonzero regs; expected fields derived from objdump operand text only). Extreme words recomputed by hand from spec formulas — all match assembler and decode.
+- P3 differential disassembler fuzz (3000 words, seed 0x5EEDC917) — HELD. 0 words LLVM calls base-RV64I that decode rejects, 0 mnemonic mismatches, 0 decode-accepts of LLVM-valid non-Level-0 (77 csr* all rejected). Sole asymmetry: 12 FENCE words with exotic fm/rd/rs1 decode accepts but LLVM won't print — root-caused to spec §2.7 forward-compat ("base implementations shall ignore these fields") and the module's documented policy; disassembler conservatism, not a bug.
+- P4 task angles 2/3/4/5 — HELD. Scramble extremes exact; insn[7]-flip drops imm bit 11 as predicted; full-range stride (phase 7) + 1M random (verifier seed) no panics; fence w,r / i,o / iorw,w / tso exact fields; FENCE.I words 0x0000100f AND 0xffff100f illegal; addi x1,x0,-1 → imm == −1i64.
+- Angle 1 hello-ELF cross-decode — SKIPPED loud: E0-T14 pending, binary doesn't exist; mitigated by the 3000-word differential (superset attack); re-run at E0-T14/E0-T20.
+- rr — SKIPPED loud: macOS/no PMU; mitigated by deterministic suite + miri + wasm + CI; decode is a pure const fn with no concurrency to interrogate.
+- COVERAGE: 5/5 mutations killed by the worker's own suite — B imm[11]←insn[8] (golden red at 0xfe419ee3); BLT/BGE swap (red at 0xfe62cce3); FENCE.I allowed (negative red); OP M-leak (negative red); imm_i zero-extend (golden red at 0xffc102e7). No surviving mutant.
+- MOCK/HONESTY: provenance authentic — no self-licking, table words from a reproducible external assembler. Claim numbers all check (70/30/const/miri-1.41s/CI 28604047843 at 29dbd40 with decode tests in logs); ONE discrepancy: "47 mnemonics" is actually 52 — harmless undercount, log corrected.
+- NOVEL: per-word llvm-mc --disassemble differential, invented after discovering two disassembler artifacts a naive stream differential would misreport ($d mapping symbols; long-encoding low-byte desync). Exotic-fm FENCE probe root-caused to policy. No decoder finding from any novel attack.
+- SUITE: promote verifier_golden.rs (87-entry independent table, all 52 mnemonics) + verifier_angles.rs (angles 2–5 with verifier inputs) + fuzz_words.txt as E0-T21 corpus seeds. Discard examples/vfuzz.rs (harness hack).
+Commands: docker alpine clang/llvm re-dump + diff; check_table.py/gen_table.py; cold-clone cargo test ×2 rounds; 5 mutations (all red, reverted); llvm-mc --disassemble ×3000; wasm-pack test --node; miri decode_golden (1.41s); gh run view 28604047843 + job logs.
+
+### 2026-07-02 — post-verdict actions (worker)
+Promoted verifier_e0t06_golden.rs (87 entries) + verifier_e0t06_angles.rs verbatim;
+fuzz corpus seeds committed to tests/data/decode_fuzz_corpus_e0t06.txt for E0-T21.
+Mnemonic count corrected 47→52 in the claim. Gates re-earned: fmt/clippy exit 0/
+promoted suites green (4+1 tests).
