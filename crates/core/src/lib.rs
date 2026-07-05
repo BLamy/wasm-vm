@@ -705,10 +705,15 @@ impl Machine {
         if !self.storm_detect {
             return;
         }
-        if let Some(plic) = &self.plic {
-            self.irqstats.claims = *plic.borrow().claim_counts();
-        }
-        if let Some(r) = self.irqstats.check_storm(1_000_000, 5_000, 3) {
+        // Hot path is just check_storm (a subtract + compare). The PLIC claim sync + "hot line"
+        // naming happen ONLY when a storm actually fires (rare), so per-trap overhead is a few
+        // instructions even during a busy boot.
+        if let Some(mut r) = self.irqstats.check_storm(1_000_000, 5_000, 3) {
+            if let Some(plic) = &self.plic {
+                self.irqstats.claims = *plic.borrow().claim_counts();
+            }
+            r.hot_irq = self.irqstats.hottest_irq();
+            self.irqstats.last_storm = Some(r.clone());
             let hot = match r.hot_irq {
                 Some((id, n)) => alloc::format!("hottest PLIC irq {id} ({n} claims)"),
                 None => alloc::string::String::from("no external PLIC irq is hot"),

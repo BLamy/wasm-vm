@@ -58,6 +58,12 @@ pub struct BootArgs {
     /// — for debugging fs corruption or stalls. Requires `--drive`.
     #[arg(long)]
     pub blk_log: bool,
+    /// E2-T20: disable the always-on interrupt-storm / WFI-deadlock detectors (overhead A/B).
+    #[arg(long)]
+    pub no_storm_detect: bool,
+    /// E2-T20: print the interrupt/trap counters at exit.
+    #[arg(long)]
+    pub stats: bool,
 }
 
 /// Guest console → this process's stdout. Shared with the SBI console channel; a closed pipe
@@ -152,6 +158,9 @@ pub fn boot(a: BootArgs) -> ExitCode {
         // Final drain before we act on the outcome.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
+        if a.stats {
+            eprint!("{}", m.stats_dump()); // E2-T20
+        }
 
         match outcome {
             RunOutcome::Reset(wasm_vm_core::ExitReason::Reboot) if !a.no_reboot => {
@@ -215,6 +224,7 @@ fn assemble(
         }
     };
     let mut m = Machine::new(ram_bytes);
+    m.set_storm_detect(!a.no_storm_detect); // E2-T20
 
     // --- devices, in dependency order (PLIC before its consumers) ---
     m.enable_clint(10);

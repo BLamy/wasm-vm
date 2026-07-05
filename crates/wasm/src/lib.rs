@@ -256,6 +256,38 @@ impl WasmMachine {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
         Ok(inner.machine.snapshot().hex_digest())
     }
+
+    /// E2-T20: the interrupt/trap counters + storm/WFI diagnosis as a JS object
+    /// `{ retired, wfi, exceptions:[16], interrupts:[16], claims:[32], storm:bool, wfiReport:string|null }`.
+    /// E2-T26's UI surfaces these so a browser boot that death-spirals shows a diagnosis instead
+    /// of a silently-pinned tab.
+    #[wasm_bindgen(js_name = getStats)]
+    pub fn get_stats(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let s = inner.machine.irq_stats();
+        let obj = js_sys::Object::new();
+        let set = |k: &str, v: &JsValue| {
+            let _ = js_sys::Reflect::set(&obj, &JsValue::from_str(k), v);
+        };
+        let u64_arr = |a: &[u64]| {
+            let arr = js_sys::Array::new();
+            for &x in a {
+                arr.push(&JsValue::from_f64(x as f64));
+            }
+            arr
+        };
+        set("retired", &JsValue::from_f64(s.retired as f64));
+        set("wfi", &JsValue::from_f64(s.wfi as f64));
+        set("exceptions", &u64_arr(&s.exc));
+        set("interrupts", &u64_arr(&s.int));
+        set("claims", &u64_arr(&s.claims));
+        set("storm", &JsValue::from_bool(s.last_storm.is_some()));
+        match &s.last_wfi_report {
+            Some(r) => set("wfiReport", &JsValue::from_str(r)),
+            None => set("wfiReport", &JsValue::NULL),
+        }
+        Ok(obj.into())
+    }
 }
 
 impl WasmMachine {
