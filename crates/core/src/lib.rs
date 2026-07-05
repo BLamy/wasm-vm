@@ -115,6 +115,13 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
         dev::plic::IrqLine,
     )>,
+    /// E2-T11: virtio-blk service state (shared backend state + the persistent ring view),
+    /// when [`Self::enable_virtio_blk`] plugged a backend into slot 0. Serviced at every
+    /// instruction boundary the guest has kicked.
+    blk: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::blk::BlkState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+    )>,
 }
 
 impl Machine {
@@ -143,6 +150,7 @@ impl Machine {
             sbi_state: sbi::SbiState::default(),
             uart: None,
             virtio: alloc::vec::Vec::new(),
+            blk: None,
         })
     }
 
@@ -253,6 +261,23 @@ impl Machine {
             handles.push(cell);
         }
         handles
+    }
+
+    /// E2-T11: attach a virtio-blk device (DeviceID 2) backed by `backend` in slot 0 and
+    /// the seven empty slots alongside (calls [`Self::enable_virtio_slots`] internally).
+    /// Returns (slot-0 handle, shared blk state — inspect `flush_count`, swap inputs).
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_blk(
+        &mut self,
+        backend: alloc::boxed::Box<dyn block::BlockBackend>,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::blk::BlkState>>,
+    ) {
+        let (devhalf, state) = dev::virtio::blk::new(backend);
+        let slots = self.enable_virtio_slots(Some(alloc::boxed::Box::new(devhalf)));
+        self.blk = Some((alloc::rc::Rc::clone(&state), None));
+        (alloc::rc::Rc::clone(&slots[0]), state)
     }
 
     /// E2-T03 (ADR 0002): route `ecall`-from-S to the built-in Rust SBI ([`sbi::dispatch`])
@@ -518,6 +543,12 @@ impl Machine {
                     let mut u = uart.borrow_mut();
                     u.tick();
                     line.set(u.irq_level());
+                }
+                // E2-T11: service pending virtio-blk kicks BEFORE mirroring levels, so a
+                // completed request's used-ring interrupt lands this same boundary.
+                if let Some((state, vq)) = &mut self.blk {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[0].0);
+                    dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
                 }
                 // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
                 for (slot, line) in &self.virtio {

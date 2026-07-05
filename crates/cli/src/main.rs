@@ -68,6 +68,10 @@ struct RunArgs {
     /// Signature word size in bytes (RISCOF default 4; only 4 is supported).
     #[arg(long, default_value_t = 4)]
     signature_granularity: u32,
+    /// E2-T11: attach a virtio-blk drive in slot 0: `--drive file=IMG` or
+    /// `--drive file=IMG,ro` (mmap-backed; flush = msync).
+    #[arg(long)]
+    drive: Option<String>,
 }
 
 /// Guest console → this process's stdout, streamed (no unbounded buffering). A closed
@@ -163,6 +167,37 @@ fn run(a: RunArgs) -> ExitCode {
 
     let ram_bytes = a.ram_mib.saturating_mul(1024 * 1024);
     let mut m = Machine::new(ram_bytes);
+    // E2-T11: --drive file=IMG[,ro] → PLIC + CLINT + virtio-blk slot 0 (mmap FileBackend).
+    if let Some(spec) = &a.drive {
+        let (path, ro) = match spec.strip_suffix(",ro") {
+            Some(rest) => (rest, true),
+            None => (spec.as_str(), false),
+        };
+        let Some(path) = path.strip_prefix("file=") else {
+            eprintln!("wasm-vm: --drive expects file=IMG[,ro]");
+            return ExitCode::from(2);
+        };
+        let backend: Box<dyn wasm_vm_core::block::BlockBackend> = if ro {
+            match file_backend::FileBackend::open_read_only(std::path::Path::new(path)) {
+                Ok(b) => Box::new(b),
+                Err(e) => {
+                    eprintln!("wasm-vm: cannot open drive {path}: {e}");
+                    return ExitCode::from(2);
+                }
+            }
+        } else {
+            match file_backend::FileBackend::open(std::path::Path::new(path)) {
+                Ok(b) => Box::new(b),
+                Err(e) => {
+                    eprintln!("wasm-vm: cannot open drive {path}: {e}");
+                    return ExitCode::from(2);
+                }
+            }
+        };
+        m.enable_clint(10);
+        m.enable_plic();
+        let _ = m.enable_virtio_blk(backend);
+    }
 
     let console = StdoutConsole {
         out: Rc::new(io::stdout()),
