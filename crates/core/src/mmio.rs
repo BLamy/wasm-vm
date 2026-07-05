@@ -254,6 +254,13 @@ impl Bus for SystemBus {
     sysbus_store!(store16, u16, Width::B2);
     sysbus_store!(store32, u32, Width::B4);
     sysbus_store!(store64, u64, Width::B8);
+
+    fn ram_contains(&self, addr: u64, len: u64) -> bool {
+        // Only the RAM region supports misaligned accesses (E1-T26). Device windows never do
+        // — a misaligned access touching a window (or straddling out of RAM) keeps the
+        // `*AddrMisaligned` trap. Delegates to the RAM's own containment check.
+        self.ram.ram_contains(addr, len)
+    }
 }
 
 /// Everything a [`RecordingDevice`] captured, shared with the test via `Rc<RefCell<_>>`.

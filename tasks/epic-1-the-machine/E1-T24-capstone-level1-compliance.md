@@ -4,7 +4,7 @@ epic: 1
 title: "Capstone: Level 1 threshold — riscv-tests and RISCOF green, native and WASM"
 priority: 124
 status: in_progress
-depends_on: [E1-T13, E1-T14, E1-T18, E1-T20, E1-T21, E1-T22, E1-T23, E1-T25, E1-T26, E1-T27, E1-T28, E1-T29]
+depends_on: [E1-T13, E1-T14, E1-T18, E1-T20, E1-T21, E1-T22, E1-T23, E1-T25, E1-T26, E1-T29]
 estimate: L
 capstone: true
 ---

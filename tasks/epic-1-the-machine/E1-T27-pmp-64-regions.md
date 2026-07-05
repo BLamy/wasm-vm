@@ -2,12 +2,14 @@
 id: E1-T27
 epic: 1
 title: 64-region PMP — pmpaddr0..63 / pmpcfg0..14 (Priv §3.7)
-priority: 127
+priority: 141
 status: pending
 depends_on: [E1-T15]
 estimate: M
 capstone: false
 ---
+
+> **E1-T26 UPDATE — capstone-OBSOLETE (deprioritized 127/128 → 141/142).** The RISCOF exclusions this task existed to clear were removed by E1-T26 (switching the reference to the canonical Sail model, configured to our declared ISA, makes the full arch-test suite pass 395/0 with EXCLUSIONS.md empty). This remains a VALUABLE feature for hosting more OSes, but the Level-1 capstone (E1-T24) no longer depends on it.
 
 ## Goal
 Expand PMP from the 16-entry implementation (E1-T15) to the full 64 regions the spec

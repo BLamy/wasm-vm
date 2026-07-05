@@ -1,0 +1,22 @@
+{
+  "//": "E1-T26 — layer over sail_riscv_sim's default config so the SAIL reference matches our DUT's ISA (rv64gc + S/U + Sv39/Sv48). Applied via `--config-override` by riscof_sail.py. Only the deltas from the default config are listed.",
+  "extensions": {
+    "//Svnapot": "our DUT treats PTE bit 63 (N) as reserved and page-faults it (E1-T20); disable so Sail does too (fixes vm_*_reserved_svnapot).",
+    "Svnapot": { "supported": false },
+    "//Svpbmt": "our DUT treats PTE bits 62:61 (PBMT) / [60:54] as reserved and page-faults them (E1-T20); disable so Sail does too (fixes vm_*_pte_reserved_field).",
+    "Svpbmt": { "supported": false },
+    "//Sv57": "our DUT implements up to Sv48 and WARL-rejects satp MODE=10 (E1-T18); disable Sv57 in the reference to match.",
+    "Sv57": { "supported": false },
+    "//Svrsw60t59b": "our DUT treats PTE bits [63:54] (incl. 60:59) as reserved and page-faults them (E1-T20, PTE_RESERVED_HI); disable this reserved-for-SW extension so Sail faults 60:59 too (fixes vm_*_pte_reserved_field).",
+    "Svrsw60t59b": { "supported": false }
+  },
+  "memory": {
+    "misaligned": {
+      "//": "Scalar misaligned already proceeds (default) — matches our DUT. Atomics require alignment: our DUT raises *AddrMisaligned (cause 4/6 = AlignmentException), not Sail's default AccessFault.",
+      "exceptions": {
+        "lrsc": "AlignmentException",
+        "amo": "AlignmentException"
+      }
+    }
+  }
+}

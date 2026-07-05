@@ -18,12 +18,8 @@ const SKIP: &[(&str, &str)] = &[
         "rv64ui-p-fence_i",
         "Zifencei (fence.i) — out of the rv64i base, arrives in a later epic",
     ),
-    (
-        "rv64ui-p-ma_data",
-        "exercises MISALIGNED loads/stores succeeding; Level 0 deliberately faults \
-         misaligned access (E0-T08), so this trap is correct behavior, not a bug. \
-         Passes once an unaligned-access mode lands.",
-    ),
+    // rv64ui-p-ma_data REMOVED (E1-T26): misaligned loads/stores now succeed for RAM, so this
+    // test runs below and must PASS — no longer skipped.
 ];
 
 fn bin_dir() -> PathBuf {

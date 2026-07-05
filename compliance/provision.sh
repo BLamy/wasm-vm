@@ -25,9 +25,31 @@ ARCHTEST_DIR="${ARCHTEST_DIR:-$PWD/compliance/riscv-arch-test}"  # gitignored
 # The shipped reference plugins (riscof-plugins/rv64/spike_simple) are the base for compliance/spike
 # and compliance/wasmvm.
 
-# 3) Sanity: Spike (reference) reachable via the Docker toolchain image.
+# 3) Sanity: Spike (fallback reference) reachable via the Docker toolchain image.
 tools/toolchain/run.sh -- spike --help >/dev/null 2>&1 || {
   echo "error: Spike not reachable — build the toolchain image: tools/toolchain/build.sh" >&2; exit 1; }
+
+# 4) Sail reference model (E1-T26) — sail-riscv 0.12 PREBUILT binary (no opam/source build).
+#    Sail honors hw_data_misaligned_support, so it can validate our misaligned support where
+#    Spike-1.1.1 (hardcoded misaligned trapping) cannot. Runs natively on the host.
+SAIL_VERSION="0.12"
+SAIL_DIR="${SAIL_DIR:-$PWD/compliance/sail-riscv}"  # gitignored
+if [ -z "$(ls "$SAIL_DIR"/*/bin/sail_riscv_sim 2>/dev/null || true)" ]; then
+  case "$(uname -s)-$(uname -m)" in
+    Darwin-arm64) SAIL_ASSET="sail-riscv-Mac-arm64.tar.gz" ;;
+    Linux-aarch64) SAIL_ASSET="sail-riscv-Linux-aarch64.tar.gz" ;;
+    Linux-x86_64) SAIL_ASSET="sail-riscv-Linux-x86_64.tar.gz" ;;
+    *) echo "warning: no prebuilt Sail for $(uname -s)-$(uname -m); set \$SAIL_SIM to a riscv sail binary" >&2; SAIL_ASSET="" ;;
+  esac
+  if [ -n "$SAIL_ASSET" ]; then
+    mkdir -p "$SAIL_DIR"
+    curl -sSL -o "$SAIL_DIR/sail.tar.gz" \
+      "https://github.com/riscv/sail-riscv/releases/download/${SAIL_VERSION}/${SAIL_ASSET}"
+    tar -xzf "$SAIL_DIR/sail.tar.gz" -C "$SAIL_DIR" && rm -f "$SAIL_DIR/sail.tar.gz"
+    chmod +x "$SAIL_DIR"/*/bin/sail_riscv_sim
+  fi
+fi
+ls "$SAIL_DIR"/*/bin/sail_riscv_sim >/dev/null 2>&1 && echo "  sail:      $(ls "$SAIL_DIR"/*/bin/sail_riscv_sim | head -1) (v${SAIL_VERSION})"
 
 echo "provisioned: riscof ${RISCOF_VERSION}, riscv-arch-test (RISCOF-pinned ctp-release @ 281d71ef), Spike (Docker) OK"
 echo "  venv:      $VENV"

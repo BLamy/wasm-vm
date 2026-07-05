@@ -135,6 +135,15 @@ impl Bus for Ram {
     impl_store!(store16, u16);
     impl_store!(store32, u32);
     impl_store!(store64, u64);
+
+    fn ram_contains(&self, addr: u64, len: u64) -> bool {
+        // [addr, addr+len) ⊆ [base, base+len_bytes). Wide compares (checked_add) so a range
+        // ending past u64::MAX cannot wrap into a false positive.
+        match addr.checked_add(len) {
+            Some(end) => addr >= self.base() && end <= self.base() + self.len() as u64,
+            None => false,
+        }
+    }
 }
 
 #[cfg(test)]

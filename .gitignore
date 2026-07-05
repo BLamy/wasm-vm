@@ -33,3 +33,6 @@ compliance/config.ini
 
 # E1-T21 differential fuzzer scratch (generated .S/.elf per run)
 tools/fuzz/.work/
+
+# E1-T26 Sail reference model (downloaded by provision.sh; not vendored)
+compliance/sail-riscv/
