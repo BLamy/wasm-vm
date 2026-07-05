@@ -83,6 +83,20 @@ impl ConsoleSink for SharedStdout {
     }
 }
 
+/// E2-T16: the host wall clock for the RTC — `SystemTime` nanoseconds since the Unix epoch.
+/// Lives in the CLI (not `crates/core`) because core bans host time sources for determinism.
+/// A clock before 1970 (unrepresentable) reads back as 0.
+struct SystemClock;
+
+impl wasm_vm_core::dev::rtc::WallClock for SystemClock {
+    fn now_ns(&self) -> u64 {
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|d| d.as_nanos() as u64)
+            .unwrap_or(0)
+    }
+}
+
 pub fn boot(a: BootArgs) -> ExitCode {
     let kernel = match std::fs::read(&a.kernel) {
         Ok(b) => b,
@@ -115,7 +129,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
     // --- devices, in dependency order (PLIC before its consumers) ---
     m.enable_clint(10);
     m.enable_plic();
-    m.enable_rtc();
+    m.enable_rtc(Box::new(SystemClock));
     let uart = m.enable_uart16550();
     // virtio: a real blk device if --drive was given, else the 8 empty mmio slots the DTB
     // advertises (the kernel probes each address; an unbacked window would fault).

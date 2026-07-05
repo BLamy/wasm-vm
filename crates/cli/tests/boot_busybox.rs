@@ -118,6 +118,17 @@ fn boots_to_interactive_busybox_shell() {
         );
     }
 
+    // E2-T16: the goldfish RTC must deliver REAL wall-clock time, not the 1970 epoch — the
+    // kernel logs `setting system clock to <year>-…` at probe. Assert a 21st-century year so
+    // this stays true without pinning to a specific date.
+    {
+        let t = transcript.lock().unwrap();
+        assert!(
+            t.contains("setting system clock to 20"),
+            "RTC did not set a real (20xx) system clock — got 1970?; transcript:\n{t}"
+        );
+    }
+
     // ttyS0 must appear in /proc/interrupts (input arrived via the UART IRQ, not polling).
     assert!(
         transcript.lock().unwrap().contains("ttyS0"),
