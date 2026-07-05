@@ -3,7 +3,7 @@ id: E2-T18
 epic: 2
 title: Alpine riscv64 rootfs — scripted ext4 image build with getty on ttyS0
 priority: 218
-status: pending
+status: implemented
 depends_on: [E2-T12]
 estimate: M
 capstone: false
@@ -57,4 +57,44 @@ claims. Verify the image contains no riscv64-incompatible binaries (`find / -typ
 -exec file {} +` scan inside QEMU for x86 ELF — any hit refutes).
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — Alpine riscv64 rootfs boots to `login:`
+
+`bash tools/build-rootfs.sh` produces `releases/rootfs/alpine-rootfs.ext4` (Alpine 3.20,
+riscv64, OpenRC + getty/login on ttyS0). It boots on our own emulator — the E2-T12 kernel has
+`EXT4_FS`+`VIRTIO_BLK`+`VIRTIO_MMIO` built in — all the way to the login prompt:
+
+```
+[  2.46] EXT4-fs (vda): mounted filesystem a11ce000-…-f50000000018 r/w …
+[  2.47] VFS: Mounted root (ext4 filesystem) on device 254:0.
+[  2.47] Run /sbin/init as init process
+   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)
+ * Mounting /proc … /sys … /dev/pts … [ ok ]
+ * Scanning hardware for mdev … [ ok ]
+ * Setting system clock using the hardware clock [UTC] … [ ok ]   ← reads the E2-T16 RTC
+ * Starting networking … [ ok ]
+Welcome to Alpine Linux 3.20
+Kernel 6.6.63 on an riscv64 (/dev/ttyS0)
+wasm-vm login:
+```
+
+**Approach — path (b), no emulation.** `apk.static --arch riscv64 … --no-scripts` cross-installs
+the riscv64 root by UNPACKING only (no binfmt/qemu-user, no privileged loop mounts), then
+`mke2fs -d` packs the directory into ext4. The `--no-scripts` install skips `busybox --install`,
+so we recreate the applet symlinks (`/sbin/init`, `/sbin/getty`, `/bin/login`, …) using the
+build container's SAME-version (1.36.1) `busybox --list-full` — without this the kernel finds no
+`/sbin/init` and falls through to `/bin/sh`. Config: ttyS0-only getty, `ttyS0` in securetty,
+`/dev/vda / ext4` fstab, passwordless root, loopback `/etc/network/interfaces` (else the
+networking service crashes), OpenRC runlevel symlinks. Full pipeline in `docs/rootfs.md`.
+
+**Build-time verification (in-container, every run):** `fsck.ext4 -f -n` reports the fresh image
+**clean** (787 files, no orphan inodes); a `find … -exec file` scan confirms **no foreign
+(x86/aarch64) ELF** — riscv64 only; `MANIFEST.txt` pins the exact resolved package set. Image is
+512 MiB (sparse ~10 MiB), reproducible (pinned Alpine v3.20 + fixed fs UUID); the `.ext4` is
+gitignored (rebuilt from the recipe + `SHA256SUMS`). No `sudo`/loop-mount anywhere.
+
+**Acceptance:** #1 (boots to `login:`, ext4 root on vda) ✓ — proven on our emulator (QEMU not on
+the dev host; the QEMU `-device virtio-blk-device` cross-check is documented for when it is).
+#2 (fsck clean, ≤512 MiB) ✓. #3 (reproducible: pinned version + MANIFEST lock; mtime caveat
+documented) ✓. #4 (no privileged ops) ✓. Interactive root-login + `apk --version` is the
+E2-T19 capstone (which boots this exact image to an interactive login).
