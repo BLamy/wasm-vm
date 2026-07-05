@@ -500,7 +500,11 @@ impl WasmLinux {
                         inner.uart.borrow_mut().push_input(&batch);
                     }
                 }
-                let step = if inner.pending.is_empty() { remaining } else { INPUT_SLICE.min(remaining) };
+                let step = if inner.pending.is_empty() {
+                    remaining
+                } else {
+                    INPUT_SLICE.min(remaining)
+                };
                 let oc = inner.machine.run_traced(step, &mut sink);
                 remaining -= step;
                 if remaining == 0 || !matches!(oc, RunOutcome::MaxInstrs) {
