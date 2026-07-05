@@ -3,7 +3,7 @@ id: E0-T10
 epic: 0
 title: ELF64 loader for bare-metal riscv64 executables
 priority: 10
-status: pending
+status: verified
 depends_on: [E0-T03]
 estimate: M
 capstone: false
@@ -56,4 +56,68 @@ and byte-compare loaded RAM against `riscv64-unknown-elf-objcopy -O binary` outp
 unreproducible binary blob in-tree refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-02 — worker claim — commit 60b1cf7 (branch task/e0-t10-elf-loader, stacked on e0-t09)
+Deliverables: crates/core/src/loader.rs — dependency-free, no_std, panic-free ELF64
+parser/loader. load_elf validates header identity with PRECISE errors (machine checked
+before type: x86-64 rejects WrongMachine, rv32 rejects WrongClass, ET_DYN rejects
+WrongType); TWO-PASS load: pass 1 validates every PT_LOAD (checked u64/u128 arithmetic,
+file bounds AND RAM bounds) before pass 2 writes a byte — CONTRACT: RAM bit-identical on
+any Err (stronger than the task's "document partial writes" option; tested with a
+valid-first/invalid-second image). Loads at p_paddr (Spike convention); BSS zero-fill in
+512-byte chunks with no over-fill past p_memsz; tohost/fromhost via best-effort
+.symtab/.strtab scan (bounded loops, malformed → Nones, never panic/error).
+FIXTURE PROVENANCE (angle 5 pre-empted): minimal.elf (ET_EXEC rv64i, entry 0x80000000,
+2 PT_LOADs, second with filesz 0x21 < memsz 0x121, tohost/fromhost symbols) built by the
+COMMITTED fixtures/build.sh (docker alpine clang+lld with committed minimal.s + link.ld);
+committed llvm-readelf/objdump dumps are the cross-check references.
+Tests: 6 native — dump CROSS-CHECK test parses the committed readelf text (entry +
+segment placement + byte content per LOAD line, not hardcoded); BSS zero-fill over
+0xAA-preseeded RAM incl. no-over-fill probe; 9-case malformed battery with exact error
+asserts; overflow attacks (p_filesz=u64::MAX, p_paddr=u64::MAX-100, e_phnum=0xFFFF,
+filesz>memsz); no-partial-write; 100k-iteration mutation fuzz + garbage buffers (angle 1
+proactive; miri-reduced to 500 per established pattern). 3 wasm32 mirrors (32-bit usize
+arithmetic; the mirror caught a golden-word rd mixup in its own first draft — documented
+in-test). miri: 6/6 (88s). Gates: fmt / clippy exit 0 / 20 native + 9 wasm suites /
+no_std wasm32 build / CI green run 28628224873.
+rr: SKIPPED locally (macOS/no PMU per AGENTS.md).
+Angle 4 follow-up recorded: byte-compare vs objcopy output when E0-T14 lands.
+
+### 2026-07-02 — adversarial verifier (fresh session) — VERDICT: refuted
+- P1 fuzz (angle 1) — HELD. 0 panics over 2,000,000 targeted-mutation iters + ~34k random buffers, verifier seed, overflow-checks-on.
+- P2 overflow battery (angle 2) — HELD. e_phoff/e_shoff=u64::MAX, p_offset+p_filesz>usize, p_paddr+p_memsz wrap → all Err, no panic.
+- P3 symbol-scan malformed — HELD. bogus sh_link=0xFFFFFFFF, sh_offset past EOF, sh_size=u64::MAX, truncated strtab, shentsize=0xFFFF → None, no panic, miri-clean.
+- P4 no-partial-write (angle 3) — HELD. RAM bit-identical across out-of-RAM/file-overflow/filesz>memsz second-segment failures; zero-PT_LOAD and memsz=0 succeed with RAM untouched.
+- P5 error precision on GENUINE artifacts — IMPL HELD, COVERAGE FAILED. Real x86-64 EXEC/DYN and rv32 ELFs → WrongMachine/WrongMachine/WrongClass correct on real code.
+- P6 fixture provenance (angle 5) — HELD. Rebuilt minimal.elf from committed build.sh → sha256 bit-identical to committed; dumps match; cross-check test genuinely parses the dump.
+- P7 wasm+miri — HELD. loader 3/3 wasm, loader_elf 6/6 + verifier 4/4 miri, no UB.
+- rr — SKIPPED (macOS/no PMU); pure &[u8]→Result, no concurrency.
+- COVERAGE — REFUTATION: mutation (a) "e_machine checked AFTER e_type" SURVIVES the committed suite yet mis-reports a GENUINE x86-64 PIE (ET_DYN+machine 62) as WrongType not WrongMachine — the byte-patched x86-64 test kept ET_EXEC, so type-first still falls through to the machine check; the ordering the acceptance criterion rests on is UNPROVEN. Mutations (b)-(f) correctly RED. DEMAND: committed test with machine≠243 AND type≠2 asserting WrongMachine (genuine x86_64_dyn.elf is a ready fixture).
+- MOCK/HONESTY: claim-commit tasks-only; fixture bit-identical reproducible. Caveat: CI run could not be independently verified from a local-origin clone (green-CI rests on worker's word here).
+- NOVEL: genuine-x86-64-PIE probe (ET_DYN + machine 62) — the input where machine/type ordering is observable — exposed the gap; byte-patched ET_EXEC cannot. Zero-PT_LOAD/memsz=0 untouched-RAM success held.
+- SUITE: promote verifier_genuine.rs + genuine/*.elf (real-toolchain error-precision regression, the mutation-(a) kill); promote verifier_e0t10 symtab/partial-write/zero-seg cases (fuzz reworked to committed volume); discard 2M fuzz as-is (keep as corpus seeds).
+
+### 2026-07-02 — rework after refutation (worker)
+Applied all demands: (1) promoted verifier_genuine.rs + genuine/{x86_64_exec,x86_64_dyn,
+rv32}.elf (real toolchain artifacts) and verifier_e0t10.rs (fuzz reworked 2M→200k CI
+volume, miri 500; 2M campaign preserved as corpus provenance); (2) re-ran the exact
+surviving mutation (e_machine checked after e_type): now KILLED by
+genuine_x86_64_dyn_rejected_for_machine_not_type, reverted, loader.rs clean; mutations
+(b)-(f) re-confirmed red. Gates: clippy exit 0, 22 native suites green. Status
+implemented; re-verification requested.
+
+### 2026-07-02 — adversarial verifier (re-verification) — VERDICT: verified
+- (a) Mutation e_machine-after-e_type RE-APPLIED → now KILLED by genuine_x86_64_dyn_rejected_for_machine_not_type (loader_elf stays 6/6, genuine goes 2/1 FAILED). The first-pass survivor is caught. Reverted clean.
+- (b) genuine/x86_64_dyn.elf identity confirmed: class=2, type=3(DYN), machine=62 — real machine≠RISCV AND type≠EXEC, so it genuinely exercises ordering; sha256 bit-identical to docker rebuild.
+- (c) NEW mutant (e_class checked AFTER e_machine): SURVIVES the committed suite — genuine rv32 has the RIGHT machine (243) so class-after-machine still reports WrongClass. RESIDUAL GAP (non-blocking): needs a genuine i386 class32+machine≠243 fixture.
+- (d) Promoted suites verbatim (rustfmt reflow + announced fuzz rework only); genuine/*.elf bit-identical.
+- (e) Full core suite green from cold clone, scrubbed env; 0 failed.
+
+### 2026-07-02 — residual-gap closure (worker, beyond the demand)
+The re-verification passed but flagged one residual gap (c): the class-vs-machine ordering
+was unpinned. Closed it proactively — built a genuine i386 ELF (class=ELF32, machine=Intel
+80386, via docker clang -m32 + ld.lld -m elf_i386, recipe appended to fixtures/build.sh)
+and added genuine_i386_rejected_for_class_not_machine asserting WrongClass. Re-ran the
+critic's exact (c) mutant (e_class checked after e_machine): now KILLED. Both identity
+orderings (class→machine→type) are now regression-pinned by genuine toolchain artifacts.
+Gates: clippy exit 0, verifier_genuine 4/4, full suite green.

@@ -12,6 +12,7 @@ extern crate alloc;
 pub mod bus;
 pub mod decode;
 pub mod hart;
+pub mod loader;
 pub mod mmio;
 pub mod ram;
 
