@@ -87,6 +87,11 @@ struct Window {
     /// Inclusive last byte — precomputed so dispatch needs no arithmetic that can wrap.
     last: u64,
     dev: Box<dyn MmioDevice>,
+    /// E2-T25: count of accesses (load or store) that landed in this window. A DETERMINISTIC
+    /// counter (a plain increment on a device hit — no host clock), so it is identical native
+    /// and wasm and safe under the determinism gate. The profiling layer maps `start` → a device
+    /// name via the platform memory map to attribute MMIO traffic per device.
+    hits: u64,
 }
 
 /// The system bus: guest RAM plus attached MMIO device windows.
@@ -143,6 +148,7 @@ impl SystemBus {
             start: base,
             last,
             dev,
+            hits: 0,
         });
         Ok(())
     }
@@ -155,6 +161,13 @@ impl SystemBus {
     /// Mutable access to RAM for loaders (`write_slice`) and test rigs.
     pub fn ram_mut(&mut self) -> &mut Ram {
         &mut self.ram
+    }
+
+    /// E2-T25 profiling: per-device MMIO access counts as `(window_base, hits)`, in attach order.
+    /// Deterministic (identical native/wasm). The caller maps `window_base` to a device name via
+    /// the platform memory map (UART0_BASE, CLINT_BASE, PLIC_BASE, …) to attribute traffic.
+    pub fn device_hits(&self) -> alloc::vec::Vec<(u64, u64)> {
+        self.windows.iter().map(|w| (w.start, w.hits)).collect()
     }
 
     /// True when every byte of `[addr, addr + width)` lies in `[start, last]`.
@@ -182,6 +195,7 @@ fn load_device(windows: &mut [Window], addr: u64, width: Width) -> Result<u64, B
     else {
         return Err(BusFault::Access);
     };
+    win.hits += 1; // E2-T25: this access landed in the device window (counted before alignment).
     if addr & (w - 1) != 0 {
         return Err(BusFault::Misaligned);
     }
@@ -205,6 +219,7 @@ fn store_device(
     else {
         return Err(BusFault::Access);
     };
+    win.hits += 1; // E2-T25: this access landed in the device window (counted before alignment).
     if addr & (w - 1) != 0 {
         return Err(BusFault::Misaligned);
     }
@@ -357,6 +372,25 @@ mod tests {
         );
         bus.load16(WIN_BASE + 0x20).unwrap();
         assert_eq!(log.borrow().reads, [(0x20, Width::B2)]);
+    }
+
+    #[test]
+    fn device_hits_counts_every_access_that_lands_in_the_window() {
+        let (mut bus, _log) = bus_with_device(0);
+        // 3 stores + 2 loads into the window, plus a misaligned access (still a window hit), and
+        // one RAM + one unmapped access that must NOT be counted against the device window.
+        bus.store32(WIN_BASE + 0x40, 1).unwrap();
+        bus.store8(WIN_BASE, 2).unwrap();
+        bus.store16(WIN_BASE + 0x10, 3).unwrap();
+        bus.load16(WIN_BASE + 0x20).unwrap();
+        bus.load8(WIN_BASE + 0x21).unwrap();
+        let _ = bus.load64(WIN_BASE + 1); // misaligned → counted as a window hit, then Misaligned
+        let _ = bus.load64(DRAM_BASE); // RAM, not the device
+        let _ = bus.load8(WIN_END + 0x1000); // unmapped, no window
+        let hits = bus.device_hits();
+        assert_eq!(hits.len(), 1, "one device window");
+        assert_eq!(hits[0].0, WIN_BASE, "reported base is the window base");
+        assert_eq!(hits[0].1, 6, "5 aligned + 1 misaligned window accesses counted, RAM/unmapped excluded");
     }
 
     #[test]
