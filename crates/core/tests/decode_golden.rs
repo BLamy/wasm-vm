@@ -110,9 +110,10 @@ const NEGATIVE: &[u32] = &[
     0x00000002, // compressed space: insn[1:0] == 10
     0x00008062, // compressed space with plausible upper bits
     0x0000200F, // MISC-MEM funct3=010 (reserved)
-    0x02208033, // MUL — M extension (OP funct7=0000001), illegal until E1-T03
-    0x02209033, // MULH
-    0x0220F03B, // REMUW-shaped — M on OP-32
+    // MUL/MULH (0x02208033/0x02209033) and REMUW (0x0220F03B) are now LEGAL — M extension,
+    // E1-T03. But an M *W-form reserved funct3 stays illegal:
+    0x0220303B, // OP-32 funct7=0000001 funct3=011 — reserved (no such M *W op)
+    0x0220103B, // OP-32 funct7=0000001 funct3=001 — reserved
     0x04011093, // SLLI with insn[26]=1 (top6=000001, reserved)
     0x0201109B, // SLLIW with insn[25]=1 — architecturally illegal (acceptance)
     0x6000509B, // SRAIW-space with garbage funct7

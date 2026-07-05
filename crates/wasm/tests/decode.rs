@@ -105,8 +105,8 @@ fn negatives_on_wasm32() {
         0xFFFFFFFF,
         0x00000001,
         // FENCE.I (0x0000100F) and CSRRW (0x00101073) became LEGAL in the default Zicsr
-        // decoder (E1-T02) — no longer illegal probes here.
-        0x02208033, // MUL — still illegal until E1-T03
+        // decoder (E1-T02); MUL became LEGAL in E1-T03 — no longer illegal probes here.
+        0x0220303B, // OP-32 M funct3=011 — reserved (no such *W op), still illegal
         0x0201109B, // SLLIW imm[5]=1
         0x0000200F, // MISC-MEM funct3=010, reserved
     ] {

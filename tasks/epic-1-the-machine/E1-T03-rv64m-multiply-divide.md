@@ -3,7 +3,7 @@ id: E1-T03
 epic: 1
 title: RV64M multiply/divide with exact div-by-zero and overflow semantics
 priority: 103
-status: pending
+status: verified
 depends_on: [E1-T01]
 estimate: M
 capstone: false
@@ -54,4 +54,71 @@ i128 paths (wasm has no native i128) and re-run the boundary table — any nativ
 mismatch is a refutation. A Rust panic or abort on any input is also a refutation.
 
 ## Verification log
-(empty)
+
+### 2026-07-03 — worker (implementation claim)
+Implemented all 13 RV64M ops as decode variants + execute arms (`crates/core/src/decode.rs`,
+`crates/core/src/hart/mod.rs`). Design notes:
+- **Not feature-gated** (unlike Zicsr): the M decode is legal in both the default and
+  `zicsr-stub` builds. The rv64ui-p stub path never executes M ops, so this is inert there —
+  confirmed by rv64ui-p still passing under the stub.
+- **No Rust panic paths**: every divisor-zero and signed-overflow case is branched out
+  BEFORE the `/`/`%`. Signed div/rem use an explicit `b==0 → -1/dividend` and
+  `MIN/-1 → dividend/0` guard; unsigned use `checked_div`/`checked_rem` (which return `None`
+  only on divisor zero — no unsigned overflow case).
+- **MULHSU**: `(rs1 as i64 as i128) * (rs2 as u128 as i128)` — rs1 sign-extended, rs2
+  zero-extended (always non-negative), exact product in i128, arithmetic `>>64`. Derivation
+  documented in-line. A dedicated test contrasts MULHU vs MULHSU on (-1,-1) to prove the
+  sign of rs1 flips the high word.
+- **W forms** operate on the low 32 bits and sign-extend the 32-bit result — including
+  DIVUW/REMUW, whose *unsigned* results are still sign-extended from bit 31.
+
+Evidence (local, macOS + reference toolchain):
+- `cargo test -p wasm-vm-core --test rv64m` — 12/12 (products, div/rem-by-zero over 6
+  dividends, signed overflow, truncate-toward-zero, W upper-bits-ignored, DIVUW/REMUW
+  sign-extension, rd==rs1==rs2 aliasing, boundary-biased no-panic sweep).
+- **Official riscv-tests rv64um-p: all 13 ELFs pass** via `tohost` (`cargo test -p
+  wasm-vm-core --features zicsr-stub --test riscv_tests` → `rv64um_p_suite_all_pass` +
+  `rv64ui_p_suite_...` both green). Built reproducibly with `tools/riscv-tests/build-rv64um.sh`
+  (`-march=rv64im_zicsr`, committed to `tests/riscv-tests-bin/`).
+- wasm32: `crates/wasm/tests/rv64m.rs` boundary table passes under BOTH `wasm-pack test
+  --node crates/wasm` and `--features zicsr-stub` — forces the `__multi3` i128 lowering
+  (no native i128 on wasm) and matches native bit-for-bit.
+- Decoder space: exhaustive 2^32 release sweep passes with the updated analytic tally
+  **236,093,445** (= 56·2^22 + 3·2^16 + 31·2^15 + 5; +13·2^15 for the new M encodings);
+  `decode_props` round-trip extended to all 13 M ops + the reserved-funct7 sweep now
+  excludes 0000001; `decode_golden`/wasm negatives updated (MUL/MULH/REMUW now legal, a
+  reserved M *W funct3 kept as the illegal probe).
+- Gate: `cargo fmt --all --check` clean, `cargo clippy --workspace --all-targets` 0
+  warnings, `cargo test --workspace` 0 FAILED.
+
+### 2026-07-03 — adversarial verifier (fresh cold clone @ 649f883) — VERDICT: verified
+Could not refute after all seven required attacks.
+- **Spike differential, two legs, both clean.** (a) All 13 `rv64um-p` ELFs run under
+  `spike --isa=rv64im` and exit 0 (tohost pass) — committed ELFs valid, emulator passes
+  them. (b) Self-contained ISA-level oracle harness drove `Hart::step` over **2,000,000**
+  random M instructions (all 13 ops, random rd/rs1/rs2 incl. x0 and forced rd==rs1==rs2
+  aliasing; operands 80% boundary-biased to 0/1/-1/i64::MIN/i64::MAX/0x8000_0000/
+  0x7FFF_FFFF/0xFFFF_FFFF/0xFFFF_FFFF_0000_0000/random) vs an independent i128/u128 oracle.
+  **0 divergences.**
+- **MULHSU:** independent Python i128 oracle reproduces the emulator exactly
+  ((-1)×(2^64-1)→all-ones, MIN×(2^64-1)→0x8000…0000, MIN×2→all-ones, 5×2^63→2). The
+  `i64 as i128 × u128 as i128` construction is correct.
+- **W-form garbage / DIVUW:** upper-garbage operands in the sweep confirm bits 63:32 ignored
+  and sign-extension from bit 31 (DIVUW 0xFFFF_FFFF → 0xFFFF_FFFF_FFFF_FFFF).
+- **Panic hunt:** 2M release-build oracle run over i64::MIN/-1, i32::MIN/-1, x/0 for every
+  op — zero panics; every divisor-zero and MIN/-1 case branched out before any `/`/`%`;
+  unsigned use `checked_div`/`checked_rem`.
+- **WASM/native parity:** `rv64m_boundary_table_on_wasm32` passes under `wasm-pack test
+  --node` in BOTH default and `--features zicsr-stub` builds (the `__multi3` i128 lowering
+  matches native).
+- **Mutation audit (7):** MULHSU rs2→signed, MULHSU >>64→>>63, DIVUW drop sext32,
+  DIVUW div/0→0, DIV div/0→0, REM rem/0→0, MULW drop sext32 — each caught by a committed
+  test. Lone survivor (DIVW MIN/-1 guard → false) is a **provably equivalent mutant**:
+  Rust `wrapping_div(i32::MIN, -1)` already returns `i32::MIN`, identical to the guarded
+  branch — not a coverage gap.
+- **Decoder tally:** 236,093,445 asserted against the brute-force 2^32 sweep; reserved
+  OP-32 M funct3 001/010/011 confirmed illegal.
+- **Gate:** fmt --check exit 0; clippy 0 warnings; `cargo test --workspace` no FAILED;
+  rv64um+rv64ui pass; exhaustive tally passes. Working tree left clean.
+
+VERIFIED — E1-T03 complete.

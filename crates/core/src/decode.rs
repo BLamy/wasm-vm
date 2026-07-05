@@ -12,7 +12,9 @@
 //!   including `fence.tso`); FENCE.I (funct3=001) is Zifencei → illegal at Level 0.
 //! - SYSTEM: only the exact words ECALL (0x00000073) and EBREAK (0x00100073) decode;
 //!   CSR space (funct3 != 0) and xRET/WFI encodings are illegal until E1.
-//! - M-extension encodings (OP/OP-32 with funct7=0000001) are illegal until E1-T03.
+//! - M-extension encodings (OP/OP-32 with funct7=0000001) decode as of E1-T03; unlike Zicsr
+//!   they are NOT gated on `zicsr-stub` (the rv64ui-p path never executes M ops, so decoding
+//!   them as legal there is inert).
 
 /// The instruction word did not decode to a valid Level-0 RV64I instruction.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -272,6 +274,73 @@ pub enum Instr {
         rs2: u8,
     },
     Sraw {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    // ── M extension: OP (RV64M, funct7=0000001) ─────────────────────────────
+    Mul {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    Mulh {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    Mulhsu {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    Mulhu {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    Div {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    Divu {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    Rem {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    Remu {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    // ── M extension: OP-32 (RV64M *W forms, funct7=0000001) ──────────────────
+    Mulw {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    Divw {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    Divuw {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    Remw {
+        rd: u8,
+        rs1: u8,
+        rs2: u8,
+    },
+    Remuw {
         rd: u8,
         rs1: u8,
         rs2: u8,
@@ -667,7 +736,48 @@ pub const fn decode(insn: u32) -> Result<Instr, IllegalInstr> {
                 rs1: s1,
                 rs2: s2,
             }),
-            _ => Err(IllegalInstr), // incl. M-extension funct7=0000001 (E1-T03)
+            // M extension (funct7 = 0000001): MUL/MULH/MULHSU/MULHU/DIV/DIVU/REM/REMU.
+            (0b0000001, 0b000) => Ok(Instr::Mul {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            (0b0000001, 0b001) => Ok(Instr::Mulh {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            (0b0000001, 0b010) => Ok(Instr::Mulhsu {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            (0b0000001, 0b011) => Ok(Instr::Mulhu {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            (0b0000001, 0b100) => Ok(Instr::Div {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            (0b0000001, 0b101) => Ok(Instr::Divu {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            (0b0000001, 0b110) => Ok(Instr::Rem {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            (0b0000001, 0b111) => Ok(Instr::Remu {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            _ => Err(IllegalInstr),
         },
         0b0011011 => {
             // OP-IMM-32: 5-bit shamt; insn[25] = 1 is architecturally illegal.
@@ -718,6 +828,32 @@ pub const fn decode(insn: u32) -> Result<Instr, IllegalInstr> {
                 rs2: s2,
             }),
             (0b0100000, 0b101) => Ok(Instr::Sraw {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            // M extension *W forms (funct7 = 0000001): funct3 001/010/011 are reserved.
+            (0b0000001, 0b000) => Ok(Instr::Mulw {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            (0b0000001, 0b100) => Ok(Instr::Divw {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            (0b0000001, 0b101) => Ok(Instr::Divuw {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            (0b0000001, 0b110) => Ok(Instr::Remw {
+                rd: d,
+                rs1: s1,
+                rs2: s2,
+            }),
+            (0b0000001, 0b111) => Ok(Instr::Remuw {
                 rd: d,
                 rs1: s1,
                 rs2: s2,
