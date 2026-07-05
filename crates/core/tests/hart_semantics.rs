@@ -161,17 +161,18 @@ fn illegal_instruction_cause_and_tval() {
 }
 
 #[test]
-fn not_yet_implemented_ops_trap_as_documented_placeholders() {
-    // Owned by E0-T11 — currently placeholder IllegalInstruction traps.
-    // (lb/sb left at E0-T08; jal/jalr/beq left at E0-T09 when control flow landed.)
-    for word in [
-        0x00000073u32, // ecall
-        0x00100073,    // ebreak
-    ] {
-        let trap = exec(word, &[]).unwrap_err();
-        assert_eq!(trap.cause, Exception::IllegalInstruction, "{word:#010x}");
-        assert_eq!(trap.tval, u64::from(word));
-    }
+fn ecall_ebreak_now_execute_no_placeholders_remain() {
+    // The placeholder-trap list is EMPTY as of E0-T11: lb/sb left at E0-T08,
+    // jal/jalr/beq at E0-T09, ecall/ebreak here. The whole RV64I set retires or
+    // traps with its own architectural cause. This test pins that ecall/ebreak
+    // are NO LONGER IllegalInstruction (E0-T11 owns their real semantics in
+    // tests/htif_run.rs; here we just guard against regression to placeholders).
+    let ecall = exec(0x0000_0073, &[]).unwrap_err();
+    assert_eq!(ecall.cause, Exception::EcallFromM);
+    assert_eq!(ecall.tval, 0);
+    let ebreak = exec(0x0010_0073, &[]).unwrap_err();
+    assert_eq!(ebreak.cause, Exception::Breakpoint);
+    assert_eq!(ebreak.tval, DRAM_BASE, "EBREAK tval = pc");
 }
 
 #[test]

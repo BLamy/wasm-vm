@@ -19,8 +19,8 @@
 //!   misaligned-target trap (cause 0, tval = target) is raised by the TAKEN
 //!   jump/branch itself with no link write; a not-taken branch with a misaligned
 //!   target retires normally. IALIGN=32 until the C extension (E1-T08).
-//! - ECALL/EBREAK: E0-T11. Until then they decode fine but raise
-//!   `IllegalInstruction` as an explicit placeholder (documented, tested as such).
+//! - ECALL/EBREAK: executed (E0-T11) as precise traps (cause 11 / cause 3). The
+//!   complete RV64I execution set now retires or traps — no placeholder arms remain.
 
 pub mod regs;
 
@@ -155,12 +155,12 @@ impl Hart {
                 tval: insn as u64,
             });
         };
-        self.execute(bus, instr, insn)
+        self.execute(bus, instr)
     }
 
     /// Execute a decoded instruction. Every arm either fully retires (writeback +
     /// PC advance) or returns a trap having touched nothing.
-    fn execute(&mut self, bus: &mut impl Bus, instr: Instr, raw: u32) -> Result<(), Trap> {
+    fn execute(&mut self, bus: &mut impl Bus, instr: Instr) -> Result<(), Trap> {
         use Instr::*;
         let r = &mut self.regs;
         let pc = r.pc;
@@ -359,12 +359,20 @@ impl Hart {
             Bltu { rs1, rs2, imm } => branch(r.read(rs1) < r.read(rs2), pc, imm)?,
             Bgeu { rs1, rs2, imm } => branch(r.read(rs1) >= r.read(rs2), pc, imm)?,
 
-            // Owned by E0-T11 — explicit placeholders (see module doc). They
-            // trap BEFORE any state is touched, preserving trap purity.
-            Ecall | Ebreak => {
+            // ECALL / EBREAK (E0-T11): precise traps, PC left at the instruction's
+            // own address, nothing else mutated. ECALL → cause 11 (env-call-from-M,
+            // our only mode at Level 0), tval 0. EBREAK → cause 3 (breakpoint),
+            // tval = pc. The host decides what happens next.
+            Ecall => {
                 return Err(Trap {
-                    cause: Exception::IllegalInstruction,
-                    tval: raw as u64,
+                    cause: Exception::EcallFromM,
+                    tval: 0,
+                });
+            }
+            Ebreak => {
+                return Err(Trap {
+                    cause: Exception::Breakpoint,
+                    tval: pc,
                 });
             }
         };

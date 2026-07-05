@@ -16,3 +16,7 @@ docker run --rm -v "$PWD:/w" alpine:latest sh -c '
 #   docker run --rm -v "$PWD:/w" alpine sh -c 'apk add clang lld && \
 #     clang -target i386-unknown-elf -m32 -c -o /w/i386.o /w/genuine/i386.s && \
 #     ld.lld -m elf_i386 -e _start -o /w/genuine/i386.elf /w/i386.o'
+
+# stripped.elf — minimal.elf with the symbol table removed (E0-T11 tohost=None path).
+# Rebuild: docker run --rm -v "$PWD:/w" alpine sh -c \
+#   'apk add llvm && llvm-strip --strip-all -o /w/stripped.elf /w/minimal.elf'
