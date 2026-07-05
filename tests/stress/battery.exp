@@ -107,12 +107,19 @@ set lat [expr {[clock milliseconds]-$t0}]
 result interactivity $echoed "echo_latency_ms=$lat"
 run_wait "wait; sync; echo LOADDONE\$((6*7))" "LOADDONE42" 600
 
-# 7. Clean sync + poweroff → the process must exit 0. The OpenRC shutdown RUNLEVEL (stop every
-#    service, unmount, remount-ro, SBI power-down) is CPU-bound and as slow as boot, so wait with
-#    the same generous budget rather than a fixed 300 s.
+# 7. Clean sync + poweroff. The OpenRC shutdown RUNLEVEL (stop every service, unmount, remount-ro,
+#    SBI power-down) is CPU-bound and can run LONGER than a boot, so: (a) match the kernel's
+#    definitive `reboot: Power down` marker as soon as it appears mid-shutdown (don't wait for the
+#    process eof, which expect's non-resetting -timeout could miss on a very long shutdown), and
+#    (b) give it a very generous budget. `guest exited` is the emulator's clean-exit line as backstop.
 send -- "sync; poweroff\r"
 set powered 0
-expect { -timeout $boot_to eof { set powered 1 } timeout { set powered 0 } }
+expect {
+  -timeout [expr {$boot_to * 2}]
+  -re {reboot: Power down|guest exited 0} { set powered 1 }
+  eof { set powered 1 }
+  timeout { set powered 0 }
+}
 result poweroff $powered
 
 puts "STRESS_SUMMARY fails=$fails"
