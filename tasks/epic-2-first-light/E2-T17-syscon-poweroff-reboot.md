@@ -106,3 +106,25 @@ cli 8+21+2-ignored, clippy ±`--all-features`, fmt, wasm32, determinism — all 
 reset via fresh assemble) ✓; #3 (fail path with code 7) ✓ syscon unit test; #4 (sysrq-b) uses
 the same SBI SRST restart path as `reboot`, so it reboots too. QEMU-`dumpdtb` diff deferred
 (QEMU not on the dev host; DTB structure matches the documented QEMU layout).
+
+### 2026-07-05 — cold-clone critic — NO refutations; 3 advisories folded in
+
+The critic hunted against QEMU `sifive_test.c` / Linux syscon / SBI-SRST semantics and found
+**no must-fix bugs** — all 8 attack claims CONFIRMED (finisher decode exact parity incl. the
+`(word>>16)` fail code; run-loop reset lands before the next instruction; SRST reboot
+spec-correct with reason-validated-first; reboot loop rebuilds a fresh machine with no thread/fd
+leak; `RunOutcome::Reset` exhaustive everywhere; determinism clean; wasm `exited` correctly set
+only for PowerOff/Fail). Advisories folded in:
+- **A1 (footgun): `enable_syscon` wasn't cfg-gated like its run-loop drain** — under zicsr-stub
+  the drain compiles out, so attaching the device would latch a reset that never ends the run
+  (silent hang). Fixed: `enable_syscon` is now `#[cfg(not(feature="zicsr-stub"))]` (a compile
+  error there, not a latent hang) + the `syscon` field carries the stub `allow(dead_code)`.
+- **A2 (edge): a finisher write on the VERY LAST budgeted instruction** was misreported as
+  `MaxInstrs`. Fixed: `run_traced` drains the syscon cell once more before returning MaxInstrs.
+- **A4 (test gap):** added an assert that a reboot with a reserved reason (>1) returns
+  INVALID_PARAM and does NOT flag a reboot.
+
+Non-issues (parity, left as-is): A3 sub-word write width (Linux always writes 32-bit), A5 wasm
+re-run-same-instance (JS re-inits per contract), A6 infinite-reboot-without-backoff (QEMU
+parity; `--no-reboot` is the escape). Gates re-run green: core 95, clippy ±`--all-features`,
+zicsr-stub build clean, fmt.

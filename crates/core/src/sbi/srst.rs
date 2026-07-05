@@ -74,6 +74,14 @@ mod tests {
         );
         assert!(st.reboot, "cold reboot flags a reboot request");
         assert_eq!(st.shutdown, None, "reboot must not shut down");
+        // E2-T17 (critic A4): a reboot with a RESERVED reason validates the reason FIRST →
+        // INVALID_PARAM, and must NOT flag a reboot.
+        let mut st = SbiState::default();
+        assert_eq!(
+            handle(&mut st, 0, &[TYPE_COLD_REBOOT, 99, 0, 0, 0, 0]).error,
+            SBI_ERR_INVALID_PARAM
+        );
+        assert!(!st.reboot, "reserved-reason reboot must not flag a reboot");
         let mut st = SbiState::default();
         assert_eq!(
             handle(&mut st, 0, &[TYPE_WARM_REBOOT, 0, 0, 0, 0, 0]).error,

@@ -132,7 +132,10 @@ pub struct Machine {
         dev::plic::IrqLine,
     )>,
     /// E2-T17: the syscon test finisher's shared reset latch, when [`Self::enable_syscon`]
-    /// attached it. The run loop drains it and returns [`RunOutcome::Reset`].
+    /// attached it. The run loop drains it and returns [`RunOutcome::Reset`]. (Only read on
+    /// the real-CSR path; the quarantined zicsr-stub build compiles the drain + `enable_syscon`
+    /// out, so the field is inert there.)
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     syscon: Option<dev::syscon::ResetCell>,
     /// E2-T08: the eight virtio-mmio slots + their PLIC lines (IRQ 1..=8), when
     /// [`Self::enable_virtio_slots`] attached them. The run loop mirrors each slot's
@@ -338,6 +341,12 @@ impl Machine {
     /// `syscon-poweroff`/`syscon-reboot` children. A recognized write (`0x5555` poweroff,
     /// `0x7777` reboot, `0x3333|code<<16` fail) ends the run with [`RunOutcome::Reset`]. No
     /// PLIC line — the finisher carries no interrupt.
+    ///
+    /// Gated `not(zicsr-stub)` to match the run loop's reset drain (critic A1): under the
+    /// quarantined stub the drain is compiled out, so attaching the device would latch a reset
+    /// that never ends the run — a silent hang. Making this a compile error there removes the
+    /// footgun entirely.
+    #[cfg(not(feature = "zicsr-stub"))]
     pub fn enable_syscon(&mut self) {
         let (device, cell) = dev::syscon::SysconFinisher::new();
         self.bus
@@ -798,6 +807,13 @@ impl Machine {
                     }
                 }
             }
+        }
+        // E2-T17 (critic A2): a finisher write on the VERY LAST budgeted instruction latches
+        // the reset cell but the top-of-loop drain never runs again. Drain it once more here
+        // so a poweroff/reboot on the final instruction isn't misreported as MaxInstrs.
+        #[cfg(not(feature = "zicsr-stub"))]
+        if let Some(reason) = self.syscon.as_ref().and_then(|c| *c.borrow()) {
+            return RunOutcome::Reset(reason);
         }
         RunOutcome::MaxInstrs
     }
