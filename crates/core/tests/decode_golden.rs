@@ -127,7 +127,8 @@ const NEGATIVE: &[u32] = &[
     0x4000403B, // OP-32 funct7=0100000 on invalid slot
     0x0000203B, // OP-32 funct3=010 (no SLTW exists)
     0x10200073, // SRET — privileged, illegal at Level 0
-    0x0000002F, // AMO opcode (A extension)
+    0x0000002F, // AMO opcode, funct3=000 — bad width (A ext needs 010/011), still illegal
+    0x2820302F, // AMO funct5=00101 (reserved) at a valid width — illegal (E1-T04)
     0x00000007, // LOAD-FP opcode (F extension)
     0x0000006B, // reserved opcode 1101011
     0x000000F3, // SYSTEM funct3=0 but rd=1 (not the exact ECALL word)
