@@ -184,11 +184,16 @@ async fn await_transaction(txn: &IdbTransaction) -> Result<(), JsValue> {
         let oncomplete = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
             let _ = resolve.call0(&JsValue::NULL);
         });
+        // E3-T10: surface the transaction's DOMException NAME (esp. QuotaExceededError) so the
+        // boundary can classify quota exhaustion vs a generic failure. `txn.error()` holds it on
+        // abort; fall back to a generic label.
+        let txn_err = txn.clone();
         let onerror = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
-            let _ = reject.call1(
-                &JsValue::NULL,
-                &JsValue::from_str("IndexedDB transaction failed"),
-            );
+            let name = txn_err
+                .error()
+                .map(|e| e.name())
+                .unwrap_or_else(|| "IndexedDB transaction failed".to_string());
+            let _ = reject.call1(&JsValue::NULL, &JsValue::from_str(&name));
         });
         txn.set_oncomplete(Some(oncomplete.as_ref().unchecked_ref()));
         txn.set_onerror(Some(onerror.as_ref().unchecked_ref()));

@@ -9,7 +9,7 @@
 // for the deferred 512 MB single-copy audit). The result is handed to wasm by one copy in the
 // `WasmLinux` constructor. No intermediate Blob/ArrayBuffer duplication beyond that.
 
-import init, { WasmLinux } from "./pkg/wasm_vm_wasm.js";
+import init, { WasmLinux, overlayDbName } from "./pkg/wasm_vm_wasm.js";
 
 /** Fetch `url` into one preallocated buffer, reporting `(loaded, total)`; `total` is null when
  *  the server sends no Content-Length (progress must degrade to indeterminate, not lie). */
@@ -92,6 +92,23 @@ async function sha256hex(bytes) {
  *   quantum       instructions per run tick (default 2_000_000)
  * Returns a controller: { sendInput(bytes), stop(), whenDone: Promise<string> }.
  */
+// E3-T10: "reset disk" — delete THIS image's durable overlay (its own IndexedDB database),
+// scoped by the manifest's base hash so a second image's overlay survives. Returns true if a
+// database was deleted. The caller must ensure no tab is booted rw against it (the writer lock
+// makes a live wipe race impossible — a running writer holds the lock; reset from a fresh page).
+export async function resetDisk(manifestUrl = "./releases/chunked-alpine/manifest.json") {
+  await init();
+  const text = await (await fetch(manifestUrl, { cache: "no-store" })).text();
+  const name = overlayDbName(text);
+  await new Promise((resolve, reject) => {
+    const req = indexedDB.deleteDatabase(name);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+    req.onblocked = () => resolve(); // another connection open; delete completes when it closes
+  });
+  return name;
+}
+
 export async function startLinuxBoot(opts = {}) {
   const {
     manifestUrl = "./artifacts.json",
@@ -118,6 +135,13 @@ export async function startLinuxBoot(opts = {}) {
     // E3-T09: called with { readOnly: bool } once the writer Web Lock is resolved for a
     // persistent boot — the UI shows the RO banner / retry-as-writer affordance on it.
     onWriterStatus = () => {},
+    // E3-T10: called with { usage, quota, granted } once at boot (persistent boots) so the UI
+    // can show the storage indicator; `granted` is the navigator.storage.persist() result.
+    onStorage = () => {},
+    // E3-T10: called with { usage, quota } when a durable write hits the storage quota — the VM
+    // is PAUSED before returning; the UI shows the dialog and calls the returned controller's
+    // resumeAfterQuota()/continueReadOnly()/resetDisk() to act.
+    onQuota = () => {},
     quantum = 2_000_000,
   } = opts;
   // E3-T09 (critic BUG-1): hoisted ABOVE the try so the catch can release a granted writer
@@ -230,6 +254,15 @@ export async function startLinuxBoot(opts = {}) {
         readOnly = true;
       }
       onWriterStatus({ readOnly });
+      // E3-T10: request durable (non-best-effort) storage ONCE so eviction-under-pressure can't
+      // silently delete the disk, and report usage/quota. RO tabs skip persist() (they don't own
+      // the disk). Failures here are non-fatal — the boot proceeds either way.
+      try {
+        let granted = false;
+        if (!readOnly && navigator.storage?.persist) granted = await navigator.storage.persist();
+        const est = navigator.storage?.estimate ? await navigator.storage.estimate() : {};
+        onStorage({ usage: est.usage ?? null, quota: est.quota ?? null, granted });
+      } catch { /* storage API absent → no indicator */ }
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
       machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, readOnly, (u8) => onOutput(u8));
     } else if (isChunked) {
@@ -316,6 +349,15 @@ export async function startLinuxBoot(opts = {}) {
         try {
           await machine.persistPending();
         } catch (e) {
+          // E3-T10: a storage-quota hit is RECOVERABLE — the dirty blocks stay pending (no lost
+          // write). Pause the VM before any more guest work can ack, and hand the UI a dialog.
+          if (String(e?.message || e).startsWith("StorageFull")) {
+            paused = true;
+            tickScheduled = false;
+            const est = navigator.storage?.estimate ? await navigator.storage.estimate() : {};
+            onQuota({ usage: est.usage ?? null, quota: est.quota ?? null });
+            return; // resume happens via the controller's quota actions
+          }
           tickScheduled = false;
           onState("error");
           onError(e);
@@ -360,6 +402,15 @@ export async function startLinuxBoot(opts = {}) {
       persist: () => (usePersist && !readOnly ? machine.persistPending() : Promise.resolve(0)),
       // E3-T09: is this boot read-only (another tab held the writer lock)?
       readOnly: () => readOnly,
+      // E3-T10 quota-dialog actions ------------------------------------------------------------
+      // "Free space in guest / retry": resume the VM; the pending writes retry on the next tick
+      // (succeed once the guest freed space, or re-hit the dialog if not).
+      resumeAfterQuota: () => { paused = false; schedule(); },
+      // "Continue read-only": flip the disk RO (guest writes now get EIO) and resume — the guest
+      // stops generating undurable writes; existing durable data is intact.
+      continueReadOnly: () => { try { machine.setDiskReadOnly(); } catch {} readOnly = true; paused = false; schedule(); },
+      // Current {usage, quota} for the storage indicator.
+      storageEstimate: () => (navigator.storage?.estimate ? navigator.storage.estimate() : Promise.resolve({})),
       // E3-T09: explicitly release the writer lock (poweroff/stop paths; close/crash releases
       // it automatically via Web Locks semantics).
       releaseWriterLock: () => {

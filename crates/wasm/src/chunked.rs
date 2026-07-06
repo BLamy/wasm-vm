@@ -38,10 +38,12 @@ pub struct ChunkedBackend<B: OverlayBackend = MemOverlay> {
     /// that FLUSH covers. Held across `flush()` retries so continuous guest writes cannot extend
     /// the wait; dropped once every barrier block has durably committed.
     flush_barrier: Option<Vec<u64>>,
-    /// E3-T09: read-only mode (another tab holds the writer Web Lock). Writes are rejected at
-    /// THIS seam (`BlockError::ReadOnly`) and the device advertises `VIRTIO_BLK_F_RO`, so the
-    /// guest mounts `/` ro cleanly instead of corrupting a disk another tab owns.
-    read_only: bool,
+    /// E3-T09/E3-T10: read-only mode. Set at construction when another tab holds the writer
+    /// Web Lock (E3-T09); flipped at RUNTIME when the user chooses "continue read-only" after a
+    /// storage-quota hit (E3-T10). A shared `Rc<Cell>` so the wasm boundary can flip it live.
+    /// Writes are rejected at THIS seam (`BlockError::ReadOnly`) and the device advertises
+    /// `VIRTIO_BLK_F_RO` — the guest sees EIO/EROFS instead of a silently-undurable write.
+    read_only: Rc<std::cell::Cell<bool>>,
 }
 
 impl ChunkedBackend<MemOverlay> {
@@ -70,14 +72,22 @@ impl<B: OverlayBackend> ChunkedBackend<B> {
             store,
             disk,
             flush_barrier: None,
-            read_only: false,
+            read_only: Rc::new(std::cell::Cell::new(false)),
         }
     }
 
     /// E3-T09: mark this backend read-only (the writer Web Lock is held by another tab). The
     /// overlay's persisted blocks still serve reads; every write is refused at this seam.
     pub fn set_read_only(&mut self) {
-        self.read_only = true;
+        self.read_only.set(true);
+    }
+
+    /// E3-T10: the shared read-only flag, so the wasm boundary can flip it at runtime (the
+    /// "continue read-only" choice after a storage-quota hit) without a handle to the backend.
+    /// (Consumed only by the wasm32 `assemble` path; unused in the native test build.)
+    #[allow(dead_code)]
+    pub fn read_only_flag(&self) -> Rc<std::cell::Cell<bool>> {
+        self.read_only.clone()
     }
 }
 
@@ -104,7 +114,7 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
     fn write(&mut self, sector: u64, buf: &[u8]) -> Result<(), BlockError> {
         // E3-T09: an RO tab must never mutate a disk another tab owns — refused before any
         // range math so no state (overlay, persist queue) is touched.
-        if self.read_only {
+        if self.read_only.get() {
             return Err(BlockError::ReadOnly);
         }
         let off = check_range(self.capacity_sectors, sector, buf.len())?;
@@ -120,7 +130,7 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
     }
 
     fn is_read_only(&self) -> bool {
-        self.read_only
+        self.read_only.get()
     }
 
     fn flush(&mut self) -> Result<(), BlockError> {
@@ -512,6 +522,49 @@ mod ro_tests {
             queue.borrow().unpersisted_count(),
             1,
             "still only the forged entry"
+        );
+    }
+}
+
+#[cfg(test)]
+mod reset_scope_tests {
+    use super::tests_support::*;
+    use wasm_vm_storage::{ImageManifest, overlay_store_name};
+
+    /// E3-T10 reset scoping: the overlay DB name is derived from the image's base hash, so two
+    /// different images map to DIFFERENT databases — deleting one cannot touch the other. This is
+    /// the naming-layer proof behind "reset wipes only the current image's overlay".
+    #[test]
+    fn overlay_db_name_is_per_image_and_stable() {
+        let (m1, _s1) = tiny_manifest_store();
+        let n1a = overlay_store_name(&m1.base_hash());
+        let n1b = overlay_store_name(&m1.base_hash());
+        assert_eq!(n1a, n1b, "same image → stable DB name");
+        assert!(n1a.starts_with("wvov-"), "namespaced: {n1a}");
+
+        // A second, different image (different chunk contents → different base hash).
+        let data2 = std::vec![0x33u8; 16 * 4096];
+        let chunks2: std::vec::Vec<String> = data2
+            .chunks(4096)
+            .map(|c| {
+                use sha2::{Digest, Sha256};
+                Sha256::digest(c)
+                    .iter()
+                    .map(|b| format!("{b:02x}"))
+                    .collect()
+            })
+            .collect();
+        let m2 = ImageManifest {
+            version: wasm_vm_storage::FORMAT_VERSION,
+            image_len: data2.len() as u64,
+            chunk_size: 4096,
+            layout: wasm_vm_storage::Layout::Split,
+            chunks: chunks2,
+        };
+        assert_ne!(
+            n1a,
+            overlay_store_name(&m2.base_hash()),
+            "different image → different DB name (reset cannot cross images)"
         );
     }
 }

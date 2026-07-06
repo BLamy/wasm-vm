@@ -3,7 +3,7 @@ id: E3-T10
 epic: 3
 title: Storage quota management and reset-disk escape hatch
 priority: 310
-status: pending
+status: in_progress
 depends_on: [E3-T05]
 estimate: S
 capstone: false
@@ -62,4 +62,32 @@ or be refused; a wipe racing live writes refutes. Confirm incognito mode gets a 
 "storage is ephemeral here" warning rather than a confusing quota error later.
 
 ## Verification log
-(empty)
+
+**2026-07-06 — quota handling + reset-disk core (pass 1).**
+No-lost-write on quota is the spine: `persistPending` classifies the failed IDB transaction via
+`StorageError::classify` (native-tested — QuotaExceeded vs other, across engine spellings) and on
+quota **does NOT `mark_persisted`** — the dirty blocks stay pending, so freeing space + retry or
+flipping read-only keeps the filesystem consistent (no corruption, no fake success).
+`await_transaction` now surfaces the DOMException NAME (was a generic string) so quota is
+distinguishable. Runtime read-only flip: `ChunkedBackend::read_only` unified to a shared
+`Rc<Cell<bool>>`; `WasmLinux.setDiskReadOnly()` flips it live (the "continue read-only" choice →
+guest writes get EIO/EROFS, honest I/O errors not silent drops). `WasmLinux.hasUnpersisted()` +
+`overlayDbName(manifest)` (the per-image IndexedDB name — reset scope). Loader: `navigator.
+storage.persist()` requested ONCE at first (writer) boot + usage/quota reported (`onStorage`);
+the persist pump catches `StorageFull`, PAUSES the VM before more writes can ack, and fires
+`onQuota`; controller actions `resumeAfterQuota` / `continueReadOnly` / `resetDisk`. Main.js:
+storage indicator + a three-option quota dialog (free space & retry / continue read-only / reset
+disk with typed RESET confirm) + a per-image `resetDisk()` (`indexedDB.deleteDatabase` of exactly
+this image's overlay DB). Documented: freed ext4 blocks do NOT shrink the overlay (no discard/TRIM
+— dialog copy says so).
+
+Tests: native `storage_err` (2 — quota classification across engines), `reset_scope_tests` (1 —
+per-image DB name distinct + stable), wasm-lib 16 total. Browser (`quota.spec.js`, 2 passed, 3.8s,
+FAST — no full boot): `overlayDbName` per-image + `deleteDatabase` removes only the target DB (a
+second image's overlay survives); the storage indicator appears on a persistent boot. Gates:
+clippy(all-features) 0, fmt, wasm32 default+zicsr-stub builds.
+
+**Remaining (pass 2, nightly — env kept killing long runs today):** the full quota-exhaustion
+boot with CDP `Storage.overrideQuota` to ~50 MB → `dd` triggers the dialog → "continue" makes
+`dd` exit EIO with the guest still usable → post-hit fsck clean (T08 harness); the "reset →
+pristine reboot" full-boot leg; incognito ephemeral-storage warning.

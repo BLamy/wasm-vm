@@ -27,6 +27,9 @@ use wasm_vm_core::{Machine, RunOutcome};
 mod chunked;
 #[cfg(all(test, not(feature = "zicsr-stub")))]
 mod critic_flush_reset;
+// E3-T10 storage-error classification — pure string logic, native-tested.
+#[cfg(any(all(target_arch = "wasm32", not(feature = "zicsr-stub")), test))]
+mod storage_err;
 // The web-sys `fetch` glue is browser-only.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod http_fetch;
@@ -54,6 +57,18 @@ pub fn init_logging() {
 #[wasm_bindgen]
 pub fn version() -> String {
     wasm_vm_core::version().into()
+}
+
+/// E3-T10: the IndexedDB database name that holds a given image's durable overlay — so the
+/// "reset disk" flow can `indexedDB.deleteDatabase(name)` for THIS image only (a second image's
+/// overlay, in a different DB, survives). Same derivation the durable store uses
+/// (`overlay_store_name(base_hash)`), so it always matches.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen(js_name = overlayDbName)]
+pub fn overlay_db_name(manifest_json: &str) -> Result<String, JsError> {
+    let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
+        .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
+    Ok(wasm_vm_storage::overlay_store_name(&manifest.base_hash()))
 }
 
 /// The E0-T14 golden `loops.elf` (the pinned benchmark workload) and its retired count.
@@ -427,6 +442,10 @@ struct LinuxInner {
     /// E3-T05 durable-persistence state, present only for a `newChunkedDiskPersistent` boot: the
     /// IndexedDB store (`Clone`) + the shared persist queue the overlay records writes into.
     persist: Option<(idb_store::IdbStore, wasm_vm_storage::SharedPersistQueue)>,
+    /// E3-T10: the chunked backend's shared read-only flag, so `setDiskReadOnly` can flip the
+    /// disk live (the "continue read-only" choice after a storage-quota hit). `None` off the
+    /// persistent path.
+    disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>>,
 }
 
 /// Which block device (if any) backs the boot: none (initramfs), an in-memory image, or a lazily
@@ -690,6 +709,7 @@ impl WasmLinux {
         let uart = machine.enable_uart16550();
         let mut fetch = None;
         let mut persist = None;
+        let mut disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>> = None;
         match disk {
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
             DiskChoice::Mem(image) => {
@@ -738,6 +758,13 @@ impl WasmLinux {
                     // the writer's IndexedDB store even by accident.
                     backend.set_read_only();
                 }
+                // E3-T10: keep the shared RO flag so `setDiskReadOnly` can flip it live after a
+                // storage-quota hit (only meaningful for a writer boot).
+                disk_ro = if read_only {
+                    None
+                } else {
+                    Some(backend.read_only_flag())
+                };
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
@@ -772,6 +799,7 @@ impl WasmLinux {
                 finished: None,
                 fetch,
                 persist,
+                disk_ro,
             }),
         })
     }
@@ -910,9 +938,18 @@ impl WasmLinux {
         }
         let blocks: Vec<(u64, [u8; wasm_vm_storage::OVERLAY_BLOCK])> =
             batch.iter().map(|(b, _, bytes)| (*b, *bytes)).collect();
-        idb.persist(&blocks)
-            .await
-            .map_err(|e| JsError::new(&format!("IndexedDB persist: {e:?}")))?;
+        if let Err(e) = idb.persist(&blocks).await {
+            // E3-T10: classify the failure. On QuotaExceeded we DELIBERATELY do NOT
+            // mark_persisted — the dirty blocks stay pending, so no write is lost: freeing space
+            // and retrying, or flipping the disk read-only, keeps the filesystem consistent. The
+            // error is tagged so the loader can pause + show the quota dialog (vs a generic fail).
+            let name = e.as_string().unwrap_or_else(|| format!("{e:?}"));
+            let kind = storage_err::StorageError::classify(&name);
+            if kind.is_quota() {
+                return Err(JsError::new(&format!("StorageFull: {name}")));
+            }
+            return Err(JsError::new(&format!("IndexedDB persist: {name}")));
+        }
         // Mark exactly what was flushed (generation-guarded) — a mid-flush re-write stays pending.
         let pairs: Vec<(u64, u64)> = batch.iter().map(|(b, g, _)| (*b, *g)).collect();
         queue.borrow_mut().mark_persisted(&pairs);
@@ -925,6 +962,34 @@ impl WasmLinux {
     /// driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
     /// so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
     /// boots.
+    /// E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
+    /// storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
+    /// so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the
+    /// persistent path. Returns true if a disk flag was flipped.
+    #[wasm_bindgen(js_name = setDiskReadOnly)]
+    pub fn set_disk_read_only(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        match &inner.disk_ro {
+            Some(cell) => {
+                cell.set(true);
+                Ok(true)
+            }
+            None => Ok(false),
+        }
+    }
+
+    /// E3-T10: whether the overlay has unpersisted (dirty) blocks — after a quota hit the caller
+    /// checks this to decide whether flipping read-only is enough (pending writes will retry once
+    /// space is freed) vs. data that can never become durable.
+    #[wasm_bindgen(js_name = hasUnpersisted)]
+    pub fn has_unpersisted(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner
+            .persist
+            .as_ref()
+            .is_some_and(|(_, q)| !q.borrow().is_empty()))
+    }
+
     #[wasm_bindgen(js_name = persistStats)]
     pub fn persist_stats(&self) -> Result<JsValue, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
