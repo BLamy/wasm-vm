@@ -17,6 +17,12 @@ use alloc::vec::Vec;
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 
+mod fetch;
+pub use fetch::{
+    ChunkRequest, ChunkStore, FetchFailure, ResponseAction, RetryPolicy, classify_response,
+    plan_fetches,
+};
+
 /// The one format version this reader understands. Bumped only on an incompatible change; unknown
 /// *fields* are ignored (forward-compatible), but an unknown *version* is a hard error.
 pub const FORMAT_VERSION: u32 = 1;
