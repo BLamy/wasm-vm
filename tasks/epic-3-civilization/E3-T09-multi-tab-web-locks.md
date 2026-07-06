@@ -4,7 +4,7 @@ epic: 3
 title: Multi-tab safety via Web Locks single-writer and read-only mode
 priority: 309
 status: pending
-depends_on: [E3-T07]
+depends_on: [E3-T05]
 estimate: M
 capstone: false
 ---
@@ -16,6 +16,10 @@ boot) in explicitly read-only mode with a visible banner, and can take over writ
 after the first tab closes.
 
 ## Context
+**Groomed 2026-07-06:** re-depped E3-T07 → E3-T05 — multi-tab locking needs a durable
+backend, not the backend *benchmark*. Doable against IndexedDB now; the OPFS handle
+interplay below re-checks when E3-T06 lands (post E4-T22).
+
 Two writers on one IndexedDB store or OPFS file is guaranteed corruption. Use
 `navigator.locks.request("wasm-vm-disk-{image_id}", { mode: "exclusive" }, holder)` held for
 the tab's lifetime — Web Locks auto-release on tab close/crash, which gives us clean

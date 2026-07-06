@@ -2,9 +2,9 @@
 id: E3-T06
 epic: 3
 title: OPFS overlay backend with sync access handles in a worker
-priority: 306
+priority: 329
 status: pending
-depends_on: [E3-T04]
+depends_on: [E3-T04, E4-T22]
 estimate: M
 capstone: false
 ---
@@ -15,6 +15,11 @@ a dedicated worker: synchronous, low-latency block reads/writes to a real file, 
 `flush()` mapped to `commit`. This is the expected performance winner over IndexedDB.
 
 ## Context
+**Groomed 2026-07-06:** `createSyncAccessHandle()` is worker-only, but the VM runs on the
+main thread until E4-T22 (CPU on a dedicated Web Worker + SAB). Deps now carry E4-T22 and
+the priority moved past the epic tail — this ticket is not sequentially doable inside Epic 3.
+IndexedDB (E3-T05, verified) is the durable backend until then.
+
 `createSyncAccessHandle()` is worker-only and takes an exclusive lock on the file — which
 composes nicely with running the VM in a worker, but means the handle must be owned by
 exactly one worker and released cleanly (`close()`) on shutdown, or subsequent opens fail
