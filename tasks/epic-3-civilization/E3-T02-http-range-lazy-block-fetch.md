@@ -87,5 +87,38 @@ leg is a ~10 min boot — measurement-heavy, like the capstone. NOTE: implement 
 completion + native mock tests FIRST (self-contained, critic-verifiable), then the wasm fetch +
 browser leg — this is a LARGE, invasive task best built in those two focused passes.
 
+## Pass-2 mechanics (2026-07-06, from reading blk.rs — for correct fresh-context implementation)
+
+Pass 1 (DONE, PR/branch): storage `ChunkSource` + `ChunkIndex::read → ReadOutcome::{Ready,NeedChunk}`.
+
+`blk::service` today (`crates/core/src/dev/virtio/blk.rs`): `loop { match q.pop(bus) { Ok(Some(chain))
+=> { written = execute(&chain, state, bus); q.push_used(bus, chain.head, written); } ... } }`.
+`execute()` reads the header, does `state.backend.read(sector, &mut buf)` (Err → S_IOERR), writes the
+data+status into the guest, returns `written`. **The chain is popped from AVAIL and pushed to USED
+atomically — there is no in-flight state.**
+
+Deferred-completion change (do it with a mock-WouldBlock backend test that asserts NO double-push and
+exactly-once completion — silent corruption won't show up otherwise):
+1. `BlockError::WouldBlock { chunk: usize }` (core `block.rs`). Existing `Err(_) => S_IOERR` arms in
+   blk.rs must be changed to match `WouldBlock` EXPLICITLY (else a would-block silently becomes an I/O
+   error) — audit lines ~271/292/305.
+2. `execute` returns `enum Outcome { Done(u32 written), Parked { chunk } }` — on `WouldBlock` it writes
+   NOTHING to the guest and does not touch the status byte.
+3. `BlkState` gains `parked: Vec<{ head: u16, chunk: usize }>`. On `Parked`, service records `chain.head`
+   + the awaited chunk and does NOT `push_used`. Each `service()` call, BEFORE popping new AVAIL chains,
+   walk `parked`: re-`execute` each by its head (descriptors are still live in the table — popping from
+   AVAIL only advances the avail idx, which we already did; re-reading the descriptor chain from `head`
+   is idempotent). If now `Done` → `push_used(head, written)` and drop from `parked`; if still `Parked`
+   keep it. Out-of-order USED completion is legal in virtio (USED carries the head), so this is spec-OK.
+4. New API `Machine::pending_blk_chunks() -> Vec<usize>` (the union of `parked` awaited chunks) so the
+   wasm pump knows what to fetch. The ChunkedBackend (impl `BlockBackend`, lives in crates/wasm which
+   depends on core+storage) reads via a `ChunkSource` the wasm layer populates; a miss → `WouldBlock`.
+   Hash-verify happens on populate (E3-T01 `verify_chunk`), so a `Done` re-execute only ever returns
+   verified bytes — the used-ring is never completed with unverified data (adversarial bar).
+
+Pass 3 (wasm): `HttpChunkSource` (fetch per-chunk / Range; 200-not-206 → typed error; in-flight dedup;
+retry→permanent-error→S_IOERR on the parked chain). Pass 4: browser Alpine-from-chunked-image (~10 min
+boot) with fetch-count + bytes-transferred instrumentation.
+
 ## Verification log
 (empty)
