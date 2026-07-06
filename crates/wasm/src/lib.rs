@@ -432,6 +432,8 @@ enum DiskChoice {
         base_url: String,
         /// E3-T03 cache byte budget.
         budget: u64,
+        /// E3-T03 boot profile: ordered chunks to prefetch (empty if none).
+        profile: Vec<usize>,
     },
 }
 
@@ -498,12 +500,14 @@ impl WasmLinux {
     /// disk read of an absent chunk parks (deferred virtio-blk completion) until `fetchPending`
     /// retrieves and hash-verifies that chunk. No full-image download ever happens.
     #[wasm_bindgen(js_name = newChunkedDisk)]
+    #[allow(clippy::too_many_arguments)]
     pub fn new_chunked_disk(
         ram_mib: u32,
         kernel: &[u8],
         manifest_json: &str,
         base_url: String,
         cache_budget_mib: u32,
+        boot_profile: Vec<u32>,
         bootargs: String,
         output: js_sys::Function,
     ) -> Result<WasmLinux, JsError> {
@@ -522,6 +526,8 @@ impl WasmLinux {
         } as u64
             * 1024
             * 1024;
+        // The boot profile (a JSON array parsed JS-side) prefetches boot-critical chunks up front.
+        let profile: Vec<usize> = boot_profile.into_iter().map(|c| c as usize).collect();
         Self::assemble(
             ram_mib,
             kernel,
@@ -530,6 +536,7 @@ impl WasmLinux {
                 manifest,
                 base_url,
                 budget,
+                profile,
             },
             &args,
             output,
@@ -567,13 +574,14 @@ impl WasmLinux {
                 manifest,
                 base_url,
                 budget,
+                profile,
             } => {
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let backend = chunked::ChunkedBackend::new(manifest.index(), store.clone());
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
-                    manifest, base_url, store,
+                    manifest, base_url, store, profile,
                 )));
             }
             // Busybox initramfs: the 8 empty virtio slots the DTB advertises.
@@ -743,14 +751,38 @@ impl WasmLinux {
                 set_num(&cache, "residentBytes", m.bytes_resident as f64);
                 set_num(&cache, "budgetBytes", budget as f64);
                 let _ = js_sys::Reflect::set(&obj, &"cache".into(), &cache.into());
+                // E3-T03 prefetch accuracy: prefetched-and-later-demanded / prefetched.
+                let (issued, used) = s.tracker.borrow().counts();
+                let prefetch = js_sys::Object::new();
+                set_num(&prefetch, "issued", issued as f64);
+                set_num(&prefetch, "used", used as f64);
+                set_num(
+                    &prefetch,
+                    "accuracyPct",
+                    s.tracker.borrow().accuracy_pct() as f64,
+                );
+                let _ = js_sys::Reflect::set(&obj, &"prefetch".into(), &prefetch.into());
             }
             None => {
                 set_num(&obj, "fetches", 0.0);
                 set_num(&obj, "bytes", 0.0);
                 let _ = js_sys::Reflect::set(&obj, &"error".into(), &JsValue::NULL);
                 let _ = js_sys::Reflect::set(&obj, &"cache".into(), &JsValue::NULL);
+                let _ = js_sys::Reflect::set(&obj, &"prefetch".into(), &JsValue::NULL);
             }
         }
         Ok(obj.into())
+    }
+
+    /// E3-T03 dev-mode recorder: the ordered first-touch chunk-access list of this boot as a JSON
+    /// array — write it to `boot-profile.json` next to the manifest to enable boot-profile prefetch.
+    /// Empty `[]` for a non-chunked boot.
+    #[wasm_bindgen(js_name = bootProfile)]
+    pub fn boot_profile(&self) -> Result<String, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(match &inner.fetch {
+            Some(s) => s.boot_profile_json(),
+            None => "[]".to_string(),
+        })
     }
 }

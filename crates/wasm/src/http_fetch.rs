@@ -19,11 +19,17 @@ use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, Response};
 
 use wasm_vm_storage::{
-    BlockCache, FetchFailure, ImageManifest, ResponseAction, RetryPolicy, classify_response,
-    plan_fetches,
+    BlockCache, FetchFailure, ImageManifest, PrefetchTracker, Readahead, ResponseAction,
+    RetryPolicy, boot_prefetch, classify_response, plan_fetches,
 };
 
 use std::cell::RefCell;
+
+/// Sequential readahead depth (chunks ahead of a detected forward run).
+const READAHEAD_WINDOW: usize = 4;
+/// Max speculative (readahead + boot-profile) fetches issued per pump tick — the concurrency cap,
+/// bounding the extra work a tick does on top of the demand chunks the guest is parked on.
+const PREFETCH_CAP: usize = 8;
 
 /// Everything the fetch layer needs, shared (via `Rc`) so a `runChunk` between two `fetchPending`
 /// calls never aliases a borrow held across an `await`. Interior mutability via `RefCell`/`Cell`.
@@ -40,6 +46,15 @@ pub struct FetchState {
     /// once the read completes (the chunk drops out of `pending_blk_chunks`), reconciled each tick.
     pub pinned: RefCell<BTreeSet<usize>>,
     pub retry: RetryPolicy,
+    /// Sequential-readahead detector (E3-T03): a forward run of demand misses prefetches ahead.
+    pub readahead: RefCell<Readahead>,
+    /// Prefetch-accuracy accounting (prefetched-and-later-demanded / prefetched).
+    pub tracker: RefCell<PrefetchTracker>,
+    /// The ordered first-touch demand-access list — the recording that becomes `boot-profile.json`.
+    pub access_log: RefCell<Vec<usize>>,
+    access_seen: RefCell<BTreeSet<usize>>,
+    /// An input boot profile (ordered chunks to prefetch at boot); empty if none supplied.
+    pub boot_profile: Vec<usize>,
     /// Instrumentation for the pass-4 acceptance (< 40% of the image transferred to reach login).
     pub fetch_count: Cell<u32>,
     pub bytes_transferred: Cell<u64>,
@@ -52,6 +67,7 @@ impl FetchState {
         manifest: ImageManifest,
         base_url: String,
         store: Rc<RefCell<BlockCache>>,
+        boot_profile: Vec<usize>,
     ) -> FetchState {
         FetchState {
             manifest,
@@ -60,10 +76,31 @@ impl FetchState {
             in_flight: RefCell::new(BTreeSet::new()),
             pinned: RefCell::new(BTreeSet::new()),
             retry: RetryPolicy::DEFAULT,
+            readahead: RefCell::new(Readahead::new(READAHEAD_WINDOW)),
+            tracker: RefCell::new(PrefetchTracker::new()),
+            access_log: RefCell::new(Vec::new()),
+            access_seen: RefCell::new(BTreeSet::new()),
+            boot_profile,
             fetch_count: Cell::new(0),
             bytes_transferred: Cell::new(0),
             last_error: RefCell::new(None),
         }
+    }
+
+    /// The recorded boot access profile as a JSON array of chunk indices (dev-mode recorder →
+    /// `boot-profile.json`).
+    pub fn boot_profile_json(&self) -> String {
+        let log = self.access_log.borrow();
+        let mut s = String::with_capacity(log.len() * 6 + 2);
+        s.push('[');
+        for (i, c) in log.iter().enumerate() {
+            if i > 0 {
+                s.push(',');
+            }
+            s.push_str(&c.to_string());
+        }
+        s.push(']');
+        s
     }
 }
 
@@ -85,29 +122,84 @@ pub async fn fetch_pending(state: &Rc<FetchState>, pending: &[usize]) -> u32 {
             pinned.remove(&c);
         }
     }
-    let plan = plan_fetches(
+    // Record demand accesses (the boot profile), note prefetch hits, and detect sequential runs. Done
+    // in one scoped borrow block so nothing is held across the awaits below.
+    let mut readahead_targets: Vec<usize> = Vec::new();
+    {
+        let mut ra = state.readahead.borrow_mut();
+        let mut tr = state.tracker.borrow_mut();
+        let mut log = state.access_log.borrow_mut();
+        let mut seen = state.access_seen.borrow_mut();
+        for &c in pending {
+            tr.note_access(c); // if c was speculatively prefetched, count it used
+            if seen.insert(c) {
+                log.push(c); // first-touch order → the recorded boot profile
+            }
+            readahead_targets.extend(ra.observe(c));
+        }
+    }
+
+    // 1) DEMAND: fetch the chunks the guest is parked on FIRST (lowest latency), pinning each so a
+    //    tight budget can't evict it before the parked read re-executes.
+    let demand = plan_fetches(
         pending,
         |c| state.store.borrow().contains(c),
         &state.in_flight.borrow(),
     );
     let mut done = 0u32;
-    for chunk in plan {
+    for chunk in demand {
         state.in_flight.borrow_mut().insert(chunk);
         let outcome = fetch_one(state, chunk).await;
         state.in_flight.borrow_mut().remove(&chunk);
         match outcome {
-            Ok(()) => done += 1,
-            Err(f) => {
-                let msg = format!("chunk {chunk}: {f:?}");
-                log::error!("lazy fetch failed — {msg}");
-                let mut slot = state.last_error.borrow_mut();
-                if slot.is_none() {
-                    *slot = Some(msg);
-                }
+            Ok(()) => {
+                state.store.borrow_mut().pin(chunk);
+                state.pinned.borrow_mut().insert(chunk);
+                done += 1;
             }
+            Err(f) => record_error(state, chunk, f),
+        }
+    }
+
+    // 2) PREFETCH: readahead targets + the next boot-profile batch, deduped against resident/in-flight,
+    //    clamped to the image, capped at PREFETCH_CAP. Best-effort — NOT pinned (no parked read needs
+    //    them), so eviction under pressure is harmless; counted for accuracy.
+    let chunk_count = state.manifest.index().chunk_count() as usize;
+    let profile_batch = boot_prefetch(&state.boot_profile, PREFETCH_CAP, |c| {
+        !state.store.borrow().contains(c) && !state.in_flight.borrow().contains(&c)
+    });
+    let mut candidates: Vec<usize> = readahead_targets
+        .into_iter()
+        .chain(profile_batch)
+        .filter(|&c| c < chunk_count)
+        .collect();
+    candidates = plan_fetches(
+        &candidates,
+        |c| state.store.borrow().contains(c),
+        &state.in_flight.borrow(),
+    );
+    candidates.truncate(PREFETCH_CAP);
+    for chunk in candidates {
+        state.in_flight.borrow_mut().insert(chunk);
+        let outcome = fetch_one(state, chunk).await;
+        state.in_flight.borrow_mut().remove(&chunk);
+        // Speculative: record it for accuracy, do NOT pin. A prefetch failure is silent (the guest
+        // never asked for it); only demand errors surface.
+        if outcome.is_ok() {
+            state.tracker.borrow_mut().record_issued(chunk);
         }
     }
     done
+}
+
+/// Record the first permanent fetch failure (the guest already saw an I/O error for it).
+fn record_error(state: &Rc<FetchState>, chunk: usize, f: FetchFailure) {
+    let msg = format!("chunk {chunk}: {f:?}");
+    log::error!("lazy fetch failed — {msg}");
+    let mut slot = state.last_error.borrow_mut();
+    if slot.is_none() {
+        *slot = Some(msg);
+    }
 }
 
 /// Fetch, verify, and cache a single chunk with bounded retry + backoff. A transient failure
@@ -139,13 +231,11 @@ async fn fetch_one(state: &Rc<FetchState>, chunk: usize) -> Result<(), FetchFail
                         // that ChunkStore.provide used to do lives here now. A mismatch/truncation is
                         // a corrupt delivery: retry, never cache or serve the bad bytes.
                         match state.manifest.verify_chunk(chunk, &body) {
+                            // Insert only; the caller pins DEMAND chunks (a prefetched chunk is not
+                            // pinned — nothing is parked on it). Pinning stays a caller decision so a
+                            // tiny budget can't evict a demand chunk before its parked read re-executes.
                             Ok(()) => {
                                 state.store.borrow_mut().insert(chunk, body);
-                                // Pin against eviction until the parked guest read completes (E3-T03):
-                                // a tiny budget could otherwise evict this chunk before the read that
-                                // asked for it re-executes, livelocking the boot. Reconciled next tick.
-                                state.store.borrow_mut().pin(chunk);
-                                state.pinned.borrow_mut().insert(chunk);
                                 return Ok(());
                             }
                             Err(_) if state.retry.should_retry(attempt) => {}
