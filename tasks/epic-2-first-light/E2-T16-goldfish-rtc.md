@@ -3,7 +3,7 @@ id: E2-T16
 epic: 2
 title: goldfish-rtc device — real wall-clock time in the guest
 priority: 216
-status: implemented
+status: verified
 depends_on: [E2-T15]
 estimate: S
 capstone: false
@@ -112,3 +112,12 @@ smoke test if desired.
   semantics, arm-in-past-fires-now, no-storm, PLIC-mirror-before-sync ordering, `enable_plic`
   ordering, RefCell safety, determinism gate, and the wasm cfg-gating all hold. RTC unit tests
   now 7/7; core lib 91.
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT SOUND.
+Rollover latching survived the task's own 10^6-read hostile clock (1ms step per read, every LOW→HIGH
+pair exact); TIME_HIGH-without-LOW returns the stale latch (QEMU parity); huge-negative `date -s`
+offset lands exactly via wrapping u64; alarm edges unit-covered; WallClock injected, zero host-clock
+refs in core. 3 critic tests adopted (verifier_e2_sweep.rs). Criteria 1-2 met by recorded downstream
+evidence (boot logs assert the `setting system clock to 20xx` line); `hwclock -r` sub-clause
+honestly unrun. Checkbox bookkeeping: boxes reflect the log's dispositions rather than being ticked
+wholesale (hwclock clause open).

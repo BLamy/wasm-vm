@@ -3,7 +3,7 @@ id: E2-T23b
 epic: 2
 title: Deterministic WFI fast-forward (tickless idle) — fix idle/sleep slowdown, keep determinism
 priority: 223
-status: implemented
+status: verified
 depends_on: [E2-T23]
 estimate: S
 capstone: false
@@ -84,3 +84,14 @@ unchanged). determinism-hazards + no-host-float clean; core + wasm clippy clean.
 
 Gates exit 0: build · test (615/0/13) · clippy workspace-all-features + wasm-target ·
 determinism-hazards · no-host-float.
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT SOUND + coverage gap CLOSED + 1 LOW fixed.
+The feature had ZERO dedicated unit tests; the critic's 5 hostile tests are now adopted
+(wfi_fast_forward_critic.rs): jump lands EXACTLY on mtimecmp (no overshoot/missed deadline);
+already-due mtimecmp fires before the WFI with no jump; no-timer-armed → no jump (watchdog
+territory preserved — watchdog runs BEFORE fast-forward, source-confirmed); idle jump delivers the
+timer within a few boundaries. LOW fixed in the sweep: a pending+ENABLED interrupt (mip&mie != 0,
+globally masked) satisfies WFI immediately per the ISA — the fast-forward no longer jumps mtime in
+that state (was a deterministic ~1M-tick time distortion; Linux's idle path never hit it); the
+critic's pinning test flipped to assert the fixed behavior. Native≡wasm: pure machine-state
+function + the determinism gate's wasm fingerprint check ran green in the sweep.

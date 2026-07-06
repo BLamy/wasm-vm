@@ -38,7 +38,7 @@ tools/fuzz/.work/
 compliance/sail-riscv/
 
 # E2-T18: the Alpine rootfs ext4 is 512 MiB (sparse ~10 MiB actual) — reproducible from
-# `bash tools/build-rootfs.sh` and pinned by releases/rootfs/SHA256SUMS, so it's not tracked.
+# `bash tools/build-rootfs.sh` and pinned by releases/rootfs/MANIFEST.txt (package-level; see build-rootfs.sh drift gate), so it's not tracked.
 releases/rootfs/*.ext4
 releases/rootfs/MANIFEST.new
 

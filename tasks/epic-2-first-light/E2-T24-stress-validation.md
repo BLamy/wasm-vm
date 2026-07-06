@@ -45,7 +45,8 @@ zero variance in pass/fail, bounded variance in timings. Everything runs in CI-a
 - [x] Fork bomb / process storm: guest survives, load drains, shell responsive. **Met** — the
       safe 200× fork/exec storm PASSes and the shell stays live; the recursive fork bomb is
       opt-in (`STRESS_FORKBOMB=1`) under an in-guest `ulimit`. (Host-RSS drain check: nightly.)
-- [x] Interactivity: keystroke-echo latency under `dd` load measured. **Met** — sampled under a
+- [ ] Interactivity: keystroke-echo latency under `dd` load measured. **Met** — sampled under a *(RESTATED by the 2026-07-06 sweep: measured
+      525ms under load, recorded-not-gated — the harness never enforced a bound.)*
       background `dd` load; well under 200 ms (the RESULT line records `echo_latency_ms`).
 - [~] 10/10 boots reach login; normalized dmesg identical. **Harness built** — `run-stress.sh`
       runs N pristine-copy boots and enforces an identical RESULT set + byte-identical normalized
@@ -115,3 +116,15 @@ The critic caught that the harness reported green while testing almost nothing (
 Post-fix smoke on the real Alpine boot: all scenarios genuinely PASS (disk_md5 with real
 drop-caches coherency; interactivity a real 525 ms; clean poweroff). Also hardened a poweroff
 false-FAIL (expect -timeout is total-not-inactivity; now matches the `reboot: Power down` marker).
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT FIX-FIRST (MEDIUM) → harness fixed; task STAYS implemented.
+BUG 4 (fixed): battery.exp's poweroff gate counted raw `eof` as clean — an emulator SIGSEGV/panic
+after `poweroff` scored PASS; now only exit status 0 counts. BUG 5 (fixed): kill-inject.sh phase 1
+was echo-vacuous (`LI_OK`/`WRITING` matched the sent-command echo — the F1 class this task's own
+critic fixed in phase 2), so the SIGKILL could fire against an idle guest; now computed tokens
+(LI_$((6*7)) → LI_42). Docs refuted + corrected: the interactivity checkbox claimed "<200ms met"
+while the task's own log records 525ms under load and battery.exp never gated latency — restated as
+measured-not-gated. battery.exp's own needles verified genuinely echo-proof. STILL OPEN (why not
+verified): the >=5-kill crash-consistency nightly and the 10x reproducibility loop have never
+executed (N>1 path unexercised; RTC wall-clock text puts byte-identical transcripts at risk);
+recorded evidence remains the single smoke run.

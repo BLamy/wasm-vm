@@ -61,7 +61,14 @@ impl MmioDevice for SysconFinisher {
         Ok(0)
     }
 
-    fn write(&mut self, _offset: u64, _width: Width, value: u64) -> Result<(), BusFault> {
+    fn write(&mut self, offset: u64, _width: Width, value: u64) -> Result<(), BusFault> {
+        // Sweep-critic (E2-T17 LOW, QEMU parity): sifive_test acts only at register offset 0;
+        // a command word written elsewhere in the window is a guest error, logged-and-ignored
+        // by QEMU — never a poweroff. Linux's DTB nodes use offset 0, so this is unreachable
+        // from a conforming guest.
+        if offset != 0 {
+            return Ok(());
+        }
         if let Some(reason) = Self::decode(value as u32) {
             // First recognized command wins; a later write can't override a pending reset.
             let mut slot = self.pending.borrow_mut();

@@ -89,6 +89,9 @@ def verify(args) -> int:
             reassembled.update(buf)
             total += len(buf)
     else:  # blob: read the ranges back out of the image
+        if not args.image:
+            print("chunk_image: verify of a blob-layout manifest needs --image", file=sys.stderr)
+            return 2
         with open(args.image, "rb") as img:
             for i, h in enumerate(m["chunks"]):
                 buf = img.read(cs)

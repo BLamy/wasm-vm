@@ -576,3 +576,51 @@ fn spawn_stdin_reader() -> mpsc::Receiver<Vec<u8>> {
     });
     rx
 }
+
+#[cfg(test)]
+mod critic_profiler_tests {
+    use super::BootProfiler;
+
+    /// SWEEP (E2-T25): regression for critic C2 — a multibyte char (U+FFFD from a non-ASCII
+    /// dmesg byte) straddling the tail cut must not panic split_off. No test existed for the fix.
+    #[test]
+    fn non_ascii_console_bytes_never_panic_the_tail_cut() {
+        let mut p = BootProfiler::new();
+        // Feed lots of raw 0xFF bytes (each becomes a 3-byte U+FFFD) in awkward chunk sizes so
+        // the len-256 cut lands mid-char repeatedly.
+        for chunk in [1usize, 3, 7, 127, 255, 511, 513] {
+            let bytes = vec![0xFFu8; chunk];
+            for _ in 0..20 {
+                p.feed(&bytes, 0);
+            }
+        }
+        assert!(p.hits.is_empty(), "no phase markers in noise");
+    }
+
+    /// SWEEP (E2-T25): a phase marker split across two quanta must still be detected once,
+    /// and a repeated marker must not double-fire.
+    #[test]
+    fn marker_split_across_quanta_fires_exactly_once() {
+        let mut p = BootProfiler::new();
+        p.feed(b"Linux ver", 10);
+        assert!(p.hits.is_empty(), "half a needle is not a sighting");
+        p.feed(b"sion 6.6.63\n", 20);
+        assert_eq!(p.hits.len(), 1);
+        assert_eq!(p.hits[0].0, "kernel-entry");
+        assert_eq!(
+            p.hits[0].2, 20,
+            "stamped with the retired count at sighting"
+        );
+        p.feed(b"Linux version 6.6.63 again\n", 30);
+        assert_eq!(p.hits.len(), 1, "first sighting only");
+    }
+
+    /// SWEEP (E2-T25): the terminal markers stop the profile.
+    #[test]
+    fn terminal_marker_sets_done() {
+        let mut p = BootProfiler::new();
+        assert!(!p.done);
+        p.feed(b"wasm-vm login: ", 99);
+        assert!(p.done, "getty-login is terminal");
+    }
+}

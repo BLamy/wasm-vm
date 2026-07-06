@@ -117,7 +117,11 @@ set powered 0
 expect {
   -timeout [expr {$boot_to * 2}]
   -re {reboot: Power down|guest exited 0} { set powered 1 }
-  eof { set powered 1 }
+  eof {
+    # Sweep-critic E2-T24 BUG 4: raw eof used to count as clean — an emulator SIGSEGV/panic
+    # after `poweroff` was sent scored PASS. Only a zero exit status is a clean poweroff.
+    catch { set st [lindex [wait] 3] ; if {$st == 0} { set powered 1 } }
+  }
   timeout { set powered 0 }
 }
 result poweroff $powered

@@ -39,7 +39,8 @@ coreutils and record findings. Fix upstream bugs in their crates; log them here.
       pristine image copy (image reset between runs).
 - [ ] dmesg + OpenRC output free of WARN/BUG/Oops/`I/O error`/rcu-stall lines (scripted
       grep gate).
-- [ ] `login:` accepts root with the documented password; a wrong password is *rejected*
+- [ ] `login:` accepts root with the documented password; a wrong password is *rejected* *(AMENDED by the 2026-07-06 sweep: root is
+      passwordless by T18 design — superseded; the login gate is the echo-proof marker.)*
       (proves login/PAM path is real, not a fluke tty).
 - [ ] Files written in one boot are present in the next boot of the same image.
 - [ ] External `fsck.ext4 -f -n` clean after the scripted clean shutdown.
@@ -117,3 +118,17 @@ the corruption-hunt adversarial pass, multi-run determinism, wrong-password reje
 persistence-across-boot — mechanical follow-ups (the fs is now clean). QEMU-diff deferred (QEMU
 not on the dev host). Gates: core 95, virtio_blk 8 (incl. blk-log), clippy ±`--all-features`,
 fmt, determinism — all green.
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT FIX-FIRST (MEDIUM) → test fixed; task STAYS implemented.
+The critic proved (hostile transcript demo) that 4 of the 6 battery asserts were echo-vacuous —
+`WASMVM_LOGIN_OK`/`persist_me` matched the tty ECHO of the sent command, `Alpine Linux` matched the
+getty BANNER, `df`'s needle was pre-satisfied by `mount`'s output — the pre-F1 test was never
+retrofitted, and its doc comment overclaimed. RETROFITTED in the sweep: split markers
+(WASMVM_LOGIN_"OK", persist_$((6*7))), banner-proof os-release check, computed df marker, and the
+criterion-2 dmesg health gate (`grep -cE 'WARNING|BUG:|Oops|I/O error'` → DMESGBAD=0, output-only).
+--blk-log CLEARED: zero-cost off (Option + one if-let), bounded on (drained per quantum, tail
+drained before exit), failures logged; critic's hostile test adopted (virtio_blk.rs, 12/12).
+STILL OPEN (why not verified): 3-consecutive-run criterion unmet (recorded evidence is single-run);
+the retrofitted battery has not yet had its own recorded boot; criterion 3 ("wrong password
+rejected") is incoherent against T18's passwordless-root design — amended below; host-side
+post-mortem fsck.ext4 unavailable on macOS (in-guest dmesg gate substituted).

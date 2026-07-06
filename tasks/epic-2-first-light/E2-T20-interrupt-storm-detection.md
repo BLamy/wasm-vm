@@ -3,7 +3,7 @@ id: E2-T20
 epic: 2
 title: Interrupt storm and livelock detection instrumentation
 priority: 220
-status: implemented
+status: verified
 depends_on: [E2-T15]
 estimate: M
 capstone: false
@@ -126,3 +126,16 @@ by per-window claims); #2 WFI watchdog reports instead of hanging ✓; #3 full b
 positives ✓; #4 **detector** overhead within noise, counters structurally negligible (honest
 reframe) ✓; #5 counters via `--stats` + wasm `getStats` ✓. Gates: core 102, storm 5, clippy
 ±`--all-features`, fmt, determinism, wasm32 — all green.
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT FIX-FIRST (MEDIUM) → FIXED (2 bugs), 1 documented.
+BUG 1 (MEDIUM, fixed): a ZERO-progress trap loop (mtvec → faulting instruction) never retired, so
+the retire-count window never closed — the most total storm possible was structurally invisible.
+check_storm now fires on the raw in-window trap count alone at >3x threshold with the window still
+open; critic's failing test adopted as the regression (critic_storm_hostile.rs, passing). BUG 2
+(fixed): any_wakeup_armed counted an armed mtimecmp/msip as a wakeup regardless of mie — an
+armed-but-never-deliverable timer masked a genuine WFI deadlock. Now gated per-source on the mie
+enable bits (MTIE/MSIE/STIE); critic's test passing. BUG 3 (documented, LOW): the watchdog can
+cry wolf on a guest idling for FUTURE external input (UART IER+PLIC armed but nothing pending) —
+one-shot log line, Linux always arms a timer; critic's test pins the behavior. Threshold ceiling
+documented: 1-trap-per-200-retired catches tight bare-metal storms, not full-Linux-ISR-path storms.
+Zero false positives across every recorded boot (criterion 3, downstream evidence).

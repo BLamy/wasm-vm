@@ -3,7 +3,7 @@ id: E2-T18
 epic: 2
 title: Alpine riscv64 rootfs — scripted ext4 image build with getty on ttyS0
 priority: 218
-status: implemented
+status: verified
 depends_on: [E2-T12]
 estimate: M
 capstone: false
@@ -126,3 +126,13 @@ supply-chain claims (the honestly-weakest part). All fixed:
   asserts the container busybox version equals the target's and fails on skew.
 - CONFIRMED by the critic: passwordless-root-on-securetty, the fsck gate, the applet skip-guard,
   gitignore coherence, and 512M sizing all correct. (#5 getty-storm is non-blocking given #4.)
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT SOUND.
+Pinning has real teeth: base image pinned by DIGEST, tools by exact version, APK signatures
+verified (no --allow-untrusted), and the MANIFEST drift gate diffs against a COMMITTED lock (the
+silent-self-seed failure mode does not exist). getty/securetty/passwordless-root/no-privileged-ops
+all source-verified; in-container fsck + foreign-ELF scan gates fail the build. LOW fixed in the
+sweep: stale .gitignore comment (SHA256SUMS → MANIFEST.txt pinning). QEMU leg honestly unmet
+(documented); boot-to-login met by recorded downstream evidence (828s/797s native, 12.1-23.7min
+browser); debugfs comparison honestly substituted + documented. `apk --version` loose end noted
+for E3-T20.

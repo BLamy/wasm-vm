@@ -3,7 +3,7 @@ id: E2-T17
 epic: 2
 title: syscon poweroff/reboot device — clean shutdown propagated to the host/JS
 priority: 217
-status: implemented
+status: verified
 depends_on: [E2-T15]
 estimate: S
 capstone: false
@@ -128,3 +128,12 @@ Non-issues (parity, left as-is): A3 sub-word write width (Linux always writes 32
 re-run-same-instance (JS re-inits per contract), A6 infinite-reboot-without-backoff (QEMU
 parity; `--no-reboot` is the escape). Gates re-run green: core 95, clippy ±`--all-features`,
 zicsr-stub build clean, fmt.
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT SOUND (one LOW fixed).
+Command mask `word & 0xFFFF` matches QEMU sifive_test exactly (0xABCD_5555 → poweroff, hostile
+widths ignored); DTB regmap/offset/value match the Linux syscon-poweroff/reboot bindings; reset
+teardown drains the ResetCell at every boundary + after the budget. LOW fixed in the sweep: writes
+at a NONZERO register offset are now ignored (QEMU acts only at offset 0; unreachable from a
+conforming guest — parity hardening); critic's parity test adopted and passing. Criteria met by
+unit + recorded downstream evidence (E2-T24 clean-poweroff scenario, E2-T17 reboot transcript);
+literal sysrq-b transcript honestly absent (same SBI-SRST path, source-verified).

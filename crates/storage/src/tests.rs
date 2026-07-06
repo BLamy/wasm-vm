@@ -337,6 +337,106 @@ fn lazy_read_assembles_present_chunks_and_reports_first_missing() {
     );
 }
 
+#[test]
+fn critic_base_hash_canonicalization_is_stable() {
+    // Two JSON texts with different field order + whitespace must yield the SAME base_hash,
+    // because base_hash is computed over the re-serialized struct (fixed field order), never the
+    // raw input text.
+    let data: Vec<u8> = (0..6u8).collect();
+    let m = manifest_for(&data, 4);
+    let a = format!(
+        r#"{{"version":1,"image_len":6,"chunk_size":4,"layout":"split","chunks":["{}","{}"]}}"#,
+        m.chunks[0], m.chunks[1]
+    );
+    let b = format!(
+        "{{\n  \"chunks\": [\"{}\", \"{}\"],\n  \"layout\": \"split\",\n  \"chunk_size\": 4,\n  \"image_len\": 6,\n  \"version\": 1,\n  \"unknown_field\": true\n}}",
+        m.chunks[0], m.chunks[1]
+    );
+    let ma = ImageManifest::from_json(&a).unwrap();
+    let mb = ImageManifest::from_json(&b).unwrap();
+    assert_eq!(ma.base_hash(), mb.base_hash());
+    assert_eq!(ma.base_hash(), m.base_hash());
+
+    // Same bytes re-chunked at a different chunk_size must bind differently (overlay safety).
+    let m2 = manifest_for(&data, 2);
+    assert_ne!(m.base_hash(), m2.base_hash());
+
+    // FIXED by the sweep: uppercase hex is now REJECTED at validation (it would produce a
+    // different base_hash than the lowercase form of the same digest — an overlay-orphaning
+    // hazard the reader no longer admits).
+    let mut upper = m.clone();
+    upper.chunks = m.chunks.iter().map(|h| h.to_uppercase()).collect();
+    assert!(matches!(
+        upper.validate(),
+        Err(ImageError::BadHashHex { chunk: 0 })
+    ));
+}
+
+#[test]
+fn critic_overflow_shaped_inputs_are_typed_errors() {
+    // image_len = u64::MAX with chunk_size 1: derived count is astronomical -> count mismatch,
+    // and none of the math (div_ceil, locate, chunk_len) overflows or panics.
+    let huge = ImageManifest {
+        version: FORMAT_VERSION,
+        image_len: u64::MAX,
+        chunk_size: 1,
+        layout: Layout::Blob,
+        chunks: alloc::vec![String::from("ab").repeat(32)],
+    };
+    assert!(matches!(
+        huge.validate(),
+        Err(ImageError::ChunkCountMismatch { .. })
+    ));
+    let idx = huge.index();
+    assert_eq!(idx.chunk_count(), u64::MAX);
+    assert!(idx.locate(u64::MAX - 1).is_ok()); // no overflow
+    assert_eq!(idx.chunk_len((u64::MAX - 1) as usize % (1 << 40)), 1); // in-range chunk, no overflow
+
+    // chunk_span where offset + len overflows u64 must be a typed error (checked_add path).
+    let m = manifest_for(&[0u8; 10], 4);
+    let i = m.index();
+    assert!(matches!(
+        i.chunk_span(u64::MAX - 1, 3),
+        Err(ImageError::OffsetOutOfRange { .. })
+    ));
+    assert!(
+        i.read(
+            &MockSource {
+                chunks: alloc::vec![]
+            },
+            u64::MAX,
+            u64::MAX
+        )
+        .is_err()
+    );
+
+    // JSON with a negative / overflowing image_len or a huge chunk_size: typed Json error.
+    for bad in [
+        r#"{"version":1,"image_len":-1,"chunk_size":4,"layout":"split","chunks":[]}"#,
+        r#"{"version":1,"image_len":18446744073709551616,"chunk_size":4,"layout":"split","chunks":[]}"#,
+        r#"{"version":1,"image_len":4,"chunk_size":4294967296,"layout":"split","chunks":[""]}"#,
+        r#"{"version":-1,"image_len":4,"chunk_size":4,"layout":"split","chunks":[""]}"#,
+    ] {
+        assert!(
+            matches!(ImageManifest::from_json(bad), Err(ImageError::Json(_))),
+            "expected typed Json error for: {bad}"
+        );
+    }
+
+    // Unvalidated manifest whose chunks vector is LARGER than image_len implies: verify_chunk on
+    // the excess index must not panic (chunk_len returns 0 -> length check governs).
+    let extra = ImageManifest {
+        version: FORMAT_VERSION,
+        image_len: 2,
+        chunk_size: 4,
+        layout: Layout::Split,
+        chunks: alloc::vec![String::from("ab").repeat(32); 5],
+    };
+    // chunk 3 is past the derived count (1): expected len 0, so only b"" reaches the hash check.
+    assert!(extra.verify_chunk(3, &[1, 2, 3]).is_err());
+    assert!(extra.verify_chunk(3, &[]).is_err()); // hash of "" won't match "abab..."
+}
+
 proptest::proptest! {
     // Reassembling chunk-by-chunk per the index reproduces the image byte-for-byte, and every
     // offset locates to the right (chunk, intra) — for random sizes around chunk-size multiples.

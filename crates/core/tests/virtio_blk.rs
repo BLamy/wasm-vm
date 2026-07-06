@@ -186,6 +186,51 @@ fn blk_log_records_serviced_requests() {
     assert!(m.drain_blk_log().is_empty(), "log cleared after drain");
 }
 
+/// HOSTILE (verification sweep): the blk-log's debugging value is recording FAILURES too —
+/// garbage request types (S_UNSUPP) and out-of-range I/O (S_IOERR) must land in the log with
+/// their real status, and the log must keep growing (no silent cap) until drained.
+#[test]
+fn blk_log_records_failures_and_grows_until_drained() {
+    let (mut m, mut ctx) = machine(vec![0u8; 8 * SECTOR_SIZE], false);
+    m.enable_blk_log();
+    // Garbage type 13 (DISCARD-ish) → S_UNSUPP(2).
+    write_hdr(&mut m, HDR, 13, 0);
+    wdesc(&mut m, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut m, 1, STATUS, 1, F_WRITE, 0);
+    assert_eq!(submit(&mut m, &mut ctx, 0), 2);
+    // IN far past the end of the 8-sector disk → S_IOERR(1).
+    write_hdr(&mut m, HDR, 0, 1_000_000);
+    wdesc(&mut m, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut m, 1, DATA, SECTOR_SIZE as u32, F_WRITE | F_NEXT, 2);
+    wdesc(&mut m, 2, STATUS, 1, F_WRITE, 0);
+    assert_eq!(submit(&mut m, &mut ctx, 0), 1);
+    // 50 more valid reads WITHOUT draining: no cap may drop entries.
+    for _ in 0..50 {
+        write_hdr(&mut m, HDR, 0, 1);
+        wdesc(&mut m, 0, HDR, 16, F_NEXT, 1);
+        wdesc(&mut m, 1, DATA, SECTOR_SIZE as u32, F_WRITE | F_NEXT, 2);
+        wdesc(&mut m, 2, STATUS, 1, F_WRITE, 0);
+        assert_eq!(submit(&mut m, &mut ctx, 0), 0);
+    }
+    let log = m.drain_blk_log();
+    assert_eq!(
+        log.len(),
+        52,
+        "every request logged, failures included, no cap"
+    );
+    assert_eq!(
+        (log[0].rtype, log[0].status),
+        (13, 2),
+        "garbage type logged as UNSUPP"
+    );
+    assert_eq!(
+        (log[1].rtype, log[1].status),
+        (0, 1),
+        "out-of-range IN logged as IOERR"
+    );
+    assert!(log[2..].iter().all(|r| r.status == 0));
+}
+
 /// Acceptance: header split 4+12 across two descriptors parses identically.
 #[test]
 fn segmented_header_4_plus_12() {

@@ -154,6 +154,26 @@ impl IrqStats {
         let window = window.max(1);
         let retired_in_window = self.retired.saturating_sub(self.window_start_retired);
         if retired_in_window < window {
+            // Sweep-critic (E2-T20, MEDIUM): a ZERO-progress trap loop (mtvec pointing at a
+            // faulting instruction) never retires, so a retire-count window would never close
+            // and the most total storm possible stayed invisible forever. Fire on the raw
+            // in-window trap count alone once it exceeds 3x the threshold — with the window
+            // still open, that many traps against so few retires is a storm by any reading.
+            if self.window_traps > threshold.saturating_mul(3) {
+                let traps = self.window_traps;
+                let hot = self.hottest_irq_in_window();
+                self.window_start_retired = self.retired;
+                self.window_traps = 0;
+                self.claims_window_start = self.claims;
+                self.consecutive_hot = 0;
+                let report = StormReport {
+                    window_traps: traps,
+                    window_retired: retired_in_window,
+                    hot_irq: hot,
+                };
+                self.last_storm = Some(report.clone());
+                return Some(report);
+            }
             return None; // window still open
         }
         let traps = self.window_traps;

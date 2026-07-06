@@ -16,6 +16,7 @@ QUEUE = TASKS / "QUEUE.md"
 STATUS_ICON = {
     "pending": " ",
     "in-progress": "~",
+    "in_progress": "~",  # both spellings appear in the wild (sweep-critic F)
     "implemented": "?",
     "refuted": "!",
     "verified": "x",
@@ -106,7 +107,11 @@ def main() -> int:
             current_epic = t.get("epic")
             epic_dir = t["_path"].parent.name
             lines += ["", f"## Epic {current_epic} — `{epic_dir}`", ""]
-        icon = STATUS_ICON.get(t.get("status", "pending"), " ")
+        status = t.get("status", "pending")
+        if status not in STATUS_ICON:
+            # Sweep-critic F: an unknown status silently rendered as pending — the board lied.
+            print(f"warning: {t['id']} has unknown status {status!r}", file=sys.stderr)
+        icon = STATUS_ICON.get(status, " ")
         rel = t["_path"].relative_to(TASKS).as_posix()
         deps = ", ".join(t.get("depends_on", [])) or "—"
         cap = " **[CAPSTONE]**" if t.get("capstone") else ""

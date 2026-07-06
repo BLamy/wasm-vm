@@ -3,7 +3,7 @@ id: E2-T21
 epic: 2
 title: Browser loading pipeline — fetch kernel and disk image with progress, instantiate WASM
 priority: 221
-status: implemented
+status: verified
 depends_on: [E2-T10, E2-T15]
 estimate: M
 capstone: false
@@ -118,3 +118,14 @@ storm_detect=true default) folded into PR #78 for the record.
 **Honest scope:** two primary criteria (boot-to-banner-in-page, integrity-reject) met + verified;
 512 MB memory audit / warm-cache assertion / CI wiring deferred (see acceptance boxes) — the 512 MB
 disk-image path needs virtio-blk browser wiring that doesn't exist yet.
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT SOUND.
+No integrity bypass exists: hash mismatch throws BEFORE init/construction in all verified modes
+(fail-closed both directions — truncated fetch and stale manifest both land in mismatch); chunked
+kernel hash-checked, rootfs chunks verify-on-insert, boot-profile indices bounds-clamped. LOW fixed
+in the sweep: the loader header falsely claimed a single preallocated buffer (reality: chunks +
+concat = transient ~2x JS peak) — comment now honest, and it gates the deferred 512MB single-copy
+audit. Design note recorded (MEDIUM-for-later, E3 deploy scope): the chunked image manifest.json is
+unpinned — corruption is fail-closed but a consistently swapped manifest+chunks pair boots; pin its
+sha256 in artifacts-alpine.json before any non-same-origin serving. Cold-load/mismatch criteria:
+recorded evidence (boot.spec #1/#2) + every E3 browser acceptance runs this pipeline.

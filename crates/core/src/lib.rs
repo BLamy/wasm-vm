@@ -592,7 +592,12 @@ impl Machine {
     /// footprint (`.bss` and all) — does not fit above `KERNEL_BASE` in RAM.
     pub fn load_kernel_image(&mut self, bytes: &[u8]) -> Result<u64, bus::BusFault> {
         let footprint = kernel_image_footprint(bytes);
-        let kernel_end = platform::virt::KERNEL_BASE + footprint;
+        // Sweep-critic (E2-T15, MEDIUM): a hostile `image_size` near u64::MAX wrapped this add
+        // in release mode — kernel_end landed BELOW KERNEL_BASE, passed the RAM-ceiling check,
+        // and the initrd was silently placed on top of the kernel. checked_add → typed refusal.
+        let kernel_end = platform::virt::KERNEL_BASE
+            .checked_add(footprint)
+            .ok_or(bus::BusFault::Access)?;
         // The RUNTIME footprint (not just the file) must fit: the no-initrd boot path has no
         // later placement check to catch a `.bss` that overflows top-of-RAM, so guard here so
         // the doc's "fails Access if it doesn't fit" is actually true.
@@ -867,6 +872,13 @@ impl Machine {
     #[cfg(not(feature = "zicsr-stub"))]
     fn wfi_fast_forward(&mut self) {
         let Some(clint) = &self.clint else { return };
+        // Sweep-critic (E2-T23b LOW): a pending+enabled interrupt (mip & mie != 0) satisfies
+        // the WFI wake condition RIGHT NOW (per the ISA, even with global xIE=0) — no time
+        // needs to pass, so jumping mtime to a timer deadline would be a semantic time
+        // distortion. Skip the jump; the WFI retires as a nop and execution proceeds.
+        if self.hart.csr.mip_and_mie_nonzero() {
+            return;
+        }
         // Nearest armed FUTURE deadline. A deadline already <= mtime is "due" — its interrupt is
         // pending and WFI wakes next boundary anyway, so there is nothing to skip. `u64::MAX` is
         // the "cancelled" sentinel for both compares.
@@ -944,11 +956,18 @@ impl Machine {
         if self.hart.csr.mip_and_mie_nonzero() {
             return true;
         }
-        if self.sbi_state.stimecmp != u64::MAX {
+        // Sweep-critic (E2-T20 BUG 2): a wakeup source only counts if it is DELIVERABLE — an
+        // armed mtimecmp with MTIE=0 (or msip with MSIE=0) can never end the WFI loop under
+        // our semantics, which is exactly the deadlock the watchdog exists to report. Gate
+        // each CLINT source on its mie enable bit (stimecmp rides the S-timer → STIE, bit 5).
+        let mie = self.hart.csr.mie_bits();
+        if self.sbi_state.stimecmp != u64::MAX && mie & (1 << 5) != 0 {
             return true;
         }
         if let Some(clint) = &self.clint {
-            return clint.borrow().any_timer_armed();
+            let c = clint.borrow();
+            return (c.mtimecmp != u64::MAX && mie & (1 << 7) != 0)
+                || (c.msip && mie & (1 << 3) != 0);
         }
         false
     }

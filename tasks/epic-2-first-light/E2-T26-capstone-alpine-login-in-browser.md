@@ -140,3 +140,17 @@ manifest/Makefile; no committed rootfs; gh-pages untouched), C4 spec non-vacuous
 token, skip prevents false CI green). Gates: cargo test 616/0; wasm build default + zicsr-stub;
 determinism-hazards clean; fmt clean; node --check OK. Honest caveat (critic couldn't run the
 10-min boot → static-only) is covered by the live MCP + e2e runtime evidence above.
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT FIX-FIRST (MEDIUM evidence gaps); task STAYS implemented.
+The flagship claim (Alpine → login: in the browser) is genuinely evidenced: the recorded
+capstone.spec.js pass (8.9m, non-vacuous computed marker) + four later independent recorded browser
+boots (11.3m/11.7m/12.1m/15.8m) — though those four ride the CHUNKED path; the capstone's own
+newDisk path has exactly one recorded run. Enumerated gaps that block `verified`: criterion 3
+(vi/top/^C) covered by no recorded run; criterion 4 (browser poweroff → halted UI + fsck) never
+recorded in a browser; criterion 6 requires 3/3 consecutive (recorded: 1/1); criterion 5 met only
+via native-baseline substitution (T25's browser column was never filled); criterion 7 observational,
+never asserted via getStats; deliverable docs/media/ recording does not exist; the cold-start
+charter run was never recorded. Reproducibility PIECES all exist and are sound (demo-capstone.sh /
+serve-dev.sh / self-skipping spec). Follow-up: one recorded 3x capstone run + a browser
+poweroff/fsck spec + a vi/top assertion (or recorded manual session) + the demo recording (or an
+explicit descope) flips this.

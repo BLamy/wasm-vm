@@ -3,9 +3,11 @@
 // boot), instantiates the WASM module, and boots unmodified Linux via `WasmLinux`, driving the
 // run loop off `setTimeout` so the main thread stays responsive (workers/SAB are Epic 4).
 //
-// Memory discipline (32-bit wasm): each artifact lands in JS memory exactly once (a single
-// preallocated `Uint8Array` sized from Content-Length), then is handed to wasm by one copy in
-// the `WasmLinux` constructor. No intermediate Blob/ArrayBuffer duplication.
+// Memory discipline (32-bit wasm): streamed chunks are accumulated then concatenated once —
+// a transient ~2x peak in JS heap during the concat (sweep-critic E2-T21: the old comment
+// claimed a single preallocated buffer; that optimization is future work and a prerequisite
+// for the deferred 512 MB single-copy audit). The result is handed to wasm by one copy in the
+// `WasmLinux` constructor. No intermediate Blob/ArrayBuffer duplication beyond that.
 
 import init, { WasmLinux } from "./pkg/wasm_vm_wasm.js";
 

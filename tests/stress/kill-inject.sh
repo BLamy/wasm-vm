@@ -37,10 +37,12 @@ for k in $(seq 1 "$KILLS"); do
     set pid [exp_pid]
     expect { -timeout [ge STRESS_BOOT_TO 900] "login:" {} timeout { exit 3 } }
     send "root\r"; sleep 3; send "\r"; sleep 2
-    send "echo LI_OK\r"; expect { -timeout 90 "LI_OK" {} timeout { exit 4 } }
+    # Echo-proof (sweep-critic E2-T24 BUG 5, the F1 class): the token must be computed by the
+    # shell so the tty echo of the command can never satisfy the expect.
+    send "echo LI_\$((6*7))\r"; expect { -timeout 90 "LI_42" {} timeout { exit 4 } }
     # Sustained writers churning the journal; run detached so the shell returns immediately.
-    send "for i in 1 2 3 4; do (while :; do dd if=/dev/zero of=/root/w\$i bs=1M count=8 conv=fsync 2>/dev/null; done) & done; echo WRITING\r"
-    expect { -timeout 60 "WRITING" {} timeout { exit 5 } }
+    send "for i in 1 2 3 4; do (while :; do dd if=/dev/zero of=/root/w\$i bs=1M count=8 conv=fsync 2>/dev/null; done) & done; echo WRIT_\$((6*7))\r"
+    expect { -timeout 60 "WRIT_42" {} timeout { exit 5 } }
     # Let the writes run, then SIGKILL mid-transaction.
     sleep [ge STRESS_D 20]
     exec kill -9 $pid
