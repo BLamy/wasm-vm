@@ -60,6 +60,10 @@ const LOOPBACK_CAP: usize = 256;
 /// The seam between the virtio-net DEVICE and the outside "network" (a loopback echo now, a
 /// slirp user-space TCP/IP stack in E3-T14). Every frame crosses as a plain ethernet frame
 /// `Vec<u8>` — **no** `virtio_net_hdr` (the device owns that). Method names are the DEVICE's view.
+///
+/// **Contract (critic advisory, binding on T14):** `tx`/`rx`/`rx_ready` must NOT re-enter the
+/// device state ([`NetState`] or the mmio slot) — they are called while the device holds its
+/// `RefCell` borrow (including inside a guest MMIO store during `reset`), so re-entry panics.
 pub trait NetBackend {
     /// Guest → network: the device hands over one ethernet frame the guest just transmitted
     /// (the `virtio_net_hdr` already stripped). Loopback swaps src/dst MAC and stages it for
@@ -127,6 +131,9 @@ impl NetBackend for LoopbackBackend {
 /// frames are captured as the device pulls them from the inner backend — so a loopback capture
 /// shows both directions of a ping. Timestamps are a deterministic monotonic counter (no clock
 /// — the core crate is deterministic; wall-clock lives in the host).
+///
+/// **Test/diagnostic use only:** the capture buffer grows without bound (critic advisory) — do
+/// not wire this into a long-lived session; use it for bounded acceptance captures.
 pub struct PcapBackend<B: NetBackend> {
     inner: B,
     pcap: Vec<u8>,
@@ -367,17 +374,20 @@ fn service_rx(
 ) -> Result<bool, super::queue::Violation> {
     let mut used = false;
     loop {
-        // Only pull a frame from the backend once we know there is (or isn't) a buffer for it —
-        // but a drop must still consume the frame so the backend queue drains (bounded memory).
         if !state.borrow().backend.rx_ready() {
             break;
         }
+        // Pull the frame BEFORE popping a descriptor (critic MED, E3-T13 pass 1): a guest
+        // buffer is only consumed once we hold a real frame, so a backend whose `rx_ready()`
+        // lies (returns true while `rx()` yields `None` — a buggy/racy T14 backend) can never
+        // leak a posted rx descriptor. The old pop-then-pull order silently lost a descriptor
+        // per lie: consumed from avail, never published on used.
+        let frame = match state.borrow_mut().backend.rx() {
+            Some(f) => f,
+            None => break, // rx_ready lied; no descriptor was touched
+        };
         match rx.pop(bus)? {
             Some(chain) => {
-                let frame = match state.borrow_mut().backend.rx() {
-                    Some(f) => f,
-                    None => break, // rx_ready lied; nothing to deliver
-                };
                 let mut buf = Vec::with_capacity(NET_HDR_LEN + frame.len());
                 buf.extend_from_slice(&rx_header());
                 buf.extend_from_slice(&frame);
@@ -386,20 +396,20 @@ fn service_rx(
                     state.borrow_mut().rx_count += 1;
                 } else {
                     // Frame did not fit the posted buffer: drop it, but STILL return the
-                    // descriptor (len 0) so the guest's buffer isn't stranded.
+                    // descriptor (len 0) so the guest's buffer isn't stranded. Linux's
+                    // virtnet guards len < hdr_len first (pr_debug + rx_length_errors++ +
+                    // repost) — graceful; QEMU without MRG_RXBUF virtio_error()s instead,
+                    // which is worse (critic claim 5: documented deviation, keep ours).
                     rx.push_used(bus, chain.head, 0)?;
                     state.borrow_mut().rx_dropped += 1;
                 }
                 used = true;
             }
             None => {
-                // No free rx descriptor: drain one frame and drop it (counted). Looping drains
-                // the whole backlog so the backend queue — and the host heap — stays bounded.
-                if state.borrow_mut().backend.rx().is_some() {
-                    state.borrow_mut().rx_dropped += 1;
-                } else {
-                    break;
-                }
+                // No free rx descriptor: the frame we hold is dropped (counted). Looping
+                // drains the whole backlog so the backend queue — and the host heap — stays
+                // bounded.
+                state.borrow_mut().rx_dropped += 1;
             }
         }
     }

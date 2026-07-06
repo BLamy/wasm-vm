@@ -3,7 +3,7 @@ id: E3-T13
 epic: 3
 title: virtio-net device with rx/tx rings, config space, and MAC
 priority: 313
-status: pending
+status: in_progress
 depends_on: [E2]
 estimate: M
 capstone: false
@@ -59,4 +59,35 @@ an off-by-two here corrupts every frame and is the classic bug to hunt). Diff a 
 guest DHCP attempts against wireshark-parsed expectations for well-formedness.
 
 ## Verification log
-(empty)
+
+**2026-07-06 — device core (pass 1), PR #96 stacked on #95.**
+`crates/core/src/dev/virtio/net.rs`: VirtioNetDev (DeviceID 1) on the E2-T08 transport + E2-T09
+rings — receiveq/transmitq, `VIRTIO_NET_F_MAC` only (declined + documented: MRG_RXBUF, offloads,
+CTRL_VQ, STATUS), fixed MAC 52:54:00:12:34:56, deferred-kick service (blk pattern). **Header is
+12 bytes** (`virtio_net_hdr_mrg_rxbuf`, num_buffers=1): spec §5.1.6.1 includes num_buffers under
+VERSION_1 *or* MRG_RXBUF, and §5.1.6.4.1 mandates num_buffers=1 without MRG_RXBUF; Linux
+`virtnet_probe` corroborates (hdr_len = mrg size under VERSION_1). `NetBackend` seam (plain
+ethernet `Vec<u8>` frames) + `LoopbackBackend` (MAC-swap echo, 256-cap oldest-drop) +
+`PcapBackend` (both-direction capture, deterministic tick timestamps). rx starvation drops with
+`rx_dropped` counter; ring Violations degrade via protocol_violation.
+
+Cold-clone critic (10-claim charter) **SOUND with one MED → fixed same PR**: pre-fix,
+`service_rx` popped an rx descriptor BEFORE pulling the frame, so a backend whose `rx_ready()`
+lied (buggy/racy T14 backend) consumed a posted descriptor per lie — silent permanent guest
+buffer loss (critic demonstrated with a lying-backend test: 2 posted buffers gone, used.idx 0,
+no NEEDS_RESET). Fixed by pulling the frame first (descriptor only popped once a real frame is
+held); regression `lying_backend_does_not_leak_rx_descriptors`. Critic CONFIRMED all other
+claims: 12-byte header (spec+Linux), bounded rx (device+backend layer), no loss/dup/reorder in
+10⁴-frame fuzz, ring hostility handled by queue engine (zero-len rejected before address checks),
+used.len=0 on oversized drop harmless for Linux (guards len<hdr_len → rx_length_errors++, repost;
+QEMU virtio_errors instead — ours gentler, documented), IRQ can only be spurious never missed,
+determinism clean. LOW advisories addressed: NetBackend re-entrancy contract documented (T14
+landmine), PcapBackend unbounded-growth documented as test-only. Critic tests ADOPTED into
+`crates/core/tests/virtio_net_critic.rs` (7): leak regression, writable-only tx chain, 3-segment
+rx delivery, loopback cap oldest-drop, rx avail-idx jump → NEEDS_RESET, reset teardown+recovery,
+wide config reads past the MAC.
+
+Gates: net 10 + critic 7 + blk/torture/mmio/virtqueue all green; fmt/clippy(all-features)/
+determinism/wasm(default+zicsr-stub) clean. **Remaining (pass 2, stacked):** Machine wiring
+(`enable_virtio_net`, slot 1, run-loop service), DTB node, Alpine `eth0` probe + `ip link` MAC
+acceptance, loopback arping via PcapBackend capture, native/wasm parity run.
