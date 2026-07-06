@@ -12,7 +12,7 @@ use js_sys::{Array, Uint8Array};
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{IdbDatabase, IdbObjectStore, IdbRequest, IdbTransaction, IdbTransactionMode};
+use web_sys::{IdbDatabase, IdbObjectStore, IdbRequest, IdbTransaction};
 
 use std::collections::BTreeMap;
 
@@ -79,11 +79,27 @@ impl IdbStore {
         }
     }
 
-    /// Write (or replace) the meta record.
+    /// A strict-durability `readwrite` transaction on `store` — the txn's `complete` event fires only
+    /// once the data is flushed to disk, not merely handed to the OS cache (E3-T05: `durability:"strict"`
+    /// on commit-critical transactions). Called via `js_sys` reflection because web-sys gates the typed
+    /// `IdbTransactionOptions` behind `web_sys_unstable_apis` (a project-wide build flag we avoid);
+    /// `db.transaction(store, "readwrite", { durability: "strict" })` is the stable equivalent.
+    fn rw_strict(&self, store: &str) -> Result<IdbTransaction, JsValue> {
+        let opts = js_sys::Object::new();
+        js_sys::Reflect::set(&opts, &"durability".into(), &JsValue::from_str("strict"))?;
+        let txn_fn = js_sys::Reflect::get(&self.db, &"transaction".into())?
+            .dyn_into::<js_sys::Function>()?;
+        let args = js_sys::Array::of3(
+            &JsValue::from_str(store),
+            &JsValue::from_str("readwrite"),
+            &opts,
+        );
+        js_sys::Reflect::apply(&txn_fn, &self.db, &args)?.dyn_into::<IdbTransaction>()
+    }
+
+    /// Write (or replace) the meta record (strict durability).
     pub async fn write_meta(&self, bytes: &[u8]) -> Result<(), JsValue> {
-        let txn = self
-            .db
-            .transaction_with_str_and_mode(META, IdbTransactionMode::Readwrite)?;
+        let txn = self.rw_strict(META)?;
         let store = txn.object_store(META)?;
         let arr = Uint8Array::from(bytes);
         store.put_with_key(&arr, &JsValue::from_f64(META_KEY))?;
@@ -113,15 +129,14 @@ impl IdbStore {
         Ok(out)
     }
 
-    /// Persist a batch of `(block, bytes)` in ONE `readwrite` transaction; resolves only on the
-    /// transaction's `complete` event — the honest durability barrier (E3-T05 commit contract).
+    /// Persist a batch of `(block, bytes)` in ONE strict-durability `readwrite` transaction; resolves
+    /// only on the transaction's `complete` event — with `durability:strict` that is the honest
+    /// durability barrier (data flushed to disk, E3-T05 commit contract).
     pub async fn persist(&self, batch: &[(u64, [u8; OVERLAY_BLOCK])]) -> Result<(), JsValue> {
         if batch.is_empty() {
             return Ok(());
         }
-        let txn = self
-            .db
-            .transaction_with_str_and_mode(BLOCKS, IdbTransactionMode::Readwrite)?;
+        let txn = self.rw_strict(BLOCKS)?;
         let store: IdbObjectStore = txn.object_store(BLOCKS)?;
         for (block, bytes) in batch {
             let arr = Uint8Array::from(&bytes[..]);
