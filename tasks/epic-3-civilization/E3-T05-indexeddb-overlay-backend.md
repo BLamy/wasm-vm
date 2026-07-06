@@ -3,7 +3,7 @@ id: E3-T05
 epic: 3
 title: IndexedDB overlay backend
 priority: 305
-status: pending
+status: verified
 depends_on: [E3-T04]
 estimate: M
 capstone: false
