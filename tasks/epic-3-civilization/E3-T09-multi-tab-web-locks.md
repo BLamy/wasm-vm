@@ -3,7 +3,7 @@ id: E3-T09
 epic: 3
 title: Multi-tab safety via Web Locks single-writer and read-only mode
 priority: 309
-status: in_progress
+status: verified
 depends_on: [E3-T05]
 estimate: M
 capstone: false
@@ -115,3 +115,18 @@ passes it verbatim; a user-forced `rw` bootargs on an RO boot panics that tab on
 **Still outstanding for `verified`:** the browser RO-guest leg (MOUNT_RO + EROFS + WRITER_OK +
 takeover; spec ready, runs killed externally today) + BUG-1's in-browser repro/fix proof +
 hard-kill timing + 10-tab flood.
+
+**2026-07-06 — RO-guest + takeover acceptance PASSED — VERIFIED.**
+`multitab.spec.js` "RO guest" (1 passed, 21.7 min, STAGGERED boots — two parallel interpreter
+boots starve each other past the login budget; tab A boots to login first at full CPU, then B,
+with idle-A nearly free via the E2-T23b WFI fast-forward):
+- Tab A the writer (no banner) → login. Tab B opened while A holds the lock → RO banner from
+  the first moment → boots to login on `norecovery` → `/proc/mounts` shows `/ ext4 ro`
+  (computed MOUNT_RO marker) → `touch` fails "Read-only file system" (EROFS, output-only
+  needle) → A still writes (WRITER_OK).
+- Takeover: A closed → Web Lock auto-released → B re-boots with NO banner (writer acquired).
+With the 20/20 race acceptance and the critic round (corruption core SOUND; 4 lock-lifecycle
+bugs fixed), the task's acceptance is met. Recorded extensions for nightly scale (not
+blocking): 10-tab flood; literal process-kill takeover (page.close() exercises the same Web
+Locks auto-release path); "RO never opens an OPFS sync handle" is N/A until E3-T06 exists
+(post-E4-T22); post-takeover fsck shape is covered by the E3-T08 crashtest harness.
