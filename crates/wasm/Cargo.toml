@@ -31,6 +31,18 @@ features = [
     "RequestMode",
     "Headers",
     "Response",
+    # E3-T05 IndexedDB durable overlay backend.
+    "IdbFactory",
+    "IdbOpenDbRequest",
+    "IdbDatabase",
+    "IdbTransaction",
+    "IdbTransactionMode",
+    "IdbObjectStore",
+    "IdbRequest",
+    "IdbVersionChangeEvent",
+    "DomException",
+    "Event",
+    "EventTarget",
 ]
 
 [features]
