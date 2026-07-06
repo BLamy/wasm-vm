@@ -83,11 +83,20 @@ committed `releases/chunked-alpine` → OK, 87 distinct chunks.
 produced DIFFERENT manifests — **11.2% churn, 10 of 84 chunks** — because `mke2fs` pinned the fs
 UUID (`-U`) but NOT the directory-htree **hash seed**, which it randomizes per build (the churned
 chunks were the directory-index blocks). E2-T18 only ever claimed package-level reproducibility,
-not byte-identical ext4 — this gate is what forces the stronger guarantee. Fixed in
-`tools/rootfs-inner.sh`: `-E hash_seed=$FS_UUID` (reusing the one pinned constant; dir_index stays
-on → deterministic htree, no lookup regression). Re-run confirms [PIPELINE_RESULT].
+not byte-identical ext4 — this gate is what forces the stronger guarantee. Attempted fix in
+`tools/rootfs-inner.sh` (`-E hash_seed=$FS_UUID`, kept as legit hardening) — but the RE-RUN
+churn was UNCHANGED (still 11.2%, the SAME 5 chunk indices: 0, 2, 3, 1024, 3072). Those offsets
+are the primary superblock + block-group descriptors + backup superblocks at group boundaries
+(128 MB, 384 MB) — i.e. a random field REPLICATED across every superblock copy, almost certainly
+`s_hash_seed`, which the `-E hash_seed=` option did not visibly pin (mke2fs accepted it without
+error yet the bytes didn't change — needs a `dumpe2fs -h` diff of the two images to confirm which
+field, done in pass 2). **So byte-identical reproducibility is NOT yet achieved** — honest status:
+the pipeline, the integrity/churn checker, and the reproducibility GATE are done and tested (the
+gate correctly refuses to pass a non-reproducible build), but the ext4-metadata determinism fix
+is unfinished. `build.sh` now dumps the differing chunk indices + keeps both `.ext4` images on a
+failed REPRO_CHECK so pass 2 can `dumpe2fs`-diff and pinpoint the field.
 
-Gates: clippy(all-features) 0, fmt, determinism, cli tests. **Remaining (pass 2):** cross-host
-rebuild diff; mount-and-hunt (machine-id / ssh keys / mtimes > epoch); adopt the rebuilt artifact
-as the web default + regenerate web/artifacts-alpine.json; the boot-through-streaming acceptance
-(same path E3-T02..T13 already prove).
+Gates: clippy(all-features) 0, fmt, determinism, cli tests. **Remaining (pass 2):** finish the
+byte-repro fix (dumpe2fs-diff → pin the residual superblock field); cross-host rebuild diff;
+mount-and-hunt (machine-id / ssh keys / mtimes > epoch); adopt the rebuilt artifact as the web
+default + regenerate web/artifacts-alpine.json; boot-through-streaming acceptance.

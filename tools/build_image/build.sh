@@ -36,6 +36,8 @@ build_and_chunk_to() {
   local dest="$1"
   log "building the Alpine rootfs (Docker)…"
   bash tools/build-rootfs.sh
+  # Keep a copy of the image alongside its chunk set so a failed REPRO_CHECK can dumpe2fs-diff.
+  cp -f "$ROOTFS" "${dest}.ext4" 2>/dev/null || true
   log "chunking → $dest (chunk-size $CHUNK_SIZE)…"
   rm -rf "$dest"
   "$CLI" chunk "$ROOTFS" --out "$dest" --chunk-size "$CHUNK_SIZE" --layout split
@@ -47,7 +49,18 @@ if [ "${REPRO_CHECK:-0}" = 1 ]; then
   build_and_chunk_to "target/repro-b"
   if ! diff -q "target/repro-a/manifest.json" "target/repro-b/manifest.json" >/dev/null; then
     log "FAIL: two builds produced different manifests — the image is not byte-reproducible."
-    diff "target/repro-a/manifest.json" "target/repro-b/manifest.json" >&2 || true
+    "$CLI" chunk-churn --old target/repro-a --new target/repro-b >&2 || true
+    # Pinpoint the nondeterministic ext4 metadata: which chunk INDICES differ (index 0-3 =
+    # superblock/group-descriptors/inode-table). A dumpe2fs of both images (kept as
+    # target/repro-{a,b}.ext4 when REPRO_CHECK) narrows it to a superblock field / inode order.
+    python3 - <<'PY' >&2 || true
+import json
+a=json.load(open('target/repro-a/manifest.json'))['chunks']
+b=json.load(open('target/repro-b/manifest.json'))['chunks']
+d=[i for i,(x,y) in enumerate(zip(a,b)) if x!=y]
+print("build_image: differing chunk indices:", d[:32], "total", len(d))
+print("build_image: (0-3 = ext4 superblock/GDT/inode-table metadata; dumpe2fs both to pinpoint)")
+PY
     exit 1
   fi
   log "reproducibility OK: identical manifest across two builds."
