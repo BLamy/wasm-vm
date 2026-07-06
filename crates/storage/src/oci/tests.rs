@@ -230,3 +230,58 @@ fn classify_recognizes_both_whiteout_forms() {
         Classified::Ordinary
     ));
 }
+
+// ── Critic-adopted (E3.5-T01): CRITICAL escape + MAJOR opaque-ordering, asserting the FIXES ──
+
+/// Critic MAJOR 3a (fixed): an opaque marker AFTER a same-layer file, in hostile tar order, must
+/// drop only LOWER-layer contents — the same layer's own file survives.
+#[test]
+fn opaque_after_same_layer_file_keeps_it() {
+    let t = build(vec![
+        (
+            vec!["app", "app/old"],
+            vec![dir("app"), file("app/old", b"o")],
+        ),
+        (
+            vec!["app/new", "app/.wh..wh..opq"],
+            vec![file("app/new", b"n")],
+        ),
+    ]);
+    assert!(
+        !t.contains_key("app/old"),
+        "lower content dropped (correct)"
+    );
+    assert!(
+        t.contains_key("app/new"),
+        "same-layer file survives the opaque sweep (fixed)"
+    );
+}
+
+/// Critic CRITICAL 1a (fixed): a path descending through a symlink ancestor is REJECTED by the
+/// applier — the tar symlink-traversal escape seed can never enter the tree.
+#[test]
+fn descent_through_symlink_ancestor_is_rejected() {
+    let mut tree = Tree::new();
+    let raws = vec!["evil".to_string(), "evil/passwd".to_string()];
+    let entries = alloc::vec![
+        Entry::Symlink {
+            path: "evil".to_string(),
+            target: "/etc".to_string()
+        },
+        file("evil/passwd", b"x"),
+    ];
+    let r = apply_layer(&mut tree, &raws, |p| {
+        let clean = safe_path(p)?;
+        Ok(entries.iter().find(|e| entry_path(e) == clean).cloned())
+    });
+    assert!(
+        matches!(r, Err(OciError::SymlinkTraversal { .. })),
+        "got {r:?}"
+    );
+    // The symlink itself was placed, but nothing UNDER it.
+    assert!(matches!(tree.get("evil"), Some(Node::Symlink { .. })));
+    assert!(
+        !tree.contains_key("evil/passwd"),
+        "no path materialized under the symlink"
+    );
+}

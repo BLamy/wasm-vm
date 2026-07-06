@@ -150,30 +150,63 @@ fn pick_arch<'a>(descs: &'a [Descriptor], arch: &str) -> Option<&'a Descriptor> 
     None
 }
 
-/// Parse one decompressed layer tar into `(ordered_raw_paths, entries_by_path)` and apply it.
-fn apply_layer_tar(tree: &mut Tree, tar_bytes: &[u8]) -> Result<(), UnpackError> {
-    // Gzip is the near-universal layer compression; a stored (uncompressed) tar starts with a
-    // ustar header, so sniff the gzip magic and only inflate when present.
-    let raw: Vec<u8> = if tar_bytes.starts_with(&[0x1f, 0x8b]) {
-        let mut d = GzDecoder::new(tar_bytes);
-        let mut out = Vec::new();
-        d.read_to_end(&mut out)
-            .map_err(|e| UnpackError::Io(format!("gunzip: {e}")))?;
-        out
-    } else {
-        tar_bytes.to_vec()
-    };
+/// Total decompressed bytes we will read from a single layer before treating it as a bomb. Far
+/// above any real riscv64 base/database image, well below OOM. Streamed — never buffered whole.
+const MAX_LAYER_BYTES: u64 = 8 * 1024 * 1024 * 1024;
 
-    // First pass: collect ordered member paths + build the entry map (tar's Archive is a
-    // single-pass reader, so materialize what the applier needs).
+/// Parse one layer tar (gzip-sniffed) STREAMING from the decompressor and apply it, refusing to
+/// read past `budget` decompressed bytes (the gzip-bomb DoS guard — critic MAJOR 2d; streaming so
+/// a bomb never buffers to RAM).
+fn apply_layer_tar(tree: &mut Tree, tar_bytes: &[u8]) -> Result<(), UnpackError> {
+    apply_layer_tar_capped(tree, tar_bytes, MAX_LAYER_BYTES)
+}
+
+fn cap_err(budget: u64) -> UnpackError {
+    UnpackError::Io(format!(
+        "layer inflates past the {budget}-byte cap (possible decompression bomb)"
+    ))
+}
+
+fn apply_layer_tar_capped(
+    tree: &mut Tree,
+    tar_bytes: &[u8],
+    budget: u64,
+) -> Result<(), UnpackError> {
+    // A stored (uncompressed) tar starts with a ustar header; only inflate on the gzip magic.
+    // `Read::take(budget + 1)` bounds the TOTAL bytes pulled from the (possibly bombing) stream;
+    // we detect overflow by seeing the reader still has bytes at the cap.
+    let gz = tar_bytes.starts_with(&[0x1f, 0x8b]);
+    let src: Box<dyn Read> = if gz {
+        Box::new(GzDecoder::new(tar_bytes))
+    } else {
+        Box::new(tar_bytes)
+    };
+    let count = std::rc::Rc::new(std::cell::Cell::new(0u64));
+    let mut counted = CountingRead {
+        inner: src.take(budget + 1),
+        count: count.clone(),
+    };
+    // Once the capped stream is exhausted, tar reads fail with EOF; map those to the cap error.
+    let over = || count.get() > budget;
+
+    // Single streaming pass: collect ordered member paths + the entry map the applier needs.
     let mut ordered: Vec<String> = Vec::new();
     let mut by_path: std::collections::HashMap<String, Entry> = std::collections::HashMap::new();
-    let mut ar = tar::Archive::new(&raw[..]);
-    for ent in ar
-        .entries()
-        .map_err(|e| UnpackError::Io(format!("tar: {e}")))?
-    {
-        let mut ent = ent.map_err(|e| UnpackError::Io(format!("tar entry: {e}")))?;
+    let mut ar = tar::Archive::new(&mut counted);
+    for ent in ar.entries().map_err(|e| {
+        if over() {
+            cap_err(budget)
+        } else {
+            UnpackError::Io(format!("tar: {e}"))
+        }
+    })? {
+        let mut ent = ent.map_err(|e| {
+            if over() {
+                cap_err(budget)
+            } else {
+                UnpackError::Io(format!("tar entry: {e}"))
+            }
+        })?;
         let raw_path = ent
             .path()
             .map_err(|e| UnpackError::Io(format!("tar path: {e}")))?
@@ -220,8 +253,13 @@ fn apply_layer_tar(tree: &mut Tree, tar_bytes: &[u8]) -> Result<(), UnpackError>
             }
             _ => {
                 let mut data = Vec::new();
-                ent.read_to_end(&mut data)
-                    .map_err(|e| UnpackError::Io(format!("tar read: {e}")))?;
+                ent.read_to_end(&mut data).map_err(|e| {
+                    if over() {
+                        cap_err(budget)
+                    } else {
+                        UnpackError::Io(format!("tar read: {e}"))
+                    }
+                })?;
                 Entry::File {
                     path: clean,
                     mode,
@@ -231,8 +269,30 @@ fn apply_layer_tar(tree: &mut Tree, tar_bytes: &[u8]) -> Result<(), UnpackError>
         };
         by_path.insert(raw_path, entry);
     }
+    // Drop the archive borrow, then confirm we didn't hit the cap (a bomb keeps producing bytes
+    // past `budget`, so `count` reaches budget+1).
+    // `count` is a shared Rc<Cell> (not borrowed via `ar`), so it can be read directly.
+    if count.get() > budget {
+        return Err(UnpackError::Io(format!(
+            "layer inflates past the {budget}-byte cap (possible decompression bomb)"
+        )));
+    }
 
     apply_layer(tree, &ordered, |raw| Ok(by_path.get(raw).cloned())).map_err(UnpackError::Oci)
+}
+
+/// A `Read` that counts the bytes it passes through — so we can detect a layer that decompresses
+/// past its budget without buffering the whole thing.
+struct CountingRead<R: Read> {
+    inner: R,
+    count: std::rc::Rc<std::cell::Cell<u64>>,
+}
+impl<R: Read> Read for CountingRead<R> {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        let n = self.inner.read(buf)?;
+        self.count.set(self.count.get() + n as u64);
+        Ok(n)
+    }
 }
 
 /// Write the flattened tree to `out`, refusing to follow any path outside it (belt-and-suspenders
@@ -246,17 +306,37 @@ fn write_tree(tree: &Tree, out: &Path) -> Result<usize, UnpackError> {
         if !dst.starts_with(out) {
             return Err(UnpackError::Oci(OciError::UnsafePath(path.clone())));
         }
+        // Critic CRITICAL 1a: refuse to write THROUGH a symlink. If any on-disk ancestor of `dst`
+        // is a symlink, a std::fs::write would follow it out of the root. The applier already
+        // rejects symlink-descent keys; this is the write-side belt so no path can escape even if
+        // the tree were built another way.
+        if let Some(bad) = symlinked_ancestor_on_disk(out, path) {
+            return Err(UnpackError::Oci(OciError::SymlinkTraversal {
+                path: path.clone(),
+                via: bad,
+            }));
+        }
         match node {
             Node::Dir { .. } => {
                 std::fs::create_dir_all(&dst)
                     .map_err(|e| UnpackError::Io(format!("{}: {e}", dst.display())))?;
             }
-            Node::File { data, .. } => {
+            Node::File { data, mode } => {
                 if let Some(p) = dst.parent() {
                     std::fs::create_dir_all(p).ok();
                 }
                 std::fs::write(&dst, data)
                     .map_err(|e| UnpackError::Io(format!("{}: {e}", dst.display())))?;
+                // Preserve the tar mode (esp. the exec bit — /bin/sh must be runnable). Mask to
+                // permission bits; the type bits come from the node kind.
+                #[cfg(unix)]
+                {
+                    use std::os::unix::fs::PermissionsExt;
+                    let _ = std::fs::set_permissions(
+                        &dst,
+                        std::fs::Permissions::from_mode(mode & 0o7777),
+                    );
+                }
                 n += 1;
             }
             Node::Symlink { target } => {
@@ -272,6 +352,28 @@ fn write_tree(tree: &Tree, out: &Path) -> Result<usize, UnpackError> {
         }
     }
     Ok(n)
+}
+
+/// The first on-disk ancestor of `<out>/<rel>` that is a symlink (via `symlink_metadata`, which
+/// does NOT follow), if any — used to refuse writing through a symlink.
+fn symlinked_ancestor_on_disk(out: &Path, rel: &str) -> Option<String> {
+    let mut acc = out.to_path_buf();
+    let comps: Vec<&str> = rel.split('/').collect();
+    // Check every ANCESTOR component (not the leaf — the leaf may legitimately be a symlink).
+    for comp in &comps[..comps.len().saturating_sub(1)] {
+        acc.push(comp);
+        if let Ok(md) = std::fs::symlink_metadata(&acc)
+            && md.file_type().is_symlink()
+        {
+            return Some(
+                acc.strip_prefix(out)
+                    .unwrap_or(&acc)
+                    .to_string_lossy()
+                    .into_owned(),
+            );
+        }
+    }
+    None
 }
 
 /// The library entry point (tested directly): unpack `layout` for `arch` into `out`, returning

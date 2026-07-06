@@ -161,3 +161,89 @@ fn missing_arch_is_a_typed_error() {
     let err = unpack_to_tree(td.path(), "s390x").unwrap_err();
     assert!(matches!(err, UnpackError::NoArch(_)), "got {err:?}");
 }
+
+// ── Critic-adopted (E3.5-T01): the escape is BLOCKED, the bomb is CAPPED ──
+
+/// Build an OCI layout whose single layer contains `evil -> <target>` then `evil/passwd`.
+fn escape_layout(layout: &Path, symlink_target: &str) {
+    let mut gz = flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::fast());
+    {
+        let mut ar = tar::Builder::new(&mut gz);
+        let mut h = tar::Header::new_gnu();
+        h.set_entry_type(tar::EntryType::Symlink);
+        h.set_size(0);
+        h.set_mode(0o777);
+        h.set_cksum();
+        ar.append_link(&mut h, "evil", symlink_target).unwrap();
+        let data = b"PWNED";
+        let mut hf = tar::Header::new_gnu();
+        hf.set_entry_type(tar::EntryType::Regular);
+        hf.set_size(data.len() as u64);
+        hf.set_mode(0o644);
+        hf.set_cksum();
+        ar.append_data(&mut hf, "evil/passwd", &data[..]).unwrap();
+        ar.finish().unwrap();
+    }
+    let blob = gz.finish().unwrap();
+    let d = put_blob(layout, &blob);
+    let manifest = format!(
+        r#"{{"schemaVersion":2,"mediaType":"application/vnd.oci.image.manifest.v1+json","config":{{"digest":"{c}","size":0}},"layers":[{{"mediaType":"application/vnd.oci.image.layer.v1.tar+gzip","digest":"{d}","size":0}}]}}"#,
+        c = put_blob(layout, b"{}"),
+    );
+    let mdig = put_blob(layout, manifest.as_bytes());
+    let index = format!(
+        r#"{{"schemaVersion":2,"manifests":[{{"digest":"{mdig}","size":0,"platform":{{"architecture":"riscv64","os":"linux"}}}}]}}"#
+    );
+    std::fs::write(layout.join("index.json"), index).unwrap();
+}
+
+#[test]
+fn symlink_traversal_escape_is_blocked() {
+    for target in [
+        "/tmp/wasmvm-oci-victim",
+        "../../../../../../tmp/wasmvm-oci-victim",
+    ] {
+        let td = tempfile::tempdir().unwrap();
+        escape_layout(td.path(), target);
+        let out = td.path().join("root");
+        // Unpack must FAIL (SymlinkTraversal), and NOTHING may be written outside `out`.
+        let victim = std::path::Path::new("/tmp/wasmvm-oci-victim/passwd");
+        let _ = std::fs::remove_dir_all("/tmp/wasmvm-oci-victim");
+        let tree = unpack_to_tree(td.path(), "riscv64");
+        // The applier rejects the descent; if it somehow produced a tree, write must also refuse.
+        if let Ok(t) = tree {
+            let _ = write_tree(&t, &out);
+        }
+        assert!(
+            !victim.exists(),
+            "CONTAINER ESCAPE: {} was created outside the root",
+            victim.display()
+        );
+    }
+}
+
+#[test]
+fn gzip_bomb_is_capped() {
+    // A highly-compressible member far larger than a small budget → the streaming cap errors
+    // instead of buffering it. Uses the capped inner fn with a 1 MiB budget so the test is fast.
+    let mut gz = flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::best());
+    {
+        let mut ar = tar::Builder::new(&mut gz);
+        let size: u64 = 64 * 1024 * 1024; // 64 MiB of zeros → ~KB compressed, past the 1 MiB budget
+        let mut h = tar::Header::new_gnu();
+        h.set_entry_type(tar::EntryType::Regular);
+        h.set_size(size);
+        h.set_mode(0o644);
+        h.set_cksum();
+        ar.append_data(&mut h, "big", std::io::repeat(0u8).take(size))
+            .unwrap();
+        ar.finish().unwrap();
+    }
+    let blob = gz.finish().unwrap();
+    let mut tree = Tree::new();
+    let err = apply_layer_tar_capped(&mut tree, &blob, 1024 * 1024).unwrap_err();
+    assert!(
+        matches!(err, UnpackError::Io(m) if m.contains("cap")),
+        "expected a cap error, got other"
+    );
+}

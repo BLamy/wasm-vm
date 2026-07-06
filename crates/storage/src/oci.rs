@@ -63,6 +63,10 @@ pub enum OciError {
     UnsafePath(String),
     /// A hardlink names a target that hasn't been applied yet.
     DanglingHardlink { path: String, target: String },
+    /// An entry's path descends through a SYMLINK ancestor already in the tree — the classic
+    /// tar symlink-traversal escape (a layer creates `evil -> /etc` then `evil/passwd`). Rejected
+    /// so the writer can never follow the symlink out of the root (critic CRITICAL).
+    SymlinkTraversal { path: String, via: String },
 }
 
 /// Normalize + safety-check a tar path: strip a leading `./`, reject absolute paths, empty paths,
@@ -133,6 +137,27 @@ pub fn classify(raw: &str) -> Result<Classified, OciError> {
     Ok(Classified::Ordinary)
 }
 
+/// The first ANCESTOR of `path` that is a symlink node in the tree, if any. A path may only
+/// descend through real directories — descending through a symlink is a containment escape.
+fn symlinked_ancestor(tree: &Tree, path: &str) -> Option<String> {
+    let mut acc = String::new();
+    for comp in path.split('/') {
+        if acc.is_empty() {
+            acc.push_str(comp);
+        } else {
+            acc.push('/');
+            acc.push_str(comp);
+        }
+        if acc == path {
+            break; // the leaf itself may legitimately BE a symlink; only ancestors matter
+        }
+        if matches!(tree.get(&acc), Some(Node::Symlink { .. })) {
+            return Some(acc);
+        }
+    }
+    None
+}
+
 /// Remove `target` and its entire subtree from the tree.
 fn remove_subtree(tree: &mut Tree, target: &str) {
     let victims: Vec<String> = tree.keys().filter(|k| under(k, target)).cloned().collect();
@@ -153,13 +178,15 @@ pub fn apply_layer<F>(tree: &mut Tree, raw_paths: &[String], mut resolve: F) -> 
 where
     F: FnMut(&str) -> Result<Option<Entry>, OciError>,
 {
+    // Keys THIS layer adds — an opaque marker must only wipe LOWER-layer contents, never a file
+    // this same layer already placed in the opaque dir (critic MAJOR: hostile tar order).
+    let mut added: alloc::collections::BTreeSet<String> = alloc::collections::BTreeSet::new();
     for raw in raw_paths {
         match classify(raw)? {
             Classified::Opaque { dir } => {
-                // Drop everything the lower layers put strictly UNDER `dir` (keep `dir` itself).
                 let victims: Vec<String> = tree
                     .keys()
-                    .filter(|k| k.as_str() != dir && under(k, &dir))
+                    .filter(|k| k.as_str() != dir && under(k, &dir) && !added.contains(*k))
                     .cloned()
                     .collect();
                 for k in victims {
@@ -169,19 +196,32 @@ where
             Classified::Delete { target } => remove_subtree(tree, &target),
             Classified::Ordinary => {
                 let Some(entry) = resolve(raw)? else { continue };
-                insert_entry(tree, entry)?;
+                let key = insert_entry(tree, entry)?;
+                added.insert(key);
             }
         }
     }
     Ok(())
 }
 
-fn insert_entry(tree: &mut Tree, entry: Entry) -> Result<(), OciError> {
+fn insert_entry(tree: &mut Tree, entry: Entry) -> Result<String, OciError> {
+    // CRITICAL (critic 1a): no entry may descend through a symlink ancestor already in the tree
+    // — that is the tar symlink-traversal escape. Checked for every path before insertion.
+    let raw = match &entry {
+        Entry::File { path, .. }
+        | Entry::Dir { path, .. }
+        | Entry::Symlink { path, .. }
+        | Entry::Hardlink { path, .. } => safe_path(path)?,
+    };
+    if let Some(via) = symlinked_ancestor(tree, &raw) {
+        return Err(OciError::SymlinkTraversal { path: raw, via });
+    }
     match entry {
         Entry::Dir { path, mode } => {
             let path = safe_path(&path)?;
             // A dir replacing a file: just overwrite the node (no subtree to clear for a file).
-            tree.insert(path, Node::Dir { mode });
+            tree.insert(path.clone(), Node::Dir { mode });
+            Ok(path)
         }
         Entry::File { path, mode, data } => {
             let path = safe_path(&path)?;
@@ -189,14 +229,16 @@ fn insert_entry(tree: &mut Tree, entry: Entry) -> Result<(), OciError> {
             if matches!(tree.get(&path), Some(Node::Dir { .. })) {
                 remove_subtree(tree, &path);
             }
-            tree.insert(path, Node::File { mode, data });
+            tree.insert(path.clone(), Node::File { mode, data });
+            Ok(path)
         }
         Entry::Symlink { path, target } => {
             let path = safe_path(&path)?;
             if matches!(tree.get(&path), Some(Node::Dir { .. })) {
                 remove_subtree(tree, &path);
             }
-            tree.insert(path, Node::Symlink { target });
+            tree.insert(path.clone(), Node::Symlink { target });
+            Ok(path)
         }
         Entry::Hardlink { path, target } => {
             let path = safe_path(&path)?;
@@ -208,10 +250,10 @@ fn insert_entry(tree: &mut Tree, entry: Entry) -> Result<(), OciError> {
                     path: path.clone(),
                     target,
                 })?;
-            tree.insert(path, node);
+            tree.insert(path.clone(), node);
+            Ok(path)
         }
     }
-    Ok(())
 }
 
 #[cfg(test)]
