@@ -75,6 +75,10 @@ async function runLinuxBoot(opts, banner) {
     });
     const ctlForRelease = linuxCtl;
     linuxCtl.whenDone.then((state) => {
+      // E3-T09 (critic NOTE-1): release the writer lock on EVERY terminal outcome (halt,
+      // error, stop) — release is idempotent, and a future writer-stop UI path must not
+      // strand the lock until tab close.
+      try { ctlForRelease?.releaseWriterLock?.(); } catch {}
       ui.detachSink();
       bootBtns.forEach((b) => b && (b.disabled = false));
       linuxCtl = null;
@@ -83,9 +87,6 @@ async function runLinuxBoot(opts, banner) {
       const halt = { poweroff: "powered off", reboot: "rebooted (halted)", error: "error" };
       const reason = halt[state] || (state?.startsWith?.("exited") ? state : state?.startsWith?.("fail") ? state : null);
       if (reason) {
-        // E3-T09: on clean halt, release the writer lock so another tab can take over.
-        // (linuxCtl is already nulled above — use the captured controller.)
-        try { ctlForRelease?.releaseWriterLock?.(); } catch {}
         setStatus(`⏻ machine halted — ${reason}`);
         term.writeln(`\r\n\x1b[7m machine halted (${reason}) — click "Boot Linux"/"Boot Alpine" to boot a fresh machine \x1b[0m`);
       } else {

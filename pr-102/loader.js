@@ -120,6 +120,10 @@ export async function startLinuxBoot(opts = {}) {
     onWriterStatus = () => {},
     quantum = 2_000_000,
   } = opts;
+  // E3-T09 (critic BUG-1): hoisted ABOVE the try so the catch can release a granted writer
+  // lock when boot fails AFTER acquisition — otherwise a banner-less zombie tab strands the
+  // lock until close and every other tab silently boots read-only.
+  let releaseLock = null;
   const isChunked = mode === "chunked";
   // Disk/chunked modes leave bootargs empty so WasmLinux supplies `root=/dev/vda rw …`.
   const bootargs = opts.bootargs ?? (mode === "initramfs" ? "console=ttyS0 earlycon=sbi" : "");
@@ -188,14 +192,18 @@ export async function startLinuxBoot(opts = {}) {
     const maxDirtyBytes = opts.persistMax ?? 16 * 1024 * 1024;
     let machine;
     let readOnly = false;
-    let releaseLock = null;
     if (usePersist) {
       // E3-T09 single-writer discipline: exactly one tab may open the overlay writable. The
       // exclusive Web Lock (auto-released on tab close/crash — no heartbeats) is acquired
       // BEFORE the writable store opens; a second tab probes with ifAvailable (queueing would
       // hang its boot) and falls back to a read-only boot: writes rejected at the backend
       // seam, VIRTIO_BLK_F_RO advertised, guest mounts `/` ro, NO persist pump.
-      const lockName = `wasm-vm-disk-${imageManifestUrl}`;
+      // E3-T09 (critic BUG-3): key the lock on the MANIFEST CONTENT digest, not the URL
+      // string — the IndexedDB name is keyed on the base hash, so two URL spellings of the
+      // same image must contend for the SAME lock.
+      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(imageManifestText));
+      const hex = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+      const lockName = `wasm-vm-disk-${hex}`;
       if (navigator.locks) {
         const granted = await new Promise((resolve) => {
           navigator.locks
@@ -214,6 +222,12 @@ export async function startLinuxBoot(opts = {}) {
             .catch(() => resolve(false));
         });
         readOnly = !granted;
+      } else {
+        // E3-T09 (critic BUG-2): without the Web Locks API there is NO single-writer
+        // guarantee — fail CLOSED (read-only) rather than silently risking a double writer
+        // against the shared IndexedDB.
+        console.warn("wasm-vm: Web Locks API unavailable — persistent boot forced read-only");
+        readOnly = true;
       }
       onWriterStatus({ readOnly });
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
@@ -357,6 +371,11 @@ export async function startLinuxBoot(opts = {}) {
       whenDone,
     };
   } catch (e) {
+    // E3-T09 (critic BUG-1): a granted writer lock must not outlive a failed boot.
+    if (releaseLock) {
+      releaseLock();
+      releaseLock = null;
+    }
     onState("error");
     onError(e);
     throw e;
