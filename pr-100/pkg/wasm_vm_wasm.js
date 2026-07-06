@@ -214,6 +214,22 @@ export class WasmLinux {
         return ret;
     }
     /**
+     * E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
+     * reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
+     * means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
+     * driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
+     * so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
+     * boots.
+     * @returns {any}
+     */
+    persistStats() {
+        const ret = wasm.wasmlinux_persistStats(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
      * 16550 RX, and return `{ done: bool, state: string|null }`. `state` is `"poweroff"`,
      * `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or `"trap:<cause>"` once terminal.
