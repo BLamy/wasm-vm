@@ -40,6 +40,12 @@ pub enum BlockError {
     /// request and completes it on a later boundary once the chunk arrives. Synchronous backends
     /// (MemBackend, the native file backend) never return it, so the deferred path stays dead there.
     WouldBlock { chunk: usize },
+    /// E3-T08: a FLUSH was accepted but the write-back data it covers has not durably committed
+    /// yet (an async store's transaction is still in flight). The virtio-blk service PARKS the
+    /// FLUSH request and retries it each boundary; it completes — and only then advances the used
+    /// ring — once the backend reports the durability barrier clear. Synchronous backends never
+    /// return it (their `flush` IS the barrier).
+    FlushPending,
 }
 
 /// Object-safe storage backend, sector-addressed in 512-byte units.

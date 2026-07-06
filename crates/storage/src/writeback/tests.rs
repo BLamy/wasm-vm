@@ -195,3 +195,78 @@ fn overlay_disk_reads_merge_over_base_through_write_back() {
         OverlayOutcome::Done(expect)
     );
 }
+
+// ── E3-T08: FLUSH durability barriers ───────────────────────────────────────────────────────
+
+/// A barrier is exactly the pending block set; a full persist round clears it.
+#[test]
+fn barrier_taken_and_cleared_by_persist_round() {
+    let m = manifest(4 * OVERLAY_BLOCK as u64);
+    let mut ov = WriteBackOverlay::new(&m);
+    assert!(ov.durability_barrier().is_none(), "durable when empty");
+
+    ov.write_block(0, blk(1));
+    ov.write_block(2, blk(2));
+    let barrier = ov.durability_barrier().expect("pending data → barrier");
+    assert_eq!(barrier, vec![0, 2]);
+    assert!(!ov.barrier_clear(&barrier), "not durable yet");
+
+    // The async store drains + marks (simulated).
+    let snap = ov.shared_queue().borrow().pending_flush();
+    let p = pairs(&snap);
+    ov.shared_queue().borrow_mut().mark_persisted(&p);
+    assert!(ov.barrier_clear(&barrier), "barrier clear after the round");
+    assert!(ov.durability_barrier().is_none(), "queue empty again");
+}
+
+/// Writes AFTER the barrier don't extend it: draining only the barrier blocks satisfies the
+/// FLUSH even while newer writes remain pending (a flush covers only writes completed before
+/// it was issued).
+#[test]
+fn post_barrier_writes_do_not_extend_the_barrier() {
+    let m = manifest(4 * OVERLAY_BLOCK as u64);
+    let mut ov = WriteBackOverlay::new(&m);
+    ov.write_block(0, blk(1));
+    let barrier = ov.durability_barrier().unwrap();
+    assert_eq!(barrier, vec![0]);
+
+    // Snapshot FIRST (covers only block 0), THEN a post-barrier write to block 3 lands.
+    let snap = ov.shared_queue().borrow().pending_flush();
+    ov.write_block(3, blk(3));
+    let p = pairs(&snap);
+    ov.shared_queue().borrow_mut().mark_persisted(&p);
+
+    assert!(
+        ov.barrier_clear(&barrier),
+        "barrier satisfied though block 3 still pending"
+    );
+    assert_eq!(ov.shared_queue().borrow().unpersisted_count(), 1);
+}
+
+/// The honesty case (mirrors the E3-T05 lost-write guard): a barrier block RE-written mid-flush
+/// keeps the barrier held — the pre-flush version never became durable, so acking would lie.
+/// The barrier releases only when the coalesced newer version persists.
+#[test]
+fn re_dirtied_barrier_block_keeps_flush_waiting() {
+    let m = manifest(4 * OVERLAY_BLOCK as u64);
+    let mut ov = WriteBackOverlay::new(&m);
+    ov.write_block(0, blk(1));
+    let barrier = ov.durability_barrier().unwrap();
+
+    // The store snapshots gen-1, but the guest re-writes block 0 (gen-2) before the txn lands.
+    let snap = ov.shared_queue().borrow().pending_flush();
+    ov.write_block(0, blk(9));
+    let p = pairs(&snap);
+    ov.shared_queue().borrow_mut().mark_persisted(&p); // gen guard: block 0 stays pending
+
+    assert!(
+        !ov.barrier_clear(&barrier),
+        "hostile-commit guard: the barrier must NOT clear — gen-1 never reached disk"
+    );
+
+    // The next round persists gen-2 → now the flush is honestly durable.
+    let snap2 = ov.shared_queue().borrow().pending_flush();
+    let p2 = pairs(&snap2);
+    ov.shared_queue().borrow_mut().mark_persisted(&p2);
+    assert!(ov.barrier_clear(&barrier));
+}

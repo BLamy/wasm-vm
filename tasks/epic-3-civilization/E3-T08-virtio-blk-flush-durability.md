@@ -3,7 +3,7 @@ id: E3-T08
 epic: 3
 title: Map virtio-blk flush to backend commit with crash consistency
 priority: 308
-status: pending
+status: in_progress
 depends_on: [E3-T05]
 estimate: M
 capstone: false
@@ -62,4 +62,36 @@ commit's durability. Kill during the *idle trickle drain* specifically. Any boot
 manual fsck, any file with mixed old/new content across a flush boundary, refutes.
 
 ## Verification log
-(empty)
+
+**2026-07-06 — ordering-contract core (pass 1), PR stacked on the backlog-oci branch.**
+The honest-durability seam, native-testable end to end:
+- `PersistQueue::barrier()/barrier_clear()` (crates/storage/writeback.rs): a FLUSH barrier is
+  the pending block set at issue time; satisfied when every barrier block has left the queue.
+  Post-barrier writes don't extend it; a barrier block RE-written mid-flush keeps the barrier
+  held (the pre-flush version never became durable — the generation guard makes a lying
+  `mark_persisted` unable to clear it, which is the built-in hostile-commit defense).
+- `OverlayBackend::{durability_barrier, barrier_clear}` (default: always durable — MemOverlay
+  and other sync backends unaffected) + `WriteBackOverlay` override via its shared queue;
+  threaded through `OverlayDisk`.
+- `BlockError::FlushPending` (crates/core/block.rs) + blk.rs `ParkReason::{Chunk, Flush}`
+  refactor: T_FLUSH parks on FlushPending exactly like lazy reads/writes park on chunks —
+  used ring untouched, no status byte, retried each boundary, completed exactly once when the
+  barrier clears. `pending_chunks()` filters Flush parks (never reported to the fetch layer);
+  `flush_waiting()` exposes the state; transport reset discards parked FLUSHes with the rest.
+- `ChunkedBackend::flush()` holds ONE barrier across retries (never re-takes it — continuous
+  guest writes cannot extend the wait/livelock the FLUSH).
+
+Tests: storage barrier suite (3 — taken/cleared, post-barrier non-extension, re-dirty keeps
+waiting); core `virtio_blk_flush.rs` (3 — **the acceptance ordering test**: a delayed commit
+provably delays the used-ring completion (status byte poisoned + verified untouched while
+parked; ack lands exactly once on the boundary after the commit resolves, commit counter = 1),
+immediate-ack when durable, transport reset discards a parked FLUSH with no stale ack);
+wasm-native `flush_barrier_over_writeback_overlay` (FlushPending→drain barrier only→Ok while a
+newer write stays pending→new flush covers it). Gates: clippy 0 / determinism / core+storage(51)
+suites / wasm32 builds all green. `VIRTIO_BLK_F_FLUSH` was already advertised (E2-T11);
+`flush_count` documents attempt-counting semantics (tests read the backend's own commit counter).
+
+**Remaining (pass 2):** wasm pump prioritization when `flush_waiting()` (persistPending already
+runs per tick), dirty-bytes threshold force-drain + idle trickle documentation, `tools/crashtest`
+tab-kill loop (IDB backend, ≥10-30 kills → fsck clean/recovered), guest `sync` → exactly-one-
+commit instrumentation check in-browser. OPFS-backend crashtest re-run deferred to E3-T07 (groomed).
