@@ -1,0 +1,19 @@
+[package]
+name = "wasm-vm-storage"
+version = "0.0.1"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+# E3-T01: the chunked disk-image format — pure types + math + SHA-256 verification. Browser-agnostic
+# by construction (NO web-sys/js-sys/fetch here — Epic 3's lazy-fetch/cache/overlay layers live in
+# crates/wasm and depend on THIS). `no_std` + `alloc` so it compiles for wasm32-unknown-unknown.
+[dependencies]
+serde = { version = "1", default-features = false, features = ["derive", "alloc"] }
+# JSON manifest parsing. `alloc` (not default `std`) keeps the crate no_std; without `preserve_order`
+# serde_json's object map is a BTreeMap (no HashMap → deterministic, no nondeterminism hazard).
+serde_json = { version = "1", default-features = false, features = ["alloc"] }
+sha2 = { version = "0.10", default-features = false }
+
+[dev-dependencies]
+proptest = "1"
