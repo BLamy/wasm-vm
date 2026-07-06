@@ -51,6 +51,23 @@ export class WasmLinux {
         }
     }
     /**
+     * E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
+     * reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
+     * means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
+     * driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
+     * so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
+     * boots.
+     * E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
+     * can proceed instead of blocking on our open handle. Call before wiping; the machine must
+     * not persist afterward. No-op off the persistent path.
+     */
+    closeStorage() {
+        const ret = wasm.wasmlinux_closeStorage(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
@@ -264,12 +281,6 @@ export class WasmLinux {
         }
     }
     /**
-     * E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
-     * reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
-     * means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
-     * driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
-     * so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
-     * boots.
      * E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
      * storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
      * so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the
@@ -588,6 +599,9 @@ function __wbg_get_imports() {
             const ret = arg0.call(arg1, arg2);
             return ret;
         }, arguments); },
+        __wbg_close_4c3686e8e8c6d353: function(arg0) {
+            arg0.close();
+        },
         __wbg_createObjectStore_ff668af6e79f0433: function() { return handleError(function (arg0, arg1, arg2) {
             const ret = arg0.createObjectStore(getStringFromWasm0(arg1, arg2));
             return ret;
@@ -883,6 +897,9 @@ function __wbg_get_imports() {
         __wbg_set_onupgradeneeded_7b2cf4ba1c57e655: function(arg0, arg1) {
             arg0.onupgradeneeded = arg1;
         },
+        __wbg_set_onversionchange_c4d25c90ac386854: function(arg0, arg1) {
+            arg0.onversionchange = arg1;
+        },
         __wbg_stack_3b0d974bbf31e44f: function(arg0, arg1) {
             const ret = arg1.stack;
             const ptr1 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -934,17 +951,17 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000001: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 142, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 144, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h4dab88d0e3c13e7c);
             return ret;
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 76, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 82, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h268857b0ab0b8859);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 76, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 82, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h268857b0ab0b8859_2);
             return ret;
         },

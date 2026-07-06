@@ -20,6 +20,18 @@ export class WasmLinux {
      */
     bootProfile(): string;
     /**
+     * E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
+     * reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
+     * means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
+     * driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
+     * so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
+     * boots.
+     * E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
+     * can proceed instead of blocking on our open handle. Call before wiping; the machine must
+     * not persist afterward. No-op off the persistent path.
+     */
+    closeStorage(): void;
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
@@ -92,12 +104,6 @@ export class WasmLinux {
      */
     sendInput(bytes: Uint8Array): void;
     /**
-     * E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
-     * reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
-     * means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
-     * driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
-     * so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
-     * boots.
      * E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
      * storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
      * so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the
@@ -203,6 +209,7 @@ export interface InitOutput {
     readonly overlayDbName: (a: number, b: number) => [number, number, number, number];
     readonly version: () => [number, number];
     readonly wasmlinux_bootProfile: (a: number) => [number, number, number, number];
+    readonly wasmlinux_closeStorage: (a: number) => [number, number];
     readonly wasmlinux_fetchPending: (a: number) => any;
     readonly wasmlinux_fetchStats: (a: number) => [number, number, number];
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];

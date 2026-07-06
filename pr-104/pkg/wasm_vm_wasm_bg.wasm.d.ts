@@ -7,6 +7,7 @@ export const bench: (a: number) => [number, number, number];
 export const overlayDbName: (a: number, b: number) => [number, number, number, number];
 export const version: () => [number, number];
 export const wasmlinux_bootProfile: (a: number) => [number, number, number, number];
+export const wasmlinux_closeStorage: (a: number) => [number, number];
 export const wasmlinux_fetchPending: (a: number) => any;
 export const wasmlinux_fetchStats: (a: number) => [number, number, number];
 export const wasmlinux_hasUnpersisted: (a: number) => [number, number, number];

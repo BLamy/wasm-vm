@@ -62,13 +62,19 @@ async function runLinuxBoot(opts, banner) {
       // E3-T10: storage quota hit — the VM is PAUSED; show the actionable dialog. The three
       // choices map to loader controller actions (retry after freeing space / continue
       // read-only / reset disk). No option silently drops a durable write.
-      onQuota: ({ usage, quota }) => {
+      onQuota: ({ usage, quota, unsaved }) => {
         const el = document.getElementById("quota-dialog");
         if (!el) return;
         const pct = quota ? `${((usage / quota) * 100) | 0}%` : "full";
         el.style.display = "block";
+        // Honest copy (critic BUG-1): writes the guest already ACKed but that never reached disk
+        // stay pending — "Free space & retry" saves them; "Continue read-only" keeps trying in the
+        // background but they are NOT durable until space frees (a reload before then loses them).
+        const warn = unsaved
+          ? ' <b>Some acknowledged writes are not yet saved</b> — free space and Retry to persist them; a reload before then loses them.'
+          : "";
         el.innerHTML =
-          `<b>Storage full</b> (${pct} of ${(quota / 1048576) | 0}MB). The VM is paused — no write was lost. ` +
+          `<b>Storage full</b> (${pct} of ${(quota / 1048576) | 0}MB). The VM is paused.${warn} ` +
           '<button id="q-retry">Free space in guest & retry</button> ' +
           '<button id="q-ro">Continue read-only</button> ' +
           '<button id="q-reset">Reset disk…</button>';
@@ -78,14 +84,19 @@ async function runLinuxBoot(opts, banner) {
           el.style.display = "none";
           linuxCtl?.continueReadOnly?.();
           const ro = document.getElementById("ro-banner");
-          if (ro) { ro.style.display = "block"; ro.textContent = "read-only: storage full — guest writes now return I/O errors"; }
+          if (ro) { ro.style.display = "block"; ro.textContent = "read-only: storage full — new guest writes return I/O errors; pending writes save if you free space"; }
         };
         document.getElementById("q-reset").onclick = async () => {
-          if (!confirm('Type-to-confirm in the next prompt. Reset wipes ALL guest changes for this image.')) return;
           const typed = prompt('This deletes every saved change to the Alpine disk. Type RESET to confirm:');
           if (typed !== "RESET") return;
           el.style.display = "none";
-          if (linuxCtl) { try { linuxCtl.stop(); } catch {} linuxCtl = null; }
+          // Critic BUG-4: close THIS tab's IndexedDB connection before deleteDatabase, or the
+          // delete blocks forever. stop() halts the run loop; closeStorage() drops the handle.
+          if (linuxCtl) {
+            try { linuxCtl.closeStorage(); } catch {}
+            try { linuxCtl.stop(); } catch {}
+            linuxCtl = null;
+          }
           try {
             await resetDisk();
             term.writeln("\r\n\x1b[33mdisk reset — reboot for a pristine filesystem\x1b[0m");
