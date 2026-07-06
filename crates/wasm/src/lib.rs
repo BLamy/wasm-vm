@@ -20,6 +20,15 @@ use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
 use wasm_vm_core::trace::{TraceRecord, TraceSink, fmt_canonical};
 use wasm_vm_core::{Machine, RunOutcome};
 
+// E3-T02 lazy-fetch backend. Compiled where it is actually used: the normal wasm build (behind
+// `newChunkedDisk`) and native unit tests. Excluded from the zicsr-stub wasm build and the native
+// lib build so it is never dead code under `-D warnings`.
+#[cfg(any(all(target_arch = "wasm32", not(feature = "zicsr-stub")), test))]
+mod chunked;
+// The web-sys `fetch` glue is browser-only.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod http_fetch;
+
 /// One-time browser diagnostics setup: route `log` to the JS console and install the
 /// panic hook that turns Rust panics into readable console errors. Idempotent.
 fn init_diagnostics() {
@@ -407,6 +416,21 @@ struct LinuxInner {
     output: js_sys::Function,
     pending: std::collections::VecDeque<u8>,
     finished: Option<String>,
+    /// E3-T02 lazy-fetch state, present only for a `newChunkedDisk` boot (`None` otherwise). Held in
+    /// an `Rc` so `fetchPending` can clone it out and `await` without keeping the inner borrow.
+    fetch: Option<std::rc::Rc<http_fetch::FetchState>>,
+}
+
+/// Which block device (if any) backs the boot: none (initramfs), an in-memory image, or a lazily
+/// fetched chunked image (E3-T02).
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+enum DiskChoice {
+    None,
+    Mem(Vec<u8>),
+    Chunked {
+        manifest: wasm_vm_storage::ImageManifest,
+        base_url: String,
+    },
 }
 
 /// Console sink that accumulates guest bytes into a shared buffer (drained per `runChunk`).
@@ -444,7 +468,7 @@ impl WasmLinux {
         } else {
             bootargs
         };
-        Self::assemble(ram_mib, kernel, initrd_opt, None, &args, output)
+        Self::assemble(ram_mib, kernel, initrd_opt, DiskChoice::None, &args, output)
     }
 
     /// E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
@@ -464,15 +488,46 @@ impl WasmLinux {
         } else {
             bootargs
         };
-        Self::assemble(ram_mib, kernel, None, Some(disk), &args, output)
+        Self::assemble(ram_mib, kernel, None, DiskChoice::Mem(disk), &args, output)
     }
 
-    /// Shared platform assembly for the initramfs (`new`) and disk (`newDisk`) boot paths.
+    /// E3-T02: boot from a CHUNKED image fetched lazily over HTTP. Instead of a full disk `Vec`, take
+    /// the image `manifest` JSON and the `base_url` its chunks live under (must end in `/`). A guest
+    /// disk read of an absent chunk parks (deferred virtio-blk completion) until `fetchPending`
+    /// retrieves and hash-verifies that chunk. No full-image download ever happens.
+    #[wasm_bindgen(js_name = newChunkedDisk)]
+    pub fn new_chunked_disk(
+        ram_mib: u32,
+        kernel: &[u8],
+        manifest_json: &str,
+        base_url: String,
+        bootargs: String,
+        output: js_sys::Function,
+    ) -> Result<WasmLinux, JsError> {
+        let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
+            .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
+        let args = if bootargs.is_empty() {
+            "root=/dev/vda rw console=ttyS0 earlycon=sbi".to_string()
+        } else {
+            bootargs
+        };
+        Self::assemble(
+            ram_mib,
+            kernel,
+            None,
+            DiskChoice::Chunked { manifest, base_url },
+            &args,
+            output,
+        )
+    }
+
+    /// Shared platform assembly for the initramfs (`new`), in-memory disk (`newDisk`), and lazy
+    /// chunked-disk (`newChunkedDisk`) boot paths.
     fn assemble(
         ram_mib: u32,
         kernel: &[u8],
         initrd: Option<&[u8]>,
-        disk: Option<Vec<u8>>,
+        disk: DiskChoice,
         bootargs: &str,
         output: js_sys::Function,
     ) -> Result<WasmLinux, JsError> {
@@ -486,13 +541,23 @@ impl WasmLinux {
         machine.enable_rtc(Box::new(JsWallClock));
         machine.enable_syscon();
         let uart = machine.enable_uart16550();
+        let mut fetch = None;
         match disk {
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
-            Some(image) => {
+            DiskChoice::Mem(image) => {
                 machine.enable_virtio_blk(Box::new(wasm_vm_core::block::MemBackend::new(image)));
             }
+            // Lazy chunked image: a ChunkedBackend over a store the fetch layer populates on demand.
+            DiskChoice::Chunked { manifest, base_url } => {
+                let store = std::rc::Rc::new(RefCell::new(wasm_vm_storage::ChunkStore::new()));
+                let backend = chunked::ChunkedBackend::new(manifest.index(), store.clone());
+                machine.enable_virtio_blk(Box::new(backend));
+                fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
+                    manifest, base_url, store,
+                )));
+            }
             // Busybox initramfs: the 8 empty virtio slots the DTB advertises.
-            None => {
+            DiskChoice::None => {
                 let _ = machine.enable_virtio_slots(None);
             }
         }
@@ -510,6 +575,7 @@ impl WasmLinux {
                 output,
                 pending: std::collections::VecDeque::new(),
                 finished: None,
+                fetch,
             }),
         })
     }
@@ -592,5 +658,65 @@ impl WasmLinux {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         inner.pending.extend(bytes.iter().copied());
         Ok(())
+    }
+
+    /// E3-T02: the chunk indices the virtio-blk device is currently parked on (guest reads awaiting a
+    /// lazy fetch). Empty for a non-chunked boot or when nothing is parked. The JS driver calls this
+    /// after each `runChunk` and, if non-empty, awaits `fetchPending` before the next `runChunk`.
+    #[wasm_bindgen(js_name = pendingChunks)]
+    pub fn pending_chunks(&self) -> Result<Vec<u32>, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner
+            .machine
+            .pending_blk_chunks()
+            .into_iter()
+            .map(|c| c as u32)
+            .collect())
+    }
+
+    /// E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
+    /// the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
+    /// resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
+    /// borrow the machine); the JS driver alternates them.
+    #[wasm_bindgen(js_name = fetchPending)]
+    pub async fn fetch_pending(&self) -> Result<u32, JsError> {
+        // Clone the fetch handle and snapshot the parked chunks under a brief borrow, then release it
+        // BEFORE awaiting — an `await` while holding `inner` would alias the borrow on re-entry.
+        let (state, pending) = {
+            let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            match &inner.fetch {
+                Some(s) => (s.clone(), inner.machine.pending_blk_chunks()),
+                None => return Ok(0),
+            }
+        };
+        Ok(http_fetch::fetch_pending(&state, &pending).await)
+    }
+
+    /// E3-T02 instrumentation: `{ fetches, bytes }` — how many chunk fetches happened and how many
+    /// bytes they transferred (the pass-4 acceptance compares `bytes` against the image size). A
+    /// non-chunked boot reports zeros.
+    #[wasm_bindgen(js_name = fetchStats)]
+    pub fn fetch_stats(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let (fetches, bytes, err) = match &inner.fetch {
+            Some(s) => (
+                s.fetch_count.get(),
+                s.bytes_transferred.get(),
+                s.last_error.borrow().clone(),
+            ),
+            None => (0, 0, None),
+        };
+        let obj = js_sys::Object::new();
+        let _ = js_sys::Reflect::set(&obj, &"fetches".into(), &JsValue::from_f64(fetches as f64));
+        let _ = js_sys::Reflect::set(&obj, &"bytes".into(), &JsValue::from_f64(bytes as f64));
+        let _ = js_sys::Reflect::set(
+            &obj,
+            &"error".into(),
+            &match err {
+                Some(e) => JsValue::from_str(&e),
+                None => JsValue::NULL,
+            },
+        );
+        Ok(obj.into())
     }
 }
