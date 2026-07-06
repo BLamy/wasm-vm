@@ -74,6 +74,9 @@ export async function startLinuxBoot(opts = {}) {
     bootProfileUrl = "./releases/chunked-alpine/boot-profile.json",
     // E3-T03 block-cache byte budget in MiB (0 → 256 MiB default). Set low to exercise eviction.
     cacheBudgetMib = 0,
+    // E3-T05: persist the copy-on-write overlay to IndexedDB (writes survive a tab reload). Only
+    // meaningful in "chunked" mode; the driver flushes via machine.persistPending() each tick.
+    persist = false,
     ramMib = 256,
     onState = () => {},
     onProgress = () => {},
@@ -141,12 +144,20 @@ export async function startLinuxBoot(opts = {}) {
 
     onState("booting");
     // disk → in-memory virtio-blk backend (whole image); chunked → a ChunkedBackend that lazily
-    // HTTP-fetches chunks under baseUrl; initramfs → the image as the initrd.
-    const machine = isChunked
-      ? WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, (u8) => onOutput(u8))
-      : mode === "disk"
-        ? WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8))
-        : new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
+    // HTTP-fetches chunks under baseUrl (+ E3-T05 persist: writes survive reload via IndexedDB);
+    // initramfs → the image as the initrd.
+    const usePersist = isChunked && persist;
+    let machine;
+    if (usePersist) {
+      // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
+      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, (u8) => onOutput(u8));
+    } else if (isChunked) {
+      machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, (u8) => onOutput(u8));
+    } else if (mode === "disk") {
+      machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
+    } else {
+      machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
+    }
 
     let stopped = false;
     let paused = false;
@@ -198,6 +209,20 @@ export async function startLinuxBoot(opts = {}) {
         }
         if (stopped || paused) { tickScheduled = false; return; }
       }
+      // E3-T05: durably flush any overlay writes to IndexedDB (cheap no-op when nothing is pending;
+      // resolves on the IndexedDB transaction complete, so a flush before reload survives it).
+      if (usePersist) {
+        try {
+          await machine.persistPending();
+        } catch (e) {
+          tickScheduled = false;
+          onState("error");
+          onError(e);
+          resolveDone("error");
+          return;
+        }
+        if (stopped || paused) { tickScheduled = false; return; }
+      }
       // Yield to the event loop so the page stays responsive (no main-thread freeze).
       tickScheduled = false;
       schedule();
@@ -230,6 +255,8 @@ export async function startLinuxBoot(opts = {}) {
       // E3-T02: chunked-boot instrumentation — `{ fetches, bytes, error }` (bytes transferred so
       // far via lazy chunk fetch). Null for non-chunked boots. Drives the <40%-of-image acceptance.
       fetchStats: () => (isChunked ? machine.fetchStats() : null),
+      // E3-T05: force a durable flush of the overlay to IndexedDB (resolves when the txn completes).
+      persist: () => (usePersist ? machine.persistPending() : Promise.resolve(0)),
       whenDone,
     };
   } catch (e) {
