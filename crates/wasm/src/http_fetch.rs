@@ -100,26 +100,35 @@ async fn fetch_one(state: &Rc<FetchState>, chunk: usize) -> Result<(), FetchFail
 
     let mut attempt = 0u32;
     loop {
-        match http_get(&req.url, req.range).await {
-            Ok((status, body)) => match classify_response(state.manifest.layout, status) {
-                ResponseAction::Accept => {
-                    state.fetch_count.set(state.fetch_count.get() + 1);
-                    state
-                        .bytes_transferred
-                        .set(state.bytes_transferred.get() + body.len() as u64);
-                    match state
-                        .store
-                        .borrow_mut()
-                        .provide(&state.manifest, chunk, body)
-                    {
-                        Ok(()) => return Ok(()),
-                        // A verified-store rejection (hash mismatch / truncation) is a corrupt
-                        // delivery — retry the fetch; never cache or serve the bad bytes.
-                        Err(_) if state.retry.should_retry(attempt) => {}
-                        Err(_) => return Err(FetchFailure::RetriesExhausted { chunk }),
+        // CRITICAL (critic pass-3 FINDING 1): classify on the RESPONSE STATUS first and read the body
+        // ONLY on Accept. The body is not downloaded until we read it, so a `blob`-layout server that
+        // ignored Range and returned 200 (a full-image body) is refused WITHOUT buffering it — never
+        // stream/copy 400 MB just to throw it away.
+        match http_send(&req.url, req.range).await {
+            Ok(resp) => match classify_response(state.manifest.layout, resp.status()) {
+                ResponseAction::Accept => match read_body(&resp).await {
+                    Ok(body) => {
+                        state.fetch_count.set(state.fetch_count.get() + 1);
+                        state
+                            .bytes_transferred
+                            .set(state.bytes_transferred.get() + body.len() as u64);
+                        match state
+                            .store
+                            .borrow_mut()
+                            .provide(&state.manifest, chunk, body)
+                        {
+                            Ok(()) => return Ok(()),
+                            // A verified-store rejection (hash mismatch / truncation) is a corrupt
+                            // delivery — retry the fetch; never cache or serve the bad bytes.
+                            Err(_) if state.retry.should_retry(attempt) => {}
+                            Err(_) => return Err(FetchFailure::RetriesExhausted { chunk }),
+                        }
                     }
-                }
-                // A server that ignored Range, or a 4xx — permanent, surface at once.
+                    // The body stream faulted mid-download (truncated) — retryable.
+                    Err(_) if state.retry.should_retry(attempt) => {}
+                    Err(_) => return Err(FetchFailure::RetriesExhausted { chunk }),
+                },
+                // A server that ignored Range, or a 4xx — permanent, surface at once (body unread).
                 ResponseAction::Fail(f) => return Err(f),
                 // 5xx/408/429 — retryable.
                 ResponseAction::Retry if state.retry.should_retry(attempt) => {}
@@ -134,11 +143,11 @@ async fn fetch_one(state: &Rc<FetchState>, chunk: usize) -> Result<(), FetchFail
     }
 }
 
-/// GET `url` (optionally with an inclusive `Range`), returning `(status, body_bytes)`. A rejected
-/// promise (network/CORS) is `Err`. Reads the body as an ArrayBuffer — for a 206 that is just the
-/// requested slice; a stray 200 is caught by [`classify_response`] BEFORE we get here for blob, but
-/// we still only copy what the response carried (we never expand a Range into a full download).
-async fn http_get(url: &str, range: Option<(u64, u64)>) -> Result<(u16, Vec<u8>), JsValue> {
+/// Send a GET for `url` (optionally with an inclusive `Range`) and await the RESPONSE HEADERS only —
+/// the status is available, but the body is NOT read (so it is not downloaded). A rejected promise
+/// (network/CORS) is `Err`. The caller inspects the status and reads the body via [`read_body`] only
+/// if it decides to accept — this is what makes the 200-not-206 refusal free of a full-body buffer.
+async fn http_send(url: &str, range: Option<(u64, u64)>) -> Result<Response, JsValue> {
     let opts = RequestInit::new();
     opts.set_method("GET");
     let req = Request::new_with_str_and_init(url, &opts)?;
@@ -147,11 +156,15 @@ async fn http_get(url: &str, range: Option<(u64, u64)>) -> Result<(u16, Vec<u8>)
             .set("Range", &format!("bytes={first}-{last}"))?;
     }
     let resp_val = JsFuture::from(fetch(&req)?).await?;
-    let resp: Response = resp_val.dyn_into()?;
-    let status = resp.status();
+    resp_val.dyn_into()
+}
+
+/// Read the (accepted) response body as bytes. For a `206` this is exactly the requested slice; we
+/// only ever call this after [`classify_response`] returned `Accept`, so a full-image `200` body is
+/// never read here.
+async fn read_body(resp: &Response) -> Result<Vec<u8>, JsValue> {
     let buf = JsFuture::from(resp.array_buffer()?).await?;
-    let bytes = Uint8Array::new(&buf).to_vec();
-    Ok((status, bytes))
+    Ok(Uint8Array::new(&buf).to_vec())
 }
 
 /// `fetch(req)` against whichever global is present (a Window on the main thread, or a

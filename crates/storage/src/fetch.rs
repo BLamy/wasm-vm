@@ -57,10 +57,19 @@ impl ImageManifest {
             }
             Layout::Blob => {
                 let idx = self.index();
-                let start = chunk as u64 * idx.chunk_size();
                 let len = idx.chunk_len(chunk);
-                // Inclusive end (HTTP Range semantics); len >= 1 for every in-range chunk of a
-                // non-empty image, so `start + len - 1` never underflows.
+                // Defense-in-depth: on an INCONSISTENT unvalidated manifest (e.g. image_len==0 but a
+                // non-empty `chunks`, so `chunk < chunks.len()` yet `chunk >= chunk_count`),
+                // `chunk_len` returns 0 and `start + len - 1` would underflow-panic. Guard it — the
+                // same no-panic contract the sibling `chunk_span`/`locate` guards uphold.
+                if len == 0 {
+                    return Err(ImageError::ChunkIndexOutOfRange {
+                        chunk,
+                        count: idx.chunk_count(),
+                    });
+                }
+                let start = chunk as u64 * idx.chunk_size();
+                // Inclusive end (HTTP Range semantics); len >= 1 here, so this never underflows.
                 let last = start + len - 1;
                 let mut url = String::with_capacity(base_url.len() + 10);
                 url.push_str(base_url);

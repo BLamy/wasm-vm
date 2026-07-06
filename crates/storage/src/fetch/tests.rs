@@ -74,6 +74,20 @@ fn chunk_request_out_of_range_and_bad_chunk_size_are_typed_errors() {
         chunks: vec![String::from("ab").repeat(32)],
     };
     assert_eq!(bad.chunk_request("b/", 0), Err(ImageError::BadChunkSize(0)));
+
+    // Critic pass-3 FINDING 2: an INCONSISTENT unvalidated manifest — image_len 0 (derived count 0)
+    // but a non-empty `chunks` — must be a typed error, not a `start + len - 1` underflow panic.
+    let inconsistent = ImageManifest {
+        version: FORMAT_VERSION,
+        image_len: 0,
+        chunk_size: 4,
+        layout: Layout::Blob,
+        chunks: vec![String::from("ab").repeat(32)],
+    };
+    assert_eq!(
+        inconsistent.chunk_request("b/", 0),
+        Err(ImageError::ChunkIndexOutOfRange { chunk: 0, count: 0 })
+    );
 }
 
 #[test]
