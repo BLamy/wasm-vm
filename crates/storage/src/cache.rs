@@ -26,6 +26,11 @@ pub struct CacheMetrics {
     pub evictions: u64,
     pub inserts: u64,
     pub bytes_resident: u64,
+    /// Chunks inserted speculatively (via [`BlockCache::note_prefetch`]).
+    pub prefetch_issued: u64,
+    /// Speculatively-inserted chunks that were later HIT by a guest read before eviction — i.e.
+    /// prefetches that paid off. Accuracy = `prefetch_used / prefetch_issued`.
+    pub prefetch_used: u64,
 }
 
 struct Entry {
@@ -34,6 +39,9 @@ struct Entry {
     referenced: Cell<bool>,
     /// Outstanding pins (in-flight guest reads). Non-zero ⇒ never evicted.
     pins: u32,
+    /// This chunk was inserted speculatively (prefetch) and not yet counted as used. The first `get`
+    /// hit clears it and increments `prefetch_used` — so a prefetch counts as "paid off" exactly once.
+    prefetched: Cell<bool>,
 }
 
 /// A byte-budgeted CLOCK cache of chunk bytes. `get` is `&self` (interior-mutable ref bit + hit/miss
@@ -49,6 +57,8 @@ pub struct BlockCache {
     misses: Cell<u64>,
     evictions: u64,
     inserts: u64,
+    prefetch_issued: u64,
+    prefetch_used: Cell<u64>,
 }
 
 impl BlockCache {
@@ -66,21 +76,42 @@ impl BlockCache {
             misses: Cell::new(0),
             evictions: 0,
             inserts: 0,
+            prefetch_issued: 0,
+            prefetch_used: Cell::new(0),
         }
     }
 
-    /// Look up `chunk`, marking it referenced (CLOCK second chance) and counting a hit/miss.
+    /// Look up `chunk`, marking it referenced (CLOCK second chance) and counting a hit/miss. A hit on a
+    /// still-flagged prefetched chunk counts it as a paid-off prefetch (once).
     pub fn lookup(&self, chunk: usize) -> Option<&[u8]> {
         match self.entries.get(&chunk) {
             Some(e) => {
                 e.referenced.set(true);
                 self.hits.set(self.hits.get() + 1);
+                if e.prefetched.get() {
+                    e.prefetched.set(false);
+                    self.prefetch_used.set(self.prefetch_used.get() + 1);
+                }
                 Some(&e.bytes)
             }
             None => {
                 self.misses.set(self.misses.get() + 1);
                 None
             }
+        }
+    }
+
+    /// Flag a resident chunk as speculatively fetched (prefetch). The next `get` hit on it (before
+    /// eviction) counts as a paid-off prefetch. Idempotent: flagging an already-flagged chunk does not
+    /// re-count `prefetch_issued`. No-op if the chunk is not resident.
+    pub fn note_prefetch(&mut self, chunk: usize) {
+        // `prefetched` is a Cell, so a shared borrow suffices to flag it — leaving `self.prefetch_issued`
+        // (a disjoint field) free to bump.
+        if let Some(e) = self.entries.get(&chunk)
+            && !e.prefetched.get()
+        {
+            e.prefetched.set(true);
+            self.prefetch_issued += 1;
         }
     }
 
@@ -95,6 +126,7 @@ impl BlockCache {
                 let new = bytes.len() as u64;
                 e.bytes = bytes;
                 e.referenced.set(true);
+                e.prefetched.set(false); // a re-insert is a fresh (demand) fetch, not a prefetch
                 (old, new)
             };
             self.resident_bytes = self.resident_bytes - old + new;
@@ -128,6 +160,7 @@ impl BlockCache {
                 bytes,
                 referenced: Cell::new(true),
                 pins: 0,
+                prefetched: Cell::new(false),
             },
         );
     }
@@ -223,6 +256,8 @@ impl BlockCache {
             evictions: self.evictions,
             inserts: self.inserts,
             bytes_resident: self.resident_bytes,
+            prefetch_issued: self.prefetch_issued,
+            prefetch_used: self.prefetch_used.get(),
         }
     }
 }

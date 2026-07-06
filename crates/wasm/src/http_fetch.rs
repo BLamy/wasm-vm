@@ -19,8 +19,8 @@ use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, Response};
 
 use wasm_vm_storage::{
-    BlockCache, FetchFailure, ImageManifest, PrefetchTracker, Readahead, ResponseAction,
-    RetryPolicy, boot_prefetch, classify_response, plan_fetches,
+    BlockCache, FetchFailure, ImageManifest, Readahead, ResponseAction, RetryPolicy, boot_prefetch,
+    classify_response, plan_fetches,
 };
 
 use std::cell::RefCell;
@@ -48,8 +48,6 @@ pub struct FetchState {
     pub retry: RetryPolicy,
     /// Sequential-readahead detector (E3-T03): a forward run of demand misses prefetches ahead.
     pub readahead: RefCell<Readahead>,
-    /// Prefetch-accuracy accounting (prefetched-and-later-demanded / prefetched).
-    pub tracker: RefCell<PrefetchTracker>,
     /// The ordered first-touch demand-access list — the recording that becomes `boot-profile.json`.
     pub access_log: RefCell<Vec<usize>>,
     access_seen: RefCell<BTreeSet<usize>>,
@@ -77,7 +75,6 @@ impl FetchState {
             pinned: RefCell::new(BTreeSet::new()),
             retry: RetryPolicy::DEFAULT,
             readahead: RefCell::new(Readahead::new(READAHEAD_WINDOW)),
-            tracker: RefCell::new(PrefetchTracker::new()),
             access_log: RefCell::new(Vec::new()),
             access_seen: RefCell::new(BTreeSet::new()),
             boot_profile,
@@ -127,11 +124,9 @@ pub async fn fetch_pending(state: &Rc<FetchState>, pending: &[usize]) -> u32 {
     let mut readahead_targets: Vec<usize> = Vec::new();
     {
         let mut ra = state.readahead.borrow_mut();
-        let mut tr = state.tracker.borrow_mut();
         let mut log = state.access_log.borrow_mut();
         let mut seen = state.access_seen.borrow_mut();
         for &c in pending {
-            tr.note_access(c); // if c was speculatively prefetched, count it used
             if seen.insert(c) {
                 log.push(c); // first-touch order → the recorded boot profile
             }
@@ -183,10 +178,11 @@ pub async fn fetch_pending(state: &Rc<FetchState>, pending: &[usize]) -> u32 {
         state.in_flight.borrow_mut().insert(chunk);
         let outcome = fetch_one(state, chunk).await;
         state.in_flight.borrow_mut().remove(&chunk);
-        // Speculative: record it for accuracy, do NOT pin. A prefetch failure is silent (the guest
-        // never asked for it); only demand errors surface.
+        // Speculative: flag it in the cache (a later read HIT counts it as a paid-off prefetch), do
+        // NOT pin. A prefetch failure is silent (the guest never asked for it); only demand errors
+        // surface.
         if outcome.is_ok() {
-            state.tracker.borrow_mut().record_issued(chunk);
+            state.store.borrow_mut().note_prefetch(chunk);
         }
     }
     done

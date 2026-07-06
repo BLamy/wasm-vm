@@ -751,16 +751,16 @@ impl WasmLinux {
                 set_num(&cache, "residentBytes", m.bytes_resident as f64);
                 set_num(&cache, "budgetBytes", budget as f64);
                 let _ = js_sys::Reflect::set(&obj, &"cache".into(), &cache.into());
-                // E3-T03 prefetch accuracy: prefetched-and-later-demanded / prefetched.
-                let (issued, used) = s.tracker.borrow().counts();
+                // E3-T03 prefetch accuracy: prefetched chunks later HIT by a guest read / prefetched.
                 let prefetch = js_sys::Object::new();
-                set_num(&prefetch, "issued", issued as f64);
-                set_num(&prefetch, "used", used as f64);
-                set_num(
-                    &prefetch,
-                    "accuracyPct",
-                    s.tracker.borrow().accuracy_pct() as f64,
-                );
+                set_num(&prefetch, "issued", m.prefetch_issued as f64);
+                set_num(&prefetch, "used", m.prefetch_used as f64);
+                let acc = m
+                    .prefetch_used
+                    .saturating_mul(100)
+                    .checked_div(m.prefetch_issued)
+                    .unwrap_or(0);
+                set_num(&prefetch, "accuracyPct", acc as f64);
                 let _ = js_sys::Reflect::set(&obj, &"prefetch".into(), &prefetch.into());
             }
             None => {

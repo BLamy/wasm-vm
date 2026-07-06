@@ -99,6 +99,8 @@ if (bootAlpineChunkedBtn) {
         manifestUrl: "./artifacts-alpine.json",
         mode: "chunked",
         imageManifestUrl: "./releases/chunked-alpine/manifest.json",
+        // E3-T03: `?cacheBudgetMib=N` boots with an N-MiB cache to exercise eviction (0 → 256 default).
+        cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
         ramMib: 256,
       },
       "booting Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login:…",
