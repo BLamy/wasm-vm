@@ -122,6 +122,12 @@ export E2FSPROGS_FAKE_TIME="$SOURCE_DATE_EPOCH"
 #     (inittab, shadow, securetty, …) carry the real build time, so the inode table varied per
 #     build — the residual 4.7% churn after freezing the superblock clock. apk-packaged files
 #     already have fixed mtimes; this pins the generated ones too. (-h touches symlinks themselves.)
+# E3.5-T02: ship the container-capability smoke test into the rootfs (mounted read-only by the
+# build; copied to a PATH dir so `container-smoke` runs in-guest).
+if [ -f /container-smoke.sh ]; then
+  install -Dm755 /container-smoke.sh "$ROOT/usr/local/bin/container-smoke"
+fi
+
 find "$ROOT" -exec touch -h -d "@$SOURCE_DATE_EPOCH" {} +
 rm -f /out/alpine-rootfs.ext4
 mke2fs -q -t ext4 -O ^metadata_csum -L root -U "$FS_UUID" -E "root_owner=0:0,hash_seed=$FS_UUID" -d "$ROOT" /out/alpine-rootfs.ext4 "$IMG_SIZE"

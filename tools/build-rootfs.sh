@@ -17,7 +17,9 @@ export SOURCE_DATE_EPOCH=1731542400 # 2024-11-14, matches the kernel banner date
 IMG_SIZE=512M
 # The riscv64 root package set: alpine-base pulls openrc+busybox+musl+baselayout; busybox-suid
 # gives setuid login/passwd; the rest make it feel like a real system.
-PKGS="alpine-base busybox-suid openrc"
+# E3.5-T02: util-linux (real unshare/nsenter/setpriv/pivot_root), iproute2 (ip), e2fsprogs
+# (mkfs.ext4 for loop/overlay) — the container primitives busybox's applets can't fully drive.
+PKGS="alpine-base busybox-suid openrc util-linux iproute2 e2fsprogs"
 
 OUT="releases/rootfs"
 IMG_TAG="wasm-vm-rootfs-build:local"
@@ -31,6 +33,7 @@ docker build -q -f tools/rootfs.Dockerfile -t "$IMG_TAG" tools >/dev/null
 docker run --rm \
   -v "$PWD/$OUT:/out" \
   -v "$PWD/tools/rootfs-inner.sh:/rootfs-inner.sh:ro" \
+  -v "$PWD/tools/guest/container-smoke.sh:/container-smoke.sh:ro" \
   -e MIRROR="$MIRROR" \
   -e FS_UUID="$FS_UUID" \
   -e SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
