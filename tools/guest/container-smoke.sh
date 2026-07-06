@@ -16,14 +16,20 @@ bad()  { echo "SMOKE $1 FAIL: $2"; fails=$((fails + 1)); }
 #    The child computes its marker so the outer tty echo can't satisfy the check.
 if unshare -m -n -u -i -p -f --mount-proc sh -c 'echo NS_$((6*7))' 2>/dev/null | grep -q '^NS_42$'; then
   # In a fresh PID ns the entered shell is PID 1 and sees a fresh /proc.
-  npids=$(unshare -m -p -f --mount-proc sh -c 'ls /proc | grep -c "^[0-9]*$"' 2>/dev/null)
-  if [ "${npids:-99}" -le 3 ]; then ok NS; else bad NS "PID ns did not isolate /proc (saw $npids pids)"; fi
+  npids=$(unshare -m -p -f --mount-proc sh -c 'ls /proc | grep -c "^[0-9][0-9]*$"' 2>/dev/null)
+  # Lower bound (>=1) guards against an empty/failed /proc reading as "isolated" (critic LOW).
+  if [ "${npids:-99}" -ge 1 ] && [ "${npids:-99}" -le 3 ]; then ok NS; else bad NS "PID ns did not isolate /proc (saw $npids pids)"; fi
 else
   bad NS "unshare of pid/mount/net/uts/ipc failed"
 fi
 
-# 2. USER NAMESPACE (rootless shape) — unshare -U with a uid map; root inside maps to the caller.
-if unshare -U -r sh -c 'id -u' 2>/dev/null | grep -q '^0$'; then ok USERNS; else bad USERNS "unshare -U -r failed"; fi
+# 2. USER NAMESPACE (rootless shape) — assert a DISTINCT user ns is actually created. The guest runs
+#    as root, so `id -u == 0` proves nothing (it's 0 with or without unshare — critic MAJOR). Compare
+#    the /proc/self/ns/user inode: a real new userns has a different inode from the caller's.
+outer_userns=$(readlink /proc/self/ns/user 2>/dev/null)
+inner_userns=$(unshare -U -r sh -c 'readlink /proc/self/ns/user' 2>/dev/null)
+if [ -n "$inner_userns" ] && [ "$inner_userns" != "$outer_userns" ]; then ok USERNS
+else bad USERNS "no distinct user ns (outer=$outer_userns inner=$inner_userns)"; fi
 
 # 3. UTS isolation — a hostname change inside the ns must not leak out.
 outer=$(hostname)
@@ -61,32 +67,51 @@ if unshare -m sh -c '
 ' 2>/dev/null | grep -q '^PIVOT_42$'; then ok PIVOT_ROOT; else bad PIVOT_ROOT "pivot_root inside a mount ns failed"; fi
 
 # 7. CGROUP v2 memory limit → OOM kill (memcg accounting + the OOM killer must work).
-if mount -t cgroup2 none /sys/fs/cgroup 2>/dev/null || [ -d /sys/fs/cgroup/cgroup.controllers ]; then
+#    Availability test keys on the controllers FILE (-f, not -d — it is a file; critic LOW false-FAIL),
+#    and on Alpine /sys/fs/cgroup is usually already a cgroup2 mount so the mount may fail-busy.
+if [ -f /sys/fs/cgroup/cgroup.controllers ] || mount -t cgroup2 none /sys/fs/cgroup 2>/dev/null; then
   grep -q memory /sys/fs/cgroup/cgroup.controllers 2>/dev/null && \
     echo +memory > /sys/fs/cgroup/cgroup.subtree_control 2>/dev/null
   leaf=/sys/fs/cgroup/smoke; mkdir -p "$leaf" 2>/dev/null
   if echo $((16 * 1024 * 1024)) > "$leaf/memory.max" 2>/dev/null; then
-    # Move an over-allocator into the group; it must be OOM-killed, and the guest survives.
-    ( echo $$ > "$leaf/cgroup.procs" 2>/dev/null
-      # busybox 'yes' piped into a growing buffer allocates; use dd to a tmpfs sized past the limit.
-      exec sh -c 'a=""; i=0; while [ $i -lt 100000 ]; do a="$a$(head -c 1024 /dev/zero | tr "\0" x)"; i=$((i+1)); done' ) &
+    # Move the allocator into the leaf from INSIDE its own process, then exec the allocator: after the
+    # `exec`, $$ is the allocator's own pid (in a POSIX subshell $$ is the PARENT script's pid, so the
+    # old `echo $$ > cgroup.procs` moved the WRONG process and left the allocator unconfined — critic
+    # CRITICAL). `tail /dev/zero` is the canonical unbounded allocator (O(1) forks, not the old O(n²)
+    # shell-string loop that would blow the interpreter budget).
+    sh -c 'echo $$ > "'"$leaf"'/cgroup.procs" 2>/dev/null; exec tail /dev/zero' >/dev/null 2>&1 &
     child=$!
-    wait "$child" 2>/dev/null; rc=$?
-    # Killed by SIGKILL (OOM) → exit code 137, or non-zero. A clean 0 means the limit was NOT enforced.
-    if [ "$rc" -ne 0 ]; then ok CGROUP_MEM; else bad CGROUP_MEM "over-allocator was NOT OOM-killed (limit unenforced)"; fi
+    wait "$child" 2>/dev/null
+    # PROOF is the kernel's own memcg OOM counter, NOT the exit code: a nonzero exit could come from a
+    # global OOM, a signal, or an error while the memcg limit was never enforced (critic CRITICAL).
+    # memory.events:oom_kill > 0 proves THIS cgroup's OOM killer fired.
+    oom=$(awk '/^oom_kill /{print $2}' "$leaf/memory.events" 2>/dev/null)
+    if [ "${oom:-0}" -gt 0 ]; then ok CGROUP_MEM
+    else bad CGROUP_MEM "no memcg oom_kill event (limit unenforced; oom=${oom:-unset})"; fi
     rmdir "$leaf" 2>/dev/null
   else bad CGROUP_MEM "cannot set memory.max"; fi
 else bad CGROUP_MEM "cgroup2 unavailable"; fi
 
-# 8. VETH pair into a BRIDGE (the container networking primitive, inside a net ns).
+# 8. VETH pair into a BRIDGE, with one peer moved into a separate NET NAMESPACE and pinged across.
+#    Enslavement alone (all in the root netns) doesn't exercise the setns/cross-netns datapath the
+#    runner needs — the peer must move into an `ip netns` and connectivity must actually work
+#    (critic MAJOR: this is the emulator gap the task exists to surface).
 if command -v ip >/dev/null 2>&1; then
+  ip netns add smk-ns 2>/dev/null
   if ip link add smk-br type bridge 2>/dev/null \
      && ip link add smk-a type veth peer name smk-b 2>/dev/null \
      && ip link set smk-a master smk-br 2>/dev/null \
-     && ip link set smk-br up 2>/dev/null && ip link set smk-a up 2>/dev/null; then
-    ip link show smk-a 2>/dev/null | grep -q 'master smk-br' && ok VETH_BRIDGE || bad VETH_BRIDGE "veth not enslaved"
-    ip link del smk-br 2>/dev/null; ip link del smk-a 2>/dev/null
-  else bad VETH_BRIDGE "veth/bridge creation failed"; fi
+     && ip link set smk-b netns smk-ns 2>/dev/null \
+     && ip addr add 10.99.0.1/24 dev smk-br 2>/dev/null \
+     && ip link set smk-br up 2>/dev/null && ip link set smk-a up 2>/dev/null \
+     && ip netns exec smk-ns ip addr add 10.99.0.2/24 dev smk-b 2>/dev/null \
+     && ip netns exec smk-ns ip link set smk-b up 2>/dev/null \
+     && ip netns exec smk-ns ip link set lo up 2>/dev/null; then
+    # Ping the bridge (root netns) FROM inside the ns, across the veth — proves the datapath, not just plumbing.
+    if ip netns exec smk-ns ping -c 1 -W 2 10.99.0.1 >/dev/null 2>&1; then ok VETH_BRIDGE
+    else bad VETH_BRIDGE "no connectivity across veth/bridge/netns (ping failed)"; fi
+  else bad VETH_BRIDGE "veth/bridge/netns setup failed"; fi
+  ip link del smk-br 2>/dev/null; ip link del smk-a 2>/dev/null; ip netns del smk-ns 2>/dev/null
 else bad VETH_BRIDGE "iproute2 'ip' missing"; fi
 
 # 9. LOOP device — loop-mount a filesystem image (some layer/volume flows use it).
