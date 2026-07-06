@@ -28,6 +28,54 @@ fn manifest_for(data: &[u8], chunk_size: u32) -> ImageManifest {
 }
 
 #[test]
+fn from_image_produces_a_valid_roundtripping_manifest() {
+    // The producer (pass-4 tooling) must yield a manifest that validates, JSON-round-trips, and
+    // whose hashes verify the ORIGINAL chunk bytes — i.e. exactly what the reader expects.
+    let data: Vec<u8> = (0..1000u32).map(|i| (i % 251) as u8).collect(); // 1000 bytes
+    let m = ImageManifest::from_image(&data, 256, Layout::Blob).unwrap(); // chunks [256,256,256,232]
+    assert_eq!(m.validate(), Ok(()));
+    assert_eq!(m.chunks.len(), 4);
+    assert_eq!(m.image_len, 1000);
+    assert_eq!(m.layout, Layout::Blob);
+
+    // Every produced hash verifies the real chunk bytes (incl. the short tail).
+    for (c, bytes) in data.chunks(256).enumerate() {
+        assert_eq!(m.verify_chunk(c, bytes), Ok(()));
+    }
+    // JSON round-trip is faithful.
+    assert_eq!(ImageManifest::from_json(&m.to_json()), Ok(m.clone()));
+
+    // The producer matches the hand-built helper (same hashing, split layout).
+    let hand = manifest_for(&data, 256);
+    assert_eq!(
+        ImageManifest::from_image(&data, 256, Layout::Split).unwrap(),
+        hand
+    );
+
+    // A bad chunk size is a typed error, not a panic.
+    assert_eq!(
+        ImageManifest::from_image(&data, 0, Layout::Split),
+        Err(ImageError::BadChunkSize(0))
+    );
+    assert_eq!(
+        ImageManifest::from_image(&data, 3, Layout::Split),
+        Err(ImageError::BadChunkSize(3))
+    );
+    // An exact-multiple image: the last chunk is full-size, not short.
+    let exact = ImageManifest::from_image(&[7u8; 512], 256, Layout::Split).unwrap();
+    assert_eq!(exact.chunks.len(), 2);
+    assert_eq!(exact.index().chunk_len(1), 256);
+    // A 0-byte image: no chunks.
+    assert_eq!(
+        ImageManifest::from_image(&[], 256, Layout::Split)
+            .unwrap()
+            .chunks
+            .len(),
+        0
+    );
+}
+
+#[test]
 fn offset_math_edge_cases() {
     // 10 bytes, 4-byte chunks → chunks [4,4,2]; tail is short.
     let idx = manifest_for(&[0u8; 10], 4).index();

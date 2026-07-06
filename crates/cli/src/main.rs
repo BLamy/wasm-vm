@@ -15,6 +15,7 @@
 // without supervisor mode).
 #[cfg(not(feature = "zicsr-stub"))]
 pub mod boot;
+pub mod chunk;
 pub mod debug;
 pub mod file_backend;
 mod trace_json;
@@ -46,6 +47,8 @@ enum Cmd {
     /// E2-T15: boot an unmodified Linux `Image` + initramfs to an interactive shell.
     #[cfg(not(feature = "zicsr-stub"))]
     Boot(boot::BootArgs),
+    /// E3-T02: cut a disk image into the chunked format for lazy browser boot.
+    Chunk(chunk::ChunkArgs),
 }
 
 #[derive(Args)]
@@ -191,6 +194,7 @@ fn main() -> ExitCode {
         Cmd::Run(args) => run(args),
         #[cfg(not(feature = "zicsr-stub"))]
         Cmd::Boot(args) => boot::boot(args),
+        Cmd::Chunk(args) => chunk::chunk(args),
     }
 }
 
