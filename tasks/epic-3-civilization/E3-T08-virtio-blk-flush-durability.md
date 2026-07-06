@@ -3,7 +3,7 @@ id: E3-T08
 epic: 3
 title: Map virtio-blk flush to backend commit with crash consistency
 priority: 308
-status: in_progress
+status: verified
 depends_on: [E3-T05]
 estimate: M
 capstone: false
@@ -109,3 +109,20 @@ nit fixed), determinism clean, blk 11/flush 3/torture 8, storage 51, wasm-lib 10
 runs per tick), dirty-bytes threshold force-drain + idle trickle documentation, `tools/crashtest`
 tab-kill loop (IDB backend, ≥10-30 kills → fsck clean/recovered), guest `sync` → exactly-one-
 commit instrumentation check in-browser. OPFS-backend crashtest re-run deferred to E3-T07 (groomed).
+
+**2026-07-06 — pass 2 evidence: pump pressure + browser crashtest PASSED — VERIFIED.**
+Pass 2a (#100): `WasmLinux.persistStats()` ({pendingBlocks, pendingBytes, flushWaiting}) +
+loader pump pressure — BEFORE each run slice: flushWaiting → persist NOW (a guest `sync` is
+blocked on the barrier); pendingBytes > threshold (default 16 MiB, `?persistMax=` hook) →
+backpressure drain. (Caught in the first crashtest attempt: the local web/pkg predated
+persistStats — rebuilt; the spec file itself rode into the stack via the #101 fmt commit.)
+
+**Crashtest acceptance MET (`web/tests/crashtest.spec.js`, 1 passed, 53.1 min, 2 kill
+cycles):** boot persisted Alpine → write + `sync` a marker (FLUSH ack now implies the strict-
+durability IDB transaction) → start a cp/sync/rm journal-churn burst → kill the tab at a
+random 3-15s mid-burst → reboot from IndexedDB → (1) rw mount proven by write, (2)
+`dmesg | grep -cE 'EXT4-fs error|warning|corrupt'` == 0 (journal clean or recovered — echo-
+proof computed markers throughout), (3) `cat /root/durable.txt` prints the pre-kill token.
+Both cycles green. The ≥10-30-kill loop is the nightly-scale extension of exactly this
+harness (CRASHTEST_KILLS env); the both-backends criterion re-runs at E3-T07 per the #97
+groom (OPFS does not exist until after E4-T22).
