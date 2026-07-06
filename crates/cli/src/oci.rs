@@ -13,7 +13,7 @@ use std::process::ExitCode;
 
 use clap::Args;
 use flate2::read::GzDecoder;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use wasm_vm_storage::oci::{Entry, Node, OciError, Tree, apply_layer};
 
@@ -76,7 +76,70 @@ struct Index {
 }
 #[derive(Deserialize)]
 struct Manifest {
+    /// The image config blob (holds Entrypoint/Cmd/Env/WorkingDir/User) — E3.5-T03 needs this to
+    /// emit a runnable bundle, not just a rootfs.
+    config: Descriptor,
     layers: Vec<Descriptor>,
+}
+
+/// The OCI image config blob (`application/vnd.oci.image.config.v1+json`). We read only the
+/// `config` sub-object's run parameters — the fields the runner (`wvrun`) needs to exec the
+/// container's process the way `docker run` would.
+#[derive(Deserialize, Default)]
+struct ImageConfig {
+    #[serde(default)]
+    config: ImageConfigInner,
+}
+#[derive(Deserialize, Default)]
+struct ImageConfigInner {
+    #[serde(default, rename = "Env")]
+    env: Vec<String>,
+    #[serde(default, rename = "Entrypoint")]
+    entrypoint: Vec<String>,
+    #[serde(default, rename = "Cmd")]
+    cmd: Vec<String>,
+    #[serde(default, rename = "WorkingDir")]
+    working_dir: String,
+    #[serde(default, rename = "User")]
+    user: String,
+}
+
+/// The simplified runtime config the runner consumes — the OCI image config distilled to exactly
+/// what `wvrun` needs to `execve` the container process. Emitted as `run.json` (canonical) plus
+/// flat shell-readable files (`config/argv`, `config/env`, `config/cwd`, `config/user`) so the
+/// POSIX-sh runner needs no JSON parser in the guest.
+#[derive(Serialize, Debug, PartialEq, Eq, Default)]
+pub struct RuntimeConfig {
+    /// The final argv = Entrypoint ++ Cmd (OCI runtime semantics). Empty only if the image sets
+    /// neither — then a non-interactive run has nothing to exec (a typed error) but `--interactive`
+    /// still works (it overrides argv with a shell).
+    pub argv: Vec<String>,
+    pub env: Vec<String>,
+    /// Working directory; defaults to `/` when the image leaves it blank.
+    pub cwd: String,
+    /// `User` from the image (name or `uid[:gid]`); empty means root. v1 runs as root-in-guest, so
+    /// this is recorded for fidelity/logging, not yet enforced (documented in the runner).
+    pub user: String,
+}
+
+impl RuntimeConfig {
+    /// Distill an image config into the runtime config. Pure — unit-tested without any I/O.
+    fn from_image(cfg: ImageConfig) -> Self {
+        let inner = cfg.config;
+        let mut argv = inner.entrypoint;
+        argv.extend(inner.cmd);
+        let cwd = if inner.working_dir.is_empty() {
+            String::from("/")
+        } else {
+            inner.working_dir
+        };
+        RuntimeConfig {
+            argv,
+            env: inner.env,
+            cwd,
+            user: inner.user,
+        }
+    }
 }
 
 /// `blobs/sha256/<hex>` for a `sha256:<hex>` digest.
@@ -388,22 +451,70 @@ pub fn unpack_to_tree(layout: &Path, arch: &str) -> Result<Tree, UnpackError> {
     Ok(tree)
 }
 
+/// Resolve the manifest, read+VERIFY the image config blob, and distill it into the runtime config
+/// the runner needs. Tested directly. The config blob is digest-verified like every other blob.
+pub fn resolve_runtime_config(layout: &Path, arch: &str) -> Result<RuntimeConfig, UnpackError> {
+    let manifest = resolve_manifest(layout, arch)?;
+    let bytes = read_verified(layout, &manifest.config.digest)?;
+    let image: ImageConfig = serde_json::from_slice(&bytes)
+        .map_err(|e| UnpackError::Json(format!("image config: {e}")))?;
+    Ok(RuntimeConfig::from_image(image))
+}
+
+/// Write a runnable BUNDLE to `out`: the `rootfs/` (flattened tree), `run.json` (canonical config),
+/// and flat `config/{argv,env,cwd,user}` files the POSIX-sh runner reads without a JSON parser.
+/// Returns the number of rootfs files/links written.
+fn write_bundle(tree: &Tree, cfg: &RuntimeConfig, out: &Path) -> Result<usize, UnpackError> {
+    let rootfs = out.join("rootfs");
+    let n = write_tree(tree, &rootfs)?;
+
+    let run_json = serde_json::to_string_pretty(cfg)
+        .map_err(|e| UnpackError::Json(format!("run.json: {e}")))?;
+    write_out(&out.join("run.json"), run_json.as_bytes())?;
+
+    let cfgdir = out.join("config");
+    std::fs::create_dir_all(&cfgdir)
+        .map_err(|e| UnpackError::Io(format!("{}: {e}", cfgdir.display())))?;
+    // One argv arg / one env entry per line. (A NUL/newline inside an arg is not represented; real
+    // image argvs/envs don't contain newlines — documented v1 limitation in the runner.)
+    write_out(&cfgdir.join("argv"), lines(&cfg.argv).as_bytes())?;
+    write_out(&cfgdir.join("env"), lines(&cfg.env).as_bytes())?;
+    write_out(&cfgdir.join("cwd"), format!("{}\n", cfg.cwd).as_bytes())?;
+    write_out(&cfgdir.join("user"), format!("{}\n", cfg.user).as_bytes())?;
+    Ok(n)
+}
+
+/// Join with trailing newline per element (empty vec → empty string, so the file is 0 bytes).
+fn lines(items: &[String]) -> String {
+    let mut s = String::new();
+    for it in items {
+        s.push_str(it);
+        s.push('\n');
+    }
+    s
+}
+
+fn write_out(path: &Path, data: &[u8]) -> Result<(), UnpackError> {
+    std::fs::write(path, data).map_err(|e| UnpackError::Io(format!("{}: {e}", path.display())))
+}
+
 pub fn unpack(a: UnpackArgs) -> ExitCode {
-    match unpack_to_tree(&a.layout, &a.arch) {
-        Ok(tree) => match write_tree(&tree, &a.out) {
-            Ok(n) => {
-                println!(
-                    "oci unpack: OK — {} entries ({n} files/links) → {}",
-                    tree.len(),
-                    a.out.display()
-                );
-                ExitCode::SUCCESS
-            }
-            Err(e) => {
-                eprintln!("oci unpack: write failed — {e:?}");
-                ExitCode::from(2)
-            }
-        },
+    // Unpack the layers AND resolve the run config, then emit a runnable bundle
+    // (`<out>/rootfs` + `run.json` + `config/…`) the E3.5-T03 runner (`wvrun`) consumes.
+    let result = (|| -> Result<(usize, usize, usize), UnpackError> {
+        let tree = unpack_to_tree(&a.layout, &a.arch)?;
+        let cfg = resolve_runtime_config(&a.layout, &a.arch)?;
+        let n = write_bundle(&tree, &cfg, &a.out)?;
+        Ok((tree.len(), n, cfg.argv.len()))
+    })();
+    match result {
+        Ok((entries, n, argc)) => {
+            println!(
+                "oci unpack: OK — {entries} entries ({n} files/links) + run config ({argc} argv) → bundle {}",
+                a.out.display()
+            );
+            ExitCode::SUCCESS
+        }
         Err(UnpackError::DigestMismatch { expected, actual }) => {
             eprintln!(
                 "oci unpack: DIGEST MISMATCH — expected {expected}, got {actual} (corrupt/tampered blob)"

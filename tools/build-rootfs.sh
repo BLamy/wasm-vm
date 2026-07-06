@@ -34,6 +34,7 @@ docker run --rm \
   -v "$PWD/$OUT:/out" \
   -v "$PWD/tools/rootfs-inner.sh:/rootfs-inner.sh:ro" \
   -v "$PWD/tools/guest/container-smoke.sh:/container-smoke.sh:ro" \
+  -v "$PWD/tools/guest/wvrun.sh:/wvrun.sh:ro" \
   -e MIRROR="$MIRROR" \
   -e FS_UUID="$FS_UUID" \
   -e SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \

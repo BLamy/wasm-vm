@@ -68,6 +68,15 @@ fn put_blob(layout: &Path, bytes: &[u8]) -> String {
 
 /// Assemble a 2-layer riscv64 OCI layout in `layout`. Returns the manifest digest.
 fn build_layout(layout: &Path) -> String {
+    build_layout_cfg(
+        layout,
+        br#"{"architecture":"riscv64","os":"linux","rootfs":{"type":"layers","diff_ids":[]}}"#,
+    )
+}
+
+/// Like [`build_layout`] but with a caller-supplied image config blob (so tests can drive the
+/// Entrypoint/Cmd/Env/WorkingDir/User translation).
+fn build_layout_cfg(layout: &Path, config_json: &[u8]) -> String {
     // Layer 1: /etc/motd=v1, /etc/gone=bye, /bin/ (dir), /bin/sh=ELF.
     let l1 = layer(&[
         M::Dir("etc/"),
@@ -81,10 +90,7 @@ fn build_layout(layout: &Path) -> String {
 
     let d1 = put_blob(layout, &l1);
     let d2 = put_blob(layout, &l2);
-    let config = put_blob(
-        layout,
-        br#"{"architecture":"riscv64","os":"linux","rootfs":{"type":"layers","diff_ids":[]}}"#,
-    );
+    let config = put_blob(layout, config_json);
 
     let manifest = format!(
         r#"{{"schemaVersion":2,"mediaType":"application/vnd.oci.image.manifest.v1+json","config":{{"mediaType":"application/vnd.oci.image.config.v1+json","digest":"{config}","size":0}},"layers":[{{"mediaType":"application/vnd.oci.image.layer.v1.tar+gzip","digest":"{d1}","size":0}},{{"mediaType":"application/vnd.oci.image.layer.v1.tar+gzip","digest":"{d2}","size":0}}]}}"#
@@ -220,6 +226,128 @@ fn symlink_traversal_escape_is_blocked() {
             victim.display()
         );
     }
+}
+
+// ── E3.5-T03: image-config → runtime-config translation + runnable bundle emission ──
+
+#[test]
+fn runtime_config_merges_entrypoint_and_cmd() {
+    let td = tempfile::tempdir().unwrap();
+    // A postgres-shaped config: Entrypoint + Cmd + Env + WorkingDir + User.
+    build_layout_cfg(
+        td.path(),
+        br#"{"architecture":"riscv64","os":"linux","config":{
+            "Env":["PATH=/usr/local/bin:/usr/bin","POSTGRES_DB=app"],
+            "Entrypoint":["docker-entrypoint.sh"],
+            "Cmd":["postgres","-c","max_connections=100"],
+            "WorkingDir":"/var/lib/postgresql",
+            "User":"postgres"}}"#,
+    );
+    let cfg = resolve_runtime_config(td.path(), "riscv64").unwrap();
+    // OCI runtime semantics: final argv = Entrypoint ++ Cmd.
+    assert_eq!(
+        cfg.argv,
+        vec![
+            "docker-entrypoint.sh",
+            "postgres",
+            "-c",
+            "max_connections=100"
+        ]
+    );
+    assert_eq!(
+        cfg.env,
+        vec!["PATH=/usr/local/bin:/usr/bin", "POSTGRES_DB=app"]
+    );
+    assert_eq!(cfg.cwd, "/var/lib/postgresql");
+    assert_eq!(cfg.user, "postgres");
+}
+
+#[test]
+fn runtime_config_defaults_when_fields_absent() {
+    let td = tempfile::tempdir().unwrap();
+    // Only a Cmd (no Entrypoint/WorkingDir/User/Env) — the common single-arch base-image shape.
+    build_layout_cfg(
+        td.path(),
+        br#"{"architecture":"riscv64","os":"linux","config":{"Cmd":["/bin/sh"]}}"#,
+    );
+    let cfg = resolve_runtime_config(td.path(), "riscv64").unwrap();
+    assert_eq!(cfg.argv, vec!["/bin/sh"]);
+    assert!(cfg.env.is_empty());
+    assert_eq!(cfg.cwd, "/", "blank WorkingDir defaults to /");
+    assert_eq!(cfg.user, "");
+}
+
+#[test]
+fn unpack_emits_runnable_bundle() {
+    let td = tempfile::tempdir().unwrap();
+    build_layout_cfg(
+        td.path(),
+        br#"{"architecture":"riscv64","os":"linux","config":{
+            "Env":["PATH=/usr/bin"],"Entrypoint":["/bin/sh"],"Cmd":["-c","echo hi"],
+            "WorkingDir":"/srv","User":"1000:1000"}}"#,
+    );
+    let out = td.path().join("bundle");
+    let tree = unpack_to_tree(td.path(), "riscv64").unwrap();
+    let cfg = resolve_runtime_config(td.path(), "riscv64").unwrap();
+    write_bundle(&tree, &cfg, &out).unwrap();
+
+    // rootfs/ holds the merged tree.
+    assert_eq!(std::fs::read(out.join("rootfs/etc/motd")).unwrap(), b"v2");
+    assert!(out.join("rootfs/bin/sh").exists());
+    assert!(!out.join("rootfs/etc/gone").exists(), "whiteout applied");
+
+    // Flat shell-readable config the runner consumes (no JSON parser in the guest).
+    assert_eq!(
+        std::fs::read_to_string(out.join("config/argv")).unwrap(),
+        "/bin/sh\n-c\necho hi\n"
+    );
+    assert_eq!(
+        std::fs::read_to_string(out.join("config/env")).unwrap(),
+        "PATH=/usr/bin\n"
+    );
+    assert_eq!(
+        std::fs::read_to_string(out.join("config/cwd")).unwrap(),
+        "/srv\n"
+    );
+    assert_eq!(
+        std::fs::read_to_string(out.join("config/user")).unwrap(),
+        "1000:1000\n"
+    );
+
+    // run.json is canonical + re-parseable.
+    let rj = std::fs::read_to_string(out.join("run.json")).unwrap();
+    assert!(rj.contains("\"argv\""));
+    assert!(rj.contains("/bin/sh"));
+}
+
+#[test]
+fn corrupted_config_blob_is_refused_by_digest() {
+    let td = tempfile::tempdir().unwrap();
+    // A config blob big enough to be the largest? No — corrupt the config specifically by name.
+    build_layout_cfg(
+        td.path(),
+        br#"{"architecture":"riscv64","os":"linux","config":{"Cmd":["/bin/sh"],"Env":["A=1","B=2","C=3","D=4","E=5"]}}"#,
+    );
+    // Find the config blob (the JSON one that parses as an image config with a "config" key) and
+    // flip a byte; resolve_runtime_config must refuse it on digest.
+    let blobs = td.path().join("blobs/sha256");
+    let has = |data: &[u8], needle: &[u8]| data.windows(needle.len()).any(|w| w == needle);
+    for e in std::fs::read_dir(&blobs).unwrap().flatten() {
+        let data = std::fs::read(e.path()).unwrap();
+        // The image config uniquely has "architecture" but no "schemaVersion" (the manifest has the
+        // reverse) — corrupt ONLY it, so the failure exercises the config-blob verify path.
+        if has(&data, b"architecture") && !has(&data, b"schemaVersion") {
+            let mut d = data.clone();
+            let m = d.len() / 2;
+            d[m] ^= 0xFF;
+            std::fs::write(e.path(), &d).unwrap();
+        }
+    }
+    let err = resolve_runtime_config(td.path(), "riscv64").unwrap_err();
+    assert!(
+        matches!(err, UnpackError::DigestMismatch { .. }),
+        "got {err:?}"
+    );
 }
 
 #[test]
