@@ -49,7 +49,31 @@ async function runLinuxBoot(opts, banner) {
       },
       onOutput: (u8) => ui.write(u8),
       onError: (e) => term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`),
+      // E3-T09: single-writer status. RO → banner + a retry-as-writer affordance (reboot;
+      // the Web Lock is re-probed — succeeds once the writer tab is gone).
+      onWriterStatus: ({ readOnly }) => {
+        const el = document.getElementById("ro-banner");
+        if (!el) return;
+        if (readOnly) {
+          el.style.display = "block";
+          el.innerHTML =
+            'read-only: disk in use by another tab — writes are rejected (guest mounts / ro). ' +
+            '<button id="ro-retry">retry as writer</button>';
+          document.getElementById("ro-retry").addEventListener("click", async () => {
+            // Stop the RO machine and reboot; the lock probe runs again at boot.
+            if (linuxCtl) { try { linuxCtl.stop(); } catch {} linuxCtl = null; }
+            el.style.display = "none";
+            bootBtns.forEach((b) => b && (b.disabled = false));
+            setStatus("retrying as writer — click the boot button again");
+            term.writeln("\r\n\x1b[33mretry-as-writer: click the Boot button again (lock re-probed at boot)\x1b[0m");
+          });
+          term.writeln("\x1b[33mREAD-ONLY: another tab holds the disk — guest will mount / ro\x1b[0m");
+        } else {
+          el.style.display = "none";
+        }
+      },
     });
+    const ctlForRelease = linuxCtl;
     linuxCtl.whenDone.then((state) => {
       ui.detachSink();
       bootBtns.forEach((b) => b && (b.disabled = false));
@@ -59,6 +83,9 @@ async function runLinuxBoot(opts, banner) {
       const halt = { poweroff: "powered off", reboot: "rebooted (halted)", error: "error" };
       const reason = halt[state] || (state?.startsWith?.("exited") ? state : state?.startsWith?.("fail") ? state : null);
       if (reason) {
+        // E3-T09: on clean halt, release the writer lock so another tab can take over.
+        // (linuxCtl is already nulled above — use the captured controller.)
+        try { ctlForRelease?.releaseWriterLock?.(); } catch {}
         setStatus(`⏻ machine halted — ${reason}`);
         term.writeln(`\r\n\x1b[7m machine halted (${reason}) — click "Boot Linux"/"Boot Alpine" to boot a fresh machine \x1b[0m`);
       } else {

@@ -3,7 +3,7 @@ id: E3-T09
 epic: 3
 title: Multi-tab safety via Web Locks single-writer and read-only mode
 priority: 309
-status: pending
+status: in_progress
 depends_on: [E3-T05]
 estimate: M
 capstone: false
@@ -62,3 +62,30 @@ claim.
 
 ## Verification log
 (empty)
+
+**2026-07-06 — single-writer core + race acceptance (pass 1).**
+Implementation: exclusive Web Lock (`wasm-vm-disk-<manifest-url>`, auto-released on tab
+close/crash — no heartbeats) acquired BEFORE the writable store opens; second tab probes with
+`ifAvailable` (never queues — queueing would hang boot) and falls back to a READ-ONLY boot:
+`ChunkedBackend::set_read_only()` refuses writes at the seam (`BlockError::ReadOnly`, before any
+overlay/queue mutation), the device advertises `VIRTIO_BLK_F_RO` (pre-existing E2-T11 plumb), NO
+persist pump is registered, an RO tab never writes IndexedDB (not even a fresh meta record), and
+the kernel cmdline gets `root=/dev/vda ro rootflags=norecovery`. UI: RO banner + retry-as-writer;
+writer lock explicitly released on clean halt (poweroff) so a waiting tab can take over; Web
+Locks semantics cover the hard-kill path.
+
+**Race acceptance MET (`multitab.spec.js` "race", 1 passed, 4.0 min): 20/20 simultaneous
+dual-opens (<50ms apart) produced EXACTLY ONE writer every time** — no double-writer, no
+double-RO. Seam unit test (`ro_tests`, wasm-native): RO backend serves reads incl. another tab's
+persisted overlay blocks, refuses writes typed with zero queue mutation, reports is_read_only.
+
+**Real bug found by the first dual-boot run:** the RO tab's overlay snapshot can carry a dirty
+journal (the writer replays it in ITS memory only); ext4 REFUSES a ro mount needing recovery →
+"Unable to mount root fs" panic. Fixed: RO boots mount `norecovery` (documented staleness
+caveat — the right trade for a browse-only tab).
+
+**Outstanding evidence (pass 2):** the full RO-guest dual-boot leg (B mounts / ro, EROFS on
+write, takeover after A closes) — the fixed run was repeatedly killed by the environment
+mid-execution (external process kills, several today); the spec (`multitab.spec.js` "RO guest")
+is ready and re-runs unattended. Also outstanding: hard-kill takeover timing, 10-tab flood,
+forged-flag bypass audit (critic charter items).

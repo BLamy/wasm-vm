@@ -38,6 +38,10 @@ pub struct ChunkedBackend<B: OverlayBackend = MemOverlay> {
     /// that FLUSH covers. Held across `flush()` retries so continuous guest writes cannot extend
     /// the wait; dropped once every barrier block has durably committed.
     flush_barrier: Option<Vec<u64>>,
+    /// E3-T09: read-only mode (another tab holds the writer Web Lock). Writes are rejected at
+    /// THIS seam (`BlockError::ReadOnly`) and the device advertises `VIRTIO_BLK_F_RO`, so the
+    /// guest mounts `/` ro cleanly instead of corrupting a disk another tab owns.
+    read_only: bool,
 }
 
 impl ChunkedBackend<MemOverlay> {
@@ -66,7 +70,14 @@ impl<B: OverlayBackend> ChunkedBackend<B> {
             store,
             disk,
             flush_barrier: None,
+            read_only: false,
         }
+    }
+
+    /// E3-T09: mark this backend read-only (the writer Web Lock is held by another tab). The
+    /// overlay's persisted blocks still serve reads; every write is refused at this seam.
+    pub fn set_read_only(&mut self) {
+        self.read_only = true;
     }
 }
 
@@ -91,6 +102,11 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
     }
 
     fn write(&mut self, sector: u64, buf: &[u8]) -> Result<(), BlockError> {
+        // E3-T09: an RO tab must never mutate a disk another tab owns — refused before any
+        // range math so no state (overlay, persist queue) is touched.
+        if self.read_only {
+            return Err(BlockError::ReadOnly);
+        }
         let off = check_range(self.capacity_sectors, sector, buf.len())?;
         // `disk.write` is &mut self.disk; the base cache borrows self.store immutably (disjoint fields).
         let cache = self.store.borrow();
@@ -101,6 +117,10 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
             Ok(OverlayOutcome::NeedChunk(c)) => Err(BlockError::WouldBlock { chunk: c }),
             Err(_) => Err(BlockError::Io),
         }
+    }
+
+    fn is_read_only(&self) -> bool {
+        self.read_only
     }
 
     fn flush(&mut self) -> Result<(), BlockError> {
@@ -384,5 +404,46 @@ mod tests_support {
             store.borrow_mut().insert(i, c.to_vec());
         }
         (m, store)
+    }
+}
+
+#[cfg(test)]
+mod ro_tests {
+    use super::tests_support::*;
+    use super::*;
+
+    /// E3-T09: an RO backend serves reads (incl. previously persisted overlay blocks) but
+    /// refuses every write at the seam with a typed ReadOnly — no overlay/queue mutation —
+    /// and reports is_read_only so the device advertises VIRTIO_BLK_F_RO.
+    #[test]
+    fn read_only_backend_serves_reads_refuses_writes() {
+        let (m, store) = tiny_manifest_store();
+        let queue = std::rc::Rc::new(RefCell::new(wasm_vm_storage::PersistQueue::new()));
+        // A pre-existing dirty block, as if loaded from another tab's persisted overlay.
+        let mut loaded = std::collections::BTreeMap::new();
+        loaded.insert(0u64, [0xAAu8; wasm_vm_storage::OVERLAY_BLOCK]);
+        let overlay =
+            wasm_vm_storage::WriteBackOverlay::with_shared_queue(&m, queue.clone(), loaded);
+        let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &m).unwrap();
+        let mut be = ChunkedBackend::from_disk(disk, store);
+        be.set_read_only();
+
+        assert!(be.is_read_only(), "device will advertise VIRTIO_BLK_F_RO");
+        // Reads work — including the other tab's flushed data (overlay block 0).
+        let mut buf = [0u8; SECTOR_SIZE];
+        be.read(0, &mut buf).unwrap();
+        assert_eq!(
+            buf, [0xAA; SECTOR_SIZE],
+            "persisted overlay data readable in RO"
+        );
+        // Writes are refused with the typed error, and nothing reaches the persist queue.
+        let w = [0x55u8; SECTOR_SIZE];
+        assert_eq!(be.write(0, &w), Err(BlockError::ReadOnly));
+        assert_eq!(queue.borrow().unpersisted_count(), 0, "no queue mutation");
+        // The data is untouched.
+        be.read(0, &mut buf).unwrap();
+        assert_eq!(buf, [0xAA; SECTOR_SIZE]);
+        // Flush on an RO backend is trivially durable (nothing pending).
+        assert_eq!(be.flush(), Ok(()));
     }
 }
