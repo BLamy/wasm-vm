@@ -226,7 +226,9 @@ impl ChunkIndex {
                 offset,
                 image_len: self.image_len,
             })?;
-        if len == 0 || end > self.image_len {
+        // `chunk_size == 0` (only from an unvalidated manifest) means no addressable bytes; guard it
+        // so the divisions below can never panic — mirroring `locate` (critic round-2 BUG 2).
+        if self.chunk_size == 0 || len == 0 || end > self.image_len {
             // A zero-length read touches nothing; a past-the-end read is invalid.
             return Err(ImageError::OffsetOutOfRange {
                 offset,

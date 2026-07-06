@@ -205,6 +205,13 @@ fn unvalidated_manifest_never_panics() {
     assert_eq!(idx.chunk_count(), 0);
     assert!(idx.locate(0).is_err()); // no div-by-zero
     assert_eq!(idx.chunk_len(0), 0);
+    // The lazy read-path (E3-T02) must inherit the same guard — chunk_span/read divide by
+    // chunk_size (critic round-2 BUG 2).
+    assert!(idx.chunk_span(0, 4).is_err()); // no div-by-zero
+    let src = MockSource {
+        chunks: alloc::vec![],
+    };
+    assert!(idx.read(&src, 0, 4).is_err()); // no div-by-zero
 
     // Declared image_len implies 250 chunks but the vector is empty → bounds-check must use the
     // vector length, not the derived count, so `chunks[5]` cannot panic.

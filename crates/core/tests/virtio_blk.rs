@@ -450,3 +450,54 @@ fn lazy_read_parks_then_completes_exactly_once() {
         "no double-completion"
     );
 }
+
+/// A device reset while a read is parked (mid lazy-fetch: driver reload, error recovery, kexec)
+/// MUST discard the in-flight chain. Otherwise the abandoned read replays against the torn-down
+/// queue when the chunk finally arrives — corrupting the (now repurposed) guest buffer and pushing
+/// a used-ring entry the driver never requested (critic round-2 BUG 1).
+#[test]
+fn reset_discards_parked_reads() {
+    let ready = Rc::new(Cell::new(false));
+    let reads = Rc::new(Cell::new(0u32));
+    let payload: Vec<u8> = (0..64 * SECTOR_SIZE).map(|i| (i % 251) as u8).collect();
+    let mock = LazyMock {
+        ready: ready.clone(),
+        reads: reads.clone(),
+        data: payload.clone(),
+    };
+    let (mut m, mut ctx) = machine_be(Box::new(mock));
+
+    // IN: read sector 0 into a guest buffer — parks (backend not ready).
+    write_hdr(&mut m, HDR, 0, 0);
+    let rbuf = DATA + 0x4000;
+    wdesc(&mut m, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut m, 1, rbuf, SECTOR_SIZE as u32, F_WRITE | F_NEXT, 2);
+    wdesc(&mut m, 2, STATUS, 1, F_WRITE, 0);
+    m.bus_mut().store8(STATUS, 0xEE).unwrap(); // sentinel: unchanged ⇒ never completed
+    m.bus_mut().store16(USED + 2, 0).unwrap();
+    submit(&mut m, &mut ctx, 0);
+    assert_eq!(m.pending_blk_chunks(), vec![0], "parked before reset");
+
+    // Guest resets the device (Status ← 0) — the queue is torn down.
+    m.bus_mut().store32(SLOT0 + 0x70, 0).unwrap();
+    assert!(
+        m.pending_blk_chunks().is_empty(),
+        "reset discarded the parked read"
+    );
+
+    // The chunk arrives AFTER the reset. Draining boundaries must NOT replay the abandoned read:
+    // no used-ring entry, no write into the (repurposed) guest buffer, status sentinel intact.
+    ready.set(true);
+    assert_eq!(m.run(16), RunOutcome::MaxInstrs);
+    assert!(m.pending_blk_chunks().is_empty(), "still nothing parked");
+    assert_eq!(
+        m.bus_mut().load16(USED + 2).unwrap(),
+        0,
+        "no spurious completion after reset"
+    );
+    assert_eq!(
+        m.bus_mut().load8(STATUS).unwrap(),
+        0xEE,
+        "guest buffer never touched after reset"
+    );
+}

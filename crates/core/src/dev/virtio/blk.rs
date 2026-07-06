@@ -141,6 +141,12 @@ impl VirtioDevice for VirtioBlkDev {
         let mut st = self.state.borrow_mut();
         st.kicked = false;
         st.reset_pending = true; // run loop drops the cached ring view (critic round-1)
+        // Discard in-flight parked reads: their (head, rbuf, status) descriptors belong to
+        // the queue being torn down. A reset during a lazy-fetch window (driver reload,
+        // error recovery, kexec) would otherwise replay a stale chain against the
+        // re-initialized queue — writing sector data into a repurposed guest buffer and
+        // pushing a used-ring entry the new driver never requested (critic round-2 BUG 1).
+        st.parked.clear();
     }
 }
 
