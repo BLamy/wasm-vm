@@ -962,6 +962,18 @@ impl WasmLinux {
     /// driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
     /// so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
     /// boots.
+    /// E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
+    /// can proceed instead of blocking on our open handle. Call before wiping; the machine must
+    /// not persist afterward. No-op off the persistent path.
+    #[wasm_bindgen(js_name = closeStorage)]
+    pub fn close_storage(&self) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        if let Some((idb, _)) = &inner.persist {
+            idb.close();
+        }
+        Ok(())
+    }
+
     /// E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
     /// storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
     /// so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the

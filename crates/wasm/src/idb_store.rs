@@ -30,6 +30,12 @@ pub struct IdbStore {
 }
 
 impl IdbStore {
+    /// E3-T10: close this IndexedDB connection so a `deleteDatabase` (reset-disk) can proceed
+    /// without blocking. Idempotent; the store must not be used for I/O afterward.
+    pub fn close(&self) {
+        self.db.close();
+    }
+
     /// Open (creating/upgrading) the overlay DB for the base identified by `base_binding`. Creates the
     /// `blocks` + `meta` object stores on first use / version upgrade.
     pub async fn open(base_binding: &[u8; 32]) -> Result<IdbStore, JsValue> {
@@ -64,6 +70,15 @@ impl IdbStore {
 
         let db_val = await_request(req.unchecked_ref()).await?;
         let db: IdbDatabase = db_val.dyn_into()?;
+        // E3-T10 (critic BUG-4): close this connection when ANOTHER context requests a
+        // versionchange (i.e. deleteDatabase for reset-disk) — otherwise our open handle blocks
+        // the delete indefinitely and reset silently no-ops.
+        let db_for_vc = db.clone();
+        let on_vc = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
+            db_for_vc.close();
+        });
+        db.set_onversionchange(Some(on_vc.as_ref().unchecked_ref()));
+        on_vc.forget();
         Ok(IdbStore { db })
     }
 

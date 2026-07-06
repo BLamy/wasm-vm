@@ -568,3 +568,89 @@ mod reset_scope_tests {
         );
     }
 }
+
+#[cfg(test)]
+mod critic_e3t10_hostile {
+    use super::tests_support::*;
+    use super::*;
+
+    /// CRITIC HOSTILE (claim 1c): a block re-dirtied between a FAILED (quota) persist and the
+    /// retry — the E3-T05 generation guard must not lose the newest bytes across the failed
+    /// persist. Adopted verbatim from the critic.
+    #[test]
+    fn quota_failure_then_redirty_then_retry_never_loses_the_newest_bytes() {
+        let (m, store) = tiny_manifest_store();
+        let queue = std::rc::Rc::new(RefCell::new(wasm_vm_storage::PersistQueue::new()));
+        let overlay = wasm_vm_storage::WriteBackOverlay::with_shared_queue(
+            &m,
+            queue.clone(),
+            std::collections::BTreeMap::new(),
+        );
+        let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &m).unwrap();
+        let mut be = ChunkedBackend::from_disk(disk, store);
+        be.write(0, &[0x11u8; 4096]).unwrap();
+        let s1 = queue.borrow().pending_flush();
+        assert_eq!(s1.len(), 1);
+        // persist(s1) FAILS on quota: mark_persisted NOT called. Guest re-writes v2.
+        be.write(0, &[0x22u8; 4096]).unwrap();
+        let stale: Vec<(u64, u64)> = s1.iter().map(|(b, g, _)| (*b, *g)).collect();
+        queue.borrow_mut().mark_persisted(&stale);
+        assert!(
+            !queue.borrow().is_empty(),
+            "stale-generation mark must NOT clear a re-dirtied block (would lose v2)"
+        );
+        let s2 = queue.borrow().pending_flush();
+        assert_eq!(s2[0].2, [0x22u8; 4096], "retry flushes the NEWEST bytes");
+        assert!(
+            s2[0].1 > s1[0].1,
+            "generation advanced across the failed persist"
+        );
+        let pairs: Vec<(u64, u64)> = s2.iter().map(|(b, g, _)| (*b, *g)).collect();
+        queue.borrow_mut().mark_persisted(&pairs);
+        assert!(
+            queue.borrow().is_empty(),
+            "successful retry clears the queue"
+        );
+    }
+
+    /// CRITIC claim 3, REFRAMED after the fix: at the BACKEND, a "continue read-only" runtime flip
+    /// over a backend with an unpersisted block correctly PARKS a FLUSH (never acks undurable
+    /// data) — which is exactly WHY the loader must keep the persist pump alive (critic BUG-1
+    /// fix: the pump is now gated on lockReadOnly, NOT the quota RO flag, so the backlog drains).
+    /// This test proves the resolution path: once the pending block IS persisted (the pump
+    /// succeeding after the user frees space), the FLUSH acks — the write was never lost.
+    #[test]
+    fn continue_read_only_flush_parks_until_backlog_drains_then_acks() {
+        let (m, store) = tiny_manifest_store();
+        let queue = std::rc::Rc::new(RefCell::new(wasm_vm_storage::PersistQueue::new()));
+        let overlay = wasm_vm_storage::WriteBackOverlay::with_shared_queue(
+            &m,
+            queue.clone(),
+            std::collections::BTreeMap::new(),
+        );
+        let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &m).unwrap();
+        let mut be = ChunkedBackend::from_disk(disk, store);
+        be.write(0, &[0xEEu8; 4096]).unwrap(); // acked S_OK pre-quota
+        assert_eq!(queue.borrow().unpersisted_count(), 1);
+        // Quota → "continue read-only": flip the shared cell (no NEW writes accepted)…
+        be.read_only_flag().set(true);
+        assert!(be.is_read_only());
+        assert_eq!(
+            be.write(0, &[0x99; 4096]),
+            Err(BlockError::ReadOnly),
+            "no new writes"
+        );
+        // …while the pending block is still undurable, FLUSH correctly parks (won't lie).
+        assert_eq!(be.flush(), Err(BlockError::FlushPending));
+        // The loader pump keeps draining: simulate the persist succeeding once space is freed.
+        let snap = queue.borrow().pending_flush();
+        let pairs: Vec<(u64, u64)> = snap.iter().map(|(b, g, _)| (*b, *g)).collect();
+        queue.borrow_mut().mark_persisted(&pairs);
+        assert!(
+            queue.borrow().is_empty(),
+            "backlog drained (pump alive — BUG-1 fixed)"
+        );
+        // Now the FLUSH acks — the acked write became durable; nothing was lost.
+        assert_eq!(be.flush(), Ok(()), "FLUSH acks once the backlog is durable");
+    }
+}

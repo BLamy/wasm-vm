@@ -91,3 +91,35 @@ clippy(all-features) 0, fmt, wasm32 default+zicsr-stub builds.
 boot with CDP `Storage.overrideQuota` to ~50 MB → `dd` triggers the dialog → "continue" makes
 `dd` exit EIO with the guest still usable → post-hit fsck clean (T08 harness); the "reset →
 pristine reboot" full-boot leg; incognito ephemeral-storage warning.
+
+**2026-07-06 — cold-clone critic round: FIX-FIRST → 5 bugs fixed. Persist-path mechanism, reset
+scoping, E3-T09 regression surface all SOUND.**
+- **BUG-1 (CRITICAL, fixed):** "continue read-only" reused the E3-T09 `readOnly` flag, which
+  gates the persist pump OFF — so already-acked-but-unpersisted blocks were STRANDED (lost on
+  reload) and the guest's next FLUSH parked forever. Fixed by splitting the flags: `lockReadOnly`
+  (E3-T09, we don't own the disk → never persist) vs `quotaReadOnly` (E3-T10, we own it but can't
+  grow it → refuse NEW writes yet KEEP the pump draining the backlog, throttled 3s). The pump now
+  gates on `lockReadOnly` only; the pending set drains once space frees and the parked FLUSH acks
+  (proven: `continue_read_only_flush_parks_until_backlog_drains_then_acks`). Dialog copy now warns
+  when `hasUnpersisted()` (its previously-caller-less API is now wired).
+- **BUG-2 (HIGH, fixed):** the flush-priority/backpressure persist site (the LIKELY quota path —
+  guest sync → flushWaiting) didn't classify StorageFull and killed the boot generically. Both
+  persist sites now route through one `handlePersistError` → quota pause + dialog.
+- **BUG-3 (MEDIUM, fixed):** `visibilitychange`→`resume()` could resume the VM behind the dialog.
+  The quota pause is now its own `quotaPaused` flag that `schedule()` honors and plain `resume()`
+  can't clear.
+- **BUG-4 (HIGH, fixed):** reset-while-booted was a no-op that CLAIMED success — the live IDB
+  connection blocked `deleteDatabase`, whose `onblocked` handler resolved as success. Fixed:
+  `IdbStore::close()` + an `onversionchange→close` handler; `WasmLinux.closeStorage()`; the reset
+  dialog closes storage before wiping; `resetDisk` now treats `onblocked` as pending→failure
+  (3s grace) rather than phantom success.
+- **BUG-6 (LOW, fixed):** the quota-path `estimate()` is now try/caught so `onQuota` always fires.
+- **Classifier (fixed):** dropped the `"maximum size"` false positive (Chrome's oversized-VALUE
+  error is deterministic, not quota — "retry" would loop forever); added the legacy WebKit
+  `QUOTA_EXCEEDED_ERR` spelling; removed a redundant substring. The shipped test that enshrined the
+  misclassification is corrected; critic's 2 classifier + 2 chunked hostile tests adopted.
+Critic CONFIRMED the no-lost-write MECHANISM (persistPending returns before mark_persisted on any
+error; IDB txn abort rolls back the whole batch → all stay pending; gen guard intact) and reset
+scoping (per-image DB, meta in-DB, chunk cache in-memory). Gate: wasm-lib 20/20, clippy 0, quota
+browser 2/2, wasm32 builds. Threat note: `resetDisk` still defaults the manifest URL (LOW — single
+image today). Pass-2 nightly acceptance unchanged (CDP overrideQuota full boot, fsck, incognito).

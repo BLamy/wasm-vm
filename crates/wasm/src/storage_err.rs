@@ -22,13 +22,15 @@ impl StorageError {
     /// or an `NS_ERROR_DOM_QUOTA_REACHED` (Firefox) / `kQuotaExceeded` spelling.
     pub fn classify(name_or_message: &str) -> StorageError {
         let s = name_or_message;
-        let quota = s.contains("QuotaExceeded")
-            || s.contains("QUOTA_REACHED")
-            || s.contains("QuotaExceededError")
-            || s.contains("kQuota")
-            // Firefox worker IDB sometimes reports the bare message:
-            || s.to_ascii_lowercase().contains("not enough space")
-            || s.to_ascii_lowercase().contains("maximum size");
+        // Only signals that specifically mean "the origin ran out of storage" and are recoverable
+        // by freeing space. Deliberately NOT "maximum size" — Chrome's oversized-VALUE error
+        // ("serialized value is too large … maximum size is …") is a deterministic per-value limit
+        // (DataCloneError family), which freeing space cannot fix (critic false-positive).
+        let quota = s.contains("QuotaExceeded")           // QuotaExceededError (all modern engines)
+            || s.contains("QUOTA_EXCEEDED")               // legacy WebKit constant QUOTA_EXCEEDED_ERR
+            || s.contains("QUOTA_REACHED")                // Firefox NS_ERROR_DOM_QUOTA_REACHED
+            || s.contains("kQuota")                       // Chromium internal spelling
+            || s.to_ascii_lowercase().contains("not enough space"); // bare-message fallback
         if quota {
             StorageError::QuotaExceeded
         } else {
@@ -52,7 +54,7 @@ mod tests {
             "QuotaExceededError: The current transaction exceeded its quota limitations.",
             "NS_ERROR_DOM_QUOTA_REACHED",
             "kQuotaExceededError",
-            "The serialized value is too large (maximum size...).",
+            "QUOTA_EXCEEDED_ERR: DOM Exception 22",
             "There is not enough space to complete the operation.",
         ] {
             assert_eq!(
@@ -79,5 +81,39 @@ mod tests {
             );
             assert!(!StorageError::classify(n).is_quota());
         }
+    }
+}
+
+#[cfg(test)]
+mod critic_e3t10_hostile {
+    use super::*;
+
+    /// CRITIC HOSTILE (claim 2, miss): legacy WebKit spelled the quota DOMException as
+    /// "QUOTA_EXCEEDED_ERR: DOM Exception 22" (the constant name + numeric code 22, no
+    /// "QuotaExceededError" camel-case anywhere). classify() misses it.
+    #[test]
+    fn legacy_webkit_quota_spelling_is_missed() {
+        assert_eq!(
+            StorageError::classify("QUOTA_EXCEEDED_ERR: DOM Exception 22"),
+            StorageError::QuotaExceeded,
+            "legacy WebKit quota spelling should classify as quota"
+        );
+    }
+
+    /// CRITIC HOSTILE (claim 2, false positive): Chrome's oversized-value error — "The
+    /// serialized value is too large (size=x bytes, maximum size is y bytes)." — is a
+    /// DETERMINISTIC per-value limit (DataCloneError-family), not quota. classify() calls it
+    /// quota via the "maximum size" substring, so "free space & retry" would loop forever
+    /// (freeing space cannot fix an oversized value). Unreachable for 4 KiB blocks today, but
+    /// the classifier is generic and the shipped test SUITE endorses the misclassification.
+    #[test]
+    fn oversized_value_error_is_not_quota() {
+        assert_eq!(
+            StorageError::classify(
+                "The serialized value is too large (size=339 bytes, maximum size is 255 bytes)."
+            ),
+            StorageError::Other,
+            "a per-value size limit is deterministic, not recoverable by freeing space"
+        );
     }
 }
