@@ -74,7 +74,8 @@ pub struct ImageManifest {
     pub chunk_size: u32,
     /// Chunk storage layout.
     pub layout: Layout,
-    /// Ordered lowercase-hex SHA-256 of each chunk. `chunks.len()` must equal the derived count.
+    /// Ordered hex SHA-256 of each chunk (producers write lowercase; the reader accepts either
+    /// case). `chunks.len()` must equal the count derived from `image_len` and `chunk_size`.
     pub chunks: Vec<String>,
 }
 
@@ -129,13 +130,20 @@ impl ImageManifest {
     /// tail chunk) AND SHA-256 matching the manifest. A flipped byte or truncated chunk is a typed
     /// error, never a panic.
     pub fn verify_chunk(&self, chunk: usize, bytes: &[u8]) -> Result<(), ImageError> {
-        let idx = self.index();
-        if chunk as u64 >= idx.chunk_count {
+        // Bounds-check against the ACTUAL hash vector (not the derived count) so `self.chunks[chunk]`
+        // below can never OOB-panic, even on an unvalidated manifest whose declared count and
+        // `chunks.len()` disagree.
+        if chunk >= self.chunks.len() {
             return Err(ImageError::ChunkIndexOutOfRange {
                 chunk,
-                count: idx.chunk_count,
+                count: self.chunks.len() as u64,
             });
         }
+        // A 0 chunk_size (only from an unvalidated manifest) is a bad manifest, not a panic.
+        if self.chunk_size == 0 {
+            return Err(ImageError::BadChunkSize(0));
+        }
+        let idx = self.index();
         let expected = idx.chunk_len(chunk);
         if bytes.len() as u64 != expected {
             return Err(ImageError::TruncatedChunk {
@@ -180,7 +188,9 @@ impl ChunkIndex {
     /// The chunk index and intra-chunk offset holding byte `offset`. `offset >= image_len` (which
     /// includes every offset of a 0-byte image) is [`ImageError::OffsetOutOfRange`].
     pub fn locate(&self, offset: u64) -> Result<(usize, u64), ImageError> {
-        if offset >= self.image_len {
+        // `chunk_size == 0` (only from an unvalidated manifest) means no addressable bytes; guard it
+        // so the division below can never panic.
+        if self.chunk_size == 0 || offset >= self.image_len {
             return Err(ImageError::OffsetOutOfRange {
                 offset,
                 image_len: self.image_len,
@@ -208,9 +218,10 @@ impl ChunkIndex {
     }
 }
 
-/// `ceil(image_len / chunk_size)` — chunk_size is a nonzero power of two here, so no overflow.
+/// `ceil(image_len / chunk_size)`. Guards `chunk_size == 0` (→ 0) so it never divides by zero even
+/// on an unvalidated, hand-constructed manifest — every public method must be panic-free.
 fn derived_chunk_count(image_len: u64, chunk_size: u64) -> u64 {
-    if image_len == 0 {
+    if image_len == 0 || chunk_size == 0 {
         0
     } else {
         image_len.div_ceil(chunk_size)

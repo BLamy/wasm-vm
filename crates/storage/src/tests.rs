@@ -186,6 +186,41 @@ fn from_json_parses_ignores_unknown_fields_and_errors_typed() {
     );
 }
 
+#[test]
+fn unvalidated_manifest_never_panics() {
+    // The public API must be panic-free even on a hand-constructed manifest that skipped validate()
+    // (the `pub` fields allow it). Critic C2 footgun: chunk_size=0 div-by-zero + OOB index.
+    let bad_cs = ImageManifest {
+        version: FORMAT_VERSION,
+        image_len: 10,
+        chunk_size: 0,
+        layout: Layout::Split,
+        chunks: alloc::vec![String::from("ab").repeat(32)],
+    };
+    assert_eq!(
+        bad_cs.verify_chunk(0, &[]),
+        Err(ImageError::BadChunkSize(0))
+    );
+    let idx = bad_cs.index(); // no div-by-zero
+    assert_eq!(idx.chunk_count(), 0);
+    assert!(idx.locate(0).is_err()); // no div-by-zero
+    assert_eq!(idx.chunk_len(0), 0);
+
+    // Declared image_len implies 250 chunks but the vector is empty → bounds-check must use the
+    // vector length, not the derived count, so `chunks[5]` cannot panic.
+    let empty = ImageManifest {
+        version: FORMAT_VERSION,
+        image_len: 1000,
+        chunk_size: 4,
+        layout: Layout::Blob,
+        chunks: alloc::vec![],
+    };
+    assert_eq!(
+        empty.verify_chunk(5, &[0u8; 4]),
+        Err(ImageError::ChunkIndexOutOfRange { chunk: 5, count: 0 })
+    );
+}
+
 proptest::proptest! {
     // Reassembling chunk-by-chunk per the index reproduces the image byte-for-byte, and every
     // offset locates to the right (chunk, intra) — for random sizes around chunk-size multiples.
