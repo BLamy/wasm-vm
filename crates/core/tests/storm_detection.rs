@@ -110,7 +110,14 @@ fn wfi_watchdog_silent_when_timer_armed() {
     // timer is now correctly reported as a deadlock (see critic_storm_hostile.rs).
     m.hart_mut()
         .csr
-        .access(wasm_vm_core::csr::MIE, wasm_vm_core::csr::CsrOp::Write, 1 << 7, false, false, 0)
+        .access(
+            wasm_vm_core::csr::MIE,
+            wasm_vm_core::csr::CsrOp::Write,
+            1 << 7,
+            false,
+            false,
+            0,
+        )
         .unwrap();
     m.bus_mut().store32(CODE, 0x1050_0073).unwrap(); // wfi
     m.bus_mut().store32(CODE + 4, 0x0000_006F).unwrap(); // jal x0,0
