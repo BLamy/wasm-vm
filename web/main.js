@@ -49,10 +49,19 @@ async function runLinuxBoot(opts, banner) {
       onError: (e) => term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`),
     });
     linuxCtl.whenDone.then((state) => {
-      setStatus(`linux: ${state}`);
       ui.detachSink();
       bootBtns.forEach((b) => b && (b.disabled = false));
       linuxCtl = null;
+      // E2-T26: surface the T17 terminal ExitReason as a distinct HALTED state, not just a status
+      // string — the machine is gone; you must re-boot from a fresh Machine.
+      const halt = { poweroff: "powered off", reboot: "rebooted (halted)", error: "error" };
+      const reason = halt[state] || (state?.startsWith?.("exited") ? state : state?.startsWith?.("fail") ? state : null);
+      if (reason) {
+        setStatus(`⏻ machine halted — ${reason}`);
+        term.writeln(`\r\n\x1b[7m machine halted (${reason}) — click "Boot Linux"/"Boot Alpine" to boot a fresh machine \x1b[0m`);
+      } else {
+        setStatus(`linux: ${state}`);
+      }
     });
     // Route terminal keystrokes/paste to the guest's ttyS0 via the backpressure bridge.
     ui.attachSink((bytes) => {
