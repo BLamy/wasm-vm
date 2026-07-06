@@ -91,3 +91,23 @@ Gates: net 10 + critic 7 + blk/torture/mmio/virtqueue all green; fmt/clippy(all-
 determinism/wasm(default+zicsr-stub) clean. **Remaining (pass 2, stacked):** Machine wiring
 (`enable_virtio_net`, slot 1, run-loop service), DTB node, Alpine `eth0` probe + `ip link` MAC
 acceptance, loopback arping via PcapBackend capture, native/wasm parity run.
+
+**2026-07-06 — machine wiring + native Alpine acceptance (pass 2), PR stacked on the groom
+branch.** `VirtioMmio::install_device` (empty-slot-only; occupied → device returned via Err,
+never silent replace) + `Machine::enable_virtio_net` (installs into slot 1 — the DTB already
+advertises all 8 windows, zero DTB change) + run-loop service each boundary (kick OR async
+backend rx). CLI `wasm-vm boot --net`; wasm `assemble()` attaches loopback net on every boot
+shape (T14 swaps in slirp). **Kernel rebuilt with networking** — the E2-T12 pinned config had
+`CONFIG_NET=n` ("Epic 3 revisits networking" — this is that moment): +NET/UNIX/INET/PACKET/
+NETDEVICES/NET_CORE/VIRTIO_NET (ETHERNET stays off — it only gates vendor NIC drivers;
+virtio_net is under NET_CORE), Image 17.7→22.1 MB, docs/kernel.md updated.
+
+**Native acceptance MET (`boot_alpine_net.rs`, 1 passed, 797.8s):** full Alpine/OpenRC boot
+with `--net` → root login → (1) `dmesg | grep virtio_net` shows the stock driver probe;
+(2) `ip link show eth0` shows MAC 52:54:00:12:34:56 (our config space); (3) `ip addr add
+10.0.2.15/24` + `ip link set eth0 up` + `arping -c 2 10.0.2.99` →
+`/sys/class/net/eth0/statistics/rx_packets > 0` AND `tx_packets > 0` — the ONLY possible rx
+source is the LoopbackBackend echoing the guest's own tx MAC-swapped, so this proves
+guest→device→backend→device→guest end-to-end under the stock driver; clean poweroff exit 0.
+Machine-level test `virtio_net_machine.rs` (2): slot-1 lifecycle over real registers, echo
+round-trip in ONE run-loop boundary, IRQ raise/ACK via real registers, double-install refused.

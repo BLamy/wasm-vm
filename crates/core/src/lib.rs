@@ -185,6 +185,15 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::blk::BlkState>>,
         Option<dev::virtio::queue::Virtqueue>,
     )>,
+    /// E3-T13: virtio-net service state (shared backend state + the persistent receiveq /
+    /// transmitq ring views), when [`Self::enable_virtio_net`] plugged a backend into slot 1.
+    /// Serviced at every boundary the guest has kicked OR the backend has an rx frame ready.
+    #[allow(clippy::type_complexity)]
+    net: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::net::NetState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+    )>,
 }
 
 impl Machine {
@@ -218,6 +227,7 @@ impl Machine {
             syscon: None,
             virtio: alloc::vec::Vec::new(),
             blk: None,
+            net: None,
         })
     }
 
@@ -345,6 +355,37 @@ impl Machine {
         let slots = self.enable_virtio_slots(Some(alloc::boxed::Box::new(devhalf)));
         self.blk = Some((alloc::rc::Rc::clone(&state), None));
         (alloc::rc::Rc::clone(&slots[0]), state)
+    }
+
+    /// E3-T13: attach a virtio-net device (DeviceID 1) backed by `backend` in slot 1. The
+    /// eight slots must already exist ([`Self::enable_virtio_blk`] or
+    /// [`Self::enable_virtio_slots`] first) — net installs into the empty slot 1 (the DTB
+    /// already advertises all eight windows, so the kernel probes it with no DTB change).
+    /// Returns (slot-1 handle, shared net state — inspect `rx_dropped`/`tx_count`, drive the
+    /// backend).
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_net(
+        &mut self,
+        backend: alloc::boxed::Box<dyn dev::virtio::net::NetBackend>,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::net::NetState>>,
+    ) {
+        assert!(
+            self.virtio.len() > 1,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_net"
+        );
+        let (devhalf, state) = dev::virtio::net::new(backend);
+        assert!(
+            self.virtio[1]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(devhalf))
+                .is_ok(),
+            "virtio slot 1 already has a device"
+        );
+        self.net = Some((alloc::rc::Rc::clone(&state), None, None));
+        (alloc::rc::Rc::clone(&self.virtio[1].0), state)
     }
 
     /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,
@@ -939,6 +980,12 @@ impl Machine {
                 if let Some((state, vq)) = &mut self.blk {
                     let slot = alloc::rc::Rc::clone(&self.virtio[0].0);
                     dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
+                }
+                // E3-T13: service virtio-net kicks (and async backend rx frames) the same
+                // boundary, so tx completions + delivered echoes interrupt promptly.
+                if let Some((state, rx_vq, tx_vq)) = &mut self.net {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[1].0);
+                    dev::virtio::net::service(&slot, rx_vq, tx_vq, state, &mut self.bus);
                 }
                 // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
                 for (slot, line) in &self.virtio {

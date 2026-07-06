@@ -111,6 +111,21 @@ impl VirtioMmio {
         Self::with_backend(Some(dev))
     }
 
+    /// E3-T13: install a backend into an EMPTY slot after attachment (net goes into slot 1
+    /// while blk claimed slot 0 at `enable_virtio_slots` time). Installing over an existing
+    /// backend is a wiring bug — the device is returned to the caller untouched (`Err`),
+    /// never silently replacing a live device.
+    pub fn install_device(
+        &mut self,
+        dev: Box<dyn VirtioDevice>,
+    ) -> Result<(), Box<dyn VirtioDevice>> {
+        if self.dev.is_some() {
+            return Err(dev);
+        }
+        self.dev = Some(dev);
+        Ok(())
+    }
+
     fn with_backend(dev: Option<Box<dyn VirtioDevice>>) -> Self {
         Self {
             dev,

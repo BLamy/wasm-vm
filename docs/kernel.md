@@ -45,8 +45,11 @@ Verify: run the build on two machines (or two container UIDs) and diff
 - **`PRINTK_TIME`** — timestamped dmesg (bisecting boot hangs).
 - **`IKCONFIG` + `_PROC`** — `/proc/config.gz` so the running kernel's config is auditable.
 - **`MODULES=n`** — everything built-in; no initramfs/module coupling, no module load path.
-- **`PCI/NET/USB/SOUND/DRM/FB=n`** — cut boot probing for hardware we don't emulate yet
-  (Epic 3 revisits networking; note the boot-time cost then).
+- **`NET/UNIX/INET/PACKET/NETDEVICES/NET_CORE/VIRTIO_NET=y`** (E3-T13) — the network stack +
+  the stock virtio_net driver for our slot-1 device. `PACKET` is AF_PACKET (arping/udhcpc/
+  tcpdump — the T13/T15 acceptance tools). `ETHERNET` stays **off**: it only gates vendor NIC
+  drivers (virtio_net lives in drivers/net under NET_CORE, not drivers/net/ethernet).
+- **`PCI/ETHERNET/USB/SOUND/DRM/FB=n`** — cut boot probing for hardware we don't emulate.
 
 ## Bumping the version
 
