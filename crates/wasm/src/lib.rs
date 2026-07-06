@@ -25,6 +25,8 @@ use wasm_vm_core::{Machine, RunOutcome};
 // lib build so it is never dead code under `-D warnings`.
 #[cfg(any(all(target_arch = "wasm32", not(feature = "zicsr-stub")), test))]
 mod chunked;
+#[cfg(all(test, not(feature = "zicsr-stub")))]
+mod critic_flush_reset;
 // The web-sys `fetch` glue is browser-only.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod http_fetch;

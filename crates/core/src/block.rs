@@ -54,6 +54,13 @@ pub trait BlockBackend {
     fn read(&mut self, sector: u64, buf: &mut [u8]) -> Result<(), BlockError>;
     fn write(&mut self, sector: u64, buf: &[u8]) -> Result<(), BlockError>;
     fn flush(&mut self) -> Result<(), BlockError>;
+    /// E3-T08: every parked FLUSH request has been DISCARDED (transport reset, or the device
+    /// degraded and dropped its in-flight chains) — abandon any held durability barrier, so the
+    /// next FLUSH takes a FRESH barrier covering everything pending at that point. Without this,
+    /// a write-back backend's barrier from a dead FLUSH goes stale and the next FLUSH can adopt
+    /// it and ack while its own coverage is unpersisted (critic BUG 1: the early-ack lie).
+    /// Default no-op: synchronous backends hold no barrier.
+    fn flush_reset(&mut self) {}
     fn is_read_only(&self) -> bool {
         false
     }

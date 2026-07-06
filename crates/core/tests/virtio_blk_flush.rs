@@ -71,6 +71,7 @@ struct Ctx {
     seq: u16,
 }
 
+#[allow(clippy::type_complexity)]
 fn machine() -> (Machine, Ctx, Rc<Cell<bool>>, Rc<Cell<u64>>, Rc<Cell<u64>>) {
     let durable = Rc::new(Cell::new(true));
     let commits = Rc::new(Cell::new(0));

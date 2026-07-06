@@ -124,6 +124,14 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
         }
         self.disk.commit().map_err(|_| BlockError::Io)
     }
+
+    fn flush_reset(&mut self) {
+        // E3-T08 (critic BUG 1): the parked FLUSH holding our barrier was discarded (transport
+        // reset / device degradation). Drop it so the NEXT flush takes a FRESH barrier covering
+        // everything pending at that point — adopting the stale, narrower barrier could ack a
+        // new FLUSH while its own coverage is unpersisted.
+        self.flush_barrier = None;
+    }
 }
 
 #[cfg(test)]

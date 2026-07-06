@@ -170,6 +170,10 @@ impl VirtioDevice for VirtioBlkDev {
         // re-initialized queue — writing sector data into a repurposed guest buffer and
         // pushing a used-ring entry the new driver never requested (critic round-2 BUG 1).
         st.parked.clear();
+        // E3-T08 (critic BUG 1): a discarded parked FLUSH leaves its durability barrier held
+        // in the backend; the NEXT flush would adopt that stale (too-narrow) barrier and could
+        // ack while its own coverage is unpersisted. Tell the backend its barrier is orphaned.
+        st.backend.flush_reset();
     }
 }
 
@@ -464,7 +468,11 @@ pub fn service(
     }
     let q = vq.as_mut().expect("just constructed");
     let mut delivered_work = false;
-    // E3-T02: retry PARKED reads first. Drain them (so `execute` can re-borrow state); a chain whose
+    // E3-T02: retry PARKED reads first. INVARIANT (E3-T08, load-bearing): the parked chains —
+    // in particular a barrier-holding FLUSH — are ALWAYS re-executed before any fresh pop. A
+    // parked FLUSH therefore re-checks (and on success releases) its held barrier before a
+    // newly-popped FLUSH can call the backend, so a fresh FLUSH never adopts another request's
+    // barrier (critic claim-3: this ordering is what makes two-FLUSHes-in-flight safe). Drain them (so `execute` can re-borrow state); a chain whose
     // data is now resident completes — pushed to the used ring EXACTLY ONCE — and is dropped; one
     // still absent is re-parked. Re-executing a stored chain is idempotent (it re-reads the guest
     // descriptors + backend and writes nothing to the guest until it can complete). Out-of-order used
@@ -478,6 +486,9 @@ pub fn service(
                 if q.push_used(bus, chain.head, w).is_err() {
                     slot.borrow_mut().protocol_violation();
                     *vq = None;
+                    // The rest of the taken parked chains are dropped with this early return —
+                    // any barrier a dropped FLUSH held is orphaned (E3-T08 critic BUG 1 family).
+                    state.borrow_mut().backend.flush_reset();
                     return;
                 }
                 delivered_work = true;

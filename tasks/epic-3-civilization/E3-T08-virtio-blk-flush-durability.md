@@ -91,6 +91,20 @@ newer write stays pending→new flush covers it). Gates: clippy 0 / determinism 
 suites / wasm32 builds all green. `VIRTIO_BLK_F_FLUSH` was already advertised (E2-T11);
 `flush_count` documents attempt-counting semantics (tests read the backend's own commit counter).
 
+Cold-clone critic (filesystem-corruption charter) **FIX-FIRST → fixed same PR**: BUG 1 (HIGH,
+failing-test-proven) — a stale `flush_barrier` survived transport reset (reset discarded the
+parked FLUSH but never told the backend), so the NEXT flush adopted the dead, too-narrow
+barrier and could ack while its own coverage was unpersisted (write A → FLUSH-1 parks → reset
+→ drain A → re-init → write C → FLUSH-2 acked with C pending). Fixed with
+`BlockBackend::flush_reset()` (default no-op) called from `reset()` and the service-loop
+early-returns that drop taken parked chains; `ChunkedBackend` drops its held barrier →
+next FLUSH takes a fresh one. Critic REFUTED the suspected two-FLUSH interleaving bug (safe:
+parked chains are always retried before fresh pops, so the barrier holder releases first) —
+that invariant is load-bearing and now documented at the retry loop. Critic's 3 tests adopted
+(`crates/wasm/src/critic_flush_reset.rs`): the BUG-1 regression, the two-FLUSH safety probe,
+combined chunk+flush parks reporting only the chunk. Post-fix gate: clippy 0 (type_complexity
+nit fixed), determinism clean, blk 11/flush 3/torture 8, storage 51, wasm-lib 10, wasm32 builds.
+
 **Remaining (pass 2):** wasm pump prioritization when `flush_waiting()` (persistPending already
 runs per tick), dirty-bytes threshold force-drain + idle trickle documentation, `tools/crashtest`
 tab-kill loop (IDB backend, ≥10-30 kills → fsck clean/recovered), guest `sync` → exactly-one-
