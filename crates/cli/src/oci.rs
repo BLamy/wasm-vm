@@ -1,0 +1,319 @@
+//! E3.5-T01: `wasm-vm oci unpack <layout-dir> <out-dir>` — resolve an OCI image-layout to its
+//! linux/riscv64 manifest, verify every blob's sha256 digest, gunzip + untar each layer feeding
+//! the shared whiteout applier ([`wasm_vm_storage::oci`]), and write the flattened rootfs.
+//!
+//! Input is a standard OCI image-layout (`skopeo copy … oci:dir` / `docker save`-style):
+//!   `index.json` → a manifest (or a manifest-list we pick linux/riscv64 from) → `config` + N
+//!   `layers`, all under `blobs/sha256/<hex>`. The registry PULL that fetches this layout over
+//!   HTTP is a later (network) pass; this is the local, deterministic, unit-tested core.
+
+use std::io::Read;
+use std::path::{Path, PathBuf};
+use std::process::ExitCode;
+
+use clap::Args;
+use flate2::read::GzDecoder;
+use serde::Deserialize;
+use sha2::{Digest, Sha256};
+use wasm_vm_storage::oci::{Entry, Node, OciError, Tree, apply_layer};
+
+#[derive(Args)]
+pub struct UnpackArgs {
+    /// An OCI image-layout directory (`index.json` + `blobs/sha256/…`).
+    layout: PathBuf,
+    /// Output directory for the flattened rootfs (created; must not escape).
+    #[arg(long)]
+    out: PathBuf,
+    /// Target platform architecture to pick from a manifest list (default riscv64).
+    #[arg(long, default_value = "riscv64")]
+    arch: String,
+}
+
+// The String/field payloads are surfaced through Debug (`{e:?}`) in the CLI + test assertions;
+// clippy's dead-code pass doesn't count Debug-only reads, so allow it here.
+#[derive(Debug)]
+#[allow(dead_code)]
+pub enum UnpackError {
+    Io(String),
+    Json(String),
+    /// A blob's bytes do not hash to its digest (corruption / tamper).
+    DigestMismatch {
+        expected: String,
+        actual: String,
+    },
+    /// No manifest matched the requested architecture.
+    NoArch(String),
+    BadDigest(String),
+    Oci(OciError),
+}
+
+impl From<OciError> for UnpackError {
+    fn from(e: OciError) -> Self {
+        UnpackError::Oci(e)
+    }
+}
+
+// ── Minimal OCI JSON shapes (only the fields we use) ─────────────────────────────────────────
+#[derive(Deserialize)]
+struct Descriptor {
+    digest: String,
+    #[serde(default)]
+    #[serde(rename = "mediaType")]
+    media_type: String,
+    #[serde(default)]
+    platform: Option<Platform>,
+}
+#[derive(Deserialize)]
+struct Platform {
+    #[serde(default)]
+    architecture: String,
+    #[serde(default)]
+    os: String,
+}
+#[derive(Deserialize)]
+struct Index {
+    manifests: Vec<Descriptor>,
+}
+#[derive(Deserialize)]
+struct Manifest {
+    layers: Vec<Descriptor>,
+}
+
+/// `blobs/sha256/<hex>` for a `sha256:<hex>` digest.
+fn blob_path(layout: &Path, digest: &str) -> Result<PathBuf, UnpackError> {
+    let hex = digest
+        .strip_prefix("sha256:")
+        .ok_or_else(|| UnpackError::BadDigest(digest.to_string()))?;
+    Ok(layout.join("blobs").join("sha256").join(hex))
+}
+
+/// Read a blob and VERIFY its bytes hash to `digest` before returning them (never trust a blob
+/// unverified — the T01 charter).
+fn read_verified(layout: &Path, digest: &str) -> Result<Vec<u8>, UnpackError> {
+    let path = blob_path(layout, digest)?;
+    let bytes =
+        std::fs::read(&path).map_err(|e| UnpackError::Io(format!("{}: {e}", path.display())))?;
+    let actual = format!("sha256:{}", hex(&Sha256::digest(&bytes)));
+    if actual != *digest {
+        return Err(UnpackError::DigestMismatch {
+            expected: digest.to_string(),
+            actual,
+        });
+    }
+    Ok(bytes)
+}
+
+fn hex(bytes: &[u8]) -> String {
+    bytes.iter().map(|b| format!("{b:02x}")).collect()
+}
+
+/// Resolve the index → the manifest for `arch` (following a manifest list if present).
+fn resolve_manifest(layout: &Path, arch: &str) -> Result<Manifest, UnpackError> {
+    let index_text = std::fs::read_to_string(layout.join("index.json"))
+        .map_err(|e| UnpackError::Io(format!("index.json: {e}")))?;
+    let index: Index =
+        serde_json::from_str(&index_text).map_err(|e| UnpackError::Json(e.to_string()))?;
+
+    // Find a manifest whose platform matches `arch` (linux/*), OR if the single top entry is a
+    // plain manifest (no platform), use it; OR follow it if it's an index.
+    let pick = pick_arch(&index.manifests, arch);
+    let desc = pick.ok_or_else(|| UnpackError::NoArch(arch.to_string()))?;
+    let bytes = read_verified(layout, &desc.digest)?;
+
+    // The picked descriptor may itself be a manifest-list (nested index) or a manifest.
+    if desc.media_type.contains("index") || desc.media_type.contains("manifest.list") {
+        let nested: Index = serde_json::from_str(&String::from_utf8_lossy(&bytes))
+            .map_err(|e| UnpackError::Json(e.to_string()))?;
+        let d2 = pick_arch(&nested.manifests, arch)
+            .ok_or_else(|| UnpackError::NoArch(arch.to_string()))?;
+        let mbytes = read_verified(layout, &d2.digest)?;
+        return serde_json::from_str(&String::from_utf8_lossy(&mbytes))
+            .map_err(|e| UnpackError::Json(e.to_string()));
+    }
+    serde_json::from_str(&String::from_utf8_lossy(&bytes))
+        .map_err(|e| UnpackError::Json(e.to_string()))
+}
+
+/// Pick the descriptor matching `arch` (preferring linux); fall back to a lone platformless entry.
+fn pick_arch<'a>(descs: &'a [Descriptor], arch: &str) -> Option<&'a Descriptor> {
+    if let Some(d) = descs.iter().find(|d| {
+        d.platform
+            .as_ref()
+            .is_some_and(|p| p.architecture == arch && (p.os.is_empty() || p.os == "linux"))
+    }) {
+        return Some(d);
+    }
+    // No platform info (a single-arch image's index) → the sole manifest.
+    if descs.len() == 1 && descs[0].platform.is_none() {
+        return Some(&descs[0]);
+    }
+    None
+}
+
+/// Parse one decompressed layer tar into `(ordered_raw_paths, entries_by_path)` and apply it.
+fn apply_layer_tar(tree: &mut Tree, tar_bytes: &[u8]) -> Result<(), UnpackError> {
+    // Gzip is the near-universal layer compression; a stored (uncompressed) tar starts with a
+    // ustar header, so sniff the gzip magic and only inflate when present.
+    let raw: Vec<u8> = if tar_bytes.starts_with(&[0x1f, 0x8b]) {
+        let mut d = GzDecoder::new(tar_bytes);
+        let mut out = Vec::new();
+        d.read_to_end(&mut out)
+            .map_err(|e| UnpackError::Io(format!("gunzip: {e}")))?;
+        out
+    } else {
+        tar_bytes.to_vec()
+    };
+
+    // First pass: collect ordered member paths + build the entry map (tar's Archive is a
+    // single-pass reader, so materialize what the applier needs).
+    let mut ordered: Vec<String> = Vec::new();
+    let mut by_path: std::collections::HashMap<String, Entry> = std::collections::HashMap::new();
+    let mut ar = tar::Archive::new(&raw[..]);
+    for ent in ar
+        .entries()
+        .map_err(|e| UnpackError::Io(format!("tar: {e}")))?
+    {
+        let mut ent = ent.map_err(|e| UnpackError::Io(format!("tar entry: {e}")))?;
+        let raw_path = ent
+            .path()
+            .map_err(|e| UnpackError::Io(format!("tar path: {e}")))?
+            .to_string_lossy()
+            .into_owned();
+        // A `.wh.` member is a whiteout — recorded in `ordered` only; the applier re-derives it.
+        let name = raw_path.rsplit('/').next().unwrap_or("");
+        let is_whiteout = name.starts_with(".wh.");
+        let hdr = ent.header();
+        let mode = hdr.mode().unwrap_or(0o644);
+        ordered.push(raw_path.clone());
+        if is_whiteout {
+            continue;
+        }
+        let clean = match wasm_vm_storage::oci::safe_path(&raw_path) {
+            Ok(c) => c,
+            Err(e) => return Err(UnpackError::Oci(e)),
+        };
+        let entry = match hdr.entry_type() {
+            tar::EntryType::Directory => Entry::Dir { path: clean, mode },
+            tar::EntryType::Symlink => {
+                let target = hdr
+                    .link_name()
+                    .ok()
+                    .flatten()
+                    .map(|p| p.to_string_lossy().into_owned())
+                    .unwrap_or_default();
+                Entry::Symlink {
+                    path: clean,
+                    target,
+                }
+            }
+            tar::EntryType::Link => {
+                let target = hdr
+                    .link_name()
+                    .ok()
+                    .flatten()
+                    .map(|p| p.to_string_lossy().into_owned())
+                    .unwrap_or_default();
+                Entry::Hardlink {
+                    path: clean,
+                    target,
+                }
+            }
+            _ => {
+                let mut data = Vec::new();
+                ent.read_to_end(&mut data)
+                    .map_err(|e| UnpackError::Io(format!("tar read: {e}")))?;
+                Entry::File {
+                    path: clean,
+                    mode,
+                    data,
+                }
+            }
+        };
+        by_path.insert(raw_path, entry);
+    }
+
+    apply_layer(tree, &ordered, |raw| Ok(by_path.get(raw).cloned())).map_err(UnpackError::Oci)
+}
+
+/// Write the flattened tree to `out`, refusing to follow any path outside it (belt-and-suspenders
+/// on top of the applier's `safe_path`).
+fn write_tree(tree: &Tree, out: &Path) -> Result<usize, UnpackError> {
+    std::fs::create_dir_all(out).map_err(|e| UnpackError::Io(format!("{}: {e}", out.display())))?;
+    let mut n = 0;
+    // Directories first (sorted keys give parents before children).
+    for (path, node) in tree {
+        let dst = out.join(path);
+        if !dst.starts_with(out) {
+            return Err(UnpackError::Oci(OciError::UnsafePath(path.clone())));
+        }
+        match node {
+            Node::Dir { .. } => {
+                std::fs::create_dir_all(&dst)
+                    .map_err(|e| UnpackError::Io(format!("{}: {e}", dst.display())))?;
+            }
+            Node::File { data, .. } => {
+                if let Some(p) = dst.parent() {
+                    std::fs::create_dir_all(p).ok();
+                }
+                std::fs::write(&dst, data)
+                    .map_err(|e| UnpackError::Io(format!("{}: {e}", dst.display())))?;
+                n += 1;
+            }
+            Node::Symlink { target } => {
+                if let Some(p) = dst.parent() {
+                    std::fs::create_dir_all(p).ok();
+                }
+                let _ = std::fs::remove_file(&dst);
+                #[cfg(unix)]
+                std::os::unix::fs::symlink(target, &dst)
+                    .map_err(|e| UnpackError::Io(format!("symlink {}: {e}", dst.display())))?;
+                n += 1;
+            }
+        }
+    }
+    Ok(n)
+}
+
+/// The library entry point (tested directly): unpack `layout` for `arch` into `out`, returning
+/// the flattened tree.
+pub fn unpack_to_tree(layout: &Path, arch: &str) -> Result<Tree, UnpackError> {
+    let manifest = resolve_manifest(layout, arch)?;
+    let mut tree = Tree::new();
+    for layer in &manifest.layers {
+        let bytes = read_verified(layout, &layer.digest)?; // digest-verified before unpack
+        apply_layer_tar(&mut tree, &bytes)?;
+    }
+    Ok(tree)
+}
+
+pub fn unpack(a: UnpackArgs) -> ExitCode {
+    match unpack_to_tree(&a.layout, &a.arch) {
+        Ok(tree) => match write_tree(&tree, &a.out) {
+            Ok(n) => {
+                println!(
+                    "oci unpack: OK — {} entries ({n} files/links) → {}",
+                    tree.len(),
+                    a.out.display()
+                );
+                ExitCode::SUCCESS
+            }
+            Err(e) => {
+                eprintln!("oci unpack: write failed — {e:?}");
+                ExitCode::from(2)
+            }
+        },
+        Err(UnpackError::DigestMismatch { expected, actual }) => {
+            eprintln!(
+                "oci unpack: DIGEST MISMATCH — expected {expected}, got {actual} (corrupt/tampered blob)"
+            );
+            ExitCode::from(3)
+        }
+        Err(e) => {
+            eprintln!("oci unpack: FAIL — {e:?}");
+            ExitCode::from(2)
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests;
