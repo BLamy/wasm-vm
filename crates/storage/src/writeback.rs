@@ -26,6 +26,11 @@ pub struct WriteBackOverlay {
     blocks: BTreeMap<u64, [u8; OVERLAY_BLOCK]>,
     /// Blocks written since they were last persisted — the set the async store still needs to flush.
     unpersisted: BTreeSet<u64>,
+    /// Per-block dirty generation, bumped on every `write_block`. `pending_flush` stamps each block
+    /// with its generation; `mark_persisted` clears a block ONLY if its generation is unchanged since
+    /// the snapshot — so a block re-written mid-flush is never wrongly marked durable (the lost-write
+    /// class). A block absent here has generation 0 (never dirtied since load).
+    generation: BTreeMap<u64, u64>,
     base_binding: [u8; 32],
     image_len: u64,
 }
@@ -36,6 +41,7 @@ impl WriteBackOverlay {
         WriteBackOverlay {
             blocks: BTreeMap::new(),
             unpersisted: BTreeSet::new(),
+            generation: BTreeMap::new(),
             base_binding: manifest.base_hash(),
             image_len: manifest.image_len,
         }
@@ -51,28 +57,39 @@ impl WriteBackOverlay {
         WriteBackOverlay {
             blocks,
             unpersisted: BTreeSet::new(),
+            generation: BTreeMap::new(),
             base_binding: manifest.base_hash(),
             image_len: manifest.image_len,
         }
     }
 
-    /// Snapshot of the blocks that still need to be written to the durable store — `(block, bytes)` in
-    /// ascending block order. The async persister writes exactly these in one batched transaction, then
-    /// calls [`Self::mark_persisted`]. Snapshotting (rather than draining) means a write that lands
-    /// mid-transaction is simply re-flushed next round — never lost.
-    pub fn pending_flush(&self) -> Vec<(u64, [u8; OVERLAY_BLOCK])> {
+    /// The dirty generation of block `b` (0 if never written since load).
+    fn gen_of(&self, b: u64) -> u64 {
+        self.generation.get(&b).copied().unwrap_or(0)
+    }
+
+    /// Snapshot of the blocks that still need to be written to the durable store — `(block, generation,
+    /// bytes)` in ascending block order. The async persister writes exactly these in one batched
+    /// transaction, then passes the same `(block, generation)` pairs to [`Self::mark_persisted`]. If a
+    /// block is re-written between this snapshot and that call, its generation advances, so it will NOT
+    /// be marked persisted and is re-flushed next round — never lost.
+    pub fn pending_flush(&self) -> Vec<(u64, u64, [u8; OVERLAY_BLOCK])> {
         self.unpersisted
             .iter()
-            .map(|&b| (b, self.blocks[&b]))
+            .map(|&b| (b, self.gen_of(b), self.blocks[&b]))
             .collect()
     }
 
-    /// Mark `blocks` as durably persisted (called after the store's transaction completes). A block
-    /// that was re-written after the snapshot but before this call stays unpersisted only if it was
-    /// re-added to `unpersisted` in the interim — so re-marking here clears exactly what was flushed.
-    pub fn mark_persisted(&mut self, blocks: &[u64]) {
-        for b in blocks {
-            self.unpersisted.remove(b);
+    /// Mark blocks as durably persisted after the store's transaction completes, given the
+    /// `(block, generation)` pairs from the [`Self::pending_flush`] snapshot that was flushed. A block
+    /// is cleared from `unpersisted` ONLY if its current generation equals the flushed one — a block
+    /// re-written since the snapshot (higher generation) stays unpersisted so its new bytes are flushed
+    /// next round. This is what makes write-back safe under concurrent guest writes (critic E3-T05).
+    pub fn mark_persisted(&mut self, persisted: &[(u64, u64)]) {
+        for &(b, g) in persisted {
+            if self.gen_of(b) == g {
+                self.unpersisted.remove(&b);
+            }
         }
     }
 
@@ -95,6 +112,7 @@ impl OverlayBackend for WriteBackOverlay {
     fn write_block(&mut self, block: u64, bytes: [u8; OVERLAY_BLOCK]) {
         self.blocks.insert(block, bytes);
         self.unpersisted.insert(block); // needs a durable flush
+        *self.generation.entry(block).or_insert(0) += 1; // advance the dirty generation
     }
 
     fn commit(&mut self) -> Result<(), OverlayError> {
