@@ -5,6 +5,7 @@
 
 pub mod blk;
 pub mod mmio;
+pub mod net;
 pub mod queue;
 
 /// Standard virtio feature bit the transport ALWAYS offers (spec 1.2 §6.1): bit 32,
