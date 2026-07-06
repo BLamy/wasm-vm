@@ -34,7 +34,7 @@ pub use overlay::{
     OverlayOutcome,
 };
 pub use prefetch::{PrefetchTracker, Readahead, boot_prefetch};
-pub use writeback::WriteBackOverlay;
+pub use writeback::{PersistQueue, SharedPersistQueue, WriteBackOverlay};
 
 /// The one format version this reader understands. Bumped only on an incompatible change; unknown
 /// *fields* are ignored (forward-compatible), but an unknown *version* is a hard error.

@@ -131,6 +131,42 @@ fn from_loaded_reopen_has_all_blocks_persisted() {
 }
 
 #[test]
+fn a_shared_queue_lets_an_external_persister_drain_the_overlays_writes() {
+    // The durable-backend seam: the overlay records writes into a SHARED PersistQueue that the async
+    // store drains independently (it never touches the overlay/machine).
+    use alloc::rc::Rc;
+    use core::cell::RefCell;
+    let m = manifest(3 * OVERLAY_BLOCK as u64);
+    let queue = Rc::new(RefCell::new(crate::PersistQueue::new()));
+    let mut wb = WriteBackOverlay::with_shared_queue(&m, queue.clone(), BTreeMap::new());
+
+    wb.write_block(0, blk(0xD0));
+    wb.write_block(2, blk(0xD2));
+    // The external persister sees the writes through its own clone of the queue.
+    let snap = queue.borrow().pending_flush();
+    assert_eq!(
+        snap.iter().map(|(b, _, _)| *b).collect::<Vec<_>>(),
+        vec![0, 2]
+    );
+    assert_eq!(snap[0].2, blk(0xD0));
+    // It marks them persisted on its side; the overlay observes the drain.
+    let flushed: Vec<(u64, u64)> = snap.iter().map(|(b, g, _)| (*b, *g)).collect();
+    queue.borrow_mut().mark_persisted(&flushed);
+    assert_eq!(wb.unpersisted_count(), 0);
+    // A re-write during a hypothetical in-flight flush is still not lost across the shared boundary.
+    wb.write_block(0, blk(0xEE));
+    queue.borrow_mut().mark_persisted(&flushed); // stale pairs from the FIRST snapshot
+    assert_eq!(
+        wb.unpersisted_count(),
+        1,
+        "re-write survives a stale mark across the shared queue"
+    );
+    assert_eq!(queue.borrow().pending_flush()[0].2, blk(0xEE));
+    // The overlay still serves the latest bytes for reads.
+    assert_eq!(wb.dirty_block(0), Some(&blk(0xEE)));
+}
+
+#[test]
 fn overlay_disk_reads_merge_over_base_through_write_back() {
     // WriteBackOverlay is a drop-in OverlayBackend: OverlayDisk merges over base identically.
     let data = vec![0xEEu8; OVERLAY_BLOCK];

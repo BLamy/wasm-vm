@@ -15,87 +15,147 @@
 //! formalizes how the virtio-blk `FLUSH` completion waits for that async barrier.
 
 use crate::{ImageManifest, OVERLAY_BLOCK, OverlayBackend, OverlayError};
-use alloc::collections::{BTreeMap, BTreeSet};
+use alloc::collections::BTreeMap;
+use alloc::rc::Rc;
 use alloc::vec::Vec;
+use core::cell::RefCell;
 
-/// In-memory write layer with unpersisted-block tracking for an async durable store. Synchronous for
-/// the `OverlayDisk` read/write path; the async persister drains [`pending_flush`](Self::pending_flush).
-#[derive(Debug, Clone)]
+/// A shared handle to a [`PersistQueue`] — cloned into both the in-memory overlay (which records every
+/// write) and the async durable store (which drains it), so the store never reaches into the machine.
+pub type SharedPersistQueue = Rc<RefCell<PersistQueue>>;
+
+/// The blocks not yet durably persisted, with the bytes to write and a per-block dirty generation.
+/// This is the single source of truth for write-back durability; a durable backend shares one of these
+/// with its in-memory overlay and drains it asynchronously.
+#[derive(Debug, Default, Clone)]
+pub struct PersistQueue {
+    /// `block -> (generation, bytes)` for every block awaiting a durable flush.
+    pending: BTreeMap<u64, (u64, [u8; OVERLAY_BLOCK])>,
+    /// Monotonic per-block dirty generation (never decreases), so a block re-written between a flush
+    /// snapshot and its mark is detectable.
+    generation: BTreeMap<u64, u64>,
+}
+
+impl PersistQueue {
+    pub fn new() -> PersistQueue {
+        PersistQueue::default()
+    }
+
+    /// Record a written block (its post-RMW bytes) as needing a durable flush; advances its generation.
+    fn record(&mut self, block: u64, bytes: [u8; OVERLAY_BLOCK]) {
+        let g = {
+            let e = self.generation.entry(block).or_insert(0);
+            *e += 1;
+            *e
+        };
+        self.pending.insert(block, (g, bytes));
+    }
+
+    /// Snapshot of the blocks to flush — `(block, generation, bytes)` in ascending block order. The
+    /// async store writes exactly these, then passes the same `(block, generation)` pairs to
+    /// [`Self::mark_persisted`].
+    pub fn pending_flush(&self) -> Vec<(u64, u64, [u8; OVERLAY_BLOCK])> {
+        self.pending
+            .iter()
+            .map(|(&b, &(g, bytes))| (b, g, bytes))
+            .collect()
+    }
+
+    /// Clear flushed blocks whose generation is UNCHANGED since the snapshot — a block re-written
+    /// mid-flush (higher generation) stays pending so its new bytes are flushed next round. This
+    /// generation guard is the E3-T05 lost-write fix.
+    pub fn mark_persisted(&mut self, persisted: &[(u64, u64)]) {
+        for &(b, g) in persisted {
+            if self.pending.get(&b).is_some_and(|&(pg, _)| pg == g) {
+                self.pending.remove(&b);
+            }
+        }
+    }
+
+    /// How many blocks still need flushing.
+    pub fn unpersisted_count(&self) -> usize {
+        self.pending.len()
+    }
+
+    /// Whether nothing is pending a flush.
+    pub fn is_empty(&self) -> bool {
+        self.pending.is_empty()
+    }
+}
+
+/// In-memory write layer for the `OverlayDisk` path (synchronous reads/writes), with durability
+/// tracking delegated to a (possibly shared) [`PersistQueue`]. The `blocks` map is owned — so
+/// `dirty_block` returns a borrow with no interior-mutability gymnastics — while the durability queue
+/// can be shared with an async store (see [`Self::with_shared_queue`]/[`Self::shared_queue`]).
+#[derive(Debug)]
 pub struct WriteBackOverlay {
     /// The full in-memory view — every dirty block, whether or not it is durably persisted yet.
     blocks: BTreeMap<u64, [u8; OVERLAY_BLOCK]>,
-    /// Blocks written since they were last persisted — the set the async store still needs to flush.
-    unpersisted: BTreeSet<u64>,
-    /// Per-block dirty generation, bumped on every `write_block`. `pending_flush` stamps each block
-    /// with its generation; `mark_persisted` clears a block ONLY if its generation is unchanged since
-    /// the snapshot — so a block re-written mid-flush is never wrongly marked durable (the lost-write
-    /// class). A block absent here has generation 0 (never dirtied since load).
-    generation: BTreeMap<u64, u64>,
+    /// Durability tracking — the source of truth for `pending_flush`/`mark_persisted`; may be shared.
+    queue: SharedPersistQueue,
     base_binding: [u8; 32],
     image_len: u64,
 }
 
 impl WriteBackOverlay {
-    /// A fresh (empty) write-back overlay bound to `manifest`'s base.
+    /// A fresh (empty) write-back overlay bound to `manifest`'s base, with its own private queue.
     pub fn new(manifest: &ImageManifest) -> WriteBackOverlay {
-        WriteBackOverlay {
-            blocks: BTreeMap::new(),
-            unpersisted: BTreeSet::new(),
-            generation: BTreeMap::new(),
-            base_binding: manifest.base_hash(),
-            image_len: manifest.image_len,
-        }
+        WriteBackOverlay::with_shared_queue(
+            manifest,
+            Rc::new(RefCell::new(PersistQueue::new())),
+            BTreeMap::new(),
+        )
     }
 
     /// Reconstruct from blocks loaded out of a durable store on reopen. All loaded blocks are already
-    /// persisted, so `unpersisted` starts empty. (The caller is responsible for verifying the store's
-    /// recorded base binding matches `manifest.base_hash()` — E3-T04's rule — before loading.)
+    /// persisted, so the queue starts empty. (The caller must verify the store's recorded base binding
+    /// matches `manifest.base_hash()` — E3-T04's rule — before loading.)
     pub fn from_loaded(
         manifest: &ImageManifest,
         blocks: BTreeMap<u64, [u8; OVERLAY_BLOCK]>,
     ) -> WriteBackOverlay {
+        WriteBackOverlay::with_shared_queue(
+            manifest,
+            Rc::new(RefCell::new(PersistQueue::new())),
+            blocks,
+        )
+    }
+
+    /// Build over a SHARED persist queue (the async durable store holds the other `Rc` clone) and
+    /// pre-loaded `blocks` (already persisted — the queue starts reflecting only new writes). This is
+    /// how a durable backend wires the in-memory overlay to its flush loop.
+    pub fn with_shared_queue(
+        manifest: &ImageManifest,
+        queue: SharedPersistQueue,
+        blocks: BTreeMap<u64, [u8; OVERLAY_BLOCK]>,
+    ) -> WriteBackOverlay {
         WriteBackOverlay {
             blocks,
-            unpersisted: BTreeSet::new(),
-            generation: BTreeMap::new(),
+            queue,
             base_binding: manifest.base_hash(),
             image_len: manifest.image_len,
         }
     }
 
-    /// The dirty generation of block `b` (0 if never written since load).
-    fn gen_of(&self, b: u64) -> u64 {
-        self.generation.get(&b).copied().unwrap_or(0)
+    /// A clone of the shared persist-queue handle — the async store drains this while the overlay keeps
+    /// serving reads/writes.
+    pub fn shared_queue(&self) -> SharedPersistQueue {
+        self.queue.clone()
     }
 
-    /// Snapshot of the blocks that still need to be written to the durable store — `(block, generation,
-    /// bytes)` in ascending block order. The async persister writes exactly these in one batched
-    /// transaction, then passes the same `(block, generation)` pairs to [`Self::mark_persisted`]. If a
-    /// block is re-written between this snapshot and that call, its generation advances, so it will NOT
-    /// be marked persisted and is re-flushed next round — never lost.
+    /// Snapshot of blocks awaiting a durable flush (delegates to the queue).
     pub fn pending_flush(&self) -> Vec<(u64, u64, [u8; OVERLAY_BLOCK])> {
-        self.unpersisted
-            .iter()
-            .map(|&b| (b, self.gen_of(b), self.blocks[&b]))
-            .collect()
+        self.queue.borrow().pending_flush()
     }
 
-    /// Mark blocks as durably persisted after the store's transaction completes, given the
-    /// `(block, generation)` pairs from the [`Self::pending_flush`] snapshot that was flushed. A block
-    /// is cleared from `unpersisted` ONLY if its current generation equals the flushed one — a block
-    /// re-written since the snapshot (higher generation) stays unpersisted so its new bytes are flushed
-    /// next round. This is what makes write-back safe under concurrent guest writes (critic E3-T05).
+    /// Mark flushed `(block, generation)` pairs persisted (delegates to the queue; generation-guarded).
     pub fn mark_persisted(&mut self, persisted: &[(u64, u64)]) {
-        for &(b, g) in persisted {
-            if self.gen_of(b) == g {
-                self.unpersisted.remove(&b);
-            }
-        }
+        self.queue.borrow_mut().mark_persisted(persisted);
     }
 
     /// How many blocks still need flushing to the durable store.
     pub fn unpersisted_count(&self) -> usize {
-        self.unpersisted.len()
+        self.queue.borrow().unpersisted_count()
     }
 
     /// How many dirty blocks are resident in total (persisted + unpersisted).
@@ -111,8 +171,7 @@ impl OverlayBackend for WriteBackOverlay {
 
     fn write_block(&mut self, block: u64, bytes: [u8; OVERLAY_BLOCK]) {
         self.blocks.insert(block, bytes);
-        self.unpersisted.insert(block); // needs a durable flush
-        *self.generation.entry(block).or_insert(0) += 1; // advance the dirty generation
+        self.queue.borrow_mut().record(block, bytes); // needs a durable flush (generation advanced)
     }
 
     fn commit(&mut self) -> Result<(), OverlayError> {
