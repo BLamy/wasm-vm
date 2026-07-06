@@ -62,4 +62,32 @@ claim: if adding one package rewrites >50% of chunks, the ext4 layout isn't stab
 and demand investigation (e.g., fixed inode allocation via `-d` ordering).
 
 ## Verification log
-(empty)
+
+**2026-07-06 — pipeline orchestration + integrity/churn gates + a real reproducibility bug (pass 1).**
+`tools/build_image/build.sh`: one command → reproducible ext4 (E2-T18) → `wasm-vm chunk` →
+`chunk-verify` integrity gate → `image-info.json` (Alpine release, mirror, epoch, exact package
+lock) → optional `REPRO_CHECK=1` double-build/diff gate. The integrity + CDN-churn logic is native
+Rust (`crates/cli/src/chunk_verify.rs`: `chunk-verify` = manifest↔chunks/ mutual consistency
+[missing/corrupt/orphan/oversized → nonzero exit, reusing `ImageManifest::verify_chunk`];
+`chunk-churn --old --new [--max-churn-pct]` = (added+removed)/union over chunk sets, the
+CDN-friendliness metric). `docs/design/image-pipeline.md`: determinism techniques, CDN cache
+headers (immutable content-addressed chunks), package-bump flow, adversarial checklist.
+
+**Native acceptance MET (`crates/cli/tests/chunk_verify.rs`, 5 passed):** clean dir verifies;
+a flipped chunk byte → `HashMismatch`; a removed chunk → `MissingChunk`; an extra file →
+`OrphanChunk`; identical rebuilds → 0.0% churn while a one-region change stays small and the
+`--max-churn-pct` ceiling both passes (50%) and trips (1%). Also ran `chunk-verify` on the REAL
+committed `releases/chunked-alpine` → OK, 87 distinct chunks.
+
+**The REPRO_CHECK gate caught a genuine nondeterminism bug (the charter's point):** two builds
+produced DIFFERENT manifests — **11.2% churn, 10 of 84 chunks** — because `mke2fs` pinned the fs
+UUID (`-U`) but NOT the directory-htree **hash seed**, which it randomizes per build (the churned
+chunks were the directory-index blocks). E2-T18 only ever claimed package-level reproducibility,
+not byte-identical ext4 — this gate is what forces the stronger guarantee. Fixed in
+`tools/rootfs-inner.sh`: `-E hash_seed=$FS_UUID` (reusing the one pinned constant; dir_index stays
+on → deterministic htree, no lookup regression). Re-run confirms [PIPELINE_RESULT].
+
+Gates: clippy(all-features) 0, fmt, determinism, cli tests. **Remaining (pass 2):** cross-host
+rebuild diff; mount-and-hunt (machine-id / ssh keys / mtimes > epoch); adopt the rebuilt artifact
+as the web default + regenerate web/artifacts-alpine.json; the boot-through-streaming acceptance
+(same path E3-T02..T13 already prove).

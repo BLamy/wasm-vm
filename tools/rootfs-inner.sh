@@ -108,8 +108,14 @@ for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
 # build-vs-kernel interaction, NOT an emulator fault (the block backend is synchronous, no cache,
 # so a write is byte-visible to the next read; verified by the block/virtio-blk tests). Plain
 # ext4 without metadata_csum is what QEMU rootfs images conventionally use.
+#
+# E3-T11 (reproducibility): `-E hash_seed=` pins the directory-htree hash seed. Without it mke2fs
+# picks a RANDOM seed per build, so the directory index blocks differ every time — ~11% of chunks
+# churned across two otherwise-identical builds (caught by tools/build_image/build.sh REPRO_CHECK).
+# Reusing FS_UUID as the seed keeps it a single pinned constant. (dir_index stays ON — deterministic
+# htree, no lookup-speed regression.)
 rm -f /out/alpine-rootfs.ext4
-mke2fs -q -t ext4 -O ^metadata_csum -L root -U "$FS_UUID" -d "$ROOT" -E root_owner=0:0 /out/alpine-rootfs.ext4 "$IMG_SIZE"
+mke2fs -q -t ext4 -O ^metadata_csum -L root -U "$FS_UUID" -E "root_owner=0:0,hash_seed=$FS_UUID" -d "$ROOT" /out/alpine-rootfs.ext4 "$IMG_SIZE"
 
 # 4. fsck must report the freshly built image CLEAN (no orphan inodes from the build).
 echo "--- fsck.ext4 -f -n ---"
