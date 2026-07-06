@@ -121,4 +121,23 @@ retry→permanent-error→S_IOERR on the parked chain). Pass 4: browser Alpine-f
 boot) with fetch-count + bytes-transferred instrumentation.
 
 ## Verification log
-(empty)
+
+**2026-07-06 — Core deferred-completion (passes 1+2), PR #86 (stacked on #85).**
+Passes 1 (storage `ChunkSource`/`ReadOutcome`) and 2 (virtio-blk `WouldBlock` park path:
+`ExecOutcome`, `BlkState.parked` re-execution, `pending_blk_chunks()`) landed. Native mock
+tests cover park→complete-exactly-once (single + two-chains-same-chunk), re-park, and the
+lazy read-path assembly/first-missing logic.
+
+Cold-clone adversarial critic (fresh context, charged to refute) confirmed TWO bugs, both
+reproduced with tests, both fixed here with regression coverage:
+- **BUG 1 (HIGH):** `parked` not cleared on device reset → a read parked mid-fetch replayed
+  against the re-initialized queue on chunk arrival (guest-buffer corruption + spurious used
+  entry; critic saw used idx →2). Fix: `reset()` clears `parked`. Test: `reset_discards_parked_reads`.
+- **BUG 2 (LOW-MED):** `chunk_span`/`read` div-by-zero on `chunk_size==0` (missing the guard
+  `locate` has). Fix: guard `chunk_span`. Test: extended `unvalidated_manifest_never_panics`.
+Critic verified SOUND: no-corruption-on-WouldBlock, exactly-once, re-park, RefCell borrows,
+out-of-order USED spec-legality, storage boundary math. Post-fix verdict: ship.
+
+Gates: storage 7/0, virtio_blk 10/0, workspace clippy --all-features + fmt + determinism
+clean, wasm default + zicsr-stub build. **Remaining:** pass 3 (wasm `HttpChunkSource`) +
+pass 4 (browser Alpine-from-chunked-image, <40% bytes) — separate stacked PR.
