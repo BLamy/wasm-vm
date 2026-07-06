@@ -470,6 +470,7 @@
             <button id="bench">Bench</button>
             <button id="boot-linux">Boot Linux</button>
             <button id="boot-alpine" title="Boot the full Alpine ext4 rootfs over virtio-blk (local-only via serve-dev + tools/demo-capstone.sh)">Boot Alpine</button>
+            <button id="boot-alpine-chunked" title="Boot the SAME Alpine rootfs but fetched lazily one E3-T01 chunk at a time over HTTP (local-only; run `wasm-vm chunk` first)">Boot Alpine (chunked)</button>
             <button id="term-fit" title="Re-fit the terminal to the panel and copy the matching stty command">Fit</button>
             <label class="file">ELF <input id="file" type="file" /></label>
             <span id="status">initializing...</span>

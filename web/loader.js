@@ -213,6 +213,9 @@ export async function startLinuxBoot(opts = {}) {
         }
       },
       isPaused: () => paused,
+      // E3-T02: chunked-boot instrumentation — `{ fetches, bytes, error }` (bytes transferred so
+      // far via lazy chunk fetch). Null for non-chunked boots. Drives the <40%-of-image acceptance.
+      fetchStats: () => (isChunked ? machine.fetchStats() : null),
       whenDone,
     };
   } catch (e) {
