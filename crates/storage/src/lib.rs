@@ -18,11 +18,13 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
 mod cache;
+mod dbmeta;
 mod fetch;
 mod overlay;
 mod prefetch;
 mod writeback;
 pub use cache::{BlockCache, CacheMetrics};
+pub use dbmeta::{OVERLAY_DB_VERSION, OverlayMeta, overlay_store_name};
 pub use fetch::{
     ChunkRequest, ChunkStore, FetchFailure, ResponseAction, RetryPolicy, classify_response,
     plan_fetches,
