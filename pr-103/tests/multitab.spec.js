@@ -55,7 +55,7 @@ test.describe("E3-T09: multi-tab single-writer", () => {
   test("RO guest boots usable with / mounted ro; EROFS on write; takeover after writer closes", async ({
     context,
   }) => {
-    test.setTimeout(2_400_000);
+    test.setTimeout(3_600_000);
     const type = (page, s) =>
       page.evaluate((x) => window.__term.typeBytes(new TextEncoder().encode(x)), s);
     const bootToLogin = async (page) => {
@@ -78,21 +78,21 @@ test.describe("E3-T09: multi-tab single-writer", () => {
       await expect(page.locator(rows)).toContainText("SHELL_UP", { timeout: 60_000 });
     };
 
-    // Tab A: the writer.
+    // Tab A: the writer — boot it to login FIRST at full CPU (two parallel interpreter
+    // boots starve each other past the login budget; an A idling at login: is nearly free
+    // thanks to the E2-T23b WFI fast-forward).
     const a = await context.newPage();
     await startBoot(a);
     await a.waitForTimeout(8000);
     expect(await bannerVisible(a), "tab A must be the writer").toBe(false);
+    await bootToLogin(a);
+    await login(a);
 
-    // Tab B during A: must be RO from the first moment.
+    // Tab B while A holds the lock: must be RO from the first moment.
     const b = await context.newPage();
     await startBoot(b);
     await b.waitForTimeout(8000);
     expect(await bannerVisible(b), "tab B must be read-only").toBe(true);
-
-    // Both boot in parallel (they share the CPU; allow the long clock).
-    await bootToLogin(a);
-    await login(a);
     await bootToLogin(b);
     await login(b);
 
