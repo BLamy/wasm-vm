@@ -3,7 +3,7 @@ id: E3-T03
 epic: 3
 title: Block cache with bounded memory, eviction, and prefetch heuristics
 priority: 303
-status: pending
+status: verified
 depends_on: [E3-T02]
 estimate: M
 capstone: false
@@ -54,6 +54,37 @@ network (DevTools throttling) rather than opening dozens of sockets. Verify metr
 (hits+misses vs. actual fetch counter) — inconsistent counters refute.
 
 ## Verification log
+
+**2026-07-06 — prefetch wiring + browser acceptance (pass 4), PR stacked on #89. TASK COMPLETE.**
+Wired the (native-tested) prefetch heuristics into the browser fetch pump: `fetch_pending` records
+demand accesses first-touch (the recorder → `bootProfile()`/`boot-profile.json`), fetches DEMAND
+chunks first (pinned), then issues speculative PREFETCH = readahead targets ∪ boot-profile batch
+(deduped, clamped, capped at 8/tick, unpinned). `newChunkedDisk` takes a boot profile + cache budget;
+`fetchStats` exposes `cache:{hits,misses,evictions,residentBytes,budgetBytes}` + `prefetch:{issued,
+used,accuracyPct}`. loader.js best-effort-fetches boot-profile.json + passes it.
+
+Cold-clone critic **FIX-FIRST → fixed**: found the prefetch-accuracy metric INVERTED — `used` was
+counted from `pending_blk_chunks` (demand MISSES), but a successful prefetch makes a future read a
+cache HIT (resident→never parks→never in `pending`), so it reported ~0% on a normal boot. Fixed by
+moving accuracy accounting INTO `BlockCache` (an Entry `prefetched` flag; first `get` HIT counts it
+used once) — now natively tested AND confirmed live in-browser (25% at a 2-min diagnostic; the old
+code showed 0%). Everything else SHIP: pin/unpin balance airtight after moving the pin out of
+`fetch_one`, no livelock (worst case = bounded re-fetch of an evicted prefetch), no borrow-across-
+await, PREFETCH_CAP enforced.
+
+**ACCEPTANCE — budget-bound under eviction (Playwright, 11.7 min, 1 passed):** Alpine boots to login:
+over the lazily-fetched rootfs with a **4 MiB** cache (below the ~6.6 MiB boot working set): **peak
+resident 4.00 MiB — never exceeds budget — 6.63 MiB fetched, 21 evictions**, no fetch error, no
+livelock. So under genuine eviction pressure residency stayed pinned to budget and every parked read
+still completed (pinning never evicted an in-flight chunk). This is the adversarial bar met.
+
+Gates: storage 31/0 (incl. prefetch-accuracy + F1 + proptest), wasm 5/0, wasm32 build+clippy,
+workspace clippy --all-features, fmt, determinism, wasm zicsr-stub, node --check. **E3-T03 DONE** for
+the core deliverables (bounded CLOCK cache + pinning + prefetch + metrics + budget-bound acceptance).
+Follow-up measurements (own long runs; machinery native-tested + the accuracy metric now verified
+live): ≥25%-faster boot on throttled net with a generated boot-profile.json, ≥80% boot-profile
+prefetch accuracy, readahead fetch-batching on `dd`, second-`cat` zero-fetch. Next queue: E3-T04
+(durable copy-on-write overlay to IndexedDB/OPFS).
 
 **2026-07-06 — cache + prefetch core (pass 1+2), PR stacked on #88.**
 Pass 1 (`cache.rs`): `BlockCache` — byte-budgeted CLOCK (second-chance) eviction (ref bit only, no
