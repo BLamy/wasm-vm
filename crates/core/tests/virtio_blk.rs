@@ -22,14 +22,18 @@ const F_NEXT: u16 = 1;
 const F_WRITE: u16 = 2;
 
 fn machine(image: Vec<u8>, ro: bool) -> (Machine, blkctx::Ctx) {
-    let mut m = Machine::new(RAM);
-    m.enable_clint(10);
-    m.enable_plic();
     let backend: Box<dyn BlockBackend> = if ro {
         Box::new(MemBackend::new_read_only(image))
     } else {
         Box::new(MemBackend::new(image))
     };
+    machine_be(backend)
+}
+
+fn machine_be(backend: Box<dyn BlockBackend>) -> (Machine, blkctx::Ctx) {
+    let mut m = Machine::new(RAM);
+    m.enable_clint(10);
+    m.enable_plic();
     let (slot, state) = m.enable_virtio_blk(backend);
     m.enable_builtin_sbi();
     m.boot_supervisor(0, 0);
@@ -338,4 +342,111 @@ fn no_status_byte_is_protocol_violation() {
     assert_eq!(m.run(4), RunOutcome::MaxInstrs);
     let status = m.bus_mut().load32(SLOT0 + 0x70).unwrap();
     assert_ne!(status & 64, 0, "NEEDS_RESET set");
+}
+
+// ── E3-T02: deferred (lazy-fetch) completion ────────────────────────────────────────────────
+use std::cell::Cell;
+use std::rc::Rc;
+use wasm_vm_core::block::BlockError;
+
+/// A backend that WouldBlocks (awaiting chunk 0) until `ready` is set, then serves `data`. Models a
+/// lazy chunk source whose chunk hasn't been fetched yet.
+struct LazyMock {
+    ready: Rc<Cell<bool>>,
+    reads: Rc<Cell<u32>>,
+    data: Vec<u8>,
+}
+impl BlockBackend for LazyMock {
+    fn capacity_sectors(&self) -> u64 {
+        (self.data.len() / SECTOR_SIZE) as u64
+    }
+    fn read(&mut self, sector: u64, buf: &mut [u8]) -> Result<(), BlockError> {
+        self.reads.set(self.reads.get() + 1);
+        if !self.ready.get() {
+            return Err(BlockError::WouldBlock { chunk: 0 });
+        }
+        let start = (sector as usize) * SECTOR_SIZE;
+        buf.copy_from_slice(&self.data[start..start + buf.len()]);
+        Ok(())
+    }
+    fn write(&mut self, _sector: u64, _buf: &[u8]) -> Result<(), BlockError> {
+        Ok(())
+    }
+    fn flush(&mut self) -> Result<(), BlockError> {
+        Ok(())
+    }
+}
+
+/// A read whose data isn't resident PARKS (no used-ring completion, status untouched, surfaced via
+/// pending_blk_chunks), then completes EXACTLY ONCE on a later boundary once the chunk arrives —
+/// with correct data — and is never double-completed.
+#[test]
+fn lazy_read_parks_then_completes_exactly_once() {
+    let ready = Rc::new(Cell::new(false));
+    let reads = Rc::new(Cell::new(0u32));
+    let payload: Vec<u8> = (0..64 * SECTOR_SIZE).map(|i| (i % 251) as u8).collect();
+    let mock = LazyMock {
+        ready: ready.clone(),
+        reads: reads.clone(),
+        data: payload.clone(),
+    };
+    let (mut m, mut ctx) = machine_be(Box::new(mock));
+
+    // IN: read sector 0 (1 sector) into a guest buffer.
+    write_hdr(&mut m, HDR, 0, 0);
+    let rbuf = DATA + 0x4000;
+    wdesc(&mut m, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut m, 1, rbuf, SECTOR_SIZE as u32, F_WRITE | F_NEXT, 2);
+    wdesc(&mut m, 2, STATUS, 1, F_WRITE, 0);
+    m.bus_mut().store8(STATUS, 0xEE).unwrap(); // sentinel: unchanged ⇒ never completed
+    m.bus_mut().store16(USED + 2, 0).unwrap();
+
+    // Submit while NOT ready → the read parks (submit runs one boundary).
+    submit(&mut m, &mut ctx, 0);
+    assert_eq!(m.pending_blk_chunks(), vec![0], "parked, awaiting chunk 0");
+    assert_eq!(
+        m.bus_mut().load16(USED + 2).unwrap(),
+        0,
+        "used idx unchanged while parked"
+    );
+    assert_eq!(
+        m.bus_mut().load8(STATUS).unwrap(),
+        0xEE,
+        "status untouched while parked"
+    );
+
+    // Extra boundaries while still parked must NOT complete or drop the request.
+    assert_eq!(m.run(4), RunOutcome::MaxInstrs);
+    assert_eq!(m.pending_blk_chunks(), vec![0], "still parked");
+    assert_eq!(
+        m.bus_mut().load16(USED + 2).unwrap(),
+        0,
+        "still not completed"
+    );
+
+    // Chunk arrives → a plain boundary (no fresh kick) re-services and completes.
+    ready.set(true);
+    assert_eq!(m.run(4), RunOutcome::MaxInstrs);
+    assert!(m.pending_blk_chunks().is_empty(), "no longer parked");
+    assert_eq!(
+        m.bus_mut().load16(USED + 2).unwrap(),
+        1,
+        "completed exactly once"
+    );
+    assert_eq!(m.bus_mut().load8(STATUS).unwrap(), 0, "status S_OK");
+    for (i, &want) in payload[..SECTOR_SIZE].iter().enumerate() {
+        assert_eq!(
+            m.bus_mut().load8(rbuf + i as u64).unwrap(),
+            want,
+            "correct data at byte {i}"
+        );
+    }
+
+    // Further boundaries must NOT double-complete.
+    assert_eq!(m.run(8), RunOutcome::MaxInstrs);
+    assert_eq!(
+        m.bus_mut().load16(USED + 2).unwrap(),
+        1,
+        "no double-completion"
+    );
 }

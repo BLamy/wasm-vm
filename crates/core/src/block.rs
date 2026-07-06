@@ -35,6 +35,11 @@ pub enum BlockError {
     ReadOnly,
     /// Host I/O failure (native file backends).
     Io,
+    /// E3-T02: the data for this read is not resident yet — chunk `chunk` must be fetched first.
+    /// A lazy/streaming backend returns this instead of blocking; the virtio-blk service PARKS the
+    /// request and completes it on a later boundary once the chunk arrives. Synchronous backends
+    /// (MemBackend, the native file backend) never return it, so the deferred path stays dead there.
+    WouldBlock { chunk: usize },
 }
 
 /// Object-safe storage backend, sector-addressed in 512-byte units.
