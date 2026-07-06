@@ -3,11 +3,17 @@ id: E8-T02
 epic: 8
 title: Boot stock Chromium in the guest desktop — sandbox, threads, GPU, first paint
 priority: 802
-status: pending
+status: cancelled
 depends_on: [E8-T01]
 estimate: L
 capstone: false
 ---
+
+> **CANCELLED 2026-07-06** (Brett's direction): Epic 8 "Chrome in Chrome" is cancelled as a
+> goal. Superseded in spirit by **Epic 3.5 — OCI Workloads in the Browser**
+> (`tasks/epic-3.5-oci-workloads/`): real container workloads are the payoff instead of a
+> nested browser. The Layer-G record/replay ideas in E8-T03..T09 may be resurrected as their
+> own epic later if VM time-travel becomes a goal again.
 
 ## Goal
 Stock chromium-riscv64 **launches on the Level 5/7 desktop, loads a real web page, and renders

@@ -11,7 +11,8 @@ Like Kurzweil's law of accelerating returns, each level here is not just "more f
 each level is a *phase change* that makes the next level cheaper to reach. The interpreter
 makes the CPU debuggable; the compliant CPU makes Linux bootable; booted Linux makes the
 system self-testing (the guest becomes our test harness); the JIT makes compilers usable
-inside the guest; and at the top, the system runs *stock Chromium* and makes it
+inside the guest; and at the top (cancelled 2026-07-06), the system was to run *stock
+Chromium* and make it
 time-travelable. That closed loop is the singularity condition.
 
 ---
@@ -72,16 +73,18 @@ Level 0  IGNITION        a Rust machine skeleton executing RISC-V in a browser t
 Level 1  THE MACHINE     RV64GC CPU + Sv39 MMU + traps + timers/interrupts        [Layer A]
 Level 2  FIRST LIGHT     devices + interrupts + SBI → boot xv6, then Linux to init [Layer B]
 Level 3  CIVILIZATION    persistence + net + a real userland → busybox+QuickJS+Node [Layer C]
+Level 3.5 OCI WORKLOADS  pull + run real riscv64 containers, cached in the browser   [Layer C+]
 Level 4  ACCELERATION    JIT-to-WASM + FENCE.I i-cache coherence → fast Node.js/Bun [Layer D]
 Level 5  THE WINDOW      framebuffer/GPU + input + compositor → GUI apps, a surface [Layer E]
 Level 6  TRANSCENDENCE   SMP, WebGPU-3D, shareable snapshots, self-hosting        [Layer G*]
 Level 7  BABEL           box64 + full network + persistence → x86_64 bins, a desktop [Layer F]
-Level 8  CHROME IN CHROME stock chromium-riscv64 + record/replay → time-travel browser [Layer G]
+Level 8  CHROME IN CHROME (CANCELLED 2026-07-06) — see the Level 8 section
 ```
 
 `*` **Layer G (determinism & record/replay) is cross-cutting**, not a level of its own — it
-matures from Level 1 onward (see the dedicated section below) and reaches its capstone at
-Level 8. Level 6 is where its *snapshot/share/time-travel* machinery is hardened.
+matures from Level 1 onward (see the dedicated section below) and was to reach its capstone at
+Level 8 (now cancelled). Level 6 is where its *snapshot/share/time-travel* machinery is
+hardened.
 
 ## Capability stack — Layers A–G
 
@@ -93,7 +96,7 @@ Level 8. Level 6 is where its *snapshot/share/time-travel* machinery is hardened
 | **D** | Warp Drive (JIT) | E4 | Dynamic binary translation to WASM, block chaining, FENCE.I i-cache coherence for guest self-modifying code | **Interactive/fast Node.js** (and **Bun**, gated on JSC's weaker RISC-V JIT) |
 | **E** | The Surface | E5 | virtio-gpu framebuffer, virtio-input, sound, a compositor (Wayland/X) | **GUI apps** + a **browser rendering surface** |
 | **F** | Babel & Fabric | E7 | **box64** (x86_64→riscv64 userspace JIT), hardened full network stack, robust persistence | Run **x86_64 Linux binaries** inside the machine; a **real desktop** (CheerpX-via-emulation) |
-| **G** | Determinism & Record/Replay | E0→E8 *(cross-cutting)* | Trace hook (E0-T16), snapshots (E0-T17), deterministic capture/replay of all guest nondeterminism, time-travel | Bit-identical replay; **time-travel** — makes *stock* Chrome time-travelable with zero Chromium-side instrumentation |
+| **G** | Determinism & Record/Replay | E0→E6 *(cross-cutting; the E8 capstone is cancelled)* | Trace hook (E0-T16), snapshots (E0-T17), deterministic capture/replay of all guest nondeterminism, time-travel | Bit-identical replay; **time-travel** — makes *stock* Chrome time-travelable with zero Chromium-side instrumentation |
 
 ## Targets → which epic
 
@@ -110,8 +113,9 @@ Level 8. Level 6 is where its *snapshot/share/time-travel* machinery is hardened
 | Shareable / time-travelable machine state | E6 | G |
 | x86_64 Linux binaries (via box64) | E7 | F |
 | A real desktop (mixed riscv64 + x86_64 apps) | E7 | E→F |
-| Stock chromium-riscv64 booting | E8 | E→D→B |
-| A nested, time-travelable browser | E8 | G (capstone) |
+| Stock chromium-riscv64 booting | ~~E8~~ (cancelled) | — |
+| A nested, time-travelable browser | ~~E8~~ (cancelled) | — |
+| Pull + run riscv64 OCI containers, cached in-browser | E3.5 | C+ (on C, B) |
 
 ---
 
@@ -289,9 +293,15 @@ enough to be usable, and Level 6's SMP is what makes a heavy desktop bearable.
 `x86-64`) from the guest desktop; it runs under box64 and renders through virtio-gpu; a
 mixed riscv64 + x86_64 desktop session is interactive.
 
-## Level 8 — CHROME IN CHROME *(a nested, time-travelable browser — Layer G capstone)*
+## Level 8 — CHROME IN CHROME *(CANCELLED)*
 
-**Thesis:** The summit is not our own browser fork — it is **stock Chromium**, unmodified,
+> **CANCELLED 2026-07-06** (Brett's direction). The nested-browser summit is off the
+> roadmap; **Epic 3.5 — OCI Workloads in the Browser** (`tasks/epic-3.5-oci-workloads/`)
+> takes the "real software runs in here" crown instead: pull and run genuine riscv64 OCI
+> container images, cached in browser storage. The Layer-G record/replay ideas below remain
+> archived here and may return as their own epic if VM time-travel becomes a goal again.
+
+**Thesis (archived):** The summit is not our own browser fork — it is **stock Chromium**, unmodified,
 booted inside the machine and made *time-travelable by the VM around it*. This is the
 inverse of Replay.io's approach: instead of instrumenting Chromium to record itself, we run
 an ordinary `chromium-riscv64` build and let the VM's **deterministic record/replay + snapshot
@@ -346,8 +356,9 @@ snapshot module E0-T17). From there it threads upward:
 - Task IDs are `E{level}-T{nn}`; priority = `level × 100 + nn`. The queue is strictly
   ascending priority. Dependencies may pull tasks earlier in *eligibility* but never
   reorder the queue file itself.
-- Levels 0–6 carry ~24–28 tasks each; the two summit levels (7 Babel, 8 Chrome in Chrome)
-  are leaner, milestone-focused epics. Each epic ends in a capstone naming its runnable
+- Levels 0–6 carry ~24–28 tasks each; the summit level (7 Babel) is a leaner,
+  milestone-focused epic. Level 3.5 (OCI Workloads) is a 5-task wedge between Civilization
+  and Acceleration; Level 8 (Chrome in Chrome) is cancelled. Each epic ends in a capstone naming its runnable
   target — you are never guessing what "done" looks like.
 
 *The machine wakes up one instruction at a time — and, at the top, learns to run it backward.*

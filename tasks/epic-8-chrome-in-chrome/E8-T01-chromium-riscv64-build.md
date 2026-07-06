@@ -3,11 +3,17 @@ id: E8-T01
 epic: 8
 title: Stock chromium-riscv64 — obtain or build an unmodified browser artifact, pinned
 priority: 801
-status: pending
+status: cancelled
 depends_on: [E6]
 estimate: L
 capstone: false
 ---
+
+> **CANCELLED 2026-07-06** (Brett's direction): Epic 8 "Chrome in Chrome" is cancelled as a
+> goal. Superseded in spirit by **Epic 3.5 — OCI Workloads in the Browser**
+> (`tasks/epic-3.5-oci-workloads/`): real container workloads are the payoff instead of a
+> nested browser. The Layer-G record/replay ideas in E8-T03..T09 may be resurrected as their
+> own epic later if VM time-travel becomes a goal again.
 
 ## Goal
 A pinned, **stock, unmodified** `chromium-riscv64` build to run inside the machine. The whole

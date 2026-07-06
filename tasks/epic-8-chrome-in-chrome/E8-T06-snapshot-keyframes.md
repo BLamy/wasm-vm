@@ -3,11 +3,17 @@ id: E8-T06
 epic: 8
 title: Snapshot keyframes — periodic full-machine snapshots as replay seek points
 priority: 806
-status: pending
+status: cancelled
 depends_on: [E8-T05]
 estimate: M
 capstone: false
 ---
+
+> **CANCELLED 2026-07-06** (Brett's direction): Epic 8 "Chrome in Chrome" is cancelled as a
+> goal. Superseded in spirit by **Epic 3.5 — OCI Workloads in the Browser**
+> (`tasks/epic-3.5-oci-workloads/`): real container workloads are the payoff instead of a
+> nested browser. The Layer-G record/replay ideas in E8-T03..T09 may be resurrected as their
+> own epic later if VM time-travel becomes a goal again.
 
 ## Goal
 Marry the E6 snapshot format to the record/replay engine so that a recording carries **periodic

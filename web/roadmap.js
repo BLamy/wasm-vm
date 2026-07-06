@@ -67,6 +67,18 @@ export const ROADMAP = [
     ],
   },
   {
+    epic: "E3.5",
+    title: "OCI Workloads",
+    status: "pending",
+    blurb: "Pull real riscv64 container images, verify digests, run them with a tiny runner — layers cached in browser storage across reloads.",
+    caps: [
+      { name: "OCI image importer (pull + verify + unpack)", status: "pending" },
+      { name: "Container kernel audit (namespaces/cgroups/overlayfs)", status: "pending" },
+      { name: "Tiny OCI runner (wvrun)", status: "pending" },
+      { name: "Digest-deduped layer cache, reload-proof", status: "pending" },
+    ],
+  },
+  {
     epic: "E4",
     title: "Acceleration",
     status: "pending",
@@ -112,11 +124,8 @@ export const ROADMAP = [
   {
     epic: "E8",
     title: "Chrome in Chrome",
-    status: "pending",
-    blurb: "Boot Chromium on RISC-V to first paint; deterministic record/replay engine.",
-    caps: [
-      { name: "Chromium/RISC-V boot to first paint", status: "pending" },
-      { name: "Deterministic record/replay engine", status: "pending" },
-    ],
+    status: "cancelled",
+    blurb: "Cancelled 2026-07-06 — superseded by E3.5 OCI Workloads. The record/replay ideas may return as their own epic.",
+    caps: [],
   },
 ];
