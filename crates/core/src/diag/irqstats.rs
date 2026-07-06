@@ -159,7 +159,9 @@ impl IrqStats {
             // and the most total storm possible stayed invisible forever. Fire on the raw
             // in-window trap count alone once it exceeds 3x the threshold — with the window
             // still open, that many traps against so few retires is a storm by any reading.
-            if self.window_traps > threshold.saturating_mul(3) {
+            // (threshold == 0 is the degenerate any-trap-is-hot test configuration — early
+            // fire is disabled there; production uses 5000.)
+            if threshold > 0 && self.window_traps > threshold.saturating_mul(3) {
                 let traps = self.window_traps;
                 let hot = self.hottest_irq_in_window();
                 self.window_start_retired = self.retired;
