@@ -87,11 +87,29 @@ impl BlockCache {
     /// Insert (or replace) `chunk`'s bytes, evicting unpinned entries first so residency stays within
     /// budget where possible. A freshly inserted chunk starts referenced (recently used).
     pub fn insert(&mut self, chunk: usize, bytes: Vec<u8>) {
-        if let Some(e) = self.entries.get_mut(&chunk) {
+        if self.entries.contains_key(&chunk) {
             // Replace in place; keep its ring position and pins, refresh bytes + reference bit.
-            self.resident_bytes = self.resident_bytes - e.bytes.len() as u64 + bytes.len() as u64;
-            e.bytes = bytes;
-            e.referenced.set(true);
+            let (old, new) = {
+                let e = self.entries.get_mut(&chunk).expect("just checked contains");
+                let old = e.bytes.len() as u64;
+                let new = bytes.len() as u64;
+                e.bytes = bytes;
+                e.referenced.set(true);
+                (old, new)
+            };
+            self.resident_bytes = self.resident_bytes - old + new;
+            // A GROWING replace must still honour the budget (critic F1) — evict other entries to fit,
+            // pinning the just-written chunk across the sweep so it can't self-evict. A same-size
+            // replace (the norm: fixed-size chunks, byte-identical re-fetch) skips this entirely.
+            if new > old {
+                self.pin(chunk);
+                while self.resident_bytes > self.budget_bytes {
+                    if self.evict_one().is_none() {
+                        break;
+                    }
+                }
+                self.unpin(chunk);
+            }
             return;
         }
         let need = bytes.len() as u64;

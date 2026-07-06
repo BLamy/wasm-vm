@@ -120,6 +120,35 @@ fn metrics_track_hits_misses_and_replace_in_place() {
 }
 
 #[test]
+fn growing_replace_still_honours_the_budget() {
+    // Critic F1: replacing a chunk with a LARGER blob must evict others to stay within budget, not
+    // overshoot silently. (Same-size replace is the norm; this guards the growing edge.)
+    let mut c = BlockCache::new(300);
+    for i in 0..3 {
+        c.insert(i, vec![i as u8; 100]); // at budget: 3×100
+    }
+    // Grow chunk 0 to 250 B → evicts the two others to fit; the replaced chunk is never self-evicted.
+    c.insert(0, vec![9; 250]);
+    assert!(
+        c.contains(0),
+        "the just-written chunk survives its own budget sweep"
+    );
+    assert_eq!(c.lookup(0), Some(&[9u8; 250][..]), "correct grown bytes");
+    assert!(
+        c.resident_bytes() <= 300,
+        "residency {} within budget",
+        c.resident_bytes()
+    );
+    assert_eq!(c.resident_bytes(), actual_resident(&c));
+    // A growing replace past the whole budget falls back to the documented single-oversized overshoot.
+    let mut c2 = BlockCache::new(300);
+    c2.insert(0, vec![0; 100]);
+    c2.insert(0, vec![1; 5000]);
+    assert_eq!(c2.resident_bytes(), 5000); // only the oversized chunk; still accounted exactly
+    assert_eq!(c2.resident_bytes(), actual_resident(&c2));
+}
+
+#[test]
 fn chunk_source_impl_reads_current_bytes() {
     let mut c = BlockCache::new(300);
     c.insert(5, vec![0x55; 64]);
