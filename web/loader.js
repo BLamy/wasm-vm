@@ -39,6 +39,37 @@ async function fetchWithProgress(url, onProgress) {
   return out;
 }
 
+/** Fetch a text resource, failing with a CLEAR message when the file is missing. A dev server that
+ *  lacks the local-only Alpine assets returns its HTML 404 page; parsing that as JSON would otherwise
+ *  blow up as the cryptic "Unexpected token '<', "<!DOCTYPE"...". Returns the response text. */
+async function fetchAsset(url, what) {
+  let resp;
+  try {
+    resp = await fetch(url, { cache: "default" });
+  } catch (e) {
+    throw new Error(`could not fetch ${what} (${url}): ${e.message || e}`);
+  }
+  const text = await resp.text();
+  if (!resp.ok || text.trimStart().startsWith("<")) {
+    throw new Error(
+      `${what} not found at ${url} (HTTP ${resp.status}). The chunked Alpine boot needs local-only ` +
+        `assets (web/artifacts-alpine.json + releases/chunked-alpine/) that are NOT on the public ` +
+        `deploy — build the chunked image with \`wasm-vm chunk\` and serve via \`bash tools/serve-dev.sh\`.`,
+    );
+  }
+  return text;
+}
+
+/** Fetch + parse a JSON manifest with the clear-error handling of `fetchAsset`. */
+async function fetchJsonAsset(url, what) {
+  const text = await fetchAsset(url, what);
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`${what} at ${url} is not valid JSON.`);
+  }
+}
+
 /** Lowercase hex SHA-256 of `bytes` (WebCrypto). */
 async function sha256hex(bytes) {
   const digest = await crypto.subtle.digest("SHA-256", bytes);
@@ -91,7 +122,7 @@ export async function startLinuxBoot(opts = {}) {
   const baseUrl = opts.baseUrl ?? imageManifestUrl.replace(/[^/]*$/, "");
 
   try {
-    const manifest = await (await fetch(manifestUrl)).json();
+    const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
     const km = manifest.artifacts.kernel;
 
     onState("fetching");
@@ -103,9 +134,9 @@ export async function startLinuxBoot(opts = {}) {
     let imageManifestText = null;
     let bootProfile = new Uint32Array(0);
     if (isChunked) {
-      const r = await fetch(imageManifestUrl, { cache: "default" });
-      if (!r.ok) throw new Error(`fetch ${imageManifestUrl} → HTTP ${r.status} ${r.statusText}`);
-      imageManifestText = await r.text();
+      // The chunked image manifest (JSON text handed to wasm as-is). Clear error if the local-only
+      // asset is missing rather than a cryptic parse failure later.
+      imageManifestText = await fetchAsset(imageManifestUrl, "chunked image manifest");
       // E3-T03: an optional boot-profile.json (ordered chunk indices) prefetched up front. Best-
       // effort — a missing profile just means no boot-profile prefetch (readahead still applies).
       try {
