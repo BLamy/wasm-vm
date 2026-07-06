@@ -56,4 +56,25 @@ Attempt reads concurrent with a large batched write and check no transaction ord
 returns stale data after `commit` resolved.
 
 ## Verification log
-(empty)
+
+**2026-07-06 — write-back bookkeeping core (pass 1), PR stacked on #92.**
+`crates/storage/src/writeback.rs`: `WriteBackOverlay` — the browser-agnostic write-back layer the
+durable backends (IndexedDB T05, OPFS T06) share. IndexedDB/OPFS are async but `OverlayBackend` + the
+`OverlayDisk` read path are synchronous, so it holds the full write layer in memory (sync reads/writes)
+and tracks an `unpersisted` set the async store drains via `pending_flush()` (snapshot) /
+`mark_persisted()`. `from_loaded()` reopens with everything persisted. Sync `commit` is documented as
+NOT the durability barrier (the async store's transaction-complete is; E3-T08 wires FLUSH to it).
+
+Cold-clone critic **FIX-FIRST → fixed**: confirmed a HIGH-severity **lost write on re-dirty-during-
+flush** — `mark_persisted` cleared a block unconditionally, so a guest re-writing a hot block WHILE its
+flush txn was in flight lost the newer bytes (silently stale on reload). Fixed with a per-block dirty
+**generation guard**: `pending_flush` stamps each block's generation; `mark_persisted` clears a block
+only if its generation is unchanged since the snapshot, so a re-written block re-flushes its new bytes.
+Regression test `re_dirty_during_flush_is_not_lost`. Critic verified sound: sync read view, snapshot
+integrity (no panic — `unpersisted ⊆ blocks`), mark scoping, OverlayBackend drop-in, commit no-op.
+
+Gates: storage 43/0, workspace clippy --all-features + fmt + determinism + wasm build; `cargo tree -p
+wasm-vm-storage` still no browser deps. **Remaining (pass 2, stacked branch):** the `IdbBackend`
+web-sys IndexedDB glue (load-on-open, batched readwrite transactions, `durability:"strict"` async
+commit, meta store + version + image-namespaced DB) driving this write-back core, plus the browser
+reload-persistence integration test + reload-kill torture.
