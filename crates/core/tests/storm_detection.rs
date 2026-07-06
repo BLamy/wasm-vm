@@ -105,13 +105,20 @@ fn wfi_watchdog_silent_when_timer_armed() {
     let mut m = Machine::new(1024 * 1024);
     let clint = m.enable_clint(1);
     clint.borrow_mut().mtimecmp = 1_000_000; // a finite future deadline = an armed wakeup
+    // Sweep contract update (E2-T20 BUG 2): a wakeup only counts if DELIVERABLE — the armed
+    // timer must be enabled in mie (MTIE, bit 7) to silence the watchdog. An armed-but-masked
+    // timer is now correctly reported as a deadlock (see critic_storm_hostile.rs).
+    m.hart_mut()
+        .csr
+        .access(wasm_vm_core::csr::MIE, wasm_vm_core::csr::CsrOp::Write, 1 << 7, false, false, 0)
+        .unwrap();
     m.bus_mut().store32(CODE, 0x1050_0073).unwrap(); // wfi
     m.bus_mut().store32(CODE + 4, 0x0000_006F).unwrap(); // jal x0,0
     m.hart_mut().regs.pc = CODE;
     let _ = m.run(100);
     assert!(
         m.irq_stats().last_wfi_report.is_none(),
-        "an armed timer is a wakeup source → no deadlock report"
+        "an armed DELIVERABLE timer is a wakeup source → no deadlock report"
     );
 }
 
