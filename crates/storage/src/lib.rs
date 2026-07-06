@@ -216,6 +216,80 @@ impl ChunkIndex {
             self.image_len - c * self.chunk_size
         }
     }
+
+    /// The set of chunk indices a read of `[offset, offset+len)` touches — `[first, last]`. `Err` if
+    /// the range is out of bounds. A read spanning a chunk boundary needs every chunk in the span.
+    pub fn chunk_span(&self, offset: u64, len: u64) -> Result<(usize, usize), ImageError> {
+        let end = offset
+            .checked_add(len)
+            .ok_or(ImageError::OffsetOutOfRange {
+                offset,
+                image_len: self.image_len,
+            })?;
+        if len == 0 || end > self.image_len {
+            // A zero-length read touches nothing; a past-the-end read is invalid.
+            return Err(ImageError::OffsetOutOfRange {
+                offset,
+                image_len: self.image_len,
+            });
+        }
+        let first = (offset / self.chunk_size) as usize;
+        let last = ((end - 1) / self.chunk_size) as usize;
+        Ok((first, last))
+    }
+
+    /// The deterministic lazy read-path: assemble `[offset, offset+len)` from `source`, or report the
+    /// FIRST chunk that is not yet available so the caller (the async fetch layer) can fetch it and
+    /// retry. Pure and synchronous — the async I/O lives entirely in the fetch layer; this is the
+    /// core logic the device model's deferred-completion path (E3-T02) drives.
+    pub fn read<S: ChunkSource>(
+        &self,
+        source: &S,
+        offset: u64,
+        len: u64,
+    ) -> Result<ReadOutcome, ImageError> {
+        let (first, last) = self.chunk_span(offset, len)?;
+        // A read never crosses more than a handful of chunks; collect its bytes chunk by chunk.
+        let mut out = Vec::with_capacity(len as usize);
+        for c in first..=last {
+            let Some(chunk) = source.get(c) else {
+                return Ok(ReadOutcome::NeedChunk(c));
+            };
+            // Guard against a source handing back a wrong-length chunk (never trust the fetch layer).
+            if chunk.len() as u64 != self.chunk_len(c) {
+                return Err(ImageError::TruncatedChunk {
+                    chunk: c,
+                    expected: self.chunk_len(c),
+                    got: chunk.len() as u64,
+                });
+            }
+            let base = c as u64 * self.chunk_size;
+            let lo = offset.saturating_sub(base).min(chunk.len() as u64) as usize;
+            let hi = (offset + len).saturating_sub(base).min(chunk.len() as u64) as usize;
+            out.extend_from_slice(&chunk[lo..hi]);
+        }
+        Ok(ReadOutcome::Ready(out))
+    }
+}
+
+/// A source of (already-fetched, already-hash-verified) chunk bytes. `get` returns the bytes if the
+/// chunk is resident, or `None` if it must still be fetched. Synchronous by design: the async fetch,
+/// hash-verify (E3-T01 `verify_chunk`), and caching all live in the wasm layer, which populates
+/// whatever backs this source, so `crates/storage` stays browser-agnostic. A read of an absent chunk
+/// yields [`ReadOutcome::NeedChunk`] so the caller can fetch and retry (deferred virtio-blk completion).
+pub trait ChunkSource {
+    /// The bytes of chunk `chunk` if resident, else `None`.
+    fn get(&self, chunk: usize) -> Option<&[u8]>;
+}
+
+/// The outcome of [`ChunkIndex::read`]: either the requested bytes, or the first chunk that must be
+/// fetched before the read can complete.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ReadOutcome {
+    /// All touched chunks were resident; here are the `[offset, offset+len)` bytes.
+    Ready(Vec<u8>),
+    /// Chunk `usize` is not yet resident — fetch it, then retry the read.
+    NeedChunk(usize),
 }
 
 /// `ceil(image_len / chunk_size)`. Guards `chunk_size == 0` (→ 0) so it never divides by zero even
