@@ -103,7 +103,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Epic 3 — `epic-3-civilization`
 
-- [ ] `301` [E3-T01](epic-3-civilization/E3-T01-chunked-disk-image-format.md) — Chunked disk-image format with hashed manifest and core reader *(deps: E2)*
+- [?] `301` [E3-T01](epic-3-civilization/E3-T01-chunked-disk-image-format.md) — Chunked disk-image format with hashed manifest and core reader *(deps: E2)*
 - [ ] `302` [E3-T02](epic-3-civilization/E3-T02-http-range-lazy-block-fetch.md) — Lazy chunk fetching over HTTP with Range and streaming support *(deps: E3-T01)*
 - [ ] `303` [E3-T03](epic-3-civilization/E3-T03-block-cache-eviction-prefetch.md) — Block cache with bounded memory, eviction, and prefetch heuristics *(deps: E3-T02)*
 - [ ] `304` [E3-T04](epic-3-civilization/E3-T04-cow-overlay-design.md) — Copy-on-write overlay format and BlockBackend trait *(deps: E3-T01)*
