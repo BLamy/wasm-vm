@@ -89,3 +89,29 @@ write, takeover after A closes) — the fixed run was repeatedly killed by the e
 mid-execution (external process kills, several today); the spec (`multitab.spec.js` "RO guest")
 is ready and re-runs unattended. Also outstanding: hard-kill takeover timing, 10-tab flood,
 forged-flag bypass audit (critic charter items).
+
+**2026-07-06 — cold-clone critic round: FIX-FIRST → all four fixed; corruption core SOUND.**
+Critic could not corrupt the overlay from an RO tab by ANY path — verified down to
+`PersistQueue::record` being private (its own test draft failed to compile calling it), reads
+sharing no path with the queue, flush harmless, both pump gates independently sufficient, the
+RO meta guard, and IDB double-open unable to hang (constant version → `blocked` unreachable).
+FIXED same PR: **BUG-1 (MED)** — a failed boot AFTER lock grant stranded the writer lock until
+tab close (the catch couldn't even see `releaseLock` — hoisted above the try, released in the
+catch); **BUG-2 (MED)** — missing Web Locks API silently booted EVERY tab read-write (now fails
+CLOSED: forced RO + console warning); **BUG-3 (LOW)** — the lock was keyed on the manifest URL
+string while the DB is keyed on the base hash, so two URL spellings of one image could double-
+write (lock now keyed on the manifest-content SHA-256); **NOTE-1 (LOW)** — the lock is now
+released on EVERY terminal outcome (halt/error/stop), not only clean halt. Critic's 2 hostile
+tests adopted (`ro_tests`: RO-check-precedes-range-validation + read-sweep never dirties the
+queue; forged-dirty-queue would park flush forever — pinned as unreachable-in-production).
+
+**Threat model (critic NOTE-2, accepted by design):** `newChunkedDiskPersistent(...,
+read_only=false)` is callable from the console without the lock — the wasm layer trusts the
+flag; same-origin page JS is trusted. Not reachable from normal UI. Genuinely closing it would
+need the lock and the store owned by one agent (e.g. a SharedWorker owning the IDB handle) —
+an E4-era shape. `norecovery` analysis: standard unconditional ext4 option, `rootflags=`
+passes it verbatim; a user-forced `rw` bootargs on an RO boot panics that tab only (cosmetic).
+
+**Still outstanding for `verified`:** the browser RO-guest leg (MOUNT_RO + EROFS + WRITER_OK +
+takeover; spec ready, runs killed externally today) + BUG-1's in-browser repro/fix proof +
+hard-kill timing + 10-tab flood.

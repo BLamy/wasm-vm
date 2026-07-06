@@ -446,4 +446,72 @@ mod ro_tests {
         // Flush on an RO backend is trivially durable (nothing pending).
         assert_eq!(be.flush(), Ok(()));
     }
+
+    /// CRITIC HOSTILE (E3-T09): the RO check must fire BEFORE range validation, so even an
+    /// out-of-range / misaligned write on an RO backend reports ReadOnly — proving the check is
+    /// truly first and no range math or state is reachable. Also: repeated writes after repeated
+    /// reads never leak anything into the persist queue (reads share no path with record()).
+    #[test]
+    fn ro_check_precedes_range_validation_and_reads_never_dirty_queue() {
+        let (m, store) = tiny_manifest_store();
+        let queue = std::rc::Rc::new(RefCell::new(wasm_vm_storage::PersistQueue::new()));
+        let overlay = wasm_vm_storage::WriteBackOverlay::with_shared_queue(
+            &m,
+            queue.clone(),
+            std::collections::BTreeMap::new(),
+        );
+        let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &m).unwrap();
+        let mut be = ChunkedBackend::from_disk(disk, store);
+        be.set_read_only();
+        // Way out of range — on a WRITABLE backend this is OutOfRange; RO must win first.
+        let w = [0u8; SECTOR_SIZE];
+        assert_eq!(be.write(u64::MAX, &w), Err(BlockError::ReadOnly));
+        // Misaligned length — same.
+        assert_eq!(be.write(0, &[0u8; 100]), Err(BlockError::ReadOnly));
+        // Reads across the disk never touch the queue.
+        let mut buf = [0u8; SECTOR_SIZE];
+        for s in 0..(m.image_len / SECTOR_SIZE as u64) {
+            be.read(s, &mut buf).unwrap();
+        }
+        assert_eq!(queue.borrow().unpersisted_count(), 0);
+        assert!(
+            queue.borrow().is_empty(),
+            "reads must never dirty the queue"
+        );
+    }
+
+    /// CRITIC HOSTILE (E3-T09): documents WHY the "RO backend has an empty queue" invariant is
+    /// load-bearing. If pending entries COULD exist in an RO backend (they cannot via the wasm
+    /// construction path: the queue is created fresh and every write is refused), flush() would
+    /// take a durability barrier and return FlushPending forever — no persist pump exists in an
+    /// RO tab to drain it, so the guest's sync would hang. This test pins that behaviour so any
+    /// future path that lets an RO backend see a dirty queue fails loudly here.
+    #[test]
+    fn ro_backend_with_forged_dirty_queue_would_park_flush_forever() {
+        let (m, store) = tiny_manifest_store();
+        let queue = std::rc::Rc::new(RefCell::new(wasm_vm_storage::PersistQueue::new()));
+        // Forge a pending entry BEFORE set_read_only (no wasm-layer path does this for an RO
+        // boot; note PersistQueue::record itself is private — write_block is the only door).
+        let mut overlay = wasm_vm_storage::WriteBackOverlay::with_shared_queue(
+            &m,
+            queue.clone(),
+            std::collections::BTreeMap::new(),
+        );
+        use wasm_vm_storage::OverlayBackend as _;
+        overlay.write_block(0, [0x11u8; wasm_vm_storage::OVERLAY_BLOCK]);
+        let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &m).unwrap();
+        let mut be = ChunkedBackend::from_disk(disk, store);
+        be.set_read_only();
+        // FlushPending forever: no pump exists in an RO tab, nothing will mark_persisted.
+        assert_eq!(be.flush(), Err(BlockError::FlushPending));
+        assert_eq!(be.flush(), Err(BlockError::FlushPending));
+        // The invariant that protects the guest: the wasm layer builds RO backends over a FRESH
+        // queue and refuses every write, so this state is unreachable there (see lib.rs).
+        assert_eq!(be.write(0, &[0u8; SECTOR_SIZE]), Err(BlockError::ReadOnly));
+        assert_eq!(
+            queue.borrow().unpersisted_count(),
+            1,
+            "still only the forged entry"
+        );
+    }
 }
