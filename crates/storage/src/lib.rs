@@ -19,11 +19,13 @@ use sha2::{Digest, Sha256};
 
 mod cache;
 mod fetch;
+mod prefetch;
 pub use cache::{BlockCache, CacheMetrics};
 pub use fetch::{
     ChunkRequest, ChunkStore, FetchFailure, ResponseAction, RetryPolicy, classify_response,
     plan_fetches,
 };
+pub use prefetch::{PrefetchTracker, Readahead, boot_prefetch};
 
 /// The one format version this reader understands. Bumped only on an incompatible change; unknown
 /// *fields* are ignored (forward-compatible), but an unknown *version* is a hard error.
