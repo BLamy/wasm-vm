@@ -17,7 +17,9 @@ use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
+mod cache;
 mod fetch;
+pub use cache::{BlockCache, CacheMetrics};
 pub use fetch::{
     ChunkRequest, ChunkStore, FetchFailure, ResponseAction, RetryPolicy, classify_response,
     plan_fetches,
