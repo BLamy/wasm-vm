@@ -16,13 +16,13 @@ use std::collections::BTreeMap;
 use std::rc::Rc;
 
 use wasm_vm_core::block::{BlockBackend, BlockError, SECTOR_SIZE, check_range};
-use wasm_vm_storage::{ChunkIndex, ChunkStore, ReadOutcome};
+use wasm_vm_storage::{BlockCache, ChunkIndex, ReadOutcome};
 
 /// A virtio-blk backend over a chunked image. Reads assemble from `store` (parking on an absent
 /// chunk); writes land in `overlay` and shadow the chunk data for the rest of the session.
 pub struct ChunkedBackend {
-    /// Shared with the fetch layer, which populates verified chunks into it (verify-on-insert).
-    store: Rc<RefCell<ChunkStore>>,
+    /// Shared with the fetch layer, which verifies then inserts chunks into it (E3-T03 bounded cache).
+    store: Rc<RefCell<BlockCache>>,
     index: ChunkIndex,
     capacity_sectors: u64,
     /// Guest-written sectors (sector index → 512 bytes). In-memory only (E3-T04 makes it durable).
@@ -30,9 +30,9 @@ pub struct ChunkedBackend {
 }
 
 impl ChunkedBackend {
-    /// A backend over `index`, reading verified chunk bytes from the shared `store`. Capacity is the
-    /// whole-sector floor of the image length (a trailing partial sector, if any, is not addressable).
-    pub fn new(index: ChunkIndex, store: Rc<RefCell<ChunkStore>>) -> ChunkedBackend {
+    /// A backend over `index`, reading verified chunk bytes from the shared bounded `store`. Capacity
+    /// is the whole-sector floor of the image length (a trailing partial sector is not addressable).
+    pub fn new(index: ChunkIndex, store: Rc<RefCell<BlockCache>>) -> ChunkedBackend {
         ChunkedBackend {
             store,
             index,
@@ -126,7 +126,7 @@ mod tests {
     ) -> (
         Vec<u8>,
         ImageManifest,
-        Rc<RefCell<ChunkStore>>,
+        Rc<RefCell<BlockCache>>,
         ChunkedBackend,
     ) {
         let data: Vec<u8> = (0..nsec * SECTOR_SIZE).map(|i| (i % 251) as u8).collect();
@@ -139,19 +139,19 @@ mod tests {
             chunks,
         };
         assert_eq!(m.validate(), Ok(()));
-        let store = Rc::new(RefCell::new(ChunkStore::new()));
+        // A generous budget so these correctness tests never see eviction (the cache's own suite
+        // covers eviction/pinning). The fetch layer verifies before inserting; here we insert the
+        // real slice directly.
+        let store = Rc::new(RefCell::new(BlockCache::new(1 << 30)));
         let backend = ChunkedBackend::new(m.index(), store.clone());
         (data, m, store, backend)
     }
 
-    /// Provide chunk `c` of `data` into `store` (verified).
-    fn give(store: &Rc<RefCell<ChunkStore>>, m: &ImageManifest, data: &[u8], c: usize, cs: usize) {
+    /// Insert the real bytes of chunk `c` of `data` into the cache (the fetch layer's verify+insert).
+    fn give(store: &Rc<RefCell<BlockCache>>, _m: &ImageManifest, data: &[u8], c: usize, cs: usize) {
         let lo = c * cs;
         let hi = (lo + cs).min(data.len());
-        store
-            .borrow_mut()
-            .provide(m, c, data[lo..hi].to_vec())
-            .unwrap();
+        store.borrow_mut().insert(c, data[lo..hi].to_vec());
     }
 
     #[test]

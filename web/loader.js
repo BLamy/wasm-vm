@@ -70,6 +70,8 @@ export async function startLinuxBoot(opts = {}) {
     // E3-T02 chunked mode: URL of the image manifest.json produced by `wasm-vm chunk`. `baseUrl`
     // (the directory chunks live under) defaults to the manifest's directory.
     imageManifestUrl = "./releases/chunked-alpine/manifest.json",
+    // E3-T03 block-cache byte budget in MiB (0 → 256 MiB default). Set low to exercise eviction.
+    cacheBudgetMib = 0,
     ramMib = 256,
     onState = () => {},
     onProgress = () => {},
@@ -129,7 +131,7 @@ export async function startLinuxBoot(opts = {}) {
     // disk → in-memory virtio-blk backend (whole image); chunked → a ChunkedBackend that lazily
     // HTTP-fetches chunks under baseUrl; initramfs → the image as the initrd.
     const machine = isChunked
-      ? WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, bootargs, (u8) => onOutput(u8))
+      ? WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootargs, (u8) => onOutput(u8))
       : mode === "disk"
         ? WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8))
         : new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));

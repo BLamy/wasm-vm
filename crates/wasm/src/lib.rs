@@ -430,6 +430,8 @@ enum DiskChoice {
     Chunked {
         manifest: wasm_vm_storage::ImageManifest,
         base_url: String,
+        /// E3-T03 cache byte budget.
+        budget: u64,
     },
 }
 
@@ -501,6 +503,7 @@ impl WasmLinux {
         kernel: &[u8],
         manifest_json: &str,
         base_url: String,
+        cache_budget_mib: u32,
         bootargs: String,
         output: js_sys::Function,
     ) -> Result<WasmLinux, JsError> {
@@ -511,11 +514,23 @@ impl WasmLinux {
         } else {
             bootargs
         };
+        // E3-T03 cache budget: `cache_budget_mib` MiB (0 → 256 MiB default).
+        let budget = if cache_budget_mib == 0 {
+            256
+        } else {
+            cache_budget_mib
+        } as u64
+            * 1024
+            * 1024;
         Self::assemble(
             ram_mib,
             kernel,
             None,
-            DiskChoice::Chunked { manifest, base_url },
+            DiskChoice::Chunked {
+                manifest,
+                base_url,
+                budget,
+            },
             &args,
             output,
         )
@@ -547,9 +562,14 @@ impl WasmLinux {
             DiskChoice::Mem(image) => {
                 machine.enable_virtio_blk(Box::new(wasm_vm_core::block::MemBackend::new(image)));
             }
-            // Lazy chunked image: a ChunkedBackend over a store the fetch layer populates on demand.
-            DiskChoice::Chunked { manifest, base_url } => {
-                let store = std::rc::Rc::new(RefCell::new(wasm_vm_storage::ChunkStore::new()));
+            // Lazy chunked image: a ChunkedBackend over a bounded BlockCache the fetch layer fills.
+            DiskChoice::Chunked {
+                manifest,
+                base_url,
+                budget,
+            } => {
+                let store =
+                    std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let backend = chunked::ChunkedBackend::new(manifest.index(), store.clone());
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
@@ -692,31 +712,45 @@ impl WasmLinux {
         Ok(http_fetch::fetch_pending(&state, &pending).await)
     }
 
-    /// E3-T02 instrumentation: `{ fetches, bytes }` — how many chunk fetches happened and how many
-    /// bytes they transferred (the pass-4 acceptance compares `bytes` against the image size). A
-    /// non-chunked boot reports zeros.
+    /// E3-T02/T03 instrumentation: `{ fetches, bytes, error, cache }` — chunk fetches + bytes
+    /// transferred (pass-4 acceptance), the first fetch error (or null), and the E3-T03 cache metrics
+    /// `{ hits, misses, evictions, residentBytes, budgetBytes }`. A non-chunked boot reports zeros.
     #[wasm_bindgen(js_name = fetchStats)]
     pub fn fetch_stats(&self) -> Result<JsValue, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
-        let (fetches, bytes, err) = match &inner.fetch {
-            Some(s) => (
-                s.fetch_count.get(),
-                s.bytes_transferred.get(),
-                s.last_error.borrow().clone(),
-            ),
-            None => (0, 0, None),
-        };
         let obj = js_sys::Object::new();
-        let _ = js_sys::Reflect::set(&obj, &"fetches".into(), &JsValue::from_f64(fetches as f64));
-        let _ = js_sys::Reflect::set(&obj, &"bytes".into(), &JsValue::from_f64(bytes as f64));
-        let _ = js_sys::Reflect::set(
-            &obj,
-            &"error".into(),
-            &match err {
-                Some(e) => JsValue::from_str(&e),
-                None => JsValue::NULL,
-            },
-        );
+        let set_num = |o: &js_sys::Object, k: &str, v: f64| {
+            let _ = js_sys::Reflect::set(o, &k.into(), &JsValue::from_f64(v));
+        };
+        match &inner.fetch {
+            Some(s) => {
+                set_num(&obj, "fetches", s.fetch_count.get() as f64);
+                set_num(&obj, "bytes", s.bytes_transferred.get() as f64);
+                let _ = js_sys::Reflect::set(
+                    &obj,
+                    &"error".into(),
+                    &match s.last_error.borrow().clone() {
+                        Some(e) => JsValue::from_str(&e),
+                        None => JsValue::NULL,
+                    },
+                );
+                let m = s.store.borrow().metrics();
+                let budget = s.store.borrow().budget_bytes();
+                let cache = js_sys::Object::new();
+                set_num(&cache, "hits", m.hits as f64);
+                set_num(&cache, "misses", m.misses as f64);
+                set_num(&cache, "evictions", m.evictions as f64);
+                set_num(&cache, "residentBytes", m.bytes_resident as f64);
+                set_num(&cache, "budgetBytes", budget as f64);
+                let _ = js_sys::Reflect::set(&obj, &"cache".into(), &cache.into());
+            }
+            None => {
+                set_num(&obj, "fetches", 0.0);
+                set_num(&obj, "bytes", 0.0);
+                let _ = js_sys::Reflect::set(&obj, &"error".into(), &JsValue::NULL);
+                let _ = js_sys::Reflect::set(&obj, &"cache".into(), &JsValue::NULL);
+            }
+        }
         Ok(obj.into())
     }
 }
