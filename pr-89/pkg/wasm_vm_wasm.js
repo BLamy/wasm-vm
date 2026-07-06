@@ -38,9 +38,9 @@ export class WasmLinux {
         return ret;
     }
     /**
-     * E3-T02 instrumentation: `{ fetches, bytes }` — how many chunk fetches happened and how many
-     * bytes they transferred (the pass-4 acceptance compares `bytes` against the image size). A
-     * non-chunked boot reports zeros.
+     * E3-T02/T03 instrumentation: `{ fetches, bytes, error, cache }` — chunk fetches + bytes
+     * transferred (pass-4 acceptance), the first fetch error (or null), and the E3-T03 cache metrics
+     * `{ hits, misses, evictions, residentBytes, budgetBytes }`. A non-chunked boot reports zeros.
      * @returns {any}
      */
     fetchStats() {
@@ -83,11 +83,12 @@ export class WasmLinux {
      * @param {Uint8Array} kernel
      * @param {string} manifest_json
      * @param {string} base_url
+     * @param {number} cache_budget_mib
      * @param {string} bootargs
      * @param {Function} output
      * @returns {WasmLinux}
      */
-    static newChunkedDisk(ram_mib, kernel, manifest_json, base_url, bootargs, output) {
+    static newChunkedDisk(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, bootargs, output) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -96,7 +97,7 @@ export class WasmLinux {
         const len2 = WASM_VECTOR_LEN;
         const ptr3 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len3 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_newChunkedDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, ptr3, len3, output);
+        const ret = wasm.wasmlinux_newChunkedDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, output);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
