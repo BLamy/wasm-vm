@@ -890,6 +890,38 @@ impl WasmLinux {
         Ok(batch.len() as u32)
     }
 
+    /// E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
+    /// reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
+    /// means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
+    /// driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
+    /// so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
+    /// boots.
+    #[wasm_bindgen(js_name = persistStats)]
+    pub fn persist_stats(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let obj = js_sys::Object::new();
+        let (blocks, waiting) = match &inner.persist {
+            Some((_, q)) => {
+                let n = q.borrow().unpersisted_count();
+                let w = inner.machine.blk_flush_waiting();
+                (n, w)
+            }
+            None => (0, false),
+        };
+        let _ = js_sys::Reflect::set(
+            &obj,
+            &"pendingBlocks".into(),
+            &JsValue::from_f64(blocks as f64),
+        );
+        let _ = js_sys::Reflect::set(
+            &obj,
+            &"pendingBytes".into(),
+            &JsValue::from_f64((blocks * wasm_vm_storage::OVERLAY_BLOCK) as f64),
+        );
+        let _ = js_sys::Reflect::set(&obj, &"flushWaiting".into(), &JsValue::from_bool(waiting));
+        Ok(obj.into())
+    }
+
     /// E3-T02/T03 instrumentation: `{ fetches, bytes, error, cache }` — chunk fetches + bytes
     /// transferred (pass-4 acceptance), the first fetch error (or null), and the E3-T03 cache metrics
     /// `{ hits, misses, evictions, residentBytes, budgetBytes }`. A non-chunked boot reports zeros.
