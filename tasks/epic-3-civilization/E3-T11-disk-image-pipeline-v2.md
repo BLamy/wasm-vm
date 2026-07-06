@@ -100,3 +100,18 @@ Gates: clippy(all-features) 0, fmt, determinism, cli tests. **Remaining (pass 2)
 byte-repro fix (dumpe2fs-diff → pin the residual superblock field); cross-host rebuild diff;
 mount-and-hunt (machine-id / ssh keys / mtimes > epoch); adopt the rebuilt artifact as the web
 default + regenerate web/artifacts-alpine.json; boot-through-streaming acceptance.
+
+**2026-07-06 update — root-caused via dumpe2fs; 11.2% → 4.7%, residual parked.**
+`dumpe2fs -h` on the built image showed the Directory Hash Seed WAS correctly pinned to FS_UUID
+(my first fix worked) — the churn was the superblock **"Last write time"** (`s_wtime`), stamped
+with the real wall clock and replicated into every backup superblock (chunks 0/2/3/1024/3072).
+`E2FSPROGS_FAKE_TIME=$SOURCE_DATE_EPOCH` froze it → churn dropped to **4.7% (chunks 2, 3 only)**.
+Normalizing the source tree's mtimes (`find -exec touch -d @epoch`) did NOT clear the last 2
+chunks — they are the **inode table**, and the residual is almost certainly `mke2fs -d`
+**inode-allocation ORDER** (nondeterministic directory-walk order → shifted inode numbers), a
+known-hard reproducible-builds problem that needs a mke2fs-level fix (sorted walk / a different
+packer), not an env var. **PARKED** here: byte-repro is NOT on the container critical path (the
+E3.5 OCI importer unpacks *pulled* layers, not this base image), and Brett reprioritized toward
+`wvrun postgres`. Net verified progress: superblock determinism fixed + root-caused (95.3%
+reproducible), the pipeline/checker/gate all done and tested. Resume: pin inode order (e.g.
+`mke2fs`'s deterministic-`-d` behavior or a pre-sorted tar → `mkfs`), then flip to byte-identical.
