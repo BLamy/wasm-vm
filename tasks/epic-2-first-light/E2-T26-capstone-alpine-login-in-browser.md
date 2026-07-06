@@ -66,5 +66,36 @@ smoothness, ^C latency) against webvm.io/alpine.html and record the comparison i
 confirm the kernel and rootfs artifacts' sha256 match `releases/` manifests — any locally
 patched artifact refutes "unmodified".
 
+## Implementation plan (2026-07-05, scoped from the codebase)
+
+The capstone integrates already-shipped pieces; the concrete NEW work is the browser disk path.
+The current browser boot (`WasmLinux`, #78/#79) uses `enable_virtio_slots(None)` — **no disk** — and
+boots the busybox *initramfs*. Alpine needs `root=/dev/vda` over virtio-blk. Gap, in order:
+
+1. **In-memory `BlockBackend` — ALREADY EXISTS.** `crates/core/src/block.rs` has `MemBackend`
+   (Vec-backed, RW, `MemBackend::new(Vec<u8>)`) and `SparseMemBackend`, both `impl BlockBackend`.
+   No new device code — just feed the Alpine image into `MemBackend::new` and `enable_virtio_blk`.
+   Memory: take the image as a `Vec<u8>` param (wasm-bindgen moves it into the MemBackend — one
+   wasm-side copy, keeping the T21 single-copy discipline; a `&[u8]` + `.to_vec()` would double it).
+2. **`WasmLinux` disk mode.** Add a constructor (or arg) that takes the disk image bytes, builds
+   the MemBackend, `enable_virtio_blk`s it, and boots with `root=/dev/vda rw` and NO initrd (the
+   existing `place_and_boot` already supports `initrd: None`). Keep the initramfs path too.
+3. **`web/loader.js` large-image fetch.** Fetch the 512 MB Alpine ext4 (releases/rootfs) with the
+   T21 single-copy discipline. Memory budget in wasm32 (4 GB): guest RAM 256 MB + image 512 MB +
+   overhead ≈ 0.8 GB — fits, but the image must land in wasm memory exactly once (one JS buffer →
+   one copy into the MemBackend via a `&[u8]` constructor). Add a manifest entry + a "Boot Alpine"
+   affordance distinct from "Boot Linux" (busybox).
+4. **Halted-UI state (T17).** Surface `runChunk`'s poweroff/reboot terminal state as a distinct
+   "machine halted — reload to boot again" UI, not just a status string.
+5. **xv6 minimal proof.** Separate + simpler: an xv6-riscv kernel ELF booted via the bare-metal
+   path (like `WasmMachine`/ELF, not the Linux platform) to its `$`. Artifact must be built/pinned
+   (none in releases/ yet) — likely its own small sub-task.
+6. **`tools/demo-capstone.sh`, Playwright e2e, recording, README.** The e2e is heavy: a browser
+   Alpine boot is ~10 min (native was 445 s; browser ~1.2×), so the capstone Playwright test is a
+   long/nightly job — bound it and document, like E2-T24.
+
+**Cost note:** browser Alpine boot ≈ 9–10 min each; 3× fresh-context runs ≈ 30 min. This is a large
+(L) capstone whose verification is measurement-heavy — implement in focused passes, not one sprint.
+
 ## Verification log
 (empty)

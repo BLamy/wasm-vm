@@ -434,6 +434,48 @@ impl WasmLinux {
         bootargs: String,
         output: js_sys::Function,
     ) -> Result<WasmLinux, JsError> {
+        let initrd_opt = if initrd.is_empty() {
+            None
+        } else {
+            Some(initrd)
+        };
+        let args = if bootargs.is_empty() {
+            "console=ttyS0 earlycon=sbi".to_string()
+        } else {
+            bootargs
+        };
+        Self::assemble(ram_mib, kernel, initrd_opt, None, &args, output)
+    }
+
+    /// E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
+    /// an initramfs. `disk` is MOVED into an in-memory `BlockBackend` (one wasm-side copy — the T21
+    /// single-copy discipline; a `&[u8]` + `.to_vec()` would double-allocate 512 MB). Default
+    /// bootargs mount `/dev/vda` as root.
+    #[wasm_bindgen(js_name = newDisk)]
+    pub fn new_disk(
+        ram_mib: u32,
+        kernel: &[u8],
+        disk: Vec<u8>,
+        bootargs: String,
+        output: js_sys::Function,
+    ) -> Result<WasmLinux, JsError> {
+        let args = if bootargs.is_empty() {
+            "root=/dev/vda rw console=ttyS0 earlycon=sbi".to_string()
+        } else {
+            bootargs
+        };
+        Self::assemble(ram_mib, kernel, None, Some(disk), &args, output)
+    }
+
+    /// Shared platform assembly for the initramfs (`new`) and disk (`newDisk`) boot paths.
+    fn assemble(
+        ram_mib: u32,
+        kernel: &[u8],
+        initrd: Option<&[u8]>,
+        disk: Option<Vec<u8>>,
+        bootargs: &str,
+        output: js_sys::Function,
+    ) -> Result<WasmLinux, JsError> {
         init_diagnostics();
         let bytes = (ram_mib as usize).saturating_mul(1024 * 1024);
         let mut machine = Machine::try_new(bytes)
@@ -444,23 +486,21 @@ impl WasmLinux {
         machine.enable_rtc(Box::new(JsWallClock));
         machine.enable_syscon();
         let uart = machine.enable_uart16550();
-        let _ = machine.enable_virtio_slots(None); // 8 empty slots the DTB advertises
+        match disk {
+            // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
+            Some(image) => {
+                machine.enable_virtio_blk(Box::new(wasm_vm_core::block::MemBackend::new(image)));
+            }
+            // Busybox initramfs: the 8 empty virtio slots the DTB advertises.
+            None => {
+                let _ = machine.enable_virtio_slots(None);
+            }
+        }
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));
-
-        let args: &str = if bootargs.is_empty() {
-            "console=ttyS0 earlycon=sbi"
-        } else {
-            &bootargs
-        };
-        let initrd_opt = if initrd.is_empty() {
-            None
-        } else {
-            Some(initrd)
-        };
         machine
-            .place_and_boot(kernel, initrd_opt, args)
+            .place_and_boot(kernel, initrd, bootargs)
             .map_err(|e| JsError::new(&format!("boot layout failed: {e:?}")))?;
         Ok(WasmLinux {
             inner: RefCell::new(LinuxInner {
