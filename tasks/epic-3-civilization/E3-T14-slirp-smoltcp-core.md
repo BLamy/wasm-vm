@@ -227,7 +227,14 @@ socket. `real_native_connector_dials_an_actual_tcp_connection` (native-gated) bi
 drives an ARP + a guest SYN to the listener's real `(ip,port)`, then asserts `listener.accept()`
 returns within 2 s — i.e. `on_guest_frame` → `open_tcp` → `NativeConnector::connect().await` opened a
 GENUINE outbound TCP connection to the server — plus the flow is tracked and the guest receives its
-SYN-ACK. Discriminating: no connect → `accept` times out → fail; no SYN-ACK → fail. 37 slirp tests.
+SYN-ACK. The genuine dial is witnessed by TWO independent load-bearing assertions: `listener.accept()`
+returning, AND `flow_count()==1` (the bridge inserts a `FlowConn` only in the `Ok(stream)` arm of
+`connect()`, so `flow_count==1 ⟺ the dial succeeded`). The SYN-ACK is an ADDITIONAL guest-side check —
+it egresses from the local listening socket regardless of the outbound dial, so it confirms the
+guest-facing handshake but is NOT itself a dial discriminator (critic MINOR: earlier wording overstated
+it). Mutation-verified by the critic: deleting the whole `Action::Connect` block OR just the
+`connect().await` both make `accept()` time out → fail; the no-dial mutation leaves `flow_count()==0`.
+37 slirp tests.
 fmt + clippy (all-features) + no-default-features build green (the native test is correctly compiled
 out of the browser build). **CI green on #121 (all checks) — this stacks on it.** The byte-PUMP that
 carries payload over this now-proven connection (non-blocking `try_read`/`try_write` per-flow driver +
