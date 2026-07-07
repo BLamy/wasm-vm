@@ -256,7 +256,11 @@ fn tcp_data_path_and_teardown() {
     s.inject(tcp_seg(ext, 40000, 80, 1001, Some(isn + 1), false, &[]));
     s.poll(3);
     let _ = s.take_egress();
-    assert_eq!(s.tcp_state(h), State::Established, "handshake completed");
+    assert_eq!(
+        s.tcp_state(h),
+        Some(State::Established),
+        "handshake completed"
+    );
 
     // Guest → outbound: send "hello"; slirp buffers it, readable via tcp_recv.
     s.inject(tcp_seg(
@@ -282,13 +286,23 @@ fn tcp_data_path_and_teardown() {
     );
 
     // Teardown frees the endpoint: a fresh SYN to it is now filtered (dropped).
-    s.remove_tcp(h, ext, 80);
+    s.remove_tcp(h);
     s.inject(tcp_seg(ext, 40001, 80, 2000, None, true, &[]));
     s.poll(6);
     assert!(
         s.take_egress().is_empty(),
         "endpoint torn down → SYN dropped by the filter"
     );
+
+    // Use-after-remove is SAFE, not a panic (critic MAJOR): the stale handle reads as no active flow.
+    assert_eq!(s.tcp_state(h), None, "removed handle has no state");
+    assert!(
+        s.tcp_recv(h).is_empty(),
+        "recv on a removed handle is empty"
+    );
+    assert_eq!(s.tcp_send(h, b"x"), 0, "send on a removed handle is 0");
+    assert!(!s.tcp_can_send(h), "can_send on a removed handle is false");
+    s.tcp_close(h); // no-op, must not panic
 }
 
 #[test]
@@ -321,7 +335,7 @@ fn promiscuous_accept_answers_a_syn_to_an_external_host() {
     assert_eq!(tp.dst_port(), 40000, "back to the guest's source port");
     assert_eq!(tp.src_port(), 80, "from the destination port");
     // The listening socket has advanced past LISTEN (received the SYN).
-    assert_ne!(s.tcp_state(h), smoltcp::socket::tcp::State::Listen);
+    assert_ne!(s.tcp_state(h), Some(smoltcp::socket::tcp::State::Listen));
 }
 
 #[test]
