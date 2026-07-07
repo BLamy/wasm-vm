@@ -41,13 +41,15 @@ external destination and NATed outbound.
                                           → E3-T16/T17 transports    [browser]
 ```
 
-- **phy::Device glue** — a `smoltcp::phy::Device` impl whose TX enqueues frames back to the guest
-  (via the E3-T13 `NetBackend` seam, plain `Vec<u8>` ethernet frames) and whose RX dequeues guest
-  frames. No copies beyond smoltcp's token model.
-- **Interface** — a smoltcp `Interface` configured with the gateway IPs; it answers ARP and ICMP
-  echo to `10.0.2.2` itself. TCP interception is *promiscuous*: any guest SYN to any external
-  `IP:port` is accepted by a listening smoltcp socket created on demand and keyed by the guest
-  4-tuple; the accepted socket is then bridged byte-for-byte to `OutboundConnector::connect`.
+- **phy::Device glue** *(pass 2a — implemented, `device.rs`)* — a `smoltcp::phy::Device` impl over
+  two `Vec<u8>` frame queues: RX = frames from the guest (the E3-T13 `NetBackend` seam), TX = replies
+  for the guest. No copies beyond smoltcp's token model.
+- **Interface** *(pass 2a answers ARP, `stack.rs`)* — a smoltcp `Interface` configured with the
+  gateway IP `10.0.2.2/24`; pass 2a answers **ARP** for it (verified: guest ARP request → gateway
+  reply; ARP for any other IP is ignored). **ICMP echo** (`ping 10.0.2.2`) and **TCP interception**
+  are **pass 2b**: TCP interception is *promiscuous* — any guest SYN to any external `IP:port` is
+  accepted by a listening smoltcp socket created on demand and keyed by the guest 4-tuple, then
+  bridged byte-for-byte to `OutboundConnector::connect`.
 - **OutboundConnector** — the trait that decouples the stack from *how* bytes leave the process.
   The real signature uses the explicit `-> impl Future + Send` form (not `async fn`) so the returned
   future is `Send`-bound without tripping the `async_fn_in_trait` lint:
@@ -93,16 +95,19 @@ both directions; an abrupt outbound RST surfaces to the guest as `ECONNRESET` pr
 - **Inbound connections** (host→guest port-forward) — a later task (E6-T25); slirp is
   guest-initiated-outbound only.
 - **IPv6** — v1 is IPv4 only.
-- **Raw sockets / ICMP beyond echo-to-gateway** — `ping` to the gateway works; arbitrary ICMP
-  passthrough does not.
+- **Raw sockets / ICMP beyond echo-to-gateway** — `ping` to the gateway is a pass-2b goal; arbitrary
+  ICMP passthrough is out of scope.
 - **DHCP / DNS server** — E3-T15 (this crate provides the hooks; the servers land there).
 
 ## Passes
 
-1. **This pass:** the design (this doc), the `slirp` crate scaffold, the addressing constants, the
-   `OutboundConnector`/`ConnectError` trait contract, and the **`FlowTable`** (NAT table with idle
-   timeouts + bounds + deterministic iteration), fully unit-tested — the self-contained core, no
-   guest boot, no smoltcp integration yet.
-2. **Next:** the smoltcp `phy::Device` + `Interface` glue (ARP/ICMP/TCP promiscuous accept), the
-   per-flow bridge with backpressure, `NativeConnector` (tokio), and the native integration tests
-   (HTTP GET through slirp to a local hyper server; concurrency; half-close; 100 MB integrity).
+1. **Pass 1 (done):** the addressing constants, the `OutboundConnector`/`ConnectError` trait
+   contract, and the **`FlowTable`** (NAT table with idle timeouts + bounds + deterministic
+   iteration), fully unit-tested — the self-contained core, no smoltcp.
+2. **Pass 2a (done):** the smoltcp `phy::Device` (`device.rs`) + the `Interface` (`stack.rs`) owning
+   `10.0.2.2`, answering **ARP** — proven by frame-injection tests (request→reply; other-IP ignored).
+   No async, no boot.
+3. **Pass 2b (next):** ICMP echo reply, the promiscuous TCP accept + per-flow bridge with
+   backpressure/half-close, `NativeConnector` (tokio), and the native integration tests (HTTP GET
+   through slirp to a local hyper server; 50-concurrent; 100 MB integrity; half-close). The
+   booted-Alpine acceptance leg is later still (long boot, env-gated).

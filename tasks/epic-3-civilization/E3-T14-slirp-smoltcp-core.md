@@ -83,7 +83,19 @@ task landed in passes; pass 1 is the self-contained, deterministic, unit-tested 
   keeps a flow alive past its timeout; bound evicts the LRU; refresh updates LRU order; remove
   idempotent; sweep is deterministic + only-expired. fmt + clippy + determinism-hazards green.
 
-**Pass 2 (next):** the smoltcp `phy::Device` + `Interface` glue (ARP/ICMP/promiscuous TCP accept),
-the per-flow bridge with backpressure/half-close, `NativeConnector` (tokio), and the native
-integration tests (HTTP GET through slirp to a local hyper server; 50-concurrent; 100 MB integrity;
-half-close). The acceptance criteria's booted-Alpine leg is pass-2/3 (long boot, env-gated).
+**2026-07-07 — pass 2a: smoltcp phy::Device + Interface answering ARP.** Added `smoltcp = 0.13`
+(default-features off + std/medium-ethernet/proto-ipv4/socket-tcp/icmp/udp; the browser build doesn't
+pull this crate). `device.rs`: `SlirpDevice` — a `phy::Device` over two `Vec<u8>` frame queues (RX
+from guest, TX to guest), the RxToken owning the frame so `receive` can also hand out a tx token.
+`stack.rs`: `SlirpStack` — a smoltcp `Interface` owning the gateway `10.0.2.2/24`, with
+`inject`/`poll(now_ms)`/`take_egress`. Proven by frame-injection (no async, no boot): a guest ARP
+request for 10.0.2.2 → a correct gateway ARP reply (sender MAC/IP + target = guest, opcode 2); an ARP
+for another IP (10.0.2.99) is ignored. 9 slirp tests (7 NAT + 2 ARP). fmt + clippy + determinism
+green. **ICMP echo deferred to 2b:** smoltcp 0.13's interface didn't emit an echo reply from a
+hand-built frame even after the neighbor was known (needs an ICMP socket or a construction detail to
+verify) — not worth guessing blind; the design doc marks ICMP as pass 2b.
+
+**Pass 2b (next):** ICMP echo, the promiscuous TCP accept + per-flow bridge with backpressure/
+half-close, `NativeConnector` (tokio), and the native integration tests (HTTP GET through slirp to a
+local hyper server; 50-concurrent; 100 MB integrity; half-close). The booted-Alpine acceptance leg is
+later (long boot, env-gated).
