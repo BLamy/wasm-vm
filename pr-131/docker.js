@@ -26,13 +26,36 @@ const IMAGES = [
     bundlePath: "/opt/containers/busybox",
     desc: "BusyBox — the first image proven end-to-end (sideload → digest-verify → unpack → runnable riscv64 bundle).",
   },
-  { repo: "postgres", tag: "18", bundled: false, desc: "PostgreSQL 18 — the capstone target (has a riscv64 image on Docker Hub)." },
-  { repo: "nginx", tag: "latest", bundled: false, desc: "nginx 1.27 web server." },
-  { repo: "redis", tag: "latest", bundled: false, desc: "Redis 7.4 in-memory store." },
-  { repo: "node", tag: "22", bundled: false, desc: "Node.js 22 runtime." },
-  { repo: "python", tag: "3", bundled: false, desc: "Python 3.13 interpreter." },
-  { repo: "alpine", tag: "3.20", bundled: false, desc: "Alpine 3.20 — the rootfs the Terminal tab boots." },
+  { repo: "postgres", tag: "latest", bundled: false, desc: "PostgreSQL — the capstone target." },
+  { repo: "nginx", tag: "latest", bundled: false, desc: "nginx web server." },
+  { repo: "redis", tag: "latest", bundled: false, desc: "Redis in-memory store." },
+  { repo: "node", tag: "latest", bundled: false, desc: "Node.js runtime." },
+  { repo: "python", tag: "latest", bundled: false, desc: "Python interpreter." },
+  { repo: "alpine", tag: "latest", bundled: false, desc: "Alpine — the rootfs the Terminal tab boots." },
 ];
+
+// Populate busybox's displayed metadata from the COMMITTED artifact so the numbers are provable, not
+// hand-typed. Falls back to the constants above if the asset isn't deployed (e.g. a trimmed build).
+async function loadBundleManifests() {
+  const bb = IMAGES.find((i) => i.repo === "busybox");
+  try {
+    const m = await fetch("./assets/containers/busybox/manifest.json").then((r) =>
+      r.ok ? r.json() : null,
+    );
+    if (m && m.manifestDigest) {
+      bb.manifestDigest = m.manifestDigest;
+      bb.rootfsEntries = m.rootfsEntries ?? bb.rootfsEntries;
+      if (typeof m.rootfsBytes === "number") {
+        bb.rootfsSize = `${(m.rootfsBytes / (1024 * 1024)).toFixed(1)} MB`;
+      }
+      if (m.entry) bb.entry = m.entry;
+      if (m.entryElf) bb.entryElf = m.entryElf;
+      render();
+    }
+  } catch {
+    /* asset absent — keep the checked-in constants (which mirror the manifest) */
+  }
+}
 
 const state = { view: "images", detailRepo: null };
 
@@ -50,6 +73,11 @@ function build() {
   main.id = "dk-main";
   root.append(main);
   render();
+  loadBundleManifests(); // replace busybox's constants with the committed artifact's real numbers
+}
+
+function bundledCount() {
+  return IMAGES.filter((i) => i.bundled).length;
 }
 
 function navBtn(view, label) {
@@ -76,11 +104,13 @@ function render() {
 
 // ── Images ───────────────────────────────────────────────────────────────────
 function renderImages(main) {
-  main.append(head("Images", `${IMAGES.length} riscv64 images · pulled + digest-verified by the OCI pipeline`));
+  const nb = bundledCount();
+  main.append(head("Images", `${IMAGES.length} riscv64 images · ${nb} bundled + digest-verified, ${IMAGES.length - nb} pullable`));
   main.append(note(
-    "These are real riscv64 images the E3.5 pipeline pulls from Docker Hub and digest-verifies. " +
-    "“Bundled” means a real unpacked riscv64 rootfs exists (built + verified via tools/build-container-bundle.sh). " +
-    "The others are pullable the same way — just not bundled for an in-browser run yet.",
+    `${nb === 1 ? "busybox was" : `${nb} images were`} pulled from Docker Hub, digest-verified, and ` +
+    "unpacked into a real riscv64 bundle via tools/build-container-bundle.sh (the entry binary is " +
+    "checked to be a RISC-V ELF). The rest are catalog entries — pullable the same way, but not pulled " +
+    "or bundled here yet.",
   ));
   const view = elc("div", "dk-view");
   const table = elc("table", "dk-table");
