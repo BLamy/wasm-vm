@@ -241,6 +241,12 @@ fn apply_layer_tar_capped(
     let src: Box<dyn Read> = if tar_bytes.starts_with(&[0x1f, 0x8b]) {
         Box::new(GzDecoder::new(tar_bytes))
     } else if tar_bytes.starts_with(&[0x28, 0xb5, 0x2f, 0xfd]) {
+        // zstd. The streaming decoder never preallocates to the frame's declared content size, so the
+        // `take(budget+1)` cap bounds it exactly like gzip (critic-verified: a 10 GiB logical bomb
+        // caps in ~1.5 ms). NOTE: libzstd allocates a WINDOW buffer sized by the frame header — up to
+        // ~128 MiB at its default `windowLogMax` (a larger window is refused, not allocated). So the
+        // zstd path has a ~128 MiB memory floor independent of `budget`; negligible under the 8 GiB
+        // production budget, but worth knowing if this is ever reused with a very small budget.
         Box::new(
             zstd::stream::read::Decoder::new(tar_bytes)
                 .map_err(|e| UnpackError::Io(format!("zstd: {e}")))?,
