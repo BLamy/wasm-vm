@@ -22,6 +22,7 @@ pub mod nat;
 pub mod native;
 #[cfg(feature = "native")]
 pub mod pump;
+pub mod resolver;
 pub mod stack;
 pub mod tcp;
 
@@ -37,6 +38,7 @@ pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
 pub use native::NativeConnector;
 #[cfg(feature = "native")]
 pub use pump::{PumpStats, pump_flow};
+pub use resolver::{DnsForwarder, Resolution, Resolver, TtlCache};
 pub use stack::SlirpStack;
 
 /// The slirp virtual network — QEMU-user conventions so guest images "just work".

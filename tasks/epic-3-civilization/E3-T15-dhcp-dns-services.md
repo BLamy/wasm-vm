@@ -116,3 +116,21 @@ oversized-name reject, and a fuzz sweep (every truncation + bitflip of a valid q
 random inputs) asserting no panic. 64 slirp tests. fmt + clippy green under BOTH `--all-features` and
 `--no-default-features`. Remaining for T15: the async `Resolver` trait (DoH/OS) + TTL cache, wire DHCP
 + DNS into the slirp UDP path, booted-guest acceptance (env-gated).
+
+**2026-07-07 — pass 1c: DNS forwarder control layer — `Resolver` trait + TTL cache + `DnsForwarder`
+(`resolver.rs`).** Ties the wire layer (pass 1b) to a pluggable upstream. `Resolver` trait: async
+`resolve(name) -> Resolution` (`Resolved{ips,ttl}` / `NxDomain` / `Failed`) — `impl Future + Send`, NO
+tokio (mirrors `OutboundConnector`), so it's browser-safe; the DoH (wasm) and OS (native) impls are a
+later slice. `TtlCache`: bounded, TTL-respecting positive cache, DETERMINISTIC (every op takes
+`now_ms`) — clamps TTL to [5 s floor, 300 s cap] (a `ttl=0` can't defeat caching; a huge TTL can't pin
+a stale answer), returns the REMAINING TTL so answers count down, evicts the soonest-to-expire when
+full (reclaiming expired first). `DnsForwarder<R>::handle(msg, now_ms)`: parse → AAAA→empty NOERROR
+(never touches upstream) → non-A→SERVFAIL → cache hit→answer (no upstream fetch) → else resolver →
+cache positive + build A response / NXDOMAIN / SERVFAIL; malformed→drop. Tests (8, deterministic, mock
+resolver counting upstream calls): TTL clamp floor/cap, remaining-countdown + expiry, bounded eviction
+(soonest-expiry), A-resolve+cache then **second query is a cache hit (upstream called ONCE — the
+acceptance criterion)**, re-resolve after TTL expiry, empty-AAAA without touching the resolver,
+NXDOMAIN + SERVFAIL forwarded (failures NOT cached), unsupported-qtype→SERVFAIL, malformed→None. 73
+slirp tests. fmt + clippy green under BOTH `--all-features` and `--no-default-features`. Remaining for
+T15: the concrete resolvers (browser DoH `fetch`, native OS) + TCP-fallback for truncated answers, wire
+DHCP+DNS into the slirp UDP path, booted-guest acceptance (env-gated).
