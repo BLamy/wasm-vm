@@ -104,7 +104,19 @@ ident/seq echoed). Also (critic MINORs): MTU 1500→**1514** (`Medium::Ethernet`
 comments now match the honest doc. **10 slirp tests** (7 NAT + ARP + ARP-ignored + ICMP echo). fmt +
 clippy + determinism green.
 
-**Pass 2b (next):** the promiscuous TCP accept + per-flow bridge with backpressure/half-close,
-`NativeConnector` (tokio), and the native integration tests (HTTP GET through slirp to a local hyper
-server; 50-concurrent; 100 MB integrity; half-close). The booted-Alpine acceptance leg is later
-(long boot, env-gated).
+**2026-07-07 — pass 2c: `NativeConnector` (tokio) — the concrete OutboundConnector.** Added tokio
+behind a default-on `native` feature (`crates/slirp` verified to still compile `--no-default-features`
+without tokio, so a future wasm build can drop it; the browser doesn't depend on this crate anyway).
+`native.rs`: `NativeConnector` implements `OutboundConnector` with `Conn = tokio::net::TcpStream`,
+`connect(host,port)` wrapped in a connect-timeout (default 10 s) so a black-holed destination fails
+promptly instead of hanging; `io::Error` → typed `ConnectError` (ConnectionRefused→Refused,
+Timed/Network/Host-unreachable mapped). 3 tokio tests against REAL local sockets: a live listener
+round-trips a byte both ways (duplex stream proven); a closed loopback port → `Refused`; an
+unroutable TEST-NET-1 address (192.0.2.1) → a typed failure (`TimedOut`/`Unreachable`) within the
+300 ms timeout, asserted to NOT hang. 13 slirp tests total. fmt + clippy (all-features) + determinism
+green.
+
+**Pass 2b (next — the bridge):** the promiscuous TCP accept in the smoltcp `Interface` (a socket per
+guest 4-tuple, created on demand) wired to `NativeConnector` with backpressure + half-close, and the
+native integration tests (HTTP GET through slirp to a local hyper/tokio server; 50-concurrent; 100 MB
+integrity; half-close). The booted-Alpine acceptance leg is later (long boot, env-gated).

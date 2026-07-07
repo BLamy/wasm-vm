@@ -12,11 +12,15 @@ use std::net::Ipv4Addr;
 pub mod connector;
 pub mod device;
 pub mod nat;
+#[cfg(feature = "native")]
+pub mod native;
 pub mod stack;
 
 pub use connector::{ConnectError, OutboundConnector};
 pub use device::SlirpDevice;
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
+#[cfg(feature = "native")]
+pub use native::NativeConnector;
 pub use stack::SlirpStack;
 
 /// The slirp virtual network — QEMU-user conventions so guest images "just work".
