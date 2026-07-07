@@ -1391,6 +1391,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasm-vm-slirp"
+version = "0.0.0"
+
+[[package]]
 name = "wasm-vm-storage"
 version = "0.0.1"
 dependencies = [
