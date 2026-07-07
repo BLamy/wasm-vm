@@ -44,12 +44,15 @@ impl NativeConnector {
 
 /// Map a connect `io::Error` to the typed [`ConnectError`] the stack turns into a guest outcome.
 fn map_io(e: io::Error) -> ConnectError {
+    use io::ErrorKind::*;
     match e.kind() {
-        io::ErrorKind::ConnectionRefused => ConnectError::Refused,
-        io::ErrorKind::TimedOut => ConnectError::TimedOut,
-        io::ErrorKind::NetworkUnreachable
-        | io::ErrorKind::HostUnreachable
-        | io::ErrorKind::AddrNotAvailable => ConnectError::Unreachable,
+        // Actively rejected by the peer/OS → the guest should see a RST (critic LOW: reset/abort fit
+        // Refused better than Unreachable).
+        ConnectionRefused | ConnectionReset | ConnectionAborted => ConnectError::Refused,
+        TimedOut => ConnectError::TimedOut,
+        NetworkUnreachable | HostUnreachable | AddrNotAvailable => ConnectError::Unreachable,
+        // A local firewall/policy blocked it → a distinct "denied" (critic LOW).
+        PermissionDenied => ConnectError::Denied(e.to_string()),
         _ => ConnectError::Unreachable,
     }
 }

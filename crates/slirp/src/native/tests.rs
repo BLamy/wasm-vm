@@ -5,6 +5,26 @@ use super::*;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
 
+#[test]
+fn map_io_covers_the_error_table() {
+    // Pure, deterministic coverage of the io::Error → ConnectError mapping (no sockets needed).
+    use std::io::{Error, ErrorKind};
+    let m = |k: ErrorKind| super::map_io(Error::from(k));
+    assert_eq!(m(ErrorKind::ConnectionRefused), ConnectError::Refused);
+    assert_eq!(m(ErrorKind::ConnectionReset), ConnectError::Refused);
+    assert_eq!(m(ErrorKind::ConnectionAborted), ConnectError::Refused);
+    assert_eq!(m(ErrorKind::TimedOut), ConnectError::TimedOut);
+    assert_eq!(m(ErrorKind::NetworkUnreachable), ConnectError::Unreachable);
+    assert_eq!(m(ErrorKind::HostUnreachable), ConnectError::Unreachable);
+    assert_eq!(m(ErrorKind::AddrNotAvailable), ConnectError::Unreachable);
+    assert!(matches!(
+        m(ErrorKind::PermissionDenied),
+        ConnectError::Denied(_)
+    ));
+    // Anything unforeseen is a typed Unreachable, never a panic.
+    assert_eq!(m(ErrorKind::Other), ConnectError::Unreachable);
+}
+
 #[tokio::test]
 async fn connects_to_a_live_listener_and_round_trips() {
     // A local server that echoes one byte back.
