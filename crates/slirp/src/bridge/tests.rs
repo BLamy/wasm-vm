@@ -192,3 +192,48 @@ async fn local_and_non_tcp_do_not_connect() {
     );
     assert_eq!(b.flow_count(), 0);
 }
+
+/// Regression (critic pass-2h CRITICAL): at capacity, a new flow that shares the LRU victim's exact
+/// `(dst,port)` must NOT let the victim's still-queued SYN hijack the new flow's freshly-opened,
+/// slot-reused listener. Pre-fix (inject-now / poll-later) the victim's SYN was swallowed by the new
+/// listener → the LIVE flow (guest 40002) received a RST while a forged SYN-ACK went to the evicted
+/// guest 40001. The fix polls each admitted frame immediately, so no SYN outlives the eviction.
+#[tokio::test]
+async fn stale_syn_cannot_hijack_reused_listener_after_same_endpoint_eviction() {
+    let mock = MockConnector::default();
+    let mut b = Bridge::new(GW_MAC, mock, 1); // capacity 1 → the second flow evicts the first
+    b.on_guest_frame(arp(), 1).await; // learn the guest neighbor so SYN-ACKs aren't ARP-deferred
+    let _ = b.take_egress();
+    b.on_guest_frame(syn(EXT, 40001, 80), 2).await; // flow A
+    b.on_guest_frame(syn(EXT, 40002, 80), 3).await; // flow B — SAME endpoint, evicts A
+    b.poll(3); // pre-fix: drains the two queued SYNs → hijack; post-fix: already consumed, no-op
+    let eg = b.take_egress();
+
+    // The LIVE flow (guest 40002) must get a real SYN-ACK — never a RST from a mis-bound listener.
+    let mut b_got_synack = false;
+    for f in &eg {
+        let Ok(ipp) = Ipv4Packet::new_checked(&f[14..]) else {
+            continue;
+        };
+        if ipp.next_header() != IpProtocol::Tcp {
+            continue;
+        }
+        let Ok(tp) = TcpPacket::new_checked(ipp.payload()) else {
+            continue;
+        };
+        if tp.dst_port() == 40002 {
+            assert!(
+                !tp.rst(),
+                "live flow B must not be RST by a hijacked listener"
+            );
+            if tp.syn() && tp.ack() {
+                b_got_synack = true;
+            }
+        }
+    }
+    assert!(
+        b_got_synack,
+        "the live flow B completes its handshake (SYN-ACK to 40002)"
+    );
+    assert_eq!(b.flow_count(), 1, "only the surviving flow is tracked");
+}

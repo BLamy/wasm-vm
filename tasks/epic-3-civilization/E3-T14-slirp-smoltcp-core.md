@@ -201,6 +201,25 @@ a new flow at `max_flows=1` evicts + tears the old one down (bounded); local (ga
 NOT open an outbound flow. 35 slirp tests. fmt + clippy (all-features) + no-default-features build
 (tokio stays optional — `Bridge` needs only the trait) green.
 
+**Adversarial cold-clone critic on pass 2h: SOUND lifecycle, one CRITICAL hot-path hijack fixed.** The
+critic verified (leak probes across ok / connect-fail / eviction / eviction+fail / expire — every path
+ends `(sockets, endpoints, flows)` fully in sync, `bridge.flows ⊆ manager table` always so `Connect`
+never double-opens; retransmit guard holds; IPv6 can't strand a NAT entry; the mock tests are
+non-vacuous) and found ONE **CRITICAL** in the inject/poll seam. `inject` ADMITS a frame now but `poll`
+CONSUMES it later; if flow A's SYN is queued, then a new flow B at capacity evicts A and reuses A's
+exact `(dst,port)` endpoint (smoltcp recycles the freed handle slot), the deferred `poll` feeds A's
+stale SYN into B's fresh LISTEN-state listener → a **forged SYN-ACK to the torn-down flow A** (guest
+40001) AND B's listener bound to the **wrong guest 4-tuple** (cross-flow corruption: the byte-pump
+would shuttle 40001's bytes over B's outbound stream), while the intended flow B gets a **RST**. This
+is the hot browser path — many parallel connections to one `host:443` under a churning flow table.
+Fix (critic-recommended, mutation-killed): `on_guest_frame` now `poll`s IMMEDIATELY after `inject`, so
+every admitted frame is consumed under the socket topology it was admitted through — no frame outlives
+a later `open_tcp`/`remove_tcp`. New regression `stale_syn_cannot_hijack_reused_listener_after_
+same_endpoint_eviction` (cap=1, same endpoint) asserts the LIVE flow B gets a SYN-ACK, never a RST;
+verified it FAILS without the poll (0/1) and PASSES with it (mutation-kill). The deeper full-4-tuple
+accept guard for *concurrent* same-endpoint flows is noted for the byte-pump slice. 36 slirp tests.
+fmt + clippy (all-features) + no-default-features build green. **CI green on #121 (all checks pass).**
+
 **Pass 2b (next — the async byte-pump):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).

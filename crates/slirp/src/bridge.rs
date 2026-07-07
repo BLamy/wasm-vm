@@ -96,6 +96,15 @@ impl<C: OutboundConnector> Bridge<C> {
         }
         // The stack's `accept_frame` filter decides what smoltcp actually sees.
         self.stack.inject(frame);
+        // CRITICAL (critic pass-2h): consume the frame IMMEDIATELY, under the socket topology it was
+        // admitted through. `inject` admits now but `poll` consumes later; if we defer, a SYN admitted
+        // under flow A's endpoint can outlive A's eviction and be swallowed by flow B's freshly-opened
+        // listener that `(dst,port)`-aliases it (smoltcp reuses the handle slot) — a forged SYN-ACK to
+        // the torn-down flow AND B's listener bound to the wrong guest 4-tuple. Polling here makes
+        // "process each admitted frame before any topology change" an invariant: no frame survives a
+        // later `open_tcp`/`remove_tcp`. (The full-4-tuple accept guard for concurrent same-endpoint
+        // flows is a byte-pump-slice refinement — see the accept_frame note in `stack.rs`.)
+        self.stack.poll(now_ms as i64);
     }
 
     /// Sweep idle-expired flows at `now_ms`, tearing each down.
