@@ -15,8 +15,9 @@
 # v1 SCOPE / non-claims (honesty, not perfect confinement — the guest IS the sandbox):
 #   * Runs as root-in-guest. USER_NS/uid_map (rootless) is a later pass; `config/user` is recorded
 #     but NOT yet enforced.
-#   * Containers share the guest net namespace v1 (loopback + eth0 visible); veth-per-container
-#     graduates with E3.5-T05. `unshare -n` here gives an isolated (loopback-only) netns.
+#   * Containers SHARE the guest net namespace v1 (loopback + eth0 visible) — so a container service
+#     (e.g. postgres) is reachable from the guest for the capstone. Per-container veth/netns
+#     graduates with E3.5-T05.
 #   * seccomp filter install is E3.5-T03's remaining acceptance (relocated from T02); not yet here.
 #   * An argv/env value containing a newline is not representable (one-per-line files) — real images
 #     don't use them.
@@ -50,14 +51,14 @@ cwd=$(cat "$bundle/config/cwd" 2>/dev/null || true); [ -n "$cwd" ] || cwd=/
 if [ "$interactive" -eq 1 ]; then
   set -- /bin/sh
 else
-  # Read argv lines into positional params. IFS=newline so args with spaces survive.
-  oldifs=$IFS; IFS='
-'
+  # Read argv one line = one arg. `while IFS= read -r` (NOT `for a in $(cat …)`) so args keep
+  # spaces, are NOT glob-expanded against the guest cwd, and empty args are preserved (critic
+  # MAJOR: unquoted command substitution both path-expanded `*` tokens and dropped empty args).
+  # `|| [ -n "$a" ]` catches a final arg with no trailing newline.
   set --
   if [ -s "$bundle/config/argv" ]; then
-    for a in $(cat "$bundle/config/argv"); do set -- "$@" "$a"; done
+    while IFS= read -r a || [ -n "$a" ]; do set -- "$@" "$a"; done < "$bundle/config/argv"
   fi
-  IFS=$oldifs
   [ $# -gt 0 ] || { echo "wvrun: image has no entrypoint/cmd (use --interactive)" >&2; exit 2; }
 fi
 
@@ -102,8 +103,18 @@ child='
   mkdir -p "$work/merged/proc" "$work/merged/sys" "$work/merged/dev" "$work/merged/.oldroot"
   mount -t proc  proc "$work/merged/proc"
   mount -t sysfs sys  "$work/merged/sys" 2>/dev/null || true
-  # Bind the guest /dev (console/null/zero/tty) so the container has working stdio device nodes.
-  mount --rbind /dev "$work/merged/dev" 2>/dev/null || mount -t tmpfs tmpfs "$work/merged/dev"
+  # A MINIMAL /dev: bind only the standard char devices, NOT a recursive bind of the guest /dev —
+  # that would expose the backing block device (/dev/vda) into the container, letting a root
+  # process dd the raw image and bypass the overlay (critic MINOR image-bypass side channel).
+  mount -t tmpfs tmpfs "$work/merged/dev" 2>/dev/null || true
+  for d in null zero full random urandom tty console; do
+    if [ -e "/dev/$d" ]; then
+      : > "$work/merged/dev/$d" 2>/dev/null || true
+      mount --bind "/dev/$d" "$work/merged/dev/$d" 2>/dev/null || true
+    fi
+  done
+  mkdir -p "$work/merged/dev/pts" 2>/dev/null || true
+  mount -t devpts devpts "$work/merged/dev/pts" 2>/dev/null || true
   # Join the cgroup leaf from HERE (this process becomes the container PID 1 after pivot).
   [ -n "${WVRUN_CG:-}" ] && echo $$ > "$WVRUN_CG/cgroup.procs" 2>/dev/null || true
   # Switch root into the merged tree, detach the old root.
@@ -111,18 +122,27 @@ child='
   pivot_root . .oldroot
   umount -l /.oldroot 2>/dev/null || true
   rmdir /.oldroot 2>/dev/null || true
-  # Apply cwd (fall back to / if the image cwd does not exist), then env, then exec the argv.
+  # Apply cwd (fall back to / if the image cwd does not exist).
   cd "$WVRUN_CWD" 2>/dev/null || cd /
-  # Build a clean env from config/env (KEY=VAL per line) and exec argv via env -i.
-  set -- "$@"
+  # Exec argv with a CLEAN env built from config/env. Env values may contain spaces
+  # (e.g. JAVA_OPTS="-Xmx1g -Xms512m"), so we must NOT word-split `$(cat envfile)` — that fed the
+  # split value to `env` as a command name → exit 127 (critic MAJOR). Instead read each KEY=VAL
+  # line intact, append to the positional list, then rotate so the env pairs precede argv:
+  # `env -i KEY=VAL … <argv>`.
+  argc=$#
   if [ -s "$WVRUN_ENVFILE" ]; then
-    exec env -i $(cat "$WVRUN_ENVFILE") "$@"
-  else
-    exec env -i "$@"
+    while IFS= read -r kv || [ -n "$kv" ]; do
+      if [ -n "$kv" ]; then set -- "$@" "$kv"; fi
+    done < "$WVRUN_ENVFILE"
   fi
+  # Move the first argc entries (the argv) to the end → order becomes: <env pairs…> <argv…>.
+  i=0
+  while [ "$i" -lt "$argc" ]; do a=$1; shift; set -- "$@" "$a"; i=$((i + 1)); done
+  exec env -i "$@"
 '
 
-# unshare: mount+uts+ipc+pid+net, fork so the argv runs as PID 1 in the new pid ns, remount /proc.
-unshare -m -u -i -p -n -f --mount-proc sh -c "$child" wvrun-init "$@"
+# unshare mount+uts+ipc+pid (NOT net — v1 shares the guest netns so the service is reachable),
+# fork so the argv runs as PID 1 in the new pid ns, remount /proc.
+unshare -m -u -i -p -f --mount-proc sh -c "$child" wvrun-init "$@"
 rc=$?
 exit "$rc"
