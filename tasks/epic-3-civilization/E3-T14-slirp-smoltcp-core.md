@@ -186,7 +186,22 @@ active flow (no panic, no reused-slot access), `remove_tcp(handle)` drops socket
 handle is invalid + slots are reused so the bridge must drop it on teardown. New use-after-remove
 test asserts None/empty/0/no-panic. 30 slirp tests. fmt + clippy + determinism + no-default green.
 
-**Pass 2b (next — the async bridge):** wire `OutboundSyn` → create a smoltcp listening socket for the
+**2026-07-07 — pass 2h: `Bridge` control plane (`bridge.rs`).** The connection LIFECYCLE that ties
+`FlowManager` (classify + NAT) to `SlirpStack` (accept sockets) to an `OutboundConnector`: a guest SYN
+to a NEW external 4-tuple opens a listening socket AND `connect`s the outbound side, tracking both in
+`flows: BTreeMap<FlowKey, FlowConn>` (holds the `SocketHandle` + the outbound stream, ready for the
+byte-pump). `on_guest_frame` ALWAYS injects the frame (the stack's `accept_frame` filter is the real
+gate — dropping ARP would break neighbor learning), and drives lifecycle only on `Connect` (open →
+`connect().await` → track, or on refusal `remove_tcp` + `manager.remove` so the SYN is then
+filter-dropped and the guest times out) and on eviction/expiry (`teardown` drops socket + stream +
+NAT entry together — no leak). Proven with a MOCK connector (records connects, no real sockets) +
+`#[tokio::test]`s: new SYN connects exactly once + opens the socket + slirp SYN-ACKs the guest;
+connect-refusal tears the half-open flow down (no SYN-ACK); a retransmitted SYN does NOT reconnect;
+a new flow at `max_flows=1` evicts + tears the old one down (bounded); local (gateway) SYN + ARP do
+NOT open an outbound flow. 35 slirp tests. fmt + clippy (all-features) + no-default-features build
+(tokio stays optional — `Bridge` needs only the trait) green.
+
+**Pass 2b (next — the async byte-pump):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).
 The booted-Alpine acceptance leg is later (long boot, env-gated).
