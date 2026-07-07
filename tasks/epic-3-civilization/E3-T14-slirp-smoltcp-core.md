@@ -280,6 +280,21 @@ records that a read-error (RST) is currently conflated with clean EOF (guest alw
 — RST-fidelity is a stack-wiring-slice refinement). 41 slirp tests. fmt + clippy (all-features) +
 no-default-features build green. **CI green on #123.**
 
+**2026-07-07 — pass 2k: END-TO-END data path (native, `e2e_pump_stack.rs`).** The first time a guest
+frame drives REAL outbound traffic and gets a REAL reply back through the whole stack. A hand-driven
+guest (ARP→SYN→ACK→Established→data segment, via `tcp_seg`) sends `"hello slirp world"` into a real
+`SlirpStack`; an inline servicing loop shuttles `tcp_recv`→`to_pump` and `from_pump`→`tcp_send`; a
+`pump_flow` task carries the bytes over a REAL `tokio` TCP connection (`NativeConnector`) to a REAL
+echo server; the echo travels back pump→stack and egresses to the guest as a data segment. The test
+asserts an egress TCP segment to the guest (dst_port 40000) carries the exact bytes — non-vacuous
+because those bytes only ever reach a guest-bound frame if the full round trip completed (the guest's
+own inbound data is never echoed by smoltcp). Bounded by a 5 s `timeout` so a wiring regression fails
+cleanly. 42 slirp tests. fmt + clippy (all-features) + no-default-features build green (the e2e module
+is `#[cfg(all(test, feature = "native"))]` — excluded from the browser build). NOTE: the servicing loop
+lives in the TEST here; lifting it into a `Bridge` method needs a spawn/ownership refactor (native-gate
++ `C::Conn: AsyncRead+AsyncWrite` rippling through the mock lifecycle tests) — deferred so this proves
+the pieces compose first. Remaining: that `Bridge` wiring, then the env-gated booted-guest acceptance.
+
 **Pass 2b (next — the async byte-pump):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).

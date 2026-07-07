@@ -12,6 +12,8 @@ use std::net::Ipv4Addr;
 pub mod bridge;
 pub mod connector;
 pub mod device;
+#[cfg(all(test, feature = "native"))]
+mod e2e_pump_stack;
 pub mod manager;
 pub mod nat;
 #[cfg(feature = "native")]
