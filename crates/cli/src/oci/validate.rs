@@ -78,9 +78,9 @@ fn machine_name(m: u16) -> String {
     }
 }
 
-/// Read an ELF header's `(EI_CLASS, e_machine)` if `path` is an ELF, else `None`. Only the leading
-/// 20 bytes are read.
-fn elf_ident(path: &Path) -> Option<(u8, u16)> {
+/// Read an ELF header's `(EI_CLASS, e_type, e_machine)` if `path` is an ELF, else `None`. Only the
+/// leading 20 bytes are read.
+fn elf_ident(path: &Path) -> Option<(u8, u16, u16)> {
     let mut buf = [0u8; 20];
     let mut f = std::fs::File::open(path).ok()?;
     let mut read = 0;
@@ -94,13 +94,21 @@ fn elf_ident(path: &Path) -> Option<(u8, u16)> {
     if read < 20 || &buf[..4] != b"\x7fELF" {
         return None;
     }
-    // e_machine is a u16 at offset 18; honor EI_DATA (buf[5]: 1=LE, 2=BE).
-    let machine = if buf[5] == 2 {
-        u16::from_be_bytes([buf[18], buf[19]])
-    } else {
-        u16::from_le_bytes([buf[18], buf[19]])
+    // e_type @16, e_machine @18 (u16 each); honor EI_DATA (buf[5]: 1=LE, 2=BE).
+    let rd = |a: usize, b: usize| {
+        if buf[5] == 2 {
+            u16::from_be_bytes([buf[a], buf[b]])
+        } else {
+            u16::from_le_bytes([buf[a], buf[b]])
+        }
     };
-    Some((buf[4], machine))
+    Some((buf[4], rd(16, 17), rd(18, 19)))
+}
+
+/// Is this ELF `e_type` an executable image (ET_EXEC=2 or ET_DYN=3, the latter for PIE binaries like
+/// busybox/postgres)? Rejects ET_REL(.o)/ET_CORE, which cannot be exec'd (critic MINOR).
+fn is_executable_type(e_type: u16) -> bool {
+    matches!(e_type, 2 | 3)
 }
 
 /// Lexically normalize `path` (collapse `.`/`..`, no filesystem access) → an absolute-looking
@@ -208,7 +216,13 @@ const DEFAULT_PATH: &str = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/s
 /// Validate a bundle for `arch`. Returns a human description of the resolved entrypoint on success.
 pub fn validate_bundle(bundle: &Path, arch: &str) -> Result<String, ValidateError> {
     let want = expected_machine(arch).ok_or_else(|| ValidateError::UnknownArch(arch.into()))?;
+    // Make rootfs ABSOLUTE before any symlink chasing: `chase`/`norm` produce `/`-anchored paths, so
+    // a RELATIVE bundle path (`oci validate ./bundle` — the obvious invocation) would otherwise turn
+    // a symlinked entrypoint into a nonexistent host-root path and false-reject it (critic MAJOR).
     let rootfs = bundle.join("rootfs");
+    let rootfs = std::env::current_dir()
+        .map(|c| c.join(&rootfs))
+        .unwrap_or(rootfs);
     if !rootfs.is_dir() {
         return Err(ValidateError::NoRootfs(rootfs.display().to_string()));
     }
@@ -233,19 +247,20 @@ pub fn validate_bundle(bundle: &Path, arch: &str) -> Result<String, ValidateErro
         return Err(ValidateError::NotRegularFile(argv0.clone()));
     }
 
-    // The exec target: an ELF (check arch), or a #!-script whose interpreter is a matching ELF.
-    if let Some((class, machine)) = elf_ident(&target) {
-        check_machine(argv0, class, machine, want, arch)?;
+    // The exec target: an ELF (check arch + that it's an executable image), or a #!-script whose
+    // interpreter is a matching ELF.
+    if let Some((class, e_type, machine)) = elf_ident(&target) {
+        check_exec_arch(argv0, class, e_type, machine, want, arch)?;
         Ok(format!(
             "{argv0} → {}-bit {} ELF",
             elf_bits(class),
             machine_name(machine)
         ))
     } else if let Some(interp) = shebang_interp(&rootfs, &target, path_env) {
-        let (class, machine) = elf_ident(&interp).ok_or_else(|| {
+        let (class, e_type, machine) = elf_ident(&interp).ok_or_else(|| {
             ValidateError::NotRunnable(format!("{argv0}: interpreter not an ELF"))
         })?;
-        check_machine(argv0, class, machine, want, arch)?;
+        check_exec_arch(argv0, class, e_type, machine, want, arch)?;
         Ok(format!(
             "{argv0} → script → {} ({}-bit {} ELF)",
             interp.file_name().unwrap_or_default().to_string_lossy(),
@@ -261,16 +276,24 @@ fn elf_bits(class: u8) -> u8 {
     if class == 2 { 64 } else { 32 }
 }
 
-fn check_machine(
+fn check_exec_arch(
     argv0: &str,
     class: u8,
+    e_type: u16,
     machine: u16,
     want: u16,
     arch: &str,
 ) -> Result<(), ValidateError> {
-    // 64-bit arches must be ELFCLASS64; the machine must match.
+    // Must be an executable image (not a .o / core), the right machine, AND the right ELF class:
+    // 64-bit arches require ELFCLASS64, 32-bit arches require ELFCLASS32 (critic MINORs).
     let want_64 = matches!(want, 0xF3 | 0x3E | 0xB7 | 0x15 | 0x16);
-    if machine != want || (want_64 && class != 2) {
+    let class_ok = if want_64 { class == 2 } else { class == 1 };
+    if !is_executable_type(e_type) {
+        return Err(ValidateError::NotRunnable(format!(
+            "{argv0}: ELF e_type={e_type} is not an executable image (not EXEC/DYN)"
+        )));
+    }
+    if machine != want || !class_ok {
         return Err(ValidateError::WrongArch {
             path: argv0.into(),
             want: arch.into(),
@@ -283,7 +306,12 @@ fn check_machine(
 pub fn validate(a: ValidateArgs) -> ExitCode {
     match validate_bundle(&a.bundle, &a.arch) {
         Ok(desc) => {
-            println!("oci validate: OK — runnable ({}): {desc}", a.arch);
+            // "entrypoint runnable", not "runnable" — this validates argv[0]'s arch, not tree-wide
+            // arch purity of every shared lib (that's the T04b matrix's job) — critic LOW honesty.
+            println!(
+                "oci validate: OK — entrypoint runnable ({}): {desc}",
+                a.arch
+            );
             ExitCode::SUCCESS
         }
         Err(e) => {

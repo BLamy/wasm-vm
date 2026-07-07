@@ -13,19 +13,24 @@ fn set_exec(p: &Path) {
 #[cfg(not(unix))]
 fn set_exec(_: &Path) {}
 
-/// Write a minimal ELF header with `machine`/`class` so `elf_ident` reads it.
-fn write_elf(path: &Path, machine: u16, class: u8) {
+/// Write a minimal ELF header with `machine`/`class`/`e_type` so `elf_ident` reads it.
+fn write_elf_typed(path: &Path, machine: u16, class: u8, e_type: u16) {
     std::fs::create_dir_all(path.parent().unwrap()).unwrap();
     let mut b = vec![0u8; 24];
     b[..4].copy_from_slice(b"\x7fELF");
     b[4] = class; // EI_CLASS
     b[5] = 1; // EI_DATA = little-endian
     b[6] = 1; // EI_VERSION
-    b[16] = 2; // e_type = ET_EXEC (offset 16)
+    b[16] = (e_type & 0xff) as u8; // e_type (offset 16)
+    b[17] = (e_type >> 8) as u8;
     b[18] = (machine & 0xff) as u8;
     b[19] = (machine >> 8) as u8;
     std::fs::write(path, &b).unwrap();
     set_exec(path);
+}
+/// The common case: ET_DYN (3), a PIE executable like real busybox/postgres binaries.
+fn write_elf(path: &Path, machine: u16, class: u8) {
+    write_elf_typed(path, machine, class, 3);
 }
 
 const RISCV: u16 = 0xF3;
@@ -194,6 +199,37 @@ fn non_runnable_data_entrypoint_is_rejected() {
     let td = tempfile::tempdir().unwrap();
     let b = make_bundle(td.path(), &["/data"], &[]);
     std::fs::write(b.join("rootfs/data"), b"not an elf, not a script").unwrap();
+    let err = validate_bundle(&b, "riscv64").unwrap_err();
+    assert!(matches!(err, ValidateError::NotRunnable(_)), "got {err:?}");
+}
+
+#[test]
+fn relative_bundle_path_with_symlinked_entrypoint_passes() {
+    // The critic MAJOR: `oci validate ./bundle` (a RELATIVE path) with a symlinked entrypoint
+    // (`/bin/sh → busybox`, the canonical busybox/Alpine shape) must NOT false-reject. Guards the
+    // rootfs-made-absolute fix. cwd is saved/restored; other tests pass ABSOLUTE bundle paths so a
+    // concurrent cwd change can't affect them.
+    let td = tempfile::tempdir().unwrap();
+    let b = make_bundle(td.path(), &["/bin/sh"], &[]);
+    write_elf(&b.join("rootfs/bin/busybox"), RISCV, 2);
+    #[cfg(unix)]
+    std::os::unix::fs::symlink("busybox", b.join("rootfs/bin/sh")).unwrap();
+    let prev = std::env::current_dir().unwrap();
+    std::env::set_current_dir(td.path()).unwrap();
+    let res = validate_bundle(Path::new("bundle"), "riscv64");
+    std::env::set_current_dir(&prev).unwrap();
+    assert!(
+        res.is_ok(),
+        "relative-path symlinked entrypoint should validate: {res:?}"
+    );
+}
+
+#[test]
+fn relocatable_object_entrypoint_is_rejected() {
+    // A .o (ET_REL) has the right machine/class but cannot be exec'd — must NOT pass (critic MINOR).
+    let td = tempfile::tempdir().unwrap();
+    let b = make_bundle(td.path(), &["/bin/app"], &[]);
+    write_elf_typed(&b.join("rootfs/bin/app"), RISCV, 2, 1); // ET_REL
     let err = validate_bundle(&b, "riscv64").unwrap_err();
     assert!(matches!(err, ValidateError::NotRunnable(_)), "got {err:?}");
 }
