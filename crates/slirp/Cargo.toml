@@ -30,6 +30,9 @@ tokio = { version = "1", optional = true, default-features = false, features = [
     "rt",
     "net",
     "time",
+    # The byte-pump splits the outbound stream and copies both ways over channels.
+    "io-util",
+    "sync",
 ] }
 
 [dev-dependencies]

@@ -16,6 +16,8 @@ pub mod manager;
 pub mod nat;
 #[cfg(feature = "native")]
 pub mod native;
+#[cfg(feature = "native")]
+pub mod pump;
 pub mod stack;
 pub mod tcp;
 
@@ -27,6 +29,8 @@ pub use device::SlirpDevice;
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
 #[cfg(feature = "native")]
 pub use native::NativeConnector;
+#[cfg(feature = "native")]
+pub use pump::{PumpStats, pump_flow};
 pub use stack::SlirpStack;
 
 /// The slirp virtual network — QEMU-user conventions so guest images "just work".

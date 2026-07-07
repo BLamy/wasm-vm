@@ -240,6 +240,26 @@ out of the browser build). **CI green on #121 (all checks) — this stacks on it
 carries payload over this now-proven connection (non-blocking `try_read`/`try_write` per-flow driver +
 backpressure + half-close) is the final slice.
 
+**2026-07-07 — pass 2j: the byte-PUMP (`pump.rs`, native).** The data-path core: `pump_flow(stream,
+guest_rx, guest_tx)` copies bytes bidirectionally between a guest flow and its outbound duplex stream
+until BOTH directions close, honoring half-close each way independently. Deliberately DECOUPLED from
+smoltcp — it talks to the guest over a channel pair and to the outbound over any `AsyncRead+AsyncWrite`
+— so it is transport-agnostic (native `TcpStream` now, browser transport later) and unit-testable with
+`tokio::io::duplex` + channels, no sockets, no smoltcp. Semantics: guest→outbound writes each guest
+chunk to the stream, and on `guest_rx` close (guest FIN) `shutdown`s ONLY the write half (server may
+still send); outbound→guest forwards reads to `guest_tx`, and on server FIN/EOF drops `guest_tx`
+(channel close = tell the stack to FIN the guest). The future completes only when both directions end,
+so a half-open connection keeps the pump alive (as TCP requires). Proven deterministically: (1)
+`copies_both_ways_then_honors_guest_fin_then_server_close` — bytes both ways, guest-FIN half-closes
+outbound cleanly (server sees EOF), server-close closes the guest channel; (2)
+`server_fin_closes_guest_channel_but_guest_can_still_send` — the OTHER half-close order (server FIN
+first, guest keeps sending on the half-open); (3) `large_transfer_is_delivered_in_full_and_in_order` —
+100 KiB through a 64-byte duplex + depth-4 channels, exact bytes in order (backpressure, no deadlock).
+40 slirp tests. fmt + clippy (all-features) + no-default-features build green (pump is native-gated —
+tokio stays out of the browser build). The remaining leg: WIRE these channels to
+`SlirpStack::tcp_recv`/`tcp_send`/`tcp_close` in the `Bridge`, then the env-gated booted-guest
+acceptance.
+
 **Pass 2b (next — the async byte-pump):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).
