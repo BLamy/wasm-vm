@@ -260,6 +260,26 @@ tokio stays out of the browser build). The remaining leg: WIRE these channels to
 `SlirpStack::tcp_recv`/`tcp_send`/`tcp_close` in the `Bridge`, then the env-gated booted-guest
 acceptance.
 
+**Adversarial cold-clone critic on pass 2j: SOUND copy/half-close, one MAJOR false-ack data-loss fixed.**
+The critic verified (with repro/mutation tests) NO deadlock under real backpressure (a 50 KiB
+request→response through a 16-byte duplex + depth-2 channels completes — the two directions are
+independent `join!` arms, so a stall in one never blocks the other), half-close correct in BOTH orders
+(including the guest-FIN-first order the PR hadn't tested), the 100 KiB test genuinely forces
+interleaving, and `shutdown()` is load-bearing. It found ONE **MAJOR** (CRITICAL under the natural
+Bridge wiring, where the stack ACKs a guest segment on enqueue into the bounded `guest_rx`): on an
+outbound WRITE error, `to_outbound` just `return`ed, but `join!` keeps the pump alive until the reverse
+side ends — so if the server's write half stayed open, `guest_rx`'s receiver lived un-drained and the
+guest kept `send`ing bytes that returned `Ok`, were never written, and vanished on drop: **false
+"delivered" acks + silent data loss.** Fix (critic-recommended, mutation-killed): `guest_rx.close()` on
+write error, so further guest sends fail fast and the stack learns the outbound is dead. New regression
+`write_error_closes_guest_channel_so_further_sends_fail_fast` (mock stream: writes error, reads stay
+Pending) asserts `g2o_tx.closed()` resolves then sends `Err`; verified it FAILS (times out at 5.00s)
+without the fix and PASSES with it. Also folded the critic's NITs: every pump test now runs under a 5 s
+`guarded(...)` deadline so a half-close regression fails CLEANLY instead of hanging CI, and a doc note
+records that a read-error (RST) is currently conflated with clean EOF (guest always sees a graceful FIN
+— RST-fidelity is a stack-wiring-slice refinement). 41 slirp tests. fmt + clippy (all-features) +
+no-default-features build green. **CI green on #123.**
+
 **Pass 2b (next — the async byte-pump):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).
