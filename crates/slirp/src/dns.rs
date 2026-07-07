@@ -137,8 +137,13 @@ fn parse_name(msg: &[u8], start: usize) -> Option<(String, usize)> {
                 if seq_end.is_none() {
                     seq_end = Some(pos + 2);
                 }
-                if ptr >= pos {
-                    return None; // must point strictly backward (defeats pointer loops)
+                // Must jump strictly BACKWARD (defeats pointer loops) and never INTO the fixed header:
+                // no legitimate name points at the 12-byte header, and since a QNAME starts at offset
+                // 12, this also rejects a QNAME that is itself a pointer (which would otherwise make the
+                // echoed answer's `0xC0 0x0C` resolve back into the response header — a malformed reply;
+                // critic MINOR).
+                if ptr >= pos || ptr < HEADER_LEN {
+                    return None;
                 }
                 pos = ptr;
             }

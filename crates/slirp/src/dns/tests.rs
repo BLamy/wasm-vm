@@ -141,16 +141,16 @@ fn rejects_non_queries_and_bad_question_counts() {
 
 #[test]
 fn compression_pointers_are_loop_safe() {
-    // parse_name directly: a name at offset 4, then a backward pointer to it resolves.
-    let mut buf = vec![0u8; 4];
-    buf.extend_from_slice(&encode_name("a.b")); // name at offset 4
-    let name_at_4 = parse_name(&buf, 4).expect("plain name parses");
-    assert_eq!(name_at_4.0, "a.b");
+    // parse_name directly: a name just past the header (offset 12), then a backward pointer to it.
+    let mut buf = vec![0u8; HEADER_LEN];
+    buf.extend_from_slice(&encode_name("a.b")); // name at offset 12
+    let name_at_12 = parse_name(&buf, HEADER_LEN).expect("plain name parses");
+    assert_eq!(name_at_12.0, "a.b");
 
-    // A pointer at offset `p` pointing BACK to offset 4 resolves to the same name.
+    // A pointer at offset `p` pointing BACK to offset 12 resolves to the same name.
     let p = buf.len();
     buf.push(0xC0);
-    buf.push(4); // → offset 4
+    buf.push(HEADER_LEN as u8); // → offset 12 (past the header, legitimate)
     let via_ptr = parse_name(&buf, p).expect("backward pointer resolves");
     assert_eq!(via_ptr.0, "a.b");
     assert_eq!(via_ptr.1, p + 2, "sequence continues just past the pointer");
@@ -170,6 +170,34 @@ fn compression_pointers_are_loop_safe() {
     assert!(
         parse_name(&loopy, 2).is_none(),
         "mutual pointer loop cannot hang"
+    );
+
+    // A pointer into the fixed header (< 12) is rejected (critic MINOR).
+    let into_header = vec![0u8; 20];
+    let mut ptr_at_16 = into_header;
+    ptr_at_16[16] = 0xC0;
+    ptr_at_16[17] = 0x00; // → offset 0, inside the header
+    assert!(
+        parse_name(&ptr_at_16, 16).is_none(),
+        "a name pointing into the header is rejected"
+    );
+}
+
+#[test]
+fn qname_that_is_a_header_pointer_is_rejected() {
+    // A single-question QNAME can't legitimately compress (no prior name); a QNAME of `0xC0 0x00`
+    // would otherwise echo into a malformed response whose answer NAME resolves to the response
+    // header. Must be rejected outright.
+    let mut b = 0x1234u16.to_be_bytes().to_vec();
+    b.extend_from_slice(&0x0100u16.to_be_bytes()); // RD
+    b.extend_from_slice(&1u16.to_be_bytes()); // QDCOUNT
+    b.extend_from_slice(&[0, 0, 0, 0, 0, 0]);
+    b.extend_from_slice(&[0xC0, 0x00]); // QNAME = pointer into the header
+    b.extend_from_slice(&TYPE_A.to_be_bytes());
+    b.extend_from_slice(&CLASS_IN.to_be_bytes());
+    assert!(
+        parse_query(&b).is_none(),
+        "a QNAME that is a header pointer is rejected"
     );
 }
 
