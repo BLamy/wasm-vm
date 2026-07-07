@@ -141,6 +141,15 @@ tracked flow; STRAY data for an unknown flow → Existing but creates NO NAT ent
 capacity evicts the LRU (evicted surfaced); Local/Ignore create no flow; expire+remove. 27 slirp
 tests. fmt + clippy + determinism green.
 
+**2026-07-07 — pass 2f: promiscuous TCP accept.** `stack.rs`: `Interface::set_any_ip(true)`
+(process guest packets to ANY dst IP) + `SlirpStack::open_tcp(dst, port)` (a per-flow smoltcp TCP
+socket LISTENING on the external endpoint) + `tcp_state(handle)`. Proven by frame injection (no
+async, no boot): a guest SYN to an arbitrary external host (93.184.216.34:80) → a correct SYN-ACK
+from that endpoint to the guest's source port, and the socket leaves LISTEN. Honest consequence
+(documented + tested): `any_ip` makes the interface also answer ARP for in-subnet addresses (not just
+.2) — harmless, since the guest only ARPs the gateway. 28 slirp tests. fmt + clippy + determinism +
+no-default-features build green.
+
 **Pass 2b (next — the async bridge):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).

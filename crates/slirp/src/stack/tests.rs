@@ -4,7 +4,8 @@
 use super::*;
 use crate::net;
 use smoltcp::wire::{
-    EthernetFrame, EthernetProtocol, EthernetRepr, Icmpv4Packet, Icmpv4Repr, Ipv4Packet, Ipv4Repr,
+    EthernetFrame, EthernetProtocol, EthernetRepr, Icmpv4Packet, Icmpv4Repr, IpAddress, Ipv4Packet,
+    Ipv4Repr, TcpControl, TcpPacket, TcpRepr, TcpSeqNumber,
 };
 
 const GUEST_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x56];
@@ -137,16 +138,94 @@ fn gateway_answers_icmp_echo() {
     );
 }
 
+/// Build a guest→dst ethernet-framed TCP SYN.
+fn tcp_syn(dst: Ipv4Addr, src_port: u16, dst_port: u16) -> Vec<u8> {
+    let tcp = TcpRepr {
+        src_port,
+        dst_port,
+        control: TcpControl::Syn,
+        seq_number: TcpSeqNumber(1000),
+        ack_number: None,
+        window_len: 64240,
+        window_scale: None,
+        max_seg_size: None,
+        sack_permitted: false,
+        sack_ranges: [None, None, None],
+        timestamp: None,
+        payload: &[],
+    };
+    let src = net::GUEST;
+    let ip = Ipv4Repr {
+        src_addr: src,
+        dst_addr: dst,
+        next_header: smoltcp::wire::IpProtocol::Tcp,
+        payload_len: tcp.buffer_len(),
+        hop_limit: 64,
+    };
+    let eth = EthernetRepr {
+        src_addr: smoltcp::wire::EthernetAddress(GUEST_MAC),
+        dst_addr: smoltcp::wire::EthernetAddress(GW_MAC),
+        ethertype: EthernetProtocol::Ipv4,
+    };
+    let mut buf = vec![0u8; eth.buffer_len() + ip.buffer_len() + tcp.buffer_len()];
+    let caps = smoltcp::phy::ChecksumCapabilities::default();
+    let mut frame = EthernetFrame::new_unchecked(&mut buf);
+    eth.emit(&mut frame);
+    let mut ipp = Ipv4Packet::new_unchecked(frame.payload_mut());
+    ip.emit(&mut ipp, &caps);
+    let mut tp = TcpPacket::new_unchecked(ipp.payload_mut());
+    tcp.emit(&mut tp, &IpAddress::Ipv4(src), &IpAddress::Ipv4(dst), &caps);
+    buf
+}
+
 #[test]
-fn unrelated_arp_for_another_ip_is_ignored() {
-    // ARP for 10.0.2.99 (not ours) must NOT be answered.
+fn promiscuous_accept_answers_a_syn_to_an_external_host() {
+    // The promiscuous-accept core: a per-flow listening socket + `any_ip` lets a guest SYN to an
+    // ARBITRARY external IP complete the handshake in slirp (SYN → SYN-ACK), with NO guest boot.
+    let ext = Ipv4Addr::new(93, 184, 216, 34);
+    let mut s = SlirpStack::new(GW_MAC);
+    // Prime the guest neighbor (as with ICMP) so slirp can address the SYN-ACK back.
+    s.inject(arp_request());
+    s.poll(10);
+    let _ = s.take_egress();
+
+    let h = s.open_tcp(ext, 80);
+    s.inject(tcp_syn(ext, 40000, 80));
+    s.poll(20);
+    let egress = s.take_egress();
+    assert_eq!(egress.len(), 1, "exactly one SYN-ACK");
+    let reply = &egress[0];
+    assert_eq!(&reply[12..14], &[0x08, 0x00], "ethertype IPv4");
+    let ipp = Ipv4Packet::new_checked(&reply[14..]).expect("ipv4");
+    assert_eq!(
+        ipp.src_addr(),
+        ext,
+        "SYN-ACK from the external endpoint we accepted for"
+    );
+    assert_eq!(ipp.dst_addr(), net::GUEST, "to the guest");
+    let tp = TcpPacket::new_checked(ipp.payload()).expect("tcp");
+    assert!(tp.syn() && tp.ack(), "a SYN-ACK");
+    assert_eq!(tp.dst_port(), 40000, "back to the guest's source port");
+    assert_eq!(tp.src_port(), 80, "from the destination port");
+    // The listening socket has advanced past LISTEN (received the SYN).
+    assert_ne!(s.tcp_state(h), smoltcp::socket::tcp::State::Listen);
+}
+
+#[test]
+fn promiscuous_accept_makes_arp_claim_the_subnet() {
+    // Documented behavior change from pass 2a: enabling `any_ip` for promiscuous TCP accept also
+    // makes smoltcp answer ARP for in-subnet addresses (not just 10.0.2.2). This is HARMLESS — a real
+    // guest routes all non-local traffic through the gateway and only ARPs 10.0.2.2; a stray ARP for
+    // a nonexistent 10.0.2.99 getting the gateway MAC just means the guest's packet reaches us and is
+    // dropped (in-subnet-non-local → `tcp::classify` returns Other).
     let mut s = SlirpStack::new(GW_MAC);
     let mut req = arp_request();
     req[38..42].copy_from_slice(&[10, 0, 2, 99]);
     s.inject(req);
     s.poll(10);
-    assert!(
-        s.take_egress().is_empty(),
-        "we only answer ARP for our own IP"
+    assert_eq!(
+        s.take_egress().len(),
+        1,
+        "any_ip claims the subnet for ARP (was ignored pre-promiscuous-accept)"
     );
 }
