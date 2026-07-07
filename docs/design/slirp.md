@@ -109,7 +109,8 @@ both directions; an abrupt outbound RST surfaces to the guest as `ECONNRESET` pr
    iteration), fully unit-tested — the self-contained core, no smoltcp.
 2. **Pass 2a (done):** the smoltcp `phy::Device` (`device.rs`) + the `Interface` (`stack.rs`) owning
    `10.0.2.2`, answering **ARP** and **ICMP echo** — proven by frame-injection tests (ARP
-   request→reply; other-IP ignored; ping→echo reply). No async, no boot.
+   request→reply; ping→echo reply). No async, no boot. (Pass 2f's `any_ip` later broadened ARP to
+   the whole subnet — see below.)
 3. **Pass 2c–2f (done):** `NativeConnector` (tokio, `native.rs`); the TCP flow classifier
    (`tcp.rs`); the `FlowManager` control plane (`manager.rs`); and **promiscuous TCP accept**
    (`any_ip` + `open_tcp`, `stack.rs`) — a guest SYN to an arbitrary external host handshakes
