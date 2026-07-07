@@ -119,6 +119,51 @@ impl SlirpStack {
         self.sockets.get::<tcp::Socket>(handle).state()
     }
 
+    /// Drain all bytes the guest has sent on this flow (guest → outbound direction). Empty if none.
+    pub fn tcp_recv(&mut self, handle: SocketHandle) -> Vec<u8> {
+        let sock = self.sockets.get_mut::<tcp::Socket>(handle);
+        let mut out = Vec::new();
+        while sock.can_recv() {
+            let got = sock
+                .recv(|buf| {
+                    out.extend_from_slice(buf);
+                    (buf.len(), buf.len())
+                })
+                .unwrap_or(0);
+            if got == 0 {
+                break;
+            }
+        }
+        out
+    }
+
+    /// Enqueue bytes to send to the guest on this flow (outbound → guest direction). Returns the
+    /// number accepted into the send buffer (may be < `data.len()` under backpressure).
+    pub fn tcp_send(&mut self, handle: SocketHandle, data: &[u8]) -> usize {
+        self.sockets
+            .get_mut::<tcp::Socket>(handle)
+            .send_slice(data)
+            .unwrap_or(0)
+    }
+
+    /// Whether this flow's socket can currently accept more send bytes (its window is open).
+    pub fn tcp_can_send(&self, handle: SocketHandle) -> bool {
+        self.sockets.get::<tcp::Socket>(handle).can_send()
+    }
+
+    /// Half-close this flow (send a FIN to the guest) — the outbound side finished writing.
+    pub fn tcp_close(&mut self, handle: SocketHandle) {
+        self.sockets.get_mut::<tcp::Socket>(handle).close();
+    }
+
+    /// Tear down a flow: remove its smoltcp socket (frees the 128 KiB buffers) and stop accepting
+    /// frames for its endpoint. The bridge calls this on teardown/eviction/idle-expiry (critic M2:
+    /// the missing dealloc counterpart to `open_tcp`).
+    pub fn remove_tcp(&mut self, handle: SocketHandle, dst: Ipv4Addr, port: u16) {
+        self.sockets.remove(handle);
+        self.open_endpoints.remove(&(dst, port));
+    }
+
     /// Queue a guest ethernet frame for processing on the next [`poll`](Self::poll). Frames that
     /// smoltcp must NOT auto-respond to (external ICMP/UDP, un-opened TCP, non-gateway ARP) are
     /// dropped here so the stack never impersonates a host it hasn't opened a flow for.

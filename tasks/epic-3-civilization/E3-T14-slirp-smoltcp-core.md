@@ -163,6 +163,15 @@ clippy + determinism + no-default build green. Honest consequence
 .2) — harmless, since the guest only ARPs the gateway. 28 slirp tests. fmt + clippy + determinism +
 no-default-features build green.
 
+**2026-07-07 — pass 2g: TCP data path + teardown (`stack.rs`).** Added the socket byte-level API the
+async bridge drives: `tcp_recv` (drain guest→outbound bytes), `tcp_send` (enqueue outbound→guest,
+returns accepted count for backpressure), `tcp_can_send`, `tcp_close` (half-close/FIN), and
+`remove_tcp` (frees the 128 KiB buffers + drops the endpoint — the critic-M2 dealloc counterpart to
+`open_tcp`). Proven WITHOUT a boot by a hand-driven full handshake: guest SYN → SYN-ACK (read
+slirp's ISN) → guest ACK → **Established**; guest "hello" → `tcp_recv` returns it; `tcp_send("world")`
+→ a data segment carrying the bytes egresses to the guest; `remove_tcp` teardown → a fresh SYN to the
+endpoint is filter-dropped. 30 slirp tests. fmt + clippy + determinism + no-default build green.
+
 **Pass 2b (next — the async bridge):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).
