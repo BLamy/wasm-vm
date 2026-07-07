@@ -45,13 +45,16 @@ fn encode_name(name: &str) -> Vec<u8> {
     v
 }
 fn query(id: u16, name: &str, qtype: u16) -> Vec<u8> {
+    query_class(id, name, qtype, CLASS_IN)
+}
+fn query_class(id: u16, name: &str, qtype: u16, qclass: u16) -> Vec<u8> {
     let mut b = id.to_be_bytes().to_vec();
     b.extend_from_slice(&0x0100u16.to_be_bytes()); // RD
     b.extend_from_slice(&1u16.to_be_bytes()); // QDCOUNT
     b.extend_from_slice(&[0, 0, 0, 0, 0, 0]);
     b.extend_from_slice(&encode_name(name));
     b.extend_from_slice(&qtype.to_be_bytes());
-    b.extend_from_slice(&CLASS_IN.to_be_bytes());
+    b.extend_from_slice(&qclass.to_be_bytes());
     b
 }
 
@@ -208,6 +211,49 @@ async fn nxdomain_and_servfail_are_forwarded() {
         "resolver failure → fail-fast SERVFAIL"
     );
     assert_eq!(fail.cache_len(), 0, "failures are not cached");
+}
+
+#[tokio::test]
+async fn empty_a_result_is_not_cached_and_re_resolves() {
+    // Critic MAJOR: a Resolved with NO addresses (and ttl=0) must NOT be cached — otherwise the 5 s
+    // floor would pin "no A records" and starve retries. Answer empty NOERROR, but re-resolve next time.
+    let r = MockResolver::new(Resolution::Resolved {
+        ips: vec![],
+        ttl_secs: 0,
+    });
+    let mut fwd = DnsForwarder::new(r.clone(), 16);
+    let resp = fwd
+        .handle(&query(1, "flaky.test", TYPE_A), 0)
+        .await
+        .unwrap();
+    assert_eq!(rcode(&resp), RCODE_NOERROR);
+    assert_eq!(ancount(&resp), 0, "no A records → empty NOERROR");
+    assert_eq!(fwd.cache_len(), 0, "an empty answer is NOT cached");
+    // A retry 1 s later must consult the resolver again (not pinned by the floor).
+    fwd.handle(&query(2, "flaky.test", TYPE_A), 1000)
+        .await
+        .unwrap();
+    assert_eq!(
+        r.count(),
+        2,
+        "empty answer re-resolves, not served from a floor-pinned cache"
+    );
+}
+
+#[tokio::test]
+async fn non_in_class_gets_servfail_without_touching_the_resolver() {
+    // A qtype=A but qclass=CHAOS(3) query must not be answered with IN data (critic MINOR).
+    let r = MockResolver::new(Resolution::Resolved {
+        ips: vec![IP1],
+        ttl_secs: 100,
+    });
+    let mut fwd = DnsForwarder::new(r.clone(), 16);
+    let resp = fwd
+        .handle(&query_class(1, "example.com", TYPE_A, 3), 0)
+        .await
+        .unwrap();
+    assert_eq!(rcode(&resp), RCODE_SERVFAIL, "non-IN class → SERVFAIL");
+    assert_eq!(r.count(), 0, "non-IN never consults the resolver");
 }
 
 #[tokio::test]

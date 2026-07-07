@@ -113,6 +113,11 @@ impl<R: Resolver> DnsForwarder<R> {
     /// whose contract is to resolve within its own timeout.
     pub async fn handle(&mut self, msg: &[u8], now_ms: i64) -> Option<Vec<u8>> {
         let q = dns::parse_query(msg)?;
+        // We only serve the IN class; a non-IN query (CHAOS/HESIOD) must not be answered with IN data
+        // (critic MINOR). Fail fast rather than emit a class-mismatched reply.
+        if q.qclass != dns::CLASS_IN {
+            return Some(dns::servfail(&q));
+        }
         // AAAA policy: honest empty NOERROR (IPv4-only) — never touches the resolver.
         if q.is_aaaa() {
             return Some(dns::empty_aaaa(&q));
@@ -126,6 +131,11 @@ impl<R: Resolver> DnsForwarder<R> {
             return Some(answer_a(&q, &ips, remaining));
         }
         match self.resolver.resolve(&q.name).await {
+            // No A records (name exists but has none, or a transient empty). Answer an honest empty
+            // NOERROR but DON'T cache it (critic MAJOR): caching would apply the 5 s floor, pinning
+            // "no addresses" for seconds and overriding a `ttl=0` don't-cache hint — so every retry in
+            // that window would be starved. Re-resolve next time instead.
+            Resolution::Resolved { ips, .. } if ips.is_empty() => Some(answer_a(&q, &[], 0)),
             Resolution::Resolved { ips, ttl_secs } => {
                 self.cache
                     .put(q.name.clone(), ips.clone(), ttl_secs, now_ms);

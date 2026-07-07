@@ -134,3 +134,17 @@ NXDOMAIN + SERVFAIL forwarded (failures NOT cached), unsupported-qtype→SERVFAI
 slirp tests. fmt + clippy green under BOTH `--all-features` and `--no-default-features`. Remaining for
 T15: the concrete resolvers (browser DoH `fetch`, native OS) + TCP-fallback for truncated answers, wire
 DHCP+DNS into the slirp UDP path, booted-guest acceptance (env-gated).
+
+**Adversarial cold-clone critic on pass 1c: SOUND cache/eviction, one MAJOR + one MINOR fixed.** The
+critic verified SOUND (with repros): the TTL countdown/boundary math (fresh-resolve TTL and a 0-ms-later
+cache hit agree; sub-second rounds to a ≥1 floor, never 0-while-live; no overflow), eviction/bounding
+(cap-1 works, same-expiry bursts stay bounded, re-put of an existing key can't grow past max, expired
+reclaimed before evicting a live one), no cross-qtype cache poisoning (only A populates/reads the cache),
+and test honesty (mutating `get`→None breaks the cache-hit test). It found ONE **MAJOR**: an empty
+positive `Resolved{ips: []}` was cached and floor-clamped, pinning "no A records" for ≥5 s and overriding
+a `ttl=0` don't-cache hint — starving retries. Fix: answer an honest empty NOERROR but do NOT cache an
+empty result (re-resolve next time). And one **MINOR**: qclass was never validated, so a non-IN (e.g.
+CHAOS) A query got answered with IN data (class-mismatched reply). Fix: non-IN → SERVFAIL before the A
+path. Regressions: `empty_a_result_is_not_cached_and_re_resolves` (cache_len 0, second query re-resolves)
++ `non_in_class_gets_servfail_without_touching_the_resolver`. 10 resolver tests; fmt + clippy green both
+feature configs. (Not a bug: CNAME→SERVFAIL is this pass's intended policy per the pass-1b spec.)
