@@ -85,8 +85,13 @@ fn dns_query(name: &str) -> Vec<u8> {
 #[tokio::test]
 async fn dhcp_discover_broadcast_reaches_the_dhcp_server() {
     let mut s = services();
-    let r = s.handle(BROADCAST, 67, &dhcp(1), 0).await.expect("claimed");
-    assert_eq!(r.src_port, 67, "reply sent from the DHCP server port");
+    // The DHCP client sends from :68.
+    let r = s
+        .handle(68, BROADCAST, 67, &dhcp(1), 0)
+        .await
+        .expect("claimed");
+    assert_eq!(r.from_port, 67, "reply from the DHCP server port");
+    assert_eq!(r.to_port, 68, "reply to the DHCP client port");
     assert_eq!(dhcp_type(&r.payload), Some(2), "DISCOVER → OFFER");
 }
 
@@ -94,7 +99,7 @@ async fn dhcp_discover_broadcast_reaches_the_dhcp_server() {
 async fn dhcp_renew_unicast_to_gateway_reaches_the_dhcp_server() {
     let mut s = services();
     let r = s
-        .handle(net::GATEWAY, 67, &dhcp(3), 0)
+        .handle(68, net::GATEWAY, 67, &dhcp(3), 0)
         .await
         .expect("claimed");
     assert_eq!(
@@ -102,17 +107,22 @@ async fn dhcp_renew_unicast_to_gateway_reaches_the_dhcp_server() {
         Some(5),
         "REQUEST for our address → ACK"
     );
+    assert_eq!(r.to_port, 68);
 }
 
 #[tokio::test]
-async fn dns_query_to_our_resolver_is_answered() {
+async fn dns_query_to_our_resolver_is_answered_back_to_the_query_port() {
     let mut s = services();
+    // The guest queries from an ephemeral port; the reply must go BACK to it.
     let r = s
-        .handle(net::DNS, 53, &dns_query("example.com"), 0)
+        .handle(45123, net::DNS, 53, &dns_query("example.com"), 0)
         .await
         .expect("claimed");
-    assert_eq!(r.src_port, 53);
-    // Response has QR set and at least one answer.
+    assert_eq!(r.from_port, 53);
+    assert_eq!(
+        r.to_port, 45123,
+        "DNS reply addressed to the query's own source port"
+    );
     assert_eq!(r.payload[2] & 0x80, 0x80, "QR=1 (a response)");
     assert_eq!(
         u16::from_be_bytes([r.payload[6], r.payload[7]]),
@@ -126,7 +136,7 @@ async fn dns_to_an_external_server_is_not_intercepted() {
     // A query to some OTHER host's :53 is a real outbound flow — the NAT path owns it, not us.
     let mut s = services();
     assert!(
-        s.handle(EXTERNAL, 53, &dns_query("example.com"), 0)
+        s.handle(45123, EXTERNAL, 53, &dns_query("example.com"), 0)
             .await
             .is_none(),
         "external DNS is left to NAT, never transparently intercepted"
@@ -137,9 +147,13 @@ async fn dns_to_an_external_server_is_not_intercepted() {
 async fn other_ports_and_hosts_are_not_claimed() {
     let mut s = services();
     // NTP to the gateway — not a service we run.
-    assert!(s.handle(net::GATEWAY, 123, b"ntp", 0).await.is_none());
+    assert!(
+        s.handle(40000, net::GATEWAY, 123, b"ntp", 0)
+            .await
+            .is_none()
+    );
     // DHCP-port to a random external host — not broadcast, not the gateway → not ours.
-    assert!(s.handle(EXTERNAL, 67, &dhcp(1), 0).await.is_none());
+    assert!(s.handle(68, EXTERNAL, 67, &dhcp(1), 0).await.is_none());
     // A normal outbound UDP flow.
-    assert!(s.handle(EXTERNAL, 4433, b"quic", 0).await.is_none());
+    assert!(s.handle(50000, EXTERNAL, 4433, b"quic", 0).await.is_none());
 }

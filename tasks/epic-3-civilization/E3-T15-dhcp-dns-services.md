@@ -164,3 +164,14 @@ external:4433) → None. 80 slirp tests. fmt + clippy green under BOTH `--all-fe
 `--no-default-features`. Remaining for T15: the concrete resolvers (browser DoH / native OS) +
 TCP-fallback, wire `UdpServices` into the SlirpStack UDP path (smoltcp UDP socket on the gateway/DNS
 addrs), booted-guest acceptance (env-gated).
+
+**Adversarial cold-clone critic on pass 1d: essentially CLEAN, one MINOR API-smell folded in.** The
+critic mutation-verified the routing guards are real (dropping the DNS ip-check fails the external-DNS
+test; dropping the DHCP ip-check fails the external:67 test), confirmed the DHCP unicast-RENEW routing
+is consistent with `dhcp.rs`'s server-id/siaddr = gateway, and found no misroute / external-leak /
+panic. One MINOR: the reply's old `src_port` field was redundant (always == the `dst_port` just passed)
+and the struct omitted the field a caller needs to ADDRESS a DNS reply (the query's ephemeral source
+port). Folded in: `handle` now takes the guest `src_port` and `UdpReply` carries explicit `from_port`
+(67/53) + `to_port` (68 for DHCP, the query's source port for DNS) — the reply is now fully addressable
+with no out-of-band caller state. Tests assert both ports (DNS reply → 45123, DHCP → 68). 80 slirp
+tests; fmt + clippy green both configs.
