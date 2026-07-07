@@ -63,4 +63,23 @@ floor refutes. Confirm truncated (TC=1) UDP answers trigger the guest's TCP retr
 path works.
 
 ## Verification log
-(empty)
+
+**2026-07-07 — pass 1a: DHCP server state machine (`dhcp.rs`).** The pure wire layer: parse a DHCP
+message off the UDP:67 payload and produce the reply bytes (wiring it into the slirp UDP path is a
+later slice; DNS forwarder is a separate slice). `DhcpServer::handle(&[u8]) -> Option<Vec<u8>>`, a
+single static lease (guest always `net::GUEST` 10.0.2.15). State machine: DISCOVER→OFFER, REQUEST→ACK
+when the wanted address (option 50, else ciaddr for unicast RENEW) is ours / NAK when it's wrong (so
+`udhcpc` restarts cleanly); a SELECTING REQUEST (option 54) naming a different server is ignored (not
+NAK'd — it's another server's lease); RELEASE/DECLINE/INFORM and `op=BOOTREPLY` get no reply. OFFER/ACK
+options: message-type, server-id (10.0.2.2), lease-time (86400, configurable), subnet mask (/24 →
+255.255.255.0), router (10.0.2.2), DNS (10.0.2.3), and link MTU (option 26, default 1500, configurable
+for transports that impose a smaller one). Parsing is defensively bounds-checked — truncated header, no
+magic cookie, missing message-type, or an option whose length runs past the buffer all yield `None`,
+never a panic. No tokio/async → compiles into the browser build too. Tests (11): correct OFFER (echoes
+xid/chaddr, all options), ACK for our address, RENEW-via-ciaddr ACK, wrong-address NAK (no yiaddr, no
+lease), server-id selection (other→ignored, us→ACK), short-lease + custom-MTU reflected, non-request
+types silent, and a fuzz sweep (every truncation + every single-byte corruption of a valid DISCOVER,
+plus hand-built malformed messages) asserting no panic. 55 slirp tests. fmt + clippy green under BOTH
+`--all-features` and `--no-default-features`. Remaining for T15: wire DHCP into the slirp UDP path, the
+DNS forwarder (`Resolver` trait + DoH/OS impls + TTL cache + AAAA policy), and booted-guest acceptance
+(env-gated).
