@@ -98,3 +98,21 @@ confirmed — the critic planted a shifted-yiaddr bug and an unchecked index and
 in-tree validator/fuzzer. Minor non-defects noted (not fixed, none reachable from a conformant client):
 a REQUEST with neither option 50 nor a non-zero ciaddr NAKs (unreachable from udhcpc); reply not padded to
 the 300-byte BOOTP minimum (irrelevant for relay-less slirp); `siaddr`=gateway (legal, ignored).
+
+**2026-07-07 — pass 1b: DNS forwarder wire layer (`dns.rs`).** The pure, synchronous DNS message layer:
+`parse_query(&[u8]) -> Option<Query>` (id, lowercased name, qtype, qclass, RD; single-question only —
+zero-QD / multi-QD / QR=1 → `None`) and `build_response(query, rcode, answers)` (echoes the question
+verbatim; each answer's NAME is a compression pointer to the question at 0x0c; sets QR=1/RA=1, echoes RD).
+Convenience: `Answer::a(ip, ttl)`, `empty_aaaa` (the documented AAAA policy — the stack is IPv4-only, so
+AAAA gets an HONEST empty NOERROR, never SERVFAIL/NXDOMAIN/bogus-record, to avoid happy-eyeballs stalls),
+`servfail`, `nxdomain`. Name parsing is compression-loop-PROOF: a pointer must jump STRICTLY backward
+(so each jump decreases the offset → the walk always terminates) plus a 128-jump budget and a 255-byte
+name cap; any malformed encoding (loop, forward/self pointer, oversized, truncated) yields `None`, never
+a hang or panic. No tokio/async → browser-safe. Tests (9): parse an A query, case-insensitive
+lowercasing, A response bytes (id echoed, QR/RA/RD flags, pointer-to-question, TYPE/CLASS/TTL/RDLENGTH/
+RDATA), empty-AAAA NOERROR, NXDOMAIN/SERVFAIL rcodes, reject non-queries/bad-QD-counts, compression
+pointer safety (backward resolves; self/forward/mutual-loop rejected — direct `parse_name` cases),
+oversized-name reject, and a fuzz sweep (every truncation + bitflip of a valid query + 20k structured-
+random inputs) asserting no panic. 64 slirp tests. fmt + clippy green under BOTH `--all-features` and
+`--no-default-features`. Remaining for T15: the async `Resolver` trait (DoH/OS) + TTL cache, wire DHCP
++ DNS into the slirp UDP path, booted-guest acceptance (env-gated).

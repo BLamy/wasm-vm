@@ -13,6 +13,7 @@ pub mod bridge;
 pub mod connector;
 pub mod device;
 pub mod dhcp;
+pub mod dns;
 #[cfg(all(test, feature = "native"))]
 mod e2e_pump_stack;
 pub mod manager;
@@ -30,6 +31,7 @@ pub use bridge::Bridge;
 pub use connector::{ConnectError, OutboundConnector};
 pub use device::SlirpDevice;
 pub use dhcp::DhcpServer;
+pub use dns::{Answer, Query, parse_query};
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
 #[cfg(feature = "native")]
 pub use native::NativeConnector;
