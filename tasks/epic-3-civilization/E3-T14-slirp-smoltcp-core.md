@@ -220,6 +220,19 @@ verified it FAILS without the poll (0/1) and PASSES with it (mutation-kill). The
 accept guard for *concurrent* same-endpoint flows is noted for the byte-pump slice. 36 slirp tests.
 fmt + clippy (all-features) + no-default-features build green. **CI green on #121 (all checks pass).**
 
+**2026-07-07 — pass 2i: first integration test vs the REAL `NativeConnector` (`bridge/tests.rs`).** Every
+bridge test so far used the mock connector; this proves the connect leg end-to-end against an ACTUAL
+socket. `real_native_connector_dials_an_actual_tcp_connection` (native-gated) binds a real
+`tokio::net::TcpListener` on an ephemeral `127.0.0.1:0`, builds `Bridge::new(mac, NativeConnector, …)`,
+drives an ARP + a guest SYN to the listener's real `(ip,port)`, then asserts `listener.accept()`
+returns within 2 s — i.e. `on_guest_frame` → `open_tcp` → `NativeConnector::connect().await` opened a
+GENUINE outbound TCP connection to the server — plus the flow is tracked and the guest receives its
+SYN-ACK. Discriminating: no connect → `accept` times out → fail; no SYN-ACK → fail. 37 slirp tests.
+fmt + clippy (all-features) + no-default-features build green (the native test is correctly compiled
+out of the browser build). **CI green on #121 (all checks) — this stacks on it.** The byte-PUMP that
+carries payload over this now-proven connection (non-blocking `try_read`/`try_write` per-flow driver +
+backpressure + half-close) is the final slice.
+
 **Pass 2b (next — the async byte-pump):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).

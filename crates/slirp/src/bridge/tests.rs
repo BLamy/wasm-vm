@@ -237,3 +237,56 @@ async fn stale_syn_cannot_hijack_reused_listener_after_same_endpoint_eviction() 
     );
     assert_eq!(b.flow_count(), 1, "only the surviving flow is tracked");
 }
+
+/// Integration: the FIRST test against the REAL `NativeConnector` (not the mock). A guest SYN to a
+/// live `tokio::net::TcpListener`'s actual `(ip,port)` must drive an ACTUAL outbound TCP connection —
+/// proving `on_guest_frame` → `open_tcp` → `NativeConnector::connect().await` reaches a real server
+/// (and the guest gets its SYN-ACK). The byte-PUMP that then carries payload over that connection is
+/// the final slice; this proves the connect leg end-to-end against a real socket.
+#[cfg(feature = "native")]
+#[tokio::test]
+async fn real_native_connector_dials_an_actual_tcp_connection() {
+    use crate::native::NativeConnector;
+    use std::time::Duration;
+
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
+        .await
+        .expect("bind an ephemeral local listener");
+    let addr = listener.local_addr().unwrap();
+    let IpAddr::V4(dst) = addr.ip() else {
+        unreachable!("bound to an IPv4 loopback address")
+    };
+    let port = addr.port();
+
+    let mut b = Bridge::new(GW_MAC, NativeConnector::new(), 16);
+    b.on_guest_frame(arp(), 1).await; // learn the guest neighbor so the SYN-ACK isn't ARP-deferred
+    let _ = b.take_egress();
+
+    // Guest SYN to the listener's REAL endpoint → open a listening socket AND dial the real server.
+    b.on_guest_frame(syn(dst, 40000, port), 2).await;
+
+    // The server side must observe a genuine accepted TCP connection.
+    let accepted = tokio::time::timeout(Duration::from_secs(2), listener.accept()).await;
+    assert!(
+        accepted.is_ok(),
+        "NativeConnector established a real outbound TCP connection to the listener"
+    );
+    assert_eq!(
+        b.flow_count(),
+        1,
+        "the flow is tracked (socket + live outbound stream)"
+    );
+
+    // And the guest's half of the handshake completes: a SYN-ACK egresses to it.
+    let got_synack = b.take_egress().iter().any(|f| {
+        Ipv4Packet::new_checked(&f[14..])
+            .ok()
+            .filter(|ipp| ipp.next_header() == IpProtocol::Tcp)
+            .and_then(|ipp| TcpPacket::new_checked(ipp.payload()).ok())
+            .is_some_and(|tp| tp.dst_port() == 40000 && tp.syn() && tp.ack())
+    });
+    assert!(
+        got_synack,
+        "the guest receives its SYN-ACK for the real flow"
+    );
+}
