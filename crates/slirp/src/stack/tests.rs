@@ -212,20 +212,86 @@ fn promiscuous_accept_answers_a_syn_to_an_external_host() {
 }
 
 #[test]
-fn promiscuous_accept_makes_arp_claim_the_subnet() {
-    // Documented behavior change from pass 2a: enabling `any_ip` for promiscuous TCP accept also
-    // makes smoltcp answer ARP for in-subnet addresses (not just 10.0.2.2). This is HARMLESS — a real
-    // guest routes all non-local traffic through the gateway and only ARPs 10.0.2.2; a stray ARP for
-    // a nonexistent 10.0.2.99 getting the gateway MAC just means the guest's packet reaches us and is
-    // dropped (in-subnet-non-local → `tcp::classify` returns Other).
+fn unrelated_arp_for_another_ip_is_ignored() {
+    // The frame filter allows ARP only for the gateway, so even with `any_ip` on, an ARP for
+    // 10.0.2.99 is dropped before smoltcp sees it — no subnet-wide ARP claim.
     let mut s = SlirpStack::new(GW_MAC);
     let mut req = arp_request();
     req[38..42].copy_from_slice(&[10, 0, 2, 99]);
     s.inject(req);
     s.poll(10);
-    assert_eq!(
-        s.take_egress().len(),
-        1,
-        "any_ip claims the subnet for ARP (was ignored pre-promiscuous-accept)"
+    assert!(s.take_egress().is_empty(), "ARP only for the gateway");
+}
+
+#[test]
+fn does_not_impersonate_external_hosts() {
+    // The critic CRITICALs: `any_ip` alone made smoltcp forge replies AS an external host for flows
+    // we never opened. The frame filter must drop all three so slirp stays silent (0 egress):
+    let ext = Ipv4Addr::new(8, 8, 8, 8);
+    let mut s = SlirpStack::new(GW_MAC);
+    s.inject(arp_request());
+    s.poll(1);
+    let _ = s.take_egress();
+
+    // C1: guest ping to 8.8.8.8 must NOT get a forged echo reply.
+    let mut ping = icmp_echo_request();
+    // retarget the echo request's dst IP (bytes 14+16..14+20 = IP dst) to 8.8.8.8.
+    ping[30..34].copy_from_slice(&ext.octets());
+    s.inject(ping);
+    s.poll(2);
+    assert!(
+        s.take_egress().is_empty(),
+        "no forged ICMP echo reply as 8.8.8.8"
     );
+
+    // C2: guest SYN to an external port we did NOT open_tcp must NOT get a forged RST.
+    s.inject(tcp_syn(Ipv4Addr::new(93, 184, 216, 34), 41000, 80));
+    s.poll(3);
+    assert!(
+        s.take_egress().is_empty(),
+        "no forged RST for an un-opened flow"
+    );
+
+    // C3: guest UDP to 8.8.8.8:53 must NOT get a forged ICMP port-unreachable.
+    s.inject(udp_to(ext, 40000, 53));
+    s.poll(4);
+    assert!(
+        s.take_egress().is_empty(),
+        "no forged ICMP unreachable as 8.8.8.8"
+    );
+}
+
+/// A minimal guest→dst IPv4 UDP datagram (8-byte payload).
+fn udp_to(dst: Ipv4Addr, src_port: u16, dst_port: u16) -> Vec<u8> {
+    use smoltcp::wire::{UdpPacket, UdpRepr};
+    let udp = UdpRepr { src_port, dst_port };
+    let payload = [0u8; 8];
+    let ip = Ipv4Repr {
+        src_addr: net::GUEST,
+        dst_addr: dst,
+        next_header: smoltcp::wire::IpProtocol::Udp,
+        payload_len: udp.header_len() + payload.len(),
+        hop_limit: 64,
+    };
+    let eth = EthernetRepr {
+        src_addr: smoltcp::wire::EthernetAddress(GUEST_MAC),
+        dst_addr: smoltcp::wire::EthernetAddress(GW_MAC),
+        ethertype: EthernetProtocol::Ipv4,
+    };
+    let mut buf = vec![0u8; eth.buffer_len() + ip.buffer_len() + udp.header_len() + payload.len()];
+    let caps = smoltcp::phy::ChecksumCapabilities::default();
+    let mut frame = EthernetFrame::new_unchecked(&mut buf);
+    eth.emit(&mut frame);
+    let mut ipp = Ipv4Packet::new_unchecked(frame.payload_mut());
+    ip.emit(&mut ipp, &caps);
+    let mut up = UdpPacket::new_unchecked(ipp.payload_mut());
+    udp.emit(
+        &mut up,
+        &IpAddress::Ipv4(net::GUEST),
+        &IpAddress::Ipv4(dst),
+        payload.len(),
+        |b| b.copy_from_slice(&payload),
+        &caps,
+    );
+    buf
 }

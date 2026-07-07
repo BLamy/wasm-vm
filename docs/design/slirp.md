@@ -49,10 +49,15 @@ external destination and NATed outbound.
   (pass 2f): `Interface::set_any_ip(true)` makes it process guest packets to ANY dst IP, and
   `SlirpStack::open_tcp(dst, port)` adds a smoltcp TCP socket LISTENING on that external endpoint —
   so a guest SYN to an arbitrary external `IP:port` completes the handshake (SYN → SYN-ACK, verified
-  by frame injection). NOTE: `any_ip` also makes the interface answer ARP for any in-subnet address
-  (not just `.2`); harmless — the guest routes non-local traffic through the gateway and only ARPs
-  `.2`. The async **byte-bridge** from an accepted socket to `OutboundConnector::connect` (with
-  backpressure/half-close) is the next slice.
+  by frame injection). **`any_ip` is GATED by a frame filter** (`accept_frame` in `inject`): smoltcp
+  only ever sees ARP-for-the-gateway, IPv4-to-the-gateway (ICMP echo / local TCP), and TCP to an
+  endpoint we've `open_tcp`'d. Everything else — external ICMP, external UDP, un-opened-flow TCP,
+  non-gateway ARP — is dropped BEFORE smoltcp, so the stack never forges a reply *as* an external
+  host it hasn't opened a flow for (without the filter, `any_ip` made smoltcp answer `ping 8.8.8.8`,
+  RST an un-opened SYN, and ICMP-unreachable external UDP — all as the impersonated host; critic
+  CRITICAL). The async **byte-bridge** from an accepted socket to `OutboundConnector::connect` (with
+  backpressure/half-close) is the next slice; the driver must `open_tcp` a flow BEFORE injecting its
+  SYN.
 - **OutboundConnector** — the trait that decouples the stack from *how* bytes leave the process.
   The real signature uses the explicit `-> impl Future + Send` form (not `async fn`) so the returned
   future is `Send`-bound without tripping the `async_fn_in_trait` lint:
