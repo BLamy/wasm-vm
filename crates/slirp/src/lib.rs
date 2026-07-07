@@ -25,6 +25,7 @@ pub mod pump;
 pub mod resolver;
 pub mod stack;
 pub mod tcp;
+pub mod udp;
 
 pub use manager::{Action, FlowManager, FrameOutcome};
 
@@ -40,6 +41,7 @@ pub use native::NativeConnector;
 pub use pump::{PumpStats, pump_flow};
 pub use resolver::{DnsForwarder, Resolution, Resolver, TtlCache};
 pub use stack::SlirpStack;
+pub use udp::{UdpReply, UdpServices};
 
 /// The slirp virtual network — QEMU-user conventions so guest images "just work".
 pub mod net {
