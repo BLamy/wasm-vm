@@ -379,8 +379,17 @@ impl<R: Read> Read for CountingRead<R> {
 /// Write the flattened tree to `out`, refusing to follow any path outside it (belt-and-suspenders
 /// on top of the applier's `safe_path`).
 fn write_tree(tree: &Tree, out: &Path) -> Result<usize, UnpackError> {
+    use sha2::{Digest, Sha256};
+    use std::collections::HashMap;
+
     std::fs::create_dir_all(out).map_err(|e| UnpackError::Io(format!("{}: {e}", out.display())))?;
     let mut n = 0;
+    // Content de-dup: (mode, sha256(data)) → the first on-disk path written with that content. A later
+    // file with identical content+mode is created as a real hardlink to it instead of a second copy,
+    // so hardlink-heavy images (busybox: ~400 applets sharing one binary) don't bloat on disk — while
+    // the tree still carries each path's own resolved content (correct under whiteout/override). Two
+    // files that share an inode necessarily share permissions, so `mode` is part of the key.
+    let mut seen: HashMap<(u32, [u8; 32]), std::path::PathBuf> = HashMap::new();
     // Directories first (sorted keys give parents before children).
     for (path, node) in tree {
         let dst = out.join(path);
@@ -406,10 +415,24 @@ fn write_tree(tree: &Tree, out: &Path) -> Result<usize, UnpackError> {
                 if let Some(p) = dst.parent() {
                     std::fs::create_dir_all(p).ok();
                 }
-                std::fs::write(&dst, data)
-                    .map_err(|e| UnpackError::Io(format!("{}: {e}", dst.display())))?;
+                let key = (*mode, <[u8; 32]>::from(Sha256::digest(data)));
+                let _ = std::fs::remove_file(&dst);
+                if let Some(first) = seen.get(&key) {
+                    // Identical content already on disk — link to it (busybox's ~400 applets collapse
+                    // to one inode). Fall back to a copy if the fs refuses the hardlink (e.g. crossing
+                    // devices), so unpack never fails on the optimization.
+                    if std::fs::hard_link(first, &dst).is_err() {
+                        std::fs::write(&dst, data)
+                            .map_err(|e| UnpackError::Io(format!("{}: {e}", dst.display())))?;
+                    }
+                } else {
+                    std::fs::write(&dst, data)
+                        .map_err(|e| UnpackError::Io(format!("{}: {e}", dst.display())))?;
+                    seen.insert(key, dst.clone());
+                }
                 // Preserve the tar mode (esp. the exec bit — /bin/sh must be runnable). Mask to
-                // permission bits; the type bits come from the node kind.
+                // permission bits; the type bits come from the node kind. (Shared-inode links already
+                // share these bits, so setting them again is a harmless no-op.)
                 #[cfg(unix)]
                 {
                     use std::os::unix::fs::PermissionsExt;
@@ -430,34 +453,7 @@ fn write_tree(tree: &Tree, out: &Path) -> Result<usize, UnpackError> {
                     .map_err(|e| UnpackError::Io(format!("symlink {}: {e}", dst.display())))?;
                 n += 1;
             }
-            // Hardlinks are created in a SECOND pass below, once every target file exists on disk (the
-            // sorted tree can place a link before its target, e.g. `bin/[` before `bin/busybox`).
-            Node::Hardlink { .. } => {}
         }
-    }
-    // Second pass: create the hardlinks (targets are now all present).
-    for (path, node) in tree {
-        let Node::Hardlink { target } = node else {
-            continue;
-        };
-        let dst = out.join(path);
-        if !dst.starts_with(out) {
-            return Err(UnpackError::Oci(OciError::UnsafePath(path.clone())));
-        }
-        if let Some(bad) = symlinked_ancestor_on_disk(out, path) {
-            return Err(UnpackError::Oci(OciError::SymlinkTraversal {
-                path: path.clone(),
-                via: bad,
-            }));
-        }
-        let src = out.join(target);
-        if let Some(p) = dst.parent() {
-            std::fs::create_dir_all(p).ok();
-        }
-        let _ = std::fs::remove_file(&dst);
-        std::fs::hard_link(&src, &dst)
-            .map_err(|e| UnpackError::Io(format!("hardlink {} -> {target}: {e}", dst.display())))?;
-        n += 1;
     }
     Ok(n)
 }

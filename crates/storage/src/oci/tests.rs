@@ -42,6 +42,58 @@ fn dir(path: &str) -> Entry {
         mode: 0o755,
     }
 }
+fn hardlink(path: &str, target: &str) -> Entry {
+    Entry::Hardlink {
+        path: path.to_string(),
+        target: target.to_string(),
+    }
+}
+
+#[test]
+fn hardlink_survives_whiteout_of_its_target() {
+    // layer1: a=v1, b→a ; layer2: whiteout a. `b` must KEEP v1 — correct overlayfs (the link retains
+    // the content it was made against). The path-reference model regressed this to a dangling link
+    // that aborted the whole unpack (critic MAJOR).
+    let t = build(vec![
+        (vec!["a", "b"], vec![file("a", b"v1"), hardlink("b", "a")]),
+        (vec![".wh.a"], vec![]),
+    ]);
+    assert!(!t.contains_key("a"), "the target was whiteouted away");
+    assert_eq!(
+        t.get("b"),
+        Some(&Node::File {
+            mode: 0o644,
+            data: b"v1".to_vec()
+        }),
+        "the hardlink retains its content — no dangling reference"
+    );
+}
+
+#[test]
+fn hardlink_keeps_old_content_when_target_is_overridden() {
+    // layer1: a=v1, b→a ; layer2: a=v2. Correct merged view: a=v2, b=v1 (overlayfs copy-up gives the
+    // new `a` a fresh inode; `b` still points at the old content). The path-reference model gave `b`
+    // the WRONG (new) content (critic MAJOR).
+    let t = build(vec![
+        (vec!["a", "b"], vec![file("a", b"v1"), hardlink("b", "a")]),
+        (vec!["a"], vec![file("a", b"v2")]),
+    ]);
+    assert_eq!(
+        t.get("a"),
+        Some(&Node::File {
+            mode: 0o644,
+            data: b"v2".to_vec()
+        })
+    );
+    assert_eq!(
+        t.get("b"),
+        Some(&Node::File {
+            mode: 0o644,
+            data: b"v1".to_vec()
+        }),
+        "the hardlink keeps the content it was made against, not the later override"
+    );
+}
 
 #[test]
 fn later_layer_overrides_earlier_file() {
@@ -182,47 +234,15 @@ fn symlink_and_hardlink_apply() {
             target: "busybox".to_string()
         })
     );
-    // A hardlink is preserved as a LINK to the target file (not a copy of its bytes), so
-    // hardlink-heavy images (busybox: ~400 applets → one binary) stay their real size.
+    // A hardlink resolves to the target's CONTENT at apply time (its own copy of the bytes) — correct
+    // overlayfs semantics that survive a later whiteout/override of the target. (Identical bytes are
+    // de-duped into real hardlinks at write time; see the cli write_tree test.)
     assert_eq!(
         t.get("bin/ln"),
-        Some(&Node::Hardlink {
-            target: "bin/busybox".to_string()
-        })
-    );
-    // The target itself is still the real file.
-    assert_eq!(
-        t.get("bin/busybox"),
         Some(&Node::File {
             mode: 0o644,
             data: b"ELF".to_vec()
         })
-    );
-}
-
-#[test]
-fn hardlink_chain_collapses_to_the_ultimate_file() {
-    // A -> file, B -> A (a hardlink to a hardlink): B must point at the ultimate FILE, not at A, so
-    // the writer can create a real link to an existing file regardless of write order.
-    let t = build(vec![(
-        vec!["a", "b", "c"],
-        vec![
-            file("a", b"DATA"),
-            Entry::Hardlink {
-                path: "b".to_string(),
-                target: "a".to_string(),
-            },
-            Entry::Hardlink {
-                path: "c".to_string(),
-                target: "b".to_string(),
-            },
-        ],
-    )]);
-    assert_eq!(t.get("b"), Some(&Node::Hardlink { target: "a".into() }));
-    assert_eq!(
-        t.get("c"),
-        Some(&Node::Hardlink { target: "a".into() }),
-        "chain collapses to the ultimate file 'a', not the intermediate 'b'"
     );
 }
 

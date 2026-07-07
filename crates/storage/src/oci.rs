@@ -38,8 +38,8 @@ pub enum Entry {
         path: String,
         target: String,
     },
-    /// Hardlink to an already-applied path (tar `LinkType`). Preserved as a link to the target file
-    /// (not copied), so hardlink-heavy images (busybox) don't explode in size.
+    /// Hardlink to an already-applied path (tar `LinkType`). Resolved to the target's content at apply
+    /// time (correct under later whiteout/override); de-duplicated to a real hardlink on write.
     Hardlink {
         path: String,
         target: String,
@@ -47,24 +47,18 @@ pub enum Entry {
 }
 
 /// A node in the flattened rootfs tree.
+///
+/// A tar hardlink is resolved to its target's CONTENT here (a `File` with the same bytes), which is
+/// the semantically-correct overlayfs behavior: the link keeps the content it was made against even if
+/// a later layer whiteouts or replaces the target (critic MAJOR — a live path reference would dangle
+/// or capture the wrong content). Identical content is then de-duplicated into real on-disk hardlinks
+/// at WRITE time (see `write_tree`), so hardlink-heavy images (busybox: ~400 applets → one binary)
+/// don't bloat on disk.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Node {
-    File {
-        mode: u32,
-        data: Vec<u8>,
-    },
-    Dir {
-        mode: u32,
-    },
-    Symlink {
-        target: String,
-    },
-    /// A hardlink to another path's file content — preserved as a link (NOT a copy) so images that
-    /// hardlink heavily (busybox: ~400 applets → one binary) stay their real size instead of
-    /// exploding ~400×. `target` is the ultimate FILE path (hardlink chains are collapsed at apply).
-    Hardlink {
-        target: String,
-    },
+    File { mode: u32, data: Vec<u8> },
+    Dir { mode: u32 },
+    Symlink { target: String },
 }
 
 /// The flattened rootfs: a path → node map (paths are normalized, no leading slash, `/`-separated).
@@ -257,22 +251,18 @@ fn insert_entry(tree: &mut Tree, entry: Entry) -> Result<String, OciError> {
         Entry::Hardlink { path, target } => {
             let path = safe_path(&path)?;
             let target = safe_path(&target)?;
-            // The target must already be applied. Preserve the hardlink as a LINK to the ultimate
-            // file (collapsing any hardlink chain) rather than copying its bytes — otherwise busybox's
-            // ~400 applet hardlinks each become a full 1 MiB copy (~400 MiB bundle). A hardlink to a
-            // symlink/dir (rare) falls back to cloning the node (no bloat concern).
-            let node = match tree.get(&target) {
-                Some(Node::File { .. }) => Node::Hardlink {
-                    target: target.clone(),
-                },
-                Some(Node::Hardlink { target: ultimate }) => Node::Hardlink {
-                    target: ultimate.clone(),
-                },
-                Some(other) => other.clone(),
-                None => {
-                    return Err(OciError::DanglingHardlink { path, target });
-                }
-            };
+            // Resolve to the target's CURRENT content and store it as this path's own node. This keeps
+            // correct overlayfs semantics under later whiteout/override of the target (the link retains
+            // the content it was made against), while `write_tree` de-duplicates identical bytes back
+            // into real hardlinks on disk so there's no size blow-up. (A dangling target — not yet
+            // applied — is a malformed layer.)
+            let node = tree
+                .get(&target)
+                .cloned()
+                .ok_or(OciError::DanglingHardlink {
+                    path: path.clone(),
+                    target,
+                })?;
             tree.insert(path.clone(), node);
             Ok(path)
         }
