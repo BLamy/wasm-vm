@@ -149,12 +149,20 @@ async fn guest_bytes_round_trip_through_pump_to_a_real_echo_server() {
     s.inject(tcp_seg(dst, 40000, port, 1000, None, true, &[])); // guest SYN
     s.poll(t);
     t += 1;
-    let sa = s.take_egress();
-    let ipp = Ipv4Packet::new_checked(&sa[0][14..]).unwrap();
-    let isn = TcpPacket::new_checked(ipp.payload())
-        .unwrap()
-        .seq_number()
-        .0 as i64;
+    // Pull slirp's ISN from the SYN-ACK. Scan for it rather than assuming egress[0] is IPv4/TCP
+    // (robust if an ARP or other frame ever precedes it — critic NIT).
+    let isn = s
+        .take_egress()
+        .iter()
+        .find_map(|f| {
+            let ipp = Ipv4Packet::new_checked(&f[14..]).ok()?;
+            if ipp.next_header() != IpProtocol::Tcp {
+                return None;
+            }
+            let tp = TcpPacket::new_checked(ipp.payload()).ok()?;
+            (tp.dst_port() == 40000 && tp.syn() && tp.ack()).then(|| tp.seq_number().0 as i64)
+        })
+        .expect("a SYN-ACK egressed to the guest");
     s.inject(tcp_seg(dst, 40000, port, 1001, Some(isn + 1), false, &[])); // guest ACK → Established
     s.poll(t);
     t += 1;
@@ -183,12 +191,12 @@ async fn guest_bytes_round_trip_through_pump_to_a_real_echo_server() {
     // Inline servicing loop: shuttle guest→outbound and outbound→guest until the echo egresses to the
     // guest, bounded by a hard deadline so a wiring regression fails cleanly instead of hanging.
     let mut pending_out: Vec<u8> = Vec::new();
-    let round_trip = tokio::time::timeout(Duration::from_secs(5), async {
+    let found = tokio::time::timeout(Duration::from_secs(5), async {
         loop {
             // guest → outbound: hand any buffered guest bytes to the pump.
             let d = s.tcp_recv(h);
-            if !d.is_empty() {
-                to_pump_tx.send(d).await.unwrap();
+            if !d.is_empty() && to_pump_tx.send(d).await.is_err() {
+                return false; // the pump task died — fail cleanly (not a panic, not a false pass)
             }
             // outbound → guest: pull echoed bytes from the pump and enqueue to the guest socket.
             while let Ok(chunk) = from_pump_rx.try_recv() {
@@ -201,15 +209,18 @@ async fn guest_bytes_round_trip_through_pump_to_a_real_echo_server() {
             s.poll(t);
             t += 1;
             if egress_to_guest_contains(&s.take_egress(), 40000, REQ) {
-                return; // the echo reached the guest
+                return true; // the echo reached the guest
             }
             tokio::time::sleep(Duration::from_millis(5)).await; // let the pump + echo server run
         }
     })
     .await;
 
+    // Ok(true) = round trip proven. Ok(false) = the pump died. Err = 5 s timeout (never round-tripped).
+    // All three of the "didn't work" cases fail the assertion — no false pass on a broken data path.
     assert!(
-        round_trip.is_ok(),
-        "the echoed reply travelled guest → stack → pump → real echo server → back to the guest"
+        matches!(found, Ok(true)),
+        "the echoed reply travelled guest → stack → pump → real echo server → back to the guest \
+         (got {found:?})",
     );
 }
