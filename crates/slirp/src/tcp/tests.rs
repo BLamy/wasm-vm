@@ -85,6 +85,29 @@ fn syn_to_the_gateway_is_local_not_nated() {
 }
 
 #[test]
+fn syn_to_in_subnet_non_local_host_is_dropped() {
+    // 10.0.2.99 is in the guest subnet but not the gateway/DNS — no such host on the virtual link,
+    // and a private 10.0.2.x must not be NATed out. Not an outbound flow (critic MINOR).
+    let f = tcp_frame(Ipv4Addr::new(10, 0, 2, 99), 40010, 80, true, false);
+    assert_eq!(classify(&f), FrameClass::Other);
+    // The guest's own IP and the subnet broadcast likewise.
+    assert_eq!(
+        classify(&tcp_frame(GUEST_IP, 40011, 80, true, false)),
+        FrameClass::Other
+    );
+    assert_eq!(
+        classify(&tcp_frame(
+            Ipv4Addr::new(10, 0, 2, 255),
+            40012,
+            80,
+            true,
+            false
+        )),
+        FrameClass::Other
+    );
+}
+
+#[test]
 fn non_syn_tcp_is_an_existing_flow() {
     // A bare ACK to an external host belongs to an already-open flow, not a new one.
     let f = tcp_frame(EXT_IP, 40002, 443, false, true);

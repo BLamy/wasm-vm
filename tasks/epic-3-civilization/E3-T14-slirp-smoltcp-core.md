@@ -124,7 +124,11 @@ green.
 malformed — never panics). Extracts the guest 4-tuple into a `nat::FlowKey`. 6 unit tests (SYN→ext
 OutboundSyn with the exact 4-tuple; SYN→gateway LocalTcp; bare ACK ExistingTcp; SYN+ACK not-fresh;
 ARP/UDP/truncated/empty → Other). `smoltcp::wire::Ipv4Address` is `core::net::Ipv4Addr`, so 4-tuples
-convert with no glue. 19 slirp tests. fmt + clippy + determinism green.
+convert with no glue. **Cold-clone critic: SOUND** (verified IP-options/IHL>5 offset handled, full
+flag matrix, 4-tuple not swapped, ZERO panics on 20k random buffers). Adopted MINOR-1: an in-subnet
+non-local dst (10.0.2.x != .2/.3, incl the guest's own .15 / .255 broadcast) is NOT NATed out — no
+such host on the virtual link — it's dropped (`Other`); added a test. MINOR-2 noted in-code (the
+bridge must distinguish FIN/RST from data in pass 2b). 20 slirp tests. fmt + clippy + determinism green.
 
 **Pass 2b (next — the async bridge):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the

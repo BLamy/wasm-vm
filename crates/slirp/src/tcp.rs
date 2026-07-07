@@ -52,6 +52,15 @@ pub fn classify(frame: &[u8]) -> FrameClass {
     if net::is_local(dst) {
         return FrameClass::LocalTcp;
     }
+    // In-subnet but NOT the gateway/DNS (e.g. 10.0.2.99, the guest's own .15, or .255 broadcast):
+    // there is no such host on the virtual link, and NATing a private 10.0.2.x address out to the
+    // real internet would be wrong — so it's not an outbound flow. Drop it (the guest just times
+    // out, which is accurate). (critic MINOR: use the existing `in_subnet` guard.)
+    if net::in_subnet(dst) {
+        return FrameClass::Other;
+    }
+    // NOTE (pass 2b): `ExistingTcp` currently lumps data/ACK with FIN/RST. The async bridge will need
+    // to distinguish teardown (FIN/RST) to close the smoltcp socket + free the FlowKey.
     if tcp.syn() && !tcp.ack() {
         FrameClass::OutboundSyn(key)
     } else {
