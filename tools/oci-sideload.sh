@@ -63,6 +63,7 @@ if [ "${1:-}" = "--selftest" ]; then
   ck quay.io/podman/hello:v1.2  "quay.io|podman/hello|v1.2|quay.io"
   ck gcr.io/proj/sub/img:tag    "gcr.io|proj/sub/img|tag|gcr.io"
   ck localhost:5000/img:v2      "localhost:5000|img|v2|localhost:5000"
+  ck "busybox:"                 "docker.io|library/busybox||registry-1.docker.io"  # empty tag → rejected at runtime
   [ "$f" = 0 ] && echo "PARSE SELFTEST OK" || echo "PARSE SELFTEST FAILED"; exit "$f"
 fi
 
@@ -79,6 +80,9 @@ IFS='|' read -r HOST repo tag REG_HOST <<EOF
 $(parse_ref "$ref")
 EOF
 REG="https://$REG_HOST"
+# A trailing colon (`busybox:`) yields an empty tag → a malformed `…/manifests/` request; reject it
+# with a clear message instead of a confusing 404 (critic MINOR).
+[ -n "$tag" ] || { echo "[sideload] empty tag in ref '$ref' (trailing ':') — omit the colon or give a tag" >&2; exit 2; }
 
 blobs="$out/blobs/sha256"
 mkdir -p "$blobs"
@@ -102,9 +106,13 @@ token_from_challenge() {
   scope=$(printf '%s' "$chal"   | sed -n 's/.*scope="\([^"]*\)".*/\1/p')
   [ -n "$scope" ] || scope="repository:$repo:pull"
   [ -n "$realm" ] || { log "auth challenge without a realm: $chal"; return 1; }
+  # The realm URL is ATTACKER-CONTROLLED (it comes from the registry's challenge). Require https and
+  # forbid redirects + non-http protocols so a malicious registry can't point it at `file:///…`
+  # (local-file read → token exfil) or an internal URL (SSRF) — critic MAJOR.
+  case "$realm" in https://*) ;; *) log "refusing non-https auth realm: $realm"; return 1 ;; esac
   q="scope=$scope"; [ -n "$service" ] && q="service=$service&$q"
   # ghcr returns {"token":…}; some registries use {"access_token":…}. Accept either.
-  TOK=$(curl -fsSL "$realm?$q" 2>/dev/null \
+  TOK=$(curl -fsS --proto '=https' --max-redirs 0 "$realm?$q" 2>/dev/null \
     | python3 -c "import sys,json;d=json.load(sys.stdin);print(d.get('token') or d.get('access_token') or '')")
 }
 
@@ -121,11 +129,11 @@ sha256_of() {
 authed_get() {
   local url="$1" dst="$2" code hdr chal
   hdr=$(mktemp)
-  code=$(curl -sSL -H "Authorization: Bearer $TOK" -H "Accept: $MTYPES" -D "$hdr" -w '%{http_code}' -o "$dst" "$url" || echo 000)
+  code=$(curl -sSL -H "Authorization: Bearer $TOK" -H "Accept: $MTYPES" -D "$hdr" -w '%{http_code}' -o "$dst" "$url" || true)
   if [ "$code" = "401" ]; then
     chal=$(tr -d '\r' < "$hdr" | grep -i '^www-authenticate:' | head -1 || true)
     if [ -n "$chal" ] && token_from_challenge "$chal"; then
-      code=$(curl -sSL -H "Authorization: Bearer $TOK" -H "Accept: $MTYPES" -w '%{http_code}' -o "$dst" "$url" || echo 000)
+      code=$(curl -sSL -H "Authorization: Bearer $TOK" -H "Accept: $MTYPES" -w '%{http_code}' -o "$dst" "$url" || true)
     fi
   fi
   rm -f "$hdr"
