@@ -48,20 +48,27 @@ external destination and NATed outbound.
   echo to `10.0.2.2` itself. TCP interception is *promiscuous*: any guest SYN to any external
   `IP:port` is accepted by a listening smoltcp socket created on demand and keyed by the guest
   4-tuple; the accepted socket is then bridged byte-for-byte to `OutboundConnector::connect`.
-- **OutboundConnector** — the trait that decouples the stack from *how* bytes leave the process:
+- **OutboundConnector** — the trait that decouples the stack from *how* bytes leave the process.
+  The real signature uses the explicit `-> impl Future + Send` form (not `async fn`) so the returned
+  future is `Send`-bound without tripping the `async_fn_in_trait` lint:
   ```rust
   trait OutboundConnector {
-      // Establish an outbound TCP connection; returns split byte streams or a typed refusal.
-      async fn connect(&self, host: IpAddr, port: u16) -> Result<Conn, ConnectError>;
+      type Conn;
+      // Establish an outbound TCP connection; yields a duplex byte stream or a typed refusal.
+      fn connect(&self, host: IpAddr, port: u16)
+          -> impl Future<Output = Result<Self::Conn, ConnectError>> + Send;
   }
   ```
   `NativeConnector` = `tokio::net::TcpStream` (tests + native CLI). Browser transports (E3-T16/T17)
   implement the same trait. **Contract:** `connect` either yields a duplex byte stream or fails
   within the connect timeout with a typed error the stack maps to a guest RST.
 - **FlowTable** — the NAT table (this pass): entries keyed by `(proto, guest_ip, guest_port,
-  dst_ip, dst_port)`, each with a last-activity timestamp and idle timeout (TCP established **2 h**,
-  UDP **30 s**, TCP handshaking/closing **short**). Bounded total entries; per-flow buffers bounded
-  (backpressure, not unbounded growth). Deterministic iteration (`BTreeMap`, not `HashMap`).
+  dst_ip, dst_port)`, each with a last-activity timestamp and a per-protocol idle timeout (TCP
+  **2 h**, UDP **30 s**). A shorter tier for TCP handshaking/closing states needs per-flow TCP state,
+  which the bridge tracks in **pass 2** — pass 1 keys the timeout on the protocol only. Bounded total
+  entries (LRU eviction); per-flow buffers bounded in pass 2 (backpressure, not unbounded growth).
+  Deterministic iteration (`BTreeMap`, not `HashMap`). **Time is injected** (`now_ms` per call);
+  callers must pass a monotonic clock (a backwards `now` would shorten a flow's life).
 
 ## Flow control (the hard part — pass 2)
 

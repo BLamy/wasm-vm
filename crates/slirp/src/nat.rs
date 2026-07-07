@@ -2,6 +2,10 @@
 //! timeouts and a hard entry bound so a flow flood can't exhaust memory. Deterministic (`BTreeMap`,
 //! ordered iteration) and **time-injected** (every method takes `now_ms`) so it is fully
 //! unit-testable and reproducible with no clock access of its own.
+//!
+//! Callers MUST pass a MONOTONIC `now_ms` (milliseconds): the timeout math floors negatives at 0, so
+//! a backwards clock never drops a live flow early on `sweep`, but a backwards `touch` would move a
+//! flow's activity clock backwards and could expire it too soon. A monotonic source avoids both.
 
 use std::collections::BTreeMap;
 use std::net::IpAddr;
