@@ -38,7 +38,8 @@ pub enum Entry {
         path: String,
         target: String,
     },
-    /// Hardlink to an already-applied path (tar `LinkType`). Resolved to the target's content.
+    /// Hardlink to an already-applied path (tar `LinkType`). Preserved as a link to the target file
+    /// (not copied), so hardlink-heavy images (busybox) don't explode in size.
     Hardlink {
         path: String,
         target: String,
@@ -48,9 +49,22 @@ pub enum Entry {
 /// A node in the flattened rootfs tree.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Node {
-    File { mode: u32, data: Vec<u8> },
-    Dir { mode: u32 },
-    Symlink { target: String },
+    File {
+        mode: u32,
+        data: Vec<u8>,
+    },
+    Dir {
+        mode: u32,
+    },
+    Symlink {
+        target: String,
+    },
+    /// A hardlink to another path's file content — preserved as a link (NOT a copy) so images that
+    /// hardlink heavily (busybox: ~400 applets → one binary) stay their real size instead of
+    /// exploding ~400×. `target` is the ultimate FILE path (hardlink chains are collapsed at apply).
+    Hardlink {
+        target: String,
+    },
 }
 
 /// The flattened rootfs: a path → node map (paths are normalized, no leading slash, `/`-separated).
@@ -243,13 +257,22 @@ fn insert_entry(tree: &mut Tree, entry: Entry) -> Result<String, OciError> {
         Entry::Hardlink { path, target } => {
             let path = safe_path(&path)?;
             let target = safe_path(&target)?;
-            let node = tree
-                .get(&target)
-                .cloned()
-                .ok_or(OciError::DanglingHardlink {
-                    path: path.clone(),
-                    target,
-                })?;
+            // The target must already be applied. Preserve the hardlink as a LINK to the ultimate
+            // file (collapsing any hardlink chain) rather than copying its bytes — otherwise busybox's
+            // ~400 applet hardlinks each become a full 1 MiB copy (~400 MiB bundle). A hardlink to a
+            // symlink/dir (rare) falls back to cloning the node (no bloat concern).
+            let node = match tree.get(&target) {
+                Some(Node::File { .. }) => Node::Hardlink {
+                    target: target.clone(),
+                },
+                Some(Node::Hardlink { target: ultimate }) => Node::Hardlink {
+                    target: ultimate.clone(),
+                },
+                Some(other) => other.clone(),
+                None => {
+                    return Err(OciError::DanglingHardlink { path, target });
+                }
+            };
             tree.insert(path.clone(), node);
             Ok(path)
         }

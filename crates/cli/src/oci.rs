@@ -430,7 +430,34 @@ fn write_tree(tree: &Tree, out: &Path) -> Result<usize, UnpackError> {
                     .map_err(|e| UnpackError::Io(format!("symlink {}: {e}", dst.display())))?;
                 n += 1;
             }
+            // Hardlinks are created in a SECOND pass below, once every target file exists on disk (the
+            // sorted tree can place a link before its target, e.g. `bin/[` before `bin/busybox`).
+            Node::Hardlink { .. } => {}
         }
+    }
+    // Second pass: create the hardlinks (targets are now all present).
+    for (path, node) in tree {
+        let Node::Hardlink { target } = node else {
+            continue;
+        };
+        let dst = out.join(path);
+        if !dst.starts_with(out) {
+            return Err(UnpackError::Oci(OciError::UnsafePath(path.clone())));
+        }
+        if let Some(bad) = symlinked_ancestor_on_disk(out, path) {
+            return Err(UnpackError::Oci(OciError::SymlinkTraversal {
+                path: path.clone(),
+                via: bad,
+            }));
+        }
+        let src = out.join(target);
+        if let Some(p) = dst.parent() {
+            std::fs::create_dir_all(p).ok();
+        }
+        let _ = std::fs::remove_file(&dst);
+        std::fs::hard_link(&src, &dst)
+            .map_err(|e| UnpackError::Io(format!("hardlink {} -> {target}: {e}", dst.display())))?;
+        n += 1;
     }
     Ok(n)
 }

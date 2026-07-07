@@ -116,6 +116,45 @@ fn build_layout_cfg(layout: &Path, config_json: &[u8]) -> String {
     mdig
 }
 
+#[cfg(unix)]
+#[test]
+fn write_tree_preserves_hardlinks_as_real_on_disk_links() {
+    use std::os::unix::fs::MetadataExt;
+    // A busybox-shaped tree: one real binary + a link that sorts BEFORE it (`[` < `busybox`), which
+    // exercises write_tree's two-pass ordering (the link's target doesn't exist yet in pass 1).
+    let mut tree = Tree::new();
+    tree.insert("bin".into(), Node::Dir { mode: 0o755 });
+    tree.insert(
+        "bin/busybox".into(),
+        Node::File {
+            mode: 0o755,
+            data: b"\x7fELF-riscv-busybox".to_vec(),
+        },
+    );
+    tree.insert(
+        "bin/[".into(),
+        Node::Hardlink {
+            target: "bin/busybox".into(),
+        },
+    );
+    let td = tempfile::tempdir().unwrap();
+    write_tree(&tree, td.path()).unwrap();
+
+    let ino_target = std::fs::metadata(td.path().join("bin/busybox"))
+        .unwrap()
+        .ino();
+    let ino_link = std::fs::metadata(td.path().join("bin/[")).unwrap().ino();
+    assert_eq!(
+        ino_link, ino_target,
+        "the hardlink shares the target's inode — ONE physical copy, not two (busybox stays ~1 MiB, not ~400)"
+    );
+    // Both names read the same bytes.
+    assert_eq!(
+        std::fs::read(td.path().join("bin/[")).unwrap(),
+        b"\x7fELF-riscv-busybox"
+    );
+}
+
 #[test]
 fn unpack_merges_layers_with_override_and_whiteout() {
     let td = tempfile::tempdir().unwrap();

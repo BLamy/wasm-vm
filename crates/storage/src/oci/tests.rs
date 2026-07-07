@@ -182,13 +182,47 @@ fn symlink_and_hardlink_apply() {
             target: "busybox".to_string()
         })
     );
-    // Hardlink resolves to the target's content (a copy of the node).
+    // A hardlink is preserved as a LINK to the target file (not a copy of its bytes), so
+    // hardlink-heavy images (busybox: ~400 applets → one binary) stay their real size.
     assert_eq!(
         t.get("bin/ln"),
+        Some(&Node::Hardlink {
+            target: "bin/busybox".to_string()
+        })
+    );
+    // The target itself is still the real file.
+    assert_eq!(
+        t.get("bin/busybox"),
         Some(&Node::File {
             mode: 0o644,
             data: b"ELF".to_vec()
         })
+    );
+}
+
+#[test]
+fn hardlink_chain_collapses_to_the_ultimate_file() {
+    // A -> file, B -> A (a hardlink to a hardlink): B must point at the ultimate FILE, not at A, so
+    // the writer can create a real link to an existing file regardless of write order.
+    let t = build(vec![(
+        vec!["a", "b", "c"],
+        vec![
+            file("a", b"DATA"),
+            Entry::Hardlink {
+                path: "b".to_string(),
+                target: "a".to_string(),
+            },
+            Entry::Hardlink {
+                path: "c".to_string(),
+                target: "b".to_string(),
+            },
+        ],
+    )]);
+    assert_eq!(t.get("b"), Some(&Node::Hardlink { target: "a".into() }));
+    assert_eq!(
+        t.get("c"),
+        Some(&Node::Hardlink { target: "a".into() }),
+        "chain collapses to the ultimate file 'a', not the intermediate 'b'"
     );
 }
 
