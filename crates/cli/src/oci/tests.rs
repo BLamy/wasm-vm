@@ -4,6 +4,7 @@
 use super::*;
 use flate2::{Compression, write::GzEncoder};
 use sha2::{Digest, Sha256};
+use std::io::Write;
 use std::path::Path;
 
 fn hexd(b: &[u8]) -> String {
@@ -18,11 +19,11 @@ enum M<'a> {
     Whiteout(&'a str),
 }
 
-/// Build a gzipped layer tar from members, return its bytes.
-fn layer(members: &[M]) -> Vec<u8> {
-    let mut gz = GzEncoder::new(Vec::new(), Compression::fast());
+/// Build a raw (uncompressed) tar from members.
+fn tar_of(members: &[M]) -> Vec<u8> {
+    let mut buf = Vec::new();
     {
-        let mut ar = tar::Builder::new(&mut gz);
+        let mut ar = tar::Builder::new(&mut buf);
         for m in members {
             match m {
                 M::File(path, data) => {
@@ -54,7 +55,19 @@ fn layer(members: &[M]) -> Vec<u8> {
         }
         ar.finish().unwrap();
     }
+    buf
+}
+
+/// Build a gzipped layer tar from members, return its bytes.
+fn layer(members: &[M]) -> Vec<u8> {
+    let mut gz = GzEncoder::new(Vec::new(), Compression::fast());
+    gz.write_all(&tar_of(members)).unwrap();
     gz.finish().unwrap()
+}
+
+/// Build a zstd-compressed layer tar (E3.5-T04c — modern buildkit ships these).
+fn layer_zstd(members: &[M]) -> Vec<u8> {
+    zstd::stream::encode_all(&tar_of(members)[..], 3).unwrap()
 }
 
 /// Write `bytes` as a blob and return its `sha256:<hex>` digest.
@@ -391,6 +404,52 @@ fn corrupted_config_blob_is_refused_by_digest() {
     assert!(
         matches!(err, UnpackError::DigestMismatch { .. }),
         "got {err:?}"
+    );
+}
+
+// ── E3.5-T04c: zstd-compressed layers (modern buildkit / `--compression=zstd`) ──
+
+#[test]
+fn zstd_compressed_layer_unpacks() {
+    // A zstd layer (magic 28 b5 2f fd) must unpack exactly like gzip.
+    let l = layer_zstd(&[M::Dir("etc/"), M::File("etc/motd", b"zstd-works")]);
+    assert_eq!(&l[..4], &[0x28, 0xb5, 0x2f, 0xfd], "sanity: zstd magic");
+    let mut tree = Tree::new();
+    apply_layer_tar(&mut tree, &l).unwrap();
+    assert_eq!(
+        tree.get("etc/motd"),
+        Some(&Node::File {
+            mode: 0o644,
+            data: b"zstd-works".to_vec()
+        })
+    );
+    assert!(matches!(tree.get("etc"), Some(Node::Dir { .. })));
+}
+
+#[test]
+fn zstd_bomb_is_capped() {
+    // 64 MiB of zeros → tiny zstd; the streaming budget cap must fire, not buffer it (same guard as
+    // the gzip bomb — decompression is bounded regardless of codec).
+    let mut tar_bytes = Vec::new();
+    {
+        let mut ar = tar::Builder::new(&mut tar_bytes);
+        let size: u64 = 64 * 1024 * 1024;
+        let mut h = tar::Header::new_gnu();
+        h.set_entry_type(tar::EntryType::Regular);
+        h.set_size(size);
+        h.set_mode(0o644);
+        h.set_cksum();
+        ar.append_data(&mut h, "big", std::io::repeat(0u8).take(size))
+            .unwrap();
+        ar.finish().unwrap();
+    }
+    let blob = zstd::stream::encode_all(&tar_bytes[..], 19).unwrap();
+    assert_eq!(&blob[..4], &[0x28, 0xb5, 0x2f, 0xfd]);
+    let mut tree = Tree::new();
+    let err = apply_layer_tar_capped(&mut tree, &blob, 1024 * 1024).unwrap_err();
+    assert!(
+        matches!(err, UnpackError::Io(m) if m.contains("cap")),
+        "expected a cap error for the zstd bomb"
     );
 }
 

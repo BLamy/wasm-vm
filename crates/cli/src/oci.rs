@@ -235,12 +235,16 @@ fn apply_layer_tar_capped(
     tar_bytes: &[u8],
     budget: u64,
 ) -> Result<(), UnpackError> {
-    // A stored (uncompressed) tar starts with a ustar header; only inflate on the gzip magic.
-    // `Read::take(budget + 1)` bounds the TOTAL bytes pulled from the (possibly bombing) stream;
-    // we detect overflow by seeing the reader still has bytes at the cap.
-    let gz = tar_bytes.starts_with(&[0x1f, 0x8b]);
-    let src: Box<dyn Read> = if gz {
+    // Sniff the compression by magic: gzip (`1f 8b`), zstd (`28 b5 2f fd`), else a stored
+    // (uncompressed) ustar tar. `Read::take(budget + 1)` bounds the TOTAL bytes pulled from the
+    // (possibly bombing) DECOMPRESSED stream — the same cap guards gzip and zstd bombs alike.
+    let src: Box<dyn Read> = if tar_bytes.starts_with(&[0x1f, 0x8b]) {
         Box::new(GzDecoder::new(tar_bytes))
+    } else if tar_bytes.starts_with(&[0x28, 0xb5, 0x2f, 0xfd]) {
+        Box::new(
+            zstd::stream::read::Decoder::new(tar_bytes)
+                .map_err(|e| UnpackError::Io(format!("zstd: {e}")))?,
+        )
     } else {
         Box::new(tar_bytes)
     };
