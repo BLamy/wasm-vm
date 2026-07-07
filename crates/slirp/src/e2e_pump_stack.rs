@@ -15,12 +15,17 @@ use smoltcp::wire::{
     EthernetFrame, EthernetProtocol, EthernetRepr, IpAddress, IpProtocol, Ipv4Packet, Ipv4Repr,
     TcpControl, TcpPacket, TcpRepr, TcpSeqNumber,
 };
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use std::future::Future;
+use std::io;
+use std::net::IpAddr;
+use std::pin::Pin;
+use std::task::{Context, Poll};
+use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt, ReadBuf};
 use tokio::net::TcpListener;
 use tokio::sync::mpsc;
 
 use crate::net;
-use crate::{Bridge, NativeConnector, OutboundConnector, SlirpStack, pump_flow};
+use crate::{Bridge, ConnectError, NativeConnector, OutboundConnector, SlirpStack, pump_flow};
 
 const GUEST_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x56];
 const GW_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x00, 0x00, 0x02];
@@ -312,5 +317,105 @@ async fn bridge_service_round_trips_guest_bytes_to_a_real_echo_server() {
         br.flow_count(),
         1,
         "the flow is still live after the round trip"
+    );
+}
+
+/// A stream that FLOODS: every read yields a full buffer of bytes forever; writes are sunk. Models a
+/// server firehosing data faster than a stalled guest can accept it.
+struct FloodStream;
+impl AsyncRead for FloodStream {
+    fn poll_read(
+        self: Pin<&mut Self>,
+        _: &mut Context<'_>,
+        buf: &mut ReadBuf<'_>,
+    ) -> Poll<io::Result<()>> {
+        let n = buf.remaining().min(16 * 1024);
+        buf.put_slice(&vec![b'x'; n]);
+        Poll::Ready(Ok(()))
+    }
+}
+impl AsyncWrite for FloodStream {
+    fn poll_write(
+        self: Pin<&mut Self>,
+        _: &mut Context<'_>,
+        buf: &[u8],
+    ) -> Poll<io::Result<usize>> {
+        Poll::Ready(Ok(buf.len())) // sink everything
+    }
+    fn poll_flush(self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<io::Result<()>> {
+        Poll::Ready(Ok(()))
+    }
+    fn poll_shutdown(self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<io::Result<()>> {
+        Poll::Ready(Ok(()))
+    }
+}
+
+#[derive(Clone)]
+struct FloodConnector;
+impl OutboundConnector for FloodConnector {
+    type Conn = FloodStream;
+    // The trait requires `-> impl Future + Send` (not `async fn`), matching the real connectors.
+    #[allow(clippy::manual_async_fn)]
+    fn connect(
+        &self,
+        _host: IpAddr,
+        _port: u16,
+    ) -> impl Future<Output = Result<Self::Conn, ConnectError>> + Send {
+        async { Ok(FloodStream) }
+    }
+}
+
+/// Regression (critic MAJOR): the outbound→guest path must be BOUNDED. With a server flooding bytes
+/// and a guest whose receive window is shut (it never ACKs), `Bridge`'s `pending_out` must NOT grow
+/// without limit — otherwise a single flow OOMs the host. Pre-fix this climbed ~100 MiB in 400 passes;
+/// post-fix it holds ~one channel drain because leaving bytes in the bounded `from_pump` blocks the
+/// pump (and thus the server).
+#[tokio::test]
+async fn outbound_to_guest_stays_bounded_when_the_server_floods_and_the_guest_stalls() {
+    let dst = Ipv4Addr::new(93, 184, 216, 34);
+    let port = 80;
+    let mut br = Bridge::new(GW_MAC, FloodConnector, 16);
+    let mut t: u64 = 1;
+    br.on_guest_frame(arp_request(), t).await;
+    t += 1;
+    let _ = br.take_egress();
+
+    br.on_guest_frame(tcp_seg(dst, 40000, port, 1000, None, true, &[]), t)
+        .await; // SYN
+    t += 1;
+    let isn = br
+        .take_egress()
+        .iter()
+        .find_map(|f| {
+            let ipp = Ipv4Packet::new_checked(&f[14..]).ok()?;
+            if ipp.next_header() != IpProtocol::Tcp {
+                return None;
+            }
+            let tp = TcpPacket::new_checked(ipp.payload()).ok()?;
+            (tp.dst_port() == 40000 && tp.syn() && tp.ack()).then(|| tp.seq_number().0 as i64)
+        })
+        .expect("a SYN-ACK egressed to the guest");
+    br.on_guest_frame(
+        tcp_seg(dst, 40000, port, 1001, Some(isn + 1), false, &[]),
+        t,
+    )
+    .await; // ACK
+    t += 1;
+    let _ = br.take_egress();
+
+    // The guest now STALLS — we drop every guest-bound frame and never ACK, so smoltcp's send buffer
+    // fills and `tcp_send` accepts 0. Drive many passes; the outbound buffer must stay bounded.
+    let mut max = 0usize;
+    for _ in 0..300 {
+        br.service();
+        br.poll(t as i64);
+        t += 1;
+        let _ = br.take_egress(); // never ACK → the guest window stays shut
+        max = max.max(br.pending_out_bytes());
+        tokio::task::yield_now().await; // let the flood pump run between passes
+    }
+    assert!(
+        max < 4 * 1024 * 1024,
+        "outbound buffering stayed bounded (max={max} bytes); unbounded growth = remote OOM",
     );
 }

@@ -316,6 +316,26 @@ fmt + clippy green under BOTH `--all-features` AND `--no-default-features` (the 
 native impl, and the `stream` read are all `native`-gated → tokio stays out of the browser build).
 Remaining: the env-gated booted-guest acceptance (drive `service` from the executor's poll loop).
 
+**Adversarial cold-clone critic on pass 2l: SOUND lifecycle, one MAJOR outbound-backpressure gap fixed.**
+The critic verified (repro + mutation) the guest→outbound backpressure (`try_reserve`), the half-close
+ordering (no truncation — `tcp_recv` drains the whole rx buffer, including data delivered with the FIN,
+BEFORE the `guest_finished_sending` check drops `to_pump`), reap consistency (all four maps keyed by the
+same `(key, handle)`; `remove_tcp` deferred past the loop so no handle invalidates mid-pass; `tcp_close`
+→ `Closed` needs the FIN ACKed so reap can't drop an un-ACKed FIN), the `mem::take`+restore pattern, the
+`--no-default` gating, and test honesty (neutering `service` fails the round trip via timeout). It found
+ONE **MAJOR** (borderline CRITICAL — remotely-triggerable OOM from a single flow): the outbound→guest
+path had NO backpressure. `service` drained `from_pump` into the UNBOUNDED `pending_out` every pass
+regardless of whether the guest could accept; a fast server + a guest whose window is shut (`tcp_send`
+accepts 0) inflates `pending_out` without limit (critic repro: ~100 MiB in 400 passes; smoltcp's own
+buffer capped at ~128 KiB). Fix (critic-recommended, mutation-killed): only pull the next `from_pump`
+batch once `pending_out` is empty — leaving bytes in the BOUNDED `from_pump` channel blocks the pump's
+`guest_tx.send`, which backpressures the real server. (The FIN guard already required `pending_out`
+empty, so deferring `Disconnected` detection loses nothing.) New regression
+`outbound_to_guest_stays_bounded_when_the_server_floods_and_the_guest_stalls` (a `FloodConnector` whose
+stream yields infinite bytes; guest never ACKs) drives 300 passes and asserts total buffered < 4 MiB;
+verified it FAILS (unbounded) without the guard and PASSES with it (holds ~one channel drain). 44 slirp
+tests. fmt + clippy green under BOTH `--all-features` and `--no-default-features`. **CI green on #126.**
+
 **Pass 2b (next — the async byte-pump):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).

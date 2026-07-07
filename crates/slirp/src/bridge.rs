@@ -270,14 +270,23 @@ where
 
             // outbound → guest: pull served bytes, noting when the pump has closed its side (server
             // FIN/EOF), then feed the socket (partial-accept safe — the remainder retries next pass).
+            // BACKPRESSURE (critic MAJOR): only pull the NEXT batch once the previous one has fully
+            // reached the socket. If we drained `from_pump` unconditionally, a fast server + a stalled
+            // guest (its window shut, so `tcp_send` accepts 0) would inflate `pending_out` — an
+            // unbounded plain `Vec` — without limit → remote OOM from a single flow. Leaving bytes in
+            // the BOUNDED `from_pump` channel instead blocks the pump's `guest_tx.send`, which
+            // backpressures the real server. (The FIN guard below already requires `pending_out`
+            // empty, so deferring `Disconnected` detection until the buffer flushes loses nothing.)
             let mut outbound_closed = false;
-            loop {
-                match ph.from_pump.try_recv() {
-                    Ok(chunk) => ph.pending_out.extend_from_slice(&chunk),
-                    Err(tokio::sync::mpsc::error::TryRecvError::Empty) => break,
-                    Err(tokio::sync::mpsc::error::TryRecvError::Disconnected) => {
-                        outbound_closed = true;
-                        break;
+            if ph.pending_out.is_empty() {
+                loop {
+                    match ph.from_pump.try_recv() {
+                        Ok(chunk) => ph.pending_out.extend_from_slice(&chunk),
+                        Err(tokio::sync::mpsc::error::TryRecvError::Empty) => break,
+                        Err(tokio::sync::mpsc::error::TryRecvError::Disconnected) => {
+                            outbound_closed = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -308,6 +317,13 @@ where
             self.manager.remove(&key);
         }
         self.pumps = pumps;
+    }
+
+    /// Total bytes buffered in the outbound→guest direction across all flows. Introspection hook for
+    /// the backpressure regression test (it must stay bounded even against a flooding server).
+    #[cfg(test)]
+    pub(crate) fn pending_out_bytes(&self) -> usize {
+        self.pumps.values().map(|p| p.pending_out.len()).sum()
     }
 }
 
