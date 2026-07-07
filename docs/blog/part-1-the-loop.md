@@ -68,7 +68,7 @@ a failure at ANY stage returns the worker to the top,
 with the failure report as new context
 ```
 
-(That diagram is lifted verbatim from `AGENTS.md`, where it's called **the gauntlet**.)
+(That diagram is lifted straight from `AGENTS.md` — it's the pipeline every task runs.)
 
 ## The three documents
 

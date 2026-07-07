@@ -35,7 +35,7 @@ This is the ratchet. The 6,144-cell page-table corpus the verifier built to atta
 didn't evaporate when the verdict came down — its assertions became committed tests. The
 mutation that exposed E0-T20's false-pass became a permanent probe in the harness's
 self-test. Task 55 runs against every trap task 1 through 54 left behind, at the *cheap*
-end of the gauntlet, before a verifier ever gets involved. The system's immune memory grows
+end of the pipeline, before a verifier ever gets involved. The system's immune memory grows
 monotonically, which is exactly the property the naive "agent in a while-loop" lacks —
 there, each iteration *erodes* confidence in the ones before it; here, each iteration
 armors them.
@@ -99,7 +99,7 @@ Everything reduces to seven decisions:
    do — only whether it's done. One task in flight.
 4. **Split worker from verifier — hard.** Fresh session, zero shared context, a charter to
    refute, and `verified` grantable only by the adversary. Refutation restarts the
-   gauntlet; it doesn't patch mid-pipeline.
+   pipeline from the top; it doesn't patch mid-pipeline.
 5. **Demand recordings, not claims.** Flight-recorder infrastructure before features;
    differential oracles you didn't write; determinism enforced by CI; findings cite
    coordinates (an rr event, a trace line) or they don't count. Coverage is part of proof:

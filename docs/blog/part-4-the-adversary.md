@@ -118,7 +118,7 @@ commits. The verifier's only writes are the log, promoted tests, and the status 
 never fixes implementation code, because an adversary who fixes things stops being an
 adversary.
 
-And on refutation, the worker starts the gauntlet from the top — fmt, clippy, tests, fresh
+And on refutation, the worker starts the pipeline from the top — fmt, clippy, tests, fresh
 recording — rather than patching in place:
 
 > A fix applied mid-pipeline never re-earned the earlier gates.
