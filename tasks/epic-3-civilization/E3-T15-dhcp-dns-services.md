@@ -83,3 +83,18 @@ plus hand-built malformed messages) asserting no panic. 55 slirp tests. fmt + cl
 `--all-features` and `--no-default-features`. Remaining for T15: wire DHCP into the slirp UDP path, the
 DNS forwarder (`Resolver` trait + DoH/OS impls + TTL cache + AAAA policy), and booted-guest acceptance
 (env-gated).
+
+**Adversarial cold-clone critic on pass 1a: NO defect found (first clean slice in the series).** After a
+deep pass the critic could not produce a panic, overrun, malformed reply, or a state-machine bug that
+would wedge/mislead a real `udhcpc`. Verified SOUND (with evidence): (1) parser bounds-safe — **5,000,000
+fuzz inputs** (3M random, 1M valid-header+random-options, 1M mutated/truncated/bitflipped) through
+`handle` with backtraces on: ZERO panics; `BOOTP_LEN=236` confirmed correct; every header index guarded by
+the `len < 240` gate, options walk fully fallible. (2) Reply wire format RFC-2131 correct on every produced
+reply — op=2/htype=1/hlen=6, magic at 236, yiaddr(16..20)=GUEST for OFFER/ACK & 0 for NAK, flags a
+byte-exact echo, chaddr 6 bytes + zero pad, per-option lengths all correct. (3) State machine correct
+across **all 400 REQUEST combinations** (msg-type × req-ip × ciaddr × server-id) — every path a real
+busybox `udhcpc` traverses yields the right reply. (4) Endianness/encoding correct. (5) Test honesty
+confirmed — the critic planted a shifted-yiaddr bug and an unchecked index and both were caught by the
+in-tree validator/fuzzer. Minor non-defects noted (not fixed, none reachable from a conformant client):
+a REQUEST with neither option 50 nor a non-zero ciaddr NAKs (unreachable from udhcpc); reply not padded to
+the 300-byte BOOTP minimum (irrelevant for relay-less slirp); `siaddr`=gateway (legal, ignored).
