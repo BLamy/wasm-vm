@@ -90,12 +90,21 @@ from guest, TX to guest), the RxToken owning the frame so `receive` can also han
 `stack.rs`: `SlirpStack` — a smoltcp `Interface` owning the gateway `10.0.2.2/24`, with
 `inject`/`poll(now_ms)`/`take_egress`. Proven by frame-injection (no async, no boot): a guest ARP
 request for 10.0.2.2 → a correct gateway ARP reply (sender MAC/IP + target = guest, opcode 2); an ARP
-for another IP (10.0.2.99) is ignored. 9 slirp tests (7 NAT + 2 ARP). fmt + clippy + determinism
-green. **ICMP echo deferred to 2b:** smoltcp 0.13's interface didn't emit an echo reply from a
-hand-built frame even after the neighbor was known (needs an ICMP socket or a construction detail to
-verify) — not worth guessing blind; the design doc marks ICMP as pass 2b.
+for another IP (10.0.2.99) is ignored.
 
-**Pass 2b (next):** ICMP echo, the promiscuous TCP accept + per-flow bridge with backpressure/
-half-close, `NativeConnector` (tokio), and the native integration tests (HTTP GET through slirp to a
-local hyper server; 50-concurrent; 100 MB integrity; half-close). The booted-Alpine acceptance leg is
-later (long boot, env-gated).
+**Adversarial cold-clone critic on pass 2a: SOUND, and it PINNED the ICMP root cause.** It proved the
+phy::Device TX path is byte-identical to smoltcp's own loopback device (no spurious/empty/wrong-length
+frames — smoltcp resolves neighbors + computes total_len BEFORE consuming the token), the ARP test is
+non-vacuous, and my "ICMP needs a socket" hypothesis was WRONG: smoltcp 0.13 gates the interface's
+auto echo-reply behind the `auto-icmp-echo-reply` feature (in its `default` set, which I'd disabled),
+so the reply arm was compiled out and every ping silently dropped. Fixes: added the one feature →
+**ICMP echo now works and is IN pass 2a** (`gateway_answers_icmp_echo`: ping 10.0.2.2 → echo reply,
+ident/seq echoed). Also (critic MINORs): MTU 1500→**1514** (`Medium::Ethernet` MTU includes the
+14-byte header; a bare 1500 would silently cap the guest TCP MSS to 1446 in 2b); the "ICMP now" code
+comments now match the honest doc. **10 slirp tests** (7 NAT + ARP + ARP-ignored + ICMP echo). fmt +
+clippy + determinism green.
+
+**Pass 2b (next):** the promiscuous TCP accept + per-flow bridge with backpressure/half-close,
+`NativeConnector` (tokio), and the native integration tests (HTTP GET through slirp to a local hyper
+server; 50-concurrent; 100 MB integrity; half-close). The booted-Alpine acceptance leg is later
+(long boot, env-gated).

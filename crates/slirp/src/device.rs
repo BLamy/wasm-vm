@@ -6,9 +6,13 @@ use std::collections::VecDeque;
 
 use smoltcp::phy::{Device, DeviceCapabilities, Medium, RxToken, TxToken};
 use smoltcp::time::Instant;
+use smoltcp::wire::EthernetFrame;
 
-/// Standard ethernet MTU for the guest link.
-pub const MTU: usize = 1500;
+/// The IP MTU (1500). For `Medium::Ethernet`, smoltcp's `max_transmission_unit` is the FULL frame
+/// size incl. the 14-byte ethernet header (it derives the IP MTU as `mtu - header_len`), so the
+/// device advertises `IP_MTU + 14` — advertising a bare 1500 would silently undersize the guest's
+/// TCP MSS to 1446 (critic MINOR).
+pub const IP_MTU: usize = 1500;
 
 /// A queue-backed ethernet device. `rx` = frames from the guest (we consume), `tx` = frames for the
 /// guest (smoltcp produces).
@@ -69,7 +73,8 @@ impl Device for SlirpDevice {
     fn capabilities(&self) -> DeviceCapabilities {
         let mut c = DeviceCapabilities::default();
         c.medium = Medium::Ethernet;
-        c.max_transmission_unit = MTU;
+        // Full ethernet frame size = IP MTU + the ethernet header (so the derived IP MTU is 1500).
+        c.max_transmission_unit = IP_MTU + EthernetFrame::<&[u8]>::header_len();
         c
     }
 }
