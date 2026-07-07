@@ -228,6 +228,50 @@ fn symlink_traversal_escape_is_blocked() {
     }
 }
 
+/// Regression (found by sideloading the REAL busybox riscv64 image): every real image tarball
+/// carries a `./` (and sometimes `.`) root-directory member. It normalizes to the empty path, which
+/// `safe_path` correctly rejects — so unpack used to FAIL with `UnsafePath("./")`. The root entry
+/// must be SKIPPED, not rejected, while `..`/absolute paths stay rejected.
+#[test]
+fn tar_root_dir_entry_is_skipped_not_rejected() {
+    let mut gz = GzEncoder::new(Vec::new(), Compression::fast());
+    {
+        let mut ar = tar::Builder::new(&mut gz);
+        // Root entries "./" and "." must be skipped; "./etc" is a real dir (its `./` prefix strips
+        // to "etc").
+        for p in ["./", ".", "./etc"] {
+            let mut h = tar::Header::new_gnu();
+            h.set_size(0);
+            h.set_mode(0o755);
+            h.set_entry_type(tar::EntryType::Directory);
+            h.set_cksum();
+            ar.append_data(&mut h, p, &b""[..]).unwrap();
+        }
+        // A real member under the root, with the `./` prefix real tars use.
+        let data = b"hi";
+        let mut h = tar::Header::new_gnu();
+        h.set_size(data.len() as u64);
+        h.set_mode(0o644);
+        h.set_entry_type(tar::EntryType::Regular);
+        h.set_cksum();
+        ar.append_data(&mut h, "./etc/motd", &data[..]).unwrap();
+        ar.finish().unwrap();
+    }
+    let blob = gz.finish().unwrap();
+    let mut tree = Tree::new();
+    apply_layer_tar(&mut tree, &blob).expect("root './' entry must be skipped, not rejected");
+    assert_eq!(
+        tree.get("etc/motd"),
+        Some(&Node::File {
+            mode: 0o644,
+            data: b"hi".to_vec()
+        })
+    );
+    assert!(tree.contains_key("etc"));
+    assert!(!tree.contains_key(""), "no empty-path node");
+    assert!(!tree.contains_key("."), "no '.' node");
+}
+
 // ── E3.5-T03: image-config → runtime-config translation + runnable bundle emission ──
 
 #[test]

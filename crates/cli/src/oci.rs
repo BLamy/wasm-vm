@@ -275,6 +275,14 @@ fn apply_layer_tar_capped(
             .map_err(|e| UnpackError::Io(format!("tar path: {e}")))?
             .to_string_lossy()
             .into_owned();
+        // The tar root-directory entry (`.` or `./`) is not a node — real image tarballs include it,
+        // but it normalizes to the empty path, which `safe_path` (correctly) rejects. Skip it before
+        // it reaches `ordered`/the applier. (Trailing slashes only: `./bin` etc. are handled fine by
+        // safe_path's `./` strip.)
+        let trimmed = raw_path.trim_end_matches('/');
+        if trimmed.is_empty() || trimmed == "." {
+            continue;
+        }
         // A `.wh.` member is a whiteout — recorded in `ordered` only; the applier re-derives it.
         let name = raw_path.rsplit('/').next().unwrap_or("");
         let is_whiteout = name.starts_with(".wh.");
