@@ -271,6 +271,19 @@ pub fn build_response(query: &Query, rcode: u8, answers: &[Answer]) -> Vec<u8> {
     b
 }
 
+/// A minimal TRUNCATED response (header only, TC=1, echoed question, no answers). A UDP DNS answer
+/// that won't fit the datagram is replaced by this — the TC (truncation) bit tells the guest's
+/// resolver to re-issue the query over TCP (RFC 1035 §4.2.1), where the length-prefixed framing has no
+/// size limit (see [`crate::dns_tcp`]). NOERROR rcode: the name resolved fine, the answer just didn't
+/// fit UDP.
+pub fn truncated(query: &Query) -> Vec<u8> {
+    let mut b = build_response(query, RCODE_NOERROR, &[]);
+    // Set the TC bit (0x0200) in the flags word (bytes 2..4).
+    let flags = u16::from_be_bytes([b[2], b[3]]) | 0x0200;
+    b[2..4].copy_from_slice(&flags.to_be_bytes());
+    b
+}
+
 /// The empty-AAAA policy (documented): the stack is IPv4-only, so we answer AAAA queries HONESTLY with
 /// `NOERROR` and zero answers — NOT an error. Returning SERVFAIL/NXDOMAIN or a bogus record would make
 /// guests slow via happy-eyeballs timeouts; an empty NOERROR tells the resolver "no AAAA here, use A".
