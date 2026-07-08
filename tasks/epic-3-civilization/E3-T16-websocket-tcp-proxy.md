@@ -219,11 +219,40 @@ mutants** (transition-before-check, AwaitingHello-routes-to-fresh-mux, Ready-rep
   asserts `live_count()` unchanged; **verified to KILL** the reset-mutant (removing the
   `AlreadyReady` guard now FAILS the test). Production code was already correct.
 
-### E3-T16 natively-verifiable surface COMPLETE
-The pure protocol stack is whole and critic-verified end to end: **codec (#144) → per-stream
-state (#145) → mux (#146) → session/handshake (#147).** Remaining legs need live I/O:
-- **tokio relay server** — *native* (not browser-gated); testable with a WS test client + local
-  echo TCP server (byte round-trip, credit backpressure, socket reap). Needs a WS-server dep behind
-  the `native` feature. This is the next stackable native pass.
-- **`web_sys` `WsConnector`** + **booted 1 GB byte-diff / 500-stream-`lsof` acceptance** —
-  genuinely browser/boot-gated.
+### Pass 1e — relay-server decision core, sans-io (PR #148, stacked on #147)
+**Delivered:** `crates/slirp/src/ws_proxy/relay.rs` — `RelayCore`, the relay server's *policy* as a
+pure step function over Session/Mux. **No I/O, no WS dependency** (builds under
+`--no-default-features` — wasm-safe); each `on_*` event returns `RelayActions { ws_sends, socket_ops }`
+and the async driver (next pass) executes them. Correction to the earlier plan: the relay's testable
+substance is dep-free — only the final WS-wire adapter needs `tokio-tungstenite`, so this pass forces
+**no** dependency decision. Policy: handshake-gate; OPEN→Connect, connect-ok→OPEN_OK+initial WINDOW
+(256 KiB), connect-fail→OPEN_FAIL; guest DATA→Write+re-grant window; backend DATA→DATA under the
+guest's credit (driver sizes reads by `send_credit()` — the backpressure seam, no HOL blocking);
+half-close both ways; error→RST; close/rst→socket drop; WS-drop→reap every socket.
+
+**Local gate:** clippy both configs + fmt clean; full slirp suite **180 passed** / 0 failed;
+16 relay tests. **CI #148 green** (fails=0).
+
+**Adversarial cold-clone critic** (reviewed `origin/task/e3-t16d..HEAD`): **REFUTED — 1 MAJOR +
+minors, all FIX-FIRST.** Credit invariant holds under normal flow (guest DATA of N consumes N +
+re-grants N → window pinned at INITIAL_WINDOW; concurrent streams independent; reap-all closes
+every socket; clean errors, no panics).
+- **MAJOR:** duplicate `on_connect_result(true)` was re-entrant (`open_succeeded` only checked
+  existence, `grant` accumulates) → a second success **doubled the guest's window** (2×256 KiB)
+  and re-emitted OPEN_OK. **Fixed:** a `connecting` set records each outstanding Connect;
+  `on_connect_result` requires-and-removes it → a duplicate/unopened-stream result →
+  `UnknownStream`. New test **verified to KILL** the guard-removal mutant, and proves the window
+  stays exactly INITIAL_WINDOW (INITIAL_WINDOW+1 guest bytes → violation).
+- **MINOR (fixed):** the guest-DATA refill grant was silently swallowed (`if let Ok(win)`) → now
+  `.map_err(?)`; the server never emitted its own HELLO → documented the driver-sends-`hello()`
+  contract + test; `on_hello` error mapping made consistent via `map_session_err`.
+
+### E3-T16 status
+Pure protocol stack + relay decision core complete & critic-verified: **codec (#144) → stream
+state (#145) → mux (#146) → session (#147) → relay core (#148).** Remaining legs need live I/O:
+- **async tokio driver** — *native, NO new dep*: a per-connection task executing `SocketOp`s
+  against real `TcpStream`s + `send_credit()`-sized reads, testable against a real echo server.
+  The next stackable native pass.
+- **WS-wire adapter** (`tokio-tungstenite` — the ONLY piece needing a new dep, Brett's call still
+  open) + **`web_sys` client** + **booted 1 GB byte-diff / 500-stream-`lsof` acceptance** —
+  wire adapter is one thin layer; client + boot are browser/boot-gated.
