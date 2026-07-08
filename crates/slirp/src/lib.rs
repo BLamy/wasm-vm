@@ -56,8 +56,9 @@ pub use stack::SlirpStack;
 pub use udp::{UdpReply, UdpServices};
 pub use udp_frame::{GuestUdp, build_udp_frame, parse_udp};
 pub use ws_proxy::{
-    Frame as WsFrame, StreamError as WsStreamError, StreamState as WsStreamState,
-    Terminal as WsTerminal, VERSION as WS_PROXY_VERSION,
+    Frame as WsFrame, Mux as WsMux, MuxError as WsMuxError, MuxEvent as WsMuxEvent, Role as WsRole,
+    StreamError as WsStreamError, StreamState as WsStreamState, Terminal as WsTerminal,
+    VERSION as WS_PROXY_VERSION,
 };
 
 /// The slirp virtual network — QEMU-user conventions so guest images "just work".
