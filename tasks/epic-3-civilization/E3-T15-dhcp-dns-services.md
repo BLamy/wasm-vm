@@ -223,3 +223,20 @@ code defect): no answer-name validation (acceptable — the DoH/OS resolver trus
 what it asked; TXID/transport is a separate layer) and bounded-but-uncapped `a_records` (≤ 65535, not a
 DoS). Folded a doc acknowledgement of both onto `parse_response` so the future untrusted-transport path
 cross-checks the answer name. No correctness change. 90 slirp tests; fmt + clippy + no-default green.
+
+**2026-07-08 — pass 1g: DoH resolver (`doh.rs`) + `dns::build_query`.** The browser's `Resolver`,
+transport-injected so it's pure/browser-safe and natively testable. `DohResolver<T: DohTransport>`
+resolves a name by building a DNS query (`dns::build_query(0, name, A)` — id=0 per RFC 8484, round-trips
+`parse_query`), POSTing it via the transport (browser: `fetch` to a DoH endpoint w/
+`application/dns-message`; the concrete `web_sys` transport lands in the wasm crate later), and mapping
+`parse_response` → `Resolution`: NXDOMAIN→NxDomain; NOERROR→Resolved{A-record ips, ttl = the SMALLEST
+record TTL floored at 1}; transport failure / malformed response / SERVFAIL/other rcode → Failed
+(fail-fast, never trusts garbage). `DohTransport` is `-> impl Future + Send` (no tokio), mirroring
+`OutboundConnector`. Tests (6, mock transport, no network): posts a well-formed A/IN id=0 query +
+maps two A records with the min TTL (120); NXDOMAIN→NxDomain; SERVFAIL→Failed; transport-failure→Failed;
+malformed-bytes→Failed; NOERROR-with-only-AAAA→empty Resolved. Plus `dns::build_query` round-trips
+through `parse_query`. 97 slirp tests. fmt + clippy + no-default-features BUILD green (the resolver is
+pure/generic → compiles into the browser build). Remaining for T15: the concrete `fetch` DohTransport
+(wasm crate), TCP-fallback for truncated answers, wire `UdpServices` into the SlirpStack UDP path,
+booted-guest acceptance (env-gated). Both resolver impls (native OS + DoH) now exist behind the one
+`Resolver` trait the forwarder consumes.

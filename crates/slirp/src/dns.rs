@@ -71,6 +71,29 @@ impl Answer {
 
 /// Parse a single-question DNS query. Returns `None` on anything malformed (so the caller drops it or
 /// answers SERVFAIL) — never panics, never loops.
+/// Build a single-question DNS query wire message (for a DoH `POST`). RD is set; one question with
+/// `name` / `qtype` / IN class. `id` is typically 0 for DoH (RFC 8484 recommends it for cacheability).
+/// Round-trips with [`parse_query`]. A label longer than 63 bytes or a name over 255 encoded bytes is
+/// truncated at the wire level by the length byte cast — callers pass real hostnames, so this is a
+/// non-issue in practice (the guest's own resolver already bounds the name).
+pub fn build_query(id: u16, name: &str, qtype: u16) -> Vec<u8> {
+    let mut b = Vec::with_capacity(HEADER_LEN + name.len() + 6);
+    b.extend_from_slice(&id.to_be_bytes());
+    b.extend_from_slice(&0x0100u16.to_be_bytes()); // QR=0, Opcode=0, RD=1
+    b.extend_from_slice(&1u16.to_be_bytes()); // QDCOUNT
+    b.extend_from_slice(&0u16.to_be_bytes()); // ANCOUNT
+    b.extend_from_slice(&0u16.to_be_bytes()); // NSCOUNT
+    b.extend_from_slice(&0u16.to_be_bytes()); // ARCOUNT
+    for label in name.split('.').filter(|l| !l.is_empty()) {
+        b.push(label.len() as u8);
+        b.extend_from_slice(label.as_bytes());
+    }
+    b.push(0); // root label
+    b.extend_from_slice(&qtype.to_be_bytes());
+    b.extend_from_slice(&CLASS_IN.to_be_bytes());
+    b
+}
+
 pub fn parse_query(msg: &[u8]) -> Option<Query> {
     if msg.len() < HEADER_LEN {
         return None;

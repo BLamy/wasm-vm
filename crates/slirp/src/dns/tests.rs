@@ -404,3 +404,14 @@ fn malformed_responses_never_panic() {
         let _ = parse_response(&m); // must not panic
     }
 }
+
+#[test]
+fn build_query_round_trips_through_parse_query() {
+    let msg = crate::dns::build_query(0, "dl-cdn.alpinelinux.org", TYPE_A);
+    let q = parse_query(&msg).expect("built query parses");
+    assert_eq!(q.id, 0);
+    assert_eq!(q.name, "dl-cdn.alpinelinux.org");
+    assert_eq!(q.qtype, TYPE_A);
+    assert_eq!(q.qclass, CLASS_IN);
+    assert!(q.rd, "RD is set");
+}
