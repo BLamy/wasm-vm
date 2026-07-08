@@ -564,6 +564,23 @@
         font: 11.5px ui-monospace, monospace; background: #0b141c;
         border: 1px solid #223; border-radius: 4px; padding: 0 4px;
       }
+      /* E3.5-T05a run view: verified badge, typed-error box, and the real guest transcript pane. */
+      .dk-verified {
+        margin-left: auto; font: 11px ui-monospace, monospace; color: var(--green);
+        border: 1px solid #22503a; border-radius: 5px; padding: 1px 7px; background: #0f2318;
+      }
+      .dk-error {
+        margin: 4px 18px 12px; padding: 9px 12px; border-radius: 8px;
+        background: #3b1c1f; border: 1px solid #803b3b; color: #ffbcbc;
+        font: 12.5px ui-monospace, monospace; white-space: pre-wrap;
+      }
+      .dk-console {
+        margin: 4px 18px 18px; padding: 10px 12px; border-radius: 8px;
+        background: #0b0e14; border: 1px solid var(--line); color: #cdd6f4;
+        font: 12px ui-monospace, monospace; line-height: 1.4;
+        white-space: pre-wrap; overflow-wrap: anywhere;
+        max-height: 52vh; min-height: 200px; overflow: auto;
+      }
       /* Terminal-tab: make booting obvious + an honest one-click status line. */
       .boot-hint {
         margin: 6px 0 0; padding: 8px 12px; border-radius: 8px;
