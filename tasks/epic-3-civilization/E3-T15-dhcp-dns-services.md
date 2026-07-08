@@ -319,3 +319,19 @@ inject a DISCOVER frame → `take_service_udp` → the real `DhcpServer` → `bu
 with yiaddr = the guest address. 109 slirp tests. fmt + clippy green under BOTH `--all-features` and
 `--no-default-features`. Remaining for T15: the sync/async servicing loop that drives `UdpServices` from
 this diversion (DHCP sync + DNS async, like the pump's bridge), TCP-fallback, booted-guest acceptance.
+
+**Adversarial cold-clone critic on pass 1j: production code SOUND, one test-honesty MINOR fixed.** The
+critic verified (with mutations) the divert is genuinely additive + safe: `is_service_udp` matches
+`UdpServices` routing EXACTLY (no cross-match; gateway:53/dns:67 fall through), NO reflection/spoof
+vector (in slirp the only sender reaching `inject` is the guest), the `any_ip` bypass isn't exploitable
+(diverted frames would otherwise be dropped/noise), no legit frame wrongly diverted (ARP/ICMP/TCP →
+`parse_udp` None → fall through unchanged; mutation `is_service_udp→false` fails all 3 divert tests), and
+the external-DNS assertion is load-bearing (divert-on-port-only is caught). One MINOR (test honesty): the
+tests didn't cover the ONE case where `inject`'s divert-`return` is observable — a unicast DHCP RENEW to
+`gateway:67`, where without the return smoltcp (owning 10.0.2.2, no UDP:67 socket) emits a spurious ICMP
+port-unreachable; that mutation survived the suite. Fixed: `unicast_renew_to_gateway_is_diverted_not_
+double_handled` asserts the RENEW is diverted AND smoltcp never sees it — mutation-verified (FAILS with
+the `return` removed, PASSES with it). Two lower notes (not fixed, consistent with existing design):
+`service_udp` is unbounded (so are `device.rx`/`tx` — not a new DoS surface), and diverted frames bypass
+smoltcp's checksum validation (harmless — the guest's own frame, `dhcp.rs` parses defensively, UDP
+checksums are optional and DHCP often sends 0). 110 slirp tests; fmt + clippy + no-default green.

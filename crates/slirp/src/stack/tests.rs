@@ -554,3 +554,34 @@ fn full_dhcp_path_through_the_stack_offer_egresses_to_the_guest() {
     // yiaddr (offset 16..20 of the BOOTP payload) is the guest address.
     assert_eq!(&g.payload[16..20], &net::GUEST.octets());
 }
+
+#[test]
+fn unicast_renew_to_gateway_is_diverted_not_double_handled() {
+    // A DHCP RENEW unicast to the gateway (10.0.2.2:67) is the ONE case where `inject`'s divert-`return`
+    // matters: without it, the frame would ALSO reach smoltcp (which owns 10.0.2.2 but has no UDP:67
+    // socket) and emit a spurious ICMP port-unreachable to the guest. Prove the divert claims it AND
+    // smoltcp never sees it (critic MINOR: this path was previously untested).
+    let mut s = SlirpStack::new(GW_MAC);
+    let frame = build_udp_frame(
+        GUEST_MAC,
+        GW_MAC,
+        net::GUEST,
+        68,
+        net::GATEWAY, // unicast to the gateway, not broadcast
+        67,
+        &dhcp_discover(),
+    )
+    .unwrap();
+    s.inject(frame);
+
+    assert_eq!(
+        s.take_service_udp().len(),
+        1,
+        "the unicast RENEW is diverted"
+    );
+    s.poll(1);
+    assert!(
+        s.take_egress().is_empty(),
+        "smoltcp never saw it — no spurious ICMP port-unreachable"
+    );
+}
