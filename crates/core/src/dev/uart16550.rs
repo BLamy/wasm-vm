@@ -131,24 +131,29 @@ impl crate::resume::ComponentSnapshot for Uart16550 {
 
         let mut off = 14usize;
         // rx: length-prefixed, bounded by both the physical FIFO depth and the remaining bytes.
+        // `checked_add` for the slice end so an attacker-controlled length can't overflow `usize`
+        // (on wasm32 `usize` is 32-bit — a plain `off + len` with a ~4 GiB length would wrap and
+        // slip past the `> p.len()` guard into an out-of-bounds slice).
         let rx_len = u32::from_le_bytes(p[off..off + 4].try_into().map_err(|_| err())?) as usize;
         off += 4;
-        if rx_len > FIFO_DEPTH || off + rx_len > p.len() {
+        let rx_end = off.checked_add(rx_len).ok_or_else(err)?;
+        if rx_len > FIFO_DEPTH || rx_end > p.len() {
             return Err(err());
         }
-        let rx: VecDeque<u8> = p[off..off + rx_len].iter().copied().collect();
-        off += rx_len;
-        // out: length-prefixed, bounded by the remaining bytes.
+        let rx: VecDeque<u8> = p[off..rx_end].iter().copied().collect();
+        off = rx_end;
+        // out: length-prefixed, bounded by the remaining bytes (same overflow-safe check).
         if off + 4 > p.len() {
             return Err(err());
         }
         let out_len = u32::from_le_bytes(p[off..off + 4].try_into().map_err(|_| err())?) as usize;
         off += 4;
-        if off + out_len > p.len() {
+        let out_end = off.checked_add(out_len).ok_or_else(err)?;
+        if out_end > p.len() {
             return Err(err());
         }
-        let out = p[off..off + out_len].to_vec();
-        off += out_len;
+        let out = p[off..out_end].to_vec();
+        off = out_end;
         // Canonical: no trailing bytes.
         if off != p.len() {
             return Err(err());
@@ -582,6 +587,13 @@ mod snapshot_tests {
         let mut overrun_rx = alloc::vec![0u8; 14];
         overrun_rx.extend_from_slice(&3u32.to_le_bytes()); // claims 3 rx bytes, provides 0
         assert_eq!(u.restore(&overrun_rx), Err(bad.clone()));
+
+        // A huge out_len (~4 GiB) with a short buffer — must be rejected fast, with NO usize
+        // overflow (the wasm32 hazard), no OOB slice, no allocation.
+        let mut huge_out = alloc::vec![0u8; 14];
+        huge_out.extend_from_slice(&0u32.to_le_bytes()); // rx_len = 0
+        huge_out.extend_from_slice(&u32::MAX.to_le_bytes()); // out_len = ~4 GiB, no data
+        assert_eq!(u.restore(&huge_out), Err(bad.clone()));
 
         // Trailing bytes after a valid payload.
         let mut trailing = good.clone();
