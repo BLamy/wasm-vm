@@ -210,3 +210,16 @@ corruption of a valid response) asserting no panic. 90 slirp tests. fmt + clippy
 `--all-features` and `--no-default-features`. Remaining for T15: the DoH resolver wiring this parser to a
 `fetch` transport (browser) — the transport is injectable so its response-mapping is testable natively;
 TCP-fallback; wire `UdpServices` into the SlirpStack UDP path; booted-guest acceptance (env-gated).
+
+**Adversarial cold-clone critic on pass 1f: CLEAN, no defect (400k-iteration fuzz).** The critic read
+`parse_response` + the full `parse_name` and ran a 400,000-iteration fuzz plus every crafted case: NO
+panic; name-ends-exactly-at-EOF with truncated fields → `None` (every one of the 10 RR-header bytes uses
+`*msg.get(after+k)?`, no raw index); a forward pointer in an answer name → `None`; NO zero-advance spin
+(`pos` strictly grows ≥ 11 bytes/RR, so the ancount loop always terminates); compressed-RDATA (a CNAME
+whose rdata is a 2-byte pointer) is skipped by raw rdlen with the trailing A found at the exact next
+offset (no off-by-one); `ancount=65535` in a 12-byte buffer → `None` in < 100 ms (no spin/alloc); rcode
+= low nibble + QR-check correct; `checked_add` guards the one overflow-capable add. Two MINOR notes (no
+code defect): no answer-name validation (acceptable — the DoH/OS resolver trusts its endpoint and knows
+what it asked; TXID/transport is a separate layer) and bounded-but-uncapped `a_records` (≤ 65535, not a
+DoS). Folded a doc acknowledgement of both onto `parse_response` so the future untrusted-transport path
+cross-checks the answer name. No correctness change. 90 slirp tests; fmt + clippy + no-default green.

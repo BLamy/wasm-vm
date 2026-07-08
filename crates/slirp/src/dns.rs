@@ -114,6 +114,13 @@ pub struct ResponseInfo {
 /// compression loop) — the caller treats that as a resolver failure (SERVFAIL), never a panic or hang.
 /// Bounds-checked and compression-loop-proof throughout (names via the same backward-only walk as
 /// [`parse_name`]).
+///
+/// NOTE (critic MINOR): it does NOT validate that an answer's NAME matches the queried name — it trusts
+/// the response and returns whatever A records it carries. That is fine for the DoH/OS use case (the
+/// resolver trusts its configured endpoint and already knows what it asked; TXID/transport integrity is
+/// a different layer), but a future untrusted-transport path should cross-check the answer name. The
+/// returned `a_records` is bounded by `ancount` (≤ 65535) and by the buffer (each A needs ≥ 15 on-wire
+/// bytes), so a hostile response can't blow up memory.
 pub fn parse_response(msg: &[u8]) -> Option<ResponseInfo> {
     if msg.len() < HEADER_LEN {
         return None;
