@@ -451,3 +451,18 @@ answer → frame → parse round trip, and TC=1 (QR=1/TC=1/NOERROR/no-answers/qu
 tests. fmt + clippy green under BOTH `--all-features` and `--no-default-features`. Remaining for T15
 (env-gated): wire `dns_tcp` to an internal TCP listener on the DNS address (a guest resolver's TCP retry
 lands there), the concrete browser `fetch` DohTransport, and booted-guest acceptance.
+
+**Adversarial cold-clone critic on pass 1n: CLEAN, no defect — plus a POSITIVE verification of the
+boot-gated TC=1 behavior.** The critic's most valuable result: it confirmed (against musl ≥1.2.4 and
+glibc `res_send` source) that an **empty-answer TC=1 NOERROR response DOES trigger a real resolver's TCP
+retry** — the fallback won't silently fail at booted acceptance on modern Alpine (musl ≥1.2.4 falls back
+to TCP UNCONDITIONALLY on the header TC bit, decided BEFORE the answer section; glibc checks the header
+`tc` before consuming records; neither mis-reads it as an authoritative empty answer, and truncated
+responses aren't negative-cached). Also verified SOUND: 100k-iteration fuzz of `next_message` (buffers
+0..70000, incl. >u16 / exactly-fit / off-by-one) — ZERO panics, every result self-consistent (`consumed
+== 2+body`, `msg == buf[2..2+body]`, `NeedMore` iff short); `consumed` always ≥2 so a pipelining caller
+ALWAYS makes progress (no infinite loop, incl. zero-length); no usize overflow (total ≤ 65537);
+round-trip fidelity to the 65535 max; `0x0200` is the correct TC bit (RFC 1035 §4.1.1, TC=bit 9 from MSB)
+placed preserving QR/RD/RA/RCODE with ANCOUNT=0; tests non-vacuous. One out-of-scope caveat (NOT a defect
+here): musl <1.2.4 had NO TCP fallback at all — a guest-resolver-version property; modern Alpine ships
+musl ≥1.2.4. No code change. 125 slirp tests; fmt + clippy + no-default green.
