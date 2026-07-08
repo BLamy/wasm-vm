@@ -103,6 +103,38 @@ still green). **Fixed:** gave the bound a **distinct** `SparseRunExceedsTotal` v
 observable (deleting the guard now changes the returned variant → the test fails). Other 3 mutants
 (bound `<=`→`<`, overlay-gen guard, DATA-slice off-by-one) all caught.
 
-**Next passes (boot/browser-gated):** the `Snapshot`/`Restore` component visitors over CPU/RAM/CLINT/
-PLIC/UART/virtio (with device quiesce) + the native determinism trace-diff (#1); browser OPFS resume
-(#2); the `sync`→snapshot→reload→`fsck` coherence proof (#5).
+### Pass 2 — ComponentSnapshot for CLINT + PLIC (device resume state) (on PR #153)
+**Delivered:** `crates/core/src/resume.rs` adds the `ComponentSnapshot` trait (`const SECTION: u32`,
+`to_snapshot(&self)->Vec<u8>`, `restore(&mut self, &[u8])->Result`); impls for **CLINT**
+(`clint.rs`: mtime|mtimecmp|msip = 17 bytes, all-or-nothing restore, rejects a non-boolean msip byte)
+and **PLIC** (`plic.rs`: full behavioural state priority[32]/enable[2]/threshold[2]/level/claimed[2] =
+156 bytes; the diagnostic `claim_count` is intentionally not snapshotted and resets on restore —
+documented; wrong-length rejected before any write). The first real component visitors — timer +
+interrupt-controller resume state — both **completely round-trip-verifiable headlessly** (bounded,
+fully-enumerable register sets). CPU/RAM visitors + determinism trace-diff stay in the boot pass.
+
+**Local gate:** fmt + clippy `--lib --tests` clean; full core lib suite 122 passed. **CI #153 green.**
+
+**Tests:** CLINT complete round-trip + malformed/all-or-nothing; PLIC behavioural round-trip +
+diagnostic-counter-reset + wrong-length/no-mutate; `a_component_round_trips_through_the_container_
+format` (the whole seam: component → section → blob → `SectionReader` → restored component).
+
+**Adversarial cold-clone critic** (reviewed `HEAD~1..HEAD`): **REFUTED on test-completeness —
+production serialization CLEAN.** Byte-complete + correctly-ordered (a `to_snapshot` field-order swap
+fails the round-trip); `claim_count` drop **verified non-behavioural by reading every use** (written
+only, read only via the diagnostic getter — never by `pending`/`best_source`/`eip`/`claim`/`complete`);
+`PlicState` is the whole PLIC state (no hidden/cached state); malformed-safe; SECTION distinct.
+- **MAJOR (test-gap) — FIX-FIRST:** `plic_behavioural..._drops_the_diagnostic_counter` restored into a
+  *fresh default* (claim_count already `[0;32]`), so the reset assertion was vacuous — removing the
+  reset line **survived**. The real path restores into a *live* PlicState that accumulated the counter,
+  so the reset matters for the "restarts from resume point" contract. **Fixed:** restore into a *dirty*
+  target (different behavioural fields + non-zero claim_count); **verified** the test now fails when the
+  reset line is removed. Production code unchanged.
+
+**Note:** pass 2 landed on **#153** (with pass 1 + the web Docker fix) — a branch-first miss; the clean
+split into a separate stacked PR was blocked as a destructive rewrite of an open PR. Cohesive E3-T12
+work, CI-verified.
+
+**Next passes (boot/browser-gated):** the CPU/RAM `ComponentSnapshot` visitors (+ UART/virtio, with
+device quiesce) + the native determinism trace-diff (#1); browser OPFS resume (#2); the
+`sync`→snapshot→reload→`fsck` coherence proof (#5).
