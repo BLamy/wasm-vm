@@ -247,12 +247,39 @@ every socket; clean errors, no panics).
   `.map_err(?)`; the server never emitted its own HELLO → documented the driver-sends-`hello()`
   contract + test; `on_hello` error mapping made consistent via `map_session_err`.
 
-### E3-T16 status
-Pure protocol stack + relay decision core complete & critic-verified: **codec (#144) → stream
-state (#145) → mux (#146) → session (#147) → relay core (#148).** Remaining legs need live I/O:
-- **async tokio driver** — *native, NO new dep*: a per-connection task executing `SocketOp`s
-  against real `TcpStream`s + `send_credit()`-sized reads, testable against a real echo server.
-  The next stackable native pass.
+### Pass 1f — native async relay driver (PR #149, stacked on #148)
+**Delivered:** `crates/slirp/src/ws_proxy/driver.rs` — `RelayServer`, the tokio driver that executes
+`RelayCore`'s decisions against **real sockets** (behind the `native` feature; wasm build gates it
+out). Carries WS messages over two `mpsc` channels → **no WS dependency**; the tests drive them
+against a **real TCP echo server**, proving the whole chain guest→relay→real TCP→back. Actor model:
+one main task owns `RelayCore` exclusively; per-stream reader + writer tasks.
+
+**THE RELAY NOW WORKS END TO END against real TCP.**
+
+**Local gate:** clippy both configs + fmt clean; full slirp suite **188 passed**; 8 driver
+integration tests 3× no flake. **CI #149 green.**
+
+**Adversarial cold-clone critic** (aimed at the concurrency — the highest-risk kind): **REFUTED —
+2 reproducible CRITICALs, both FIX-FIRST + regression tests mutation-VERIFIED to bite.**
+- **CRITICAL 1 — credit over-read → silent stream drop.** `refresh_credit` published gross credit
+  via a `watch`, which COALESCES; a guest pipelining WINDOWs made the reader out-read the grant →
+  `on_socket_data` reserve failed → stream silently killed (no RST, data lost). **Fixed:** replaced
+  the watch with a per-stream **Semaphore** (permits accumulate, no coalescing); the reader acquires
+  permits *before* reading, so it can't out-read the grant. Regression
+  `pipelined_windows_under_a_flood_deliver_every_byte` — **mutation-verified** (reader-ignores-credit
+  → FAILS).
+- **CRITICAL 2 — head-of-line deadlock.** The main loop `.await`ed a bounded `writer_tx.send()`, so
+  one stalled backend froze the whole WS connection. **Fixed:** (a) unbounded write hand-off (main
+  loop never blocks); (b) window refill tied to backend **drain** not receipt (new
+  `RelayCore::on_backend_written`), bounding a stalled stream's queue to the 256 KiB window.
+  Regression `a_stalled_backend_does_not_freeze_other_streams` — **mutation-verified** (bounded
+  blocking writer → the test HANGS = the deadlock).
+- Also: on a now-unreachable `on_socket_data` error, emit RST to the guest instead of silent drop.
+
+### E3-T16 status — end-to-end working relay over real TCP
+Full stack critic-verified: **codec (#144) → stream state (#145) → mux (#146) → session (#147) →
+relay core (#148) → async driver (#149).** Remaining legs:
 - **WS-wire adapter** (`tokio-tungstenite` — the ONLY piece needing a new dep, Brett's call still
-  open) + **`web_sys` client** + **booted 1 GB byte-diff / 500-stream-`lsof` acceptance** —
-  wire adapter is one thin layer; client + boot are browser/boot-gated.
+  open): a thin layer bridging a real WebSocket's binary messages to the driver's `inbound`/
+  `outbound` channels, which already speak the full protocol.
+- **`web_sys` client** + **booted 1 GB byte-diff / 500-stream-`lsof` acceptance** — browser/boot-gated.
