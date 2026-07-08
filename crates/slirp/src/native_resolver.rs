@@ -10,6 +10,14 @@
 //! guess `NxDomain` — SERVFAIL makes the guest fail fast and RETRY, which is the safe behavior for a
 //! transient upstream blip; a true NXDOMAIN just costs one retry. (The DoH resolver, which sees the
 //! real RCODE, will return `NxDomain` precisely.)
+//!
+//! CAVEAT for the future concurrent-dispatch wiring (critic MINOR): `lookup_host` runs a BLOCKING
+//! `getaddrinfo` on tokio's blocking threadpool. Our `timeout` returns `Failed` on schedule, but it
+//! only DROPS the future — the underlying getaddrinfo thread stays pinned until the OS resolver
+//! returns (up to `/etc/resolv.conf`'s own multi-second timeout). Per-query awaiting (as the forwarder
+//! does today) is fine, but a path that dispatches many concurrent queries to a black-holed resolver
+//! could pin many of tokio's blocking threads — so the wiring slice should bound resolve concurrency
+//! (or move to a raw async resolver so `timeout` truly cancels the in-flight lookup).
 
 use std::net::IpAddr;
 use std::time::Duration;

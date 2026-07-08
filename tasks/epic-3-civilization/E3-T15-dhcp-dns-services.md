@@ -175,3 +175,21 @@ port). Folded in: `handle` now takes the guest `src_port` and `UdpReply` carries
 (67/53) + `to_port` (68 for DHCP, the query's source port for DNS) — the reply is now fully addressable
 with no out-of-band caller state. Tests assert both ports (DNS reply → 45123, DHCP → 68). 80 slirp
 tests; fmt + clippy green both configs.
+
+**Adversarial cold-clone critic on pass 1e: essentially CLEAN, one MINOR caveat documented.** The critic
+attacked crafted names, the timeout, empty-ips composition, dedup, and CI-determinism with repros — none
+hung/panicked/misresolved. Verified SOUND: crafted names (`example.com.`, `a:b:c`, `[::1]`, `evil:22`,
+300-char label, NUL) all → `Failed`/`Resolved{empty}` within the deadline (and the wire path can't even
+inject a trailing dot — `parse_name` strips it); the timeout genuinely bounds it (1 ms-timeout resolve →
+`Failed` in 2.7 ms on both current- and multi-thread runtimes); empty-ips composes correctly with the
+forwarder's un-cached-empty-NOERROR branch (ttl:60 harmlessly dropped); no duplicate A records
+(getaddrinfo with SOCK_STREAM); CI-determinism is fine (ubuntu-latest, not a minimal container — glibc/musl
+have the RFC-6761 `localhost→127.0.0.1` built-in fallback plus `/etc/hosts`); mutation-checked
+(`resolve→Failed` fails the localhost test). One **MINOR** (inherent to `lookup_host`, not a coding error,
+not a live bug here — no concurrent dispatch is wired yet): `tokio::time::timeout` returns `Failed` on
+schedule but only DROPS the future — the blocking getaddrinfo thread stays pinned until the OS resolver
+returns, so a future concurrent-dispatch path against a black-holed resolver could pin tokio blocking
+threads. Folded in as an in-code CAVEAT so the wiring slice bounds resolve concurrency (or uses a raw async
+resolver). Two NITs (harmless, noted): v4-mapped-IPv6 filtered as empty; the `::1` test's Failed escape
+hatch is loose (but the v4-only assertion in the localhost test covers the filter deterministically). No
+correctness change. 84 slirp tests; fmt + clippy + no-default build green.
