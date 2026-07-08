@@ -9,9 +9,11 @@
 //! tokio → browser-safe.
 
 pub mod mux;
+pub mod relay;
 pub mod session;
 pub mod stream;
 pub use mux::{MAX_STREAMS, Mux, MuxError, MuxEvent, Role};
+pub use relay::{INITIAL_WINDOW, RelayActions, RelayCore, RelayError, SocketOp};
 pub use session::{HandshakeError, Session, SessionError, accept_hello, hello};
 pub use stream::{StreamError, StreamState, Terminal};
 
