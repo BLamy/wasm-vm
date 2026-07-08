@@ -29,6 +29,8 @@ pub mod resolver;
 pub mod stack;
 pub mod tcp;
 pub mod udp;
+#[cfg(all(test, feature = "native"))]
+mod udp_integration_tests;
 
 pub use manager::{Action, FlowManager, FrameOutcome};
 
