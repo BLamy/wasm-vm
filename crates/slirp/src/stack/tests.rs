@@ -693,8 +693,11 @@ fn run_dhcp_leaves_dns_datagrams_queued_for_the_async_layer() {
 
     let sent = s.run_dhcp(&dhcp);
     assert_eq!(sent, 1, "the DHCP frame was serviced");
-    // The DNS datagram is UNTOUCHED — still queued for the async servicing loop.
+    // The DNS datagram is UNTOUCHED — still queued, addressing AND payload intact — for the async loop.
     let left = s.take_service_udp();
     assert_eq!(left.len(), 1, "the DNS datagram remains queued");
+    assert_eq!(left[0].dst_ip, net::DNS);
     assert_eq!(left[0].dst_port, 53);
+    assert_eq!(left[0].src_port, 40000);
+    assert_eq!(left[0].payload, b"query", "payload not mutated");
 }

@@ -351,3 +351,19 @@ the DNS datagram stays queued untouched for the async loop. 113 slirp tests. fmt
 BOTH `--all-features` and `--no-default-features`. Remaining for T15: the ASYNC DNS servicing loop
 (drive `DnsForwarder`/`UdpServices` from the diverted :53 datagrams + `push_egress` the framed answer,
 like the pump's bridge), the concrete `fetch` DohTransport, TCP-fallback, booted-guest acceptance.
+
+**Adversarial cold-clone critic on pass 1k: SOUND — and a valuable POSITIVE verification of booted
+acceptance.** The critic traced the reply addressing against busybox `udhcpc`'s actual source and
+CONFIRMED a real booted client would accept the L2-unicast + L3-broadcast OFFER in EVERY state (the one
+risk that could otherwise only surface at booted acceptance): pre-lease it reads a RAW socket filtered
+only on UDP:68 + checksum (L2/L3 dst ignored → the unicast-MAC frame is received); during RENEW it binds
+`INADDR_ANY:68` with `SO_BROADCAST` (→ the 255.255.255.255:68 datagram still reaches it). Also verified
+SOUND: server-id + L3 source both = `net::GATEWAY` (so the client's later unicast REQUEST/RENEW is
+re-diverted); the partition preserves DNS order with no drop/double-service; `handle→None`
+(RELEASE/DECLINE/INFORM) consumes without reply and won't reprocess; no smoltcp interaction; and all 3
+tests are mutation-load-bearing (drop dispatch → 3 fail; frame-but-not-egress → 2 fail; drop DNS → the
+queued test fails). Two accuracy items, no functional bug: MINOR — my "client has no IP yet" doc
+rationale is WRONG for the RENEW path (broadcast is still safe, just for a different reason: udhcpc
+receives it in every listen mode); reworded the doc to state that precisely. NIT — the DNS-queued test
+now also asserts the payload/addressing are intact (not just `len==1`). 113 slirp tests; fmt + clippy +
+no-default green.
