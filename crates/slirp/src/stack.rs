@@ -16,8 +16,13 @@ use smoltcp::wire::{
 };
 
 use crate::device::SlirpDevice;
+use crate::dhcp::DhcpServer;
 use crate::net;
-use crate::udp_frame::{GuestUdp, parse_udp};
+use crate::udp_frame::{GuestUdp, build_udp_frame, parse_udp};
+
+/// The BOOTP/DHCP client port a server reply is addressed to.
+const DHCP_CLIENT_PORT: u16 = 68;
+const DHCP_SERVER_PORT: u16 = 67;
 
 /// Per-flow smoltcp TCP socket buffer size (64 KiB each way).
 const TCP_BUF: usize = 64 * 1024;
@@ -230,6 +235,42 @@ impl SlirpStack {
     /// in the next [`take_egress`](Self::take_egress) alongside smoltcp's own output.
     pub fn push_egress(&mut self, frame: Vec<u8>) {
         self.device.tx.push_back(frame);
+    }
+
+    /// Service every DIVERTED DHCP datagram (dst port 67) with `dhcp`, framing each reply back to the
+    /// guest and egressing it. DHCP is fully SYNCHRONOUS (no resolver), so it's serviced end-to-end
+    /// here; DNS datagrams (dst port 53) are LEFT in the service queue for the async layer.
+    ///
+    /// Reply addressing (RFC 2131): the client is acquiring its lease and has no IP yet, so the reply
+    /// is sent with a BROADCAST L3 destination (`255.255.255.255:68`) from the gateway server
+    /// (`10.0.2.2:67`), unicast at L2 back to the requesting guest's MAC (it accepts a broadcast-IP
+    /// frame addressed to its own MAC without flooding the link). Returns the number of replies sent.
+    pub fn run_dhcp(&mut self, dhcp: &DhcpServer) -> usize {
+        // Partition: take DHCP datagrams, leave the rest (DNS) queued for the async layer.
+        let pending = std::mem::take(&mut self.service_udp);
+        let mut sent = 0;
+        for g in pending {
+            if g.dst_port != DHCP_SERVER_PORT {
+                self.service_udp.push(g); // not DHCP (DNS) — keep it for the async servicing loop
+                continue;
+            }
+            if let Some(reply) = dhcp.handle(&g.payload) {
+                let frame = build_udp_frame(
+                    self.mac,     // from the gateway MAC
+                    g.src_mac,    // L2-unicast back to the requesting guest
+                    net::GATEWAY, // from the DHCP server (10.0.2.2)
+                    DHCP_SERVER_PORT,
+                    BROADCAST, // L3 broadcast — the client has no IP yet
+                    DHCP_CLIENT_PORT,
+                    &reply,
+                );
+                if let Some(frame) = frame {
+                    self.device.tx.push_back(frame);
+                    sent += 1;
+                }
+            }
+        }
+        sent
     }
 
     /// Drive smoltcp once at `now_ms`: process queued guest frames and emit any replies.

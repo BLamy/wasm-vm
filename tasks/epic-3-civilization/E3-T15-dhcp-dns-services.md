@@ -335,3 +335,19 @@ the `return` removed, PASSES with it). Two lower notes (not fixed, consistent wi
 `service_udp` is unbounded (so are `device.rx`/`tx` — not a new DoS surface), and diverted frames bypass
 smoltcp's checksum validation (harmless — the guest's own frame, `dhcp.rs` parses defensively, UDP
 checksums are optional and DHCP often sends 0). 110 slirp tests; fmt + clippy + no-default green.
+
+**2026-07-08 — pass 1k: synchronous DHCP servicing (`SlirpStack::run_dhcp`).** The DHCP path is now
+closed in PRODUCTION code (not just a test): `run_dhcp(&DhcpServer) -> usize` drains every diverted DHCP
+datagram (dst :67), dispatches it to the real `DhcpServer`, frames each reply, egresses it, and returns
+the count. DHCP is fully SYNCHRONOUS (no resolver), so it's serviced end-to-end here; DNS datagrams
+(dst :53) are LEFT in the service queue for the async layer (the loop partitions: keep dst_port != 67).
+Reply addressing (RFC 2131): the client is acquiring its lease and has no IP yet, so the reply is sent
+with a BROADCAST L3 destination (255.255.255.255:68) from the gateway server (10.0.2.2:67), unicast at
+L2 back to the requesting guest's MAC (it accepts a broadcast-IP frame to its own MAC without flooding).
+Tests (3, frame-injection, no boot): a full DISCOVER→OFFER→REQUEST→ACK handshake through `run_dhcp` (the
+OFFER frame is UDP :67→:68, L3 broadcast, from the gateway MAC, yiaddr = guest; the REQUEST for our
+address → ACK); a wrong-address REQUEST → NAK; and a mixed queue where the DHCP frame is serviced while
+the DNS datagram stays queued untouched for the async loop. 113 slirp tests. fmt + clippy green under
+BOTH `--all-features` and `--no-default-features`. Remaining for T15: the ASYNC DNS servicing loop
+(drive `DnsForwarder`/`UdpServices` from the diverted :53 datagrams + `push_egress` the framed answer,
+like the pump's bridge), the concrete `fetch` DohTransport, TCP-fallback, booted-guest acceptance.
