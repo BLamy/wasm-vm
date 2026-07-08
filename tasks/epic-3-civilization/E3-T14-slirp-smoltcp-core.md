@@ -3,8 +3,8 @@ id: E3-T14
 epic: 3
 title: Slirp-style user-mode network core on smoltcp with NAT
 priority: 314
-status: pending
-depends_on: [E3-T13]
+status: in_progress
+depends_on: [E3-T13, E3-T12]
 estimate: L
 capstone: false
 ---
@@ -14,6 +14,11 @@ A user-mode TCP/IP stack — our slirp — that terminates the guest's ethernet 
 in Rust: smoltcp parses/answers guest frames, guest-initiated TCP connections are accepted
 locally and NATed onto an abstract `OutboundConnector` trait, UDP flows get per-flow NAT
 entries, all with no privileged host networking. Architecture documented before code.
+
+**VISIBLE-RAIL DEFERRAL 2026-07-08:** pause broader networking after the current verified
+core slices until the Docker tab has one real bundled busybox Run (E3.5-T05a) and that same
+state reloads through snapshot restore (E3-T12). Slirp resumes after the visible path is
+undeniable.
 
 ## Context
 This is the largest networking task; the design doc is a deliverable, not an afterthought.
@@ -336,7 +341,44 @@ stream yields infinite bytes; guest never ACKs) drives 300 passes and asserts to
 verified it FAILS (unbounded) without the guard and PASSES with it (holds ~one channel drain). 44 slirp
 tests. fmt + clippy green under BOTH `--all-features` and `--no-default-features`. **CI green on #126.**
 
-**Pass 2b (next — the async byte-pump):** wire `OutboundSyn` → create a smoltcp listening socket for the
-4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
-native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).
-The booted-Alpine acceptance leg is later (long boot, env-gated).
+**2026-07-08 — pass 3a: `SlirpBackend` — slirp wired into the machine's virtio-net (`crates/cli`).**
+Everything above lived in `crates/slirp` and was driven by tests; this connects it to the actual VM.
+The machine's `NetBackend` (`crates/core/dev/virtio/net.rs`) is **synchronous** (the run loop calls
+`tx`/`rx`/`rx_ready` every quantum); slirp's `Bridge` is **async** (`on_guest_frame` awaits `connect`,
+`service` spawns tokio pumps). `crates/cli/src/net_backend.rs` bridges them with a **dedicated driver
+thread**: it owns the `Bridge` on a current-thread tokio runtime and loops — recv guest frames off an
+unbounded channel → `on_guest_frame`, a 1 ms `interval` tick → `poll`/`service`/`expire`, then drain
+`take_egress` into an `Arc<Mutex<VecDeque>>` the guest reads. The non-`Send` smoltcp state never leaves
+that thread; only `Vec<u8>` frames cross, over the channel + shared queue. `tx` is a channel send, `rx`
+/`rx_ready` read the shared queue — so the run loop is never blocked by network I/O. `Drop` drops the
+sender (→ driver `recv()` yields `None` → loop breaks) and joins the thread. Wired into `boot.rs` behind
+`--net-slirp` (takes precedence over `--net` loopback), gated with the boot subcommand (both cfg'd out
+under `zicsr-stub`, as CI's `--all-features` clippy run does).
+
+**Verified headlessly (2 in-crate tests, driven exactly as the run loop drives the backend — no boot):**
+(A) `guest_arp_for_gateway_gets_a_reply_through_the_backend` — a guest ARP-for-the-gateway fed via
+`tx` comes back as a gateway ARP reply (op=reply, spa=10.0.2.2, sha=GATEWAY_MAC) via `rx`, proving the
+whole async-driver path end to end (tx → channel → driver thread → tokio → Bridge → SlirpStack →
+take_egress → shared queue → rx). (B) `guest_syn_dials_a_real_server_and_gets_a_syn_ack` — an ARP then
+a hand-built (smoltcp-emitted, checksummed) guest SYN to a **real** local `tokio::net::TcpListener`
+makes slirp actually **dial** it (`listener.accept()` fires within 3 s ⇒ `NativeConnector` opened a
+genuine outbound socket) and hand back a SYN-ACK to the guest's source port — slirp's actual purpose
+(guest TCP → real socket) proven through the backend. Debugging (A→B) surfaced the neighbor-cache need:
+without a preceding ARP the stack ARP-storms for the guest's MAC and can't address the SYN-ACK — the
+test ARPs first, exactly as a real guest stack would.
+
+**Local gate:** fmt clean; `clippy -p wasm-vm-cli --all-targets` clean BOTH default (compiles
+boot+net_backend) AND `--all-features` (zicsr-stub cfg's them out) — 0 warnings; drive-by fixed 2
+pre-existing `boot.rs` lints (collapsible-if, manual `Range::contains`) surfaced now that default clippy
+compiles boot. New deps in `crates/cli`: `wasm-vm-slirp` (path) + `tokio` (rt/macros/time/sync/net/
+io-util) — native harness only; the browser build never pulls them.
+
+**Known limitations (documented in the module, for the next passes):** DHCP/DNS auto-config isn't wired
+yet, so a booted guest needs a static address until pass 3b (the tests drive frames directly with the
+static 10.0.2.15). `on_guest_frame` awaits `connect` inside the driver's select arm, so a connect to an
+*unreachable* host serializes the loop until its timeout — fine for reachable/local flows; the fix
+(spawn the connect) is the concurrency pass. The booted-Alpine acceptance (`wget` through slirp to a
+local server; 50-concurrent; 100 MB integrity) remains the env-gated long-boot leg.
+
+**Next (pass 3b):** wire DHCP (`stack.run_dhcp`) + DNS/UDP services (`take_service_udp` + `UdpServices`)
+into the driver loop so a booted guest auto-configures eth0, then the env-gated booted-Alpine acceptance.
