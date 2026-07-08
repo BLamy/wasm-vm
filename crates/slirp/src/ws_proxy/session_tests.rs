@@ -114,13 +114,31 @@ fn after_hello_streams_route_to_the_mux() {
 }
 
 #[test]
-fn a_second_hello_after_ready_is_rejected() {
+fn a_second_hello_after_ready_does_not_reset_a_live_mux() {
+    // A replayed HELLO must be rejected AND must not replace the mux — otherwise it's a reset
+    // attack that silently drops every live stream.
     let mut server = Session::new(Role::Server);
     server.on_hello(&hello(vec![])).unwrap();
     assert!(server.is_ready());
+    // Open a live stream so a mux replacement would be observable.
+    server
+        .on_frame(Frame::Open {
+            stream: 1,
+            host: "a".into(),
+            port: 80,
+        })
+        .unwrap();
+    assert_eq!(server.mux().unwrap().live_count(), 1);
+
     assert_eq!(
         server.on_hello(&hello(vec![])),
         Err(SessionError::AlreadyReady)
+    );
+    // The live stream survived — the mux was not reset.
+    assert_eq!(
+        server.mux().unwrap().live_count(),
+        1,
+        "a replayed HELLO must not drop live streams"
     );
 }
 
