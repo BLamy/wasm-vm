@@ -157,6 +157,15 @@ fn malformed_frames_never_panic_and_decode_to_none() {
     );
     // OPEN with a non-UTF8 host.
     assert!(Frame::decode(&[0, 0, 0, 1, 1, 1, 0xff, 0x00, 0x50]).is_none());
+    // OPEN with trailing bytes after the port — like every sibling opcode, an exact-length
+    // frame; extra bytes are a protocol error, not silently dropped (keeps the wire canonical).
+    assert!(
+        Frame::decode(&[
+            0, 0, 0, 1, 1, 5, b'a', b'.', b'c', b'o', b'm', 0x00, 0x50, 0xde, 0xad
+        ])
+        .is_none(),
+        "OPEN must reject trailing bytes after the port"
+    );
 
     // WINDOW with the wrong credit length.
     assert!(

@@ -44,8 +44,10 @@ decoder with garbage must never panic or leak.
 - **`HELLO`** — version negotiation + an (optional, may be empty) auth token. Auth/rate-limiting
   is E3-T19; the token FIELD exists now so the wire format doesn't change later.
 - **`OPEN`** — connect to `host:port`. The host is a **name, not an IP**, so the relay resolves it
-  (and E3-T15's DNS can route through the relay). `host_len` is a u8, sufficient for a ≤253-byte
-  DNS name; an over-long host is a protocol error.
+  (and E3-T15's DNS can route through the relay). `host_len` is a u8 (max 255, comfortably
+  covering a ≤253-byte DNS name); a host that won't fit a u8 length is a protocol error. The
+  `OPEN` payload is exact-length — trailing bytes after the port are a protocol error (as for
+  every fixed-shape opcode), so the wire stays canonical.
 - **`OPEN_FAIL` `code`** — a small errno-ish class (refused / unreachable / timed-out / denied),
   mapped by the client to the guest's connect outcome.
 - **`WINDOW`** — **credit-based flow control.** The receiver grants byte credits per stream; a

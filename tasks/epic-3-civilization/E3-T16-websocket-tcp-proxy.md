@@ -65,4 +65,56 @@ Kill the server mid-transfer: guest must get a connection error, and (with T25 l
 reconnect must be possible — for now, no wasm panic.
 
 ## Verification log
-(empty)
+
+### Pass 1a — shared framing codec + spec (PR #144, stacked on #143)
+**Delivered:** `docs/design/ws-proxy-protocol.md` (the wire spec — version 1) and
+`crates/slirp/src/ws_proxy.rs` — the `Frame` enum with `encode()->Option<Vec<u8>>` and
+`decode(&[u8])->Option<Frame>`, shared by the (later) `WsConnector` and relay `proxy/` so
+they agree by construction. Pure, no tokio, browser-safe. Frame =
+`[stream_id:u32 BE][opcode:u8][payload]`, one frame per WS binary message; opcodes
+0=HELLO(ver+token, stream 0)/1=OPEN(host_len+host+port)/2=OPEN_OK/3=OPEN_FAIL(code)/4=DATA/
+5=SHUTDOWN_WR/6=CLOSE/7=RST/8=WINDOW(credit:u32). Per-stream credit flow control (not the
+WS global `bufferedAmount`).
+
+**Local gate:** `cargo clippy --all-features --tests` clean; `--no-default-features --tests`
+clean; full slirp suite 130 passed / 0 failed / 1 ignored; the 5 ws_proxy tests pass.
+
+**Tests (charter-aligned):**
+- `every_frame_round_trips` — `decode(encode(F))==Some(F)` for all 11 frame shapes.
+- `conformance_vectors_are_byte_exact` — pins HELLO/OPEN/WINDOW/RST byte layouts (the
+  client/server contract can't silently drift).
+- `a_255_byte_host_is_the_max_a_longer_one_is_rejected` — the u8 host-length boundary.
+- `hello_must_be_on_stream_zero_and_others_must_not` — stream-0 reservation, both directions.
+- `malformed_frames_never_panic_and_decode_to_none` — targeted bad payloads **plus** every
+  truncation + every single-byte corruption of a valid-frame set + 50,000 structured-random
+  buffers, all asserting no panic.
+
+**CI:** #144 fmt / clippy / determinism / all feature-matrix legs (std, trace, wasm,
+no-default) / perf-smoke — all pass.
+
+**Adversarial cold-clone critic** (fresh clone, reviewed `origin/task/e3-t15n..HEAD`;
+brute-forced every opcode 0–9 × stream {0,1} × payload 0–6 bytes, single-byte corruption,
+truncation, 50k+ random buffers; mutation-tested the suite): **verdict CLEAN on all
+hard-refutation criteria** — no panic, no OOB, no integer overflow (`host_len as usize + 2`
+≤ 257), no silent wrong-frame mis-decode, no resource leak; stream-0 gating airtight
+(checked before the opcode match); all 4 injected mutations (`host_len..+1`, port
+`to_be`→`to_le`, unknown-opcode→DATA, credit `to_be`→`to_le`) were **caught** by the suite.
+
+Found **1 real MAJOR** defect — **FIX-FIRST applied:**
+- `OP_OPEN` was the sole opcode that didn't enforce exact payload length: it read host+port
+  and silently dropped trailing bytes, so two distinct wire messages decoded to one `Frame`
+  and `decode`'s output re-encoded to *different* bytes (non-canonical), violating the doc's
+  "a malformed payload is a protocol error → None" and the suite's own `RST takes no
+  payload` invariant. Repro: `decode([0,0,0,1, 1,5,'a','.','c','o','m', 0x00,0x50, 0xde,0xad,
+  0xbe])` → `Some(Open{host:"a.com",port:80})` (16 in, re-encodes to 13). **Fixed**
+  (`ws_proxy.rs`): after reading the port, require `rest.len() == host_len + 2` else `None`,
+  matching every sibling opcode. **Regression test added** (`malformed_frames_never_panic…`:
+  OPEN + 2 trailing bytes → `None`) — fails on the pre-fix decoder, passes now.
+- MINOR doc drift (host_len "≤253" vs code's u8 max 255) — clarified in the spec (benign;
+  u8 max 255 comfortably covers a 253-byte DNS name).
+
+Post-fix gate re-run: clippy both configs clean, full slirp suite 130 passed / 0 failed, the
+5 ws_proxy tests pass.
+
+**Env-gated later passes:** tokio relay server, `web_sys` `WsConnector`, credit-enforcement
++ 500-stream-reap + 1 GB byte-diff acceptance — need a live browser/boot session.

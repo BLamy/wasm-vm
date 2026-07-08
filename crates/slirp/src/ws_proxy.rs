@@ -143,6 +143,12 @@ impl Frame {
                 let host_len = host_len as usize;
                 let host_bytes = rest.get(..host_len)?;
                 let port_bytes = rest.get(host_len..host_len + 2)?;
+                // Exact-length like every sibling opcode: trailing bytes after the port are a
+                // protocol error, not silently dropped (keeps the wire canonical — one frame,
+                // one byte string).
+                if rest.len() != host_len + 2 {
+                    return None;
+                }
                 let host = core::str::from_utf8(host_bytes).ok()?.to_string();
                 let port = u16::from_be_bytes([port_bytes[0], port_bytes[1]]);
                 Some(Frame::Open { stream, host, port })
