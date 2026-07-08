@@ -701,3 +701,143 @@ fn run_dhcp_leaves_dns_datagrams_queued_for_the_async_layer() {
     assert_eq!(left[0].src_port, 40000);
     assert_eq!(left[0].payload, b"query", "payload not mutated");
 }
+
+// ── run_dns: asynchronous DNS servicing through the stack ────────────────────
+use crate::resolver::{DnsForwarder, Resolution, Resolver};
+use std::future::Future;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicUsize, Ordering};
+
+/// A resolver returning a fixed A record, counting upstream lookups (to prove the cache hit).
+#[derive(Clone)]
+struct FixedResolver {
+    ip: Ipv4Addr,
+    calls: Arc<AtomicUsize>,
+}
+impl Resolver for FixedResolver {
+    #[allow(clippy::manual_async_fn)]
+    fn resolve(&self, _name: &str) -> impl Future<Output = Resolution> + Send {
+        self.calls.fetch_add(1, Ordering::SeqCst);
+        let ip = self.ip;
+        async move {
+            Resolution::Resolved {
+                ips: vec![ip],
+                ttl_secs: 120,
+            }
+        }
+    }
+}
+
+/// Inject a guest DNS A query for `name` from `src_port` to 10.0.2.3:53.
+fn inject_dns(s: &mut SlirpStack, src_port: u16, name: &str) {
+    let query = crate::dns::build_query(0, name, crate::dns::TYPE_A);
+    let frame = build_udp_frame(
+        GUEST_MAC,
+        GW_MAC,
+        net::GUEST,
+        src_port,
+        net::DNS,
+        53,
+        &query,
+    )
+    .unwrap();
+    s.inject(frame);
+}
+/// The first A record IP in a DNS answer frame's payload.
+fn answer_first_a(frame: &[u8]) -> Option<Ipv4Addr> {
+    let g = parse_udp(frame)?;
+    crate::dns::parse_response(&g.payload)?
+        .a_records
+        .first()
+        .map(|(ip, _)| *ip)
+}
+
+#[tokio::test]
+async fn run_dns_answers_a_query_back_to_the_guest() {
+    let mut s = SlirpStack::new(GW_MAC);
+    let calls = Arc::new(AtomicUsize::new(0));
+    let mut fwd = DnsForwarder::new(
+        FixedResolver {
+            ip: Ipv4Addr::new(93, 184, 216, 34),
+            calls: calls.clone(),
+        },
+        16,
+    );
+
+    inject_dns(&mut s, 40000, "example.com");
+    assert_eq!(s.run_dns(&mut fwd, 0).await, 1, "one answer sent");
+
+    let eg = s.take_egress();
+    assert_eq!(eg.len(), 1);
+    let g = parse_udp(&eg[0]).unwrap();
+    assert_eq!(g.src_ip, net::DNS, "answer from the resolver");
+    assert_eq!(g.src_port, 53);
+    assert_eq!(
+        g.dst_ip,
+        net::GUEST,
+        "unicast to the guest (it has its IP now)"
+    );
+    assert_eq!(g.dst_port, 40000, "back to the query's source port");
+    assert_eq!(g.src_mac, GW_MAC);
+    assert_eq!(
+        answer_first_a(&eg[0]),
+        Some(Ipv4Addr::new(93, 184, 216, 34))
+    );
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+}
+
+#[tokio::test]
+async fn run_dns_serves_a_repeat_from_cache_without_re_resolving() {
+    let mut s = SlirpStack::new(GW_MAC);
+    let calls = Arc::new(AtomicUsize::new(0));
+    let mut fwd = DnsForwarder::new(
+        FixedResolver {
+            ip: Ipv4Addr::new(1, 2, 3, 4),
+            calls: calls.clone(),
+        },
+        16,
+    );
+
+    inject_dns(&mut s, 40000, "a.test");
+    s.run_dns(&mut fwd, 1000).await;
+    let _ = s.take_egress();
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+
+    // A second query for the same name, a few seconds later → served from cache, no new lookup.
+    inject_dns(&mut s, 40001, "a.test");
+    assert_eq!(s.run_dns(&mut fwd, 5000).await, 1);
+    assert_eq!(
+        answer_first_a(&s.take_egress()[0]),
+        Some(Ipv4Addr::new(1, 2, 3, 4))
+    );
+    assert_eq!(
+        calls.load(Ordering::SeqCst),
+        1,
+        "the cache served the repeat"
+    );
+}
+
+#[tokio::test]
+async fn run_dns_leaves_dhcp_datagrams_queued_for_run_dhcp() {
+    let mut s = SlirpStack::new(GW_MAC);
+    let mut fwd = DnsForwarder::new(
+        FixedResolver {
+            ip: Ipv4Addr::new(1, 2, 3, 4),
+            calls: Arc::new(AtomicUsize::new(0)),
+        },
+        16,
+    );
+    // A DHCP DISCOVER + a DNS query in the queue.
+    inject_dhcp(&mut s, &dhcp_msg(1, None));
+    inject_dns(&mut s, 40000, "example.com");
+
+    assert_eq!(
+        s.run_dns(&mut fwd, 0).await,
+        1,
+        "the DNS query was answered"
+    );
+    // The DHCP datagram is untouched — still queued for run_dhcp.
+    let left = s.take_service_udp();
+    assert_eq!(left.len(), 1, "the DHCP datagram remains queued");
+    assert_eq!(left[0].dst_port, 67);
+}

@@ -367,3 +367,21 @@ rationale is WRONG for the RENEW path (broadcast is still safe, just for a diffe
 receives it in every listen mode); reworded the doc to state that precisely. NIT — the DNS-queued test
 now also asserts the payload/addressing are intact (not just `len==1`). 113 slirp tests; fmt + clippy +
 no-default green.
+
+**2026-07-08 — pass 1l: asynchronous DNS servicing (`SlirpStack::run_dns`).** The DNS path is now closed
+in PRODUCTION code, symmetric to `run_dhcp` — the async counterpart. `run_dns<R: Resolver>(&mut
+DnsForwarder<R>, now_ms).await -> usize` drains every diverted DNS datagram (dst :53), dispatches each to
+the async `DnsForwarder` (cache hit → answer immediately; miss → `.await` the resolver), frames the
+answer, egresses it, and returns the count. DHCP datagrams (dst :67) are LEFT queued for `run_dhcp` (the
+loop partitions). Answer addressing: unicast to the guest (which HAS its IP by now) — from the resolver
+`10.0.2.3:53` to the query's own `(src_ip, src_port)`, L2 to its MAC. A response too large to frame (>
+`MAX_UDP_PAYLOAD`) is dropped (TC=1 truncation is a later leg; A-record answers are always small). No
+tokio in the signature (async fn) → browser-safe. Tests (3, `#[tokio::test]`, frame-injection + a
+counting resolver, no boot): a DNS A query frame → `run_dns` → an answer frame egresses UNICAST to the
+guest (from 10.0.2.3:53 to the guest's src_ip:src_port, L2 to its MAC) carrying the A record; a repeat
+query is served from the forwarder's cache WITHOUT re-resolving (upstream consulted once); and a mixed
+queue where the DNS query is answered while the DHCP datagram stays queued for `run_dhcp`. 116 slirp
+tests. fmt + clippy + no-default BUILD green (async `run_dns` compiles into the browser build). BOTH
+services are now serviced end-to-end through the real stack (frame-verified); the remaining T15 legs are
+purely env-gated: the concrete `fetch` DohTransport (wasm crate), TCP-fallback for truncated answers, and
+booted-guest acceptance (a real Alpine acquiring its lease + resolving names).
