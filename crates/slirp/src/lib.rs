@@ -56,7 +56,8 @@ pub use stack::SlirpStack;
 pub use udp::{UdpReply, UdpServices};
 pub use udp_frame::{GuestUdp, build_udp_frame, parse_udp};
 pub use ws_proxy::{
-    Frame as WsFrame, Mux as WsMux, MuxError as WsMuxError, MuxEvent as WsMuxEvent, Role as WsRole,
+    Frame as WsFrame, HandshakeError as WsHandshakeError, Mux as WsMux, MuxError as WsMuxError,
+    MuxEvent as WsMuxEvent, Role as WsRole, Session as WsSession, SessionError as WsSessionError,
     StreamError as WsStreamError, StreamState as WsStreamState, Terminal as WsTerminal,
     VERSION as WS_PROXY_VERSION,
 };
