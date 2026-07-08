@@ -153,7 +153,16 @@ async function runLinuxBoot(opts, banner) {
     });
     // Route terminal keystrokes/paste to the guest's ttyS0 via the backpressure bridge.
     ui.attachSink((bytes) => {
-      if (linuxCtl) linuxCtl.sendInput(bytes);
+      // Defense-in-depth: the wasm machine rejects re-entrant sendInput (a console/output callback
+      // must not drive the machine). Any such stray call is contained here so it can never propagate
+      // up and stop the run loop — which would silently brick the terminal. Well-behaved callers
+      // (docker.js) already defer input out of the callback; this guard is the safety net.
+      if (!linuxCtl) return;
+      try {
+        linuxCtl.sendInput(bytes);
+      } catch (e) {
+        console.warn("dropped a terminal input chunk:", e?.message || e);
+      }
     });
     // Fit the rendered grid to the page now that the terminal is the active view, and print
     // the matching stty hint so the guest can be told its real window size (serial has no winsize).
