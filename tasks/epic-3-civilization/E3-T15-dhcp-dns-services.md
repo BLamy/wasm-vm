@@ -267,3 +267,21 @@ the REAL `NativeResolver`: `localhost` resolves to 127.0.0.1 end-to-end through 
 a mock. test+native-gated. 99 slirp tests. fmt + clippy + no-default build green. This closes out the
 natively-verifiable control layer; the boot/browser-gated legs remain: concrete `fetch` DohTransport
 (wasm crate), TCP-fallback, wiring `UdpServices` into the SlirpStack UDP path, booted-guest acceptance.
+
+**2026-07-08 — pass 1i: UDP datagram framing (`udp_frame.rs`).** The pure, browser-safe glue between
+the frame-level stack and the payload-level `UdpServices` — the architecture-independent building block
+the UDP stack-wiring needs regardless of how DHCP/DNS are ultimately hooked in. `parse_udp(frame) ->
+Option<GuestUdp{ src_mac, src_ip, src_port, dst_ip, dst_port, payload }>` pulls the fields dispatch needs
+plus what's needed to ADDRESS a reply out of a guest ethernet frame (`None` on non-IPv4 / non-UDP /
+malformed — never panics, leaving the frame to the TCP/ICMP/NAT paths). `build_udp_frame(src_mac,
+dst_mac, from_ip, from_port, to_ip, to_port, payload)` frames an Ethernet+IPv4+UDP reply with correct
+checksums (via smoltcp wire types) — handles both a DHCP broadcast reply (to the ff:ff MAC / 255.255…
+IP) and a DNS unicast (to the guest MAC/IP/port). No tokio → browser build. Tests (5): build↔parse
+round-trip (all fields), a guest DHCP DISCOVER (0.0.0.0:68 → 255.255.255.255:67) parses, empty-payload
+round-trip, non-UDP/non-IPv4 rejection (ARP + a TCP-protocol IPv4 packet → None), and a malformed sweep
+(short/no-room + every truncation & single-byte corruption of a valid frame) asserting no panic. 104
+slirp tests. fmt + clippy green under BOTH `--all-features` and `--no-default-features`. (Local gate
+caught 6 useless-conversion clippy warnings — smoltcp's `Ipv4Address` IS `std::net::Ipv4Addr` in this
+version — fixed before push.) Remaining for T15: wire `parse_udp`→`UdpServices`→`build_udp_frame` into
+the SlirpStack (accept UDP to our service endpoints, dispatch, egress the reply; the DNS async path needs
+the same sync/async bridge as the pump), TCP-fallback, booted-guest acceptance (env-gated).
