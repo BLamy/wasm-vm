@@ -232,7 +232,7 @@ impl<B: BlobBackend> BlobStore<B> {
 
     /// Test-only: reach the backend to model an attacker tampering with the underlying store.
     #[cfg(test)]
-    fn backend_mut(&mut self) -> &mut B {
+    pub(crate) fn backend_mut(&mut self) -> &mut B {
         &mut self.backend
     }
 }
