@@ -25,8 +25,13 @@ function show(tab) {
     p.classList.toggle("active", p.id === `panel-${tab}`);
   }
   if (tab === "terminal") {
-    // The terminal panel was hidden; let layout settle, then re-fit xterm via the Fit button.
-    requestAnimationFrame(() => document.getElementById("term-fit")?.click());
+    // The terminal panel was hidden; let layout settle, then re-fit xterm via the Fit button
+    // and focus it so keystrokes land immediately (xterm ignores input unless focused, and a
+    // display:none panel can't hold focus — so it must be re-focused every time it's shown).
+    requestAnimationFrame(() => {
+      document.getElementById("term-fit")?.click();
+      window.__term?.focus?.();
+    });
   }
   if (location.hash.slice(1) !== tab) {
     history.replaceState(null, "", `#${tab}`);
