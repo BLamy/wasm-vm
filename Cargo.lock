@@ -1620,9 +1620,12 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
+ "smoltcp",
  "tar",
  "tempfile",
+ "tokio",
  "wasm-vm-core",
+ "wasm-vm-slirp",
  "wasm-vm-storage",
  "zstd",
 ]
