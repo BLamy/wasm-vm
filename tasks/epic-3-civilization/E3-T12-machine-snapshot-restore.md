@@ -66,4 +66,43 @@ documented behavior (overlay generation mismatch → refuse); if it silently res
 newer disk, that is the corruption case — refute.
 
 ## Verification log
-(empty)
+
+### Pass 1 — resume-snapshot format + zero-elision codec, native core (PR #153, stacked on #152)
+**Delivered:** `crates/core/src/resume.rs` — the versioned, sectioned (TLV) container the whole-machine
+snapshot serializes into, the coherence guards, and the RAM zero-elision codec. Pure `no_std` + alloc
+(builds for wasm32). Distinct from `crate::snapshot` (the E0-T17 state digest). The per-component
+`Snapshot`/`Restore` visitors (CPU/RAM/devices) + the determinism trace-diff are the integration pass
+(need the running machine — boot-adjacent). Header = `magic | format_version | core_hash |
+base_image_hash | overlay_generation`, then TLV sections; `SectionReader` bounds-checks every length
+and fails loudly on an unknown section tag. `SnapshotHeader::validate_for` refuses a snapshot from a
+different build / base image / stale overlay generation (typed error → caller cold-boots).
+`encode_sparse`/`decode_sparse` collapse zero runs so a mostly-idle 256 MiB RAM doesn't serialize to
+256 MiB.
+
+**Native-core-now split (off the postgres critical path, but the highest-value headless queue task —
+the OCI/postgres path is boot/browser-blocked):** closes the LOGIC behind acceptance **#3 (mismatch
+refusal)** + **#4 (zero elision, <15%)** + the format/parser fuzz-safety foundation. Deferred:
+component visitor + determinism trace-diff (#1), browser resume (#2), fsck coherence (#5).
+
+**A real DoS the pre-critic fuzz caught:** the 20k-iteration `decode_sparse` fuzz HUNG the machine —
+the decoder resized the output for a `CHUNK_ZERO` run *before* bounding its length, so a hostile
+zero-chunk claiming ~4 GiB forced an unbounded allocation. Fixed: bound the run against `expected_len`
+before growing.
+
+**Local gate:** clippy (both `--lib` and `--all-targets` after the CI catch) + fmt clean; full core
+lib suite 117 passed; 14 resume tests (0.03s). **CI #153 green** (after fixing a `clippy::useless_vec`
+that `-D warnings` rejected — lesson: run `--all-targets` locally, not just `--lib`).
+
+**Adversarial cold-clone critic** (reviewed `origin/task/e35-t04b..HEAD`): **REFUTED — 1 MAJOR
+test-gap; production code correct — FIX-FIRST.** Parser/codec held (no panic/OOB/unbounded-alloc/hang,
+sound round-trip over 2000+ fuzz iters; `SectionReader` `checked_add`-bounded, terminates on
+zero-length streams, latches `done` after error). But the DoS-fix regression test was **vacuous**:
+removing the pre-allocation bound *survived* because both it and the trailing `out.len()!=expected_len`
+check returned the same `BadSparseEncoding` (critic measured 17.86s / ~4 GiB under the mutant, suite
+still green). **Fixed:** gave the bound a **distinct** `SparseRunExceedsTotal` variant so it's
+observable (deleting the guard now changes the returned variant → the test fails). Other 3 mutants
+(bound `<=`→`<`, overlay-gen guard, DATA-slice off-by-one) all caught.
+
+**Next passes (boot/browser-gated):** the `Snapshot`/`Restore` component visitors over CPU/RAM/CLINT/
+PLIC/UART/virtio (with device quiesce) + the native determinism trace-diff (#1); browser OPFS resume
+(#2); the `sync`→snapshot→reload→`fsck` coherence proof (#5).
