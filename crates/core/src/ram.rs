@@ -282,3 +282,101 @@ mod tests {
         assert_eq!(Ram::new(usize::MAX).err(), Some(OutOfMemory));
     }
 }
+
+/// E3-T12: RAM snapshots as its entire byte array through the zero-elision codec (a mostly-idle
+/// guest RAM doesn't serialize to its full size). RAM state IS its bytes — nothing hidden — so this
+/// is complete by construction. `base` is fixed platform config (bound by the header's base-image
+/// hash), not dynamic state, so it isn't part of the payload. Restore into a RAM of a DIFFERENT size
+/// is refused: `decode_sparse` reconstructs to exactly the current length or errors, so a snapshot of
+/// a differently-sized RAM cannot be applied.
+impl crate::resume::ComponentSnapshot for Ram {
+    const SECTION: u32 = crate::resume::section::RAM;
+
+    fn to_snapshot(&self) -> alloc::vec::Vec<u8> {
+        crate::resume::encode_sparse(&self.data)
+    }
+
+    fn restore(&mut self, payload: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        // decode_sparse guarantees the result is exactly `self.data.len()` bytes (or errors), so the
+        // copy is length-safe and a wrong-size snapshot is rejected before any mutation.
+        let bytes = crate::resume::decode_sparse(payload, self.data.len())?;
+        self.data.copy_from_slice(&bytes);
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod resume_snapshot_tests {
+    use super::Ram;
+    use crate::resume::{ComponentSnapshot, SnapshotError, section};
+
+    /// A RAM with a mostly-zero body plus a few non-zero spans (the realistic snapshot shape).
+    fn patterned(len: usize) -> Ram {
+        let mut r = Ram::new(len).unwrap();
+        for off in [0usize, 1024, len / 2, len - 4] {
+            for k in 0..4 {
+                if off + k < len {
+                    r.data[off + k] = (off as u8) ^ (k as u8) | 1;
+                }
+            }
+        }
+        r
+    }
+
+    #[test]
+    fn ram_round_trips_completely() {
+        let r = patterned(1 << 16);
+        assert_eq!(Ram::SECTION, section::RAM);
+        let bytes = r.to_snapshot();
+        let mut restored = Ram::new(1 << 16).unwrap();
+        restored.restore(&bytes).unwrap();
+        // Every byte survives — RAM state is exactly its bytes.
+        assert_eq!(restored.as_bytes(), r.as_bytes());
+    }
+
+    #[test]
+    fn a_mostly_zero_ram_snapshot_is_far_under_ram_size() {
+        // AC #4 at the RAM level: a mostly-idle 1 MiB RAM must serialize to well under 15%.
+        let r = patterned(1 << 20);
+        let snap = r.to_snapshot();
+        let pct = snap.len() * 100 / r.len();
+        assert!(pct < 15, "RAM elided to {pct}% (< 15% required)");
+        // …and it still round-trips exactly.
+        let mut restored = Ram::new(1 << 20).unwrap();
+        restored.restore(&snap).unwrap();
+        assert_eq!(restored.as_bytes(), r.as_bytes());
+    }
+
+    #[test]
+    fn restoring_a_wrong_size_snapshot_is_refused_without_mutating() {
+        let src = patterned(4096);
+        let snap = src.to_snapshot();
+        // A RAM of a different size cannot accept this snapshot (decode reconstructs to 8192 ≠ 4096).
+        let mut bigger = patterned(8192);
+        let before = bigger.as_bytes().to_vec();
+        assert_eq!(
+            bigger.restore(&snap),
+            Err(SnapshotError::BadSparseEncoding),
+            "a differently-sized RAM snapshot is rejected"
+        );
+        assert_eq!(
+            bigger.as_bytes(),
+            &before[..],
+            "rejected restore left RAM untouched"
+        );
+    }
+
+    #[test]
+    fn a_malformed_payload_is_refused_without_mutating() {
+        let mut r = patterned(256);
+        let before = r.as_bytes().to_vec();
+        // A truncated zero-run chunk (kind byte, no length) is malformed.
+        assert!(r.restore(&[0u8]).is_err());
+        assert!(r.restore(&[1, 0, 0, 0]).is_err()); // data chunk, len word cut short
+        assert_eq!(
+            r.as_bytes(),
+            &before[..],
+            "malformed restore left RAM untouched"
+        );
+    }
+}
