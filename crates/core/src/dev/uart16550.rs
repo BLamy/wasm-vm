@@ -549,13 +549,18 @@ mod snapshot_tests {
         r.restore(&bytes).unwrap();
         // Re-serializing the restored device yields the identical bytes → every field survived.
         assert_eq!(r.to_snapshot(), bytes);
-        // And spot-check the variable-length + latch fields explicitly.
+        // Assert EVERY field explicitly against its distinct value — the re-serialize check above is
+        // a tautology for a field dropped by BOTH to_snapshot and restore, so per-field asserts are
+        // what actually pin completeness (all 7 registers, not just a couple).
+        assert_eq!(
+            (r.ier, r.fcr, r.lcr, r.mcr, r.scr, r.dll, r.dlm),
+            (1, 2, 3, 4, 5, 6, 7),
+            "every register survives"
+        );
         assert_eq!(r.rx, u.rx);
         assert_eq!(r.out, u.out);
         assert_eq!(r.idle_ticks, u.idle_ticks);
         assert!(r.overrun && r.thre_latched && r.timeout_latched);
-        assert_eq!(r.ier, 1);
-        assert_eq!(r.dlm, 7);
 
         // Empty rx + out also round-trip.
         let empty = Uart16550::new();
@@ -578,10 +583,17 @@ mod snapshot_tests {
         nonbool[7] = 2;
         assert_eq!(u.restore(&nonbool), Err(bad.clone()));
 
-        // An rx length beyond the physical FIFO depth.
+        // An rx length beyond the physical FIFO depth, with the 17 bytes ACTUALLY PRESENT — so the
+        // byte-overrun guard is satisfied and ONLY the depth cap can reject it (isolates the cap).
         let mut over = alloc::vec![0u8; 14];
-        over.extend_from_slice(&((FIFO_DEPTH as u32) + 1).to_le_bytes());
-        assert_eq!(u.restore(&over), Err(bad.clone()));
+        over.extend_from_slice(&((FIFO_DEPTH as u32) + 1).to_le_bytes()); // rx_len = 17
+        over.extend_from_slice(&[0u8; 17]); // the 17 rx bytes are present
+        over.extend_from_slice(&0u32.to_le_bytes()); // out_len = 0
+        assert_eq!(
+            u.restore(&over),
+            Err(bad.clone()),
+            "an over-depth FIFO is refused even when its bytes are present"
+        );
 
         // An rx length that overruns the remaining bytes.
         let mut overrun_rx = alloc::vec![0u8; 14];
