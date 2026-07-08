@@ -399,7 +399,7 @@ mod tests {
 
 #[cfg(test)]
 mod snapshot_tests {
-    use super::{FixedClock, GoldfishRtc, WallClock};
+    use super::{FixedClock, GoldfishRtc};
     use crate::resume::{ComponentSnapshot, SnapshotError, section};
     use alloc::boxed::Box;
 
@@ -453,10 +453,18 @@ mod snapshot_tests {
         assert_eq!(r.restore(&[]), Err(bad.clone()));
         assert_eq!(r.restore(&[0u8; 26]), Err(bad.clone()));
         assert_eq!(r.restore(&[0u8; 28]), Err(bad.clone()));
-        // A non-boolean alarm_armed byte (index 24).
-        let mut nb = alloc::vec![0u8; 27];
-        nb[24] = 2;
-        assert_eq!(r.restore(&nb), Err(bad));
+        // A non-boolean byte at EACH of the three bool positions must be rejected — index 24
+        // (alarm_armed), 25 (irq_enabled), 26 (alarm_fired). Covering all three so a lax parse at
+        // any position is caught, not just the first.
+        for i in 24..=26 {
+            let mut nb = alloc::vec![0u8; 27];
+            nb[i] = 2;
+            assert_eq!(
+                r.restore(&nb),
+                Err(bad.clone()),
+                "non-bool byte at index {i}"
+            );
+        }
         // A failed restore left the device untouched (all-or-nothing).
         assert_eq!(r.offset, 0x1122_3344_5566_7788);
     }
