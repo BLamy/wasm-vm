@@ -318,6 +318,24 @@ impl SlirpStack {
         sent
     }
 
+    /// Service ALL diverted internal-service datagrams in one call — the event loop's single entry
+    /// point for DHCP + DNS. Runs the async DNS pass then the sync DHCP pass; they partition the queue
+    /// by dst port, so every diverted datagram is serviced exactly once regardless of order. Returns
+    /// the total number of replies egressed. Drive this each tick alongside [`poll`](Self::poll) (which
+    /// handles ARP/ICMP/TCP): a typical loop is `inject` guest frames → `service(...).await` → `poll` →
+    /// `take_egress`.
+    pub async fn service<R: crate::resolver::Resolver>(
+        &mut self,
+        dhcp: &DhcpServer,
+        fwd: &mut crate::resolver::DnsForwarder<R>,
+        now_ms: i64,
+    ) -> usize {
+        // DNS first (it leaves the DHCP datagrams queued), then DHCP drains what's left.
+        let dns = self.run_dns(fwd, now_ms).await;
+        let dhcp = self.run_dhcp(dhcp);
+        dns + dhcp
+    }
+
     /// Drive smoltcp once at `now_ms`: process queued guest frames and emit any replies.
     pub fn poll(&mut self, now_ms: i64) {
         let _ = self.iface.poll(
