@@ -285,3 +285,20 @@ caught 6 useless-conversion clippy warnings — smoltcp's `Ipv4Address` IS `std:
 version — fixed before push.) Remaining for T15: wire `parse_udp`→`UdpServices`→`build_udp_frame` into
 the SlirpStack (accept UDP to our service endpoints, dispatch, egress the reply; the DNS async path needs
 the same sync/async bridge as the pump), TCP-fallback, booted-guest acceptance (env-gated).
+
+**Adversarial cold-clone critic on pass 1i: SOUND parse, one latent MINOR (overflow panic) fixed + a
+test gap closed.** The critic read smoltcp-0.13 source and ran hand-corrupted frames — `parse_udp` is
+CLEAN against every lying-length case: IP total_length > buffer → None (check_len rejects); UDP length >
+IP payload → None; UDP length < 8 → None; UDP length == 8 → correct empty payload; trailing bytes after
+the datagram are EXCLUDED by both `Ipv4Packet::payload()` (bounded by total_length) and
+`UdpPacket::payload()` (bounded by the UDP length) — junk does NOT leak; IPv4 options (IHL=6) → ports
+parse at the right offset (no misparse); all boundary/truncation/bitflip cases → no panic; the TCP-flip
+test is honest (the None genuinely comes from the next_header check). It found one real latent MINOR:
+`build_udp_frame` PANICKED for payloads ≥ 65508 bytes — the IPv4 total_length is a u16, so `20 + 8 +
+len` overflowed, then `copy_from_slice` length-mismatched. No caller trips it yet, but a service
+reframing a large answer would crash. Fix: `build_udp_frame` now returns `Option`, rejecting a payload >
+`MAX_UDP_PAYLOAD` (65507) — the largest legal UDP-over-IPv4 payload. Also closed the critic's test-gap
+(the round-trip was checksum-blind since `new_checked` validates lengths only): a new test asserts the
+built frame's IP + UDP checksums `verify_checksum()` for empty/1/27-byte payloads (a real guest accepts
+them), and a regression frames exactly `MAX_UDP_PAYLOAD` while rejecting +1. 106 slirp tests; fmt +
+clippy + no-default build green.

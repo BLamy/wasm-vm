@@ -52,10 +52,18 @@ pub fn parse_udp(frame: &[u8]) -> Option<GuestUdp> {
     })
 }
 
+/// The largest UDP payload a single IPv4 datagram can carry: the IPv4 `total_length` field is a u16,
+/// minus the 20-byte IPv4 header and 8-byte UDP header. A larger payload can't be framed (and would
+/// overflow `total_length`), so [`build_udp_frame`] returns `None` for it.
+pub const MAX_UDP_PAYLOAD: usize = u16::MAX as usize - 20 - 8; // 65507
+
 /// Build an Ethernet+IPv4+UDP reply frame carrying `payload`, from `(from_ip, from_port)` to
 /// `(to_ip, to_port)`, addressed at the ethernet layer from `src_mac` to `dst_mac`. Checksums are
 /// computed. Used to frame a service reply (a DHCP OFFER/ACK to the broadcast MAC/IP or the guest; a
-/// DNS answer to the guest's MAC/IP/port).
+/// DNS answer to the guest's MAC/IP/port). Returns `None` if `payload` exceeds [`MAX_UDP_PAYLOAD`] —
+/// the IPv4 `total_length` is a u16, so a larger payload would overflow it and mis-size the datagram
+/// (critic: this previously panicked via a `copy_from_slice` length mismatch). No legal single UDP
+/// datagram is that large; a service must cap/truncate (DNS: set TC=1) before framing.
 #[allow(clippy::too_many_arguments)]
 pub fn build_udp_frame(
     src_mac: [u8; 6],
@@ -65,7 +73,10 @@ pub fn build_udp_frame(
     to_ip: Ipv4Addr,
     to_port: u16,
     payload: &[u8],
-) -> Vec<u8> {
+) -> Option<Vec<u8>> {
+    if payload.len() > MAX_UDP_PAYLOAD {
+        return None;
+    }
     let udp = UdpRepr {
         src_port: from_port,
         dst_port: to_port,
@@ -97,7 +108,7 @@ pub fn build_udp_frame(
         |b| b.copy_from_slice(payload),
         &caps,
     );
-    buf
+    Some(buf)
 }
 
 #[cfg(test)]
