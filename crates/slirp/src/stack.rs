@@ -17,9 +17,22 @@ use smoltcp::wire::{
 
 use crate::device::SlirpDevice;
 use crate::net;
+use crate::udp_frame::{GuestUdp, parse_udp};
 
 /// Per-flow smoltcp TCP socket buffer size (64 KiB each way).
 const TCP_BUF: usize = 64 * 1024;
+
+/// The all-ones broadcast a DHCP DISCOVER/rebind is sent to.
+const BROADCAST: Ipv4Addr = Ipv4Addr::new(255, 255, 255, 255);
+
+/// Is a guest UDP datagram to `(dst_ip, dst_port)` bound for one of our INTERNAL services (the DHCP
+/// server or the DNS forwarder)? Matches the `UdpServices` routing: DHCP on :67 to the broadcast or
+/// the gateway; DNS on :53 to the address we present as the resolver. Everything else is a normal
+/// outbound UDP flow (left to the NAT path — not our service).
+fn is_service_udp(dst_ip: Ipv4Addr, dst_port: u16) -> bool {
+    (dst_port == 67 && (dst_ip == BROADCAST || dst_ip == net::GATEWAY))
+        || (dst_port == 53 && dst_ip == net::DNS)
+}
 
 /// The slirp network stack: a smoltcp `Interface` over our queue-backed device.
 pub struct SlirpStack {
@@ -33,6 +46,11 @@ pub struct SlirpStack {
     /// here is removed/unknown, so accessors return a safe default instead of panicking / touching a
     /// reused slot; critic MAJOR).
     flows: BTreeMap<SocketHandle, (Ipv4Addr, u16)>,
+    /// Guest UDP datagrams bound for our internal services (DHCP/DNS), DIVERTED out of the smoltcp
+    /// path (which drops UDP) for the caller to dispatch via `UdpServices` — sync for DHCP, async for
+    /// DNS. Drained by [`take_service_udp`](Self::take_service_udp); replies come back via
+    /// [`push_egress`](Self::push_egress).
+    service_udp: Vec<GuestUdp>,
 }
 
 impl SlirpStack {
@@ -60,6 +78,7 @@ impl SlirpStack {
             sockets: SocketSet::new(vec![]),
             mac,
             flows: BTreeMap::new(),
+            service_udp: Vec::new(),
         }
     }
 
@@ -184,13 +203,33 @@ impl SlirpStack {
         }
     }
 
-    /// Queue a guest ethernet frame for processing on the next [`poll`](Self::poll). Frames that
-    /// smoltcp must NOT auto-respond to (external ICMP/UDP, un-opened TCP, non-gateway ARP) are
-    /// dropped here so the stack never impersonates a host it hasn't opened a flow for.
+    /// Queue a guest ethernet frame for processing on the next [`poll`](Self::poll). A UDP datagram
+    /// bound for an internal service (DHCP/DNS) is DIVERTED into the service queue (smoltcp would drop
+    /// it — it's not a flow it opened), for the caller to dispatch. Everything else goes through the
+    /// `accept_frame` filter: frames smoltcp must NOT auto-respond to (external ICMP/UDP, un-opened
+    /// TCP, non-gateway ARP) are dropped so the stack never impersonates a host it hasn't opened.
     pub fn inject(&mut self, frame: Vec<u8>) {
+        if let Some(g) = parse_udp(&frame)
+            && is_service_udp(g.dst_ip, g.dst_port)
+        {
+            self.service_udp.push(g);
+            return; // handled by the service path, not smoltcp
+        }
         if self.accept_frame(&frame) {
             self.device.rx.push_back(frame);
         }
+    }
+
+    /// Take the guest UDP datagrams diverted to the internal services since the last call, for the
+    /// caller to dispatch via `UdpServices` and frame the replies back with [`push_egress`].
+    pub fn take_service_udp(&mut self) -> Vec<GuestUdp> {
+        std::mem::take(&mut self.service_udp)
+    }
+
+    /// Enqueue a caller-framed ethernet frame (a service reply) for delivery to the guest — it appears
+    /// in the next [`take_egress`](Self::take_egress) alongside smoltcp's own output.
+    pub fn push_egress(&mut self, frame: Vec<u8>) {
+        self.device.tx.push_back(frame);
     }
 
     /// Drive smoltcp once at `now_ms`: process queued guest frames and emit any replies.

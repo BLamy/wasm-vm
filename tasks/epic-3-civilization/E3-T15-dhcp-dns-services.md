@@ -302,3 +302,20 @@ reframing a large answer would crash. Fix: `build_udp_frame` now returns `Option
 built frame's IP + UDP checksums `verify_checksum()` for empty/1/27-byte payloads (a real guest accepts
 them), and a regression frames exactly `MAX_UDP_PAYLOAD` while rejecting +1. 106 slirp tests; fmt +
 clippy + no-default build green.
+
+**2026-07-08 — pass 1j: stack-level UDP service diversion (`stack.rs`).** The first actual integration of
+the internal services into the real `SlirpStack` — architecture-neutral (the caller dispatches, sync for
+DHCP now, async for DNS later, so it doesn't prejudge the sync/async bridge). `inject` now checks
+`parse_udp` + `is_service_udp(dst_ip, dst_port)` (DHCP :67 to broadcast/gateway; DNS :53 to `net::DNS` —
+matching the `UdpServices` routing exactly) and DIVERTS a service-bound datagram into a `service_udp`
+queue instead of the smoltcp path (which drops UDP anyway) — strictly additive, no TCP/ICMP/ARP behavior
+changes. `take_service_udp() -> Vec<GuestUdp>` drains the queue for the caller; `push_egress(frame)`
+injects a caller-framed reply so it appears in `take_egress` alongside smoltcp's output. Tests (3,
+frame-injection, no boot): a DHCP DISCOVER broadcast frame is DIVERTED (not dropped, and smoltcp never
+sees it — no auto-reply on poll); DNS to 10.0.2.3:53 is diverted while DNS to an EXTERNAL 8.8.8.8:53 is
+NOT (left to NAT, and the stack doesn't answer it); and the **full DHCP path through the real stack** —
+inject a DISCOVER frame → `take_service_udp` → the real `DhcpServer` → `build_udp_frame` the OFFER →
+`push_egress` → `take_egress` yields exactly one frame that parses as UDP :67→:68 carrying a DHCP OFFER
+with yiaddr = the guest address. 109 slirp tests. fmt + clippy green under BOTH `--all-features` and
+`--no-default-features`. Remaining for T15: the sync/async servicing loop that drives `UdpServices` from
+this diversion (DHCP sync + DNS async, like the pump's bridge), TCP-fallback, booted-guest acceptance.
