@@ -2,7 +2,7 @@
 //! tampering (wrong bytes / truncated / wrong key), `put_expected` refusal with no partial state,
 //! LRU eviction over unpinned blobs, pinning, and hit/miss stats.
 
-use super::{BlobError, BlobStore, MemBlobBackend, blob_id};
+use super::{BlobBackend, BlobError, BlobStore, MemBlobBackend, blob_id};
 use alloc::vec;
 use alloc::vec::Vec;
 
@@ -170,6 +170,28 @@ fn eviction_stops_cleanly_when_only_pinned_blobs_remain() {
     // Budget below the pinned size → cannot shrink; returns empty, does not loop forever.
     assert!(s.evict_to(10).is_empty());
     assert!(s.has(&a));
+}
+
+#[test]
+fn put_self_heals_a_blob_the_backend_lost_out_of_band() {
+    // A durable backend (IndexedDB) can evict a value under storage pressure while the store's index
+    // survives. `put` distrusts the backend symmetrically with `get`: re-putting the same bytes
+    // restores the lost value rather than dedupe-skipping it into permanent unretrievability.
+    let mut s = store();
+    let bytes = blob(4, 128);
+    let id = s.put(&bytes);
+    s.backend_mut().delete(&id); // backend loses it out-of-band; index still lists it
+    assert!(s.has(&id));
+    // Re-put the SAME bytes (a dedupe hit) must restore the backend value.
+    let id2 = s.put(&bytes);
+    assert_eq!(id2, id);
+    assert_eq!(
+        s.get(&id).as_deref(),
+        Some(bytes.as_slice()),
+        "a re-put of present bytes self-heals a lossy backend"
+    );
+    assert_eq!(s.len(), 1, "still one blob, no double-count");
+    assert_eq!(s.total_bytes(), 128);
 }
 
 #[test]

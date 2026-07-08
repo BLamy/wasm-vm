@@ -40,6 +40,9 @@ pub trait BlobBackend {
     fn get(&self, id: &BlobId) -> Option<Vec<u8>>;
     /// Remove `id` if present.
     fn delete(&mut self, id: &BlobId);
+    /// Cheap existence check (no bytes transferred) — a durable backend (IndexedDB) can lose a value
+    /// under storage pressure while the store's index survives; `put` uses this to self-heal.
+    fn contains(&self, id: &BlobId) -> bool;
 }
 
 /// Per-blob index entry (bytes live in the backend).
@@ -85,7 +88,13 @@ impl<B: BlobBackend> BlobStore<B> {
         let id = blob_id(bytes);
         let now = self.tick();
         if let Some(meta) = self.index.get_mut(&id) {
-            meta.last_access = now; // dedupe hit — already stored, just touch
+            meta.last_access = now; // dedupe hit — already indexed, just touch recency
+            // Self-heal: distrust the backend symmetrically with `get`. If a durable backend dropped
+            // the value out-of-band (IDB eviction) while the index survived, re-store it — the caller
+            // handed us the correct bytes, so a present index entry stays actually retrievable.
+            if !self.backend.contains(&id) {
+                self.backend.put(&id, bytes);
+            }
         } else {
             self.backend.put(&id, bytes);
             self.total_bytes += bytes.len();
@@ -258,6 +267,9 @@ impl BlobBackend for MemBlobBackend {
     }
     fn delete(&mut self, id: &BlobId) {
         self.map.remove(id);
+    }
+    fn contains(&self, id: &BlobId) -> bool {
+        self.map.contains_key(id)
     }
 }
 
