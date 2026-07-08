@@ -894,7 +894,22 @@ async fn service_drives_a_full_guest_network_session_through_the_stack() {
     assert_eq!(
         calls.load(Ordering::SeqCst),
         1,
-        "one upstream lookup for the whole session"
+        "one upstream lookup so far"
+    );
+
+    // 5. The guest re-resolves the SAME name (a real app hits DNS repeatedly) → served from the
+    // forwarder's cache through `service`, with NO second upstream lookup. This makes the caching
+    // genuinely load-bearing at the composed level (not just that the resolver ran once) — critic MINOR.
+    inject_dns(&mut s, 40001, "example.com");
+    assert_eq!(s.service(&dhcp, &mut fwd, 4).await, 1);
+    assert_eq!(
+        answer_first_a(&s.take_egress()[0]),
+        Some(Ipv4Addr::new(93, 184, 216, 34))
+    );
+    assert_eq!(
+        calls.load(Ordering::SeqCst),
+        1,
+        "the repeat was served from cache — upstream consulted exactly once across the session"
     );
 }
 

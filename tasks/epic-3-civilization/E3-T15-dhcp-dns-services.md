@@ -417,3 +417,18 @@ diversion + `run_dhcp`/`run_dns`/`service` — the whole zero-config-networking 
 frame-verified end-to-end through the real `SlirpStack`. The ONLY remaining legs are env-gated: the
 concrete browser `fetch` DohTransport (wasm crate) and booted-guest acceptance (a real Alpine acquiring
 its lease + resolving names, which the critic already PRE-verified udhcpc will accept).
+
+**Adversarial cold-clone critic on pass 1m: production `service()` SOUND, one MINOR misleading assertion
+tightened.** The critic verified SOUND (with repros): exactly-once partition (an interleaved 3 DHCP + 4
+DNS queue → 7 replies, queue empty, egress len 7 — the two `mem::take` passes partition cleanly on dst
+port); return count == egress frame count including a no-reply RELEASE (`sent` only increments on an
+actual push, so oversized-DNS/None-DHCP never inflate it); idempotence/empty (0, no panic); `service`'s
+future is `Send` (`assert_send` compiled → spawnable in the event loop); no poll/smoltcp interference
+(reply frames merely interleave in `device.tx`); and the mutations catch the core claims (service no-op →
+both capstone tests fail; dropping run_dhcp from service → mixed-tick fails with a :67 left unserviced).
+One MINOR (misleading, not a defect): the full-session `calls==1` was commented "one upstream lookup for
+the whole session" as if it proved CACHING, but the session issued only one query, so the resolver runs
+once regardless of the cache (proven: disabling the cache left the capstone passing). Fixed by making the
+session re-resolve the SAME name a second time through `service` and asserting `calls==1` across BOTH —
+so the caching is now genuinely load-bearing at the composed level (not just "the resolver ran"). 118
+slirp tests; fmt + clippy + no-default green.
