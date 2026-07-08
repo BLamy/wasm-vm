@@ -94,6 +94,46 @@ fn connect_failure_refuses_the_open() {
 }
 
 #[test]
+fn a_duplicate_connect_result_is_rejected_and_cannot_double_grant_the_window() {
+    // The MAJOR the critic found: without a guard, a second on_connect_result(true) re-grants
+    // INITIAL_WINDOW (window doubles) and re-emits OPEN_OK. The `connecting` guard rejects it.
+    let mut r = ready_relay();
+    open_stream(&mut r, 1, "echo.local", 7); // performs exactly one on_connect_result(true)
+    let err = r.on_connect_result(1, true).unwrap_err();
+    assert_eq!(
+        err,
+        RelayError::UnknownStream(1),
+        "a second connect-result has no outstanding connect to satisfy"
+    );
+    // Prove the window was NOT doubled: the guest may send exactly INITIAL_WINDOW before a
+    // credit violation (513 KiB would be accepted if the window had doubled to 512 KiB).
+    let one_over = r.on_inbound_frame(Frame::Data {
+        stream: 1,
+        bytes: vec![0u8; INITIAL_WINDOW as usize + 1],
+    });
+    assert!(
+        matches!(one_over, Err(RelayError::Mux(MuxError::Stream(1, _)))),
+        "the window is still exactly INITIAL_WINDOW, not doubled"
+    );
+}
+
+#[test]
+fn a_connect_result_for_an_unopened_stream_is_rejected() {
+    let mut r = ready_relay();
+    assert_eq!(
+        r.on_connect_result(42, true).unwrap_err(),
+        RelayError::UnknownStream(42)
+    );
+}
+
+#[test]
+fn the_relay_offers_its_own_hello_for_the_driver_to_send() {
+    // Both ends send a HELLO as their opening frame; the driver sends this at connection open.
+    let r = RelayCore::new();
+    assert_eq!(r.hello(b"srv".to_vec()), hello(b"srv".to_vec()));
+}
+
+#[test]
 fn guest_data_is_written_to_the_backend_and_credit_is_regranted() {
     let mut r = ready_relay();
     open_stream(&mut r, 1, "echo.local", 7);

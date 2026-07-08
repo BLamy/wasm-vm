@@ -17,6 +17,7 @@
 //!   without head-of-line-blocking the other streams.
 
 use super::{Frame, MuxError, MuxEvent, Role, Session, SessionError};
+use std::collections::BTreeSet;
 
 /// Credit (bytes) the relay grants a freshly-opened stream so the guest can start sending.
 pub const INITIAL_WINDOW: u32 = 256 * 1024;
@@ -85,6 +86,10 @@ impl From<SessionError> for RelayError {
 #[derive(Debug)]
 pub struct RelayCore {
     session: Session,
+    /// Streams with a [`SocketOp::Connect`] outstanding, awaiting exactly one
+    /// [`RelayCore::on_connect_result`]. Guards against a duplicate connect result re-granting the
+    /// initial window (credit corruption).
+    connecting: BTreeSet<u32>,
 }
 
 impl RelayCore {
@@ -92,10 +97,13 @@ impl RelayCore {
     pub fn new() -> Self {
         Self {
             session: Session::new(Role::Server),
+            connecting: BTreeSet::new(),
         }
     }
 
-    /// The `HELLO` the relay sends first.
+    /// The `HELLO` the relay sends first. Both ends send a `HELLO` as their opening frame, so the
+    /// driver MUST send this over the WS at connection open (independently of receiving the guest's);
+    /// `on_inbound_frame` consumes the *guest's* `HELLO` but does not itself emit the server's.
     pub fn hello(&self, token: Vec<u8>) -> Frame {
         self.session.hello(token)
     }
@@ -124,27 +132,30 @@ impl RelayCore {
     pub fn on_inbound_frame(&mut self, frame: Frame) -> Result<RelayActions, RelayError> {
         if !self.session.is_ready() {
             // The first frame must complete the handshake; a mismatch/NotHello closes the WS.
-            self.session.on_hello(&frame)?;
+            self.session.on_hello(&frame).map_err(map_session_err)?;
             return Ok(RelayActions::default());
         }
 
         let mux_event = self.session.on_frame(frame).map_err(map_session_err)?;
         let actions = match mux_event {
-            // Connect the backend; OPEN_OK / initial window wait for the connect result.
+            // Connect the backend; OPEN_OK / initial window wait for the connect result. Record the
+            // outstanding connect so a duplicate result can't re-grant the window.
             MuxEvent::OpenRequested { stream, host, port } => {
+                self.connecting.insert(stream);
                 RelayActions::socket(vec![SocketOp::Connect { stream, host, port }])
             }
             // Guest → backend: write it, and re-grant the consumed credit so the guest keeps flowing.
             MuxEvent::Data { stream, bytes } => {
                 let refill = bytes.len() as u32;
-                let mut ws = Vec::new();
-                if let Some(mux) = self.session.mux_mut()
-                    && let Ok(win) = mux.grant(stream, refill)
-                {
-                    ws.push(win);
-                }
+                // The refill equals what `on_recv_data` just consumed on a live stream, so `grant`
+                // cannot fail here; surface any error rather than silently shrinking the window.
+                let mux = self
+                    .session
+                    .mux_mut()
+                    .ok_or(RelayError::UnknownStream(stream))?;
+                let win = mux.grant(stream, refill).map_err(RelayError::Mux)?;
                 RelayActions {
-                    ws_sends: ws,
+                    ws_sends: vec![win],
                     socket_ops: vec![SocketOp::Write { stream, bytes }],
                 }
             }
@@ -173,6 +184,11 @@ impl RelayCore {
         stream: u32,
         connected: bool,
     ) -> Result<RelayActions, RelayError> {
+        // Exactly one result per outstanding connect. A duplicate (or a result for a stream we never
+        // asked to connect) is rejected, so the initial window can't be granted twice.
+        if !self.connecting.remove(&stream) {
+            return Err(RelayError::UnknownStream(stream));
+        }
         let mux = self
             .session
             .mux_mut()
@@ -226,6 +242,7 @@ impl RelayCore {
 
     /// The WS transport dropped → tear down every backend socket (no leak).
     pub fn on_ws_closed(&mut self) -> RelayActions {
+        self.connecting.clear();
         let ids = match self.session.mux_mut() {
             Some(mux) => mux.reap_all(),
             None => Vec::new(),
