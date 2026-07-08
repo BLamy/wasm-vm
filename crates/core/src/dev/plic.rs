@@ -367,14 +367,28 @@ mod snapshot_tests {
         assert_eq!(bytes.len(), PLIC_SNAPSHOT_LEN);
         assert_eq!(PlicState::SECTION, section::PLIC);
 
+        // Restore INTO A DIRTY target: different behavioural fields (so the round-trip asserts aren't
+        // vacuous) AND a non-zero diagnostic counter (so the reset is actually exercised — restoring
+        // into a fresh default would leave claim_count already-zero and never test the reset line).
         let mut r = PlicState::default();
+        for (i, p) in r.priority.iter_mut().enumerate() {
+            *p = 0xFFFF - i as u32;
+        }
+        r.level = 0x1234_5678;
+        r.claim_count = [7u64; NUM_SOURCES];
+        assert_ne!(r.priority, s.priority, "target differs before restore");
+        assert_ne!(
+            r.claim_count, [0u64; NUM_SOURCES],
+            "target's counter is stale/non-zero"
+        );
+
         r.restore(&bytes).unwrap();
         assert_eq!(r.priority, s.priority);
         assert_eq!(r.enable, s.enable);
         assert_eq!(r.threshold, s.threshold);
         assert_eq!(r.level, s.level);
         assert_eq!(r.claimed, s.claimed);
-        // The diagnostic storm counter is intentionally not snapshotted → reset from the resume point.
+        // The stale diagnostic counter was cleared by restore (fails now if the reset line is removed).
         assert_eq!(r.claim_count, [0u64; NUM_SOURCES]);
     }
 
