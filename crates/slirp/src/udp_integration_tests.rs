@@ -85,10 +85,11 @@ fn dns_a_query(id: u16, name: &str) -> Vec<u8> {
     crate::dns::build_query(id, name, crate::dns::TYPE_A)
 }
 /// The first A record `(ip)` in a response, if any.
-fn dns_first_a(resp: &[u8], name: &str) -> Option<Ipv4Addr> {
-    let info = crate::dns::parse_response(resp)?;
-    let _ = name;
-    info.a_records.first().map(|(ip, _)| *ip)
+fn dns_first_a(resp: &[u8]) -> Option<Ipv4Addr> {
+    crate::dns::parse_response(resp)?
+        .a_records
+        .first()
+        .map(|(ip, _)| *ip)
 }
 
 /// A full zero-config session: DISCOVER→OFFER, REQUEST→ACK, then two DNS queries — the second served
@@ -126,7 +127,7 @@ async fn full_guest_session_lease_then_resolve_with_cache_reuse() {
     assert_eq!(r1.from_port, 53);
     assert_eq!(r1.to_port, 40000);
     assert_eq!(
-        dns_first_a(&r1.payload, "example.com"),
+        dns_first_a(&r1.payload),
         Some(Ipv4Addr::new(93, 184, 216, 34))
     );
     assert_eq!(
@@ -141,7 +142,7 @@ async fn full_guest_session_lease_then_resolve_with_cache_reuse() {
         .await
         .expect("second DNS query claimed");
     assert_eq!(
-        dns_first_a(&r2.payload, "example.com"),
+        dns_first_a(&r2.payload),
         Some(Ipv4Addr::new(93, 184, 216, 34))
     );
     assert_eq!(
@@ -171,7 +172,7 @@ async fn real_native_resolver_composes_through_the_dispatcher() {
         .await
         .expect("DNS query claimed");
     assert_eq!(
-        dns_first_a(&resp.payload, "localhost"),
+        dns_first_a(&resp.payload),
         Some(Ipv4Addr::LOCALHOST),
         "the real OS resolver resolved localhost through UdpServices → DnsForwarder → NativeResolver"
     );
