@@ -18,13 +18,22 @@ use tokio_tungstenite::tungstenite::Message;
 const CHAN_DEPTH: usize = 64;
 
 /// Accept WebSocket connections on `listener` forever, running one [`RelayServer`] per connection.
-/// Returns when the listener errors (e.g. it was closed).
+/// A transient `accept` error (fd exhaustion, an aborted connection) must NOT kill the listener —
+/// the fd frees moments later — so it is backed off and retried rather than treated as fatal.
 pub async fn serve(listener: TcpListener, token: Vec<u8>) {
-    while let Ok((tcp, _peer)) = listener.accept().await {
-        let token = token.clone();
-        tokio::spawn(async move {
-            handle_conn(tcp, token).await;
-        });
+    loop {
+        match listener.accept().await {
+            Ok((tcp, _peer)) => {
+                let token = token.clone();
+                tokio::spawn(async move {
+                    handle_conn(tcp, token).await;
+                });
+            }
+            Err(_) => {
+                // Back off briefly so a persistent error can't become a busy-spin, then keep serving.
+                tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+            }
+        }
     }
 }
 

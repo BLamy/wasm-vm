@@ -37,6 +37,9 @@ tokio = { version = "1", optional = true, default-features = false, features = [
     # The byte-pump splits the outbound stream and copies both ways over channels.
     "io-util",
     "sync",
+    # The relay driver uses `tokio::select!` — a macro gated behind this feature. Without it the
+    # `native` lib fails a standalone `cargo build` (dev-deps mask it during `cargo test`).
+    "macros",
 ] }
 tokio-tungstenite = { version = "0.24", default-features = false, features = ["handshake"], optional = true }
 

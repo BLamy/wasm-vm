@@ -2,7 +2,7 @@
 //! the adapter to a REAL TCP echo backend — proving the entire chain over an actual WebSocket wire,
 //! not the channel shortcut the driver tests use.
 
-use super::serve;
+use super::{handle_conn, serve};
 use crate::ws_proxy::{Frame, INITIAL_WINDOW, hello};
 use futures_util::{SinkExt, StreamExt};
 use std::net::SocketAddr;
@@ -147,5 +147,78 @@ async fn a_refused_backend_reports_open_fail_over_the_websocket() {
     assert_eq!(
         recv_frame(&mut ws).await,
         Frame::OpenFail { stream: 1, code: 1 }
+    );
+}
+
+/// Accept exactly one connection and run `handle_conn` as an observable task, returning its address
+/// and the join handle — so a test can assert the per-connection cleanup chain actually completes.
+async fn one_shot_conn() -> (SocketAddr, tokio::task::JoinHandle<()>) {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    let handle = tokio::spawn(async move {
+        let (tcp, _) = listener.accept().await.unwrap();
+        handle_conn(tcp, vec![]).await;
+    });
+    (addr, handle)
+}
+
+async fn client_to(addr: SocketAddr) -> ClientWs {
+    let tcp = TcpStream::connect(addr).await.unwrap();
+    let (ws, _) = client_async(format!("ws://{addr}/").as_str(), tcp)
+        .await
+        .unwrap();
+    ws
+}
+
+/// F2 regression: a client disconnect must drive the whole per-connection shutdown chain to
+/// completion (inbound close → relay stops → outbound close → writer exits → `handle_conn` returns).
+/// Removing the load-bearing `drop(in_tx)` deadlocks this — the join handle never completes.
+#[tokio::test]
+async fn a_client_disconnect_cleanly_finishes_the_connection_task() {
+    let (addr, server) = one_shot_conn().await;
+    let mut ws = client_to(addr).await;
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    drop(ws); // client disconnects
+
+    timeout(Duration::from_secs(5), server)
+        .await
+        .expect("handle_conn hung after client disconnect (deadlock / task leak)")
+        .expect("handle_conn task panicked");
+}
+
+/// F2 regression: when the relay dies on a protocol error, the adapter must deliver a proper WS
+/// Close to the client (not just drop the TCP). Removing `ws_sink.close()` fails this — the client
+/// sees a reset/None instead of a clean Close.
+#[tokio::test]
+async fn a_relay_protocol_error_delivers_a_clean_close_to_the_client() {
+    let (addr, _server) = one_shot_conn().await;
+    let mut ws = client_to(addr).await;
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    // A stream frame before completing the handshake → relay protocol error → run() returns.
+    ws.send(Message::Binary(
+        Frame::Data {
+            stream: 1,
+            bytes: vec![1],
+        }
+        .encode()
+        .unwrap(),
+    ))
+    .await
+    .unwrap();
+
+    let saw_clean_close = timeout(Duration::from_secs(5), async {
+        loop {
+            match ws.next().await {
+                Some(Ok(Message::Close(_))) => return true,
+                Some(Ok(_)) => continue,
+                Some(Err(_)) | None => return false, // TCP reset / drop without a clean Close
+            }
+        }
+    })
+    .await
+    .expect("timed out waiting for the connection to close");
+    assert!(
+        saw_clean_close,
+        "the client received a proper WS Close frame when the relay died"
     );
 }
