@@ -237,15 +237,17 @@ fn decode_sparse_rejects_malformed_payloads() {
         Err(SnapshotError::BadSparseEncoding)
     );
 
-    // A well-formed payload but the wrong expected length.
-    let enc = encode_sparse(&vec![0u8; 10]);
+    // A well-formed payload but the wrong expected length: too-large expected → under-length →
+    // BadSparseEncoding (the trailing check); too-small expected → the run overruns the declared
+    // total → SparseRunExceedsTotal (the pre-allocation bound).
+    let enc = encode_sparse(&[0u8; 10]);
     assert_eq!(
         decode_sparse(&enc, 11),
         Err(SnapshotError::BadSparseEncoding)
     );
     assert_eq!(
         decode_sparse(&enc, 9),
-        Err(SnapshotError::BadSparseEncoding)
+        Err(SnapshotError::SparseRunExceedsTotal)
     );
 }
 
@@ -256,16 +258,19 @@ fn a_huge_zero_run_length_is_rejected_without_allocating() {
     // gigabyte allocation. This returns instantly; without the bound it OOMs / hangs.
     let mut bad = vec![0u8]; // CHUNK_ZERO
     bad.extend_from_slice(&u32::MAX.to_le_bytes()); // len ~4 GiB, no payload
+    // The DISTINCT variant is what makes this test bite: it is produced ONLY by the pre-allocation
+    // bound. Delete that bound and the run instead allocates ~4 GiB and returns the *trailing*
+    // BadSparseEncoding — a different variant — so this assertion fails (the guard is observable).
     assert_eq!(
         decode_sparse(&bad, 64),
-        Err(SnapshotError::BadSparseEncoding)
+        Err(SnapshotError::SparseRunExceedsTotal)
     );
-    // Also a data-chunk with a huge declared len (but the input is short) is bounded by both guards.
+    // A data-chunk with a huge declared len is likewise rejected before allocating.
     let mut bad2 = vec![1u8];
     bad2.extend_from_slice(&u32::MAX.to_le_bytes());
     assert_eq!(
         decode_sparse(&bad2, 64),
-        Err(SnapshotError::BadSparseEncoding)
+        Err(SnapshotError::SparseRunExceedsTotal)
     );
 }
 

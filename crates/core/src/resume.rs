@@ -74,6 +74,12 @@ pub enum SnapshotError {
     SectionLengthOverflow { tag: u32 },
     /// The zero-elision payload decoded to a different length than expected, or is malformed.
     BadSparseEncoding,
+    /// A zero-elision run declared a length that would push the output past `expected_len` — rejected
+    /// **before** growing the buffer, so a hostile multi-gigabyte run can't force an allocation. This
+    /// is a *distinct* variant from [`Self::BadSparseEncoding`] precisely so the pre-allocation bound
+    /// is observable: deleting it changes this error (fast) into a trailing length mismatch (after a
+    /// giant allocation).
+    SparseRunExceedsTotal,
 }
 
 /// The parsed, fixed-size container header.
@@ -306,13 +312,14 @@ pub fn decode_sparse(enc: &[u8], expected_len: usize) -> Result<Vec<u8>, Snapsho
         let len = u32_le(&enc[i + 1..i + 5]) as usize;
         i += 5;
         // Bound the run against the declared total BEFORE allocating — an untrusted zero-run length
-        // must not be able to force a multi-gigabyte resize.
+        // must not be able to force a multi-gigabyte resize. This uses a DISTINCT error variant from
+        // the trailing length check so the guard is observable (mutation-testable).
         let new_len = out
             .len()
             .checked_add(len)
-            .ok_or(SnapshotError::BadSparseEncoding)?;
+            .ok_or(SnapshotError::SparseRunExceedsTotal)?;
         if new_len > expected_len {
-            return Err(SnapshotError::BadSparseEncoding);
+            return Err(SnapshotError::SparseRunExceedsTotal);
         }
         match kind {
             CHUNK_ZERO => {
