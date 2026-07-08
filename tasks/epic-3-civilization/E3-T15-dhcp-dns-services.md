@@ -240,3 +240,16 @@ pure/generic → compiles into the browser build). Remaining for T15: the concre
 (wasm crate), TCP-fallback for truncated answers, wire `UdpServices` into the SlirpStack UDP path,
 booted-guest acceptance (env-gated). Both resolver impls (native OS + DoH) now exist behind the one
 `Resolver` trait the forwarder consumes.
+
+**Adversarial cold-clone critic on pass 1g: CLEAN, no defect (one unreachable NIT).** The critic
+verified SOUND (with mutations/repros): the empty-ips TTL composition end-to-end — `DohResolver` returns
+`Resolved{ips:[], ttl:1}` for a NOERROR/AAAA-only response, but `DnsForwarder` matches the empty-ips arm
+and emits an un-cached empty NOERROR (dropping the ttl), so nothing caches an empty answer and the `ttl:1`
+is dead/harmless; the min-TTL mapping (mutation `min→max` FAILS the ttl==120 assertion — non-vacuous);
+full rcode coverage (NXDOMAIN→NxDomain, NOERROR→Resolved, transport-None/parse-None/SERVFAIL/REFUSED/
+other→Failed); the `Send` bound is real+minimal (`T: DohTransport + Sync` makes `&self` Send across the
+await); the `--no-default-features` build compiles (pure/generic → browser-safe). One NIT (unreachable,
+not fixed): `build_query`'s `label.len() as u8` would corrupt a >63-byte label, but 64+ byte labels are
+ILLEGAL DNS and `parse_name` bounds the guest's name to ≤63/label, and the only caller passes that parsed
+name — so no legal/guest-reachable path hits it (the doc already states this). No code change. 97 slirp
+tests; fmt + clippy + no-default build green.
