@@ -153,6 +153,13 @@ impl Mux {
         None
     }
 
+    /// Test-only: seed the id allocator so a test can force `alloc_id` onto an already-occupied slot
+    /// (the collision path otherwise only triggers after a full u32 wrap).
+    #[cfg(test)]
+    fn force_next_id(&mut self, id: u32) {
+        self.next_id = id;
+    }
+
     // ── Server: answer an OPEN ───────────────────────────────────────────────
 
     /// (server) The flow connected — produce the `OPEN_OK`.

@@ -152,5 +152,43 @@ rejection, zero-length keepalive, u32 overflow rejection, `default==new`.
   policy); a late `RST` on an already-`Closed` stream is dropped as `Terminated` (deliberate
   "retired = retired", symmetric on both ends). No FIX-FIRST needed.
 
+### Pass 1c — connection multiplexer (PR #146, stacked on #145)
+**Delivered:** `crates/slirp/src/ws_proxy/mux.rs` — `Mux`, the pure I/O-free duplex logic each end
+runs over one WebSocket, composing the frame codec (1a) + state machine (1b). Stream table
+(`BTreeMap`, deterministic) + client-side id allocation; role-aware (`open`→id+OPEN pending until
+OK/FAIL; server `on_frame(OPEN)`→`OpenRequested`, `open_succeeded`/`open_failed`);
+`on_frame` routes DATA/WINDOW/SHUTDOWN_WR/CLOSE/RST to the addressed stream, CLOSE/RST reap;
+`reap_all` empties the table on WS drop. Catches the connection-level violations the lower layers
+can't: `UnknownStream` (DATA-before-OPEN / reaped), `StreamExists` (id reuse), `RoleViolation`,
+`TooManyStreams` (cap 1024), `DataTooLarge` — every one a returned `MuxError`, never a panic or
+unbounded alloc.
+
+**Local gate:** clippy both configs + fmt clean; full slirp suite **156 passed** / 0 failed;
+16 mux tests. **CI #146 green** (fails=0). Serves acceptance: DATA-before-OPEN rejected,
+500-stream reap, hacked-client credit violation → `Stream(id, RecvCreditExceeded)`, half-close
+keeps the stream live for the late reply.
+
+**Adversarial cold-clone critic** (reviewed `origin/task/e3-t16b..HEAD`): **verdict REFUTED on
+test coverage — production logic CLEAN.** The critic could not produce a leak, panic, overwrite,
+mis-route, cap bypass, or credit bypass under direct adversarial exercise (500-stream reap, every
+per-stream opcode for an unknown id → `UnknownStream` with no side effect, roles enforced both
+directions, `alloc_id` terminating + 0-skipping + wrap-correct, `pending ⊆ streams` bounded).
+But **2 of the 4 charter mutants SURVIVED the shipped suite** — real coverage gaps in a PR whose
+job is adversarial coverage:
+- **MAJOR** — `reap()` clearing `pending` was untested: a `CLOSE`/`RST` for a *still-pending*
+  client stream is a reachable path, and under the mutant a later `OPEN_OK` spuriously returns
+  `Opened` for a dead stream (phantom-open + pending leak).
+- **MAJOR** — `alloc_id`'s `!contains_key` collision guard was untested, and the test named
+  `…reuses_freed_ones` never asserted reuse (name overstated coverage; the guard is load-bearing
+  only after a u32 wrap).
+
+**FIX-FIRST applied (test-only; production code was already correct):** added
+`closing_a_still_pending_client_stream_clears_it_from_pending` (CLOSE *and* RST paths) and
+`alloc_id_skips_an_occupied_slot_and_never_clobbers_a_live_stream` (via a `#[cfg(test)]`
+`force_next_id` seeding the allocator onto an occupied slot, since the collision path otherwise
+only triggers on wrap); renamed the misleading test to `client_allocates_distinct_nonzero_ids`.
+**Both new tests were verified to KILL their mutant** — each FAILS under the injected mutation and
+PASSES on restored code — so the two invariants are now genuinely pinned. Suite 154→156.
+
 **Env-gated later passes:** tokio relay server, `web_sys` `WsConnector`, credit-enforcement
 + 500-stream-reap + 1 GB byte-diff acceptance — need a live browser/boot session.

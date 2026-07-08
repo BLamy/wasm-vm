@@ -239,16 +239,75 @@ fn hello_reaching_the_mux_is_an_error() {
 }
 
 #[test]
-fn client_allocates_distinct_nonzero_ids_and_reuses_freed_ones() {
+fn client_allocates_distinct_nonzero_ids() {
     let mut client = Mux::new(Role::Client);
     let (a, _) = client.open("h".into(), 1).unwrap();
     let (b, _) = client.open("h".into(), 2).unwrap();
     assert_ne!(a, b);
     assert!(a != 0 && b != 0, "stream 0 is reserved");
-    // Confirm + close `a`, freeing its id; a later open may reuse it (BTreeMap has no live entry).
     client.on_frame(Frame::OpenOk { stream: a }).unwrap();
     client.local_close(a).unwrap();
     assert_eq!(client.live_count(), 1, "only b remains");
+}
+
+#[test]
+fn alloc_id_skips_an_occupied_slot_and_never_clobbers_a_live_stream() {
+    // The collision path: after a u32 wrap the allocator can land on an id that is still live. It
+    // MUST skip it — returning it would overwrite that stream's StreamState and lose its credit.
+    let mut client = Mux::new(Role::Client);
+    let (a, _) = client.open("a".into(), 80).unwrap(); // a == 1
+    client.on_frame(Frame::OpenOk { stream: a }).unwrap();
+    client
+        .on_frame(Frame::Window {
+            stream: a,
+            credit: 42,
+        })
+        .unwrap();
+    assert_eq!(client.get(a).unwrap().send_credit(), 42);
+
+    // Force the allocator's next candidate back onto the occupied id `a`.
+    client.force_next_id(a);
+    let (b, _) = client.open("b".into(), 80).unwrap();
+    assert_ne!(
+        b, a,
+        "allocator skipped the occupied id instead of colliding"
+    );
+    assert_eq!(
+        client.get(a).unwrap().send_credit(),
+        42,
+        "the live stream's credit was not clobbered by a colliding alloc"
+    );
+    assert_eq!(client.live_count(), 2);
+}
+
+#[test]
+fn closing_a_still_pending_client_stream_clears_it_from_pending() {
+    // A CLOSE/RST for a client stream that hasn't been OPEN_OK'd yet must reap it from BOTH the
+    // table and the pending set — otherwise a late OPEN_OK would spuriously "confirm" a dead stream.
+    let mut client = Mux::new(Role::Client);
+    let (sid, _open) = client.open("a".into(), 80).unwrap(); // pending, not yet confirmed
+    assert_eq!(
+        client.on_frame(Frame::Close { stream: sid }).unwrap(),
+        MuxEvent::Closed(sid)
+    );
+    assert_eq!(client.live_count(), 0);
+    // The formerly-pending id is fully gone: a late OPEN_OK is UnknownStream, not a phantom Opened.
+    assert_eq!(
+        client.on_frame(Frame::OpenOk { stream: sid }),
+        Err(MuxError::UnknownStream(sid)),
+        "pending was cleared by the reap"
+    );
+    // Same for RST on a still-pending stream.
+    let mut client2 = Mux::new(Role::Client);
+    let (sid2, _) = client2.open("a".into(), 80).unwrap();
+    assert_eq!(
+        client2.on_frame(Frame::Rst { stream: sid2 }).unwrap(),
+        MuxEvent::Reset(sid2)
+    );
+    assert_eq!(
+        client2.on_frame(Frame::OpenOk { stream: sid2 }),
+        Err(MuxError::UnknownStream(sid2))
+    );
 }
 
 #[test]
