@@ -35,7 +35,7 @@ pub use bridge::Bridge;
 pub use connector::{ConnectError, OutboundConnector};
 pub use device::SlirpDevice;
 pub use dhcp::DhcpServer;
-pub use dns::{Answer, Query, parse_query};
+pub use dns::{Answer, Query, ResponseInfo, parse_query, parse_response};
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
 #[cfg(feature = "native")]
 pub use native::NativeConnector;
