@@ -728,9 +728,12 @@ impl Resolver for FixedResolver {
     }
 }
 
+/// The DNS transaction ID the test queries use — nonzero so the answer's echoed id is verifiable.
+const DNS_TXID: u16 = 0xBEEF;
+
 /// Inject a guest DNS A query for `name` from `src_port` to 10.0.2.3:53.
 fn inject_dns(s: &mut SlirpStack, src_port: u16, name: &str) {
-    let query = crate::dns::build_query(0, name, crate::dns::TYPE_A);
+    let query = crate::dns::build_query(DNS_TXID, name, crate::dns::TYPE_A);
     let frame = build_udp_frame(
         GUEST_MAC,
         GW_MAC,
@@ -782,6 +785,12 @@ async fn run_dns_answers_a_query_back_to_the_guest() {
     assert_eq!(
         answer_first_a(&eg[0]),
         Some(Ipv4Addr::new(93, 184, 216, 34))
+    );
+    // The answer echoes the query's transaction id (a resolver mismatching it would be dropped).
+    assert_eq!(
+        u16::from_be_bytes([g.payload[0], g.payload[1]]),
+        DNS_TXID,
+        "txid echoed"
     );
     assert_eq!(calls.load(Ordering::SeqCst), 1);
 }

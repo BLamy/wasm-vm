@@ -385,3 +385,17 @@ tests. fmt + clippy + no-default BUILD green (async `run_dns` compiles into the 
 services are now serviced end-to-end through the real stack (frame-verified); the remaining T15 legs are
 purely env-gated: the concrete `fetch` DohTransport (wasm crate), TCP-fallback for truncated answers, and
 booted-guest acceptance (a real Alpine acquiring its lease + resolving names).
+
+**Adversarial cold-clone critic on pass 1l: CLEAN, no defect (one coverage NIT hardened).** The critic
+verified SOUND the two highest-risk things: (1) answer ADDRESSING is correct — `parse_udp` populates
+`src_ip`/`src_port` from the guest (source) fields, `run_dns` frames the answer FROM `10.0.2.3:53` TO the
+guest's `(src_ip, src_port)` L2 to its MAC (not swapped; egress dst confirmed = the guest); and (2) the
+`run_dns` future IS `Send` (a scratch `assert_send` compiled — smoltcp `Interface` is Send, resolver is
+`impl Future + Send`), so the eventual event-loop wiring can `tokio::spawn` it — NOT a limitation. Also
+sound: the partition loses/double-services nothing (run_dns pushes back the 67s, run_dhcp the 53s —
+symmetric/complementary), the oversized-drop is correct+honest (`sent` accurate, guest retries), and the
+cache-across-passes test spans two separate `run_dns` calls (calls==1 proves the cache served the
+repeat). All three mutations caught (swap src/dst → wrong-dst fail; drop push → no-egress fail;
+cache-always-miss → calls==2 fail). One NIT (coverage, not a defect): the tests used txid 0 so a broken
+query-ID echo wouldn't be caught. Hardened: the query now uses txid 0xBEEF and the answer test asserts it
+round-trips. 116 slirp tests; fmt + clippy + no-default green.
