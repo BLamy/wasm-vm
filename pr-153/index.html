@@ -560,6 +560,21 @@
         margin: 4px 18px 14px; padding: 8px 12px; border-radius: 8px;
         background: #12202b; border: 1px solid #22506e; color: #a9cbe0; font-size: 12px;
       }
+      .dk-note code, .boot-hint code, .run-banner code {
+        font: 11.5px ui-monospace, monospace; background: #0b141c;
+        border: 1px solid #223; border-radius: 4px; padding: 0 4px;
+      }
+      /* Terminal-tab: make booting obvious + an honest one-click status line. */
+      .boot-hint {
+        margin: 6px 0 0; padding: 8px 12px; border-radius: 8px;
+        background: #10202b; border: 1px solid #22506e; color: #a9cbe0;
+        font-size: 12.5px; line-height: 1.5;
+      }
+      .run-banner {
+        margin: 6px 0; padding: 8px 12px; border-radius: 8px;
+        background: #143c31; border: 1px solid #287555; color: #d6ffe6;
+        font-size: 12.5px; line-height: 1.5;
+      }
 
       @media (max-width: 900px) {
         header { align-items: flex-start; flex-direction: column; }
@@ -671,7 +686,7 @@
             <button id="run">Run ELF</button>
             <button id="reset">Reset</button>
             <button id="bench">Bench</button>
-            <button id="boot-linux">Boot Linux</button>
+            <button id="boot-linux" class="primary" title="Boot a real RISC-V Linux (busybox userland) in your browser — works offline and on GitHub Pages">▶ Boot Linux (busybox)</button>
             <button id="boot-alpine" title="Boot the full Alpine ext4 rootfs over virtio-blk (local-only via serve-dev + tools/demo-capstone.sh)">Boot Alpine</button>
             <button id="boot-alpine-chunked" title="Boot the SAME Alpine rootfs but fetched lazily one E3-T01 chunk at a time over HTTP (local-only; run `wasm-vm chunk` first)">Boot Alpine (chunked)</button>
             <button id="term-fit" title="Re-fit the terminal to the panel and copy the matching stty command">Fit</button>
@@ -682,6 +697,13 @@
             <span id="storage-indicator" class="version" style="display:none;"></span>
           </div>
         </div>
+        <p id="boot-hint" class="boot-hint">
+          New here? Click <b>▶ Boot Linux (busybox)</b> to start a real RISC-V Linux shell right in
+          your browser, then type commands like <code>ls /</code> or <code>uname -a</code>.
+          (The larger Alpine boots need local-only artifacts — see <code>tools/serve-dev.sh</code>.)
+        </p>
+        <!-- Docker "Run" writes here: an honest status line for the in-browser container boot. -->
+        <div id="run-banner" class="run-banner" style="display:none;"></div>
         <!-- E3-T09: shown when another tab holds the writer Web Lock (this boot is read-only) -->
         <div id="ro-banner" style="display:none; background:#4a3320; color:#f0c674; border:1px solid #6a4a20; border-radius:8px; padding:8px 12px; margin:6px 0; font:13px ui-monospace, monospace;"></div>
         <!-- E3-T10: shown (VM paused) when a durable write hits the origin storage quota -->
