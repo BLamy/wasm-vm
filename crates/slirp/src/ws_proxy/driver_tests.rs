@@ -255,3 +255,124 @@ async fn a_dropped_ws_transport_shuts_the_relay_down() {
         .await
         .expect("relay did not shut down after the transport dropped");
 }
+
+// ── Regression: the two CRITICAL concurrency bugs the cold-clone critic found ────────────────
+
+/// A backend that floods `total` bytes on connect, then holds the socket open.
+async fn spawn_flood(total: usize) -> SocketAddr {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    tokio::spawn(async move {
+        while let Ok((mut sock, _)) = listener.accept().await {
+            tokio::spawn(async move {
+                let _ = sock.write_all(&vec![0xABu8; total]).await;
+                let mut b = [0u8; 64];
+                while let Ok(n) = sock.read(&mut b).await {
+                    if n == 0 {
+                        break;
+                    }
+                }
+            });
+        }
+    });
+    addr
+}
+
+/// A backend that accepts but never reads → writes to it wedge under TCP flow control.
+async fn spawn_black_hole() -> SocketAddr {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    tokio::spawn(async move {
+        let mut held = Vec::new();
+        while let Ok((sock, _)) = listener.accept().await {
+            held.push(sock); // keep alive, never read
+        }
+    });
+    addr
+}
+
+/// FINDING 1 (credit over-read): a guest that pipelines its WINDOW grants while the backend floods
+/// must receive EVERY granted byte — the old `watch`-based credit coalesced grants and let the
+/// reader out-read, which then killed the stream via `SendCreditExceeded`. The semaphore fix caps
+/// reads at the accumulated grant, so nothing is lost.
+#[tokio::test]
+async fn pipelined_windows_under_a_flood_deliver_every_byte() {
+    const TOTAL: usize = 64 * 1024;
+    const STEP: u32 = 16;
+    let addr = spawn_flood(TOTAL).await;
+    let mut g = start_relay();
+    handshake(&mut g).await;
+    open(&mut g, 1, addr).await;
+
+    // Fire all the WINDOW grants as fast as possible (total == TOTAL) while the backend streams.
+    let grant_tx = g.tx.clone();
+    tokio::spawn(async move {
+        let mut granted = 0u32;
+        while (granted as usize) < TOTAL {
+            let c = STEP.min(TOTAL as u32 - granted);
+            if grant_tx
+                .send(
+                    Frame::Window {
+                        stream: 1,
+                        credit: c,
+                    }
+                    .encode()
+                    .unwrap(),
+                )
+                .await
+                .is_err()
+            {
+                break;
+            }
+            granted += c;
+        }
+    });
+
+    let got = timeout(Duration::from_secs(20), g.collect_data(1, TOTAL))
+        .await
+        .expect("the stream died mid-transfer — a credit over-read (Finding 1)");
+    assert_eq!(got.len(), TOTAL, "every granted byte delivered, none lost");
+}
+
+/// FINDING 2 (head-of-line deadlock): one stalled backend must not freeze the whole WS connection.
+/// The old code `.await`ed a bounded `writer_tx.send()` in the main loop, so a wedged writer froze
+/// every stream; the unbounded write hand-off + drain-tied refill keep the main loop live.
+#[tokio::test]
+async fn a_stalled_backend_does_not_freeze_other_streams() {
+    let hole = spawn_black_hole().await;
+    let echo = spawn_echo().await;
+    let mut g = start_relay();
+    handshake(&mut g).await;
+    open(&mut g, 1, hole).await; // stream 1 → black hole
+    open(&mut g, 2, echo).await; // stream 2 → echo
+
+    // Flood stream 1 (within its 256 KiB guest→backend window) so its writer wedges on the stall.
+    let flood_tx = g.tx.clone();
+    tokio::spawn(async move {
+        for _ in 0..32 {
+            let f = Frame::Data {
+                stream: 1,
+                bytes: vec![0u8; 4096],
+            };
+            if flood_tx.send(f.encode().unwrap()).await.is_err() {
+                break;
+            }
+        }
+    });
+
+    // Stream 2 must still echo despite stream 1 being wedged.
+    g.send(Frame::Window {
+        stream: 2,
+        credit: 1024,
+    })
+    .await;
+    g.send(Frame::Data {
+        stream: 2,
+        bytes: b"still-alive".to_vec(),
+    })
+    .await;
+    let echoed = timeout(Duration::from_secs(10), g.collect_data(2, 11))
+        .await
+        .expect("stream 2 froze — the stalled backend wedged the relay (Finding 2)");
+    assert_eq!(echoed, b"still-alive");
+}

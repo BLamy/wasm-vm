@@ -134,10 +134,11 @@ fn the_relay_offers_its_own_hello_for_the_driver_to_send() {
 }
 
 #[test]
-fn guest_data_is_written_to_the_backend_and_credit_is_regranted() {
+fn guest_data_is_written_to_the_backend_and_the_window_refills_on_drain() {
     let mut r = ready_relay();
     open_stream(&mut r, 1, "echo.local", 7);
-    // The guest sends within the window it was granted.
+    // The guest sends within the window it was granted: bytes go to the backend, and NO window is
+    // refilled yet — the refill is tied to the backend accepting the bytes, not to receipt.
     let acts = r
         .on_inbound_frame(Frame::Data {
             stream: 1,
@@ -152,14 +153,23 @@ fn guest_data_is_written_to_the_backend_and_credit_is_regranted() {
         }],
         "guest bytes go to the backend"
     );
+    assert!(
+        acts.ws_sends.is_empty(),
+        "no refill until the backend drains the bytes"
+    );
+    // Once the backend accepts the 5 bytes, the window is refilled by exactly 5.
+    let acts = r.on_backend_written(1, 5).unwrap();
     assert_eq!(
         acts.ws_sends,
         vec![Frame::Window {
             stream: 1,
             credit: 5
         }],
-        "the 5 consumed bytes of window are re-granted"
+        "the drained bytes are re-granted"
     );
+    // A refill for a stream that was already reaped is silently dropped (no error, no frame).
+    r.on_inbound_frame(Frame::Close { stream: 1 }).unwrap();
+    assert_eq!(r.on_backend_written(1, 3).unwrap(), Default::default());
 }
 
 #[test]

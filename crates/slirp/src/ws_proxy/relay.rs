@@ -144,20 +144,11 @@ impl RelayCore {
                 self.connecting.insert(stream);
                 RelayActions::socket(vec![SocketOp::Connect { stream, host, port }])
             }
-            // Guest → backend: write it, and re-grant the consumed credit so the guest keeps flowing.
+            // Guest → backend: write it. The guest's window is refilled only once the backend
+            // *accepts* the bytes (`on_backend_written`), not on receipt — so the guest cannot
+            // outrun a slow/stalled backend and pile up unbounded un-written data.
             MuxEvent::Data { stream, bytes } => {
-                let refill = bytes.len() as u32;
-                // The refill equals what `on_recv_data` just consumed on a live stream, so `grant`
-                // cannot fail here; surface any error rather than silently shrinking the window.
-                let mux = self
-                    .session
-                    .mux_mut()
-                    .ok_or(RelayError::UnknownStream(stream))?;
-                let win = mux.grant(stream, refill).map_err(RelayError::Mux)?;
-                RelayActions {
-                    ws_sends: vec![win],
-                    socket_ops: vec![SocketOp::Write { stream, bytes }],
-                }
+                RelayActions::socket(vec![SocketOp::Write { stream, bytes }])
             }
             // Guest half-closed → half-close the backend's write side.
             MuxEvent::PeerShutdown(stream) => {
@@ -218,6 +209,20 @@ impl RelayCore {
             .ok_or(RelayError::UnknownStream(stream))?;
         let data = mux.send_data(stream, bytes).map_err(RelayError::Mux)?;
         Ok(RelayActions::ws(vec![data]))
+    }
+
+    /// The backend accepted `n` bytes previously handed to it via [`SocketOp::Write`]. Refill the
+    /// guest's send window by `n` (a `WINDOW`), so the window tracks backend *drain*, not receipt —
+    /// this is the guest→backend backpressure. A refill for a stream already reaped is dropped.
+    pub fn on_backend_written(&mut self, stream: u32, n: u32) -> Result<RelayActions, RelayError> {
+        let mux = self
+            .session
+            .mux_mut()
+            .ok_or(RelayError::UnknownStream(stream))?;
+        match mux.grant(stream, n) {
+            Ok(win) => Ok(RelayActions::ws(vec![win])),
+            Err(_) => Ok(RelayActions::default()),
+        }
     }
 
     /// The backend socket reached EOF on read → half-close toward the guest (`SHUTDOWN_WR`).
