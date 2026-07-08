@@ -80,6 +80,28 @@ pub enum SnapshotError {
     /// is observable: deleting it changes this error (fast) into a trailing length mismatch (after a
     /// giant allocation).
     SparseRunExceedsTotal,
+    /// A component-state section payload was the wrong length or otherwise malformed for its
+    /// component (`tag`) — restore refuses it rather than half-applying a corrupt state.
+    BadComponentState { tag: u32 },
+}
+
+/// A machine component (CLINT, PLIC, UART, …) whose full state serializes to a resume-format
+/// section payload and restores from one. Encodings are **fixed-layout little-endian**; `restore`
+/// rejects a wrong-length/malformed payload with [`SnapshotError::BadComponentState`] — never a
+/// panic — so a truncated or hand-edited snapshot can't half-apply a corrupt device state.
+///
+/// This is the seam the whole-machine snapshot is built from: each component writes its
+/// [`Self::SECTION`] section on save and restores it on load. The CPU/RAM visitors and the
+/// determinism trace-diff (which proves *completeness*, not just round-trip) are the boot-gated
+/// integration pass; a bounded device like the CLINT/PLIC is fully round-trip-verifiable headlessly
+/// because its entire behavioural state is enumerable.
+pub trait ComponentSnapshot {
+    /// The resume-format section tag this component's state is stored under.
+    const SECTION: u32;
+    /// Serialize the component's full behavioural state to a section payload.
+    fn to_snapshot(&self) -> Vec<u8>;
+    /// Restore behavioural state from a payload. A wrong-length/malformed payload is a typed error.
+    fn restore(&mut self, payload: &[u8]) -> Result<(), SnapshotError>;
 }
 
 /// The parsed, fixed-size container header.

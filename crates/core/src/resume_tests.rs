@@ -290,3 +290,34 @@ fn decode_sparse_never_panics_on_random_input() {
         let _ = decode_sparse(&junk, expected); // Ok or typed Err — never panic
     }
 }
+
+#[test]
+fn a_component_round_trips_through_the_container_format() {
+    // The whole seam: a component's state → its section → a blob → the reader → restored component.
+    use super::{ComponentSnapshot, SectionReader, SnapshotWriter};
+    use crate::dev::clint::ClintState;
+
+    let clint = ClintState {
+        mtime: 12345,
+        mtimecmp: 67890,
+        msip: true,
+    };
+    let mut w = SnapshotWriter::new(&CORE, &BASE, 3);
+    w.section(ClintState::SECTION, &clint.to_snapshot());
+    let blob = w.finish();
+
+    let (_hdr, reader) = SectionReader::new(&blob).unwrap();
+    let mut restored = ClintState::default();
+    let mut seen = false;
+    for sec in reader {
+        let sec = sec.unwrap();
+        if sec.tag == ClintState::SECTION {
+            restored.restore(sec.payload).unwrap();
+            seen = true;
+        }
+    }
+    assert!(seen, "the CLINT section was found + restored");
+    assert_eq!(restored.mtime, 12345);
+    assert_eq!(restored.mtimecmp, 67890);
+    assert!(restored.msip);
+}

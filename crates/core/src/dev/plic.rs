@@ -68,6 +68,61 @@ impl PlicState {
     }
 }
 
+/// Fixed snapshot payload length: priority + enable + threshold + level + claimed (all u32 LE).
+/// `claim_count` is a diagnostic counter and is NOT part of it (see below).
+const PLIC_SNAPSHOT_LEN: usize = (NUM_SOURCES + 3 * NUM_CONTEXTS + 1) * 4;
+
+/// E3-T12: the PLIC's full *behavioural* state round-trips. The per-source `claim_count` is a
+/// diagnostic storm counter that "never affects behaviour", so it is not snapshotted — it restarts
+/// from the resume point (a documented decision, not an omission).
+impl crate::resume::ComponentSnapshot for PlicState {
+    const SECTION: u32 = crate::resume::section::PLIC;
+
+    fn to_snapshot(&self) -> alloc::vec::Vec<u8> {
+        let mut v = alloc::vec::Vec::with_capacity(PLIC_SNAPSHOT_LEN);
+        for x in &self.priority {
+            v.extend_from_slice(&x.to_le_bytes());
+        }
+        for x in &self.enable {
+            v.extend_from_slice(&x.to_le_bytes());
+        }
+        for x in &self.threshold {
+            v.extend_from_slice(&x.to_le_bytes());
+        }
+        v.extend_from_slice(&self.level.to_le_bytes());
+        for x in &self.claimed {
+            v.extend_from_slice(&x.to_le_bytes());
+        }
+        v
+    }
+
+    fn restore(&mut self, p: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        let err = || crate::resume::SnapshotError::BadComponentState { tag: Self::SECTION };
+        if p.len() != PLIC_SNAPSHOT_LEN {
+            return Err(err());
+        }
+        let mut it = p
+            .chunks_exact(4)
+            .map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]]));
+        for x in &mut self.priority {
+            *x = it.next().ok_or_else(err)?;
+        }
+        for x in &mut self.enable {
+            *x = it.next().ok_or_else(err)?;
+        }
+        for x in &mut self.threshold {
+            *x = it.next().ok_or_else(err)?;
+        }
+        self.level = it.next().ok_or_else(err)?;
+        for x in &mut self.claimed {
+            *x = it.next().ok_or_else(err)?;
+        }
+        // Diagnostic counter restarts from the resume point (behaviourally inert).
+        self.claim_count = [0; NUM_SOURCES];
+        Ok(())
+    }
+}
+
 impl Default for PlicState {
     fn default() -> Self {
         Self {
@@ -273,5 +328,70 @@ impl MmioDevice for Plic {
             }
         }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::{NUM_CONTEXTS, NUM_SOURCES, PLIC_SNAPSHOT_LEN, PlicState};
+    use crate::resume::{ComponentSnapshot, SnapshotError, section};
+
+    /// A PlicState with every behavioural field set to a distinct non-default value (plus a
+    /// non-zero diagnostic counter, to prove it is intentionally dropped on restore).
+    fn distinctive() -> PlicState {
+        let mut s = PlicState::default();
+        for (i, p) in s.priority.iter_mut().enumerate() {
+            *p = (i as u32) * 7 + 1;
+        }
+        for (i, e) in s.enable.iter_mut().enumerate() {
+            *e = 0xA5A5_0000 ^ i as u32;
+        }
+        for (i, t) in s.threshold.iter_mut().enumerate() {
+            *t = 3 + i as u32;
+        }
+        s.level = 0xDEAD_BEEF;
+        for (i, c) in s.claimed.iter_mut().enumerate() {
+            *c = 0x1000 + i as u32;
+        }
+        for (i, c) in s.claim_count.iter_mut().enumerate() {
+            *c = i as u64 + 1; // diagnostic — should NOT survive restore
+        }
+        assert_eq!(NUM_CONTEXTS, 2); // guard: the distinct values assume the current shape
+        s
+    }
+
+    #[test]
+    fn plic_behavioural_state_round_trips_and_drops_the_diagnostic_counter() {
+        let s = distinctive();
+        let bytes = s.to_snapshot();
+        assert_eq!(bytes.len(), PLIC_SNAPSHOT_LEN);
+        assert_eq!(PlicState::SECTION, section::PLIC);
+
+        let mut r = PlicState::default();
+        r.restore(&bytes).unwrap();
+        assert_eq!(r.priority, s.priority);
+        assert_eq!(r.enable, s.enable);
+        assert_eq!(r.threshold, s.threshold);
+        assert_eq!(r.level, s.level);
+        assert_eq!(r.claimed, s.claimed);
+        // The diagnostic storm counter is intentionally not snapshotted → reset from the resume point.
+        assert_eq!(r.claim_count, [0u64; NUM_SOURCES]);
+    }
+
+    #[test]
+    fn plic_restore_rejects_wrong_length_without_mutating() {
+        let bad = SnapshotError::BadComponentState { tag: section::PLIC };
+        let mut s = distinctive();
+        assert_eq!(s.restore(&[]), Err(bad.clone()));
+        assert_eq!(
+            s.restore(&alloc::vec![0u8; PLIC_SNAPSHOT_LEN - 1]),
+            Err(bad.clone())
+        );
+        assert_eq!(
+            s.restore(&alloc::vec![0u8; PLIC_SNAPSHOT_LEN + 1]),
+            Err(bad)
+        );
+        // The length check runs before any field write → the target is untouched.
+        assert_eq!(s.level, 0xDEAD_BEEF);
     }
 }
