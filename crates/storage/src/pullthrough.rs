@@ -47,6 +47,15 @@ pub enum PullError<E> {
 /// valid, else fetched, verified, and cached. Returns the [`PullReport`]. The order of `layers` is
 /// preserved for deterministic accounting; a duplicate digest within one call is a hit after the
 /// first occurrence (deduped).
+///
+/// **Partial pull on error:** if a later layer errors, the earlier layers of the *same* call remain
+/// cached (and the `PullReport` is discarded). This is safe and intentional — the store is
+/// content-addressed and every cached layer was digest-verified before storing, so the partial state
+/// is trustworthy and is reused (as hits) when the pull is retried.
+///
+/// **Eviction is the caller's responsibility:** this never calls [`BlobStore::evict_to`], so an
+/// unbounded pull grows the store without bound. A caller with a byte budget should evict (over
+/// unpinned blobs) after pulling — the pinned image's layers survive.
 pub fn pull_through<B, F>(
     store: &mut BlobStore<B>,
     fetcher: &mut F,
