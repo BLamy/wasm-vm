@@ -38,6 +38,11 @@ pub enum OverlayError {
     },
     /// The base chunk source returned an error assembling base bytes.
     Base,
+    /// A persisted overlay's on-storage format version is not understood (E3-T05 durable backends must
+    /// refuse rather than silently reinterpret an incompatible layout).
+    UnsupportedFormat { found: u32 },
+    /// A persisted overlay meta record is malformed (bad magic / truncated / inconsistent geometry).
+    BadMeta,
 }
 
 /// The outcome of an overlay read/write: complete, or blocked on a base chunk that must be fetched

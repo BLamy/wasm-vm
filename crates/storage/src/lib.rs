@@ -18,11 +18,13 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
 mod cache;
+mod dbmeta;
 mod fetch;
 mod overlay;
 mod prefetch;
 mod writeback;
 pub use cache::{BlockCache, CacheMetrics};
+pub use dbmeta::{OVERLAY_DB_VERSION, OverlayMeta, overlay_store_name};
 pub use fetch::{
     ChunkRequest, ChunkStore, FetchFailure, ResponseAction, RetryPolicy, classify_response,
     plan_fetches,
@@ -32,7 +34,7 @@ pub use overlay::{
     OverlayOutcome,
 };
 pub use prefetch::{PrefetchTracker, Readahead, boot_prefetch};
-pub use writeback::WriteBackOverlay;
+pub use writeback::{PersistQueue, SharedPersistQueue, WriteBackOverlay};
 
 /// The one format version this reader understands. Bumped only on an incompatible change; unknown
 /// *fields* are ignored (forward-compatible), but an unknown *version* is a hard error.
