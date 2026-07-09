@@ -64,6 +64,10 @@ pub struct BootArgs {
     /// E2-T20: print the interrupt/trap counters at exit.
     #[arg(long)]
     pub stats: bool,
+    /// E2-T25: emit a boot phase-timing table (wall ms, retired, MIPS per phase) + per-device
+    /// MMIO access counts, as pretty text + JSON, when the boot reaches userland (or at exit).
+    #[arg(long)]
+    pub profile_boot: bool,
 }
 
 /// Guest console → this process's stdout. Shared with the SBI console channel; a closed pipe
@@ -144,6 +148,9 @@ pub fn boot(a: BootArgs) -> ExitCode {
     let stdin_rx = (!a.no_input).then(spawn_stdin_reader);
     let mut pending: std::collections::VecDeque<u8> = std::collections::VecDeque::new();
 
+    // E2-T25: a boot profiler covering the FIRST boot (the baseline). Reboots are not profiled.
+    let mut profiler = a.profile_boot.then(BootProfiler::new);
+
     let mut boot_num = 0u32;
     loop {
         boot_num += 1;
@@ -154,10 +161,23 @@ pub fn boot(a: BootArgs) -> ExitCode {
             Ok(v) => v,
             Err(code) => return code,
         };
-        let outcome = run_machine(&a, &mut m, &uart, &console, stdin_rx.as_ref(), &mut pending);
+        let outcome = run_machine(
+            &a,
+            &mut m,
+            &uart,
+            &console,
+            stdin_rx.as_ref(),
+            &mut pending,
+            profiler.as_mut().filter(|_| boot_num == 1),
+        );
         // Final drain before we act on the outcome.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
+        if boot_num == 1 {
+            if let Some(p) = profiler.as_ref() {
+                p.report(&m.bus_mut().device_hits(), m.irq_stats().retired);
+            }
+        }
         if a.stats {
             eprint!("{}", m.stats_dump()); // E2-T20
         }
@@ -193,6 +213,12 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 return ExitCode::from(101);
             }
             RunOutcome::MaxInstrs => {
+                // A profiled boot stops itself at the userland marker (also a MaxInstrs return);
+                // don't mislabel that as hitting the budget (critic C3).
+                if profiler.as_ref().is_some_and(|p| p.done) {
+                    eprintln!("wasm-vm: profile complete (stopped at userland marker)");
+                    return ExitCode::SUCCESS;
+                }
                 eprintln!("wasm-vm: reached --max-instrs {}", a.max_instrs);
                 return ExitCode::from(102);
             }
@@ -316,6 +342,141 @@ fn assemble(
 /// Run one assembled machine to its terminal [`RunOutcome`], executing in quanta while pumping
 /// UART output → stdout and host stdin → the UART RX FIFO (rate-limited to its free space so a
 /// pasted line can't overrun). `pending` carries un-fed host input across quanta (and reboots).
+/// E2-T25 boot profiler. Detects guest phase markers in the console byte stream and, at each
+/// marker's FIRST sighting, stamps host wall time (allowed here — this is the CLI, not core, so
+/// the determinism gate does not apply) and the retired-instruction count. `report()` then prints
+/// a phase table (per-phase wall ms, retired, derived MIPS) and per-device MMIO access counts.
+/// The host-time split (CPU vs device handlers vs I/O) comes from an external flamegraph — see
+/// docs/perf-baseline.md; the deterministic device counts here cross-check it.
+struct BootProfiler {
+    start: std::time::Instant,
+    tail: String,
+    /// (phase label, needle substring); a phase fires on the FIRST line containing its needle.
+    markers: Vec<(&'static str, &'static str)>,
+    /// (label, wall_ms, retired) at first sighting, in the order phases fired.
+    hits: Vec<(&'static str, u128, u64)>,
+    seen: Vec<bool>,
+    /// Set once a TERMINAL marker (userland reached) fires; the run loop stops profiling boots
+    /// here so the total reflects boot-to-userland, not the idle spin that follows under --no-input.
+    done: bool,
+}
+
+impl BootProfiler {
+    fn new() -> Self {
+        // Markers present across busybox-initramfs and Alpine boots; unseen ones are simply omitted.
+        let markers = vec![
+            ("kernel-entry", "Linux version"),
+            ("console-up", "printk: console"),
+            ("rootfs-mounted", "VFS: Mounted root"),
+            ("init-handoff", "Freeing unused kernel"),
+            ("busybox-userland", "userland up"),
+            ("getty-login", "login:"),
+        ];
+        let n = markers.len();
+        Self {
+            start: std::time::Instant::now(),
+            tail: String::new(),
+            markers,
+            hits: Vec::new(),
+            seen: vec![false; n],
+            done: false,
+        }
+    }
+
+    /// Feed one quantum's console output + the current retired count; record any first-seen markers.
+    fn feed(&mut self, out: &[u8], retired: u64) {
+        if out.is_empty() {
+            return;
+        }
+        self.tail.push_str(&String::from_utf8_lossy(out));
+        for (i, (label, needle)) in self.markers.iter().enumerate() {
+            if !self.seen[i] && self.tail.contains(needle) {
+                self.seen[i] = true;
+                self.hits
+                    .push((label, self.start.elapsed().as_millis(), retired));
+                // "userland up" (busybox) or "login:" (getty) means the boot is complete.
+                if *label == "busybox-userland" || *label == "getty-login" {
+                    self.done = true;
+                }
+            }
+        }
+        // Keep only a short tail so a marker split across quanta still matches, without unbounded
+        // growth. Snap the cut to a char boundary: `from_utf8_lossy` yields valid UTF-8, but a
+        // multibyte char (e.g. a U+FFFD from a non-ASCII dmesg byte) straddling `len-256` would make
+        // `split_off` PANIC — a profiling flag must never be able to crash the emulator.
+        if self.tail.len() > 512 {
+            let mut cut = self.tail.len() - 256;
+            while cut < self.tail.len() && !self.tail.is_char_boundary(cut) {
+                cut += 1;
+            }
+            self.tail = self.tail.split_off(cut);
+        }
+    }
+
+    /// Map a device window base to a human name via the platform memory map.
+    fn device_name(base: u64) -> &'static str {
+        use wasm_vm_core::platform::virt::{
+            CLINT_BASE, PLIC_BASE, RTC_BASE, UART0_BASE, VIRTIO_BASE,
+        };
+        match base {
+            b if b == UART0_BASE => "uart16550",
+            b if b == CLINT_BASE => "clint",
+            b if b == PLIC_BASE => "plic",
+            b if b == RTC_BASE => "goldfish-rtc",
+            b if b >= VIRTIO_BASE && b < VIRTIO_BASE + 8 * 0x1000 => "virtio-mmio",
+            _ => "other",
+        }
+    }
+
+    /// Pretty phase table + per-device counts + a JSON blob, to stderr.
+    fn report(&self, device_hits: &[(u64, u64)], total_retired: u64) {
+        let total_ms = self.start.elapsed().as_millis();
+        eprintln!("\n=== E2-T25 boot profile ===");
+        eprintln!("phase              wall_ms   d_wall_ms   d_retired      phase_MIPS");
+        let (mut pw, mut pr) = (0u128, 0u64);
+        let mut json_phases = String::new();
+        for (label, wall_ms, retired) in &self.hits {
+            let dw = wall_ms.saturating_sub(pw);
+            let dr = retired.saturating_sub(pr);
+            let mips = if dw > 0 {
+                dr as f64 / dw as f64 / 1000.0
+            } else {
+                0.0
+            };
+            eprintln!("{label:<18}{wall_ms:>8}{dw:>12}{dr:>12}{mips:>16.2}");
+            if !json_phases.is_empty() {
+                json_phases.push(',');
+            }
+            json_phases.push_str(&format!(
+                "{{\"phase\":\"{label}\",\"wall_ms\":{wall_ms},\"retired\":{retired},\"phase_mips\":{mips:.2}}}"
+            ));
+            pw = *wall_ms;
+            pr = *retired;
+        }
+        let overall_mips = if total_ms > 0 {
+            total_retired as f64 / total_ms as f64 / 1000.0
+        } else {
+            0.0
+        };
+        eprintln!("total: {total_ms} ms, {total_retired} retired, overall {overall_mips:.2} MIPS");
+        eprintln!("\nper-device MMIO accesses:");
+        let mut json_dev = String::new();
+        for (base, hits) in device_hits {
+            let name = Self::device_name(*base);
+            eprintln!("  {name:<14} {hits:>12}  (@ {base:#x})");
+            if !json_dev.is_empty() {
+                json_dev.push(',');
+            }
+            json_dev.push_str(&format!(
+                "{{\"device\":\"{name}\",\"base\":\"{base:#x}\",\"accesses\":{hits}}}"
+            ));
+        }
+        eprintln!(
+            "\nPROFILE_JSON {{\"total_ms\":{total_ms},\"total_retired\":{total_retired},\"overall_mips\":{overall_mips:.2},\"phases\":[{json_phases}],\"devices\":[{json_dev}]}}"
+        );
+    }
+}
+
 fn run_machine(
     a: &BootArgs,
     m: &mut Machine,
@@ -323,7 +484,9 @@ fn run_machine(
     console: &SharedStdout,
     stdin_rx: Option<&mpsc::Receiver<Vec<u8>>>,
     pending: &mut std::collections::VecDeque<u8>,
+    profiler: Option<&mut BootProfiler>,
 ) -> RunOutcome {
+    let mut profiler = profiler;
     let mut total = 0u64;
     loop {
         if total >= a.max_instrs {
@@ -335,6 +498,15 @@ fn run_machine(
         // Drain UART output → stdout every quantum so the boot log streams live.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
+        // E2-T25: feed the console stream + retired count to the profiler so it can stamp the
+        // wall time + retired count at each guest phase marker's first sighting.
+        if let Some(p) = profiler.as_deref_mut() {
+            p.feed(&out, m.irq_stats().retired);
+            // Boot reached userland → stop here so the profile total is boot time, not idle spin.
+            if p.done {
+                return RunOutcome::MaxInstrs;
+            }
+        }
         // E2-T19: drain the virtio-blk request trace → stderr (when --blk-log).
         if a.blk_log {
             for r in m.drain_blk_log() {
