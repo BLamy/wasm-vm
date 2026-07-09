@@ -91,6 +91,13 @@ struct RunArgs {
     /// full quantum makes no forward progress (a spin loop).
     #[arg(long, value_name = "QUANTUM")]
     hang_watchdog: Option<u64>,
+    /// E2-T20: after the run, print the interrupt/trap counters (retired, exceptions,
+    /// interrupts, PLIC claims, WFI) to stderr.
+    #[arg(long)]
+    stats: bool,
+    /// E2-T20: disable the always-on interrupt-storm / WFI-deadlock detectors.
+    #[arg(long)]
+    no_storm_detect: bool,
 }
 
 /// Guest console → this process's stdout, streamed (no unbounded buffering). A closed
@@ -198,6 +205,7 @@ fn run(a: RunArgs) -> ExitCode {
 
     let ram_bytes = a.ram_mib.saturating_mul(1024 * 1024);
     let mut m = Machine::new(ram_bytes);
+    m.set_storm_detect(!a.no_storm_detect); // E2-T20
     // E2-T11: --drive file=IMG[,ro] → PLIC + CLINT + virtio-blk slot 0 (mmap FileBackend).
     if let Some(spec) = &a.drive {
         let (path, ro) = match spec.strip_suffix(",ro") {
@@ -337,6 +345,9 @@ fn run(a: RunArgs) -> ExitCode {
     }
 
     eprintln!("retired={}", sink.count);
+    if a.stats {
+        eprint!("{}", m.stats_dump()); // E2-T20
+    }
 
     // RISCOF signature dump (E1-T20): write the begin_signature..end_signature region after the
     // run. Required for the arch-test flow; a run that asked for it but lacks the symbols is a hard

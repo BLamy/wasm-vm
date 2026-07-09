@@ -92,7 +92,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [?] `217` [E2-T17](epic-2-first-light/E2-T17-syscon-poweroff-reboot.md) — syscon poweroff/reboot device — clean shutdown propagated to the host/JS *(deps: E2-T15)*
 - [?] `218` [E2-T18](epic-2-first-light/E2-T18-alpine-rootfs-image.md) — Alpine riscv64 rootfs — scripted ext4 image build with getty on ttyS0 *(deps: E2-T12)*
 - [?] `219` [E2-T19](epic-2-first-light/E2-T19-alpine-boot-to-login-native.md) — Full Alpine boot — ext4 root on virtio-blk to login shell (native CLI) *(deps: E2-T11, E2-T15, E2-T18)*
-- [ ] `220` [E2-T20](epic-2-first-light/E2-T20-interrupt-storm-detection.md) — Interrupt storm and livelock detection instrumentation *(deps: E2-T15)*
+- [?] `220` [E2-T20](epic-2-first-light/E2-T20-interrupt-storm-detection.md) — Interrupt storm and livelock detection instrumentation *(deps: E2-T15)*
 - [ ] `221` [E2-T21](epic-2-first-light/E2-T21-browser-loading-ux.md) — Browser loading pipeline — fetch kernel and disk image with progress, instantiate WASM *(deps: E2-T10, E2-T15)*
 - [ ] `222` [E2-T22](epic-2-first-light/E2-T22-xterm-uart-wiring.md) — xterm.js to UART wiring — input path, control characters, resize story *(deps: E2-T07, E2-T21)*
 - [ ] `223` [E2-T23](epic-2-first-light/E2-T23-browser-timekeeping.md) — Browser timekeeping — mtime from performance.now, throttling, suspend recovery *(deps: E2-T16, E2-T21)*

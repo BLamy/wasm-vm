@@ -115,6 +115,10 @@ pub struct Hart {
     /// Software TLB (E1-T17): ASID-tagged cache in front of the Sv39 walker. Microarchitectural
     /// state — NOT part of the architectural snapshot; SFENCE.VMA is its only invalidation.
     pub tlb: crate::tlb::Tlb,
+    /// E2-T20: the just-executed instruction was `WFI`. Microarchitectural (NOT snapshotted),
+    /// set by the WFI arm and cleared by the run loop after it reads it for the WFI-deadlock
+    /// watchdog.
+    pub last_was_wfi: bool,
     /// QUARANTINED CSR scaffolding for the riscv-tests p-env (E0-T19). Present only under
     /// `feature = "zicsr-stub"`; Epic 1 replaces it with the real CSR file above.
     #[cfg(feature = "zicsr-stub")]
@@ -131,6 +135,7 @@ impl Default for Hart {
             resv: None,
             fregs: fregs::FRegs::default(),
             tlb: crate::tlb::Tlb::new(),
+            last_was_wfi: false,
             #[cfg(feature = "zicsr-stub")]
             csrs: crate::zicsr_stub::CsrFile::default(),
         };
@@ -1363,6 +1368,7 @@ impl Hart {
                     });
                 }
                 self.resv = None;
+                self.last_was_wfi = true; // E2-T20: WFI-deadlock watchdog signal
                 (0, 0, pc_next)
             }
             // Supervisor fence (E1-T17, Priv §4.2.1): invalidate the software TLB per the four

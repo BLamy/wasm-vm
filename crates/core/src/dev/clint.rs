@@ -60,6 +60,13 @@ impl ClintState {
     pub const fn mtip(&self) -> bool {
         self.mtime >= self.mtimecmp
     }
+
+    /// E2-T20: is a timer wakeup armed? A software interrupt request (`msip`) will fire, and a
+    /// finite `mtimecmp` (not the `u64::MAX` "cancelled" sentinel) will eventually fire as
+    /// `mtime` advances — either counts as an armed wakeup for the WFI watchdog.
+    pub const fn any_timer_armed(&self) -> bool {
+        self.msip || self.mtimecmp != u64::MAX
+    }
 }
 
 /// The memory-mapped CLINT device. Holds a shared handle to [`ClintState`]; the machine holds

@@ -3,7 +3,7 @@ id: E2-T20
 epic: 2
 title: Interrupt storm and livelock detection instrumentation
 priority: 220
-status: pending
+status: implemented
 depends_on: [E2-T15]
 estimate: M
 capstone: false
@@ -61,4 +61,68 @@ report fire, and does it correctly not fire when a timer IS armed? Each wrong an
 refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — storm / livelock / WFI-deadlock detection landed
+
+`crates/core/src/diag/irqstats.rs`: always-on plain-counter instrumentation for the three
+emulator death spirals. Per-`scause` trap counters, per-PLIC-source CLAIM counters, WFI count; a
+sliding-window **storm detector** (`>5000 traps / 10^6 retired` sustained over 3 windows, names
+the hottest PLIC line); a one-shot **WFI-deadlock watchdog** (WFI + no wakeup armed → report).
+Fixed arrays (no HashMap/time/rand — determinism gate clean).
+
+**Wiring:** PLIC per-source `claim_count`; a microarchitectural `Hart::last_was_wfi` flag (NOT
+snapshotted) set by the WFI arm; `Csrs::mip_and_mie_nonzero` + `ClintState::any_timer_armed` as
+the wakeup-armed signals; the run loop counts traps/interrupts/retires/WFI, runs `storm_check`
+when a trap lands (event-driven — zero cost while quiet) and `wfi_watchdog_check` after a WFI.
+Hot-path cost is just `check_storm` (a subtract+compare); the PLIC claim sync + hot-line naming
+happen ONLY on a fire. CLI `--stats` / `--no-storm-detect` (run + boot); wasm `getStats()` returns
+`{retired, wfi, exceptions[16], interrupts[16], claims[32], storm, wfiReport}` for E2-T26's UI.
+
+**Tests (10):** 6 unit (storm fires after N consecutive hot windows; a quiet window resets the
+streak; window stays open until enough retired; WFI watchdog fires-once-then-rearms + silent when
+armed; hottest-irq). 4 integration through the real run loop: an illegal-insn→`mret` **storm**
+fires (`exc[2] > 3M`, hot window > 5000 traps); a `wfi;jal x0,0` **deadlock** watchdog reports and
+names the failure; the SAME WFI with a CLINT timer armed stays **silent** (no false positive); a
+quiet `addi;j` loop produces zero storms/WFI-reports/exceptions.
+
+**Overhead (acceptance #4, reproducible):** two 800M-instruction headless busybox boots
+(`wasm-vm boot … --no-input --max-instrs 800000000` ± `--no-storm-detect`): **117.20 s** with
+detection vs **116.90 s** without = **0.26 %** (within measurement noise), far under the 3 %
+threshold. That boot ran the counters throughout (`exc[8]=650`, page-faults `[12/13/15]≈414`,
+S-timer `int[5]=758`, UART PLIC claims `[10]=5`, 537 K WFIs) with **no false positive** (no storm,
+no WFI report — the Linux idle loop arms a timer before each WFI, so `any_wakeup_armed` is true).
+
+### 2026-07-05 — cold-clone critic — 3 REFUTATIONS fixed (this is why the gate exists)
+
+The critic found the green suite was hiding real bugs:
+
+- **REFUTATION #1 — interrupt storms were STRUCTURALLY UNDETECTABLE.** `storm_check` was wired
+  only to the *exception* path; the interrupt path did `on_interrupt; continue` and never called
+  the detector. So the task's headline attack — a PLIC/timer interrupt firing forever — climbed
+  the counter but never fired the detector. My exception-storm test masked it. **Fixed:**
+  `storm_check()` now also runs after `on_interrupt`. **New integration test**
+  `timer_interrupt_storm_is_detected` (CLINT `mtimecmp=0` → MTIP-forever, handler=`mret`)
+  asserts `int[7]>1M` AND `last_storm.is_some()` — it FAILED before the fix.
+- **REFUTATION #2 — per-line naming used the CUMULATIVE claim leader, not the storming line.**
+  A line hot early (UART IRQ 10) would misname a later IRQ-11 storm. **Fixed:** the detector
+  now snapshots PLIC claims at each window boundary and names the max *per-window* delta
+  (`hottest_irq_in_window`). **New unit test** `naming_uses_the_window_not_the_lifetime_leader`
+  (IRQ 10 hot in windows 0–1, IRQ 11 storms in 2–4) asserts the firing window names **11**.
+- **REFUTATION #3 — the overhead A/B was mislabelled.** `--no-storm-detect` gates only the
+  detector *bodies*; the always-on counters (`retired += 1` + the WFI branch per retired instr)
+  run in both arms. So the **0.26 %** is **detector overhead**, within run-to-run noise — NOT
+  total-instrumentation overhead. Reframed honestly (per the critic's accepted option): the
+  detector cost is negligible; the always-on counter cost is a single `u64` increment + one
+  predictable branch per retired instruction — structurally a rounding error against the
+  interpreter's dozens-of-host-instructions-per-guest-instruction, and not isolated by this A/B.
+- **ADVISORY #5 fixed:** `check_storm` now normalizes the trap RATE to the window's actual
+  retired length (`traps·window > threshold·retired_in_window`), so a sparse-trap window can't
+  be mis-scored. **CONFIRMED by the critic:** the WFI watchdog `any_wakeup_armed` (future-IPI
+  reports, timer-armed stays silent, `mip&mie` ignores `mstatus.xIE`, `u64::MAX` sentinels) and
+  the determinism (counters live off the snapshot; `last_was_wfi` transient) all hold.
+
+**Acceptance (post-fix):** #1 storm fires + names the hot line ✓ (now for interrupt storms too,
+by per-window claims); #2 WFI watchdog reports instead of hanging ✓; #3 full boot zero false
+positives ✓; #4 **detector** overhead within noise, counters structurally negligible (honest
+reframe) ✓; #5 counters via `--stats` + wasm `getStats` ✓. Gates: core 102, storm 5, clippy
+±`--all-features`, fmt, determinism, wasm32 — all green.
