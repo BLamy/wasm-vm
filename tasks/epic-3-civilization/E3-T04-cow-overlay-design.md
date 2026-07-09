@@ -56,4 +56,27 @@ attaches, refute. Check the doc against the code: any commit guarantee stated bu
 implemented (or vice versa) refutes. `cargo tree` — no browser deps in the core crate.
 
 ## Verification log
-(empty)
+
+**2026-07-06 — CoW overlay core (pass 1), PR stacked on #90.**
+`crates/storage/src/overlay.rs`: `OverlayBackend` trait (dirty-block read/write, commit barrier,
+base_binding, image_len) + `MemOverlay` in-memory reference (sparse BTreeMap of 4 KiB blocks; no_std,
+no HashMap) + `OverlayDisk<B>` (merge overlay-over-base per block; atomic read-modify-write of partial
+blocks; `NeedChunk` when a base block isn't resident, composing with E3-T02 deferred completion;
+`attach` refuses a mismatched base by manifest hash BEFORE any I/O). `ImageManifest::base_hash()` =
+SHA-256 of the canonical manifest JSON (folds in chunk_size → a re-chunked base differs).
+`docs/design/cow-overlay.md`: format, 4 KiB granularity rationale, base-binding rule, commit contract
+(E3-T08 maps VIRTIO_BLK_T_FLUSH → commit in one line), versioning.
+
+Cold-clone critic (fresh context) attacked merge-seam block math, RMW atomicity, the tail-block fast
+path, base binding, NeedChunk propagation, range/overflow, and doc-vs-code — wrote 3 throwaway seam
+tests the proptest's random distribution rarely hits (block-aligned reads, tail full-cover-then-
+partial, blocked-write atomicity). **Verdict SHIP, no bugs**, all doc claims matched.
+
+Acceptance met: [x] ≥10^4-case proptest (10,000) — OverlayDisk over a resident base byte-identical to
+a flat Vec model (unaligned + cross-block-boundary + tail). [x] unwritten read hits base exactly; the
+100-byte write at offset 4090 merges. [x] mismatched base hash → typed error before I/O (incl. a
+re-chunked same-bytes base). [x] commit-semantics doc explicit for T08. **Remaining (pass 2, stacked
+branch):** [ ] Alpine boots read-write on OverlayDisk + a resident base (native harness + browser),
+`touch /root/x; ls` works — wire OverlayDisk into the wasm virtio-blk path (replacing ChunkedBackend's
+ad-hoc sector overlay). Gates: storage 37/0, workspace clippy --all-features + fmt + determinism +
+wasm build; `cargo tree -p wasm-vm-storage` has no web-sys/js-sys/wasm-bindgen (adversarial check).

@@ -19,11 +19,16 @@ use sha2::{Digest, Sha256};
 
 mod cache;
 mod fetch;
+mod overlay;
 mod prefetch;
 pub use cache::{BlockCache, CacheMetrics};
 pub use fetch::{
     ChunkRequest, ChunkStore, FetchFailure, ResponseAction, RetryPolicy, classify_response,
     plan_fetches,
+};
+pub use overlay::{
+    MemOverlay, OVERLAY_BLOCK, OVERLAY_FORMAT_VERSION, OverlayBackend, OverlayDisk, OverlayError,
+    OverlayOutcome,
 };
 pub use prefetch::{PrefetchTracker, Readahead, boot_prefetch};
 
@@ -126,6 +131,15 @@ impl ImageManifest {
         // A well-formed input always yields a valid manifest; validate defends against a future bug.
         m.validate()?;
         Ok(m)
+    }
+
+    /// A stable 32-byte identity for this exact base image — SHA-256 of the canonical manifest JSON,
+    /// which folds in the version, length, **chunk size**, layout, and every chunk hash. A copy-on-write
+    /// overlay records this and refuses to attach to any other base (E3-T04): a re-chunked image (same
+    /// bytes, different `chunk_size`) hashes differently, so an overlay cannot silently ride the wrong
+    /// geometry. Not a security boundary — a collision-resistant binding, not an auth token.
+    pub fn base_hash(&self) -> [u8; 32] {
+        Sha256::digest(self.to_json().as_bytes()).into()
     }
 
     /// Serialize to compact JSON (the manifest a `newChunkedDisk` boot loads). Round-trips through
