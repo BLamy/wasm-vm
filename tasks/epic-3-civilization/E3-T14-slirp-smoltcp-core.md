@@ -130,6 +130,17 @@ non-local dst (10.0.2.x != .2/.3, incl the guest's own .15 / .255 broadcast) is 
 such host on the virtual link — it's dropped (`Other`); added a test. MINOR-2 noted in-code (the
 bridge must distinguish FIN/RST from data in pass 2b). 20 slirp tests. fmt + clippy + determinism green.
 
+**2026-07-07 — pass 2e: `FlowManager` (the control plane).** `manager.rs`: `FlowManager` ties
+`tcp::classify` + the NAT `FlowTable` into per-frame flow-lifecycle `Action`s the async bridge will
+dispatch on — `Connect(FlowKey)` (a new outbound flow → the bridge opens the connector + a smoltcp
+socket), `Existing(FlowKey)` (feed to the flow's socket), `Local` (smoltcp answers), `Ignore` (drop).
+`on_guest_frame(frame, now_ms) -> FrameOutcome { action, evicted }` also surfaces any NAT-bound
+eviction so the bridge tears down the evicted flow's socket. Pure + time-injected. 7 unit tests: new
+SYN → Connect (+ creates a flow); retransmitted SYN → Existing (NOT a 2nd connect); data refreshes a
+tracked flow; STRAY data for an unknown flow → Existing but creates NO NAT entry; a new flow at
+capacity evicts the LRU (evicted surfaced); Local/Ignore create no flow; expire+remove. 27 slirp
+tests. fmt + clippy + determinism green.
+
 **Pass 2b (next — the async bridge):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).

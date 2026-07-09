@@ -11,11 +11,14 @@ use std::net::Ipv4Addr;
 
 pub mod connector;
 pub mod device;
+pub mod manager;
 pub mod nat;
 #[cfg(feature = "native")]
 pub mod native;
 pub mod stack;
 pub mod tcp;
+
+pub use manager::{Action, FlowManager, FrameOutcome};
 
 pub use connector::{ConnectError, OutboundConnector};
 pub use device::SlirpDevice;
