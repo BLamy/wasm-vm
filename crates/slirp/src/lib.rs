@@ -12,6 +12,7 @@ use std::net::Ipv4Addr;
 pub mod bridge;
 pub mod connector;
 pub mod device;
+pub mod dhcp;
 #[cfg(all(test, feature = "native"))]
 mod e2e_pump_stack;
 pub mod manager;
@@ -28,6 +29,7 @@ pub use manager::{Action, FlowManager, FrameOutcome};
 pub use bridge::Bridge;
 pub use connector::{ConnectError, OutboundConnector};
 pub use device::SlirpDevice;
+pub use dhcp::DhcpServer;
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
 #[cfg(feature = "native")]
 pub use native::NativeConnector;
