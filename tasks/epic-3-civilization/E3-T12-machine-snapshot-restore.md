@@ -178,6 +178,34 @@ RTC tag unique + in is_known_section. **MAJOR (fixed):** the malformed test only
 → a lax parse at 25/26 survived; fixed by looping 24..=26; index-25 mutant now killed. Also fixed a
 CI clippy fail (unused `WallClock` test import).
 
-**Next passes (boot/browser-gated):** the CPU/RAM `ComponentSnapshot` visitors (+ UART/virtio, with
-device quiesce) + the native determinism trace-diff (#1); browser OPFS resume (#2); the
-`sync`→snapshot→reload→`fsck` coherence proof (#5).
+### Pass 5 — ComponentSnapshot for RAM (guest memory), zero-elision encoded (PR #157, stacked on #155)
+**Delivered:** `impl ComponentSnapshot for Ram` + `section::RAM` (tag 2). `to_snapshot` = `encode_sparse`
+over the live guest bytes (the Pass-1 zero-elision codec — a mostly-empty 256 MiB RAM snapshots to a
+handful of runs, not 256 MiB); `restore` = `decode_sparse(payload, self.data.len())` then a single
+`copy_from_slice`. `base` (fixed platform address, not state) is NOT snapshotted. All-or-nothing:
+a payload that decodes to the wrong length is refused with `BadComponentState { tag: RAM }` before any
+mutation of live memory. This is the last bounded-state visitor; the CPU visitor stays boot-gated on the
+determinism trace-diff (a partial CSR section = a landmine). **CI #157 pending→see PR.**
+
+**Adversarial cold-clone critic** (reviewed `origin/task/e3-t12d-rtc..HEAD`): **verdict CLEAN.** The one
+memory-safety seam — `copy_from_slice` (panics on length mismatch) — is guarded because `decode_sparse`
+is passed `self.data.len()` as the expected length and returns `Err` on any deviation, so the copy only
+runs on an exact-length buffer; **verified over 200k fuzzed round-trips** (random fills incl. all-zero,
+all-0xff, sparse) — every one round-trips byte-exact and every wrong-size payload is refused, none reach
+the copy. Completeness is a full-buffer byte compare (not a length/spot check); the wrong-size-refused
+test bites. No mutants survived.
+
+### Web fix (folded here per Brett's "add to the current PR so the stack carries it")
+Fixed the "can't type in the terminals at all" bug: **nothing in `web/` ever focused xterm** (no
+`.focus()` call existed), so after boot — and on every Terminal-tab re-show from a `display:none` panel —
+keystrokes silently went nowhere. Added `terminal.focus()`, called after a successful boot and on
+Terminal-tab activation (+ `wvmDemo.focusTerminal()` for the Docker Run pane). The Docker Run
+auto-command was never affected (programmatic `typeBytes`, no focus needed). **Regression test
+(`terminal.spec.js`): real `page.keyboard` input with NO prior click reaches the guest — mutation-verified
+(removing the boot `ui.focus()` makes it fail, restored it passes, 1.3–1.5 min real WASM boot each way).**
+The gap that let this ship: every prior terminal test injected via `window.__term.typeBytes`, which needs
+no focus, so none could catch it.
+
+**Next passes (boot/browser-gated):** the CPU `ComponentSnapshot` visitor (+ virtio, with device quiesce)
++ the native determinism trace-diff (#1); browser OPFS resume (#2); the `sync`→snapshot→reload→`fsck`
+coherence proof (#5). RAM/CLINT/PLIC/UART/RTC bounded-state visitors are now all done + critic-verified.

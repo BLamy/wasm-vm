@@ -58,6 +58,21 @@ test("xterm ↔ UART: echo, ^C survival, and byte-exact bulk input", async ({ pa
   await expect(page.locator(rows)).toContainText("100000 /tmp/paste", { timeout: 120_000 });
 });
 
+test("real keyboard input reaches the guest without first clicking the terminal", async ({ page }) => {
+  test.setTimeout(240_000);
+  await page.goto("/");
+  await page.click("#boot-linux");
+  await expect(page.locator(rows)).toContainText("busybox userland up", { timeout: 180_000 });
+  await expect(page.locator(rows)).toContainText("~ #");
+
+  // Deliberately do NOT click the terminal. Boot must have focused it (the "can't type" fix).
+  // Use the real keyboard — page.keyboard dispatches to document.activeElement, so this only
+  // reaches the guest if the xterm textarea is actually focused. Enter is sent as \r (CR).
+  await page.keyboard.type("echo KBD_FOCUS_$((6*7))");
+  await page.keyboard.press("Enter");
+  await expect(page.locator(rows)).toContainText("KBD_FOCUS_42", { timeout: 15_000 });
+});
+
 test("Fit button surfaces a matching stty hint", async ({ page }) => {
   await page.goto("/");
   await page.click("#term-fit");
