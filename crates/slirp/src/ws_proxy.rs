@@ -8,10 +8,14 @@
 //! `None` — never a panic (the adversarial charter: fuzzing with garbage must not panic or leak). No
 //! tokio → browser-safe.
 
+#[cfg(feature = "native")]
+pub mod driver;
 pub mod mux;
 pub mod relay;
 pub mod session;
 pub mod stream;
+#[cfg(feature = "native")]
+pub use driver::RelayServer;
 pub use mux::{MAX_STREAMS, Mux, MuxError, MuxEvent, Role};
 pub use relay::{INITIAL_WINDOW, RelayActions, RelayCore, RelayError, SocketOp};
 pub use session::{HandshakeError, Session, SessionError, accept_hello, hello};
