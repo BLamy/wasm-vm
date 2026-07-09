@@ -34,6 +34,10 @@ pub struct ChunkedBackend<B: OverlayBackend = MemOverlay> {
     /// The E3-T04 copy-on-write overlay over the base.
     disk: OverlayDisk<B>,
     capacity_sectors: u64,
+    /// E3-T08: the durability barrier held by an in-flight (parked) FLUSH — the exact block set
+    /// that FLUSH covers. Held across `flush()` retries so continuous guest writes cannot extend
+    /// the wait; dropped once every barrier block has durably committed.
+    flush_barrier: Option<Vec<u64>>,
 }
 
 impl ChunkedBackend<MemOverlay> {
@@ -61,6 +65,7 @@ impl<B: OverlayBackend> ChunkedBackend<B> {
             capacity_sectors: disk.len() / SECTOR_SIZE as u64,
             store,
             disk,
+            flush_barrier: None,
         }
     }
 }
@@ -99,8 +104,33 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
     }
 
     fn flush(&mut self) -> Result<(), BlockError> {
-        // virtio-blk FLUSH → the overlay durability barrier (E3-T04 commit contract).
+        // virtio-blk FLUSH → the overlay durability barrier (E3-T04 commit contract; E3-T08 made
+        // it HONEST for async write-back backends). First call under unpersisted data takes a
+        // barrier (the exact block set this FLUSH covers) and reports FlushPending — the device
+        // parks the request and re-calls flush() each boundary. Retries re-check the SAME held
+        // barrier (never re-take it, or continuous guest writes would extend the wait forever);
+        // once every barrier block has durably committed (the async store's transaction-complete
+        // → mark_persisted), the barrier drops and the FLUSH acks. Synchronous backends
+        // (MemOverlay) have no barrier and ack immediately.
+        if let Some(b) = &self.flush_barrier {
+            if self.disk.barrier_clear(b) {
+                self.flush_barrier = None;
+            } else {
+                return Err(BlockError::FlushPending);
+            }
+        } else if let Some(b) = self.disk.durability_barrier() {
+            self.flush_barrier = Some(b);
+            return Err(BlockError::FlushPending);
+        }
         self.disk.commit().map_err(|_| BlockError::Io)
+    }
+
+    fn flush_reset(&mut self) {
+        // E3-T08 (critic BUG 1): the parked FLUSH holding our barrier was discarded (transport
+        // reset / device degradation). Drop it so the NEXT flush takes a FRESH barrier covering
+        // everything pending at that point — adopting the stale, narrower barrier could ack a
+        // new FLUSH while its own coverage is unpersisted.
+        self.flush_barrier = None;
     }
 }
 
@@ -257,5 +287,102 @@ mod tests {
         let mut buf = [0u8; SECTOR_SIZE];
         assert_eq!(be.read(16, &mut buf), Err(BlockError::OutOfRange));
         assert_eq!(be.write(16, &buf), Err(BlockError::OutOfRange));
+    }
+}
+
+#[cfg(test)]
+mod flush_tests {
+    use super::tests_support::*;
+    use super::*;
+
+    /// E3-T08: the full FLUSH-barrier glue over a WriteBackOverlay — FlushPending until the
+    /// simulated async store drains the queue, then Ok; a post-barrier write does NOT extend the
+    /// held barrier; MemOverlay (ephemeral) flush stays synchronous-Ok.
+    #[test]
+    fn flush_barrier_over_writeback_overlay() {
+        let (m, store) = tiny_manifest_store();
+        let queue = std::rc::Rc::new(RefCell::new(wasm_vm_storage::PersistQueue::new()));
+        let overlay = wasm_vm_storage::WriteBackOverlay::with_shared_queue(
+            &m,
+            queue.clone(),
+            std::collections::BTreeMap::new(),
+        );
+        let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &m).unwrap();
+        let mut be = ChunkedBackend::from_disk(disk, store.clone());
+
+        // Nothing written yet → flush is immediately durable.
+        assert_eq!(be.flush(), Ok(()));
+
+        // A whole-sector write (block-aligned so no base RMW needed) → data pending durability.
+        let buf = [0xCDu8; SECTOR_SIZE]; // 512
+        assert_eq!(be.write(0, &buf), Ok(()));
+        assert_eq!(be.flush(), Err(BlockError::FlushPending), "barrier taken");
+        // Retries keep reporting pending, and do NOT re-take the barrier.
+        assert_eq!(be.flush(), Err(BlockError::FlushPending));
+
+        // A post-barrier write to a DIFFERENT region must not extend the held barrier.
+        assert_eq!(be.write(16, &buf), Ok(())); // sector 16 = a different 4KiB overlay block
+
+        // The async store drains ONLY the first snapshot... but pending_flush() now holds both
+        // blocks. Drain everything pending at snapshot time — the barrier only tracks its own
+        // block set, so full-drain also proves the simpler path.
+        let snap = queue.borrow().pending_flush();
+        // Simulate persisting ONLY the barrier block (the first write's overlay block 0):
+        let only_first: Vec<(u64, u64)> = snap
+            .iter()
+            .filter(|(b, _, _)| *b == 0)
+            .map(|(b, g, _)| (*b, *g))
+            .collect();
+        queue.borrow_mut().mark_persisted(&only_first);
+        assert_eq!(
+            be.flush(),
+            Ok(()),
+            "barrier satisfied though the post-barrier write is still pending"
+        );
+        assert_eq!(
+            queue.borrow().unpersisted_count(),
+            1,
+            "newer write still queued"
+        );
+
+        // A NEW flush now covers the newer write.
+        assert_eq!(be.flush(), Err(BlockError::FlushPending));
+        let snap2 = queue.borrow().pending_flush();
+        let p2: Vec<(u64, u64)> = snap2.iter().map(|(b, g, _)| (*b, *g)).collect();
+        queue.borrow_mut().mark_persisted(&p2);
+        assert_eq!(be.flush(), Ok(()));
+    }
+}
+
+#[cfg(test)]
+mod tests_support {
+    //! Shared fixtures for the flush tests (mirrors `tests::setup` for a tiny image with the
+    //! whole base resident, so writes never park on chunks).
+    use super::*;
+    use sha2::{Digest, Sha256};
+    use wasm_vm_storage::{FORMAT_VERSION, ImageManifest, Layout};
+
+    pub fn tiny_manifest_store() -> (ImageManifest, Rc<RefCell<BlockCache>>) {
+        let data: Vec<u8> = vec![0u8; 16 * 4096]; // 16 overlay blocks
+        let chunks: Vec<String> = data
+            .chunks(4096)
+            .map(|c| {
+                let d = Sha256::digest(c);
+                d.iter().map(|b| format!("{b:02x}")).collect()
+            })
+            .collect();
+        let m = ImageManifest {
+            version: FORMAT_VERSION,
+            image_len: data.len() as u64,
+            chunk_size: 4096,
+            layout: Layout::Split,
+            chunks,
+        };
+        assert_eq!(m.validate(), Ok(()));
+        let store = Rc::new(RefCell::new(BlockCache::new(1 << 30)));
+        for (i, c) in data.chunks(4096).enumerate() {
+            store.borrow_mut().insert(i, c.to_vec());
+        }
+        (m, store)
     }
 }

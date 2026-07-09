@@ -178,6 +178,9 @@ export async function startLinuxBoot(opts = {}) {
     // HTTP-fetches chunks under baseUrl (+ E3-T05 persist: writes survive reload via IndexedDB);
     // initramfs → the image as the initrd.
     const usePersist = isChunked && persist;
+    // E3-T08: dirty-bytes threshold that forces a drain before more guest work (default 16 MiB;
+    // tests set it tiny via the persistMax option to prove the backpressure path).
+    const maxDirtyBytes = opts.persistMax ?? 16 * 1024 * 1024;
     let machine;
     if (usePersist) {
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
@@ -210,6 +213,26 @@ export async function startLinuxBoot(opts = {}) {
     // the fetch is a no-op and no second loop can start.
     const tick = async () => {
       if (stopped || paused) { tickScheduled = false; return; }
+      // E3-T08 durability pressure, checked BEFORE the run slice:
+      //  - flushWaiting: a guest FLUSH is parked on the durable-commit barrier — persist NOW so
+      //    the barrier clears at the very next boundary (the guest's `sync` is blocked on it).
+      //  - pendingBytes > maxDirtyBytes: backpressure — drain before running more guest work, so
+      //    an unflushed session cannot accumulate unbounded dirty state (bounded loss window).
+      if (usePersist) {
+        try {
+          const ps = machine.persistStats();
+          if (ps.flushWaiting || ps.pendingBytes > maxDirtyBytes) {
+            await machine.persistPending();
+          }
+        } catch (e) {
+          tickScheduled = false;
+          onState("error");
+          onError(e);
+          resolveDone("error");
+          return;
+        }
+        if (stopped || paused) { tickScheduled = false; return; }
+      }
       let res;
       try {
         res = machine.runChunk(quantum);

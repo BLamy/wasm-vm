@@ -454,6 +454,14 @@ impl Machine {
     /// E3-T02: the chunks that parked virtio-blk reads are waiting on — what a lazy-fetch layer must
     /// load next. Empty unless a `WouldBlock`-returning backend has parked reads. After the layer
     /// populates these chunks, the next run-loop boundary re-services the parked reads and completes them.
+    /// E3-T08: whether a guest FLUSH is parked awaiting the durable commit barrier — the
+    /// persist pump should drain IMMEDIATELY (the guest's `sync` is blocked on it).
+    pub fn blk_flush_waiting(&self) -> bool {
+        self.blk
+            .as_ref()
+            .is_some_and(|(s, _)| s.borrow().flush_waiting())
+    }
+
     pub fn pending_blk_chunks(&self) -> alloc::vec::Vec<usize> {
         self.blk
             .as_ref()

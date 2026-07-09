@@ -81,6 +81,24 @@ impl PersistQueue {
     pub fn is_empty(&self) -> bool {
         self.pending.is_empty()
     }
+
+    /// E3-T08: take a FLUSH barrier — the set of blocks with unpersisted data *right now*.
+    /// A `VIRTIO_BLK_T_FLUSH` is durably satisfied once every one of these blocks has left the
+    /// queue ([`Self::barrier_clear`]). Writes recorded AFTER the barrier don't extend it (a
+    /// flush only covers writes the guest completed before issuing it), with one deliberate
+    /// exception: a barrier block RE-written mid-flush stays pending at a higher generation,
+    /// and the barrier keeps waiting for it — the pre-flush version of that block never became
+    /// durable, so acking would lie; the coalesced newer version reaching disk is what makes
+    /// the flush honest (standard write-back coalescing).
+    pub fn barrier(&self) -> Vec<u64> {
+        self.pending.keys().copied().collect()
+    }
+
+    /// E3-T08: whether every block of a previously-taken [`Self::barrier`] has been durably
+    /// persisted (left the pending queue).
+    pub fn barrier_clear(&self, barrier: &[u64]) -> bool {
+        barrier.iter().all(|b| !self.pending.contains_key(b))
+    }
 }
 
 /// In-memory write layer for the `OverlayDisk` path (synchronous reads/writes), with durability
@@ -178,7 +196,24 @@ impl OverlayBackend for WriteBackOverlay {
         // NOT the durability barrier — the async store's transaction-complete is (see module docs).
         // Returning Ok here only means "the in-memory write set is consistent"; the wasm layer's async
         // commit awaits the store. A no-op keeps the synchronous OverlayDisk::commit total.
+        // E3-T08: the honest FLUSH path takes `durability_barrier()` and re-checks `barrier_clear`
+        // each boundary instead of trusting this Ok.
         Ok(())
+    }
+
+    fn durability_barrier(&self) -> Option<Vec<u64>> {
+        // E3-T08: a FLUSH issued now must wait on exactly the blocks currently pending a durable
+        // transaction. Empty pending set → None (already durable, FLUSH can ack immediately).
+        let q = self.queue.borrow();
+        if q.is_empty() {
+            None
+        } else {
+            Some(q.barrier())
+        }
+    }
+
+    fn barrier_clear(&self, barrier: &[u64]) -> bool {
+        self.queue.borrow().barrier_clear(barrier)
     }
 
     fn base_binding(&self) -> &[u8; 32] {

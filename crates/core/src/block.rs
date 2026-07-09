@@ -40,6 +40,12 @@ pub enum BlockError {
     /// request and completes it on a later boundary once the chunk arrives. Synchronous backends
     /// (MemBackend, the native file backend) never return it, so the deferred path stays dead there.
     WouldBlock { chunk: usize },
+    /// E3-T08: a FLUSH was accepted but the write-back data it covers has not durably committed
+    /// yet (an async store's transaction is still in flight). The virtio-blk service PARKS the
+    /// FLUSH request and retries it each boundary; it completes — and only then advances the used
+    /// ring — once the backend reports the durability barrier clear. Synchronous backends never
+    /// return it (their `flush` IS the barrier).
+    FlushPending,
 }
 
 /// Object-safe storage backend, sector-addressed in 512-byte units.
@@ -48,6 +54,13 @@ pub trait BlockBackend {
     fn read(&mut self, sector: u64, buf: &mut [u8]) -> Result<(), BlockError>;
     fn write(&mut self, sector: u64, buf: &[u8]) -> Result<(), BlockError>;
     fn flush(&mut self) -> Result<(), BlockError>;
+    /// E3-T08: every parked FLUSH request has been DISCARDED (transport reset, or the device
+    /// degraded and dropped its in-flight chains) — abandon any held durability barrier, so the
+    /// next FLUSH takes a FRESH barrier covering everything pending at that point. Without this,
+    /// a write-back backend's barrier from a dead FLUSH goes stale and the next FLUSH can adopt
+    /// it and ack while its own coverage is unpersisted (critic BUG 1: the early-ack lie).
+    /// Default no-op: synchronous backends hold no barrier.
+    fn flush_reset(&mut self) {}
     fn is_read_only(&self) -> bool {
         false
     }

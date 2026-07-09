@@ -71,10 +71,21 @@ pub struct BlkState {
     /// E2-T19: when `Some`, each serviced request is appended here for `--blk-log`. Off by
     /// default (no cost, and no host-visible allocation on the hot path when disabled).
     blk_log: Option<alloc::vec::Vec<BlkReq>>,
-    /// E3-T02: read chains PARKED because their data isn't resident yet — `(chain, awaited_chunk)`.
-    /// Re-executed each `service()` boundary; completed (pushed to the used ring, exactly once) when
-    /// the chunk arrives. Empty for synchronous backends, which never return `WouldBlock`.
-    parked: alloc::vec::Vec<(DescriptorChain, usize)>,
+    /// E3-T02/E3-T08: chains PARKED awaiting something asynchronous — a base chunk fetch
+    /// (`WouldBlock`) or a durable flush commit (`FlushPending`). Re-executed each `service()`
+    /// boundary; completed (pushed to the used ring, exactly once) when the wait resolves. Empty
+    /// for synchronous backends.
+    parked: alloc::vec::Vec<(DescriptorChain, ParkReason)>,
+}
+
+/// E3-T08: why a chain is parked — awaiting a chunk fetch (reads/RMW writes) or the durable
+/// commit of a FLUSH's write-back barrier.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ParkReason {
+    /// E3-T02: waiting for base chunk `chunk` to be fetched.
+    Chunk(usize),
+    /// E3-T08: a FLUSH waiting for the backend's durability barrier to clear.
+    Flush,
 }
 
 impl BlkState {
@@ -82,12 +93,24 @@ impl BlkState {
     /// must load next (in park order, deduplicated). Empty unless a lazy backend has parked reads.
     pub fn pending_chunks(&self) -> alloc::vec::Vec<usize> {
         let mut out: alloc::vec::Vec<usize> = alloc::vec::Vec::new();
-        for (_, chunk) in &self.parked {
-            if !out.contains(chunk) {
+        for (_, reason) in &self.parked {
+            // A parked FLUSH waits on the durable store, not a chunk — never report it to the
+            // fetch layer (E3-T08).
+            if let ParkReason::Chunk(chunk) = reason
+                && !out.contains(chunk)
+            {
                 out.push(*chunk);
             }
         }
         out
+    }
+
+    /// E3-T08: whether any FLUSH is parked awaiting durable commit — the run loop / persist pump
+    /// uses this to prioritize a drain.
+    pub fn flush_waiting(&self) -> bool {
+        self.parked
+            .iter()
+            .any(|(_, r)| matches!(r, ParkReason::Flush))
     }
 
     /// E2-T19: start recording serviced requests for `--blk-log`.
@@ -147,6 +170,10 @@ impl VirtioDevice for VirtioBlkDev {
         // re-initialized queue — writing sector data into a repurposed guest buffer and
         // pushing a used-ring entry the new driver never requested (critic round-2 BUG 1).
         st.parked.clear();
+        // E3-T08 (critic BUG 1): a discarded parked FLUSH leaves its durability barrier held
+        // in the backend; the NEXT flush would adopt that stale (too-narrow) barrier and could
+        // ack while its own coverage is unpersisted. Tell the backend its barrier is orphaned.
+        st.backend.flush_reset();
     }
 }
 
@@ -257,7 +284,7 @@ impl<'a> Cursor<'a> {
 /// once `chunk` arrives; `Invalid` = protocol violation (no status byte), drop the chain.
 enum ExecOutcome {
     Done(u32),
-    Parked { chunk: usize },
+    Parked(ParkReason),
     Invalid,
 }
 
@@ -302,7 +329,9 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                     }
                     // E3-T02: data not resident — PARK this chain (write nothing, no status) and
                     // retry once `chunk` is fetched. The used ring is never touched for a park.
-                    Err(BlockError::WouldBlock { chunk }) => return ExecOutcome::Parked { chunk },
+                    Err(BlockError::WouldBlock { chunk }) => {
+                        return ExecOutcome::Parked(ParkReason::Chunk(chunk));
+                    }
                     Err(_) => (S_IOERR, 0),
                 }
             }
@@ -329,7 +358,7 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                         // WouldBlock. Park the write exactly like a read — re-execution is safe because
                         // OverlayDisk::write mutated nothing on WouldBlock (atomic, E3-T04).
                         Err(BlockError::WouldBlock { chunk }) => {
-                            return ExecOutcome::Parked { chunk };
+                            return ExecOutcome::Parked(ParkReason::Chunk(chunk));
                         }
                         Err(BlockError::ReadOnly) => (S_IOERR, 0),
                         Err(_) => (S_IOERR, 0),
@@ -344,6 +373,17 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                 state.flush_count += 1;
                 match state.backend.flush() {
                     Ok(()) => (S_OK, 0),
+                    // E3-T08: the write-back data this FLUSH covers is not durably committed yet
+                    // — PARK the request (no status byte, used ring untouched) and retry each
+                    // boundary until the backend's durability barrier clears. Acking earlier
+                    // would lie to the guest's journal (fsck horror on a tab kill). Re-execution
+                    // re-calls flush(), which re-checks the SAME barrier (backend holds it) —
+                    // idempotent. Note flush_count counts ATTEMPTS forwarded; retries of one
+                    // parked FLUSH re-increment it, so tests asserting "exactly one commit" must
+                    // read the backend's own counter, not this.
+                    Err(BlockError::FlushPending) => {
+                        return ExecOutcome::Parked(ParkReason::Flush);
+                    }
                     Err(_) => (S_IOERR, 0),
                 }
             }
@@ -428,7 +468,11 @@ pub fn service(
     }
     let q = vq.as_mut().expect("just constructed");
     let mut delivered_work = false;
-    // E3-T02: retry PARKED reads first. Drain them (so `execute` can re-borrow state); a chain whose
+    // E3-T02: retry PARKED reads first. INVARIANT (E3-T08, load-bearing): the parked chains —
+    // in particular a barrier-holding FLUSH — are ALWAYS re-executed before any fresh pop. A
+    // parked FLUSH therefore re-checks (and on success releases) its held barrier before a
+    // newly-popped FLUSH can call the backend, so a fresh FLUSH never adopts another request's
+    // barrier (critic claim-3: this ordering is what makes two-FLUSHes-in-flight safe). Drain them (so `execute` can re-borrow state); a chain whose
     // data is now resident completes — pushed to the used ring EXACTLY ONCE — and is dropped; one
     // still absent is re-parked. Re-executing a stored chain is idempotent (it re-reads the guest
     // descriptors + backend and writes nothing to the guest until it can complete). Out-of-order used
@@ -442,11 +486,14 @@ pub fn service(
                 if q.push_used(bus, chain.head, w).is_err() {
                     slot.borrow_mut().protocol_violation();
                     *vq = None;
+                    // The rest of the taken parked chains are dropped with this early return —
+                    // any barrier a dropped FLUSH held is orphaned (E3-T08 critic BUG 1 family).
+                    state.borrow_mut().backend.flush_reset();
                     return;
                 }
                 delivered_work = true;
             }
-            ExecOutcome::Parked { chunk } => state.borrow_mut().parked.push((chain, chunk)),
+            ExecOutcome::Parked(reason) => state.borrow_mut().parked.push((chain, reason)),
             // A chain valid enough to have parked cannot become a protocol violation on re-exec.
             ExecOutcome::Invalid => {}
         }
@@ -467,8 +514,8 @@ pub fn service(
                     }
                     // E3-T02: data not resident — keep the chain OUT of the used ring and retry next
                     // boundary (once the fetch layer has populated `chunk`).
-                    ExecOutcome::Parked { chunk } => {
-                        state.borrow_mut().parked.push((chain, chunk));
+                    ExecOutcome::Parked(reason) => {
+                        state.borrow_mut().parked.push((chain, reason));
                     }
                     ExecOutcome::Invalid => {
                         // No status byte anywhere: protocol violation, chain dropped.

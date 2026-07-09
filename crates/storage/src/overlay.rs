@@ -67,6 +67,19 @@ pub trait OverlayBackend {
     /// `MemOverlay`, memory is always "durable" for the session — a no-op). This is exactly what a
     /// virtio-blk `VIRTIO_BLK_T_FLUSH` maps onto (E3-T08).
     fn commit(&mut self) -> Result<(), OverlayError>;
+    /// E3-T08: take a durability barrier — an opaque snapshot of the writes that a FLUSH issued
+    /// *now* must wait on. `None` = everything already durable (synchronous backends). Async
+    /// write-back backends (E3-T05 IndexedDB) return the set of block indices still awaiting
+    /// their durable transaction.
+    fn durability_barrier(&self) -> Option<Vec<u64>> {
+        None
+    }
+    /// E3-T08: whether a previously-taken [`Self::durability_barrier`] has fully reached durable
+    /// storage. Synchronous backends are always clear.
+    fn barrier_clear(&self, barrier: &[u64]) -> bool {
+        let _ = barrier;
+        true
+    }
     /// The 32-byte binding to the base image this overlay belongs to ([`ImageManifest::base_hash`]).
     fn base_binding(&self) -> &[u8; 32];
     /// The total image length in bytes (same as the base).
@@ -158,6 +171,17 @@ impl<B: OverlayBackend> OverlayDisk<B> {
     /// Durability barrier — see [`OverlayBackend::commit`].
     pub fn commit(&mut self) -> Result<(), OverlayError> {
         self.overlay.commit()
+    }
+
+    /// E3-T08: take a durability barrier from the backend (see
+    /// [`OverlayBackend::durability_barrier`]).
+    pub fn durability_barrier(&self) -> Option<Vec<u64>> {
+        self.overlay.durability_barrier()
+    }
+
+    /// E3-T08: whether a previously-taken barrier has fully reached durable storage.
+    pub fn barrier_clear(&self, barrier: &[u64]) -> bool {
+        self.overlay.barrier_clear(barrier)
     }
 
     /// The valid byte length of overlay block `block` — [`OVERLAY_BLOCK`] for every block but the tail
