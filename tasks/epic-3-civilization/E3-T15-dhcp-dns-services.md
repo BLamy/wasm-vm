@@ -399,3 +399,36 @@ repeat). All three mutations caught (swap src/dst → wrong-dst fail; drop push 
 cache-always-miss → calls==2 fail). One NIT (coverage, not a defect): the tests used txid 0 so a broken
 query-ID echo wouldn't be caught. Hardened: the query now uses txid 0xBEEF and the answer test asserts it
 round-trips. 116 slirp tests; fmt + clippy + no-default green.
+
+**2026-07-08 — pass 1m: unified `service()` entry point + full-session capstone (`stack.rs`).** The
+event loop's single entry point for both internal services: `service<R>(&DhcpServer, &mut
+DnsForwarder<R>, now_ms).await -> usize` runs the async DNS pass then the sync DHCP pass (they partition
+the queue by dst port → every diverted datagram serviced exactly once regardless of order) and returns
+the total replies egressed. Intended loop: `inject` guest frames → `service(...).await` → `poll`
+(ARP/ICMP/TCP) → `take_egress`. Tests (2, `#[tokio::test]`): the CAPSTONE — a full guest network session
+driven end-to-end through the REAL stack's `inject`/`service`/`poll`/`take_egress` (not `UdpServices`
+directly): the guest ARPs the gateway (→ ARP reply), DHCP DISCOVER→OFFER, REQUEST→ACK, then — leased —
+resolves a name → the DNS answer reaches the guest (dst = guest, one upstream lookup for the whole
+session); and a mixed tick where a DHCP DISCOVER + a DNS query arriving together are BOTH serviced in one
+`service` call (queue fully drained, one OFFER from :67 + one answer from :53 egress). 118 slirp tests.
+fmt + clippy + no-default build green. **E3-T15 is now feature-complete natively:** DHCP + DNS
+(wire/builder/parser) + resolver/cache + both resolver impls (native OS + DoH) + UDP framing + stack
+diversion + `run_dhcp`/`run_dns`/`service` — the whole zero-config-networking control plane, proven
+frame-verified end-to-end through the real `SlirpStack`. The ONLY remaining legs are env-gated: the
+concrete browser `fetch` DohTransport (wasm crate) and booted-guest acceptance (a real Alpine acquiring
+its lease + resolving names, which the critic already PRE-verified udhcpc will accept).
+
+**Adversarial cold-clone critic on pass 1m: production `service()` SOUND, one MINOR misleading assertion
+tightened.** The critic verified SOUND (with repros): exactly-once partition (an interleaved 3 DHCP + 4
+DNS queue → 7 replies, queue empty, egress len 7 — the two `mem::take` passes partition cleanly on dst
+port); return count == egress frame count including a no-reply RELEASE (`sent` only increments on an
+actual push, so oversized-DNS/None-DHCP never inflate it); idempotence/empty (0, no panic); `service`'s
+future is `Send` (`assert_send` compiled → spawnable in the event loop); no poll/smoltcp interference
+(reply frames merely interleave in `device.tx`); and the mutations catch the core claims (service no-op →
+both capstone tests fail; dropping run_dhcp from service → mixed-tick fails with a :67 left unserviced).
+One MINOR (misleading, not a defect): the full-session `calls==1` was commented "one upstream lookup for
+the whole session" as if it proved CACHING, but the session issued only one query, so the resolver runs
+once regardless of the cache (proven: disabling the cache left the capstone passing). Fixed by making the
+session re-resolve the SAME name a second time through `service` and asserting `calls==1` across BOTH —
+so the caching is now genuinely load-bearing at the composed level (not just "the resolver ran"). 118
+slirp tests; fmt + clippy + no-default green.

@@ -850,3 +850,96 @@ async fn run_dns_leaves_dhcp_datagrams_queued_for_run_dhcp() {
     assert_eq!(left.len(), 1, "the DHCP datagram remains queued");
     assert_eq!(left[0].dst_port, 67);
 }
+
+// ── service(): the unified event-loop entry point (full guest session) ───────
+#[tokio::test]
+async fn service_drives_a_full_guest_network_session_through_the_stack() {
+    let mut s = SlirpStack::new(GW_MAC);
+    let dhcp = DhcpServer::new();
+    let calls = Arc::new(AtomicUsize::new(0));
+    let mut fwd = DnsForwarder::new(
+        FixedResolver {
+            ip: Ipv4Addr::new(93, 184, 216, 34),
+            calls: calls.clone(),
+        },
+        16,
+    );
+
+    // 1. The guest ARPs the gateway (smoltcp path, via poll) — this also teaches the neighbor entry.
+    s.inject(arp_request());
+    s.poll(0);
+    assert_eq!(s.take_egress().len(), 1, "ARP reply");
+
+    // 2. DHCP DISCOVER → service → OFFER.
+    inject_dhcp(&mut s, &dhcp_msg(1, None));
+    assert_eq!(s.service(&dhcp, &mut fwd, 1).await, 1);
+    assert_eq!(reply_dhcp_type(&s.take_egress()[0]), Some(2), "OFFER");
+
+    // 3. DHCP REQUEST → service → ACK.
+    inject_dhcp(&mut s, &dhcp_msg(3, Some(net::GUEST)));
+    assert_eq!(s.service(&dhcp, &mut fwd, 2).await, 1);
+    assert_eq!(reply_dhcp_type(&s.take_egress()[0]), Some(5), "ACK");
+
+    // 4. Now leased, the guest resolves a name → service → DNS answer to the guest.
+    inject_dns(&mut s, 40000, "example.com");
+    assert_eq!(s.service(&dhcp, &mut fwd, 3).await, 1);
+    let ans = s.take_egress();
+    let g = parse_udp(&ans[0]).unwrap();
+    assert_eq!(g.dst_ip, net::GUEST);
+    assert_eq!(g.dst_port, 40000);
+    assert_eq!(
+        answer_first_a(&ans[0]),
+        Some(Ipv4Addr::new(93, 184, 216, 34))
+    );
+    assert_eq!(
+        calls.load(Ordering::SeqCst),
+        1,
+        "one upstream lookup so far"
+    );
+
+    // 5. The guest re-resolves the SAME name (a real app hits DNS repeatedly) → served from the
+    // forwarder's cache through `service`, with NO second upstream lookup. This makes the caching
+    // genuinely load-bearing at the composed level (not just that the resolver ran once) — critic MINOR.
+    inject_dns(&mut s, 40001, "example.com");
+    assert_eq!(s.service(&dhcp, &mut fwd, 4).await, 1);
+    assert_eq!(
+        answer_first_a(&s.take_egress()[0]),
+        Some(Ipv4Addr::new(93, 184, 216, 34))
+    );
+    assert_eq!(
+        calls.load(Ordering::SeqCst),
+        1,
+        "the repeat was served from cache — upstream consulted exactly once across the session"
+    );
+}
+
+#[tokio::test]
+async fn service_handles_dhcp_and_dns_in_one_tick() {
+    let mut s = SlirpStack::new(GW_MAC);
+    let dhcp = DhcpServer::new();
+    let mut fwd = DnsForwarder::new(
+        FixedResolver {
+            ip: Ipv4Addr::new(1, 2, 3, 4),
+            calls: Arc::new(AtomicUsize::new(0)),
+        },
+        16,
+    );
+    // Both a DHCP DISCOVER and a DNS query arrive in the same tick.
+    inject_dhcp(&mut s, &dhcp_msg(1, None));
+    inject_dns(&mut s, 40000, "example.com");
+
+    assert_eq!(
+        s.service(&dhcp, &mut fwd, 0).await,
+        2,
+        "both serviced in one call"
+    );
+    // Nothing left in the queue — both partitions drained.
+    assert!(s.take_service_udp().is_empty(), "queue fully drained");
+
+    // One OFFER + one DNS answer egressed (order-independent check).
+    let eg = s.take_egress();
+    assert_eq!(eg.len(), 2);
+    let types: Vec<u16> = eg.iter().map(|f| parse_udp(f).unwrap().src_port).collect();
+    assert!(types.contains(&67), "a DHCP reply (from :67)");
+    assert!(types.contains(&53), "a DNS answer (from :53)");
+}
