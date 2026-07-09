@@ -26,45 +26,83 @@ const fileInput = document.getElementById("file");
 // E2-T21: boot unmodified Linux in the browser via the loading pipeline (loader.js).
 const bootLinuxBtn = document.getElementById("boot-linux");
 const bootProgressEl = document.getElementById("boot-progress");
+// E2-T26: a second "Boot Alpine" button boots the full Alpine ext4 rootfs over virtio-blk
+// (mode "disk", a separate local-only manifest) — shared boot path with the busybox button.
+const bootAlpineBtn = document.getElementById("boot-alpine");
+// E3-T02: boot the same Alpine rootfs but fetched lazily as E3-T01 chunks over HTTP.
+const bootAlpineChunkedBtn = document.getElementById("boot-alpine-chunked");
 let linuxCtl = null;
-if (bootLinuxBtn) {
-  bootLinuxBtn.addEventListener("click", async () => {
-    if (linuxCtl) return; // already booting
-    bootLinuxBtn.disabled = true;
-    term.reset();
-    term.writeln("\x1b[36mbooting unmodified Linux 6.6.63 + busybox in wasm…\x1b[0m");
-    const pct = {};
-    try {
-      linuxCtl = await startLinuxBoot({
-        manifestUrl: "./artifacts.json",
-        onState: (s) => setStatus(`linux: ${s}`),
-        onProgress: (role, loaded, total) => {
-          pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;
-          bootProgressEl.textContent = Object.entries(pct).map(([k, v]) => `${k} ${v}`).join("  ");
-        },
-        onOutput: (u8) => ui.write(u8),
-        onError: (e) => term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`),
-      });
-      linuxCtl.whenDone.then((state) => {
-        setStatus(`linux: ${state}`);
-        ui.detachSink();
-        bootLinuxBtn.disabled = false;
-        linuxCtl = null;
-      });
-      // Route terminal keystrokes/paste to the guest's ttyS0 via the backpressure bridge.
-      ui.attachSink((bytes) => {
-        if (linuxCtl) linuxCtl.sendInput(bytes);
-      });
-      // Fit the rendered grid to the page now that the terminal is the active view, and print
-      // the matching stty hint so the guest can be told its real window size (serial has no winsize).
-      const { cols, rows } = ui.fitNow();
-      term.writeln(`\x1b[90m[terminal ${cols}x${rows} — click "Fit" then run: ${ui.sttyHint()}]\x1b[0m`);
-    } catch (e) {
-      term.writeln(`\x1b[31mcannot boot linux: ${e.message || e}\x1b[0m`);
-      bootLinuxBtn.disabled = false;
+const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineChunkedBtn];
+async function runLinuxBoot(opts, banner) {
+  if (linuxCtl) return; // already booting
+  bootBtns.forEach((b) => b && (b.disabled = true));
+  term.reset();
+  term.writeln(`\x1b[36m${banner}\x1b[0m`);
+  const pct = {};
+  try {
+    linuxCtl = await startLinuxBoot({
+      ...opts,
+      onState: (s) => setStatus(`linux: ${s}`),
+      onProgress: (role, loaded, total) => {
+        pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;
+        bootProgressEl.textContent = Object.entries(pct).map(([k, v]) => `${k} ${v}`).join("  ");
+      },
+      onOutput: (u8) => ui.write(u8),
+      onError: (e) => term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`),
+    });
+    linuxCtl.whenDone.then((state) => {
+      ui.detachSink();
+      bootBtns.forEach((b) => b && (b.disabled = false));
       linuxCtl = null;
-    }
-  });
+      // E2-T26: surface the T17 terminal ExitReason as a distinct HALTED state, not just a status
+      // string — the machine is gone; you must re-boot from a fresh Machine.
+      const halt = { poweroff: "powered off", reboot: "rebooted (halted)", error: "error" };
+      const reason = halt[state] || (state?.startsWith?.("exited") ? state : state?.startsWith?.("fail") ? state : null);
+      if (reason) {
+        setStatus(`⏻ machine halted — ${reason}`);
+        term.writeln(`\r\n\x1b[7m machine halted (${reason}) — click "Boot Linux"/"Boot Alpine" to boot a fresh machine \x1b[0m`);
+      } else {
+        setStatus(`linux: ${state}`);
+      }
+    });
+    // Route terminal keystrokes/paste to the guest's ttyS0 via the backpressure bridge.
+    ui.attachSink((bytes) => {
+      if (linuxCtl) linuxCtl.sendInput(bytes);
+    });
+    // Fit the rendered grid to the page now that the terminal is the active view, and print
+    // the matching stty hint so the guest can be told its real window size (serial has no winsize).
+    const { cols, rows } = ui.fitNow();
+    term.writeln(`\x1b[90m[terminal ${cols}x${rows} — click "Fit" then run: ${ui.sttyHint()}]\x1b[0m`);
+  } catch (e) {
+    term.writeln(`\x1b[31mcannot boot: ${e.message || e}\x1b[0m`);
+    bootBtns.forEach((b) => b && (b.disabled = false));
+    linuxCtl = null;
+  }
+}
+if (bootLinuxBtn) {
+  bootLinuxBtn.addEventListener("click", () =>
+    runLinuxBoot({ manifestUrl: "./artifacts.json" }, "booting unmodified Linux 6.6.63 + busybox in wasm…"));
+}
+if (bootAlpineBtn) {
+  bootAlpineBtn.addEventListener("click", () =>
+    runLinuxBoot(
+      { manifestUrl: "./artifacts-alpine.json", mode: "disk", ramMib: 256 },
+      "booting unmodified Alpine (ext4 rootfs over virtio-blk) in wasm — large image, ~minutes to login:…",
+    ));
+}
+if (bootAlpineChunkedBtn) {
+  bootAlpineChunkedBtn.addEventListener("click", () =>
+    runLinuxBoot(
+      {
+        // Same kernel as the proven Alpine disk boot; the rootfs is fetched lazily per chunk here
+        // (no full-image download — only the chunks the boot actually touches).
+        manifestUrl: "./artifacts-alpine.json",
+        mode: "chunked",
+        imageManifestUrl: "./releases/chunked-alpine/manifest.json",
+        ramMib: 256,
+      },
+      "booting Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login:…",
+    ));
 }
 // E2-T22: "Fit" re-fits the rendered grid to the panel and surfaces the matching `stty` line.
 // A serial console carries no out-of-band winsize, so resize is cooperative: if a guest is live
@@ -81,6 +119,24 @@ if (termFitBtn) {
 }
 // Test hook: Playwright drives keyboard input + reads the backpressure high-water via this.
 window.__term = ui;
+
+// E2-T23: idle the executor while the tab is hidden. Guest `mtime` is a deterministic retire-count
+// clock, so pausing freezes guest monotonic time cleanly and it resumes with no jump/storm (see
+// docs/timekeeping.md); the Date.now goldfish RTC keeps true wall time across the gap, so on return
+// `date` is correct while `uptime` counts only executed time.
+document.addEventListener("visibilitychange", () => {
+  if (!linuxCtl) return;
+  if (document.hidden) linuxCtl.pause();
+  else linuxCtl.resume();
+});
+// Test hook for the timekeeping spec — drive pause/resume without a real tab switch.
+window.__linux = {
+  pause: () => linuxCtl?.pause(),
+  resume: () => linuxCtl?.resume(),
+  isPaused: () => !!linuxCtl?.isPaused(),
+};
+// E3-T02 test hook: the chunked-boot lazy-fetch instrumentation ({ fetches, bytes, error } | null).
+window.__chunkedStats = () => linuxCtl?.fetchStats?.() ?? null;
 
 const statusEl = document.getElementById("status");
 const versionEl = document.getElementById("version");

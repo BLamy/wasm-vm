@@ -14,10 +14,43 @@ export class WasmLinux {
     free(): void;
     [Symbol.dispose](): void;
     /**
+     * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
+     * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
+     * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
+     * borrow the machine); the JS driver alternates them.
+     */
+    fetchPending(): Promise<number>;
+    /**
+     * E3-T02/T03 instrumentation: `{ fetches, bytes, error, cache }` — chunk fetches + bytes
+     * transferred (pass-4 acceptance), the first fetch error (or null), and the E3-T03 cache metrics
+     * `{ hits, misses, evictions, residentBytes, budgetBytes }`. A non-chunked boot reports zeros.
+     */
+    fetchStats(): any;
+    /**
      * Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
      * `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
      */
     constructor(ram_mib: number, kernel: Uint8Array, initrd: Uint8Array, bootargs: string, output: Function);
+    /**
+     * E3-T02: boot from a CHUNKED image fetched lazily over HTTP. Instead of a full disk `Vec`, take
+     * the image `manifest` JSON and the `base_url` its chunks live under (must end in `/`). A guest
+     * disk read of an absent chunk parks (deferred virtio-blk completion) until `fetchPending`
+     * retrieves and hash-verifies that chunk. No full-image download ever happens.
+     */
+    static newChunkedDisk(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, bootargs: string, output: Function): WasmLinux;
+    /**
+     * E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
+     * an initramfs. `disk` is MOVED into an in-memory `BlockBackend` (one wasm-side copy — the T21
+     * single-copy discipline; a `&[u8]` + `.to_vec()` would double-allocate 512 MB). Default
+     * bootargs mount `/dev/vda` as root.
+     */
+    static newDisk(ram_mib: number, kernel: Uint8Array, disk: Uint8Array, bootargs: string, output: Function): WasmLinux;
+    /**
+     * E3-T02: the chunk indices the virtio-blk device is currently parked on (guest reads awaiting a
+     * lazy fetch). Empty for a non-chunked boot or when nothing is parked. The JS driver calls this
+     * after each `runChunk` and, if non-empty, awaits `fetchPending` before the next `runChunk`.
+     */
+    pendingChunks(): Uint32Array;
     /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
      * 16550 RX, and return `{ done: bool, state: string|null }`. `state` is `"poweroff"`,
@@ -117,7 +150,12 @@ export interface InitOutput {
     readonly __wbg_wasmmachine_free: (a: number, b: number) => void;
     readonly bench: (a: number) => [number, number, number];
     readonly version: () => [number, number];
+    readonly wasmlinux_fetchPending: (a: number) => any;
+    readonly wasmlinux_fetchStats: (a: number) => [number, number, number];
     readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
+    readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: any) => [number, number, number];
+    readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
+    readonly wasmlinux_pendingChunks: (a: number) => [number, number, number, number];
     readonly wasmlinux_runChunk: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];
@@ -132,12 +170,15 @@ export interface InitOutput {
     readonly wasmmachine_step: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_takeTrace: (a: number) => [number, number, number, number];
     readonly initLogging: () => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h4dab88d0e3c13e7c: (a: number, b: number, c: any) => [number, number];
+    readonly wasm_bindgen__convert__closures_____invoke__h583f8b0f4fac6275: (a: number, b: number, c: any, d: any) => void;
     readonly __wbindgen_exn_store: (a: number) => void;
     readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+    readonly __wbindgen_destroy_closure: (a: number, b: number) => void;
     readonly __externref_table_dealloc: (a: number) => void;
     readonly __wbindgen_start: () => void;
 }
