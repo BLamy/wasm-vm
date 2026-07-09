@@ -29,6 +29,12 @@ pub mod native_resolver;
 pub mod pump;
 pub mod resolver;
 pub mod stack;
+// E3-net slice 2a: the synchronous, poll-driven outbound connector (browser-compatible) + its native
+// `std::net` implementation. The trait is always available; `StdConnector` is native-only (real
+// sockets don't exist on wasm32).
+#[cfg(not(target_arch = "wasm32"))]
+pub mod std_connector;
+pub mod sync_connector;
 pub mod tcp;
 pub mod udp;
 pub mod udp_frame;
@@ -55,6 +61,9 @@ pub use native_resolver::NativeResolver;
 pub use pump::{PumpStats, pump_flow};
 pub use resolver::{DnsForwarder, Resolution, Resolver, TtlCache};
 pub use stack::SlirpStack;
+#[cfg(not(target_arch = "wasm32"))]
+pub use std_connector::StdConnector;
+pub use sync_connector::{ConnId, ConnStatus, SyncConnector};
 pub use udp::{UdpReply, UdpServices};
 pub use udp_frame::{GuestUdp, build_udp_frame, parse_udp};
 pub use ws_proxy::{
