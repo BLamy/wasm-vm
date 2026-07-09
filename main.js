@@ -153,7 +153,19 @@ async function runLinuxBoot(opts, banner) {
     });
     // Route terminal keystrokes/paste to the guest's ttyS0 via the backpressure bridge.
     ui.attachSink((bytes) => {
-      if (linuxCtl) linuxCtl.sendInput(bytes);
+      // Defense-in-depth: the wasm machine rejects re-entrant sendInput (a console/output callback
+      // must not drive the machine — it throws while runChunk holds the borrow). If that throw were
+      // allowed to unwind through the terminal's pump(), pump would skip resetting `draining` and the
+      // input queue would jam permanently — bricking the terminal. Contain it here so pump completes.
+      // Well-behaved callers (docker.js) already defer input out of the callback; this is the net.
+      // Logged at error level so the Playwright console-error gate catches any future callback-driven
+      // input regression instead of it failing silently.
+      if (!linuxCtl) return;
+      try {
+        linuxCtl.sendInput(bytes);
+      } catch (e) {
+        console.error("dropped a terminal input chunk:", e?.message || e);
+      }
     });
     // Fit the rendered grid to the page now that the terminal is the active view, and print
     // the matching stty hint so the guest can be told its real window size (serial has no winsize).
