@@ -14,6 +14,7 @@
 pub mod base;
 pub mod dbcn;
 pub mod legacy;
+pub mod time;
 
 use alloc::boxed::Box;
 use alloc::collections::VecDeque;
@@ -75,11 +76,11 @@ pub const fn is_legacy(eid: u64) -> bool {
 }
 
 /// Probe answer for `eid`: nonzero iff the extension is CALLABLE now (the single source of
-/// truth — Base `probe_extension` returns exactly this). TIME/IPI/RFENCE/HSM/SRST flip to 1
-/// as E2-T05/T06 land.
+/// truth — Base `probe_extension` returns exactly this). IPI/RFENCE/HSM/SRST flip to 1 as
+/// E2-T06 lands (TIME landed with E2-T05).
 pub fn probe(eid: u64) -> u64 {
     match eid {
-        EID_BASE | EID_DBCN | EID_LEGACY_PUTCHAR | EID_LEGACY_GETCHAR => 1,
+        EID_BASE | EID_DBCN | EID_TIME | EID_LEGACY_PUTCHAR | EID_LEGACY_GETCHAR => 1,
         _ => 0,
     }
 }
@@ -90,10 +91,22 @@ pub fn probe(eid: u64) -> u64 {
 /// uses — the host wires both to the same terminal); input is a byte queue the host pushes
 /// into ([`crate::Machine::sbi_push_input`]). No sink ⇒ output bytes are dropped, reads see
 /// an empty queue — a console-less machine still boots.
-#[derive(Default)]
 pub struct SbiState {
     pub(crate) console_out: Option<Box<dyn ConsoleSink>>,
     pub(crate) console_in: VecDeque<u8>,
+    /// E2-T05 TIME: the programmed S-timer deadline in `mtime` units. The run loop derives
+    /// `mip.STIP = (mtime >= stimecmp)` each boundary. `u64::MAX` = no timer ("cancel").
+    pub(crate) stimecmp: u64,
+}
+
+impl Default for SbiState {
+    fn default() -> Self {
+        Self {
+            console_out: None,
+            console_in: VecDeque::new(),
+            stimecmp: u64::MAX, // reset: no timer programmed — never fires
+        }
+    }
 }
 
 impl SbiState {
@@ -116,6 +129,7 @@ pub fn handle(
     match eid {
         EID_BASE => base::handle(fid, args),
         EID_DBCN => dbcn::handle(state, bus, fid, args),
+        EID_TIME => time::handle(state, fid, args),
         EID_LEGACY_PUTCHAR | EID_LEGACY_GETCHAR => legacy::handle(state, eid, args),
         // Known-but-not-yet-implemented and unknown alike: the spec probe answer, never a
         // trap or panic (E2-T05/T06 claim their EIDs by adding arms here + rows in `probe`).
@@ -141,7 +155,6 @@ mod tests {
         for eid in [
             0u64,
             0x0A,
-            EID_TIME,
             EID_IPI,
             EID_RFENCE,
             EID_HSM,
@@ -163,7 +176,7 @@ mod tests {
             (EID_DBCN, 1),
             (EID_LEGACY_PUTCHAR, 1),
             (EID_LEGACY_GETCHAR, 1),
-            (EID_TIME, 0),
+            (EID_TIME, 1), // E2-T05
             (EID_IPI, 0),
             (EID_RFENCE, 0),
             (EID_HSM, 0),

@@ -23,7 +23,7 @@ fn base_and_probe_on_wasm32() {
     let r = handle(&mut st, &mut b, EID_BASE, 0, &[0; 6]);
     assert_eq!((r.error, r.value), (SBI_SUCCESS, SPEC_VERSION));
     // probe: DBCN present, TIME/HSM pending, PMU absent
-    for (eid, want) in [(EID_DBCN, 1i64), (EID_TIME, 0), (EID_HSM, 0), (0x0A, 0)] {
+    for (eid, want) in [(EID_DBCN, 1i64), (EID_TIME, 1), (EID_HSM, 0), (0x0A, 0)] {
         let r = handle(&mut st, &mut b, EID_BASE, 3, &[eid, 0, 0, 0, 0, 0]);
         assert_eq!((r.error, r.value), (SBI_SUCCESS, want));
     }

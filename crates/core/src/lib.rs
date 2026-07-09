@@ -210,7 +210,7 @@ impl Machine {
     /// - PMP entry 0 opened R/W/X over all of memory (S-mode needs an explicit grant).
     #[cfg(not(feature = "zicsr-stub"))]
     pub fn boot_supervisor(&mut self, hartid: u64, dtb_addr: u64) {
-        use crate::csr::{CsrOp, MEDELEG, MIDELEG, Priv};
+        use crate::csr::{CsrOp, MCOUNTEREN, MEDELEG, MIDELEG, Priv};
         self.hart.csr.pmp.allow_all();
         // Legalized writes from M (the mode we're in pre-handoff).
         self.hart.csr.mode = Priv::M;
@@ -222,6 +222,13 @@ impl Machine {
             .csr
             .access(MEDELEG, CsrOp::Write, 0xB109, false, false, 0)
             .expect("medeleg write from M cannot fail");
+        // E2-T05: grant S-mode the CY/TM/IR counters (mcounteren = 0x7) — the kernel's
+        // sched_clock reads `time` via rdtime, which traps without this (OpenSBI grants the
+        // same). scounteren stays kernel-owned.
+        self.hart
+            .csr
+            .access(MCOUNTEREN, CsrOp::Write, 0x7, false, false, 0)
+            .expect("mcounteren write from M cannot fail");
         self.hart.csr.mode = Priv::S;
         self.hart.regs.pc = platform::virt::KERNEL_BASE;
         self.hart.regs.write(10, hartid); // a0
@@ -379,6 +386,24 @@ impl Machine {
         }
     }
 
+    /// E2-T05: derive `mip.STIP` from the built-in-SBI timer deadline — a LEVEL, exactly
+    /// like MTIP: `STIP = (mtime >= stimecmp)`. Re-evaluated every boundary, so a
+    /// `set_timer` in the past fires at the NEXT boundary, a future deadline CLEARS a
+    /// pending STIP before the guest runs another instruction (the spec's "clears the
+    /// pending timer interrupt" clause), and `u64::MAX` never fires. A no-op unless the
+    /// built-in SBI is enabled and a CLINT provides `mtime`.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn sync_sbi_timer(&mut self) {
+        if self.builtin_sbi
+            && let Some(clint) = &self.clint
+        {
+            let mtime = clint.borrow().mtime;
+            self.hart
+                .csr
+                .set_mip_bit(5, mtime >= self.sbi_state.stimecmp); // STIP
+        }
+    }
+
     /// E1-T12: advance `mtime` by one tick per `clock_div` retired instructions — the
     /// deterministic clock source (native and wasm retire identically, so a timer interrupt
     /// lands at the same retire index). A no-op when no CLINT is attached.
@@ -409,6 +434,8 @@ impl Machine {
                 self.sync_clint();
                 // E1-T13: refresh the PLIC-driven MEIP/SEIP levels too, before sampling.
                 self.sync_plic();
+                // E2-T05: refresh the built-in-SBI S-timer level (STIP) before sampling.
+                self.sync_sbi_timer();
             }
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
             // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the
