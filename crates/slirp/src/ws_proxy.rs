@@ -8,7 +8,9 @@
 //! `None` — never a panic (the adversarial charter: fuzzing with garbage must not panic or leak). No
 //! tokio → browser-safe.
 
+pub mod mux;
 pub mod stream;
+pub use mux::{MAX_STREAMS, Mux, MuxError, MuxEvent, Role};
 pub use stream::{StreamError, StreamState, Terminal};
 
 /// The protocol version carried in the [`Frame::Hello`] frame.
