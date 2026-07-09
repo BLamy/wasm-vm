@@ -7,6 +7,13 @@ repository.workspace = true
 # E3-T14: the NAT/addressing core (pass 1) has no deps. Pass 2 adds smoltcp — the TCP/IP stack that
 # parses/answers guest frames (ARP + ICMP echo now; TCP bridge next). tokio (the NativeConnector)
 # still arrives later behind a feature so the browser build never pulls it.
+# `native` (default) pulls tokio for the `NativeConnector` (the real outbound socket path used by the
+# native harness). A future wasm build of this crate would use `default-features = false` so the
+# browser never pulls tokio; the browser (crates/wasm) doesn't depend on this crate today regardless.
+[features]
+default = ["native"]
+native = ["dep:tokio"]
+
 [dependencies]
 smoltcp = { version = "0.13", default-features = false, features = [
     "std",
@@ -18,4 +25,19 @@ smoltcp = { version = "0.13", default-features = false, features = [
     "socket-tcp",
     "socket-icmp",
     "socket-udp",
+] }
+tokio = { version = "1", optional = true, default-features = false, features = [
+    "rt",
+    "net",
+    "time",
+] }
+
+[dev-dependencies]
+tokio = { version = "1", default-features = false, features = [
+    "rt",
+    "rt-multi-thread",
+    "net",
+    "time",
+    "macros",
+    "io-util",
 ] }
