@@ -13,14 +13,20 @@
 
 pub mod base;
 pub mod dbcn;
+pub mod hsm;
+pub mod ipi;
 pub mod legacy;
+pub mod rfence;
+pub mod srst;
 pub mod time;
 
 use alloc::boxed::Box;
 use alloc::collections::VecDeque;
 
 use crate::dev::console::ConsoleSink;
+use crate::hart::Hart;
 use crate::mmio::SystemBus;
+use crate::platform::virt::NUM_HARTS;
 
 /// SBI return pair: `a0`=error, `a1`=value.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -76,11 +82,12 @@ pub const fn is_legacy(eid: u64) -> bool {
 }
 
 /// Probe answer for `eid`: nonzero iff the extension is CALLABLE now (the single source of
-/// truth — Base `probe_extension` returns exactly this). IPI/RFENCE/HSM/SRST flip to 1 as
-/// E2-T06 lands (TIME landed with E2-T05).
+/// truth — Base `probe_extension` returns exactly this). The full Epic-2 set (ADR 0002
+/// table) is now implemented: Base, DBCN, TIME, IPI, RFENCE, HSM, SRST, legacy console.
 pub fn probe(eid: u64) -> u64 {
     match eid {
-        EID_BASE | EID_DBCN | EID_TIME | EID_LEGACY_PUTCHAR | EID_LEGACY_GETCHAR => 1,
+        EID_BASE | EID_DBCN | EID_TIME | EID_IPI | EID_RFENCE | EID_HSM | EID_SRST => 1,
+        EID_LEGACY_PUTCHAR | EID_LEGACY_GETCHAR => 1,
         _ => 0,
     }
 }
@@ -97,6 +104,9 @@ pub struct SbiState {
     /// E2-T05 TIME: the programmed S-timer deadline in `mtime` units. The run loop derives
     /// `mip.STIP = (mtime >= stimecmp)` each boundary. `u64::MAX` = no timer ("cancel").
     pub(crate) stimecmp: u64,
+    /// E2-T06 SRST: a requested shutdown (`Some(exit_code)`) — the run loop returns
+    /// `RunOutcome::Exited(code)` before the guest executes another instruction.
+    pub(crate) shutdown: Option<u64>,
 }
 
 impl Default for SbiState {
@@ -105,6 +115,7 @@ impl Default for SbiState {
             console_out: None,
             console_in: VecDeque::new(),
             stimecmp: u64::MAX, // reset: no timer programmed — never fires
+            shutdown: None,
         }
     }
 }
@@ -117,11 +128,28 @@ impl SbiState {
     }
 }
 
+/// Decode the SBI `(hart_mask, hart_mask_base)` addressing (§Binary Encoding) against the
+/// current topology: `base == u64::MAX` means "all harts"; a base beyond the topology or a
+/// mask bit naming a nonexistent hart is INVALID_PARAM. Returns the ABSOLUTE hart bitmap
+/// (bit i = hartid i) — single-hart today, unchanged shape for Epic 6 SMP.
+pub(crate) fn decode_hart_mask(mask: u64, base: u64) -> Result<u64, SbiRet> {
+    let n = NUM_HARTS as u64;
+    if base == u64::MAX {
+        return Ok((1 << n) - 1); // all harts
+    }
+    if base >= n || (mask >> (n - base)) != 0 {
+        return Err(SbiRet::invalid_param());
+    }
+    Ok(mask << base)
+}
+
 /// One SBI call. `eid`/`fid` from `a7`/`a6`, `args` from `a0..a5`; needs the bus (DBCN reads
-/// and writes guest DRAM) and the firmware console state.
+/// and writes guest DRAM), the hart (IPI raises SSIP, RFENCE flushes the TLB), and the
+/// firmware console state.
 pub fn handle(
     state: &mut SbiState,
     bus: &mut SystemBus,
+    hart: &mut Hart,
     eid: u64,
     fid: u64,
     args: &[u64; 6],
@@ -130,9 +158,12 @@ pub fn handle(
         EID_BASE => base::handle(fid, args),
         EID_DBCN => dbcn::handle(state, bus, fid, args),
         EID_TIME => time::handle(state, fid, args),
+        EID_IPI => ipi::handle(hart, fid, args),
+        EID_RFENCE => rfence::handle(hart, fid, args),
+        EID_HSM => hsm::handle(fid, args),
+        EID_SRST => srst::handle(state, fid, args),
         EID_LEGACY_PUTCHAR | EID_LEGACY_GETCHAR => legacy::handle(state, eid, args),
-        // Known-but-not-yet-implemented and unknown alike: the spec probe answer, never a
-        // trap or panic (E2-T05/T06 claim their EIDs by adding arms here + rows in `probe`).
+        // Unknown EID: the spec probe answer, never a trap or panic.
         _ => SbiRet::not_supported(),
     }
 }
@@ -147,22 +178,14 @@ mod tests {
         SystemBus::new(Ram::new(64 * 1024).unwrap())
     }
 
-    /// Unknown / not-yet-implemented EIDs → NOT_SUPPORTED (-2); never panics.
+    /// Unknown EIDs → NOT_SUPPORTED (-2); never panics.
     #[test]
     fn unknown_and_pending_eids_not_supported() {
         let mut st = SbiState::default();
         let mut b = bus();
-        for eid in [
-            0u64,
-            0x0A,
-            EID_IPI,
-            EID_RFENCE,
-            EID_HSM,
-            EID_SRST,
-            0xDEAD,
-            u64::MAX,
-        ] {
-            let ret = handle(&mut st, &mut b, eid, 0, &[0; 6]);
+        let mut h = crate::hart::Hart::new();
+        for eid in [0u64, 0x0A, 0xDEAD, u64::MAX] {
+            let ret = handle(&mut st, &mut b, &mut h, eid, 0, &[0; 6]);
             assert_eq!(ret.error, SBI_ERR_NOT_SUPPORTED, "eid {eid:#x}");
             assert_eq!(ret.value, 0);
         }
@@ -177,10 +200,10 @@ mod tests {
             (EID_LEGACY_PUTCHAR, 1),
             (EID_LEGACY_GETCHAR, 1),
             (EID_TIME, 1), // E2-T05
-            (EID_IPI, 0),
-            (EID_RFENCE, 0),
-            (EID_HSM, 0),
-            (EID_SRST, 0),
+            (EID_IPI, 1),  // E2-T06
+            (EID_RFENCE, 1),
+            (EID_HSM, 1),
+            (EID_SRST, 1),
             (0x0A, 0), // PMU — acceptance names it explicitly
         ] {
             assert_eq!(probe(eid), want, "probe({eid:#x})");
@@ -193,6 +216,7 @@ mod tests {
     fn dispatcher_fuzz_1e6() {
         let mut st = SbiState::default();
         let mut b = bus();
+        let mut h = crate::hart::Hart::new();
         let mut x = 0x243F_6A88_85A3_08D3u64; // deterministic LCG/xorshift seed
         let mut next = move || {
             x ^= x << 13;
@@ -204,7 +228,7 @@ mod tests {
             let eid = next();
             let fid = next() & 0xF;
             let args = [next(), next(), next(), next(), next(), next()];
-            let ret = handle(&mut st, &mut b, eid, fid, &args);
+            let ret = handle(&mut st, &mut b, &mut h, eid, fid, &args);
             assert!(
                 (-9..=0).contains(&ret.error),
                 "non-spec error {} for eid {eid:#x}",

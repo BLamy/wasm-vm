@@ -472,7 +472,19 @@ impl Machine {
                         self.hart.regs.read(14),
                         self.hart.regs.read(15),
                     ];
-                    let ret = sbi::handle(&mut self.sbi_state, &mut self.bus, eid, fid, &args);
+                    let ret = sbi::handle(
+                        &mut self.sbi_state,
+                        &mut self.bus,
+                        &mut self.hart,
+                        eid,
+                        fid,
+                        &args,
+                    );
+                    // E2-T06 SRST: a requested shutdown ends the run NOW — the guest never
+                    // executes another instruction (spec: system_reset does not return).
+                    if let Some(code) = self.sbi_state.shutdown {
+                        return RunOutcome::Exited(code);
+                    }
                     self.hart.regs.write(10, ret.error as u64); // a0
                     // Legacy extensions (EID < 0x10) clobber ONLY a0 (SBI v0.1 convention).
                     if !sbi::is_legacy(eid) {

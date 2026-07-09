@@ -7,7 +7,7 @@
 #![cfg(not(feature = "zicsr-stub"))]
 
 use wasm_vm_core::bus::Bus;
-use wasm_vm_core::csr::{CsrOp, Priv, SIP};
+use wasm_vm_core::csr::{CsrOp, Priv};
 use wasm_vm_core::platform::virt;
 use wasm_vm_core::{Machine, RunOutcome};
 
@@ -145,7 +145,7 @@ impl Rng {
 #[ignore = "~6e8 guest instructions; run with --release -- --ignored"]
 fn hostile_guest_200k_random_deadlines() {
     const N: usize = 1_000_000;
-    let mut rng = Rng(0xE2_705_C41C);
+    let mut rng = Rng(0x000E_2705_C41C);
     let mut expected: u64 = 0;
     let mut table: Vec<u8> = Vec::with_capacity(N * 16);
     for _ in 0..N {
