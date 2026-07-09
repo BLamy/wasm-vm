@@ -22,7 +22,7 @@ zicsr-stub = ["wasm-vm-core/zicsr-stub"]
 wasm-vm-core = { workspace = true, features = ["std", "trace"] }
 wasm-vm-storage = { path = "../storage" }
 # E3-T14: wire the slirp user-mode network stack (its native NativeConnector path) behind
-# `--net-mode slirp`, so a booted guest's ethernet frames reach real outbound sockets. The driver
+# `boot --net-slirp`, so a booted guest's ethernet frames reach real outbound sockets. The driver
 # thread runs slirp's async Bridge on a current-thread tokio runtime; the sync NetBackend the machine
 # calls talks to it over channels. (The browser build never pulls this — it's the native harness only.)
 wasm-vm-slirp = { path = "../slirp" }

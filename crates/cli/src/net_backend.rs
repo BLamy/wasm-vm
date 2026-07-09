@@ -81,6 +81,9 @@ fn driver_loop(
         let now_ms = || start.elapsed().as_millis() as i64;
         let mut bridge = Bridge::new(mac, NativeConnector::new(), MAX_FLOWS);
         let mut tick = tokio::time::interval(TICK);
+        // Drive-on-cadence, not catch-up: after a stall (e.g. a slow connect) we want ONE resume
+        // tick, not a burst of missed ones each re-running poll/service (critic m2).
+        tick.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
         loop {
             tokio::select! {
                 maybe = from_guest.recv() => match maybe {
@@ -98,6 +101,10 @@ fn driver_loop(
             bridge.expire(t as u64);
             let out = bridge.take_egress();
             if !out.is_empty() {
+                // No hard cap here: egress is bounded below by smoltcp's per-socket send windows +
+                // retransmit gating (it stops producing to-guest frames when the guest RX ring isn't
+                // serviced), and the guest→driver channel is bounded by the guest's own tx rate. The
+                // per-flow pump depth is capped at PUMP_DEPTH in slirp. (critic m3)
                 let mut q = egress.lock().expect("egress mutex");
                 q.extend(out);
             }
@@ -124,11 +131,21 @@ impl NetBackend for SlirpBackend {
 
 impl Drop for SlirpBackend {
     fn drop(&mut self) {
-        // Drop the only sender so the driver's `recv().await` yields `None` and the loop breaks,
-        // then join so the runtime (and its spawned pumps) tears down before we return.
+        // Drop the only sender so the driver's `recv().await` yields `None` and the loop breaks.
         self.to_driver.take();
         if let Some(h) = self.driver.take() {
-            let _ = h.join();
+            // Bounded join (critic M1): an in-flight `connect().await` runs inside the driver's
+            // already-resolved `select!` arm, so it is NOT interrupted by the sender dropping — a
+            // plain `join()` would block up to the connector's timeout (~10 s to a black-holed host).
+            // Give it a short grace window to exit cleanly, then detach: the thread is
+            // self-terminating (its `recv()` returns `None` once the connect resolves) and owns all
+            // its state (Bridge, runtime, its clone of `egress`), so detaching is memory-safe.
+            let (done_tx, done_rx) = std::sync::mpsc::channel();
+            std::thread::spawn(move || {
+                let _ = h.join();
+                let _ = done_tx.send(());
+            });
+            let _ = done_rx.recv_timeout(std::time::Duration::from_millis(250));
         }
     }
 }
@@ -231,6 +248,80 @@ mod tests {
         buf
     }
 
+    /// Build a guest TCP segment (ACK or PSH+ACK, no MSS option) with an explicit seq/ack — used to
+    /// complete the handshake and carry data after the SYN.
+    #[allow(clippy::too_many_arguments)]
+    fn guest_tcp_seg(
+        src_port: u16,
+        dst: Ipv4Address,
+        dst_port: u16,
+        seq: TcpSeqNumber,
+        ack: TcpSeqNumber,
+        ctrl: TcpControl,
+        payload: &[u8],
+    ) -> Vec<u8> {
+        let tcp = TcpRepr {
+            src_port,
+            dst_port,
+            control: ctrl,
+            seq_number: seq,
+            ack_number: Some(ack),
+            window_len: 64240,
+            window_scale: None,
+            max_seg_size: None,
+            sack_permitted: false,
+            sack_ranges: [None, None, None],
+            timestamp: None,
+            payload,
+        };
+        let ip = Ipv4Repr {
+            src_addr: GUEST_IP,
+            dst_addr: dst,
+            next_header: IpProtocol::Tcp,
+            payload_len: tcp.buffer_len(),
+            hop_limit: 64,
+        };
+        let eth = EthernetRepr {
+            src_addr: EthernetAddress(GUEST_MAC),
+            dst_addr: EthernetAddress(GATEWAY_MAC),
+            ethertype: EthernetProtocol::Ipv4,
+        };
+        let mut buf = vec![0u8; eth.buffer_len() + ip.buffer_len() + tcp.buffer_len()];
+        let mut frame = EthernetFrame::new_unchecked(&mut buf);
+        eth.emit(&mut frame);
+        let mut ippkt = Ipv4Packet::new_unchecked(frame.payload_mut());
+        ip.emit(&mut ippkt, &Default::default());
+        let mut tpkt = TcpPacket::new_unchecked(ippkt.payload_mut());
+        tcp.emit(
+            &mut tpkt,
+            &GUEST_IP.into(),
+            &dst.into(),
+            &Default::default(),
+        );
+        buf
+    }
+
+    /// Parse a guest-bound frame as IPv4/TCP: `(dst_port, syn, ack, seq, ack_no, payload)`.
+    fn guest_tcp(f: &[u8]) -> Option<(u16, bool, bool, i32, i32, Vec<u8>)> {
+        let frame = EthernetFrame::new_checked(f).ok()?;
+        if frame.ethertype() != EthernetProtocol::Ipv4 {
+            return None;
+        }
+        let ip = Ipv4Packet::new_checked(frame.payload()).ok()?;
+        if ip.next_header() != IpProtocol::Tcp {
+            return None;
+        }
+        let tcp = TcpPacket::new_checked(ip.payload()).ok()?;
+        Some((
+            tcp.dst_port(),
+            tcp.syn(),
+            tcp.ack(),
+            tcp.seq_number().0,
+            tcp.ack_number().0,
+            tcp.payload().to_vec(),
+        ))
+    }
+
     #[test]
     fn guest_arp_for_gateway_gets_a_reply_through_the_backend() {
         let mut backend = SlirpBackend::new(GATEWAY_MAC);
@@ -313,6 +404,70 @@ mod tests {
         assert!(
             syn_ack,
             "guest should receive a SYN-ACK from slirp for the accepted flow"
+        );
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn guest_tcp_data_round_trips_through_the_backend_to_a_real_echo_server() {
+        // A real echo server: accept one connection, copy read→write. The guest's bytes only come
+        // back if slirp's byte pump actually shuttled them out to this socket and the echo back in —
+        // this is the data-path proof the SYN-ACK-only tests don't give (critic M2).
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
+        tokio::spawn(async move {
+            if let Ok((mut sock, _)) = listener.accept().await {
+                let (mut r, mut w) = sock.split();
+                let _ = tokio::io::copy(&mut r, &mut w).await;
+            }
+        });
+
+        let marker = b"PING_slirp_42".to_vec();
+        let dst = Ipv4Address::new(127, 0, 0, 1);
+        let src_port = 40007u16;
+        let echoed = tokio::task::spawn_blocking(move || {
+            let mut backend = SlirpBackend::new(GATEWAY_MAC);
+            backend.tx(&guest_arp_request());
+            std::thread::sleep(Duration::from_millis(50));
+            // Handshake: SYN (our ISN=1000) → read slirp's SYN-ACK to learn its ISN → ACK.
+            backend.tx(&guest_tcp_syn(src_port, dst, addr.port()));
+            let synack = wait_for_frame(&mut backend, Duration::from_secs(3), |f| {
+                matches!(guest_tcp(f), Some((dp, syn, ack, ..)) if dp == src_port && syn && ack)
+            })
+            .expect("SYN-ACK");
+            let (.., server_isn, _my_ack, _) = guest_tcp(&synack).unwrap();
+            let my_seq = TcpSeqNumber(1001); // our ISN + 1
+            let my_ack = TcpSeqNumber(server_isn.wrapping_add(1));
+            backend.tx(&guest_tcp_seg(
+                src_port,
+                dst,
+                addr.port(),
+                my_seq,
+                my_ack,
+                TcpControl::None,
+                &[],
+            ));
+            // Send the data (PSH+ACK) and wait for the SAME bytes to come back from the echo server.
+            backend.tx(&guest_tcp_seg(
+                src_port,
+                dst,
+                addr.port(),
+                my_seq,
+                my_ack,
+                TcpControl::Psh,
+                &marker,
+            ));
+            wait_for_frame(&mut backend, Duration::from_secs(5), |f| {
+                matches!(guest_tcp(f), Some((dp, .., payload))
+                    if dp == src_port && payload.windows(marker.len()).any(|w| w == marker.as_slice()))
+            })
+            .is_some()
+        })
+        .await
+        .unwrap();
+
+        assert!(
+            echoed,
+            "guest should receive its bytes echoed back through slirp's pump from the real server"
         );
     }
 }

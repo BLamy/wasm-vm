@@ -380,5 +380,27 @@ static 10.0.2.15). `on_guest_frame` awaits `connect` inside the driver's select 
 (spawn the connect) is the concurrency pass. The booted-Alpine acceptance (`wget` through slirp to a
 local server; 50-concurrent; 100 MB integrity) remains the env-gated long-boot leg.
 
-**Next (pass 3b):** wire DHCP (`stack.run_dhcp`) + DNS/UDP services (`take_service_udp` + `UdpServices`)
-into the driver loop so a booted guest auto-configures eth0, then the env-gated booted-Alpine acceptance.
+**Adversarial cold-clone critic on pass 3a: REFUTED (FIX-FIRST) → fixed.** Both tests confirmed
+non-vacuous by mutation (neutering `tx`'s send OR the egress `q.extend` fails both); build/clippy/wasm
+isolation clean. Findings folded in:
+- **M1 (fixed):** `Drop` could block the caller up to the connector's 10 s timeout — an in-flight
+  `connect().await` runs inside the driver's *already-resolved* `select!` arm, so dropping the sender
+  doesn't interrupt it and a plain `join()` inherits the timeout. Fixed with a **bounded join**: drop
+  the sender, then join off-thread with a 250 ms grace and detach (the driver is self-terminating and
+  owns all its state, so detaching is memory-safe).
+- **M2 (fixed) — the data path was untested (SYN-ACK is control-plane, answered without the pump moving
+  a byte).** Added `guest_tcp_data_round_trips_through_the_backend_to_a_real_echo_server`: full guest
+  handshake (SYN → parse slirp's ISN from the SYN-ACK → ACK) then PSH data to a **real** tokio echo
+  server; asserts the SAME bytes come back to the guest — proving slirp's byte pump actually shuttled
+  them out and the echo back, on the current-thread runtime driven by the 1 ms tick.
+- **m2 (fixed):** interval → `MissedTickBehavior::Skip` (no burst catch-up after a stall).
+- **m3 (documented):** egress `VecDeque` relies on smoltcp send-window/retransmit gating + the guest tx
+  rate for boundedness (per-flow pump depth is capped at `PUMP_DEPTH`) — noted in-code.
+- **m4 (fixed):** stale `Cargo.toml` comment `--net-mode` → `--net-slirp`.
+- **m1 (acknowledged, deferred):** an unreachable-host connect still stalls the whole loop up to 10 s
+  (spawn-the-connect is the concurrency pass — same root as M1's residual). **3 net_backend tests**;
+  fmt + clippy clean (default + `--all-features`); full cli suite green. **CI #159 green.**
+
+**Next (pass 3b):** spawn the connect (kills the loop-stall + the Drop residual), then wire DHCP
+(`stack.run_dhcp`) + DNS/UDP services (`take_service_udp` + `UdpServices`) into the driver loop so a
+booted guest auto-configures eth0, then the env-gated booted-Alpine acceptance.
