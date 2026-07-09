@@ -64,6 +64,9 @@ enum Cmd {
 enum OciCmd {
     /// Unpack an OCI image-layout (verifying blob digests) into a flattened rootfs directory.
     Unpack(oci::UnpackArgs),
+    /// Validate that an unpacked bundle is RUNNABLE (rootfs + run.json + a resolvable, correct-arch
+    /// entrypoint) — a fast preflight for `wvrun`, no boot required.
+    Validate(oci::ValidateArgs),
 }
 
 #[derive(Args)]
@@ -213,6 +216,7 @@ fn main() -> ExitCode {
         Cmd::ChunkVerify(args) => chunk_verify::run_verify(args),
         Cmd::ChunkChurn(args) => chunk_verify::run_churn(args),
         Cmd::Oci(OciCmd::Unpack(args)) => oci::unpack(args),
+        Cmd::Oci(OciCmd::Validate(args)) => oci::validate(args),
     }
 }
 

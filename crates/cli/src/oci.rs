@@ -108,7 +108,7 @@ struct ImageConfigInner {
 /// what `wvrun` needs to `execve` the container process. Emitted as `run.json` (canonical) plus
 /// flat shell-readable files (`config/argv`, `config/env`, `config/cwd`, `config/user`) so the
 /// POSIX-sh runner needs no JSON parser in the guest.
-#[derive(Serialize, Debug, PartialEq, Eq, Default)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Default)]
 pub struct RuntimeConfig {
     /// The final argv = Entrypoint ++ Cmd (OCI runtime semantics). Empty only if the image sets
     /// neither — then a non-interactive run has nothing to exec (a typed error) but `--interactive`
@@ -545,6 +545,9 @@ pub fn unpack(a: UnpackArgs) -> ExitCode {
         }
     }
 }
+
+mod validate;
+pub use validate::{ValidateArgs, validate};
 
 #[cfg(test)]
 mod tests;
