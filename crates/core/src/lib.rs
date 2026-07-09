@@ -553,7 +553,7 @@ impl Machine {
             .expect("medeleg write from M cannot fail");
         // E2-T05: grant S-mode the CY/TM/IR counters (mcounteren = 0x7) — the kernel's
         // sched_clock reads `time` via rdtime, which traps without this (OpenSBI grants the
-        // same). scounteren stays kernel-owned.
+        // same). (E-net/rdtime: scounteren gets the same grant just below, so U-mode gets them too.)
         self.hart
             .csr
             .access(MCOUNTEREN, CsrOp::Write, 0x7, false, false, 0)
