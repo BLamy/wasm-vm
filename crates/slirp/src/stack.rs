@@ -191,11 +191,27 @@ impl SlirpStack {
         self.flows.contains_key(&handle) && self.sockets.get::<tcp::Socket>(handle).can_send()
     }
 
+    /// Whether the guest may still send us more bytes on this flow. Goes `false` once the guest sends
+    /// a FIN (its write side closed) — the signal for the backend to `shutdown_write` the outbound
+    /// side. `false` if `handle` is not an active flow.
+    pub fn tcp_may_recv(&self, handle: SocketHandle) -> bool {
+        self.flows.contains_key(&handle) && self.sockets.get::<tcp::Socket>(handle).may_recv()
+    }
+
     /// Half-close this flow (send a FIN to the guest) — the outbound side finished writing. No-op if
     /// `handle` is not an active flow.
     pub fn tcp_close(&mut self, handle: SocketHandle) {
         if self.flows.contains_key(&handle) {
             self.sockets.get_mut::<tcp::Socket>(handle).close();
+        }
+    }
+
+    /// Abort this flow (send a RST to the guest) — the outbound connect failed or the remote reset.
+    /// Unlike [`tcp_close`](Self::tcp_close) (a graceful FIN), this tears the guest connection down
+    /// hard so the guest sees `ECONNRESET`, not a clean EOF. No-op if `handle` is not an active flow.
+    pub fn tcp_abort(&mut self, handle: SocketHandle) {
+        if self.flows.contains_key(&handle) {
+            self.sockets.get_mut::<tcp::Socket>(handle).abort();
         }
     }
 
