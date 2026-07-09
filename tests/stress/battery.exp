@@ -1,0 +1,126 @@
+#!/usr/bin/expect -f
+# E2-T24 stress battery: drive one native Alpine boot through a disk/process/interactivity
+# gauntlet and emit machine-parseable `RESULT <name> <PASS|FAIL> [detail]` lines. Parameterized
+# by env so the SAME script serves a fast CI smoke and the full nightly torture (see run-stress.sh).
+#
+#   STRESS_IMG      path to the (already-copied, disposable) ext4 image to boot   [required]
+#   STRESS_KERNEL   kernel Image path                                             [required]
+#   STRESS_BIN      wasm-vm binary                                                [required]
+#   STRESS_DD_MB    single-writer dd size in MiB           (default 8)
+#   STRESS_WRITERS  parallel dd writers                    (default 2)
+#   STRESS_FORKBOMB run the bounded fork bomb (1/0)        (default 1)
+#   STRESS_BOOT_TO  seconds to wait for login              (default 900 — Alpine/OpenRC is slow)
+#
+# Exit 0 iff every RESULT is PASS and the guest powered off cleanly.
+
+proc getenv {name def} { global env; return [expr {[info exists env($name)] ? $env($name) : $def}] }
+
+set img       [getenv STRESS_IMG ""]
+set kernel    [getenv STRESS_KERNEL ""]
+set bin       [getenv STRESS_BIN ""]
+set dd_mb     [getenv STRESS_DD_MB 8]
+set writers   [getenv STRESS_WRITERS 2]
+set forkbomb  [getenv STRESS_FORKBOMB 1]
+set boot_to   [getenv STRESS_BOOT_TO 900]
+if {$img eq "" || $kernel eq "" || $bin eq ""} { puts "battery: STRESS_IMG/KERNEL/BIN required"; exit 2 }
+
+set fails 0
+# Leading \n so the RESULT line starts fresh even when the guest just printed a prompt with no
+# trailing newline (otherwise it embeds as `wasm-vm login: RESULT boot PASS` and an anchored grep
+# would miss it). run-stress.sh also greps un-anchored as a belt-and-suspenders.
+proc result {name ok {detail ""}} { global fails; if {$ok} { puts "\nRESULT $name PASS $detail" } else { puts "\nRESULT $name FAIL $detail"; incr fails } }
+
+# A shell command that waits for its own unique sentinel, so we never race the next step. Returns
+# the transcript captured between the markers is not needed here — we assert on specific output.
+set tag 0
+proc run_wait {cmd needle secs} {
+  # send cmd, then wait for `needle`; return 1 on match, 0 on timeout.
+  global tag; incr tag
+  send -- "$cmd\r"
+  set ok 0
+  expect {
+    -timeout $secs
+    -- "$needle" { set ok 1 }
+    timeout { set ok 0 }
+  }
+  return $ok
+}
+
+set timeout $boot_to
+spawn $bin boot --kernel $kernel --drive file=$img \
+  --append "root=/dev/vda rw console=ttyS0 earlycon=sbi" --max-instrs 40000000000
+
+# 1. Boot to login.
+expect {
+  -timeout $boot_to
+  -- "login:" {}
+  eof { puts "\nRESULT boot FAIL emulator-exited-before-login"; exit 1 }
+  timeout { puts "\nRESULT boot FAIL never-reached-login"; exit 1 }
+}
+result boot 1
+# NOTE on needles (critic C1): the guest tty ECHOES the typed command, so a needle that is a
+# literal substring of the command matches on the echo, not the output — a vacuous pass. Every
+# success needle below is therefore an OUTPUT-ONLY token: the command emits `TOK$((6*7))` and we
+# wait for `TOK42`; the command text contains `$((6*7))`, never `TOK42`, so the match can only come
+# from the shell having actually executed and produced output. A failing command emits a different
+# token (or none) → the needle never appears → run_wait times out → FAIL.
+
+# 2. Log in (passwordless; dismiss an optional Password: prompt), prove the shell executed a command.
+send -- "root\r"; sleep 3; send -- "\r"; sleep 2
+result login [run_wait "echo LOGIN\$((6*7))" "LOGIN42" 90]
+
+# 3. Disk integrity: write DD_MB of urandom, md5 it, DROP CACHES (force a real re-read from the
+#    virtio device, not the page cache), re-md5, and compare. A mismatch — a virtio-blk/ext4
+#    write-read coherency or writeback bug — makes the shell print DISKBAD, so the DISKOK42 needle
+#    never appears and the step FAILs. drop_caches is the difference between a real device read and
+#    a cached same-file compare (critic C1).
+run_wait "dd if=/dev/urandom of=/root/blob bs=1M count=$dd_mb 2>/dev/null; echo WROTE\$((6*7))" "WROTE42" 600
+run_wait "md5sum /root/blob | cut -d' ' -f1 > /root/sum1; sync; echo SUMA\$((6*7))" "SUMA42" 300
+run_wait "sync; echo 3 > /proc/sys/vm/drop_caches 2>/dev/null; md5sum /root/blob | cut -d' ' -f1 > /root/sum2; echo SUMB\$((6*7))" "SUMB42" 300
+result disk_md5 [run_wait "if cmp -s /root/sum1 /root/sum2; then echo DISKOK\$((6*7)); else echo DISKBAD; fi" "DISKOK42" 60]
+
+# 4. Parallel writers — N concurrent dd must all complete and the fs stay consistent.
+result parallel [run_wait \
+  "for i in \$(seq $writers); do dd if=/dev/zero of=/root/p\$i bs=1M count=4 2>/dev/null & done; wait; sync; echo PARA\$((6*7))" \
+  "PARA42" 600]
+
+# 5. Process storm. Always run the SAFE fork/exec micro-benchmark (200 short-lived procs); the
+#    STORM_DONE_$n token (n=200 only if all 200 ran) is output-only. The real recursive fork bomb
+#    is OPT-IN via STRESS_FORKBOMB=1 (nightly, under an in-guest ulimit).
+result procstorm [run_wait \
+  "n=0; for i in \$(seq 200); do /bin/true; n=\$((n+1)); done; echo STORM_DONE_\$n" \
+  "STORM_DONE_200" 300]
+if {$forkbomb} {
+  run_wait "setsid sh -c '(ulimit -u 64; :(){ :|:& };:)' 2>/dev/null & BP=\$!; sleep 3; kill -9 -\$BP 2>/dev/null; kill -9 \$BP 2>/dev/null; wait 2>/dev/null; echo BOMBKILLED\$((6*7))" "BOMBKILLED42" 180
+  result forkbomb_survived [run_wait "echo STILL_ALIVE_\$((6*7))" "STILL_ALIVE_42" 90]
+} else {
+  puts "\nRESULT forkbomb_survived SKIP"
+}
+
+# 6. Interactivity under load: start a background dd, then time how long the shell takes to EXECUTE
+#    a command (needle PING42 is the arithmetic RESULT, so it appears only after the shell runs —
+#    a real time-to-execute-under-load metric, not the instant tty echo, critic C1).
+run_wait "dd if=/dev/zero of=/root/load bs=1M count=32 2>/dev/null & echo LOADED\$((6*7))" "LOADED42" 60
+set t0 [clock milliseconds]
+set echoed [run_wait "echo PING\$((6*7))" "PING42" 60]
+set lat [expr {[clock milliseconds]-$t0}]
+result interactivity $echoed "echo_latency_ms=$lat"
+run_wait "wait; sync; echo LOADDONE\$((6*7))" "LOADDONE42" 600
+
+# 7. Clean sync + poweroff. The OpenRC shutdown RUNLEVEL (stop every service, unmount, remount-ro,
+#    SBI power-down) is CPU-bound and can run LONGER than a boot, so: (a) match the kernel's
+#    definitive `reboot: Power down` marker as soon as it appears mid-shutdown (don't wait for the
+#    process eof, which expect's non-resetting -timeout could miss on a very long shutdown), and
+#    (b) give it a very generous budget. `guest exited` is the emulator's clean-exit line as backstop.
+send -- "sync; poweroff\r"
+set powered 0
+expect {
+  -timeout [expr {$boot_to * 2}]
+  -re {reboot: Power down|guest exited 0} { set powered 1 }
+  eof { set powered 1 }
+  timeout { set powered 0 }
+}
+result poweroff $powered
+
+puts "STRESS_SUMMARY fails=$fails"
+exit [expr {$fails > 0 ? 1 : 0}]

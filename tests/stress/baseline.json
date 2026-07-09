@@ -1,0 +1,20 @@
+{
+  "_comment": "E2-T24 stress-battery baseline for the SMOKE scope (RUNS=1, DD_MB=4, WRITERS=2, FORKBOMB=0). Regenerate with `tools/run-stress.sh` (writes tests/stress/out/summary.json). The invariant that must hold run-to-run is the RESULT PASS/FAIL set and the normalized transcript — absolute latency_ms is interpreter-speed-dependent and NOT a gate. The full nightly scope is RUNS=10 DD_MB=256 FORKBOMB=1.",
+  "scope": "smoke",
+  "runs": 1,
+  "dd_mb": 4,
+  "writers": 2,
+  "forkbomb": 0,
+  "result_set": [
+    "RESULT boot PASS",
+    "RESULT login PASS",
+    "RESULT disk_md5 PASS",
+    "RESULT parallel PASS",
+    "RESULT procstorm PASS",
+    "RESULT forkbomb_survived SKIP",
+    "RESULT interactivity PASS",
+    "RESULT poweroff PASS"
+  ],
+  "all_runs_passed": true,
+  "reproducible": null
+}
