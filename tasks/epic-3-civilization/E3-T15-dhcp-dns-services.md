@@ -148,3 +148,30 @@ CHAOS) A query got answered with IN data (class-mismatched reply). Fix: non-IN �
 path. Regressions: `empty_a_result_is_not_cached_and_re_resolves` (cache_len 0, second query re-resolves)
 + `non_in_class_gets_servfail_without_touching_the_resolver`. 10 resolver tests; fmt + clippy green both
 feature configs. (Not a bug: CNAME→SERVFAIL is this pass's intended policy per the pass-1b spec.)
+
+**2026-07-07 — pass 1d: UDP service dispatch (`udp.rs`).** The composition seam that ties the DHCP
+server + DNS forwarder into one router: `UdpServices<R>::handle(dst_ip, dst_port, payload, now_ms)
+-> Option<UdpReply>` claims a guest UDP datagram for the internal service that owns `(dst_ip,
+dst_port)` and returns the response payload + the source port to reply from. Routing policy: DHCP —
+port 67 to the broadcast (DISCOVER/rebind) OR the gateway (unicast RENEW), since we're the sole server
+on the link → `DhcpServer`, reply from :67; DNS — ONLY `10.0.2.3:53` → `DnsForwarder`, reply from :53;
+everything else (an external UDP flow, INCLUDING DNS to some OTHER server's :53) is NOT claimed → left
+to the NAT/outbound path (no transparent-DNS surprise). Pure control logic (no smoltcp); the caller
+parses the datagram off the wire and frames the reply. Tests (6): DHCP DISCOVER (broadcast:67) → OFFER
+from :67; DHCP RENEW (gateway:67) → ACK; DNS to 10.0.2.3:53 → QR-set response with an A answer from
+:53; DNS to an EXTERNAL host:53 → None (left to NAT); other ports/hosts (gateway:123 NTP, external:67,
+external:4433) → None. 80 slirp tests. fmt + clippy green under BOTH `--all-features` and
+`--no-default-features`. Remaining for T15: the concrete resolvers (browser DoH / native OS) +
+TCP-fallback, wire `UdpServices` into the SlirpStack UDP path (smoltcp UDP socket on the gateway/DNS
+addrs), booted-guest acceptance (env-gated).
+
+**Adversarial cold-clone critic on pass 1d: essentially CLEAN, one MINOR API-smell folded in.** The
+critic mutation-verified the routing guards are real (dropping the DNS ip-check fails the external-DNS
+test; dropping the DHCP ip-check fails the external:67 test), confirmed the DHCP unicast-RENEW routing
+is consistent with `dhcp.rs`'s server-id/siaddr = gateway, and found no misroute / external-leak /
+panic. One MINOR: the reply's old `src_port` field was redundant (always == the `dst_port` just passed)
+and the struct omitted the field a caller needs to ADDRESS a DNS reply (the query's ephemeral source
+port). Folded in: `handle` now takes the guest `src_port` and `UdpReply` carries explicit `from_port`
+(67/53) + `to_port` (68 for DHCP, the query's source port for DNS) — the reply is now fully addressable
+with no out-of-band caller state. Tests assert both ports (DNS reply → 45123, DHCP → 68). 80 slirp
+tests; fmt + clippy green both configs.
