@@ -301,3 +301,148 @@ fn no_connector_means_no_outbound_and_no_panic() {
         "without a connector there is no outbound path, so the flow cannot establish"
     );
 }
+
+/// A deterministic byte at stream offset `i` — lets a bulk test verify integrity, not just length.
+fn pat(i: usize) -> u8 {
+    (i % 251) as u8 // 251 is prime → the pattern doesn't align to any power-of-two buffer boundary.
+}
+
+/// Spawn a server that, on connect, floods `n` deterministic bytes then closes. Returns the port.
+fn spawn_flood_server(n: usize) -> u16 {
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind flood server");
+    let port = listener.local_addr().unwrap().port();
+    std::thread::spawn(move || {
+        if let Ok((mut sock, _)) = listener.accept() {
+            let payload: Vec<u8> = (0..n).map(pat).collect();
+            let _ = sock.write_all(&payload); // blocks until the client drains — real backpressure
+        }
+    });
+    port
+}
+
+/// REGRESSION (critic DEFECT 1): a bulk download must not be silently truncated when the guest drains
+/// slower than the remote floods. Before the `pending_in` fix, `tcp_send`'s unaccepted tail was
+/// dropped once the guest-facing 64 KiB tx buffer filled, so the guest received only ~128 KiB of a
+/// 512 KiB stream.
+#[test]
+fn bulk_download_is_not_truncated_under_backpressure() {
+    const N: usize = 512 * 1024;
+    let port = spawn_flood_server(N);
+    let clock = Arc::new(AtomicI64::new(0));
+    let clk = clock.clone();
+    let mut backend = SlirpLocalBackend::with_connector(
+        GW_MAC,
+        Box::new(move || clk.load(Ordering::SeqCst)),
+        Box::new(StdConnector::new()),
+    );
+    let mut guest = Guest::new(&clock);
+    guest.connect(Ipv4Addr::new(127, 0, 0, 1), port);
+
+    let mut received: Vec<u8> = Vec::new();
+    for step in 0..200_000 {
+        clock.fetch_add(5, Ordering::SeqCst);
+        guest.poll(&clock);
+        shuttle(&mut guest, &mut backend);
+        guest.poll(&clock);
+        // Drain a bounded amount per pass so the guest rx window fills and backpressure is real.
+        if guest.socket().can_recv() {
+            let chunk = guest
+                .socket()
+                .recv(|b| {
+                    let take = b.len().min(4096);
+                    (take, b[..take].to_vec())
+                })
+                .unwrap();
+            received.extend_from_slice(&chunk);
+        }
+        if received.len() >= N {
+            break;
+        }
+        if step % 8 == 0 {
+            std::thread::sleep(Duration::from_millis(1));
+        }
+    }
+
+    assert_eq!(
+        received.len(),
+        N,
+        "the whole stream must arrive — no silent truncation"
+    );
+    assert!(
+        received.iter().enumerate().all(|(i, &b)| b == pat(i)),
+        "the received bytes must match the sent pattern exactly (no corruption/reorder)"
+    );
+}
+
+/// Spawn a server that reads until EOF, then replies `REPLY` and closes. It only replies AFTER it sees
+/// the client's half-close — so the reply proves the guest's FIN was forwarded to the remote.
+fn spawn_read_then_reply_server(reply: &'static [u8]) -> u16 {
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind reply server");
+    let port = listener.local_addr().unwrap().port();
+    std::thread::spawn(move || {
+        if let Ok((mut sock, _)) = listener.accept() {
+            let mut sink = Vec::new();
+            // read_to_end returns only once the peer's write side closes (FIN → EOF).
+            if sock.read_to_end(&mut sink).is_ok() {
+                let _ = sock.write_all(reply);
+            }
+        }
+    });
+    port
+}
+
+/// REGRESSION (critic DEFECT 2): a guest half-close (FIN) must be forwarded to the remote. Before the
+/// `status == Established` guard fix, the FIN-forward branch latched during the optimistic-accept
+/// window (socket in SynReceived → `may_recv()` already false) and no-op'd on the still-connecting
+/// conn, so the guest's real FIN never reached the server and a read-then-reply server hung.
+#[test]
+fn guest_half_close_is_forwarded_so_a_read_then_reply_server_answers() {
+    const REPLY: &[u8] = b"SERVER-SAW-EOF";
+    let port = spawn_read_then_reply_server(REPLY);
+    let clock = Arc::new(AtomicI64::new(0));
+    let clk = clock.clone();
+    let mut backend = SlirpLocalBackend::with_connector(
+        GW_MAC,
+        Box::new(move || clk.load(Ordering::SeqCst)),
+        Box::new(StdConnector::new()),
+    );
+    let mut guest = Guest::new(&clock);
+    guest.connect(Ipv4Addr::new(127, 0, 0, 1), port);
+
+    let mut sent_and_closed = false;
+    let mut received: Vec<u8> = Vec::new();
+    for step in 0..20_000 {
+        clock.fetch_add(5, Ordering::SeqCst);
+        guest.poll(&clock);
+        shuttle(&mut guest, &mut backend);
+        guest.poll(&clock);
+
+        // Once established: send a request, then half-close (guest FIN).
+        if !sent_and_closed && guest.socket().may_send() {
+            guest.socket().send_slice(b"please").unwrap();
+            guest.socket().close(); // active close → FIN on the guest's write side
+            sent_and_closed = true;
+        }
+        if guest.socket().can_recv() {
+            let chunk = guest
+                .socket()
+                .recv(|b| {
+                    let v = b.to_vec();
+                    (v.len(), v)
+                })
+                .unwrap();
+            received.extend_from_slice(&chunk);
+        }
+        if received.len() >= REPLY.len() {
+            break;
+        }
+        if step % 4 == 0 {
+            std::thread::sleep(Duration::from_millis(1));
+        }
+    }
+
+    assert_eq!(
+        received, REPLY,
+        "the server only replies after EOF — receiving the reply proves the guest FIN was forwarded"
+    );
+}

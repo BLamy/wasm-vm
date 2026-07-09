@@ -50,6 +50,11 @@ struct Flow {
     /// Re-offered each pass; keeps the pump lossless when the connector's send window is momentarily
     /// full.
     pending_out: Vec<u8>,
+    /// Remote→guest bytes received from the connector but not yet accepted by the guest-facing socket
+    /// (its tx buffer is full because the guest is draining slower than the remote sends). Re-offered
+    /// each pass; the mirror of `pending_out` — without it, `tcp_send`'s unaccepted tail is lost on
+    /// any bulk download (critic MAJOR: silent truncation).
+    pending_in: Vec<u8>,
     /// We've already forwarded the guest's FIN to the connector (`shutdown_write`); don't repeat.
     guest_fin_sent: bool,
 }
@@ -123,6 +128,7 @@ impl SlirpLocalBackend {
                     handle,
                     conn,
                     pending_out: Vec::new(),
+                    pending_in: Vec::new(),
                     guest_fin_sent: false,
                 },
             );
@@ -185,7 +191,15 @@ impl SlirpLocalBackend {
             }
 
             // Guest FIN → forward a write-shutdown to the remote, once, after the pending drained.
-            if !self.stack.tcp_may_recv(handle)
+            // The `status == Established` guard is REQUIRED (critic MAJOR): during the optimistic-accept
+            // window the guest-facing socket sits in `SynReceived`, where smoltcp's `may_recv()` is
+            // already `false` — without this guard the branch fires on the first pass (before the guest
+            // has sent any FIN), calls a no-op `shutdown_write` on the still-`Connecting` conn, and
+            // latches `guest_fin_sent`, so the guest's REAL FIN is never forwarded and a
+            // read-then-reply server hangs. `may_recv()` is only a true guest-FIN signal once
+            // Established.
+            if status == ConnStatus::Established
+                && !self.stack.tcp_may_recv(handle)
                 && self.flows[&key].pending_out.is_empty()
                 && !self.flows[&key].guest_fin_sent
             {
@@ -193,15 +207,28 @@ impl SlirpLocalBackend {
                 self.flows.get_mut(&key).unwrap().guest_fin_sent = true;
             }
 
-            // remote → guest: deliver whatever the remote sent (tcp_send buffers; poll flushes it).
+            // remote → guest: buffer whatever the remote sent, then flush as much as the guest-facing
+            // socket's tx window accepts — keeping the unaccepted tail for next pass. `tcp_send` returns
+            // < len when the guest drains slower than the remote sends; discarding that tail silently
+            // truncates any bulk download (critic MAJOR). This mirrors the guest→remote `pending_out`.
             let from_remote = self.connector.as_mut().unwrap().recv(conn);
             if !from_remote.is_empty() {
-                self.stack.tcp_send(handle, &from_remote);
+                self.flows
+                    .get_mut(&key)
+                    .unwrap()
+                    .pending_in
+                    .extend_from_slice(&from_remote);
+            }
+            let pending_in = core::mem::take(&mut self.flows.get_mut(&key).unwrap().pending_in);
+            if !pending_in.is_empty() {
+                let accepted = self.stack.tcp_send(handle, &pending_in);
+                self.flows.get_mut(&key).unwrap().pending_in = pending_in[accepted..].to_vec();
             }
 
-            // Remote half-closed and everything delivered → FIN the guest. Teardown waits until the
-            // guest has also finished (its socket leaves the connection) so the FIN is acknowledged.
-            if status == ConnStatus::Closed && from_remote.is_empty() {
+            // Remote half-closed and everything delivered (nothing left buffered inbound) → FIN the
+            // guest. Teardown waits until the guest has also finished (its socket leaves the connection)
+            // so the FIN is acknowledged.
+            if status == ConnStatus::Closed && self.flows[&key].pending_in.is_empty() {
                 self.stack.tcp_close(handle);
                 if self.stack.tcp_state(handle).is_none_or(is_terminal) {
                     self.teardown(&key);
