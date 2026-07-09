@@ -283,10 +283,13 @@ pub fn build_virt_dtb(platform: &Platform, bootargs: &str, initrd: Option<Initrd
     f.prop_u32("reg", virt::BOOT_HART as u32);
     f.prop_str("status", "okay");
     f.prop_str("compatible", "riscv");
-    // The ISA string matches misa (rv64imafdc + S/U); mmu-type advertises the deepest
-    // paging mode the MMU implements (Sv57 since E1-T28 — deeper than the task text's
-    // pre-T28 "sv39"; kernels cap themselves via the satp probe regardless).
-    f.prop_str("riscv,isa", "rv64imafdc");
+    // The ISA string matches misa (rv64imafdc + S/U) plus the multi-letter extensions this core
+    // implements: Zicsr (CSR access), Zifencei (fence.i), and Zicntr (the cycle/time/instret
+    // counters). Advertising Zicntr is REQUIRED for Linux to grant userspace the counters
+    // (scounteren.TM) — without it the vDSO's `rdtime` SIGILLs any clock-reading program (ping,
+    // udhcpc, clock_gettime in postgres/redis). mmu-type advertises the deepest paging mode the
+    // MMU implements (Sv57 since E1-T28; kernels cap themselves via the satp probe regardless).
+    f.prop_str("riscv,isa", "rv64imafdc_zicntr_zicsr_zifencei");
     f.prop_str("mmu-type", "riscv,sv57");
     f.begin_node("interrupt-controller");
     f.prop_u32("#interrupt-cells", 1);

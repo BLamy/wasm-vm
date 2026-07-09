@@ -107,6 +107,15 @@ fn boots_to_interactive_busybox_shell() {
         ("uname -m", "riscv64"),
         ("cat /proc/cpuinfo", "rv64imafdc"),
         ("cat /proc/interrupts", "riscv-timer"),
+        // E-net/rdtime: a userspace clock read. busybox `ping` (like udhcpc/postgres) reads the
+        // clock via the vDSO's `rdtime`; before the DTB advertised `zicntr` (so Linux grants
+        // scounteren.TM) that SIGILL'd with "Illegal instruction" and the program died. Ping the
+        // loopback (always local) — a successful "bytes from 127.0.0.1" reply proves userspace
+        // rdtime no longer traps. ("bytes from" appears only in ping's OUTPUT, not the command.)
+        (
+            "ip link set lo up; ping -c 1 -W 2 127.0.0.1",
+            "bytes from 127.0.0.1",
+        ),
     ];
     for (cmd, expect) in steps {
         writeln!(stdin, "{cmd}").expect("write command");

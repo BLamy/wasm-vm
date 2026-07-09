@@ -292,30 +292,36 @@ fn guest_cannot_clear_stip_via_sip_csrc() {
     );
 }
 
-/// ATTACK 4: mcounteren grant scope — S-mode rdtime works after boot_supervisor, but U-mode
-/// rdtime still traps (scounteren stays 0, kernel-owned).
+/// ATTACK 4: counter grant scope after boot_supervisor. The firmware seeds BOTH mcounteren AND
+/// scounteren = 0x7 (CY/TM/IR) so `rdtime` works from S AND U. This REVERSES the earlier
+/// "scounteren stays 0, U-mode rdtime traps" behavior: Linux does not set scounteren.TM in this
+/// config, so the vDSO's userspace `rdtime` SIGILL'd — killing every clock-reading program (ping,
+/// udhcpc, `clock_gettime` in postgres/redis). Confirmed end-to-end by `boot_busybox.rs` (userspace
+/// `ping` replies instead of "Illegal instruction"). The counteren access GATE stays spec-exact
+/// (zicntr.rs); this only asserts the firmware pre-grants the enable bits, as a real firmware/SBI
+/// environment does for a `time`-CSR platform.
 #[test]
-fn umode_rdtime_still_traps_scounteren_zero() {
+fn rdtime_works_from_s_and_u_after_firmware_seeds_scounteren() {
     let mut m = Machine::new(RAM);
     m.enable_clint(CLOCK_DIV);
     m.enable_builtin_sbi();
     m.boot_supervisor(0, 0);
     let csr = &mut m.hart_mut().csr;
-    // scounteren reads 0 from S.
+    // Firmware seeded scounteren = CY|TM|IR so userspace gets the counters.
     let sc = csr
         .access(0x106, CsrOp::Set, 0, true, false, 0)
         .expect("scounteren readable from S");
-    assert_eq!(sc, 0, "scounteren must stay 0 (kernel-owned)");
+    assert_eq!(sc, 0x7, "firmware seeds scounteren = CY|TM|IR");
     // S-mode rdtime: OK (mcounteren.TM granted).
     assert!(
         csr.access(0xC01, CsrOp::Set, 0, true, false, 0).is_ok(),
         "S-mode rdtime must work after boot_supervisor"
     );
-    // U-mode rdtime: must trap.
+    // U-mode rdtime: now ALSO OK — the fix. Without the scounteren seed this trapped → SIGILL.
     csr.mode = Priv::U;
     assert!(
-        csr.access(0xC01, CsrOp::Set, 0, true, false, 0).is_err(),
-        "U-mode rdtime must trap with scounteren=0"
+        csr.access(0xC01, CsrOp::Set, 0, true, false, 0).is_ok(),
+        "U-mode rdtime must work after the firmware scounteren seed"
     );
 }
 
