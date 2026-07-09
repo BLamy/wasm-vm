@@ -16,6 +16,7 @@
 #[cfg(not(feature = "zicsr-stub"))]
 pub mod boot;
 pub mod chunk;
+mod chunk_verify;
 pub mod debug;
 pub mod file_backend;
 mod trace_json;
@@ -49,6 +50,10 @@ enum Cmd {
     Boot(boot::BootArgs),
     /// E3-T02: cut a disk image into the chunked format for lazy browser boot.
     Chunk(chunk::ChunkArgs),
+    /// E3-T11: verify a chunked artifact directory (manifest ↔ chunks/ integrity).
+    ChunkVerify(chunk_verify::VerifyArgs),
+    /// E3-T11: report the chunk churn between two builds (CDN-friendliness metric).
+    ChunkChurn(chunk_verify::ChurnArgs),
 }
 
 #[derive(Args)]
@@ -195,6 +200,8 @@ fn main() -> ExitCode {
         #[cfg(not(feature = "zicsr-stub"))]
         Cmd::Boot(args) => boot::boot(args),
         Cmd::Chunk(args) => chunk::chunk(args),
+        Cmd::ChunkVerify(args) => chunk_verify::run_verify(args),
+        Cmd::ChunkChurn(args) => chunk_verify::run_churn(args),
     }
 }
 

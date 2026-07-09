@@ -8,11 +8,10 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E3-T10** — Storage quota management and reset-disk escape hatch
 1. **E3-T11** — Reproducible Alpine disk-image build pipeline v2 with chunking
-1. **E3-T12** — Full machine snapshot and restore with instant-resume boot
-1. **E3-T14** — Slirp-style user-mode network core on smoltcp with NAT
 1. **E3.5-T01** — OCI image importer — pull manifests/layers, verify digests, unpack to a guest rootfs
+1. **E3-T14** — Slirp-style user-mode network core on smoltcp with NAT
+1. **E3-T12** — Full machine snapshot and restore with instant-resume boot
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -115,9 +114,19 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] `305` [E3-T05](epic-3-civilization/E3-T05-indexeddb-overlay-backend.md) — IndexedDB overlay backend *(deps: E3-T04)*
 - [x] `308` [E3-T08](epic-3-civilization/E3-T08-virtio-blk-flush-durability.md) — Map virtio-blk flush to backend commit with crash consistency *(deps: E3-T05)*
 - [x] `309` [E3-T09](epic-3-civilization/E3-T09-multi-tab-web-locks.md) — Multi-tab safety via Web Locks single-writer and read-only mode *(deps: E3-T05)*
-- [ ] `310` [E3-T10](epic-3-civilization/E3-T10-storage-quota-reset-disk.md) — Storage quota management and reset-disk escape hatch *(deps: E3-T05)*
+- [~] `310` [E3-T10](epic-3-civilization/E3-T10-storage-quota-reset-disk.md) — Storage quota management and reset-disk escape hatch *(deps: E3-T05)*
 - [ ] `311` [E3-T11](epic-3-civilization/E3-T11-disk-image-pipeline-v2.md) — Reproducible Alpine disk-image build pipeline v2 with chunking *(deps: E3-T01)*
-- [ ] `312` [E3-T12](epic-3-civilization/E3-T12-machine-snapshot-restore.md) — Full machine snapshot and restore with instant-resume boot *(deps: E3-T08)*
+
+## Epic 3.5 — `epic-3.5-oci-workloads`
+
+- [ ] `312.1` [E3.5-T01](epic-3.5-oci-workloads/E3.5-T01-oci-image-importer.md) — OCI image importer — pull manifests/layers, verify digests, unpack to a guest rootfs *(deps: E3-T02, E3-T05)*
+- [ ] `312.2` [E3.5-T02](epic-3.5-oci-workloads/E3.5-T02-container-kernel-audit.md) — Container kernel audit — namespaces, cgroups, seccomp, overlayfs, net plumbing *(deps: E2)*
+- [ ] `312.3` [E3.5-T03](epic-3.5-oci-workloads/E3.5-T03-tiny-oci-runner.md) — Tiny OCI runner — unpack, namespace, mount, exec; stdio to the terminal *(deps: E3.5-T01, E3.5-T02)*
+- [ ] `312.4` [E3.5-T04](epic-3.5-oci-workloads/E3.5-T04-registry-layer-persistence.md) — Registry/layer persistence — digest-deduped layer cache in browser storage *(deps: E3.5-T01, E3-T05)*
+- [ ] `312.5` [E3.5-T05](epic-3.5-oci-workloads/E3.5-T05-container-capstone.md) — "Capstone: pull and run an OCI container in a fresh browser profile, twice — second run from cache" **[CAPSTONE]** *(deps: E3.5-T03, E3.5-T04)*
+
+## Epic 3 — `epic-3-civilization`
+
 - [x] `313` [E3-T13](epic-3-civilization/E3-T13-virtio-net-device.md) — virtio-net device with rx/tx rings, config space, and MAC *(deps: E2)*
 - [ ] `314` [E3-T14](epic-3-civilization/E3-T14-slirp-smoltcp-core.md) — Slirp-style user-mode network core on smoltcp with NAT *(deps: E3-T13)*
 - [ ] `315` [E3-T15](epic-3-civilization/E3-T15-dhcp-dns-services.md) — Internal DHCP server and DNS forwarder in the slirp stack *(deps: E3-T14)*
@@ -127,6 +136,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [ ] `319` [E3-T19](epic-3-civilization/E3-T19-proxy-deployment-hardening.md) — Proxy server deployment - auth tokens, rate limits, CORS, local dev *(deps: E3-T16)*
 - [ ] `320` [E3-T20](epic-3-civilization/E3-T20-apk-add-end-to-end.md) — apk add end-to-end against a real Alpine mirror — install and run the userland targets (QuickJS, Node.js) *(deps: E3-T15, E3-T16, E3-T17)*
 - [ ] `321` [E3-T21](epic-3-civilization/E3-T21-host-guest-file-transfer.md) — Host to guest file transfer - drag-and-drop upload and download *(deps: E3-T08, E3-T14)*
+- [ ] `322` [E3-T12](epic-3-civilization/E3-T12-machine-snapshot-restore.md) — Full machine snapshot and restore with instant-resume boot *(deps: E3-T08)*
 - [ ] `322` [E3-T22](epic-3-civilization/E3-T22-clipboard-osc52.md) — Clipboard integration - OSC 52 copy, paste injection, bracketed paste *(deps: E2)*
 - [ ] `323` [E3-T23](epic-3-civilization/E3-T23-terminal-polish.md) — Terminal polish - SIGWINCH resize, truecolor, scrollback, font *(deps: E3-T22)*
 - [ ] `324` [E3-T24](epic-3-civilization/E3-T24-boot-ux-progress-offline.md) — Loading and boot UX - progress, snapshot fast path, offline assets *(deps: E3-T03, E3-T12)*
@@ -136,14 +146,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [ ] `328` [E3-T28](epic-3-civilization/E3-T28-capstone-persistent-networked-alpine.md) — "Capstone: a real userland — busybox + QuickJS + interpreted Node.js on a persistent, networked Alpine (webvm parity)" **[CAPSTONE]** *(deps: E3-T11, E3-T18, E3-T25, E3-T26, E3-T27)*
 - [ ] `329` [E3-T06](epic-3-civilization/E3-T06-opfs-overlay-backend.md) — OPFS overlay backend with sync access handles in a worker *(deps: E3-T04, E4-T22)*
 - [ ] `330` [E3-T07](epic-3-civilization/E3-T07-block-backend-benchmark-default.md) — Benchmark IndexedDB vs OPFS backends and select the default *(deps: E3-T05, E3-T06)*
-
-## Epic 3.5 — `epic-3.5-oci-workloads`
-
-- [ ] `331` [E3.5-T01](epic-3.5-oci-workloads/E3.5-T01-oci-image-importer.md) — OCI image importer — pull manifests/layers, verify digests, unpack to a guest rootfs *(deps: E3-T02, E3-T05)*
-- [ ] `332` [E3.5-T02](epic-3.5-oci-workloads/E3.5-T02-container-kernel-audit.md) — Container kernel audit — namespaces, cgroups, seccomp, overlayfs, net plumbing *(deps: E2)*
-- [ ] `333` [E3.5-T03](epic-3.5-oci-workloads/E3.5-T03-tiny-oci-runner.md) — Tiny OCI runner — unpack, namespace, mount, exec; stdio to the terminal *(deps: E3.5-T01, E3.5-T02)*
-- [ ] `334` [E3.5-T04](epic-3.5-oci-workloads/E3.5-T04-registry-layer-persistence.md) — Registry/layer persistence — digest-deduped layer cache in browser storage *(deps: E3.5-T01, E3-T05)*
-- [ ] `335` [E3.5-T05](epic-3.5-oci-workloads/E3.5-T05-container-capstone.md) — "Capstone: pull and run an OCI container in a fresh browser profile, twice — second run from cache" **[CAPSTONE]** *(deps: E3.5-T03, E3.5-T04)*
 
 ## Epic 4 — `epic-4-acceleration`
 

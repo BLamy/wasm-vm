@@ -38,7 +38,7 @@ def parse_frontmatter(path: Path) -> dict | None:
         if key == "depends_on":
             fm[key] = [d.strip() for d in val.strip("[]").split(",") if d.strip()]
         elif key == "priority":
-            fm[key] = int(val)
+            fm[key] = float(val) if "." in val else int(val)
         elif key == "epic":
             # Fractional epics exist (3.5 = OCI workloads); keep whole numbers as int so
             # headers print "Epic 3", not "Epic 3.0".

@@ -108,8 +108,23 @@ for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
 # build-vs-kernel interaction, NOT an emulator fault (the block backend is synchronous, no cache,
 # so a write is byte-visible to the next read; verified by the block/virtio-blk tests). Plain
 # ext4 without metadata_csum is what QEMU rootfs images conventionally use.
+#
+# E3-T11 (reproducibility): TWO pins are needed for byte-identical metadata blocks —
+#  1. `-E hash_seed=$FS_UUID` — the directory-htree seed (else random per build).
+#  2. `E2FSPROGS_FAKE_TIME=$SOURCE_DATE_EPOCH` — mke2fs otherwise stamps the superblock's write/
+#     mount times with the REAL wall clock (dumpe2fs "Last write time"), which varies every build
+#     and is replicated into every backup superblock — the residual ~11% churn (chunks 0/2/3 +
+#     the backups at 128 MB / 384 MB) after the hash seed alone. e2fsprogs honors this env var to
+#     freeze all its clock reads. (SOURCE_DATE_EPOCH alone did NOT freeze s_wtime here.)
+export E2FSPROGS_FAKE_TIME="$SOURCE_DATE_EPOCH"
+#  3. Normalize EVERY file's mtime/atime to SOURCE_DATE_EPOCH. mke2fs -d copies the source tree's
+#     timestamps into the inode table (chunks 2-3); the config files rootfs-inner.sh just wrote
+#     (inittab, shadow, securetty, …) carry the real build time, so the inode table varied per
+#     build — the residual 4.7% churn after freezing the superblock clock. apk-packaged files
+#     already have fixed mtimes; this pins the generated ones too. (-h touches symlinks themselves.)
+find "$ROOT" -exec touch -h -d "@$SOURCE_DATE_EPOCH" {} +
 rm -f /out/alpine-rootfs.ext4
-mke2fs -q -t ext4 -O ^metadata_csum -L root -U "$FS_UUID" -d "$ROOT" -E root_owner=0:0 /out/alpine-rootfs.ext4 "$IMG_SIZE"
+mke2fs -q -t ext4 -O ^metadata_csum -L root -U "$FS_UUID" -E "root_owner=0:0,hash_seed=$FS_UUID" -d "$ROOT" /out/alpine-rootfs.ext4 "$IMG_SIZE"
 
 # 4. fsck must report the freshly built image CLEAN (no orphan inodes from the build).
 echo "--- fsck.ext4 -f -n ---"

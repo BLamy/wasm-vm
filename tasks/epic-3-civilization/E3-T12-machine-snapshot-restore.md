@@ -2,7 +2,7 @@
 id: E3-T12
 epic: 3
 title: Full machine snapshot and restore with instant-resume boot
-priority: 312
+priority: 322
 status: pending
 depends_on: [E3-T08]
 estimate: L
@@ -16,6 +16,10 @@ instruction-exact continuation. A snapshot taken at the post-boot login prompt b
 instant-resume path: page load → restore → usable shell in a fraction of cold-boot time.
 
 ## Context
+**DEFERRED 2026-07-06 (Brett): container workloads (Epic 3.5 → `wvrun postgres`) take priority.**
+Snapshot/restore is valuable but not on the database critical path; priority 312 → 322 so the
+OCI cluster (E3.5-T01..T05) leads. E3-T24 (loading UX) still depends on this — unaffected.
+
 webvm's perceived speed is largely resume-not-boot. Requirements: a `Snapshot` visitor over
 every stateful component (hart state incl. all CSRs and pending interrupt lines; RAM with
 zero-page elision or simple RLE — a 256 MB guest RAM must not become a 256 MB blob when
