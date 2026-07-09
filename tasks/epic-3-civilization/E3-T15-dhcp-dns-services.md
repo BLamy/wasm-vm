@@ -253,3 +253,17 @@ not fixed): `build_query`'s `label.len() as u8` would corrupt a >63-byte label, 
 ILLEGAL DNS and `parse_name` bounds the guest's name to ≤63/label, and the only caller passes that parsed
 name — so no legal/guest-reachable path hits it (the doc already states this). No code change. 97 slirp
 tests; fmt + clippy + no-default build green.
+
+**2026-07-08 — pass 1h: services integration test (`udp_integration_tests.rs`).** The per-module tests
+exercise each control-plane piece in isolation; this proves they COMPOSE through `UdpServices` as one
+guest session. (1) `full_guest_session_lease_then_resolve_with_cache_reuse` — DISCOVER→OFFER (yiaddr =
+guest, reply to :68), REQUEST→ACK, then TWO DNS queries through the SAME dispatcher: the first resolves
+via a counting upstream (answer back to the query's ephemeral port), the second (same name, 4 s later)
+is served from the forwarder's TTL cache — **upstream consulted exactly ONCE across the whole session**
+(the cache persists across dispatch calls, the task's DNS-cache acceptance criterion, proven at the
+composed level). (2) `real_native_resolver_composes_through_the_dispatcher` — the SAME session but with
+the REAL `NativeResolver`: `localhost` resolves to 127.0.0.1 end-to-end through UdpServices → DnsForwarder
+→ NativeResolver (offline, `/etc/hosts`, no network) — proving the production resolver composes, not just
+a mock. test+native-gated. 99 slirp tests. fmt + clippy + no-default build green. This closes out the
+natively-verifiable control layer; the boot/browser-gated legs remain: concrete `fetch` DohTransport
+(wasm crate), TCP-fallback, wiring `UdpServices` into the SlirpStack UDP path, booted-guest acceptance.
