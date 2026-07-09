@@ -49,10 +49,38 @@ async function runLinuxBoot(opts, banner) {
       },
       onOutput: (u8) => ui.write(u8),
       onError: (e) => term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`),
+      // E3-T09: single-writer status. RO → banner + a retry-as-writer affordance (reboot;
+      // the Web Lock is re-probed — succeeds once the writer tab is gone).
+      onWriterStatus: ({ readOnly }) => {
+        const el = document.getElementById("ro-banner");
+        if (!el) return;
+        if (readOnly) {
+          el.style.display = "block";
+          el.innerHTML =
+            'read-only: disk in use by another tab — writes are rejected (guest mounts / ro). ' +
+            '<button id="ro-retry">retry as writer</button>';
+          document.getElementById("ro-retry").addEventListener("click", async () => {
+            // Stop the RO machine and reboot; the lock probe runs again at boot.
+            if (linuxCtl) { try { linuxCtl.stop(); } catch {} linuxCtl = null; }
+            el.style.display = "none";
+            bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
+            setStatus("retrying as writer — click the boot button again");
+            term.writeln("\r\n\x1b[33mretry-as-writer: click the Boot button again (lock re-probed at boot)\x1b[0m");
+          });
+          term.writeln("\x1b[33mREAD-ONLY: another tab holds the disk — guest will mount / ro\x1b[0m");
+        } else {
+          el.style.display = "none";
+        }
+      },
     });
+    const ctlForRelease = linuxCtl;
     linuxCtl.whenDone.then((state) => {
+      // E3-T09 (critic NOTE-1): release the writer lock on EVERY terminal outcome (halt,
+      // error, stop) — release is idempotent, and a future writer-stop UI path must not
+      // strand the lock until tab close.
+      try { ctlForRelease?.releaseWriterLock?.(); } catch {}
       ui.detachSink();
-      bootBtns.forEach((b) => b && (b.disabled = false));
+      bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
       linuxCtl = null;
       // E2-T26: surface the T17 terminal ExitReason as a distinct HALTED state, not just a status
       // string — the machine is gone; you must re-boot from a fresh Machine.
@@ -75,7 +103,7 @@ async function runLinuxBoot(opts, banner) {
     term.writeln(`\x1b[90m[terminal ${cols}x${rows} — click "Fit" then run: ${ui.sttyHint()}]\x1b[0m`);
   } catch (e) {
     term.writeln(`\x1b[31mcannot boot: ${e.message || e}\x1b[0m`);
-    bootBtns.forEach((b) => b && (b.disabled = false));
+    bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
     linuxCtl = null;
   }
 }
@@ -703,9 +731,35 @@ setInteractiveState();
     window.__ready = true; // signal for automated tests
   } catch (e) {
     setStatus(`failed to load hello.elf: ${e}`);
-  } finally {
-    setTimeout(() => {
-      void runSuite();
-    }, 80);
   }
+  // Alpine availability probe (Brett 2026-07-06): the 512 MB Alpine artifacts are LOCAL-ONLY
+  // by design (served by tools/serve-dev.sh — never deployed to GitHub Pages). Instead of a
+  // mid-boot "boot error", detect absence up front and disable the Alpine buttons with an
+  // explanation; the busybox boot works everywhere.
+  try {
+    const probe = await fetch("./artifacts-alpine.json", { method: "GET", cache: "no-store" });
+    const text = probe.ok ? await probe.text() : "";
+    const present = probe.ok && !text.trimStart().startsWith("<");
+    if (!present) {
+      const why =
+        "Alpine's 512 MB image is local-only (not deployed to GitHub Pages) — clone the repo and run: bash tools/serve-dev.sh";
+      for (const b of [bootAlpineBtn, bootAlpineChunkedBtn]) {
+        if (b) {
+          b.disabled = true;
+          b.dataset.unavailable = "1"; // survives the generic boot-button re-enable
+          b.title = why;
+        }
+      }
+      const note = document.createElement("div");
+      note.className = "version";
+      note.style.cssText = "margin-top:4px; opacity:.7;";
+      note.textContent = "Alpine boots need local artifacts — " + why;
+      bootAlpineChunkedBtn?.parentElement?.appendChild(note);
+    }
+  } catch {
+    /* probe failure = treat as absent; buttons already work locally */
+  }
+  // The riscv-tests suite no longer auto-runs on load (Brett 2026-07-06): 126 in-browser
+  // binaries take real time and CPU — run it via the "Run tests" button instead. The
+  // roadmap capabilities stay in their static state until a run promotes them.
 })();
