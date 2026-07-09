@@ -51,6 +51,23 @@ export class WasmLinux {
         }
     }
     /**
+     * E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
+     * reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
+     * means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
+     * driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
+     * so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
+     * boots.
+     * E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
+     * can proceed instead of blocking on our open handle. Call before wiping; the machine must
+     * not persist afterward. No-op off the persistent path.
+     */
+    closeStorage() {
+        const ret = wasm.wasmlinux_closeStorage(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
@@ -73,6 +90,19 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * E3-T10: whether the overlay has unpersisted (dirty) blocks — after a quota hit the caller
+     * checks this to decide whether flipping read-only is enough (pending writes will retry once
+     * space is freed) vs. data that can never become durable.
+     * @returns {boolean}
+     */
+    hasUnpersisted() {
+        const ret = wasm.wasmlinux_hasUnpersisted(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
     }
     /**
      * Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
@@ -215,12 +245,6 @@ export class WasmLinux {
         return ret;
     }
     /**
-     * E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
-     * reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
-     * means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
-     * driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
-     * so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
-     * boots.
      * @returns {any}
      */
     persistStats() {
@@ -255,6 +279,20 @@ export class WasmLinux {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
+     * storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
+     * so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the
+     * persistent path. Returns true if a disk flag was flipped.
+     * @returns {boolean}
+     */
+    setDiskReadOnly() {
+        const ret = wasm.wasmlinux_setDiskReadOnly(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
     }
 }
 if (Symbol.dispose) WasmLinux.prototype[Symbol.dispose] = WasmLinux.prototype.free;
@@ -455,6 +493,35 @@ export function initLogging() {
 }
 
 /**
+ * E3-T10: the IndexedDB database name that holds a given image's durable overlay — so the
+ * "reset disk" flow can `indexedDB.deleteDatabase(name)` for THIS image only (a second image's
+ * overlay, in a different DB, survives). Same derivation the durable store uses
+ * (`overlay_store_name(base_hash)`), so it always matches.
+ * @param {string} manifest_json
+ * @returns {string}
+ */
+export function overlayDbName(manifest_json) {
+    let deferred3_0;
+    let deferred3_1;
+    try {
+        const ptr0 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.overlayDbName(ptr0, len0);
+        var ptr2 = ret[0];
+        var len2 = ret[1];
+        if (ret[3]) {
+            ptr2 = 0; len2 = 0;
+            throw takeFromExternrefTable0(ret[2]);
+        }
+        deferred3_0 = ptr2;
+        deferred3_1 = len2;
+        return getStringFromWasm0(ptr2, len2);
+    } finally {
+        wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
+    }
+}
+
+/**
  * The core crate version, exposed to JS.
  * @returns {string}
  */
@@ -502,6 +569,14 @@ function __wbg_get_imports() {
             getDataViewMemory0().setFloat64(arg0 + 8 * 1, isLikeNone(ret) ? 0 : ret, true);
             getDataViewMemory0().setInt32(arg0 + 4 * 0, !isLikeNone(ret), true);
         },
+        __wbg___wbindgen_string_get_b0ca35b86a603356: function(arg0, arg1) {
+            const obj = arg1;
+            const ret = typeof(obj) === 'string' ? obj : undefined;
+            var ptr1 = isLikeNone(ret) ? 0 : passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len1 = WASM_VECTOR_LEN;
+            getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
+            getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
+        },
         __wbg___wbindgen_throw_344f42d3211c4765: function(arg0, arg1) {
             throw new Error(getStringFromWasm0(arg0, arg1));
         },
@@ -524,12 +599,19 @@ function __wbg_get_imports() {
             const ret = arg0.call(arg1, arg2);
             return ret;
         }, arguments); },
+        __wbg_close_4c3686e8e8c6d353: function(arg0) {
+            arg0.close();
+        },
         __wbg_createObjectStore_ff668af6e79f0433: function() { return handleError(function (arg0, arg1, arg2) {
             const ret = arg0.createObjectStore(getStringFromWasm0(arg1, arg2));
             return ret;
         }, arguments); },
         __wbg_debug_87fd9b1a625b7efb: function(arg0) {
             console.debug(arg0);
+        },
+        __wbg_error_5b02424faf301d7c: function(arg0) {
+            const ret = arg0.error;
+            return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
         },
         __wbg_error_744744ff0c9861e6: function(arg0) {
             console.error(arg0);
@@ -662,6 +744,13 @@ function __wbg_get_imports() {
         },
         __wbg_log_d267660666346fb3: function(arg0) {
             console.log(arg0);
+        },
+        __wbg_name_9d2bcd24d4433cef: function(arg0, arg1) {
+            const ret = arg1.name;
+            const ptr1 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len1 = WASM_VECTOR_LEN;
+            getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
+            getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
         },
         __wbg_new_227d7c05414eb861: function() {
             const ret = new Error();
@@ -808,6 +897,9 @@ function __wbg_get_imports() {
         __wbg_set_onupgradeneeded_7b2cf4ba1c57e655: function(arg0, arg1) {
             arg0.onupgradeneeded = arg1;
         },
+        __wbg_set_onversionchange_c4d25c90ac386854: function(arg0, arg1) {
+            arg0.onversionchange = arg1;
+        },
         __wbg_stack_3b0d974bbf31e44f: function(arg0, arg1) {
             const ret = arg1.stack;
             const ptr1 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -859,17 +951,17 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000001: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 141, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 144, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h4dab88d0e3c13e7c);
             return ret;
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 83, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 82, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h268857b0ab0b8859);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 83, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 82, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h268857b0ab0b8859_2);
             return ret;
         },

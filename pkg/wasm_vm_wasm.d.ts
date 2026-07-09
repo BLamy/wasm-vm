@@ -20,6 +20,18 @@ export class WasmLinux {
      */
     bootProfile(): string;
     /**
+     * E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
+     * reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
+     * means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
+     * driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
+     * so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
+     * boots.
+     * E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
+     * can proceed instead of blocking on our open handle. Call before wiping; the machine must
+     * not persist afterward. No-op off the persistent path.
+     */
+    closeStorage(): void;
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
@@ -32,6 +44,12 @@ export class WasmLinux {
      * `{ hits, misses, evictions, residentBytes, budgetBytes }`. A non-chunked boot reports zeros.
      */
     fetchStats(): any;
+    /**
+     * E3-T10: whether the overlay has unpersisted (dirty) blocks — after a quota hit the caller
+     * checks this to decide whether flipping read-only is enough (pending writes will retry once
+     * space is freed) vs. data that can never become durable.
+     */
+    hasUnpersisted(): boolean;
     /**
      * Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
      * `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
@@ -74,14 +92,6 @@ export class WasmLinux {
      * `runChunk` (both borrow the machine); the JS driver alternates them.
      */
     persistPending(): Promise<number>;
-    /**
-     * E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
-     * reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
-     * means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
-     * driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
-     * so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
-     * boots.
-     */
     persistStats(): any;
     /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
@@ -93,6 +103,13 @@ export class WasmLinux {
      * Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).
      */
     sendInput(bytes: Uint8Array): void;
+    /**
+     * E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
+     * storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
+     * so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the
+     * persistent path. Returns true if a disk flag was flipped.
+     */
+    setDiskReadOnly(): boolean;
 }
 
 /**
@@ -170,6 +187,14 @@ export function bench(target_instrs: number): any;
 export function initLogging(): void;
 
 /**
+ * E3-T10: the IndexedDB database name that holds a given image's durable overlay — so the
+ * "reset disk" flow can `indexedDB.deleteDatabase(name)` for THIS image only (a second image's
+ * overlay, in a different DB, survives). Same derivation the durable store uses
+ * (`overlay_store_name(base_hash)`), so it always matches.
+ */
+export function overlayDbName(manifest_json: string): string;
+
+/**
  * The core crate version, exposed to JS.
  */
 export function version(): string;
@@ -181,10 +206,13 @@ export interface InitOutput {
     readonly __wbg_wasmlinux_free: (a: number, b: number) => void;
     readonly __wbg_wasmmachine_free: (a: number, b: number) => void;
     readonly bench: (a: number) => [number, number, number];
+    readonly overlayDbName: (a: number, b: number) => [number, number, number, number];
     readonly version: () => [number, number];
     readonly wasmlinux_bootProfile: (a: number) => [number, number, number, number];
+    readonly wasmlinux_closeStorage: (a: number) => [number, number];
     readonly wasmlinux_fetchPending: (a: number) => any;
     readonly wasmlinux_fetchStats: (a: number) => [number, number, number];
+    readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
     readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];
     readonly wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: any) => any;
@@ -194,6 +222,7 @@ export interface InitOutput {
     readonly wasmlinux_persistStats: (a: number) => [number, number, number];
     readonly wasmlinux_runChunk: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
+    readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];
     readonly wasmmachine_loadElf: (a: number, b: number, c: number) => [number, number];
     readonly wasmmachine_new: (a: number) => [number, number, number];

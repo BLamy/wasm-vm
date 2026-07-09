@@ -6,7 +6,7 @@
 import init, { WasmMachine, version, bench } from "./pkg/wasm_vm_wasm.js";
 import { RISCV_TESTS } from "./riscv-tests.js";
 import { ROADMAP } from "./roadmap.js";
-import { startLinuxBoot } from "./loader.js";
+import { startLinuxBoot, resetDisk } from "./loader.js";
 import { createLinuxTerminal } from "./terminal.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
@@ -49,6 +49,64 @@ async function runLinuxBoot(opts, banner) {
       },
       onOutput: (u8) => ui.write(u8),
       onError: (e) => term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`),
+      // E3-T10: storage indicator (usage/quota/persist grant) at boot.
+      onStorage: ({ usage, quota, granted }) => {
+        const el = document.getElementById("storage-indicator");
+        if (el && quota != null) {
+          const mb = (n) => (n / 1048576).toFixed(0);
+          el.textContent = `storage ${mb(usage)}/${mb(quota)} MB${granted ? " (persistent)" : " (best-effort)"}`;
+          el.style.display = "inline";
+        }
+        term.writeln(`\x1b[90m[storage: ${quota != null ? `${((usage / quota) * 100) | 0}% of ${(quota / 1048576) | 0}MB` : "n/a"}, persist=${granted}]\x1b[0m`);
+      },
+      // E3-T10: storage quota hit — the VM is PAUSED; show the actionable dialog. The three
+      // choices map to loader controller actions (retry after freeing space / continue
+      // read-only / reset disk). No option silently drops a durable write.
+      onQuota: ({ usage, quota, unsaved }) => {
+        const el = document.getElementById("quota-dialog");
+        if (!el) return;
+        const pct = quota ? `${((usage / quota) * 100) | 0}%` : "full";
+        el.style.display = "block";
+        // Honest copy (critic BUG-1): writes the guest already ACKed but that never reached disk
+        // stay pending — "Free space & retry" saves them; "Continue read-only" keeps trying in the
+        // background but they are NOT durable until space frees (a reload before then loses them).
+        const warn = unsaved
+          ? ' <b>Some acknowledged writes are not yet saved</b> — free space and Retry to persist them; a reload before then loses them.'
+          : "";
+        el.innerHTML =
+          `<b>Storage full</b> (${pct} of ${(quota / 1048576) | 0}MB). The VM is paused.${warn} ` +
+          '<button id="q-retry">Free space in guest & retry</button> ' +
+          '<button id="q-ro">Continue read-only</button> ' +
+          '<button id="q-reset">Reset disk…</button>';
+        term.writeln("\r\n\x1b[7m STORAGE FULL — VM paused. Free space (rm + sync) then Retry, or Continue read-only. \x1b[0m");
+        document.getElementById("q-retry").onclick = () => { el.style.display = "none"; linuxCtl?.resumeAfterQuota?.(); };
+        document.getElementById("q-ro").onclick = () => {
+          el.style.display = "none";
+          linuxCtl?.continueReadOnly?.();
+          const ro = document.getElementById("ro-banner");
+          if (ro) { ro.style.display = "block"; ro.textContent = "read-only: storage full — new guest writes return I/O errors; pending writes save if you free space"; }
+        };
+        document.getElementById("q-reset").onclick = async () => {
+          const typed = prompt('This deletes every saved change to the Alpine disk. Type RESET to confirm:');
+          if (typed !== "RESET") return;
+          el.style.display = "none";
+          // Critic BUG-4: close THIS tab's IndexedDB connection before deleteDatabase, or the
+          // delete blocks forever. stop() halts the run loop; closeStorage() drops the handle.
+          if (linuxCtl) {
+            try { linuxCtl.closeStorage(); } catch {}
+            try { linuxCtl.stop(); } catch {}
+            linuxCtl = null;
+          }
+          try {
+            await resetDisk();
+            term.writeln("\r\n\x1b[33mdisk reset — reboot for a pristine filesystem\x1b[0m");
+            setStatus("disk reset — click Boot to start fresh");
+            bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
+          } catch (e) {
+            term.writeln(`\r\n\x1b[31mreset failed: ${e.message || e}\x1b[0m`);
+          }
+        };
+      },
       // E3-T09: single-writer status. RO → banner + a retry-as-writer affordance (reboot;
       // the Web Lock is re-probed — succeeds once the writer tab is gone).
       onWriterStatus: ({ readOnly }) => {
