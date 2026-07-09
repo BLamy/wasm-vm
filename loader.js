@@ -3,9 +3,11 @@
 // boot), instantiates the WASM module, and boots unmodified Linux via `WasmLinux`, driving the
 // run loop off `setTimeout` so the main thread stays responsive (workers/SAB are Epic 4).
 //
-// Memory discipline (32-bit wasm): each artifact lands in JS memory exactly once (a single
-// preallocated `Uint8Array` sized from Content-Length), then is handed to wasm by one copy in
-// the `WasmLinux` constructor. No intermediate Blob/ArrayBuffer duplication.
+// Memory discipline (32-bit wasm): streamed chunks are accumulated then concatenated once —
+// a transient ~2x peak in JS heap during the concat (sweep-critic E2-T21: the old comment
+// claimed a single preallocated buffer; that optimization is future work and a prerequisite
+// for the deferred 512 MB single-copy audit). The result is handed to wasm by one copy in the
+// `WasmLinux` constructor. No intermediate Blob/ArrayBuffer duplication beyond that.
 
 import init, { WasmLinux } from "./pkg/wasm_vm_wasm.js";
 
@@ -178,6 +180,9 @@ export async function startLinuxBoot(opts = {}) {
     // HTTP-fetches chunks under baseUrl (+ E3-T05 persist: writes survive reload via IndexedDB);
     // initramfs → the image as the initrd.
     const usePersist = isChunked && persist;
+    // E3-T08: dirty-bytes threshold that forces a drain before more guest work (default 16 MiB;
+    // tests set it tiny via the persistMax option to prove the backpressure path).
+    const maxDirtyBytes = opts.persistMax ?? 16 * 1024 * 1024;
     let machine;
     if (usePersist) {
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
@@ -210,6 +215,26 @@ export async function startLinuxBoot(opts = {}) {
     // the fetch is a no-op and no second loop can start.
     const tick = async () => {
       if (stopped || paused) { tickScheduled = false; return; }
+      // E3-T08 durability pressure, checked BEFORE the run slice:
+      //  - flushWaiting: a guest FLUSH is parked on the durable-commit barrier — persist NOW so
+      //    the barrier clears at the very next boundary (the guest's `sync` is blocked on it).
+      //  - pendingBytes > maxDirtyBytes: backpressure — drain before running more guest work, so
+      //    an unflushed session cannot accumulate unbounded dirty state (bounded loss window).
+      if (usePersist) {
+        try {
+          const ps = machine.persistStats();
+          if (ps.flushWaiting || ps.pendingBytes > maxDirtyBytes) {
+            await machine.persistPending();
+          }
+        } catch (e) {
+          tickScheduled = false;
+          onState("error");
+          onError(e);
+          resolveDone("error");
+          return;
+        }
+        if (stopped || paused) { tickScheduled = false; return; }
+      }
       let res;
       try {
         res = machine.runChunk(quantum);

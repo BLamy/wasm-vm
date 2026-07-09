@@ -103,6 +103,8 @@ if (bootAlpineChunkedBtn) {
         cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
         // E3-T05: `?persist=1` persists the CoW overlay to IndexedDB (writes survive a reload).
         persist: new URLSearchParams(location.search).get("persist") === "1",
+        // E3-T08 test hook: ?persistMax=N sets the dirty-bytes backpressure threshold.
+        persistMax: Number(new URLSearchParams(location.search).get("persistMax")) || undefined,
         ramMib: 256,
       },
       "booting Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login:…",
@@ -374,7 +376,10 @@ function renderRoadmap() {
       makeEl("span", "epic-tag", epic.epic),
       makeEl("span", "epic-name", epic.title),
       makeEl("span", "epic-state",
-        epic.status === "done" ? "complete" : epic.status === "next" ? "in progress" : "planned"),
+        epic.status === "done" ? "complete"
+          : epic.status === "next" ? "in progress"
+          : epic.status === "cancelled" ? "cancelled"
+          : "planned"),
     );
     const list = makeEl("ul", "cap-list");
     for (const cap of epic.caps) {

@@ -75,6 +75,15 @@ export class WasmLinux {
      */
     persistPending(): Promise<number>;
     /**
+     * E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
+     * reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
+     * means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
+     * driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
+     * so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
+     * boots.
+     */
+    persistStats(): any;
+    /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
      * 16550 RX, and return `{ done: bool, state: string|null }`. `state` is `"poweroff"`,
      * `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or `"trap:<cause>"` once terminal.
@@ -182,6 +191,7 @@ export interface InitOutput {
     readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_pendingChunks: (a: number) => [number, number, number, number];
     readonly wasmlinux_persistPending: (a: number) => any;
+    readonly wasmlinux_persistStats: (a: number) => [number, number, number];
     readonly wasmlinux_runChunk: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];

@@ -14,6 +14,7 @@ export const wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: numbe
 export const wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
 export const wasmlinux_pendingChunks: (a: number) => [number, number, number, number];
 export const wasmlinux_persistPending: (a: number) => any;
+export const wasmlinux_persistStats: (a: number) => [number, number, number];
 export const wasmlinux_runChunk: (a: number, b: number) => [number, number, number];
 export const wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
 export const wasmmachine_getStats: (a: number) => [number, number, number];
