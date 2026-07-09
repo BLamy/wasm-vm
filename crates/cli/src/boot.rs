@@ -54,6 +54,10 @@ pub struct BootArgs {
     /// On a guest reboot, exit (QEMU `-no-reboot` style) instead of re-booting a fresh machine.
     #[arg(long)]
     pub no_reboot: bool,
+    /// E2-T19: trace every virtio-blk request to stderr (`blk: <op> sector=N len=M status=S`)
+    /// — for debugging fs corruption or stalls. Requires `--drive`.
+    #[arg(long)]
+    pub blk_log: bool,
 }
 
 /// Guest console → this process's stdout. Shared with the SBI console channel; a closed pipe
@@ -118,6 +122,11 @@ pub fn boot(a: BootArgs) -> ExitCode {
         },
         None => None,
     };
+
+    // E2-T19 critic advisory: --blk-log without --drive can't trace anything (no blk device).
+    if a.blk_log && a.drive.is_none() {
+        eprintln!("wasm-vm: --blk-log has no effect without --drive (no virtio-blk device)");
+    }
 
     // Console + stdin reader are created ONCE and shared across reboots; only the Machine (RAM
     // + devices) is rebuilt fresh each boot. The `--drive` file is re-opened per boot, so block
@@ -242,6 +251,9 @@ fn assemble(
             }
         };
         let _ = m.enable_virtio_blk(backend);
+        if a.blk_log {
+            m.enable_blk_log(); // E2-T19: trace requests to stderr
+        }
     } else {
         let _ = m.enable_virtio_slots(None);
     }
@@ -371,6 +383,22 @@ fn run_machine(
         // Drain UART output → stdout every quantum so the boot log streams live.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
+        // E2-T19: drain the virtio-blk request trace → stderr (when --blk-log).
+        if a.blk_log {
+            for r in m.drain_blk_log() {
+                let op = match r.rtype {
+                    0 => "IN ",
+                    1 => "OUT",
+                    4 => "FLUSH",
+                    8 => "GET_ID",
+                    _ => "?",
+                };
+                eprintln!(
+                    "blk: {op} sector={} len={} status={}",
+                    r.sector, r.len, r.status
+                );
+            }
+        }
         // Collect any newly-arrived host input, then feed the FIFO up to its free space.
         if let Some(rx) = stdin_rx {
             while let Ok(chunk) = rx.try_recv() {

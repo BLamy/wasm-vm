@@ -141,6 +141,47 @@ fn out_then_in_roundtrip() {
     }
 }
 
+/// E2-T19 `--blk-log`: enabled logging records each serviced request (type/sector/len/status).
+#[test]
+fn blk_log_records_serviced_requests() {
+    let (mut m, mut ctx) = machine(vec![0u8; 64 * SECTOR_SIZE], false);
+    m.enable_blk_log();
+    // OUT one sector at sector 5.
+    write_hdr(&mut m, HDR, 1, 5);
+    for i in 0..SECTOR_SIZE {
+        m.bus_mut().store8(DATA + i as u64, 0xAB).unwrap();
+    }
+    wdesc(&mut m, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut m, 1, DATA, SECTOR_SIZE as u32, F_NEXT, 2);
+    wdesc(&mut m, 2, STATUS, 1, F_WRITE, 0);
+    assert_eq!(submit(&mut m, &mut ctx, 0), 0);
+    // IN the same sector back.
+    write_hdr(&mut m, HDR, 0, 5);
+    wdesc(&mut m, 0, HDR, 16, F_NEXT, 1);
+    wdesc(
+        &mut m,
+        1,
+        DATA + 0x4000,
+        SECTOR_SIZE as u32,
+        F_WRITE | F_NEXT,
+        2,
+    );
+    wdesc(&mut m, 2, STATUS, 1, F_WRITE, 0);
+    assert_eq!(submit(&mut m, &mut ctx, 0), 0);
+
+    let log = m.drain_blk_log();
+    assert_eq!(log.len(), 2, "two requests logged");
+    // OUT: type 1, sector 5, len 0 (writes report no data-in), status OK(0).
+    assert_eq!((log[0].rtype, log[0].sector, log[0].status), (1, 5, 0));
+    // IN: type 0, sector 5, len = one sector, status OK(0).
+    assert_eq!(
+        (log[1].rtype, log[1].sector, log[1].len, log[1].status),
+        (0, 5, SECTOR_SIZE as u32, 0)
+    );
+    // Draining clears it.
+    assert!(m.drain_blk_log().is_empty(), "log cleared after drain");
+}
+
 /// Acceptance: header split 4+12 across two descriptors parses identically.
 #[test]
 fn segmented_header_4_plus_12() {
