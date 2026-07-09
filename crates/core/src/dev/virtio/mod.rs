@@ -3,6 +3,7 @@
 //! ([`mmio::VirtioMmio`]). The transport owns ALL register/lifecycle/feature mechanics so a
 //! backend is pure device logic.
 
+pub mod blk;
 pub mod mmio;
 pub mod queue;
 
