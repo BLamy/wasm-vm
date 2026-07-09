@@ -189,6 +189,41 @@ job is adversarial coverage:
 only triggers on wrap); renamed the misleading test to `client_allocates_distinct_nonzero_ids`.
 **Both new tests were verified to KILL their mutant** — each FAILS under the injected mutation and
 PASSES on restored code — so the two invariants are now genuinely pinned. Suite 154→156.
+**CI #146 green** (fails=0, incl. the fold repush).
 
-**Env-gated later passes:** tokio relay server, `web_sys` `WsConnector`, credit-enforcement
-+ 500-stream-reap + 1 GB byte-diff acceptance — need a live browser/boot session.
+### Pass 1d — connection handshake + session ordering gate (PR #147, stacked on #146)
+**Delivered:** `crates/slirp/src/ws_proxy/session.rs` — the connection-level gate that nothing
+previously enforced. `hello(token)` builds the opening `HELLO`; `accept_hello(frame)` returns the
+peer token or `VersionMismatch{peer,ours}`/`NotHello`. `Session { AwaitingHello | Ready(Mux) }`:
+`on_hello` validates + transitions to Ready (creating the role's `Mux`), refusing a version
+mismatch **before any Mux exists**; `on_frame` routes to the mux once ready, else `NotReady`; a
+replayed `HELLO` after Ready is `AlreadyReady` (and must not reset the live mux). Pure. Serves the
+spec's §Versioning acceptance ("a mismatch the peer can't speak is refused before any stream
+opens"). Token plumbed now for E3-T19; wire stays stable.
+
+**Local gate:** clippy both configs + fmt clean; full slirp suite **164 passed** / 0 failed;
+8 session tests. **CI #147 green** (fails=0).
+
+**Adversarial cold-clone critic** (reviewed `origin/task/e3-t16c..HEAD`): **verdict CLEAN.**
+Every charter vector reproduced and defended: no ordering bypass (`on_frame` in `AwaitingHello`
+→ `NotReady`; `is_ready`/`mux`/`on_frame` all agree on the same `State::Ready` match); the version
+gate mutates no state until `accept_hello` succeeds (`?` precedes `self.state =`), so a mismatch
+(tried v0/v255/v+7) leaves the session `AwaitingHello` with no mux; the second-HELLO reset attack
+is blocked by the `AlreadyReady` early-return (the live mux is never replaced); role plumbed
+Client/Server; all 8 non-HELLO variants → `NotHello`; token cloned, no aliasing. **All 3 injected
+mutants** (transition-before-check, AwaitingHello-routes-to-fresh-mux, Ready-replaces-mux) were
+**caught** by the suite.
+- **MINOR test-coverage note (fixed):** the critic observed `a_second_hello_after_ready_is_rejected`
+  asserted the `AlreadyReady` error but not that the live mux *survives*. Strengthened to
+  `a_second_hello_after_ready_does_not_reset_a_live_mux` — opens a live stream, replays HELLO,
+  asserts `live_count()` unchanged; **verified to KILL** the reset-mutant (removing the
+  `AlreadyReady` guard now FAILS the test). Production code was already correct.
+
+### E3-T16 natively-verifiable surface COMPLETE
+The pure protocol stack is whole and critic-verified end to end: **codec (#144) → per-stream
+state (#145) → mux (#146) → session/handshake (#147).** Remaining legs need live I/O:
+- **tokio relay server** — *native* (not browser-gated); testable with a WS test client + local
+  echo TCP server (byte round-trip, credit backpressure, socket reap). Needs a WS-server dep behind
+  the `native` feature. This is the next stackable native pass.
+- **`web_sys` `WsConnector`** + **booted 1 GB byte-diff / 500-stream-`lsof` acceptance** —
+  genuinely browser/boot-gated.

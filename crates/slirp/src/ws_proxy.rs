@@ -9,8 +9,10 @@
 //! tokio → browser-safe.
 
 pub mod mux;
+pub mod session;
 pub mod stream;
 pub use mux::{MAX_STREAMS, Mux, MuxError, MuxEvent, Role};
+pub use session::{HandshakeError, Session, SessionError, accept_hello, hello};
 pub use stream::{StreamError, StreamState, Terminal};
 
 /// The protocol version carried in the [`Frame::Hello`] frame.
