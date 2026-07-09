@@ -454,6 +454,9 @@ enum DiskChoice {
         loaded: alloc_map::BlockMap,
         idb: idb_store::IdbStore,
         queue: wasm_vm_storage::SharedPersistQueue,
+        /// E3-T09: another tab holds the writer Web Lock — reject writes at the backend seam,
+        /// advertise VIRTIO_BLK_F_RO, and register NO persist pump.
+        read_only: bool,
     },
 }
 
@@ -584,6 +587,7 @@ impl WasmLinux {
         cache_budget_mib: u32,
         boot_profile: Vec<u32>,
         bootargs: String,
+        read_only: bool,
         output: js_sys::Function,
     ) -> Result<WasmLinux, JsError> {
         let manifest = wasm_vm_storage::ImageManifest::from_json(&manifest_json)
@@ -606,9 +610,13 @@ impl WasmLinux {
                     .map_err(|e| JsError::new(&format!("overlay/base mismatch: {e:?}")))?;
             }
             None => {
-                idb.write_meta(&wasm_vm_storage::OverlayMeta::new(&manifest).to_bytes())
-                    .await
-                    .map_err(|e| JsError::new(&format!("IndexedDB write meta: {e:?}")))?;
+                // E3-T09: an RO tab must not write ANYTHING — not even the meta record of a
+                // brand-new DB (that's the writer's job; an empty DB simply reads as no blocks).
+                if !read_only {
+                    idb.write_meta(&wasm_vm_storage::OverlayMeta::new(&manifest).to_bytes())
+                        .await
+                        .map_err(|e| JsError::new(&format!("IndexedDB write meta: {e:?}")))?;
+                }
             }
         }
         let loaded = idb
@@ -618,7 +626,18 @@ impl WasmLinux {
 
         let queue = std::rc::Rc::new(RefCell::new(wasm_vm_storage::PersistQueue::new()));
         let args = if bootargs.is_empty() {
-            "root=/dev/vda rw console=ttyS0 earlycon=sbi".to_string()
+            // E3-T09: an RO boot asks the kernel for an ro root up front — mounting rw on a
+            // VIRTIO_BLK_F_RO device would fail. `norecovery`: the overlay snapshot an RO tab
+            // loads may carry a dirty journal (the writer tab replays it in ITS memory only);
+            // ext4 refuses a ro mount that needs recovery ("unable to mount root fs" panic —
+            // seen in the first dual-boot run), and norecovery mounts it read-only anyway.
+            // Caveat (documented): the RO view may be slightly stale w.r.t. unreplayed journal
+            // entries — exactly the right trade for a browse-only tab.
+            if read_only {
+                "root=/dev/vda ro rootflags=norecovery console=ttyS0 earlycon=sbi".to_string()
+            } else {
+                "root=/dev/vda rw console=ttyS0 earlycon=sbi".to_string()
+            }
         } else {
             bootargs
         };
@@ -642,6 +661,7 @@ impl WasmLinux {
                 loaded,
                 idb,
                 queue,
+                read_only,
             },
             &args,
             output,
@@ -700,6 +720,7 @@ impl WasmLinux {
                 loaded,
                 idb,
                 queue,
+                read_only,
             } => {
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
@@ -710,12 +731,20 @@ impl WasmLinux {
                 );
                 let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &manifest)
                     .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
-                let backend = chunked::ChunkedBackend::from_disk(disk, store.clone());
+                let mut backend = chunked::ChunkedBackend::from_disk(disk, store.clone());
+                if read_only {
+                    // E3-T09: writes refused at this seam; the device advertises F_RO; and no
+                    // persist pump exists (`persist` stays None), so an RO tab cannot touch
+                    // the writer's IndexedDB store even by accident.
+                    backend.set_read_only();
+                }
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
                 )));
-                persist = Some((idb, queue));
+                if !read_only {
+                    persist = Some((idb, queue));
+                }
             }
             // Busybox initramfs: the 8 empty virtio slots the DTB advertises.
             DiskChoice::None => {

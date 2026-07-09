@@ -3,7 +3,7 @@ id: E3-T09
 epic: 3
 title: Multi-tab safety via Web Locks single-writer and read-only mode
 priority: 309
-status: pending
+status: in_progress
 depends_on: [E3-T05]
 estimate: M
 capstone: false
@@ -62,3 +62,56 @@ claim.
 
 ## Verification log
 (empty)
+
+**2026-07-06 — single-writer core + race acceptance (pass 1).**
+Implementation: exclusive Web Lock (`wasm-vm-disk-<manifest-url>`, auto-released on tab
+close/crash — no heartbeats) acquired BEFORE the writable store opens; second tab probes with
+`ifAvailable` (never queues — queueing would hang boot) and falls back to a READ-ONLY boot:
+`ChunkedBackend::set_read_only()` refuses writes at the seam (`BlockError::ReadOnly`, before any
+overlay/queue mutation), the device advertises `VIRTIO_BLK_F_RO` (pre-existing E2-T11 plumb), NO
+persist pump is registered, an RO tab never writes IndexedDB (not even a fresh meta record), and
+the kernel cmdline gets `root=/dev/vda ro rootflags=norecovery`. UI: RO banner + retry-as-writer;
+writer lock explicitly released on clean halt (poweroff) so a waiting tab can take over; Web
+Locks semantics cover the hard-kill path.
+
+**Race acceptance MET (`multitab.spec.js` "race", 1 passed, 4.0 min): 20/20 simultaneous
+dual-opens (<50ms apart) produced EXACTLY ONE writer every time** — no double-writer, no
+double-RO. Seam unit test (`ro_tests`, wasm-native): RO backend serves reads incl. another tab's
+persisted overlay blocks, refuses writes typed with zero queue mutation, reports is_read_only.
+
+**Real bug found by the first dual-boot run:** the RO tab's overlay snapshot can carry a dirty
+journal (the writer replays it in ITS memory only); ext4 REFUSES a ro mount needing recovery →
+"Unable to mount root fs" panic. Fixed: RO boots mount `norecovery` (documented staleness
+caveat — the right trade for a browse-only tab).
+
+**Outstanding evidence (pass 2):** the full RO-guest dual-boot leg (B mounts / ro, EROFS on
+write, takeover after A closes) — the fixed run was repeatedly killed by the environment
+mid-execution (external process kills, several today); the spec (`multitab.spec.js` "RO guest")
+is ready and re-runs unattended. Also outstanding: hard-kill takeover timing, 10-tab flood,
+forged-flag bypass audit (critic charter items).
+
+**2026-07-06 — cold-clone critic round: FIX-FIRST → all four fixed; corruption core SOUND.**
+Critic could not corrupt the overlay from an RO tab by ANY path — verified down to
+`PersistQueue::record` being private (its own test draft failed to compile calling it), reads
+sharing no path with the queue, flush harmless, both pump gates independently sufficient, the
+RO meta guard, and IDB double-open unable to hang (constant version → `blocked` unreachable).
+FIXED same PR: **BUG-1 (MED)** — a failed boot AFTER lock grant stranded the writer lock until
+tab close (the catch couldn't even see `releaseLock` — hoisted above the try, released in the
+catch); **BUG-2 (MED)** — missing Web Locks API silently booted EVERY tab read-write (now fails
+CLOSED: forced RO + console warning); **BUG-3 (LOW)** — the lock was keyed on the manifest URL
+string while the DB is keyed on the base hash, so two URL spellings of one image could double-
+write (lock now keyed on the manifest-content SHA-256); **NOTE-1 (LOW)** — the lock is now
+released on EVERY terminal outcome (halt/error/stop), not only clean halt. Critic's 2 hostile
+tests adopted (`ro_tests`: RO-check-precedes-range-validation + read-sweep never dirties the
+queue; forged-dirty-queue would park flush forever — pinned as unreachable-in-production).
+
+**Threat model (critic NOTE-2, accepted by design):** `newChunkedDiskPersistent(...,
+read_only=false)` is callable from the console without the lock — the wasm layer trusts the
+flag; same-origin page JS is trusted. Not reachable from normal UI. Genuinely closing it would
+need the lock and the store owned by one agent (e.g. a SharedWorker owning the IDB handle) —
+an E4-era shape. `norecovery` analysis: standard unconditional ext4 option, `rootflags=`
+passes it verbatim; a user-forced `rw` bootargs on an RO boot panics that tab only (cosmetic).
+
+**Still outstanding for `verified`:** the browser RO-guest leg (MOUNT_RO + EROFS + WRITER_OK +
+takeover; spec ready, runs killed externally today) + BUG-1's in-browser repro/fix proof +
+hard-kill timing + 10-tab flood.

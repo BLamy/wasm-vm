@@ -115,8 +115,15 @@ export async function startLinuxBoot(opts = {}) {
     onProgress = () => {},
     onOutput = () => {},
     onError = () => {},
+    // E3-T09: called with { readOnly: bool } once the writer Web Lock is resolved for a
+    // persistent boot — the UI shows the RO banner / retry-as-writer affordance on it.
+    onWriterStatus = () => {},
     quantum = 2_000_000,
   } = opts;
+  // E3-T09 (critic BUG-1): hoisted ABOVE the try so the catch can release a granted writer
+  // lock when boot fails AFTER acquisition — otherwise a banner-less zombie tab strands the
+  // lock until close and every other tab silently boots read-only.
+  let releaseLock = null;
   const isChunked = mode === "chunked";
   // Disk/chunked modes leave bootargs empty so WasmLinux supplies `root=/dev/vda rw …`.
   const bootargs = opts.bootargs ?? (mode === "initramfs" ? "console=ttyS0 earlycon=sbi" : "");
@@ -184,9 +191,47 @@ export async function startLinuxBoot(opts = {}) {
     // tests set it tiny via the persistMax option to prove the backpressure path).
     const maxDirtyBytes = opts.persistMax ?? 16 * 1024 * 1024;
     let machine;
+    let readOnly = false;
     if (usePersist) {
+      // E3-T09 single-writer discipline: exactly one tab may open the overlay writable. The
+      // exclusive Web Lock (auto-released on tab close/crash — no heartbeats) is acquired
+      // BEFORE the writable store opens; a second tab probes with ifAvailable (queueing would
+      // hang its boot) and falls back to a read-only boot: writes rejected at the backend
+      // seam, VIRTIO_BLK_F_RO advertised, guest mounts `/` ro, NO persist pump.
+      // E3-T09 (critic BUG-3): key the lock on the MANIFEST CONTENT digest, not the URL
+      // string — the IndexedDB name is keyed on the base hash, so two URL spellings of the
+      // same image must contend for the SAME lock.
+      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(imageManifestText));
+      const hex = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+      const lockName = `wasm-vm-disk-${hex}`;
+      if (navigator.locks) {
+        const granted = await new Promise((resolve) => {
+          navigator.locks
+            .request(lockName, { ifAvailable: true }, (lock) => {
+              if (lock === null) {
+                resolve(false);
+                return; // not held; the request callback ends immediately
+              }
+              resolve(true);
+              // Hold the lock for the tab's lifetime: the callback's promise resolving is
+              // what releases it, so we park it on a promise `stop()`/takeover resolves.
+              return new Promise((release) => {
+                releaseLock = release;
+              });
+            })
+            .catch(() => resolve(false));
+        });
+        readOnly = !granted;
+      } else {
+        // E3-T09 (critic BUG-2): without the Web Locks API there is NO single-writer
+        // guarantee — fail CLOSED (read-only) rather than silently risking a double writer
+        // against the shared IndexedDB.
+        console.warn("wasm-vm: Web Locks API unavailable — persistent boot forced read-only");
+        readOnly = true;
+      }
+      onWriterStatus({ readOnly });
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
-      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, (u8) => onOutput(u8));
+      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, readOnly, (u8) => onOutput(u8));
     } else if (isChunked) {
       machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, (u8) => onOutput(u8));
     } else if (mode === "disk") {
@@ -220,7 +265,7 @@ export async function startLinuxBoot(opts = {}) {
       //    the barrier clears at the very next boundary (the guest's `sync` is blocked on it).
       //  - pendingBytes > maxDirtyBytes: backpressure — drain before running more guest work, so
       //    an unflushed session cannot accumulate unbounded dirty state (bounded loss window).
-      if (usePersist) {
+      if (usePersist && !readOnly) {
         try {
           const ps = machine.persistStats();
           if (ps.flushWaiting || ps.pendingBytes > maxDirtyBytes) {
@@ -267,7 +312,7 @@ export async function startLinuxBoot(opts = {}) {
       }
       // E3-T05: durably flush any overlay writes to IndexedDB (cheap no-op when nothing is pending;
       // resolves on the IndexedDB transaction complete, so a flush before reload survives it).
-      if (usePersist) {
+      if (usePersist && !readOnly) {
         try {
           await machine.persistPending();
         } catch (e) {
@@ -312,10 +357,25 @@ export async function startLinuxBoot(opts = {}) {
       // far via lazy chunk fetch). Null for non-chunked boots. Drives the <40%-of-image acceptance.
       fetchStats: () => (isChunked ? machine.fetchStats() : null),
       // E3-T05: force a durable flush of the overlay to IndexedDB (resolves when the txn completes).
-      persist: () => (usePersist ? machine.persistPending() : Promise.resolve(0)),
+      persist: () => (usePersist && !readOnly ? machine.persistPending() : Promise.resolve(0)),
+      // E3-T09: is this boot read-only (another tab held the writer lock)?
+      readOnly: () => readOnly,
+      // E3-T09: explicitly release the writer lock (poweroff/stop paths; close/crash releases
+      // it automatically via Web Locks semantics).
+      releaseWriterLock: () => {
+        if (releaseLock) {
+          releaseLock();
+          releaseLock = null;
+        }
+      },
       whenDone,
     };
   } catch (e) {
+    // E3-T09 (critic BUG-1): a granted writer lock must not outlive a failed boot.
+    if (releaseLock) {
+      releaseLock();
+      releaseLock = null;
+    }
     onState("error");
     onError(e);
     throw e;

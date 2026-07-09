@@ -49,8 +49,36 @@ async function runLinuxBoot(opts, banner) {
       },
       onOutput: (u8) => ui.write(u8),
       onError: (e) => term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`),
+      // E3-T09: single-writer status. RO → banner + a retry-as-writer affordance (reboot;
+      // the Web Lock is re-probed — succeeds once the writer tab is gone).
+      onWriterStatus: ({ readOnly }) => {
+        const el = document.getElementById("ro-banner");
+        if (!el) return;
+        if (readOnly) {
+          el.style.display = "block";
+          el.innerHTML =
+            'read-only: disk in use by another tab — writes are rejected (guest mounts / ro). ' +
+            '<button id="ro-retry">retry as writer</button>';
+          document.getElementById("ro-retry").addEventListener("click", async () => {
+            // Stop the RO machine and reboot; the lock probe runs again at boot.
+            if (linuxCtl) { try { linuxCtl.stop(); } catch {} linuxCtl = null; }
+            el.style.display = "none";
+            bootBtns.forEach((b) => b && (b.disabled = false));
+            setStatus("retrying as writer — click the boot button again");
+            term.writeln("\r\n\x1b[33mretry-as-writer: click the Boot button again (lock re-probed at boot)\x1b[0m");
+          });
+          term.writeln("\x1b[33mREAD-ONLY: another tab holds the disk — guest will mount / ro\x1b[0m");
+        } else {
+          el.style.display = "none";
+        }
+      },
     });
+    const ctlForRelease = linuxCtl;
     linuxCtl.whenDone.then((state) => {
+      // E3-T09 (critic NOTE-1): release the writer lock on EVERY terminal outcome (halt,
+      // error, stop) — release is idempotent, and a future writer-stop UI path must not
+      // strand the lock until tab close.
+      try { ctlForRelease?.releaseWriterLock?.(); } catch {}
       ui.detachSink();
       bootBtns.forEach((b) => b && (b.disabled = false));
       linuxCtl = null;

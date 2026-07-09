@@ -21,8 +21,7 @@ use wasm_vm_core::platform::virt;
 use wasm_vm_core::{Machine, RunOutcome};
 use wasm_vm_storage::BlockCache;
 use wasm_vm_storage::{
-    FORMAT_VERSION, ImageManifest, Layout, OVERLAY_BLOCK, OverlayDisk, PersistQueue,
-    WriteBackOverlay,
+    FORMAT_VERSION, ImageManifest, Layout, OverlayDisk, PersistQueue, WriteBackOverlay,
 };
 
 const RAM: usize = 8 * 1024 * 1024;
