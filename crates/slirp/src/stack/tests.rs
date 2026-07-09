@@ -585,3 +585,119 @@ fn unicast_renew_to_gateway_is_diverted_not_double_handled() {
         "smoltcp never saw it — no spurious ICMP port-unreachable"
     );
 }
+
+// ── run_dhcp: synchronous DHCP servicing through the stack ───────────────────
+use crate::dhcp::DhcpServer;
+
+/// A DHCP message of the given type (option 53), REQUEST also carrying option 50 = the wanted address.
+fn dhcp_msg(msg_type: u8, requested: Option<Ipv4Addr>) -> Vec<u8> {
+    let mut b = vec![0u8; 236];
+    b[0] = 1;
+    b[1] = 1;
+    b[2] = 6;
+    b[28..34].copy_from_slice(&GUEST_MAC);
+    b.extend_from_slice(&[0x63, 0x82, 0x53, 0x63]);
+    b.extend_from_slice(&[53, 1, msg_type]);
+    if let Some(ip) = requested {
+        b.extend_from_slice(&[50, 4]);
+        b.extend_from_slice(&ip.octets());
+    }
+    b.push(255);
+    b
+}
+fn inject_dhcp(s: &mut SlirpStack, msg: &[u8]) {
+    let frame = build_udp_frame(
+        GUEST_MAC,
+        [0xff; 6],
+        Ipv4Addr::UNSPECIFIED,
+        68,
+        Ipv4Addr::new(255, 255, 255, 255),
+        67,
+        msg,
+    )
+    .unwrap();
+    s.inject(frame);
+}
+/// The DHCP message type of a reply frame's payload.
+fn reply_dhcp_type(frame: &[u8]) -> Option<u8> {
+    let g = parse_udp(frame)?;
+    let p = &g.payload;
+    let mut i = 240;
+    while i + 1 < p.len() {
+        if p[i] == 255 {
+            break;
+        }
+        if p[i] == 0 {
+            i += 1;
+            continue;
+        }
+        let len = p[i + 1] as usize;
+        if p[i] == 53 && len == 1 {
+            return p.get(i + 2).copied();
+        }
+        i += 2 + len;
+    }
+    None
+}
+
+#[test]
+fn run_dhcp_services_a_full_discover_request_handshake() {
+    let mut s = SlirpStack::new(GW_MAC);
+    let dhcp = DhcpServer::new();
+
+    // DISCOVER → OFFER (broadcast reply from :67 to :68, yiaddr = guest).
+    inject_dhcp(&mut s, &dhcp_msg(1, None));
+    assert_eq!(s.run_dhcp(&dhcp), 1, "one OFFER sent");
+    let eg = s.take_egress();
+    assert_eq!(eg.len(), 1);
+    assert_eq!(reply_dhcp_type(&eg[0]), Some(2), "OFFER");
+    let g = parse_udp(&eg[0]).unwrap();
+    assert_eq!(g.src_port, 67);
+    assert_eq!(g.dst_port, 68);
+    assert_eq!(
+        g.dst_ip,
+        Ipv4Addr::new(255, 255, 255, 255),
+        "broadcast L3 (client has no IP)"
+    );
+    assert_eq!(g.src_mac, GW_MAC, "from the gateway MAC");
+    assert_eq!(&g.payload[16..20], &net::GUEST.octets(), "yiaddr = guest");
+
+    // REQUEST for our address → ACK.
+    inject_dhcp(&mut s, &dhcp_msg(3, Some(net::GUEST)));
+    assert_eq!(s.run_dhcp(&dhcp), 1, "one ACK sent");
+    assert_eq!(reply_dhcp_type(&s.take_egress()[0]), Some(5), "ACK");
+}
+
+#[test]
+fn run_dhcp_naks_a_wrong_address_request() {
+    let mut s = SlirpStack::new(GW_MAC);
+    let dhcp = DhcpServer::new();
+    inject_dhcp(&mut s, &dhcp_msg(3, Some(Ipv4Addr::new(10, 0, 2, 99))));
+    assert_eq!(s.run_dhcp(&dhcp), 1);
+    assert_eq!(
+        reply_dhcp_type(&s.take_egress()[0]),
+        Some(6),
+        "NAK for the wrong address"
+    );
+}
+
+#[test]
+fn run_dhcp_leaves_dns_datagrams_queued_for_the_async_layer() {
+    let mut s = SlirpStack::new(GW_MAC);
+    let dhcp = DhcpServer::new();
+    // A DNS datagram to our resolver + a DHCP DISCOVER.
+    let dns =
+        build_udp_frame(GUEST_MAC, GW_MAC, net::GUEST, 40000, net::DNS, 53, b"query").unwrap();
+    s.inject(dns);
+    inject_dhcp(&mut s, &dhcp_msg(1, None));
+
+    let sent = s.run_dhcp(&dhcp);
+    assert_eq!(sent, 1, "the DHCP frame was serviced");
+    // The DNS datagram is UNTOUCHED — still queued, addressing AND payload intact — for the async loop.
+    let left = s.take_service_udp();
+    assert_eq!(left.len(), 1, "the DNS datagram remains queued");
+    assert_eq!(left[0].dst_ip, net::DNS);
+    assert_eq!(left[0].dst_port, 53);
+    assert_eq!(left[0].src_port, 40000);
+    assert_eq!(left[0].payload, b"query", "payload not mutated");
+}

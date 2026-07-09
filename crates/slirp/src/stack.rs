@@ -16,13 +16,19 @@ use smoltcp::wire::{
 };
 
 use crate::device::SlirpDevice;
+use crate::dhcp::DhcpServer;
 use crate::net;
-use crate::udp_frame::{GuestUdp, parse_udp};
+use crate::udp_frame::{GuestUdp, build_udp_frame, parse_udp};
+
+/// The BOOTP/DHCP client port a server reply is addressed to.
+const DHCP_CLIENT_PORT: u16 = 68;
+const DHCP_SERVER_PORT: u16 = 67;
 
 /// Per-flow smoltcp TCP socket buffer size (64 KiB each way).
 const TCP_BUF: usize = 64 * 1024;
 
-/// The all-ones broadcast a DHCP DISCOVER/rebind is sent to.
+/// The all-ones broadcast — the DHCP client sends DISCOVER/rebind to it, and (see `run_dhcp`) we
+/// address replies to it as well.
 const BROADCAST: Ipv4Addr = Ipv4Addr::new(255, 255, 255, 255);
 
 /// Is a guest UDP datagram to `(dst_ip, dst_port)` bound for one of our INTERNAL services (the DHCP
@@ -230,6 +236,47 @@ impl SlirpStack {
     /// in the next [`take_egress`](Self::take_egress) alongside smoltcp's own output.
     pub fn push_egress(&mut self, frame: Vec<u8>) {
         self.device.tx.push_back(frame);
+    }
+
+    /// Service every DIVERTED DHCP datagram (dst port 67) with `dhcp`, framing each reply back to the
+    /// guest and egressing it. DHCP is fully SYNCHRONOUS (no resolver), so it's serviced end-to-end
+    /// here; DNS datagrams (dst port 53) are LEFT in the service queue for the async layer.
+    ///
+    /// Reply addressing: the reply is sent with a BROADCAST L3 destination (`255.255.255.255:68`) from
+    /// the gateway server (`10.0.2.2:67`), unicast at L2 back to the requesting guest's MAC (which
+    /// accepts a broadcast-IP frame addressed to its own MAC without flooding the link). Broadcasting
+    /// UNCONDITIONALLY is safe for every state a busybox `udhcpc` is in when it receives it (critic-
+    /// verified against the client source): pre-lease it reads a RAW socket filtered only on UDP:68 +
+    /// checksum (L2/L3 dst ignored, so the unicast-MAC frame is received); during RENEW it binds
+    /// `INADDR_ANY:68` with `SO_BROADCAST`, so the `255.255.255.255:68` datagram still reaches it. (A
+    /// strictly-conformant RENEW ACK would unicast to `ciaddr`; broadcasting is harmless in a
+    /// single-tenant slirp — no other host is on the link.) Returns the number of replies sent.
+    pub fn run_dhcp(&mut self, dhcp: &DhcpServer) -> usize {
+        // Partition: take DHCP datagrams, leave the rest (DNS) queued for the async layer.
+        let pending = std::mem::take(&mut self.service_udp);
+        let mut sent = 0;
+        for g in pending {
+            if g.dst_port != DHCP_SERVER_PORT {
+                self.service_udp.push(g); // not DHCP (DNS) — keep it for the async servicing loop
+                continue;
+            }
+            if let Some(reply) = dhcp.handle(&g.payload) {
+                let frame = build_udp_frame(
+                    self.mac,     // from the gateway MAC
+                    g.src_mac,    // L2-unicast back to the requesting guest
+                    net::GATEWAY, // from the DHCP server (10.0.2.2)
+                    DHCP_SERVER_PORT,
+                    BROADCAST, // L3 broadcast — the client has no IP yet
+                    DHCP_CLIENT_PORT,
+                    &reply,
+                );
+                if let Some(frame) = frame {
+                    self.device.tx.push_back(frame);
+                    sent += 1;
+                }
+            }
+        }
+        sent
     }
 
     /// Drive smoltcp once at `now_ms`: process queued guest frames and emit any replies.
