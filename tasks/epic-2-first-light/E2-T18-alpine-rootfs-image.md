@@ -3,7 +3,7 @@ id: E2-T18
 epic: 2
 title: Alpine riscv64 rootfs — scripted ext4 image build with getty on ttyS0
 priority: 218
-status: pending
+status: implemented
 depends_on: [E2-T12]
 estimate: M
 capstone: false
@@ -57,4 +57,72 @@ claims. Verify the image contains no riscv64-incompatible binaries (`find / -typ
 -exec file {} +` scan inside QEMU for x86 ELF — any hit refutes).
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — Alpine riscv64 rootfs boots to `login:`
+
+`bash tools/build-rootfs.sh` produces `releases/rootfs/alpine-rootfs.ext4` (Alpine 3.20,
+riscv64, OpenRC + getty/login on ttyS0). It boots on our own emulator — the E2-T12 kernel has
+`EXT4_FS`+`VIRTIO_BLK`+`VIRTIO_MMIO` built in — all the way to the login prompt:
+
+```
+[  2.46] EXT4-fs (vda): mounted filesystem a11ce000-…-f50000000018 r/w …
+[  2.47] VFS: Mounted root (ext4 filesystem) on device 254:0.
+[  2.47] Run /sbin/init as init process
+   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)
+ * Mounting /proc … /sys … /dev/pts … [ ok ]
+ * Scanning hardware for mdev … [ ok ]
+ * Setting system clock using the hardware clock [UTC] … [ ok ]   ← reads the E2-T16 RTC
+ * Starting networking … [ ok ]
+Welcome to Alpine Linux 3.20
+Kernel 6.6.63 on an riscv64 (/dev/ttyS0)
+wasm-vm login:
+```
+
+**Approach — path (b), no emulation.** `apk.static --arch riscv64 … --no-scripts` cross-installs
+the riscv64 root by UNPACKING only (no binfmt/qemu-user, no privileged loop mounts), then
+`mke2fs -d` packs the directory into ext4. The `--no-scripts` install skips `busybox --install`,
+so we recreate the applet symlinks (`/sbin/init`, `/sbin/getty`, `/bin/login`, …) using the
+build container's SAME-version (1.36.1) `busybox --list-full` — without this the kernel finds no
+`/sbin/init` and falls through to `/bin/sh`. Config: ttyS0-only getty, `ttyS0` in securetty,
+`/dev/vda / ext4` fstab, passwordless root, loopback `/etc/network/interfaces` (else the
+networking service crashes), OpenRC runlevel symlinks. Full pipeline in `docs/rootfs.md`.
+
+**Build-time verification (in-container, every run):** `fsck.ext4 -f -n` reports the fresh image
+**clean** (787 files, no orphan inodes); a `find … -exec file` scan confirms **no foreign
+(x86/aarch64) ELF** — riscv64 only; `MANIFEST.txt` pins the exact resolved package set. Image is
+512 MiB (sparse ~10 MiB), reproducible (pinned Alpine v3.20 + fixed fs UUID); the `.ext4` is
+gitignored (rebuilt from the recipe + `SHA256SUMS`). No `sudo`/loop-mount anywhere.
+
+**Acceptance:** #1 (boots to `login:`, ext4 root on vda) ✓ — proven on our emulator (QEMU not on
+the dev host; the QEMU `-device virtio-blk-device` cross-check is documented for when it is).
+#2 (fsck clean, ≤512 MiB) ✓. #3 (reproducible: pinned version + MANIFEST lock; mtime caveat
+documented) ✓. #4 (no privileged ops) ✓. Interactive root-login + `apk --version` is the
+E2-T19 capstone (which boots this exact image to an interactive login).
+
+### 2026-07-05 — cold-clone critic — supply-chain refutations fixed
+
+The critic confirmed the image boots but landed real REFUTATIONS on the reproducibility /
+supply-chain claims (the honestly-weakest part). All fixed:
+
+- **REFUTATION #1 — `--allow-untrusted` disabled Alpine signature verification.** Real hole. The
+  reason it "seemed needed": the riscv64 v3.20 APKINDEX is signed by key `60ac2099`, which is
+  NOT in the container's default `/etc/apk/keys` (the critic's "same keys" premise was wrong for
+  riscv64) — but it DOES ship, verified, in `alpine-keys` under `/usr/share/apk/keys/riscv64`.
+  **Fixed:** `--keys-dir /usr/share/apk/keys/riscv64`, dropped `--allow-untrusted`; the build now
+  verifies signatures and fails closed on a tampered mirror (confirmed: install runs with no
+  `UNTRUSTED` warning).
+- **REFUTATION #2 — committed ext4 `SHA256SUMS` was an unverifiable pin.** The image is
+  gitignored + non-byte-reproducible (per-build mtimes), so a committed image hash fails
+  `shasum -c` on every honest rebuild. **Fixed:** `SHA256SUMS` now covers only the reproducible
+  `MANIFEST.txt`; docs state plainly the `.ext4` is not hash-pinned and why.
+- **REFUTATION #3 — "pinned/reproducible/lock" was overstated** (versions float within v3.20;
+  `FROM alpine:3.20` was a floating tag). **Fixed:** Dockerfile pins the base by **digest** +
+  tools by exact version; and a **MANIFEST drift gate** in `build-rootfs.sh` diffs the freshly
+  resolved package set against the committed lock and **fails on drift** (verified: a tampered
+  lock line is caught and errors; `UPDATE_MANIFEST=1` accepts an intentional bump).
+- **ADVISORY #6 — foreign-ELF scan was a blacklist.** **Fixed:** inverted to an allow-list (flag
+  any ELF that is not `RISC-V`), so ppc/s390/32-bit-ARM/etc. are caught too.
+- **ADVISORY #4 — container-vs-target busybox version assumed equal.** **Fixed:** the build now
+  asserts the container busybox version equals the target's and fails on skew.
+- CONFIRMED by the critic: passwordless-root-on-securetty, the fsck gate, the applet skip-guard,
+  gitignore coherence, and 512M sizing all correct. (#5 getty-storm is non-blocking given #4.)
