@@ -40,6 +40,9 @@ pub mod udp;
 pub mod udp_frame;
 #[cfg(all(test, feature = "native"))]
 mod udp_integration_tests;
+// E3-net slice 2b: the browser outbound path — a SyncConnector tunnelling guest flows through the
+// ws-proxy relay over a pluggable FrameTransport. Pure state machine (no sockets) → compiles for wasm.
+pub mod ws_connector;
 pub mod ws_proxy;
 
 pub use manager::{Action, FlowManager, FrameOutcome};
@@ -66,6 +69,7 @@ pub use std_connector::StdConnector;
 pub use sync_connector::{ConnId, ConnStatus, SyncConnector};
 pub use udp::{UdpReply, UdpServices};
 pub use udp_frame::{GuestUdp, build_udp_frame, parse_udp};
+pub use ws_connector::{FrameTransport, WsConnector};
 pub use ws_proxy::{
     Frame as WsFrame, HandshakeError as WsHandshakeError, Mux as WsMux, MuxError as WsMuxError,
     MuxEvent as WsMuxEvent, Role as WsRole, Session as WsSession, SessionError as WsSessionError,
