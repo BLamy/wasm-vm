@@ -217,7 +217,10 @@ export async function startLinuxBoot(opts = {}) {
     // E3-net: pick the virtio-net backend for this boot BEFORE constructing WasmLinux (which reads
     // the flag). `slirpNet` → the slirp local stack (guest DHCPs 10.0.2.15 + reaches the gateway);
     // default → the loopback backend. Set unconditionally so a prior boot's choice never leaks.
-    try { setSlirpNet(!!opts.slirpNet); } catch { /* older pkg without the export */ }
+    // Defensive: setSlirpNet is a trivial atomic store and won't throw; the guard just ensures a
+    // stray failure can only fall back to the default backend, never abort the boot. (A pkg missing
+    // the export would fail earlier at the named import, not here.)
+    try { setSlirpNet(!!opts.slirpNet); } catch { /* keep the default backend */ }
 
     onState("booting");
     // disk → in-memory virtio-blk backend (whole image); chunked → a ChunkedBackend that lazily
