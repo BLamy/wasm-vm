@@ -21,6 +21,7 @@ mod cache;
 mod fetch;
 mod overlay;
 mod prefetch;
+mod writeback;
 pub use cache::{BlockCache, CacheMetrics};
 pub use fetch::{
     ChunkRequest, ChunkStore, FetchFailure, ResponseAction, RetryPolicy, classify_response,
@@ -31,6 +32,7 @@ pub use overlay::{
     OverlayOutcome,
 };
 pub use prefetch::{PrefetchTracker, Readahead, boot_prefetch};
+pub use writeback::WriteBackOverlay;
 
 /// The one format version this reader understands. Bumped only on an incompatible change; unknown
 /// *fields* are ignored (forward-compatible), but an unknown *version* is a hard error.
