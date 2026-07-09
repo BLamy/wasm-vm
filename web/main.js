@@ -42,6 +42,9 @@ async function runLinuxBoot(opts, banner) {
   try {
     linuxCtl = await startLinuxBoot({
       ...opts,
+      // E3-net: `?slirpNet` in the URL boots with the slirp local stack (real DHCP/ARP/ICMP) instead
+      // of the loopback backend — so the guest can pull a real IP and reach the gateway.
+      slirpNet: opts.slirpNet ?? new URLSearchParams(location.search).has("slirpNet"),
       onState: (s) => setStatus(`linux: ${s}`),
       onProgress: (role, loaded, total) => {
         pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;
