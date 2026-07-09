@@ -196,6 +196,36 @@ if (bootAlpineChunkedBtn) {
       "booting Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login:…",
     ));
 }
+// ── Docker tab ⇄ real boot bridge ─────────────────────────────────────────────
+// The Docker "Run" button drives the SAME real boot machinery as this Terminal tab — it never
+// simulates a shell. For busybox we boot the real busybox userland on RISC-V Linux (the initramfs
+// boot, which works everywhere incl. GitHub Pages) and land the user at the real `#` prompt.
+// HONEST SCOPE: this runs the real busybox multi-call binary; it is NOT the wvrun/OCI-overlay
+// isolation path (unshare + overlay + pivot_root), which is built and native-tested
+// (crates/cli/tests/boot_wvrun.rs) but not yet baked into the served in-browser image.
+const runBannerEl = document.getElementById("run-banner");
+function setRunBanner(html) {
+  if (!runBannerEl) return;
+  runBannerEl.style.display = html == null ? "none" : "block";
+  if (html != null) runBannerEl.innerHTML = html;
+}
+window.wvmDemo = {
+  isGuestUp: () => !!linuxCtl,
+  async runBusybox() {
+    if (linuxCtl) {
+      setRunBanner('busybox userland is already live below — you are at the shell. Try <code>ls /</code> or <code>uname -a</code>.');
+      return "already-running";
+    }
+    setRunBanner(
+      'Booting a real RISC-V Linux guest → <b>busybox</b> userland… watch the console below; ' +
+      'you will land at the <code>#</code> shell prompt in a few seconds. ' +
+      'Try <code>ls /</code>, <code>uname -a</code>, or <code>busybox | head</code> once it is up.',
+    );
+    await runLinuxBoot({ manifestUrl: "./artifacts.json" }, "booting the real busybox userland on RISC-V Linux (in wasm)…");
+    return "booting";
+  },
+};
+
 // E2-T22: "Fit" re-fits the rendered grid to the panel and surfaces the matching `stty` line.
 // A serial console carries no out-of-band winsize, so resize is cooperative: if a guest is live
 // the button types the `stty rows R cols C` straight into it, so vi/top use the full area.
