@@ -720,6 +720,11 @@ impl WasmLinux {
                 let _ = machine.enable_virtio_slots(None);
             }
         }
+        // E3-T13: loopback-backed virtio-net in slot 1 on every boot shape — the guest sees
+        // eth0 (MAC 52:54:00:12:34:56); E3-T14 swaps the loopback for the slirp stack.
+        let _ = machine.enable_virtio_net(Box::new(
+            wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
+        ));
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));

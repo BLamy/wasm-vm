@@ -1,7 +1,7 @@
 {
   "generated": "content-hashed; regenerate with tools/gen-web-manifest.sh",
   "artifacts": {
-    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "7809d520a169ede55d81034672ec5e66d2e72577a6edc431e4661d3b59c3c08e", "size": 17724416 },
+    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58", "size": 22097408 },
     "initramfs": { "url": "releases/initramfs/initramfs.cpio.gz", "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563", "size": 1151596 }
   }
 }

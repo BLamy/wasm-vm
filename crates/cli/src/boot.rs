@@ -68,6 +68,10 @@ pub struct BootArgs {
     /// MMIO access counts, as pretty text + JSON, when the boot reaches userland (or at exit).
     #[arg(long)]
     pub profile_boot: bool,
+    /// E3-T13: attach a virtio-net device (slot 1) with the loopback backend — the guest sees
+    /// `eth0` (MAC 52:54:00:12:34:56); transmitted frames echo back with src/dst MAC swapped.
+    #[arg(long)]
+    pub net: bool,
 }
 
 /// Guest console → this process's stdout. Shared with the SBI console channel; a closed pipe
@@ -285,6 +289,13 @@ fn assemble(
         }
     } else {
         let _ = m.enable_virtio_slots(None);
+    }
+    if a.net {
+        // E3-T13: loopback-backed virtio-net in slot 1 (the DTB already advertises all 8
+        // slots, so the stock virtio_net driver probes it with no DTB change).
+        let _ = m.enable_virtio_net(Box::new(
+            wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
+        ));
     }
 
     // Built-in SBI firmware + its console channel (earlycon=sbi / legacy putchar).
