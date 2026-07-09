@@ -1,6 +1,79 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
 
 /**
+ * E2-T21: a browser-side unmodified-Linux boot. Unlike [`WasmMachine`] (bare-metal ELF + a
+ * Uart0 stub), this assembles the full `virt` platform (CLINT/PLIC/16550/virtio/goldfish-RTC/
+ * syscon/built-in SBI) via the SHARED [`Machine::place_and_boot`] and boots a kernel `Image`
+ * + optional initramfs. Console is chunked: all guest output (SBI `earlycon` + the 16550
+ * `ttyS0`) accumulates in a buffer that each `runChunk` flushes to a JS callback as one
+ * `Uint8Array`; host keystrokes queued via `sendInput` feed the 16550 RX. The JS host drives
+ * the machine off `requestAnimationFrame`/`setTimeout` (workers/SAB are Epic 4).
+ */
+export class WasmLinux {
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        WasmLinuxFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_wasmlinux_free(ptr, 0);
+    }
+    /**
+     * Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
+     * `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
+     * @param {number} ram_mib
+     * @param {Uint8Array} kernel
+     * @param {Uint8Array} initrd
+     * @param {string} bootargs
+     * @param {Function} output
+     */
+    constructor(ram_mib, kernel, initrd, bootargs, output) {
+        const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passArray8ToWasm0(initrd, wasm.__wbindgen_malloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_new(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, output);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        this.__wbg_ptr = ret[0];
+        WasmLinuxFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
+    /**
+     * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
+     * 16550 RX, and return `{ done: bool, state: string|null }`. `state` is `"poweroff"`,
+     * `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or `"trap:<cause>"` once terminal.
+     * @param {number} max_instrs
+     * @returns {any}
+     */
+    runChunk(max_instrs) {
+        const ret = wasm.wasmlinux_runChunk(this.__wbg_ptr, max_instrs);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).
+     * @param {Uint8Array} bytes
+     */
+    sendInput(bytes) {
+        const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_sendInput(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+}
+if (Symbol.dispose) WasmLinux.prototype[Symbol.dispose] = WasmLinux.prototype.free;
+
+/**
  * JS-facing handle over [`wasm_vm_core::Machine`].
  */
 export class WasmMachine {
@@ -13,6 +86,20 @@ export class WasmMachine {
     free() {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_wasmmachine_free(ptr, 0);
+    }
+    /**
+     * E2-T20: the interrupt/trap counters + storm/WFI diagnosis as a JS object
+     * `{ retired, wfi, exceptions:[16], interrupts:[16], claims:[32], storm:bool, wfiReport:string|null }`.
+     * E2-T26's UI surfaces these so a browser boot that death-spirals shows a diagnosis instead
+     * of a silently-pinned tab.
+     * @returns {any}
+     */
+    getStats() {
+        const ret = wasm.wasmmachine_getStats(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * Load a bare-metal rv64 ELF. A malformed image throws a `JsError` naming the
@@ -238,8 +325,16 @@ function __wbg_get_imports() {
             const ret = new Error();
             return ret;
         },
+        __wbg_new_32b398fb48b6d94a: function() {
+            const ret = new Array();
+            return ret;
+        },
         __wbg_new_da52cf8fe3429cb2: function() {
             const ret = new Object();
+            return ret;
+        },
+        __wbg_new_from_slice_77cdfb7977362f3c: function(arg0, arg1) {
+            const ret = new Uint8Array(getArrayU8FromWasm0(arg0, arg1));
             return ret;
         },
         __wbg_new_with_length_3709f79f83165acf: function(arg0) {
@@ -248,6 +343,10 @@ function __wbg_get_imports() {
         },
         __wbg_now_86c0d4ba3fa605b8: function() {
             const ret = Date.now();
+            return ret;
+        },
+        __wbg_push_d2ae3af0c1217ae6: function(arg0, arg1) {
+            const ret = arg0.push(arg1);
             return ret;
         },
         __wbg_set_8535240470bf2500: function() { return handleError(function (arg0, arg1, arg2) {
@@ -293,6 +392,9 @@ function __wbg_get_imports() {
     };
 }
 
+const WasmLinuxFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_wasmlinux_free(ptr, 1));
 const WasmMachineFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_wasmmachine_free(ptr, 1));
@@ -301,6 +403,11 @@ function addToExternrefTable0(obj) {
     const idx = wasm.__externref_table_alloc();
     wasm.__wbindgen_externrefs.set(idx, obj);
     return idx;
+}
+
+function getArrayU8FromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    return getUint8ArrayMemory0().subarray(ptr / 1, ptr / 1 + len);
 }
 
 let cachedDataViewMemory0 = null;

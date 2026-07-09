@@ -1,9 +1,14 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
+export const __wbg_wasmlinux_free: (a: number, b: number) => void;
 export const __wbg_wasmmachine_free: (a: number, b: number) => void;
 export const bench: (a: number) => [number, number, number];
 export const version: () => [number, number];
+export const wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
+export const wasmlinux_runChunk: (a: number, b: number) => [number, number, number];
+export const wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
+export const wasmmachine_getStats: (a: number) => [number, number, number];
 export const wasmmachine_loadElf: (a: number, b: number, c: number) => [number, number];
 export const wasmmachine_new: (a: number) => [number, number, number];
 export const wasmmachine_ramLen: (a: number) => [number, number, number];

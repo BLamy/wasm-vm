@@ -2,11 +2,47 @@
 /* eslint-disable */
 
 /**
+ * E2-T21: a browser-side unmodified-Linux boot. Unlike [`WasmMachine`] (bare-metal ELF + a
+ * Uart0 stub), this assembles the full `virt` platform (CLINT/PLIC/16550/virtio/goldfish-RTC/
+ * syscon/built-in SBI) via the SHARED [`Machine::place_and_boot`] and boots a kernel `Image`
+ * + optional initramfs. Console is chunked: all guest output (SBI `earlycon` + the 16550
+ * `ttyS0`) accumulates in a buffer that each `runChunk` flushes to a JS callback as one
+ * `Uint8Array`; host keystrokes queued via `sendInput` feed the 16550 RX. The JS host drives
+ * the machine off `requestAnimationFrame`/`setTimeout` (workers/SAB are Epic 4).
+ */
+export class WasmLinux {
+    free(): void;
+    [Symbol.dispose](): void;
+    /**
+     * Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
+     * `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
+     */
+    constructor(ram_mib: number, kernel: Uint8Array, initrd: Uint8Array, bootargs: string, output: Function);
+    /**
+     * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
+     * 16550 RX, and return `{ done: bool, state: string|null }`. `state` is `"poweroff"`,
+     * `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or `"trap:<cause>"` once terminal.
+     */
+    runChunk(max_instrs: number): any;
+    /**
+     * Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).
+     */
+    sendInput(bytes: Uint8Array): void;
+}
+
+/**
  * JS-facing handle over [`wasm_vm_core::Machine`].
  */
 export class WasmMachine {
     free(): void;
     [Symbol.dispose](): void;
+    /**
+     * E2-T20: the interrupt/trap counters + storm/WFI diagnosis as a JS object
+     * `{ retired, wfi, exceptions:[16], interrupts:[16], claims:[32], storm:bool, wfiReport:string|null }`.
+     * E2-T26's UI surfaces these so a browser boot that death-spirals shows a diagnosis instead
+     * of a silently-pinned tab.
+     */
+    getStats(): any;
     /**
      * Load a bare-metal rv64 ELF. A malformed image throws a `JsError` naming the
      * `ElfError` variant and leaves the machine usable (RAM is validated before it is
@@ -77,9 +113,14 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
+    readonly __wbg_wasmlinux_free: (a: number, b: number) => void;
     readonly __wbg_wasmmachine_free: (a: number, b: number) => void;
     readonly bench: (a: number) => [number, number, number];
     readonly version: () => [number, number];
+    readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
+    readonly wasmlinux_runChunk: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
+    readonly wasmmachine_getStats: (a: number) => [number, number, number];
     readonly wasmmachine_loadElf: (a: number, b: number, c: number) => [number, number];
     readonly wasmmachine_new: (a: number) => [number, number, number];
     readonly wasmmachine_ramLen: (a: number) => [number, number, number];
