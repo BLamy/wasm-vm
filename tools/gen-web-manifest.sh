@@ -19,10 +19,14 @@ for e in "${entries[@]}"; do
   f="releases/$rel"
   [ -f "$f" ] || { echo "gen-web-manifest: missing $f" >&2; exit 1; }
   sha=$(shasum -a 256 "$f" | awk '{print $1}')
-  size=$(stat -f '%z' "$f")
+  size=$(wc -c < "$f" | tr -d ' ')  # portable byte count (GNU stat -c%s / BSD stat -f%z differ)
   [ "$first" = 1 ] || json+=',\n'
   first=0
-  json+="    \"$role\": { \"url\": \"/releases/$rel\", \"sha256\": \"$sha\", \"size\": $size }"
+  # RELATIVE url (no leading slash) so it resolves against the page's base — works at the Pages
+  # site root (/wasm-vm/) AND under a PR preview (/wasm-vm/pr-N/), not just the dev-server root.
+  # The artifacts are copied into web/releases/ by `make web-build`; the dev server also maps
+  # /releases/* to the repo releases/ dir, so a page served at / resolves the same file locally.
+  json+="    \"$role\": { \"url\": \"releases/$rel\", \"sha256\": \"$sha\", \"size\": $size }"
 done
 json+='\n  }\n}\n'
 
