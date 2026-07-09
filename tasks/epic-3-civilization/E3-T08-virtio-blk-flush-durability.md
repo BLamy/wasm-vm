@@ -4,7 +4,7 @@ epic: 3
 title: Map virtio-blk flush to backend commit with crash consistency
 priority: 308
 status: pending
-depends_on: [E3-T07]
+depends_on: [E3-T05]
 estimate: M
 capstone: false
 ---
@@ -16,6 +16,10 @@ on the used ring after `BlockBackend::commit` has durably resolved. Killing the 
 moment leaves an ext4 filesystem that mounts clean or journal-recovers — never fsck-fatal.
 
 ## Context
+**Groomed 2026-07-06:** re-depped E3-T07 → E3-T05. The FLUSH→durable-commit ordering
+contract only needs one durable backend (IndexedDB, verified in E3-T05); the "both
+backends" crashtest line is re-run at E3-T07 when OPFS exists. Sequentially doable now.
+
 This is where browser storage semantics meet what the Linux block layer believes. ext4's
 journal correctness depends on flush barriers: if we ack FLUSH before the backend is durable,
 a tab kill can produce a journal that lies, and fsck horror follows. Contract (per T04's
@@ -45,7 +49,8 @@ queue during idle) so an unflushed session doesn't accumulate unbounded dirty st
       -rf /root/x; done` → every reboot mounts rw and `fsck.ext4 -n` reports clean or
       journal-recovered; zero corrupted-data outcomes. Results appended to the log.
 - [ ] Dirty-bytes threshold forces a drain (test with threshold set tiny).
-- [ ] Both backends (`?backend=idb`, `?backend=opfs`) pass the crashtest loop (≥10 kills each).
+- [ ] The IndexedDB backend (`?backend=idb`) passes the crashtest loop (≥10 kills). (The
+      both-backend re-run moved to E3-T07 — OPFS lands after E4-T22; groomed 2026-07-06.)
 
 ## Adversarial verification
 Your job is to corrupt the filesystem. Run the crashtest with kills timed by instrumentation

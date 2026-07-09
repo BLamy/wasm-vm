@@ -2,7 +2,7 @@
 id: E3-T07
 epic: 3
 title: Benchmark IndexedDB vs OPFS backends and select the default
-priority: 307
+priority: 330
 status: pending
 depends_on: [E3-T05, E3-T06]
 estimate: S
@@ -16,6 +16,10 @@ prefers the default and falls back cleanly — both backends staying alive behin
 `BlockBackend` trait.
 
 ## Context
+**Groomed 2026-07-06:** deferred with E3-T06 (needs both backends; OPFS is blocked on
+E4-T22 worker infra). Until this runs, IndexedDB (E3-T05) is the de-facto default backend.
+The "both backends pass the crashtest" acceptance line from E3-T08 is re-checked here.
+
 The expectation is OPFS-with-sync-handles wins by a wide margin on 4 KiB random writes and
 commit latency, but the decision must be measured, per browser, not assumed — and IndexedDB
 must remain a maintained fallback for any environment without sync access handles. The

@@ -4,7 +4,7 @@ epic: 3
 title: Storage quota management and reset-disk escape hatch
 priority: 310
 status: pending
-depends_on: [E3-T07]
+depends_on: [E3-T05]
 estimate: S
 capstone: false
 ---
@@ -16,6 +16,9 @@ actionable dialog instead of corrupting state, and a "reset disk" control wipes 
 and returns the machine to the pristine base image.
 
 ## Context
+**Groomed 2026-07-06:** re-depped E3-T07 → E3-T05 — quota handling needs a durable
+backend, not the backend *benchmark*. Doable against IndexedDB now.
+
 Browsers give an origin a quota (often GBs, but Safari is stingier and incognito is tiny);
 a guest `dd if=/dev/zero of=/root/fill` will find the edge. Use `navigator.storage.
 estimate()` for {usage, quota}, and call `navigator.storage.persist()` once at first write
