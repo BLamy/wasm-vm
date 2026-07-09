@@ -537,53 +537,25 @@
         border: 1px solid #22506e; border-radius: 5px; padding: 1px 6px; background: #10222e;
       }
       .dk-mono { font: 12px ui-monospace, monospace; color: var(--muted); }
-      .dk-badge-cap {
-        font: 10px ui-monospace, monospace; color: #0b0e14; background: var(--amber);
-        border-radius: 4px; padding: 1px 5px; margin-left: 6px; font-weight: 700;
-      }
       .dk-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
       .dk-status .dot { width: 8px; height: 8px; border-radius: 50%; }
       .dk-status.running .dot { background: var(--green); box-shadow: 0 0 0 3px rgba(46,160,67,.2); }
-      .dk-status.exited .dot { background: var(--muted); }
       .dk-btn {
         border: 1px solid var(--line); border-radius: 6px; background: #1b222d;
         color: var(--text); font-size: 12px; padding: 5px 11px; cursor: pointer; min-height: 30px;
       }
       .dk-btn.run { border-color: #287555; background: #143c31; color: #d6ffe6; }
-      .dk-btn.stop { border-color: #803b3b; background: #3b1c1f; }
       .dk-btn:disabled { opacity: .45; cursor: not-allowed; }
       /* container detail */
-      .dk-detail { display: flex; flex-direction: column; min-height: 0; }
       .dk-detail-head {
         display: flex; align-items: center; gap: 12px; padding: 14px 18px;
         border-bottom: 1px solid var(--line);
       }
       .dk-back { background: none; border: 0; color: var(--cyan); cursor: pointer; font-size: 13px; padding: 4px 6px; }
-      .dk-subtabs { display: flex; gap: 4px; padding: 8px 14px; border-bottom: 1px solid var(--line); }
-      .dk-subtab {
-        border: 0; background: none; color: var(--muted); font-size: 13px; font-weight: 600;
-        padding: 6px 12px; border-radius: 6px; cursor: pointer;
-      }
-      .dk-subtab.active { background: var(--panel-2); color: var(--text); }
       .dk-pane { padding: 14px 18px; overflow: auto; font: 12.5px ui-monospace, monospace; }
-      .dk-pane[hidden] { display: none; }
       .dk-kv { display: grid; grid-template-columns: 130px minmax(0,1fr); gap: 6px 14px; }
       .dk-kv dt { color: var(--muted); }
       .dk-kv dd { margin: 0; color: #dbe5ef; overflow-wrap: anywhere; }
-      .dk-logs { white-space: pre-wrap; color: #c9d1d9; line-height: 1.5; }
-      .dk-term {
-        background: #06080c; border: 1px solid var(--line); border-radius: 8px;
-        padding: 10px 12px; min-height: 300px; max-height: 52vh; overflow: auto;
-        white-space: pre-wrap; line-height: 1.5; color: #d7e0ea;
-      }
-      .dk-term .ps { color: var(--green); }
-      .dk-term .cmd { color: #eef2f7; }
-      .dk-termline { display: flex; gap: 8px; align-items: baseline; padding: 8px 0 0; }
-      .dk-termline .ps { flex: none; }
-      .dk-input {
-        flex: 1; background: none; border: 0; outline: none; color: var(--text);
-        font: inherit; padding: 0;
-      }
       .dk-note {
         margin: 4px 18px 14px; padding: 8px 12px; border-radius: 8px;
         background: #12202b; border: 1px solid #22506e; color: #a9cbe0; font-size: 12px;
