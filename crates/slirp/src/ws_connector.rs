@@ -325,7 +325,12 @@ impl<T: FrameTransport> SyncConnector for WsConnector<T> {
         let Some(c) = self.conns.get_mut(&id) else {
             return 0;
         };
-        if matches!(c.status, ConnStatus::Failed(_) | ConnStatus::Closed) {
+        // Only a hard failure refuses new sends. `Closed` here means the REMOTE half-closed
+        // (`PeerShutdown` — no more remote→guest bytes); TCP leaves the guest→remote direction open, so
+        // the guest may still write (critic MINOR). This matches `StdConnector`, whose socket still
+        // accepts writes after a remote FIN. A send on a fully-reaped stream no-ops harmlessly in
+        // `flush_stream` (the mux returns `UnknownStream`).
+        if matches!(c.status, ConnStatus::Failed(_)) {
             return 0;
         }
         // Queue it all; `flush_stream` sends what the window allows now and keeps the rest. Returning

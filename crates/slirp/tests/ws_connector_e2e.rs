@@ -15,7 +15,7 @@ use std::net::{Ipv4Addr, Shutdown, TcpListener, TcpStream};
 use std::rc::Rc;
 use std::time::Duration;
 
-use wasm_vm_slirp::ws_proxy::{Frame, RelayActions, RelayCore, SocketOp};
+use wasm_vm_slirp::ws_proxy::{Frame, INITIAL_WINDOW, RelayActions, RelayCore, SocketOp};
 use wasm_vm_slirp::{ConnStatus, FrameTransport, SyncConnector, WsConnector};
 
 /// The shared frame queues between client and relay (stand-in for a WebSocket's two directions).
@@ -264,24 +264,26 @@ fn refused_destination_fails_the_stream_through_the_relay() {
 #[test]
 fn bulk_download_flows_within_the_sliding_window() {
     // The relay→guest window is granted by the client and refilled as it drains — a larger-than-window
-    // stream must arrive intact, exercising the client's `recv`-time window refill.
-    const N: usize = 256 * 1024;
+    // stream must arrive intact, exercising the client's `recv`-time window refill. `n` MUST exceed
+    // INITIAL_WINDOW (critic MAJOR: at n == INITIAL_WINDOW the single initial grant covers the whole
+    // download, so a broken refill passes vacuously — proven by mutation). 3× forces ≥2 refills.
+    let n: usize = 3 * INITIAL_WINDOW as usize;
     let listener = TcpListener::bind("127.0.0.1:0").expect("bind flood server");
     let port = listener.local_addr().unwrap().port();
     std::thread::spawn(move || {
         if let Ok((mut sock, _)) = listener.accept() {
-            let payload: Vec<u8> = (0..N).map(|i| (i % 251) as u8).collect();
+            let payload: Vec<u8> = (0..n).map(|i| (i % 251) as u8).collect();
             let _ = sock.write_all(&payload);
         }
     });
 
     let (mut client, mut relay, conn) = new_pair(port);
     let mut received: Vec<u8> = Vec::new();
-    for step in 0..200_000 {
+    for step in 0..1_000_000 {
         relay.service();
         let _ = client.status(conn);
         received.extend_from_slice(&client.recv(conn));
-        if received.len() >= N {
+        if received.len() >= n {
             break;
         }
         if step % 8 == 0 {
@@ -290,7 +292,7 @@ fn bulk_download_flows_within_the_sliding_window() {
     }
     assert_eq!(
         received.len(),
-        N,
+        n,
         "the whole stream must arrive (sliding window, no truncation)"
     );
     assert!(
