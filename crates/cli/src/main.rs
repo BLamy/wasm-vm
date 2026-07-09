@@ -10,6 +10,11 @@
 //!   stderr); `--max-instrs` reached ⇒ 102. Bad inputs get distinct nonzero codes.
 //! - **`retired=<n>`** is printed to stderr at exit for the bench/CI harnesses.
 
+// The Linux boot path needs S-mode + built-in SBI, which the quarantined `zicsr-stub` build
+// compiles out — so the whole subcommand is gated the same way (there is no Linux to boot
+// without supervisor mode).
+#[cfg(not(feature = "zicsr-stub"))]
+pub mod boot;
 pub mod debug;
 pub mod file_backend;
 mod trace_json;
@@ -38,6 +43,9 @@ struct Cli {
 enum Cmd {
     /// Load a bare-metal rv64 ELF and execute it.
     Run(RunArgs),
+    /// E2-T15: boot an unmodified Linux `Image` + initramfs to an interactive shell.
+    #[cfg(not(feature = "zicsr-stub"))]
+    Boot(boot::BootArgs),
 }
 
 #[derive(Args)]
@@ -164,6 +172,8 @@ fn main() -> ExitCode {
     env_logger::init();
     match Cli::parse().cmd {
         Cmd::Run(args) => run(args),
+        #[cfg(not(feature = "zicsr-stub"))]
+        Cmd::Boot(args) => boot::boot(args),
     }
 }
 

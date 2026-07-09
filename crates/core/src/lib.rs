@@ -280,6 +280,20 @@ impl Machine {
         (alloc::rc::Rc::clone(&slots[0]), state)
     }
 
+    /// E2-T15: attach the goldfish RTC (a boot-time read-only stub, epoch 0 → 1970) at
+    /// [`platform::virt::RTC_BASE`], matching the `google,goldfish-rtc` node the DTB
+    /// advertises. Without it the kernel's `rtc-goldfish` probe takes a load access fault on
+    /// the unbacked window. E2-T16 upgrades the stub to a real host clock.
+    pub fn enable_rtc(&mut self) {
+        self.bus
+            .attach(
+                platform::virt::RTC_BASE,
+                platform::virt::RTC_LEN,
+                alloc::boxed::Box::new(dev::rtc::GoldfishRtc::new()),
+            )
+            .expect("RTC window overlaps RAM or another device");
+    }
+
     /// E2-T03 (ADR 0002): route `ecall`-from-S to the built-in Rust SBI ([`sbi::dispatch`])
     /// instead of delivering it as an architectural trap. Enable together with
     /// [`Self::boot_supervisor`] for the emulator-as-firmware boot path.
@@ -307,8 +321,10 @@ impl Machine {
     /// would hand off to a kernel. Sets, precisely:
     /// - privilege = **S-mode**, `pc = platform::virt::KERNEL_BASE` (0x8020_0000);
     /// - `a0 = hartid`, `a1 = dtb_addr` (the standard Linux/SBI convention);
-    /// - `mideleg = 0x222` (SSI/STI/SEI to S), `medeleg = 0xB109` (misaligned-fetch,
-    ///   breakpoint, ecall-from-U, and the three page-faults to S — OpenSBI's own set);
+    /// - `mideleg = 0x222` (SSI/STI/SEI to S), `medeleg = 0xB1FF` (OpenSBI's full set: causes
+    ///   0..=8 incl. illegal-instruction and load/store access faults, + I/L/S page faults to
+    ///   S — wide by necessity, since with no guest M-mode firmware `mtvec` stays 0 and any
+    ///   non-delegated trap would abort the whole machine instead of reaching the kernel);
     /// - `satp = 0` (Bare; the kernel builds its own tables), `sstatus.SIE = 0`
     ///   (interrupts masked until the kernel opts in) — both reset defaults, restated here
     ///   as part of the contract;
@@ -323,9 +339,18 @@ impl Machine {
             .csr
             .access(MIDELEG, CsrOp::Write, 0x222, false, false, 0)
             .expect("mideleg write from M cannot fail");
+        // medeleg = 0xB1FF — OpenSBI's full delegation set: causes 0..=8 (misaligned-fetch,
+        // fetch-access, ILLEGAL-INSTRUCTION, breakpoint, misaligned/access load & store,
+        // ecall-from-U) plus the three page-faults (12/13/15). This MUST be the wide set, not
+        // a minimal one: there is no guest M-mode firmware here (SBI is Rust) and Linux runs
+        // in S-mode, so it only ever programs `stvec` — `mtvec` stays 0 forever. Any cause we
+        // DON'T delegate therefore traps to M-mode, finds no handler (mtvec==0), and aborts
+        // the whole machine (RunOutcome::Trapped) instead of reaching the kernel. With the
+        // wide set, a userspace illegal instruction becomes SIGILL and a bad access becomes
+        // SIGSEGV/SIGBUS in just that process — exactly as on real hardware + OpenSBI.
         self.hart
             .csr
-            .access(MEDELEG, CsrOp::Write, 0xB109, false, false, 0)
+            .access(MEDELEG, CsrOp::Write, 0xB1FF, false, false, 0)
             .expect("medeleg write from M cannot fail");
         // E2-T05: grant S-mode the CY/TM/IR counters (mcounteren = 0x7) — the kernel's
         // sched_clock reads `time` via rdtime, which traps without this (OpenSBI grants the
@@ -353,6 +378,40 @@ impl Machine {
             .htif
             .map_or(0, |h| h.check(&mut self.bus).raw_or_zero());
         Ok(img)
+    }
+
+    /// E2-T15: load a flat kernel `Image` (the Linux/RISC-V boot format — a raw binary, NOT
+    /// an ELF) at [`platform::virt::KERNEL_BASE`] and return `kernel_end` — one past the last
+    /// byte the RUNNING kernel occupies, which is what the initrd/DTB must be placed above.
+    ///
+    /// Crucially this is NOT `KERNEL_BASE + file_len`: the Image file omits `.bss`/init, but
+    /// the kernel reserves that memory at runtime. The RISC-V Image header (arch/riscv/kernel/
+    /// head.S) carries `image_size` at byte offset 16 (LE u64), the total memory footprint;
+    /// when the `RISCV\0\0\0`→`RSC\x05` magic at offset 0x38 is present and `image_size`
+    /// exceeds the file, we honour it. Placing the initrd at `KERNEL_BASE + file_len` instead
+    /// lands it inside `.bss` → the kernel logs "overlaps in-use memory region — disabling
+    /// initrd" and boots without a rootfs. Fails `Access` if the image — or its full runtime
+    /// footprint (`.bss` and all) — does not fit above `KERNEL_BASE` in RAM.
+    pub fn load_kernel_image(&mut self, bytes: &[u8]) -> Result<u64, bus::BusFault> {
+        let footprint = kernel_image_footprint(bytes);
+        let kernel_end = platform::virt::KERNEL_BASE + footprint;
+        // The RUNTIME footprint (not just the file) must fit: the no-initrd boot path has no
+        // later placement check to catch a `.bss` that overflows top-of-RAM, so guard here so
+        // the doc's "fails Access if it doesn't fit" is actually true.
+        let ram_top = self.bus.ram().base() + self.bus.ram().len() as u64;
+        if kernel_end > ram_top {
+            return Err(bus::BusFault::Access);
+        }
+        self.bus
+            .ram_mut()
+            .write_slice(platform::virt::KERNEL_BASE, bytes)?;
+        Ok(kernel_end)
+    }
+
+    /// E2-T15: place a blob (initrd, DTB) at an absolute guest-physical address in RAM.
+    /// A thin wrapper over the RAM loader escape hatch used by the boot assembler.
+    pub fn load_blob(&mut self, addr: u64, bytes: &[u8]) -> Result<(), bus::BusFault> {
+        self.bus.ram_mut().write_slice(addr, bytes)
     }
 
     /// Borrow the hart / bus for test rigs and the CLI (seeding instructions,
@@ -673,9 +732,55 @@ impl Machine {
     }
 }
 
+/// The memory footprint (bytes from `KERNEL_BASE`) of a RISC-V Linux `Image`. Returns
+/// `image_size` from the Image header when the header is valid and larger than the file;
+/// otherwise the raw file length (a kernel without the header, or a truncated/foreign blob,
+/// still loads and the caller gets a safe lower bound).
+///
+/// Header layout (arch/riscv/kernel/head.S `_start`): `code0`(4) `code1`(4) `text_offset`(8)
+/// `image_size`(8) `flags`(8) `version`(4) `res1`(4) `res2`(8) `magic`(8, deprecated
+/// `"RISCV\0\0\0"` at 0x30) then the 4-byte `magic2 = "RSC\x05"` at offset **0x38**. We key
+/// off `magic2`, which is stable across the header revisions that carry `image_size`.
+///
+/// Limitation: a pre-4.6 kernel (or one built without CONFIG) can leave `image_size == 0`
+/// ("unbounded"); we then fall back to `file_len`, which under-reports the `.bss` footprint
+/// and could mis-place the initrd. Every kernel we ship (6.6.63) sets it, and the boot glue's
+/// RAM ceiling still prevents an overflow — but an image_size-0 kernel is unsupported here.
+fn kernel_image_footprint(bytes: &[u8]) -> u64 {
+    let file_len = bytes.len() as u64;
+    if bytes.len() >= 0x3c && &bytes[0x38..0x3c] == b"RSC\x05" {
+        let image_size = u64::from_le_bytes(bytes[16..24].try_into().unwrap());
+        if image_size > file_len {
+            return image_size;
+        }
+    }
+    file_len
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn kernel_footprint_honours_image_size() {
+        // A minimal header: image_size at offset 16, RSC\x05 magic at 0x3c.
+        let mut img = alloc::vec![0u8; 0x3c];
+        img[16..24].copy_from_slice(&0x0011_4d00u64.to_le_bytes());
+        img[0x38..0x3c].copy_from_slice(b"RSC\x05");
+        assert_eq!(kernel_image_footprint(&img), 0x0011_4d00);
+    }
+
+    #[test]
+    fn kernel_footprint_falls_back_to_file_len() {
+        // No magic → use the file length (never place initrd below the raw image).
+        let img = alloc::vec![0u8; 0x200];
+        assert_eq!(kernel_image_footprint(&img), 0x200);
+        // Magic present but image_size smaller than the file → still the file length.
+        let mut small = alloc::vec![0u8; 0x400];
+        small[16..24].copy_from_slice(&0x100u64.to_le_bytes());
+        small[0x38..0x3c].copy_from_slice(b"RSC\x05");
+        assert_eq!(kernel_image_footprint(&small), 0x400);
+    }
 
     #[test]
     fn version_matches_manifest() {

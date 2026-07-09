@@ -53,8 +53,8 @@ fn builtin_sbi_first_call_and_reset_state() {
     assert_eq!(rd_csr(&mut m, MIDELEG), 0x222, "mideleg: SSI/STI/SEI -> S");
     assert_eq!(
         rd_csr(&mut m, MEDELEG),
-        0xB109,
-        "medeleg: OpenSBI-equivalent set"
+        0xB1FF,
+        "medeleg: OpenSBI's full delegation set (causes 0..=8 + page faults)"
     );
     assert_eq!(rd_csr(&mut m, SATP), 0, "satp = Bare");
     assert_eq!(rd_csr(&mut m, SSTATUS) & 0x2, 0, "sstatus.SIE = 0");

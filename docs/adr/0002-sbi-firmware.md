@@ -77,7 +77,7 @@ Boot HART MEDELEG         : 0x000000000000b109
 === outcome: MaxInstrs, final pc 0x80200000 ===          ← parked in our stub kernel
 ```
 
-OpenSBI's own hart init lands on **exactly** the `mideleg 0x222` / `medeleg 0xB109` this
+OpenSBI's own hart init lands on **exactly** the `mideleg 0x222` / `medeleg 0xB1FF` this
 ADR's boot contract specifies — independent confirmation of the delegation table below.
 
 ### Prototype (a): built-in SBI first call
@@ -133,7 +133,7 @@ instruction-zero by `builtin_sbi_first_call_and_reset_state`:
 | `a0` | hartid (`0`) | standard Linux/SBI handoff |
 | `a1` | DTB physical address | from `fdt::dtb_placement` (top of DRAM − blob − 16 KiB slack, 8-byte aligned) |
 | `mideleg` | `0x222` | SSI/STI/SEI delegated to S |
-| `medeleg` | `0xB109` | misaligned-fetch, breakpoint, ecall-from-U, I/L/S page faults → S (OpenSBI's own set) |
+| `medeleg` | `0xB1FF` | causes 0..=8 (incl. illegal-instr + load/store access faults) + I/L/S page faults → S (OpenSBI's full set; wide by necessity — no guest M-mode, so mtvec stays 0) |
 | `satp` | `0` (Bare) | kernel builds its own tables |
 | `sstatus.SIE` | `0` | interrupts masked until the kernel opts in |
 | PMP | entry 0 = R/W/X NAPOT over all memory | S-mode needs an explicit grant |
