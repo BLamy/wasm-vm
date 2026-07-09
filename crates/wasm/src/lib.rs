@@ -578,7 +578,7 @@ impl WasmLinux {
             } => {
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
-                let backend = chunked::ChunkedBackend::new(manifest.index(), store.clone());
+                let backend = chunked::ChunkedBackend::new(&manifest, store.clone());
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,

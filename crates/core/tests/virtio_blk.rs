@@ -501,3 +501,105 @@ fn reset_discards_parked_reads() {
         "guest buffer never touched after reset"
     );
 }
+
+/// A backend whose WRITE parks (`WouldBlock`) until `ready` — models a copy-on-write overlay whose
+/// partial-block RMW needs a base chunk that hasn't been fetched yet (E3-T04). Counts applied writes
+/// and captures the last payload so the test can prove exactly-once apply.
+struct LazyWriteMock {
+    ready: Rc<Cell<bool>>,
+    applied: Rc<Cell<u32>>,
+    last: Rc<std::cell::RefCell<Vec<u8>>>,
+    capacity: u64,
+}
+impl BlockBackend for LazyWriteMock {
+    fn capacity_sectors(&self) -> u64 {
+        self.capacity
+    }
+    fn read(&mut self, _sector: u64, buf: &mut [u8]) -> Result<(), BlockError> {
+        buf.fill(0);
+        Ok(())
+    }
+    fn write(&mut self, _sector: u64, buf: &[u8]) -> Result<(), BlockError> {
+        if !self.ready.get() {
+            return Err(BlockError::WouldBlock { chunk: 0 }); // parks until the base chunk arrives
+        }
+        self.applied.set(self.applied.get() + 1);
+        *self.last.borrow_mut() = buf.to_vec();
+        Ok(())
+    }
+    fn flush(&mut self) -> Result<(), BlockError> {
+        Ok(())
+    }
+}
+
+/// A WRITE whose backing block isn't resident PARKS (no used-ring completion, no apply), then applies
+/// and completes EXACTLY ONCE once the chunk arrives — never double-applied or double-completed. This
+/// is the E3-T04 copy-on-write write-park path (blk.rs T_OUT WouldBlock arm).
+#[test]
+fn lazy_write_parks_then_applies_exactly_once() {
+    let ready = Rc::new(Cell::new(false));
+    let applied = Rc::new(Cell::new(0u32));
+    let last = Rc::new(std::cell::RefCell::new(Vec::new()));
+    let mock = LazyWriteMock {
+        ready: ready.clone(),
+        applied: applied.clone(),
+        last: last.clone(),
+        capacity: 64,
+    };
+    let (mut m, mut ctx) = machine_be(Box::new(mock));
+
+    // OUT: write one sector of a known payload from a guest buffer (readable data descriptor).
+    let payload: Vec<u8> = (0..SECTOR_SIZE).map(|i| (i as u8) ^ 0x5A).collect();
+    let wbuf = DATA + 0x4000;
+    for (i, b) in payload.iter().enumerate() {
+        m.bus_mut().store8(wbuf + i as u64, *b).unwrap();
+    }
+    write_hdr(&mut m, HDR, 1, 0); // rtype T_OUT, sector 0
+    wdesc(&mut m, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut m, 1, wbuf, SECTOR_SIZE as u32, F_NEXT, 2); // readable (device reads data-out)
+    wdesc(&mut m, 2, STATUS, 1, F_WRITE, 0);
+    m.bus_mut().store8(STATUS, 0xEE).unwrap(); // sentinel: unchanged ⇒ never completed
+    m.bus_mut().store16(USED + 2, 0).unwrap();
+
+    // Submit while NOT ready → the write parks: nothing applied, no used-ring completion.
+    submit(&mut m, &mut ctx, 0);
+    assert_eq!(
+        m.pending_blk_chunks(),
+        vec![0],
+        "write parked, awaiting chunk 0"
+    );
+    assert_eq!(applied.get(), 0, "parked write must not apply");
+    assert_eq!(
+        m.bus_mut().load16(USED + 2).unwrap(),
+        0,
+        "used idx unchanged"
+    );
+    assert_eq!(m.bus_mut().load8(STATUS).unwrap(), 0xEE, "status untouched");
+
+    // Extra boundaries while parked must not apply or complete.
+    assert_eq!(m.run(4), RunOutcome::MaxInstrs);
+    assert_eq!(applied.get(), 0, "still not applied");
+    assert_eq!(m.bus_mut().load16(USED + 2).unwrap(), 0);
+
+    // Chunk arrives → a plain boundary re-services and completes the write EXACTLY ONCE.
+    ready.set(true);
+    assert_eq!(m.run(4), RunOutcome::MaxInstrs);
+    assert!(m.pending_blk_chunks().is_empty(), "no longer parked");
+    assert_eq!(applied.get(), 1, "applied exactly once");
+    assert_eq!(&*last.borrow(), &payload, "correct payload applied");
+    assert_eq!(
+        m.bus_mut().load16(USED + 2).unwrap(),
+        1,
+        "completed exactly once"
+    );
+    assert_eq!(m.bus_mut().load8(STATUS).unwrap(), 0, "status S_OK");
+
+    // Further boundaries must not double-apply or double-complete.
+    assert_eq!(m.run(8), RunOutcome::MaxInstrs);
+    assert_eq!(applied.get(), 1, "no double-apply");
+    assert_eq!(
+        m.bus_mut().load16(USED + 2).unwrap(),
+        1,
+        "no double-completion"
+    );
+}

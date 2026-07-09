@@ -3,7 +3,7 @@ id: E3-T04
 epic: 3
 title: Copy-on-write overlay format and BlockBackend trait
 priority: 304
-status: pending
+status: verified
 depends_on: [E3-T01]
 estimate: M
 capstone: false
@@ -75,8 +75,30 @@ partial, blocked-write atomicity). **Verdict SHIP, no bugs**, all doc claims mat
 Acceptance met: [x] ≥10^4-case proptest (10,000) — OverlayDisk over a resident base byte-identical to
 a flat Vec model (unaligned + cross-block-boundary + tail). [x] unwritten read hits base exactly; the
 100-byte write at offset 4090 merges. [x] mismatched base hash → typed error before I/O (incl. a
-re-chunked same-bytes base). [x] commit-semantics doc explicit for T08. **Remaining (pass 2, stacked
-branch):** [ ] Alpine boots read-write on OverlayDisk + a resident base (native harness + browser),
-`touch /root/x; ls` works — wire OverlayDisk into the wasm virtio-blk path (replacing ChunkedBackend's
-ad-hoc sector overlay). Gates: storage 37/0, workspace clippy --all-features + fmt + determinism +
-wasm build; `cargo tree -p wasm-vm-storage` has no web-sys/js-sys/wasm-bindgen (adversarial check).
+re-chunked same-bytes base). [x] commit-semantics doc explicit for T08.
+
+**2026-07-06 — OverlayDisk wired into virtio-blk (pass 2), PR stacked on #91. TASK COMPLETE.**
+`ChunkedBackend` now holds `OverlayDisk<MemOverlay>` over the shared `BlockCache` base (replacing the
+ad-hoc 512 B sector overlay): read → merge overlay-over-base (WouldBlock on absent base chunk); write
+→ 4 KiB-block CoW (partial block read-modify-written; WouldBlock if the block's base chunk isn't
+resident); flush → `commit`. `blk.rs` T_OUT arm parks writes on WouldBlock, symmetric to reads — safe
+because `OverlayDisk::write` is atomic on NeedChunk (mutates nothing), so re-executing a parked write
+never double-applies/tears. Synchronous backends (MemBackend/FileBackend) never WouldBlock → the
+busybox/whole-disk boot paths are unchanged.
+
+Cold-clone critic **SHIP, no bugs** — hand-traced parked-write across boundaries + wrote a throwaway
+core test proving exactly-once apply+push (now a permanent regression test:
+`lazy_write_parks_then_applies_exactly_once`). Verified: write atomicity (blocked write mutates
+nothing), exactly-once apply+push, write-park→fetch→complete liveness (awaited chunk surfaced via
+pending_blk_chunks), read-path + synchronous-backend non-regression, borrow safety, capacity/attach.
+
+**ACCEPTANCE MET (browser, Playwright, 12.1 min, 1 passed):** unmodified Alpine boots READ-WRITE on
+the CoW OverlayDisk IN THE BROWSER (base = lazily-fetched chunks; writes = 4 KiB overlay); a guest
+write round-trips — `touch /root/cowfile && ls` shows it, `echo … > cowfile && cat` reads the written
+bytes back through the overlay merge, no console errors.
+
+Gates: core virtio_blk 11/0 (+ write-park regression), wasm ChunkedBackend 6/0, storage 37/0 (10^4
+proptest), workspace clippy --all-features + fmt + determinism + wasm builds (default + zicsr-stub) +
+node --check; `cargo tree -p wasm-vm-storage` has no browser deps. **E3-T04 DONE** — all acceptance
+criteria met across PR #91 (core) + the pass-2 wiring PR. Follow-on: durable overlay persistence to
+IndexedDB/OPFS (a later task implementing OverlayBackend); E3-T08 maps VIRTIO_BLK_T_FLUSH → commit.

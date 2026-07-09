@@ -324,6 +324,13 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                     drop(rc);
                     match state.backend.write(sector, &buf) {
                         Ok(()) => (S_OK, 0),
+                        // A copy-on-write overlay write of a PARTIAL block must read the base for the
+                        // untouched part; if that base chunk isn't resident yet the backend reports
+                        // WouldBlock. Park the write exactly like a read — re-execution is safe because
+                        // OverlayDisk::write mutated nothing on WouldBlock (atomic, E3-T04).
+                        Err(BlockError::WouldBlock { chunk }) => {
+                            return ExecOutcome::Parked { chunk };
+                        }
                         Err(BlockError::ReadOnly) => (S_IOERR, 0),
                         Err(_) => (S_IOERR, 0),
                     }
