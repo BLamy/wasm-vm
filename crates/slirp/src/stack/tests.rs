@@ -422,3 +422,166 @@ fn udp_to(dst: Ipv4Addr, src_port: u16, dst_port: u16) -> Vec<u8> {
     );
     buf
 }
+
+// ── Internal-service UDP diversion (E3-T15 stack wiring) ─────────────────────
+use crate::udp_frame::build_udp_frame;
+use std::net::Ipv4Addr;
+
+/// A tiny DHCP DISCOVER payload (option 53 = 1), enough for DhcpServer to answer.
+fn dhcp_discover() -> Vec<u8> {
+    let mut b = vec![0u8; 236];
+    b[0] = 1;
+    b[1] = 1;
+    b[2] = 6;
+    b[28..34].copy_from_slice(&GUEST_MAC);
+    b.extend_from_slice(&[0x63, 0x82, 0x53, 0x63]); // magic cookie
+    b.extend_from_slice(&[53, 1, 1]); // DISCOVER
+    b.push(255);
+    b
+}
+
+#[test]
+fn dhcp_broadcast_frame_is_diverted_to_the_service_queue() {
+    let mut s = SlirpStack::new(GW_MAC);
+    // Guest DHCP DISCOVER: 0.0.0.0:68 → 255.255.255.255:67.
+    let frame = build_udp_frame(
+        GUEST_MAC,
+        [0xff; 6],
+        Ipv4Addr::UNSPECIFIED,
+        68,
+        Ipv4Addr::new(255, 255, 255, 255),
+        67,
+        &dhcp_discover(),
+    )
+    .unwrap();
+    s.inject(frame);
+
+    let diverted = s.take_service_udp();
+    assert_eq!(
+        diverted.len(),
+        1,
+        "the DHCP frame was diverted, not dropped"
+    );
+    assert_eq!(diverted[0].dst_port, 67);
+    assert_eq!(diverted[0].src_port, 68);
+    // It must NOT have gone to smoltcp (no auto-reply on poll).
+    s.poll(1);
+    assert!(
+        s.take_egress().is_empty(),
+        "smoltcp did not see the diverted UDP"
+    );
+}
+
+#[test]
+fn dns_query_to_our_resolver_is_diverted_external_dns_is_not() {
+    let mut s = SlirpStack::new(GW_MAC);
+    // DNS to 10.0.2.3:53 → diverted.
+    let ours =
+        build_udp_frame(GUEST_MAC, GW_MAC, net::GUEST, 40000, net::DNS, 53, b"query").unwrap();
+    s.inject(ours);
+    assert_eq!(
+        s.take_service_udp().len(),
+        1,
+        "DNS to our resolver is diverted"
+    );
+
+    // DNS to an EXTERNAL server (8.8.8.8:53) → NOT diverted (a normal outbound flow), and dropped by
+    // the filter (not injected as a forged reply) — nothing in the service queue OR egress.
+    let ext = build_udp_frame(
+        GUEST_MAC,
+        GW_MAC,
+        net::GUEST,
+        40001,
+        Ipv4Addr::new(8, 8, 8, 8),
+        53,
+        b"query",
+    )
+    .unwrap();
+    s.inject(ext);
+    assert!(
+        s.take_service_udp().is_empty(),
+        "external DNS is not intercepted"
+    );
+    s.poll(1);
+    assert!(
+        s.take_egress().is_empty(),
+        "external UDP is not answered by the stack"
+    );
+}
+
+#[test]
+fn full_dhcp_path_through_the_stack_offer_egresses_to_the_guest() {
+    use crate::dhcp::DhcpServer;
+    let mut s = SlirpStack::new(GW_MAC);
+    let dhcp = DhcpServer::new();
+
+    // Inject a DISCOVER, dispatch it via DhcpServer, frame the OFFER back, and confirm it egresses.
+    let frame = build_udp_frame(
+        GUEST_MAC,
+        [0xff; 6],
+        Ipv4Addr::UNSPECIFIED,
+        68,
+        Ipv4Addr::new(255, 255, 255, 255),
+        67,
+        &dhcp_discover(),
+    )
+    .unwrap();
+    s.inject(frame);
+
+    for g in s.take_service_udp() {
+        if let Some(reply) = dhcp.handle(&g.payload) {
+            // A DHCP reply is broadcast from the gateway:67 to the client:68.
+            let out = build_udp_frame(
+                GW_MAC,
+                g.src_mac,
+                net::GATEWAY,
+                67,
+                Ipv4Addr::new(255, 255, 255, 255),
+                68,
+                &reply,
+            )
+            .unwrap();
+            s.push_egress(out);
+        }
+    }
+
+    let egress = s.take_egress();
+    assert_eq!(egress.len(), 1, "the OFFER frame egressed to the guest");
+    // It parses back as a UDP datagram from :67 to :68 carrying a DHCP OFFER (option 53 = 2).
+    let g = parse_udp(&egress[0]).expect("egress is a valid UDP frame");
+    assert_eq!(g.src_port, 67);
+    assert_eq!(g.dst_port, 68);
+    // yiaddr (offset 16..20 of the BOOTP payload) is the guest address.
+    assert_eq!(&g.payload[16..20], &net::GUEST.octets());
+}
+
+#[test]
+fn unicast_renew_to_gateway_is_diverted_not_double_handled() {
+    // A DHCP RENEW unicast to the gateway (10.0.2.2:67) is the ONE case where `inject`'s divert-`return`
+    // matters: without it, the frame would ALSO reach smoltcp (which owns 10.0.2.2 but has no UDP:67
+    // socket) and emit a spurious ICMP port-unreachable to the guest. Prove the divert claims it AND
+    // smoltcp never sees it (critic MINOR: this path was previously untested).
+    let mut s = SlirpStack::new(GW_MAC);
+    let frame = build_udp_frame(
+        GUEST_MAC,
+        GW_MAC,
+        net::GUEST,
+        68,
+        net::GATEWAY, // unicast to the gateway, not broadcast
+        67,
+        &dhcp_discover(),
+    )
+    .unwrap();
+    s.inject(frame);
+
+    assert_eq!(
+        s.take_service_udp().len(),
+        1,
+        "the unicast RENEW is diverted"
+    );
+    s.poll(1);
+    assert!(
+        s.take_egress().is_empty(),
+        "smoltcp never saw it — no spurious ICMP port-unreachable"
+    );
+}

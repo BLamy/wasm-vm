@@ -302,3 +302,36 @@ reframing a large answer would crash. Fix: `build_udp_frame` now returns `Option
 built frame's IP + UDP checksums `verify_checksum()` for empty/1/27-byte payloads (a real guest accepts
 them), and a regression frames exactly `MAX_UDP_PAYLOAD` while rejecting +1. 106 slirp tests; fmt +
 clippy + no-default build green.
+
+**2026-07-08 — pass 1j: stack-level UDP service diversion (`stack.rs`).** The first actual integration of
+the internal services into the real `SlirpStack` — architecture-neutral (the caller dispatches, sync for
+DHCP now, async for DNS later, so it doesn't prejudge the sync/async bridge). `inject` now checks
+`parse_udp` + `is_service_udp(dst_ip, dst_port)` (DHCP :67 to broadcast/gateway; DNS :53 to `net::DNS` —
+matching the `UdpServices` routing exactly) and DIVERTS a service-bound datagram into a `service_udp`
+queue instead of the smoltcp path (which drops UDP anyway) — strictly additive, no TCP/ICMP/ARP behavior
+changes. `take_service_udp() -> Vec<GuestUdp>` drains the queue for the caller; `push_egress(frame)`
+injects a caller-framed reply so it appears in `take_egress` alongside smoltcp's output. Tests (3,
+frame-injection, no boot): a DHCP DISCOVER broadcast frame is DIVERTED (not dropped, and smoltcp never
+sees it — no auto-reply on poll); DNS to 10.0.2.3:53 is diverted while DNS to an EXTERNAL 8.8.8.8:53 is
+NOT (left to NAT, and the stack doesn't answer it); and the **full DHCP path through the real stack** —
+inject a DISCOVER frame → `take_service_udp` → the real `DhcpServer` → `build_udp_frame` the OFFER →
+`push_egress` → `take_egress` yields exactly one frame that parses as UDP :67→:68 carrying a DHCP OFFER
+with yiaddr = the guest address. 109 slirp tests. fmt + clippy green under BOTH `--all-features` and
+`--no-default-features`. Remaining for T15: the sync/async servicing loop that drives `UdpServices` from
+this diversion (DHCP sync + DNS async, like the pump's bridge), TCP-fallback, booted-guest acceptance.
+
+**Adversarial cold-clone critic on pass 1j: production code SOUND, one test-honesty MINOR fixed.** The
+critic verified (with mutations) the divert is genuinely additive + safe: `is_service_udp` matches
+`UdpServices` routing EXACTLY (no cross-match; gateway:53/dns:67 fall through), NO reflection/spoof
+vector (in slirp the only sender reaching `inject` is the guest), the `any_ip` bypass isn't exploitable
+(diverted frames would otherwise be dropped/noise), no legit frame wrongly diverted (ARP/ICMP/TCP →
+`parse_udp` None → fall through unchanged; mutation `is_service_udp→false` fails all 3 divert tests), and
+the external-DNS assertion is load-bearing (divert-on-port-only is caught). One MINOR (test honesty): the
+tests didn't cover the ONE case where `inject`'s divert-`return` is observable — a unicast DHCP RENEW to
+`gateway:67`, where without the return smoltcp (owning 10.0.2.2, no UDP:67 socket) emits a spurious ICMP
+port-unreachable; that mutation survived the suite. Fixed: `unicast_renew_to_gateway_is_diverted_not_
+double_handled` asserts the RENEW is diverted AND smoltcp never sees it — mutation-verified (FAILS with
+the `return` removed, PASSES with it). Two lower notes (not fixed, consistent with existing design):
+`service_udp` is unbounded (so are `device.rx`/`tx` — not a new DoS surface), and diverted frames bypass
+smoltcp's checksum validation (harmless — the guest's own frame, `dhcp.rs` parses defensively, UDP
+checksums are optional and DHCP often sends 0). 110 slirp tests; fmt + clippy + no-default green.
