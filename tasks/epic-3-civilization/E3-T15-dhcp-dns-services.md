@@ -267,3 +267,38 @@ the REAL `NativeResolver`: `localhost` resolves to 127.0.0.1 end-to-end through 
 a mock. test+native-gated. 99 slirp tests. fmt + clippy + no-default build green. This closes out the
 natively-verifiable control layer; the boot/browser-gated legs remain: concrete `fetch` DohTransport
 (wasm crate), TCP-fallback, wiring `UdpServices` into the SlirpStack UDP path, booted-guest acceptance.
+
+**2026-07-08 — pass 1i: UDP datagram framing (`udp_frame.rs`).** The pure, browser-safe glue between
+the frame-level stack and the payload-level `UdpServices` — the architecture-independent building block
+the UDP stack-wiring needs regardless of how DHCP/DNS are ultimately hooked in. `parse_udp(frame) ->
+Option<GuestUdp{ src_mac, src_ip, src_port, dst_ip, dst_port, payload }>` pulls the fields dispatch needs
+plus what's needed to ADDRESS a reply out of a guest ethernet frame (`None` on non-IPv4 / non-UDP /
+malformed — never panics, leaving the frame to the TCP/ICMP/NAT paths). `build_udp_frame(src_mac,
+dst_mac, from_ip, from_port, to_ip, to_port, payload)` frames an Ethernet+IPv4+UDP reply with correct
+checksums (via smoltcp wire types) — handles both a DHCP broadcast reply (to the ff:ff MAC / 255.255…
+IP) and a DNS unicast (to the guest MAC/IP/port). No tokio → browser build. Tests (5): build↔parse
+round-trip (all fields), a guest DHCP DISCOVER (0.0.0.0:68 → 255.255.255.255:67) parses, empty-payload
+round-trip, non-UDP/non-IPv4 rejection (ARP + a TCP-protocol IPv4 packet → None), and a malformed sweep
+(short/no-room + every truncation & single-byte corruption of a valid frame) asserting no panic. 104
+slirp tests. fmt + clippy green under BOTH `--all-features` and `--no-default-features`. (Local gate
+caught 6 useless-conversion clippy warnings — smoltcp's `Ipv4Address` IS `std::net::Ipv4Addr` in this
+version — fixed before push.) Remaining for T15: wire `parse_udp`→`UdpServices`→`build_udp_frame` into
+the SlirpStack (accept UDP to our service endpoints, dispatch, egress the reply; the DNS async path needs
+the same sync/async bridge as the pump), TCP-fallback, booted-guest acceptance (env-gated).
+
+**Adversarial cold-clone critic on pass 1i: SOUND parse, one latent MINOR (overflow panic) fixed + a
+test gap closed.** The critic read smoltcp-0.13 source and ran hand-corrupted frames — `parse_udp` is
+CLEAN against every lying-length case: IP total_length > buffer → None (check_len rejects); UDP length >
+IP payload → None; UDP length < 8 → None; UDP length == 8 → correct empty payload; trailing bytes after
+the datagram are EXCLUDED by both `Ipv4Packet::payload()` (bounded by total_length) and
+`UdpPacket::payload()` (bounded by the UDP length) — junk does NOT leak; IPv4 options (IHL=6) → ports
+parse at the right offset (no misparse); all boundary/truncation/bitflip cases → no panic; the TCP-flip
+test is honest (the None genuinely comes from the next_header check). It found one real latent MINOR:
+`build_udp_frame` PANICKED for payloads ≥ 65508 bytes — the IPv4 total_length is a u16, so `20 + 8 +
+len` overflowed, then `copy_from_slice` length-mismatched. No caller trips it yet, but a service
+reframing a large answer would crash. Fix: `build_udp_frame` now returns `Option`, rejecting a payload >
+`MAX_UDP_PAYLOAD` (65507) — the largest legal UDP-over-IPv4 payload. Also closed the critic's test-gap
+(the round-trip was checksum-blind since `new_checked` validates lengths only): a new test asserts the
+built frame's IP + UDP checksums `verify_checksum()` for empty/1/27-byte payloads (a real guest accepts
+them), and a regression frames exactly `MAX_UDP_PAYLOAD` while rejecting +1. 106 slirp tests; fmt +
+clippy + no-default build green.

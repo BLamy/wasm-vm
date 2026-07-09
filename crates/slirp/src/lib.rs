@@ -29,6 +29,7 @@ pub mod resolver;
 pub mod stack;
 pub mod tcp;
 pub mod udp;
+pub mod udp_frame;
 #[cfg(all(test, feature = "native"))]
 mod udp_integration_tests;
 
@@ -50,6 +51,7 @@ pub use pump::{PumpStats, pump_flow};
 pub use resolver::{DnsForwarder, Resolution, Resolver, TtlCache};
 pub use stack::SlirpStack;
 pub use udp::{UdpReply, UdpServices};
+pub use udp_frame::{GuestUdp, build_udp_frame, parse_udp};
 
 /// The slirp virtual network — QEMU-user conventions so guest images "just work".
 pub mod net {
