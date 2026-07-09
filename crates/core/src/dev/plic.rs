@@ -33,7 +33,8 @@ pub const NUM_SOURCES: usize = 32;
 /// Interrupt contexts: hart-0 M-mode (0) and hart-0 S-mode (1).
 pub const NUM_CONTEXTS: usize = 2;
 /// The standard QEMU-virt PLIC window length (covers the used register banks with margin).
-pub const PLIC_LEN: u64 = 0x0060_0000;
+/// Re-exported from the authoritative [`crate::platform::virt`] map (E2-T01).
+pub use crate::platform::virt::PLIC_LEN;
 
 const PENDING_BASE: u64 = 0x1000;
 const ENABLE_BASE: u64 = 0x2000;

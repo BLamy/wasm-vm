@@ -38,8 +38,9 @@ const MSIP: u64 = 0x0000;
 const MTIMECMP: u64 = 0x4000;
 const MTIME: u64 = 0xBFF8;
 
-/// The standard CLINT window length (QEMU-virt): 64 KiB.
-pub const CLINT_LEN: u64 = 0x1_0000;
+/// The standard CLINT window length (QEMU-virt): 64 KiB. Re-exported from the authoritative
+/// [`crate::platform::virt`] map (E2-T01).
+pub use crate::platform::virt::CLINT_LEN;
 
 /// The register state a [`Clint`] device shares with the [`crate::Machine`] that drives its
 /// clock and samples its interrupt levels. Hart-0 only for now (single hart).

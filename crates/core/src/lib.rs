@@ -35,6 +35,7 @@ pub mod htif;
 pub mod loader;
 pub mod mmio;
 pub mod mmu;
+pub mod platform;
 pub mod pmp;
 pub mod ram;
 pub mod snapshot;

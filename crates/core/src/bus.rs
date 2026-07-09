@@ -24,24 +24,14 @@ pub enum BusFault {
 
 /// The canonical guest physical memory map.
 ///
-/// `DRAM_BASE` matches QEMU `virt` and Spike defaults, so differential traces (E0-T20)
-/// need no address translation.
+/// These are re-exported from the authoritative [`crate::platform::virt`] definition (E2-T01)
+/// so the whole machine has a single source of truth for addresses — `mmap::DRAM_BASE` and
+/// `platform::virt::DRAM_BASE` are the same constant. `DRAM_BASE` matches QEMU `virt` and Spike
+/// defaults, so differential traces (E0-T20) need no address translation.
 pub mod mmap {
-    /// Base address of guest DRAM.
-    pub const DRAM_BASE: u64 = 0x8000_0000;
-    /// Default guest DRAM size: 128 MiB.
-    pub const DRAM_SIZE_DEFAULT: u64 = 128 * 1024 * 1024;
-    /// UART0 base — the 16550 THR on the QEMU `virt` board (E0-T12 stub;
-    /// E2 replaces it with a full 16550 at the same address, no relink).
-    pub const UART0_BASE: u64 = 0x1000_0000;
-    /// UART0 MMIO window length.
-    pub const UART0_LEN: u64 = 0x100;
-    /// CLINT base — the SiFive/QEMU-virt Core-Local Interruptor (E1-T12): msip / mtimecmp /
-    /// mtime for the machine timer + software interrupt.
-    pub const CLINT_BASE: u64 = 0x0200_0000;
-    /// PLIC base — the QEMU-virt Platform-Level Interrupt Controller (E1-T13): external
-    /// interrupt routing to mip.MEIP / mip.SEIP.
-    pub const PLIC_BASE: u64 = 0x0C00_0000;
+    pub use crate::platform::virt::{
+        CLINT_BASE, DRAM_BASE, DRAM_SIZE_DEFAULT, PLIC_BASE, UART0_BASE, UART0_LEN,
+    };
 }
 
 /// Fallible little-endian accessors at every RV64 access width.
