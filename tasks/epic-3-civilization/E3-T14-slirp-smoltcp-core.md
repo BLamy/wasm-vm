@@ -65,4 +65,25 @@ chunks (pathological framing) — corruption or quadratic slowdown refutes. Diff
 slirp.md` claims against behavior; any contract stated but unimplemented refutes.
 
 ## Verification log
-(empty)
+
+**2026-07-07 — pass 1: design + crate scaffold + NAT flow table (the pure core).** This is a large
+task landed in passes; pass 1 is the self-contained, deterministic, unit-tested core with NO smoltcp
+/ tokio yet (so no guest boot, no async runtime, and the browser build stays clean).
+- **`docs/design/slirp.md`** — the full architecture (required deliverable): addressing plan
+  (10.0.2.0/24, guest .15, gateway .2, DNS .3), the phy-device/Interface/promiscuous-TCP-accept
+  design, the `OutboundConnector` contract (incl. backpressure + half-close semantics), the NAT
+  table lifecycle (create/refresh/expire/bound), and explicit OUT-OF-SCOPE (inbound port-forward,
+  IPv6, raw ICMP, DHCP/DNS server) — with the pass split written down.
+- **`crates/slirp`** (new workspace member): `net` addressing constants + `is_local`/`in_subnet`;
+  the `OutboundConnector` trait + `ConnectError` (Refused/TimedOut/Unreachable/Denied) contract; and
+  **`FlowTable`** — NAT keyed by the 5-tuple, TIME-INJECTED (`now_ms` on every method, no clock of
+  its own → deterministic + reproducible), `BTreeMap` (ordered, no HashMap), idle timeouts (TCP 2 h,
+  UDP 30 s), a hard entry bound with **LRU eviction** returning the evicted flow so the caller tears
+  down its socket. 7 unit tests: create-then-refresh; UDP-expires-at-30s-while-TCP-survives; refresh
+  keeps a flow alive past its timeout; bound evicts the LRU; refresh updates LRU order; remove
+  idempotent; sweep is deterministic + only-expired. fmt + clippy + determinism-hazards green.
+
+**Pass 2 (next):** the smoltcp `phy::Device` + `Interface` glue (ARP/ICMP/promiscuous TCP accept),
+the per-flow bridge with backpressure/half-close, `NativeConnector` (tokio), and the native
+integration tests (HTTP GET through slirp to a local hyper server; 50-concurrent; 100 MB integrity;
+half-close). The acceptance criteria's booted-Alpine leg is pass-2/3 (long boot, env-gated).

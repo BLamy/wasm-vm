@@ -1,0 +1,10 @@
+[package]
+name = "wasm-vm-slirp"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+# E3-T14 pass 1: the pure NAT/addressing core has NO dependencies (deterministic, unit-tested, wasm+
+# native). smoltcp (the TCP/IP stack) and tokio (the NativeConnector) arrive in pass 2 behind
+# features so the browser build never pulls tokio.
+[dependencies]
