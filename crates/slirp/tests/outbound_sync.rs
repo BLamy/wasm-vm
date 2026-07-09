@@ -13,8 +13,8 @@
 use std::collections::VecDeque;
 use std::io::{Read, Write};
 use std::net::{Ipv4Addr, TcpListener};
-use std::sync::atomic::{AtomicI64, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicI64, Ordering};
 use std::time::Duration;
 
 use smoltcp::iface::{Config, Interface, SocketSet};
@@ -25,8 +25,8 @@ use smoltcp::wire::{
     EthernetAddress, EthernetFrame, HardwareAddress, IpAddress, IpCidr, Ipv4Address,
 };
 
-use wasm_vm_slirp::{SlirpLocalBackend, StdConnector};
 use wasm_vm_core::dev::virtio::net::NetBackend;
+use wasm_vm_slirp::{SlirpLocalBackend, StdConnector};
 
 /// A queue-backed guest ethernet device (mirrors the crate's `SlirpDevice`, but with public queues so
 /// the shuttle loop can move frames): `rx` = frames FROM the backend (guest consumes), `tx` = frames
@@ -107,7 +107,10 @@ struct Guest {
 
 impl Guest {
     fn new(clock: &Arc<AtomicI64>) -> Self {
-        let mut dev = GuestDevice { rx: VecDeque::new(), tx: VecDeque::new() };
+        let mut dev = GuestDevice {
+            rx: VecDeque::new(),
+            tx: VecDeque::new(),
+        };
         let cfg = Config::new(HardwareAddress::Ethernet(EthernetAddress(GUEST_MAC)));
         let mut iface = Interface::new(cfg, &mut dev, now(clock));
         iface.update_ip_addrs(|addrs| {
@@ -198,7 +201,11 @@ fn guest_tcp_reaches_a_real_echo_server_through_the_sync_backend() {
         // Once established, send the message exactly once.
         if !sent && guest.socket().may_send() && guest.socket().can_send() {
             let n = guest.socket().send_slice(MSG).unwrap();
-            assert_eq!(n, MSG.len(), "guest send buffer should accept the whole message");
+            assert_eq!(
+                n,
+                MSG.len(),
+                "guest send buffer should accept the whole message"
+            );
             sent = true;
         }
         // Drain whatever the echo brought back.
@@ -274,8 +281,7 @@ fn guest_syn_to_a_refused_port_gets_reset_not_hung() {
 fn no_connector_means_no_outbound_and_no_panic() {
     let clock = Arc::new(AtomicI64::new(0));
     let clk = clock.clone();
-    let mut backend =
-        SlirpLocalBackend::new(GW_MAC, Box::new(move || clk.load(Ordering::SeqCst)));
+    let mut backend = SlirpLocalBackend::new(GW_MAC, Box::new(move || clk.load(Ordering::SeqCst)));
     let mut guest = Guest::new(&clock);
     guest.connect(Ipv4Addr::new(93, 184, 216, 34), 80);
     let mut established_ever = false;
