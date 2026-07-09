@@ -6,8 +6,9 @@
 //! outbound TCP pump. Outbound TCP (guest → real socket over the WebSocket relay) is a later slice;
 //! this one gets a booted browser guest a DHCP-configured `eth0` and a reachable gateway.
 //!
-//! The clock is injected (`Box<dyn Fn() -> i64>` monotonic ms) so this is `no_std` + native-testable:
-//! the browser passes a `js_sys::Date::now`-based closure; tests pass a mock.
+//! The clock is injected (`Box<dyn Fn() -> i64>` monotonic ms) so the backend stays native-testable
+//! (this module is written alloc-only, though the crate around it is std): the browser passes a
+//! `js_sys::Date::now`-based closure; tests pass a mock.
 
 extern crate alloc;
 use alloc::boxed::Box;
@@ -40,13 +41,13 @@ impl SlirpLocalBackend {
         }
     }
 
-    /// Drive one servicing pass: `poll` (ARP/ICMP + divert any DHCP UDP to the service queue), then
-    /// `run_dhcp` (answer diverted DHCP), then harvest egress for the guest.
+    /// Drive one servicing pass: `poll` (ARP/ICMP; `inject` already diverted any DHCP UDP to the
+    /// service queue), then `run_dhcp` (answer diverted DHCP → `device.tx`), then harvest egress for
+    /// the guest. (`run_dhcp` writes egress directly, so no second `poll` is needed to flush it.)
     fn service(&mut self) {
         let now = (self.clock)();
         self.stack.poll(now);
         self.stack.run_dhcp(&self.dhcp);
-        self.stack.poll(now);
         for f in self.stack.take_egress() {
             self.egress.push_back(f);
         }
