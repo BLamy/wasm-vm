@@ -3,7 +3,7 @@ id: E3-T01
 epic: 3
 title: Chunked disk-image format with hashed manifest and core reader
 priority: 301
-status: pending
+status: implemented
 depends_on: [E2]
 estimate: M
 capstone: false
@@ -36,14 +36,14 @@ browser-agnostic: no fetch here, only pure types + math.
 - Native unit tests incl. proptest: chunk math round-trips for random image sizes.
 
 ## Acceptance criteria
-- [ ] `cargo test` passes natively and the storage crate builds for `wasm32-unknown-unknown`.
-- [ ] Chunking the Epic 2 Alpine image with `tools/chunk_image.py`, then reassembling chunks
+- [x] `cargo test` passes natively and the storage crate builds for `wasm32-unknown-unknown`.
+- [x] Chunking the Epic 2 Alpine image with `tools/chunk_image.py`, then reassembling chunks
       per the manifest, yields a byte-identical file (`sha256sum` match).
-- [ ] Offset math is proven for edge cases: offset 0, last byte, image size not a multiple of
+- [x] Offset math is proven for edge cases: offset 0, last byte, image size not a multiple of
       chunk size, single-chunk image — each covered by an explicit test.
-- [ ] A manifest with a corrupted chunk hash and a chunk with flipped bytes both produce
+- [x] A manifest with a corrupted chunk hash and a chunk with flipped bytes both produce
       typed errors, not panics.
-- [ ] `docs/design/chunked-image.md` exists and matches the implemented structs field-for-field.
+- [x] `docs/design/chunked-image.md` exists and matches the implemented structs field-for-field.
 
 ## Adversarial verification
 Attack the math and the spec/impl gap. Fuzz `ChunkIndex` with image sizes around chunk-size
@@ -55,4 +55,28 @@ any undocumented field or documented-but-absent field refutes. Confirm the crate
 `wasm32-unknown-unknown` with no `web-sys`/`js-sys` in its dependency tree (`cargo tree`).
 
 ## Verification log
-(empty)
+
+### 2026-07-06 — chunked format + core reader (PR #85)
+
+New crate `crates/storage` (wasm-vm-storage): `ImageManifest` (serde, from_json+validate; unknown
+fields ignored), `ChunkIndex` (offset↔chunk math, tail handling), `verify_chunk` (length-then-SHA256),
+typed `ImageError`. `no_std`+alloc, browser-agnostic (no web-sys/js-sys — cargo tree clean).
+`tools/chunk_image.py` (split/blob, round-trip verify). `docs/design/chunked-image.md` (spec + 128 KiB
+rationale + forward-compat).
+
+**Acceptance MET:** #1 native test + wasm32 build (no browser deps); #2 round-trip byte-identical on
+the 17 MB kernel Image (136 chunks, sha256 round-trips; Alpine identical); #3 offset edges
+(0/last/exact-multiple/single/1B/0B) + proptest; #4 hostile manifest edits + corruption → typed
+errors; #5 doc matches structs field-for-field. Full local gate clean (fmt/build/clippy-workspace-
+all-features/determinism).
+
+### 2026-07-06 — cold-clone critic — C1/C3/C4 confirmed, C2 footgun found + fixed
+
+Critic fuzzed the parser (20 hostile strings → all typed errors) and round-tripped real files. C1
+math CONFIRMED (proptest + a real 300 KB file). C3 verify_chunk CONFIRMED (length before hash). C4
+browser-agnostic + wasm + spec + python-manifest↔Rust-reader CONFIRMED. **C2 found a real footgun:**
+the PUBLIC unvalidated-construction path (pub fields let a caller skip validate()) could panic —
+chunk_size=0 div-by-zero, and verify_chunk bounds-checking the derived count not chunks.len() → OOB
+index. FIXED: derived_chunk_count/locate guard chunk_size==0; verify_chunk bounds-checks chunks.len()
++ rejects chunk_size==0 first; new test `unvalidated_manifest_never_panics`. Minor doc note
+(uppercase-hex accepted) clarified. Gates: 6/0 tests, clippy/fmt clean, wasm32 build, no regression.
