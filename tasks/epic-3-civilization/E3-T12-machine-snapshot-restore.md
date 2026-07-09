@@ -135,6 +135,27 @@ only, read only via the diagnostic getter — never by `pending`/`best_source`/`
 split into a separate stacked PR was blocked as a destructive rewrite of an open PR. Cohesive E3-T12
 work, CI-verified.
 
+### Pass 3 — ComponentSnapshot for the ns16550a UART (PR #154, stacked on #153)
+**Delivered:** `impl ComponentSnapshot for Uart16550` — the console UART's full state (7 registers +
+3 line-status latches + idle_ticks + the length-prefixed rx FIFO + out buffer). Richer than CLINT/PLIC
+(two variable-length buffers), so the decode is **fuzz-safe**: lengths bounded via `checked_add` before
+allocating, rx capped at FIFO_DEPTH, non-boolean latch bytes + trailing bytes rejected, all-or-nothing
+commit. **CI #154 green.**
+
+**Tests:** complete round-trip (all 7 registers asserted explicitly + rx/out/latches; empty + non-empty);
+malformed rejection (too-short, non-bool latch, rx-over-depth-with-bytes-present, rx-overrun,
+huge-out_len, trailing) all-or-nothing; 5k random fuzz no-panic.
+
+**Adversarial cold-clone critic:** **REFUTED — 1 CRITICAL (self-caught) + 3 test gaps, all fixed.**
+- **CRITICAL wasm32 usize overflow:** `off + out_len` (untrusted u32 ~4 GiB) wrapped on wasm32
+  (usize=32, the shipped target) past the `> p.len()` guard → OOB slice panic on a 22-byte payload;
+  invisible to the 64-bit suite. **Self-caught + fixed** (`checked_add`) before the critic returned;
+  critic independently confirmed. Added a huge-out_len test.
+- **MAJOR ×2 (test gaps, shipped code correct):** completeness was a re-serialize tautology (dropping
+  `mcr` survived) → assert all 7 registers explicitly; the rx FIFO-depth cap + the out_len bound were
+  never isolated (mutants survived) → added an over-depth-with-bytes test + the huge-out_len test.
+  **All 3 mutants verified killed.**
+
 **Next passes (boot/browser-gated):** the CPU/RAM `ComponentSnapshot` visitors (+ UART/virtio, with
 device quiesce) + the native determinism trace-diff (#1); browser OPFS resume (#2); the
 `sync`→snapshot→reload→`fsck` coherence proof (#5).

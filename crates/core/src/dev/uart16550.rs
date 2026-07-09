@@ -83,6 +83,102 @@ impl Default for Uart16550 {
     }
 }
 
+/// A byte that must be a 0/1 boolean, or a malformed payload.
+fn bool_byte(b: u8) -> Option<bool> {
+    match b {
+        0 => Some(false),
+        1 => Some(true),
+        _ => None,
+    }
+}
+
+/// E3-T12: the ns16550a's full state round-trips — 7 registers + the 3 line-status latches +
+/// `idle_ticks` + the (length-prefixed) RX FIFO and pending output buffer. The variable-length
+/// FIFOs are decoded **fuzz-safely**: a length is bounded against the remaining bytes *before* any
+/// allocation, `rx` is capped at the physical FIFO depth, and trailing bytes are rejected — so a
+/// truncated/hostile payload is a typed error, never a panic or an over-allocation.
+impl crate::resume::ComponentSnapshot for Uart16550 {
+    const SECTION: u32 = crate::resume::section::UART;
+
+    fn to_snapshot(&self) -> alloc::vec::Vec<u8> {
+        let mut v = alloc::vec::Vec::with_capacity(14 + 8 + self.rx.len() + self.out.len());
+        v.extend_from_slice(&[
+            self.ier, self.fcr, self.lcr, self.mcr, self.scr, self.dll, self.dlm,
+        ]);
+        v.push(self.overrun as u8);
+        v.push(self.thre_latched as u8);
+        v.push(self.timeout_latched as u8);
+        v.extend_from_slice(&self.idle_ticks.to_le_bytes());
+        // rx FIFO (≤ FIFO_DEPTH, fits u32) then the pending output buffer, each length-prefixed.
+        v.extend_from_slice(&(self.rx.len() as u32).to_le_bytes());
+        v.extend(self.rx.iter().copied());
+        v.extend_from_slice(&(self.out.len() as u32).to_le_bytes());
+        v.extend_from_slice(&self.out);
+        v
+    }
+
+    fn restore(&mut self, p: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        let err = || crate::resume::SnapshotError::BadComponentState { tag: Self::SECTION };
+        // Fixed prefix: 7 regs + 3 bool latches + u32 idle_ticks = 14 bytes, then the rx length word.
+        if p.len() < 14 + 4 {
+            return Err(err());
+        }
+        let [ier, fcr, lcr, mcr, scr, dll, dlm] = p[0..7].try_into().map_err(|_| err())?;
+        let overrun = bool_byte(p[7]).ok_or_else(err)?;
+        let thre_latched = bool_byte(p[8]).ok_or_else(err)?;
+        let timeout_latched = bool_byte(p[9]).ok_or_else(err)?;
+        let idle_ticks = u32::from_le_bytes(p[10..14].try_into().map_err(|_| err())?);
+
+        let mut off = 14usize;
+        // rx: length-prefixed, bounded by both the physical FIFO depth and the remaining bytes.
+        // `checked_add` for the slice end so an attacker-controlled length can't overflow `usize`
+        // (on wasm32 `usize` is 32-bit — a plain `off + len` with a ~4 GiB length would wrap and
+        // slip past the `> p.len()` guard into an out-of-bounds slice).
+        let rx_len = u32::from_le_bytes(p[off..off + 4].try_into().map_err(|_| err())?) as usize;
+        off += 4;
+        let rx_end = off.checked_add(rx_len).ok_or_else(err)?;
+        if rx_len > FIFO_DEPTH || rx_end > p.len() {
+            return Err(err());
+        }
+        let rx: VecDeque<u8> = p[off..rx_end].iter().copied().collect();
+        off = rx_end;
+        // out: length-prefixed, bounded by the remaining bytes (same overflow-safe check).
+        if off + 4 > p.len() {
+            return Err(err());
+        }
+        let out_len = u32::from_le_bytes(p[off..off + 4].try_into().map_err(|_| err())?) as usize;
+        off += 4;
+        let out_end = off.checked_add(out_len).ok_or_else(err)?;
+        if out_end > p.len() {
+            return Err(err());
+        }
+        let out = p[off..out_end].to_vec();
+        off = out_end;
+        // Canonical: no trailing bytes.
+        if off != p.len() {
+            return Err(err());
+        }
+
+        // Commit only after the whole payload parsed (all-or-nothing).
+        *self = Uart16550 {
+            ier,
+            fcr,
+            lcr,
+            mcr,
+            scr,
+            dll,
+            dlm,
+            rx,
+            overrun,
+            thre_latched,
+            idle_ticks,
+            timeout_latched,
+            out,
+        };
+        Ok(())
+    }
+}
+
 impl Uart16550 {
     pub fn new() -> Self {
         Self {
@@ -415,5 +511,128 @@ mod tests {
             assert_eq!(u.read_reg(0), i, "byte {i} preserved");
         }
         assert_eq!(u.read_reg(5) & LSR_DR, 0, "drained");
+    }
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::{FIFO_DEPTH, Uart16550};
+    use crate::resume::{ComponentSnapshot, SnapshotError, section};
+    use alloc::vec::Vec;
+
+    /// A UART with every field set to a distinct non-default value (incl. non-empty rx + out).
+    fn distinctive() -> Uart16550 {
+        let mut u = Uart16550::new();
+        u.ier = 1;
+        u.fcr = 2;
+        u.lcr = 3;
+        u.mcr = 4;
+        u.scr = 5;
+        u.dll = 6;
+        u.dlm = 7;
+        u.overrun = true;
+        u.thre_latched = true;
+        u.timeout_latched = true;
+        u.idle_ticks = 0x1234_5678;
+        u.rx = [0xAA, 0xBB, 0xCC].into_iter().collect();
+        u.out = alloc::vec![0x11, 0x22, 0x33, 0x44];
+        u
+    }
+
+    #[test]
+    fn uart_state_round_trips_completely() {
+        let u = distinctive();
+        let bytes = u.to_snapshot();
+        assert_eq!(Uart16550::SECTION, section::UART);
+
+        let mut r = Uart16550::new();
+        r.restore(&bytes).unwrap();
+        // Re-serializing the restored device yields the identical bytes → every field survived.
+        assert_eq!(r.to_snapshot(), bytes);
+        // Assert EVERY field explicitly against its distinct value — the re-serialize check above is
+        // a tautology for a field dropped by BOTH to_snapshot and restore, so per-field asserts are
+        // what actually pin completeness (all 7 registers, not just a couple).
+        assert_eq!(
+            (r.ier, r.fcr, r.lcr, r.mcr, r.scr, r.dll, r.dlm),
+            (1, 2, 3, 4, 5, 6, 7),
+            "every register survives"
+        );
+        assert_eq!(r.rx, u.rx);
+        assert_eq!(r.out, u.out);
+        assert_eq!(r.idle_ticks, u.idle_ticks);
+        assert!(r.overrun && r.thre_latched && r.timeout_latched);
+
+        // Empty rx + out also round-trip.
+        let empty = Uart16550::new();
+        let mut r2 = distinctive();
+        r2.restore(&empty.to_snapshot()).unwrap();
+        assert!(r2.rx.is_empty() && r2.out.is_empty());
+    }
+
+    #[test]
+    fn uart_restore_rejects_malformed_payloads_without_mutating() {
+        let bad = SnapshotError::BadComponentState { tag: section::UART };
+        let good = distinctive().to_snapshot();
+
+        // Too short (< fixed prefix + rx length word).
+        let mut u = distinctive();
+        assert_eq!(u.restore(&[0u8; 17]), Err(bad.clone()));
+
+        // A non-boolean latch byte (overrun byte at index 7).
+        let mut nonbool = alloc::vec![0u8; 18];
+        nonbool[7] = 2;
+        assert_eq!(u.restore(&nonbool), Err(bad.clone()));
+
+        // An rx length beyond the physical FIFO depth, with the 17 bytes ACTUALLY PRESENT — so the
+        // byte-overrun guard is satisfied and ONLY the depth cap can reject it (isolates the cap).
+        let mut over = alloc::vec![0u8; 14];
+        over.extend_from_slice(&((FIFO_DEPTH as u32) + 1).to_le_bytes()); // rx_len = 17
+        over.extend_from_slice(&[0u8; 17]); // the 17 rx bytes are present
+        over.extend_from_slice(&0u32.to_le_bytes()); // out_len = 0
+        assert_eq!(
+            u.restore(&over),
+            Err(bad.clone()),
+            "an over-depth FIFO is refused even when its bytes are present"
+        );
+
+        // An rx length that overruns the remaining bytes.
+        let mut overrun_rx = alloc::vec![0u8; 14];
+        overrun_rx.extend_from_slice(&3u32.to_le_bytes()); // claims 3 rx bytes, provides 0
+        assert_eq!(u.restore(&overrun_rx), Err(bad.clone()));
+
+        // A huge out_len (~4 GiB) with a short buffer — must be rejected fast, with NO usize
+        // overflow (the wasm32 hazard), no OOB slice, no allocation.
+        let mut huge_out = alloc::vec![0u8; 14];
+        huge_out.extend_from_slice(&0u32.to_le_bytes()); // rx_len = 0
+        huge_out.extend_from_slice(&u32::MAX.to_le_bytes()); // out_len = ~4 GiB, no data
+        assert_eq!(u.restore(&huge_out), Err(bad.clone()));
+
+        // Trailing bytes after a valid payload.
+        let mut trailing = good.clone();
+        trailing.push(0xFF);
+        assert_eq!(u.restore(&trailing), Err(bad.clone()));
+
+        // A failed restore left the device untouched (all-or-nothing).
+        assert_eq!(u.ier, 1);
+        assert_eq!(u.rx, distinctive().rx);
+        // The valid payload still restores.
+        assert_eq!(u.restore(&good), Ok(()));
+    }
+
+    #[test]
+    fn uart_restore_never_panics_on_random_input() {
+        let mut seed = 0xABCD_1234u32;
+        let mut rng = || {
+            seed ^= seed << 13;
+            seed ^= seed >> 17;
+            seed ^= seed << 5;
+            seed
+        };
+        for _ in 0..5000 {
+            let len = (rng() as usize) % 80;
+            let junk: Vec<u8> = (0..len).map(|_| (rng() & 0xff) as u8).collect();
+            let mut u = Uart16550::new();
+            let _ = u.restore(&junk); // Ok or typed Err — never a panic
+        }
     }
 }
