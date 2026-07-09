@@ -3,7 +3,7 @@ id: E2-T03
 epic: 2
 title: Firmware decision — built-in SBI in the emulator vs OpenSBI as guest payload
 priority: 203
-status: pending
+status: verified
 depends_on: [E2-T01]
 estimate: S
 capstone: false
@@ -57,4 +57,49 @@ Confirm the reset-state table in the ADR by dumping actual CSR state at first in
 in a trace. Any contradiction between ADR and code skeleton is a refutation.
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — worker — implemented
+
+**Decision:** (a) built-in Rust SBI (SBI v2.0), kernel entered directly in S-mode; OpenSBI
+kept as a STANDING M-mode compliance testcase (probe re-runnable at any time). ADR:
+`docs/adr/0002-sbi-firmware.md`.
+
+**Empirical evidence (both options RUN, per the charter):**
+- **(b) OpenSBI v1.3 fw_dynamic on our emulator** (`tools/adr0002_opensbi_probe.sh` →
+  ignored test `boot_contract.rs::opensbi_fw_dynamic_boots`): run 1 printed the full banner
+  then OpenSBI's own trap dump — mcause=7 store fault at 0x88000015, 21 bytes past top of
+  RAM: OUR dtb_placement left zero headroom and OpenSBI's reserved-memory fixup grows the
+  DTB in place. Fixed (fdt::DTB_SLACK = 16 KiB). Run 2: **complete boot** — full platform
+  report read from OUR E2-T02 DTB (riscv-virtio,qemu; aclint-mtimer @ 10000000Hz =
+  TIMEBASE_FREQ_HZ; uart8250; sifive_test reboot), PMP Count 64 detected, PMP domains
+  programmed, and a clean S-mode handoff: final pc 0x80200000 (parked in our stub kernel).
+  OpenSBI's hart init lands on mideleg 0x222 / medeleg 0xB109 — independently confirming
+  the boot-contract values.
+- **(a) built-in SBI first call** (`boot_contract.rs::builtin_sbi_first_call_and_reset_state`):
+  S-mode entry per the contract; payload ecalls Base probe (a7=0x10); skeleton answers
+  NOT_SUPPORTED(-2)/0; execution RESUMES in S-mode (sentinel li ra,42 reached; MaxInstrs in
+  the parking loop; no M-mode excursion). The ADR reset-state table is dumped and asserted
+  in the same test (mode=S, pc=KERNEL_BASE, a0/a1, mideleg/medeleg, satp=0, sstatus.SIE=0).
+
+**Code:** `sbi.rs` dispatch skeleton (EIDs Base/DBCN/TIME/IPI/RFENCE/HSM/legacy; every call
+→ NOT_SUPPORTED; never traps/panics — acceptance #3, native + wasm32 mirror
+`crates/wasm/tests/sbi.rs`); `Machine::enable_builtin_sbi` + run-loop ecall-from-S
+interception (default OFF — bare-metal/RISCOF delivery unchanged); `Machine::boot_supervisor`
+(the contract, acceptance #2); `platform::virt::KERNEL_BASE`; `fdt::DTB_SLACK`.
+Gates: fmt clean, clippy -D warnings clean, boot_contract + privilege suites green.
+
+### 2026-07-05 — verifier (cold critic) — CONFIRMED
+
+All 6 attack angles executed. (1) Prototype (a) re-run: reset-state table matches ADR
+exactly (incl. PMP allow_all == "entry 0 R/W/X NAPOT"). (2) Critic re-ran the OpenSBI probe
+ITSELF (308s): byte-identical 2197-byte transcript — banner, platform report from our DTB,
+PMP Count 64, mideleg 0x222/medeleg 0xB109, clean S-mode handoff to 0x80200000; evidence
+neither stale nor shallow. (3) Linux 6.6 arch/riscv/kernel/sbi.c fetched: no minimum spec
+version enforced; init probes TIME/IPI/RFENCE/SRST; DBCN absent in 6.6 (ADR makes no such
+claim; legacy 0x01/0x02 is the 6.6 console fallback and is in the list) — acceptance #4
+complete for boot. (4) Interception matches EcallFromS ONLY (U/M-ecalls deliver
+architecturally; medeleg bit 8 → S); pc+=4 safe (no c.ecall exists); flag default-off at
+the sole constructor. (5) Regressions flag-off: privilege 13/0, riscv_tests_mi 12/0,
+interrupts 11/0, pmp green. (6) OpenSBI-as-testcase deliverable satisfied (script + ignored
+test committed, critic re-ran both); fmt/clippy clean. **Critic finding folded in: SRST
+(EID 0x53525354) — Linux 6.6 probes it at init; now scoped into E2-T06 + ADR table.**

@@ -39,6 +39,7 @@ pub mod mmu;
 pub mod platform;
 pub mod pmp;
 pub mod ram;
+pub mod sbi;
 pub mod snapshot;
 pub mod softfloat;
 pub mod tlb;
@@ -91,6 +92,12 @@ pub struct Machine {
     /// PLIC shared state (E1-T13), present when [`Self::enable_plic`] attached the device. The
     /// run loop samples the per-context EIP levels into `mip.MEIP`/`mip.SEIP`.
     plic: Option<alloc::rc::Rc<core::cell::RefCell<dev::plic::PlicState>>>,
+    /// E2-T03 (ADR 0002): when set, the emulator IS the M-mode firmware — `ecall` from S-mode
+    /// is answered by [`sbi::dispatch`] in Rust instead of being delivered to a guest M-mode
+    /// handler. Off by default (bare-metal tests and RISCOF keep architectural delivery).
+    /// (Only read on the real-CSR path; the quarantined zicsr-stub build has no S-mode.)
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    builtin_sbi: bool,
 }
 
 impl Machine {
@@ -115,6 +122,7 @@ impl Machine {
             clock_div: 1,
             tick_accum: 0,
             plic: None,
+            builtin_sbi: false,
         })
     }
 
@@ -161,6 +169,44 @@ impl Machine {
     /// Size of guest RAM in bytes.
     pub fn ram_len(&self) -> usize {
         self.bus.ram().len()
+    }
+
+    /// E2-T03 (ADR 0002): route `ecall`-from-S to the built-in Rust SBI ([`sbi::dispatch`])
+    /// instead of delivering it as an architectural trap. Enable together with
+    /// [`Self::boot_supervisor`] for the emulator-as-firmware boot path.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn enable_builtin_sbi(&mut self) {
+        self.builtin_sbi = true;
+    }
+
+    /// E2-T03 boot contract (ADR 0002): enter a supervisor payload the way OpenSBI `fw_jump`
+    /// would hand off to a kernel. Sets, precisely:
+    /// - privilege = **S-mode**, `pc = platform::virt::KERNEL_BASE` (0x8020_0000);
+    /// - `a0 = hartid`, `a1 = dtb_addr` (the standard Linux/SBI convention);
+    /// - `mideleg = 0x222` (SSI/STI/SEI to S), `medeleg = 0xB109` (misaligned-fetch,
+    ///   breakpoint, ecall-from-U, and the three page-faults to S — OpenSBI's own set);
+    /// - `satp = 0` (Bare; the kernel builds its own tables), `sstatus.SIE = 0`
+    ///   (interrupts masked until the kernel opts in) — both reset defaults, restated here
+    ///   as part of the contract;
+    /// - PMP entry 0 opened R/W/X over all of memory (S-mode needs an explicit grant).
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn boot_supervisor(&mut self, hartid: u64, dtb_addr: u64) {
+        use crate::csr::{CsrOp, MEDELEG, MIDELEG, Priv};
+        self.hart.csr.pmp.allow_all();
+        // Legalized writes from M (the mode we're in pre-handoff).
+        self.hart.csr.mode = Priv::M;
+        self.hart
+            .csr
+            .access(MIDELEG, CsrOp::Write, 0x222, false, false, 0)
+            .expect("mideleg write from M cannot fail");
+        self.hart
+            .csr
+            .access(MEDELEG, CsrOp::Write, 0xB109, false, false, 0)
+            .expect("medeleg write from M cannot fail");
+        self.hart.csr.mode = Priv::S;
+        self.hart.regs.pc = platform::virt::KERNEL_BASE;
+        self.hart.regs.write(10, hartid); // a0
+        self.hart.regs.write(11, dtb_addr); // a1
     }
 
     /// Load an ELF image: copy segments into RAM, set the PC to `e_entry`, and
@@ -364,6 +410,28 @@ impl Machine {
                 self.advance_clock();
             }
             if let Err(trap) = step_result {
+                // E2-T03 (ADR 0002): with the built-in SBI enabled, `ecall` from S-mode is a
+                // FIRMWARE CALL, not an architectural trap — answer it in Rust and resume at
+                // the next instruction (ecall is always a 4-byte encoding). a7=EID, a6=FID,
+                // a0..a5=args; returns a0=error, a1=value. Everything else still traps below.
+                #[cfg(not(feature = "zicsr-stub"))]
+                if self.builtin_sbi && trap.cause == hart::Exception::EcallFromS {
+                    let eid = self.hart.regs.read(17); // a7
+                    let fid = self.hart.regs.read(16); // a6
+                    let args = [
+                        self.hart.regs.read(10),
+                        self.hart.regs.read(11),
+                        self.hart.regs.read(12),
+                        self.hart.regs.read(13),
+                        self.hart.regs.read(14),
+                        self.hart.regs.read(15),
+                    ];
+                    let ret = sbi::dispatch(eid, fid, &args);
+                    self.hart.regs.write(10, ret.error as u64); // a0
+                    self.hart.regs.write(11, ret.value as u64); // a1
+                    self.hart.regs.pc = self.hart.regs.pc.wrapping_add(4);
+                    continue;
+                }
                 // E1-T10: DELIVER the trap through the CSR machinery (mepc/mcause/mtval +
                 // mtvec vector) and keep running — a guest with a handler installed resumes
                 // at mtvec. `step`/`execute` stay pure (they returned Err having touched

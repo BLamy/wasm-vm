@@ -61,6 +61,10 @@ pub mod virt {
     /// "no interrupt" sentinel, so the highest usable source id is `PLIC_NDEV`.
     pub const PLIC_NDEV: u32 = 95;
 
+    /// Kernel/payload load+entry address — `DRAM_BASE + 2 MiB`, the standard RISC-V
+    /// `fw_jump`/Linux Image convention (E2-T03 boot contract).
+    pub const KERNEL_BASE: u64 = 0x8020_0000;
+
     // ── Hart layout & boot contract ──────────────────────────────────────────────────
     /// Harts present in Epic 2 (single-hart; SMP arrives in Epic 6).
     pub const NUM_HARTS: usize = 1;
