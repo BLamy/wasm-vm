@@ -62,9 +62,14 @@ async function sha256hex(bytes) {
 export async function startLinuxBoot(opts = {}) {
   const {
     manifestUrl = "./artifacts.json",
-    // "initramfs" = busybox (the gh-pages default); "disk" = Alpine ext4 over virtio-blk. The
-    // 512 MB Alpine image is local-only (served by tools/serve-dev.sh) — too big for gh-pages.
+    // "initramfs" = busybox (the gh-pages default); "disk" = Alpine ext4 over virtio-blk (the whole
+    // 512 MB image is downloaded up front); "chunked" = the SAME Alpine image but fetched lazily,
+    // one E3-T01 chunk at a time over HTTP, so boot touches only a fraction of the image. Both disk
+    // modes are local-only (served by tools/serve-dev.sh) — too big for gh-pages.
     mode = "initramfs",
+    // E3-T02 chunked mode: URL of the image manifest.json produced by `wasm-vm chunk`. `baseUrl`
+    // (the directory chunks live under) defaults to the manifest's directory.
+    imageManifestUrl = "./releases/chunked-alpine/manifest.json",
     ramMib = 256,
     onState = () => {},
     onProgress = () => {},
@@ -72,30 +77,48 @@ export async function startLinuxBoot(opts = {}) {
     onError = () => {},
     quantum = 2_000_000,
   } = opts;
-  // Disk mode leaves bootargs empty so WasmLinux.newDisk supplies `root=/dev/vda rw …`.
-  const bootargs = opts.bootargs ?? (mode === "disk" ? "" : "console=ttyS0 earlycon=sbi");
+  const isChunked = mode === "chunked";
+  // Disk/chunked modes leave bootargs empty so WasmLinux supplies `root=/dev/vda rw …`.
+  const bootargs = opts.bootargs ?? (mode === "initramfs" ? "console=ttyS0 earlycon=sbi" : "");
   const role = mode === "disk" ? "rootfs" : "initramfs";
+  const baseUrl = opts.baseUrl ?? imageManifestUrl.replace(/[^/]*$/, "");
 
   try {
     const manifest = await (await fetch(manifestUrl)).json();
     const km = manifest.artifacts.kernel;
-    const secondary = manifest.artifacts[role];
-    if (!secondary) throw new Error(`manifest has no '${role}' artifact for boot mode '${mode}'`);
 
     onState("fetching");
-    const [kernel, secondaryBytes] = await Promise.all([
-      fetchWithProgress(km.url, (l, t) => onProgress("kernel", l, t)),
-      fetchWithProgress(secondary.url, (l, t) => onProgress(role, l, t)),
-    ]);
-
-    onState("verifying");
-    for (const [name, bytes, want] of [
-      ["kernel", kernel, km.sha256],
-      [role, secondaryBytes, secondary.sha256],
-    ]) {
-      const got = await sha256hex(bytes);
-      if (got !== want) {
-        throw new Error(`integrity check failed for ${name}: expected ${want}, got ${got} — refusing to boot corrupt bytes`);
+    // The kernel is always fetched whole (small). The rootfs is fetched whole for disk/initramfs
+    // modes; in chunked mode it is NOT — only the image manifest is fetched now, and its chunks are
+    // pulled lazily during boot by WasmLinux.fetchPending.
+    const kernel = await fetchWithProgress(km.url, (l, t) => onProgress("kernel", l, t));
+    let secondaryBytes = null;
+    let imageManifestText = null;
+    if (isChunked) {
+      const r = await fetch(imageManifestUrl, { cache: "default" });
+      if (!r.ok) throw new Error(`fetch ${imageManifestUrl} → HTTP ${r.status} ${r.statusText}`);
+      imageManifestText = await r.text();
+    } else {
+      const secondary = manifest.artifacts[role];
+      if (!secondary) throw new Error(`manifest has no '${role}' artifact for boot mode '${mode}'`);
+      secondaryBytes = await fetchWithProgress(secondary.url, (l, t) => onProgress(role, l, t));
+      onState("verifying");
+      for (const [name, bytes, want] of [
+        ["kernel", kernel, km.sha256],
+        [role, secondaryBytes, secondary.sha256],
+      ]) {
+        const got = await sha256hex(bytes);
+        if (got !== want) {
+          throw new Error(`integrity check failed for ${name}: expected ${want}, got ${got} — refusing to boot corrupt bytes`);
+        }
+      }
+    }
+    // Chunked mode verifies the kernel (small) but defers rootfs integrity to per-chunk hash checks
+    // inside wasm (ChunkStore verify-on-insert) — the whole point is never downloading it whole.
+    if (isChunked) {
+      const got = await sha256hex(kernel);
+      if (got !== km.sha256) {
+        throw new Error(`integrity check failed for kernel: expected ${km.sha256}, got ${got}`);
       }
     }
 
@@ -103,10 +126,11 @@ export async function startLinuxBoot(opts = {}) {
     await init(); // WebAssembly.instantiateStreaming under the hood (wasm-pack --target web)
 
     onState("booting");
-    // Disk mode moves the image into an in-memory virtio-blk backend (WasmLinux.newDisk); initramfs
-    // mode passes it as the initrd (the WasmLinux constructor).
-    const machine =
-      mode === "disk"
+    // disk → in-memory virtio-blk backend (whole image); chunked → a ChunkedBackend that lazily
+    // HTTP-fetches chunks under baseUrl; initramfs → the image as the initrd.
+    const machine = isChunked
+      ? WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, bootargs, (u8) => onOutput(u8))
+      : mode === "disk"
         ? WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8))
         : new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
 
@@ -124,24 +148,44 @@ export async function startLinuxBoot(opts = {}) {
       tickScheduled = true;
       setTimeout(tick, 0);
     };
-    const tick = () => {
-      tickScheduled = false;
-      if (stopped || paused) return;
+    // `tick` is async so chunked mode can `await` the lazy chunk fetch between run quanta. To keep
+    // the E2-T23 C3 single-tick invariant across the await, `tickScheduled` stays TRUE for the whole
+    // duration of a tick (run + fetch) and is cleared only at the end — so any `schedule()` during
+    // the fetch is a no-op and no second loop can start.
+    const tick = async () => {
+      if (stopped || paused) { tickScheduled = false; return; }
       let res;
       try {
         res = machine.runChunk(quantum);
       } catch (e) {
+        tickScheduled = false;
         onState("error");
         onError(e);
         resolveDone("error");
         return;
       }
       if (res.done) {
+        tickScheduled = false;
         onState("done");
         resolveDone(res.state);
         return;
       }
+      // E3-T02 chunked boot: a guest disk read may have parked awaiting a chunk. Fetch every parked
+      // chunk (hash-verified in wasm) before the next quantum, or the parked reads never complete.
+      if (isChunked) {
+        try {
+          if (machine.pendingChunks().length > 0) await machine.fetchPending();
+        } catch (e) {
+          tickScheduled = false;
+          onState("error");
+          onError(e);
+          resolveDone("error");
+          return;
+        }
+        if (stopped || paused) { tickScheduled = false; return; }
+      }
       // Yield to the event loop so the page stays responsive (no main-thread freeze).
+      tickScheduled = false;
       schedule();
     };
     schedule();
@@ -169,6 +213,9 @@ export async function startLinuxBoot(opts = {}) {
         }
       },
       isPaused: () => paused,
+      // E3-T02: chunked-boot instrumentation — `{ fetches, bytes, error }` (bytes transferred so
+      // far via lazy chunk fetch). Null for non-chunked boots. Drives the <40%-of-image acceptance.
+      fetchStats: () => (isChunked ? machine.fetchStats() : null),
       whenDone,
     };
   } catch (e) {

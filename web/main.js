@@ -29,8 +29,10 @@ const bootProgressEl = document.getElementById("boot-progress");
 // E2-T26: a second "Boot Alpine" button boots the full Alpine ext4 rootfs over virtio-blk
 // (mode "disk", a separate local-only manifest) — shared boot path with the busybox button.
 const bootAlpineBtn = document.getElementById("boot-alpine");
+// E3-T02: boot the same Alpine rootfs but fetched lazily as E3-T01 chunks over HTTP.
+const bootAlpineChunkedBtn = document.getElementById("boot-alpine-chunked");
 let linuxCtl = null;
-const bootBtns = [bootLinuxBtn, bootAlpineBtn];
+const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineChunkedBtn];
 async function runLinuxBoot(opts, banner) {
   if (linuxCtl) return; // already booting
   bootBtns.forEach((b) => b && (b.disabled = true));
@@ -88,6 +90,20 @@ if (bootAlpineBtn) {
       "booting unmodified Alpine (ext4 rootfs over virtio-blk) in wasm — large image, ~minutes to login:…",
     ));
 }
+if (bootAlpineChunkedBtn) {
+  bootAlpineChunkedBtn.addEventListener("click", () =>
+    runLinuxBoot(
+      {
+        // Same kernel as the proven Alpine disk boot; the rootfs is fetched lazily per chunk here
+        // (no full-image download — only the chunks the boot actually touches).
+        manifestUrl: "./artifacts-alpine.json",
+        mode: "chunked",
+        imageManifestUrl: "./releases/chunked-alpine/manifest.json",
+        ramMib: 256,
+      },
+      "booting Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login:…",
+    ));
+}
 // E2-T22: "Fit" re-fits the rendered grid to the panel and surfaces the matching `stty` line.
 // A serial console carries no out-of-band winsize, so resize is cooperative: if a guest is live
 // the button types the `stty rows R cols C` straight into it, so vi/top use the full area.
@@ -119,6 +135,8 @@ window.__linux = {
   resume: () => linuxCtl?.resume(),
   isPaused: () => !!linuxCtl?.isPaused(),
 };
+// E3-T02 test hook: the chunked-boot lazy-fetch instrumentation ({ fetches, bytes, error } | null).
+window.__chunkedStats = () => linuxCtl?.fetchStats?.() ?? null;
 
 const statusEl = document.getElementById("status");
 const versionEl = document.getElementById("version");

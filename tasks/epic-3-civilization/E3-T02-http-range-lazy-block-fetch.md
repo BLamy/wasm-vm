@@ -3,7 +3,7 @@ id: E3-T02
 epic: 3
 title: Lazy chunk fetching over HTTP with Range and streaming support
 priority: 302
-status: pending
+status: verified
 depends_on: [E3-T01]
 estimate: M
 capstone: false
@@ -164,3 +164,27 @@ determinism, wasm zicsr-stub — all clean. **Remaining:** pass 4 — browser Al
 chunked image (`web/loader.js` chunked-boot pump + dev-server chunk routes + image chunking) with
 fetch-count/bytes instrumentation, <40%-of-image acceptance. The http_fetch web-sys glue is only
 exercised end-to-end there (not natively testable).
+
+**2026-07-06 — chunking tool + browser boot (pass 4), PR stacked on #87. TASK COMPLETE.**
+Pass 4a: `ImageManifest::from_image`/`to_json` producer (storage, native round-trip test) + `wasm-vm
+chunk` CLI (integration test) + `web/loader.js` chunked boot mode (async pump: `await fetchPending()`
+when `pendingChunks()` non-empty). Pass 4b: chunked-boot UI button + `fetchStats` hook + the e2e
+acceptance test. The 512 MB Alpine ext4 chunked at 128 KiB → 4096 chunks but only **87 unique files
+(11 MB)** — content-addressed split layout dedups the mostly-zero image automatically.
+
+**ACCEPTANCE MET (measured, Playwright, headless, 1 passed in 11.3 min):** unmodified Alpine boots to
+`login:` IN THE BROWSER over the lazily-fetched rootfs, root login runs a command (`LAZY_42_OK`), no
+kernel panic, no console errors. **48 chunk fetches, 6,291,456 bytes = 1.2% of the 512 MB image**
+(bar: <40%); network trace shows only per-chunk fetches, never the whole image.
+
+Cold-clone critic (fresh context) attacked producer hash/tail correctness, the CLI URL contract, the
+async single-tick double-loop invariant, no-full-image-download, e2e-assertion non-vacuity, and
+disk/initramfs regression — all SOUND, **verdict SHIP, no bugs**. One non-blocking note (a
+dead-but-harmless `image.blob` check in the split-layout test guard) — left as-is.
+
+Gates: storage 16/0, cli 22/0 (+ chunk integration), wasm chunked 5/0, workspace clippy
+--all-features + fmt + determinism, wasm builds (default + zicsr-stub), `node --check` on the JS.
+
+**E3-T02 DONE** — all four passes landed (core deferred completion → storage/wasm fetch layer →
+chunking tool + browser boot). Lazy HTTP chunk boot works end-to-end; the VM boots a real OS pulling
+1.2% of the disk on demand. Follow-ons: E3-T03 (block cache), E3-T04 (durable copy-on-write overlay).

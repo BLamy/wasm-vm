@@ -14,7 +14,7 @@ extern crate alloc;
 
 use alloc::string::String;
 use alloc::vec::Vec;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
 mod fetch;
@@ -59,7 +59,7 @@ pub enum ImageError {
 
 /// How the chunks are stored. Both are representable in the manifest; the reader here is layout-
 /// agnostic (it only does math + verification) — the fetch layer (T02) chooses how to load bytes.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Layout {
     /// One immutable, content-addressed file per chunk: `chunks/{sha256}.bin` (CDN/cache friendly).
@@ -70,7 +70,7 @@ pub enum Layout {
 
 /// The parsed manifest. Deserialized from JSON; unknown fields are ignored (forward-compat). Use
 /// [`ImageManifest::from_json`] (which also validates) rather than deserializing directly.
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct ImageManifest {
     /// Format version — must equal [`FORMAT_VERSION`].
     pub version: u32,
@@ -93,6 +93,43 @@ impl ImageManifest {
             serde_json::from_str(s).map_err(|e| ImageError::Json(alloc::format!("{e}")))?;
         m.validate()?;
         Ok(m)
+    }
+
+    /// Build a manifest by chunking `image` at `chunk_size` (SHA-256 per chunk). The producer side of
+    /// the format (E3-T02 pass 4 tooling): the CLI writes these hashes as `chunks/{hash}.bin` (split)
+    /// or the caller keeps `image` as one blob. `chunk_size` must be a non-zero power of two — the
+    /// returned manifest satisfies [`Self::validate`]. The last chunk is short when `image.len()` is
+    /// not a multiple of `chunk_size`.
+    pub fn from_image(
+        image: &[u8],
+        chunk_size: u32,
+        layout: Layout,
+    ) -> Result<ImageManifest, ImageError> {
+        if chunk_size == 0 || !chunk_size.is_power_of_two() {
+            return Err(ImageError::BadChunkSize(chunk_size));
+        }
+        let chunks: Vec<String> = image
+            .chunks(chunk_size as usize)
+            .map(|c| encode_hex32(&Sha256::digest(c)))
+            .collect();
+        let m = ImageManifest {
+            version: FORMAT_VERSION,
+            image_len: image.len() as u64,
+            chunk_size,
+            layout,
+            chunks,
+        };
+        // A well-formed input always yields a valid manifest; validate defends against a future bug.
+        m.validate()?;
+        Ok(m)
+    }
+
+    /// Serialize to compact JSON (the manifest a `newChunkedDisk` boot loads). Round-trips through
+    /// [`Self::from_json`].
+    pub fn to_json(&self) -> String {
+        // The manifest is plain scalars + a string vec — serialization cannot fail; fall back to an
+        // empty object on the impossible error rather than panicking.
+        serde_json::to_string(self).unwrap_or_else(|_| String::from("{}"))
     }
 
     /// Validate all internal invariants. Called by [`Self::from_json`]; also usable on a
@@ -308,6 +345,17 @@ fn derived_chunk_count(image_len: u64, chunk_size: u64) -> u64 {
     } else {
         image_len.div_ceil(chunk_size)
     }
+}
+
+/// Encode 32 bytes as 64 lowercase hex chars (the manifest's per-chunk hash form).
+fn encode_hex32(bytes: &[u8]) -> String {
+    const HEX: &[u8; 16] = b"0123456789abcdef";
+    let mut s = String::with_capacity(bytes.len() * 2);
+    for &b in bytes {
+        s.push(HEX[(b >> 4) as usize] as char);
+        s.push(HEX[(b & 0xf) as usize] as char);
+    }
+    s
 }
 
 /// Decode exactly 64 hex chars into 32 bytes; `None` on a wrong length or a non-hex character.

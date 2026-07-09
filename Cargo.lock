@@ -1281,8 +1281,10 @@ dependencies = [
  "memmap2",
  "predicates",
  "serde_json",
+ "sha2",
  "tempfile",
  "wasm-vm-core",
+ "wasm-vm-storage",
 ]
 
 [[package]]
