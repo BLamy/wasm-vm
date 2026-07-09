@@ -1,505 +1,107 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>wasm-vm — RV64 in the browser</title>
-    <link rel="stylesheet" href="./node_modules/@xterm/xterm/css/xterm.css" />
-    <style>
-      :root {
-        color-scheme: dark;
-        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-        --bg: #090b0f;
-        --panel: #10141b;
-        --panel-2: #151a22;
-        --line: #242b36;
-        --text: #eef2f7;
-        --muted: #9aa6b2;
-        --green: #2ea043;
-        --red: #f85149;
-        --amber: #f2c94c;
-        --cyan: #53d4ff;
-      }
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        background: var(--bg);
-        color: var(--text);
-      }
-      header {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        align-items: center;
-        padding: 14px 18px;
-        border-bottom: 1px solid var(--line);
-        background: #0d1015;
-      }
-      h1, h2 { letter-spacing: 0; }
-      h1 {
-        font-size: 16px;
-        margin: 0;
-        font-weight: 650;
-      }
-      .version {
-        color: var(--muted);
-        font: 12px ui-monospace, monospace;
-        white-space: nowrap;
-      }
-      main {
-        display: grid;
-        grid-template-columns: minmax(420px, 1fr) minmax(360px, 44vw);
-        min-height: calc(100vh - 49px);
-      }
-      section {
-        min-width: 0;
-      }
-      .suite {
-        border-right: 1px solid var(--line);
-        background: var(--panel);
-      }
-      .suite-head, .console-head {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        align-items: center;
-        padding: 14px 16px;
-        border-bottom: 1px solid var(--line);
-      }
-      h2 {
-        font-size: 13px;
-        margin: 0;
-        text-transform: uppercase;
-      }
-      .suite-count {
-        color: var(--muted);
-        font: 12px ui-monospace, monospace;
-        margin-top: 4px;
-      }
-      .actions, .controls {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      button, select {
-        border: 1px solid var(--line);
-        border-radius: 6px;
-        background: #1b222d;
-        color: var(--text);
-        font-size: 13px;
-        min-height: 32px;
-      }
-      button {
-        padding: 6px 12px;
-        cursor: pointer;
-      }
-      button.primary {
-        border-color: #287555;
-        background: #143c31;
-      }
-      button.danger {
-        border-color: #803b3b;
-        background: #3b1c1f;
-      }
-      button:disabled, select:disabled {
-        opacity: .45;
-        cursor: not-allowed;
-      }
-      select {
-        padding: 5px 8px;
-      }
-      .metrics {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        border-bottom: 1px solid var(--line);
-      }
-      .metric {
-        padding: 12px 16px;
-        border-right: 1px solid var(--line);
-      }
-      .metric:last-child { border-right: 0; }
-      .metric span {
-        display: block;
-        color: var(--muted);
-        font-size: 11px;
-        text-transform: uppercase;
-      }
-      .metric strong {
-        display: block;
-        margin-top: 4px;
-        font: 650 24px ui-monospace, monospace;
-      }
-      .metric.pass strong { color: var(--green); }
-      .metric.fail strong { color: var(--red); }
-      .metric.run strong { color: var(--cyan); }
-      .progress {
-        height: 8px;
-        background: #1c2129;
-        border-bottom: 1px solid var(--line);
-      }
-      #suite-progress-bar {
-        display: block;
-        width: 0%;
-        height: 100%;
-        background: linear-gradient(90deg, var(--green), var(--cyan));
-        transition: width 120ms ease-out;
-      }
-      .suite-tools {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: center;
-        padding: 10px 16px;
-        border-bottom: 1px solid var(--line);
-        color: var(--muted);
-        font-size: 12px;
-      }
-      .legend {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .legend-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-      }
-      .legend-swatch {
-        width: 11px;
-        height: 11px;
-        border-radius: 3px;
-        border: 1px solid #303844;
-      }
-      .legend-swatch.pass { background: var(--green); border-color: var(--green); }
-      .legend-swatch.fail { background: var(--red); border-color: var(--red); }
-      .legend-swatch.pending { background: #242b35; }
-      .heatmap-wrap {
-        position: relative;
-        max-height: calc(100vh - 254px);
-        overflow: auto;
-        padding: 12px 16px 18px;
-      }
-      .heatmap {
-        display: grid;
-        gap: 11px;
-        min-width: 440px;
-      }
-      .test-group {
-        display: grid;
-        grid-template-columns: 86px minmax(0, 1fr);
-        gap: 12px;
-        align-items: start;
-      }
-      .group-label {
-        padding-top: 2px;
-        color: #dbe5ef;
-        font: 12px ui-monospace, monospace;
-      }
-      .group-meta {
-        display: block;
-        margin-top: 3px;
-        color: var(--muted);
-        font: 11px ui-monospace, monospace;
-      }
-      .dot-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-      }
-      .test-dot {
-        position: relative;
-        width: 16px;
-        height: 16px;
-        padding: 0;
-        min-height: 0;
-        border-radius: 4px;
-        border: 1px solid #303844;
-        background: #242b35;
-        cursor: default;
-      }
-      .test-dot:focus-visible {
-        outline: 2px solid var(--cyan);
-        outline-offset: 2px;
-      }
-      .test-dot[data-status="pending"] {
-        background: #242b35;
-      }
-      .test-dot[data-status="running"] {
-        border-color: #5f6b7a;
-        background:
-          linear-gradient(110deg, #242b35 20%, #566170 42%, #242b35 64%);
-        background-size: 220% 100%;
-        animation: shimmer 900ms linear infinite;
-      }
-      .test-dot[data-status="pass"] {
-        border-color: var(--green);
-        background: var(--green);
-      }
-      .test-dot[data-status="fail"],
-      .test-dot[data-status="error"] {
-        border-color: var(--red);
-        background: var(--red);
-      }
-      @keyframes shimmer {
-        from { background-position: 160% 0; }
-        to { background-position: -60% 0; }
-      }
-      .hover-card {
-        position: fixed;
-        z-index: 20;
-        width: min(320px, calc(100vw - 24px));
-        padding: 10px 12px;
-        border: 1px solid #374151;
-        border-radius: 8px;
-        background: #0d1117;
-        box-shadow: 0 18px 48px rgba(0, 0, 0, .42);
-        color: var(--text);
-        pointer-events: none;
-      }
-      .hover-card[hidden] { display: none; }
-      .hover-name {
-        font: 650 13px ui-monospace, monospace;
-        overflow-wrap: anywhere;
-      }
-      .hover-status {
-        margin-top: 6px;
-        font-size: 12px;
-        color: var(--muted);
-      }
-      .hover-detail {
-        margin-top: 6px;
-        color: #c9d1d9;
-        font: 12px ui-monospace, monospace;
-        overflow-wrap: anywhere;
-      }
-      .hover-status.pass { color: var(--green); }
-      .hover-status.fail,
-      .hover-status.error { color: var(--red); }
-      .hover-status.running { color: var(--cyan); }
-      .console {
-        background: #0b0e14;
-      }
-      .controls {
-        justify-content: flex-end;
-      }
-      #status {
-        color: var(--muted);
-        font: 12px ui-monospace, monospace;
-        width: 100%;
-        text-align: right;
-      }
-      label.file {
-        color: var(--muted);
-        font-size: 13px;
-      }
-      input[type="file"] {
-        max-width: 170px;
-        font-size: 12px;
-      }
-      #term {
-        padding: 10px 16px 16px;
-      }
-      /* ── Roadmap progress panel ─────────────────────────────────────── */
-      .roadmap {
-        border-top: 1px solid var(--line);
-        background: var(--panel);
-      }
-      .roadmap-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 16px;
-        flex-wrap: wrap;
-        padding: 14px 16px;
-        border-bottom: 1px solid var(--line);
-      }
-      .roadmap-legend {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        flex-wrap: wrap;
-        color: var(--muted);
-        font-size: 12px;
-      }
-      .roadmap-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 12px;
-        padding: 16px;
-      }
-      .epic-card {
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        background: var(--panel-2);
-        overflow: hidden;
-      }
-      .epic-card.done { border-color: #22503a; }
-      .epic-card.next { border-color: #2c4a63; }
-      .epic-head {
-        display: flex;
-        align-items: baseline;
-        gap: 8px;
-        padding: 11px 13px 8px;
-      }
-      .epic-tag {
-        font: 650 12px ui-monospace, monospace;
-        color: #0b0e14;
-        background: var(--muted);
-        border-radius: 5px;
-        padding: 1px 6px;
-      }
-      .epic-card.done .epic-tag { background: var(--green); }
-      .epic-card.next .epic-tag { background: var(--cyan); }
-      .epic-name { font-size: 14px; font-weight: 650; }
-      .epic-state {
-        margin-left: auto;
-        font: 11px ui-monospace, monospace;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
-      .epic-card.done .epic-state { color: var(--green); }
-      .epic-card.next .epic-state { color: var(--cyan); }
-      .epic-blurb {
-        padding: 0 13px 10px;
-        color: var(--muted);
-        font-size: 12px;
-        line-height: 1.45;
-      }
-      .cap-list { list-style: none; margin: 0; padding: 0 6px 8px; }
-      .cap {
-        display: grid;
-        grid-template-columns: 14px minmax(0, 1fr);
-        gap: 9px;
-        align-items: start;
-        padding: 6px 7px;
-        border-radius: 6px;
-      }
-      .cap:hover { background: #10151d; }
-      .cap-pip {
-        width: 11px;
-        height: 11px;
-        margin-top: 3px;
-        border-radius: 50%;
-        border: 1px solid #303844;
-        background: #242b35;
-      }
-      .cap-pip.verified { background: var(--green); border-color: var(--green); }
-      .cap-pip.live {
-        background: var(--green);
-        border-color: var(--green);
-        box-shadow: 0 0 0 3px rgba(46, 160, 67, .22);
-      }
-      .cap-pip.partial { background: var(--amber); border-color: var(--amber); }
-      .cap-pip.pending { background: #242b35; }
-      .cap-pip.regressed { background: var(--red); border-color: var(--red); }
-      .cap-name { font-size: 12.5px; color: #dbe5ef; }
-      .cap-ev {
-        display: block;
-        margin-top: 1px;
-        color: var(--muted);
-        font: 11px ui-monospace, monospace;
-        overflow-wrap: anywhere;
-      }
-      .cap-ev.live { color: var(--green); }
-      .cap-ev.regressed { color: var(--red); }
-
-      @media (max-width: 900px) {
-        header { align-items: flex-start; flex-direction: column; }
-        main { grid-template-columns: 1fr; }
-        .suite { border-right: 0; }
-        .heatmap-wrap { max-height: 58vh; }
-        .test-group { grid-template-columns: 74px minmax(0, 1fr); }
-        .test-dot { width: 15px; height: 15px; }
-        .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .console-head { align-items: flex-start; flex-direction: column; }
-        .controls { justify-content: flex-start; }
-        #status { text-align: left; }
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>wasm-vm — RV64 in the browser</h1>
-      <span id="version" class="version">initializing...</span>
-    </header>
-    <main>
-      <section class="suite" aria-labelledby="suite-title">
-        <div class="suite-head">
-          <div>
-            <h2 id="suite-title">RISC-V compliance</h2>
-            <div id="suite-count" class="suite-count">110 riscv-tests binaries</div>
-          </div>
-          <div class="actions">
-            <button id="suite-run" class="primary" disabled>Rerun</button>
-            <button id="suite-stop" class="danger" disabled>Stop</button>
-          </div>
-        </div>
-        <div class="metrics" aria-live="polite">
-          <div class="metric"><span>Total</span><strong id="metric-total">0</strong></div>
-          <div class="metric pass"><span>Passed</span><strong id="metric-pass">0</strong></div>
-          <div class="metric fail"><span>Failed</span><strong id="metric-fail">0</strong></div>
-          <div class="metric run"><span>Done</span><strong id="metric-done">0</strong></div>
-        </div>
-        <div class="progress" aria-hidden="true"><span id="suite-progress-bar"></span></div>
-        <div class="suite-tools">
-          <span id="suite-status">waiting for wasm</span>
-          <div class="legend" aria-hidden="true">
-            <span class="legend-item"><span class="legend-swatch pending"></span>Queued</span>
-            <span class="legend-item"><span class="legend-swatch pass"></span>Passed</span>
-            <span class="legend-item"><span class="legend-swatch fail"></span>Failed</span>
-          </div>
-        </div>
-        <div class="heatmap-wrap">
-          <div id="suite-heatmap" class="heatmap"></div>
-          <div id="hover-card" class="hover-card" hidden>
-            <div id="hover-name" class="hover-name"></div>
-            <div id="hover-status" class="hover-status"></div>
-            <div id="hover-detail" class="hover-detail"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="console" aria-labelledby="console-title">
-        <div class="console-head">
-          <h2 id="console-title">Console</h2>
-          <div class="controls">
-            <button id="run">Run ELF</button>
-            <button id="reset">Reset</button>
-            <button id="bench">Bench</button>
-            <button id="boot-linux">Boot Linux</button>
-            <button id="boot-alpine" title="Boot the full Alpine ext4 rootfs over virtio-blk (local-only via serve-dev + tools/demo-capstone.sh)">Boot Alpine</button>
-            <button id="boot-alpine-chunked" title="Boot the SAME Alpine rootfs but fetched lazily one E3-T01 chunk at a time over HTTP (local-only; run `wasm-vm chunk` first)">Boot Alpine (chunked)</button>
-            <button id="term-fit" title="Re-fit the terminal to the panel and copy the matching stty command">Fit</button>
-            <label class="file">ELF <input id="file" type="file" /></label>
-            <span id="status">initializing...</span>
-            <span id="boot-progress" class="version"></span>
-            <span id="stty-hint" class="version"></span>
-          </div>
-        </div>
-        <div id="term"></div>
-      </section>
-    </main>
-
-    <section class="roadmap" aria-labelledby="roadmap-title">
-      <div class="roadmap-head">
-        <div>
-          <h2 id="roadmap-title">Roadmap progress</h2>
-          <div id="roadmap-sub" class="suite-count">where we are across the 9-epic roadmap</div>
-        </div>
-        <div class="roadmap-legend" aria-hidden="true">
-          <span class="legend-item"><span class="cap-pip verified"></span>verified</span>
-          <span class="legend-item"><span class="cap-pip live"></span>live-proven this run</span>
-          <span class="legend-item"><span class="cap-pip pending"></span>pending</span>
-        </div>
-      </div>
-      <div id="roadmap-grid" class="roadmap-grid"></div>
-    </section>
-
-    <!-- xterm.js UMD build + fit addon (pinned via package-lock.json + npm ci — no CDN). -->
-    <script src="./node_modules/@xterm/xterm/lib/xterm.js"></script>
-    <script src="./node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
-    <script type="module" src="./main.js"></script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>wasm-vm — PR previews</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; background:#090b0f; color:#eef2f7;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      display:flex; align-items:flex-start; justify-content:center; padding:48px 20px; }
+    main { width:100%; max-width:680px; }
+    h1 { font-size:20px; margin:0 0 4px; font-weight:650; }
+    .sub { color:#9aa6b2; font:13px ui-monospace, monospace; margin:0 0 24px; }
+    ul { list-style:none; margin:0; padding:0; border:1px solid #242b36; border-radius:10px; overflow:hidden; }
+    li a { display:flex; justify-content:space-between; align-items:center; gap:16px;
+      padding:14px 18px; text-decoration:none; color:#eef2f7; border-bottom:1px solid #1a1f28;
+      background:#10141b; transition:background 120ms; }
+    li:last-child a { border-bottom:0; }
+    li a:hover { background:#151c26; }
+    .num { font:650 15px ui-monospace, monospace; }
+    .arrow { color:#53d4ff; font:12px ui-monospace, monospace; }
+    .empty { padding:18px; color:#9aa6b2; text-align:center; font:13px ui-monospace, monospace; }
+    footer { margin-top:22px; color:#6b7684; font:12px ui-monospace, monospace; }
+    footer a { color:#9aa6b2; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>wasm-vm — RV64 in the browser</h1>
+    <p class="sub">69 open PR preview(s) · newest first</p>
+    <ul>
+      <li><a href="./pr-159/"><span class="num">PR #159</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-158/"><span class="num">PR #158</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-157/"><span class="num">PR #157</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-156/"><span class="num">PR #156</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-155/"><span class="num">PR #155</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-154/"><span class="num">PR #154</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-153/"><span class="num">PR #153</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-152/"><span class="num">PR #152</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-151/"><span class="num">PR #151</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-150/"><span class="num">PR #150</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-149/"><span class="num">PR #149</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-148/"><span class="num">PR #148</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-147/"><span class="num">PR #147</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-146/"><span class="num">PR #146</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-145/"><span class="num">PR #145</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-144/"><span class="num">PR #144</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-143/"><span class="num">PR #143</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-142/"><span class="num">PR #142</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-141/"><span class="num">PR #141</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-140/"><span class="num">PR #140</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-139/"><span class="num">PR #139</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-138/"><span class="num">PR #138</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-137/"><span class="num">PR #137</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-136/"><span class="num">PR #136</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-135/"><span class="num">PR #135</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-134/"><span class="num">PR #134</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-133/"><span class="num">PR #133</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-132/"><span class="num">PR #132</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-131/"><span class="num">PR #131</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-130/"><span class="num">PR #130</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-129/"><span class="num">PR #129</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-128/"><span class="num">PR #128</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-127/"><span class="num">PR #127</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-126/"><span class="num">PR #126</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-125/"><span class="num">PR #125</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-124/"><span class="num">PR #124</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-123/"><span class="num">PR #123</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-122/"><span class="num">PR #122</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-121/"><span class="num">PR #121</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-120/"><span class="num">PR #120</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-119/"><span class="num">PR #119</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-118/"><span class="num">PR #118</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-117/"><span class="num">PR #117</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-116/"><span class="num">PR #116</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-115/"><span class="num">PR #115</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-114/"><span class="num">PR #114</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-113/"><span class="num">PR #113</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-112/"><span class="num">PR #112</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-111/"><span class="num">PR #111</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-110/"><span class="num">PR #110</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-109/"><span class="num">PR #109</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-108/"><span class="num">PR #108</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-107/"><span class="num">PR #107</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-106/"><span class="num">PR #106</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-105/"><span class="num">PR #105</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-104/"><span class="num">PR #104</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-103/"><span class="num">PR #103</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-102/"><span class="num">PR #102</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-101/"><span class="num">PR #101</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-100/"><span class="num">PR #100</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-99/"><span class="num">PR #99</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-98/"><span class="num">PR #98</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-97/"><span class="num">PR #97</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-96/"><span class="num">PR #96</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-95/"><span class="num">PR #95</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-94/"><span class="num">PR #94</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-93/"><span class="num">PR #93</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-92/"><span class="num">PR #92</span><span class="arrow">live preview →</span></a></li>
+      <li><a href="./pr-57/"><span class="num">PR #57</span><span class="arrow">live preview →</span></a></li>
+    </ul>
+    <footer>Each PR deploys a live preview here via the <code>pages</code> workflow · <a href="https://github.com/BLamy/wasm-vm">source</a></footer>
+  </main>
+</body>
 </html>
