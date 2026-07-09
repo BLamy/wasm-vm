@@ -19,7 +19,7 @@ use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, Response};
 
 use wasm_vm_storage::{
-    ChunkStore, FetchFailure, ImageManifest, ResponseAction, RetryPolicy, classify_response,
+    BlockCache, FetchFailure, ImageManifest, ResponseAction, RetryPolicy, classify_response,
     plan_fetches,
 };
 
@@ -31,10 +31,14 @@ pub struct FetchState {
     pub manifest: ImageManifest,
     /// Directory URL the manifest was loaded from (must end in `/`).
     pub base_url: String,
-    /// Shared with the `ChunkedBackend` inside the machine — populated here, read there.
-    pub store: Rc<RefCell<ChunkStore>>,
+    /// The bounded cache (E3-T03), shared with the `ChunkedBackend` inside the machine — verified
+    /// chunks are inserted here and read there.
+    pub store: Rc<RefCell<BlockCache>>,
     /// Chunks with a fetch in progress (dedup: one fetch per chunk even under concurrent misses).
     pub in_flight: RefCell<BTreeSet<usize>>,
+    /// Chunks pinned against eviction because a parked guest read still needs them (E3-T03). Unpinned
+    /// once the read completes (the chunk drops out of `pending_blk_chunks`), reconciled each tick.
+    pub pinned: RefCell<BTreeSet<usize>>,
     pub retry: RetryPolicy,
     /// Instrumentation for the pass-4 acceptance (< 40% of the image transferred to reach login).
     pub fetch_count: Cell<u32>,
@@ -47,13 +51,14 @@ impl FetchState {
     pub fn new(
         manifest: ImageManifest,
         base_url: String,
-        store: Rc<RefCell<ChunkStore>>,
+        store: Rc<RefCell<BlockCache>>,
     ) -> FetchState {
         FetchState {
             manifest,
             base_url,
             store,
             in_flight: RefCell::new(BTreeSet::new()),
+            pinned: RefCell::new(BTreeSet::new()),
             retry: RetryPolicy::DEFAULT,
             fetch_count: Cell::new(0),
             bytes_transferred: Cell::new(0),
@@ -66,7 +71,25 @@ impl FetchState {
 /// number of chunks newly made resident. Fetches are issued sequentially — correctness over latency;
 /// each pump tick only surfaces the handful of chunks the guest just touched.
 pub async fn fetch_pending(state: &Rc<FetchState>, pending: &[usize]) -> u32 {
-    let plan = plan_fetches(pending, &state.store.borrow(), &state.in_flight.borrow());
+    // Reconcile pins first: a chunk we pinned for an in-flight read that is no longer parked has been
+    // consumed — release it so the cache can evict it under pressure (E3-T03 pinning lifecycle).
+    {
+        let mut pinned = state.pinned.borrow_mut();
+        let completed: Vec<usize> = pinned
+            .iter()
+            .copied()
+            .filter(|c| !pending.contains(c))
+            .collect();
+        for c in completed {
+            state.store.borrow_mut().unpin(c);
+            pinned.remove(&c);
+        }
+    }
+    let plan = plan_fetches(
+        pending,
+        |c| state.store.borrow().contains(c),
+        &state.in_flight.borrow(),
+    );
     let mut done = 0u32;
     for chunk in plan {
         state.in_flight.borrow_mut().insert(chunk);
@@ -112,14 +135,19 @@ async fn fetch_one(state: &Rc<FetchState>, chunk: usize) -> Result<(), FetchFail
                         state
                             .bytes_transferred
                             .set(state.bytes_transferred.get() + body.len() as u64);
-                        match state
-                            .store
-                            .borrow_mut()
-                            .provide(&state.manifest, chunk, body)
-                        {
-                            Ok(()) => return Ok(()),
-                            // A verified-store rejection (hash mismatch / truncation) is a corrupt
-                            // delivery — retry the fetch; never cache or serve the bad bytes.
+                        // Verify BEFORE caching — the bounded cache is raw bytes, so the hash check
+                        // that ChunkStore.provide used to do lives here now. A mismatch/truncation is
+                        // a corrupt delivery: retry, never cache or serve the bad bytes.
+                        match state.manifest.verify_chunk(chunk, &body) {
+                            Ok(()) => {
+                                state.store.borrow_mut().insert(chunk, body);
+                                // Pin against eviction until the parked guest read completes (E3-T03):
+                                // a tiny budget could otherwise evict this chunk before the read that
+                                // asked for it re-executes, livelocking the boot. Reconciled next tick.
+                                state.store.borrow_mut().pin(chunk);
+                                state.pinned.borrow_mut().insert(chunk);
+                                return Ok(());
+                            }
                             Err(_) if state.retry.should_retry(attempt) => {}
                             Err(_) => return Err(FetchFailure::RetriesExhausted { chunk }),
                         }

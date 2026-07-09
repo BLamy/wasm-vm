@@ -54,4 +54,43 @@ network (DevTools throttling) rather than opening dozens of sockets. Verify metr
 (hits+misses vs. actual fetch counter) — inconsistent counters refute.
 
 ## Verification log
-(empty)
+
+**2026-07-06 — cache + prefetch core (pass 1+2), PR stacked on #88.**
+Pass 1 (`cache.rs`): `BlockCache` — byte-budgeted CLOCK (second-chance) eviction (ref bit only, no
+timestamps → deterministic/no_std), byte accounting, pinning (in-flight guest reads never evicted;
+all-pinned → bounded overshoot), `get`/`ChunkSource` via interior-mutable Cell, `CacheMetrics`.
+8 unit tests + a 400-case proptest (read-correctness: a resident chunk always returns its
+last-inserted bytes; accounting: tracked total == actual sum). Pass 2 (`prefetch.rs`): `Readahead`
+(3-consecutive-run → k+1..=k+window), `boot_prefetch` (ordered profile batch, `max` = concurrency
+cap), `PrefetchTracker` (accuracy = used/issued). 5 tests.
+
+Cold-clone critic (fresh context) attacked never-serve-wrong-bytes, never-evict-pinned,
+accounting-never-drifts, eviction-terminates, hand-integrity, readahead, prefetch — wrote 5
+throwaway tests targeting what the proptest can't reach (differently-sized replaces, set_budget×pin
+interleaving, all-pinned inserts, hand churn). **Verdict SHIP**, all invariants sound. One LOW
+finding **F1**: a size-GROWING replace-in-place skipped the eviction loop → could overshoot budget
+(non-issue for fixed-size chunks, but a latent gap). **FIXED** with a budget sweep after a growing
+replace (pinning the written chunk against self-eviction) + regression test.
+
+Gates: storage 30/0, workspace clippy --all-features + fmt + determinism + wasm build — all clean.
+
+**2026-07-06 — wasm wiring (pass 3), same PR #89.**
+`BlockCache` replaces the unbounded `ChunkStore` in the browser virtio-blk path: `ChunkedBackend` +
+`FetchState` hold `Rc<RefCell<BlockCache>>`; the read path is unchanged (BlockCache impls
+`ChunkSource`, so every guest read feeds the CLOCK ref bit + hit/miss counters). Verify-before-cache
+moved to `http_fetch` (`verify_chunk` before `insert` — the guarantee `ChunkStore::provide` gave).
+Pinning lifecycle: `fetch_one` pins a fetched chunk (it backs a parked read); `fetch_pending`
+reconciles each tick, unpinning chunks that left `pending_blk_chunks` (read completed) — prevents a
+tiny budget from evicting a just-fetched chunk before its read re-executes (livelock). `plan_fetches`
+generalized to a residency predicate. `newChunkedDisk` gains `cache_budget_mib` (0→256); `fetchStats`
+adds `cache: {hits,misses,evictions,residentBytes,budgetBytes}`.
+
+Cold-clone critic **SHIP, no bugs** — proved the pin/unpin balance invariant (cache pin-count(C) ==
+[C ∈ state.pinned], 0 or 1: only fetch_one pins/only reconcile unpins, plan_fetches skips resident so
+no double-pin, evict-and-refetch can't corrupt the count), verify-before-cache holds on every accept
+path incl. retries, no RefCell borrow across await, no non-chunked regression, budget math u64-safe.
+
+Gates: storage 30/0, wasm 5/0, wasm32 build+clippy, workspace clippy --all-features, fmt, determinism,
+wasm zicsr-stub, node --check loader.js — all clean. **Remaining:** pass 4 (new stacked branch) —
+dev-mode access recorder + `boot-profile.json` + browser measurements (budget-bound over a `find /`
+sweep, readahead on `dd`, ≥25% faster boot on throttled net, ≥80% boot-profile prefetch accuracy).

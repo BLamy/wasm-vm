@@ -217,19 +217,20 @@ impl ChunkSource for ChunkStore {
 }
 
 /// In-flight fetch dedup: which of `pending` chunks should be *newly* fetched, skipping those already
-/// resident in `store` or already `in_flight`. This is the "two simultaneous reads of the same absent
-/// chunk cause exactly one fetch" guarantee — the caller records each returned chunk as in-flight
-/// before awaiting, so a later `plan_fetches` in the same tick won't re-issue it. Order-preserving
-/// and de-duplicated (a chunk listed twice in `pending` is planned at most once).
+/// resident (`is_resident(c)` true) or already `in_flight`. This is the "two simultaneous reads of the
+/// same absent chunk cause exactly one fetch" guarantee — the caller records each returned chunk as
+/// in-flight before awaiting, so a later `plan_fetches` in the same tick won't re-issue it. Order-
+/// preserving and de-duplicated (a chunk listed twice in `pending` is planned at most once). The
+/// residency test is a predicate so any cache (`ChunkStore`, `BlockCache`, …) can back it.
 pub fn plan_fetches(
     pending: &[usize],
-    store: &ChunkStore,
+    is_resident: impl Fn(usize) -> bool,
     in_flight: &BTreeSet<usize>,
 ) -> Vec<usize> {
     let mut out = Vec::new();
     let mut seen = BTreeSet::new();
     for &c in pending {
-        if store.contains(c) || in_flight.contains(&c) || seen.contains(&c) {
+        if is_resident(c) || in_flight.contains(&c) || seen.contains(&c) {
             continue;
         }
         seen.insert(c);

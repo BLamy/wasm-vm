@@ -199,12 +199,15 @@ fn plan_fetches_dedups_resident_inflight_and_repeats() {
 
     // Pending lists 0,1,2,3,0 (a duplicate 0). Resident 2 and in-flight 1 are skipped; the repeat
     // of 0 is planned once. Order preserved: [0, 3].
-    let plan = plan_fetches(&[0, 1, 2, 3, 0], &store, &in_flight);
+    let plan = plan_fetches(&[0, 1, 2, 3, 0], |c| store.contains(c), &in_flight);
     assert_eq!(plan, vec![0, 3]);
 
     // Two simultaneous reads of the same absent chunk → exactly one planned fetch (dedup within one
     // call), then zero once it is marked in-flight.
-    assert_eq!(plan_fetches(&[3, 3, 3], &store, &in_flight), vec![3]);
+    assert_eq!(
+        plan_fetches(&[3, 3, 3], |c| store.contains(c), &in_flight),
+        vec![3]
+    );
     in_flight.insert(3);
-    assert!(plan_fetches(&[3, 3, 3], &store, &in_flight).is_empty());
+    assert!(plan_fetches(&[3, 3, 3], |c| store.contains(c), &in_flight).is_empty());
 }
