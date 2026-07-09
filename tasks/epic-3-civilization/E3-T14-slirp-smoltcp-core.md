@@ -186,7 +186,41 @@ active flow (no panic, no reused-slot access), `remove_tcp(handle)` drops socket
 handle is invalid + slots are reused so the bridge must drop it on teardown. New use-after-remove
 test asserts None/empty/0/no-panic. 30 slirp tests. fmt + clippy + determinism + no-default green.
 
-**Pass 2b (next — the async bridge):** wire `OutboundSyn` → create a smoltcp listening socket for the
+**2026-07-07 — pass 2h: `Bridge` control plane (`bridge.rs`).** The connection LIFECYCLE that ties
+`FlowManager` (classify + NAT) to `SlirpStack` (accept sockets) to an `OutboundConnector`: a guest SYN
+to a NEW external 4-tuple opens a listening socket AND `connect`s the outbound side, tracking both in
+`flows: BTreeMap<FlowKey, FlowConn>` (holds the `SocketHandle` + the outbound stream, ready for the
+byte-pump). `on_guest_frame` ALWAYS injects the frame (the stack's `accept_frame` filter is the real
+gate — dropping ARP would break neighbor learning), and drives lifecycle only on `Connect` (open →
+`connect().await` → track, or on refusal `remove_tcp` + `manager.remove` so the SYN is then
+filter-dropped and the guest times out) and on eviction/expiry (`teardown` drops socket + stream +
+NAT entry together — no leak). Proven with a MOCK connector (records connects, no real sockets) +
+`#[tokio::test]`s: new SYN connects exactly once + opens the socket + slirp SYN-ACKs the guest;
+connect-refusal tears the half-open flow down (no SYN-ACK); a retransmitted SYN does NOT reconnect;
+a new flow at `max_flows=1` evicts + tears the old one down (bounded); local (gateway) SYN + ARP do
+NOT open an outbound flow. 35 slirp tests. fmt + clippy (all-features) + no-default-features build
+(tokio stays optional — `Bridge` needs only the trait) green.
+
+**Adversarial cold-clone critic on pass 2h: SOUND lifecycle, one CRITICAL hot-path hijack fixed.** The
+critic verified (leak probes across ok / connect-fail / eviction / eviction+fail / expire — every path
+ends `(sockets, endpoints, flows)` fully in sync, `bridge.flows ⊆ manager table` always so `Connect`
+never double-opens; retransmit guard holds; IPv6 can't strand a NAT entry; the mock tests are
+non-vacuous) and found ONE **CRITICAL** in the inject/poll seam. `inject` ADMITS a frame now but `poll`
+CONSUMES it later; if flow A's SYN is queued, then a new flow B at capacity evicts A and reuses A's
+exact `(dst,port)` endpoint (smoltcp recycles the freed handle slot), the deferred `poll` feeds A's
+stale SYN into B's fresh LISTEN-state listener → a **forged SYN-ACK to the torn-down flow A** (guest
+40001) AND B's listener bound to the **wrong guest 4-tuple** (cross-flow corruption: the byte-pump
+would shuttle 40001's bytes over B's outbound stream), while the intended flow B gets a **RST**. This
+is the hot browser path — many parallel connections to one `host:443` under a churning flow table.
+Fix (critic-recommended, mutation-killed): `on_guest_frame` now `poll`s IMMEDIATELY after `inject`, so
+every admitted frame is consumed under the socket topology it was admitted through — no frame outlives
+a later `open_tcp`/`remove_tcp`. New regression `stale_syn_cannot_hijack_reused_listener_after_
+same_endpoint_eviction` (cap=1, same endpoint) asserts the LIVE flow B gets a SYN-ACK, never a RST;
+verified it FAILS without the poll (0/1) and PASSES with it (mutation-kill). The deeper full-4-tuple
+accept guard for *concurrent* same-endpoint flows is noted for the byte-pump slice. 36 slirp tests.
+fmt + clippy (all-features) + no-default-features build green. **CI green on #121 (all checks pass).**
+
+**Pass 2b (next — the async byte-pump):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).
 The booted-Alpine acceptance leg is later (long boot, env-gated).

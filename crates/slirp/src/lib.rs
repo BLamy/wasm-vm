@@ -9,6 +9,7 @@
 
 use std::net::Ipv4Addr;
 
+pub mod bridge;
 pub mod connector;
 pub mod device;
 pub mod manager;
@@ -20,6 +21,7 @@ pub mod tcp;
 
 pub use manager::{Action, FlowManager, FrameOutcome};
 
+pub use bridge::Bridge;
 pub use connector::{ConnectError, OutboundConnector};
 pub use device::SlirpDevice;
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
