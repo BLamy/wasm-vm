@@ -19,6 +19,7 @@ pub mod chunk;
 mod chunk_verify;
 pub mod debug;
 pub mod file_backend;
+mod oci;
 mod trace_json;
 
 use std::cell::Cell;
@@ -54,6 +55,15 @@ enum Cmd {
     ChunkVerify(chunk_verify::VerifyArgs),
     /// E3-T11: report the chunk churn between two builds (CDN-friendliness metric).
     ChunkChurn(chunk_verify::ChurnArgs),
+    /// E3.5-T01: OCI container-image operations.
+    #[command(subcommand)]
+    Oci(OciCmd),
+}
+
+#[derive(Subcommand)]
+enum OciCmd {
+    /// Unpack an OCI image-layout (verifying blob digests) into a flattened rootfs directory.
+    Unpack(oci::UnpackArgs),
 }
 
 #[derive(Args)]
@@ -202,6 +212,7 @@ fn main() -> ExitCode {
         Cmd::Chunk(args) => chunk::chunk(args),
         Cmd::ChunkVerify(args) => chunk_verify::run_verify(args),
         Cmd::ChunkChurn(args) => chunk_verify::run_churn(args),
+        Cmd::Oci(OciCmd::Unpack(args)) => oci::unpack(args),
     }
 }
 

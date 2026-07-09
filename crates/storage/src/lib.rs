@@ -20,6 +20,7 @@ use sha2::{Digest, Sha256};
 mod cache;
 mod dbmeta;
 mod fetch;
+pub mod oci;
 mod overlay;
 mod prefetch;
 mod writeback;
