@@ -6,6 +6,7 @@
 import init, { WasmMachine, version, bench } from "./pkg/wasm_vm_wasm.js";
 import { RISCV_TESTS } from "./riscv-tests.js";
 import { ROADMAP } from "./roadmap.js";
+import { startLinuxBoot } from "./loader.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -23,6 +24,45 @@ term.open(document.getElementById("term"));
 const runBtn = document.getElementById("run");
 const resetBtn = document.getElementById("reset");
 const fileInput = document.getElementById("file");
+
+// E2-T21: boot unmodified Linux in the browser via the loading pipeline (loader.js).
+const bootLinuxBtn = document.getElementById("boot-linux");
+const bootProgressEl = document.getElementById("boot-progress");
+let linuxCtl = null;
+if (bootLinuxBtn) {
+  bootLinuxBtn.addEventListener("click", async () => {
+    if (linuxCtl) return; // already booting
+    bootLinuxBtn.disabled = true;
+    term.reset();
+    term.writeln("\x1b[36mbooting unmodified Linux 6.6.63 + busybox in wasm…\x1b[0m");
+    const pct = {};
+    try {
+      linuxCtl = await startLinuxBoot({
+        manifestUrl: "./artifacts.json",
+        onState: (s) => setStatus(`linux: ${s}`),
+        onProgress: (role, loaded, total) => {
+          pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;
+          bootProgressEl.textContent = Object.entries(pct).map(([k, v]) => `${k} ${v}`).join("  ");
+        },
+        onOutput: (u8) => term.write(u8),
+        onError: (e) => term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`),
+      });
+      linuxCtl.whenDone.then((state) => {
+        setStatus(`linux: ${state}`);
+        bootLinuxBtn.disabled = false;
+        linuxCtl = null;
+      });
+      // Route terminal keystrokes to the guest's ttyS0.
+      term.onData((data) => {
+        if (linuxCtl) linuxCtl.sendInput(new TextEncoder().encode(data));
+      });
+    } catch (e) {
+      term.writeln(`\x1b[31mcannot boot linux: ${e.message || e}\x1b[0m`);
+      bootLinuxBtn.disabled = false;
+      linuxCtl = null;
+    }
+  });
+}
 const statusEl = document.getElementById("status");
 const versionEl = document.getElementById("version");
 const suiteRunBtn = document.getElementById("suite-run");

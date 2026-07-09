@@ -370,10 +370,10 @@ impl WasmMachine {
 /// sources for determinism. This is the minimal "wire the trait" shim; E2-T23 owns the real
 /// browser timekeeping policy (drift, throttling, suspend/resume recovery) that will build on
 /// it. wasm-only: `js_sys::Date::now` links nowhere else.
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 pub struct JsWallClock;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 impl wasm_vm_core::dev::rtc::WallClock for JsWallClock {
     fn now_ns(&self) -> u64 {
         // Date.now() is f64 milliseconds; ×1e6 → ns. Negative (pre-1970) reads back as 0.
@@ -383,5 +383,155 @@ impl wasm_vm_core::dev::rtc::WallClock for JsWallClock {
         } else {
             (ms * 1_000_000.0) as u64
         }
+    }
+}
+
+/// E2-T21: a browser-side unmodified-Linux boot. Unlike [`WasmMachine`] (bare-metal ELF + a
+/// Uart0 stub), this assembles the full `virt` platform (CLINT/PLIC/16550/virtio/goldfish-RTC/
+/// syscon/built-in SBI) via the SHARED [`Machine::place_and_boot`] and boots a kernel `Image`
+/// + optional initramfs. Console is chunked: all guest output (SBI `earlycon` + the 16550
+/// `ttyS0`) accumulates in a buffer that each `runChunk` flushes to a JS callback as one
+/// `Uint8Array`; host keystrokes queued via `sendInput` feed the 16550 RX. The JS host drives
+/// the machine off `requestAnimationFrame`/`setTimeout` (workers/SAB are Epic 4).
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+pub struct WasmLinux {
+    inner: RefCell<LinuxInner>,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+struct LinuxInner {
+    machine: Machine,
+    uart: std::rc::Rc<RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
+    out: std::rc::Rc<RefCell<Vec<u8>>>,
+    output: js_sys::Function,
+    pending: std::collections::VecDeque<u8>,
+    finished: Option<String>,
+}
+
+/// Console sink that accumulates guest bytes into a shared buffer (drained per `runChunk`).
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+struct BufSink {
+    buf: std::rc::Rc<RefCell<Vec<u8>>>,
+}
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl ConsoleSink for BufSink {
+    fn put_byte(&mut self, b: u8) {
+        self.buf.borrow_mut().push(b);
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+impl WasmLinux {
+    /// Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
+    /// `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        ram_mib: u32,
+        kernel: &[u8],
+        initrd: &[u8],
+        bootargs: String,
+        output: js_sys::Function,
+    ) -> Result<WasmLinux, JsError> {
+        init_diagnostics();
+        let bytes = (ram_mib as usize).saturating_mul(1024 * 1024);
+        let mut machine = Machine::try_new(bytes)
+            .map_err(|_| JsError::new(&format!("cannot allocate {ram_mib} MiB of guest RAM")))?;
+        // Devices in dependency order (PLIC before its consumers).
+        machine.enable_clint(10);
+        machine.enable_plic();
+        machine.enable_rtc(Box::new(JsWallClock));
+        machine.enable_syscon();
+        let uart = machine.enable_uart16550();
+        let _ = machine.enable_virtio_slots(None); // 8 empty slots the DTB advertises
+        machine.enable_builtin_sbi();
+        let out = std::rc::Rc::new(RefCell::new(Vec::new()));
+        machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));
+
+        let args: &str = if bootargs.is_empty() {
+            "console=ttyS0 earlycon=sbi"
+        } else {
+            &bootargs
+        };
+        let initrd_opt = if initrd.is_empty() {
+            None
+        } else {
+            Some(initrd)
+        };
+        machine
+            .place_and_boot(kernel, initrd_opt, args)
+            .map_err(|e| JsError::new(&format!("boot layout failed: {e:?}")))?;
+        Ok(WasmLinux {
+            inner: RefCell::new(LinuxInner {
+                machine,
+                uart,
+                out,
+                output,
+                pending: std::collections::VecDeque::new(),
+                finished: None,
+            }),
+        })
+    }
+
+    /// Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
+    /// 16550 RX, and return `{ done: bool, state: string|null }`. `state` is `"poweroff"`,
+    /// `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or `"trap:<cause>"` once terminal.
+    #[wasm_bindgen(js_name = runChunk)]
+    pub fn run_chunk(&self, max_instrs: u32) -> Result<JsValue, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.finished.is_none() {
+            let mut sink = wasm_vm_core::trace::NullSink;
+            let outcome = inner.machine.run_traced(max_instrs as u64, &mut sink);
+            // Drain the 16550 TX into the console buffer.
+            let uart_out = inner.uart.borrow_mut().take_output();
+            inner.out.borrow_mut().extend_from_slice(&uart_out);
+            // Feed queued host input into the RX FIFO, up to its free space (no overrun).
+            if !inner.pending.is_empty() {
+                let free = inner.uart.borrow().rx_free();
+                let n = free.min(inner.pending.len());
+                if n > 0 {
+                    let batch: Vec<u8> = inner.pending.drain(..n).collect();
+                    inner.uart.borrow_mut().push_input(&batch);
+                }
+            }
+            inner.finished = match outcome {
+                RunOutcome::Reset(wasm_vm_core::ExitReason::PowerOff) => Some("poweroff".into()),
+                RunOutcome::Reset(wasm_vm_core::ExitReason::Reboot) => Some("reboot".into()),
+                RunOutcome::Reset(wasm_vm_core::ExitReason::Fail(c)) => Some(format!("fail:{c}")),
+                RunOutcome::Exited(code) => Some(format!("exited:{code}")),
+                RunOutcome::Trapped(t) => Some(format!("trap:{:?}", t.cause)),
+                RunOutcome::MaxInstrs => None, // keep going
+            };
+        }
+        // Flush accumulated console output to JS as one chunk.
+        let bytes = std::mem::take(&mut *inner.out.borrow_mut());
+        if !bytes.is_empty() {
+            let arr = js_sys::Uint8Array::from(&bytes[..]);
+            let _ = inner.output.call1(&JsValue::NULL, &arr);
+        }
+        let obj = js_sys::Object::new();
+        let _ = js_sys::Reflect::set(
+            &obj,
+            &"done".into(),
+            &JsValue::from_bool(inner.finished.is_some()),
+        );
+        match &inner.finished {
+            Some(s) => {
+                let _ = js_sys::Reflect::set(&obj, &"state".into(), &JsValue::from_str(s));
+            }
+            None => {
+                let _ = js_sys::Reflect::set(&obj, &"state".into(), &JsValue::NULL);
+            }
+        }
+        Ok(obj.into())
+    }
+
+    /// Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).
+    #[wasm_bindgen(js_name = sendInput)]
+    pub fn send_input(&self, bytes: &[u8]) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.pending.extend(bytes.iter().copied());
+        Ok(())
     }
 }
