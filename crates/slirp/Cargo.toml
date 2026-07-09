@@ -18,6 +18,11 @@ default = ["native"]
 native = ["dep:tokio", "dep:tokio-tungstenite", "dep:futures-util"]
 
 [dependencies]
+# E3-net (browser networking): the local-stack NetBackend impl needs the machine's NetBackend trait.
+# default-features off (no `trace`/`std` core features). NOTE: this crate is NOT no_std — it uses std
+# and enables smoltcp's `std` feature; it compiles for wasm32-unknown-unknown because that target
+# provides std. (local_backend.rs is written alloc-only, but the crate around it is std.)
+wasm-vm-core = { workspace = true }
 futures-util = { version = "0.3", default-features = false, features = ["sink", "std"], optional = true }
 smoltcp = { version = "0.13", default-features = false, features = [
     "std",

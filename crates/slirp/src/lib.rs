@@ -18,6 +18,7 @@ pub mod dns_tcp;
 pub mod doh;
 #[cfg(all(test, feature = "native"))]
 mod e2e_pump_stack;
+pub mod local_backend;
 pub mod manager;
 pub mod nat;
 #[cfg(feature = "native")]
@@ -44,6 +45,7 @@ pub use dhcp::DhcpServer;
 pub use dns::{Answer, Query, ResponseInfo, build_query, parse_query, parse_response};
 pub use dns_tcp::{TcpFrame, frame_message, next_message};
 pub use doh::{DohResolver, DohTransport};
+pub use local_backend::SlirpLocalBackend;
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
 #[cfg(feature = "native")]
 pub use native::NativeConnector;
