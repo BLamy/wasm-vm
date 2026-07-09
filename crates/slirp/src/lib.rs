@@ -15,6 +15,7 @@ pub mod nat;
 #[cfg(feature = "native")]
 pub mod native;
 pub mod stack;
+pub mod tcp;
 
 pub use connector::{ConnectError, OutboundConnector};
 pub use device::SlirpDevice;
