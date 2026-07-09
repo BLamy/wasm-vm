@@ -9,7 +9,7 @@
 // for the deferred 512 MB single-copy audit). The result is handed to wasm by one copy in the
 // `WasmLinux` constructor. No intermediate Blob/ArrayBuffer duplication beyond that.
 
-import init, { WasmLinux, overlayDbName } from "./pkg/wasm_vm_wasm.js";
+import init, { WasmLinux, overlayDbName, setSlirpNet } from "./pkg/wasm_vm_wasm.js";
 
 /** Fetch `url` into one preallocated buffer, reporting `(loaded, total)`; `total` is null when
  *  the server sends no Content-Length (progress must degrade to indeterminate, not lie). */
@@ -213,6 +213,14 @@ export async function startLinuxBoot(opts = {}) {
 
     onState("instantiating");
     await init(); // WebAssembly.instantiateStreaming under the hood (wasm-pack --target web)
+
+    // E3-net: pick the virtio-net backend for this boot BEFORE constructing WasmLinux (which reads
+    // the flag). `slirpNet` → the slirp local stack (guest DHCPs 10.0.2.15 + reaches the gateway);
+    // default → the loopback backend. Set unconditionally so a prior boot's choice never leaks.
+    // Defensive: setSlirpNet is a trivial atomic store and won't throw; the guard just ensures a
+    // stray failure can only fall back to the default backend, never abort the boot. (A pkg missing
+    // the export would fail earlier at the named import, not here.)
+    try { setSlirpNet(!!opts.slirpNet); } catch { /* keep the default backend */ }
 
     onState("booting");
     // disk → in-memory virtio-blk backend (whole image); chunked → a ChunkedBackend that lazily
