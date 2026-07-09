@@ -295,6 +295,47 @@ lives in the TEST here; lifting it into a `Bridge` method needs a spawn/ownershi
 + `C::Conn: AsyncRead+AsyncWrite` rippling through the mock lifecycle tests) — deferred so this proves
 the pieces compose first. Remaining: that `Bridge` wiring, then the env-gated booted-guest acceptance.
 
+**2026-07-07 — pass 2l: `Bridge::service` — the data path lifted into the control plane (`bridge.rs`).**
+The servicing loop the e2e proved (pass 2k) now lives in `Bridge` as a native-gated `service()`. Design
+keeps the mock lifecycle tests untouched: the pump plumbing is a `#[cfg(feature="native")] pumps:
+BTreeMap<FlowKey, PumpHandle>` field + a separate `impl … where C::Conn: AsyncRead+AsyncWrite+Send+'static`
+block, so the generic `on_guest_frame`/`teardown` (used by the `Conn=()` mock) never gains the bound.
+`FlowConn.stream` became `Option<S>` so `service` can `take` it. Per pass: `start_pumps` spawns a
+`pump_flow` for each freshly-connected flow (taking its stream); then for every flow it drains
+`tcp_recv`→`to_pump` ONLY while the channel has a reserve (real backpressure — an exhausted reserve
+leaves bytes in the socket buffer, closing the guest window), forwards `from_pump`→`tcp_send`
+(partial-accept safe, remainder retried), propagates half-close each way (guest FIN [socket can no
+longer receive] → drop `to_pump` so the pump FINs outbound; server FIN/EOF [channel Disconnected] +
+buffer flushed → `tcp_close` the guest, once), and reaps flows whose socket reached `Closed`/gone
+(drop pump + flow + NAT entry together). `service` is non-blocking and never awaits, so it can't stall
+the stack; the heavy copy is on the pump tasks. `expire`/`teardown` now also drop the pump handle.
+Proven: `bridge_service_round_trips_guest_bytes_to_a_real_echo_server` drives a guest SYN/ACK/data in
+via `on_guest_frame`, then `service()`+`poll()` shuttle "hello via bridge" out to a REAL tokio echo
+server and the echo back to the guest (bool-returning timeout loop — no false pass). 43 slirp tests.
+fmt + clippy green under BOTH `--all-features` AND `--no-default-features` (the `pumps` field, the
+native impl, and the `stream` read are all `native`-gated → tokio stays out of the browser build).
+Remaining: the env-gated booted-guest acceptance (drive `service` from the executor's poll loop).
+
+**Adversarial cold-clone critic on pass 2l: SOUND lifecycle, one MAJOR outbound-backpressure gap fixed.**
+The critic verified (repro + mutation) the guest→outbound backpressure (`try_reserve`), the half-close
+ordering (no truncation — `tcp_recv` drains the whole rx buffer, including data delivered with the FIN,
+BEFORE the `guest_finished_sending` check drops `to_pump`), reap consistency (all four maps keyed by the
+same `(key, handle)`; `remove_tcp` deferred past the loop so no handle invalidates mid-pass; `tcp_close`
+→ `Closed` needs the FIN ACKed so reap can't drop an un-ACKed FIN), the `mem::take`+restore pattern, the
+`--no-default` gating, and test honesty (neutering `service` fails the round trip via timeout). It found
+ONE **MAJOR** (borderline CRITICAL — remotely-triggerable OOM from a single flow): the outbound→guest
+path had NO backpressure. `service` drained `from_pump` into the UNBOUNDED `pending_out` every pass
+regardless of whether the guest could accept; a fast server + a guest whose window is shut (`tcp_send`
+accepts 0) inflates `pending_out` without limit (critic repro: ~100 MiB in 400 passes; smoltcp's own
+buffer capped at ~128 KiB). Fix (critic-recommended, mutation-killed): only pull the next `from_pump`
+batch once `pending_out` is empty — leaving bytes in the BOUNDED `from_pump` channel blocks the pump's
+`guest_tx.send`, which backpressures the real server. (The FIN guard already required `pending_out`
+empty, so deferring `Disconnected` detection loses nothing.) New regression
+`outbound_to_guest_stays_bounded_when_the_server_floods_and_the_guest_stalls` (a `FloodConnector` whose
+stream yields infinite bytes; guest never ACKs) drives 300 passes and asserts total buffered < 4 MiB;
+verified it FAILS (unbounded) without the guard and PASSES with it (holds ~one channel drain). 44 slirp
+tests. fmt + clippy green under BOTH `--all-features` and `--no-default-features`. **CI green on #126.**
+
 **Pass 2b (next — the async byte-pump):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).

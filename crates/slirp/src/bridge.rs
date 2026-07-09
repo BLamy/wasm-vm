@@ -4,9 +4,12 @@
 //! the existing socket; local frames go to smoltcp; eviction/teardown drops both the socket and the
 //! outbound connection together (no leak).
 //!
-//! This slice is the connection LIFECYCLE (open/track/teardown), unit-tested with a mock connector.
-//! The byte-PUMP between each smoltcp socket and its outbound stream (with backpressure/half-close)
-//! is the final slice; the per-flow stream is already held here ready for it.
+//! The connection LIFECYCLE (open/track/teardown) is generic and unit-tested with a mock connector.
+//! The DATA PATH is a native-gated layer ([`Bridge::service`]): it spawns a per-flow byte pump
+//! ([`pump_flow`](crate::pump_flow)) for each connected flow and, on each non-blocking pass, shuttles
+//! bytes both ways with backpressure, propagates half-close in each direction, and reaps closed flows.
+//! Kept behind `feature = "native"` (tokio channels + task) so the browser build never pulls tokio;
+//! the guest↔echo round trip through `service` is proven end-to-end in `e2e_pump_stack.rs`.
 
 use std::collections::BTreeMap;
 use std::net::IpAddr;
@@ -18,12 +21,15 @@ use crate::manager::{Action, FlowManager};
 use crate::nat::FlowKey;
 use crate::stack::SlirpStack;
 
-/// A live flow's resources: its smoltcp socket handle and the outbound byte stream.
+/// A live flow's resources: its smoltcp socket handle and the outbound byte stream. The stream is
+/// held in an `Option` so the native servicing layer can `take` it to hand to a per-flow byte pump
+/// (see [`Bridge::service`]); until then it just sits here keeping the connection open.
 struct FlowConn<S> {
     handle: SocketHandle,
-    /// The outbound stream (the byte-pump slice reads/writes this). Held so it isn't dropped; the
-    /// leading underscore silences dead-code until the pump consumes it.
-    _stream: S,
+    // Read only by the native servicing layer (which `take`s it for the pump). Without `native` it
+    // just holds the connection open until teardown, so it's legitimately unread there.
+    #[cfg_attr(not(feature = "native"), allow(dead_code))]
+    stream: Option<S>,
 }
 
 /// Drives guest frames → outbound connections over a bounded set of flows.
@@ -32,6 +38,32 @@ pub struct Bridge<C: OutboundConnector> {
     manager: FlowManager,
     connector: C,
     flows: BTreeMap<FlowKey, FlowConn<C::Conn>>,
+    /// Per-flow byte pumps (native only — tokio channels + task). Populated lazily by
+    /// [`Bridge::service`]; empty until then. Feature-gated so the browser build never pulls tokio.
+    #[cfg(feature = "native")]
+    pumps: BTreeMap<FlowKey, pump::PumpHandle>,
+}
+
+#[cfg(feature = "native")]
+mod pump {
+    use smoltcp::iface::SocketHandle;
+    use tokio::sync::mpsc;
+    use tokio::task::JoinHandle;
+
+    use crate::pump::PumpStats;
+
+    /// A running flow's pump plumbing: the channel we feed guest bytes into (`to_pump`, `None` once
+    /// the guest half-closed), the channel we drain outbound bytes from (`from_pump`), a small buffer
+    /// for bytes smoltcp couldn't accept yet (`pending_out`), and the pump task handle. `SocketHandle`
+    /// is stored so servicing can find the socket without re-borrowing the flow map.
+    pub(super) struct PumpHandle {
+        pub handle: SocketHandle,
+        pub to_pump: Option<mpsc::Sender<Vec<u8>>>,
+        pub from_pump: mpsc::Receiver<Vec<u8>>,
+        pub pending_out: Vec<u8>,
+        pub outbound_fin_sent: bool,
+        pub _join: JoinHandle<PumpStats>,
+    }
 }
 
 impl<C: OutboundConnector> Bridge<C> {
@@ -42,6 +74,8 @@ impl<C: OutboundConnector> Bridge<C> {
             manager: FlowManager::new(max_flows),
             connector,
             flows: BTreeMap::new(),
+            #[cfg(feature = "native")]
+            pumps: BTreeMap::new(),
         }
     }
 
@@ -81,7 +115,7 @@ impl<C: OutboundConnector> Bridge<C> {
                         key,
                         FlowConn {
                             handle,
-                            _stream: stream,
+                            stream: Some(stream),
                         },
                     );
                 }
@@ -113,6 +147,10 @@ impl<C: OutboundConnector> Bridge<C> {
             if let Some(fc) = self.flows.remove(&key) {
                 self.stack.remove_tcp(fc.handle);
             }
+            // Dropping the pump handle closes both channels, so the pump task's copy of the stream is
+            // dropped and it finishes; the join handle is detached (no await here).
+            #[cfg(feature = "native")]
+            self.pumps.remove(&key);
         }
     }
 
@@ -122,7 +160,170 @@ impl<C: OutboundConnector> Bridge<C> {
         if let Some(fc) = self.flows.remove(key) {
             self.stack.remove_tcp(fc.handle);
         }
+        #[cfg(feature = "native")]
+        self.pumps.remove(key);
         self.manager.remove(key);
+    }
+}
+
+/// Per-flow pump channel depth: bounds buffering each way so a slow peer backpressures the other
+/// side (via smoltcp's window / the pump's `write_all`) instead of growing memory unbounded.
+#[cfg(feature = "native")]
+const PUMP_DEPTH: usize = 16;
+
+/// Has the guest finished sending (sent FIN)? True once our socket can no longer receive — the peer
+/// has closed its write side. Used to half-close the outbound direction.
+#[cfg(feature = "native")]
+fn guest_finished_sending(state: Option<smoltcp::socket::tcp::State>) -> bool {
+    use smoltcp::socket::tcp::State::*;
+    matches!(
+        state,
+        Some(CloseWait | Closing | LastAck | TimeWait | Closed) | None
+    )
+}
+
+#[cfg(feature = "native")]
+impl<C: OutboundConnector> Bridge<C>
+where
+    C::Conn: tokio::io::AsyncRead + tokio::io::AsyncWrite + Send + 'static,
+{
+    /// Spawn a byte pump for every connected flow that doesn't have one yet: take the flow's outbound
+    /// stream and hand it to [`pump_flow`](crate::pump_flow), wiring the two channels `service` drives.
+    fn start_pumps(&mut self) {
+        let fresh: Vec<FlowKey> = self
+            .flows
+            .iter()
+            .filter(|(k, fc)| fc.stream.is_some() && !self.pumps.contains_key(k))
+            .map(|(k, _)| k.clone())
+            .collect();
+        for key in fresh {
+            let Some(fc) = self.flows.get_mut(&key) else {
+                continue;
+            };
+            let Some(stream) = fc.stream.take() else {
+                continue;
+            };
+            let handle = fc.handle;
+            let (to_pump, to_pump_rx) = tokio::sync::mpsc::channel(PUMP_DEPTH);
+            let (from_pump_tx, from_pump) = tokio::sync::mpsc::channel(PUMP_DEPTH);
+            let join = tokio::spawn(crate::pump_flow(stream, to_pump_rx, from_pump_tx));
+            self.pumps.insert(
+                key,
+                pump::PumpHandle {
+                    handle,
+                    to_pump: Some(to_pump),
+                    from_pump,
+                    pending_out: Vec::new(),
+                    outbound_fin_sent: false,
+                    _join: join,
+                },
+            );
+        }
+    }
+
+    /// One non-blocking servicing pass across all flows: spawn pumps for freshly-connected flows,
+    /// shuttle bytes both ways with backpressure, propagate half-close in each direction, and reap
+    /// flows whose socket has fully closed. Drive this after each `poll`/`on_guest_frame` and whenever
+    /// the runtime nudges progress (this is the seam the eventual event loop / booted-guest wiring
+    /// calls). The heavy byte-copy is on the pump tasks; this pass is cheap, non-blocking, and never
+    /// awaits — so it can't stall the stack.
+    pub fn service(&mut self) {
+        self.start_pumps();
+        // Take the pump map out so we can freely borrow `self.stack`/`self.flows` while iterating
+        // (they're disjoint fields, but the borrow checker can't see that through `self`).
+        let mut pumps = std::mem::take(&mut self.pumps);
+        let mut finished: Vec<(FlowKey, SocketHandle)> = Vec::new();
+
+        for (key, ph) in pumps.iter_mut() {
+            let h = ph.handle;
+
+            // guest → outbound: drain smoltcp only while the channel has room. An exhausted reserve
+            // leaves bytes in the socket's rx buffer, so smoltcp closes the guest's window — real
+            // backpressure, no unbounded growth.
+            let mut fully_drained = true;
+            if let Some(tx) = ph.to_pump.as_ref() {
+                loop {
+                    match tx.try_reserve() {
+                        Ok(permit) => {
+                            let d = self.stack.tcp_recv(h);
+                            if d.is_empty() {
+                                break;
+                            }
+                            permit.send(d);
+                        }
+                        Err(_) => {
+                            fully_drained = false; // channel full — more guest bytes may be pending
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Guest half-close: once the guest has FIN'd AND we've forwarded everything it sent, drop
+            // our sender so the pump FINs the outbound write side (the server may still send).
+            if fully_drained
+                && ph.to_pump.is_some()
+                && guest_finished_sending(self.stack.tcp_state(h))
+            {
+                ph.to_pump = None;
+            }
+
+            // outbound → guest: pull served bytes, noting when the pump has closed its side (server
+            // FIN/EOF), then feed the socket (partial-accept safe — the remainder retries next pass).
+            // BACKPRESSURE (critic MAJOR): only pull the NEXT batch once the previous one has fully
+            // reached the socket. If we drained `from_pump` unconditionally, a fast server + a stalled
+            // guest (its window shut, so `tcp_send` accepts 0) would inflate `pending_out` — an
+            // unbounded plain `Vec` — without limit → remote OOM from a single flow. Leaving bytes in
+            // the BOUNDED `from_pump` channel instead blocks the pump's `guest_tx.send`, which
+            // backpressures the real server. (The FIN guard below already requires `pending_out`
+            // empty, so deferring `Disconnected` detection until the buffer flushes loses nothing.)
+            let mut outbound_closed = false;
+            if ph.pending_out.is_empty() {
+                loop {
+                    match ph.from_pump.try_recv() {
+                        Ok(chunk) => ph.pending_out.extend_from_slice(&chunk),
+                        Err(tokio::sync::mpsc::error::TryRecvError::Empty) => break,
+                        Err(tokio::sync::mpsc::error::TryRecvError::Disconnected) => {
+                            outbound_closed = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if !ph.pending_out.is_empty() {
+                let n = self.stack.tcp_send(h, &ph.pending_out);
+                ph.pending_out.drain(..n);
+            }
+
+            // Server FIN/EOF: once every buffered byte has reached the socket, FIN the guest — once.
+            if outbound_closed && ph.pending_out.is_empty() && !ph.outbound_fin_sent {
+                self.stack.tcp_close(h);
+                ph.outbound_fin_sent = true;
+            }
+
+            // Reap when the socket is fully closed (or already gone): drop the pump + flow together.
+            if matches!(
+                self.stack.tcp_state(h),
+                None | Some(smoltcp::socket::tcp::State::Closed)
+            ) {
+                finished.push((key.clone(), h));
+            }
+        }
+
+        for (key, h) in finished {
+            pumps.remove(&key);
+            self.flows.remove(&key);
+            self.stack.remove_tcp(h);
+            self.manager.remove(&key);
+        }
+        self.pumps = pumps;
+    }
+
+    /// Total bytes buffered in the outbound→guest direction across all flows. Introspection hook for
+    /// the backpressure regression test (it must stay bounded even against a flooding server).
+    #[cfg(test)]
+    pub(crate) fn pending_out_bytes(&self) -> usize {
+        self.pumps.values().map(|p| p.pending_out.len()).sum()
     }
 }
 
