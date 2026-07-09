@@ -3,11 +3,17 @@ id: E8-T07
 epic: 8
 title: Time-travel controls — seek, reverse-step, and a scrub UI over a live session
 priority: 807
-status: pending
+status: cancelled
 depends_on: [E8-T06]
 estimate: M
 capstone: false
 ---
+
+> **CANCELLED 2026-07-06** (Brett's direction): Epic 8 "Chrome in Chrome" is cancelled as a
+> goal. Superseded in spirit by **Epic 3.5 — OCI Workloads in the Browser**
+> (`tasks/epic-3.5-oci-workloads/`): real container workloads are the payoff instead of a
+> nested browser. The Layer-G record/replay ideas in E8-T03..T09 may be resurrected as their
+> own epic later if VM time-travel becomes a goal again.
 
 ## Goal
 The user-facing time machine: controls to **pause, seek to any time, step backward and forward,

@@ -374,7 +374,10 @@ function renderRoadmap() {
       makeEl("span", "epic-tag", epic.epic),
       makeEl("span", "epic-name", epic.title),
       makeEl("span", "epic-state",
-        epic.status === "done" ? "complete" : epic.status === "next" ? "in progress" : "planned"),
+        epic.status === "done" ? "complete"
+          : epic.status === "next" ? "in progress"
+          : epic.status === "cancelled" ? "cancelled"
+          : "planned"),
     );
     const list = makeEl("ul", "cap-list");
     for (const cap of epic.caps) {

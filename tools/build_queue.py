@@ -19,6 +19,7 @@ STATUS_ICON = {
     "implemented": "?",
     "refuted": "!",
     "verified": "x",
+    "cancelled": "-",
 }
 
 
@@ -35,8 +36,12 @@ def parse_frontmatter(path: Path) -> dict | None:
         key, val = key.strip(), val.split("#")[0].strip()
         if key == "depends_on":
             fm[key] = [d.strip() for d in val.strip("[]").split(",") if d.strip()]
-        elif key in ("epic", "priority"):
+        elif key == "priority":
             fm[key] = int(val)
+        elif key == "epic":
+            # Fractional epics exist (3.5 = OCI workloads); keep whole numbers as int so
+            # headers print "Epic 3", not "Epic 3.0".
+            fm[key] = int(val) if val.isdigit() else float(val)
         elif key == "capstone":
             fm[key] = val.lower() == "true"
         else:
@@ -86,7 +91,7 @@ def main() -> int:
         f"**{n_verified} / {len(tasks)} tasks verified.**",
         "",
         "Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting"
-        " adversarial verification) · `[!]` refuted · `[x]` verified",
+        " adversarial verification) · `[!]` refuted · `[x]` verified · `[-]` cancelled",
         "",
         "## Next up (deps satisfied, in priority order)",
         "",
