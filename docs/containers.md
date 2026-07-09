@@ -84,3 +84,19 @@ real emulator. Any step that FAILS in-guest but works on real riscv64 Linux is a
 (a missing/wrong syscall: `clone3` namespace flags, `setns`, `pivot_root`, `umount2(MNT_DETACH)`,
 `seccomp` filtering) to file and fix — the whole point of this task is to surface those before the
 runner (E3.5-T03) depends on them.
+
+## The runner: `wvrun` (E3.5-T03)
+
+`tools/guest/wvrun.sh` (→ `/usr/local/bin/wvrun`) consumes a BUNDLE produced by
+`wasm-vm oci unpack <layout> --out <bundle>` — `<bundle>/rootfs/` + `run.json` +
+`config/{argv,env,cwd,user}` (flat files so the POSIX-sh runner needs no JSON parser). It overlays
+the image (rootfs = read-only lower, tmpfs upper), `unshare`s pid+mount+uts+ipc (v1 shares the guest
+netns so the service is reachable), mounts fresh
+proc/sys + `/dev`, `pivot_root`s in, applies cwd/env, and `exec`s the image's argv with exit-code
+passthrough. `wvrun --interactive <bundle>` drops to a shell. `crates/cli/tests/boot_wvrun.rs`
+(`#[ignore]`) is its booted acceptance: runs a bundle, proves overlay-upper write isolation (the
+bundle rootfs is unmutated), and exit-code fidelity. **Seccomp filtering** (relocated here from the
+audit) is NOT yet implemented — `wvrun` installs no filter today. The remaining T03 acceptance will
+have the runner install a runc-style filter and assert a denied syscall returns EPERM; until then
+`SECCOMP`/`SECCOMP_FILTER` are config-verified only. It is the one container primitive not exercised
+by either the audit smoke test or the runner yet.

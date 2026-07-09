@@ -127,6 +127,10 @@ export E2FSPROGS_FAKE_TIME="$SOURCE_DATE_EPOCH"
 if [ -f /container-smoke.sh ]; then
   install -Dm755 /container-smoke.sh "$ROOT/usr/local/bin/container-smoke"
 fi
+# E3.5-T03: ship the tiny OCI runner `wvrun` into the rootfs (runs an unpacked bundle in-guest).
+if [ -f /wvrun.sh ]; then
+  install -Dm755 /wvrun.sh "$ROOT/usr/local/bin/wvrun"
+fi
 
 find "$ROOT" -exec touch -h -d "@$SOURCE_DATE_EPOCH" {} +
 rm -f /out/alpine-rootfs.ext4
