@@ -3,3 +3,4 @@
 pub mod clint;
 pub mod console;
 pub mod plic;
+pub mod uart16550;

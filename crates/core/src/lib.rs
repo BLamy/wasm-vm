@@ -101,6 +101,12 @@ pub struct Machine {
     /// SBI console state (E2-T04): host output sink + input queue for DBCN/legacy console.
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     sbi_state: sbi::SbiState,
+    /// E2-T07: the ns16550a UART + its PLIC IRQ-10 line, when [`Self::enable_uart16550`]
+    /// attached it. The run loop ticks the char-timeout clock and mirrors the level.
+    uart: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::uart16550::Uart16550>>,
+        dev::plic::IrqLine,
+    )>,
 }
 
 impl Machine {
@@ -127,6 +133,7 @@ impl Machine {
             plic: None,
             builtin_sbi: false,
             sbi_state: sbi::SbiState::default(),
+            uart: None,
         })
     }
 
@@ -173,6 +180,31 @@ impl Machine {
     /// Size of guest RAM in bytes.
     pub fn ram_len(&self) -> usize {
         self.bus.ram().len()
+    }
+
+    /// E2-T07: attach the ns16550a UART at [`platform::virt::UART0_BASE`], wired to PLIC
+    /// IRQ 10. Requires [`Self::enable_plic`] first. The run loop ticks the UART's
+    /// deterministic char-timeout clock and mirrors its level into the PLIC every
+    /// instruction boundary. Returns the shared handle (host input via
+    /// `borrow_mut().push_input`, output via `take_output`).
+    pub fn enable_uart16550(
+        &mut self,
+    ) -> alloc::rc::Rc<core::cell::RefCell<dev::uart16550::Uart16550>> {
+        let plic = self
+            .plic
+            .as_ref()
+            .expect("enable_plic before enable_uart16550");
+        let line = dev::plic::Plic::irq_line(plic, platform::virt::UART0_IRQ as usize);
+        let cell = alloc::rc::Rc::new(core::cell::RefCell::new(dev::uart16550::Uart16550::new()));
+        self.bus
+            .attach(
+                bus::mmap::UART0_BASE,
+                bus::mmap::UART0_LEN,
+                alloc::boxed::Box::new(dev::uart16550::SharedUart(alloc::rc::Rc::clone(&cell))),
+            )
+            .expect("UART window overlaps RAM or another device");
+        self.uart = Some((alloc::rc::Rc::clone(&cell), line));
+        cell
     }
 
     /// E2-T03 (ADR 0002): route `ecall`-from-S to the built-in Rust SBI ([`sbi::dispatch`])
@@ -432,6 +464,13 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             {
                 self.sync_clint();
+                // E2-T07: tick the UART char-timeout clock and mirror its level into the
+                // PLIC BEFORE sync_plic samples EIP, so a UART edge lands this boundary.
+                if let Some((uart, line)) = &self.uart {
+                    let mut u = uart.borrow_mut();
+                    u.tick();
+                    line.set(u.irq_level());
+                }
                 // E1-T13: refresh the PLIC-driven MEIP/SEIP levels too, before sampling.
                 self.sync_plic();
                 // E2-T05: refresh the built-in-SBI S-timer level (STIP) before sampling.
