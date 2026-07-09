@@ -4,7 +4,7 @@ epic: 3
 title: Full machine snapshot and restore with instant-resume boot
 priority: 322
 status: pending
-depends_on: [E3-T08]
+depends_on: [E3-T08, E3.5-T05a]
 estimate: L
 capstone: false
 ---
@@ -16,9 +16,13 @@ instruction-exact continuation. A snapshot taken at the post-boot login prompt b
 instant-resume path: page load → restore → usable shell in a fraction of cold-boot time.
 
 ## Context
-**DEFERRED 2026-07-06 (Brett): container workloads (Epic 3.5 → `wvrun postgres`) take priority.**
-Snapshot/restore is valuable but not on the database critical path; priority 312 → 322 so the
-OCI cluster (E3.5-T01..T05) leads. E3-T24 (loading UX) still depends on this — unaffected.
+**VISIBLE-RAIL UPDATE 2026-07-08 (Brett): snapshot/restore comes immediately after the
+Docker tab proves one real bundled busybox run.** The first browser-facing resume target is
+not a generic login prompt; it is the exact state created by E3.5-T05a: Docker tab → Run →
+booted guest → bundled busybox command completed and ready for another command. Once that
+state exists, reload must restore it fast enough that the Docker tab feels continuous.
+Broader Alpine chunking, slirp networking, registry pull-through, and database/container
+demos wait until this visible resume path is verified.
 
 webvm's perceived speed is largely resume-not-boot. Requirements: a `Snapshot` visitor over
 every stateful component (hart state incl. all CSRs and pending interrupt lines; RAM with
@@ -40,6 +44,8 @@ harness and browser.
 - Overlay-generation binding: commit counter persisted by T08's backend, checked on restore.
 - UI: "save snapshot" control; boot path: if a valid resume snapshot exists, restore
   instead of cold boot (fall back to cold boot on any validation failure).
+- Docker-tab resume path: after E3.5-T05a has produced a booted bundled-busybox state, reload
+  the tab and restore that same state into the Docker tab output surface.
 - Native determinism test: run N instructions, snapshot, run M more recording a trace;
   restore, run M, diff traces — must be identical.
 
@@ -48,6 +54,8 @@ harness and browser.
       post-restore, including timer interrupt timing).
 - [ ] In-browser: snapshot at login prompt, reload tab, resume → shell responds; wall-clock
       resume-to-usable < 3 s on a dev machine (record the number).
+- [ ] In-browser Docker tab: after a bundled busybox Run completes, save a snapshot, reload
+      the tab, resume the same state, and run a second real guest command without cold boot.
 - [ ] Restore against a mismatched base image hash or stale overlay generation is refused
       with a typed error and falls back to cold boot — demonstrated by test.
 - [ ] Mostly-idle 256 MB RAM snapshot is < 15% of RAM size on disk (zero elision works).
@@ -155,6 +163,20 @@ huge-out_len, trailing) all-or-nothing; 5k random fuzz no-panic.
   `mcr` survived) → assert all 7 registers explicitly; the rx FIFO-depth cap + the out_len bound were
   never isolated (mutants survived) → added an over-depth-with-bytes test + the huge-out_len test.
   **All 3 mutants verified killed.**
+
+### Pass 4 — ComponentSnapshot for the Goldfish RTC (PR #155, stacked on #154)
+**Delivered:** `impl ComponentSnapshot for GoldfishRtc` + `section::RTC` (tag 8). 27 fixed bytes
+(offset|time_high_latch|alarm|alarm_high_write|3 bool flags). The injected `clock` (host WallClock) is
+NOT snapshotted — re-injected on restore; preserving `offset` (not absolute time) makes the guest
+clock correctly advance across suspend. All-or-nothing restore; malformed → BadComponentState.
+Completes the bounded-device visitor sweep: **CLINT + PLIC + UART + RTC.** **CI #155 green.**
+
+**Adversarial cold-clone critic:** **REFUTED — 1 MAJOR test-coverage gap; production code CLEAN.**
+All 7 fields at matching offsets; clock-not-overwritten proven (restore into a clock=999 device keeps
+999); all-or-nothing; completeness is a real per-field assert (drop-alarm_high_write mutant caught);
+RTC tag unique + in is_known_section. **MAJOR (fixed):** the malformed test only covered bool index 24
+→ a lax parse at 25/26 survived; fixed by looping 24..=26; index-25 mutant now killed. Also fixed a
+CI clippy fail (unused `WallClock` test import).
 
 **Next passes (boot/browser-gated):** the CPU/RAM `ComponentSnapshot` visitors (+ UART/virtio, with
 device quiesce) + the native determinism trace-diff (#1); browser OPFS resume (#2); the

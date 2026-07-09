@@ -77,6 +77,59 @@ pub struct GoldfishRtc {
     alarm_fired: bool,
 }
 
+/// A byte that must be a 0/1 boolean, or a malformed payload.
+fn bool_byte(b: u8) -> Option<bool> {
+    match b {
+        0 => Some(false),
+        1 => Some(true),
+        _ => None,
+    }
+}
+
+/// E3-T12: the RTC's guest-visible state round-trips — the `offset` (guest `date -s` adjustment) +
+/// the read latch + the alarm register/flags = 27 fixed bytes. The `clock` (host wall-clock source)
+/// is NOT snapshotted: it is re-injected on restore, and preserving `offset` (not an absolute time)
+/// means the guest's clock correctly advances by the wall-time elapsed during the suspend — an RTC
+/// tracks real time across a pause. Fixed layout, all-or-nothing restore, malformed → typed error.
+impl crate::resume::ComponentSnapshot for GoldfishRtc {
+    const SECTION: u32 = crate::resume::section::RTC;
+
+    fn to_snapshot(&self) -> alloc::vec::Vec<u8> {
+        let mut v = alloc::vec::Vec::with_capacity(27);
+        v.extend_from_slice(&self.offset.to_le_bytes());
+        v.extend_from_slice(&self.time_high_latch.to_le_bytes());
+        v.extend_from_slice(&self.alarm.to_le_bytes());
+        v.extend_from_slice(&self.alarm_high_write.to_le_bytes());
+        v.push(self.alarm_armed as u8);
+        v.push(self.irq_enabled as u8);
+        v.push(self.alarm_fired as u8);
+        v
+    }
+
+    fn restore(&mut self, p: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        let err = || crate::resume::SnapshotError::BadComponentState { tag: Self::SECTION };
+        if p.len() != 27 {
+            return Err(err());
+        }
+        // Parse into locals first, commit on success — the host `clock` is left untouched.
+        let offset = u64::from_le_bytes(p[0..8].try_into().map_err(|_| err())?);
+        let time_high_latch = u32::from_le_bytes(p[8..12].try_into().map_err(|_| err())?);
+        let alarm = u64::from_le_bytes(p[12..20].try_into().map_err(|_| err())?);
+        let alarm_high_write = u32::from_le_bytes(p[20..24].try_into().map_err(|_| err())?);
+        let alarm_armed = bool_byte(p[24]).ok_or_else(err)?;
+        let irq_enabled = bool_byte(p[25]).ok_or_else(err)?;
+        let alarm_fired = bool_byte(p[26]).ok_or_else(err)?;
+        self.offset = offset;
+        self.time_high_latch = time_high_latch;
+        self.alarm = alarm;
+        self.alarm_high_write = alarm_high_write;
+        self.alarm_armed = alarm_armed;
+        self.irq_enabled = irq_enabled;
+        self.alarm_fired = alarm_fired;
+        Ok(())
+    }
+}
+
 impl GoldfishRtc {
     pub fn new(clock: alloc::boxed::Box<dyn WallClock>) -> Self {
         Self {
@@ -341,5 +394,78 @@ mod tests {
         // Enabling now exposes the latched fire.
         rtc.write(IRQ_ENABLED, Width::B4, 1).unwrap();
         assert!(rtc.irq_level(), "enable reveals the latched alarm");
+    }
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::{FixedClock, GoldfishRtc};
+    use crate::resume::{ComponentSnapshot, SnapshotError, section};
+    use alloc::boxed::Box;
+
+    fn distinctive() -> GoldfishRtc {
+        let mut r = GoldfishRtc::new(Box::new(FixedClock(111)));
+        r.offset = 0x1122_3344_5566_7788;
+        r.time_high_latch = 0xAABB_CCDD;
+        r.alarm = 0xDEAD_BEEF_0000_0001;
+        r.alarm_high_write = 0x0102_0304;
+        r.alarm_armed = true;
+        r.irq_enabled = true;
+        r.alarm_fired = true;
+        r
+    }
+
+    #[test]
+    fn rtc_state_round_trips_completely_and_keeps_the_host_clock() {
+        let r = distinctive();
+        let bytes = r.to_snapshot();
+        assert_eq!(bytes.len(), 27);
+        assert_eq!(GoldfishRtc::SECTION, section::RTC);
+
+        // Restore into a device with a DIFFERENT host clock (999): the guest-visible fields come
+        // from the snapshot, but the host clock source stays the target's (not overwritten).
+        let mut t = GoldfishRtc::new(Box::new(FixedClock(999)));
+        t.restore(&bytes).unwrap();
+        assert_eq!(t.offset, r.offset);
+        assert_eq!(t.time_high_latch, r.time_high_latch);
+        assert_eq!(t.alarm, r.alarm);
+        assert_eq!(t.alarm_high_write, r.alarm_high_write);
+        assert!(t.alarm_armed && t.irq_enabled && t.alarm_fired);
+        assert_eq!(
+            t.clock.now_ns(),
+            999,
+            "restore must NOT overwrite the host clock"
+        );
+        // Re-serialize equals → every serialized field survived.
+        assert_eq!(t.to_snapshot(), bytes);
+
+        // The all-false bool path round-trips too.
+        let mut off = GoldfishRtc::new(Box::new(FixedClock(1)));
+        off.restore(&GoldfishRtc::new(Box::new(FixedClock(1))).to_snapshot())
+            .unwrap();
+        assert!(!off.alarm_armed && !off.irq_enabled && !off.alarm_fired);
+    }
+
+    #[test]
+    fn rtc_restore_rejects_malformed_without_mutating() {
+        let bad = SnapshotError::BadComponentState { tag: section::RTC };
+        let mut r = distinctive();
+        assert_eq!(r.restore(&[]), Err(bad.clone()));
+        assert_eq!(r.restore(&[0u8; 26]), Err(bad.clone()));
+        assert_eq!(r.restore(&[0u8; 28]), Err(bad.clone()));
+        // A non-boolean byte at EACH of the three bool positions must be rejected — index 24
+        // (alarm_armed), 25 (irq_enabled), 26 (alarm_fired). Covering all three so a lax parse at
+        // any position is caught, not just the first.
+        for i in 24..=26 {
+            let mut nb = alloc::vec![0u8; 27];
+            nb[i] = 2;
+            assert_eq!(
+                r.restore(&nb),
+                Err(bad.clone()),
+                "non-bool byte at index {i}"
+            );
+        }
+        // A failed restore left the device untouched (all-or-nothing).
+        assert_eq!(r.offset, 0x1122_3344_5566_7788);
     }
 }

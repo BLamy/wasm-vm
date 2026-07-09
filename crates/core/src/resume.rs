@@ -36,6 +36,7 @@ pub mod section {
     pub const UART: u32 = 5;
     pub const VIRTIO_BLK: u32 = 6;
     pub const VIRTIO_NET: u32 = 7;
+    pub const RTC: u32 = 8;
 }
 
 /// Is `tag` a section this build understands?
@@ -49,6 +50,7 @@ pub fn is_known_section(tag: u32) -> bool {
             | section::UART
             | section::VIRTIO_BLK
             | section::VIRTIO_NET
+            | section::RTC
     )
 }
 
