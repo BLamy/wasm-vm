@@ -12,11 +12,26 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 wasm-vm-core = { workspace = true, features = ["trace"] }
+wasm-vm-storage = { path = "../storage" }
 wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = "0.4"
 js-sys = "0.3"
 log = { workspace = true }
 console_log = { workspace = true }
 console_error_panic_hook = { workspace = true }
+
+# The `fetch` surface for the E3-T02 lazy chunk loader (browser only; gated behind wasm32 in code).
+[dependencies.web-sys]
+version = "0.3"
+features = [
+    "Window",
+    "WorkerGlobalScope",
+    "Request",
+    "RequestInit",
+    "RequestMode",
+    "Headers",
+    "Response",
+]
 
 [features]
 # Forwards the quarantined E0-T19 CSR stub so the wasm riscv-tests harness can run the
@@ -25,3 +40,5 @@ zicsr-stub = ["wasm-vm-core/zicsr-stub"]
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
+# For building manifests in the native ChunkedBackend unit tests (matches the storage crate's sha2).
+sha2 = { version = "0.10", default-features = false }

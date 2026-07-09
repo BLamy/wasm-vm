@@ -141,3 +141,26 @@ out-of-order USED spec-legality, storage boundary math. Post-fix verdict: ship.
 Gates: storage 7/0, virtio_blk 10/0, workspace clippy --all-features + fmt + determinism
 clean, wasm default + zicsr-stub build. **Remaining:** pass 3 (wasm `HttpChunkSource`) +
 pass 4 (browser Alpine-from-chunked-image, <40% bytes) — separate stacked PR.
+
+**2026-07-06 — wasm chunk-fetch layer (pass 3), PR stacked on #86.**
+Pass 3a (storage `fetch.rs`): pure protocol logic — `chunk_request` (split URL / blob inclusive
+Range), `classify_response` (200-not-206 refusal), `RetryPolicy`, `ChunkStore` (verify-on-insert),
+`plan_fetches` (dedup); 8 native tests. Pass 3b (wasm): `ChunkedBackend` (BlockBackend over the
+store, WouldBlock on absent chunk, in-memory write overlay; 5 native tests) + `http_fetch.rs`
+(web-sys glue) + `WasmLinux::{newChunkedDisk, pendingChunks, fetchPending, fetchStats}`. JS driver:
+`while(!runChunk().done){ if(vm.pendingChunks().length) await vm.fetchPending() }`.
+
+Cold-clone critic (fresh context) attacked verify-before-serve, 200-not-206, dedup, retry-
+termination, borrow-across-await, range math — all SOUND — and confirmed TWO issues, both fixed
+with regression coverage:
+- **FINDING 1 (MEDIUM):** `http_get` read the whole body before classifying → a blob 200-not-206
+  buffered the full image before refusing (the "never buffer 400 MB" bar). Fix: `http_send`
+  (headers only) → classify → `read_body` ONLY on Accept; a Fail returns body-unread.
+- **FINDING 2 (LOW):** `chunk_request` `start+len-1` underflow-panicked on an inconsistent
+  unvalidated manifest (image_len==0, non-empty chunks). Fix: guard len==0 → typed error.
+
+Gates: storage 15/0, wasm chunked 5/0, wasm32 build+clippy, workspace clippy --all-features, fmt,
+determinism, wasm zicsr-stub — all clean. **Remaining:** pass 4 — browser Alpine boot from the
+chunked image (`web/loader.js` chunked-boot pump + dev-server chunk routes + image chunking) with
+fetch-count/bytes instrumentation, <40%-of-image acceptance. The http_fetch web-sys glue is only
+exercised end-to-end there (not natively testable).

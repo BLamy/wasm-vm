@@ -1322,9 +1322,13 @@ dependencies = [
  "console_log",
  "js-sys",
  "log",
+ "sha2",
  "wasm-bindgen",
+ "wasm-bindgen-futures",
  "wasm-bindgen-test",
  "wasm-vm-core",
+ "wasm-vm-storage",
+ "web-sys",
 ]
 
 [[package]]
