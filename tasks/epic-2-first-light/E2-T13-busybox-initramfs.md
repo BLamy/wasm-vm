@@ -3,7 +3,7 @@ id: E2-T13
 epic: 2
 title: Static busybox initramfs — minimal userland for first boot
 priority: 213
-status: pending
+status: verified
 depends_on: [E2-T12]
 estimate: M
 capstone: false
@@ -54,4 +54,48 @@ supported size and boot — initrd corruption ("junk in compressed archive") ref
 placement math. Run `busybox --list` and diff applet set against the documented one.
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — worker — implemented
+
+**What landed.** `tools/build-initramfs.sh` + `tools/initramfs.Dockerfile` +
+`tools/initramfs/init` → `releases/initramfs/{initramfs.cpio.gz,busybox,SHA256SUMS}`
+(checked in). busybox **1.36.1** (pinned sha256), CONFIG_STATIC, riscv64 cross toolchain in
+a container-native Docker volume. `/init` mounts proc/sysfs/devtmpfs then spawns an
+interactive shell as a CHILD (not exec) via `setsid cttyhack sh` in a respawn loop — so the
+shell has its own session + controlling TTY. `docs/platform.md` gains the DRAM layout
+diagram (kernel@0x8020_0000 | initrd | DTB). `fdt::initrd_placement(kernel_end, dtb, len)`
+computes the initrd region (above kernel, below DTB, 8-aligned) and `build_virt_dtb` already
+emits `linux,initrd-start/end` from `Initrd` (E2-T02/T03) — unit-tested.
+
+**Evidence (booted on stock qemu-system-riscv64 -M virt -kernel Image -initrd …):**
+- #1 static ELF: `file` → "statically linked, UCB RISC-V"; `cpio -t` lists
+  init/bin/busybox/proc/sys/dev/tmp with NO warnings.
+- #2 interactive busybox sh: reaches the `~ #` prompt; `ls /bin` shows applets, `ps` and
+  `mount` (`rootfs on /`) work.
+- #3 + charter ^C attack: `/init` is PID 1 (`ps`: `{init} /bin/busybox sh /init`), the
+  spawned shell's `echo $$` = **33** (NOT 1), a ^C at the prompt prints
+  `ALIVE_AFTER_CTRLC=yes` and the system survives (poweroff -f then powers down). (Fixed
+  round-1: `exec setsid` collapsed the chain leaving the shell as PID 1 — switched to a
+  non-exec respawn loop.)
+- #4 reproducible: TWO independent fresh-Docker-volume builds → byte-identical cpio.gz.
+  (Fixed: `cpio --reproducible` keeps file mtimes → normalize every mtime to
+  SOURCE_DATE_EPOCH first; gzip -n.)
+- fmt + clippy ±--all-features clean; wasm fdt mirror 3/3.
+
+**Deferred honestly:** the corrupt-byte "Initramfs unpacking failed" attack + the actual
+in-emulator initrd LOAD (Machine placing the cpio in RAM + reserving the region) land with
+E2-T15's boot; the placement math + DTB props are here and tested.
+
+### 2026-07-05 — verifier (cold critic) — CONFIRMED
+
+All 6 angles executed independently, none refuted. (1) Reproducibility: critic deleted the
+build volume AND cached tarball, rebuilt from scratch — both hashes byte-identical to
+committed (cpio.gz 35a74c93…, busybox 9958179c…). (2) Pinning: BBSHA256 b8cc24c9… matches
+busybox.net's published .sha256 exactly; fetch aborts on mismatch under set -e. (3) Boot:
+reaches `~ #`, shell $$=33 (not 1), ^C prints SURVIVED_CTRLC (system alive), ps shows PID 1
+= /init and the shell PID 33 = sh, clean Power down. (4) CHARTER DELIVERY ATTACK: flipped
+byte @575798 → kernel fails to unpack the initrd and panics `VFS: Unable to mount root fs`,
+never reaching the shell — proving the userland genuinely comes from `-initrd`, not a
+baked-in image. (5) cttyhack/setsid/vi/ps/mount all present in busybox --list. (6) shasum -c
+OK, static ELF, cpio -t clean, fdt tests 5/5, fmt/clippy ±--all-features clean, tree clean.
+E2-T15 deferral (reserved-region + in-emulator load) confirmed honest.
