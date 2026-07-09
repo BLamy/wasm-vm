@@ -10,6 +10,7 @@
 //!   stderr); `--max-instrs` reached ⇒ 102. Bad inputs get distinct nonzero codes.
 //! - **`retired=<n>`** is printed to stderr at exit for the bench/CI harnesses.
 
+pub mod debug;
 pub mod file_backend;
 mod trace_json;
 
@@ -72,6 +73,16 @@ struct RunArgs {
     /// `--drive file=IMG,ro` (mmap-backed; flush = msync).
     #[arg(long)]
     drive: Option<String>,
+    /// E2-T14: after the run, print the N hottest PCs ("where is it spinning?").
+    #[arg(long, value_name = "N")]
+    pc_histogram: Option<usize>,
+    /// E2-T14: dump the last N retired instructions (pc + raw) on exit/hang.
+    #[arg(long, value_name = "N")]
+    trace_last: Option<usize>,
+    /// E2-T14: hang watchdog — run in this many-instruction quanta and abort+dump when a
+    /// full quantum makes no forward progress (a spin loop).
+    #[arg(long, value_name = "QUANTUM")]
+    hang_watchdog: Option<u64>,
 }
 
 /// Guest console → this process's stdout, streamed (no unbounded buffering). A closed
@@ -223,6 +234,53 @@ fn run(a: RunArgs) -> ExitCode {
             return ExitCode::from(74); // EX_IOERR-ish
         }
     };
+
+    // E2-T14 boot-debugging path: when any of --pc-histogram / --trace-last / --hang-watchdog
+    // is set, run through the DebugSink (optionally quantum-driven for hang detection) and
+    // print the diagnostics to stderr. Mutually exclusive with --trace/--trace-json capture
+    // (the debugging flags are their own inspection mode).
+    if a.pc_histogram.is_some() || a.trace_last.is_some() || a.hang_watchdog.is_some() {
+        let mut dbg = debug::DebugSink::new(a.pc_histogram.is_some(), a.trace_last);
+        let (outcome, retired, hang_pc) = match a.hang_watchdog {
+            Some(q) => match debug::run_with_watchdog(&mut m, &mut dbg, q, a.max_instrs) {
+                debug::WatchdogResult::Ended(o, r) => (o, r, None),
+                debug::WatchdogResult::Hang { pc, retired } => {
+                    (RunOutcome::MaxInstrs, retired, Some(pc))
+                }
+            },
+            None => {
+                let o = m.run_traced(a.max_instrs, &mut dbg);
+                (o, dbg.retired, None)
+            }
+        };
+        if let Some(pc) = hang_pc {
+            eprintln!(
+                "wasm-vm: HANG — no forward progress at pc={pc:#018x} after {retired} instrs"
+            );
+        }
+        if let Some(n) = a.pc_histogram {
+            eprintln!("=== hottest {n} PCs (symbolize with tools/symbolize.py) ===");
+            for (pc, count) in dbg.hottest(n) {
+                eprintln!("{count:>12}  {pc:#018x}");
+            }
+        }
+        if let Some(n) = a.trace_last {
+            eprintln!(
+                "=== last {} retired (pc  insn) ===",
+                dbg.last_trace().len().min(n)
+            );
+            for (pc, insn) in dbg.last_trace() {
+                eprintln!("{pc:#018x}  {insn:#010x}");
+            }
+        }
+        eprintln!("retired={retired}");
+        return match outcome {
+            RunOutcome::Exited(code) => ExitCode::from((code & 0xFF) as u8),
+            RunOutcome::Trapped(_) => ExitCode::from(101),
+            RunOutcome::MaxInstrs if hang_pc.is_some() => ExitCode::from(103), // distinct: hang
+            RunOutcome::MaxInstrs => ExitCode::from(102),
+        };
+    }
 
     let mut sink = CliSink {
         count: 0,
