@@ -71,9 +71,25 @@ pub struct BlkState {
     /// E2-T19: when `Some`, each serviced request is appended here for `--blk-log`. Off by
     /// default (no cost, and no host-visible allocation on the hot path when disabled).
     blk_log: Option<alloc::vec::Vec<BlkReq>>,
+    /// E3-T02: read chains PARKED because their data isn't resident yet — `(chain, awaited_chunk)`.
+    /// Re-executed each `service()` boundary; completed (pushed to the used ring, exactly once) when
+    /// the chunk arrives. Empty for synchronous backends, which never return `WouldBlock`.
+    parked: alloc::vec::Vec<(DescriptorChain, usize)>,
 }
 
 impl BlkState {
+    /// E3-T02: the distinct chunks that parked reads are waiting on — what the async fetch layer
+    /// must load next (in park order, deduplicated). Empty unless a lazy backend has parked reads.
+    pub fn pending_chunks(&self) -> alloc::vec::Vec<usize> {
+        let mut out: alloc::vec::Vec<usize> = alloc::vec::Vec::new();
+        for (_, chunk) in &self.parked {
+            if !out.contains(chunk) {
+                out.push(*chunk);
+            }
+        }
+        out
+    }
+
     /// E2-T19: start recording serviced requests for `--blk-log`.
     pub fn enable_log(&mut self) {
         if self.blk_log.is_none() {
@@ -125,6 +141,12 @@ impl VirtioDevice for VirtioBlkDev {
         let mut st = self.state.borrow_mut();
         st.kicked = false;
         st.reset_pending = true; // run loop drops the cached ring view (critic round-1)
+        // Discard in-flight parked reads: their (head, rbuf, status) descriptors belong to
+        // the queue being torn down. A reset during a lazy-fetch window (driver reload,
+        // error recovery, kexec) would otherwise replay a stale chain against the
+        // re-initialized queue — writing sector data into a repurposed guest buffer and
+        // pushing a used-ring entry the new driver never requested (critic round-2 BUG 1).
+        st.parked.clear();
     }
 }
 
@@ -137,6 +159,7 @@ pub fn new(backend: Box<dyn BlockBackend>) -> (VirtioBlkDev, Rc<RefCell<BlkState
         reset_pending: false,
         flush_count: 0,
         blk_log: None,
+        parked: alloc::vec::Vec::new(),
     }));
     (
         VirtioBlkDev {
@@ -229,10 +252,19 @@ impl<'a> Cursor<'a> {
 /// Execute one request chain. Returns bytes WRITTEN by the device (data + status byte).
 /// Every malformed shape lands in a status byte when one exists; a chain with no writable
 /// byte at all (nowhere to report) is a protocol violation.
-fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -> Option<u32> {
+/// The result of running one request chain. `Done(written)` = completed, push it to the used ring;
+/// `Parked{chunk}` = a lazy read whose data isn't resident (E3-T02) — do NOT complete, park and retry
+/// once `chunk` arrives; `Invalid` = protocol violation (no status byte), drop the chain.
+enum ExecOutcome {
+    Done(u32),
+    Parked { chunk: usize },
+    Invalid,
+}
+
+fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -> ExecOutcome {
     let writable_total = chain.writable_len();
     if writable_total == 0 {
-        return None; // no status byte possible → protocol violation
+        return ExecOutcome::Invalid; // no status byte possible → protocol violation
     }
     let status_pos = writable_total - 1;
 
@@ -244,7 +276,7 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
     drop(rc);
     if !ok {
         write_status(chain, bus, status_pos, S_IOERR);
-        return Some(1);
+        return ExecOutcome::Done(1);
     }
     let rtype = u32::from_le_bytes(hdr[0..4].try_into().unwrap());
     let sector = u64::from_le_bytes(hdr[8..16].try_into().unwrap());
@@ -268,6 +300,9 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                             (S_IOERR, 0)
                         }
                     }
+                    // E3-T02: data not resident — PARK this chain (write nothing, no status) and
+                    // retry once `chunk` is fetched. The used ring is never touched for a park.
+                    Err(BlockError::WouldBlock { chunk }) => return ExecOutcome::Parked { chunk },
                     Err(_) => (S_IOERR, 0),
                 }
             }
@@ -329,7 +364,7 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
     }
 
     write_status(chain, bus, status_pos, status);
-    Some(data_written + 1)
+    ExecOutcome::Done(data_written + 1)
 }
 
 /// Write the status byte at writable-stream position `pos`.
@@ -362,7 +397,9 @@ pub fn service(
             st.reset_pending = false;
             *vq = None;
         }
-        if !st.kicked {
+        // Proceed on a kick OR when there are parked reads to retry (E3-T02): a chunk may have
+        // arrived since the last boundary, so we must re-service even without a fresh kick.
+        if !st.kicked && st.parked.is_empty() {
             return;
         }
         st.kicked = false;
@@ -384,12 +421,36 @@ pub fn service(
     }
     let q = vq.as_mut().expect("just constructed");
     let mut delivered_work = false;
+    // E3-T02: retry PARKED reads first. Drain them (so `execute` can re-borrow state); a chain whose
+    // data is now resident completes — pushed to the used ring EXACTLY ONCE — and is dropped; one
+    // still absent is re-parked. Re-executing a stored chain is idempotent (it re-reads the guest
+    // descriptors + backend and writes nothing to the guest until it can complete). Out-of-order used
+    // completion is legal in virtio (the used elem carries the head).
+    let parked = core::mem::take(&mut state.borrow_mut().parked);
+    for (chain, _) in parked {
+        // Bind first so the `state.borrow_mut()` temporary is released before the arms re-borrow it.
+        let outcome = execute(&chain, &mut state.borrow_mut(), bus);
+        match outcome {
+            ExecOutcome::Done(w) => {
+                if q.push_used(bus, chain.head, w).is_err() {
+                    slot.borrow_mut().protocol_violation();
+                    *vq = None;
+                    return;
+                }
+                delivered_work = true;
+            }
+            ExecOutcome::Parked { chunk } => state.borrow_mut().parked.push((chain, chunk)),
+            // A chain valid enough to have parked cannot become a protocol violation on re-exec.
+            ExecOutcome::Invalid => {}
+        }
+    }
     loop {
         match q.pop(bus) {
             Ok(Some(chain)) => {
-                let written = execute(&chain, &mut state.borrow_mut(), bus);
-                match written {
-                    Some(w) => {
+                // Bind first so the `state.borrow_mut()` temporary is released before the arms re-borrow it.
+                let outcome = execute(&chain, &mut state.borrow_mut(), bus);
+                match outcome {
+                    ExecOutcome::Done(w) => {
                         if q.push_used(bus, chain.head, w).is_err() {
                             slot.borrow_mut().protocol_violation();
                             *vq = None;
@@ -397,7 +458,12 @@ pub fn service(
                         }
                         delivered_work = true;
                     }
-                    None => {
+                    // E3-T02: data not resident — keep the chain OUT of the used ring and retry next
+                    // boundary (once the fetch layer has populated `chunk`).
+                    ExecOutcome::Parked { chunk } => {
+                        state.borrow_mut().parked.push((chain, chunk));
+                    }
+                    ExecOutcome::Invalid => {
                         // No status byte anywhere: protocol violation, chain dropped.
                         slot.borrow_mut().protocol_violation();
                         *vq = None;

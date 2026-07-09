@@ -410,6 +410,16 @@ impl Machine {
             .unwrap_or_default()
     }
 
+    /// E3-T02: the chunks that parked virtio-blk reads are waiting on — what a lazy-fetch layer must
+    /// load next. Empty unless a `WouldBlock`-returning backend has parked reads. After the layer
+    /// populates these chunks, the next run-loop boundary re-services the parked reads and completes them.
+    pub fn pending_blk_chunks(&self) -> alloc::vec::Vec<usize> {
+        self.blk
+            .as_ref()
+            .map(|(s, _)| s.borrow().pending_chunks())
+            .unwrap_or_default()
+    }
+
     /// E2-T17: attach the syscon test finisher (`sifive,test0`) at
     /// [`platform::virt::TEST_BASE`], matching the DTB's `test@…` node + its
     /// `syscon-poweroff`/`syscon-reboot` children. A recognized write (`0x5555` poweroff,

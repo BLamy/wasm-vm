@@ -1,9 +1,9 @@
 //! E3-T01 tests: offset math edge cases, manifest validation, chunk verification, and a proptest
 //! that reassembly + offset-location round-trip against a flat reference buffer for random sizes.
 use super::*;
-use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
+use alloc::{format, vec};
 
 /// Lowercase-hex SHA-256 of `bytes`.
 fn sha_hex(bytes: &[u8]) -> String {
@@ -205,6 +205,13 @@ fn unvalidated_manifest_never_panics() {
     assert_eq!(idx.chunk_count(), 0);
     assert!(idx.locate(0).is_err()); // no div-by-zero
     assert_eq!(idx.chunk_len(0), 0);
+    // The lazy read-path (E3-T02) must inherit the same guard — chunk_span/read divide by
+    // chunk_size (critic round-2 BUG 2).
+    assert!(idx.chunk_span(0, 4).is_err()); // no div-by-zero
+    let src = MockSource {
+        chunks: alloc::vec![],
+    };
+    assert!(idx.read(&src, 0, 4).is_err()); // no div-by-zero
 
     // Declared image_len implies 250 chunks but the vector is empty → bounds-check must use the
     // vector length, not the derived count, so `chunks[5]` cannot panic.
@@ -218,6 +225,67 @@ fn unvalidated_manifest_never_panics() {
     assert_eq!(
         empty.verify_chunk(5, &[0u8; 4]),
         Err(ImageError::ChunkIndexOutOfRange { chunk: 5, count: 0 })
+    );
+}
+
+/// A mock chunk source: `chunks[i] = Some(bytes)` if resident, `None` if not yet fetched.
+struct MockSource {
+    chunks: Vec<Option<Vec<u8>>>,
+}
+impl ChunkSource for MockSource {
+    fn get(&self, chunk: usize) -> Option<&[u8]> {
+        self.chunks.get(chunk).and_then(|c| c.as_deref())
+    }
+}
+
+#[test]
+fn lazy_read_assembles_present_chunks_and_reports_first_missing() {
+    let data: Vec<u8> = (0..10u8).collect();
+    let m = manifest_for(&data, 4); // chunks [4,4,2]
+    let idx = m.index();
+
+    // All resident → a cross-chunk read returns exactly the requested slice.
+    let all = MockSource {
+        chunks: data.chunks(4).map(|c| Some(c.to_vec())).collect(),
+    };
+    assert_eq!(
+        idx.read(&all, 2, 5),
+        Ok(ReadOutcome::Ready(data[2..7].to_vec()))
+    ); // spans chunk 0+1
+    assert_eq!(idx.read(&all, 0, 10), Ok(ReadOutcome::Ready(data.clone()))); // whole image, all 3 chunks
+    assert_eq!(idx.read(&all, 9, 1), Ok(ReadOutcome::Ready(vec![9]))); // last byte, tail chunk
+
+    // Chunk 1 absent → the read reports NeedChunk(1) (the FIRST missing one it hits), not partial data.
+    let missing1 = MockSource {
+        chunks: vec![Some(data[0..4].to_vec()), None, Some(data[8..10].to_vec())],
+    };
+    assert_eq!(idx.read(&missing1, 0, 10), Ok(ReadOutcome::NeedChunk(1)));
+    assert_eq!(
+        idx.read(&missing1, 0, 4),
+        Ok(ReadOutcome::Ready(data[0..4].to_vec()))
+    ); // chunk 0 alone is fine
+    assert_eq!(idx.read(&missing1, 5, 1), Ok(ReadOutcome::NeedChunk(1)));
+
+    // Out-of-bounds and zero-length reads are errors, never a partial/empty Ready.
+    assert!(idx.read(&all, 10, 1).is_err());
+    assert!(idx.read(&all, 8, 5).is_err()); // runs past image_len
+    assert!(idx.read(&all, 0, 0).is_err()); // zero length
+
+    // A source handing back a wrong-length chunk is rejected (never trust the fetch layer).
+    let bad = MockSource {
+        chunks: vec![
+            Some(vec![0u8; 3]),
+            Some(data[4..8].to_vec()),
+            Some(data[8..10].to_vec()),
+        ],
+    };
+    assert_eq!(
+        idx.read(&bad, 0, 4),
+        Err(ImageError::TruncatedChunk {
+            chunk: 0,
+            expected: 4,
+            got: 3
+        })
     );
 }
 
