@@ -83,7 +83,28 @@ task landed in passes; pass 1 is the self-contained, deterministic, unit-tested 
   keeps a flow alive past its timeout; bound evicts the LRU; refresh updates LRU order; remove
   idempotent; sweep is deterministic + only-expired. fmt + clippy + determinism-hazards green.
 
-**Pass 2 (next):** the smoltcp `phy::Device` + `Interface` glue (ARP/ICMP/promiscuous TCP accept),
-the per-flow bridge with backpressure/half-close, `NativeConnector` (tokio), and the native
-integration tests (HTTP GET through slirp to a local hyper server; 50-concurrent; 100 MB integrity;
-half-close). The acceptance criteria's booted-Alpine leg is pass-2/3 (long boot, env-gated).
+**2026-07-07 — pass 2a: smoltcp phy::Device + Interface answering ARP.** Added `smoltcp = 0.13`
+(default-features off + std/medium-ethernet/proto-ipv4/socket-tcp/icmp/udp; the browser build doesn't
+pull this crate). `device.rs`: `SlirpDevice` — a `phy::Device` over two `Vec<u8>` frame queues (RX
+from guest, TX to guest), the RxToken owning the frame so `receive` can also hand out a tx token.
+`stack.rs`: `SlirpStack` — a smoltcp `Interface` owning the gateway `10.0.2.2/24`, with
+`inject`/`poll(now_ms)`/`take_egress`. Proven by frame-injection (no async, no boot): a guest ARP
+request for 10.0.2.2 → a correct gateway ARP reply (sender MAC/IP + target = guest, opcode 2); an ARP
+for another IP (10.0.2.99) is ignored.
+
+**Adversarial cold-clone critic on pass 2a: SOUND, and it PINNED the ICMP root cause.** It proved the
+phy::Device TX path is byte-identical to smoltcp's own loopback device (no spurious/empty/wrong-length
+frames — smoltcp resolves neighbors + computes total_len BEFORE consuming the token), the ARP test is
+non-vacuous, and my "ICMP needs a socket" hypothesis was WRONG: smoltcp 0.13 gates the interface's
+auto echo-reply behind the `auto-icmp-echo-reply` feature (in its `default` set, which I'd disabled),
+so the reply arm was compiled out and every ping silently dropped. Fixes: added the one feature →
+**ICMP echo now works and is IN pass 2a** (`gateway_answers_icmp_echo`: ping 10.0.2.2 → echo reply,
+ident/seq echoed). Also (critic MINORs): MTU 1500→**1514** (`Medium::Ethernet` MTU includes the
+14-byte header; a bare 1500 would silently cap the guest TCP MSS to 1446 in 2b); the "ICMP now" code
+comments now match the honest doc. **10 slirp tests** (7 NAT + ARP + ARP-ignored + ICMP echo). fmt +
+clippy + determinism green.
+
+**Pass 2b (next):** the promiscuous TCP accept + per-flow bridge with backpressure/half-close,
+`NativeConnector` (tokio), and the native integration tests (HTTP GET through slirp to a local hyper
+server; 50-concurrent; 100 MB integrity; half-close). The booted-Alpine acceptance leg is later
+(long boot, env-gated).

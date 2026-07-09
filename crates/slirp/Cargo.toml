@@ -4,7 +4,18 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 
-# E3-T14 pass 1: the pure NAT/addressing core has NO dependencies (deterministic, unit-tested, wasm+
-# native). smoltcp (the TCP/IP stack) and tokio (the NativeConnector) arrive in pass 2 behind
-# features so the browser build never pulls tokio.
+# E3-T14: the NAT/addressing core (pass 1) has no deps. Pass 2 adds smoltcp — the TCP/IP stack that
+# parses/answers guest frames (ARP + ICMP echo now; TCP bridge next). tokio (the NativeConnector)
+# still arrives later behind a feature so the browser build never pulls it.
 [dependencies]
+smoltcp = { version = "0.13", default-features = false, features = [
+    "std",
+    "medium-ethernet",
+    "proto-ipv4",
+    # The interface's automatic ICMP echo reply is gated behind this (it's in smoltcp's `default`
+    # set, which we disabled) — without it the interface silently drops every `ping` (critic).
+    "auto-icmp-echo-reply",
+    "socket-tcp",
+    "socket-icmp",
+    "socket-udp",
+] }
