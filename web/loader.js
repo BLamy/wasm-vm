@@ -62,29 +62,36 @@ async function sha256hex(bytes) {
 export async function startLinuxBoot(opts = {}) {
   const {
     manifestUrl = "./artifacts.json",
+    // "initramfs" = busybox (the gh-pages default); "disk" = Alpine ext4 over virtio-blk. The
+    // 512 MB Alpine image is local-only (served by tools/serve-dev.sh) — too big for gh-pages.
+    mode = "initramfs",
     ramMib = 256,
-    bootargs = "console=ttyS0 earlycon=sbi",
     onState = () => {},
     onProgress = () => {},
     onOutput = () => {},
     onError = () => {},
     quantum = 2_000_000,
   } = opts;
+  // Disk mode leaves bootargs empty so WasmLinux.newDisk supplies `root=/dev/vda rw …`.
+  const bootargs = opts.bootargs ?? (mode === "disk" ? "" : "console=ttyS0 earlycon=sbi");
+  const role = mode === "disk" ? "rootfs" : "initramfs";
 
   try {
     const manifest = await (await fetch(manifestUrl)).json();
-    const { kernel: km, initramfs: im } = manifest.artifacts;
+    const km = manifest.artifacts.kernel;
+    const secondary = manifest.artifacts[role];
+    if (!secondary) throw new Error(`manifest has no '${role}' artifact for boot mode '${mode}'`);
 
     onState("fetching");
-    const [kernel, initramfs] = await Promise.all([
+    const [kernel, secondaryBytes] = await Promise.all([
       fetchWithProgress(km.url, (l, t) => onProgress("kernel", l, t)),
-      fetchWithProgress(im.url, (l, t) => onProgress("initramfs", l, t)),
+      fetchWithProgress(secondary.url, (l, t) => onProgress(role, l, t)),
     ]);
 
     onState("verifying");
     for (const [name, bytes, want] of [
       ["kernel", kernel, km.sha256],
-      ["initramfs", initramfs, im.sha256],
+      [role, secondaryBytes, secondary.sha256],
     ]) {
       const got = await sha256hex(bytes);
       if (got !== want) {
@@ -96,7 +103,12 @@ export async function startLinuxBoot(opts = {}) {
     await init(); // WebAssembly.instantiateStreaming under the hood (wasm-pack --target web)
 
     onState("booting");
-    const machine = new WasmLinux(ramMib, kernel, initramfs, bootargs, (u8) => onOutput(u8));
+    // Disk mode moves the image into an in-memory virtio-blk backend (WasmLinux.newDisk); initramfs
+    // mode passes it as the initrd (the WasmLinux constructor).
+    const machine =
+      mode === "disk"
+        ? WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8))
+        : new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
 
     let stopped = false;
     let paused = false;
