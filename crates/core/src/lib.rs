@@ -69,6 +69,23 @@ pub enum RunOutcome {
     Trapped(Trap),
     /// The instruction budget was exhausted without exit or trap.
     MaxInstrs,
+    /// E2-T17: the guest asked the platform to power off or reboot — via the syscon test
+    /// finisher (`sifive,test0`, MMIO at `TEST_BASE`) or SBI SRST reboot. Carries the reason
+    /// so the host can exit cleanly (poweroff/fail) or re-boot (reboot). NO `process::exit`
+    /// happens in the core — the value is surfaced so the CLI and the wasm boundary decide.
+    Reset(ExitReason),
+}
+
+/// E2-T17: why the guest reset the platform — the typed outcome of a syscon finisher write
+/// (or SBI SRST reboot), propagated out of the run loop to the host.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ExitReason {
+    /// Clean power off (finisher `0x5555`) — the host should exit 0.
+    PowerOff,
+    /// Restart (finisher `0x7777` / SBI SRST reboot) — the CLI re-boots a fresh machine.
+    Reboot,
+    /// Guest-signalled failure (finisher `0x3333`, code in the upper 16 bits) — exit `code`.
+    Fail(u16),
 }
 
 /// A full Level-0 machine: one hart on a system bus, plus optional HTIF exit
@@ -114,6 +131,12 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::rtc::GoldfishRtc>>,
         dev::plic::IrqLine,
     )>,
+    /// E2-T17: the syscon test finisher's shared reset latch, when [`Self::enable_syscon`]
+    /// attached it. The run loop drains it and returns [`RunOutcome::Reset`]. (Only read on
+    /// the real-CSR path; the quarantined zicsr-stub build compiles the drain + `enable_syscon`
+    /// out, so the field is inert there.)
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    syscon: Option<dev::syscon::ResetCell>,
     /// E2-T08: the eight virtio-mmio slots + their PLIC lines (IRQ 1..=8), when
     /// [`Self::enable_virtio_slots`] attached them. The run loop mirrors each slot's
     /// InterruptStatus level.
@@ -156,6 +179,7 @@ impl Machine {
             sbi_state: sbi::SbiState::default(),
             uart: None,
             rtc: None,
+            syscon: None,
             virtio: alloc::vec::Vec::new(),
             blk: None,
         })
@@ -310,6 +334,29 @@ impl Machine {
             .expect("RTC window overlaps RAM or another device");
         self.rtc = Some((alloc::rc::Rc::clone(&cell), line));
         cell
+    }
+
+    /// E2-T17: attach the syscon test finisher (`sifive,test0`) at
+    /// [`platform::virt::TEST_BASE`], matching the DTB's `test@…` node + its
+    /// `syscon-poweroff`/`syscon-reboot` children. A recognized write (`0x5555` poweroff,
+    /// `0x7777` reboot, `0x3333|code<<16` fail) ends the run with [`RunOutcome::Reset`]. No
+    /// PLIC line — the finisher carries no interrupt.
+    ///
+    /// Gated `not(zicsr-stub)` to match the run loop's reset drain (critic A1): under the
+    /// quarantined stub the drain is compiled out, so attaching the device would latch a reset
+    /// that never ends the run — a silent hang. Making this a compile error there removes the
+    /// footgun entirely.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn enable_syscon(&mut self) {
+        let (device, cell) = dev::syscon::SysconFinisher::new();
+        self.bus
+            .attach(
+                platform::virt::TEST_BASE,
+                platform::virt::TEST_LEN,
+                alloc::boxed::Box::new(device),
+            )
+            .expect("syscon window overlaps RAM or another device");
+        self.syscon = Some(cell);
     }
 
     /// E2-T03 (ADR 0002): route `ecall`-from-S to the built-in Rust SBI ([`sbi::dispatch`])
@@ -608,6 +655,12 @@ impl Machine {
     /// an untraced run can never diverge in when they stop.
     pub fn run_traced<T: trace::TraceSink>(&mut self, max_instrs: u64, sink: &mut T) -> RunOutcome {
         for _ in 0..max_instrs {
+            // E2-T17: a syscon finisher write (poweroff/reboot/fail) during the previous
+            // instruction ends the run before the next one executes.
+            #[cfg(not(feature = "zicsr-stub"))]
+            if let Some(reason) = self.syscon.as_ref().and_then(|c| *c.borrow()) {
+                return RunOutcome::Reset(reason);
+            }
             // E1-T12: refresh the CLINT-driven interrupt LEVELS (MTIP = mtime >= mtimecmp, MSIP
             // = msip) into `mip` before sampling — a continuously re-evaluated level, so a
             // just-crossed timer fires and a raised `mtimecmp` clears MTIP with no CSR access.
@@ -689,6 +742,10 @@ impl Machine {
                     if let Some(code) = self.sbi_state.shutdown {
                         return RunOutcome::Exited(code);
                     }
+                    // E2-T17 SRST: a requested reboot ends the run so the host re-boots.
+                    if self.sbi_state.reboot {
+                        return RunOutcome::Reset(ExitReason::Reboot);
+                    }
                     self.hart.regs.write(10, ret.error as u64); // a0
                     // Legacy extensions (EID < 0x10) clobber ONLY a0 (SBI v0.1 convention).
                     if !sbi::is_legacy(eid) {
@@ -750,6 +807,13 @@ impl Machine {
                     }
                 }
             }
+        }
+        // E2-T17 (critic A2): a finisher write on the VERY LAST budgeted instruction latches
+        // the reset cell but the top-of-loop drain never runs again. Drain it once more here
+        // so a poweroff/reboot on the final instruction isn't misreported as MaxInstrs.
+        #[cfg(not(feature = "zicsr-stub"))]
+        if let Some(reason) = self.syscon.as_ref().and_then(|c| *c.borrow()) {
+            return RunOutcome::Reset(reason);
         }
         RunOutcome::MaxInstrs
     }

@@ -3,7 +3,7 @@ id: E2-T17
 epic: 2
 title: syscon poweroff/reboot device — clean shutdown propagated to the host/JS
 priority: 217
-status: pending
+status: implemented
 depends_on: [E2-T15]
 estimate: S
 capstone: false
@@ -59,4 +59,72 @@ refutes. Kill-path check: `poweroff` (non-forced, full init shutdown) after `dd`
 values (not 0x5555/0x3333/0x7777) to the device: must be ignored, not exit.
 
 ## Verification log
-(empty)
+
+### 2026-07-05 — clean poweroff + reboot landed
+
+The guest can turn itself off and restart. Verified end-to-end in one process (real transcript):
+
+```
+~ # echo PRE_REBOOT_MARKER
+PRE_REBOOT_MARKER
+~ # reboot -f
+[    5.7] reboot: Restarting system
+wasm-vm: guest requested reboot — restarting
+wasm-vm: --- reboot #1 ---
+[    0.000000] Linux version 6.6.63 …          ← SECOND full boot, same process
+~ # echo POST_REBOOT_MARKER
+POST_REBOOT_MARKER
+~ # poweroff -f
+[    4.4] reboot: Power down                     ← exit code 0
+```
+
+Two `Linux version` boots in one process; `poweroff -f` exits 0.
+
+**Design (no `process::exit` in core):**
+- New `dev/syscon.rs` — the `sifive,test0` finisher at `TEST_BASE` (0x100000). A write of
+  `0x5555`→PowerOff, `0x7777`→Reboot, `0x3333|code<<16`→Fail; anything else ignored (QEMU
+  parity). It sets a shared `ResetCell` the run loop drains into the new
+  `RunOutcome::Reset(ExitReason)` (`ExitReason::{PowerOff, Reboot, Fail(u16)}`).
+- **SBI SRST reboot is now supported** (was NOT_SUPPORTED) → `RunOutcome::Reset(Reboot)`.
+  Linux tries SBI SRST before the syscon device, so `reboot`/`sysrq-b` take this path;
+  `poweroff` still goes through SBI shutdown (`Exited(0)`). The syscon finisher backs the
+  DTB's `syscon-poweroff`/`syscon-reboot` nodes and is unit-tested directly.
+- CLI `boot` refactored into a **reboot loop**: `assemble()` builds a fresh machine (RAM
+  re-zeroed, devices reset) each boot; `--drive` is re-opened so block state persists across
+  reboot (RAM does not). `--no-reboot` exits instead (QEMU `-no-reboot` style). Console +
+  stdin reader are shared across reboots.
+- `RunOutcome::Reset` threaded through all match sites: CLI `run` path (poweroff/reboot→0,
+  fail→code), wasm boundary (a `kind:"reset"` event for E2-T21/T26), and the arch-test harness.
+
+**Tests:** 4 syscon unit tests (each command decodes; junk ignored; first-command-wins; reads
+return 0), the SRST reboot test, and an `#[ignore]`d `reboot_produces_second_boot_then_poweroff`
+integration test (two boots + clean exit). DTB `test@`/`poweroff`/`reboot` nodes already match
+QEMU virt's structure (`sifive,test1/test0/syscon`, values `0x5555`/`0x7777`). Gates: core 95,
+cli 8+21+2-ignored, clippy ±`--all-features`, fmt, wasm32, determinism — all green.
+
+**Acceptance:** #1 (poweroff→exit 0, "Power down") ✓; #2 (reboot→second boot to prompt, devices
+reset via fresh assemble) ✓; #3 (fail path with code 7) ✓ syscon unit test; #4 (sysrq-b) uses
+the same SBI SRST restart path as `reboot`, so it reboots too. QEMU-`dumpdtb` diff deferred
+(QEMU not on the dev host; DTB structure matches the documented QEMU layout).
+
+### 2026-07-05 — cold-clone critic — NO refutations; 3 advisories folded in
+
+The critic hunted against QEMU `sifive_test.c` / Linux syscon / SBI-SRST semantics and found
+**no must-fix bugs** — all 8 attack claims CONFIRMED (finisher decode exact parity incl. the
+`(word>>16)` fail code; run-loop reset lands before the next instruction; SRST reboot
+spec-correct with reason-validated-first; reboot loop rebuilds a fresh machine with no thread/fd
+leak; `RunOutcome::Reset` exhaustive everywhere; determinism clean; wasm `exited` correctly set
+only for PowerOff/Fail). Advisories folded in:
+- **A1 (footgun): `enable_syscon` wasn't cfg-gated like its run-loop drain** — under zicsr-stub
+  the drain compiles out, so attaching the device would latch a reset that never ends the run
+  (silent hang). Fixed: `enable_syscon` is now `#[cfg(not(feature="zicsr-stub"))]` (a compile
+  error there, not a latent hang) + the `syscon` field carries the stub `allow(dead_code)`.
+- **A2 (edge): a finisher write on the VERY LAST budgeted instruction** was misreported as
+  `MaxInstrs`. Fixed: `run_traced` drains the syscon cell once more before returning MaxInstrs.
+- **A4 (test gap):** added an assert that a reboot with a reserved reason (>1) returns
+  INVALID_PARAM and does NOT flag a reboot.
+
+Non-issues (parity, left as-is): A3 sub-word write width (Linux always writes 32-bit), A5 wasm
+re-run-same-instance (JS re-inits per contract), A6 infinite-reboot-without-backoff (QEMU
+parity; `--no-reboot` is the escape). Gates re-run green: core 95, clippy ±`--all-features`,
+zicsr-stub build clean, fmt.

@@ -312,6 +312,22 @@ impl WasmMachine {
             RunOutcome::MaxInstrs => {
                 set("kind", &JsValue::from_str("max"));
             }
+            // E2-T17: syscon/SBI reset surfaced as an event kind for the JS host (E2-T21/T26
+            // consume it — poweroff closes the tab/worker, reboot re-inits the machine).
+            RunOutcome::Reset(r) => {
+                inner.exited = matches!(
+                    r,
+                    wasm_vm_core::ExitReason::PowerOff | wasm_vm_core::ExitReason::Fail(_)
+                );
+                set("kind", &JsValue::from_str("reset"));
+                let (reason, code) = match r {
+                    wasm_vm_core::ExitReason::PowerOff => ("poweroff", 0u16),
+                    wasm_vm_core::ExitReason::Reboot => ("reboot", 0),
+                    wasm_vm_core::ExitReason::Fail(c) => ("fail", c),
+                };
+                set("reason", &JsValue::from_str(reason));
+                set("code", &JsValue::from_f64(code as f64));
+            }
         }
         Ok(obj.into())
     }

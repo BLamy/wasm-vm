@@ -90,7 +90,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] `214` [E2-T14](epic-2-first-light/E2-T14-boot-debugging-playbook.md) — Boot debugging playbook — earlycon, initcall_debug, trace bisection of hangs *(deps: E2-T04, E2-T12)*
 - [?] `215` [E2-T15](epic-2-first-light/E2-T15-boot-xv6-then-busybox.md) — Milestone — boot xv6-riscv to its shell, then unmodified Linux to a busybox shell (native CLI) *(deps: E2-T02, E2-T06, E2-T07, E2-T13, E2-T14)*
 - [?] `216` [E2-T16](epic-2-first-light/E2-T16-goldfish-rtc.md) — goldfish-rtc device — real wall-clock time in the guest *(deps: E2-T15)*
-- [ ] `217` [E2-T17](epic-2-first-light/E2-T17-syscon-poweroff-reboot.md) — syscon poweroff/reboot device — clean shutdown propagated to the host/JS *(deps: E2-T15)*
+- [?] `217` [E2-T17](epic-2-first-light/E2-T17-syscon-poweroff-reboot.md) — syscon poweroff/reboot device — clean shutdown propagated to the host/JS *(deps: E2-T15)*
 - [ ] `218` [E2-T18](epic-2-first-light/E2-T18-alpine-rootfs-image.md) — Alpine riscv64 rootfs — scripted ext4 image build with getty on ttyS0 *(deps: E2-T12)*
 - [ ] `219` [E2-T19](epic-2-first-light/E2-T19-alpine-boot-to-login-native.md) — Full Alpine boot — ext4 root on virtio-blk to login shell (native CLI) *(deps: E2-T11, E2-T15, E2-T18)*
 - [ ] `220` [E2-T20](epic-2-first-light/E2-T20-interrupt-storm-detection.md) — Interrupt storm and livelock detection instrumentation *(deps: E2-T15)*

@@ -51,6 +51,9 @@ pub struct BootArgs {
     /// Do not read host stdin (headless boot: prove the dmesg parade, don't drive the shell).
     #[arg(long)]
     pub no_input: bool,
+    /// On a guest reboot, exit (QEMU `-no-reboot` style) instead of re-booting a fresh machine.
+    #[arg(long)]
+    pub no_reboot: bool,
 }
 
 /// Guest console → this process's stdout. Shared with the SBI console channel; a closed pipe
@@ -116,12 +119,90 @@ pub fn boot(a: BootArgs) -> ExitCode {
         None => None,
     };
 
+    // Console + stdin reader are created ONCE and shared across reboots; only the Machine (RAM
+    // + devices) is rebuilt fresh each boot. The `--drive` file is re-opened per boot, so block
+    // state persists across reboot (documented) while RAM does not.
+    let console = SharedStdout {
+        out: Rc::new(io::stdout()),
+        broken: Rc::new(Cell::new(false)),
+    };
+    let stdin_rx = (!a.no_input).then(spawn_stdin_reader);
+    let mut pending: std::collections::VecDeque<u8> = std::collections::VecDeque::new();
+
+    let mut boot_num = 0u32;
+    loop {
+        boot_num += 1;
+        if boot_num > 1 {
+            eprintln!("wasm-vm: --- reboot #{} ---", boot_num - 1);
+        }
+        let (mut m, uart) = match assemble(&a, &kernel, &initrd, &console) {
+            Ok(v) => v,
+            Err(code) => return code,
+        };
+        let outcome = run_machine(&a, &mut m, &uart, &console, stdin_rx.as_ref(), &mut pending);
+        // Final drain before we act on the outcome.
+        let out = uart.borrow_mut().take_output();
+        console.write_bytes(&out);
+
+        match outcome {
+            RunOutcome::Reset(wasm_vm_core::ExitReason::Reboot) if !a.no_reboot => {
+                eprintln!("wasm-vm: guest requested reboot — restarting");
+                continue; // fresh machine, same backends
+            }
+            RunOutcome::Reset(wasm_vm_core::ExitReason::Reboot) => {
+                eprintln!("wasm-vm: guest requested reboot (--no-reboot: exiting)");
+                return ExitCode::SUCCESS;
+            }
+            RunOutcome::Reset(wasm_vm_core::ExitReason::PowerOff) => {
+                eprintln!("wasm-vm: guest powered off");
+                return ExitCode::SUCCESS;
+            }
+            RunOutcome::Reset(wasm_vm_core::ExitReason::Fail(c)) => {
+                eprintln!("wasm-vm: guest signalled failure (code {c})");
+                return ExitCode::from((c & 0xff) as u8);
+            }
+            RunOutcome::Exited(code) => {
+                eprintln!("wasm-vm: guest exited {code}");
+                return ExitCode::from((code & 0xff) as u8);
+            }
+            RunOutcome::Trapped(t) => {
+                eprintln!(
+                    "wasm-vm: unhandled trap {:?} (tval={:#x}, pc={:#x}) — boot aborted",
+                    t.cause,
+                    t.tval,
+                    m.hart().regs.pc,
+                );
+                return ExitCode::from(101);
+            }
+            RunOutcome::MaxInstrs => {
+                eprintln!("wasm-vm: reached --max-instrs {}", a.max_instrs);
+                return ExitCode::from(102);
+            }
+        }
+    }
+}
+
+/// Build a fresh machine for one boot: RAM + all devices + the boot triple in DRAM, entered at
+/// the ADR-0002 contract. Returns the machine and the UART handle, or an `ExitCode` for a fatal
+/// setup error. Called once per boot (reboot rebuilds from scratch → devices reset, RAM zeroed).
+fn assemble(
+    a: &BootArgs,
+    kernel: &[u8],
+    initrd: &Option<Vec<u8>>,
+    console: &SharedStdout,
+) -> Result<
+    (
+        Machine,
+        Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
+    ),
+    ExitCode,
+> {
     let ram_bytes = a.ram_mib.saturating_mul(1024 * 1024);
     let plat = match platform::Platform::try_new(ram_bytes as u64) {
         Ok(p) => p,
         Err(e) => {
             eprintln!("wasm-vm: invalid platform ({} MiB RAM): {e:?}", a.ram_mib);
-            return ExitCode::from(2);
+            return Err(ExitCode::from(2));
         }
     };
     let mut m = Machine::new(ram_bytes);
@@ -130,6 +211,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
     m.enable_clint(10);
     m.enable_plic();
     m.enable_rtc(Box::new(SystemClock));
+    m.enable_syscon(); // E2-T17: poweroff/reboot finisher at TEST_BASE
     let uart = m.enable_uart16550();
     // virtio: a real blk device if --drive was given, else the 8 empty mmio slots the DTB
     // advertises (the kernel probes each address; an unbacked window would fault).
@@ -140,14 +222,14 @@ pub fn boot(a: BootArgs) -> ExitCode {
         };
         let Some(path) = path.strip_prefix("file=") else {
             eprintln!("wasm-vm: --drive expects file=IMG[,ro]");
-            return ExitCode::from(2);
+            return Err(ExitCode::from(2));
         };
         let backend: Box<dyn wasm_vm_core::block::BlockBackend> = if ro {
             match file_backend::FileBackend::open_read_only(std::path::Path::new(path)) {
                 Ok(b) => Box::new(b),
                 Err(e) => {
                     eprintln!("wasm-vm: cannot open drive {path}: {e}");
-                    return ExitCode::from(2);
+                    return Err(ExitCode::from(2));
                 }
             }
         } else {
@@ -155,7 +237,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 Ok(b) => Box::new(b),
                 Err(e) => {
                     eprintln!("wasm-vm: cannot open drive {path}: {e}");
-                    return ExitCode::from(2);
+                    return Err(ExitCode::from(2));
                 }
             }
         };
@@ -165,15 +247,11 @@ pub fn boot(a: BootArgs) -> ExitCode {
     }
 
     // Built-in SBI firmware + its console channel (earlycon=sbi / legacy putchar).
-    let console = SharedStdout {
-        out: Rc::new(io::stdout()),
-        broken: Rc::new(Cell::new(false)),
-    };
     m.enable_builtin_sbi();
     m.sbi_set_console(Box::new(console.clone()));
 
     // --- lay out the boot triple: Image @ KERNEL_BASE, then initrd, then DTB near top ---
-    let kernel_end = match m.load_kernel_image(&kernel) {
+    let kernel_end = match m.load_kernel_image(kernel) {
         Ok(end) => end,
         Err(e) => {
             eprintln!(
@@ -181,7 +259,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 kernel.len(),
                 a.ram_mib
             );
-            return ExitCode::from(2);
+            return Err(ExitCode::from(2));
         }
     };
 
@@ -203,7 +281,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
         .map(|v| v & !(PMD_SIZE - 1))
     else {
         eprintln!("wasm-vm: kernel_end {kernel_end:#x} too large to align an initrd above");
-        return ExitCode::from(2);
+        return Err(ExitCode::from(2));
     };
 
     let (dtb, dtb_addr, placed_initrd) = match &initrd {
@@ -212,7 +290,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 fdt::build_virt_dtb(&plat, &a.append, Some(fdt::Initrd { start: 0, end: 0 }));
             let Some(dtb_addr) = fdt::dtb_placement(&plat, probe.len() as u64) else {
                 eprintln!("wasm-vm: DTB does not fit in RAM");
-                return ExitCode::from(2);
+                return Err(ExitCode::from(2));
             };
             let Some(place) = fdt::initrd_placement(initrd_floor, dtb_addr, bytes.len() as u64)
             else {
@@ -220,7 +298,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                     "wasm-vm: initrd ({} bytes) does not fit between kernel_end={kernel_end:#x} and DTB={dtb_addr:#x} — grow --ram-mib",
                     bytes.len()
                 );
-                return ExitCode::from(2);
+                return Err(ExitCode::from(2));
             };
             let dtb = fdt::build_virt_dtb(&plat, &a.append, Some(place));
             debug_assert_eq!(
@@ -234,7 +312,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
             let dtb = fdt::build_virt_dtb(&plat, &a.append, None);
             let Some(dtb_addr) = fdt::dtb_placement(&plat, dtb.len() as u64) else {
                 eprintln!("wasm-vm: DTB does not fit in RAM");
-                return ExitCode::from(2);
+                return Err(ExitCode::from(2));
             };
             (dtb, dtb_addr, None)
         }
@@ -244,12 +322,12 @@ pub fn boot(a: BootArgs) -> ExitCode {
         let bytes = initrd.as_ref().expect("initrd present when placed");
         if let Err(e) = m.load_blob(place.start, bytes) {
             eprintln!("wasm-vm: cannot place initrd at {:#x}: {e:?}", place.start);
-            return ExitCode::from(2);
+            return Err(ExitCode::from(2));
         }
     }
     if let Err(e) = m.load_blob(dtb_addr, &dtb) {
         eprintln!("wasm-vm: cannot place DTB at {dtb_addr:#x}: {e:?}");
-        return ExitCode::from(2);
+        return Err(ExitCode::from(2));
     }
 
     eprintln!(
@@ -268,17 +346,24 @@ pub fn boot(a: BootArgs) -> ExitCode {
 
     // Enter S-mode at KERNEL_BASE with a0=hartid, a1=DTB (ADR 0002 boot contract).
     m.boot_supervisor(0, dtb_addr);
+    Ok((m, uart))
+}
 
-    // --- run loop: execute in quanta, pumping stdin→UART-RX and UART-TX→stdout ---
-    let stdin_rx = (!a.no_input).then(spawn_stdin_reader);
-    // Host-side pending input: stdin can arrive faster than the guest drains the 16-byte RX
-    // FIFO (a pasted command line is >16 bytes), so we buffer here and feed only `rx_free()`
-    // bytes per quantum — no host-induced overrun, while true typing speed is unaffected.
-    let mut pending: std::collections::VecDeque<u8> = std::collections::VecDeque::new();
+/// Run one assembled machine to its terminal [`RunOutcome`], executing in quanta while pumping
+/// UART output → stdout and host stdin → the UART RX FIFO (rate-limited to its free space so a
+/// pasted line can't overrun). `pending` carries un-fed host input across quanta (and reboots).
+fn run_machine(
+    a: &BootArgs,
+    m: &mut Machine,
+    uart: &Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
+    console: &SharedStdout,
+    stdin_rx: Option<&mpsc::Receiver<Vec<u8>>>,
+    pending: &mut std::collections::VecDeque<u8>,
+) -> RunOutcome {
     let mut total = 0u64;
-    let outcome = loop {
+    loop {
         if total >= a.max_instrs {
-            break RunOutcome::MaxInstrs;
+            return RunOutcome::MaxInstrs;
         }
         let step = a.quantum.min(a.max_instrs - total);
         let mut sink = wasm_vm_core::trace::NullSink;
@@ -287,7 +372,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
         // Collect any newly-arrived host input, then feed the FIFO up to its free space.
-        if let Some(rx) = &stdin_rx {
+        if let Some(rx) = stdin_rx {
             while let Ok(chunk) = rx.try_recv() {
                 pending.extend(chunk);
             }
@@ -302,36 +387,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
         }
         match o {
             RunOutcome::MaxInstrs => total += step,
-            other => break other,
-        }
-    };
-    // Final drain.
-    let out = uart.borrow_mut().take_output();
-    console.write_bytes(&out);
-
-    match outcome {
-        RunOutcome::Exited(code) => {
-            eprintln!("wasm-vm: guest exited {code}");
-            ExitCode::from((code & 0xff) as u8)
-        }
-        RunOutcome::Trapped(t) => {
-            eprintln!(
-                "wasm-vm: unhandled trap {:?} (tval={:#x}, pc={:#x}) — boot aborted",
-                t.cause,
-                t.tval,
-                m.hart().regs.pc,
-            );
-            ExitCode::from(101)
-        }
-        RunOutcome::MaxInstrs => {
-            // `total` is the sum of quantum sizes run, i.e. run-loop steps — very close to
-            // retired instructions but not exact (a quantum that delivers an interrupt spends
-            // a step retiring nothing), so it's labelled "steps", not "retired".
-            eprintln!(
-                "wasm-vm: reached --max-instrs {} (~{total} steps)",
-                a.max_instrs
-            );
-            ExitCode::from(102)
+            other => return other,
         }
     }
 }

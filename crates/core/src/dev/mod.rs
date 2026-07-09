@@ -4,5 +4,6 @@ pub mod clint;
 pub mod console;
 pub mod plic;
 pub mod rtc;
+pub mod syscon;
 pub mod uart16550;
 pub mod virtio;
