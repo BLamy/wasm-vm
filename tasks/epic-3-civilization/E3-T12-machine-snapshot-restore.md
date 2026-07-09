@@ -66,4 +66,75 @@ documented behavior (overlay generation mismatch → refuse); if it silently res
 newer disk, that is the corruption case — refute.
 
 ## Verification log
-(empty)
+
+### Pass 1 — resume-snapshot format + zero-elision codec, native core (PR #153, stacked on #152)
+**Delivered:** `crates/core/src/resume.rs` — the versioned, sectioned (TLV) container the whole-machine
+snapshot serializes into, the coherence guards, and the RAM zero-elision codec. Pure `no_std` + alloc
+(builds for wasm32). Distinct from `crate::snapshot` (the E0-T17 state digest). The per-component
+`Snapshot`/`Restore` visitors (CPU/RAM/devices) + the determinism trace-diff are the integration pass
+(need the running machine — boot-adjacent). Header = `magic | format_version | core_hash |
+base_image_hash | overlay_generation`, then TLV sections; `SectionReader` bounds-checks every length
+and fails loudly on an unknown section tag. `SnapshotHeader::validate_for` refuses a snapshot from a
+different build / base image / stale overlay generation (typed error → caller cold-boots).
+`encode_sparse`/`decode_sparse` collapse zero runs so a mostly-idle 256 MiB RAM doesn't serialize to
+256 MiB.
+
+**Native-core-now split (off the postgres critical path, but the highest-value headless queue task —
+the OCI/postgres path is boot/browser-blocked):** closes the LOGIC behind acceptance **#3 (mismatch
+refusal)** + **#4 (zero elision, <15%)** + the format/parser fuzz-safety foundation. Deferred:
+component visitor + determinism trace-diff (#1), browser resume (#2), fsck coherence (#5).
+
+**A real DoS the pre-critic fuzz caught:** the 20k-iteration `decode_sparse` fuzz HUNG the machine —
+the decoder resized the output for a `CHUNK_ZERO` run *before* bounding its length, so a hostile
+zero-chunk claiming ~4 GiB forced an unbounded allocation. Fixed: bound the run against `expected_len`
+before growing.
+
+**Local gate:** clippy (both `--lib` and `--all-targets` after the CI catch) + fmt clean; full core
+lib suite 117 passed; 14 resume tests (0.03s). **CI #153 green** (after fixing a `clippy::useless_vec`
+that `-D warnings` rejected — lesson: run `--all-targets` locally, not just `--lib`).
+
+**Adversarial cold-clone critic** (reviewed `origin/task/e35-t04b..HEAD`): **REFUTED — 1 MAJOR
+test-gap; production code correct — FIX-FIRST.** Parser/codec held (no panic/OOB/unbounded-alloc/hang,
+sound round-trip over 2000+ fuzz iters; `SectionReader` `checked_add`-bounded, terminates on
+zero-length streams, latches `done` after error). But the DoS-fix regression test was **vacuous**:
+removing the pre-allocation bound *survived* because both it and the trailing `out.len()!=expected_len`
+check returned the same `BadSparseEncoding` (critic measured 17.86s / ~4 GiB under the mutant, suite
+still green). **Fixed:** gave the bound a **distinct** `SparseRunExceedsTotal` variant so it's
+observable (deleting the guard now changes the returned variant → the test fails). Other 3 mutants
+(bound `<=`→`<`, overlay-gen guard, DATA-slice off-by-one) all caught.
+
+### Pass 2 — ComponentSnapshot for CLINT + PLIC (device resume state) (on PR #153)
+**Delivered:** `crates/core/src/resume.rs` adds the `ComponentSnapshot` trait (`const SECTION: u32`,
+`to_snapshot(&self)->Vec<u8>`, `restore(&mut self, &[u8])->Result`); impls for **CLINT**
+(`clint.rs`: mtime|mtimecmp|msip = 17 bytes, all-or-nothing restore, rejects a non-boolean msip byte)
+and **PLIC** (`plic.rs`: full behavioural state priority[32]/enable[2]/threshold[2]/level/claimed[2] =
+156 bytes; the diagnostic `claim_count` is intentionally not snapshotted and resets on restore —
+documented; wrong-length rejected before any write). The first real component visitors — timer +
+interrupt-controller resume state — both **completely round-trip-verifiable headlessly** (bounded,
+fully-enumerable register sets). CPU/RAM visitors + determinism trace-diff stay in the boot pass.
+
+**Local gate:** fmt + clippy `--lib --tests` clean; full core lib suite 122 passed. **CI #153 green.**
+
+**Tests:** CLINT complete round-trip + malformed/all-or-nothing; PLIC behavioural round-trip +
+diagnostic-counter-reset + wrong-length/no-mutate; `a_component_round_trips_through_the_container_
+format` (the whole seam: component → section → blob → `SectionReader` → restored component).
+
+**Adversarial cold-clone critic** (reviewed `HEAD~1..HEAD`): **REFUTED on test-completeness —
+production serialization CLEAN.** Byte-complete + correctly-ordered (a `to_snapshot` field-order swap
+fails the round-trip); `claim_count` drop **verified non-behavioural by reading every use** (written
+only, read only via the diagnostic getter — never by `pending`/`best_source`/`eip`/`claim`/`complete`);
+`PlicState` is the whole PLIC state (no hidden/cached state); malformed-safe; SECTION distinct.
+- **MAJOR (test-gap) — FIX-FIRST:** `plic_behavioural..._drops_the_diagnostic_counter` restored into a
+  *fresh default* (claim_count already `[0;32]`), so the reset assertion was vacuous — removing the
+  reset line **survived**. The real path restores into a *live* PlicState that accumulated the counter,
+  so the reset matters for the "restarts from resume point" contract. **Fixed:** restore into a *dirty*
+  target (different behavioural fields + non-zero claim_count); **verified** the test now fails when the
+  reset line is removed. Production code unchanged.
+
+**Note:** pass 2 landed on **#153** (with pass 1 + the web Docker fix) — a branch-first miss; the clean
+split into a separate stacked PR was blocked as a destructive rewrite of an open PR. Cohesive E3-T12
+work, CI-verified.
+
+**Next passes (boot/browser-gated):** the CPU/RAM `ComponentSnapshot` visitors (+ UART/virtio, with
+device quiesce) + the native determinism trace-diff (#1); browser OPFS resume (#2); the
+`sync`→snapshot→reload→`fsck` coherence proof (#5).

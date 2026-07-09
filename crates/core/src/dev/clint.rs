@@ -69,6 +69,41 @@ impl ClintState {
     }
 }
 
+/// E3-T12: the CLINT's entire state is `mtime | mtimecmp | msip` — 17 bytes, fully round-trippable.
+impl crate::resume::ComponentSnapshot for ClintState {
+    const SECTION: u32 = crate::resume::section::CLINT;
+
+    fn to_snapshot(&self) -> alloc::vec::Vec<u8> {
+        let mut v = alloc::vec::Vec::with_capacity(17);
+        v.extend_from_slice(&self.mtime.to_le_bytes());
+        v.extend_from_slice(&self.mtimecmp.to_le_bytes());
+        v.push(self.msip as u8);
+        v
+    }
+
+    fn restore(&mut self, p: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        let err = || crate::resume::SnapshotError::BadComponentState { tag: Self::SECTION };
+        if p.len() != 17 {
+            return Err(err());
+        }
+        // Parse into locals first, then commit — a malformed payload leaves `self` untouched
+        // (all-or-nothing restore). Slices are exactly 8 bytes (len == 17), so try_into can't fail.
+        let mtime = u64::from_le_bytes(p[0..8].try_into().map_err(|_| err())?);
+        let mtimecmp = u64::from_le_bytes(p[8..16].try_into().map_err(|_| err())?);
+        let msip = match p[16] {
+            0 => false,
+            1 => true,
+            _ => return Err(err()), // a non-boolean msip byte is malformed
+        };
+        *self = ClintState {
+            mtime,
+            mtimecmp,
+            msip,
+        };
+        Ok(())
+    }
+}
+
 /// The memory-mapped CLINT device. Holds a shared handle to [`ClintState`]; the machine holds
 /// the other handle to advance `mtime` and read the MTIP/MSIP levels.
 pub struct Clint {
@@ -143,5 +178,58 @@ impl MmioDevice for Clint {
             _ => {}
         }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::ClintState;
+    use crate::resume::{ComponentSnapshot, SnapshotError, section};
+
+    #[test]
+    fn clint_state_round_trips_completely() {
+        let s = ClintState {
+            mtime: 0x1122_3344_5566_7788,
+            mtimecmp: 0xDEAD_BEEF_CAFE_F00D,
+            msip: true,
+        };
+        let bytes = s.to_snapshot();
+        assert_eq!(bytes.len(), 17);
+        assert_eq!(ClintState::SECTION, section::CLINT);
+
+        let mut restored = ClintState::default();
+        restored.restore(&bytes).unwrap();
+        // Every field survives — the CLINT's entire state is these three.
+        assert_eq!(restored.mtime, s.mtime);
+        assert_eq!(restored.mtimecmp, s.mtimecmp);
+        assert_eq!(restored.msip, s.msip);
+
+        // The msip=false path round-trips too.
+        let off = ClintState { msip: false, ..s };
+        let mut r2 = ClintState::default();
+        r2.restore(&off.to_snapshot()).unwrap();
+        assert!(!r2.msip);
+    }
+
+    #[test]
+    fn clint_restore_rejects_malformed_payloads_without_mutating() {
+        let bad = SnapshotError::BadComponentState {
+            tag: section::CLINT,
+        };
+        let mut s = ClintState {
+            mtime: 42,
+            mtimecmp: 99,
+            msip: true,
+        };
+        // Wrong lengths.
+        assert_eq!(s.restore(&[]), Err(bad.clone()));
+        assert_eq!(s.restore(&[0u8; 16]), Err(bad.clone()));
+        assert_eq!(s.restore(&[0u8; 18]), Err(bad.clone()));
+        // A non-boolean msip byte.
+        let mut nonbool = alloc::vec![0u8; 17];
+        nonbool[16] = 2;
+        assert_eq!(s.restore(&nonbool), Err(bad));
+        // A failed restore left the target untouched (all-or-nothing).
+        assert_eq!((s.mtime, s.mtimecmp, s.msip), (42, 99, true));
     }
 }

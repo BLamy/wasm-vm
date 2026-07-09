@@ -41,6 +41,7 @@ pub mod mmu;
 pub mod platform;
 pub mod pmp;
 pub mod ram;
+pub mod resume;
 pub mod sbi;
 pub mod snapshot;
 pub mod softfloat;
