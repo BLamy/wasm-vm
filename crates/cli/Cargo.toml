@@ -21,6 +21,12 @@ zicsr-stub = ["wasm-vm-core/zicsr-stub"]
 [dependencies]
 wasm-vm-core = { workspace = true, features = ["std", "trace"] }
 wasm-vm-storage = { path = "../storage" }
+# E3-T14: wire the slirp user-mode network stack (its native NativeConnector path) behind
+# `boot --net-slirp`, so a booted guest's ethernet frames reach real outbound sockets. The driver
+# thread runs slirp's async Bridge on a current-thread tokio runtime; the sync NetBackend the machine
+# calls talks to it over channels. (The browser build never pulls this — it's the native harness only.)
+wasm-vm-slirp = { path = "../slirp" }
+tokio = { version = "1", default-features = false, features = ["rt", "macros", "time", "sync", "net", "io-util"] }
 clap = { workspace = true }
 log = { workspace = true }
 env_logger = { workspace = true }
@@ -42,6 +48,10 @@ tempfile = "3"
 serde_json = "1"
 sha2 = { version = "0.10", default-features = false }
 criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }
+# E3-T14 slirp-backend integration test: a real local tokio echo server + smoltcp wire builders to
+# craft the guest SYN/data frames fed through the NetBackend.
+tokio = { version = "1", default-features = false, features = ["rt", "rt-multi-thread", "macros", "time", "sync", "net", "io-util"] }
+smoltcp = { version = "0.13", default-features = false, features = ["std", "medium-ethernet", "proto-ipv4", "socket-tcp"] }
 
 [[bench]]
 name = "interp"

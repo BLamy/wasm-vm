@@ -72,6 +72,11 @@ pub struct BootArgs {
     /// `eth0` (MAC 52:54:00:12:34:56); transmitted frames echo back with src/dst MAC swapped.
     #[arg(long)]
     pub net: bool,
+    /// E3-T14: attach virtio-net (slot 1) backed by the slirp user-mode network stack instead of
+    /// loopback — guest-initiated TCP is NATed onto real outbound sockets. Takes precedence over
+    /// `--net`. (DHCP/DNS auto-config is a later pass; for now a guest needs a static address.)
+    #[arg(long)]
+    pub net_slirp: bool,
 }
 
 /// Guest console → this process's stdout. Shared with the SBI console channel; a closed pipe
@@ -177,10 +182,10 @@ pub fn boot(a: BootArgs) -> ExitCode {
         // Final drain before we act on the outcome.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
-        if boot_num == 1 {
-            if let Some(p) = profiler.as_ref() {
-                p.report(&m.bus_mut().device_hits(), m.irq_stats().retired);
-            }
+        if boot_num == 1
+            && let Some(p) = profiler.as_ref()
+        {
+            p.report(&m.bus_mut().device_hits(), m.irq_stats().retired);
         }
         if a.stats {
             eprint!("{}", m.stats_dump()); // E2-T20
@@ -290,7 +295,13 @@ fn assemble(
     } else {
         let _ = m.enable_virtio_slots(None);
     }
-    if a.net {
+    if a.net_slirp {
+        // E3-T14: slirp-backed virtio-net in slot 1 — the guest's frames terminate in the
+        // user-mode TCP/IP stack and guest-initiated TCP is NATed onto real outbound sockets.
+        let _ = m.enable_virtio_net(Box::new(crate::net_backend::SlirpBackend::new(
+            crate::net_backend::GATEWAY_MAC,
+        )));
+    } else if a.net {
         // E3-T13: loopback-backed virtio-net in slot 1 (the DTB already advertises all 8
         // slots, so the stock virtio_net driver probes it with no DTB change).
         let _ = m.enable_virtio_net(Box::new(
@@ -434,7 +445,7 @@ impl BootProfiler {
             b if b == CLINT_BASE => "clint",
             b if b == PLIC_BASE => "plic",
             b if b == RTC_BASE => "goldfish-rtc",
-            b if b >= VIRTIO_BASE && b < VIRTIO_BASE + 8 * 0x1000 => "virtio-mmio",
+            b if (VIRTIO_BASE..VIRTIO_BASE + 8 * 0x1000).contains(&b) => "virtio-mmio",
             _ => "other",
         }
     }
