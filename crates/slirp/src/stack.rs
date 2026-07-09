@@ -23,6 +23,7 @@ use crate::udp_frame::{GuestUdp, build_udp_frame, parse_udp};
 /// The BOOTP/DHCP client port a server reply is addressed to.
 const DHCP_CLIENT_PORT: u16 = 68;
 const DHCP_SERVER_PORT: u16 = 67;
+const DNS_PORT: u16 = 53;
 
 /// Per-flow smoltcp TCP socket buffer size (64 KiB each way).
 const TCP_BUF: usize = 64 * 1024;
@@ -274,6 +275,44 @@ impl SlirpStack {
                     self.device.tx.push_back(frame);
                     sent += 1;
                 }
+            }
+        }
+        sent
+    }
+
+    /// Service every DIVERTED DNS datagram (dst port 53) with `fwd`, framing each answer back to the
+    /// guest and egressing it. DNS is ASYNC (a cache miss consults the resolver), so this is the
+    /// `async` counterpart to [`run_dhcp`](Self::run_dhcp); DHCP datagrams (dst 67) are LEFT in the
+    /// service queue for [`run_dhcp`]. The answer is unicast to the guest (which HAS its IP by now):
+    /// from the resolver (`10.0.2.3:53`) to the query's own `(src_ip, src_port)`, L2 to its MAC. A
+    /// response too large to frame (`> MAX_UDP_PAYLOAD`) is dropped — a real forwarder would set TC=1
+    /// to trigger the guest's TCP retry (a later leg); our A-record answers are always small. Returns
+    /// the number of answers sent.
+    pub async fn run_dns<R: crate::resolver::Resolver>(
+        &mut self,
+        fwd: &mut crate::resolver::DnsForwarder<R>,
+        now_ms: i64,
+    ) -> usize {
+        let pending = std::mem::take(&mut self.service_udp);
+        let mut sent = 0;
+        for g in pending {
+            if g.dst_port != DNS_PORT {
+                self.service_udp.push(g); // not DNS (DHCP) — keep it for run_dhcp
+                continue;
+            }
+            if let Some(answer) = fwd.handle(&g.payload, now_ms).await
+                && let Some(frame) = build_udp_frame(
+                    self.mac,  // from the gateway MAC
+                    g.src_mac, // L2-unicast back to the guest
+                    net::DNS,  // from the resolver (10.0.2.3)
+                    DNS_PORT,
+                    g.src_ip,   // to the guest's own address...
+                    g.src_port, // ...and the query's source port
+                    &answer,
+                )
+            {
+                self.device.tx.push_back(frame);
+                sent += 1;
             }
         }
         sent

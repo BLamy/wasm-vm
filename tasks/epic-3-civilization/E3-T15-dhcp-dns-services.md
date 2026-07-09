@@ -367,3 +367,35 @@ rationale is WRONG for the RENEW path (broadcast is still safe, just for a diffe
 receives it in every listen mode); reworded the doc to state that precisely. NIT — the DNS-queued test
 now also asserts the payload/addressing are intact (not just `len==1`). 113 slirp tests; fmt + clippy +
 no-default green.
+
+**2026-07-08 — pass 1l: asynchronous DNS servicing (`SlirpStack::run_dns`).** The DNS path is now closed
+in PRODUCTION code, symmetric to `run_dhcp` — the async counterpart. `run_dns<R: Resolver>(&mut
+DnsForwarder<R>, now_ms).await -> usize` drains every diverted DNS datagram (dst :53), dispatches each to
+the async `DnsForwarder` (cache hit → answer immediately; miss → `.await` the resolver), frames the
+answer, egresses it, and returns the count. DHCP datagrams (dst :67) are LEFT queued for `run_dhcp` (the
+loop partitions). Answer addressing: unicast to the guest (which HAS its IP by now) — from the resolver
+`10.0.2.3:53` to the query's own `(src_ip, src_port)`, L2 to its MAC. A response too large to frame (>
+`MAX_UDP_PAYLOAD`) is dropped (TC=1 truncation is a later leg; A-record answers are always small). No
+tokio in the signature (async fn) → browser-safe. Tests (3, `#[tokio::test]`, frame-injection + a
+counting resolver, no boot): a DNS A query frame → `run_dns` → an answer frame egresses UNICAST to the
+guest (from 10.0.2.3:53 to the guest's src_ip:src_port, L2 to its MAC) carrying the A record; a repeat
+query is served from the forwarder's cache WITHOUT re-resolving (upstream consulted once); and a mixed
+queue where the DNS query is answered while the DHCP datagram stays queued for `run_dhcp`. 116 slirp
+tests. fmt + clippy + no-default BUILD green (async `run_dns` compiles into the browser build). BOTH
+services are now serviced end-to-end through the real stack (frame-verified); the remaining T15 legs are
+purely env-gated: the concrete `fetch` DohTransport (wasm crate), TCP-fallback for truncated answers, and
+booted-guest acceptance (a real Alpine acquiring its lease + resolving names).
+
+**Adversarial cold-clone critic on pass 1l: CLEAN, no defect (one coverage NIT hardened).** The critic
+verified SOUND the two highest-risk things: (1) answer ADDRESSING is correct — `parse_udp` populates
+`src_ip`/`src_port` from the guest (source) fields, `run_dns` frames the answer FROM `10.0.2.3:53` TO the
+guest's `(src_ip, src_port)` L2 to its MAC (not swapped; egress dst confirmed = the guest); and (2) the
+`run_dns` future IS `Send` (a scratch `assert_send` compiled — smoltcp `Interface` is Send, resolver is
+`impl Future + Send`), so the eventual event-loop wiring can `tokio::spawn` it — NOT a limitation. Also
+sound: the partition loses/double-services nothing (run_dns pushes back the 67s, run_dhcp the 53s —
+symmetric/complementary), the oversized-drop is correct+honest (`sent` accurate, guest retries), and the
+cache-across-passes test spans two separate `run_dns` calls (calls==1 proves the cache served the
+repeat). All three mutations caught (swap src/dst → wrong-dst fail; drop push → no-egress fail;
+cache-always-miss → calls==2 fail). One NIT (coverage, not a defect): the tests used txid 0 so a broken
+query-ID echo wouldn't be caught. Hardened: the query now uses txid 0xBEEF and the answer test asserts it
+round-trips. 116 slirp tests; fmt + clippy + no-default green.
