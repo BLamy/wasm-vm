@@ -142,6 +142,14 @@ impl VirtioMmio {
         self.int_status |= INT_USED_RING;
     }
 
+    /// E2-T09 policy: a ring protocol violation ([`super::queue::Violation`]) degrades
+    /// the device to NEEDS_RESET with a config-change notification (spec §2.1) — loud,
+    /// recoverable via reset, never a wedge.
+    pub fn protocol_violation(&mut self) {
+        self.status |= STATUS_NEEDS_RESET;
+        self.raise_config_irq();
+    }
+
     /// Backend signal: config space changed.
     pub fn raise_config_irq(&mut self) {
         self.int_status |= INT_CONFIG_CHANGE;
@@ -601,6 +609,23 @@ mod tests {
             assert_eq!(r32(&mut m, off), 0xFFFF_FFFF, "SHM off {off:#x}");
         }
         w32(&mut m, SHM_SEL, 3); // accepted, ignored
+    }
+
+    /// E2-T09 policy hook: protocol_violation() = NEEDS_RESET + config-change interrupt +
+    /// generation bump + line high (mirrors QEMU virtio_error; critic advisory: pin it).
+    #[test]
+    fn protocol_violation_degrades_loudly() {
+        let mut m = slot();
+        let gen_before = r32(&mut m, CONFIG_GENERATION);
+        m.protocol_violation();
+        assert_ne!(r32(&mut m, STATUS) & STATUS_NEEDS_RESET, 0);
+        assert_ne!(r32(&mut m, INTERRUPT_STATUS) & INT_CONFIG_CHANGE, 0);
+        assert!(m.irq_level());
+        assert_ne!(r32(&mut m, CONFIG_GENERATION), gen_before);
+        // Recovery: full reset clears it all.
+        w32(&mut m, STATUS, 0);
+        assert_eq!(r32(&mut m, STATUS), 0);
+        assert!(!m.irq_level());
     }
 
     /// Charter fuzz: 10^6 random-width random-offset ops over 0x000–0x1FF — no panic,
