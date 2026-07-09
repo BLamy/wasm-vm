@@ -17,6 +17,7 @@ use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
+mod blobstore;
 mod cache;
 mod dbmeta;
 mod fetch;
@@ -24,6 +25,7 @@ pub mod oci;
 mod overlay;
 mod prefetch;
 mod writeback;
+pub use blobstore::{BlobBackend, BlobError, BlobId, BlobStore, MemBlobBackend, blob_id};
 pub use cache::{BlockCache, CacheMetrics};
 pub use dbmeta::{OVERLAY_DB_VERSION, OverlayMeta, overlay_store_name};
 pub use fetch::{
