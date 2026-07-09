@@ -99,6 +99,76 @@ pub fn parse_query(msg: &[u8]) -> Option<Query> {
     })
 }
 
+/// The distilled result of a DNS RESPONSE (as returned by a DoH endpoint / upstream resolver): the
+/// header RCODE and every IPv4 `A` record's `(address, ttl)`. This is what the DoH resolver maps to a
+/// [`crate::resolver::Resolution`]. CNAME/other RRs are skipped (an A found after a CNAME chain is
+/// still collected — we only care about the addresses the name ultimately resolves to).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ResponseInfo {
+    pub rcode: u8,
+    pub a_records: Vec<(Ipv4Addr, u32)>,
+}
+
+/// Parse a DNS response message (from a resolver / DoH endpoint) into its RCODE + A records. Returns
+/// `None` on a structurally malformed message (short header, a name/RR that runs past the buffer, a
+/// compression loop) — the caller treats that as a resolver failure (SERVFAIL), never a panic or hang.
+/// Bounds-checked and compression-loop-proof throughout (names via the same backward-only walk as
+/// [`parse_name`]).
+///
+/// NOTE (critic MINOR): it does NOT validate that an answer's NAME matches the queried name — it trusts
+/// the response and returns whatever A records it carries. That is fine for the DoH/OS use case (the
+/// resolver trusts its configured endpoint and already knows what it asked; TXID/transport integrity is
+/// a different layer), but a future untrusted-transport path should cross-check the answer name. The
+/// returned `a_records` is bounded by `ancount` (≤ 65535) and by the buffer (each A needs ≥ 15 on-wire
+/// bytes), so a hostile response can't blow up memory.
+pub fn parse_response(msg: &[u8]) -> Option<ResponseInfo> {
+    if msg.len() < HEADER_LEN {
+        return None;
+    }
+    let flags = u16::from_be_bytes([msg[2], msg[3]]);
+    if flags & 0x8000 == 0 {
+        return None; // QR=0 → it's a query, not a response
+    }
+    let rcode = (flags & 0x000F) as u8;
+    let qdcount = u16::from_be_bytes([msg[4], msg[5]]);
+    let ancount = u16::from_be_bytes([msg[6], msg[7]]);
+
+    // Skip the question section: `qdcount` questions, each = a name + QTYPE(2) + QCLASS(2).
+    let mut pos = HEADER_LEN;
+    for _ in 0..qdcount {
+        let (_name, after) = parse_name(msg, pos)?;
+        pos = after.checked_add(4)?; // QTYPE + QCLASS
+        if pos > msg.len() {
+            return None;
+        }
+    }
+
+    // Walk the answer RRs, collecting A records. Each RR = NAME + TYPE(2) + CLASS(2) + TTL(4) +
+    // RDLENGTH(2) + RDATA(rdlen).
+    let mut a_records = Vec::new();
+    for _ in 0..ancount {
+        let (_name, after) = parse_name(msg, pos)?;
+        let rtype = u16::from_be_bytes([*msg.get(after)?, *msg.get(after + 1)?]);
+        let class = u16::from_be_bytes([*msg.get(after + 2)?, *msg.get(after + 3)?]);
+        let ttl = u32::from_be_bytes([
+            *msg.get(after + 4)?,
+            *msg.get(after + 5)?,
+            *msg.get(after + 6)?,
+            *msg.get(after + 7)?,
+        ]);
+        let rdlen = u16::from_be_bytes([*msg.get(after + 8)?, *msg.get(after + 9)?]) as usize;
+        let rdata_start = after + 10;
+        let rdata_end = rdata_start.checked_add(rdlen)?;
+        let rdata = msg.get(rdata_start..rdata_end)?; // bounds-checks the whole RR
+        if rtype == TYPE_A && class == CLASS_IN && rdlen == 4 {
+            a_records.push((Ipv4Addr::new(rdata[0], rdata[1], rdata[2], rdata[3]), ttl));
+        }
+        pos = rdata_end;
+    }
+
+    Some(ResponseInfo { rcode, a_records })
+}
+
 /// Read a DNS name starting at `start`. Returns `(name, offset_just_past_the_name_in_sequence)`.
 /// Compression pointers are followed but must jump strictly BACKWARD (so the walk always terminates),
 /// and a budget bounds total labels/jumps. `None` on any malformed encoding.

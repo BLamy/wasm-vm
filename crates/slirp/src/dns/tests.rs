@@ -252,3 +252,155 @@ fn malformed_queries_never_panic() {
         let _ = parse_query(&m); // must not panic
     }
 }
+
+// ── parse_response (DoH / upstream response wire format) ─────────────────────
+use std::net::Ipv4Addr;
+
+/// A response header: id, flags (QR=1 + rcode), qd/an counts (ns/ar = 0).
+fn resp_header(rcode: u8, qd: u16, an: u16) -> Vec<u8> {
+    let mut b = 0x1234u16.to_be_bytes().to_vec();
+    let flags: u16 = 0x8180 | (rcode as u16 & 0x000F); // QR=1, RD=1, RA=1
+    b.extend_from_slice(&flags.to_be_bytes());
+    b.extend_from_slice(&qd.to_be_bytes());
+    b.extend_from_slice(&an.to_be_bytes());
+    b.extend_from_slice(&0u16.to_be_bytes()); // NS
+    b.extend_from_slice(&0u16.to_be_bytes()); // AR
+    b
+}
+/// An answer RR with a compression-pointer NAME (→ the question at 0x0c), the given type/ttl/rdata.
+fn answer_rr(rtype: u16, ttl: u32, rdata: &[u8]) -> Vec<u8> {
+    let mut b = vec![0xC0, 0x0C];
+    b.extend_from_slice(&rtype.to_be_bytes());
+    b.extend_from_slice(&CLASS_IN.to_be_bytes());
+    b.extend_from_slice(&ttl.to_be_bytes());
+    b.extend_from_slice(&(rdata.len() as u16).to_be_bytes());
+    b.extend_from_slice(rdata);
+    b
+}
+/// A full response: header + one question + the given answers.
+fn build_response_msg(name: &str, rcode: u8, answers: &[Vec<u8>]) -> Vec<u8> {
+    let mut b = resp_header(rcode, 1, answers.len() as u16);
+    b.extend_from_slice(&encode_name(name)); // question name
+    b.extend_from_slice(&TYPE_A.to_be_bytes());
+    b.extend_from_slice(&CLASS_IN.to_be_bytes());
+    for a in answers {
+        b.extend_from_slice(a);
+    }
+    b
+}
+
+#[test]
+fn parses_a_records_and_rcode_from_a_response() {
+    let ip1 = Ipv4Addr::new(93, 184, 216, 34);
+    let ip2 = Ipv4Addr::new(93, 184, 216, 35);
+    let msg = build_response_msg(
+        "example.com",
+        RCODE_NOERROR,
+        &[
+            answer_rr(TYPE_A, 300, &ip1.octets()),
+            answer_rr(TYPE_A, 300, &ip2.octets()),
+        ],
+    );
+    let info = parse_response(&msg).expect("valid response parses");
+    assert_eq!(info.rcode, RCODE_NOERROR);
+    assert_eq!(info.a_records, vec![(ip1, 300), (ip2, 300)]);
+}
+
+#[test]
+fn skips_cname_and_collects_the_trailing_a() {
+    // A common CNAME chain: the response has a CNAME then the real A. We ignore the CNAME, keep the A.
+    let ip = Ipv4Addr::new(1, 2, 3, 4);
+    let mut cname_rdata = encode_name("target.example.net");
+    // give the CNAME rdata some bytes (its exact content doesn't matter — we skip it)
+    let cname = answer_rr(TYPE_CNAME, 60, &cname_rdata);
+    cname_rdata.clear();
+    let msg = build_response_msg(
+        "www.example.com",
+        RCODE_NOERROR,
+        &[cname, answer_rr(TYPE_A, 120, &ip.octets())],
+    );
+    let info = parse_response(&msg).unwrap();
+    assert_eq!(
+        info.a_records,
+        vec![(ip, 120)],
+        "CNAME skipped, A collected"
+    );
+}
+
+#[test]
+fn aaaa_records_are_ignored() {
+    let v6 = [0x20, 0x01, 0xd, 0xb8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+    let msg = build_response_msg(
+        "example.com",
+        RCODE_NOERROR,
+        &[answer_rr(TYPE_AAAA, 300, &v6)],
+    );
+    let info = parse_response(&msg).unwrap();
+    assert!(info.a_records.is_empty(), "AAAA (IPv6) yields no A records");
+    assert_eq!(info.rcode, RCODE_NOERROR);
+}
+
+#[test]
+fn nxdomain_and_servfail_rcodes_are_surfaced() {
+    let nx = build_response_msg("nope.invalid", RCODE_NXDOMAIN, &[]);
+    assert_eq!(parse_response(&nx).unwrap().rcode, RCODE_NXDOMAIN);
+    assert!(parse_response(&nx).unwrap().a_records.is_empty());
+
+    let sf = build_response_msg("x.test", RCODE_SERVFAIL, &[]);
+    assert_eq!(parse_response(&sf).unwrap().rcode, RCODE_SERVFAIL);
+}
+
+#[test]
+fn a_query_is_rejected_as_a_response() {
+    // QR=0 → not a response.
+    let q = build_query(1, "example.com", TYPE_A, true);
+    assert!(
+        parse_response(&q).is_none(),
+        "a query (QR=0) is not a response"
+    );
+}
+
+#[test]
+fn malformed_responses_never_panic() {
+    assert!(parse_response(&[]).is_none());
+    assert!(parse_response(&[0u8; 8]).is_none(), "short header");
+
+    // ancount claims an answer that isn't there.
+    let mut lying = resp_header(RCODE_NOERROR, 1, 5);
+    lying.extend_from_slice(&encode_name("example.com"));
+    lying.extend_from_slice(&TYPE_A.to_be_bytes());
+    lying.extend_from_slice(&CLASS_IN.to_be_bytes());
+    assert!(
+        parse_response(&lying).is_none(),
+        "truncated answer section → None, not panic"
+    );
+
+    // An answer RR whose RDLENGTH runs past the buffer.
+    let mut bad_rd = resp_header(RCODE_NOERROR, 1, 1);
+    bad_rd.extend_from_slice(&encode_name("example.com"));
+    bad_rd.extend_from_slice(&TYPE_A.to_be_bytes());
+    bad_rd.extend_from_slice(&CLASS_IN.to_be_bytes());
+    bad_rd.extend_from_slice(&[0xC0, 0x0C]); // answer name ptr
+    bad_rd.extend_from_slice(&TYPE_A.to_be_bytes());
+    bad_rd.extend_from_slice(&CLASS_IN.to_be_bytes());
+    bad_rd.extend_from_slice(&300u32.to_be_bytes());
+    bad_rd.extend_from_slice(&200u16.to_be_bytes()); // rdlen=200, only ~4 present
+    bad_rd.extend_from_slice(&[1, 2, 3, 4]);
+    assert!(parse_response(&bad_rd).is_none(), "overrun RDLENGTH → None");
+
+    // Fuzz: every truncation + bitflip of a valid multi-answer response.
+    let ip = Ipv4Addr::new(1, 2, 3, 4);
+    let full = build_response_msg(
+        "example.com",
+        RCODE_NOERROR,
+        &[answer_rr(TYPE_A, 300, &ip.octets())],
+    );
+    for cut in 0..full.len() {
+        let _ = parse_response(&full[..cut]);
+    }
+    for i in 0..full.len() {
+        let mut m = full.clone();
+        m[i] ^= 0xff;
+        let _ = parse_response(&m); // must not panic
+    }
+}

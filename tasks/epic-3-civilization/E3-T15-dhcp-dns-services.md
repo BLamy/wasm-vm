@@ -193,3 +193,33 @@ threads. Folded in as an in-code CAVEAT so the wiring slice bounds resolve concu
 resolver). Two NITs (harmless, noted): v4-mapped-IPv6 filtered as empty; the `::1` test's Failed escape
 hatch is loose (but the v4-only assertion in the localhost test covers the filter deterministically). No
 correctness change. 84 slirp tests; fmt + clippy + no-default build green.
+
+**2026-07-08 — pass 1f: DNS response parser (`dns::parse_response`).** The pure, browser-safe core the
+DoH resolver will use: `parse_response(&[u8]) -> Option<ResponseInfo{ rcode, a_records: Vec<(Ipv4Addr,
+u32)> }>` distills a DNS RESPONSE (from a DoH endpoint / upstream) into its RCODE + every IPv4 A record
+`(address, ttl)`. Rejects a query (QR=0). Skips the question section (qdcount names + 4 bytes each) and
+walks the answer RRs (NAME + type/class/ttl/rdlen/rdata), collecting only A/IN/rdlen=4 records — a CNAME
+chain is skipped and the trailing A still collected; AAAA/other RRs ignored. Reuses `parse_name` for
+name-skipping, so it's compression-loop-proof (backward-only jumps); every field access is bounds-checked
+(`get`/`checked_add`), so a short header, an ancount that lies, an RDLENGTH that overruns, a compression
+loop, or any truncation/bitflip yields `None` — never a panic (the caller treats `None` as SERVFAIL). No
+tokio/async → compiles into the browser build. Tests (6): multi-A + RCODE extraction, CNAME-then-A
+(CNAME skipped, A kept), AAAA ignored, NXDOMAIN/SERVFAIL rcodes surfaced, a query rejected as a response,
+and a malformed sweep (short header, lying ancount, overrun RDLENGTH, + every truncation & single-byte
+corruption of a valid response) asserting no panic. 90 slirp tests. fmt + clippy green under BOTH
+`--all-features` and `--no-default-features`. Remaining for T15: the DoH resolver wiring this parser to a
+`fetch` transport (browser) — the transport is injectable so its response-mapping is testable natively;
+TCP-fallback; wire `UdpServices` into the SlirpStack UDP path; booted-guest acceptance (env-gated).
+
+**Adversarial cold-clone critic on pass 1f: CLEAN, no defect (400k-iteration fuzz).** The critic read
+`parse_response` + the full `parse_name` and ran a 400,000-iteration fuzz plus every crafted case: NO
+panic; name-ends-exactly-at-EOF with truncated fields → `None` (every one of the 10 RR-header bytes uses
+`*msg.get(after+k)?`, no raw index); a forward pointer in an answer name → `None`; NO zero-advance spin
+(`pos` strictly grows ≥ 11 bytes/RR, so the ancount loop always terminates); compressed-RDATA (a CNAME
+whose rdata is a 2-byte pointer) is skipped by raw rdlen with the trailing A found at the exact next
+offset (no off-by-one); `ancount=65535` in a 12-byte buffer → `None` in < 100 ms (no spin/alloc); rcode
+= low nibble + QR-check correct; `checked_add` guards the one overflow-capable add. Two MINOR notes (no
+code defect): no answer-name validation (acceptable — the DoH/OS resolver trusts its endpoint and knows
+what it asked; TXID/transport is a separate layer) and bounded-but-uncapped `a_records` (≤ 65535, not a
+DoS). Folded a doc acknowledgement of both onto `parse_response` so the future untrusted-transport path
+cross-checks the answer name. No correctness change. 90 slirp tests; fmt + clippy + no-default green.
