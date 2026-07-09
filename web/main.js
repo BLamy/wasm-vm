@@ -101,6 +101,8 @@ if (bootAlpineChunkedBtn) {
         imageManifestUrl: "./releases/chunked-alpine/manifest.json",
         // E3-T03: `?cacheBudgetMib=N` boots with an N-MiB cache to exercise eviction (0 → 256 default).
         cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
+        // E3-T05: `?persist=1` persists the CoW overlay to IndexedDB (writes survive a reload).
+        persist: new URLSearchParams(location.search).get("persist") === "1",
         ramMib: 256,
       },
       "booting Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login:…",
@@ -139,6 +141,8 @@ window.__linux = {
 };
 // E3-T02 test hook: the chunked-boot lazy-fetch instrumentation ({ fetches, bytes, error } | null).
 window.__chunkedStats = () => linuxCtl?.fetchStats?.() ?? null;
+// E3-T05 test hook: force a durable flush of the overlay to IndexedDB (Promise → blocks persisted).
+window.__persist = () => linuxCtl?.persist?.() ?? Promise.resolve(0);
 
 const statusEl = document.getElementById("status");
 const versionEl = document.getElementById("version");

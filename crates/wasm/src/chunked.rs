@@ -17,36 +17,55 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use wasm_vm_core::block::{BlockBackend, BlockError, SECTOR_SIZE, check_range};
-use wasm_vm_storage::{BlockCache, ImageManifest, MemOverlay, OverlayDisk, OverlayOutcome};
+use wasm_vm_storage::{
+    BlockCache, ImageManifest, MemOverlay, OverlayBackend, OverlayDisk, OverlayOutcome,
+};
 
 /// A virtio-blk backend over a chunked image with a copy-on-write overlay. Reads merge the overlay
 /// over the base (parking on an absent base chunk); writes land in the overlay (a partial-block write
 /// parks if the block's base chunk is not resident, since it must read-modify-write the block).
-pub struct ChunkedBackend {
+///
+/// Generic over the overlay backend `B`: the default [`MemOverlay`] is the ephemeral in-memory overlay
+/// (`newChunkedDisk`); the durable IndexedDB path (`newChunkedDiskPersistent`, E3-T05) builds it over a
+/// `WriteBackOverlay` via [`Self::from_disk`].
+pub struct ChunkedBackend<B: OverlayBackend = MemOverlay> {
     /// The base chunk cache, shared with the fetch layer which verifies+inserts chunks (E3-T03).
     store: Rc<RefCell<BlockCache>>,
     /// The E3-T04 copy-on-write overlay over the base.
-    disk: OverlayDisk<MemOverlay>,
+    disk: OverlayDisk<B>,
     capacity_sectors: u64,
 }
 
-impl ChunkedBackend {
-    /// A backend over the base described by `manifest`, reading verified chunk bytes from the shared
-    /// bounded `store`. Capacity is the whole-sector floor of the image length.
-    pub fn new(manifest: &ImageManifest, store: Rc<RefCell<BlockCache>>) -> ChunkedBackend {
+impl ChunkedBackend<MemOverlay> {
+    /// An ephemeral backend over the base described by `manifest` (in-memory `MemOverlay`), reading
+    /// verified chunk bytes from the shared bounded `store`. Capacity is the whole-sector floor of the
+    /// image length.
+    pub fn new(
+        manifest: &ImageManifest,
+        store: Rc<RefCell<BlockCache>>,
+    ) -> ChunkedBackend<MemOverlay> {
         let overlay = MemOverlay::new(manifest);
         // A fresh overlay is bound to exactly this manifest, so `attach` cannot fail here.
         let disk = OverlayDisk::attach(overlay, manifest)
             .expect("a fresh overlay binds to the manifest it was created from");
+        ChunkedBackend::from_disk(disk, store)
+    }
+}
+
+impl<B: OverlayBackend> ChunkedBackend<B> {
+    /// Build over an already-attached [`OverlayDisk`] — the durable path passes an `OverlayDisk` over a
+    /// `WriteBackOverlay` (loaded from IndexedDB, sharing a persist queue). Capacity is the whole-sector
+    /// floor of the overlay's image length.
+    pub fn from_disk(disk: OverlayDisk<B>, store: Rc<RefCell<BlockCache>>) -> ChunkedBackend<B> {
         ChunkedBackend {
-            capacity_sectors: manifest.image_len / SECTOR_SIZE as u64,
+            capacity_sectors: disk.len() / SECTOR_SIZE as u64,
             store,
             disk,
         }
     }
 }
 
-impl BlockBackend for ChunkedBackend {
+impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
     fn capacity_sectors(&self) -> u64 {
         self.capacity_sectors
     }

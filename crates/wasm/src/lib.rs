@@ -28,6 +28,9 @@ mod chunked;
 // The web-sys `fetch` glue is browser-only.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod http_fetch;
+// The web-sys IndexedDB durable-overlay store is browser-only.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod idb_store;
 
 /// One-time browser diagnostics setup: route `log` to the JS console and install the
 /// panic hook that turns Rust panics into readable console errors. Idempotent.
@@ -419,6 +422,9 @@ struct LinuxInner {
     /// E3-T02 lazy-fetch state, present only for a `newChunkedDisk` boot (`None` otherwise). Held in
     /// an `Rc` so `fetchPending` can clone it out and `await` without keeping the inner borrow.
     fetch: Option<std::rc::Rc<http_fetch::FetchState>>,
+    /// E3-T05 durable-persistence state, present only for a `newChunkedDiskPersistent` boot: the
+    /// IndexedDB store (`Clone`) + the shared persist queue the overlay records writes into.
+    persist: Option<(idb_store::IdbStore, wasm_vm_storage::SharedPersistQueue)>,
 }
 
 /// Which block device (if any) backs the boot: none (initramfs), an in-memory image, or a lazily
@@ -435,6 +441,24 @@ enum DiskChoice {
         /// E3-T03 boot profile: ordered chunks to prefetch (empty if none).
         profile: Vec<usize>,
     },
+    /// E3-T05: like `Chunked`, but the overlay is a `WriteBackOverlay` (loaded from IndexedDB, sharing
+    /// a persist queue) so guest writes survive a reload.
+    ChunkedPersistent {
+        manifest: wasm_vm_storage::ImageManifest,
+        base_url: String,
+        budget: u64,
+        profile: Vec<usize>,
+        /// Blocks loaded from the durable store on reopen (already persisted).
+        loaded: alloc_map::BlockMap,
+        idb: idb_store::IdbStore,
+        queue: wasm_vm_storage::SharedPersistQueue,
+    },
+}
+
+/// A small alias module so the enum variant's type reads cleanly.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod alloc_map {
+    pub type BlockMap = std::collections::BTreeMap<u64, [u8; wasm_vm_storage::OVERLAY_BLOCK]>;
 }
 
 /// Console sink that accumulates guest bytes into a shared buffer (drained per `runChunk`).
@@ -543,6 +567,85 @@ impl WasmLinux {
         )
     }
 
+    /// E3-T05: like [`Self::new_chunked_disk`], but the copy-on-write overlay is persisted to
+    /// IndexedDB — guest writes survive a tab reload. Async: opens the image-namespaced DB (checking
+    /// its recorded base binding against the manifest — a mismatch/older-version is a typed error, not
+    /// silent reuse), loads any previously persisted blocks, and boots over them. Call `persistPending`
+    /// to flush new writes durably (its Promise resolves on the IndexedDB transaction `complete`).
+    #[wasm_bindgen(js_name = newChunkedDiskPersistent)]
+    #[allow(clippy::too_many_arguments)]
+    pub async fn new_chunked_disk_persistent(
+        ram_mib: u32,
+        kernel: Vec<u8>,
+        manifest_json: String,
+        base_url: String,
+        cache_budget_mib: u32,
+        boot_profile: Vec<u32>,
+        bootargs: String,
+        output: js_sys::Function,
+    ) -> Result<WasmLinux, JsError> {
+        let manifest = wasm_vm_storage::ImageManifest::from_json(&manifest_json)
+            .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
+        let base_binding = manifest.base_hash();
+
+        // Open the durable store and reconcile its meta record with this base.
+        let idb = idb_store::IdbStore::open(&base_binding)
+            .await
+            .map_err(|e| JsError::new(&format!("IndexedDB open: {e:?}")))?;
+        match idb
+            .read_meta()
+            .await
+            .map_err(|e| JsError::new(&format!("IndexedDB read meta: {e:?}")))?
+        {
+            Some(bytes) => {
+                let meta = wasm_vm_storage::OverlayMeta::from_bytes(&bytes)
+                    .map_err(|e| JsError::new(&format!("overlay meta: {e:?}")))?;
+                meta.check(&manifest)
+                    .map_err(|e| JsError::new(&format!("overlay/base mismatch: {e:?}")))?;
+            }
+            None => {
+                idb.write_meta(&wasm_vm_storage::OverlayMeta::new(&manifest).to_bytes())
+                    .await
+                    .map_err(|e| JsError::new(&format!("IndexedDB write meta: {e:?}")))?;
+            }
+        }
+        let loaded = idb
+            .load_blocks()
+            .await
+            .map_err(|e| JsError::new(&format!("IndexedDB load: {e:?}")))?;
+
+        let queue = std::rc::Rc::new(RefCell::new(wasm_vm_storage::PersistQueue::new()));
+        let args = if bootargs.is_empty() {
+            "root=/dev/vda rw console=ttyS0 earlycon=sbi".to_string()
+        } else {
+            bootargs
+        };
+        let budget = if cache_budget_mib == 0 {
+            256
+        } else {
+            cache_budget_mib
+        } as u64
+            * 1024
+            * 1024;
+        let profile: Vec<usize> = boot_profile.into_iter().map(|c| c as usize).collect();
+        Self::assemble(
+            ram_mib,
+            &kernel,
+            None,
+            DiskChoice::ChunkedPersistent {
+                manifest,
+                base_url,
+                budget,
+                profile,
+                loaded,
+                idb,
+                queue,
+            },
+            &args,
+            output,
+        )
+    }
+
     /// Shared platform assembly for the initramfs (`new`), in-memory disk (`newDisk`), and lazy
     /// chunked-disk (`newChunkedDisk`) boot paths.
     fn assemble(
@@ -564,6 +667,7 @@ impl WasmLinux {
         machine.enable_syscon();
         let uart = machine.enable_uart16550();
         let mut fetch = None;
+        let mut persist = None;
         match disk {
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
             DiskChoice::Mem(image) => {
@@ -583,6 +687,33 @@ impl WasmLinux {
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
                 )));
+            }
+            // E3-T05 durable chunked image: the overlay is a WriteBackOverlay (reopened blocks +
+            // shared persist queue) so guest writes survive a reload; base chunks still lazily fetched.
+            DiskChoice::ChunkedPersistent {
+                manifest,
+                base_url,
+                budget,
+                profile,
+                loaded,
+                idb,
+                queue,
+            } => {
+                let store =
+                    std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
+                let overlay = wasm_vm_storage::WriteBackOverlay::with_shared_queue(
+                    &manifest,
+                    queue.clone(),
+                    loaded,
+                );
+                let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &manifest)
+                    .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
+                let backend = chunked::ChunkedBackend::from_disk(disk, store.clone());
+                machine.enable_virtio_blk(Box::new(backend));
+                fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
+                    manifest, base_url, store, profile,
+                )));
+                persist = Some((idb, queue));
             }
             // Busybox initramfs: the 8 empty virtio slots the DTB advertises.
             DiskChoice::None => {
@@ -604,6 +735,7 @@ impl WasmLinux {
                 pending: std::collections::VecDeque::new(),
                 finished: None,
                 fetch,
+                persist,
             }),
         })
     }
@@ -718,6 +850,37 @@ impl WasmLinux {
             }
         };
         Ok(http_fetch::fetch_pending(&state, &pending).await)
+    }
+
+    /// E3-T05: durably flush the overlay's pending writes to IndexedDB. Resolves to the number of
+    /// blocks persisted; its Promise resolves only after the IndexedDB transaction `complete` event
+    /// (`durability` per the store), so a caller that awaits it knows the writes survive a reload. A
+    /// block re-written during the flush is NOT marked persisted (generation guard) and is flushed
+    /// next call — never lost. No-op (0) for a non-persistent boot. Must not run concurrently with
+    /// `runChunk` (both borrow the machine); the JS driver alternates them.
+    #[wasm_bindgen(js_name = persistPending)]
+    pub async fn persist_pending(&self) -> Result<u32, JsError> {
+        // Clone the store handle + shared queue out under a brief borrow; never hold it across await.
+        let (idb, queue) = {
+            let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            match &inner.persist {
+                Some((idb, q)) => (idb.clone(), q.clone()),
+                None => return Ok(0),
+            }
+        };
+        let batch = queue.borrow().pending_flush(); // (block, generation, bytes)
+        if batch.is_empty() {
+            return Ok(0);
+        }
+        let blocks: Vec<(u64, [u8; wasm_vm_storage::OVERLAY_BLOCK])> =
+            batch.iter().map(|(b, _, bytes)| (*b, *bytes)).collect();
+        idb.persist(&blocks)
+            .await
+            .map_err(|e| JsError::new(&format!("IndexedDB persist: {e:?}")))?;
+        // Mark exactly what was flushed (generation-guarded) — a mid-flush re-write stays pending.
+        let pairs: Vec<(u64, u64)> = batch.iter().map(|(b, g, _)| (*b, *g)).collect();
+        queue.borrow_mut().mark_persisted(&pairs);
+        Ok(batch.len() as u32)
     }
 
     /// E3-T02/T03 instrumentation: `{ fetches, bytes, error, cache }` — chunk fetches + bytes
