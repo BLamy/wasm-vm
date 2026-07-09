@@ -18,6 +18,9 @@ default = ["native"]
 native = ["dep:tokio", "dep:tokio-tungstenite", "dep:futures-util"]
 
 [dependencies]
+# E3-net (browser networking): the local-stack NetBackend impl needs the machine's NetBackend trait.
+# default-features off keeps it no_std so the wasm/browser build never pulls std.
+wasm-vm-core = { workspace = true }
 futures-util = { version = "0.3", default-features = false, features = ["sink", "std"], optional = true }
 smoltcp = { version = "0.13", default-features = false, features = [
     "std",

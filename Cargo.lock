@@ -1657,6 +1657,7 @@ dependencies = [
  "smoltcp",
  "tokio",
  "tokio-tungstenite",
+ "wasm-vm-core",
 ]
 
 [[package]]
