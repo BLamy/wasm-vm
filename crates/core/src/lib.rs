@@ -530,7 +530,7 @@ impl Machine {
     /// - PMP entry 0 opened R/W/X over all of memory (S-mode needs an explicit grant).
     #[cfg(not(feature = "zicsr-stub"))]
     pub fn boot_supervisor(&mut self, hartid: u64, dtb_addr: u64) {
-        use crate::csr::{CsrOp, MCOUNTEREN, MEDELEG, MIDELEG, Priv};
+        use crate::csr::{CsrOp, MCOUNTEREN, MEDELEG, MIDELEG, Priv, SCOUNTEREN};
         self.hart.csr.pmp.allow_all();
         // Legalized writes from M (the mode we're in pre-handoff).
         self.hart.csr.mode = Priv::M;
@@ -558,6 +558,17 @@ impl Machine {
             .csr
             .access(MCOUNTEREN, CsrOp::Write, 0x7, false, false, 0)
             .expect("mcounteren write from M cannot fail");
+        // E-net/rdtime: ALSO seed scounteren = 0x7 so U-mode gets CY/TM/IR. Linux does not set
+        // scounteren.TM in this kernel/config (verified: userspace `rdtime` in the vDSO SIGILLs), and
+        // it never clears scounteren either, so this firmware seed sticks and makes every
+        // clock-reading userspace program (ping, udhcpc, `clock_gettime` in postgres/redis) work
+        // instead of dying on an illegal `rdtime`. The counteren access GATE stays spec-exact
+        // (E1-T14) — we only pre-grant the enable bits, exactly as a real firmware/SBI environment
+        // would arrange for a `time`-CSR platform.
+        self.hart
+            .csr
+            .access(SCOUNTEREN, CsrOp::Write, 0x7, false, false, 0)
+            .expect("scounteren write from M cannot fail");
         self.hart.csr.mode = Priv::S;
         self.hart.regs.pc = platform::virt::KERNEL_BASE;
         self.hart.regs.write(10, hartid); // a0
