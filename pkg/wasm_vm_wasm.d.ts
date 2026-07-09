@@ -14,6 +14,12 @@ export class WasmLinux {
     free(): void;
     [Symbol.dispose](): void;
     /**
+     * E3-T03 dev-mode recorder: the ordered first-touch chunk-access list of this boot as a JSON
+     * array — write it to `boot-profile.json` next to the manifest to enable boot-profile prefetch.
+     * Empty `[]` for a non-chunked boot.
+     */
+    bootProfile(): string;
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
@@ -37,7 +43,7 @@ export class WasmLinux {
      * disk read of an absent chunk parks (deferred virtio-blk completion) until `fetchPending`
      * retrieves and hash-verifies that chunk. No full-image download ever happens.
      */
-    static newChunkedDisk(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, bootargs: string, output: Function): WasmLinux;
+    static newChunkedDisk(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, output: Function): WasmLinux;
     /**
      * E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
      * an initramfs. `disk` is MOVED into an in-memory `BlockBackend` (one wasm-side copy — the T21
@@ -150,10 +156,11 @@ export interface InitOutput {
     readonly __wbg_wasmmachine_free: (a: number, b: number) => void;
     readonly bench: (a: number) => [number, number, number];
     readonly version: () => [number, number];
+    readonly wasmlinux_bootProfile: (a: number) => [number, number, number, number];
     readonly wasmlinux_fetchPending: (a: number) => any;
     readonly wasmlinux_fetchStats: (a: number) => [number, number, number];
     readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
-    readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: any) => [number, number, number];
+    readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];
     readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_pendingChunks: (a: number) => [number, number, number, number];
     readonly wasmlinux_runChunk: (a: number, b: number) => [number, number, number];

@@ -27,6 +27,30 @@ export class WasmLinux {
         wasm.__wbg_wasmlinux_free(ptr, 0);
     }
     /**
+     * E3-T03 dev-mode recorder: the ordered first-touch chunk-access list of this boot as a JSON
+     * array — write it to `boot-profile.json` next to the manifest to enable boot-profile prefetch.
+     * Empty `[]` for a non-chunked boot.
+     * @returns {string}
+     */
+    bootProfile() {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.wasmlinux_bootProfile(this.__wbg_ptr);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
@@ -84,20 +108,23 @@ export class WasmLinux {
      * @param {string} manifest_json
      * @param {string} base_url
      * @param {number} cache_budget_mib
+     * @param {Uint32Array} boot_profile
      * @param {string} bootargs
      * @param {Function} output
      * @returns {WasmLinux}
      */
-    static newChunkedDisk(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, bootargs, output) {
+    static newChunkedDisk(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, bootargs, output) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len1 = WASM_VECTOR_LEN;
         const ptr2 = passStringToWasm0(base_url, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len2 = WASM_VECTOR_LEN;
-        const ptr3 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const ptr3 = passArray32ToWasm0(boot_profile, wasm.__wbindgen_malloc);
         const len3 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_newChunkedDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, output);
+        const ptr4 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_newChunkedDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, output);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -762,6 +789,13 @@ function makeMutClosure(arg0, arg1, f) {
     };
     CLOSURE_DTORS.register(real, state, state);
     return real;
+}
+
+function passArray32ToWasm0(arg, malloc) {
+    const ptr = malloc(arg.length * 4, 4) >>> 0;
+    getUint32ArrayMemory0().set(arg, ptr / 4);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
 }
 
 function passArray8ToWasm0(arg, malloc) {
