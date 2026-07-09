@@ -276,10 +276,39 @@ integration tests 3× no flake. **CI #149 green.**
   blocking writer → the test HANGS = the deadlock).
 - Also: on a now-unreachable `on_socket_data` error, emit RST to the guest instead of silent drop.
 
-### E3-T16 status — end-to-end working relay over real TCP
-Full stack critic-verified: **codec (#144) → stream state (#145) → mux (#146) → session (#147) →
-relay core (#148) → async driver (#149).** Remaining legs:
-- **WS-wire adapter** (`tokio-tungstenite` — the ONLY piece needing a new dep, Brett's call still
-  open): a thin layer bridging a real WebSocket's binary messages to the driver's `inbound`/
-  `outbound` channels, which already speak the full protocol.
-- **`web_sys` client** + **booted 1 GB byte-diff / 500-stream-`lsof` acceptance** — browser/boot-gated.
+- Also: on a now-unreachable `on_socket_data` error, emit RST to the guest instead of silent drop.
+
+### Pass 1g — WebSocket-wire adapter (PR #150, stacked on #149)
+**Delivered:** `crates/slirp/src/ws_proxy/ws_adapter.rs` — the thin layer bridging a **real**
+WebSocket to the `RelayServer`. `serve(listener, token)` accepts WS connections (one relay each);
+`handle_conn` upgrades via `accept_async`, splits, and pumps WS binary msgs ↔ the relay's channels.
+**DEP TAKEN** (Brett's call, proceeded on the repeated keep-stacking directive; one-line revert):
+`tokio-tungstenite` 0.24 + `futures-util`, both behind `native`, `default-features=false`, **no TLS**
+(relay terminates plaintext ws://). Browser/wasm build pulls none of it. **This closes the server
+side: guest → real WebSocket → relay → real outbound TCP → back.**
+
+**Local gate:** clippy both configs + fmt clean; full slirp suite **192 passed**; 4 ws_adapter tests
+(real `tokio-tungstenite` client) 3× no flake; `cargo build --features native --lib` compiles. **CI
+#150 green.**
+
+**Adversarial cold-clone critic** (aimed at WS hazards): **REFUTED — 2 MAJOR + a latent build issue,
+all FIX-FIRST.** Bridge logic held (keepalive works — the auto-pong rides the adapter's own read
+loop, not the split sink; backpressure per-connection; no half-open leak; deps correct).
+- **F1 (MAJOR):** the accept loop `while let Ok(..)` died on any transient error (EMFILE/aborted) —
+  a permanent DoS on new connections. **Fixed:** loop+match, back off 10ms on Err and keep serving.
+- **F2 (MAJOR, test gap):** cleanup/shutdown chain untested; 2 mutations survived. Added
+  `a_client_disconnect_cleanly_finishes_the_connection_task` (kills the `drop(in_tx)`-removal mutant
+  — a real triple-task deadlock) and `a_relay_protocol_error_delivers_a_clean_close_to_the_client`
+  (kills the `ws_sink.close()`-removal mutant). **Both mutation-VERIFIED** to FAIL (self-time-out at
+  5s) under the reintroduced bug.
+- **Latent build (real, fixed):** the `native` lib couldn't `cargo build` standalone —
+  `tokio::select!` needs tokio's `"macros"` feature (masked by dev-deps under `cargo test`). Added
+  `"macros"`; the lib now compiles standalone.
+
+### E3-T16 status — SERVER SIDE COMPLETE over a real WebSocket
+Full server stack critic-verified: **codec (#144) → stream state (#145) → mux (#146) → session
+(#147) → relay core (#148) → async driver (#149) → WS adapter (#150).** The relay carries real guest
+TCP over a real WebSocket end to end. **Only browser/boot-gated legs remain:**
+- **`web_sys` `WsConnector`** — the guest-side client in the browser (needs wasm-bindgen + a browser).
+- **Booted acceptance** — a real Alpine guest doing `wget` through the chain; 1 GB byte-diff; 500-
+  stream `lsof` reap (needs a boot session).

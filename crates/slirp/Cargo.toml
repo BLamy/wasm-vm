@@ -12,9 +12,13 @@ repository.workspace = true
 # browser never pulls tokio; the browser (crates/wasm) doesn't depend on this crate today regardless.
 [features]
 default = ["native"]
-native = ["dep:tokio"]
+# `native` pulls tokio (the NativeConnector + relay driver) and tokio-tungstenite (the WS-wire
+# adapter that bridges a real WebSocket to the relay). No TLS: the relay terminates plaintext WS;
+# TLS belongs at the ingress. The browser build (`default-features = false`) pulls none of this.
+native = ["dep:tokio", "dep:tokio-tungstenite", "dep:futures-util"]
 
 [dependencies]
+futures-util = { version = "0.3", default-features = false, features = ["sink", "std"], optional = true }
 smoltcp = { version = "0.13", default-features = false, features = [
     "std",
     "medium-ethernet",
@@ -33,7 +37,11 @@ tokio = { version = "1", optional = true, default-features = false, features = [
     # The byte-pump splits the outbound stream and copies both ways over channels.
     "io-util",
     "sync",
+    # The relay driver uses `tokio::select!` — a macro gated behind this feature. Without it the
+    # `native` lib fails a standalone `cargo build` (dev-deps mask it during `cargo test`).
+    "macros",
 ] }
+tokio-tungstenite = { version = "0.24", default-features = false, features = ["handshake"], optional = true }
 
 [dev-dependencies]
 tokio = { version = "1", default-features = false, features = [

@@ -15,11 +15,15 @@ pub mod relay;
 pub mod session;
 pub mod stream;
 #[cfg(feature = "native")]
+pub mod ws_adapter;
+#[cfg(feature = "native")]
 pub use driver::RelayServer;
 pub use mux::{MAX_STREAMS, Mux, MuxError, MuxEvent, Role};
 pub use relay::{INITIAL_WINDOW, RelayActions, RelayCore, RelayError, SocketOp};
 pub use session::{HandshakeError, Session, SessionError, accept_hello, hello};
 pub use stream::{StreamError, StreamState, Terminal};
+#[cfg(feature = "native")]
+pub use ws_adapter::serve as serve_ws;
 
 /// The protocol version carried in the [`Frame::Hello`] frame.
 pub const VERSION: u8 = 1;
