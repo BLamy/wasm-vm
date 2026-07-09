@@ -55,7 +55,10 @@ pub use resolver::{DnsForwarder, Resolution, Resolver, TtlCache};
 pub use stack::SlirpStack;
 pub use udp::{UdpReply, UdpServices};
 pub use udp_frame::{GuestUdp, build_udp_frame, parse_udp};
-pub use ws_proxy::{Frame as WsFrame, VERSION as WS_PROXY_VERSION};
+pub use ws_proxy::{
+    Frame as WsFrame, StreamError as WsStreamError, StreamState as WsStreamState,
+    Terminal as WsTerminal, VERSION as WS_PROXY_VERSION,
+};
 
 /// The slirp virtual network — QEMU-user conventions so guest images "just work".
 pub mod net {

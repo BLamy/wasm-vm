@@ -114,7 +114,43 @@ Found **1 real MAJOR** defect — **FIX-FIRST applied:**
   u8 max 255 comfortably covers a 253-byte DNS name).
 
 Post-fix gate re-run: clippy both configs clean, full slirp suite 130 passed / 0 failed, the
-5 ws_proxy tests pass.
+5 ws_proxy tests pass. **CI #144 green** (29 pass / 1 skip).
+
+### Pass 1b — per-stream flow-control + close lifecycle state machine (PR #145, stacked on #144)
+**Delivered:** `crates/slirp/src/ws_proxy/stream.rs` — `StreamState`, the pure, I/O-free state
+each side keeps for one multiplexed flow (both the client and relay drive an identical copy, so
+credit accounting + close rules can't diverge). Credit: `on_window` grows send credit
+(`checked_add`→`CreditOverflow`); `reserve_send(len)` refuses *without spending* if
+`len > send_credit` / write closed / terminal; `grant`/`on_recv_data` mirror it — a peer that
+sends past granted credit gets `RecvCreditExceeded`. Lifecycle: directional half-close
+(`local_shutdown`/`peer_shutdown`, idempotent while live); `close`→`Closed`, `reset`→`Reset`;
+every op after retirement returns `Terminated` (retired id must not be reused). All illegal
+transitions return `StreamError`, never panic.
+
+**Local gate:** clippy `--all-features` + `--no-default-features` clean; full slirp suite
+140 passed / 0 failed; 15 ws_proxy tests pass (10 new). **CI #145 green** (28 pass / 1 skip).
+
+**Tests (acceptance-aligned):** nothing-sent-before-grant, drain-to-zero-then-pause,
+atomic over-credit refusal, the adversarial *hacked peer blasts 100 MB with 8 bytes granted →
+`RecvCreditExceeded`*, directional half-close, idempotent shutdown, close/RST retire + reuse
+rejection, zero-length keepalive, u32 overflow rejection, `default==new`.
+
+**Adversarial cold-clone critic** (reviewed `origin/task/e3-t16a..HEAD`): **verdict CLEAN.**
+- Credit soundness **property-tested at 2M iterations** each direction with a u128 shadow
+  accumulator: `cumulative_sent ≤ cumulative_granted` and `cumulative_recvd ≤ cumulative_granted`
+  held for all ops; a refused op leaves the counter byte-for-byte unchanged (no partial spend,
+  no wrap); exactly-at-limit accepted (no off-by-one). Subtraction guards (`len > credit` before
+  `credit -= len`) provably prevent u32 underflow; all additions are `checked_add`.
+- Lifecycle: every one of the 8 mutators calls `check_live()` first → `Terminated` post-retire;
+  `write_open`/`read_open` AND-in `terminal.is_none()` (no stale-bool lies); retired-id reuse
+  rejected. Matches the spec's close/RST retirement rule.
+- **Mutation testing: 15 injected mutants, ALL killed** (incl. all 3 charter-suggested
+  `>`→`>=` / drop-spend / drop-`check_live`, plus `checked_add`→`wrapping_add`, guard removals,
+  query terminal-check removal, shutdown no-ops, `reset`-writes-`Closed`). Zero surviving mutants.
+- Two design notes flagged for the record (not defects): a received `CLOSE` always retires
+  regardless of half-close state (correct — the "after both sides finished" clause is send-side
+  policy); a late `RST` on an already-`Closed` stream is dropped as `Terminated` (deliberate
+  "retired = retired", symmetric on both ends). No FIX-FIRST needed.
 
 **Env-gated later passes:** tokio relay server, `web_sys` `WsConnector`, credit-enforcement
 + 500-stream-reap + 1 GB byte-diff acceptance — need a live browser/boot session.
