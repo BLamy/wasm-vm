@@ -95,7 +95,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [?] `220` [E2-T20](epic-2-first-light/E2-T20-interrupt-storm-detection.md) — Interrupt storm and livelock detection instrumentation *(deps: E2-T15)*
 - [?] `221` [E2-T21](epic-2-first-light/E2-T21-browser-loading-ux.md) — Browser loading pipeline — fetch kernel and disk image with progress, instantiate WASM *(deps: E2-T10, E2-T15)*
 - [?] `222` [E2-T22](epic-2-first-light/E2-T22-xterm-uart-wiring.md) — xterm.js to UART wiring — input path, control characters, resize story *(deps: E2-T07, E2-T21)*
-- [ ] `223` [E2-T23](epic-2-first-light/E2-T23-browser-timekeeping.md) — Browser timekeeping — mtime from performance.now, throttling, suspend recovery *(deps: E2-T16, E2-T21)*
+- [?] `223` [E2-T23](epic-2-first-light/E2-T23-browser-timekeeping.md) — Browser timekeeping — mtime from performance.now, throttling, suspend recovery *(deps: E2-T16, E2-T21)*
 - [ ] `224` [E2-T24](epic-2-first-light/E2-T24-stress-validation.md) — Stress validation — disk torture, fork bombs, interactivity, 10x reproducible boots *(deps: E2-T17, E2-T19)*
 - [ ] `225` [E2-T25](epic-2-first-light/E2-T25-boot-profiling-baseline.md) — Boot-time profiling baseline — where the time goes, CPU vs devices *(deps: E2-T19)*
 - [ ] `226` [E2-T26](epic-2-first-light/E2-T26-capstone-alpine-login-in-browser.md) — "Capstone: unmodified Alpine riscv64 boots to a login shell in the browser" **[CAPSTONE]** *(deps: E2-T19, E2-T20, E2-T22, E2-T23, E2-T24, E2-T25)*

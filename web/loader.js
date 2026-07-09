@@ -99,10 +99,22 @@ export async function startLinuxBoot(opts = {}) {
     const machine = new WasmLinux(ramMib, kernel, initramfs, bootargs, (u8) => onOutput(u8));
 
     let stopped = false;
+    let paused = false;
+    // Exactly one `tick` may be pending at a time. `resume()` guarding only on `paused` is not
+    // enough: a rapid pause→resume while a tick is already pending would schedule a SECOND chain,
+    // and both would then self-perpetuate (two concurrent loops, double CPU). This flag makes
+    // scheduling idempotent so there is always at most one pending tick. (E2-T23 critic C3.)
+    let tickScheduled = false;
     let resolveDone;
     const whenDone = new Promise((r) => (resolveDone = r));
+    const schedule = () => {
+      if (tickScheduled || stopped || paused) return;
+      tickScheduled = true;
+      setTimeout(tick, 0);
+    };
     const tick = () => {
-      if (stopped) return;
+      tickScheduled = false;
+      if (stopped || paused) return;
       let res;
       try {
         res = machine.runChunk(quantum);
@@ -118,9 +130,9 @@ export async function startLinuxBoot(opts = {}) {
         return;
       }
       // Yield to the event loop so the page stays responsive (no main-thread freeze).
-      setTimeout(tick, 0);
+      schedule();
     };
-    setTimeout(tick, 0);
+    schedule();
 
     return {
       sendInput: (bytes) => {
@@ -130,6 +142,21 @@ export async function startLinuxBoot(opts = {}) {
         stopped = true;
         resolveDone("stopped");
       },
+      // E2-T23: pause/resume the executor. Because guest `mtime` is a DETERMINISTIC retire-count
+      // clock (not a wall clock), pausing simply stops retiring instructions → guest monotonic
+      // time freezes and continues seamlessly on resume. No slew clamp, catch-up storm, or
+      // deadline reconciliation is possible — the "giant jump on resume" that wall-clock designs
+      // fear cannot occur here. The goldfish RTC (Date.now) keeps true wall time across the pause,
+      // so on resume `date` is correct while `uptime` reflects only executed time. See
+      // docs/timekeeping.md. main.js drives these from `visibilitychange` to idle a hidden tab.
+      pause: () => { paused = true; },
+      resume: () => {
+        if (paused && !stopped) {
+          paused = false;
+          schedule(); // idempotent — never spawns a second loop even if a tick is still pending
+        }
+      },
+      isPaused: () => paused,
       whenDone,
     };
   } catch (e) {

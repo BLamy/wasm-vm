@@ -82,6 +82,22 @@ if (termFitBtn) {
 // Test hook: Playwright drives keyboard input + reads the backpressure high-water via this.
 window.__term = ui;
 
+// E2-T23: idle the executor while the tab is hidden. Guest `mtime` is a deterministic retire-count
+// clock, so pausing freezes guest monotonic time cleanly and it resumes with no jump/storm (see
+// docs/timekeeping.md); the Date.now goldfish RTC keeps true wall time across the gap, so on return
+// `date` is correct while `uptime` counts only executed time.
+document.addEventListener("visibilitychange", () => {
+  if (!linuxCtl) return;
+  if (document.hidden) linuxCtl.pause();
+  else linuxCtl.resume();
+});
+// Test hook for the timekeeping spec — drive pause/resume without a real tab switch.
+window.__linux = {
+  pause: () => linuxCtl?.pause(),
+  resume: () => linuxCtl?.resume(),
+  isPaused: () => !!linuxCtl?.isPaused(),
+};
+
 const statusEl = document.getElementById("status");
 const versionEl = document.getElementById("version");
 const suiteRunBtn = document.getElementById("suite-run");
