@@ -33,6 +33,7 @@ pub mod udp;
 pub mod udp_frame;
 #[cfg(all(test, feature = "native"))]
 mod udp_integration_tests;
+pub mod ws_proxy;
 
 pub use manager::{Action, FlowManager, FrameOutcome};
 
@@ -54,6 +55,7 @@ pub use resolver::{DnsForwarder, Resolution, Resolver, TtlCache};
 pub use stack::SlirpStack;
 pub use udp::{UdpReply, UdpServices};
 pub use udp_frame::{GuestUdp, build_udp_frame, parse_udp};
+pub use ws_proxy::{Frame as WsFrame, VERSION as WS_PROXY_VERSION};
 
 /// The slirp virtual network — QEMU-user conventions so guest images "just work".
 pub mod net {
