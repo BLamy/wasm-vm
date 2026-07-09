@@ -10,6 +10,7 @@
 //!   stderr); `--max-instrs` reached ⇒ 102. Bad inputs get distinct nonzero codes.
 //! - **`retired=<n>`** is printed to stderr at exit for the bench/CI harnesses.
 
+pub mod file_backend;
 mod trace_json;
 
 use std::cell::Cell;

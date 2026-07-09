@@ -25,6 +25,7 @@
 
 extern crate alloc;
 
+pub mod block;
 pub mod bus;
 pub mod csr;
 pub mod decode;
