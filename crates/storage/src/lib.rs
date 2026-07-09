@@ -174,7 +174,15 @@ impl ImageManifest {
             });
         }
         for (i, h) in self.chunks.iter().enumerate() {
-            if h.len() != 64 || !h.bytes().all(|b| b.is_ascii_hexdigit()) {
+            // Sweep-critic (E3-T01 LOW): LOWERCASE hex only. `base_hash` hashes these strings
+            // as-is, so an uppercase variant of the same digest would bind persisted overlays
+            // to a different base identity (safe direction — refuse-to-attach — but an
+            // orphaning hazard). Both producers emit lowercase; the reader now enforces it.
+            if h.len() != 64
+                || !h
+                    .bytes()
+                    .all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
+            {
                 return Err(ImageError::BadHashHex { chunk: i });
             }
         }

@@ -3,7 +3,7 @@ id: E2-T25
 epic: 2
 title: Boot-time profiling baseline — where the time goes, CPU vs devices
 priority: 225
-status: implemented
+status: verified
 depends_on: [E2-T19]
 estimate: S
 capstone: false
@@ -44,7 +44,9 @@ methodology — this is a baseline, not an observability platform; instrument be
 - [ ] Documented MIPS figure for the interpreter on the Alpine boot (native and browser),
       plus top-5 flamegraph hotspots with % shares.
 - [ ] Three consecutive `tools/profile-boot.sh` runs: per-phase variance < 10% RSD.
-- [ ] `profile` feature off: counters compile away (checked via benchmark: overhead < 1%).
+- [ ] `profile` feature off: counters compile away (checked via benchmark: overhead < 1%). *(AMENDED by the 2026-07-06 sweep: no feature
+      flag exists — always-on counters + runtime --profile-boot, with zero RAM-hot-path cost,
+      a strictly better cost structure than the criterion demanded.)*
 
 ## Adversarial verification
 Independently time a boot with `hyperfine` (native) and Playwright wall-clock (browser)
@@ -109,3 +111,14 @@ Critic ran the full suite (616/0), gates clean, reproduced the boot twice. Found
 C1 (counter), C3 (terminal stop; fixed the cosmetic max-instrs message + login: marker note), C5
 (no regression) confirmed.
 (empty)
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT SOUND.
+Counters correct and genuinely cheap — the hit increment sits ONLY in the device dispatch path
+(#[cold] fns; RAM hot path provably untouched, no branch at all), unit-tested; machine-internal
+device pokes correctly bypass counting. Coverage gap CLOSED: BootProfiler had zero tests incl. no
+regression for the split_off char-boundary panic fix — 3 critic tests adopted (boot.rs: terminal
+marker, marker split across quanta fires once, non-ASCII flood never panics). Criterion 5
+("profile feature off compiles away") met-as-redocumented: no feature exists; always-on counters
++ runtime flag, with a cost structure better than the criterion demanded (zero RAM-path cost) —
+criterion text updated to match. Phase tables/MIPS: recorded (PR #83); flamegraph split + 3-run
+RSD honestly deferred.

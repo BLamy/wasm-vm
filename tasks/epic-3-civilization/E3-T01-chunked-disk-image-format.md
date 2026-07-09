@@ -3,7 +3,7 @@ id: E3-T01
 epic: 3
 title: Chunked disk-image format with hashed manifest and core reader
 priority: 301
-status: implemented
+status: verified
 depends_on: [E2]
 estimate: M
 capstone: false
@@ -80,3 +80,15 @@ chunk_size=0 div-by-zero, and verify_chunk bounds-checking the derived count not
 index. FIXED: derived_chunk_count/locate guard chunk_size==0; verify_chunk bounds-checks chunks.len()
 + rejects chunk_size==0 first; new test `unvalidated_manifest_never_panics`. Minor doc note
 (uppercase-hex accepted) clarified. Gates: 6/0 tests, clippy/fmt clean, wasm32 build, no regression.
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT SOUND.
+Attacks cleared: dd-flipped chunk bytes + manifest hex edits refused end-to-end (exit 1, typed);
+overflow-shaped manifests (image_len=u64::MAX, chunk_size=1; chunk_span near-overflow) all typed
+errors, zero panics; base_hash canonicalization stable across field order/whitespace/unknown-field
+variants (hashes the re-serialized struct, never input text); no_std unconditional, wasm32 dep tree
+clean (no web/js/getrandom); storage suite 53/0. Two LOW fixed in the sweep: validate() now enforces
+LOWERCASE hex (an uppercase variant of the same digest would orphan persisted overlays — refuse-to-
+attach direction, but now rejected at validation); chunk_image.py verify without --image → usage
+error not TypeError. Criterion 2 (Alpine-scale round-trip) met by recorded downstream evidence:
+every E3-T02..T05/T13 boot runs through manifests this format produced. 2 critic tests adopted
+(tests.rs: canonicalization stability, overflow-shaped inputs).

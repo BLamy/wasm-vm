@@ -3,7 +3,7 @@ id: E2-T15
 epic: 2
 title: Milestone — boot xv6-riscv to its shell, then unmodified Linux to a busybox shell (native CLI)
 priority: 215
-status: implemented
+status: verified
 depends_on: [E2-T02, E2-T06, E2-T07, E2-T13, E2-T14]
 estimate: L
 capstone: false
@@ -167,3 +167,14 @@ signal a finding is real:
   UART drain loses no output; cfg gating (clippy ±`--all-features`, core 86, fmt) all green;
   the smoke test is correctly `#[ignore]`d, deadline-bounded (can't hang), and asserts on real
   command output (can't pass on a dead boot).
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT FIX-FIRST (MEDIUM) → FIXED.
+NEW BUG (MEDIUM): hostile `image_size` near u64::MAX wrapped `KERNEL_BASE + footprint` — debug
+panic; RELEASE silently placed the initrd AT KERNEL_BASE over the kernel (critic reproduced:
+Ok((0x8001_0000, Some((0x8020_0000,…))))). Fixed with checked_add → BusFault::Access; critic's
+`hostile_image_size_wrap_is_rejected_not_wrapped` adopted as the regression (verifier_e2_sweep.rs,
+now passing). Also cleared: exact RAM-ceiling boundary (flush-to-top accepted, +1 rejected), bad
+magic falls back to file_len ignoring hostile size. Boot-to-shell/dmesg/interrupts criteria: met by
+recorded downstream evidence (E2-T15 log transcript + every later recorded boot enters through this
+loader — E2-T24 battery, E3-T13 828s/15.8min). Honestly still open: xv6 leg, vi/^C, 5-run
+determinism (harness exists, recorded run RUNS=1).

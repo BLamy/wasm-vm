@@ -112,7 +112,10 @@ fn boots_alpine_to_root_login_runs_battery_and_powers_off() {
     std::thread::sleep(Duration::from_secs(3));
     send(&mut stdin, ""); // dismiss a Password: prompt if one appears
     std::thread::sleep(Duration::from_secs(2));
-    send(&mut stdin, "echo WASMVM_LOGIN_OK");
+    // Echo-proof marker (sweep-critic E2-T19 F1 retrofit): the guest tty echoes every sent
+    // command into the transcript, so an asserted marker must never appear literally in the
+    // sent text — split it so only guest output joins the needle.
+    send(&mut stdin, "echo WASMVM_LOGIN_\"OK\"");
     assert!(
         wait_for(&transcript, "WASMVM_LOGIN_OK", 90),
         "root login did not reach a working shell; transcript:\n{}",
@@ -120,17 +123,31 @@ fn boots_alpine_to_root_login_runs_battery_and_powers_off() {
     );
 
     // 3. Command battery — each waits for its own output before the next (ordered, no flood).
-    //    Assert on strings that appear ONLY in the command output, not the boot dmesg: the
-    //    kernel mounts root as `/dev/root` (a `root=` convention), which never appears in the
-    //    `root=/dev/vda` dmesg — so it proves we're reading the shell's output, not the log.
+    //    ECHO-PROOF DISCIPLINE (sweep-critic E2-T19, the E3-T13 F1 class): every asserted
+    //    needle must be a string only guest OUTPUT can contain — never a substring of the
+    //    sent command and never something the getty banner/boot log already printed.
+    //    - `Linux wasm-vm` (uname) and `/dev/root on / type ext4` (mount) are genuine
+    //      output-only strings (the kernel logs `root=/dev/vda`, never `/dev/root`).
+    //    - `Alpine Linux` appears in the getty BANNER, so os-release is asserted via a
+    //      computed marker instead.
+    //    - the marker-file readback and df computations are split-marker proofs.
     let steps: &[(&str, &str)] = &[
         ("uname -a", "Linux wasm-vm"),
-        ("cat /etc/os-release", "Alpine Linux"),
-        ("mount", "/dev/root on / type ext4"),
-        ("df -h /", "/dev/root"),
         (
-            "echo persist_me > /root/marker.txt && cat /root/marker.txt",
-            "persist_me",
+            "grep -q 'Alpine Linux' /etc/os-release && echo OSREL_\"OK\"",
+            "OSREL_OK",
+        ),
+        ("mount", "/dev/root on / type ext4"),
+        ("df -h / | grep -q /dev/root && echo DF_\"OK\"", "DF_OK"),
+        (
+            "echo persist_$((6*7)) > /root/marker.txt && cat /root/marker.txt",
+            "persist_42",
+        ),
+        // Sweep-critic E2-T19 criterion 2: the dmesg health gate — zero WARN/BUG/Oops/I/O
+        // errors, asserted via a computed count marker (output-only).
+        (
+            "dmesg | grep -cE 'WARNING|BUG:|Oops|I/O error' | sed 's/^/DMESGBAD=/'",
+            "DMESGBAD=0",
         ),
         ("sync", ""), // no output; just must not hang before poweroff
     ];

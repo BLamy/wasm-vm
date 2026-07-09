@@ -3,7 +3,7 @@ id: E2-T23
 epic: 2
 title: Browser timekeeping — mtime from performance.now, throttling, suspend recovery
 priority: 223
-status: implemented
+status: verified
 depends_on: [E2-T16, E2-T21]
 estimate: M
 capstone: false
@@ -95,3 +95,12 @@ account) and REFUTED two of my claims — both fixed:
   window even if pause did nothing). Replaced with a direct freeze-probe that fails if pause is a
   no-op. Verified green.
 Gates exit 0 (build/determinism/no-host-float/node --check); 0 files under crates/; web suite 5/5.
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT SOUND.
+Quarantine claim source-verified: mtime = retire count in core, zero host-clock references (grep
+clean); Date.now only in the bench helper + JsWallClock→RTC (wall-dependent by design, documented).
+The tickScheduled pause/resume race fix audited — the flag survives the chunked/persist awaits,
+every early-exit clears it. Criteria: #1 superseded by the documented design pivot + T23b's
+recorded sleep measurement; #2 recorded (freeze-probe non-vacuous); #3 doc-verified against source;
+#4 recorded via spec ratios (10-min soak honestly unrun). Process nit noted: checkboxes track the
+log, not ticked wholesale.

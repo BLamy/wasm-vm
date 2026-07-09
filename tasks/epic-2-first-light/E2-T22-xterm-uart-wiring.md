@@ -3,7 +3,7 @@ id: E2-T22
 epic: 2
 title: xterm.js to UART wiring — input path, control characters, resize story
 priority: 222
-status: implemented
+status: verified
 depends_on: [E2-T07, E2-T21]
 estimate: M
 capstone: false
@@ -117,3 +117,12 @@ Gates (exit 0): build · clippy `--workspace --all-targets --all-features` · cl
 --target wasm32-unknown-unknown` (lints runChunk) · determinism-hazards · no-host-float · wasm-pack
 build. Two theoretical-only notes (both unreachable: a sink that can't throw; leftover pending on a
 finished machine). The behavior gate for this change is the 4/4-green Playwright suite.
+
+**2026-07-06 — VERIFICATION-DEBT SWEEP (parallel cold-clone critics, PR #101).** VERDICT SOUND.
+Silent-drop attack refuted by source: JS queue and wasm VecDeque unbounded, RX FIFO fed only
+rx_free().min(pending) — the 16550 OE drop path is unreachable from browser input; runChunk's
+RX/execute interleave provably terminates. ^C/paste/stty criteria recorded (terminal.spec 4/4,
+100KB paste zero-loss) + every E3 spec types real sessions through this path for 11-24 min.
+Honest gaps noted: vi/top screen-diff follow-up, 1MB adversarial paste and 30s autorepeat never
+recorded, --uart-tap equivalence harness doesn't exist (all pre-marked deferred). Backpressure is
+memory-unbounded (denial-of-self only, documented).
