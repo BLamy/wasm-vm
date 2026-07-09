@@ -1683,6 +1683,7 @@ dependencies = [
  "wasm-bindgen-futures",
  "wasm-bindgen-test",
  "wasm-vm-core",
+ "wasm-vm-slirp",
  "wasm-vm-storage",
  "web-sys",
 ]

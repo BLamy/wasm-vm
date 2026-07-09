@@ -20,6 +20,34 @@ use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
 use wasm_vm_core::trace::{TraceRecord, TraceSink, fmt_canonical};
 use wasm_vm_core::{Machine, RunOutcome};
 
+// E3-net: browser-only (the boot site that consumes these is wasm+non-zicsr-gated), so gate the whole
+// toggle to the same cfg — otherwise the const/fn are dead code on the native `-D warnings` clippy job.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod slirp_net {
+    use core::sync::atomic::{AtomicBool, Ordering};
+    use wasm_bindgen::prelude::*;
+
+    /// Gateway MAC for the browser slirp local stack (distinct from the guest's virtio-net MAC
+    /// 52:54:00:12:34:56). The guest learns it via ARP for the gateway 10.0.2.2.
+    pub(crate) const SLIRP_GATEWAY_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x02];
+
+    /// When set, boots wire virtio-net to the slirp LOCAL stack (DHCP/ARP/ICMP) instead of loopback.
+    /// Single-threaded browser → a plain atomic suffices. Set via `setSlirpNet` BEFORE booting.
+    static SLIRP_NET: AtomicBool = AtomicBool::new(false);
+
+    pub(crate) fn slirp_net_enabled() -> bool {
+        SLIRP_NET.load(Ordering::Relaxed)
+    }
+
+    /// Choose the slirp local network stack (vs the default loopback) for subsequent boots.
+    #[wasm_bindgen(js_name = setSlirpNet)]
+    pub fn set_slirp_net(on: bool) {
+        SLIRP_NET.store(on, Ordering::Relaxed);
+    }
+}
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+use slirp_net::{SLIRP_GATEWAY_MAC, slirp_net_enabled};
+
 // E3-T02 lazy-fetch backend. Compiled where it is actually used: the normal wasm build (behind
 // `newChunkedDisk`) and native unit tests. Excluded from the zicsr-stub wasm build and the native
 // lib build so it is never dead code under `-D warnings`.
@@ -778,11 +806,22 @@ impl WasmLinux {
                 let _ = machine.enable_virtio_slots(None);
             }
         }
-        // E3-T13: loopback-backed virtio-net in slot 1 on every boot shape — the guest sees
-        // eth0 (MAC 52:54:00:12:34:56); E3-T14 swaps the loopback for the slirp stack.
-        let _ = machine.enable_virtio_net(Box::new(
-            wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
-        ));
+        // virtio-net in slot 1 on every boot shape — the guest sees eth0 (MAC 52:54:00:12:34:56).
+        // Default: E3-T13 loopback (frames echo back). With `setSlirpNet(true)`, E3-net swaps in the
+        // synchronous slirp LOCAL stack so the guest can DHCP a real IP (10.0.2.15) and reach the
+        // gateway (10.0.2.2) — no tokio, no outbound yet (that's the WebSocket-relay slice).
+        if slirp_net_enabled() {
+            let start = js_sys::Date::now();
+            let clock = Box::new(move || (js_sys::Date::now() - start) as i64);
+            let _ = machine.enable_virtio_net(Box::new(wasm_vm_slirp::SlirpLocalBackend::new(
+                SLIRP_GATEWAY_MAC,
+                clock,
+            )));
+        } else {
+            let _ = machine.enable_virtio_net(Box::new(
+                wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
+            ));
+        }
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));
