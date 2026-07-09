@@ -432,3 +432,37 @@ once regardless of the cache (proven: disabling the cache left the capstone pass
 session re-resolve the SAME name a second time through `service` and asserting `calls==1` across BOTH —
 so the caching is now genuinely load-bearing at the composed level (not just "the resolver ran"). 118
 slirp tests; fmt + clippy + no-default green.
+
+**2026-07-08 — pass 1n: DNS-over-TCP framing + TC=1 truncation (`dns_tcp.rs` + `dns::truncated`).** The
+"TCP fallback for truncated answers" leg the charter calls for, groundwork-first (pure wire layer; the
+internal-TCP-listener wiring is later). `dns::truncated(query)` builds a minimal UDP response with the
+**TC bit set** (0x0200), NOERROR, echoed question, no answers — the trigger that tells a guest resolver
+to re-issue the query over TCP (RFC 1035 §4.2.1) when a UDP answer won't fit. `dns_tcp` is the TCP wire
+layer (RFC 1035 §4.2.2 — each message 2-byte-length-prefixed so a byte STREAM carries any size, no 512-
+byte limit): `next_message(buf) -> TcpFrame::{Message{msg, consumed} | NeedMore{need_total}}` pulls one
+whole length-prefixed message from a stream buffer (partial → NeedMore with the total needed; pipelined
+back-to-back messages pulled one at a time; a declared-0-length makes progress consuming just the prefix;
+never panics), and `frame_message(msg) -> Option<Vec<u8>>` prepends the length (None if > 65535). It
+composes with the SAME `parse_query`/`build_response`/`parse_response` as the UDP path — only the
+transport framing differs. No tokio → browser-safe. Tests (7): frame↔parse round-trip, partial-buffer
+NeedMore (incl. sub-prefix + empty), pipelined-messages one-at-a-time (exact consume), zero-length
+progress, oversized reject (65535 max frames, 65536 None), a real length-prefixed A query → parse →
+answer → frame → parse round trip, and TC=1 (QR=1/TC=1/NOERROR/no-answers/question-echoed). 125 slirp
+tests. fmt + clippy green under BOTH `--all-features` and `--no-default-features`. Remaining for T15
+(env-gated): wire `dns_tcp` to an internal TCP listener on the DNS address (a guest resolver's TCP retry
+lands there), the concrete browser `fetch` DohTransport, and booted-guest acceptance.
+
+**Adversarial cold-clone critic on pass 1n: CLEAN, no defect — plus a POSITIVE verification of the
+boot-gated TC=1 behavior.** The critic's most valuable result: it confirmed (against musl ≥1.2.4 and
+glibc `res_send` source) that an **empty-answer TC=1 NOERROR response DOES trigger a real resolver's TCP
+retry** — the fallback won't silently fail at booted acceptance on modern Alpine (musl ≥1.2.4 falls back
+to TCP UNCONDITIONALLY on the header TC bit, decided BEFORE the answer section; glibc checks the header
+`tc` before consuming records; neither mis-reads it as an authoritative empty answer, and truncated
+responses aren't negative-cached). Also verified SOUND: 100k-iteration fuzz of `next_message` (buffers
+0..70000, incl. >u16 / exactly-fit / off-by-one) — ZERO panics, every result self-consistent (`consumed
+== 2+body`, `msg == buf[2..2+body]`, `NeedMore` iff short); `consumed` always ≥2 so a pipelining caller
+ALWAYS makes progress (no infinite loop, incl. zero-length); no usize overflow (total ≤ 65537);
+round-trip fidelity to the 65535 max; `0x0200` is the correct TC bit (RFC 1035 §4.1.1, TC=bit 9 from MSB)
+placed preserving QR/RD/RA/RCODE with ANCOUNT=0; tests non-vacuous. One out-of-scope caveat (NOT a defect
+here): musl <1.2.4 had NO TCP fallback at all — a guest-resolver-version property; modern Alpine ships
+musl ≥1.2.4. No code change. 125 slirp tests; fmt + clippy + no-default green.
