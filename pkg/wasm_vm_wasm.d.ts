@@ -45,6 +45,14 @@ export class WasmLinux {
      */
     static newChunkedDisk(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, output: Function): WasmLinux;
     /**
+     * E3-T05: like [`Self::new_chunked_disk`], but the copy-on-write overlay is persisted to
+     * IndexedDB — guest writes survive a tab reload. Async: opens the image-namespaced DB (checking
+     * its recorded base binding against the manifest — a mismatch/older-version is a typed error, not
+     * silent reuse), loads any previously persisted blocks, and boots over them. Call `persistPending`
+     * to flush new writes durably (its Promise resolves on the IndexedDB transaction `complete`).
+     */
+    static newChunkedDiskPersistent(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, output: Function): Promise<WasmLinux>;
+    /**
      * E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
      * an initramfs. `disk` is MOVED into an in-memory `BlockBackend` (one wasm-side copy — the T21
      * single-copy discipline; a `&[u8]` + `.to_vec()` would double-allocate 512 MB). Default
@@ -57,6 +65,15 @@ export class WasmLinux {
      * after each `runChunk` and, if non-empty, awaits `fetchPending` before the next `runChunk`.
      */
     pendingChunks(): Uint32Array;
+    /**
+     * E3-T05: durably flush the overlay's pending writes to IndexedDB. Resolves to the number of
+     * blocks persisted; its Promise resolves only after the IndexedDB transaction `complete` event
+     * (`durability` per the store), so a caller that awaits it knows the writes survive a reload. A
+     * block re-written during the flush is NOT marked persisted (generation guard) and is flushed
+     * next call — never lost. No-op (0) for a non-persistent boot. Must not run concurrently with
+     * `runChunk` (both borrow the machine); the JS driver alternates them.
+     */
+    persistPending(): Promise<number>;
     /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
      * 16550 RX, and return `{ done: bool, state: string|null }`. `state` is `"poweroff"`,
@@ -161,8 +178,10 @@ export interface InitOutput {
     readonly wasmlinux_fetchStats: (a: number) => [number, number, number];
     readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];
+    readonly wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => any;
     readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_pendingChunks: (a: number) => [number, number, number, number];
+    readonly wasmlinux_persistPending: (a: number) => any;
     readonly wasmlinux_runChunk: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];
@@ -179,12 +198,14 @@ export interface InitOutput {
     readonly initLogging: () => void;
     readonly wasm_bindgen__convert__closures_____invoke__h4dab88d0e3c13e7c: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h583f8b0f4fac6275: (a: number, b: number, c: any, d: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h268857b0ab0b8859: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h268857b0ab0b8859_2: (a: number, b: number, c: any) => void;
+    readonly __wbindgen_malloc: (a: number, b: number) => number;
+    readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;
     readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;
-    readonly __wbindgen_malloc: (a: number, b: number) => number;
-    readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_destroy_closure: (a: number, b: number) => void;
     readonly __externref_table_dealloc: (a: number) => void;
     readonly __wbindgen_start: () => void;

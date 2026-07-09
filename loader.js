@@ -39,6 +39,37 @@ async function fetchWithProgress(url, onProgress) {
   return out;
 }
 
+/** Fetch a text resource, failing with a CLEAR message when the file is missing. A dev server that
+ *  lacks the local-only Alpine assets returns its HTML 404 page; parsing that as JSON would otherwise
+ *  blow up as the cryptic "Unexpected token '<', "<!DOCTYPE"...". Returns the response text. */
+async function fetchAsset(url, what) {
+  let resp;
+  try {
+    resp = await fetch(url, { cache: "default" });
+  } catch (e) {
+    throw new Error(`could not fetch ${what} (${url}): ${e.message || e}`);
+  }
+  const text = await resp.text();
+  if (!resp.ok || text.trimStart().startsWith("<")) {
+    throw new Error(
+      `${what} not found at ${url} (HTTP ${resp.status}). The chunked Alpine boot needs local-only ` +
+        `assets (web/artifacts-alpine.json + releases/chunked-alpine/) that are NOT on the public ` +
+        `deploy — build the chunked image with \`wasm-vm chunk\` and serve via \`bash tools/serve-dev.sh\`.`,
+    );
+  }
+  return text;
+}
+
+/** Fetch + parse a JSON manifest with the clear-error handling of `fetchAsset`. */
+async function fetchJsonAsset(url, what) {
+  const text = await fetchAsset(url, what);
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`${what} at ${url} is not valid JSON.`);
+  }
+}
+
 /** Lowercase hex SHA-256 of `bytes` (WebCrypto). */
 async function sha256hex(bytes) {
   const digest = await crypto.subtle.digest("SHA-256", bytes);
@@ -74,6 +105,9 @@ export async function startLinuxBoot(opts = {}) {
     bootProfileUrl = "./releases/chunked-alpine/boot-profile.json",
     // E3-T03 block-cache byte budget in MiB (0 → 256 MiB default). Set low to exercise eviction.
     cacheBudgetMib = 0,
+    // E3-T05: persist the copy-on-write overlay to IndexedDB (writes survive a tab reload). Only
+    // meaningful in "chunked" mode; the driver flushes via machine.persistPending() each tick.
+    persist = false,
     ramMib = 256,
     onState = () => {},
     onProgress = () => {},
@@ -88,7 +122,7 @@ export async function startLinuxBoot(opts = {}) {
   const baseUrl = opts.baseUrl ?? imageManifestUrl.replace(/[^/]*$/, "");
 
   try {
-    const manifest = await (await fetch(manifestUrl)).json();
+    const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
     const km = manifest.artifacts.kernel;
 
     onState("fetching");
@@ -100,9 +134,9 @@ export async function startLinuxBoot(opts = {}) {
     let imageManifestText = null;
     let bootProfile = new Uint32Array(0);
     if (isChunked) {
-      const r = await fetch(imageManifestUrl, { cache: "default" });
-      if (!r.ok) throw new Error(`fetch ${imageManifestUrl} → HTTP ${r.status} ${r.statusText}`);
-      imageManifestText = await r.text();
+      // The chunked image manifest (JSON text handed to wasm as-is). Clear error if the local-only
+      // asset is missing rather than a cryptic parse failure later.
+      imageManifestText = await fetchAsset(imageManifestUrl, "chunked image manifest");
       // E3-T03: an optional boot-profile.json (ordered chunk indices) prefetched up front. Best-
       // effort — a missing profile just means no boot-profile prefetch (readahead still applies).
       try {
@@ -141,12 +175,20 @@ export async function startLinuxBoot(opts = {}) {
 
     onState("booting");
     // disk → in-memory virtio-blk backend (whole image); chunked → a ChunkedBackend that lazily
-    // HTTP-fetches chunks under baseUrl; initramfs → the image as the initrd.
-    const machine = isChunked
-      ? WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, (u8) => onOutput(u8))
-      : mode === "disk"
-        ? WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8))
-        : new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
+    // HTTP-fetches chunks under baseUrl (+ E3-T05 persist: writes survive reload via IndexedDB);
+    // initramfs → the image as the initrd.
+    const usePersist = isChunked && persist;
+    let machine;
+    if (usePersist) {
+      // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
+      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, (u8) => onOutput(u8));
+    } else if (isChunked) {
+      machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, (u8) => onOutput(u8));
+    } else if (mode === "disk") {
+      machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
+    } else {
+      machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
+    }
 
     let stopped = false;
     let paused = false;
@@ -198,6 +240,20 @@ export async function startLinuxBoot(opts = {}) {
         }
         if (stopped || paused) { tickScheduled = false; return; }
       }
+      // E3-T05: durably flush any overlay writes to IndexedDB (cheap no-op when nothing is pending;
+      // resolves on the IndexedDB transaction complete, so a flush before reload survives it).
+      if (usePersist) {
+        try {
+          await machine.persistPending();
+        } catch (e) {
+          tickScheduled = false;
+          onState("error");
+          onError(e);
+          resolveDone("error");
+          return;
+        }
+        if (stopped || paused) { tickScheduled = false; return; }
+      }
       // Yield to the event loop so the page stays responsive (no main-thread freeze).
       tickScheduled = false;
       schedule();
@@ -230,6 +286,8 @@ export async function startLinuxBoot(opts = {}) {
       // E3-T02: chunked-boot instrumentation — `{ fetches, bytes, error }` (bytes transferred so
       // far via lazy chunk fetch). Null for non-chunked boots. Drives the <40%-of-image acceptance.
       fetchStats: () => (isChunked ? machine.fetchStats() : null),
+      // E3-T05: force a durable flush of the overlay to IndexedDB (resolves when the txn completes).
+      persist: () => (usePersist ? machine.persistPending() : Promise.resolve(0)),
       whenDone,
     };
   } catch (e) {
