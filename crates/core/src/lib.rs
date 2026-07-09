@@ -108,6 +108,12 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::uart16550::Uart16550>>,
         dev::plic::IrqLine,
     )>,
+    /// E2-T16: the goldfish RTC + its PLIC IRQ-11 line, when [`Self::enable_rtc`] attached it.
+    /// The run loop polls the alarm and mirrors its interrupt level into the PLIC.
+    rtc: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::rtc::GoldfishRtc>>,
+        dev::plic::IrqLine,
+    )>,
     /// E2-T08: the eight virtio-mmio slots + their PLIC lines (IRQ 1..=8), when
     /// [`Self::enable_virtio_slots`] attached them. The run loop mirrors each slot's
     /// InterruptStatus level.
@@ -149,6 +155,7 @@ impl Machine {
             builtin_sbi: false,
             sbi_state: sbi::SbiState::default(),
             uart: None,
+            rtc: None,
             virtio: alloc::vec::Vec::new(),
             blk: None,
         })
@@ -280,18 +287,29 @@ impl Machine {
         (alloc::rc::Rc::clone(&slots[0]), state)
     }
 
-    /// E2-T15: attach the goldfish RTC (a boot-time read-only stub, epoch 0 → 1970) at
-    /// [`platform::virt::RTC_BASE`], matching the `google,goldfish-rtc` node the DTB
-    /// advertises. Without it the kernel's `rtc-goldfish` probe takes a load access fault on
-    /// the unbacked window. E2-T16 upgrades the stub to a real host clock.
-    pub fn enable_rtc(&mut self) {
+    /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,
+    /// with `clock` as its wall-clock source (`SystemTime` in the CLI, `Date.now()` in wasm, a
+    /// mock in tests). Matches the `google,goldfish-rtc` node the DTB advertises — without it
+    /// the kernel's `rtc-goldfish` probe takes a load access fault on the unbacked window. The
+    /// guest reads real time (`clock.now_ns()` + any `date -s` offset) and can arm alarms; the
+    /// run loop polls the alarm each boundary and mirrors its level into the PLIC. Requires
+    /// [`Self::enable_plic`] first. Returns the shared handle (tests drive it directly).
+    pub fn enable_rtc(
+        &mut self,
+        clock: alloc::boxed::Box<dyn dev::rtc::WallClock>,
+    ) -> alloc::rc::Rc<core::cell::RefCell<dev::rtc::GoldfishRtc>> {
+        let plic = self.plic.as_ref().expect("enable_plic before enable_rtc");
+        let line = dev::plic::Plic::irq_line(plic, platform::virt::RTC_IRQ as usize);
+        let cell = alloc::rc::Rc::new(core::cell::RefCell::new(dev::rtc::GoldfishRtc::new(clock)));
         self.bus
             .attach(
                 platform::virt::RTC_BASE,
                 platform::virt::RTC_LEN,
-                alloc::boxed::Box::new(dev::rtc::GoldfishRtc::new()),
+                alloc::boxed::Box::new(dev::rtc::SharedRtc(alloc::rc::Rc::clone(&cell))),
             )
             .expect("RTC window overlaps RAM or another device");
+        self.rtc = Some((alloc::rc::Rc::clone(&cell), line));
+        cell
     }
 
     /// E2-T03 (ADR 0002): route `ecall`-from-S to the built-in Rust SBI ([`sbi::dispatch`])
@@ -602,6 +620,11 @@ impl Machine {
                     let mut u = uart.borrow_mut();
                     u.tick();
                     line.set(u.irq_level());
+                }
+                // E2-T16: poll the RTC alarm and mirror its interrupt level into the PLIC,
+                // BEFORE sync_plic samples EIP, so a just-reached alarm fires this boundary.
+                if let Some((rtc, line)) = &self.rtc {
+                    line.set(rtc.borrow_mut().poll());
                 }
                 // E2-T11: service pending virtio-blk kicks BEFORE mirroring levels, so a
                 // completed request's used-ring interrupt lands this same boundary.

@@ -316,3 +316,24 @@ impl WasmMachine {
         Ok(obj.into())
     }
 }
+
+/// E2-T16: the browser wall clock for the goldfish RTC — `Date.now()` (ms since the Unix
+/// epoch) scaled to nanoseconds. Kept here (not `crates/core`) because core bans host time
+/// sources for determinism. This is the minimal "wire the trait" shim; E2-T23 owns the real
+/// browser timekeeping policy (drift, throttling, suspend/resume recovery) that will build on
+/// it. wasm-only: `js_sys::Date::now` links nowhere else.
+#[cfg(target_arch = "wasm32")]
+pub struct JsWallClock;
+
+#[cfg(target_arch = "wasm32")]
+impl wasm_vm_core::dev::rtc::WallClock for JsWallClock {
+    fn now_ns(&self) -> u64 {
+        // Date.now() is f64 milliseconds; ×1e6 → ns. Negative (pre-1970) reads back as 0.
+        let ms = js_sys::Date::now();
+        if ms <= 0.0 {
+            0
+        } else {
+            (ms * 1_000_000.0) as u64
+        }
+    }
+}
