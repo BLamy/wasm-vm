@@ -178,6 +178,133 @@ fn tcp_syn(dst: Ipv4Addr, src_port: u16, dst_port: u16) -> Vec<u8> {
     buf
 }
 
+/// A general guest→dst TCP segment with explicit seq/ack/flags/payload (for hand-driven handshakes).
+fn tcp_seg(
+    dst: Ipv4Addr,
+    src_port: u16,
+    dst_port: u16,
+    seq: i64,
+    ack: Option<i64>,
+    syn: bool,
+    payload: &[u8],
+) -> Vec<u8> {
+    let tcp = TcpRepr {
+        src_port,
+        dst_port,
+        control: if syn {
+            TcpControl::Syn
+        } else {
+            TcpControl::None
+        },
+        seq_number: TcpSeqNumber(seq as i32),
+        ack_number: ack.map(|a| TcpSeqNumber(a as i32)),
+        window_len: 64240,
+        window_scale: None,
+        max_seg_size: None,
+        sack_permitted: false,
+        sack_ranges: [None, None, None],
+        timestamp: None,
+        payload,
+    };
+    let src = net::GUEST;
+    let ip = Ipv4Repr {
+        src_addr: src,
+        dst_addr: dst,
+        next_header: smoltcp::wire::IpProtocol::Tcp,
+        payload_len: tcp.buffer_len(),
+        hop_limit: 64,
+    };
+    let eth = EthernetRepr {
+        src_addr: smoltcp::wire::EthernetAddress(GUEST_MAC),
+        dst_addr: smoltcp::wire::EthernetAddress(GW_MAC),
+        ethertype: EthernetProtocol::Ipv4,
+    };
+    let mut buf = vec![0u8; eth.buffer_len() + ip.buffer_len() + tcp.buffer_len()];
+    let caps = smoltcp::phy::ChecksumCapabilities::default();
+    let mut frame = EthernetFrame::new_unchecked(&mut buf);
+    eth.emit(&mut frame);
+    let mut ipp = Ipv4Packet::new_unchecked(frame.payload_mut());
+    ip.emit(&mut ipp, &caps);
+    let mut tp = TcpPacket::new_unchecked(ipp.payload_mut());
+    tcp.emit(&mut tp, &IpAddress::Ipv4(src), &IpAddress::Ipv4(dst), &caps);
+    buf
+}
+
+#[test]
+fn tcp_data_path_and_teardown() {
+    // Drive a full handshake by hand, exchange bytes both ways, and tear the flow down — the
+    // data-path methods (`tcp_recv`/`tcp_send`/`remove_tcp`) the async bridge will use. No boot.
+    use smoltcp::socket::tcp::State;
+    let ext = Ipv4Addr::new(93, 184, 216, 34);
+    let mut s = SlirpStack::new(GW_MAC);
+    s.inject(arp_request());
+    s.poll(1);
+    let _ = s.take_egress();
+    let h = s.open_tcp(ext, 80);
+
+    // Guest SYN (seq=1000) → slirp SYN-ACK; read slirp's ISN.
+    s.inject(tcp_seg(ext, 40000, 80, 1000, None, true, &[]));
+    s.poll(2);
+    let sa = s.take_egress();
+    assert_eq!(sa.len(), 1, "SYN-ACK");
+    let ipp = Ipv4Packet::new_checked(&sa[0][14..]).unwrap();
+    let tp = TcpPacket::new_checked(ipp.payload()).unwrap();
+    assert!(tp.syn() && tp.ack());
+    let isn = tp.seq_number().0 as i64;
+
+    // Guest ACK (seq=1001, ack=ISN+1) → Established.
+    s.inject(tcp_seg(ext, 40000, 80, 1001, Some(isn + 1), false, &[]));
+    s.poll(3);
+    let _ = s.take_egress();
+    assert_eq!(
+        s.tcp_state(h),
+        Some(State::Established),
+        "handshake completed"
+    );
+
+    // Guest → outbound: send "hello"; slirp buffers it, readable via tcp_recv.
+    s.inject(tcp_seg(
+        ext,
+        40000,
+        80,
+        1001,
+        Some(isn + 1),
+        false,
+        b"hello",
+    ));
+    s.poll(4);
+    let _ = s.take_egress();
+    assert_eq!(s.tcp_recv(h), b"hello", "guest bytes reach the flow socket");
+
+    // Outbound → guest: tcp_send enqueues; a data segment carrying it egresses to the guest.
+    assert_eq!(s.tcp_send(h, b"world"), 5);
+    s.poll(5);
+    let out = s.take_egress();
+    assert!(
+        out.iter().any(|f| f.windows(5).any(|w| w == b"world")),
+        "slirp→guest data segment carries the bytes"
+    );
+
+    // Teardown frees the endpoint: a fresh SYN to it is now filtered (dropped).
+    s.remove_tcp(h);
+    s.inject(tcp_seg(ext, 40001, 80, 2000, None, true, &[]));
+    s.poll(6);
+    assert!(
+        s.take_egress().is_empty(),
+        "endpoint torn down → SYN dropped by the filter"
+    );
+
+    // Use-after-remove is SAFE, not a panic (critic MAJOR): the stale handle reads as no active flow.
+    assert_eq!(s.tcp_state(h), None, "removed handle has no state");
+    assert!(
+        s.tcp_recv(h).is_empty(),
+        "recv on a removed handle is empty"
+    );
+    assert_eq!(s.tcp_send(h, b"x"), 0, "send on a removed handle is 0");
+    assert!(!s.tcp_can_send(h), "can_send on a removed handle is false");
+    s.tcp_close(h); // no-op, must not panic
+}
+
 #[test]
 fn promiscuous_accept_answers_a_syn_to_an_external_host() {
     // The promiscuous-accept core: a per-flow listening socket + `any_ip` lets a guest SYN to an
@@ -208,7 +335,7 @@ fn promiscuous_accept_answers_a_syn_to_an_external_host() {
     assert_eq!(tp.dst_port(), 40000, "back to the guest's source port");
     assert_eq!(tp.src_port(), 80, "from the destination port");
     // The listening socket has advanced past LISTEN (received the SYN).
-    assert_ne!(s.tcp_state(h), smoltcp::socket::tcp::State::Listen);
+    assert_ne!(s.tcp_state(h), Some(smoltcp::socket::tcp::State::Listen));
 }
 
 #[test]

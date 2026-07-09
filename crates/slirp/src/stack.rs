@@ -4,7 +4,7 @@
 //! frames go in via [`SlirpStack::inject`]; replies come out via [`SlirpStack::take_egress`]. The
 //! async byte-bridge to an `OutboundConnector` is the next slice; this proves the accept path.
 
-use std::collections::BTreeSet;
+use std::collections::BTreeMap;
 use std::net::Ipv4Addr;
 
 use smoltcp::iface::{Config, Interface, SocketHandle, SocketSet};
@@ -27,12 +27,12 @@ pub struct SlirpStack {
     device: SlirpDevice,
     sockets: SocketSet<'static>,
     mac: [u8; 6],
-    /// External `(ip, port)` endpoints we've opened a listening socket for. Frames to any OTHER
-    /// external address are dropped before smoltcp sees them — otherwise `any_ip` would make smoltcp
-    /// forge replies AS that host (ICMP echo, TCP RST, UDP unreachable) for flows we never opened
-    /// (critic CRITICAL: host impersonation). smoltcp only ever sees gateway-local frames + TCP to an
-    /// opened endpoint.
-    open_endpoints: BTreeSet<(Ipv4Addr, u16)>,
+    /// The active flows: `SocketHandle → (external dst ip, port)`. Single source of truth for BOTH
+    /// the frame filter (smoltcp only sees TCP to an opened endpoint — otherwise `any_ip` would forge
+    /// replies AS a host we never opened; critic CRITICAL) AND the accessor guard (a handle not in
+    /// here is removed/unknown, so accessors return a safe default instead of panicking / touching a
+    /// reused slot; critic MAJOR).
+    flows: BTreeMap<SocketHandle, (Ipv4Addr, u16)>,
 }
 
 impl SlirpStack {
@@ -59,7 +59,7 @@ impl SlirpStack {
             device,
             sockets: SocketSet::new(vec![]),
             mac,
-            open_endpoints: BTreeSet::new(),
+            flows: BTreeMap::new(),
         }
     }
 
@@ -85,7 +85,8 @@ impl SlirpStack {
                 if ip.next_header() == IpProtocol::Tcp
                     && let Ok(tcp) = TcpPacket::new_checked(ip.payload())
                 {
-                    return self.open_endpoints.contains(&(dst, tcp.dst_port()));
+                    let ep = (dst, tcp.dst_port());
+                    return self.flows.values().any(|f| *f == ep);
                 }
                 false // external ICMP/UDP/un-opened-TCP → drop (no impersonation)
             }
@@ -110,13 +111,77 @@ impl SlirpStack {
             port,
         })
         .expect("listen on the flow's destination endpoint");
-        self.open_endpoints.insert((dst, port));
-        self.sockets.add(sock)
+        let handle = self.sockets.add(sock);
+        self.flows.insert(handle, (dst, port));
+        handle
     }
 
-    /// The TCP state of a socket opened with [`open_tcp`](Self::open_tcp).
-    pub fn tcp_state(&self, handle: SocketHandle) -> tcp::State {
-        self.sockets.get::<tcp::Socket>(handle).state()
+    /// The TCP state of a flow, or `None` if `handle` is not an active flow (removed / never opened)
+    /// — never panics on a stale handle (critic MAJOR).
+    pub fn tcp_state(&self, handle: SocketHandle) -> Option<tcp::State> {
+        self.flows
+            .contains_key(&handle)
+            .then(|| self.sockets.get::<tcp::Socket>(handle).state())
+    }
+
+    /// Drain all bytes the guest has sent on this flow (guest → outbound direction). Empty if none
+    /// or if `handle` is not an active flow.
+    pub fn tcp_recv(&mut self, handle: SocketHandle) -> Vec<u8> {
+        if !self.flows.contains_key(&handle) {
+            return Vec::new();
+        }
+        let sock = self.sockets.get_mut::<tcp::Socket>(handle);
+        let mut out = Vec::new();
+        while sock.can_recv() {
+            let got = sock
+                .recv(|buf| {
+                    out.extend_from_slice(buf);
+                    (buf.len(), buf.len())
+                })
+                .unwrap_or(0);
+            if got == 0 {
+                break;
+            }
+        }
+        out
+    }
+
+    /// Enqueue bytes to send to the guest on this flow (outbound → guest direction). Returns the
+    /// number accepted into the send buffer (may be < `data.len()` under backpressure); 0 if `handle`
+    /// is not an active flow.
+    pub fn tcp_send(&mut self, handle: SocketHandle, data: &[u8]) -> usize {
+        if !self.flows.contains_key(&handle) {
+            return 0;
+        }
+        self.sockets
+            .get_mut::<tcp::Socket>(handle)
+            .send_slice(data)
+            .unwrap_or(0)
+    }
+
+    /// Whether this flow's socket can currently accept more send bytes (its window is open). `false`
+    /// if `handle` is not an active flow.
+    pub fn tcp_can_send(&self, handle: SocketHandle) -> bool {
+        self.flows.contains_key(&handle) && self.sockets.get::<tcp::Socket>(handle).can_send()
+    }
+
+    /// Half-close this flow (send a FIN to the guest) — the outbound side finished writing. No-op if
+    /// `handle` is not an active flow.
+    pub fn tcp_close(&mut self, handle: SocketHandle) {
+        if self.flows.contains_key(&handle) {
+            self.sockets.get_mut::<tcp::Socket>(handle).close();
+        }
+    }
+
+    /// Tear down a flow by handle: remove its smoltcp socket (frees the 128 KiB buffers) and its
+    /// filter endpoint together (looked up from `flows`, so socket + endpoint can never desync —
+    /// critic MINOR). No-op if already removed. **After this the `handle` is INVALID; smoltcp reuses
+    /// slots, so a later `open_tcp` may return the SAME handle for a different flow — the caller MUST
+    /// drop its copy of the handle on teardown, never reuse it (critic MAJOR).**
+    pub fn remove_tcp(&mut self, handle: SocketHandle) {
+        if self.flows.remove(&handle).is_some() {
+            self.sockets.remove(handle);
+        }
     }
 
     /// Queue a guest ethernet frame for processing on the next [`poll`](Self::poll). Frames that

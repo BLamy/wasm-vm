@@ -163,6 +163,29 @@ clippy + determinism + no-default build green. Honest consequence
 .2) — harmless, since the guest only ARPs the gateway. 28 slirp tests. fmt + clippy + determinism +
 no-default-features build green.
 
+**2026-07-07 — pass 2g: TCP data path + teardown (`stack.rs`).** Added the socket byte-level API the
+async bridge drives: `tcp_recv` (drain guest→outbound bytes), `tcp_send` (enqueue outbound→guest,
+returns accepted count for backpressure), `tcp_can_send`, `tcp_close` (half-close/FIN), and
+`remove_tcp` (frees the 128 KiB buffers + drops the endpoint — the critic-M2 dealloc counterpart to
+`open_tcp`). Proven WITHOUT a boot by a hand-driven full handshake: guest SYN → SYN-ACK (read
+slirp's ISN) → guest ACK → **Established**; guest "hello" → `tcp_recv` returns it; `tcp_send("world")`
+→ a data segment carrying the bytes egresses to the guest; `remove_tcp` teardown → a fresh SYN to the
+endpoint is filter-dropped. 30 slirp tests. fmt + clippy + determinism + no-default build green.
+
+**Adversarial cold-clone critic on pass 2g: SOUND data path, one MAJOR teardown trap fixed.** The
+critic verified (by repro + mutation-kill) the data path is correct — multi-segment recv drains
+in-order/no-loss, over-buffer send is honest partial backpressure, send-on-non-Established is a safe
+0, `close` emits a real FIN, and the handshake test is genuine (no-op'ing `tcp_recv`/`tcp_send` fails
+it). MAJOR (fixed): after `remove_tcp` the `SocketHandle` dangled — accessors did an unguarded
+`SocketSet::get` that PANICS on a stale handle, or WORSE silently addressed a different flow once
+smoltcp reused the slot (cross-flow corruption the bridge would hit). Fix: a single `flows:
+BTreeMap<SocketHandle,(ip,port)>` source of truth — every accessor (`tcp_state`→`Option`,
+`tcp_recv`/`tcp_send`/`tcp_can_send`/`tcp_close`) returns a safe default when the handle isn't an
+active flow (no panic, no reused-slot access), `remove_tcp(handle)` drops socket+endpoint together
+(MINOR: no more caller-supplied-tuple desync), and the filter reads the same map. Doc warns the
+handle is invalid + slots are reused so the bridge must drop it on teardown. New use-after-remove
+test asserts None/empty/0/no-panic. 30 slirp tests. fmt + clippy + determinism + no-default green.
+
 **Pass 2b (next — the async bridge):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).
