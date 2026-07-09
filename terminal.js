@@ -98,5 +98,9 @@ export function createLinuxTerminal(containerEl) {
     sttyHint() { return `stty rows ${term.rows} cols ${term.cols}`; },
     highWater: () => highWater,
     typeBytes: (u8) => feed(u8),
+    // xterm only captures keystrokes while its hidden textarea is focused. Nothing focuses
+    // it implicitly, so manual typing silently goes nowhere until this is called (after boot
+    // and whenever the Terminal tab is (re)shown from a display:none panel).
+    focus() { try { term.focus(); } catch { /* ignore */ } },
   };
 }

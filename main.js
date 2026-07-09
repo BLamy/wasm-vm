@@ -159,6 +159,9 @@ async function runLinuxBoot(opts, banner) {
     // the matching stty hint so the guest can be told its real window size (serial has no winsize).
     const { cols, rows } = ui.fitNow();
     term.writeln(`\x1b[90m[terminal ${cols}x${rows} — click "Fit" then run: ${ui.sttyHint()}]\x1b[0m`);
+    // The guest is live and the input sink is attached; focus the terminal so the user can
+    // type immediately without first having to click into it.
+    ui.focus();
   } catch (e) {
     lastBootError = e.message || String(e); // surfaced to the Docker tab's typed-error path
     term.writeln(`\x1b[31mcannot boot: ${e.message || e}\x1b[0m`);
@@ -230,6 +233,8 @@ window.wvmDemo = {
   // Inject bytes through the REAL terminal input bridge — the same backpressure queue → ttyS0 RX
   // path that keystrokes and paste take. This is NOT a side channel: it is exactly how a human types.
   sendInput(bytes) { ui.typeBytes(bytes); },
+  // Focus the real terminal so the user can keep typing after a programmatic run.
+  focusTerminal() { ui.focus(); },
   // Boot the real busybox userland. Resolves { ok:true } once the guest is running, { ok:true,
   // already:true } if it was already up, or { ok:false, error } if the real boot path refused to
   // start (e.g. a manifest/integrity failure) — the caller must show that error, never fall back.
