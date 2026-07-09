@@ -44,12 +44,20 @@ external destination and NATed outbound.
 - **phy::Device glue** *(pass 2a — implemented, `device.rs`)* — a `smoltcp::phy::Device` impl over
   two `Vec<u8>` frame queues: RX = frames from the guest (the E3-T13 `NetBackend` seam), TX = replies
   for the guest. No copies beyond smoltcp's token model.
-- **Interface** *(pass 2a, `stack.rs`)* — a smoltcp `Interface` configured with the gateway IP
-  `10.0.2.2/24`; pass 2a answers **ARP** and **ICMP echo** for it (verified: guest ARP → gateway
-  reply, ARP for any other IP ignored; guest `ping 10.0.2.2` → echo reply). **TCP interception** is
-  **pass 2b**: *promiscuous* — any guest SYN to any external `IP:port` is accepted by a listening
-  smoltcp socket created on demand and keyed by the guest 4-tuple, then bridged byte-for-byte to
-  `OutboundConnector::connect`.
+- **Interface** *(pass 2a/2f, `stack.rs`)* — a smoltcp `Interface` configured with the gateway IP
+  `10.0.2.2/24`; answers **ARP** and **ICMP echo** for it (pass 2a). **Promiscuous TCP accept**
+  (pass 2f): `Interface::set_any_ip(true)` makes it process guest packets to ANY dst IP, and
+  `SlirpStack::open_tcp(dst, port)` adds a smoltcp TCP socket LISTENING on that external endpoint —
+  so a guest SYN to an arbitrary external `IP:port` completes the handshake (SYN → SYN-ACK, verified
+  by frame injection). **`any_ip` is GATED by a frame filter** (`accept_frame` in `inject`): smoltcp
+  only ever sees ARP-for-the-gateway, IPv4-to-the-gateway (ICMP echo / local TCP), and TCP to an
+  endpoint we've `open_tcp`'d. Everything else — external ICMP, external UDP, un-opened-flow TCP,
+  non-gateway ARP — is dropped BEFORE smoltcp, so the stack never forges a reply *as* an external
+  host it hasn't opened a flow for (without the filter, `any_ip` made smoltcp answer `ping 8.8.8.8`,
+  RST an un-opened SYN, and ICMP-unreachable external UDP — all as the impersonated host; critic
+  CRITICAL). The async **byte-bridge** from an accepted socket to `OutboundConnector::connect` (with
+  backpressure/half-close) is the next slice; the driver must `open_tcp` a flow BEFORE injecting its
+  SYN.
 - **OutboundConnector** — the trait that decouples the stack from *how* bytes leave the process.
   The real signature uses the explicit `-> impl Future + Send` form (not `async fn`) so the returned
   future is `Send`-bound without tripping the `async_fn_in_trait` lint:
@@ -106,8 +114,13 @@ both directions; an abrupt outbound RST surfaces to the guest as `ECONNRESET` pr
    iteration), fully unit-tested — the self-contained core, no smoltcp.
 2. **Pass 2a (done):** the smoltcp `phy::Device` (`device.rs`) + the `Interface` (`stack.rs`) owning
    `10.0.2.2`, answering **ARP** and **ICMP echo** — proven by frame-injection tests (ARP
-   request→reply; other-IP ignored; ping→echo reply). No async, no boot.
-3. **Pass 2b (next):** the promiscuous TCP accept + per-flow bridge with backpressure/half-close,
-   `NativeConnector` (tokio), and the native integration tests (HTTP GET through slirp to a local
-   hyper server; 50-concurrent; 100 MB integrity; half-close). The booted-Alpine acceptance leg is
-   later still (long boot, env-gated).
+   request→reply; ping→echo reply). No async, no boot. (Pass 2f's `any_ip` later broadened ARP to
+   the whole subnet — see below.)
+3. **Pass 2c–2f (done):** `NativeConnector` (tokio, `native.rs`); the TCP flow classifier
+   (`tcp.rs`); the `FlowManager` control plane (`manager.rs`); and **promiscuous TCP accept**
+   (`any_ip` + `open_tcp`, `stack.rs`) — a guest SYN to an arbitrary external host handshakes
+   (SYN → SYN-ACK).
+4. **Pass 2b (next — the async byte-bridge):** wire the accepted smoltcp socket ⇄
+   `NativeConnector` with backpressure/half-close, driven by the `FlowManager` actions, then the
+   native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB
+   integrity). The booted-Alpine acceptance leg is later still (long boot, env-gated).

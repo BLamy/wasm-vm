@@ -141,6 +141,28 @@ tracked flow; STRAY data for an unknown flow → Existing but creates NO NAT ent
 capacity evicts the LRU (evicted surfaced); Local/Ignore create no flow; expire+remove. 27 slirp
 tests. fmt + clippy + determinism green.
 
+**2026-07-07 — pass 2f: promiscuous TCP accept.** `stack.rs`: `Interface::set_any_ip(true)`
+(process guest packets to ANY dst IP) + `SlirpStack::open_tcp(dst, port)` (a per-flow smoltcp TCP
+socket LISTENING on the external endpoint) + `tcp_state(handle)`. Proven by frame injection (no
+async, no boot): a guest SYN to an arbitrary external host (93.184.216.34:80) → a correct SYN-ACK
+from that endpoint to the guest's source port, and the socket  leaves LISTEN.
+
+**Adversarial cold-clone critic: REFUTED (FIX-FIRST) → fixed.** The accept proof was genuine + load-
+bearing, but `set_any_ip(true)` alone made smoltcp IMPERSONATE every external IP for flows we never
+opened (critic confirmed by repro, all clean regressions from any_ip-off): C1 `ping 8.8.8.8` → forged
+echo reply as 8.8.8.8; C2 SYN to an un-opened external port → forged RST as that host; C3 external UDP
+→ forged ICMP port-unreachable as that host. FIX: a frame filter (`accept_frame`, applied in
+`inject`) gates `any_ip` — smoltcp only ever sees ARP-for-the-gateway, IPv4-to-the-gateway, and TCP to
+an endpoint we've `open_tcp`'d (tracked in `open_endpoints`); everything else is dropped BEFORE
+smoltcp, so no impersonation. This also restores gateway-only ARP (reverted the ARP test to
+`is_empty`). New `does_not_impersonate_external_hosts` test asserts 0 egress for all three C1/C2/C3
+cases; the opened-flow SYN→SYN-ACK still works. Doc updated (any_ip is filter-gated, not "harmless
+ARP only"); the driver must `open_tcp` a flow before injecting its SYN. **29 slirp tests.** fmt +
+clippy + determinism + no-default build green. Honest consequence
+(documented + tested): `any_ip` makes the interface also answer ARP for in-subnet addresses (not just
+.2) — harmless, since the guest only ARPs the gateway. 28 slirp tests. fmt + clippy + determinism +
+no-default-features build green.
+
 **Pass 2b (next — the async bridge):** wire `OutboundSyn` → create a smoltcp listening socket for the
 4-tuple + `NativeConnector::connect`, pump bytes both ways with backpressure + half-close, and the
 native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB integrity).

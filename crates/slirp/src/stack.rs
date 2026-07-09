@@ -1,14 +1,25 @@
 //! The smoltcp `Interface` that owns the slirp gateway (`10.0.2.2`) and answers the guest's
-//! link-layer world: ARP for the gateway, ICMP echo (`ping 10.0.2.2`). Guest frames go in via
-//! [`SlirpStack::inject`]; replies come out via [`SlirpStack::take_egress`]. TCP interception + the
-//! outbound bridge are the next pass; this pass proves the device/interface glue.
+//! link-layer world: ARP for the gateway, ICMP echo (`ping 10.0.2.2`), and — the promiscuous-accept
+//! mechanism — TCP SYNs to ARBITRARY external IPs (via `any_ip` + a per-flow listening socket). Guest
+//! frames go in via [`SlirpStack::inject`]; replies come out via [`SlirpStack::take_egress`]. The
+//! async byte-bridge to an `OutboundConnector` is the next slice; this proves the accept path.
 
-use smoltcp::iface::{Config, Interface, SocketSet};
+use std::collections::BTreeSet;
+use std::net::Ipv4Addr;
+
+use smoltcp::iface::{Config, Interface, SocketHandle, SocketSet};
+use smoltcp::socket::tcp;
 use smoltcp::time::Instant;
-use smoltcp::wire::{EthernetAddress, HardwareAddress, IpAddress, IpCidr};
+use smoltcp::wire::{
+    EthernetAddress, EthernetFrame, EthernetProtocol, HardwareAddress, IpAddress, IpCidr,
+    IpListenEndpoint, IpProtocol, Ipv4Packet, TcpPacket,
+};
 
 use crate::device::SlirpDevice;
 use crate::net;
+
+/// Per-flow smoltcp TCP socket buffer size (64 KiB each way).
+const TCP_BUF: usize = 64 * 1024;
 
 /// The slirp network stack: a smoltcp `Interface` over our queue-backed device.
 pub struct SlirpStack {
@@ -16,6 +27,12 @@ pub struct SlirpStack {
     device: SlirpDevice,
     sockets: SocketSet<'static>,
     mac: [u8; 6],
+    /// External `(ip, port)` endpoints we've opened a listening socket for. Frames to any OTHER
+    /// external address are dropped before smoltcp sees them — otherwise `any_ip` would make smoltcp
+    /// forge replies AS that host (ICMP echo, TCP RST, UDP unreachable) for flows we never opened
+    /// (critic CRITICAL: host impersonation). smoltcp only ever sees gateway-local frames + TCP to an
+    /// opened endpoint.
+    open_endpoints: BTreeSet<(Ipv4Addr, u16)>,
 }
 
 impl SlirpStack {
@@ -34,11 +51,45 @@ impl SlirpStack {
                 ))
                 .expect("one ip fits");
         });
+        // Promiscuous accept: process guest packets destined to ANY IP (not just 10.0.2.2), so a
+        // per-flow listening socket can accept a guest SYN to an arbitrary external host.
+        iface.set_any_ip(true);
         SlirpStack {
             iface,
             device,
             sockets: SocketSet::new(vec![]),
             mac,
+            open_endpoints: BTreeSet::new(),
+        }
+    }
+
+    /// Whether a guest frame may reach smoltcp. Gates `any_ip` so smoltcp never impersonates a host:
+    /// allow ARP for the gateway only, IPv4 to the gateway (ARP/ICMP-echo/local TCP), and TCP to an
+    /// endpoint we've explicitly opened; drop everything else (external ICMP/UDP/un-opened TCP).
+    fn accept_frame(&self, frame: &[u8]) -> bool {
+        let Ok(eth) = EthernetFrame::new_checked(frame) else {
+            return false;
+        };
+        match eth.ethertype() {
+            // ARP only for the gateway — don't claim the whole subnet.
+            EthernetProtocol::Arp => frame.len() >= 42 && frame[38..42] == net::GATEWAY.octets(),
+            EthernetProtocol::Ipv4 => {
+                let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                    return false;
+                };
+                let dst = ip.dst_addr();
+                if dst == net::GATEWAY {
+                    return true; // ICMP echo / local TCP addressed to us
+                }
+                // TCP to an endpoint we've opened a listening socket for.
+                if ip.next_header() == IpProtocol::Tcp
+                    && let Ok(tcp) = TcpPacket::new_checked(ip.payload())
+                {
+                    return self.open_endpoints.contains(&(dst, tcp.dst_port()));
+                }
+                false // external ICMP/UDP/un-opened-TCP → drop (no impersonation)
+            }
+            _ => false,
         }
     }
 
@@ -47,9 +98,34 @@ impl SlirpStack {
         self.mac
     }
 
-    /// Queue a guest→gateway ethernet frame for processing on the next [`poll`](Self::poll).
+    /// Open a per-flow smoltcp TCP socket that LISTENS on `dst:port` — so an incoming guest SYN to
+    /// that external endpoint (accepted via `any_ip`) completes the handshake locally. Returns the
+    /// socket handle; the async bridge (next slice) pumps its bytes to/from an `OutboundConnector`.
+    pub fn open_tcp(&mut self, dst: Ipv4Addr, port: u16) -> SocketHandle {
+        let rx = tcp::SocketBuffer::new(vec![0u8; TCP_BUF]);
+        let tx = tcp::SocketBuffer::new(vec![0u8; TCP_BUF]);
+        let mut sock = tcp::Socket::new(rx, tx);
+        sock.listen(IpListenEndpoint {
+            addr: Some(IpAddress::Ipv4(dst)),
+            port,
+        })
+        .expect("listen on the flow's destination endpoint");
+        self.open_endpoints.insert((dst, port));
+        self.sockets.add(sock)
+    }
+
+    /// The TCP state of a socket opened with [`open_tcp`](Self::open_tcp).
+    pub fn tcp_state(&self, handle: SocketHandle) -> tcp::State {
+        self.sockets.get::<tcp::Socket>(handle).state()
+    }
+
+    /// Queue a guest ethernet frame for processing on the next [`poll`](Self::poll). Frames that
+    /// smoltcp must NOT auto-respond to (external ICMP/UDP, un-opened TCP, non-gateway ARP) are
+    /// dropped here so the stack never impersonates a host it hasn't opened a flow for.
     pub fn inject(&mut self, frame: Vec<u8>) {
-        self.device.rx.push_back(frame);
+        if self.accept_frame(&frame) {
+            self.device.rx.push_back(frame);
+        }
     }
 
     /// Drive smoltcp once at `now_ms`: process queued guest frames and emit any replies.

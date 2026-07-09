@@ -4,7 +4,8 @@
 use super::*;
 use crate::net;
 use smoltcp::wire::{
-    EthernetFrame, EthernetProtocol, EthernetRepr, Icmpv4Packet, Icmpv4Repr, Ipv4Packet, Ipv4Repr,
+    EthernetFrame, EthernetProtocol, EthernetRepr, Icmpv4Packet, Icmpv4Repr, IpAddress, Ipv4Packet,
+    Ipv4Repr, TcpControl, TcpPacket, TcpRepr, TcpSeqNumber,
 };
 
 const GUEST_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x56];
@@ -137,16 +138,160 @@ fn gateway_answers_icmp_echo() {
     );
 }
 
+/// Build a guest→dst ethernet-framed TCP SYN.
+fn tcp_syn(dst: Ipv4Addr, src_port: u16, dst_port: u16) -> Vec<u8> {
+    let tcp = TcpRepr {
+        src_port,
+        dst_port,
+        control: TcpControl::Syn,
+        seq_number: TcpSeqNumber(1000),
+        ack_number: None,
+        window_len: 64240,
+        window_scale: None,
+        max_seg_size: None,
+        sack_permitted: false,
+        sack_ranges: [None, None, None],
+        timestamp: None,
+        payload: &[],
+    };
+    let src = net::GUEST;
+    let ip = Ipv4Repr {
+        src_addr: src,
+        dst_addr: dst,
+        next_header: smoltcp::wire::IpProtocol::Tcp,
+        payload_len: tcp.buffer_len(),
+        hop_limit: 64,
+    };
+    let eth = EthernetRepr {
+        src_addr: smoltcp::wire::EthernetAddress(GUEST_MAC),
+        dst_addr: smoltcp::wire::EthernetAddress(GW_MAC),
+        ethertype: EthernetProtocol::Ipv4,
+    };
+    let mut buf = vec![0u8; eth.buffer_len() + ip.buffer_len() + tcp.buffer_len()];
+    let caps = smoltcp::phy::ChecksumCapabilities::default();
+    let mut frame = EthernetFrame::new_unchecked(&mut buf);
+    eth.emit(&mut frame);
+    let mut ipp = Ipv4Packet::new_unchecked(frame.payload_mut());
+    ip.emit(&mut ipp, &caps);
+    let mut tp = TcpPacket::new_unchecked(ipp.payload_mut());
+    tcp.emit(&mut tp, &IpAddress::Ipv4(src), &IpAddress::Ipv4(dst), &caps);
+    buf
+}
+
+#[test]
+fn promiscuous_accept_answers_a_syn_to_an_external_host() {
+    // The promiscuous-accept core: a per-flow listening socket + `any_ip` lets a guest SYN to an
+    // ARBITRARY external IP complete the handshake in slirp (SYN → SYN-ACK), with NO guest boot.
+    let ext = Ipv4Addr::new(93, 184, 216, 34);
+    let mut s = SlirpStack::new(GW_MAC);
+    // Prime the guest neighbor (as with ICMP) so slirp can address the SYN-ACK back.
+    s.inject(arp_request());
+    s.poll(10);
+    let _ = s.take_egress();
+
+    let h = s.open_tcp(ext, 80);
+    s.inject(tcp_syn(ext, 40000, 80));
+    s.poll(20);
+    let egress = s.take_egress();
+    assert_eq!(egress.len(), 1, "exactly one SYN-ACK");
+    let reply = &egress[0];
+    assert_eq!(&reply[12..14], &[0x08, 0x00], "ethertype IPv4");
+    let ipp = Ipv4Packet::new_checked(&reply[14..]).expect("ipv4");
+    assert_eq!(
+        ipp.src_addr(),
+        ext,
+        "SYN-ACK from the external endpoint we accepted for"
+    );
+    assert_eq!(ipp.dst_addr(), net::GUEST, "to the guest");
+    let tp = TcpPacket::new_checked(ipp.payload()).expect("tcp");
+    assert!(tp.syn() && tp.ack(), "a SYN-ACK");
+    assert_eq!(tp.dst_port(), 40000, "back to the guest's source port");
+    assert_eq!(tp.src_port(), 80, "from the destination port");
+    // The listening socket has advanced past LISTEN (received the SYN).
+    assert_ne!(s.tcp_state(h), smoltcp::socket::tcp::State::Listen);
+}
+
 #[test]
 fn unrelated_arp_for_another_ip_is_ignored() {
-    // ARP for 10.0.2.99 (not ours) must NOT be answered.
+    // The frame filter allows ARP only for the gateway, so even with `any_ip` on, an ARP for
+    // 10.0.2.99 is dropped before smoltcp sees it — no subnet-wide ARP claim.
     let mut s = SlirpStack::new(GW_MAC);
     let mut req = arp_request();
     req[38..42].copy_from_slice(&[10, 0, 2, 99]);
     s.inject(req);
     s.poll(10);
+    assert!(s.take_egress().is_empty(), "ARP only for the gateway");
+}
+
+#[test]
+fn does_not_impersonate_external_hosts() {
+    // The critic CRITICALs: `any_ip` alone made smoltcp forge replies AS an external host for flows
+    // we never opened. The frame filter must drop all three so slirp stays silent (0 egress):
+    let ext = Ipv4Addr::new(8, 8, 8, 8);
+    let mut s = SlirpStack::new(GW_MAC);
+    s.inject(arp_request());
+    s.poll(1);
+    let _ = s.take_egress();
+
+    // C1: guest ping to 8.8.8.8 must NOT get a forged echo reply.
+    let mut ping = icmp_echo_request();
+    // retarget the echo request's dst IP (bytes 14+16..14+20 = IP dst) to 8.8.8.8.
+    ping[30..34].copy_from_slice(&ext.octets());
+    s.inject(ping);
+    s.poll(2);
     assert!(
         s.take_egress().is_empty(),
-        "we only answer ARP for our own IP"
+        "no forged ICMP echo reply as 8.8.8.8"
     );
+
+    // C2: guest SYN to an external port we did NOT open_tcp must NOT get a forged RST.
+    s.inject(tcp_syn(Ipv4Addr::new(93, 184, 216, 34), 41000, 80));
+    s.poll(3);
+    assert!(
+        s.take_egress().is_empty(),
+        "no forged RST for an un-opened flow"
+    );
+
+    // C3: guest UDP to 8.8.8.8:53 must NOT get a forged ICMP port-unreachable.
+    s.inject(udp_to(ext, 40000, 53));
+    s.poll(4);
+    assert!(
+        s.take_egress().is_empty(),
+        "no forged ICMP unreachable as 8.8.8.8"
+    );
+}
+
+/// A minimal guest→dst IPv4 UDP datagram (8-byte payload).
+fn udp_to(dst: Ipv4Addr, src_port: u16, dst_port: u16) -> Vec<u8> {
+    use smoltcp::wire::{UdpPacket, UdpRepr};
+    let udp = UdpRepr { src_port, dst_port };
+    let payload = [0u8; 8];
+    let ip = Ipv4Repr {
+        src_addr: net::GUEST,
+        dst_addr: dst,
+        next_header: smoltcp::wire::IpProtocol::Udp,
+        payload_len: udp.header_len() + payload.len(),
+        hop_limit: 64,
+    };
+    let eth = EthernetRepr {
+        src_addr: smoltcp::wire::EthernetAddress(GUEST_MAC),
+        dst_addr: smoltcp::wire::EthernetAddress(GW_MAC),
+        ethertype: EthernetProtocol::Ipv4,
+    };
+    let mut buf = vec![0u8; eth.buffer_len() + ip.buffer_len() + udp.header_len() + payload.len()];
+    let caps = smoltcp::phy::ChecksumCapabilities::default();
+    let mut frame = EthernetFrame::new_unchecked(&mut buf);
+    eth.emit(&mut frame);
+    let mut ipp = Ipv4Packet::new_unchecked(frame.payload_mut());
+    ip.emit(&mut ipp, &caps);
+    let mut up = UdpPacket::new_unchecked(ipp.payload_mut());
+    udp.emit(
+        &mut up,
+        &IpAddress::Ipv4(net::GUEST),
+        &IpAddress::Ipv4(dst),
+        payload.len(),
+        |b| b.copy_from_slice(&payload),
+        &caps,
+    );
+    buf
 }
