@@ -47,7 +47,7 @@ async function runLinuxBoot(opts, banner) {
         pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;
         bootProgressEl.textContent = Object.entries(pct).map(([k, v]) => `${k} ${v}`).join("  ");
       },
-      onOutput: (u8) => ui.write(u8),
+      onOutput: (u8) => { ui.write(u8); emitConsole(u8); },
       onError: (e) => term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`),
       // E3-T10: storage indicator (usage/quota/persist grant) at boot.
       onStorage: ({ usage, quota, granted }) => {
@@ -160,6 +160,7 @@ async function runLinuxBoot(opts, banner) {
     const { cols, rows } = ui.fitNow();
     term.writeln(`\x1b[90m[terminal ${cols}x${rows} — click "Fit" then run: ${ui.sttyHint()}]\x1b[0m`);
   } catch (e) {
+    lastBootError = e.message || String(e); // surfaced to the Docker tab's typed-error path
     term.writeln(`\x1b[31mcannot boot: ${e.message || e}\x1b[0m`);
     bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
     linuxCtl = null;
@@ -209,20 +210,41 @@ function setRunBanner(html) {
   runBannerEl.style.display = html == null ? "none" : "block";
   if (html != null) runBannerEl.innerHTML = html;
 }
+
+// The REAL guest console byte stream, tapped for anyone who wants it (the Docker tab attaches its
+// output pane here). These are the EXACT bytes written to xterm via onOutput above — not a separate
+// buffer that JS fills. `lastBootError` is the message from the most recent failed boot so the
+// Docker tab can render a typed error instead of falling back to anything canned.
+const consoleSubscribers = new Set();
+function emitConsole(u8) {
+  for (const fn of consoleSubscribers) {
+    try { fn(u8); } catch { /* a broken subscriber must not break the console */ }
+  }
+}
+let lastBootError = null;
+
 window.wvmDemo = {
   isGuestUp: () => !!linuxCtl,
+  // Subscribe to the real guest console stream (Uint8Array chunks). Returns an unsubscribe fn.
+  onConsole(fn) { consoleSubscribers.add(fn); return () => consoleSubscribers.delete(fn); },
+  // Inject bytes through the REAL terminal input bridge — the same backpressure queue → ttyS0 RX
+  // path that keystrokes and paste take. This is NOT a side channel: it is exactly how a human types.
+  sendInput(bytes) { ui.typeBytes(bytes); },
+  // Boot the real busybox userland. Resolves { ok:true } once the guest is running, { ok:true,
+  // already:true } if it was already up, or { ok:false, error } if the real boot path refused to
+  // start (e.g. a manifest/integrity failure) — the caller must show that error, never fall back.
   async runBusybox() {
     if (linuxCtl) {
       setRunBanner('busybox userland is already live below — you are at the shell. Try <code>ls /</code> or <code>uname -a</code>.');
-      return "already-running";
+      return { ok: true, already: true };
     }
+    lastBootError = null;
     setRunBanner(
       'Booting a real RISC-V Linux guest → <b>busybox</b> userland… watch the console below; ' +
-      'you will land at the <code>#</code> shell prompt in a few seconds. ' +
-      'Try <code>ls /</code>, <code>uname -a</code>, or <code>busybox | head</code> once it is up.',
+      'you will land at the <code>#</code> shell prompt in a few seconds.',
     );
     await runLinuxBoot({ manifestUrl: "./artifacts.json" }, "booting the real busybox userland on RISC-V Linux (in wasm)…");
-    return "booting";
+    return linuxCtl ? { ok: true } : { ok: false, error: lastBootError || "boot failed" };
   },
 };
 
