@@ -30,6 +30,12 @@ pub struct IdbStore {
 }
 
 impl IdbStore {
+    /// E3-T10: close this IndexedDB connection so a `deleteDatabase` (reset-disk) can proceed
+    /// without blocking. Idempotent; the store must not be used for I/O afterward.
+    pub fn close(&self) {
+        self.db.close();
+    }
+
     /// Open (creating/upgrading) the overlay DB for the base identified by `base_binding`. Creates the
     /// `blocks` + `meta` object stores on first use / version upgrade.
     pub async fn open(base_binding: &[u8; 32]) -> Result<IdbStore, JsValue> {
@@ -64,6 +70,15 @@ impl IdbStore {
 
         let db_val = await_request(req.unchecked_ref()).await?;
         let db: IdbDatabase = db_val.dyn_into()?;
+        // E3-T10 (critic BUG-4): close this connection when ANOTHER context requests a
+        // versionchange (i.e. deleteDatabase for reset-disk) — otherwise our open handle blocks
+        // the delete indefinitely and reset silently no-ops.
+        let db_for_vc = db.clone();
+        let on_vc = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
+            db_for_vc.close();
+        });
+        db.set_onversionchange(Some(on_vc.as_ref().unchecked_ref()));
+        on_vc.forget();
         Ok(IdbStore { db })
     }
 
@@ -184,11 +199,16 @@ async fn await_transaction(txn: &IdbTransaction) -> Result<(), JsValue> {
         let oncomplete = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
             let _ = resolve.call0(&JsValue::NULL);
         });
+        // E3-T10: surface the transaction's DOMException NAME (esp. QuotaExceededError) so the
+        // boundary can classify quota exhaustion vs a generic failure. `txn.error()` holds it on
+        // abort; fall back to a generic label.
+        let txn_err = txn.clone();
         let onerror = Closure::<dyn FnMut(web_sys::Event)>::new(move |_e| {
-            let _ = reject.call1(
-                &JsValue::NULL,
-                &JsValue::from_str("IndexedDB transaction failed"),
-            );
+            let name = txn_err
+                .error()
+                .map(|e| e.name())
+                .unwrap_or_else(|| "IndexedDB transaction failed".to_string());
+            let _ = reject.call1(&JsValue::NULL, &JsValue::from_str(&name));
         });
         txn.set_oncomplete(Some(oncomplete.as_ref().unchecked_ref()));
         txn.set_onerror(Some(onerror.as_ref().unchecked_ref()));
