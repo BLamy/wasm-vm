@@ -149,6 +149,53 @@ fn growing_replace_still_honours_the_budget() {
 }
 
 #[test]
+fn prefetch_accuracy_counts_hits_on_prefetched_chunks() {
+    // Critic pass-4: "used" must be counted at the cache HIT (a successful prefetch makes a future
+    // read a hit), NOT from demand misses. A prefetched chunk that is later read counts once; one
+    // evicted before any read does not.
+    let mut c = BlockCache::new(300); // 3 slots
+    // Prefetch 0 and 1 (inserted speculatively, flagged).
+    c.insert(0, vec![0; 100]);
+    c.note_prefetch(0);
+    c.insert(1, vec![1; 100]);
+    c.note_prefetch(1);
+    // A demand insert of 2 is NOT a prefetch.
+    c.insert(2, vec![2; 100]);
+    let m = c.metrics();
+    assert_eq!(
+        (m.prefetch_issued, m.prefetch_used),
+        (2, 0),
+        "nothing used yet"
+    );
+
+    // Read 0 (a HIT on a prefetched chunk) → used++. Reading it again does not double-count.
+    assert_eq!(c.lookup(0), Some(&[0u8; 100][..]));
+    assert_eq!(c.lookup(0), Some(&[0u8; 100][..]));
+    // Reading the demand chunk 2 is a hit but NOT a prefetch → does not count.
+    assert_eq!(c.lookup(2), Some(&[2u8; 100][..]));
+    let m = c.metrics();
+    assert_eq!((m.prefetch_issued, m.prefetch_used), (2, 1));
+
+    // Evict chunk 1 (prefetched, never read) by flooding; it must NOT count as used.
+    for i in 10..20 {
+        c.insert(i, vec![i as u8; 100]);
+    }
+    assert!(!c.contains(1), "chunk 1 evicted before any read");
+    let m = c.metrics();
+    assert_eq!(
+        m.prefetch_used, 1,
+        "an evicted-unused prefetch is not counted used"
+    );
+    assert!(m.prefetch_used <= m.prefetch_issued);
+    // Idempotent flagging: re-noting an already-flagged resident prefetch doesn't inflate issued.
+    let mut c2 = BlockCache::new(300);
+    c2.insert(5, vec![5; 50]);
+    c2.note_prefetch(5);
+    c2.note_prefetch(5);
+    assert_eq!(c2.metrics().prefetch_issued, 1);
+}
+
+#[test]
 fn chunk_source_impl_reads_current_bytes() {
     let mut c = BlockCache::new(300);
     c.insert(5, vec![0x55; 64]);

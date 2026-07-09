@@ -70,6 +70,8 @@ export async function startLinuxBoot(opts = {}) {
     // E3-T02 chunked mode: URL of the image manifest.json produced by `wasm-vm chunk`. `baseUrl`
     // (the directory chunks live under) defaults to the manifest's directory.
     imageManifestUrl = "./releases/chunked-alpine/manifest.json",
+    // E3-T03 boot-profile URL (ordered chunk indices to prefetch up front); missing → readahead-only.
+    bootProfileUrl = "./releases/chunked-alpine/boot-profile.json",
     // E3-T03 block-cache byte budget in MiB (0 → 256 MiB default). Set low to exercise eviction.
     cacheBudgetMib = 0,
     ramMib = 256,
@@ -96,10 +98,20 @@ export async function startLinuxBoot(opts = {}) {
     const kernel = await fetchWithProgress(km.url, (l, t) => onProgress("kernel", l, t));
     let secondaryBytes = null;
     let imageManifestText = null;
+    let bootProfile = new Uint32Array(0);
     if (isChunked) {
       const r = await fetch(imageManifestUrl, { cache: "default" });
       if (!r.ok) throw new Error(`fetch ${imageManifestUrl} → HTTP ${r.status} ${r.statusText}`);
       imageManifestText = await r.text();
+      // E3-T03: an optional boot-profile.json (ordered chunk indices) prefetched up front. Best-
+      // effort — a missing profile just means no boot-profile prefetch (readahead still applies).
+      try {
+        const pr = await fetch(bootProfileUrl, { cache: "default" });
+        if (pr.ok) {
+          const arr = await pr.json();
+          if (Array.isArray(arr)) bootProfile = Uint32Array.from(arr.filter((n) => Number.isInteger(n) && n >= 0));
+        }
+      } catch { /* no profile → readahead-only */ }
     } else {
       const secondary = manifest.artifacts[role];
       if (!secondary) throw new Error(`manifest has no '${role}' artifact for boot mode '${mode}'`);
@@ -131,7 +143,7 @@ export async function startLinuxBoot(opts = {}) {
     // disk → in-memory virtio-blk backend (whole image); chunked → a ChunkedBackend that lazily
     // HTTP-fetches chunks under baseUrl; initramfs → the image as the initrd.
     const machine = isChunked
-      ? WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootargs, (u8) => onOutput(u8))
+      ? WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, (u8) => onOutput(u8))
       : mode === "disk"
         ? WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8))
         : new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
