@@ -20,24 +20,33 @@ use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
 use wasm_vm_core::trace::{TraceRecord, TraceSink, fmt_canonical};
 use wasm_vm_core::{Machine, RunOutcome};
 
-/// E3-net: gateway MAC for the browser slirp local stack (distinct from the guest's virtio-net MAC
-/// 52:54:00:12:34:56). The guest learns it via ARP for the gateway 10.0.2.2.
-const SLIRP_GATEWAY_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x02];
+// E3-net: browser-only (the boot site that consumes these is wasm+non-zicsr-gated), so gate the whole
+// toggle to the same cfg — otherwise the const/fn are dead code on the native `-D warnings` clippy job.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod slirp_net {
+    use core::sync::atomic::{AtomicBool, Ordering};
+    use wasm_bindgen::prelude::*;
 
-/// E3-net: when set, boots wire virtio-net to the slirp LOCAL stack (DHCP/ARP/ICMP) instead of the
-/// loopback backend. Single-threaded browser → a plain atomic suffices. Set via `setSlirpNet` BEFORE
-/// constructing a WasmLinux boot.
-static SLIRP_NET: AtomicBool = AtomicBool::new(false);
+    /// Gateway MAC for the browser slirp local stack (distinct from the guest's virtio-net MAC
+    /// 52:54:00:12:34:56). The guest learns it via ARP for the gateway 10.0.2.2.
+    pub(crate) const SLIRP_GATEWAY_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x02];
 
-fn slirp_net_enabled() -> bool {
-    SLIRP_NET.load(Ordering::Relaxed)
+    /// When set, boots wire virtio-net to the slirp LOCAL stack (DHCP/ARP/ICMP) instead of loopback.
+    /// Single-threaded browser → a plain atomic suffices. Set via `setSlirpNet` BEFORE booting.
+    static SLIRP_NET: AtomicBool = AtomicBool::new(false);
+
+    pub(crate) fn slirp_net_enabled() -> bool {
+        SLIRP_NET.load(Ordering::Relaxed)
+    }
+
+    /// Choose the slirp local network stack (vs the default loopback) for subsequent boots.
+    #[wasm_bindgen(js_name = setSlirpNet)]
+    pub fn set_slirp_net(on: bool) {
+        SLIRP_NET.store(on, Ordering::Relaxed);
+    }
 }
-
-/// Choose the slirp local network stack (vs the default loopback) for subsequent boots.
-#[wasm_bindgen(js_name = setSlirpNet)]
-pub fn set_slirp_net(on: bool) {
-    SLIRP_NET.store(on, Ordering::Relaxed);
-}
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+use slirp_net::{SLIRP_GATEWAY_MAC, slirp_net_enabled};
 
 // E3-T02 lazy-fetch backend. Compiled where it is actually used: the normal wasm build (behind
 // `newChunkedDisk`) and native unit tests. Excluded from the zicsr-stub wasm build and the native
