@@ -21,6 +21,8 @@ pub mod nat;
 #[cfg(feature = "native")]
 pub mod native;
 #[cfg(feature = "native")]
+pub mod native_resolver;
+#[cfg(feature = "native")]
 pub mod pump;
 pub mod resolver;
 pub mod stack;
@@ -37,6 +39,8 @@ pub use dns::{Answer, Query, parse_query};
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
 #[cfg(feature = "native")]
 pub use native::NativeConnector;
+#[cfg(feature = "native")]
+pub use native_resolver::NativeResolver;
 #[cfg(feature = "native")]
 pub use pump::{PumpStats, pump_flow};
 pub use resolver::{DnsForwarder, Resolution, Resolver, TtlCache};
