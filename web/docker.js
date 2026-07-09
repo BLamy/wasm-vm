@@ -134,7 +134,13 @@ function injectCommand() {
   if (!session || session.injected) return;
   session.injected = true;
   clearTimeout(session.fallback);
-  window.wvmDemo.sendInput(new TextEncoder().encode(RUN_CMD));
+  // CRITICAL: injectCommand runs from inside onConsoleChunk, which the guest calls SYNCHRONOUSLY
+  // while emitting output (machine.runChunk → onOutput → emitConsole → onConsoleChunk). Calling
+  // sendInput here would re-enter the wasm machine mid-runChunk, which the machine forbids and
+  // rejects ("re-entrant call into WasmMachine") — the command was silently dropped and the guest
+  // never ran it. Defer to a fresh macrotask so sendInput lands AFTER runChunk has returned.
+  const cmd = new TextEncoder().encode(RUN_CMD);
+  setTimeout(() => window.wvmDemo.sendInput(cmd), 0);
 }
 
 // Decide when the guest is ready for the command: after the busybox init banner AND a shell prompt.
