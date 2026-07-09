@@ -116,6 +116,60 @@ fn build_layout_cfg(layout: &Path, config_json: &[u8]) -> String {
     mdig
 }
 
+#[cfg(unix)]
+#[test]
+fn write_tree_dedups_identical_content_into_one_inode() {
+    use std::os::unix::fs::MetadataExt;
+    // busybox-shaped: several paths resolve to the SAME content (its ~400 applets all resolve to the
+    // one binary). write_tree must write the bytes once and hardlink the rest — one physical copy.
+    let bin = b"\x7fELF-riscv-busybox".to_vec();
+    let mut tree = Tree::new();
+    tree.insert("bin".into(), Node::Dir { mode: 0o755 });
+    for name in ["busybox", "sh", "[", "ls", "cat"] {
+        tree.insert(
+            format!("bin/{name}"),
+            Node::File {
+                mode: 0o755,
+                data: bin.clone(),
+            },
+        );
+    }
+    // A different file must NOT be linked to the busybox inode.
+    tree.insert(
+        "etc/motd".into(),
+        Node::File {
+            mode: 0o644,
+            data: b"hello".to_vec(),
+        },
+    );
+    let td = tempfile::tempdir().unwrap();
+    write_tree(&tree, td.path()).unwrap();
+
+    let ino = |p: &str| std::fs::metadata(td.path().join(p)).unwrap().ino();
+    let base = ino("bin/busybox");
+    for p in ["bin/sh", "bin/[", "bin/ls", "bin/cat"] {
+        assert_eq!(
+            ino(p),
+            base,
+            "{p} shares the single busybox inode (no bloat)"
+        );
+        assert_eq!(std::fs::read(td.path().join(p)).unwrap(), bin);
+    }
+    assert_ne!(
+        ino("etc/motd"),
+        base,
+        "distinct content keeps its own inode"
+    );
+    // On-disk usage is ~one binary, not five.
+    let nlink = std::fs::metadata(td.path().join("bin/busybox"))
+        .unwrap()
+        .nlink();
+    assert!(
+        nlink >= 5,
+        "the shared inode has all the applet links (nlink={nlink})"
+    );
+}
+
 #[test]
 fn unpack_merges_layers_with_override_and_whiteout() {
     let td = tempfile::tempdir().unwrap();
