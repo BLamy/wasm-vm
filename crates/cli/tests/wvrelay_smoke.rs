@@ -95,9 +95,16 @@ async fn the_deployed_wvrelay_binary_round_trips_a_real_websocket_to_a_real_back
     let (_relay, relay_addr) = spawn_relay(); // real process; killed on drop
 
     let tcp = TcpStream::connect(relay_addr).await.expect("connect relay");
-    let (mut ws, _resp) = client_async(format!("ws://{relay_addr}/"), tcp)
-        .await
-        .expect("ws handshake with the spawned relay");
+    // Bound the WS upgrade: if the binary bound the port but isn't actually serving (a broken relay),
+    // `client_async` would await a handshake response that never comes and HANG the test — so a
+    // regression must fail fast and clean, not stall until the CI job timeout.
+    let (mut ws, _resp) = timeout(
+        Duration::from_secs(10),
+        client_async(format!("ws://{relay_addr}/"), tcp),
+    )
+    .await
+    .expect("ws handshake timed out — the spawned relay bound the port but isn't serving")
+    .expect("ws handshake with the spawned relay");
 
     // Relay sends HELLO first; complete the handshake.
     assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
