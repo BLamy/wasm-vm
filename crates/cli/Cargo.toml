@@ -11,6 +11,13 @@ license.workspace = true
 name = "wasm-vm"
 path = "src/main.rs"
 
+# E3-net slice 2c: the deployable ws-proxy relay server. `serve_ws` is a library fn in wasm-vm-slirp
+# (proven over a real WebSocket in ws_adapter_tests); this binary is the runnable artifact the browser
+# WsConnector (slice 2b) connects to. Plaintext ws://; TLS terminates at the ingress.
+[[bin]]
+name = "wvrelay"
+path = "src/bin/wvrelay.rs"
+
 [features]
 # Passthrough of core's quarantined zicsr-stub (E0-T19). Declaring it here means
 # `--all-features` (what CI clippy runs) enables it on THIS crate too, so the boot
@@ -52,6 +59,9 @@ criterion = { version = "0.5", default-features = false, features = ["cargo_benc
 # craft the guest SYN/data frames fed through the NetBackend.
 tokio = { version = "1", default-features = false, features = ["rt", "rt-multi-thread", "macros", "time", "sync", "net", "io-util"] }
 smoltcp = { version = "0.13", default-features = false, features = ["std", "medium-ethernet", "proto-ipv4", "socket-tcp"] }
+# E3-net slice 2c: the wvrelay smoke test connects a REAL WebSocket client to the spawned binary.
+tokio-tungstenite = { version = "0.24", default-features = false, features = ["handshake"] }
+futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
 
 [[bench]]
 name = "interp"
