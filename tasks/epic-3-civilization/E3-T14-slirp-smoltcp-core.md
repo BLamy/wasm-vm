@@ -3,7 +3,7 @@ id: E3-T14
 epic: 3
 title: Slirp-style user-mode network core on smoltcp with NAT
 priority: 314
-status: in_progress
+status: implemented
 depends_on: [E3-T13, E3-T12]
 estimate: L
 capstone: false
@@ -19,6 +19,11 @@ entries, all with no privileged host networking. Architecture documented before 
 core slices until the Docker tab has one real bundled busybox Run (E3.5-T05a) and that same
 state reloads through snapshot restore (E3-T12). Slirp resumes after the visible path is
 undeniable.
+
+**IMPLEMENTATION SCOPE 2026-07-14:** E3-T14 v1 terminates guest TCP and internal DHCP UDP.
+Arbitrary external UDP needs a datagram-aware browser relay and is explicitly split to the
+E3-T18 transport follow-up; DNS boot wiring remains E3-T15. This is a visible deferral, not a
+claim that TCP-over-WebSocket preserves UDP datagrams.
 
 ## Context
 This is the largest networking task; the design doc is a deliverable, not an afterthought.
@@ -47,17 +52,17 @@ buffers.
   half-close (`shutdown(WR)`) test; large-transfer (100 MB) integrity test via sha256.
 
 ## Acceptance criteria
-- [ ] Native harness: booted Alpine fetches `http://192.0.2.1:8080/file` (a test-net
+- [x] Native harness: booted Alpine fetches `http://192.0.2.1:8080/file` (a test-net
       address the `NativeConnector` maps to a local hyper server) via `wget`; body sha256
       matches the served file — i.e., guest TCP through slirp to a real socket,
       content-identical.
-- [ ] 50 concurrent guest TCP connections complete with correct data (no cross-flow bleed —
+- [x] 50 concurrent guest TCP connections complete with correct data (no cross-flow bleed —
       each flow carries a distinct pattern, verified server-side).
-- [ ] 100 MB transfer both directions is content-identical and memory stays bounded
+- [x] 100 MB transfer both directions is content-identical and memory stays bounded
       (per-flow buffer cap enforced; assert peak RSS delta in test).
-- [ ] Guest `ping 10.0.2.2` gets ICMP replies; NAT entries expire (observe table size
+- [x] Guest `ping 10.0.2.2` gets ICMP replies; NAT entries expire (observe table size
       return to zero after idle timeout with time mocked or shortened).
-- [ ] Half-close works: guest `shutdown(WR)` still receives the server's remaining data.
+- [x] Half-close works: guest `shutdown(WR)` still receives the server's remaining data.
 
 ## Adversarial verification
 Attack flow control and teardown. Stall the server side of a transfer for 60 s mid-stream —
@@ -404,3 +409,42 @@ isolation clean. Findings folded in:
 **Next (pass 3b):** spawn the connect (kills the loop-stall + the Drop residual), then wire DHCP
 (`stack.run_dhcp`) + DNS/UDP services (`take_service_udp` + `UdpServices`) into the driver loop so a
 booted guest auto-configures eth0, then the env-gated booted-Alpine acceptance.
+
+### 2026-07-14 — worker — IMPLEMENTED at `01f901a`
+
+Claim: E3-T14's v1 TCP slirp path now works end to end in both native and browser Alpine. Stock
+OpenRC/`udhcpc` configures `eth0` as `10.0.2.15/24` with the default route through `10.0.2.2`; the
+gateway answers ICMP; guest TCP crosses smoltcp, the bounded connector, and a real host socket; full
+guest 4-tuples remain isolated even when 50 clients use the same destination; 100 MiB in each
+direction is byte-exact within the asserted queue/RSS bounds; and FIN/backpressure/refusal paths are
+covered. Browser WebSocket callbacks are polled from virtio-net, and `wvrelay` supports a deterministic
+TEST-NET-to-loopback mapping for repeatable acceptance. DNS names are not claimed here: completing
+Alpine name resolution is E3-T15; arbitrary external UDP is the explicit E3-T18 transport follow-up.
+
+Evidence and exact gates:
+
+- Native boot: `WASM_VM_SLIRP_HOST_MAP=192.0.2.1=127.0.0.1 target/release/wasm-vm boot
+  --kernel releases/kernel/6.6.63/Image --drive file=/tmp/wasm-vm-e3-t14-native.ext4
+  --net-slirp --append 'root=/dev/vda rw console=ttyS0 earlycon=sbi' --max-instrs 60000000000`.
+  Guest observation: DHCP lease `10.0.2.15`, default route `10.0.2.2`, ping 3/3, then
+  `wget -O /tmp/file http://192.0.2.1:8080/file`; guest and host SHA-256 both
+  `a8aa13fc1f45fd3401d649871ad303e662d7c202254fb8ea7e558fde11f766a2`; clean poweroff and
+  emulator exit 0.
+- Browser: `make web-build`, `WVRELAY_HOST_MAP=192.0.2.1=127.0.0.1 target/release/wvrelay
+  127.0.0.1:8081`, then one cache-disabled Playwright load of
+  `http://127.0.0.1:8123/?slirpRelay=ws://127.0.0.1:8081`. Stock Alpine repeated the same DHCP,
+  3/3 ping, 112-byte wget, and SHA-256 result. The in-page suite completed `126 passed, 0 failed`
+  in 179.5 s; the E3 user-mode-network pip rendered `cap-pip verified`; console had no application
+  errors (only the allowed favicon 404). Screenshots: `e3-t14-alpine-network.png` and
+  `e3-t14-roadmap.png`.
+- `cargo fmt --check`
+- `cargo clippy --workspace --all-targets --all-features -- -D warnings`
+- `cargo test --workspace` (full green run, including the 100,000,000-instruction debug timer leg;
+  slirp: 194 passed/1 ignored, outbound acceptance: 7/7, WebSocket connector: 5/5)
+- `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`
+- `make web-build`
+
+Mac evidence limitation: host `rr` is unavailable by platform policy. The handoff therefore carries
+the deterministic native/integration gates plus the real browser Alpine run and screenshots. A fresh
+verifier must still adversarially inspect this commit and either promote/refute it; only that session
+may set `verified`.
