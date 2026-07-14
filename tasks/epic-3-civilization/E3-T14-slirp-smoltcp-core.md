@@ -3,7 +3,7 @@ id: E3-T14
 epic: 3
 title: Slirp-style user-mode network core on smoltcp with NAT
 priority: 314
-status: implemented
+status: in_progress
 depends_on: [E3-T13, E3-T12]
 estimate: L
 capstone: false
@@ -448,3 +448,66 @@ Mac evidence limitation: host `rr` is unavailable by platform policy. The handof
 the deterministic native/integration gates plus the real browser Alpine run and screenshots. A fresh
 verifier must still adversarially inspect this commit and either promote/refute it; only that session
 may set `verified`.
+
+VERDICT: refuted
+
+### 2026-07-14 — adversarial verifier
+
+- **P1 external UDP NAT — FAILED.** Predicted a guest UDP datagram to an external address would
+  create the per-flow NAT entry and outbound datagram path required by the task Goal/Deliverable
+  (`E3-T14`: lines 12-16, 43-49). Observed `SlirpStack::accept_frame` deliberately returns `false`
+  for external UDP and `inject` only diverts internal service UDP (`crates/slirp/src/stack.rs:124-131,
+  289-305`); the focused `stack::tests::does_not_impersonate_external_hosts` probe passed with zero
+  egress. The handoff's claimed split is not backed by an implementation task: E3-T18 explicitly has
+  “No production integration” and mentions datagrams only as *future* UDP
+  (`E3-T18-webtransport-evaluation.md:12-21`). **Demand:** implement external UDP NAT here, or obtain
+  an explicit scope decision and create a concrete production UDP task before resubmitting; E3-T18
+  cannot carry this deliverable as written.
+- **P2 refused native connection — FAILED.** Predicted a connector refusal would give the guest RST
+  within the connect timeout (`E3-T14`: lines 72-73; design contract `docs/design/slirp.md:80`).
+  Observed the native CLI's async `Bridge` removes the listener/NAT entry and explicitly leaves the
+  guest to time out (`crates/slirp/src/bridge.rs:108-134`); its committed test passed by asserting
+  *empty* egress (`crates/slirp/src/bridge/tests.rs:127-151`). The synchronous browser/StdConnector
+  probe `guest_syn_to_a_refused_port_gets_reset_not_hung` passed, isolating the contradiction to the
+  native async path used by `--net-slirp`. **Demand:** abort/poll the guest socket before teardown and
+  add a full native-driver assertion that observes the RST promptly.
+- **P3 abrupt outbound reset — FAILED.** Predicted an outbound RST would surface as guest
+  `ECONNRESET`, not FIN (`E3-T14`: lines 69-70; design claim `docs/design/slirp.md:91-98`). Observed
+  `pump_flow` explicitly merges `Err(_)` with clean EOF and drops the channel
+  (`crates/slirp/src/pump.rs:73-92`); `Bridge::service` interprets that disconnect by calling
+  `tcp_close`, which emits a graceful FIN (`crates/slirp/src/bridge.rs:277-307`). **Demand:** preserve
+  EOF-vs-read-error through the pump and abort the guest socket on error, with a real reset probe.
+- **P4 accepted TCP core — HELD (limited).** Predicted same-endpoint port aliasing and bounded bulk
+  transfer would survive independent reruns. The 50-concurrent-flow test passed 50/50;
+  `hundred_mebibytes_each_way_are_exact_with_bounded_memory` passed
+  100 MiB in each direction in 39.90 s; the synchronous refused-port probe also passed. These establish
+  the happy TCP core but do not exercise or waive P1-P3.
+- **COVERAGE / NOVEL browser-transport attack — INSUFFICIENT.** The 112-byte browser wget exercises
+  the normal WebSocket message path, but no cited evidence forces the new transport's malformed-frame,
+  oversize-message, 32 MiB inbound-cap, 4 MiB outbound-cap, `onerror`, or `onclose` branches
+  (`crates/wasm/src/ws_transport.rs:49-86, 97-152`). The 100 MiB test uses `StdConnector`, not this
+  browser transport. **Demand:** record a browser/wasm run that forces each behavior mentioned by the
+  bounds/failure contract, or add deterministic wasm tests and classify the remaining callbacks.
+- **EVIDENCE — INSUFFICIENT.** The committed terminal screenshot genuinely shows browser Alpine DHCP,
+  3/3 gateway ping, the 112-byte wget, and the matching `web/file` SHA-256. But the native boot is only
+  a prose observation, `.playwright-mcp` metadata is untracked, and the handoff cites no guest trace,
+  digest, or replayable transcript (`E3-T14`: lines 424-449). E0-T16 is verified, so the repo policy
+  makes guest-layer evidence mandatory on this Mac (`AGENTS.md:91-98`). **Demand:** re-record the final
+  native and browser happy runs with committed/reopenable guest trace/digest references after P1-P3
+  are fixed.
+- **MOCK / ENV:** the TEST-NET host maps are explicit acceptance fixtures and the committed browser
+  file's SHA-256 matches the screenshot; no self-licking payload mismatch found. The maps prove only
+  deterministic TCP-to-loopback routing and do not stand in for external UDP or teardown behavior.
+- **SUITE:** no promotion while the task is refuted. Required future permanent artifacts are the
+  external-UDP NAT test, native async refusal/RST tests, outbound-reset distinction test, 60 s
+  stall-and-resume run, 1000-abandoned-flow expiry run, and 1-byte-framing 100 MiB run specified by
+  the task's own attack list.
+
+Commands: `cargo test -p wasm-vm-slirp --lib stack::tests::does_not_impersonate_external_hosts
+-- --exact --nocapture`; `cargo test -p wasm-vm-slirp --lib
+bridge::tests::connect_failure_tears_the_flow_down -- --exact --nocapture`; `cargo test -p
+wasm-vm-slirp --test outbound_sync guest_syn_to_a_refused_port_gets_reset_not_hung -- --exact
+--nocapture`; `cargo test -p wasm-vm-slirp --test outbound_sync
+fifty_concurrent_guest_connections_complete_without_cross_flow_bleed -- --exact --nocapture`;
+`cargo test -p wasm-vm-slirp --test outbound_sync
+hundred_mebibytes_each_way_are_exact_with_bounded_memory -- --exact --nocapture`.
