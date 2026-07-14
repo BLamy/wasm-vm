@@ -332,3 +332,42 @@ fn guest_half_close_is_tunnelled_so_a_read_then_reply_server_answers() {
         "the server replies only after EOF — receiving it proves the half-close was tunnelled"
     );
 }
+
+#[test]
+fn stalled_relay_upload_queue_is_bounded_and_reports_backpressure() {
+    let port = spawn_echo_server();
+    let (mut client, mut relay, conn) = new_pair(port);
+
+    // Complete HELLO + OPEN, including the relay's one INITIAL_WINDOW grant, then deliberately stop
+    // servicing the relay. The first window can leave immediately; only one additional window may be
+    // owned by the connector while the relay is stalled.
+    for _ in 0..20 {
+        relay.service();
+        if client.status(conn) == ConnStatus::Established {
+            break;
+        }
+    }
+    assert_eq!(client.status(conn), ConnStatus::Established);
+
+    let two_windows = vec![0x5a; 2 * INITIAL_WINDOW as usize];
+    assert_eq!(
+        client.send(conn, &two_windows),
+        INITIAL_WINDOW as usize,
+        "one bounded window is accepted per offer"
+    );
+    assert_eq!(
+        client.send(conn, &two_windows),
+        INITIAL_WINDOW as usize,
+        "after the granted window leaves, one bounded pending window is accepted"
+    );
+    assert_eq!(
+        client.send(conn, b"must backpressure"),
+        0,
+        "a stalled relay must close the caller-side window instead of growing the heap"
+    );
+    assert_eq!(
+        client.buffered_bytes(),
+        INITIAL_WINDOW as usize,
+        "connector-owned bytes stay at the explicit per-flow cap"
+    );
+}

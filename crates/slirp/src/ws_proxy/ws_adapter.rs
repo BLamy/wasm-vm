@@ -9,6 +9,7 @@
 
 use super::RelayServer;
 use futures_util::{SinkExt, StreamExt};
+use std::collections::BTreeMap;
 use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::mpsc;
 use tokio_tungstenite::accept_async;
@@ -21,12 +22,23 @@ const CHAN_DEPTH: usize = 64;
 /// A transient `accept` error (fd exhaustion, an aborted connection) must NOT kill the listener —
 /// the fd frees moments later — so it is backed off and retried rather than treated as fatal.
 pub async fn serve(listener: TcpListener, token: Vec<u8>) {
+    serve_with_host_map(listener, token, BTreeMap::new()).await;
+}
+
+/// Like [`serve`], with exact guest-host → relay-host rewrites. This is primarily a deterministic
+/// acceptance/development hook; an empty map is byte-for-byte the normal relay policy.
+pub async fn serve_with_host_map(
+    listener: TcpListener,
+    token: Vec<u8>,
+    host_map: BTreeMap<String, String>,
+) {
     loop {
         match listener.accept().await {
             Ok((tcp, _peer)) => {
                 let token = token.clone();
+                let host_map = host_map.clone();
                 tokio::spawn(async move {
-                    handle_conn(tcp, token).await;
+                    handle_conn(tcp, token, host_map).await;
                 });
             }
             Err(_) => {
@@ -38,7 +50,7 @@ pub async fn serve(listener: TcpListener, token: Vec<u8>) {
 }
 
 /// Upgrade one TCP connection to a WebSocket and bridge it to a fresh relay.
-async fn handle_conn(tcp: TcpStream, token: Vec<u8>) {
+async fn handle_conn(tcp: TcpStream, token: Vec<u8>, host_map: BTreeMap<String, String>) {
     let ws = match accept_async(tcp).await {
         Ok(ws) => ws,
         Err(_) => return, // failed upgrade → drop the connection
@@ -47,7 +59,7 @@ async fn handle_conn(tcp: TcpStream, token: Vec<u8>) {
 
     let (in_tx, in_rx) = mpsc::channel::<Vec<u8>>(CHAN_DEPTH);
     let (out_tx, mut out_rx) = mpsc::channel::<Vec<u8>>(CHAN_DEPTH);
-    tokio::spawn(RelayServer::new(in_rx, out_tx, token).run());
+    tokio::spawn(RelayServer::with_host_map(in_rx, out_tx, token, host_map).run());
 
     // Outbound: relay frames → WS binary messages.
     let writer = tokio::spawn(async move {

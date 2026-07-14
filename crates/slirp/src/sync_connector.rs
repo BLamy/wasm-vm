@@ -75,6 +75,13 @@ pub trait SyncConnector {
     /// `SHUTDOWN_WR`). No-op for an unknown id.
     fn shutdown_write(&mut self, id: ConnId);
 
+    /// Bytes currently owned by the connector while waiting for either transport credit or the
+    /// caller to drain them. This is a diagnostic used by the large-transfer acceptance test to
+    /// prove the user-space queues stay bounded; socket/kernel buffers are intentionally excluded.
+    fn buffered_bytes(&self) -> usize {
+        0
+    }
+
     /// Tear down `id` (guest RST / flow eviction / both sides done). Idempotent; an unknown id is a
     /// no-op. After this the id is dead — `status` reports `Failed`.
     fn close(&mut self, id: ConnId);

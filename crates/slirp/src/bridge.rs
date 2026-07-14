@@ -12,11 +12,13 @@
 //! the guest↔echo round trip through `service` is proven end-to-end in `e2e_pump_stack.rs`.
 
 use std::collections::BTreeMap;
+#[cfg(test)]
 use std::net::IpAddr;
 
 use smoltcp::iface::SocketHandle;
 
 use crate::connector::OutboundConnector;
+use crate::dhcp::DhcpServer;
 use crate::manager::{Action, FlowManager};
 use crate::nat::FlowKey;
 use crate::stack::SlirpStack;
@@ -94,6 +96,12 @@ impl<C: OutboundConnector> Bridge<C> {
         self.stack.poll(now_ms);
     }
 
+    /// Answer every DHCP datagram diverted by the stack. The native CLI driver calls this beside
+    /// `poll` so an actual Alpine guest can configure eth0 without a test-only static address.
+    pub fn run_dhcp(&mut self, dhcp: &DhcpServer) -> usize {
+        self.stack.run_dhcp(dhcp)
+    }
+
     /// Process one guest frame: classify it, drive the flow lifecycle, and hand the frame to the
     /// stack (whose `accept_frame` filter is the real gate — it admits ARP/ICMP for the gateway and
     /// TCP for opened endpoints, drops the rest). On a NEW flow (`Connect`) we open a listening socket
@@ -105,10 +113,8 @@ impl<C: OutboundConnector> Bridge<C> {
         if let Some(evicted) = out.evicted {
             self.teardown(&evicted);
         }
-        if let Action::Connect(key) = out.action
-            && let IpAddr::V4(dst) = key.dst_ip
-        {
-            let handle = self.stack.open_tcp(dst, key.dst_port);
+        if let Action::Connect(key) = out.action {
+            let handle = self.stack.open_tcp_flow(&key);
             match self.connector.connect(key.dst_ip, key.dst_port).await {
                 Ok(stream) => {
                     self.flows.insert(

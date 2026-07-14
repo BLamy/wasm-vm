@@ -72,6 +72,10 @@ pub struct SlirpLocalBackend {
     connector: Option<Box<dyn SyncConnector>>,
     manager: FlowManager,
     flows: BTreeMap<FlowKey, Flow>,
+    /// The machine calls `NetBackend::poll` every instruction boundary. Browser WebSocket callbacks
+    /// can only run between wasm calls, so servicing more than once per monotonic millisecond is
+    /// wasted work; this keeps the idle/run-loop cost bounded without adding a timer/runtime.
+    last_background_poll_ms: Option<i64>,
 }
 
 impl SlirpLocalBackend {
@@ -87,6 +91,7 @@ impl SlirpLocalBackend {
             connector: None,
             manager: FlowManager::new(MAX_FLOWS),
             flows: BTreeMap::new(),
+            last_background_poll_ms: None,
         }
     }
 
@@ -101,6 +106,26 @@ impl SlirpLocalBackend {
         let mut be = Self::new(gateway_mac, clock);
         be.connector = Some(connector);
         be
+    }
+
+    /// User-space bytes waiting on either side of the flow-control boundary. This diagnostic makes
+    /// the large-transfer acceptance non-vacuous: a 100 MB stream must not imply a 100 MB queue.
+    pub fn buffered_bytes(&self) -> usize {
+        let flows = self.flows.values().fold(0usize, |total, flow| {
+            total
+                .saturating_add(flow.pending_out.len())
+                .saturating_add(flow.pending_in.len())
+        });
+        flows.saturating_add(
+            self.connector
+                .as_ref()
+                .map_or(0, |connector| connector.buffered_bytes()),
+        )
+    }
+
+    /// Number of live NATed TCP flows, exposed for acceptance/diagnostic assertions.
+    pub fn flow_count(&self) -> usize {
+        self.flows.len()
     }
 
     /// Classify a guest frame (only when a connector is attached) and start any new outbound dial. On
@@ -120,7 +145,7 @@ impl SlirpLocalBackend {
         {
             // Optimistic accept: open the listening socket so the guest handshake completes locally,
             // and start the outbound dial in parallel. A dial failure is surfaced as a RST in `pump`.
-            let handle = self.stack.open_tcp(dst, key.dst_port);
+            let handle = self.stack.open_tcp_flow(&key);
             let conn = self.connector.as_mut().unwrap().connect(dst, key.dst_port);
             self.flows.insert(
                 key,
@@ -175,13 +200,18 @@ impl SlirpLocalBackend {
             }
 
             // guest → remote: drain what the guest sent into the flow's pending buffer, then offer it.
-            let from_guest = self.stack.tcp_recv(handle);
-            if !from_guest.is_empty() {
-                self.flows
-                    .get_mut(&key)
-                    .unwrap()
-                    .pending_out
-                    .extend_from_slice(&from_guest);
+            // Do not drain another smoltcp receive window until the previous connector tail has
+            // cleared. Leaving bytes in the fixed-size socket buffer is how TCP backpressure reaches
+            // the guest; repeatedly draining into `pending_out` would make a stalled upload unbounded.
+            if self.flows[&key].pending_out.is_empty() {
+                let from_guest = self.stack.tcp_recv(handle);
+                if !from_guest.is_empty() {
+                    self.flows
+                        .get_mut(&key)
+                        .unwrap()
+                        .pending_out
+                        .extend_from_slice(&from_guest);
+                }
             }
             let pending = core::mem::take(&mut self.flows.get_mut(&key).unwrap().pending_out);
             if !pending.is_empty() {
@@ -191,15 +221,12 @@ impl SlirpLocalBackend {
             }
 
             // Guest FIN → forward a write-shutdown to the remote, once, after the pending drained.
-            // The `status == Established` guard is REQUIRED (critic MAJOR): during the optimistic-accept
-            // window the guest-facing socket sits in `SynReceived`, where smoltcp's `may_recv()` is
-            // already `false` — without this guard the branch fires on the first pass (before the guest
-            // has sent any FIN), calls a no-op `shutdown_write` on the still-`Connecting` conn, and
-            // latches `guest_fin_sent`, so the guest's REAL FIN is never forwarded and a
-            // read-then-reply server hangs. `may_recv()` is only a true guest-FIN signal once
-            // Established.
+            // The exact stack state matters: `may_recv()` is ALSO false in `SynReceived`, and a fast
+            // connector can become Established before the guest ACK reaches this listener. Treating
+            // that optimistic-accept window as a FIN silently half-closes early under concurrency.
+            // `CloseWait` is the unambiguous state after the guest (our TCP peer) actually sent FIN.
             if status == ConnStatus::Established
-                && !self.stack.tcp_may_recv(handle)
+                && self.stack.tcp_state(handle) == Some(smoltcp::socket::tcp::State::CloseWait)
                 && self.flows[&key].pending_out.is_empty()
                 && !self.flows[&key].guest_fin_sent
             {
@@ -211,13 +238,18 @@ impl SlirpLocalBackend {
             // socket's tx window accepts — keeping the unaccepted tail for next pass. `tcp_send` returns
             // < len when the guest drains slower than the remote sends; discarding that tail silently
             // truncates any bulk download (critic MAJOR). This mirrors the guest→remote `pending_out`.
-            let from_remote = self.connector.as_mut().unwrap().recv(conn);
-            if !from_remote.is_empty() {
-                self.flows
-                    .get_mut(&key)
-                    .unwrap()
-                    .pending_in
-                    .extend_from_slice(&from_remote);
+            // Mirror the outbound rule: while a tail is waiting for the guest-facing socket, leave
+            // new bytes in the connector's bounded queue so its credit/window backpressures the
+            // remote. Never accumulate one `recv` result per service pass in `pending_in`.
+            if self.flows[&key].pending_in.is_empty() {
+                let from_remote = self.connector.as_mut().unwrap().recv(conn);
+                if !from_remote.is_empty() {
+                    self.flows
+                        .get_mut(&key)
+                        .unwrap()
+                        .pending_in
+                        .extend_from_slice(&from_remote);
+                }
             }
             let pending_in = core::mem::take(&mut self.flows.get_mut(&key).unwrap().pending_in);
             if !pending_in.is_empty() {
@@ -275,6 +307,18 @@ fn is_terminal(state: smoltcp::socket::tcp::State) -> bool {
 }
 
 impl NetBackend for SlirpLocalBackend {
+    fn poll(&mut self) {
+        if self.connector.is_none() {
+            return;
+        }
+        let now = (self.clock)();
+        if self.last_background_poll_ms == Some(now) {
+            return;
+        }
+        self.last_background_poll_ms = Some(now);
+        self.service();
+    }
+
     fn tx(&mut self, frame: &[u8]) {
         self.classify_and_connect(frame);
         self.stack.inject(frame.to_vec());
@@ -293,11 +337,9 @@ impl NetBackend for SlirpLocalBackend {
     }
 
     fn rx_ready(&self) -> bool {
-        // A pure predicate (`&self`, no servicing): the trait forbids re-entering the machine here, and
-        // servicing needs `&mut`. Outbound data is pumped by `tx` (on a guest frame) and `rx` (on a
-        // poll). NOTE (slice 2a → 2c): the *device's* receiveq only calls `rx` when this returns true,
-        // so async remote→guest delivery through the booted device needs a periodic pump / kick — the
-        // browser wiring (slice 2c). Slice 2a proves the sync pump by driving `tx`/`rx` directly.
+        // Pure readiness predicate. Event-driven connector work is advanced by `NetBackend::poll`
+        // before the device asks this question, so remote data can wake a booted guest even when the
+        // guest is waiting and emits no further frames.
         !self.egress.is_empty()
     }
 }

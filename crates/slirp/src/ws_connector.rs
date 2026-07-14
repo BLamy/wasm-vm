@@ -16,7 +16,7 @@
 //! window that bounds buffering and can't overrun the guest.
 
 extern crate alloc;
-use alloc::collections::BTreeMap;
+use alloc::collections::{BTreeMap, VecDeque};
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::net::Ipv4Addr;
@@ -25,6 +25,11 @@ use crate::connector::ConnectError;
 use crate::sync_connector::{ConnId, ConnStatus, SyncConnector};
 use crate::ws_proxy::relay::INITIAL_WINDOW;
 use crate::ws_proxy::{Frame, MuxEvent, Role, Session};
+
+/// Per-flow guest→relay queue cap. The relay grants this same amount of initial credit; accepting
+/// more while that credit is exhausted would merely move an unbounded stalled upload into the wasm
+/// heap instead of closing the guest TCP window.
+const MAX_PENDING_TX_BYTES: usize = INITIAL_WINDOW as usize;
 
 /// Carries encoded ws-proxy [`Frame`]s over a transport, decoupled from the protocol state machine.
 /// The browser implements this with a JS `WebSocket`; native tests with an in-process channel. All
@@ -50,7 +55,7 @@ struct Conn {
     /// Bytes received from the relay, awaiting the caller's `recv`.
     rx: Vec<u8>,
     /// Guest→remote bytes not yet sent (blocked on the send window). Re-offered each pump.
-    pending_tx: Vec<u8>,
+    pending_tx: VecDeque<u8>,
     /// The caller half-closed (`shutdown_write`); forward a `SHUTDOWN_WR` once `pending_tx` drains.
     want_shutdown: bool,
     /// We already forwarded the shutdown; don't repeat.
@@ -284,7 +289,7 @@ impl<T: FrameTransport> SyncConnector for WsConnector<T> {
                 port,
                 status: ConnStatus::Connecting,
                 rx: Vec::new(),
-                pending_tx: Vec::new(),
+                pending_tx: VecDeque::new(),
                 want_shutdown: false,
                 shutdown_done: false,
             },
@@ -322,23 +327,23 @@ impl<T: FrameTransport> SyncConnector for WsConnector<T> {
 
     fn send(&mut self, id: ConnId, data: &[u8]) -> usize {
         self.pump();
-        let Some(c) = self.conns.get_mut(&id) else {
-            return 0;
+        let accepted = {
+            let Some(c) = self.conns.get_mut(&id) else {
+                return 0;
+            };
+            // Only a hard failure refuses new sends. `Closed` here means the REMOTE half-closed
+            // (`PeerShutdown` — no more remote→guest bytes); TCP leaves the guest→remote direction
+            // open, so the guest may still write (critic MINOR).
+            if matches!(c.status, ConnStatus::Failed(_)) {
+                return 0;
+            }
+            let room = MAX_PENDING_TX_BYTES.saturating_sub(c.pending_tx.len());
+            let accepted = room.min(data.len());
+            c.pending_tx.extend(data[..accepted].iter().copied());
+            accepted
         };
-        // Only a hard failure refuses new sends. `Closed` here means the REMOTE half-closed
-        // (`PeerShutdown` — no more remote→guest bytes); TCP leaves the guest→remote direction open, so
-        // the guest may still write (critic MINOR). This matches `StdConnector`, whose socket still
-        // accepts writes after a remote FIN. A send on a fully-reaped stream no-ops harmlessly in
-        // `flush_stream` (the mux returns `UnknownStream`).
-        if matches!(c.status, ConnStatus::Failed(_)) {
-            return 0;
-        }
-        // Queue it all; `flush_stream` sends what the window allows now and keeps the rest. Returning
-        // the full length is correct — the connector owns the buffered tail (lossless), like the
-        // native StdConnector's caller contract.
-        c.pending_tx.extend_from_slice(data);
         self.pump();
-        data.len()
+        accepted
     }
 
     fn shutdown_write(&mut self, id: ConnId) {
@@ -346,6 +351,13 @@ impl<T: FrameTransport> SyncConnector for WsConnector<T> {
             c.want_shutdown = true;
         }
         self.pump();
+    }
+
+    fn buffered_bytes(&self) -> usize {
+        self.conns
+            .values()
+            .map(|c| c.rx.len().saturating_add(c.pending_tx.len()))
+            .sum()
     }
 
     fn close(&mut self, id: ConnId) {

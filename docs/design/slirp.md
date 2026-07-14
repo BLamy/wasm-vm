@@ -3,9 +3,10 @@
 A user-mode TCP/IP stack that terminates the guest's ethernet world entirely in Rust, so the guest
 gets outbound networking (DNS, HTTP, `apk`, pulling OCI images from inside the guest) with **no
 privileged host networking** — no TUN/TAP, no root, works in a browser tab. smoltcp parses and
-answers the guest's frames; guest-initiated TCP/UDP flows are NATed onto an abstract
-`OutboundConnector`, which the native harness backs with real `tokio` sockets (so the whole thing is
-testable against real localhost servers without a guest boot).
+answers the guest's frames; guest-initiated TCP flows are NATed onto abstract connector traits. The
+native harness backs them with real sockets, while the browser tunnels them over a multiplexed
+WebSocket to `wvrelay`. Internal UDP is implemented for DHCP and DNS; arbitrary external UDP is
+explicitly deferred (see Out of scope).
 
 This is the largest networking task; it lands in passes. **This doc is a deliverable and is kept in
 sync with the code** — a contract stated here but not implemented is a bug.
@@ -15,13 +16,14 @@ sync with the code** — a contract stated here but not implemented is a bug.
 | Role | Address |
 |---|---|
 | Guest subnet | `10.0.2.0/24` |
-| Guest host | `10.0.2.15` (assigned by DHCP — E3-T15) |
+| Guest host | `10.0.2.15` (assigned by the in-stack DHCP server) |
 | Gateway (us) | `10.0.2.2` |
 | DNS (us) | `10.0.2.3` |
 
-The slirp stack owns `10.0.2.2` and `10.0.2.3`: it answers ARP for them, replies to ICMP echo at
-`10.0.2.2`, and (E3-T15) serves DHCP + DNS. Everything else the guest sends to is treated as an
-external destination and NATed outbound.
+The slirp stack owns `10.0.2.2` and `10.0.2.3`: it answers ARP, replies to ICMP echo at
+`10.0.2.2`, and serves DHCP. The DNS parser/forwarder/DoH and OS-resolver cores exist under E3-T15;
+the remaining work there is wiring the browser resolver into the synchronous backend and proving
+name resolution in booted Alpine. External TCP destinations are NATed outbound.
 
 ## Architecture
 
@@ -32,13 +34,14 @@ external destination and NATed outbound.
     the E3-T13 NetBackend seam) │      │              │ answers ARP/ICMP,      │
                                 │      │              │ promiscuous TCP accept │
                                 │      ▼              ▼                        │
-                                │   FlowTable ◀──▶ per-flow bridge task        │
+                                │   FlowTable ◀──▶ bounded per-flow pump     │
                                 │  (NAT, timeouts)     │                       │
                                 └──────────────────────┼───────────────────────┘
                                                        ▼
-                                        OutboundConnector::connect(host,port)
-                                          → NativeConnector (tokio)  [tests]
-                                          → E3-T16/T17 transports    [browser]
+                                        connector(host, port)
+                                          → NativeConnector (tokio)
+                                          → StdConnector (sync tests)
+                                          → WsConnector → wvrelay [browser]
 ```
 
 - **phy::Device glue** *(pass 2a — implemented, `device.rs`)* — a `smoltcp::phy::Device` impl over
@@ -47,17 +50,18 @@ external destination and NATed outbound.
 - **Interface** *(pass 2a/2f, `stack.rs`)* — a smoltcp `Interface` configured with the gateway IP
   `10.0.2.2/24`; answers **ARP** and **ICMP echo** for it (pass 2a). **Promiscuous TCP accept**
   (pass 2f): `Interface::set_any_ip(true)` makes it process guest packets to ANY dst IP, and
-  `SlirpStack::open_tcp(dst, port)` adds a smoltcp TCP socket LISTENING on that external endpoint —
+  `SlirpStack::open_tcp_flow(key)` adds a smoltcp TCP socket LISTENING on that external endpoint —
   so a guest SYN to an arbitrary external `IP:port` completes the handshake (SYN → SYN-ACK, verified
   by frame injection). **`any_ip` is GATED by a frame filter** (`accept_frame` in `inject`): smoltcp
   only ever sees ARP-for-the-gateway, IPv4-to-the-gateway (ICMP echo / local TCP), and TCP to an
-  endpoint we've `open_tcp`'d. Everything else — external ICMP, external UDP, un-opened-flow TCP,
+  endpoint we've opened. Everything else — external ICMP, external UDP, un-opened-flow TCP,
   non-gateway ARP — is dropped BEFORE smoltcp, so the stack never forges a reply *as* an external
   host it hasn't opened a flow for (without the filter, `any_ip` made smoltcp answer `ping 8.8.8.8`,
   RST an un-opened SYN, and ICMP-unreachable external UDP — all as the impersonated host; critic
-  CRITICAL). The async **byte-bridge** from an accepted socket to `OutboundConnector::connect` (with
-  backpressure/half-close) is the next slice; the driver must `open_tcp` a flow BEFORE injecting its
-  SYN.
+  CRITICAL). Concurrent connections to the same external `IP:port` are demultiplexed by a unique
+  smoltcp-local port alias per full guest 4-tuple; ingress/egress TCP ports and checksums are rewritten
+  at the stack boundary, so guest and real server still see the original port. This is load-bearing:
+  50 simultaneous same-endpoint flows are byte-distinct in the acceptance suite.
 - **OutboundConnector** — the trait that decouples the stack from *how* bytes leave the process.
   The real signature uses the explicit `-> impl Future + Send` form (not `async fn`) so the returned
   future is `Send`-bound without tripping the `async_fn_in_trait` lint:
@@ -69,29 +73,34 @@ external destination and NATed outbound.
           -> impl Future<Output = Result<Self::Conn, ConnectError>> + Send;
   }
   ```
-  `NativeConnector` = `tokio::net::TcpStream` (tests + native CLI). Browser transports (E3-T16/T17)
-  implement the same trait. **Contract:** `connect` either yields a duplex byte stream or fails
+  `NativeConnector` = `tokio::net::TcpStream` (tests + native CLI). The browser uses the synchronous
+  sibling trait `SyncConnector`: `WsConnector` multiplexes flow-control-aware streams over a browser
+  `WebSocket` to `wvrelay`, which owns the real sockets. **Contract:** connect either yields a duplex
+  stream or fails
   within the connect timeout with a typed error the stack maps to a guest RST.
 - **FlowTable** — the NAT table (this pass): entries keyed by `(proto, guest_ip, guest_port,
   dst_ip, dst_port)`, each with a last-activity timestamp and a per-protocol idle timeout (TCP
   **2 h**, UDP **30 s**). A shorter tier for TCP handshaking/closing states needs per-flow TCP state,
   which the bridge tracks in **pass 2** — pass 1 keys the timeout on the protocol only. Bounded total
-  entries (LRU eviction); per-flow buffers bounded in pass 2 (backpressure, not unbounded growth).
+  entries (LRU eviction); per-flow buffers and WebSocket queues have explicit hard caps.
   Deterministic iteration (`BTreeMap`, not `HashMap`). **Time is injected** (`now_ms` per call);
   callers must pass a monotonic clock (a backwards `now` would shorten a flow's life).
 
-## Flow control (the hard part — pass 2)
+## Flow control
 
 Transport backpressure must propagate into smoltcp's window and back: when the outbound side stalls,
 we stop reading from the smoltcp socket → its receive window closes → the guest sender stalls; when
 the guest stalls, we stop reading the outbound socket. Per-flow buffers are capped, so a 60 s server
-stall mid-stream must not grow memory past the cap, and the flow must resume. RST/FIN propagate in
-both directions; an abrupt outbound RST surfaces to the guest as `ECONNRESET` promptly, not a hang.
+stall mid-stream must not grow memory past the cap, and the flow must resume. The local backend only
+drains another smoltcp window when its previous tail is empty; `WsConnector` accepts at most one
+256 KiB pending window per flow. RST/FIN propagate in both directions, including guest half-close.
+The permanent acceptance streams 100 MiB each way and asserts byte identity, connector/backend queue
+bounds, and peak-RSS delta.
 
 ## NAT table lifecycle
 
 - **Create** on the guest's first packet of a flow (TCP SYN / first UDP datagram).
-- **Refresh** last-activity on every packet in either direction.
+- **Refresh** last-activity on guest packets for the tracked flow.
 - **Expire** by idle timeout (swept lazily on access + on a periodic tick); on expiry the outbound
   socket is closed and, for TCP, a RST is sent to the guest if still open.
 - **Bound**: a hard cap on total entries; past the cap, the oldest idle entry is evicted (its socket
@@ -105,7 +114,10 @@ both directions; an abrupt outbound RST surfaces to the guest as `ECONNRESET` pr
 - **IPv6** — v1 is IPv4 only.
 - **Raw sockets / ICMP beyond echo-to-gateway** — `ping` to the gateway works (pass 2a); arbitrary
   ICMP passthrough is out of scope.
-- **DHCP / DNS server** — E3-T15 (this crate provides the hooks; the servers land there).
+- **Arbitrary external UDP NAT** — v1 exposes only internal UDP services (DHCP and DNS). Browser UDP
+  needs a datagram-aware relay protocol rather than pretending a TCP stream preserves datagrams.
+- **Complete DNS wiring/boot proof** — E3-T15. DHCP is wired and proven in native + browser Alpine;
+  DNS core modules exist, but the browser DoH transport is not yet attached to `SlirpLocalBackend`.
 
 ## Passes
 
@@ -120,7 +132,8 @@ both directions; an abrupt outbound RST surfaces to the guest as `ECONNRESET` pr
    (`tcp.rs`); the `FlowManager` control plane (`manager.rs`); and **promiscuous TCP accept**
    (`any_ip` + `open_tcp`, `stack.rs`) — a guest SYN to an arbitrary external host handshakes
    (SYN → SYN-ACK).
-4. **Pass 2b (next — the async byte-bridge):** wire the accepted smoltcp socket ⇄
-   `NativeConnector` with backpressure/half-close, driven by the `FlowManager` actions, then the
-   native integration tests (HTTP GET through slirp to a local server; 50-concurrent; 100 MB
-   integrity). The booted-Alpine acceptance leg is later still (long boot, env-gated).
+4. **Data paths (done):** async `Bridge` + `NativeConnector` for the CLI, synchronous
+   `SlirpLocalBackend` + `StdConnector` for native acceptance, and `WsConnector` + browser
+   `WebSocket` + `wvrelay` for wasm. DHCP is driven in both native and browser backends. Evidence:
+   real browser Alpine DHCP/ping/wget with a host-matching SHA-256; 50 concurrent distinct flows;
+   100 MiB byte-exact each direction with bounded memory; half-close/refusal/backpressure suites.

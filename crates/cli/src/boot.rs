@@ -73,8 +73,8 @@ pub struct BootArgs {
     #[arg(long)]
     pub net: bool,
     /// E3-T14: attach virtio-net (slot 1) backed by the slirp user-mode network stack instead of
-    /// loopback — guest-initiated TCP is NATed onto real outbound sockets. Takes precedence over
-    /// `--net`. (DHCP/DNS auto-config is a later pass; for now a guest needs a static address.)
+    /// loopback — DHCP configures `eth0`, and guest-initiated TCP is NATed onto real outbound
+    /// sockets. Takes precedence over `--net`. DNS remains a follow-up.
     #[arg(long)]
     pub net_slirp: bool,
 }

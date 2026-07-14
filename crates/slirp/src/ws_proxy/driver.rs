@@ -20,7 +20,7 @@
 //!   queued data to the window (256 KiB) and can never freeze the shared main loop or other streams.
 
 use super::{Frame, RelayCore, RelayError};
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::sync::Arc;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
@@ -90,6 +90,9 @@ pub struct RelayServer {
     inbound: mpsc::Receiver<Vec<u8>>,
     outbound: mpsc::Sender<Vec<u8>>,
     token: Vec<u8>,
+    /// Optional exact host rewrites for deterministic/local deployments (for example the E3-T14
+    /// acceptance address 192.0.2.1 → 127.0.0.1). Empty in production by default.
+    host_map: BTreeMap<String, String>,
 }
 
 impl RelayServer {
@@ -103,6 +106,22 @@ impl RelayServer {
             inbound,
             outbound,
             token,
+            host_map: BTreeMap::new(),
+        }
+    }
+
+    pub fn with_host_map(
+        inbound: mpsc::Receiver<Vec<u8>>,
+        outbound: mpsc::Sender<Vec<u8>>,
+        token: Vec<u8>,
+        host_map: BTreeMap<String, String>,
+    ) -> Self {
+        Self {
+            core: RelayCore::new(),
+            inbound,
+            outbound,
+            token,
+            host_map,
         }
     }
 
@@ -230,6 +249,7 @@ impl RelayServer {
         for op in actions.socket_ops {
             match op {
                 super::SocketOp::Connect { stream, host, port } => {
+                    let host = self.host_map.get(&host).cloned().unwrap_or(host);
                     let tx = int_tx.clone();
                     tokio::spawn(async move {
                         match TcpStream::connect((host.as_str(), port)).await {

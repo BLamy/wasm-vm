@@ -12,9 +12,10 @@
 
 use std::collections::VecDeque;
 use std::io::{Read, Write};
-use std::net::{Ipv4Addr, TcpListener};
+use std::net::{Ipv4Addr, Shutdown, TcpListener};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicI64, Ordering};
+use std::sync::mpsc::{self, Receiver};
 use std::time::Duration;
 
 use smoltcp::iface::{Config, Interface, SocketSet};
@@ -138,11 +139,28 @@ impl Guest {
 
     /// Start connecting to `remote:port` (from `LOCAL_PORT`).
     fn connect(&mut self, remote: Ipv4Addr, port: u16) {
-        let sock = self.sockets.get_mut::<tcp::Socket>(self.tcp);
+        self.connect_socket(self.tcp, remote, port, LOCAL_PORT);
+    }
+
+    fn add_tcp_socket(&mut self) -> smoltcp::iface::SocketHandle {
+        self.sockets.add(tcp::Socket::new(
+            tcp::SocketBuffer::new(vec![0u8; 64 * 1024]),
+            tcp::SocketBuffer::new(vec![0u8; 64 * 1024]),
+        ))
+    }
+
+    fn connect_socket(
+        &mut self,
+        handle: smoltcp::iface::SocketHandle,
+        remote: Ipv4Addr,
+        port: u16,
+        local_port: u16,
+    ) {
+        let sock = self.sockets.get_mut::<tcp::Socket>(handle);
         sock.connect(
             self.iface.context(),
             (IpAddress::Ipv4(remote), port),
-            LOCAL_PORT,
+            local_port,
         )
         .expect("guest connect");
     }
@@ -154,6 +172,10 @@ impl Guest {
 
     fn socket(&mut self) -> &mut tcp::Socket<'static> {
         self.sockets.get_mut::<tcp::Socket>(self.tcp)
+    }
+
+    fn socket_by(&mut self, handle: smoltcp::iface::SocketHandle) -> &mut tcp::Socket<'static> {
+        self.sockets.get_mut::<tcp::Socket>(handle)
     }
 }
 
@@ -232,6 +254,139 @@ fn guest_tcp_reaches_a_real_echo_server_through_the_sync_backend() {
         received, MSG,
         "the guest must receive its bytes echoed back through the real outbound socket"
     );
+}
+
+fn flow_payload(flow: usize, len: usize) -> Vec<u8> {
+    let mut bytes = Vec::with_capacity(len);
+    bytes.extend_from_slice(&(flow as u16).to_be_bytes());
+    bytes.extend((2..len).map(|offset| ((flow * 37 + offset) % 251) as u8));
+    bytes
+}
+
+/// One listener, many simultaneous connections. Each accepted socket verifies a flow-specific body
+/// before echoing it, so the server independently detects cross-flow bleed (not merely the guest).
+fn spawn_pattern_echo_server(
+    flows: usize,
+    bytes_per_flow: usize,
+) -> (u16, Receiver<(usize, bool)>) {
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind concurrent echo server");
+    let port = listener.local_addr().unwrap().port();
+    let (result_tx, result_rx) = mpsc::channel();
+    std::thread::spawn(move || {
+        for _ in 0..flows {
+            let Ok((mut sock, _)) = listener.accept() else {
+                break;
+            };
+            let tx = result_tx.clone();
+            std::thread::spawn(move || {
+                let mut body = vec![0u8; bytes_per_flow];
+                let ok = sock.read_exact(&mut body).is_ok();
+                let flow = body
+                    .get(..2)
+                    .and_then(|b| <[u8; 2]>::try_from(b).ok())
+                    .map_or(usize::MAX, |b| u16::from_be_bytes(b) as usize);
+                let exact = ok && flow < flows && body == flow_payload(flow, bytes_per_flow);
+                if exact {
+                    let _ = sock.write_all(&body);
+                }
+                let _ = tx.send((flow, exact));
+            });
+        }
+    });
+    (port, result_rx)
+}
+
+#[test]
+fn fifty_concurrent_guest_connections_complete_without_cross_flow_bleed() {
+    const FLOWS: usize = 50;
+    const BYTES_PER_FLOW: usize = 4096;
+    let (port, server_results) = spawn_pattern_echo_server(FLOWS, BYTES_PER_FLOW);
+    let clock = Arc::new(AtomicI64::new(0));
+    let clk = clock.clone();
+    let mut backend = SlirpLocalBackend::with_connector(
+        GW_MAC,
+        Box::new(move || clk.load(Ordering::SeqCst)),
+        Box::new(StdConnector::new()),
+    );
+    let mut guest = Guest::new(&clock);
+
+    let mut handles = vec![guest.tcp];
+    handles.extend((1..FLOWS).map(|_| guest.add_tcp_socket()));
+    for (flow, &handle) in handles.iter().enumerate() {
+        guest.connect_socket(
+            handle,
+            Ipv4Addr::new(127, 0, 0, 1),
+            port,
+            40_000 + flow as u16,
+        );
+    }
+
+    let expected: Vec<Vec<u8>> = (0..FLOWS)
+        .map(|flow| flow_payload(flow, BYTES_PER_FLOW))
+        .collect();
+    let mut sent = [false; FLOWS];
+    let mut received = vec![Vec::new(); FLOWS];
+    let mut peak_flows = 0;
+
+    for step in 0..200_000 {
+        clock.fetch_add(2, Ordering::SeqCst);
+        guest.poll(&clock);
+        shuttle(&mut guest, &mut backend);
+        guest.poll(&clock);
+        peak_flows = peak_flows.max(backend.flow_count());
+
+        for (flow, &handle) in handles.iter().enumerate() {
+            let socket = guest.socket_by(handle);
+            if !sent[flow] && socket.may_send() && socket.can_send() {
+                let n = socket.send_slice(&expected[flow]).unwrap();
+                assert_eq!(n, expected[flow].len());
+                sent[flow] = true;
+            }
+            if socket.can_recv() {
+                let chunk = socket
+                    .recv(|bytes| {
+                        let out = bytes.to_vec();
+                        (out.len(), out)
+                    })
+                    .unwrap();
+                received[flow].extend_from_slice(&chunk);
+            }
+        }
+
+        if received
+            .iter()
+            .zip(&expected)
+            .all(|(actual, expected)| actual.len() >= expected.len())
+        {
+            break;
+        }
+        if step % 16 == 0 {
+            std::thread::sleep(Duration::from_millis(1));
+        }
+    }
+
+    assert_eq!(peak_flows, FLOWS, "all {FLOWS} NAT flows must coexist");
+    for flow in 0..FLOWS {
+        assert_eq!(
+            received[flow].len(),
+            expected[flow].len(),
+            "flow {flow} was truncated"
+        );
+        assert_eq!(
+            received[flow], expected[flow],
+            "flow {flow} received another flow's bytes"
+        );
+    }
+    let mut server_seen = vec![false; FLOWS];
+    for _ in 0..FLOWS {
+        let (flow, exact) = server_results
+            .recv_timeout(Duration::from_secs(5))
+            .expect("server must verify every concurrent connection");
+        assert!(exact, "server saw corrupt/cross-flow bytes for flow {flow}");
+        assert!(!server_seen[flow], "server saw flow {flow} twice");
+        server_seen[flow] = true;
+    }
+    assert!(server_seen.into_iter().all(|seen| seen));
 }
 
 #[test]
@@ -444,5 +599,178 @@ fn guest_half_close_is_forwarded_so_a_read_then_reply_server_answers() {
     assert_eq!(
         received, REPLY,
         "the server only replies after EOF — receiving the reply proves the guest FIN was forwarded"
+    );
+}
+
+fn stream_pat(seed: usize, offset: usize) -> u8 {
+    ((seed + offset * 131) % 251) as u8
+}
+
+fn spawn_full_duplex_pattern_server(bytes_each_way: usize) -> (u16, Receiver<bool>) {
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind full-duplex server");
+    let port = listener.local_addr().unwrap().port();
+    let (result_tx, result_rx) = mpsc::channel();
+    std::thread::spawn(move || {
+        let Ok((mut reader, _)) = listener.accept() else {
+            let _ = result_tx.send(false);
+            return;
+        };
+        let mut writer = reader.try_clone().expect("clone full-duplex socket");
+        let writer_thread = std::thread::spawn(move || {
+            let mut offset = 0usize;
+            let mut chunk = vec![0u8; 64 * 1024];
+            while offset < bytes_each_way {
+                let n = chunk.len().min(bytes_each_way - offset);
+                for (i, byte) in chunk[..n].iter_mut().enumerate() {
+                    *byte = stream_pat(17, offset + i);
+                }
+                if writer.write_all(&chunk[..n]).is_err() {
+                    return false;
+                }
+                offset += n;
+            }
+            writer.shutdown(Shutdown::Write).is_ok()
+        });
+
+        let mut exact = true;
+        let mut offset = 0usize;
+        let mut chunk = vec![0u8; 64 * 1024];
+        while offset < bytes_each_way {
+            match reader.read(&mut chunk) {
+                Ok(0) => {
+                    exact = false;
+                    break;
+                }
+                Ok(n) => {
+                    exact &= chunk[..n]
+                        .iter()
+                        .enumerate()
+                        .all(|(i, &byte)| byte == stream_pat(83, offset + i));
+                    offset += n;
+                }
+                Err(_) => {
+                    exact = false;
+                    break;
+                }
+            }
+        }
+        exact &= offset == bytes_each_way;
+        exact &= writer_thread.join().unwrap_or(false);
+        let _ = result_tx.send(exact);
+    });
+    (port, result_rx)
+}
+
+#[cfg(unix)]
+fn peak_rss_bytes() -> u64 {
+    let mut usage = std::mem::MaybeUninit::<libc::rusage>::zeroed();
+    // SAFETY: `usage` points to writable storage for exactly one `rusage`; getrusage initializes it
+    // on success, which is asserted before assume_init.
+    let rc = unsafe { libc::getrusage(libc::RUSAGE_SELF, usage.as_mut_ptr()) };
+    assert_eq!(rc, 0, "getrusage must succeed for the RSS acceptance");
+    // SAFETY: the successful getrusage call initialized the structure.
+    let usage = unsafe { usage.assume_init() };
+    #[cfg(target_os = "macos")]
+    {
+        usage.ru_maxrss as u64 // bytes on macOS
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        (usage.ru_maxrss as u64).saturating_mul(1024) // KiB on Linux/BSD
+    }
+}
+
+#[cfg(not(unix))]
+fn peak_rss_bytes() -> u64 {
+    0
+}
+
+#[test]
+fn hundred_mebibytes_each_way_are_exact_with_bounded_memory() {
+    const N: usize = 100 * 1024 * 1024;
+    const MAX_USER_QUEUES: usize = 512 * 1024;
+    const MAX_RSS_DELTA: u64 = 64 * 1024 * 1024;
+
+    let rss_before = peak_rss_bytes();
+    let (port, server_result) = spawn_full_duplex_pattern_server(N);
+    let clock = Arc::new(AtomicI64::new(0));
+    let clk = clock.clone();
+    let mut backend = SlirpLocalBackend::with_connector(
+        GW_MAC,
+        Box::new(move || clk.load(Ordering::SeqCst)),
+        Box::new(StdConnector::new()),
+    );
+    let mut guest = Guest::new(&clock);
+    guest.connect(Ipv4Addr::new(127, 0, 0, 1), port);
+
+    let mut upload_offset = 0usize;
+    let mut download_offset = 0usize;
+    let mut guest_half_closed = false;
+    let mut peak_buffered = 0usize;
+    let mut server_exact = None;
+
+    for step in 0..2_000_000 {
+        clock.fetch_add(1, Ordering::SeqCst);
+        guest.poll(&clock);
+        shuttle(&mut guest, &mut backend);
+        guest.poll(&clock);
+        peak_buffered = peak_buffered.max(backend.buffered_bytes());
+
+        let socket = guest.socket();
+        if upload_offset < N && socket.may_send() && socket.can_send() {
+            let want = (16 * 1024).min(N - upload_offset);
+            let chunk: Vec<u8> = (0..want)
+                .map(|i| stream_pat(83, upload_offset + i))
+                .collect();
+            let accepted = socket.send_slice(&chunk).unwrap();
+            upload_offset += accepted;
+        }
+        if upload_offset == N && !guest_half_closed {
+            socket.close();
+            guest_half_closed = true;
+        }
+        if socket.can_recv() {
+            let chunk = socket
+                .recv(|bytes| {
+                    let out = bytes.to_vec();
+                    (out.len(), out)
+                })
+                .unwrap();
+            assert!(
+                chunk
+                    .iter()
+                    .enumerate()
+                    .all(|(i, &byte)| byte == stream_pat(17, download_offset + i)),
+                "download bytes diverged at offset {download_offset}"
+            );
+            download_offset += chunk.len();
+        }
+
+        if server_exact.is_none() {
+            server_exact = server_result.try_recv().ok();
+        }
+        if upload_offset == N && download_offset == N && server_exact.is_some() {
+            break;
+        }
+        if step % 128 == 0 {
+            std::thread::sleep(Duration::from_millis(1));
+        }
+    }
+
+    assert_eq!(upload_offset, N, "guest→server transfer was truncated");
+    assert_eq!(download_offset, N, "server→guest transfer was truncated");
+    assert_eq!(
+        server_exact,
+        Some(true),
+        "the server must independently verify every uploaded byte"
+    );
+    assert!(
+        peak_buffered <= MAX_USER_QUEUES,
+        "100 MiB transfer queued {peak_buffered} bytes in user space (cap {MAX_USER_QUEUES})"
+    );
+    let rss_delta = peak_rss_bytes().saturating_sub(rss_before);
+    assert!(
+        rss_delta <= MAX_RSS_DELTA,
+        "streaming 200 MiB raised peak RSS by {rss_delta} bytes (budget {MAX_RSS_DELTA})"
     );
 }

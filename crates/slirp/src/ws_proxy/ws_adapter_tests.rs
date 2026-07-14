@@ -5,6 +5,7 @@
 use super::{handle_conn, serve};
 use crate::ws_proxy::{Frame, INITIAL_WINDOW, hello};
 use futures_util::{SinkExt, StreamExt};
+use std::collections::BTreeMap;
 use std::net::SocketAddr;
 use std::time::Duration;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -157,7 +158,7 @@ async fn one_shot_conn() -> (SocketAddr, tokio::task::JoinHandle<()>) {
     let addr = listener.local_addr().unwrap();
     let handle = tokio::spawn(async move {
         let (tcp, _) = listener.accept().await.unwrap();
-        handle_conn(tcp, vec![]).await;
+        handle_conn(tcp, vec![], BTreeMap::new()).await;
     });
     (addr, handle)
 }

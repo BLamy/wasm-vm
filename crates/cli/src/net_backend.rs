@@ -9,20 +9,20 @@
 //! the `Bridge` (which owns non-`Send` smoltcp state) on that one thread means nothing smoltcp ever
 //! crosses a thread boundary — only `Vec<u8>` frames do, over the channels.
 //!
-//! Scope (pass 1): the TCP bridge path (guest SYN → real outbound socket → bytes both ways). DHCP so
-//! a booted guest auto-configures, DNS/UDP services, and the long booted-Alpine acceptance are the
-//! next passes; until DHCP lands, a guest must be given a static address (the integration test drives
-//! frames directly). Known limitation, documented for the concurrency pass: `on_guest_frame` awaits
-//! `connect` inside the driver's select arm, so a connect to an unreachable host serializes the loop
-//! until its timeout — fine for reachable/local flows; the fix is to spawn the connect.
+//! Current scope: TCP bridging (guest SYN → real outbound socket → bytes both ways) plus DHCP, so a
+//! booted Alpine guest auto-configures `eth0`. DNS and general outbound UDP remain follow-up work.
+//! Known limitation: `on_guest_frame` awaits `connect` inside the driver's select arm, so a connect
+//! to an unreachable host serializes the loop until its timeout — fine for reachable/local flows;
+//! the concurrency follow-up should spawn the connect.
 
-use std::collections::VecDeque;
+use std::collections::{BTreeMap, VecDeque};
+use std::net::IpAddr;
 use std::sync::{Arc, Mutex};
 use std::thread::JoinHandle;
 use std::time::{Duration, Instant};
 
 use wasm_vm_core::dev::virtio::net::NetBackend;
-use wasm_vm_slirp::{Bridge, NativeConnector};
+use wasm_vm_slirp::{Bridge, DhcpServer, NativeConnector};
 
 /// The slirp gateway's own MAC (10.0.2.2), distinct from the guest's virtio-net MAC
 /// (`wasm_vm_core::dev::virtio::net::MAC` = 52:54:00:12:34:56). Locally-administered; the guest
@@ -51,12 +51,13 @@ impl SlirpBackend {
     /// Start the driver thread with a fresh `Bridge` bound to `mac`. Returns immediately; the thread
     /// runs until this backend is dropped.
     pub fn new(mac: [u8; 6]) -> Self {
+        let host_map = host_map_from_env();
         let (to_driver, from_guest) = tokio::sync::mpsc::unbounded_channel::<Vec<u8>>();
         let egress: Arc<Mutex<VecDeque<Vec<u8>>>> = Arc::new(Mutex::new(VecDeque::new()));
         let egress_driver = Arc::clone(&egress);
         let driver = std::thread::Builder::new()
             .name("slirp-driver".into())
-            .spawn(move || driver_loop(mac, from_guest, egress_driver))
+            .spawn(move || driver_loop(mac, host_map, from_guest, egress_driver))
             .expect("spawn slirp driver thread");
         SlirpBackend {
             to_driver: Some(to_driver),
@@ -66,9 +67,37 @@ impl SlirpBackend {
     }
 }
 
+/// Optional deterministic native-acceptance mapping, e.g.
+/// `WASM_VM_SLIRP_HOST_MAP=192.0.2.1=127.0.0.1`. The guest keeps the task's TEST-NET target while
+/// the real HTTP server remains safely bound to loopback.
+fn host_map_from_env() -> BTreeMap<IpAddr, IpAddr> {
+    let Some(spec) = std::env::var_os("WASM_VM_SLIRP_HOST_MAP") else {
+        return BTreeMap::new();
+    };
+    let spec = spec.to_string_lossy();
+    let mut map = BTreeMap::new();
+    for entry in spec.split(',').filter(|entry| !entry.is_empty()) {
+        let (source, target) = entry.split_once('=').unwrap_or_else(|| {
+            panic!("invalid WASM_VM_SLIRP_HOST_MAP entry {entry:?}; expected source=target")
+        });
+        let source: IpAddr = source
+            .parse()
+            .unwrap_or_else(|_| panic!("invalid source IP in WASM_VM_SLIRP_HOST_MAP: {source:?}"));
+        let target: IpAddr = target
+            .parse()
+            .unwrap_or_else(|_| panic!("invalid target IP in WASM_VM_SLIRP_HOST_MAP: {target:?}"));
+        assert!(
+            map.insert(source, target).is_none(),
+            "duplicate source IP in WASM_VM_SLIRP_HOST_MAP: {source}"
+        );
+    }
+    map
+}
+
 /// The driver thread body: own the `Bridge` on a current-thread runtime and pump it forever.
 fn driver_loop(
     mac: [u8; 6],
+    host_map: BTreeMap<IpAddr, IpAddr>,
     mut from_guest: tokio::sync::mpsc::UnboundedReceiver<Vec<u8>>,
     egress: Arc<Mutex<VecDeque<Vec<u8>>>>,
 ) {
@@ -79,7 +108,9 @@ fn driver_loop(
     rt.block_on(async move {
         let start = Instant::now();
         let now_ms = || start.elapsed().as_millis() as i64;
-        let mut bridge = Bridge::new(mac, NativeConnector::new(), MAX_FLOWS);
+        let connector = NativeConnector::new().with_host_map(host_map);
+        let mut bridge = Bridge::new(mac, connector, MAX_FLOWS);
+        let dhcp = DhcpServer::new();
         let mut tick = tokio::time::interval(TICK);
         // Drive-on-cadence, not catch-up: after a stall (e.g. a slow connect) we want ONE resume
         // tick, not a burst of missed ones each re-running poll/service (critic m2).
@@ -97,6 +128,7 @@ fn driver_loop(
             // After every event, drive the stack + pumps and harvest anything bound for the guest.
             let t = now_ms();
             bridge.poll(t);
+            bridge.run_dhcp(&dhcp);
             bridge.service();
             bridge.expire(t as u64);
             let out = bridge.take_egress();
@@ -164,6 +196,7 @@ mod tests {
     };
     use std::time::{Duration, Instant};
     use wasm_vm_core::dev::virtio::net::{MAC as GUEST_MAC, NetBackend};
+    use wasm_vm_slirp::build_udp_frame;
 
     const GUEST_IP: Ipv4Address = Ipv4Address::new(10, 0, 2, 15);
     const GATEWAY_IP: Ipv4Address = Ipv4Address::new(10, 0, 2, 2);
@@ -204,6 +237,26 @@ mod tests {
         let mut apkt = ArpPacket::new_unchecked(frame.payload_mut());
         arp.emit(&mut apkt);
         buf
+    }
+
+    fn guest_dhcp_discover() -> Vec<u8> {
+        let mut bootp = vec![0u8; 236];
+        bootp[0] = 1; // BOOTREQUEST
+        bootp[1] = 1; // ethernet
+        bootp[2] = 6;
+        bootp[28..34].copy_from_slice(&GUEST_MAC);
+        bootp.extend_from_slice(&[0x63, 0x82, 0x53, 0x63]); // DHCP cookie
+        bootp.extend_from_slice(&[53, 1, 1, 255]); // DISCOVER + END
+        build_udp_frame(
+            GUEST_MAC,
+            [0xff; 6],
+            std::net::Ipv4Addr::UNSPECIFIED,
+            68,
+            std::net::Ipv4Addr::BROADCAST,
+            67,
+            &bootp,
+        )
+        .expect("build DHCP discover")
     }
 
     fn guest_tcp_syn(src_port: u16, dst: Ipv4Address, dst_port: u16) -> Vec<u8> {
@@ -348,6 +401,25 @@ mod tests {
         assert!(
             reply.is_some(),
             "expected a gateway ARP reply back through the backend"
+        );
+    }
+
+    #[test]
+    fn guest_dhcp_discover_gets_an_offer_through_the_native_driver() {
+        let mut backend = SlirpBackend::new(GATEWAY_MAC);
+        backend.tx(&guest_dhcp_discover());
+        let offer = wait_for_frame(&mut backend, Duration::from_secs(3), |frame| {
+            if frame.len() < 42 + 244 {
+                return false;
+            }
+            let bootp = &frame[42..];
+            bootp[0] == 2
+                && bootp[16..20] == [10, 0, 2, 15]
+                && bootp[240..].windows(3).any(|option| option == [53, 1, 2])
+        });
+        assert!(
+            offer.is_some(),
+            "native driver must answer DHCP so Alpine can auto-configure eth0"
         );
     }
 

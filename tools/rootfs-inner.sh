@@ -80,10 +80,18 @@ fi
 # 2e. Hostname.
 echo wasm-vm > "$ROOT/etc/hostname"
 
-# 2e2. NO networking. The E2-T12 kernel is built without CONFIG_NET (no network stack until a
-# later epic), so the `networking` service is not linked into any runlevel below — running it
-# on a netless kernel is pointless work that only slows the boot and litters the log with
-# `net.* unknown key` sysctl errors. (A NIC + networking arrives with the network epic.)
+# 2e2. E3-T14 networking. The current kernel has CONFIG_NET + CONFIG_VIRTIO_NET and the image's
+# alpine-base dependency includes ifupdown-ng. Bring the slirp-backed eth0 up through DHCP during
+# the default runlevel; the guest receives 10.0.2.15/24, gateway 10.0.2.2, and DNS 10.0.2.3. Keeping
+# this in the image (rather than typing `ip addr` in demos) is what makes networking an OS capability.
+mkdir -p "$ROOT/etc/network"
+cat > "$ROOT/etc/network/interfaces" <<'INTERFACES'
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+INTERFACES
 
 # 2f. OpenRC runlevels — symlink the services a headless serial boot needs, tolerantly (only if
 # the init script exists, so a package-set change never breaks the build). /dev is auto-mounted
@@ -99,6 +107,7 @@ link_svc() { # $1=runlevel $2=service
 }
 for s in devfs dmesg mdev sysfs hwdrivers; do link_svc sysinit "$s"; done
 for s in modules hwclock swap hostname bootmisc syslog seedrng; do link_svc boot "$s"; done
+link_svc default networking
 for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
 
 # 3. Pack into a reproducible ext4 (fixed UUID; mke2fs -d needs no privileges/loop mounts).

@@ -45,6 +45,10 @@ features = [
     "DomException",
     "Event",
     "EventTarget",
+    # E3-net browser TCP transport.
+    "WebSocket",
+    "BinaryType",
+    "MessageEvent",
 ]
 
 [features]

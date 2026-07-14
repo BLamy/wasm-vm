@@ -23,7 +23,7 @@ pub use relay::{INITIAL_WINDOW, RelayActions, RelayCore, RelayError, SocketOp};
 pub use session::{HandshakeError, Session, SessionError, accept_hello, hello};
 pub use stream::{StreamError, StreamState, Terminal};
 #[cfg(feature = "native")]
-pub use ws_adapter::serve as serve_ws;
+pub use ws_adapter::{serve as serve_ws, serve_with_host_map as serve_ws_with_host_map};
 
 /// The protocol version carried in the [`Frame::Hello`] frame.
 pub const VERSION: u8 = 1;
