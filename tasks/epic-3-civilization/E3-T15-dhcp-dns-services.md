@@ -3,7 +3,7 @@ id: E3-T15
 epic: 3
 title: Internal DHCP server and DNS forwarder in the slirp stack
 priority: 315
-status: pending
+status: in-progress
 depends_on: [E3-T14]
 estimate: M
 capstone: false
