@@ -3,7 +3,7 @@ id: E3-T14
 epic: 3
 title: Slirp-style user-mode network core on smoltcp with NAT
 priority: 314
-status: implemented
+status: in_progress
 depends_on: [E3-T13, E3-T12]
 estimate: L
 capstone: false
@@ -592,3 +592,74 @@ instruction/state digest, native transcript, decoded browser xterm buffer, scree
 console captures, and real-socket integration tests are the complete Mac-side handoff. A fresh
 verifier must still predict, falsify, audit diff coverage, run the task's attacks, and alone decide
 whether to set `verified`.
+
+VERDICT: refuted
+
+### 2026-07-15 — adversarial verifier (fresh session)
+
+- **P1 TCP idle expiry sends RST — FAILED.** Predicted an established TCP flow swept at the 2 h
+  idle deadline would emit a guest RST before its socket disappeared, matching the design contract
+  (`docs/design/slirp.md:109-116`). Observed both production backends delete the smoltcp socket
+  directly: async `Bridge::expire` calls `remove_tcp` (`crates/slirp/src/bridge.rs:163-173`) and sync
+  `SlirpLocalBackend::expire` calls `teardown` (`crates/slirp/src/local_backend.rs:422-431`). The
+  sync reset path itself documents the decisive ordering invariant: `tcp_abort` + `poll` must occur
+  before removal or the RST is erased (`local_backend.rs:340-348`). **Demand:** abort and poll an
+  expired live TCP socket before teardown in both backends, and add an exact guest-side regression
+  proving the expiry segment is RST (not silence/FIN) while the table and connector return to zero.
+- **P2 shared TCP/UDP relay stream namespace — FAILED.** Predicted a TCP `OPEN` reusing a live UDP
+  stream id would be rejected, because UDP ids are documented as occupying the same wire namespace
+  and the high-half allocation exists to avoid collisions (`ws_connector.rs:33-36,204-220`). In a
+  scratch verifier probe, `UDP_OPEN(stream=0x80000000)` received `UDP_OPEN_OK`, then TCP
+  `OPEN(stream=0x80000000)` received both `OPEN_OK` and its initial `WINDOW`: the relay held the same
+  id live in both maps. The UDP-open path checks both maps (`ws_proxy/driver.rs:193-207`), but TCP
+  frames fall through to `RelayCore` without checking `udp`; the mux allocator/server tracks only
+  TCP streams (`ws_proxy/mux.rs:120-153`). **Demand:** enforce one combined id namespace and combined
+  `MAX_STREAMS` limit in both open directions, constrain the normal client allocators so they can
+  never cross halves after wrap, and commit the collision probe as a rejection test.
+- **P3 1000 abandoned flows — HELD.** Predicted the unified 256-entry cap would close every evicted
+  UDP connector and the 30 s sweep would close every survivor. The verifier-promoted
+  `thousand_abandoned_udp_flows_are_bounded_then_fully_reaped` passed: 744 eviction closes, then
+  256 expiry closes, final table size zero. This test is retained as the permanent attack artifact.
+- **P4 rework happy paths / prior refutations — HELD.** Independent focused reruns held for external
+  UDP NAT+expiry, prompt native refused-port RST, pump read-error-vs-EOF, guest RST on outbound reset,
+  browser transport caps/fail-closed state, and WFI host-yield suppression. The production
+  WS-to-real-UDP test passed again from a pristine clone with `RUSTFLAGS`, `RUST_LOG`, `CARGO_HOME`,
+  and `CARGO_TARGET_DIR` scrubbed. The committed native/browser transcript and artifact SHA-256s
+  match the handoff; native evidence seals 4,421,704,713 retired instructions with
+  `fnv64=2fa1668cba2a743a`, final state
+  `94eadf4da3fd59bbc17cd3051754654bd2a163b8b1ce0b52d90dad0a4ce605d4`, and `Exited(0)`.
+- **TASK ATTACKS / COVERAGE — NEEDS EVIDENCE.** The existing stalled-relay test proves the 256 KiB
+  cap but neither waits 60 s nor resumes the same stream (`ws_connector_e2e.rs:336-373`). The 100 MiB
+  acceptance uses ordinary 16/64 KiB chunks; no test forces one-byte connector deliveries for the
+  whole transfer. **Demand:** record the task's exact 60 s stall-then-resume attack and the 100 MiB
+  one-byte-framing attack, asserting identity, survival, queue caps, and a non-quadratic stated time
+  budget. These are task-named changed-path coverage, not optional stress tests.
+- **EVIDENCE SUFFICIENCY — HELD FOR THE RECORDED HAPPY RUN, must be replaced after fixes.** Artifact
+  hashes match; terminal points prove DHCP, route, ping, TCP digest, two distinct UDP datagrams,
+  prompt reset, state digest, and exit. The compact native FNV/state digest is a sealed rerun
+  fingerprint rather than an addressable canonical trace, so it cannot answer a new per-instruction
+  falsification by itself; the committed transcripts provide the reopenable network observations.
+  Any P1/P2 fix changes the final tree, so both native and browser evidence must be re-recorded.
+- **SABOTAGE / MOCK / ENV.** In the pristine clone, forcing `classify_udp` to reject every nonempty
+  frame made `external_udp_preserves_datagrams_and_expires_its_nat_flow` fail at the expected opened
+  endpoint assertion; reverting restored the source. This kills the happy-UDP no-op mutation. Host
+  maps and loopback fixtures are explicit and the cold-clone production-relay UDP run used real
+  sockets; no self-licking payload oracle was found.
+- **SUITE:** retained the deterministic 1000-flow cap/expiry probe. Further promotion waits until
+  P1/P2 and the two missing task attacks are corrected.
+
+Commands: `cargo test -p wasm-vm-slirp --lib
+local_backend::tests::thousand_abandoned_udp_flows_are_bounded_then_fully_reaped -- --exact
+--nocapture`; `cargo test -p wasm-vm-slirp --lib
+e2e_pump_stack::outbound_to_guest_stays_bounded_when_the_server_floods_and_the_guest_stalls --
+--exact --nocapture`; `cargo test -p wasm-vm-slirp --test ws_connector_e2e
+stalled_relay_upload_queue_is_bounded_and_reports_backpressure -- --exact --nocapture`; cold clone:
+`env -u RUSTFLAGS -u RUST_LOG -u CARGO_HOME -u CARGO_TARGET_DIR cargo test -p wasm-vm-slirp --test
+udp_ws_e2e guest_udp_round_trips_through_ws_connector_and_production_relay -- --exact --nocapture`;
+scratch collision probe:
+`cargo test -p wasm-vm-slirp --lib
+ws_proxy::driver::driver_tests::verifier_probe_tcp_open_is_accepted_over_a_live_udp_stream_id --
+--exact --nocapture`; sabotage: mutated `classify_udp` to return false, then ran
+`cargo test -p wasm-vm-slirp --lib
+local_backend::tests::external_udp_preserves_datagrams_and_expires_its_nat_flow -- --exact
+--nocapture` (failed as predicted).

@@ -570,6 +570,50 @@ mod tests {
         }
     }
 
+    #[derive(Default)]
+    struct FloodProbeState {
+        next: u64,
+        closed: usize,
+    }
+
+    struct FloodProbe(Rc<RefCell<FloodProbeState>>);
+
+    impl SyncConnector for FloodProbe {
+        fn connect(&mut self, _host: Ipv4Addr, _port: u16) -> ConnId {
+            0
+        }
+        fn status(&mut self, _id: ConnId) -> ConnStatus {
+            ConnStatus::Failed(crate::ConnectError::Unreachable)
+        }
+        fn recv(&mut self, _id: ConnId) -> Vec<u8> {
+            Vec::new()
+        }
+        fn send(&mut self, _id: ConnId, _data: &[u8]) -> usize {
+            0
+        }
+        fn shutdown_write(&mut self, _id: ConnId) {}
+        fn close(&mut self, _id: ConnId) {}
+
+        fn udp_open(&mut self, _host: Ipv4Addr, _port: u16) -> DatagramId {
+            let mut state = self.0.borrow_mut();
+            let id = DatagramId(state.next);
+            state.next += 1;
+            id
+        }
+        fn udp_status(&mut self, _id: DatagramId) -> ConnStatus {
+            ConnStatus::Established
+        }
+        fn udp_send(&mut self, _id: DatagramId, _payload: &[u8]) -> bool {
+            true
+        }
+        fn udp_recv(&mut self, _id: DatagramId) -> Vec<Vec<u8>> {
+            Vec::new()
+        }
+        fn udp_close(&mut self, _id: DatagramId) {
+            self.0.borrow_mut().closed += 1;
+        }
+    }
+
     fn guest_arp_request() -> Vec<u8> {
         let arp = ArpRepr::EthernetIpv4 {
             operation: ArpOperation::Request,
@@ -670,6 +714,52 @@ mod tests {
             state.borrow().closed,
             1,
             "expiry closes the connector socket"
+        );
+    }
+
+    /// Verifier-promoted attack from E3-T14: opening 1000 flows must stay bounded, and abandoning
+    /// every survivor must let the timeout sweep close every connector resource and return the NAT
+    /// table to zero.
+    #[test]
+    fn thousand_abandoned_udp_flows_are_bounded_then_fully_reaped() {
+        const REMOTE: Ipv4Addr = Ipv4Addr::new(198, 51, 100, 29);
+        let state = Rc::new(RefCell::new(FloodProbeState::default()));
+        let now = Rc::new(Cell::new(1i64));
+        let clock = {
+            let now = now.clone();
+            Box::new(move || now.get())
+        };
+        let mut be =
+            SlirpLocalBackend::with_connector(GW_MAC, clock, Box::new(FloodProbe(state.clone())));
+
+        for flow in 0..1000u16 {
+            let request = build_udp_frame(
+                GUEST_MAC,
+                GW_MAC,
+                GUEST_IP,
+                40_000 + flow,
+                REMOTE,
+                9000,
+                &[flow as u8],
+            )
+            .unwrap();
+            be.tx(&request);
+        }
+
+        assert_eq!(be.flow_count(), MAX_FLOWS, "the NAT hard cap must hold");
+        assert_eq!(
+            state.borrow().closed,
+            1000 - MAX_FLOWS,
+            "each LRU eviction closes its connector socket"
+        );
+
+        now.set(crate::nat::UDP_IDLE_MS as i64 + 1);
+        be.poll();
+        assert_eq!(be.flow_count(), 0, "the timeout sweep reaps every survivor");
+        assert_eq!(
+            state.borrow().closed,
+            1000,
+            "eviction plus expiry closes every opened socket exactly once"
         );
     }
 }
