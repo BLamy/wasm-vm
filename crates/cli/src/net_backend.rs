@@ -1,42 +1,33 @@
 //! E3-T14: `SlirpBackend` — plug the slirp user-mode network stack into the machine's virtio-net.
 //!
-//! The machine's [`NetBackend`] is a **synchronous** trait the run loop calls every quantum
-//! (`tx` per guest frame, `rx`/`rx_ready` to feed the guest). slirp's `Bridge` is **async** (its
-//! `on_guest_frame` awaits outbound `connect`, and `service` spawns tokio byte-pump tasks). We bridge
-//! the two with a **dedicated driver thread** that owns the `Bridge` on a current-thread tokio
-//! runtime and loops: receive guest frames off a channel → `on_guest_frame`, tick periodically →
-//! `poll`/`service`/`expire`, then drain `take_egress` into a shared queue the guest reads. Keeping
-//! the `Bridge` (which owns non-`Send` smoltcp state) on that one thread means nothing smoltcp ever
-//! crosses a thread boundary — only `Vec<u8>` frames do, over the channels.
+//! The machine's [`NetBackend`] is synchronous. A dedicated driver thread owns the same
+//! [`SlirpLocalBackend`] used by wasm, with [`StdConnector`] supplying real non-blocking TCP and UDP
+//! sockets. Guest frames cross the thread boundary; smoltcp state never does. Sharing this backend
+//! is deliberate: native and browser now exercise identical NAT, expiry, framing, and backpressure
+//! logic, while only their connector transport differs (OS sockets vs. WebSocket relay).
 //!
-//! Current scope: TCP bridging (guest SYN → real outbound socket → bytes both ways) plus DHCP, so a
-//! booted Alpine guest auto-configures `eth0`. DNS and general outbound UDP remain follow-up work.
-//! Known limitation: `on_guest_frame` awaits `connect` inside the driver's select arm, so a connect
-//! to an unreachable host serializes the loop until its timeout — fine for reachable/local flows;
-//! the concurrency follow-up should spawn the connect.
+//! Current scope: TCP and external UDP NAT plus DHCP. DNS service wiring remains E3-T15.
 
 use std::collections::{BTreeMap, VecDeque};
-use std::net::IpAddr;
+use std::net::Ipv4Addr;
 use std::sync::{Arc, Mutex};
 use std::thread::JoinHandle;
 use std::time::{Duration, Instant};
 
 use wasm_vm_core::dev::virtio::net::NetBackend;
-use wasm_vm_slirp::{Bridge, DhcpServer, NativeConnector};
+use wasm_vm_slirp::{SlirpLocalBackend, StdConnector};
 
 /// The slirp gateway's own MAC (10.0.2.2), distinct from the guest's virtio-net MAC
 /// (`wasm_vm_core::dev::virtio::net::MAC` = 52:54:00:12:34:56). Locally-administered; the guest
 /// learns it via ARP for the gateway.
 pub const GATEWAY_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x02];
 
-/// How many concurrent guest TCP flows the NAT table holds before LRU-evicting the oldest.
-const MAX_FLOWS: usize = 256;
 /// Driver tick — how often we `poll` smoltcp + `service` the pumps when no guest frame arrives.
 /// smoltcp timers (retransmit, delayed-ACK) and server-initiated data both need this cadence.
 const TICK: Duration = Duration::from_millis(1);
 
 /// A [`NetBackend`] that terminates the guest's ethernet world in slirp and NATs it onto real
-/// outbound sockets via [`NativeConnector`]. Cheap to call from the run loop: `tx` is a channel
+/// outbound sockets via [`StdConnector`]. Cheap to call from the run loop: `tx` is a channel
 /// send, `rx`/`rx_ready` read a shared queue — all real work is on the driver thread.
 pub struct SlirpBackend {
     /// Guest → slirp: frames the guest transmitted, handed to the driver thread. `Option` so `Drop`
@@ -48,8 +39,8 @@ pub struct SlirpBackend {
 }
 
 impl SlirpBackend {
-    /// Start the driver thread with a fresh `Bridge` bound to `mac`. Returns immediately; the thread
-    /// runs until this backend is dropped.
+    /// Start the driver thread with a fresh shared local backend bound to `mac`. Returns immediately;
+    /// the thread runs until this backend is dropped.
     pub fn new(mac: [u8; 6]) -> Self {
         let host_map = host_map_from_env();
         let (to_driver, from_guest) = tokio::sync::mpsc::unbounded_channel::<Vec<u8>>();
@@ -70,7 +61,7 @@ impl SlirpBackend {
 /// Optional deterministic native-acceptance mapping, e.g.
 /// `WASM_VM_SLIRP_HOST_MAP=192.0.2.1=127.0.0.1`. The guest keeps the task's TEST-NET target while
 /// the real HTTP server remains safely bound to loopback.
-fn host_map_from_env() -> BTreeMap<IpAddr, IpAddr> {
+fn host_map_from_env() -> BTreeMap<Ipv4Addr, Ipv4Addr> {
     let Some(spec) = std::env::var_os("WASM_VM_SLIRP_HOST_MAP") else {
         return BTreeMap::new();
     };
@@ -80,10 +71,10 @@ fn host_map_from_env() -> BTreeMap<IpAddr, IpAddr> {
         let (source, target) = entry.split_once('=').unwrap_or_else(|| {
             panic!("invalid WASM_VM_SLIRP_HOST_MAP entry {entry:?}; expected source=target")
         });
-        let source: IpAddr = source
+        let source: Ipv4Addr = source
             .parse()
             .unwrap_or_else(|_| panic!("invalid source IP in WASM_VM_SLIRP_HOST_MAP: {source:?}"));
-        let target: IpAddr = target
+        let target: Ipv4Addr = target
             .parse()
             .unwrap_or_else(|_| panic!("invalid target IP in WASM_VM_SLIRP_HOST_MAP: {target:?}"));
         assert!(
@@ -94,10 +85,10 @@ fn host_map_from_env() -> BTreeMap<IpAddr, IpAddr> {
     map
 }
 
-/// The driver thread body: own the `Bridge` on a current-thread runtime and pump it forever.
+/// The driver thread body: own the synchronous backend on a current-thread runtime and pump forever.
 fn driver_loop(
     mac: [u8; 6],
-    host_map: BTreeMap<IpAddr, IpAddr>,
+    host_map: BTreeMap<Ipv4Addr, Ipv4Addr>,
     mut from_guest: tokio::sync::mpsc::UnboundedReceiver<Vec<u8>>,
     egress: Arc<Mutex<VecDeque<Vec<u8>>>>,
 ) {
@@ -107,10 +98,12 @@ fn driver_loop(
         .expect("slirp driver tokio runtime");
     rt.block_on(async move {
         let start = Instant::now();
-        let now_ms = || start.elapsed().as_millis() as i64;
-        let connector = NativeConnector::new().with_host_map(host_map);
-        let mut bridge = Bridge::new(mac, connector, MAX_FLOWS);
-        let dhcp = DhcpServer::new();
+        let connector = StdConnector::new().with_host_map(host_map);
+        let mut backend = SlirpLocalBackend::with_connector(
+            mac,
+            Box::new(move || start.elapsed().as_millis() as i64),
+            Box::new(connector),
+        );
         let mut tick = tokio::time::interval(TICK);
         // Drive-on-cadence, not catch-up: after a stall (e.g. a slow connect) we want ONE resume
         // tick, not a burst of missed ones each re-running poll/service (critic m2).
@@ -119,24 +112,23 @@ fn driver_loop(
             tokio::select! {
                 maybe = from_guest.recv() => match maybe {
                     // The guest transmitted a frame; feed it into the stack (may open an outbound flow).
-                    Some(frame) => bridge.on_guest_frame(frame, now_ms() as u64).await,
+                    Some(frame) => backend.tx(&frame),
                     // The backend was dropped (all senders gone) — shut the driver down.
                     None => break,
                 },
                 _ = tick.tick() => {}
             }
             // After every event, drive the stack + pumps and harvest anything bound for the guest.
-            let t = now_ms();
-            bridge.poll(t);
-            bridge.run_dhcp(&dhcp);
-            bridge.service();
-            bridge.expire(t as u64);
-            let out = bridge.take_egress();
+            backend.poll();
+            let mut out = Vec::new();
+            while let Some(frame) = backend.rx() {
+                out.push(frame);
+            }
             if !out.is_empty() {
                 // No hard cap here: egress is bounded below by smoltcp's per-socket send windows +
                 // retransmit gating (it stops producing to-guest frames when the guest RX ring isn't
                 // serviced), and the guest→driver channel is bounded by the guest's own tx rate. The
-                // per-flow pump depth is capped at PUMP_DEPTH in slirp. (critic m3)
+                // per-flow connector/NAT queues are explicitly capped in slirp. (critic m3)
                 let mut q = egress.lock().expect("egress mutex");
                 q.extend(out);
             }
@@ -166,12 +158,9 @@ impl Drop for SlirpBackend {
         // Drop the only sender so the driver's `recv().await` yields `None` and the loop breaks.
         self.to_driver.take();
         if let Some(h) = self.driver.take() {
-            // Bounded join (critic M1): an in-flight `connect().await` runs inside the driver's
-            // already-resolved `select!` arm, so it is NOT interrupted by the sender dropping — a
-            // plain `join()` would block up to the connector's timeout (~10 s to a black-holed host).
-            // Give it a short grace window to exit cleanly, then detach: the thread is
-            // self-terminating (its `recv()` returns `None` once the connect resolves) and owns all
-            // its state (Bridge, runtime, its clone of `egress`), so detaching is memory-safe.
+            // Give the runtime thread a short grace window to observe sender closure and exit. TCP
+            // dials themselves run on short-lived connector threads, so they cannot block this join.
+            // Detaching after the grace window is memory-safe: the driver owns all remaining state.
             let (done_tx, done_rx) = std::sync::mpsc::channel();
             std::thread::spawn(move || {
                 let _ = h.join();
@@ -196,7 +185,7 @@ mod tests {
     };
     use std::time::{Duration, Instant};
     use wasm_vm_core::dev::virtio::net::{MAC as GUEST_MAC, NetBackend};
-    use wasm_vm_slirp::build_udp_frame;
+    use wasm_vm_slirp::{build_udp_frame, parse_udp};
 
     const GUEST_IP: Ipv4Address = Ipv4Address::new(10, 0, 2, 15);
     const GATEWAY_IP: Ipv4Address = Ipv4Address::new(10, 0, 2, 2);
@@ -420,6 +409,90 @@ mod tests {
         assert!(
             offer.is_some(),
             "native driver must answer DHCP so Alpine can auto-configure eth0"
+        );
+    }
+
+    /// Full production-driver regression for the verifier's refused-connect finding. A real closed
+    /// loopback port must produce a guest-visible RST within the driver's deadline; merely deleting
+    /// the internal flow and waiting for the guest's TCP timeout is not acceptable behavior.
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn guest_syn_to_a_refused_port_gets_a_prompt_rst_from_the_native_driver() {
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let port = listener.local_addr().unwrap().port();
+        drop(listener); // the selected port now deterministically refuses a connect
+
+        let got_rst = tokio::task::spawn_blocking(move || {
+            let mut backend = SlirpBackend::new(GATEWAY_MAC);
+            backend.tx(&guest_arp_request());
+            std::thread::sleep(Duration::from_millis(50));
+            let src_port = 40009;
+            backend.tx(&guest_tcp_syn(
+                src_port,
+                Ipv4Address::new(127, 0, 0, 1),
+                port,
+            ));
+            wait_for_frame(&mut backend, Duration::from_secs(3), |frame| {
+                let Ok(eth) = EthernetFrame::new_checked(frame) else {
+                    return false;
+                };
+                let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                    return false;
+                };
+                let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                    return false;
+                };
+                tcp.dst_port() == src_port && tcp.rst()
+            })
+            .is_some()
+        })
+        .await
+        .unwrap();
+
+        assert!(
+            got_rst,
+            "a refused native outbound connect must RST the guest within 3 seconds"
+        );
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn external_udp_round_trips_through_the_native_driver() {
+        let echo = tokio::net::UdpSocket::bind("127.0.0.1:0").await.unwrap();
+        let port = echo.local_addr().unwrap().port();
+        tokio::spawn(async move {
+            let mut buf = [0u8; 2048];
+            if let Ok((n, peer)) = echo.recv_from(&mut buf).await {
+                let _ = echo.send_to(&buf[..n], peer).await;
+            }
+        });
+
+        let response = tokio::task::spawn_blocking(move || {
+            let mut backend = SlirpBackend::new(GATEWAY_MAC);
+            let request = build_udp_frame(
+                GUEST_MAC,
+                GATEWAY_MAC,
+                GUEST_IP,
+                41001,
+                Ipv4Address::new(127, 0, 0, 1),
+                port,
+                b"native-udp-datagram",
+            )
+            .unwrap();
+            backend.tx(&request);
+            wait_for_frame(&mut backend, Duration::from_secs(3), |frame| {
+                parse_udp(frame).is_some_and(|udp| {
+                    udp.src_ip == Ipv4Address::new(127, 0, 0, 1)
+                        && udp.src_port == port
+                        && udp.dst_port == 41001
+                        && udp.payload == b"native-udp-datagram"
+                })
+            })
+        })
+        .await
+        .unwrap();
+
+        assert!(
+            response.is_some(),
+            "the native production driver must preserve an external UDP datagram round trip"
         );
     }
 

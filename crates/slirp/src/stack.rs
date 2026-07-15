@@ -37,7 +37,7 @@ const BROADCAST: Ipv4Addr = Ipv4Addr::new(255, 255, 255, 255);
 /// server or the DNS forwarder)? Matches the `UdpServices` routing: DHCP on :67 to the broadcast or
 /// the gateway; DNS on :53 to the address we present as the resolver. Everything else is a normal
 /// outbound UDP flow (left to the NAT path — not our service).
-fn is_service_udp(dst_ip: Ipv4Addr, dst_port: u16) -> bool {
+pub(crate) fn is_service_udp(dst_ip: Ipv4Addr, dst_port: u16) -> bool {
     (dst_port == 67 && (dst_ip == BROADCAST || dst_ip == net::GATEWAY))
         || (dst_port == 53 && dst_ip == net::DNS)
 }

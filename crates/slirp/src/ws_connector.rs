@@ -1,7 +1,7 @@
 //! E3-net slice 2b: `WsConnector` — a [`SyncConnector`](crate::SyncConnector) that reaches the
 //! network through the [`ws_proxy`](crate::ws_proxy) WebSocket relay instead of a local socket. This
-//! is the BROWSER outbound path: the wasm guest has no sockets, so its TCP flows are tunnelled as
-//! ws-proxy streams to a relay server that owns the real sockets.
+//! is the BROWSER outbound path: the wasm guest has no sockets, so TCP flows are tunnelled as
+//! credit-controlled streams and UDP flows as boundary-preserving datagram frames to a relay.
 //!
 //! It drives the client half of the protocol — a [`Session`] (HELLO handshake) wrapping the client
 //! [`Mux`](crate::ws_proxy::WsMux) — over a pluggable [`FrameTransport`]: the browser backs it with a
@@ -22,14 +22,18 @@ use alloc::vec::Vec;
 use core::net::Ipv4Addr;
 
 use crate::connector::ConnectError;
-use crate::sync_connector::{ConnId, ConnStatus, SyncConnector};
+use crate::sync_connector::{ConnId, ConnStatus, DatagramId, SyncConnector};
 use crate::ws_proxy::relay::INITIAL_WINDOW;
-use crate::ws_proxy::{Frame, MuxEvent, Role, Session};
+use crate::ws_proxy::{Frame, MAX_DATAGRAM_BYTES, MuxEvent, Role, Session};
 
 /// Per-flow guest→relay queue cap. The relay grants this same amount of initial credit; accepting
 /// more while that credit is exhausted would merely move an unbounded stalled upload into the wasm
 /// heap instead of closing the guest TCP window.
 const MAX_PENDING_TX_BYTES: usize = INITIAL_WINDOW as usize;
+/// Datagram queues are necessarily lossy under pressure; keep at most four maximum IPv4 datagrams
+/// in either direction for one flow, then fail/drop instead of growing the wasm heap.
+const MAX_UDP_QUEUE_BYTES: usize = 4 * MAX_DATAGRAM_BYTES;
+const FIRST_UDP_STREAM: u32 = 0x8000_0000;
 
 /// Carries encoded ws-proxy [`Frame`]s over a transport, decoupled from the protocol state machine.
 /// The browser implements this with a JS `WebSocket`; native tests with an in-process channel. All
@@ -62,6 +66,17 @@ struct Conn {
     shutdown_done: bool,
 }
 
+struct UdpConn {
+    stream: Option<u32>,
+    host: String,
+    port: u16,
+    status: ConnStatus,
+    pending_tx: VecDeque<Vec<u8>>,
+    pending_tx_bytes: usize,
+    rx: VecDeque<Vec<u8>>,
+    rx_bytes: usize,
+}
+
 /// A [`SyncConnector`] that tunnels guest TCP flows through the ws-proxy relay over a
 /// [`FrameTransport`]. The browser outbound path (native-testable against a real `RelayCore`).
 pub struct WsConnector<T: FrameTransport> {
@@ -73,6 +88,10 @@ pub struct WsConnector<T: FrameTransport> {
     next_id: ConnId,
     conns: BTreeMap<ConnId, Conn>,
     stream_to_conn: BTreeMap<u32, ConnId>,
+    next_udp_id: u64,
+    next_udp_stream: u32,
+    udp: BTreeMap<DatagramId, UdpConn>,
+    stream_to_udp: BTreeMap<u32, DatagramId>,
     /// Frames produced this pump, drained to the transport at the end (keeps mux borrows local).
     outbox: Vec<Frame>,
 }
@@ -89,6 +108,10 @@ impl<T: FrameTransport> WsConnector<T> {
             next_id: 0,
             conns: BTreeMap::new(),
             stream_to_conn: BTreeMap::new(),
+            next_udp_id: 0,
+            next_udp_stream: FIRST_UDP_STREAM,
+            udp: BTreeMap::new(),
+            stream_to_udp: BTreeMap::new(),
             outbox: Vec::new(),
         }
     }
@@ -100,6 +123,11 @@ impl<T: FrameTransport> WsConnector<T> {
         if !self.transport.is_open() {
             // The relay is gone — fail every non-terminal stream so the backend RSTs the guest.
             for c in self.conns.values_mut() {
+                if !is_terminal(&c.status) {
+                    c.status = ConnStatus::Failed(ConnectError::Unreachable);
+                }
+            }
+            for c in self.udp.values_mut() {
                 if !is_terminal(&c.status) {
                     c.status = ConnStatus::Failed(ConnectError::Unreachable);
                 }
@@ -122,10 +150,23 @@ impl<T: FrameTransport> WsConnector<T> {
                     for c in self.conns.values_mut() {
                         c.status = ConnStatus::Failed(ConnectError::Unreachable);
                     }
+                    for c in self.udp.values_mut() {
+                        c.status = ConnStatus::Failed(ConnectError::Unreachable);
+                    }
                 }
                 continue;
             }
-            // A malformed/out-of-order frame is a defensive drop (the charter: garbage never panics).
+            if matches!(
+                frame,
+                Frame::UdpOpenOk { .. }
+                    | Frame::UdpOpenFail { .. }
+                    | Frame::UdpData { .. }
+                    | Frame::UdpClose { .. }
+            ) {
+                self.handle_udp_frame(frame);
+                continue;
+            }
+            // A malformed/out-of-order TCP frame is a defensive drop (garbage never panics).
             if let Ok(ev) = self.session.on_frame(frame) {
                 self.handle_event(ev);
             }
@@ -159,6 +200,25 @@ impl<T: FrameTransport> WsConnector<T> {
                     }
                 }
             }
+
+            let pending_udp: Vec<DatagramId> = self
+                .udp
+                .iter()
+                .filter(|(_, c)| c.stream.is_none() && c.status == ConnStatus::Connecting)
+                .map(|(id, _)| *id)
+                .collect();
+            for id in pending_udp {
+                let stream = self.next_udp_stream;
+                self.next_udp_stream = self.next_udp_stream.wrapping_add(1).max(FIRST_UDP_STREAM);
+                let c = self.udp.get_mut(&id).unwrap();
+                c.stream = Some(stream);
+                self.stream_to_udp.insert(stream, id);
+                self.outbox.push(Frame::UdpOpen {
+                    stream,
+                    host: c.host.clone(),
+                    port: c.port,
+                });
+            }
         }
 
         // 3. Per-stream outbound: flush pending_tx within the send window, then a pending shutdown.
@@ -166,10 +226,69 @@ impl<T: FrameTransport> WsConnector<T> {
         for id in ids {
             self.flush_stream(id);
         }
+        self.flush_udp();
 
         // 4. Ship everything produced this pass.
         for frame in core::mem::take(&mut self.outbox) {
             self.transport.send(frame);
+        }
+    }
+
+    fn handle_udp_frame(&mut self, frame: Frame) {
+        let stream = match &frame {
+            Frame::UdpOpenOk { stream }
+            | Frame::UdpOpenFail { stream, .. }
+            | Frame::UdpData { stream, .. }
+            | Frame::UdpClose { stream } => *stream,
+            _ => return,
+        };
+        let Some(&id) = self.stream_to_udp.get(&stream) else {
+            return;
+        };
+        let c = self
+            .udp
+            .get_mut(&id)
+            .expect("stream map points to live UDP flow");
+        match frame {
+            Frame::UdpOpenOk { .. } => c.status = ConnStatus::Established,
+            Frame::UdpOpenFail { .. } => {
+                c.status = ConnStatus::Failed(ConnectError::Refused);
+                self.stream_to_udp.remove(&stream);
+            }
+            Frame::UdpData { bytes, .. } => {
+                if c.rx_bytes.saturating_add(bytes.len()) > MAX_UDP_QUEUE_BYTES {
+                    c.status = ConnStatus::Failed(ConnectError::Denied(
+                        "ws-proxy UDP receive queue exceeded".to_string(),
+                    ));
+                    self.outbox.push(Frame::UdpClose { stream });
+                    self.stream_to_udp.remove(&stream);
+                } else {
+                    c.rx_bytes += bytes.len();
+                    c.rx.push_back(bytes);
+                }
+            }
+            Frame::UdpClose { .. } => {
+                c.status = ConnStatus::Closed;
+                self.stream_to_udp.remove(&stream);
+            }
+            _ => {}
+        }
+    }
+
+    fn flush_udp(&mut self) {
+        let ids: Vec<DatagramId> = self.udp.keys().copied().collect();
+        for id in ids {
+            let c = self.udp.get_mut(&id).unwrap();
+            if c.status != ConnStatus::Established {
+                continue;
+            }
+            let Some(stream) = c.stream else {
+                continue;
+            };
+            while let Some(bytes) = c.pending_tx.pop_front() {
+                c.pending_tx_bytes -= bytes.len();
+                self.outbox.push(Frame::UdpData { stream, bytes });
+            }
         }
     }
 
@@ -354,10 +473,17 @@ impl<T: FrameTransport> SyncConnector for WsConnector<T> {
     }
 
     fn buffered_bytes(&self) -> usize {
-        self.conns
+        let tcp = self
+            .conns
             .values()
             .map(|c| c.rx.len().saturating_add(c.pending_tx.len()))
-            .sum()
+            .sum::<usize>();
+        let udp = self
+            .udp
+            .values()
+            .map(|c| c.rx_bytes.saturating_add(c.pending_tx_bytes))
+            .sum::<usize>();
+        tcp.saturating_add(udp)
     }
 
     fn close(&mut self, id: ConnId) {
@@ -370,5 +496,155 @@ impl<T: FrameTransport> SyncConnector for WsConnector<T> {
             self.stream_to_conn.remove(&stream);
         }
         self.conns.remove(&id);
+    }
+
+    fn udp_open(&mut self, host: Ipv4Addr, port: u16) -> DatagramId {
+        let id = DatagramId(self.next_udp_id);
+        self.next_udp_id = self.next_udp_id.wrapping_add(1);
+        let status =
+            if self.udp.len().saturating_add(self.conns.len()) >= crate::ws_proxy::MAX_STREAMS {
+                ConnStatus::Failed(ConnectError::Denied(
+                    "ws-proxy stream limit reached".to_string(),
+                ))
+            } else {
+                ConnStatus::Connecting
+            };
+        self.udp.insert(
+            id,
+            UdpConn {
+                stream: None,
+                host: host.to_string(),
+                port,
+                status,
+                pending_tx: VecDeque::new(),
+                pending_tx_bytes: 0,
+                rx: VecDeque::new(),
+                rx_bytes: 0,
+            },
+        );
+        self.pump();
+        id
+    }
+
+    fn udp_status(&mut self, id: DatagramId) -> ConnStatus {
+        self.pump();
+        self.udp
+            .get(&id)
+            .map(|c| c.status.clone())
+            .unwrap_or(ConnStatus::Failed(ConnectError::Unreachable))
+    }
+
+    fn udp_send(&mut self, id: DatagramId, payload: &[u8]) -> bool {
+        self.pump();
+        let Some(c) = self.udp.get_mut(&id) else {
+            return false;
+        };
+        if is_terminal(&c.status)
+            || payload.len() > MAX_DATAGRAM_BYTES
+            || c.pending_tx_bytes.saturating_add(payload.len()) > MAX_UDP_QUEUE_BYTES
+        {
+            return false;
+        }
+        c.pending_tx_bytes += payload.len();
+        c.pending_tx.push_back(payload.to_vec());
+        self.pump();
+        true
+    }
+
+    fn udp_recv(&mut self, id: DatagramId) -> Vec<Vec<u8>> {
+        self.pump();
+        let Some(c) = self.udp.get_mut(&id) else {
+            return Vec::new();
+        };
+        c.rx_bytes = 0;
+        c.rx.drain(..).collect()
+    }
+
+    fn udp_close(&mut self, id: DatagramId) {
+        if let Some(c) = self.udp.remove(&id)
+            && let Some(stream) = c.stream
+        {
+            self.transport.send(Frame::UdpClose { stream });
+            self.stream_to_udp.remove(&stream);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    #[derive(Default)]
+    struct Wire {
+        sent: Vec<Frame>,
+        incoming: Vec<Frame>,
+    }
+
+    struct TestTransport(Rc<RefCell<Wire>>);
+    impl FrameTransport for TestTransport {
+        fn send(&mut self, frame: Frame) {
+            self.0.borrow_mut().sent.push(frame);
+        }
+        fn poll(&mut self) -> Vec<Frame> {
+            std::mem::take(&mut self.0.borrow_mut().incoming)
+        }
+        fn is_open(&self) -> bool {
+            true
+        }
+    }
+
+    #[test]
+    fn udp_connector_preserves_each_datagram_over_the_frame_transport() {
+        let wire = Rc::new(RefCell::new(Wire::default()));
+        let mut connector = WsConnector::new(TestTransport(wire.clone()), Vec::new());
+        let id = connector.udp_open(Ipv4Addr::new(198, 51, 100, 7), 9000);
+        assert!(matches!(wire.borrow().sent[0], Frame::Hello { .. }));
+
+        wire.borrow_mut()
+            .incoming
+            .push(crate::ws_proxy::hello(Vec::new()));
+        assert_eq!(connector.udp_status(id), ConnStatus::Connecting);
+        let stream = wire
+            .borrow()
+            .sent
+            .iter()
+            .find_map(|frame| match frame {
+                Frame::UdpOpen { stream, host, port }
+                    if host == "198.51.100.7" && *port == 9000 =>
+                {
+                    Some(*stream)
+                }
+                _ => None,
+            })
+            .expect("handshake completion emits UDP_OPEN");
+
+        wire.borrow_mut().incoming.extend([
+            Frame::UdpOpenOk { stream },
+            Frame::UdpData {
+                stream,
+                bytes: b"one".to_vec(),
+            },
+            Frame::UdpData {
+                stream,
+                bytes: b"two-two".to_vec(),
+            },
+        ]);
+        assert_eq!(connector.udp_status(id), ConnStatus::Established);
+        assert_eq!(
+            connector.udp_recv(id),
+            vec![b"one".to_vec(), b"two-two".to_vec()],
+            "two relay messages remain two guest UDP datagrams"
+        );
+
+        assert!(connector.udp_send(id, b"request"));
+        assert!(wire.borrow().sent.iter().any(|frame| {
+            matches!(frame, Frame::UdpData { stream: s, bytes } if *s == stream && bytes == b"request")
+        }));
+        assert!(
+            !connector.udp_send(id, &vec![0; MAX_DATAGRAM_BYTES + 1]),
+            "an oversized datagram is rejected, never split"
+        );
     }
 }

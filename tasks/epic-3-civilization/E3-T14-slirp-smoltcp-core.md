@@ -20,10 +20,9 @@ core slices until the Docker tab has one real bundled busybox Run (E3.5-T05a) an
 state reloads through snapshot restore (E3-T12). Slirp resumes after the visible path is
 undeniable.
 
-**IMPLEMENTATION SCOPE 2026-07-14:** E3-T14 v1 terminates guest TCP and internal DHCP UDP.
-Arbitrary external UDP needs a datagram-aware browser relay and is explicitly split to the
-E3-T18 transport follow-up; DNS boot wiring remains E3-T15. This is a visible deferral, not a
-claim that TCP-over-WebSocket preserves UDP datagrams.
+**IMPLEMENTATION SCOPE 2026-07-14:** E3-T14 v1 terminates guest TCP, internal DHCP UDP, and
+arbitrary guest-initiated external UDP. The browser relay protocol has distinct datagram opcodes;
+it does not pretend a TCP byte stream preserves UDP boundaries. DNS boot wiring remains E3-T15.
 
 ## Context
 This is the largest networking task; the design doc is a deliverable, not an afterthought.
@@ -63,6 +62,8 @@ buffers.
 - [x] Guest `ping 10.0.2.2` gets ICMP replies; NAT entries expire (observe table size
       return to zero after idle timeout with time mocked or shortened).
 - [x] Half-close works: guest `shutdown(WR)` still receives the server's remaining data.
+- [x] External UDP uses per-five-tuple NAT with 30 s idle expiry; distinct datagrams round-trip
+      byte-exact through both native sockets and the browser WebSocket relay.
 
 ## Adversarial verification
 Attack flow control and teardown. Stall the server side of a transfer for 60 s mid-stream —

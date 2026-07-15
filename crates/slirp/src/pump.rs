@@ -23,6 +23,15 @@ pub struct PumpStats {
     pub to_guest: u64,
 }
 
+/// Pump output for the guest-facing stack. Keeping clean EOF distinct from reset is load-bearing:
+/// EOF becomes a TCP FIN, while any outbound I/O error must become a TCP RST.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum PumpEvent {
+    Data(Vec<u8>),
+    Eof,
+    Reset,
+}
+
 /// How much we read from the outbound stream per `read` call.
 const READ_CHUNK: usize = 16 * 1024;
 
@@ -42,7 +51,7 @@ const READ_CHUNK: usize = 16 * 1024;
 pub async fn pump_flow<S>(
     stream: S,
     mut guest_rx: mpsc::Receiver<Vec<u8>>,
-    guest_tx: mpsc::Sender<Vec<u8>>,
+    guest_tx: mpsc::Sender<PumpEvent>,
 ) -> PumpStats
 where
     S: AsyncRead + AsyncWrite,
@@ -50,6 +59,7 @@ where
     let (mut rd, mut wr) = tokio::io::split(stream);
 
     // Guest → outbound: drain guest bytes to the server, then half-close the write side on guest FIN.
+    let reset_tx = guest_tx.clone();
     let to_outbound = async {
         let mut n: u64 = 0;
         while let Some(buf) = guest_rx.recv().await {
@@ -62,6 +72,7 @@ where
                 // direction stays alive: on a real RST its `read` also errors and ends promptly; on an
                 // odd write-only-close the guest may still legitimately receive.)
                 guest_rx.close();
+                let _ = reset_tx.send(PumpEvent::Reset).await;
                 return n;
             }
             n += buf.len() as u64;
@@ -70,26 +81,32 @@ where
         n
     };
 
-    // Outbound → guest: forward server bytes, then close the guest channel on server FIN/EOF.
+    // Outbound → guest: forward server bytes, preserving clean EOF versus reset for the stack.
     let to_guest = async {
         let mut n: u64 = 0;
         let mut buf = vec![0u8; READ_CHUNK];
         loop {
             match rd.read(&mut buf).await {
-                // Server FIN/EOF or read error → stop. NOTE: a read error (RST) is currently
-                // conflated with a clean EOF, so the guest always sees a graceful FIN, never a RST.
-                // Distinguishing them (to RST the guest) is a fidelity refinement for the stack-wiring
-                // slice, which owns the guest-facing socket (critic MINOR).
-                Ok(0) | Err(_) => break,
+                Ok(0) => {
+                    let _ = guest_tx.send(PumpEvent::Eof).await;
+                    break;
+                }
+                Err(_) => {
+                    let _ = guest_tx.send(PumpEvent::Reset).await;
+                    break;
+                }
                 Ok(k) => {
-                    if guest_tx.send(buf[..k].to_vec()).await.is_err() {
+                    if guest_tx
+                        .send(PumpEvent::Data(buf[..k].to_vec()))
+                        .await
+                        .is_err()
+                    {
                         break; // guest side is gone — nowhere to deliver.
                     }
                     n += k as u64;
                 }
             }
         }
-        drop(guest_tx); // closing the channel tells the stack to FIN the guest.
         n
     };
 
@@ -125,7 +142,7 @@ mod tests {
         guarded(async {
             let (pump_side, mut server) = tokio::io::duplex(1024);
             let (g2o_tx, g2o_rx) = mpsc::channel::<Vec<u8>>(8); // guest → outbound
-            let (o2g_tx, mut o2g_rx) = mpsc::channel::<Vec<u8>>(8); // outbound → guest
+            let (o2g_tx, mut o2g_rx) = mpsc::channel::<PumpEvent>(8); // outbound → guest
             let h = tokio::spawn(pump_flow(pump_side, g2o_rx, o2g_tx));
 
             // Guest → server.
@@ -138,7 +155,7 @@ mod tests {
             server.write_all(b"world!").await.unwrap();
             assert_eq!(
                 o2g_rx.recv().await.unwrap(),
-                b"world!",
+                PumpEvent::Data(b"world!".to_vec()),
                 "server bytes reached the guest"
             );
 
@@ -148,12 +165,9 @@ mod tests {
             server.read_to_end(&mut tail).await.unwrap();
             assert!(tail.is_empty(), "guest FIN half-closed outbound cleanly");
 
-            // Server closes → the guest delivery channel closes (stack will FIN the guest).
+            // Server closes → the stack gets an explicit clean EOF (and therefore sends FIN).
             drop(server);
-            assert!(
-                o2g_rx.recv().await.is_none(),
-                "server close closes the guest channel"
-            );
+            assert_eq!(o2g_rx.recv().await, Some(PumpEvent::Eof));
 
             let stats = h.await.unwrap();
             assert_eq!(
@@ -174,16 +188,17 @@ mod tests {
         guarded(async {
             let (pump_side, mut server) = tokio::io::duplex(1024);
             let (g2o_tx, g2o_rx) = mpsc::channel::<Vec<u8>>(8);
-            let (o2g_tx, mut o2g_rx) = mpsc::channel::<Vec<u8>>(8);
+            let (o2g_tx, mut o2g_rx) = mpsc::channel::<PumpEvent>(8);
             let h = tokio::spawn(pump_flow(pump_side, g2o_rx, o2g_tx));
 
             // Server sends, then FINs its write half.
             server.write_all(b"ab").await.unwrap();
             server.shutdown().await.unwrap();
-            assert_eq!(o2g_rx.recv().await.unwrap(), b"ab");
-            assert!(
-                o2g_rx.recv().await.is_none(),
-                "server FIN closes the guest channel"
+            assert_eq!(o2g_rx.recv().await, Some(PumpEvent::Data(b"ab".to_vec())));
+            assert_eq!(
+                o2g_rx.recv().await,
+                Some(PumpEvent::Eof),
+                "server FIN is reported as clean EOF"
             );
 
             // Half-open: the guest keeps sending after the server's FIN; bytes still reach the server.
@@ -216,7 +231,7 @@ mod tests {
         guarded(async {
             let (pump_side, mut server) = tokio::io::duplex(64); // tiny buffer forces backpressure
             let (g2o_tx, g2o_rx) = mpsc::channel::<Vec<u8>>(4);
-            let (o2g_tx, mut o2g_rx) = mpsc::channel::<Vec<u8>>(4);
+            let (o2g_tx, mut o2g_rx) = mpsc::channel::<PumpEvent>(4);
             let h = tokio::spawn(pump_flow(pump_side, g2o_rx, o2g_tx));
 
             const N: usize = 100 * 1024;
@@ -244,8 +259,8 @@ mod tests {
             }
             drop(g2o_tx);
             // No reverse traffic here: the pump's read side hits EOF when the drain task drops `server`,
-            // which closes the guest channel — so this recv resolves to None when the reverse side ends.
-            let _ = o2g_rx.recv().await;
+            // which reports an explicit clean EOF to the stack.
+            assert_eq!(o2g_rx.recv().await, Some(PumpEvent::Eof));
 
             let received = drain.await.unwrap();
             assert_eq!(received, N);
@@ -296,7 +311,7 @@ mod tests {
     async fn write_error_closes_guest_channel_so_further_sends_fail_fast() {
         guarded(async {
             let (g2o_tx, g2o_rx) = mpsc::channel::<Vec<u8>>(8);
-            let (o2g_tx, _o2g_rx) = mpsc::channel::<Vec<u8>>(8);
+            let (o2g_tx, mut o2g_rx) = mpsc::channel::<PumpEvent>(8);
             // Pre-load one byte the pump will try (and fail) to write.
             g2o_tx.send(b"x".to_vec()).await.unwrap();
             let _pump = tokio::spawn(pump_flow(DeadWriteLiveRead, g2o_rx, o2g_tx));
@@ -307,6 +322,53 @@ mod tests {
                 g2o_tx.send(b"y".to_vec()).await.is_err(),
                 "guest sends fail after outbound death — no false delivery ack, no silent drop"
             );
+            assert_eq!(
+                o2g_rx.recv().await,
+                Some(PumpEvent::Reset),
+                "an outbound write error is a guest-visible reset, never a clean EOF"
+            );
+        })
+        .await;
+    }
+
+    /// A read-side connection reset must remain distinguishable from a clean EOF. Conflating these
+    /// made the bridge send FIN for a remote RST, which falsely tells the guest all prior bytes were
+    /// delivered cleanly.
+    struct ResetRead;
+    impl AsyncRead for ResetRead {
+        fn poll_read(
+            self: Pin<&mut Self>,
+            _: &mut Context<'_>,
+            _: &mut ReadBuf<'_>,
+        ) -> Poll<io::Result<()>> {
+            Poll::Ready(Err(io::Error::from(io::ErrorKind::ConnectionReset)))
+        }
+    }
+    impl AsyncWrite for ResetRead {
+        fn poll_write(
+            self: Pin<&mut Self>,
+            _: &mut Context<'_>,
+            buf: &[u8],
+        ) -> Poll<io::Result<usize>> {
+            Poll::Ready(Ok(buf.len()))
+        }
+        fn poll_flush(self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<io::Result<()>> {
+            Poll::Ready(Ok(()))
+        }
+        fn poll_shutdown(self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<io::Result<()>> {
+            Poll::Ready(Ok(()))
+        }
+    }
+
+    #[tokio::test]
+    async fn read_reset_is_reported_as_reset_not_eof() {
+        guarded(async {
+            let (g2o_tx, g2o_rx) = mpsc::channel::<Vec<u8>>(1);
+            let (o2g_tx, mut o2g_rx) = mpsc::channel::<PumpEvent>(1);
+            drop(g2o_tx);
+            let stats = pump_flow(ResetRead, g2o_rx, o2g_tx).await;
+            assert_eq!(o2g_rx.recv().await, Some(PumpEvent::Reset));
+            assert_eq!(stats.to_guest, 0);
         })
         .await;
     }

@@ -216,7 +216,7 @@ export async function startLinuxBoot(opts = {}) {
 
     // E3-net: pick the virtio-net backend for this boot BEFORE constructing WasmLinux (which reads
     // the flags). `slirpNet` → the local stack (DHCP/ARP/ICMP); `slirpRelay` additionally attaches
-    // outbound TCP through WsConnector → WebSocket → wvrelay. Set both unconditionally so a prior
+    // outbound TCP/UDP through WsConnector → WebSocket → wvrelay. Set both unconditionally so a prior
     // boot's choice never leaks.
     // Defensive: both setters only update boot configuration; a stray failure can fall back to the
     // default backend rather than aborting asset loading. (A pkg missing either named export fails
@@ -378,6 +378,12 @@ export async function startLinuxBoot(opts = {}) {
       }
       if (res.done) {
         tickScheduled = false;
+        // Compact guest-layer evidence for long Linux runs: surface the same architectural state
+        // SHA-256 contract as native boot evidence. It is printed into the terminal so the browser
+        // screenshot/transcript carries a reopenable, stale-run-detecting fingerprint.
+        try {
+          onOutput(new TextEncoder().encode(`\r\nstate sha256=${machine.stateDigest()}\r\n`));
+        } catch { /* a terminal state is still reported even if evidence formatting fails */ }
         onState("done");
         resolveDone(res.state);
         return;
@@ -439,6 +445,7 @@ export async function startLinuxBoot(opts = {}) {
         }
       },
       isPaused: () => paused,
+      stateDigest: () => machine.stateDigest(),
       // E3-T02: chunked-boot instrumentation — `{ fetches, bytes, error }` (bytes transferred so
       // far via lazy chunk fetch). Null for non-chunked boots. Drives the <40%-of-image acceptance.
       fetchStats: () => (isChunked ? machine.fetchStats() : null),

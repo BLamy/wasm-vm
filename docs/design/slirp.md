@@ -3,10 +3,10 @@
 A user-mode TCP/IP stack that terminates the guest's ethernet world entirely in Rust, so the guest
 gets outbound networking (DNS, HTTP, `apk`, pulling OCI images from inside the guest) with **no
 privileged host networking** — no TUN/TAP, no root, works in a browser tab. smoltcp parses and
-answers the guest's frames; guest-initiated TCP flows are NATed onto abstract connector traits. The
-native harness backs them with real sockets, while the browser tunnels them over a multiplexed
-WebSocket to `wvrelay`. Internal UDP is implemented for DHCP and DNS; arbitrary external UDP is
-explicitly deferred (see Out of scope).
+answers the guest's frames; guest-initiated TCP and UDP flows are NATed onto abstract connector
+traits. The native harness backs them with real sockets, while the browser tunnels them over a
+multiplexed WebSocket to `wvrelay`. TCP uses credit-controlled byte streams; UDP uses dedicated
+datagram frames so message boundaries remain intact. DHCP is implemented; DNS wiring remains T15.
 
 This is the largest networking task; it lands in passes. **This doc is a deliverable and is kept in
 sync with the code** — a contract stated here but not implemented is a bug.
@@ -23,7 +23,7 @@ sync with the code** — a contract stated here but not implemented is a bug.
 The slirp stack owns `10.0.2.2` and `10.0.2.3`: it answers ARP, replies to ICMP echo at
 `10.0.2.2`, and serves DHCP. The DNS parser/forwarder/DoH and OS-resolver cores exist under E3-T15;
 the remaining work there is wiring the browser resolver into the synchronous backend and proving
-name resolution in booted Alpine. External TCP destinations are NATed outbound.
+name resolution in booted Alpine. External TCP and UDP destinations are NATed outbound.
 
 ## Architecture
 
@@ -56,7 +56,9 @@ name resolution in booted Alpine. External TCP destinations are NATed outbound.
   only ever sees ARP-for-the-gateway, IPv4-to-the-gateway (ICMP echo / local TCP), and TCP to an
   endpoint we've opened. Everything else — external ICMP, external UDP, un-opened-flow TCP,
   non-gateway ARP — is dropped BEFORE smoltcp, so the stack never forges a reply *as* an external
-  host it hasn't opened a flow for (without the filter, `any_ip` made smoltcp answer `ping 8.8.8.8`,
+  host it hasn't opened a TCP flow for. External UDP is intercepted by `SlirpLocalBackend` before
+  this filter and routed through connected-socket NAT. Without the filter, `any_ip` made smoltcp
+  answer `ping 8.8.8.8`,
   RST an un-opened SYN, and ICMP-unreachable external UDP — all as the impersonated host; critic
   CRITICAL). Concurrent connections to the same external `IP:port` are demultiplexed by a unique
   smoltcp-local port alias per full guest 4-tuple; ingress/egress TCP ports and checksums are rewritten
@@ -73,8 +75,9 @@ name resolution in booted Alpine. External TCP destinations are NATed outbound.
           -> impl Future<Output = Result<Self::Conn, ConnectError>> + Send;
   }
   ```
-  `NativeConnector` = `tokio::net::TcpStream` (tests + native CLI). The browser uses the synchronous
-  sibling trait `SyncConnector`: `WsConnector` multiplexes flow-control-aware streams over a browser
+  `NativeConnector` = `tokio::net::TcpStream` (async bridge tests). Production native and browser
+  use the synchronous sibling trait `SyncConnector`: `StdConnector` owns OS sockets, while
+  `WsConnector` multiplexes flow-control-aware streams over a browser
   `WebSocket` to `wvrelay`, which owns the real sockets. **Contract:** connect either yields a duplex
   stream or fails
   within the connect timeout with a typed error the stack maps to a guest RST.
@@ -85,6 +88,12 @@ name resolution in booted Alpine. External TCP destinations are NATed outbound.
   entries (LRU eviction); per-flow buffers and WebSocket queues have explicit hard caps.
   Deterministic iteration (`BTreeMap`, not `HashMap`). **Time is injected** (`now_ms` per call);
   callers must pass a monotonic clock (a backwards `now` would shorten a flow's life).
+- **UDP NAT** — the first external guest datagram creates one connected socket keyed by the full
+  five-tuple; later datagrams refresh it and retain their boundaries. Replies are accepted only from
+  that connected destination, reframed with the original external source IP/port, and delivered to
+  the guest. Native uses `std::net::UdpSocket`; the browser uses `UDP_OPEN`/`UDP_DATA`/`UDP_CLOSE`
+  frames through `wvrelay`. Each per-flow queue is capped at four maximum IPv4 datagrams; excess is
+  dropped rather than growing memory. Idle flows expire after 30 seconds.
 
 ## Flow control
 
@@ -114,8 +123,6 @@ bounds, and peak-RSS delta.
 - **IPv6** — v1 is IPv4 only.
 - **Raw sockets / ICMP beyond echo-to-gateway** — `ping` to the gateway works (pass 2a); arbitrary
   ICMP passthrough is out of scope.
-- **Arbitrary external UDP NAT** — v1 exposes only internal UDP services (DHCP and DNS). Browser UDP
-  needs a datagram-aware relay protocol rather than pretending a TCP stream preserves datagrams.
 - **Complete DNS wiring/boot proof** — E3-T15. DHCP is wired and proven in native + browser Alpine;
   DNS core modules exist, but the browser DoH transport is not yet attached to `SlirpLocalBackend`.
 
@@ -132,8 +139,12 @@ bounds, and peak-RSS delta.
    (`tcp.rs`); the `FlowManager` control plane (`manager.rs`); and **promiscuous TCP accept**
    (`any_ip` + `open_tcp`, `stack.rs`) — a guest SYN to an arbitrary external host handshakes
    (SYN → SYN-ACK).
-4. **Data paths (done):** async `Bridge` + `NativeConnector` for the CLI, synchronous
-   `SlirpLocalBackend` + `StdConnector` for native acceptance, and `WsConnector` + browser
-   `WebSocket` + `wvrelay` for wasm. DHCP is driven in both native and browser backends. Evidence:
-   real browser Alpine DHCP/ping/wget with a host-matching SHA-256; 50 concurrent distinct flows;
-   100 MiB byte-exact each direction with bounded memory; half-close/refusal/backpressure suites.
+4. **Data paths (done):** `SlirpLocalBackend` is shared by the native CLI (`StdConnector`) and wasm
+   (`WsConnector` + browser `WebSocket` + `wvrelay`); the async `Bridge` + `NativeConnector` remains
+   independently tested. DHCP is driven in both backends. Evidence: real browser Alpine
+   DHCP/ping/wget with a host-matching SHA-256; 50 concurrent distinct TCP flows; 100 MiB byte-exact
+   each direction with bounded memory; half-close/refusal/backpressure suites; and external UDP
+   round trips through native sockets and the production WebSocket relay. While a relay-backed NAT
+   flow is live, the backend reports external I/O pending to the machine: WFI then advances only to
+   the next host run-chunk boundary instead of fast-forwarding guest time to a socket timeout before
+   JavaScript can deliver a WebSocket callback.

@@ -143,11 +143,21 @@ async fn connect_failure_tears_the_flow_down() {
         0,
         "half-open flow torn down on connect failure"
     );
-    // The endpoint was removed → the SYN is filtered → no SYN-ACK (guest times out).
+    // The failed dial must terminate the guest promptly. The bridge briefly lets smoltcp consume the
+    // SYN so it knows the peer sequence number, then aborts; the final segment is therefore RST.
     b.poll(2);
+    let egress = b.take_egress();
     assert!(
-        b.take_egress().is_empty(),
-        "no SYN-ACK for a refused outbound"
+        egress.iter().any(|frame| {
+            let Ok(ip) = Ipv4Packet::new_checked(&frame[14..]) else {
+                return false;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                return false;
+            };
+            tcp.dst_port() == 40000 && tcp.rst()
+        }),
+        "a refused outbound must RST the guest immediately, not leave it to time out: {egress:?}"
     );
 }
 

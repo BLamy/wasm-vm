@@ -21,6 +21,7 @@ use std::sync::mpsc;
 
 use clap::Args;
 use wasm_vm_core::dev::console::ConsoleSink;
+use wasm_vm_core::trace::{HashSink, NullSink, TraceSink};
 use wasm_vm_core::{Machine, RunOutcome, platform};
 
 use crate::file_backend;
@@ -73,10 +74,15 @@ pub struct BootArgs {
     #[arg(long)]
     pub net: bool,
     /// E3-T14: attach virtio-net (slot 1) backed by the slirp user-mode network stack instead of
-    /// loopback — DHCP configures `eth0`, and guest-initiated TCP is NATed onto real outbound
+    /// loopback — DHCP configures `eth0`, and guest-initiated TCP/UDP is NATed onto real outbound
     /// sockets. Takes precedence over `--net`. DNS remains a follow-up.
     #[arg(long)]
     pub net_slirp: bool,
+    /// Write compact guest-layer evidence at exit: a rolling digest of every retired instruction,
+    /// retired count, and final architectural-state SHA-256. Intended for reopenable verification
+    /// of long Linux boots where a full multi-billion-line canonical trace is impractical.
+    #[arg(long)]
+    pub evidence: Option<PathBuf>,
 }
 
 /// Guest console → this process's stdout. Shared with the SBI console channel; a closed pipe
@@ -170,15 +176,31 @@ pub fn boot(a: BootArgs) -> ExitCode {
             Ok(v) => v,
             Err(code) => return code,
         };
-        let outcome = run_machine(
-            &a,
-            &mut m,
-            &uart,
-            &console,
-            stdin_rx.as_ref(),
-            &mut pending,
-            profiler.as_mut().filter(|_| boot_num == 1),
-        );
+        let mut hash = HashSink::new();
+        let outcome = if a.evidence.is_some() {
+            run_machine(
+                &a,
+                &mut m,
+                &uart,
+                &console,
+                stdin_rx.as_ref(),
+                &mut pending,
+                profiler.as_mut().filter(|_| boot_num == 1),
+                &mut hash,
+            )
+        } else {
+            let mut null = NullSink;
+            run_machine(
+                &a,
+                &mut m,
+                &uart,
+                &console,
+                stdin_rx.as_ref(),
+                &mut pending,
+                profiler.as_mut().filter(|_| boot_num == 1),
+                &mut null,
+            )
+        };
         // Final drain before we act on the outcome.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
@@ -189,6 +211,21 @@ pub fn boot(a: BootArgs) -> ExitCode {
         }
         if a.stats {
             eprint!("{}", m.stats_dump()); // E2-T20
+        }
+        if let Some(path) = &a.evidence {
+            let evidence = format!(
+                "wasm-vm boot evidence v1\ntrace fnv64={:016x}\ntrace retired={}\n{}\noutcome={outcome:?}\n",
+                hash.hash(),
+                hash.retired(),
+                m.snapshot().state_sha256_line(),
+            );
+            if let Err(e) = std::fs::write(path, evidence) {
+                eprintln!(
+                    "wasm-vm: cannot write boot evidence {}: {e}",
+                    path.display()
+                );
+                return ExitCode::from(74);
+            }
         }
 
         match outcome {
@@ -499,7 +536,7 @@ impl BootProfiler {
     }
 }
 
-fn run_machine(
+fn run_machine<T: TraceSink>(
     a: &BootArgs,
     m: &mut Machine,
     uart: &Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
@@ -507,6 +544,7 @@ fn run_machine(
     stdin_rx: Option<&mpsc::Receiver<Vec<u8>>>,
     pending: &mut std::collections::VecDeque<u8>,
     profiler: Option<&mut BootProfiler>,
+    sink: &mut T,
 ) -> RunOutcome {
     let mut profiler = profiler;
     let mut total = 0u64;
@@ -515,8 +553,7 @@ fn run_machine(
             return RunOutcome::MaxInstrs;
         }
         let step = a.quantum.min(a.max_instrs - total);
-        let mut sink = wasm_vm_core::trace::NullSink;
-        let o = m.run_traced(step, &mut sink);
+        let o = m.run_traced(step, sink);
         // Drain UART output → stdout every quantum so the boot log streams live.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);

@@ -903,6 +903,16 @@ impl Machine {
         }
     }
 
+    /// Whether a network backend is waiting on an event that only the host can deliver between
+    /// execution chunks. Fast-forwarding WFI to a guest timer deadline in this state can make a
+    /// socket timeout fire before the browser gets a chance to run its WebSocket callback.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn external_net_io_pending(&self) -> bool {
+        self.net
+            .as_ref()
+            .is_some_and(|(state, _, _)| state.borrow().backend.external_io_pending())
+    }
+
     /// E2-T20: run the sliding-window interrupt-storm detector. Called only when a trap lands
     /// (event-driven, so zero cost while quiet — a trap during normal operation is rare, and
     /// during a storm the detector is exactly what we want running). Syncs the PLIC claim
@@ -1052,7 +1062,9 @@ impl Machine {
                     // None above), so this WFI is a real idle wait. Skip the idle spin by jumping
                     // mtime to the nearest armed timer deadline — deterministic, so native and
                     // wasm agree. Turns a ~20× `sleep` into near-real-time. No-op if no timer armed.
-                    self.wfi_fast_forward();
+                    if !self.external_net_io_pending() {
+                        self.wfi_fast_forward();
+                    }
                 }
             }
             if let Err(trap) = step_result {

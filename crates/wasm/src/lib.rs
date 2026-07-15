@@ -88,6 +88,8 @@ mod idb_store;
 // E3-net: JS WebSocket callbacks ↔ synchronous ws-proxy connector queues.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod ws_transport;
+#[cfg(any(all(target_arch = "wasm32", not(feature = "zicsr-stub")), test))]
+mod ws_transport_state;
 
 /// One-time browser diagnostics setup: route `log` to the JS console and install the
 /// panic hook that turns Rust panics into readable console errors. Idempotent.
@@ -949,6 +951,14 @@ impl WasmLinux {
             }
         }
         Ok(obj.into())
+    }
+
+    /// Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
+    /// devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
+    #[wasm_bindgen(js_name = stateDigest)]
+    pub fn state_digest(&self) -> Result<String, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.machine.snapshot().hex_digest())
     }
 
     /// Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).

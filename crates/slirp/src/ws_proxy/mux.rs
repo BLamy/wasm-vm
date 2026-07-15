@@ -280,6 +280,14 @@ impl Mux {
                 self.reap(stream);
                 Ok(MuxEvent::Reset(stream))
             }
+
+            // UDP datagrams bypass the TCP stream state machine and are handled directly by the
+            // connector/relay driver. Feeding one into Mux is always a caller routing bug.
+            Frame::UdpOpen { .. }
+            | Frame::UdpOpenOk { .. }
+            | Frame::UdpOpenFail { .. }
+            | Frame::UdpData { .. }
+            | Frame::UdpClose { .. } => Err(MuxError::RoleViolation),
         }
     }
 

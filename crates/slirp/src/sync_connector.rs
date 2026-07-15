@@ -24,6 +24,11 @@ use crate::connector::ConnectError;
 /// stale/unknown id is simply "not found" (handled gracefully, never a panic).
 pub type ConnId = u64;
 
+/// Opaque id for one connected UDP socket. Kept distinct from [`ConnId`] at the type level so TCP
+/// stream lifecycle operations cannot accidentally address a datagram flow.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DatagramId(pub u64);
+
 /// The lifecycle state of a connection as the synchronous backend pump observes it.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ConnStatus {
@@ -85,4 +90,31 @@ pub trait SyncConnector {
     /// Tear down `id` (guest RST / flow eviction / both sides done). Idempotent; an unknown id is a
     /// no-op. After this the id is dead — `status` reports `Failed`.
     fn close(&mut self, id: ConnId);
+
+    /// Open a connected UDP socket for one guest five-tuple. Like TCP connect, this is non-blocking;
+    /// browser implementations may remain [`Connecting`](ConnStatus::Connecting) until the relay
+    /// acknowledges the socket. The default makes TCP-only test connectors fail closed.
+    fn udp_open(&mut self, _host: Ipv4Addr, _port: u16) -> DatagramId {
+        DatagramId(u64::MAX)
+    }
+
+    /// Current UDP socket state. `Established` means datagrams may be sent/received; `Failed` causes
+    /// the NAT entry to be reaped. UDP has no half-close, so `Closed` is terminal too.
+    fn udp_status(&mut self, _id: DatagramId) -> ConnStatus {
+        ConnStatus::Failed(ConnectError::Unreachable)
+    }
+
+    /// Send exactly one datagram, preserving its boundary. Returns true only when the whole datagram
+    /// was accepted; UDP never exposes a partial application datagram.
+    fn udp_send(&mut self, _id: DatagramId, _payload: &[u8]) -> bool {
+        false
+    }
+
+    /// Drain received datagrams, preserving one `Vec` per datagram. Empty means no data available.
+    fn udp_recv(&mut self, _id: DatagramId) -> Vec<Vec<u8>> {
+        Vec::new()
+    }
+
+    /// Tear down a UDP flow. Idempotent for stale/unknown ids.
+    fn udp_close(&mut self, _id: DatagramId) {}
 }

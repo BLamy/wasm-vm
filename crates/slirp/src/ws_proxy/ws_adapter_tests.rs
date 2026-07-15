@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 use std::net::SocketAddr;
 use std::time::Duration;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::net::{TcpListener, TcpStream};
+use tokio::net::{TcpListener, TcpStream, UdpSocket};
 use tokio::time::timeout;
 use tokio_tungstenite::client_async;
 use tokio_tungstenite::tungstenite::Message;
@@ -149,6 +149,68 @@ async fn a_refused_backend_reports_open_fail_over_the_websocket() {
         recv_frame(&mut ws).await,
         Frame::OpenFail { stream: 1, code: 1 }
     );
+}
+
+#[tokio::test]
+async fn udp_datagrams_round_trip_over_a_real_websocket_without_coalescing() {
+    let echo = UdpSocket::bind("127.0.0.1:0").await.unwrap();
+    let echo_addr = echo.local_addr().unwrap();
+    tokio::spawn(async move {
+        let mut buf = [0u8; 65_507];
+        while let Ok((n, peer)) = echo.recv_from(&mut buf).await {
+            if echo.send_to(&buf[..n], peer).await.is_err() {
+                break;
+            }
+        }
+    });
+
+    let mut ws = connect_ws().await;
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    send_frame(&mut ws, hello(vec![])).await;
+    let stream = 0x8000_0001;
+    send_frame(
+        &mut ws,
+        Frame::UdpOpen {
+            stream,
+            host: "127.0.0.1".into(),
+            port: echo_addr.port(),
+        },
+    )
+    .await;
+    assert_eq!(recv_frame(&mut ws).await, Frame::UdpOpenOk { stream });
+
+    send_frame(
+        &mut ws,
+        Frame::UdpData {
+            stream,
+            bytes: b"first".to_vec(),
+        },
+    )
+    .await;
+    send_frame(
+        &mut ws,
+        Frame::UdpData {
+            stream,
+            bytes: b"second-is-longer".to_vec(),
+        },
+    )
+    .await;
+    assert_eq!(
+        recv_frame(&mut ws).await,
+        Frame::UdpData {
+            stream,
+            bytes: b"first".to_vec()
+        }
+    );
+    assert_eq!(
+        recv_frame(&mut ws).await,
+        Frame::UdpData {
+            stream,
+            bytes: b"second-is-longer".to_vec()
+        },
+        "WebSocket framing preserves two distinct UDP datagrams"
+    );
+    send_frame(&mut ws, Frame::UdpClose { stream }).await;
 }
 
 /// Accept exactly one connection and run `handle_conn` as an observable task, returning its address

@@ -49,6 +49,12 @@ impl FlowManager {
         self.table.len()
     }
 
+    /// Create or refresh a non-TCP flow in the same bounded NAT table. The caller owns the protocol
+    /// classifier (currently external UDP framing) and must tear down any returned eviction.
+    pub fn touch_flow(&mut self, key: FlowKey, now_ms: u64) -> TouchOutcome {
+        self.table.touch(key, now_ms)
+    }
+
     /// Classify + record one guest→gateway frame at `now_ms`, returning what the bridge should do.
     pub fn on_guest_frame(&mut self, frame: &[u8], now_ms: u64) -> FrameOutcome {
         match tcp::classify(frame) {

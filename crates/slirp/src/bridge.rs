@@ -39,6 +39,7 @@ pub struct Bridge<C: OutboundConnector> {
     stack: SlirpStack,
     manager: FlowManager,
     connector: C,
+    last_now_ms: i64,
     flows: BTreeMap<FlowKey, FlowConn<C::Conn>>,
     /// Per-flow byte pumps (native only — tokio channels + task). Populated lazily by
     /// [`Bridge::service`]; empty until then. Feature-gated so the browser build never pulls tokio.
@@ -52,7 +53,7 @@ mod pump {
     use tokio::sync::mpsc;
     use tokio::task::JoinHandle;
 
-    use crate::pump::PumpStats;
+    use crate::pump::{PumpEvent, PumpStats};
 
     /// A running flow's pump plumbing: the channel we feed guest bytes into (`to_pump`, `None` once
     /// the guest half-closed), the channel we drain outbound bytes from (`from_pump`), a small buffer
@@ -61,9 +62,12 @@ mod pump {
     pub(super) struct PumpHandle {
         pub handle: SocketHandle,
         pub to_pump: Option<mpsc::Sender<Vec<u8>>>,
-        pub from_pump: mpsc::Receiver<Vec<u8>>,
+        pub from_pump: mpsc::Receiver<PumpEvent>,
         pub pending_out: Vec<u8>,
-        pub outbound_fin_sent: bool,
+        /// A terminal condition waits here until any preceding data is accepted by smoltcp. Reset
+        /// overrides EOF because observing any I/O error invalidates a previously-racing clean FIN.
+        pub terminal: Option<PumpEvent>,
+        pub terminal_sent: bool,
         pub _join: JoinHandle<PumpStats>,
     }
 }
@@ -75,6 +79,7 @@ impl<C: OutboundConnector> Bridge<C> {
             stack: SlirpStack::new(mac),
             manager: FlowManager::new(max_flows),
             connector,
+            last_now_ms: 0,
             flows: BTreeMap::new(),
             #[cfg(feature = "native")]
             pumps: BTreeMap::new(),
@@ -93,6 +98,7 @@ impl<C: OutboundConnector> Bridge<C> {
 
     /// Poll the underlying stack (process injected frames, emit replies) at `now_ms`.
     pub fn poll(&mut self, now_ms: i64) {
+        self.last_now_ms = now_ms;
         self.stack.poll(now_ms);
     }
 
@@ -106,7 +112,7 @@ impl<C: OutboundConnector> Bridge<C> {
     /// stack (whose `accept_frame` filter is the real gate — it admits ARP/ICMP for the gateway and
     /// TCP for opened endpoints, drops the rest). On a NEW flow (`Connect`) we open a listening socket
     /// and `connect` the outbound side before injecting the SYN (so it passes the filter); on connect
-    /// failure we drop the half-open flow so the SYN is then filtered out and the guest times out.
+    /// failure we briefly accept then abort the half-open flow so the guest gets a prompt RST.
     /// Any flow the NAT evicted to make room is torn down first.
     pub async fn on_guest_frame(&mut self, frame: Vec<u8>, now_ms: u64) {
         let out = self.manager.on_guest_frame(&frame, now_ms);
@@ -126,11 +132,17 @@ impl<C: OutboundConnector> Bridge<C> {
                     );
                 }
                 Err(_refused) => {
-                    // No outbound → drop the half-open flow (socket + endpoint + NAT entry) so the
-                    // SYN below is filtered out; the guest handshake times out. (A prompt RST is a
-                    // byte-pump-slice refinement.)
+                    // Let smoltcp consume the SYN through the listener, then abort and poll BEFORE
+                    // removing the socket. `abort` only queues the RST; removing first would erase it
+                    // and leave the guest half-open until its own timeout.
+                    self.stack.inject(frame);
+                    self.stack.poll(now_ms as i64);
+                    self.stack.tcp_abort(handle);
+                    self.stack.poll(now_ms as i64);
                     self.stack.remove_tcp(handle);
                     self.manager.remove(&key);
+                    self.last_now_ms = now_ms as i64;
+                    return;
                 }
             }
         }
@@ -145,6 +157,7 @@ impl<C: OutboundConnector> Bridge<C> {
         // later `open_tcp`/`remove_tcp`. (The full-4-tuple accept guard for concurrent same-endpoint
         // flows is a byte-pump-slice refinement — see the accept_frame note in `stack.rs`.)
         self.stack.poll(now_ms as i64);
+        self.last_now_ms = now_ms as i64;
     }
 
     /// Sweep idle-expired flows at `now_ms`, tearing each down.
@@ -220,7 +233,8 @@ where
                     to_pump: Some(to_pump),
                     from_pump,
                     pending_out: Vec::new(),
-                    outbound_fin_sent: false,
+                    terminal: None,
+                    terminal_sent: false,
                     _join: join,
                 },
             );
@@ -283,14 +297,29 @@ where
             // the BOUNDED `from_pump` channel instead blocks the pump's `guest_tx.send`, which
             // backpressures the real server. (The FIN guard below already requires `pending_out`
             // empty, so deferring `Disconnected` detection until the buffer flushes loses nothing.)
-            let mut outbound_closed = false;
             if ph.pending_out.is_empty() {
                 loop {
                     match ph.from_pump.try_recv() {
-                        Ok(chunk) => ph.pending_out.extend_from_slice(&chunk),
+                        Ok(crate::pump::PumpEvent::Data(chunk)) => {
+                            ph.pending_out.extend_from_slice(&chunk)
+                        }
+                        Ok(crate::pump::PumpEvent::Eof) => {
+                            if ph.terminal.is_none() {
+                                ph.terminal = Some(crate::pump::PumpEvent::Eof);
+                            }
+                            break;
+                        }
+                        Ok(crate::pump::PumpEvent::Reset) => {
+                            ph.terminal = Some(crate::pump::PumpEvent::Reset);
+                            break;
+                        }
                         Err(tokio::sync::mpsc::error::TryRecvError::Empty) => break,
                         Err(tokio::sync::mpsc::error::TryRecvError::Disconnected) => {
-                            outbound_closed = true;
+                            // The pump contract always sends an explicit terminal event. A task that
+                            // disappears without one is therefore abnormal and must fail closed.
+                            if ph.terminal.is_none() && !ph.terminal_sent {
+                                ph.terminal = Some(crate::pump::PumpEvent::Reset);
+                            }
                             break;
                         }
                     }
@@ -301,10 +330,22 @@ where
                 ph.pending_out.drain(..n);
             }
 
-            // Server FIN/EOF: once every buffered byte has reached the socket, FIN the guest — once.
-            if outbound_closed && ph.pending_out.is_empty() && !ph.outbound_fin_sent {
-                self.stack.tcp_close(h);
-                ph.outbound_fin_sent = true;
+            // Preserve the outbound terminal condition. A clean EOF half-closes with FIN; an I/O
+            // error aborts with RST. Poll before reap so the terminal segment reaches egress.
+            // Reset is not ordered behind buffered application data: a reset discards unacknowledged
+            // bytes. Clean EOF, by contrast, must wait until all preceding bytes reach the socket.
+            if matches!(ph.terminal, Some(crate::pump::PumpEvent::Reset)) {
+                ph.pending_out.clear();
+            }
+            if ph.pending_out.is_empty() && !ph.terminal_sent && ph.terminal.is_some() {
+                let terminal = ph.terminal.take().expect("checked above");
+                match terminal {
+                    crate::pump::PumpEvent::Eof => self.stack.tcp_close(h),
+                    crate::pump::PumpEvent::Reset => self.stack.tcp_abort(h),
+                    crate::pump::PumpEvent::Data(_) => unreachable!(),
+                }
+                self.stack.poll(self.last_now_ms);
+                ph.terminal_sent = true;
             }
 
             // Reap when the socket is fully closed (or already gone): drop the pump + flow together.
