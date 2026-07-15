@@ -4,7 +4,7 @@
 //! read, and two concurrent streams with no cross-talk.
 
 use super::RelayServer;
-use crate::ws_proxy::{Frame, INITIAL_WINDOW, hello};
+use crate::ws_proxy::{FIRST_UDP_STREAM, Frame, INITIAL_WINDOW, MAX_STREAMS, hello};
 use std::net::SocketAddr;
 use std::time::Duration;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -299,6 +299,84 @@ async fn tcp_open_reusing_a_live_udp_id_is_rejected_without_harming_the_datagram
 
     g.send(Frame::UdpClose { stream }).await;
     open(&mut g, stream, tcp_addr).await;
+}
+
+/// Verifier-promoted inverse-collision attack: the shared namespace must be symmetric. A UDP open
+/// may not alias a live TCP id, and rejecting it must not perturb the established byte stream.
+#[tokio::test]
+async fn udp_open_reusing_a_live_tcp_id_is_rejected_without_harming_the_stream() {
+    let tcp_addr = spawn_echo().await;
+    let udp_addr = spawn_udp_echo().await;
+    let mut g = start_relay();
+    handshake(&mut g).await;
+    open(&mut g, 1, tcp_addr).await;
+
+    g.send(Frame::UdpOpen {
+        stream: 1,
+        host: "127.0.0.1".into(),
+        port: udp_addr.port(),
+    })
+    .await;
+    assert_eq!(
+        g.recv().await,
+        Frame::UdpOpenFail { stream: 1, code: 1 },
+        "a live TCP id must not also gain a UDP socket"
+    );
+
+    g.send(Frame::Window {
+        stream: 1,
+        credit: 64,
+    })
+    .await;
+    g.send(Frame::Data {
+        stream: 1,
+        bytes: b"tcp-still-live".to_vec(),
+    })
+    .await;
+    assert_eq!(
+        g.collect_data(1, b"tcp-still-live".len()).await,
+        b"tcp-still-live",
+        "rejecting the colliding UDP open leaves TCP intact"
+    );
+}
+
+/// Verifier-promoted resource attack: TCP and UDP consume one server-side MAX_STREAMS budget, not
+/// independent per-protocol budgets. Reaping one datagram must release exactly one slot.
+#[tokio::test]
+async fn tcp_and_udp_share_one_server_side_stream_cap() {
+    let udp_addr = spawn_udp_echo().await;
+    let tcp_addr = spawn_echo().await;
+    let mut g = start_relay();
+    handshake(&mut g).await;
+
+    for offset in 0..MAX_STREAMS {
+        let stream = FIRST_UDP_STREAM + u32::try_from(offset).unwrap();
+        g.send(Frame::UdpOpen {
+            stream,
+            host: "127.0.0.1".into(),
+            port: udp_addr.port(),
+        })
+        .await;
+        assert_eq!(g.recv().await, Frame::UdpOpenOk { stream });
+    }
+
+    g.send(Frame::Open {
+        stream: 1,
+        host: "127.0.0.1".into(),
+        port: tcp_addr.port(),
+    })
+    .await;
+    assert_eq!(
+        g.recv().await,
+        Frame::OpenFail { stream: 1, code: 1 },
+        "the 257th combined TCP/UDP resource must be refused"
+    );
+
+    g.send(Frame::UdpClose {
+        stream: FIRST_UDP_STREAM,
+    })
+    .await;
+    open(&mut g, 1, tcp_addr).await;
 }
 
 #[tokio::test]

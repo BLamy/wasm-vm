@@ -3,7 +3,7 @@ id: E3-T14
 epic: 3
 title: Slirp-style user-mode network core on smoltcp with NAT
 priority: 314
-status: implemented
+status: verified
 depends_on: [E3-T13, E3-T12]
 estimate: L
 capstone: false
@@ -754,3 +754,81 @@ Mac evidence limitation: host `rr` is unavailable by platform policy. The commit
 native transcript, decoded browser buffer, screenshots, zero-error captures, exact stress tests,
 and production-socket regressions are the complete Mac handoff. A fresh verifier must still predict,
 falsify, audit the diff/evidence coverage, and alone decide whether to set `verified`.
+
+VERDICT: verified
+
+### 2026-07-15 — adversarial verifier (fresh session)
+
+- **P1 exact TCP expiry RST — HELD.** Predicted that sweeping an established flow at the TCP idle
+  deadline would refresh the two-hour-stale guest neighbor, abort and poll while the socket was
+  installed, emit RST (never FIN/silence), and then leave zero NAT/connector resources. The async
+  regression observes exactly that at `bridge/tests.rs:239-282` through the production expiry path
+  at `bridge.rs:170-193`; the synchronous real-socket regression independently closes the guest,
+  NAT entry, and counted `StdConnector`. A pristine `aef66c0` clone passed the async test with
+  `RUSTFLAGS`, `RUST_LOG`, `CARGO_HOME`, and `CARGO_TARGET_DIR` scrubbed. Sabotage-removing
+  `tcp_abort(handle)` made it fail with `expiry must emit RST ... []`; restoring the line returned
+  the scratch clone to a clean tree. The injected neighbor refresh is exercised, not decorative:
+  the expiry is later than smoltcp's ARP lifetime (`stack.rs:142-165`).
+- **P2 one relay namespace and cap — HELD.** Predicted low-half TCP allocation and high-half UDP
+  allocation across wrap, symmetric rejection of a live-id collision, one shared 256-resource
+  server budget, and survival of the non-colliding flow. The worker's real relay test proves live
+  UDP → colliding TCP `OPEN_FAIL` → byte-exact UDP still live → safe TCP reuse
+  (`driver_tests.rs:258-302`). The verifier-promoted inverse attack proves live TCP → colliding UDP
+  `UDP_OPEN_FAIL` while the TCP echo remains byte-exact, and the verifier-promoted cap attack opens
+  256 real UDP sockets, rejects the 257th combined TCP resource, closes one UDP flow, then admits
+  TCP. The complete real-socket driver group passed 11/11; the server checks are at
+  `driver.rs:193-221`. Client wrap and mixed-cap tests also passed in the slirp library suite.
+- **P3 exact 60 s stall/resume — HELD.** Predicted the same stream id would survive a real
+  mid-stream 60-second relay stall, keep connector-owned data at one 256 KiB window, and resume two
+  distinct windows byte-exact in under 30 seconds. The focused independent run passed in 60.11 s;
+  the full workspace rerun passed in 60.33 s (`ws_connector_e2e.rs:336-421`).
+- **P4 one-byte 100 MiB each way — HELD.** Predicted independent upload/download identities,
+  exactly one byte per connector delivery, at most 128 KiB user queues, one half-close, one resource
+  close, and completion below 180 s. The focused run passed in 118.28 s; under the concurrent full
+  workspace suite it passed in 130.79 s (`outbound_sync.rs:999-1095`). The original real-socket
+  100 MiB-each-way/RSS test passed alongside it.
+- **P5 abandonment, reset, refusal, and happy paths — HELD.** The retained
+  `thousand_abandoned_udp_flows_are_bounded_then_fully_reaped` passed with final table size zero in
+  both independent slirp-library and full-workspace runs. Real outbound-reset→guest-RST, prompt
+  native refused-port RST, 50 distinct concurrent flows, half-close, external native/relay UDP,
+  DHCP, ICMP, browser transport bounds, and WFI network-yield regressions all passed in the full
+  suite.
+- **EVIDENCE — HELD.** Every SHA-256 in `evidence/e3-t14-rework/README.md:100-111` matches its
+  committed artifact. The native transcript's reopenable points prove DHCP `10.0.2.15`, default
+  route, ping 3/3, 112-byte wget digest
+  `a8aa13fc1f45fd3401d649871ad303e662d7c202254fb8ea7e558fde11f766a2`, two distinct byte-exact UDP
+  echoes, data-phase refusal `rc=1 elapsed=0s`, normal poweroff, and exit 0. Its compact guest seal
+  matches `fnv64=630ba49220f08bcb`, 4,654,237,747 retired instructions, state
+  `a9105ded112afbcf1b3e77edf03dff56523dee7e2978baaedb0b58fb8fa2f318`, `Exited(0)`. The cold browser
+  terminal proves the same network path through production `wvrelay`, reset, state
+  `91a58999dfcccd4312f12e109535f1a1b3fd132b7b277f9a4dd9f3272e13d7ad`, and exit 0; visual inspection
+  of the three screenshots confirms `126 passed, 0 failed`, E3-T14 `verified`, 12 live pips, and the
+  terminal pass. Both committed console-error captures are empty.
+- **COVERAGE — COMPLETE.** Expiry/guest-MAC/ARP-refresh hunks execute in the two expiry regressions;
+  staging plus `recv_into` execute in both 100 MiB tests; TCP/UDP allocation, wrap, combined-cap,
+  collision, `has_stream`, and both open-direction checks execute in the worker and verifier relay
+  tests; the changed stress hunks execute in the exact timed attacks. Constants, trait signature
+  plumbing, comments, evidence files, task frontmatter, and queue metadata are waived as
+  non-executable; the defensive client pump cap mirrors the admission cap and is covered by the
+  mixed 256-flow invariant plus the end-to-end relay cap attacks. No changed behavioral hunk remains
+  unexercised or dead.
+- **MOCK / ENV HUNT — HELD.** The production collision/cap and UDP tests use real TCP/UDP loopback
+  sockets. The boot fixtures and TEST-NET host maps are explicit; rootfs and body hashes match. The
+  one-byte connector generates and verifies opposite-seed streams independently while counting
+  exact bytes and deliveries; its fixed 100 MiB length cannot be satisfied by an empty/no-op path.
+  The pristine-clone expiry run plus mutation kill rules out a workspace-only or self-licking pass.
+- **SUITE:** promoted `udp_open_reusing_a_live_tcp_id_is_rejected_without_harming_the_stream` and
+  `tcp_and_udp_share_one_server_side_stream_cap`; retained the worker's expiry, wrap/collision,
+  exact-stall, one-byte, and the prior verifier's 1000-flow attacks. The compact boot seals remain
+  acceptance fingerprints rather than per-instruction canonical traces; host rr is unavailable on
+  this Mac, as the repository policy records.
+
+Commands (all green unless explicitly the expected sabotage failure):
+`env -u RUSTFLAGS -u RUST_LOG -u CARGO_HOME -u CARGO_TARGET_DIR cargo test --workspace`;
+`cargo fmt --all -- --check`; `cargo clippy --workspace --all-targets --all-features -- -D warnings`;
+`cargo check -p wasm-vm-slirp --no-default-features --target wasm32-unknown-unknown`;
+`cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`; `make web-build`;
+focused exact runs for async/sync expiry, the whole real-socket relay-driver group, the 60-second
+stall, and the 100 MiB one-byte test; `shasum -a 256` over the rootfs, fixture, and every cited
+evidence artifact; pristine local clone at `aef66c0` with scrubbed environment; verifier sabotage
+removing async `tcp_abort` (failed on missing RST as predicted), then restoration to a clean clone.
