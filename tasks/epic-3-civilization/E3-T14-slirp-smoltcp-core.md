@@ -3,7 +3,7 @@ id: E3-T14
 epic: 3
 title: Slirp-style user-mode network core on smoltcp with NAT
 priority: 314
-status: in_progress
+status: implemented
 depends_on: [E3-T13, E3-T12]
 estimate: L
 capstone: false
@@ -512,3 +512,83 @@ wasm-vm-slirp --test outbound_sync guest_syn_to_a_refused_port_gets_reset_not_hu
 fifty_concurrent_guest_connections_complete_without_cross_flow_bleed -- --exact --nocapture`;
 `cargo test -p wasm-vm-slirp --test outbound_sync
 hundred_mebibytes_each_way_are_exact_with_bounded_memory -- --exact --nocapture`.
+
+### 2026-07-14 — worker rework — IMPLEMENTED at `6bbbe9c`
+
+Claim: the verifier's P1-P3 refutations and browser/evidence insufficiencies are closed. E3-T14 now
+implements per-five-tuple external UDP NAT in the native and browser connectors (30 s expiry, bounded
+datagram queues, distinct WebSocket datagram opcodes), preserves outbound EOF versus reset through the
+pump, emits guest RST on connector failure/reset, and exercises the production native driver and
+WebSocket relay with real TCP/UDP sockets. Browser transport close/error/malformed/oversize and
+aggregate-cap behavior is factored into a deterministic state machine with native tests. A browser
+WebSocket reply can now reach a sleeping guest before its timer expires: while an external network
+flow is pending, WFI returns at the normal host run-chunk boundary instead of fast-forwarding directly
+to the guest socket deadline. DNS remains the explicit E3-T15 follow-up; it is not claimed here.
+
+Refutation-specific permanent tests:
+
+- P1: `external_udp_preserves_datagrams_and_expires_its_nat_flow`,
+  `external_udp_round_trips_through_the_native_driver`, and
+  `guest_udp_round_trips_through_ws_connector_and_production_relay` cover frame parsing, five-tuple
+  NAT, expiry, the native CLI driver, production WebSocket framing/relay, and a real UDP echo socket.
+- P2: `connect_failure_tears_the_flow_down` and
+  `guest_syn_to_a_refused_port_gets_a_prompt_rst_from_the_native_driver` assert a real refused socket
+  produces a guest RST promptly; the final native Alpine probe records `rc=1 elapsed=0s`.
+- P3: `read_reset_is_reported_as_reset_not_eof` and
+  `outbound_connection_reset_becomes_guest_rst_not_fin` preserve and assert RST semantics end to end.
+- Browser coverage: `ws_transport_state` tests force malformed/oversize inbound messages, the 32 MiB
+  inbound cap, 4 MiB outbound cap, drain accounting, close, and error. The cold browser acceptance
+  forces the live `WebSocket` open/message/send/close path. `external_network_io_suppresses_wfi_deadline_jump`
+  covers the host-yield fix through the `PcapBackend` decorator as used by machine wiring.
+
+Exact gates, all green on the final tree:
+
+- `cargo fmt --check`
+- `cargo clippy --workspace --all-targets --all-features -- -D warnings`
+- `cargo test --workspace` (exit 0; CLI real-socket TCP/UDP/refusal tests, core scheduler/device
+  regressions, 200 active slirp tests/1 ignored, production WebSocket TCP+UDP integrations, wasm
+  transport-state tests, and the accumulated verifier suites)
+- `cargo check -p wasm-vm-slirp --no-default-features --target wasm32-unknown-unknown`
+- `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`
+- `make web-build`
+
+Recorded native evidence (fresh rootfs SHA-256
+`8e57a0bce7d275c1ab6cc8c9ebb7a0ddbf342681949876b6099937cc21bb2475`):
+
+- Exact command: `WASM_VM_SLIRP_HOST_MAP=192.0.2.1=127.0.0.1 target/release/wasm-vm boot
+  --kernel releases/kernel/6.6.63/Image --drive file=/tmp/wasm-vm-e3-t14-rework-final.ext4
+  --net-slirp --evidence evidence/e3-t14-rework/native-alpine.evidence
+  --append 'root=/dev/vda rw console=ttyS0 earlycon=sbi' --max-instrs 60000000000`, wrapped with
+  `/usr/bin/script` for `evidence/e3-t14-rework/native-alpine.typescript`.
+- Guest result: DHCP `10.0.2.15`, default route via `10.0.2.2`, ping 3/3, 112-byte TCP `wget` SHA-256
+  `a8aa13fc1f45fd3401d649871ad303e662d7c202254fb8ea7e558fde11f766a2`, `udp-one` and
+  `udp-two-is-a-different-length` returned as two byte-exact datagrams, refused TCP `rc=1 elapsed=0s`,
+  clean poweroff and emulator exit 0.
+- Compact evidence: `trace fnv64=2fa1668cba2a743a`, `trace retired=4421704713`, state SHA-256
+  `94eadf4da3fd59bbc17cd3051754654bd2a163b8b1ce0b52d90dad0a4ce605d4`, `outcome=Exited(0)`.
+  Artifact SHA-256: transcript `4aef523350184bafa7a8d9f0a2a17129958f4bebf05e83bd252714e7ecff61b2`;
+  compact evidence `6a5a6d09b28f264d12a65c1301dc4dd740a1966c99ca7deeacbf479683023c6f`.
+
+Recorded browser evidence (origin storage cleared and cache disabled before the single load):
+
+- URL: `http://127.0.0.1:8123/?slirpRelay=ws://127.0.0.1:8081&final=4`, with
+  `WASM_VM_SLIRP_HOST_MAP=192.0.2.1=127.0.0.1 target/release/wvrelay 127.0.0.1:8081` and real
+  loopback HTTP/UDP fixtures.
+- `evidence/e3-t14-rework/e3-t14-rework-browser-terminal.txt` records stock Alpine DHCP, route,
+  ping 3/3, the same TCP body/digest, both distinct UDP echoes through the production relay, a
+  data-phase closed-port `Connection reset by peer` with `rc=1 elapsed=0s`, clean poweroff, state
+  SHA-256 `5e4eac5b69d67a23009f94330e6c51c40c85463f85ed798e972cf0966cc5c8a2`, and `exited:0`.
+  (`nc -z` observes the documented optimistic local SYN handshake before relay `OPEN_FAIL`; the
+  data-phase probe is the reset assertion.) Transcript SHA-256:
+  `215d7473cac43f2661c7e94fcf2a83ccc21ea9429bbc710364361b2193e19cc3`.
+- On the same page, the in-browser suite completed `126 passed, 0 failed` in 12.5 s, the E3-T14
+  roadmap entry rendered `cap-pip verified`, and both saved console captures report zero errors.
+  Screenshots: `e3-t14-rework-browser-terminal.png`, `e3-t14-rework-browser-suite.png`, and
+  `e3-t14-rework-browser-roadmap.png`. Full artifact hashes and reproduction details are in
+  `evidence/e3-t14-rework/README.md`.
+
+Mac evidence limitation: host `rr` is unavailable by platform policy. The committed guest
+instruction/state digest, native transcript, decoded browser xterm buffer, screenshots, browser
+console captures, and real-socket integration tests are the complete Mac-side handoff. A fresh
+verifier must still predict, falsify, audit diff coverage, run the task's attacks, and alone decide
+whether to set `verified`.
