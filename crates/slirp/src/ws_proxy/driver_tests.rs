@@ -8,7 +8,7 @@ use crate::ws_proxy::{Frame, INITIAL_WINDOW, hello};
 use std::net::SocketAddr;
 use std::time::Duration;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::net::TcpListener;
+use tokio::net::{TcpListener, UdpSocket};
 use tokio::sync::mpsc;
 use tokio::time::timeout;
 
@@ -32,6 +32,20 @@ async fn spawn_echo() -> SocketAddr {
                     }
                 }
             });
+        }
+    });
+    addr
+}
+
+async fn spawn_udp_echo() -> SocketAddr {
+    let socket = UdpSocket::bind("127.0.0.1:0").await.unwrap();
+    let addr = socket.local_addr().unwrap();
+    tokio::spawn(async move {
+        let mut buf = [0u8; 2048];
+        while let Ok((n, peer)) = socket.recv_from(&mut buf).await {
+            if socket.send_to(&buf[..n], peer).await.is_err() {
+                break;
+            }
         }
     });
     addr
@@ -239,6 +253,52 @@ async fn a_guest_close_tears_the_stream_down() {
     })
     .await;
     assert_eq!(g.collect_data(2, 5).await, b"alive");
+}
+
+#[tokio::test]
+async fn tcp_open_reusing_a_live_udp_id_is_rejected_without_harming_the_datagram() {
+    let udp_addr = spawn_udp_echo().await;
+    let tcp_addr = spawn_echo().await;
+    let mut g = start_relay();
+    handshake(&mut g).await;
+    let stream = crate::ws_proxy::FIRST_UDP_STREAM;
+
+    g.send(Frame::UdpOpen {
+        stream,
+        host: "127.0.0.1".into(),
+        port: udp_addr.port(),
+    })
+    .await;
+    assert_eq!(g.recv().await, Frame::UdpOpenOk { stream });
+
+    g.send(Frame::Open {
+        stream,
+        host: "127.0.0.1".into(),
+        port: tcp_addr.port(),
+    })
+    .await;
+    assert_eq!(
+        g.recv().await,
+        Frame::OpenFail { stream, code: 1 },
+        "the live UDP id must not also gain a TCP OPEN_OK/WINDOW"
+    );
+
+    g.send(Frame::UdpData {
+        stream,
+        bytes: b"datagram-still-live".to_vec(),
+    })
+    .await;
+    assert_eq!(
+        g.recv().await,
+        Frame::UdpData {
+            stream,
+            bytes: b"datagram-still-live".to_vec()
+        },
+        "rejecting the colliding TCP open leaves the UDP flow intact"
+    );
+
+    g.send(Frame::UdpClose { stream }).await;
+    open(&mut g, stream, tcp_addr).await;
 }
 
 #[tokio::test]

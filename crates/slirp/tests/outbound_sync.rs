@@ -10,13 +10,16 @@
 //! the connector's background connect thread + the echo server make progress (this test uses real OS
 //! sockets + threads on purpose — it is the real-socket proof, not a mock).
 
-use std::collections::VecDeque;
+use std::cell::Cell;
+use std::collections::{BTreeSet, VecDeque};
 use std::io::{Read, Write};
 use std::net::{Ipv4Addr, Shutdown, TcpListener};
-use std::sync::Arc;
+use std::rc::Rc;
 use std::sync::atomic::{AtomicI64, Ordering};
 use std::sync::mpsc::{self, Receiver};
+use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use std::time::Instant as WallInstant;
 
 use smoltcp::iface::{Config, Interface, SocketSet};
 use smoltcp::phy::{Device, DeviceCapabilities, Medium, RxToken, TxToken};
@@ -27,7 +30,175 @@ use smoltcp::wire::{
 };
 
 use wasm_vm_core::dev::virtio::net::NetBackend;
-use wasm_vm_slirp::{SlirpLocalBackend, StdConnector};
+use wasm_vm_slirp::{ConnId, ConnStatus, SlirpLocalBackend, StdConnector, SyncConnector};
+
+/// Delegates to the real socket connector while exposing its live-id set, so expiry tests can prove
+/// the guest segment, NAT entry, and outbound resource all disappear together.
+struct CountingConnector {
+    inner: StdConnector,
+    live: Arc<Mutex<BTreeSet<ConnId>>>,
+}
+
+impl CountingConnector {
+    fn new(live: Arc<Mutex<BTreeSet<ConnId>>>) -> Self {
+        Self {
+            inner: StdConnector::new(),
+            live,
+        }
+    }
+}
+
+impl SyncConnector for CountingConnector {
+    fn connect(&mut self, host: Ipv4Addr, port: u16) -> ConnId {
+        let id = self.inner.connect(host, port);
+        self.live.lock().unwrap().insert(id);
+        id
+    }
+
+    fn status(&mut self, id: ConnId) -> ConnStatus {
+        self.inner.status(id)
+    }
+
+    fn recv(&mut self, id: ConnId) -> Vec<u8> {
+        self.inner.recv(id)
+    }
+
+    fn send(&mut self, id: ConnId, data: &[u8]) -> usize {
+        self.inner.send(id, data)
+    }
+
+    fn shutdown_write(&mut self, id: ConnId) {
+        self.inner.shutdown_write(id);
+    }
+
+    fn buffered_bytes(&self) -> usize {
+        self.inner.buffered_bytes()
+    }
+
+    fn close(&mut self, id: ConnId) {
+        self.inner.close(id);
+        self.live.lock().unwrap().remove(&id);
+    }
+}
+
+#[derive(Default)]
+struct OneByteProbe {
+    upload_exact: Cell<bool>,
+    uploaded: Cell<usize>,
+    downloaded: Cell<usize>,
+    max_delivery: Cell<usize>,
+    shutdowns: Cell<usize>,
+    closes: Cell<usize>,
+}
+
+/// Deterministic adversarial connector: the upload is independently checked byte-for-byte, while
+/// every remote→guest delivery contains exactly one byte. It owns no large body buffer.
+struct OneBytePatternConnector {
+    probe: Rc<OneByteProbe>,
+    total: usize,
+    upload_offset: usize,
+    download_offset: usize,
+    connected: bool,
+    shutdown: bool,
+}
+
+impl OneBytePatternConnector {
+    fn new(total: usize, probe: Rc<OneByteProbe>) -> Self {
+        probe.upload_exact.set(true);
+        Self {
+            probe,
+            total,
+            upload_offset: 0,
+            download_offset: 0,
+            connected: false,
+            shutdown: false,
+        }
+    }
+
+    fn next_download_byte(&mut self) -> Option<u8> {
+        if !self.connected || self.download_offset >= self.total {
+            return None;
+        }
+        let byte = stream_pat(17, self.download_offset);
+        self.download_offset += 1;
+        self.probe.max_delivery.set(1);
+        Some(byte)
+    }
+}
+
+impl Drop for OneBytePatternConnector {
+    fn drop(&mut self) {
+        self.probe.uploaded.set(self.upload_offset);
+        self.probe.downloaded.set(self.download_offset);
+    }
+}
+
+impl SyncConnector for OneBytePatternConnector {
+    fn connect(&mut self, _host: Ipv4Addr, _port: u16) -> ConnId {
+        self.connected = true;
+        0
+    }
+
+    fn status(&mut self, id: ConnId) -> ConnStatus {
+        if id != 0 || !self.connected {
+            ConnStatus::Failed(wasm_vm_slirp::ConnectError::Unreachable)
+        } else if self.download_offset == self.total && self.shutdown {
+            ConnStatus::Closed
+        } else {
+            ConnStatus::Established
+        }
+    }
+
+    fn recv(&mut self, id: ConnId) -> Vec<u8> {
+        if id != 0 {
+            return Vec::new();
+        }
+        self.next_download_byte().into_iter().collect()
+    }
+
+    fn recv_into(&mut self, id: ConnId, out: &mut Vec<u8>) -> usize {
+        if id != 0 {
+            return 0;
+        }
+        let Some(byte) = self.next_download_byte() else {
+            return 0;
+        };
+        out.push(byte);
+        1
+    }
+
+    fn send(&mut self, id: ConnId, data: &[u8]) -> usize {
+        if id != 0 || !self.connected {
+            return 0;
+        }
+        let accepted = data
+            .len()
+            .min(self.total.saturating_sub(self.upload_offset));
+        if !data[..accepted]
+            .iter()
+            .enumerate()
+            .all(|(i, &byte)| byte == stream_pat(83, self.upload_offset + i))
+        {
+            self.probe.upload_exact.set(false);
+        }
+        self.upload_offset += accepted;
+        accepted
+    }
+
+    fn shutdown_write(&mut self, id: ConnId) {
+        if id == 0 && !self.shutdown {
+            self.shutdown = true;
+            self.probe.shutdowns.set(self.probe.shutdowns.get() + 1);
+        }
+    }
+
+    fn close(&mut self, id: ConnId) {
+        if id == 0 && self.connected {
+            self.connected = false;
+            self.probe.closes.set(self.probe.closes.get() + 1);
+        }
+    }
+}
 
 /// A queue-backed guest ethernet device (mirrors the crate's `SlirpDevice`, but with public queues so
 /// the shuttle loop can move frames): `rx` = frames FROM the backend (guest consumes), `tx` = frames
@@ -430,6 +601,56 @@ fn guest_syn_to_a_refused_port_gets_reset_not_hung() {
     );
 }
 
+#[test]
+fn sync_tcp_idle_expiry_resets_the_guest_and_closes_the_real_connector() {
+    let port = spawn_echo_server();
+    let clock = Arc::new(AtomicI64::new(0));
+    let clk = clock.clone();
+    let live = Arc::new(Mutex::new(BTreeSet::new()));
+    let mut backend = SlirpLocalBackend::with_connector(
+        GW_MAC,
+        Box::new(move || clk.load(Ordering::SeqCst)),
+        Box::new(CountingConnector::new(live.clone())),
+    );
+    let mut guest = Guest::new(&clock);
+    guest.connect(Ipv4Addr::LOCALHOST, port);
+
+    for step in 0..5000 {
+        clock.fetch_add(5, Ordering::SeqCst);
+        guest.poll(&clock);
+        shuttle(&mut guest, &mut backend);
+        guest.poll(&clock);
+        if guest.socket().state() == tcp::State::Established {
+            break;
+        }
+        if step % 4 == 0 {
+            std::thread::sleep(Duration::from_millis(1));
+        }
+    }
+    assert_eq!(guest.socket().state(), tcp::State::Established);
+    assert_eq!(backend.flow_count(), 1);
+    assert_eq!(live.lock().unwrap().len(), 1);
+
+    clock.fetch_add(
+        i64::try_from(wasm_vm_slirp::nat::TCP_IDLE_MS).unwrap() + 1,
+        Ordering::SeqCst,
+    );
+    backend.poll();
+    shuttle(&mut guest, &mut backend);
+    guest.poll(&clock);
+
+    assert_eq!(
+        guest.socket().state(),
+        tcp::State::Closed,
+        "the exact idle-deadline segment must reset the guest, not leave it established or FIN-close"
+    );
+    assert_eq!(backend.flow_count(), 0, "the NAT entry was reaped");
+    assert!(
+        live.lock().unwrap().is_empty(),
+        "the real outbound connector was closed with the expired flow"
+    );
+}
+
 /// The no-connector constructor keeps slice-1 behaviour: a guest SYN to a non-local IP produces no
 /// outbound flow (and no panic) — the frame is simply filtered by the stack.
 #[test]
@@ -773,4 +994,103 @@ fn hundred_mebibytes_each_way_are_exact_with_bounded_memory() {
         rss_delta <= MAX_RSS_DELTA,
         "streaming 200 MiB raised peak RSS by {rss_delta} bytes (budget {MAX_RSS_DELTA})"
     );
+}
+
+#[test]
+fn hundred_mebibytes_each_way_survive_one_byte_connector_deliveries_in_linear_time() {
+    const N: usize = 100 * 1024 * 1024;
+    const MAX_USER_QUEUES: usize = 128 * 1024;
+    // Focused debug run: ~84 s on the worker Mac. `cargo test --workspace` runs this beside the
+    // original real-socket 200 MiB test and measured ~127 s under that CPU contention, so keep a
+    // deterministic 180 s ceiling: comfortably linear, but still tight enough to catch quadratic
+    // staging/copy behavior.
+    const MAX_ELAPSED: Duration = Duration::from_secs(180);
+
+    let probe = Rc::new(OneByteProbe::default());
+    let clock = Arc::new(AtomicI64::new(0));
+    let clk = clock.clone();
+    let mut backend = SlirpLocalBackend::with_connector(
+        GW_MAC,
+        Box::new(move || clk.load(Ordering::SeqCst)),
+        Box::new(OneBytePatternConnector::new(N, probe.clone())),
+    );
+    let mut guest = Guest::new(&clock);
+    guest.connect(Ipv4Addr::new(192, 0, 2, 1), 8080);
+
+    let started = WallInstant::now();
+    let mut upload_offset = 0usize;
+    let mut download_offset = 0usize;
+    let mut guest_half_closed = false;
+    let mut peak_buffered = 0usize;
+
+    for _ in 0..2_000_000 {
+        clock.fetch_add(1, Ordering::SeqCst);
+        guest.poll(&clock);
+        shuttle(&mut guest, &mut backend);
+        guest.poll(&clock);
+        peak_buffered = peak_buffered.max(backend.buffered_bytes());
+
+        let socket = guest.socket();
+        if upload_offset < N && socket.may_send() && socket.can_send() {
+            let want = (16 * 1024).min(N - upload_offset);
+            let chunk: Vec<u8> = (0..want)
+                .map(|i| stream_pat(83, upload_offset + i))
+                .collect();
+            upload_offset += socket.send_slice(&chunk).unwrap();
+        }
+        if upload_offset == N && !guest_half_closed {
+            socket.close();
+            guest_half_closed = true;
+        }
+        if socket.can_recv() {
+            let chunk = socket
+                .recv(|bytes| {
+                    let out = bytes.to_vec();
+                    (out.len(), out)
+                })
+                .unwrap();
+            assert!(
+                chunk
+                    .iter()
+                    .enumerate()
+                    .all(|(i, &byte)| byte == stream_pat(17, download_offset + i)),
+                "one-byte-framed download diverged at offset {download_offset}"
+            );
+            download_offset += chunk.len();
+        }
+        if upload_offset == N && download_offset == N && backend.flow_count() == 0 {
+            break;
+        }
+    }
+
+    let elapsed = started.elapsed();
+    assert_eq!(upload_offset, N, "one-byte attack truncated the upload");
+    assert_eq!(download_offset, N, "one-byte attack truncated the download");
+    assert!(
+        peak_buffered <= MAX_USER_QUEUES,
+        "one-byte framing queued {peak_buffered} bytes (cap {MAX_USER_QUEUES})"
+    );
+    assert!(
+        elapsed < MAX_ELAPSED,
+        "200 MiB through 100 MiB of one-byte deliveries took {elapsed:?}; linear-time budget is {MAX_ELAPSED:?}"
+    );
+
+    drop(backend);
+    assert!(
+        probe.upload_exact.get(),
+        "the connector independently observed corrupt upload bytes"
+    );
+    assert_eq!(probe.uploaded.get(), N);
+    assert_eq!(probe.downloaded.get(), N);
+    assert_eq!(
+        probe.max_delivery.get(),
+        1,
+        "every connector delivery must be exactly one byte"
+    );
+    assert_eq!(
+        probe.shutdowns.get(),
+        1,
+        "guest half-close reached connector"
+    );
+    assert_eq!(probe.closes.get(), 1, "the connector resource was reaped");
 }

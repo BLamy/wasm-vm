@@ -11,8 +11,8 @@ use smoltcp::iface::{Config, Interface, SocketHandle, SocketSet};
 use smoltcp::socket::tcp;
 use smoltcp::time::Instant;
 use smoltcp::wire::{
-    EthernetAddress, EthernetFrame, EthernetProtocol, HardwareAddress, IpAddress, IpCidr,
-    IpListenEndpoint, IpProtocol, Ipv4Packet, TcpPacket,
+    ArpOperation, ArpPacket, ArpRepr, EthernetAddress, EthernetFrame, EthernetProtocol,
+    HardwareAddress, IpAddress, IpCidr, IpListenEndpoint, IpProtocol, Ipv4Packet, TcpPacket,
 };
 
 use crate::device::SlirpDevice;
@@ -137,6 +137,32 @@ impl SlirpStack {
     /// The gateway MAC this stack answers as.
     pub fn mac(&self) -> [u8; 6] {
         self.mac
+    }
+
+    /// Refresh smoltcp's guest IPv4→Ethernet neighbor entry from an address pair already observed on
+    /// an authenticated flow frame. TCP idle expiry (2 h) outlives smoltcp's ARP cache, but an abort
+    /// still has to put a RST on the guest's Ethernet link before its socket can be removed. Feeding
+    /// this equivalent ARP reply through the normal interface path lets the queued reset egress in
+    /// the same deterministic service pass without retaining a dead 128 KiB socket indefinitely.
+    pub fn remember_guest_neighbor(&mut self, guest_ip: Ipv4Addr, guest_mac: [u8; 6]) {
+        let arp = ArpRepr::EthernetIpv4 {
+            operation: ArpOperation::Reply,
+            source_hardware_addr: EthernetAddress(guest_mac),
+            source_protocol_addr: guest_ip,
+            target_hardware_addr: EthernetAddress(self.mac),
+            target_protocol_addr: net::GATEWAY,
+        };
+        let eth = smoltcp::wire::EthernetRepr {
+            src_addr: EthernetAddress(guest_mac),
+            dst_addr: EthernetAddress(self.mac),
+            ethertype: EthernetProtocol::Arp,
+        };
+        let mut buf = vec![0u8; eth.buffer_len() + arp.buffer_len()];
+        let mut frame = EthernetFrame::new_unchecked(&mut buf);
+        eth.emit(&mut frame);
+        let mut packet = ArpPacket::new_unchecked(frame.payload_mut());
+        arp.emit(&mut packet);
+        self.inject(buf);
     }
 
     /// Open a per-flow smoltcp TCP socket that LISTENS on `dst:port` — so an incoming guest SYN to

@@ -70,6 +70,16 @@ pub trait SyncConnector {
     /// buffered or `id` is unknown.
     fn recv(&mut self, id: ConnId) -> Vec<u8>;
 
+    /// Append one connector delivery to `out`, returning the number of bytes appended. The default
+    /// preserves the owned-`Vec` API above; pathological or zero-copy connectors may override this
+    /// to avoid one heap allocation per tiny delivery. One call is still one delivery boundary.
+    fn recv_into(&mut self, id: ConnId, out: &mut Vec<u8>) -> usize {
+        let bytes = self.recv(id);
+        let n = bytes.len();
+        out.extend_from_slice(&bytes);
+        n
+    }
+
     /// Offer `data` to send to the remote (guest → remote direction). Returns the number of bytes
     /// ACCEPTED — may be less than `data.len()` under backpressure, or 0 for an unknown id. The
     /// caller re-offers the unaccepted tail on a later pass.

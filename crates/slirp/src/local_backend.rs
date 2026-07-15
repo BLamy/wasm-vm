@@ -44,11 +44,16 @@ const MAX_FLOWS: usize = 256;
 /// At most four maximum-sized datagrams may wait for a browser relay acknowledgement/backpressure
 /// per flow. UDP has no sender backpressure, so excess datagrams are intentionally dropped.
 const MAX_PENDING_UDP_BYTES: usize = 4 * MAX_UDP_PAYLOAD;
+/// Bound for coalescing pathological tiny remote deliveries before offering them to smoltcp. This is
+/// no larger than one guest-facing TCP socket buffer, so it improves framing efficiency without
+/// weakening backpressure or allowing connector data to grow unbounded.
+const MAX_REMOTE_STAGING_BYTES: usize = 64 * 1024;
 
 /// One live outbound flow: the guest-facing smoltcp socket (`handle`) paired with the connector-side
 /// connection (`conn`), plus the guest→remote bytes not yet accepted by the connector.
 struct Flow {
     handle: SocketHandle,
+    guest_mac: [u8; 6],
     conn: ConnId,
     /// Guest→remote bytes drained from the stack but not yet accepted by the connector (backpressure).
     /// Re-offered each pass; keeps the pump lossless when the connector's send window is momentarily
@@ -222,6 +227,10 @@ impl SlirpLocalBackend {
         if let Action::Connect(key) = out.action
             && let IpAddr::V4(dst) = key.dst_ip
         {
+            let guest_mac = smoltcp::wire::EthernetFrame::new_checked(frame)
+                .expect("a classified TCP frame is valid Ethernet")
+                .src_addr()
+                .0;
             // Optimistic accept: open the listening socket so the guest handshake completes locally,
             // and start the outbound dial in parallel. A dial failure is surfaced as a RST in `pump`.
             let handle = self.stack.open_tcp_flow(&key);
@@ -230,6 +239,7 @@ impl SlirpLocalBackend {
                 key,
                 Flow {
                     handle,
+                    guest_mac,
                     conn,
                     pending_out: Vec::new(),
                     pending_in: Vec::new(),
@@ -390,15 +400,18 @@ impl SlirpLocalBackend {
             // truncates any bulk download (critic MAJOR). This mirrors the guest→remote `pending_out`.
             // Mirror the outbound rule: while a tail is waiting for the guest-facing socket, leave
             // new bytes in the connector's bounded queue so its credit/window backpressures the
-            // remote. Never accumulate one `recv` result per service pass in `pending_in`.
+            // remote. Tiny connector deliveries may be coalesced only up to one fixed socket-buffer
+            // cap; this keeps a 1-byte-framed 100 MiB transfer linear without weakening bounds.
             if self.flows[&key].pending_in.is_empty() {
-                let from_remote = self.connector.as_mut().unwrap().recv(conn);
-                if !from_remote.is_empty() {
-                    self.flows
-                        .get_mut(&key)
+                while self.flows[&key].pending_in.len() < MAX_REMOTE_STAGING_BYTES {
+                    let appended = self
+                        .connector
+                        .as_mut()
                         .unwrap()
-                        .pending_in
-                        .extend_from_slice(&from_remote);
+                        .recv_into(conn, &mut self.flows.get_mut(&key).unwrap().pending_in);
+                    if appended == 0 {
+                        break;
+                    }
                 }
             }
             let pending_in = core::mem::take(&mut self.flows.get_mut(&key).unwrap().pending_in);
@@ -427,6 +440,20 @@ impl SlirpLocalBackend {
         }
         let now = (self.clock)().max(0) as u64;
         for key in self.manager.expire(now) {
+            if let Some((handle, guest_mac)) = self
+                .flows
+                .get(&key)
+                .map(|flow| (flow.handle, flow.guest_mac))
+            {
+                // Idle expiry aborts a live guest connection. Poll while the socket and its flow
+                // mapping still exist so smoltcp emits the RST before teardown removes the socket.
+                if let IpAddr::V4(guest_ip) = key.guest_ip {
+                    self.stack.remember_guest_neighbor(guest_ip, guest_mac);
+                    self.stack.poll(now as i64);
+                }
+                self.stack.tcp_abort(handle);
+                self.stack.poll(now as i64);
+            }
             self.teardown(&key);
         }
     }

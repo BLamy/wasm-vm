@@ -24,7 +24,7 @@ use core::net::Ipv4Addr;
 use crate::connector::ConnectError;
 use crate::sync_connector::{ConnId, ConnStatus, DatagramId, SyncConnector};
 use crate::ws_proxy::relay::INITIAL_WINDOW;
-use crate::ws_proxy::{Frame, MAX_DATAGRAM_BYTES, MuxEvent, Role, Session};
+use crate::ws_proxy::{FIRST_UDP_STREAM, Frame, MAX_DATAGRAM_BYTES, MuxEvent, Role, Session};
 
 /// Per-flow guest→relay queue cap. The relay grants this same amount of initial credit; accepting
 /// more while that credit is exhausted would merely move an unbounded stalled upload into the wasm
@@ -33,7 +33,6 @@ const MAX_PENDING_TX_BYTES: usize = INITIAL_WINDOW as usize;
 /// Datagram queues are necessarily lossy under pressure; keep at most four maximum IPv4 datagrams
 /// in either direction for one flow, then fail/drop instead of growing the wasm heap.
 const MAX_UDP_QUEUE_BYTES: usize = 4 * MAX_DATAGRAM_BYTES;
-const FIRST_UDP_STREAM: u32 = 0x8000_0000;
 
 /// Carries encoded ws-proxy [`Frame`]s over a transport, decoupled from the protocol state machine.
 /// The browser implements this with a JS `WebSocket`; native tests with an in-process channel. All
@@ -116,6 +115,42 @@ impl<T: FrameTransport> WsConnector<T> {
         }
     }
 
+    fn active_flow_count(&self) -> usize {
+        let tcp = self
+            .conns
+            .values()
+            .filter(|conn| !is_terminal(&conn.status))
+            .count();
+        let udp = self
+            .udp
+            .values()
+            .filter(|conn| !is_terminal(&conn.status))
+            .count();
+        tcp.saturating_add(udp)
+    }
+
+    /// Allocate only from the high-half datagram partition, skipping a still-live id after wrap.
+    fn alloc_udp_stream(&mut self) -> Option<u32> {
+        for _ in 0..=crate::ws_proxy::MAX_STREAMS {
+            if self.next_udp_stream < FIRST_UDP_STREAM {
+                self.next_udp_stream = FIRST_UDP_STREAM;
+            }
+            let stream = self.next_udp_stream;
+            self.next_udp_stream = self.next_udp_stream.wrapping_add(1);
+            if self.next_udp_stream < FIRST_UDP_STREAM {
+                self.next_udp_stream = FIRST_UDP_STREAM;
+            }
+            let tcp_live = self
+                .session
+                .mux()
+                .is_some_and(|mux| mux.get(stream).is_some());
+            if !tcp_live && !self.stream_to_udp.contains_key(&stream) {
+                return Some(stream);
+            }
+        }
+        None
+    }
+
     /// One servicing pass: send the opening `HELLO` if needed, drain inbound frames, issue any pending
     /// opens once the handshake completes, flush per-stream outbound work, then push all produced
     /// frames to the transport. Called at the top of every `SyncConnector` method so state stays live.
@@ -185,8 +220,18 @@ impl<T: FrameTransport> WsConnector<T> {
                     let c = &self.conns[&id];
                     (c.host.clone(), c.port)
                 };
-                let mux = self.session.mux_mut().unwrap();
-                match mux.open(host, port) {
+                let at_combined_cap = self
+                    .session
+                    .mux()
+                    .map_or(0, |mux| mux.live_count())
+                    .saturating_add(self.stream_to_udp.len())
+                    >= crate::ws_proxy::MAX_STREAMS;
+                let opened = if at_combined_cap {
+                    Err(crate::ws_proxy::MuxError::TooManyStreams)
+                } else {
+                    self.session.mux_mut().unwrap().open(host, port)
+                };
+                match opened {
                     Ok((sid, frame)) => {
                         self.conns.get_mut(&id).unwrap().stream = Some(sid);
                         self.stream_to_conn.insert(sid, id);
@@ -208,8 +253,21 @@ impl<T: FrameTransport> WsConnector<T> {
                 .map(|(id, _)| *id)
                 .collect();
             for id in pending_udp {
-                let stream = self.next_udp_stream;
-                self.next_udp_stream = self.next_udp_stream.wrapping_add(1).max(FIRST_UDP_STREAM);
+                let at_combined_cap = self
+                    .session
+                    .mux()
+                    .map_or(0, |mux| mux.live_count())
+                    .saturating_add(self.stream_to_udp.len())
+                    >= crate::ws_proxy::MAX_STREAMS;
+                let Some(stream) = (!at_combined_cap)
+                    .then(|| self.alloc_udp_stream())
+                    .flatten()
+                else {
+                    self.udp.get_mut(&id).unwrap().status = ConnStatus::Failed(
+                        ConnectError::Denied("ws-proxy stream limit reached".to_string()),
+                    );
+                    continue;
+                };
                 let c = self.udp.get_mut(&id).unwrap();
                 c.stream = Some(stream);
                 self.stream_to_udp.insert(stream, id);
@@ -400,13 +458,20 @@ impl<T: FrameTransport> SyncConnector for WsConnector<T> {
     fn connect(&mut self, host: Ipv4Addr, port: u16) -> ConnId {
         let id = self.next_id;
         self.next_id += 1;
+        let status = if self.active_flow_count() >= crate::ws_proxy::MAX_STREAMS {
+            ConnStatus::Failed(ConnectError::Denied(
+                "ws-proxy stream limit reached".to_string(),
+            ))
+        } else {
+            ConnStatus::Connecting
+        };
         self.conns.insert(
             id,
             Conn {
                 stream: None,
                 host: host.to_string(),
                 port,
-                status: ConnStatus::Connecting,
+                status,
                 rx: Vec::new(),
                 pending_tx: VecDeque::new(),
                 want_shutdown: false,
@@ -501,14 +566,13 @@ impl<T: FrameTransport> SyncConnector for WsConnector<T> {
     fn udp_open(&mut self, host: Ipv4Addr, port: u16) -> DatagramId {
         let id = DatagramId(self.next_udp_id);
         self.next_udp_id = self.next_udp_id.wrapping_add(1);
-        let status =
-            if self.udp.len().saturating_add(self.conns.len()) >= crate::ws_proxy::MAX_STREAMS {
-                ConnStatus::Failed(ConnectError::Denied(
-                    "ws-proxy stream limit reached".to_string(),
-                ))
-            } else {
-                ConnStatus::Connecting
-            };
+        let status = if self.active_flow_count() >= crate::ws_proxy::MAX_STREAMS {
+            ConnStatus::Failed(ConnectError::Denied(
+                "ws-proxy stream limit reached".to_string(),
+            ))
+        } else {
+            ConnStatus::Connecting
+        };
         self.udp.insert(
             id,
             UdpConn {
@@ -593,6 +657,57 @@ mod tests {
         fn is_open(&self) -> bool {
             true
         }
+    }
+
+    #[test]
+    fn udp_allocator_wrap_stays_in_its_high_half_and_skips_live_ids() {
+        let wire = Rc::new(RefCell::new(Wire::default()));
+        let mut connector = WsConnector::new(TestTransport(wire), Vec::new());
+        connector.next_udp_stream = u32::MAX;
+        assert_eq!(connector.alloc_udp_stream(), Some(u32::MAX));
+        assert_eq!(connector.alloc_udp_stream(), Some(FIRST_UDP_STREAM));
+
+        connector
+            .stream_to_udp
+            .insert(FIRST_UDP_STREAM, DatagramId(99));
+        connector.next_udp_stream = FIRST_UDP_STREAM;
+        assert_eq!(
+            connector.alloc_udp_stream(),
+            Some(FIRST_UDP_STREAM + 1),
+            "wrap must skip a still-live datagram id"
+        );
+    }
+
+    #[test]
+    fn tcp_and_udp_share_one_client_side_stream_cap() {
+        let wire = Rc::new(RefCell::new(Wire::default()));
+        let mut connector = WsConnector::new(TestTransport(wire), Vec::new());
+        for i in 0..crate::ws_proxy::MAX_STREAMS {
+            if i % 2 == 0 {
+                let id = connector.connect(Ipv4Addr::LOCALHOST, 80);
+                assert_eq!(connector.conns[&id].status, ConnStatus::Connecting);
+            } else {
+                let id = connector.udp_open(Ipv4Addr::LOCALHOST, 53);
+                assert_eq!(connector.udp[&id].status, ConnStatus::Connecting);
+            }
+        }
+        assert_eq!(connector.active_flow_count(), crate::ws_proxy::MAX_STREAMS);
+
+        let rejected_tcp = connector.connect(Ipv4Addr::LOCALHOST, 81);
+        assert!(matches!(
+            connector.conns[&rejected_tcp].status,
+            ConnStatus::Failed(ConnectError::Denied(_))
+        ));
+        let rejected_udp = connector.udp_open(Ipv4Addr::LOCALHOST, 54);
+        assert!(matches!(
+            connector.udp[&rejected_udp].status,
+            ConnStatus::Failed(ConnectError::Denied(_))
+        ));
+        assert_eq!(
+            connector.active_flow_count(),
+            crate::ws_proxy::MAX_STREAMS,
+            "rejected opens do not consume capacity"
+        );
     }
 
     #[test]

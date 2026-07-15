@@ -3,7 +3,7 @@
 //! frame for a reaped stream, role violations, and the unbounded-open cap + reap-on-disconnect.
 
 use super::{MAX_STREAMS, Mux, MuxError, MuxEvent, Role};
-use crate::ws_proxy::{Frame, StreamError};
+use crate::ws_proxy::{FIRST_UDP_STREAM, Frame, StreamError};
 
 /// A full client→server open, a credited DATA each way, and a clean close that reaps both ends.
 #[test]
@@ -278,6 +278,26 @@ fn alloc_id_skips_an_occupied_slot_and_never_clobbers_a_live_stream() {
         "the live stream's credit was not clobbered by a colliding alloc"
     );
     assert_eq!(client.live_count(), 2);
+}
+
+#[test]
+fn tcp_allocator_wrap_never_enters_the_udp_half_of_the_shared_namespace() {
+    let mut client = Mux::new(Role::Client);
+    let (one, _) = client.open("one".into(), 80).unwrap();
+    assert_eq!(one, 1);
+
+    client.force_next_id(FIRST_UDP_STREAM);
+    let (two, _) = client.open("two".into(), 80).unwrap();
+    assert_eq!(
+        two, 2,
+        "the occupied low id is skipped after high-half wrap"
+    );
+    assert!(two < FIRST_UDP_STREAM);
+
+    client.force_next_id(u32::MAX);
+    let (three, _) = client.open("three".into(), 80).unwrap();
+    assert_eq!(three, 3);
+    assert!(three < FIRST_UDP_STREAM);
 }
 
 #[test]

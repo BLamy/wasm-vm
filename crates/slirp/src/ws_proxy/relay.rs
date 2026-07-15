@@ -127,6 +127,14 @@ impl RelayCore {
         self.session.mux().map_or(0, |m| m.live_count())
     }
 
+    /// Whether the shared wire id is already occupied by a TCP stream, including a connect that has
+    /// not completed yet. The relay driver uses this beside its UDP map to enforce one namespace.
+    pub fn has_stream(&self, stream: u32) -> bool {
+        self.session
+            .mux()
+            .is_some_and(|mux| mux.get(stream).is_some())
+    }
+
     /// Feed one decoded inbound WS frame. Before the handshake, the frame must be the guest's
     /// `HELLO`; afterwards it is routed through the mux and translated to relay actions.
     pub fn on_inbound_frame(&mut self, frame: Frame) -> Result<RelayActions, RelayError> {

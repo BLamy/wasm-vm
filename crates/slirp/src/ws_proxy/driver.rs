@@ -192,11 +192,26 @@ impl RelayServer {
         };
         if self.core.is_ready() {
             match &frame {
+                Frame::Open { stream, .. }
+                    if *stream == 0
+                        || udp.contains_key(stream)
+                        || self.core.live_streams().saturating_add(udp.len()) >= MAX_STREAMS =>
+                {
+                    // TCP and UDP share the u32 wire namespace and one resource cap. Refuse this
+                    // OPEN without feeding it to the TCP mux; otherwise a live UDP id can also gain
+                    // a TCP socket (and OPEN_OK/WINDOW), making later frames ambiguous.
+                    self.send_frame(Frame::OpenFail {
+                        stream: *stream,
+                        code: 1,
+                    })
+                    .await;
+                    return Ok(());
+                }
                 Frame::UdpOpen { stream, host, port } => {
                     if *stream == 0
-                        || streams.contains_key(stream)
+                        || self.core.has_stream(*stream)
                         || udp.contains_key(stream)
-                        || streams.len().saturating_add(udp.len()) >= MAX_STREAMS
+                        || self.core.live_streams().saturating_add(udp.len()) >= MAX_STREAMS
                     {
                         self.send_frame(Frame::UdpOpenFail {
                             stream: *stream,

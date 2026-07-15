@@ -16,6 +16,7 @@ use std::collections::BTreeMap;
 use std::net::IpAddr;
 
 use smoltcp::iface::SocketHandle;
+use smoltcp::wire::EthernetFrame;
 
 use crate::connector::OutboundConnector;
 use crate::dhcp::DhcpServer;
@@ -28,6 +29,7 @@ use crate::stack::SlirpStack;
 /// (see [`Bridge::service`]); until then it just sits here keeping the connection open.
 struct FlowConn<S> {
     handle: SocketHandle,
+    guest_mac: [u8; 6],
     // Read only by the native servicing layer (which `take`s it for the pump). Without `native` it
     // just holds the connection open until teardown, so it's legitimately unread there.
     #[cfg_attr(not(feature = "native"), allow(dead_code))]
@@ -120,6 +122,10 @@ impl<C: OutboundConnector> Bridge<C> {
             self.teardown(&evicted);
         }
         if let Action::Connect(key) = out.action {
+            let guest_mac = EthernetFrame::new_checked(&frame)
+                .expect("a classified TCP frame is valid Ethernet")
+                .src_addr()
+                .0;
             let handle = self.stack.open_tcp_flow(&key);
             match self.connector.connect(key.dst_ip, key.dst_port).await {
                 Ok(stream) => {
@@ -127,6 +133,7 @@ impl<C: OutboundConnector> Bridge<C> {
                         key,
                         FlowConn {
                             handle,
+                            guest_mac,
                             stream: Some(stream),
                         },
                     );
@@ -163,6 +170,19 @@ impl<C: OutboundConnector> Bridge<C> {
     /// Sweep idle-expired flows at `now_ms`, tearing each down.
     pub fn expire(&mut self, now_ms: u64) {
         for key in self.manager.expire(now_ms) {
+            if let Some((handle, guest_mac)) =
+                self.flows.get(&key).map(|fc| (fc.handle, fc.guest_mac))
+            {
+                // Expiry is an abort, not a clean half-close. Keep the socket installed until
+                // smoltcp has turned the abort into a guest-visible RST; removing it first erases
+                // the queued segment and leaves the guest hanging until its own timeout.
+                if let std::net::IpAddr::V4(guest_ip) = key.guest_ip {
+                    self.stack.remember_guest_neighbor(guest_ip, guest_mac);
+                    self.stack.poll(now_ms as i64);
+                }
+                self.stack.tcp_abort(handle);
+                self.stack.poll(now_ms as i64);
+            }
             if let Some(fc) = self.flows.remove(&key) {
                 self.stack.remove_tcp(fc.handle);
             }

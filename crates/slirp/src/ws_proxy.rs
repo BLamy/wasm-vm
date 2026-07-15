@@ -46,6 +46,9 @@ const OP_UDP_CLOSE: u8 = 13;
 /// Largest legal IPv4 UDP payload. The proxy rejects larger messages rather than truncating or
 /// splitting them, because either would violate datagram boundaries.
 pub const MAX_DATAGRAM_BYTES: usize = 65_507;
+/// Datagram ids occupy the high half of the shared stream namespace. Normal TCP allocation is
+/// permanently constrained below this boundary, including after u32 wraparound.
+pub const FIRST_UDP_STREAM: u32 = 0x8000_0000;
 
 const HEADER_LEN: usize = 5; // stream_id(4) + opcode(1)
 /// Stream 0 is reserved for connection-level frames (HELLO); per-flow frames use a nonzero id.

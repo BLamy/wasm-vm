@@ -13,7 +13,7 @@ use std::collections::{BTreeMap, VecDeque};
 use std::io::{ErrorKind, Read, Write};
 use std::net::{Ipv4Addr, Shutdown, TcpListener, TcpStream};
 use std::rc::Rc;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use wasm_vm_slirp::ws_proxy::{Frame, INITIAL_WINDOW, RelayActions, RelayCore, SocketOp};
 use wasm_vm_slirp::{ConnStatus, FrameTransport, SyncConnector, WsConnector};
@@ -349,14 +349,15 @@ fn stalled_relay_upload_queue_is_bounded_and_reports_backpressure() {
     }
     assert_eq!(client.status(conn), ConnStatus::Established);
 
-    let two_windows = vec![0x5a; 2 * INITIAL_WINDOW as usize];
+    let first_window = vec![0x5a; INITIAL_WINDOW as usize];
+    let second_window = vec![0xa5; INITIAL_WINDOW as usize];
     assert_eq!(
-        client.send(conn, &two_windows),
+        client.send(conn, &first_window),
         INITIAL_WINDOW as usize,
         "one bounded window is accepted per offer"
     );
     assert_eq!(
-        client.send(conn, &two_windows),
+        client.send(conn, &second_window),
         INITIAL_WINDOW as usize,
         "after the granted window leaves, one bounded pending window is accepted"
     );
@@ -369,5 +370,53 @@ fn stalled_relay_upload_queue_is_bounded_and_reports_backpressure() {
         client.buffered_bytes(),
         INITIAL_WINDOW as usize,
         "connector-owned bytes stay at the explicit per-flow cap"
+    );
+
+    // Let the relay write the first window, collect its refill, and enqueue the second window. The
+    // backend has now observed real mid-stream bytes; pausing RelayHarness below is a server-side
+    // stall on this exact live stream rather than a pre-connect delay.
+    relay.service();
+    assert_eq!(client.status(conn), ConnStatus::Established);
+    let mut received = client.recv(conn);
+    assert_eq!(relay.socks.keys().copied().collect::<Vec<_>>(), vec![1]);
+    assert!(
+        client.buffered_bytes() <= INITIAL_WINDOW as usize,
+        "post-refill client buffering remains within one window"
+    );
+
+    let stall_started = Instant::now();
+    std::thread::sleep(Duration::from_secs(60));
+    assert!(
+        stall_started.elapsed() >= Duration::from_secs(60),
+        "the adversarial server-side stall must be the exact requested 60 seconds"
+    );
+
+    let resume_started = Instant::now();
+    let expected_len = first_window.len() + second_window.len();
+    for step in 0..200_000 {
+        relay.service();
+        assert!(
+            !matches!(client.status(conn), ConnStatus::Failed(_)),
+            "the same stream must survive the 60-second stall"
+        );
+        received.extend_from_slice(&client.recv(conn));
+        if received.len() >= expected_len {
+            break;
+        }
+        if step % 4 == 0 {
+            std::thread::sleep(Duration::from_millis(1));
+        }
+    }
+    let mut expected = first_window;
+    expected.extend_from_slice(&second_window);
+    assert_eq!(received, expected, "the resumed stream is byte-identical");
+    assert_eq!(
+        relay.socks.keys().copied().collect::<Vec<_>>(),
+        vec![1],
+        "resume used the original stream id; no reconnect hid a dead flow"
+    );
+    assert!(
+        resume_started.elapsed() < Duration::from_secs(30),
+        "a bounded 512 KiB stream must resume within 30 seconds"
     );
 }
