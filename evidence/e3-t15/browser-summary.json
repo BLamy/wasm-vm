@@ -1,13 +1,31 @@
 {
   "url": "http://127.0.0.1:8124/?slirpDoh=http%3A%2F%2F127.0.0.1%3A8053%2Fdns-query&slirpLeaseSecs=60&e3t15=browser-final",
   "coldLoads": 1,
-  "loginSeconds": 846.1,
-  "runSeconds": 980.4,
+  "loginSeconds": 635.8,
+  "runSeconds": 737.5,
   "dhcp": {
     "address": "10.0.2.15/24",
     "gateway": "10.0.2.2",
     "dns": "10.0.2.3",
-    "leaseSeconds": 60
+    "leaseSeconds": 60,
+    "beforeT1": {
+      "discovers": 1,
+      "offers": 1,
+      "requests": 8,
+      "acks": 8,
+      "renewRequests": 7,
+      "renewAcks": 7,
+      "naks": 0
+    },
+    "afterT1": {
+      "discovers": 1,
+      "offers": 1,
+      "requests": 11,
+      "acks": 11,
+      "renewRequests": 10,
+      "renewAcks": 10,
+      "naks": 0
+    }
   },
   "doh": {
     "endpoint": "http://127.0.0.1:8053/dns-query",
@@ -21,6 +39,12 @@
       },
       "mode": "success"
     }
+  },
+  "tcpFallback": {
+    "udpFlags": "8380",
+    "guestCommand": "ping large.test",
+    "resolvedAddress": "192.0.2.1",
+    "scriptedTcpQuery": false
   },
   "suite": {
     "passed": 126,

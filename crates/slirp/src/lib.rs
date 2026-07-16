@@ -53,7 +53,7 @@ pub use manager::{Action, FlowManager, FrameOutcome};
 pub use bridge::Bridge;
 pub use connector::{ConnectError, OutboundConnector};
 pub use device::SlirpDevice;
-pub use dhcp::DhcpServer;
+pub use dhcp::{DhcpServer, DhcpStats, DhcpStatsHandle};
 pub use dns::{Answer, Query, ResponseInfo, build_query, parse_query, parse_response};
 pub use dns_service::{DnsCompletion, DnsRequest, DnsService, MAX_PENDING_DNS};
 pub use dns_tcp::{TcpFrame, frame_message, next_message};

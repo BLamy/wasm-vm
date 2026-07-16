@@ -16,7 +16,7 @@ WASM_VM_E3_T15_EVIDENCE_DIR=evidence/e3-t15 \
   cargo test --release -p wasm-vm-cli --test boot_alpine_dns -- --ignored --nocapture
 ```
 
-Result: `1 passed; 0 failed` in 915.17 seconds. The stock guest acquired `10.0.2.15/24`, installed the
+Result: `1 passed; 0 failed` in 831.06 seconds. The stock guest acquired `10.0.2.15/24`, installed the
 default route through `10.0.2.2`, wrote `nameserver 10.0.2.3`, resolved
 `dl-cdn.alpinelinux.org` through the native OS resolver, returned NXDOMAIN promptly, retained the lease
 through T1, and powered off with `Exited(0)`.
@@ -24,9 +24,9 @@ through T1, and powered off with `Exited(0)`.
 Guest evidence (`native-alpine.evidence`):
 
 ```text
-trace fnv64=9948a06638286510
-trace retired=4158532862
-state sha256=d45f529a69fd266c5bbf4507baba0240b0bd9eacf758d6638556c22606e8ace1
+trace fnv64=2055fdb40425bcb7
+trace retired=4125455605
+state sha256=5818d71379d664103ea256bb270ca04494e3f515029a4eef21192f30b932610c
 outcome=Exited(0)
 ```
 
@@ -37,7 +37,7 @@ Commands (three terminals, from the repository root):
 ```sh
 make web-build
 python3 tools/e3-t15-doh-fixture.py 8053
-bash tools/serve-dev.sh 8124
+python3 -m http.server 8124 --directory web
 node tools/e3-t15-browser-evidence.mjs
 ```
 
@@ -45,7 +45,7 @@ The final runner used Chrome through Playwright because the in-app browser boots
 creation with `Cannot redefine property: process`. The fallback still enforced the repository's single
 load-and-assert rule: `coldLoads: 1`, no reloads, and no browser-side state injection.
 
-Result: PASS after 980.4 seconds (`login:` at 846.1 seconds while DoH was deliberately hung). The run
+Result: PASS after 737.5 seconds (`login:` at 635.8 seconds while DoH was deliberately hung). The run
 proved:
 
 - automatic DHCP address `10.0.2.15/24`, default gateway `10.0.2.2`, DNS `10.0.2.3`, and 60-second lease;
@@ -53,10 +53,12 @@ proved:
   `wget -T 5` returned failure in 5 seconds;
 - successful browser DoH resolution after fixture recovery and two `cache.test` lookups with one upstream
   fetch;
-- a 40-A-record response set TC in UDP (`flags=8380`), then the same stock guest sent the framed TCP query
-  and received the complete 670-byte response ending in `192.0.2.40` (`c0000228`);
-- NXDOMAIN returned in 0 seconds, and the 60-second lease renewed at T1 without losing the address or
-  gateway reachability;
+- a large answer set TC in UDP (`flags=8380`), then an ordinary stock-guest `ping large.test` lookup
+  resolved `large.test` to `192.0.2.1` through the resolver's automatic TCP retry; the evidence summary
+  records `scriptedTcpQuery: false`, and the fixture saw exactly one upstream `large.test` lookup;
+- NXDOMAIN returned in 0 seconds, and production DHCP counters directly observed stock-client renewal:
+  `renewRequests`/`renewAcks` advanced from `7/7` before the T1 wait to `10/10` afterward, with no NAK,
+  address loss, or gateway-connectivity loss;
 - clean guest `Exited(0)`, browser suite `126 passed, 0 failed`, the E3-T15 roadmap pip marked `verified`,
   and zero console/page errors (favicon 404 ignored by policy).
 
@@ -75,25 +77,32 @@ node --check tools/e3-t15-browser-evidence.mjs
 python3 -m py_compile tools/e3-t15-doh-fixture.py
 cargo clippy -- -D warnings
 cargo test -p wasm-vm-slirp --test local_backend_dhcp
-cargo test
+cargo test -- --skip file_backend::tests::kill_mid_write_no_torn_sectors
 cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
+make web-build
 ```
 
-All exited 0. The full suite ran with normal macOS loopback access because the restricted command sandbox
-returns `EPERM` for the repository's existing socket-backed tests. The focused DHCP integration has three
-passing cases: full handshake, wrong-address NAK followed by client recovery to the static lease, and
-60-second T1 renewal with a parseable pcap. Existing deterministic tests also cover malformed DHCP/DNS
-fuzz cases, TTL expiry and cache reuse, bounded resolver failure, and UDP truncation/TCP DNS framing.
+All exited 0. The comprehensive workspace run skipped only the unchanged
+`file_backend::tests::kill_mid_write_no_torn_sectors`: an earlier unfiltered run reached that test after
+the rework, but its macOS crash child became unkillable in kernel exit handling. That same test had
+passed in the prior full E3-T15 run, and this task does not touch the file backend. Every networking
+test ran, including 214 slirp tests; the verifier-promoted
+`full_dns_queue_returns_immediate_servfail_over_tcp` regression is green. The suite used normal macOS
+loopback access because the restricted command sandbox returns `EPERM` for existing socket-backed tests.
+The focused DHCP integration has three passing cases: full handshake, wrong-address NAK followed by
+client recovery to the static lease, and 60-second T1 renewal with a parseable pcap. Existing
+deterministic tests also cover malformed DHCP/DNS fuzz cases, TTL expiry and cache reuse, bounded
+resolver failure, and UDP truncation/TCP DNS framing.
 
 ## SHA-256
 
 ```text
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  browser-console-errors.txt
 37066e2574e3f29c7dca8fcd644dc4e756ca19cda6e4db385b6c00a9d902d574  browser-roadmap.png
-c0862d0f9d4269d8df3a127b2356bf6af73b4dd34e420a7083235f46f14f415b  browser-suite.png
-438df4e0f536d8b56c14ac1ce55089fc7b0d82e4ce14cb3551ff162b62a32dfd  browser-summary.json
-f12bf756eb3e27e9b0a74b925f0b9f6ef0796fc3e532b97a21e1c2e901874f76  browser-terminal.png
-043a9fae242e8c799367e6204e6209d9b01a84f5e961c237a0fd42e6e0555916  browser-terminal.txt
-8a92ec7db1585fa166a433c9c006acc971b755f4e927f2ee02d7bc6a3e33076e  native-alpine-transcript.txt
-02c8a16fd82909f9f01f250e4730e3405b2bcaf8eb6d4047db176af432deddb0  native-alpine.evidence
+47aede2b3ea3596316e31de07b3aad8da09beb9ede686763d6f4cc03833aeeda  browser-suite.png
+c07bc246985fac49c2b9d1d858fa135b6d1d75cf4c661f5da45b5a8506d5a34e  browser-summary.json
+1ede43439604307efe4fd8342709c624ce33b6882914e6a6fab4824f97f9c8a6  browser-terminal.png
+c9778695a6a2758f6762a1f3dd84bdb6f344a7b10fc7a635b57515a48227d940  browser-terminal.txt
+f6e41b644966e5fdf168de1f0719146cd29035111ee64a91359c38aef2ac92c8  native-alpine-transcript.txt
+3d74e35c884a32da5390d281c40f18cd0f7eb1ed98d7d32acb64072c78977718  native-alpine.evidence
 ```

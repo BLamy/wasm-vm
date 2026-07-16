@@ -311,6 +311,8 @@ window.__linux = {
 };
 // E3-T02 test hook: the chunked-boot lazy-fetch instrumentation ({ fetches, bytes, error } | null).
 window.__chunkedStats = () => linuxCtl?.fetchStats?.() ?? null;
+// E3-T15 test hook: counters from the production DHCP server for the current guest boot.
+window.__dhcpStats = () => linuxCtl?.dhcpStats?.() ?? null;
 // E3-T05 test hook: force a durable flush of the overlay to IndexedDB (Promise → blocks persisted).
 window.__persist = () => linuxCtl?.persist?.() ?? Promise.resolve(0);
 

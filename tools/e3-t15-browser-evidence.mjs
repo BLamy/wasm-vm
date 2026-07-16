@@ -156,12 +156,22 @@ try {
   assert(counts.counts["cache.test"] === 1, `cache.test upstream count ${counts.counts["cache.test"]}`);
 
   text = await runCommand(
-    "printf '\\022\\064\\001\\000\\000\\001\\000\\000\\000\\000\\000\\000\\005large\\004test\\000\\000\\001\\000\\001' >/tmp/dns.q; cat /tmp/dns.q | nc -u -w 2 10.0.2.3 53 >/tmp/dns.udp; flags=$(dd if=/tmp/dns.udp bs=1 skip=2 count=2 2>/dev/null | hexdump -v -e '2/1 \"%02x\"'); { printf '\\000\\034'; cat /tmp/dns.q; } | nc -w 5 10.0.2.3 53 >/tmp/dns.tcp; tcp_bytes=$(wc -c </tmp/dns.tcp); tail_hex=$(tail -c 4 /tmp/dns.tcp | hexdump -v -e '4/1 \"%02x\"'); echo E3T15_\"TCP_PROOF\" udp_flags=$flags tcp_bytes=$tcp_bytes tail=$tail_hex",
+    "printf '\\022\\064\\001\\000\\000\\001\\000\\000\\000\\000\\000\\000\\005large\\004test\\000\\000\\001\\000\\001' >/tmp/dns.q; cat /tmp/dns.q | nc -u -w 2 10.0.2.3 53 >/tmp/dns.udp; flags=$(dd if=/tmp/dns.udp bs=1 skip=2 count=2 2>/dev/null | hexdump -v -e '2/1 \"%02x\"'); ping -c 1 -W 1 large.test; ping_rc=$?; echo E3T15_\"TCP_PROOF\" udp_flags=$flags ping_rc=$ping_rc",
     "TCP_FALLBACK_OK",
   );
-  match = text.match(/E3T15_TCP_PROOF udp_flags=([0-9a-f]+) tcp_bytes=(\d+) tail=([0-9a-f]+)/);
+  match = text.match(/E3T15_TCP_PROOF udp_flags=([0-9a-f]+) ping_rc=(\d+)/);
   assert(match && match[1] === "8380", `UDP DNS answer did not set TC: ${match}\n${text.slice(-3000)}`);
-  assert(match && Number(match[2]) === 670 && match[3] === "c0000228", `TCP DNS answer was incomplete: ${match}\n${text.slice(-3000)}`);
+  const automaticTcpAddress = text.match(/PING large\.test \((192\.0\.2\.\d+)\)/)?.[1];
+  assert(
+    automaticTcpAddress,
+    `the guest resolver did not automatically retry the TC response over TCP: ${match}\n${text.slice(-3000)}`,
+  );
+  const tcpFallback = {
+    udpFlags: match[1],
+    guestCommand: "ping large.test",
+    resolvedAddress: automaticTcpAddress,
+    scriptedTcpQuery: false,
+  };
   counts = await (await fixture("/counts")).json();
   assert(counts.counts["large.test"] === 1, `large.test upstream count ${counts.counts["large.test"]}`);
 
@@ -172,6 +182,8 @@ try {
   match = text.match(/E3T15_NXDOMAIN rc=(\d+) elapsed=(\d+)/);
   assert(match && Number(match[1]) !== 0 && Number(match[2]) <= 5, `NXDOMAIN was not fast: ${match}`);
 
+  const dhcpBefore = await page.evaluate(() => window.__dhcpStats());
+  assert(dhcpBefore, "DHCP diagnostics unavailable before the T1 check");
   text = await runCommand(
     "sleep 35; ping -c 1 -W 3 10.0.2.2; ip -4 addr show dev eth0",
     "RENEW_OK",
@@ -179,6 +191,11 @@ try {
   );
   assert(text.includes("1 packets received"), "gateway ping failed after DHCP T1");
   assert(text.includes("10.0.2.15/24"), "lease missing after DHCP T1");
+  const dhcpAfter = await page.evaluate(() => window.__dhcpStats());
+  assert(
+    dhcpAfter.renewRequests > dhcpBefore.renewRequests && dhcpAfter.renewAcks > dhcpBefore.renewAcks,
+    `the production DHCP server did not observe a real client RENEW→ACK during T1: ${JSON.stringify({ dhcpBefore, dhcpAfter })}`,
+  );
 
   const rawTerminal = await terminalBuffer();
   await fs.writeFile(`${out}/browser-terminal.txt`, rawTerminal);
@@ -228,8 +245,16 @@ try {
     coldLoads: 1,
     loginSeconds,
     runSeconds: Number(((Date.now() - startedAt) / 1000).toFixed(1)),
-    dhcp: { address: "10.0.2.15/24", gateway: "10.0.2.2", dns: "10.0.2.3", leaseSeconds: 60 },
+    dhcp: {
+      address: "10.0.2.15/24",
+      gateway: "10.0.2.2",
+      dns: "10.0.2.3",
+      leaseSeconds: 60,
+      beforeT1: dhcpBefore,
+      afterT1: dhcpAfter,
+    },
     doh: { endpoint: `${fixtureBase}/dns-query`, counts },
+    tcpFallback,
     suite: { passed, failed },
     haltedStatus,
     roadmap: { text: roadmapText, pipClass: roadmapPipClass },

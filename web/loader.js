@@ -17,6 +17,7 @@ import init, {
   setSlirpDohEndpoint,
   setSlirpDhcpLeaseSeconds,
   setSlirpMtu,
+  slirpDhcpStats,
 } from "./pkg/wasm_vm_wasm.js";
 
 /** Fetch `url` into one preallocated buffer, reporting `(loaded, total)`; `total` is null when
@@ -460,6 +461,8 @@ export async function startLinuxBoot(opts = {}) {
       },
       isPaused: () => paused,
       stateDigest: () => machine.stateDigest(),
+      // E3-T15 verifier evidence: production DHCP exchanges from this exact guest boot.
+      dhcpStats: () => JSON.parse(slirpDhcpStats()),
       // E3-T02: chunked-boot instrumentation — `{ fetches, bytes, error }` (bytes transferred so
       // far via lazy chunk fetch). Null for non-chunked boots. Drives the <40%-of-image acceptance.
       fetchStats: () => (isChunked ? machine.fetchStats() : null),

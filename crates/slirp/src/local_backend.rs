@@ -404,14 +404,8 @@ impl SlirpLocalBackend {
                 self.dns_tcp_rx.extend_from_slice(&received);
             }
 
-            loop {
-                if self.pending_dns.len() >= MAX_PENDING_DNS {
-                    break;
-                }
-                let (message, consumed) = match next_message(&self.dns_tcp_rx) {
-                    TcpFrame::Message { msg, consumed } => (msg.to_vec(), consumed),
-                    TcpFrame::NeedMore { .. } => break,
-                };
+            while let TcpFrame::Message { msg, consumed } = next_message(&self.dns_tcp_rx) {
+                let message = msg.to_vec();
                 self.dns_tcp_rx.drain(..consumed);
                 self.submit_dns(
                     message,

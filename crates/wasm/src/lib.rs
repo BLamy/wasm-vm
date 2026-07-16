@@ -40,6 +40,7 @@ mod slirp_net {
     std::thread_local! {
         static SLIRP_RELAY_URL: RefCell<Option<String>> = const { RefCell::new(None) };
         static SLIRP_DOH_ENDPOINT: RefCell<Option<String>> = const { RefCell::new(None) };
+        static SLIRP_DHCP_STATS: RefCell<Option<wasm_vm_slirp::DhcpStatsHandle>> = const { RefCell::new(None) };
     }
 
     pub(crate) fn slirp_net_enabled() -> bool {
@@ -67,10 +68,15 @@ mod slirp_net {
         SLIRP_MTU.load(Ordering::Relaxed).clamp(576, 1500) as u16
     }
 
+    pub(crate) fn set_slirp_dhcp_stats(stats: wasm_vm_slirp::DhcpStatsHandle) {
+        SLIRP_DHCP_STATS.with(|slot| *slot.borrow_mut() = Some(stats));
+    }
+
     /// Choose the slirp local network stack (vs the default loopback) for subsequent boots.
     #[wasm_bindgen(js_name = setSlirpNet)]
     pub fn set_slirp_net(on: bool) {
         SLIRP_NET.store(on, Ordering::Relaxed);
+        SLIRP_DHCP_STATS.with(|slot| *slot.borrow_mut() = None);
     }
 
     /// Configure the WebSocket relay used for outbound TCP on subsequent slirp boots. An empty URL
@@ -109,11 +115,32 @@ mod slirp_net {
     pub fn set_slirp_mtu(mtu: u32) {
         SLIRP_MTU.store(mtu.clamp(576, 1500), Ordering::Relaxed);
     }
+
+    /// Snapshot the current boot's production DHCP exchanges for evidence and diagnostics.
+    #[wasm_bindgen(js_name = slirpDhcpStats)]
+    pub fn slirp_dhcp_stats() -> String {
+        SLIRP_DHCP_STATS.with(|slot| {
+            let Some(handle) = slot.borrow().as_ref().cloned() else {
+                return "null".to_owned();
+            };
+            let stats = handle.snapshot();
+            format!(
+                "{{\"discovers\":{},\"offers\":{},\"requests\":{},\"acks\":{},\"renewRequests\":{},\"renewAcks\":{},\"naks\":{}}}",
+                stats.discovers,
+                stats.offers,
+                stats.requests,
+                stats.acks,
+                stats.renew_requests,
+                stats.renew_acks,
+                stats.naks,
+            )
+        })
+    }
 }
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 use slirp_net::{
-    SLIRP_GATEWAY_MAC, slirp_doh_endpoint, slirp_lease_secs, slirp_mtu, slirp_net_enabled,
-    slirp_relay_url,
+    SLIRP_GATEWAY_MAC, set_slirp_dhcp_stats, slirp_doh_endpoint, slirp_lease_secs, slirp_mtu,
+    slirp_net_enabled, slirp_relay_url,
 };
 
 // E3-T02 lazy-fetch backend. Compiled where it is actually used: the normal wasm build (behind
@@ -903,6 +930,7 @@ impl WasmLinux {
             let dhcp = wasm_vm_slirp::DhcpServer::new()
                 .with_lease_secs(slirp_lease_secs())
                 .with_mtu(slirp_mtu());
+            set_slirp_dhcp_stats(dhcp.stats_handle());
             let backend = backend.with_dhcp_server(dhcp).with_dns_service(Box::new(
                 doh_fetch::BrowserDnsService::new(slirp_doh_endpoint()),
             ));

@@ -138,7 +138,7 @@ wasm-vm: booting kernel=22097408 bytes @ 0x80200000 (footprint_end=0x81798000), 
 [    2.234555] virtio_blk virtio0: [vda] 1048576 512-byte logical blocks (537 MB/512 MiB)
 [    2.262869] mousedev: PS/2 mouse device common for all mice
 [    2.265826] goldfish_rtc 101000.rtc: registered as rtc0
-[    2.266035] goldfish_rtc 101000.rtc: setting system clock to 2026-07-16T02:15:31 UTC (1784168131)
+[    2.266035] goldfish_rtc 101000.rtc: setting system clock to 2026-07-16T22:34:03 UTC (1784241243)
 [    2.269141] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
 [    2.269388] syscon-poweroff: probe of poweroff failed with error -16
 [    2.271918] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
@@ -158,16 +158,16 @@ wasm-vm: booting kernel=22097408 bytes @ 0x80200000 (footprint_end=0x81798000), 
 [    2.298105] Bridge firewalling registered
 [    2.298540] 8021q: 802.1Q VLAN Support v1.8
 [    2.299117] 9pnet: Installing 9P2000 support
-[    2.299990] Key type dns_resolver registered
-[    2.529526] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
-[    2.541731] Btrfs loaded, zoned=no, fsverity=no
-[    2.550986] Legacy PMU implementation is available
-[    2.552206] clk: Disabling unused clocks
-[    2.578363] EXT4-fs (vda): mounted filesystem a11ce000-0e2f-4c18-b007-f50000000018 r/w with ordered data mode. Quota mode: disabled.
-[    2.578649] VFS: Mounted root (ext4 filesystem) on device 254:0.
-[    2.579283] devtmpfs: mounted
-[    2.585835] Freeing unused kernel image (initmem) memory: 2200K
-[    2.585993] Run /sbin/init as init process
+[    2.300330] Key type dns_resolver registered
+[    2.520487] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+[    2.532695] Btrfs loaded, zoned=no, fsverity=no
+[    2.541212] Legacy PMU implementation is available
+[    2.542472] clk: Disabling unused clocks
+[    2.568633] EXT4-fs (vda): mounted filesystem a11ce000-0e2f-4c18-b007-f50000000018 r/w with ordered data mode. Quota mode: disabled.
+[    2.568920] VFS: Mounted root (ext4 filesystem) on device 254:0.
+[    2.569558] devtmpfs: mounted
+[    2.576163] Freeing unused kernel image (initmem) memory: 2200K
+[    2.576321] Run /sbin/init as init process
 
    OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)
 
@@ -191,7 +191,9 @@ wasm-vm: booting kernel=22097408 bytes @ 0x80200000 (footprint_end=0x81798000), 
  * Loading modules ...modprobe: can't change directory to '/lib/modules': No such file or directory
 modprobe: can't change directory to '/lib/modules': No such file or directory
  [ ok ]
- * Setting system clock using the hardware clock [UTC] ... [ ok ]
+ * Setting system clock using the hardware clock [UTC] ...hwclock: select() to /dev/rtc0 to wait for clock tick timed out
+ * Failed to set the system clock
+ [ !! ]
  * Checking local filesystems  ... [ ok ]
  * Remounting filesystems ... [ ok ]
  * Activating swap devices ... [ ok ]
@@ -209,11 +211,11 @@ udhcpc: broadcasting discover
 udhcpc: broadcasting select for 10.0.2.15, server 10.0.2.2
 udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 60
  [ ok ]
-
+
 Welcome to Alpine Linux 3.20
-Kernel 6.6.63 on an riscv64 (/dev/ttyS0)
-
-wasm-vm login: root
+Kernel 6.6.63 on an riscv64 (/dev/ttyS0)
+
+wasm-vm login: root
 Welcome to Alpine!
 
 The Alpine Wiki contains a large amount of how-to guides and general
@@ -227,31 +229,31 @@ You may change this message by editing /etc/motd.
 wasm-vm:~# [6n
 wasm-vm:~# [6necho E3T15_LOGIN_"OK"
 E3T15_LOGIN_OK
-wasm-vm:~# [6nip -4 addr show dev eth0 | grep -q '10[.]0[.]2[.]15/24' && echo DHCP_
+wasm-vm:~# [6nip -4 addr show dev eth0 | grep -q '10[.]0[.]2[.]15/24' && echo DHCP_
 ADDR_"OK" || echo DHCP_ADDR_"BAD"
 DHCP_ADDR_OK
-wasm-vm:~# [6nip route | grep -q 'default via 10[.]0[.]2[.]2' && echo DHCP_ROUTE_"O
+wasm-vm:~# [6nip route | grep -q 'default via 10[.]0[.]2[.]2' && echo DHCP_ROUTE_"O
 K" || echo DHCP_ROUTE_"BAD"
 DHCP_ROUTE_OK
-wasm-vm:~# [6ngrep -q '^nameserver 10[.]0[.]2[.]3$' /etc/resolv.conf && echo DHCP_D
+wasm-vm:~# [6ngrep -q '^nameserver 10[.]0[.]2[.]3$' /etc/resolv.conf && echo DHCP_D
 NS_"OK" || echo DHCP_DNS_"BAD"
 DHCP_DNS_OK
-wasm-vm:~# [6nnslookup dl-cdn.alpinelinux.org >/tmp/e3t15-lookup 2>&1; r=$?; cat /t
-mp/e3t15-lookup; [ $r -eq 0 ] && grep -q '^Name:.*dl-cdn[.]alpinelinux[.]org' /t
+wasm-vm:~# [6nnslookup dl-cdn.alpinelinux.org >/tmp/e3t15-lookup 2>&1; r=$?; cat /t
+mp/e3t15-lookup; [ $r -eq 0 ] && grep -q '^Name:.*dl-cdn[.]alpinelinux[.]org' /t
 mp/e3t15-lookup && echo DNS_PUBLIC_"OK" || echo DNS_PUBLIC_"BAD"
 Server:		10.0.2.3
 Address:	10.0.2.3:53
 
 Non-authoritative answer:
 Name:	dl-cdn.alpinelinux.org
-Address: 167.82.50.132
+Address: 167.82.10.132
 
 Non-authoritative answer:
 
 DNS_PUBLIC_OK
-wasm-vm:~# [6ns=$(date +%s); nslookup definitely-missing-e3t15.invalid >/tmp/e3t15-
-nx 2>&1; r=$?; e=$(($(date +%s)-s)); cat /tmp/e3t15-nx; [ $r -ne 0 ] && [ $e -le
- 5 ] && grep -Eqi 'NXDOMAIN|non-existent' /tmp/e3t15-nx && echo DNS_NX_"OK" || e
+wasm-vm:~# [6ns=$(date +%s); nslookup definitely-missing-e3t15.invalid >/tmp/e3t15-
+nx 2>&1; r=$?; e=$(($(date +%s)-s)); cat /tmp/e3t15-nx; [ $r -ne 0 ] && [ $e -le
+ 5 ] && grep -Eqi 'NXDOMAIN|non-existent' /tmp/e3t15-nx && echo DNS_NX_"OK" || e
 cho DNS_NX_"BAD"
 Server:		10.0.2.3
 Address:	10.0.2.3:53
@@ -261,8 +263,8 @@ Address:	10.0.2.3:53
 Non-authoritative answer:
 
 DNS_NX_OK
-wasm-vm:~# [6nsleep 35; ping -c 1 -W 2 10.0.2.2 >/dev/null && ip -4 addr show dev e
-th0 | grep -q '10[.]0[.]2[.]15/24' && echo DHCP_RENEW_"OK" || echo DHCP_RENEW_"B
+wasm-vm:~# [6nsleep 35; ping -c 1 -W 2 10.0.2.2 >/dev/null && ip -4 addr show dev e
+th0 | grep -q '10[.]0[.]2[.]15/24' && echo DHCP_RENEW_"OK" || echo DHCP_RENEW_"B
 AD"
 DHCP_RENEW_OK
 wasm-vm:~# [6necho E3T15_NATIVE_"PASS"; poweroff
@@ -283,9 +285,9 @@ wasm-vm:~# [6n * Stopping busybox syslog ... [ ok ]
  [ ok ]
  * Remounting remaining filesystems read-only ... *   Remounting / read only ... [ ok ]
  [ ok ]
-The system is going down NOW!
-Sent SIGTERM to all processes
-Sent SIGKILL to all processes
-Requesting system poweroff
-[  146.965354] reboot: Power down
+The system is going down NOW!
+Sent SIGTERM to all processes
+Sent SIGKILL to all processes
+Requesting system poweroff
+[  147.994200] reboot: Power down
 wasm-vm: guest exited 0
