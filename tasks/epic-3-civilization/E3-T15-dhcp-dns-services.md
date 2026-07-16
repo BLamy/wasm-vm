@@ -3,7 +3,7 @@ id: E3-T15
 epic: 3
 title: Internal DHCP server and DNS forwarder in the slirp stack
 priority: 315
-status: implemented
+status: verified
 depends_on: [E3-T14]
 estimate: M
 capstone: false
@@ -591,3 +591,63 @@ evidence exercises the production DHCP server, UDP/TCP DNS paths, native resolve
 cache, bounded failure mapping, wasm diagnostics bridge, and roadmap surface. Host `rr` remains
 unavailable on this Apple Silicon Mac; this non-concurrency task supplies the required guest trace/state
 evidence and deterministic browser artifacts.
+
+### 2026-07-16 — verifier
+
+VERDICT: verified
+
+- P1 bounded DNS-over-TCP failure — PASSED. Predicted that a full 64-request resolver queue would
+  consume every complete subsequent TCP DNS frame and immediately frame SERVFAIL rather than leaving
+  bytes buffered. The promoted regression returned both expected SERVFAIL messages after the verifier
+  strengthened the attack to pipeline two over-cap queries in one segment; `pending_dns` remained 64
+  and `dns_tcp_rx` was empty (`crates/slirp/src/local_backend.rs:307-327,407-417,1131-1233`). The same
+  test failed under a scratch sabotage restoring the old pre-parse queue break (`pending=64`,
+  `buffered=35`, zero answer bytes), so the regression is load-bearing.
+- P2 stock resolver UDP-to-TCP fallback — PASSED. Predicted that the ordinary guest resolver, not a
+  scripted TCP client, would obtain an address after the large UDP reply set TC. The one-load browser
+  transcript records UDP flags `8380`, then `PING large.test (192.0.2.1)` from stock `ping`; the runner
+  contains no TCP `nc` query and freezes `scriptedTcpQuery: false`
+  (`tools/e3-t15-browser-evidence.mjs:158-176`; `evidence/e3-t15/browser-terminal.txt:287-294`;
+  `evidence/e3-t15/browser-summary.json:43-47`). The fixture's 40-record answer is larger than the UDP
+  limit and its count remained one, so the successful name expansion cannot have come from the
+  truncated UDP response or a second upstream fetch (`tools/e3-t15-doh-fixture.py:38-63`;
+  `evidence/e3-t15/browser-summary.json:30-40`).
+- P3 stock `udhcpc` RENEW to ACK — PASSED. Predicted that a 60-second production lease would show both
+  a new ciaddr-based request and server ACK during the recorded T1 window. The read-only wasm hook
+  snapshots the same `DhcpServer` installed in the production backend; `renewRequests` and `renewAcks`
+  both advanced from 7 to 10 with zero NAKs, while the guest retained `10.0.2.15/24` and gateway
+  connectivity (`crates/slirp/src/dhcp.rs:58-90,136-180`; `crates/wasm/src/lib.rs:119-138,916-937`;
+  `evidence/e3-t15/browser-summary.json:6-28`; `evidence/e3-t15/browser-terminal.txt:306-316`). The
+  focused packet integration independently parsed the framed renewal ACK and wrong-address NAK/recovery.
+- P4 remaining acceptance and artifact freshness — PASSED. The browser record shows automatic address,
+  route, and resolver configuration, SERVFAIL in 0 s, hostname `wget` failure in 5 s, one upstream
+  fetch for two cache lookups, NXDOMAIN in 0 s, clean `exited:0`, 126/0 browser tests, a verified E3-T15
+  roadmap pip, and no console/page errors (`evidence/e3-t15/browser-terminal.txt:212-316`;
+  `evidence/e3-t15/browser-summary.json:1-58`). The native evidence reports 4,125,455,605 retired guest
+  instructions, trace FNV64 `2055fdb40425bcb7`, state SHA-256
+  `5818d71379d664103ea256bb270ca04494e3f515029a4eef21192f30b932610c`, and `Exited(0)`
+  (`evidence/e3-t15/native-alpine.evidence:1-5`). Every committed artifact SHA-256 matched the frozen
+  ledger (`evidence/e3-t15/README.md:97-107`).
+- COVERAGE — PASSED. The queue-loop hunk is exercised by the strengthened regression and the recorded
+  stock fallback; DHCP counter definitions/update paths by the exact unit test plus browser renewal;
+  the wasm export, loader, and page hook by the browser snapshots; and the runner changes by the frozen
+  summary/transcript. The `slirpDhcpStats` no-current-boot `null` branch is waived as defensive
+  diagnostics state, and the public re-export/JSON formatting are type/marshalling seams covered by the
+  wasm build and browser readback. No task behavior hunk is unexecuted.
+- MOCK/ENV and attacks — PASSED. The deterministic DoH fixture is an instrumented upstream, not a
+  replacement guest stack: unmodified Alpine still drives production DHCP, UDP/TCP DNS, wasm, and DoH
+  transport code. With `RUSTFLAGS`, `RUST_LOG`, and `CARGO_TARGET_DIR` scrubbed, the queue regression
+  passed from an archive-created scratch checkout. Independent malformed DHCP/DNS, compression-loop,
+  TTL expiry, cache reuse, NXDOMAIN/SERVFAIL, NAK/recovery, and TCP framing attacks all passed. The
+  sandbox-only loopback `EPERM` failures were rerun with normal macOS loopback access and the slirp lib
+  suite passed 214 tests with one network-only resolver test ignored.
+- SUITE: retained and strengthened `full_dns_queue_returns_immediate_servfail_over_tcp` so it now
+  asserts two pipelined over-cap queries are both consumed and answered; discard additional fixtures
+  because the worker's guest trace, browser bundle, malformed-packet corpus, and pcap renewal regression
+  already persist the remaining falsification cases.
+
+Commands: `cargo fmt --all -- --check`; `cargo clippy -p wasm-vm-slirp -- -D warnings`;
+`cargo test -p wasm-vm-slirp --lib full_dns_queue_returns_immediate_servfail_over_tcp -- --nocapture`;
+`cargo test -p wasm-vm-slirp --lib -- --nocapture` (normal loopback: 214 passed, 1 ignored);
+`cargo test -p wasm-vm-slirp --test local_backend_dhcp -- --nocapture` (3 passed); SHA-256 ledger
+recalculation; scratch sabotage and clean-checkout rerun of the queue regression.

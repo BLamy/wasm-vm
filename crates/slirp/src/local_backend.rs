@@ -1184,9 +1184,13 @@ mod tests {
         }
         assert_eq!(be.pending_dns.len(), MAX_PENDING_DNS);
 
-        // The next complete, valid message must be consumed and rejected with a framed SERVFAIL.
+        // Every complete, valid message must be consumed and rejected with a framed SERVFAIL. Send
+        // two queries in one TCP segment so an implementation that handles only the first frame
+        // cannot accidentally satisfy the bounded-queue regression.
         let query = dns::build_query(0x5151, "queue-full.test", dns::TYPE_A);
-        let framed_query = frame_message(&query).unwrap();
+        let query_two = dns::build_query(0x5252, "still-full.test", dns::TYPE_A);
+        let mut framed_query = frame_message(&query).unwrap();
+        framed_query.extend_from_slice(&frame_message(&query_two).unwrap());
         be.tx(&guest_tcp_segment(
             crate::net::DNS,
             client_port,
@@ -1213,7 +1217,9 @@ mod tests {
             }
         }
         let parsed = dns::parse_query(&query).unwrap();
-        let expected = frame_message(&dns::servfail(&parsed)).unwrap();
+        let parsed_two = dns::parse_query(&query_two).unwrap();
+        let mut expected = frame_message(&dns::servfail(&parsed)).unwrap();
+        expected.extend_from_slice(&frame_message(&dns::servfail(&parsed_two)).unwrap());
         assert_eq!(
             stream,
             expected,
