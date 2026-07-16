@@ -3,7 +3,7 @@ id: E3-T15
 epic: 3
 title: Internal DHCP server and DNS forwarder in the slirp stack
 priority: 315
-status: in-progress
+status: implemented
 depends_on: [E3-T14]
 estimate: M
 capstone: false
@@ -466,3 +466,49 @@ round-trip fidelity to the 65535 max; `0x0200` is the correct TC bit (RFC 1035 �
 placed preserving QR/RD/RA/RCODE with ANCOUNT=0; tests non-vacuous. One out-of-scope caveat (NOT a defect
 here): musl <1.2.4 had NO TCP fallback at all — a guest-resolver-version property; modern Alpine ships
 musl ≥1.2.4. No code change. 125 slirp tests; fmt + clippy + no-default green.
+
+### 2026-07-15 — worker — implemented
+
+Implementation commit: `ff1532b` (`feat(net): complete Alpine DHCP and DNS services`). The production
+CLI now owns a persistent DHCP server and native DNS worker; the wasm runtime owns an RFC 8484
+`fetch`/`AbortController` DoH worker; both drive the same bounded `SlirpLocalBackend` UDP/TCP DNS paths,
+TTL cache, failure mapping, and DHCP configuration. The internal stack owns and ARP-answers both
+10.0.2.2 and 10.0.2.3. CLI/wasm/web configuration exposes lease, MTU, and DoH endpoint controls, and the
+web roadmap surfaces this capability as verified. The implementation adds a stock-Alpine native boot
+acceptance, a deterministic browser evidence runner/DoH fixture, and a composed DHCP NAK→recovery test.
+
+Final cheap gates after the last test change all exited 0: `cargo fmt --all -- --check`;
+`node --check tools/e3-t15-browser-evidence.mjs`; `python3 -m py_compile
+tools/e3-t15-doh-fixture.py`; `cargo clippy -- -D warnings`; `cargo test -p wasm-vm-slirp --test
+local_backend_dhcp` (3 passed, including wrong-address NAK followed by recovery and 60-second renewal);
+full-workspace `cargo test` with normal macOS loopback access (all active tests passed, including 212
+slirp, 9 outbound stress, 86 storage, and 24 wasm tests); and `cargo build -p wasm-vm-wasm --target
+wasm32-unknown-unknown`.
+
+Native recorded happy run: `WASM_VM_E3_T15_EVIDENCE_DIR=evidence/e3-t15 cargo test --release -p
+wasm-vm-cli --test boot_alpine_dns -- --ignored --nocapture` — 1 passed in 915.17 s. The stock guest
+automatically obtained `10.0.2.15/24`, route `default via 10.0.2.2`, resolver `10.0.2.3`, resolved the
+Alpine mirror through the OS resolver, returned NXDOMAIN promptly, retained connectivity at T1, and
+powered off. Evidence: `evidence/e3-t15/native-alpine-transcript.txt` and
+`evidence/e3-t15/native-alpine.evidence`; guest trace FNV64 `9948a06638286510`, 4,158,532,862 retired
+instructions, final state SHA-256 `d45f529a69fd266c5bbf4507baba0240b0bd9eacf758d6638556c22606e8ace1`,
+`outcome=Exited(0)`.
+
+Browser recorded happy run: `make web-build`, `python3 tools/e3-t15-doh-fixture.py 8053`, `bash
+tools/serve-dev.sh 8124`, then `node tools/e3-t15-browser-evidence.mjs`. One cold load booted the same
+stock guest while DoH was deliberately hung (OpenRC still reached login), proved SERVFAIL in 0 s and
+`wget -T 5` failure in 5 s, restored DoH, resolved the Alpine mirror, proved two cache lookups caused
+one upstream fetch, proved UDP TC=1 followed by a complete 670-byte TCP DNS reply, returned NXDOMAIN in
+0 s, renewed the 60-second lease at T1, and halted with `Exited(0)`. On that same page load the suite
+reached `126 passed, 0 failed`, the E3-T15 roadmap pip was `verified`, and console/page errors were empty.
+Evidence: `evidence/e3-t15/browser-summary.json`, `browser-terminal.txt`, `browser-terminal.png`,
+`browser-suite.png`, `browser-roadmap.png`, and the empty `browser-console-errors.txt`. The exact commands,
+assertions, file hashes, and browser-tool fallback reason are frozen in `evidence/e3-t15/README.md`.
+
+Claim: the recordings demonstrate zero-configuration stock Alpine networking on both production
+backends—not merely unit-level packets. DHCP installs the requested address, gateway, DNS server, lease,
+and survives T1; DNS succeeds through the correct native/browser upstream, caches positive answers,
+returns bounded NXDOMAIN/SERVFAIL failures, and serves oversized results through DNS-over-TCP. The full
+diff is exercised by permanent unit/integration tests or by these two runtime recordings. Host `rr` is
+unavailable on this Apple Silicon Mac; this non-concurrency task therefore supplies the required guest
+instruction/state evidence plus deterministic browser recording artifacts.
