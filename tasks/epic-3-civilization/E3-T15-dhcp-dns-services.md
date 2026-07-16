@@ -3,7 +3,7 @@ id: E3-T15
 epic: 3
 title: Internal DHCP server and DNS forwarder in the slirp stack
 priority: 315
-status: in-progress
+status: implemented
 depends_on: [E3-T14]
 estimate: M
 capstone: false
@@ -39,17 +39,17 @@ slow via happy-eyeballs timeouts).
 - Native + browser boot tests: unmodified Alpine acquires its lease and resolves names.
 
 ## Acceptance criteria
-- [ ] Cold boot with stock `/etc/network/interfaces` DHCP config: `ip addr` shows
+- [x] Cold boot with stock `/etc/network/interfaces` DHCP config: `ip addr` shows
       10.0.2.15/24, default route via 10.0.2.2, `/etc/resolv.conf` contains 10.0.2.3 —
       no guest-side manual commands.
-- [ ] `nslookup dl-cdn.alpinelinux.org` in the guest returns addresses (browser build,
+- [x] `nslookup dl-cdn.alpinelinux.org` in the guest returns addresses (browser build,
       via DoH; native build via OS resolver).
-- [ ] udhcpc renewal at T1 succeeds (shorten lease to 60 s in a test config and observe a
+- [x] udhcpc renewal at T1 succeeds (shorten lease to 60 s in a test config and observe a
       RENEW→ACK in the pcap capture without connectivity loss).
-- [ ] A query for a nonexistent domain returns NXDOMAIN to the guest within 5 s; DoH
+- [x] A query for a nonexistent domain returns NXDOMAIN to the guest within 5 s; DoH
       endpoint unreachable returns SERVFAIL within the timeout, and `wget` fails fast with
       a name-resolution error rather than hanging.
-- [ ] DNS cache: two back-to-back queries for the same name produce one upstream DoH fetch
+- [x] DNS cache: two back-to-back queries for the same name produce one upstream DoH fetch
       (instrumented counter).
 
 ## Adversarial verification
@@ -544,3 +544,50 @@ VERDICT: refuted
 Commands: `cargo test -p wasm-vm-slirp --lib
 full_dns_queue_returns_immediate_servfail_over_tcp -- --nocapture` (FAILED: 0 response bytes,
 `pending=64`, `buffered=35`; expected framed SERVFAIL).
+
+### 2026-07-16 — worker — implemented (rework after `3658f19`)
+
+Implementation/evidence commit: `0f6df83` (`fix(net): close E3-T15 verification gaps`). The rework
+closes every item in the verifier's refutation. `pump_dns_tcp` now drains each complete framed query
+through `submit_dns` even when 64 resolutions are outstanding, so the existing bounded rejection path
+can return an immediate framed SERVFAIL; the verifier-promoted
+`full_dns_queue_returns_immediate_servfail_over_tcp` regression passed in the 214-test slirp suite.
+Production `DhcpServer` instances now expose monotonic exchange counters, carried through the wasm boot
+controller, so the browser recording directly observes the stock client's RENEW requests and server
+ACKs instead of inferring renewal from a retained address. The browser proof no longer scripts a TCP
+DNS query: it first verifies a raw UDP response with TC set, then invokes ordinary stock-guest
+`ping large.test`; the resolver returns `192.0.2.1`, the fixture records one upstream lookup, and the
+summary explicitly records `scriptedTcpQuery: false`.
+
+Final gates on the rework all exited 0: `cargo fmt --all -- --check`; `node --check
+tools/e3-t15-browser-evidence.mjs`; `python3 -m py_compile tools/e3-t15-doh-fixture.py`; `cargo clippy
+-- -D warnings`; comprehensive `cargo test -- --skip
+file_backend::tests::kill_mid_write_no_torn_sectors`; `cargo build -p wasm-vm-wasm --target
+wasm32-unknown-unknown`; and `make web-build`. The workspace run skipped only that unchanged file-backend
+crash test: the unfiltered rework run reached it, but its macOS crash child became unkillable in kernel
+exit handling; the same test passed in the preceding full E3-T15 run, and this diff does not touch the
+file backend. All networking tests ran and passed, including the promoted queue-saturation regression,
+real connector integrations, 100 MiB backpressure tests, websocket relay tests, and DHCP integration.
+
+Native final recording: `WASM_VM_E3_T15_EVIDENCE_DIR=evidence/e3-t15 cargo test --release -p
+wasm-vm-cli --test boot_alpine_dns -- --ignored --nocapture` — 1 passed in 831.06 s. Evidence:
+`evidence/e3-t15/native-alpine-transcript.txt` and `native-alpine.evidence`; trace FNV64
+`2055fdb40425bcb7`, 4,125,455,605 retired instructions, final state SHA-256
+`5818d71379d664103ea256bb270ca04494e3f515029a4eef21192f30b932610c`, `outcome=Exited(0)`.
+
+Browser final recording: `python3 tools/e3-t15-doh-fixture.py 8053`, `python3 -m http.server 8124
+--directory web`, and `node tools/e3-t15-browser-evidence.mjs`. One cold load (`coldLoads: 1`) reached
+login in 635.8 s while DoH began unavailable and finished in 737.5 s. It proved automatic DHCP
+`10.0.2.15/24`, gateway `10.0.2.2`, resolver `10.0.2.3`; SERVFAIL in 0 s and hostname `wget` failure in
+5 s; browser DoH recovery; positive resolution; one-upstream-fetch cache reuse; UDP flags `8380`
+followed by automatic stock-resolver TCP fallback; NXDOMAIN in 0 s; and production RENEW/ACK counters
+advancing from `7/7` before T1 to `10/10` after T1 with zero NAKs. The same page halted cleanly, reached
+`126 passed, 0 failed`, showed the E3-T15 roadmap pip `verified`, and recorded zero console/page errors.
+Artifacts and SHA-256 hashes are frozen in `evidence/e3-t15/README.md`.
+
+Claim: the final native guest trace and one-load browser run now demonstrate the complete zero-config
+stock-Alpine behavior, while permanent tests cover the queue boundary and packet-level attacks. The
+evidence exercises the production DHCP server, UDP/TCP DNS paths, native resolver, browser DoH worker,
+cache, bounded failure mapping, wasm diagnostics bridge, and roadmap surface. Host `rr` remains
+unavailable on this Apple Silicon Mac; this non-concurrency task supplies the required guest trace/state
+evidence and deterministic browser artifacts.

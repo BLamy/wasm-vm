@@ -135,7 +135,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 - [x] `313` [E3-T13](epic-3-civilization/E3-T13-virtio-net-device.md) — virtio-net device with rx/tx rings, config space, and MAC *(deps: E2)*
 - [x] `314` [E3-T14](epic-3-civilization/E3-T14-slirp-smoltcp-core.md) — Slirp-style user-mode network core on smoltcp with NAT *(deps: E3-T13, E3-T12)*
-- [~] `315` [E3-T15](epic-3-civilization/E3-T15-dhcp-dns-services.md) — Internal DHCP server and DNS forwarder in the slirp stack *(deps: E3-T14)*
+- [?] `315` [E3-T15](epic-3-civilization/E3-T15-dhcp-dns-services.md) — Internal DHCP server and DNS forwarder in the slirp stack *(deps: E3-T14)*
 - [ ] `316` [E3-T16](epic-3-civilization/E3-T16-websocket-tcp-proxy.md) — WebSocket TCP proxy - framing protocol and Rust relay server *(deps: E3-T14)*
 - [ ] `317` [E3-T17](epic-3-civilization/E3-T17-fetch-http-gateway.md) — Fetch-based HTTP gateway transport for plain-HTTP guest flows *(deps: E3-T14)*
 - [ ] `318` [E3-T18](epic-3-civilization/E3-T18-webtransport-evaluation.md) — WebTransport transport option evaluation *(deps: E3-T16)*
