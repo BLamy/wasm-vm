@@ -789,6 +789,22 @@ mod tests {
         }
     }
 
+    struct StalledDns;
+
+    impl DnsService for StalledDns {
+        fn submit(&mut self, _request: DnsRequest) -> Result<(), DnsRequest> {
+            Ok(())
+        }
+
+        fn poll(&mut self) -> Vec<crate::DnsCompletion> {
+            Vec::new()
+        }
+
+        fn pending(&self) -> bool {
+            true
+        }
+    }
+
     fn guest_tcp_segment(
         dst: Ipv4Addr,
         src_port: u16,
@@ -1115,6 +1131,106 @@ mod tests {
         let answer = dns::parse_response(&msg).unwrap();
         assert_eq!(answer.a_records.len(), 40);
         assert_eq!(submissions.get(), 2, "one UDP resolve plus the TCP retry");
+    }
+
+    #[test]
+    fn full_dns_queue_returns_immediate_servfail_over_tcp() {
+        let mut be =
+            SlirpLocalBackend::new(GW_MAC, Box::new(|| 1)).with_dns_service(Box::new(StalledDns));
+
+        // Establish the permanent DNS-over-TCP listener through the real guest-facing stack.
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+        let client_port = 40532;
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            client_port,
+            53,
+            1000,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        let server_isn = loop {
+            let frame = be.rx().expect("DNS TCP SYN-ACK");
+            let Ok(eth) = EthernetFrame::new_checked(&frame) else {
+                continue;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                continue;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                continue;
+            };
+            if tcp.src_port() == 53 && tcp.dst_port() == client_port && tcp.syn() && tcp.ack() {
+                break tcp.seq_number().0;
+            }
+        };
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            client_port,
+            53,
+            1001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::None,
+            &[],
+        ));
+        while be.rx().is_some() {}
+
+        // Saturate the bounded resolver queue with accepted work that deliberately never completes.
+        let stalled = dns::build_query(0x5100, "stalled.test", dns::TYPE_A);
+        for _ in 0..MAX_PENDING_DNS {
+            be.submit_dns(
+                stalled.clone(),
+                DnsTarget::Tcp {
+                    generation: u64::MAX,
+                },
+                1,
+            );
+        }
+        assert_eq!(be.pending_dns.len(), MAX_PENDING_DNS);
+
+        // The next complete, valid message must be consumed and rejected with a framed SERVFAIL.
+        let query = dns::build_query(0x5151, "queue-full.test", dns::TYPE_A);
+        let framed_query = frame_message(&query).unwrap();
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            client_port,
+            53,
+            1001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::Psh,
+            &framed_query,
+        ));
+
+        let mut stream = Vec::new();
+        for frame in &be.egress {
+            let Ok(eth) = EthernetFrame::new_checked(frame) else {
+                continue;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                continue;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                continue;
+            };
+            if tcp.src_port() == 53 && tcp.dst_port() == client_port {
+                stream.extend_from_slice(tcp.payload());
+            }
+        }
+        let parsed = dns::parse_query(&query).unwrap();
+        let expected = frame_message(&dns::servfail(&parsed)).unwrap();
+        assert_eq!(
+            stream,
+            expected,
+            "a full DNS work queue must produce immediate framed SERVFAIL; pending={}, buffered={}",
+            be.pending_dns.len(),
+            be.dns_tcp_rx.len()
+        );
+        assert!(
+            be.dns_tcp_rx.is_empty(),
+            "complete query must not remain buffered"
+        );
     }
 
     #[test]

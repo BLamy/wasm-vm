@@ -3,7 +3,7 @@ id: E3-T15
 epic: 3
 title: Internal DHCP server and DNS forwarder in the slirp stack
 priority: 315
-status: implemented
+status: in-progress
 depends_on: [E3-T14]
 estimate: M
 capstone: false
@@ -512,3 +512,35 @@ returns bounded NXDOMAIN/SERVFAIL failures, and serves oversized results through
 diff is exercised by permanent unit/integration tests or by these two runtime recordings. Host `rr` is
 unavailable on this Apple Silicon Mac; this non-concurrency task therefore supplies the required guest
 instruction/state evidence plus deterministic browser recording artifacts.
+
+### 2026-07-15 — verifier
+
+VERDICT: refuted
+
+- P1 bounded DNS-over-TCP failure — FAILED. Predicted that, with exactly 64 unresolved DNS requests,
+  the next complete valid TCP message would be consumed and receive an immediate length-prefixed
+  SERVFAIL. The promoted verifier regression observed `pending=64`, `buffered=35`, and zero TCP answer
+  bytes instead of the expected 35-byte framed SERVFAIL
+  (`crates/slirp/src/local_backend.rs:1136-1230`). `pump_dns_tcp` exits on the queue-length check before
+  parsing/draining the complete message and before reaching `submit_dns`, whose full-queue branch would
+  generate SERVFAIL (`crates/slirp/src/local_backend.rs:307-313,407-422`). Demand: consume each complete
+  TCP message and route it through the bounded rejection path even when the resolver queue is full,
+  keep this regression green, then re-record the bounded-failure run.
+- EVIDENCE automatic UDP-to-TCP retry — INSUFFICIENT. The browser runner constructs one raw DNS query,
+  sends it once with `nc -u`, then separately prefixes and sends it with TCP `nc`; this proves the two
+  transports independently, not that the stock resolver automatically retried after TC=1
+  (`tools/e3-t15-browser-evidence.mjs:158-164`; transcript
+  `evidence/e3-t15/browser-terminal.txt:283-289`). Demand: record one ordinary stock-resolver lookup
+  where the UDP TC=1 response and that client's ensuing TCP query/answer are captured as one exchange.
+- EVIDENCE T1 renewal — INSUFFICIENT. Both runtime scripts sleep through T1 and then check gateway ping
+  plus the still-present address; neither records the real `udhcpc` RENEW→ACK exchange
+  (`tools/e3-t15-browser-evidence.mjs:175-181`; `crates/cli/tests/boot_alpine_dns.rs:174-183`). The
+  permanent pcap test injects a hand-built renewal (`crates/slirp/tests/local_backend_dhcp.rs:45-57,
+  138-155`) and therefore does not close the runtime-evidence gap. Demand: capture the stock client's
+  renewal request and server ACK at T1 in the native or browser happy run.
+- SUITE: promoted `full_dns_queue_returns_immediate_servfail_over_tcp`; it currently fails exactly at
+  the bounded queue contradiction and should remain as the regression for the rework.
+
+Commands: `cargo test -p wasm-vm-slirp --lib
+full_dns_queue_returns_immediate_servfail_over_tcp -- --nocapture` (FAILED: 0 response bytes,
+`pending=64`, `buffered=35`; expected framed SERVFAIL).
