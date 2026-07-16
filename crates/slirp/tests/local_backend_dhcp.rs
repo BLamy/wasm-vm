@@ -5,8 +5,8 @@
 //! critic's probe, which is what confirmed DHCP actually flows through the synchronous backend.)
 use std::net::Ipv4Addr;
 
-use wasm_vm_core::dev::virtio::net::NetBackend;
-use wasm_vm_slirp::{SlirpLocalBackend, build_udp_frame};
+use wasm_vm_core::dev::virtio::net::{NetBackend, PcapBackend};
+use wasm_vm_slirp::{DhcpServer, SlirpLocalBackend, build_udp_frame};
 
 const GUEST_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x56];
 const GW_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x02];
@@ -40,6 +40,21 @@ fn dhcp_frame(msg_type: u8, requested: Option<Ipv4Addr>) -> Vec<u8> {
         &dhcp_msg(msg_type, requested),
     )
     .expect("build DHCP UDP frame")
+}
+
+fn dhcp_renew_frame() -> Vec<u8> {
+    let mut message = dhcp_msg(3, None);
+    message[12..16].copy_from_slice(&Ipv4Addr::new(10, 0, 2, 15).octets()); // ciaddr at T1
+    build_udp_frame(
+        GUEST_MAC,
+        GW_MAC,
+        Ipv4Addr::new(10, 0, 2, 15),
+        68,
+        Ipv4Addr::new(10, 0, 2, 2),
+        67,
+        &message,
+    )
+    .expect("build unicast DHCP RENEW")
 }
 
 /// Parse a DHCP reply frame → (dhcp message type, yiaddr). eth(14)+ip(20)+udp(8)=42 header bytes.
@@ -97,4 +112,55 @@ fn full_dhcp_handshake_through_local_backend_gives_guest_an_ip() {
     let (atype, ayiaddr) = drain_dhcp(&mut be).expect("REQUEST produced no DHCP reply");
     assert_eq!(atype, 5, "expected DHCP ACK (type 5), got {atype}");
     assert_eq!(ayiaddr, Ipv4Addr::new(10, 0, 2, 15));
+}
+
+#[test]
+fn wrong_address_is_naked_then_client_recovers_to_the_static_lease() {
+    let mut be = SlirpLocalBackend::new(GW_MAC, Box::new(|| 0));
+
+    be.tx(&dhcp_frame(3, Some(Ipv4Addr::new(10, 0, 2, 99))));
+    let (kind, address) = drain_dhcp(&mut be).expect("wrong-address REQUEST produced no reply");
+    assert_eq!(
+        (kind, address),
+        (6, Ipv4Addr::UNSPECIFIED),
+        "expected DHCP NAK"
+    );
+
+    // BusyBox udhcpc restarts discovery after the NAK and accepts our one static lease.
+    be.tx(&dhcp_frame(1, None));
+    let (kind, offered) = drain_dhcp(&mut be).expect("recovery DISCOVER produced no OFFER");
+    assert_eq!((kind, offered), (2, Ipv4Addr::new(10, 0, 2, 15)));
+    be.tx(&dhcp_frame(3, Some(offered)));
+    let (kind, leased) = drain_dhcp(&mut be).expect("recovery REQUEST produced no ACK");
+    assert_eq!((kind, leased), (5, offered));
+}
+
+#[test]
+fn short_lease_renew_is_acked_and_the_exchange_is_a_parseable_pcap() {
+    let backend = SlirpLocalBackend::new(GW_MAC, Box::new(|| 30_000))
+        .with_dhcp_server(DhcpServer::new().with_lease_secs(60));
+    let mut capture = PcapBackend::new(backend);
+
+    capture.tx(&dhcp_frame(1, None));
+    let (kind, offered) = drain_dhcp_capture(&mut capture).expect("OFFER");
+    assert_eq!((kind, offered), (2, Ipv4Addr::new(10, 0, 2, 15)));
+    capture.tx(&dhcp_frame(3, Some(offered)));
+    assert_eq!(drain_dhcp_capture(&mut capture).unwrap().0, 5);
+
+    // At T1 (half of a 60-second lease), udhcpc unicasts REQUEST with ciaddr and no option 50.
+    capture.tx(&dhcp_renew_frame());
+    let (kind, renewed) = drain_dhcp_capture(&mut capture).expect("RENEW ACK");
+    assert_eq!((kind, renewed), (5, offered));
+    assert_eq!(capture.frame_count(), 6, "three requests + three replies");
+    assert_eq!(&capture.pcap()[0..4], &0xa1b2c3d4u32.to_le_bytes());
+}
+
+fn drain_dhcp_capture(backend: &mut PcapBackend<SlirpLocalBackend>) -> Option<(u8, Ipv4Addr)> {
+    let mut last = None;
+    while let Some(frame) = backend.rx() {
+        if let Some(reply) = parse_dhcp_reply(&frame) {
+            last = Some(reply);
+        }
+    }
+    last
 }

@@ -1,25 +1,19 @@
 //! `NativeResolver` — the native-harness [`Resolver`] backed by the OS resolver (E3-T15). This is the
 //! `resolve` half of the DNS forwarder when running natively (tests + the native CLI); the browser
-//! build uses a DoH resolver over `fetch` instead. Resolves a name via tokio's `lookup_host`, keeps
-//! only the IPv4 addresses (the slirp stack is IPv4-only), and maps the outcome to the forwarder's
-//! [`Resolution`]: addresses → `Resolved`, an empty/failed lookup → `Failed` (SERVFAIL, fail-fast),
-//! bounded by a timeout so a wedged resolver can never hang the stack.
+//! build uses a DoH resolver over `fetch` instead. A bounded blocking `getaddrinfo` call retains the
+//! OS resolver's authoritative `EAI_NONAME` result, so a real NXDOMAIN reaches the guest as NXDOMAIN
+//! instead of being collapsed into SERVFAIL. Only IPv4 addresses are retained.
 //!
-//! NXDOMAIN vs a transient failure: `lookup_host` collapses both into an `Err`, and telling them apart
-//! portably would need a raw resolver. We map every lookup error to `Failed` (SERVFAIL) rather than
-//! guess `NxDomain` — SERVFAIL makes the guest fail fast and RETRY, which is the safe behavior for a
-//! transient upstream blip; a true NXDOMAIN just costs one retry. (The DoH resolver, which sees the
-//! real RCODE, will return `NxDomain` precisely.)
-//!
-//! CAVEAT for the future concurrent-dispatch wiring (critic MINOR): `lookup_host` runs a BLOCKING
-//! `getaddrinfo` on tokio's blocking threadpool. Our `timeout` returns `Failed` on schedule, but it
+//! CAVEAT: `getaddrinfo` runs on Tokio's blocking threadpool. Our `timeout` returns `Failed` on
+//! schedule, but it
 //! only DROPS the future — the underlying getaddrinfo thread stays pinned until the OS resolver
-//! returns (up to `/etc/resolv.conf`'s own multi-second timeout). Per-query awaiting (as the forwarder
-//! does today) is fine, but a path that dispatches many concurrent queries to a black-holed resolver
-//! could pin many of tokio's blocking threads — so the wiring slice should bound resolve concurrency
-//! (or move to a raw async resolver so `timeout` truly cancels the in-flight lookup).
+//! returns. The production service deliberately serializes and caps requests, so a black-holed host
+//! resolver can pin at most one lookup thread per VM rather than an unbounded number.
 
-use std::net::IpAddr;
+use std::collections::BTreeSet;
+use std::ffi::CString;
+use std::net::Ipv4Addr;
+use std::ptr;
 use std::time::Duration;
 
 use crate::resolver::{Resolution, Resolver};
@@ -56,28 +50,79 @@ impl NativeResolver {
 
 impl Resolver for NativeResolver {
     fn resolve(&self, name: &str) -> impl std::future::Future<Output = Resolution> + Send {
-        // `lookup_host` wants a `host:port`; the port is irrelevant to A records, so use 0.
-        let host = format!("{name}:0");
+        let name = name.to_owned();
         let timeout = self.timeout;
         async move {
-            match tokio::time::timeout(timeout, tokio::net::lookup_host(host)).await {
-                Ok(Ok(addrs)) => {
-                    let ips: Vec<_> = addrs
-                        .filter_map(|sa| match sa.ip() {
-                            IpAddr::V4(v4) => Some(v4),
-                            IpAddr::V6(_) => None, // IPv4-only stack
-                        })
-                        .collect();
-                    // A name that resolved to only IPv6 (or nothing) → no A records. `Resolved` with an
-                    // empty vec is the honest answer; the forwarder turns it into an un-cached empty
-                    // NOERROR, never a bogus record.
-                    Resolution::Resolved { ips, ttl_secs: 60 }
-                }
-                // Lookup failed (NXDOMAIN or transient) or exceeded the timeout → fail fast.
-                Ok(Err(_)) | Err(_) => Resolution::Failed,
+            let lookup = tokio::task::spawn_blocking(move || lookup_ipv4(&name));
+            match tokio::time::timeout(timeout, lookup).await {
+                Ok(Ok(HostLookup::Resolved(ips))) => Resolution::Resolved { ips, ttl_secs: 60 },
+                Ok(Ok(HostLookup::NxDomain)) => Resolution::NxDomain,
+                Ok(Ok(HostLookup::Failed)) | Ok(Err(_)) | Err(_) => Resolution::Failed,
             }
         }
     }
+}
+
+enum HostLookup {
+    Resolved(Vec<Ipv4Addr>),
+    NxDomain,
+    Failed,
+}
+
+fn lookup_ipv4(name: &str) -> HostLookup {
+    if !valid_dns_name(name) {
+        return HostLookup::Failed;
+    }
+    let Ok(name) = CString::new(name) else {
+        return HostLookup::Failed;
+    };
+    // SAFETY: `hints` is initialized before use; `result` is owned by getaddrinfo on success and
+    // freed exactly once after walking its linked list. Every sockaddr is checked for AF_INET and a
+    // sufficient length before casting to sockaddr_in.
+    unsafe {
+        let mut hints: libc::addrinfo = std::mem::zeroed();
+        hints.ai_family = libc::AF_INET;
+        hints.ai_socktype = libc::SOCK_STREAM;
+        let mut result: *mut libc::addrinfo = ptr::null_mut();
+        let rc = libc::getaddrinfo(name.as_ptr(), ptr::null(), &hints, &mut result);
+        if rc == libc::EAI_NONAME {
+            return HostLookup::NxDomain;
+        }
+        if rc != 0 || result.is_null() {
+            return HostLookup::Failed;
+        }
+
+        let mut ips = BTreeSet::new();
+        let mut cursor = result;
+        while !cursor.is_null() {
+            let info = &*cursor;
+            if info.ai_family == libc::AF_INET
+                && !info.ai_addr.is_null()
+                && (info.ai_addrlen as usize) >= std::mem::size_of::<libc::sockaddr_in>()
+            {
+                let address = &*(info.ai_addr.cast::<libc::sockaddr_in>());
+                ips.insert(Ipv4Addr::from(address.sin_addr.s_addr.to_ne_bytes()));
+            }
+            cursor = info.ai_next;
+        }
+        libc::freeaddrinfo(result);
+        HostLookup::Resolved(ips.into_iter().collect())
+    }
+}
+
+fn valid_dns_name(name: &str) -> bool {
+    let name = name.strip_suffix('.').unwrap_or(name);
+    !name.is_empty()
+        && name.len() <= 253
+        && name.split('.').all(|label| {
+            !label.is_empty()
+                && label.len() <= 63
+                && !label.starts_with('-')
+                && !label.ends_with('-')
+                && label
+                    .bytes()
+                    .all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
+        })
 }
 
 #[cfg(test)]

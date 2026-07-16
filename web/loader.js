@@ -9,7 +9,15 @@
 // for the deferred 512 MB single-copy audit). The result is handed to wasm by one copy in the
 // `WasmLinux` constructor. No intermediate Blob/ArrayBuffer duplication beyond that.
 
-import init, { WasmLinux, overlayDbName, setSlirpNet, setSlirpRelay } from "./pkg/wasm_vm_wasm.js";
+import init, {
+  WasmLinux,
+  overlayDbName,
+  setSlirpNet,
+  setSlirpRelay,
+  setSlirpDohEndpoint,
+  setSlirpDhcpLeaseSeconds,
+  setSlirpMtu,
+} from "./pkg/wasm_vm_wasm.js";
 
 /** Fetch `url` into one preallocated buffer, reporting `(loaded, total)`; `total` is null when
  *  the server sends no Content-Length (progress must degrade to indeterminate, not lie). */
@@ -222,9 +230,15 @@ export async function startLinuxBoot(opts = {}) {
     // default backend rather than aborting asset loading. (A pkg missing either named export fails
     // earlier at import time, not here.)
     const slirpRelay = typeof opts.slirpRelay === "string" ? opts.slirpRelay.trim() : "";
+    const slirpDoh = typeof opts.slirpDoh === "string" ? opts.slirpDoh.trim() : "";
+    const leaseSecs = Number(opts.slirpLeaseSecs ?? 86400);
+    const slirpMtu = Number(opts.slirpMtu ?? 1500);
     try {
       setSlirpRelay(slirpRelay);
-      setSlirpNet(!!opts.slirpNet || !!slirpRelay);
+      setSlirpDohEndpoint(slirpDoh);
+      setSlirpDhcpLeaseSeconds(Number.isFinite(leaseSecs) ? Math.max(1, leaseSecs) : 86400);
+      setSlirpMtu(Number.isFinite(slirpMtu) ? Math.min(1500, Math.max(576, slirpMtu)) : 1500);
+      setSlirpNet(!!opts.slirpNet || !!slirpRelay || !!slirpDoh);
     } catch { /* keep the default backend */ }
 
     onState("booting");

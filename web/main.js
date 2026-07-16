@@ -40,6 +40,7 @@ async function runLinuxBoot(opts, banner) {
   term.writeln(`\x1b[36m${banner}\x1b[0m`);
   const query = new URLSearchParams(location.search);
   const slirpRelay = opts.slirpRelay ?? query.get("slirpRelay") ?? "";
+  const slirpDoh = opts.slirpDoh ?? query.get("slirpDoh") ?? "";
   if (slirpRelay) {
     term.writeln(`\x1b[90m[network: slirp outbound via ${slirpRelay}]\x1b[0m`);
   }
@@ -49,8 +50,11 @@ async function runLinuxBoot(opts, banner) {
       ...opts,
       // E3-net: `?slirpNet` in the URL boots with the slirp local stack (real DHCP/ARP/ICMP) instead
       // of the loopback backend — so the guest can pull a real IP and reach the gateway.
-      slirpNet: opts.slirpNet ?? (query.has("slirpNet") || !!slirpRelay),
+      slirpNet: opts.slirpNet ?? (query.has("slirpNet") || !!slirpRelay || !!slirpDoh),
       slirpRelay,
+      slirpDoh,
+      slirpLeaseSecs: opts.slirpLeaseSecs ?? query.get("slirpLeaseSecs") ?? 86400,
+      slirpMtu: opts.slirpMtu ?? query.get("slirpMtu") ?? 1500,
       onState: (s) => setStatus(`linux: ${s}`),
       onProgress: (role, loaded, total) => {
         pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;

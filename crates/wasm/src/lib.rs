@@ -25,7 +25,7 @@ use wasm_vm_core::{Machine, RunOutcome};
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod slirp_net {
     use core::cell::RefCell;
-    use core::sync::atomic::{AtomicBool, Ordering};
+    use core::sync::atomic::{AtomicBool, AtomicU32, Ordering};
     use wasm_bindgen::prelude::*;
 
     /// Gateway MAC for the browser slirp local stack (distinct from the guest's virtio-net MAC
@@ -35,8 +35,11 @@ mod slirp_net {
     /// When set, boots wire virtio-net to the slirp LOCAL stack (DHCP/ARP/ICMP) instead of loopback.
     /// Single-threaded browser → a plain atomic suffices. Set via `setSlirpNet` BEFORE booting.
     static SLIRP_NET: AtomicBool = AtomicBool::new(false);
+    static SLIRP_LEASE_SECS: AtomicU32 = AtomicU32::new(wasm_vm_slirp::dhcp::DEFAULT_LEASE_SECS);
+    static SLIRP_MTU: AtomicU32 = AtomicU32::new(wasm_vm_slirp::dhcp::DEFAULT_MTU as u32);
     std::thread_local! {
         static SLIRP_RELAY_URL: RefCell<Option<String>> = const { RefCell::new(None) };
+        static SLIRP_DOH_ENDPOINT: RefCell<Option<String>> = const { RefCell::new(None) };
     }
 
     pub(crate) fn slirp_net_enabled() -> bool {
@@ -45,6 +48,23 @@ mod slirp_net {
 
     pub(crate) fn slirp_relay_url() -> Option<String> {
         SLIRP_RELAY_URL.with(|url| url.borrow().clone())
+    }
+
+    pub(crate) fn slirp_doh_endpoint() -> String {
+        SLIRP_DOH_ENDPOINT.with(|endpoint| {
+            endpoint
+                .borrow()
+                .clone()
+                .unwrap_or_else(|| crate::doh_fetch::DEFAULT_DOH_ENDPOINT.to_owned())
+        })
+    }
+
+    pub(crate) fn slirp_lease_secs() -> u32 {
+        SLIRP_LEASE_SECS.load(Ordering::Relaxed).max(1)
+    }
+
+    pub(crate) fn slirp_mtu() -> u16 {
+        SLIRP_MTU.load(Ordering::Relaxed).clamp(576, 1500) as u16
     }
 
     /// Choose the slirp local network stack (vs the default loopback) for subsequent boots.
@@ -65,9 +85,36 @@ mod slirp_net {
             };
         });
     }
+
+    /// Configure the RFC 8484 wire-format DoH endpoint. Empty restores the production default.
+    #[wasm_bindgen(js_name = setSlirpDohEndpoint)]
+    pub fn set_slirp_doh_endpoint(endpoint: String) {
+        SLIRP_DOH_ENDPOINT.with(|slot| {
+            *slot.borrow_mut() = if endpoint.trim().is_empty() {
+                None
+            } else {
+                Some(endpoint)
+            };
+        });
+    }
+
+    /// Configure the DHCP lease duration for subsequent boots (used by the renewal acceptance).
+    #[wasm_bindgen(js_name = setSlirpDhcpLeaseSeconds)]
+    pub fn set_slirp_dhcp_lease_seconds(seconds: u32) {
+        SLIRP_LEASE_SECS.store(seconds.max(1), Ordering::Relaxed);
+    }
+
+    /// Configure the DHCP-advertised link MTU for subsequent boots.
+    #[wasm_bindgen(js_name = setSlirpMtu)]
+    pub fn set_slirp_mtu(mtu: u32) {
+        SLIRP_MTU.store(mtu.clamp(576, 1500), Ordering::Relaxed);
+    }
 }
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
-use slirp_net::{SLIRP_GATEWAY_MAC, slirp_net_enabled, slirp_relay_url};
+use slirp_net::{
+    SLIRP_GATEWAY_MAC, slirp_doh_endpoint, slirp_lease_secs, slirp_mtu, slirp_net_enabled,
+    slirp_relay_url,
+};
 
 // E3-T02 lazy-fetch backend. Compiled where it is actually used: the normal wasm build (behind
 // `newChunkedDisk`) and native unit tests. Excluded from the zicsr-stub wasm build and the native
@@ -82,6 +129,9 @@ mod storage_err;
 // The web-sys `fetch` glue is browser-only.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod http_fetch;
+// E3-T15: browser DoH fetch transport + bounded poll-driven DNS worker.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod doh_fetch;
 // The web-sys IndexedDB durable-overlay store is browser-only.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod idb_store;
@@ -839,22 +889,24 @@ impl WasmLinux {
         if slirp_net_enabled() {
             let start = js_sys::Date::now();
             let clock = Box::new(move || (js_sys::Date::now() - start) as i64);
-            if let Some(url) = slirp_relay_url() {
+            let backend = if let Some(url) = slirp_relay_url() {
                 let transport = ws_transport::BrowserWebSocketTransport::connect(&url)?;
                 let connector = wasm_vm_slirp::WsConnector::new(transport, Vec::new());
-                let _ = machine.enable_virtio_net(Box::new(
-                    wasm_vm_slirp::SlirpLocalBackend::with_connector(
-                        SLIRP_GATEWAY_MAC,
-                        clock,
-                        Box::new(connector),
-                    ),
-                ));
-            } else {
-                let _ = machine.enable_virtio_net(Box::new(wasm_vm_slirp::SlirpLocalBackend::new(
+                wasm_vm_slirp::SlirpLocalBackend::with_connector(
                     SLIRP_GATEWAY_MAC,
                     clock,
-                )));
-            }
+                    Box::new(connector),
+                )
+            } else {
+                wasm_vm_slirp::SlirpLocalBackend::new(SLIRP_GATEWAY_MAC, clock)
+            };
+            let dhcp = wasm_vm_slirp::DhcpServer::new()
+                .with_lease_secs(slirp_lease_secs())
+                .with_mtu(slirp_mtu());
+            let backend = backend.with_dhcp_server(dhcp).with_dns_service(Box::new(
+                doh_fetch::BrowserDnsService::new(slirp_doh_endpoint()),
+            ));
+            let _ = machine.enable_virtio_net(Box::new(backend));
         } else {
             let _ = machine.enable_virtio_net(Box::new(
                 wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),

@@ -1,0 +1,35 @@
+{
+  "url": "http://127.0.0.1:8124/?slirpDoh=http%3A%2F%2F127.0.0.1%3A8053%2Fdns-query&slirpLeaseSecs=60&e3t15=browser-final",
+  "coldLoads": 1,
+  "loginSeconds": 846.1,
+  "runSeconds": 980.4,
+  "dhcp": {
+    "address": "10.0.2.15/24",
+    "gateway": "10.0.2.2",
+    "dns": "10.0.2.3",
+    "leaseSeconds": 60
+  },
+  "doh": {
+    "endpoint": "http://127.0.0.1:8053/dns-query",
+    "counts": {
+      "counts": {
+        "cache.test": 1,
+        "dl-cdn.alpinelinux.org": 1,
+        "fail.test": 13,
+        "large.test": 1,
+        "nxdomain.test": 1
+      },
+      "mode": "success"
+    }
+  },
+  "suite": {
+    "passed": 126,
+    "failed": 0
+  },
+  "haltedStatus": "⏻ machine halted — exited:0",
+  "roadmap": {
+    "text": "Zero-config Alpine DHCP + DNSstock Alpine leases 10.0.2.15/24; native OS DNS + browser DoH, cache, failure, renewal, and UDP→TCP fallback (E3-T15)",
+    "pipClass": "cap-pip verified"
+  },
+  "consoleErrors": []
+}
