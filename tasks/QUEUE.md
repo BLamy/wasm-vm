@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E3-T11** — Reproducible Alpine disk-image build pipeline v2 with chunking
 1. **E3-T16** — WebSocket TCP/UDP transport provider and public relay fallback
 1. **E3-T21** — Host to guest file transfer - drag-and-drop upload and download
 
@@ -114,7 +113,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] `308` [E3-T08](epic-3-civilization/E3-T08-virtio-blk-flush-durability.md) — Map virtio-blk flush to backend commit with crash consistency *(deps: E3-T05)*
 - [x] `309` [E3-T09](epic-3-civilization/E3-T09-multi-tab-web-locks.md) — Multi-tab safety via Web Locks single-writer and read-only mode *(deps: E3-T05)*
 - [~] `310` [E3-T10](epic-3-civilization/E3-T10-storage-quota-reset-disk.md) — Storage quota management and reset-disk escape hatch *(deps: E3-T05)*
-- [ ] `311` [E3-T11](epic-3-civilization/E3-T11-disk-image-pipeline-v2.md) — Reproducible Alpine disk-image build pipeline v2 with chunking *(deps: E3-T01)*
+- [~] `311` [E3-T11](epic-3-civilization/E3-T11-disk-image-pipeline-v2.md) — Reproducible Alpine disk-image build pipeline v2 with chunking *(deps: E3-T01)*
 
 ## Epic 3.5 — `epic-3.5-oci-workloads`
 

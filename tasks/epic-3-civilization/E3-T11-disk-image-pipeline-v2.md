@@ -3,7 +3,7 @@ id: E3-T11
 epic: 3
 title: Reproducible Alpine disk-image build pipeline v2 with chunking
 priority: 311
-status: pending
+status: in-progress
 depends_on: [E3-T01]
 estimate: M
 capstone: false
