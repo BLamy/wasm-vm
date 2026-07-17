@@ -183,10 +183,12 @@ prompt, run `vi`, `top`, shell scripts, and a clean `poweroff`.
 **Thesis:** A booted kernel is a machine; a *userland* is a computer you can use. Level 3
 gives the machine everything a real userspace needs — a persistent rootfs (copy-on-write
 block overlay on IndexedDB/OPFS, streaming chunked disk images over HTTP), a network (a
-slirp-style user-mode TCP/IP stack in Rust bridging virtio-net to fetch/WebSocket), working
-`apk add` against real mirrors, snapshot/restore, host↔guest transfer — and then proves that
-real, dynamically-linked programs run correctly on it: process model, `mmap`/W^X, threads
-and futex, signals, TLS.
+slirp-style user-mode TCP/IP stack in Rust bridging virtio-net primarily through a browser
+Tailscale/Headscale node, with a public WebSocket relay as the fallback), working `apk add`
+against real mirrors, snapshot/restore, host↔guest transfer — and then proves that real,
+dynamically-linked programs run correctly on it: process model, `mmap`/W^X, threads and
+futex, signals, TLS. The browser tab is the tailnet node; Alpine sits behind its virtual
+gateway unless a later task explicitly gives the guest its own tailnet identity.
 
 **Named milestones:** an interactive **busybox** userland, **QuickJS** (a full embeddable
 JS engine — a stress test for libc and mmap), and a **slow, pure-interpreted CLI Node.js**
@@ -200,8 +202,10 @@ Level 4. Node.js exercises nearly every hard corner of the userland ABI (futex c
 means the machine is correct — Level 4 only has to make it *fast*.
 
 **Capstone threshold:** Cold-load the page, `apk add` the runtimes, drop into a busybox
-shell, run a QuickJS program and a Node.js script (interpreted, slow is fine), reload the
-tab, and the state is still there — the whole flow comparable to webvm.io/alpine.html.
+shell, run a QuickJS program and a Node.js script (interpreted, slow is fine), reach both a
+MagicDNS tailnet service and the public internet through the browser node, reload the tab,
+and the state and tailnet session are still there — the whole flow comparable to
+webvm.io/alpine.html.
 
 ## Level 4 — ACCELERATION *(the engine of accelerating returns — Layer D)*
 

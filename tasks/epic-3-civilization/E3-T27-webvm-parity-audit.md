@@ -22,7 +22,8 @@ time-to-prompt and reload time-to-prompt (stopwatch from navigation to usable sh
 runs each); interactive feel (keystroke echo latency measured via a scripted
 input-to-render probe, scroll performance in `less`); persistence (file survives reload —
 both systems); networking (`apk add`/package install wall-clock, `curl https://` success,
-DNS latency); terminal fidelity (resize, colors, `htop`, `vim`); clipboard both directions;
+DNS latency, Tailscale cold-connect/session-restore cost, MagicDNS/tailnet reachability, and
+forced-relay fallback); terminal fidelity (resize, colors, `htop`, `vim`); clipboard both directions;
 file transfer both directions; multi-tab behavior; offline behavior; failure comportment
 (kill network mid-download on both). Also audit the intangibles that make webvm feel
 finished: favicon, page title, load animation, error pages — list them. Where webvm wins,

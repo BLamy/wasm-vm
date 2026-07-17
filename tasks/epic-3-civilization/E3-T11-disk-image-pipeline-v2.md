@@ -23,9 +23,9 @@ mirror or an explicit apk-versioned world file; set `SOURCE_DATE_EPOCH`, normali
 timestamps/uids in the ext4 image (mke2fs `-d` with fixed hash seed via `-U` and
 `E2FSPROGS_FAKE_TIME`). Baseline packages: alpine-base, agetty/openrc bits from Epic 2,
 ca-certificates, curl, nano or vim — lean; python3 stays *out* (the capstone installs it).
-`/etc/apk/repositories` must point at the mirror scheme the network stack will actually
-reach (see T17/T20) — coordinate the URL now, plain-HTTP mirror is acceptable because apk
-verifies signatures. Artifacts: `manifest.json`, `chunks/{sha256}.bin`, `boot-profile.json`,
+`/etc/apk/repositories` must point at the HTTPS mirror the Tailscale transport and the relay
+fallback will both reach (see T17/T20); do not couple the production image to the optional
+browser-fetch fast path. Artifacts: `manifest.json`, `chunks/{sha256}.bin`, `boot-profile.json`,
 `image-info.json` (build inputs, versions) — all safe to serve with
 `Cache-Control: immutable` because names are content hashes.
 
@@ -43,8 +43,8 @@ verifies signatures. Artifacts: `manifest.json`, `chunks/{sha256}.bin`, `boot-pr
 - [ ] Two consecutive `./build.sh` runs on the same commit produce identical
       `manifest.json` (hence identical chunk set) — asserted by the script itself.
 - [ ] The image boots to login through the T02/T03 streaming path and `apk update`
-      succeeds once networking exists (until then: `apk version` runs and the repositories
-      file matches the documented URL).
+      succeeds through the T17 Tailscale provider once networking exists (until then:
+      `apk version` runs and the repositories file matches the documented HTTPS URL).
 - [ ] No chunk file exceeds the manifest's chunk size; every file in `chunks/` is
       referenced by the manifest and vice versa (script-asserted).
 - [ ] `image-info.json` records the Alpine release, mirror snapshot, and package list with

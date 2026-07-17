@@ -1,7 +1,7 @@
 ---
 id: E3-T16
 epic: 3
-title: WebSocket TCP proxy - framing protocol and Rust relay server
+title: WebSocket TCP/UDP transport provider and public relay fallback
 priority: 316
 status: pending
 depends_on: [E3-T14]
@@ -10,14 +10,16 @@ capstone: false
 ---
 
 ## Goal
-The general-purpose transport: an `OutboundConnector` that tunnels guest TCP flows through a
-single multiplexed WebSocket to a small Rust relay server, which opens real TCP connections
-outbound. Any TCP protocol the guest speaks (HTTP, TLS, SSH, git) works through it, with a
-designed-and-documented binary framing protocol.
+The fallback general-purpose transport: an `OutboundConnector` that tunnels guest TCP/UDP
+flows through a single multiplexed WebSocket to a small Rust relay server. It remains the
+portable no-tailnet path and defines the framing, flow-control, close/reset, and datagram
+semantics reused by transport providers. T17 makes a browser Tailscale node the shipped
+primary provider; this task still has to stand on its own and pass every relay acceptance.
 
 ## Context
-Browsers cannot open raw sockets; a relay is how webvm-class systems reach arbitrary
-TCP. Design the framing protocol first (`docs/design/ws-proxy-protocol.md`): one WebSocket
+Browsers cannot open raw sockets; a relay is the universal fallback when Tailscale is not
+configured or cannot connect. Design the framing protocol first
+(`docs/design/ws-proxy-protocol.md`): one WebSocket
 carries all flows; binary frames `{u32 stream_id, u8 opcode, payload}` with opcodes OPEN
 (payload: hostname length-prefixed + u16 port — hostname not IP, so the relay does DNS and
 T15 can also route through it), OPEN_OK/OPEN_FAIL(errno-ish code), DATA, SHUTDOWN_WR (maps
@@ -27,7 +29,9 @@ credits per stream; sender never exceeds outstanding credit — do not rely on W
 Server: tokio + tokio-tungstenite (or axum ws), per-stream tasks, per-connection and
 per-stream buffer caps. Client side implements `OutboundConnector` mapping credits to the
 slirp socket window (T14's backpressure seam). Auth/rate limiting/deploy hardening is T19 —
-but leave the hello frame's token field in the protocol now.
+but leave the hello frame's token field in the protocol now. Provider selection belongs
+outside `WsConnector`: T17 plugs a Worker-backed Tailscale provider into the same slirp seam,
+while T19 owns production policy and lifecycle for both paths.
 
 ## Deliverables
 - `docs/design/ws-proxy-protocol.md`: wire format, flow-control rules, close/RST state
@@ -36,6 +40,8 @@ but leave the hello frame's token field in the protocol now.
   structured logs, `--listen`/`--allow-dest` flags, graceful shutdown.
 - Client `WsConnector` (wasm: `web-sys` WebSocket; native: tungstenite for harness tests)
   implementing the protocol incl. credits and half-close.
+- TCP and UDP relay paths share one bounded connection while preserving TCP byte-stream
+  semantics and UDP datagram boundaries, with typed refusal/reset/unreachable outcomes.
 - Protocol conformance tests: a shared test vector suite run against both client and server
   encoders/decoders; end-to-end native test guest→slirp→WsConnector→server→local echo.
 
@@ -52,6 +58,8 @@ but leave the hello frame's token field in the protocol now.
 - [ ] RST from the destination surfaces to the guest as ECONNRESET within 1 s.
 - [ ] Encoder/decoder conformance vectors pass identically in the wasm client, native
       client, and server.
+- [ ] Two concurrent UDP flows preserve zero-length, maximum-supported, and back-to-back
+      differently-sized datagrams without cross-flow contamination or TCP head-of-line stalls.
 
 ## Adversarial verification
 Attack the protocol and the flow control. Fuzz the server with malformed frames (unknown
@@ -312,3 +320,10 @@ TCP over a real WebSocket end to end. **Only browser/boot-gated legs remain:**
 - **`web_sys` `WsConnector`** — the guest-side client in the browser (needs wasm-bindgen + a browser).
 - **Booted acceptance** — a real Alpine guest doing `wget` through the chain; 1 GB byte-diff; 500-
   stream `lsof` reap (needs a boot session).
+
+### 2026-07-17 — planning reconciliation
+The two bullets above are historical. E3-T14 later landed and verifier-proved the production
+`web_sys` connector plus booted browser Alpine TCP/UDP through `wvrelay`. E3-T16 now retains the
+larger protocol-specific acceptance still not independently closed here: multiplexed large-transfer
+and stall/backpressure evidence, half-close/RST, malformed/credit attacks, and 500-stream reap. T17
+uses the same connector seam for Tailscale; it does not replace or weaken this fallback proof.
