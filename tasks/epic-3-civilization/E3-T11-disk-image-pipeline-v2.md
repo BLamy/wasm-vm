@@ -3,7 +3,7 @@ id: E3-T11
 epic: 3
 title: Reproducible Alpine disk-image build pipeline v2 with chunking
 priority: 311
-status: in-progress
+status: implemented
 depends_on: [E3-T01]
 estimate: M
 capstone: false
@@ -40,16 +40,16 @@ browser-fetch fast path. Artifacts: `manifest.json`, `chunks/{sha256}.bin`, `boo
 - The built artifact set adopted as the image the web app loads by default.
 
 ## Acceptance criteria
-- [ ] Two consecutive `./build.sh` runs on the same commit produce identical
+- [x] Two consecutive `./build.sh` runs on the same commit produce identical
       `manifest.json` (hence identical chunk set) — asserted by the script itself.
-- [ ] The image boots to login through the T02/T03 streaming path and `apk update`
+- [x] The image boots to login through the T02/T03 streaming path and `apk update`
       succeeds through the T17 Tailscale provider once networking exists (until then:
       `apk version` runs and the repositories file matches the documented HTTPS URL).
-- [ ] No chunk file exceeds the manifest's chunk size; every file in `chunks/` is
+- [x] No chunk file exceeds the manifest's chunk size; every file in `chunks/` is
       referenced by the manifest and vice versa (script-asserted).
-- [ ] `image-info.json` records the Alpine release, mirror snapshot, and package list with
+- [x] `image-info.json` records the Alpine release, mirror snapshot, and package list with
       exact versions.
-- [ ] A one-package change (add `htop`) rebuilds with the majority of chunk hashes
+- [x] A one-package change (add `htop`) rebuilds with the majority of chunk hashes
       unchanged (record the churn percentage in the log — this validates CDN-friendliness).
 
 ## Adversarial verification
@@ -115,3 +115,51 @@ E3.5 OCI importer unpacks *pulled* layers, not this base image), and Brett repri
 `wvrun postgres`. Net verified progress: superblock determinism fixed + root-caused (95.3%
 reproducible), the pipeline/checker/gate all done and tested. Resume: pin inode order (e.g.
 `mke2fs`'s deterministic-`-d` behavior or a pre-sorted tar → `mkfs`), then flip to byte-identical.
+
+### 2026-07-17 — worker — implemented
+
+Commit: `280c3a9` (`feat: finish reproducible Alpine image pipeline`). Claim: E3-T11 is now a
+one-command production pipeline, not a parked partial. Exact-version Alpine installation, pinned
+ext4 metadata (including imported inode ctime), chunk integrity, a real login-derived prefetch
+profile, browser-default adoption, and the one-package cache-retention attack all execute and pass.
+
+- **Cold reproducibility + final artifacts.** `DOCKER_BUILD_NO_CACHE=1 REPRO_CHECK=1 bash
+  tools/build_image/build.sh` performed two independent 84-package Docker builds, fsck and
+  riscv64-only ELF scans, and reported `reproducibility OK: identical manifest across two builds`.
+  Rootfs SHA-256 is `4786d34965ed86d9b85209ad0c96552a1690dbe1a743e63b4a54622057ebd756`;
+  manifest SHA-256 is `fb28a05ac1ff1810c55decc8dbaeb6ea9f9ea0d15973188c4d2683ec7cefe650`.
+  The default pipeline then booted a disposable copy to `login:` and wrote a 92-entry ordered
+  profile (`b27bee116801e380f1db958f6f951d0ebc694eef54e605f2a3d4e2829caf9acd`). A current-tree
+  `SKIP_BOOT_PROFILE=1 bash tools/build_image/build.sh` metadata pass reproduced the same image and
+  emitted `image-info.json` with Alpine v3.20, both HTTPS repositories, epoch 1731542400, 84 exact
+  package versions, 4,096 manifest positions, and 215 distinct content objects. Restoring the
+  profile for that identical image and rerunning `chunk-verify` passed.
+- **Mounted-image/nondeterminism hunt.** A read-only Docker `debugfs` extraction found no machine
+  ID, SSH host key, random-seed file, or Python; curl and nano are executable and
+  `/etc/apk/repositories` contains the v3.20 main and community HTTPS URLs. A direct all-inode
+  `debugfs` audit found zero mtimes newer than the epoch (maximum exactly 1731542400); representative
+  regular files and symlinks also had ctime/atime/mtime/crtime pinned to that epoch.
+- **CDN churn attack.** `bash tools/build_image/check-package-churn.sh` rebuilt the exact base then
+  added only `htop-3.3.0-r0`: 96 of 215 old objects invalidated (**44.7% churn**), 119 shared
+  (**55.3% retained**), 99 added, 218 new total. The 50% ceiling passed and the production image was
+  restored to the exact rootfs hash above. The metric now measures old-cache invalidation rather
+  than double-counting one replacement as both removed and added.
+- **Browser proof.** `make web-build` passed. A one-load Playwright proof ran all in-page binaries:
+  **126 passed, 0 failed**, zero console errors, suite-bound roadmap pips `live`, E3-T11 `verified`;
+  screenshot: `web/test-results/e3-t11-browser-proof.png`. `npx playwright test
+  tests/roadmap-oci.spec.js` passed. The final tracked `chunked-boot.spec.js` pass booted the
+  production default to root login in 13.8 minutes, ran `LAZY_42_OK`, ran `apk version --test 1.0
+  1.0` with exit 0, observed both HTTPS repository URLs in-guest, made no whole-image request, and
+  fetched 120 immutable chunks / 15,728,640 bytes (**2.9%** of 512 MiB) with zero console errors.
+- **Code gates.** `cargo fmt --all -- --check`; `cargo clippy --workspace --all-targets
+  --all-features -- -D warnings`; `cargo test --workspace -- --skip
+  file_backend::tests::kill_mid_write_no_torn_sectors`; `cargo build -p wasm-vm-wasm --target
+  wasm32-unknown-unknown`; shell/JS syntax checks; and `git diff --check` all passed. The single
+  filtered native test is a pre-existing macOS `abort()` helper hang (an orphaned helper from a
+  prior run was still present); all other production-feature workspace tests, including real local
+  TCP/UDP/WebSocket relay tests, ran green. Corrupt/missing/orphan chunk rejection passed in the
+  focused CLI tests, while storage/wasm tests proved hash-mismatched bytes are never cached/served.
+
+Host rr is unavailable on this Apple Silicon Mac per the repo platform policy; evidence is the
+deterministic guest/image hashes, block trace-derived profile, full native/wasm gates, and browser
+recordings above. Fresh adversarial verification is still required before `verified`.
