@@ -43,8 +43,8 @@ test.describe("E3-T02: Alpine in the browser via lazy chunk fetch", () => {
     });
 
     await page.goto("/");
-    await expect(page.locator("#boot-alpine-chunked")).toBeEnabled();
-    await page.click("#boot-alpine-chunked");
+    await expect(page.locator("#boot-alpine")).toBeEnabled();
+    await page.click("#boot-alpine");
 
     // The kernel mounts the ext4 root over virtio-blk whose bytes arrive lazily — a panic here would
     // mean a parked read never completed or served wrong data.
@@ -62,6 +62,23 @@ test.describe("E3-T02: Alpine in the browser via lazy chunk fetch", () => {
     await page.waitForTimeout(2000);
     await type("echo LAZY_$((6*7))_OK\r");
     await expect(page.locator(rows)).toContainText("LAZY_42_OK", { timeout: 60_000 });
+
+    // E3-T11 pre-networking acceptance: apk itself runs in the production image and the guest is
+    // configured for the two HTTPS repositories that Tailscale/relay networking will reach.
+    // The full installed-package comparison is prohibitively slow under the wasm interpreter;
+    // compare two versions directly to execute the subcommand without scanning the package DB.
+    await type("apk version --test 1.0 1.0; echo APK_VERSION_RC=$?\r");
+    await expect(page.locator(rows)).toContainText("=", { timeout: 180_000 });
+    await expect(page.locator(rows)).toContainText("APK_VERSION_RC=0", { timeout: 180_000 });
+    await type("cat /etc/apk/repositories\r");
+    await expect(page.locator(rows)).toContainText(
+      "https://dl-cdn.alpinelinux.org/alpine/v3.20/main",
+      { timeout: 60_000 },
+    );
+    await expect(page.locator(rows)).toContainText(
+      "https://dl-cdn.alpinelinux.org/alpine/v3.20/community",
+      { timeout: 60_000 },
+    );
 
     // Acceptance: the in-wasm instrumentation reports bytes transferred < 40% of the image, and the
     // network trace shows only per-chunk fetches (no whole-image request), with no fetch error.

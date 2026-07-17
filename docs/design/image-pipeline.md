@@ -7,6 +7,7 @@ CDN-ready artifact directory:
 ```sh
 bash tools/build_image/build.sh              # build + chunk + verify + image-info
 REPRO_CHECK=1 bash tools/build_image/build.sh # + build twice and fail on manifest drift
+DOCKER_BUILD_NO_CACHE=1 REPRO_CHECK=1 bash tools/build_image/build.sh # cold builder layers
 ```
 
 Output (`releases/`):
@@ -16,6 +17,7 @@ Output (`releases/`):
 | `rootfs/alpine-rootfs.ext4` | the reproducible ext4 (E2-T18) |
 | `chunked-alpine/manifest.json` | E3-T01 manifest (image len, chunk size, per-chunk sha256) |
 | `chunked-alpine/chunks/<sha256>.bin` | one immutable, content-addressed file per chunk |
+| `chunked-alpine/boot-profile.json` | ordered first-touch chunks recorded from a real boot to `login:` |
 | `chunked-alpine/image-info.json` | build provenance: Alpine release, mirror, epoch, exact package versions |
 
 ## Why v2
@@ -29,6 +31,9 @@ The pipeline is an orchestration of already-verified pieces:
 3. `wasm-vm chunk-verify` / `wasm-vm chunk-churn` (E3-T11) — the integrity + CDN-churn gates,
    implemented in Rust (`crates/cli/src/chunk_verify.rs`) so the guarantees are **unit-tested**,
    not asserted in shell.
+4. `tools/build_image/record_boot_profile.sh` — boots a disposable copy with the native CLI's
+   `--profile-boot --blk-log`, stops at getty's `login:` marker, and maps successful virtio-blk
+   reads to the browser's chunk indices. The production image itself is never boot-mutated.
 
 ## Determinism techniques (where each lives)
 
@@ -37,12 +42,17 @@ The pipeline is an orchestration of already-verified pieces:
 - **Package-set drift gate** — apk resolves "latest within v3.20", so a mirror point-release
   (a libcrypto CVE patch, a busybox `-r31→-r32`) silently changes the image. `build-rootfs.sh`
   diffs the freshly-resolved set against the committed `releases/rootfs/MANIFEST.txt` lock and
-  **fails on drift**; `UPDATE_MANIFEST=1` accepts + refreshes the lock. This is the exact-version
-  record `image-info.json` reads.
+  **fails on drift**; normal builds convert every locked `name-version-rN` entry into apk's exact
+  `name=version-rN` constraint. `UPDATE_MANIFEST=1` deliberately re-resolves and refreshes the lock.
+  This is the exact-version record `image-info.json` reads.
 - **Fixed filesystem identity** — `FS_UUID` and `SOURCE_DATE_EPOCH` (2024-11-14, matching the
   kernel banner) are constants in `build-rootfs.sh`; `mke2fs -d` packs the tree without loop
   mounts or privileges, `-O ^metadata_csum` disables the (non-deterministic-seed) metadata
-  checksums, `-E root_owner=0:0` normalizes ownership.
+  checksums, `-E root_owner=0:0` normalizes ownership, and `-E hash_seed=<FS_UUID>` fixes the
+  directory-htree seed. `E2FSPROGS_FAKE_TIME` freezes e2fsprogs timestamps. A final pinned
+  `debugfs` batch normalizes imported inode ctimes: `touch` can fix source mtime/atime but its
+  own metadata operation advances source ctime, and `mke2fs -d` otherwise copies that real
+  container-clock value into every populated ext4 inode.
 - **No per-boot secrets baked in** — `/etc/machine-id`, ssh host keys, and random seeds must be
   absent or generated on first boot, never captured at build time (audited in the adversarial
   check below).
@@ -50,7 +60,9 @@ The pipeline is an orchestration of already-verified pieces:
 ## Reproducibility gate
 
 `REPRO_CHECK=1` builds the ext4 twice and diffs `manifest.json`. Identical manifests ⇒ identical
-chunk set ⇒ the image is byte-reproducible. Any drift fails the build with the manifest diff.
+ordered chunk hashes ⇒ the image is byte-reproducible. Any drift fails the build, reports chunk
+set churn and differing chunk indices, and preserves both ext4 files under `target/repro-*.ext4`
+for `cmp`/`dumpe2fs`/`debugfs` diagnosis.
 
 The chunking step is deterministic *given* a fixed image (pure content hashing), so the gate is
 really testing the ext4 build; the `chunk-churn` metric below is what validates that a
@@ -65,9 +77,9 @@ Every file under `chunks/` is named by its sha256 and never changes content, so 
 Cache-Control: public, max-age=31536000, immutable
 ```
 
-`manifest.json` and `image-info.json` are the only mutable entries (they change when the image
-changes) — serve them with a short max-age or an ETag so a new build is picked up promptly while
-the (immutable) chunks stay cached.
+`manifest.json`, `boot-profile.json`, and `image-info.json` are the mutable entries (they change
+when the image changes) — serve them with a short max-age or an ETag so a new build is picked up
+promptly while the immutable chunks stay cached.
 
 ### Churn / CDN-friendliness
 
@@ -76,12 +88,15 @@ the whole image on every rebuild. Measure it:
 
 ```sh
 wasm-vm chunk-churn --old <previous-art-dir> --new releases/chunked-alpine --max-churn-pct 50
+bash tools/build_image/check-package-churn.sh # real one-package (`htop`) build + 50% ceiling
 ```
 
-Churn is `(added + removed) / union` over the two chunk *sets*. A churn far above the size of the
-change means the ext4 **layout** shifted (inode/block reallocation cascaded) — investigate before
-shipping (stable `-d` input ordering keeps allocation deterministic). The pipeline sets a ceiling
-(e.g. 50%) so an unstable-layout regression fails CI rather than quietly bloating CDN traffic.
+Churn is `old objects no longer referenced / old objects` over the distinct chunk sets: the
+fraction of the existing immutable CDN cache invalidated by the rebuild. Retention and newly added
+objects are reported separately; counting a replacement as both removed and added would double-count
+one invalidated cache entry. A churn far above the size of the change means the ext4 **layout**
+shifted (inode/block reallocation cascaded). The pipeline's 50% ceiling requires the majority of
+previously cached objects to remain reusable.
 
 ## Bumping packages
 

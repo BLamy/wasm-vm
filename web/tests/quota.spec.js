@@ -61,8 +61,8 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
 
   test("storage indicator appears on a persistent boot", async ({ page }) => {
     await page.goto("/?persist=1");
-    await expect(page.locator("#boot-alpine-chunked")).toBeEnabled();
-    await page.click("#boot-alpine-chunked");
+    await expect(page.locator("#boot-alpine")).toBeEnabled();
+    await page.click("#boot-alpine");
     // The indicator is populated by onStorage right after the Web-Lock/persist() resolve, well
     // before login — no full boot needed.
     await expect(page.locator("#storage-indicator")).toBeVisible({ timeout: 60_000 });

@@ -25,21 +25,9 @@ fi
 echo "demo-capstone: building web bundle (wasm-pack + npm ci + assets)…" >&2
 make web-build >&2
 
-# The LOCAL-ONLY Alpine manifest: kernel + rootfs, RELATIVE urls the dev server maps to releases/.
-# NOT committed and NOT copied into web/ (keeps the 512 MB image off gh-pages / the deploy).
-echo "demo-capstone: hashing artifacts for web/artifacts-alpine.json (512 MB — a few seconds)…" >&2
-ksha=$(shasum -a 256 "$kernel" | awk '{print $1}'); ksize=$(wc -c < "$kernel" | tr -d ' ')
-rsha=$(shasum -a 256 "$rootfs" | awk '{print $1}'); rsize=$(wc -c < "$rootfs" | tr -d ' ')
-cat > web/artifacts-alpine.json <<JSON
-{
-  "generated": "LOCAL-ONLY capstone manifest (tools/demo-capstone.sh) — Alpine is served by serve-dev, not gh-pages",
-  "artifacts": {
-    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "$ksha", "size": $ksize },
-    "rootfs": { "url": "releases/rootfs/alpine-rootfs.ext4", "sha256": "$rsha", "size": $rsize }
-  }
-}
-JSON
-echo "demo-capstone: wrote web/artifacts-alpine.json (rootfs ${rsize} bytes)" >&2
+# The local-only manifest is also emitted by E3-T11's production image build. Regenerate it here
+# so this standalone demo always pairs the kernel with the exact rootfs on disk.
+bash tools/gen-alpine-manifest.sh
 
 cat >&2 <<EOF
 
