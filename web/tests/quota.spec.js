@@ -251,14 +251,15 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
 
     // Write beyond the overridden quota. The persist pump must pause on StorageFull before silently
     // dropping the failed IndexedDB transaction. Retry without freeing ORIGIN storage must re-pause.
-    // Direct I/O makes the acceptance observable at the virtio request boundary:
-    // every completed 1 MiB dd record has crossed both the block completion and filesystem sync
-    // boundary. After Continue flips the live backend read-only, the ONE parked, unacknowledged
-    // request completes S_IOERR and dd must report nonzero. The reopened file is compared against
-    // dd's exact completed-record count below; this is the load-bearing no-acked-write-loss proof.
+    // Direct I/O makes each data record observable at the virtio request boundary. Ext4 inode-size
+    // metadata is still asynchronous, so issue one 1 MiB dd at a time and count it only after a
+    // successful sync. After Continue flips the live backend read-only, the ONE parked,
+    // unacknowledged request completes S_IOERR and the current dd must report nonzero. The reopened
+    // file is compared against this exact synced-record count; this is the load-bearing
+    // no-acked-write-loss proof.
     await type(
       page,
-      "dd if=/dev/zero of=/root/quota-fill bs=1M count=80 oflag=direct; r=$?; echo QUOTA_DD_RC=$r; echo QUOTA_GUEST_$((6*7))_OK\r",
+      "i=0; r=0; while [ $i -lt 80 ]; do dd if=/dev/zero of=/root/quota-fill bs=1M count=1 seek=$i conv=notrunc oflag=direct || { r=$?; break; }; sync || { r=$?; break; }; i=$((i+1)); done; echo QUOTA_DURABLE_RECORDS=$i; echo QUOTA_DD_RC=$r; echo QUOTA_GUEST_$((6*7))_OK\r",
     );
     const dialog = page.locator("#quota-dialog");
     await expect(dialog).toBeVisible({ timeout: 900_000 });
@@ -280,12 +281,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     await expect(page.locator(rows)).toContainText("QUOTA_GUEST_42_OK", { timeout: 60_000 });
     const quotaTerminal = await page.locator(rows).textContent();
     const ddRc = Number(quotaTerminal.match(/QUOTA_DD_RC=(\d+)/)?.[1]);
-    const recordsOut = [...quotaTerminal.matchAll(/(\d+)\+(\d+) records out/g)];
-    expect(recordsOut.length, "dd must report its guest-completed record count").toBeGreaterThan(0);
-    const [, ddFullText, ddPartialText] = recordsOut.at(-1);
-    const ddFullRecords = Number(ddFullText);
-    const ddPartialRecords = Number(ddPartialText);
-    expect(ddPartialRecords, "a failed 1 MiB record must not be reported as completed").toBe(0);
+    const ddFullRecords = Number(quotaTerminal.match(/QUOTA_DURABLE_RECORDS=(\d+)/)?.[1]);
     expect(ddFullRecords).toBeGreaterThan(0);
     expect(ddFullRecords).toBeLessThan(80);
     const ddDurableBytes = ddFullRecords * 1024 * 1024;
@@ -379,7 +375,6 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
       retryHits,
       ddRc,
       ddFullRecords,
-      ddPartialRecords,
       ddDurableBytes,
       reopenedBytes: ddDurableBytes,
       reopenedPrefixSha256: expectedPrefixSha256,
