@@ -8,7 +8,7 @@
 // three interpreter boots. This file's FAST checks (indicator, reset scoping, ephemeral warning)
 // run in seconds and don't need a full boot. Local/nightly only.
 import { test, expect, chromium } from "@playwright/test";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
@@ -42,7 +42,7 @@ function reconstructAndFsck(blocks, evidenceDir) {
     fs.closeSync(fd);
   }
   try {
-    const output = execFileSync(
+    const result = spawnSync(
       "docker",
       [
         "run", "--rm", "-v", `${scratch}:/work`, "wasm-vm-rootfs-build:local", "-lc",
@@ -50,7 +50,10 @@ function reconstructAndFsck(blocks, evidenceDir) {
       ],
       { encoding: "utf8" },
     );
+    const output = `${result.stdout || ""}${result.stderr || ""}`;
     fs.writeFileSync(path.join(evidenceDir, "quota-fsck.txt"), output);
+    expect(result.error, output).toBeUndefined();
+    expect(result.status, output).toBe(0);
     expect(output).toMatch(/JOURNAL_REPLAY_RC=[0-3]/);
     expect(output).toContain("FSCK_RC=0");
     expect(output).toContain("Pass 5: Checking group summary information");
