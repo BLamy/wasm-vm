@@ -3,7 +3,7 @@ id: E3-T10
 epic: 3
 title: Storage quota management and reset-disk escape hatch
 priority: 310
-status: implemented
+status: in-progress
 depends_on: [E3-T05]
 estimate: S
 capstone: false
@@ -171,3 +171,44 @@ Evidence: `evidence/e3-t10/browser-summary.json`, `quota-dialog-after-retry.png`
 `browser-demo-126-of-126.png`; index and reproduction commands are in `evidence/e3-t10/README.md`.
 Host rr is unavailable on this macOS machine; the browser run, real IndexedDB transaction boundary,
 guest terminal markers, ext4 checks, and complete in-browser suite are the recorded guest evidence.
+
+### 2026-07-18 — fresh verifier
+
+VERDICT: refuted
+
+- **P0 no-acked-write-loss attack — FAILED.** Predicted that, once the quota transaction fails,
+  every write already completed to the guest is either present in IndexedDB after reload or is
+  completed with IOERR before the guest sees success. Observed that `ChunkedBackend::write` returns
+  `Ok(())` as soon as the write enters the in-memory overlay (`crates/wasm/src/chunked.rs:114-129`),
+  and the existing hostile test explicitly labels such a block `acked S_OK pre-quota`
+  (`crates/wasm/src/chunked.rs:633-634`). A failed IndexedDB transaction deliberately leaves that
+  batch only in the RAM queue (`crates/wasm/src/lib.rs:1125-1141`). Continue does not make space, and
+  the shipped proof closes the page immediately afterward (`web/tests/quota.spec.js:240-254`),
+  discarding the queue; the product copy confirms the contradiction: `a reload before then loses
+  them` (`web/main.js:92-97`). This fails the task's explicit adversarial condition, "no write was
+  acked to the guest that never became durable." Rework the quota boundary so an aborted batch
+  cannot contain guest-successful writes that disappear on reload, then record a test comparing the
+  exact `dd` completed-byte count/content with the reopened file at the quota edge.
+- **P1 post-quota fsck evidence — INSUFFICIENT.** Predicted an actual T08-style filesystem check
+  after killing the quota-edge page. Observed only a grep of `dmesg` for EXT4 strings
+  (`web/tests/quota.spec.js:248-257`); no `fsck.ext4 -f -n` command or result is present. Run the
+  ticket's own reboot-and-fsck attack and preserve its output. Also exercise quota during the idle
+  trickle drain, which the submitted browser test does not target.
+- **COVERAGE / evidence — INSUFFICIENT.** The files in `evidence/e3-t10/` are two screenshots, a
+  self-written JSON summary, an empty console-error file, and the demo screenshot. There is no
+  Playwright trace, terminal transcript, or guest instruction trace/digest. The retry screenshot
+  is before Continue; the reset screenshot shows the third boot login but not `ddRc`,
+  `QUOTA_EXTBAD`, `PRISTINE`, or `RESET_EXTBAD`. Consequently the load-bearing changed paths
+  (`crates/wasm/src/lib.rs:1001-1023` and `web/loader.js:341-347`) are not reopenably covered by the
+  submitted evidence. Record the final run with its terminal/trace and bind the artifact digest to
+  the claimed commit.
+- **Gates that survived:** `cargo fmt --all -- --check`; `cargo test -p wasm-vm-wasm --lib`
+  (24/24); `cargo clippy -p wasm-vm-wasm --all-targets --all-features -- -D warnings`;
+  `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`; a scrubbed, fresh-target
+  `cargo test -p wasm-vm-wasm --lib` (24/24 in 38.50s); and `node --check` for both changed runtime
+  JS files and both changed specs. An independent Playwright rerun could not start because this
+  verifier sandbox forbids binding the configured local server; that limitation does not cause the
+  verdict—the source/evidence contradiction above does.
+- **SUITE:** no promotion while the correctness refutation remains. The next proof must be
+  sabotage-sensitive: removing the in-Wasm dirty-pressure yield must make it fail, and losing any
+  guest-acknowledged block across the quota-edge reload must make it fail.
