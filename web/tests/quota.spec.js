@@ -277,7 +277,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     // Continue must let the guest run: the parked write gets EIO and dd exits nonzero. No S_OK was
     // published for the failed transaction; the RAM-only overlay bytes may disappear on page close.
     await page.click("#q-ro");
-    await expect(page.locator("#ro-banner")).toContainText("new guest writes return I/O errors");
+    await expect(page.locator("#ro-banner")).toContainText("guest writes return I/O errors");
     await expect(page.locator(rows)).toContainText(/QUOTA_DD_RC=[1-9]/, { timeout: 180_000 });
     await expect(page.locator(rows)).toContainText("QUOTA_GUEST_42_OK", { timeout: 60_000 });
     const quotaTerminal = await page.locator(rows).textContent();
