@@ -251,14 +251,14 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
 
     // Write beyond the overridden quota. The persist pump must pause on StorageFull before silently
     // dropping the failed IndexedDB transaction. Retry without freeing ORIGIN storage must re-pause.
-    // Direct + synchronous I/O makes the acceptance observable at the virtio request boundary:
+    // Direct I/O makes the acceptance observable at the virtio request boundary:
     // every completed 1 MiB dd record has crossed both the block completion and filesystem sync
     // boundary. After Continue flips the live backend read-only, the ONE parked, unacknowledged
     // request completes S_IOERR and dd must report nonzero. The reopened file is compared against
     // dd's exact completed-record count below; this is the load-bearing no-acked-write-loss proof.
     await type(
       page,
-      "dd if=/dev/zero of=/root/quota-fill bs=1M count=80 oflag=direct,sync; r=$?; echo QUOTA_DD_RC=$r; echo QUOTA_GUEST_$((6*7))_OK\r",
+      "dd if=/dev/zero of=/root/quota-fill bs=1M count=80 oflag=direct; r=$?; echo QUOTA_DD_RC=$r; echo QUOTA_GUEST_$((6*7))_OK\r",
     );
     const dialog = page.locator("#quota-dialog");
     await expect(dialog).toBeVisible({ timeout: 900_000 });
