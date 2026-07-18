@@ -213,8 +213,10 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
       await type(p, 'echo QUOTA_SHELL_$((6*7))_OK\r');
       await expect(p.locator(rows)).toContainText("QUOTA_SHELL_42_OK", { timeout: 60_000 });
     };
-    // Start from this image's pristine overlay. The fault stays disabled through boot, then the
-    // guest gets exactly 12,800 additional 4 KiB puts (50 MiB) before the transaction aborts.
+    // Start from this image's pristine overlay. The fault stays disabled through boot, then model
+    // a 50 MiB origin with 4 MiB remaining: exactly 1,024 additional 4 KiB puts may commit before
+    // the real transaction is aborted. A near-full origin keeps this three-boot proof bounded while
+    // still exercising the production IndexedDB/StorageFull boundary.
     try {
     await page.goto("/");
     const injectedName = await page.evaluate(async () => {
@@ -247,7 +249,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     expect(await page.evaluate(() => window.__e3t10Quota.state().quota)).toBe(50 * 1024 * 1024);
     await page.goto("/?persist=1&persistMax=1048576");
     await bootToShell(page);
-    await page.evaluate(() => window.__e3t10Quota.enableAfter(12_800));
+    await page.evaluate(() => window.__e3t10Quota.enableAfter(1_024));
 
     // Write beyond the overridden quota. The persist pump must pause on StorageFull before silently
     // dropping the failed IndexedDB transaction. Retry without freeing ORIGIN storage must re-pause.
@@ -375,6 +377,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     summary = {
       sourceCommit,
       quotaBytes: 50 * 1024 * 1024,
+      quotaRemainingAtFaultArmBytes: 4 * 1024 * 1024,
       retryHits,
       ddRc,
       ddFullRecords,
