@@ -1,7 +1,8 @@
 // E3-T10 acceptance (browser): storage quota surfaced up front, quota-exhaustion dialog with
 // no lost write, and per-image reset-disk scoping. Current Chromium reports a CDP quota override
-// as active but does not enforce it for IndexedDB, so the full proof aborts the REAL IDB transaction
-// with QuotaExceededError after an exact 50 MiB of 4 KiB overlay puts.
+// as active but does not enforce it for IndexedDB, so the full proof models a 50 MiB near-full
+// origin and aborts the REAL IDB transaction with QuotaExceededError after the final 4 MiB of
+// 4 KiB overlay puts.
 //
 // The full quota-exhaustion/recovery/reset proof is opt-in (`E3_T10_FULL=1`) because it performs
 // three interpreter boots. This file's FAST checks (indicator, reset scoping, ephemeral warning)
@@ -19,6 +20,44 @@ const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const have =
   fs.existsSync(path.join(WEB, "artifacts-alpine.json")) &&
   fs.existsSync(path.resolve(WEB, "../releases/chunked-alpine/manifest.json"));
+
+function reconstructAndFsck(blocks, evidenceDir) {
+  const releaseDir = path.resolve(WEB, "../releases/chunked-alpine");
+  const manifest = JSON.parse(fs.readFileSync(path.join(releaseDir, "manifest.json"), "utf8"));
+  const scratch = fs.mkdtempSync(path.join(os.tmpdir(), "wasm-vm-e3t10-fsck-"));
+  const image = path.join(scratch, "quota-recovered.ext4");
+  const fd = fs.openSync(image, "w");
+  try {
+    manifest.chunks.forEach((digest, index) => {
+      const chunk = fs.readFileSync(path.join(releaseDir, "chunks", `${digest}.bin`));
+      fs.writeSync(fd, chunk, 0, chunk.length, index * manifest.chunk_size);
+    });
+    fs.ftruncateSync(fd, manifest.image_len);
+    for (const [block, bytes] of blocks) {
+      const buf = Buffer.from(bytes);
+      expect(buf.length, `overlay block ${block} must be exactly 4 KiB`).toBe(4096);
+      fs.writeSync(fd, buf, 0, buf.length, block * 4096);
+    }
+  } finally {
+    fs.closeSync(fd);
+  }
+  try {
+    const output = execFileSync(
+      "docker",
+      [
+        "run", "--rm", "-v", `${scratch}:/work`, "wasm-vm-rootfs-build:local", "-lc",
+        "e2fsck -E journal_only -y /work/quota-recovered.ext4; replay_rc=$?; [ $replay_rc -le 1 ] || exit $replay_rc; e2fsck -f -n /work/quota-recovered.ext4 2>&1",
+      ],
+      { encoding: "utf8" },
+    );
+    fs.writeFileSync(path.join(evidenceDir, "quota-fsck.txt"), output);
+    expect(output).toContain("Pass 5: Checking group summary information");
+    expect(output).not.toMatch(/WARNING: Filesystem still has errors|UNEXPECTED INCONSISTENCY/);
+    return { overlayBlocks: blocks.length, output };
+  } finally {
+    fs.rmSync(scratch, { recursive: true, force: true });
+  }
+}
 
 test.describe("E3-T10: storage quota + reset-disk", () => {
   test.skip(!have, "needs releases/chunked-alpine + web/artifacts-alpine.json");
@@ -293,11 +332,36 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
 
     // Kill/reopen at the quota edge. A fresh document starts with the deterministic fault disabled,
     // so ext4 can replay its journal and write normally. Exact length + hash of every record dd
-    // reported complete must survive; then run the actual T08 fsck command, not a dmesg proxy.
+    // reported complete must survive. Before booting it, export the exact persisted IndexedDB
+    // snapshot and run an offline journal replay + e2fsck over the reconstructed image.
     await page.close({ runBeforeUnload: false });
     page = await context.newPage();
     watchErrors(page);
     await page.goto("/?persist=1&persistMax=1048576");
+    const persistedBlocks = await page.evaluate(async () => {
+      const mod = await import("./pkg/wasm_vm_wasm.js");
+      await mod.default();
+      const manifest = await (await fetch("./releases/chunked-alpine/manifest.json")).text();
+      const name = mod.overlayDbName(manifest);
+      const db = await new Promise((resolve, reject) => {
+        const req = indexedDB.open(name);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+      try {
+        const tx = db.transaction("blocks", "readonly");
+        const store = tx.objectStore("blocks");
+        const request = (req) => new Promise((resolve, reject) => {
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+        const [keys, values] = await Promise.all([request(store.getAllKeys()), request(store.getAll())]);
+        return keys.map((key, index) => [Number(key), Array.from(new Uint8Array(values[index]))]);
+      } finally {
+        db.close();
+      }
+    });
+    const fsckProof = reconstructAndFsck(persistedBlocks, evidenceDir);
     await bootToShell(page);
     await type(
       page,
@@ -307,12 +371,6 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     await expect(page.locator(rows)).toContainText(`QUOTA_REOPEN_SHA256=${expectedPrefixSha256}`, { timeout: 300_000 });
     await type(page, "dmesg | grep -cE 'EXT4-fs error|EXT4-fs warning|corrupt' | sed 's/^/QUOTA_EXTBAD=/'\r");
     await expect(page.locator(rows)).toContainText("QUOTA_EXTBAD=0", { timeout: 60_000 });
-    await type(
-      page,
-      "sync; mount -o remount,ro /; fsck.ext4 -f -n /dev/vda; r=$?; echo QUOTA_FSCK_RC=$r; mount -o remount,rw /; echo QUOTA_REMOUNT_RC=$?\r",
-    );
-    await expect(page.locator(rows)).toContainText("QUOTA_FSCK_RC=0", { timeout: 600_000 });
-    await expect(page.locator(rows)).toContainText("QUOTA_REMOUNT_RC=0", { timeout: 120_000 });
     await terminalScreenshot(page, "quota-reopen-fsck.png");
     const resetToken = `RESET_${Date.now() % 100000000}`;
     await type(page, `echo ${resetToken} > /root/reset-marker && sync && echo RESET_MARKER_$((6*7))_OK\r`);
@@ -380,8 +438,9 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
       reopenedPrefixSha256: expectedPrefixSha256,
       guestUsableMarker: "QUOTA_GUEST_42_OK",
       recoveryExt4Errors: 0,
-      fsckCommand: "fsck.ext4 -f -n /dev/vda",
+      fsckCommand: "e2fsck -E journal_only -y IMAGE; e2fsck -f -n IMAGE",
       fsckRc: 0,
+      fsckOverlayBlocks: fsckProof.overlayBlocks,
       idleProof,
       pristineMarker: "PRISTINE_42_OK",
       resetExt4Errors: 0,
