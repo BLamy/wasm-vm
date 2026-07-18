@@ -334,12 +334,17 @@ export async function startLinuxBoot(opts = {}) {
     };
     // E3-T10: shared handler for a persist failure on EITHER pump site. A StorageFull is
     // RECOVERABLE — the dirty blocks stay pending (persistPending never marked them). While the
-    // user is in "continue read-only" mode the backlog just keeps retrying quietly (no new writes
-    // arrive, so it can only shrink); otherwise PAUSE via the quota flag and raise the dialog.
+    // user is in "continue read-only" mode the backlog keeps retrying quietly (no new writes
+    // arrive, so it can only shrink) WITHOUT starving guest execution; otherwise PAUSE via the
+    // quota flag and raise the dialog.
     // Returns true if the caller should stop this tick.
     const handlePersistError = async (e) => {
       if (String(e?.message || e).startsWith("StorageFull")) {
-        if (quotaReadOnly) return true; // expected while space is full; retry next throttled tick
+        // Expected while space is still full. Keep the backlog pending and let this tick run the
+        // guest: its next write must reach the now-read-only backend and complete with EIO. Returning
+        // true here would retry persistence before every CPU slice forever, so `dd` would remain
+        // frozen instead of observing the promised error and the supposedly usable guest would hang.
+        if (quotaReadOnly) return false;
         quotaPaused = true;
         tickScheduled = false;
         let est = {};
@@ -372,7 +377,7 @@ export async function startLinuxBoot(opts = {}) {
           // While quotaReadOnly, no new writes arrive — retry the backlog at most every ~3s so a
           // still-full quota doesn't hammer IndexedDB every quantum (critic BUG-1 storm).
           const throttled = quotaReadOnly && Date.now() - lastPersistRetry < 3000;
-          if (!throttled && (ps.flushWaiting || ps.pendingBytes > maxDirtyBytes)) {
+          if (!throttled && (ps.flushWaiting || ps.pendingBytes >= maxDirtyBytes)) {
             if (quotaReadOnly) lastPersistRetry = Date.now();
             await machine.persistPending();
           }
@@ -383,7 +388,11 @@ export async function startLinuxBoot(opts = {}) {
       }
       let res;
       try {
-        res = machine.runChunk(quantum);
+        // Persistent boots also pass the dirty-byte ceiling into wasm. Wasm checks it between
+        // short internal instruction slices and yields early, so a high-throughput guest write
+        // cannot finish an entire command inside one 2M-instruction quantum before the IDB pump
+        // gets a chance to report quota exhaustion.
+        res = machine.runChunk(quantum, usePersist ? maxDirtyBytes : undefined);
       } catch (e) {
         tickScheduled = false;
         onState("error");
@@ -471,8 +480,9 @@ export async function startLinuxBoot(opts = {}) {
       // E3-T09: is this boot read-only (lock not held, OR quota forced it)?
       readOnly: () => lockReadOnly || quotaReadOnly,
       // E3-T10 quota-dialog actions ------------------------------------------------------------
-      // "Free space in guest & retry": clear the quota pause and resume — the still-pending
-      // writes retry on the next tick (succeed once the guest freed origin space, else re-dialog).
+      // "Free browser storage & retry": clear the quota pause and resume — the still-pending
+      // writes retry on the next tick (succeed once origin storage is available, else re-dialog).
+      // Deleting guest files does not shrink this block overlay until discard/TRIM exists.
       resumeAfterQuota: () => { quotaPaused = false; schedule(); },
       // "Continue read-only": refuse NEW guest writes (disk RO → EIO) but KEEP the persist pump
       // alive so the already-acked pending backlog still drains when space frees (critic BUG-1:

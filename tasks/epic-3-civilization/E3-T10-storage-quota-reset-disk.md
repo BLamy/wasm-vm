@@ -39,9 +39,11 @@ require typed confirmation.
   or a tiny incognito quota) and exercises all three dialog options.
 
 ## Acceptance criteria
-- [ ] With quota overridden to ~50 MB, `dd if=/dev/zero of=/root/fill bs=1M` triggers the
-      dialog before any backend write is silently dropped; choosing "continue" makes `dd`
-      exit with an I/O error and the guest stays usable.
+- [ ] With quota overridden to ~50 MB, `dd if=/dev/zero of=/root/fill bs=1M oflag=direct`
+      triggers the dialog before any backend write is silently dropped; choosing "continue"
+      completes the next virtio-blk request with IOERR, makes `dd` exit with an I/O error, and
+      leaves the guest usable. Direct I/O is load-bearing evidence here: buffered `dd` may finish
+      into Linux's page cache before a later writeback error becomes observable at `fsync`.
 - [ ] After freeing space in the guest (`rm /root/fill; sync`... note: freed ext4 blocks
       don't shrink the overlay — the dialog copy must not promise that they do; discard/
       TRIM is out of scope and documented as such).

@@ -962,10 +962,17 @@ impl WasmLinux {
     }
 
     /// Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
-    /// 16550 RX, and return `{ done: bool, state: string|null }`. `state` is `"poweroff"`,
-    /// `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or `"trap:<cause>"` once terminal.
+    /// 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
+    /// `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
+    /// that limit so JS can durably drain it before the guest can race arbitrarily far ahead.
+    /// `state` is `"poweroff"`, `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or
+    /// `"trap:<cause>"` once terminal.
     #[wasm_bindgen(js_name = runChunk)]
-    pub fn run_chunk(&self, max_instrs: u32) -> Result<JsValue, JsError> {
+    pub fn run_chunk(
+        &self,
+        max_instrs: u32,
+        persist_max_dirty_bytes: Option<u32>,
+    ) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         if inner.finished.is_none() {
             let mut sink = wasm_vm_core::trace::NullSink;
@@ -974,8 +981,12 @@ impl WasmLinux {
             // of the budget on a near-empty FIFO. Instead, when input is queued, run in short slices
             // and top up the FIFO between them so the guest drains it many times within one budget
             // (bulk paste / held-key autorepeat throughput ~ slices × FIFO depth). When nothing is
-            // queued this collapses to a single full-budget run — the quiet path pays nothing.
+            // queued this collapses to a single full-budget run — unless persistent-disk pressure
+            // also needs a boundary. Without that boundary one 2M-instruction slice can complete an
+            // 80 MiB `dd` before IndexedDB reports quota exhaustion, falsely returning success to
+            // the guest before the UI can pause it (E3-T10 acceptance finding).
             const INPUT_SLICE: u64 = 16_384;
+            const PERSIST_SLICE: u64 = 16_384;
             let mut remaining = max_instrs as u64;
             let outcome = loop {
                 // Feed queued host input into the RX FIFO, up to its free space (no overrun).
@@ -987,14 +998,28 @@ impl WasmLinux {
                         inner.uart.borrow_mut().push_input(&batch);
                     }
                 }
-                let step = if inner.pending.is_empty() {
-                    remaining
-                } else {
+                let persistence_bounded =
+                    persist_max_dirty_bytes.is_some() && inner.persist.is_some();
+                let step = if !inner.pending.is_empty() {
                     INPUT_SLICE.min(remaining)
+                } else if persistence_bounded {
+                    PERSIST_SLICE.min(remaining)
+                } else {
+                    remaining
                 };
                 let oc = inner.machine.run_traced(step, &mut sink);
                 remaining -= step;
-                if remaining == 0 || !matches!(oc, RunOutcome::MaxInstrs) {
+                let persistence_due = persist_max_dirty_bytes.is_some_and(|limit| {
+                    limit > 0
+                        && inner.persist.as_ref().is_some_and(|(_, queue)| {
+                            queue
+                                .borrow()
+                                .unpersisted_count()
+                                .saturating_mul(wasm_vm_storage::OVERLAY_BLOCK)
+                                >= limit as usize
+                        })
+                });
+                if remaining == 0 || persistence_due || !matches!(oc, RunOutcome::MaxInstrs) {
                     break oc;
                 }
             };

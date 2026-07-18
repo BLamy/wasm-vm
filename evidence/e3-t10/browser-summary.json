@@ -1,0 +1,10 @@
+{
+  "quotaBytes": 52428800,
+  "retryHits": 2,
+  "ddRc": 1,
+  "guestUsableMarker": "QUOTA_GUEST_42_OK",
+  "recoveryExt4Errors": 0,
+  "pristineMarker": "PRISTINE_42_OK",
+  "resetExt4Errors": 0,
+  "consoleErrors": 0
+}

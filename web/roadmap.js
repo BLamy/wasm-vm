@@ -69,7 +69,7 @@ export const ROADMAP = [
       { name: "virtio-net device", status: "verified", evidence: "eth0 acceptance: native 828s + browser 15.8 min (E3-T13, #96/#98)" },
       { name: "Honest FLUSH barrier + crash safety", status: "verified", evidence: "barrier seam; 2 tab-kills survived 53 min crashtest (E3-T08, #100)" },
       { name: "Multi-tab writer lock + RO takeover", status: "verified", evidence: "20/20 race + RO-guest/EROFS/takeover, staggered-boot evidence (E3-T09, #102)" },
-      { name: "Storage quota + honest per-image reset", status: "verified", evidence: "no-lost-write-on-quota; lock-RO vs quota-RO split (E3-T10, #104)" },
+      { name: "Storage quota + honest per-image reset", status: "verified", evidence: "50 MiB real-IDB abort → Retry / guest IOERR / clean recovery / typed reset (E3-T10)" },
       { name: "User-mode network (slirp + smoltcp NAT)", status: "verified", evidence: "browser Alpine DHCP + ping + byte-exact TCP wget + datagram-exact external UDP through WebSocket relay (E3-T14)" },
       { name: "Zero-config Alpine DHCP + DNS", status: "verified", evidence: "stock Alpine leases 10.0.2.15/24; native OS DNS + browser DoH, cache, failure, renewal, and UDP→TCP fallback (E3-T15)" },
     ],

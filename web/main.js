@@ -64,12 +64,22 @@ async function runLinuxBoot(opts, banner) {
       // E3-T10: storage indicator (usage/quota/persist grant) at boot.
       onStorage: ({ usage, quota, granted }) => {
         const el = document.getElementById("storage-indicator");
+        const warning = document.getElementById("storage-warning");
         if (el && quota != null) {
           const mb = (n) => (n / 1048576).toFixed(0);
           el.textContent = `storage ${mb(usage)}/${mb(quota)} MB${granted ? " (persistent)" : " (best-effort)"}`;
           el.style.display = "inline";
         }
+        // There is no reliable cross-browser private-mode bit. A denied persist() request is the
+        // actionable condition in either private browsing or ordinary best-effort storage, so warn
+        // honestly in both cases instead of guessing why the browser denied durable storage.
+        if (warning) {
+          warning.style.display = granted ? "none" : "block";
+          warning.textContent =
+            "Storage is best-effort: changes may be evicted, and private/incognito storage is temporary. Export anything important.";
+        }
         term.writeln(`\x1b[90m[storage: ${quota != null ? `${((usage / quota) * 100) | 0}% of ${(quota / 1048576) | 0}MB` : "n/a"}, persist=${granted}]\x1b[0m`);
+        if (!granted) term.writeln("\x1b[33m[storage warning: best-effort; private/incognito changes are temporary]\x1b[0m");
       },
       // E3-T10: storage quota hit — the VM is PAUSED; show the actionable dialog. The three
       // choices map to loader controller actions (retry after freeing space / continue
@@ -83,14 +93,16 @@ async function runLinuxBoot(opts, banner) {
         // stay pending — "Free space & retry" saves them; "Continue read-only" keeps trying in the
         // background but they are NOT durable until space frees (a reload before then loses them).
         const warn = unsaved
-          ? ' <b>Some acknowledged writes are not yet saved</b> — free space and Retry to persist them; a reload before then loses them.'
+          ? ' <b>Some acknowledged writes are not yet saved</b> — free browser storage and Retry to persist them; a reload before then loses them.'
           : "";
         el.innerHTML =
           `<b>Storage full</b> (${pct} of ${(quota / 1048576) | 0}MB). The VM is paused.${warn} ` +
-          '<button id="q-retry">Free space in guest & retry</button> ' +
+          '<b>Deleting files inside Alpine will not reclaim browser storage because discard/TRIM is not implemented.</b> ' +
+          '<button id="q-retry">Free browser storage & retry</button> ' +
           '<button id="q-ro">Continue read-only</button> ' +
           '<button id="q-reset">Reset disk…</button>';
-        term.writeln("\r\n\x1b[7m STORAGE FULL — VM paused. Free space (rm + sync) then Retry, or Continue read-only. \x1b[0m");
+        el.dataset.hits = String((Number(el.dataset.hits) || 0) + 1);
+        term.writeln("\r\n\x1b[7m STORAGE FULL — VM paused. Free browser storage then Retry, Continue read-only, or Reset disk. Guest rm cannot reclaim origin quota without TRIM. \x1b[0m");
         document.getElementById("q-retry").onclick = () => { el.style.display = "none"; linuxCtl?.resumeAfterQuota?.(); };
         document.getElementById("q-ro").onclick = () => {
           el.style.display = "none";
