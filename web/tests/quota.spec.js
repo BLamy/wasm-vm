@@ -5,7 +5,7 @@
 // 4 KiB overlay puts.
 //
 // The full quota-exhaustion/recovery/reset proof is opt-in (`E3_T10_FULL=1`) because it performs
-// three interpreter boots. This file's FAST checks (indicator, reset scoping, ephemeral warning)
+// four interpreter boots. This file's FAST checks (indicator, reset scoping, ephemeral warning)
 // run in seconds and don't need a full boot. Local/nightly only.
 import { test, expect, chromium } from "@playwright/test";
 import { execFileSync, spawnSync } from "node:child_process";
@@ -134,8 +134,8 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
   });
 
   test("forced quota: Retry, Continue/EIO, recovery, typed reset, pristine reboot", async () => {
-    test.skip(process.env.E3_T10_FULL !== "1", "set E3_T10_FULL=1 for the three-boot quota proof");
-    test.setTimeout(5_400_000); // up to 90 min: three ~18-min interpreter boots + quota writes
+    test.skip(process.env.E3_T10_FULL !== "1", "set E3_T10_FULL=1 for the four-boot quota proof");
+    test.setTimeout(5_400_000); // up to 90 min: four interpreter boots + quota writes + offline fsck
     const evidenceDir = path.resolve(WEB, "../evidence/e3-t10");
     fs.mkdirSync(evidenceDir, { recursive: true });
 
@@ -198,6 +198,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     const transcript = [];
     let bootNumber = 0;
     let summary = null;
+    let fsckProof = null;
     const sourceCommit = execFileSync("git", ["rev-parse", "HEAD"], {
       cwd: path.resolve(WEB, ".."),
       encoding: "utf8",
@@ -236,6 +237,29 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
       await p.evaluate(() => window.__term.term.scrollToBottom());
       await p.locator("#term").screenshot({ path: path.join(evidenceDir, name) });
     };
+    const exportPersistedBlocks = (p) => p.evaluate(async () => {
+      const mod = await import("./pkg/wasm_vm_wasm.js");
+      await mod.default();
+      const manifest = await (await fetch("./releases/chunked-alpine/manifest.json")).text();
+      const name = mod.overlayDbName(manifest);
+      const db = await new Promise((resolve, reject) => {
+        const req = indexedDB.open(name);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+      try {
+        const tx = db.transaction("blocks", "readonly");
+        const store = tx.objectStore("blocks");
+        const request = (req) => new Promise((resolve, reject) => {
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+        const [keys, values] = await Promise.all([request(store.getAllKeys()), request(store.getAll())]);
+        return keys.map((key, index) => [Number(key), Array.from(new Uint8Array(values[index]))]);
+      } finally {
+        db.close();
+      }
+    });
     const bootToShell = async (p) => {
       await expect(p.locator("#boot-alpine")).toBeEnabled();
       bootNumber += 1;
@@ -336,37 +360,12 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     await takeTranscript(page, "quota hit, retry, Continue, and dd IOERR");
 
     // Kill/reopen at the quota edge. A fresh document starts with the deterministic fault disabled,
-    // so ext4 can replay its journal and write normally. Exact length + hash of every record dd
-    // reported complete must survive. Before booting it, export the exact persisted IndexedDB
-    // snapshot and run an offline journal replay + e2fsck over the reconstructed image.
+    // so ext4 performs its real mount-time journal + orphan recovery. Exact length + hash of every
+    // record reported durable must survive.
     await page.close({ runBeforeUnload: false });
     page = await context.newPage();
     watchErrors(page);
     await page.goto("/?persist=1&persistMax=1048576");
-    const persistedBlocks = await page.evaluate(async () => {
-      const mod = await import("./pkg/wasm_vm_wasm.js");
-      await mod.default();
-      const manifest = await (await fetch("./releases/chunked-alpine/manifest.json")).text();
-      const name = mod.overlayDbName(manifest);
-      const db = await new Promise((resolve, reject) => {
-        const req = indexedDB.open(name);
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-      });
-      try {
-        const tx = db.transaction("blocks", "readonly");
-        const store = tx.objectStore("blocks");
-        const request = (req) => new Promise((resolve, reject) => {
-          req.onsuccess = () => resolve(req.result);
-          req.onerror = () => reject(req.error);
-        });
-        const [keys, values] = await Promise.all([request(store.getAllKeys()), request(store.getAll())]);
-        return keys.map((key, index) => [Number(key), Array.from(new Uint8Array(values[index]))]);
-      } finally {
-        db.close();
-      }
-    });
-    const fsckProof = reconstructAndFsck(persistedBlocks, evidenceDir);
     await bootToShell(page);
     await type(
       page,
@@ -406,8 +405,23 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     });
     await page.evaluate(() => window.__e3t10Quota.disable());
 
-    // Force a second quota hit, then drive the actual typed-confirmation UI. resetDisk closes the
-    // live IDB handle, deletes only this image's database, stops the VM, and re-enables Boot.
+    // A crash snapshot legitimately carries ext4 orphan work that journal-only replay does not
+    // process. Follow the task's actual sequence: reboot (done above), let the kernel recover it,
+    // then cleanly power off. The persisted post-recovery image must pass an offline forced fsck.
+    await type(page, "poweroff\r");
+    await expect(page.locator("#status")).toContainText("machine halted — powered off", { timeout: 300_000 });
+    await takeTranscript(page, "reopen recovery, exact content, idle proof, and clean poweroff");
+    await page.close({ runBeforeUnload: false });
+    page = await context.newPage();
+    watchErrors(page);
+    await page.goto("/?persist=1&persistMax=1048576");
+    const persistedBlocks = await exportPersistedBlocks(page);
+    fsckProof = reconstructAndFsck(persistedBlocks, evidenceDir);
+
+    // Boot the recovered, fsck-clean image, force a second quota hit, then drive the actual
+    // typed-confirmation UI. resetDisk closes the live IDB handle, deletes only this image's
+    // database, stops the VM, and re-enables Boot.
+    await bootToShell(page);
     await page.evaluate(() => window.__e3t10Quota.enableAfter(128)); // 512 KiB more durable puts
     await type(page, "dd if=/dev/zero of=/root/reset-fill bs=1M count=8\r");
     await expect(page.locator("#quota-dialog")).toBeVisible({ timeout: 300_000 });
