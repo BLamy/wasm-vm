@@ -21,6 +21,10 @@ const have =
   fs.existsSync(path.join(WEB, "artifacts-alpine.json")) &&
   fs.existsSync(path.resolve(WEB, "../releases/chunked-alpine/manifest.json"));
 
+// This spec records the long acceptance into evidence/e3-t10 with its own persistent context.
+// Disable the runner-level retain-on-failure trace so the two tracing owners never overlap.
+test.use({ trace: "off" });
+
 function reconstructAndFsck(blocks, evidenceDir) {
   const releaseDir = path.resolve(WEB, "../releases/chunked-alpine");
   const manifest = JSON.parse(fs.readFileSync(path.join(releaseDir, "manifest.json"), "utf8"));
