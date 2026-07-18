@@ -253,14 +253,14 @@ export async function startLinuxBoot(opts = {}) {
     let machine;
     // E3-T09: the disk is owned by ANOTHER tab (Web Lock not held) → never persist, disk RO.
     let lockReadOnly = false;
-    // E3-T10: this tab owns the disk but storage is full → refuse NEW guest writes (disk RO) yet
-    // KEEP draining the pending backlog (it can only shrink; blocks persist once space frees).
+    // E3-T10: this tab owns the disk but storage is full → refuse guest writes (disk RO) yet keep
+    // retrying the parked request's unacknowledged RAM bytes if space later becomes available.
     // Distinct from lockReadOnly precisely so the pump stays alive (critic BUG-1).
     let quotaReadOnly = false;
     // E3-T10 (critic BUG-3): the quota pause is its OWN flag so visibilitychange's resume() can't
     // resume the VM behind the dialog. It gates the pump/run independently of `paused`.
     let quotaPaused = false;
-    let lastPersistRetry = 0; // throttle backlog retries while quotaReadOnly (BUG-1 dialog storm)
+    let lastPersistRetry = 0; // throttle pending-byte retries while quotaReadOnly
     if (usePersist) {
       // E3-T09 single-writer discipline: exactly one tab may open the overlay writable. The
       // exclusive Web Lock (auto-released on tab close/crash — no heartbeats) is acquired
@@ -334,13 +334,13 @@ export async function startLinuxBoot(opts = {}) {
     };
     // E3-T10: shared handler for a persist failure on EITHER pump site. A StorageFull is
     // RECOVERABLE — the dirty blocks stay pending (persistPending never marked them). While the
-    // user is in "continue read-only" mode the backlog keeps retrying quietly (no new writes
+    // user is in "continue read-only" mode the unacknowledged batch retries quietly (no new writes
     // arrive, so it can only shrink) WITHOUT starving guest execution; otherwise PAUSE via the
     // quota flag and raise the dialog.
     // Returns true if the caller should stop this tick.
     const handlePersistError = async (e) => {
       if (String(e?.message || e).startsWith("StorageFull")) {
-        // Expected while space is still full. Keep the backlog pending and let this tick run the
+        // Expected while space is still full. Keep the unacknowledged bytes pending and run the
         // guest: its next write must reach the now-read-only backend and complete with EIO. Returning
         // true here would retry persistence before every CPU slice forever, so `dd` would remain
         // frozen instead of observing the promised error and the supposedly usable guest would hang.
@@ -366,7 +366,9 @@ export async function startLinuxBoot(opts = {}) {
     // the fetch is a no-op and no second loop can start.
     const tick = async () => {
       if (stopped || paused || quotaPaused) { tickScheduled = false; return; }
-      // E3-T08 durability pressure, checked BEFORE the run slice:
+      // E3-T08/E3-T10 durability pressure, checked BEFORE the run slice:
+      //  - writeWaiting: a guest WRITE has changed the synchronous overlay but is still outside
+      //    the used ring. Persist NOW so the exact descriptor can complete on the next boundary.
       //  - flushWaiting: a guest FLUSH is parked on the durable-commit barrier — persist NOW so
       //    the barrier clears at the very next boundary (the guest's `sync` is blocked on it).
       //  - pendingBytes > maxDirtyBytes: backpressure — drain before running more guest work, so
@@ -377,7 +379,7 @@ export async function startLinuxBoot(opts = {}) {
           // While quotaReadOnly, no new writes arrive — retry the backlog at most every ~3s so a
           // still-full quota doesn't hammer IndexedDB every quantum (critic BUG-1 storm).
           const throttled = quotaReadOnly && Date.now() - lastPersistRetry < 3000;
-          if (!throttled && (ps.flushWaiting || ps.pendingBytes >= maxDirtyBytes)) {
+          if (!throttled && (ps.writeWaiting || ps.flushWaiting || ps.pendingBytes >= maxDirtyBytes)) {
             if (quotaReadOnly) lastPersistRetry = Date.now();
             await machine.persistPending();
           }
@@ -477,6 +479,9 @@ export async function startLinuxBoot(opts = {}) {
       fetchStats: () => (isChunked ? machine.fetchStats() : null),
       // E3-T05: force a durable flush of the overlay to IndexedDB (resolves when the txn completes).
       persist: () => (usePersist && !lockReadOnly ? machine.persistPending() : Promise.resolve(0)),
+      // E3-T10 proof hook: exposes whether bytes or a guest WRITE/FLUSH acknowledgement are
+      // waiting on host durability. Persistent idle state must settle to all-zero/false.
+      persistStats: () => machine.persistStats(),
       // E3-T09: is this boot read-only (lock not held, OR quota forced it)?
       readOnly: () => lockReadOnly || quotaReadOnly,
       // E3-T10 quota-dialog actions ------------------------------------------------------------
@@ -484,9 +489,10 @@ export async function startLinuxBoot(opts = {}) {
       // writes retry on the next tick (succeed once origin storage is available, else re-dialog).
       // Deleting guest files does not shrink this block overlay until discard/TRIM exists.
       resumeAfterQuota: () => { quotaPaused = false; schedule(); },
-      // "Continue read-only": refuse NEW guest writes (disk RO → EIO) but KEEP the persist pump
-      // alive so the already-acked pending backlog still drains when space frees (critic BUG-1:
-      // must NOT strand acked writes). Existing durable data is intact.
+      // "Continue read-only": refuse every future guest write and resolve the ONE parked,
+      // unacknowledged WRITE with EIO. The persist pump may keep retrying its RAM-only bytes after
+      // space is freed, but page close is allowed to lose those bytes because the guest never saw
+      // S_OK for that descriptor. Existing durable data is intact.
       continueReadOnly: () => {
         try { machine.setDiskReadOnly(); } catch {}
         quotaReadOnly = true;
@@ -494,7 +500,8 @@ export async function startLinuxBoot(opts = {}) {
         lastPersistRetry = 0;
         schedule();
       },
-      // E3-T10: does the overlay still hold acked-but-unpersisted blocks? (dialog copy uses it)
+      // E3-T10: does the overlay hold bytes that have not reached IndexedDB? A parked WRITE means
+      // these are explicitly unacknowledged to the guest.
       hasUnpersisted: () => { try { return machine.hasUnpersisted(); } catch { return false; } },
       // Current {usage, quota} for the storage indicator.
       storageEstimate: () => (navigator.storage?.estimate ? navigator.storage.estimate() : Promise.resolve({})),

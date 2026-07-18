@@ -82,10 +82,15 @@ fn machine() -> (Machine, Ctx, Rc<Cell<bool>>, Rc<Cell<u64>>, Rc<Cell<u64>>) {
         commits: Rc::clone(&commits),
         flush_attempts: Rc::clone(&attempts),
     };
+    let (m, ctx) = machine_with_backend(Box::new(backend));
+    (m, ctx, durable, commits, attempts)
+}
+
+fn machine_with_backend(backend: Box<dyn BlockBackend>) -> (Machine, Ctx) {
     let mut m = Machine::new(RAM);
     m.enable_clint(10);
     m.enable_plic();
-    let (slot, state) = m.enable_virtio_blk(Box::new(backend));
+    let (slot, state) = m.enable_virtio_blk(backend);
     m.enable_builtin_sbi();
     m.boot_supervisor(0, 0);
     m.bus_mut().store32(virt::KERNEL_BASE, 0x0000_006F).unwrap();
@@ -115,9 +120,6 @@ fn machine() -> (Machine, Ctx, Rc<Cell<bool>>, Rc<Cell<u64>>, Rc<Cell<u64>>) {
             state,
             seq: 0,
         },
-        durable,
-        commits,
-        attempts,
     )
 }
 
@@ -255,4 +257,140 @@ fn reset_discards_parked_flush() {
         "parked FLUSH discarded"
     );
     assert_eq!(commits.get(), 0, "no commit resolved for a discarded FLUSH");
+}
+
+/// Persistent-write mock: the first execution mutates its RAM view but returns `WritePending`.
+/// Only an explicit durability transition permits the retry to return `Ok`; a runtime read-only
+/// transition rejects the same parked request with `ReadOnly` instead.
+struct AckGatedWrite {
+    data: Vec<u8>,
+    durable: Rc<Cell<bool>>,
+    read_only: Rc<Cell<bool>>,
+    pending: bool,
+    applied: Rc<Cell<u64>>,
+}
+
+impl BlockBackend for AckGatedWrite {
+    fn capacity_sectors(&self) -> u64 {
+        self.data.len() as u64 / 512
+    }
+
+    fn read(&mut self, sector: u64, buf: &mut [u8]) -> Result<(), BlockError> {
+        let off = sector as usize * 512;
+        buf.copy_from_slice(&self.data[off..off + buf.len()]);
+        Ok(())
+    }
+
+    fn write(&mut self, sector: u64, buf: &[u8]) -> Result<(), BlockError> {
+        if self.read_only.get() {
+            self.pending = false;
+            return Err(BlockError::ReadOnly);
+        }
+        if self.pending {
+            if self.durable.get() {
+                self.pending = false;
+                return Ok(());
+            }
+            return Err(BlockError::WritePending);
+        }
+        let off = sector as usize * 512;
+        self.data[off..off + buf.len()].copy_from_slice(buf);
+        self.applied.set(self.applied.get() + 1);
+        self.durable.set(false);
+        self.pending = true;
+        Err(BlockError::WritePending)
+    }
+
+    fn flush(&mut self) -> Result<(), BlockError> {
+        Ok(())
+    }
+
+    fn write_reset(&mut self) {
+        self.pending = false;
+    }
+}
+
+/// E3-T10 load-bearing ordering proof. A RAM-only write publishes neither status nor used-ring
+/// completion; later requests cannot overtake it; durable commit produces one S_OK; and choosing
+/// Continue read-only turns the next parked request into S_IOERR rather than a false success.
+#[test]
+fn persistent_write_ack_waits_for_commit_and_read_only_resolves_with_ioerr() {
+    let durable = Rc::new(Cell::new(true));
+    let read_only = Rc::new(Cell::new(false));
+    let applied = Rc::new(Cell::new(0));
+    let backend = AckGatedWrite {
+        data: vec![0u8; 64 * 512],
+        durable: Rc::clone(&durable),
+        read_only: Rc::clone(&read_only),
+        pending: false,
+        applied: Rc::clone(&applied),
+    };
+    let (mut m, mut ctx) = machine_with_backend(Box::new(backend));
+
+    // Request 1, descriptors 0..2.
+    write_hdr(&mut m, 1, 3);
+    for i in 0..512u64 {
+        m.bus_mut().store8(DATA + i, 0xA1).unwrap();
+    }
+    m.bus_mut().store8(STATUS, 0x77).unwrap();
+    wdesc(&mut m, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut m, 1, DATA, 512, F_NEXT, 2);
+    wdesc(&mut m, 2, STATUS, 1, F_WRITE, 0);
+    submit(&mut m, &mut ctx, 0);
+    assert_eq!(
+        used_idx(&mut m),
+        0,
+        "RAM-only write is not guest-acknowledged"
+    );
+    assert_eq!(m.bus_mut().load8(STATUS).unwrap(), 0x77, "status untouched");
+    assert!(ctx.state.borrow().write_waiting());
+    assert_eq!(applied.get(), 1, "overlay mutation applied exactly once");
+
+    // Publish request 2 while request 1 is parked. Its distinct descriptor chain must remain
+    // untouched until request 1 is durable.
+    const HDR2: u64 = HDR + 0x100;
+    const DATA2: u64 = DATA + 0x1000;
+    const STATUS2: u64 = STATUS + 0x100;
+    m.bus_mut().store32(HDR2, 1).unwrap();
+    m.bus_mut().store32(HDR2 + 4, 0).unwrap();
+    m.bus_mut().store64(HDR2 + 8, 8).unwrap();
+    for i in 0..512u64 {
+        m.bus_mut().store8(DATA2 + i, 0xB2).unwrap();
+    }
+    m.bus_mut().store8(STATUS2, 0x66).unwrap();
+    wdesc(&mut m, 3, HDR2, 16, F_NEXT, 4);
+    wdesc(&mut m, 4, DATA2, 512, F_NEXT, 5);
+    wdesc(&mut m, 5, STATUS2, 1, F_WRITE, 0);
+    submit(&mut m, &mut ctx, 3);
+    assert_eq!(
+        used_idx(&mut m),
+        0,
+        "later write cannot overtake pending durability"
+    );
+    assert_eq!(m.bus_mut().load8(STATUS2).unwrap(), 0x66);
+    assert_eq!(applied.get(), 1, "later write not even applied yet");
+
+    // Commit request 1. Its retry gets one S_OK, then request 2 may be applied and parked.
+    durable.set(true);
+    assert_eq!(m.run(4), RunOutcome::MaxInstrs);
+    assert_eq!(used_idx(&mut m), 1);
+    assert_eq!(m.bus_mut().load8(STATUS).unwrap(), 0, "request 1 S_OK");
+    assert_eq!(
+        m.bus_mut().load8(STATUS2).unwrap(),
+        0x66,
+        "request 2 still unacked"
+    );
+    assert_eq!(applied.get(), 2);
+    assert!(ctx.state.borrow().write_waiting());
+
+    // Quota choice: the still-unacknowledged request resolves as I/O error, exactly once.
+    read_only.set(true);
+    assert_eq!(m.run(4), RunOutcome::MaxInstrs);
+    assert_eq!(used_idx(&mut m), 2);
+    assert_eq!(m.bus_mut().load8(STATUS2).unwrap(), 1, "request 2 S_IOERR");
+    assert!(!ctx.state.borrow().write_waiting());
+    for _ in 0..3 {
+        assert_eq!(m.run(4), RunOutcome::MaxInstrs);
+    }
+    assert_eq!(used_idx(&mut m), 2, "neither request completes twice");
 }

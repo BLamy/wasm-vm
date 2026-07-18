@@ -89,11 +89,11 @@ async function runLinuxBoot(opts, banner) {
         if (!el) return;
         const pct = quota ? `${((usage / quota) * 100) | 0}%` : "full";
         el.style.display = "block";
-        // Honest copy (critic BUG-1): writes the guest already ACKed but that never reached disk
-        // stay pending — "Free space & retry" saves them; "Continue read-only" keeps trying in the
-        // background but they are NOT durable until space frees (a reload before then loses them).
+        // The pending descriptor has NOT been acknowledged: the guest cannot mistake RAM-only
+        // bytes for a successful write. Retry may persist and complete it; Continue read-only
+        // returns EIO for it. Reload may discard only bytes that never received S_OK.
         const warn = unsaved
-          ? ' <b>Some acknowledged writes are not yet saved</b> — free browser storage and Retry to persist them; a reload before then loses them.'
+          ? ' <b>One write is waiting for durable storage and has not been acknowledged</b> — free browser storage and Retry to complete it, or Continue read-only to return an I/O error.'
           : "";
         el.innerHTML =
           `<b>Storage full</b> (${pct} of ${(quota / 1048576) | 0}MB). The VM is paused.${warn} ` +
@@ -108,7 +108,7 @@ async function runLinuxBoot(opts, banner) {
           el.style.display = "none";
           linuxCtl?.continueReadOnly?.();
           const ro = document.getElementById("ro-banner");
-          if (ro) { ro.style.display = "block"; ro.textContent = "read-only: storage full — new guest writes return I/O errors; pending writes save if you free space"; }
+          if (ro) { ro.style.display = "block"; ro.textContent = "read-only: storage full — the waiting and all future guest writes return I/O errors"; }
         };
         document.getElementById("q-reset").onclick = async () => {
           const typed = prompt('This deletes every saved change to the Alpine disk. Type RESET to confirm:');
@@ -326,6 +326,8 @@ window.__chunkedStats = () => linuxCtl?.fetchStats?.() ?? null;
 window.__dhcpStats = () => linuxCtl?.dhcpStats?.() ?? null;
 // E3-T05 test hook: force a durable flush of the overlay to IndexedDB (Promise → blocks persisted).
 window.__persist = () => linuxCtl?.persist?.() ?? Promise.resolve(0);
+// E3-T10 proof hook: `{ pendingBlocks, pendingBytes, flushWaiting, writeWaiting }`.
+window.__persistStats = () => linuxCtl?.persistStats?.() ?? null;
 
 const statusEl = document.getElementById("status");
 const versionEl = document.getElementById("version");

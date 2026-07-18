@@ -882,7 +882,8 @@ impl WasmLinux {
                 );
                 let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &manifest)
                     .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
-                let mut backend = chunked::ChunkedBackend::from_disk(disk, store.clone());
+                let mut backend =
+                    chunked::ChunkedBackend::from_persistent_disk(disk, store.clone());
                 if read_only {
                     // E3-T09: writes refused at this seam; the device advertises F_RO; and no
                     // persist pump exists (`persist` stays None), so an RO tab cannot touch
@@ -1009,16 +1010,18 @@ impl WasmLinux {
                 };
                 let oc = inner.machine.run_traced(step, &mut sink);
                 remaining -= step;
-                let persistence_due = persist_max_dirty_bytes.is_some_and(|limit| {
-                    limit > 0
-                        && inner.persist.as_ref().is_some_and(|(_, queue)| {
-                            queue
-                                .borrow()
-                                .unpersisted_count()
-                                .saturating_mul(wasm_vm_storage::OVERLAY_BLOCK)
-                                >= limit as usize
-                        })
-                });
+                let persistence_due = persistence_bounded
+                    && (inner.machine.blk_write_waiting()
+                        || persist_max_dirty_bytes.is_some_and(|limit| {
+                            limit > 0
+                                && inner.persist.as_ref().is_some_and(|(_, queue)| {
+                                    queue
+                                        .borrow()
+                                        .unpersisted_count()
+                                        .saturating_mul(wasm_vm_storage::OVERLAY_BLOCK)
+                                        >= limit as usize
+                                })
+                        }));
                 if remaining == 0 || persistence_due || !matches!(oc, RunOutcome::MaxInstrs) {
                     break oc;
                 }
@@ -1130,9 +1133,10 @@ impl WasmLinux {
             batch.iter().map(|(b, _, bytes)| (*b, *bytes)).collect();
         if let Err(e) = idb.persist(&blocks).await {
             // E3-T10: classify the failure. On QuotaExceeded we DELIBERATELY do NOT
-            // mark_persisted — the dirty blocks stay pending, so no write is lost: freeing space
-            // and retrying, or flipping the disk read-only, keeps the filesystem consistent. The
-            // error is tagged so the loader can pause + show the quota dialog (vs a generic fail).
+            // mark_persisted — the dirty blocks stay pending and the persistent virtio WRITE that
+            // produced them remains outside the used ring. Freeing space + retry may complete it;
+            // Continue read-only resolves it with IOERR. The error is tagged so the loader can
+            // pause + show the quota dialog (vs a generic failure).
             let name = e.as_string().unwrap_or_else(|| format!("{e:?}"));
             let kind = storage_err::StorageError::classify(&name);
             if kind.is_quota() {
@@ -1146,12 +1150,6 @@ impl WasmLinux {
         Ok(batch.len() as u32)
     }
 
-    /// E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
-    /// reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
-    /// means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
-    /// driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
-    /// so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
-    /// boots.
     /// E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
     /// can proceed instead of blocking on our open handle. Call before wiping; the machine must
     /// not persist afterward. No-op off the persistent path.
@@ -1180,9 +1178,9 @@ impl WasmLinux {
         }
     }
 
-    /// E3-T10: whether the overlay has unpersisted (dirty) blocks — after a quota hit the caller
-    /// checks this to decide whether flipping read-only is enough (pending writes will retry once
-    /// space is freed) vs. data that can never become durable.
+    /// E3-T10: whether the overlay has unpersisted (dirty) blocks. In persistent writer mode these
+    /// belong to a virtio WRITE that has not been acknowledged; the quota dialog uses this to say
+    /// Retry may still complete it, while Continue returns IOERR.
     #[wasm_bindgen(js_name = hasUnpersisted)]
     pub fn has_unpersisted(&self) -> Result<bool, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
@@ -1192,17 +1190,25 @@ impl WasmLinux {
             .is_some_and(|(_, q)| !q.borrow().is_empty()))
     }
 
+    /// E3-T08/E3-T10 persistence pressure —
+    /// `{ pendingBlocks, pendingBytes, flushWaiting, writeWaiting }`. The JS pump persists
+    /// immediately when a guest WRITE or FLUSH is parked awaiting durable commit; pending bytes
+    /// over the configured threshold remain the generic write-back backpressure signal. Zeros for
+    /// non-persistent boots.
     #[wasm_bindgen(js_name = persistStats)]
     pub fn persist_stats(&self) -> Result<JsValue, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
         let obj = js_sys::Object::new();
-        let (blocks, waiting) = match &inner.persist {
+        let (blocks, flush_waiting, write_waiting) = match &inner.persist {
             Some((_, q)) => {
                 let n = q.borrow().unpersisted_count();
-                let w = inner.machine.blk_flush_waiting();
-                (n, w)
+                (
+                    n,
+                    inner.machine.blk_flush_waiting(),
+                    inner.machine.blk_write_waiting(),
+                )
             }
-            None => (0, false),
+            None => (0, false, false),
         };
         let _ = js_sys::Reflect::set(
             &obj,
@@ -1214,7 +1220,16 @@ impl WasmLinux {
             &"pendingBytes".into(),
             &JsValue::from_f64((blocks * wasm_vm_storage::OVERLAY_BLOCK) as f64),
         );
-        let _ = js_sys::Reflect::set(&obj, &"flushWaiting".into(), &JsValue::from_bool(waiting));
+        let _ = js_sys::Reflect::set(
+            &obj,
+            &"flushWaiting".into(),
+            &JsValue::from_bool(flush_waiting),
+        );
+        let _ = js_sys::Reflect::set(
+            &obj,
+            &"writeWaiting".into(),
+            &JsValue::from_bool(write_waiting),
+        );
         Ok(obj.into())
     }
 

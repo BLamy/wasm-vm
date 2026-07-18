@@ -463,6 +463,15 @@ impl Machine {
             .is_some_and(|(s, _)| s.borrow().flush_waiting())
     }
 
+    /// E3-T10: whether a persistent virtio-blk WRITE is parked before used-ring acknowledgement,
+    /// awaiting the host durable transaction. The wasm driver must prioritize `persistPending`
+    /// while this is true; quota failure then resolves the same request with IOERR.
+    pub fn blk_write_waiting(&self) -> bool {
+        self.blk
+            .as_ref()
+            .is_some_and(|(s, _)| s.borrow().write_waiting())
+    }
+
     pub fn pending_blk_chunks(&self) -> alloc::vec::Vec<usize> {
         self.blk
             .as_ref()
