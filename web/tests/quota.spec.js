@@ -207,9 +207,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
         await p.waitForTimeout(1500);
       }
       await type(p, "root\r");
-      await p.waitForTimeout(3000);
-      await type(p, "\r");
-      await p.waitForTimeout(2000);
+      await expect(p.locator(rows)).toContainText("wasm-vm:~#", { timeout: 120_000 });
       await type(p, 'echo QUOTA_SHELL_$((6*7))_OK\r');
       await expect(p.locator(rows)).toContainText("QUOTA_SHELL_42_OK", { timeout: 60_000 });
     };
