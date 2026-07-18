@@ -413,7 +413,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     // process. Follow the task's actual sequence: reboot (done above), let the kernel recover it,
     // then cleanly power off. The persisted post-recovery image must pass an offline forced fsck.
     await type(page, "poweroff\r");
-    await expect(page.locator("#status")).toContainText("machine halted — powered off", { timeout: 300_000 });
+    await expect(page.locator("#status")).toContainText("machine halted — exited:0", { timeout: 300_000 });
     await takeTranscript(page, "reopen recovery, exact content, idle proof, and clean poweroff");
     await page.close({ runBeforeUnload: false });
     page = await context.newPage();
