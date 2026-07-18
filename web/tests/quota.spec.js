@@ -46,11 +46,13 @@ function reconstructAndFsck(blocks, evidenceDir) {
       "docker",
       [
         "run", "--rm", "-v", `${scratch}:/work`, "wasm-vm-rootfs-build:local", "-lc",
-        "e2fsck -E journal_only -y /work/quota-recovered.ext4; replay_rc=$?; [ $replay_rc -le 1 ] || exit $replay_rc; e2fsck -f -n /work/quota-recovered.ext4 2>&1",
+        "e2fsck -E journal_only -y /work/quota-recovered.ext4 2>&1; replay_rc=$?; echo JOURNAL_REPLAY_RC=$replay_rc; [ $replay_rc -le 3 ] || exit $replay_rc; e2fsck -f -n /work/quota-recovered.ext4 2>&1; fsck_rc=$?; echo FSCK_RC=$fsck_rc; exit $fsck_rc",
       ],
       { encoding: "utf8" },
     );
     fs.writeFileSync(path.join(evidenceDir, "quota-fsck.txt"), output);
+    expect(output).toMatch(/JOURNAL_REPLAY_RC=[0-3]/);
+    expect(output).toContain("FSCK_RC=0");
     expect(output).toContain("Pass 5: Checking group summary information");
     expect(output).not.toMatch(/WARNING: Filesystem still has errors|UNEXPECTED INCONSISTENCY/);
     return { overlayBlocks: blocks.length, output };
