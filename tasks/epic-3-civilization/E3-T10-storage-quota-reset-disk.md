@@ -3,7 +3,7 @@ id: E3-T10
 epic: 3
 title: Storage quota management and reset-disk escape hatch
 priority: 310
-status: in_progress
+status: implemented
 depends_on: [E3-T05]
 estimate: S
 capstone: false
@@ -39,18 +39,18 @@ require typed confirmation.
   or a tiny incognito quota) and exercises all three dialog options.
 
 ## Acceptance criteria
-- [ ] With quota overridden to ~50 MB, `dd if=/dev/zero of=/root/fill bs=1M oflag=direct`
+- [x] With quota overridden to ~50 MB, `dd if=/dev/zero of=/root/fill bs=1M oflag=direct`
       triggers the dialog before any backend write is silently dropped; choosing "continue"
       completes the next virtio-blk request with IOERR, makes `dd` exit with an I/O error, and
       leaves the guest usable. Direct I/O is load-bearing evidence here: buffered `dd` may finish
       into Linux's page cache before a later writeback error becomes observable at `fsync`.
-- [ ] After freeing space in the guest (`rm /root/fill; sync`... note: freed ext4 blocks
+- [x] After freeing space in the guest (`rm /root/fill; sync`... note: freed ext4 blocks
       don't shrink the overlay — the dialog copy must not promise that they do; discard/
       TRIM is out of scope and documented as such).
-- [ ] Reset disk wipes only the current image's overlay (a second image's overlay survives),
+- [x] Reset disk wipes only the current image's overlay (a second image's overlay survives),
       and the next boot shows a pristine filesystem.
-- [ ] `persist()` result and usage/quota are visible in the UI and logged at boot.
-- [ ] Post-quota-hit, T08's fsck check still passes: quota exhaustion never yields a
+- [x] `persist()` result and usage/quota are visible in the UI and logged at boot.
+- [x] Post-quota-hit, T08's fsck check still passes: quota exhaustion never yields a
       corrupt filesystem.
 
 ## Adversarial verification
@@ -125,3 +125,49 @@ error; IDB txn abort rolls back the whole batch → all stay pending; gen guard 
 scoping (per-image DB, meta in-DB, chunk cache in-memory). Gate: wasm-lib 20/20, clippy 0, quota
 browser 2/2, wasm32 builds. Threat note: `resetDisk` still defaults the manifest URL (LOW — single
 image today). Pass-2 nightly acceptance unchanged (CDP overrideQuota full boot, fsck, incognito).
+
+**2026-07-18 — worker — implemented at `9349e1f`.**
+
+Completed the pass-2 browser acceptance and fixed two bugs exposed by the real run. Chromium's CDP
+quota override reports itself active but does not constrain IndexedDB in this runner, so the proof
+now drives the production boundary deterministically: it performs real `IDBObjectStore.put` calls,
+aborts the exact transaction after 12,800 additional 4 KiB block writes (50 MiB), and throws the
+browser's `QuotaExceededError` DOMException. No application quota callback is mocked. The first run
+then refuted the old 2M-instruction scheduling quantum: an 80 MiB guest write could finish before JS
+observed the failed transaction. `WasmLinux.runChunk` now checks persistent dirty pressure between
+16,384-instruction slices and yields at the configured ceiling. A second finding showed the loader
+could starve the guest by retrying the failed backlog forever after Continue; quota-read-only mode
+now preserves the pending batch while allowing CPU slices, so the next direct virtio-blk write
+completes IOERR and `dd` exits 1. Direct I/O is explicit in the acceptance because buffered Linux
+writes may be acknowledged into page cache before a later writeback error reaches an fsync boundary.
+
+The final three-boot Playwright run passed in 39.2 minutes: Retry reproduced the quota dialog
+(`retryHits: 2`); Continue produced `ddRc: 1` and `QUOTA_GUEST_42_OK`; a new page recovered with
+`QUOTA_EXTBAD=0`; the live typed-RESET flow deleted the current image database; and the third boot
+proved `PRISTINE_42_OK` plus `RESET_EXTBAD=0`. The UI now says guest `rm` cannot reclaim origin
+storage without discard/TRIM, distinguishes browser storage from guest storage, and shows an
+explicit best-effort/private-incognito warning when `persist()` is denied. Fast browser tests prove
+per-image reset isolation, the usage/quota indicator, and the warning. The demo's E3-T10 roadmap
+evidence was refreshed and a single post-build pass reached 126 passed / 0 failed with zero console
+errors.
+
+Commands and results:
+
+- `cargo fmt --all -- --check` — pass.
+- `cargo clippy --workspace --all-targets --all-features -- -D warnings` — pass (4m13s).
+- `cargo test --workspace -- --skip file_backend::tests::kill_mid_write_no_torn_sectors` — pass;
+  the one destructive child-kill test was intentionally filtered, all executed suites/doc tests
+  exited 0.
+- `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown` — pass (31.52s).
+- `make web-build` — pass; fresh wasm-bindgen/wasm-opt package and web artifacts generated.
+- `npx playwright test tests/quota.spec.js` — 3 passed, full proof opt-in skipped (9.7s).
+- `E3_T10_FULL=1 npx playwright test tests/quota.spec.js --grep "forced quota"` — 1 passed
+  (39.2m), three boots and both quota hits.
+- `E3_T10_DEMO=1 npx playwright test tests/e3-t10-demo-proof.spec.js` — 1 passed (16.0s),
+  126 passed / 0 failed, zero console errors.
+
+Evidence: `evidence/e3-t10/browser-summary.json`, `quota-dialog-after-retry.png`,
+`pristine-after-reset.png`, `browser-console-errors.txt` (0 bytes), and
+`browser-demo-126-of-126.png`; index and reproduction commands are in `evidence/e3-t10/README.md`.
+Host rr is unavailable on this macOS machine; the browser run, real IndexedDB transaction boundary,
+guest terminal markers, ext4 checks, and complete in-browser suite are the recorded guest evidence.
