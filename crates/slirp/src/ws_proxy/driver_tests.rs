@@ -394,6 +394,51 @@ async fn a_dropped_ws_transport_shuts_the_relay_down() {
         .expect("relay did not shut down after the transport dropped");
 }
 
+/// Adversarial E3-T16 resource proof: 500 real outbound TCP sockets must all observe EOF promptly
+/// when the single WebSocket transport disappears. This interrogates the peers directly instead of
+/// relying on an `lsof` sampling race.
+#[tokio::test]
+async fn dropping_one_transport_reaps_500_real_backend_sockets() {
+    const FLOWS: u32 = 500;
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    let (reaped_tx, mut reaped_rx) = mpsc::channel::<()>(FLOWS as usize);
+    tokio::spawn(async move {
+        for _ in 0..FLOWS {
+            let (mut sock, _) = listener.accept().await.expect("accept backend flow");
+            let reaped_tx = reaped_tx.clone();
+            tokio::spawn(async move {
+                let mut byte = [0u8; 1];
+                let _ = sock.read(&mut byte).await;
+                let _ = reaped_tx.send(()).await;
+            });
+        }
+    });
+
+    let mut g = start_relay();
+    handshake(&mut g).await;
+    for stream in 1..=FLOWS {
+        open(&mut g, stream, addr).await;
+    }
+
+    drop(g.tx);
+    let relay_closed = async { while g.rx.recv().await.is_some() {} };
+    timeout(Duration::from_secs(5), relay_closed)
+        .await
+        .expect("relay task did not end after transport drop");
+
+    timeout(Duration::from_secs(5), async {
+        for observed in 1..=FLOWS {
+            reaped_rx
+                .recv()
+                .await
+                .unwrap_or_else(|| panic!("reap probe closed after {observed} of {FLOWS} sockets"));
+        }
+    })
+    .await
+    .expect("not all 500 backend sockets observed teardown within five seconds");
+}
+
 // ── Regression: the two CRITICAL concurrency bugs the cold-clone critic found ────────────────
 
 /// A backend that floods `total` bytes on connect, then holds the socket open.

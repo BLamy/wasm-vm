@@ -750,6 +750,98 @@ fn bulk_download_is_not_truncated_under_backpressure() {
     );
 }
 
+/// A connector that reports the remote FIN immediately after handing the backend one full staging
+/// buffer, while retaining a second full buffer for a later `recv_into`. This is legal: `Closed`
+/// promises that no new bytes will arrive, not that bytes already buffered have been drained.
+struct ClosedWithBufferedTail {
+    phase: u8,
+}
+
+impl SyncConnector for ClosedWithBufferedTail {
+    fn connect(&mut self, _host: Ipv4Addr, _port: u16) -> ConnId {
+        0
+    }
+
+    fn status(&mut self, id: ConnId) -> ConnStatus {
+        if id != 0 {
+            ConnStatus::Failed(wasm_vm_slirp::ConnectError::Unreachable)
+        } else if self.phase == 0 {
+            ConnStatus::Established
+        } else {
+            ConnStatus::Closed
+        }
+    }
+
+    fn recv(&mut self, id: ConnId) -> Vec<u8> {
+        let mut out = Vec::new();
+        self.recv_into(id, &mut out);
+        out
+    }
+
+    fn recv_into(&mut self, id: ConnId, out: &mut Vec<u8>) -> usize {
+        if id != 0 || self.phase >= 2 {
+            return 0;
+        }
+        let start = self.phase as usize * 64 * 1024;
+        out.extend((start..start + 64 * 1024).map(pat));
+        self.phase += 1;
+        64 * 1024
+    }
+
+    fn send(&mut self, id: ConnId, data: &[u8]) -> usize {
+        if id == 0 { data.len() } else { 0 }
+    }
+
+    fn shutdown_write(&mut self, _id: ConnId) {}
+
+    fn close(&mut self, _id: ConnId) {}
+}
+
+/// Regression for E3-T16's browser refutation: the relay delivered a remote FIN while the backend
+/// still had one staged tail and `WsConnector` retained the final 64 KiB DATA frame. The old close
+/// check emitted guest FIN as soon as the staged tail drained, dropping the connector's last frame.
+#[test]
+fn remote_fin_waits_for_connector_bytes_buffered_behind_a_staged_tail() {
+    const N: usize = 128 * 1024;
+    let clock = Arc::new(AtomicI64::new(0));
+    let clk = clock.clone();
+    let mut backend = SlirpLocalBackend::with_connector(
+        GW_MAC,
+        Box::new(move || clk.load(Ordering::SeqCst)),
+        Box::new(ClosedWithBufferedTail { phase: 0 }),
+    );
+    let mut guest = Guest::new(&clock);
+    guest.connect(Ipv4Addr::new(192, 0, 2, 1), 80);
+
+    let mut received = Vec::new();
+    for _ in 0..100_000 {
+        clock.fetch_add(5, Ordering::SeqCst);
+        guest.poll(&clock);
+        shuttle(&mut guest, &mut backend);
+        guest.poll(&clock);
+        if guest.socket().can_recv() {
+            let chunk = guest
+                .socket()
+                .recv(|bytes| {
+                    let take = bytes.len().min(4096);
+                    (take, bytes[..take].to_vec())
+                })
+                .unwrap();
+            received.extend_from_slice(&chunk);
+        }
+        if received.len() == N {
+            break;
+        }
+    }
+
+    assert_eq!(
+        received.len(),
+        N,
+        "remote FIN must not discard buffered connector bytes"
+    );
+    assert!(received.iter().enumerate().all(|(i, &byte)| byte == pat(i)));
+}
+
 /// Spawn a server that reads until EOF, then replies `REPLY` and closes. It only replies AFTER it sees
 /// the client's half-close — so the reply proves the guest's FIN was forwarded to the remote.
 fn spawn_read_then_reply_server(reply: &'static [u8]) -> u16 {

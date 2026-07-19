@@ -3,7 +3,7 @@ id: E3-T16
 epic: 3
 title: WebSocket TCP/UDP transport provider and public relay fallback
 priority: 316
-status: pending
+status: verified
 depends_on: [E3-T14]
 estimate: M
 capstone: false
@@ -46,19 +46,19 @@ while T19 owns production policy and lifecycle for both paths.
   encoders/decoders; end-to-end native test guest→slirp→WsConnector→server→local echo.
 
 ## Acceptance criteria
-- [ ] Booted guest (native harness and browser) completes `wget http://example-served-
+- [x] Booted guest (native harness and browser) completes `wget http://example-served-
       locally/100mb.bin` through the full chain; sha256 matches; single WebSocket carried
       all traffic (server logs show stream multiplexing for ≥3 concurrent flows).
-- [ ] Credit flow control provably works: a guest downloading into a stalled reader (guest
+- [x] Credit flow control provably works: a guest downloading into a stalled reader (guest
       `sleep`ing mid-`wget` via a rate-limited pipe) causes the server's outstanding-credit
       counter for that stream to hit zero and its TCP read to pause (server metric), while
       a second concurrent stream continues at full speed.
-- [ ] Half-close: guest `nc -q` style send-then-shutdown flows deliver the server's late
+- [x] Half-close: guest `nc -q` style send-then-shutdown flows deliver the server's late
       response fully.
-- [ ] RST from the destination surfaces to the guest as ECONNRESET within 1 s.
-- [ ] Encoder/decoder conformance vectors pass identically in the wasm client, native
+- [x] RST from the destination surfaces to the guest as ECONNRESET within 1 s.
+- [x] Encoder/decoder conformance vectors pass identically in the wasm client, native
       client, and server.
-- [ ] Two concurrent UDP flows preserve zero-length, maximum-supported, and back-to-back
+- [x] Two concurrent UDP flows preserve zero-length, maximum-supported, and back-to-back
       differently-sized datagrams without cross-flow contamination or TCP head-of-line stalls.
 
 ## Adversarial verification
@@ -327,3 +327,72 @@ The two bullets above are historical. E3-T14 later landed and verifier-proved th
 larger protocol-specific acceptance still not independently closed here: multiplexed large-transfer
 and stall/backpressure evidence, half-close/RST, malformed/credit attacks, and 500-stream reap. T17
 uses the same connector seam for Tailscale; it does not replace or weaken this fallback proof.
+
+### 2026-07-19 — worker — implemented
+
+Commits `58e7c5b`, `85971db`, and `bfeea1d`. Native real-WebSocket acceptance passes three logical
+flows with a 100 MiB digest match; the recorded full attack scales the same test to one 1 GiB flow
+stalled unread for five minutes plus ten concurrent 2 MiB siblings, all byte- and SHA-identical in
+533.39 s. A separate recorded transport-drop run reaps 500 real backend sockets. The full slirp
+suite passes 215 unit tests (one resolver-only ignore) and 19 integration tests, including malformed
+frames, credit violations, half-close, RST, UDP boundaries, 100 MiB transfers, one-byte delivery,
+and the 60-second stalled upload. Strict fmt/clippy, wasm32 build, and `make web-build` pass.
+
+The first stock-Alpine browser run refuted the close path at 104,791,922 / 104,857,600 bytes with
+`wget: connection closed prematurely`. The trace exposed a bridge race: after a staged tail drained,
+guest FIN could be emitted while `WsConnector` retained one final DATA delivery. `85971db` adds a
+close-time connector drain and a mutation-proven regression (old behavior: 65,536 / 131,072; fixed:
+131,072 / 131,072). The rebuilt browser rerun then passed in 3,440.1 s: wget exit 0, exact
+104,857,600 bytes, SHA-256 `20492a4d0d84f8beb1767f6616229f85d44c2827b64bdbfb260ee12fa1109e0e`,
+and zero console errors. The demo rerun passed 126 / 0 and displayed the E3-T16 evidence. Evidence
+manifest and artifact digests: `evidence/e3-t16/README.md`.
+
+### 2026-07-19 — verifier
+
+VERDICT: verified
+
+- **P1 — booted browser transfer survives the close boundary.** Predicted the stock Alpine guest
+  would report exit 0, exactly 104,857,600 bytes, and the fixture SHA-256 after traversing
+  `BrowserWebSocketTransport -> WsConnector -> wvrelay`. Observed exactly those values with no
+  console errors in `evidence/e3-t16/alpine-relay-summary.json:3-9` and the guest command/result at
+  `evidence/e3-t16/alpine-relay-terminal.txt:233-236`. All seven submitted artifact SHA-256 values
+  match `evidence/e3-t16/README.md`, and commits `58e7c5b -> 85971db -> bfeea1d -> 7deb8a0` are a
+  direct ancestry chain from the verified E3-T10 parent.
+- **P2 — stalled-stream multiplexing is independent and byte-exact.** Predicted one unread stream
+  would not block sibling streams, and the large stream would remain byte- and SHA-identical after
+  release. An independent scrubbed-env rerun of the real-WebSocket 100 MiB / three-flow test passed
+  in 34.67 s. The recorded full attack uses the same assertions with a one GiB stream, ten siblings,
+  and a five-minute minimum stall (`crates/cli/tests/ws_connector_over_real_ws.rs:226-345`) and passed
+  in 533.39 s (`evidence/e3-t16/full-attack.typescript:4-8`).
+- **P3 — transport drop reaps every real backend.** Predicted all 500 peer sockets would observe EOF
+  and the relay channel would close within five seconds. The independently run full slirp suite hit
+  `dropping_one_transport_reaps_500_real_backend_sockets` and passed; its direct-peer EOF oracle and
+  deadlines are at `crates/slirp/src/ws_proxy/driver_tests.rs:397-439`. This is stronger than an
+  `lsof` sampling check.
+- **P4 — malformed, credit, half-close/RST, and UDP attacks remain closed.** Predicted malformed
+  frames and DATA-before-OPEN would return errors without panic, over-credit would be rejected,
+  late half-close responses would arrive, destination reset would become guest RST, and UDP
+  datagrams would not coalesce. The independent full slirp run passed 215 / 0 (one resolver-only
+  ignore) plus 19 / 0 integration tests, including those named attack paths, the 60-second bounded
+  stalled-upload test, 100 MiB each-way byte checks, and production-relay UDP.
+- **P5 — close-time drain regression is load-bearing.** Predicted replacing the connector drain at
+  `crates/slirp/src/local_backend.rs:623-627` with `appended = 0` would truncate the staged 128 KiB
+  response. In a detached scratch worktree the mutant failed
+  `remote_fin_waits_for_connector_bytes_buffered_behind_a_staged_tail` at 65,536 / 131,072 bytes;
+  restored source passed in a fresh target and again after clearing the mutant build artifact. The
+  production browser rerun exercises the same close path at 100 MiB.
+- **COVERAGE.** Production hunk `local_backend.rs:617-633` is covered by the mutation-killing
+  regression and browser run. The real-WS acceptance hunk is covered by both recorded scales and an
+  independent rerun; the 500-socket hunk by recorded and independent suite runs; Playwright specs
+  and roadmap text by the two browser artifacts. Evidence files, task/queue metadata, imports, and
+  comments are waived as non-runtime data. No changed behavior is unexecuted.
+- **SUITE.** Keep the deterministic close-drain, real-WebSocket multiplexing, and 500-socket reap
+  tests. They are stable acceptance oracles and the close-drain test demonstrably kills the observed
+  regression. Browser and terminal artifacts remain task evidence; no new verifier fixture needed.
+
+Commands: `cargo fmt --check`; `cargo clippy -p wasm-vm-slirp --all-targets --all-features -- -D
+warnings`; scrubbed-env `cargo test -p wasm-vm-slirp`; scrubbed-env `cargo test -p wasm-vm-cli
+--test ws_connector_over_real_ws one_websocket_multiplexes_a_stalled_stream_and_a_100mib_transfer
+-- --exact`; isolated mutant and restored-source runs of `cargo test -p wasm-vm-slirp --test
+outbound_sync remote_fin_waits_for_connector_bytes_buffered_behind_a_staged_tail -- --exact`;
+artifact `shasum -a 256` and commit-ancestry checks.

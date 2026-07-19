@@ -16,6 +16,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use futures_util::{SinkExt, StreamExt};
+use sha2::{Digest, Sha256};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::{TcpListener, TcpStream};
 use tokio_tungstenite::client_async;
@@ -212,4 +213,135 @@ async fn ws_connector_refused_backend_fails_over_a_real_websocket() {
         failed,
         "a refused backend must surface as a failed stream over the real WebSocket"
     );
+}
+
+/// E3-T16 acceptance: one real WebSocket multiplexes three live TCP streams. The first stream's
+/// guest reader is deliberately stalled, exhausting its relay-to-guest credit; the other two must
+/// still finish. Once the first reader resumes, a full 100 MiB transfer must be byte-identical and
+/// SHA-256-identical to what was sent.
+#[tokio::test]
+async fn one_websocket_multiplexes_a_stalled_stream_and_a_100mib_transfer() {
+    const SMALL: usize = 2 * 1024 * 1024;
+    const OFFER: usize = 32 * 1024;
+    let full_attack = std::env::var_os("E3_T16_FULL_ATTACK").is_some();
+    let large = if full_attack {
+        1024 * 1024 * 1024
+    } else {
+        100 * 1024 * 1024
+    };
+    let sibling_count = if full_attack { 10 } else { 2 };
+    let minimum_stall = if full_attack {
+        Duration::from_secs(5 * 60)
+    } else {
+        Duration::ZERO
+    };
+    let timeout = if full_attack {
+        Duration::from_secs(20 * 60)
+    } else {
+        Duration::from_secs(240)
+    };
+
+    let echo = spawn_echo().await;
+    let (_relay, relay_addr) = spawn_relay();
+    // One transport means one actual WebSocket; every logical connection below shares it.
+    let transport = connect_transport(relay_addr).await;
+    let mut client = WsConnector::new(transport, Vec::new());
+    let conns = (0..=sibling_count)
+        .map(|_| client.connect(Ipv4Addr::new(192, 0, 2, 1), echo.port()))
+        .collect::<Vec<_>>();
+    let mut totals = vec![SMALL; sibling_count + 1];
+    totals[0] = large;
+    let mut sent = vec![0usize; totals.len()];
+    let mut received = vec![0usize; totals.len()];
+    let mut sent_hashes = (0..totals.len()).map(|_| Sha256::new()).collect::<Vec<_>>();
+    let mut recv_hashes = (0..totals.len()).map(|_| Sha256::new()).collect::<Vec<_>>();
+    let started = std::time::Instant::now();
+    let mut stalled_reader_released = false;
+    let mut siblings_finished = None;
+
+    tokio::time::timeout(timeout, async {
+        loop {
+            for i in 0..conns.len() {
+                if sent[i] < totals[i] && client.status(conns[i]) == ConnStatus::Established {
+                    let end = (sent[i] + OFFER).min(totals[i]);
+                    let bytes: Vec<u8> = (sent[i]..end)
+                        .map(|offset| ((offset + i * 67) % 251) as u8)
+                        .collect();
+                    let accepted = client.send(conns[i], &bytes);
+                    sent_hashes[i].update(&bytes[..accepted]);
+                    sent[i] += accepted;
+                }
+            }
+
+            // Hold stream 0's guest reader closed until every sibling has completed. Its initial
+            // receive window therefore drains to zero at the relay, while the shared WS continues
+            // carrying the sibling streams.
+            for i in 1..conns.len() {
+                let bytes = client.recv(conns[i]);
+                for (j, &byte) in bytes.iter().enumerate() {
+                    assert_eq!(
+                        byte,
+                        ((received[i] + j + i * 67) % 251) as u8,
+                        "stream {i} byte mismatch at {}",
+                        received[i] + j
+                    );
+                }
+                recv_hashes[i].update(&bytes);
+                received[i] += bytes.len();
+            }
+
+            if siblings_finished.is_none() && received[1..].iter().all(|&n| n == SMALL) {
+                assert_eq!(
+                    received[0], 0,
+                    "the adversarial reader stayed fully stalled"
+                );
+                assert!(
+                    started.elapsed() < Duration::from_secs(60),
+                    "all sibling streams must finish while stream 0 is stalled"
+                );
+                siblings_finished = Some(started.elapsed());
+            }
+            if !stalled_reader_released
+                && siblings_finished.is_some()
+                && started.elapsed() >= minimum_stall
+            {
+                stalled_reader_released = true;
+            }
+
+            if stalled_reader_released {
+                let bytes = client.recv(conns[0]);
+                for (j, &byte) in bytes.iter().enumerate() {
+                    assert_eq!(
+                        byte,
+                        ((received[0] + j) % 251) as u8,
+                        "large stream byte mismatch at {}",
+                        received[0] + j
+                    );
+                }
+                recv_hashes[0].update(&bytes);
+                received[0] += bytes.len();
+            }
+
+            if received == totals {
+                break;
+            }
+            tokio::time::sleep(Duration::from_millis(1)).await;
+        }
+    })
+    .await
+    .expect("multiplexed real-WebSocket acceptance exceeded its timeout");
+
+    assert!(
+        stalled_reader_released,
+        "sibling streams never escaped the stall"
+    );
+    assert_eq!(sent, totals, "every source byte entered the connector");
+    assert_eq!(received, totals, "every echoed byte returned to the guest");
+    for i in 0..conns.len() {
+        assert_eq!(
+            sent_hashes[i].clone().finalize(),
+            recv_hashes[i].clone().finalize(),
+            "stream {i} SHA-256 mismatch"
+        );
+    }
 }
