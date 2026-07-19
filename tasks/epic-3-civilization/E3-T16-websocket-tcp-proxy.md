@@ -3,7 +3,7 @@ id: E3-T16
 epic: 3
 title: WebSocket TCP/UDP transport provider and public relay fallback
 priority: 316
-status: in-progress
+status: implemented
 depends_on: [E3-T14]
 estimate: M
 capstone: false
@@ -46,19 +46,19 @@ while T19 owns production policy and lifecycle for both paths.
   encoders/decoders; end-to-end native test guest→slirp→WsConnector→server→local echo.
 
 ## Acceptance criteria
-- [ ] Booted guest (native harness and browser) completes `wget http://example-served-
+- [x] Booted guest (native harness and browser) completes `wget http://example-served-
       locally/100mb.bin` through the full chain; sha256 matches; single WebSocket carried
       all traffic (server logs show stream multiplexing for ≥3 concurrent flows).
-- [ ] Credit flow control provably works: a guest downloading into a stalled reader (guest
+- [x] Credit flow control provably works: a guest downloading into a stalled reader (guest
       `sleep`ing mid-`wget` via a rate-limited pipe) causes the server's outstanding-credit
       counter for that stream to hit zero and its TCP read to pause (server metric), while
       a second concurrent stream continues at full speed.
-- [ ] Half-close: guest `nc -q` style send-then-shutdown flows deliver the server's late
+- [x] Half-close: guest `nc -q` style send-then-shutdown flows deliver the server's late
       response fully.
-- [ ] RST from the destination surfaces to the guest as ECONNRESET within 1 s.
-- [ ] Encoder/decoder conformance vectors pass identically in the wasm client, native
+- [x] RST from the destination surfaces to the guest as ECONNRESET within 1 s.
+- [x] Encoder/decoder conformance vectors pass identically in the wasm client, native
       client, and server.
-- [ ] Two concurrent UDP flows preserve zero-length, maximum-supported, and back-to-back
+- [x] Two concurrent UDP flows preserve zero-length, maximum-supported, and back-to-back
       differently-sized datagrams without cross-flow contamination or TCP head-of-line stalls.
 
 ## Adversarial verification
@@ -327,3 +327,22 @@ The two bullets above are historical. E3-T14 later landed and verifier-proved th
 larger protocol-specific acceptance still not independently closed here: multiplexed large-transfer
 and stall/backpressure evidence, half-close/RST, malformed/credit attacks, and 500-stream reap. T17
 uses the same connector seam for Tailscale; it does not replace or weaken this fallback proof.
+
+### 2026-07-19 — worker — implemented
+
+Commits `58e7c5b`, `85971db`, and `bfeea1d`. Native real-WebSocket acceptance passes three logical
+flows with a 100 MiB digest match; the recorded full attack scales the same test to one 1 GiB flow
+stalled unread for five minutes plus ten concurrent 2 MiB siblings, all byte- and SHA-identical in
+533.39 s. A separate recorded transport-drop run reaps 500 real backend sockets. The full slirp
+suite passes 215 unit tests (one resolver-only ignore) and 19 integration tests, including malformed
+frames, credit violations, half-close, RST, UDP boundaries, 100 MiB transfers, one-byte delivery,
+and the 60-second stalled upload. Strict fmt/clippy, wasm32 build, and `make web-build` pass.
+
+The first stock-Alpine browser run refuted the close path at 104,791,922 / 104,857,600 bytes with
+`wget: connection closed prematurely`. The trace exposed a bridge race: after a staged tail drained,
+guest FIN could be emitted while `WsConnector` retained one final DATA delivery. `85971db` adds a
+close-time connector drain and a mutation-proven regression (old behavior: 65,536 / 131,072; fixed:
+131,072 / 131,072). The rebuilt browser rerun then passed in 3,440.1 s: wget exit 0, exact
+104,857,600 bytes, SHA-256 `20492a4d0d84f8beb1767f6616229f85d44c2827b64bdbfb260ee12fa1109e0e`,
+and zero console errors. The demo rerun passed 126 / 0 and displayed the E3-T16 evidence. Evidence
+manifest and artifact digests: `evidence/e3-t16/README.md`.
