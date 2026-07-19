@@ -268,6 +268,7 @@ struct AckGatedWrite {
     read_only: Rc<Cell<bool>>,
     pending: bool,
     applied: Rc<Cell<u64>>,
+    resets: Rc<Cell<u64>>,
 }
 
 impl BlockBackend for AckGatedWrite {
@@ -307,6 +308,7 @@ impl BlockBackend for AckGatedWrite {
 
     fn write_reset(&mut self) {
         self.pending = false;
+        self.resets.set(self.resets.get() + 1);
     }
 }
 
@@ -318,12 +320,14 @@ fn persistent_write_ack_waits_for_commit_and_read_only_resolves_with_ioerr() {
     let durable = Rc::new(Cell::new(true));
     let read_only = Rc::new(Cell::new(false));
     let applied = Rc::new(Cell::new(0));
+    let resets = Rc::new(Cell::new(0));
     let backend = AckGatedWrite {
         data: vec![0u8; 64 * 512],
         durable: Rc::clone(&durable),
         read_only: Rc::clone(&read_only),
         pending: false,
         applied: Rc::clone(&applied),
+        resets,
     };
     let (mut m, mut ctx) = machine_with_backend(Box::new(backend));
 
@@ -393,4 +397,111 @@ fn persistent_write_ack_waits_for_commit_and_read_only_resolves_with_ioerr() {
         assert_eq!(m.run(4), RunOutcome::MaxInstrs);
     }
     assert_eq!(used_idx(&mut m), 2, "neither request completes twice");
+}
+
+/// Verifier attack: a transport reset while a durable WRITE is parked must discard the chain and
+/// its backend retry identity. A later durability transition must not publish a stale used entry
+/// into the torn-down queue.
+#[test]
+fn reset_discards_parked_durable_write() {
+    let durable = Rc::new(Cell::new(false));
+    let read_only = Rc::new(Cell::new(false));
+    let applied = Rc::new(Cell::new(0));
+    let resets = Rc::new(Cell::new(0));
+    let backend = AckGatedWrite {
+        data: vec![0u8; 64 * 512],
+        durable: Rc::clone(&durable),
+        read_only,
+        pending: false,
+        applied: Rc::clone(&applied),
+        resets: Rc::clone(&resets),
+    };
+    let (mut m, mut ctx) = machine_with_backend(Box::new(backend));
+
+    write_hdr(&mut m, 1, 3);
+    for i in 0..512u64 {
+        m.bus_mut().store8(DATA + i, 0xC3).unwrap();
+    }
+    m.bus_mut().store8(STATUS, 0x77).unwrap();
+    wdesc(&mut m, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut m, 1, DATA, 512, F_NEXT, 2);
+    wdesc(&mut m, 2, STATUS, 1, F_WRITE, 0);
+    submit(&mut m, &mut ctx, 0);
+    assert!(ctx.state.borrow().write_waiting());
+    assert_eq!(used_idx(&mut m), 0);
+    assert_eq!(applied.get(), 1);
+
+    m.bus_mut().store32(SLOT0 + 0x70, 0).unwrap();
+    assert_eq!(
+        resets.get(),
+        1,
+        "transport reset reaches backend retry state"
+    );
+    durable.set(true);
+    for _ in 0..5 {
+        assert_eq!(m.run(4), RunOutcome::MaxInstrs);
+    }
+    assert!(!ctx.state.borrow().write_waiting());
+    assert_eq!(used_idx(&mut m), 0, "abandoned WRITE never completes");
+    assert_eq!(
+        m.bus_mut().load8(STATUS).unwrap(),
+        0x77,
+        "abandoned descriptor status remains untouched"
+    );
+
+    // Reinitialize the same queue from empty indices. The backend must treat this as a genuinely
+    // new write, not as the durability retry of the request abandoned by transport reset.
+    m.bus_mut().store16(AVAIL + 2, 0).unwrap();
+    m.bus_mut().store16(USED + 2, 0).unwrap();
+    ctx.seq = 0;
+    let w = |m: &mut Machine, off: u64, v: u32| {
+        m.bus_mut().store32(SLOT0 + off, v).unwrap();
+    };
+    w(&mut m, 0x70, 1);
+    w(&mut m, 0x70, 3);
+    w(&mut m, 0x24, 0);
+    w(&mut m, 0x20, (1 << 9) | (1 << 5));
+    w(&mut m, 0x24, 1);
+    w(&mut m, 0x20, 1);
+    w(&mut m, 0x70, 11);
+    w(&mut m, 0x30, 0);
+    w(&mut m, 0x38, 8);
+    w(&mut m, 0x80, DESC as u32);
+    w(&mut m, 0x84, 0);
+    w(&mut m, 0x90, AVAIL as u32);
+    w(&mut m, 0x94, 0);
+    w(&mut m, 0xa0, USED as u32);
+    w(&mut m, 0xa4, 0);
+    w(&mut m, 0x44, 1);
+    w(&mut m, 0x70, 15);
+    // Let the run loop observe reset teardown and construct a fresh ring view at avail_idx = 0
+    // before the new driver publishes its first descriptor.
+    m.bus_mut().store32(SLOT0 + 0x50, 0).unwrap();
+    assert_eq!(m.run(4), RunOutcome::MaxInstrs);
+
+    for i in 0..512u64 {
+        m.bus_mut().store8(DATA + i, 0xD4).unwrap();
+    }
+    m.bus_mut().store8(STATUS, 0x55).unwrap();
+    submit(&mut m, &mut ctx, 0);
+    for _ in 0..5 {
+        if applied.get() != 1 || used_idx(&mut m) != 0 {
+            break;
+        }
+        assert_eq!(m.run(4), RunOutcome::MaxInstrs);
+    }
+    assert_eq!(
+        applied.get(),
+        2,
+        "post-reset WRITE is newly applied, not mistaken for the abandoned retry"
+    );
+    assert!(ctx.state.borrow().write_waiting());
+    assert_eq!(used_idx(&mut m), 0, "fresh WRITE waits for its own barrier");
+    assert_eq!(m.bus_mut().load8(STATUS).unwrap(), 0x55);
+
+    durable.set(true);
+    assert_eq!(m.run(4), RunOutcome::MaxInstrs);
+    assert_eq!(used_idx(&mut m), 1, "fresh WRITE completes exactly once");
+    assert_eq!(m.bus_mut().load8(STATUS).unwrap(), 0);
+    assert!(!ctx.state.borrow().write_waiting());
 }
