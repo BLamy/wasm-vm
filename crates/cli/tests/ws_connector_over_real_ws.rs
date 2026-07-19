@@ -221,31 +221,47 @@ async fn ws_connector_refused_backend_fails_over_a_real_websocket() {
 /// SHA-256-identical to what was sent.
 #[tokio::test]
 async fn one_websocket_multiplexes_a_stalled_stream_and_a_100mib_transfer() {
-    const LARGE: usize = 100 * 1024 * 1024;
     const SMALL: usize = 2 * 1024 * 1024;
     const OFFER: usize = 32 * 1024;
+    let full_attack = std::env::var_os("E3_T16_FULL_ATTACK").is_some();
+    let large = if full_attack {
+        1024 * 1024 * 1024
+    } else {
+        100 * 1024 * 1024
+    };
+    let sibling_count = if full_attack { 10 } else { 2 };
+    let minimum_stall = if full_attack {
+        Duration::from_secs(5 * 60)
+    } else {
+        Duration::ZERO
+    };
+    let timeout = if full_attack {
+        Duration::from_secs(20 * 60)
+    } else {
+        Duration::from_secs(240)
+    };
 
     let echo = spawn_echo().await;
     let (_relay, relay_addr) = spawn_relay();
-    // One transport means one actual WebSocket; all three logical connections below share it.
+    // One transport means one actual WebSocket; every logical connection below shares it.
     let transport = connect_transport(relay_addr).await;
     let mut client = WsConnector::new(transport, Vec::new());
-    let conns = [
-        client.connect(Ipv4Addr::new(192, 0, 2, 1), echo.port()),
-        client.connect(Ipv4Addr::new(192, 0, 2, 1), echo.port()),
-        client.connect(Ipv4Addr::new(192, 0, 2, 1), echo.port()),
-    ];
-    let totals = [LARGE, SMALL, SMALL];
-    let mut sent = [0usize; 3];
-    let mut received = [0usize; 3];
-    let mut sent_hashes = [Sha256::new(), Sha256::new(), Sha256::new()];
-    let mut recv_hashes = [Sha256::new(), Sha256::new(), Sha256::new()];
+    let conns = (0..=sibling_count)
+        .map(|_| client.connect(Ipv4Addr::new(192, 0, 2, 1), echo.port()))
+        .collect::<Vec<_>>();
+    let mut totals = vec![SMALL; sibling_count + 1];
+    totals[0] = large;
+    let mut sent = vec![0usize; totals.len()];
+    let mut received = vec![0usize; totals.len()];
+    let mut sent_hashes = (0..totals.len()).map(|_| Sha256::new()).collect::<Vec<_>>();
+    let mut recv_hashes = (0..totals.len()).map(|_| Sha256::new()).collect::<Vec<_>>();
     let started = std::time::Instant::now();
     let mut stalled_reader_released = false;
+    let mut siblings_finished = None;
 
-    tokio::time::timeout(Duration::from_secs(240), async {
+    tokio::time::timeout(timeout, async {
         loop {
-            for i in 0..3 {
+            for i in 0..conns.len() {
                 if sent[i] < totals[i] && client.status(conns[i]) == ConnStatus::Established {
                     let end = (sent[i] + OFFER).min(totals[i]);
                     let bytes: Vec<u8> = (sent[i]..end)
@@ -257,10 +273,10 @@ async fn one_websocket_multiplexes_a_stalled_stream_and_a_100mib_transfer() {
                 }
             }
 
-            // Hold stream 0's guest reader closed until both siblings have completed. Its initial
+            // Hold stream 0's guest reader closed until every sibling has completed. Its initial
             // receive window therefore drains to zero at the relay, while the shared WS continues
-            // carrying streams 1 and 2.
-            for i in 1..3 {
+            // carrying the sibling streams.
+            for i in 1..conns.len() {
                 let bytes = client.recv(conns[i]);
                 for (j, &byte) in bytes.iter().enumerate() {
                     assert_eq!(
@@ -274,15 +290,21 @@ async fn one_websocket_multiplexes_a_stalled_stream_and_a_100mib_transfer() {
                 received[i] += bytes.len();
             }
 
-            if !stalled_reader_released && received[1] == SMALL && received[2] == SMALL {
+            if siblings_finished.is_none() && received[1..].iter().all(|&n| n == SMALL) {
                 assert_eq!(
                     received[0], 0,
                     "the adversarial reader stayed fully stalled"
                 );
                 assert!(
                     started.elapsed() < Duration::from_secs(60),
-                    "two sibling streams must finish while stream 0 is stalled"
+                    "all sibling streams must finish while stream 0 is stalled"
                 );
+                siblings_finished = Some(started.elapsed());
+            }
+            if !stalled_reader_released
+                && siblings_finished.is_some()
+                && started.elapsed() >= minimum_stall
+            {
                 stalled_reader_released = true;
             }
 
@@ -307,7 +329,7 @@ async fn one_websocket_multiplexes_a_stalled_stream_and_a_100mib_transfer() {
         }
     })
     .await
-    .expect("three-flow real-WebSocket acceptance exceeded 240 seconds");
+    .expect("multiplexed real-WebSocket acceptance exceeded its timeout");
 
     assert!(
         stalled_reader_released,
@@ -315,7 +337,7 @@ async fn one_websocket_multiplexes_a_stalled_stream_and_a_100mib_transfer() {
     );
     assert_eq!(sent, totals, "every source byte entered the connector");
     assert_eq!(received, totals, "every echoed byte returned to the guest");
-    for i in 0..3 {
+    for i in 0..conns.len() {
         assert_eq!(
             sent_hashes[i].clone().finalize(),
             recv_hashes[i].clone().finalize(),
