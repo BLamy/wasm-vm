@@ -615,9 +615,21 @@ impl SlirpLocalBackend {
             // guest. Teardown waits until the guest has also finished (its socket leaves the connection)
             // so the FIN is acknowledged.
             if status == ConnStatus::Closed && self.flows[&key].pending_in.is_empty() {
-                self.stack.tcp_close(handle);
-                if self.stack.tcp_state(handle).is_none_or(is_terminal) {
-                    self.teardown(&key);
+                // `Closed` means no *new* bytes can arrive, but the connector may still have bytes
+                // buffered from before the remote FIN. In particular, when `pending_in` was nonempty
+                // above we intentionally skipped `recv_into` to preserve backpressure; that tail can
+                // drain in this same pass while a final connector delivery is still waiting. Probe
+                // once more before emitting FIN or that last delivery is silently truncated.
+                let appended = self
+                    .connector
+                    .as_mut()
+                    .unwrap()
+                    .recv_into(conn, &mut self.flows.get_mut(&key).unwrap().pending_in);
+                if appended == 0 {
+                    self.stack.tcp_close(handle);
+                    if self.stack.tcp_state(handle).is_none_or(is_terminal) {
+                        self.teardown(&key);
+                    }
                 }
             }
         }
