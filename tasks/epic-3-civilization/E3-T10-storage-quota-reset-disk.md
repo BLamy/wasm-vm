@@ -3,7 +3,7 @@ id: E3-T10
 epic: 3
 title: Storage quota management and reset-disk escape hatch
 priority: 310
-status: in-progress
+status: implemented
 depends_on: [E3-T05]
 estimate: S
 capstone: false
@@ -212,3 +212,33 @@ VERDICT: refuted
 - **SUITE:** no promotion while the correctness refutation remains. The next proof must be
   sabotage-sensitive: removing the in-Wasm dirty-pressure yield must make it fail, and losing any
   guest-acknowledged block across the quota-edge reload must make it fail.
+
+### 2026-07-18 — worker — implemented at `4a1c664`
+
+Closed the fresh verifier's durability and evidence refutations. Persistent guest writes now wait
+for the exact IndexedDB write-back barrier before virtio-blk publishes success; the browser proof
+writes one direct 1 MiB record at a time, syncs it, counts only completed records, then kills and
+reopens the tab. The final recorded run observed 3 completed records / 3,145,728 bytes before the
+quota boundary, `dd` exit 1 after Continue, and exactly 3,145,728 reopened bytes with SHA-256
+`bbd05cf6097ac9b1f89ea29d2542c1b7b67ee46848393895f5a9e43fa1f621e5`. The idle attack found no
+hidden backlog (`pendingBlocks=0`, no write/flush waiter, no new put, no dialog). After a clean
+guest poweroff, journal replay and forced read-only e2fsck completed all five passes with
+`FSCK_RC=0`. A later real quota hit drove typed RESET, and the fourth boot proved
+`PRISTINE_42_OK` plus `RESET_EXTBAD=0` with zero browser console errors.
+
+Recorded browser command: `cd web && E3_T10_FULL=1 npx playwright test tests/quota.spec.js
+--grep "forced quota"` — 1 passed in 48.1 minutes. Evidence is bound to full source commit
+`4a1c6649aa889c7d8ef37e7ee1bd9dd5ac1e6fbd`: `evidence/e3-t10/quota-terminal.txt`,
+`browser-summary.json`, `quota-fsck.txt`, the four screenshots indexed by the evidence README, and
+`quota-playwright-trace.zip` with SHA-256
+`9ccdb05120bd072a4b4f312bf4f5fda623ec851fc6283965e638dd64d46593a2`.
+
+Final gates: `cargo fmt --all -- --check`; `cargo clippy --workspace --all-targets --all-features
+-- -D warnings`; `cargo test --workspace -- --skip
+file_backend::tests::kill_mid_write_no_torn_sectors` (permission-correct local TCP/UDP rerun, no
+executed failures); `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`; `make web-build`;
+`npx playwright test tests/quota.spec.js` (3 passed, full proof opt-in skipped); and
+`E3_T10_DEMO=1 npx playwright test tests/e3-t10-demo-proof.spec.js` (1 passed in 14.1s, 126 passed /
+0 failed and the E3-T10 roadmap evidence visible). Host rr remains unavailable on this macOS host;
+the reopenable Playwright trace, full four-boot terminal transcript, exact IndexedDB overlay
+reconstruction/fsck, and browser compliance run are the final guest/browser evidence.

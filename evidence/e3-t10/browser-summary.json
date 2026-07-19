@@ -1,10 +1,31 @@
 {
+  "sourceCommit": "4a1c6649aa889c7d8ef37e7ee1bd9dd5ac1e6fbd",
   "quotaBytes": 52428800,
+  "quotaRemainingAtFaultArmBytes": 4194304,
   "retryHits": 2,
   "ddRc": 1,
+  "ddFullRecords": 3,
+  "ddDurableBytes": 3145728,
+  "reopenedBytes": 3145728,
+  "reopenedPrefixSha256": "bbd05cf6097ac9b1f89ea29d2542c1b7b67ee46848393895f5a9e43fa1f621e5",
   "guestUsableMarker": "QUOTA_GUEST_42_OK",
   "recoveryExt4Errors": 0,
+  "fsckCommand": "e2fsck -E journal_only -y IMAGE; e2fsck -f -n IMAGE",
+  "fsckRc": 0,
+  "fsckOverlayBlocks": 1303,
+  "idleProof": {
+    "stats": {
+      "pendingBlocks": 0,
+      "pendingBytes": 0,
+      "flushWaiting": false,
+      "writeWaiting": false
+    },
+    "puts": 192,
+    "dialogVisible": false
+  },
   "pristineMarker": "PRISTINE_42_OK",
   "resetExt4Errors": 0,
-  "consoleErrors": 0
+  "consoleErrors": 0,
+  "playwrightTrace": "quota-playwright-trace.zip",
+  "playwrightTraceSha256": "9ccdb05120bd072a4b4f312bf4f5fda623ec851fc6283965e638dd64d46593a2"
 }
