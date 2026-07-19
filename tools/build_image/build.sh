@@ -12,6 +12,7 @@
 #   REPRO_CHECK=1   build the ext4 TWICE and fail if manifest.json differs (reproducibility gate)
 #   CHUNK_SIZE=N    override the chunk size (default 128 KiB — matches the loader)
 #   UPDATE_MANIFEST=1  accept an Alpine package-set drift (passed through to build-rootfs)
+#   SKIP_BOOT_PROFILE=1  diagnostic-only: omit the real boot/profile pass
 #
 # Docker-only host requirement (same as the kernel/rootfs builds). Everything determinism-
 # sensitive (pinned base image by digest, version-pinned apk tools, fixed FS UUID +
@@ -36,8 +37,11 @@ build_and_chunk_to() {
   local dest="$1"
   log "building the Alpine rootfs (Docker)…"
   bash tools/build-rootfs.sh
-  # Keep a copy of the image alongside its chunk set so a failed REPRO_CHECK can dumpe2fs-diff.
-  cp -f "$ROOTFS" "${dest}.ext4" 2>/dev/null || true
+  # Keep diagnostic image copies only for the double-build gate. A normal production build must
+  # not leak a second 512 MiB `releases/chunked-alpine.ext4` beside the artifact directory.
+  if [[ "$dest" == target/repro-* ]]; then
+    cp -f "$ROOTFS" "${dest}.ext4"
+  fi
   log "chunking → $dest (chunk-size $CHUNK_SIZE)…"
   rm -rf "$dest"
   "$CLI" chunk "$ROOTFS" --out "$dest" --chunk-size "$CHUNK_SIZE" --layout split
@@ -80,8 +84,9 @@ log "verifying the artifact directory…"
 IMAGE_SHA=$(shasum -a 256 "$ROOTFS" | awk '{print $1}')
 IMAGE_LEN=$(wc -c < "$ROOTFS" | tr -d ' ')
 NCHUNKS=$(find "$ART/chunks" -type f | wc -l | tr -d ' ')
+MANIFEST_CHUNKS=$(( (IMAGE_LEN + CHUNK_SIZE - 1) / CHUNK_SIZE ))
 ALPINE_BRANCH=$(grep -m1 '^ALPINE_BRANCH=' tools/build-rootfs.sh | cut -d= -f2)
-MIRROR=$(grep -m1 '^MIRROR=' tools/build-rootfs.sh | cut -d'"' -f2)
+MIRROR_BASE=$(grep -m1 '^MIRROR_BASE=' tools/build-rootfs.sh | cut -d'"' -f2 | sed "s/\${ALPINE_BRANCH}/${ALPINE_BRANCH}/")
 EPOCH=$(grep -m1 'SOURCE_DATE_EPOCH=' tools/build-rootfs.sh | grep -oE '[0-9]+' | head -1)
 # The committed, drift-gated package lock (E2-T18) IS the exact-version record.
 PKGS_JSON=$(awk 'NF{printf "%s\"%s\"", (NR>1?",":""), $0}' releases/rootfs/MANIFEST.txt 2>/dev/null || echo "")
@@ -89,19 +94,28 @@ cat > "$ART/image-info.json" <<JSON
 {
   "generated_by": "tools/build_image/build.sh (E3-T11)",
   "alpine_branch": "${ALPINE_BRANCH}",
-  "mirror": "${MIRROR}",
+  "repositories": ["${MIRROR_BASE}/main", "${MIRROR_BASE}/community"],
   "source_date_epoch": ${EPOCH:-0},
   "chunk_size": ${CHUNK_SIZE},
   "image": { "path": "releases/rootfs/alpine-rootfs.ext4", "sha256": "${IMAGE_SHA}", "size": ${IMAGE_LEN} },
-  "chunks": ${NCHUNKS},
+  "manifest_chunks": ${MANIFEST_CHUNKS},
+  "chunk_objects": ${NCHUNKS},
   "packages": [${PKGS_JSON}]
 }
 JSON
-log "wrote $ART/image-info.json (${NCHUNKS} chunks, image ${IMAGE_LEN} bytes)"
+log "wrote $ART/image-info.json (${MANIFEST_CHUNKS} manifest entries, ${NCHUNKS} distinct objects)"
 
-# 4. Regenerate the local-only web manifest so the demo boots this exact image.
-if [ -f tools/demo-capstone.sh ]; then
-  log "note: run tools/demo-capstone.sh to refresh web/artifacts-alpine.json for the local demo."
+# 4. Record the T03 boot prefetch profile from a real boot of a disposable image copy. The default
+#    one-command production pipeline includes this gate; skipping is an explicit diagnostic mode.
+if [ "${SKIP_BOOT_PROFILE:-0}" != 1 ]; then
+  bash tools/build_image/record_boot_profile.sh "$ROOTFS" "$ART/manifest.json" "$ART/boot-profile.json"
+else
+  log "WARNING: SKIP_BOOT_PROFILE=1 — artifact is incomplete for production adoption."
 fi
+
+# 5. Adopt this exact image as the local browser's production Alpine artifact. `Boot Alpine`
+#    uses the chunked manifest by default; artifacts-alpine.json supplies the matching kernel
+#    (and retains the full-image URL for the explicit debug fallback).
+bash tools/gen-alpine-manifest.sh
 log "DONE. To measure CDN churn vs a previous build: \
 $CLI chunk-churn --old <old-art-dir> --new $ART --max-churn-pct 50"

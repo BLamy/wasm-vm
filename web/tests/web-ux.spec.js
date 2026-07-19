@@ -28,8 +28,8 @@ test("suite is button-triggered; Alpine buttons disable gracefully when artifact
   expect(ranBefore, "suite must NOT auto-run on load").toBe(0);
 
   // 2. Alpine buttons disabled with the explanation; busybox boot stays enabled.
-  await expect(page.locator("#boot-alpine-chunked")).toBeDisabled();
-  const title = await page.locator("#boot-alpine-chunked").getAttribute("title");
+  await expect(page.locator("#boot-alpine")).toBeDisabled();
+  const title = await page.locator("#boot-alpine").getAttribute("title");
   expect(title).toContain("local-only");
   await expect(page.locator("#boot-linux")).toBeEnabled();
 

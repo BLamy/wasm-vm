@@ -4,15 +4,16 @@ epic: 3
 title: "Capstone: a real userland — busybox + QuickJS + interpreted Node.js on a persistent, networked Alpine (webvm parity)"
 priority: 328
 status: pending
-depends_on: [E3-T11, E3-T18, E3-T25, E3-T26, E3-T27]
+depends_on: [E3-T11, E3-T25, E3-T26, E3-T27]
 estimate: L
 capstone: true
 ---
 
 ## Goal
 The Level 3 threshold — a **real userland** — demonstrated end-to-end from a cold start:
-load the page in a fresh browser profile, drop into an interactive **busybox** shell,
-`apk add nodejs quickjs` against a real Alpine mirror through our network stack, run a
+load the page in a fresh browser profile, provision the browser Tailscale node, drop into an
+interactive **busybox** shell, reach a MagicDNS tailnet service, `apk add nodejs quickjs`
+against a real Alpine mirror through the configured exit node, run a
 **QuickJS** program (`qjs`) and a **Node.js** script (interpreted — slow is fine; this
 proves the userland ABI, not speed), write a file in the guest, reload the tab, and the
 runtimes and the file are still there and still run — the whole flow comparable to
@@ -25,16 +26,18 @@ product value; Level 4 only has to make this *fast*.
 Everything in Epic 3 converges here; the capstone adds no new subsystems — it is the
 integration proof plus whatever glue fixes the full flow exposes. Per `tasks/README.md`, a
 capstone demo runs from a cold start: fresh clone, `./build.sh` artifacts (T11), `docker
-compose up` for relay + serving (T19), fresh browser profile — no development state. The
+compose up` for Headscale/provisioning + tailnet fixture + optional relay fallback + serving
+(T19), fresh browser profile — no development state. The
 demo procedure (written + automated headless variant) is itself a deliverable so the
 adversarial verifier can execute it without the implementer present. "Comparable to webvm"
 is bounded by T27's recorded go/no-go tolerances — cite them, don't re-litigate them.
 
 ## Deliverables
 - `docs/capstone-e3.md`: the exact cold-start procedure — clean checkout, build, deploy,
-  browser steps, expected outputs at each step, and the T27 tolerance citations.
+  browser/Tailscale provisioning steps, expected outputs at each step, and the T27 tolerance citations.
 - Automated headless E2E (`tests/e2e/capstone_e3.*`) executing: cold boot → busybox shell →
-  `apk update` → `apk add nodejs quickjs` → `cat > /root/hello.js` (heredoc writing a script
+  MagicDNS lookup/tailnet fixture request → `apk update` → `apk add nodejs quickjs` →
+  `cat > /root/hello.js` (heredoc writing a script
   that prints a computed value, e.g. `console.log([...Array(100).keys()].reduce((a,b)=>a+b))`)
   → `qjs /root/hello.js` asserted → `node /root/hello.js` asserted → `sync` → tab close →
   new tab, same profile → `node /root/hello.js` asserted again → `ls /root/hello.js`
@@ -55,8 +58,9 @@ is bounded by T27's recorded go/no-go tolerances — cite them, don't re-litigat
 - [ ] The reload boots via the fast path (T24 resume or warm cold-boot per design) and
       node runs without `apk fix` or any repair step — the install was durable per T08
       semantics (`sync` honored).
-- [ ] The full flow runs with CSP enforced, cross-origin isolation on (T26), and the
-      relay requiring auth (T19) — no dev-mode relaxations (asserted by the E2E checking
+- [ ] The full flow runs with CSP enforced, cross-origin isolation on (T26), the Tailscale
+      node/ACL policy enforced, and the relay fallback requiring auth (T19) — no dev-mode
+      relaxations (asserted by the E2E checking
       `crossOriginIsolated` and header presence).
 - [ ] The demo also passes on a second browser engine (Firefox or Safari), or the log
       records the specific gap and it is dispositioned in `docs/parity/gaps.md`.

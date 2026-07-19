@@ -61,7 +61,7 @@ export const ROADMAP = [
     status: "done",
     blurb: "Lazy HTTP-fetched disk images, bounded block cache, copy-on-write + IndexedDB-durable overlay, virtio-net, honest flush, multi-tab safety — a persistent, networked filesystem.",
     caps: [
-      { name: "Chunked disk image format", status: "verified", evidence: "content-addressed chunks + manifest; reproducibility gate (E3-T01/T11, #85/#105)" },
+      { name: "Chunked disk image format", status: "verified", evidence: "cold-cache byte-identical rebuild + 92-chunk real-boot profile (E3-T01/T11)" },
       { name: "Lazy HTTP range chunk boot", status: "verified", evidence: "Alpine boots pulling ~1.2% of a 512 MB image on demand (E3-T02, #88)" },
       { name: "Bounded block cache + prefetch", status: "verified", evidence: "CLOCK cache + pinning + prefetch (E3-T03, #90)" },
       { name: "Copy-on-write overlay", status: "verified", evidence: "4 KiB CoW blocks + base-binding + write-park (E3-T04, #92)" },

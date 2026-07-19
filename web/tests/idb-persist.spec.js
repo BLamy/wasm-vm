@@ -33,8 +33,8 @@ test.describe("E3-T05: IndexedDB durable overlay survives a reload", () => {
     const type = (s) => page.evaluate((x) => window.__term.typeBytes(new TextEncoder().encode(x)), s);
 
     const bootToLogin = async () => {
-      await expect(page.locator("#boot-alpine-chunked")).toBeEnabled();
-      await page.click("#boot-alpine-chunked");
+      await expect(page.locator("#boot-alpine")).toBeEnabled();
+      await page.click("#boot-alpine");
       let sawOpenRC = false;
       for (let i = 0; i < 900; i++) {
         const text = await page.locator(rows).textContent().catch(() => "");

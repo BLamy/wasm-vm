@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # E2-T18 in-container build: cross-install + configure the Alpine riscv64 root and pack it into
 # an ext4 image. Runs inside tools/rootfs.Dockerfile (host-arch Alpine); env from build-rootfs.sh:
-#   MIRROR FS_UUID SOURCE_DATE_EPOCH IMG_SIZE PKGS ALPINE_BRANCH
+#   MAIN_REPO COMMUNITY_REPO FS_UUID SOURCE_DATE_EPOCH IMG_SIZE PKGS EXTRA_PKGS
+#   LOCKED_INSTALL ALPINE_BRANCH
 set -euo pipefail
 ROOT=/rootfs
 mkdir -p "$ROOT"
@@ -12,8 +13,27 @@ mkdir -p "$ROOT"
 # 60ac2099, which lives under /usr/share/apk/keys/riscv64 (NOT the default /etc/apk/keys), so
 # without this apk reports "UNTRUSTED signature". We do NOT use --allow-untrusted (critic #1):
 # a MITM/mirror-compromise now fails closed.
-apk.static --arch riscv64 -X "$MIRROR" --keys-dir /usr/share/apk/keys/riscv64 -U \
-  --root "$ROOT" --initdb --no-scripts add $PKGS
+if [ "${LOCKED_INSTALL:-0}" = 1 ] && [ -s /out/MANIFEST.txt ]; then
+  # Convert `name-version-rN` to apk's exact constraint `name=version-rN`. Package names may
+  # contain dashes, so split only at the final version beginning with a digit.
+  mapfile -t INSTALL_PKGS < <(sed -E 's/-([0-9][^-]*-r[0-9]+)$/=\1/' /out/MANIFEST.txt)
+else
+  read -r -a INSTALL_PKGS <<< "$PKGS"
+fi
+apk.static --arch riscv64 -X "$MAIN_REPO" -X "$COMMUNITY_REPO" \
+  --keys-dir /usr/share/apk/keys/riscv64 -U \
+  --root "$ROOT" --initdb --no-scripts add "${INSTALL_PKGS[@]}"
+
+# Churn attacks add one package only AFTER recreating the exact locked base. This preserves the
+# base package extraction/directory-entry order instead of asking apk to resolve one combined world
+# where a new dependency can be interleaved ahead of dozens of existing packages and cascade the
+# ext4 layout. It is also the honest CDN update model: stable base plus an explicit addition.
+if [ -n "${EXTRA_PKGS:-}" ]; then
+  read -r -a EXTRA_INSTALL_PKGS <<< "$EXTRA_PKGS"
+  apk.static --arch riscv64 -X "$MAIN_REPO" -X "$COMMUNITY_REPO" \
+    --keys-dir /usr/share/apk/keys/riscv64 -U \
+    --root "$ROOT" --no-scripts add "${EXTRA_INSTALL_PKGS[@]}"
+fi
 
 # Record exactly what landed → drift lock (host diffs this against the committed manifest).
 apk.static --root "$ROOT" info -v | sort > /out/MANIFEST.new
@@ -80,6 +100,13 @@ fi
 # 2e. Hostname.
 echo wasm-vm > "$ROOT/etc/hostname"
 
+# The production guest uses HTTPS through either the T17 Tailscale provider or T16 relay fallback.
+# Keep both official repositories explicit; apk signatures stay mandatory and TLS remains opaque.
+cat > "$ROOT/etc/apk/repositories" <<REPOSITORIES
+$MAIN_REPO
+$COMMUNITY_REPO
+REPOSITORIES
+
 # 2e2. E3-T14 networking. The current kernel has CONFIG_NET + CONFIG_VIRTIO_NET and the image's
 # alpine-base dependency includes ifupdown-ng. Bring the slirp-backed eth0 up through DHCP during
 # the default runlevel; the guest receives 10.0.2.15/24, gateway 10.0.2.2, and DNS 10.0.2.3. Keeping
@@ -144,6 +171,27 @@ fi
 find "$ROOT" -exec touch -h -d "@$SOURCE_DATE_EPOCH" {} +
 rm -f /out/alpine-rootfs.ext4
 mke2fs -q -t ext4 -O ^metadata_csum -L root -U "$FS_UUID" -E "root_owner=0:0,hash_seed=$FS_UUID" -d "$ROOT" /out/alpine-rootfs.ext4 "$IMG_SIZE"
+
+# `touch` pins mtime/atime but necessarily advances the SOURCE tree's ctime to the real
+# container clock. `mke2fs -d` copies that ctime into each destination inode even while
+# E2FSPROGS_FAKE_TIME correctly pins the filesystem/superblock and inode creation times.
+# The result is one changing byte at inode offset 0x0c for every imported inode — exactly
+# the residual E3-T11 drift in chunks 2-4. ext4 ctime is historical metadata here (the image
+# has never been mounted), so normalize it after population with the same pinned e2fsprogs.
+#
+# Address inodes by their image path rather than by source inode number. Quoting/escaping
+# keeps the batch correct for whitespace, quotes, and backslashes; repeated hard-link paths
+# harmlessly write the same value. No data/block allocation changes in this pass.
+CTIME_CMDS=/tmp/debugfs-normalize-ctime.cmds
+: > "$CTIME_CMDS"
+while IFS= read -r -d '' source_path; do
+  image_path=${source_path#"$ROOT"}
+  if [ -z "$image_path" ]; then image_path=/; fi
+  image_path=${image_path//\\/\\\\}
+  image_path=${image_path//\"/\\\"}
+  printf 'set_inode_field "%s" ctime %s\n' "$image_path" "$SOURCE_DATE_EPOCH" >> "$CTIME_CMDS"
+done < <(find "$ROOT" -print0)
+debugfs -w -f "$CTIME_CMDS" /out/alpine-rootfs.ext4 >/tmp/debugfs-normalize-ctime.log 2>&1
 
 # 4. fsck must report the freshly built image CLEAN (no orphan inodes from the build).
 echo "--- fsck.ext4 -f -n ---"

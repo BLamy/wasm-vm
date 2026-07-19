@@ -26,13 +26,12 @@ const fileInput = document.getElementById("file");
 // E2-T21: boot unmodified Linux in the browser via the loading pipeline (loader.js).
 const bootLinuxBtn = document.getElementById("boot-linux");
 const bootProgressEl = document.getElementById("boot-progress");
-// E2-T26: a second "Boot Alpine" button boots the full Alpine ext4 rootfs over virtio-blk
-// (mode "disk", a separate local-only manifest) — shared boot path with the busybox button.
+// E3-T11: the primary Alpine button boots the production chunked image. The full 512 MiB image
+// remains an explicit debug fallback; it is no longer the default user path.
 const bootAlpineBtn = document.getElementById("boot-alpine");
-// E3-T02: boot the same Alpine rootfs but fetched lazily as E3-T01 chunks over HTTP.
-const bootAlpineChunkedBtn = document.getElementById("boot-alpine-chunked");
+const bootAlpineFullBtn = document.getElementById("boot-alpine-full");
 let linuxCtl = null;
-const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineChunkedBtn];
+const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineFullBtn];
 async function runLinuxBoot(opts, banner) {
   if (linuxCtl) return; // already booting
   bootBtns.forEach((b) => b && (b.disabled = true));
@@ -201,16 +200,9 @@ if (bootLinuxBtn) {
 if (bootAlpineBtn) {
   bootAlpineBtn.addEventListener("click", () =>
     runLinuxBoot(
-      { manifestUrl: "./artifacts-alpine.json", mode: "disk", ramMib: 256 },
-      "booting unmodified Alpine (ext4 rootfs over virtio-blk) in wasm — large image, ~minutes to login:…",
-    ));
-}
-if (bootAlpineChunkedBtn) {
-  bootAlpineChunkedBtn.addEventListener("click", () =>
-    runLinuxBoot(
       {
-        // Same kernel as the proven Alpine disk boot; the rootfs is fetched lazily per chunk here
-        // (no full-image download — only the chunks the boot actually touches).
+        // E3-T11 production default: the deterministic rootfs is fetched lazily by immutable,
+        // content-addressed chunks. No full-image request occurs.
         manifestUrl: "./artifacts-alpine.json",
         mode: "chunked",
         imageManifestUrl: "./releases/chunked-alpine/manifest.json",
@@ -222,7 +214,14 @@ if (bootAlpineChunkedBtn) {
         persistMax: Number(new URLSearchParams(location.search).get("persistMax")) || undefined,
         ramMib: 256,
       },
-      "booting Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login:…",
+      "booting production Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login:…",
+    ));
+}
+if (bootAlpineFullBtn) {
+  bootAlpineFullBtn.addEventListener("click", () =>
+    runLinuxBoot(
+      { manifestUrl: "./artifacts-alpine.json", mode: "disk", ramMib: 256 },
+      "debug boot: loading the full Alpine ext4 image before virtio-blk startup…",
     ));
 }
 // ── Docker tab ⇄ real boot bridge ─────────────────────────────────────────────
@@ -885,7 +884,7 @@ setInteractiveState();
     if (!present) {
       const why =
         "Alpine's 512 MB image is local-only (not deployed to GitHub Pages) — clone the repo and run: bash tools/serve-dev.sh";
-      for (const b of [bootAlpineBtn, bootAlpineChunkedBtn]) {
+      for (const b of [bootAlpineBtn, bootAlpineFullBtn]) {
         if (b) {
           b.disabled = true;
           b.dataset.unavailable = "1"; // survives the generic boot-button re-enable
@@ -896,7 +895,7 @@ setInteractiveState();
       note.className = "version";
       note.style.cssText = "margin-top:4px; opacity:.7;";
       note.textContent = "Alpine boots need local artifacts — " + why;
-      bootAlpineChunkedBtn?.parentElement?.appendChild(note);
+      bootAlpineBtn?.parentElement?.appendChild(note);
     }
   } catch {
     /* probe failure = treat as absent; buttons already work locally */

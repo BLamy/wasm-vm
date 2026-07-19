@@ -38,8 +38,8 @@ test.describe("E3-T03: bounded cache under a below-working-set budget", () => {
     });
 
     await page.goto(`/?cacheBudgetMib=${BUDGET_MIB}`);
-    await expect(page.locator("#boot-alpine-chunked")).toBeEnabled();
-    await page.click("#boot-alpine-chunked");
+    await expect(page.locator("#boot-alpine")).toBeEnabled();
+    await page.click("#boot-alpine");
 
     // Sample the cache metrics throughout the boot; track the peak residency and whether eviction
     // actually happened (proving the budget is genuinely below the working set).

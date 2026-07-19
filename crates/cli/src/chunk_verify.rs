@@ -124,23 +124,55 @@ pub fn verify_dir(dir: &Path) -> Result<usize, VerifyError> {
     Ok(referenced.len())
 }
 
-/// `(shared, changed, added, removed, total_new, churn_pct)` between two manifests' chunk SETS.
-/// Churn is over the union so add+remove both count — the CDN cares about how many immutable
-/// objects a rebuild invalidates/introduces.
-pub fn churn(old: &ImageManifest, new: &ImageManifest) -> (usize, usize, usize, usize, usize, f64) {
+/// CDN cache retention between two manifests' distinct chunk sets.
+///
+/// `invalidated_pct` answers the task's binary question: what fraction of OLD immutable objects
+/// can no longer be reused? Additions are reported separately because counting a replacement as
+/// both removed and added inflates one invalidated cache object into two units of "churn" and can
+/// claim that a majority was rewritten even when a majority of the old cache remains valid.
+#[derive(Debug, PartialEq)]
+pub struct ChurnStats {
+    pub shared: usize,
+    pub added: usize,
+    pub removed: usize,
+    pub old_total: usize,
+    pub new_total: usize,
+    pub invalidated_pct: f64,
+    pub retained_pct: f64,
+    pub growth_pct: f64,
+}
+
+pub fn churn(old: &ImageManifest, new: &ImageManifest) -> ChurnStats {
     let a: BTreeSet<&String> = old.chunks.iter().collect();
     let b: BTreeSet<&String> = new.chunks.iter().collect();
     let shared = a.intersection(&b).count();
     let removed = a.difference(&b).count();
     let added = b.difference(&a).count();
-    let union = a.union(&b).count();
-    let changed = added + removed;
-    let pct = if union == 0 {
+    let invalidated_pct = if a.is_empty() {
         0.0
     } else {
-        (changed as f64) * 100.0 / (union as f64)
+        (removed as f64) * 100.0 / (a.len() as f64)
     };
-    (shared, changed, added, removed, b.len(), pct)
+    let retained_pct = if a.is_empty() {
+        100.0
+    } else {
+        (shared as f64) * 100.0 / (a.len() as f64)
+    };
+    let growth_pct = if a.is_empty() {
+        if b.is_empty() { 0.0 } else { 100.0 }
+    } else {
+        (added as f64) * 100.0 / (a.len() as f64)
+    };
+    ChurnStats {
+        shared,
+        added,
+        removed,
+        old_total: a.len(),
+        new_total: b.len(),
+        invalidated_pct,
+        retained_pct,
+        growth_pct,
+    }
 }
 
 pub fn run_verify(a: VerifyArgs) -> ExitCode {
@@ -177,15 +209,26 @@ pub fn run_churn(a: ChurnArgs) -> ExitCode {
         Ok(m) => m,
         Err(c) => return c,
     };
-    let (shared, changed, added, removed, total, pct) = churn(&old, &new);
+    let stats = churn(&old, &new);
     println!(
-        "chunk-churn: {changed} changed ({added} added, {removed} removed), {shared} shared, \
-         {total} total → {pct:.1}% churn"
+        "chunk-churn: {removed} invalidated of {old_total} old objects ({invalidated_pct:.1}% \
+         churn; {retained_pct:.1}% retained), {added} added ({growth_pct:.1}% growth), \
+         {new_total} new total",
+        removed = stats.removed,
+        old_total = stats.old_total,
+        invalidated_pct = stats.invalidated_pct,
+        retained_pct = stats.retained_pct,
+        added = stats.added,
+        growth_pct = stats.growth_pct,
+        new_total = stats.new_total,
     );
     if let Some(max) = a.max_churn_pct
-        && pct > max
+        && stats.invalidated_pct > max
     {
-        eprintln!("chunk-churn: FAIL — {pct:.1}% churn exceeds --max-churn-pct {max:.1}");
+        eprintln!(
+            "chunk-churn: FAIL — {:.1}% churn exceeds --max-churn-pct {max:.1}",
+            stats.invalidated_pct
+        );
         return ExitCode::from(3);
     }
     ExitCode::SUCCESS
