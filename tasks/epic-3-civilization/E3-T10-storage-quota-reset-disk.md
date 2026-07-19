@@ -3,7 +3,7 @@ id: E3-T10
 epic: 3
 title: Storage quota management and reset-disk escape hatch
 priority: 310
-status: implemented
+status: in-progress
 depends_on: [E3-T05]
 estimate: S
 capstone: false
@@ -242,3 +242,32 @@ executed failures); `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown
 0 failed and the E3-T10 roadmap evidence visible). Host rr remains unavailable on this macOS host;
 the reopenable Playwright trace, full four-boot terminal transcript, exact IndexedDB overlay
 reconstruction/fsck, and browser compliance run are the final guest/browser evidence.
+
+### 2026-07-19 — verifier — VERDICT: needs-evidence
+
+- P0 durable-write acknowledgement — PASSED. Targeted core and wasm barrier tests prove a
+  RAM-only persistent WRITE leaves status/used-ring state untouched, blocks overtaking, completes
+  exactly once after its durability barrier, and resolves IOERR after Continue read-only. The
+  browser evidence independently records 3 durable records / 3,145,728 bytes, `dd` RC 1, and an
+  exact 3,145,728-byte reopen with SHA-256
+  `bbd05cf6097ac9b1f89ea29d2542c1b7b67ee46848393895f5a9e43fa1f621e5`.
+- P1 quota-edge recovery/fsck/idle/reset — PASSED. The trace digest and source binding match;
+  forced e2fsck completed all five passes with `FSCK_RC=0`; the idle attack reported zero pending
+  blocks/bytes and no waiters or dialog; the final boot recorded `PRISTINE_42_OK` and
+  `RESET_EXTBAD=0`.
+- COVERAGE durable reset identity — INSUFFICIENT. The candidate
+  `reset_discards_parked_durable_write` proves an abandoned chain never publishes a stale used
+  entry or status write, but survived sabotage removing `backend.write_reset()`. Strengthen it by
+  reinitializing the queue and submitting a fresh same-sector/length WRITE after reset, proving the
+  request is newly applied and cannot inherit the abandoned retry identity; then rerun sabotage.
+- COVERAGE: the durable BlockError/park/order paths, persistent barrier/read-only paths, loader
+  quota pump/Continue path, UI dialog/reset, exact reopen/fsck, and idle path are exercised.
+  Comments/docs, thin getter delegation, and evidence metadata are waived. No dead hunk found.
+- MOCK/ENV: targeted core reset and wasm barrier tests passed with Rust/Cargo environment scrubbed.
+  The browser proof uses a deterministic real IndexedDB transaction abort at the production
+  boundary; no application quota callback is mocked.
+- Gates passed: fmt; targeted core durable-write/reset tests; wasm barrier test; targeted core and
+  wasm clippy with all targets/features and `-D warnings`; wasm32 build; JS syntax checks; evidence
+  digest validation. The 48-minute browser trace was interrogated rather than rerun.
+- SUITE: do not promote the reset test until the new post-reset request makes removal of
+  `backend.write_reset()` fail.
