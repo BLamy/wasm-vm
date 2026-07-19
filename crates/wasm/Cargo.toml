@@ -33,6 +33,8 @@ features = [
     "RequestMode",
     "Headers",
     "Response",
+    "AbortController",
+    "AbortSignal",
     # E3-T05 IndexedDB durable overlay backend.
     "IdbFactory",
     "IdbOpenDbRequest",

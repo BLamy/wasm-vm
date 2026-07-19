@@ -9,6 +9,7 @@
 //! missing/short options, no message-type) yields `None` rather than a panic or a bogus reply.
 
 use std::net::Ipv4Addr;
+use std::sync::{Arc, Mutex};
 
 use crate::net;
 
@@ -54,11 +55,47 @@ struct Msg {
     server_id: Option<Ipv4Addr>,
 }
 
+/// Monotonic counters for DHCP exchanges observed by the production server.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct DhcpStats {
+    pub discovers: u32,
+    pub offers: u32,
+    pub requests: u32,
+    pub acks: u32,
+    pub renew_requests: u32,
+    pub renew_acks: u32,
+    pub naks: u32,
+}
+
+/// Shared, read-only-from-the-outside DHCP counters. The boot harness keeps a clone so recorded runs
+/// can prove that the real guest client sent a RENEW and received an ACK, rather than inferring it
+/// from an address that might merely not have expired yet.
+#[derive(Debug, Clone, Default)]
+pub struct DhcpStatsHandle(Arc<Mutex<DhcpStats>>);
+
+impl DhcpStatsHandle {
+    pub fn snapshot(&self) -> DhcpStats {
+        *self
+            .0
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+    }
+
+    fn record(&self, update: impl FnOnce(&mut DhcpStats)) {
+        let mut stats = self
+            .0
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        update(&mut stats);
+    }
+}
+
 /// A zero-config DHCP server that always leases `net::GUEST` to whoever asks.
 #[derive(Debug, Clone)]
 pub struct DhcpServer {
     lease_secs: u32,
     mtu: u16,
+    stats: DhcpStatsHandle,
 }
 
 impl Default for DhcpServer {
@@ -72,7 +109,13 @@ impl DhcpServer {
         DhcpServer {
             lease_secs: DEFAULT_LEASE_SECS,
             mtu: DEFAULT_MTU,
+            stats: DhcpStatsHandle::default(),
         }
+    }
+
+    /// Cloneable diagnostics handle used by native/browser acceptance recordings.
+    pub fn stats_handle(&self) -> DhcpStatsHandle {
+        self.stats.clone()
     }
 
     /// Shorten the lease (tests use ~60 s to observe a RENEW→ACK).
@@ -96,8 +139,21 @@ impl DhcpServer {
             return None; // only BOOTREQUEST (op=1) is a client asking us
         }
         match m.msg_type {
-            DISCOVER => Some(self.reply(&m, OFFER)),
+            DISCOVER => {
+                self.stats.record(|stats| {
+                    stats.discovers = stats.discovers.saturating_add(1);
+                    stats.offers = stats.offers.saturating_add(1);
+                });
+                Some(self.reply(&m, OFFER))
+            }
             REQUEST => {
+                let is_renew = m.requested_ip.is_none() && !m.ciaddr.is_unspecified();
+                self.stats.record(|stats| {
+                    stats.requests = stats.requests.saturating_add(1);
+                    if is_renew {
+                        stats.renew_requests = stats.renew_requests.saturating_add(1);
+                    }
+                });
                 // If the client is SELECTING a specific server (option 54) and it isn't us, this
                 // REQUEST is meant for another DHCP server — stay silent (don't NAK a peer's lease).
                 if let Some(sid) = m.server_id
@@ -110,8 +166,16 @@ impl DhcpServer {
                 // restarts cleanly instead of using a wrong address.
                 let wants = m.requested_ip.unwrap_or(m.ciaddr);
                 if wants == net::GUEST {
+                    self.stats.record(|stats| {
+                        stats.acks = stats.acks.saturating_add(1);
+                        if is_renew {
+                            stats.renew_acks = stats.renew_acks.saturating_add(1);
+                        }
+                    });
                     Some(self.reply(&m, ACK))
                 } else {
+                    self.stats
+                        .record(|stats| stats.naks = stats.naks.saturating_add(1));
                     Some(self.reply(&m, NAK))
                 }
             }

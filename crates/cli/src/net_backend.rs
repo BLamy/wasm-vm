@@ -6,7 +6,8 @@
 //! is deliberate: native and browser now exercise identical NAT, expiry, framing, and backpressure
 //! logic, while only their connector transport differs (OS sockets vs. WebSocket relay).
 //!
-//! Current scope: TCP and external UDP NAT plus DHCP. DNS service wiring remains E3-T15.
+//! E3-T15 adds the bounded asynchronous native DNS worker; the synchronous machine thread keeps
+//! pumping TCP/UDP while host OS resolution is in flight.
 
 use std::collections::{BTreeMap, VecDeque};
 use std::net::Ipv4Addr;
@@ -15,12 +16,27 @@ use std::thread::JoinHandle;
 use std::time::{Duration, Instant};
 
 use wasm_vm_core::dev::virtio::net::NetBackend;
-use wasm_vm_slirp::{SlirpLocalBackend, StdConnector};
+use wasm_vm_slirp::{DhcpServer, NativeDnsService, SlirpLocalBackend, StdConnector};
 
 /// The slirp gateway's own MAC (10.0.2.2), distinct from the guest's virtio-net MAC
 /// (`wasm_vm_core::dev::virtio::net::MAC` = 52:54:00:12:34:56). Locally-administered; the guest
 /// learns it via ARP for the gateway.
 pub const GATEWAY_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x02];
+
+#[derive(Debug, Clone, Copy)]
+pub struct SlirpConfig {
+    pub lease_secs: u32,
+    pub mtu: u16,
+}
+
+impl Default for SlirpConfig {
+    fn default() -> Self {
+        Self {
+            lease_secs: wasm_vm_slirp::dhcp::DEFAULT_LEASE_SECS,
+            mtu: wasm_vm_slirp::dhcp::DEFAULT_MTU,
+        }
+    }
+}
 
 /// Driver tick — how often we `poll` smoltcp + `service` the pumps when no guest frame arrives.
 /// smoltcp timers (retransmit, delayed-ACK) and server-initiated data both need this cadence.
@@ -42,13 +58,17 @@ impl SlirpBackend {
     /// Start the driver thread with a fresh shared local backend bound to `mac`. Returns immediately;
     /// the thread runs until this backend is dropped.
     pub fn new(mac: [u8; 6]) -> Self {
+        Self::with_config(mac, SlirpConfig::default())
+    }
+
+    pub fn with_config(mac: [u8; 6], config: SlirpConfig) -> Self {
         let host_map = host_map_from_env();
         let (to_driver, from_guest) = tokio::sync::mpsc::unbounded_channel::<Vec<u8>>();
         let egress: Arc<Mutex<VecDeque<Vec<u8>>>> = Arc::new(Mutex::new(VecDeque::new()));
         let egress_driver = Arc::clone(&egress);
         let driver = std::thread::Builder::new()
             .name("slirp-driver".into())
-            .spawn(move || driver_loop(mac, host_map, from_guest, egress_driver))
+            .spawn(move || driver_loop(mac, config, host_map, from_guest, egress_driver))
             .expect("spawn slirp driver thread");
         SlirpBackend {
             to_driver: Some(to_driver),
@@ -88,6 +108,7 @@ fn host_map_from_env() -> BTreeMap<Ipv4Addr, Ipv4Addr> {
 /// The driver thread body: own the synchronous backend on a current-thread runtime and pump forever.
 fn driver_loop(
     mac: [u8; 6],
+    config: SlirpConfig,
     host_map: BTreeMap<Ipv4Addr, Ipv4Addr>,
     mut from_guest: tokio::sync::mpsc::UnboundedReceiver<Vec<u8>>,
     egress: Arc<Mutex<VecDeque<Vec<u8>>>>,
@@ -99,11 +120,16 @@ fn driver_loop(
     rt.block_on(async move {
         let start = Instant::now();
         let connector = StdConnector::new().with_host_map(host_map);
+        let dhcp = DhcpServer::new()
+            .with_lease_secs(config.lease_secs)
+            .with_mtu(config.mtu);
         let mut backend = SlirpLocalBackend::with_connector(
             mac,
             Box::new(move || start.elapsed().as_millis() as i64),
             Box::new(connector),
-        );
+        )
+        .with_dhcp_server(dhcp)
+        .with_dns_service(Box::new(NativeDnsService::new()));
         let mut tick = tokio::time::interval(TICK);
         // Drive-on-cadence, not catch-up: after a stall (e.g. a slow connect) we want ONE resume
         // tick, not a burst of missed ones each re-running poll/service (critic m2).
@@ -185,7 +211,7 @@ mod tests {
     };
     use std::time::{Duration, Instant};
     use wasm_vm_core::dev::virtio::net::{MAC as GUEST_MAC, NetBackend};
-    use wasm_vm_slirp::{build_udp_frame, parse_udp};
+    use wasm_vm_slirp::{build_query, build_udp_frame, parse_response, parse_udp};
 
     const GUEST_IP: Ipv4Address = Ipv4Address::new(10, 0, 2, 15);
     const GATEWAY_IP: Ipv4Address = Ipv4Address::new(10, 0, 2, 2);
@@ -493,6 +519,46 @@ mod tests {
         assert!(
             response.is_some(),
             "the native production driver must preserve an external UDP datagram round trip"
+        );
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn internal_dns_resolves_through_the_native_driver_without_manual_guest_config() {
+        let response = tokio::task::spawn_blocking(move || {
+            let mut backend = SlirpBackend::new(GATEWAY_MAC);
+            let query = build_query(0x5151, "localhost", wasm_vm_slirp::dns::TYPE_A);
+            let request = build_udp_frame(
+                GUEST_MAC,
+                GATEWAY_MAC,
+                GUEST_IP,
+                43053,
+                wasm_vm_slirp::net::DNS,
+                53,
+                &query,
+            )
+            .unwrap();
+            backend.tx(&request);
+            wait_for_frame(&mut backend, Duration::from_secs(3), |frame| {
+                let Some(udp) = parse_udp(frame) else {
+                    return false;
+                };
+                udp.src_ip == wasm_vm_slirp::net::DNS
+                    && udp.src_port == 53
+                    && udp.dst_port == 43053
+                    && parse_response(&udp.payload).is_some_and(|answer| {
+                        answer
+                            .a_records
+                            .iter()
+                            .any(|(ip, _)| ip == &Ipv4Address::LOCALHOST)
+                    })
+            })
+        })
+        .await
+        .unwrap();
+
+        assert!(
+            response.is_some(),
+            "the production native backend must answer guest DNS through the host OS resolver"
         );
     }
 

@@ -54,6 +54,9 @@ pub struct SlirpStack {
     /// here is removed/unknown, so accessors return a safe default instead of panicking / touching a
     /// reused slot; critic MAJOR).
     flows: BTreeMap<SocketHandle, TcpFlow>,
+    /// Permanent internal DNS-over-TCP listener on `10.0.2.3:53`. It is deliberately separate from
+    /// NAT `flows`: local DNS never consumes a NAT slot or opens an outbound connector.
+    dns_tcp: SocketHandle,
     /// Guest UDP datagrams bound for our internal services (DHCP/DNS), DIVERTED out of the smoltcp
     /// path (which drops UDP) for the caller to dispatch via `UdpServices` — sync for DHCP, async for
     /// DNS. Drained by [`take_service_udp`](Self::take_service_udp); replies come back via
@@ -74,6 +77,19 @@ struct TcpFlow {
     guest: Option<(Ipv4Addr, u16)>,
 }
 
+fn new_dns_tcp_socket() -> tcp::Socket<'static> {
+    let rx = tcp::SocketBuffer::new(vec![0u8; TCP_BUF]);
+    let tx = tcp::SocketBuffer::new(vec![0u8; TCP_BUF]);
+    let mut socket = tcp::Socket::new(rx, tx);
+    socket
+        .listen(IpListenEndpoint {
+            addr: Some(IpAddress::Ipv4(net::DNS)),
+            port: DNS_PORT,
+        })
+        .expect("listen on internal DNS endpoint");
+    socket
+}
+
 impl SlirpStack {
     /// A stack whose gateway MAC is `mac` and whose gateway IP is `net::GATEWAY` (`10.0.2.2/24`).
     pub fn new(mac: [u8; 6]) -> Self {
@@ -89,16 +105,26 @@ impl SlirpStack {
                     net::PREFIX_LEN,
                 ))
                 .expect("one ip fits");
+            let dns = net::DNS.octets();
+            addrs
+                .push(IpCidr::new(
+                    IpAddress::v4(dns[0], dns[1], dns[2], dns[3]),
+                    net::PREFIX_LEN,
+                ))
+                .expect("gateway and DNS addresses fit");
         });
         // Promiscuous accept: process guest packets destined to ANY IP (not just 10.0.2.2), so a
         // per-flow listening socket can accept a guest SYN to an arbitrary external host.
         iface.set_any_ip(true);
+        let mut sockets = SocketSet::new(vec![]);
+        let dns_tcp = sockets.add(new_dns_tcp_socket());
         SlirpStack {
             iface,
             device,
-            sockets: SocketSet::new(vec![]),
+            sockets,
             mac,
             flows: BTreeMap::new(),
+            dns_tcp,
             service_udp: Vec::new(),
         }
     }
@@ -111,15 +137,19 @@ impl SlirpStack {
             return false;
         };
         match eth.ethertype() {
-            // ARP only for the gateway — don't claim the whole subnet.
-            EthernetProtocol::Arp => frame.len() >= 42 && frame[38..42] == net::GATEWAY.octets(),
+            // ARP only for the two addresses slirp owns — don't claim the whole subnet.
+            EthernetProtocol::Arp => {
+                frame.len() >= 42
+                    && (frame[38..42] == net::GATEWAY.octets()
+                        || frame[38..42] == net::DNS.octets())
+            }
             EthernetProtocol::Ipv4 => {
                 let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
                     return false;
                 };
                 let dst = ip.dst_addr();
-                if dst == net::GATEWAY {
-                    return true; // ICMP echo / local TCP addressed to us
+                if net::is_local(dst) {
+                    return true; // gateway ICMP/TCP or the internal DNS TCP listener
                 }
                 // TCP to an endpoint we've opened a listening socket for.
                 if ip.next_header() == IpProtocol::Tcp
@@ -299,6 +329,57 @@ impl SlirpStack {
         if self.flows.contains_key(&handle) {
             self.sockets.get_mut::<tcp::Socket>(handle).abort();
         }
+    }
+
+    /// State of the permanent internal DNS-over-TCP socket.
+    pub fn dns_tcp_state(&self) -> tcp::State {
+        self.sockets.get::<tcp::Socket>(self.dns_tcp).state()
+    }
+
+    /// Drain all currently available DNS-over-TCP stream bytes from the guest.
+    pub fn dns_tcp_recv(&mut self) -> Vec<u8> {
+        let socket = self.sockets.get_mut::<tcp::Socket>(self.dns_tcp);
+        let mut out = Vec::new();
+        while socket.can_recv() {
+            let got = socket
+                .recv(|buf| {
+                    out.extend_from_slice(buf);
+                    (buf.len(), buf.len())
+                })
+                .unwrap_or(0);
+            if got == 0 {
+                break;
+            }
+        }
+        out
+    }
+
+    /// Offer response bytes to the DNS-over-TCP socket, returning the accepted prefix length.
+    pub fn dns_tcp_send(&mut self, bytes: &[u8]) -> usize {
+        self.sockets
+            .get_mut::<tcp::Socket>(self.dns_tcp)
+            .send_slice(bytes)
+            .unwrap_or(0)
+    }
+
+    /// Gracefully close the current DNS-over-TCP connection after all answers have been queued.
+    pub fn dns_tcp_close(&mut self) {
+        self.sockets.get_mut::<tcp::Socket>(self.dns_tcp).close();
+    }
+
+    /// Re-arm the permanent listener after the previous connection reaches `Closed`.
+    pub fn dns_tcp_relisten(&mut self) -> bool {
+        let socket = self.sockets.get_mut::<tcp::Socket>(self.dns_tcp);
+        if socket.state() != tcp::State::Closed {
+            return false;
+        }
+        socket
+            .listen(IpListenEndpoint {
+                addr: Some(IpAddress::Ipv4(net::DNS)),
+                port: DNS_PORT,
+            })
+            .expect("relisten on internal DNS endpoint");
+        true
     }
 
     /// Tear down a flow by handle: remove its smoltcp socket (frees the 128 KiB buffers) and its

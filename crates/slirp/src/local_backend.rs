@@ -31,6 +31,9 @@ use core::net::IpAddr;
 use wasm_vm_core::dev::virtio::net::NetBackend;
 
 use crate::dhcp::DhcpServer;
+use crate::dns;
+use crate::dns_service::{DnsRequest, DnsService, MAX_PENDING_DNS};
+use crate::dns_tcp::{TcpFrame, frame_message, next_message};
 use crate::manager::{Action, FlowManager};
 use crate::nat::{FlowKey, Proto};
 use crate::stack::{SlirpStack, is_service_udp};
@@ -48,6 +51,9 @@ const MAX_PENDING_UDP_BYTES: usize = 4 * MAX_UDP_PAYLOAD;
 /// no larger than one guest-facing TCP socket buffer, so it improves framing efficiency without
 /// weakening backpressure or allowing connector data to grow unbounded.
 const MAX_REMOTE_STAGING_BYTES: usize = 64 * 1024;
+/// Classic DNS-over-UDP payload ceiling. Larger answers are replaced by a TC=1 response so the
+/// guest retries the same query over the permanent internal TCP listener.
+const DNS_UDP_PAYLOAD_LIMIT: usize = 512;
 
 /// One live outbound flow: the guest-facing smoltcp socket (`handle`) paired with the connector-side
 /// connection (`conn`), plus the guest→remote bytes not yet accepted by the connector.
@@ -77,6 +83,21 @@ struct UdpFlow {
     pending_bytes: usize,
 }
 
+enum DnsTarget {
+    Udp(GuestUdp),
+    Tcp { generation: u64 },
+}
+
+struct PendingDns {
+    target: DnsTarget,
+    query: Vec<u8>,
+}
+
+struct PendingTcpWrite {
+    bytes: Vec<u8>,
+    offset: usize,
+}
+
 /// A [`NetBackend`] backed by the slirp local stack: the guest sees a real gateway (`10.0.2.2`) that
 /// answers ARP + ICMP and a DHCP server that hands out `10.0.2.15`. With a [`SyncConnector`] attached
 /// (`with_connector`), guest TCP and UDP flows to non-local IPs are NATed outbound synchronously.
@@ -84,6 +105,12 @@ pub struct SlirpLocalBackend {
     stack: SlirpStack,
     gateway_mac: [u8; 6],
     dhcp: DhcpServer,
+    dns: Option<Box<dyn DnsService>>,
+    next_dns_id: u64,
+    pending_dns: BTreeMap<u64, PendingDns>,
+    dns_tcp_generation: u64,
+    dns_tcp_rx: Vec<u8>,
+    dns_tcp_tx: VecDeque<PendingTcpWrite>,
     egress: VecDeque<Vec<u8>>,
     clock: Box<dyn Fn() -> i64>,
     /// `None` → slice-1 behaviour (no outbound; classification is skipped entirely). `Some` → outbound
@@ -107,6 +134,12 @@ impl SlirpLocalBackend {
             stack: SlirpStack::new(gateway_mac),
             gateway_mac,
             dhcp: DhcpServer::new(),
+            dns: None,
+            next_dns_id: 1,
+            pending_dns: BTreeMap::new(),
+            dns_tcp_generation: 0,
+            dns_tcp_rx: Vec::new(),
+            dns_tcp_tx: VecDeque::new(),
             egress: VecDeque::new(),
             clock,
             connector: None,
@@ -128,6 +161,18 @@ impl SlirpLocalBackend {
         let mut be = Self::new(gateway_mac, clock);
         be.connector = Some(connector);
         be
+    }
+
+    /// Attach the asynchronous DNS resolver/cache reactor used by both UDP and DNS-over-TCP.
+    pub fn with_dns_service(mut self, dns: Box<dyn DnsService>) -> Self {
+        self.dns = Some(dns);
+        self
+    }
+
+    /// Override DHCP lease/MTU parameters for acceptance tests or transport-specific configuration.
+    pub fn with_dhcp_server(mut self, dhcp: DhcpServer) -> Self {
+        self.dhcp = dhcp;
+        self
     }
 
     /// User-space bytes waiting on either side of the flow-control boundary. This diagnostic makes
@@ -246,6 +291,152 @@ impl SlirpLocalBackend {
                     guest_fin_sent: false,
                 },
             );
+        }
+    }
+
+    fn allocate_dns_id(&mut self) -> u64 {
+        loop {
+            let id = self.next_dns_id;
+            self.next_dns_id = self.next_dns_id.wrapping_add(1);
+            if !self.pending_dns.contains_key(&id) {
+                return id;
+            }
+        }
+    }
+
+    fn submit_dns(&mut self, query: Vec<u8>, target: DnsTarget, now_ms: i64) {
+        let Some(parsed) = dns::parse_query(&query) else {
+            return; // malformed DNS is dropped, matching DnsForwarder::handle
+        };
+        if self.pending_dns.len() >= MAX_PENDING_DNS || self.dns.is_none() {
+            self.deliver_dns(target, &query, dns::servfail(&parsed));
+            return;
+        }
+
+        let id = self.allocate_dns_id();
+        let request = DnsRequest {
+            id,
+            message: query.clone(),
+            now_ms,
+        };
+        match self.dns.as_mut().unwrap().submit(request) {
+            Ok(()) => {
+                self.pending_dns.insert(id, PendingDns { target, query });
+            }
+            Err(_) => self.deliver_dns(target, &query, dns::servfail(&parsed)),
+        }
+    }
+
+    fn deliver_dns(&mut self, target: DnsTarget, query: &[u8], mut answer: Vec<u8>) {
+        match target {
+            DnsTarget::Udp(guest) => {
+                if answer.len() > DNS_UDP_PAYLOAD_LIMIT {
+                    let Some(parsed) = dns::parse_query(query) else {
+                        return;
+                    };
+                    answer = dns::truncated(&parsed);
+                }
+                if let Some(frame) = build_udp_frame(
+                    self.gateway_mac,
+                    guest.src_mac,
+                    crate::net::DNS,
+                    53,
+                    guest.src_ip,
+                    guest.src_port,
+                    &answer,
+                ) {
+                    self.stack.push_egress(frame);
+                }
+            }
+            DnsTarget::Tcp { generation } if generation == self.dns_tcp_generation => {
+                if let Some(bytes) = frame_message(&answer) {
+                    self.dns_tcp_tx
+                        .push_back(PendingTcpWrite { bytes, offset: 0 });
+                }
+            }
+            DnsTarget::Tcp { .. } => {} // the guest closed/replaced this connection while resolving
+        }
+    }
+
+    fn submit_udp_dns(&mut self, now_ms: i64) {
+        // `run_dhcp` partitioned the queue first, so only DNS datagrams remain here.
+        for guest in self.stack.take_service_udp() {
+            let query = guest.payload.clone();
+            self.submit_dns(query, DnsTarget::Udp(guest), now_ms);
+        }
+    }
+
+    fn poll_dns_completions(&mut self) {
+        let completions = self.dns.as_mut().map_or_else(Vec::new, |dns| dns.poll());
+        for completion in completions {
+            let Some(pending) = self.pending_dns.remove(&completion.id) else {
+                continue; // stale/unknown completion cannot be delivered to an arbitrary guest flow
+            };
+            if let Some(answer) = completion.message {
+                self.deliver_dns(pending.target, &pending.query, answer);
+            }
+        }
+    }
+
+    fn reset_dns_tcp_connection(&mut self) {
+        let old = self.dns_tcp_generation;
+        self.dns_tcp_generation = self.dns_tcp_generation.wrapping_add(1);
+        self.dns_tcp_rx.clear();
+        self.dns_tcp_tx.clear();
+        self.pending_dns.retain(|_, pending| {
+            !matches!(pending.target, DnsTarget::Tcp { generation } if generation == old)
+        });
+    }
+
+    fn pump_dns_tcp(&mut self, now_ms: i64) {
+        use smoltcp::socket::tcp::State;
+
+        if self.stack.dns_tcp_state() == State::Closed && self.stack.dns_tcp_relisten() {
+            self.reset_dns_tcp_connection();
+        }
+
+        if matches!(
+            self.stack.dns_tcp_state(),
+            State::Established | State::CloseWait
+        ) {
+            let received = self.stack.dns_tcp_recv();
+            if !received.is_empty() {
+                self.dns_tcp_rx.extend_from_slice(&received);
+            }
+
+            while let TcpFrame::Message { msg, consumed } = next_message(&self.dns_tcp_rx) {
+                let message = msg.to_vec();
+                self.dns_tcp_rx.drain(..consumed);
+                self.submit_dns(
+                    message,
+                    DnsTarget::Tcp {
+                        generation: self.dns_tcp_generation,
+                    },
+                    now_ms,
+                );
+            }
+
+            while let Some(write) = self.dns_tcp_tx.front_mut() {
+                let accepted = self.stack.dns_tcp_send(&write.bytes[write.offset..]);
+                if accepted == 0 {
+                    break;
+                }
+                write.offset += accepted;
+                if write.offset == write.bytes.len() {
+                    self.dns_tcp_tx.pop_front();
+                }
+            }
+
+            let generation = self.dns_tcp_generation;
+            let unresolved = self.pending_dns.values().any(
+                |pending| matches!(pending.target, DnsTarget::Tcp { generation: g } if g == generation),
+            );
+            if self.stack.dns_tcp_state() == State::CloseWait
+                && !unresolved
+                && self.dns_tcp_tx.is_empty()
+            {
+                self.stack.dns_tcp_close();
+            }
         }
     }
 
@@ -458,15 +649,17 @@ impl SlirpLocalBackend {
         }
     }
 
-    /// Drive one servicing pass: `poll` (ARP/ICMP; `inject` already diverted any DHCP UDP to the
-    /// service queue), then `run_dhcp` (answer diverted DHCP → `device.tx`), then the outbound-TCP
-    /// pump, then harvest egress for the guest. A second `poll` after the pump flushes the segments
-    /// `tcp_send`/`tcp_close` queued (they only leave the interface on a poll). (`run_dhcp` writes
-    /// egress directly, so it needs no extra poll.)
+    /// Drive one servicing pass: poll smoltcp, answer DHCP, submit/poll UDP and TCP DNS work, pump
+    /// outbound TCP/UDP, then harvest egress. The second stack poll flushes segments queued by both
+    /// the external pump and the internal DNS-over-TCP listener.
     fn service(&mut self) {
         let now = (self.clock)();
         self.stack.poll(now);
         self.stack.run_dhcp(&self.dhcp);
+        self.submit_udp_dns(now);
+        self.pump_dns_tcp(now);
+        self.poll_dns_completions();
+        self.pump_dns_tcp(now);
         self.pump();
         self.pump_udp();
         self.expire();
@@ -490,11 +683,13 @@ impl NetBackend for SlirpLocalBackend {
         // exists, a remote TCP/UDP reply may therefore be waiting in the host event loop even when
         // no guest-bound ethernet frame is staged yet. Tell the machine not to WFI-fast-forward a
         // guest socket timeout past that delivery opportunity.
-        self.connector.is_some() && self.manager.flow_count() > 0
+        (self.connector.is_some() && self.manager.flow_count() > 0)
+            || !self.pending_dns.is_empty()
+            || self.dns.as_ref().is_some_and(|dns| dns.pending())
     }
 
     fn poll(&mut self) {
-        if self.connector.is_none() {
+        if self.connector.is_none() && self.dns.is_none() {
             return;
         }
         let now = (self.clock)();
@@ -518,7 +713,7 @@ impl NetBackend for SlirpLocalBackend {
         // When the caller polls for a frame and nothing is queued, run a servicing pass so
         // remote→guest data (and connect-state transitions) are picked up. (No connector → nothing to
         // pump; the branch is skipped, so slice-1 behaviour is byte-identical.)
-        if self.egress.is_empty() && self.connector.is_some() {
+        if self.egress.is_empty() && (self.connector.is_some() || self.dns.is_some()) {
             self.service();
         }
         self.egress.pop_front()
@@ -537,7 +732,8 @@ mod tests {
     use super::*;
     use smoltcp::wire::{
         ArpOperation, ArpPacket, ArpRepr, EthernetAddress, EthernetFrame, EthernetProtocol,
-        EthernetRepr,
+        EthernetRepr, IpAddress, IpProtocol, Ipv4Packet, Ipv4Repr, TcpControl, TcpPacket, TcpRepr,
+        TcpSeqNumber,
     };
     use std::cell::{Cell, RefCell};
     use std::rc::Rc;
@@ -547,6 +743,112 @@ mod tests {
     use core::net::Ipv4Addr;
     const GUEST_IP: Ipv4Addr = Ipv4Addr::new(10, 0, 2, 15);
     const GW_IP: Ipv4Addr = Ipv4Addr::new(10, 0, 2, 2);
+
+    struct ImmediateDns {
+        answer_count: usize,
+        completions: VecDeque<crate::DnsCompletion>,
+        submissions: Rc<Cell<usize>>,
+    }
+
+    impl ImmediateDns {
+        fn new(answer_count: usize, submissions: Rc<Cell<usize>>) -> Self {
+            Self {
+                answer_count,
+                completions: VecDeque::new(),
+                submissions,
+            }
+        }
+    }
+
+    impl DnsService for ImmediateDns {
+        fn submit(&mut self, request: DnsRequest) -> Result<(), DnsRequest> {
+            self.submissions.set(self.submissions.get() + 1);
+            let query = dns::parse_query(&request.message).unwrap();
+            let answers: Vec<_> = (0..self.answer_count)
+                .map(|index| dns::Answer::a(Ipv4Addr::new(192, 0, 2, (index % 250 + 1) as u8), 60))
+                .collect();
+            self.completions.push_back(crate::DnsCompletion {
+                id: request.id,
+                message: Some(dns::build_response(&query, dns::RCODE_NOERROR, &answers)),
+            });
+            Ok(())
+        }
+
+        fn poll(&mut self) -> Vec<crate::DnsCompletion> {
+            self.completions.drain(..).collect()
+        }
+
+        fn pending(&self) -> bool {
+            !self.completions.is_empty()
+        }
+    }
+
+    struct StalledDns;
+
+    impl DnsService for StalledDns {
+        fn submit(&mut self, _request: DnsRequest) -> Result<(), DnsRequest> {
+            Ok(())
+        }
+
+        fn poll(&mut self) -> Vec<crate::DnsCompletion> {
+            Vec::new()
+        }
+
+        fn pending(&self) -> bool {
+            true
+        }
+    }
+
+    fn guest_tcp_segment(
+        dst: Ipv4Addr,
+        src_port: u16,
+        dst_port: u16,
+        seq: i32,
+        ack: Option<i32>,
+        control: TcpControl,
+        payload: &[u8],
+    ) -> Vec<u8> {
+        let tcp = TcpRepr {
+            src_port,
+            dst_port,
+            control,
+            seq_number: TcpSeqNumber(seq),
+            ack_number: ack.map(TcpSeqNumber),
+            window_len: 64240,
+            window_scale: None,
+            max_seg_size: None,
+            sack_permitted: false,
+            sack_ranges: [None, None, None],
+            timestamp: None,
+            payload,
+        };
+        let ip = Ipv4Repr {
+            src_addr: GUEST_IP,
+            dst_addr: dst,
+            next_header: IpProtocol::Tcp,
+            payload_len: tcp.buffer_len(),
+            hop_limit: 64,
+        };
+        let eth = EthernetRepr {
+            src_addr: EthernetAddress(GUEST_MAC),
+            dst_addr: EthernetAddress(GW_MAC),
+            ethertype: EthernetProtocol::Ipv4,
+        };
+        let mut bytes = vec![0; eth.buffer_len() + ip.buffer_len() + tcp.buffer_len()];
+        let caps = smoltcp::phy::ChecksumCapabilities::default();
+        let mut frame = EthernetFrame::new_unchecked(&mut bytes);
+        eth.emit(&mut frame);
+        let mut ip_packet = Ipv4Packet::new_unchecked(frame.payload_mut());
+        ip.emit(&mut ip_packet, &caps);
+        let mut tcp_packet = TcpPacket::new_unchecked(ip_packet.payload_mut());
+        tcp.emit(
+            &mut tcp_packet,
+            &IpAddress::Ipv4(GUEST_IP),
+            &IpAddress::Ipv4(dst),
+            &caps,
+        );
+        bytes
+    }
 
     #[derive(Default)]
     struct UdpProbeState {
@@ -692,6 +994,243 @@ mod tests {
             }
         }
         assert!(got, "gateway should ARP-reply through the local backend");
+    }
+
+    #[test]
+    fn oversized_udp_dns_answer_sets_tc_then_full_answer_succeeds_over_tcp() {
+        let submissions = Rc::new(Cell::new(0));
+        let mut be = SlirpLocalBackend::new(GW_MAC, Box::new(|| 1))
+            .with_dns_service(Box::new(ImmediateDns::new(40, submissions.clone())));
+
+        let query = dns::build_query(0xD15A, "many.test", dns::TYPE_A);
+        let udp_query = build_udp_frame(
+            GUEST_MAC,
+            GW_MAC,
+            GUEST_IP,
+            40530,
+            crate::net::DNS,
+            53,
+            &query,
+        )
+        .unwrap();
+        be.tx(&udp_query);
+        let truncated = loop {
+            let frame = be.rx().expect("UDP DNS answer");
+            if let Some(udp) = parse_udp(&frame)
+                && udp.src_ip == crate::net::DNS
+                && udp.src_port == 53
+            {
+                break udp.payload;
+            }
+        };
+        assert_ne!(truncated[2] & 0x02, 0, "oversized UDP answer sets TC=1");
+        assert_eq!(u16::from_be_bytes([truncated[6], truncated[7]]), 0);
+
+        // Prime the guest neighbor, then perform the resolver's TCP retry against 10.0.2.3:53.
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+        let client_port = 40531;
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            client_port,
+            53,
+            1000,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        let server_isn = loop {
+            let frame = be.rx().expect("DNS TCP SYN-ACK");
+            let Ok(eth) = EthernetFrame::new_checked(&frame) else {
+                continue;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                continue;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                continue;
+            };
+            if tcp.src_port() == 53 && tcp.dst_port() == client_port && tcp.syn() && tcp.ack() {
+                break tcp.seq_number().0;
+            }
+        };
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            client_port,
+            53,
+            1001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::None,
+            &[],
+        ));
+        while be.rx().is_some() {}
+        let framed_query = frame_message(&query).unwrap();
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            client_port,
+            53,
+            1001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::Psh,
+            &framed_query,
+        ));
+
+        let mut stream = Vec::new();
+        let mut expected_server_seq = server_isn.wrapping_add(1);
+        let client_seq = 1001i32.wrapping_add(framed_query.len() as i32);
+        for _ in 0..8 {
+            let Some(frame) = be.rx() else {
+                break;
+            };
+            let Ok(eth) = EthernetFrame::new_checked(&frame) else {
+                continue;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                continue;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                continue;
+            };
+            if tcp.src_port() == 53
+                && tcp.dst_port() == client_port
+                && !tcp.payload().is_empty()
+                && tcp.seq_number().0 == expected_server_seq
+            {
+                stream.extend_from_slice(tcp.payload());
+                expected_server_seq = expected_server_seq.wrapping_add(tcp.payload().len() as i32);
+                // A real resolver ACKs each TCP segment; doing so here lets smoltcp emit the rest of
+                // an answer larger than its conservative 536-byte initial segment.
+                be.tx(&guest_tcp_segment(
+                    crate::net::DNS,
+                    client_port,
+                    53,
+                    client_seq,
+                    Some(expected_server_seq),
+                    TcpControl::None,
+                    &[],
+                ));
+                if matches!(next_message(&stream), TcpFrame::Message { .. }) {
+                    break;
+                }
+            }
+        }
+        let TcpFrame::Message { msg, consumed } = next_message(&stream) else {
+            panic!(
+                "full length-prefixed DNS answer must arrive over TCP ({} bytes, prefix {:?})",
+                stream.len(),
+                &stream[..stream.len().min(8)]
+            );
+        };
+        assert_eq!(consumed, stream.len());
+        let answer = dns::parse_response(&msg).unwrap();
+        assert_eq!(answer.a_records.len(), 40);
+        assert_eq!(submissions.get(), 2, "one UDP resolve plus the TCP retry");
+    }
+
+    #[test]
+    fn full_dns_queue_returns_immediate_servfail_over_tcp() {
+        let mut be =
+            SlirpLocalBackend::new(GW_MAC, Box::new(|| 1)).with_dns_service(Box::new(StalledDns));
+
+        // Establish the permanent DNS-over-TCP listener through the real guest-facing stack.
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+        let client_port = 40532;
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            client_port,
+            53,
+            1000,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        let server_isn = loop {
+            let frame = be.rx().expect("DNS TCP SYN-ACK");
+            let Ok(eth) = EthernetFrame::new_checked(&frame) else {
+                continue;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                continue;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                continue;
+            };
+            if tcp.src_port() == 53 && tcp.dst_port() == client_port && tcp.syn() && tcp.ack() {
+                break tcp.seq_number().0;
+            }
+        };
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            client_port,
+            53,
+            1001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::None,
+            &[],
+        ));
+        while be.rx().is_some() {}
+
+        // Saturate the bounded resolver queue with accepted work that deliberately never completes.
+        let stalled = dns::build_query(0x5100, "stalled.test", dns::TYPE_A);
+        for _ in 0..MAX_PENDING_DNS {
+            be.submit_dns(
+                stalled.clone(),
+                DnsTarget::Tcp {
+                    generation: u64::MAX,
+                },
+                1,
+            );
+        }
+        assert_eq!(be.pending_dns.len(), MAX_PENDING_DNS);
+
+        // Every complete, valid message must be consumed and rejected with a framed SERVFAIL. Send
+        // two queries in one TCP segment so an implementation that handles only the first frame
+        // cannot accidentally satisfy the bounded-queue regression.
+        let query = dns::build_query(0x5151, "queue-full.test", dns::TYPE_A);
+        let query_two = dns::build_query(0x5252, "still-full.test", dns::TYPE_A);
+        let mut framed_query = frame_message(&query).unwrap();
+        framed_query.extend_from_slice(&frame_message(&query_two).unwrap());
+        be.tx(&guest_tcp_segment(
+            crate::net::DNS,
+            client_port,
+            53,
+            1001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::Psh,
+            &framed_query,
+        ));
+
+        let mut stream = Vec::new();
+        for frame in &be.egress {
+            let Ok(eth) = EthernetFrame::new_checked(frame) else {
+                continue;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                continue;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                continue;
+            };
+            if tcp.src_port() == 53 && tcp.dst_port() == client_port {
+                stream.extend_from_slice(tcp.payload());
+            }
+        }
+        let parsed = dns::parse_query(&query).unwrap();
+        let parsed_two = dns::parse_query(&query_two).unwrap();
+        let mut expected = frame_message(&dns::servfail(&parsed)).unwrap();
+        expected.extend_from_slice(&frame_message(&dns::servfail(&parsed_two)).unwrap());
+        assert_eq!(
+            stream,
+            expected,
+            "a full DNS work queue must produce immediate framed SERVFAIL; pending={}, buffered={}",
+            be.pending_dns.len(),
+            be.dns_tcp_rx.len()
+        );
+        assert!(
+            be.dns_tcp_rx.is_empty(),
+            "complete query must not remain buffered"
+        );
     }
 
     #[test]

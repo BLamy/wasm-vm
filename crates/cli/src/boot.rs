@@ -75,9 +75,15 @@ pub struct BootArgs {
     pub net: bool,
     /// E3-T14: attach virtio-net (slot 1) backed by the slirp user-mode network stack instead of
     /// loopback — DHCP configures `eth0`, and guest-initiated TCP/UDP is NATed onto real outbound
-    /// sockets. Takes precedence over `--net`. DNS remains a follow-up.
+    /// sockets, with internal DHCP and host-resolver-backed DNS. Takes precedence over `--net`.
     #[arg(long)]
     pub net_slirp: bool,
+    /// DHCP lease advertised by slirp, in seconds. Short values make renewal tests deterministic.
+    #[arg(long, default_value_t = wasm_vm_slirp::dhcp::DEFAULT_LEASE_SECS)]
+    pub net_slirp_lease_secs: u32,
+    /// Link MTU advertised by slirp DHCP option 26.
+    #[arg(long, default_value_t = wasm_vm_slirp::dhcp::DEFAULT_MTU)]
+    pub net_slirp_mtu: u16,
     /// Write compact guest-layer evidence at exit: a rolling digest of every retired instruction,
     /// retired count, and final architectural-state SHA-256. Intended for reopenable verification
     /// of long Linux boots where a full multi-billion-line canonical trace is impractical.
@@ -335,8 +341,13 @@ fn assemble(
     if a.net_slirp {
         // E3-T14: slirp-backed virtio-net in slot 1 — the guest's frames terminate in the
         // user-mode TCP/IP stack and guest-initiated TCP is NATed onto real outbound sockets.
-        let _ = m.enable_virtio_net(Box::new(crate::net_backend::SlirpBackend::new(
+        let config = crate::net_backend::SlirpConfig {
+            lease_secs: a.net_slirp_lease_secs.max(1),
+            mtu: a.net_slirp_mtu.clamp(576, 1500),
+        };
+        let _ = m.enable_virtio_net(Box::new(crate::net_backend::SlirpBackend::with_config(
             crate::net_backend::GATEWAY_MAC,
+            config,
         )));
     } else if a.net {
         // E3-T13: loopback-backed virtio-net in slot 1 (the DTB already advertises all 8
@@ -536,6 +547,9 @@ impl BootProfiler {
     }
 }
 
+// These references are the long-lived boot-loop state; bundling them into a one-use context solely
+// to satisfy the argument-count style lint would obscure their ownership and widen unrelated churn.
+#[allow(clippy::too_many_arguments)]
 fn run_machine<T: TraceSink>(
     a: &BootArgs,
     m: &mut Machine,

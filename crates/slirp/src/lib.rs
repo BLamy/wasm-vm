@@ -14,6 +14,7 @@ pub mod connector;
 pub mod device;
 pub mod dhcp;
 pub mod dns;
+pub mod dns_service;
 pub mod dns_tcp;
 pub mod doh;
 #[cfg(all(test, feature = "native"))]
@@ -23,6 +24,8 @@ pub mod manager;
 pub mod nat;
 #[cfg(feature = "native")]
 pub mod native;
+#[cfg(feature = "native")]
+pub mod native_dns;
 #[cfg(feature = "native")]
 pub mod native_resolver;
 #[cfg(feature = "native")]
@@ -50,14 +53,17 @@ pub use manager::{Action, FlowManager, FrameOutcome};
 pub use bridge::Bridge;
 pub use connector::{ConnectError, OutboundConnector};
 pub use device::SlirpDevice;
-pub use dhcp::DhcpServer;
+pub use dhcp::{DhcpServer, DhcpStats, DhcpStatsHandle};
 pub use dns::{Answer, Query, ResponseInfo, build_query, parse_query, parse_response};
+pub use dns_service::{DnsCompletion, DnsRequest, DnsService, MAX_PENDING_DNS};
 pub use dns_tcp::{TcpFrame, frame_message, next_message};
 pub use doh::{DohResolver, DohTransport};
 pub use local_backend::SlirpLocalBackend;
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
 #[cfg(feature = "native")]
 pub use native::NativeConnector;
+#[cfg(feature = "native")]
+pub use native_dns::NativeDnsService;
 #[cfg(feature = "native")]
 pub use native_resolver::NativeResolver;
 #[cfg(feature = "native")]

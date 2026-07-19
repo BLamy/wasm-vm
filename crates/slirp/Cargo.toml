@@ -15,7 +15,7 @@ default = ["native"]
 # `native` pulls tokio (the NativeConnector + relay driver) and tokio-tungstenite (the WS-wire
 # adapter that bridges a real WebSocket to the relay). No TLS: the relay terminates plaintext WS;
 # TLS belongs at the ingress. The browser build (`default-features = false`) pulls none of this.
-native = ["dep:tokio", "dep:tokio-tungstenite", "dep:futures-util"]
+native = ["dep:tokio", "dep:tokio-tungstenite", "dep:futures-util", "dep:libc"]
 
 [dependencies]
 # E3-net (browser networking): the local-stack NetBackend impl needs the machine's NetBackend trait.
@@ -47,9 +47,9 @@ tokio = { version = "1", optional = true, default-features = false, features = [
     "macros",
 ] }
 tokio-tungstenite = { version = "0.24", default-features = false, features = ["handshake"], optional = true }
+libc = { version = "0.2", optional = true }
 
 [dev-dependencies]
-libc = "0.2"
 tokio = { version = "1", default-features = false, features = [
     "rt",
     "rt-multi-thread",
