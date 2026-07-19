@@ -3,7 +3,7 @@ id: E3-T10
 epic: 3
 title: Storage quota management and reset-disk escape hatch
 priority: 310
-status: implemented
+status: verified
 depends_on: [E3-T05]
 estimate: S
 capstone: false
@@ -293,3 +293,33 @@ TCP/UDP tests and the full workspace suite with zero failures); and `cargo build
 --target wasm32-unknown-unknown` (pass, 36.39s). The prior commit-bound browser trace, exact
 quota-edge reopen hash, forced fsck, idle-drain attack, typed reset, and demo proof remain unchanged;
 this resubmission adds the one deterministic reset-identity regression requested by the critic.
+
+### 2026-07-19 — fresh verifier — VERDICT: verified
+
+- P0 durable reset identity — HELD. Predicted that resetting the transport while a persistent
+  WRITE is parked clears the backend retry identity, leaves the abandoned used ring and status
+  byte untouched, and makes a fresh same-sector/length WRITE apply once and wait for its own
+  durability barrier. In a scrubbed environment,
+  `reset_discards_parked_durable_write` passed at submission `7441073`.
+- SABOTAGE — HELD. In a detached disposable worktree, removing only the production
+  `st.backend.write_reset()` call from `VirtioBlkDev::reset` made the exact test fail at
+  `crates/core/tests/virtio_blk_flush.rs:435`: predicted reset count `1`, observed `0`. Restoring
+  the hook made the identical scrubbed command pass. The promoted regression is therefore
+  load-bearing for the final coverage gap.
+- COVERAGE — SUFFICIENT. The strengthened test directly observes the reset hook, abandoned-chain
+  non-completion/status preservation, queue reinitialization, new write application, independent
+  durability wait, and exactly-once completion. The remaining diff is task/queue metadata; no dead
+  or unexercised behavior hunk remains.
+- EVIDENCE / MOCK / ENV — HELD. The prior browser trace digest remains
+  `9ccdb05120bd072a4b4f312bf4f5fda623ec851fc6283965e638dd64d46593a2`, its source commit
+  `4a1c6649aa889c7d8ef37e7ee1bd9dd5ac1e6fbd` is an ancestor of the submission, and the retained
+  terminal/fsck evidence still records `PRISTINE_42_OK`, `RESET_EXTBAD=0`, and `FSCK_RC=0`.
+  `git diff --check 35ad7fb..7441073` passed.
+- SUITE: promote `reset_discards_parked_durable_write` as the permanent deterministic regression.
+
+Commands: `env -u RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS -u CARGO_TARGET_DIR -u
+CARGO_BUILD_TARGET -u RUST_LOG cargo test -p wasm-vm-core --test virtio_blk_flush
+reset_discards_parked_durable_write -- --exact --nocapture` (green at submission, red under
+sabotage with exit 101, green after restore); `shasum -a 256 evidence/e3-t10/*`;
+`git merge-base --is-ancestor 4a1c6649aa889c7d8ef37e7ee1bd9dd5ac1e6fbd 7441073`;
+`git diff --check 35ad7fb..7441073`.
