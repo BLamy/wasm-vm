@@ -3,7 +3,7 @@ id: E3-T10
 epic: 3
 title: Storage quota management and reset-disk escape hatch
 priority: 310
-status: in-progress
+status: implemented
 depends_on: [E3-T05]
 estimate: S
 capstone: false
@@ -271,3 +271,25 @@ reconstruction/fsck, and browser compliance run are the final guest/browser evid
   digest validation. The 48-minute browser trace was interrogated rather than rerun.
 - SUITE: do not promote the reset test until the new post-reset request makes removal of
   `backend.write_reset()` fail.
+
+### 2026-07-19 — worker — implemented at `54d27e6`
+
+Closed the verifier's final reset-identity evidence gap. The promoted
+`reset_discards_parked_durable_write` attack now resets the transport while a persistent WRITE is
+parked, proves the abandoned descriptor never publishes a used entry or status byte, reinitializes
+the same queue, submits a fresh WRITE to the same sector and length, and proves that request is
+newly applied, waits for its own durability barrier, then completes exactly once. The test backend
+also counts reset notifications so the production reset hook is directly observed.
+
+Sabotage was load-bearing: temporarily removing `st.backend.write_reset()` from
+`VirtioBlkDev::reset` made this exact test fail at `transport reset reaches backend retry state`
+with observed resets `0` versus expected `1`; restoring the hook returned the test to green.
+
+Gates: `cargo fmt --all -- --check`; `cargo clippy --workspace --all-targets --all-features -- -D
+warnings` (pass, 7m13s); `cargo test --workspace -- --skip
+file_backend::tests::kill_mid_write_no_torn_sectors` (first sandboxed run reached four local-socket
+tests and failed only with `Operation not permitted`; the exact permitted rerun executed those
+TCP/UDP tests and the full workspace suite with zero failures); and `cargo build -p wasm-vm-wasm
+--target wasm32-unknown-unknown` (pass, 36.39s). The prior commit-bound browser trace, exact
+quota-edge reopen hash, forced fsck, idle-drain attack, typed reset, and demo proof remain unchanged;
+this resubmission adds the one deterministic reset-identity regression requested by the critic.
