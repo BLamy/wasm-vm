@@ -3,7 +3,7 @@ id: E3-T17
 epic: 3
 title: Browser Tailscale transport — IPN worker, TCP/UDP streams, MagicDNS, and exit nodes
 priority: 317
-status: pending
+status: in-progress
 depends_on: [E3-T15, E3-T16]
 estimate: L
 capstone: false
