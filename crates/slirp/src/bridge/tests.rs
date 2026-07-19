@@ -10,6 +10,7 @@ use smoltcp::wire::{
 };
 use std::future::Future;
 use std::net::Ipv4Addr;
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
 const GUEST_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x56];
@@ -80,6 +81,80 @@ fn syn(dst: Ipv4Addr, src_port: u16, dst_port: u16) -> Vec<u8> {
     buf
 }
 
+fn ack(
+    dst: Ipv4Addr,
+    src_port: u16,
+    dst_port: u16,
+    seq_number: TcpSeqNumber,
+    ack_number: TcpSeqNumber,
+) -> Vec<u8> {
+    let tcp = TcpRepr {
+        src_port,
+        dst_port,
+        control: TcpControl::None,
+        seq_number,
+        ack_number: Some(ack_number),
+        window_len: 64240,
+        window_scale: None,
+        max_seg_size: None,
+        sack_permitted: false,
+        sack_ranges: [None, None, None],
+        timestamp: None,
+        payload: &[],
+    };
+    let src: Ipv4Address = net::GUEST;
+    let ip = Ipv4Repr {
+        src_addr: src,
+        dst_addr: dst,
+        next_header: IpProtocol::Tcp,
+        payload_len: tcp.buffer_len(),
+        hop_limit: 64,
+    };
+    let eth = EthernetRepr {
+        src_addr: smoltcp::wire::EthernetAddress(GUEST_MAC),
+        dst_addr: smoltcp::wire::EthernetAddress(GW_MAC),
+        ethertype: EthernetProtocol::Ipv4,
+    };
+    let mut buf = vec![0u8; eth.buffer_len() + ip.buffer_len() + tcp.buffer_len()];
+    let caps = smoltcp::phy::ChecksumCapabilities::default();
+    let mut frame = smoltcp::wire::EthernetFrame::new_unchecked(&mut buf);
+    eth.emit(&mut frame);
+    let mut ipp = Ipv4Packet::new_unchecked(frame.payload_mut());
+    ip.emit(&mut ipp, &caps);
+    let mut tp = TcpPacket::new_unchecked(ipp.payload_mut());
+    tcp.emit(&mut tp, &IpAddress::Ipv4(src), &IpAddress::Ipv4(dst), &caps);
+    buf
+}
+
+#[derive(Clone, Default)]
+struct ExpiryConnector {
+    live: Arc<AtomicUsize>,
+}
+
+struct ExpiryConn(Arc<AtomicUsize>);
+
+impl Drop for ExpiryConn {
+    fn drop(&mut self) {
+        self.0.fetch_sub(1, Ordering::SeqCst);
+    }
+}
+
+impl OutboundConnector for ExpiryConnector {
+    type Conn = ExpiryConn;
+
+    fn connect(
+        &self,
+        _host: IpAddr,
+        _port: u16,
+    ) -> impl Future<Output = Result<Self::Conn, ConnectError>> + Send {
+        let live = self.live.clone();
+        async move {
+            live.fetch_add(1, Ordering::SeqCst);
+            Ok(ExpiryConn(live))
+        }
+    }
+}
+
 fn arp() -> Vec<u8> {
     let mut f = vec![0u8; 42];
     f[0..6].copy_from_slice(&[0xff; 6]);
@@ -143,11 +218,67 @@ async fn connect_failure_tears_the_flow_down() {
         0,
         "half-open flow torn down on connect failure"
     );
-    // The endpoint was removed → the SYN is filtered → no SYN-ACK (guest times out).
+    // The failed dial must terminate the guest promptly. The bridge briefly lets smoltcp consume the
+    // SYN so it knows the peer sequence number, then aborts; the final segment is therefore RST.
     b.poll(2);
+    let egress = b.take_egress();
     assert!(
-        b.take_egress().is_empty(),
-        "no SYN-ACK for a refused outbound"
+        egress.iter().any(|frame| {
+            let Ok(ip) = Ipv4Packet::new_checked(&frame[14..]) else {
+                return false;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                return false;
+            };
+            tcp.dst_port() == 40000 && tcp.rst()
+        }),
+        "a refused outbound must RST the guest immediately, not leave it to time out: {egress:?}"
+    );
+}
+
+#[tokio::test]
+async fn idle_expiry_resets_an_established_guest_before_reaping_every_resource() {
+    let connector = ExpiryConnector::default();
+    let live = connector.live.clone();
+    let mut b = Bridge::new(GW_MAC, connector, 16);
+    b.on_guest_frame(arp(), 1).await;
+    let _ = b.take_egress();
+
+    b.on_guest_frame(syn(EXT, 40000, 80), 2).await;
+    let syn_ack = b
+        .take_egress()
+        .into_iter()
+        .find_map(|frame| {
+            let ip = Ipv4Packet::new_checked(&frame[14..]).ok()?;
+            let tcp = TcpPacket::new_checked(ip.payload()).ok()?;
+            (tcp.dst_port() == 40000 && tcp.syn() && tcp.ack()).then_some(tcp.seq_number())
+        })
+        .expect("the guest received the SYN-ACK");
+    b.on_guest_frame(ack(EXT, 40000, 80, TcpSeqNumber(1001), syn_ack + 1), 3)
+        .await;
+    let _ = b.take_egress();
+    assert_eq!(b.flow_count(), 1);
+    assert_eq!(live.load(Ordering::SeqCst), 1);
+
+    b.expire(3 + crate::nat::TCP_IDLE_MS);
+    let egress = b.take_egress();
+    assert!(
+        egress.iter().any(|frame| {
+            let Ok(ip) = Ipv4Packet::new_checked(&frame[14..]) else {
+                return false;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                return false;
+            };
+            tcp.dst_port() == 40000 && tcp.rst() && !tcp.fin()
+        }),
+        "expiry must emit RST (never silence or FIN) before removing the socket: {egress:?}"
+    );
+    assert_eq!(b.flow_count(), 0, "the expired NAT flow is gone");
+    assert_eq!(
+        live.load(Ordering::SeqCst),
+        0,
+        "the outbound connection dropped"
     );
 }
 

@@ -23,7 +23,7 @@ pub use relay::{INITIAL_WINDOW, RelayActions, RelayCore, RelayError, SocketOp};
 pub use session::{HandshakeError, Session, SessionError, accept_hello, hello};
 pub use stream::{StreamError, StreamState, Terminal};
 #[cfg(feature = "native")]
-pub use ws_adapter::serve as serve_ws;
+pub use ws_adapter::{serve as serve_ws, serve_with_host_map as serve_ws_with_host_map};
 
 /// The protocol version carried in the [`Frame::Hello`] frame.
 pub const VERSION: u8 = 1;
@@ -37,6 +37,18 @@ const OP_SHUTDOWN_WR: u8 = 5;
 const OP_CLOSE: u8 = 6;
 const OP_RST: u8 = 7;
 const OP_WINDOW: u8 = 8;
+const OP_UDP_OPEN: u8 = 9;
+const OP_UDP_OPEN_OK: u8 = 10;
+const OP_UDP_OPEN_FAIL: u8 = 11;
+const OP_UDP_DATA: u8 = 12;
+const OP_UDP_CLOSE: u8 = 13;
+
+/// Largest legal IPv4 UDP payload. The proxy rejects larger messages rather than truncating or
+/// splitting them, because either would violate datagram boundaries.
+pub const MAX_DATAGRAM_BYTES: usize = 65_507;
+/// Datagram ids occupy the high half of the shared stream namespace. Normal TCP allocation is
+/// permanently constrained below this boundary, including after u32 wraparound.
+pub const FIRST_UDP_STREAM: u32 = 0x8000_0000;
 
 const HEADER_LEN: usize = 5; // stream_id(4) + opcode(1)
 /// Stream 0 is reserved for connection-level frames (HELLO); per-flow frames use a nonzero id.
@@ -47,7 +59,10 @@ const CONTROL_STREAM: u32 = 0;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Frame {
     /// Version negotiation + an optional auth token (may be empty; auth is E3-T19).
-    Hello { version: u8, token: Vec<u8> },
+    Hello {
+        version: u8,
+        token: Vec<u8>,
+    },
     /// Open a flow to `host:port` — the host is a NAME (the relay resolves it).
     Open {
         stream: u32,
@@ -55,19 +70,58 @@ pub enum Frame {
         port: u16,
     },
     /// The flow opened.
-    OpenOk { stream: u32 },
+    OpenOk {
+        stream: u32,
+    },
     /// The flow could not open; `code` is a small errno-ish class.
-    OpenFail { stream: u32, code: u8 },
+    OpenFail {
+        stream: u32,
+        code: u8,
+    },
     /// Stream bytes.
-    Data { stream: u32, bytes: Vec<u8> },
+    Data {
+        stream: u32,
+        bytes: Vec<u8>,
+    },
     /// Half-close: the sender's write side is done (the peer may keep sending).
-    ShutdownWr { stream: u32 },
+    ShutdownWr {
+        stream: u32,
+    },
     /// Clean bidirectional close.
-    Close { stream: u32 },
+    Close {
+        stream: u32,
+    },
     /// Abort — surfaces to the guest as `ECONNRESET`.
-    Rst { stream: u32 },
+    Rst {
+        stream: u32,
+    },
     /// Grant `credit` bytes of send window for this stream (per-stream flow control).
-    Window { stream: u32, credit: u32 },
+    Window {
+        stream: u32,
+        credit: u32,
+    },
+    /// Open one connected UDP socket. Datagram stream ids live in the same wire namespace but are
+    /// allocated from the high half by the client, avoiding collisions with TCP mux ids.
+    UdpOpen {
+        stream: u32,
+        host: String,
+        port: u16,
+    },
+    UdpOpenOk {
+        stream: u32,
+    },
+    UdpOpenFail {
+        stream: u32,
+        code: u8,
+    },
+    /// Exactly one UDP datagram. Never coalesced or split.
+    UdpData {
+        stream: u32,
+        bytes: Vec<u8>,
+    },
+    UdpClose {
+        stream: u32,
+    },
 }
 
 impl Frame {
@@ -82,7 +136,12 @@ impl Frame {
             | Frame::ShutdownWr { stream }
             | Frame::Close { stream }
             | Frame::Rst { stream }
-            | Frame::Window { stream, .. } => *stream,
+            | Frame::Window { stream, .. }
+            | Frame::UdpOpen { stream, .. }
+            | Frame::UdpOpenOk { stream }
+            | Frame::UdpOpenFail { stream, .. }
+            | Frame::UdpData { stream, .. }
+            | Frame::UdpClose { stream } => *stream,
         }
     }
 
@@ -97,6 +156,11 @@ impl Frame {
             Frame::Close { .. } => OP_CLOSE,
             Frame::Rst { .. } => OP_RST,
             Frame::Window { .. } => OP_WINDOW,
+            Frame::UdpOpen { .. } => OP_UDP_OPEN,
+            Frame::UdpOpenOk { .. } => OP_UDP_OPEN_OK,
+            Frame::UdpOpenFail { .. } => OP_UDP_OPEN_FAIL,
+            Frame::UdpData { .. } => OP_UDP_DATA,
+            Frame::UdpClose { .. } => OP_UDP_CLOSE,
         }
     }
 
@@ -111,20 +175,29 @@ impl Frame {
                 b.push(*version);
                 b.extend_from_slice(token);
             }
-            Frame::Open { host, port, .. } => {
+            Frame::Open { host, port, .. } | Frame::UdpOpen { host, port, .. } => {
                 let len: u8 = host.len().try_into().ok()?;
                 b.push(len);
                 b.extend_from_slice(host.as_bytes());
                 b.extend_from_slice(&port.to_be_bytes());
             }
             Frame::OpenFail { code, .. } => b.push(*code),
+            Frame::UdpOpenFail { code, .. } => b.push(*code),
             Frame::Data { bytes, .. } => b.extend_from_slice(bytes),
+            Frame::UdpData { bytes, .. } => {
+                if bytes.len() > MAX_DATAGRAM_BYTES {
+                    return None;
+                }
+                b.extend_from_slice(bytes);
+            }
             Frame::Window { credit, .. } => b.extend_from_slice(&credit.to_be_bytes()),
             // No payload.
             Frame::OpenOk { .. }
             | Frame::ShutdownWr { .. }
             | Frame::Close { .. }
-            | Frame::Rst { .. } => {}
+            | Frame::Rst { .. }
+            | Frame::UdpOpenOk { .. }
+            | Frame::UdpClose { .. } => {}
         }
         Some(b)
     }
@@ -189,6 +262,31 @@ impl Frame {
                     credit: u32::from_be_bytes(b),
                 })
             }
+            OP_UDP_OPEN => {
+                let (&host_len, rest) = payload.split_first()?;
+                let host_len = host_len as usize;
+                let host_bytes = rest.get(..host_len)?;
+                let port_bytes = rest.get(host_len..host_len + 2)?;
+                if rest.len() != host_len + 2 {
+                    return None;
+                }
+                Some(Frame::UdpOpen {
+                    stream,
+                    host: core::str::from_utf8(host_bytes).ok()?.to_string(),
+                    port: u16::from_be_bytes([port_bytes[0], port_bytes[1]]),
+                })
+            }
+            OP_UDP_OPEN_OK => payload.is_empty().then_some(Frame::UdpOpenOk { stream }),
+            OP_UDP_OPEN_FAIL => {
+                let (&code, rest) = payload.split_first()?;
+                rest.is_empty()
+                    .then_some(Frame::UdpOpenFail { stream, code })
+            }
+            OP_UDP_DATA if payload.len() <= MAX_DATAGRAM_BYTES => Some(Frame::UdpData {
+                stream,
+                bytes: payload.to_vec(),
+            }),
+            OP_UDP_CLOSE => payload.is_empty().then_some(Frame::UdpClose { stream }),
             _ => None, // unknown opcode
         }
     }

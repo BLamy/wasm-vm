@@ -1656,6 +1656,7 @@ name = "wasm-vm-slirp"
 version = "0.0.0"
 dependencies = [
  "futures-util",
+ "libc",
  "smoltcp",
  "tokio",
  "tokio-tungstenite",

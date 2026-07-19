@@ -8,8 +8,8 @@ repository.workspace = true
 # parses/answers guest frames (ARP + ICMP echo now; TCP bridge next). tokio (the NativeConnector)
 # still arrives later behind a feature so the browser build never pulls it.
 # `native` (default) pulls tokio for the `NativeConnector` (the real outbound socket path used by the
-# native harness). A future wasm build of this crate would use `default-features = false` so the
-# browser never pulls tokio; the browser (crates/wasm) doesn't depend on this crate today regardless.
+# native harness). The wasm build uses this crate with `default-features = false`, so the browser
+# gets the local stack and WebSocket connector without pulling tokio.
 [features]
 default = ["native"]
 # `native` pulls tokio (the NativeConnector + relay driver) and tokio-tungstenite (the WS-wire
@@ -49,6 +49,7 @@ tokio = { version = "1", optional = true, default-features = false, features = [
 tokio-tungstenite = { version = "0.24", default-features = false, features = ["handshake"], optional = true }
 
 [dev-dependencies]
+libc = "0.2"
 tokio = { version = "1", default-features = false, features = [
     "rt",
     "rt-multi-thread",

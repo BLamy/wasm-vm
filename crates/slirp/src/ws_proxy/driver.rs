@@ -19,12 +19,12 @@
 //!   bytes to the backend ([`RelayCore::on_backend_written`]). So a stalled backend bounds a stream's
 //!   queued data to the window (256 KiB) and can never freeze the shared main loop or other streams.
 
-use super::{Frame, RelayCore, RelayError};
-use std::collections::HashMap;
+use super::{Frame, MAX_DATAGRAM_BYTES, MAX_STREAMS, RelayCore, RelayError};
+use std::collections::{BTreeMap, HashMap};
 use std::sync::Arc;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::net::TcpStream;
 use tokio::net::tcp::{OwnedReadHalf, OwnedWriteHalf};
+use tokio::net::{TcpStream, UdpSocket};
 use tokio::sync::{Semaphore, mpsc};
 use tokio::task::JoinHandle;
 
@@ -62,6 +62,13 @@ enum Internal {
     SocketError {
         stream: u32,
     },
+    UdpData {
+        stream: u32,
+        bytes: Vec<u8>,
+    },
+    UdpError {
+        stream: u32,
+    },
 }
 
 /// Per-stream handles the main loop keeps to steer the stream's I/O tasks.
@@ -71,6 +78,17 @@ struct StreamHandle {
     credit: Arc<Semaphore>,
     reader: JoinHandle<()>,
     writer: JoinHandle<()>,
+}
+
+struct UdpHandle {
+    socket: Arc<UdpSocket>,
+    reader: JoinHandle<()>,
+}
+
+impl UdpHandle {
+    fn shutdown(self) {
+        self.reader.abort();
+    }
 }
 
 impl StreamHandle {
@@ -90,6 +108,9 @@ pub struct RelayServer {
     inbound: mpsc::Receiver<Vec<u8>>,
     outbound: mpsc::Sender<Vec<u8>>,
     token: Vec<u8>,
+    /// Optional exact host rewrites for deterministic/local deployments (for example the E3-T14
+    /// acceptance address 192.0.2.1 → 127.0.0.1). Empty in production by default.
+    host_map: BTreeMap<String, String>,
 }
 
 impl RelayServer {
@@ -103,6 +124,22 @@ impl RelayServer {
             inbound,
             outbound,
             token,
+            host_map: BTreeMap::new(),
+        }
+    }
+
+    pub fn with_host_map(
+        inbound: mpsc::Receiver<Vec<u8>>,
+        outbound: mpsc::Sender<Vec<u8>>,
+        token: Vec<u8>,
+        host_map: BTreeMap<String, String>,
+    ) -> Self {
+        Self {
+            core: RelayCore::new(),
+            inbound,
+            outbound,
+            token,
+            host_map,
         }
     }
 
@@ -114,19 +151,20 @@ impl RelayServer {
 
         let (int_tx, mut int_rx) = mpsc::channel::<Internal>(256);
         let mut streams: HashMap<u32, StreamHandle> = HashMap::new();
+        let mut udp: HashMap<u32, UdpHandle> = HashMap::new();
 
         loop {
             tokio::select! {
                 msg = self.inbound.recv() => match msg {
                     Some(bytes) => {
-                        if self.on_ws_message(&bytes, &int_tx, &mut streams).await.is_err() {
+                        if self.on_ws_message(&bytes, &int_tx, &mut streams, &mut udp).await.is_err() {
                             break; // protocol error → close the connection
                         }
                     }
                     None => break, // WS transport closed
                 },
                 Some(ev) = int_rx.recv() => {
-                    self.on_internal(ev, &int_tx, &mut streams).await;
+                    self.on_internal(ev, &int_tx, &mut streams, &mut udp).await;
                 }
             }
         }
@@ -134,6 +172,9 @@ impl RelayServer {
         // Transport gone → reap every backend socket.
         self.core.on_ws_closed();
         for (_, h) in streams.drain() {
+            h.shutdown();
+        }
+        for (_, h) in udp.drain() {
             h.shutdown();
         }
     }
@@ -144,10 +185,114 @@ impl RelayServer {
         bytes: &[u8],
         int_tx: &mpsc::Sender<Internal>,
         streams: &mut HashMap<u32, StreamHandle>,
+        udp: &mut HashMap<u32, UdpHandle>,
     ) -> Result<(), RelayError> {
         let Some(frame) = Frame::decode(bytes) else {
             return Err(RelayError::UnknownStream(0)); // undecodable → protocol error
         };
+        if self.core.is_ready() {
+            match &frame {
+                Frame::Open { stream, .. }
+                    if *stream == 0
+                        || udp.contains_key(stream)
+                        || self.core.live_streams().saturating_add(udp.len()) >= MAX_STREAMS =>
+                {
+                    // TCP and UDP share the u32 wire namespace and one resource cap. Refuse this
+                    // OPEN without feeding it to the TCP mux; otherwise a live UDP id can also gain
+                    // a TCP socket (and OPEN_OK/WINDOW), making later frames ambiguous.
+                    self.send_frame(Frame::OpenFail {
+                        stream: *stream,
+                        code: 1,
+                    })
+                    .await;
+                    return Ok(());
+                }
+                Frame::UdpOpen { stream, host, port } => {
+                    if *stream == 0
+                        || self.core.has_stream(*stream)
+                        || udp.contains_key(stream)
+                        || self.core.live_streams().saturating_add(udp.len()) >= MAX_STREAMS
+                    {
+                        self.send_frame(Frame::UdpOpenFail {
+                            stream: *stream,
+                            code: 1,
+                        })
+                        .await;
+                        return Ok(());
+                    }
+                    let host = self
+                        .host_map
+                        .get(host)
+                        .cloned()
+                        .unwrap_or_else(|| host.clone());
+                    let socket = match UdpSocket::bind((std::net::Ipv4Addr::UNSPECIFIED, 0)).await {
+                        Ok(socket) if socket.connect((host.as_str(), *port)).await.is_ok() => {
+                            Arc::new(socket)
+                        }
+                        _ => {
+                            self.send_frame(Frame::UdpOpenFail {
+                                stream: *stream,
+                                code: 1,
+                            })
+                            .await;
+                            return Ok(());
+                        }
+                    };
+                    let stream = *stream;
+                    let reader_socket = socket.clone();
+                    let tx = int_tx.clone();
+                    let reader = tokio::spawn(async move {
+                        let mut buf = vec![0u8; MAX_DATAGRAM_BYTES];
+                        loop {
+                            match reader_socket.recv(&mut buf).await {
+                                Ok(n) => {
+                                    if tx
+                                        .send(Internal::UdpData {
+                                            stream,
+                                            bytes: buf[..n].to_vec(),
+                                        })
+                                        .await
+                                        .is_err()
+                                    {
+                                        break;
+                                    }
+                                }
+                                Err(_) => {
+                                    let _ = tx.send(Internal::UdpError { stream }).await;
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                    udp.insert(stream, UdpHandle { socket, reader });
+                    self.send_frame(Frame::UdpOpenOk { stream }).await;
+                    return Ok(());
+                }
+                Frame::UdpData { stream, bytes } => {
+                    let sent = match udp.get(stream) {
+                        Some(handle) => handle.socket.send(bytes).await.ok(),
+                        None => None,
+                    };
+                    if sent != Some(bytes.len()) {
+                        if let Some(handle) = udp.remove(stream) {
+                            handle.shutdown();
+                        }
+                        self.send_frame(Frame::UdpClose { stream: *stream }).await;
+                    }
+                    return Ok(());
+                }
+                Frame::UdpClose { stream } => {
+                    if let Some(handle) = udp.remove(stream) {
+                        handle.shutdown();
+                    }
+                    return Ok(());
+                }
+                Frame::UdpOpenOk { .. } | Frame::UdpOpenFail { .. } => {
+                    return Err(RelayError::UnknownStream(0));
+                }
+                _ => {}
+            }
+        }
         // A guest WINDOW grows this stream's backend→guest credit; add the exact grant as permits.
         let grant = match &frame {
             Frame::Window { stream, credit } => Some((*stream, *credit)),
@@ -169,6 +314,7 @@ impl RelayServer {
         ev: Internal,
         int_tx: &mpsc::Sender<Internal>,
         streams: &mut HashMap<u32, StreamHandle>,
+        udp: &mut HashMap<u32, UdpHandle>,
     ) {
         match ev {
             Internal::Connected { stream, io } => {
@@ -214,6 +360,17 @@ impl RelayServer {
                     h.shutdown();
                 }
             }
+            Internal::UdpData { stream, bytes } => {
+                if udp.contains_key(&stream) {
+                    self.send_frame(Frame::UdpData { stream, bytes }).await;
+                }
+            }
+            Internal::UdpError { stream } => {
+                if let Some(handle) = udp.remove(&stream) {
+                    handle.shutdown();
+                    self.send_frame(Frame::UdpClose { stream }).await;
+                }
+            }
         }
     }
 
@@ -230,6 +387,7 @@ impl RelayServer {
         for op in actions.socket_ops {
             match op {
                 super::SocketOp::Connect { stream, host, port } => {
+                    let host = self.host_map.get(&host).cloned().unwrap_or(host);
                     let tx = int_tx.clone();
                     tokio::spawn(async move {
                         match TcpStream::connect((host.as_str(), port)).await {

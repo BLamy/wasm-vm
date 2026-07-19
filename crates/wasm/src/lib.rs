@@ -24,6 +24,7 @@ use wasm_vm_core::{Machine, RunOutcome};
 // toggle to the same cfg — otherwise the const/fn are dead code on the native `-D warnings` clippy job.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod slirp_net {
+    use core::cell::RefCell;
     use core::sync::atomic::{AtomicBool, Ordering};
     use wasm_bindgen::prelude::*;
 
@@ -34,9 +35,16 @@ mod slirp_net {
     /// When set, boots wire virtio-net to the slirp LOCAL stack (DHCP/ARP/ICMP) instead of loopback.
     /// Single-threaded browser → a plain atomic suffices. Set via `setSlirpNet` BEFORE booting.
     static SLIRP_NET: AtomicBool = AtomicBool::new(false);
+    std::thread_local! {
+        static SLIRP_RELAY_URL: RefCell<Option<String>> = const { RefCell::new(None) };
+    }
 
     pub(crate) fn slirp_net_enabled() -> bool {
         SLIRP_NET.load(Ordering::Relaxed)
+    }
+
+    pub(crate) fn slirp_relay_url() -> Option<String> {
+        SLIRP_RELAY_URL.with(|url| url.borrow().clone())
     }
 
     /// Choose the slirp local network stack (vs the default loopback) for subsequent boots.
@@ -44,9 +52,22 @@ mod slirp_net {
     pub fn set_slirp_net(on: bool) {
         SLIRP_NET.store(on, Ordering::Relaxed);
     }
+
+    /// Configure the WebSocket relay used for outbound TCP on subsequent slirp boots. An empty URL
+    /// keeps the local-only DHCP/ARP/ICMP stack.
+    #[wasm_bindgen(js_name = setSlirpRelay)]
+    pub fn set_slirp_relay(url: String) {
+        SLIRP_RELAY_URL.with(|slot| {
+            *slot.borrow_mut() = if url.trim().is_empty() {
+                None
+            } else {
+                Some(url)
+            };
+        });
+    }
 }
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
-use slirp_net::{SLIRP_GATEWAY_MAC, slirp_net_enabled};
+use slirp_net::{SLIRP_GATEWAY_MAC, slirp_net_enabled, slirp_relay_url};
 
 // E3-T02 lazy-fetch backend. Compiled where it is actually used: the normal wasm build (behind
 // `newChunkedDisk`) and native unit tests. Excluded from the zicsr-stub wasm build and the native
@@ -64,6 +85,11 @@ mod http_fetch;
 // The web-sys IndexedDB durable-overlay store is browser-only.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod idb_store;
+// E3-net: JS WebSocket callbacks ↔ synchronous ws-proxy connector queues.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod ws_transport;
+#[cfg(any(all(target_arch = "wasm32", not(feature = "zicsr-stub")), test))]
+mod ws_transport_state;
 
 /// One-time browser diagnostics setup: route `log` to the JS console and install the
 /// panic hook that turns Rust panics into readable console errors. Idempotent.
@@ -813,10 +839,22 @@ impl WasmLinux {
         if slirp_net_enabled() {
             let start = js_sys::Date::now();
             let clock = Box::new(move || (js_sys::Date::now() - start) as i64);
-            let _ = machine.enable_virtio_net(Box::new(wasm_vm_slirp::SlirpLocalBackend::new(
-                SLIRP_GATEWAY_MAC,
-                clock,
-            )));
+            if let Some(url) = slirp_relay_url() {
+                let transport = ws_transport::BrowserWebSocketTransport::connect(&url)?;
+                let connector = wasm_vm_slirp::WsConnector::new(transport, Vec::new());
+                let _ = machine.enable_virtio_net(Box::new(
+                    wasm_vm_slirp::SlirpLocalBackend::with_connector(
+                        SLIRP_GATEWAY_MAC,
+                        clock,
+                        Box::new(connector),
+                    ),
+                ));
+            } else {
+                let _ = machine.enable_virtio_net(Box::new(wasm_vm_slirp::SlirpLocalBackend::new(
+                    SLIRP_GATEWAY_MAC,
+                    clock,
+                )));
+            }
         } else {
             let _ = machine.enable_virtio_net(Box::new(
                 wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
@@ -913,6 +951,14 @@ impl WasmLinux {
             }
         }
         Ok(obj.into())
+    }
+
+    /// Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
+    /// devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
+    #[wasm_bindgen(js_name = stateDigest)]
+    pub fn state_digest(&self) -> Result<String, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.machine.snapshot().hex_digest())
     }
 
     /// Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).

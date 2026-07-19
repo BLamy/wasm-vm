@@ -11,12 +11,13 @@ use smoltcp::iface::{Config, Interface, SocketHandle, SocketSet};
 use smoltcp::socket::tcp;
 use smoltcp::time::Instant;
 use smoltcp::wire::{
-    EthernetAddress, EthernetFrame, EthernetProtocol, HardwareAddress, IpAddress, IpCidr,
-    IpListenEndpoint, IpProtocol, Ipv4Packet, TcpPacket,
+    ArpOperation, ArpPacket, ArpRepr, EthernetAddress, EthernetFrame, EthernetProtocol,
+    HardwareAddress, IpAddress, IpCidr, IpListenEndpoint, IpProtocol, Ipv4Packet, TcpPacket,
 };
 
 use crate::device::SlirpDevice;
 use crate::dhcp::DhcpServer;
+use crate::nat::FlowKey;
 use crate::net;
 use crate::udp_frame::{GuestUdp, build_udp_frame, parse_udp};
 
@@ -36,7 +37,7 @@ const BROADCAST: Ipv4Addr = Ipv4Addr::new(255, 255, 255, 255);
 /// server or the DNS forwarder)? Matches the `UdpServices` routing: DHCP on :67 to the broadcast or
 /// the gateway; DNS on :53 to the address we present as the resolver. Everything else is a normal
 /// outbound UDP flow (left to the NAT path — not our service).
-fn is_service_udp(dst_ip: Ipv4Addr, dst_port: u16) -> bool {
+pub(crate) fn is_service_udp(dst_ip: Ipv4Addr, dst_port: u16) -> bool {
     (dst_port == 67 && (dst_ip == BROADCAST || dst_ip == net::GATEWAY))
         || (dst_port == 53 && dst_ip == net::DNS)
 }
@@ -52,12 +53,25 @@ pub struct SlirpStack {
     /// replies AS a host we never opened; critic CRITICAL) AND the accessor guard (a handle not in
     /// here is removed/unknown, so accessors return a safe default instead of panicking / touching a
     /// reused slot; critic MAJOR).
-    flows: BTreeMap<SocketHandle, (Ipv4Addr, u16)>,
+    flows: BTreeMap<SocketHandle, TcpFlow>,
     /// Guest UDP datagrams bound for our internal services (DHCP/DNS), DIVERTED out of the smoltcp
     /// path (which drops UDP) for the caller to dispatch via `UdpServices` — sync for DHCP, async for
     /// DNS. Drained by [`take_service_udp`](Self::take_service_udp); replies come back via
     /// [`push_egress`](Self::push_egress).
     service_udp: Vec<GuestUdp>,
+}
+
+#[derive(Clone, Copy)]
+struct TcpFlow {
+    dst_ip: Ipv4Addr,
+    /// Port the real guest believes it connected to (and the outbound connector actually dials).
+    external_port: u16,
+    /// Unique smoltcp-local listening port. Concurrent guest flows to the same external endpoint get
+    /// distinct aliases so the socket demultiplexer cannot bind every SYN to one listener.
+    listen_port: u16,
+    /// Exact guest endpoint for production NAT flows. Legacy stack-only tests use `None` and do no
+    /// port rewriting because they open only one listener per external endpoint.
+    guest: Option<(Ipv4Addr, u16)>,
 }
 
 impl SlirpStack {
@@ -112,7 +126,7 @@ impl SlirpStack {
                     && let Ok(tcp) = TcpPacket::new_checked(ip.payload())
                 {
                     let ep = (dst, tcp.dst_port());
-                    return self.flows.values().any(|f| *f == ep);
+                    return self.flows.values().any(|f| (f.dst_ip, f.listen_port) == ep);
                 }
                 false // external ICMP/UDP/un-opened-TCP → drop (no impersonation)
             }
@@ -125,20 +139,92 @@ impl SlirpStack {
         self.mac
     }
 
+    /// Refresh smoltcp's guest IPv4→Ethernet neighbor entry from an address pair already observed on
+    /// an authenticated flow frame. TCP idle expiry (2 h) outlives smoltcp's ARP cache, but an abort
+    /// still has to put a RST on the guest's Ethernet link before its socket can be removed. Feeding
+    /// this equivalent ARP reply through the normal interface path lets the queued reset egress in
+    /// the same deterministic service pass without retaining a dead 128 KiB socket indefinitely.
+    pub fn remember_guest_neighbor(&mut self, guest_ip: Ipv4Addr, guest_mac: [u8; 6]) {
+        let arp = ArpRepr::EthernetIpv4 {
+            operation: ArpOperation::Reply,
+            source_hardware_addr: EthernetAddress(guest_mac),
+            source_protocol_addr: guest_ip,
+            target_hardware_addr: EthernetAddress(self.mac),
+            target_protocol_addr: net::GATEWAY,
+        };
+        let eth = smoltcp::wire::EthernetRepr {
+            src_addr: EthernetAddress(guest_mac),
+            dst_addr: EthernetAddress(self.mac),
+            ethertype: EthernetProtocol::Arp,
+        };
+        let mut buf = vec![0u8; eth.buffer_len() + arp.buffer_len()];
+        let mut frame = EthernetFrame::new_unchecked(&mut buf);
+        eth.emit(&mut frame);
+        let mut packet = ArpPacket::new_unchecked(frame.payload_mut());
+        arp.emit(&mut packet);
+        self.inject(buf);
+    }
+
     /// Open a per-flow smoltcp TCP socket that LISTENS on `dst:port` — so an incoming guest SYN to
     /// that external endpoint (accepted via `any_ip`) completes the handshake locally. Returns the
     /// socket handle; the async bridge (next slice) pumps its bytes to/from an `OutboundConnector`.
     pub fn open_tcp(&mut self, dst: Ipv4Addr, port: u16) -> SocketHandle {
+        self.open_tcp_inner(dst, port, port, None)
+    }
+
+    /// Open a production NAT flow keyed by the full guest/external 4-tuple. smoltcp listeners bind
+    /// only their local `(dst, port)`, so two guest source ports dialing the same server would
+    /// otherwise collide. Allocate a unique local port and transparently rewrite TCP ports at the
+    /// stack boundary; the guest and connector continue to see the real external port.
+    pub fn open_tcp_flow(&mut self, key: &FlowKey) -> SocketHandle {
+        let (std::net::IpAddr::V4(guest_ip), std::net::IpAddr::V4(dst_ip)) =
+            (key.guest_ip, key.dst_ip)
+        else {
+            panic!("slirp TCP flow must be IPv4");
+        };
+        let listen_port = (0..=u16::MAX)
+            .map(|offset| key.dst_port.wrapping_add(offset))
+            .find(|&candidate| {
+                candidate != 0
+                    && !self
+                        .flows
+                        .values()
+                        .any(|flow| flow.dst_ip == dst_ip && flow.listen_port == candidate)
+            })
+            .expect("MAX_FLOWS leaves a free TCP port alias");
+        self.open_tcp_inner(
+            dst_ip,
+            key.dst_port,
+            listen_port,
+            Some((guest_ip, key.guest_port)),
+        )
+    }
+
+    fn open_tcp_inner(
+        &mut self,
+        dst: Ipv4Addr,
+        external_port: u16,
+        listen_port: u16,
+        guest: Option<(Ipv4Addr, u16)>,
+    ) -> SocketHandle {
         let rx = tcp::SocketBuffer::new(vec![0u8; TCP_BUF]);
         let tx = tcp::SocketBuffer::new(vec![0u8; TCP_BUF]);
         let mut sock = tcp::Socket::new(rx, tx);
         sock.listen(IpListenEndpoint {
             addr: Some(IpAddress::Ipv4(dst)),
-            port,
+            port: listen_port,
         })
         .expect("listen on the flow's destination endpoint");
         let handle = self.sockets.add(sock);
-        self.flows.insert(handle, (dst, port));
+        self.flows.insert(
+            handle,
+            TcpFlow {
+                dst_ip: dst,
+                external_port,
+                listen_port,
+                guest,
+            },
+        );
         handle
     }
 
@@ -232,14 +318,84 @@ impl SlirpStack {
     /// `accept_frame` filter: frames smoltcp must NOT auto-respond to (external ICMP/UDP, un-opened
     /// TCP, non-gateway ARP) are dropped so the stack never impersonates a host it hasn't opened.
     pub fn inject(&mut self, frame: Vec<u8>) {
+        let mut frame = frame;
         if let Some(g) = parse_udp(&frame)
             && is_service_udp(g.dst_ip, g.dst_port)
         {
             self.service_udp.push(g);
             return; // handled by the service path, not smoltcp
         }
+        self.rewrite_guest_tcp_port(&mut frame);
         if self.accept_frame(&frame) {
             self.device.rx.push_back(frame);
+        }
+    }
+
+    fn rewrite_guest_tcp_port(&self, frame: &mut [u8]) {
+        let Ok(mut eth) = EthernetFrame::new_checked(frame) else {
+            return;
+        };
+        if eth.ethertype() != EthernetProtocol::Ipv4 {
+            return;
+        }
+        let Ok(mut ip) = Ipv4Packet::new_checked(eth.payload_mut()) else {
+            return;
+        };
+        if ip.next_header() != IpProtocol::Tcp {
+            return;
+        }
+        let src_ip = ip.src_addr();
+        let dst_ip = ip.dst_addr();
+        let Ok(mut packet) = TcpPacket::new_checked(ip.payload_mut()) else {
+            return;
+        };
+        let src_port = packet.src_port();
+        let external_port = packet.dst_port();
+        let Some(flow) = self.flows.values().find(|flow| {
+            flow.dst_ip == dst_ip
+                && flow.external_port == external_port
+                && flow.guest == Some((src_ip, src_port))
+        }) else {
+            return;
+        };
+        if flow.listen_port != external_port {
+            packet.set_dst_port(flow.listen_port);
+            packet.fill_checksum(&IpAddress::Ipv4(src_ip), &IpAddress::Ipv4(dst_ip));
+        }
+    }
+
+    fn rewrite_egress_tcp_ports(&mut self) {
+        for frame in &mut self.device.tx {
+            let Ok(mut eth) = EthernetFrame::new_checked(frame.as_mut_slice()) else {
+                continue;
+            };
+            if eth.ethertype() != EthernetProtocol::Ipv4 {
+                continue;
+            }
+            let Ok(mut ip) = Ipv4Packet::new_checked(eth.payload_mut()) else {
+                continue;
+            };
+            if ip.next_header() != IpProtocol::Tcp {
+                continue;
+            }
+            let src_ip = ip.src_addr();
+            let dst_ip = ip.dst_addr();
+            let Ok(mut packet) = TcpPacket::new_checked(ip.payload_mut()) else {
+                continue;
+            };
+            let listen_port = packet.src_port();
+            let guest_port = packet.dst_port();
+            let Some(flow) = self.flows.values().find(|flow| {
+                flow.dst_ip == src_ip
+                    && flow.listen_port == listen_port
+                    && flow.guest == Some((dst_ip, guest_port))
+            }) else {
+                continue;
+            };
+            if flow.listen_port != flow.external_port {
+                packet.set_src_port(flow.external_port);
+                packet.fill_checksum(&IpAddress::Ipv4(src_ip), &IpAddress::Ipv4(dst_ip));
+            }
         }
     }
 
@@ -359,6 +515,9 @@ impl SlirpStack {
             &mut self.device,
             &mut self.sockets,
         );
+        // Rewrite while the flow mapping is still live. Failure/RST paths may remove the socket
+        // before the caller drains egress; delaying this until `take_egress` would leak alias ports.
+        self.rewrite_egress_tcp_ports();
     }
 
     /// Take all frames smoltcp has queued for the guest since the last call.

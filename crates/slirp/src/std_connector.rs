@@ -9,12 +9,13 @@
 
 use std::collections::BTreeMap;
 use std::io::{ErrorKind, Read, Write};
-use std::net::{IpAddr, Ipv4Addr, Shutdown, SocketAddr, TcpStream};
+use std::net::{IpAddr, Ipv4Addr, Shutdown, SocketAddr, TcpStream, UdpSocket};
 use std::sync::mpsc::{self, Receiver, TryRecvError};
 use std::time::Duration;
 
 use crate::connector::ConnectError;
-use crate::sync_connector::{ConnId, ConnStatus, SyncConnector};
+use crate::sync_connector::{ConnId, ConnStatus, DatagramId, SyncConnector};
+use crate::udp_frame::MAX_UDP_PAYLOAD;
 
 /// How long a dial may take before it is reported [`ConnectError::TimedOut`]. Bounded so a black-hole
 /// destination can't strand a connect thread forever (the charter: connect must resolve, never hang).
@@ -41,11 +42,22 @@ struct Conn {
 pub struct StdConnector {
     conns: BTreeMap<ConnId, Conn>,
     next_id: ConnId,
+    udp: BTreeMap<DatagramId, Result<UdpSocket, ConnectError>>,
+    next_udp_id: u64,
+    host_map: BTreeMap<Ipv4Addr, Ipv4Addr>,
 }
 
 impl StdConnector {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Exact destination rewrites used by deterministic native acceptance (TEST-NET → loopback).
+    /// The guest-visible source address remains the original key; only the real socket destination
+    /// changes. Applied consistently to TCP and UDP.
+    pub fn with_host_map(mut self, host_map: BTreeMap<Ipv4Addr, Ipv4Addr>) -> Self {
+        self.host_map = host_map;
+        self
     }
 
     /// Map a `std::io` connect/read error to the guest-visible [`ConnectError`].
@@ -82,7 +94,8 @@ impl SyncConnector for StdConnector {
     fn connect(&mut self, host: Ipv4Addr, port: u16) -> ConnId {
         let id = self.next_id;
         self.next_id += 1;
-        let addr = SocketAddr::new(IpAddr::V4(host), port);
+        let mapped = self.host_map.get(&host).copied().unwrap_or(host);
+        let addr = SocketAddr::new(IpAddr::V4(mapped), port);
         let (tx, rx) = mpsc::channel();
         // The blocking connect runs off-thread so this call returns immediately (contract). The
         // thread ends as soon as it sends — a short-lived worker, not a persistent driver.
@@ -169,5 +182,80 @@ impl SyncConnector for StdConnector {
     fn close(&mut self, id: ConnId) {
         // Dropping the stream closes the socket (RST if unread data remains, else FIN). Idempotent.
         self.conns.remove(&id);
+    }
+
+    fn udp_open(&mut self, host: Ipv4Addr, port: u16) -> DatagramId {
+        let id = DatagramId(self.next_udp_id);
+        self.next_udp_id = self.next_udp_id.wrapping_add(1);
+        let mapped = self.host_map.get(&host).copied().unwrap_or(host);
+        let socket = UdpSocket::bind((Ipv4Addr::UNSPECIFIED, 0))
+            .and_then(|socket| {
+                socket.connect((mapped, port))?;
+                socket.set_nonblocking(true)?;
+                Ok(socket)
+            })
+            .map_err(|e| Self::classify(&e));
+        self.udp.insert(id, socket);
+        id
+    }
+
+    fn udp_status(&mut self, id: DatagramId) -> ConnStatus {
+        match self.udp.get(&id) {
+            Some(Ok(_)) => ConnStatus::Established,
+            Some(Err(e)) => ConnStatus::Failed(e.clone()),
+            None => ConnStatus::Failed(ConnectError::Unreachable),
+        }
+    }
+
+    fn udp_send(&mut self, id: DatagramId, payload: &[u8]) -> bool {
+        if payload.len() > MAX_UDP_PAYLOAD {
+            return false;
+        }
+        let Some(entry) = self.udp.get_mut(&id) else {
+            return false;
+        };
+        let Ok(socket) = entry else {
+            return false;
+        };
+        match socket.send(payload) {
+            Ok(n) => n == payload.len(),
+            Err(e) if e.kind() == ErrorKind::WouldBlock => false,
+            Err(e) => {
+                *entry = Err(Self::classify(&e));
+                false
+            }
+        }
+    }
+
+    fn udp_recv(&mut self, id: DatagramId) -> Vec<Vec<u8>> {
+        // Bound work per service pass. Further queued datagrams remain in the kernel socket buffer
+        // and are drained on later polls, so a remote flood cannot monopolize the emulator loop.
+        const MAX_DRAIN: usize = 64;
+        let Some(entry) = self.udp.get_mut(&id) else {
+            return Vec::new();
+        };
+        let Ok(socket) = entry else {
+            return Vec::new();
+        };
+        let mut out = Vec::new();
+        for _ in 0..MAX_DRAIN {
+            let mut buf = vec![0u8; MAX_UDP_PAYLOAD];
+            match socket.recv(&mut buf) {
+                Ok(n) => {
+                    buf.truncate(n);
+                    out.push(buf);
+                }
+                Err(e) if e.kind() == ErrorKind::WouldBlock => break,
+                Err(e) => {
+                    *entry = Err(Self::classify(&e));
+                    break;
+                }
+            }
+        }
+        out
+    }
+
+    fn udp_close(&mut self, id: DatagramId) {
+        self.udp.remove(&id);
     }
 }

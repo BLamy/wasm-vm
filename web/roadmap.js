@@ -70,7 +70,7 @@ export const ROADMAP = [
       { name: "Honest FLUSH barrier + crash safety", status: "verified", evidence: "barrier seam; 2 tab-kills survived 53 min crashtest (E3-T08, #100)" },
       { name: "Multi-tab writer lock + RO takeover", status: "verified", evidence: "20/20 race + RO-guest/EROFS/takeover, staggered-boot evidence (E3-T09, #102)" },
       { name: "Storage quota + honest per-image reset", status: "verified", evidence: "no-lost-write-on-quota; lock-RO vs quota-RO split (E3-T10, #104)" },
-      { name: "User-mode network (slirp + smoltcp NAT)", status: "partial", evidence: "data path proven END-TO-END native: guest → NAT → pump → real TCP → echo → back to guest (E3-T14, #114–#124); Bridge wiring + booted acceptance pending" },
+      { name: "User-mode network (slirp + smoltcp NAT)", status: "verified", evidence: "browser Alpine DHCP + ping + byte-exact TCP wget + datagram-exact external UDP through WebSocket relay (E3-T14)" },
     ],
   },
   {

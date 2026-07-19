@@ -65,6 +65,18 @@ const LOOPBACK_CAP: usize = 256;
 /// device state ([`NetState`] or the mmio slot) — they are called while the device holds its
 /// `RefCell` borrow (including inside a guest MMIO store during `reset`), so re-entry panics.
 pub trait NetBackend {
+    /// Give an event-driven backend a chance to advance work that arrived independently of a guest
+    /// transmit. The run loop calls this before checking [`Self::rx_ready`]. Synchronous backends
+    /// need no maintenance and inherit the no-op default; browser slirp uses it to drain WebSocket
+    /// frames into its guest-facing receive queue.
+    fn poll(&mut self) {}
+    /// True while this backend is waiting for work that can arrive only from outside the
+    /// deterministic guest machine (for example a browser WebSocket callback). A WFI must not
+    /// fast-forward guest time straight to its next timer deadline while this is true: the host
+    /// needs a run-chunk boundary to deliver that external event first.
+    fn external_io_pending(&self) -> bool {
+        false
+    }
     /// Guest → network: the device hands over one ethernet frame the guest just transmitted
     /// (the `virtio_net_hdr` already stripped). Loopback swaps src/dst MAC and stages it for
     /// the guest to receive back; slirp (T14) will feed it into its IP stack. (Task seam name:
@@ -192,6 +204,12 @@ impl<B: NetBackend> PcapBackend<B> {
 }
 
 impl<B: NetBackend> NetBackend for PcapBackend<B> {
+    fn poll(&mut self) {
+        self.inner.poll();
+    }
+    fn external_io_pending(&self) -> bool {
+        self.inner.external_io_pending()
+    }
     fn tx(&mut self, frame: &[u8]) {
         self.record(frame);
         self.inner.tx(frame);
@@ -434,6 +452,10 @@ pub fn service(
             *rx_vq = None;
             *tx_vq = None;
         }
+        // Event-driven backends (for example browser WebSockets) receive work independently of a
+        // guest kick. Advance them before testing readiness so their newly-produced frame can wake
+        // the receiveq on this same instruction boundary.
+        st.backend.poll();
         // Proceed on a kick OR when the backend has an async rx frame to deliver.
         if !st.kicked && !st.backend.rx_ready() {
             return;

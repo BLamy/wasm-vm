@@ -7,7 +7,7 @@
 
 #![cfg(not(feature = "zicsr-stub"))]
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
 use wasm_vm_core::bus::Bus;
@@ -122,6 +122,10 @@ impl Net {
 
     fn kick(&mut self) {
         self.slot.borrow_mut().write(0x050, Width::B4, 0).ok();
+        self.service();
+    }
+
+    fn service(&mut self) {
         wasm_vm_core::dev::virtio::net::service(
             &self.slot,
             &mut self.rx_vq,
@@ -151,6 +155,62 @@ impl Net {
         wdesc(&mut self.bus, &self.txr, head, addr, total, 0, 0);
         publish(&mut self.bus, &mut self.txr, head);
     }
+}
+
+struct EventDrivenBackend {
+    polls: Rc<Cell<u32>>,
+    staged: Option<Vec<u8>>,
+    arriving: Option<Vec<u8>>,
+}
+
+impl NetBackend for EventDrivenBackend {
+    fn poll(&mut self) {
+        self.polls.set(self.polls.get() + 1);
+        if self.staged.is_none() {
+            self.staged = self.arriving.take();
+        }
+    }
+
+    fn tx(&mut self, _frame: &[u8]) {}
+
+    fn rx(&mut self) -> Option<Vec<u8>> {
+        self.staged.take()
+    }
+
+    fn rx_ready(&self) -> bool {
+        self.staged.is_some()
+    }
+}
+
+/// An event-driven backend must be polled even when the guest did not kick a queue and readiness was
+/// false before the poll. This is the browser-WebSocket wakeup seam: a relay frame arrives between
+/// wasm run calls, `poll` turns it into ethernet egress, and the same boundary delivers it.
+#[test]
+fn backend_poll_can_wake_receiveq_without_a_guest_kick() {
+    let polls = Rc::new(Cell::new(0));
+    let f = frame([7; 6], MAC, 0xA7);
+    let mut net = Net::new(
+        Box::new(EventDrivenBackend {
+            polls: polls.clone(),
+            staged: None,
+            arriving: Some(f.clone()),
+        }),
+        8,
+    );
+    net.post_rx(0, 2048);
+
+    net.service();
+
+    assert_eq!(polls.get(), 1, "service must poll the backend exactly once");
+    assert_eq!(
+        net.rxr.used_idx(&mut net.bus),
+        1,
+        "the frame produced by poll must reach the guest without a queue kick"
+    );
+    assert_eq!(
+        net.rxr.used_elem(&mut net.bus, 0).1 as usize,
+        NET_HDR_LEN + f.len()
+    );
 }
 
 fn frame(dst: [u8; 6], src: [u8; 6], tag: u8) -> Vec<u8> {

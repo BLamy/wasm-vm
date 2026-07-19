@@ -25,7 +25,9 @@ use tokio::net::TcpListener;
 use tokio::sync::mpsc;
 
 use crate::net;
-use crate::{Bridge, ConnectError, NativeConnector, OutboundConnector, SlirpStack, pump_flow};
+use crate::{
+    Bridge, ConnectError, NativeConnector, OutboundConnector, PumpEvent, SlirpStack, pump_flow,
+};
 
 const GUEST_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x56];
 const GW_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x00, 0x00, 0x02];
@@ -115,6 +117,18 @@ fn egress_to_guest_contains(frames: &[Vec<u8>], dst_port: u16, needle: &[u8]) ->
     })
 }
 
+fn egress_to_guest_has_rst(frames: &[Vec<u8>], dst_port: u16) -> bool {
+    frames.iter().any(|f| {
+        let Ok(ipp) = Ipv4Packet::new_checked(&f[14..]) else {
+            return false;
+        };
+        let Ok(tp) = TcpPacket::new_checked(ipp.payload()) else {
+            return false;
+        };
+        tp.dst_port() == dst_port && tp.rst()
+    })
+}
+
 /// Guest sends a request through the whole stack to a real echo server, and the echoed reply comes
 /// back out to the guest — the complete slirp data path, proven natively with no booted guest.
 #[tokio::test]
@@ -183,7 +197,7 @@ async fn guest_bytes_round_trip_through_pump_to_a_real_echo_server() {
         Err(e) => panic!("connect to the echo server failed: {e:?}"),
     };
     let (to_pump_tx, to_pump_rx) = mpsc::channel::<Vec<u8>>(8); // guest → outbound
-    let (from_pump_tx, mut from_pump_rx) = mpsc::channel::<Vec<u8>>(8); // outbound → guest
+    let (from_pump_tx, mut from_pump_rx) = mpsc::channel::<PumpEvent>(8); // outbound → guest
     tokio::spawn(pump_flow(stream, to_pump_rx, from_pump_tx));
 
     // Guest sends a request as a data segment.
@@ -204,8 +218,12 @@ async fn guest_bytes_round_trip_through_pump_to_a_real_echo_server() {
                 return false; // the pump task died — fail cleanly (not a panic, not a false pass)
             }
             // outbound → guest: pull echoed bytes from the pump and enqueue to the guest socket.
-            while let Ok(chunk) = from_pump_rx.try_recv() {
-                pending_out.extend_from_slice(&chunk);
+            while let Ok(event) = from_pump_rx.try_recv() {
+                match event {
+                    PumpEvent::Data(chunk) => pending_out.extend_from_slice(&chunk),
+                    PumpEvent::Eof => s.tcp_close(h),
+                    PumpEvent::Reset => s.tcp_abort(h),
+                }
             }
             if !pending_out.is_empty() {
                 let n = s.tcp_send(h, &pending_out);
@@ -318,6 +336,94 @@ async fn bridge_service_round_trips_guest_bytes_to_a_real_echo_server() {
         1,
         "the flow is still live after the round trip"
     );
+}
+
+/// Outbound read failure after a completed guest handshake must abort the guest socket. This holds
+/// the pump's explicit Reset event against the Bridge integration; mapping it to EOF would emit FIN
+/// and fail the RST assertion.
+struct ResetStream;
+impl AsyncRead for ResetStream {
+    fn poll_read(
+        self: Pin<&mut Self>,
+        _: &mut Context<'_>,
+        _: &mut ReadBuf<'_>,
+    ) -> Poll<io::Result<()>> {
+        Poll::Ready(Err(io::Error::from(io::ErrorKind::ConnectionReset)))
+    }
+}
+impl AsyncWrite for ResetStream {
+    fn poll_write(
+        self: Pin<&mut Self>,
+        _: &mut Context<'_>,
+        buf: &[u8],
+    ) -> Poll<io::Result<usize>> {
+        Poll::Ready(Ok(buf.len()))
+    }
+    fn poll_flush(self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<io::Result<()>> {
+        Poll::Ready(Ok(()))
+    }
+    fn poll_shutdown(self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<io::Result<()>> {
+        Poll::Ready(Ok(()))
+    }
+}
+
+#[derive(Clone)]
+struct ResetConnector;
+impl OutboundConnector for ResetConnector {
+    type Conn = ResetStream;
+    #[allow(clippy::manual_async_fn)]
+    fn connect(
+        &self,
+        _host: IpAddr,
+        _port: u16,
+    ) -> impl Future<Output = Result<Self::Conn, ConnectError>> + Send {
+        async { Ok(ResetStream) }
+    }
+}
+
+#[tokio::test]
+async fn outbound_connection_reset_becomes_guest_rst_not_fin() {
+    let dst = Ipv4Addr::new(198, 51, 100, 20);
+    let port = 443;
+    let mut br = Bridge::new(GW_MAC, ResetConnector, 16);
+    let mut t = 1u64;
+    br.on_guest_frame(arp_request(), t).await;
+    t += 1;
+    let _ = br.take_egress();
+    br.on_guest_frame(tcp_seg(dst, 40011, port, 1000, None, true, &[]), t)
+        .await;
+    t += 1;
+    let isn = br
+        .take_egress()
+        .iter()
+        .find_map(|f| {
+            let ip = Ipv4Packet::new_checked(&f[14..]).ok()?;
+            let tcp = TcpPacket::new_checked(ip.payload()).ok()?;
+            (tcp.dst_port() == 40011 && tcp.syn() && tcp.ack()).then(|| tcp.seq_number().0 as i64)
+        })
+        .expect("guest handshake gets SYN-ACK");
+    br.on_guest_frame(
+        tcp_seg(dst, 40011, port, 1001, Some(isn + 1), false, &[]),
+        t,
+    )
+    .await;
+    t += 1;
+    let _ = br.take_egress();
+
+    let got_rst = tokio::time::timeout(Duration::from_secs(1), async {
+        loop {
+            br.service();
+            br.poll(t as i64);
+            t += 1;
+            if egress_to_guest_has_rst(&br.take_egress(), 40011) {
+                return true;
+            }
+            tokio::task::yield_now().await;
+        }
+    })
+    .await
+    .unwrap_or(false);
+    assert!(got_rst, "outbound ConnectionReset must emit guest TCP RST");
 }
 
 /// A stream that FLOODS: every read yields a full buffer of bytes forever; writes are sunk. Models a

@@ -10,7 +10,7 @@
 //! unbounded-open DoS (a per-connection stream cap). Every violation is a returned [`MuxError`],
 //! never a panic or an unbounded allocation. See `docs/design/ws-proxy-protocol.md`.
 
-use super::{Frame, StreamError, StreamState};
+use super::{FIRST_UDP_STREAM, Frame, StreamError, StreamState};
 use std::collections::{BTreeMap, BTreeSet};
 
 /// Per-connection cap on concurrent streams — a hacked client that opens without bound is refused
@@ -141,12 +141,15 @@ impl Mux {
     /// `MAX_STREAMS + 1` candidates, so this terminates.
     fn alloc_id(&mut self) -> Option<u32> {
         for _ in 0..=MAX_STREAMS {
-            let id = self.next_id;
-            self.next_id = self.next_id.wrapping_add(1);
-            if self.next_id == 0 {
+            if self.next_id == 0 || self.next_id >= FIRST_UDP_STREAM {
                 self.next_id = 1;
             }
-            if id != 0 && !self.streams.contains_key(&id) {
+            let id = self.next_id;
+            self.next_id = self.next_id.wrapping_add(1);
+            if self.next_id == 0 || self.next_id >= FIRST_UDP_STREAM {
+                self.next_id = 1;
+            }
+            if !self.streams.contains_key(&id) {
                 return Some(id);
             }
         }
@@ -280,6 +283,14 @@ impl Mux {
                 self.reap(stream);
                 Ok(MuxEvent::Reset(stream))
             }
+
+            // UDP datagrams bypass the TCP stream state machine and are handled directly by the
+            // connector/relay driver. Feeding one into Mux is always a caller routing bug.
+            Frame::UdpOpen { .. }
+            | Frame::UdpOpenOk { .. }
+            | Frame::UdpOpenFail { .. }
+            | Frame::UdpData { .. }
+            | Frame::UdpClose { .. } => Err(MuxError::RoleViolation),
         }
     }
 

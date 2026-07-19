@@ -4,6 +4,7 @@
 //! ↔ connector *bridge* that drives it from guest frames is the next slice; this is the connector
 //! itself, testable in isolation against a local `tokio::net::TcpListener`.
 
+use std::collections::BTreeMap;
 use std::io;
 use std::net::{IpAddr, SocketAddr};
 use std::time::Duration;
@@ -20,6 +21,7 @@ pub const DEFAULT_CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
 #[derive(Debug, Clone)]
 pub struct NativeConnector {
     connect_timeout: Duration,
+    host_map: BTreeMap<IpAddr, IpAddr>,
 }
 
 impl Default for NativeConnector {
@@ -32,12 +34,20 @@ impl NativeConnector {
     pub fn new() -> Self {
         NativeConnector {
             connect_timeout: DEFAULT_CONNECT_TIMEOUT,
+            host_map: BTreeMap::new(),
         }
     }
 
     /// Set the connect timeout (e.g. a short one in tests).
     pub fn with_connect_timeout(mut self, t: Duration) -> Self {
         self.connect_timeout = t;
+        self
+    }
+
+    /// Deterministically rewrite selected destination IPs before dialing. Acceptance uses this to
+    /// keep the guest-visible TEST-NET address (`192.0.2.1`) while the real server binds loopback.
+    pub fn with_host_map(mut self, host_map: BTreeMap<IpAddr, IpAddr>) -> Self {
+        self.host_map = host_map;
         self
     }
 }
@@ -65,7 +75,8 @@ impl OutboundConnector for NativeConnector {
         host: IpAddr,
         port: u16,
     ) -> impl std::future::Future<Output = Result<Self::Conn, ConnectError>> + Send {
-        let addr = SocketAddr::new(host, port);
+        let mapped = self.host_map.get(&host).copied().unwrap_or(host);
+        let addr = SocketAddr::new(mapped, port);
         let timeout = self.connect_timeout;
         async move {
             match tokio::time::timeout(timeout, TcpStream::connect(addr)).await {

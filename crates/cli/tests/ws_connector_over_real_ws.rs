@@ -78,6 +78,9 @@ fn spawn_relay() -> (ChildGuard, SocketAddr) {
     use std::io::{BufRead, BufReader};
     let mut child = Command::new(env!("CARGO_BIN_EXE_wvrelay"))
         .arg("127.0.0.1:0")
+        // E3-T14's acceptance target is TEST-NET-1. The relay rewrites it explicitly to the local
+        // server so the proof is deterministic and needs no privileged route/loopback alias.
+        .env("WVRELAY_HOST_MAP", "192.0.2.1=127.0.0.1")
         .stdout(Stdio::piped())
         .spawn()
         .expect("spawn wvrelay");
@@ -161,7 +164,7 @@ async fn ws_connector_round_trips_over_a_real_websocket_through_wvrelay() {
     let transport = connect_transport(relay_addr).await;
 
     let mut client = WsConnector::new(transport, Vec::new());
-    let conn = client.connect(Ipv4Addr::new(127, 0, 0, 1), echo.port());
+    let conn = client.connect(Ipv4Addr::new(192, 0, 2, 1), echo.port());
 
     const MSG: &[u8] = b"WsConnector over a real websocket wire";
     let mut sent = false;

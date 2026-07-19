@@ -1,7 +1,7 @@
-# WebSocket TCP proxy — framing protocol (E3-T16)
+# WebSocket TCP/UDP proxy — framing protocol (E3-T16 / E3-T14)
 
-A browser can't open raw TCP, so guest TCP flows are tunnelled through **one** multiplexed
-WebSocket to a small Rust relay server that opens the real outbound connections. This document
+A browser can't open raw TCP or UDP, so guest flows are tunnelled through **one** multiplexed
+WebSocket to a small Rust relay server that opens the real outbound sockets. This document
 specifies the binary wire format; the codec (`crates/slirp/src/ws_proxy.rs`) is shared by the
 client (`WsConnector`) and the server (`proxy/`) so their encoders/decoders agree by construction.
 
@@ -40,6 +40,11 @@ decoder with garbage must never panic or leak.
 | 6  | `CLOSE`       | nonzero| —                                          | both (clean close) |
 | 7  | `RST`         | nonzero| —                                          | both (abort) |
 | 8  | `WINDOW`      | nonzero| `credit:u32` (BE)                          | both (flow control) |
+| 9  | `UDP_OPEN`    | nonzero| `host_len:u8` + `host` + `port:u16`       | client→server |
+| 10 | `UDP_OPEN_OK` | nonzero| —                                          | server→client |
+| 11 | `UDP_OPEN_FAIL`| nonzero| `code:u8`                                 | server→client |
+| 12 | `UDP_DATA`    | nonzero| one UDP datagram, at most 65,507 bytes     | both |
+| 13 | `UDP_CLOSE`   | nonzero| —                                          | both |
 
 - **`HELLO`** — version negotiation + an (optional, may be empty) auth token. Auth/rate-limiting
   is E3-T19; the token FIELD exists now so the wire format doesn't change later.
@@ -55,6 +60,15 @@ decoder with garbage must never panic or leak.
   is **per-stream** — do NOT rely on the WebSocket's `bufferedAmount`, which is global and can't
   prevent one stalled stream from head-of-line-blocking the others. The client maps credits to the
   slirp socket window (E3-T14's backpressure seam).
+
+### UDP datagrams
+
+`UDP_OPEN` creates a connected relay UDP socket for one guest five-tuple; the client allocates its
+ids from `0x8000_0000..` to avoid TCP mux ids. Each `UDP_DATA` WebSocket message is exactly one UDP
+datagram. Implementations MUST reject payloads over 65,507 bytes and MUST NOT coalesce or split
+datagrams. UDP has no stream credit or half-close: bounded per-flow/application and transport queues
+drop or fail under pressure, while `UDP_CLOSE` reaps the socket. The connected socket admits replies
+only from the chosen destination. NAT idle expiry is 30 seconds on the client side.
 
 ## Close / RST state
 

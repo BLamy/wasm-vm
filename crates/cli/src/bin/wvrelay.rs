@@ -9,6 +9,7 @@
 //! Plaintext `ws://` only — TLS terminates at the ingress (a reverse proxy / the browser's `wss://`
 //! terminator), never here. There is no auth token wired yet (an empty token; auth is a later task).
 
+use std::collections::BTreeMap;
 use std::net::SocketAddr;
 
 use tokio::net::TcpListener;
@@ -27,6 +28,31 @@ fn resolve_addr(arg: Option<&str>, env: Option<&str>) -> Result<SocketAddr, Stri
         .map_err(|e| format!("invalid bind address {src:?}: {e}"))
 }
 
+/// Parse `source=target` entries separated by commas. Exact rewrites keep the normal relay closed to
+/// surprises: no wildcard/suffix matching, and an unset/empty value means no rewrites.
+fn parse_host_map(value: Option<&str>) -> Result<BTreeMap<String, String>, String> {
+    let mut out = BTreeMap::new();
+    let Some(value) = value.filter(|v| !v.trim().is_empty()) else {
+        return Ok(out);
+    };
+    for entry in value.split(',') {
+        let (source, target) = entry
+            .split_once('=')
+            .ok_or_else(|| format!("invalid host map entry {entry:?}; expected source=target"))?;
+        let source = source.trim();
+        let target = target.trim();
+        if source.is_empty() || target.is_empty() {
+            return Err(format!(
+                "invalid host map entry {entry:?}; source and target must be non-empty"
+            ));
+        }
+        if out.insert(source.to_string(), target.to_string()).is_some() {
+            return Err(format!("duplicate host map source {source:?}"));
+        }
+    }
+    Ok(out)
+}
+
 #[tokio::main(flavor = "current_thread")]
 async fn main() {
     // argv[1] is the optional bind address; $WVRELAY_ADDR is the env fallback (for container deploys).
@@ -34,6 +60,13 @@ async fn main() {
     let env = std::env::var("WVRELAY_ADDR").ok();
     let addr = match resolve_addr(arg.as_deref(), env.as_deref()) {
         Ok(a) => a,
+        Err(e) => {
+            eprintln!("wvrelay: {e}");
+            std::process::exit(2);
+        }
+    };
+    let host_map = match parse_host_map(std::env::var("WVRELAY_HOST_MAP").ok().as_deref()) {
+        Ok(map) => map,
         Err(e) => {
             eprintln!("wvrelay: {e}");
             std::process::exit(2);
@@ -56,12 +89,12 @@ async fn main() {
     let _ = std::io::stdout().flush();
 
     // Serve forever. An empty token = no auth (a later task); the relay bridges plaintext ws://.
-    wasm_vm_slirp::ws_proxy::serve_ws(listener, Vec::new()).await;
+    wasm_vm_slirp::ws_proxy::serve_ws_with_host_map(listener, Vec::new(), host_map).await;
 }
 
 #[cfg(test)]
 mod tests {
-    use super::resolve_addr;
+    use super::{parse_host_map, resolve_addr};
 
     #[test]
     fn defaults_to_loopback_8080_when_nothing_given() {
@@ -96,5 +129,18 @@ mod tests {
         assert!(resolve_addr(Some("not-an-addr"), None).is_err());
         // An unparseable env value is also an error — never silently fall back to the default.
         assert!(resolve_addr(None, Some("999.999.999.999:1")).is_err());
+    }
+
+    #[test]
+    fn host_map_is_exact_and_rejects_ambiguous_entries() {
+        let map = parse_host_map(Some("192.0.2.1=127.0.0.1,example.test=localhost")).unwrap();
+        assert_eq!(map.get("192.0.2.1").map(String::as_str), Some("127.0.0.1"));
+        assert_eq!(
+            map.get("example.test").map(String::as_str),
+            Some("localhost")
+        );
+        assert!(parse_host_map(Some("missing-equals")).is_err());
+        assert!(parse_host_map(Some("a=b,a=c")).is_err());
+        assert!(parse_host_map(Some("=target")).is_err());
     }
 }

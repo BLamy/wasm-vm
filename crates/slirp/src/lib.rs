@@ -61,12 +61,12 @@ pub use native::NativeConnector;
 #[cfg(feature = "native")]
 pub use native_resolver::NativeResolver;
 #[cfg(feature = "native")]
-pub use pump::{PumpStats, pump_flow};
+pub use pump::{PumpEvent, PumpStats, pump_flow};
 pub use resolver::{DnsForwarder, Resolution, Resolver, TtlCache};
 pub use stack::SlirpStack;
 #[cfg(not(target_arch = "wasm32"))]
 pub use std_connector::StdConnector;
-pub use sync_connector::{ConnId, ConnStatus, SyncConnector};
+pub use sync_connector::{ConnId, ConnStatus, DatagramId, SyncConnector};
 pub use udp::{UdpReply, UdpServices};
 pub use udp_frame::{GuestUdp, build_udp_frame, parse_udp};
 pub use ws_connector::{FrameTransport, WsConnector};
