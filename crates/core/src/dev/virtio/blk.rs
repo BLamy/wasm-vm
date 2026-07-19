@@ -71,21 +71,23 @@ pub struct BlkState {
     /// E2-T19: when `Some`, each serviced request is appended here for `--blk-log`. Off by
     /// default (no cost, and no host-visible allocation on the hot path when disabled).
     blk_log: Option<alloc::vec::Vec<BlkReq>>,
-    /// E3-T02/E3-T08: chains PARKED awaiting something asynchronous — a base chunk fetch
-    /// (`WouldBlock`) or a durable flush commit (`FlushPending`). Re-executed each `service()`
-    /// boundary; completed (pushed to the used ring, exactly once) when the wait resolves. Empty
-    /// for synchronous backends.
+    /// E3-T02/E3-T08/E3-T10: chains PARKED awaiting something asynchronous — a base chunk fetch
+    /// (`WouldBlock`), a durable flush commit (`FlushPending`), or a durable write commit
+    /// (`WritePending`). Re-executed each `service()` boundary; completed (pushed to the used ring,
+    /// exactly once) when the wait resolves. Empty for synchronous backends.
     parked: alloc::vec::Vec<(DescriptorChain, ParkReason)>,
 }
 
-/// E3-T08: why a chain is parked — awaiting a chunk fetch (reads/RMW writes) or the durable
-/// commit of a FLUSH's write-back barrier.
+/// Why a chain is parked — awaiting a chunk fetch, a FLUSH barrier, or a persistent WRITE commit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ParkReason {
     /// E3-T02: waiting for base chunk `chunk` to be fetched.
     Chunk(usize),
     /// E3-T08: a FLUSH waiting for the backend's durability barrier to clear.
     Flush,
+    /// E3-T10: a WRITE whose bytes are in the in-memory overlay but whose IndexedDB transaction
+    /// has not committed. It is not guest-visible until the used-ring entry is published.
+    Write,
 }
 
 impl BlkState {
@@ -111,6 +113,14 @@ impl BlkState {
         self.parked
             .iter()
             .any(|(_, r)| matches!(r, ParkReason::Flush))
+    }
+
+    /// E3-T10: whether a persistent WRITE is parked before guest acknowledgement. The wasm driver
+    /// uses this to prioritize the async durable transaction immediately.
+    pub fn write_waiting(&self) -> bool {
+        self.parked
+            .iter()
+            .any(|(_, r)| matches!(r, ParkReason::Write))
     }
 
     /// E2-T19: start recording serviced requests for `--blk-log`.
@@ -174,6 +184,7 @@ impl VirtioDevice for VirtioBlkDev {
         // in the backend; the NEXT flush would adopt that stale (too-narrow) barrier and could
         // ack while its own coverage is unpersisted. Tell the backend its barrier is orphaned.
         st.backend.flush_reset();
+        st.backend.write_reset();
     }
 }
 
@@ -360,6 +371,12 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                         Err(BlockError::WouldBlock { chunk }) => {
                             return ExecOutcome::Parked(ParkReason::Chunk(chunk));
                         }
+                        // E3-T10: persistent mode applies the bytes to its synchronous overlay,
+                        // then parks this exact descriptor until IndexedDB commits. No status byte
+                        // or used-ring entry is published while the request is RAM-only.
+                        Err(BlockError::WritePending) => {
+                            return ExecOutcome::Parked(ParkReason::Write);
+                        }
                         Err(BlockError::ReadOnly) => (S_IOERR, 0),
                         Err(_) => (S_IOERR, 0),
                     }
@@ -478,7 +495,8 @@ pub fn service(
     // descriptors + backend and writes nothing to the guest until it can complete). Out-of-order used
     // completion is legal in virtio (the used elem carries the head).
     let parked = core::mem::take(&mut state.borrow_mut().parked);
-    for (chain, _) in parked {
+    let mut write_still_waiting = false;
+    for (chain, parked_reason) in parked {
         // Bind first so the `state.borrow_mut()` temporary is released before the arms re-borrow it.
         let outcome = execute(&chain, &mut state.borrow_mut(), bus);
         match outcome {
@@ -489,14 +507,32 @@ pub fn service(
                     // The rest of the taken parked chains are dropped with this early return —
                     // any barrier a dropped FLUSH held is orphaned (E3-T08 critic BUG 1 family).
                     state.borrow_mut().backend.flush_reset();
+                    state.borrow_mut().backend.write_reset();
                     return;
                 }
                 delivered_work = true;
             }
-            ExecOutcome::Parked(reason) => state.borrow_mut().parked.push((chain, reason)),
-            // A chain valid enough to have parked cannot become a protocol violation on re-exec.
-            ExecOutcome::Invalid => {}
+            ExecOutcome::Parked(reason) => {
+                write_still_waiting |= matches!(reason, ParkReason::Write);
+                state.borrow_mut().parked.push((chain, reason));
+            }
+            // A conforming driver leaves an outstanding descriptor immutable, but a hostile guest
+            // can rewrite it. Drop any backend retry identity with the now-invalid chain so the
+            // next fresh request cannot inherit its write or flush barrier.
+            ExecOutcome::Invalid => match parked_reason {
+                ParkReason::Flush => state.borrow_mut().backend.flush_reset(),
+                ParkReason::Write => state.borrow_mut().backend.write_reset(),
+                ParkReason::Chunk(_) => {}
+            },
         }
+    }
+    // Exactly one durable write may be outstanding. Do not pop fresh descriptor chains while it
+    // remains RAM-only: a successful later request must never pass an uncommitted earlier write.
+    if write_still_waiting {
+        if delivered_work && vq.as_ref().is_some_and(|q| q.interrupt_needed(bus)) {
+            slot.borrow_mut().raise_used_irq();
+        }
+        return;
     }
     loop {
         match q.pop(bus) {
@@ -515,12 +551,17 @@ pub fn service(
                     // E3-T02: data not resident — keep the chain OUT of the used ring and retry next
                     // boundary (once the fetch layer has populated `chunk`).
                     ExecOutcome::Parked(reason) => {
+                        let blocks_fresh_writes = matches!(reason, ParkReason::Write);
                         state.borrow_mut().parked.push((chain, reason));
+                        if blocks_fresh_writes {
+                            break;
+                        }
                     }
                     ExecOutcome::Invalid => {
                         // No status byte anywhere: protocol violation, chain dropped.
                         slot.borrow_mut().protocol_violation();
                         *vq = None;
+                        state.borrow_mut().backend.write_reset();
                         return;
                     }
                 }

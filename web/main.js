@@ -64,12 +64,22 @@ async function runLinuxBoot(opts, banner) {
       // E3-T10: storage indicator (usage/quota/persist grant) at boot.
       onStorage: ({ usage, quota, granted }) => {
         const el = document.getElementById("storage-indicator");
+        const warning = document.getElementById("storage-warning");
         if (el && quota != null) {
           const mb = (n) => (n / 1048576).toFixed(0);
           el.textContent = `storage ${mb(usage)}/${mb(quota)} MB${granted ? " (persistent)" : " (best-effort)"}`;
           el.style.display = "inline";
         }
+        // There is no reliable cross-browser private-mode bit. A denied persist() request is the
+        // actionable condition in either private browsing or ordinary best-effort storage, so warn
+        // honestly in both cases instead of guessing why the browser denied durable storage.
+        if (warning) {
+          warning.style.display = granted ? "none" : "block";
+          warning.textContent =
+            "Storage is best-effort: changes may be evicted, and private/incognito storage is temporary. Export anything important.";
+        }
         term.writeln(`\x1b[90m[storage: ${quota != null ? `${((usage / quota) * 100) | 0}% of ${(quota / 1048576) | 0}MB` : "n/a"}, persist=${granted}]\x1b[0m`);
+        if (!granted) term.writeln("\x1b[33m[storage warning: best-effort; private/incognito changes are temporary]\x1b[0m");
       },
       // E3-T10: storage quota hit — the VM is PAUSED; show the actionable dialog. The three
       // choices map to loader controller actions (retry after freeing space / continue
@@ -79,24 +89,26 @@ async function runLinuxBoot(opts, banner) {
         if (!el) return;
         const pct = quota ? `${((usage / quota) * 100) | 0}%` : "full";
         el.style.display = "block";
-        // Honest copy (critic BUG-1): writes the guest already ACKed but that never reached disk
-        // stay pending — "Free space & retry" saves them; "Continue read-only" keeps trying in the
-        // background but they are NOT durable until space frees (a reload before then loses them).
+        // The pending descriptor has NOT been acknowledged: the guest cannot mistake RAM-only
+        // bytes for a successful write. Retry may persist and complete it; Continue read-only
+        // returns EIO for it. Reload may discard only bytes that never received S_OK.
         const warn = unsaved
-          ? ' <b>Some acknowledged writes are not yet saved</b> — free space and Retry to persist them; a reload before then loses them.'
+          ? ' <b>One write is waiting for durable storage and has not been acknowledged</b> — free browser storage and Retry to complete it, or Continue read-only to return an I/O error.'
           : "";
         el.innerHTML =
           `<b>Storage full</b> (${pct} of ${(quota / 1048576) | 0}MB). The VM is paused.${warn} ` +
-          '<button id="q-retry">Free space in guest & retry</button> ' +
+          '<b>Deleting files inside Alpine will not reclaim browser storage because discard/TRIM is not implemented.</b> ' +
+          '<button id="q-retry">Free browser storage & retry</button> ' +
           '<button id="q-ro">Continue read-only</button> ' +
           '<button id="q-reset">Reset disk…</button>';
-        term.writeln("\r\n\x1b[7m STORAGE FULL — VM paused. Free space (rm + sync) then Retry, or Continue read-only. \x1b[0m");
+        el.dataset.hits = String((Number(el.dataset.hits) || 0) + 1);
+        term.writeln("\r\n\x1b[7m STORAGE FULL — VM paused. Free browser storage then Retry, Continue read-only, or Reset disk. Guest rm cannot reclaim origin quota without TRIM. \x1b[0m");
         document.getElementById("q-retry").onclick = () => { el.style.display = "none"; linuxCtl?.resumeAfterQuota?.(); };
         document.getElementById("q-ro").onclick = () => {
           el.style.display = "none";
           linuxCtl?.continueReadOnly?.();
           const ro = document.getElementById("ro-banner");
-          if (ro) { ro.style.display = "block"; ro.textContent = "read-only: storage full — new guest writes return I/O errors; pending writes save if you free space"; }
+          if (ro) { ro.style.display = "block"; ro.textContent = "read-only: storage full — the waiting and all future guest writes return I/O errors"; }
         };
         document.getElementById("q-reset").onclick = async () => {
           const typed = prompt('This deletes every saved change to the Alpine disk. Type RESET to confirm:');
@@ -314,6 +326,8 @@ window.__chunkedStats = () => linuxCtl?.fetchStats?.() ?? null;
 window.__dhcpStats = () => linuxCtl?.dhcpStats?.() ?? null;
 // E3-T05 test hook: force a durable flush of the overlay to IndexedDB (Promise → blocks persisted).
 window.__persist = () => linuxCtl?.persist?.() ?? Promise.resolve(0);
+// E3-T10 proof hook: `{ pendingBlocks, pendingBytes, flushWaiting, writeWaiting }`.
+window.__persistStats = () => linuxCtl?.persistStats?.() ?? null;
 
 const statusEl = document.getElementById("status");
 const versionEl = document.getElementById("version");

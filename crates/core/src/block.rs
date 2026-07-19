@@ -46,6 +46,11 @@ pub enum BlockError {
     /// ring — once the backend reports the durability barrier clear. Synchronous backends never
     /// return it (their `flush` IS the barrier).
     FlushPending,
+    /// E3-T10: a WRITE has been applied to the synchronous in-memory view, but its durable async
+    /// transaction has not committed yet. The virtio-blk service parks the descriptor chain and
+    /// must not publish it to the used ring until retry returns `Ok`, or `ReadOnly`/`Io` after a
+    /// quota decision. Synchronous and ordinary write-back backends never return this variant.
+    WritePending,
 }
 
 /// Object-safe storage backend, sector-addressed in 512-byte units.
@@ -61,6 +66,10 @@ pub trait BlockBackend {
     /// it and ack while its own coverage is unpersisted (critic BUG 1: the early-ack lie).
     /// Default no-op: synchronous backends hold no barrier.
     fn flush_reset(&mut self) {}
+    /// E3-T10: every parked durable-WRITE request has been discarded (transport reset or device
+    /// degradation). Drop backend retry identity so a new descriptor chain cannot accidentally
+    /// complete the abandoned request. Default no-op: synchronous backends never park writes.
+    fn write_reset(&mut self) {}
     fn is_read_only(&self) -> bool {
         false
     }

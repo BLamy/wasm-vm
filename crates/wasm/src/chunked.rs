@@ -21,6 +21,15 @@ use wasm_vm_storage::{
     BlockCache, ImageManifest, MemOverlay, OverlayBackend, OverlayDisk, OverlayOutcome,
 };
 
+/// Identity + durability barrier for the one persistent WRITE allowed to wait for host commit.
+/// The virtio service stops consuming fresh chains while this exists, so matching sector/length is
+/// sufficient to distinguish the retry from a malformed replacement descriptor.
+struct PendingWrite {
+    sector: u64,
+    len: usize,
+    barrier: Vec<u64>,
+}
+
 /// A virtio-blk backend over a chunked image with a copy-on-write overlay. Reads merge the overlay
 /// over the base (parking on an absent base chunk); writes land in the overlay (a partial-block write
 /// parks if the block's base chunk is not resident, since it must read-modify-write the block).
@@ -38,6 +47,10 @@ pub struct ChunkedBackend<B: OverlayBackend = MemOverlay> {
     /// that FLUSH covers. Held across `flush()` retries so continuous guest writes cannot extend
     /// the wait; dropped once every barrier block has durably committed.
     flush_barrier: Option<Vec<u64>>,
+    /// E3-T10: persistent IndexedDB mode is write-through at the guest acknowledgement boundary.
+    /// A successful overlay mutation parks the virtio request until its exact queue barrier clears.
+    durable_write_ack: bool,
+    pending_write: Option<PendingWrite>,
     /// E3-T09/E3-T10: read-only mode. Set at construction when another tab holds the writer
     /// Web Lock (E3-T09); flipped at RUNTIME when the user chooses "continue read-only" after a
     /// storage-quota hit (E3-T10). A shared `Rc<Cell>` so the wasm boundary can flip it live.
@@ -67,11 +80,32 @@ impl<B: OverlayBackend> ChunkedBackend<B> {
     /// `WriteBackOverlay` (loaded from IndexedDB, sharing a persist queue). Capacity is the whole-sector
     /// floor of the overlay's image length.
     pub fn from_disk(disk: OverlayDisk<B>, store: Rc<RefCell<BlockCache>>) -> ChunkedBackend<B> {
+        Self::build(disk, store, false)
+    }
+
+    /// Build the persistent writer path: every guest WRITE remains out of the used ring until the
+    /// async durable store has committed its barrier. This is deliberately separate from
+    /// [`Self::from_disk`] so native write-back/FLUSH tests can continue modelling ordinary cached
+    /// writes without opting into host-level write-through semantics.
+    pub fn from_persistent_disk(
+        disk: OverlayDisk<B>,
+        store: Rc<RefCell<BlockCache>>,
+    ) -> ChunkedBackend<B> {
+        Self::build(disk, store, true)
+    }
+
+    fn build(
+        disk: OverlayDisk<B>,
+        store: Rc<RefCell<BlockCache>>,
+        durable_write_ack: bool,
+    ) -> ChunkedBackend<B> {
         ChunkedBackend {
             capacity_sectors: disk.len() / SECTOR_SIZE as u64,
             store,
             disk,
             flush_barrier: None,
+            durable_write_ack,
+            pending_write: None,
             read_only: Rc::new(std::cell::Cell::new(false)),
         }
     }
@@ -113,15 +147,41 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
 
     fn write(&mut self, sector: u64, buf: &[u8]) -> Result<(), BlockError> {
         // E3-T09: an RO tab must never mutate a disk another tab owns — refused before any
-        // range math so no state (overlay, persist queue) is touched.
+        // range math so no new state (overlay, persist queue) is touched. If E3-T10 flipped RO
+        // while this exact request was parked on host durability, discard its retry identity and
+        // complete that unacknowledged chain with IOERR.
         if self.read_only.get() {
+            self.pending_write = None;
             return Err(BlockError::ReadOnly);
+        }
+        if let Some(pending) = &self.pending_write {
+            if pending.sector != sector || pending.len != buf.len() {
+                return Err(BlockError::Io);
+            }
+            if self.disk.barrier_clear(&pending.barrier) {
+                self.pending_write = None;
+                return Ok(());
+            }
+            return Err(BlockError::WritePending);
         }
         let off = check_range(self.capacity_sectors, sector, buf.len())?;
         // `disk.write` is &mut self.disk; the base cache borrows self.store immutably (disjoint fields).
         let cache = self.store.borrow();
         match self.disk.write(&*cache, off, buf) {
-            Ok(OverlayOutcome::Done(())) => Ok(()),
+            Ok(OverlayOutcome::Done(())) => {
+                if self.durable_write_ack
+                    && let Some(barrier) = self.disk.durability_barrier()
+                {
+                    self.pending_write = Some(PendingWrite {
+                        sector,
+                        len: buf.len(),
+                        barrier,
+                    });
+                    Err(BlockError::WritePending)
+                } else {
+                    Ok(())
+                }
+            }
             // A partial-block RMW needs a base chunk that isn't resident yet — park (the write mutated
             // nothing, E3-T04 atomicity, so re-execution after the fetch is safe).
             Ok(OverlayOutcome::NeedChunk(c)) => Err(BlockError::WouldBlock { chunk: c }),
@@ -161,6 +221,10 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
         // everything pending at that point — adopting the stale, narrower barrier could ack a
         // new FLUSH while its own coverage is unpersisted.
         self.flush_barrier = None;
+    }
+
+    fn write_reset(&mut self) {
+        self.pending_write = None;
     }
 }
 
@@ -570,6 +634,56 @@ mod reset_scope_tests {
 }
 
 #[cfg(test)]
+mod durable_write_ack_tests {
+    use super::tests_support::*;
+    use super::*;
+
+    /// E3-T10 backend contract: persistent mode applies a write once, but returns WritePending
+    /// until the exact queue generation has been marked persisted. A quota-driven RO transition
+    /// rejects a still-parked request instead of converting RAM-only bytes into a false success.
+    #[test]
+    fn persistent_write_waits_for_exact_barrier_then_acks_or_returns_read_only() {
+        let (m, store) = tiny_manifest_store();
+        let queue = std::rc::Rc::new(RefCell::new(wasm_vm_storage::PersistQueue::new()));
+        let overlay = wasm_vm_storage::WriteBackOverlay::with_shared_queue(
+            &m,
+            queue.clone(),
+            std::collections::BTreeMap::new(),
+        );
+        let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &m).unwrap();
+        let mut be = ChunkedBackend::from_persistent_disk(disk, store);
+        let first = [0xA1u8; 4096];
+
+        assert_eq!(be.write(0, &first), Err(BlockError::WritePending));
+        let snap = queue.borrow().pending_flush();
+        assert_eq!(snap.len(), 1);
+        let first_generation = snap[0].1;
+        assert_eq!(snap[0].2, first);
+
+        // Virtio retries the SAME descriptor while IDB is unresolved. It must not rewrite the
+        // block or advance its generation; otherwise the captured barrier could never clear.
+        assert_eq!(be.write(0, &first), Err(BlockError::WritePending));
+        let retry_snap = queue.borrow().pending_flush();
+        assert_eq!(retry_snap[0].1, first_generation, "retry is idempotent");
+
+        let persisted: Vec<(u64, u64)> = snap.iter().map(|(b, g, _)| (*b, *g)).collect();
+        queue.borrow_mut().mark_persisted(&persisted);
+        assert_eq!(be.write(0, &first), Ok(()), "S_OK may now be published");
+        assert!(queue.borrow().is_empty());
+
+        // A second request parks. Continue read-only clears its retry identity and returns EIO;
+        // its queue bytes may remain RAM-only, but the guest never received success for them.
+        let second = [0xB2u8; 4096];
+        assert_eq!(be.write(8, &second), Err(BlockError::WritePending));
+        assert_eq!(queue.borrow().unpersisted_count(), 1);
+        be.read_only_flag().set(true);
+        assert_eq!(be.write(8, &second), Err(BlockError::ReadOnly));
+        assert_eq!(be.write(8, &second), Err(BlockError::ReadOnly));
+        assert_eq!(queue.borrow().unpersisted_count(), 1);
+    }
+}
+
+#[cfg(test)]
 mod critic_e3t10_hostile {
     use super::tests_support::*;
     use super::*;
@@ -613,12 +727,11 @@ mod critic_e3t10_hostile {
         );
     }
 
-    /// CRITIC claim 3, REFRAMED after the fix: at the BACKEND, a "continue read-only" runtime flip
-    /// over a backend with an unpersisted block correctly PARKS a FLUSH (never acks undurable
-    /// data) — which is exactly WHY the loader must keep the persist pump alive (critic BUG-1
-    /// fix: the pump is now gated on lockReadOnly, NOT the quota RO flag, so the backlog drains).
-    /// This test proves the resolution path: once the pending block IS persisted (the pump
-    /// succeeding after the user frees space), the FLUSH acks — the write was never lost.
+    /// Cached-mode regression retained from the earlier critic: `from_disk` intentionally models
+    /// ordinary write-back (not the production persistent writer, which now uses
+    /// `from_persistent_disk`). If cached bytes exist when read-only flips, a FLUSH must still park
+    /// until the pump drains them. This prevents regressions in the generic E3-T08 barrier path;
+    /// the production no-early-ack contract is covered by `durable_write_ack_tests` above.
     #[test]
     fn continue_read_only_flush_parks_until_backlog_drains_then_acks() {
         let (m, store) = tiny_manifest_store();
@@ -630,7 +743,7 @@ mod critic_e3t10_hostile {
         );
         let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &m).unwrap();
         let mut be = ChunkedBackend::from_disk(disk, store);
-        be.write(0, &[0xEEu8; 4096]).unwrap(); // acked S_OK pre-quota
+        be.write(0, &[0xEEu8; 4096]).unwrap(); // cached-mode S_OK (not persistent writer mode)
         assert_eq!(queue.borrow().unpersisted_count(), 1);
         // Quota → "continue read-only": flip the shared cell (no NEW writes accepted)…
         be.read_only_flag().set(true);
