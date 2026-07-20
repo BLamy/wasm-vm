@@ -19,9 +19,9 @@
 //!   bytes to the backend ([`RelayCore::on_backend_written`]). So a stalled backend bounds a stream's
 //!   queued data to the window (256 KiB) and can never freeze the shared main loop or other streams.
 
-use super::relay_security::{RelayToken, destination_is_public, verify_relay_token};
+use super::relay_security::{RelayToken, verify_relay_token};
 use super::{Frame, MAX_DATAGRAM_BYTES, MAX_STREAMS, RelayCore, RelayError};
-use super::{RelayLimits, RelayUsageRegistry};
+use super::{RelayLimits, RelayUsageRegistry, destinations_are_public};
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::Arc;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -240,8 +240,23 @@ impl RelayServer {
                 .duration_since(std::time::UNIX_EPOCH)
                 .map_err(|_| RelayError::Authentication)?
                 .as_secs();
-            let verified = verify_relay_token(&security.hmac_secret, now, &security.origin, token)
-                .map_err(|_| RelayError::Authentication)?;
+            let verified = match verify_relay_token(
+                &security.hmac_secret,
+                now,
+                &security.origin,
+                token,
+            ) {
+                Ok(token) => token,
+                Err(reason) => {
+                    security.usage.record_authentication(false);
+                    eprintln!(
+                        "{{\"event\":\"relay_authentication_rejected\",\"reason\":\"{reason:?}\"}}"
+                    );
+                    return Err(RelayError::Authentication);
+                }
+            };
+            security.usage.record_authentication(true);
+            eprintln!("{{\"event\":\"relay_session_authenticated\"}}");
             self.authenticated_token = Some(verified);
         }
         if self.core.is_ready() {
@@ -585,11 +600,17 @@ impl RelayServer {
             return false;
         };
         let now = unix_now();
-        if security
-            .usage
-            .reserve_stream(token, now, security.limits)
-            .is_err()
-        {
+        if let Err(reason) = security.usage.reserve_stream(token, now, security.limits) {
+            let metrics = security.usage.metrics();
+            eprintln!(
+                "{{\"event\":\"relay_quota_rejected\",\"reason\":\"{reason:?}\",\"active_streams\":{},\"connects_accepted\":{},\"rejected_concurrency\":{},\"rejected_rate\":{},\"rejected_bytes\":{},\"bytes_accounted\":{}}}",
+                metrics.active_streams,
+                metrics.connects_accepted,
+                metrics.rejected_concurrency,
+                metrics.rejected_rate,
+                metrics.rejected_bytes,
+                metrics.bytes_accounted,
+            );
             return false;
         }
         self.quota_streams.insert(stream)
@@ -618,10 +639,23 @@ impl RelayServer {
         let Some(token) = &self.authenticated_token else {
             return false;
         };
-        security
+        let accepted = security
             .usage
             .record_bytes(&token.id, bytes, security.limits)
-            .is_ok()
+            .is_ok();
+        if !accepted {
+            let metrics = security.usage.metrics();
+            eprintln!(
+                "{{\"event\":\"relay_quota_rejected\",\"reason\":\"ByteLimit\",\"active_streams\":{},\"connects_accepted\":{},\"rejected_concurrency\":{},\"rejected_rate\":{},\"rejected_bytes\":{},\"bytes_accounted\":{}}}",
+                metrics.active_streams,
+                metrics.connects_accepted,
+                metrics.rejected_concurrency,
+                metrics.rejected_rate,
+                metrics.rejected_bytes,
+                metrics.bytes_accounted,
+            );
+        }
+        accepted
     }
 }
 
@@ -651,9 +685,12 @@ async fn resolve_destination(
     // race the resolver/connect boundary or steer retries onto a protected address.
     if addresses.is_empty()
         || (require_public
-            && addresses
-                .iter()
-                .any(|address| !destination_is_public(address.ip())))
+            && !destinations_are_public(
+                &addresses
+                    .iter()
+                    .map(|address| address.ip())
+                    .collect::<Vec<_>>(),
+            ))
     {
         return Err(());
     }

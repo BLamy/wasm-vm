@@ -24,8 +24,8 @@ pub use mux::{MAX_STREAMS, Mux, MuxError, MuxEvent, Role};
 pub use relay::{INITIAL_WINDOW, RelayActions, RelayCore, RelayError, SocketOp};
 #[cfg(feature = "native")]
 pub use relay_security::{
-    RelayLimits, RelayQuotaError, RelayToken, RelayTokenError, RelayUsageRegistry,
-    issue_relay_token, verify_relay_token,
+    RelayLimits, RelayMetrics, RelayQuotaError, RelayToken, RelayTokenError, RelayUsageRegistry,
+    destinations_are_public, issue_relay_token, verify_relay_token,
 };
 pub use session::{HandshakeError, Session, SessionError, accept_hello, hello};
 pub use stream::{StreamError, StreamState, Terminal};

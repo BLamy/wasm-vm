@@ -54,8 +54,26 @@ pub enum RelayQuotaError {
     ByteLimit,
 }
 
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct RelayMetrics {
+    pub sessions_authenticated: u64,
+    pub rejected_authentication: u64,
+    pub active_streams: u64,
+    pub connects_accepted: u64,
+    pub rejected_concurrency: u64,
+    pub rejected_rate: u64,
+    pub rejected_bytes: u64,
+    pub bytes_accounted: u64,
+}
+
+#[derive(Debug, Default)]
+struct RegistryState {
+    tokens: HashMap<String, TokenUsage>,
+    metrics: RelayMetrics,
+}
+
 #[derive(Debug, Clone, Default)]
-pub struct RelayUsageRegistry(Arc<Mutex<HashMap<String, TokenUsage>>>);
+pub struct RelayUsageRegistry(Arc<Mutex<RegistryState>>);
 
 #[derive(Debug, Default)]
 struct TokenUsage {
@@ -66,6 +84,15 @@ struct TokenUsage {
 }
 
 impl RelayUsageRegistry {
+    pub fn record_authentication(&self, accepted: bool) {
+        let mut registry = self.0.lock().expect("relay usage registry poisoned");
+        if accepted {
+            registry.metrics.sessions_authenticated += 1;
+        } else {
+            registry.metrics.rejected_authentication += 1;
+        }
+    }
+
     pub fn reserve_stream(
         &self,
         token: &RelayToken,
@@ -73,35 +100,57 @@ impl RelayUsageRegistry {
         limits: RelayLimits,
     ) -> Result<(), RelayQuotaError> {
         let mut registry = self.0.lock().expect("relay usage registry poisoned");
-        registry.retain(|_, usage| usage.expiry_unix_secs > now_unix_secs);
-        let usage = registry.entry(token.id.clone()).or_default();
-        usage.expiry_unix_secs = token.expiry_unix_secs;
-        while usage
-            .connect_times
-            .front()
-            .is_some_and(|time| time.saturating_add(60) <= now_unix_secs)
-        {
-            usage.connect_times.pop_front();
+        registry
+            .tokens
+            .retain(|_, usage| usage.expiry_unix_secs > now_unix_secs);
+        let outcome = {
+            let usage = registry.tokens.entry(token.id.clone()).or_default();
+            usage.expiry_unix_secs = token.expiry_unix_secs;
+            while usage
+                .connect_times
+                .front()
+                .is_some_and(|time| time.saturating_add(60) <= now_unix_secs)
+            {
+                usage.connect_times.pop_front();
+            }
+            if usage.active_streams >= limits.max_concurrent_streams {
+                Err(RelayQuotaError::ConcurrentStreams)
+            } else if usage.connect_times.len() >= limits.max_connects_per_minute {
+                Err(RelayQuotaError::ConnectRate)
+            } else {
+                usage.active_streams += 1;
+                usage.connect_times.push_back(now_unix_secs);
+                Ok(())
+            }
+        };
+        match outcome {
+            Err(RelayQuotaError::ConcurrentStreams) => {
+                registry.metrics.rejected_concurrency += 1;
+                return Err(RelayQuotaError::ConcurrentStreams);
+            }
+            Err(RelayQuotaError::ConnectRate) => {
+                registry.metrics.rejected_rate += 1;
+                return Err(RelayQuotaError::ConnectRate);
+            }
+            Err(RelayQuotaError::ByteLimit) => unreachable!(),
+            Ok(()) => {}
         }
-        if usage.active_streams >= limits.max_concurrent_streams {
-            return Err(RelayQuotaError::ConcurrentStreams);
-        }
-        if usage.connect_times.len() >= limits.max_connects_per_minute {
-            return Err(RelayQuotaError::ConnectRate);
-        }
-        usage.active_streams += 1;
-        usage.connect_times.push_back(now_unix_secs);
+        registry.metrics.active_streams += 1;
+        registry.metrics.connects_accepted += 1;
         Ok(())
     }
 
     pub fn release_stream(&self, token_id: &str) {
-        if let Some(usage) = self
-            .0
-            .lock()
-            .expect("relay usage registry poisoned")
-            .get_mut(token_id)
-        {
+        let mut registry = self.0.lock().expect("relay usage registry poisoned");
+        let was_active = if let Some(usage) = registry.tokens.get_mut(token_id) {
+            let was_active = usage.active_streams > 0;
             usage.active_streams = usage.active_streams.saturating_sub(1);
+            was_active
+        } else {
+            false
+        };
+        if was_active {
+            registry.metrics.active_streams = registry.metrics.active_streams.saturating_sub(1);
         }
     }
 
@@ -112,18 +161,35 @@ impl RelayUsageRegistry {
         limits: RelayLimits,
     ) -> Result<(), RelayQuotaError> {
         let mut registry = self.0.lock().expect("relay usage registry poisoned");
-        let usage = registry
-            .get_mut(token_id)
-            .ok_or(RelayQuotaError::ByteLimit)?;
-        let next = usage
-            .bytes
-            .checked_add(count as u64)
-            .ok_or(RelayQuotaError::ByteLimit)?;
-        if next > limits.max_bytes_per_token {
+        let accepted = if let Some(usage) = registry.tokens.get_mut(token_id) {
+            match usage.bytes.checked_add(count as u64) {
+                Some(next) if next <= limits.max_bytes_per_token => {
+                    usage.bytes = next;
+                    true
+                }
+                _ => false,
+            }
+        } else {
+            false
+        };
+        if !accepted {
+            registry.metrics.rejected_bytes += 1;
             return Err(RelayQuotaError::ByteLimit);
         }
-        usage.bytes = next;
+        registry.metrics.bytes_accounted = registry
+            .metrics
+            .bytes_accounted
+            .saturating_add(count as u64);
         Ok(())
+    }
+
+    /// Aggregate-only operational counters. They deliberately contain no token IDs, origins,
+    /// destinations, tailnet state, or payload data and are therefore safe for metrics/log output.
+    pub fn metrics(&self) -> RelayMetrics {
+        self.0
+            .lock()
+            .expect("relay usage registry poisoned")
+            .metrics
     }
 }
 
@@ -210,6 +276,12 @@ pub fn destination_is_public(ip: IpAddr) -> bool {
         IpAddr::V4(ip) => ipv4_is_public(ip),
         IpAddr::V6(ip) => ipv6_is_public(ip),
     }
+}
+
+/// A DNS result is allowed only when it is non-empty and every answer remains public. Rejecting
+/// the complete mixed set is the resolver/connect boundary that defeats DNS rebinding retries.
+pub fn destinations_are_public(addresses: &[IpAddr]) -> bool {
+    !addresses.is_empty() && addresses.iter().copied().all(destination_is_public)
 }
 
 fn ipv4_is_public(ip: Ipv4Addr) -> bool {
@@ -371,6 +443,19 @@ mod tests {
     }
 
     #[test]
+    fn destination_policy_rejects_empty_and_mixed_dns_answers() {
+        assert!(!destinations_are_public(&[]));
+        assert!(destinations_are_public(&[
+            "1.1.1.1".parse().unwrap(),
+            "2606:4700:4700::1111".parse().unwrap(),
+        ]));
+        assert!(!destinations_are_public(&[
+            "1.1.1.1".parse().unwrap(),
+            "169.254.169.254".parse().unwrap(),
+        ]));
+    }
+
+    #[test]
     fn quotas_are_shared_by_token_id_and_release_only_concurrency() {
         let registry = RelayUsageRegistry::default();
         let token = RelayToken {
@@ -399,6 +484,19 @@ mod tests {
         assert_eq!(
             registry.record_bytes(&token.id, 1, limits),
             Err(RelayQuotaError::ByteLimit)
+        );
+        assert_eq!(
+            registry.metrics(),
+            RelayMetrics {
+                sessions_authenticated: 0,
+                rejected_authentication: 0,
+                active_streams: 0,
+                connects_accepted: 2,
+                rejected_concurrency: 1,
+                rejected_rate: 1,
+                rejected_bytes: 1,
+                bytes_accounted: 5,
+            }
         );
     }
 }

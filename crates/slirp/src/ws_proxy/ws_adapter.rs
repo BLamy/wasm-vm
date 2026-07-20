@@ -170,8 +170,10 @@ async fn handle_secure_conn(
         .expect("origin capture poisoned")
         .clone();
     let Some(origin) = origin.filter(|origin| allowed_origins.contains(origin)) else {
+        eprintln!("{{\"event\":\"relay_origin_rejected\"}}");
         return;
     };
+    let session_usage = usage.clone();
     bridge_ws(
         ws,
         RelayConnectionSecurity {
@@ -183,6 +185,18 @@ async fn handle_secure_conn(
         host_map,
     )
     .await;
+    let metrics = session_usage.metrics();
+    eprintln!(
+        "{{\"event\":\"relay_session_closed\",\"sessions_authenticated\":{},\"rejected_authentication\":{},\"active_streams\":{},\"connects_accepted\":{},\"rejected_concurrency\":{},\"rejected_rate\":{},\"rejected_bytes\":{},\"bytes_accounted\":{}}}",
+        metrics.sessions_authenticated,
+        metrics.rejected_authentication,
+        metrics.active_streams,
+        metrics.connects_accepted,
+        metrics.rejected_concurrency,
+        metrics.rejected_rate,
+        metrics.rejected_bytes,
+        metrics.bytes_accounted,
+    );
 }
 
 async fn bridge_ws(

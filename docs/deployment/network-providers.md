@@ -31,7 +31,9 @@ and paste it into the password field. Tokens are HMAC signed, Origin-bound, expi
 minutes, and are carried only in the binary HELLO. The public relay resolves every destination and
 rejects the whole answer if any address is loopback, link-local, RFC1918/4193, CGNAT, metadata,
 multicast, or a documentation range. The compose-only exact fixture rewrite is the explicit local
-development exception.
+development exception. Relay security events are newline-delimited JSON. They expose only event and
+reason names plus aggregate authenticated-session, active-stream, accepted-connect, rejected-limit,
+and byte counters; token IDs, origins, destinations, payloads, and state never enter those records.
 
 ## Production checklist
 
