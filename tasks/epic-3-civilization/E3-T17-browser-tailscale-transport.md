@@ -3,7 +3,7 @@ id: E3-T17
 epic: 3
 title: Browser Tailscale transport — IPN worker, TCP/UDP streams, MagicDNS, and exit nodes
 priority: 317
-status: implemented
+status: in-progress
 depends_on: [E3-T15, E3-T16]
 estimate: L
 capstone: false
@@ -209,3 +209,32 @@ failures, all four E3-T17 pips verified, and zero application console errors. Tw
 connector builds produced identical `main.wasm` SHA-256
 `546d60eeaf034740b536021afbf4578490783942a9379188b2e1881678357c36` and identical `pkg.js`
 SHA-256 `794737c98253168ae116377d89fac4988e174d09de14e35e236963deea9796f5`.
+
+### 2026-07-20 — verifier — rework review
+
+VERDICT: refuted
+
+- **P0 asynchronous lifecycle state-machine race — FAILED.** Predicted that once the Worker had
+  accepted and returned from `{type: "logout"}`, every new TCP OPEN would fail until a subsequent
+  authenticated `Running` state. The production runtime's `logout()` initiates logout and returns
+  synchronously (`web/tailscale-runtime.js:183-187`), so the core clears `loggingOut`
+  (`web/tailscale-worker-core.js:375-380`) before the later unauthenticated status callback changes
+  `runtimeOnline`. An independent Node harness posted OPEN immediately after
+  `await core.accept({type: "logout"})` and observed `dials=1`, `flows=1`, OPEN_OK opcode 2, and
+  WINDOW opcode 8. Keep the guest-facing gate closed across the asynchronous lifecycle transition,
+  add an OPEN-during-transition regression, and record that boundary without first waiting for the
+  terminal status.
+- **TEST GAP.** The permanent logout regression closes existing and pending flows, then sends only
+  stale DATA after awaiting logout (`web/tests/e3-t17-worker-protocol.spec.js:236-264`); it never
+  sends a new OPEN in the interval above. The live recheck waits for empty storage and the terminal
+  unauthenticated state before opening again (`evidence/e3-t17/logout-recheck.txt:28-32`), so the
+  submitted evidence does not exercise this boundary.
+- **SABOTAGE.** In isolated clone `/private/tmp/wasm-vm-e3t17-verifier-sabotage`, removing the
+  active-flow closing loops made the focused regression fail with `activeFlows=3`, all close counts
+  zero, and writes `[[1],[2],[3]]`. The existing-flow assertions are load-bearing but do not cover
+  the new-OPEN lifecycle interval.
+
+Commands: independent Node lifecycle harness importing `web/tailscale-worker-core.js`; `npx
+playwright test tests/e3-t17-provider-selection.spec.js tests/e3-t17-runtime-smoke.spec.js
+tests/e3-t17-worker-protocol.spec.js tests/e3-t17-demo-proof.spec.js --reporter=line` (13 passed,
+1 opt-in skipped); isolated-clone focused Playwright sabotage check.
