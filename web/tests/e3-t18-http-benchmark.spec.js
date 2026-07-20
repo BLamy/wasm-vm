@@ -45,6 +45,29 @@ test("E3-T18 compares generic TCP, browser fetch, and streaming Tailscale HTTP",
       dialTCP: runtime.dialTCP,
       maxQueueBytes,
     });
+    const semanticRequest = async (path, relativeUrl, method = "GET") => {
+      const chunks = [];
+      const base = path === "browser-fetch" ? fetchUrl : `http://${peerIp}:18000`;
+      const response = await evaluator.request({ url: `${base}${relativeUrl}`, method }, {
+        path,
+        onChunk: async (chunk) => chunks.push(...chunk),
+      });
+      return {
+        ...response,
+        body: chunks,
+        byteExactPattern: chunks.every((value, index) => value === (index & 255)),
+      };
+    };
+    const semantics = {};
+    for (const path of ["browser-fetch", "tailscale-http"]) {
+      semantics[path] = {
+        fixed: await semanticRequest(path, "/e3-t18/fixed?bytes=4096"),
+        trickle: await semanticRequest(path, "/e3-t18/trickle?bytes=4096"),
+        redirect: await semanticRequest(path, "/e3-t18/redirect"),
+        notFound: await semanticRequest(path, "/e3-t18/not-found"),
+        head: await semanticRequest(path, "/e3-t18/fixed?bytes=4096", "HEAD"),
+      };
+    }
     const percentile = (values, fraction) => {
       if (!values.length) return 0;
       const sorted = [...values].sort((a, b) => a - b);
@@ -163,13 +186,48 @@ test("E3-T18 compares generic TCP, browser fetch, and streaming Tailscale HTTP",
     for (const order of orders) {
       for (const path of order) runs.push({ path, ...await runners[path]() });
     }
-    return { bodyBytes, maxQueueBytes, orders, runs };
+    return { bodyBytes, maxQueueBytes, semantics, orders, runs };
   }, { controlUrl: CONTROL_URL, authKey: AUTH_KEY, peerIp: PEER_IP, fetchUrl: FETCH_URL, bodyBytes: BYTES });
 
   for (const pathName of ["generic-tcp", "browser-fetch", "tailscale-http"]) {
     const runs = result.runs.filter(({ path }) => path === pathName);
     expect(runs).toHaveLength(3);
     expect(runs.every(({ bytes, stalledConsumer }) => bytes === BYTES && stalledConsumer)).toBe(true);
+  }
+  for (const pathName of ["browser-fetch", "tailscale-http"]) {
+    const semantics = result.semantics[pathName];
+    for (const response of [semantics.fixed, semantics.trickle]) {
+      expect(response).toMatchObject({ status: 200, bodyBytes: 4096 });
+      expect(response.body).toHaveLength(4096);
+      expect(response.body.every((value, index) => value === (index & 255))).toBe(true);
+    }
+    expect(semantics.notFound.status).toBe(404);
+    expect(semantics.head).toMatchObject({ status: 200, bodyBytes: 0, body: [] });
+  }
+  expect(result.semantics["browser-fetch"].redirect.status).toBe(0);
+  expect(result.semantics["tailscale-http"].redirect.status).toBe(302);
+  // Fetch's CORS filtered response hides non-exposed headers. Even with an expose header,
+  // the Headers API combines duplicate values, so this path cannot transparently reconstruct
+  // the guest's HTTP response. Keep that limitation as evidence rather than normalizing it away.
+  expect(result.semantics["browser-fetch"].fixed.headers
+    .find(([name]) => name === "x-e3-t18-duplicate")).toBeUndefined();
+  expect(result.semantics["tailscale-http"].fixed.headers
+    .filter(([name]) => name === "X-E3-T18-Duplicate")).toEqual([
+      ["X-E3-T18-Duplicate", "one"],
+      ["X-E3-T18-Duplicate", "two"],
+    ]);
+  if (process.env.E3_T18_SEMANTICS_EVIDENCE === "1") {
+    const evidence = path.resolve(WEB, "../evidence/e3-t18");
+    const compact = Object.fromEntries(Object.entries(result.semantics).map(([pathName, cases]) => [
+      pathName,
+      Object.fromEntries(Object.entries(cases).map(([caseName, response]) => {
+        const { body: _body, ...summary } = response;
+        return [caseName, summary];
+      })),
+    ]));
+    fs.mkdirSync(evidence, { recursive: true });
+    fs.writeFileSync(path.join(evidence, "live-semantics.json"),
+      `${JSON.stringify(compact, null, 2)}\n`);
   }
   if (BYTES === 1024 * 1024 * 1024) {
     const evidence = path.resolve(WEB, "../evidence/e3-t18");

@@ -1,0 +1,113 @@
+{
+  "bodyBytes": 1073741824,
+  "maxQueueBytes": 262144,
+  "orders": [
+    [
+      "generic-tcp",
+      "browser-fetch",
+      "tailscale-http"
+    ],
+    [
+      "browser-fetch",
+      "tailscale-http",
+      "generic-tcp"
+    ],
+    [
+      "tailscale-http",
+      "generic-tcp",
+      "browser-fetch"
+    ]
+  ],
+  "runs": [
+    {
+      "path": "generic-tcp",
+      "bytes": 1073741824,
+      "elapsedMs": 909188.0250000954,
+      "mibPerSecond": 1.1262796823571148,
+      "chunkGapP50Ms": 0.22499990463256836,
+      "chunkGapP99Ms": 42.53499984741211,
+      "peakIncrementalHeapBytes": 0,
+      "stalledConsumer": true
+    },
+    {
+      "path": "browser-fetch",
+      "bytes": 1073741824,
+      "elapsedMs": 3612.4900002479553,
+      "mibPerSecond": 283.4609922601071,
+      "chunkGapP50Ms": 0.6750001907348633,
+      "chunkGapP99Ms": 2.184999942779541,
+      "peakIncrementalHeapBytes": 0,
+      "stalledConsumer": true
+    },
+    {
+      "path": "tailscale-http",
+      "bytes": 1073741824,
+      "elapsedMs": 1006249.1199998856,
+      "mibPerSecond": 1.017640641514416,
+      "chunkGapP50Ms": 0.2199997901916504,
+      "chunkGapP99Ms": 43.11500024795532,
+      "peakIncrementalHeapBytes": 103400000,
+      "stalledConsumer": true
+    },
+    {
+      "path": "browser-fetch",
+      "bytes": 1073741824,
+      "elapsedMs": 3007.829999923706,
+      "mibPerSecond": 340.44477248580336,
+      "chunkGapP50Ms": 0.619999885559082,
+      "chunkGapP99Ms": 1.1150002479553223,
+      "peakIncrementalHeapBytes": 0,
+      "stalledConsumer": true
+    },
+    {
+      "path": "tailscale-http",
+      "bytes": 1073741824,
+      "elapsedMs": 1104626.950000286,
+      "mibPerSecond": 0.927009792762828,
+      "chunkGapP50Ms": 0.24499988555908203,
+      "chunkGapP99Ms": 42.43000030517578,
+      "peakIncrementalHeapBytes": 68000000,
+      "stalledConsumer": true
+    },
+    {
+      "path": "generic-tcp",
+      "bytes": 1073741824,
+      "elapsedMs": 1056241.9549999237,
+      "mibPerSecond": 0.9694748396924584,
+      "chunkGapP50Ms": 0.19999980926513672,
+      "chunkGapP99Ms": 32.55999994277954,
+      "peakIncrementalHeapBytes": 55000000,
+      "stalledConsumer": true
+    },
+    {
+      "path": "tailscale-http",
+      "bytes": 1073741824,
+      "elapsedMs": 1058416.894999981,
+      "mibPerSecond": 0.9674826666481154,
+      "chunkGapP50Ms": 0.2199997901916504,
+      "chunkGapP99Ms": 31.90500020980835,
+      "peakIncrementalHeapBytes": 32000000,
+      "stalledConsumer": true
+    },
+    {
+      "path": "generic-tcp",
+      "bytes": 1073741824,
+      "elapsedMs": 1169621.029999733,
+      "mibPerSecond": 0.8754972540124674,
+      "chunkGapP50Ms": 0.21000003814697266,
+      "chunkGapP99Ms": 40.84999990463257,
+      "peakIncrementalHeapBytes": 124000000,
+      "stalledConsumer": true
+    },
+    {
+      "path": "browser-fetch",
+      "bytes": 1073741824,
+      "elapsedMs": 3620.789999961853,
+      "mibPerSecond": 282.8112097113581,
+      "chunkGapP50Ms": 0.7249999046325684,
+      "chunkGapP99Ms": 1.9850001335144043,
+      "peakIncrementalHeapBytes": 0,
+      "stalledConsumer": true
+    }
+  ]
+}

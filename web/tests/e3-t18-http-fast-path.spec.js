@@ -87,7 +87,12 @@ test("E3-T18 browser fetch candidate streams bounded chunks with explicit redire
           controller.enqueue(new Uint8Array(3).fill(9));
           controller.close();
         },
-      }), { status: 302, headers: [["Location", "/elsewhere"], ["Access-Control-Allow-Origin", "*"]] });
+      }), { status: 302, headers: [
+        ["Location", "/elsewhere"],
+        ["Access-Control-Allow-Origin", "*"],
+        ["X-Dupe", "one"],
+        ["X-Dupe", "two"],
+      ] });
     };
     const chunks = [];
     const evaluator = createHttpFastPathEvaluator({
@@ -104,6 +109,7 @@ test("E3-T18 browser fetch candidate streams bounded chunks with explicit redire
 
   expect(result.response.status).toBe(302);
   expect(result.response.bodyBytes).toBe(10_003);
+  expect(result.response.headers.find(([name]) => name === "x-dupe")).toEqual(["x-dupe", "one, two"]);
   expect(result.chunks).toEqual([[4096, 7], [4096, 7], [1808, 7], [3, 9]]);
   expect(result.init).toMatchObject({ credentials: "omit", redirect: "manual", cache: "no-store" });
 });
