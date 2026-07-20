@@ -3,7 +3,7 @@ id: E3-T17
 epic: 3
 title: Browser Tailscale transport — IPN worker, TCP/UDP streams, MagicDNS, and exit nodes
 priority: 317
-status: in-progress
+status: implemented
 depends_on: [E3-T15, E3-T16]
 estimate: L
 capstone: false
@@ -180,3 +180,32 @@ tests/e3-t17-runtime-smoke.spec.js tests/e3-t17-worker-protocol.spec.js
 tests/e3-t17-demo-proof.spec.js --reporter=line` (11 passed, opt-in demo proof skipped); independent
 Node logout-race harness; `shasum -a 256 web/tailscale-connect/main.wasm`; independent Node SHA-256
 stream oracle; isolated-clone Playwright sabotage check.
+
+### 2026-07-20 — worker — reworked after refutation
+
+Rework commits `45d518b` and `55f8027` close every verifier demand. Logout now fails and reaps
+active TCP/UDP flows before revoking persisted identity; the permanent race test proves later DATA
+is rejected. A real Headscale recording in `evidence/e3-t17/logout-recheck.txt` correlates browser
+node `100.64.0.30` with accepted service traffic, then shows the open flow reset, node deletion, and
+a post-logout open failing without another service request. `failure-matrix.txt` records expired and
+reused keys, wrong and unreachable control URLs, corrupt persisted state, and admin revocation; all
+fail closed without OPEN_OK or credential disclosure.
+
+The prescribed identity-laundering attack is recorded in `evidence/e3-t17/acl-identity.txt` using
+the exact `tools/e3-t17-acl-policy.hujson`: `tag:relay` node `100.64.0.3` succeeds before and after
+restart, while `tag:browser` node `100.64.0.4` fails twice within 20 seconds and never appears in
+the service log. `remote-rst.txt` records an independent peer abort observed as Worker RST opcode 7.
+The stock-Alpine extension (`alpine-rst-*`) proves the same reset is guest-visible: BusyBox `wget`
+exits nonzero with `connection reset by peer`, alongside DHCP, `10.0.2.3`, MagicDNS, TCP, and UDP
+success from browser node `100.64.0.5`. The gVisor reset-preservation patch is pinned and applied in
+an isolated module cache by the documented connector build.
+
+Final gates passed from the reworked head: `cargo fmt --check`; `cargo clippy -- -D warnings`;
+`cargo test --workspace -- --skip file_backend::tests::kill_mid_write_no_torn_sectors` with normal
+loopback privileges (all runnable workspace and doc tests passed); `cargo build -p wasm-vm-wasm
+--target wasm32-unknown-unknown`; `make web-build`; and the focused provider/runtime/protocol/browser
+suite (13 passed, the opt-in demo test skipped). The opt-in final demo then passed 126/126 with zero
+failures, all four E3-T17 pips verified, and zero application console errors. Two clean pinned
+connector builds produced identical `main.wasm` SHA-256
+`546d60eeaf034740b536021afbf4578490783942a9379188b2e1881678357c36` and identical `pkg.js`
+SHA-256 `794737c98253168ae116377d89fac4988e174d09de14e35e236963deea9796f5`.
