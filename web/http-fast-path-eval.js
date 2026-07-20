@@ -3,6 +3,7 @@
 
 const DEFAULT_QUEUE_BYTES = 256 * 1024;
 const MAX_HEADER_BYTES = 64 * 1024;
+const MAX_DIAL_READ_BYTES = 64 * 1024;
 
 function bytes(value) {
   return value instanceof Uint8Array ? value : new Uint8Array(value);
@@ -93,7 +94,10 @@ async function tailscaleHttp(request, options) {
   let eof = false;
   const readMore = async () => {
     if (eof) return false;
-    const chunk = await conn.read(Math.max(1, options.maxQueueBytes - pending.byteLength));
+    const chunk = await conn.read(Math.min(
+      MAX_DIAL_READ_BYTES,
+      Math.max(1, options.maxQueueBytes - pending.byteLength),
+    ));
     if (chunk === null) {
       eof = true;
       return false;

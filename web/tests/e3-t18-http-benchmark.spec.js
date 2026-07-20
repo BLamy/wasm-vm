@@ -99,7 +99,7 @@ test("E3-T18 compares generic TCP, browser fetch, and streaming Tailscale HTTP",
         );
         await conn.write(request);
         for (;;) {
-          const chunk = await conn.read(maxQueueBytes);
+          const chunk = await conn.read(Math.min(maxQueueBytes, 64 * 1024));
           if (chunk === null) break;
           if (!headersDone) {
             const joined = new Uint8Array(header.byteLength + chunk.byteLength);
