@@ -6,13 +6,80 @@
 import init, { WasmMachine, version, bench } from "./pkg/wasm_vm_wasm.js";
 import { RISCV_TESTS } from "./riscv-tests.js";
 import { ROADMAP } from "./roadmap.js";
-import { startLinuxBoot, resetDisk } from "./loader.js";
+import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
 import { createLinuxTerminal } from "./terminal.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
 const TEST_MAX_INSTRS = 1_000_000;
 const SYS_EXIT = 93n;
+const TAILSCALE_STATE_KEY = "wasm-vm.tailscale-state.v1";
+
+const networkProviderEl = document.getElementById("network-provider");
+const networkRelayEl = document.getElementById("network-relay-url");
+const tailscaleControlEl = document.getElementById("tailscale-control-url");
+const tailscaleHostnameEl = document.getElementById("tailscale-hostname");
+const tailscaleAuthEl = document.getElementById("tailscale-auth-key");
+const tailscaleExitNodeEl = document.getElementById("tailscale-exit-node");
+const tailscaleAcceptDnsEl = document.getElementById("tailscale-accept-dns");
+const tailscaleStatusEl = document.getElementById("tailscale-status");
+
+function loadTailscaleState() {
+  try {
+    const raw = localStorage.getItem(TAILSCALE_STATE_KEY);
+    if (!raw) return null;
+    const state = JSON.parse(raw);
+    if (!state || typeof state !== "object" || Array.isArray(state) ||
+        !Object.values(state).every((value) => typeof value === "string")) {
+      throw new Error("invalid state shape");
+    }
+    return state;
+  } catch {
+    localStorage.removeItem(TAILSCALE_STATE_KEY);
+    return null;
+  }
+}
+
+globalThis.__wasmVmTailscaleEvent = (message) => {
+  if (!message || typeof message !== "object") return;
+  if (message.type === "storageUpdate") {
+    const snapshot = message.snapshot;
+    if (snapshot && Object.keys(snapshot).length) {
+      localStorage.setItem(TAILSCALE_STATE_KEY, JSON.stringify(snapshot));
+    } else {
+      localStorage.removeItem(TAILSCALE_STATE_KEY);
+    }
+    return;
+  }
+  if (message.type === "status") {
+    // Once provisioning has started, remove the one-time key from the DOM as well as Worker/Go.
+    if (tailscaleAuthEl) tailscaleAuthEl.value = "";
+    const status = message.status ?? {};
+    const self = status.netMap?.self;
+    const identity = self?.name ? ` · ${self.name}${self.addresses?.length ? ` (${self.addresses.join(", ")})` : ""}` : "";
+    if (tailscaleStatusEl) tailscaleStatusEl.textContent = `Tailscale: ${status.state ?? "unknown"}${identity}`;
+    return;
+  }
+  if (message.type === "failed" && tailscaleStatusEl) {
+    tailscaleStatusEl.textContent = `Tailscale failed: ${message.error?.message ?? "provider stopped"}`;
+  }
+};
+
+document.getElementById("tailscale-login")?.addEventListener("click", () => {
+  if (!tailscaleCommand("login") && tailscaleStatusEl) {
+    tailscaleStatusEl.textContent = "Boot with the Tailscale provider before requesting login.";
+  }
+});
+document.getElementById("tailscale-logout")?.addEventListener("click", () => {
+  localStorage.removeItem(TAILSCALE_STATE_KEY);
+  if (tailscaleAuthEl) tailscaleAuthEl.value = "";
+  const sent = tailscaleCommand("logout");
+  if (tailscaleStatusEl) {
+    tailscaleStatusEl.textContent = sent
+      ? "Tailscale logout/revocation requested; persisted browser state cleared."
+      : "Persisted browser state cleared; no active Tailscale Worker.";
+  }
+});
 
 // E2-T22: the terminal + its UART input bridge (fit addon, backpressure queue, key policy) live
 // in terminal.js. `term` is the raw xterm.js instance the ELF-console paths keep writing to.
@@ -38,8 +105,24 @@ async function runLinuxBoot(opts, banner) {
   term.reset();
   term.writeln(`\x1b[36m${banner}\x1b[0m`);
   const query = new URLSearchParams(location.search);
-  const slirpRelay = opts.slirpRelay ?? query.get("slirpRelay") ?? "";
+  const slirpRelay = opts.slirpRelay ?? query.get("slirpRelay") ?? networkRelayEl?.value ?? "";
   const slirpDoh = opts.slirpDoh ?? query.get("slirpDoh") ?? "";
+  const slirpProvider = opts.slirpProvider ?? query.get("slirpProvider") ??
+    (opts.slirpTailscale ? "tailscale" : slirpRelay ? "relay" : networkProviderEl?.value ?? "offline");
+  const slirpTailscale = opts.slirpTailscale ?? (slirpProvider === "tailscale" ? {
+    workerUrl: "./tailscale-worker.js",
+    config: {
+      wasmUrl: "./tailscale-connect/main.wasm",
+      controlUrl: tailscaleControlEl?.value.trim() || undefined,
+      hostname: tailscaleHostnameEl?.value.trim() || "wasm-vm-browser",
+      authKey: tailscaleAuthEl?.value || undefined,
+      state: loadTailscaleState(),
+      acceptDns: Boolean(tailscaleAcceptDnsEl?.checked),
+      useExitNode: Boolean(tailscaleExitNodeEl?.value.trim()),
+      exitNodeId: tailscaleExitNodeEl?.value.trim() || null,
+    },
+  } : null);
+  if (networkProviderEl) networkProviderEl.value = slirpProvider;
   if (slirpRelay) {
     term.writeln(`\x1b[90m[network: slirp outbound via ${slirpRelay}]\x1b[0m`);
   }
@@ -49,8 +132,10 @@ async function runLinuxBoot(opts, banner) {
       ...opts,
       // E3-net: `?slirpNet` in the URL boots with the slirp local stack (real DHCP/ARP/ICMP) instead
       // of the loopback backend — so the guest can pull a real IP and reach the gateway.
-      slirpNet: opts.slirpNet ?? (query.has("slirpNet") || !!slirpRelay || !!slirpDoh),
+      slirpNet: opts.slirpNet ?? (query.has("slirpNet") || slirpProvider !== "offline" || !!slirpDoh),
+      slirpProvider,
       slirpRelay,
+      slirpTailscale,
       slirpDoh,
       slirpLeaseSecs: opts.slirpLeaseSecs ?? query.get("slirpLeaseSecs") ?? 86400,
       slirpMtu: opts.slirpMtu ?? query.get("slirpMtu") ?? 1500,

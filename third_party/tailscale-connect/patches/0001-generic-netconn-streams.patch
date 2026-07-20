@@ -1,0 +1,211 @@
+diff --git a/cmd/tsconnect/src/types/wasm_js.d.ts b/cmd/tsconnect/src/types/wasm_js.d.ts
+index 938ec759c..57b965235 100644
+--- a/cmd/tsconnect/src/types/wasm_js.d.ts
++++ b/cmd/tsconnect/src/types/wasm_js.d.ts
+@@ -34,6 +34,15 @@ declare global {
+       statusText: string
+       text: () => Promise<string>
+     }>
++    dialTCP(host: string, port: number, timeoutMs?: number): Promise<IPNNetConn>
++    dialUDP(host: string, port: number, timeoutMs?: number): Promise<IPNNetConn>
++  }
++
++  interface IPNNetConn {
++    read(maxBytes?: number): Promise<Uint8Array | null>
++    write(bytes: Uint8Array): Promise<number>
++    shutdownWrite(): Promise<void>
++    close(): Promise<void>
+   }
+ 
+   interface IPNSSHSession {
+diff --git a/cmd/tsconnect/wasm/wasm_js.go b/cmd/tsconnect/wasm/wasm_js.go
+index 828ce3456..dcca1f4a2 100644
+--- a/cmd/tsconnect/wasm/wasm_js.go
++++ b/cmd/tsconnect/wasm/wasm_js.go
+@@ -24,7 +24,9 @@
+ 	"net"
+ 	"net/http"
+ 	"net/netip"
++	"strconv"
+ 	"strings"
++	"sync"
+ 	"syscall/js"
+ 	"time"
+ 
+@@ -225,7 +227,144 @@ func newIPN(jsConfig js.Value) map[string]any {
+ 			}
+ 			return jsIPN.lookup(args[0].String())
+ 		}),
++		"dialTCP": js.FuncOf(func(this js.Value, args []js.Value) any {
++			return jsIPN.dial("tcp", args)
++		}),
++		"dialUDP": js.FuncOf(func(this js.Value, args []js.Value) any {
++			return jsIPN.dial("udp", args)
++		}),
++	}
++}
++
++const maxJSStreamRead = 64 * 1024
++
++// dial exposes the generic net.Conn seam used by wasm-vm's bounded Worker transport. Unlike
++// fetch, it never constructs an HTTP request or buffers a response body. Each returned method is
++// promise-shaped so blocking Go net.Conn operations run on goroutines instead of the JS callback.
++func (i *jsIPN) dial(network string, args []js.Value) js.Value {
++	return makePromise(func() (any, error) {
++		if len(args) < 2 || args[0].Type() != js.TypeString || args[1].Type() != js.TypeNumber {
++			return nil, fmt.Errorf("Usage: dial%s(host, port[, timeoutMs])", strings.ToUpper(network))
++		}
++		host, port := args[0].String(), args[1].Int()
++		if host == "" || port < 1 || port > 65535 {
++			return nil, fmt.Errorf("invalid destination")
++		}
++		timeout := 10 * time.Second
++		if len(args) >= 3 && args[2].Type() == js.TypeNumber {
++			ms := args[2].Int()
++			if ms > 0 && ms <= 120_000 {
++				timeout = time.Duration(ms) * time.Millisecond
++			}
++		}
++		ctx, cancel := context.WithTimeout(context.Background(), timeout)
++		defer cancel()
++		conn, err := i.dialer.UserDial(ctx, network, net.JoinHostPort(host, strconv.Itoa(port)))
++		if err != nil {
++			return nil, err
++		}
++		return newJSNetConn(conn, network == "udp"), nil
++	})
++}
++
++type jsNetConn struct {
++	conn      net.Conn
++	datagram  bool
++	readMu    sync.Mutex
++	writeMu   sync.Mutex
++	closeOnce sync.Once
++}
++
++func newJSNetConn(conn net.Conn, datagram bool) map[string]any {
++	c := &jsNetConn{conn: conn, datagram: datagram}
++	return map[string]any{
++		"read": js.FuncOf(func(this js.Value, args []js.Value) any {
++			max := maxJSStreamRead
++			if len(args) == 1 && args[0].Type() == js.TypeNumber {
++				max = args[0].Int()
++			}
++			return makePromise(func() (any, error) { return c.read(max) })
++		}),
++		"write": js.FuncOf(func(this js.Value, args []js.Value) any {
++			if len(args) != 1 || !args[0].InstanceOf(js.Global().Get("Uint8Array")) {
++				return rejectedPromise("write requires one Uint8Array")
++			}
++			payload := make([]byte, args[0].Length())
++			js.CopyBytesToGo(payload, args[0])
++			return makePromise(func() (any, error) { return c.write(payload) })
++		}),
++		"shutdownWrite": js.FuncOf(func(this js.Value, args []js.Value) any {
++			return makePromise(func() (any, error) { return nil, c.shutdownWrite() })
++		}),
++		"close": js.FuncOf(func(this js.Value, args []js.Value) any {
++			return makePromise(func() (any, error) { return nil, c.close() })
++		}),
++	}
++}
++
++func (c *jsNetConn) read(max int) (any, error) {
++	if max < 1 || max > maxJSStreamRead {
++		return nil, fmt.Errorf("read size must be between 1 and %d", maxJSStreamRead)
++	}
++	c.readMu.Lock()
++	defer c.readMu.Unlock()
++	buf := make([]byte, max)
++	n, err := c.conn.Read(buf)
++	if err != nil {
++		if err == io.EOF {
++			return nil, nil
++		}
++		return nil, err
++	}
++	array := js.Global().Get("Uint8Array").New(n)
++	js.CopyBytesToJS(array, buf[:n])
++	return array, nil
++}
++
++func (c *jsNetConn) write(payload []byte) (any, error) {
++	if len(payload) > maxJSStreamRead {
++		return nil, fmt.Errorf("write exceeds %d-byte bridge limit", maxJSStreamRead)
++	}
++	c.writeMu.Lock()
++	defer c.writeMu.Unlock()
++	if c.datagram {
++		n, err := c.conn.Write(payload)
++		if err == nil && n != len(payload) {
++			err = io.ErrShortWrite
++		}
++		return n, err
+ 	}
++	written := 0
++	for written < len(payload) {
++		n, err := c.conn.Write(payload[written:])
++		written += n
++		if err != nil {
++			return written, err
++		}
++		if n == 0 {
++			return written, io.ErrShortWrite
++		}
++	}
++	return written, nil
++}
++
++func (c *jsNetConn) shutdownWrite() error {
++	if c.datagram {
++		return fmt.Errorf("UDP does not support half-close")
++	}
++	if conn, ok := c.conn.(interface{ CloseWrite() error }); ok {
++		return conn.CloseWrite()
++	}
++	return fmt.Errorf("connection does not support half-close")
++}
++
++func (c *jsNetConn) close() (err error) {
++	c.closeOnce.Do(func() { err = c.conn.Close() })
++	return err
++}
++
++func rejectedPromise(message string) js.Value {
++	return js.Global().Get("Promise").Call("reject", message)
+ }
+ 
+ type jsIPN struct {
+@@ -329,6 +468,10 @@ func (i *jsIPN) run(jsCallbacks js.Value) {
+ 	})
+ 
+ 	go func() {
++		// Auth keys are one-time provisioning inputs. Drop the bridge's copy before Start so the
++		// long-lived browser runtime and diagnostics cannot retain it after registration begins.
++		authKey := i.authKey
++		i.authKey = ""
+ 		err := i.lb.Start(ipn.Options{
+ 			UpdatePrefs: &ipn.Prefs{
+ 				ControlURL:  i.controlURL,
+@@ -336,8 +479,9 @@ func (i *jsIPN) run(jsCallbacks js.Value) {
+ 				WantRunning: true,
+ 				Hostname:    i.hostname,
+ 			},
+-			AuthKey: i.authKey,
++			AuthKey: authKey,
+ 		})
++		authKey = ""
+ 		if err != nil {
+ 			log.Printf("Start error: %v", err)
+ 		}
+diff --git a/cmd/tsconnect/src/pkg/pkg.ts b/cmd/tsconnect/src/pkg/pkg.ts
+index a44c57150..ade15985b 100644
+--- a/cmd/tsconnect/src/pkg/pkg.ts
++++ b/cmd/tsconnect/src/pkg/pkg.ts
+@@ -36,5 +36,3 @@ export async function createIPN(config: IPNPackageConfig): Promise<IPN> {
+ 
+   return newIPN(config)
+ }
+-
+-export { runSSHSession } from "../lib/ssh"

@@ -51,6 +51,10 @@ features = [
     "WebSocket",
     "BinaryType",
     "MessageEvent",
+  "Worker",
+  "WorkerOptions",
+  "WorkerType",
+    "ErrorEvent",
 ]
 
 [features]
