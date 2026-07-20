@@ -373,11 +373,11 @@ export class TailscaleWorkerCore {
         // first prevents active, queued, and still-dialing flows from leaking traffic through
         // the asynchronous logout window.
         this.loggingOut = true;
+        this.runtimeOnline = false;
         for (const stream of [...this.tcp.keys()]) this.closeTCP(stream, true);
         for (const stream of [...this.udp.keys()]) this.closeUDP(stream, true);
       }
       await this.runtime[method]();
-      if (method === "logout") this.loggingOut = false;
     } catch (error) {
       this.fail("lifecycle", redactError(error));
     }
@@ -387,6 +387,7 @@ export class TailscaleWorkerCore {
     const state = status?.state;
     if (state === "Running") {
       this.runtimeOnline = true;
+      this.loggingOut = false;
     } else if (state === "NeedsLogin" || state === "Stopped" || state === "error") {
       this.runtimeOnline = false;
       for (const stream of [...this.tcp.keys()]) this.closeTCP(stream, true);

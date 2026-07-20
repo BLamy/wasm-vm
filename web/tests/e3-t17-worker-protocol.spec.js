@@ -175,6 +175,7 @@ test("E3-T17 logout reaps active and dialing flows before queued IO can escape",
     let udpCloses = 0;
     let lateCloses = 0;
     let logouts = 0;
+    let tcpDials = 0;
     let releaseFirstWrite;
     let resolveLateDial;
     const firstWrite = new Promise((resolve) => { releaseFirstWrite = resolve; });
@@ -196,7 +197,10 @@ test("E3-T17 logout reaps active and dialing flows before queued IO can escape",
     };
     const runtime = {
       start: async () => {},
-      dialTCP: async (host) => host === "late" ? lateDial : activeTCP,
+      dialTCP: async (host) => {
+        tcpDials += 1;
+        return host === "late" ? lateDial : activeTCP;
+      },
       dialUDP: async () => activeUDP,
       logout: async () => { logouts += 1; },
       dispose: async () => {},
@@ -241,27 +245,31 @@ test("E3-T17 logout reaps active and dialing flows before queued IO can escape",
     await settle();
     // Stale guest traffic and opens racing the logout must fail closed.
     core.onFrame(frame(1, OP.DATA, Uint8Array.of(3)));
+    core.onFrame(open(4, OP.OPEN, "after-logout"));
+    await settle();
 
     const wire = posts.filter((entry) => entry.type === "frame").map((entry) => {
       const bytes = new Uint8Array(entry.bytes);
       return { stream: new DataView(bytes.buffer).getUint32(0, false), opcode: bytes[4] };
     });
     return {
-      writes, tcpCloses, udpCloses, lateCloses, logouts,
+      writes, tcpCloses, udpCloses, lateCloses, logouts, tcpDials,
       activeFlows: core.flowCount(), wire,
     };
   });
 
   expect(result).toMatchObject({
     writes: [[1]], tcpCloses: 1, udpCloses: 1, lateCloses: 1, logouts: 1,
-    activeFlows: 0,
+    tcpDials: 2, activeFlows: 0,
   });
   expect(result.wire).toEqual(expect.arrayContaining([
     { stream: 1, opcode: 7 },
     { stream: 2, opcode: 7 },
     { stream: 3, opcode: 13 },
+    { stream: 4, opcode: 3 },
   ]));
   expect(result.wire).not.toContainEqual({ stream: 2, opcode: 2 });
+  expect(result.wire).not.toContainEqual({ stream: 4, opcode: 2 });
 });
 
 test("E3-T17 control-plane revocation reaps flows and blocks new dials", async ({ page }) => {
