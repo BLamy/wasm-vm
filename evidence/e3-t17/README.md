@@ -36,6 +36,13 @@ In the same run, a download stopped exactly at the 262,144-byte receive-credit c
 HTTP stream completed, and a peer response arrived after the client half-closed its write side.
 The service-side addresses identify browser node `100.64.0.27`, not a backend relay.
 
+`alpine-relay-summary.json`, `alpine-relay-terminal.txt`, and `alpine-relay-100m.png` are the
+required E3-T16 fallback recheck after the Tailscale provider changes. With Tailscale disabled,
+stock Alpine downloaded exactly 104,857,600 bytes through the production browser WebSocket relay
+in 3,224 seconds. The guest SHA-256 was
+`20492a4d0d84f8beb1767f6616229f85d44c2827b64bdbfb260ee12fa1109e0e`, matching the independent
+fixture, with exit code 0 and no console errors.
+
 Reproduce with:
 
 ```sh
@@ -52,3 +59,11 @@ npx playwright test tests/e3-t17-alpine-tailnet.spec.js
 
 For the public HTTPS proof, add `E3_T17_EXIT_NODE_ID=1` and
 `E3_T17_PUBLIC_URL=https://1.1.1.1/`.
+
+Repeat the relay fallback without overwriting E3-T16's original evidence with:
+
+```sh
+cd web
+E3_T16_FULL=1 E3_T16_EVIDENCE_DIR=evidence/e3-t17 \
+  npx playwright test tests/e3-t16-alpine-relay.spec.js --reporter=line
+```
