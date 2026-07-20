@@ -3,7 +3,7 @@ id: E3-T18
 epic: 3
 title: Optional browser HTTP fast-path evaluation after Tailscale
 priority: 318
-status: implemented
+status: verified
 depends_on: [E3-T17]
 estimate: S
 capstone: false
@@ -109,3 +109,52 @@ Commands and gates:
 - Live 1 MiB semantic/transport rerun with ephemeral Headscale credentials — 1 passed in 15.3 s.
 - `E3_T17_DEMO=1 npx playwright test tests/e3-t17-demo-proof.spec.js --reporter=line` — pass,
   126/0 and zero console errors.
+
+### 2026-07-20 — verifier — VERDICT: verified
+
+- DECISION — SURVIVED. Predicted neither candidate could satisfy every precommitted gate. The
+  1 GiB evidence contains three rotated, stalled-consumer runs per path
+  (`evidence/e3-t18/benchmark.json:2-110`): recomputation gives T17 median 0.969 MiB/s and median
+  p99 gap 40.850 ms versus Tailscale HTTP 0.967 MiB/s (0.998x), 42.430 ms, and 103,400,000 B
+  maximum incremental JS heap. That misses both the 1.25x and 16 MiB rules committed in
+  `937d1b5` before the result. Fetch is fast but the live evidence shows opaque redirect status 0
+  and no duplicate response headers (`evidence/e3-t18/live-semantics.json:43-50,97-138,182-218`).
+  Rejecting both candidates is the only verdict consistent with the declared rule.
+- INTEGRITY — SURVIVED. Predicted the submitted bytes and cited evidence would match exactly.
+  Submitted head `ca95c18` has unchanged evaluator/benchmark/evidence bytes from implementation
+  head `8bce08b`; SHA-256 recomputation produced
+  `a47da90dcf2914c7486fd961fe18d9d30288f5c6b38f914ff5a3d95a154669be` and
+  `9f6480ea1aa2c384c47f63bceb7d71f88d85ce07128cb2873660c83b679ae5aa`, matching the claim.
+- FRAMING/CORS — SURVIVED FOR THE REJECTION. Predicted alternate casing, combined request
+  `Content-Length`/`Transfer-Encoding`, CRLF injection, an over-64-KiB request, a subdomain of an
+  allowlisted origin, an over-64-KiB response, and conflicting response lengths would not pass
+  through. Scratch Playwright attacks observed zero dials for all request cases and explicit
+  response rejections; the committed Chromium matrix independently passed same-origin,
+  permissive, blocked, redirect, and credential-omission cases. The task's fixed, trickled, 404,
+  HEAD, duplicate-header, and keep-alive paths are all exercised by the deterministic and live
+  suites.
+- INVENTED ATTACK — REJECTION STRENGTHENED. Predicted a short `conn.write` would require a retry
+  or failure; a scratch connection returning half the request once was nevertheless followed by
+  response parsing (`web/http-fast-path-eval.js:146`). This is another reason the prototype must
+  not be adopted. It does not weaken the delivered no-go decision because the module is
+  non-production, no implementation task is filed, and the shipped path never imports it.
+- BOUNDS/COVERAGE — SUFFICIENT FOR NO-GO. The measured consumers validate every byte, throw above
+  256 KiB, await the 250 ms stall, and retain no body (`web/tests/e3-t18-http-benchmark.spec.js:
+  76-110`); the evaluator caps pending bytes and awaits each consumer (`web/http-fast-path-eval.js:
+  93-131`). Completed 1 GiB entries prove the checks did not fire. Response/parser hunks are
+  exercised by unit and live semantics runs; the fixture and evidence-writer hunks are exercised
+  by the pinned JSON. Documentation/status hunks are waived as declarative. No production import
+  exists, E3-T20 has no E3-T18 dependency, and a fresh E3-T17 demo rerun passed 126/0 with zero
+  console errors.
+- SUITE: retain both E3-T18 Playwright specs as the permanent decision/semantic harness. The
+  scratch short-write attack is discarded because the attacked candidate is explicitly rejected
+  and unreachable from production. Sabotage-checking the request-framing guard in a scratch copy
+  made the committed opt-in/framing test fail, so that test is sensitive to the protected behavior.
+
+Verifier commands: `shasum -a 256 evidence/e3-t18/{benchmark,live-semantics}.json`; independent
+`jq` median/max recomputation; `npx playwright test tests/e3-t18-http-fast-path.spec.js
+tests/e3-t18-http-benchmark.spec.js --reporter=line` (5 passed, live benchmark skipped without
+ephemeral credentials); scratch-only oversized/framing/short-write attacks; scratch-only sabotage
+run; `make web-build`; `cargo fmt --check`; `cargo clippy -- -D warnings`; `git diff --check`;
+`E3_T17_DEMO=1 npx playwright test tests/e3-t17-demo-proof.spec.js --reporter=line` (1 passed,
+126/0, zero console errors).
