@@ -224,7 +224,10 @@ export class TailscaleWorkerCore {
         flow.recvCredit += payload.byteLength;
         this.sendFrame(windowFrame(stream, payload.byteLength));
       }
-    }).catch(() => this.resetTCP(stream));
+    }).catch((error) => {
+      this.post({ type: "flowError", transport: "tcp", stream, phase: "write", message: redactError(error) });
+      this.resetTCP(stream);
+    });
   }
 
   grantTCP({ stream, credit }) {
@@ -242,7 +245,10 @@ export class TailscaleWorkerCore {
     if (!flow?.conn || flow.cancelled) return this.resetTCP(stream);
     flow.writeChain = flow.writeChain
       .then(() => flow.conn.shutdownWrite())
-      .catch(() => this.resetTCP(stream));
+      .catch((error) => {
+        this.post({ type: "flowError", transport: "tcp", stream, phase: "shutdown", message: redactError(error) });
+        this.resetTCP(stream);
+      });
   }
 
   async readTCP(flow) {
@@ -265,7 +271,11 @@ export class TailscaleWorkerCore {
         flow.sendCredit -= payload.byteLength;
         this.sendFrame(dataFrame(flow.stream, OP.DATA, payload));
       }
-    } catch {
+    } catch (error) {
+      this.post({
+        type: "flowError", transport: "tcp", stream: flow.stream, phase: "read",
+        message: redactError(error),
+      });
       this.resetTCP(flow.stream);
     }
   }

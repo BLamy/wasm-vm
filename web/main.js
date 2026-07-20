@@ -65,8 +65,9 @@ globalThis.__wasmVmTailscaleEvent = (message) => {
     return;
   }
   if (message.type === "flowError" && tailscaleStatusEl) {
+    const phase = message.phase ? ` ${message.phase}` : "";
     tailscaleStatusEl.textContent =
-      `Tailscale ${message.transport ?? "flow"} ${message.stream ?? "?"} failed: ${message.message ?? "connection failed"}`;
+      `Tailscale ${message.transport ?? "flow"} ${message.stream ?? "?"}${phase} failed: ${message.message ?? "connection failed"}`;
   }
 };
 

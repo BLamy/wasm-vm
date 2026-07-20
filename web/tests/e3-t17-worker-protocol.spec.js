@@ -101,6 +101,70 @@ test("E3-T17 Worker maps bounded TCP frames without calling whole-body fetch", a
   });
 });
 
+test("E3-T17 Worker reports the exact TCP bridge phase before resetting", async ({ page }) => {
+  await page.goto("/");
+  const errors = await page.evaluate(async () => {
+    const { TailscaleWorkerCore, ProxyOpcode: OP } = await import("./tailscale-worker-core.js");
+    const posts = [];
+    const never = () => new Promise(() => {});
+    const runtime = {
+      start: async () => {},
+      dialTCP: async (host) => ({
+        read: host === "read" ? async () => { throw new Error("read exploded"); } : never,
+        write: host === "write" ? async () => { throw new Error("write exploded"); } : async (bytes) => bytes.byteLength,
+        shutdownWrite: host === "shutdown"
+          ? async () => { throw new Error("shutdown tskey-auth-secret"); }
+          : async () => {},
+        close: async () => {},
+      }),
+      dialUDP: async () => { throw new Error("not used"); },
+      dispose: async () => {},
+    };
+    const core = new TailscaleWorkerCore({ post: (message) => posts.push(message), loadRuntime: async () => runtime });
+    await core.accept({ type: "configure", config: {} });
+    const frame = (stream, opcode, payload = new Uint8Array()) => {
+      const bytes = new Uint8Array(5 + payload.byteLength);
+      new DataView(bytes.buffer).setUint32(0, stream, false);
+      bytes[4] = opcode;
+      bytes.set(payload, 5);
+      return bytes;
+    };
+    const open = (stream, host) => {
+      const name = new TextEncoder().encode(host);
+      const payload = new Uint8Array(3 + name.byteLength);
+      payload[0] = name.byteLength;
+      payload.set(name, 1);
+      new DataView(payload.buffer).setUint16(1 + name.byteLength, 443, false);
+      return frame(stream, OP.OPEN, payload);
+    };
+    const window = (stream, credit) => {
+      const payload = new Uint8Array(4);
+      new DataView(payload.buffer).setUint32(0, credit, false);
+      return frame(stream, OP.WINDOW, payload);
+    };
+    const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+    core.onFrame(frame(0, OP.HELLO, Uint8Array.of(1)));
+    core.onFrame(open(1, "read"));
+    core.onFrame(open(2, "write"));
+    core.onFrame(open(3, "shutdown"));
+    await settle();
+    core.onFrame(window(1, 1));
+    core.onFrame(frame(2, OP.DATA, Uint8Array.of(1)));
+    core.onFrame(frame(3, OP.SHUTDOWN_WR));
+    await settle();
+    await settle();
+    await core.dispose();
+    return posts.filter((message) => message.type === "flowError");
+  });
+
+  expect(errors).toEqual(expect.arrayContaining([
+    { type: "flowError", transport: "tcp", stream: 1, phase: "read", message: "read exploded" },
+    { type: "flowError", transport: "tcp", stream: 2, phase: "write", message: "write exploded" },
+    { type: "flowError", transport: "tcp", stream: 3, phase: "shutdown", message: "shutdown [redacted]" },
+  ]));
+});
+
 test("E3-T17 Worker preserves hostile UDP boundaries and connect-close races", async ({ page }) => {
   await page.goto("/");
   const result = await page.evaluate(async () => {
