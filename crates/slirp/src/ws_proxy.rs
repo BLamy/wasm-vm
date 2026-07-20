@@ -23,12 +23,16 @@ pub use driver::{RelayConnectionSecurity, RelayServer};
 pub use mux::{MAX_STREAMS, Mux, MuxError, MuxEvent, Role};
 pub use relay::{INITIAL_WINDOW, RelayActions, RelayCore, RelayError, SocketOp};
 #[cfg(feature = "native")]
-pub use relay_security::{RelayToken, RelayTokenError, issue_relay_token, verify_relay_token};
+pub use relay_security::{
+    RelayLimits, RelayQuotaError, RelayToken, RelayTokenError, RelayUsageRegistry,
+    issue_relay_token, verify_relay_token,
+};
 pub use session::{HandshakeError, Session, SessionError, accept_hello, hello};
 pub use stream::{StreamError, StreamState, Terminal};
 #[cfg(feature = "native")]
 pub use ws_adapter::{
     serve as serve_ws, serve_secure as serve_ws_secure,
+    serve_secure_with_limits as serve_ws_secure_with_limits,
     serve_with_host_map as serve_ws_with_host_map,
 };
 

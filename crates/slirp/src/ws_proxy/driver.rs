@@ -21,7 +21,8 @@
 
 use super::relay_security::{RelayToken, destination_is_public, verify_relay_token};
 use super::{Frame, MAX_DATAGRAM_BYTES, MAX_STREAMS, RelayCore, RelayError};
-use std::collections::{BTreeMap, HashMap};
+use super::{RelayLimits, RelayUsageRegistry};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::Arc;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::tcp::{OwnedReadHalf, OwnedWriteHalf};
@@ -116,12 +117,15 @@ pub struct RelayServer {
     /// uses [`Self::with_security`] and refuses any stream until the origin-bound HELLO verifies.
     security: Option<RelayConnectionSecurity>,
     authenticated_token: Option<RelayToken>,
+    quota_streams: HashSet<u32>,
 }
 
 #[derive(Debug, Clone)]
 pub struct RelayConnectionSecurity {
     pub hmac_secret: Vec<u8>,
     pub origin: String,
+    pub limits: RelayLimits,
+    pub usage: RelayUsageRegistry,
 }
 
 impl RelayServer {
@@ -138,6 +142,7 @@ impl RelayServer {
             host_map: BTreeMap::new(),
             security: None,
             authenticated_token: None,
+            quota_streams: HashSet::new(),
         }
     }
 
@@ -155,6 +160,7 @@ impl RelayServer {
             host_map,
             security: None,
             authenticated_token: None,
+            quota_streams: HashSet::new(),
         }
     }
 
@@ -172,6 +178,7 @@ impl RelayServer {
             host_map,
             security: Some(security),
             authenticated_token: None,
+            quota_streams: HashSet::new(),
         }
     }
 
@@ -209,6 +216,7 @@ impl RelayServer {
         for (_, h) in udp.drain() {
             h.shutdown();
         }
+        self.release_all_quota_streams();
     }
 
     /// Decode + route one inbound WS message. Returns `Err` on a protocol error (caller closes).
@@ -238,6 +246,17 @@ impl RelayServer {
         }
         if self.core.is_ready() {
             match &frame {
+                Frame::Open { stream, .. } | Frame::UdpOpen { stream, .. }
+                    if !self.reserve_quota_stream(*stream) =>
+                {
+                    self.send_frame(match frame {
+                        Frame::Open { stream, .. } => Frame::OpenFail { stream, code: 2 },
+                        Frame::UdpOpen { stream, .. } => Frame::UdpOpenFail { stream, code: 2 },
+                        _ => unreachable!(),
+                    })
+                    .await;
+                    return Ok(());
+                }
                 Frame::Open { stream, .. }
                     if *stream == 0
                         || udp.contains_key(stream)
@@ -251,6 +270,7 @@ impl RelayServer {
                         code: 1,
                     })
                     .await;
+                    self.release_quota_stream(*stream);
                     return Ok(());
                 }
                 Frame::UdpOpen { stream, host, port } => {
@@ -264,6 +284,7 @@ impl RelayServer {
                             code: 1,
                         })
                         .await;
+                        self.release_quota_stream(*stream);
                         return Ok(());
                     }
                     let (host, development_allow) = match self.host_map.get(host) {
@@ -288,6 +309,7 @@ impl RelayServer {
                                 code: 1,
                             })
                             .await;
+                            self.release_quota_stream(*stream);
                             return Ok(());
                         }
                     };
@@ -322,6 +344,14 @@ impl RelayServer {
                     return Ok(());
                 }
                 Frame::UdpData { stream, bytes } => {
+                    if !self.record_quota_bytes(bytes.len()) {
+                        if let Some(handle) = udp.remove(stream) {
+                            handle.shutdown();
+                        }
+                        self.send_frame(Frame::UdpClose { stream: *stream }).await;
+                        self.release_quota_stream(*stream);
+                        return Ok(());
+                    }
                     let sent = match udp.get(stream) {
                         Some(handle) => handle.socket.send(bytes).await.ok(),
                         None => None,
@@ -338,6 +368,7 @@ impl RelayServer {
                     if let Some(handle) = udp.remove(stream) {
                         handle.shutdown();
                     }
+                    self.release_quota_stream(*stream);
                     return Ok(());
                 }
                 Frame::UdpOpenOk { .. } | Frame::UdpOpenFail { .. } => {
@@ -351,8 +382,25 @@ impl RelayServer {
             Frame::Window { stream, credit } => Some((*stream, *credit)),
             _ => None,
         };
+        if let Frame::Data { stream, bytes } = &frame
+            && !self.record_quota_bytes(bytes.len())
+        {
+            if let Ok(actions) = self.core.on_inbound_frame(Frame::Rst { stream: *stream }) {
+                self.dispatch(actions, int_tx, streams).await;
+            }
+            self.send_frame(Frame::Rst { stream: *stream }).await;
+            self.release_quota_stream(*stream);
+            return Ok(());
+        }
+        let terminal_stream = match &frame {
+            Frame::Close { stream } | Frame::Rst { stream } => Some(*stream),
+            _ => None,
+        };
         let actions = self.core.on_inbound_frame(frame)?;
         self.dispatch(actions, int_tx, streams).await;
+        if let Some(stream) = terminal_stream {
+            self.release_quota_stream(stream);
+        }
         if let Some((stream, credit)) = grant
             && let Some(h) = streams.get(&stream)
         {
@@ -380,6 +428,7 @@ impl RelayServer {
                 if let Ok(actions) = self.core.on_connect_result(stream, false) {
                     self.dispatch(actions, int_tx, streams).await;
                 }
+                self.release_quota_stream(stream);
             }
             Internal::Written { stream, n } => {
                 if let Ok(actions) = self.core.on_backend_written(stream, n) {
@@ -388,7 +437,20 @@ impl RelayServer {
             }
             Internal::SocketData { stream, bytes } => match self.core.on_socket_data(stream, bytes)
             {
-                Ok(actions) => self.dispatch(actions, int_tx, streams).await,
+                Ok(actions)
+                    if self.record_quota_bytes(actions.ws_sends.iter().map(frame_bytes).sum()) =>
+                {
+                    self.dispatch(actions, int_tx, streams).await
+                }
+                Ok(_) => {
+                    if let Ok(actions) = self.core.on_socket_error(stream) {
+                        self.dispatch(actions, int_tx, streams).await;
+                    }
+                    if let Some(h) = streams.remove(&stream) {
+                        h.shutdown();
+                    }
+                    self.release_quota_stream(stream);
+                }
                 Err(_) => {
                     // Should not happen (the semaphore gates reads to the grant), but if it ever
                     // does, tell the guest with an RST rather than silently dropping the stream.
@@ -398,6 +460,7 @@ impl RelayServer {
                     if let Some(h) = streams.remove(&stream) {
                         h.shutdown();
                     }
+                    self.release_quota_stream(stream);
                 }
             },
             Internal::SocketEof { stream } => {
@@ -412,16 +475,22 @@ impl RelayServer {
                 if let Some(h) = streams.remove(&stream) {
                     h.shutdown();
                 }
+                self.release_quota_stream(stream);
             }
             Internal::UdpData { stream, bytes } => {
-                if udp.contains_key(&stream) {
+                if udp.contains_key(&stream) && self.record_quota_bytes(bytes.len()) {
                     self.send_frame(Frame::UdpData { stream, bytes }).await;
+                } else if let Some(handle) = udp.remove(&stream) {
+                    handle.shutdown();
+                    self.send_frame(Frame::UdpClose { stream }).await;
+                    self.release_quota_stream(stream);
                 }
             }
             Internal::UdpError { stream } => {
                 if let Some(handle) = udp.remove(&stream) {
                     handle.shutdown();
                     self.send_frame(Frame::UdpClose { stream }).await;
+                    self.release_quota_stream(stream);
                 }
             }
         }
@@ -506,6 +575,66 @@ impl RelayServer {
         if let Some(bytes) = frame.encode() {
             let _ = self.outbound.send(bytes).await;
         }
+    }
+
+    fn reserve_quota_stream(&mut self, stream: u32) -> bool {
+        let Some(security) = &self.security else {
+            return true;
+        };
+        let Some(token) = &self.authenticated_token else {
+            return false;
+        };
+        let now = unix_now();
+        if security
+            .usage
+            .reserve_stream(token, now, security.limits)
+            .is_err()
+        {
+            return false;
+        }
+        self.quota_streams.insert(stream)
+    }
+
+    fn release_quota_stream(&mut self, stream: u32) {
+        if !self.quota_streams.remove(&stream) {
+            return;
+        }
+        if let (Some(security), Some(token)) = (&self.security, &self.authenticated_token) {
+            security.usage.release_stream(&token.id);
+        }
+    }
+
+    fn release_all_quota_streams(&mut self) {
+        let streams: Vec<_> = self.quota_streams.iter().copied().collect();
+        for stream in streams {
+            self.release_quota_stream(stream);
+        }
+    }
+
+    fn record_quota_bytes(&self, bytes: usize) -> bool {
+        let Some(security) = &self.security else {
+            return true;
+        };
+        let Some(token) = &self.authenticated_token else {
+            return false;
+        };
+        security
+            .usage
+            .record_bytes(&token.id, bytes, security.limits)
+            .is_ok()
+    }
+}
+
+fn unix_now() -> u64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0, |duration| duration.as_secs())
+}
+
+fn frame_bytes(frame: &Frame) -> usize {
+    match frame {
+        Frame::Data { bytes, .. } | Frame::UdpData { bytes, .. } => bytes.len(),
+        _ => 0,
     }
 }
 

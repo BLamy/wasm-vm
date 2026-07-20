@@ -2,8 +2,8 @@
 //! the adapter to a REAL TCP echo backend — proving the entire chain over an actual WebSocket wire,
 //! not the channel shortcut the driver tests use.
 
-use super::{handle_conn, serve, serve_secure};
-use crate::ws_proxy::{Frame, INITIAL_WINDOW, hello, issue_relay_token};
+use super::{handle_conn, serve, serve_secure_with_limits};
+use crate::ws_proxy::{Frame, INITIAL_WINDOW, RelayLimits, hello, issue_relay_token};
 use futures_util::{SinkExt, StreamExt};
 use std::collections::BTreeMap;
 use std::net::SocketAddr;
@@ -78,13 +78,22 @@ async fn secure_client_with_map(
     origin: Option<&str>,
     host_map: BTreeMap<String, String>,
 ) -> (ClientWs, Vec<u8>) {
+    secure_client_with_limits(origin, host_map, RelayLimits::default()).await
+}
+
+async fn secure_client_with_limits(
+    origin: Option<&str>,
+    host_map: BTreeMap<String, String>,
+    limits: RelayLimits,
+) -> (ClientWs, Vec<u8>) {
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
     let addr = listener.local_addr().unwrap();
-    tokio::spawn(serve_secure(
+    tokio::spawn(serve_secure_with_limits(
         listener,
         b"relay test secret".to_vec(),
         ["https://vm.example".to_owned()].into_iter().collect(),
         host_map,
+        limits,
     ));
     let tcp = TcpStream::connect(addr).await.unwrap();
     let mut request = format!("ws://{addr}/").into_client_request().unwrap();
@@ -171,6 +180,95 @@ async fn secure_relay_accepts_an_origin_bound_hello() {
     )
     .await;
     assert_eq!(recv_frame(&mut ws).await, Frame::OpenOk { stream: 2 });
+}
+
+#[tokio::test]
+async fn secure_relay_caps_streams_and_bytes_without_disturbing_an_existing_stream() {
+    let echo = spawn_echo().await;
+    let (mut ws, token) = secure_client_with_limits(
+        Some("https://vm.example"),
+        [("fixture.test".to_owned(), "127.0.0.1".to_owned())]
+            .into_iter()
+            .collect(),
+        RelayLimits {
+            max_concurrent_streams: 1,
+            max_connects_per_minute: 4,
+            max_bytes_per_token: 10,
+        },
+    )
+    .await;
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    send_frame(&mut ws, hello(token)).await;
+    send_frame(
+        &mut ws,
+        Frame::Open {
+            stream: 1,
+            host: "fixture.test".into(),
+            port: echo.port(),
+        },
+    )
+    .await;
+    assert_eq!(recv_frame(&mut ws).await, Frame::OpenOk { stream: 1 });
+    assert!(matches!(
+        recv_frame(&mut ws).await,
+        Frame::Window { stream: 1, .. }
+    ));
+    send_frame(
+        &mut ws,
+        Frame::Open {
+            stream: 2,
+            host: "fixture.test".into(),
+            port: echo.port(),
+        },
+    )
+    .await;
+    assert_eq!(
+        recv_frame(&mut ws).await,
+        Frame::OpenFail { stream: 2, code: 2 }
+    );
+
+    // The refused second stream does not disturb stream 1. Five bytes outbound plus five echoed
+    // bytes consume the exact token budget and still round-trip.
+    send_frame(
+        &mut ws,
+        Frame::Window {
+            stream: 1,
+            credit: 5,
+        },
+    )
+    .await;
+    send_frame(
+        &mut ws,
+        Frame::Data {
+            stream: 1,
+            bytes: b"alive".to_vec(),
+        },
+    )
+    .await;
+    let mut saw_echo = false;
+    for _ in 0..3 {
+        if recv_frame(&mut ws).await
+            == (Frame::Data {
+                stream: 1,
+                bytes: b"alive".to_vec(),
+            })
+        {
+            saw_echo = true;
+            break;
+        }
+    }
+    assert!(saw_echo);
+
+    // One additional byte exceeds the shared token budget and produces a typed stream reset.
+    send_frame(
+        &mut ws,
+        Frame::Data {
+            stream: 1,
+            bytes: vec![1],
+        },
+    )
+    .await;
+    assert_eq!(recv_frame(&mut ws).await, Frame::Rst { stream: 1 });
 }
 
 #[tokio::test]

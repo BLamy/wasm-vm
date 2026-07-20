@@ -6,7 +6,9 @@
 //! rebinding into a protected network.
 
 use sha2::{Digest, Sha256};
+use std::collections::{HashMap, VecDeque};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+use std::sync::{Arc, Mutex};
 
 pub const MAX_TOKEN_LIFETIME_SECS: u64 = 15 * 60;
 const TOKEN_VERSION: &str = "v1";
@@ -26,6 +28,103 @@ pub enum RelayTokenError {
     Expired,
     LifetimeTooLong,
     WrongOrigin,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct RelayLimits {
+    pub max_concurrent_streams: usize,
+    pub max_connects_per_minute: usize,
+    pub max_bytes_per_token: u64,
+}
+
+impl Default for RelayLimits {
+    fn default() -> Self {
+        Self {
+            max_concurrent_streams: 64,
+            max_connects_per_minute: 120,
+            max_bytes_per_token: 64 * 1024 * 1024,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RelayQuotaError {
+    ConcurrentStreams,
+    ConnectRate,
+    ByteLimit,
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct RelayUsageRegistry(Arc<Mutex<HashMap<String, TokenUsage>>>);
+
+#[derive(Debug, Default)]
+struct TokenUsage {
+    expiry_unix_secs: u64,
+    active_streams: usize,
+    connect_times: VecDeque<u64>,
+    bytes: u64,
+}
+
+impl RelayUsageRegistry {
+    pub fn reserve_stream(
+        &self,
+        token: &RelayToken,
+        now_unix_secs: u64,
+        limits: RelayLimits,
+    ) -> Result<(), RelayQuotaError> {
+        let mut registry = self.0.lock().expect("relay usage registry poisoned");
+        registry.retain(|_, usage| usage.expiry_unix_secs > now_unix_secs);
+        let usage = registry.entry(token.id.clone()).or_default();
+        usage.expiry_unix_secs = token.expiry_unix_secs;
+        while usage
+            .connect_times
+            .front()
+            .is_some_and(|time| time.saturating_add(60) <= now_unix_secs)
+        {
+            usage.connect_times.pop_front();
+        }
+        if usage.active_streams >= limits.max_concurrent_streams {
+            return Err(RelayQuotaError::ConcurrentStreams);
+        }
+        if usage.connect_times.len() >= limits.max_connects_per_minute {
+            return Err(RelayQuotaError::ConnectRate);
+        }
+        usage.active_streams += 1;
+        usage.connect_times.push_back(now_unix_secs);
+        Ok(())
+    }
+
+    pub fn release_stream(&self, token_id: &str) {
+        if let Some(usage) = self
+            .0
+            .lock()
+            .expect("relay usage registry poisoned")
+            .get_mut(token_id)
+        {
+            usage.active_streams = usage.active_streams.saturating_sub(1);
+        }
+    }
+
+    pub fn record_bytes(
+        &self,
+        token_id: &str,
+        count: usize,
+        limits: RelayLimits,
+    ) -> Result<(), RelayQuotaError> {
+        let mut registry = self.0.lock().expect("relay usage registry poisoned");
+        let usage = registry
+            .get_mut(token_id)
+            .ok_or(RelayQuotaError::ByteLimit)?;
+        let next = usage
+            .bytes
+            .checked_add(count as u64)
+            .ok_or(RelayQuotaError::ByteLimit)?;
+        if next > limits.max_bytes_per_token {
+            return Err(RelayQuotaError::ByteLimit);
+        }
+        usage.bytes = next;
+        Ok(())
+    }
 }
 
 /// Issue an opaque ASCII token suitable for the ws-proxy `HELLO`. The caller supplies the random
@@ -269,5 +368,37 @@ mod tests {
         for allowed in ["1.1.1.1", "8.8.8.8", "2606:4700:4700::1111"] {
             assert!(destination_is_public(allowed.parse().unwrap()), "{allowed}");
         }
+    }
+
+    #[test]
+    fn quotas_are_shared_by_token_id_and_release_only_concurrency() {
+        let registry = RelayUsageRegistry::default();
+        let token = RelayToken {
+            expiry_unix_secs: NOW + 300,
+            origin: ORIGIN.into(),
+            id: "shared".into(),
+        };
+        let limits = RelayLimits {
+            max_concurrent_streams: 1,
+            max_connects_per_minute: 2,
+            max_bytes_per_token: 5,
+        };
+        registry.reserve_stream(&token, NOW, limits).unwrap();
+        assert_eq!(
+            registry.reserve_stream(&token, NOW, limits),
+            Err(RelayQuotaError::ConcurrentStreams)
+        );
+        registry.release_stream(&token.id);
+        registry.reserve_stream(&token, NOW, limits).unwrap();
+        registry.release_stream(&token.id);
+        assert_eq!(
+            registry.reserve_stream(&token, NOW, limits),
+            Err(RelayQuotaError::ConnectRate)
+        );
+        registry.record_bytes(&token.id, 5, limits).unwrap();
+        assert_eq!(
+            registry.record_bytes(&token.id, 1, limits),
+            Err(RelayQuotaError::ByteLimit)
+        );
     }
 }
