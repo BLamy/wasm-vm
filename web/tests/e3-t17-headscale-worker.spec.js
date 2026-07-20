@@ -10,6 +10,10 @@ const PEER_IP = process.env.E3_T17_PEER_IP;
 const PEER_NAME = process.env.E3_T17_PEER_NAME;
 const PEER_PORT = Number(process.env.E3_T17_PEER_PORT ?? 0);
 const PEER_UDP_PORT = Number(process.env.E3_T17_PEER_UDP_PORT ?? 0);
+const EXIT_NODE_ID = process.env.E3_T17_EXIT_NODE_ID ?? "";
+const PUBLIC_HOST = process.env.E3_T17_PUBLIC_HOST ?? "";
+const PUBLIC_PORT = Number(process.env.E3_T17_PUBLIC_PORT ?? 0);
+const PUBLIC_NAME = process.env.E3_T17_PUBLIC_NAME ?? "";
 
 test("real Headscale registration survives Worker restart without retaining the auth key", async ({ page }) => {
   test.skip(!CONTROL_URL || !AUTH_KEY, "set E3_T17_CONTROL_URL and E3_T17_AUTH_KEY for the live proof");
@@ -19,7 +23,10 @@ test("real Headscale registration survives Worker restart without retaining the 
   page.on("request", (request) => requests.push(request.url()));
   await page.goto("/");
 
-  const result = await page.evaluate(async ({ controlUrl, authKey, hostname, peerIp, peerName, peerPort, peerUdpPort }) => {
+  const result = await page.evaluate(async ({
+    controlUrl, authKey, hostname, peerIp, peerName, peerPort, peerUdpPort,
+    exitNodeId, publicHost, publicPort, publicName,
+  }) => {
     const waitForMessage = (session, predicate, timeoutMs = 30_000) => new Promise((resolve, reject) => {
       const started = performance.now();
       const inspect = () => {
@@ -97,9 +104,9 @@ test("real Headscale registration survives Worker restart without retaining the 
       };
       worker.postMessage({ type: "configure", config });
     });
-    const httpRequest = async (session, stream) => {
+    const httpRequest = async (session, stream, host = peerIp, port = peerPort) => {
       const before = session.messages.length;
-      session.worker.postMessage({ type: "frame", bytes: openFrame(stream, peerIp, peerPort).buffer });
+      session.worker.postMessage({ type: "frame", bytes: openFrame(stream, host, port).buffer });
       await waitForMessage(session, (message, index) => (
         index >= before && streamId(message) === stream && opcode(message) === 2
       ));
@@ -110,7 +117,7 @@ test("real Headscale registration survives Worker restart without retaining the 
       new DataView(credit.buffer).setUint32(0, 1024 * 1024, false);
       session.worker.postMessage({ type: "frame", bytes: frame(stream, 8, credit).buffer });
       const request = new TextEncoder().encode(
-        `GET / HTTP/1.1\r\nHost: ${peerIp}\r\nConnection: close\r\n\r\n`,
+        `GET / HTTP/1.1\r\nHost: ${host}\r\nConnection: close\r\n\r\n`,
       );
       session.worker.postMessage({ type: "frame", bytes: frame(stream, 4, request).buffer });
       session.worker.postMessage({ type: "frame", bytes: frame(stream, 5).buffer });
@@ -171,12 +178,23 @@ test("real Headscale registration survives Worker restart without retaining the 
       authKey,
       state: {},
       acceptDns: true,
+      useExitNode: Boolean(exitNodeId || publicHost),
+      exitNodeId: exitNodeId || null,
     });
     const firstState = structuredClone(first.state);
     const firstIdentity = first.status.netMap?.self ?? null;
     let lookupAddresses = null;
+    let publicLookupAddresses = null;
     let peerResponse = null;
+    let publicResponse = null;
+    let selectedExitNodeId = null;
     let udp = null;
+    if (exitNodeId || publicHost) {
+      const selected = await waitForMessage(first, (message) => (
+        message?.type === "status" && message.status?.netMap?.selectedExitNodeId
+      ));
+      selectedExitNodeId = selected.status.netMap.selectedExitNodeId;
+    }
     if (peerName) {
       first.worker.postMessage({ type: "lookup", id: 17, name: peerName });
       const lookup = await waitForMessage(first, (message) => (
@@ -185,11 +203,26 @@ test("real Headscale registration survives Worker restart without retaining the 
       if (lookup.failed) throw new Error(`MagicDNS lookup failed for ${peerName}`);
       lookupAddresses = lookup.addresses;
     }
+    if (publicName) {
+      first.worker.postMessage({ type: "lookup", id: 18, name: publicName });
+      const lookup = await waitForMessage(first, (message) => (
+        message?.type === "lookupResult" && message.id === 18
+      ));
+      if (lookup.failed) throw new Error(`public DNS fallback failed for ${publicName}`);
+      publicLookupAddresses = lookup.addresses;
+    }
     if (peerIp && peerPort) {
       first.worker.postMessage({ type: "frame", bytes: frame(0, 0, Uint8Array.of(1)).buffer });
       await waitForMessage(first, (message) => opcode(message) === 0);
       peerResponse = await httpRequest(first, 1);
       if (peerUdpPort) udp = await udpRoundtrip(first, 0x80000001);
+    }
+    if (publicHost && publicPort) {
+      if (!peerIp || !peerPort) {
+        first.worker.postMessage({ type: "frame", bytes: frame(0, 0, Uint8Array.of(1)).buffer });
+        await waitForMessage(first, (message) => opcode(message) === 0);
+      }
+      publicResponse = await httpRequest(first, 3, publicHost, publicPort);
     }
     first.worker.terminate();
 
@@ -203,6 +236,8 @@ test("real Headscale registration survives Worker restart without retaining the 
       hostname,
       state: firstState,
       acceptDns: true,
+      useExitNode: Boolean(exitNodeId || publicHost),
+      exitNodeId: exitNodeId || null,
     });
     const secondIdentity = second.status.netMap?.self ?? null;
     let peerResponseAfterRestart = null;
@@ -226,8 +261,11 @@ test("real Headscale registration survives Worker restart without retaining the 
       secondIdentity,
       stateKeys: Object.keys(firstState).sort(),
       lookupAddresses,
+      publicLookupAddresses,
       peerResponse,
       peerResponseAfterRestart,
+      publicResponse,
+      selectedExitNodeId,
       udp,
       loggedOut: true,
       messages: [...first.messages, ...second.messages],
@@ -240,6 +278,10 @@ test("real Headscale registration survives Worker restart without retaining the 
     peerName: PEER_NAME,
     peerPort: PEER_PORT,
     peerUdpPort: PEER_UDP_PORT,
+    exitNodeId: EXIT_NODE_ID,
+    publicHost: PUBLIC_HOST,
+    publicPort: PUBLIC_PORT,
+    publicName: PUBLIC_NAME,
   });
 
   expect(result.stateKeys.length).toBeGreaterThan(0);
@@ -249,9 +291,12 @@ test("real Headscale registration survives Worker restart without retaining the 
   expect(requests.some((url) => url.endsWith("/tailscale-connect/main.wasm"))).toBe(true);
   expect(requests.every((url) => !url.includes(AUTH_KEY))).toBe(true);
   if (PEER_NAME) expect(result.lookupAddresses).toContain(PEER_IP);
+  if (PUBLIC_NAME) expect(result.publicLookupAddresses.length).toBeGreaterThan(0);
   if (PEER_IP && PEER_PORT) {
     expect(result.peerResponse).toMatch(/^HTTP\/1\.[01] /);
     expect(result.peerResponseAfterRestart).toMatch(/^HTTP\/1\.[01] /);
   }
   if (PEER_IP && PEER_UDP_PORT) expect(result.udp.actual).toEqual(result.udp.expected);
+  if (EXIT_NODE_ID) expect(result.selectedExitNodeId).toBe(EXIT_NODE_ID);
+  if (PUBLIC_HOST && PUBLIC_PORT) expect(result.publicResponse).toMatch(/^HTTP\/1\.[01] /);
 });

@@ -1,5 +1,43 @@
 import { test, expect } from "@playwright/test";
 
+test("E3-T17 exit-node selection is deterministic and respects an explicit stable ID", async ({ page }) => {
+  await page.goto("/");
+  const result = await page.evaluate(async () => {
+    const { lookupPublicA, selectExitNode } = await import("./tailscale-runtime.js");
+    const netMap = {
+      peers: [
+        { id: "20", exitNodeOption: true, online: true },
+        { id: "3", exitNodeOption: true, online: true },
+        { id: "1", exitNodeOption: true, online: false },
+        { id: "2", exitNodeOption: false, online: true },
+      ],
+    };
+    const publicLookup = await lookupPublicA("example.com", async (url, options) => ({
+      ok: options.headers.accept === "application/dns-json" &&
+        new URL(url).searchParams.get("name") === "example.com",
+      status: 200,
+      json: async () => ({
+        Answer: [
+          { type: 28, data: "2001:db8::1" },
+          { type: 1, data: "192.0.2.44" },
+        ],
+      }),
+    }));
+    return {
+      automatic: selectExitNode(netMap),
+      explicit: selectExitNode(netMap, " node-fixed "),
+      unavailable: selectExitNode({ peers: [{ id: "1", exitNodeOption: true, online: false }] }),
+      publicLookup,
+    };
+  });
+  expect(result).toEqual({
+    automatic: "3",
+    explicit: "node-fixed",
+    unavailable: null,
+    publicLookup: { addresses: [{ family: 4, address: "192.0.2.44" }] },
+  });
+});
+
 test("E3-T17 offline and relay UI do not preload the Tailscale Worker or artifact", async ({ page }) => {
   const requests = [];
   page.on("request", (request) => requests.push(request.url()));

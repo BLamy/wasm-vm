@@ -1,11 +1,50 @@
 import { createIPN } from "./tailscale-connect/pkg.js";
 
+const DEFAULT_DOH_JSON_ENDPOINT = "https://cloudflare-dns.com/dns-query";
+
 function normalizeSnapshot(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {};
   const entries = Object.entries(value);
   return entries.every(([key, item]) => key && typeof item === "string")
     ? Object.fromEntries(entries)
     : {};
+}
+
+export function selectExitNode(netMap, configuredId = null) {
+  if (typeof configuredId === "string" && configuredId.trim()) return configuredId.trim();
+  const candidates = Array.isArray(netMap?.peers) ? netMap.peers.filter((peer) => (
+    peer?.exitNodeOption === true && peer?.online !== false && typeof peer?.id === "string" && peer.id
+  )) : [];
+  candidates.sort((left, right) => left.id.localeCompare(right.id, undefined, { numeric: true }));
+  return candidates[0]?.id ?? null;
+}
+
+export async function lookupPublicA(
+  hostname,
+  fetchImpl = globalThis.fetch.bind(globalThis),
+  endpoint = DEFAULT_DOH_JSON_ENDPOINT,
+) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 1_000);
+  try {
+    const url = new URL(endpoint);
+    url.searchParams.set("name", hostname);
+    url.searchParams.set("type", "A");
+    const response = await fetchImpl(url.href, {
+      headers: { accept: "application/dns-json" },
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`DoH returned HTTP ${response.status}`);
+    const message = await response.json();
+    const addresses = Array.isArray(message?.Answer) ? message.Answer
+      .filter((answer) => answer?.type === 1 && typeof answer.data === "string" &&
+        /^(?:\d{1,3}\.){3}\d{1,3}$/.test(answer.data))
+      .map((answer) => ({ family: 4, address: answer.data })) : [];
+    if (addresses.length === 0) throw new Error("DoH returned no IPv4 address");
+    return { addresses };
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 export async function createTailscaleRuntime(config, hooks) {
@@ -33,6 +72,10 @@ export async function createTailscaleRuntime(config, hooks) {
 
   let netMap = null;
   let stateName = "NoState";
+  let selectedExitNodeId = typeof config.exitNodeId === "string" && config.exitNodeId.trim()
+    ? config.exitNodeId.trim()
+    : null;
+  let selectingExitNode = false;
   return {
     async start() {
       ipn.run({
@@ -42,6 +85,23 @@ export async function createTailscaleRuntime(config, hooks) {
         },
         notifyNetMap(value) {
           try { netMap = typeof value === "string" ? JSON.parse(value) : value; } catch { netMap = null; }
+          if (config.useExitNode && !selectedExitNodeId && !selectingExitNode) {
+            const candidate = selectExitNode(netMap);
+            if (candidate) {
+              selectingExitNode = true;
+              void ipn.configure({
+                acceptDns: Boolean(config.acceptDns),
+                routeAll: true,
+                exitNodeId: candidate,
+              }).then(() => {
+                selectedExitNodeId = candidate;
+                hooks.status({ state: stateName, netMap: { ...netMap, selectedExitNodeId } });
+              }).catch((error) => {
+                hooks.status({ state: "error", detail: `cannot select exit node: ${String(error).slice(0, 240)}` });
+              }).finally(() => { selectingExitNode = false; });
+            }
+          }
+          if (netMap && selectedExitNodeId) netMap = { ...netMap, selectedExitNodeId };
           hooks.status({ state: stateName, netMap });
         },
         notifyBrowseToURL(loginUrl) { hooks.status({ state: stateName, loginUrl }); },
@@ -70,7 +130,15 @@ export async function createTailscaleRuntime(config, hooks) {
     },
     dialTCP: (host, port, timeoutMs) => ipn.dialTCP(host, port, timeoutMs),
     dialUDP: (host, port, timeoutMs) => ipn.dialUDP(host, port, timeoutMs),
-    lookup: (hostname) => ipn.lookup(hostname),
+    async lookup(hostname) {
+      try {
+        return await ipn.lookup(hostname);
+      } catch {
+        // The browser IPN is authoritative for MagicDNS. Its Go resolver has no OS DNS server in a
+        // Worker, so only an IPN lookup failure falls back to browser DoH for public names.
+        return lookupPublicA(hostname, undefined, config.dohUrl);
+      }
+    },
     // The Go runtime lives for the Worker lifetime. Flow closure is handled by the core; Worker
     // termination is the deterministic final release and deliberately does not log the node out.
     dispose: async () => {},
