@@ -3,7 +3,7 @@ id: E3-T17
 epic: 3
 title: Browser Tailscale transport — IPN worker, TCP/UDP streams, MagicDNS, and exit nodes
 priority: 317
-status: in-progress
+status: implemented
 depends_on: [E3-T15, E3-T16]
 estimate: L
 capstone: false
@@ -93,3 +93,43 @@ show provider work did not regress the fallback.
 Supersedes the unimplemented CORS-bound fetch gateway plan. Browser fetch is now an optional,
 measured optimization in E3-T18; the correctness path is generic TCP/UDP through the browser
 Tailscale node, with T16 retained as the public relay fallback.
+
+### 2026-07-20 — worker — implemented
+
+Implementation and evidence commits span `0f46826` through `9a8485b` on top of task-start commit
+`f17afcf`. The browser now has an explicit, lazy `tailscale` provider at the existing slirp
+connector seam, a dedicated Worker and pinned vendored runtime, bounded TCP/UDP framing and credit,
+MagicDNS, deterministic exit-node selection, persisted state, diagnostics, logout, and teardown.
+Public exit sockets are opened only when the guest first writes, avoiding a remote TLS handshake
+timeout while the interpreted guest constructs its ClientHello; tailnet/private/no-exit dials stay
+eager. Offline and relay modes instantiate no Worker and fetch no Tailscale artifact.
+
+The real Headscale recordings used fresh ephemeral one-time keys and identify the browser node at
+the service/control plane. Stock Alpine kept its normal `10.0.2.15/24` lease and `10.0.2.3` resolver,
+resolved `wasm-vm-tailnet-fixture.example.com`, exchanged exact TCP and UDP data with the tailnet-only
+peer, and completed public HTTPS through selected exit node ID 1. The no-exit variant failed within
+the connector deadline. The final Tailscale scale attack uploaded exactly 1,073,741,824 deterministic
+bytes with peer SHA-256 `2c06ade942ee3f17a048dd1064b2fab046a4bb95386d8bb41b68dc6711ac2af3`;
+an unread download stopped exactly at the 262,144-byte credit cap while a sibling HTTP stream
+completed, and the peer replied after guest half-close. Permanent Worker tests cover DATA-before-OPEN,
+over-credit/malformed frames, auth-key redaction, hostile UDP sizes/order, connect-close races, reset
+mapping, and 500-flow reap without calling whole-body `ipn.fetch`. Evidence and reproduction commands
+are in `evidence/e3-t17/README.md`.
+
+Final gates passed: `cargo fmt --check`; `cargo clippy -- -D warnings`; comprehensive
+`cargo test --workspace -- --skip file_backend::tests::kill_mid_write_no_torn_sectors` with normal
+loopback access (all runnable workspace tests passed, including the production relay and slirp
+stress suites); `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`; and `make web-build`.
+The one unchanged macOS abort/crash-report test was filtered because its child remains stuck in
+kernel exit handling; older orphaned instances confirm the host issue, and this diff does not touch
+the file backend. A targeted browser run passed 12/12 provider/runtime/Worker/roadmap tests. One
+fresh demo load passed 126/0, recorded zero application console errors, and showed verified Tailscale
+TCP, UDP, MagicDNS, and exit-node pips in `evidence/e3-t17/browser-demo-126-of-126.png`.
+
+Finally, with Tailscale disabled, the required fallback rerun booted stock Alpine and transferred
+104,857,600 bytes through `BrowserWebSocketTransport -> WsConnector -> wvrelay` in 3,224 seconds.
+Guest and independent fixture SHA-256 both equal
+`20492a4d0d84f8beb1767f6616229f85d44c2827b64bdbfb260ee12fa1109e0e`, wget exited 0, and console
+errors were empty (`evidence/e3-t17/alpine-relay-*`). Host `rr` is unavailable on this Apple Silicon
+Mac; the task therefore supplies production browser recordings, independent peer/control-plane
+oracles, deterministic protocol tests, and bounded-memory scale evidence for adversarial review.
