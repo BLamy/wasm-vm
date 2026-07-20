@@ -9,8 +9,10 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"fmt"
 	"io"
 	"log"
@@ -19,6 +21,8 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -26,8 +30,10 @@ import (
 )
 
 const (
-	tcpPort = 18000
-	udpPort = 19000
+	tcpPort  = 18000
+	udpPort  = 19000
+	bulkPort = 18001
+	maxBulk  = 1 << 30
 )
 
 func main() {
@@ -75,6 +81,14 @@ func main() {
 	})}
 	go func() { _ = httpServer.Serve(tcpListener) }()
 
+	bulkAddress := net.JoinHostPort(ip4.String(), fmt.Sprint(bulkPort))
+	bulkListener, err := server.Listen("tcp", bulkAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer bulkListener.Close()
+	go serveBulk(bulkListener)
+
 	udpAddress := net.JoinHostPort(ip4.String(), fmt.Sprint(udpPort))
 	packetConn, err := server.ListenPacket("udp4", udpAddress)
 	if err != nil {
@@ -83,11 +97,74 @@ func main() {
 	defer packetConn.Close()
 	go echoDatagrams(packetConn)
 
-	fmt.Printf("READY peer=%s tcp=%d udp=%d\n", ip4, tcpPort, udpPort)
+	fmt.Printf("READY peer=%s tcp=%d udp=%d bulk=%d\n", ip4, tcpPort, udpPort, bulkPort)
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 	<-stop
 	_ = httpServer.Close()
+}
+
+func serveBulk(listener net.Listener) {
+	for {
+		connection, err := listener.Accept()
+		if err != nil {
+			return
+		}
+		go handleBulk(connection)
+	}
+}
+
+func handleBulk(connection net.Conn) {
+	defer connection.Close()
+	reader := bufio.NewReader(connection)
+	line, err := reader.ReadString('\n')
+	if err != nil {
+		return
+	}
+	fields := strings.Fields(line)
+	if len(fields) == 1 && fields[0] == "HALFCLOSE" {
+		hash := sha256.New()
+		written, err := io.Copy(hash, reader)
+		if err == nil {
+			_, _ = fmt.Fprintf(connection, "HALFCLOSE %d %x\n", written, hash.Sum(nil))
+		}
+		return
+	}
+	if len(fields) != 2 || (fields[0] != "UPLOAD" && fields[0] != "DOWNLOAD") {
+		_, _ = io.WriteString(connection, "ERROR invalid command\n")
+		return
+	}
+	size, err := strconv.ParseInt(fields[1], 10, 64)
+	if err != nil || size < 0 || size > maxBulk {
+		_, _ = io.WriteString(connection, "ERROR invalid size\n")
+		return
+	}
+	if fields[0] == "DOWNLOAD" {
+		block := make([]byte, 64*1024)
+		for index := range block {
+			block[index] = byte(index)
+		}
+		remaining := size
+		for remaining > 0 {
+			chunk := int64(len(block))
+			if remaining < chunk {
+				chunk = remaining
+			}
+			if _, err := connection.Write(block[:chunk]); err != nil {
+				return
+			}
+			remaining -= chunk
+		}
+		fmt.Printf("BULK download=%d from=%s\n", size, connection.RemoteAddr())
+		return
+	}
+	hash := sha256.New()
+	written, err := io.CopyN(hash, reader, size)
+	if err != nil {
+		return
+	}
+	fmt.Printf("BULK upload=%d sha256=%x from=%s\n", written, hash.Sum(nil), connection.RemoteAddr())
+	_, _ = fmt.Fprintf(connection, "OK %d %x\n", written, hash.Sum(nil))
 }
 
 func echoDatagrams(connection net.PacketConn) {

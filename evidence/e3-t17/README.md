@@ -29,6 +29,13 @@ had constructed its ClientHello; the endpoint's 15-second handshake deadline exp
 passing run used the production fix that defers only public exit-node dials until the guest's first
 write. Tailnet/private and no-exit dials remain eager.
 
+`bulk-summary.json` and `bulk-peer.txt` record the real Tailscale bulk attack. The browser Worker
+uploaded exactly 1,073,741,824 deterministic bytes in 722.474 seconds; the independent tsnet peer
+computed SHA-256 `2c06ade942ee3f17a048dd1064b2fab046a4bb95386d8bb41b68dc6711ac2af3`.
+In the same run, a download stopped exactly at the 262,144-byte receive-credit cap while a sibling
+HTTP stream completed, and a peer response arrived after the client half-closed its write side.
+The service-side addresses identify browser node `100.64.0.27`, not a backend relay.
+
 Reproduce with:
 
 ```sh
