@@ -18,6 +18,17 @@ fixture independently logged the guest UDP packet as arriving from `100.64.0.16:
 the service-side identity to the browser node rather than a relay. The browser loaded the pinned
 Tailscale artifact exactly once and reported no application console errors.
 
+`alpine-exit-terminal.txt`, `alpine-exit-summary.json`, and `alpine-exit.png` are the later
+19.6-minute exit-node proof. The same stock guest repeated DHCP, MagicDNS, tailnet TCP, and tailnet
+UDP, then completed `wget https://1.1.1.1/` with exit code 0 through selected exit node ID `1`.
+Headscale identified the browser as `wasm-vm-alpine-exit-fixed.example.com` at `100.64.0.24`.
+The summary records zero console errors and exactly one Tailscale artifact request.
+
+The preceding refuted recordings connected the real public socket before the interpreted guest
+had constructed its ClientHello; the endpoint's 15-second handshake deadline expired first. The
+passing run used the production fix that defers only public exit-node dials until the guest's first
+write. Tailnet/private and no-exit dials remain eager.
+
 Reproduce with:
 
 ```sh
@@ -31,3 +42,6 @@ E3_T17_PEER_PORT=18000 \
 E3_T17_PEER_UDP_PORT=19000 \
 npx playwright test tests/e3-t17-alpine-tailnet.spec.js
 ```
+
+For the public HTTPS proof, add `E3_T17_EXIT_NODE_ID=1` and
+`E3_T17_PUBLIC_URL=https://1.1.1.1/`.
