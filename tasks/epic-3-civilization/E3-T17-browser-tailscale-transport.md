@@ -3,7 +3,7 @@ id: E3-T17
 epic: 3
 title: Browser Tailscale transport — IPN worker, TCP/UDP streams, MagicDNS, and exit nodes
 priority: 317
-status: implemented
+status: verified
 depends_on: [E3-T15, E3-T16]
 estimate: L
 capstone: false
@@ -255,3 +255,41 @@ file_backend::tests::kill_mid_write_no_torn_sectors` with all runnable workspace
 browser suite (13 passed, one opt-in demo skipped); and the opt-in demo (126 passed, 0 failed, four
 verified E3-T17 roadmap pips, zero application console errors). The refreshed screenshot is
 `evidence/e3-t17/browser-demo-126-of-126.png`.
+
+### 2026-07-20 — verifier — lifecycle rework review
+
+VERDICT: verified
+
+- **P0 asynchronous logout gate — HELD.** Predicted before execution that a new TCP OPEN posted
+  immediately after `await core.accept({type: "logout"})` would emit OPEN_FAIL without entering the
+  runtime dial, that `NeedsLogin`/`Stopped`/`error` would remain fail-closed, and that only a later
+  authenticated `Running` callback would authorize another dial. An independent Node state-machine
+  oracle observed dial count 1 through logout and all three unauthenticated states, OPEN_FAIL for
+  streams 2-5, then dial count 2 and OPEN_OK only for stream 6 after `Running`. This exercises the
+  fixed gate at `web/tailscale-worker-core.js:375-390`; the permanent regression independently
+  covers the immediate post-logout interval at `web/tests/e3-t17-worker-protocol.spec.js:240-272`.
+- **PRIOR ACL/failure/reset evidence — SUFFICIENT.** The task-local artifacts are unchanged by this
+  rework and retain independent production oracles: `acl-identity.txt` correlates Headscale node
+  addresses with allowed relay service traffic and two denied browser attempts;
+  `failure-matrix.txt` covers expired/reused keys, wrong/unreachable control, corrupt state, and
+  exact-node admin revocation without OPEN_OK or credential disclosure; `logout-recheck.txt`
+  correlates flow reset and node deletion; and `remote-rst.txt` plus `alpine-rst-*` carry an
+  independent peer abort through Worker opcode 7 to guest-visible reset semantics.
+- **COVERAGE.** The only production hunk since verifier commit `34e74a7` is the lifecycle gate above,
+  executed by both the permanent test and independent oracle. The accompanying test hunk asserts
+  OPEN_FAIL, absence of OPEN_OK, unchanged runtime dial count, and zero surviving flows. Queue/log
+  edits and the refreshed demo screenshot are waived as metadata/evidence; visual inspection confirms
+  126 passed, 0 failed and live/verified Tailscale TCP, UDP, MagicDNS, and exit-node pips. No changed
+  runtime line is unexecuted or dead.
+- **SABOTAGE.** In `/private/tmp/e3-t17-worker-core-sabotaged.mjs`, restored the refuted behavior by
+  removing the immediate offline assignment and clearing `loggingOut` when `runtime.logout()`
+  returned. The independent oracle failed at the first post-logout OPEN with dial count 2 instead of
+  1, confirming the lifecycle assertion detects the regression.
+- **SUITE.** The strengthened Worker regression is retained as the permanent deterministic artifact;
+  the independent oracle and sabotage copy are discarded as verifier-local probes.
+
+Commands: independent Node lifecycle oracle; `npx playwright test
+tests/e3-t17-worker-protocol.spec.js tests/e3-t17-provider-selection.spec.js
+tests/e3-t17-runtime-smoke.spec.js --reporter=line` (13 passed); `cargo fmt --check`; `git diff
+--check 34e74a7..c0db54f`; SHA-256 audit of task-local ACL/failure/logout/RST/demo artifacts and the
+pinned Worker WASM; isolated `/private/tmp` lifecycle sabotage oracle.
