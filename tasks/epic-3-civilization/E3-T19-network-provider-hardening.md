@@ -3,7 +3,7 @@ id: E3-T19
 epic: 3
 title: Tailscale/Headscale lifecycle and public-relay fallback hardening
 priority: 319
-status: pending
+status: in-progress
 depends_on: [E3-T16, E3-T17]
 estimate: M
 capstone: false
