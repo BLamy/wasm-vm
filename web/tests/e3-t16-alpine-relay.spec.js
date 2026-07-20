@@ -11,7 +11,9 @@ import { fileURLToPath } from "node:url";
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const REPO = path.resolve(WEB, "..");
-const EVIDENCE = path.resolve(REPO, "evidence/e3-t16");
+const EVIDENCE = process.env.E3_T16_EVIDENCE_DIR
+  ? path.resolve(REPO, process.env.E3_T16_EVIDENCE_DIR)
+  : path.resolve(REPO, "evidence/e3-t16");
 const TOTAL = 100 * 1024 * 1024;
 const CHUNK = Buffer.from({ length: 1024 * 1024 }, (_, i) => i % 251);
 
