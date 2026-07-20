@@ -146,6 +146,15 @@ test("real Headscale registration survives Worker restart without retaining the 
       acceptDns: true,
     });
     const secondIdentity = second.status.netMap?.self ?? null;
+    const beforeLogout = second.messages.length;
+    second.worker.postMessage({ type: "logout" });
+    await waitForMessage(second, (message, index) => (
+      index >= beforeLogout && message?.type === "storageUpdate" &&
+      Object.keys(message.snapshot ?? {}).length === 0
+    ));
+    await waitForMessage(second, (message, index) => (
+      index >= beforeLogout && message?.type === "status" && message.status?.state === "NeedsLogin"
+    ));
     second.worker.terminate();
     return {
       firstIdentity,
@@ -153,6 +162,7 @@ test("real Headscale registration survives Worker restart without retaining the 
       stateKeys: Object.keys(firstState).sort(),
       lookupAddresses,
       peerResponse,
+      loggedOut: true,
       messages: [...first.messages, ...second.messages],
     };
   }, {
@@ -166,6 +176,7 @@ test("real Headscale registration survives Worker restart without retaining the 
 
   expect(result.stateKeys.length).toBeGreaterThan(0);
   expect(result.secondIdentity).toEqual(result.firstIdentity);
+  expect(result.loggedOut).toBe(true);
   expect(JSON.stringify(result.messages)).not.toContain(AUTH_KEY);
   expect(requests.some((url) => url.endsWith("/tailscale-connect/main.wasm"))).toBe(true);
   expect(requests.every((url) => !url.includes(AUTH_KEY))).toBe(true);
