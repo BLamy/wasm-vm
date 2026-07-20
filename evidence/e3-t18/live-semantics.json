@@ -1,0 +1,301 @@
+{
+  "browser-fetch": {
+    "fixed": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": [
+        [
+          "cache-control",
+          "no-store"
+        ],
+        [
+          "content-length",
+          "4096"
+        ],
+        [
+          "content-type",
+          "application/octet-stream"
+        ]
+      ],
+      "bodyBytes": 4096,
+      "redirected": false,
+      "responseUrl": "http://127.0.0.1:57231/e3-t18/fixed?bytes=4096",
+      "byteExactPattern": true
+    },
+    "trickle": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": [
+        [
+          "cache-control",
+          "no-store"
+        ],
+        [
+          "content-type",
+          "application/octet-stream"
+        ]
+      ],
+      "bodyBytes": 4096,
+      "redirected": false,
+      "responseUrl": "http://127.0.0.1:57231/e3-t18/trickle?bytes=4096",
+      "byteExactPattern": true
+    },
+    "redirect": {
+      "status": 0,
+      "statusText": "",
+      "headers": [],
+      "bodyBytes": 0,
+      "redirected": false,
+      "responseUrl": "http://127.0.0.1:57231/e3-t18/redirect",
+      "byteExactPattern": true
+    },
+    "notFound": {
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": [
+        [
+          "cache-control",
+          "no-store"
+        ],
+        [
+          "content-length",
+          "10"
+        ],
+        [
+          "content-type",
+          "text/plain; charset=utf-8"
+        ]
+      ],
+      "bodyBytes": 10,
+      "redirected": false,
+      "responseUrl": "http://127.0.0.1:57231/e3-t18/not-found",
+      "byteExactPattern": false
+    },
+    "head": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": [
+        [
+          "cache-control",
+          "no-store"
+        ],
+        [
+          "content-length",
+          "4096"
+        ],
+        [
+          "content-type",
+          "application/octet-stream"
+        ]
+      ],
+      "bodyBytes": 0,
+      "redirected": false,
+      "responseUrl": "http://127.0.0.1:57231/e3-t18/fixed?bytes=4096",
+      "byteExactPattern": true
+    }
+  },
+  "tailscale-http": {
+    "fixed": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Cache-Control",
+          "no-store"
+        ],
+        [
+          "Content-Length",
+          "4096"
+        ],
+        [
+          "Content-Type",
+          "application/octet-stream"
+        ],
+        [
+          "Cross-Origin-Resource-Policy",
+          "cross-origin"
+        ],
+        [
+          "X-E3-T18-Duplicate",
+          "one"
+        ],
+        [
+          "X-E3-T18-Duplicate",
+          "two"
+        ],
+        [
+          "Date",
+          "Mon, 20 Jul 2026 20:35:10 GMT"
+        ]
+      ],
+      "bodyBytes": 4096,
+      "redirected": false,
+      "responseUrl": "http://100.64.0.2:18000/e3-t18/fixed?bytes=4096",
+      "byteExactPattern": true
+    },
+    "trickle": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Cache-Control",
+          "no-store"
+        ],
+        [
+          "Content-Type",
+          "application/octet-stream"
+        ],
+        [
+          "Cross-Origin-Resource-Policy",
+          "cross-origin"
+        ],
+        [
+          "X-E3-T18-Duplicate",
+          "one"
+        ],
+        [
+          "X-E3-T18-Duplicate",
+          "two"
+        ],
+        [
+          "Date",
+          "Mon, 20 Jul 2026 20:35:10 GMT"
+        ],
+        [
+          "Transfer-Encoding",
+          "chunked"
+        ]
+      ],
+      "bodyBytes": 4096,
+      "redirected": false,
+      "responseUrl": "http://100.64.0.2:18000/e3-t18/trickle?bytes=4096",
+      "byteExactPattern": true
+    },
+    "redirect": {
+      "status": 302,
+      "statusText": "Found",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Cache-Control",
+          "no-store"
+        ],
+        [
+          "Content-Type",
+          "application/octet-stream"
+        ],
+        [
+          "Cross-Origin-Resource-Policy",
+          "cross-origin"
+        ],
+        [
+          "Location",
+          "/e3-t18/fixed?bytes=1024"
+        ],
+        [
+          "Date",
+          "Mon, 20 Jul 2026 20:35:11 GMT"
+        ],
+        [
+          "Content-Length",
+          "0"
+        ]
+      ],
+      "bodyBytes": 0,
+      "redirected": false,
+      "responseUrl": "http://100.64.0.2:18000/e3-t18/redirect",
+      "byteExactPattern": true
+    },
+    "notFound": {
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Cache-Control",
+          "no-store"
+        ],
+        [
+          "Content-Type",
+          "text/plain; charset=utf-8"
+        ],
+        [
+          "Cross-Origin-Resource-Policy",
+          "cross-origin"
+        ],
+        [
+          "X-Content-Type-Options",
+          "nosniff"
+        ],
+        [
+          "Date",
+          "Mon, 20 Jul 2026 20:35:11 GMT"
+        ],
+        [
+          "Content-Length",
+          "10"
+        ]
+      ],
+      "bodyBytes": 10,
+      "redirected": false,
+      "responseUrl": "http://100.64.0.2:18000/e3-t18/not-found",
+      "byteExactPattern": false
+    },
+    "head": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": [
+        [
+          "Access-Control-Allow-Origin",
+          "*"
+        ],
+        [
+          "Cache-Control",
+          "no-store"
+        ],
+        [
+          "Content-Length",
+          "4096"
+        ],
+        [
+          "Content-Type",
+          "application/octet-stream"
+        ],
+        [
+          "Cross-Origin-Resource-Policy",
+          "cross-origin"
+        ],
+        [
+          "X-E3-T18-Duplicate",
+          "one"
+        ],
+        [
+          "X-E3-T18-Duplicate",
+          "two"
+        ],
+        [
+          "Date",
+          "Mon, 20 Jul 2026 20:35:12 GMT"
+        ]
+      ],
+      "bodyBytes": 0,
+      "redirected": false,
+      "responseUrl": "http://100.64.0.2:18000/e3-t18/fixed?bytes=4096",
+      "byteExactPattern": true
+    }
+  }
+}

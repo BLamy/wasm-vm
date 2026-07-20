@@ -75,12 +75,16 @@ func main() {
 		log.Fatal(err)
 	}
 	defer tcpListener.Close()
-	httpServer := &http.Server{Handler: http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-		fmt.Printf("TCP path=%s from=%s\n", request.URL.Path, request.RemoteAddr)
-		writer.Header().Set("content-type", "application/octet-stream")
-		_, _ = io.WriteString(writer, "wasm-vm-tailnet-fixture\n")
-	})}
+	httpHandler := http.HandlerFunc(serveHTTP)
+	httpServer := &http.Server{Handler: httpHandler}
 	go func() { _ = httpServer.Serve(tcpListener) }()
+	loopbackListener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer loopbackListener.Close()
+	loopbackServer := &http.Server{Handler: httpHandler}
+	go func() { _ = loopbackServer.Serve(loopbackListener) }()
 
 	bulkAddress := net.JoinHostPort(ip4.String(), fmt.Sprint(bulkPort))
 	bulkListener, err := server.Listen("tcp", bulkAddress)
@@ -106,11 +110,68 @@ func main() {
 	defer packetConn.Close()
 	go echoDatagrams(packetConn)
 
-	fmt.Printf("READY peer=%s tcp=%d udp=%d bulk=%d rst=%d\n", ip4, tcpPort, udpPort, bulkPort, rstPort)
+	fmt.Printf("READY peer=%s tcp=%d udp=%d bulk=%d rst=%d fetch=http://%s\n",
+		ip4, tcpPort, udpPort, bulkPort, rstPort, loopbackListener.Addr())
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 	<-stop
 	_ = httpServer.Close()
+	_ = loopbackServer.Close()
+}
+
+func serveHTTP(writer http.ResponseWriter, request *http.Request) {
+	fmt.Printf("TCP path=%s from=%s\n", request.URL.Path, request.RemoteAddr)
+	writer.Header().Set("Access-Control-Allow-Origin", "*")
+	writer.Header().Set("Cross-Origin-Resource-Policy", "cross-origin")
+	writer.Header().Set("Cache-Control", "no-store")
+	writer.Header().Set("Content-Type", "application/octet-stream")
+	if request.URL.Path == "/e3-t18/redirect" {
+		http.Redirect(writer, request, "/e3-t18/fixed?bytes=1024", http.StatusFound)
+		return
+	}
+	if request.URL.Path == "/e3-t18/not-found" {
+		http.Error(writer, "not found", http.StatusNotFound)
+		return
+	}
+	if request.URL.Path != "/e3-t18/fixed" && request.URL.Path != "/e3-t18/trickle" {
+		_, _ = io.WriteString(writer, "wasm-vm-tailnet-fixture\n")
+		return
+	}
+	size, err := strconv.ParseInt(request.URL.Query().Get("bytes"), 10, 64)
+	if err != nil || size < 0 || size > maxBulk {
+		http.Error(writer, "invalid size", http.StatusBadRequest)
+		return
+	}
+	writer.Header().Add("X-E3-T18-Duplicate", "one")
+	writer.Header().Add("X-E3-T18-Duplicate", "two")
+	if request.URL.Path == "/e3-t18/fixed" {
+		writer.Header().Set("Content-Length", strconv.FormatInt(size, 10))
+	}
+	if request.Method == http.MethodHead {
+		writer.WriteHeader(http.StatusOK)
+		return
+	}
+	block := make([]byte, 64*1024)
+	for index := range block {
+		block[index] = byte(index)
+	}
+	remaining := size
+	for remaining > 0 {
+		chunk := int64(len(block))
+		if remaining < chunk {
+			chunk = remaining
+		}
+		if _, err := writer.Write(block[:chunk]); err != nil {
+			return
+		}
+		remaining -= chunk
+		if request.URL.Path == "/e3-t18/trickle" {
+			if flusher, ok := writer.(http.Flusher); ok {
+				flusher.Flush()
+			}
+			time.Sleep(time.Millisecond)
+		}
+	}
 }
 
 func serveResets(listener net.Listener) {
