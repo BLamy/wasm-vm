@@ -43,6 +43,19 @@ in 3,224 seconds. The guest SHA-256 was
 `20492a4d0d84f8beb1767f6616229f85d44c2827b64bdbfb260ee12fa1109e0e`, matching the independent
 fixture, with exit code 0 and no console errors.
 
+`logout-recheck.txt` records the post-refutation production recheck. A fresh Headscale browser node
+at `100.64.0.30` reached the tailnet fixture, restored the same identity without its provisioning
+key, then logged out while a real tailnet TCP flow remained open. The Worker emitted a reset for
+that flow, Headscale deleted node 29, and a post-logout open failed without another service request.
+The same-run control-plane and service excerpts correlate the named browser node with both accepted
+requests.
+
+`failure-matrix.txt` records production-Worker attacks using an expired key, reused one-time key,
+wrong control path, unreachable control port, malformed persisted state, and an admin-revoked live
+node. Every case fails closed without OPEN_OK or credential exposure. The revocation run correlates
+Headscale node 35 with Worker address `100.64.0.35`, deletes that exact node, waits the declared
+30-second peer-map bound, and proves a fresh tailnet flow cannot open.
+
 Reproduce with:
 
 ```sh

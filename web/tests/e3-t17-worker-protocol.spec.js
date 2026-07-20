@@ -165,6 +165,164 @@ test("E3-T17 Worker reports the exact TCP bridge phase before resetting", async 
   ]));
 });
 
+test("E3-T17 logout reaps active and dialing flows before queued IO can escape", async ({ page }) => {
+  await page.goto("/");
+  const result = await page.evaluate(async () => {
+    const { TailscaleWorkerCore, ProxyOpcode: OP } = await import("./tailscale-worker-core.js");
+    const posts = [];
+    const writes = [];
+    let tcpCloses = 0;
+    let udpCloses = 0;
+    let lateCloses = 0;
+    let logouts = 0;
+    let releaseFirstWrite;
+    let resolveLateDial;
+    const firstWrite = new Promise((resolve) => { releaseFirstWrite = resolve; });
+    const lateDial = new Promise((resolve) => { resolveLateDial = resolve; });
+    const activeTCP = {
+      read: () => new Promise(() => {}),
+      write: async (bytes) => {
+        writes.push([...bytes]);
+        if (writes.length === 1) await firstWrite;
+        return bytes.byteLength;
+      },
+      shutdownWrite: async () => {},
+      close: async () => { tcpCloses += 1; },
+    };
+    const activeUDP = {
+      read: () => new Promise(() => {}),
+      write: async (bytes) => bytes.byteLength,
+      close: async () => { udpCloses += 1; },
+    };
+    const runtime = {
+      start: async () => {},
+      dialTCP: async (host) => host === "late" ? lateDial : activeTCP,
+      dialUDP: async () => activeUDP,
+      logout: async () => { logouts += 1; },
+      dispose: async () => {},
+    };
+    const core = new TailscaleWorkerCore({
+      post: (message) => posts.push(message),
+      loadRuntime: async () => runtime,
+    });
+    await core.accept({ type: "configure", config: {} });
+
+    const frame = (stream, opcode, payload = new Uint8Array()) => {
+      const bytes = new Uint8Array(5 + payload.byteLength);
+      new DataView(bytes.buffer).setUint32(0, stream, false);
+      bytes[4] = opcode;
+      bytes.set(payload, 5);
+      return bytes;
+    };
+    const open = (stream, opcode, host) => {
+      const name = new TextEncoder().encode(host);
+      const payload = new Uint8Array(3 + name.byteLength);
+      payload[0] = name.byteLength;
+      payload.set(name, 1);
+      new DataView(payload.buffer).setUint16(1 + name.byteLength, 443, false);
+      return frame(stream, opcode, payload);
+    };
+    const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+    core.onFrame(frame(0, OP.HELLO, Uint8Array.of(1)));
+    core.onFrame(open(1, OP.OPEN, "active"));
+    core.onFrame(open(2, OP.OPEN, "late"));
+    core.onFrame(open(3, OP.UDP_OPEN, "active"));
+    await settle();
+    core.onFrame(frame(1, OP.DATA, Uint8Array.of(1)));
+    core.onFrame(frame(1, OP.DATA, Uint8Array.of(2)));
+    await settle();
+
+    await core.accept({ type: "logout" });
+    // A dial that resolves after logout must be closed without ever becoming guest-visible.
+    resolveLateDial({ close: async () => { lateCloses += 1; } });
+    releaseFirstWrite();
+    await settle();
+    await settle();
+    // Stale guest traffic and opens racing the logout must fail closed.
+    core.onFrame(frame(1, OP.DATA, Uint8Array.of(3)));
+
+    const wire = posts.filter((entry) => entry.type === "frame").map((entry) => {
+      const bytes = new Uint8Array(entry.bytes);
+      return { stream: new DataView(bytes.buffer).getUint32(0, false), opcode: bytes[4] };
+    });
+    return {
+      writes, tcpCloses, udpCloses, lateCloses, logouts,
+      activeFlows: core.flowCount(), wire,
+    };
+  });
+
+  expect(result).toMatchObject({
+    writes: [[1]], tcpCloses: 1, udpCloses: 1, lateCloses: 1, logouts: 1,
+    activeFlows: 0,
+  });
+  expect(result.wire).toEqual(expect.arrayContaining([
+    { stream: 1, opcode: 7 },
+    { stream: 2, opcode: 7 },
+    { stream: 3, opcode: 13 },
+  ]));
+  expect(result.wire).not.toContainEqual({ stream: 2, opcode: 2 });
+});
+
+test("E3-T17 control-plane revocation reaps flows and blocks new dials", async ({ page }) => {
+  await page.goto("/");
+  const result = await page.evaluate(async () => {
+    const { TailscaleWorkerCore, ProxyOpcode: OP } = await import("./tailscale-worker-core.js");
+    const posts = [];
+    let status;
+    let dials = 0;
+    let closes = 0;
+    const runtime = {
+      start: async () => { status({ state: "Running" }); },
+      dialTCP: async () => {
+        dials += 1;
+        return {
+          read: () => new Promise(() => {}),
+          write: async (bytes) => bytes.byteLength,
+          shutdownWrite: async () => {},
+          close: async () => { closes += 1; },
+        };
+      },
+      dialUDP: async () => { throw new Error("not used"); },
+      dispose: async () => {},
+    };
+    const core = new TailscaleWorkerCore({
+      post: (message) => posts.push(message),
+      loadRuntime: async (_config, hooks) => { status = hooks.status; return runtime; },
+    });
+    await core.accept({ type: "configure", config: {} });
+    const frame = (stream, opcode, payload = new Uint8Array()) => {
+      const bytes = new Uint8Array(5 + payload.byteLength);
+      new DataView(bytes.buffer).setUint32(0, stream, false);
+      bytes[4] = opcode;
+      bytes.set(payload, 5);
+      return bytes;
+    };
+    const open = (stream) => {
+      const host = new TextEncoder().encode("peer");
+      const payload = new Uint8Array(3 + host.byteLength);
+      payload[0] = host.byteLength;
+      payload.set(host, 1);
+      new DataView(payload.buffer).setUint16(1 + host.byteLength, 443, false);
+      return frame(stream, OP.OPEN, payload);
+    };
+    core.onFrame(frame(0, OP.HELLO, Uint8Array.of(1)));
+    core.onFrame(open(1));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    status({ state: "NeedsLogin" });
+    core.onFrame(open(2));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const wire = posts.filter((message) => message.type === "frame").map((message) => {
+      const bytes = new Uint8Array(message.bytes);
+      return { stream: new DataView(bytes.buffer).getUint32(0, false), opcode: bytes[4] };
+    });
+    return { dials, closes, flows: core.flowCount(), wire };
+  });
+  expect(result).toEqual(expect.objectContaining({ dials: 1, closes: 1, flows: 0 }));
+  expect(result.wire).toContainEqual({ stream: 1, opcode: 7 });
+  expect(result.wire).toContainEqual({ stream: 2, opcode: 3 });
+});
+
 test("E3-T17 Worker preserves hostile UDP boundaries and connect-close races", async ({ page }) => {
   await page.goto("/");
   const result = await page.evaluate(async () => {

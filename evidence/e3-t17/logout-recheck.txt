@@ -1,0 +1,48 @@
+E3-T17 real Headscale logout recheck — 2026-07-20 05:01 EDT
+
+Command (the fresh ephemeral key was generated into an environment variable and was not logged):
+
+  E3_T17_CONTROL_URL=http://127.0.0.1:8080 \
+  E3_T17_AUTH_KEY="$KEY" \
+  E3_T17_HOSTNAME=wasm-vm-browser-logout-recheck \
+  E3_T17_PEER_IP=100.64.0.25 \
+  E3_T17_PEER_NAME=wasm-vm-tailnet-fixture.example.com \
+  E3_T17_PEER_PORT=18000 \
+  npx playwright test tests/e3-t17-headscale-worker.spec.js --reporter=line
+
+Result: 1 passed (11.5s)
+
+Secret-free test oracle:
+
+  firstIdentity.name=wasm-vm-browser-logout-final.example.com.
+  firstIdentity.addresses=[100.64.0.30, fd7a:115c:a1e0::1e]
+  firstIdentity.machineStatus=MachineAuthorized
+  secondIdentity.name=wasm-vm-browser-logout-final.example.com.
+  secondIdentity.addresses=[100.64.0.30, fd7a:115c:a1e0::1e]
+  secondIdentity.machineStatus=MachineAuthorized
+  stateKeys=[_current-profile, _machinekey, _profiles, log-policy, profile-0634]
+  activeFlowResetOnLogout=true
+  postLogoutOpenFailed=true
+  loggedOut=true
+
+The production Worker test registered a fresh browser node, reached Running, fetched the
+tailnet-only fixture, restarted from persisted state without the auth key, and reached the fixture
+again with the same identity. It then opened and held stream 4, sent logout, required an immediate
+RST for stream 4, waited for empty persisted state and NeedsLogin, and required a post-logout open
+on stream 5 to fail. The test also asserted that the auth key appeared in no Worker message or URL.
+
+Same-run Headscale oracle:
+
+  05:04:11 node connected node.id=30 node.name=wasm-vm-browser-logout-final
+  05:04:17 node connected node.id=30 node.name=wasm-vm-browser-logout-final
+  05:04:18 Deleting ephemeral node during logout node.id=30
+             node.name=wasm-vm-browser-logout-final
+
+Same-run independent tailnet fixture oracle:
+
+  TCP path=/ from=100.64.0.30:22413
+  TCP path=/ from=100.64.0.30:41840
+
+The two service requests correspond to the pre-restart and restored-session requests. There is no
+third request after logout. The Worker-reported address 100.64.0.30 and service source 100.64.0.30
+correlate Headscale node 30's named browser identity with the accepted requests; logout deleted it.

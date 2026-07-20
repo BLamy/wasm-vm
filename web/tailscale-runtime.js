@@ -3,11 +3,18 @@ import { createIPN } from "./tailscale-connect/pkg.js";
 const DEFAULT_DOH_JSON_ENDPOINT = "https://cloudflare-dns.com/dns-query";
 
 function normalizeSnapshot(value) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  if (value == null) return {};
+  if (typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("persisted Tailscale state is not an object");
+  }
   const entries = Object.entries(value);
-  return entries.every(([key, item]) => key && typeof item === "string")
-    ? Object.fromEntries(entries)
-    : {};
+  if (!entries.every(([key, item]) => (
+    key.length > 0 && key.length <= 256 && typeof item === "string" &&
+    item.length <= 1024 * 1024 && item.length % 2 === 0 && /^[0-9a-f]*$/i.test(item)
+  ))) {
+    throw new Error("persisted Tailscale state is malformed");
+  }
+  return Object.fromEntries(entries);
 }
 
 export function selectExitNode(netMap, configuredId = null) {

@@ -2,6 +2,7 @@
 // Headscale proxy and a single-use key; this spec owns only the browser Worker lifecycle so the
 // recorded requests and structured-clone messages remain directly inspectable by the critic.
 import { test, expect } from "@playwright/test";
+import { execFileSync } from "node:child_process";
 
 const CONTROL_URL = process.env.E3_T17_CONTROL_URL;
 const AUTH_KEY = process.env.E3_T17_AUTH_KEY;
@@ -18,6 +19,9 @@ const USE_EXIT_NODE = process.env.E3_T17_USE_EXIT_NODE === "0"
   ? false
   : Boolean(EXIT_NODE_ID || PUBLIC_HOST);
 const EXPECT_PUBLIC_FAIL = process.env.E3_T17_EXPECT_PUBLIC_FAIL === "1";
+const REVOKE_NODE = process.env.E3_T17_REVOKE_NODE === "1";
+const HEADSCALE_REPO = process.env.E3_T17_HEADSCALE_REPO;
+const HEADSCALE_CONFIG = process.env.E3_T17_HEADSCALE_CONFIG;
 
 test("real Headscale registration survives Worker restart without retaining the auth key", async ({ page }) => {
   test.skip(!CONTROL_URL || !AUTH_KEY, "set E3_T17_CONTROL_URL and E3_T17_AUTH_KEY for the live proof");
@@ -25,11 +29,27 @@ test("real Headscale registration survives Worker restart without retaining the 
 
   const requests = [];
   page.on("request", (request) => requests.push(request.url()));
+  if (REVOKE_NODE) {
+    test.skip(!HEADSCALE_REPO || !HEADSCALE_CONFIG,
+      "revocation proof requires E3_T17_HEADSCALE_REPO and E3_T17_HEADSCALE_CONFIG");
+    await page.exposeFunction("e3t17RevokeNode", (hostname) => {
+      const baseArgs = ["-C", HEADSCALE_REPO, "run", "./cmd/headscale", "-c", HEADSCALE_CONFIG];
+      const nodes = JSON.parse(execFileSync("go", [...baseArgs, "nodes", "list", "--output", "json"], {
+        encoding: "utf8",
+      }));
+      const node = nodes.find((candidate) => candidate.name === hostname);
+      if (!node) throw new Error(`Headscale node not found for ${hostname}`);
+      execFileSync("go", [...baseArgs, "nodes", "delete", "-i", String(node.id), "--force"], {
+        encoding: "utf8",
+      });
+      return { id: node.id, name: node.name, addresses: node.ip_addresses };
+    });
+  }
   await page.goto("/");
 
   const result = await page.evaluate(async ({
     controlUrl, authKey, hostname, peerIp, peerName, peerPort, peerUdpPort,
-    exitNodeId, publicHost, publicPort, publicName, useExitNode, expectPublicFail,
+    exitNodeId, publicHost, publicPort, publicName, useExitNode, expectPublicFail, revokeNode,
   }) => {
     const waitForMessage = (session, predicate, timeoutMs = 30_000) => new Promise((resolve, reject) => {
       const started = performance.now();
@@ -260,20 +280,54 @@ test("real Headscale registration survives Worker restart without retaining the 
     });
     const secondIdentity = second.status.netMap?.self ?? null;
     let peerResponseAfterRestart = null;
+    let activeFlowResetOnLogout = null;
+    let postLogoutOpenFailed = null;
     if (peerIp && peerPort) {
       second.worker.postMessage({ type: "frame", bytes: frame(0, 0, Uint8Array.of(1)).buffer });
       await waitForMessage(second, (message) => opcode(message) === 0);
       peerResponseAfterRestart = await httpRequest(second, 2);
+      const activeBefore = second.messages.length;
+      second.worker.postMessage({ type: "frame", bytes: openFrame(4, peerIp, peerPort).buffer });
+      await waitForMessage(second, (message, index) => (
+        index >= activeBefore && streamId(message) === 4 && opcode(message) === 2
+      ));
     }
     const beforeLogout = second.messages.length;
-    second.worker.postMessage({ type: "logout" });
-    await waitForMessage(second, (message, index) => (
-      index >= beforeLogout && message?.type === "storageUpdate" &&
-      Object.keys(message.snapshot ?? {}).length === 0
-    ));
-    await waitForMessage(second, (message, index) => (
-      index >= beforeLogout && message?.type === "status" && message.status?.state === "NeedsLogin"
-    ));
+    let revokedNode = null;
+    if (revokeNode) {
+      revokedNode = await globalThis.e3t17RevokeNode(hostname);
+      // Headscale revocation is distributed to peers through their map streams. Enforce a
+      // documented 30-second propagation bound before testing the revoked node's next flow.
+      await new Promise((resolve) => setTimeout(resolve, 30_000));
+    } else {
+      second.worker.postMessage({ type: "logout" });
+    }
+    if (peerIp && peerPort && !revokeNode) {
+      await waitForMessage(second, (message, index) => (
+        index >= beforeLogout && streamId(message) === 4 && opcode(message) === 7
+      ));
+      activeFlowResetOnLogout = true;
+    }
+    if (!revokeNode) {
+      await waitForMessage(second, (message, index) => (
+        index >= beforeLogout && message?.type === "storageUpdate" &&
+        Object.keys(message.snapshot ?? {}).length === 0
+      ));
+    }
+    if (!revokeNode) {
+      await waitForMessage(second, (message, index) => (
+        index >= beforeLogout && message?.type === "status" && message.status?.state === "NeedsLogin"
+      ));
+    }
+    if (peerIp && peerPort) {
+      const postLogoutBefore = second.messages.length;
+      second.worker.postMessage({ type: "frame", bytes: openFrame(5, peerIp, peerPort).buffer });
+      await waitForMessage(second, (message, index) => index >= postLogoutBefore && (
+        (streamId(message) === 5 && opcode(message) === 3) ||
+        (message?.type === "flowError" && message.transport === "tcp" && message.stream === 5)
+      ));
+      postLogoutOpenFailed = true;
+    }
     second.worker.terminate();
     return {
       firstIdentity,
@@ -287,7 +341,10 @@ test("real Headscale registration survives Worker restart without retaining the 
       publicFailureMs,
       selectedExitNodeId,
       udp,
-      loggedOut: true,
+      loggedOut: !revokeNode,
+      revokedNode,
+      activeFlowResetOnLogout,
+      postLogoutOpenFailed,
       messages: [...first.messages, ...second.messages],
     };
   }, {
@@ -304,11 +361,34 @@ test("real Headscale registration survives Worker restart without retaining the 
     publicName: PUBLIC_NAME,
     useExitNode: USE_EXIT_NODE,
     expectPublicFail: EXPECT_PUBLIC_FAIL,
+    revokeNode: REVOKE_NODE,
   });
+
+  console.log("E3_T17_HEADSCALE_RESULT", JSON.stringify({
+    firstIdentity: {
+      name: result.firstIdentity?.name,
+      addresses: result.firstIdentity?.addresses,
+      machineStatus: result.firstIdentity?.machineStatus,
+    },
+    secondIdentity: {
+      name: result.secondIdentity?.name,
+      addresses: result.secondIdentity?.addresses,
+      machineStatus: result.secondIdentity?.machineStatus,
+    },
+    stateKeys: result.stateKeys,
+    activeFlowResetOnLogout: result.activeFlowResetOnLogout,
+    postLogoutOpenFailed: result.postLogoutOpenFailed,
+    loggedOut: result.loggedOut,
+    revokedNode: result.revokedNode,
+  }));
 
   expect(result.stateKeys.length).toBeGreaterThan(0);
   expect(result.secondIdentity).toEqual(result.firstIdentity);
-  expect(result.loggedOut).toBe(true);
+  expect(result.loggedOut).toBe(!REVOKE_NODE);
+  if (REVOKE_NODE) {
+    expect(result.revokedNode).toEqual(expect.objectContaining({ name: HOSTNAME }));
+    expect(result.revokedNode.addresses).toContain(result.firstIdentity.addresses[0]);
+  }
   expect(JSON.stringify(result.messages)).not.toContain(AUTH_KEY);
   expect(requests.some((url) => url.endsWith("/tailscale-connect/main.wasm"))).toBe(true);
   expect(requests.every((url) => !url.includes(AUTH_KEY))).toBe(true);
@@ -317,6 +397,8 @@ test("real Headscale registration survives Worker restart without retaining the 
   if (PEER_IP && PEER_PORT) {
     expect(result.peerResponse).toMatch(/^HTTP\/1\.[01] /);
     expect(result.peerResponseAfterRestart).toMatch(/^HTTP\/1\.[01] /);
+    expect(result.activeFlowResetOnLogout).toBe(REVOKE_NODE ? null : true);
+    expect(result.postLogoutOpenFailed).toBe(true);
   }
   if (PEER_IP && PEER_UDP_PORT) expect(result.udp.actual).toEqual(result.udp.expected);
   if (EXIT_NODE_ID) expect(result.selectedExitNodeId).toBe(EXIT_NODE_ID);

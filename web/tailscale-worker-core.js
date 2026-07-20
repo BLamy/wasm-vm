@@ -115,6 +115,8 @@ export class TailscaleWorkerCore {
     this.configuring = false;
     this.ready = false;
     this.hello = false;
+    this.loggingOut = false;
+    this.runtimeOnline = null;
     this.disposed = false;
     this.tcp = new Map();
     this.udp = new Map();
@@ -140,7 +142,7 @@ export class TailscaleWorkerCore {
     const runtimeConfig = { ...config };
     try {
       this.runtime = await this.loadRuntime(runtimeConfig, {
-        status: (status) => this.post({ type: "status", status }),
+        status: (status) => this.onRuntimeStatus(status),
         storageUpdate: (snapshot) => this.post({ type: "storageUpdate", snapshot }),
       });
       // The runtime copied this provisioning input into Go. Erase the Worker-side copies now; the
@@ -186,7 +188,8 @@ export class TailscaleWorkerCore {
   }
 
   async openTCP({ stream, host, port }) {
-    if (this.flowCount() >= MAX_STREAMS || this.tcp.has(stream) || this.udp.has(stream)) {
+    if (this.loggingOut || this.runtimeOnline === false || this.flowCount() >= MAX_STREAMS ||
+        this.tcp.has(stream) || this.udp.has(stream)) {
       return this.sendFrame(failFrame(stream, OP.OPEN_FAIL));
     }
     const flow = {
@@ -218,6 +221,7 @@ export class TailscaleWorkerCore {
     }
     flow.recvCredit -= payload.byteLength;
     flow.writeChain = flow.writeChain.then(async () => {
+      if (flow.cancelled || this.tcp.get(stream) !== flow) return;
       const written = await flow.conn.write(payload);
       if (written !== payload.byteLength) throw new Error("short Tailscale TCP write");
       if (!flow.cancelled) {
@@ -244,7 +248,9 @@ export class TailscaleWorkerCore {
     const flow = this.tcp.get(stream);
     if (!flow?.conn || flow.cancelled) return this.resetTCP(stream);
     flow.writeChain = flow.writeChain
-      .then(() => flow.conn.shutdownWrite())
+      .then(() => {
+        if (!flow.cancelled && this.tcp.get(stream) === flow) return flow.conn.shutdownWrite();
+      })
       .catch((error) => {
         this.post({ type: "flowError", transport: "tcp", stream, phase: "shutdown", message: redactError(error) });
         this.resetTCP(stream);
@@ -297,7 +303,8 @@ export class TailscaleWorkerCore {
   }
 
   async openUDP({ stream, host, port }) {
-    if (this.flowCount() >= MAX_STREAMS || this.tcp.has(stream) || this.udp.has(stream)) {
+    if (this.loggingOut || this.runtimeOnline === false || this.flowCount() >= MAX_STREAMS ||
+        this.tcp.has(stream) || this.udp.has(stream)) {
       return this.sendFrame(failFrame(stream, OP.UDP_OPEN_FAIL));
     }
     const flow = { stream, conn: null, cancelled: false, queuedBytes: 0, writeChain: Promise.resolve() };
@@ -325,6 +332,7 @@ export class TailscaleWorkerCore {
     }
     flow.queuedBytes += payload.byteLength;
     flow.writeChain = flow.writeChain.then(async () => {
+      if (flow.cancelled || this.udp.get(stream) !== flow) return;
       const written = await flow.conn.write(payload);
       if (written !== payload.byteLength) throw new Error("short Tailscale UDP write");
       flow.queuedBytes -= payload.byteLength;
@@ -360,10 +368,31 @@ export class TailscaleWorkerCore {
       return this.fail("not_ready", `runtime cannot ${method}`);
     }
     try {
+      if (method === "logout") {
+        // Revoke the guest-facing session before asking the control plane to log out. Closing
+        // first prevents active, queued, and still-dialing flows from leaking traffic through
+        // the asynchronous logout window.
+        this.loggingOut = true;
+        for (const stream of [...this.tcp.keys()]) this.closeTCP(stream, true);
+        for (const stream of [...this.udp.keys()]) this.closeUDP(stream, true);
+      }
       await this.runtime[method]();
+      if (method === "logout") this.loggingOut = false;
     } catch (error) {
       this.fail("lifecycle", redactError(error));
     }
+  }
+
+  onRuntimeStatus(status) {
+    const state = status?.state;
+    if (state === "Running") {
+      this.runtimeOnline = true;
+    } else if (state === "NeedsLogin" || state === "Stopped" || state === "error") {
+      this.runtimeOnline = false;
+      for (const stream of [...this.tcp.keys()]) this.closeTCP(stream, true);
+      for (const stream of [...this.udp.keys()]) this.closeUDP(stream, true);
+    }
+    this.post({ type: "status", status });
   }
 
   async lookup(message) {
