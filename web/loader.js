@@ -14,6 +14,7 @@ import init, {
   overlayDbName,
   setSlirpNet,
   setSlirpRelay,
+  setSlirpRelayToken,
   setSlirpTailscaleWorker,
   slirpTailscaleCommand,
   setSlirpDohEndpoint,
@@ -238,6 +239,7 @@ export async function startLinuxBoot(opts = {}) {
     const slirpMtu = Number(opts.slirpMtu ?? 1500);
     try {
       setSlirpRelay(network.relayUrl);
+      setSlirpRelayToken(network.relayToken);
       setSlirpTailscaleWorker(
         network.workerUrl,
         network.workerConfig,
@@ -544,6 +546,7 @@ export async function startLinuxBoot(opts = {}) {
  */
 export function resolveSlirpProvider(opts = {}) {
   const relayUrl = typeof opts.slirpRelay === "string" ? opts.slirpRelay.trim() : "";
+  const relayToken = typeof opts.slirpRelayToken === "string" ? opts.slirpRelayToken : "";
   const tailscale = opts.slirpTailscale && typeof opts.slirpTailscale === "object"
     ? opts.slirpTailscale
     : null;
@@ -564,6 +567,7 @@ export function resolveSlirpProvider(opts = {}) {
   return {
     provider,
     relayUrl: provider === "relay" ? relayUrl : "",
+    relayToken: provider === "relay" ? relayToken : "",
     workerUrl: provider === "tailscale" ? workerUrl : "",
     workerConfig: provider === "tailscale" ? (tailscale?.config ?? {}) : {},
   };

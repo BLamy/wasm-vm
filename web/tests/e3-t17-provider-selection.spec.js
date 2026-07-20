@@ -25,7 +25,7 @@ test("E3-T17 provider selection is explicit, lazy, and fail-closed", async ({ pa
   });
 
   expect(selected.offline).toEqual({
-    provider: "offline", relayUrl: "", workerUrl: "", workerConfig: {},
+    provider: "offline", relayUrl: "", relayToken: "", workerUrl: "", workerConfig: {},
   });
   expect(selected.relay.workerUrl).toBe("");
   expect(selected.relay.workerConfig).toEqual({});

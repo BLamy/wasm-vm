@@ -40,6 +40,7 @@ mod slirp_net {
     static SLIRP_MTU: AtomicU32 = AtomicU32::new(wasm_vm_slirp::dhcp::DEFAULT_MTU as u32);
     std::thread_local! {
         static SLIRP_RELAY_URL: RefCell<Option<String>> = const { RefCell::new(None) };
+        static SLIRP_RELAY_TOKEN: RefCell<Option<String>> = const { RefCell::new(None) };
         static SLIRP_TAILSCALE_WORKER: RefCell<Option<(String, JsValue)>> = const { RefCell::new(None) };
         static SLIRP_TAILSCALE_CONTROL: RefCell<Option<JsValue>> = const { RefCell::new(None) };
         static SLIRP_DOH_ENDPOINT: RefCell<Option<String>> = const { RefCell::new(None) };
@@ -52,6 +53,10 @@ mod slirp_net {
 
     pub(crate) fn slirp_relay_url() -> Option<String> {
         SLIRP_RELAY_URL.with(|url| url.borrow().clone())
+    }
+
+    pub(crate) fn take_slirp_relay_token() -> Vec<u8> {
+        SLIRP_RELAY_TOKEN.with(|token| token.borrow_mut().take().unwrap_or_default().into_bytes())
     }
 
     pub(crate) fn take_slirp_tailscale_worker() -> Option<(String, JsValue)> {
@@ -100,6 +105,15 @@ mod slirp_net {
             } else {
                 Some(url)
             };
+        });
+    }
+
+    /// Stage a short-lived relay credential for exactly the next boot. It is kept out of URLs and
+    /// consumed when the connector is constructed, so a later boot cannot silently replay it.
+    #[wasm_bindgen(js_name = setSlirpRelayToken)]
+    pub fn set_slirp_relay_token(token: String) {
+        SLIRP_RELAY_TOKEN.with(|slot| {
+            *slot.borrow_mut() = if token.is_empty() { None } else { Some(token) };
         });
     }
 
@@ -196,7 +210,7 @@ mod slirp_net {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 use slirp_net::{
     SLIRP_GATEWAY_MAC, set_slirp_dhcp_stats, slirp_doh_endpoint, slirp_lease_secs, slirp_mtu,
-    slirp_net_enabled, slirp_relay_url, take_slirp_tailscale_worker,
+    slirp_net_enabled, slirp_relay_url, take_slirp_relay_token, take_slirp_tailscale_worker,
 };
 
 // E3-T02 lazy-fetch backend. Compiled where it is actually used: the normal wasm build (behind
@@ -994,7 +1008,8 @@ impl WasmLinux {
                     )
                 } else if let Some(url) = slirp_relay_url() {
                     let transport = ws_transport::BrowserWebSocketTransport::connect(&url)?;
-                    let connector = wasm_vm_slirp::WsConnector::new(transport, Vec::new());
+                    let connector =
+                        wasm_vm_slirp::WsConnector::new(transport, take_slirp_relay_token());
                     (
                         wasm_vm_slirp::SlirpLocalBackend::with_connector(
                             SLIRP_GATEWAY_MAC,

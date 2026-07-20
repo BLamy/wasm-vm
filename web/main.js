@@ -17,6 +17,7 @@ const TAILSCALE_STATE_KEY = "wasm-vm.tailscale-state.v1";
 
 const networkProviderEl = document.getElementById("network-provider");
 const networkRelayEl = document.getElementById("network-relay-url");
+const networkRelayTokenEl = document.getElementById("network-relay-token");
 const tailscaleControlEl = document.getElementById("tailscale-control-url");
 const tailscaleHostnameEl = document.getElementById("tailscale-hostname");
 const tailscaleAuthEl = document.getElementById("tailscale-auth-key");
@@ -141,6 +142,7 @@ async function runLinuxBoot(opts, banner) {
       slirpNet: opts.slirpNet ?? (query.has("slirpNet") || slirpProvider !== "offline" || !!slirpDoh),
       slirpProvider,
       slirpRelay,
+      slirpRelayToken: slirpProvider === "relay" ? networkRelayTokenEl?.value ?? "" : "",
       slirpTailscale,
       slirpDoh,
       slirpLeaseSecs: opts.slirpLeaseSecs ?? query.get("slirpLeaseSecs") ?? 86400,
