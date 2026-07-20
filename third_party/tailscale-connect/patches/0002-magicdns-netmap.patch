@@ -1,0 +1,54 @@
+diff --git a/cmd/tsconnect/wasm/wasm_js.go b/cmd/tsconnect/wasm/wasm_js.go
+index dcca1f4a2..11263cfc1 100644
+--- a/cmd/tsconnect/wasm/wasm_js.go
++++ b/cmd/tsconnect/wasm/wasm_js.go
+@@ -872,9 +872,15 @@ func (i *jsIPN) lookup(hostname string) js.Value {
+ 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+ 		defer cancel()
+ 
+-		addrs, err := net.DefaultResolver.LookupHost(ctx, hostname)
+-		if err != nil {
+-			return nil, err
++		// The browser's default resolver cannot see MagicDNS. Resolve authoritative tailnet names
++		// from the same network map that drives tsdial before falling back to public DNS.
++		addrs := i.lookupNetMap(hostname)
++		if len(addrs) == 0 {
++			var err error
++			addrs, err = net.DefaultResolver.LookupHost(ctx, hostname)
++			if err != nil {
++				return nil, err
++			}
+ 		}
+ 
+ 		jsAddrs := make([]any, 0, len(addrs))
+@@ -900,6 +906,30 @@ func (i *jsIPN) lookup(hostname string) js.Value {
+ 	})
+ }
+ 
++func (i *jsIPN) lookupNetMap(hostname string) []string {
++	wanted := strings.TrimSuffix(strings.ToLower(hostname), ".")
++	if wanted == "" {
++		return nil
++	}
++	nm := i.lb.NetMapWithPeers()
++	if nm == nil {
++		return nil
++	}
++	for _, peer := range nm.Peers {
++		name := strings.TrimSuffix(strings.ToLower(peer.Name()), ".")
++		short := strings.SplitN(name, ".", 2)[0]
++		if name != wanted && short != wanted {
++			continue
++		}
++		addrs := make([]string, 0, peer.Addresses().Len())
++		for _, prefix := range peer.Addresses().All() {
++			addrs = append(addrs, prefix.Addr().String())
++		}
++		return addrs
++	}
++	return nil
++}
++
+ type termWriter struct {
+ 	f js.Value
+ }

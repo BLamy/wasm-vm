@@ -9,6 +9,7 @@ function normalizeSnapshot(value) {
 }
 
 export async function createTailscaleRuntime(config, hooks) {
+  const shouldProvision = typeof config.authKey === "string" && config.authKey.length > 0;
   const state = new Map(Object.entries(normalizeSnapshot(config.state)));
   const emitState = () => hooks.storageUpdate(Object.fromEntries(state));
   const stateStorage = {
@@ -52,6 +53,13 @@ export async function createTailscaleRuntime(config, hooks) {
           routeAll: Boolean(config.useExitNode),
           exitNodeId: config.exitNodeId ?? null,
         });
+      }
+      // run() initializes LocalBackend but deliberately leaves it in NeedsLogin. A one-time key is
+      // consumed only when login() starts registration, so auth-key provisioning must make that
+      // transition automatically. Retain only this boolean after createIPN copied the key into Go.
+      if (shouldProvision) {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        ipn.login();
       }
     },
     login: () => ipn.login(),

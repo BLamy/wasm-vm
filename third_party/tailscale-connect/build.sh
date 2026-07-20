@@ -6,6 +6,7 @@ SOURCE_URL="https://github.com/BLamy/tailscale.git"
 SOURCE_COMMIT="0c78282d89c9c0af8e31d460a61bc5517d54c769"
 TOOLCHAIN_COMMIT="c803676bcc7f2b195b167a53d49d728045cd9b36"
 PATCH="$ROOT/third_party/tailscale-connect/patches/0001-generic-netconn-streams.patch"
+DNS_PATCH="$ROOT/third_party/tailscale-connect/patches/0002-magicdns-netmap.patch"
 DEST="$ROOT/web/tailscale-connect"
 WORK="$(mktemp -d "${TMPDIR:-/tmp}/wasm-vm-tailscale.XXXXXX")"
 trap 'chmod -R u+w "$WORK" 2>/dev/null || true; rm -rf "$WORK"' EXIT
@@ -19,6 +20,8 @@ test "$(git -C "$WORK/source" rev-parse HEAD)" = "$SOURCE_COMMIT"
 test "$(tr -d '[:space:]' < "$WORK/source/go.toolchain.rev")" = "$TOOLCHAIN_COMMIT"
 git -C "$WORK/source" apply --check "$PATCH"
 git -C "$WORK/source" apply "$PATCH"
+git -C "$WORK/source" apply --check "$DNS_PATCH"
+git -C "$WORK/source" apply "$DNS_PATCH"
 
 mkdir -p "$WORK/cache/go-build" "$WORK/cache/go-mod" "$WORK/pkg"
 (

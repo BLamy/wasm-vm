@@ -5,7 +5,9 @@ E3-T17 builds the browser IPN from `https://github.com/BLamy/tailscale.git` at i
 pins the Tailscale-patched Go toolchain at `c803676bcc7f2b195b167a53d49d728045cd9b36`.
 
 `patches/0001-generic-netconn-streams.patch` adds bounded generic TCP/UDP sessions to the public JS bridge.
-The transport uses `dialTCP` / `dialUDP`; it does not use the whole-body `ipn.fetch` API. Run
+`patches/0002-magicdns-netmap.patch` makes `lookup` consult the active IPN netmap before public DNS, so
+tailnet names remain authoritative in a browser Worker. The transport uses `dialTCP` / `dialUDP`;
+it does not use the whole-body `ipn.fetch` API. Run
 `./third_party/tailscale-connect/build.sh` from any checkout to rebuild `web/tailscale-connect/`.
 The script creates its own temporary source checkout and therefore has no dependency on an adjacent
 `almostnode` or Tailscale checkout.
