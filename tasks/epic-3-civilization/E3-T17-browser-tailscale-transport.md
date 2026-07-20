@@ -3,7 +3,7 @@ id: E3-T17
 epic: 3
 title: Browser Tailscale transport — IPN worker, TCP/UDP streams, MagicDNS, and exit nodes
 priority: 317
-status: implemented
+status: in-progress
 depends_on: [E3-T15, E3-T16]
 estimate: L
 capstone: false
@@ -133,3 +133,50 @@ Guest and independent fixture SHA-256 both equal
 errors were empty (`evidence/e3-t17/alpine-relay-*`). Host `rr` is unavailable on this Apple Silicon
 Mac; the task therefore supplies production browser recordings, independent peer/control-plane
 oracles, deterministic protocol tests, and bounded-memory scale evidence for adversarial review.
+
+### 2026-07-20 — verifier
+
+VERDICT: refuted
+
+- **P0 logout/revocation race — FAILED.** Predicted that accepting `{type: "logout"}` while TCP
+  stream 7 was open would close the underlying connection, remove the flow, and reject later DATA.
+  An independent fake-runtime attack observed `activeFlows=1`, `writes=3`, and `closes=0` after
+  logout; no failure frame was emitted. The lifecycle path at `web/tailscale-worker-core.js:358-367`
+  calls only `runtime.logout()` and never reaps `tcp`/`udp`, while flow teardown exists separately at
+  `web/tailscale-worker-core.js:393-400`. This contradicts the explicit logout-race attack and leaves
+  already-authorized sessions usable after the UI says they were revoked. Close/fail every active
+  flow as part of logout, add a permanent race test, and record a real Headscale run proving an
+  in-flight flow fails and a post-logout open cannot reach the service.
+- **P1 identity/ACL oracle — NEEDS EVIDENCE.** Predicted that one artifact would correlate a named
+  browser node's Headscale address with the service-observed source, then show the same browser node
+  denied while a relay node remains allowed. The stock-Alpine summaries contain only Worker-reported
+  `status` (`100.64.0.16`/`.24`), while `bulk-peer.txt` contains only service source `.27`; no submitted
+  control-plane/ACL artifact joins those identities, and no deny-browser/allow-relay run exists.
+  Record the task's prescribed ACL attack with Headscale node/route/ACL output and service logs from
+  the same run; otherwise identity laundering cannot be falsified.
+- **P1 required failure/RST attacks — NEEDS EVIDENCE.** The diff/evidence has no executed expired or
+  reused key, wrong control URL to terminal failure, revoked node, unreachable control/DERP, corrupt
+  persisted state, or guest-visible remote-RST recording. The runtime smoke against port 9 stops at
+  `starting`, and the protocol test substitutes a fake `read()` exception; neither proves actionable
+  fail-closed production behavior. Add the adversarial matrix and a real reset oracle before resubmission.
+- **CORRECTNESS that held.** Independently recomputed the 1 GiB pattern digest as
+  `2c06ade942ee3f17a048dd1064b2fab046a4bb95386d8bb41b68dc6711ac2af3` and the half-close payload
+  digest as `fe8749cd3d06321134c8972b231874388c3540fd51cbe97c84ef3ffa6e44438c`; both match the peer
+  artifacts. The pinned `main.wasm` digest matches `main.wasm.sha256`. Terminal artifacts show DHCP,
+  `10.0.2.3`, MagicDNS, TCP, UDP, exit HTTPS, and relay SHA markers; the demo screenshot visibly shows
+  126/0 and all four verified pips.
+- **COVERAGE.** Live Alpine/Headscale, bulk, focused browser tests, and the vendored artifact exercise
+  the provider staging, Worker transport, MagicDNS, TCP/UDP bridge, exit routing, and fallback hunks.
+  Build metadata, licenses, generated declarations/artifact, fixture code, docs, roadmap metadata, and
+  evidence-only files are waived as non-runtime oracles. The lifecycle/ACL/failure/RST hunks above are
+  `needs-evidence`; no production hunk was classified dead. No suite artifact is promoted while the
+  refutation remains.
+- **SABOTAGE.** In isolated clone `/private/tmp/wasm-vm-e3t17-sabotage` at `bf767b5`, changed
+  `INITIAL_WINDOW` from 256 KiB to 128 KiB. The focused protocol test failed on the advertised WINDOW
+  payload (`[0,2,0,0]` observed vs `[0,4,0,0]` expected), confirming that assertion is load-bearing.
+
+Commands: `npx playwright test tests/e3-t17-provider-selection.spec.js
+tests/e3-t17-runtime-smoke.spec.js tests/e3-t17-worker-protocol.spec.js
+tests/e3-t17-demo-proof.spec.js --reporter=line` (11 passed, opt-in demo proof skipped); independent
+Node logout-race harness; `shasum -a 256 web/tailscale-connect/main.wasm`; independent Node SHA-256
+stream oracle; isolated-clone Playwright sabotage check.
