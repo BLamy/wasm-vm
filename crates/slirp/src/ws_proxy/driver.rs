@@ -19,6 +19,7 @@
 //!   bytes to the backend ([`RelayCore::on_backend_written`]). So a stalled backend bounds a stream's
 //!   queued data to the window (256 KiB) and can never freeze the shared main loop or other streams.
 
+use super::relay_security::{RelayToken, destination_is_public, verify_relay_token};
 use super::{Frame, MAX_DATAGRAM_BYTES, MAX_STREAMS, RelayCore, RelayError};
 use std::collections::{BTreeMap, HashMap};
 use std::sync::Arc;
@@ -111,6 +112,16 @@ pub struct RelayServer {
     /// Optional exact host rewrites for deterministic/local deployments (for example the E3-T14
     /// acceptance address 192.0.2.1 → 127.0.0.1). Empty in production by default.
     host_map: BTreeMap<String, String>,
+    /// Public-relay authentication. Development/local callers may leave this unset; public serving
+    /// uses [`Self::with_security`] and refuses any stream until the origin-bound HELLO verifies.
+    security: Option<RelayConnectionSecurity>,
+    authenticated_token: Option<RelayToken>,
+}
+
+#[derive(Debug, Clone)]
+pub struct RelayConnectionSecurity {
+    pub hmac_secret: Vec<u8>,
+    pub origin: String,
 }
 
 impl RelayServer {
@@ -125,6 +136,8 @@ impl RelayServer {
             outbound,
             token,
             host_map: BTreeMap::new(),
+            security: None,
+            authenticated_token: None,
         }
     }
 
@@ -140,6 +153,25 @@ impl RelayServer {
             outbound,
             token,
             host_map,
+            security: None,
+            authenticated_token: None,
+        }
+    }
+
+    pub fn with_security(
+        inbound: mpsc::Receiver<Vec<u8>>,
+        outbound: mpsc::Sender<Vec<u8>>,
+        security: RelayConnectionSecurity,
+        host_map: BTreeMap<String, String>,
+    ) -> Self {
+        Self {
+            core: RelayCore::new(),
+            inbound,
+            outbound,
+            token: Vec::new(),
+            host_map,
+            security: Some(security),
+            authenticated_token: None,
         }
     }
 
@@ -190,6 +222,20 @@ impl RelayServer {
         let Some(frame) = Frame::decode(bytes) else {
             return Err(RelayError::UnknownStream(0)); // undecodable → protocol error
         };
+        if !self.core.is_ready()
+            && let Some(security) = &self.security
+        {
+            let Frame::Hello { token, .. } = &frame else {
+                return Err(RelayError::Authentication);
+            };
+            let now = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map_err(|_| RelayError::Authentication)?
+                .as_secs();
+            let verified = verify_relay_token(&security.hmac_secret, now, &security.origin, token)
+                .map_err(|_| RelayError::Authentication)?;
+            self.authenticated_token = Some(verified);
+        }
         if self.core.is_ready() {
             match &frame {
                 Frame::Open { stream, .. }
@@ -220,13 +266,20 @@ impl RelayServer {
                         .await;
                         return Ok(());
                     }
-                    let host = self
-                        .host_map
-                        .get(host)
-                        .cloned()
-                        .unwrap_or_else(|| host.clone());
+                    let (host, development_allow) = match self.host_map.get(host) {
+                        Some(rewrite) => (rewrite.clone(), true),
+                        None => (host.clone(), false),
+                    };
                     let socket = match UdpSocket::bind((std::net::Ipv4Addr::UNSPECIFIED, 0)).await {
-                        Ok(socket) if socket.connect((host.as_str(), *port)).await.is_ok() => {
+                        Ok(socket)
+                            if connect_udp_destination(
+                                &socket,
+                                &host,
+                                *port,
+                                self.security.is_some() && !development_allow,
+                            )
+                            .await =>
+                        {
                             Arc::new(socket)
                         }
                         _ => {
@@ -387,10 +440,14 @@ impl RelayServer {
         for op in actions.socket_ops {
             match op {
                 super::SocketOp::Connect { stream, host, port } => {
-                    let host = self.host_map.get(&host).cloned().unwrap_or(host);
+                    let (host, development_allow) = match self.host_map.get(&host) {
+                        Some(rewrite) => (rewrite.clone(), true),
+                        None => (host, false),
+                    };
+                    let require_public = self.security.is_some() && !development_allow;
                     let tx = int_tx.clone();
                     tokio::spawn(async move {
-                        match TcpStream::connect((host.as_str(), port)).await {
+                        match connect_tcp_destination(&host, port, require_public).await {
                             Ok(io) => {
                                 let _ = tx.send(Internal::Connected { stream, io }).await;
                             }
@@ -450,6 +507,58 @@ impl RelayServer {
             let _ = self.outbound.send(bytes).await;
         }
     }
+}
+
+async fn resolve_destination(
+    host: &str,
+    port: u16,
+    require_public: bool,
+) -> Result<Vec<std::net::SocketAddr>, ()> {
+    let addresses: Vec<_> = tokio::net::lookup_host((host, port))
+        .await
+        .map_err(|_| ())?
+        .collect();
+    // Reject a mixed answer in full. Picking only its public member would let a rebinding attacker
+    // race the resolver/connect boundary or steer retries onto a protected address.
+    if addresses.is_empty()
+        || (require_public
+            && addresses
+                .iter()
+                .any(|address| !destination_is_public(address.ip())))
+    {
+        return Err(());
+    }
+    Ok(addresses)
+}
+
+async fn connect_tcp_destination(
+    host: &str,
+    port: u16,
+    require_public: bool,
+) -> Result<TcpStream, ()> {
+    for address in resolve_destination(host, port, require_public).await? {
+        if let Ok(stream) = TcpStream::connect(address).await {
+            return Ok(stream);
+        }
+    }
+    Err(())
+}
+
+async fn connect_udp_destination(
+    socket: &UdpSocket,
+    host: &str,
+    port: u16,
+    require_public: bool,
+) -> bool {
+    let Ok(addresses) = resolve_destination(host, port, require_public).await else {
+        return false;
+    };
+    for address in addresses {
+        if socket.connect(address).await.is_ok() {
+            return true;
+        }
+    }
+    false
 }
 
 /// Backend → guest: acquire credit *permits* before reading, so a read can never exceed the credit

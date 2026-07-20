@@ -7,13 +7,14 @@
 //! No TLS: the relay terminates **plaintext** `ws://`. TLS termination belongs at the ingress
 //! (a reverse proxy / the browser's `wss://` terminator), not here.
 
-use super::RelayServer;
+use super::{RelayConnectionSecurity, RelayServer};
 use futures_util::{SinkExt, StreamExt};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
+use std::sync::{Arc, Mutex};
 use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::mpsc;
-use tokio_tungstenite::accept_async;
 use tokio_tungstenite::tungstenite::Message;
+use tokio_tungstenite::{accept_async, accept_hdr_async};
 
 /// Channel depth between the WS pumps and the relay (bounded → WS backpressure propagates).
 const CHAN_DEPTH: usize = 64;
@@ -45,6 +46,30 @@ pub async fn serve_with_host_map(
                 // Back off briefly so a persistent error can't become a busy-spin, then keep serving.
                 tokio::time::sleep(std::time::Duration::from_millis(10)).await;
             }
+        }
+    }
+}
+
+/// Public serving mode. Every upgrade must present an exact allowed Origin and every first binary
+/// message must be an origin-bound, short-lived HMAC token. Failed upgrades are dropped before a
+/// relay actor (and therefore before any outbound `OPEN`) exists.
+pub async fn serve_secure(
+    listener: TcpListener,
+    hmac_secret: Vec<u8>,
+    allowed_origins: BTreeSet<String>,
+    host_map: BTreeMap<String, String>,
+) {
+    loop {
+        match listener.accept().await {
+            Ok((tcp, _peer)) => {
+                let secret = hmac_secret.clone();
+                let origins = allowed_origins.clone();
+                let host_map = host_map.clone();
+                tokio::spawn(async move {
+                    handle_secure_conn(tcp, secret, origins, host_map).await;
+                });
+            }
+            Err(_) => tokio::time::sleep(std::time::Duration::from_millis(10)).await,
         }
     }
 }
@@ -87,6 +112,84 @@ async fn handle_conn(tcp: TcpStream, token: Vec<u8>, host_map: BTreeMap<String, 
 
     // Inbound ended → dropping `in_tx` closes the relay's inbound, which shuts the relay down, which
     // drops `out_tx` and ends the writer.
+    drop(in_tx);
+    let _ = writer.await;
+}
+
+// `accept_hdr_async` fixes the callback's error type to tungstenite's intentionally rich HTTP
+// response. We only return `Ok`, but clippy still attributes the trait's large unused Err here.
+#[allow(clippy::result_large_err)]
+async fn handle_secure_conn(
+    tcp: TcpStream,
+    hmac_secret: Vec<u8>,
+    allowed_origins: BTreeSet<String>,
+    host_map: BTreeMap<String, String>,
+) {
+    let captured_origin = Arc::new(Mutex::new(None::<String>));
+    let callback_origin = captured_origin.clone();
+    let ws = match accept_hdr_async(
+        tcp,
+        move |request: &tokio_tungstenite::tungstenite::handshake::server::Request, response| {
+            let origin = request
+                .headers()
+                .get("origin")
+                .and_then(|value| value.to_str().ok())
+                .map(str::to_owned);
+            *callback_origin.lock().expect("origin capture poisoned") = origin;
+            Ok(response)
+        },
+    )
+    .await
+    {
+        Ok(ws) => ws,
+        Err(_) => return,
+    };
+    let origin = captured_origin
+        .lock()
+        .expect("origin capture poisoned")
+        .clone();
+    let Some(origin) = origin.filter(|origin| allowed_origins.contains(origin)) else {
+        return;
+    };
+    bridge_ws(
+        ws,
+        RelayConnectionSecurity {
+            hmac_secret,
+            origin,
+        },
+        host_map,
+    )
+    .await;
+}
+
+async fn bridge_ws(
+    ws: tokio_tungstenite::WebSocketStream<TcpStream>,
+    security: RelayConnectionSecurity,
+    host_map: BTreeMap<String, String>,
+) {
+    let (mut ws_sink, mut ws_stream) = ws.split();
+    let (in_tx, in_rx) = mpsc::channel::<Vec<u8>>(CHAN_DEPTH);
+    let (out_tx, mut out_rx) = mpsc::channel::<Vec<u8>>(CHAN_DEPTH);
+    tokio::spawn(RelayServer::with_security(in_rx, out_tx, security, host_map).run());
+    let writer = tokio::spawn(async move {
+        while let Some(bytes) = out_rx.recv().await {
+            if ws_sink.send(Message::Binary(bytes)).await.is_err() {
+                break;
+            }
+        }
+        let _ = ws_sink.close().await;
+    });
+    while let Some(msg) = ws_stream.next().await {
+        match msg {
+            Ok(Message::Binary(bytes)) => {
+                if in_tx.send(bytes).await.is_err() {
+                    break;
+                }
+            }
+            Ok(Message::Close(_)) | Err(_) => break,
+            Ok(_) => {}
+        }
+    }
     drop(in_tx);
     let _ = writer.await;
 }

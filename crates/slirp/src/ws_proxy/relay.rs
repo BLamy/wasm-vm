@@ -74,6 +74,8 @@ pub enum RelayError {
     Mux(MuxError),
     /// A socket event named a stream the relay is not tracking (driver bug or a late event).
     UnknownStream(u32),
+    /// The public relay's HELLO token was absent, expired, forged, or bound to another Origin.
+    Authentication,
 }
 
 impl From<SessionError> for RelayError {

@@ -12,18 +12,25 @@
 pub mod driver;
 pub mod mux;
 pub mod relay;
+#[cfg(feature = "native")]
+pub mod relay_security;
 pub mod session;
 pub mod stream;
 #[cfg(feature = "native")]
 pub mod ws_adapter;
 #[cfg(feature = "native")]
-pub use driver::RelayServer;
+pub use driver::{RelayConnectionSecurity, RelayServer};
 pub use mux::{MAX_STREAMS, Mux, MuxError, MuxEvent, Role};
 pub use relay::{INITIAL_WINDOW, RelayActions, RelayCore, RelayError, SocketOp};
+#[cfg(feature = "native")]
+pub use relay_security::{RelayToken, RelayTokenError, issue_relay_token, verify_relay_token};
 pub use session::{HandshakeError, Session, SessionError, accept_hello, hello};
 pub use stream::{StreamError, StreamState, Terminal};
 #[cfg(feature = "native")]
-pub use ws_adapter::{serve as serve_ws, serve_with_host_map as serve_ws_with_host_map};
+pub use ws_adapter::{
+    serve as serve_ws, serve_secure as serve_ws_secure,
+    serve_with_host_map as serve_ws_with_host_map,
+};
 
 /// The protocol version carried in the [`Frame::Hello`] frame.
 pub const VERSION: u8 = 1;

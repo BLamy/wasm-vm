@@ -2,8 +2,8 @@
 //! the adapter to a REAL TCP echo backend — proving the entire chain over an actual WebSocket wire,
 //! not the channel shortcut the driver tests use.
 
-use super::{handle_conn, serve};
-use crate::ws_proxy::{Frame, INITIAL_WINDOW, hello};
+use super::{handle_conn, serve, serve_secure};
+use crate::ws_proxy::{Frame, INITIAL_WINDOW, hello, issue_relay_token};
 use futures_util::{SinkExt, StreamExt};
 use std::collections::BTreeMap;
 use std::net::SocketAddr;
@@ -12,7 +12,8 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::{TcpListener, TcpStream, UdpSocket};
 use tokio::time::timeout;
 use tokio_tungstenite::client_async;
-use tokio_tungstenite::tungstenite::Message;
+use tokio_tungstenite::tungstenite::client::IntoClientRequest;
+use tokio_tungstenite::tungstenite::{Message, http};
 
 type ClientWs = tokio_tungstenite::WebSocketStream<TcpStream>;
 
@@ -67,6 +68,109 @@ async fn recv_frame(ws: &mut ClientWs) -> Frame {
 
 async fn send_frame(ws: &mut ClientWs, f: Frame) {
     ws.send(Message::Binary(f.encode().unwrap())).await.unwrap();
+}
+
+async fn secure_client(origin: Option<&str>) -> (ClientWs, Vec<u8>) {
+    secure_client_with_map(origin, BTreeMap::new()).await
+}
+
+async fn secure_client_with_map(
+    origin: Option<&str>,
+    host_map: BTreeMap<String, String>,
+) -> (ClientWs, Vec<u8>) {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    tokio::spawn(serve_secure(
+        listener,
+        b"relay test secret".to_vec(),
+        ["https://vm.example".to_owned()].into_iter().collect(),
+        host_map,
+    ));
+    let tcp = TcpStream::connect(addr).await.unwrap();
+    let mut request = format!("ws://{addr}/").into_client_request().unwrap();
+    if let Some(origin) = origin {
+        request.headers_mut().insert(
+            http::header::ORIGIN,
+            http::HeaderValue::from_str(origin).unwrap(),
+        );
+    }
+    let (ws, _) = client_async(request, tcp).await.unwrap();
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+    let token = issue_relay_token(
+        b"relay test secret",
+        now,
+        now + 60,
+        "https://vm.example",
+        "browser-session-1",
+    )
+    .unwrap();
+    (ws, token)
+}
+
+#[tokio::test]
+async fn secure_relay_closes_absent_wrong_origin_and_forged_hello_before_open() {
+    for origin in [None, Some("https://evil.example")] {
+        let (mut ws, _) = secure_client(origin).await;
+        let ended = timeout(Duration::from_secs(5), ws.next()).await.unwrap();
+        assert!(matches!(
+            ended,
+            None | Some(Ok(Message::Close(_))) | Some(Err(_))
+        ));
+    }
+
+    let (mut ws, mut token) = secure_client(Some("https://vm.example")).await;
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    token[8] ^= 1;
+    send_frame(&mut ws, hello(token)).await;
+    let ended = timeout(Duration::from_secs(5), ws.next()).await.unwrap();
+    assert!(matches!(
+        ended,
+        None | Some(Ok(Message::Close(_))) | Some(Err(_))
+    ));
+}
+
+#[tokio::test]
+async fn secure_relay_accepts_an_origin_bound_hello() {
+    let echo = spawn_echo().await;
+    let (mut ws, token) = secure_client(Some("https://vm.example")).await;
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    send_frame(&mut ws, hello(token)).await;
+    send_frame(
+        &mut ws,
+        Frame::Open {
+            stream: 1,
+            host: "127.0.0.1".into(),
+            port: echo.port(),
+        },
+    )
+    .await;
+    assert_eq!(
+        recv_frame(&mut ws).await,
+        Frame::OpenFail { stream: 1, code: 1 }
+    );
+
+    let (mut ws, token) = secure_client_with_map(
+        Some("https://vm.example"),
+        [("fixture.test".to_owned(), "127.0.0.1".to_owned())]
+            .into_iter()
+            .collect(),
+    )
+    .await;
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    send_frame(&mut ws, hello(token)).await;
+    send_frame(
+        &mut ws,
+        Frame::Open {
+            stream: 2,
+            host: "fixture.test".into(),
+            port: echo.port(),
+        },
+    )
+    .await;
+    assert_eq!(recv_frame(&mut ws).await, Frame::OpenOk { stream: 2 });
 }
 
 #[tokio::test]
