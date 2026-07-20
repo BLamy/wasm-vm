@@ -69,6 +69,7 @@ func main() {
 	}
 	defer tcpListener.Close()
 	httpServer := &http.Server{Handler: http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		fmt.Printf("TCP path=%s from=%s\n", request.URL.Path, request.RemoteAddr)
 		writer.Header().Set("content-type", "application/octet-stream")
 		_, _ = io.WriteString(writer, "wasm-vm-tailnet-fixture\n")
 	})}
