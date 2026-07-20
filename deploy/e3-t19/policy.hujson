@@ -1,0 +1,25 @@
+{
+  "groups": {
+    "group:browser": ["browser@example.com"],
+  },
+  "tagOwners": {
+    "tag:fixture": ["browser@example.com"],
+    "tag:exit": ["browser@example.com"],
+    "tag:relay": ["browser@example.com"],
+  },
+  "acls": [
+    {
+      "action": "accept",
+      "src": ["group:browser"],
+      "dst": ["tag:fixture:*"],
+    },
+    {
+      "action": "accept",
+      "src": ["group:browser"],
+      "dst": ["autogroup:internet:*"],
+    },
+  ],
+  "autoApprovers": {
+    "exitNode": ["tag:exit"],
+  },
+}

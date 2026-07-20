@@ -1,0 +1,13 @@
+.git
+target
+rr-traces
+evidence
+compliance
+fuzz
+web
+releases
+node_modules
+**/node_modules
+**/test-results
+**/playwright-report
+.DS_Store

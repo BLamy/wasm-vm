@@ -1,0 +1,107 @@
+name: wasm-vm-e3-t19
+
+services:
+  app:
+    image: nginx:1.29.5-alpine
+    ports:
+      - "8123:8080"
+    volumes:
+      - ./web:/usr/share/nginx/html:ro
+      - ./deploy/e3-t19/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+
+  headscale:
+    image: headscale/headscale:0.29.2
+    command: serve
+    ports:
+      - "18080:8080"
+    volumes:
+      - ./deploy/e3-t19/headscale.yaml:/etc/headscale/config.yaml:ro
+      - ./deploy/e3-t19/policy.hujson:/etc/headscale/policy.hujson:ro
+      - headscale-data:/var/lib/headscale
+      - headscale-run:/var/run/headscale
+    healthcheck:
+      test: ["CMD", "headscale", "health"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  provision:
+    image: headscale/headscale:0.29.2-debug
+    entrypoint: ["/busybox/sh", "/opt/wasm-vm/provision.sh"]
+    depends_on:
+      headscale:
+        condition: service_healthy
+    volumes:
+      - ./deploy/e3-t19/headscale.yaml:/etc/headscale/config.yaml:ro
+      - ./deploy/e3-t19/policy.hujson:/etc/headscale/policy.hujson:ro
+      - ./deploy/e3-t19/provision.sh:/opt/wasm-vm/provision.sh:ro
+      - headscale-data:/var/lib/headscale
+      - headscale-run:/var/run/headscale
+      - ephemeral-keys:/run/wasm-vm-keys
+
+  fixture:
+    image: tailscale/tailscale:v1.98.9
+    hostname: fixture
+    environment:
+      NODE_ROLE: fixture
+      TS_HOSTNAME: fixture
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_EXTRA_ARGS: --login-server=http://headscale:8080 --accept-dns=true
+    cap_add: [NET_ADMIN, NET_RAW]
+    volumes:
+      - ./deploy/e3-t19/tailnet-node.sh:/usr/local/bin/wasm-vm-node:ro
+      - ephemeral-keys:/run/wasm-vm-keys
+      - fixture-state:/var/lib/tailscale
+    entrypoint: ["/usr/local/bin/wasm-vm-node"]
+    depends_on: [provision]
+
+  fixture-http:
+    image: hashicorp/http-echo:1.0.0
+    command: ["-listen=:5678", "-text=wasm-vm tailnet fixture"]
+    network_mode: service:fixture
+    depends_on: [fixture]
+
+  exit:
+    image: tailscale/tailscale:v1.98.9
+    hostname: exit
+    environment:
+      NODE_ROLE: exit
+      TS_HOSTNAME: exit
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_EXTRA_ARGS: --login-server=http://headscale:8080 --advertise-exit-node --accept-routes
+    cap_add: [NET_ADMIN, NET_RAW]
+    sysctls:
+      net.ipv4.ip_forward: "1"
+      net.ipv6.conf.all.forwarding: "1"
+    volumes:
+      - ./deploy/e3-t19/tailnet-node.sh:/usr/local/bin/wasm-vm-node:ro
+      - ephemeral-keys:/run/wasm-vm-keys
+      - exit-state:/var/lib/tailscale
+    entrypoint: ["/usr/local/bin/wasm-vm-node"]
+    depends_on: [provision]
+
+  relay:
+    profiles: [relay]
+    build:
+      context: .
+      dockerfile: deploy/e3-t19/relay.Dockerfile
+    ports:
+      - "18081:8080"
+    environment:
+      WVRELAY_ALLOWED_ORIGINS: http://localhost:8123
+      WVRELAY_HOST_MAP: fixture.wasm-vm.test=fixture
+    volumes:
+      - ephemeral-keys:/run/wasm-vm-keys:ro
+    depends_on: [provision]
+    read_only: true
+
+volumes:
+  headscale-data:
+  headscale-run:
+  ephemeral-keys:
+  fixture-state:
+  exit-state:

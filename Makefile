@@ -252,3 +252,14 @@ verify-list: ; @bash tools/verify/list.sh
 # first (riscof venv + arch-test) + the Docker toolchain image (Spike). Enforces compliance/EXCLUSIONS.md.
 riscof:
 	bash tools/run_riscof.sh
+
+.PHONY: verify-E3-T19
+verify-E3-T19:
+	cargo fmt --all --check
+	cargo clippy -p wasm-vm-slirp -p wasm-vm-cli -- -D warnings
+	cargo test -p wasm-vm-slirp --lib relay_security
+	cargo test -p wasm-vm-slirp --lib secure_relay
+	cargo test -p wasm-vm-cli --bin wvrelay
+	bash tools/verify/e3-t19-deployment.sh
+	cd web && npx playwright test tests/e3-t17-provider-selection.spec.js tests/e3-t19-provider-security.spec.js
+	@echo "verify-E3-T19 (provider lifecycle + relay security): OK"
