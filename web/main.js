@@ -62,6 +62,11 @@ globalThis.__wasmVmTailscaleEvent = (message) => {
   }
   if (message.type === "failed" && tailscaleStatusEl) {
     tailscaleStatusEl.textContent = `Tailscale failed: ${message.error?.message ?? "provider stopped"}`;
+    return;
+  }
+  if (message.type === "flowError" && tailscaleStatusEl) {
+    tailscaleStatusEl.textContent =
+      `Tailscale ${message.transport ?? "flow"} ${message.stream ?? "?"} failed: ${message.message ?? "connection failed"}`;
   }
 };
 

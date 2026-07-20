@@ -46,5 +46,7 @@ artifact.
 
 The shared Rust transport rejects messages above 1 MiB, caps queued inbound frames at 32 MiB and
 outbound frames at 4 MiB, and fails closed after malformed input or Worker error. The session layer
-adds the E3-T16 per-flow 256 KiB TCP windows and four-datagram UDP queue cap. A Worker crash or
-dispose fails in-flight flows normally; a later boot creates one new Worker from persisted IPN state.
+adds the E3-T16 per-flow 256 KiB TCP windows and four-datagram UDP queue cap. UDP payloads are
+limited to 1,252 bytes: Tailscale's default safe 1,280-byte TUN MTU minus the inner IPv4 (20-byte)
+and UDP (8-byte) headers. A Worker crash or dispose fails in-flight flows normally; a later boot
+creates one new Worker from persisted IPN state.

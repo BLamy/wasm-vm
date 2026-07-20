@@ -4,7 +4,8 @@
 export const INITIAL_WINDOW = 256 * 1024;
 export const MAX_STREAMS = 1024;
 export const MAX_BRIDGE_CHUNK = 64 * 1024;
-export const MAX_DATAGRAM = 65_507;
+// Tailscale's default safe TUN MTU (1,280) includes the inner IPv4 (20) and UDP (8) headers.
+export const MAX_DATAGRAM = 1_252;
 const MAX_UDP_QUEUE = 4 * MAX_DATAGRAM;
 
 const OP = Object.freeze({
@@ -203,8 +204,9 @@ export class TailscaleWorkerCore {
       this.sendFrame(simple(stream, OP.OPEN_OK));
       this.sendFrame(windowFrame(stream, INITIAL_WINDOW));
       void this.readTCP(flow);
-    } catch {
+    } catch (error) {
       if (this.tcp.get(stream) === flow) this.tcp.delete(stream);
+      this.post({ type: "flowError", transport: "tcp", stream, message: redactError(error) });
       if (!flow.cancelled) this.sendFrame(failFrame(stream, OP.OPEN_FAIL));
     }
   }
@@ -298,8 +300,9 @@ export class TailscaleWorkerCore {
       flow.conn = conn;
       this.sendFrame(simple(stream, OP.UDP_OPEN_OK));
       void this.readUDP(flow);
-    } catch {
+    } catch (error) {
       if (this.udp.get(stream) === flow) this.udp.delete(stream);
+      this.post({ type: "flowError", transport: "udp", stream, message: redactError(error) });
       if (!flow.cancelled) this.sendFrame(failFrame(stream, OP.UDP_OPEN_FAIL));
     }
   }

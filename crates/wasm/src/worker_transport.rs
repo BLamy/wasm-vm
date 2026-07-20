@@ -65,7 +65,9 @@ impl BrowserWorkerTransport {
                 }
                 // Status/diagnostic messages are intentionally outside FrameTransport. The UI-side
                 // controller consumes them; the guest data path ignores them.
-                Some("status") | Some("storageUpdate") => forward_control_event(&data),
+                Some("status") | Some("storageUpdate") | Some("flowError") => {
+                    forward_control_event(&data)
+                }
                 Some("lookupResult") => {
                     crate::tailscale_dns::accept_lookup_result(&message_dns, &data)
                 }

@@ -26,7 +26,17 @@ test("real Headscale registration survives Worker restart without retaining the 
         const found = session.messages.find(predicate);
         if (found) return resolve(found);
         if (performance.now() - started >= timeoutMs) {
-          reject(new Error(`Worker message timeout: ${JSON.stringify(session.messages.slice(-8))}`));
+          const tail = session.messages.slice(-12).map((message) => {
+            if (message?.type !== "frame") return message;
+            const bytes = new Uint8Array(message.bytes);
+            return {
+              type: "frame",
+              stream: new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getUint32(0, false),
+              opcode: bytes[4],
+              length: bytes.byteLength - 5,
+            };
+          });
+          reject(new Error(`Worker message timeout: ${JSON.stringify(tail)}`));
           return;
         }
         setTimeout(inspect, 20);
@@ -40,13 +50,13 @@ test("real Headscale registration survives Worker restart without retaining the 
       bytes.set(payload, 5);
       return bytes;
     };
-    const openFrame = (stream, host, port) => {
+    const openFrame = (stream, host, port, openOpcode = 1) => {
       const encoded = new TextEncoder().encode(host);
       const payload = new Uint8Array(3 + encoded.byteLength);
       payload[0] = encoded.byteLength;
       payload.set(encoded, 1);
       new DataView(payload.buffer).setUint16(1 + encoded.byteLength, port, false);
-      return frame(stream, 1, payload);
+      return frame(stream, openOpcode, payload);
     };
     const opcode = (message) => message?.type === "frame"
       ? new Uint8Array(message.bytes)[4]
@@ -123,15 +133,22 @@ test("real Headscale registration survives Worker restart without retaining the 
     };
     const udpRoundtrip = async (session, stream) => {
       const before = session.messages.length;
-      session.worker.postMessage({ type: "frame", bytes: openFrame(stream, peerIp, peerUdpPort).buffer });
-      await waitForMessage(session, (message, index) => (
-        index >= before && streamId(message) === stream && opcode(message) === 10
+      session.worker.postMessage({
+        type: "frame",
+        bytes: openFrame(stream, peerIp, peerUdpPort, 9).buffer,
+      });
+      const opened = await waitForMessage(session, (message, index) => (
+        index >= before && (
+          (streamId(message) === stream && opcode(message) === 10) ||
+          (message?.type === "flowError" && message.transport === "udp" && message.stream === stream)
+        )
       ));
+      if (opened.type === "flowError") throw new Error(`UDP open failed: ${opened.message}`);
       const expected = [
-        new Uint8Array(),
-        new Uint8Array(65_507).fill(0xa5),
         Uint8Array.of(1, 2, 3),
         Uint8Array.of(9, 8, 7, 6, 5),
+        new Uint8Array(),
+        new Uint8Array(1_252).fill(0xa5),
       ];
       for (const payload of expected) {
         session.worker.postMessage({ type: "frame", bytes: frame(stream, 12, payload).buffer });

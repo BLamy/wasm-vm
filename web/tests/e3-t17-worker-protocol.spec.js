@@ -168,7 +168,7 @@ test("E3-T17 Worker preserves hostile UDP boundaries and connect-close races", a
 
   expect(result.tcpClose).toBe(1);
   expect(result.wire).not.toContainEqual({ stream: 9, opcode: 2, length: 0 });
-  expect(result.udpWrites).toEqual([0, 65_507, 2]);
+  expect(result.udpWrites).toEqual([0, 1_252, 2]);
   expect(result.wire).toContainEqual({ stream: 0x80000001, opcode: 10, length: 0 });
   expect(result.wire).toContainEqual({ stream: 0x80000001, opcode: 12, length: 0 });
   expect(result.wire).toContainEqual({ stream: 0x80000001, opcode: 12, length: 1 });

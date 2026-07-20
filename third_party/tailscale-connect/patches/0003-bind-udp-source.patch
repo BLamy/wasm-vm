@@ -1,0 +1,47 @@
+diff --git a/cmd/tsconnect/wasm/wasm_js.go b/cmd/tsconnect/wasm/wasm_js.go
+index 828ce3456..d8a88cbf1 100644
+--- a/cmd/tsconnect/wasm/wasm_js.go
++++ b/cmd/tsconnect/wasm/wasm_js.go
+@@ -126,6 +126,7 @@ func newIPN(jsConfig js.Value) map[string]any {
+ 	}
+ 	sys.Set(eng)
+ 
++	var localBackend *ipnlocal.LocalBackend
+ 	ns, err := netstack.Create(logf, sys.Tun.Get(), eng, sys.MagicSock.Get(), dialer, sys.DNSManager.Get(), sys.ProxyMapper())
+ 	if err != nil {
+ 		log.Fatalf("netstack.Create: %v", err)
+@@ -139,7 +140,25 @@ func newIPN(jsConfig js.Value) map[string]any {
+ 		return ns.DialContextTCP(ctx, dst)
+ 	}
+ 	dialer.NetstackDialUDP = func(ctx context.Context, dst netip.AddrPort) (net.Conn, error) {
+-		return ns.DialContextUDP(ctx, dst)
++		if localBackend == nil {
++			return nil, fmt.Errorf("local backend is not ready")
++		}
++		nm := localBackend.NetMapNoPeers()
++		if nm == nil {
++			return nil, fmt.Errorf("tailnet address is not ready")
++		}
++		var src netip.Addr
++		for _, prefix := range nm.GetAddresses().All() {
++			candidate := prefix.Addr()
++			if candidate.Is4() == dst.Addr().Is4() {
++				src = candidate
++				break
++			}
++		}
++		if !src.IsValid() {
++			return nil, fmt.Errorf("no tailnet source address for %v", dst)
++		}
++		return ns.DialContextUDPWithBind(ctx, src, dst)
+ 	}
+ 	sys.NetstackRouter.Set(true)
+ 	sys.Tun.Get().Start()
+@@ -151,6 +169,7 @@ func newIPN(jsConfig js.Value) map[string]any {
+ 	if err != nil {
+ 		log.Fatalf("ipnlocal.NewLocalBackend: %v", err)
+ 	}
++	localBackend = lb
+ 	if err := ns.Start(lb); err != nil {
+ 		log.Fatalf("failed to start netstack: %v", err)
+ 	}
