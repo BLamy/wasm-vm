@@ -16,7 +16,8 @@ for the acceptance harness; they are never printed, stored in the checkout, or p
 
 The browser flow uses:
 
-- control server `http://localhost:18080`;
+- control server `http://localhost:8123` for the browser (the same-origin nginx routes `/key` and
+  `/ts2021` to Headscale); native nodes use `http://headscale:8080` inside compose;
 - stable hostname `wasm-vm-browser` (Headscale resolves collisions, while persisted IPN state
   restores the original node rather than registering a duplicate);
 - the one-time browser key for the first registration only;

@@ -261,5 +261,6 @@ verify-E3-T19:
 	cargo test -p wasm-vm-slirp --lib secure_relay
 	cargo test -p wasm-vm-cli --bin wvrelay
 	bash tools/verify/e3-t19-deployment.sh
+	bash tools/verify/e3-t19-live-proof.sh
 	cd web && npx playwright test tests/e3-t17-provider-selection.spec.js tests/e3-t19-provider-security.spec.js
 	@echo "verify-E3-T19 (provider lifecycle + relay security): OK"
