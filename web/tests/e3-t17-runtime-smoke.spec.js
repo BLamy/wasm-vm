@@ -38,6 +38,38 @@ test("E3-T17 exit-node selection is deterministic and respects an explicit stabl
   });
 });
 
+test("E3-T17 defers only public exit dials until the first guest write", async ({ page }) => {
+  await page.goto("/");
+  const result = await page.evaluate(async () => {
+    const { deferPublicExitDial } = await import("./tailscale-runtime.js");
+    const events = [];
+    const dial = async (name) => {
+      events.push(`dial:${name}`);
+      return {
+        read: async () => null,
+        write: async (bytes) => { events.push(`write:${name}:${bytes.byteLength}`); return bytes.byteLength; },
+        shutdownWrite: async () => {},
+        close: async () => {},
+      };
+    };
+    const publicConn = await deferPublicExitDial("1.1.1.1", true, () => dial("public"));
+    const beforeWrite = [...events];
+    const pendingRead = publicConn.read(10);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const whileReadWaits = [...events];
+    await publicConn.write(Uint8Array.of(1, 2, 3));
+    await pendingRead;
+    await deferPublicExitDial("100.64.0.7", true, () => dial("tailnet"));
+    await deferPublicExitDial("1.1.1.1", false, () => dial("no-exit"));
+    return { beforeWrite, whileReadWaits, events };
+  });
+  expect(result.beforeWrite).toEqual([]);
+  expect(result.whileReadWaits).toEqual([]);
+  expect(result.events).toEqual([
+    "dial:public", "write:public:3", "dial:tailnet", "dial:no-exit",
+  ]);
+});
+
 test("E3-T17 offline and relay UI do not preload the Tailscale Worker or artifact", async ({ page }) => {
   const requests = [];
   page.on("request", (request) => requests.push(request.url()));

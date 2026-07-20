@@ -19,6 +19,56 @@ export function selectExitNode(netMap, configuredId = null) {
   return candidates[0]?.id ?? null;
 }
 
+function isTailnetOrPrivateIPv4(host) {
+  const parts = host.split(".").map(Number);
+  if (parts.length !== 4 || parts.some((part) => !Number.isInteger(part) || part < 0 || part > 255)) {
+    return true;
+  }
+  const [a, b] = parts;
+  return a === 10 || a === 127 || (a === 100 && b >= 64 && b <= 127) ||
+    (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168);
+}
+
+// A software-interpreted guest can spend longer constructing its first TLS record than a public
+// server's post-accept handshake deadline. Keep the exit socket virtual until the guest supplies
+// its first bytes, so the remote deadline begins at ClientHello rather than at the guest's connect().
+// Tailnet/private and non-exit connections remain eager, preserving server-speaks-first behavior.
+export function deferPublicExitDial(host, useExitNode, dial) {
+  if (!useExitNode || isTailnetOrPrivateIPv4(host)) return dial();
+  let started = false;
+  let closed = false;
+  let begin;
+  let cancel;
+  const gate = new Promise((resolve, reject) => { begin = resolve; cancel = reject; });
+  const connection = gate.then(dial);
+  const start = () => {
+    if (!started && !closed) {
+      started = true;
+      begin();
+    }
+  };
+  return Promise.resolve({
+    read: async (maxBytes) => (await connection).read(maxBytes),
+    write: async (bytes) => {
+      start();
+      return (await connection).write(bytes);
+    },
+    shutdownWrite: async () => {
+      start();
+      return (await connection).shutdownWrite();
+    },
+    close: async () => {
+      if (!started) {
+        closed = true;
+        cancel(new Error("deferred connection closed"));
+        return;
+      }
+      return (await connection).close();
+    },
+  });
+}
+
 export async function lookupPublicA(
   hostname,
   fetchImpl = globalThis.fetch.bind(globalThis),
@@ -128,7 +178,11 @@ export async function createTailscaleRuntime(config, hooks) {
       state.clear();
       emitState();
     },
-    dialTCP: (host, port, timeoutMs) => ipn.dialTCP(host, port, timeoutMs),
+    dialTCP: (host, port, timeoutMs) => deferPublicExitDial(
+      host,
+      Boolean(config.useExitNode),
+      () => ipn.dialTCP(host, port, timeoutMs),
+    ),
     dialUDP: (host, port, timeoutMs) => ipn.dialUDP(host, port, timeoutMs),
     async lookup(hostname) {
       try {

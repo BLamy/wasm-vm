@@ -272,6 +272,7 @@ export class TailscaleWorkerCore {
         this.sendFrame(dataFrame(flow.stream, OP.DATA, payload));
       }
     } catch (error) {
+      if (flow.cancelled || this.disposed || this.tcp.get(flow.stream) !== flow) return;
       this.post({
         type: "flowError", transport: "tcp", stream: flow.stream, phase: "read",
         message: redactError(error),
