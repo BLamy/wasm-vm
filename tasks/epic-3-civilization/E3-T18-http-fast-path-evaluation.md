@@ -3,7 +3,7 @@ id: E3-T18
 epic: 3
 title: Optional browser HTTP fast-path evaluation after Tailscale
 priority: 318
-status: pending
+status: in-progress
 depends_on: [E3-T17]
 estimate: S
 capstone: false
