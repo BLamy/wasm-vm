@@ -136,7 +136,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting advers
 - [x] `315` [E3-T15](epic-3-civilization/E3-T15-dhcp-dns-services.md) — Internal DHCP server and DNS forwarder in the slirp stack *(deps: E3-T14)*
 - [x] `316` [E3-T16](epic-3-civilization/E3-T16-websocket-tcp-proxy.md) — WebSocket TCP/UDP transport provider and public relay fallback *(deps: E3-T14)*
 - [x] `317` [E3-T17](epic-3-civilization/E3-T17-browser-tailscale-transport.md) — Browser Tailscale transport — IPN worker, TCP/UDP streams, MagicDNS, and exit nodes *(deps: E3-T15, E3-T16)*
-- [~] `318` [E3-T18](epic-3-civilization/E3-T18-http-fast-path-evaluation.md) — Optional browser HTTP fast-path evaluation after Tailscale *(deps: E3-T17)*
+- [?] `318` [E3-T18](epic-3-civilization/E3-T18-http-fast-path-evaluation.md) — Optional browser HTTP fast-path evaluation after Tailscale *(deps: E3-T17)*
 - [ ] `319` [E3-T19](epic-3-civilization/E3-T19-network-provider-hardening.md) — Tailscale/Headscale lifecycle and public-relay fallback hardening *(deps: E3-T16, E3-T17)*
 - [ ] `320` [E3-T20](epic-3-civilization/E3-T20-tailscale-apk-add-end-to-end.md) — Tailscale-backed `apk add` end-to-end with relay fallback *(deps: E3-T11, E3-T15, E3-T16, E3-T17, E3-T19)*
 - [ ] `321` [E3-T21](epic-3-civilization/E3-T21-host-guest-file-transfer.md) — Host to guest file transfer - drag-and-drop upload and download *(deps: E3-T08, E3-T14)*
