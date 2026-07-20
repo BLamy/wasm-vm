@@ -14,9 +14,10 @@ const HOSTNAME = process.env.E3_T17_HOSTNAME ?? "wasm-vm-alpine-tailnet";
 const PEER_NAME = process.env.E3_T17_PEER_NAME ?? "";
 const PEER_PORT = Number(process.env.E3_T17_PEER_PORT ?? 0);
 const PEER_UDP_PORT = Number(process.env.E3_T17_PEER_UDP_PORT ?? 0);
+const PEER_RST_PORT = Number(process.env.E3_T17_PEER_RST_PORT ?? 0);
 const EXIT_NODE_ID = process.env.E3_T17_EXIT_NODE_ID ?? "";
 const PUBLIC_URL = process.env.E3_T17_PUBLIC_URL ?? "";
-const EVIDENCE_STEM = PUBLIC_URL ? "alpine-exit" : "alpine-tailnet";
+const EVIDENCE_STEM = PUBLIC_URL ? "alpine-exit" : PEER_RST_PORT ? "alpine-rst" : "alpine-tailnet";
 const haveAlpine =
   fs.existsSync(path.join(WEB, "artifacts-alpine.json")) &&
   fs.existsSync(path.resolve(WEB, "../releases/chunked-alpine/manifest.json"));
@@ -27,7 +28,7 @@ test("stock Alpine uses the browser Headscale node for DHCP, MagicDNS, TCP, and 
       !PEER_NAME || !PEER_PORT || !PEER_UDP_PORT,
     "set E3_T17_ALPINE=1 and the live Headscale/peer environment",
   );
-  test.setTimeout(2_700_000);
+  test.setTimeout(3_600_000);
   fs.mkdirSync(EVIDENCE, { recursive: true });
 
   const consoleErrors = [];
@@ -67,17 +68,24 @@ test("stock Alpine uses the browser Headscale node for DHCP, MagicDNS, TCP, and 
   await page.click("#boot-alpine");
 
   let sawOpenRC = false;
-  for (let i = 0; i < 1200; i += 1) {
+  for (let i = 0; i < 360; i += 1) {
     const text = await page.locator("#term .xterm-rows").textContent().catch(() => "");
     if (/Kernel panic|Unable to mount root/.test(text)) {
       throw new Error(`Alpine boot failed: ${text.slice(-2000)}`);
     }
     if (text.includes("OpenRC")) sawOpenRC = true;
-    if (sawOpenRC && text.includes("login:")) break;
-    if (i === 1199) throw new Error("Alpine did not reach a post-OpenRC login prompt");
-    await page.waitForTimeout(1500);
+    // BusyBox getty writes /etc/issue before reading the username. Some headless Chromium runs
+    // leave its subsequent `login:` text in the cursor row without exposing it through xterm's
+    // rendered-row text, while the issue banner is stable in both the DOM and terminal buffer.
+    if (sawOpenRC && (text.includes("login:") ||
+        (text.includes("Welcome to Alpine Linux") && text.includes("/dev/ttyS0")))) break;
+    if (i === 359) throw new Error("Alpine did not reach post-OpenRC getty");
+    // Reading xterm's rendered rows competes with the single-threaded interpreter. A five-second
+    // cadence keeps the readiness check responsive without materially extending guest boot time.
+    await page.waitForTimeout(5_000);
   }
   await expect(page.locator("#tailscale-status")).toContainText("Running", { timeout: 120_000 });
+  const runningStatus = await page.locator("#tailscale-status").textContent();
   await send("root\r");
   await page.waitForTimeout(3_000);
   await send("\r");
@@ -93,6 +101,10 @@ test("stock Alpine uses the browser Headscale node for DHCP, MagicDNS, TCP, and 
     `[ "$body" = wasm-vm-tailnet-fixture ] && echo E3T17_TCP_"OK" rc=$rc || echo E3T17_TCP_"FAIL" rc=$rc body=$body; ` +
     `udp=$(timeout 60 sh -c 'printf e3t17-guest-udp | nc -u -w 10 ${PEER_NAME} ${PEER_UDP_PORT}'); rc=$?; ` +
     `[ "$udp" = e3t17-guest-udp ] && echo E3T17_UDP_"OK" rc=$rc || echo E3T17_UDP_"FAIL" rc=$rc body=$udp; ` +
+    (PEER_RST_PORT
+      ? `rst=$(timeout 60 wget -O /dev/null http://${PEER_NAME}:${PEER_RST_PORT}/ 2>&1); rc=$?; ` +
+        `echo "$rst" | grep -qi reset && [ $rc -ne 0 ] && echo E3T17_RST_"OK" rc=$rc || echo E3T17_RST_"FAIL" rc=$rc body="$rst"; `
+      : "") +
     (PUBLIC_URL
       ? `timeout 120 wget -qO /dev/null '${PUBLIC_URL}'; rc=$?; [ $rc -eq 0 ] && echo E3T17_HTTPS_"OK" rc=$rc || echo E3T17_HTTPS_"FAIL" rc=$rc; `
       : "") +
@@ -109,8 +121,10 @@ test("stock Alpine uses the browser Headscale node for DHCP, MagicDNS, TCP, and 
   expect(text).toContain("E3T17_TCP_OK rc=0");
   if (PUBLIC_URL) expect(text).toContain("E3T17_HTTPS_OK rc=0");
   expect(text).toContain("E3T17_UDP_OK rc=0");
-  expect(text).not.toMatch(/E3T17_(DHCP|DNSCFG|MAGICDNS|TCP|UDP)_FAIL/);
-  expect(status).toContain(HOSTNAME);
+  if (PEER_RST_PORT) expect(text).toMatch(/E3T17_RST_OK rc=[1-9][0-9]*/);
+  expect(text).not.toMatch(/E3T17_(DHCP|DNSCFG|MAGICDNS|TCP|UDP|RST)_FAIL/);
+  expect(runningStatus).toContain(HOSTNAME);
+  if (PEER_RST_PORT) expect(status).toContain("connection reset by peer");
   expect(requests.filter((url) => url.endsWith("/tailscale-connect/main.wasm"))).toHaveLength(1);
   expect(requests.every((url) => !url.includes(AUTH_KEY))).toBe(true);
   expect(consoleErrors, `console errors: ${consoleErrors.join("; ")}`).toEqual([]);
@@ -123,9 +137,11 @@ test("stock Alpine uses the browser Headscale node for DHCP, MagicDNS, TCP, and 
     peerName: PEER_NAME,
     peerPort: PEER_PORT,
     peerUdpPort: PEER_UDP_PORT,
+    peerRstPort: PEER_RST_PORT || null,
     exitNodeId: EXIT_NODE_ID || null,
     publicUrl: PUBLIC_URL || null,
     dhcpStats,
+    runningStatus,
     status,
     consoleErrors,
     tailscaleArtifactRequests: requests.filter((url) => url.endsWith("/tailscale-connect/main.wasm")).length,

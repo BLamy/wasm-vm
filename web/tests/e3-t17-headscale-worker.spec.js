@@ -11,6 +11,8 @@ const PEER_IP = process.env.E3_T17_PEER_IP;
 const PEER_NAME = process.env.E3_T17_PEER_NAME;
 const PEER_PORT = Number(process.env.E3_T17_PEER_PORT ?? 0);
 const PEER_UDP_PORT = Number(process.env.E3_T17_PEER_UDP_PORT ?? 0);
+const RST_HOST = process.env.E3_T17_RST_HOST ?? "";
+const RST_PORT = Number(process.env.E3_T17_RST_PORT ?? 0);
 const EXIT_NODE_ID = process.env.E3_T17_EXIT_NODE_ID ?? "";
 const PUBLIC_HOST = process.env.E3_T17_PUBLIC_HOST ?? "";
 const PUBLIC_PORT = Number(process.env.E3_T17_PUBLIC_PORT ?? 0);
@@ -19,6 +21,7 @@ const USE_EXIT_NODE = process.env.E3_T17_USE_EXIT_NODE === "0"
   ? false
   : Boolean(EXIT_NODE_ID || PUBLIC_HOST);
 const EXPECT_PUBLIC_FAIL = process.env.E3_T17_EXPECT_PUBLIC_FAIL === "1";
+const EXPECT_PEER_FAIL = process.env.E3_T17_EXPECT_PEER_FAIL === "1";
 const REVOKE_NODE = process.env.E3_T17_REVOKE_NODE === "1";
 const HEADSCALE_REPO = process.env.E3_T17_HEADSCALE_REPO;
 const HEADSCALE_CONFIG = process.env.E3_T17_HEADSCALE_CONFIG;
@@ -48,8 +51,9 @@ test("real Headscale registration survives Worker restart without retaining the 
   await page.goto("/");
 
   const result = await page.evaluate(async ({
-    controlUrl, authKey, hostname, peerIp, peerName, peerPort, peerUdpPort,
-    exitNodeId, publicHost, publicPort, publicName, useExitNode, expectPublicFail, revokeNode,
+    controlUrl, authKey, hostname, peerIp, peerName, peerPort, peerUdpPort, rstHost, rstPort,
+    exitNodeId, publicHost, publicPort, publicName, useExitNode, expectPublicFail, expectPeerFail,
+    revokeNode,
   }) => {
     const waitForMessage = (session, predicate, timeoutMs = 30_000) => new Promise((resolve, reject) => {
       const started = performance.now();
@@ -204,6 +208,24 @@ test("real Headscale registration survives Worker restart without retaining the 
       ), 20_000);
       return performance.now() - started;
     };
+    const expectRemoteReset = async (session, stream) => {
+      const before = session.messages.length;
+      session.worker.postMessage({
+        type: "frame",
+        bytes: openFrame(stream, rstHost, rstPort).buffer,
+      });
+      await waitForMessage(session, (message, index) => (
+        index >= before && streamId(message) === stream && opcode(message) === 2
+      ));
+      const credit = new Uint8Array(4);
+      new DataView(credit.buffer).setUint32(0, 64 * 1024, false);
+      session.worker.postMessage({ type: "frame", bytes: frame(stream, 8, credit).buffer });
+      session.worker.postMessage({ type: "frame", bytes: frame(stream, 4, Uint8Array.of(1)).buffer });
+      await waitForMessage(session, (message, index) => (
+        index >= before && streamId(message) === stream && opcode(message) === 7
+      ));
+      return true;
+    };
 
     const first = await start({
       wasmUrl: "./tailscale-connect/main.wasm",
@@ -220,10 +242,12 @@ test("real Headscale registration survives Worker restart without retaining the 
     let lookupAddresses = null;
     let publicLookupAddresses = null;
     let peerResponse = null;
+    let peerDeniedMs = null;
     let publicResponse = null;
     let publicFailureMs = null;
     let selectedExitNodeId = null;
     let udp = null;
+    let remoteReset = null;
     if (useExitNode) {
       const selected = await waitForMessage(first, (message) => (
         message?.type === "status" && message.status?.netMap?.selectedExitNodeId
@@ -249,8 +273,13 @@ test("real Headscale registration survives Worker restart without retaining the 
     if (peerIp && peerPort) {
       first.worker.postMessage({ type: "frame", bytes: frame(0, 0, Uint8Array.of(1)).buffer });
       await waitForMessage(first, (message) => opcode(message) === 0);
-      peerResponse = await httpRequest(first, 1);
-      if (peerUdpPort) udp = await udpRoundtrip(first, 0x80000001);
+      if (expectPeerFail) {
+        peerDeniedMs = await expectTcpOpenFailure(first, 1, peerIp, peerPort);
+      } else {
+        peerResponse = await httpRequest(first, 1);
+        if (peerUdpPort) udp = await udpRoundtrip(first, 0x80000001);
+        if (rstHost && rstPort) remoteReset = await expectRemoteReset(first, 6);
+      }
     }
     if (publicHost && publicPort) {
       if (!peerIp || !peerPort) {
@@ -280,17 +309,22 @@ test("real Headscale registration survives Worker restart without retaining the 
     });
     const secondIdentity = second.status.netMap?.self ?? null;
     let peerResponseAfterRestart = null;
+    let peerDeniedAfterRestartMs = null;
     let activeFlowResetOnLogout = null;
     let postLogoutOpenFailed = null;
     if (peerIp && peerPort) {
       second.worker.postMessage({ type: "frame", bytes: frame(0, 0, Uint8Array.of(1)).buffer });
       await waitForMessage(second, (message) => opcode(message) === 0);
-      peerResponseAfterRestart = await httpRequest(second, 2);
-      const activeBefore = second.messages.length;
-      second.worker.postMessage({ type: "frame", bytes: openFrame(4, peerIp, peerPort).buffer });
-      await waitForMessage(second, (message, index) => (
-        index >= activeBefore && streamId(message) === 4 && opcode(message) === 2
-      ));
+      if (expectPeerFail) {
+        peerDeniedAfterRestartMs = await expectTcpOpenFailure(second, 2, peerIp, peerPort);
+      } else {
+        peerResponseAfterRestart = await httpRequest(second, 2);
+        const activeBefore = second.messages.length;
+        second.worker.postMessage({ type: "frame", bytes: openFrame(4, peerIp, peerPort).buffer });
+        await waitForMessage(second, (message, index) => (
+          index >= activeBefore && streamId(message) === 4 && opcode(message) === 2
+        ));
+      }
     }
     const beforeLogout = second.messages.length;
     let revokedNode = null;
@@ -302,7 +336,7 @@ test("real Headscale registration survives Worker restart without retaining the 
     } else {
       second.worker.postMessage({ type: "logout" });
     }
-    if (peerIp && peerPort && !revokeNode) {
+    if (peerIp && peerPort && !expectPeerFail && !revokeNode) {
       await waitForMessage(second, (message, index) => (
         index >= beforeLogout && streamId(message) === 4 && opcode(message) === 7
       ));
@@ -337,10 +371,13 @@ test("real Headscale registration survives Worker restart without retaining the 
       publicLookupAddresses,
       peerResponse,
       peerResponseAfterRestart,
+      peerDeniedMs,
+      peerDeniedAfterRestartMs,
       publicResponse,
       publicFailureMs,
       selectedExitNodeId,
       udp,
+      remoteReset,
       loggedOut: !revokeNode,
       revokedNode,
       activeFlowResetOnLogout,
@@ -355,12 +392,15 @@ test("real Headscale registration survives Worker restart without retaining the 
     peerName: PEER_NAME,
     peerPort: PEER_PORT,
     peerUdpPort: PEER_UDP_PORT,
+    rstHost: RST_HOST,
+    rstPort: RST_PORT,
     exitNodeId: EXIT_NODE_ID,
     publicHost: PUBLIC_HOST,
     publicPort: PUBLIC_PORT,
     publicName: PUBLIC_NAME,
     useExitNode: USE_EXIT_NODE,
     expectPublicFail: EXPECT_PUBLIC_FAIL,
+    expectPeerFail: EXPECT_PEER_FAIL,
     revokeNode: REVOKE_NODE,
   });
 
@@ -395,12 +435,18 @@ test("real Headscale registration survives Worker restart without retaining the 
   if (PEER_NAME) expect(result.lookupAddresses).toContain(PEER_IP);
   if (PUBLIC_NAME) expect(result.publicLookupAddresses.length).toBeGreaterThan(0);
   if (PEER_IP && PEER_PORT) {
-    expect(result.peerResponse).toMatch(/^HTTP\/1\.[01] /);
-    expect(result.peerResponseAfterRestart).toMatch(/^HTTP\/1\.[01] /);
-    expect(result.activeFlowResetOnLogout).toBe(REVOKE_NODE ? null : true);
+    if (EXPECT_PEER_FAIL) {
+      expect(result.peerDeniedMs).toBeLessThan(20_000);
+      expect(result.peerDeniedAfterRestartMs).toBeLessThan(20_000);
+    } else {
+      expect(result.peerResponse).toMatch(/^HTTP\/1\.[01] /);
+      expect(result.peerResponseAfterRestart).toMatch(/^HTTP\/1\.[01] /);
+      expect(result.activeFlowResetOnLogout).toBe(REVOKE_NODE ? null : true);
+    }
     expect(result.postLogoutOpenFailed).toBe(true);
   }
   if (PEER_IP && PEER_UDP_PORT) expect(result.udp.actual).toEqual(result.udp.expected);
+  if (RST_HOST && RST_PORT) expect(result.remoteReset).toBe(true);
   if (EXIT_NODE_ID) expect(result.selectedExitNodeId).toBe(EXIT_NODE_ID);
   if (EXPECT_PUBLIC_FAIL) {
     expect(result.publicFailureMs).toBeLessThan(20_000);

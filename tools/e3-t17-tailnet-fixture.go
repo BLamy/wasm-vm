@@ -31,6 +31,7 @@ import (
 
 const (
 	tcpPort  = 18000
+	rstPort  = 18002
 	udpPort  = 19000
 	bulkPort = 18001
 	maxBulk  = 1 << 30
@@ -89,6 +90,14 @@ func main() {
 	defer bulkListener.Close()
 	go serveBulk(bulkListener)
 
+	rstAddress := net.JoinHostPort(ip4.String(), fmt.Sprint(rstPort))
+	rstListener, err := server.Listen("tcp", rstAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rstListener.Close()
+	go serveResets(rstListener)
+
 	udpAddress := net.JoinHostPort(ip4.String(), fmt.Sprint(udpPort))
 	packetConn, err := server.ListenPacket("udp4", udpAddress)
 	if err != nil {
@@ -97,11 +106,28 @@ func main() {
 	defer packetConn.Close()
 	go echoDatagrams(packetConn)
 
-	fmt.Printf("READY peer=%s tcp=%d udp=%d bulk=%d\n", ip4, tcpPort, udpPort, bulkPort)
+	fmt.Printf("READY peer=%s tcp=%d udp=%d bulk=%d rst=%d\n", ip4, tcpPort, udpPort, bulkPort, rstPort)
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 	<-stop
 	_ = httpServer.Close()
+}
+
+func serveResets(listener net.Listener) {
+	for {
+		connection, err := listener.Accept()
+		if err != nil {
+			return
+		}
+		aborter, ok := connection.(interface{ Abort() })
+		if !ok {
+			_ = connection.Close()
+			log.Print("RST fixture requires the pinned gVisor Abort patch")
+			continue
+		}
+		fmt.Printf("RST from=%s\n", connection.RemoteAddr())
+		aborter.Abort()
+	}
 }
 
 func serveBulk(listener net.Listener) {

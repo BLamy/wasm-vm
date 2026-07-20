@@ -56,6 +56,20 @@ node. Every case fails closed without OPEN_OK or credential exposure. The revoca
 Headscale node 35 with Worker address `100.64.0.35`, deletes that exact node, waits the declared
 30-second peer-map bound, and proves a fresh tailnet flow cannot open.
 
+`acl-identity.txt` is the separate identity-laundering falsification run. An exact Headscale policy
+allowed `tag:relay` to reach `tag:service` on TCP 18000 while denying `tag:browser`. The relay node at
+`100.64.0.3` succeeded before and after restart and was the only source in the independent service
+log. The browser node at `100.64.0.4` failed both opens within 20 seconds and never reached the
+service. `tools/e3-t17-acl-policy.hujson` is the exact policy used.
+
+`remote-rst.txt` records the real tailnet reset at the production Worker boundary. The independent
+patched peer logged browser source `100.64.0.45`, aborted the accepted TCP endpoint, and the Worker
+emitted protocol opcode 7. `alpine-rst-terminal.txt`, `alpine-rst-summary.json`, and
+`alpine-rst.png` extend that oracle through the stock Alpine guest: BusyBox `wget` must exit nonzero
+and report a reset rather than treating the abort as orderly EOF. The passing 15.6-minute guest run
+registered `wasm-vm-alpine-rst-final4` at `100.64.0.5`; the peer independently logged the TCP, UDP,
+and RST connections from that same address, and the browser recorded zero console errors.
+
 Reproduce with:
 
 ```sh
@@ -72,6 +86,9 @@ npx playwright test tests/e3-t17-alpine-tailnet.spec.js
 
 For the public HTTPS proof, add `E3_T17_EXIT_NODE_ID=1` and
 `E3_T17_PUBLIC_URL=https://1.1.1.1/`.
+
+For the guest-visible remote-reset proof, add `E3_T17_PEER_RST_PORT=18002` and run the peer with a
+fresh ephemeral key through `tools/e3-t17-run-tailnet-fixture.sh`.
 
 Repeat the relay fallback without overwriting E3-T16's original evidence with:
 

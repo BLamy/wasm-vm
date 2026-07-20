@@ -1,0 +1,39 @@
+E3-T17 Headscale identity/ACL falsification run — 2026-07-20
+
+Prediction made before inspecting service logs:
+
+  - a node tagged tag:relay may reach tag:service on tcp:18000;
+  - the otherwise identical browser Worker tagged tag:browser may not;
+  - any service request sourced from the denied browser node refutes the claim.
+
+The temporary policy was exactly tools/e3-t17-acl-policy.hujson. It grants only
+tag:relay -> tag:service on tcp:18000. The Headscale user email was temporarily set to
+browser@example.com solely so it could own the three test tags, then restored after the run.
+
+Control-plane oracle:
+
+  service: node 46, 100.64.0.2, tag:service
+  allowed relay: node 47, 100.64.0.3, tag:relay, wvrelay-acl-allowed
+  denied browser: node 48, 100.64.0.4, tag:browser, wasm-vm-browser-acl-denied
+
+Observed before reading the service log:
+
+  - the relay Worker opened the service before and after Worker restart;
+  - the browser Worker failed the initial and post-restart opens within 20 seconds;
+  - both browser attempts emitted OPEN_FAIL rather than OPEN_OK.
+
+Independent service oracle:
+
+  TCP path=/ from=100.64.0.3
+  TCP path=/ from=100.64.0.3
+  no request from 100.64.0.4
+
+The service source matches Headscale's allowed relay address exactly. The denied browser address
+never appears, so the browser identity was not laundered through a backend. Both Workers restored
+their original Headscale identities across restart without another provisioning key. Keys were
+shell-local, redacted from output, and discarded when the isolated lab was stopped.
+
+Permanent attack surface:
+
+  tools/e3-t17-acl-policy.hujson
+  web/tests/e3-t17-headscale-worker.spec.js with E3_T17_EXPECT_PEER_FAIL=1
