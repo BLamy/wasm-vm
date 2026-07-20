@@ -14,6 +14,10 @@ const EXIT_NODE_ID = process.env.E3_T17_EXIT_NODE_ID ?? "";
 const PUBLIC_HOST = process.env.E3_T17_PUBLIC_HOST ?? "";
 const PUBLIC_PORT = Number(process.env.E3_T17_PUBLIC_PORT ?? 0);
 const PUBLIC_NAME = process.env.E3_T17_PUBLIC_NAME ?? "";
+const USE_EXIT_NODE = process.env.E3_T17_USE_EXIT_NODE === "0"
+  ? false
+  : Boolean(EXIT_NODE_ID || PUBLIC_HOST);
+const EXPECT_PUBLIC_FAIL = process.env.E3_T17_EXPECT_PUBLIC_FAIL === "1";
 
 test("real Headscale registration survives Worker restart without retaining the auth key", async ({ page }) => {
   test.skip(!CONTROL_URL || !AUTH_KEY, "set E3_T17_CONTROL_URL and E3_T17_AUTH_KEY for the live proof");
@@ -25,7 +29,7 @@ test("real Headscale registration survives Worker restart without retaining the 
 
   const result = await page.evaluate(async ({
     controlUrl, authKey, hostname, peerIp, peerName, peerPort, peerUdpPort,
-    exitNodeId, publicHost, publicPort, publicName,
+    exitNodeId, publicHost, publicPort, publicName, useExitNode, expectPublicFail,
   }) => {
     const waitForMessage = (session, predicate, timeoutMs = 30_000) => new Promise((resolve, reject) => {
       const started = performance.now();
@@ -170,6 +174,16 @@ test("real Headscale registration survives Worker restart without retaining the 
       session.worker.postMessage({ type: "frame", bytes: frame(stream, 13).buffer });
       return { expected: expected.map((payload) => Array.from(payload)), actual };
     };
+    const expectTcpOpenFailure = async (session, stream, host, port) => {
+      const before = session.messages.length;
+      const started = performance.now();
+      session.worker.postMessage({ type: "frame", bytes: openFrame(stream, host, port).buffer });
+      await waitForMessage(session, (message, index) => index >= before && (
+        (streamId(message) === stream && opcode(message) === 3) ||
+        (message?.type === "flowError" && message.transport === "tcp" && message.stream === stream)
+      ), 20_000);
+      return performance.now() - started;
+    };
 
     const first = await start({
       wasmUrl: "./tailscale-connect/main.wasm",
@@ -178,7 +192,7 @@ test("real Headscale registration survives Worker restart without retaining the 
       authKey,
       state: {},
       acceptDns: true,
-      useExitNode: Boolean(exitNodeId || publicHost),
+      useExitNode,
       exitNodeId: exitNodeId || null,
     });
     const firstState = structuredClone(first.state);
@@ -187,9 +201,10 @@ test("real Headscale registration survives Worker restart without retaining the 
     let publicLookupAddresses = null;
     let peerResponse = null;
     let publicResponse = null;
+    let publicFailureMs = null;
     let selectedExitNodeId = null;
     let udp = null;
-    if (exitNodeId || publicHost) {
+    if (useExitNode) {
       const selected = await waitForMessage(first, (message) => (
         message?.type === "status" && message.status?.netMap?.selectedExitNodeId
       ));
@@ -222,7 +237,11 @@ test("real Headscale registration survives Worker restart without retaining the 
         first.worker.postMessage({ type: "frame", bytes: frame(0, 0, Uint8Array.of(1)).buffer });
         await waitForMessage(first, (message) => opcode(message) === 0);
       }
-      publicResponse = await httpRequest(first, 3, publicHost, publicPort);
+      if (expectPublicFail) {
+        publicFailureMs = await expectTcpOpenFailure(first, 3, publicHost, publicPort);
+      } else {
+        publicResponse = await httpRequest(first, 3, publicHost, publicPort);
+      }
     }
     first.worker.terminate();
 
@@ -236,7 +255,7 @@ test("real Headscale registration survives Worker restart without retaining the 
       hostname,
       state: firstState,
       acceptDns: true,
-      useExitNode: Boolean(exitNodeId || publicHost),
+      useExitNode,
       exitNodeId: exitNodeId || null,
     });
     const secondIdentity = second.status.netMap?.self ?? null;
@@ -265,6 +284,7 @@ test("real Headscale registration survives Worker restart without retaining the 
       peerResponse,
       peerResponseAfterRestart,
       publicResponse,
+      publicFailureMs,
       selectedExitNodeId,
       udp,
       loggedOut: true,
@@ -282,6 +302,8 @@ test("real Headscale registration survives Worker restart without retaining the 
     publicHost: PUBLIC_HOST,
     publicPort: PUBLIC_PORT,
     publicName: PUBLIC_NAME,
+    useExitNode: USE_EXIT_NODE,
+    expectPublicFail: EXPECT_PUBLIC_FAIL,
   });
 
   expect(result.stateKeys.length).toBeGreaterThan(0);
@@ -298,5 +320,9 @@ test("real Headscale registration survives Worker restart without retaining the 
   }
   if (PEER_IP && PEER_UDP_PORT) expect(result.udp.actual).toEqual(result.udp.expected);
   if (EXIT_NODE_ID) expect(result.selectedExitNodeId).toBe(EXIT_NODE_ID);
-  if (PUBLIC_HOST && PUBLIC_PORT) expect(result.publicResponse).toMatch(/^HTTP\/1\.[01] /);
+  if (EXPECT_PUBLIC_FAIL) {
+    expect(result.publicFailureMs).toBeLessThan(20_000);
+  } else if (PUBLIC_HOST && PUBLIC_PORT) {
+    expect(result.publicResponse).toMatch(/^HTTP\/1\.[01] /);
+  }
 });
