@@ -9,6 +9,7 @@ const HOSTNAME = process.env.E3_T17_HOSTNAME ?? "wasm-vm-browser-live";
 const PEER_IP = process.env.E3_T17_PEER_IP;
 const PEER_NAME = process.env.E3_T17_PEER_NAME;
 const PEER_PORT = Number(process.env.E3_T17_PEER_PORT ?? 0);
+const PEER_UDP_PORT = Number(process.env.E3_T17_PEER_UDP_PORT ?? 0);
 
 test("real Headscale registration survives Worker restart without retaining the auth key", async ({ page }) => {
   test.skip(!CONTROL_URL || !AUTH_KEY, "set E3_T17_CONTROL_URL and E3_T17_AUTH_KEY for the live proof");
@@ -18,7 +19,7 @@ test("real Headscale registration survives Worker restart without retaining the 
   page.on("request", (request) => requests.push(request.url()));
   await page.goto("/");
 
-  const result = await page.evaluate(async ({ controlUrl, authKey, hostname, peerIp, peerName, peerPort }) => {
+  const result = await page.evaluate(async ({ controlUrl, authKey, hostname, peerIp, peerName, peerPort, peerUdpPort }) => {
     const waitForMessage = (session, predicate, timeoutMs = 30_000) => new Promise((resolve, reject) => {
       const started = performance.now();
       const inspect = () => {
@@ -49,6 +50,9 @@ test("real Headscale registration survives Worker restart without retaining the 
     };
     const opcode = (message) => message?.type === "frame"
       ? new Uint8Array(message.bytes)[4]
+      : -1;
+    const streamId = (message) => message?.type === "frame"
+      ? new DataView(message.bytes).getUint32(0, false)
       : -1;
     const start = (config) => new Promise((resolve, reject) => {
       const worker = new Worker("./tailscale-worker.js", {
@@ -83,6 +87,65 @@ test("real Headscale registration survives Worker restart without retaining the 
       };
       worker.postMessage({ type: "configure", config });
     });
+    const httpRequest = async (session, stream) => {
+      const before = session.messages.length;
+      session.worker.postMessage({ type: "frame", bytes: openFrame(stream, peerIp, peerPort).buffer });
+      await waitForMessage(session, (message, index) => (
+        index >= before && streamId(message) === stream && opcode(message) === 2
+      ));
+      await waitForMessage(session, (message, index) => (
+        index >= before && streamId(message) === stream && opcode(message) === 8
+      ));
+      const credit = new Uint8Array(4);
+      new DataView(credit.buffer).setUint32(0, 1024 * 1024, false);
+      session.worker.postMessage({ type: "frame", bytes: frame(stream, 8, credit).buffer });
+      const request = new TextEncoder().encode(
+        `GET / HTTP/1.1\r\nHost: ${peerIp}\r\nConnection: close\r\n\r\n`,
+      );
+      session.worker.postMessage({ type: "frame", bytes: frame(stream, 4, request).buffer });
+      session.worker.postMessage({ type: "frame", bytes: frame(stream, 5).buffer });
+      await waitForMessage(session, (message, index) => (
+        index >= before && streamId(message) === stream && opcode(message) === 4
+      ));
+      const responseBytes = session.messages
+        .slice(before)
+        .filter((message) => streamId(message) === stream && opcode(message) === 4)
+        .map((message) => new Uint8Array(message.bytes).subarray(5));
+      const size = responseBytes.reduce((total, bytes) => total + bytes.byteLength, 0);
+      const joined = new Uint8Array(size);
+      let offset = 0;
+      for (const bytes of responseBytes) {
+        joined.set(bytes, offset);
+        offset += bytes.byteLength;
+      }
+      session.worker.postMessage({ type: "frame", bytes: frame(stream, 6).buffer });
+      return new TextDecoder().decode(joined);
+    };
+    const udpRoundtrip = async (session, stream) => {
+      const before = session.messages.length;
+      session.worker.postMessage({ type: "frame", bytes: openFrame(stream, peerIp, peerUdpPort).buffer });
+      await waitForMessage(session, (message, index) => (
+        index >= before && streamId(message) === stream && opcode(message) === 10
+      ));
+      const expected = [
+        new Uint8Array(),
+        new Uint8Array(65_507).fill(0xa5),
+        Uint8Array.of(1, 2, 3),
+        Uint8Array.of(9, 8, 7, 6, 5),
+      ];
+      for (const payload of expected) {
+        session.worker.postMessage({ type: "frame", bytes: frame(stream, 12, payload).buffer });
+      }
+      await waitForMessage(session, (_message, _index) => (
+        session.messages.slice(before)
+          .filter((item) => streamId(item) === stream && opcode(item) === 12).length === expected.length
+      ));
+      const actual = session.messages.slice(before)
+        .filter((message) => streamId(message) === stream && opcode(message) === 12)
+        .map((message) => Array.from(new Uint8Array(message.bytes).subarray(5)));
+      session.worker.postMessage({ type: "frame", bytes: frame(stream, 13).buffer });
+      return { expected: expected.map((payload) => Array.from(payload)), actual };
+    };
 
     const first = await start({
       wasmUrl: "./tailscale-connect/main.wasm",
@@ -96,6 +159,7 @@ test("real Headscale registration survives Worker restart without retaining the 
     const firstIdentity = first.status.netMap?.self ?? null;
     let lookupAddresses = null;
     let peerResponse = null;
+    let udp = null;
     if (peerName) {
       first.worker.postMessage({ type: "lookup", id: 17, name: peerName });
       const lookup = await waitForMessage(first, (message) => (
@@ -107,30 +171,8 @@ test("real Headscale registration survives Worker restart without retaining the 
     if (peerIp && peerPort) {
       first.worker.postMessage({ type: "frame", bytes: frame(0, 0, Uint8Array.of(1)).buffer });
       await waitForMessage(first, (message) => opcode(message) === 0);
-      first.worker.postMessage({ type: "frame", bytes: openFrame(1, peerIp, peerPort).buffer });
-      await waitForMessage(first, (message) => opcode(message) === 2);
-      await waitForMessage(first, (message) => opcode(message) === 8);
-      const credit = new Uint8Array(4);
-      new DataView(credit.buffer).setUint32(0, 1024 * 1024, false);
-      first.worker.postMessage({ type: "frame", bytes: frame(1, 8, credit).buffer });
-      const request = new TextEncoder().encode(
-        `GET / HTTP/1.1\r\nHost: ${peerIp}\r\nConnection: close\r\n\r\n`,
-      );
-      first.worker.postMessage({ type: "frame", bytes: frame(1, 4, request).buffer });
-      first.worker.postMessage({ type: "frame", bytes: frame(1, 5).buffer });
-      await waitForMessage(first, (message) => opcode(message) === 4);
-      const responseBytes = first.messages
-        .filter((message) => opcode(message) === 4)
-        .map((message) => new Uint8Array(message.bytes).subarray(5));
-      const size = responseBytes.reduce((total, bytes) => total + bytes.byteLength, 0);
-      const joined = new Uint8Array(size);
-      let offset = 0;
-      for (const bytes of responseBytes) {
-        joined.set(bytes, offset);
-        offset += bytes.byteLength;
-      }
-      peerResponse = new TextDecoder().decode(joined);
-      first.worker.postMessage({ type: "frame", bytes: frame(1, 6).buffer });
+      peerResponse = await httpRequest(first, 1);
+      if (peerUdpPort) udp = await udpRoundtrip(first, 0x80000001);
     }
     first.worker.terminate();
 
@@ -146,6 +188,12 @@ test("real Headscale registration survives Worker restart without retaining the 
       acceptDns: true,
     });
     const secondIdentity = second.status.netMap?.self ?? null;
+    let peerResponseAfterRestart = null;
+    if (peerIp && peerPort) {
+      second.worker.postMessage({ type: "frame", bytes: frame(0, 0, Uint8Array.of(1)).buffer });
+      await waitForMessage(second, (message) => opcode(message) === 0);
+      peerResponseAfterRestart = await httpRequest(second, 2);
+    }
     const beforeLogout = second.messages.length;
     second.worker.postMessage({ type: "logout" });
     await waitForMessage(second, (message, index) => (
@@ -162,6 +210,8 @@ test("real Headscale registration survives Worker restart without retaining the 
       stateKeys: Object.keys(firstState).sort(),
       lookupAddresses,
       peerResponse,
+      peerResponseAfterRestart,
+      udp,
       loggedOut: true,
       messages: [...first.messages, ...second.messages],
     };
@@ -172,6 +222,7 @@ test("real Headscale registration survives Worker restart without retaining the 
     peerIp: PEER_IP,
     peerName: PEER_NAME,
     peerPort: PEER_PORT,
+    peerUdpPort: PEER_UDP_PORT,
   });
 
   expect(result.stateKeys.length).toBeGreaterThan(0);
@@ -181,5 +232,9 @@ test("real Headscale registration survives Worker restart without retaining the 
   expect(requests.some((url) => url.endsWith("/tailscale-connect/main.wasm"))).toBe(true);
   expect(requests.every((url) => !url.includes(AUTH_KEY))).toBe(true);
   if (PEER_NAME) expect(result.lookupAddresses).toContain(PEER_IP);
-  if (PEER_IP && PEER_PORT) expect(result.peerResponse).toMatch(/^HTTP\/1\.[01] /);
+  if (PEER_IP && PEER_PORT) {
+    expect(result.peerResponse).toMatch(/^HTTP\/1\.[01] /);
+    expect(result.peerResponseAfterRestart).toMatch(/^HTTP\/1\.[01] /);
+  }
+  if (PEER_IP && PEER_UDP_PORT) expect(result.udp.actual).toEqual(result.udp.expected);
 });

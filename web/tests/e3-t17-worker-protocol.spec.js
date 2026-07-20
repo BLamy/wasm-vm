@@ -195,3 +195,133 @@ test("E3-T17 Worker fails closed on malformed frames and redacts auth keys", asy
     error: { code: "runtime_unavailable", message: "rejected [redacted]" },
   });
 });
+
+test("E3-T17 Worker bounds hostile queues and reaps 500 concurrent flows", async ({ page }) => {
+  await page.goto("/");
+  const result = await page.evaluate(async () => {
+    const {
+      TailscaleWorkerCore,
+      ProxyOpcode: OP,
+      INITIAL_WINDOW,
+      MAX_DATAGRAM,
+    } = await import("./tailscale-worker-core.js");
+    const posts = [];
+    const tcpConnections = [];
+    const udpConnections = [];
+    let runtimeDisposals = 0;
+    const never = () => new Promise(() => {});
+    const runtime = {
+      start: async () => {},
+      dialTCP: async () => {
+        const connection = {
+          closes: 0,
+          read: never,
+          write: async (bytes) => bytes.byteLength,
+          shutdownWrite: async () => {},
+          close: async () => { connection.closes += 1; },
+        };
+        tcpConnections.push(connection);
+        return connection;
+      },
+      dialUDP: async () => {
+        const connection = {
+          closes: 0,
+          read: never,
+          // Deliberately stall writes so queuedBytes, rather than completed IO, enforces the cap.
+          write: never,
+          close: async () => { connection.closes += 1; },
+        };
+        udpConnections.push(connection);
+        return connection;
+      },
+      dispose: async () => { runtimeDisposals += 1; },
+    };
+    const core = new TailscaleWorkerCore({
+      post: (message) => posts.push(message),
+      loadRuntime: async () => runtime,
+    });
+    await core.accept({ type: "configure", config: {} });
+
+    const frame = (stream, opcode, payload = new Uint8Array()) => {
+      const bytes = new Uint8Array(5 + payload.byteLength);
+      new DataView(bytes.buffer).setUint32(0, stream, false);
+      bytes[4] = opcode;
+      bytes.set(payload, 5);
+      return bytes;
+    };
+    const open = (stream, opcode) => {
+      const host = new TextEncoder().encode("peer");
+      const payload = new Uint8Array(3 + host.byteLength);
+      payload[0] = host.byteLength;
+      payload.set(host, 1);
+      new DataView(payload.buffer).setUint16(1 + host.byteLength, 7, false);
+      return frame(stream, opcode, payload);
+    };
+    const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+    const decoded = () => posts.filter((entry) => entry.type === "frame").map((entry) => {
+      const bytes = new Uint8Array(entry.bytes);
+      return {
+        stream: new DataView(bytes.buffer).getUint32(0, false),
+        opcode: bytes[4],
+      };
+    });
+
+    core.onFrame(frame(0, OP.HELLO, Uint8Array.of(1)));
+
+    // DATA before OPEN and a write larger than the advertised receive credit both fail closed.
+    core.onFrame(frame(700, OP.DATA, Uint8Array.of(1)));
+    core.onFrame(open(701, OP.OPEN));
+    await settle();
+    core.onFrame(frame(701, OP.DATA, new Uint8Array(INITIAL_WINDOW + 1)));
+
+    // Four maximum datagrams fit exactly. One more byte must close the flow while every write is
+    // stalled, proving the queue cap is based on admitted bytes rather than completed writes.
+    core.onFrame(open(0x800002be, OP.UDP_OPEN));
+    await settle();
+    for (let index = 0; index < 4; index += 1) {
+      core.onFrame(frame(0x800002be, OP.UDP_DATA, new Uint8Array(MAX_DATAGRAM)));
+    }
+    core.onFrame(frame(0x800002be, OP.UDP_DATA, Uint8Array.of(1)));
+
+    // Use distinct IDs so the hostile flows above cannot make the concurrency count ambiguous.
+    for (let stream = 1; stream <= 500; stream += 1) {
+      core.onFrame(open(stream, OP.OPEN));
+    }
+    await settle();
+    const activeBeforeDispose = core.flowCount();
+    const postsBeforeDispose = posts.length;
+    await core.dispose();
+    await settle();
+
+    const wire = decoded();
+    return {
+      activeBeforeDispose,
+      activeAfterDispose: core.flowCount(),
+      runtimeDisposals,
+      tcpConnections: tcpConnections.length,
+      tcpCloses: tcpConnections.reduce((sum, connection) => sum + connection.closes, 0),
+      udpConnections: udpConnections.length,
+      udpCloses: udpConnections.reduce((sum, connection) => sum + connection.closes, 0),
+      callbacksAfterDispose: posts.length - postsBeforeDispose,
+      dataBeforeOpenReset: wire.some((item) => item.stream === 700 && item.opcode === OP.RST),
+      creditOverflowReset: wire.some((item) => item.stream === 701 && item.opcode === OP.RST),
+      udpQueueClosed: wire.some((item) => item.stream === 0x800002be && item.opcode === OP.UDP_CLOSE),
+      opened500: wire.filter((item) => item.opcode === OP.OPEN_OK && item.stream >= 1 && item.stream <= 500).length,
+    };
+  });
+
+  expect(result).toEqual({
+    activeBeforeDispose: 500,
+    activeAfterDispose: 0,
+    runtimeDisposals: 1,
+    tcpConnections: 501,
+    tcpCloses: 501,
+    udpConnections: 1,
+    udpCloses: 1,
+    callbacksAfterDispose: 0,
+    dataBeforeOpenReset: true,
+    creditOverflowReset: true,
+    udpQueueClosed: true,
+    opened500: 500,
+  });
+});
