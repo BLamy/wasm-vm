@@ -1,0 +1,41 @@
+E3-T17 real tailnet TCP reset proof — 2026-07-20
+
+Prediction made before opening the connection: an abortive close by an independent tailnet peer
+must produce protocol opcode 7 (RST), while the existing orderly-close paths must remain EOF/CLOSE.
+
+Pinned peer setup:
+
+  source: https://github.com/BLamy/tailscale.git
+  commit: 0c78282d89c9c0af8e31d460a61bc5517d54c769
+  toolchain: c803676bcc7f2b195b167a53d49d728045cd9b36
+  fixture: tools/e3-t17-tailnet-fixture.go, TCP port 18002
+  launcher: tools/e3-t17-run-tailnet-fixture.sh
+
+The fixture applies the same committed gVisor patch as the browser artifact, accepts a real
+tailnet TCP connection, logs the authenticated tailnet source, and calls the endpoint's expedited
+Abort operation. The browser test grants receive credit, writes one byte, and requires opcode 7.
+
+Observed production Worker run:
+
+  browser: wasm-vm-browser-tailnet-rst-final, 100.64.0.45
+  peer: wasm-vm-tailnet-fixture-1, 100.64.0.43
+  peer log: RST from=100.64.0.45:32999
+  Worker result: opcode 7 received; 1 passed (12.3s)
+
+This is an in-tailnet TCP reset, not a fake read exception or an unreachable-port substitute. The
+gVisor patch preserves Endpoint.LastError when gonet observes ErrClosedForReceive, allowing the
+runtime to distinguish reset from orderly EOF. The stock-Alpine guest-visible recording is stored
+separately as alpine-rst-*.
+
+Stock-Alpine production run:
+
+  browser: wasm-vm-alpine-rst-final4, 100.64.0.5
+  peer log: TCP path=/alpine from=100.64.0.5:33121
+  peer log: UDP size=15 from=100.64.0.5:52542
+  peer log: RST from=100.64.0.5:22694
+  guest: E3T17_RST_OK rc=1
+  UI diagnostic: read tcp 100.64.0.5:22694: connection reset by peer
+  result: 1 passed (15.6m)
+
+The peer's reset source and the browser's pre-attack Running identity both equal 100.64.0.5. The
+guest observed a nonzero BusyBox wget result containing `reset`; it did not accept the abort as EOF.

@@ -1,0 +1,14 @@
+{
+  "tagOwners": {
+    "tag:browser": ["browser@example.com"],
+    "tag:relay": ["browser@example.com"],
+    "tag:service": ["browser@example.com"]
+  },
+  "grants": [
+    {
+      "src": ["tag:relay"],
+      "dst": ["tag:service"],
+      "ip": ["tcp:18000"]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+BULK upload=1073741824 sha256=2c06ade942ee3f17a048dd1064b2fab046a4bb95386d8bb41b68dc6711ac2af3 from=100.64.0.27:45619
+BULK download=1048576 from=100.64.0.27:23592
+TCP path=/sibling from=100.64.0.27:35350

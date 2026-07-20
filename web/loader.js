@@ -14,6 +14,8 @@ import init, {
   overlayDbName,
   setSlirpNet,
   setSlirpRelay,
+  setSlirpTailscaleWorker,
+  slirpTailscaleCommand,
   setSlirpDohEndpoint,
   setSlirpDhcpLeaseSeconds,
   setSlirpMtu,
@@ -230,16 +232,20 @@ export async function startLinuxBoot(opts = {}) {
     // Defensive: both setters only update boot configuration; a stray failure can fall back to the
     // default backend rather than aborting asset loading. (A pkg missing either named export fails
     // earlier at import time, not here.)
-    const slirpRelay = typeof opts.slirpRelay === "string" ? opts.slirpRelay.trim() : "";
+    const network = resolveSlirpProvider(opts);
     const slirpDoh = typeof opts.slirpDoh === "string" ? opts.slirpDoh.trim() : "";
     const leaseSecs = Number(opts.slirpLeaseSecs ?? 86400);
     const slirpMtu = Number(opts.slirpMtu ?? 1500);
     try {
-      setSlirpRelay(slirpRelay);
+      setSlirpRelay(network.relayUrl);
+      setSlirpTailscaleWorker(
+        network.workerUrl,
+        network.workerConfig,
+      );
       setSlirpDohEndpoint(slirpDoh);
       setSlirpDhcpLeaseSeconds(Number.isFinite(leaseSecs) ? Math.max(1, leaseSecs) : 86400);
       setSlirpMtu(Number.isFinite(slirpMtu) ? Math.min(1500, Math.max(576, slirpMtu)) : 1500);
-      setSlirpNet(!!opts.slirpNet || !!slirpRelay || !!slirpDoh);
+      setSlirpNet(!!opts.slirpNet || network.provider !== "offline" || !!slirpDoh);
     } catch { /* keep the default backend */ }
 
     onState("booting");
@@ -528,4 +534,41 @@ export async function startLinuxBoot(opts = {}) {
     onError(e);
     throw e;
   }
+}
+
+/**
+ * Resolve one outbound provider without touching Worker or WebSocket APIs. Explicit selection is
+ * fail-closed: a missing provider URL is a configuration error, never an invitation to silently
+ * cross-fallback. The returned Tailscale config is a structured-clone value and is never encoded
+ * into a URL.
+ */
+export function resolveSlirpProvider(opts = {}) {
+  const relayUrl = typeof opts.slirpRelay === "string" ? opts.slirpRelay.trim() : "";
+  const tailscale = opts.slirpTailscale && typeof opts.slirpTailscale === "object"
+    ? opts.slirpTailscale
+    : null;
+  const workerUrl = typeof tailscale?.workerUrl === "string" ? tailscale.workerUrl.trim() : "";
+  const requested = typeof opts.slirpProvider === "string" ? opts.slirpProvider.trim() : "";
+  const provider = requested || (workerUrl ? "tailscale" : relayUrl ? "relay" : "offline");
+
+  if (!new Set(["tailscale", "relay", "offline"]).has(provider)) {
+    throw new Error(`unknown slirp provider: ${provider}`);
+  }
+  if (provider === "tailscale" && !workerUrl) {
+    throw new Error("tailscale provider requires slirpTailscale.workerUrl");
+  }
+  if (provider === "relay" && !relayUrl) {
+    throw new Error("relay provider requires slirpRelay");
+  }
+
+  return {
+    provider,
+    relayUrl: provider === "relay" ? relayUrl : "",
+    workerUrl: provider === "tailscale" ? workerUrl : "",
+    workerConfig: provider === "tailscale" ? (tailscale?.config ?? {}) : {},
+  };
+}
+
+export function tailscaleCommand(command) {
+  return slirpTailscaleCommand(command);
 }

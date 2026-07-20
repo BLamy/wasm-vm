@@ -592,6 +592,20 @@
         background: #143c31; border: 1px solid #287555; color: #d6ffe6;
         font-size: 12.5px; line-height: 1.5;
       }
+      .network-config {
+        display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 8px;
+        margin: 6px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+        background: #0d1117;
+      }
+      .network-config label { display: grid; gap: 4px; color: var(--muted); font-size: 11px; }
+      .network-config input {
+        width: 100%; min-height: 32px; border: 1px solid var(--line); border-radius: 6px;
+        background: #151a22; color: var(--text); padding: 5px 8px;
+      }
+      .network-config .network-actions { display: flex; align-items: end; gap: 8px; }
+      .network-config .check { display: flex; align-items: center; gap: 6px; align-self: end; min-height: 32px; }
+      .network-config .check input { width: auto; min-height: 0; }
+      #tailscale-status { grid-column: 1 / -1; color: var(--muted); font: 12px ui-monospace, monospace; }
 
       @media (max-width: 900px) {
         header { align-items: flex-start; flex-direction: column; }
@@ -608,6 +622,7 @@
         .tests-layout { grid-template-columns: 1fr; }
         .capstones { border-top: 1px solid var(--line); }
         .docker-app { grid-template-columns: 1fr; }
+        .network-config { grid-template-columns: 1fr 1fr; }
         .dk-side { flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--line); }
       }
     </style>
@@ -719,6 +734,36 @@
           your browser, then type commands like <code>ls /</code> or <code>uname -a</code>.
           (The larger Alpine boots need local-only artifacts — see <code>tools/serve-dev.sh</code>.)
         </p>
+        <div class="network-config" aria-label="Guest network provider">
+          <label>Provider
+            <select id="network-provider">
+              <option value="offline">Offline</option>
+              <option value="relay">Public relay</option>
+              <option value="tailscale">Tailscale / Headscale</option>
+            </select>
+          </label>
+          <label>Relay WebSocket URL
+            <input id="network-relay-url" type="url" autocomplete="off" placeholder="wss://relay.example/ws" />
+          </label>
+          <label>Control server
+            <input id="tailscale-control-url" type="url" autocomplete="off" placeholder="https://controlplane.tailscale.com" />
+          </label>
+          <label>Browser node hostname
+            <input id="tailscale-hostname" value="wasm-vm-browser" autocomplete="off" />
+          </label>
+          <label>One-time auth key
+            <input id="tailscale-auth-key" type="password" autocomplete="off" placeholder="not persisted or logged" />
+          </label>
+          <label>Exit node ID
+            <input id="tailscale-exit-node" autocomplete="off" placeholder="optional stable node ID" />
+          </label>
+          <label class="check"><input id="tailscale-accept-dns" type="checkbox" checked /> Accept MagicDNS</label>
+          <div class="network-actions">
+            <button id="tailscale-login" type="button">Login</button>
+            <button id="tailscale-logout" type="button" class="danger">Logout &amp; revoke</button>
+          </div>
+          <div id="tailscale-status" role="status">Tailscale provider idle; no Worker or runtime artifact loaded.</div>
+        </div>
         <!-- Docker "Run" writes here: an honest status line for the in-browser container boot. -->
         <div id="run-banner" class="run-banner" style="display:none;"></div>
         <!-- E3-T09: shown when another tab holds the writer Web Lock (this boot is read-only) -->

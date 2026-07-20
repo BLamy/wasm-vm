@@ -1,0 +1,24 @@
+diff --git a/pkg/tcpip/adapters/gonet/gonet.go b/pkg/tcpip/adapters/gonet/gonet.go
+index f21315e..5d0e83a 100644
+--- a/pkg/tcpip/adapters/gonet/gonet.go
++++ b/pkg/tcpip/adapters/gonet/gonet.go
+@@ -330,6 +330,9 @@ func commonRead(b []byte, ep tcpip.Endpoint, wq *waiter.Queue, deadline <-chan s
+ 	}
+ 
+ 	if _, ok := err.(*tcpip.ErrClosedForReceive); ok {
++		if lastErr := ep.LastError(); lastErr != nil {
++			return 0, errorer.newOpError("read", errors.New(lastErr.String()))
++		}
+ 		return 0, io.EOF
+ 	}
+ 
+@@ -341,6 +344,9 @@ func commonRead(b []byte, ep tcpip.Endpoint, wq *waiter.Queue, deadline <-chan s
+ 	return res.Count, nil
+ }
+ 
++// Abort performs an expedited teardown and emits TCP RST for a connected endpoint.
++func (c *TCPConn) Abort() { c.ep.Abort() }
++
+ // Read implements net.Conn.Read.
+ func (c *TCPConn) Read(b []byte) (int, error) {
+ 	c.readMu.Lock()

@@ -1,0 +1,9 @@
+{
+  "peerIp": "100.64.0.25",
+  "bytes": 1073741824,
+  "sha256": "2c06ade942ee3f17a048dd1064b2fab046a4bb95386d8bb41b68dc6711ac2af3",
+  "uploadMs": 722473.8850002289,
+  "stalledReaderBytes": 262144,
+  "siblingCompleted": true,
+  "halfCloseReply": "HALFCLOSE 15 fe8749cd3d06321134c8972b231874388c3540fd51cbe97c84ef3ffa6e44438c"
+}

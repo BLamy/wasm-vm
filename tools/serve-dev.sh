@@ -27,8 +27,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Cross-Origin-Opener-Policy", "same-origin")
         self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
         path = self.path.split("?", 1)[0]
-        if path.endswith(".wasm"):
-            self.send_header("Content-Type", "application/wasm")
+        # guess_type() below already emits the one authoritative Content-Type. Adding it here too
+        # produces a comma-joined duplicate that Chromium rejects for instantiateStreaming().
         # Content-hashed artifacts + the wasm bundle are immutable → cache hard.
         if path.startswith("/releases/") or path.endswith((".wasm", "_bg.wasm")):
             self.send_header("Cache-Control", "public, max-age=31536000, immutable")

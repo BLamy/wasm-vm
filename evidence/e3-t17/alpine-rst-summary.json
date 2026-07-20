@@ -1,0 +1,22 @@
+{
+  "hostname": "wasm-vm-alpine-rst-final4",
+  "peerName": "wasm-vm-tailnet-fixture.example.com",
+  "peerPort": 18000,
+  "peerUdpPort": 19000,
+  "peerRstPort": 18002,
+  "exitNodeId": null,
+  "publicUrl": null,
+  "dhcpStats": {
+    "discovers": 1,
+    "offers": 1,
+    "requests": 1,
+    "acks": 1,
+    "renewRequests": 0,
+    "renewAcks": 0,
+    "naks": 0
+  },
+  "runningStatus": "Tailscale: Running · wasm-vm-alpine-rst-final4.example.com. (100.64.0.5, fd7a:115c:a1e0::5)",
+  "status": "Tailscale tcp 2 read failed: read tcp 100.64.0.5:22694: connection reset by peer",
+  "consoleErrors": [],
+  "tailscaleArtifactRequests": 1
+}

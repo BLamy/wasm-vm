@@ -26,6 +26,7 @@ use wasm_vm_core::{Machine, RunOutcome};
 mod slirp_net {
     use core::cell::RefCell;
     use core::sync::atomic::{AtomicBool, AtomicU32, Ordering};
+    use wasm_bindgen::JsCast;
     use wasm_bindgen::prelude::*;
 
     /// Gateway MAC for the browser slirp local stack (distinct from the guest's virtio-net MAC
@@ -39,6 +40,8 @@ mod slirp_net {
     static SLIRP_MTU: AtomicU32 = AtomicU32::new(wasm_vm_slirp::dhcp::DEFAULT_MTU as u32);
     std::thread_local! {
         static SLIRP_RELAY_URL: RefCell<Option<String>> = const { RefCell::new(None) };
+        static SLIRP_TAILSCALE_WORKER: RefCell<Option<(String, JsValue)>> = const { RefCell::new(None) };
+        static SLIRP_TAILSCALE_CONTROL: RefCell<Option<JsValue>> = const { RefCell::new(None) };
         static SLIRP_DOH_ENDPOINT: RefCell<Option<String>> = const { RefCell::new(None) };
         static SLIRP_DHCP_STATS: RefCell<Option<wasm_vm_slirp::DhcpStatsHandle>> = const { RefCell::new(None) };
     }
@@ -49,6 +52,14 @@ mod slirp_net {
 
     pub(crate) fn slirp_relay_url() -> Option<String> {
         SLIRP_RELAY_URL.with(|url| url.borrow().clone())
+    }
+
+    pub(crate) fn take_slirp_tailscale_worker() -> Option<(String, JsValue)> {
+        SLIRP_TAILSCALE_WORKER.with(|slot| slot.borrow_mut().take())
+    }
+
+    pub(crate) fn set_slirp_tailscale_control(worker: Option<JsValue>) {
+        SLIRP_TAILSCALE_CONTROL.with(|slot| *slot.borrow_mut() = worker);
     }
 
     pub(crate) fn slirp_doh_endpoint() -> String {
@@ -90,6 +101,51 @@ mod slirp_net {
                 Some(url)
             };
         });
+    }
+
+    /// Configure the dedicated Tailscale provider Worker for the next slirp boot. The structured
+    /// config is consumed when the Worker starts; credentials are never placed in the Worker URL.
+    /// Empty `url` selects no Tailscale provider and drops any previously staged config.
+    #[wasm_bindgen(js_name = setSlirpTailscaleWorker)]
+    pub fn set_slirp_tailscale_worker(url: String, config: JsValue) {
+        SLIRP_TAILSCALE_WORKER.with(|slot| {
+            *slot.borrow_mut() = if url.trim().is_empty() {
+                None
+            } else {
+                Some((url, config))
+            };
+        });
+    }
+
+    /// Send a credential-free lifecycle command to the active provider Worker. Returns false when
+    /// no Tailscale provider owns this boot (relay/offline selection never creates a Worker).
+    #[wasm_bindgen(js_name = slirpTailscaleCommand)]
+    pub fn slirp_tailscale_command(command: String) -> bool {
+        if !matches!(command.as_str(), "login" | "logout" | "dispose") {
+            return false;
+        }
+        SLIRP_TAILSCALE_CONTROL.with(|slot| {
+            let Some(worker) = slot.borrow().as_ref().cloned() else {
+                return false;
+            };
+            let Ok(post) = js_sys::Reflect::get(&worker, &JsValue::from_str("postMessage")) else {
+                return false;
+            };
+            let Some(post) = post.dyn_ref::<js_sys::Function>() else {
+                return false;
+            };
+            let message = js_sys::Object::new();
+            if js_sys::Reflect::set(
+                &message,
+                &JsValue::from_str("type"),
+                &JsValue::from_str(&command),
+            )
+            .is_err()
+            {
+                return false;
+            }
+            post.call1(&worker, &message).is_ok()
+        })
     }
 
     /// Configure the RFC 8484 wire-format DoH endpoint. Empty restores the production default.
@@ -140,7 +196,7 @@ mod slirp_net {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 use slirp_net::{
     SLIRP_GATEWAY_MAC, set_slirp_dhcp_stats, slirp_doh_endpoint, slirp_lease_secs, slirp_mtu,
-    slirp_net_enabled, slirp_relay_url,
+    slirp_net_enabled, slirp_relay_url, take_slirp_tailscale_worker,
 };
 
 // E3-T02 lazy-fetch backend. Compiled where it is actually used: the normal wasm build (behind
@@ -167,6 +223,11 @@ mod idb_store;
 mod ws_transport;
 #[cfg(any(all(target_arch = "wasm32", not(feature = "zicsr-stub")), test))]
 mod ws_transport_state;
+// E3-T17: dedicated provider Worker carrying the same bounded ws-proxy frames as E3-T16.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod tailscale_dns;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod worker_transport;
 
 /// One-time browser diagnostics setup: route `log` to the JS console and install the
 /// panic hook that turns Rust panics into readable console errors. Idempotent.
@@ -917,24 +978,42 @@ impl WasmLinux {
         if slirp_net_enabled() {
             let start = js_sys::Date::now();
             let clock = Box::new(move || (js_sys::Date::now() - start) as i64);
-            let backend = if let Some(url) = slirp_relay_url() {
-                let transport = ws_transport::BrowserWebSocketTransport::connect(&url)?;
-                let connector = wasm_vm_slirp::WsConnector::new(transport, Vec::new());
-                wasm_vm_slirp::SlirpLocalBackend::with_connector(
-                    SLIRP_GATEWAY_MAC,
-                    clock,
-                    Box::new(connector),
-                )
-            } else {
-                wasm_vm_slirp::SlirpLocalBackend::new(SLIRP_GATEWAY_MAC, clock)
-            };
+            let (backend, dns): (_, Box<dyn wasm_vm_slirp::DnsService>) =
+                if let Some((url, config)) = take_slirp_tailscale_worker() {
+                    let transport =
+                        worker_transport::BrowserWorkerTransport::connect(&url, &config)?;
+                    let dns = Box::new(transport.dns_service());
+                    let connector = wasm_vm_slirp::WsConnector::new(transport, Vec::new());
+                    (
+                        wasm_vm_slirp::SlirpLocalBackend::with_connector(
+                            SLIRP_GATEWAY_MAC,
+                            clock,
+                            Box::new(connector),
+                        ),
+                        dns,
+                    )
+                } else if let Some(url) = slirp_relay_url() {
+                    let transport = ws_transport::BrowserWebSocketTransport::connect(&url)?;
+                    let connector = wasm_vm_slirp::WsConnector::new(transport, Vec::new());
+                    (
+                        wasm_vm_slirp::SlirpLocalBackend::with_connector(
+                            SLIRP_GATEWAY_MAC,
+                            clock,
+                            Box::new(connector),
+                        ),
+                        Box::new(doh_fetch::BrowserDnsService::new(slirp_doh_endpoint())),
+                    )
+                } else {
+                    (
+                        wasm_vm_slirp::SlirpLocalBackend::new(SLIRP_GATEWAY_MAC, clock),
+                        Box::new(doh_fetch::BrowserDnsService::new(slirp_doh_endpoint())),
+                    )
+                };
             let dhcp = wasm_vm_slirp::DhcpServer::new()
                 .with_lease_secs(slirp_lease_secs())
                 .with_mtu(slirp_mtu());
             set_slirp_dhcp_stats(dhcp.stats_handle());
-            let backend = backend.with_dhcp_server(dhcp).with_dns_service(Box::new(
-                doh_fetch::BrowserDnsService::new(slirp_doh_endpoint()),
-            ));
+            let backend = backend.with_dhcp_server(dhcp).with_dns_service(dns);
             let _ = machine.enable_virtio_net(Box::new(backend));
         } else {
             let _ = machine.enable_virtio_net(Box::new(

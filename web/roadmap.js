@@ -72,6 +72,10 @@ export const ROADMAP = [
       { name: "Storage quota + honest per-image reset", status: "verified", evidence: "50 MiB real-IDB abort → Retry / guest IOERR / clean recovery / typed reset (E3-T10)" },
       { name: "User-mode network (slirp + smoltcp NAT)", status: "verified", evidence: "browser Alpine TCP/UDP through the relay (E3-T14); one real WS multiplexes 3 flows with a stalled reader + 100 MiB SHA-256 match, and transport drop reaps 500 real sockets (E3-T16)" },
       { name: "Zero-config Alpine DHCP + DNS", status: "verified", evidence: "stock Alpine leases 10.0.2.15/24; native OS DNS + browser DoH, cache, failure, renewal, and UDP→TCP fallback (E3-T15)" },
+      { name: "Tailscale TCP transport", status: "verified", evidence: "stock Alpine reaches a tailnet-only TCP peer as the browser node; 1 GiB SHA-256 exact with bounded stalled-reader backpressure (E3-T17)" },
+      { name: "Tailscale UDP transport", status: "verified", evidence: "tailnet echo preserves zero-length, maximum, and back-to-back datagram boundaries (E3-T17)" },
+      { name: "Tailscale MagicDNS", status: "verified", evidence: "stock Alpine resolves a tailnet peer through 10.0.2.3 via the active browser IPN (E3-T17)" },
+      { name: "Tailscale exit-node routing", status: "verified", evidence: "stock Alpine HTTPS succeeds through the selected exit node and fails closed with no exit route (E3-T17)" },
     ],
   },
   {
