@@ -3,7 +3,7 @@ id: E3-T17
 epic: 3
 title: Browser Tailscale transport — IPN worker, TCP/UDP streams, MagicDNS, and exit nodes
 priority: 317
-status: in-progress
+status: implemented
 depends_on: [E3-T15, E3-T16]
 estimate: L
 capstone: false
@@ -238,3 +238,20 @@ Commands: independent Node lifecycle harness importing `web/tailscale-worker-cor
 playwright test tests/e3-t17-provider-selection.spec.js tests/e3-t17-runtime-smoke.spec.js
 tests/e3-t17-worker-protocol.spec.js tests/e3-t17-demo-proof.spec.js --reporter=line` (13 passed,
 1 opt-in skipped); isolated-clone focused Playwright sabotage check.
+
+### 2026-07-20 — worker — lifecycle transition rework
+
+Commit `b610227` keeps both guest-facing gates closed after `runtime.logout()` returns: logout now
+marks the runtime offline immediately, and neither `loggingOut` nor `runtimeOnline` can reopen until
+an explicit authenticated `Running` status arrives. The strengthened permanent regression posts a
+brand-new TCP OPEN after awaiting logout, asserts OPEN_FAIL opcode 3, asserts no OPEN_OK, and proves
+the runtime dial count remains exactly two (the two pre-logout attempts). This directly executes the
+critic's previously uncovered interval.
+
+The full gauntlet restarted from the fix and passed: `cargo fmt --check`; `cargo clippy -- -D
+warnings`; `cargo test --workspace -- --skip
+file_backend::tests::kill_mid_write_no_torn_sectors` with all runnable workspace and doc tests green;
+`cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`; `make web-build`; the focused E3-T17
+browser suite (13 passed, one opt-in demo skipped); and the opt-in demo (126 passed, 0 failed, four
+verified E3-T17 roadmap pips, zero application console errors). The refreshed screenshot is
+`evidence/e3-t17/browser-demo-126-of-126.png`.
