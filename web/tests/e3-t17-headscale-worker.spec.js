@@ -3,6 +3,7 @@
 // recorded requests and structured-clone messages remain directly inspectable by the critic.
 import { test, expect } from "@playwright/test";
 import { execFileSync } from "node:child_process";
+import path from "node:path";
 
 const CONTROL_URL = process.env.E3_T17_CONTROL_URL;
 const AUTH_KEY = process.env.E3_T17_AUTH_KEY;
@@ -20,11 +21,13 @@ const PUBLIC_NAME = process.env.E3_T17_PUBLIC_NAME ?? "";
 const USE_EXIT_NODE = process.env.E3_T17_USE_EXIT_NODE === "0"
   ? false
   : Boolean(EXIT_NODE_ID || PUBLIC_HOST);
+const CLEAR_EXIT_AFTER_RESTORE = process.env.E3_T17_CLEAR_EXIT_AFTER_RESTORE === "1";
 const EXPECT_PUBLIC_FAIL = process.env.E3_T17_EXPECT_PUBLIC_FAIL === "1";
 const EXPECT_PEER_FAIL = process.env.E3_T17_EXPECT_PEER_FAIL === "1";
 const REVOKE_NODE = process.env.E3_T17_REVOKE_NODE === "1";
 const HEADSCALE_REPO = process.env.E3_T17_HEADSCALE_REPO;
 const HEADSCALE_CONFIG = process.env.E3_T17_HEADSCALE_CONFIG;
+const HEADSCALE_DOCKER = process.env.E3_T17_HEADSCALE_DOCKER === "1";
 
 test("real Headscale registration survives Worker restart without retaining the auth key", async ({ page }) => {
   test.skip(!CONTROL_URL || !AUTH_KEY, "set E3_T17_CONTROL_URL and E3_T17_AUTH_KEY for the live proof");
@@ -33,18 +36,20 @@ test("real Headscale registration survives Worker restart without retaining the 
   const requests = [];
   page.on("request", (request) => requests.push(request.url()));
   if (REVOKE_NODE) {
-    test.skip(!HEADSCALE_REPO || !HEADSCALE_CONFIG,
-      "revocation proof requires E3_T17_HEADSCALE_REPO and E3_T17_HEADSCALE_CONFIG");
+    test.skip(!HEADSCALE_DOCKER && (!HEADSCALE_REPO || !HEADSCALE_CONFIG),
+      "revocation proof requires the compose CLI or a Headscale source/config pair");
     await page.exposeFunction("e3t17RevokeNode", (hostname) => {
-      const baseArgs = ["-C", HEADSCALE_REPO, "run", "./cmd/headscale", "-c", HEADSCALE_CONFIG];
-      const nodes = JSON.parse(execFileSync("go", [...baseArgs, "nodes", "list", "--output", "json"], {
-        encoding: "utf8",
-      }));
+      const invoke = (args) => HEADSCALE_DOCKER
+        ? execFileSync("docker", ["compose", "exec", "-T", "headscale", "headscale",
+          "-c", "/etc/headscale/config.yaml", ...args], {
+          cwd: path.resolve(process.cwd(), ".."), encoding: "utf8",
+        })
+        : execFileSync("go", ["-C", HEADSCALE_REPO, "run", "./cmd/headscale",
+          "-c", HEADSCALE_CONFIG, ...args], { encoding: "utf8" });
+      const nodes = JSON.parse(invoke(["nodes", "list", "--output", "json"]));
       const node = nodes.find((candidate) => candidate.name === hostname);
       if (!node) throw new Error(`Headscale node not found for ${hostname}`);
-      execFileSync("go", [...baseArgs, "nodes", "delete", "-i", String(node.id), "--force"], {
-        encoding: "utf8",
-      });
+      invoke(["nodes", "delete", "-i", String(node.id), "--force"]);
       return { id: node.id, name: node.name, addresses: node.ip_addresses };
     });
   }
@@ -53,7 +58,7 @@ test("real Headscale registration survives Worker restart without retaining the 
   const result = await page.evaluate(async ({
     controlUrl, authKey, hostname, peerIp, peerName, peerPort, peerUdpPort, rstHost, rstPort,
     exitNodeId, publicHost, publicPort, publicName, useExitNode, expectPublicFail, expectPeerFail,
-    revokeNode,
+    revokeNode, clearExitAfterRestore,
   }) => {
     const waitForMessage = (session, predicate, timeoutMs = 30_000) => new Promise((resolve, reject) => {
       const started = performance.now();
@@ -304,14 +309,16 @@ test("real Headscale registration survives Worker restart without retaining the 
       hostname,
       state: firstState,
       acceptDns: true,
-      useExitNode,
-      exitNodeId: exitNodeId || null,
+      useExitNode: clearExitAfterRestore ? false : useExitNode,
+      exitNodeId: clearExitAfterRestore ? null : (exitNodeId || null),
     });
     const secondIdentity = second.status.netMap?.self ?? null;
     let peerResponseAfterRestart = null;
     let peerDeniedAfterRestartMs = null;
     let activeFlowResetOnLogout = null;
     let postLogoutOpenFailed = null;
+    let publicFailureAfterExitClearMs = null;
+    let selectedExitNodeAfterRestore = second.status.netMap?.selectedExitNodeId ?? null;
     if (peerIp && peerPort) {
       second.worker.postMessage({ type: "frame", bytes: frame(0, 0, Uint8Array.of(1)).buffer });
       await waitForMessage(second, (message) => opcode(message) === 0);
@@ -325,6 +332,11 @@ test("real Headscale registration survives Worker restart without retaining the 
           index >= activeBefore && streamId(message) === 4 && opcode(message) === 2
         ));
       }
+    }
+    if (clearExitAfterRestore && publicHost && publicPort) {
+      publicFailureAfterExitClearMs = await expectTcpOpenFailure(
+        second, 0x70000001, publicHost, publicPort,
+      );
     }
     const beforeLogout = second.messages.length;
     let revokedNode = null;
@@ -376,6 +388,8 @@ test("real Headscale registration survives Worker restart without retaining the 
       publicResponse,
       publicFailureMs,
       selectedExitNodeId,
+      selectedExitNodeAfterRestore,
+      publicFailureAfterExitClearMs,
       udp,
       remoteReset,
       loggedOut: !revokeNode,
@@ -402,6 +416,7 @@ test("real Headscale registration survives Worker restart without retaining the 
     expectPublicFail: EXPECT_PUBLIC_FAIL,
     expectPeerFail: EXPECT_PEER_FAIL,
     revokeNode: REVOKE_NODE,
+    clearExitAfterRestore: CLEAR_EXIT_AFTER_RESTORE,
   });
 
   console.log("E3_T17_HEADSCALE_RESULT", JSON.stringify({
@@ -448,6 +463,10 @@ test("real Headscale registration survives Worker restart without retaining the 
   if (PEER_IP && PEER_UDP_PORT) expect(result.udp.actual).toEqual(result.udp.expected);
   if (RST_HOST && RST_PORT) expect(result.remoteReset).toBe(true);
   if (EXIT_NODE_ID) expect(result.selectedExitNodeId).toBe(EXIT_NODE_ID);
+  if (CLEAR_EXIT_AFTER_RESTORE) {
+    expect(result.selectedExitNodeAfterRestore).toBeFalsy();
+    expect(result.publicFailureAfterExitClearMs).toBeLessThan(20_000);
+  }
   if (EXPECT_PUBLIC_FAIL) {
     expect(result.publicFailureMs).toBeLessThan(20_000);
   } else if (PUBLIC_HOST && PUBLIC_PORT) {

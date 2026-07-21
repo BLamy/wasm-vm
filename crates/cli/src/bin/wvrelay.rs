@@ -14,6 +14,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::net::SocketAddr;
 
 use tokio::net::TcpListener;
+use wasm_vm_slirp::ws_proxy::ProtectedNetwork;
 
 /// The default bind address when neither an argument nor `$WVRELAY_ADDR` is given. Loopback (not
 /// `0.0.0.0`) so a bare `wvrelay` never accidentally exposes an unauthenticated relay to the network;
@@ -68,6 +69,16 @@ fn parse_origins(value: Option<&str>) -> Result<BTreeSet<String>, String> {
     Ok(origins)
 }
 
+fn parse_protected_networks(value: Option<&str>) -> Result<Vec<ProtectedNetwork>, String> {
+    let Some(value) = value.filter(|value| !value.trim().is_empty()) else {
+        return Ok(Vec::new());
+    };
+    value
+        .split(',')
+        .map(|network| network.trim().parse::<ProtectedNetwork>())
+        .collect()
+}
+
 #[tokio::main(flavor = "current_thread")]
 async fn main() {
     if std::env::args().nth(1).as_deref() == Some("issue-token") {
@@ -95,6 +106,14 @@ async fn main() {
     let allowed_origins =
         match parse_origins(std::env::var("WVRELAY_ALLOWED_ORIGINS").ok().as_deref()) {
             Ok(origins) => origins,
+            Err(error) => {
+                eprintln!("wvrelay: {error}");
+                std::process::exit(2);
+            }
+        };
+    let protected_networks =
+        match parse_protected_networks(std::env::var("WVRELAY_PROTECTED_RANGES").ok().as_deref()) {
+            Ok(networks) => networks,
             Err(error) => {
                 eprintln!("wvrelay: {error}");
                 std::process::exit(2);
@@ -136,11 +155,13 @@ async fn main() {
                 "wvrelay security enabled for {} origin(s)",
                 allowed_origins.len()
             );
-            wasm_vm_slirp::ws_proxy::serve_ws_secure(
+            wasm_vm_slirp::ws_proxy::serve_ws_secure_with_policy(
                 listener,
                 secret.into_bytes(),
                 allowed_origins,
                 host_map,
+                wasm_vm_slirp::ws_proxy::RelayLimits::default(),
+                protected_networks,
             )
             .await;
         }
@@ -197,7 +218,7 @@ fn issue_token_command() {
 
 #[cfg(test)]
 mod tests {
-    use super::{parse_host_map, parse_origins, resolve_addr};
+    use super::{parse_host_map, parse_origins, parse_protected_networks, resolve_addr};
 
     #[test]
     fn defaults_to_loopback_8080_when_nothing_given() {
@@ -254,5 +275,13 @@ mod tests {
         assert!(origins.contains("http://localhost:4321"));
         assert!(parse_origins(Some("*.example.com")).is_err());
         assert!(parse_origins(Some("https://ok.example,")).is_err());
+    }
+
+    #[test]
+    fn protected_networks_require_valid_cidr_entries() {
+        let networks = parse_protected_networks(Some("1.1.1.0/24,2606:4700::/32")).unwrap();
+        assert_eq!(networks.len(), 2);
+        assert!(parse_protected_networks(Some("1.1.1.1")).is_err());
+        assert!(parse_protected_networks(Some("1.1.1.0/33")).is_err());
     }
 }

@@ -7,7 +7,9 @@
 //! No TLS: the relay terminates **plaintext** `ws://`. TLS termination belongs at the ingress
 //! (a reverse proxy / the browser's `wss://` terminator), not here.
 
-use super::{RelayConnectionSecurity, RelayLimits, RelayServer, RelayUsageRegistry};
+use super::{
+    ProtectedNetwork, RelayConnectionSecurity, RelayLimits, RelayServer, RelayUsageRegistry,
+};
 use futures_util::{SinkExt, StreamExt};
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::{Arc, Mutex};
@@ -76,6 +78,25 @@ pub async fn serve_secure_with_limits(
     host_map: BTreeMap<String, String>,
     limits: RelayLimits,
 ) {
+    serve_secure_with_policy(
+        listener,
+        hmac_secret,
+        allowed_origins,
+        host_map,
+        limits,
+        Vec::new(),
+    )
+    .await;
+}
+
+pub async fn serve_secure_with_policy(
+    listener: TcpListener,
+    hmac_secret: Vec<u8>,
+    allowed_origins: BTreeSet<String>,
+    host_map: BTreeMap<String, String>,
+    limits: RelayLimits,
+    protected_networks: Vec<ProtectedNetwork>,
+) {
     let usage = RelayUsageRegistry::default();
     loop {
         match listener.accept().await {
@@ -84,8 +105,18 @@ pub async fn serve_secure_with_limits(
                 let origins = allowed_origins.clone();
                 let host_map = host_map.clone();
                 let usage = usage.clone();
+                let protected_networks = protected_networks.clone();
                 tokio::spawn(async move {
-                    handle_secure_conn(tcp, secret, origins, host_map, limits, usage).await;
+                    handle_secure_conn(
+                        tcp,
+                        secret,
+                        origins,
+                        host_map,
+                        limits,
+                        protected_networks,
+                        usage,
+                    )
+                    .await;
                 });
             }
             Err(_) => tokio::time::sleep(std::time::Duration::from_millis(10)).await,
@@ -144,6 +175,7 @@ async fn handle_secure_conn(
     allowed_origins: BTreeSet<String>,
     host_map: BTreeMap<String, String>,
     limits: RelayLimits,
+    protected_networks: Vec<ProtectedNetwork>,
     usage: RelayUsageRegistry,
 ) {
     let captured_origin = Arc::new(Mutex::new(None::<String>));
@@ -181,6 +213,7 @@ async fn handle_secure_conn(
             origin,
             limits,
             usage,
+            protected_networks,
         },
         host_map,
     )

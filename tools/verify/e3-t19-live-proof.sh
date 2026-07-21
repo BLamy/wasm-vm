@@ -7,7 +7,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-docker compose up -d --wait
+docker compose --profile relay up -d --build --wait
 auth_key="$(docker run --rm -v wasm-vm-e3-t19_ephemeral-keys:/keys:ro alpine:3.23 cat /keys/browser.key)"
 test -n "$auth_key"
 docker run --rm -v wasm-vm-e3-t19_ephemeral-keys:/keys alpine:3.23 rm -f /keys/browser.key
@@ -18,6 +18,10 @@ for _ in $(seq 1 30); do
   sleep 1
 done
 test -n "$peer_ip"
+exit_id="$(docker compose exec -T headscale headscale -c /etc/headscale/config.yaml \
+  nodes list -o json | python3 -c \
+  'import json,sys; print(next(str(node["id"]) for node in json.load(sys.stdin) if node["name"] == "exit"))')"
+test -n "$exit_id"
 
 E3_T17_CONTROL_URL=http://localhost:8123 \
 E3_T17_AUTH_KEY="$auth_key" \
@@ -25,6 +29,22 @@ E3_T17_HOSTNAME=wasm-vm-browser-compose \
 E3_T17_PEER_IP="$peer_ip" \
 E3_T17_PEER_NAME=fixture.wasm-vm.test \
 E3_T17_PEER_PORT=5678 \
+E3_T17_EXIT_NODE_ID="$exit_id" \
+E3_T17_PUBLIC_HOST=1.1.1.1 \
+E3_T17_PUBLIC_PORT=80 \
+E3_T17_CLEAR_EXIT_AFTER_RESTORE=1 \
+  bash -c 'cd web && npx playwright test tests/e3-t17-headscale-worker.spec.js --reporter=line'
+
+revoked_key="$(docker run --rm -v wasm-vm-e3-t19_ephemeral-keys:/keys:ro alpine:3.23 cat /keys/revoked.key)"
+test -n "$revoked_key"
+docker run --rm -v wasm-vm-e3-t19_ephemeral-keys:/keys alpine:3.23 rm -f /keys/revoked.key
+E3_T17_CONTROL_URL=http://localhost:8123 \
+E3_T17_AUTH_KEY="$revoked_key" \
+E3_T17_HOSTNAME=wasm-vm-revoked-compose \
+E3_T17_PEER_IP="$peer_ip" \
+E3_T17_PEER_PORT=5678 \
+E3_T17_REVOKE_NODE=1 \
+E3_T17_HEADSCALE_DOCKER=1 \
   bash -c 'cd web && npx playwright test tests/e3-t17-headscale-worker.spec.js --reporter=line'
 
 denied_key="$(docker run --rm -v wasm-vm-e3-t19_ephemeral-keys:/keys:ro alpine:3.23 cat /keys/denied.key)"
@@ -38,10 +58,29 @@ E3_T17_PEER_PORT=5678 \
 E3_T17_EXPECT_PEER_FAIL=1 \
   bash -c 'cd web && npx playwright test tests/e3-t17-headscale-worker.spec.js --reporter=line'
 
+outage_key="$(docker run --rm -v wasm-vm-e3-t19_ephemeral-keys:/keys:ro alpine:3.23 cat /keys/outage.key)"
+test -n "$outage_key"
+docker run --rm -v wasm-vm-e3-t19_ephemeral-keys:/keys alpine:3.23 rm -f /keys/outage.key
+docker compose stop headscale
+E3_T19_CONTROL_URL=http://localhost:8123 \
+E3_T19_AUTH_KEY="$outage_key" \
+  bash -c 'cd web && npx playwright test tests/e3-t19-control-outage.spec.js --reporter=line'
+
+relay_token="$(docker compose exec -T relay sh -c \
+  'WVRELAY_HMAC_SECRET="$(cat /run/wasm-vm-keys/relay.secret)" \
+   wvrelay issue-token http://localhost:8123 e3-t19-compose-proof 300')"
+test -n "$relay_token"
+E3_T19_RELAY_TOKEN="$relay_token" \
+  bash -c 'cd web && npx playwright test tests/e3-t19-compose-relay.spec.js --reporter=line'
+if docker compose logs relay | grep -F "$relay_token" >/dev/null; then
+  echo "relay token leaked into compose logs" >&2
+  exit 1
+fi
+
 # The fixture and exit keys must have been consumed, while reusable credential material never
 # enters the checkout. Teardown in the EXIT trap destroys the remaining one-time browser key,
 # denied-browser key, Headscale database, node states, and relay secret.
 remaining="$(docker run --rm -v wasm-vm-e3-t19_ephemeral-keys:/keys:ro alpine:3.23 \
   sh -c 'find /keys -maxdepth 1 -type f -exec basename {} \; | sort')"
 test "$remaining" = $'ready\nrelay.secret'
-echo "E3-T19 live lifecycle proof: OK (restore, allowed/denied ACLs, logout, consumed keys)"
+echo "E3-T19 live lifecycle proof: OK (exit/clear, restore, ACLs, relay, logout, keys)"

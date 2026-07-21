@@ -30,11 +30,18 @@ make_key() {
 
 make_key browser browser@example.com
 make_key denied denied@example.com
+make_key revoked browser@example.com
+make_key outage browser@example.com
 make_key fixture infra@example.com --tags tag:fixture
 make_key exit infra@example.com --tags tag:exit
 
 # Generated per `docker compose up`, never stored in the checkout or printed by any service.
 umask 077
 head -c 48 /dev/urandom | base64 > "$KEYS/relay.secret"
+chown 10001:10001 "$KEYS/relay.secret"
+chmod 0400 "$KEYS/relay.secret"
 touch "$KEYS/ready"
+# The relay UID may traverse the volume to its owned secret but cannot list the directory or read
+# any one-time Headscale key (those remain root-owned 0600 until their consumer deletes them).
+chmod 0711 "$KEYS"
 tail -f /dev/null

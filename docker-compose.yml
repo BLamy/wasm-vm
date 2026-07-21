@@ -21,6 +21,7 @@ services:
     volumes:
       - ./deploy/e3-t19/headscale.yaml:/etc/headscale/config.yaml:ro
       - ./deploy/e3-t19/policy.hujson:/etc/headscale/policy.hujson:ro
+      - ./deploy/e3-t19/derp.yaml:/etc/headscale/derp.yaml:ro
       - headscale-data:/var/lib/headscale
       - headscale-run:/var/run/headscale
     healthcheck:
@@ -38,6 +39,7 @@ services:
     volumes:
       - ./deploy/e3-t19/headscale.yaml:/etc/headscale/config.yaml:ro
       - ./deploy/e3-t19/policy.hujson:/etc/headscale/policy.hujson:ro
+      - ./deploy/e3-t19/derp.yaml:/etc/headscale/derp.yaml:ro
       - ./deploy/e3-t19/provision.sh:/opt/wasm-vm/provision.sh:ro
       - headscale-data:/var/lib/headscale
       - headscale-run:/var/run/headscale
@@ -94,10 +96,16 @@ services:
     environment:
       WVRELAY_ALLOWED_ORIGINS: http://localhost:8123
       WVRELAY_HOST_MAP: fixture.wasm-vm.test=fixture
+      WVRELAY_PROTECTED_RANGES: ${WVRELAY_PROTECTED_RANGES:-}
     volumes:
       - ephemeral-keys:/run/wasm-vm-keys:ro
     depends_on: [provision]
     read_only: true
+    healthcheck:
+      test: ["CMD", "sh", "-c", "test -r /run/wasm-vm-keys/relay.secret && kill -0 1"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
 
 volumes:
   headscale-data:

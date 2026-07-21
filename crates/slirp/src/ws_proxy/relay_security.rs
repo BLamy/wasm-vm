@@ -8,6 +8,7 @@
 use sha2::{Digest, Sha256};
 use std::collections::{HashMap, VecDeque};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+use std::str::FromStr;
 use std::sync::{Arc, Mutex};
 
 pub const MAX_TOKEN_LIFETIME_SECS: u64 = 15 * 60;
@@ -19,6 +20,67 @@ pub struct RelayToken {
     pub expiry_unix_secs: u64,
     pub origin: String,
     pub id: String,
+}
+
+/// An operator-supplied network that the public relay must never dial, in addition to the
+/// built-in loopback/private/link-local/metadata families.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ProtectedNetwork {
+    network: IpAddr,
+    prefix_len: u8,
+}
+
+impl ProtectedNetwork {
+    pub fn contains(self, candidate: IpAddr) -> bool {
+        match (self.network, candidate) {
+            (IpAddr::V4(network), IpAddr::V4(candidate)) => {
+                let prefix = self.prefix_len.min(32);
+                let mask = if prefix == 0 {
+                    0
+                } else {
+                    u32::MAX << (32 - prefix)
+                };
+                u32::from(network) & mask == u32::from(candidate) & mask
+            }
+            (IpAddr::V6(network), IpAddr::V6(candidate)) => {
+                let prefix = self.prefix_len.min(128);
+                let mask = if prefix == 0 {
+                    0
+                } else {
+                    u128::MAX << (128 - prefix)
+                };
+                u128::from(network) & mask == u128::from(candidate) & mask
+            }
+            _ => false,
+        }
+    }
+}
+
+impl FromStr for ProtectedNetwork {
+    type Err = String;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        let (address, prefix) = value
+            .trim()
+            .split_once('/')
+            .ok_or_else(|| format!("protected network {value:?} must be CIDR"))?;
+        let network = address
+            .parse::<IpAddr>()
+            .map_err(|error| format!("invalid protected network {value:?}: {error}"))?;
+        let prefix_len = prefix
+            .parse::<u8>()
+            .map_err(|_| format!("invalid protected-network prefix in {value:?}"))?;
+        let maximum = if network.is_ipv4() { 32 } else { 128 };
+        if prefix_len > maximum {
+            return Err(format!(
+                "protected-network prefix exceeds {maximum} in {value:?}"
+            ));
+        }
+        Ok(Self {
+            network,
+            prefix_len,
+        })
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -284,6 +346,14 @@ pub fn destinations_are_public(addresses: &[IpAddr]) -> bool {
     !addresses.is_empty() && addresses.iter().copied().all(destination_is_public)
 }
 
+/// Apply both the built-in policy and operator-supplied protected CIDRs to the complete DNS answer.
+pub fn destinations_are_allowed(addresses: &[IpAddr], protected: &[ProtectedNetwork]) -> bool {
+    destinations_are_public(addresses)
+        && addresses
+            .iter()
+            .all(|address| protected.iter().all(|network| !network.contains(*address)))
+}
+
 fn ipv4_is_public(ip: Ipv4Addr) -> bool {
     let octets = ip.octets();
     !(ip.is_unspecified()
@@ -453,6 +523,28 @@ mod tests {
             "1.1.1.1".parse().unwrap(),
             "169.254.169.254".parse().unwrap(),
         ]));
+    }
+
+    #[test]
+    fn operator_protected_cidrs_reject_matching_public_answers() {
+        let protected = [
+            "1.1.1.0/24".parse::<ProtectedNetwork>().unwrap(),
+            "2606:4700::/32".parse::<ProtectedNetwork>().unwrap(),
+        ];
+        assert!(!destinations_are_allowed(
+            &["1.1.1.1".parse().unwrap()],
+            &protected,
+        ));
+        assert!(!destinations_are_allowed(
+            &["2606:4700:4700::1111".parse().unwrap()],
+            &protected,
+        ));
+        assert!(destinations_are_allowed(
+            &["8.8.8.8".parse().unwrap()],
+            &protected,
+        ));
+        assert!("1.1.1.1".parse::<ProtectedNetwork>().is_err());
+        assert!("1.1.1.0/33".parse::<ProtectedNetwork>().is_err());
     }
 
     #[test]

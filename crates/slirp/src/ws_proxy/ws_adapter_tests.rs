@@ -305,13 +305,143 @@ async fn secure_relay_duplicate_open_does_not_leak_shared_concurrency() {
         let response = recv_frame(&mut ws).await;
         match stream {
             1 if response == (Frame::OpenOk { stream: 1 }) => {
-                assert!(matches!(recv_frame(&mut ws).await, Frame::Window { stream: 1, .. }));
+                assert!(matches!(
+                    recv_frame(&mut ws).await,
+                    Frame::Window { stream: 1, .. }
+                ));
             }
             1 => assert_eq!(response, Frame::OpenFail { stream: 1, code: 2 }),
             2 => assert_eq!(response, Frame::OpenOk { stream: 2 }),
             _ => unreachable!(),
         }
     }
+}
+
+#[tokio::test]
+async fn secure_relay_connect_rate_is_typed_and_released_streams_stay_released() {
+    let echo = spawn_echo().await;
+    let (mut ws, token) = secure_client_with_limits(
+        Some("https://vm.example"),
+        [("fixture.test".to_owned(), "127.0.0.1".to_owned())]
+            .into_iter()
+            .collect(),
+        RelayLimits {
+            max_concurrent_streams: 1,
+            max_connects_per_minute: 2,
+            max_bytes_per_token: 1024,
+        },
+    )
+    .await;
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    send_frame(&mut ws, hello(token)).await;
+
+    for stream in [1, 2] {
+        send_frame(
+            &mut ws,
+            Frame::Open {
+                stream,
+                host: "fixture.test".into(),
+                port: echo.port(),
+            },
+        )
+        .await;
+        assert_eq!(recv_frame(&mut ws).await, Frame::OpenOk { stream });
+        assert!(matches!(recv_frame(&mut ws).await, Frame::Window { .. }));
+        send_frame(&mut ws, Frame::Close { stream }).await;
+    }
+
+    send_frame(
+        &mut ws,
+        Frame::Open {
+            stream: 3,
+            host: "fixture.test".into(),
+            port: echo.port(),
+        },
+    )
+    .await;
+    assert_eq!(
+        recv_frame(&mut ws).await,
+        Frame::OpenFail { stream: 3, code: 2 }
+    );
+}
+
+#[tokio::test]
+async fn secure_relay_bounds_a_500_open_attack_and_reaps_every_accepted_socket() {
+    const ATTEMPTS: u32 = 500;
+    const ACCEPTED: u32 = 64;
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let backend = listener.local_addr().unwrap();
+    let (reaped_tx, mut reaped_rx) = tokio::sync::mpsc::channel(ACCEPTED as usize);
+    tokio::spawn(async move {
+        for _ in 0..ACCEPTED {
+            let (mut socket, _) = listener.accept().await.unwrap();
+            let tx = reaped_tx.clone();
+            tokio::spawn(async move {
+                let mut byte = [0u8; 1];
+                let _ = socket.read(&mut byte).await;
+                let _ = tx.send(()).await;
+            });
+        }
+    });
+    let (mut ws, token) = secure_client_with_limits(
+        Some("https://vm.example"),
+        [("fixture.test".to_owned(), "127.0.0.1".to_owned())]
+            .into_iter()
+            .collect(),
+        RelayLimits {
+            max_concurrent_streams: ACCEPTED as usize,
+            max_connects_per_minute: ATTEMPTS as usize,
+            max_bytes_per_token: 1024,
+        },
+    )
+    .await;
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    send_frame(&mut ws, hello(token)).await;
+
+    let mut accepted = 0;
+    let mut refused = 0;
+    for stream in 1..=ATTEMPTS {
+        send_frame(
+            &mut ws,
+            Frame::Open {
+                stream,
+                host: "fixture.test".into(),
+                port: backend.port(),
+            },
+        )
+        .await;
+        match recv_frame(&mut ws).await {
+            Frame::OpenOk { stream: opened } => {
+                assert_eq!(opened, stream);
+                assert!(matches!(recv_frame(&mut ws).await, Frame::Window { .. }));
+                accepted += 1;
+            }
+            Frame::OpenFail {
+                stream: denied,
+                code: 2,
+            } => {
+                assert_eq!(denied, stream);
+                refused += 1;
+            }
+            frame => panic!("unexpected response to stream {stream}: {frame:?}"),
+        }
+    }
+    assert_eq!(accepted, ACCEPTED);
+    assert_eq!(refused, ATTEMPTS - ACCEPTED);
+
+    drop(ws);
+    timeout(Duration::from_secs(5), async {
+        for observed in 1..=ACCEPTED {
+            reaped_rx.recv().await.unwrap_or_else(|| {
+                panic!(
+                    "secure relay reaped only {} of {ACCEPTED} sockets",
+                    observed - 1
+                )
+            });
+        }
+    })
+    .await
+    .expect("secure relay did not reap accepted sockets after abrupt disconnect");
 }
 
 #[tokio::test]

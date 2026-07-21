@@ -1,0 +1,41 @@
+# Pinned local copy of one Tailscale DERP region. Headscale reads this file at startup instead of
+# fetching the control-plane DERP map, so an unavailable map endpoint cannot prevent the lab from
+# starting. Browser nodes still use the named public DERP service for WebSocket relay transport.
+regions:
+  1:
+    regionid: 1
+    regioncode: nyc
+    regionname: New York City
+    nodes:
+      - name: 1f
+        regionid: 1
+        hostname: derp1f.tailscale.com
+        ipv4: 199.38.181.104
+        ipv6: 2607:f740:f::bc
+        stunport: 0
+        stunonly: false
+        derpport: 443
+      - name: 1g
+        regionid: 1
+        hostname: derp1g.tailscale.com
+        ipv4: 209.177.145.120
+        ipv6: 2607:f740:f::3eb
+        stunport: 0
+        stunonly: false
+        derpport: 443
+      - name: 1h
+        regionid: 1
+        hostname: derp1h.tailscale.com
+        ipv4: 199.38.181.93
+        ipv6: 2607:f740:f::afd
+        stunport: 0
+        stunonly: false
+        derpport: 443
+      - name: 1i
+        regionid: 1
+        hostname: derp1i.tailscale.com
+        ipv4: 199.38.181.103
+        ipv6: 2607:f740:f::e19
+        stunport: 0
+        stunonly: false
+        derpport: 443

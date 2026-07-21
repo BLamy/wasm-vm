@@ -21,7 +21,7 @@
 
 use super::relay_security::{RelayToken, verify_relay_token};
 use super::{Frame, MAX_DATAGRAM_BYTES, MAX_STREAMS, RelayCore, RelayError};
-use super::{RelayLimits, RelayUsageRegistry, destinations_are_public};
+use super::{ProtectedNetwork, RelayLimits, RelayUsageRegistry, destinations_are_allowed};
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::Arc;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -126,6 +126,7 @@ pub struct RelayConnectionSecurity {
     pub origin: String,
     pub limits: RelayLimits,
     pub usage: RelayUsageRegistry,
+    pub protected_networks: Vec<ProtectedNetwork>,
 }
 
 impl RelayServer {
@@ -313,6 +314,9 @@ impl RelayServer {
                                 &host,
                                 *port,
                                 self.security.is_some() && !development_allow,
+                                self.security.as_ref().map_or(&[][..], |security| {
+                                    security.protected_networks.as_slice()
+                                }),
                             )
                             .await =>
                         {
@@ -529,9 +533,20 @@ impl RelayServer {
                         None => (host, false),
                     };
                     let require_public = self.security.is_some() && !development_allow;
+                    let protected_networks = self
+                        .security
+                        .as_ref()
+                        .map_or_else(Vec::new, |security| security.protected_networks.clone());
                     let tx = int_tx.clone();
                     tokio::spawn(async move {
-                        match connect_tcp_destination(&host, port, require_public).await {
+                        match connect_tcp_destination(
+                            &host,
+                            port,
+                            require_public,
+                            &protected_networks,
+                        )
+                        .await
+                        {
                             Ok(io) => {
                                 let _ = tx.send(Internal::Connected { stream, io }).await;
                             }
@@ -596,6 +611,12 @@ impl RelayServer {
         let Some(security) = &self.security else {
             return true;
         };
+        // A repeated wire id is a protocol-level duplicate, not a new stream. Reject it before
+        // touching the shared token registry so a malicious duplicate OPEN cannot reserve a
+        // phantom concurrency slot or consume the token's connect-rate budget.
+        if self.quota_streams.contains(&stream) {
+            return false;
+        }
         let Some(token) = &self.authenticated_token else {
             return false;
         };
@@ -676,6 +697,7 @@ async fn resolve_destination(
     host: &str,
     port: u16,
     require_public: bool,
+    protected_networks: &[ProtectedNetwork],
 ) -> Result<Vec<std::net::SocketAddr>, ()> {
     let addresses: Vec<_> = tokio::net::lookup_host((host, port))
         .await
@@ -685,11 +707,12 @@ async fn resolve_destination(
     // race the resolver/connect boundary or steer retries onto a protected address.
     if addresses.is_empty()
         || (require_public
-            && !destinations_are_public(
+            && !destinations_are_allowed(
                 &addresses
                     .iter()
                     .map(|address| address.ip())
                     .collect::<Vec<_>>(),
+                protected_networks,
             ))
     {
         return Err(());
@@ -701,8 +724,9 @@ async fn connect_tcp_destination(
     host: &str,
     port: u16,
     require_public: bool,
+    protected_networks: &[ProtectedNetwork],
 ) -> Result<TcpStream, ()> {
-    for address in resolve_destination(host, port, require_public).await? {
+    for address in resolve_destination(host, port, require_public, protected_networks).await? {
         if let Ok(stream) = TcpStream::connect(address).await {
             return Ok(stream);
         }
@@ -715,8 +739,10 @@ async fn connect_udp_destination(
     host: &str,
     port: u16,
     require_public: bool,
+    protected_networks: &[ProtectedNetwork],
 ) -> bool {
-    let Ok(addresses) = resolve_destination(host, port, require_public).await else {
+    let Ok(addresses) = resolve_destination(host, port, require_public, protected_networks).await
+    else {
         return false;
     };
     for address in addresses {

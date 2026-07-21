@@ -24,8 +24,9 @@ pub use mux::{MAX_STREAMS, Mux, MuxError, MuxEvent, Role};
 pub use relay::{INITIAL_WINDOW, RelayActions, RelayCore, RelayError, SocketOp};
 #[cfg(feature = "native")]
 pub use relay_security::{
-    RelayLimits, RelayMetrics, RelayQuotaError, RelayToken, RelayTokenError, RelayUsageRegistry,
-    destinations_are_public, issue_relay_token, verify_relay_token,
+    ProtectedNetwork, RelayLimits, RelayMetrics, RelayQuotaError, RelayToken, RelayTokenError,
+    RelayUsageRegistry, destinations_are_allowed, destinations_are_public, issue_relay_token,
+    verify_relay_token,
 };
 pub use session::{HandshakeError, Session, SessionError, accept_hello, hello};
 pub use stream::{StreamError, StreamState, Terminal};
@@ -33,6 +34,7 @@ pub use stream::{StreamError, StreamState, Terminal};
 pub use ws_adapter::{
     serve as serve_ws, serve_secure as serve_ws_secure,
     serve_secure_with_limits as serve_ws_secure_with_limits,
+    serve_secure_with_policy as serve_ws_secure_with_policy,
     serve_with_host_map as serve_ws_with_host_map,
 };
 

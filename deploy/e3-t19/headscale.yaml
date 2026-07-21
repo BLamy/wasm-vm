@@ -13,10 +13,10 @@ prefixes:
 derp:
   server:
     enabled: false
-  urls:
-    - https://controlplane.tailscale.com/derpmap/default
-  paths: []
-  auto_update_enabled: true
+  urls: []
+  paths:
+    - /etc/headscale/derp.yaml
+  auto_update_enabled: false
   update_frequency: 3h
 disable_check_updates: true
 node:

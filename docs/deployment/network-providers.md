@@ -13,6 +13,8 @@ at `fixture.wasm-vm.test:5678`, and an approved exit node. Provisioning generate
 single-use keys inside the `ephemeral-keys` named volume. Fixture and exit containers consume and
 delete their key files. Browser and denied-browser keys remain available only inside that volume
 for the acceptance harness; they are never printed, stored in the checkout, or put in a URL.
+The committed one-region DERP map prevents Headscale startup from depending on a live control-plane
+map fetch; the browser still reaches the pinned public DERP node named in that map.
 
 The browser flow uses:
 
@@ -31,7 +33,9 @@ and paste it into the password field. Tokens are HMAC signed, Origin-bound, expi
 minutes, and are carried only in the binary HELLO. The public relay resolves every destination and
 rejects the whole answer if any address is loopback, link-local, RFC1918/4193, CGNAT, metadata,
 multicast, or a documentation range. The compose-only exact fixture rewrite is the explicit local
-development exception. Relay security events are newline-delimited JSON. They expose only event and
+development exception. Operators can add comma-separated CIDRs to `WVRELAY_PROTECTED_RANGES`; an
+invalid CIDR aborts startup, and any matching DNS answer is refused. Relay security events are
+newline-delimited JSON. They expose only event and
 reason names plus aggregate authenticated-session, active-stream, accepted-connect, rejected-limit,
 and byte counters; token IDs, origins, destinations, payloads, and state never enter those records.
 
@@ -41,6 +45,7 @@ and byte counters; token IDs, origins, destinations, payloads, and state never e
 - Generate relay secrets in a secret manager and rotate them; never put secrets or tokens in image
   layers, environment dumps, metrics, URLs, access logs, or diagnostics.
 - Set an exact `WVRELAY_ALLOWED_ORIGINS`; wildcards are rejected. Keep `WVRELAY_HOST_MAP` empty.
+- Set `WVRELAY_PROTECTED_RANGES` for organization-owned public CIDRs that the relay must not reach.
 - Review Headscale ACLs, node expiry, exit-node approvers, DERP, DNS, and revocation propagation.
 - Keep provider selection explicit in the UI. Never implement automatic Tailscale-to-relay retry.
 - Monitor structured provider state and aggregate counters only; never log guest payloads.
