@@ -271,6 +271,49 @@ async fn secure_relay_caps_streams_and_bytes_without_disturbing_an_existing_stre
     assert_eq!(recv_frame(&mut ws).await, Frame::Rst { stream: 1 });
 }
 
+/// E3-T19 verifier attack: a duplicate OPEN must not consume a second quota reservation for the
+/// same live wire stream. Otherwise one malformed frame leaves a phantom active stream and can
+/// deny unrelated, valid streams until the token expires.
+#[tokio::test]
+async fn secure_relay_duplicate_open_does_not_leak_shared_concurrency() {
+    let echo = spawn_echo().await;
+    let (mut ws, token) = secure_client_with_limits(
+        Some("https://vm.example"),
+        [("fixture.test".to_owned(), "127.0.0.1".to_owned())]
+            .into_iter()
+            .collect(),
+        RelayLimits {
+            max_concurrent_streams: 2,
+            max_connects_per_minute: 8,
+            max_bytes_per_token: 1024,
+        },
+    )
+    .await;
+    assert!(matches!(recv_frame(&mut ws).await, Frame::Hello { .. }));
+    send_frame(&mut ws, hello(token)).await;
+
+    for stream in [1, 1, 2] {
+        send_frame(
+            &mut ws,
+            Frame::Open {
+                stream,
+                host: "fixture.test".into(),
+                port: echo.port(),
+            },
+        )
+        .await;
+        let response = recv_frame(&mut ws).await;
+        match stream {
+            1 if response == (Frame::OpenOk { stream: 1 }) => {
+                assert!(matches!(recv_frame(&mut ws).await, Frame::Window { stream: 1, .. }));
+            }
+            1 => assert_eq!(response, Frame::OpenFail { stream: 1, code: 2 }),
+            2 => assert_eq!(response, Frame::OpenOk { stream: 2 }),
+            _ => unreachable!(),
+        }
+    }
+}
+
 #[tokio::test]
 async fn a_real_websocket_round_trips_to_a_real_backend() {
     let echo = spawn_echo().await;

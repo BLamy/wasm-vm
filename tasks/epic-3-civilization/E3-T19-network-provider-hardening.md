@@ -3,7 +3,7 @@ id: E3-T19
 epic: 3
 title: Tailscale/Headscale lifecycle and public-relay fallback hardening
 priority: 319
-status: implemented
+status: in-progress
 depends_on: [E3-T16, E3-T17]
 estimate: M
 capstone: false
@@ -117,3 +117,40 @@ fixture, exit-node, app, and optional-relay deployment whose one-shot keys and s
 on teardown. `cargo test --workspace --all-features` was also attempted, but its unsupported
 `zicsr-stub`/`roundtrip_csr` feature combination fails a pre-existing CSR expectation; the
 repository-prescribed workspace suite above passed and exercises the supported feature set.
+
+### 2026-07-20 — verifier — VERDICT: refuted
+
+- P1 duplicate stream IDs do not consume shared concurrency — **FAILED**. Predicted that after one
+  valid stream and a duplicate `OPEN` for the same wire ID, a second distinct stream would still fit
+  under `max_concurrent_streams = 2`. Observed structured state
+  `active_streams=2, connects_accepted=2, rejected_concurrency=1` and
+  `OpenFail { stream: 2, code: 2 }`: `reserve_quota_stream` reserves in the shared registry before
+  `HashSet::insert` discovers the duplicate (`crates/slirp/src/ws_proxy/driver.rs:603-616`). The
+  promoted real-WebSocket regression is
+  `secure_relay_duplicate_open_does_not_leak_shared_concurrency`
+  (`crates/slirp/src/ws_proxy/ws_adapter_tests.rs:274-313`). Reserve only after validating a new
+  stream ID, or roll the registry reservation back when insertion fails, then rerun every gate.
+- P2 the new clean-compose target proves both public egress identities — **NEEDS EVIDENCE**.
+  Predicted `make verify-E3-T19` would select the composed exit node, observe a public HTTPS path,
+  clear the exit without duplicating the browser node, then start the optional relay and repeat the
+  public request. The target passed, but `tools/verify/e3-t19-live-proof.sh:22-39` supplies only the
+  tailnet fixture host/port to the inherited Worker spec and never supplies `E3_T17_EXIT_NODE_ID`,
+  `E3_T17_PUBLIC_HOST`, or relay configuration; `Makefile` runs no relay-profile lifecycle. Record
+  these two promised public paths from the new bundle rather than citing unchanged parent evidence.
+- P3 adversarial lifecycle/abuse coverage — **NEEDS EVIDENCE**. The exact-head target covers token
+  signature/origin/expiry, mixed public/private DNS, one stream limit, one byte limit, same-node
+  restoration, allowed/denied fixture ACLs, logout, and teardown. It does not execute the task's
+  copied-state, hostname-collision, admin-revocation/control-outage, connect-rate, 500-stream, or
+  configured-protected-range attacks. Add deterministic attacks for these changed policy/deployment
+  boundaries; the deployment/config/docs-only hunks are otherwise waived as declarative once their
+  behavior is exercised by the corresponding live proof.
+- MOCK/ENV: the first real-socket run inside the restricted verifier sandbox failed at ephemeral
+  `TcpListener::bind` with `EPERM`; rerunning outside that socket sandbox passed the repository target
+  and is not a code finding. The compose fixture is real Headscale/Tailscale, not a mocked provider.
+- SUITE: promoted the duplicate-`OPEN` real-WebSocket regression because it deterministically catches
+  a cross-stream quota denial. Keep it and make it green during rework.
+
+Commands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u
+CARGO_BUILD_RUSTC_WRAPPER -u RUST_LOG make verify-E3-T19` (all existing gates passed outside the
+socket sandbox); `cargo test -p wasm-vm-slirp --lib
+secure_relay_duplicate_open_does_not_leak_shared_concurrency -- --nocapture` (failed as predicted).
