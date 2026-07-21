@@ -3,7 +3,7 @@ id: E3-T19
 epic: 3
 title: Tailscale/Headscale lifecycle and public-relay fallback hardening
 priority: 319
-status: in-progress
+status: implemented
 depends_on: [E3-T16, E3-T17]
 estimate: M
 capstone: false
@@ -154,3 +154,37 @@ Commands: `env -u RUSTFLAGS -u CARGO_HOME -u CARGO_TARGET_DIR -u
 CARGO_BUILD_RUSTC_WRAPPER -u RUST_LOG make verify-E3-T19` (all existing gates passed outside the
 socket sandbox); `cargo test -p wasm-vm-slirp --lib
 secure_relay_duplicate_open_does_not_leak_shared_concurrency -- --nocapture` (failed as predicted).
+
+### 2026-07-21 — worker — resubmitted after refutation
+
+Commit under test: `d2d49ac` (rework commits `9c41541`, `797e099`, and `d2d49ac`, retaining the
+critic's promoted regression in `40a1af6`). Evidence: `evidence/e3-t19/README.md` and
+`evidence/e3-t19/browser-demo-126-of-126.png` (SHA-256
+`9fb0359e3a3864d7aa53609f58fe23d16109c8730f279097ab534eaa1d80ff39`).
+
+The duplicate-OPEN path now rejects a live stream ID before reserving shared concurrency. The
+recorded real-WebSocket attacks also exercise configured CIDRs, connect-rate exhaustion, 500 OPENs
+with a hard 64-stream ceiling, abrupt teardown, and zero leaked sockets. The deployment proof now
+pins its DERP map, runs the relay as an unprivileged user with a readable-only relay secret, selects
+and clears an exit node around a public request, restores the same browser identity, proves admin
+revocation, ACL denial, and control-server outage without fallback, then explicitly selects the
+relay and repeats public egress. Successful overlay opens use bounded retries on fresh stream IDs
+to accommodate peer-path convergence; denial assertions remain single-shot.
+
+Commands run:
+
+- `cargo fmt --all --check`
+- `cargo clippy --workspace --all-targets --all-features -- -D warnings`
+- `cargo test --workspace -- --skip file_backend::tests::kill_mid_write_no_torn_sectors`
+- `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`
+- `make web-build`
+- `make verify-E3-T19`
+- `cd web && E3_T19_DEMO=1 npx playwright test tests/e3-t19-demo-proof.spec.js`
+- From a pristine clone at exact head `d2d49ac`, with `RUSTFLAGS`, `RUST_LOG`, `CARGO_HOME`, and
+  `CARGO_TARGET_DIR` unset: `make web-build` and `make verify-E3-T19`.
+
+All gates passed. The full workspace run included 227 passing slirp unit tests and the 100 MiB
+one-byte-delivery stress path; the demo reached 126 passed / 0 failed. The final pristine-clone
+target rebuilt wasm and dependencies, passed the six relay-policy attacks, six secure real-socket
+attacks, seven CLI tests, deployment validation, the complete compose lifecycle, and four browser
+provider/security tests before reporting `verify-E3-T19 (provider lifecycle + relay security): OK`.
