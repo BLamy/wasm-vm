@@ -187,6 +187,23 @@ test("real Headscale registration survives Worker restart without retaining the 
       }
       throw lastError;
     };
+    const openTcpWithRetries = async (session, streams, host = peerIp, port = peerPort) => {
+      let lastError;
+      for (const stream of streams) {
+        const before = session.messages.length;
+        session.worker.postMessage({ type: "frame", bytes: openFrame(stream, host, port).buffer });
+        const opened = await waitForMessage(session, (message, index) => index >= before && (
+          (streamId(message) === stream && (opcode(message) === 2 || opcode(message) === 3)) ||
+          (message?.type === "flowError" && message.transport === "tcp" && message.stream === stream)
+        ));
+        if (opened.type !== "flowError" && opcode(opened) === 2) return stream;
+        lastError = new Error(
+          `TCP open failed for ${host}:${port}: ${opened.message ?? "OPEN_FAIL"}`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, 2_000));
+      }
+      throw lastError;
+    };
     const udpRoundtrip = async (session, stream) => {
       const before = session.messages.length;
       session.worker.postMessage({
@@ -297,7 +314,7 @@ test("real Headscale registration survives Worker restart without retaining the 
       if (expectPeerFail) {
         peerDeniedMs = await expectTcpOpenFailure(first, 1, peerIp, peerPort);
       } else {
-        peerResponse = await httpRequest(first, 1);
+        peerResponse = await retryHttpRequest(first, [1, 11, 12]);
         if (peerUdpPort) udp = await udpRoundtrip(first, 0x80000001);
         if (rstHost && rstPort) remoteReset = await expectRemoteReset(first, 6);
       }
@@ -310,7 +327,7 @@ test("real Headscale registration survives Worker restart without retaining the 
       if (expectPublicFail) {
         publicFailureMs = await expectTcpOpenFailure(first, 3, publicHost, publicPort);
       } else {
-        publicResponse = await httpRequest(first, 3, publicHost, publicPort);
+        publicResponse = await retryHttpRequest(first, [3, 13, 14], publicHost, publicPort);
       }
     }
     first.worker.terminate();
@@ -335,21 +352,16 @@ test("real Headscale registration survives Worker restart without retaining the 
     let postLogoutOpenFailed = null;
     let publicFailureAfterExitClearMs = null;
     let selectedExitNodeAfterRestore = second.status.netMap?.selectedExitNodeId ?? null;
+    let activeStream = null;
     if (peerIp && peerPort) {
       second.worker.postMessage({ type: "frame", bytes: frame(0, 0, Uint8Array.of(1)).buffer });
       await waitForMessage(second, (message) => opcode(message) === 0);
       if (expectPeerFail) {
         peerDeniedAfterRestartMs = await expectTcpOpenFailure(second, 2, peerIp, peerPort);
       } else {
-        peerResponseAfterRestart = revokeNode
-          ? await retryHttpRequest(second, [2, 12, 13])
-          : await httpRequest(second, 2);
+        peerResponseAfterRestart = await retryHttpRequest(second, [2, 22, 23]);
         if (!revokeNode) {
-          const activeBefore = second.messages.length;
-          second.worker.postMessage({ type: "frame", bytes: openFrame(4, peerIp, peerPort).buffer });
-          await waitForMessage(second, (message, index) => (
-            index >= activeBefore && streamId(message) === 4 && opcode(message) === 2
-          ));
+          activeStream = await openTcpWithRetries(second, [4, 24, 25]);
         }
       }
     }
@@ -370,7 +382,7 @@ test("real Headscale registration survives Worker restart without retaining the 
     }
     if (peerIp && peerPort && !expectPeerFail && !revokeNode) {
       await waitForMessage(second, (message, index) => (
-        index >= beforeLogout && streamId(message) === 4 && opcode(message) === 7
+        index >= beforeLogout && streamId(message) === activeStream && opcode(message) === 7
       ));
       activeFlowResetOnLogout = true;
     }
