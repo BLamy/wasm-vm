@@ -41,3 +41,9 @@ selection/clearing, public HTTPS via the exit, admin revocation, hostname/key fa
 control-plane outage, 1 GiB bounded flow behavior, and the 100 MiB Alpine relay fallback. E3-T19
 changes the deploy/security boundary around those paths and replays their permanent tests; it does
 not replace the previously recorded multi-hour guest transfers with a new claim.
+
+The final acceptance run repeated `make web-build && make verify-E3-T19` from a pristine clone of
+`f9cdb00` with Rust/Cargo build overrides and `RUST_LOG` removed from the environment. It ended with
+`verify-E3-T19 (provider lifecycle + relay security): OK`; the live-proof trap removed every
+compose container, network, named volume, and generated one-shot secret before the browser policy
+suite ran.

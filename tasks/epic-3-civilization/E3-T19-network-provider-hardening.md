@@ -3,7 +3,7 @@ id: E3-T19
 epic: 3
 title: Tailscale/Headscale lifecycle and public-relay fallback hardening
 priority: 319
-status: in-progress
+status: implemented
 depends_on: [E3-T16, E3-T17]
 estimate: M
 capstone: false
@@ -77,3 +77,43 @@ removes nodes, containers, sockets, and persisted test secrets.
 ### 2026-07-17 — planning rewrite
 Expands the former relay-only deployment ticket. Tailscale/Headscale lifecycle and ACL identity are
 the primary security boundary; public-relay token/rate/SSRF hardening remains required for fallback.
+
+### 2026-07-20 — worker — submitted for verification
+
+Commit under test: `f9cdb00` (implementation commits `38a4553` through `f9cdb00`, based on
+`e7872e3`). Evidence: `evidence/e3-t19/README.md` and
+`evidence/e3-t19/browser-demo-126-of-126.png` (SHA-256
+`7773021d1c41debb1b0702a58815bd92d1053fba19134b89d8d521c947132bff`).
+
+Commands run at the submitted head:
+
+- `cargo fmt --check`
+- `cargo clippy --workspace --all-targets --all-features -- -D warnings`
+- `cargo test --workspace -- --skip file_backend::tests::kill_mid_write_no_torn_sectors`
+- `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown`
+- `cargo test -p wasm-vm-slirp --lib relay_security`
+- `cargo test -p wasm-vm-slirp --lib secure_relay`
+- `cargo test -p wasm-vm-cli --bin wvrelay`
+- `bash tools/verify/e3-t19-deployment.sh`
+- `bash tools/verify/e3-t19-live-proof.sh`
+- `make web-build`
+- `cd web && npx playwright test tests/e3-t17-provider-selection.spec.js tests/e3-t19-provider-security.spec.js tests/roadmap-oci.spec.js`
+- `cd web && E3_T19_DEMO=1 npx playwright test tests/e3-t19-demo-proof.spec.js`
+- From a pristine clone at `f9cdb00` with `RUSTFLAGS`, `CARGO_HOME`, `CARGO_TARGET_DIR`,
+  `CARGO_BUILD_RUSTC_WRAPPER`, and `RUST_LOG` unset: `make web-build && make verify-E3-T19`.
+
+All prescribed gates passed. The pristine-clone target rebuilt the wasm demo, reran the relay
+unit/real-socket/CLI attacks, validated the deployment bundle, provisioned independent allowed and
+denied Headscale browser identities, proved same-node restoration and logout flow reset, removed
+all compose containers/networks/volumes, and finished with four passing browser policy tests and
+`verify-E3-T19 (provider lifecycle + relay security): OK`. The demo proof reached 126 passed / 0
+failed, reported zero application console errors, and showed the E3-T19 roadmap capability as
+verified.
+
+The implementation claims short-lived Origin-bound relay credentials; post-resolution protected
+address rejection; shared per-token stream/rate/byte budgets with typed failures; secret-free
+aggregate observability; explicit, non-fallback provider identity; and a reproducible Headscale,
+fixture, exit-node, app, and optional-relay deployment whose one-shot keys and state are destroyed
+on teardown. `cargo test --workspace --all-features` was also attempted, but its unsupported
+`zicsr-stub`/`roundtrip_csr` feature combination fails a pre-existing CSR expectation; the
+repository-prescribed workspace suite above passed and exercises the supported feature set.
