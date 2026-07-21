@@ -3,7 +3,7 @@ id: E3-T19
 epic: 3
 title: Tailscale/Headscale lifecycle and public-relay fallback hardening
 priority: 319
-status: implemented
+status: in-progress
 depends_on: [E3-T16, E3-T17]
 estimate: M
 capstone: false
@@ -188,3 +188,57 @@ one-byte-delivery stress path; the demo reached 126 passed / 0 failed. The final
 target rebuilt wasm and dependencies, passed the six relay-policy attacks, six secure real-socket
 attacks, seven CLI tests, deployment validation, the complete compose lifecycle, and four browser
 provider/security tests before reporting `verify-E3-T19 (provider lifecycle + relay security): OK`.
+
+### 2026-07-21 — verifier — VERDICT: needs-evidence
+
+- P1 duplicate stream IDs preserve the shared quota — **HELD**. Predicted that the sequence
+  `OPEN 1`, duplicate `OPEN 1`, `OPEN 2` under a two-stream limit would accept streams 1 and 2,
+  reject only the duplicate, and leave no phantom reservation. The independent real-WebSocket run
+  passed `secure_relay_duplicate_open_does_not_leak_shared_concurrency`; the reservation now checks
+  `quota_streams` before touching the shared registry (`crates/slirp/src/ws_proxy/driver.rs:610-637`).
+- P2 relay abuse and destination rework — **HELD**. Predicted configured CIDRs and mixed protected
+  DNS answers would fail, connect-rate exhaustion would be typed, and 500 OPENs would cap at 64 live
+  sockets with all 64 reaped after an abrupt disconnect. Independent runs passed six policy tests
+  and six real-socket tests; the latter observed 64 accepted, 436 refused, and the closing metric
+  `active_streams=0` (`crates/slirp/src/ws_proxy/ws_adapter_tests.rs:320-445`). Origin/token, byte,
+  CLI configuration, and explicit-provider browser tests also passed.
+- P3 clean-compose browser-VM HTTPS paths — **NEEDS EVIDENCE**. Predicted the submitted target would
+  boot the browser VM and complete HTTPS through both the selected exit and explicitly selected
+  relay, as the acceptance criterion requires. The independent compose run passed, but its exit
+  path invokes the transport Worker directly against `1.1.1.1:80`
+  (`tools/verify/e3-t19-live-proof.sh:26-36`), and its relay path sends a raw HTTP request to port 80
+  (`web/tests/e3-t19-compose-relay.spec.js:55-76`). No guest boots and no TLS request executes.
+  Record the clean composed browser VM completing an HTTPS request with the exit selected, then the
+  same guest-level HTTPS request after an explicit switch to relay; do not substitute OPEN_OK or
+  plaintext HTTP.
+- P4 copied-state and hostname-collision attacks — **NEEDS EVIDENCE**. Predicted the live target
+  would copy persisted machine state into a concurrently active second browser profile and register
+  a distinct fresh profile with the same requested hostname, then assert the documented identity,
+  node-count, and fail-closed behavior. The current proof only terminates the first Worker before
+  sequentially restoring its state (`web/tests/e3-t17-headscale-worker.spec.js:268-347`), and every
+  compose identity uses a distinct hostname (`tools/verify/e3-t19-live-proof.sh:28-67`). The cited
+  E3-T17 failure matrix covers malformed state, reused/expired keys, bad control URLs, and revocation
+  (`evidence/e3-t17/failure-matrix.txt:8-49`), but neither attack. Add both live attacks and preserve
+  their node-list/identity observations as exact-head evidence.
+- P5 lifecycle/fallback/teardown subset — **HELD**. The independent compose run observed same-node
+  sequential restoration, exit selection then clearing with public failure, admin revocation, ACL
+  denial while relay was available, control outage without frames or fallback, explicit relay
+  selection, and complete removal of all project containers, networks, and volumes. The submitted
+  screenshot digest also matches
+  `9fb0359e3a3864d7aa53609f58fe23d16109c8730f279097ab534eaa1d80ff39`.
+- COVERAGE: runtime security hunks are exercised by focused unit/real-socket/browser tests; deploy
+  manifests and docs are waived as declarative after the live bundle run. The missing browser-VM
+  HTTPS and concurrent identity attacks are task-promised behavior, so the corresponding proof
+  hunks remain `needs-evidence`; no implementation finding is raised. The prior duplicate-OPEN
+  regression remains the promoted suite artifact. No additional test is promoted until these
+  environment-dependent gaps are recorded.
+- MOCK/ENV: loopback binds failed with `EPERM` in the restricted verifier sandbox and passed
+  immediately with normal socket privileges; this is not a code finding. The successful lifecycle
+  used real composed Headscale/Tailscale services, not mocks.
+
+Commands: `cargo test -p wasm-vm-slirp --lib secure_relay -- --nocapture` (6 passed outside the
+socket sandbox); `cargo test -p wasm-vm-slirp --lib relay_security` (6 passed); `cargo test -p
+wasm-vm-cli --bin wvrelay` (7 passed); `cd web && npx playwright test
+tests/e3-t17-provider-selection.spec.js tests/e3-t19-provider-security.spec.js --reporter=line`
+(4 passed); `bash tools/verify/e3-t19-live-proof.sh` (passed; cleanup audited empty); `git diff
+--check e7872e3..223ac9d`; SHA-256 audit of the submitted screenshot.
