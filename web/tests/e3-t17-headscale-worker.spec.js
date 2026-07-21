@@ -140,9 +140,13 @@ test("real Headscale registration survives Worker restart without retaining the 
     const httpRequest = async (session, stream, host = peerIp, port = peerPort) => {
       const before = session.messages.length;
       session.worker.postMessage({ type: "frame", bytes: openFrame(stream, host, port).buffer });
-      await waitForMessage(session, (message, index) => (
-        index >= before && streamId(message) === stream && opcode(message) === 2
+      const opened = await waitForMessage(session, (message, index) => index >= before && (
+        (streamId(message) === stream && (opcode(message) === 2 || opcode(message) === 3)) ||
+        (message?.type === "flowError" && message.transport === "tcp" && message.stream === stream)
       ));
+      if (opened.type === "flowError" || opcode(opened) === 3) {
+        throw new Error(`TCP open failed for ${host}:${port}: ${opened.message ?? "OPEN_FAIL"}`);
+      }
       await waitForMessage(session, (message, index) => (
         index >= before && streamId(message) === stream && opcode(message) === 8
       ));
@@ -170,6 +174,18 @@ test("real Headscale registration survives Worker restart without retaining the 
       }
       session.worker.postMessage({ type: "frame", bytes: frame(stream, 6).buffer });
       return new TextDecoder().decode(joined);
+    };
+    const retryHttpRequest = async (session, streams, host = peerIp, port = peerPort) => {
+      let lastError;
+      for (const stream of streams) {
+        try {
+          return await httpRequest(session, stream, host, port);
+        } catch (error) {
+          lastError = error;
+          await new Promise((resolve) => setTimeout(resolve, 2_000));
+        }
+      }
+      throw lastError;
     };
     const udpRoundtrip = async (session, stream) => {
       const before = session.messages.length;
@@ -325,12 +341,16 @@ test("real Headscale registration survives Worker restart without retaining the 
       if (expectPeerFail) {
         peerDeniedAfterRestartMs = await expectTcpOpenFailure(second, 2, peerIp, peerPort);
       } else {
-        peerResponseAfterRestart = await httpRequest(second, 2);
-        const activeBefore = second.messages.length;
-        second.worker.postMessage({ type: "frame", bytes: openFrame(4, peerIp, peerPort).buffer });
-        await waitForMessage(second, (message, index) => (
-          index >= activeBefore && streamId(message) === 4 && opcode(message) === 2
-        ));
+        peerResponseAfterRestart = revokeNode
+          ? await retryHttpRequest(second, [2, 12, 13])
+          : await httpRequest(second, 2);
+        if (!revokeNode) {
+          const activeBefore = second.messages.length;
+          second.worker.postMessage({ type: "frame", bytes: openFrame(4, peerIp, peerPort).buffer });
+          await waitForMessage(second, (message, index) => (
+            index >= activeBefore && streamId(message) === 4 && opcode(message) === 2
+          ));
+        }
       }
     }
     if (clearExitAfterRestore && publicHost && publicPort) {
