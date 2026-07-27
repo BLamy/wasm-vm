@@ -3,7 +3,7 @@ id: E3-T21b
 epic: 3
 title: Bounded guest file agent and slirp control endpoint
 priority: 321.2
-status: pending
+status: in-progress
 depends_on: [E3-T21a]
 estimate: S
 risk: high

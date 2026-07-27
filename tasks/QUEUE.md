@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E3-T21b** — Bounded guest file agent and slirp control endpoint
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -140,7 +139,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [ ] `320` [E3-T20](epic-3-civilization/E3-T20-tailscale-apk-add-end-to-end.md) — Tailscale-backed `apk add` end-to-end with relay fallback *(deps: E3-T11, E3-T15, E3-T16, E3-T17, E3-T19)*
 - [-] `321` [E3-T21](epic-3-civilization/E3-T21-host-guest-file-transfer.md) — Host to guest file transfer - drag-and-drop upload and download *(deps: E3-T08, E3-T14)*
 - [x] `321.1` [E3-T21a](epic-3-civilization/E3-T21a-file-transfer-protocol.md) — File-transfer mechanism decision, protocol, and threat model *(deps: E3-T08, E3-T14)*
-- [ ] `321.2` [E3-T21b](epic-3-civilization/E3-T21b-guest-file-agent.md) — Bounded guest file agent and slirp control endpoint *(deps: E3-T21a)*
+- [~] `321.2` [E3-T21b](epic-3-civilization/E3-T21b-guest-file-agent.md) — Bounded guest file agent and slirp control endpoint *(deps: E3-T21a)*
 - [ ] `321.3` [E3-T21c](epic-3-civilization/E3-T21c-browser-file-transfer-ui.md) — Streaming browser upload/download UI *(deps: E3-T21b)*
 - [ ] `321.4` [E3-T21d](epic-3-civilization/E3-T21d-file-transfer-durability-proof.md) — File-transfer guest round-trip and durability proof *(deps: E3-T10, E3-T21c)*
 - [ ] `322` [E3-T12](epic-3-civilization/E3-T12-machine-snapshot-restore.md) — Full machine snapshot and restore with instant-resume boot *(deps: E3-T08, E3.5-T05a)*
