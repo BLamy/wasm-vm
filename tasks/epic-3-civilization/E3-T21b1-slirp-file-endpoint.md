@@ -3,7 +3,7 @@ id: E3-T21b1
 epic: 3
 title: Bounded WVFT engine and synthetic slirp endpoint
 priority: 321.21
-status: implemented
+status: verified
 depends_on: [E3-T21a]
 estimate: S
 risk: high
@@ -138,3 +138,45 @@ Exact-head commands:
 Per incremental re-verification, the verifier's P1/P5/P6/P7 results can carry forward because their
 code and dependency boundary are unchanged. Re-verification should focus on P2/P3/P4 and the
 endpoint lifecycle hunks added in `d28a0a7`.
+
+### 2026-07-27 — verifier — VERDICT: verified
+
+- P2 receiver credit enforcement — **HELD**. Predicted a fifth DATA frame pipelined behind the
+  four-frame ACCEPT grant would produce `ERROR(FLOW_CONTROL)` before the fifth sink write. The
+  promoted `receiver_rejects_data_beyond_advertised_credit` regression passed with four bytes
+  written. Sabotage raised the reset window to five; the same test failed with an ACK (`type = 6`)
+  where it predicted ERROR, then passed again after the mutation was reverted.
+- P3 terminal CANCEL idempotence — **HELD**. Predicted a duplicate CANCEL for stream 43 would emit
+  no frame, leave the connection open, and permit unused stream 44. The promoted
+  `duplicate_cancel_is_idempotent_and_connection_remains_usable` regression passed.
+- P4 timeout correlation — **HELD**. Predicted receiving stream 45 and host-upload stream 46 in
+  `AwaitAccept` would each retain their own ID in `ERROR(TIMEOUT)`. The promoted receiving
+  regression and verifier-added `timeout_error_identifies_a_host_upload_awaiting_accept` bounded
+  attack both passed.
+- P1/P5/P6/P7 — **CARRIED HELD**. Their implementation and dependency boundary are unchanged from
+  `d5914dc`: malformed/oversized/offset/name attacks, two-transfer admission, source-side credit
+  and mutation, the gateway-only connector probe, and the wasm build remain covered. The focused
+  suite and wasm build passed again at the frozen verification head.
+- COVERAGE endpoint lifecycle — **HELD**. Predicted both permanent sockets could negotiate
+  simultaneously; slot one could OFFER/DATA/COMMIT through the custom store; slot two would emit a
+  typed, stream-correlated timeout and close; reset sockets would disconnect and relisten; and a
+  new malformed session would emit typed `BAD_FRAME`. The real-TCP lifecycle regression passed,
+  exercising the queue, close, disconnect, custom-store, second-slot, timeout, and relisten hunks
+  in `crates/slirp/src/local_backend.rs:469-536`.
+- SUITE: retained the three promoted refutation regressions and added the host-upload timeout
+  correlation regression. The initial full-suite run inside the restricted sandbox failed only
+  where tests attempted local socket binds (`Operation not permitted`); the identical rerun with
+  local socket access passed 243 tests, with one pre-existing resolver test ignored.
+- PRISTINE: exact head `af8c29e` cloned without hardlinks to
+  `/private/tmp/e3-t21b1-pristine.KmJlBU/repo` under scrubbed `RUSTFLAGS`/`RUST_LOG`. The 13-test
+  focused WVFT suite, including 0/100 MiB and both real-TCP endpoint tests, passed; the
+  no-default-features wasm build passed.
+
+Commands: `cargo fmt --all --check`;
+`cargo clippy -p wasm-vm-slirp --all-targets -- -D warnings`; the three promoted focused
+regressions; `cargo test -p wasm-vm-slirp --lib
+file_transfer_real_tcp_transfer_timeout_close_two_slots_and_relisten -- --nocapture`;
+`cargo test -p wasm-vm-slirp --lib file_transfer -- --nocapture` (13 passed);
+`cargo test -p wasm-vm-slirp --lib` (243 passed, 1 ignored, with local socket access);
+`cargo build -p wasm-vm-slirp --target wasm32-unknown-unknown --no-default-features`;
+`git diff --check`; pristine-clone focused test and wasm build at `af8c29e`.
