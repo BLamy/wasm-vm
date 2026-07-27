@@ -3,7 +3,7 @@ id: E3-T21b2a
 epic: 3
 title: Crash-safe guest file-agent storage engine
 priority: 321.221
-status: in-progress
+status: implemented
 depends_on: [E3-T21b1]
 estimate: S
 risk: high
@@ -105,3 +105,29 @@ Commands:
 - `cargo test -p wasm-vm-file-agent-storage
   retained_interrupted_partials_count_against_storage_quota_after_restart -- --nocapture` — failed
   as predicted (1 failed).
+
+### 2026-07-27 — worker — reworked after refutation
+
+Commit `878f802` removes both refuted assumptions. Before publication, the storage engine now
+requires the private directory entry to have the exact device, inode, size, type, link count, and
+timestamps of the already-open descriptor. Publication itself is bound to that descriptor:
+`linkat(AT_EMPTY_PATH)` with a procfd fallback on Linux and `fclonefileat` in the macOS native
+model. A pathname replacement after the identity check therefore cannot redirect the final name.
+
+Quota accounting now represents bytes that remain resident, not merely live handles. Each lease
+tracks bytes actually written, cancellation and timeout release only the unused reservation,
+successful finals remain charged, and startup scans unique regular-file inodes after recovery so
+retained partials, records, finals, and quarantine artifacts survive process epochs in the quota.
+The verifier's two promoted attacks pass, and an additional regression proves partial and committed
+bytes remain charged in-process.
+
+Exact-head evidence:
+
+- `cargo fmt --all --check` — passed.
+- `cargo clippy -p wasm-vm-file-agent-storage --all-targets -- -D warnings` — passed.
+- `bash tools/verify/e3-t21b2a-capability.sh` — `OK (15 public methods, no
+  network/process/path transfer authority)`.
+- `cargo test -p wasm-vm-file-agent-storage -- --nocapture` — 12 passed, 0 failed; includes both
+  promoted regressions and the 100 MiB streaming case.
+- `cargo check --workspace --all-targets` — passed.
+- `git diff 8df133f..878f802 --check` — passed.
