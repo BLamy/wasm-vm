@@ -3,7 +3,7 @@ id: E3-T21c
 epic: 3
 title: Streaming browser upload/download UI
 priority: 321.3
-status: pending
+status: in-progress
 depends_on: [E3-T21b2c]
 estimate: S
 risk: medium
