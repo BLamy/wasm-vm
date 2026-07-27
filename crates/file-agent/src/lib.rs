@@ -702,6 +702,36 @@ mod tests {
     }
 
     #[test]
+    fn valid_coalesced_frames_survive_a_full_transport_read_after_fragmentation() {
+        let (_temp, storage, _inbox, _outbox) = setup((MAX_DATA_BYTES * 2) as u64);
+        let (mut session, _) = Session::service(storage, 0);
+        negotiate(&mut session);
+
+        let bytes = vec![0x5a; MAX_DATA_BYTES * 2];
+        let accepted = session.receive(&offer(UPLOAD, 7, "coalesced.bin", &bytes), 2);
+        assert_eq!(kind(&accepted.frames[0]), ACCEPT);
+
+        let mut first_payload = 0u64.to_be_bytes().to_vec();
+        first_payload.extend_from_slice(&bytes[..MAX_DATA_BYTES]);
+        let first = frame(DATA, 7, &first_payload);
+        let mut second_payload = (MAX_DATA_BYTES as u64).to_be_bytes().to_vec();
+        second_payload.extend_from_slice(&bytes[MAX_DATA_BYTES..]);
+        let second = frame(DATA, 7, &second_payload);
+
+        // This is a valid byte-stream split a real drive_io read can produce: a short read
+        // leaves a frame prefix buffered, then the next maximum-sized read contains the rest
+        // of that frame and a prefix of the following frame.
+        assert!(session.receive(&first[..100], 3).frames.is_empty());
+        let mut full_read = first[100..].to_vec();
+        full_read.extend_from_slice(&second[..100]);
+        assert_eq!(full_read.len(), HEADER_BYTES + MAX_FRAME_PAYLOAD);
+        let out = session.receive(&full_read, 4);
+        assert!(!out.close, "valid coalesced frames must not be rejected");
+        assert_eq!(kind(&out.frames[0]), ACK);
+        assert_eq!(session.buffered_bytes(), 100);
+    }
+
+    #[test]
     fn download_streams_under_credit_and_waits_for_complete() {
         let (_temp, storage, _inbox, outbox) = setup(1024);
         let bytes = vec![0x5a; MAX_DATA_BYTES + 9];

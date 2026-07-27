@@ -3,7 +3,7 @@ id: E3-T21b2b
 epic: 3
 title: Static riscv64 WVFT guest agent
 priority: 321.222
-status: implemented
+status: in-progress
 depends_on: [E3-T21b2a]
 estimate: S
 risk: high
@@ -68,3 +68,26 @@ Exact-head evidence:
 
 This slice produces the verified agent artifact and native adapter proof. Rootfs installation,
 startup wiring, guest execution, and browser/boot proof are deliberately isolated in E3-T21b2c.
+
+### 2026-07-27 — verifier — VERDICT: refuted
+
+- P1 valid transport fragmentation/coalescing — FAILED. Predicted that a valid maximum-sized DATA
+  frame split after 100 bytes, followed by one `HEADER_BYTES + MAX_FRAME_PAYLOAD` transport read
+  containing the rest of that frame and the first 100 bytes of the next valid frame, would consume
+  the complete frame and retain the next prefix. Observed `Session::receive` reject the valid
+  stream as `TooLarge` at `crates/file-agent/src/lib.rs:139-143` before parsing either frame; the
+  promoted regression
+  `valid_coalesced_frames_survive_a_full_transport_read_after_fragmentation` fails at line 729.
+  Parse complete buffered frames before applying a bound to the remaining incomplete frame, then
+  rerun the focused adapter suite and evidence.
+- COVERAGE: submission review covered every new runtime/build/capability hunk structurally, but
+  dynamic sufficiency is not established after the framing refutation. The six worker tests do not
+  exercise valid maximum-frame coalescing, the static build scripts are claim evidence rather than
+  runtime protocol coverage, and the expensive binary reproducibility/pristine-clone gates were
+  skipped because correctness did not hold.
+- SUITE: promoted the deterministic coalesced-frame regression above. It is transport-shape
+  invariant, uses the production frame limit, and fails at submission head `0733260`.
+
+Command:
+`cargo test -p wasm-vm-file-agent valid_coalesced_frames_survive_a_full_transport_read_after_fragmentation -- --nocapture`
+— failed: 0 passed, 1 failed.
