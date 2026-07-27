@@ -3,7 +3,7 @@ id: E3-T21b2a
 epic: 3
 title: Crash-safe guest file-agent storage engine
 priority: 321.221
-status: in-progress
+status: implemented
 depends_on: [E3-T21b1]
 estimate: S
 risk: high
@@ -191,3 +191,18 @@ The required Linux execution remains pending. OrbStack is running and a cached L
 available, but the execution boundary requires explicit user approval before mounting this private
 crate's source into that container. The task remains `in-progress` until that proof is run; no
 verification claim is made from the macOS model alone.
+
+### 2026-07-27 — worker — Linux proof completed
+
+With explicit user approval, the exact `crates/file-agent-storage/src/lib.rs` from `85a39d2`
+(`sha256 55cd0b3226380d7e03c209d0396fd170a7d7be0362d02a532e8b7fb6a6ce1530`) was copied into an
+isolated minimal crate with vendored public dependencies. No other repository source was mounted.
+The cached Linux Rust container ran with `--network none`, a read-only `/proof` mount, and an
+ephemeral target directory.
+
+- `cargo test --offline final_cannot_be_mutated_through_a_precommit_partial_handle --
+  --nocapture` — passed on Linux (1 passed, 0 failed).
+
+This executes the actual `O_TMPFILE` copy, rehash, sync, and descriptor-publication path that the
+second verifier required. Combined with the exact-head native evidence above, the repaired
+submission is ready for fresh incremental verification.
