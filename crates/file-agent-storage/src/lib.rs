@@ -989,6 +989,60 @@ mod tests {
     }
 
     #[test]
+    fn replaced_partial_name_cannot_publish_unvalidated_out_of_root_inode() {
+        let (temp, storage, inbox, _outbox) = setup(1024);
+        let outside = temp.path().join("outside-attacker-file");
+        fs::write(&outside, b"attacker").unwrap();
+
+        let mut upload = storage
+            .begin_upload("final", 7, Sha256::digest(b"correct").into())
+            .unwrap();
+        upload.write_chunk(0, b"correct").unwrap();
+
+        let partial = inbox.join(".wvft-0000000000000001.part");
+        fs::remove_file(&partial).unwrap();
+        fs::hard_link(&outside, &partial).unwrap();
+
+        assert!(
+            upload.commit().is_err(),
+            "commit must reject a partial pathname that no longer identifies the held, hashed inode"
+        );
+        assert!(
+            !inbox.join("final").exists(),
+            "unvalidated attacker bytes became visible under the final name"
+        );
+        assert_eq!(fs::read(&outside).unwrap(), b"attacker");
+    }
+
+    #[test]
+    fn retained_interrupted_partials_count_against_storage_quota_after_restart() {
+        let temp = tempfile::tempdir().unwrap();
+        let inbox = temp.path().join("inbox");
+        let outbox = temp.path().join("outbox");
+        let config = Config {
+            inbox,
+            outbox,
+            quota_bytes: 2,
+        };
+        {
+            let storage = Storage::open(config.clone()).unwrap();
+            let mut interrupted = storage
+                .begin_upload("first", 2, Sha256::digest(b"ab").into())
+                .unwrap();
+            interrupted.write_chunk(0, b"ab").unwrap();
+        }
+
+        let reopened = Storage::open(config).unwrap();
+        assert!(
+            matches!(
+                reopened.begin_upload("second", 1, Sha256::digest(b"x").into()),
+                Err(Error::Quota)
+            ),
+            "retained interrupted bytes must remain charged to the configured storage quota"
+        );
+    }
+
+    #[test]
     fn restart_skips_private_epoch_collisions_and_alias_roots_are_rejected() {
         let temp = tempfile::tempdir().unwrap();
         let inbox = temp.path().join("inbox");

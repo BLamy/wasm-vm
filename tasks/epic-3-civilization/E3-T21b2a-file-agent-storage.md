@@ -3,7 +3,7 @@ id: E3-T21b2a
 epic: 3
 title: Crash-safe guest file-agent storage engine
 priority: 321.221
-status: implemented
+status: in-progress
 depends_on: [E3-T21b1]
 estimate: S
 risk: high
@@ -67,3 +67,41 @@ Exact-head evidence:
 
 This slice is native filesystem logic and does not change the wasm/demo surface; cross-compilation,
 rootfs installation, and browser/boot proof are deliberately isolated in E3-T21b2b/c.
+
+### 2026-07-27 — verifier — VERDICT: refuted
+
+- **P1 held partial identity — FAILED.** Predicted publication would prove that the private
+  `.part` pathname still identified the already-open descriptor whose bytes were streamed and
+  hashed. After the last DATA, the attack unlinked `.wvft-0000000000000001.part` and replaced it
+  with a hard link to an out-of-root file containing `attacker`; `Upload::commit()` returned
+  `Ok(())` because it links the pathname without an identity/link-count recheck at
+  `crates/file-agent-storage/src/lib.rs:484-486`. The promoted regression fails at
+  `crates/file-agent-storage/src/lib.rs:1006` with `commit must reject a partial pathname that no
+  longer identifies the held, hashed inode`. Link from the held descriptor (or atomically rename a
+  descriptor-identity-verified pathname) and reject any inode/link-count substitution before
+  visibility.
+- **P2 persistent quota — FAILED.** Predicted retained interrupted partials would remain charged to
+  the configured storage quota across restart. A two-byte interrupted partial filled a two-byte
+  quota, but reopening `Storage` reset `reserved_bytes` to zero at
+  `crates/file-agent-storage/src/lib.rs:177-184`; a new one-byte upload was accepted. The promoted
+  regression fails at `crates/file-agent-storage/src/lib.rs:1036` with `retained interrupted bytes
+  must remain charged to the configured storage quota`. Recover and account retained artifacts
+  before accepting another transfer, or enforce bounded cleanup without promoting them.
+- **COVERAGE — INSUFFICIENT.** The worker tests exercised representative hostile names and a
+  pre-existing hard link, but did not exercise pathname substitution after validation or retained
+  quota across process epochs. Both missing attacks directly cover the task's link-race and quota
+  criteria and are now committed as deterministic rejection tests.
+- **SUITE:** promoted
+  `replaced_partial_name_cannot_publish_unvalidated_out_of_root_inode` and
+  `retained_interrupted_partials_count_against_storage_quota_after_restart`. Each fails against
+  submission head `666af6e`, so no broad suite, sabotage mutation, workspace gate, or pristine-clone
+  proof was run; verifier policy stops expensive proof once correctness is refuted.
+
+Commands:
+
+- `cargo test -p wasm-vm-file-agent-storage
+  replaced_partial_name_cannot_publish_unvalidated_out_of_root_inode -- --nocapture` — failed as
+  predicted (1 failed).
+- `cargo test -p wasm-vm-file-agent-storage
+  retained_interrupted_partials_count_against_storage_quota_after_restart -- --nocapture` — failed
+  as predicted (1 failed).
