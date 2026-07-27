@@ -167,3 +167,27 @@ Commands:
   mutation failed as predicted.
 - The Linux-only promoted attack was frozen for the required Linux submission run; the local
   OrbStack/Docker daemon was unavailable.
+
+### 2026-07-27 — worker — Linux inode-isolation rework
+
+Commit `85a39d2` replaces Linux publication of the writable upload inode with a second,
+directory-unreachable `O_TMPFILE` inode. Commit streams the held upload descriptor into that inode,
+rehashes and length-checks the copy, syncs it, and only then publishes the isolated descriptor with
+atomic no-replacement linking. A descriptor retained against the original partial can no longer
+change COMPLETE bytes. The macOS model continues to clone into an independent inode and now
+revalidates the published copy.
+
+Exact-head native evidence:
+
+- `cargo fmt --all --check` — passed.
+- `cargo clippy -p wasm-vm-file-agent-storage --all-targets -- -D warnings` — passed.
+- `bash tools/verify/e3-t21b2a-capability.sh` — `OK (15 public methods, no
+  network/process/path transfer authority)`.
+- `cargo test -p wasm-vm-file-agent-storage -- --nocapture` — 13 passed, 0 failed, including the
+  promoted retained-writer regression and the 100 MiB streaming case.
+- `cargo check --workspace --all-targets` — passed.
+
+The required Linux execution remains pending. OrbStack is running and a cached Linux Rust image is
+available, but the execution boundary requires explicit user approval before mounting this private
+crate's source into that container. The task remains `in-progress` until that proof is run; no
+verification claim is made from the macOS model alone.
