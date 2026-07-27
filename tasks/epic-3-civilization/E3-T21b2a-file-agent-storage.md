@@ -3,7 +3,7 @@ id: E3-T21b2a
 epic: 3
 title: Crash-safe guest file-agent storage engine
 priority: 321.221
-status: pending
+status: in-progress
 depends_on: [E3-T21b1]
 estimate: S
 risk: high
