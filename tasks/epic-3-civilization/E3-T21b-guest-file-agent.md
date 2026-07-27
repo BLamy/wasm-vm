@@ -3,7 +3,8 @@ id: E3-T21b
 epic: 3
 title: Bounded guest file agent and slirp control endpoint
 priority: 321.2
-status: in-progress
+status: cancelled
+decomposed_into: [E3-T21b1, E3-T21b2]
 depends_on: [E3-T21a]
 estimate: S
 risk: high
@@ -29,4 +30,10 @@ Send malformed/truncated/oversized frames, traverse names, exhaust concurrency a
 disconnect at every state transition. No host capability outside the protocol may be reached.
 
 ## Verification log
-(empty)
+
+### 2026-07-27 — planning split
+
+The seam audit found two independently falsifiable high-risk boundaries: the alloc-bounded WVFT
+parser/service plus synthetic slirp port, and the static riscv64 filesystem agent plus reproducible
+rootfs integration. Combining them would force every protocol refutation to repeat cross-toolchain
+and image gates. This container is replaced by E3-T21b1 and E3-T21b2.
