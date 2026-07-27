@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: implemented
+status: verified
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -399,3 +399,31 @@ Exact-head commands:
 - `git diff b5296e5^..b5296e5 --check`
 
 Fresh re-verification should inspect only this one-line P4 case-sensitivity change.
+
+### 2026-07-27 — verifier — VERDICT: verified
+
+- **P1 framing and bounded state — HELD (carried forward).**
+- **P2 out-of-root hard-link capability — HELD (carried forward).**
+- **P3 visibility/durability interruption boundary — HELD (carried forward).**
+- **P4 section-wide DENY invariant — HELD.** The adjacent-paragraph and multiline results from
+  verifier commit `3762adf` remain unchanged.
+- **P4 case sensitivity — HELD.** Predicted the one-line `re.IGNORECASE` change would preserve the
+  normal document while rejecting both the exact uppercase `ALLOWED` mutation and a mixed-case
+  `PeRmItTeD` variation inside `Capabilities not granted`. The normal checker passed from the
+  repository and `/tmp`; both sabotage copies were rejected with
+  `permissive language is forbidden in the denied-capabilities section`. Citation:
+  `tools/verify/e3-t21a-protocol.sh:175-189`.
+- **COVERAGE:** the changed success path and both uppercase/mixed-case failure paths were directly
+  exercised. No changed hunk remains unexecuted.
+- **SUITE:** retain `tools/verify/e3-t21a-protocol.sh` as the recurring acceptance target. The
+  temporary mutation copies were discarded because their exact deterministic constructions are
+  recorded here and add no runtime fixture value.
+
+Commands:
+
+- `bash -n tools/verify/e3-t21a-protocol.sh`
+- checker from the repository and `/tmp`
+- exact uppercase `ALLOWED` sabotage inside the normative section
+- mixed-case `PeRmItTeD` sabotage inside the normative section
+- `python3 tools/check_task_policy.py`
+- `git diff b5296e5^..b5296e5 --check`
