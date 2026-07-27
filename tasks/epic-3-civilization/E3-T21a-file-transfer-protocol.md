@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: pending
+status: in-progress
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
