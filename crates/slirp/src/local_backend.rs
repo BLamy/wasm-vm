@@ -969,6 +969,101 @@ mod tests {
         bytes
     }
 
+    fn wvft_frame(kind: u8, stream_id: u32, payload: &[u8]) -> Vec<u8> {
+        let mut frame = Vec::from(*b"WVFT");
+        frame.extend_from_slice(&[1, kind, 0, 0]);
+        frame.extend_from_slice(&stream_id.to_be_bytes());
+        frame.extend_from_slice(&(payload.len() as u32).to_be_bytes());
+        frame.extend_from_slice(payload);
+        frame
+    }
+
+    fn establish_file_tcp(
+        backend: &mut SlirpLocalBackend,
+        client_port: u16,
+        client_isn: i32,
+    ) -> i32 {
+        backend.tx(&guest_tcp_segment(
+            GW_IP,
+            client_port,
+            crate::file_transfer::PORT,
+            client_isn,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        let server_isn = loop {
+            let frame = backend.rx().expect("WVFT TCP SYN-ACK");
+            let Ok(eth) = EthernetFrame::new_checked(&frame) else {
+                continue;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                continue;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                continue;
+            };
+            if tcp.src_port() == crate::file_transfer::PORT
+                && tcp.dst_port() == client_port
+                && tcp.syn()
+                && tcp.ack()
+            {
+                break tcp.seq_number().0;
+            }
+        };
+        backend.tx(&guest_tcp_segment(
+            GW_IP,
+            client_port,
+            crate::file_transfer::PORT,
+            client_isn.wrapping_add(1),
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::None,
+            &[],
+        ));
+        while backend.rx().is_some() {}
+        server_isn
+    }
+
+    fn send_file_bytes(
+        backend: &mut SlirpLocalBackend,
+        client_port: u16,
+        client_seq: &mut i32,
+        server_seq: &mut i32,
+        bytes: &[u8],
+    ) -> Vec<u8> {
+        backend.tx(&guest_tcp_segment(
+            GW_IP,
+            client_port,
+            crate::file_transfer::PORT,
+            *client_seq,
+            Some(*server_seq),
+            TcpControl::Psh,
+            bytes,
+        ));
+        *client_seq = client_seq.wrapping_add(bytes.len() as i32);
+        let mut payload = Vec::new();
+        while let Some(frame) = backend.rx() {
+            let Ok(eth) = EthernetFrame::new_checked(&frame) else {
+                continue;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                continue;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                continue;
+            };
+            if tcp.src_port() == crate::file_transfer::PORT
+                && tcp.dst_port() == client_port
+                && !tcp.payload().is_empty()
+                && tcp.seq_number().0 == *server_seq
+            {
+                payload.extend_from_slice(tcp.payload());
+                *server_seq = server_seq.wrapping_add(tcp.payload().len() as i32);
+            }
+        }
+        payload
+    }
+
     #[derive(Default)]
     struct UdpProbeState {
         opened: Vec<(Ipv4Addr, u16)>,
@@ -1085,6 +1180,61 @@ mod tests {
         fn shutdown_write(&mut self, _id: ConnId) {}
 
         fn close(&mut self, _id: ConnId) {}
+    }
+
+    #[derive(Default)]
+    struct FileStoreState {
+        bytes: Vec<u8>,
+        commits: usize,
+        cancels: usize,
+    }
+
+    struct FileSinkProbe(Rc<RefCell<FileStoreState>>);
+
+    impl crate::file_transfer::TransferSink for FileSinkProbe {
+        fn write(
+            &mut self,
+            offset: u64,
+            bytes: &[u8],
+        ) -> Result<(), crate::file_transfer::ErrorCode> {
+            let mut state = self.0.borrow_mut();
+            if offset != state.bytes.len() as u64 {
+                return Err(crate::file_transfer::ErrorCode::BadOffset);
+            }
+            state.bytes.extend_from_slice(bytes);
+            Ok(())
+        }
+
+        fn commit(
+            &mut self,
+            total_len: u64,
+            _sha256: [u8; 32],
+        ) -> Result<(), crate::file_transfer::ErrorCode> {
+            let mut state = self.0.borrow_mut();
+            if total_len != state.bytes.len() as u64 {
+                return Err(crate::file_transfer::ErrorCode::Io);
+            }
+            state.commits += 1;
+            Ok(())
+        }
+
+        fn cancel(&mut self) {
+            self.0.borrow_mut().cancels += 1;
+        }
+    }
+
+    struct FileStoreProbe(Rc<RefCell<FileStoreState>>);
+
+    impl TransferStore for FileStoreProbe {
+        fn open_sink(
+            &mut self,
+            _name: &str,
+            _total_len: u64,
+            _sha256: [u8; 32],
+        ) -> Result<Box<dyn crate::file_transfer::TransferSink>, crate::file_transfer::ErrorCode>
+        {
+            Ok(Box::new(FileSinkProbe(self.0.clone())))
+        }
     }
 
     fn guest_arp_request() -> Vec<u8> {
@@ -1258,6 +1408,188 @@ mod tests {
         assert!(
             dials.borrow().is_empty(),
             "local wrong ports also fail closed"
+        );
+    }
+
+    #[test]
+    fn file_transfer_real_tcp_transfer_timeout_close_two_slots_and_relisten() {
+        use sha2::{Digest, Sha256};
+
+        let now = Rc::new(Cell::new(1i64));
+        let clock = {
+            let now = now.clone();
+            Box::new(move || now.get())
+        };
+        let store = Rc::new(RefCell::new(FileStoreState::default()));
+        let mut be = SlirpLocalBackend::new(GW_MAC, clock)
+            .with_file_transfer_store(Box::new(FileStoreProbe(store.clone())));
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+
+        let first_port = 42_101;
+        let second_port = 42_102;
+        let mut first_server_seq = establish_file_tcp(&mut be, first_port, 1000).wrapping_add(1);
+        let mut second_server_seq = establish_file_tcp(&mut be, second_port, 2000).wrapping_add(1);
+        assert!(
+            be.file_connections.iter().all(Option::is_some),
+            "both bounded listener slots own independent WVFT connections"
+        );
+        let mut first_seq = 1001;
+        let mut second_seq = 2001;
+        assert_eq!(
+            send_file_bytes(
+                &mut be,
+                first_port,
+                &mut first_seq,
+                &mut first_server_seq,
+                &wvft_frame(1, 0, &[1]),
+            )[5],
+            2
+        );
+        assert_eq!(
+            send_file_bytes(
+                &mut be,
+                second_port,
+                &mut second_seq,
+                &mut second_server_seq,
+                &wvft_frame(1, 0, &[1]),
+            )[5],
+            2
+        );
+
+        let bytes = b"x";
+        let sha: [u8; 32] = Sha256::digest(bytes).into();
+        let mut offer = vec![2, 0];
+        offer.extend_from_slice(&5u16.to_be_bytes());
+        offer.extend_from_slice(&1u64.to_be_bytes());
+        offer.extend_from_slice(&sha);
+        offer.extend_from_slice(b"x.bin");
+        assert_eq!(
+            send_file_bytes(
+                &mut be,
+                first_port,
+                &mut first_seq,
+                &mut first_server_seq,
+                &wvft_frame(3, 51, &offer),
+            )[5],
+            4
+        );
+        let mut data = 0u64.to_be_bytes().to_vec();
+        data.push(b'x');
+        assert_eq!(
+            send_file_bytes(
+                &mut be,
+                first_port,
+                &mut first_seq,
+                &mut first_server_seq,
+                &wvft_frame(5, 51, &data),
+            )[5],
+            6
+        );
+        let mut commit = 1u64.to_be_bytes().to_vec();
+        commit.extend_from_slice(&sha);
+        assert_eq!(
+            send_file_bytes(
+                &mut be,
+                first_port,
+                &mut first_seq,
+                &mut first_server_seq,
+                &wvft_frame(7, 51, &commit),
+            )[5],
+            8
+        );
+        assert_eq!(store.borrow().bytes, b"x");
+        assert_eq!(store.borrow().commits, 1);
+
+        let mut timeout_offer = vec![2, 0];
+        timeout_offer.extend_from_slice(&8u16.to_be_bytes());
+        timeout_offer.extend_from_slice(&1u64.to_be_bytes());
+        timeout_offer.extend_from_slice(&Sha256::digest(b"y"));
+        timeout_offer.extend_from_slice(b"slow.bin");
+        assert_eq!(
+            send_file_bytes(
+                &mut be,
+                second_port,
+                &mut second_seq,
+                &mut second_server_seq,
+                &wvft_frame(3, 52, &timeout_offer),
+            )[5],
+            4
+        );
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            second_port,
+            crate::file_transfer::PORT,
+            second_seq,
+            Some(second_server_seq),
+            TcpControl::None,
+            &[],
+        ));
+        while be.rx().is_some() {}
+        now.set(crate::file_transfer::IDLE_TIMEOUT_MS as i64 + 2);
+        be.poll();
+        let mut timeout = Vec::new();
+        while let Some(frame) = be.rx() {
+            let Ok(eth) = EthernetFrame::new_checked(&frame) else {
+                continue;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                continue;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                continue;
+            };
+            if tcp.src_port() == crate::file_transfer::PORT && tcp.dst_port() == second_port {
+                timeout.extend_from_slice(tcp.payload());
+            }
+        }
+        assert_eq!(timeout[5], 10);
+        assert_eq!(u32::from_be_bytes(timeout[8..12].try_into().unwrap()), 52);
+
+        // Reset both guest connections so the permanent sockets reach Closed and are re-armed.
+        for (port, seq, server_seq) in [
+            (first_port, first_seq, first_server_seq),
+            (second_port, second_seq, second_server_seq),
+        ] {
+            be.tx(&guest_tcp_segment(
+                GW_IP,
+                port,
+                crate::file_transfer::PORT,
+                seq,
+                Some(server_seq),
+                TcpControl::Rst,
+                &[],
+            ));
+        }
+        for _ in 0..4 {
+            now.set(now.get() + 1);
+            be.service();
+        }
+        let third_port = 42_103;
+        let mut third_server_seq = establish_file_tcp(&mut be, third_port, 3000).wrapping_add(1);
+        let mut third_seq = 3001;
+        assert_eq!(
+            send_file_bytes(
+                &mut be,
+                third_port,
+                &mut third_seq,
+                &mut third_server_seq,
+                &wvft_frame(1, 0, &[1]),
+            )[5],
+            2,
+            "a closed slot must relisten and negotiate a fresh connection"
+        );
+        let fatal = send_file_bytes(
+            &mut be,
+            third_port,
+            &mut third_seq,
+            &mut third_server_seq,
+            &wvft_frame(0xff, 53, &[]),
+        );
+        assert_eq!(fatal[5], 10, "malformed framing returns typed ERROR");
+        assert_eq!(
+            u16::from_be_bytes(fatal[16..18].try_into().unwrap()),
+            crate::file_transfer::ErrorCode::BadFrame as u16
         );
     }
 

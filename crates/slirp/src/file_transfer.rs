@@ -114,6 +114,7 @@ struct Receiving {
     total_len: u64,
     expected_sha: [u8; 32],
     received: u64,
+    receive_credit: u8,
     hasher: Sha256,
     sink: Box<dyn TransferSink>,
 }
@@ -173,6 +174,17 @@ impl Connection {
                 | State::Sending(_)
                 | State::AwaitComplete { .. }
         )
+    }
+
+    fn active_stream_id(&self) -> Option<u32> {
+        match &self.state {
+            State::Receiving(receive) => Some(receive.stream_id),
+            State::AwaitAccept { stream_id, .. } | State::AwaitComplete { stream_id, .. } => {
+                Some(*stream_id)
+            }
+            State::Sending(send) => Some(send.stream_id),
+            _ => None,
+        }
     }
 
     fn buffered_bytes(&self) -> usize {
@@ -318,6 +330,14 @@ impl FileTransferService {
                 break;
             }
         }
+        if !out.close
+            && let State::Receiving(receive) = &mut connection.state
+        {
+            // `receive` returning hands this batch of ACKs to the transport adapter. A later call
+            // begins a new receiver window; frames pipelined in this same call must share the
+            // original four-frame grant.
+            receive.receive_credit = MAX_IN_FLIGHT_DATA_FRAMES as u8;
+        }
         self.connections.insert(id, connection);
         out
     }
@@ -328,8 +348,9 @@ impl FileTransferService {
             if connection.active()
                 && now_ms.saturating_sub(connection.last_activity_ms) >= IDLE_TIMEOUT_MS
             {
+                let stream_id = connection.active_stream_id().unwrap_or(1);
                 connection.cancel();
-                out.push((id, error_frame(0, ErrorCode::Timeout)));
+                out.push((id, error_frame(stream_id, ErrorCode::Timeout)));
             }
         }
         out
@@ -359,6 +380,11 @@ impl FileTransferService {
                 connection.state = State::Ready;
             }
             State::Ready => {
+                if frame.stream_id != 0 && connection.used_streams.contains(&frame.stream_id) {
+                    // Terminal stream IDs are never reusable. Late/duplicate frames for them are
+                    // ignored without poisoning the framed connection.
+                    return;
+                }
                 if frame.kind != OFFER || frame.stream_id == 0 {
                     fail_stream(connection, frame.stream_id, ErrorCode::BadState, out);
                     return;
@@ -402,6 +428,7 @@ impl FileTransferService {
                     total_len: offer.total_len,
                     expected_sha: offer.sha256,
                     received: 0,
+                    receive_credit: MAX_IN_FLIGHT_DATA_FRAMES as u8,
                     hasher: Sha256::new(),
                     sink,
                 });
@@ -414,6 +441,10 @@ impl FileTransferService {
                 }
                 match frame.kind {
                     DATA => {
+                        if receive.receive_credit == 0 {
+                            fail_stream(connection, frame.stream_id, ErrorCode::FlowControl, out);
+                            return;
+                        }
                         if frame.payload.len() <= 8 || frame.payload.len() > MAX_FRAME_PAYLOAD {
                             fail_stream(connection, frame.stream_id, ErrorCode::BadFrame, out);
                             return;
@@ -436,6 +467,7 @@ impl FileTransferService {
                         }
                         receive.hasher.update(data);
                         receive.received += data.len() as u64;
+                        receive.receive_credit -= 1;
                         let mut ack = receive.received.to_be_bytes().to_vec();
                         ack.push(4);
                         out.frames.push(frame_bytes(ACK, frame.stream_id, &ack));
@@ -1225,11 +1257,8 @@ mod tests {
         hello(&mut service, id);
         send_download(&mut service, id, 77, "first", 0);
         let reused = service.receive(id, &offer(DOWNLOAD, 77, "second", b""), 4);
-        assert_eq!(reused.frames[0][5], ERROR);
-        assert_eq!(
-            u16::from_be_bytes(reused.frames[0][16..18].try_into().unwrap()),
-            ErrorCode::BadState as u16
-        );
+        assert!(reused.frames.is_empty());
+        assert!(!reused.close);
 
         let source_id = service.connect(0);
         hello(&mut service, source_id);
