@@ -1083,6 +1083,86 @@ mod tests {
     }
 
     #[test]
+    fn receiver_rejects_data_beyond_advertised_credit() {
+        let stats = Rc::new(RefCell::new(Stats::default()));
+        let mut service = FileTransferService::new(Box::new(CountingStore(stats.clone())));
+        let id = service.connect(0);
+        hello(&mut service, id);
+        let data = b"abcde";
+        let accepted = service.receive(id, &offer(DOWNLOAD, 42, "credit.bin", data), 1);
+        assert_eq!(accepted.frames[0][5], ACCEPT);
+        assert_eq!(accepted.frames[0][16], MAX_IN_FLIGHT_DATA_FRAMES as u8);
+
+        // All five frames arrive in one read before any ACK returned by `receive` can reach the
+        // sender. The fifth therefore exceeds the four-frame receiver credit.
+        let mut pipelined = Vec::new();
+        for (offset, byte) in data.iter().enumerate() {
+            let mut payload = (offset as u64).to_be_bytes().to_vec();
+            payload.push(*byte);
+            pipelined.extend_from_slice(&frame_bytes(DATA, 42, &payload));
+        }
+        let output = service.receive(id, &pipelined, 2);
+        let last = output.frames.last().expect("terminal FLOW_CONTROL error");
+        assert_eq!(last[5], ERROR);
+        assert_eq!(
+            u16::from_be_bytes(last[16..18].try_into().unwrap()),
+            ErrorCode::FlowControl as u16
+        );
+        assert_eq!(
+            stats.borrow().bytes,
+            MAX_IN_FLIGHT_DATA_FRAMES as u64,
+            "the over-credit frame must not reach the sink"
+        );
+    }
+
+    #[test]
+    fn duplicate_cancel_is_idempotent_and_connection_remains_usable() {
+        let stats = Rc::new(RefCell::new(Stats::default()));
+        let mut service = FileTransferService::new(Box::new(CountingStore(stats)));
+        let id = service.connect(0);
+        hello(&mut service, id);
+        service.receive(id, &offer(DOWNLOAD, 43, "cancel.bin", b"x"), 1);
+        let cancel = frame_bytes(CANCEL, 43, &0u16.to_be_bytes());
+        let first = service.receive(id, &cancel, 2);
+        assert_eq!(first.frames[0][5], ERROR);
+        assert_eq!(
+            u16::from_be_bytes(first.frames[0][16..18].try_into().unwrap()),
+            ErrorCode::Cancelled as u16
+        );
+
+        let duplicate = service.receive(id, &cancel, 3);
+        assert!(
+            !duplicate.close,
+            "duplicate CANCEL must not reclassify or kill the connection"
+        );
+        assert!(
+            duplicate.frames.is_empty(),
+            "frames after the terminal stream state are ignored"
+        );
+        let next = service.receive(id, &offer(DOWNLOAD, 44, "next.bin", b"x"), 4);
+        assert_eq!(
+            next.frames[0][5], ACCEPT,
+            "a terminal stream must not make a framed connection unusable"
+        );
+    }
+
+    #[test]
+    fn timeout_error_identifies_the_affected_stream() {
+        let stats = Rc::new(RefCell::new(Stats::default()));
+        let mut service = FileTransferService::new(Box::new(CountingStore(stats)));
+        let id = service.connect(0);
+        hello(&mut service, id);
+        service.receive(id, &offer(DOWNLOAD, 45, "timeout.bin", b"x"), 1);
+        let output = service.poll(IDLE_TIMEOUT_MS + 1);
+        assert_eq!(output.len(), 1);
+        assert_eq!(
+            u32::from_be_bytes(output[0].1[8..12].try_into().unwrap()),
+            45,
+            "timeout must be correlated with the active transfer"
+        );
+    }
+
+    #[test]
     fn host_upload_obeys_credit_and_waits_for_complete() {
         let mut service = FileTransferService::default();
         let id = service.connect(0);
