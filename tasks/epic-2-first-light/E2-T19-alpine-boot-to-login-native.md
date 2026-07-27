@@ -3,7 +3,7 @@ id: E2-T19
 epic: 2
 title: Full Alpine boot — ext4 root on virtio-blk to login shell (native CLI)
 priority: 219
-status: implemented
+status: verification-debt
 depends_on: [E2-T11, E2-T15, E2-T18]
 estimate: L
 capstone: false

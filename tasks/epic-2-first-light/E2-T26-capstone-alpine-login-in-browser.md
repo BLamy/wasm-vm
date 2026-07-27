@@ -3,7 +3,7 @@ id: E2-T26
 epic: 2
 title: "Capstone: unmodified Alpine riscv64 boots to a login shell in the browser"
 priority: 226
-status: implemented
+status: verification-debt
 depends_on: [E2-T19, E2-T20, E2-T22, E2-T23, E2-T24, E2-T25]
 estimate: L
 capstone: true

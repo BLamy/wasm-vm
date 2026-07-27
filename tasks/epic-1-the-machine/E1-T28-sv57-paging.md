@@ -3,7 +3,7 @@ id: E1-T28
 epic: 1
 title: Sv57 five-level paging — satp MODE=10 (Priv §4.5)
 priority: 142
-status: in_progress
+status: verification-debt
 depends_on: [E1-T18]
 estimate: L
 capstone: false

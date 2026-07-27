@@ -248,6 +248,10 @@ verify-all: verify-E0-T01 verify-E0-T02 verify-E0-T03 verify-E0-T04 verify-E0-T0
 
 verify-list: ; @bash tools/verify/list.sh
 
+.PHONY: check-task-policy
+check-task-policy:
+	python3 tools/check_task_policy.py
+
 # E1-T20: RISCOF architectural compliance (DUT=wasm-vm vs Spike). Needs `bash compliance/provision.sh`
 # first (riscof venv + arch-test) + the Docker toolchain image (Spike). Enforces compliance/EXCLUSIONS.md.
 riscof:

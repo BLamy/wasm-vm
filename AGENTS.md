@@ -41,19 +41,86 @@ The same agent may play both roles on *different* tasks — never both roles on 
 
 ```
 pending → in-progress → implemented → verified   (terminal; only the verifier sets this)
-                              ↘ refuted → in-progress (worker reworks, re-records)
+                │             ↘ evidence-needed   (proof gap; code not refuted)
+                └──────────────↘ refuted → in-progress (semantic rework)
+
+verification-debt = historical landed work parked outside the active lane
+blocked = acceptance is impossible until the named external/roadmap dependency changes
 ```
 
 Statuses live in each task file's frontmatter. After any status change:
 `python3 tools/build_queue.py` regenerates `tasks/QUEUE.md`, then commit. One task
-in-flight at a time; a task's `depends_on` must all be `verified` before starting it.
+in-flight at a time across `in-progress`, `implemented`, `evidence-needed`, and `refuted`;
+a task's `depends_on` must all be `verified` before starting it. Run
+`python3 tools/check_task_policy.py` before rebuilding the queue. Historical code that landed
+without current exact-head evidence is `verification-debt`, not active work and not `verified`.
+A `blocked` task must name `blocked_on` and include an exact repro in its Verification log. It
+leaves the active lane so independent eligible work can proceed, but its dependents remain gated.
+
+## Risk and task-size policy
+
+Before a pending task enters the active lane, add `risk: low | medium | high` to its frontmatter.
+Security/identity boundaries, guest architectural semantics, persistence, concurrency, JIT code,
+and cross-host deployment default to `high`. Ordinary isolated runtime features default to
+`medium`. Documentation, declarative metadata, and visual-only work may be `low` when they cannot
+change runtime behavior.
+
+An `M`, `L`, or `XL` pending task is a planning container, not executable work. Split it into
+ordered `S` task files with one boundary and one deterministic acceptance command each; mark the
+parent `cancelled` and point it at the replacements. `build_queue.py` labels unsplit large work
+`DECOMPOSE BEFORE START`, and `check_task_policy.py` rejects it if activated. A genuinely atomic
+exception needs `decomposition: approved` plus a written `## Execution slices` section.
+
+Verification cost follows risk:
+
+| Risk | Worker submission | Fresh verifier |
+|---|---|---|
+| low | relevant format/lint/build plus direct deterministic acceptance | inspect the direct result; no automatic cold clone, sabotage, or novel attack |
+| medium | affected crates/tests, affected target build, and relevant browser path | acceptance criteria plus one bounded novel attack; cold clone only for portability/deployment claims |
+| high | full prescribed gauntlet, threat-model attacks, exact-head evidence, and final cold clone | full charter below, scoped to the claim and changed security boundary |
+
+Broad workspace, cross-target, stress, and compliance suites remain CI/nightly regression walls.
+During implementation use the narrowest gate that can falsify the changed behavior, then run the
+risk-tier submission once at the frozen head.
+
+### Re-verification is incremental
+
+A verifier records each prediction as `HELD`, `FAILED`, or `NEEDS EVIDENCE`. A later verifier must
+carry `HELD` results forward when their code, dependency boundary, and evidence digest are unchanged.
+Do not re-litigate them merely because another criterion failed.
+
+`evidence-needed` means the product claim was not contradicted. If the response changes only tests,
+fixtures, recording scripts, or evidence, rerun the missing proof and checks for the touched harness;
+do not restart unrelated workspace gates. If runtime semantics change, return to `in-progress` and
+rerun the gates selected by the task's risk. Run the pristine-clone proof once, on the final exact
+head, unless the failure itself was a portability or environment-isolation finding.
+
+## Pull requests: stack by default, merge only on explicit request
+
+Use [`kitlangton/stack`](https://github.com/kitlangton/stack) for stacked-PR maintenance
+and merging. Normal progress means continuing the stack: create each new task branch/PR on
+top of its parent, then use `stack sync` to preview and `stack sync --apply` to repair
+descendants, retarget PRs, and refresh stack metadata as needed.
+
+**Never merge a PR unless the user explicitly asks for a merge in the current request.** A
+task being verified, CI being green, an approval, a request to publish/push/open/update a PR,
+or instructions to keep working are not merge authorization. Without an explicit merge
+request, keep stacking and leave every PR open. Do not enable auto-merge, enqueue a merge,
+click a GitHub merge control, call a GitHub merge API, run `gh pr merge`, or merge locally.
+
+When the user explicitly asks to merge, use `stack merge` to preview the exact operation and
+`stack merge --apply` to perform it and repair the remaining descendants. Do not substitute
+another merge mechanism. If the requested PR is not the root, respect the user's requested
+boundary and make the full set of PRs that `stack` will land clear before applying it. Use
+`stack merge --auto` only when the user explicitly asks to enable or wait for auto-merge.
 
 ## Worker protocol
 
 1. **Pick work.** Top entry of "Next up" in `tasks/QUEUE.md`. Read the whole task file —
    the Adversarial verification section tells you how you'll be attacked; build for it.
 2. Set `status: in-progress`, rebuild queue, commit.
-3. **Implement.** Gates in ascending cost, any failure returns to the top:
+3. **Implement.** Select gates from the risk table, in ascending cost. A semantic failure returns
+   to the top of that selected set:
    `cargo fmt --check` → `cargo clippy -- -D warnings` → native tests →
    `cargo build --target wasm32-unknown-unknown` (+ wasm tests where they exist).
 3a. **Browser-impacting work ⇒ prove it in the browser, and show it on the demo.** If a change
@@ -72,7 +139,7 @@ in-flight at a time; a task's `depends_on` must all be `verified` before startin
    Non-browser work (pure tooling, compliance harness, docs) skips this gate.
 4. **Self-validate freely.** Drive the code however you want — ad-hoc runs, printf, scratch
    binaries. This inner loop is yours; nothing here is evidence.
-5. **Record the final happy run.** When satisfied, run the *same* validation one more time
+5. **Record the final happy run.** When satisfied, run the risk-tier submission once
    under recording (see Evidence below). Make the recorded run count: every behavior your
    diff changes should actually execute during it, because the verifier will hold the
    recording against the diff. Changed code the recording never ran is either unproven or
@@ -154,10 +221,11 @@ rule: acceptance commands must pass from a pristine clone in a scratch dir with 
 env (`RUSTFLAGS`, `CARGO_*`, `RUST_LOG` unset). "Works on the implementer's machine" is a
 refutation, not an excuse.
 
-**RUN THE TASK'S OWN ATTACKS.** Execute every angle in the task's Adversarial verification
-section — with your own seeds, never the worker's — and invent at least one attack the
-section doesn't list. Sabotage-check the tests once per task: break the implementation in a
-scratch branch and confirm the worker's tests actually go red.
+**RUN THE RISK-TIER ATTACKS.** High-risk tasks execute every angle in the task's Adversarial
+verification section with independent seeds, invent one bounded attack, and sabotage-check the
+new tests once. Medium-risk tasks cover the acceptance criteria and one bounded novel attack.
+Low-risk tasks verify the direct result. Never expand a task with an unrelated requirement: file
+it as follow-up work instead.
 
 **SUITE (only if correctness + coverage hold).** Judge what survives as a permanent
 artifact — this is the duty that compounds:

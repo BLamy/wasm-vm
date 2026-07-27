@@ -18,6 +18,9 @@ STATUS_ICON = {
     "in-progress": "~",
     "in_progress": "~",  # both spellings appear in the wild (sweep-critic F)
     "implemented": "?",
+    "evidence-needed": "?",
+    "blocked": "b",
+    "verification-debt": "d",
     "refuted": "!",
     "verified": "x",
     "cancelled": "-",
@@ -91,14 +94,17 @@ def main() -> int:
         "",
         f"**{n_verified} / {len(tasks)} tasks verified.**",
         "",
-        "Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented (awaiting"
-        " adversarial verification) · `[!]` refuted · `[x]` verified · `[-]` cancelled",
+        "Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed ·"
+        " `[b]` blocked · `[d]` parked verification debt · `[!]` refuted · `[x]` verified ·"
+        " `[-]` cancelled",
         "",
         "## Next up (deps satisfied, in priority order)",
         "",
     ]
     for t in next_up:
-        lines.append(f"1. **{t['id']}** — {t.get('title', '?')}")
+        estimate = t.get("estimate", "?")
+        split = " **[DECOMPOSE BEFORE START]**" if estimate in ("M", "L", "XL") else ""
+        lines.append(f"1. **{t['id']}** — {t.get('title', '?')}{split}")
     lines.append("")
 
     current_epic = None

@@ -3,7 +3,7 @@ id: E2-T24
 epic: 2
 title: Stress validation — disk torture, fork bombs, interactivity, 10x reproducible boots
 priority: 224
-status: implemented
+status: verification-debt
 depends_on: [E2-T17, E2-T19]
 estimate: M
 capstone: false

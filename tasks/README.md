@@ -28,11 +28,17 @@ Rules:
 
 ```
 pending → in-progress → implemented → verified
+                   ↘ evidence-needed      (claim not contradicted; proof incomplete)
                              ↑            |
-                             └── refuted ─┘   (verifier broke it; back to work)
+                             └── refuted ─┘   (verifier broke it; semantic rework)
 ```
 
 `verified` is the only terminal state, and only an adversarial verifier can grant it.
+`verification-debt` parks historical landed work that lacks current exact-head proof; it is
+neither active nor verified. At most one task may be `in-progress`, `implemented`,
+`evidence-needed`, or `refuted` at a time.
+`blocked` means its acceptance is currently impossible; the task must name `blocked_on` and keep
+an exact repro, while unrelated eligible work may use the active lane.
 
 ## Adversarial verification protocol
 
@@ -69,6 +75,7 @@ priority: 103
 status: pending
 depends_on: [E1-T02]
 estimate: M          # S | M | L
+risk: high           # low | medium | high; required before activation
 capstone: false
 ---
 
@@ -96,6 +103,9 @@ which reference to diff against, what would constitute refutation.
 
 - Implementation language is **Rust**; core crates must build for native *and*
   `wasm32-unknown-unknown`. Acceptance criteria that involve behavior should hold in both.
-- Tasks should be one focused session of work (estimate S/M/L ≈ hours/half-day/day-plus).
-- If a task turns out to be too big, split it into `E{n}-T{nn}a/b` files rather than letting
-  it sprawl — then rerun `build_queue.py`.
+- Executable tasks are `S`: one focused boundary, one deterministic acceptance command, normally
+  half a day to a day. `M`/`L`/`XL` files are planning containers and must be split into
+  `E{n}-T{nn}a/b` files before activation. Atomic exceptions require `decomposition: approved`
+  and a written `## Execution slices` section.
+- Run `python3 tools/check_task_policy.py` before `python3 tools/build_queue.py`; CI enforces the
+  same active-lane and task-size rules.
