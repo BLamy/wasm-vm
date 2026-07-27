@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E3-T21b1** — Bounded WVFT engine and synthetic slirp endpoint
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -141,7 +140,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `321` [E3-T21](epic-3-civilization/E3-T21-host-guest-file-transfer.md) — Host to guest file transfer - drag-and-drop upload and download *(deps: E3-T08, E3-T14)*
 - [x] `321.1` [E3-T21a](epic-3-civilization/E3-T21a-file-transfer-protocol.md) — File-transfer mechanism decision, protocol, and threat model *(deps: E3-T08, E3-T14)*
 - [-] `321.2` [E3-T21b](epic-3-civilization/E3-T21b-guest-file-agent.md) — Bounded guest file agent and slirp control endpoint *(deps: E3-T21a)*
-- [ ] `321.21` [E3-T21b1](epic-3-civilization/E3-T21b1-slirp-file-endpoint.md) — Bounded WVFT engine and synthetic slirp endpoint *(deps: E3-T21a)*
+- [~] `321.21` [E3-T21b1](epic-3-civilization/E3-T21b1-slirp-file-endpoint.md) — Bounded WVFT engine and synthetic slirp endpoint *(deps: E3-T21a)*
 - [ ] `321.22` [E3-T21b2](epic-3-civilization/E3-T21b2-guest-file-agent.md) — Static guest file agent and rootfs integration *(deps: E3-T21b1)*
 - [ ] `321.3` [E3-T21c](epic-3-civilization/E3-T21c-browser-file-transfer-ui.md) — Streaming browser upload/download UI *(deps: E3-T21b2)*
 - [ ] `321.4` [E3-T21d](epic-3-civilization/E3-T21d-file-transfer-durability-proof.md) — File-transfer guest round-trip and durability proof *(deps: E3-T10, E3-T21c)*

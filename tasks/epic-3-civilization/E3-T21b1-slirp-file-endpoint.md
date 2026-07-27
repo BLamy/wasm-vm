@@ -3,7 +3,7 @@ id: E3-T21b1
 epic: 3
 title: Bounded WVFT engine and synthetic slirp endpoint
 priority: 321.21
-status: pending
+status: in-progress
 depends_on: [E3-T21a]
 estimate: S
 risk: high
