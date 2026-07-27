@@ -182,7 +182,7 @@ capability_section_match = re.search(
 )
 if not capability_section_match:
     raise SystemExit("missing complete normative denied-capabilities section")
-if permissive.search(capability_section_match.group(1)):
+if re.search(permissive.pattern, capability_section_match.group(1), re.IGNORECASE):
     raise SystemExit("permissive language is forbidden in the denied-capabilities section")
 
 denied_subject = re.compile(
