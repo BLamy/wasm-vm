@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: implemented
+status: in-progress
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -355,3 +355,32 @@ Exact-head commands:
 - `git diff b89f7e8^..b89f7e8 --check`
 
 Fresh re-verification should carry P1/P2/P3 forward and inspect only the section-wide P4 guard.
+
+### 2026-07-27 — verifier — VERDICT: refuted
+
+- **P1 framing and bounded state — HELD (carried forward).**
+- **P2 out-of-root hard-link capability — HELD (carried forward).**
+- **P3 visibility/durability interruption boundary — HELD (carried forward).**
+- **P4 section-wide adjacency and multiline — HELD.** Predicted the complete normative-section
+  scan would reject the exact adjacent-paragraph permission and a permission split across lines.
+  Both were rejected with `permissive language is forbidden in the denied-capabilities section`.
+  Citation: `tools/verify/e3-t21a-protocol.sh:172-189`.
+- **P4 bounded in-section case variation — FAILED.** Predicted the same normative permission in
+  uppercase would also be rejected. Adding “This capability is ALLOWED for compatibility” inside
+  `Capabilities not granted` passed with the normal OK result. The permissive regex enumerates
+  lowercase and initial-capital spellings but not all-uppercase spelling. Citation:
+  `tools/verify/e3-t21a-protocol.sh:172-189`. Make the section-wide permissive match
+  case-insensitive and add this exact sabotage.
+- **COVERAGE:** the new section extraction, adjacent-paragraph path, and multiline path were
+  exercised. The case-normalization path is incomplete and falsifies the section-wide invariant.
+- **SUITE:** n/a until P4 clears; no promoted test was added.
+
+Commands:
+
+- `bash -n tools/verify/e3-t21a-protocol.sh`
+- checker from the repository and `/tmp`
+- exact adjacent-paragraph permission inside the normative section
+- multiline permission inside the normative section
+- bounded uppercase `ALLOWED` permission inside the normative section
+- `python3 tools/check_task_policy.py`
+- `git diff b89f7e8^..b89f7e8 --check`
