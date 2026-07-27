@@ -78,6 +78,11 @@ pub struct BootArgs {
     /// sockets, with internal DHCP and host-resolver-backed DNS. Takes precedence over `--net`.
     #[arg(long)]
     pub net_slirp: bool,
+    /// Attach a virtio-rng entropy device (slot 2) backed by the OS CSPRNG (`getrandom`). The guest
+    /// binds it as `/dev/hwrng` and seeds its CRNG from it. Off by default so deterministic boot
+    /// evidence is unaffected; turn it on for network/TLS workloads that need prompt entropy.
+    #[arg(long)]
+    pub virtio_rng: bool,
     /// DHCP lease advertised by slirp, in seconds. Short values make renewal tests deterministic.
     #[arg(long, default_value_t = wasm_vm_slirp::dhcp::DEFAULT_LEASE_SECS)]
     pub net_slirp_lease_secs: u32,
@@ -355,6 +360,10 @@ fn assemble(
         let _ = m.enable_virtio_net(Box::new(
             wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
         ));
+    }
+    if a.virtio_rng {
+        // virtio-rng in slot 2, backed by the OS CSPRNG — seeds the guest CRNG promptly.
+        let _ = m.enable_virtio_rng(Box::new(crate::os_entropy::OsEntropy));
     }
 
     // Built-in SBI firmware + its console channel (earlycon=sbi / legacy putchar).

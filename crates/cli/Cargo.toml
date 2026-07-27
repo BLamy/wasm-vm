@@ -27,6 +27,7 @@ zicsr-stub = ["wasm-vm-core/zicsr-stub"]
 
 [dependencies]
 wasm-vm-core = { workspace = true, features = ["std", "trace"] }
+getrandom = "0.2"
 wasm-vm-storage = { path = "../storage" }
 # E3-T14: wire the slirp user-mode network stack (its native NativeConnector path) behind
 # `boot --net-slirp`, so a booted guest's ethernet frames reach real outbound sockets. The driver

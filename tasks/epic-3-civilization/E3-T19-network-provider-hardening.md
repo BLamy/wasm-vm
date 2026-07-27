@@ -3,9 +3,12 @@ id: E3-T19
 epic: 3
 title: Tailscale/Headscale lifecycle and public-relay fallback hardening
 priority: 319
-status: in-progress
+status: blocked
+blocked_on: [E4-T13]
 depends_on: [E3-T16, E3-T17]
 estimate: M
+risk: high
+decomposition: approved
 capstone: false
 ---
 
@@ -72,7 +75,52 @@ leaked sockets or unbounded memory refute. Search browser storage, service-worke
 URLs, metrics, and diagnostics for credentials. Run compose from a cold clone and verify teardown
 removes nodes, containers, sockets, and persisted test secrets.
 
+## Execution slices
+
+- **Held relay boundary:** token, origin, destination, quota, teardown, and explicit-provider
+  behavior (verifier P1/P2/P5). Preserve unless their runtime code or evidence digest changes.
+- **Remaining identity proof:** copied live state and simultaneous hostname collision against the
+  composed control plane.
+- **Remaining guest proof:** Alpine performs HTTPS through an explicitly selected exit node and,
+  after an explicit provider change, through the relay. Entropy/device changes supporting this
+  proof are part of this slice and require focused native + wasm + guest coverage.
+- **Final exact-head closure:** run the high-risk submission and one scoped fresh critic over the
+  remaining slices; do not re-litigate unchanged held findings.
+
 ## Verification log
+
+### 2026-07-22 — worker — BLOCKED on interpreter TLS latency
+
+The remaining copied-state and hostname-collision attack now passes against the real composed
+Headscale control plane: a concurrently copied IPN snapshot retained exactly one node/address and
+renamed that identity, while two fresh profiles requesting the same hostname received distinct
+machine/node identities and addresses. The proof completed in 35.6 seconds. Its diagnostic output
+was subsequently reduced to names, counts, addresses, and booleans so machine/node/disco keys and
+pre-auth-key records are never serialized into evidence logs.
+
+The required guest HTTPS proof is not reliable enough to satisfy acceptance at interpreter speed.
+An earlier 2026-07-21 Tailscale run completed successfully and is preserved as
+`evidence/e3-t19/guest-https-tailscale.txt`; two subsequent fresh-key exact-head runs booted the
+rebuilt browser VM to Alpine login, obtained `10.0.2.15/24`, and showed
+`random: crng init done` at guest time `2.196615`, proving the new virtio-rng path removed entropy
+starvation. Both then ran `timeout 180 wget -qO /dev/null https://1.1.1.1/` through the explicitly
+selected composed exit node and observed `Connection reset by peer` / rc=1. The first run failed in
+20.5 minutes; a second run after a complete-first-TLS-record deferred-dial experiment failed the
+same way in 14.2 minutes. The experiment's focused browser tests passed but did not change the live
+outcome, so it was removed rather than retained as unproven complexity.
+
+This is a performance dependency, not an evidence-formality rejection: CRNG, boot, DHCP, provider
+selection, and identity lifecycle all held, while the interpreted guest intermittently loses the
+public TLS server's handshake deadline. One non-repeatable success does not prove the required
+Tailscale and relay paths reliably. E4-T13 is the first roadmap point where the RVC-dense Alpine
+crypto path has JIT coverage. Reopen E3-T19 there, rerun the two guest HTTPS provider legs only, and
+carry the unchanged held P1/P2/P4/P5 results forward.
+
+Commands/evidence: `make web-build`; `cargo test -p wasm-vm-core --lib dev::virtio::rng`;
+`npx playwright test tests/e3-t19-identity-attacks.spec.js`; two invocations of
+`npx playwright test tests/e3-t19-guest-https.spec.js` with in-memory single-use Headscale keys;
+Playwright failure trace at
+`web/test-results/e3-t19-guest-https-clean-c-99aec-xplicitly-selected-provider/trace.zip`.
 
 ### 2026-07-17 — planning rewrite
 Expands the former relay-only deployment ticket. Tailscale/Headscale lifecycle and ACL identity are

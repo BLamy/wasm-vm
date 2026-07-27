@@ -176,6 +176,13 @@ impl VirtioMmio {
         &self.queues[idx % MAX_QUEUES]
     }
 
+    /// Test-only: set a queue's state directly, standing in for the driver's MMIO register
+    /// programming so a device `service()` can be exercised without replaying the whole lifecycle.
+    #[cfg(test)]
+    pub(crate) fn set_queue_for_test(&mut self, idx: usize, qs: QueueState) {
+        self.queues[idx % MAX_QUEUES] = qs;
+    }
+
     fn sel_queue_mut(&mut self) -> &mut QueueState {
         &mut self.queues[(self.queue_sel as usize) % MAX_QUEUES]
     }

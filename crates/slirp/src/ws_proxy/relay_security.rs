@@ -274,7 +274,9 @@ pub fn issue_relay_token(
     }
     let payload = format!("{TOKEN_VERSION}\n{expiry_unix_secs}\n{origin}\n{id}");
     let mac = hmac_sha256(secret, payload.as_bytes());
-    Ok(format!("{payload}\n{}", hex(&mac)).into_bytes())
+    // The wire token is one opaque base64url word: operators paste it into single-line
+    // <input> fields and shell arguments, either of which would corrupt embedded newlines.
+    Ok(base64url(format!("{payload}\n{}", hex(&mac)).as_bytes()).into_bytes())
 }
 
 /// Verify signature, expiry, maximum lifetime, and the actual WebSocket Origin. `now` is injected
@@ -288,7 +290,9 @@ pub fn verify_relay_token(
     if secret.is_empty() {
         return Err(RelayTokenError::InvalidSignature);
     }
-    let text = std::str::from_utf8(encoded).map_err(|_| RelayTokenError::Malformed)?;
+    let outer = std::str::from_utf8(encoded).map_err(|_| RelayTokenError::Malformed)?;
+    let decoded = base64url_decode(outer.trim()).ok_or(RelayTokenError::Malformed)?;
+    let text = String::from_utf8(decoded).map_err(|_| RelayTokenError::Malformed)?;
     let mut fields = text.split('\n');
     let version = fields.next().ok_or(RelayTokenError::Malformed)?;
     let expiry_text = fields.next().ok_or(RelayTokenError::Malformed)?;
@@ -416,6 +420,43 @@ fn constant_time_eq(left: &[u8], right: &[u8]) -> bool {
         == 0
 }
 
+const BASE64URL: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+
+fn base64url(bytes: &[u8]) -> String {
+    let mut out = String::with_capacity(bytes.len().div_ceil(3) * 4);
+    for chunk in bytes.chunks(3) {
+        let word = (u32::from(chunk[0]) << 16)
+            | (u32::from(*chunk.get(1).unwrap_or(&0)) << 8)
+            | u32::from(*chunk.get(2).unwrap_or(&0));
+        for position in 0..=chunk.len() {
+            out.push(BASE64URL[((word >> (18 - 6 * position)) & 0x3f) as usize] as char);
+        }
+    }
+    out
+}
+
+fn base64url_decode(text: &str) -> Option<Vec<u8>> {
+    if text.len() % 4 == 1 {
+        return None;
+    }
+    let mut out = Vec::with_capacity(text.len() / 4 * 3 + 2);
+    for chunk in text.as_bytes().chunks(4) {
+        if chunk.len() == 1 {
+            return None;
+        }
+        let mut word = 0u32;
+        for &byte in chunk {
+            let value = BASE64URL.iter().position(|&digit| digit == byte)?;
+            word = (word << 6) | value as u32;
+        }
+        word <<= 6 * (4 - chunk.len());
+        for position in 0..chunk.len() - 1 {
+            out.push((word >> (16 - 8 * position)) as u8);
+        }
+    }
+    Some(out)
+}
+
 fn hex(bytes: &[u8]) -> String {
     const DIGITS: &[u8; 16] = b"0123456789abcdef";
     let mut out = String::with_capacity(bytes.len() * 2);
@@ -474,6 +515,29 @@ mod tests {
         let mut tampered = token.clone();
         tampered[5] ^= 1;
         assert!(verify_relay_token(b"test secret", NOW, ORIGIN, &tampered).is_err());
+    }
+
+    #[test]
+    fn issued_token_is_a_single_paste_safe_word() {
+        // The token is pasted into single-line <input> fields and shell arguments; embedded
+        // newlines were silently corrupted there (E3-T19 guest relay regression), so the wire
+        // form must stay one base64url word.
+        let token = issue_relay_token(b"test secret", NOW, NOW + 300, ORIGIN, "random-1").unwrap();
+        let text = std::str::from_utf8(&token).unwrap();
+        assert!(text.bytes().all(|byte| BASE64URL.contains(&byte)));
+        assert!(verify_relay_token(b"test secret", NOW, ORIGIN, text.as_bytes()).is_ok());
+        // Legacy raw (newline-separated) tokens are no longer accepted on the wire.
+        let raw = format!("{TOKEN_VERSION}\n{}\n{ORIGIN}\nrandom-1", NOW + 300);
+        let mac = hex(&hmac_sha256(b"test secret", raw.as_bytes()));
+        assert_eq!(
+            verify_relay_token(
+                b"test secret",
+                NOW,
+                ORIGIN,
+                format!("{raw}\n{mac}").as_bytes()
+            ),
+            Err(RelayTokenError::Malformed)
+        );
     }
 
     #[test]

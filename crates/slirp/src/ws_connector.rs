@@ -81,9 +81,6 @@ struct UdpConn {
 pub struct WsConnector<T: FrameTransport> {
     session: Session,
     transport: T,
-    hello_sent: bool,
-    /// The opening `HELLO` token, held until the first pump sends it.
-    pending_token: Option<Vec<u8>>,
     next_id: ConnId,
     conns: BTreeMap<ConnId, Conn>,
     stream_to_conn: BTreeMap<u32, ConnId>,
@@ -96,14 +93,17 @@ pub struct WsConnector<T: FrameTransport> {
 }
 
 impl<T: FrameTransport> WsConnector<T> {
-    /// A fresh client connector. `token` is the (optional) auth token carried in the opening `HELLO`
-    /// (auth is a later task; empty is fine). The `HELLO` is sent on the first [`pump`](Self::pump).
-    pub fn new(transport: T, token: Vec<u8>) -> Self {
+    /// A fresh client connector. `token` is the (optional) auth token carried in the opening
+    /// `HELLO`. The `HELLO` is handed to the transport immediately: relay tokens live at most
+    /// fifteen minutes from issuance, and deferring the handshake to the guest's first outbound
+    /// flow (which can follow a boot longer than that) let the token expire unused. A transport
+    /// whose socket is still connecting queues the frame and flushes it on open.
+    pub fn new(mut transport: T, token: Vec<u8>) -> Self {
+        let session = Session::new(Role::Client);
+        transport.send(session.hello(token));
         Self {
-            session: Session::new(Role::Client),
+            session,
             transport,
-            hello_sent: false,
-            pending_token: Some(token),
             next_id: 0,
             conns: BTreeMap::new(),
             stream_to_conn: BTreeMap::new(),
@@ -151,7 +151,7 @@ impl<T: FrameTransport> WsConnector<T> {
         None
     }
 
-    /// One servicing pass: send the opening `HELLO` if needed, drain inbound frames, issue any pending
+    /// One servicing pass: drain inbound frames, issue any pending
     /// opens once the handshake completes, flush per-stream outbound work, then push all produced
     /// frames to the transport. Called at the top of every `SyncConnector` method so state stays live.
     fn pump(&mut self) {
@@ -168,12 +168,6 @@ impl<T: FrameTransport> WsConnector<T> {
                 }
             }
             return;
-        }
-
-        if !self.hello_sent {
-            let token = self.pending_token.take().unwrap_or_default();
-            self.transport.send(self.session.hello(token));
-            self.hello_sent = true;
         }
 
         // 1. Inbound frames: complete the handshake, then route through the mux.

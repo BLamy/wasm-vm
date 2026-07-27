@@ -237,6 +237,9 @@ mod idb_store;
 mod ws_transport;
 #[cfg(any(all(target_arch = "wasm32", not(feature = "zicsr-stub")), test))]
 mod ws_transport_state;
+// virtio-rng entropy source backed by the browser CSPRNG (`crypto.getRandomValues`).
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod crypto_entropy;
 // E3-T17: dedicated provider Worker carrying the same bounded ws-proxy frames as E3-T16.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod tailscale_dns;
@@ -1035,6 +1038,12 @@ impl WasmLinux {
                 wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
             ));
         }
+        // virtio-rng in slot 2 on every boot, backed by the browser CSPRNG
+        // (`crypto.getRandomValues`). The guest binds it as `/dev/hwrng` and seeds its CRNG from
+        // it, so `getrandom(2)`/`/dev/urandom` are ready early — without it the interpreted guest
+        // scavenges entropy from interrupt jitter for many seconds, long enough that the first TLS
+        // ClientHello's `RAND_bytes` stalls or fails (the E3-T19 guest-HTTPS flakiness).
+        let _ = machine.enable_virtio_rng(Box::new(crypto_entropy::CryptoEntropy));
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));

@@ -32,6 +32,10 @@ make_key browser browser@example.com
 make_key denied denied@example.com
 make_key revoked browser@example.com
 make_key outage browser@example.com
+make_key guest-exit browser@example.com
+make_key copied browser@example.com
+make_key collision-a browser@example.com
+make_key collision-b browser@example.com
 make_key fixture infra@example.com --tags tag:fixture
 make_key exit infra@example.com --tags tag:exit
 

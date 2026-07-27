@@ -80,5 +80,21 @@ and build flags — a fast-build/correct-build split refutes everything; (6) Fir
 gates are Chrome-based, but a Firefox result below 5x or any Firefox correctness failure
 must be disclosed in the results JSON — omission refutes the report's completeness.
 
+## Known motivating case (logged from E3-T19, 2026-07-22)
+A concrete real-world failure that JIT acceleration is expected to fix: under the pure
+interpreter, the guest's **TLS handshake is too slow to complete before strict servers time
+out**. During E3-T19 (network provider hardening), guest HTTPS through the relay failed
+intermittently because the guest took ~13–29 s of wall-clock time to compute and emit its
+ClientHello (X25519 keygen + TLS state machine), while the remote (Cloudflare 1.1.1.1:443)
+closes the idle connection after ~15 s → RST / "connection reset by peer". Proven NOT the
+relay (a real `openssl s_client` completes a full TLS 1.3 handshake through the actual
+wvrelay) and NOT entropy (virtio-rng lands in E3; `entropy_avail=256`, `/dev/urandom` at
+~2 MB/s) — it is raw interpreter crypto latency losing a network race. HTTP and plaintext
+sends are instant because they involve no crypto. Once block translation lands (E4-T05
+onward), verify this specific case recovers: guest `wget https://1.1.1.1/` should succeed
+reliably. A pre-JIT mitigation exists if ever needed (relay defers the upstream dial until
+the guest's first data byte, so the server's idle timer starts with data already in flight),
+but the durable fix is speed. See the E3-T19 task and `web/tests/e3-t19-guest-https.spec.js`.
+
 ## Verification log
 (empty)

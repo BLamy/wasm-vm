@@ -18,6 +18,8 @@ wasm-vm-slirp = { path = "../slirp", default-features = false }
 wasm-bindgen = { workspace = true }
 wasm-bindgen-futures = "0.4"
 js-sys = "0.3"
+# virtio-rng entropy: the js backend calls crypto.getRandomValues (main thread + workers).
+getrandom = { version = "0.2", features = ["js"] }
 log = { workspace = true }
 console_log = { workspace = true }
 console_error_panic_hook = { workspace = true }

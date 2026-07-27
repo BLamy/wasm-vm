@@ -24,6 +24,7 @@ pub(crate) struct BrowserWebSocketTransport {
     _on_message: Closure<dyn FnMut(MessageEvent)>,
     _on_close: Closure<dyn FnMut(Event)>,
     _on_error: Closure<dyn FnMut(Event)>,
+    _on_open: Closure<dyn FnMut(Event)>,
 }
 
 impl BrowserWebSocketTransport {
@@ -56,12 +57,31 @@ impl BrowserWebSocketTransport {
         }) as Box<dyn FnMut(Event)>);
         socket.set_onerror(Some(on_error.as_ref().unchecked_ref()));
 
+        // Frames queued while the socket was still CONNECTING (the connector's opening HELLO —
+        // its token is short-lived) must go out the moment the handshake completes, not on the
+        // next connector pump, which may be a guest boot away.
+        let open_state = state.clone();
+        let open_socket = socket.clone();
+        let on_open = Closure::wrap(Box::new(move |_event: Event| {
+            loop {
+                let Some(bytes) = open_state.borrow_mut().pop_outbound() else {
+                    break;
+                };
+                if open_socket.send_with_u8_array(&bytes).is_err() {
+                    open_state.borrow_mut().mark_failed();
+                    break;
+                }
+            }
+        }) as Box<dyn FnMut(Event)>);
+        socket.set_onopen(Some(on_open.as_ref().unchecked_ref()));
+
         Ok(Self {
             socket,
             state,
             _on_message: on_message,
             _on_close: on_close,
             _on_error: on_error,
+            _on_open: on_open,
         })
     }
 
@@ -112,6 +132,7 @@ impl Drop for BrowserWebSocketTransport {
         self.socket.set_onmessage(None);
         self.socket.set_onclose(None);
         self.socket.set_onerror(None);
+        self.socket.set_onopen(None);
         let _ = self.socket.close();
     }
 }

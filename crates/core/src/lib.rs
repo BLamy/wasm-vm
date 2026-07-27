@@ -195,6 +195,14 @@ pub struct Machine {
         Option<dev::virtio::queue::Virtqueue>,
         Option<dev::virtio::queue::Virtqueue>,
     )>,
+    /// virtio-rng service state (shared source state + the persistent requestq ring view), when
+    /// [`Self::enable_virtio_rng`] plugged an entropy source into slot 2. Serviced at every
+    /// boundary the guest has kicked. Seeds the guest CRNG so early TLS handshakes don't stall.
+    #[allow(clippy::type_complexity)]
+    rng: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::rng::RngState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+    )>,
 }
 
 impl Machine {
@@ -229,6 +237,7 @@ impl Machine {
             virtio: alloc::vec::Vec::new(),
             blk: None,
             net: None,
+            rng: None,
         })
     }
 
@@ -387,6 +396,37 @@ impl Machine {
         );
         self.net = Some((alloc::rc::Rc::clone(&state), None, None));
         (alloc::rc::Rc::clone(&self.virtio[1].0), state)
+    }
+
+    /// Attach a virtio-rng device (DeviceID 4) backed by `source` in slot 2. The eight slots must
+    /// already exist ([`Self::enable_virtio_slots`]/`enable_virtio_blk` first) — rng installs into
+    /// the empty slot 2 (the DTB already advertises all eight windows, so the kernel's
+    /// `virtio-rng`/`rng-core` probe binds it with no DTB change). The kernel feeds the delivered
+    /// bytes into its CRNG, so guest `getrandom(2)`/`/dev/urandom` seed promptly and early TLS
+    /// handshakes stop stalling on entropy. Returns (slot-2 handle, shared rng state).
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_rng(
+        &mut self,
+        source: alloc::boxed::Box<dyn dev::virtio::rng::EntropySource>,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::rng::RngState>>,
+    ) {
+        assert!(
+            self.virtio.len() > 2,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_rng"
+        );
+        let (devhalf, state) = dev::virtio::rng::new(source);
+        assert!(
+            self.virtio[2]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(devhalf))
+                .is_ok(),
+            "virtio slot 2 already has a device"
+        );
+        self.rng = Some((alloc::rc::Rc::clone(&state), None));
+        (alloc::rc::Rc::clone(&self.virtio[2].0), state)
     }
 
     /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,
@@ -1033,6 +1073,12 @@ impl Machine {
                 if let Some((state, rx_vq, tx_vq)) = &mut self.net {
                     let slot = alloc::rc::Rc::clone(&self.virtio[1].0);
                     dev::virtio::net::service(&slot, rx_vq, tx_vq, state, &mut self.bus);
+                }
+                // virtio-rng: fill guest entropy requests the same boundary the driver kicked, so
+                // the CRNG seeds without waiting on the run loop.
+                if let Some((state, vq)) = &mut self.rng {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[2].0);
+                    dev::virtio::rng::service(&slot, vq, state, &mut self.bus);
                 }
                 // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
                 for (slot, line) in &self.virtio {

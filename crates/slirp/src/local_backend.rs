@@ -1340,4 +1340,302 @@ mod tests {
             "eviction plus expiry closes every opened socket exactly once"
         );
     }
+
+    /// E3-T19 regression: the browser relay's OPEN_OK can arrive SECONDS after the guest's SYN
+    /// (heavy runChunks starve the event loop, so WebSocket frames are delivered late). The
+    /// optimistic-accept listener completes the guest handshake immediately; the guest then sends
+    /// its first payload (a TLS ClientHello) long before the connector reports Established. All of
+    /// that must survive a late OPEN_OK: the payload flows out once credit arrives, and the
+    /// remote's reply still reaches the guest.
+    #[test]
+    fn late_open_ok_still_delivers_guest_payload_and_reply() {
+        use crate::ws_connector::{FrameTransport, WsConnector};
+        use crate::ws_proxy::Frame;
+
+        #[derive(Default)]
+        struct Wire {
+            sent: Vec<Frame>,
+            incoming: Vec<Frame>,
+        }
+        struct ManualTransport(Rc<RefCell<Wire>>);
+        impl FrameTransport for ManualTransport {
+            fn send(&mut self, frame: Frame) {
+                self.0.borrow_mut().sent.push(frame);
+            }
+            fn poll(&mut self) -> Vec<Frame> {
+                std::mem::take(&mut self.0.borrow_mut().incoming)
+            }
+            fn is_open(&self) -> bool {
+                true
+            }
+        }
+
+        let wire = Rc::new(RefCell::new(Wire::default()));
+        let connector = WsConnector::new(ManualTransport(wire.clone()), Vec::new());
+        let clock_ms = Rc::new(Cell::new(0i64));
+        let clock = {
+            let clock_ms = clock_ms.clone();
+            Box::new(move || clock_ms.get())
+        };
+        let mut be = SlirpLocalBackend::with_connector(GW_MAC, clock, Box::new(connector));
+
+        // The relay's opening HELLO completes the session handshake.
+        wire.borrow_mut().incoming.push(Frame::Hello {
+            version: 1,
+            token: Vec::new(),
+        });
+        let dst = Ipv4Addr::new(1, 1, 1, 1);
+        let client_port = 41999;
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+
+        // Guest SYN. The optimistic-accept listener must complete the guest handshake without
+        // waiting for the connector.
+        be.tx(&guest_tcp_segment(
+            dst,
+            client_port,
+            443,
+            5000,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        let server_isn = (0..2000)
+            .find_map(|_| {
+                clock_ms.set(clock_ms.get() + 1);
+                be.poll();
+                let frame = be.rx()?;
+                let eth = EthernetFrame::new_checked(&frame).ok()?;
+                let ip = Ipv4Packet::new_checked(eth.payload()).ok()?;
+                let tcp = TcpPacket::new_checked(ip.payload()).ok()?;
+                (tcp.src_port() == 443 && tcp.dst_port() == client_port && tcp.syn() && tcp.ack())
+                    .then(|| tcp.seq_number().0)
+            })
+            .expect("optimistic accept must SYN-ACK the guest before the relay's OPEN_OK");
+        be.tx(&guest_tcp_segment(
+            dst,
+            client_port,
+            443,
+            5001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::None,
+            &[],
+        ));
+
+        // Guest first payload (stand-in ClientHello), still long before OPEN_OK.
+        let hello = vec![0x16u8; 322];
+        be.tx(&guest_tcp_segment(
+            dst,
+            client_port,
+            443,
+            5001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::Psh,
+            &hello,
+        ));
+
+        // Simulate seconds of servicing before the relay answers.
+        for _ in 0..5000 {
+            clock_ms.set(clock_ms.get() + 1);
+            be.poll();
+            while be.rx().is_some() {}
+        }
+        let stream = wire
+            .borrow()
+            .sent
+            .iter()
+            .find_map(|frame| match frame {
+                Frame::Open { stream, host, port } if host == "1.1.1.1" && *port == 443 => {
+                    Some(*stream)
+                }
+                _ => None,
+            })
+            .expect("the connector must have issued the OPEN");
+
+        // The relay finally answers: connect succeeded, here is your send window.
+        wire.borrow_mut().incoming.push(Frame::OpenOk { stream });
+        wire.borrow_mut().incoming.push(Frame::Window {
+            stream,
+            credit: 262_144,
+        });
+        let mut payload_relayed = false;
+        for _ in 0..2000 {
+            clock_ms.set(clock_ms.get() + 1);
+            be.poll();
+            while be.rx().is_some() {}
+            if wire.borrow().sent.iter().any(|frame| {
+                matches!(frame, Frame::Data { stream: s, bytes } if *s == stream && bytes == &hello)
+            }) {
+                payload_relayed = true;
+                break;
+            }
+        }
+        assert!(
+            payload_relayed,
+            "guest payload sent before OPEN_OK must flow to the relay once credit arrives"
+        );
+
+        // Remote reply flows back to the guest as a data segment.
+        wire.borrow_mut().incoming.push(Frame::Data {
+            stream,
+            bytes: b"SERVER-HELLO".to_vec(),
+        });
+        let reply_seen = (0..2000).any(|_| {
+            clock_ms.set(clock_ms.get() + 1);
+            be.poll();
+            while let Some(frame) = be.rx() {
+                let Ok(eth) = EthernetFrame::new_checked(&frame) else {
+                    continue;
+                };
+                let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                    continue;
+                };
+                let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                    continue;
+                };
+                if tcp.src_port() == 443
+                    && tcp.dst_port() == client_port
+                    && tcp
+                        .payload()
+                        .windows(b"SERVER-HELLO".len())
+                        .any(|w| w == b"SERVER-HELLO")
+                {
+                    return true;
+                }
+            }
+            false
+        });
+        assert!(
+            reply_seen,
+            "remote reply must reach the guest after a late OPEN_OK"
+        );
+    }
+
+    /// E3-T19: under heavy interpreter load the guest's SYN-ACK can be delayed past Linux's 1s SYN
+    /// retransmission timer, so the listener sees duplicate SYNs; the guest's first payload can
+    /// also race ahead of everything while the relay's OPEN_OK is still seconds away. None of that
+    /// may wedge the flow.
+    #[test]
+    fn retransmitted_syn_under_delayed_open_ok_does_not_wedge_the_flow() {
+        use crate::ws_connector::{FrameTransport, WsConnector};
+        use crate::ws_proxy::Frame;
+
+        #[derive(Default)]
+        struct Wire {
+            sent: Vec<Frame>,
+            incoming: Vec<Frame>,
+        }
+        struct ManualTransport(Rc<RefCell<Wire>>);
+        impl FrameTransport for ManualTransport {
+            fn send(&mut self, frame: Frame) {
+                self.0.borrow_mut().sent.push(frame);
+            }
+            fn poll(&mut self) -> Vec<Frame> {
+                std::mem::take(&mut self.0.borrow_mut().incoming)
+            }
+            fn is_open(&self) -> bool {
+                true
+            }
+        }
+
+        let wire = Rc::new(RefCell::new(Wire::default()));
+        let connector = WsConnector::new(ManualTransport(wire.clone()), Vec::new());
+        let clock_ms = Rc::new(Cell::new(0i64));
+        let clock = {
+            let clock_ms = clock_ms.clone();
+            Box::new(move || clock_ms.get())
+        };
+        let mut be = SlirpLocalBackend::with_connector(GW_MAC, clock, Box::new(connector));
+        wire.borrow_mut().incoming.push(Frame::Hello {
+            version: 1,
+            token: Vec::new(),
+        });
+
+        let dst = Ipv4Addr::new(1, 1, 1, 1);
+        let client_port = 44777;
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+
+        let syn = guest_tcp_segment(dst, client_port, 443, 9000, None, TcpControl::Syn, &[]);
+        be.tx(&syn);
+        // Linux retransmits the SYN at ~1s and ~3s when the SYN-ACK is slow to arrive.
+        clock_ms.set(clock_ms.get() + 1000);
+        be.tx(&syn);
+        clock_ms.set(clock_ms.get() + 2000);
+        be.tx(&syn);
+
+        let server_isn = (0..2000)
+            .find_map(|_| {
+                clock_ms.set(clock_ms.get() + 1);
+                be.poll();
+                let frame = be.rx()?;
+                let eth = EthernetFrame::new_checked(&frame).ok()?;
+                let ip = Ipv4Packet::new_checked(eth.payload()).ok()?;
+                let tcp = TcpPacket::new_checked(ip.payload()).ok()?;
+                (tcp.src_port() == 443 && tcp.dst_port() == client_port && tcp.syn() && tcp.ack())
+                    .then(|| tcp.seq_number().0)
+            })
+            .expect("duplicate SYNs must still produce a SYN-ACK");
+        be.tx(&guest_tcp_segment(
+            dst,
+            client_port,
+            443,
+            9001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::None,
+            &[],
+        ));
+        let hello = vec![0x16u8; 322];
+        be.tx(&guest_tcp_segment(
+            dst,
+            client_port,
+            443,
+            9001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::Psh,
+            &hello,
+        ));
+
+        for _ in 0..3000 {
+            clock_ms.set(clock_ms.get() + 1);
+            be.poll();
+            while be.rx().is_some() {}
+        }
+        let stream = wire
+            .borrow()
+            .sent
+            .iter()
+            .find_map(|frame| match frame {
+                Frame::Open { stream, host, port } if host == "1.1.1.1" && *port == 443 => {
+                    Some(*stream)
+                }
+                _ => None,
+            })
+            .expect("exactly one OPEN for the retransmitted SYN");
+        let opens = wire
+            .borrow()
+            .sent
+            .iter()
+            .filter(|frame| matches!(frame, Frame::Open { .. }))
+            .count();
+        assert_eq!(opens, 1, "SYN retransmits must not dial duplicate streams");
+
+        wire.borrow_mut().incoming.push(Frame::OpenOk { stream });
+        wire.borrow_mut().incoming.push(Frame::Window {
+            stream,
+            credit: 262_144,
+        });
+        let payload_relayed = (0..2000).any(|_| {
+            clock_ms.set(clock_ms.get() + 1);
+            be.poll();
+            while be.rx().is_some() {}
+            wire.borrow().sent.iter().any(|frame| {
+                matches!(frame, Frame::Data { stream: s, bytes } if *s == stream && bytes == &hello)
+            })
+        });
+        assert!(
+            payload_relayed,
+            "guest payload must flow to the relay despite duplicate SYNs and a late OPEN_OK"
+        );
+    }
 }
