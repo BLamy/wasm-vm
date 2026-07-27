@@ -79,8 +79,12 @@ required_terms = [
     "strict UTF-8",
     "Unicode NFC",
     "`O_NOFOLLOW`",
+    "`RESOLVE_NO_XDEV`",
+    "`st_nlink != 1`",
+    "`st_nlink == 1` both before and after streaming",
     "atomic no-replace rename",
     "durable commit record",
+    "final-name visibility point",
     "parent-directory `fsync`",
     "receiver-controlled flow control",
     "reading a whole transfer into memory is forbidden",
@@ -109,6 +113,7 @@ hostile_vectors = [
     "x<NUL>y",
     "NFC collisions",
     "symlink replacement",
+    "out-of-root hard-link fixture",
     "DATA after COMMIT",
     "between rename and directory fsync",
     "u32::MAX",
@@ -140,9 +145,44 @@ for error in [
 if "/var/lib/wasm-vm/transfer/inbox" not in text or "/var/lib/wasm-vm/transfer/outbox" not in text:
     raise SystemExit("fixed inbox/outbox roots are not both specified")
 
+required_interruption_rows = [
+    "| sender or receiver CANCEL before final-name visibility |",
+    "| CANCEL after final-name visibility |",
+    "| EOF, timeout, tab kill, or VM stop before final-name visibility |",
+    "| EOF after final-name visibility but before durable promotion |",
+    "| EOF after durable promotion but before COMPLETE is observed |",
+]
+for row in required_interruption_rows:
+    if row not in text:
+        raise SystemExit(f"missing interruption outcome row: {row}")
+
+capability_rows = {
+    "URL, DNS name, destination IP, or port": "DENY",
+    "host path or host directory enumeration": "DENY",
+    "guest path containing a directory component": "DENY",
+    "command, shell, eval, dynamic import, or URL handler": "DENY",
+    "host listener or public ingress": "DENY",
+}
+for capability, policy in capability_rows.items():
+    pattern = rf"\|\s*{re.escape(capability)}\s*\|\s*`{policy}`\s*\|"
+    if not re.search(pattern, text):
+        raise SystemExit(f"missing normative capability policy: {capability}={policy}")
+
+permissive = re.compile(r"\b(allow|permit|accept|enable)(?:s|ed)?\b", re.IGNORECASE)
+denied_subject = re.compile(
+    r"\b(URL|DNS name|destination IP|host path|command|shell|eval|public ingress)\b",
+    re.IGNORECASE,
+)
+negation = re.compile(r"\b(no|not|never|deny|denied|forbid|forbidden|reject|rejected)\b", re.IGNORECASE)
+for line_number, line in enumerate(text.splitlines(), 1):
+    if permissive.search(line) and denied_subject.search(line) and not negation.search(line):
+        raise SystemExit(f"contradictory permissive capability statement at line {line_number}")
+
 print(
     "E3-T21a protocol: OK "
     f"({len(constants)} constants, {len(frame_types)} frame types, "
-    f"{len(hostile_vectors)} adversarial vectors)"
+    f"{len(hostile_vectors)} adversarial vectors, "
+    f"{len(required_interruption_rows)} interruption outcomes, "
+    f"{len(capability_rows)} denied capabilities)"
 )
 PY

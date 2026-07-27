@@ -25,8 +25,8 @@ The guest agent exposes two fixed roots:
 - guest-to-host downloads may read regular files by basename only from
   `/var/lib/wasm-vm/transfer/outbox`.
 
-Neither root is configurable through WVFT. Directories, symlinks, devices, sockets, hard links with
-an out-of-root inode, and path traversal are rejected.
+Neither root is configurable through WVFT. Directories, symlinks, devices, sockets, any source with
+`st_nlink != 1`, and path traversal are rejected.
 
 ## Transport and protocol constants
 
@@ -120,8 +120,14 @@ characters. Invalid UTF-8, `/etc/passwd`, `../x`, `a/b`, `a\b`, `.`, `..`, `x<NU
 aliases that collide after NFC, and names longer than 255 bytes are `ERROR(BAD_NAME)`.
 
 All opens are relative to a pre-opened inbox or outbox directory descriptor. Implementations use
-no-follow/beneath semantics (`openat2` where available, otherwise component-free basename checks
-plus `openat` with `O_NOFOLLOW`) and verify the result is a regular file. Protocol names are never
+no-follow/beneath/no-cross-device semantics (`openat2` with `RESOLVE_BENEATH`,
+`RESOLVE_NO_SYMLINKS`, and `RESOLVE_NO_XDEV` where available, otherwise component-free basename
+checks plus `openat` with `O_NOFOLLOW`) and verify the result is a regular file. For a download,
+`fstat` on the already-open descriptor must report `st_nlink == 1` both before and after streaming;
+`st_nlink != 1` is `ERROR(BAD_NAME)`. Holding the descriptor prevents path replacement from changing
+the object being read, while the second link-count check detects a link added during the transfer.
+If an outside name is removed so the outbox name is the inode's only remaining link, the outbox name
+is its sole filesystem capability and no out-of-root alias remains. Protocol names are never
 concatenated into an absolute path.
 
 ## Host-to-guest upload state machine
@@ -135,16 +141,20 @@ concatenated into an absolute path.
 4. **COMMITTING:** COMMIT is accepted only when its length and hash equal both OFFER and the
    receiver's observed byte count/hash. The guest flushes file data and metadata, durably writes a
    bounded `.wvft-<stream_id>.commit` record containing the normalized name, length, and hash,
-   atomically renames the partial to the normalized final basename without replacement, then
-   fsyncs the inbox directory. It removes the commit record and fsyncs the directory again.
+   atomically renames the partial to the normalized final basename without replacement. That rename
+   is the **final-name visibility point**: the bytes are already complete and independently
+   validated, but the directory entry is not yet claimed durable. The guest then fsyncs the inbox
+   directory, removes the commit record, and fsyncs the directory again.
 5. **COMPLETE:** only after the directory fsync succeeds does the guest send COMPLETE. A final file
-   is never visible before durable acknowledgement.
+   is never visible with incomplete or unvalidated bytes; transport acknowledgement follows local
+   durable promotion.
 
 The receiving guest owns upload durability. `fdatasync`/`fsync`, the durable commit record, atomic
 no-replace rename, and parent-directory `fsync` are its responsibility; a sender flush does not
-satisfy them. On startup, a commit record plus a matching final file proves local completion; a
-commit record with only a partial remains interrupted; any mismatch is quarantined and reported as
-IO. Thus a crash cannot make unvalidated bytes look final.
+satisfy them. On startup, a commit record plus a matching final file resumes the pending directory
+fsync and then proves local completion; a commit record with only a partial remains interrupted;
+any mismatch is quarantined and reported as IO. Thus a crash cannot make incomplete or unvalidated
+bytes look final.
 
 ## Guest-to-host download state machine
 
@@ -165,14 +175,18 @@ not an in-memory Blob. The guest must not report success merely because it finis
 
 ## Cancellation, interruption, and errors
 
-`CANCEL`, `ERROR`, and transport EOF are terminal for the affected stream. CANCEL is idempotent:
-receiving it twice does not resurrect or reclassify a stream. Frames after a terminal state are
-ignored except that malformed connection framing still closes the connection.
+`ERROR` and transport EOF are terminal for the affected stream. CANCEL before final-name visibility
+is terminal and idempotent: receiving it twice does not resurrect or reclassify a stream. CANCEL
+after final-name visibility is too late to undo validated bytes; the receiver finishes the durable
+commit and answers COMPLETE, or answers `ERROR(IO)` if durability fails. Frames after a terminal
+state are ignored except that malformed connection framing still closes the connection.
 
 | Event | Upload outcome | Download outcome |
 |---|---|---|
-| sender or receiver CANCEL before durable promotion | close the file; retain only `.wvft-<stream_id>.part`, marked partial | close the sink; retain or delete only the session-private `.part`, never expose/export it |
-| EOF, timeout, tab kill, or VM stop before durable promotion | same explicit interrupted partial outcome | same explicit interrupted partial outcome |
+| sender or receiver CANCEL before final-name visibility | close the file; retain only `.wvft-<stream_id>.part`, marked partial | close the sink; retain or delete only the session-private `.part`, never expose/export it |
+| CANCEL after final-name visibility | finish fsync/recovery and return COMPLETE; on durability failure return `ERROR(IO)` and recover from the commit record | complete local flush/promotion and return COMPLETE; on durability failure return `ERROR(IO)` and keep the object private |
+| EOF, timeout, tab kill, or VM stop before final-name visibility | same explicit interrupted partial outcome | same explicit interrupted partial outcome |
+| EOF after final-name visibility but before durable promotion | commit record drives startup fsync/finalization or quarantine; the final name contains only validated bytes | host adapter keeps the validated object private and finishes or quarantines it before exposure |
 | EOF after durable promotion but before COMPLETE is observed | receiver retains the validated final file; sender reports `COMPLETION_UNKNOWN`, never a false failure or success | receiver retains the validated complete session object; sender reports `COMPLETION_UNKNOWN` |
 | length/hash/offset mismatch | ERROR; retain partial for inspection/explicit cleanup | ERROR; retain or delete partial, never expose it |
 | quota or I/O failure | ERROR; no final rename | ERROR; no complete session object |
@@ -185,8 +199,8 @@ absolute paths, auth material, host environment values, or arbitrary underlying 
 
 Stable error codes are: `UNSUPPORTED_VERSION`, `BAD_FRAME`, `BAD_STATE`, `BAD_NAME`,
 `BAD_OFFSET`, `TOO_LARGE`, `BUSY`, `QUOTA`, `FLOW_CONTROL`, `HASH_MISMATCH`, `SOURCE_CHANGED`,
-`CANCELLED`, `TIMEOUT`, `COMPLETION_UNKNOWN`, and `IO`. Unknown peer error codes are displayed as
-`peer error` without interpreting their message.
+`CANCELLED`, `TIMEOUT`, `COMPLETION_UNKNOWN`, and `IO`. Unknown peer error codes are
+displayed as `peer error` without interpreting their message.
 
 ## Threat model and capability statement
 
@@ -206,6 +220,17 @@ These capabilities are available to arbitrary code inside the VM. The design doe
 guest keeping a token secret from itself.
 
 ### Capabilities not granted
+
+This table is the normative capability policy for version 1. No prose, extension field, error text,
+or future-compatible parsing rule may override a `DENY` row.
+
+| Capability input or operation | Version 1 policy |
+|---|---|
+| URL, DNS name, destination IP, or port | `DENY` |
+| host path or host directory enumeration | `DENY` |
+| guest path containing a directory component | `DENY` |
+| command, shell, eval, dynamic import, or URL handler | `DENY` |
+| host listener or public ingress | `DENY` |
 
 - **No arbitrary host fetch:** there is no URL, DNS name, IP address, port, HTTP method, or redirect
   field. The reserved endpoint has no CONNECT or proxy opcode and cannot dial a destination.
@@ -238,7 +263,8 @@ An implementation and verifier must cover:
 - envelope lengths of 0, 65536, 65537, and `u32::MAX`, including truncated and trailing payloads;
 - transfer lengths of 0, 1 GiB, 1 GiB + 1, and `u64::MAX`;
 - offset overlap, gap, replay, wraparound, DATA after COMMIT, and more than four frames of credit;
-- every hostile name listed in Name normalization plus NFC collisions and symlink replacement;
+- every hostile name listed in Name normalization plus NFC collisions, symlink replacement, and an
+  out-of-root hard-link fixture that must fail the `st_nlink == 1` checks;
 - CANCEL/EOF at every state, especially after the last DATA and between rename and directory fsync;
 - two accepted concurrent streams and a third `BUSY` response;
 - attempts to encode a URL, host path, shell command, unknown opcode, or destination in any field;
