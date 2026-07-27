@@ -739,6 +739,55 @@ mod tests {
     }
 
     #[test]
+    fn maximum_frames_are_transport_shape_invariant_and_residual_stays_bounded() {
+        let (_temp, storage, inbox, _outbox) = setup((MAX_DATA_BYTES * 4) as u64);
+        let bytes = vec![0xa5; MAX_DATA_BYTES * 2];
+        let mut wire = Vec::new();
+        for (offset, chunk) in bytes.chunks(MAX_DATA_BYTES).enumerate() {
+            let mut payload = ((offset * MAX_DATA_BYTES) as u64).to_be_bytes().to_vec();
+            payload.extend_from_slice(chunk);
+            wire.extend_from_slice(&frame(DATA, 7, &payload));
+        }
+
+        let (mut coalesced, _) = Session::service(storage.clone(), 0);
+        negotiate(&mut coalesced);
+        let accepted = coalesced.receive(&offer(UPLOAD, 7, "coalesced-all.bin", &bytes), 2);
+        assert_eq!(kind(&accepted.frames[0]), ACCEPT);
+        let out = coalesced.receive(&wire, 3);
+        assert!(!out.close);
+        assert_eq!(out.frames.len(), 2);
+        assert!(out.frames.iter().all(|frame| kind(frame) == ACK));
+        assert_eq!(coalesced.buffered_bytes(), 0);
+        let mut commit = (bytes.len() as u64).to_be_bytes().to_vec();
+        commit.extend_from_slice(&<[u8; 32]>::from(Sha256::digest(&bytes)));
+        assert!(coalesced.receive(&frame(COMMIT, 7, &commit), 4).complete);
+        assert_eq!(fs::read(inbox.join("coalesced-all.bin")).unwrap(), bytes);
+
+        let (mut fragmented, _) = Session::service(storage, 10);
+        negotiate(&mut fragmented);
+        let accepted = fragmented.receive(&offer(UPLOAD, 7, "fragmented-all.bin", &bytes), 12);
+        assert_eq!(kind(&accepted.frames[0]), ACCEPT);
+        let chunk_sizes = [1, 7, 257, 4_096];
+        let mut cursor = 0;
+        let mut turn = 0;
+        while cursor < wire.len() {
+            let end = (cursor + chunk_sizes[turn % chunk_sizes.len()]).min(wire.len());
+            let out = fragmented.receive(&wire[cursor..end], 13 + turn as u64);
+            assert!(!out.close);
+            assert!(fragmented.buffered_bytes() <= HEADER_BYTES + MAX_FRAME_PAYLOAD);
+            cursor = end;
+            turn += 1;
+        }
+        assert_eq!(fragmented.buffered_bytes(), 0);
+        assert!(
+            fragmented
+                .receive(&frame(COMMIT, 7, &commit), 20_000)
+                .complete
+        );
+        assert_eq!(fs::read(inbox.join("fragmented-all.bin")).unwrap(), bytes);
+    }
+
+    #[test]
     fn download_streams_under_credit_and_waits_for_complete() {
         let (_temp, storage, _inbox, outbox) = setup(1024);
         let bytes = vec![0x5a; MAX_DATA_BYTES + 9];
@@ -797,7 +846,7 @@ mod tests {
         let out = malformed.receive(&hostile, 1);
         assert!(out.close);
         assert_eq!(kind(&out.frames[0]), ERROR);
-        assert!(malformed.buffered_bytes() <= HEADER_BYTES + MAX_FRAME_PAYLOAD);
+        assert_eq!(malformed.buffered_bytes(), 0);
     }
 
     #[test]

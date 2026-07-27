@@ -3,7 +3,7 @@ id: E3-T21b2b
 epic: 3
 title: Static riscv64 WVFT guest agent
 priority: 321.222
-status: implemented
+status: verified
 depends_on: [E3-T21b2a]
 estimate: S
 risk: high
@@ -111,3 +111,44 @@ Incremental exact-head evidence:
 Command:
 `cargo test -p wasm-vm-file-agent valid_coalesced_frames_survive_a_full_transport_read_after_fragmentation -- --nocapture`
 — failed: 0 passed, 1 failed.
+
+### 2026-07-27 — verifier — VERDICT: verified
+
+- P1 promoted coalesced-frame prediction — HELD. Predicted the prior split/full-read reproducer
+  would consume the completed maximum DATA frame, emit its ACK, and retain exactly the following
+  100-byte prefix. Observed precisely that at `crates/file-agent/src/lib.rs:711-738`; the focused
+  regression passed both in the working tree and a scrubbed pristine clone of submission
+  `2aed967`.
+- P2 bounded novel coalescing prediction — HELD. Predicted two maximum DATA frames supplied in one
+  `receive` call would yield two ordered ACKs, leave zero residual bytes, and commit the advertised
+  hash. The promoted verifier regression at `crates/file-agent/src/lib.rs:741-764` observed all
+  four conditions and the durable bytes matched.
+- P3 bounded novel fragmentation prediction — HELD. Predicted the same wire stream split across
+  repeating 1/7/257/4096-byte reads would never retain more than
+  `HEADER_BYTES + MAX_FRAME_PAYLOAD`, would finish with zero residual bytes, and would commit the
+  same file. Observed exactly that at `crates/file-agent/src/lib.rs:766-787`.
+- P4 malformed-length cleanup prediction — HELD. A header declaring `u32::MAX` payload bytes
+  terminated parsing and cleared the residual buffer at `crates/file-agent/src/lib.rs:843-849`.
+- REPRODUCIBLE ARTIFACT — HELD. Two builds from the current tree and two more from the scrubbed
+  pristine clone each produced the same stripped RISC-V ELF64 static PIE with SHA-256
+  `fd94005040c1ad18450e726242d53b76da46ae394ac7ee454bbbf4f23ef84f0e`. The pristine clone also
+  passed the promoted regression, capability audit, and task policy.
+- COVERAGE: every runtime line changed by `0b6f3c6` executed under the promoted coalescing and
+  fragmentation tests except the `room == 0` defense at lines 143-147. That branch is waived as an
+  invariant guard: after a complete header, `parse` either rejects an oversized declaration or
+  consumes an exactly full valid frame, so an incomplete buffer cannot legitimately occupy the
+  full capacity. Task/log/queue changes are administrative waivers. The earlier verifier's
+  structural review of unchanged runtime, build, and capability hunks carries forward.
+- SABOTAGE: reducing the residual capacity by one byte made both maximum-frame regressions fail;
+  restoring production returned all eight crate tests to green.
+- SUITE: retained the original promoted regression, added
+  `maximum_frames_are_transport_shape_invariant_and_residual_stays_bounded`, and strengthened the
+  malformed-frame test to require an empty residual buffer.
+
+Commands:
+
+- `cargo test -p wasm-vm-file-agent -- --nocapture` — 8 passed.
+- `cargo clippy -p wasm-vm-file-agent --all-targets -- -D warnings` — passed.
+- `cargo fmt --all --check` and `git diff --check` — passed.
+- `bash tools/verify/e3-t21b2b-static.sh` — passed twice (working tree and pristine clone).
+- Pristine `cargo test ... valid_coalesced_frames...`, capability audit, and task policy — passed.
