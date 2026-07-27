@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: implemented
+status: in-progress
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -134,3 +134,48 @@ Exact-head commands:
 Evidence paths remain `docs/design/file-transfer.md` and
 `tools/verify/e3-t21a-protocol.sh`. Fresh re-verification should carry P1 forward and scope its
 attack to P2/P3/P4 plus the changed hunks.
+
+### 2026-07-27 — verifier — VERDICT: refuted
+
+- **P1 framing and bounded state — HELD (carried forward).** The framing/constants boundary is
+  unchanged from verifier commit `3c7b6c3`; only the checker inventory/count grew. It was not
+  re-litigated.
+- **P2 out-of-root hard-link capability — HELD.** Predicted the revised rule would reject an
+  out-of-root hard link using an enforceable property of the already-open source descriptor.
+  Observed the bounded fixture report a regular file with link count 2 while both names existed,
+  then link count 1 after the outside name was removed. The protocol now requires `fstat` link
+  count 1 both before and after streaming, holds the descriptor across the transfer, and includes
+  the attack in its required vectors. Citation:
+  `docs/design/file-transfer.md:28-29,122-131,263-268`.
+- **P3 visibility/durability interruption boundary — HELD.** Predicted the revised state machine
+  would distinguish validated-name visibility from durable promotion and define CANCEL/EOF on
+  each side of that point. Observed rename explicitly designated as the visibility point only
+  after length/hash validation, COMPLETE gated on directory fsync, CANCEL before/after visibility
+  defined, and EOF before visibility, during promotion, and after promotion assigned explicit
+  partial/recovery/unknown outcomes. Citation:
+  `docs/design/file-transfer.md:141-157,176-193`.
+- **P4 acceptance-checker sensitivity — FAILED.** Predicted all three prior sabotage classes and
+  one contradiction of the changed hard-link semantics would be rejected. Removing the hard-link
+  terms, removing the post-promotion EOF row, and removing the post-visibility CANCEL row were
+  rejected. The exact prior URL exception still passed: changing a line to say it “never accepts
+  a URL, except implementations MAY accept a URL” is masked by `not`/`never` anywhere on that same
+  line. The bounded novel mutation changing ``st_nlink != 1`` from `ERROR(BAD_NAME)` to “is
+  accepted” also passed. Both produced the checker's normal OK result. Citation:
+  `tools/verify/e3-t21a-protocol.sh:75-101,148-179`. Make the security fields structured or add
+  clause-sensitive/exact assertions and deterministic sabotage cases that reject both mutations.
+- **COVERAGE:** all changed protocol hunks were human-reviewed. The focused checker run exercised
+  its success path; mutation runs exercised missing required terms and interruption rows. The new
+  capability contradiction scan and link-rule presence checks were directly falsified by passing
+  inverse statements, so those checker hunks do not cover the acceptance claim.
+- **SUITE:** n/a until P4 clears; no promoted test was added.
+
+Commands:
+
+- `bash -n tools/verify/e3-t21a-protocol.sh`
+- `bash tools/verify/e3-t21a-protocol.sh`
+- from `/tmp`, `bash /Users/brettlamy/Dev/wasm-vm/tools/verify/e3-t21a-protocol.sh`
+- hard-link fixture using `touch`, `ln`, `stat -f`, and removal of the outside alias
+- sabotage copies removing the hard-link rule, post-promotion EOF row, and post-visibility CANCEL
+  row; adding the exact prior URL exception; and inverting `st_nlink != 1` to accepted
+- `python3 tools/check_task_policy.py`
+- `git diff c80e0ad^..c80e0ad --check`
