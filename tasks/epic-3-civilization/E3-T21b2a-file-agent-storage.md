@@ -3,7 +3,7 @@ id: E3-T21b2a
 epic: 3
 title: Crash-safe guest file-agent storage engine
 priority: 321.221
-status: implemented
+status: in-progress
 depends_on: [E3-T21b1]
 estimate: S
 risk: high
@@ -131,3 +131,39 @@ Exact-head evidence:
   promoted regressions and the 100 MiB streaming case.
 - `cargo check --workspace --all-targets` — passed.
 - `git diff 8df133f..878f802 --check` — passed.
+
+### 2026-07-27 — verifier — VERDICT: refuted
+
+- **P1 pathname substitution — HELD.** The promoted
+  `replaced_partial_name_cannot_publish_unvalidated_out_of_root_inode` regression passed: replacing
+  the private pathname before commit is rejected and no attacker bytes become visible.
+- **P2 resident quota — HELD.** The promoted restart-quota regression and the worker's new
+  in-process partial/final quota regression passed. Restoring the old release subtraction made the
+  new regression fail at its first over-quota assertion, so the test detects the repaired behavior.
+- **P3 immutable COMPLETE bytes — FAILED.** Predicted that a successful Linux commit would leave no
+  writable alias capable of changing the validated final. The Linux publication hunk calls
+  `linkat(AT_EMPTY_PATH)` and then a procfd `linkat` fallback in
+  `crates/file-agent-storage/src/lib.rs`; both create another hard link to the same writable partial
+  inode. An adversary can open the predictable `0600` partial before commit, retain that writable
+  descriptor, let commit validate and publish it, and then overwrite the inode through the retained
+  descriptor. The final name consequently contains bytes that were never hash-validated while the
+  commit record has already declared completion. Publish a separately validated, non-writable inode
+  rather than hard-linking the upload inode.
+- **COVERAGE — INSUFFICIENT.** The macOS model uses `fclonefileat`, so the worker's native run never
+  exercised the Linux hard-link publication boundary that ships in the guest. The promoted
+  `linux_final_cannot_be_mutated_through_a_precommit_partial_handle` regression captures the exact
+  Linux attack and must pass on Linux before re-verification.
+- **SUITE:** carried forward the two previously promoted regressions and added the Linux retained-fd
+  mutation regression. Broad and pristine-clone gates were withheld after the semantic refutation.
+
+Commands:
+
+- `cargo test -p wasm-vm-file-agent-storage
+  replaced_partial_name_cannot_publish_unvalidated_out_of_root_inode -- --nocapture` — passed.
+- `cargo test -p wasm-vm-file-agent-storage
+  retained_interrupted_partials_count_against_storage_quota_after_restart -- --nocapture` — passed.
+- `cargo test -p wasm-vm-file-agent-storage
+  retained_partial_and_committed_final_stay_charged_in_process -- --nocapture` — passed; sabotage
+  mutation failed as predicted.
+- The Linux-only promoted attack was frozen for the required Linux submission run; the local
+  OrbStack/Docker daemon was unavailable.

@@ -1148,6 +1148,31 @@ mod tests {
         assert_eq!(fs::read(&outside).unwrap(), b"attacker");
     }
 
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn linux_final_cannot_be_mutated_through_a_precommit_partial_handle() {
+        let (_temp, storage, inbox, _outbox) = setup(1024);
+        let mut upload = storage
+            .begin_upload("final", 7, Sha256::digest(b"correct").into())
+            .unwrap();
+        upload.write_chunk(0, b"correct").unwrap();
+
+        // The adversary has the same directory authority needed by the task's link-replacement
+        // attack and retains a writable handle before the private name is removed.
+        let partial = inbox.join(".wvft-0000000000000001.part");
+        let mut retained = File::options().write(true).open(partial).unwrap();
+        upload.commit().unwrap();
+        retained.seek(SeekFrom::Start(0)).unwrap();
+        retained.write_all(b"attacker").unwrap();
+        retained.sync_data().unwrap();
+
+        assert_eq!(
+            fs::read(inbox.join("final")).unwrap(),
+            b"correct",
+            "a COMPLETE final must not remain the writable partial inode"
+        );
+    }
+
     #[test]
     fn retained_interrupted_partials_count_against_storage_quota_after_restart() {
         let temp = tempfile::tempdir().unwrap();
