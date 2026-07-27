@@ -3,7 +3,7 @@ id: E3-T21b2b
 epic: 3
 title: Static riscv64 WVFT guest agent
 priority: 321.222
-status: pending
+status: in-progress
 depends_on: [E3-T21b2a]
 estimate: S
 risk: high
