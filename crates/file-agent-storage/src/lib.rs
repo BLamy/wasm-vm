@@ -130,6 +130,98 @@ impl Directory {
             }
         }
     }
+
+    fn identity(&self, name: &CStr) -> Result<FileIdentity> {
+        // SAFETY: output storage, directory fd, and C string are valid.
+        let mut stat: libc::stat = unsafe { std::mem::zeroed() };
+        if unsafe {
+            libc::fstatat(
+                self.fd(),
+                name.as_ptr(),
+                &mut stat,
+                libc::AT_SYMLINK_NOFOLLOW,
+            )
+        } != 0
+        {
+            return Err(Error::Io(std::io::Error::last_os_error()));
+        }
+        identity_from_stat(&stat)
+    }
+
+    #[cfg(target_os = "linux")]
+    fn publish_file_no_replace(&self, source: &File, target: &CStr) -> Result<()> {
+        let empty = CStr::from_bytes_with_nul(b"\0").expect("empty C string");
+        // AT_EMPTY_PATH is the direct descriptor primitive. It succeeds for a suitably privileged
+        // static agent and avoids requiring procfs to be mounted.
+        // SAFETY: both descriptors and C strings are live.
+        let direct = unsafe {
+            libc::linkat(
+                source.as_raw_fd(),
+                empty.as_ptr(),
+                self.fd(),
+                target.as_ptr(),
+                libc::AT_EMPTY_PATH,
+            )
+        };
+        if direct == 0 {
+            return Ok(());
+        }
+        let direct_error = std::io::Error::last_os_error();
+        if direct_error.raw_os_error() == Some(libc::EEXIST) {
+            return Err(Error::Exists);
+        }
+
+        // `/proc/self/fd/N` binds the source to the already-open, validated inode. In contrast,
+        // linking the private pathname would reopen a race after its identity check. This is the
+        // unprivileged fallback when AT_EMPTY_PATH is denied.
+        let source_path =
+            CString::new(format!("/proc/self/fd/{}", source.as_raw_fd())).expect("fd path");
+        // SAFETY: both descriptors and C strings are live. AT_SYMLINK_FOLLOW dereferences only the
+        // kernel-owned procfs descriptor link; the target remains beneath the held directory fd.
+        let result = unsafe {
+            libc::linkat(
+                libc::AT_FDCWD,
+                source_path.as_ptr(),
+                self.fd(),
+                target.as_ptr(),
+                libc::AT_SYMLINK_FOLLOW,
+            )
+        };
+        map_publish_result(result)
+    }
+
+    #[cfg(target_os = "macos")]
+    fn publish_file_no_replace(&self, source: &File, target: &CStr) -> Result<()> {
+        // fclonefileat reads from the held descriptor and creates the target with no replacement.
+        // It therefore preserves the same descriptor-binding guarantee as Linux's procfd link.
+        // SAFETY: source/directory descriptors and target C string are live.
+        let result =
+            unsafe { libc::fclonefileat(source.as_raw_fd(), self.fd(), target.as_ptr(), 0) };
+        map_publish_result(result)
+    }
+
+    #[cfg(not(any(target_os = "linux", target_os = "macos")))]
+    fn publish_file_no_replace(&self, _source: &File, _target: &CStr) -> Result<()> {
+        // This security boundary currently targets Linux guests and has a descriptor-bound macOS
+        // model. Refuse publication on platforms without an equivalent primitive.
+        Err(Error::Io(std::io::Error::new(
+            std::io::ErrorKind::Unsupported,
+            "descriptor-bound publication is unavailable",
+        )))
+    }
+}
+
+fn map_publish_result(result: i32) -> Result<()> {
+    if result == 0 {
+        Ok(())
+    } else {
+        let error = std::io::Error::last_os_error();
+        if error.raw_os_error() == Some(libc::EEXIST) {
+            Err(Error::Exists)
+        } else {
+            Err(Error::Io(error))
+        }
+    }
 }
 
 struct Shared {
@@ -145,6 +237,7 @@ struct Shared {
 struct Lease {
     name: String,
     total_len: u64,
+    resident_bytes: u64,
     last_activity_ms: u64,
     expired: bool,
     released: bool,
@@ -185,6 +278,7 @@ impl Storage {
             })),
         };
         storage.recover()?;
+        storage.shared.borrow_mut().reserved_bytes = retained_bytes(&storage.inbox)?;
         Ok(storage)
     }
 
@@ -242,7 +336,7 @@ impl Storage {
         let record_name = c_name(&record_text)?;
         let file = self.inbox.open_file(
             &partial_name,
-            libc::O_WRONLY | libc::O_CREAT | libc::O_EXCL | libc::O_NOFOLLOW,
+            libc::O_RDWR | libc::O_CREAT | libc::O_EXCL | libc::O_NOFOLLOW,
             0o600,
         )?;
         shared.active += 1;
@@ -251,6 +345,7 @@ impl Storage {
         let lease = Rc::new(RefCell::new(Lease {
             name: name.clone(),
             total_len,
+            resident_bytes: 0,
             last_activity_ms: now_ms,
             expired: false,
             released: false,
@@ -297,7 +392,9 @@ impl Storage {
         }
         let mut shared = self.shared.borrow_mut();
         shared.active = shared.active.saturating_sub(1);
-        shared.reserved_bytes = shared.reserved_bytes.saturating_sub(lease.total_len);
+        shared.reserved_bytes = shared
+            .reserved_bytes
+            .saturating_sub(lease.total_len.saturating_sub(lease.resident_bytes));
         shared.active_names.retain(|name| name != &lease.name);
         lease.released = true;
     }
@@ -360,16 +457,21 @@ impl Storage {
                     let final_name = c_name(&record.name)?;
                     let partial_name = partial_name_for_record(&record_name)?;
                     if entry_exists(self.inbox.fd(), &final_name)? {
-                        let partial_exists = entry_exists(self.inbox.fd(), &partial_name)?;
                         let file = self.inbox.open_file(
                             &final_name,
                             libc::O_RDONLY | libc::O_NOFOLLOW,
                             0,
                         )?;
-                        let expected_links = if partial_exists { 2 } else { 1 };
-                        if metadata(&file)?.links == expected_links
-                            && file_matches(&file, record.total_len, record.sha256)?
-                        {
+                        let final_identity = metadata(&file)?;
+                        let partial_identity = self.inbox.identity(&partial_name).ok();
+                        let safe_links = final_identity.links == 1
+                            || (final_identity.links == 2
+                                && partial_identity.is_some_and(|partial| {
+                                    (partial.device, partial.inode)
+                                        == (final_identity.device, final_identity.inode)
+                                }));
+                        if safe_links && file_matches(&file, record.total_len, record.sha256)? {
+                            let partial_exists = partial_identity.is_some();
                             if partial_exists {
                                 self.inbox.unlink(&partial_name)?;
                             }
@@ -442,6 +544,7 @@ impl Upload {
             .write_all(bytes)?;
         self.hasher.update(bytes);
         self.offset += bytes.len() as u64;
+        self.lease.borrow_mut().resident_bytes = self.offset;
         Ok(())
     }
 
@@ -470,6 +573,14 @@ impl Upload {
         let file = self.file.take().ok_or(Error::SourceChanged)?;
         file.sync_data()?;
         self.hit(FaultPoint::AfterPartialSync)?;
+        let held_identity = metadata(&file)?;
+        if held_identity.mode & libc::S_IFMT as u32 != libc::S_IFREG as u32
+            || held_identity.size != self.total_len
+            || held_identity.links != 1
+            || self.dir.identity(&self.partial_name)? != held_identity
+        {
+            return Err(Error::SourceChanged);
+        }
 
         let record = encode_record(&self.name, self.total_len, self.expected_sha);
         let mut record_file = self.dir.open_file(
@@ -481,8 +592,7 @@ impl Upload {
         record_file.sync_all()?;
         self.hit(FaultPoint::AfterRecordSync)?;
 
-        self.dir
-            .link_no_replace(&self.partial_name, &self.final_name)?;
+        self.dir.publish_file_no_replace(&file, &self.final_name)?;
         self.hit(FaultPoint::AfterRename)?;
         self.dir.unlink(&self.partial_name)?;
         self.dir.sync()?;
@@ -509,7 +619,9 @@ impl Upload {
         }
         let mut shared = self.shared.borrow_mut();
         shared.active = shared.active.saturating_sub(1);
-        shared.reserved_bytes = shared.reserved_bytes.saturating_sub(lease.total_len);
+        shared.reserved_bytes = shared
+            .reserved_bytes
+            .saturating_sub(lease.total_len.saturating_sub(lease.resident_bytes));
         shared.active_names.retain(|name| name != &lease.name);
         lease.released = true;
     }
@@ -581,6 +693,10 @@ fn metadata(file: &File) -> Result<FileIdentity> {
     if unsafe { libc::fstat(file.as_raw_fd(), &mut stat) } != 0 {
         return Err(Error::Io(std::io::Error::last_os_error()));
     }
+    identity_from_stat(&stat)
+}
+
+fn identity_from_stat(stat: &libc::stat) -> Result<FileIdentity> {
     Ok(FileIdentity {
         device: stat.st_dev as u64,
         inode: stat.st_ino,
@@ -590,6 +706,24 @@ fn metadata(file: &File) -> Result<FileIdentity> {
         modified_sec: stat.st_mtime,
         modified_nsec: stat.st_mtime_nsec,
     })
+}
+
+fn retained_bytes(dir: &Directory) -> Result<u64> {
+    let mut identities = Vec::new();
+    let mut total = 0u64;
+    for entry in fs::read_dir(&dir.path)? {
+        let entry = entry?;
+        let name = CString::new(entry.file_name().as_bytes()).map_err(|_| Error::BadName)?;
+        let identity = dir.identity(&name)?;
+        if identity.mode & libc::S_IFMT as u32 != libc::S_IFREG as u32
+            || identities.contains(&(identity.device, identity.inode))
+        {
+            continue;
+        }
+        identities.push((identity.device, identity.inode));
+        total = total.checked_add(identity.size).ok_or(Error::TooLarge)?;
+    }
+    Ok(total)
 }
 
 fn validate_source_metadata(identity: &FileIdentity) -> Result<()> {
@@ -1040,6 +1174,30 @@ mod tests {
             ),
             "retained interrupted bytes must remain charged to the configured storage quota"
         );
+    }
+
+    #[test]
+    fn retained_partial_and_committed_final_stay_charged_in_process() {
+        let (_temp, storage, _inbox, _outbox) = setup(4);
+        let mut interrupted = storage
+            .begin_upload("partial", 2, Sha256::digest(b"ab").into())
+            .unwrap();
+        interrupted.write_chunk(0, b"ab").unwrap();
+        drop(interrupted);
+        assert!(matches!(
+            storage.begin_upload("over-partial", 3, Sha256::digest(b"xyz").into()),
+            Err(Error::Quota)
+        ));
+
+        let mut committed = storage
+            .begin_upload("final", 2, Sha256::digest(b"cd").into())
+            .unwrap();
+        committed.write_chunk(0, b"cd").unwrap();
+        committed.commit().unwrap();
+        assert!(matches!(
+            storage.begin_upload("over-final", 1, Sha256::digest(b"x").into()),
+            Err(Error::Quota)
+        ));
     }
 
     #[test]
