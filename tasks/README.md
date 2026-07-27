@@ -1,11 +1,11 @@
 # wasm-vm Task System
 
 All work on wasm-vm is decomposed into task files in this directory, organized into epic
-folders (`epic-0-ignition/` … `epic-8-chrome-in-chrome/`) that stack like a Kardashev
-scale and ladder toward named, runnable milestones (xv6, busybox+QuickJS+Node, fast Node,
-GUI apps, x86_64-via-box64 + a desktop, and a time-travelable stock Chromium) — see
-`../ROADMAP.md` for the capability stack (Layers A–G), the targets→epic map, and what each
-level gets you.
+folders (`epic-0-ignition/` … `epic-8-chrome-in-chrome/`, plus fractional inserted epics
+such as `epic-3.5-oci-workloads/` and `epic-3.75-pico-lab/`). They ladder toward named,
+runnable milestones: xv6, busybox+QuickJS+Node, Pico SDK firmware on an emulated Pico 2,
+fast Node, GUI apps, and x86_64-via-box64 + a desktop. See `../ROADMAP.md` for the
+capability stack (Layers A–G), the targets→epic map, and what each level gets you.
 
 ## The priority queue
 
@@ -17,7 +17,9 @@ python3 tools/build_queue.py
 
 Rules:
 
-- **Priority** is a global integer: `epic × 100 + task number` (`E2-T07` → `207`).
+- **Priority** is a global numeric ordering key. Whole-number epics conventionally use
+  `epic × 100 + task number` (`E2-T07` → `207`). Fractional inserted epics reserve a
+  decimal band at their intended position (`E3.5` uses `312.x`; `E3.75` uses `375.xxx`).
   The queue is sorted ascending. Lower number = sooner.
 - Work is done **one task at a time**, taking the highest-priority task whose
   `depends_on` are all `verified`. The queue's "Next up" section computes this for you.

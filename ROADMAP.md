@@ -34,19 +34,23 @@ time-travelable. That closed loop is the singularity condition.
 
 ## The three irreversible architectural bets
 
-1. **Guest ISA: RISC-V (RV64GC), not x86.** CheerpX spent years on x86 translation. RV64GC
-   is a clean, fully-open, formally specified ISA with an official compliance suite
-   (riscv-tests, RISCOF), and Alpine Linux ships riscv64 as a release architecture. Every
-   binary webvm runs has an Alpine riscv64 equivalent. This single decision cuts the CPU
-   effort by ~10x. (x86_64 support arrives *inside* the machine at Layer F via box64 — a
-   guest-side userspace translator, not a second CPU core.)
+1. **Primary Linux guest ISA: RISC-V (RV64GC), not x86.** CheerpX spent years on x86
+   translation. RV64GC is a clean, fully-open, formally specified ISA with an official
+   compliance suite (riscv-tests, RISCOF), and Alpine Linux ships riscv64 as a release
+   architecture. Every binary webvm runs has an Alpine riscv64 equivalent. This single
+   decision cuts the CPU effort by ~10x. Epic 3.75 adds a deliberately isolated RV32
+   microcontroller profile for RP2350 without changing the Linux machine's RV64GC contract.
+   (x86_64 support arrives *inside* the Linux machine at Layer F via box64 — a guest-side
+   userspace translator, not a second CPU core.)
 2. **Language/runtime: Rust → `wasm32`, no_std-friendly core.** The emulator core is a pure
    Rust crate with zero web dependencies (testable natively at native speed), wrapped by a
    thin `wasm-bindgen` boundary. Everything browser-specific (IndexedDB, WebSocket, canvas,
    WebAudio, workers) lives behind Rust traits so the core never knows it's in a browser.
-3. **Device model: virtio everywhere.** Block, network, GPU, input, sound, filesystem — all
-   virtio-mmio. One transport, one ring-buffer implementation, amortized across every device.
-   The Linux kernel already has mature drivers for all of them; we never write a guest driver.
+3. **Linux device model: virtio everywhere.** Block, network, GPU, input, sound, filesystem
+   — all virtio-mmio. One transport, one ring-buffer implementation, amortized across every
+   device. The Linux kernel already has mature drivers for all of them; we never write a
+   guest driver. The RP2350 side branch is the explicit exception: it models the board's
+   native MMIO peripherals because Pico SDK firmware targets that silicon directly.
 
 ## Execution doctrine
 
@@ -74,6 +78,7 @@ Level 1  THE MACHINE     RV64GC CPU + Sv39 MMU + traps + timers/interrupts      
 Level 2  FIRST LIGHT     devices + interrupts + SBI → boot xv6, then Linux to init [Layer B]
 Level 3  CIVILIZATION    persistence + net + a real userland → busybox+QuickJS+Node [Layer C]
 Level 3.5 OCI WORKLOADS  pull + run real riscv64 containers, cached in the browser   [Layer C+]
+Level 3.75 PICO LAB      dual-Hazard3 RP2350 + Pico SDK firmware + live pins in-browser [Aµ/Bµ]
 Level 4  ACCELERATION    JIT-to-WASM + FENCE.I i-cache coherence → fast Node.js/Bun [Layer D]
 Level 5  THE WINDOW      framebuffer/GPU + input + compositor → GUI apps, a surface [Layer E]
 Level 6  TRANSCENDENCE   SMP, WebGPU-3D, shareable snapshots, self-hosting        [Layer G*]
@@ -116,6 +121,7 @@ hardened.
 | Stock chromium-riscv64 booting | ~~E8~~ (cancelled) | — |
 | A nested, time-travelable browser | ~~E8~~ (cancelled) | — |
 | Pull + run riscv64 OCI containers, cached in-browser | E3.5 | C+ (on C, B) |
+| Pico SDK RV32 firmware driving a visible Pico 2 board | E3.75 | Aµ→Bµ side branch |
 
 ---
 
@@ -206,6 +212,42 @@ shell, run a QuickJS program and a Node.js script (interpreted, slow is fine), r
 MagicDNS tailnet service and the public internet through the browser node, reload the tab,
 and the state and tailnet session are still there — the whole flow comparable to
 webvm.io/alpine.html.
+
+## Level 3.75 — PICO LAB *(an RP2350 microcontroller in the browser — Layers Aµ/Bµ)*
+
+**Thesis:** The interpreter, bus, trace, snapshot, WASM wrapper, and browser harness are
+valuable beyond the Linux `virt` machine. Pico Lab reuses those proven substrates to model a
+second, isolated machine: the non-wireless Raspberry Pi Pico 2 (`pico2`, RP2350A, 4 MiB
+flash) running its dual Hazard3 RISC-V cores. The implementation adds an RV32 profile without
+weakening the RV64 Linux contract, then models the microcontroller peripherals that firmware
+touches directly.
+
+**Named milestones:** build fixtures reproducibly with a pinned Pico SDK using
+`PICO_PLATFORM=rp2350-riscv`; run ELF32 firmware directly while the platform comes up; load
+the same application as a UF2/IMAGE_DEF flash image; print through UART, service timer and
+GPIO interrupts, launch core 1, transfer data with DMA, and drive a PIO program whose pin
+waveform is visible and inspectable in the browser.
+
+**Scope boundary:** This epic implements RV32I/M/A/C, the RP2350-configured Zba/Zbb/Zbs/Zbkb
+and Zcb/Zcmp extensions, Hazard3 machine-mode/PMP and Xh3 custom behavior, the RP2350
+memory/boot contract, clocks/resets, QMI flash/XIP, UART, timers, GPIO/SIO, dual-core
+synchronization, DMA, and PIO. General SPI/I2C/PWM/ADC/HSTX peripherals, USB device and ROM
+bootloader emulation, secure boot/OTP/access-control enforcement, SWD/debug, Arm execution,
+and Pico 2 W radio/Wi-Fi are follow-up work. Unsupported blocks must fail deterministically;
+they must not silently read as plausible hardware.
+
+**Verification doctrine:** Architectural behavior is checked against official RISC-V tests
+and the open Hazard3 implementation; Pico SDK artifacts are pinned and byte-reproducible;
+device inputs are timestamped emulator events; native and WASM runs must produce identical
+UART, pin-transition, instruction-trace, and state digests. Every user-visible increment
+updates the browser's live Pico capability panel under the normal browser proof rule.
+
+**Capstone threshold:** From a fresh browser profile, load a reproducibly built, unmodified
+Pico SDK UF2. It boots through the documented RP2350 handoff, prints the expected UART
+transcript, blinks the Pico 2 LED from an alarm interrupt, launches core 1 through SIO, and
+uses DMA-fed PIO to emit a frozen pin waveform. Two cold runs and the native runner produce
+the same digests, the page reports zero console errors, and every in-scope capability is
+`live` or `verified`.
 
 ## Level 4 — ACCELERATION *(the engine of accelerating returns — Layer D)*
 
@@ -357,12 +399,15 @@ snapshot module E0-T17). From there it threads upward:
 
 ## How to read the numbers
 
-- Task IDs are `E{level}-T{nn}`; priority = `level × 100 + nn`. The queue is strictly
-  ascending priority. Dependencies may pull tasks earlier in *eligibility* but never
-  reorder the queue file itself.
-- Levels 0–6 carry ~24–28 tasks each; the summit level (7 Babel) is a leaner,
-  milestone-focused epic. Level 3.5 (OCI Workloads) is a 5-task wedge between Civilization
-  and Acceleration; Level 8 (Chrome in Chrome) is cancelled. Each epic ends in a capstone naming its runnable
-  target — you are never guessing what "done" looks like.
+- Task IDs are `E{level}-T{nn}`. Whole-number epics conventionally use
+  `priority = level × 100 + task`; inserted fractional epics reserve numeric bands at their
+  intended position. The queue is strictly ascending priority. Dependencies may pull tasks
+  earlier in *eligibility* but never reorder the queue file itself.
+- Levels 0–6 carry roughly 24–30 executable slices each; the summit level (7 Babel) is a
+  leaner, milestone-focused epic. Level 3.5 (OCI Workloads) is a compact wedge inside
+  Civilization, while Level 3.75 (Pico Lab) is a 36-task RV32/RP2350 side branch that reuses
+  Layers A/B without gating the Linux ladder. Level 8 (Chrome in Chrome) is cancelled. Each
+  active epic ends in a capstone naming its runnable target — you are never guessing what
+  "done" looks like.
 
 *The machine wakes up one instruction at a time — and, at the top, learns to run it backward.*
