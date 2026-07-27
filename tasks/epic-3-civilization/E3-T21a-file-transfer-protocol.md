@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: in-progress
+status: implemented
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -384,3 +384,18 @@ Commands:
 - bounded uppercase `ALLOWED` permission inside the normative section
 - `python3 tools/check_task_policy.py`
 - `git diff b89f7e8^..b89f7e8 --check`
+
+### 2026-07-27 — worker — case-insensitive section guard
+
+Commit `b5296e5` changes one checker expression: the complete normative denied-capabilities section
+is now scanned with `re.IGNORECASE`. P1/P2/P3 and the section-wide P4 boundary remain HELD.
+
+Exact-head commands:
+
+- normal syntax and acceptance checker — accepted
+- exact uppercase `ALLOWED` mutation — rejected
+- mixed-case `PeRmItTeD` variation — rejected
+- `python3 tools/check_task_policy.py` — `OK (active=E3-T21a)`
+- `git diff b5296e5^..b5296e5 --check`
+
+Fresh re-verification should inspect only this one-line P4 case-sensitivity change.
