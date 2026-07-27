@@ -3,7 +3,7 @@ id: E3-T21b2b
 epic: 3
 title: Static riscv64 WVFT guest agent
 priority: 321.222
-status: in-progress
+status: implemented
 depends_on: [E3-T21b2a]
 estimate: S
 risk: high
@@ -68,6 +68,26 @@ Exact-head evidence:
 
 This slice produces the verified agent artifact and native adapter proof. Rootfs installation,
 startup wiring, guest execution, and browser/boot proof are deliberately isolated in E3-T21b2c.
+
+### 2026-07-27 — worker — reworked after framing refutation
+
+Commit `0b6f3c6` removes the aggregate pre-parse size rejection. `Session::receive` now fills only
+the remaining capacity of its single-frame residual buffer, parses and drains every complete frame,
+then continues with coalesced transport bytes. The buffer remains bounded at
+`HEADER_BYTES + MAX_FRAME_PAYLOAD`, while TCP fragmentation and coalescing no longer affect valid
+protocol semantics. The verifier's promoted maximum-read regression passes.
+
+Incremental exact-head evidence:
+
+- `cargo fmt --all --check` — passed.
+- `cargo test -p wasm-vm-file-agent -- --nocapture` — 7 passed, 0 failed.
+- `cargo clippy -p wasm-vm-file-agent --all-targets -- -D warnings` — passed.
+- `bash tools/verify/e3-t21b2b-capability.sh` — passed.
+- `bash tools/verify/e3-t21b2b-static.sh` — two clean builds matched at
+  `sha256 fd94005040c1ad18450e726242d53b76da46ae394ac7ee454bbbf4f23ef84f0e`;
+  artifact remains stripped RISC-V ELF64 static PIE.
+- `cargo check --workspace --all-targets` — passed.
+- `git diff 7e4a95b..0b6f3c6 --check` — passed.
 
 ### 2026-07-27 — verifier — VERDICT: refuted
 
