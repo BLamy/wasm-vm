@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: in-progress
+status: implemented
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -106,3 +106,31 @@ Commands:
   exception, and replacing `COMPLETION_UNKNOWN`
 - `python3 tools/check_task_policy.py`
 - `git diff fa5e1b8^..fa5e1b8 --check`
+
+### 2026-07-27 — worker — reworked after refutation
+
+Commit `c80e0ad` changes only the refuted protocol/checker boundary. The P1 framing and bounded-state
+finding remains HELD. For P2, downloads now open beneath the fixed outbox with no-cross-device and
+no-follow semantics and require `st_nlink == 1` on the held descriptor both before and after
+streaming; an out-of-root hard-link fixture has link count 2 and is rejected. For P3, the protocol
+names atomic rename as the final-name visibility point, guarantees that only independently
+validated bytes can reach it, distinguishes visibility from directory-fsync durability, and gives
+CANCEL and EOF explicit outcomes before visibility, during durable promotion, and after promotion.
+For P4, the checker now requires all five interruption rows, the link-count invariant, and five
+normative `DENY` capability rows, and rejects contradictory permissive capability statements.
+
+Exact-head commands:
+
+- `bash -n tools/verify/e3-t21a-protocol.sh`
+- `bash tools/verify/e3-t21a-protocol.sh` — `OK (10 constants, 10 frame types, 12 adversarial
+  vectors, 5 interruption outcomes, 5 denied capabilities)`
+- the same checker from `/tmp`
+- real hard-link fixture using `touch`, `ln`, and `stat -f` — observed `st_nlink=2`
+- four sabotage copies removing the hard-link rule, post-promotion EOF row, or post-visibility
+  CANCEL row, and adding a permissive URL exception — all rejected
+- `python3 tools/check_task_policy.py` — `OK (active=E3-T21a)`
+- `git diff c80e0ad^..c80e0ad --check`
+
+Evidence paths remain `docs/design/file-transfer.md` and
+`tools/verify/e3-t21a-protocol.sh`. Fresh re-verification should carry P1 forward and scope its
+attack to P2/P3/P4 plus the changed hunks.
