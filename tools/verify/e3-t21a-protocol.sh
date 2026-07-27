@@ -175,6 +175,16 @@ permissive = re.compile(
     r"\b(?:[Aa]llows?|[Aa]llowed|[Aa]llowing|[Pp]ermits?|[Pp]ermitted|[Pp]ermitting|"
     r"[Aa]ccepts?|[Aa]ccepted|[Aa]ccepting|[Ee]nables?|[Ee]nabled|[Ee]nabling)\b",
 )
+capability_section_match = re.search(
+    r"### Capabilities not granted\n(.*?)\n### Abuse controls",
+    text,
+    re.DOTALL,
+)
+if not capability_section_match:
+    raise SystemExit("missing complete normative denied-capabilities section")
+if permissive.search(capability_section_match.group(1)):
+    raise SystemExit("permissive language is forbidden in the denied-capabilities section")
+
 denied_subject = re.compile(
     r"\b(URL|DNS name|destination IP|host path|command|shell|eval|public ingress|hard[- ]link|st_nlink)\b",
     re.IGNORECASE,
