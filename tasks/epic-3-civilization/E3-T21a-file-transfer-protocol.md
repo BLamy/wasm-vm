@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: implemented
+status: in-progress
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -303,3 +303,36 @@ Exact-head commands:
 - `git diff 0d0a01a^..0d0a01a --check`
 
 Fresh re-verification should carry P1/P2/P3 forward and inspect only this structured P4 invariant.
+
+### 2026-07-27 — verifier — VERDICT: refuted
+
+- **P1 framing and bounded state — HELD (carried forward).**
+- **P2 out-of-root hard-link capability — HELD (carried forward).**
+- **P3 visibility/durability interruption boundary — HELD (carried forward).**
+- **P4 prior and multiline regressions — HELD.** Predicted the structured checker would reject
+  the exact `except`, same-clause `and`, negated-denial, and link-inversion mutations, plus a
+  permission split across lines within one paragraph. All five were rejected. Citation:
+  `tools/verify/e3-t21a-protocol.sh:172-187`.
+- **P4 bounded paragraph variation — FAILED.** Predicted a permission referring to a denied
+  capability across adjacent paragraphs would also be rejected. A Decision section containing
+  “its grammar has no URL,” followed by a separate paragraph “This capability is allowed for
+  compatibility,” passed with the normal OK result. The permission paragraph contains no repeated
+  denied-subject token, so the paragraph-local conjunction never fires even though “This
+  capability” refers directly to the preceding URL denial. Citation:
+  `tools/verify/e3-t21a-protocol.sh:179-187`. Apply the no-permissive-language invariant to the
+  complete normative section (or exclusively validate a machine-readable capability manifest)
+  rather than independently to paragraphs, and add this exact cross-paragraph sabotage.
+- **COVERAGE:** the success path, prior mutations, and multiline same-paragraph path were
+  exercised. The cross-paragraph reference path remains uncovered and falsifies the claimed
+  structured invariant.
+- **SUITE:** n/a until P4 clears; no promoted test was added.
+
+Commands:
+
+- `bash -n tools/verify/e3-t21a-protocol.sh`
+- checker from the repository and `/tmp`
+- exact `except`, same-clause `and`, negated-denial, and link-inversion sabotage copies
+- multiline same-paragraph permission sabotage
+- bounded cross-paragraph “This capability is allowed” sabotage
+- `python3 tools/check_task_policy.py`
+- `git diff 0d0a01a^..0d0a01a --check`
