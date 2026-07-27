@@ -1672,6 +1672,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasm-vm-file-agent"
+version = "0.0.0"
+dependencies = [
+ "sha2",
+ "tempfile",
+ "wasm-vm-file-agent-storage",
+]
+
+[[package]]
 name = "wasm-vm-file-agent-storage"
 version = "0.0.0"
 dependencies = [
