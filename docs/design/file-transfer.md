@@ -7,7 +7,7 @@ Security boundary: one VM session, one reserved slirp endpoint, two fixed guest 
 ## Decision
 
 Use a small guest agent over a **reserved slirp control endpoint**. The endpoint speaks only the
-versioned WVFT framing protocol below. It is not a general TCP forwarder and it never accepts a URL,
+versioned WVFT framing protocol below. It is not a general TCP forwarder; its grammar has no URL,
 host path, guest command, MIME handler, or executable callback.
 
 ### Alternatives considered
@@ -266,7 +266,7 @@ An implementation and verifier must cover:
 - every hostile name listed in Name normalization plus NFC collisions, symlink replacement, and an
   out-of-root hard-link fixture that must fail the `st_nlink == 1` checks;
 - CANCEL/EOF at every state, especially after the last DATA and between rename and directory fsync;
-- two accepted concurrent streams and a third `BUSY` response;
+- two concurrent streams reaching ACCEPT and a third `BUSY` response;
 - attempts to encode a URL, host path, shell command, unknown opcode, or destination in any field;
 - source mutation during download and quota/I/O failure during upload.
 

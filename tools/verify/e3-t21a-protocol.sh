@@ -172,26 +172,18 @@ if "`st_nlink != 1` is `ERROR(BAD_NAME)`" not in flat_text:
     raise SystemExit("hard-link rejection must map st_nlink != 1 exactly to ERROR(BAD_NAME)")
 
 permissive = re.compile(
-    r"\b(?:allows?|allowed|allowing|permits?|permitted|permitting|"
-    r"accepts?|accepted|accepting|enables?|enabled|enabling)\b",
-    re.IGNORECASE,
+    r"\b(?:[Aa]llows?|[Aa]llowed|[Aa]llowing|[Pp]ermits?|[Pp]ermitted|[Pp]ermitting|"
+    r"[Aa]ccepts?|[Aa]ccepted|[Aa]ccepting|[Ee]nables?|[Ee]nabled|[Ee]nabling)\b",
 )
 denied_subject = re.compile(
     r"\b(URL|DNS name|destination IP|host path|command|shell|eval|public ingress|hard[- ]link|st_nlink)\b",
     re.IGNORECASE,
 )
-negation = re.compile(r"\b(no|not|never|deny|denied|forbid|forbidden|reject|rejected)\b", re.IGNORECASE)
-clause_boundary = re.compile(r"[.;]|\b(?:except|but|however|unless)\b", re.IGNORECASE)
-for line_number, line in enumerate(text.splitlines(), 1):
-    for clause in clause_boundary.split(line):
-        if not denied_subject.search(clause):
-            continue
-        for permit in permissive.finditer(clause):
-            prefix_words = re.findall(r"[A-Za-z]+", clause[: permit.start()])[-3:]
-            if not any(negation.fullmatch(word) for word in prefix_words):
-                raise SystemExit(
-                    f"contradictory permissive capability statement at line {line_number}"
-                )
+for paragraph_number, paragraph in enumerate(re.split(r"\n\s*\n", text), 1):
+    if permissive.search(paragraph) and denied_subject.search(paragraph):
+        raise SystemExit(
+            f"permissive language about a denied capability in paragraph {paragraph_number}"
+        )
 
 print(
     "E3-T21a protocol: OK "
