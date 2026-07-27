@@ -136,30 +136,37 @@ impl Session {
 
     pub fn receive(&mut self, bytes: &[u8], now_ms: u64) -> Output {
         self.last_activity_ms = now_ms;
-        if self.rx.len().saturating_add(bytes.len()) > HEADER_BYTES + MAX_FRAME_PAYLOAD {
-            self.state = State::Terminal;
-            self.rx.clear();
-            return failure(0, ErrorCode::TooLarge);
-        }
-        self.rx.extend_from_slice(bytes);
         let mut output = Output::default();
-        loop {
-            let parsed = match parse(&self.rx) {
-                Parse::NeedMore => break,
-                Parse::Fatal(code) => {
-                    self.state = State::Terminal;
-                    self.rx.clear();
-                    return failure(0, code);
-                }
-                Parse::Frame(frame, used) => {
-                    self.rx.drain(..used);
-                    frame
-                }
-            };
-            self.handle(parsed, &mut output);
-            if output.close {
+        let mut remaining = bytes;
+        while !remaining.is_empty() {
+            let room = HEADER_BYTES + MAX_FRAME_PAYLOAD - self.rx.len();
+            if room == 0 {
+                self.state = State::Terminal;
                 self.rx.clear();
-                break;
+                return failure(0, ErrorCode::TooLarge);
+            }
+            let take = room.min(remaining.len());
+            self.rx.extend_from_slice(&remaining[..take]);
+            remaining = &remaining[take..];
+
+            loop {
+                let parsed = match parse(&self.rx) {
+                    Parse::NeedMore => break,
+                    Parse::Fatal(code) => {
+                        self.state = State::Terminal;
+                        self.rx.clear();
+                        return failure(0, code);
+                    }
+                    Parse::Frame(frame, used) => {
+                        self.rx.drain(..used);
+                        frame
+                    }
+                };
+                self.handle(parsed, &mut output);
+                if output.close {
+                    self.rx.clear();
+                    return output;
+                }
             }
         }
         if let State::Receiving { credit, .. } = &mut self.state {
