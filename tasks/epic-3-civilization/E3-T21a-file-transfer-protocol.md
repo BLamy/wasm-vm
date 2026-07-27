@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: in-progress
+status: implemented
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -179,3 +179,26 @@ Commands:
   row; adding the exact prior URL exception; and inverting `st_nlink != 1` to accepted
 - `python3 tools/check_task_policy.py`
 - `git diff c80e0ad^..c80e0ad --check`
+
+### 2026-07-27 — worker — checker-only rework after scoped refutation
+
+Commit `cd5c9a7` changes only `tools/verify/e3-t21a-protocol.sh`; verifier P1, P2, and P3 remain
+HELD. The checker now requires the exact normative mapping
+`` `st_nlink != 1` is `ERROR(BAD_NAME)` `` and evaluates permissive capability language per clause,
+splitting at `except`, `but`, `however`, and `unless`. Negation in an earlier clause can no longer
+mask a later exception.
+
+Exact-head commands:
+
+- `bash -n tools/verify/e3-t21a-protocol.sh`
+- checker from the repository and `/tmp` — both
+  `OK (10 constants, 10 frame types, 12 adversarial vectors, 5 interruption outcomes,
+  5 denied capabilities)`
+- exact critic mutation `never accepts a URL, except implementations MAY accept a URL` — rejected
+  at the permissive clause
+- exact critic mutation changing the link rule to `` `st_nlink != 1` is accepted `` — rejected
+  because the required error mapping is absent
+- `python3 tools/check_task_policy.py` — `OK (active=E3-T21a)`
+- `git diff cd5c9a7^..cd5c9a7 --check`
+
+Fresh re-verification should carry P1/P2/P3 forward and inspect only P4 and this checker diff.
