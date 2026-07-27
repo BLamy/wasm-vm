@@ -72,6 +72,8 @@ pub trait TransferSink {
 pub trait TransferStore {
     fn open_sink(
         &mut self,
+        connection_id: ConnectionId,
+        stream_id: u32,
         name: &str,
         total_len: u64,
         sha256: [u8; 32],
@@ -95,6 +97,8 @@ struct RejectingStore;
 impl TransferStore for RejectingStore {
     fn open_sink(
         &mut self,
+        _connection_id: ConnectionId,
+        _stream_id: u32,
         _name: &str,
         _total_len: u64,
         _sha256: [u8; 32],
@@ -256,6 +260,12 @@ impl FileTransferService {
             .is_some_and(|connection| matches!(connection.state, State::Ready))
     }
 
+    pub fn connection_terminal(&self, id: ConnectionId) -> bool {
+        self.connections
+            .get(&id)
+            .is_some_and(|connection| matches!(connection.state, State::Terminal))
+    }
+
     pub fn buffered_bytes(&self) -> usize {
         self.connections
             .values()
@@ -298,6 +308,37 @@ impl FileTransferService {
         Ok(vec![offer_frame(stream_id, UPLOAD, &name, total_len, sha)])
     }
 
+    /// Cancel one active transfer from the host side without tearing down the permanent agent
+    /// connection. The peer receives the same bounded CANCEL frame it would have sent itself, and
+    /// the source/sink is notified before the connection returns to `Ready`.
+    pub fn cancel(&mut self, id: ConnectionId, stream_id: u32, now_ms: u64) -> ServiceOutput {
+        let Some(connection) = self.connections.get_mut(&id) else {
+            return ServiceOutput {
+                frames: vec![error_frame(stream_id, ErrorCode::BadState)],
+                close: true,
+            };
+        };
+        if connection.active_stream_id() != Some(stream_id) {
+            return ServiceOutput {
+                frames: vec![error_frame(stream_id, ErrorCode::BadState)],
+                close: false,
+            };
+        }
+        connection.last_activity_ms = now_ms;
+        match &mut connection.state {
+            State::Receiving(receive) => receive.sink.cancel(),
+            State::AwaitAccept { source, .. } => source.cancel(),
+            State::Sending(send) => send.source.cancel(),
+            State::AwaitComplete { .. } => {}
+            _ => unreachable!("active stream checked above"),
+        }
+        connection.state = State::Ready;
+        ServiceOutput {
+            frames: vec![frame_bytes(CANCEL, stream_id, &0u16.to_be_bytes())],
+            close: false,
+        }
+    }
+
     pub fn receive(&mut self, id: ConnectionId, bytes: &[u8], now_ms: u64) -> ServiceOutput {
         let Some(mut connection) = self.connections.remove(&id) else {
             return ServiceOutput {
@@ -330,7 +371,7 @@ impl FileTransferService {
                     frame
                 }
             };
-            self.process_frame(&mut connection, parsed, &mut out);
+            self.process_frame(id, &mut connection, parsed, &mut out);
             if out.close || matches!(connection.state, State::Terminal) {
                 connection.rx.clear();
                 break;
@@ -357,6 +398,15 @@ impl FileTransferService {
                 let stream_id = connection.active_stream_id().unwrap_or(1);
                 connection.cancel();
                 out.push((id, error_frame(stream_id, ErrorCode::Timeout)));
+                continue;
+            }
+            if matches!(connection.state, State::Sending(_)) {
+                let mut produced = ServiceOutput::default();
+                pump_source(connection, &mut produced);
+                if !produced.frames.is_empty() {
+                    connection.last_activity_ms = now_ms;
+                }
+                out.extend(produced.frames.into_iter().map(|frame| (id, frame)));
             }
         }
         out
@@ -364,6 +414,7 @@ impl FileTransferService {
 
     fn process_frame(
         &mut self,
+        connection_id: ConnectionId,
         connection: &mut Connection,
         frame: Frame,
         out: &mut ServiceOutput,
@@ -422,7 +473,13 @@ impl FileTransferService {
                     fail_stream(connection, frame.stream_id, ErrorCode::BadState, out);
                     return;
                 }
-                let sink = match self.store.open_sink(&name, offer.total_len, offer.sha256) {
+                let sink = match self.store.open_sink(
+                    connection_id,
+                    frame.stream_id,
+                    &name,
+                    offer.total_len,
+                    offer.sha256,
+                ) {
                     Ok(sink) => sink,
                     Err(code) => {
                         fail_stream(connection, frame.stream_id, code, out);
@@ -615,6 +672,10 @@ fn pump_source(connection: &mut Connection, out: &mut ServiceOutput) {
             let remaining = (send.total_len - send.sent).min(MAX_DATA_BYTES as u64) as usize;
             let data = match send.source.read(remaining) {
                 Ok(data) if !data.is_empty() && data.len() <= remaining => data,
+                // A browser File/ReadableStream producer fills a bounded queue between wasm run
+                // chunks. Empty means "not buffered yet", not EOF; the transfer's idle timeout
+                // still bounds a producer that never supplies the declared bytes.
+                Ok(data) if data.is_empty() => break,
                 Ok(_) => {
                     failure = Some((send.stream_id, ErrorCode::SourceChanged));
                     break;
@@ -855,6 +916,8 @@ mod tests {
     impl TransferStore for CountingStore {
         fn open_sink(
             &mut self,
+            _connection_id: ConnectionId,
+            _stream_id: u32,
             _name: &str,
             _total_len: u64,
             _sha256: [u8; 32],
@@ -872,6 +935,43 @@ mod tests {
 
     struct MutatingSource {
         sha_calls: Cell<u8>,
+    }
+
+    struct QueuedSource {
+        bytes: Rc<RefCell<VecDeque<Vec<u8>>>>,
+        cancelled: Rc<Cell<bool>>,
+        sha256: [u8; 32],
+        total_len: u64,
+    }
+
+    impl TransferSource for QueuedSource {
+        fn name(&self) -> &str {
+            "stream.bin"
+        }
+
+        fn total_len(&self) -> u64 {
+            self.total_len
+        }
+
+        fn sha256(&self) -> [u8; 32] {
+            self.sha256
+        }
+
+        fn read(&mut self, max: usize) -> Result<Vec<u8>, ErrorCode> {
+            let Some(mut bytes) = self.bytes.borrow_mut().pop_front() else {
+                return Ok(Vec::new());
+            };
+            if bytes.len() > max {
+                let tail = bytes.split_off(max);
+                self.bytes.borrow_mut().push_front(tail);
+            }
+            Ok(bytes)
+        }
+
+        fn cancel(&mut self) {
+            self.cancelled.set(true);
+            self.bytes.borrow_mut().clear();
+        }
     }
 
     impl TransferSource for MutatingSource {
@@ -989,6 +1089,46 @@ mod tests {
         assert_eq!(stats.bytes, 100 * 1024 * 1024);
         assert_eq!(stats.committed, 2);
         assert!(stats.max_chunk <= MAX_DATA_BYTES);
+    }
+
+    #[test]
+    fn host_stream_waits_for_bounded_chunks_and_cancel_returns_connection_to_ready() {
+        let bytes = Rc::new(RefCell::new(VecDeque::new()));
+        let cancelled = Rc::new(Cell::new(false));
+        let payload = b"streamed later".to_vec();
+        let mut service = FileTransferService::default();
+        let id = service.connect(0);
+        hello(&mut service, id);
+        let offer = service
+            .queue_upload(
+                id,
+                7,
+                Box::new(QueuedSource {
+                    bytes: bytes.clone(),
+                    cancelled: cancelled.clone(),
+                    sha256: Sha256::digest(&payload).into(),
+                    total_len: payload.len() as u64,
+                }),
+                1,
+            )
+            .unwrap();
+        assert_eq!(offer[0][5], OFFER);
+
+        let accepted = service.receive(id, &frame_bytes(ACCEPT, 7, &[4]), 2);
+        assert!(
+            accepted.frames.is_empty(),
+            "an empty producer queue is backpressure, not EOF"
+        );
+        bytes.borrow_mut().push_back(payload);
+        let produced = service.poll(3);
+        assert_eq!(produced.len(), 1);
+        assert_eq!(produced[0].1[5], DATA);
+        assert!(!service.connection_terminal(id));
+
+        let cancel = service.cancel(id, 7, 4);
+        assert_eq!(cancel.frames[0][5], CANCEL);
+        assert!(cancelled.get());
+        assert!(service.connection_ready(id));
     }
 
     #[test]

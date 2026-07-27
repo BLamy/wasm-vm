@@ -196,6 +196,13 @@ impl SlirpLocalBackend {
             .is_some_and(|id| self.file_transfer.connection_ready(id))
     }
 
+    pub fn file_connection_terminal(&self, slot: usize) -> bool {
+        self.file_connections
+            .get(slot)
+            .and_then(|connection| *connection)
+            .is_some_and(|id| self.file_transfer.connection_terminal(id))
+    }
+
     /// Queue one host-selected source on an already-negotiated guest-agent slot.
     pub fn queue_file_upload(
         &mut self,
@@ -218,6 +225,41 @@ impl SlirpLocalBackend {
                 .map(|bytes| PendingTcpWrite { bytes, offset: 0 }),
         );
         Ok(())
+    }
+
+    pub fn cancel_file_transfer(
+        &mut self,
+        slot: usize,
+        stream_id: u32,
+    ) -> Result<(), FileTransferError> {
+        let id = self
+            .file_connections
+            .get(slot)
+            .and_then(|connection| *connection)
+            .ok_or(FileTransferError::BadState)?;
+        let now = (self.clock)().max(0) as u64;
+        let output = self.file_transfer.cancel(id, stream_id, now);
+        self.file_tcp_tx[slot].extend(
+            output
+                .frames
+                .into_iter()
+                .map(|bytes| PendingTcpWrite { bytes, offset: 0 }),
+        );
+        self.file_close_after_write[slot] |= output.close;
+        Ok(())
+    }
+
+    pub fn cancel_file_transfer_by_connection(
+        &mut self,
+        connection_id: crate::file_transfer::ConnectionId,
+        stream_id: u32,
+    ) -> Result<(), FileTransferError> {
+        let slot = self
+            .file_connections
+            .iter()
+            .position(|connection| *connection == Some(connection_id))
+            .ok_or(FileTransferError::BadState)?;
+        self.cancel_file_transfer(slot, stream_id)
     }
 
     /// Override DHCP lease/MTU parameters for acceptance tests or transport-specific configuration.
@@ -544,7 +586,7 @@ impl SlirpLocalBackend {
                 .position(|connection| *connection == Some(id))
             {
                 self.file_tcp_tx[slot].push_back(PendingTcpWrite { bytes, offset: 0 });
-                self.file_close_after_write[slot] = true;
+                self.file_close_after_write[slot] |= self.file_transfer.connection_terminal(id);
             }
         }
 
@@ -1263,6 +1305,8 @@ mod tests {
     impl TransferStore for FileStoreProbe {
         fn open_sink(
             &mut self,
+            _connection_id: crate::file_transfer::ConnectionId,
+            _stream_id: u32,
             _name: &str,
             _total_len: u64,
             _sha256: [u8; 32],

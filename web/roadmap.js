@@ -78,6 +78,7 @@ export const ROADMAP = [
       { name: "Tailscale exit-node routing", status: "verified", evidence: "stock Alpine HTTPS succeeds through the selected exit node and fails closed with no exit route (E3-T17)" },
       { name: "Network provider lifecycle + relay policy", status: "verified", evidence: "one-shot Headscale provisioning, restore/logout + allow/deny ACL proof; Origin-bound relay tokens, post-DNS SSRF policy, and shared abuse budgets (E3-T19)" },
       { name: "Bounded host/guest file-transfer agent", status: "verified", evidence: "static riscv64 WVFT agent installed in Alpine; real guest upload/download, timeout cleanup, and restart recovery (E3-T21b2c)" },
+      { name: "Streaming browser file-transfer UI", status: "verified", evidence: "100 MiB each direction with matching SHA-256, <32 MiB heap growth, bounded two-flow scheduling, cancellation, and hostile-input browser proof (E3-T21c)" },
     ],
   },
   {

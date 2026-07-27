@@ -240,11 +240,50 @@ mod ws_transport_state;
 // virtio-rng entropy source backed by the browser CSPRNG (`crypto.getRandomValues`).
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod crypto_entropy;
-// E3-T17: dedicated provider Worker carrying the same bounded ws-proxy frames as E3-T16.
+// E3-T21c: browser producer/consumer queues over the VM-private WVFT agent sockets.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod browser_file_transfer;
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod tailscale_dns;
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod worker_transport;
+
+/// Incremental SHA-256 for browser `File.stream()` inputs. The UI hashes in bounded chunks before
+/// offering a WVFT upload, avoiding `File.arrayBuffer()` and its whole-file heap spike.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+pub struct FileSha256(Option<browser_file_transfer::IncrementalSha256>);
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl Default for FileSha256 {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+impl FileSha256 {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Self {
+        Self(Some(browser_file_transfer::IncrementalSha256::new()))
+    }
+
+    pub fn update(&mut self, bytes: &[u8]) -> Result<(), JsError> {
+        self.0
+            .as_mut()
+            .ok_or_else(|| JsError::new("SHA-256 already finished"))?
+            .update(bytes);
+        Ok(())
+    }
+
+    pub fn finish(&mut self) -> Result<String, JsError> {
+        self.0
+            .take()
+            .map(browser_file_transfer::IncrementalSha256::finish)
+            .ok_or_else(|| JsError::new("SHA-256 already finished"))
+    }
+}
 
 /// One-time browser diagnostics setup: route `log` to the JS console and install the
 /// panic hook that turns Rust panics into readable console errors. Idempotent.
@@ -655,6 +694,9 @@ struct LinuxInner {
     /// disk live (the "continue read-only" choice after a storage-quota hit). `None` off the
     /// persistent path.
     disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>>,
+    /// E3-T21c: bounded browser producer/consumer queues plus the shared slirp backend handle.
+    /// Present only for slirp boots; the emulator still owns the sole `NetBackend` adapter.
+    file_transfers: Option<browser_file_transfer::BrowserFileTransfers>,
 }
 
 /// Which block device (if any) backs the boot: none (initramfs), an in-memory image, or a lazily
@@ -919,6 +961,7 @@ impl WasmLinux {
         let mut fetch = None;
         let mut persist = None;
         let mut disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>> = None;
+        let mut file_transfers = None;
         match disk {
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
             DiskChoice::Mem(image) => {
@@ -1032,7 +1075,10 @@ impl WasmLinux {
                 .with_mtu(slirp_mtu());
             set_slirp_dhcp_stats(dhcp.stats_handle());
             let backend = backend.with_dhcp_server(dhcp).with_dns_service(dns);
-            let _ = machine.enable_virtio_net(Box::new(backend));
+            let (transfers, shared) = browser_file_transfer::BrowserFileTransfers::new(backend);
+            let _ = machine
+                .enable_virtio_net(Box::new(browser_file_transfer::SharedSlirpBackend(shared)));
+            file_transfers = Some(transfers);
         } else {
             let _ = machine.enable_virtio_net(Box::new(
                 wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
@@ -1061,6 +1107,7 @@ impl WasmLinux {
                 fetch,
                 persist,
                 disk_ro,
+                file_transfers,
             }),
         })
     }
@@ -1178,6 +1225,113 @@ impl WasmLinux {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         inner.pending.extend(bytes.iter().copied());
         Ok(())
+    }
+
+    #[wasm_bindgen(js_name = fileTransferReady)]
+    pub fn file_transfer_ready(&self, slot: u32) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner
+            .file_transfers
+            .as_ref()
+            .is_some_and(|transfers| transfers.ready(slot as usize)))
+    }
+
+    #[wasm_bindgen(js_name = setFileDownloadReady)]
+    pub fn set_file_download_ready(&self, ready: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .set_download_ready(ready);
+        Ok(())
+    }
+
+    #[wasm_bindgen(js_name = beginFileUpload)]
+    pub fn begin_file_upload(
+        &self,
+        slot: u32,
+        name: String,
+        total: u32,
+        sha256_hex: String,
+    ) -> Result<u32, JsError> {
+        let sha256 = browser_file_transfer::parse_sha256(&sha256_hex)
+            .map_err(|error| JsError::new(&format!("file upload SHA-256: {error:?}")))?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .begin_upload(slot as usize, name, total as u64, sha256)
+            .map_err(|error| JsError::new(&format!("begin file upload: {error:?}")))
+    }
+
+    #[wasm_bindgen(js_name = pushFileUpload)]
+    pub fn push_file_upload(
+        &self,
+        stream: u32,
+        bytes: &[u8],
+        finished: bool,
+    ) -> Result<u32, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let buffered = inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .push_upload(stream, bytes, finished)
+            .map_err(|error| JsError::new(&format!("push file upload: {error:?}")))?;
+        Ok(buffered as u32)
+    }
+
+    #[wasm_bindgen(js_name = cancelFileUpload)]
+    pub fn cancel_file_upload(&self, stream: u32) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .cancel(stream)
+            .map_err(|error| JsError::new(&format!("cancel file upload: {error:?}")))
+    }
+
+    #[wasm_bindgen(js_name = cancelFileDownload)]
+    pub fn cancel_file_download(&self, id: u32) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .cancel_download(id)
+            .map_err(|error| JsError::new(&format!("cancel file download: {error:?}")))
+    }
+
+    #[wasm_bindgen(js_name = fileTransferStatus)]
+    pub fn file_transfer_status(&self) -> Result<String, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.file_transfers.as_ref().map_or_else(
+            || "{\"maxBuffered\":0,\"uploads\":[],\"downloads\":[]}".into(),
+            |t| t.status_json(),
+        ))
+    }
+
+    #[wasm_bindgen(js_name = takeFileDownloadChunk)]
+    pub fn take_file_download_chunk(&self, id: u32) -> Result<js_sys::Uint8Array, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let bytes = inner
+            .file_transfers
+            .as_mut()
+            .and_then(|transfers| transfers.take_download_chunk(id))
+            .unwrap_or_default();
+        Ok(js_sys::Uint8Array::from(bytes.as_slice()))
+    }
+
+    #[wasm_bindgen(js_name = dismissFileDownload)]
+    pub fn dismiss_file_download(&self, id: u32) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(inner
+            .file_transfers
+            .as_mut()
+            .is_some_and(|transfers| transfers.dismiss_download(id)))
     }
 
     /// E3-T02: the chunk indices the virtio-blk device is currently parked on (guest reads awaiting a

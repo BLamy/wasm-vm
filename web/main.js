@@ -3,11 +3,12 @@
 // the page imports directly; xterm.js is the UMD global `Terminal` from the pinned
 // node_modules copy. Errors render IN THE TERMINAL, never only in the JS console.
 
-import init, { WasmMachine, version, bench } from "./pkg/wasm_vm_wasm.js";
+import init, { FileSha256, WasmMachine, version, bench } from "./pkg/wasm_vm_wasm.js";
 import { RISCV_TESTS } from "./riscv-tests.js";
 import { ROADMAP } from "./roadmap.js";
 import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
 import { createLinuxTerminal } from "./terminal.js";
+import { createFileTransferUI } from "./file-transfer.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -92,6 +93,14 @@ document.getElementById("tailscale-logout")?.addEventListener("click", () => {
 // in terminal.js. `term` is the raw xterm.js instance the ELF-console paths keep writing to.
 const ui = createLinuxTerminal(document.getElementById("term"));
 const term = ui.term;
+const fileTransferUI = createFileTransferUI({
+  root: document.getElementById("file-transfer"),
+  FileSha256,
+});
+if (new URLSearchParams(location.search).has("testHooks")) {
+  globalThis.__wasmVmFileTransferUI = fileTransferUI;
+  globalThis.__wasmVmFileSha256 = FileSha256;
+}
 
 const runBtn = document.getElementById("run");
 const resetBtn = document.getElementById("reset");
@@ -139,7 +148,9 @@ async function runLinuxBoot(opts, banner) {
       ...opts,
       // E3-net: `?slirpNet` in the URL boots with the slirp local stack (real DHCP/ARP/ICMP) instead
       // of the loopback backend — so the guest can pull a real IP and reach the gateway.
-      slirpNet: opts.slirpNet ?? (query.has("slirpNet") || slirpProvider !== "offline" || !!slirpDoh),
+      slirpNet: opts.slirpNet ?? (
+        opts.fileTransfer || query.has("slirpNet") || slirpProvider !== "offline" || !!slirpDoh
+      ),
       slirpProvider,
       slirpRelay,
       slirpRelayToken: slirpProvider === "relay" ? networkRelayTokenEl?.value ?? "" : "",
@@ -249,12 +260,14 @@ async function runLinuxBoot(opts, banner) {
       },
     });
     const ctlForRelease = linuxCtl;
+    fileTransferUI.attachController(opts.fileTransfer ? linuxCtl : null);
     linuxCtl.whenDone.then((state) => {
       // E3-T09 (critic NOTE-1): release the writer lock on EVERY terminal outcome (halt,
       // error, stop) — release is idempotent, and a future writer-stop UI path must not
       // strand the lock until tab close.
       try { ctlForRelease?.releaseWriterLock?.(); } catch {}
       ui.detachSink();
+      fileTransferUI.attachController(null);
       bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
       linuxCtl = null;
       // E2-T26: surface the T17 terminal ExitReason as a distinct HALTED state, not just a status
@@ -318,6 +331,7 @@ if (bootAlpineBtn) {
         // E3-T08 test hook: ?persistMax=N sets the dirty-bytes backpressure threshold.
         persistMax: Number(new URLSearchParams(location.search).get("persistMax")) || undefined,
         ramMib: 256,
+        fileTransfer: true,
       },
       "booting production Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login:…",
     ));
@@ -325,7 +339,7 @@ if (bootAlpineBtn) {
 if (bootAlpineFullBtn) {
   bootAlpineFullBtn.addEventListener("click", () =>
     runLinuxBoot(
-      { manifestUrl: "./artifacts-alpine.json", mode: "disk", ramMib: 256 },
+      { manifestUrl: "./artifacts-alpine.json", mode: "disk", ramMib: 256, fileTransfer: true },
       "debug boot: loading the full Alpine ext4 image before virtio-blk startup…",
     ));
 }

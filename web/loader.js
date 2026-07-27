@@ -482,6 +482,18 @@ export async function startLinuxBoot(opts = {}) {
       stateDigest: () => machine.stateDigest(),
       // E3-T15 verifier evidence: production DHCP exchanges from this exact guest boot.
       dhcpStats: () => JSON.parse(slirpDhcpStats()),
+      // E3-T21c: bounded browser producer/consumer queues over the VM-private WVFT endpoint.
+      fileTransferReady: (slot) => machine.fileTransferReady(slot),
+      setFileDownloadReady: (ready) => machine.setFileDownloadReady(ready),
+      beginFileUpload: (slot, name, total, sha256) =>
+        machine.beginFileUpload(slot, name, total, sha256),
+      pushFileUpload: (stream, bytes, finished = false) =>
+        machine.pushFileUpload(stream, bytes, finished),
+      cancelFileUpload: (stream) => machine.cancelFileUpload(stream),
+      cancelFileDownload: (id) => machine.cancelFileDownload(id),
+      fileTransferStatus: () => JSON.parse(machine.fileTransferStatus()),
+      takeFileDownloadChunk: (id) => machine.takeFileDownloadChunk(id),
+      dismissFileDownload: (id) => machine.dismissFileDownload(id),
       // E3-T02: chunked-boot instrumentation — `{ fetches, bytes, error }` (bytes transferred so
       // far via lazy chunk fetch). Null for non-chunked boots. Drives the <40%-of-image acceptance.
       fetchStats: () => (isChunked ? machine.fetchStats() : null),

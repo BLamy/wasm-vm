@@ -169,6 +169,8 @@ impl HostDirectoryStore {
 impl TransferStore for HostDirectoryStore {
     fn open_sink(
         &mut self,
+        _connection_id: wasm_vm_slirp::file_transfer::ConnectionId,
+        _stream_id: u32,
         name: &str,
         total_len: u64,
         sha256: [u8; 32],
@@ -304,7 +306,7 @@ mod tests {
         let mut store = HostDirectoryStore::open(output.clone()).unwrap();
         let sha = <[u8; 32]>::from(Sha256::digest(&bytes));
         let mut sink = store
-            .open_sink("download.bin", bytes.len() as u64, sha)
+            .open_sink(1, 1, "download.bin", bytes.len() as u64, sha)
             .unwrap();
         sink.write(0, &bytes[..4]).unwrap();
         sink.write(4, &bytes[4..]).unwrap();
@@ -312,7 +314,7 @@ mod tests {
         assert_eq!(std::fs::read(output.join("download.bin")).unwrap(), bytes);
         assert!(
             store
-                .open_sink("download.bin", bytes.len() as u64, sha)
+                .open_sink(1, 2, "download.bin", bytes.len() as u64, sha)
                 .is_err()
         );
 
