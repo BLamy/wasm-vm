@@ -18,6 +18,8 @@ use std::time::{Duration, Instant};
 use wasm_vm_core::dev::virtio::net::NetBackend;
 use wasm_vm_slirp::{DhcpServer, NativeDnsService, SlirpLocalBackend, StdConnector};
 
+use crate::file_transfer_fixture::{FileTransferFixture, HostDirectoryStore, HostFileSource};
+
 /// The slirp gateway's own MAC (10.0.2.2), distinct from the guest's virtio-net MAC
 /// (`wasm_vm_core::dev::virtio::net::MAC` = 52:54:00:12:34:56). Locally-administered; the guest
 /// learns it via ARP for the gateway.
@@ -62,13 +64,30 @@ impl SlirpBackend {
     }
 
     pub fn with_config(mac: [u8; 6], config: SlirpConfig) -> Self {
+        Self::with_config_and_file_transfer(mac, config, FileTransferFixture::default())
+    }
+
+    pub(crate) fn with_config_and_file_transfer(
+        mac: [u8; 6],
+        config: SlirpConfig,
+        file_transfer: FileTransferFixture,
+    ) -> Self {
         let host_map = host_map_from_env();
         let (to_driver, from_guest) = tokio::sync::mpsc::unbounded_channel::<Vec<u8>>();
         let egress: Arc<Mutex<VecDeque<Vec<u8>>>> = Arc::new(Mutex::new(VecDeque::new()));
         let egress_driver = Arc::clone(&egress);
         let driver = std::thread::Builder::new()
             .name("slirp-driver".into())
-            .spawn(move || driver_loop(mac, config, host_map, from_guest, egress_driver))
+            .spawn(move || {
+                driver_loop(
+                    mac,
+                    config,
+                    file_transfer,
+                    host_map,
+                    from_guest,
+                    egress_driver,
+                )
+            })
             .expect("spawn slirp driver thread");
         SlirpBackend {
             to_driver: Some(to_driver),
@@ -109,6 +128,7 @@ fn host_map_from_env() -> BTreeMap<Ipv4Addr, Ipv4Addr> {
 fn driver_loop(
     mac: [u8; 6],
     config: SlirpConfig,
+    file_transfer: FileTransferFixture,
     host_map: BTreeMap<Ipv4Addr, Ipv4Addr>,
     mut from_guest: tokio::sync::mpsc::UnboundedReceiver<Vec<u8>>,
     egress: Arc<Mutex<VecDeque<Vec<u8>>>>,
@@ -130,6 +150,16 @@ fn driver_loop(
         )
         .with_dhcp_server(dhcp)
         .with_dns_service(Box::new(NativeDnsService::new()));
+        if let Some(directory) = file_transfer.download_dir {
+            match HostDirectoryStore::open(directory) {
+                Ok(store) => backend = backend.with_file_transfer_store(Box::new(store)),
+                Err(error) => {
+                    eprintln!("wasm-vm: WVFT download directory unavailable: {error:?}");
+                }
+            }
+        }
+        let mut pending_uploads = VecDeque::from(file_transfer.uploads);
+        let mut next_upload_probe = Instant::now();
         let mut tick = tokio::time::interval(TICK);
         // Drive-on-cadence, not catch-up: after a stall (e.g. a slow connect) we want ONE resume
         // tick, not a burst of missed ones each re-running poll/service (critic m2).
@@ -146,6 +176,29 @@ fn driver_loop(
             }
             // After every event, drive the stack + pumps and harvest anything bound for the guest.
             backend.poll();
+            if !pending_uploads.is_empty()
+                && backend.file_upload_ready(0)
+                && Instant::now() >= next_upload_probe
+            {
+                let path = pending_uploads.front().expect("checked above");
+                match HostFileSource::open(path) {
+                    Ok(source) => {
+                        if let Err(error) = backend.queue_file_upload(0, 1, Box::new(source)) {
+                            eprintln!("wasm-vm: WVFT upload could not be queued: {error:?}");
+                        }
+                        pending_uploads.pop_front();
+                    }
+                    Err(wasm_vm_slirp::FileTransferError::Io) if !path.exists() => {
+                        // A boot test may create the host-selected source after reaching the guest
+                        // shell. Probe at a bounded cadence instead of spinning every 1 ms tick.
+                        next_upload_probe = Instant::now() + Duration::from_millis(100);
+                    }
+                    Err(error) => {
+                        eprintln!("wasm-vm: WVFT upload source unavailable: {error:?}");
+                        pending_uploads.pop_front();
+                    }
+                }
+            }
             let mut out = Vec::new();
             while let Some(frame) = backend.rx() {
                 out.push(frame);

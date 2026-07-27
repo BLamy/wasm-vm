@@ -250,6 +250,12 @@ impl FileTransferService {
             .count()
     }
 
+    pub fn connection_ready(&self, id: ConnectionId) -> bool {
+        self.connections
+            .get(&id)
+            .is_some_and(|connection| matches!(connection.state, State::Ready))
+    }
+
     pub fn buffered_bytes(&self) -> usize {
         self.connections
             .values()

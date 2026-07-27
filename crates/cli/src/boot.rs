@@ -89,6 +89,14 @@ pub struct BootArgs {
     /// Link MTU advertised by slirp DHCP option 26.
     #[arg(long, default_value_t = wasm_vm_slirp::dhcp::DEFAULT_MTU)]
     pub net_slirp_mtu: u16,
+    /// Host-selected regular file to upload to the guest agent once its private WVFT connection is
+    /// ready. Repeat for an ordered queue. The protocol receives only each basename and its bytes.
+    #[arg(long, requires = "net_slirp")]
+    pub wvft_upload: Vec<PathBuf>,
+    /// Host-selected directory that receives guest `vm-download` basenames through WVFT. The guest
+    /// cannot escape this root or select any other host path.
+    #[arg(long, requires = "net_slirp")]
+    pub wvft_download_dir: Option<PathBuf>,
     /// Write compact guest-layer evidence at exit: a rolling digest of every retired instruction,
     /// retired count, and final architectural-state SHA-256. Intended for reopenable verification
     /// of long Linux boots where a full multi-billion-line canonical trace is impractical.
@@ -350,10 +358,17 @@ fn assemble(
             lease_secs: a.net_slirp_lease_secs.max(1),
             mtu: a.net_slirp_mtu.clamp(576, 1500),
         };
-        let _ = m.enable_virtio_net(Box::new(crate::net_backend::SlirpBackend::with_config(
-            crate::net_backend::GATEWAY_MAC,
-            config,
-        )));
+        let file_transfer = crate::file_transfer_fixture::FileTransferFixture {
+            uploads: a.wvft_upload.clone(),
+            download_dir: a.wvft_download_dir.clone(),
+        };
+        let _ = m.enable_virtio_net(Box::new(
+            crate::net_backend::SlirpBackend::with_config_and_file_transfer(
+                crate::net_backend::GATEWAY_MAC,
+                config,
+                file_transfer,
+            ),
+        ));
     } else if a.net {
         // E3-T13: loopback-backed virtio-net in slot 1 (the DTB already advertises all 8
         // slots, so the stock virtio_net driver probes it with no DTB change).

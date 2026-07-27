@@ -41,6 +41,8 @@ compliance/sail-riscv/
 # `bash tools/build-rootfs.sh` and pinned by releases/rootfs/MANIFEST.txt (package-level; see build-rootfs.sh drift gate), so it's not tracked.
 releases/rootfs/*.ext4
 releases/rootfs/MANIFEST.new
+releases/rootfs/FILE-MANIFEST.new
+releases/wvft-agent-riscv64
 
 # Playwright test artifacts (E2-T21)
 web/test-results/

@@ -34,6 +34,11 @@ OUT="releases/rootfs"
 IMG_TAG="wasm-vm-rootfs-build:local"
 mkdir -p "$OUT"
 
+# Build the already-verified static guest agent before entering the image builder. The container
+# receives only this one executable as a read-only input; it never receives Cargo state or source.
+AGENT="$PWD/releases/wvft-agent-riscv64"
+bash tools/build-file-agent.sh "$AGENT"
+
 # Build the pinned build image (context = tools/ only). The cold-cache adversarial gate can force
 # every layer to rebuild without changing the production command or tag.
 if [ "${DOCKER_BUILD_NO_CACHE:-0}" = 1 ]; then
@@ -49,6 +54,10 @@ docker run --rm \
   -v "$PWD/tools/rootfs-inner.sh:/rootfs-inner.sh:ro" \
   -v "$PWD/tools/guest/container-smoke.sh:/container-smoke.sh:ro" \
   -v "$PWD/tools/guest/wvrun.sh:/wvrun.sh:ro" \
+  -v "$AGENT:/wvft-agent-riscv64:ro" \
+  -v "$PWD/tools/rootfs/file-transfer.conf:/file-transfer.conf:ro" \
+  -v "$PWD/tools/rootfs/wasm-vm-file-agent.initd:/wasm-vm-file-agent.initd:ro" \
+  -v "$PWD/tools/rootfs/vm-download:/vm-download:ro" \
   -e MAIN_REPO="$MAIN_REPO" \
   -e COMMUNITY_REPO="$COMMUNITY_REPO" \
   -e FS_UUID="$FS_UUID" \
@@ -83,11 +92,28 @@ else
   mv "$NEW" "$LOCK"
 fi
 
+# Custom image inputs are not APK-owned, so lock them independently. This makes a binary, service,
+# wrapper, fixed configuration, mode, or directory drift an explicit reviewed change.
+NEW="$OUT/FILE-MANIFEST.new"; LOCK="$OUT/FILE-MANIFEST.txt"
+if [ -f "$LOCK" ] && ! diff -q "$LOCK" "$NEW" >/dev/null 2>&1; then
+  if [ "${UPDATE_MANIFEST:-0}" = 1 ]; then
+    echo "FILE-MANIFEST drift ACCEPTED (UPDATE_MANIFEST=1):"; diff "$LOCK" "$NEW" || true
+    mv "$NEW" "$LOCK"
+  else
+    echo "ERROR: custom rootfs inputs drifted from FILE-MANIFEST.txt:" >&2
+    diff "$LOCK" "$NEW" >&2 || true
+    echo "Review the diff; re-run with UPDATE_MANIFEST=1 to accept it." >&2
+    exit 1
+  fi
+else
+  mv "$NEW" "$LOCK"
+fi
+
 # The package lock is the committed review surface; the generated ext4 stays gitignored and its
 # content hash is recorded in the chunked artifact's image-info.json. E3-T11 pins all ext4 clocks,
 # UUID, directory hash seed, source-tree timestamps, and imported inode ctimes, so the image bytes
 # and manifest are now reproducible as asserted by tools/build_image/build.sh's double-build gate.
-(cd "$OUT" && shasum -a 256 MANIFEST.txt > SHA256SUMS)
+(cd "$OUT" && shasum -a 256 MANIFEST.txt FILE-MANIFEST.txt > SHA256SUMS)
 echo "Alpine riscv64 rootfs built (signatures verified, package lock enforced):"
 cat "$OUT/SHA256SUMS"
 ls -la "$OUT/alpine-rootfs.ext4"

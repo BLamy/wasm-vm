@@ -35,7 +35,8 @@ use crate::dns;
 use crate::dns_service::{DnsRequest, DnsService, MAX_PENDING_DNS};
 use crate::dns_tcp::{TcpFrame, frame_message, next_message};
 use crate::file_transfer::{
-    FileTransferService, MAX_CONCURRENT_TRANSFERS as FILE_TRANSFER_SLOTS, TransferStore,
+    ErrorCode as FileTransferError, FileTransferService,
+    MAX_CONCURRENT_TRANSFERS as FILE_TRANSFER_SLOTS, TransferSource, TransferStore,
 };
 use crate::manager::{Action, FlowManager};
 use crate::nat::{FlowKey, Proto};
@@ -183,6 +184,40 @@ impl SlirpLocalBackend {
     pub fn with_file_transfer_store(mut self, store: Box<dyn TransferStore>) -> Self {
         self.file_transfer = FileTransferService::new(store);
         self
+    }
+
+    /// Whether a connected guest agent slot has completed HELLO and can accept one host upload.
+    /// This exposes no transport or destination: the caller can only enqueue a bounded
+    /// [`TransferSource`] onto one of the two permanent VM-private WVFT connections.
+    pub fn file_upload_ready(&self, slot: usize) -> bool {
+        self.file_connections
+            .get(slot)
+            .and_then(|connection| *connection)
+            .is_some_and(|id| self.file_transfer.connection_ready(id))
+    }
+
+    /// Queue one host-selected source on an already-negotiated guest-agent slot.
+    pub fn queue_file_upload(
+        &mut self,
+        slot: usize,
+        stream_id: u32,
+        source: Box<dyn TransferSource>,
+    ) -> Result<(), FileTransferError> {
+        let id = self
+            .file_connections
+            .get(slot)
+            .and_then(|connection| *connection)
+            .ok_or(FileTransferError::BadState)?;
+        let now = (self.clock)().max(0) as u64;
+        let frames = self
+            .file_transfer
+            .queue_upload(id, stream_id, source, now)?;
+        self.file_tcp_tx[slot].extend(
+            frames
+                .into_iter()
+                .map(|bytes| PendingTcpWrite { bytes, offset: 0 }),
+        );
+        Ok(())
     }
 
     /// Override DHCP lease/MTU parameters for acceptance tests or transport-specific configuration.

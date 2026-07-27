@@ -1,0 +1,7 @@
+fb1a82d26a100db2bffb85ab8f256418b777dba7f902764328a37d0d7424454b 0755 /etc/init.d/wasm-vm-file-agent
+7a085c85612a4fc7142ff679f2f36a06b0414d7422c25dc930696e3726d5aa3f 0644 /etc/wasm-vm/file-transfer.conf
+377e7536fc217b9aaa2fc84d33614f4c536fbb13c2c06e3c79efbda56aaaa0e6 0755 /usr/bin/vm-download
+3df4809320d8fbab3b7d8b68378828e7cd5bb6711b0198cb08d3a598a322e025 0755 /usr/libexec/wasm-vm/wvft-agent
+directory 0750 /var/lib/wasm-vm/transfer
+directory 0750 /var/lib/wasm-vm/transfer/inbox
+directory 0750 /var/lib/wasm-vm/transfer/outbox

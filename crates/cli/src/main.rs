@@ -19,6 +19,8 @@ pub mod chunk;
 mod chunk_verify;
 pub mod debug;
 pub mod file_backend;
+#[cfg(not(feature = "zicsr-stub"))]
+mod file_transfer_fixture;
 mod os_entropy;
 // E3-T14: slirp NetBackend for the boot harness — gated with boot (only the boot path uses it).
 #[cfg(not(feature = "zicsr-stub"))]

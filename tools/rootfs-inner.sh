@@ -137,6 +137,40 @@ for s in modules hwclock swap hostname bootmisc syslog seedrng; do link_svc boot
 link_svc default networking
 for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
 
+# 2g. E3-T21b2c WVFT agent. Every path is fixed at image-build time. The guest service opens two
+# outbound connections to the VM-private slirp endpoint; it does not listen on any interface.
+install -Dm755 /wvft-agent-riscv64 "$ROOT/usr/libexec/wasm-vm/wvft-agent"
+install -Dm644 /file-transfer.conf "$ROOT/etc/wasm-vm/file-transfer.conf"
+install -Dm755 /wasm-vm-file-agent.initd "$ROOT/etc/init.d/wasm-vm-file-agent"
+install -Dm755 /vm-download "$ROOT/usr/bin/vm-download"
+install -d -m0750 "$ROOT/var/lib/wasm-vm/transfer"
+install -d -m0750 "$ROOT/var/lib/wasm-vm/transfer/inbox"
+install -d -m0750 "$ROOT/var/lib/wasm-vm/transfer/outbox"
+link_svc default wasm-vm-file-agent
+
+# APK's package lock cannot cover these custom inputs. Record bytes, modes, and deterministic
+# directory paths so the host-side drift gate can reject an unreviewed image capability change.
+{
+  for path in \
+    /etc/init.d/wasm-vm-file-agent \
+    /etc/wasm-vm/file-transfer.conf \
+    /usr/libexec/wasm-vm/wvft-agent \
+    /usr/bin/vm-download
+  do
+    mode=$(stat -c '%a' "$ROOT$path")
+    digest=$(sha256sum "$ROOT$path" | awk '{print $1}')
+    printf '%s 0%s %s\n' "$digest" "$mode" "$path"
+  done
+  for path in \
+    /var/lib/wasm-vm/transfer \
+    /var/lib/wasm-vm/transfer/inbox \
+    /var/lib/wasm-vm/transfer/outbox
+  do
+    mode=$(stat -c '%a' "$ROOT$path")
+    printf '%s 0%s %s\n' directory "$mode" "$path"
+  done
+} | sort -k3,3 > /out/FILE-MANIFEST.new
+
 # 3. Pack into a reproducible ext4 (fixed UUID; mke2fs -d needs no privileges/loop mounts).
 # `-O ^metadata_csum`: disable ext4 metadata checksums. mke2fs 1.47 enables them by default,
 # but a freshly-built csum image deterministically fails `EBADMSG` (Bad message) when the 6.6.63

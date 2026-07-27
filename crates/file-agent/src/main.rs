@@ -40,15 +40,21 @@ fn run() -> Result<(), &'static str> {
 }
 
 fn run_service(storage: Rc<Storage>) -> Result<(), &'static str> {
-    let mut slots = vec![
-        service_slot(storage.clone())?,
-        service_slot(storage.clone())?,
-    ];
+    let mut slots: [Option<ServiceSlot>; 2] = [None, None];
     loop {
         for slot in &mut slots {
-            if step_slot(slot).is_err() {
-                *slot = service_slot(storage.clone())?;
+            if slot
+                .as_mut()
+                .is_some_and(|active| step_slot(active).is_err())
+            {
+                *slot = None;
             }
+            if slot.is_none() {
+                *slot = service_slot(storage.clone()).ok();
+            }
+        }
+        if slots.iter().all(Option::is_none) {
+            std::thread::sleep(Duration::from_millis(10));
         }
     }
 }

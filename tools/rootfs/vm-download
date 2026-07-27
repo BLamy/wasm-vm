@@ -1,0 +1,23 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -ne 1 ]; then
+	echo "usage: vm-download BASENAME" >&2
+	exit 2
+fi
+
+# The upload service deliberately occupies both bounded WVFT connection slots. Hand those slots
+# back while this one-shot download runs, then restore upload service even when the transfer fails.
+restart=0
+if rc-service wasm-vm-file-agent status >/dev/null 2>&1; then
+	rc-service wasm-vm-file-agent stop >/dev/null
+	restart=1
+fi
+restore_service() {
+	if [ "$restart" -eq 1 ]; then
+		rc-service wasm-vm-file-agent start >/dev/null
+	fi
+}
+trap restore_service EXIT HUP INT TERM
+
+/usr/libexec/wasm-vm/wvft-agent vm-download "$1"

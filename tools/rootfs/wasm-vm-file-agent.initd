@@ -1,0 +1,20 @@
+#!/sbin/openrc-run
+
+name="wasm-vm file transfer agent"
+description="Bounded guest peer for the VM-private WVFT endpoint"
+command="/usr/libexec/wasm-vm/wvft-agent"
+command_args="service"
+command_background="yes"
+pidfile="/run/wasm-vm-file-agent.pid"
+start_stop_daemon_args="--make-pidfile"
+
+depend() {
+	need networking
+	after firewall
+}
+
+start_pre() {
+	checkpath --directory --mode 0750 /var/lib/wasm-vm/transfer
+	checkpath --directory --mode 0750 /var/lib/wasm-vm/transfer/inbox
+	checkpath --directory --mode 0750 /var/lib/wasm-vm/transfer/outbox
+}
