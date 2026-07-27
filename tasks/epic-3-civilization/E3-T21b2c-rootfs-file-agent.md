@@ -3,7 +3,7 @@ id: E3-T21b2c
 epic: 3
 title: Rootfs integration and boot proof for WVFT agent
 priority: 321.223
-status: implemented
+status: verified
 depends_on: [E3-T21b2b]
 estimate: S
 risk: high
@@ -184,3 +184,55 @@ Claim: the verifier's three evidence gaps are now directly reproducible and inde
 inspectable. No runtime semantics changed; only the affected real-boot assertion, deterministic
 double-build harness, and browser evidence were strengthened, so the prior `HELD` findings remain
 applicable under the incremental re-verification rule.
+
+### 2026-07-27 — verifier — VERDICT: verified
+
+- **P1 static agent and installed custom bytes — HELD (carried forward).** The implementation,
+  manifests, installed paths, modes, and static-agent digest are unchanged from verifier commit
+  `37c06e6`.
+- **P1 whole-image double build — HELD.** Predicted the retained artifacts would be two complete,
+  independently built 512 MiB images with matching bytes and independently reproducible verifier
+  results. Both `rootfs-a.ext4` and `rootfs-b.ext4` are exactly 536,870,912 bytes, independently
+  hash to `85ca0ab8fad742dd0fc54538bc7ea489176dd0ebe78bb6c26a73a34873035e1b`,
+  and `cmp` reports equality. Both retained logs show all 84 packages installed, clean fsck and
+  foreign-ELF scans, identical manifest digests, and `E3-T21b2c rootfs: OK`.
+- **P2 endpoint, timeout, listener, and reconnect — HELD (carried forward).** Runtime code and the
+  previously exercised transfer, timeout, no-listener, and reconnect paths are unchanged. The
+  strengthened exact real-Alpine boot passed 1/1 in the worker response.
+- **P3 corrupt-record restart recovery — HELD.** The fixture now constructs a valid 63-byte commit
+  record with magic `WVFTCMT1`, name length 13, total length 7, an all-zero deliberately mismatched
+  hash, and salvageable name `recovered.bin`; both the visible final and private partial contain
+  seven-byte `partial`. It independently requires final and commit removal, partial retention,
+  quarantine creation, and zero visible inbox names. The input command splits every failure token
+  around shell quotes, so an echoed command cannot satisfy the contiguous failure assertions.
+  With recovery deliberately omitted in a bounded verifier sabotage, the same predicates emitted
+  `FINAL_BAD`, `COMMIT_BAD`, `QUARANTINE_BAD`, and `VISIBLE_BAD`, proving the strengthened check is
+  not self-satisfying.
+- **P4 host path confinement — HELD (carried forward).** Host path handling and protocol framing
+  are unchanged from `37c06e6`.
+- **P5 browser binding — HELD.** The 1280x720 Tests screenshot visibly records total 126, passed
+  126, failed 0, and done 126. The prior roadmap screenshot visibly records the verified
+  `Bounded host/guest file-transfer agent` capability, while
+  `e3-t21b2c-browser-proof.md` separately records console errors `[]` and the exactly-one-visible
+  roadmap assertion. There is no `web/` source diff from bound source head `f5612e1` through
+  submission head `9351871`.
+- **COVERAGE — SUFFICIENT.** The only response changes are the associated-final real-boot fixture,
+  deterministic double-build harness, retained artifacts/logs, screenshots, and proof metadata.
+  No runtime semantic hunk changed, so all prior `HELD` results carry forward under incremental
+  re-verification.
+- **SUITE:** promote `tools/verify/e3-t21b2c-repro.sh` and retain the strengthened real-Alpine boot
+  fixture and browser proof artifacts.
+
+Commands:
+
+- `shasum -a 256 target/e3-t21b2c-rootfs-repro/rootfs-{a,b}.ext4` — both
+  `85ca0ab8fad742dd0fc54538bc7ea489176dd0ebe78bb6c26a73a34873035e1b`.
+- `cmp -s target/e3-t21b2c-rootfs-repro/rootfs-a.ext4
+  target/e3-t21b2c-rootfs-repro/rootfs-b.ext4` — passed; both files 536,870,912 bytes.
+- Independent inspection of `build-a.log`, `build-b.log`, both SHA files, and `result.txt` —
+  complete builds and both rootfs verifier runs passed.
+- Recovery-disabled marker sabotage using the exact record construction and predicate commands —
+  required failure markers appeared; record length 63 and bytes independently inspected with
+  `xxd`.
+- Visual inspection and SHA-256 of `e3-t21b2c-browser-tests.png` and
+  `e3-t21b2c-browser-roadmap.png`; `git diff --quiet f5612e1..9351871 -- web` — passed.
