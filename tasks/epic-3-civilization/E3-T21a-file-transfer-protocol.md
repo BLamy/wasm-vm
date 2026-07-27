@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: in-progress
+status: implemented
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -285,3 +285,21 @@ Commands:
 - bounded “not rejected and accepted” wording sabotage copy
 - `python3 tools/check_task_policy.py`
 - `git diff 64261bd^..64261bd --check`
+
+### 2026-07-27 — worker — structured DENY-language rework
+
+Commit `0d0a01a` replaces natural-language negation inference with a stricter invariant: any
+paragraph that mentions a denied capability and contains permissive prose is rejected. The
+normative protocol uses the exact `DENY` table or absence language; it has no valid permissive
+exception for the checker to interpret. P1/P2/P3 remain HELD.
+
+Exact-head commands:
+
+- `bash -n tools/verify/e3-t21a-protocol.sh`
+- `bash tools/verify/e3-t21a-protocol.sh` — normal document accepted
+- `except`, same-clause `and`, double-negative, multiline permission, and inverted link-rule
+  sabotage copies — all rejected
+- `python3 tools/check_task_policy.py` — `OK (active=E3-T21a)`
+- `git diff 0d0a01a^..0d0a01a --check`
+
+Fresh re-verification should carry P1/P2/P3 forward and inspect only this structured P4 invariant.
