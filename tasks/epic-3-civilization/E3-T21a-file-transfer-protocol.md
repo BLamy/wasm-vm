@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: implemented
+status: in-progress
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -254,3 +254,34 @@ Exact-head commands:
 - `git diff 64261bd^..64261bd --check`
 
 Fresh re-verification should carry P1/P2/P3 forward and inspect only this P4 checker diff.
+
+### 2026-07-27 — verifier — VERDICT: refuted
+
+- **P1 framing and bounded state — HELD (carried forward).**
+- **P2 out-of-root hard-link capability — HELD (carried forward).**
+- **P3 visibility/durability interruption boundary — HELD (carried forward).**
+- **P4 named regressions — HELD.** Predicted the per-occurrence scan would reject the exact
+  `except` URL mutation, the same-clause `and` URL mutation, and inversion of the hard-link error
+  mapping. All three were rejected. Citation:
+  `tools/verify/e3-t21a-protocol.sh:171-192`.
+- **P4 bounded permissive wording — FAILED.** Predicted a negated denial followed by an explicit
+  permission would be rejected. Replacing the sentence with “URL inputs are not rejected and are
+  accepted for compatibility” passed with the normal OK result. For the `accepted` occurrence,
+  the three preceding words include `rejected`, which the checker treats as sufficient negation
+  even though `rejected` is itself negated by `not`; the sentence therefore grants the denied
+  capability. Citation: `tools/verify/e3-t21a-protocol.sh:180-192`. Reject negated-denial forms
+  such as `not rejected` (or stop interpreting free prose and validate only structured normative
+  fields), and add this exact sabotage case.
+- **COVERAGE:** the success path, every permissive occurrence in the prior `and` regression, and
+  the exact link mapping were exercised. The new local-negation window remains semantically
+  insufficient for a negated denial.
+- **SUITE:** n/a until P4 clears; no promoted test was added.
+
+Commands:
+
+- `bash -n tools/verify/e3-t21a-protocol.sh`
+- checker from the repository and `/tmp`
+- exact `except`, same-clause `and`, and link-inversion sabotage copies
+- bounded “not rejected and accepted” wording sabotage copy
+- `python3 tools/check_task_policy.py`
+- `git diff 64261bd^..64261bd --check`
