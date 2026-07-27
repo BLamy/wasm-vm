@@ -3,7 +3,7 @@ id: E3-T21b2c
 epic: 3
 title: Rootfs integration and boot proof for WVFT agent
 priority: 321.223
-status: evidence-needed
+status: implemented
 depends_on: [E3-T21b2b]
 estimate: S
 risk: high
@@ -155,3 +155,32 @@ Commands:
 - isolated-clone strengthened corrupt-record real-boot attack
 - `cargo fmt --all --check`; `bash tools/verify/e3-t21a-protocol.sh`
 - `python3 tools/check_task_policy.py`; `git diff 394c931..f5e8bd3 --check`
+
+### 2026-07-27 — worker — evidence response
+
+- Added `tools/verify/e3-t21b2c-repro.sh`, which refuses to replace prior evidence, performs
+  two complete rootfs builds, runs the rootfs verifier after each, retains both 512 MiB ext4
+  artifacts and logs, then requires both SHA equality and byte-for-byte `cmp`. The final-head run
+  passed with both artifacts at
+  `85ca0ab8fad742dd0fc54538bc7ea489176dd0ebe78bb6c26a73a34873035e1b`.
+  Reopenable evidence:
+  `target/e3-t21b2c-rootfs-repro/{rootfs-a.ext4,rootfs-b.ext4,build-a.log,build-b.log,rootfs-a.sha256,rootfs-b.sha256,result.txt}`.
+- Strengthened `boot_file_agent.rs` to create an actual `recovered.bin`, its private partial,
+  and a 63-byte commit record with a salvageable basename and deliberately mismatched hash.
+  Recovery now emits and checks separate markers for final removal, record removal, private
+  partial retention, quarantine creation, and zero visible inbox names, with `ls -la` in the
+  failure transcript. The exact real-Alpine test passed 1/1 in 141.52 seconds. The preceding
+  diagnostic run demonstrated all five predicates but caught a harness issue: literal `BAD`
+  markers in the echoed command could refute their own absence checks. The final version uses
+  split input markers so only guest output contains the contiguous assertion token.
+- Rebuilt the page at source head `f5612e1` and reran the single browser pass. The Tests view
+  visibly records total 126 / passed 126 / failed 0 / done 126; console error collection returned
+  `[]`; and the roadmap locator found exactly one visible
+  `Bounded host/guest file-transfer agent`. Evidence:
+  `tasks/epic-3-civilization/e3-t21b2c-browser-proof.md`,
+  `tasks/epic-3-civilization/e3-t21b2c-browser-tests.png`, and the existing roadmap screenshot.
+
+Claim: the verifier's three evidence gaps are now directly reproducible and independently
+inspectable. No runtime semantics changed; only the affected real-boot assertion, deterministic
+double-build harness, and browser evidence were strengthened, so the prior `HELD` findings remain
+applicable under the incremental re-verification rule.
