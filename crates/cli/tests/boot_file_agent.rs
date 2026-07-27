@@ -200,14 +200,41 @@ fn alpine_file_agent_round_trip_timeout_and_restart_recovery() {
     assert!(wait_for(&transcript, "WVFT_TIMEOUT_CLEAN", 90));
     assert!(!transcript.lock().unwrap().contains("WVFT_TIMEOUT_BAD"));
 
-    // A corrupt interrupted record must not turn its partial into a complete-looking basename when
-    // the service opens storage during restart. The post-restart download proves it also reconnects
-    // to the real synthetic endpoint rather than merely reporting an OpenRC process as started.
+    // A corrupt interrupted record associated with an existing complete-looking basename must
+    // quarantine both visible artifacts while retaining the private partial for inspection. Emit
+    // one marker per predicate (plus a directory listing) so a failure identifies the exact
+    // recovery invariant rather than hiding it inside one compound shell test.
     send(
         &mut stdin,
-        "kill \"$(cat /run/wvft-test.pid)\"; wait \"$(cat /run/wvft-test.pid)\" 2>/dev/null || true; printf partial > /var/lib/wasm-vm/transfer/inbox/.wvft-0000000000000042.part; printf corrupt > /var/lib/wasm-vm/transfer/inbox/.wvft-0000000000000042.commit; /usr/libexec/wasm-vm/wvft-agent service >/tmp/wvft-agent.log 2>&1 & echo $! >/run/wvft-test.pid; test ! -e /var/lib/wasm-vm/transfer/inbox/recovered.bin && echo WVFT_RECOVERY_\"CLEAN\"",
+        "kill \"$(cat /run/wvft-test.pid)\"; wait \"$(cat /run/wvft-test.pid)\" 2>/dev/null || true; inbox=/var/lib/wasm-vm/transfer/inbox; rm -f \"$inbox/upload.bin\"; final=$inbox/recovered.bin; part=$inbox/.wvft-0000000000000042.part; commit=$inbox/.wvft-0000000000000042.commit; printf partial > \"$final\"; printf partial > \"$part\"; printf 'WVFTCMT1\\000\\015\\000\\000\\000\\000\\000\\000\\000\\007' > \"$commit\"; dd if=/dev/zero bs=32 count=1 2>/dev/null >> \"$commit\"; printf recovered.bin >> \"$commit\"; /usr/libexec/wasm-vm/wvft-agent service >/tmp/wvft-agent.log 2>&1 & echo $! >/run/wvft-test.pid; sleep 1; ls -la \"$inbox\"; test ! -e \"$final\" && echo WVFT_RECOVERY_FINAL_\"ABSENT\" || echo WVFT_RECOVERY_FINAL_\"BAD\"; test ! -e \"$commit\" && echo WVFT_RECOVERY_COMMIT_\"ABSENT\" || echo WVFT_RECOVERY_COMMIT_\"BAD\"; test -e \"$part\" && echo WVFT_RECOVERY_PARTIAL_\"PRESENT\" || echo WVFT_RECOVERY_PARTIAL_\"BAD\"; find \"$inbox\" -maxdepth 1 -name '.wvft-quarantine-*.quarantine' | grep -q . && echo WVFT_RECOVERY_QUARANTINE_\"PRESENT\" || echo WVFT_RECOVERY_QUARANTINE_\"BAD\"; test -z \"$(find \"$inbox\" -mindepth 1 -maxdepth 1 ! -name '.*' -print -quit)\" && echo WVFT_RECOVERY_VISIBLE_\"NONE\" || echo WVFT_RECOVERY_VISIBLE_\"BAD\"",
     );
-    assert!(wait_for(&transcript, "WVFT_RECOVERY_CLEAN", 120));
+    for marker in [
+        "WVFT_RECOVERY_FINAL_ABSENT",
+        "WVFT_RECOVERY_COMMIT_ABSENT",
+        "WVFT_RECOVERY_PARTIAL_PRESENT",
+        "WVFT_RECOVERY_QUARANTINE_PRESENT",
+        "WVFT_RECOVERY_VISIBLE_NONE",
+    ] {
+        assert!(
+            wait_for(&transcript, marker, 120),
+            "missing recovery marker {marker}:\n{}",
+            transcript.lock().unwrap()
+        );
+    }
+    let recovery_transcript = transcript.lock().unwrap();
+    for bad in [
+        "WVFT_RECOVERY_FINAL_BAD",
+        "WVFT_RECOVERY_COMMIT_BAD",
+        "WVFT_RECOVERY_PARTIAL_BAD",
+        "WVFT_RECOVERY_QUARANTINE_BAD",
+        "WVFT_RECOVERY_VISIBLE_BAD",
+    ] {
+        assert!(
+            !recovery_transcript.contains(bad),
+            "failed recovery predicate {bad}:\n{recovery_transcript}"
+        );
+    }
+    drop(recovery_transcript);
 
     let recovery_bytes = b"post-restart endpoint proof\n";
     send(
