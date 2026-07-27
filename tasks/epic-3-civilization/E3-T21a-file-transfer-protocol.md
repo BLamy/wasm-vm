@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: implemented
+status: in-progress
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -202,3 +202,34 @@ Exact-head commands:
 - `git diff cd5c9a7^..cd5c9a7 --check`
 
 Fresh re-verification should carry P1/P2/P3 forward and inspect only P4 and this checker diff.
+
+### 2026-07-27 — verifier — VERDICT: refuted
+
+- **P1 framing and bounded state — HELD (carried forward).**
+- **P2 out-of-root hard-link capability — HELD (carried forward).**
+- **P3 visibility/durability interruption boundary — HELD (carried forward).**
+- **P4 exact prior mutations — HELD.** Predicted the clause-sensitive checker would reject the two
+  exact mutations from verifier commit `121d490`. The same-line
+  “never accepts a URL, except implementations MAY accept a URL” mutation was rejected as a
+  contradictory permissive clause, and changing ``st_nlink != 1`` from `ERROR(BAD_NAME)` to
+  “accepted” was rejected for losing the exact error mapping. Citation:
+  `tools/verify/e3-t21a-protocol.sh:171-187`.
+- **P4 bounded clause variation — FAILED.** Predicted a second permissive statement about the same
+  denied subject in one clause would also be rejected. Changing the sentence to “never accepts a
+  URL and implementations MAY accept a URL” passed with the normal OK result. The loop calls
+  `permissive.search(clause)` once, so the negated first `accepts` masks the later unnegated
+  `accept`; the second match is never inspected. Citation:
+  `tools/verify/e3-t21a-protocol.sh:171-187`. Iterate over every permissive match in each clause
+  (or represent normative constraints only as structured fields) and add this exact sabotage case.
+- **COVERAGE:** the checker success path and both new exact guards were exercised. The changed
+  clause scan is insufficient because its multiple-match path is absent.
+- **SUITE:** n/a until the remaining checker defect clears; no promoted test was added.
+
+Commands:
+
+- `bash -n tools/verify/e3-t21a-protocol.sh`
+- checker from the repository and `/tmp`
+- exact URL-exception and link-inversion sabotage copies
+- bounded same-clause second-permit sabotage copy
+- `python3 tools/check_task_policy.py`
+- `git diff cd5c9a7^..cd5c9a7 --check`
