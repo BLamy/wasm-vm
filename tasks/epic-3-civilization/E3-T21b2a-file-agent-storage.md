@@ -3,7 +3,7 @@ id: E3-T21b2a
 epic: 3
 title: Crash-safe guest file-agent storage engine
 priority: 321.221
-status: implemented
+status: verified
 depends_on: [E3-T21b1]
 estimate: S
 risk: high
@@ -206,3 +206,48 @@ ephemeral target directory.
 This executes the actual `O_TMPFILE` copy, rehash, sync, and descriptor-publication path that the
 second verifier required. Combined with the exact-head native evidence above, the repaired
 submission is ready for fresh incremental verification.
+
+### 2026-07-27 — verifier — VERDICT: verified
+
+- **P1 pathname substitution — HELD (carried forward).** The promoted replacement attack and its
+  descriptor-bound rejection path are unchanged since verifier commit `77c9a64`; the worker's
+  exact-head native suite still executes that regression.
+- **P2 resident quota — HELD (carried forward).** Restart and in-process quota accounting are
+  unchanged from the previously sabotage-checked repair, and their evidence digest is unchanged.
+- **P3 immutable COMPLETE bytes — HELD.** Predicted that Linux publication at
+  `crates/file-agent-storage/src/lib.rs:193-207` would copy the held upload into a fresh unreachable
+  inode, rehash it, sync it, and publish only that inode. The exact source digest
+  `55cd0b3226380d7e03c209d0396fd170a7d7be0362d02a532e8b7fb6a6ce1530` matched the isolated proof
+  crate. In a fresh offline Linux container, the retained-writer regression at
+  `crates/file-agent-storage/src/lib.rs:1223-1245` passed: writing `attacker` through the retained
+  partial descriptor after commit left the final bytes equal to `correct`.
+- **NOVEL inode isolation — HELD.** Predicted the final would have a different device/inode pair
+  from the retained writable partial and exactly one link. A verifier-only Linux test in an
+  isolated copy observed both properties.
+- **COVERAGE — SUFFICIENT.** The Linux run executed the new `O_TMPFILE` creation, bounded
+  copy/rehash at `crates/file-agent-storage/src/lib.rs:877-906`, sync, descriptor publication, and
+  retained-writer assertion. The unchanged macOS copy-validation path is carried by the worker's
+  exact-head native suite. No changed runtime hunk is left unexecuted or unexplained.
+- **SABOTAGE — HELD.** Replacing the isolated-inode publication with the old direct hard link made
+  the promoted regression fail: final bytes became `attacker` rather than `correct`.
+- **PRISTINE — HELD.** A `--no-local` clone detached at exact head `2299b6c` passed the promoted
+  regression and capability audit with `RUSTFLAGS`, `RUST_LOG`, and `CARGO_TARGET_DIR` scrubbed;
+  the clone remained clean.
+- **SUITE:** retained all three promoted regressions. The verifier-only inode-identity assertion was
+  discarded because the retained-writer regression is the stronger stable behavioral contract.
+
+Commands:
+
+- `docker run --rm --network none --mount
+  type=bind,src=/tmp/wvft-linux-proof-85a39d2,dst=/proof,readonly --tmpfs
+  /target:rw,exec,nosuid,size=2g -e CARGO_TARGET_DIR=/target -w /proof rr-soft:latest
+  /opt/cargo/bin/cargo test --offline
+  final_cannot_be_mutated_through_a_precommit_partial_handle -- --nocapture` — passed, 1 passed.
+- Same isolated command with verifier-only
+  `verifier_published_inode_is_distinct_from_writable_partial` — passed, 1 passed.
+- Same isolated command after sabotaging publication back to the original descriptor — failed as
+  predicted, 1 failed, final bytes `attacker`.
+- Pristine clone: `cargo test -p wasm-vm-file-agent-storage
+  final_cannot_be_mutated_through_a_precommit_partial_handle -- --nocapture` and
+  `bash tools/verify/e3-t21b2a-capability.sh` — passed; capability `OK (15 public methods, no
+  network/process/path transfer authority)`.
