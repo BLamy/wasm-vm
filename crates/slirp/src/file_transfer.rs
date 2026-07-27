@@ -1195,6 +1195,35 @@ mod tests {
     }
 
     #[test]
+    fn timeout_error_identifies_a_host_upload_awaiting_accept() {
+        let mut service = FileTransferService::default();
+        let id = service.connect(0);
+        hello(&mut service, id);
+        service
+            .queue_upload(
+                id,
+                46,
+                Box::new(BytesSource::new("waiting.bin", b"x".to_vec())),
+                1,
+            )
+            .unwrap();
+
+        let output = service.poll(IDLE_TIMEOUT_MS + 1);
+        assert_eq!(output.len(), 1);
+        assert_eq!(output[0].0, id);
+        assert_eq!(output[0].1[5], ERROR);
+        assert_eq!(
+            u32::from_be_bytes(output[0].1[8..12].try_into().unwrap()),
+            46,
+            "the AwaitAccept branch must preserve the host-upload stream ID"
+        );
+        assert_eq!(
+            u16::from_be_bytes(output[0].1[16..18].try_into().unwrap()),
+            ErrorCode::Timeout as u16
+        );
+    }
+
+    #[test]
     fn host_upload_obeys_credit_and_waits_for_complete() {
         let mut service = FileTransferService::default();
         let id = service.connect(0);
