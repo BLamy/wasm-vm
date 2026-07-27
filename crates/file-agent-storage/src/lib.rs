@@ -149,7 +149,7 @@ impl Directory {
     }
 
     #[cfg(target_os = "linux")]
-    fn publish_file_no_replace(&self, source: &File, target: &CStr) -> Result<()> {
+    fn link_descriptor_no_replace(&self, source: &File, target: &CStr) -> Result<()> {
         let empty = CStr::from_bytes_with_nul(b"\0").expect("empty C string");
         // AT_EMPTY_PATH is the direct descriptor primitive. It succeeds for a suitably privileged
         // static agent and avoids requiring procfs to be mounted.
@@ -190,18 +190,54 @@ impl Directory {
         map_publish_result(result)
     }
 
+    #[cfg(target_os = "linux")]
+    fn publish_file_no_replace(
+        &self,
+        source: &File,
+        target: &CStr,
+        total_len: u64,
+        expected_sha: [u8; 32],
+    ) -> Result<()> {
+        let dot = CStr::from_bytes_with_nul(b".\0").expect("dot C string");
+        let mut promoted = self.open_file(dot, libc::O_RDWR | libc::O_TMPFILE, 0o600)?;
+        copy_validated(source, &mut promoted, total_len, expected_sha)?;
+        promoted.sync_data()?;
+        // Only the unreachable O_TMPFILE inode becomes visible. Any writer retained from the
+        // original partial therefore cannot mutate bytes after COMPLETE.
+        self.link_descriptor_no_replace(&promoted, target)
+    }
+
     #[cfg(target_os = "macos")]
-    fn publish_file_no_replace(&self, source: &File, target: &CStr) -> Result<()> {
+    fn publish_file_no_replace(
+        &self,
+        source: &File,
+        target: &CStr,
+        total_len: u64,
+        expected_sha: [u8; 32],
+    ) -> Result<()> {
         // fclonefileat reads from the held descriptor and creates the target with no replacement.
         // It therefore preserves the same descriptor-binding guarantee as Linux's procfd link.
         // SAFETY: source/directory descriptors and target C string are live.
         let result =
             unsafe { libc::fclonefileat(source.as_raw_fd(), self.fd(), target.as_ptr(), 0) };
-        map_publish_result(result)
+        map_publish_result(result)?;
+        let published = self.open_file(target, libc::O_RDONLY | libc::O_NOFOLLOW, 0)?;
+        if file_matches(&published, total_len, expected_sha)? {
+            Ok(())
+        } else {
+            self.unlink(target)?;
+            Err(Error::SourceChanged)
+        }
     }
 
     #[cfg(not(any(target_os = "linux", target_os = "macos")))]
-    fn publish_file_no_replace(&self, _source: &File, _target: &CStr) -> Result<()> {
+    fn publish_file_no_replace(
+        &self,
+        _source: &File,
+        _target: &CStr,
+        _total_len: u64,
+        _expected_sha: [u8; 32],
+    ) -> Result<()> {
         // This security boundary currently targets Linux guests and has a descriptor-bound macOS
         // model. Refuse publication on platforms without an equivalent primitive.
         Err(Error::Io(std::io::Error::new(
@@ -592,7 +628,12 @@ impl Upload {
         record_file.sync_all()?;
         self.hit(FaultPoint::AfterRecordSync)?;
 
-        self.dir.publish_file_no_replace(&file, &self.final_name)?;
+        self.dir.publish_file_no_replace(
+            &file,
+            &self.final_name,
+            self.total_len,
+            self.expected_sha,
+        )?;
         self.hit(FaultPoint::AfterRename)?;
         self.dir.unlink(&self.partial_name)?;
         self.dir.sync()?;
@@ -831,6 +872,37 @@ fn partial_name_for_record(record_name: &CStr) -> Result<CString> {
             .collect::<Vec<_>>(),
     )
     .map_err(|_| Error::BadName)
+}
+
+#[cfg(target_os = "linux")]
+fn copy_validated(
+    source: &File,
+    target: &mut File,
+    total_len: u64,
+    sha256: [u8; 32],
+) -> Result<()> {
+    let mut source = source.try_clone()?;
+    source.seek(SeekFrom::Start(0))?;
+    let mut copied = 0u64;
+    let mut hasher = Sha256::new();
+    let mut buffer = vec![0; MAX_CHUNK_BYTES];
+    loop {
+        let count = source.read(&mut buffer)?;
+        if count == 0 {
+            break;
+        }
+        copied = copied.checked_add(count as u64).ok_or(Error::TooLarge)?;
+        if copied > total_len {
+            return Err(Error::SourceChanged);
+        }
+        target.write_all(&buffer[..count])?;
+        hasher.update(&buffer[..count]);
+    }
+    if copied != total_len || <[u8; 32]>::from(hasher.finalize()) != sha256 {
+        Err(Error::SourceChanged)
+    } else {
+        Ok(())
+    }
 }
 
 fn file_matches(file: &File, total_len: u64, sha256: [u8; 32]) -> Result<bool> {
@@ -1148,9 +1220,8 @@ mod tests {
         assert_eq!(fs::read(&outside).unwrap(), b"attacker");
     }
 
-    #[cfg(target_os = "linux")]
     #[test]
-    fn linux_final_cannot_be_mutated_through_a_precommit_partial_handle() {
+    fn final_cannot_be_mutated_through_a_precommit_partial_handle() {
         let (_temp, storage, inbox, _outbox) = setup(1024);
         let mut upload = storage
             .begin_upload("final", 7, Sha256::digest(b"correct").into())
