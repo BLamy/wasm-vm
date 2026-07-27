@@ -25,6 +25,7 @@ use crate::udp_frame::{GuestUdp, build_udp_frame, parse_udp};
 const DHCP_CLIENT_PORT: u16 = 68;
 const DHCP_SERVER_PORT: u16 = 67;
 const DNS_PORT: u16 = 53;
+const FILE_TRANSFER_SLOTS: usize = crate::file_transfer::MAX_CONCURRENT_TRANSFERS;
 
 /// Per-flow smoltcp TCP socket buffer size (64 KiB each way).
 const TCP_BUF: usize = 64 * 1024;
@@ -57,6 +58,8 @@ pub struct SlirpStack {
     /// Permanent internal DNS-over-TCP listener on `10.0.2.3:53`. It is deliberately separate from
     /// NAT `flows`: local DNS never consumes a NAT slot or opens an outbound connector.
     dns_tcp: SocketHandle,
+    /// Permanent local-only WVFT listeners on `10.0.2.2:10021`; never represented as NAT flows.
+    file_tcp: [SocketHandle; FILE_TRANSFER_SLOTS],
     /// Guest UDP datagrams bound for our internal services (DHCP/DNS), DIVERTED out of the smoltcp
     /// path (which drops UDP) for the caller to dispatch via `UdpServices` — sync for DHCP, async for
     /// DNS. Drained by [`take_service_udp`](Self::take_service_udp); replies come back via
@@ -77,16 +80,16 @@ struct TcpFlow {
     guest: Option<(Ipv4Addr, u16)>,
 }
 
-fn new_dns_tcp_socket() -> tcp::Socket<'static> {
+fn new_local_tcp_socket(addr: Ipv4Addr, port: u16) -> tcp::Socket<'static> {
     let rx = tcp::SocketBuffer::new(vec![0u8; TCP_BUF]);
     let tx = tcp::SocketBuffer::new(vec![0u8; TCP_BUF]);
     let mut socket = tcp::Socket::new(rx, tx);
     socket
         .listen(IpListenEndpoint {
-            addr: Some(IpAddress::Ipv4(net::DNS)),
-            port: DNS_PORT,
+            addr: Some(IpAddress::Ipv4(addr)),
+            port,
         })
-        .expect("listen on internal DNS endpoint");
+        .expect("listen on internal service endpoint");
     socket
 }
 
@@ -117,7 +120,13 @@ impl SlirpStack {
         // per-flow listening socket can accept a guest SYN to an arbitrary external host.
         iface.set_any_ip(true);
         let mut sockets = SocketSet::new(vec![]);
-        let dns_tcp = sockets.add(new_dns_tcp_socket());
+        let dns_tcp = sockets.add(new_local_tcp_socket(net::DNS, DNS_PORT));
+        let file_tcp = std::array::from_fn(|_| {
+            sockets.add(new_local_tcp_socket(
+                net::GATEWAY,
+                crate::file_transfer::PORT,
+            ))
+        });
         SlirpStack {
             iface,
             device,
@@ -125,6 +134,7 @@ impl SlirpStack {
             mac,
             flows: BTreeMap::new(),
             dns_tcp,
+            file_tcp,
             service_udp: Vec::new(),
         }
     }
@@ -379,6 +389,54 @@ impl SlirpStack {
                 port: DNS_PORT,
             })
             .expect("relisten on internal DNS endpoint");
+        true
+    }
+
+    pub fn file_tcp_state(&self, slot: usize) -> tcp::State {
+        self.sockets.get::<tcp::Socket>(self.file_tcp[slot]).state()
+    }
+
+    pub fn file_tcp_recv(&mut self, slot: usize) -> Vec<u8> {
+        let socket = self.sockets.get_mut::<tcp::Socket>(self.file_tcp[slot]);
+        let mut out = Vec::new();
+        while socket.can_recv() {
+            let got = socket
+                .recv(|buf| {
+                    out.extend_from_slice(buf);
+                    (buf.len(), buf.len())
+                })
+                .unwrap_or(0);
+            if got == 0 {
+                break;
+            }
+        }
+        out
+    }
+
+    pub fn file_tcp_send(&mut self, slot: usize, bytes: &[u8]) -> usize {
+        self.sockets
+            .get_mut::<tcp::Socket>(self.file_tcp[slot])
+            .send_slice(bytes)
+            .unwrap_or(0)
+    }
+
+    pub fn file_tcp_close(&mut self, slot: usize) {
+        self.sockets
+            .get_mut::<tcp::Socket>(self.file_tcp[slot])
+            .close();
+    }
+
+    pub fn file_tcp_relisten(&mut self, slot: usize) -> bool {
+        let socket = self.sockets.get_mut::<tcp::Socket>(self.file_tcp[slot]);
+        if socket.state() != tcp::State::Closed {
+            return false;
+        }
+        socket
+            .listen(IpListenEndpoint {
+                addr: Some(IpAddress::Ipv4(net::GATEWAY)),
+                port: crate::file_transfer::PORT,
+            })
+            .expect("relisten on WVFT endpoint");
         true
     }
 

@@ -34,6 +34,9 @@ use crate::dhcp::DhcpServer;
 use crate::dns;
 use crate::dns_service::{DnsRequest, DnsService, MAX_PENDING_DNS};
 use crate::dns_tcp::{TcpFrame, frame_message, next_message};
+use crate::file_transfer::{
+    FileTransferService, MAX_CONCURRENT_TRANSFERS as FILE_TRANSFER_SLOTS, TransferStore,
+};
 use crate::manager::{Action, FlowManager};
 use crate::nat::{FlowKey, Proto};
 use crate::stack::{SlirpStack, is_service_udp};
@@ -111,6 +114,10 @@ pub struct SlirpLocalBackend {
     dns_tcp_generation: u64,
     dns_tcp_rx: Vec<u8>,
     dns_tcp_tx: VecDeque<PendingTcpWrite>,
+    file_transfer: FileTransferService,
+    file_connections: [Option<crate::file_transfer::ConnectionId>; FILE_TRANSFER_SLOTS],
+    file_tcp_tx: [VecDeque<PendingTcpWrite>; FILE_TRANSFER_SLOTS],
+    file_close_after_write: [bool; FILE_TRANSFER_SLOTS],
     egress: VecDeque<Vec<u8>>,
     clock: Box<dyn Fn() -> i64>,
     /// `None` → slice-1 behaviour (no outbound; classification is skipped entirely). `Some` → outbound
@@ -140,6 +147,10 @@ impl SlirpLocalBackend {
             dns_tcp_generation: 0,
             dns_tcp_rx: Vec::new(),
             dns_tcp_tx: VecDeque::new(),
+            file_transfer: FileTransferService::default(),
+            file_connections: [None; FILE_TRANSFER_SLOTS],
+            file_tcp_tx: std::array::from_fn(|_| VecDeque::new()),
+            file_close_after_write: [false; FILE_TRANSFER_SLOTS],
             egress: VecDeque::new(),
             clock,
             connector: None,
@@ -169,6 +180,11 @@ impl SlirpLocalBackend {
         self
     }
 
+    pub fn with_file_transfer_store(mut self, store: Box<dyn TransferStore>) -> Self {
+        self.file_transfer = FileTransferService::new(store);
+        self
+    }
+
     /// Override DHCP lease/MTU parameters for acceptance tests or transport-specific configuration.
     pub fn with_dhcp_server(mut self, dhcp: DhcpServer) -> Self {
         self.dhcp = dhcp;
@@ -188,11 +204,21 @@ impl SlirpLocalBackend {
             .values()
             .map(|flow| flow.pending_bytes)
             .sum::<usize>();
-        flows.saturating_add(udp).saturating_add(
-            self.connector
-                .as_ref()
-                .map_or(0, |connector| connector.buffered_bytes()),
-        )
+        let file_tx = self
+            .file_tcp_tx
+            .iter()
+            .flat_map(|queue| queue.iter())
+            .map(|write| write.bytes.len().saturating_sub(write.offset))
+            .sum::<usize>();
+        flows
+            .saturating_add(udp)
+            .saturating_add(file_tx)
+            .saturating_add(self.file_transfer.buffered_bytes())
+            .saturating_add(
+                self.connector
+                    .as_ref()
+                    .map_or(0, |connector| connector.buffered_bytes()),
+            )
     }
 
     /// Number of live NATed TCP + UDP flows, exposed for acceptance/diagnostic assertions.
@@ -440,6 +466,77 @@ impl SlirpLocalBackend {
         }
     }
 
+    fn pump_file_transfer(&mut self, now_ms: i64) {
+        use smoltcp::socket::tcp::State;
+
+        let now = now_ms.max(0) as u64;
+        for slot in 0..FILE_TRANSFER_SLOTS {
+            if self.stack.file_tcp_state(slot) == State::Closed
+                && self.stack.file_tcp_relisten(slot)
+            {
+                if let Some(id) = self.file_connections[slot].take() {
+                    self.file_transfer.disconnect(id);
+                }
+                self.file_tcp_tx[slot].clear();
+                self.file_close_after_write[slot] = false;
+            }
+
+            if !matches!(
+                self.stack.file_tcp_state(slot),
+                State::Established | State::CloseWait
+            ) {
+                continue;
+            }
+            let id =
+                *self.file_connections[slot].get_or_insert_with(|| self.file_transfer.connect(now));
+            let received = self.stack.file_tcp_recv(slot);
+            if !received.is_empty() {
+                let output = self.file_transfer.receive(id, &received, now);
+                self.file_tcp_tx[slot].extend(
+                    output
+                        .frames
+                        .into_iter()
+                        .map(|bytes| PendingTcpWrite { bytes, offset: 0 }),
+                );
+                self.file_close_after_write[slot] |= output.close;
+            }
+        }
+
+        for (id, bytes) in self.file_transfer.poll(now) {
+            if let Some(slot) = self
+                .file_connections
+                .iter()
+                .position(|connection| *connection == Some(id))
+            {
+                self.file_tcp_tx[slot].push_back(PendingTcpWrite { bytes, offset: 0 });
+                self.file_close_after_write[slot] = true;
+            }
+        }
+
+        for slot in 0..FILE_TRANSFER_SLOTS {
+            while let Some(write) = self.file_tcp_tx[slot].front_mut() {
+                let accepted = self.stack.file_tcp_send(slot, &write.bytes[write.offset..]);
+                if accepted == 0 {
+                    break;
+                }
+                write.offset += accepted;
+                if write.offset == write.bytes.len() {
+                    self.file_tcp_tx[slot].pop_front();
+                }
+            }
+            if self.file_tcp_tx[slot].is_empty() && self.file_close_after_write[slot] {
+                self.stack.file_tcp_close(slot);
+            } else if self.file_tcp_tx[slot].is_empty()
+                && self.stack.file_tcp_state(slot) == State::CloseWait
+            {
+                if let Some(id) = self.file_connections[slot].take() {
+                    self.file_transfer.disconnect(id);
+                }
+                self.stack.file_tcp_close(slot);
+            }
+        }
+    }
+
     /// Tear a flow down completely: the connector connection, the smoltcp socket + NAT endpoint, and
     /// the NAT table entry. Idempotent (each removal is a no-op if already gone). The `handle` is dead
     /// after `remove_tcp`; dropping the `Flow` here means it is never reused (smoltcp recycles slots).
@@ -670,8 +767,10 @@ impl SlirpLocalBackend {
         self.stack.run_dhcp(&self.dhcp);
         self.submit_udp_dns(now);
         self.pump_dns_tcp(now);
+        self.pump_file_transfer(now);
         self.poll_dns_completions();
         self.pump_dns_tcp(now);
+        self.pump_file_transfer(now);
         self.pump();
         self.pump_udp();
         self.expire();
@@ -698,10 +797,14 @@ impl NetBackend for SlirpLocalBackend {
         (self.connector.is_some() && self.manager.flow_count() > 0)
             || !self.pending_dns.is_empty()
             || self.dns.as_ref().is_some_and(|dns| dns.pending())
+            || self.file_transfer.active_transfers() > 0
     }
 
     fn poll(&mut self) {
-        if self.connector.is_none() && self.dns.is_none() {
+        if self.connector.is_none()
+            && self.dns.is_none()
+            && self.file_transfer.active_transfers() == 0
+        {
             return;
         }
         let now = (self.clock)();
@@ -725,7 +828,11 @@ impl NetBackend for SlirpLocalBackend {
         // When the caller polls for a frame and nothing is queued, run a servicing pass so
         // remote→guest data (and connect-state transitions) are picked up. (No connector → nothing to
         // pump; the branch is skipped, so slice-1 behaviour is byte-identical.)
-        if self.egress.is_empty() && (self.connector.is_some() || self.dns.is_some()) {
+        if self.egress.is_empty()
+            && (self.connector.is_some()
+                || self.dns.is_some()
+                || self.file_connections.iter().any(Option::is_some))
+        {
             self.service();
         }
         self.egress.pop_front()
@@ -955,6 +1062,31 @@ mod tests {
         }
     }
 
+    struct TcpDialProbe(Rc<RefCell<Vec<(Ipv4Addr, u16)>>>);
+
+    impl SyncConnector for TcpDialProbe {
+        fn connect(&mut self, host: Ipv4Addr, port: u16) -> ConnId {
+            self.0.borrow_mut().push((host, port));
+            1
+        }
+
+        fn status(&mut self, _id: ConnId) -> ConnStatus {
+            ConnStatus::Failed(crate::ConnectError::Unreachable)
+        }
+
+        fn recv(&mut self, _id: ConnId) -> Vec<u8> {
+            Vec::new()
+        }
+
+        fn send(&mut self, _id: ConnId, _data: &[u8]) -> usize {
+            0
+        }
+
+        fn shutdown_write(&mut self, _id: ConnId) {}
+
+        fn close(&mut self, _id: ConnId) {}
+    }
+
     fn guest_arp_request() -> Vec<u8> {
         let arp = ArpRepr::EthernetIpv4 {
             operation: ArpOperation::Request,
@@ -1006,6 +1138,127 @@ mod tests {
             }
         }
         assert!(got, "gateway should ARP-reply through the local backend");
+    }
+
+    #[test]
+    fn file_transfer_is_only_on_gateway_10021_and_never_dials_a_destination() {
+        let dials = Rc::new(RefCell::new(Vec::new()));
+        let mut be = SlirpLocalBackend::with_connector(
+            GW_MAC,
+            Box::new(|| 1),
+            Box::new(TcpDialProbe(dials.clone())),
+        );
+        be.tx(&guest_arp_request());
+        while be.rx().is_some() {}
+
+        let client_port = 41_021;
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            client_port,
+            crate::file_transfer::PORT,
+            1000,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        let server_isn = loop {
+            let frame = be.rx().expect("WVFT TCP SYN-ACK");
+            let Ok(eth) = EthernetFrame::new_checked(&frame) else {
+                continue;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                continue;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                continue;
+            };
+            if tcp.src_port() == crate::file_transfer::PORT
+                && tcp.dst_port() == client_port
+                && tcp.syn()
+                && tcp.ack()
+            {
+                break tcp.seq_number().0;
+            }
+        };
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            client_port,
+            crate::file_transfer::PORT,
+            1001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::None,
+            &[],
+        ));
+        while be.rx().is_some() {}
+
+        let mut hello = Vec::from(*b"WVFT");
+        hello.extend_from_slice(&[1, 1, 0, 0]);
+        hello.extend_from_slice(&0u32.to_be_bytes());
+        hello.extend_from_slice(&1u32.to_be_bytes());
+        hello.push(1);
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            client_port,
+            crate::file_transfer::PORT,
+            1001,
+            Some(server_isn.wrapping_add(1)),
+            TcpControl::Psh,
+            &hello,
+        ));
+
+        let mut response = Vec::new();
+        while let Some(frame) = be.rx() {
+            let Ok(eth) = EthernetFrame::new_checked(&frame) else {
+                continue;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                continue;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                continue;
+            };
+            if tcp.src_port() == crate::file_transfer::PORT && tcp.dst_port() == client_port {
+                response.extend_from_slice(tcp.payload());
+            }
+        }
+        assert_eq!(&response[..4], b"WVFT");
+        assert_eq!(response[5], 2, "the synthetic endpoint returns HELLO_ACK");
+        assert!(
+            dials.borrow().is_empty(),
+            "WVFT input has no destination field and never reaches the connector"
+        );
+
+        be.tx(&guest_tcp_segment(
+            GW_IP,
+            client_port + 1,
+            crate::file_transfer::PORT + 1,
+            2000,
+            None,
+            TcpControl::Syn,
+            &[],
+        ));
+        for _ in 0..4 {
+            be.poll();
+        }
+        let wrong_port_wvft = be.egress.iter().any(|frame| {
+            let Ok(eth) = EthernetFrame::new_checked(frame) else {
+                return false;
+            };
+            let Ok(ip) = Ipv4Packet::new_checked(eth.payload()) else {
+                return false;
+            };
+            let Ok(tcp) = TcpPacket::new_checked(ip.payload()) else {
+                return false;
+            };
+            tcp.src_port() == crate::file_transfer::PORT
+                && tcp.dst_port() == client_port + 1
+                && !tcp.payload().is_empty()
+        });
+        assert!(!wrong_port_wvft, "port 10022 cannot reach WVFT");
+        assert!(
+            dials.borrow().is_empty(),
+            "local wrong ports also fail closed"
+        );
     }
 
     #[test]
