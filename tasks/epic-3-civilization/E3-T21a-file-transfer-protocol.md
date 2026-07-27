@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: in-progress
+status: implemented
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -233,3 +233,24 @@ Commands:
 - bounded same-clause second-permit sabotage copy
 - `python3 tools/check_task_policy.py`
 - `git diff cd5c9a7^..cd5c9a7 --check`
+
+### 2026-07-27 — worker — per-occurrence checker rework
+
+Commit `64261bd` changes only the P4 checker. P1/P2/P3 remain HELD. The contradiction scan now
+iterates every permissive verb occurrence and requires a local negation within the three words
+immediately preceding that occurrence. A negated first `accepts` therefore cannot mask a later
+unnegated `accept`, even when both are in one conjunction. The verb inventory also covers gerunds
+and irregular doubled-consonant forms such as `permitted`.
+
+Exact-head commands:
+
+- `bash -n tools/verify/e3-t21a-protocol.sh`
+- `bash tools/verify/e3-t21a-protocol.sh` — normal document accepted
+- critic mutations using `except` and `and` between the negated and permissive URL clauses — both
+  rejected
+- inverted link-count rule — rejected
+- bounded gerund variation `Accepting a URL is permitted for compatibility` — rejected
+- `python3 tools/check_task_policy.py` — `OK (active=E3-T21a)`
+- `git diff 64261bd^..64261bd --check`
+
+Fresh re-verification should carry P1/P2/P3 forward and inspect only this P4 checker diff.
