@@ -3,7 +3,7 @@ id: E3-T21b2c
 epic: 3
 title: Rootfs integration and boot proof for WVFT agent
 priority: 321.223
-status: pending
+status: in-progress
 depends_on: [E3-T21b2b]
 estimate: S
 risk: high
