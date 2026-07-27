@@ -4,7 +4,7 @@ epic: 3
 title: Streaming browser upload/download UI
 priority: 321.3
 status: pending
-depends_on: [E3-T21b2]
+depends_on: [E3-T21b2c]
 estimate: S
 risk: medium
 capstone: false
