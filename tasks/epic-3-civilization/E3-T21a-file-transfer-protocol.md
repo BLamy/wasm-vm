@@ -3,7 +3,7 @@ id: E3-T21a
 epic: 3
 title: File-transfer mechanism decision, protocol, and threat model
 priority: 321.1
-status: in-progress
+status: implemented
 depends_on: [E3-T08, E3-T14]
 estimate: S
 risk: medium
@@ -336,3 +336,22 @@ Commands:
 - bounded cross-paragraph “This capability is allowed” sabotage
 - `python3 tools/check_task_policy.py`
 - `git diff 0d0a01a^..0d0a01a --check`
+
+### 2026-07-27 — worker — section-wide DENY rework
+
+Commit `b89f7e8` changes only the P4 checker. It extracts the complete normative section from
+`Capabilities not granted` through `Abuse controls` and rejects every permissive prose form
+anywhere in that section, while still requiring all five exact `DENY` rows. An adjacent or
+multiline paragraph can no longer drop the denied-subject token and escape context. P1/P2/P3 remain
+HELD.
+
+Exact-head commands:
+
+- `bash -n tools/verify/e3-t21a-protocol.sh`
+- normal checker — accepted
+- exact adjacent-paragraph `This capability is allowed for compatibility` mutation — rejected
+- multiline `This capability is` / `permitted for compatibility` mutation — rejected
+- `python3 tools/check_task_policy.py` — `OK (active=E3-T21a)`
+- `git diff b89f7e8^..b89f7e8 --check`
+
+Fresh re-verification should carry P1/P2/P3 forward and inspect only the section-wide P4 guard.
