@@ -3,7 +3,7 @@ id: E3-T21b1
 epic: 3
 title: Bounded WVFT engine and synthetic slirp endpoint
 priority: 321.21
-status: in-progress
+status: implemented
 depends_on: [E3-T21a]
 estimate: S
 risk: high
@@ -110,3 +110,31 @@ the three focused regression commands above (failed as cited);
 `cargo test -p wasm-vm-slirp --lib
 file_transfer_is_only_on_gateway_10021_and_never_dials_a_destination -- --nocapture` (passed);
 `cargo build -p wasm-vm-slirp --target wasm32-unknown-unknown --no-default-features` (passed).
+
+### 2026-07-27 — worker — reworked after refutation
+
+Commit `d28a0a7` repairs only the three semantic refutations and the named integration-coverage
+gap. Receiver DATA now consumes a four-frame per-delivery window, so a fifth frame pipelined before
+the returned ACK batch is rejected before the sink write. Completed/cancelled stream IDs remain
+terminal and late frames are ignored without poisoning the connection. Timeout output now carries
+the active stream ID. The promoted regressions remain in the focused suite.
+
+The added real-TCP test establishes both bounded `10.0.2.2:10021` listeners simultaneously, drives
+HELLO/OFFER/DATA/COMMIT through `SlirpLocalBackend` and a custom store, observes typed timeout and
+malformed-frame errors, resets both sockets, and proves a closed slot relistens for a new
+negotiation. This directly executes the previously uncovered queue, close, disconnect, second-slot,
+custom-store, and relisten hunks.
+
+Exact-head commands:
+
+- `cargo fmt --all --check` — passed.
+- `cargo clippy -p wasm-vm-slirp --all-targets -- -D warnings` — passed.
+- `cargo test -p wasm-vm-slirp --lib file_transfer -- --nocapture` — 12 passed, 0 failed, including
+  all three verifier-promoted regressions and the real-TCP lifecycle.
+- `cargo test -p wasm-vm-slirp --lib` — 242 passed, 0 failed, 1 pre-existing resolver test ignored.
+- `cargo build -p wasm-vm-slirp --target wasm32-unknown-unknown --no-default-features` — passed.
+- `git diff d28a0a7^..d28a0a7 --check` — passed.
+
+Per incremental re-verification, the verifier's P1/P5/P6/P7 results can carry forward because their
+code and dependency boundary are unchanged. Re-verification should focus on P2/P3/P4 and the
+endpoint lifecycle hunks added in `d28a0a7`.
