@@ -22,7 +22,7 @@ pub const MAX_CONTROL_PAYLOAD: usize = 4_096;
 pub const IDLE_TIMEOUT_MS: u64 = 30_000;
 // Host-to-guest uploads can legitimately wait while the interpreted Alpine guest extends ext4.
 // Keep that state bounded without weakening the short timeout for every other protocol state.
-pub const HOST_UPLOAD_IDLE_TIMEOUT_MS: u64 = 120_000;
+pub const HOST_UPLOAD_IDLE_TIMEOUT_MS: u64 = 300_000;
 pub const MAX_OWNED_BYTES: usize =
     MAX_CONCURRENT_TRANSFERS * MAX_IN_FLIGHT_DATA_FRAMES * MAX_FRAME_PAYLOAD
         + MAX_CONCURRENT_TRANSFERS * (HEADER_BYTES + MAX_FRAME_PAYLOAD);
@@ -1580,6 +1580,10 @@ mod tests {
         assert!(
             service.poll(2 + IDLE_TIMEOUT_MS).is_empty(),
             "an accepted host upload must survive the ordinary control-state timeout"
+        );
+        assert!(
+            service.poll(2 + 120_000).is_empty(),
+            "browser-interpreted ext4 produced a recorded 132.7-second ACK gap"
         );
         let output = service.poll(2 + HOST_UPLOAD_IDLE_TIMEOUT_MS);
         assert_eq!(output.len(), 1);
