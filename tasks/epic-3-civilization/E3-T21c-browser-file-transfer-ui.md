@@ -3,7 +3,7 @@ id: E3-T21c
 epic: 3
 title: Streaming browser upload/download UI
 priority: 321.3
-status: in-progress
+status: implemented
 depends_on: [E3-T21b2c]
 estimate: S
 risk: medium
@@ -175,3 +175,26 @@ errors. Note: Playwright cleaned the ignored `web/test-results/` output director
 acceptance began, so the worker trace archive verified at the start of this session is no longer
 present in the checkout; the committed screenshot still matches
 `b057540f3c4f558833131573741eb32973d5296806f4e4898c8f0d14f2c9a80b`.
+
+### 2026-07-27 — worker — P4 repaired at `cca71ae`
+
+- A download row in `complete`, `partial`, or `error` is now terminal for browser destination
+  ownership: neither `syncDownloads` nor `openDownloadWriter` can reopen it. The failure path
+  finishes/cancels the WVFT record, dismisses it once, and preserves the original browser storage
+  error.
+- The close-failure regression now waits 250 ms beyond the first error (more than ten monitor
+  polls) and asserts one destination open, one failed durable finish, one dismissal, and a stable
+  `error` label even when the mock deliberately leaves the WVFT record visible.
+- `git diff --check`; `make web-build`; and the rebuilt fast browser acceptance set passed 4/4,
+  including the strengthened P4 regression and real Wasm incremental SHA.
+- Exact-head final evidence:
+  `npx playwright test tests/e3-t21c-real-alpine.spec.js --grep 'real Alpine agent' --trace on
+  --reporter=line` passed 1/1 in 14.9 minutes. The trace was copied out of Playwright's
+  self-cleaning results directory to `rr-traces/e3-t21c-browser-playwright-cca71ae.zip`
+  (`sha256:5bc0bff70962954d9462932d0819778d7e1200747cf614927584a0eb87d3a060`).
+  The committed screenshot remains `e3-t21c-real-alpine-file-transfer.png`
+  (`sha256:b057540f3c4f558833131573741eb32973d5296806f4e4898c8f0d14f2c9a80b`).
+- Claim: the critic's P4 retry is closed without changing the P1-P3 boundaries already held. A
+  browser storage failure is terminal and stable across later polls, while the refreshed
+  exact-head real-Alpine trace re-proves successful durable-close ordering and independent
+  upload/download identities.
