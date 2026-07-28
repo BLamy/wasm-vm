@@ -268,3 +268,9 @@ verify-E3-T19:
 	bash tools/verify/e3-t19-live-proof.sh
 	cd web && npx playwright test tests/e3-t17-provider-selection.spec.js tests/e3-t19-provider-security.spec.js
 	@echo "verify-E3-T19 (provider lifecycle + relay security): OK"
+
+.PHONY: verify-E3-T21d
+verify-E3-T21d:
+	$(MAKE) web-build
+	cd web && npx playwright test tests/e3-t21d-durability.spec.js --trace on
+	@echo "verify-E3-T21d (frozen guest round trip + reboot durability): OK"
