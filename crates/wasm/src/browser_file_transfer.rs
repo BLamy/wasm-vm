@@ -4,12 +4,13 @@ use std::collections::{BTreeMap, VecDeque};
 use std::rc::Rc;
 use wasm_vm_core::dev::virtio::net::NetBackend;
 use wasm_vm_slirp::{
-    FileTransferError, SlirpLocalBackend, TransferSink, TransferSource, TransferStore,
-    file_transfer::ConnectionId,
+    CommitDisposition, FileTransferError, SlirpLocalBackend, TransferSink, TransferSource,
+    TransferStore, file_transfer::ConnectionId,
 };
 
 pub(crate) const MAX_BROWSER_TRANSFER_BUFFER: usize = 8 * 1024 * 1024;
 const MAX_RETAINED_DOWNLOADS: usize = 32;
+const MAX_RETAINED_UPLOADS: usize = 32;
 
 pub(crate) struct SharedSlirpBackend(pub Rc<RefCell<SlirpLocalBackend>>);
 
@@ -110,7 +111,8 @@ struct DownloadRecord {
     received: u64,
     buffered: usize,
     chunks: VecDeque<Vec<u8>>,
-    committed: bool,
+    wire_committed: bool,
+    durable: bool,
     cancelled: bool,
 }
 
@@ -149,7 +151,8 @@ impl TransferStore for BrowserDownloadStore {
                 received: 0,
                 buffered: 0,
                 chunks: VecDeque::new(),
-                committed: false,
+                wire_committed: false,
+                durable: false,
                 cancelled: false,
             },
         );
@@ -186,7 +189,11 @@ impl TransferSink for BrowserDownloadSink {
         Ok(())
     }
 
-    fn commit(&mut self, total_len: u64, sha256: [u8; 32]) -> Result<(), FileTransferError> {
+    fn commit(
+        &mut self,
+        total_len: u64,
+        sha256: [u8; 32],
+    ) -> Result<CommitDisposition, FileTransferError> {
         let mut manager = self.manager.borrow_mut();
         let record = manager
             .records
@@ -198,8 +205,8 @@ impl TransferSink for BrowserDownloadSink {
         {
             return Err(FileTransferError::HashMismatch);
         }
-        record.committed = true;
-        Ok(())
+        record.wire_committed = true;
+        Ok(CommitDisposition::Pending)
     }
 
     fn cancel(&mut self) {
@@ -264,6 +271,9 @@ impl BrowserFileTransfers {
         if total > wasm_vm_slirp::file_transfer::MAX_TRANSFER_BYTES {
             return Err(FileTransferError::TooLarge);
         }
+        if self.uploads.len() >= MAX_RETAINED_UPLOADS {
+            return Err(FileTransferError::Busy);
+        }
         self.next_stream = self.next_stream.wrapping_add(1).max(1);
         let stream = self.next_stream;
         let queue = Rc::new(RefCell::new(UploadQueue {
@@ -318,6 +328,18 @@ impl BrowserFileTransfers {
             .cancel_file_transfer(upload.slot, stream)
     }
 
+    pub(crate) fn dismiss_upload(&mut self, stream: u32) -> bool {
+        let removable = self.uploads.get(&stream).is_some_and(|upload| {
+            let queue = upload.queue.borrow();
+            queue.cancelled
+                || self.backend.borrow().file_connection_terminal(upload.slot)
+                || (queue.sent == queue.total
+                    && queue.finished
+                    && self.backend.borrow().file_upload_ready(upload.slot))
+        });
+        removable && self.uploads.remove(&stream).is_some()
+    }
+
     pub(crate) fn cancel_download(&mut self, id: u32) -> Result<(), FileTransferError> {
         let (connection_id, stream_id) = self
             .downloads
@@ -331,6 +353,38 @@ impl BrowserFileTransfers {
             .cancel_file_transfer_by_connection(connection_id, stream_id)
     }
 
+    pub(crate) fn finish_download(
+        &mut self,
+        id: u32,
+        success: bool,
+    ) -> Result<(), FileTransferError> {
+        let (connection_id, stream_id, ready) = self
+            .downloads
+            .borrow()
+            .records
+            .get(&id)
+            .map(|record| {
+                (
+                    record.connection_id,
+                    record.stream_id,
+                    record.wire_committed && record.buffered == 0,
+                )
+            })
+            .ok_or(FileTransferError::BadState)?;
+        if !ready {
+            return Err(FileTransferError::BadState);
+        }
+        self.backend.borrow_mut().finish_file_download(
+            connection_id,
+            stream_id,
+            success.then_some(()).ok_or(FileTransferError::Io),
+        )?;
+        if success && let Some(record) = self.downloads.borrow_mut().records.get_mut(&id) {
+            record.durable = true;
+        }
+        Ok(())
+    }
+
     pub(crate) fn take_download_chunk(&mut self, id: u32) -> Option<Vec<u8>> {
         let mut downloads = self.downloads.borrow_mut();
         let record = downloads.records.get_mut(&id)?;
@@ -341,9 +395,10 @@ impl BrowserFileTransfers {
 
     pub(crate) fn dismiss_download(&mut self, id: u32) -> bool {
         let mut downloads = self.downloads.borrow_mut();
-        let removable = downloads.records.get(&id).is_some_and(|record| {
-            (record.committed || record.cancelled) && record.chunks.is_empty()
-        });
+        let removable = downloads
+            .records
+            .get(&id)
+            .is_some_and(|record| (record.durable || record.cancelled) && record.chunks.is_empty());
         removable && downloads.records.remove(&id).is_some()
     }
 
@@ -378,8 +433,10 @@ impl BrowserFileTransfers {
             .map(|(id, record)| {
                 let state = if record.cancelled {
                     "partial"
-                } else if record.committed {
+                } else if record.durable {
                     "complete"
+                } else if record.wire_committed {
+                    "awaiting-save"
                 } else {
                     "active"
                 };

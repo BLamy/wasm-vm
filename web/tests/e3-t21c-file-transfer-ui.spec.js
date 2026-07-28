@@ -19,6 +19,7 @@ test("streams 100 MiB upload with bounded heap, matching SHA, empty-file and hos
   const result = await page.evaluate(async ({ expectedSha, mib }) => {
     const ui = globalThis.__wasmVmFileTransferUI;
     const uploads = new Map();
+    const archivedUploads = new Map();
     let nextStream = 0;
     let peakBuffered = 0;
     let active = 0;
@@ -56,6 +57,10 @@ test("streams 100 MiB upload with bounded heap, matching SHA, empty-file and hos
         if (upload?.state === "active") active -= 1;
         if (upload) upload.state = "partial";
       },
+      dismissFileUpload: (id) => {
+        archivedUploads.set(id, uploads.get(id));
+        return uploads.delete(id);
+      },
       fileTransferStatus: () => {
         for (const upload of uploads.values()) upload.buffered = Math.max(0, upload.buffered - mib);
         return { maxBuffered: 8 * mib, uploads: [...uploads.values()], downloads: [] };
@@ -86,10 +91,12 @@ test("streams 100 MiB upload with bounded heap, matching SHA, empty-file and hos
     };
 
     const baseline = performance.memory?.usedJSHeapSize ?? 0;
+    let peakHeap = baseline;
     ui.enqueueFiles([generatedFile("hundred-mib.bin", 100), emptyFile]);
     await new Promise((resolve, reject) => {
       const deadline = setTimeout(() => reject(new Error("uploads did not finish")), 120_000);
       const poll = setInterval(() => {
+        peakHeap = Math.max(peakHeap, performance.memory?.usedJSHeapSize ?? baseline);
         const snapshots = ui.snapshot();
         if (snapshots.length === 2 && snapshots.every((item) => item.state === "complete")) {
           clearInterval(poll);
@@ -98,9 +105,9 @@ test("streams 100 MiB upload with bounded heap, matching SHA, empty-file and hos
         }
       }, 20);
     });
-    const heapGrowth = performance.memory ? performance.memory.usedJSHeapSize - baseline : null;
-    const large = [...uploads.values()].find((item) => item.name === "hundred-mib.bin");
-    const empty = [...uploads.values()].find((item) => item.name === "empty.txt");
+    const heapGrowth = performance.memory ? peakHeap - baseline : null;
+    const large = [...archivedUploads.values()].find((item) => item.name === "hundred-mib.bin");
+    const empty = [...archivedUploads.values()].find((item) => item.name === "empty.txt");
 
     ui.enqueueFiles([generatedFile("../escape", 1)]);
     ui.enqueueFiles([generatedFile("report\u202egnp.exe", 1)]);
@@ -118,6 +125,8 @@ test("streams 100 MiB upload with bounded heap, matching SHA, empty-file and hos
     drop.dispatchEvent(directoryDrop);
     const directoryMessage = document.querySelector("#file-transfer-status").textContent;
     const thousandAccepted = ui.enqueueFiles(Array.from({ length: 1000 }, (_, i) => generatedFile(`f-${i}`, 0)));
+    const repeatedBatchOne = ui.enqueueFiles(Array.from({ length: 20 }, (_, i) => generatedFile(`batch-a-${i}`, 1)));
+    const repeatedBatchTwo = ui.enqueueFiles(Array.from({ length: 20 }, (_, i) => generatedFile(`batch-b-${i}`, 1)));
     return {
       expectedSha,
       observedSha: large.sha256,
@@ -128,6 +137,8 @@ test("streams 100 MiB upload with bounded heap, matching SHA, empty-file and hos
       hostileUnicodeState: hostileUnicode.state,
       directoryMessage,
       thousandAccepted,
+      repeatedBatchOne,
+      repeatedBatchTwo,
       peakBuffered,
       peakActive,
       heapGrowth,
@@ -143,6 +154,8 @@ test("streams 100 MiB upload with bounded heap, matching SHA, empty-file and hos
   expect(result.hostileUnicodeState).toBe("error");
   expect(result.directoryMessage).toContain("Directories are rejected");
   expect(result.thousandAccepted).toBe(false);
+  expect(result.repeatedBatchOne).toBe(true);
+  expect(result.repeatedBatchTwo).toBe(false);
   expect(result.peakBuffered).toBeLessThanOrEqual(8 * MIB);
   expect(result.peakActive).toBeLessThanOrEqual(2);
   if (result.heapGrowth != null) expect(result.heapGrowth).toBeLessThan(32 * MIB);
@@ -180,6 +193,7 @@ test("streams 100 MiB guest download with bounded heap and exposes partial cance
     }];
     const chunks = new Map([[7, []], [8, [new Uint8Array([7, 8, 9])]]]);
     let peakBuffered = 0;
+    const durableEvents = [];
     const controller = {
       fileTransferReady: () => true,
       setFileDownloadReady: () => {},
@@ -194,7 +208,7 @@ test("streams 100 MiB guest download with bounded heap and exposes partial cance
             large.buffered += mib;
           }
           peakBuffered = Math.max(peakBuffered, large.buffered);
-          if (large.remaining === 0) large.state = "complete";
+          if (large.remaining === 0) large.state = "awaiting-save";
         }
         return { maxBuffered: 8 * mib, uploads: [], downloads: records };
       },
@@ -218,8 +232,14 @@ test("streams 100 MiB guest download with bounded heap and exposes partial cance
           record.buffered = 0;
         }
       },
+      finishFileDownload: (id, success) => {
+        const record = records.find((item) => item.id === id);
+        durableEvents.push(["finish", id, success]);
+        if (record && success) record.state = "complete";
+      },
     };
     const baseline = performance.memory?.usedJSHeapSize ?? 0;
+    let peakHeap = baseline;
     ui.setDownloadDirectory({
       name: "test-downloads",
       getFileHandle: async (name) => ({
@@ -233,6 +253,7 @@ test("streams 100 MiB guest download with bounded heap and exposes partial cance
             written.set(name, written.get(name) + bytes.byteLength);
           },
           close: async () => {
+            durableEvents.push(["close", name]);
             hashes.set(name, hasher.finish());
           },
           abort: async () => {},
@@ -244,6 +265,7 @@ test("streams 100 MiB guest download with bounded heap and exposes partial cance
     await new Promise((resolve, reject) => {
       const deadline = setTimeout(() => reject(new Error("download did not finish")), 120_000);
       const poll = setInterval(() => {
+        peakHeap = Math.max(peakHeap, performance.memory?.usedJSHeapSize ?? baseline);
         if (ui.snapshot().find((item) => item.name === "hundred-mib-download.bin")?.state === "complete") {
           clearInterval(poll);
           clearTimeout(deadline);
@@ -262,7 +284,8 @@ test("streams 100 MiB guest download with bounded heap and exposes partial cance
       cancelled,
       dismissed,
       peakBuffered,
-      heapGrowth: performance.memory ? performance.memory.usedJSHeapSize - baseline : null,
+      durableEvents,
+      heapGrowth: performance.memory ? peakHeap - baseline : null,
       snapshot: ui.snapshot(),
     };
   }, { expectedSha, mib: MIB });
@@ -270,9 +293,74 @@ test("streams 100 MiB guest download with bounded heap and exposes partial cance
   expect(result.observedSha).toBe(result.expectedSha);
   expect(result.bytes).toBe(100 * MIB);
   expect(result.peakBuffered).toBeLessThanOrEqual(8 * MIB);
+  expect(result.durableEvents.findIndex(([event]) => event === "close"))
+    .toBeLessThan(result.durableEvents.findIndex(([event]) => event === "finish"));
   if (result.heapGrowth != null) expect(result.heapGrowth).toBeLessThan(32 * MIB);
   expect(result.cancelled).toBe(true);
   expect(result.dismissed).toBe(true);
   expect(result.snapshot.find((item) => item.name === "partial.bin").state).toBe("partial");
   await expect(page.locator('[data-transfer-id="download-8"]')).toContainText("partial");
+});
+
+test("writer close failure is reported before WVFT completion", async ({ page }) => {
+  await page.goto("/?testHooks=1");
+  await page.waitForFunction(() => globalThis.__wasmVmFileTransferUI);
+  const result = await page.evaluate(async () => {
+    const ui = globalThis.__wasmVmFileTransferUI;
+    const finishes = [];
+    const record = {
+      id: 11,
+      name: "close-fails.bin",
+      received: 0,
+      total: 0,
+      buffered: 0,
+      state: "awaiting-save",
+    };
+    const controller = {
+      setFileDownloadReady: () => {},
+      fileTransferStatus: () => ({
+        maxBuffered: 8 * 1024 * 1024,
+        uploads: [],
+        downloads: [record],
+      }),
+      takeFileDownloadChunk: () => new Uint8Array(),
+      finishFileDownload: (id, success) => {
+        finishes.push([id, success]);
+        if (success) record.state = "complete";
+        else record.state = "partial";
+      },
+      cancelFileDownload: () => {},
+      dismissFileDownload: () => false,
+    };
+    ui.setDownloadDirectory({
+      name: "failure-test",
+      getFileHandle: async () => ({
+        createWritable: async () => ({
+          write: async () => {},
+          close: async () => { throw new Error("disk full during close"); },
+          abort: async () => {},
+        }),
+      }),
+    });
+    ui.attachController(controller);
+    await new Promise((resolve, reject) => {
+      const deadline = setTimeout(() => reject(new Error("close failure was not surfaced")), 5_000);
+      const poll = setInterval(() => {
+        const transfer = ui.snapshot().find((item) => item.name === "close-fails.bin");
+        if (transfer?.state === "error") {
+          clearInterval(poll);
+          clearTimeout(deadline);
+          resolve();
+        }
+      }, 20);
+    });
+    return {
+      finishes,
+      transfer: ui.snapshot().find((item) => item.name === "close-fails.bin"),
+    };
+  });
+
+  expect(result.finishes).toEqual([[11, false]]);
+  expect(result.transfer.state).toBe("error");
+  expect(result.transfer.label).toContain("disk full during close");
 });

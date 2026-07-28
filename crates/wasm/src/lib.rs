@@ -1294,6 +1294,15 @@ impl WasmLinux {
             .map_err(|error| JsError::new(&format!("cancel file upload: {error:?}")))
     }
 
+    #[wasm_bindgen(js_name = dismissFileUpload)]
+    pub fn dismiss_file_upload(&self, stream: u32) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(inner
+            .file_transfers
+            .as_mut()
+            .is_some_and(|transfers| transfers.dismiss_upload(stream)))
+    }
+
     #[wasm_bindgen(js_name = cancelFileDownload)]
     pub fn cancel_file_download(&self, id: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
@@ -1303,6 +1312,17 @@ impl WasmLinux {
             .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
             .cancel_download(id)
             .map_err(|error| JsError::new(&format!("cancel file download: {error:?}")))
+    }
+
+    #[wasm_bindgen(js_name = finishFileDownload)]
+    pub fn finish_file_download(&self, id: u32, success: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .finish_download(id, success)
+            .map_err(|error| JsError::new(&format!("finish file download: {error:?}")))
     }
 
     #[wasm_bindgen(js_name = fileTransferStatus)]

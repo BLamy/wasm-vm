@@ -60,8 +60,9 @@ pub use dns_service::{DnsCompletion, DnsRequest, DnsService, MAX_PENDING_DNS};
 pub use dns_tcp::{TcpFrame, frame_message, next_message};
 pub use doh::{DohResolver, DohTransport};
 pub use file_transfer::{
-    ConnectionId as FileTransferConnectionId, ErrorCode as FileTransferError, FileTransferService,
-    ServiceOutput as FileTransferOutput, TransferSink, TransferSource, TransferStore,
+    CommitDisposition, ConnectionId as FileTransferConnectionId, ErrorCode as FileTransferError,
+    FileTransferService, ServiceOutput as FileTransferOutput, TransferSink, TransferSource,
+    TransferStore,
 };
 pub use local_backend::SlirpLocalBackend;
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};

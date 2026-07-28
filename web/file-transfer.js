@@ -1,4 +1,5 @@
 const MAX_SELECTED_FILES = 32;
+const MAX_RETAINED_ROWS = 64;
 const UPLOAD_WORKERS = 2;
 const POLL_MS = 24;
 
@@ -111,6 +112,16 @@ export function createFileTransferUI({
     render();
   };
 
+  const pruneHistory = (incoming) => {
+    const target = Math.max(0, MAX_RETAINED_ROWS - incoming);
+    for (const [key, transfer] of transfers) {
+      if (transfers.size <= target) break;
+      if (transfer.state === "complete" || transfer.state === "partial" || transfer.state === "error") {
+        transfers.delete(key);
+      }
+    }
+  };
+
   async function waitForSlot(signal) {
     while (!signal.aborted) {
       if (!controller) throw new Error("Boot Alpine before uploading files");
@@ -143,6 +154,9 @@ export function createFileTransferUI({
       transfer.label = "hashing locally";
       render();
       const sha256 = await hashFile(file, FileSha256, transfer.abort.signal);
+      transfer.state = "queued";
+      transfer.label = "waiting for guest agent";
+      render();
       slot = await waitForSlot(transfer.abort.signal);
       transfer.state = "active";
       transfer.label = "uploading";
@@ -183,6 +197,9 @@ export function createFileTransferUI({
       }
       fail(transfer, error);
     } finally {
+      if (transfer.stream != null) {
+        try { controller?.dismissFileUpload(transfer.stream); } catch {}
+      }
       if (slot != null) claimedSlots.delete(slot);
     }
   }
@@ -203,13 +220,19 @@ export function createFileTransferUI({
 
   function enqueueFiles(files) {
     const selected = [...files];
-    if (selected.length > MAX_SELECTED_FILES) {
+    const outstanding = [...transfers.values()].filter(
+      (transfer) =>
+        transfer.direction === "upload" &&
+        (transfer.state === "queued" || transfer.state === "hashing" || transfer.state === "active"),
+    ).length;
+    if (selected.length > MAX_SELECTED_FILES || outstanding + selected.length > MAX_SELECTED_FILES) {
       setStatus(
-        `Selection rejected: ${selected.length} files exceeds the ${MAX_SELECTED_FILES}-file bounded queue.`,
+        `Selection rejected: ${outstanding + selected.length} outstanding files exceeds the ${MAX_SELECTED_FILES}-file bounded queue.`,
         "error",
       );
       return false;
     }
+    pruneHistory(selected.length);
     for (const file of selected) {
       const transfer = {
         key: `upload-${++nextLocalId}`,
@@ -264,12 +287,13 @@ export function createFileTransferUI({
         transfer.done += chunk.byteLength;
         render();
       }
-      if (record.state === "complete" && record.buffered === 0) {
+      if (record.state === "awaiting-save" && record.buffered === 0) {
         await writer.writable.close();
-        downloadWriters.delete(record.id);
+        controller.finishFileDownload(record.id, true);
         transfer.done = transfer.total;
         transfer.state = "complete";
         transfer.label = "complete — SHA-256 verified";
+        downloadWriters.delete(record.id);
         controller.dismissFileDownload(record.id);
         render();
       } else if (record.state === "partial") {
@@ -283,7 +307,10 @@ export function createFileTransferUI({
     } catch (error) {
       try { await writer.writable.abort(error); } catch {}
       downloadWriters.delete(record.id);
-      try { controller.cancelFileDownload(record.id); } catch {}
+      try {
+        if (record.state === "awaiting-save") controller.finishFileDownload(record.id, false);
+        else controller.cancelFileDownload(record.id);
+      } catch {}
       fail(transfer, error);
     } finally {
       writer.busy = false;
@@ -395,7 +422,9 @@ export function createFileTransferUI({
       controller = next;
       if (controller) controller.setFileDownloadReady(Boolean(directory));
       setStatus(
-        next ? "WVFT ready; uploads use two bounded guest-agent connections." : "Boot Alpine to enable WVFT.",
+        next
+          ? "WVFT controller attached; uploads wait for two bounded guest-agent connections."
+          : "Boot Alpine to enable WVFT.",
         next ? "ready" : "",
       );
     },

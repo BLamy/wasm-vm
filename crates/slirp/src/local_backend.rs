@@ -262,6 +262,31 @@ impl SlirpLocalBackend {
         self.cancel_file_transfer(slot, stream_id)
     }
 
+    pub fn finish_file_download(
+        &mut self,
+        connection_id: crate::file_transfer::ConnectionId,
+        stream_id: u32,
+        result: Result<(), FileTransferError>,
+    ) -> Result<(), FileTransferError> {
+        let slot = self
+            .file_connections
+            .iter()
+            .position(|connection| *connection == Some(connection_id))
+            .ok_or(FileTransferError::BadState)?;
+        let now = (self.clock)().max(0) as u64;
+        let output =
+            self.file_transfer
+                .finish_pending_download(connection_id, stream_id, result, now);
+        self.file_tcp_tx[slot].extend(
+            output
+                .frames
+                .into_iter()
+                .map(|bytes| PendingTcpWrite { bytes, offset: 0 }),
+        );
+        self.file_close_after_write[slot] |= output.close;
+        Ok(())
+    }
+
     /// Override DHCP lease/MTU parameters for acceptance tests or transport-specific configuration.
     pub fn with_dhcp_server(mut self, dhcp: DhcpServer) -> Self {
         self.dhcp = dhcp;
@@ -1286,13 +1311,14 @@ mod tests {
             &mut self,
             total_len: u64,
             _sha256: [u8; 32],
-        ) -> Result<(), crate::file_transfer::ErrorCode> {
+        ) -> Result<crate::file_transfer::CommitDisposition, crate::file_transfer::ErrorCode>
+        {
             let mut state = self.0.borrow_mut();
             if total_len != state.bytes.len() as u64 {
                 return Err(crate::file_transfer::ErrorCode::Io);
             }
             state.commits += 1;
-            Ok(())
+            Ok(crate::file_transfer::CommitDisposition::Durable)
         }
 
         fn cancel(&mut self) {

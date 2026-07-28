@@ -62,11 +62,17 @@ pub enum ErrorCode {
 
 pub trait TransferSink {
     fn write(&mut self, offset: u64, bytes: &[u8]) -> Result<(), ErrorCode>;
-    fn commit(&mut self, total_len: u64, sha256: [u8; 32]) -> Result<(), ErrorCode>;
+    fn commit(&mut self, total_len: u64, sha256: [u8; 32]) -> Result<CommitDisposition, ErrorCode>;
     fn cancel(&mut self);
     fn buffered_bytes(&self) -> usize {
         0
     }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum CommitDisposition {
+    Durable,
+    Pending,
 }
 
 pub trait TransferStore {
@@ -150,6 +156,12 @@ enum State {
         total_len: u64,
         sha256: [u8; 32],
     },
+    AwaitDurable {
+        stream_id: u32,
+        total_len: u64,
+        sha256: [u8; 32],
+        sink: Box<dyn TransferSink>,
+    },
     Terminal,
 }
 
@@ -177,15 +189,16 @@ impl Connection {
                 | State::AwaitAccept { .. }
                 | State::Sending(_)
                 | State::AwaitComplete { .. }
+                | State::AwaitDurable { .. }
         )
     }
 
     fn active_stream_id(&self) -> Option<u32> {
         match &self.state {
             State::Receiving(receive) => Some(receive.stream_id),
-            State::AwaitAccept { stream_id, .. } | State::AwaitComplete { stream_id, .. } => {
-                Some(*stream_id)
-            }
+            State::AwaitAccept { stream_id, .. }
+            | State::AwaitComplete { stream_id, .. }
+            | State::AwaitDurable { stream_id, .. } => Some(*stream_id),
             State::Sending(send) => Some(send.stream_id),
             _ => None,
         }
@@ -196,6 +209,7 @@ impl Connection {
             State::Receiving(receive) => receive.sink.buffered_bytes(),
             State::AwaitAccept { source, .. } => source.buffered_bytes(),
             State::Sending(send) => send.source.buffered_bytes(),
+            State::AwaitDurable { sink, .. } => sink.buffered_bytes(),
             _ => 0,
         };
         self.rx.len().saturating_add(state)
@@ -206,6 +220,7 @@ impl Connection {
             State::Receiving(receive) => receive.sink.cancel(),
             State::AwaitAccept { source, .. } => source.cancel(),
             State::Sending(send) => send.source.cancel(),
+            State::AwaitDurable { sink, .. } => sink.cancel(),
             _ => {}
         }
         self.state = State::Terminal;
@@ -329,6 +344,7 @@ impl FileTransferService {
             State::Receiving(receive) => receive.sink.cancel(),
             State::AwaitAccept { source, .. } => source.cancel(),
             State::Sending(send) => send.source.cancel(),
+            State::AwaitDurable { sink, .. } => sink.cancel(),
             State::AwaitComplete { .. } => {}
             _ => unreachable!("active stream checked above"),
         }
@@ -336,6 +352,65 @@ impl FileTransferService {
         ServiceOutput {
             frames: vec![frame_bytes(CANCEL, stream_id, &0u16.to_be_bytes())],
             close: false,
+        }
+    }
+
+    /// Finish a guest-to-host transfer only after an asynchronous host sink has durably closed.
+    /// Until this call, the connection remains active and the peer cannot observe COMPLETE.
+    pub fn finish_pending_download(
+        &mut self,
+        id: ConnectionId,
+        stream_id: u32,
+        result: Result<(), ErrorCode>,
+        now_ms: u64,
+    ) -> ServiceOutput {
+        let Some(connection) = self.connections.get_mut(&id) else {
+            return ServiceOutput {
+                frames: vec![error_frame(stream_id, ErrorCode::BadState)],
+                close: true,
+            };
+        };
+        let State::AwaitDurable {
+            stream_id: pending_stream,
+            total_len,
+            sha256,
+            ..
+        } = &connection.state
+        else {
+            return ServiceOutput {
+                frames: vec![error_frame(stream_id, ErrorCode::BadState)],
+                close: false,
+            };
+        };
+        if *pending_stream != stream_id {
+            return ServiceOutput {
+                frames: vec![error_frame(stream_id, ErrorCode::BadState)],
+                close: false,
+            };
+        }
+        let total_len = *total_len;
+        let sha256 = *sha256;
+        connection.last_activity_ms = now_ms;
+        match result {
+            Ok(()) => {
+                let mut payload = total_len.to_be_bytes().to_vec();
+                payload.extend_from_slice(&sha256);
+                connection.state = State::Ready;
+                ServiceOutput {
+                    frames: vec![frame_bytes(COMPLETE, stream_id, &payload)],
+                    close: false,
+                }
+            }
+            Err(code) => {
+                if let State::AwaitDurable { sink, .. } = &mut connection.state {
+                    sink.cancel();
+                }
+                connection.state = State::Terminal;
+                ServiceOutput {
+                    frames: vec![error_frame(stream_id, code)],
+                    close: true,
+                }
+            }
         }
     }
 
@@ -551,13 +626,32 @@ impl FileTransferService {
                             fail_stream(connection, frame.stream_id, ErrorCode::HashMismatch, out);
                             return;
                         }
-                        if let Err(code) = receive.sink.commit(total, sha) {
-                            fail_stream(connection, frame.stream_id, code, out);
-                            return;
+                        match receive.sink.commit(total, sha) {
+                            Ok(CommitDisposition::Durable) => {
+                                out.frames.push(frame_bytes(
+                                    COMPLETE,
+                                    frame.stream_id,
+                                    &frame.payload,
+                                ));
+                                connection.state = State::Ready;
+                            }
+                            Ok(CommitDisposition::Pending) => {
+                                let State::Receiving(receive) =
+                                    std::mem::replace(&mut connection.state, State::Terminal)
+                                else {
+                                    unreachable!()
+                                };
+                                connection.state = State::AwaitDurable {
+                                    stream_id: frame.stream_id,
+                                    total_len: total,
+                                    sha256: sha,
+                                    sink: receive.sink,
+                                };
+                            }
+                            Err(code) => {
+                                fail_stream(connection, frame.stream_id, code, out);
+                            }
                         }
-                        out.frames
-                            .push(frame_bytes(COMPLETE, frame.stream_id, &frame.payload));
-                        connection.state = State::Ready;
                     }
                     CANCEL if frame.payload.len() == 2 => {
                         receive.sink.cancel();
@@ -651,6 +745,19 @@ impl FileTransferService {
                     return;
                 }
                 connection.state = State::Ready;
+            }
+            State::AwaitDurable { stream_id, .. } => {
+                if frame.kind == CANCEL && frame.stream_id == *stream_id && frame.payload.len() == 2
+                {
+                    if let State::AwaitDurable { sink, .. } = &mut connection.state {
+                        sink.cancel();
+                    }
+                    out.frames
+                        .push(error_frame(frame.stream_id, ErrorCode::Cancelled));
+                    connection.state = State::Ready;
+                } else {
+                    fail_stream(connection, frame.stream_id, ErrorCode::BadState, out);
+                }
             }
             State::Terminal => out.close = true,
         }
@@ -897,13 +1004,17 @@ mod tests {
             Ok(())
         }
 
-        fn commit(&mut self, total_len: u64, _sha256: [u8; 32]) -> Result<(), ErrorCode> {
+        fn commit(
+            &mut self,
+            total_len: u64,
+            _sha256: [u8; 32],
+        ) -> Result<CommitDisposition, ErrorCode> {
             let mut stats = self.0.borrow_mut();
             if total_len != stats.bytes {
                 return Err(ErrorCode::Io);
             }
             stats.committed += 1;
-            Ok(())
+            Ok(CommitDisposition::Durable)
         }
 
         fn cancel(&mut self) {
@@ -923,6 +1034,46 @@ mod tests {
             _sha256: [u8; 32],
         ) -> Result<Box<dyn TransferSink>, ErrorCode> {
             Ok(Box::new(CountingSink(self.0.clone())))
+        }
+    }
+
+    struct PendingSink(Rc<RefCell<Stats>>);
+
+    impl TransferSink for PendingSink {
+        fn write(&mut self, offset: u64, bytes: &[u8]) -> Result<(), ErrorCode> {
+            CountingSink(self.0.clone()).write(offset, bytes)
+        }
+
+        fn commit(
+            &mut self,
+            total_len: u64,
+            _sha256: [u8; 32],
+        ) -> Result<CommitDisposition, ErrorCode> {
+            let mut stats = self.0.borrow_mut();
+            if total_len != stats.bytes {
+                return Err(ErrorCode::Io);
+            }
+            stats.committed += 1;
+            Ok(CommitDisposition::Pending)
+        }
+
+        fn cancel(&mut self) {
+            self.0.borrow_mut().cancelled += 1;
+        }
+    }
+
+    struct PendingStore(Rc<RefCell<Stats>>);
+
+    impl TransferStore for PendingStore {
+        fn open_sink(
+            &mut self,
+            _connection_id: ConnectionId,
+            _stream_id: u32,
+            _name: &str,
+            _total_len: u64,
+            _sha256: [u8; 32],
+        ) -> Result<Box<dyn TransferSink>, ErrorCode> {
+            Ok(Box::new(PendingSink(self.0.clone())))
         }
     }
 
@@ -1089,6 +1240,39 @@ mod tests {
         assert_eq!(stats.bytes, 100 * 1024 * 1024);
         assert_eq!(stats.committed, 2);
         assert!(stats.max_chunk <= MAX_DATA_BYTES);
+    }
+
+    #[test]
+    fn pending_sink_withholds_complete_until_durable_finish() {
+        let stats = Rc::new(RefCell::new(Stats::default()));
+        let mut service = FileTransferService::new(Box::new(PendingStore(stats.clone())));
+        let id = service.connect(0);
+        hello(&mut service, id);
+        let bytes = b"durable later";
+        let sha: [u8; 32] = Sha256::digest(bytes).into();
+        assert_eq!(
+            service
+                .receive(id, &offer(DOWNLOAD, 9, "later.bin", bytes), 1)
+                .frames[0][5],
+            ACCEPT
+        );
+        let mut data = 0u64.to_be_bytes().to_vec();
+        data.extend_from_slice(bytes);
+        assert_eq!(
+            service.receive(id, &frame_bytes(DATA, 9, &data), 2).frames[0][5],
+            ACK
+        );
+        let mut commit = (bytes.len() as u64).to_be_bytes().to_vec();
+        commit.extend_from_slice(&sha);
+        let before_close = service.receive(id, &frame_bytes(COMMIT, 9, &commit), 3);
+        assert!(before_close.frames.is_empty());
+        assert!(!service.connection_ready(id));
+        assert_eq!(service.active_transfers(), 1);
+
+        let after_close = service.finish_pending_download(id, 9, Ok(()), 4);
+        assert_eq!(after_close.frames[0][5], COMPLETE);
+        assert!(service.connection_ready(id));
+        assert_eq!(stats.borrow().committed, 1);
     }
 
     #[test]

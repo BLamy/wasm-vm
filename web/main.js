@@ -427,6 +427,9 @@ window.__linux = {
   resume: () => linuxCtl?.resume(),
   isPaused: () => !!linuxCtl?.isPaused(),
 };
+// E3-T21c proof hook: the UI must not mistake an attached controller for guest-agent readiness.
+window.__fileTransferReady = () =>
+  [0, 1].map((slot) => Boolean(linuxCtl?.fileTransferReady?.(slot)));
 // E3-T02 test hook: the chunked-boot lazy-fetch instrumentation ({ fetches, bytes, error } | null).
 window.__chunkedStats = () => linuxCtl?.fetchStats?.() ?? null;
 // E3-T15 test hook: counters from the production DHCP server for the current guest boot.

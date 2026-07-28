@@ -9,7 +9,8 @@ use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
 use wasm_vm_slirp::{
-    FileTransferError, TransferSink, TransferSource, TransferStore, file_transfer::MAX_DATA_BYTES,
+    CommitDisposition, FileTransferError, TransferSink, TransferSource, TransferStore,
+    file_transfer::MAX_DATA_BYTES,
 };
 
 #[derive(Clone, Default)]
@@ -242,7 +243,11 @@ impl TransferSink for HostFileSink {
         Ok(())
     }
 
-    fn commit(&mut self, total_len: u64, sha256: [u8; 32]) -> Result<(), FileTransferError> {
+    fn commit(
+        &mut self,
+        total_len: u64,
+        sha256: [u8; 32],
+    ) -> Result<CommitDisposition, FileTransferError> {
         let observed = <[u8; 32]>::from(self.hasher.clone().finalize());
         if total_len != self.expected_len
             || total_len != self.written
@@ -260,7 +265,7 @@ impl TransferSink for HostFileSink {
             .and_then(|directory| directory.sync_all())
             .map_err(|_| FileTransferError::Io)?;
         self.committed = true;
-        Ok(())
+        Ok(CommitDisposition::Durable)
     }
 
     fn cancel(&mut self) {

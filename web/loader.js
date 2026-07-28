@@ -490,7 +490,9 @@ export async function startLinuxBoot(opts = {}) {
       pushFileUpload: (stream, bytes, finished = false) =>
         machine.pushFileUpload(stream, bytes, finished),
       cancelFileUpload: (stream) => machine.cancelFileUpload(stream),
+      dismissFileUpload: (stream) => machine.dismissFileUpload(stream),
       cancelFileDownload: (id) => machine.cancelFileDownload(id),
+      finishFileDownload: (id, success = true) => machine.finishFileDownload(id, success),
       fileTransferStatus: () => JSON.parse(machine.fileTransferStatus()),
       takeFileDownloadChunk: (id) => machine.takeFileDownloadChunk(id),
       dismissFileDownload: (id) => machine.dismissFileDownload(id),
