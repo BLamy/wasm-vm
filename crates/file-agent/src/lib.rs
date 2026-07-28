@@ -14,10 +14,7 @@ pub const MAX_FRAME_PAYLOAD: usize = 65_536;
 pub const MAX_DATA_BYTES: usize = 65_528;
 pub const MAX_CONTROL_PAYLOAD: usize = 4_096;
 pub const MAX_IN_FLIGHT: u8 = 4;
-// A real browser-interpreted Alpine guest can spend more than 30 seconds extending and syncing a
-// large ext4 partial before it reads the next WVFT frame. Keep abandoned sessions bounded while
-// allowing that legitimate storage backpressure to clear.
-pub const IDLE_TIMEOUT_MS: u64 = 45_000;
+pub const IDLE_TIMEOUT_MS: u64 = 30_000;
 
 const HELLO: u8 = 1;
 const HELLO_ACK: u8 = 2;
@@ -189,6 +186,10 @@ impl Session {
         } else {
             Output::default()
         }
+    }
+
+    fn note_io_progress(&mut self, now_ms: u64) {
+        self.last_activity_ms = now_ms;
     }
 
     pub fn disconnect(&mut self) {
@@ -502,6 +503,7 @@ fn drive_io<S: Read + Write>(
     initial: &[u8],
 ) -> Result<(), ErrorCode> {
     stream.write_all(initial).map_err(|_| ErrorCode::Io)?;
+    session.note_io_progress(monotonic_ms());
     let mut buffer = [0u8; MAX_FRAME_PAYLOAD + HEADER_BYTES];
     loop {
         let count = match stream.read(&mut buffer) {
@@ -523,6 +525,10 @@ fn drive_io<S: Read + Write>(
         for frame in out.frames {
             stream.write_all(&frame).map_err(|_| ErrorCode::Io)?;
         }
+        // Receiving a frame can synchronously extend or sync the guest ext4 file. Account from
+        // completed protocol I/O, not from before that storage work, or a legitimate slow write
+        // can make the next read poll falsely expire the session.
+        session.note_io_progress(monotonic_ms());
         if out.complete {
             return Ok(());
         }
@@ -850,6 +856,20 @@ mod tests {
         assert!(out.close);
         assert_eq!(kind(&out.frames[0]), ERROR);
         assert_eq!(malformed.buffered_bytes(), 0);
+    }
+
+    #[test]
+    fn completed_io_progress_restarts_the_idle_window() {
+        let (_temp, storage, _inbox, _outbox) = setup(1024);
+        let (mut session, _) = Session::service(storage, 0);
+        negotiate(&mut session);
+        session.receive(&offer(UPLOAD, 4, "slow-write", b"x"), 11);
+
+        // Model a frame whose synchronous storage work completed one full watchdog window after
+        // it arrived. `drive_io` records this completion time before its next blocking read.
+        session.note_io_progress(11 + IDLE_TIMEOUT_MS);
+        assert!(!session.poll(11 + IDLE_TIMEOUT_MS).close);
+        assert!(session.poll(11 + IDLE_TIMEOUT_MS.saturating_mul(2)).close);
     }
 
     #[test]

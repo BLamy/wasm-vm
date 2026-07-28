@@ -19,9 +19,10 @@ pub const MAX_NAME_BYTES: usize = 255;
 pub const MAX_CONCURRENT_TRANSFERS: usize = 2;
 pub const MAX_IN_FLIGHT_DATA_FRAMES: usize = 4;
 pub const MAX_CONTROL_PAYLOAD: usize = 4_096;
-// Match the guest agent: browser-interpreted ext4 allocation/fsync can delay an ACK beyond 30
-// seconds during a large real transfer. Forty-five seconds remains a bounded abandonment window.
-pub const IDLE_TIMEOUT_MS: u64 = 45_000;
+pub const IDLE_TIMEOUT_MS: u64 = 30_000;
+// Host-to-guest uploads can legitimately wait while the interpreted Alpine guest extends ext4.
+// Keep that state bounded without weakening the short timeout for every other protocol state.
+pub const HOST_UPLOAD_IDLE_TIMEOUT_MS: u64 = 120_000;
 pub const MAX_OWNED_BYTES: usize =
     MAX_CONCURRENT_TRANSFERS * MAX_IN_FLIGHT_DATA_FRAMES * MAX_FRAME_PAYLOAD
         + MAX_CONCURRENT_TRANSFERS * (HEADER_BYTES + MAX_FRAME_PAYLOAD);
@@ -469,8 +470,13 @@ impl FileTransferService {
     pub fn poll(&mut self, now_ms: u64) -> Vec<(ConnectionId, Vec<u8>)> {
         let mut out = Vec::new();
         for (&id, connection) in &mut self.connections {
+            let idle_timeout = if matches!(connection.state, State::Sending(_)) {
+                HOST_UPLOAD_IDLE_TIMEOUT_MS
+            } else {
+                IDLE_TIMEOUT_MS
+            };
             if connection.active()
-                && now_ms.saturating_sub(connection.last_activity_ms) >= IDLE_TIMEOUT_MS
+                && now_ms.saturating_sub(connection.last_activity_ms) >= idle_timeout
             {
                 let stream_id = connection.active_stream_id().unwrap_or(1);
                 connection.cancel();
@@ -1552,6 +1558,36 @@ mod tests {
         assert_eq!(
             u16::from_be_bytes(output[0].1[16..18].try_into().unwrap()),
             ErrorCode::Timeout as u16
+        );
+    }
+
+    #[test]
+    fn accepted_host_upload_allows_bounded_guest_storage_backpressure() {
+        let mut service = FileTransferService::default();
+        let id = service.connect(0);
+        hello(&mut service, id);
+        service
+            .queue_upload(
+                id,
+                47,
+                Box::new(BytesSource::new("slow-ext4.bin", b"x".to_vec())),
+                1,
+            )
+            .unwrap();
+        let accepted = service.receive(id, &frame_bytes(ACCEPT, 47, &[1]), 2);
+        assert_eq!(accepted.frames[0][5], DATA);
+
+        assert!(
+            service.poll(2 + IDLE_TIMEOUT_MS).is_empty(),
+            "an accepted host upload must survive the ordinary control-state timeout"
+        );
+        let output = service.poll(2 + HOST_UPLOAD_IDLE_TIMEOUT_MS);
+        assert_eq!(output.len(), 1);
+        assert_eq!(output[0].1[5], ERROR);
+        assert_eq!(
+            u16::from_be_bytes(output[0].1[16..18].try_into().unwrap()),
+            ErrorCode::Timeout as u16,
+            "storage backpressure remains bounded by the upload-specific watchdog"
         );
     }
 
