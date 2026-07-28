@@ -19,7 +19,9 @@ pub const MAX_NAME_BYTES: usize = 255;
 pub const MAX_CONCURRENT_TRANSFERS: usize = 2;
 pub const MAX_IN_FLIGHT_DATA_FRAMES: usize = 4;
 pub const MAX_CONTROL_PAYLOAD: usize = 4_096;
-pub const IDLE_TIMEOUT_MS: u64 = 30_000;
+// Match the guest agent: browser-interpreted ext4 allocation/fsync can delay an ACK beyond 30
+// seconds during a large real transfer. Forty-five seconds remains a bounded abandonment window.
+pub const IDLE_TIMEOUT_MS: u64 = 45_000;
 pub const MAX_OWNED_BYTES: usize =
     MAX_CONCURRENT_TRANSFERS * MAX_IN_FLIGHT_DATA_FRAMES * MAX_FRAME_PAYLOAD
         + MAX_CONCURRENT_TRANSFERS * (HEADER_BYTES + MAX_FRAME_PAYLOAD);

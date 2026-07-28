@@ -14,7 +14,10 @@ pub const MAX_FRAME_PAYLOAD: usize = 65_536;
 pub const MAX_DATA_BYTES: usize = 65_528;
 pub const MAX_CONTROL_PAYLOAD: usize = 4_096;
 pub const MAX_IN_FLIGHT: u8 = 4;
-pub const IDLE_TIMEOUT_MS: u64 = 30_000;
+// A real browser-interpreted Alpine guest can spend more than 30 seconds extending and syncing a
+// large ext4 partial before it reads the next WVFT frame. Keep abandoned sessions bounded while
+// allowing that legitimate storage backpressure to clear.
+pub const IDLE_TIMEOUT_MS: u64 = 45_000;
 
 const HELLO: u8 = 1;
 const HELLO_ACK: u8 = 2;

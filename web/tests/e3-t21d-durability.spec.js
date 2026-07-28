@@ -37,6 +37,21 @@ async function bootToRoot(page) {
   return type;
 }
 
+async function waitForTransfer(page, name, expected, timeout) {
+  await page.waitForFunction(
+    ({ transferName, expectedState }) => {
+      const item = window.__wasmVmFileTransferUI.snapshot()
+        .find((transfer) => transfer.name === transferName);
+      if (item?.state === "error" || item?.state === "partial") {
+        throw new Error(`${transferName} became ${item.state}: ${item.label} at ${item.done}/${item.total}`);
+      }
+      return item?.state === expectedState;
+    },
+    { transferName: name, expectedState: expected },
+    { timeout },
+  );
+}
+
 function repeatedDigest(byte, chunks) {
   const hash = createHash("sha256");
   for (let index = 0; index < chunks; index += 1) hash.update(Buffer.alloc(MIB, byte));
@@ -77,12 +92,7 @@ test("frozen Alpine round trip survives interruption, tab kill, and reboot", asy
     };
     window.__wasmVmFileTransferUI.enqueueFiles([generated]);
   }, { name: largeName, mib: MIB });
-  await page.waitForFunction(
-    (name) => window.__wasmVmFileTransferUI.snapshot()
-      .some((item) => item.name === name && item.state === "complete"),
-    largeName,
-    { timeout: 900_000 },
-  );
+  await waitForTransfer(page, largeName, "complete", 900_000);
   await type(`sha256sum /var/lib/wasm-vm/transfer/inbox/${largeName}\r`);
   await expect(page.locator(rows)).toContainText(largeSha, { timeout: 120_000 });
 
