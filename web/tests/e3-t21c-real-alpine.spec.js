@@ -131,4 +131,11 @@ test("real Alpine agent defers guest COMPLETE until browser close", async ({ pag
   const observed = await page.evaluate(() => Array.from(window.__downloadedBytes));
   expect(createHash("sha256").update(Buffer.from(observed)).digest("hex")).toBe(downloadSha);
   expect(errors).toEqual([]);
+  await page.screenshot({
+    path: path.join(
+      WEB,
+      "../tasks/epic-3-civilization/e3-t21c-real-alpine-file-transfer.png",
+    ),
+    fullPage: true,
+  });
 });
