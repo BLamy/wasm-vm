@@ -3,7 +3,7 @@ id: E3-T21c
 epic: 3
 title: Streaming browser upload/download UI
 priority: 321.3
-status: implemented
+status: verified
 depends_on: [E3-T21b2c]
 estimate: S
 risk: medium
@@ -198,3 +198,28 @@ present in the checkout; the committed screenshot still matches
   browser storage failure is terminal and stable across later polls, while the refreshed
   exact-head real-Alpine trace re-proves successful durable-close ordering and independent
   upload/download identities.
+
+### 2026-07-27 — verifier — VERDICT: verified
+
+- P1 durable acknowledgement — HELD (carried forward; runtime boundary unchanged).
+- P2 cumulative admission and retention — HELD (carried forward; runtime boundary unchanged).
+- P3 download readiness — HELD (carried forward; runtime boundary unchanged).
+- P4 close/quota failure stability — HELD. Predicted one failed browser close would cause exactly
+  one destination open, one failed durable finish, one dismissal, and a stable `error` row across
+  later monitor polls. The strengthened regression waits 250 ms after the first error and held in
+  three consecutive exact-head runs. Both `openDownloadWriter` and `syncDownloads` now exclude
+  terminal rows (`web/file-transfer.js:257-264,339-351`), while the catch path finishes and
+  dismisses the failed WVFT record before preserving the original storage error
+  (`web/file-transfer.js:310-319`).
+- COVERAGE: the focused regression directly executes every P4 runtime hunk and the former
+  250 ms reproducer. The preserved exact-head real-Alpine trace remained intact at
+  `rr-traces/e3-t21c-browser-playwright-cca71ae.zip`; its SHA-256 matched
+  `5bc0bff70962954d9462932d0819778d7e1200747cf614927584a0eb87d3a060`, `unzip -t`
+  passed, and trace steps re-confirmed P1 happy-path ordering and zero console errors.
+- SUITE: retain the strengthened committed close-failure regression as the permanent P4 artifact.
+
+Commands: `git diff --check 104d441..cca71ae`; trace and screenshot SHA-256; `unzip -t` plus
+focused trace-step inspection; `make web-build`;
+`cd web && npx playwright test tests/e3-t21c-file-transfer-ui.spec.js
+--grep "writer close failure" --repeat-each=3 --reporter=line` (3 passed). Live rebuilt-page
+check exposed the accessible Host ↔ Alpine files region with zero console errors.
