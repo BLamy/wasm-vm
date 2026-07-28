@@ -3,7 +3,7 @@ id: E3-T21c
 epic: 3
 title: Streaming browser upload/download UI
 priority: 321.3
-status: implemented
+status: in-progress
 depends_on: [E3-T21b2c]
 estimate: S
 risk: medium
@@ -133,3 +133,45 @@ and browser console errors were zero (favicon 404 only).
   both directions, independently checks both byte streams, and covers the critic's durable-ack,
   cumulative-retention, real-path coverage, and peak-heap findings without changing the previously
   held download-readiness boundary.
+
+### 2026-07-27 — verifier — VERDICT: refuted
+
+- P1 durable acknowledgement — HELD. `COMMIT` now moves a pending browser sink into
+  `AwaitDurable` without emitting `COMPLETE`
+  (`crates/slirp/src/file_transfer.rs:613-650`); the browser calls
+  `finishFileDownload(..., true)` only after `writable.close()` resolves
+  (`web/file-transfer.js:277-298`). The submitted real-Alpine trace digest matched
+  `4d7775c83bd5c3022f0abb6148e7f25df45fb14152b34cf58a4652fbb22b9e90`;
+  its test trace showed no guest RC before close release, then `WVFT_DOWNLOAD_RC=0`, independent
+  upload/download SHA matches, and no console errors.
+- P2 cumulative admission and retention — HELD. Admission counts all outstanding uploads before
+  accepting another selection, terminal rows are pruned, and terminal Wasm upload records are
+  dismissed. The rebuilt repeated-batch and sampled-peak-heap acceptance passed.
+- P3 download readiness — HELD (carried forward). Its code and dependency boundary are unchanged
+  from the prior verifier result.
+- P4 close/quota failure stability — FAILED. Predicted a failed durable close would remain one
+  terminal error and would never reopen the same destination. The bounded attack observed
+  `opens=2`, `finishes=1`, final state `partial`, and dismissal after 250 ms. The catch path removes
+  the writer and marks the row `error` (`web/file-transfer.js:307-317`), but the next poll sees the
+  same now-`partial` record and unconditionally opens another writer
+  (`web/file-transfer.js:257-269,320-339`); `drainDownload` then aborts that second writer,
+  overwrites the error with `partial`, and dismisses it (`web/file-transfer.js:299-305`).
+  Prevent terminal/error records from reopening, preserve the close/quota error state, and extend
+  the committed close-failure test beyond the first transient `error` observation
+  (`web/tests/e3-t21c-file-transfer-ui.spec.js:305-365`).
+- COVERAGE: the real-Alpine trace covers the repaired happy path through guest, Rust/Wasm, and UI.
+  The committed failure test uses a mock and returns at the first transient error, so it misses P4.
+- SUITE: no verifier test promoted while P4 remains refuted.
+
+Commands: `git diff --check a8be263..c954ef1`; evidence SHA-256 plus `unzip -t` and trace-step
+inspection; `cargo fmt --all --check`; `cargo test -p wasm-vm-slirp file_transfer` (15 passed);
+`cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`; clippy with `-D warnings` for
+`wasm-vm-slirp` and wasm32 `wasm-vm-wasm`; `make web-build`;
+`cd web && npx playwright test tests/e3-t21c-file-transfer-ui.spec.js
+tests/e3-t21c-real-alpine.spec.js --grep-invert "real Alpine agent" --reporter=line` (4 passed);
+verifier-only close-failure poll attack (expected terminal stability failed: 2 opens, final
+`partial`). Live rebuilt page exposed the accessible Host ↔ Alpine files region with zero console
+errors. Note: Playwright cleaned the ignored `web/test-results/` output directory when the fresh
+acceptance began, so the worker trace archive verified at the start of this session is no longer
+present in the checkout; the committed screenshot still matches
+`b057540f3c4f558833131573741eb32973d5296806f4e4898c8f0d14f2c9a80b`.
