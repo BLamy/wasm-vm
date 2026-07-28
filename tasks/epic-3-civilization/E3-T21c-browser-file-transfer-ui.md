@@ -3,7 +3,7 @@ id: E3-T21c
 epic: 3
 title: Streaming browser upload/download UI
 priority: 321.3
-status: in-progress
+status: implemented
 depends_on: [E3-T21b2c]
 estimate: S
 risk: medium
@@ -96,3 +96,40 @@ Commands: `git diff --check fc69073..7da3744`; `cargo fmt --all --check`;
 `make web-build`; `cd web && npx playwright test tests/e3-t21c-file-transfer-ui.spec.js
 --reporter=line` (2 passed). Live rebuilt-page check: the Host ↔ Alpine files region was visible
 and browser console errors were zero (favicon 404 only).
+
+### 2026-07-27 — worker — reimplemented at `b939bfc`
+
+- The protocol sink now returns `Durable` or `Pending`. Browser downloads remain in
+  `AwaitDurable`, retain their exact connection and stream IDs, and cannot emit `COMPLETE` until
+  `FileSystemWritableFileStream.close()` succeeds and the browser explicitly finishes that
+  pending transfer. A close failure emits a terminal WVFT error instead.
+- Upload admission is cumulative across selections, terminal browser rows are pruned, and terminal
+  Rust/Wasm upload records are explicitly dismissed. The repeated-batch regression proves a
+  second selection is rejected when it would exceed 32 outstanding files.
+- `cargo fmt --all --check`; `cargo test -p wasm-vm-slirp file_transfer`: 15 passed, including
+  `pending_sink_withholds_complete_until_durable_finish` and the generated empty/100 MiB case;
+  `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`; and clippy with
+  `-D warnings` for `wasm-vm-slirp`, `wasm-vm-wasm` (wasm32), and `wasm-vm-cli`: passed.
+- `make web-build` passed. The rebuilt fast browser set passed 4/4: generated 100 MiB upload and
+  download with sampled peak heap under 32 MiB, repeated-batch bounding, explicit partial
+  cancellation, durable-writer failure ordering, and the real Wasm incremental SHA implementation.
+- The local chunked image was regenerated from the current agent-bearing rootfs after the first
+  proof exposed a stale ignored artifact. `chunk-verify` passed with 4096 manifest entries and 220
+  distinct chunks; both the reconstructed chunk stream and
+  `releases/rootfs/alpine-rootfs.ext4` hash to
+  `85ca0ab8fad742dd0fc54538bc7ea489176dd0ebe78bb6c26a73a34873035e1b`.
+- `npx playwright test tests/e3-t21c-real-alpine.spec.js --grep 'real Alpine agent' --trace on`:
+  1 passed in 14.5 minutes against the actual Alpine guest, Rust/Wasm adapter, WVFT agent, and
+  browser UI. The run proved the OpenRC service was started and a slot was live; independently
+  verified the uploaded guest file SHA; observed no guest completion marker while browser
+  `close()` was deliberately pending; then released close, observed guest RC=0 and UI completion,
+  independently verified the downloaded bytes' SHA, and observed zero console errors.
+  Evidence: `web/test-results/e3-t21c-real-alpine-real-A-bde99-OMPLETE-until-browser-close/trace.zip`
+  (`sha256:4d7775c83bd5c3022f0abb6148e7f25df45fb14152b34cf58a4652fbb22b9e90`)
+  and `e3-t21c-real-alpine-file-transfer.png`
+  (`sha256:b057540f3c4f558833131573741eb32973d5296806f4e4898c8f0d14f2c9a80b`).
+- Claim: the browser and guest now agree that completion means the selected browser writer closed
+  successfully, not merely that all WVFT bytes arrived. The proof executes the real adapter in
+  both directions, independently checks both byte streams, and covers the critic's durable-ack,
+  cumulative-retention, real-path coverage, and peak-heap findings without changing the previously
+  held download-readiness boundary.
