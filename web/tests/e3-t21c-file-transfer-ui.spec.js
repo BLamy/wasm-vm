@@ -308,6 +308,8 @@ test("writer close failure is reported before WVFT completion", async ({ page })
   const result = await page.evaluate(async () => {
     const ui = globalThis.__wasmVmFileTransferUI;
     const finishes = [];
+    let opens = 0;
+    let dismisses = 0;
     const record = {
       id: 11,
       name: "close-fails.bin",
@@ -330,16 +332,22 @@ test("writer close failure is reported before WVFT completion", async ({ page })
         else record.state = "partial";
       },
       cancelFileDownload: () => {},
-      dismissFileDownload: () => false,
+      dismissFileDownload: () => {
+        dismisses += 1;
+        return false;
+      },
     };
     ui.setDownloadDirectory({
       name: "failure-test",
       getFileHandle: async () => ({
-        createWritable: async () => ({
-          write: async () => {},
-          close: async () => { throw new Error("disk full during close"); },
-          abort: async () => {},
-        }),
+        createWritable: async () => {
+          opens += 1;
+          return {
+            write: async () => {},
+            close: async () => { throw new Error("disk full during close"); },
+            abort: async () => {},
+          };
+        },
       }),
     });
     ui.attachController(controller);
@@ -354,13 +362,18 @@ test("writer close failure is reported before WVFT completion", async ({ page })
         }
       }, 20);
     });
+    await new Promise((resolve) => setTimeout(resolve, 250));
     return {
       finishes,
+      opens,
+      dismisses,
       transfer: ui.snapshot().find((item) => item.name === "close-fails.bin"),
     };
   });
 
   expect(result.finishes).toEqual([[11, false]]);
+  expect(result.opens).toBe(1);
+  expect(result.dismisses).toBe(1);
   expect(result.transfer.state).toBe("error");
   expect(result.transfer.label).toContain("disk full during close");
 });

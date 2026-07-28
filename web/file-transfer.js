@@ -257,6 +257,9 @@ export function createFileTransferUI({
   async function openDownloadWriter(record) {
     if (downloadWriters.has(record.id) || !directory) return;
     const transfer = transfers.get(`download-${record.id}`);
+    if (!transfer || transfer.state === "complete" || transfer.state === "partial" || transfer.state === "error") {
+      return;
+    }
     // Reserve the ID before either awaited picker call. The monitor can poll again while the
     // browser is opening the handle; without this reservation two writers can race, and the
     // empty loser may truncate a download that the winner just completed.
@@ -311,6 +314,7 @@ export function createFileTransferUI({
         if (record.state === "awaiting-save") controller.finishFileDownload(record.id, false);
         else controller.cancelFileDownload(record.id);
       } catch {}
+      try { controller.dismissFileDownload(record.id); } catch {}
       fail(transfer, error);
     } finally {
       writer.busy = false;
@@ -335,7 +339,15 @@ export function createFileTransferUI({
         });
         render();
       }
-      if (directory) void openDownloadWriter(record).then(() => drainDownload(record));
+      const transfer = transfers.get(key);
+      if (
+        directory &&
+        transfer.state !== "complete" &&
+        transfer.state !== "partial" &&
+        transfer.state !== "error"
+      ) {
+        void openDownloadWriter(record).then(() => drainDownload(record));
+      }
     }
   }
 
