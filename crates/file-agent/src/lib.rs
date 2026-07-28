@@ -26,6 +26,7 @@ const COMMIT: u8 = 7;
 const COMPLETE: u8 = 8;
 const CANCEL: u8 = 9;
 const ERROR: u8 = 10;
+const HEARTBEAT: u8 = 11;
 const UPLOAD: u8 = 1;
 const DOWNLOAD: u8 = 2;
 
@@ -572,12 +573,12 @@ fn parse(bytes: &[u8]) -> Parse {
         return Parse::Fatal(ErrorCode::BadFrame);
     }
     let kind = bytes[5];
-    if !(HELLO..=ERROR).contains(&kind) {
+    if !(HELLO..=HEARTBEAT).contains(&kind) {
         return Parse::Fatal(ErrorCode::BadFrame);
     }
     let stream = u32::from_be_bytes(bytes[8..12].try_into().unwrap());
-    if (matches!(kind, HELLO | HELLO_ACK) && stream != 0)
-        || (!matches!(kind, HELLO | HELLO_ACK) && stream == 0)
+    if (matches!(kind, HELLO | HELLO_ACK | HEARTBEAT) && stream != 0)
+        || (!matches!(kind, HELLO | HELLO_ACK | HEARTBEAT) && stream == 0)
     {
         return Parse::Fatal(ErrorCode::BadFrame);
     }
@@ -627,6 +628,10 @@ pub fn frame(kind: u8, stream: u32, payload: &[u8]) -> Vec<u8> {
     bytes.extend_from_slice(&(payload.len() as u32).to_be_bytes());
     bytes.extend_from_slice(payload);
     bytes
+}
+
+pub fn heartbeat_frame() -> Vec<u8> {
+    frame(HEARTBEAT, 0, &[])
 }
 
 fn error_frame(stream: u32, code: ErrorCode) -> Vec<u8> {
@@ -870,6 +875,20 @@ mod tests {
         session.note_io_progress(11 + IDLE_TIMEOUT_MS);
         assert!(!session.poll(11 + IDLE_TIMEOUT_MS).close);
         assert!(session.poll(11 + IDLE_TIMEOUT_MS.saturating_mul(2)).close);
+    }
+
+    #[test]
+    fn heartbeat_is_an_empty_connection_level_control_frame() {
+        let bytes = heartbeat_frame();
+        match parse(&bytes) {
+            Parse::Frame(frame, used) => {
+                assert_eq!(used, HEADER_BYTES);
+                assert_eq!(frame.kind, HEARTBEAT);
+                assert_eq!(frame.stream, 0);
+                assert!(frame.payload.is_empty());
+            }
+            _ => panic!("heartbeat must parse as one complete frame"),
+        }
     }
 
     #[test]

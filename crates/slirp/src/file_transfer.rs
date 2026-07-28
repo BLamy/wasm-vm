@@ -20,9 +20,7 @@ pub const MAX_CONCURRENT_TRANSFERS: usize = 2;
 pub const MAX_IN_FLIGHT_DATA_FRAMES: usize = 4;
 pub const MAX_CONTROL_PAYLOAD: usize = 4_096;
 pub const IDLE_TIMEOUT_MS: u64 = 30_000;
-// Host-to-guest uploads can legitimately wait while the interpreted Alpine guest extends ext4.
-// Keep that state bounded without weakening the short timeout for every other protocol state.
-pub const HOST_UPLOAD_IDLE_TIMEOUT_MS: u64 = 300_000;
+pub const MAX_TRANSFER_DURATION_MS: u64 = 3 * 60 * 60 * 1_000;
 pub const MAX_OWNED_BYTES: usize =
     MAX_CONCURRENT_TRANSFERS * MAX_IN_FLIGHT_DATA_FRAMES * MAX_FRAME_PAYLOAD
         + MAX_CONCURRENT_TRANSFERS * (HEADER_BYTES + MAX_FRAME_PAYLOAD);
@@ -38,6 +36,7 @@ const COMMIT: u8 = 7;
 const COMPLETE: u8 = 8;
 const CANCEL: u8 = 9;
 const ERROR: u8 = 10;
+const HEARTBEAT: u8 = 11;
 const UPLOAD: u8 = 1;
 const DOWNLOAD: u8 = 2;
 
@@ -173,6 +172,7 @@ struct Connection {
     state: State,
     used_streams: BTreeSet<u32>,
     last_activity_ms: u64,
+    active_since_ms: Option<u64>,
 }
 
 impl Connection {
@@ -182,6 +182,7 @@ impl Connection {
             state: State::AwaitHello,
             used_streams: BTreeSet::new(),
             last_activity_ms: now_ms,
+            active_since_ms: None,
         }
     }
 
@@ -317,6 +318,7 @@ impl FileTransferService {
             return Err(ErrorCode::BadState);
         }
         connection.last_activity_ms = now_ms;
+        connection.active_since_ms = Some(now_ms);
         connection.state = State::AwaitAccept {
             stream_id,
             source,
@@ -470,14 +472,11 @@ impl FileTransferService {
     pub fn poll(&mut self, now_ms: u64) -> Vec<(ConnectionId, Vec<u8>)> {
         let mut out = Vec::new();
         for (&id, connection) in &mut self.connections {
-            let idle_timeout = if matches!(connection.state, State::Sending(_)) {
-                HOST_UPLOAD_IDLE_TIMEOUT_MS
-            } else {
-                IDLE_TIMEOUT_MS
-            };
-            if connection.active()
-                && now_ms.saturating_sub(connection.last_activity_ms) >= idle_timeout
-            {
+            let idle = now_ms.saturating_sub(connection.last_activity_ms) >= IDLE_TIMEOUT_MS;
+            let duration_exhausted = connection
+                .active_since_ms
+                .is_some_and(|started| now_ms.saturating_sub(started) >= MAX_TRANSFER_DURATION_MS);
+            if connection.active() && (idle || duration_exhausted) {
                 let stream_id = connection.active_stream_id().unwrap_or(1);
                 connection.cancel();
                 out.push((id, error_frame(stream_id, ErrorCode::Timeout)));
@@ -502,6 +501,9 @@ impl FileTransferService {
         frame: Frame,
         out: &mut ServiceOutput,
     ) {
+        if frame.kind == HEARTBEAT {
+            return;
+        }
         match &mut connection.state {
             State::AwaitHello => {
                 if frame.kind != HELLO || frame.stream_id != 0 {
@@ -578,6 +580,7 @@ impl FileTransferService {
                     hasher: Sha256::new(),
                     sink,
                 });
+                connection.active_since_ms = Some(connection.last_activity_ms);
                 out.frames.push(frame_bytes(ACCEPT, frame.stream_id, &[4]));
             }
             State::Receiving(receive) => {
@@ -859,12 +862,12 @@ fn parse_one(bytes: &[u8]) -> Parse {
         return Parse::Fatal(ErrorCode::UnsupportedVersion);
     }
     let kind = bytes[5];
-    if !(HELLO..=ERROR).contains(&kind) {
+    if !(HELLO..=HEARTBEAT).contains(&kind) {
         return Parse::Fatal(ErrorCode::BadFrame);
     }
     let stream_id = u32::from_be_bytes(bytes[8..12].try_into().unwrap());
-    if (matches!(kind, HELLO | HELLO_ACK) && stream_id != 0)
-        || (!matches!(kind, HELLO | HELLO_ACK) && stream_id == 0)
+    if (matches!(kind, HELLO | HELLO_ACK | HEARTBEAT) && stream_id != 0)
+        || (!matches!(kind, HELLO | HELLO_ACK | HEARTBEAT) && stream_id == 0)
     {
         return Parse::Fatal(ErrorCode::BadFrame);
     }
@@ -892,6 +895,7 @@ fn parse_one(bytes: &[u8]) -> Parse {
                 && u16::from_be_bytes(payload[2..4].try_into().unwrap()) as usize == payload_len - 4
                 && std::str::from_utf8(&payload[4..]).is_ok()
         }
+        HEARTBEAT => payload_len == 0,
         _ => false,
     };
     if !valid_shape {
@@ -1562,7 +1566,7 @@ mod tests {
     }
 
     #[test]
-    fn accepted_host_upload_allows_bounded_guest_storage_backpressure() {
+    fn heartbeat_keeps_storage_backpressure_live_but_hard_duration_stays_bounded() {
         let mut service = FileTransferService::default();
         let id = service.connect(0);
         hello(&mut service, id);
@@ -1577,21 +1581,27 @@ mod tests {
         let accepted = service.receive(id, &frame_bytes(ACCEPT, 47, &[1]), 2);
         assert_eq!(accepted.frames[0][5], DATA);
 
+        let heartbeat = frame_bytes(HEARTBEAT, 0, &[]);
+        for now in (20_000..=400_000).step_by(20_000) {
+            assert!(service.receive(id, &heartbeat, now).frames.is_empty());
+            assert!(
+                service.poll(now + 10_000).is_empty(),
+                "a live guest heartbeat must restart the ordinary idle window"
+            );
+        }
         assert!(
-            service.poll(2 + IDLE_TIMEOUT_MS).is_empty(),
-            "an accepted host upload must survive the ordinary control-state timeout"
+            service
+                .receive(id, &heartbeat, MAX_TRANSFER_DURATION_MS)
+                .frames
+                .is_empty()
         );
-        assert!(
-            service.poll(2 + 120_000).is_empty(),
-            "browser-interpreted ext4 produced a recorded 132.7-second ACK gap"
-        );
-        let output = service.poll(2 + HOST_UPLOAD_IDLE_TIMEOUT_MS);
+        let output = service.poll(1 + MAX_TRANSFER_DURATION_MS);
         assert_eq!(output.len(), 1);
         assert_eq!(output[0].1[5], ERROR);
         assert_eq!(
             u16::from_be_bytes(output[0].1[16..18].try_into().unwrap()),
             ErrorCode::Timeout as u16,
-            "storage backpressure remains bounded by the upload-specific watchdog"
+            "heartbeats cannot extend a transfer past the independent hard cap"
         );
     }
 

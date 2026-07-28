@@ -76,7 +76,7 @@ function repeatedDigest(byte, chunks) {
   return hash.digest("hex");
 }
 
-test("frozen Alpine round trip survives interruption, tab kill, and reboot", async ({ context }) => {
+test("frozen Alpine round trip survives interruption, tab kill, and reboot", async ({ context }, testInfo) => {
   test.skip(!haveAlpine, "needs the local agent-bearing Alpine chunk image");
   test.setTimeout(4 * 60 * 60_000);
 
@@ -221,4 +221,8 @@ test("frozen Alpine round trip survives interruption, tab kill, and reboot", asy
   await expect(page.locator(rows)).toContainText(largeSha, { timeout: 120_000 });
   await expect(page.locator(rows)).toContainText("E3T21D_REBOOT_42_OK", { timeout: 120_000 });
   expect(errors).toEqual([]);
+  await page.screenshot({
+    path: testInfo.outputPath("e3-t21d-final.png"),
+    fullPage: true,
+  });
 });
