@@ -10,6 +10,8 @@ const haveAlpine =
   fs.existsSync(path.join(WEB, "artifacts-alpine.json")) &&
   fs.existsSync(path.join(WEB, "../releases/chunked-alpine/manifest.json"));
 const rows = "#term .xterm-rows";
+const LONG_TRANSFER_TIMEOUT = 90 * 60_000;
+const POLL_INTERVAL = 10_000;
 
 async function bootToRoot(page) {
   await page.goto("/?persist=1&testHooks=1");
@@ -32,24 +34,40 @@ async function bootToRoot(page) {
   await type("echo E3T21D_SHELL_$((6*7))\r");
   await expect(page.locator(rows)).toContainText("E3T21D_SHELL_42", { timeout: 60_000 });
   await page.waitForFunction(() => window.__fileTransferReady().some(Boolean), null, {
+    polling: 1_000,
     timeout: 300_000,
   });
   return type;
 }
 
-async function waitForTransfer(page, name, expected, timeout) {
-  await page.waitForFunction(
-    ({ transferName, expectedState }) => {
-      const item = window.__wasmVmFileTransferUI.snapshot()
-        .find((transfer) => transfer.name === transferName);
-      if (item?.state === "error" || item?.state === "partial") {
-        throw new Error(`${transferName} became ${item.state}: ${item.label} at ${item.done}/${item.total}`);
-      }
-      return item?.state === expectedState;
-    },
-    { transferName: name, expectedState: expected },
-    { timeout },
-  );
+const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function transferSnapshot(page, name) {
+  return page.evaluate((transferName) => window.__wasmVmFileTransferUI.snapshot()
+    .find((transfer) => transfer.name === transferName) ?? null, name);
+}
+
+async function waitForTransfer(page, name, expected, timeout, minimumDone = 0) {
+  const deadline = Date.now() + timeout;
+  let lastReportedMib = -1;
+  for (;;) {
+    const item = await transferSnapshot(page, name);
+    const doneMib = Math.floor((item?.done ?? 0) / MIB);
+    if (doneMib >= lastReportedMib + 5) {
+      console.log(`[E3-T21d] ${name}: ${item?.state ?? "queued"} ${doneMib} MiB`);
+      lastReportedMib = doneMib;
+    }
+    if (item?.state === expected && item.done >= minimumDone) return item;
+    if (item?.state === "error" || item?.state === "partial") {
+      throw new Error(`${name} became ${item.state}: ${item.label} at ${item.done}/${item.total}`);
+    }
+    if (Date.now() >= deadline) {
+      throw new Error(`${name} timed out while ${item?.state ?? "missing"} at ${item?.done ?? 0}/${item?.total ?? 0}`);
+    }
+    // Sleep in Node, not in the page: Playwright's default RAF polling and traced page timeouts
+    // compete with the single-threaded Wasm interpreter and create thousands of DOM snapshots.
+    await sleep(POLL_INTERVAL);
+  }
 }
 
 function repeatedDigest(byte, chunks) {
@@ -60,7 +78,7 @@ function repeatedDigest(byte, chunks) {
 
 test("frozen Alpine round trip survives interruption, tab kill, and reboot", async ({ context }) => {
   test.skip(!haveAlpine, "needs the local agent-bearing Alpine chunk image");
-  test.setTimeout(3_600_000);
+  test.setTimeout(4 * 60 * 60_000);
 
   const suffix = Date.now().toString(36);
   const largeName = `e3t21d-${suffix}-100m.bin`;
@@ -92,7 +110,7 @@ test("frozen Alpine round trip survives interruption, tab kill, and reboot", asy
     };
     window.__wasmVmFileTransferUI.enqueueFiles([generated]);
   }, { name: largeName, mib: MIB });
-  await waitForTransfer(page, largeName, "complete", 900_000);
+  await waitForTransfer(page, largeName, "complete", LONG_TRANSFER_TIMEOUT);
   await type(`sha256sum /var/lib/wasm-vm/transfer/inbox/${largeName}\r`);
   await expect(page.locator(rows)).toContainText(largeSha, { timeout: 120_000 });
 
@@ -105,7 +123,7 @@ test("frozen Alpine round trip survives interruption, tab kill, and reboot", asy
     (names) => names.every((name) => window.__wasmVmFileTransferUI.snapshot()
       .some((item) => item.name === name && item.state === "complete")),
     pair,
-    { timeout: 300_000 },
+    { polling: 1_000, timeout: 300_000 },
   );
 
   await page.evaluate(({ name, mib }) => {
@@ -125,17 +143,19 @@ test("frozen Alpine round trip survives interruption, tab kill, and reboot", asy
     };
     window.__wasmVmFileTransferUI.enqueueFiles([interrupted]);
   }, { name: interruptedName, mib: MIB });
-  await page.waitForFunction(
-    ({ name, half }) => window.__wasmVmFileTransferUI.snapshot()
-      .some((item) => item.name === name && item.state === "active" && item.done >= half),
-    { name: interruptedName, half: 50 * MIB },
-    { timeout: 600_000 },
+  await waitForTransfer(
+    page,
+    interruptedName,
+    "active",
+    LONG_TRANSFER_TIMEOUT,
+    50 * MIB,
   );
   await page.getByRole("button", { name: `Cancel ${interruptedName}` }).click();
   await page.waitForFunction(
     (name) => window.__wasmVmFileTransferUI.snapshot()
       .some((item) => item.name === name && item.state === "partial"),
     interruptedName,
+    { polling: 1_000 },
   );
 
   await page.evaluate(() => window.__wasmVmFileTransferUI.enqueueFiles([{
@@ -143,8 +163,12 @@ test("frozen Alpine round trip survives interruption, tab kill, and reboot", asy
     size: 1,
     stream: () => new Blob(["x"]).stream(),
   }]));
-  await page.waitForFunction(() => window.__wasmVmFileTransferUI.snapshot()
-    .some((item) => item.name === "../escape" && item.state === "error"));
+  await page.waitForFunction(
+    () => window.__wasmVmFileTransferUI.snapshot()
+      .some((item) => item.name === "../escape" && item.state === "error"),
+    null,
+    { polling: 1_000 },
+  );
 
   await type(
     `test ! -e /var/lib/wasm-vm/transfer/inbox/${interruptedName} && ` +
