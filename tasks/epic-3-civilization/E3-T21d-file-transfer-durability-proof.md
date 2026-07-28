@@ -3,7 +3,7 @@ id: E3-T21d
 epic: 3
 title: File-transfer guest round-trip and durability proof
 priority: 321.4
-status: pending
+status: in-progress
 depends_on: [E3-T10, E3-T21c]
 estimate: S
 risk: high
