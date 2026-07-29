@@ -292,3 +292,14 @@ verify-E3-T12a:
 	# Same format + codec + reserved-tag refusal executed on real wasm32 (32-bit usize guard paths).
 	$(MAKE) _v-wasm
 	@echo "verify-E3-T12a (bounded snapshot foundation freeze): OK"
+
+.PHONY: verify-E3-T24a
+verify-E3-T24a:
+	# The progress MODEL's invariants (monotonic, no fake 99%, byte-weight <15% divergence, per-stage
+	# errors, reorder/duplicate/omit/delay) proven headlessly — deterministic, no browser timing.
+	cd web && npx playwright test tests/e3-t24a-progress.spec.js --reporter=list
+	# The wired accessible surface against a real busybox boot: monotonic advance, explicit
+	# indeterminate boot-to-login, 100% only at the prompt, and a stage-named error on a failed fetch.
+	$(MAKE) web-build
+	cd web && npx playwright test tests/e3-t24a-boot-progress.spec.js --reporter=list
+	@echo "verify-E3-T24a (typed honest boot-progress): OK"

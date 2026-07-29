@@ -9,6 +9,7 @@ import { ROADMAP } from "./roadmap.js";
 import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
 import { createLinuxTerminal } from "./terminal.js";
 import { createFileTransferUI } from "./file-transfer.js";
+import { createBootProgressSurface } from "./boot-progress.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -109,6 +110,12 @@ const fileInput = document.getElementById("file");
 // E2-T21: boot unmodified Linux in the browser via the loading pipeline (loader.js).
 const bootLinuxBtn = document.getElementById("boot-linux");
 const bootProgressEl = document.getElementById("boot-progress");
+// E3-T24a: the typed, monotonic, byte-weighted boot-progress surface (additive to the per-role text).
+const bootProgress = createBootProgressSurface({
+  bar: document.getElementById("boot-progress-bar"),
+  label: document.getElementById("boot-progress-label"),
+  root: document.getElementById("boot-progress-surface"),
+});
 // E3-T11: the primary Alpine button boots the production chunked image. The full 512 MiB image
 // remains an explicit debug fallback; it is no longer the default user path.
 const bootAlpineBtn = document.getElementById("boot-alpine");
@@ -143,6 +150,8 @@ async function runLinuxBoot(opts, banner) {
     term.writeln(`\x1b[90m[network: slirp outbound via ${slirpRelay}]\x1b[0m`);
   }
   const pct = {};
+  bootProgress.begin();
+  const imageLen = opts.imageLen ?? 536870912; // chunked image length; for byte-fraction honesty
   try {
     linuxCtl = await startLinuxBoot({
       ...opts,
@@ -158,13 +167,22 @@ async function runLinuxBoot(opts, banner) {
       slirpDoh,
       slirpLeaseSecs: opts.slirpLeaseSecs ?? query.get("slirpLeaseSecs") ?? 86400,
       slirpMtu: opts.slirpMtu ?? query.get("slirpMtu") ?? 1500,
-      onState: (s) => setStatus(`linux: ${s}`),
+      onState: (s) => { setStatus(`linux: ${s}`); bootProgress.onState(s); },
       onProgress: (role, loaded, total) => {
         pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;
         bootProgressEl.textContent = Object.entries(pct).map(([k, v]) => `${k} ${v}`).join("  ");
+        bootProgress.onProgress(role, loaded, total);
       },
-      onOutput: (u8) => { ui.write(u8); emitConsole(u8); },
-      onError: (e) => term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`),
+      onOutput: (u8) => {
+        ui.write(u8);
+        emitConsole(u8);
+        // E3-T24a: the honest 100% signal is a usable prompt, detected in the guest console stream.
+        try { bootProgress.scanOutput(new TextDecoder().decode(u8)); } catch {}
+      },
+      onError: (e) => {
+        term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`);
+        bootProgress.fail(e?.message || String(e));
+      },
       // E3-T10: storage indicator (usage/quota/persist grant) at boot.
       onStorage: ({ usage, quota, granted }) => {
         const el = document.getElementById("storage-indicator");
@@ -261,6 +279,20 @@ async function runLinuxBoot(opts, banner) {
     });
     const ctlForRelease = linuxCtl;
     fileTransferUI.attachController(opts.fileTransfer ? linuxCtl : null);
+    // E3-T24a: a lazy/chunked image reports no per-fetch bytes, so drive the byte-weighted `chunk`
+    // phase from the loader's running counter until the prompt is reached or the boot ends.
+    if (typeof linuxCtl.fetchStats === "function") {
+      const pollChunks = () => {
+        if (!linuxCtl || bootProgress.state.ready || bootProgress.state.error) return;
+        const stats = linuxCtl.fetchStats?.();
+        if (stats) {
+          if (stats.error) bootProgress.fail(String(stats.error));
+          else if (stats.bytes > 0) bootProgress.onChunkBytes(stats.bytes, imageLen);
+        }
+        setTimeout(pollChunks, 250);
+      };
+      setTimeout(pollChunks, 250);
+    }
     linuxCtl.whenDone.then((state) => {
       // E3-T09 (critic NOTE-1): release the writer lock on EVERY terminal outcome (halt,
       // error, stop) — release is idempotent, and a future writer-stop UI path must not

@@ -290,6 +290,52 @@
         width: 100%;
         text-align: right;
       }
+      /* E3-T24a boot-progress surface */
+      .boot-progress-surface {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        margin-top: 4px;
+      }
+      .bp-bar {
+        position: relative;
+        flex: 1;
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+      }
+      .bp-fill {
+        height: 100%;
+        width: 0;
+        border-radius: 3px;
+        background: var(--green, #2ea043);
+        transition: width 180ms linear;
+      }
+      /* Indeterminate phases: an explicit sweeping animation, NOT a fabricated number — the numeric
+         value holds and aria-valuetext says the stage is working. */
+      .bp-bar[data-indeterminate="true"] .bp-fill {
+        width: 35% !important;
+        background: linear-gradient(90deg, transparent, var(--cyan, #39c5cf), transparent);
+        animation: bp-sweep 1.1s ease-in-out infinite;
+      }
+      .bp-bar[data-error="true"] .bp-fill {
+        background: var(--red, #f85149);
+        animation: none;
+      }
+      @keyframes bp-sweep {
+        0% { transform: translateX(-120%); }
+        100% { transform: translateX(320%); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bp-bar[data-indeterminate="true"] .bp-fill { animation: none; }
+      }
+      .bp-label {
+        color: var(--muted);
+        font: 12px ui-monospace, monospace;
+        white-space: nowrap;
+      }
       label.file {
         color: var(--muted);
         font-size: 13px;
@@ -776,6 +822,25 @@
             <span id="boot-progress" class="version"></span>
             <span id="stty-hint" class="version"></span>
             <span id="storage-indicator" class="version" style="display:none;"></span>
+          </div>
+          <!-- E3-T24a: typed, monotonic, byte-weighted boot-progress surface. Determinate for the
+               byte-measurable phases; an explicit "working" animation (never a fake number) for the
+               indeterminate ones; 100% only when the prompt is usable. -->
+          <div id="boot-progress-surface" class="boot-progress-surface" hidden>
+            <div
+              id="boot-progress-bar"
+              class="bp-bar"
+              role="progressbar"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+              aria-valuetext="Starting"
+              aria-labelledby="boot-progress-label"
+              data-indeterminate="true"
+            >
+              <div class="bp-fill"></div>
+            </div>
+            <span id="boot-progress-label" class="bp-label" role="status" aria-live="polite">Starting</span>
           </div>
         </div>
         <p id="boot-hint" class="boot-hint">
