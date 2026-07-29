@@ -572,5 +572,8 @@ pub fn unpack(a: UnpackArgs) -> ExitCode {
 mod validate;
 pub use validate::{ValidateArgs, validate};
 
+mod pull;
+pub use pull::{PullArgs, pull};
+
 #[cfg(test)]
 mod tests;

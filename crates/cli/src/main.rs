@@ -68,6 +68,9 @@ enum Cmd {
 
 #[derive(Subcommand)]
 enum OciCmd {
+    /// Pull an image from a registry (token auth, multi-arch → riscv64, digest-verified) into a
+    /// local OCI image-layout that `oci unpack` consumes.
+    Pull(oci::PullArgs),
     /// Unpack an OCI image-layout (verifying blob digests) into a flattened rootfs directory.
     Unpack(oci::UnpackArgs),
     /// Validate that an unpacked bundle is RUNNABLE (rootfs + run.json + a resolvable, correct-arch
@@ -221,6 +224,7 @@ fn main() -> ExitCode {
         Cmd::Chunk(args) => chunk::chunk(args),
         Cmd::ChunkVerify(args) => chunk_verify::run_verify(args),
         Cmd::ChunkChurn(args) => chunk_verify::run_churn(args),
+        Cmd::Oci(OciCmd::Pull(args)) => oci::pull(args),
         Cmd::Oci(OciCmd::Unpack(args)) => oci::unpack(args),
         Cmd::Oci(OciCmd::Validate(args)) => oci::validate(args),
     }

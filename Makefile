@@ -313,3 +313,19 @@ verify-E3.5-T05a:
 	$(MAKE) web-build
 	cd web && npx playwright test tests/docker-busybox.spec.js --reporter=list
 	@echo "verify-E3.5-T05a (visible Docker busybox — real guest command): OK"
+
+.PHONY: verify-E3.5-T01
+verify-E3.5-T01:
+	# Scoped to the OCI crates (storage applier + cli importer). Default features only — the workspace
+	# --all-features clippy debt (cli os_entropy) is unrelated and tracked elsewhere.
+	cargo fmt --check -p wasm-vm-cli -p wasm-vm-storage
+	cargo clippy -p wasm-vm-storage --lib -- -D warnings
+	cargo clippy -p wasm-vm-cli --bin wasm-vm -- -D warnings
+	# Whiteout/tar layer applier (storage) + registry PULL protocol (cli): mock-registry anonymous
+	# Bearer auth dance, multi-arch index → riscv64 selection, NON-OPTIONAL digest verification, and
+	# the full pull → image-layout → unpack loop; plus the local-layout unpack + bundle validate.
+	cargo test -p wasm-vm-storage oci
+	cargo test -p wasm-vm-cli --bin wasm-vm oci
+	# The shared applier also compiles for wasm32 — it runs in the browser importer, not just native.
+	cargo build -p wasm-vm-storage --no-default-features --target wasm32-unknown-unknown
+	@echo "verify-E3.5-T01 (OCI importer: registry pull + digest-verified unpack): OK"

@@ -48,6 +48,10 @@ zstd = "0.13"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = { version = "0.10", default-features = false }
+# E3.5-T01 OCI registry pull: a blocking HTTPS client (rustls, no OpenSSL) for the real native
+# transport. The pull PROTOCOL is transport-agnostic and mock-tested; ureq only backs the live
+# `oci pull` path against real registries (Docker Hub / ghcr token-auth + CDN blob redirects).
+ureq = { version = "2", default-features = false, features = ["tls", "gzip"] }
 
 [dev-dependencies]
 assert_cmd = "2"
