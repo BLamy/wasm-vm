@@ -20,6 +20,14 @@ pub const MAX_CONCURRENT_TRANSFERS: usize = 2;
 pub const MAX_IN_FLIGHT_DATA_FRAMES: usize = 4;
 pub const MAX_CONTROL_PAYLOAD: usize = 4_096;
 pub const IDLE_TIMEOUT_MS: u64 = 30_000;
+// A connection that is actively moving file bytes — or finalizing durability — can legitimately go
+// quiet for far longer in host wall-clock than the 30 s handshake budget. The interpreted Alpine
+// guest advances its own monotonic clock (and therefore its liveness heartbeat) far slower than
+// real time while it extends and fsyncs ext4, so the wall-clock spacing between heartbeats balloons
+// under load and tracing. Heartbeats keep this window fresh whenever they arrive; the larger
+// ceiling absorbs their wall-clock spacing without weakening the short handshake timeout. The hard
+// MAX_TRANSFER_DURATION_MS cap below still bounds a genuinely wedged transfer.
+pub const ACTIVE_TRANSFER_IDLE_TIMEOUT_MS: u64 = 300_000;
 pub const MAX_TRANSFER_DURATION_MS: u64 = 3 * 60 * 60 * 1_000;
 pub const MAX_OWNED_BYTES: usize =
     MAX_CONCURRENT_TRANSFERS * MAX_IN_FLIGHT_DATA_FRAMES * MAX_FRAME_PAYLOAD
@@ -60,6 +68,65 @@ pub enum ErrorCode {
     Timeout = 13,
     CompletionUnknown = 14,
     Io = 15,
+}
+
+impl ErrorCode {
+    pub fn from_u16(value: u16) -> Option<Self> {
+        Some(match value {
+            1 => Self::UnsupportedVersion,
+            2 => Self::BadFrame,
+            3 => Self::BadState,
+            4 => Self::BadName,
+            5 => Self::BadOffset,
+            6 => Self::TooLarge,
+            7 => Self::Busy,
+            8 => Self::Quota,
+            9 => Self::FlowControl,
+            10 => Self::HashMismatch,
+            11 => Self::SourceChanged,
+            12 => Self::Cancelled,
+            13 => Self::Timeout,
+            14 => Self::CompletionUnknown,
+            15 => Self::Io,
+            _ => return None,
+        })
+    }
+
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::UnsupportedVersion => "UnsupportedVersion",
+            Self::BadFrame => "BadFrame",
+            Self::BadState => "BadState",
+            Self::BadName => "BadName",
+            Self::BadOffset => "BadOffset",
+            Self::TooLarge => "TooLarge",
+            Self::Busy => "Busy",
+            Self::Quota => "Quota",
+            Self::FlowControl => "FlowControl",
+            Self::HashMismatch => "HashMismatch",
+            Self::SourceChanged => "SourceChanged",
+            Self::Cancelled => "Cancelled",
+            Self::Timeout => "Timeout",
+            Self::CompletionUnknown => "CompletionUnknown",
+            Self::Io => "Io",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TerminalDiagnostic {
+    pub connection_id: ConnectionId,
+    pub stream_id: u32,
+    pub from_state: &'static str,
+    pub transition: &'static str,
+    pub frame_kind: Option<u8>,
+    pub error: ErrorCode,
+    pub byte_offset: u64,
+    pub at_ms: u64,
+    pub last_activity_ms: u64,
+    pub idle_ms: u64,
+    pub active_since_ms: Option<u64>,
+    pub peer_detail: Option<String>,
 }
 
 pub trait TransferSink {
@@ -168,22 +235,75 @@ enum State {
 }
 
 struct Connection {
+    id: ConnectionId,
     rx: Vec<u8>,
     state: State,
     used_streams: BTreeSet<u32>,
     last_activity_ms: u64,
     active_since_ms: Option<u64>,
+    terminal_diagnostic: Option<TerminalDiagnostic>,
 }
 
 impl Connection {
-    fn new(now_ms: u64) -> Self {
+    fn new(id: ConnectionId, now_ms: u64) -> Self {
         Self {
+            id,
             rx: Vec::new(),
             state: State::AwaitHello,
             used_streams: BTreeSet::new(),
             last_activity_ms: now_ms,
             active_since_ms: None,
+            terminal_diagnostic: None,
         }
+    }
+
+    fn state_name(&self) -> &'static str {
+        match self.state {
+            State::AwaitHello => "AwaitHello",
+            State::Ready => "Ready",
+            State::Receiving(_) => "Receiving",
+            State::AwaitAccept { .. } => "AwaitAccept",
+            State::Sending(_) => "Sending",
+            State::AwaitComplete { .. } => "AwaitComplete",
+            State::AwaitDurable { .. } => "AwaitDurable",
+            State::Terminal => "Terminal",
+        }
+    }
+
+    fn byte_offset(&self) -> u64 {
+        match &self.state {
+            State::Receiving(receive) => receive.received,
+            State::Sending(send) => send.acked,
+            State::AwaitComplete { total_len, .. } | State::AwaitDurable { total_len, .. } => {
+                *total_len
+            }
+            _ => 0,
+        }
+    }
+
+    fn record_terminal(
+        &mut self,
+        stream_id: u32,
+        transition: &'static str,
+        frame_kind: Option<u8>,
+        error: ErrorCode,
+        at_ms: u64,
+        peer_detail: Option<String>,
+    ) {
+        self.terminal_diagnostic = Some(TerminalDiagnostic {
+            connection_id: self.id,
+            stream_id,
+            from_state: self.state_name(),
+            transition,
+            frame_kind,
+            error,
+            byte_offset: self.byte_offset(),
+            at_ms,
+            last_activity_ms: self.last_activity_ms,
+            idle_ms: at_ms.saturating_sub(self.last_activity_ms),
+            active_since_ms: self.active_since_ms,
+            peer_detail,
+        });
     }
 
     fn active(&self) -> bool {
@@ -195,6 +315,16 @@ impl Connection {
                 | State::AwaitComplete { .. }
                 | State::AwaitDurable { .. }
         )
+    }
+
+    fn idle_timeout_ms(&self) -> u64 {
+        match self.state {
+            State::Sending(_)
+            | State::Receiving(_)
+            | State::AwaitComplete { .. }
+            | State::AwaitDurable { .. } => ACTIVE_TRANSFER_IDLE_TIMEOUT_MS,
+            _ => IDLE_TIMEOUT_MS,
+        }
     }
 
     fn active_stream_id(&self) -> Option<u32> {
@@ -256,13 +386,28 @@ impl FileTransferService {
     pub fn connect(&mut self, now_ms: u64) -> ConnectionId {
         let id = self.next_connection;
         self.next_connection = self.next_connection.wrapping_add(1).max(1);
-        self.connections.insert(id, Connection::new(now_ms));
+        self.connections.insert(id, Connection::new(id, now_ms));
         id
     }
 
     pub fn disconnect(&mut self, id: ConnectionId) {
         if let Some(mut connection) = self.connections.remove(&id) {
             connection.cancel();
+        }
+    }
+
+    /// Credit every active transfer with host-side liveness at `now_ms`. The browser host pauses the
+    /// guest to flush its durable overlay to IndexedDB while a persistent boot uploads or downloads;
+    /// during that pause the guest cannot emit an ACK or heartbeat, yet the transfer is plainly alive
+    /// — the host is busy persisting its very bytes. Charging that wall-clock against the idle budget
+    /// falsely times out long persist-dominated transfers (E3-T21d). Resets `last_activity_ms` only;
+    /// `active_since_ms` is untouched so the independent hard-duration cap still bounds a wedged
+    /// transfer.
+    pub fn note_host_activity(&mut self, now_ms: u64) {
+        for connection in self.connections.values_mut() {
+            if connection.active() {
+                connection.last_activity_ms = now_ms;
+            }
         }
     }
 
@@ -283,6 +428,12 @@ impl FileTransferService {
         self.connections
             .get(&id)
             .is_some_and(|connection| matches!(connection.state, State::Terminal))
+    }
+
+    pub fn terminal_diagnostic(&self, id: ConnectionId) -> Option<&TerminalDiagnostic> {
+        self.connections
+            .get(&id)
+            .and_then(|connection| connection.terminal_diagnostic.as_ref())
     }
 
     pub fn buffered_bytes(&self) -> usize {
@@ -428,6 +579,14 @@ impl FileTransferService {
         };
         connection.last_activity_ms = now_ms;
         if connection.rx.len().saturating_add(bytes.len()) > HEADER_BYTES + MAX_FRAME_PAYLOAD {
+            connection.record_terminal(
+                0,
+                "receive-buffer-overflow",
+                None,
+                ErrorCode::TooLarge,
+                now_ms,
+                None,
+            );
             connection.cancel();
             self.connections.insert(id, connection);
             return ServiceOutput {
@@ -441,6 +600,7 @@ impl FileTransferService {
             let parsed = match parse_one(&connection.rx) {
                 Parse::NeedMore => break,
                 Parse::Fatal(code) => {
+                    connection.record_terminal(0, "parse-fatal", None, code, now_ms, None);
                     connection.cancel();
                     out.frames.push(error_frame(0, code));
                     out.close = true;
@@ -472,12 +632,25 @@ impl FileTransferService {
     pub fn poll(&mut self, now_ms: u64) -> Vec<(ConnectionId, Vec<u8>)> {
         let mut out = Vec::new();
         for (&id, connection) in &mut self.connections {
-            let idle = now_ms.saturating_sub(connection.last_activity_ms) >= IDLE_TIMEOUT_MS;
+            let idle =
+                now_ms.saturating_sub(connection.last_activity_ms) >= connection.idle_timeout_ms();
             let duration_exhausted = connection
                 .active_since_ms
                 .is_some_and(|started| now_ms.saturating_sub(started) >= MAX_TRANSFER_DURATION_MS);
             if connection.active() && (idle || duration_exhausted) {
                 let stream_id = connection.active_stream_id().unwrap_or(1);
+                connection.record_terminal(
+                    stream_id,
+                    if duration_exhausted {
+                        "hard-duration-timeout"
+                    } else {
+                        "idle-timeout"
+                    },
+                    None,
+                    ErrorCode::Timeout,
+                    now_ms,
+                    None,
+                );
                 connection.cancel();
                 out.push((id, error_frame(stream_id, ErrorCode::Timeout)));
                 continue;
@@ -507,6 +680,14 @@ impl FileTransferService {
         match &mut connection.state {
             State::AwaitHello => {
                 if frame.kind != HELLO || frame.stream_id != 0 {
+                    connection.record_terminal(
+                        frame.stream_id,
+                        "unexpected-frame",
+                        Some(frame.kind),
+                        ErrorCode::BadState,
+                        connection.last_activity_ms,
+                        None,
+                    );
                     out.frames
                         .push(error_frame(frame.stream_id, ErrorCode::BadState));
                     connection.state = State::Terminal;
@@ -514,6 +695,14 @@ impl FileTransferService {
                 }
                 if frame.payload.as_slice() != [VERSION] {
                     let code = ErrorCode::UnsupportedVersion;
+                    connection.record_terminal(
+                        frame.stream_id,
+                        "unsupported-version",
+                        Some(frame.kind),
+                        code,
+                        connection.last_activity_ms,
+                        None,
+                    );
                     out.frames.push(error_frame(frame.stream_id, code));
                     connection.state = State::Terminal;
                     return;
@@ -706,6 +895,21 @@ impl FileTransferService {
                 pump_source(connection, out);
             }
             State::Sending(send) => {
+                if frame.kind == ERROR && frame.stream_id == send.stream_id {
+                    let (code, detail) =
+                        parse_error_payload(&frame.payload).unwrap_or((ErrorCode::BadFrame, None));
+                    connection.record_terminal(
+                        frame.stream_id,
+                        "peer-error",
+                        Some(frame.kind),
+                        code,
+                        connection.last_activity_ms,
+                        detail,
+                    );
+                    connection.cancel();
+                    out.close = true;
+                    return;
+                }
                 if frame.kind == CANCEL
                     && frame.stream_id == send.stream_id
                     && frame.payload.len() == 2
@@ -835,6 +1039,14 @@ fn fail_stream(
     code: ErrorCode,
     out: &mut ServiceOutput,
 ) {
+    connection.record_terminal(
+        stream_id,
+        "protocol-error",
+        None,
+        code,
+        connection.last_activity_ms,
+        None,
+    );
     connection.cancel();
     out.frames.push(error_frame(stream_id, code));
 }
@@ -927,6 +1139,23 @@ fn error_frame(stream_id: u32, code: ErrorCode) -> Vec<u8> {
     let mut payload = (code as u16).to_be_bytes().to_vec();
     payload.extend_from_slice(&0u16.to_be_bytes());
     frame_bytes(ERROR, stream_id.max(1), &payload)
+}
+
+fn parse_error_payload(payload: &[u8]) -> Option<(ErrorCode, Option<String>)> {
+    if payload.len() < 4 {
+        return None;
+    }
+    let code = ErrorCode::from_u16(u16::from_be_bytes(payload[..2].try_into().ok()?))?;
+    let detail_len = u16::from_be_bytes(payload[2..4].try_into().ok()?) as usize;
+    if payload.len() != 4 + detail_len {
+        return None;
+    }
+    let detail = if detail_len == 0 {
+        None
+    } else {
+        Some(std::str::from_utf8(&payload[4..]).ok()?.to_owned())
+    };
+    Some((code, detail))
 }
 
 struct Offer {
@@ -1451,7 +1680,11 @@ mod tests {
         let id = service.connect(0);
         hello(&mut service, id);
         service.receive(id, &offer(DOWNLOAD, 1, "a", b"x"), 1);
-        let output = service.poll(IDLE_TIMEOUT_MS + 1);
+        assert!(
+            service.poll(IDLE_TIMEOUT_MS + 1).is_empty(),
+            "an active transfer must outlive the short handshake budget"
+        );
+        let output = service.poll(ACTIVE_TRANSFER_IDLE_TIMEOUT_MS + 1);
         assert_eq!(output.len(), 1);
         assert_eq!(stats.borrow().cancelled, 1);
     }
@@ -1527,7 +1760,7 @@ mod tests {
         let id = service.connect(0);
         hello(&mut service, id);
         service.receive(id, &offer(DOWNLOAD, 45, "timeout.bin", b"x"), 1);
-        let output = service.poll(IDLE_TIMEOUT_MS + 1);
+        let output = service.poll(ACTIVE_TRANSFER_IDLE_TIMEOUT_MS + 1);
         assert_eq!(output.len(), 1);
         assert_eq!(
             u32::from_be_bytes(output[0].1[8..12].try_into().unwrap()),
@@ -1563,6 +1796,139 @@ mod tests {
             u16::from_be_bytes(output[0].1[16..18].try_into().unwrap()),
             ErrorCode::Timeout as u16
         );
+    }
+
+    #[test]
+    fn host_persist_activity_keeps_an_upload_alive_but_respects_the_hard_cap() {
+        // E3-T21d: a persistent boot freezes the guest to flush its overlay to IndexedDB; during that
+        // pause the guest emits nothing, but note_host_activity credits the transfer so the idle
+        // budget is not charged for the host's own persist time. The hard duration cap still bounds it.
+        let mut service = FileTransferService::default();
+        let id = service.connect(0);
+        hello(&mut service, id);
+        service
+            .queue_upload(
+                id,
+                61,
+                Box::new(BytesSource::new("persist.bin", b"x".to_vec())),
+                1,
+            )
+            .unwrap();
+        let accepted = service.receive(id, &frame_bytes(ACCEPT, 61, &[1]), 2);
+        assert_eq!(accepted.frames[0][5], DATA);
+
+        // Persist notes land steadily but far wider than the active-transfer idle window; each keeps
+        // the transfer alive even though the guest is frozen and sends no frame.
+        let mut now = 2;
+        for _ in 0..8 {
+            now += ACTIVE_TRANSFER_IDLE_TIMEOUT_MS - 1;
+            service.note_host_activity(now);
+            assert!(
+                service
+                    .poll(now + ACTIVE_TRANSFER_IDLE_TIMEOUT_MS - 1)
+                    .is_empty(),
+                "a host persist pause must not time out an in-flight transfer"
+            );
+        }
+        // The independent hard cap is measured from active_since_ms, which note_host_activity leaves
+        // untouched, so a persist-heartbeated transfer is still reclaimed once it exceeds it.
+        let output = service.poll(MAX_TRANSFER_DURATION_MS + 1);
+        assert_eq!(output.len(), 1);
+        assert_eq!(output[0].1[5], ERROR);
+        assert_eq!(
+            u16::from_be_bytes(output[0].1[16..18].try_into().unwrap()),
+            ErrorCode::Timeout as u16
+        );
+    }
+
+    #[test]
+    fn active_upload_survives_heartbeat_gaps_wider_than_the_handshake_budget() {
+        // Regression for E3-T21d: a host->guest upload stalled ~25 MiB in when the interpreted
+        // guest's heartbeat landed more than IDLE_TIMEOUT_MS apart in host wall-clock while it
+        // extended ext4. The active-transfer window must absorb that spacing, and pure silence must
+        // still be reclaimed at the larger ceiling.
+        let mut service = FileTransferService::default();
+        let id = service.connect(0);
+        hello(&mut service, id);
+        service
+            .queue_upload(
+                id,
+                51,
+                Box::new(BytesSource::new("ext4-stall.bin", b"x".to_vec())),
+                1,
+            )
+            .unwrap();
+        let accepted = service.receive(id, &frame_bytes(ACCEPT, 51, &[1]), 2);
+        assert_eq!(accepted.frames[0][5], DATA, "ACCEPT starts the send");
+
+        let heartbeat = frame_bytes(HEARTBEAT, 0, &[]);
+        // Heartbeats 40 s apart — wider than the 30 s handshake budget the old uniform timeout used.
+        let mut now = 2;
+        for _ in 0..5 {
+            now += 40_000;
+            assert!(service.receive(id, &heartbeat, now).frames.is_empty());
+            assert!(
+                service.poll(now + IDLE_TIMEOUT_MS + 1).is_empty(),
+                "a heartbeat gap past the handshake budget must not cancel an active upload"
+            );
+        }
+        // Genuine silence is still bounded by the active-transfer ceiling.
+        let output = service.poll(now + ACTIVE_TRANSFER_IDLE_TIMEOUT_MS + 1);
+        assert_eq!(output.len(), 1);
+        assert_eq!(output[0].1[5], ERROR);
+        assert_eq!(
+            u16::from_be_bytes(output[0].1[16..18].try_into().unwrap()),
+            ErrorCode::Timeout as u16
+        );
+    }
+
+    #[test]
+    fn peer_timeout_keeps_guest_detail_instead_of_collapsing_to_bad_state() {
+        let bytes = Rc::new(RefCell::new(VecDeque::from([b"x".to_vec()])));
+        let cancelled = Rc::new(Cell::new(false));
+        let mut service = FileTransferService::default();
+        let id = service.connect(10);
+        hello(&mut service, id);
+        service
+            .queue_upload(
+                id,
+                61,
+                Box::new(QueuedSource {
+                    bytes,
+                    cancelled: cancelled.clone(),
+                    sha256: Sha256::digest(b"x").into(),
+                    total_len: 1,
+                }),
+                11,
+            )
+            .unwrap();
+        let accepted = service.receive(id, &frame_bytes(ACCEPT, 61, &[1]), 12);
+        assert_eq!(accepted.frames[0][5], DATA);
+
+        let detail = r#"{"component":"guest","transition":"idle-timeout","fromState":"Receiving","frameKind":null,"error":"Timeout","stream":61,"byteOffset":0,"atMs":40001,"lastActivityMs":1,"idleMs":40000,"storageWrite":null}"#;
+        let mut payload = (ErrorCode::Timeout as u16).to_be_bytes().to_vec();
+        payload.extend_from_slice(&(detail.len() as u16).to_be_bytes());
+        payload.extend_from_slice(detail.as_bytes());
+        let output = service.receive(id, &frame_bytes(ERROR, 61, &payload), 50_000);
+        assert!(output.close);
+        assert!(
+            output.frames.is_empty(),
+            "a peer terminal error must not be answered with a misleading BadState"
+        );
+        assert!(cancelled.get());
+
+        let diagnostic = service
+            .terminal_diagnostic(id)
+            .expect("terminal diagnostic");
+        assert_eq!(diagnostic.connection_id, id);
+        assert_eq!(diagnostic.stream_id, 61);
+        assert_eq!(diagnostic.from_state, "Sending");
+        assert_eq!(diagnostic.transition, "peer-error");
+        assert_eq!(diagnostic.frame_kind, Some(ERROR));
+        assert_eq!(diagnostic.error, ErrorCode::Timeout);
+        assert_eq!(diagnostic.byte_offset, 0);
+        assert_eq!(diagnostic.at_ms, 50_000);
+        assert_eq!(diagnostic.peer_detail.as_deref(), Some(detail));
     }
 
     #[test]

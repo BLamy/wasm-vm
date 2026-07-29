@@ -1334,6 +1334,19 @@ impl WasmLinux {
         ))
     }
 
+    /// E3-T21d: the persistent driver calls this right after `persistPending` so a durable IndexedDB
+    /// flush pause — during which the guest is frozen and cannot ACK or heartbeat an in-flight file
+    /// transfer — does not accrue against the WVFT idle-timeout budget. No-op when nothing is
+    /// transferring or off the slirp path.
+    #[wasm_bindgen(js_name = noteFileTransferPersist)]
+    pub fn note_file_transfer_persist(&self) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if let Some(transfers) = inner.file_transfers.as_mut() {
+            transfers.note_persist();
+        }
+        Ok(())
+    }
+
     #[wasm_bindgen(js_name = takeFileDownloadChunk)]
     pub fn take_file_download_chunk(&self, id: u32) -> Result<js_sys::Uint8Array, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;

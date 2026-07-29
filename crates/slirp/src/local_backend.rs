@@ -36,7 +36,8 @@ use crate::dns_service::{DnsRequest, DnsService, MAX_PENDING_DNS};
 use crate::dns_tcp::{TcpFrame, frame_message, next_message};
 use crate::file_transfer::{
     ErrorCode as FileTransferError, FileTransferService,
-    MAX_CONCURRENT_TRANSFERS as FILE_TRANSFER_SLOTS, TransferSource, TransferStore,
+    MAX_CONCURRENT_TRANSFERS as FILE_TRANSFER_SLOTS, TerminalDiagnostic, TransferSource,
+    TransferStore,
 };
 use crate::manager::{Action, FlowManager};
 use crate::nat::{FlowKey, Proto};
@@ -102,6 +103,15 @@ struct PendingTcpWrite {
     offset: usize,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct FileTransferSlotDiagnostic {
+    pub slot: usize,
+    pub connection_id: Option<crate::file_transfer::ConnectionId>,
+    pub socket_state: String,
+    pub reconnects: u64,
+    pub terminal: Option<TerminalDiagnostic>,
+}
+
 /// A [`NetBackend`] backed by the slirp local stack: the guest sees a real gateway (`10.0.2.2`) that
 /// answers ARP + ICMP and a DHCP server that hands out `10.0.2.15`. With a [`SyncConnector`] attached
 /// (`with_connector`), guest TCP and UDP flows to non-local IPs are NATed outbound synchronously.
@@ -119,6 +129,8 @@ pub struct SlirpLocalBackend {
     file_connections: [Option<crate::file_transfer::ConnectionId>; FILE_TRANSFER_SLOTS],
     file_tcp_tx: [VecDeque<PendingTcpWrite>; FILE_TRANSFER_SLOTS],
     file_close_after_write: [bool; FILE_TRANSFER_SLOTS],
+    file_last_terminal: [Option<TerminalDiagnostic>; FILE_TRANSFER_SLOTS],
+    file_reconnects: [u64; FILE_TRANSFER_SLOTS],
     egress: VecDeque<Vec<u8>>,
     clock: Box<dyn Fn() -> i64>,
     /// `None` → slice-1 behaviour (no outbound; classification is skipped entirely). `Some` → outbound
@@ -152,6 +164,8 @@ impl SlirpLocalBackend {
             file_connections: [None; FILE_TRANSFER_SLOTS],
             file_tcp_tx: std::array::from_fn(|_| VecDeque::new()),
             file_close_after_write: [false; FILE_TRANSFER_SLOTS],
+            file_last_terminal: std::array::from_fn(|_| None),
+            file_reconnects: [0; FILE_TRANSFER_SLOTS],
             egress: VecDeque::new(),
             clock,
             connector: None,
@@ -186,6 +200,17 @@ impl SlirpLocalBackend {
         self
     }
 
+    /// Credit active WVFT transfers with liveness at the current clock. The persistent boot calls
+    /// this after each durable IndexedDB flush so a host persist pause (during which the guest is
+    /// frozen and cannot ACK or heartbeat) does not count against the transfer idle budget.
+    pub fn note_file_transfer_persist(&mut self) {
+        if self.file_transfer.active_transfers() == 0 {
+            return;
+        }
+        let now = (self.clock)().max(0) as u64;
+        self.file_transfer.note_host_activity(now);
+    }
+
     /// Whether a connected guest agent slot has completed HELLO and can accept one host upload.
     /// This exposes no transport or destination: the caller can only enqueue a bounded
     /// [`TransferSource`] onto one of the two permanent VM-private WVFT connections.
@@ -201,6 +226,34 @@ impl SlirpLocalBackend {
             .get(slot)
             .and_then(|connection| *connection)
             .is_some_and(|id| self.file_transfer.connection_terminal(id))
+    }
+
+    pub fn file_transfer_diagnostic(&self, slot: usize) -> Option<FileTransferSlotDiagnostic> {
+        if slot >= FILE_TRANSFER_SLOTS {
+            return None;
+        }
+        let connection_id = self.file_connections[slot];
+        let terminal = connection_id
+            .and_then(|id| self.file_transfer.terminal_diagnostic(id).cloned())
+            .or_else(|| self.file_last_terminal[slot].clone());
+        Some(FileTransferSlotDiagnostic {
+            slot,
+            connection_id,
+            socket_state: format!("{:?}", self.stack.file_tcp_state(slot)),
+            reconnects: self.file_reconnects[slot],
+            terminal,
+        })
+    }
+
+    pub fn file_transfer_terminal_error(
+        &self,
+        slot: usize,
+        stream_id: u32,
+    ) -> Option<FileTransferError> {
+        self.file_transfer_diagnostic(slot)
+            .and_then(|diagnostic| diagnostic.terminal)
+            .filter(|terminal| terminal.stream_id == stream_id)
+            .map(|terminal| terminal.error)
     }
 
     /// Queue one host-selected source on an already-negotiated guest-agent slot.
@@ -577,7 +630,11 @@ impl SlirpLocalBackend {
                 && self.stack.file_tcp_relisten(slot)
             {
                 if let Some(id) = self.file_connections[slot].take() {
+                    if let Some(diagnostic) = self.file_transfer.terminal_diagnostic(id).cloned() {
+                        self.file_last_terminal[slot] = Some(diagnostic);
+                    }
                     self.file_transfer.disconnect(id);
+                    self.file_reconnects[slot] = self.file_reconnects[slot].saturating_add(1);
                 }
                 self.file_tcp_tx[slot].clear();
                 self.file_close_after_write[slot] = false;
@@ -601,6 +658,9 @@ impl SlirpLocalBackend {
                         .map(|bytes| PendingTcpWrite { bytes, offset: 0 }),
                 );
                 self.file_close_after_write[slot] |= output.close;
+                if let Some(diagnostic) = self.file_transfer.terminal_diagnostic(id).cloned() {
+                    self.file_last_terminal[slot] = Some(diagnostic);
+                }
             }
         }
 
@@ -612,6 +672,9 @@ impl SlirpLocalBackend {
             {
                 self.file_tcp_tx[slot].push_back(PendingTcpWrite { bytes, offset: 0 });
                 self.file_close_after_write[slot] |= self.file_transfer.connection_terminal(id);
+                if let Some(diagnostic) = self.file_transfer.terminal_diagnostic(id).cloned() {
+                    self.file_last_terminal[slot] = Some(diagnostic);
+                }
             }
         }
 
@@ -632,7 +695,11 @@ impl SlirpLocalBackend {
                 && self.stack.file_tcp_state(slot) == State::CloseWait
             {
                 if let Some(id) = self.file_connections[slot].take() {
+                    if let Some(diagnostic) = self.file_transfer.terminal_diagnostic(id).cloned() {
+                        self.file_last_terminal[slot] = Some(diagnostic);
+                    }
                     self.file_transfer.disconnect(id);
+                    self.file_reconnects[slot] = self.file_reconnects[slot].saturating_add(1);
                 }
                 self.stack.file_tcp_close(slot);
             }
@@ -1631,8 +1698,12 @@ mod tests {
             &[],
         ));
         while be.rx().is_some() {}
-        now.set(crate::file_transfer::IDLE_TIMEOUT_MS as i64 + 2);
-        be.poll();
+        while be.rx().is_some() {}
+        now.set(crate::file_transfer::ACTIVE_TRANSFER_IDLE_TIMEOUT_MS as i64 + 2);
+        // The long idle expires smoltcp's neighbour entry for the guest; re-announce it (as ongoing
+        // guest traffic would in the browser) so the best-effort guest-bound timeout frame ships.
+        // This servicing pass also fires the WVFT idle timeout and stages the ERROR/FIN.
+        be.tx(&guest_arp_request());
         let mut timeout = Vec::new();
         while let Some(frame) = be.rx() {
             let Ok(eth) = EthernetFrame::new_checked(&frame) else {
@@ -1650,6 +1721,22 @@ mod tests {
         }
         assert_eq!(timeout[5], 10);
         assert_eq!(u32::from_be_bytes(timeout[8..12].try_into().unwrap()), 52);
+        let diagnostic = be
+            .file_transfer_diagnostic(1)
+            .expect("second WVFT slot diagnostic");
+        assert_eq!(diagnostic.slot, 1);
+        assert_eq!(diagnostic.connection_id, Some(2));
+        assert!(!diagnostic.socket_state.is_empty());
+        let terminal = diagnostic.terminal.expect("timeout transition");
+        assert_eq!(terminal.connection_id, 2);
+        assert_eq!(terminal.stream_id, 52);
+        assert_eq!(terminal.from_state, "Receiving");
+        assert_eq!(terminal.transition, "idle-timeout");
+        assert_eq!(terminal.error, crate::file_transfer::ErrorCode::Timeout);
+        assert_eq!(
+            terminal.idle_ms,
+            crate::file_transfer::ACTIVE_TRANSFER_IDLE_TIMEOUT_MS + 1
+        );
 
         // Reset both guest connections so the permanent sockets reach Closed and are re-armed.
         for (port, seq, server_seq) in [

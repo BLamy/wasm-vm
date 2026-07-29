@@ -389,7 +389,11 @@ export async function startLinuxBoot(opts = {}) {
           const throttled = quotaReadOnly && Date.now() - lastPersistRetry < 3000;
           if (!throttled && (ps.writeWaiting || ps.flushWaiting || ps.pendingBytes >= maxDirtyBytes)) {
             if (quotaReadOnly) lastPersistRetry = Date.now();
-            await machine.persistPending();
+            // Credit an in-flight WVFT transfer only when the flush actually persisted guest writes:
+            // the guest was frozen doing real durability, so the pause must not be charged against
+            // its idle-timeout budget (E3-T21d). A no-op flush (hung guest, nothing dirty) leaves the
+            // idle timer running so a truly dead transfer is still reclaimed.
+            if ((await machine.persistPending()) > 0) machine.noteFileTransferPersist();
           }
         } catch (e) {
           if (await handlePersistError(e)) return;
@@ -436,14 +440,21 @@ export async function startLinuxBoot(opts = {}) {
         }
         if (stopped || paused) { tickScheduled = false; return; }
       }
-      // E3-T05: durably flush any overlay writes to IndexedDB (cheap no-op when nothing is pending;
-      // resolves on the IndexedDB transaction complete, so a flush before reload survives it).
+      // E3-T05/E3-T21d: durably flush overlay writes to IndexedDB, but only under durability pressure
+      // — a parked write/flush barrier, or the dirty-byte ceiling reached. Flushing unconditionally
+      // every tick froze the guest on a fresh IndexedDB transaction each quantum, throttling a large
+      // streaming write (a 100 MiB file transfer) to a crawl. Batching to the existing maxDirtyBytes
+      // loss-window bound keeps the guest running between flushes; an explicit persist before tab-kill
+      // still flushes everything, so reboot durability is unchanged.
       if (usePersist && !lockReadOnly) {
         try {
+          const ps = machine.persistStats();
           const throttled = quotaReadOnly && Date.now() - lastPersistRetry < 3000;
-          if (!throttled) {
+          if (!throttled && (ps.writeWaiting || ps.flushWaiting || ps.pendingBytes >= maxDirtyBytes)) {
             if (quotaReadOnly) lastPersistRetry = Date.now();
-            await machine.persistPending();
+            // Credit any in-flight WVFT transfer only when this flush persisted real guest writes
+            // (see the pre-slice flush above) (E3-T21d).
+            if ((await machine.persistPending()) > 0) machine.noteFileTransferPersist();
           }
         } catch (e) {
           if (await handlePersistError(e)) return;

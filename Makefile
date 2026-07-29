@@ -272,5 +272,5 @@ verify-E3-T19:
 .PHONY: verify-E3-T21d
 verify-E3-T21d:
 	$(MAKE) web-build
-	cd web && npx playwright test tests/e3-t21d-durability.spec.js --trace on
+	cd web && npx playwright test tests/e3-t21d-durability.spec.js --trace retain-on-failure
 	@echo "verify-E3-T21d (frozen guest round trip + reboot durability): OK"

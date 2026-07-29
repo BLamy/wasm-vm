@@ -5,7 +5,7 @@ use std::rc::Rc;
 use wasm_vm_core::dev::virtio::net::NetBackend;
 use wasm_vm_slirp::{
     CommitDisposition, FileTransferError, SlirpLocalBackend, TransferSink, TransferSource,
-    TransferStore, file_transfer::ConnectionId,
+    TransferStore, file_transfer::ConnectionId, local_backend::FileTransferSlotDiagnostic,
 };
 
 pub(crate) const MAX_BROWSER_TRANSFER_BUFFER: usize = 8 * 1024 * 1024;
@@ -257,6 +257,13 @@ impl BrowserFileTransfers {
         self.backend.borrow().file_upload_ready(slot)
     }
 
+    /// Credit active transfers with liveness after a durable persist pause (guest frozen while the
+    /// host flushed its writes to IndexedDB), so persist time is not charged against the WVFT idle
+    /// budget.
+    pub(crate) fn note_persist(&mut self) {
+        self.backend.borrow_mut().note_file_transfer_persist();
+    }
+
     pub(crate) fn set_download_ready(&mut self, ready: bool) {
         self.downloads.borrow_mut().accepting = ready;
     }
@@ -303,8 +310,15 @@ impl BrowserFileTransfers {
             .uploads
             .get(&stream)
             .ok_or(FileTransferError::BadState)?;
+        let terminal_error = self
+            .backend
+            .borrow()
+            .file_transfer_terminal_error(upload.slot, stream);
         let mut queue = upload.queue.borrow_mut();
-        if queue.cancelled || queue.finished || bytes.is_empty() && !finished {
+        if queue.cancelled {
+            return Err(terminal_error.unwrap_or(FileTransferError::Cancelled));
+        }
+        if queue.finished || bytes.is_empty() && !finished {
             return Err(FileTransferError::BadState);
         }
         if queue.buffered.saturating_add(bytes.len()) > MAX_BROWSER_TRANSFER_BUFFER {
@@ -409,7 +423,23 @@ impl BrowserFileTransfers {
             .iter()
             .map(|(stream, upload)| {
                 let queue = upload.queue.borrow();
-                let state = if queue.cancelled {
+                let diagnostic = backend.file_transfer_diagnostic(upload.slot);
+                let terminal_error = diagnostic
+                    .as_ref()
+                    .and_then(|diagnostic| diagnostic.terminal.as_ref())
+                    .filter(|terminal| terminal.stream_id == *stream)
+                    .map(|terminal| terminal.error);
+                let diagnostic = diagnostic.filter(|diagnostic| {
+                    diagnostic
+                        .terminal
+                        .as_ref()
+                        .is_none_or(|terminal| terminal.stream_id == *stream)
+                });
+                let state = if queue.cancelled
+                    && terminal_error.is_some_and(|error| error != FileTransferError::Cancelled)
+                {
+                    "error"
+                } else if queue.cancelled {
                     "partial"
                 } else if queue.sent == queue.total && backend.file_upload_ready(upload.slot) {
                     "complete"
@@ -418,9 +448,14 @@ impl BrowserFileTransfers {
                 } else {
                     "active"
                 };
+                let error = terminal_error
+                    .map_or_else(|| "null".to_owned(), |error| format!("\"{}\"", error.name()));
+                let diagnostic = diagnostic
+                    .as_ref()
+                    .map_or_else(|| "null".to_owned(), file_transfer_diagnostic_json);
                 format!(
-                    "{{\"id\":{stream},\"slot\":{},\"sent\":{},\"total\":{},\"buffered\":{},\"state\":\"{state}\"}}",
-                    upload.slot, queue.sent, queue.total, queue.buffered
+                    "{{\"id\":{stream},\"slot\":{},\"sent\":{},\"total\":{},\"buffered\":{},\"state\":\"{state}\",\"error\":{error},\"diagnostic\":{diagnostic}}}",
+                    upload.slot, queue.sent, queue.total, queue.buffered,
                 )
             })
             .collect::<Vec<_>>()
@@ -454,6 +489,45 @@ impl BrowserFileTransfers {
             "{{\"maxBuffered\":{MAX_BROWSER_TRANSFER_BUFFER},\"uploads\":[{uploads}],\"downloads\":[{downloads}]}}"
         )
     }
+}
+
+fn file_transfer_diagnostic_json(diagnostic: &FileTransferSlotDiagnostic) -> String {
+    let connection_id = diagnostic
+        .connection_id
+        .map_or_else(|| "null".to_owned(), |id| id.to_string());
+    let terminal = diagnostic.terminal.as_ref().map_or_else(
+        || "null".to_owned(),
+        |terminal| {
+            let frame_kind = terminal
+                .frame_kind
+                .map_or_else(|| "null".to_owned(), |kind| kind.to_string());
+            let active_since = terminal
+                .active_since_ms
+                .map_or_else(|| "null".to_owned(), |at| at.to_string());
+            let peer_detail = terminal.peer_detail.as_ref().map_or_else(
+                || "null".to_owned(),
+                |detail| format!("\"{}\"", escape_json(detail)),
+            );
+            format!(
+                "{{\"connectionId\":{},\"stream\":{},\"fromState\":\"{}\",\"transition\":\"{}\",\"frameKind\":{frame_kind},\"error\":\"{}\",\"byteOffset\":{},\"atMs\":{},\"lastActivityMs\":{},\"idleMs\":{},\"activeSinceMs\":{active_since},\"peerDetail\":{peer_detail}}}",
+                terminal.connection_id,
+                terminal.stream_id,
+                terminal.from_state,
+                terminal.transition,
+                terminal.error.name(),
+                terminal.byte_offset,
+                terminal.at_ms,
+                terminal.last_activity_ms,
+                terminal.idle_ms,
+            )
+        },
+    );
+    format!(
+        "{{\"slot\":{},\"connectionId\":{connection_id},\"socketState\":\"{}\",\"reconnects\":{},\"terminal\":{terminal}}}",
+        diagnostic.slot,
+        escape_json(&diagnostic.socket_state),
+        diagnostic.reconnects,
+    )
 }
 
 pub(crate) fn parse_sha256(hex: &str) -> Result<[u8; 32], FileTransferError> {
