@@ -39,7 +39,8 @@ pub mod section {
     pub const RTC: u32 = 8;
 }
 
-/// Is `tag` a section this build understands?
+/// Is `tag` a section number this format family reserves (the whole reserved universe, whether or
+/// not *this* build can restore it)? A tag outside this set is a garbage/foreign tag.
 pub fn is_known_section(tag: u32) -> bool {
     matches!(
         tag,
@@ -51,6 +52,19 @@ pub fn is_known_section(tag: u32) -> bool {
             | section::VIRTIO_BLK
             | section::VIRTIO_NET
             | section::RTC
+    )
+}
+
+/// Is `tag` a section this build actually has a restorer for? The bounded-component foundation
+/// (E3-T12a) ships RAM + CLINT + PLIC + UART + RTC; the CPU and virtio sections are reserved
+/// numbers whose visitors land in later integration passes (E3-T12b/c). A known-but-unsupported tag
+/// is refused loudly ([`SnapshotError::UnsupportedSection`]) rather than accepted and skipped. When a
+/// visitor lands, its tag moves here and the reserved list shrinks — no format-version bump needed
+/// because the reader already fails closed on it.
+pub fn is_supported_section(tag: u32) -> bool {
+    matches!(
+        tag,
+        section::RAM | section::CLINT | section::PLIC | section::UART | section::RTC
     )
 }
 
@@ -70,8 +84,14 @@ pub enum SnapshotError {
     /// The overlay has advanced since the snapshot (or is otherwise inconsistent) — refuse rather
     /// than resume a stale CPU/RAM state over a newer disk (the corruption case).
     OverlayGenerationMismatch { snapshot: u64, current: u64 },
-    /// A section tag this build does not understand — fail loudly.
+    /// A section tag this build does not understand at all — fail loudly.
     UnknownSection { tag: u32 },
+    /// A section tag this format family reserves but this build has no restorer for yet (e.g. the
+    /// CPU / virtio sections, whose visitors are later integration passes). Recognised, but refused
+    /// rather than accepted-and-silently-skipped — the same "must not be half-applied" rule as an
+    /// unknown tag, kept a *distinct* variant so a reserved-not-yet-implemented section is
+    /// observably different from a garbage tag.
+    UnsupportedSection { tag: u32 },
     /// A section's declared length exceeds the bytes remaining in the blob.
     SectionLengthOverflow { tag: u32 },
     /// The zero-elision payload decoded to a different length than expected, or is malformed.
@@ -267,6 +287,13 @@ impl<'a> Iterator for SectionReader<'a> {
         if !is_known_section(tag) {
             self.done = true;
             return Some(Err(SnapshotError::UnknownSection { tag }));
+        }
+        // A reserved tag with no restorer in this build is refused loudly, not accepted-and-skipped:
+        // silently dropping a section a restore loop can't apply is exactly the half-applied hazard
+        // the format forbids. The length is still bounds-checked above, so this stays panic-free.
+        if !is_supported_section(tag) {
+            self.done = true;
+            return Some(Err(SnapshotError::UnsupportedSection { tag }));
         }
         self.pos = end;
         Some(Ok(Section {

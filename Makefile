@@ -274,3 +274,21 @@ verify-E3-T21d:
 	$(MAKE) web-build
 	cd web && npx playwright test tests/e3-t21d-durability.spec.js --trace retain-on-failure
 	@echo "verify-E3-T21d (frozen guest round trip + reboot durability): OK"
+
+.PHONY: verify-E3-T12a
+verify-E3-T12a:
+	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
+	# and the component visitors live) so the target is self-contained: unrelated lint debt in sibling
+	# test binaries or other crates can neither mask nor block it.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib -- -D warnings
+	# Container format + coherence guards + TLV bounds + sparse codec allocation bound + the
+	# reserved-tag "unsupported" refusal (crates/core/src/resume_tests.rs).
+	cargo test -p wasm-vm-core --lib resume
+	# Bounded-component round trips + malformed/wrong-length rejection (CLINT/PLIC/UART/RTC) and the
+	# RAM 256 MiB zero-elision <15% + byte-identical restore (AC #3).
+	cargo test -p wasm-vm-core --lib -- clint plic uart rtc ram_round_trips \
+	  a_mostly_zero mostly_zero_256 restoring_a_wrong_size a_malformed_payload
+	# Same format + codec + reserved-tag refusal executed on real wasm32 (32-bit usize guard paths).
+	$(MAKE) _v-wasm
+	@echo "verify-E3-T12a (bounded snapshot foundation freeze): OK"
