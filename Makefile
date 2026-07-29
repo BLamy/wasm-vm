@@ -303,3 +303,13 @@ verify-E3-T24a:
 	$(MAKE) web-build
 	cd web && npx playwright test tests/e3-t24a-boot-progress.spec.js --reporter=list
 	@echo "verify-E3-T24a (typed honest boot-progress): OK"
+
+.PHONY: verify-E3.5-T05a
+verify-E3.5-T05a:
+	# The Docker tab's bundled-busybox Run boots the REAL guest and runs one real command, streaming
+	# real guest output: CONTAINED_42 computed in-guest, uname -m = riscv64, exit 0; a missing/corrupt
+	# artifact yields a typed error (no canned fallback); and a source grep forbids any surviving fake
+	# command interpreter / canned transcript.
+	$(MAKE) web-build
+	cd web && npx playwright test tests/docker-busybox.spec.js --reporter=list
+	@echo "verify-E3.5-T05a (visible Docker busybox — real guest command): OK"
