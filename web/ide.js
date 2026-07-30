@@ -17,12 +17,18 @@ const ROOT = "/root";
 
 // ── styles (injected; no dependency on index.html CSS) ───────────────────────
 const css = `
-#ide-root { display: flex; flex-direction: column; height: min(82vh, 940px); min-height: 520px;
-  border: 1px solid var(--line, #232a35); border-radius: 12px; overflow: hidden;
+/* The IDE fills the whole panel below the header (VSCode-style full-bleed, no card). */
+#panel-ide.active { display: flex; flex-direction: column; height: calc(100vh - 51px); min-height: 0; }
+#ide-root { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow: hidden;
   background: var(--panel, #0d1117); color: var(--text, #d6deeb);
   font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; }
 
 .ide-body { display: flex; flex: 1 1 auto; min-height: 0; }
+
+/* Resize handles — sidebar width (col-resize) and terminal height (row-resize). */
+.ide-vsplit { flex: 0 0 6px; cursor: col-resize; background: transparent; z-index: 5; border-left: 1px solid var(--line, #232a35); }
+.ide-hsplit { flex: 0 0 6px; cursor: row-resize; background: transparent; z-index: 5; border-top: 1px solid var(--line, #232a35); }
+.ide-vsplit:hover, .ide-vsplit.drag, .ide-hsplit:hover, .ide-hsplit.drag { background: rgba(83,212,255,.35); }
 
 /* Activity bar */
 .ide-activity { flex: 0 0 48px; display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -127,8 +133,8 @@ const css = `
 .ide-node .nm { overflow: hidden; text-overflow: ellipsis; }
 
 /* Terminal pane */
-.ide-term-pane { flex: 0 0 auto; height: 280px; display: flex; flex-direction: column;
-  border-top: 1px solid var(--line, #232a35); background: var(--panel, #0d1117); resize: vertical; overflow: hidden; }
+.ide-term-pane { flex: 0 0 auto; height: 280px; min-height: 80px; display: flex; flex-direction: column;
+  background: var(--panel, #0d1117); overflow: hidden; }
 .ide-term-bar { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; padding: 4px 12px;
   background: #0a0d13; border-bottom: 1px solid var(--line, #232a35); font-size: 11px; color: #8fa3bf; }
 .ide-term-bar .sp { flex: 1 1 auto; }
@@ -220,6 +226,7 @@ if (root) {
           <div class="ide-dk" id="ide-dk"></div>
         </div>
       </div>
+      <div class="ide-vsplit" id="ide-vsplit" title="Drag to resize the sidebar"></div>
       <div class="ide-editor-area">
         <div class="ide-tabstrip" id="ide-tabstrip"></div>
         <div class="ide-editor-toolbar">
@@ -236,6 +243,7 @@ if (root) {
         </div>
       </div>
     </div>
+    <div class="ide-hsplit" id="ide-hsplit" title="Drag to resize the terminal"></div>
     <div class="ide-term-pane" id="ide-term-pane">
       <div class="ide-term-bar">
         <span>TERMINAL — guest shell (ttyS0)</span>
@@ -305,6 +313,41 @@ if (root) {
   document.querySelector('.tab[data-tab="ide"]')?.addEventListener("click", autoFit);
   window.addEventListener("hashchange", () => { if (location.hash.slice(1) === "ide") autoFit(); });
   autoFit();
+
+  // ── Resizable panels: drag the sidebar width (vsplit) and the terminal height (hsplit) ─────────
+  function makeDrag(handle, target, axis) {
+    if (!handle || !target) return;
+    handle.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      const startPos = axis === "x" ? e.clientX : e.clientY;
+      const r = target.getBoundingClientRect();
+      const startSize = axis === "x" ? r.width : r.height;
+      handle.classList.add("drag");
+      document.body.style.userSelect = "none";
+      const move = (ev) => {
+        if (axis === "x") {
+          const w = Math.max(140, Math.min(640, startSize + (ev.clientX - startPos)));
+          target.style.flex = "0 0 " + w + "px";
+        } else {
+          // hsplit sits above the terminal; dragging UP grows the terminal.
+          const h = Math.max(80, Math.min(window.innerHeight - 180, startSize - (ev.clientY - startPos)));
+          target.style.height = h + "px";
+        }
+        autoFit();
+      };
+      const up = () => {
+        handle.classList.remove("drag");
+        document.body.style.userSelect = "";
+        document.removeEventListener("mousemove", move);
+        document.removeEventListener("mouseup", up);
+        autoFit();
+      };
+      document.addEventListener("mousemove", move);
+      document.addEventListener("mouseup", up);
+    });
+  }
+  makeDrag(q("#ide-vsplit"), q("#ide-side"), "x");
+  makeDrag(q("#ide-hsplit"), q("#ide-term-pane"), "y");
 
   // ── Status bar: guest + network ─────────────────────────────────────────────
   const sbDot = q("#ide-sb-dot");
