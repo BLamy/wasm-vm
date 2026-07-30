@@ -329,3 +329,21 @@ verify-E3.5-T01:
 	# The shared applier also compiles for wasm32 — it runs in the browser importer, not just native.
 	cargo build -p wasm-vm-storage --no-default-features --target wasm32-unknown-unknown
 	@echo "verify-E3.5-T01 (OCI importer: registry pull + digest-verified unpack): OK"
+
+# E3.5-T02/T03 are FULL native-boot acceptances (~13 min each on a quiet machine, longer under load):
+# they build the container rootfs (util-linux + the smoke/wvrun scripts), a release CLI, then boot
+# real Alpine and drive the ignored boot test. UPDATE_MANIFEST=1 accepts the reproducible-build
+# manifest as the current package set. Run these one at a time on an otherwise-idle machine.
+.PHONY: verify-E3.5-T02
+verify-E3.5-T02:
+	UPDATE_MANIFEST=1 bash tools/build-rootfs.sh
+	cargo build --release -p wasm-vm-cli
+	cargo test --release -p wasm-vm-cli --test boot_container_smoke -- --ignored --nocapture
+	@echo "verify-E3.5-T02 (container kernel audit — in-guest SMOKE_ALL_PASS): OK"
+
+.PHONY: verify-E3.5-T03
+verify-E3.5-T03:
+	UPDATE_MANIFEST=1 bash tools/build-rootfs.sh
+	cargo build --release -p wasm-vm-cli
+	cargo test --release -p wasm-vm-cli --test boot_wvrun -- --ignored --nocapture
+	@echo "verify-E3.5-T03 (tiny OCI runner — wvrun runs a bundle + isolates + propagates exit): OK"
