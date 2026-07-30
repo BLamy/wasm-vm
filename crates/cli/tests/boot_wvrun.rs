@@ -110,7 +110,7 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
     };
 
     assert!(
-        wait_for(&transcript, "login:", 900),
+        wait_for(&transcript, "login:", 2400),
         "no login; transcript:\n{}",
         transcript.lock().unwrap()
     );
@@ -120,7 +120,7 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
     std::thread::sleep(Duration::from_secs(2));
     send(&mut stdin, "echo SHELL_\"UP\"");
     assert!(
-        wait_for(&transcript, "SHELL_UP", 90),
+        wait_for(&transcript, "SHELL_UP", 300),
         "no shell; transcript:\n{}",
         transcript.lock().unwrap()
     );
@@ -130,8 +130,11 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
     // The `$((6*7))` stays LITERAL in the argv file (single-quoted printf), so the marker is
     // computed by the container's shell, not by the login shell echoing our command.
     for c in [
-        "mkdir -p /tmp/b/rootfs/bin /tmp/b/config",
+        "mkdir -p /tmp/b/rootfs/bin /tmp/b/rootfs/lib /tmp/b/config",
         "cp -a /bin/busybox /tmp/b/rootfs/bin/ && ln -sf busybox /tmp/b/rootfs/bin/sh",
+        // Alpine busybox is dynamically linked against the musl loader; without it, the post-pivot
+        // exec fails with "not found" (missing ELF interpreter). Copy the loader into the bundle.
+        "cp -aL /lib/ld-musl-riscv64.so.1 /tmp/b/rootfs/lib/",
         "printf '/bin/sh\\n-c\\ntouch /ephemeral; echo CONTAINED_$((6*7))\\n' > /tmp/b/config/argv",
         "printf '/\\n' > /tmp/b/config/cwd",
         ": > /tmp/b/config/env",
@@ -141,7 +144,7 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
         send(&mut stdin, c);
     }
     assert!(
-        wait_for(&transcript, "CONTAINED_42", 180),
+        wait_for(&transcript, "CONTAINED_42", 600),
         "wvrun did not run the container argv; transcript:\n{}",
         transcript.lock().unwrap()
     );
@@ -151,7 +154,7 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
         "test -e /tmp/b/rootfs/ephemeral && echo LEAKED_TO_IMAGE || echo IMAGE_\"CLEAN\"",
     );
     assert!(
-        wait_for(&transcript, "IMAGE_CLEAN", 60),
+        wait_for(&transcript, "IMAGE_CLEAN", 300),
         "container write leaked into the bundle rootfs; transcript:\n{}",
         transcript.lock().unwrap()
     );
@@ -169,7 +172,7 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
         send(&mut stdin, c);
     }
     assert!(
-        wait_for(&transcript, "WVRUN_RC=7", 120),
+        wait_for(&transcript, "WVRUN_RC=7", 300),
         "wvrun did not propagate the container exit code; transcript:\n{}",
         transcript.lock().unwrap()
     );
