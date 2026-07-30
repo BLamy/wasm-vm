@@ -890,7 +890,7 @@
       <h1>wasm-vm — RV64 in the browser</h1>
       <nav class="tabs" role="tablist" aria-label="Views">
         <button class="tab active" data-tab="roadmap" role="tab" aria-selected="true">Roadmap</button>
-        <button class="tab" data-tab="terminal" role="tab" aria-selected="false">Terminal</button>
+        <button class="tab" data-tab="ide" role="tab" aria-selected="false">IDE</button>
         <button class="tab" data-tab="docker" role="tab" aria-selected="false">Docker</button>
       </nav>
       <span id="version" class="version">initializing...</span>
@@ -977,7 +977,10 @@
     </div>
 
     <!-- ══ TERMINAL TAB ════════════════════════════════════════════════════ -->
-    <div id="panel-terminal" class="panel" role="tabpanel">
+    <div id="panel-ide" class="panel" role="tabpanel">
+      <!-- IDE layout (explorer + editor + embedded terminal) is assembled by ide.js, which
+           re-parents the existing .console section (with its #term xterm) into the bottom pane. -->
+      <div id="ide-root"><!-- built by ide.js --></div>
       <section class="console" aria-labelledby="console-title">
         <div class="console-head">
           <h2 id="console-title">Console</h2>
@@ -1093,6 +1096,7 @@
     <script src="./node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
     <script type="module" src="./tabs.js"></script>
     <script type="module" src="./docker.js"></script>
+    <script type="module" src="./ide.js"></script>
     <script type="module" src="./main.js"></script>
   </body>
 </html>

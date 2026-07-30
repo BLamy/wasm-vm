@@ -6,7 +6,7 @@
 // (see roadmap.js — Verification log / Acceptance criteria per issue). The in-browser riscv-tests
 // suite machinery still exists in main.js, bound to the hidden legacy #panel-tests DOM.
 
-const TABS = ["roadmap", "terminal", "docker"];
+const TABS = ["roadmap", "ide", "docker"];
 
 // Under Playwright (navigator.webdriver === true) reveal every panel so the existing element-level
 // specs — which click #boot-alpine, #suite-run, etc. by ID — stay actionable no matter which tab is
@@ -46,7 +46,7 @@ function show(tab) {
   for (const p of document.querySelectorAll(".panel")) {
     p.classList.toggle("active", p.id === `panel-${tab}`);
   }
-  if (tab === "terminal") {
+  if (tab === "ide") {
     // The terminal panel was hidden; let layout settle, then re-fit xterm via the Fit button
     // and focus it so keystrokes land immediately (xterm ignores input unless focused, and a
     // display:none panel can't hold focus — so it must be re-focused every time it's shown).
