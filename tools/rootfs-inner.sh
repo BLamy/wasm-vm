@@ -205,6 +205,18 @@ fi
 if [ -f /wvseccomp-riscv64 ]; then
   install -Dm755 /wvseccomp-riscv64 "$ROOT/usr/local/bin/wvseccomp"
 fi
+# E3.5-T05d: bake pre-built, digest-verified OCI bundles into /opt/containers/<name> so
+# `wvrun /opt/containers/<name>` runs a REAL container in the browser with ZERO network. Each bundle
+# is rootfs/ + config/ (from tools/build-container-bundle.sh); index.json is the Docker-tab catalog.
+if [ -d /container-bundles ]; then
+  install -d "$ROOT/opt/containers"
+  for d in /container-bundles/*/; do
+    name=$(basename "$d")
+    [ -d "${d}bundle/rootfs" ] || continue
+    cp -a "${d}bundle" "$ROOT/opt/containers/$name"
+  done
+  [ -f /container-bundles/index.json ] && install -Dm644 /container-bundles/index.json "$ROOT/opt/containers/index.json"
+fi
 
 find "$ROOT" -exec touch -h -d "@$SOURCE_DATE_EPOCH" {} +
 rm -f /out/alpine-rootfs.ext4

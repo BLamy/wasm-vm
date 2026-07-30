@@ -60,6 +60,7 @@ docker run --rm \
   -v "$PWD/tools/guest/wvrun.sh:/wvrun.sh:ro" \
   -v "$AGENT:/wvft-agent-riscv64:ro" \
   -v "$WVSECCOMP:/wvseccomp-riscv64:ro" \
+  -v "$PWD/releases/container-bundles:/container-bundles:ro" \
   -v "$PWD/tools/rootfs/file-transfer.conf:/file-transfer.conf:ro" \
   -v "$PWD/tools/rootfs/wasm-vm-file-agent.initd:/wasm-vm-file-agent.initd:ro" \
   -v "$PWD/tools/rootfs/vm-download:/vm-download:ro" \

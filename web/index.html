@@ -719,7 +719,170 @@
         .docker-app { grid-template-columns: 1fr; }
         .network-config { grid-template-columns: 1fr 1fr; }
         .dk-side { flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--line); }
+        .rm-detail { width: 100%; }
       }
+
+      /* ── Linear-style roadmap (Roadmap tab) ──────────────────────────────── */
+      #panel-roadmap { position: relative; }
+      .rm { padding: 0 0 40px; }
+      .rm-top {
+        display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 560px);
+        gap: 18px; align-items: stretch;
+        padding: 16px 20px; border-bottom: 1px solid var(--line);
+      }
+      .rm-head h2 { font-size: 20px; text-transform: none; letter-spacing: -0.2px; }
+      .rm-headline { margin-top: 6px; color: var(--muted); font: 12.5px ui-monospace, monospace; }
+      .rm-overall-card {
+        border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2);
+        padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;
+      }
+      .rm-overall-head { display: flex; justify-content: space-between; align-items: baseline; }
+      .rm-overall-title { font-size: 12px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.4px; }
+      .rm-overall-num { font: 650 13px ui-monospace, monospace; color: var(--green); }
+      .rm-progress { height: 8px; border-radius: 5px; background: #1c2129; overflow: hidden; }
+      .rm-progress-fill { display: block; height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan)); }
+      .rm-burndown { width: 100%; height: auto; display: block; }
+      .rm-overall-foot { color: var(--muted); font-size: 11px; }
+
+      .rm-toolbar {
+        display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+        padding: 12px 20px; border-bottom: 1px solid var(--line); background: #0d1015;
+        position: sticky; top: 0; z-index: 5;
+      }
+      .rm-search {
+        flex: 1; min-width: 200px; min-height: 34px; padding: 6px 12px;
+        border: 1px solid var(--line); border-radius: 8px; background: #151a22; color: var(--text); font-size: 13px;
+      }
+      .rm-select { min-height: 34px; }
+      .rm-count { margin-left: auto; color: var(--muted); font: 12px ui-monospace, monospace; }
+
+      .rm-lanes { display: flex; flex-direction: column; }
+      .rm-lane { padding: 14px 20px; border-bottom: 1px solid var(--line); }
+      .rm-lane.done { background: #0b0f0c; }
+      .rm-lane-head {
+        display: flex; align-items: center; gap: 10px; margin-bottom: 10px; width: 100%;
+        background: none; border: 0; padding: 4px 2px; cursor: pointer; color: var(--text);
+        border-radius: 6px; text-align: left;
+      }
+      .rm-lane-head:hover { background: var(--panel-2); }
+      .rm-lane-head:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+      .rm-caret { color: var(--muted); font-size: 10px; width: 12px; }
+      .rm-epic-tag {
+        font: 650 12px ui-monospace, monospace; color: #0b0e14; background: var(--muted);
+        border-radius: 5px; padding: 1px 7px;
+      }
+      .rm-lane.done .rm-epic-tag { background: var(--green); }
+      .rm-epic-name { font-size: 14px; font-weight: 650; }
+      .rm-epic-done { font: 11px ui-monospace, monospace; color: var(--green); }
+      .rm-epic-count { margin-left: auto; color: var(--muted); font: 11px ui-monospace, monospace; }
+      .rm-lane.collapsed .rm-stack { margin-bottom: 0; }
+      .rm-stack { display: flex; height: 6px; border-radius: 4px; overflow: hidden; background: #1c2129; margin-bottom: 12px; }
+      .rm-stack-seg { display: block; height: 100%; }
+
+      /* Kanban board: horizontally scrolling columns, each column vertically scrollable. */
+      .rm-board {
+        display: flex; gap: 12px; align-items: flex-start;
+        overflow-x: auto; padding-bottom: 6px;
+      }
+      .rm-col {
+        flex: 0 0 264px; width: 264px;
+        background: #0d1117; border: 1px solid var(--line); border-radius: 10px;
+        display: flex; flex-direction: column; max-height: 560px;
+      }
+      .rm-col-head {
+        display: flex; align-items: center; gap: 8px; padding: 9px 11px;
+        border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #0d1117;
+        border-radius: 10px 10px 0 0;
+      }
+      .rm-col-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 650; }
+      .rm-col-count {
+        margin-left: auto; font: 11px ui-monospace, monospace; color: var(--muted);
+        background: #1c2129; border-radius: 10px; padding: 0 8px; min-width: 22px; text-align: center;
+      }
+      .rm-col-verified .rm-col-label { color: var(--green); }
+      .rm-col-blocked .rm-col-label { color: var(--red); }
+      .rm-col-debt .rm-col-label { color: #b17ce0; }
+      .rm-col-in-progress .rm-col-label { color: var(--amber); }
+      .rm-col-body {
+        display: flex; flex-direction: column; gap: 8px;
+        padding: 9px; overflow-y: auto; min-height: 0;
+      }
+      .rm-card {
+        text-align: left; border: 1px solid var(--line); border-left: 3px solid var(--muted);
+        border-radius: 9px; background: var(--panel-2); padding: 11px 12px; cursor: pointer;
+        display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto; color: var(--text);
+        transition: border-color 120ms, transform 80ms;
+      }
+      .rm-card:hover { border-color: #3a4453; transform: translateY(-1px); }
+      .rm-card:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+      .rm-card.st-verified { border-left-color: var(--green); }
+      .rm-card.st-implemented { border-left-color: #4a9eff; }
+      .rm-card.st-progress { border-left-color: var(--amber); }
+      .rm-card.st-pending { border-left-color: #6b7684; }
+      .rm-card.st-blocked { border-left-color: var(--red); }
+      .rm-card.st-debt { border-left-color: #b17ce0; }
+      .rm-card.st-cancelled { border-left-color: #5a6470; opacity: 0.6; }
+      .rm-card.st-cancelled .rm-card-title { text-decoration: line-through; }
+      .rm-card-top { display: flex; align-items: center; gap: 8px; }
+      .rm-card-id { font: 650 11px ui-monospace, monospace; color: var(--muted); }
+      .rm-capstone { font: 10px ui-monospace, monospace; color: var(--amber); }
+      .rm-badge {
+        margin-left: auto; font: 10.5px ui-monospace, monospace; text-transform: uppercase;
+        border-radius: 5px; padding: 1px 7px; border: 1px solid currentColor; white-space: nowrap;
+      }
+      .rm-badge.st-verified { color: var(--green); }
+      .rm-badge.st-implemented { color: #4a9eff; }
+      .rm-badge.st-progress { color: var(--amber); }
+      .rm-badge.st-pending { color: #8a94a2; }
+      .rm-badge.st-blocked { color: var(--red); }
+      .rm-badge.st-debt { color: #b17ce0; }
+      .rm-badge.st-cancelled { color: #6b7684; }
+      .rm-card-title { font-size: 12.5px; line-height: 1.4; color: #dbe5ef; }
+      .rm-card-foot { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+      .rm-chip {
+        font: 10.5px ui-monospace, monospace; color: var(--muted);
+        border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px;
+      }
+      .rm-empty { padding: 40px 20px; color: var(--muted); text-align: center; }
+
+      /* Ticket detail — slide-in evidence panel */
+      .rm-detail {
+        position: fixed; top: 51px; right: 0; bottom: 0; width: min(560px, 94vw); z-index: 30;
+        background: var(--panel); border-left: 1px solid var(--line);
+        box-shadow: -18px 0 48px rgba(0,0,0,.45); overflow: auto;
+      }
+      .rm-detail[hidden] { display: none; }
+      .rm-detail-bar {
+        position: sticky; top: 0; display: flex; align-items: center; gap: 10px;
+        padding: 12px 18px; border-bottom: 1px solid var(--line); background: #0d1015;
+      }
+      .rm-detail-id { font: 650 13px ui-monospace, monospace; color: var(--text); }
+      .rm-detail-close {
+        margin-left: auto; border: 1px solid var(--line); border-radius: 6px; background: #1b222d;
+        color: var(--text); font-size: 12px; padding: 5px 11px; cursor: pointer;
+      }
+      .rm-detail-body { padding: 16px 18px 40px; }
+      .rm-detail-title { margin: 0 0 12px; font-size: 16px; line-height: 1.4; }
+      .rm-detail-kv { display: grid; grid-template-columns: 120px minmax(0,1fr); gap: 6px 14px; margin-bottom: 14px; }
+      .rm-detail-kv dt { color: var(--muted); font-size: 12px; }
+      .rm-detail-kv dd { margin: 0; font-size: 12.5px; color: #dbe5ef; overflow-wrap: anywhere; }
+      .rm-detail-h {
+        margin: 18px 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+        color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 5px;
+      }
+      .rm-detail-text { margin: 0; font-size: 12.5px; line-height: 1.55; color: #c9d1d9; white-space: pre-wrap; }
+      .rm-ac { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+      .rm-ac-item { display: grid; grid-template-columns: 18px minmax(0,1fr); gap: 8px; font-size: 12.5px; line-height: 1.45; color: #c9d1d9; }
+      .rm-ac-box { color: var(--muted); font: 12px ui-monospace, monospace; }
+      .rm-ac-item.done .rm-ac-box { color: var(--green); }
+      .rm-ac-item.done .rm-ac-text { color: #9aa6b2; }
+      .rm-log {
+        margin: 0; padding: 12px; border-radius: 8px; background: #0b0e14; border: 1px solid var(--line);
+        font: 11.5px ui-monospace, monospace; line-height: 1.5; color: #cdd6f4;
+        white-space: pre-wrap; overflow-wrap: anywhere; max-height: 420px; overflow: auto;
+      }
+      .rm-detail-src { margin-top: 16px; color: var(--muted); font-size: 11px; }
+      .rm-detail-src code { font: 11px ui-monospace, monospace; background: #0b141c; border: 1px solid #223; border-radius: 4px; padding: 0 4px; }
     </style>
   </head>
   <body>
@@ -727,34 +890,43 @@
       <h1>wasm-vm — RV64 in the browser</h1>
       <nav class="tabs" role="tablist" aria-label="Views">
         <button class="tab active" data-tab="roadmap" role="tab" aria-selected="true">Roadmap</button>
-        <button class="tab" data-tab="tests" role="tab" aria-selected="false">Tests</button>
         <button class="tab" data-tab="terminal" role="tab" aria-selected="false">Terminal</button>
         <button class="tab" data-tab="docker" role="tab" aria-selected="false">Docker</button>
       </nav>
       <span id="version" class="version">initializing...</span>
     </header>
 
-    <!-- ══ ROADMAP TAB (default) ═══════════════════════════════════════════ -->
+    <!-- ══ ROADMAP TAB (default) — Linear-style, reads ./tasks.json ═════════ -->
     <div id="panel-roadmap" class="panel active" role="tabpanel">
-      <section class="roadmap" aria-labelledby="roadmap-title">
-        <div class="roadmap-head">
-          <div>
-            <h2 id="roadmap-title">Roadmap progress</h2>
-            <div id="roadmap-sub" class="suite-count">where we are across the 9-epic roadmap</div>
+      <section class="rm" aria-labelledby="rm-title">
+        <div class="rm-top">
+          <div class="rm-head">
+            <h2 id="rm-title">Roadmap</h2>
+            <div id="rm-headline" class="rm-headline">loading tasks…</div>
           </div>
-          <div class="roadmap-legend" aria-hidden="true">
-            <span class="legend-item"><span class="cap-pip verified"></span>verified</span>
-            <span class="legend-item"><span class="cap-pip live"></span>live-proven this run</span>
-            <span class="legend-item"><span class="cap-pip partial"></span>partial</span>
-            <span class="legend-item"><span class="cap-pip pending"></span>pending</span>
-          </div>
+          <div id="rm-overall" class="rm-overall"></div>
         </div>
-        <div id="roadmap-grid" class="roadmap-grid"></div>
+        <div class="rm-toolbar">
+          <input id="rm-search" type="search" class="rm-search" placeholder="Search issues…  (press /)" aria-label="Search issues" />
+          <select id="rm-epic" class="rm-select" aria-label="Filter by epic"><option value="">All epics</option></select>
+          <select id="rm-status" class="rm-select" aria-label="Filter by status"><option value="">All statuses</option></select>
+          <span id="rm-count" class="rm-count"></span>
+        </div>
+        <div id="rm-lanes" class="rm-lanes"></div>
       </section>
+      <aside id="rm-detail" class="rm-detail" role="dialog" aria-label="Issue detail" hidden></aside>
     </div>
 
-    <!-- ══ TESTS TAB ═══════════════════════════════════════════════════════ -->
-    <div id="panel-tests" class="panel" role="tabpanel">
+    <!-- Legacy live-suite capability panel: the standalone Tests tab was removed, but main.js
+         (an off-limits file) still binds these element IDs (#roadmap-grid/#roadmap-sub, the
+         #suite-* / #metric-* / #hover-* nodes) to drive the in-browser riscv-tests suite whose
+         results feed ticket evidence. Kept in the DOM, hidden, and unreachable from the tab bar. -->
+    <div id="legacy-roadmap" hidden aria-hidden="true">
+      <div id="roadmap-sub"></div>
+      <div id="roadmap-grid"></div>
+    </div>
+
+    <div id="panel-tests" class="panel" role="tabpanel" hidden aria-hidden="true">
       <div class="tests-layout">
         <section class="suite" aria-labelledby="suite-title">
           <div class="suite-head">

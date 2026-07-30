@@ -25,6 +25,17 @@ mkdir -p "$DIST/releases/kernel/6.6.63" "$DIST/releases/initramfs"
 cp releases/kernel/6.6.63/Image "$DIST/releases/kernel/6.6.63/Image"
 cp releases/initramfs/initramfs.cpio.gz "$DIST/releases/initramfs/initramfs.cpio.gz"
 
+# The ALPINE guest (chunked, lazy-fetched) — ships wvrun + baked /opt/containers bundles so the Docker
+# tab runs real containers. The browser fetches only touched chunks; here we deploy the whole chunk set.
+if [ -d releases/chunked-alpine ] && [ -f web/artifacts-alpine.json ]; then
+  echo "[deploy] staging Alpine chunked image ($(du -sh releases/chunked-alpine | cut -f1)) …"
+  cp web/artifacts-alpine.json "$DIST/artifacts-alpine.json"
+  rm -rf "$DIST/releases/chunked-alpine"
+  cp -R releases/chunked-alpine "$DIST/releases/chunked-alpine"
+else
+  echo "[deploy] NOTE: releases/chunked-alpine or web/artifacts-alpine.json missing — Alpine/Docker won't boot." >&2
+fi
+
 # Fail fast on any file over Cloudflare Pages' 25 MiB per-file limit.
 big=$(find "$DIST" -type f -size +25M -print)
 if [ -n "$big" ]; then

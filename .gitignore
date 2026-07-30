@@ -69,3 +69,7 @@ web/artifacts-alpine.json
 releases/chunked-alpine/
 
 releases/wvseccomp-riscv64
+
+# Container bundles baked into the Alpine rootfs (rebuild: tools/build-container-bundle.sh <img>).
+# 82M of pulled/unpacked images — rebuildable, like releases/rootfs; not committed.
+releases/container-bundles/

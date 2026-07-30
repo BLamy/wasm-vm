@@ -22,10 +22,13 @@
 // in-browser image yet, so it can't run headlessly here — the run pane says so plainly.
 // Un-bundled images are honestly marked as pullable-natively, not fabricated as runnable.
 
-// The one real command typed into the guest shell once it is up. The marker is arithmetic the guest
-// evaluates ($((6*7))), never a literal — that is what makes a host-side fake fail the acceptance.
-// WVM_EXIT_$? surfaces the real exit status of the command from the guest shell (0 == success).
-const RUN_CMD = "sh -lc 'echo CONTAINED_$((6*7)); uname -m; id'; echo WVM_EXIT_$?\r";
+// Build the command typed into the ALPINE guest to run an image as a REAL OCI container: write the
+// image's demo into the bundle's config/argv (single quotes keep $((…))/$(…) LITERAL to Alpine, so they
+// are evaluated INSIDE the container — a host-side fake can't satisfy them), then `wvrun <bundle>`
+// (unshare + overlay + pivot_root + seccomp). WVM_EXIT_$? surfaces the container's real exit status.
+function wvrunCmd(img) {
+  return `printf '/bin/sh\\n-c\\n${img.demo}\\n' > ${img.bundlePath}/config/argv; wvrun ${img.bundlePath}; echo WVM_EXIT_$?\r`;
+}
 
 // ── Image catalog ────────────────────────────────────────────────────────────
 // `bundled` images carry REAL metadata from `tools/build-container-bundle.sh <repo> riscv64` (verified:
@@ -36,24 +39,48 @@ const IMAGES = [
     repo: "busybox",
     tag: "latest",
     bundled: true,
-    // We can boot the REAL busybox userland in the browser (the initramfs boot in main.js), so
-    // busybox gets a genuine one-click Run everywhere. Other images have no in-browser userland yet.
     runnableInBrowser: true,
-    // Real values from `tools/build-container-bundle.sh busybox riscv64` (see the manifest.json it emits).
     manifestDigest: "sha256:24a317d293b839dcf9033f80b6a8fb8407244dec45a2929925bc757fa33d1e71",
     rootfsSize: "3.2 MB",
     rootfsEntries: 448,
     entry: "sh",
     entryElf: "ELF 64-bit LSB pie, UCB RISC-V RVC double-float, dynamically linked",
     bundlePath: "/opt/containers/busybox",
-    desc: "BusyBox — the first image proven end-to-end (sideload → digest-verify → unpack → runnable riscv64 bundle).",
+    // The demo command runs INSIDE the container via wvrun. Markers are computed by the container's own
+    // shell (arithmetic, `hostname`, `/proc/1/comm`), so no host-side literal can satisfy them — and
+    // they prove the pid/uts/mount isolation of a real OCI container.
+    demo: "echo CONTAINED_$((6*7)); echo pid1=$(cat /proc/1/comm); echo host=$(hostname); echo root:; ls /",
+    desc: "BusyBox — a real Docker Hub image, digest-verified, run as an isolated OCI container by wvrun.",
   },
-  { repo: "postgres", tag: "latest", bundled: false, desc: "PostgreSQL — the capstone target." },
-  { repo: "nginx", tag: "latest", bundled: false, desc: "nginx web server." },
-  { repo: "redis", tag: "latest", bundled: false, desc: "Redis in-memory store." },
-  { repo: "node", tag: "latest", bundled: false, desc: "Node.js runtime." },
-  { repo: "python", tag: "latest", bundled: false, desc: "Python interpreter." },
-  { repo: "alpine", tag: "latest", bundled: false, desc: "Alpine — the rootfs the Terminal tab boots." },
+  {
+    repo: "alpine",
+    tag: "latest",
+    bundled: true,
+    runnableInBrowser: true,
+    rootfsSize: "7.0 MB",
+    rootfsEntries: 515,
+    entry: "/bin/sh",
+    bundlePath: "/opt/containers/alpine",
+    demo: "echo CONTAINED_$((6*7)); echo alpine $(cat /etc/alpine-release 2>/dev/null); echo pid1=$(cat /proc/1/comm); echo host=$(hostname)",
+    desc: "Alpine Linux — a real Docker Hub image run as an isolated OCI container (its own /etc, pid ns, hostname).",
+  },
+  {
+    repo: "memcached",
+    tag: "latest",
+    bundled: true,
+    runnableInBrowser: true,
+    rootfsSize: "72 MB",
+    rootfsEntries: 3323,
+    entry: "docker-entrypoint.sh memcached",
+    bundlePath: "/opt/containers/memcached",
+    // memcached is a server (runs forever); prove the real riscv64 memcached binary executes by asking
+    // its version, then confirm the container init/hostname isolation.
+    demo: "memcached -V; echo pid1=$(cat /proc/1/comm); echo host=$(hostname)",
+    desc: "memcached — a real server image; wvrun runs the actual riscv64 memcached binary in an isolated container.",
+  },
+  { repo: "postgres", tag: "latest", bundled: false, riscv64: true, desc: "PostgreSQL — riscv64 image exists (254 MB); too large to bundle, pull natively." },
+  { repo: "nginx", tag: "latest", bundled: false, riscv64: true, desc: "nginx — riscv64 image exists; large, pull natively." },
+  { repo: "redis", tag: "latest", bundled: false, riscv64: true, desc: "Redis — riscv64 image exists (172 MB); large, pull natively." },
 ];
 
 // Populate busybox's displayed metadata from the COMMITTED artifact so the numbers are provable, not
@@ -129,33 +156,23 @@ function showRunError(errEl, msg) {
   errEl.style.display = "block";
 }
 
-// Type the one real command into the guest once it is at a shell prompt. Idempotent per session.
+// Type the `wvrun <bundle>` command into the ALPINE guest once it is at a shell prompt. Idempotent.
 function injectCommand() {
   if (!session || session.injected) return;
   session.injected = true;
   clearTimeout(session.fallback);
   // CRITICAL: injectCommand runs from inside onConsoleChunk, which the guest calls SYNCHRONOUSLY
-  // while emitting output (machine.runChunk → onOutput → emitConsole → onConsoleChunk). Calling
-  // sendInput here would re-enter the wasm machine mid-runChunk, which the machine forbids and
-  // rejects ("re-entrant call into WasmMachine") — the command was silently dropped and the guest
-  // never ran it. Defer to a fresh macrotask so sendInput lands AFTER runChunk has returned.
-  const cmd = new TextEncoder().encode(RUN_CMD);
+  // while emitting output. Calling sendInput here would re-enter the wasm machine mid-runChunk (the
+  // machine rejects "re-entrant call into WasmMachine"). Defer to a fresh macrotask.
+  const cmd = new TextEncoder().encode(wvrunCmd(session.img));
   setTimeout(() => window.wvmDemo.sendInput(cmd), 0);
 }
 
-// Decide when the guest is ready for the command: after the busybox init banner AND a shell prompt.
+// Decide when the Alpine guest is ready for the command: it reaches a root auto-login shell prompt
+// like `wasm-vm:~# ` (the interpreted boot takes minutes; the prompt is the ready signal).
 function maybeInject() {
   if (!session || session.injected) return;
-  const banner = session.buf.indexOf("busybox userland up");
-  if (banner === -1) return;
-  if (!session.bannerSeen) {
-    session.bannerSeen = true;
-    // Safety net: the banner proves the guest is up; if the prompt marker never matches, still type
-    // the command into the confirmed-live guest after a grace period (its real output is the proof).
-    session.fallback = setTimeout(injectCommand, 12_000);
-  }
-  const after = session.buf.slice(banner);
-  if (/# |~ #/.test(after)) injectCommand();
+  if (/[\w][\w.-]*:~#\s*$/m.test(session.buf) || /\/ #\s*$/m.test(session.buf)) injectCommand();
 }
 
 // The console tap: exactly the bytes main.js writes to xterm. Append to the pane + drive injection.
@@ -175,7 +192,7 @@ function onConsoleChunk(u8) {
 // real command. `reuse` re-attaches the pane to an already-live session instead of rebooting.
 async function runFlow(img, paneEl, errEl, artEl) {
   const api = window.wvmDemo;
-  if (!api || !api.runBusybox) {
+  if (!api || !api.bootAlpine) {
     showRunError(errEl, "The boot engine is still loading — wait a moment and click Run again.");
     return;
   }
@@ -186,23 +203,25 @@ async function runFlow(img, paneEl, errEl, artEl) {
     session.errEl = errEl;
     paneEl.textContent = session.buf;
     paneEl.scrollTop = paneEl.scrollHeight;
-    showArtifact(artEl, img).catch(() => {});
+    renderContainerInfo(artEl, img);
     return;
   }
 
-  // Pre-flight: the bundled artifact must be present + well-formed, or Run fails with a typed error
-  // and boots NOTHING. (A corrupt-BYTES artifact is caught deeper, by the loader's integrity check.)
-  let initrd;
-  try {
-    initrd = await loadBootArtifact();
-  } catch (e) {
-    showRunError(errEl, `Bundled busybox artifact unavailable — ${e.message || e}. Not falling back to any canned output.`);
+  // Pre-flight: the Alpine guest (which ships wvrun + the baked bundles) must be deployed to this host,
+  // or wvrun cannot run here — fail with a typed error and boot NOTHING (no busybox-initramfs fallback).
+  if (!api.alpineArtifactsPresent || !api.alpineArtifactsPresent()) {
+    showRunError(
+      errEl,
+      "The Alpine container image (wvrun + baked OCI bundles) isn't deployed to this host yet, so real " +
+        "containers can't run here. Deploy the Alpine artifacts (artifacts-alpine.json + releases/chunked-alpine/), " +
+        "or clone the repo and run: bash tools/serve-dev.sh",
+    );
     return;
   }
-  renderArtifact(artEl, img, initrd);
+  renderContainerInfo(artEl, img);
 
   session = {
-    repo: img.repo, buf: "", injected: false, bannerSeen: false, starting: true,
+    repo: img.repo, img, buf: "", injected: false, starting: true,
     decoder: new TextDecoder(), paneEl, errEl, unsub: null, fallback: null,
   };
   session.unsub = api.onConsole(onConsoleChunk);
@@ -210,40 +229,34 @@ async function runFlow(img, paneEl, errEl, artEl) {
 
   let res;
   try {
-    res = await api.runBusybox();
+    res = await api.bootAlpine();
   } catch (e) {
     res = { ok: false, error: e.message || String(e) };
   }
   session.starting = false;
   if (!res || !res.ok) {
-    showRunError(errEl, `Boot failed — ${res?.error || "unknown error"}. Corrupt/missing artifacts are refused; there is no mock-shell fallback.`);
+    showRunError(errEl, `Alpine boot failed — ${res?.error || "unknown error"}. Missing/corrupt artifacts are refused; there is no mock-shell fallback.`);
     if (session.unsub) session.unsub();
     return;
   }
 }
 
-// Render the artifact rows given the already-fetched initramfs metadata (path + real sha256), plus
-// the OCI bundle digest (clearly a different thing from the bootable in-browser artifact).
-function renderArtifact(artEl, img, initrd) {
+// Show what actually runs: the baked OCI bundle (real Docker Hub image, digest-verified) and the
+// `wvrun` command that runs it as an isolated container in the Alpine guest.
+function renderContainerInfo(artEl, img) {
+  if (!artEl) return;
   artEl.replaceChildren();
   const dl = elc("dl", "dk-kv");
   const rows = [
-    ["Boot artifact (initramfs)", initrd.url],
-    ["Artifact sha256", initrd.sha256],
+    ["Image", `${img.repo}:${img.tag} (riscv64)`],
+    ["OCI bundle (in guest)", img.bundlePath],
+    ["Unpacked rootfs", `${img.rootfsSize || "?"}${img.rootfsEntries ? ` · ${img.rootfsEntries} entries` : ""}`],
+    ["Entrypoint", img.entry || "sh"],
   ];
-  if (typeof initrd.size === "number") rows.push(["Artifact size", `${(initrd.size / 1024).toFixed(0)} KiB`]);
-  rows.push(
-    ["OCI bundle digest", img.manifestDigest],
-    ["OCI bundle path (in guest)", img.bundlePath],
-  );
+  if (img.manifestDigest) rows.push(["Manifest digest", img.manifestDigest]);
+  rows.push(["Runs as", `wvrun ${img.bundlePath}  (unshare + overlay + pivot_root + seccomp)`]);
   for (const [k, v] of rows) dl.append(elc("dt", null, k), elc("dd", null, v));
   artEl.append(dl);
-}
-
-// Best-effort artifact display for the re-attach path (errors ignored — the guest is already live).
-async function showArtifact(artEl, img) {
-  const initrd = await loadBootArtifact();
-  renderArtifact(artEl, img, initrd);
 }
 
 const root = document.getElementById("docker-app");
@@ -390,9 +403,12 @@ function renderRun(main) {
 
   const cmdNote = elc("div", "dk-note");
   cmdNote.append(
-    document.createTextNode("Command typed into the guest: "),
-    elc("code", null, RUN_CMD.trim()),
-    document.createTextNode(" — the marker is arithmetic the guest evaluates, so a host-side literal echo cannot satisfy it."),
+    document.createTextNode("Runs in the Alpine guest: "),
+    elc("code", null, `wvrun ${img.bundlePath}`),
+    document.createTextNode(
+      " — a REAL OCI container (unshare + overlay + pivot_root + seccomp). The marker below is computed " +
+        "INSIDE the container by its own shell, so a host-side literal can't satisfy it.",
+    ),
   );
   main.append(cmdNote);
 

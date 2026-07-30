@@ -400,6 +400,8 @@ function emitConsole(u8) {
   }
 }
 let lastBootError = null;
+// Whether the Alpine (container-capable) artifacts are deployed — set by the load-time probe below.
+let alpineAvailable = false;
 
 window.wvmDemo = {
   isGuestUp: () => !!linuxCtl,
@@ -426,6 +428,34 @@ window.wvmDemo = {
     await runLinuxBoot({ manifestUrl: "./artifacts.json" }, "booting the real busybox userland on RISC-V Linux (in wasm)…");
     return linuxCtl ? { ok: true } : { ok: false, error: lastBootError || "boot failed" };
   },
+  // Boot the ALPINE guest (chunked, lazy-fetch) — the one that ships `wvrun` + baked OCI bundles at
+  // /opt/containers, so the Docker tab can run REAL containers. Resolves { ok:true } once running,
+  // { ok:true, already:true } if already up, or { ok:false, error } if the boot refused/failed. Needs
+  // the Alpine artifacts to be deployed (artifacts-alpine.json + releases/chunked-alpine/).
+  async bootAlpine() {
+    if (linuxCtl) return { ok: true, already: true };
+    lastBootError = null;
+    setRunBanner(
+      'Booting <b>Alpine</b> (lazy chunk fetch) to run real OCI containers via <code>wvrun</code>… ' +
+      'this takes a few minutes on the interpreted CPU — the console below is the real guest.',
+    );
+    await runLinuxBoot(
+      {
+        manifestUrl: "./artifacts-alpine.json",
+        mode: "chunked",
+        imageManifestUrl: "./releases/chunked-alpine/manifest.json",
+        cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
+        persist: new URLSearchParams(location.search).get("persist") === "1",
+        ramMib: 256,
+        fileTransfer: true,
+      },
+      "booting production Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login…",
+    );
+    return linuxCtl ? { ok: true } : { ok: false, error: lastBootError || "boot failed" };
+  },
+  // True only once the booted guest actually has the container runtime (Alpine, not the busybox
+  // initramfs). The Docker tab uses this to know whether it can run wvrun.
+  alpineArtifactsPresent: () => alpineAvailable,
 };
 
 // E2-T22: "Fit" re-fits the rendered grid to the panel and surfaces the matching `stty` line.
@@ -1037,9 +1067,10 @@ setInteractiveState();
     const probe = await fetch("./artifacts-alpine.json", { method: "GET", cache: "no-store" });
     const text = probe.ok ? await probe.text() : "";
     const present = probe.ok && !text.trimStart().startsWith("<");
+    alpineAvailable = present;
     if (!present) {
       const why =
-        "Alpine's 512 MB image is local-only (not deployed to GitHub Pages) — clone the repo and run: bash tools/serve-dev.sh";
+        "Alpine's image (with wvrun + baked OCI bundles) isn't deployed to this host yet — clone the repo and run: bash tools/serve-dev.sh";
       for (const b of [bootAlpineBtn, bootAlpineFullBtn]) {
         if (b) {
           b.disabled = true;

@@ -3,7 +3,7 @@
 # disagree, that's a bug (E0-T02).
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke bench-l1 riscof diff-all diff-selftest diff-qemu \
-        exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate
+        exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -125,6 +125,11 @@ web-build:
 	cp releases/kernel/6.6.63/Image web/releases/kernel/6.6.63/Image
 	cp releases/initramfs/initramfs.cpio.gz web/releases/initramfs/initramfs.cpio.gz
 	bash tools/gen-web-manifest.sh
+
+# Regenerate web/tasks.json from the /tasks folder (the roadmap's single source of truth).
+# Run after editing any task file; the Roadmap tab fetches ./tasks.json at load.
+tasks-json:
+	python3 tools/gen-tasks-json.py
 
 # Serve web/ over HTTP (wasm streaming + ES module MIME rules break file://).
 web-serve:

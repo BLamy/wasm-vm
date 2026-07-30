@@ -147,3 +147,409 @@ export const ROADMAP = [
     caps: [],
   },
 ];
+
+// ════════════════════════════════════════════════════════════════════════════
+// Linear-style roadmap — the Roadmap tab. Reads ./tasks.json (generated from the
+// /tasks folder by tools/gen-tasks-json.py, the single source of truth). The
+// ROADMAP array above is retained ONLY because main.js/tabs.js still import it
+// for the legacy live-suite capability panel (now hidden); this module owns the
+// visible Roadmap tab and never touches those elements.
+// ════════════════════════════════════════════════════════════════════════════
+
+const STATUS = {
+  verified: { label: "verified", color: "var(--green)", cls: "st-verified" },
+  implemented: { label: "implemented", color: "#4a9eff", cls: "st-implemented" },
+  "evidence-needed": { label: "evidence-needed", color: "#4a9eff", cls: "st-implemented" },
+  "in-progress": { label: "in progress", color: "var(--amber)", cls: "st-progress" },
+  pending: { label: "pending", color: "#6b7684", cls: "st-pending" },
+  blocked: { label: "blocked", color: "var(--red)", cls: "st-blocked" },
+  "verification-debt": { label: "verification debt", color: "#b17ce0", cls: "st-debt" },
+  cancelled: { label: "cancelled", color: "#5a6470", cls: "st-cancelled" },
+};
+
+function statusMeta(s) {
+  return STATUS[s] || STATUS.pending;
+}
+
+function h(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
+const state = {
+  data: null,
+  epics: [],
+  filters: { search: "", epic: "", status: "" },
+};
+
+function epicTitle(key) {
+  const e = state.epics.find((x) => x.key === key);
+  return e ? e.title : key;
+}
+
+function groupByEpic(tasks) {
+  const map = new Map();
+  for (const t of tasks) {
+    if (!map.has(t.epicKey)) map.set(t.epicKey, []);
+    map.get(t.epicKey).push(t);
+  }
+  // Preserve the /tasks epic ordering.
+  const ordered = [];
+  for (const e of state.epics) {
+    if (map.has(e.key)) ordered.push([e.key, map.get(e.key)]);
+  }
+  return ordered;
+}
+
+function matchesFilter(t) {
+  const f = state.filters;
+  if (f.epic && t.epicKey !== f.epic) return false;
+  if (f.status && t.status !== f.status) return false;
+  if (f.search) {
+    const q = f.search.toLowerCase();
+    if (!(`${t.id} ${t.title} ${t.goal}`.toLowerCase().includes(q))) return false;
+  }
+  return true;
+}
+
+// Small stacked progress bar: verified vs everything-else, coloured by status.
+function stackBar(tasks) {
+  const total = tasks.length || 1;
+  const order = ["verified", "implemented", "evidence-needed", "in-progress", "verification-debt", "blocked", "pending", "cancelled"];
+  const counts = {};
+  for (const t of tasks) counts[t.status] = (counts[t.status] || 0) + 1;
+  const bar = h("div", "rm-stack");
+  for (const s of order) {
+    if (!counts[s]) continue;
+    const seg = h("span", "rm-stack-seg");
+    seg.style.width = (counts[s] / total) * 100 + "%";
+    seg.style.background = statusMeta(s).color;
+    seg.title = `${counts[s]} ${statusMeta(s).label}`;
+    bar.append(seg);
+  }
+  return bar;
+}
+
+// Overall burndown: remaining (non-verified, non-cancelled) tasks as the epic
+// timeline advances — hand-rolled SVG, no libs. It is a *derived* burndown from
+// the epic sequence (we have no historical dated snapshots), labelled as such.
+function overallBurndown(tasks) {
+  const wrap = h("div", "rm-overall-card");
+  const active = tasks.filter((t) => t.status !== "cancelled");
+  const total = active.length;
+  const verified = active.filter((t) => t.status === "verified").length;
+
+  const head = h("div", "rm-overall-head");
+  head.append(h("span", "rm-overall-title", "Overall progress"));
+  head.append(h("span", "rm-overall-num", `${verified} / ${total} verified`));
+  wrap.append(head);
+
+  const pct = total ? Math.round((verified / total) * 100) : 0;
+  const pbar = h("div", "rm-progress");
+  const fill = h("span", "rm-progress-fill");
+  fill.style.width = pct + "%";
+  pbar.append(fill);
+  wrap.append(pbar);
+
+  // Derived burndown line across epics.
+  const groups = groupByEpic(active);
+  const W = 520, H = 96, PAD = 6;
+  let cum = 0;
+  const pts = [];
+  const labels = [];
+  groups.forEach(([key, ts], i) => {
+    cum += ts.filter((t) => t.status === "verified").length;
+    const remaining = total - cum;
+    const x = PAD + (groups.length <= 1 ? 0 : (i / (groups.length - 1)) * (W - 2 * PAD));
+    const y = PAD + (total ? (remaining / total) * (H - 2 * PAD) : 0);
+    pts.push([x, y]);
+    labels.push(key);
+  });
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("class", "rm-burndown");
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", `Derived burndown: ${total - verified} tasks remaining of ${total}`);
+  if (pts.length) {
+    const line = document.createElementNS(svgNS, "polyline");
+    line.setAttribute("points", pts.map((p) => p.join(",")).join(" "));
+    line.setAttribute("fill", "none");
+    line.setAttribute("stroke", "var(--cyan)");
+    line.setAttribute("stroke-width", "2");
+    // Area under the line.
+    const area = document.createElementNS(svgNS, "polygon");
+    const first = pts[0], last = pts[pts.length - 1];
+    area.setAttribute("points", `${first[0]},${H - PAD} ${pts.map((p) => p.join(",")).join(" ")} ${last[0]},${H - PAD}`);
+    area.setAttribute("fill", "rgba(83,212,255,0.10)");
+    svg.append(area, line);
+    for (const p of pts) {
+      const c = document.createElementNS(svgNS, "circle");
+      c.setAttribute("cx", p[0]);
+      c.setAttribute("cy", p[1]);
+      c.setAttribute("r", "2.5");
+      c.setAttribute("fill", "var(--cyan)");
+      svg.append(c);
+    }
+  }
+  wrap.append(svg);
+  wrap.append(h("div", "rm-overall-foot", "Derived burndown — remaining tasks as the epic sequence advances"));
+  return wrap;
+}
+
+function taskCard(t) {
+  const meta = statusMeta(t.status);
+  const card = h("button", `rm-card ${meta.cls}`);
+  card.type = "button";
+  card.dataset.id = t.id;
+
+  const top = h("div", "rm-card-top");
+  top.append(h("span", "rm-card-id", t.id));
+  if (t.capstone) top.append(h("span", "rm-capstone", "★ capstone"));
+  const badge = h("span", `rm-badge ${meta.cls}`, meta.label);
+  top.append(badge);
+  card.append(top);
+
+  card.append(h("div", "rm-card-title", t.title));
+
+  const foot = h("div", "rm-card-foot");
+  if (t.estimate) foot.append(h("span", "rm-chip", t.estimate));
+  if (t.criteriaTotal) foot.append(h("span", "rm-chip", `AC ${t.criteriaDone}/${t.criteriaTotal}`));
+  if (t.depends_on && t.depends_on.length) foot.append(h("span", "rm-chip", `${t.depends_on.length} dep${t.depends_on.length > 1 ? "s" : ""}`));
+  card.append(foot);
+
+  card.addEventListener("click", () => openDetail(t.id));
+  return card;
+}
+
+// Jira-style Kanban columns. Each status maps to one column; columns render in
+// this fixed left-to-right order, and only columns with at least one card in the
+// current epic (after filtering) are shown.
+const COLUMNS = [
+  { key: "pending", label: "Backlog", statuses: ["pending"] },
+  { key: "in-progress", label: "In progress", statuses: ["in-progress"] },
+  { key: "review", label: "In review", statuses: ["implemented", "evidence-needed"] },
+  { key: "debt", label: "Verification debt", statuses: ["verification-debt"] },
+  { key: "blocked", label: "Blocked", statuses: ["blocked"] },
+  { key: "verified", label: "Done", statuses: ["verified"] },
+  { key: "cancelled", label: "Cancelled", statuses: ["cancelled"] },
+];
+
+// An epic is "done" (collapsed by default) when it has active tasks and every
+// non-cancelled task is verified.
+function epicIsDone(tasks) {
+  const active = tasks.filter((t) => t.status !== "cancelled");
+  return active.length > 0 && active.every((t) => t.status === "verified");
+}
+
+// Remember which epics the user has manually toggled so re-renders (filtering,
+// searching) keep their expanded/collapsed state.
+const collapseOverride = new Map();
+
+function kanbanBoard(tasks) {
+  const board = h("div", "rm-board");
+  for (const col of COLUMNS) {
+    const cards = tasks.filter((t) => col.statuses.includes(t.status));
+    if (!cards.length) continue;
+    const column = h("div", `rm-col rm-col-${col.key}`);
+    const chead = h("div", "rm-col-head");
+    chead.append(h("span", "rm-col-label", col.label));
+    chead.append(h("span", "rm-col-count", String(cards.length)));
+    column.append(chead);
+    const body = h("div", "rm-col-body");
+    for (const t of cards) body.append(taskCard(t));
+    column.append(body);
+    board.append(column);
+  }
+  return board;
+}
+
+function render() {
+  const lanes = document.getElementById("rm-lanes");
+  if (!lanes || !state.data) return;
+  lanes.replaceChildren();
+
+  const visible = state.data.tasks.filter(matchesFilter);
+  const groups = groupByEpic(visible);
+  const filtering = !!(state.filters.search || state.filters.status || state.filters.epic);
+
+  const countEl = document.getElementById("rm-count");
+  if (countEl) countEl.textContent = `${visible.length} of ${state.data.tasks.length} issues`;
+
+  if (!groups.length) {
+    lanes.append(h("div", "rm-empty", "No issues match the current filters."));
+    return;
+  }
+
+  for (const [key, tasks] of groups) {
+    const done = epicIsDone(tasks);
+    // Collapsed by default when the epic is done — unless the user overrode it,
+    // or an active filter is narrowing results (then always expand so hits show).
+    let collapsed = done;
+    if (collapseOverride.has(key)) collapsed = collapseOverride.get(key);
+    else if (filtering) collapsed = false;
+
+    const lane = h("section", `rm-lane${collapsed ? " collapsed" : ""}${done ? " done" : ""}`);
+
+    const head = h("button", "rm-lane-head");
+    head.type = "button";
+    head.setAttribute("aria-expanded", String(!collapsed));
+    head.append(h("span", "rm-caret", collapsed ? "▶" : "▼"));
+    head.append(h("span", "rm-epic-tag", `E${key}`));
+    head.append(h("span", "rm-epic-name", epicTitle(key)));
+    const verified = tasks.filter((t) => t.status === "verified").length;
+    if (done) head.append(h("span", "rm-epic-done", "✓ done"));
+    head.append(h("span", "rm-epic-count", `${verified}/${tasks.length} verified`));
+    head.addEventListener("click", () => {
+      collapseOverride.set(key, !lane.classList.contains("collapsed") ? true : false);
+      render();
+    });
+    lane.append(head);
+    lane.append(stackBar(tasks));
+
+    if (!collapsed) lane.append(kanbanBoard(tasks));
+    lanes.append(lane);
+  }
+}
+
+// ── Ticket detail — evidence lives in the ticket ────────────────────────────
+function openDetail(id) {
+  const t = state.data.tasks.find((x) => x.id === id);
+  const panel = document.getElementById("rm-detail");
+  if (!t || !panel) return;
+  const meta = statusMeta(t.status);
+  panel.replaceChildren();
+
+  const bar = h("div", "rm-detail-bar");
+  const close = h("button", "rm-detail-close", "✕ Close");
+  close.type = "button";
+  close.addEventListener("click", closeDetail);
+  bar.append(h("span", "rm-detail-id", t.id), h("span", `rm-badge ${meta.cls}`, meta.label), close);
+  panel.append(bar);
+
+  const body = h("div", "rm-detail-body");
+  body.append(h("h3", "rm-detail-title", t.title));
+
+  const kv = h("div", "rm-detail-kv");
+  const add = (k, v) => { kv.append(h("dt", null, k), h("dd", null, v)); };
+  add("Epic", `E${t.epicKey} — ${epicTitle(t.epicKey)}`);
+  add("Status", meta.label);
+  if (t.estimate) add("Estimate", t.estimate);
+  add("Depends on", t.depends_on && t.depends_on.length ? t.depends_on.join(", ") : "—");
+  if (t.capstone) add("Capstone", "★ epic capstone");
+  body.append(kv);
+
+  if (t.goal) {
+    body.append(h("h4", "rm-detail-h", "Goal"));
+    body.append(h("p", "rm-detail-text", t.goal));
+  }
+
+  if (t.criteria && t.criteria.length) {
+    body.append(h("h4", "rm-detail-h", `Acceptance criteria (${t.criteriaDone}/${t.criteriaTotal})`));
+    const ul = h("ul", "rm-ac");
+    for (const c of t.criteria) {
+      const li = h("li", c.checked ? "rm-ac-item done" : "rm-ac-item");
+      li.append(h("span", "rm-ac-box", c.checked ? "✓" : "○"));
+      li.append(h("span", "rm-ac-text", c.text));
+      ul.append(li);
+    }
+    body.append(ul);
+  }
+
+  if (t.verificationLog) {
+    body.append(h("h4", "rm-detail-h", "Verification log — evidence"));
+    body.append(h("pre", "rm-log", t.verificationLog));
+  }
+
+  if (t.adversarial) {
+    body.append(h("h4", "rm-detail-h", "Adversarial verification"));
+    body.append(h("pre", "rm-log", t.adversarial));
+  }
+
+  const src = h("div", "rm-detail-src");
+  src.append(h("span", null, "source: "), h("code", null, t.file));
+  body.append(src);
+
+  panel.append(body);
+  panel.hidden = false;
+  panel.scrollTop = 0;
+  close.focus();
+}
+
+function closeDetail() {
+  const panel = document.getElementById("rm-detail");
+  if (panel) panel.hidden = true;
+}
+
+function populateFilters() {
+  const epicSel = document.getElementById("rm-epic");
+  if (epicSel) {
+    for (const e of state.epics) {
+      const o = h("option", null, `E${e.key} — ${e.title}`);
+      o.value = e.key;
+      epicSel.append(o);
+    }
+  }
+  const statusSel = document.getElementById("rm-status");
+  if (statusSel) {
+    const present = [...new Set(state.data.tasks.map((t) => t.status))];
+    for (const s of Object.keys(STATUS)) {
+      if (!present.includes(s)) continue;
+      const o = h("option", null, statusMeta(s).label);
+      o.value = s;
+      statusSel.append(o);
+    }
+  }
+}
+
+function wireControls() {
+  const search = document.getElementById("rm-search");
+  const epicSel = document.getElementById("rm-epic");
+  const statusSel = document.getElementById("rm-status");
+  search?.addEventListener("input", () => { state.filters.search = search.value.trim(); render(); });
+  epicSel?.addEventListener("change", () => { state.filters.epic = epicSel.value; render(); });
+  statusSel?.addEventListener("change", () => { state.filters.status = statusSel.value; render(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeDetail();
+    if (e.key === "/" && document.activeElement !== search && !document.getElementById("rm-detail")?.hidden === false) {
+      // focus search unless typing in a field
+      if (!/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "")) {
+        e.preventDefault();
+        search?.focus();
+      }
+    }
+  });
+}
+
+async function initRoadmap() {
+  const lanes = document.getElementById("rm-lanes");
+  if (!lanes) return; // not on this page build
+  try {
+    const res = await fetch("./tasks.json", { cache: "no-cache" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    state.data = await res.json();
+    state.epics = state.data.epics || [];
+  } catch (err) {
+    lanes.append(h("div", "rm-empty", `Could not load tasks.json (${err.message}). Run: make tasks-json`));
+    return;
+  }
+
+  const headline = document.getElementById("rm-headline");
+  if (headline && state.data.headline) {
+    headline.textContent = `${state.data.headline.verified} / ${state.data.headline.total} tasks verified across ${state.epics.length} epics`;
+  }
+  const overall = document.getElementById("rm-overall");
+  if (overall) overall.replaceChildren(overallBurndown(state.data.tasks));
+
+  populateFilters();
+  wireControls();
+  render();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initRoadmap);
+} else {
+  initRoadmap();
+}
