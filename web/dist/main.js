@@ -151,6 +151,7 @@ async function runLinuxBoot(opts, banner) {
   }
   const pct = {};
   bootProgress.begin();
+  resetGuestReady();
   const imageLen = opts.imageLen ?? 536870912; // chunked image length; for byte-fraction honesty
   try {
     linuxCtl = await startLinuxBoot({
@@ -177,7 +178,12 @@ async function runLinuxBoot(opts, banner) {
         ui.write(u8);
         emitConsole(u8);
         // E3-T24a: the honest 100% signal is a usable prompt, detected in the guest console stream.
-        try { bootProgress.scanOutput(new TextDecoder().decode(u8)); } catch {}
+        try {
+          const s = new TextDecoder().decode(u8);
+          bootProgress.scanOutput(s);
+          promptTail = (promptTail + s).slice(-200);
+          if (/[\w][\w.-]*:~#\s*$/.test(promptTail) || /\/ #\s*$/.test(promptTail)) markGuestReady();
+        } catch {}
       },
       onError: (e) => {
         term.writeln(`\x1b[31mboot error: ${e.message || e}\x1b[0m`);
@@ -302,6 +308,7 @@ async function runLinuxBoot(opts, banner) {
       fileTransferUI.attachController(null);
       bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
       linuxCtl = null;
+      resetGuestReady();
       // E2-T26: surface the T17 terminal ExitReason as a distinct HALTED state, not just a status
       // string — the machine is gone; you must re-boot from a fresh Machine.
       const halt = { poweroff: "powered off", reboot: "rebooted (halted)", error: "error" };
@@ -399,9 +406,58 @@ function emitConsole(u8) {
     try { fn(u8); } catch { /* a broken subscriber must not break the console */ }
   }
 }
+// Shared, serialized fenced RPC into the guest — the Docker tab AND the IDE tab use this to run shell
+// commands (`wvrun ps`, `ls`, `cat`, writing files, …) and read their output. Sends `<cmd>; printf
+// '\n__WVEND_<id>_%s\n' $?` and captures stdout between the echoed command and the END marker (matched
+// with a trailing DIGIT so the echoed marker text — ending in `%s` — never false-matches). Requires the
+// guest at a shell (see isGuestReady). Serialized via a promise chain so callers don't interleave.
+let execChain = Promise.resolve();
+let execSeq = 0;
+function guestExec(cmd, timeoutMs = 60000) {
+  const task = () =>
+    new Promise((resolve, reject) => {
+      if (!linuxCtl) return reject(new Error("guest not up"));
+      const rid = `${Date.now().toString(36)}${execSeq++}`;
+      const endRe = new RegExp(`__WVEND_${rid}_(\\d+)`);
+      const dec = new TextDecoder();
+      let buf = "";
+      const onc = (u8) => {
+        buf += dec.decode(u8, { stream: true }).replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, "").replace(/\r/g, "");
+        const m = buf.match(endRe);
+        if (m) {
+          const exit = parseInt(m[1], 10);
+          let out = buf.slice(0, m.index);
+          const nl = out.indexOf("\n");
+          if (nl !== -1) out = out.slice(nl + 1);
+          cleanup();
+          resolve({ stdout: out, exit });
+        }
+      };
+      const cleanup = () => { clearTimeout(timer); consoleSubscribers.delete(onc); };
+      consoleSubscribers.add(onc);
+      const timer = setTimeout(() => { cleanup(); reject(new Error("guest command timed out")); }, timeoutMs);
+      setTimeout(() => ui.typeBytes(new TextEncoder().encode(`${cmd}; printf '\\n__WVEND_${rid}_%s\\n' "$?"\r`)), 0);
+    });
+  execChain = execChain.then(task, task);
+  return execChain;
+}
 let lastBootError = null;
 // Whether the Alpine (container-capable) artifacts are deployed — set by the load-time probe below.
 let alpineAvailable = false;
+// Guest readiness: flips true when the booted guest reaches a usable shell prompt. The Docker/IDE tabs
+// gate on this; a `wvm:guest-ready` window event fires once per boot. Reset when a new boot starts.
+let guestReady = false;
+let promptTail = "";
+function markGuestReady() {
+  if (guestReady) return;
+  guestReady = true;
+  try { window.dispatchEvent(new Event("wvm:guest-ready")); } catch {}
+}
+function resetGuestReady() {
+  guestReady = false;
+  promptTail = "";
+  try { window.dispatchEvent(new Event("wvm:guest-booting")); } catch {}
+}
 
 window.wvmDemo = {
   isGuestUp: () => !!linuxCtl,
@@ -456,6 +512,10 @@ window.wvmDemo = {
   // True only once the booted guest actually has the container runtime (Alpine, not the busybox
   // initramfs). The Docker tab uses this to know whether it can run wvrun.
   alpineArtifactsPresent: () => alpineAvailable,
+  // True once the booted guest has reached a usable shell prompt (Docker/IDE tabs gate on this).
+  isGuestReady: () => guestReady,
+  // Run a shell command in the guest, resolve { stdout, exit } (shared, serialized — see guestExec).
+  exec: (cmd, timeoutMs) => guestExec(cmd, timeoutMs),
 };
 
 // E2-T22: "Fit" re-fits the rendered grid to the panel and surfaces the matching `stty` line.
@@ -1086,6 +1146,12 @@ setInteractiveState();
     }
   } catch {
     /* probe failure = treat as absent; buttons already work locally */
+  }
+  // Auto-boot Alpine in the BACKGROUND as the shared host for the whole app (IDE + Docker both use it).
+  // It boots once, no matter which tab is showing; the console renders on the IDE/Terminal tab and the
+  // Docker/IDE tabs unlock via the `wvm:guest-ready` event. `?noAutoBoot` opts out (e.g. for tests).
+  if (alpineAvailable && !linuxCtl && !new URLSearchParams(location.search).has("noAutoBoot")) {
+    setTimeout(() => { try { window.wvmDemo.bootAlpine(); } catch {} }, 400);
   }
   // The riscv-tests suite no longer auto-runs on load (Brett 2026-07-06): 126 in-browser
   // binaries take real time and CPU — run it via the "Run tests" button instead. The

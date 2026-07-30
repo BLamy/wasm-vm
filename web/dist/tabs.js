@@ -15,8 +15,29 @@ if (navigator.webdriver) {
   document.documentElement.classList.add("e2e-showall");
 }
 
+// The Docker tab is GATED on the guest being booted+ready (Alpine auto-boots in the background on
+// load). Until then the tab is locked; direct hash navigation is also blocked.
+function guestReady() {
+  return !!(window.wvmDemo && window.wvmDemo.isGuestReady && window.wvmDemo.isGuestReady());
+}
+function updateDockerGate() {
+  const ready = guestReady();
+  const btn = document.querySelector('.tab[data-tab="docker"]');
+  if (!btn) return;
+  btn.classList.toggle("locked", !ready);
+  btn.setAttribute("aria-disabled", ready ? "false" : "true");
+  btn.title = ready ? "" : "Booting Alpine in the background… the Docker tab unlocks when the guest is ready.";
+  // If the guest went away while Docker was showing, fall back to the IDE/Terminal tab.
+  if (!ready && document.querySelector('.tab[data-tab="docker"]')?.classList.contains("active")) {
+    show(TABS.includes("ide") ? "ide" : "terminal");
+  }
+}
+window.addEventListener("wvm:guest-ready", updateDockerGate);
+window.addEventListener("wvm:guest-booting", updateDockerGate);
+
 function show(tab) {
   if (!TABS.includes(tab)) return;
+  if (tab === "docker" && !guestReady()) return; // gated until the guest is up
   for (const b of document.querySelectorAll(".tab")) {
     const on = b.dataset.tab === tab;
     b.classList.toggle("active", on);
@@ -44,6 +65,13 @@ for (const b of document.querySelectorAll(".tab")) {
 }
 window.addEventListener("hashchange", () => show(location.hash.slice(1)));
 
-// Honor a deep-linked tab on load (default stays Roadmap).
+// Locked-tab styling (injected so we don't depend on index.html CSS).
+const gateStyle = document.createElement("style");
+gateStyle.textContent = ".tab.locked{opacity:.45;cursor:not-allowed;position:relative}.tab.locked::after{content:'🔒';font-size:.7em;margin-left:5px;opacity:.8}";
+document.head.appendChild(gateStyle);
+updateDockerGate();
+
+// Honor a deep-linked tab on load (default stays Roadmap). A deep-linked #docker is honored only once
+// the guest is ready (updateDockerGate + the show() gate handle the wait).
 const initial = location.hash.slice(1);
 if (TABS.includes(initial) && initial !== "roadmap") show(initial);
