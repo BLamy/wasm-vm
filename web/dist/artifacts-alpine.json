@@ -1,7 +1,7 @@
 {
   "generated": "LOCAL-ONLY production Alpine manifest (tools/gen-alpine-manifest.sh)",
   "artifacts": {
-    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58", "size": 22097408 },
-    "rootfs": { "url": "releases/rootfs/alpine-rootfs.ext4", "sha256": "e7db52dae2f9f6631ab6f7a693125418aa5841216554fbc4123435725d320c19", "size": 536870912 }
+    "kernel": { "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/kernel/6.6.63/Image", "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58", "size": 22097408 },
+    "rootfs": { "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/rootfs/alpine-rootfs.ext4", "sha256": "e7db52dae2f9f6631ab6f7a693125418aa5841216554fbc4123435725d320c19", "size": 536870912 }
   }
 }

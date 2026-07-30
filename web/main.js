@@ -362,7 +362,7 @@ if (bootAlpineBtn) {
         // content-addressed chunks. No full-image request occurs.
         manifestUrl: "./artifacts-alpine.json",
         mode: "chunked",
-        imageManifestUrl: "./releases/chunked-alpine/manifest.json",
+        imageManifestUrl: R2_ASSETS + "/chunked-alpine/manifest.json",
         // E3-T03: `?cacheBudgetMib=N` boots with an N-MiB cache to exercise eviction (0 → 256 default).
         cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
         // E3-T05: `?persist=1` persists the CoW overlay to IndexedDB (writes survive a reload).
@@ -447,6 +447,13 @@ function guestExec(cmd, timeoutMs = 60000) {
   return execChain;
 }
 let lastBootError = null;
+// Large boot artifacts (kernel, initramfs, the ~130 MB chunked Alpine image) are hosted on Cloudflare
+// R2, not on Pages — this keeps the Pages deploy small and under the 25 MiB/file limit. `?assetBase=`
+// overrides (e.g. local dev serving its own copies via serve-dev). The manifests' relative
+// `releases/…` URLs are rewritten to this base at deploy time (tools/deploy-cloudflare.sh).
+const R2_ASSETS =
+  new URLSearchParams(location.search).get("assetBase") ||
+  "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev";
 // Whether the Alpine (container-capable) artifacts are deployed — set by the load-time probe below.
 let alpineAvailable = false;
 // Guest readiness: flips true when the booted guest reaches a usable shell prompt. The Docker/IDE tabs
@@ -504,7 +511,7 @@ window.wvmDemo = {
       {
         manifestUrl: "./artifacts-alpine.json",
         mode: "chunked",
-        imageManifestUrl: "./releases/chunked-alpine/manifest.json",
+        imageManifestUrl: R2_ASSETS + "/chunked-alpine/manifest.json",
         cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
         persist: new URLSearchParams(location.search).get("persist") === "1",
         ramMib: 256,

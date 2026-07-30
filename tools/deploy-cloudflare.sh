@@ -18,23 +18,20 @@ if [ "${REBUILD:-0}" = "1" ] || [ ! -f "$DIST/index.html" ]; then
   make web-dist
 fi
 
-# The large boot artifacts are not committed into web/dist (they live in releases/). Stage them for a
-# standalone Cloudflare deploy — a build-free file copy.
-echo "[deploy] staging boot artifacts into $DIST/releases …"
-mkdir -p "$DIST/releases/kernel/6.6.63" "$DIST/releases/initramfs"
-cp releases/kernel/6.6.63/Image "$DIST/releases/kernel/6.6.63/Image"
-cp releases/initramfs/initramfs.cpio.gz "$DIST/releases/initramfs/initramfs.cpio.gz"
-
-# The ALPINE guest (chunked, lazy-fetched) — ships wvrun + baked /opt/containers bundles so the Docker
-# tab runs real containers. The browser fetches only touched chunks; here we deploy the whole chunk set.
-if [ -d releases/chunked-alpine ] && [ -f web/artifacts-alpine.json ]; then
-  echo "[deploy] staging Alpine chunked image ($(du -sh releases/chunked-alpine | cut -f1)) …"
-  cp web/artifacts-alpine.json "$DIST/artifacts-alpine.json"
-  rm -rf "$DIST/releases/chunked-alpine"
-  cp -R releases/chunked-alpine "$DIST/releases/chunked-alpine"
-else
-  echo "[deploy] NOTE: releases/chunked-alpine or web/artifacts-alpine.json missing — Alpine/Docker won't boot." >&2
-fi
+# The LARGE boot artifacts (kernel, initramfs, the ~130 MB chunked Alpine image) live on Cloudflare R2,
+# NOT on Pages — this keeps the Pages deploy tiny and off the 25 MiB/file limit. Upload them once with
+# `bash tools/deploy-r2.sh`. Here we only ship the small manifests and REWRITE their relative
+# `releases/…` URLs to the R2 public base (kernel/initramfs/rootfs/chunked-alpine). The chunked-image
+# manifest URL is set to R2 directly in web/main.js (R2_ASSETS).
+R2_PUBLIC="https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev"
+echo "[deploy] repointing manifests at R2 ($R2_PUBLIC) …"
+[ -f web/artifacts-alpine.json ] && cp web/artifacts-alpine.json "$DIST/artifacts-alpine.json"
+for m in "$DIST/artifacts.json" "$DIST/artifacts-alpine.json"; do
+  [ -f "$m" ] || continue
+  sed "s#\"releases/#\"$R2_PUBLIC/#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m"
+done
+# Do NOT ship the big artifacts with the site.
+rm -rf "$DIST/releases/kernel" "$DIST/releases/initramfs" "$DIST/releases/chunked-alpine" 2>/dev/null || true
 
 # Fail fast on any file over Cloudflare Pages' 25 MiB per-file limit.
 big=$(find "$DIST" -type f -size +25M -print)
