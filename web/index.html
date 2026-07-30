@@ -890,9 +890,8 @@
       <h1>wasm-vm — RV64 in the browser</h1>
       <nav class="tabs" role="tablist" aria-label="Views">
         <button class="tab active" data-tab="roadmap" role="tab" aria-selected="true">Roadmap</button>
-        <button class="tab" data-tab="ide" role="tab" aria-selected="false">IDE</button>
-        <button class="tab" data-tab="docker" role="tab" aria-selected="false">Docker</button>
-        <a class="tab" href="./docs.html" title="How to embed wasm-vm in your own frontend">Docs&nbsp;↗</a>
+        <button class="tab" data-tab="ide" role="tab" aria-selected="false">Demo</button>
+        <button class="tab" data-tab="docs" role="tab" aria-selected="false">Docs</button>
       </nav>
       <span id="version" class="version">initializing...</span>
     </header>
@@ -985,13 +984,14 @@
       <section class="console" aria-labelledby="console-title">
         <div class="console-head">
           <h2 id="console-title">Console</h2>
-          <div class="controls">
+          <!-- Legacy boot/bench toolbar. The 3 boot buttons were removed (main.js null-guards them);
+               #run/#reset/#bench/#file/#term-fit are kept but hidden because main.js binds them
+               un-guarded (a delete would throw at load and kill auto-boot). The IDE's own terminal
+               toolbar (Clear/Fit) and status bar drive the UX instead. -->
+          <div class="controls" hidden aria-hidden="true">
             <button id="run">Run ELF</button>
             <button id="reset">Reset</button>
             <button id="bench">Bench</button>
-            <button id="boot-linux" class="primary" title="Boot a real RISC-V Linux (busybox userland) in your browser — works offline and on GitHub Pages">▶ Boot Linux (busybox)</button>
-            <button id="boot-alpine" title="Boot the production Alpine image lazily from immutable E3-T11 chunks (local-only via serve-dev)">Boot Alpine</button>
-            <button id="boot-alpine-full" title="Debug fallback: fetch the entire 512 MiB ext4 image before booting">Boot Alpine (full-image debug)</button>
             <button id="term-fit" title="Re-fit the terminal to the panel and copy the matching stty command">Fit</button>
             <label class="file">ELF <input id="file" type="file" /></label>
             <span id="status">initializing...</span>
@@ -1087,17 +1087,22 @@
       </section>
     </div>
 
-    <!-- ══ DOCKER TAB ══════════════════════════════════════════════════════ -->
-    <div id="panel-docker" class="panel" role="tabpanel">
-      <div id="docker-app" class="docker-app"><!-- built by docker.js --></div>
+    <!-- ══ DOCS TAB ════════════════════════════════════════════════════════ -->
+    <!-- In-app docs mount point. A separate docstream (React) renderer is mounted into #docs-mount;
+         keeping it a tab (not a page link) means switching to Docs never reloads the SPA and never
+         interrupts the background Alpine boot. -->
+    <div id="panel-docs" class="panel" role="tabpanel">
+      <div id="docs-mount">
+        <p style="padding:24px;color:#9aa6b2;font:14px ui-monospace,monospace">Loading docs…</p>
+      </div>
     </div>
 
     <!-- xterm.js UMD build + fit addon (pinned via package-lock.json + npm ci — no CDN). -->
     <script src="./node_modules/@xterm/xterm/lib/xterm.js"></script>
     <script src="./node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
     <script type="module" src="./tabs.js"></script>
-    <script type="module" src="./docker.js"></script>
     <script type="module" src="./ide.js"></script>
+    <script type="module" src="./docs-mount.js"></script>
     <script type="module" src="./main.js"></script>
   </body>
 </html>
