@@ -166,8 +166,11 @@ container_core() {
   fi
   export WVRUN_ROOTFS="$rootfs" WVRUN_CWD="$cwd" WVRUN_ENVFILE="$bundle/config/env"
 
-  # Interactive foreground (no tracking): exec-style so the container owns the controlling tty.
-  if [ "$_int" -eq 1 ] && [ -z "$_sd" ]; then
+  # Non-tracked (legacy run-to-exit + interactive): FOREGROUND exec-style unshare — exactly the path
+  # E3.5-T03 proved (direct exit-code propagation + a controlling tty for interactive). Only TRACKED
+  # detached containers need the background+wait+capture below; routing the legacy --memory OOM path
+  # through background+wait misbehaved under the memcg OOM-killer on the interpreted guest.
+  if [ -z "$_sd" ]; then
     rc=0
     unshare -m -u -i -p -f --mount-proc sh -c "$child" wvrun-init "$@" || rc=$?
     _leave_cgroup "$cg"
