@@ -1,119 +1,65 @@
 #!/bin/sh
-# wvrun — the tiny OCI runner (E3.5-T03). NOT Docker Engine: the ~20% of runc that runs a real
-# unpacked image. Given a BUNDLE produced by `wasm-vm oci unpack` (`<bundle>/rootfs` + `run.json` +
-# `config/{argv,env,cwd,user}`), it:
-#   1. creates a per-container cgroup leaf (memory/pids limits when asked),
-#   2. `unshare`s pid+mount+uts+ipc+net (fork so the child is PID 1),
-#   3. overlay-mounts the image (rootfs = lower, tmpfs = upper) so container writes never mutate
-#      the unpacked image,
-#   4. mounts fresh proc/sys + a minimal /dev inside the new root,
-#   5. `pivot_root`s into it, applies cwd/env, and `exec`s the image's argv,
-#   6. propagates the container's exit code as wvrun's own.
+# wvrun — the tiny OCI runner + minimal container LIFECYCLE (E3.5-T03 core, E3.5-T05b lifecycle).
+# NOT Docker Engine: the ~20% of runc+a-daemon that runs real unpacked images and tracks them.
 #
-# The container's stdio is wired straight to wvrun's — an interactive `sh` feels like a shell.
+# Subcommands (E3.5-T05b):
+#   wvrun run [-d|--detach] [--name N] [--memory B] [--pids N] <bundle>   run (foreground / detached)
+#   wvrun ps [-a]                                                         list containers (JSON lines)
+#   wvrun logs [-f] <id|name>                                            replay/follow a container log
+#   wvrun stop <id|name>                                                 SIGTERM→cgroup.kill
+#   wvrun rm [-f] <id|name>                                              remove a (stopped) container
+#   wvrun exec [-it] <id|name> <cmd…>                                    enter a running container (E3.5-T05c)
+# Legacy (E3.5-T03, still supported): `wvrun [--interactive] [--memory B] [--pids N] <bundle>`.
+#
+# For a BUNDLE produced by `wasm-vm oci unpack` (`<bundle>/rootfs` + `config/{argv,env,cwd,user}`),
+# a container is: a per-container cgroup leaf → `unshare` pid+mount+uts+ipc(+not net) → overlay-mount
+# the image (ro rootfs lower + tmpfs upper) → fresh proc/sys + minimal /dev → pivot_root → seccomp
+# filter → exec the image argv; the container's exit code is propagated.
 #
 # v1 SCOPE / non-claims (honesty, not perfect confinement — the guest IS the sandbox):
-#   * Runs as root-in-guest. USER_NS/uid_map (rootless) is a later pass; `config/user` is recorded
-#     but NOT yet enforced.
-#   * Containers SHARE the guest net namespace v1 (loopback + eth0 visible) — so a container service
-#     (e.g. postgres) is reachable from the guest for the capstone. Per-container veth/netns
-#     graduates with E3.5-T05.
-#   * seccomp filter install is E3.5-T03's remaining acceptance (relocated from T02); not yet here.
-#   * An argv/env value containing a newline is not representable (one-per-line files) — real images
-#     don't use them.
+#   * Runs as root-in-guest. USER_NS/uid_map (rootless) is a later pass.
+#   * Containers SHARE the guest net namespace v1 (loopback + eth0 visible).
+#   * argv/env values containing a newline are not representable (one-per-line files).
 #
-# POSIX sh (busybox ash). Requires util-linux (unshare/pivot_root) + the audited kernel (T02).
+# POSIX sh (busybox ash). Requires util-linux (unshare/nsenter/pivot_root/setsid) + the audited kernel.
 set -eu
 
-usage() { echo "usage: wvrun [--interactive] [--memory BYTES] [--pids N] <bundle-dir>" >&2; exit 2; }
+WV_RUN_DIR=/run/wvcontainers      # per-container state (tmpfs)
+WV_LOG_DIR=/var/log/wvcontainers  # captured stdout+stderr
 
-interactive=0
-mem_limit=""
-pids_limit=""
-while [ $# -gt 0 ]; do
-  case "$1" in
-    --interactive|-i) interactive=1; shift ;;
-    --memory) mem_limit="${2:?}"; shift 2 ;;
-    --pids)   pids_limit="${2:?}"; shift 2 ;;
-    --) shift; break ;;
-    -*) echo "wvrun: unknown flag $1" >&2; usage ;;
-    *) break ;;
-  esac
-done
-bundle="${1:-}"; [ -n "$bundle" ] || usage
-rootfs="$bundle/rootfs"
-[ -d "$rootfs" ] || { echo "wvrun: no rootfs/ in bundle $bundle" >&2; exit 2; }
-
-# ── Runtime config (flat files; no JSON parser needed in the guest) ─────────────────────────────
-cwd=$(cat "$bundle/config/cwd" 2>/dev/null || true); [ -n "$cwd" ] || cwd=/
-
-# argv: interactive overrides with a shell; else the image's Entrypoint++Cmd (must be non-empty).
-if [ "$interactive" -eq 1 ]; then
-  set -- /bin/sh
-else
-  # Read argv one line = one arg. `while IFS= read -r` (NOT `for a in $(cat …)`) so args keep
-  # spaces, are NOT glob-expanded against the guest cwd, and empty args are preserved (critic
-  # MAJOR: unquoted command substitution both path-expanded `*` tokens and dropped empty args).
-  # `|| [ -n "$a" ]` catches a final arg with no trailing newline.
-  set --
-  if [ -s "$bundle/config/argv" ]; then
-    while IFS= read -r a || [ -n "$a" ]; do set -- "$@" "$a"; done < "$bundle/config/argv"
-  fi
-  [ $# -gt 0 ] || { echo "wvrun: image has no entrypoint/cmd (use --interactive)" >&2; exit 2; }
-fi
-
-# ── Per-container cgroup leaf (only when a limit is requested) ───────────────────────────────────
-# Join the leaf HERE, in the host pid namespace, BEFORE unshare: `unshare --fork` then makes the
-# container a child of this process, so it inherits this cgroup. (Joining from inside the new pid ns
-# with `echo $$` is unreliable — $$ is the namespaced pid — so the limit never bound the container.)
-cg=""
-if [ -f /sys/fs/cgroup/cgroup.controllers ] && { [ -n "$mem_limit" ] || [ -n "$pids_limit" ]; }; then
-  grep -q memory /sys/fs/cgroup/cgroup.controllers 2>/dev/null &&
-    echo '+memory +pids' > /sys/fs/cgroup/cgroup.subtree_control 2>/dev/null || true
-  cg="/sys/fs/cgroup/wvrun.$$"
-  if mkdir -p "$cg" 2>/dev/null; then
-    [ -n "$mem_limit" ]  && echo "$mem_limit"  > "$cg/memory.max" 2>/dev/null || true
-    [ -n "$pids_limit" ] && echo "$pids_limit" > "$cg/pids.max"   2>/dev/null || true
-    echo $$ > "$cg/cgroup.procs" 2>/dev/null || cg=""
+ensure_dirs() { mkdir -p "$WV_RUN_DIR" "$WV_LOG_DIR" 2>/dev/null || true; }
+now_epoch()   { date +%s 2>/dev/null || echo 0; }
+# Short random container id (12 hex). NOT sequential — avoids collisions across reloads.
+new_id() {
+  if [ -r /proc/sys/kernel/random/uuid ]; then
+    tr -d - < /proc/sys/kernel/random/uuid | cut -c1-12
   else
-    cg=""
-  fi
-fi
-
-# On exit, leave the leaf (move back to root) so it can be removed; the container has already gone.
-cleanup() {
-  if [ -n "$cg" ]; then
-    echo $$ > /sys/fs/cgroup/cgroup.procs 2>/dev/null || true
-    rmdir "$cg" 2>/dev/null || true
+    od -An -tx1 -N6 /dev/urandom 2>/dev/null | tr -d ' \n' || echo "c$$$(now_epoch)"
   fi
 }
-trap cleanup EXIT INT TERM
+# JSON-quote a string (escape backslash + double-quote; control chars are not expected in names).
+json() { printf '"%s"' "$(printf '%s' "${1:-}" | sed 's/\\/\\\\/g; s/"/\\"/g')"; }
 
-# Export what the unshared child needs (a fresh `sh -c` does not inherit shell vars, only env).
-export WVRUN_ROOTFS="$rootfs" WVRUN_CWD="$cwd" WVRUN_CG="$cg"
-# The container's env comes from config/env; pass its path so the child sources it.
-export WVRUN_ENVFILE="$bundle/config/env"
+usage() {
+  echo "usage: wvrun run [-d] [--name N] [--memory B] [--pids N] <bundle>" >&2
+  echo "       wvrun ps [-a] | logs [-f] <ref> | stop <ref> | rm [-f] <ref> | exec [-it] <ref> <cmd…>" >&2
+  echo "       wvrun [--interactive] [--memory B] [--pids N] <bundle>   (legacy run-to-exit)" >&2
+  exit 2
+}
 
-# The child script: runs INSIDE the new namespaces as (eventually) PID 1. It sets up the mounts,
-# pivots, joins the cgroup, applies env/cwd, and execs the argv passed as "$@".
+# ── The container child: runs INSIDE the new namespaces as PID 1. Sets up mounts, pivots, installs the
+# seccomp filter, applies env/cwd, and execs the argv passed as "$@". (Unchanged from E3.5-T03.) ──────
 child='
   set -eu
-  # Private propagation so our mounts do not leak back to the guest.
   mount --make-rprivate / 2>/dev/null || true
   work=$(mktemp -d /tmp/wvrun.XXXXXX)
   mkdir -p "$work/upper" "$work/work" "$work/merged"
-  # Overlay: image rootfs is the read-only lower; a tmpfs upper captures all container writes so
-  # the unpacked image is never mutated.
   mount -t tmpfs tmpfs "$work/upper" 2>/dev/null || true
   mkdir -p "$work/upper/u" "$work/upper/w"
   mount -t overlay overlay -o "lowerdir=$WVRUN_ROOTFS,upperdir=$work/upper/u,workdir=$work/upper/w" "$work/merged"
-  # Essential virtual filesystems inside the new root.
   mkdir -p "$work/merged/proc" "$work/merged/sys" "$work/merged/dev" "$work/merged/.oldroot"
   mount -t proc  proc "$work/merged/proc"
   mount -t sysfs sys  "$work/merged/sys" 2>/dev/null || true
-  # A MINIMAL /dev: bind only the standard char devices, NOT a recursive bind of the guest /dev —
-  # that would expose the backing block device (/dev/vda) into the container, letting a root
-  # process dd the raw image and bypass the overlay (critic MINOR image-bypass side channel).
   mount -t tmpfs tmpfs "$work/merged/dev" 2>/dev/null || true
   for d in null zero full random urandom tty console; do
     if [ -e "/dev/$d" ]; then
@@ -123,50 +69,324 @@ child='
   done
   mkdir -p "$work/merged/dev/pts" 2>/dev/null || true
   mount -t devpts devpts "$work/merged/dev/pts" 2>/dev/null || true
-  # (The cgroup was already joined by the parent before unshare, so this pid-1 inherits it.)
-  # E3.5-T03 (AC6): make the static seccomp helper reachable INSIDE the container (a single-file bind
-  # at a fixed path), so the post-pivot exec can install the filter. It is statically linked, so it
-  # needs nothing else from the container rootfs. Absent helper → run without a filter (graceful).
   have_seccomp=0
   if [ -x /usr/local/bin/wvseccomp ]; then
-    # Copy (not bind) the static helper into the container rootfs — a file bind onto an overlayfs path
-    # is unreliable; a copy into the tmpfs upper always works and the helper is self-contained (static).
     if cp /usr/local/bin/wvseccomp "$work/merged/.wvseccomp" 2>/dev/null; then
       chmod 0755 "$work/merged/.wvseccomp" 2>/dev/null || true
       have_seccomp=1
     fi
   fi
-  # Switch root into the merged tree, detach the old root.
   cd "$work/merged"
   pivot_root . .oldroot
   umount -l /.oldroot 2>/dev/null || true
   rmdir /.oldroot 2>/dev/null || true
-  # Apply cwd (fall back to / if the image cwd does not exist).
   cd "$WVRUN_CWD" 2>/dev/null || cd /
-  # Exec argv with a CLEAN env built from config/env. Env values may contain spaces
-  # (e.g. JAVA_OPTS="-Xmx1g -Xms512m"), so we must NOT word-split `$(cat envfile)` — that fed the
-  # split value to `env` as a command name → exit 127 (critic MAJOR). Instead read each KEY=VAL
-  # line intact, append to the positional list, then rotate so the env pairs precede argv:
-  # `env -i KEY=VAL … <argv>`.
   argc=$#
   if [ -s "$WVRUN_ENVFILE" ]; then
     while IFS= read -r kv || [ -n "$kv" ]; do
       if [ -n "$kv" ]; then set -- "$@" "$kv"; fi
     done < "$WVRUN_ENVFILE"
   fi
-  # Move the first argc entries (the argv) to the end → order becomes: <env pairs…> <argv…>.
   i=0
   while [ "$i" -lt "$argc" ]; do a=$1; shift; set -- "$@" "$a"; i=$((i + 1)); done
-  # Install the runc-style seccomp filter (deny mount/umount2/reboot/kexec_load/swapon → EPERM) then
-  # exec; the filter is inherited across the execve by the container and all its children.
   if [ "${have_seccomp:-0}" = 1 ]; then
     exec /.wvseccomp -- env -i "$@"
   fi
   exec env -i "$@"
 '
 
-# unshare mount+uts+ipc+pid (NOT net — v1 shares the guest netns so the service is reachable),
-# fork so the argv runs as PID 1 in the new pid ns, remount /proc.
-unshare -m -u -i -p -f --mount-proc sh -c "$child" wvrun-init "$@"
-rc=$?
-exit "$rc"
+# Create + join a per-container cgroup leaf. Tracked containers ALWAYS get one (even with no limits) so
+# `cgroup.kill` gives a reliable stop — a pid-ns init ignores SIGTERM unless it installed a handler.
+# Echoes the cgroup path (empty if cgroups are unavailable). Joins THIS process (parent) before unshare
+# so `unshare --fork` inherits it.
+setup_cgroup() {
+  _cgname=$1 _mem=$2 _pids=$3
+  [ -f /sys/fs/cgroup/cgroup.controllers ] || { echo ""; return 0; }
+  grep -q memory /sys/fs/cgroup/cgroup.controllers 2>/dev/null &&
+    echo '+memory +pids' > /sys/fs/cgroup/cgroup.subtree_control 2>/dev/null || true
+  _cg="/sys/fs/cgroup/$_cgname"
+  mkdir -p "$_cg" 2>/dev/null || { echo ""; return 0; }
+  [ -n "$_mem" ]  && echo "$_mem"  > "$_cg/memory.max" 2>/dev/null || true
+  [ -n "$_pids" ] && echo "$_pids" > "$_cg/pids.max"   2>/dev/null || true
+  # Join must succeed for the leaf to bind the container (and for cgroup.kill to work). If it fails
+  # (e.g. a systemd-delegated host that forbids root-level cgroup joins), DON'T leave an orphan dir —
+  # rmdir it and report no-cgroup so `stop` falls back to signalling the pid directly.
+  if echo $$ > "$_cg/cgroup.procs" 2>/dev/null; then
+    echo "$_cg"
+  else
+    rmdir "$_cg" 2>/dev/null || true
+    echo ""
+  fi
+}
+
+# Read the container's PID-1 host pid: the child forked by `unshare --fork` is a child of the unshare
+# process ($1) in the host ns. Poll /proc children briefly (fork is near-instant). Echoes "" on failure.
+container_pid1() {
+  _up=$1 _n=0
+  while [ "$_n" -lt 500 ]; do
+    _c=$(cat "/proc/$_up/task/$_up/children" 2>/dev/null | awk '{print $1; exit}')
+    [ -n "${_c:-}" ] && { echo "$_c"; return 0; }
+    _n=$((_n + 1))
+  done
+  echo ""
+}
+
+# The shared runner. Sets up the cgroup, unshares, execs the container.
+#   container_core <interactive> <mem> <pids> <cgname> <statedir|""> <bundle>
+# statedir="" → legacy/foreground (interactive keeps the tty). statedir set → tracked (records
+# pid/upid/cg/status/exit into the dir, backgrounds the container so the host pid-1 can be captured).
+container_core() {
+  _int=$1 _mem=$2 _pids=$3 _cgname=$4 _sd=$5 bundle=$6
+  rootfs="$bundle/rootfs"
+  [ -d "$rootfs" ] || { echo "wvrun: no rootfs/ in bundle $bundle" >&2; return 2; }
+  cwd=$(cat "$bundle/config/cwd" 2>/dev/null || true); [ -n "$cwd" ] || cwd=/
+
+  set --
+  if [ "$_int" -eq 1 ]; then
+    set -- /bin/sh
+  else
+    if [ -s "$bundle/config/argv" ]; then
+      while IFS= read -r a || [ -n "$a" ]; do set -- "$@" "$a"; done < "$bundle/config/argv"
+    fi
+    [ $# -gt 0 ] || { echo "wvrun: image has no entrypoint/cmd (use --interactive)" >&2; return 2; }
+  fi
+
+  # A tracked container always gets a cgroup leaf; a legacy run only when a limit is asked.
+  cg=""
+  if [ -n "$_sd" ] || [ -n "$_mem" ] || [ -n "$_pids" ]; then
+    cg=$(setup_cgroup "$_cgname" "$_mem" "$_pids")
+  fi
+  export WVRUN_ROOTFS="$rootfs" WVRUN_CWD="$cwd" WVRUN_ENVFILE="$bundle/config/env"
+
+  # Interactive foreground (no tracking): exec-style so the container owns the controlling tty.
+  if [ "$_int" -eq 1 ] && [ -z "$_sd" ]; then
+    rc=0
+    unshare -m -u -i -p -f --mount-proc sh -c "$child" wvrun-init "$@" || rc=$?
+    _leave_cgroup "$cg"
+    return "$rc"
+  fi
+
+  # Background the container so we can capture its host PID-1 (needed for stop/exec).
+  unshare -m -u -i -p -f --mount-proc sh -c "$child" wvrun-init "$@" &
+  upid=$!
+  cpid=$(container_pid1 "$upid")
+  if [ -n "$_sd" ]; then
+    printf '%s\n' "$upid" > "$_sd/upid"
+    printf '%s\n' "$cpid" > "$_sd/pid"
+    printf '%s\n' "$cg"   > "$_sd/cg"
+    printf 'running\n'    > "$_sd/status"
+  fi
+  rc=0
+  wait "$upid" || rc=$?
+  if [ -n "$_sd" ]; then
+    printf '%s\n' "$rc"  > "$_sd/exit"
+    printf 'exited\n'    > "$_sd/status"
+  fi
+  _leave_cgroup "$cg"
+  return "$rc"
+}
+
+# Move back to the root cgroup so a leaf can be rmdir'd (the container has already gone).
+_leave_cgroup() {
+  [ -n "${1:-}" ] || return 0
+  echo $$ > /sys/fs/cgroup/cgroup.procs 2>/dev/null || true
+  rmdir "$1" 2>/dev/null || true
+}
+
+# Resolve a ref (id or name) → its state dir path. Echoes the path, returns 1 if not found.
+resolve() {
+  _ref=$1
+  for d in "$WV_RUN_DIR"/*; do
+    [ -d "$d" ] || continue
+    [ "$(cat "$d/id" 2>/dev/null || true)" = "$_ref" ]   && { printf '%s' "$d"; return 0; }
+    [ "$(cat "$d/name" 2>/dev/null || true)" = "$_ref" ] && { printf '%s' "$d"; return 0; }
+  done
+  return 1
+}
+name_taken() { _n=$1; resolve "$_n" >/dev/null 2>&1; }
+
+# Reconcile a container marked running whose supervisor pid is gone → exited(dead).
+reconcile() {
+  _d=$1
+  [ "$(cat "$_d/status" 2>/dev/null || true)" = running ] || return 0
+  _up=$(cat "$_d/upid" 2>/dev/null || true)
+  if [ -n "$_up" ] && [ ! -d "/proc/$_up" ]; then
+    printf 'exited\n' > "$_d/status"
+    [ -s "$_d/exit" ] || printf 'dead\n' > "$_d/exit"
+  fi
+}
+
+# ── run ───────────────────────────────────────────────────────────────────────────────────────────
+wv_run() {
+  _int=0 _mem="" _pids="" _name="" _detach=0
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -d|--detach)      _detach=1; shift ;;
+      -i|--interactive) _int=1; shift ;;
+      --name)           _name="${2:?--name needs a value}"; shift 2 ;;
+      --memory)         _mem="${2:?--memory needs a value}"; shift 2 ;;
+      --pids)           _pids="${2:?--pids needs a value}"; shift 2 ;;
+      --)               shift; break ;;
+      -*)               echo "wvrun run: unknown flag $1" >&2; return 2 ;;
+      *)                break ;;
+    esac
+  done
+  bundle="${1:-}"; [ -n "$bundle" ] || usage
+  [ -d "$bundle/rootfs" ] || { echo "wvrun run: no rootfs/ in bundle $bundle" >&2; return 2; }
+  ensure_dirs
+
+  if [ "$_detach" -eq 0 ]; then
+    container_core "$_int" "$_mem" "$_pids" "wvrun.fg.$$" "" "$bundle"
+    return $?
+  fi
+
+  # Detached: allocate id + state, check name uniqueness, launch a supervisor subshell.
+  [ -n "$_name" ] && { name_taken "$_name" && { echo "wvrun run: name '$_name' already in use" >&2; return 2; }; }
+  id=$(new_id)
+  [ -n "$_name" ] || _name="$id"
+  sd="$WV_RUN_DIR/$id"; mkdir -p "$sd"
+  log="$WV_LOG_DIR/$id.log"; : > "$log"
+  printf '%s\n' "$id"                 > "$sd/id"
+  printf '%s\n' "$_name"              > "$sd/name"
+  printf '%s\n' "$(basename "$bundle")" > "$sd/image"
+  printf '%s\n' "$bundle"             > "$sd/bundle"
+  printf '%s\n' "$(now_epoch)"        > "$sd/started"
+  printf 'created\n'                  > "$sd/status"
+  # Supervisor: a detached subshell (ignores SIGHUP so it survives this wvrun exiting). It inherits the
+  # functions + $child. stdout/stderr → the container log. It records state and reaps the exit code.
+  (
+    trap '' HUP
+    exec >>"$log" 2>&1 </dev/null
+    container_core "$_int" "$_mem" "$_pids" "wvrun.$id" "$sd" "$bundle" || true
+  ) &
+  printf '%s\n' "$!" > "$sd/spid"
+  printf '%s\n' "$id"
+}
+
+# ── ps ────────────────────────────────────────────────────────────────────────────────────────────
+wv_ps() {
+  _all=0; [ "${1:-}" = "-a" ] && _all=1
+  ensure_dirs
+  for d in "$WV_RUN_DIR"/*; do
+    [ -d "$d" ] || continue
+    id=$(cat "$d/id" 2>/dev/null || true); [ -n "$id" ] || continue
+    reconcile "$d"
+    st=$(cat "$d/status" 2>/dev/null || echo unknown)
+    if [ "$_all" -eq 0 ]; then
+      [ "$st" = running ] || [ "$st" = created ] || continue
+    fi
+    name=$(cat "$d/name" 2>/dev/null || true)
+    image=$(cat "$d/image" 2>/dev/null || true)
+    started=$(cat "$d/started" 2>/dev/null || echo 0)
+    exitc=$(cat "$d/exit" 2>/dev/null || true)
+    printf '{"id":"%s","name":%s,"image":%s,"status":"%s","started":"%s","exit":"%s"}\n' \
+      "$id" "$(json "$name")" "$(json "$image")" "$st" "$started" "$exitc"
+  done
+}
+
+# ── logs ──────────────────────────────────────────────────────────────────────────────────────────
+wv_logs() {
+  _f=0; [ "${1:-}" = "-f" ] && { _f=1; shift; }
+  ref="${1:-}"; [ -n "$ref" ] || { echo "usage: wvrun logs [-f] <id|name>" >&2; return 2; }
+  d=$(resolve "$ref") || { echo "wvrun logs: no such container: $ref" >&2; return 1; }
+  id=$(cat "$d/id" 2>/dev/null || true); log="$WV_LOG_DIR/$id.log"
+  [ -f "$log" ] || { echo "wvrun logs: no log for $ref" >&2; return 1; }
+  if [ "$_f" -eq 0 ]; then cat "$log"; return 0; fi
+  # Follow: stream new lines until the container leaves the running/created states.
+  tail -n +1 -f "$log" & tp=$!
+  while :; do
+    reconcile "$d"
+    st=$(cat "$d/status" 2>/dev/null || echo exited)
+    { [ "$st" = running ] || [ "$st" = created ]; } || break
+    sleep 1
+  done
+  sleep 1
+  kill "$tp" 2>/dev/null || true
+  wait "$tp" 2>/dev/null || true
+}
+
+# ── stop ──────────────────────────────────────────────────────────────────────────────────────────
+wv_stop() {
+  ref="${1:-}"; [ -n "$ref" ] || { echo "usage: wvrun stop <id|name>" >&2; return 2; }
+  d=$(resolve "$ref") || { echo "wvrun stop: no such container: $ref" >&2; return 1; }
+  reconcile "$d"
+  st=$(cat "$d/status" 2>/dev/null || true)
+  [ "$st" = running ] || { echo "$(cat "$d/id")"; return 0; }
+  cg=$(cat "$d/cg" 2>/dev/null || true)
+  pid=$(cat "$d/pid" 2>/dev/null || true)
+  up=$(cat "$d/upid" 2>/dev/null || true)
+  # Best-effort graceful: SIGTERM the container init (honored only if it installed a handler).
+  [ -n "$pid" ] && kill -TERM "$pid" 2>/dev/null || true
+  _n=0; while [ "$_n" -lt 10 ]; do
+    reconcile "$d"; [ "$(cat "$d/status" 2>/dev/null)" = running ] || break; sleep 1; _n=$((_n + 1))
+  done
+  if [ "$(cat "$d/status" 2>/dev/null)" = running ]; then
+    if [ -n "$cg" ] && [ -f "$cg/cgroup.kill" ]; then
+      echo 1 > "$cg/cgroup.kill" 2>/dev/null || true
+    else
+      [ -n "$up" ]  && kill -KILL "$up"  2>/dev/null || true
+      [ -n "$pid" ] && kill -KILL "$pid" 2>/dev/null || true
+    fi
+  fi
+  _n=0; while [ "$_n" -lt 10 ]; do
+    reconcile "$d"; [ "$(cat "$d/status" 2>/dev/null)" = running ] || break; sleep 1; _n=$((_n + 1))
+  done
+  echo "$(cat "$d/id")"
+}
+
+# ── rm ────────────────────────────────────────────────────────────────────────────────────────────
+wv_rm() {
+  _force=0; [ "${1:-}" = "-f" ] && { _force=1; shift; }
+  ref="${1:-}"; [ -n "$ref" ] || { echo "usage: wvrun rm [-f] <id|name>" >&2; return 2; }
+  d=$(resolve "$ref") || { echo "wvrun rm: no such container: $ref" >&2; return 1; }
+  reconcile "$d"
+  st=$(cat "$d/status" 2>/dev/null || true)
+  if [ "$st" = running ] || [ "$st" = created ]; then
+    [ "$_force" -eq 1 ] || { echo "wvrun rm: container $ref is $st (use -f to force)" >&2; return 1; }
+    wv_stop "$ref" >/dev/null 2>&1 || true
+  fi
+  id=$(cat "$d/id" 2>/dev/null || true)
+  cg=$(cat "$d/cg" 2>/dev/null || true)
+  _leave_cgroup "$cg"
+  # Defensive: also remove the id-derived leaf if a partially-created one lingers.
+  [ -n "$id" ] && [ -d "/sys/fs/cgroup/wvrun.$id" ] && rmdir "/sys/fs/cgroup/wvrun.$id" 2>/dev/null || true
+  rm -rf "$d"
+  [ -n "$id" ] && rm -f "$WV_LOG_DIR/$id.log"
+  echo "$id"
+}
+
+# ── exec (E3.5-T05c) ──────────────────────────────────────────────────────────────────────────────
+wv_exec() {
+  echo "wvrun exec: not implemented yet (E3.5-T05c)" >&2
+  return 2
+}
+
+# ── legacy run-to-exit (E3.5-T03): `wvrun [--interactive] [--memory B] [--pids N] <bundle>` ──────────
+wv_legacy() {
+  _int=0 _mem="" _pids=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --interactive|-i) _int=1; shift ;;
+      --memory) _mem="${2:?}"; shift 2 ;;
+      --pids)   _pids="${2:?}"; shift 2 ;;
+      --) shift; break ;;
+      -*) echo "wvrun: unknown flag $1" >&2; usage ;;
+      *) break ;;
+    esac
+  done
+  bundle="${1:-}"; [ -n "$bundle" ] || usage
+  ensure_dirs
+  container_core "$_int" "$_mem" "$_pids" "wvrun.$$" "" "$bundle"
+}
+
+# ── dispatch ────────────────────────────────────────────────────────────────────────────────────────
+case "${1:-}" in
+  run)  shift; wv_run  "$@" ;;
+  ps)   shift; wv_ps   "$@" ;;
+  logs) shift; wv_logs "$@" ;;
+  stop) shift; wv_stop "$@" ;;
+  rm)   shift; wv_rm   "$@" ;;
+  exec) shift; wv_exec "$@" ;;
+  "")   usage ;;
+  *)    wv_legacy "$@" ;;
+esac

@@ -280,6 +280,51 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
         transcript.lock().unwrap()
     );
 
+    // ── E3.5-T05b: container LIFECYCLE (run -d / ps / logs / stop) on the real guest ──────────────
+    // Positive markers are computed ($((6*7))=42) so a host-side echo of the command can't satisfy
+    // them; a failed check simply never emits the marker → wait_for times out (no echo-collision).
+    // A detached long-runner: a loop so it stays `running` for the ps/logs checks.
+    send(
+        &mut stdin,
+        "printf '/bin/sh\\n-c\\ni=0; while :; do echo LIFE_$((6*7))_$i; i=$((i+1)); sleep 1; done\\n' > /tmp/b/config/argv",
+    );
+    send(
+        &mut stdin,
+        "wvrun run -d --name c1 /tmp/b > /tmp/cid; [ -s /tmp/cid ] && echo RANID_$((6*7)) || echo RANID_no",
+    );
+    assert!(
+        wait_for(&transcript, "RANID_42", 180),
+        "wvrun run -d did not return a container id; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(
+        &mut stdin,
+        "sleep 2; wvrun ps | grep -q '\"name\":\"c1\"' && wvrun ps | grep -q '\"status\":\"running\"' && echo PSRUN_$((6*7)) || echo PSRUN_no",
+    );
+    assert!(
+        wait_for(&transcript, "PSRUN_42", 180),
+        "wvrun ps did not show c1 running; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(
+        &mut stdin,
+        "wvrun logs c1 | grep -q LIFE_42 && echo LOGOK_$((6*7)) || echo LOGOK_no",
+    );
+    assert!(
+        wait_for(&transcript, "LOGOK_42", 180),
+        "wvrun logs did not capture the detached container's computed marker; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(
+        &mut stdin,
+        "wvrun stop c1 >/dev/null; sleep 1; wvrun ps -a | grep '\"name\":\"c1\"' | grep -q exited && echo STOPPED_$((6*7)) || echo STOPPED_no",
+    );
+    assert!(
+        wait_for(&transcript, "STOPPED_42", 180),
+        "wvrun stop did not move c1 to exited; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+
     send(&mut stdin, "poweroff");
     let deadline = Instant::now() + Duration::from_secs(600);
     let child = guard.0.as_mut().unwrap();
