@@ -132,11 +132,17 @@ const css = `
 .ide-term-bar { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; padding: 4px 12px;
   background: #0a0d13; border-bottom: 1px solid var(--line, #232a35); font-size: 11px; color: #8fa3bf; }
 .ide-term-bar .sp { flex: 1 1 auto; }
-.ide-term-scroll { flex: 1 1 auto; overflow: auto; }
-/* Hide the legacy boot/bench toolbar + boot-hint (kept in DOM for main.js bindings; the hint
-   referenced now-removed boot buttons). */
-.ide-term-scroll .console-head, .ide-term-scroll #boot-hint { display: none !important; }
-.ide-term-scroll .console { border: 0; border-radius: 0; margin: 0; }
+/* The terminal pane is a single scroll: this wrapper does NOT scroll (overflow:hidden); the xterm
+   viewport inside #term is the only scrollbar. #term flexes to fill so the fit addon sizes it. */
+.ide-term-scroll { flex: 1 1 auto; overflow: hidden; min-height: 0; }
+/* Hide the legacy boot/bench toolbar + boot-hint (kept in DOM for main.js bindings) and any info
+   banners so the terminal shows only the guest console. */
+.ide-term-scroll .console-head, .ide-term-scroll #boot-hint, .ide-term-scroll #run-banner { display: none !important; }
+.ide-term-scroll .console { border: 0; border-radius: 0; margin: 0; height: 100%; min-height: 0;
+  display: flex; flex-direction: column; }
+.ide-term-scroll .console > *:not(#term) { flex: 0 0 auto; }
+.ide-term-scroll #term { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.ide-term-scroll #term .xterm { height: 100%; }
 
 /* Status bar */
 .ide-statusbar { flex: 0 0 auto; display: flex; align-items: center; gap: 0; height: 24px;
@@ -235,7 +241,6 @@ if (root) {
         <span>TERMINAL — guest shell (ttyS0)</span>
         <span class="sp"></span>
         <button class="ide-mini" id="ide-term-clear">Clear</button>
-        <button class="ide-mini" id="ide-term-fit">Fit</button>
       </div>
       <div class="ide-term-scroll" id="ide-term-scroll"></div>
     </div>
@@ -288,9 +293,18 @@ if (root) {
   q("#ide-act-docker").addEventListener("click", () => selectSideView("docker"));
   q("#ide-act-collapse").addEventListener("click", () => sideEl.classList.toggle("collapsed"));
 
-  // ── Terminal toolbar ────────────────────────────────────────────────────────
-  q("#ide-term-fit").addEventListener("click", () => document.getElementById("term-fit")?.click());
+  // ── Terminal toolbar + AUTO-FIT ─────────────────────────────────────────────
   q("#ide-term-clear").addEventListener("click", () => window.__term?.clear?.());
+  // Fit the terminal to its pane automatically — on window resize AND when the pane is resized
+  // (dragged) or the Demo tab becomes visible. No manual "Fit" button. Debounced.
+  let fitTimer = null;
+  const autoFit = () => { clearTimeout(fitTimer); fitTimer = setTimeout(() => { try { window.__term?.fitNow?.(); } catch {} }, 80); };
+  window.addEventListener("resize", autoFit);
+  try { new ResizeObserver(autoFit).observe(document.getElementById("ide-term-pane")); } catch {}
+  // Re-fit when the Demo tab is shown (it may have been display:none, so xterm couldn't size).
+  document.querySelector('.tab[data-tab="ide"]')?.addEventListener("click", autoFit);
+  window.addEventListener("hashchange", () => { if (location.hash.slice(1) === "ide") autoFit(); });
+  autoFit();
 
   // ── Status bar: guest + network ─────────────────────────────────────────────
   const sbDot = q("#ide-sb-dot");

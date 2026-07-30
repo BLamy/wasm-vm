@@ -126,7 +126,9 @@ async function runLinuxBoot(opts, banner) {
   if (linuxCtl) return; // already booting
   bootBtns.forEach((b) => b && (b.disabled = true));
   term.reset();
-  term.writeln(`\x1b[36m${banner}\x1b[0m`);
+  // (No info banner in the terminal — the status bar shows boot/guest state; the console is just the
+  // guest's own output.) `banner` is still used by setStatus below.
+  void banner;
   const query = new URLSearchParams(location.search);
   const slirpRelay = opts.slirpRelay ?? query.get("slirpRelay") ?? networkRelayEl?.value ?? "";
   const slirpDoh = opts.slirpDoh ?? query.get("slirpDoh") ?? "";
@@ -336,10 +338,8 @@ async function runLinuxBoot(opts, banner) {
         console.error("dropped a terminal input chunk:", e?.message || e);
       }
     });
-    // Fit the rendered grid to the page now that the terminal is the active view, and print
-    // the matching stty hint so the guest can be told its real window size (serial has no winsize).
-    const { cols, rows } = ui.fitNow();
-    term.writeln(`\x1b[90m[terminal ${cols}x${rows} — click "Fit" then run: ${ui.sttyHint()}]\x1b[0m`);
+    // Fit the rendered grid to the page (no stty-hint line printed — the terminal auto-fits on resize).
+    ui.fitNow();
     // The guest is live and the input sink is attached; focus the terminal so the user can
     // type immediately without first having to click into it.
     ui.focus();
@@ -391,8 +391,13 @@ if (bootAlpineFullBtn) {
 // (crates/cli/tests/boot_wvrun.rs) but not yet baked into the served in-browser image.
 const runBannerEl = document.getElementById("run-banner");
 function setRunBanner(html) {
+  // Deliberately a no-op now: the Demo tab's blue status bar shows guest/boot state, so we keep the
+  // terminal free of info banners. (Signature kept — callers still invoke it.)
+  void html;
   if (!runBannerEl) return;
-  runBannerEl.style.display = html == null ? "none" : "block";
+  runBannerEl.style.display = "none";
+  return;
+  // eslint-disable-next-line no-unreachable
   if (html != null) runBannerEl.innerHTML = html;
 }
 
