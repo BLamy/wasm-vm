@@ -201,6 +201,10 @@ fi
 if [ -f /wvrun.sh ]; then
   install -Dm755 /wvrun.sh "$ROOT/usr/local/bin/wvrun"
 fi
+# E3.5-T03 (AC6): the static seccomp helper wvrun execs the container through.
+if [ -f /wvseccomp-riscv64 ]; then
+  install -Dm755 /wvseccomp-riscv64 "$ROOT/usr/local/bin/wvseccomp"
+fi
 
 find "$ROOT" -exec touch -h -d "@$SOURCE_DATE_EPOCH" {} +
 rm -f /out/alpine-rootfs.ext4

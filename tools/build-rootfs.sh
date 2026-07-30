@@ -39,6 +39,10 @@ mkdir -p "$OUT"
 AGENT="$PWD/releases/wvft-agent-riscv64"
 bash tools/build-file-agent.sh "$AGENT"
 
+# E3.5-T03 (AC6): the static seccomp helper wvrun wraps the container exec with.
+WVSECCOMP="$PWD/releases/wvseccomp-riscv64"
+bash tools/build-wvseccomp.sh "$WVSECCOMP"
+
 # Build the pinned build image (context = tools/ only). The cold-cache adversarial gate can force
 # every layer to rebuild without changing the production command or tag.
 if [ "${DOCKER_BUILD_NO_CACHE:-0}" = 1 ]; then
@@ -55,6 +59,7 @@ docker run --rm \
   -v "$PWD/tools/guest/container-smoke.sh:/container-smoke.sh:ro" \
   -v "$PWD/tools/guest/wvrun.sh:/wvrun.sh:ro" \
   -v "$AGENT:/wvft-agent-riscv64:ro" \
+  -v "$WVSECCOMP:/wvseccomp-riscv64:ro" \
   -v "$PWD/tools/rootfs/file-transfer.conf:/file-transfer.conf:ro" \
   -v "$PWD/tools/rootfs/wasm-vm-file-agent.initd:/wasm-vm-file-agent.initd:ro" \
   -v "$PWD/tools/rootfs/vm-download:/vm-download:ro" \

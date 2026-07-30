@@ -1,0 +1,14 @@
+[package]
+name = "wasm-vm-wvseccomp"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+# E3.5-T03 (AC6): a tiny static-musl riscv64 helper that installs a runc-style seccomp filter and
+# execs the container argv. wvrun wraps the container exec with it. Only ever built for the guest.
+[[bin]]
+name = "wvseccomp"
+path = "src/main.rs"
+
+[dependencies]
+libc = "0.2"

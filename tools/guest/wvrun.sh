@@ -62,23 +62,31 @@ else
   [ $# -gt 0 ] || { echo "wvrun: image has no entrypoint/cmd (use --interactive)" >&2; exit 2; }
 fi
 
-# ── Per-container cgroup leaf (best-effort; limits only when requested) ──────────────────────────
+# ── Per-container cgroup leaf (only when a limit is requested) ───────────────────────────────────
+# Join the leaf HERE, in the host pid namespace, BEFORE unshare: `unshare --fork` then makes the
+# container a child of this process, so it inherits this cgroup. (Joining from inside the new pid ns
+# with `echo $$` is unreliable — $$ is the namespaced pid — so the limit never bound the container.)
 cg=""
-if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
-  # Ensure controllers are delegated to children, then make a unique leaf.
+if [ -f /sys/fs/cgroup/cgroup.controllers ] && { [ -n "$mem_limit" ] || [ -n "$pids_limit" ]; }; then
   grep -q memory /sys/fs/cgroup/cgroup.controllers 2>/dev/null &&
     echo '+memory +pids' > /sys/fs/cgroup/cgroup.subtree_control 2>/dev/null || true
   cg="/sys/fs/cgroup/wvrun.$$"
   if mkdir -p "$cg" 2>/dev/null; then
     [ -n "$mem_limit" ]  && echo "$mem_limit"  > "$cg/memory.max" 2>/dev/null || true
     [ -n "$pids_limit" ] && echo "$pids_limit" > "$cg/pids.max"   2>/dev/null || true
+    echo $$ > "$cg/cgroup.procs" 2>/dev/null || cg=""
   else
     cg=""
   fi
 fi
 
-# Clean up the cgroup leaf on exit (after the container process has left it).
-cleanup() { [ -n "$cg" ] && rmdir "$cg" 2>/dev/null || true; }
+# On exit, leave the leaf (move back to root) so it can be removed; the container has already gone.
+cleanup() {
+  if [ -n "$cg" ]; then
+    echo $$ > /sys/fs/cgroup/cgroup.procs 2>/dev/null || true
+    rmdir "$cg" 2>/dev/null || true
+  fi
+}
 trap cleanup EXIT INT TERM
 
 # Export what the unshared child needs (a fresh `sh -c` does not inherit shell vars, only env).
@@ -115,8 +123,19 @@ child='
   done
   mkdir -p "$work/merged/dev/pts" 2>/dev/null || true
   mount -t devpts devpts "$work/merged/dev/pts" 2>/dev/null || true
-  # Join the cgroup leaf from HERE (this process becomes the container PID 1 after pivot).
-  [ -n "${WVRUN_CG:-}" ] && echo $$ > "$WVRUN_CG/cgroup.procs" 2>/dev/null || true
+  # (The cgroup was already joined by the parent before unshare, so this pid-1 inherits it.)
+  # E3.5-T03 (AC6): make the static seccomp helper reachable INSIDE the container (a single-file bind
+  # at a fixed path), so the post-pivot exec can install the filter. It is statically linked, so it
+  # needs nothing else from the container rootfs. Absent helper → run without a filter (graceful).
+  have_seccomp=0
+  if [ -x /usr/local/bin/wvseccomp ]; then
+    # Copy (not bind) the static helper into the container rootfs — a file bind onto an overlayfs path
+    # is unreliable; a copy into the tmpfs upper always works and the helper is self-contained (static).
+    if cp /usr/local/bin/wvseccomp "$work/merged/.wvseccomp" 2>/dev/null; then
+      chmod 0755 "$work/merged/.wvseccomp" 2>/dev/null || true
+      have_seccomp=1
+    fi
+  fi
   # Switch root into the merged tree, detach the old root.
   cd "$work/merged"
   pivot_root . .oldroot
@@ -138,6 +157,11 @@ child='
   # Move the first argc entries (the argv) to the end → order becomes: <env pairs…> <argv…>.
   i=0
   while [ "$i" -lt "$argc" ]; do a=$1; shift; set -- "$@" "$a"; i=$((i + 1)); done
+  # Install the runc-style seccomp filter (deny mount/umount2/reboot/kexec_load/swapon → EPERM) then
+  # exec; the filter is inherited across the execve by the container and all its children.
+  if [ "${have_seccomp:-0}" = 1 ]; then
+    exec /.wvseccomp -- env -i "$@"
+  fi
   exec env -i "$@"
 '
 

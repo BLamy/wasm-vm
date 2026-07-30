@@ -6,6 +6,7 @@ members = [
     "crates/slirp",
     "crates/file-agent-storage",
     "crates/file-agent",
+    "crates/wvseccomp",
     "crates/wasm",
     "crates/cli",
     "tools/fuzz",
