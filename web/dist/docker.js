@@ -73,10 +73,10 @@ const IMAGES = [
     rootfsEntries: 3323,
     entry: "docker-entrypoint.sh memcached",
     bundlePath: "/opt/containers/memcached",
-    // memcached is a server (runs forever); prove the real riscv64 memcached binary executes by asking
-    // its version, then confirm the container init/hostname isolation.
-    demo: "memcached -V; echo pid1=$(cat /proc/1/comm); echo host=$(hostname)",
-    desc: "memcached — a real server image; wvrun runs the actual riscv64 memcached binary in an isolated container.",
+    // memcached is a real server: run its default entrypoint (no argv override) so the container stays
+    // LONG-LIVED — it shows as `running` in the Containers tab, and its logs carry the server's startup.
+    demo: null,
+    desc: "memcached — a real server image; wvrun runs the actual riscv64 memcached server in an isolated, long-lived container.",
   },
   { repo: "postgres", tag: "latest", bundled: false, riscv64: true, desc: "PostgreSQL — riscv64 image exists (254 MB); too large to bundle, pull natively." },
   { repo: "nginx", tag: "latest", bundled: false, riscv64: true, desc: "nginx — riscv64 image exists; large, pull natively." },
@@ -108,6 +108,69 @@ async function loadBundleManifests() {
 }
 
 const state = { view: "images", detailRepo: null, runRepo: null };
+
+// ── Guest command channel: a serialized, fenced RPC over the single serial console ─────────────────
+// Sends `<cmd>; printf '\n__WVEND_<id>_%s\n' $?` and captures stdout between the echoed command and the
+// END marker. The marker is matched with a trailing DIGIT (the real $? output) so the command's OWN
+// echoed marker text — which ends in the literal `%s` — never matches. Requires the Alpine guest booted
+// and idle at a shell. Serialized via a promise chain so concurrent callers don't interleave.
+let rpcChain = Promise.resolve();
+let rpcSeq = 0;
+function guestRun(cmd, timeoutMs = 60000) {
+  const task = () =>
+    new Promise((resolve, reject) => {
+      const api = window.wvmDemo;
+      if (!api || !api.isGuestUp || !api.isGuestUp()) return reject(new Error("guest not up"));
+      const rid = `${Date.now().toString(36)}${rpcSeq++}`;
+      const endRe = new RegExp(`__WVEND_${rid}_(\\d+)`);
+      const dec = new TextDecoder();
+      let buf = "";
+      let unsub = null;
+      let timer = null;
+      const finish = (fn) => { clearTimeout(timer); if (unsub) unsub(); fn(); };
+      unsub = api.onConsole((u8) => {
+        buf += stripAnsi(dec.decode(u8, { stream: true }));
+        const m = buf.match(endRe);
+        if (m) {
+          const exit = parseInt(m[1], 10);
+          let out = buf.slice(0, m.index);
+          const nl = out.indexOf("\n"); // drop the guest's echo of the command line
+          if (nl !== -1) out = out.slice(nl + 1);
+          finish(() => resolve({ stdout: out, exit }));
+        }
+      });
+      timer = setTimeout(() => finish(() => reject(new Error("guest command timed out"))), timeoutMs);
+      const full = `${cmd}; printf '\\n__WVEND_${rid}_%s\\n' "$?"\r`;
+      setTimeout(() => api.sendInput(new TextEncoder().encode(full)), 0);
+    });
+  rpcChain = rpcChain.then(task, task);
+  return rpcChain;
+}
+
+// Parse `wvrun ps` JSON-line output into container objects (skips the echoed command + partial lines).
+function parsePs(stdout) {
+  const out = [];
+  for (const line of (stdout || "").split("\n")) {
+    const s = line.trim();
+    if (s[0] !== "{") continue;
+    try { out.push(JSON.parse(s)); } catch { /* echoed/partial line */ }
+  }
+  return out;
+}
+
+// Build the detached-run command for an image: for busybox/alpine, override the container argv with the
+// isolation-proof demo + a sleep so the container stays "running" (visible in Containers) and its logs
+// carry the proof; memcached (img.demo unset) runs its real long-lived server entrypoint.
+function wvrunRunCmd(img) {
+  const name = `${img.repo}-${Math.floor(1000 + Math.random() * 9000)}`;
+  const setArgv = img.demo
+    ? `printf '/bin/sh\\n-c\\n${img.demo}; echo; echo [container still alive — sleeping]; sleep 240\\n' > ${img.bundlePath}/config/argv; `
+    : "";
+  return { name, cmd: `${setArgv}wvrun run -d --name ${name} ${img.bundlePath}` };
+}
+
+// Poll handle for the Containers view (cleared when navigating away).
+let containersPoll = null;
 
 // The live in-tab run session (see runFlow). Holds the real console tap + the streamed transcript
 // so a re-render of the run view can re-attach without rebooting or fabricating output.
@@ -156,16 +219,27 @@ function showRunError(errEl, msg) {
   errEl.style.display = "block";
 }
 
-// Type the `wvrun <bundle>` command into the ALPINE guest once it is at a shell prompt. Idempotent.
+// Once the Alpine guest reaches a shell prompt, start the container DETACHED (`wvrun run -d`) so it is
+// tracked and shows up in the Containers tab. Idempotent per session.
 function injectCommand() {
   if (!session || session.injected) return;
   session.injected = true;
   clearTimeout(session.fallback);
-  // CRITICAL: injectCommand runs from inside onConsoleChunk, which the guest calls SYNCHRONOUSLY
-  // while emitting output. Calling sendInput here would re-enter the wasm machine mid-runChunk (the
-  // machine rejects "re-entrant call into WasmMachine"). Defer to a fresh macrotask.
-  const cmd = new TextEncoder().encode(wvrunCmd(session.img));
-  setTimeout(() => window.wvmDemo.sendInput(cmd), 0);
+  const { name, cmd } = wvrunRunCmd(session.img);
+  session.startedName = name;
+  // CRITICAL: injectCommand runs from inside onConsoleChunk (the guest emits output synchronously);
+  // calling sendInput here re-enters the wasm machine ("re-entrant call into WasmMachine"). Defer it.
+  const bytes = new TextEncoder().encode(cmd + "\r");
+  setTimeout(() => {
+    window.wvmDemo.sendInput(bytes);
+    // `wvrun run -d` returns the id quickly; jump to the Containers tab, which polls `wvrun ps`.
+    setTimeout(() => {
+      if (session && session.unsub) session.unsub();
+      state.view = "containers";
+      state.runRepo = null;
+      render();
+    }, 3500);
+  }, 0);
 }
 
 // Decide when the Alpine guest is ready for the command: it reaches a root auto-login shell prompt
@@ -292,6 +366,9 @@ function navBtn(view, label) {
 }
 
 function render() {
+  // Any prior Containers poll stops on a view change; renderContainers re-arms it if we stay there.
+  clearInterval(containersPoll);
+  containersPoll = null;
   for (const b of root.querySelectorAll(".dk-nav")) {
     b.classList.toggle("active", b.dataset.view === state.view && !state.detailRepo);
   }
@@ -422,19 +499,105 @@ function renderRun(main) {
   runFlow(img, pane, errEl, artEl);
 }
 
-// ── Containers (honest: none run in-browser yet) ─────────────────────────────
+// ── Containers: LIVE from `wvrun ps` in the Alpine guest ──────────────────────
 function renderContainers(main) {
-  main.append(head("Containers", "in-browser container runtime — status"));
+  main.append(head("Containers", "live from wvrun ps in the Alpine guest"));
   const view = elc("div", "dk-view");
-  view.append(note(
-    "Click ▶ Run on busybox (Images) to boot a real RISC-V Linux guest running the real busybox " +
-    "userland — one click opens a run pane that streams the guest's real console and runs one real " +
-    "command in it. That is the real thing, not a simulated shell. The OCI-overlay isolation runner " +
-    "(wvrun /opt/containers/<name> — " +
-    "unshare + overlay + pivot_root) is built and native-tested but not yet baked into the served " +
-    "in-browser image, so full container isolation still runs natively; see a bundled image’s Run panel.",
-  ));
   main.append(view);
+  const api = window.wvmDemo;
+
+  if (!api || !api.isGuestUp || !api.isGuestUp()) {
+    view.append(note(
+      "No guest is running yet. Go to Images and click ▶ Run on a bundled image — it boots the Alpine " +
+      "guest and starts the container detached (wvrun run -d). Running/exited containers then appear " +
+      "here, polled live from wvrun ps, with Logs / Stop / Remove.",
+    ));
+    return;
+  }
+
+  const listEl = elc("div", "dk-clist");
+  listEl.textContent = "loading containers (wvrun ps -a)…";
+  view.append(listEl);
+  const logEl = elc("pre", "dk-console");
+  logEl.style.display = "none";
+  view.append(logEl);
+
+  let inFlight = false;
+  const refresh = async () => {
+    if (state.view !== "containers" || inFlight) return; // navigated away / prior poll still running
+    inFlight = true;
+    try {
+      const { stdout } = await guestRun("wvrun ps -a");
+      if (state.view !== "containers") return;
+      renderContainerList(listEl, logEl, parsePs(stdout));
+    } catch (e) {
+      if (state.view === "containers") listEl.textContent = `wvrun ps failed: ${e.message || e}`;
+    } finally {
+      inFlight = false;
+    }
+  };
+  refresh();
+  clearInterval(containersPoll);
+  containersPoll = setInterval(refresh, 6000);
+}
+
+// Render the container rows + wire Logs / Stop / Remove (each an RPC into the guest).
+function renderContainerList(listEl, logEl, rows) {
+  listEl.replaceChildren();
+  if (!rows.length) {
+    listEl.append(note("No containers yet. Run a bundled image from the Images tab."));
+    return;
+  }
+  const table = elc("table", "dk-table");
+  table.innerHTML = "<thead><tr><th>Container</th><th>Image</th><th>Status</th><th></th></tr></thead>";
+  const tb = document.createElement("tbody");
+  for (const c of rows) {
+    const tr = document.createElement("tr");
+    const nameCell = td();
+    nameCell.append(elc("span", "dk-repo", c.name || c.id));
+    nameCell.append(document.createElement("br"), elc("span", "dk-mono", c.id));
+    tr.append(nameCell);
+    tr.append(td(elc("span", "dk-mono", c.image || "")));
+    const st = td();
+    const running = c.status === "running";
+    const badge = elc("span", running ? "dk-status running" : "dk-mono");
+    if (running) badge.append(elc("span", "dot"), document.createTextNode("running"));
+    else badge.textContent = c.status + (c.exit ? ` (${c.exit})` : "");
+    st.append(badge);
+    tr.append(st);
+    const actions = td();
+    actions.style.whiteSpace = "nowrap";
+    const logsBtn = elc("button", "dk-btn", "Logs");
+    logsBtn.addEventListener("click", () => showLogs(logEl, c));
+    actions.append(logsBtn);
+    if (running) {
+      const stopBtn = elc("button", "dk-btn", "Stop");
+      stopBtn.style.marginLeft = "6px";
+      stopBtn.addEventListener("click", async () => { stopBtn.disabled = true; await guestRun(`wvrun stop ${c.id}`).catch(() => {}); });
+      actions.append(stopBtn);
+    } else {
+      const rmBtn = elc("button", "dk-btn", "Remove");
+      rmBtn.style.marginLeft = "6px";
+      rmBtn.addEventListener("click", async () => { rmBtn.disabled = true; await guestRun(`wvrun rm -f ${c.id}`).catch(() => {}); });
+      actions.append(rmBtn);
+    }
+    tr.append(actions);
+    tb.append(tr);
+  }
+  table.append(tb);
+  listEl.append(table);
+}
+
+// Fetch + show a container's logs (the container's real stdout, incl. the guest-computed proof markers).
+async function showLogs(logEl, c) {
+  logEl.style.display = "block";
+  logEl.textContent = `wvrun logs ${c.name || c.id} …`;
+  try {
+    const { stdout } = await guestRun(`wvrun logs ${c.id}`);
+    logEl.textContent = `$ wvrun logs ${c.name || c.id}\n${stdout.trim() || "(no output yet)"}`;
+  } catch (e) {
+    logEl.textContent = `wvrun logs failed: ${e.message || e}`;
+  }
 }
 
 // ── Image detail: Inspect + Run (honest, no fake shell) ──────────────────────
