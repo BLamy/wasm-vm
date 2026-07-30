@@ -271,16 +271,6 @@ async function runFlow(img, paneEl, errEl, artEl) {
     return;
   }
 
-  // Re-attach to an in-progress / live session for this image rather than rebooting or faking.
-  if (session && session.repo === img.repo && (session.starting || api.isGuestUp())) {
-    session.paneEl = paneEl;
-    session.errEl = errEl;
-    paneEl.textContent = session.buf;
-    paneEl.scrollTop = paneEl.scrollHeight;
-    renderContainerInfo(artEl, img);
-    return;
-  }
-
   // Pre-flight: the Alpine guest (which ships wvrun + the baked bundles) must be deployed to this host,
   // or wvrun cannot run here — fail with a typed error and boot NOTHING (no busybox-initramfs fallback).
   if (!api.alpineArtifactsPresent || !api.alpineArtifactsPresent()) {
@@ -313,6 +303,10 @@ async function runFlow(img, paneEl, errEl, artEl) {
     if (session.unsub) session.unsub();
     return;
   }
+  // If the guest was ALREADY up (a second Run), no boot prompt will re-appear in the console stream to
+  // trigger injection — so fire the detached run now (the guest is idle at a shell). A fresh boot is
+  // driven by maybeInject() when the prompt first appears.
+  if (res.already) setTimeout(injectCommand, 800);
 }
 
 // Show what actually runs: the baked OCI bundle (real Docker Hub image, digest-verified) and the
