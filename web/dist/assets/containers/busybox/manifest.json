@@ -1,0 +1,9 @@
+{
+  "ref": "busybox",
+  "arch": "riscv64",
+  "manifestDigest": "sha256:24a317d293b839dcf9033f80b6a8fb8407244dec45a2929925bc757fa33d1e71",
+  "entry": "sh",
+  "rootfsBytes": 3334144,
+  "rootfsEntries": 448,
+  "entryElf": "ELF 64-bit LSB pie executable, UCB RISC-V, RVC, double-float ABI, version 1 (SYSV), dynamically linked, interpreter /lib"
+}

@@ -21,6 +21,14 @@ web/node_modules/
 web/pkg/
 web/assets/*.elf
 web/assets/riscv-tests/
+
+# poor-mans-ci: web/dist is the deployable site, BUILT LOCALLY by the pre-commit hook and COMMITTED
+# so CI only deploys (no CI build). Track it despite the broad dist/ & pkg/ ignores above; but the
+# large boot artifacts (kernel Image + initramfs) are copied in from releases/ at deploy time, so
+# keep web/dist/releases/ out of git (no ~22 MB kernel duplicated per web change).
+!web/dist/
+!web/dist/**
+web/dist/releases/
 .claude/worktrees/
 .DS_Store
 **/.DS_Store

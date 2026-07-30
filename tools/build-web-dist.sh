@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Assemble a self-contained, deployable browser demo into web/dist/ — the "dist directory" the
+# pre-commit hook commits and poor-mans-ci deploys WITHOUT any CI-side build (that's the whole point:
+# the expensive wasm/npm build happens once, locally, and the result rides in git).
+#
+#   bash tools/build-web-dist.sh
+#
+# web/dist/ contains everything the site needs to run EXCEPT the large boot artifacts (kernel Image +
+# initramfs), which already live in releases/ (tracked) and are copied into the deploy by poor-mans-ci
+# at deploy time — so we never duplicate ~22 MB of kernel into git history on every web change.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+DIST=web/dist
+
+echo "[web-dist] building wasm + installing pinned deps (make web-build)…"
+make web-build
+
+echo "[web-dist] assembling $DIST …"
+rm -rf "$DIST"
+mkdir -p "$DIST"
+
+# Top-level app source: js/mjs/html/json, minus build/test scaffolding and the deploy-time manifest.
+for f in web/*.js web/*.mjs web/*.html web/*.json; do
+  [ -e "$f" ] || continue
+  b=$(basename "$f")
+  case "$b" in
+    package.json | package-lock.json | playwright.config.js | artifacts-alpine.json) continue ;;
+  esac
+  cp "$f" "$DIST/"
+done
+
+# App subdirectories that are real source (worker, tailscale connect assets).
+[ -d web/tailscale-connect ] && cp -R web/tailscale-connect "$DIST/tailscale-connect"
+
+# The built wasm ES module (from make web-build).
+cp -R web/pkg "$DIST/pkg"
+
+# Small runtime assets (guest ELFs, riscv-tests) — NOT web/releases (large; deploy-time copy).
+if [ -d web/assets ]; then
+  mkdir -p "$DIST/assets"
+  cp -R web/assets/. "$DIST/assets/"
+  rm -rf "$DIST/assets"/*.elf.tmp 2>/dev/null || true
+fi
+
+# Vendor the three @xterm files index.html references into web/dist/vendor/ (NOT node_modules/, which
+# .gitignore excludes globally — vendoring avoids a re-include fight) and rewrite the paths in the
+# copied index.html so the deployed page loads them from ./vendor/.
+mkdir -p "$DIST/vendor/xterm"
+cp web/node_modules/@xterm/xterm/lib/xterm.js         "$DIST/vendor/xterm/xterm.js"
+cp web/node_modules/@xterm/xterm/css/xterm.css        "$DIST/vendor/xterm/xterm.css"
+cp web/node_modules/@xterm/addon-fit/lib/addon-fit.js "$DIST/vendor/xterm/addon-fit.js"
+if [ -e "$DIST/index.html" ]; then
+  # portable in-place sed (works on both GNU and BSD/macOS sed)
+  sed -e 's#\./node_modules/@xterm/xterm/css/xterm\.css#./vendor/xterm/xterm.css#g' \
+      -e 's#\./node_modules/@xterm/xterm/lib/xterm\.js#./vendor/xterm/xterm.js#g' \
+      -e 's#\./node_modules/@xterm/addon-fit/lib/addon-fit\.js#./vendor/xterm/addon-fit.js#g' \
+      "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
+fi
+
+# artifacts.json (relative ./releases/… URLs; poor-mans-ci fills web/dist/releases at deploy).
+[ -e web/artifacts.json ] && cp web/artifacts.json "$DIST/"
+
+# GitHub Pages: don't run Jekyll over the output.
+touch "$DIST/.nojekyll"
+
+echo "[web-dist] done — $(du -sh "$DIST" | cut -f1) in $DIST (boot artifacts added at deploy time)"

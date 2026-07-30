@@ -3,7 +3,7 @@
 # disagree, that's a bug (E0-T02).
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke bench-l1 riscof diff-all diff-selftest diff-qemu \
-        exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve bench capstone-e0 level1-gate
+        exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -130,6 +130,16 @@ web-build:
 web-serve:
 	@echo "serving http://localhost:8080  (Ctrl-C to stop)"
 	python3 -m http.server 8080 --directory web
+
+# poor-mans-ci: assemble the committed, deployable web/dist (build wasm + vendor deps locally). The
+# pre-commit hook runs this automatically when web/wasm sources change; run it by hand to refresh dist.
+web-dist:
+	bash tools/build-web-dist.sh
+
+# Install the git hooks (the pre-commit hook that rebuilds + stages web/dist on web/wasm changes).
+hooks:
+	git config core.hooksPath tools/git-hooks
+	@echo "hooks installed: core.hooksPath = tools/git-hooks (pre-commit rebuilds web/dist)"
 
 # Interpreter MIPS baseline (E0-T24). Regenerates the native rows of docs/baselines.md;
 # the node/browser rows come from web/bench-node.mjs and the demo page's Bench button.

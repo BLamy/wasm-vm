@@ -95,24 +95,56 @@ do not restart unrelated workspace gates. If runtime semantics change, return to
 rerun the gates selected by the task's risk. Run the pristine-clone proof once, on the final exact
 head, unless the failure itself was a portability or environment-isolation finding.
 
-## Pull requests: stack by default, merge only on explicit request
+## Pull requests: GitHub-native stacked PRs, merge only on explicit request
 
-Use [`kitlangton/stack`](https://github.com/kitlangton/stack) for stacked-PR maintenance
-and merging. Normal progress means continuing the stack: create each new task branch/PR on
-top of its parent, then use `stack sync` to preview and `stack sync --apply` to repair
-descendants, retarget PRs, and refresh stack metadata as needed.
+All stacked-PR work uses GitHub's native **stacked pull requests** primitive
+(<https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart>), driven by
+the **`gh-stack`** CLI extension (the `gh-stack` skill has the full command reference — invoke
+it before non-trivial stack work). A stack is an ordered chain of branches, each PR based on
+the one below it, rooted on `main`; the **bottom** is closest to trunk, the **top** furthest.
+Foundational changes go in lower branches, dependents above.
 
-**Never merge a PR unless the user explicitly asks for a merge in the current request.** A
-task being verified, CI being green, an approval, a request to publish/push/open/update a PR,
-or instructions to keep working are not merge authorization. Without an explicit merge
-request, keep stacking and leave every PR open. Do not enable auto-merge, enqueue a merge,
-click a GitHub merge control, call a GitHub merge API, run `gh pr merge`, or merge locally.
+**All `gh stack` commands must be non-interactive** (they hang on a prompt/TUI otherwise):
+- `gh stack view --json` — never bare `view` (it opens a TUI).
+- `gh stack submit --auto` — auto-generate PR titles; never bare `submit`.
+- `gh stack init <branch…>` / `gh stack add <branch>` — always pass branch names.
+- `gh stack checkout <pr|branch>` — always pass an argument; if a different local stack already
+  tracks those branches, `gh stack unstack --local` first.
 
-When the user explicitly asks to merge, use `stack merge` to preview the exact operation and
-`stack merge --apply` to perform it and repair the remaining descendants. Do not substitute
-another merge mechanism. If the requested PR is not the root, respect the user's requested
-boundary and make the full set of PRs that `stack` will land clear before applying it. Use
-`stack merge --auto` only when the user explicitly asks to enable or wait for auto-merge.
+Normal progress means **continuing the stack**: `gh stack add <branch>` for each new task layer,
+commit deliberately (plain `git add`/`git commit` — one logical concern per branch), then
+`gh stack submit --auto` to create/update the PRs. Use `gh stack sync` / `gh stack rebase
+--upstack` to repair descendants after a lower-layer change. For branches created by an external
+tool (e.g. codex/jj/Sapling), adopt them into a native stack with `gh stack link <bottom> …
+<top>` (bottom-to-top; PR numbers are used as-is, nothing is pushed) — this registers the stack
+on GitHub without merging or touching code.
+
+**Never merge a PR unless the user explicitly asks for a merge in the current request.** A task
+being verified, CI being green, an approval, a request to publish/push/open/update/link a PR, or
+instructions to keep working are **not** merge authorization. Without an explicit merge request,
+keep stacking and leave every PR open. Do not enable auto-merge, enqueue a merge, click a GitHub
+merge control, call a merge API, run `gh pr merge`, `gh stack merge`, or merge locally.
+
+When the user explicitly asks to merge, use **`gh stack merge --yes`** (plain `gh pr merge` does
+not work on stacks). It merges the stack bottom-to-top atomically (all-or-nothing); scope it with
+a PR number (`gh stack merge <pr#> --yes` merges everything up to and including that PR) and pick
+the method with `--squash`/`--rebase`/`--merge`. Respect the user's requested boundary and make
+the full set that will land clear before applying.
+
+### Deployment & CI cost model (poor-mans-ci)
+
+CI does **not** build the browser demo — the wasm/npm build runs once, LOCALLY, in the
+**pre-commit hook** (`tools/git-hooks/pre-commit` → `tools/build-web-dist.sh`), which commits the
+deployable **`web/dist`**. The **`poor-mans-ci`** workflow only *publishes* that committed dist
+(checkout + file copy — no cargo/wasm-pack/npm), deploying `main` → `/main/` and each PR →
+`/pr-<N>/` with a root landing page linking to `/main/` plus every open preview. Install the hook
+once with **`make hooks`**; refresh dist by hand with `make web-dist`. So **PR previews stay free**
+and every stacked PR still gets a live preview.
+
+The full Rust gauntlet (`ci.yml`) no longer runs on every push or every stacked intermediate PR —
+only on a **PR targeting `main`** and on manual dispatch. During stacked development the gate is
+**local**: `make ci` (the exact mirror of `ci.yml`) plus the pre-commit hook. Pay compute on your
+machine, not the CI bill.
 
 ## Worker protocol
 
@@ -136,6 +168,10 @@ boundary and make the full set of PRs that `stack` will land clear before applyi
        `126 passed, 0 failed` (or the new total), and the roadmap pips you touched show
        `live`/`verified` — one screenshot for the record. Keep it to a single load-and-assert
        pass; don't rebuild the world. Cite the result in your Verification log entry.
+   (c) **Ship it to the preview**: the pre-commit hook rebuilds and commits `web/dist` when web/wasm
+       sources change, so the change actually reaches the PR's `/pr-<N>/` preview (poor-mans-ci
+       deploys the committed dist — see the CI cost model above). Verify `web/dist` is staged in the
+       commit; if the hook was bypassed, `make web-dist` and commit it.
    Non-browser work (pure tooling, compliance harness, docs) skips this gate.
 4. **Self-validate freely.** Drive the code however you want — ad-hoc runs, printf, scratch
    binaries. This inner loop is yours; nothing here is evidence.

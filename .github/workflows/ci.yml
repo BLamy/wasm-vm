@@ -4,9 +4,14 @@
 
 name: ci
 
+# poor-mans-ci cost policy: the full Rust gauntlet no longer runs on every push or every stacked
+# intermediate PR. It runs only when a PR TARGETS main (the point work actually lands) and on manual
+# dispatch. During stacked development the gate is LOCAL — `make ci` (this file's exact mirror) plus the
+# pre-commit hook — so contributors pay compute on their own machine, not the CI bill. See AGENTS.md.
 on:
-  push:
+  workflow_dispatch:
   pull_request:
+    branches: [main]
 
 env:
   CARGO_TERM_COLOR: always
