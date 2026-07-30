@@ -190,6 +190,10 @@ container_core() {
     printf 'running\n'    > "$_sd/status"
     cpid=$(container_pid1 "$upid")
     printf '%s\n' "$cpid" > "$_sd/pid"
+    # The supervisor now LEAVES the container's cgroup (the unshare child already inherited it at fork).
+    # Two reasons: `wvrun stop` uses `cgroup.kill`, which would otherwise kill this supervisor before it
+    # can record the exit; and the supervisor's own memory must not count against the container's limit.
+    [ -n "$cg" ] && echo $$ > /sys/fs/cgroup/cgroup.procs 2>/dev/null || true
   fi
   rc=0
   wait "$upid" || rc=$?
@@ -220,12 +224,22 @@ resolve() {
 }
 name_taken() { _n=$1; resolve "$_n" >/dev/null 2>&1; }
 
-# Reconcile a container marked running whose supervisor pid is gone → exited(dead).
+# Reconcile a container marked running whose supervisor pid is gone → exited(dead). A pid that is gone
+# OR a ZOMBIE (killed, not yet reaped — /proc still exists) both mean the container is no longer alive;
+# checking only /proc existence would keep a cgroup.kill'd-but-unreaped upid stuck at `running`.
 reconcile() {
   _d=$1
   [ "$(cat "$_d/status" 2>/dev/null || true)" = running ] || return 0
   _up=$(cat "$_d/upid" 2>/dev/null || true)
-  if [ -n "$_up" ] && [ ! -d "/proc/$_up" ]; then
+  [ -n "$_up" ] || return 0
+  _dead=0
+  if [ ! -e "/proc/$_up" ]; then
+    _dead=1
+  else
+    _stt=$(awk '/^State:/{print $2; exit}' "/proc/$_up/status" 2>/dev/null || echo Z)
+    case "$_stt" in Z | X | "") _dead=1 ;; esac
+  fi
+  if [ "$_dead" = 1 ]; then
     printf 'exited\n' > "$_d/status"
     [ -s "$_d/exit" ] || printf 'dead\n' > "$_d/exit"
   fi
