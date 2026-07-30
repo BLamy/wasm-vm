@@ -325,6 +325,64 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
         transcript.lock().unwrap()
     );
 
+    // ── E3.5-T05c: exec into a RUNNING container (nsenter join) ───────────────────────────────────
+    // A detached long-runner that sets its OWN hostname; then exec proves the ns joins. Plant a
+    // guest-only file OUTSIDE the bundle to prove mount-ns isolation from inside exec.
+    send(&mut stdin, "echo TOPSECRET_$((6*7)) > /root/guest-secret");
+    send(
+        &mut stdin,
+        "printf '/bin/sh\\n-c\\nhostname ctrbox; while :; do sleep 1; done\\n' > /tmp/b/config/argv",
+    );
+    send(
+        &mut stdin,
+        "wvrun run -d --name e1 /tmp/b > /tmp/eid; [ -s /tmp/eid ] && echo EXECID_$((6*7)) || echo EXECID_no",
+    );
+    assert!(
+        wait_for(&transcript, "EXECID_42", 180),
+        "wvrun run -d (for exec) did not start; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    // Marker computed INSIDE the container by the exec'd shell (pid+mount+uts ns join).
+    send(&mut stdin, "sleep 2; wvrun exec e1 sh -c 'echo INEXEC_$((6*7))'");
+    assert!(
+        wait_for(&transcript, "INEXEC_42", 180),
+        "wvrun exec did not run a command inside the container; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    // UTS-ns join: the exec sees the CONTAINER hostname, not the guest's.
+    send(
+        &mut stdin,
+        "wvrun exec e1 hostname | grep -q ctrbox && echo UTSOK_$((6*7)) || echo UTSOK_no",
+    );
+    assert!(
+        wait_for(&transcript, "UTSOK_42", 180),
+        "wvrun exec did not join the container UTS namespace; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    // pid-ns join: /proc/1 inside exec is the CONTAINER init.
+    send(
+        &mut stdin,
+        "wvrun exec e1 sh -c 'cat /proc/1/comm' | grep -q sh && echo PIDNS_$((6*7)) || echo PIDNS_no",
+    );
+    assert!(
+        wait_for(&transcript, "PIDNS_42", 180),
+        "wvrun exec did not join the container pid namespace; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    // mount-ns isolation: the guest-only file is NOT readable from inside exec.
+    send(
+        &mut stdin,
+        "wvrun exec e1 sh -c 'cat /root/guest-secret 2>/dev/null' | grep -q TOPSECRET && echo LEAK_yes || echo NOLEAK_$((6*7))",
+    );
+    // NOLEAK_42 (computed, echo-proof) is emitted only when the guest file is NOT readable; a leak
+    // makes grep match → LEAK_yes → NOLEAK_42 never appears → this times out.
+    assert!(
+        wait_for(&transcript, "NOLEAK_42", 180),
+        "a guest-only file leaked into wvrun exec (mount-ns not isolated); transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(&mut stdin, "wvrun stop e1 >/dev/null");
+
     send(&mut stdin, "poweroff");
     let deadline = Instant::now() + Duration::from_secs(600);
     let child = guard.0.as_mut().unwrap();

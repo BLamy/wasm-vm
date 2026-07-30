@@ -120,12 +120,20 @@ setup_cgroup() {
 }
 
 # Read the container's PID-1 host pid: the child forked by `unshare --fork` is a child of the unshare
-# process ($1) in the host ns. Poll /proc children briefly (fork is near-instant). Echoes "" on failure.
+# process ($1) in the host ns. Uses the shell builtin `read` (NOT a `cat|awk` subprocess per spin — on
+# the interpreted riscv guest each fork+exec is glacially slow, so a subprocess spin here hung past the
+# AC4 timeout). Bounded builtin poll + a single 1s yield fallback for the fork-not-visible-yet race.
 container_pid1() {
-  _up=$1 _n=0
-  while [ "$_n" -lt 500 ]; do
-    _c=$(cat "/proc/$_up/task/$_up/children" 2>/dev/null | awk '{print $1; exit}')
-    [ -n "${_c:-}" ] && { echo "$_c"; return 0; }
+  _up=$1 _n=0 _c=""
+  # `$(cat …)` capture (NOT `read`, which returns non-zero on the momentarily-empty children file and
+  # trips `set -e` inside the loop) + shell `${_c%% *}` for the first pid (no awk subprocess). A real 1s
+  # yield between tries lets the forked child get scheduled; returns as soon as it appears (usually ≤1s),
+  # bounded at ~30s — NOT a tight 500-iteration subprocess spin (that hung the interpreted riscv guest).
+  while [ "$_n" -lt 30 ]; do
+    _c=$(cat "/proc/$_up/task/$_up/children" 2>/dev/null || true)
+    _c=${_c%% *}
+    [ -n "$_c" ] && { echo "$_c"; return 0; }
+    sleep 1 2>/dev/null || true
     _n=$((_n + 1))
   done
   echo ""
@@ -166,15 +174,19 @@ container_core() {
     return "$rc"
   fi
 
-  # Background the container so we can capture its host PID-1 (needed for stop/exec).
+  # Background the container so we can capture its host PID-1 (needed for stop/exec). The pid capture
+  # only matters for a TRACKED container — skip it for the legacy/foreground path (where the captured
+  # value is discarded), so a plain `wvrun --memory <bundle>` never pays the capture cost.
   unshare -m -u -i -p -f --mount-proc sh -c "$child" wvrun-init "$@" &
   upid=$!
-  cpid=$(container_pid1 "$upid")
   if [ -n "$_sd" ]; then
+    # Publish running state IMMEDIATELY (before the pid capture, which yields ~1s for the fork to be
+    # scheduled) so `ps` sees `running` without delay. The pid is filled in a moment later.
     printf '%s\n' "$upid" > "$_sd/upid"
-    printf '%s\n' "$cpid" > "$_sd/pid"
     printf '%s\n' "$cg"   > "$_sd/cg"
     printf 'running\n'    > "$_sd/status"
+    cpid=$(container_pid1 "$upid")
+    printf '%s\n' "$cpid" > "$_sd/pid"
   fi
   rc=0
   wait "$upid" || rc=$?
@@ -355,10 +367,51 @@ wv_rm() {
   echo "$id"
 }
 
-# ── exec (E3.5-T05c) ──────────────────────────────────────────────────────────────────────────────
+# ── exec (E3.5-T05c): enter a running container's namespaces via nsenter/setns ──────────────────────
+# Runs a NEW process inside an already-running container's pid+mount+uts+ipc namespaces, its root
+# filesystem (the overlay merged tree), and its cwd/env. This is the real "docker exec" primitive.
+#
+# CONFINEMENT INHERITANCE (honest, v1): exec inherits the container's NAMESPACES (pid/mount/uts/ipc)
+# and therefore its root fs + hostname + process view. It does NOT re-apply the container's seccomp
+# filter to the exec'd process (nsenter doesn't, and setns doesn't carry the filter) — a follow-up if
+# per-exec seccomp parity is wanted. cgroup: the exec'd process stays in the CALLER's cgroup (guest),
+# not the container's leaf, in v1. These are stated, not implied.
 wv_exec() {
-  echo "wvrun exec: not implemented yet (E3.5-T05c)" >&2
-  return 2
+  _it=0
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -it|-ti|-i|-t) _it=1; shift ;;
+      --) shift; break ;;
+      -*) echo "wvrun exec: unknown flag $1" >&2; return 2 ;;
+      *) break ;;
+    esac
+  done
+  ref="${1:-}"; [ -n "$ref" ] || { echo "usage: wvrun exec [-it] <id|name> <cmd…>" >&2; return 2; }
+  shift
+  d=$(resolve "$ref") || { echo "wvrun exec: no such container: $ref" >&2; return 1; }
+  reconcile "$d"
+  st=$(cat "$d/status" 2>/dev/null || true)
+  [ "$st" = running ] || { echo "wvrun exec: container $ref is not running ($st)" >&2; return 1; }
+  pid=$(cat "$d/pid" 2>/dev/null || true)
+  { [ -n "$pid" ] && [ -d "/proc/$pid" ]; } || { echo "wvrun exec: container $ref has no live process" >&2; return 1; }
+  # Guard against host PID reuse: the recorded pid must still be a pid-namespace INIT (nested) — its
+  # /proc/<pid>/status NSpid line must carry 2+ fields (host pid + in-ns pid). A recycled guest pid
+  # would show a single NSpid field → refuse rather than exec into an unrelated process.
+  _nsp=$(awk '/^NSpid:/{print NF-1; exit}' "/proc/$pid/status" 2>/dev/null || echo 1)
+  [ "${_nsp:-1}" -ge 2 ] || { echo "wvrun exec: container $ref pid is no longer a container init (pid reuse guard)" >&2; return 1; }
+
+  [ $# -gt 0 ] || set -- /bin/sh
+  bundle=$(cat "$d/bundle" 2>/dev/null || true)
+  # Enter the container namespaces + root + cwd; apply the container env (env -i KEY=VAL…). nsenter's
+  # --root/--wd (no value) default to the target's root and cwd, landing in the overlay merged tree.
+  argc=$#
+  if [ -n "$bundle" ] && [ -s "$bundle/config/env" ]; then
+    while IFS= read -r kv || [ -n "$kv" ]; do [ -n "$kv" ] && set -- "$@" "$kv"; done < "$bundle/config/env"
+  fi
+  # Rotate: move the original argv (argc entries) to the end so order is <env pairs…> <argv…>.
+  i=0
+  while [ "$i" -lt "$argc" ]; do a=$1; shift; set -- "$@" "$a"; i=$((i + 1)); done
+  exec nsenter --target "$pid" --pid --mount --uts --ipc --root --wd -- env -i "$@"
 }
 
 # ── legacy run-to-exit (E3.5-T03): `wvrun [--interactive] [--memory B] [--pids N] <bundle>` ──────────
