@@ -165,10 +165,21 @@ const STATUS = {
   blocked: { label: "blocked", color: "var(--red)", cls: "st-blocked" },
   "verification-debt": { label: "verification debt", color: "#b17ce0", cls: "st-debt" },
   cancelled: { label: "cancelled", color: "#5a6470", cls: "st-cancelled" },
+  decomposed: { label: "decomposed", color: "#7c8aa0", cls: "st-decomposed" },
 };
 
 function statusMeta(s) {
   return STATUS[s] || STATUS.pending;
+}
+
+// A "decomposed" parent was split into sub-tickets (seam decomposition). It carries
+// `status: cancelled` in the source frontmatter, but it's superseded, not abandoned —
+// we render it as a parent group with its sub-tickets nested, never as "cancelled".
+function isDecomposed(t) {
+  return Array.isArray(t.decomposed_into) && t.decomposed_into.length > 0;
+}
+function effStatus(t) {
+  return isDecomposed(t) ? "decomposed" : t.status;
 }
 
 function h(tag, cls, text) {
@@ -217,9 +228,9 @@ function matchesFilter(t) {
 // Small stacked progress bar: verified vs everything-else, coloured by status.
 function stackBar(tasks) {
   const total = tasks.length || 1;
-  const order = ["verified", "implemented", "evidence-needed", "in-progress", "verification-debt", "blocked", "pending", "cancelled"];
+  const order = ["verified", "implemented", "evidence-needed", "in-progress", "verification-debt", "blocked", "pending", "decomposed", "cancelled"];
   const counts = {};
-  for (const t of tasks) counts[t.status] = (counts[t.status] || 0) + 1;
+  for (const t of tasks) counts[effStatus(t)] = (counts[effStatus(t)] || 0) + 1;
   const bar = h("div", "rm-stack");
   for (const s of order) {
     if (!counts[s]) continue;
@@ -300,7 +311,7 @@ function overallBurndown(tasks) {
 }
 
 function taskCard(t) {
-  const meta = statusMeta(t.status);
+  const meta = statusMeta(effStatus(t));
   const card = h("button", `rm-card ${meta.cls}`);
   card.type = "button";
   card.dataset.id = t.id;
@@ -322,6 +333,35 @@ function taskCard(t) {
 
   card.addEventListener("click", () => openDetail(t.id));
   return card;
+}
+
+// Decomposed parents rendered as parent groups with their sub-tickets nested
+// underneath — the answer to "show them with their sub-tickets under them" rather
+// than as struck-through "cancelled" cards.
+function decomposedBlock(parents) {
+  const wrap = h("div", "rm-decomp");
+  for (const p of parents) {
+    const group = h("div", "rm-decomp-group");
+    const phead = h("button", "rm-decomp-parent");
+    phead.type = "button";
+    phead.dataset.id = p.id;
+    phead.append(h("span", "rm-card-id", p.id));
+    phead.append(h("span", "rm-decomp-tag", "decomposed"));
+    phead.append(h("span", "rm-decomp-title", p.title));
+    phead.append(h("span", "rm-decomp-count", `${p.decomposed_into.length} sub-ticket${p.decomposed_into.length > 1 ? "s" : ""}`));
+    phead.addEventListener("click", () => openDetail(p.id));
+    group.append(phead);
+
+    const kids = h("div", "rm-decomp-kids");
+    for (const cid of p.decomposed_into) {
+      const child = state.data.tasks.find((x) => x.id === cid);
+      if (child) kids.append(taskCard(child));
+      else kids.append(h("div", "rm-decomp-missing", `${cid} — not found`));
+    }
+    group.append(kids);
+    wrap.append(group);
+  }
+  return wrap;
 }
 
 // Jira-style Kanban columns. Each status maps to one column; columns render in
@@ -409,7 +449,19 @@ function render() {
     lane.append(head);
     lane.append(stackBar(tasks));
 
-    if (!collapsed) lane.append(kanbanBoard(tasks));
+    // Decomposed parents get their own nested block; their sub-tickets live under
+    // the parent rather than loose in the Kanban, so pull both out of the board.
+    const allParents = tasks.filter(isDecomposed);
+    const childIds = new Set(allParents.flatMap((p) => p.decomposed_into || []));
+    // A parent that is itself another parent's sub-ticket (nested decomposition)
+    // renders as a child card, not a second top-level group.
+    const parents = allParents.filter((p) => !childIds.has(p.id));
+    const boardTasks = tasks.filter((t) => !isDecomposed(t) && !childIds.has(t.id));
+
+    if (!collapsed) {
+      if (parents.length) lane.append(decomposedBlock(parents));
+      if (boardTasks.length) lane.append(kanbanBoard(boardTasks));
+    }
     lanes.append(lane);
   }
 }
@@ -419,7 +471,7 @@ function openDetail(id) {
   const t = state.data.tasks.find((x) => x.id === id);
   const panel = document.getElementById("rm-detail");
   if (!t || !panel) return;
-  const meta = statusMeta(t.status);
+  const meta = statusMeta(effStatus(t));
   panel.replaceChildren();
 
   const bar = h("div", "rm-detail-bar");
@@ -440,6 +492,24 @@ function openDetail(id) {
   add("Depends on", t.depends_on && t.depends_on.length ? t.depends_on.join(", ") : "—");
   if (t.capstone) add("Capstone", "★ epic capstone");
   body.append(kv);
+
+  if (isDecomposed(t)) {
+    body.append(h("h4", "rm-detail-h", `Decomposed into ${t.decomposed_into.length} sub-tickets`));
+    const ul = h("ul", "rm-ac");
+    for (const cid of t.decomposed_into) {
+      const child = state.data.tasks.find((x) => x.id === cid);
+      const li = h("li", "rm-ac-item");
+      const cm = child ? statusMeta(effStatus(child)) : null;
+      li.append(h("span", "rm-ac-box", child && child.status === "verified" ? "✓" : "○"));
+      const link = h("button", "rm-ac-text rm-sub-link", child ? `${cid} — ${child.title}` : `${cid} — (not found)`);
+      link.type = "button";
+      if (child) link.addEventListener("click", () => openDetail(cid));
+      li.append(link);
+      if (cm) li.append(h("span", `rm-badge ${cm.cls}`, cm.label));
+      ul.append(li);
+    }
+    body.append(ul);
+  }
 
   if (t.goal) {
     body.append(h("h4", "rm-detail-h", "Goal"));

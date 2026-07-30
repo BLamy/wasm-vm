@@ -105,6 +105,7 @@ def main():
                 "priority": int(fm["priority"]) if str(fm.get("priority", "")).isdigit() else None,
                 "status": fm.get("status", "pending"),
                 "depends_on": fm.get("depends_on", []) if isinstance(fm.get("depends_on"), list) else [],
+                "decomposed_into": fm.get("decomposed_into", []) if isinstance(fm.get("decomposed_into"), list) else [],
                 "estimate": fm.get("estimate", ""),
                 "capstone": bool(fm.get("capstone", False)),
                 "goal": extract_section(body, "Goal"),

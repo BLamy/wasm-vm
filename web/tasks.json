@@ -63,6 +63,7 @@
       "priority": 1,
       "status": "verified",
       "depends_on": [],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A three-crate cargo workspace exists and builds on stable Rust for both native and\n`wasm32-unknown-unknown`: `crates/core` (`wasm-vm-core`, the emulator, zero web\ndependencies, `no_std`-friendly), `crates/wasm` (`wasm-vm-wasm`, the `wasm-bindgen`\nboundary), and `crates/cli` (`wasm-vm-cli`, the native runner).",
@@ -108,6 +109,7 @@
       "depends_on": [
         "E0-T01"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A GitHub Actions pipeline (plus an identical local `make ci` entry point) that fails the\nbuild on any formatting drift, clippy warning, native test failure, or\n`wasm32-unknown-unknown` build breakage — so the native/wasm dual-target invariant is\nenforced by a machine, not by discipline.",
@@ -145,6 +147,7 @@
       "depends_on": [
         "E0-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "`wasm-vm-core` gains the machine's memory substrate: a `Bus` trait exposing fallible\nlittle-endian `load8/16/32/64` and `store8/16/32/64`, a `Ram` implementation backed by a\nheap-allocated byte slice, and the canonical guest physical memory map\n(`DRAM_BASE = 0x8000_0000`, default 128 MiB) matching QEMU `virt` and Spike defaults.",
@@ -190,6 +193,7 @@
       "depends_on": [
         "E0-T03"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A `SystemBus` that implements `Bus` by routing each access either to guest RAM or to a\nregistered `MmioDevice` by physical address window, with unmapped holes returning\n`BusFault::Access` — the single seam through which every future device (UART, CLINT, PLIC,\nvirtio-mmio) attaches.",
@@ -231,6 +235,7 @@
       "depends_on": [
         "E0-T01"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "An `XRegs` type holding the 31 writable RV64 integer registers plus a `u64` PC, where\n`x0` reads as zero on every path and writes to it are architecturally discarded — the\ninvariant enforced in exactly one place so no executor can violate it.",
@@ -268,6 +273,7 @@
       "depends_on": [
         "E0-T01"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A pure function `decode(insn: u32) -> Result<Instr, IllegalInstr>` in `wasm-vm-core` that\nclassifies every RV64I instruction into a typed `Instr` enum with fields extracted\n(rd/rs1/rs2, sign-extended immediates) for all six formats R/I/S/B/U/J — no execution,\nno state, fully table-testable.",
@@ -311,6 +317,7 @@
         "E0-T05",
         "E0-T06"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A `Hart` with `step(&mut self, bus: &mut impl Bus) -> Result<(), Trap>` that fetches at\nPC, decodes, and executes all RV64I computational instructions (LUI, AUIPC, OP-IMM,\nOP-IMM-32, OP, OP-32) with bit-exact semantics, reporting failures through a `Trap` type\nwhose cause codes mirror the privileged spec's `mcause` encodings.",
@@ -356,6 +363,7 @@
       "depends_on": [
         "E0-T07"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "`Hart::step` executes the full RV64I memory instruction set — LB/LH/LW/LD (sign-extend),\nLBU/LHU/LWU (zero-extend), SB/SH/SW/SD — with effective address `rs1 + sext(imm)` in\nwrapping two's-complement, mapping `BusFault::Misaligned` to causes 4/6 and\n`BusFault::Access` to causes 5/7, with `tval` = the effective address, and with zero\npartial side effects on any fault.",
@@ -401,6 +409,7 @@
       "depends_on": [
         "E0-T07"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "`Hart::step` executes JAL, JALR, BEQ/BNE/BLT/BGE/BLTU/BGEU, and FENCE with exact\nUnprivileged ISA §2.5 semantics: link value `pc + 4` written after target computation\n(so `jalr rd == rs1` works), JALR target `(rs1 + sext(imm)) & !1`, and a *taken* transfer\nto a non-4-byte-aligned target raising instruction-address-misaligned (cause 0,\n`tval` = target) — since IALIGN=32 without the C extension.",
@@ -446,6 +455,7 @@
       "depends_on": [
         "E0-T03"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A dependency-free ELF64 parser/loader in `wasm-vm-core` (`&[u8]` in, `Result` out — works\nidentically in no_std/wasm) that validates a bare-metal riscv64 `ET_EXEC` image, copies\neach `PT_LOAD` segment into guest RAM at `p_paddr`, zero-fills `p_memsz - p_filesz` (BSS),\nreturns `e_entry`, and can look up the `tohost`/`fromhost` symbols needed by HTIF (E0-T11).",
@@ -488,6 +498,7 @@
         "E0-T08",
         "E0-T10"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "ECALL and EBREAK surface as precise traps (cause 11 — environment-call-from-M, our only\nmode at Level 0 — and cause 3, breakpoint), and a host-side `Htif` component watches the\nELF-provided `tohost` address so riscv-tests-style bare-metal binaries can terminate the\nmachine with an exit code — the same convention Spike honors, making pass/fail and exit\ncodes directly comparable.",
@@ -525,6 +536,7 @@
       "depends_on": [
         "E0-T04"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A minimal write-only console device mapped at `0x1000_0000` (UART0 on the QEMU `virt`\nboard) that forwards every byte stored at offset 0 to a host-provided `ConsoleSink`\ntrait — the output organ the capstone's \"Hello from RV64\" travels through, in both the\nnative CLI (stdout) and the browser (JS callback → xterm.js).",
@@ -566,6 +578,7 @@
       "depends_on": [
         "E0-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "One command gives any contributor (and the CI/adversarial verifier) a pinned\n`riscv64-unknown-elf-gcc`, Spike (`riscv-isa-sim`), and `qemu-system-riscv64` — with a\nDockerfile as the canonical reproducible path and documented native installs (Homebrew,\napt) as conveniences. Golden binaries (E0-T14) and differential traces (E0-T20) both\ndepend on these exact versions.",
@@ -609,6 +622,7 @@
         "E0-T11",
         "E0-T12"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A `guest/` directory containing small bare-metal rv64i programs — `hello` (prints\n\"Hello from RV64\" via the UART0 stub, exits via `tohost`), `loops` (deterministic\narithmetic, fixed retired-instruction count), `memops` (all load/store widths and sign\nmodes) — built by a pinned toolchain with a shared `crt0.S` and linker script, with the\nresulting ELFs byte-committed so the emulator test suite never needs a cross compiler.",
@@ -650,6 +664,7 @@
       "depends_on": [
         "E0-T01"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A coherent feature-flag and logging scheme for the workspace: the `log` facade (no_std\ncompatible) for diagnostics, a `trace` cargo feature gating the instruction-trace hooks\n(E0-T16), and a compile-time guarantee that with tracing disabled the hart's hot loop\ncontains no trace code at all — zero cost, not merely cheap.",
@@ -689,6 +704,7 @@
         "E0-T09",
         "E0-T15"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Every retired instruction can emit a structured `TraceRecord { pc, insn, rd: Option<(u8,\nu64)>, mem: Option<MemOp> }` into a pluggable `TraceSink`, with a precisely specified\ncanonical text serialization designed to be diffable against a normalized Spike\n`--log-commits` log — identical bytes from native and wasm builds.",
@@ -730,6 +746,7 @@
       "depends_on": [
         "E0-T07"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A `Machine::snapshot()` producing `Snapshot { pc: u64, xregs: [u64; 32], mem_digest:\n[u8; 32] }` — the memory digest a SHA-256 over all of guest RAM — so any two runs (native\nvs. wasm, trace-on vs. trace-off, before-refactor vs. after) can be asserted identical\nwith one comparison, platform-independently.",
@@ -775,6 +792,7 @@
         "E0-T16",
         "E0-T17"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "`wasm-vm-cli run <elf>` assembles a complete machine (RAM + UART0 stub on stdout + HTIF),\nloads a bare-metal ELF, executes until HTIF exit / trap / `--max-instrs`, and can emit the\ncanonical trace and state dump — the native workhorse used by the differential harness,\nthe riscv-tests runner, benchmarks, and every human debugging session from here on.",
@@ -817,6 +835,7 @@
         "E0-T18",
         "E0-T13"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The official `riscv-software-src/riscv-tests` rv64ui-p binaries (the RV64I user-level\ntests, physical-memory \"p\" environment) run green under `wasm-vm-cli` and as a `cargo\ntest` harness — our first externally-authored correctness evidence, ahead of the full\ncompliance push in Epic 1.",
@@ -859,6 +878,7 @@
         "E0-T18",
         "E0-T14"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "One command runs an ELF under both `wasm-vm-cli` and Spike, normalizes both instruction\nlogs into the E0-T16 canonical grammar, and byte-compares them — reporting the first\ndivergent instruction with surrounding context. This is the project's ground-truth\ncorrectness instrument and the capstone's measuring device.",
@@ -900,6 +920,7 @@
       "depends_on": [
         "E0-T06"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The decoder is armored by three independent adversaries: `proptest` strategies generating\nfield-wise-legal encodings per format (with an encode/decode round-trip oracle), an\nexhaustive no-panic sweep of the entire 32-bit instruction space, and a `cargo-fuzz`\ntarget — establishing the fuzzing scaffold every later parser (ELF loader, virtio rings,\ndevice configs) will reuse.",
@@ -945,6 +966,7 @@
         "E0-T16",
         "E0-T17"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "`wasm-vm-wasm` exposes the machine to JavaScript through a thin, panic-safe\n`#[wasm_bindgen]` surface: construct with RAM size, load ELF bytes, step/run with\ninstruction budgets, receive console bytes through a JS callback, and read back traces,\nregisters, and state digests — everything the browser demo (E0-T23) and capstone need,\nwith zero emulator logic living in this crate.",
@@ -986,6 +1008,7 @@
       "depends_on": [
         "E0-T22"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A static `web/` page that loads the wasm-pack module, instantiates `WasmMachine`, and\nwires its console callback into an `@xterm/xterm` terminal — with Run/Reset controls, an\nELF file picker, the embedded default `hello.elf`, and a status line showing retired\ninstructions and exit code. This is the capstone's stage.",
@@ -1029,6 +1052,7 @@
         "E0-T14",
         "E0-T15"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A repeatable MIPS (million instructions per second) measurement for the interpreter on\nfixed workloads, in three environments — native (criterion), node-wasm, and browser —\nwith the numbers recorded as the official Level 0 baseline that Level 4's \"≥10x\" capstone\nis contractually measured against.",
@@ -1072,6 +1096,7 @@
         "E0-T18",
         "E0-T20"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The verification protocol from `tasks/README.md` becomes executable: every Epic 0 task\ngets a `make verify-E0-Tnn` target that runs its acceptance checks mechanically, a\n`tools/verify/cold_clone.sh` script that performs any target from a pristine clone in a\nscratch directory, and a verifier runbook that tells a hostile verifier exactly how to\nattempt refutation and how to record the outcome.",
@@ -1119,6 +1144,7 @@
         "E0-T24",
         "E0-T25"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": true,
       "goal": "The Level 0 threshold from `ROADMAP.md`, demonstrated end-to-end from a cold start: a\nbrowser page loads the WASM module, executes the bare-metal `hello.elf`, prints\n`Hello from RV64` through the stub console into xterm.js — and the instruction trace of\nthat exact execution matches Spike's normalized trace byte-for-byte, with native, node-\nwasm, and browser-wasm builds all in agreement.",
@@ -1160,6 +1186,7 @@
       "depends_on": [
         "E0"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "The hart comes out of reset in exactly the state the privileged spec (§3.4, \"Reset\")\nmandates, with a single authoritative `Hart::reset()` that every test harness, the WASM\nentry point, and future snapshot/restore all go through — no ad-hoc field initialization\nscattered across constructors.",
@@ -1201,6 +1228,7 @@
       "depends_on": [
         "E1-T01"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A single, table-driven CSR subsystem implementing CSRRW/CSRRS/CSRRC and their immediate\nforms with spec-exact read/write side-effect suppression, per-CSR WARL/WLRL legalization\nmasks, privilege and read-only checks derived from the CSR address encoding, plus\nFENCE.I (Zifencei) — the substrate every later task (mstatus, satp, counters, PMP) plugs\ninto instead of open-coding CSR behavior.",
@@ -1242,6 +1270,7 @@
       "depends_on": [
         "E1-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "All thirteen M-extension instructions (MUL, MULH, MULHSU, MULHU, DIV, DIVU, REM, REMU,\nMULW, DIVW, DIVUW, REMW, REMUW) execute with bit-exact results including the spec's\nnon-trapping division edge cases, so rv64um passes and the shifts into Linux's libgcc\nsoft-div paths never arise.",
@@ -1287,6 +1316,7 @@
       "depends_on": [
         "E1-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Full A-extension support: LR.W/LR.D with a reservation set, SC.W/SC.D with spec-legal\nsuccess/failure behavior, and all 18 AMO instructions (AMOSWAP/ADD/XOR/AND/OR/MIN/MAX/\nMINU/MAXU × W/D) as atomic read-modify-writes, with aq/rl bits decoded (no-ops for a\nsingle in-order hart, but preserved in the decoder for the Epic 6 SMP future).",
@@ -1328,6 +1358,7 @@
       "depends_on": [
         "E1-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A written, benchmarked decision on how wasm-vm computes IEEE-754 arithmetic — a Rust port\nof Berkeley SoftFloat-3e, `rustc_apfloat`, an existing crate (e.g. `softfloat-wrapper`/\n`simple-soft-float`), or hand-rolled — plus the chosen backend integrated behind a\n`SoftFloat` trait with f32/f64 add/sub/mul/div/sqrt/fma/compare/convert entry points that\nreturn (result, exception-flags) pairs. T06/T07 build on this without revisiting the choice.",
@@ -1374,6 +1405,7 @@
         "E1-T05",
         "E1-T02"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Complete F-extension execution: the 32-entry f-register file with NaN-boxing of 32-bit\nvalues, all RV64F compute/convert/compare/classify/move instructions, dynamic and static\nrounding modes, and the fflags/frm/fcsr CSR triad wired through the T02 CSR file with\nmstatus.FS dirty tracking — sufficient for rv64uf to go green.",
@@ -1423,6 +1455,7 @@
       "depends_on": [
         "E1-T06"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Full D-extension execution on top of T06's register file and softfloat backend: all\ndouble-precision compute/convert/compare/classify ops, FLD/FSD, FMV.X.D/FMV.D.X, and the\nsingle↔double conversion pair — making the FPU complete for RV64GC and rv64ud green.",
@@ -1468,6 +1501,7 @@
       "depends_on": [
         "E1-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Every legal RV64C encoding decodes by expansion to its base RV64I/F/D equivalent and\nexecutes identically to the expanded form; the fetch path handles 16-bit instruction\ngranularity, IALIGN drops to 16, and misaligned-fetch semantics change accordingly.\nAlpine riscv64 userland is compiled RVC — without this, nothing at Level 2+ runs.",
@@ -1513,6 +1547,7 @@
       "depends_on": [
         "E1-T02"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Three privilege modes with the complete mstatus/sstatus state machine: trap-entry and\nxRET stack manipulation (MPP/SPP, MPIE/SPIE, MIE/SIE), the memory-behavior modifiers\n(MPRV, SUM, MXR), the virtualization/trap knobs (TVM, TW, TSR), FS/SD tracking from T06,\nand sstatus as a masked view of mstatus — the skeleton Linux and OpenSBI stand on.",
@@ -1558,6 +1593,7 @@
       "depends_on": [
         "E1-T09"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Every synchronous exception in the privileged spec is raised precisely — correct mcause\ncode, correct mepc (the faulting instruction, never the next one), spec-exact mtval, and\ncorrect priority when one instruction can raise several — dispatched through mtvec with\nboth direct and vectored modes supported.",
@@ -1607,6 +1643,7 @@
       "depends_on": [
         "E1-T10"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Asynchronous interrupts delivered with spec-exact enable/pending logic, priority ordering,\nand delegation: mie/mip and their sie/sip views, medeleg/mideleg routing traps to S-mode,\nthe mstatus.MIE/SIE global-enable rules across privilege modes, and a WFI that actually\nsleeps the interpreter loop until a wakeup condition — the mechanism Linux's timer tick\nand every device interrupt will ride through.",
@@ -1656,6 +1693,7 @@
       "depends_on": [
         "E1-T11"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A SiFive-compatible CLINT device on the memory bus at 0x0200_0000 providing the machine\ntimer (mtime/mtimecmp driving mip.MTIP) and the software-interrupt register (msip driving\nmip.MSIP), with a defined mtime advance policy for both native and browser execution —\nthe heartbeat OpenSBI and the Linux scheduler tick depend on.",
@@ -1701,6 +1739,7 @@
       "depends_on": [
         "E1-T11"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A QEMU-virt-compatible PLIC at 0x0C00_0000 routing up to 32 external interrupt sources\nthrough per-source priorities, per-context enable bits and priority thresholds, and the\nclaim/complete handshake, driving mip.MEIP (hart0 M context) and mip.SEIP (hart0 S\ncontext) — the front door every Level 2 device (UART, virtio) will ring.",
@@ -1747,6 +1786,7 @@
         "E1-T09",
         "E1-T12"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "The unprivileged Zicntr counters — cycle (0xC00), time (0xC01), instret (0xC02) — exposed\nread-only with the M-mode backing registers mcycle/minstret (0xB00/0xB02) writable, and\naccess from S/U gated by mcounteren/scounteren exactly per spec, so `rdtime`-based delays\nin OpenSBI/Linux and vDSO clock reads behave.",
@@ -1792,6 +1832,7 @@
       "depends_on": [
         "E1-T10"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "16 physical memory protection entries — pmpcfg0/pmpcfg2 (RV64 packs 8 entries per even\ncsr) and pmpaddr0–15 — implementing OFF/TOR/NA4/NAPOT matching, R/W/X permission checks\nfor S/U (and for M when locked), and the L lock bit, sufficient for OpenSBI's firmware\nself-protection and rv64mi PMP behavior.",
@@ -1842,6 +1883,7 @@
         "E1-T09",
         "E1-T10"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A spec-complete Sv39 MMU: satp-rooted three-level table walk translating every fetch/\nload/store/AMO in S/U (and MPRV-modified M accesses), enforcing all PTE permission bits\n(V/R/W/X/U/G/A/D), superpage alignment, SUM/MXR modifiers, and raising page faults with\nexact cause codes and stval — the single hardest correctness cliff between here and Linux.",
@@ -1895,6 +1937,7 @@
       "depends_on": [
         "E1-T16"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A software TLB in front of the T16 walker — tagged by {VA page, ASID, level, global} —\nthat makes translation amortized-O(1), plus SFENCE.VMA implementing all four rs1/rs2\noperand combinations with spec-correct invalidation scope, so satp/ASID switching (the\nLinux context-switch hot path) is both fast and correct.",
@@ -1945,6 +1988,7 @@
         "E1-T15",
         "E1-T17"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "satp becomes a fully WARL-correct mode switch: Bare (MODE=0) ⇔ Sv39 (MODE=8) transitions\nbehave per spec, and a config-gated Sv48 (MODE=9) generalizes the T16 walker to four\nlevels — proving the walker isn't hard-coded to three levels and giving Level 2+ a\nbigger-VA escape hatch that QEMU-virt guests may probe for.",
@@ -1995,6 +2039,7 @@
         "E1-T12",
         "E1-T17"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The official riscv-tests binaries — rv64ui/um/ua/uf/ud/uc in both -p (physical) and -v\n(virtual memory) variants, plus rv64mi and rv64si — run as a single command natively and\nunder wasm32, emitting a per-test pass/fail table, wired into CI as a required job with\nan explicit, reviewed known-failure allowlist (target: empty by the capstone).",
@@ -2040,6 +2085,7 @@
       "depends_on": [
         "E1-T19"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A working RISCOF flow: our emulator packaged as a RISCOF DUT plugin, the RISC-V Sail\nmodel (Spike as fallback) as the reference, riscv-arch-test suites for\nRV64IMAFDC_Zicsr_Zifencei + privilege running end-to-end with signature comparison — the\nofficial \"is it architecturally RISC-V\" verdict the Level 1 capstone requires.",
@@ -2081,6 +2127,7 @@
       "depends_on": [
         "E1-T19"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A fuzzing rig that generates constrained-random RV64GC instruction streams, executes them\nin lockstep on our hart and on Spike, compares architectural state at every retire, and\nauto-minimizes any divergence to a short reproducer checked in as a regression test —\nthe tool that finds the bugs the curated suites were not written to find.",
@@ -2126,6 +2173,7 @@
       "depends_on": [
         "E1-T19"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A standing proof that the native and wasm32 builds are the *same machine*: given the same\nprogram, initial state, and injected-event schedule, both produce bit-identical\narchitectural traces — with FP, i128, and container-ordering hazards specifically\nneutralized and a CI job that keeps it true forever.",
@@ -2171,6 +2219,7 @@
       "depends_on": [
         "E1-T19"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "An honest, reproducible measurement of how fast the Level-1 interpreter retires\ninstructions — native release build and in-browser WASM, across representative workloads\n— recorded as the baseline every Level 4 JIT claim will be measured against, plus a CI\nguard so Epic 2/3 feature work can't silently cost 2x.",
@@ -2225,6 +2274,7 @@
         "E1-T26",
         "E1-T29"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": true,
       "goal": "The Level 1 exit gate from ROADMAP.md, demonstrated end-to-end from a cold start: the\ncomplete RV64GC machine passes riscv-tests — rv64ui, rv64um, rv64ua, rv64uf, rv64ud,\nrv64uc (both -p and -v variants), rv64mi, rv64si — AND a full RISCOF architectural\ncompliance run, in the native build and the wasm32 build, with zero allowlist/exclusion\nentries. After this, a Linux misbehavior is never silently a CPU bug.",
@@ -2270,6 +2320,7 @@
       "depends_on": [
         "E1-T20"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Make synchronous exception priority match Priv §3.7.1 when a single access is faultable\nin more than one way: an address-misaligned condition on a load/store is reported **before**\nan access-fault or page-fault on the same access. This burns the `vm_sv39 VA_all_zeros`\nRISCOF exclusion and is a prerequisite for the Level 1 capstone (E1-T24) reaching zero\nexclusions.",
@@ -2303,6 +2354,7 @@
       "depends_on": [
         "E1-T25"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Support misaligned loads and stores to regular (main-memory) regions so that\n`rv64ui-p-ma_data` passes, burning that entry from `tests/riscv-tests-allowlist.txt`. A\nLevel-1 RV64GC machine that will host xv6/Linux must not fault every unaligned access.",
@@ -2336,6 +2388,7 @@
       "depends_on": [
         "E1-T15"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Expand PMP from the 16-entry implementation (E1-T15) to the full 64 regions the spec\npermits, so `pmpm_all_entries_check-01..04` pass — burning those 4 entries from\n`compliance/EXCLUSIONS.md` toward the Level 1 capstone's zero-exclusion bar.",
@@ -2369,6 +2422,7 @@
       "depends_on": [
         "E1-T18"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Extend the MMU to Sv57 (five-level, 57-bit VA) so `satp` MODE=10 is a working mode and the\n`vm_sv57` + `vm_pmp/sv57` RISCOF suites pass — burning the 38 Sv57 entries from\n`compliance/EXCLUSIONS.md`, the single largest block on the path to the Level 1 capstone's\nzero-exclusion bar.",
@@ -2406,6 +2460,7 @@
       "depends_on": [
         "E1-T10"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Implement the minimal debug-spec trigger module (tselect/tdata1/tdata2, mcontrol type-2\nbreakpoints) so `rv64mi-p-breakpoint` passes — burning that entry from\n`tests/riscv-tests-allowlist.txt`, the last allowlist entry blocking the Level 1 capstone.",
@@ -2439,6 +2494,7 @@
       "depends_on": [
         "E1"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A single authoritative platform definition (Rust constants + doc) that fixes the physical\nmemory map, device placement, IRQ numbers, hart layout, and kernel entry contract for the\nmachine Linux will boot on — mirroring QEMU's `virt` machine wherever that buys us free\ncompatibility with existing kernel configs and debugging tools.",
@@ -2476,6 +2532,7 @@
       "depends_on": [
         "E2-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A pure-Rust flattened-device-tree builder that serializes our platform definition into a\nspec-valid DTB blob at a known RAM address, so the kernel discovers memory, CPUs, and every\ndevice without a single hardcoded driver address.",
@@ -2513,6 +2570,7 @@
       "depends_on": [
         "E2-T01"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A written, evidence-backed architecture decision record choosing between (a) implementing\nSBI directly in the emulator (the emulator *is* the M-mode firmware; kernel entered in\nS-mode) and (b) running an unmodified OpenSBI `fw_jump`/`fw_dynamic` binary as an M-mode\nguest payload — fixing the kernel entry contract for every subsequent boot task.",
@@ -2550,6 +2608,7 @@
       "depends_on": [
         "E2-T03"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A spec-compliant SBI v2.0 Base extension plus the Debug Console (DBCN) and legacy console\nextensions, giving the kernel its first working output channel (`earlycon=sbi`) before any\nUART exists — the single most valuable debugging tool of this epic.",
@@ -2591,6 +2650,7 @@
       "depends_on": [
         "E2-T04"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "`sbi_set_timer` (EID 0x54494D45, FID 0) implemented with exact spec semantics, so the\nkernel's clockevent driver ticks correctly — the difference between a kernel that schedules\nand one that hangs silently right after \"sched_clock: ...\" in dmesg.",
@@ -2632,6 +2692,7 @@
       "depends_on": [
         "E2-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "*(Scope addendum from the E2-T03 critic: also implement **SRST** (EID 0x53525354, system\nreset) here — Linux 6.6 probes it at init for reboot/poweroff handlers; the syscon\nsifive_test device is the backend. Cheap alongside HSM.)*\nComplete the SBI v2.0 surface Linux probes at boot: IPI (EID 0x735049), RFENCE\n(EID 0x52464E43), and HSM (EID 0x48534D), implemented correctly for our single hart while\nkeeping the interfaces shaped for Epic 6 SMP.",
@@ -2673,6 +2734,7 @@
       "depends_on": [
         "E2-T01"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "An ns16550a-compatible UART at `0x1000_0000` complete enough that the Linux 8250 driver\n(`CONFIG_SERIAL_8250`) drives it as `ttyS0` for console, getty, and full-screen curses apps\n— including the THR-empty interrupt dance that most half-baked emulated UARTs get wrong.",
@@ -2714,6 +2776,7 @@
       "depends_on": [
         "E2-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A reusable virtio-mmio (non-legacy, Version=2) transport implementing the full register\nlayout, status/reset lifecycle, and 64-bit feature negotiation, as a generic wrapper any\nvirtio device (blk now; net/gpu/input later) plugs into.",
@@ -2755,6 +2818,7 @@
       "depends_on": [
         "E2-T08"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A correct, hostile-guest-proof split-virtqueue implementation: descriptor table walking,\navailable-ring consumption, used-ring publication, and interrupt suppression flags — the\nsingle ring engine every virtio device in the roadmap will reuse.",
@@ -2796,6 +2860,7 @@
       "depends_on": [
         "E2-T01"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A `BlockBackend` trait that decouples virtio-blk from storage, with two implementations:\na memory-mapped file for the native CLI (fast iteration on multi-hundred-MB images) and an\nin-memory buffer for the browser (rootfs fetched as an ArrayBuffer) — the seam where\nEpic 3's IndexedDB/OPFS copy-on-write overlay will later plug in.",
@@ -2834,6 +2899,7 @@
         "E2-T09",
         "E2-T10"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A virtio-blk device (DeviceID 2) on the E2-T08 transport that the unmodified Linux\n`virtio_blk` driver mounts as `/dev/vda`, correct through mkfs/fsck/mount/heavy-IO — the\nroot-filesystem workhorse for everything after this.",
@@ -2875,6 +2941,7 @@
       "depends_on": [
         "E2-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A reproducible, one-command kernel build producing a pinned riscv64 `Image` configured for\nour virt-like machine, with the `.config` treated as a reviewed source artifact — so \"which\nkernel are we booting\" is never a variable while debugging the emulator.",
@@ -2912,6 +2979,7 @@
       "depends_on": [
         "E2-T12"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A tiny initramfs (static busybox + `/init`) that gives us a userland the moment the kernel\ncan execute one — decoupling \"does the kernel boot\" from the much bigger ext4/virtio-blk/\nAlpine surface, so E2-T15 has a minimal success target.",
@@ -2950,6 +3018,7 @@
         "E2-T04",
         "E2-T12"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A written, tool-backed playbook that turns \"the kernel hangs somewhere\" from a day of\nguessing into a 15-minute bisection — plus the emulator-side tooling (trace windowing,\nSystem.map symbolization) the playbook depends on.",
@@ -2991,6 +3060,7 @@
         "E2-T13",
         "E2-T14"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The first light itself, in two named steps. **Step 1 — xv6-riscv:** boot the tiny,\nself-contained xv6-riscv kernel (github.com/mit-pdos/xv6-riscv) to its `$` shell on the\nnative CLI build. xv6 needs only Layer A + a minimal Layer B (16550 UART, virtio-blk for\nits filesystem, CLINT timer), so it is the cleanest possible proof that the machine boots a\nreal OS — reachable with far less than the full Linux platform, which is exactly why it is\nthe opening milestone (it straddles E1/E2). **Step 2 — Linux:** the pinned unmodified Linux\nkernel + busybox initramfs boots to an interactive shell on ttyS0 — proving entry contract,\nDTB, SBI (all extensions), CLINT/PLIC, and UART work together as a full system.",
@@ -3036,6 +3106,7 @@
       "depends_on": [
         "E2-T15"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A goldfish-rtc device so the guest's `date` is real wall-clock time from first boot —\nrequired for ext4 mount timestamps, `make`, TLS later in Epic 3, and generally for the\nsystem to feel like a computer instead of a 1970 time capsule.",
@@ -3073,6 +3144,7 @@
       "depends_on": [
         "E2-T15"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "The guest can turn itself off: a QEMU-virt-compatible syscon test device so `poweroff` and\n`reboot` inside Linux cleanly terminate or restart the emulator, with the outcome\npropagated as a typed exit to the CLI and (later) to JS — the capstone's \"clean poweroff\"\nrequirement lands here.",
@@ -3110,6 +3182,7 @@
       "depends_on": [
         "E2-T12"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A one-command, documented pipeline producing a bootable Alpine Linux riscv64 ext4 disk\nimage — real OpenRC init, real `login`, getty on ttyS0 — the actual root filesystem for\nthe epic's capstone.",
@@ -3149,6 +3222,7 @@
         "E2-T15",
         "E2-T18"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The complete Level 2 system running natively: unmodified kernel mounts the Alpine ext4\nimage from virtio-blk as root, OpenRC brings up userland, getty presents `login:`, and a\nlogged-in root shell is genuinely usable — everything the browser capstone needs, minus\nthe browser.",
@@ -3190,6 +3264,7 @@
       "depends_on": [
         "E2-T15"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Always-available (cheap) instrumentation that detects the classic emulator death spirals —\ninterrupt storms, trap livelocks, WFI-with-nothing-armed deadlocks — and dumps an\nactionable diagnosis instead of letting a boot silently spin at 100% CPU forever.",
@@ -3232,6 +3307,7 @@
         "E2-T10",
         "E2-T15"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The browser page's cold-start path: stream-fetch the kernel, initramfs, and disk image\nwith real progress UI, instantiate the WASM module, hand the bytes to the machine, and\nstart execution — the scaffolding every browser-side task (T22, T23, T26) builds on.",
@@ -3274,6 +3350,7 @@
         "E2-T07",
         "E2-T21"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A real terminal in the page: xterm.js bidirectionally wired to the 16550 so the browser\nguest console is byte-for-byte equivalent to the native CLI's pty — ^C interrupts, vi\ndraws correctly, paste works, and the terminal-size story is explicit rather than broken.",
@@ -3312,6 +3389,7 @@
         "E2-T16",
         "E2-T21"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Guest time that stays sane in a browser: mtime advances at a stable 10 MHz against wall\nclock while the tab is active, survives background throttling and machine suspend without\ninterrupt storms or timer deadlocks, and goldfish-RTC wall time stays correct throughout.",
@@ -3349,6 +3427,7 @@
       "depends_on": [
         "E2-T23"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Eliminate the ~20× wall-clock cost of a guest `sleep`/idle in the browser (E2-T23 measured\n`sleep 2` ≈ 40 s wall) WITHOUT giving up the deterministic retire-count clock. When the hart\nexecutes `WFI` with no interrupt pending and a timer armed, jump `mtime` straight to the nearest\narmed deadline instead of spinning `WFI` for `deadline_ticks × clock_div` retirements.",
@@ -3383,6 +3462,7 @@
         "E2-T17",
         "E2-T19"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A scripted stress battery that beats on the full native Alpine system hard enough to\nsurface the bugs polite boots never find — and a repeatability harness proving the machine\nboots identically ten times in a row.",
@@ -3416,6 +3496,7 @@
       "depends_on": [
         "E2-T19"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A quantified, reproducible answer to \"why does boot take N seconds\": phase-by-phase wall\ntime, instructions retired, emulated MIPS, and the CPU-execution vs device-emulation vs\nhost-I/O split — the frozen baseline Epic 4's ≥10x JIT claim will be measured against.",
@@ -3462,6 +3543,7 @@
         "E2-T24",
         "E2-T25"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": true,
       "goal": "The Level 2 threshold, demonstrated end-to-end. First the minimal-platform proof: the\nbrowser tab boots **xv6-riscv** to its `$` shell (Layer A + minimal Layer B). Then the full\nmilestone: the same page loads the WASM machine, fetches the pinned Linux kernel and Alpine\next4 image, boots unmodified Linux from virtio-blk to a `login:` prompt in xterm.js; a human\nlogs in, uses `vi`, `top`, and shell scripts, and runs `poweroff` to a clean, UI-acknowledged\nhalt. Real OS kernels — tiny and full — in the tab.",
@@ -3495,6 +3577,7 @@
       "depends_on": [
         "E2"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A specified, versioned chunked disk-image format — fixed-size blocks, a JSON manifest with\nper-chunk SHA-256 hashes — plus the core Rust types that parse the manifest, map guest byte\noffsets to chunk indices, and verify chunk integrity. This replaces Epic 2's monolithic\nimage download as the base layer for streaming, caching, and copy-on-write.",
@@ -3536,6 +3619,7 @@
       "depends_on": [
         "E3-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The VM boots from a chunked image fetched on demand: a guest disk read touching an absent\nchunk triggers an HTTP fetch (per-chunk file for `split` layout, `Range: bytes=` request for\n`blob` layout), verifies the hash, and completes the pending virtio-blk request when the\nbytes arrive. No full-image download, ever.",
@@ -3577,6 +3661,7 @@
       "depends_on": [
         "E3-T02"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A memory-bounded cache between the guest and `ChunkSource`: fetched chunks live in a cache\nwith a configurable byte budget (default 256 MiB) and an eviction policy; sequential access\ntriggers readahead; a recorded boot profile prefetches boot-critical chunks up front. Result:\nwarm reads never refetch, cold boot overlaps fetch with execution.",
@@ -3618,6 +3703,7 @@
       "depends_on": [
         "E3-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A copy-on-write block overlay: the streamed base image is immutable; all guest writes land\nin a local write layer. Reads merge overlay-over-base at block granularity. The overlay's\non-storage format is specified in a design doc, and all persistence backends implement one\n`BlockBackend` trait, with an in-memory reference implementation proven by property tests.",
@@ -3659,6 +3745,7 @@
       "depends_on": [
         "E3-T04"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A `BlockBackend` implementation persisting the write layer in IndexedDB: guest writes survive\ntab reload. Writes are batched into transactions; `commit` resolves only when the data is\ntransaction-complete with strict durability.",
@@ -3701,6 +3788,7 @@
         "E3-T04",
         "E4-T22"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A `BlockBackend` on the Origin Private File System using `FileSystemSyncAccessHandle` inside\na dedicated worker: synchronous, low-latency block reads/writes to a real file, with\n`flush()` mapped to `commit`. This is the expected performance winner over IndexedDB.",
@@ -3743,6 +3831,7 @@
         "E3-T05",
         "E3-T06"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A reproducible benchmark page comparing `IdbBackend` and `OpfsBackend` on identical\nworkloads, a written decision selecting the default backend, and a runtime selector that\nprefers the default and falls back cleanly — both backends staying alive behind the\n`BlockBackend` trait.",
@@ -3784,6 +3873,7 @@
       "depends_on": [
         "E3-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Honest durability: the device advertises `VIRTIO_BLK_F_FLUSH`, guest writes go through a\nwrite-back cache in the overlay layer, and a `VIRTIO_BLK_T_FLUSH` request is only completed\non the used ring after `BlockBackend::commit` has durably resolved. Killing the tab at any\nmoment leaves an ext4 filesystem that mounts clean or journal-recovers — never fsck-fatal.",
@@ -3825,6 +3915,7 @@
       "depends_on": [
         "E3-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Opening the VM in two tabs cannot corrupt the overlay: the first tab acquires an exclusive\nWeb Lock and runs read-write; any subsequent tab detects the held lock, boots (or offers to\nboot) in explicitly read-only mode with a visible banner, and can take over write ownership\nafter the first tab closes.",
@@ -3866,6 +3957,7 @@
       "depends_on": [
         "E3-T05"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "The VM knows how much origin storage it has and behaves sanely at the edge: quota usage is\nsurfaced in the UI, `QuotaExceededError` (or OPFS write failure) pauses the VM with an\nactionable dialog instead of corrupting state, and a \"reset disk\" control wipes the overlay\nand returns the machine to the pristine base image.",
@@ -3907,6 +3999,7 @@
       "depends_on": [
         "E3-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "One command builds the production Alpine riscv64 disk image reproducibly — pinned package\nversions, preinstalled baseline, deterministic bytes — then chunks it, generates the T01\nmanifest and the T03 boot profile, and emits a CDN-ready artifact directory with\ncontent-addressed, immutably-cacheable files.",
@@ -3948,6 +4041,13 @@
       "depends_on": [
         "E3-T08",
         "E3.5-T05a"
+      ],
+      "decomposed_into": [
+        "E3-T12a",
+        "E3-T12b",
+        "E3-T12c",
+        "E3-T12d",
+        "E3-T12e"
       ],
       "estimate": "L",
       "capstone": false,
@@ -3994,6 +4094,7 @@
       "depends_on": [
         "E3-T08"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Freeze and independently verify the already-landed versioned snapshot container, sparse RAM codec,\nand bounded CLINT, PLIC, UART, RTC, and RAM component visitors before extending the format.",
@@ -4027,6 +4128,7 @@
       "depends_on": [
         "E3-T12a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Snapshot and restore the hart's complete architectural execution state so continuation produces an\ninstruction-identical trace, including privilege, traps, counters, timers, and pending interrupts.",
@@ -4061,6 +4163,7 @@
         "E3-T12b",
         "E3-T08"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Create a coherent snapshot boundary across virtio devices, guest page cache, and persistent overlay\ngeneration by draining or refusing in-flight work before serialization.",
@@ -4094,6 +4197,7 @@
       "depends_on": [
         "E3-T12c"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Persist coherent snapshots in the browser and select restore versus cold boot using exact build,\nbase-image, and overlay-generation validation.",
@@ -4128,6 +4232,7 @@
         "E3-T12d",
         "E3.5-T05a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Prove the visible Docker-tab state resumes into a usable guest in seconds and remains disk-coherent\nafter reload.",
@@ -4161,6 +4266,7 @@
       "depends_on": [
         "E2"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A virtio-mmio network device the unmodified Alpine kernel drives with its stock virtio_net\ndriver: two virtqueues (receiveq/transmitq), feature negotiation, MAC in config space, and\nethernet frames flowing to/from a pluggable `NetBackend` trait. Proven with a loopback\nbackend before any real network stack exists.",
@@ -4203,6 +4309,7 @@
         "E3-T13",
         "E3-T12"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A user-mode TCP/IP stack — our slirp — that terminates the guest's ethernet world entirely\nin Rust: smoltcp parses/answers guest frames, guest-initiated TCP connections are accepted\nlocally and NATed onto an abstract `OutboundConnector` trait, UDP flows get per-flow NAT\nentries, all with no privileged host networking. Architecture documented before code.\n\n**VISIBLE-RAIL DEFERRAL 2026-07-08:** pause broader networking after the current verified\ncore slices until the Docker tab has one real bundled busybox Run (E3.5-T05a) and that same\nstate reloads through snapshot restore (E3-T12). Slirp resumes after the visible path is\nundeniable.\n\n**IMPLEMENTATION SCOPE 2026-07-14:** E3-T14 v1 terminates guest TCP, internal DHCP UDP, and\narbitrary guest-initiated external UDP. The browser relay protocol has distinct datagram opcodes;\nit does not pretend a TCP byte stream preserves UDP boundaries. DNS boot wiring remains E3-T15.",
@@ -4248,6 +4355,7 @@
       "depends_on": [
         "E3-T14"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Zero-config guest networking: Alpine's stock `udhcpc` gets a lease from our in-slirp DHCP\nserver (10.0.2.15, gateway 10.0.2.2, DNS 10.0.2.3), and DNS queries to 10.0.2.3 are answered\nby a forwarder that resolves names through the transport layer. `rc-service networking\nstart` (or the boot default) just works.",
@@ -4289,6 +4397,7 @@
       "depends_on": [
         "E3-T14"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The fallback general-purpose transport: an `OutboundConnector` that tunnels guest TCP/UDP\nflows through a single multiplexed WebSocket to a small Rust relay server. It remains the\nportable no-tailnet path and defines the framing, flow-control, close/reset, and datagram\nsemantics reused by transport providers. T17 makes a browser Tailscale node the shipped\nprimary provider; this task still has to stand on its own and pass every relay acceptance.",
@@ -4335,6 +4444,7 @@
         "E3-T15",
         "E3-T16"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The browser tab becomes the VM's Tailscale/Headscale node. Alpine keeps its ordinary\n`eth0`/DHCP/default-route view behind slirp, while outbound guest TCP and UDP, DNS, tailnet\nservices, and optional public internet via an exit node flow through a dedicated Tailscale\nWASM Worker. The browser node's identity and ACLs remain authoritative; no backend pretends\nto be the browser and no Tailscale credential enters guest memory.",
@@ -4388,6 +4498,7 @@
       "depends_on": [
         "E3-T17"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A measured go/no-go decision on an HTTP-specific guest fast path after the generic Tailscale\nand relay transports work. Compare browser `fetch`, a streaming Tailscale HTTP API, and the\nnormal guest TCP path; integrate nothing unless it is streaming, bounded, semantically honest,\nand materially better. This task is optional optimization, not an `apk add` or capstone gate.",
@@ -4430,6 +4541,7 @@
         "E3-T16",
         "E3-T17"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Both shipped network providers are deployable without confusing identity or creating an open\nproxy. Tailscale/Headscale is the primary path with explicit provisioning, persisted node state,\nACL/exit-node policy, revocation, and credential hygiene. T16 remains a public WebSocket fallback\nwith signed tokens, origin checks, destination policy, and bounded abuse. Provider status and\nfailure are visible; fallback never silently changes the caller's security identity.",
@@ -4478,6 +4590,12 @@
         "E3-T16",
         "E3-T17",
         "E3-T19"
+      ],
+      "decomposed_into": [
+        "E3-T20a",
+        "E3-T20b",
+        "E3-T20c",
+        "E3-T20d"
       ],
       "estimate": "M",
       "capstone": false,
@@ -4532,6 +4650,7 @@
         "E3-T17",
         "E3-T19"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Freeze the production Alpine repository and provider-observation contract so later apk proofs can\nidentify every network layer without exposing credentials or using a hidden fetch path.",
@@ -4565,6 +4684,7 @@
       "depends_on": [
         "E3-T20a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "From a fresh browser profile, install a signed Alpine package through the browser node and selected\nTailscale exit path while the public relay is unavailable.",
@@ -4598,6 +4718,7 @@
       "depends_on": [
         "E3-T20a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Install the same signed Alpine package through an explicitly selected public relay while the\nTailscale module, worker, node, and exit route are absent.",
@@ -4632,6 +4753,7 @@
         "E3-T20b",
         "E3-T20c"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Prove the frozen network/image path supports the named Level-3 runtimes and bounded recovery under\nreal package-manager load.",
@@ -4665,6 +4787,12 @@
       "depends_on": [
         "E3-T08",
         "E3-T14"
+      ],
+      "decomposed_into": [
+        "E3-T21a",
+        "E3-T21b",
+        "E3-T21c",
+        "E3-T21d"
       ],
       "estimate": "L",
       "capstone": false,
@@ -4708,6 +4836,7 @@
         "E3-T08",
         "E3-T14"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Freeze one bounded host/guest file-transfer mechanism and protocol before implementation begins.",
@@ -4736,6 +4865,10 @@
       "status": "cancelled",
       "depends_on": [
         "E3-T21a"
+      ],
+      "decomposed_into": [
+        "E3-T21b1",
+        "E3-T21b2"
       ],
       "estimate": "S",
       "capstone": false,
@@ -4770,6 +4903,7 @@
       "depends_on": [
         "E3-T21a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Implement the frozen WVFT framing/state engine and terminate it only on the synthetic\n`10.0.2.2:10021` slirp service.",
@@ -4802,6 +4936,11 @@
       "status": "cancelled",
       "depends_on": [
         "E3-T21b1"
+      ],
+      "decomposed_into": [
+        "E3-T21b2a",
+        "E3-T21b2b",
+        "E3-T21b2c"
       ],
       "estimate": "S",
       "capstone": false,
@@ -4836,6 +4975,7 @@
       "depends_on": [
         "E3-T21b1"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Implement the filesystem transaction boundary used by the guest WVFT peer without coupling it to\ncross-compilation, init scripts, or a boot image.",
@@ -4869,6 +5009,7 @@
       "depends_on": [
         "E3-T21b2a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Bind the verified WVFT protocol to the verified guest storage engine in one reproducibly built\nstatic riscv64 agent providing the service and `vm-download`.",
@@ -4902,6 +5043,7 @@
       "depends_on": [
         "E3-T21b2b"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Install and lifecycle the static agent reproducibly in Alpine, then prove the real guest reaches\nthe verified synthetic endpoint.",
@@ -4935,6 +5077,7 @@
       "depends_on": [
         "E3-T21b2c"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Expose the frozen transfer protocol through accessible drag/drop upload and browser download flows.",
@@ -4965,6 +5108,7 @@
         "E3-T10",
         "E3-T21c"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Prove the completed transfer path inside Alpine, across interruption and reboot, on a frozen head.",
@@ -4998,6 +5142,7 @@
       "depends_on": [
         "E2"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Real clipboard flow between guest and host: guest programs emitting OSC 52 sequences set the\nhost clipboard; host paste (Ctrl+Shift+V / context menu) injects into the guest tty with\nbracketed-paste framing when the guest has enabled it; vim/tmux clipboard workflows in the\nguest behave like a native terminal.",
@@ -5039,6 +5184,7 @@
       "depends_on": [
         "E3-T22"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The terminal stops feeling like a serial console: resizing the browser window resizes the\nguest tty (programs get SIGWINCH and redraw), 256-color and truecolor output render\ncorrectly with a proper TERM/terminfo setup, scrollback works without fighting fullscreen\napps, and a deliberate monospace webfont renders box-drawing and powerline glyphs cleanly.",
@@ -5081,6 +5227,12 @@
         "E3-T03",
         "E3-T12"
       ],
+      "decomposed_into": [
+        "E3-T24a",
+        "E3-T24b",
+        "E3-T24c",
+        "E3-T24d"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "Loading the page feels intentional: a progress surface shows real stages (wasm fetch →\nmanifest → boot-critical chunks → kernel boot → login / snapshot restore), the T12 snapshot\nfast path is the default so reloads resume in seconds, and a service worker caches the app\nshell so a previously-visited VM loads with no network at all (against local disk state).",
@@ -5122,6 +5274,7 @@
       "depends_on": [
         "E3-T03"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Render one monotonic, stage-labeled progress surface driven by typed fetch and boot events rather\nthan timers or inferred fake percentages.",
@@ -5157,6 +5310,7 @@
         "E3-T12e",
         "E3-T10"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Make the validated snapshot path the visible default while every invalid or reset state takes an\nhonest, typed cold-boot path.",
@@ -5191,6 +5345,7 @@
         "E3-T24a",
         "E3-T03"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Serve a previously visited app shell offline from one versioned cache without double-owning disk\nchunks or mixing assets from different builds.",
@@ -5225,6 +5380,7 @@
         "E3-T24b",
         "E3-T24c"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Prove a previously visited VM reaches a usable shell with the network and dev server absent, using\nonly coherent local shell, snapshot/overlay, and cached-image state.",
@@ -5258,6 +5414,13 @@
       "depends_on": [
         "E3-T10",
         "E3-T20"
+      ],
+      "decomposed_into": [
+        "E3-T25a",
+        "E3-T25b",
+        "E3-T25c",
+        "E3-T25d",
+        "E3-T25e"
       ],
       "estimate": "M",
       "capstone": false,
@@ -5301,6 +5464,7 @@
         "E3-T10",
         "E3-T20d"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Give every detectable network, chunk, and storage failure one typed policy and one deterministic\ninjection point before implementing recovery state machines.",
@@ -5336,6 +5500,7 @@
         "E3-T19",
         "E3-T20d"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Make Tailscale and relay loss fail in-flight guest flows normally, fail new flows promptly, and\nrecover only within the explicitly selected identity/provider.",
@@ -5370,6 +5535,7 @@
         "E3-T25a",
         "E3-T03"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Pause the machine coherently when a demanded image chunk exhausts retries, then resume the same\nblocked operation after the user retries successfully.",
@@ -5404,6 +5570,7 @@
         "E3-T25a",
         "E3-T10"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Surface backend write, eviction, handle-loss, and quota failures before the guest receives a false\ndurability acknowledgement, then resume safely when the condition is cleared.",
@@ -5440,6 +5607,7 @@
         "E3-T25d",
         "E3-T22"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Export useful secret-free diagnostics and prove simultaneous recovery surfaces cannot deadlock or\nleak sensitive guest/provider data.",
@@ -5473,6 +5641,12 @@
       "depends_on": [
         "E3-T19",
         "E3-T24"
+      ],
+      "decomposed_into": [
+        "E3-T26a",
+        "E3-T26b",
+        "E3-T26c",
+        "E3-T26d"
       ],
       "estimate": "M",
       "capstone": false,
@@ -5515,6 +5689,7 @@
       "depends_on": [
         "E3-T24d"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Make every document and cached response preserve the exact COOP/COEP/CORP/CORS contract required\nfor `SharedArrayBuffer`, online and offline.",
@@ -5552,6 +5727,7 @@
         "E3-T22",
         "E3-T23"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Enforce a minimum CSP that permits the shipped wasm, worker, network, terminal, snapshot, and file\nflows while blocking inline/off-origin execution and framing.",
@@ -5586,6 +5762,7 @@
         "E3-T19",
         "E3-T25e"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Prevent an XSS foothold, cache dump, copied profile, or diagnostics export from recovering a\nreusable Tailscale auth key, relay token, or unauthorized node identity.",
@@ -5620,6 +5797,7 @@
         "E3-T26b",
         "E3-T26c"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Run one exact-head deployed audit proving isolation, CSP, credential hygiene, and all protected app\nflows hold together in cold, warm, and offline states.",
@@ -5657,6 +5835,7 @@
         "E3-T22",
         "E3-T23"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "An evidence-based, feature-by-feature and feel-by-feel comparison of wasm-vm against\nwebvm.io/alpine.html, producing (1) a scored parity checklist with measurements, (2) a\nranked gap list with each gap dispositioned (fix-now in this epic, Epic 4 speed, Epic 5\nGUI, wontfix-with-reason), and (3) the go/no-go input for attempting the T28 capstone.",
@@ -5701,6 +5880,7 @@
         "E3-T26d",
         "E3-T27"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": true,
       "goal": "The Level 3 threshold — a **real userland** — demonstrated end-to-end from a cold start:\nload the page in a fresh browser profile, provision the browser Tailscale node, drop into an\ninteractive **busybox** shell, reach a MagicDNS tailnet service, `apk add nodejs quickjs`\nagainst a real Alpine mirror through the configured exit node, run a\n**QuickJS** program (`qjs`) and a **Node.js** script (interpreted — slow is fine; this\nproves the userland ABI, not speed), write a file in the guest, reload the tab, and the\nruntimes and the file are still there and still run — the whole flow comparable to\nwebvm.io/alpine.html. Node is the ABI stress test: futex, large `mmap`, W^X page flips, TLS,\nsignals all get exercised, so a running interpreted Node is the proof the userland is\ncorrect. This is the epic's exit gate and the project's first release with standalone\nproduct value; Level 4 only has to make this *fast*.",
@@ -5747,6 +5927,7 @@
         "E3-T02",
         "E3-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Pull an OCI image (manifest list → platform manifest → config + layer blobs) for\n`linux/riscv64` from a registry, verify every content digest, and unpack the layer stack\n(whiteout-aware) into a guest-visible rootfs — either written into the CoW overlay as a\ndirectory tree the guest can chroot/pivot into, or staged in a browser-backed layer cache\n(E3.5-T04) that materializes on demand.",
@@ -5784,6 +5965,7 @@
       "depends_on": [
         "E2"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "An audited, documented kernel configuration for running containers in the guest: confirm\n(and where missing, enable + rebuild) namespaces, cgroups, seccomp, overlayfs, veth/bridge/\nNAT, tmpfs, and loop devices — with an in-guest proof for each (not just a config grep).",
@@ -5826,6 +6008,7 @@
         "E3.5-T01",
         "E3.5-T02"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "NOT Docker Engine. A small in-guest runner (`wvrun`) that takes an unpacked OCI rootfs +\nimage config and runs the container: set env/cwd/entrypoint+cmd from the config, mount\nproc/sys/dev(+pts) inside, isolate with the namespaces/cgroups E3.5-T02 proved, and wire\nthe container's stdio straight to the terminal (interactive `sh` in a container must feel\nlike a shell).",
@@ -5872,6 +6055,7 @@
         "E3.5-T01",
         "E3-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Pulled OCI layers persist in the browser: a content-addressed layer cache in IndexedDB (or\nthe OPFS backend when E3-T06 lands) keyed by digest, deduped across images, surviving a tab\nreload — so the second `pull` of anything already cached transfers zero bytes.",
@@ -5913,6 +6097,7 @@
       "depends_on": [
         "E3.5-T01"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "The unavoidable \"get the image in\" step between `oci unpack` (E3.5-T01) and running a real\ncontainer (`wvrun`, E3.5-T03) toward the `wvrun postgres` capstone: fetch a public OCI image for\na target arch into a local OCI image-layout that `wasm-vm oci unpack` already consumes — WITHOUT a\nnew Rust HTTP dependency or a registry client baked into the emulator. The digest-deduped BROWSER\nlayer cache is the separate E3.5-T04; this is the native dev-side pull.",
@@ -5947,6 +6132,7 @@
         "E3.5-T03",
         "E3.5-T04a"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Brett's directive: be **generic enough to run any Docker container that is riscv-compatible**, and\nPROVE it — not just claim it. Turn \"the pipeline worked on busybox + postgres\" into \"the pipeline is\nverified across a spread of real riscv64 images (minimal userland, web servers, datastores,\nproxies).\"",
@@ -5988,6 +6174,7 @@
       "depends_on": [
         "E3.5-T01"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Close the generality gap the container matrix (E3.5-T04b) surfaced: `oci unpack` decompressed\n**gzip only**, so any image whose layers use **zstd** (modern buildkit / `docker buildx\n--compression=zstd`, and the OCI `…tar+zstd` media type) was mis-read as a raw tar and failed. To\n\"run any riscv-compatible container\" the importer must handle zstd layers transparently.",
@@ -6025,6 +6212,7 @@
       "depends_on": [
         "E3.5-T04a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Toward \"run any riscv-compatible container\": the sideload pulled from Docker Hub only (hardcoded\n`registry-1.docker.io` + `auth.docker.io`). Many images live on **ghcr.io / quay.io / gcr.io /\npublic.ecr.aws / private registries**. Support any standard Docker v2 registry with anonymous pull.",
@@ -6066,6 +6254,7 @@
       "depends_on": [
         "E3.5-T03"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "A fast, NATIVE, unit-testable answer to \"will this bundle actually run?\" — so a broken bundle fails\nin milliseconds instead of after a ~7-minute guest boot. This advances \"run any riscv container\" on\nthe run-side with real (Rust, CI-gated) code, not blind unbootable shell: it validates the exact\nbundle `oci unpack` emits and that `wvrun` consumes.",
@@ -6108,6 +6297,7 @@
         "E3.5-T05f",
         "E3.5-T04"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": true,
       "goal": "The full loop in a clean browser: boot Alpine, pull a small riscv64 OCI image from a real\nregistry, run it with the tiny runner and see its output in the terminal; reload the tab,\nrun it again — this time from the persisted layer cache with zero blob downloads. Then, as\nthe graduation exercise (gated on guest port-forwarding), a Node/HTTP container serving a\nrequest that a host-browser fetch can hit.",
@@ -6150,6 +6340,7 @@
         "E2-T22",
         "E3-T05"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Make the Docker tab visibly real before more hidden infrastructure lands: clicking **Run**\non the bundled busybox image boots the actual browser VM path, uses the bundled busybox/rootfs\nartifact, runs one real command through the guest, and streams the real output back into the\nDocker tab.",
@@ -6192,6 +6383,7 @@
         "E3.5-T03",
         "E3.5-T05a"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Grow `wvrun` from run-to-exit into a minimal container LIFECYCLE manager — the guest-side\nsubstrate a Docker-Desktop-style UI needs: start a container detached, list running/stopped\ncontainers with machine-readable status, capture and stream its logs, and stop/remove it. This\nis the ~20% of a container daemon that the UI drives; NOT a full Docker Engine, NO daemon socket,\nNO image build.",
@@ -6233,6 +6425,7 @@
       "depends_on": [
         "E3.5-T05b"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "`wvrun exec [-it] <id|name> <cmd…>` — run a NEW process inside an already-running container's\nnamespaces (the real \"docker exec\" primitive): join the container's pid+mount+uts+ipc namespaces,\nland in its root filesystem (the overlay merged tree), apply its env, and exec the command with stdio\nwired to the caller. This is what makes the Docker tab's \"exec inside\" real rather than a second\nindependent boot.",
@@ -6275,6 +6468,7 @@
         "E3.5-T04a",
         "E3.5-T03"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Put REAL, pre-unpacked riscv64 OCI bundles inside the browser-served Alpine image so the Docker tab\ncan run them with ZERO network — and include AS MANY images as actually run in the interpreted guest,\nnot just busybox/alpine. Each baked image must be proven to genuinely RUN (its entrypoint executes and\nproduces real output in the guest), not merely unpack.",
@@ -6317,6 +6511,7 @@
         "E3.5-T05b",
         "E3.5-T05d"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The plumbing between the browser Docker tab and the container-capable guest: (1) a `wvmDemo` method\nthat boots the ALPINE guest (which ships `wvrun` + baked bundles), and (2) a fenced request/response\nprotocol over the single ttyS0 console so the UI drives `wvrun ps/logs/run/exec` and parses STRUCTURED\nresults instead of scraping free-form text — plus one long-lived streaming channel for `logs -f` /\ninteractive `exec`.",
@@ -6359,6 +6554,7 @@
         "E3.5-T05c",
         "E3.5-T05e"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Rebuild the Docker tab (`web/docker.js`) into a real Docker-Desktop-style surface driven by the guest\nruntime: browse baked images, PULL (honest: real in-guest pull when a network provider is configured,\nelse the baked set), RUN a container, see it in a Containers list with live status, VIEW its logs\nstreaming, and EXEC an interactive shell inside it — all through the real Alpine guest + `wvrun`, never\na simulated shell or canned output.",
@@ -6401,6 +6597,7 @@
         "E3.5-T05",
         "E3-T16"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Put the pull half of the OCI pipeline INSIDE the guest so a container image can be fetched while the\nVM is running — not baked at build time. A small static riscv64 tool (`wvpull`) that, given an image\nref, resolves the registry manifest, picks the riscv64 image, downloads + sha256-verifies every blob,\nand unpacks a runnable bundle into `/opt/containers/<name>` — the same bundle shape `wvrun` (E3.5-T03)\nalready runs. This is the missing in-guest counterpart to the native `wasm-vm oci pull`\n(crates/cli/src/oci/pull) + `tools/oci-sideload.sh`, which today run only on the HOST.",
@@ -6443,6 +6640,7 @@
         "E3.6-T01",
         "E3-T19"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Prove `wvpull` (E3.6-T01) reaches a REAL registry over the in-browser guest's network — i.e. a running\nbrowser VM booted with a network provider pulls `busybox:riscv64` from Docker Hub, digest-verifies it,\nand unpacks a runnable bundle, with ZERO bytes baked. This is the \"why can't I just pull it when it's\nrunning\" milestone made real (over a configured provider).",
@@ -6481,6 +6679,7 @@
         "E3.6-T02",
         "E3.5-T05f"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Make the Docker tab's **Pull** button do the real thing when a network provider is configured: type a\nref, watch the in-guest `wvpull` fetch + digest-verify + unpack with honest progress, then the image\nappears in the Images catalog and is immediately runnable — no baked bytes, no fake spinner.",
@@ -6518,6 +6717,7 @@
       "depends_on": [
         "E3.6-T03"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": true,
       "goal": "The full live loop in a clean browser: fresh profile → boot Alpine (chunked, persisted) → **pull** a\nreal riscv64 image from a registry IN-GUEST over a provider → run it → see logs + exec inside →\n`page.reload()` → boot → the image is still there from the persisted cache and re-runs with ZERO\nre-pull (no registry fetches). Data written by the container also survives the reload (durability).",
@@ -6565,6 +6765,7 @@
         "E0-T23",
         "E0-T25"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Turn “emulate a Raspberry Pi Pico 2” into one versioned, testable machine contract before any\nRV32 or RP2350 code is added.",
@@ -6599,6 +6800,7 @@
         "E3.75-T01",
         "E0-T13"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Produce byte-reproducible RP2350 RISC-V ELF, BIN, and UF2 fixtures so emulator behavior is tested\nagainst real Pico SDK output rather than hand-authored instruction words alone.",
@@ -6632,6 +6834,7 @@
       "depends_on": [
         "E3.75-T01"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Make register, PC, effective-address, shift-width, trace, and snapshot behavior explicitly\nprofiled by XLEN while preserving every existing RV64 result byte-for-byte.",
@@ -6670,6 +6873,7 @@
         "E3.75-T03",
         "E3.75-T02"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Decode and execute RV32I programs, including control flow, loads/stores, fences, system traps,\nand all 32-bit wrap/sign rules, without admitting RV64-only encodings.",
@@ -6707,6 +6911,7 @@
       "depends_on": [
         "E3.75-T04"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Execute the RV32M multiplication and division extension exactly for 32-bit operands and results.",
@@ -6744,6 +6949,7 @@
       "depends_on": [
         "E3.75-T04"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Implement the complete RV32A word-width LR/SC and AMO instruction set with a reservation model\nthat can later attach to RP2350's global exclusive monitor.",
@@ -6785,6 +6991,7 @@
       "depends_on": [
         "E3.75-T04"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Decode and execute every RV32C/Zca instruction with RV32-specific legality, immediates, and\ntwo-byte PC behavior.",
@@ -6822,6 +7029,7 @@
       "depends_on": [
         "E3.75-T04"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Execute the standard bit-manipulation extensions configured on RP2350 Hazard3 cores at exact\nRV32 widths.",
@@ -6860,6 +7068,7 @@
         "E3.75-T07",
         "E3.75-T08"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Implement the additional compressed Zcb operations and Zcmp push/pop/double-move instructions\nused by RP2350's code-density profile.",
@@ -6897,6 +7106,7 @@
       "depends_on": [
         "E3.75-T04"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Implement the standard privileged architecture as configured by RP2350 Hazard3: M/U modes,\nZicsr/Zifencei, precise exceptions, interrupts, and architectural counters.",
@@ -6934,6 +7144,7 @@
       "depends_on": [
         "E3.75-T10a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Enforce the RP2350 Hazard3 protection profile: eight NAPOT PMP regions, a 32-byte granule, and\nXh3pmpm's unlocked M-mode regions.",
@@ -6972,6 +7183,7 @@
         "E3.75-T08",
         "E3.75-T10a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Implement the remaining non-interrupt Hazard3 custom extensions enabled by RP2350 so SDK and\nboot-path code observe the real processor profile.",
@@ -7009,6 +7221,7 @@
       "depends_on": [
         "E3.75-T10a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Deliver RP2350's 52-line, 16-priority Hazard3 interrupt controller, including nested preemption\nand its array-CSR interface over standard `mip.meip`.",
@@ -7052,6 +7265,7 @@
         "E3.75-T11",
         "E3.75-T12"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Prove the assembled RP2350 CPU profile as one whole before any board peripheral can hide CPU\ndefects behind higher-level output.",
@@ -7089,6 +7303,7 @@
       "depends_on": [
         "E3.75-T13"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Create an authoritative RP2350 machine map for ROM, XIP, 520 KiB SRAM, APB/AHB peripherals, SIO,\nand private regions, with the chip's atomic alias and narrow-write behavior.",
@@ -7131,6 +7346,7 @@
         "E3.75-T02",
         "E3.75-T14"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Run an RP2350-linked ELF32 directly on a selected Pico machine in the native CLI, WASM harness,\nand browser test surface without changing Linux `virt` defaults.",
@@ -7168,6 +7384,7 @@
       "depends_on": [
         "E3.75-T15"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Implement the reset controller and deterministic clock-control behavior required for pinned Pico\nSDK startup to configure the RP2350 RISC-V machine and reach `main`.",
@@ -7206,6 +7423,7 @@
         "E3.75-T02",
         "E3.75-T14"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Validate a standard Pico 2 UF2 as untrusted input and atomically populate the 4 MiB emulated\nflash image without starting a core.",
@@ -7244,6 +7462,7 @@
         "E3.75-T16",
         "E3.75-T17a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Select the supported RISC-V IMAGE_DEF from committed flash and enter the application through a\ndocumented host-assisted RP2350 boot handoff.",
@@ -7281,6 +7500,7 @@
       "depends_on": [
         "E3.75-T17b"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Execute Pico SDK code from emulated external flash through RP2350's QMI/XIP windows with the\naddress translation and cache-control behavior needed by the scoped firmware.",
@@ -7319,6 +7539,7 @@
         "E3.75-T12",
         "E3.75-T16"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Run Pico SDK UART stdio and interrupt-driven serial I/O through both RP2350 UART instances with\nbounded FIFOs and deterministic timing.",
@@ -7357,6 +7578,7 @@
         "E3.75-T12",
         "E3.75-T16"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Provide one deterministic timebase powering the RP2350 timer/alarm blocks and each Hazard3\nhart's RISC-V platform timer interrupt.",
@@ -7394,6 +7616,7 @@
       "depends_on": [
         "E3.75-T20a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Model the RP2350 watchdog's tick sources, countdown, scratch registers, reason bits, and\ndeterministic reset effects.",
@@ -7432,6 +7655,7 @@
         "E3.75-T12",
         "E3.75-T16"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Model all 30 RP2350A GPIOs plus the Pico 2 board wiring: 26 header GPIOs and the four internal\nGPIO23/24/25/29 functions, from pad input through SIO output and per-core interrupts.",
@@ -7470,6 +7694,7 @@
         "E3.75-T13",
         "E3.75-T16"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Represent both RP2350 Hazard3 cores, hold core 1 in its documented reset/launch state, and execute\nthem under one deterministic scheduler with shared memory and devices.",
@@ -7512,6 +7737,7 @@
         "E3.75-T21",
         "E3.75-T22"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Run Pico SDK's core-1 launch protocol and bounded inter-core messaging on the two emulated\nHazard3 harts.",
@@ -7551,6 +7777,7 @@
         "E3.75-T22",
         "E3.75-T23a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Provide race-correct hardware spinlocks and global LR/SC invalidation across both harts and\nnon-hart bus writers.",
@@ -7590,6 +7817,7 @@
         "E3.75-T20a",
         "E3.75-T23b"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Execute one RP2350 DMA channel's programmed bus transfers exactly, including address generation,\nwidth conversion, partial progress, errors, and reservation invalidation.",
@@ -7629,6 +7857,7 @@
         "E3.75-T19",
         "E3.75-T24a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Compose sixteen DMA channels under deterministic priority/arbitration, DREQ pacing, chaining,\nabort, and four shared IRQ outputs.",
@@ -7667,6 +7896,7 @@
         "E3.75-T20a",
         "E3.75-T21"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Build all three RP2350 PIO blocks and execute their control-flow, wait, move, IRQ, set, side-set,\ndelay, wrap, and pin-timing behavior cycle-exactly.",
@@ -7704,6 +7934,7 @@
       "depends_on": [
         "E3.75-T25a"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Complete the PIO instruction engine's data path: input/output shift registers, thresholds,\nauto-push/pull, stalls, and the four shift/FIFO-facing opcodes.",
@@ -7743,6 +7974,7 @@
         "E3.75-T24b",
         "E3.75-T25b"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Connect PIO state machines to their FIFOs, interrupt lines, DMA request signals, and the shared\nGPIO fabric so real Pico SDK PIO programs can stream without host intervention.",
@@ -7782,6 +8014,7 @@
         "E3.75-T19",
         "E3.75-T21"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Make the RP2350 machine a first-class browser experience: users can select Pico 2, drop a UF2,\nrun/reset it, see the board and LED/pins, and use a serial console.",
@@ -7821,6 +8054,7 @@
         "E3.75-T26",
         "E3.75-T27"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Let users drive digital Pico pins and inspect GPIO/PIO output waveforms without introducing\nbrowser timing nondeterminism.",
@@ -7865,6 +8099,7 @@
         "E3.75-T26",
         "E3.75-T28"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Run a fixed matrix of independently meaningful Pico SDK programs across direct ELF, UF2/XIP,\nnative, WASM, and browser paths before declaring the board complete.",
@@ -7902,6 +8137,7 @@
       "depends_on": [
         "E3.75-T29"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": true,
       "goal": "Prove the complete scoped Pico 2 machine in one cold, user-visible, deterministic browser run.",
@@ -7939,6 +8175,7 @@
       "depends_on": [
         "E3"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Before we optimize anything, the emulator can tell us *where guest execution time goes*:\na low-overhead hot-PC histogram identifying the hottest guest code regions, and wall-clock\naccounting of host time split across CPU interpretation, MMU walks, and each device model —\nproducing a ranked report that will justify (with numbers) every optimization in this epic.",
@@ -7976,6 +8213,7 @@
       "depends_on": [
         "E4-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A documented, repeatable procedure (plus committed reference profiles) for producing\nflamegraphs of the *emulator itself* — native via `samply`/`cargo flamegraph`, in-browser\nvia Chrome DevTools performance profiles with readable Rust frame names — so host-side\nhotspots (dispatch overhead, bounds checks, bindgen boundary costs) are visible, not\nguessed, before the JIT design doc is written.",
@@ -8013,6 +8251,7 @@
       "depends_on": [
         "E3"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "CoreMark and Dhrystone run *inside the guest* on demand, fully scripted end-to-end (boot →\nrun → parse score → emit JSON), reproducibly enough that a 10% performance change is\nsignal, not noise. This is the micro-benchmark half of the measurement backbone the whole\nepic (and its capstone's \"≥10x CoreMark\") stands on.",
@@ -8050,6 +8289,7 @@
       "depends_on": [
         "E4-T03"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Two macro benchmarks join the harness — kernel-boot wall clock and an in-guest\n`gcc -O2` compile of a pinned non-trivial C file — and all benchmark results start\naccumulating in a committed ledger (`bench/ledger.json`), opening with the official\n**Level 3 interpreter baseline** numbers that every Epic 4 speedup claim, and the capstone's\n\"≥10x\" and \"<5 s boot\", will be measured against.",
@@ -8088,6 +8328,7 @@
         "E4-T01",
         "E4-T04"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The interpreter stops re-decoding every instruction on every execution: fetched code is\ndecoded once into a cached basic block of predecoded micro-ops (op enum + pre-extracted\nfields + pre-expanded compressed forms), keyed by physical PC, and the dispatch loop is\ntuned — yielding a measured CoreMark uplift and, more importantly, building the exact\nblock-cache skeleton (discovery, keying, invalidation hooks) the JIT will inhabit.",
@@ -8130,6 +8371,7 @@
         "E4-T02",
         "E4-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A reviewed `docs/jit-architecture.md` that commits — with rationale and numbers from the\nprofiling tasks — to the JIT's load-bearing decisions: tiering policy, translation unit\nshape, the ABI between dispatch loop and generated code, side-exit/deopt strategy,\ntranslation-cache keying and invalidation matrix, and memory/module budgets. Every later\ntask in this epic implements a section of this document instead of re-litigating it.",
@@ -8167,6 +8409,7 @@
       "depends_on": [
         "E4-T06"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A new `crates/wasm-emit` crate that builds valid WebAssembly binary modules from scratch —\nsection framing, LEB128, type/import/function/table/memory/export/element/code sections,\nand a typed instruction encoder — with zero runtime dependencies, `no_std + alloc`\ncompatible, fast enough to emit thousands of small functions per second, and proven valid\nby `wasmparser` in tests only.",
@@ -8209,6 +8452,7 @@
         "E4-T05",
         "E4-T06"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "The E4-T05 block cache learns to nominate JIT candidates: each `DecodedBlock` carries an\nexecution counter; crossing the design-doc hotness threshold enqueues a `TranslationRequest`\ncarrying everything the translator needs (entry physical PC, instruction bytes snapshot,\nper-op lengths, terminator kind) — with dedup, requeue-after-invalidation, and counters\nobservable through the profiling stats.",
@@ -8247,6 +8491,7 @@
         "E4-T07",
         "E4-T08"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A `crates/jit-translate` translator that turns one predecoded RV64I basic block into one\nwasm function (via `wasm-emit`) implementing the E4-T06 ABI: guest registers mapped to\ni64 locals (lazily loaded from the CPU-state region of linear memory on first read, written\nback per the eager/dirty rules on exits), correct RV64 semantics for the full base integer\nISA, and a returned exit code + next-PC. Verified natively by executing generated functions\nunder wasmtime against the interpreter — no browser in the loop yet.",
@@ -8288,6 +8533,7 @@
       "depends_on": [
         "E4-T09"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Translated blocks actually execute inside the running VM: emitted bytes become a\n`WebAssembly.Module`/Instance in the browser (wasmtime natively, same bytes), generated\nfunctions are registered in a funcref table, and the main dispatch loop checks the\ntranslation cache — hit calls the translated function through the table, miss falls back\nto the E4-T05 interpreter — with the exit-code protocol (fallthrough PC, untranslated\ntarget, trap, interrupt-budget expiry) fully wired.",
@@ -8329,6 +8575,7 @@
       "depends_on": [
         "E4-T10"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Translated loads and stores stop calling out to the host for every access: guest RAM, CPU\nstate, and softmmu TLB arrays live at fixed offsets in one (shared-capable) linear memory,\nand generated code inlines a direct-mapped TLB lookup — tag compare, add offset, raw\n`i64.load`/`store` on hit; call-out to the existing softmmu walker on miss — with misaligned\nand page-straddling accesses, MMIO pages, and permission distinctions all handled exactly.",
@@ -8370,6 +8617,7 @@
       "depends_on": [
         "E4-T11"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Any exception raised inside translated code — page fault, misaligned fetch target, illegal\ninstruction, ecall/ebreak — side-exits to the interpreter with *precise* architectural\nstate: the faulting instruction's PC, fully written-back registers as of that instruction,\nand correct mcause/mtval/mepc produced by the existing (trusted) interpreter trap machinery.\nCSR and privileged instructions follow the E4-T06 policy: they terminate blocks and execute\nvia interpreter call-out — never inlined in v1.",
@@ -8407,6 +8655,7 @@
       "depends_on": [
         "E4-T12"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Translated blocks natively execute the full M extension (MUL/MULH/MULHSU/MULHU, DIV/DIVU/\nREM/REMU and all `*W` forms) with exact RISC-V corner-case semantics, and compressed (C)\ninstructions flow through translation correctly — expanded at predecode, with 2-byte PC\narithmetic, branch targets, and block byte-ranges all right — so real Alpine binaries\n(which are RVC-dense) run predominantly in the JIT tier.",
@@ -8444,6 +8693,7 @@
       "depends_on": [
         "E4-T12"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Atomics run in the JIT tier: AMOs (amoswap/add/xor/and/or/min/max[u], .w/.d) execute as\ninline load-op-store sequences using wasm atomic RMW ops on the shared linear memory, and\nLR/SC implements the reservation-set protocol against the same `(addr, valid)` reservation\nstate the interpreter uses — correct today on one hart, and deliberately built on wasm\natomics so the E4-T22 worker move and future SMP don't force retranslation semantics.",
@@ -8481,6 +8731,7 @@
       "depends_on": [
         "E4-T12"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A *measured* decision on floating point in the JIT — (a) side-exit every F/D instruction\nto the interpreter, (b) fully translate to wasm f32/f64 with NaN-boxing and software\nfflags, or (c) hybrid: translate the common arithmetic subset, call out for the hard ops —\nimplemented, benchmarked, and recorded, with rv64uf/ud green under whatever ships.",
@@ -8522,6 +8773,7 @@
       "depends_on": [
         "E4-T12"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The two architectural invalidation events are handled exactly under JIT: `fence.i`\ninvalidates translated blocks so subsequently executed code reflects all prior stores, and\n`SFENCE.VMA` (all four rs1/rs2 operand forms, ASID-aware) flushes address translation —\ninline TLB arrays and any translation-lookup state that depends on the old mapping — with\nthe physical-address-keyed translation cache meaning SFENCE.VMA does *not* need to kill\ntranslations, and that argument is now proven by test, not just asserted in the design doc.",
@@ -8564,6 +8816,7 @@
         "E4-T11",
         "E4-T16"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Writes to guest pages containing translated code are detected exactly and invalidate only\nthe affected translations: a per-physical-page \"has translated code\" bitmap keeps such\npages out of the write TLB, forcing stores into the slow path, which invalidates every\nblock overlapping the written page before completing the store — replacing E4-T16's\nconservative behaviors with page-granular precision and making `fence.i` near-free.",
@@ -8605,6 +8858,7 @@
       "depends_on": [
         "E4-T16"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Hot paths stop bouncing through the dispatch loop on every block boundary: translated\nblocks jump directly to their successors — same-module successors via structured control\nflow, cross-module via funcref-table link slots — with unlinking on any invalidation\n(fence.i, SMC, eviction) that provably cuts every edge into a dead block, and a measured\nCoreMark uplift from chaining.",
@@ -8647,6 +8901,7 @@
         "E4-T10",
         "E4-T18"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The one-Module-per-block placeholder becomes a measured batching strategy: hot blocks are\ncompiled K-per-module (translation-group batching), with K and the compile pathway\n(async `WebAssembly.compile` vs `compileStreaming`, main-thread vs worker-side) chosen\nfrom a scripted cost matrix run on Chrome, Firefox, and Safari — because per-Module fixed\noverheads (compile setup, tiering, per-Instance metadata) differ wildly across engines and\nbrowsers throttle or cap pathological module counts.",
@@ -8689,6 +8944,7 @@
         "E4-T17",
         "E4-T19"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The translation cache lives within the E4-T06 budgets forever: hard caps on translated-code\nbytes, live Module/Instance count, funcref-table size, and metadata (edge maps, interval\nlists), enforced by an eviction policy — coarse generational flush vs batch-level LRU,\nchosen by A/B measurement — so a week-long tab or a gcc bootstrap can never OOM the page\nor degrade into thrash without the stats saying so loudly.",
@@ -8730,6 +8986,7 @@
       "depends_on": [
         "E4-T20"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Translation work never stalls guest execution perceptibly: hot-block nominations flow to a\ncompiler running off the execution path (async task now; a dedicated compile worker once\nE4-T22 lands, exploiting that `WebAssembly.Module` is postMessage-transferable), execution\ncontinues in the interpreter until installation, and the system meets a hard pause-time\ntarget — no single JIT-attributable stall of the execution thread > 5 ms — verified by\ninstrumentation, not vibes.",
@@ -8771,6 +9028,7 @@
       "depends_on": [
         "E4-T11"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The CPU loop (interpreter + JIT) runs on a dedicated Web Worker against a shared wasm\nmemory (SharedArrayBuffer-backed) holding guest RAM, CPU state, and TLBs, leaving the main\nthread for DOM/xterm.js/devices — with the COOP/COEP deployment story solved (headers,\ndev server, and static-hosting fallback documented and tested), a WFI park/wake path via\n`Atomics.wait`/`notify`, and a single-threaded fallback build retained for non-isolated\ncontexts.",
@@ -8812,6 +9070,7 @@
       "depends_on": [
         "E4-T22"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The interim blocking MMIO stub becomes a real split-device architecture with measured\nlatency budgets: device state is partitioned between the CPU worker (everything without a\nDOM/main-thread dependency: CLINT, PLIC, virtio ring processing) and the main thread\n(xterm.js UART endpoint, IndexedDB/network backends), with SAB ring-buffer proxying for\ncross-thread MMIO, interrupt injection via shared pending-IRQ cells + `Atomics.notify`,\nand `Atomics.waitAsync` (not busy-wait, not blocking) on the main-thread side.",
@@ -8854,6 +9113,7 @@
         "E4-T12",
         "E4-T23"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Guest time stays sane when the CPU runs 10–50x faster and lives on a throttleable worker:\na defined mtime architecture — wall-clock-authoritative (`performance.now()`-derived,\nscaled to the DT-declared timebase frequency) with monotonicity clamps and catch-up\npolicy after tab throttling/suspension, plus an optional deterministic instruction-count\nmode (icount) for the lockstep/fuzz rigs — so `sleep 1` sleeps one second, timestamps\nnever go backward, and timer interrupts are delivered when mtimecmp says, at JIT speed.",
@@ -8898,6 +9158,7 @@
         "E4-T15",
         "E4-T18"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A lockstep mode where the JIT engine and a shadow interpreter execute the same guest in\nparallel and compare architectural state at every translated-block boundary — plus a\nrandomized RV64GC program fuzzer feeding both engines — turning \"the JIT is correct\"\nfrom a hope into a machine that hunts divergences continuously, with automatic trace\ncapture and test-case minimization when it finds one.",
@@ -8941,6 +9202,7 @@
         "E4-T17",
         "E4-T25"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The complete Epic 1 compliance surface — all riscv-tests suites (rv64ui/um/ua/uf/ud/uc,\nmi/si) and a full RISCOF architectural run — passes with the JIT forced always-on\n(hotness threshold 0, chaining on, eviction churn configs included), in both the native\nwasmtime-backed runtime and the browser, wired into CI as a hard gate that no future JIT\nchange can merge past while red.",
@@ -8984,6 +9246,7 @@
         "E4-T21",
         "E4-T23"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Performance becomes a gated invariant like correctness: every merge runs the benchmark\nsuite (CoreMark, Dhrystone, boot, gcc, FP micro, plus the latency metrics — JIT pause p100,\nMMIO budgets, echo latency) against recorded thresholds, failing the build on regression —\nwith the statistical machinery (fixed runners, medians, noise bands, rolling baselines) to\nmake failures trustworthy rather than ignorable.",
@@ -9027,6 +9290,7 @@
         "E4-T26",
         "E4-T27"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": true,
       "goal": "The Level 4 threshold demonstrated end-to-end from a cold start. The headline named target\nis **interactive, fast Node.js**: the same runtime that crawled at Level 3 (E3-T28), now\nresponsive — a REPL that echoes and evaluates without perceptible lag, and a real\n`node`-driven workload (e.g. a small HTTP server handling requests, or `npm`-style script\nexecution) that feels usable. Because V8 emits machine code at runtime, this is also the\nproof that **FENCE.I i-cache coherence** (E4-T16) works: the guest's own JIT is writing code\ninto pages we have translated. Supporting gates: in-browser CoreMark ≥ 10x the recorded\nLevel 3 interpreter baseline, unmodified Alpine kernel boot to login under 5 seconds, and the\nfull compliance suite green under JIT. **Bun** is a documented *stretch*: attempt it, but its\nJavaScriptCore backend has a much weaker/immature RISC-V JIT, so a Bun result is recorded as\nbonus/gap data, never a gate. This is the moment the machine crosses from \"toy shell\" to\n\"you can develop software inside it.\"",
@@ -9076,6 +9340,7 @@
       "depends_on": [
         "E4"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A virtio-gpu device (virtio device ID 16) on the existing virtio-mmio transport that\nnegotiates features, exposes controlq (queue 0) and cursorq (queue 1), parses the\n`virtio_gpu_ctrl_hdr` protocol, and answers `VIRTIO_GPU_CMD_GET_DISPLAY_INFO` with one\nenabled 1280x800 scanout — the foundation every later GPU command builds on.",
@@ -9121,6 +9386,7 @@
       "depends_on": [
         "E5-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The device owns a correct 2D resource store: guests can create host resources with\n`RESOURCE_CREATE_2D`, attach guest-physical scatter-gather backing with\n`RESOURCE_ATTACH_BACKING`, detach, and destroy with `RESOURCE_UNREF` — with strict\nvalidation so a hostile guest cannot exhaust host memory or dangle references.",
@@ -9162,6 +9428,7 @@
       "depends_on": [
         "E5-T02"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The device implements the three commands that actually move pixels: `TRANSFER_TO_HOST_2D`\ncopies a rect from guest backing pages into the host shadow buffer, `SET_SCANOUT` binds a\nresource to scanout 0, and `RESOURCE_FLUSH` hands a damage rect to a host-side `FrameSink`\ntrait — testable natively with zero browser code.",
@@ -9203,6 +9470,7 @@
       "depends_on": [
         "E5-T03"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "The device advertises `VIRTIO_GPU_F_EDID`, answers `VIRTIO_GPU_CMD_GET_EDID` with a valid\n128-byte EDID block whose preferred detailed timing matches the current host canvas size,\nand can raise `VIRTIO_GPU_EVENT_DISPLAY` through `events_read` + config-change interrupt —\nthe mechanism display resize (T22) and multi-display (T27) will ride on.",
@@ -9244,6 +9512,7 @@
       "depends_on": [
         "E4"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A rebuilt riscv64 kernel artifact whose config enables every guest-side driver Epic 5\nneeds — virtio-gpu DRM/KMS with fbdev emulation and fbcon, virtio-input evdev, virtio-snd\nALSA, virtio-console multiport — while still booting the Epic 3/4 images unchanged when\nno display device is present.",
@@ -9285,6 +9554,7 @@
       "depends_on": [
         "E5-T03"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A `CanvasSink` implementing the T03 `FrameSink` trait with two presentation backends —\n2D-context `putImageData` and WebGL2 `texSubImage2D` + textured quad — plus a benchmark\npage that measures both, and a recorded, data-backed decision on the default path.",
@@ -9328,6 +9598,7 @@
         "E5-T05",
         "E5-T06"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Boot the T05 kernel against the T01–T03 device and the T06 sink and watch the Linux boot\nlog scroll *on the canvas*: virtio-gpu probes, DRM registers card0, fbdev emulation\ncreates fb0, fbcon takes over tty0, and every printk is real pixels — the epic's\nfirst user-visible milestone, before any input exists.",
@@ -9369,6 +9640,7 @@
       "depends_on": [
         "E5-T07"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "The page hosts both faces of the machine: the canvas display and the xterm.js serial\nconsole, switchable via UI tabs and a reserved hotkey, plus one-click screenshot (PNG)\nand screen recording (WebM) of the canvas — the debugging harness every later task in\nthis epic will lean on.",
@@ -9411,6 +9683,7 @@
         "E5-T06",
         "E5-T07"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The present pipeline stops being \"one JS call per guest flush\": damage rects from\nRESOURCE_FLUSH are coalesced per frame, uploads are restricted to dirty tiles, and\npresentation is paced by `requestAnimationFrame` with at most one upload+draw per\ndisplay refresh — cutting bytes-per-frame and decoupling guest flush rate from vsync.",
@@ -9452,6 +9725,7 @@
       "depends_on": [
         "E5-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A reusable virtio-input device (virtio ID 18) implementing the select/subsel config\nspace and the eventq/statusq queue pair, with a host-side `inject(type, code, value)`\nAPI and bounded buffering — the shared chassis that T11's keyboard and T14's pointers\nare instances of.",
@@ -9493,6 +9767,7 @@
       "depends_on": [
         "E5-T10"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A concrete keyboard instance of the T10 chassis that the Linux guest binds as a full\nevdev keyboard: EV_KEY capability bitmap covering the PC-105 key range, EV_LED with\nCapsLock/NumLock/ScrollLock state flowing back to the host UI, and a deliberate,\ndocumented autorepeat policy.",
@@ -9534,6 +9809,7 @@
       "depends_on": [
         "E5-T11"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Real keystrokes flow: a translation layer maps `KeyboardEvent.code` (physical key\nidentity) to evdev codes for the T11 keyboard, tracks modifier state, suppresses browser\nautorepeat, and enforces an explicit preventDefault/capture policy — so typing in the\ncanvas types in the guest, layout handled by the guest's own keymap.",
@@ -9575,6 +9851,7 @@
       "depends_on": [
         "E5-T12"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The keyboard is unbreakable by window management: focus loss releases every held key,\nOS-swallowed shortcuts can't strand a modifier down in the guest, CapsLock state\ndivergence is detected and reconciled, and a panic \"release all keys\" control exists —\neliminating the classic emulator failure where Alt-Tab leaves Alt stuck forever.",
@@ -9616,6 +9893,7 @@
       "depends_on": [
         "E5-T10"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Two pointer instances of the T10 chassis — an absolute tablet (the default, giving\npixel-exact host-cursor correspondence with no grab) and a relative mouse (behind\nPointer Lock, for apps that warp/hide the cursor) — with buttons, horizontal/vertical\nwheel, and a clean mode toggle.",
@@ -9658,6 +9936,7 @@
         "E5-T03",
         "E5-T14"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The cursorq comes alive: `VIRTIO_GPU_CMD_UPDATE_CURSOR` and `MOVE_CURSOR` are\nimplemented with a host presentation strategy that keeps the guest cursor a separate\nplane (DOM overlay / CSS cursor image) instead of compositing it into the framebuffer —\nzero-latency cursor movement independent of frame uploads.",
@@ -9701,6 +9980,7 @@
         "E5-T13",
         "E5-T14"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A written, measured decision on the guest display server for the flagship desktop image:\ncandidates evaluated *inside the emulator* on CPU cost, damage quality, memory, cursor\nplane use, clipboard tooling, and Alpine riscv64 package availability — ending in one\ncommitted choice and a recorded rationale others can re-litigate with data.",
@@ -9742,6 +10022,7 @@
       "depends_on": [
         "E5-T16"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A reproducible, scripted build of the desktop disk image: Epic 3's Alpine rootfs plus\nthe T16-chosen display stack, terminal, fonts, seat/udev machinery, and an autostart\npath — within a hard size budget so the streamed-chunk loading from Epic 3 stays\ntolerable on first visit.",
@@ -9785,6 +10066,7 @@
         "E5-T15",
         "E5-T17"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Cold page load boots all the way into the T17 desktop with a working cursor, focusable\nwindows, and a terminal launchable from the WM menu — plus a written debugging playbook\ncapturing every failure mode found on the way (this task *is* mostly debugging; the\nplaybook is how that work compounds).",
@@ -9826,6 +10108,7 @@
       "depends_on": [
         "E5-T05"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A virtio-snd device (virtio ID 25) with a spec-correct control plane and one playback\nPCM stream whose full state machine (SET_PARAMS → PREPARE → START → STOP → RELEASE)\nworks against the Linux `snd_virtio` driver, delivering PCM frames to a host `AudioSink`\ntrait — natively testable by dumping WAV files, before any WebAudio exists.",
@@ -9867,6 +10150,7 @@
       "depends_on": [
         "E5-T19"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Guest PCM reaches the speakers: an `AudioSink` implementation that pushes T19's frames\ninto a SharedArrayBuffer ring buffer consumed by an `AudioWorkletProcessor`, with the\naudio clock fed back as the device's pacing source, measured latency, counted\nunderruns, and a clean autoplay-policy unlock flow.",
@@ -9908,6 +10192,7 @@
       "depends_on": [
         "E5-T20"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Config-gated microphone input: the virtio-snd device grows a capture PCM stream fed\nfrom `getUserMedia` through a capture AudioWorklet and a second SAB ring, so `arecord`\nin the guest records the real mic — off by default, honest about permission state, and\nsilent (not broken) when denied.",
@@ -9950,6 +10235,7 @@
         "E5-T04",
         "E5-T18"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Resizing the browser window resizes the guest desktop: canvas-size changes flow through\nT04's display-info/EDID hotplug event, the guest compositor picks up the new mode,\nreallocates its framebuffer, and the new-size scanout lands back on a correctly-sized\ncanvas — with the whole loop debounced and storm-proof.",
@@ -9991,6 +10277,7 @@
       "depends_on": [
         "E5-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A private host⇄guest control channel: a virtio-console (device ID 3) multiport device\nexposing a named port, and a small static Rust agent in the guest speaking a versioned,\nframed protocol over it — the extension point that clipboard (T24), resolution\nnotifications, and future integrations plug into without inventing new devices.",
@@ -10033,6 +10320,7 @@
         "E5-T18",
         "E5-T23"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Copy in the guest, paste on the host; copy on the host, paste in the guest — text\nclipboard synced both directions through T23's agent with loop suppression, size\nlimits, and honest handling of the browser clipboard-permission model.",
@@ -10075,6 +10363,7 @@
         "E5-T09",
         "E5-T18"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Two repeatable, scripted measurements with committed baselines: (1) sustained FPS while\ndragging a real window across the T18 desktop, and (2) input→photon latency from\nhost-side event injection to the resulting pixel change being presented — the numbers\nthe capstone's \"usable FPS\" claim and all future perf work will be judged against.",
@@ -10117,6 +10406,7 @@
         "E5-T18",
         "E5-T20"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Epic 3's snapshot/restore machinery learns the Epic 5 devices: suspend a running\ndesktop (windows open, cursor set, audio configured), reload the tab, restore, and be\nlooking at the same pixels with working input and sound within seconds — no guest\nreboot, no re-probe.",
@@ -10158,6 +10448,7 @@
       "depends_on": [
         "E5-T22"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Behind a config flag, the machine grows a second display: `num_scanouts = 2`, a second\ncanvas element, per-scanout damage/present pipelines, and a guest desktop extended\nacross both — proving the T01–T09 pipeline was genuinely scanout-indexed and not\nsecretly single-display, while changing nothing for default users.",
@@ -10204,6 +10495,7 @@
         "E5-T24",
         "E5-T25"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": true,
       "goal": "The Level 5 threshold — a **browser rendering surface** with **real GUI applications** on\nit, Layer E — demonstrated end-to-end from a cold start: the page boots unmodified Alpine\nriscv64 to a graphical surface (a compositor + at least one real GUI app, e.g. a terminal\nemulator and a second graphical application); real keyboard typing works in it; a sound\naudibly plays; and a window drags at usable FPS — one continuous session, no cherry-picked\nclips. This proves the pixels-out / input-in path and the compositor. The full multi-app\n*desktop* — especially one compositing x86_64 apps under box64 — is Level 7's (Babel) job;\nLevel 5 delivers the surface those levels paint on.",
@@ -10245,6 +10537,7 @@
       "depends_on": [
         "E5"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The core crate models N harts (configurable 1–8) as first-class machine state — a\n`Vec<Hart>` with fully independent architectural state per hart, banked CLINT registers,\nand per-context PLIC enable/threshold/claim — so SMP is a property of the machine model\nbefore any host-side concurrency exists.",
@@ -10286,6 +10579,7 @@
       "depends_on": [
         "E6-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Our SBI firmware layer implements the Hart State Management extension (EID 0x48534D) with\nthe full state machine — STARTED / STOPPED / START_PENDING / STOP_PENDING / SUSPENDED /\nSUSPEND_PENDING / RESUME_PENDING — so the Linux kernel can bring secondary harts online\nthrough the standard `cpu_ops` SBI path and offline them again.",
@@ -10327,6 +10621,7 @@
       "depends_on": [
         "E6-T02"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "An SMP-enabled Alpine kernel boots with 2–4 harts on a deterministic, single-threaded\nround-robin scheduler that interleaves hart execution — proving multi-hart architectural\ncorrectness (HSM, IPIs-as-msip, per-hart timers) before any real parallelism, while\npreserving the reproducible-execution property we rely on for differential debugging.",
@@ -10368,6 +10663,7 @@
       "depends_on": [
         "E6-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A written, defended mapping from RVWMO (guest memory model) onto the wasm/JS shared-memory\nmodel (host), with an executable litmus-test suite that runs the classic shapes on real\nbrowsers — so E6-T05's parallel harts are built on an argued-correct foundation instead of\n\"atomics are probably fine\".",
@@ -10406,6 +10702,7 @@
         "E6-T03",
         "E6-T04"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Each hart executes on its own dedicated Web Worker against guest RAM in shared wasm\nmemory (SharedArrayBuffer), following the E6-T04 mapping — Linux SMP boots with harts\ngenuinely running in parallel, with a clean automatic fallback to the E6-T03 round-robin\nscheduler when the page is not crossOriginIsolated.",
@@ -10447,6 +10744,7 @@
       "depends_on": [
         "E6-T05"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The A-extension is correct under true concurrency: AMOs are single wasm atomic RMWs,\nLR/SC is emulated with a documented cmpxchg strategy whose deviation window (ABA) is\nunderstood and bounded, and constrained LR/SC loops make forward progress — so every\nlock, refcount, and futex in the guest behaves under contention.",
@@ -10488,6 +10786,7 @@
       "depends_on": [
         "E6-T05"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Cross-hart communication is complete and correct under parallelism: the SBI IPI extension\ndelivers supervisor software interrupts to arbitrary hart masks, and the RFENCE extension\n(remote fence.i / sfence.vma / sfence.vma.asid) performs synchronous cross-hart TLB and\nicache-order maintenance — so mprotect/munmap and smp_call_function are safe with harts\non separate threads.",
@@ -10530,6 +10829,7 @@
         "E6-T05",
         "E6-T07"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The Epic 4 JIT is safe under SMP: each hart worker's translation cache is invalidated\ncorrectly when any hart (or DMA) writes to translated guest pages, remote_fence_i\nprovides the architectural synchronization point, and cross-modifying code executes\ncorrectly — without serializing the fast path.",
@@ -10573,6 +10873,7 @@
         "E6-T07",
         "E6-T08"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A repeatable, CI-runnable SMP verification suite using the kernel's own torture machinery\nplus scaling benchmarks — the standing proof that parallel harts stay correct as the JIT,\ndevices, and GPU work of this epic churn underneath them.",
@@ -10614,6 +10915,7 @@
       "depends_on": [
         "E5"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "An evidence-based, written go/no-go decision on the guest-3D backend: virgl (Gallium-level\nGL command stream) versus venus (serialized Vulkan) translated to WebGPU — grounded in\ncaptured real command streams and a WebGPU capability audit, so E6-T11/12/13 build the\npath that can actually ship instead of the one that sounds best.",
@@ -10651,6 +10953,7 @@
       "depends_on": [
         "E6-T10"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The Epic 5 virtio-gpu device grows the full 3D control plane: VIRGL feature negotiation,\ncapset queries, context lifecycle, 3D resources, transfer ops, command submission and\nfences — validated by a null renderer that decodes every command into typed Rust enums,\nso the guest Mesa driver initializes end-to-end before any pixel is drawn.",
@@ -10692,6 +10995,7 @@
       "depends_on": [
         "E6-T11"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A `WebGpuRenderer` implementing the E6-T10 MVP command subset — state objects, shaders,\ndraws, clears, transfers — with a TGSI→WGSL shader translator and a Gallium-state→\nGPURenderPipeline cache, sufficient to render kmscube and es2gears correctly at\ninteractive frame rates inside the guest desktop.",
@@ -10733,6 +11037,7 @@
       "depends_on": [
         "E6-T12"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The 3D stack graduates from gears to reality: a full glmark2-es2 run completes with\ncorrect rendering, and one real interactive GL application (Neverball or ioquake3 —\nwhichever the E6-T10 decision and riscv64 packaging make achievable) is playable in the\nguest desktop with keyboard/mouse input at usable frame rates.",
@@ -10774,6 +11079,7 @@
       "depends_on": [
         "E5"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A virtio-9p device (virtio device id 9) with a 9P2000.L protocol server backed by a\n`HostFs` trait — mountable from the guest with `mount -t 9p -o trans=virtio` — giving\nthe machine its first shared-folder mechanism and the backend seam that E6-T15 (OPFS)\nand the embedding SDK's file injection will plug into.",
@@ -10815,6 +11121,7 @@
       "depends_on": [
         "E6-T14"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A browser `HostFs` implementation over OPFS so the guest gets a persistent shared folder\nat `/mnt/opfs` that survives reloads, with the sync-access-handle plumbing, metadata\nsynthesis, and mount UX that make it feel like a normal directory rather than a browser\nAPI with a filesystem costume.",
@@ -10856,6 +11163,7 @@
       "depends_on": [
         "E5"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A versioned, compressed, integrity-checked snapshot container replacing Epic 3's v1\nformat — designed for the sharing and cloud-sync tasks that follow: chunked for ranged\nfetch, self-describing enough to migrate forward, and honest about compatibility. This is\nalso the **Layer G (determinism & record/replay) hardening milestone**: these snapshots are\nthe *keyframes* Level 8's time-travel replay seeks to before replaying forward, so the\nformat's integrity and fast, deterministic restore are load-bearing for \"Chrome in Chrome\"\nbeing time-travelable (E8-T06/T07).",
@@ -10897,6 +11205,7 @@
       "depends_on": [
         "E6-T16"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Opt-in synchronization of snapshots (and disk overlays) to S3-compatible storage via\nshort-lived presigned URLs minted by a minimal broker — content-addressed chunks for\ndedupe and resume, compare-and-swap manifests for conflict safety, and optional\nclient-side encryption so the server can be honest about seeing nothing.",
@@ -10938,6 +11247,7 @@
       "depends_on": [
         "E6-T17"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "One click turns a running machine into a URL; anyone opening that URL boots that exact\nmachine state — with streaming boot-before-fully-fetched, honest size budgets, and a\nsecurity flow that confronts the fact that a full-RAM snapshot is a memory dump full of\nsecrets.",
@@ -10980,6 +11290,7 @@
         "E6-T14",
         "E6-T16"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The VM becomes a component: an npm package exposing a `<wasm-vm>` custom element and a\nprogrammatic API, plus an iframe host mode with a versioned postMessage protocol\ncovering lifecycle, serial I/O, file injection, snapshots, and events — the surface that\nE6-T21's examples, E6-T20's security model, and the capstone's child-VM boot all build on.",
@@ -11021,6 +11332,7 @@
       "depends_on": [
         "E6-T19"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A default-deny capability model governing what a host page may grant an embedded guest —\nnetwork, persistence, clipboard, audio, GPU, file access — enforced inside the VM\nruntime (not merely by the wrapper), with sandboxing guidance for untrusted snapshots\nand resource caps that keep a hostile or runaway guest from owning the embedding page's\nUX.",
@@ -11063,6 +11375,7 @@
         "E6-T19",
         "E6-T20"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Two working, documented example embeds prove the SDK from the outside: a minimal\nsingle-file terminal widget, and the almostnode web-IDE rewired as a front-end to a real\nmachine — its editor, run button, and output panel driven by the SDK instead of API\nshims — plus generated API reference docs and Playwright coverage for both.",
@@ -11104,6 +11417,7 @@
       "depends_on": [
         "E5"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A purpose-built Alpine riscv64 disk image with the complete toolchain to build wasm-vm\ninside the guest — rustc/cargo (with wasm32 std), clang/lld, git, make, wasm-bindgen-cli\n— plus the repo's entire crate graph vendored for fully offline builds, sized and\nchunk-streamed realistically for browser delivery.",
@@ -11146,6 +11460,7 @@
         "E6-T09",
         "E6-T22"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Inside the browser-hosted guest, clone the wasm-vm repository and `cargo build` the core\ncrate to a native riscv64 binary, run its unit tests in-guest, and record honest memory\nand time budgets — the first turn of the self-hosting loop and the workload that proves\nthe JIT+SMP stack under a real compiler.",
@@ -11187,6 +11502,7 @@
       "depends_on": [
         "E6-T23"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The guest cross-compiles the web crate to `wasm32-unknown-unknown` and runs\nwasm-bindgen-cli to produce the complete deployable artifact set (`.wasm` + JS glue +\ntypes) — functionally validated by loading that exact artifact in the host browser —\nwith every toolchain gap documented honestly rather than papered over.",
@@ -11228,6 +11544,7 @@
       "depends_on": [
         "E5"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A guest process listening on a TCP port becomes reachable from the host browser at a\nURL: a Service Worker proxies `/vm/{id}/{port}/*` fetches through the Epic 3 slirp stack\ninto guest TCP connections, streaming both directions — the plumbing that lets the\ncapstone's iframe load a child VM served by `busybox httpd` inside the parent guest.",
@@ -11269,6 +11586,7 @@
       "depends_on": [
         "E6-T19"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Strictly opt-in, schema-allowlisted telemetry (boot outcomes, timings, device error\ncounters) and crash reporting (symbolicated wasm panics) that a platform needs to be\noperable at scale — engineered so the privacy promise is verifiable from the outside,\nand so a crash is diagnosable even when the user opted out (via a local, user-initiated\ndiagnostic bundle).",
@@ -11311,6 +11629,7 @@
         "E6-T21",
         "E6-T26"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The project ships like a platform: a public docs site aggregating the epic's design and\nuser documents, and a tag-driven release pipeline producing versioned, checksummed,\nimmutable artifacts — core wasm bundle, npm SDK, images — under a written semver policy\nthat covers the three independently-versioned surfaces (crate API, embed protocol,\nsnapshot format).",
@@ -11354,6 +11673,7 @@
         "E6-T24",
         "E6-T25"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": true,
       "goal": "The Level 6 threshold, end-to-end in one sitting: inside the browser-hosted guest, clone\nthis repository, build the core crate, produce the wasm artifact, serve it from a guest\nHTTP server, and boot a *child* VM in an iframe from that artifact — with a\nrecursion-depth guard and a scripted, timestamped demo a stranger can reproduce.",
@@ -11395,6 +11715,7 @@
       "depends_on": [
         "E6"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A reproducible, pinned build of **box64** (github.com/ptitSeb/box64) — the x86_64→native\nuserspace dynamic translator — compiled *for riscv64*, packaged so it can be dropped into the\nguest and run there. This is the foundation of Layer F: box64 runs as an ordinary guest\nprocess and translates x86_64 Linux binaries to riscv64 on the fly, giving the machine access\nto the entire x86_64 binary universe without a second CPU core.",
@@ -11428,6 +11749,7 @@
       "depends_on": [
         "E7-T01"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A guest root filesystem that carries an **x86_64 dynamic-linker + core libraries** (the\nx86_64 musl or glibc runtime, `ld-linux-x86-64.so.2`, libc, libstdc++, libm, etc.) next to\nthe native riscv64 userland, so box64 can resolve the shared-library dependencies of real\ndynamic x86_64 binaries. Without this, only fully-static x86_64 binaries would run.",
@@ -11457,6 +11779,7 @@
       "depends_on": [
         "E7-T02"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The Layer F first light: **an actual x86_64 Linux binary executes correctly inside the\nRISC-V-on-WASM machine**, translated by box64. Two steps — a fully static x86_64 binary (no\nloader dependencies) first, then a dynamically-linked x86_64 coreutils/busybox binary\nresolving the E7-T02 x86_64 libraries. This is emulation-in-emulation working end to end: an\nx86 dynarec (box64) running as a guest process on our riscv64 CPU, itself running on WASM.",
@@ -11490,6 +11813,7 @@
       "depends_on": [
         "E7-T03"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Make running x86_64 binaries *transparent*: typing `./some-x86_64-app` (or an app the desktop\nlaunches) Just Works, with the kernel's `binfmt_misc` handing x86_64 ELFs to box64\nautomatically — no explicit `box64` prefix. This is what turns \"box64 can run a binary\" into\n\"the machine runs x86_64 software.\"",
@@ -11519,6 +11843,7 @@
       "depends_on": [
         "E7-T03"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Make box64 *usable*, not just correct. box64 emits riscv64 code at runtime; that code becomes\nhot guest code our Level 4 JIT then translates to WASM — a dynamic binary translator inside a\ndynamic binary translator. This task measures and tunes that stack so x86_64 apps run at\ninteractive speed, and proves the **FENCE.I / i-cache coherence** path (E4-T16) holds when the\nself-modifying code is box64's dynarec output.",
@@ -11548,6 +11873,7 @@
       "depends_on": [
         "E6"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Mature the Epic 3 user-mode network stack from \"apk add works\" into a **full network fabric a\ndesktop can live on**: sustained throughput for large downloads, many concurrent connections\n(a browser/app opens dozens), IPv6 where the transport allows, and graceful behavior under\nloss and reconnection. Layer F is not only box64 — a real desktop needs a real network.",
@@ -11577,6 +11903,7 @@
       "depends_on": [
         "E6"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Scale the Epic 3 copy-on-write persistence from \"a script survives reload\" to **a desktop's\nworking set survives**: multi-gigabyte overlays, many small writes from GUI apps and the\nx86_64 library cache, and durable `fsync` semantics under a heavier, longer-lived session —\nwithout blowing storage quota or corrupting on an abrupt tab close.",
@@ -11607,6 +11934,7 @@
         "E7-T04",
         "E7-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "A **real, non-trivial x86_64 Linux CLI application** — not a fixture, an actual upstream\nrelease binary with no riscv64 build — runs correctly and usably in the guest via transparent\nbox64. This is the concrete proof of Layer F's value: software that exists *only* as x86_64\nnow runs in the browser.",
@@ -11638,6 +11966,7 @@
         "E7-T06",
         "E7-T07"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Turn the Level 5 rendering *surface* into an actual **desktop**: a compositor with a working\npanel/launcher, a file manager, a terminal, and a small application suite, running a **mixed\nsession** where some apps are riscv64-native and some are x86_64-under-box64 — indistinguishable\nto the user. This is the \"real desktop\" half of Layer F, standing on E5's surface, E6's SMP/3D\nhorsepower, and Babel's hardened network (E7-T06) and persistence (E7-T07).",
@@ -11668,6 +11997,7 @@
         "E7-T08",
         "E7-T09"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "An **x86_64 GUI application** (GTK or Qt, x86_64-only here) launches under box64 and **renders\nto the screen through virtio-gpu**, accepting real keyboard/mouse input — the graphical\ncounterpart to E7-T08's CLI milestone, and the hardest box64 path (it drags in x86_64 GUI\ntoolkits, GL, fontconfig, dbus, and the display-server protocol, all translated).",
@@ -11697,6 +12027,7 @@
       "depends_on": [
         "E7-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Prove the determinism/record-replay layer (Layer G) survives Babel's hardest state: a\n**full-machine snapshot taken while box64 is mid-translation, then restored, resumes the x86_64\nprogram correctly**. box64 holds large runtime-generated code caches and JIT metadata entirely\nin guest RAM, so if the snapshot format (E6-T16) and restore are honest, no special handling is\nneeded — this task verifies that and closes any gap before Layer G's Level 8 capstone.",
@@ -11727,6 +12058,7 @@
         "E7-T10",
         "E7-T11"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": true,
       "goal": "The Level 7 (Babel / Layer F) threshold, demonstrated end-to-end from a cold start: the page\nboots to a **real desktop**; the operator launches, transparently, both a **riscv64-native app\nand an x86_64-only Linux application** (CLI and GUI) that run correctly and usably under box64;\na mixed-arch session is interactive, networked, and persistent across a reload. This is\nCheerpX's entire value proposition — arbitrary x86 Linux software in a browser tab — reached\n*through* the RISC-V machine instead of as the base layer.",
@@ -11764,6 +12096,7 @@
       "depends_on": [
         "E6"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "A pinned, **stock, unmodified** `chromium-riscv64` build to run inside the machine. The whole\nLevel 8 thesis rests on this being *ordinary* Chromium — no fork, no instrumentation, no Replay\npatches — so the determinism can live entirely in the VM around it. This task acquires (from a\ndistro/upstream riscv64 build) or reproducibly builds that artifact and records exactly what it is.",
@@ -11793,6 +12126,7 @@
       "depends_on": [
         "E8-T01"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Stock chromium-riscv64 **launches on the Level 5/7 desktop, loads a real web page, and renders\nit** — first paint of a nested browser. Chromium is one of the most demanding Linux programs in\nexistence (multi-process sandbox, many threads, shared memory, GPU, futex-heavy), so this is a\nbrutal integration test of the entire stack beneath it.",
@@ -11822,6 +12156,7 @@
       "depends_on": [
         "E6"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The keystone of Layer G: a complete, audited **inventory of every source of nondeterminism**\nthat can reach the guest, and a clamp at the VM boundary for each one, so that guest execution\nbecomes a pure function of (initial state + a recorded input stream). This is what lets a *stock*\nprogram — up to and including Chromium — be recorded and replayed without touching it.",
@@ -11851,6 +12186,7 @@
       "depends_on": [
         "E8-T03"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The **record** half of record/replay: a low-overhead engine that captures, in order and with\ntheir exact delivery points, every input crossing the VM boundary into the guest — building on\nthe E0-T16 trace hook and the E8-T03 inventory. The output is a compact trace that, together\nwith a starting snapshot, fully determines the run.",
@@ -11880,6 +12216,7 @@
       "depends_on": [
         "E8-T04"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "The **replay** half: given a starting snapshot and an E8-T04 trace, re-execute the guest so that\nit reaches **bit-identical machine state** at every point of the original run, re-injecting each\nrecorded input at exactly its recorded delivery point. This is the mechanism that makes any\nrecorded session — including a stock-Chromium browsing session — reproducible on demand.",
@@ -11909,6 +12246,7 @@
       "depends_on": [
         "E8-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Marry the E6 snapshot format to the record/replay engine so that a recording carries **periodic\nfull-machine snapshots as keyframes**. To reach any target time, replay seeks to the nearest\npreceding keyframe (an O(1) snapshot restore) and replays the trace forward — the standard\ntime-travel-debugger architecture, now for a whole Linux machine running a stock browser.",
@@ -11938,6 +12276,7 @@
       "depends_on": [
         "E8-T06"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "The user-facing time machine: controls to **pause, seek to any time, step backward and forward,\nand scrub** through a recorded session, built on the E8-T06 keyframe+replay seek primitive.\nReverse-step is the headline capability — the ability to run a whole Linux machine (and the\nChromium inside it) *backward*.",
@@ -11968,6 +12307,7 @@
         "E8-T02",
         "E8-T05"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": false,
       "goal": "Harden record/replay against the most hostile determinism workload available: **live stock\nChromium** — dozens of threads across SMP harts, GPU command streams, JIT'd V8 code writing\nitself, high-rate network and timer events, over a multi-minute session. This is where Layer G's\ntheoretical determinism meets the real world and any remaining nondeterminism source is flushed out.",
@@ -11997,6 +12337,7 @@
       "depends_on": [
         "E8-T05"
       ],
+      "decomposed_into": [],
       "estimate": "M",
       "capstone": false,
       "goal": "Make the network a **replayable input, not a live dependency**: record every byte the guest\nreceives from the network (at the virtio-net / transport boundary) into the trace, so a recorded\nbrowsing session **replays deterministically and offline** — the remote servers are gone, but\nthe recording reproduces exactly what they sent. Without this, replay of a real web session is\nimpossible (the network is nondeterministic and non-repeatable).",
@@ -12026,6 +12367,7 @@
       "depends_on": [
         "E8-T02"
       ],
+      "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
       "goal": "Certify the design invariant that defines this epic: **the Chromium being recorded is stock and\nunmodified; all determinism/record/replay lives in the VM around it.** This is explicitly *not*\nReplay.io's instrumented browser-in-browser — there is no Chromium fork, no injected\nrecording/devtools instrumentation. The VM's determinism replaces browser-side instrumentation.",
@@ -12058,6 +12400,7 @@
         "E8-T09",
         "E8-T10"
       ],
+      "decomposed_into": [],
       "estimate": "L",
       "capstone": true,
       "goal": "The summit of the entire roadmap, demonstrated end-to-end from a cold start: in a fresh browser\ntab, the VM boots to a desktop, launches **stock chromium-riscv64**, loads a real web page and\nthe operator interacts with it — and then **reverses execution**, scrubbing the whole machine\n(browser included) backward and forward to any earlier point of the browsing session,\nbit-identically, with **zero Chromium modifications**. A nested browser that is time-travelable\nbecause the machine under it is deterministic. The closed loop: determinism in the emulator\nreplaces instrumentation in the application.",

@@ -823,6 +823,40 @@
       .rm-card.st-debt { border-left-color: #b17ce0; }
       .rm-card.st-cancelled { border-left-color: #5a6470; opacity: 0.6; }
       .rm-card.st-cancelled .rm-card-title { text-decoration: line-through; }
+      /* Decomposed parents — shown as a parent group with sub-tickets nested under, NOT cancelled. */
+      .rm-decomp { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+      .rm-decomp-group {
+        border: 1px solid var(--line); border-left: 3px solid #7c8aa0;
+        border-radius: 10px; background: #0d1117; overflow: hidden;
+      }
+      .rm-decomp-parent {
+        display: flex; align-items: center; gap: 8px; width: 100%; text-align: left;
+        padding: 10px 12px; background: #11161d; border: none; cursor: pointer; color: var(--text);
+        border-bottom: 1px solid var(--line);
+      }
+      .rm-decomp-parent:hover { background: #151b23; }
+      .rm-decomp-parent:focus-visible { outline: 2px solid var(--cyan); outline-offset: -2px; }
+      .rm-decomp-tag {
+        font: 10.5px ui-monospace, monospace; text-transform: uppercase; color: #9aa7b8;
+        border: 1px solid #7c8aa0; border-radius: 5px; padding: 1px 7px;
+      }
+      .rm-decomp-title { font-size: 13px; font-weight: 600; }
+      .rm-decomp-count { margin-left: auto; font: 11px ui-monospace, monospace; color: var(--muted); }
+      .rm-decomp-kids {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 8px; padding: 10px;
+      }
+      .rm-decomp-missing {
+        font: 11px ui-monospace, monospace; color: var(--muted); padding: 8px;
+        border: 1px dashed var(--line); border-radius: 8px;
+      }
+      .rm-card.st-decomposed { border-left-color: #7c8aa0; }
+      .rm-badge.st-decomposed { color: #9aa7b8; }
+      .rm-sub-link {
+        background: none; border: none; padding: 0; color: var(--cyan); cursor: pointer;
+        text-align: left; font: inherit; text-decoration: underline; text-underline-offset: 2px;
+      }
+      .rm-sub-link:hover { color: #8fe3ff; }
       .rm-card-top { display: flex; align-items: center; gap: 8px; }
       .rm-card-id { font: 650 11px ui-monospace, monospace; color: var(--muted); }
       .rm-capstone { font: 10px ui-monospace, monospace; color: var(--amber); }
