@@ -158,7 +158,7 @@ where behavior contradicts the task, and for any changed line your run never exe
 | Layer | Records | Tooling | Runs where |
 |---|---|---|---|
 | **Guest** (the machine we emulate) | every retired guest instruction, architectural state digests, diffs vs Spike/QEMU | trace infra (E0-T16), snapshot digests (E0-T17), differential harness (E0-T20) | everywhere — native, wasm, including this Mac |
-| **Host** (the Rust process itself) | the entire emulator process: all threads, syscalls, memory — replayable in gdb with reverse execution | rr — see `tools/rr/README.md` | **Linux with PMU access only** (remote box or CI runner; *not* macOS, not Docker Desktop on Apple Silicon) |
+| **Host** (the Rust process itself) | the entire emulator process: all threads, syscalls, memory — replayable in gdb with reverse execution | rr / **rr-soft** — see `tools/rr/README.md` | **Linux** — a PMU box or CI runner for mainline rr; the PMU-less `ssh dev` box via **rr-soft** (software counters); *not* macOS |
 
 - The guest layer answers *"did the machine do the right thing?"* It is the emulator being
   its own Replay browser, and it's mandatory evidence for every task once trace infra
@@ -174,6 +174,55 @@ where behavior contradicts the task, and for any changed line your run never exe
 Record with `tools/rr/record-test.sh` (builds the test binary first so the trace holds the
 test, not the compiler; `rr pack`s the trace so it's a self-contained directory you can
 hand to the verifier). Traces land in `rr-traces/` (gitignored).
+
+### Proving environments: this Mac, `ssh dev`, and the emulator
+
+Three places work gets proven, in increasing authority. Use the cheapest one that can
+actually falsify the claim, then escalate — but the **authoritative** proof for a task's
+acceptance is always the one its acceptance criteria name (a recorded emulator boot, a
+Playwright run on the built page, a guest trace/digest), never a fast-path pre-check.
+
+- **This Mac (local).** Native Rust tests, guest-layer evidence (instruction traces,
+  digests, Spike/QEMU diffs), `make web-build` + Playwright. No rr here — Apple Silicon has
+  no virtualizable PMU. Fastest loop for anything that doesn't need a real Linux kernel.
+
+- **`ssh dev` — the fast Linux fast-path.** A small x86_64 Linux box (AWS EC2, sudo root,
+  cgroup v2, overlayfs, static busybox) reachable at `ssh dev`. Use it to **iterate
+  arch-agnostic guest-side logic that needs real Linux kernel features** — namespaces,
+  cgroups, overlayfs, `pivot_root`, seccomp, POSIX-sh tooling like `wvrun` — in **seconds**,
+  instead of 15–40-minute interpreted-riscv emulator boots. The pattern: get the logic green
+  on `dev` with a throwaway native bundle (see `tools/guest/wvrun-lifecycle-test.sh`), *then*
+  confirm the arch-specific behaviour with **one** emulator boot. It is also the box for
+  **host-layer rr/rr-soft** (below), since the Mac can't run rr at all.
+
+  What `dev` does **not** prove — do not let a green run there stand in for the real proof:
+  - It is **x86_64, not riscv** — it cannot catch riscv codegen/arch bugs, and it cannot
+    reproduce the interpreted guest's *timing*. (Real example: a pid-capture loop that spun
+    500 subprocesses was instant on `dev` but hung the interpreted guest for minutes — only
+    the emulator boot surfaced it.)
+  - Its cgroup v2 is **systemd-delegated**, so root-level cgroup joins/placement behave
+    differently than the emulator's clean cgroup hierarchy — treat cgroup-placement quirks
+    there as environment noise, not guest truth.
+  - It's a **pre-check, not evidence.** The Verification log cites the emulator/browser/rr
+    proof; `dev` runs are how you got there fast, mentioned but not counted.
+
+- **The emulator (native riscv boot / wasm in the browser).** The authoritative guest
+  environment. Slow (interpreted), so reserve it for the confirming run(s) a task's
+  acceptance requires — and expect it to catch exactly the arch/timing issues `dev` can't.
+
+### rr-soft on `ssh dev` (host-layer time travel without a PMU)
+
+Mainline rr needs a hardware PMU; `ssh dev` is a cloud VM with **no vPMU** (its
+`/sys/bus/event_source/devices` has no `cpu` source), so plain `rr record` can't count
+retired instructions there. **rr-soft** — rr with *software* instruction counters — records
+and replays on exactly such PMU-less boxes, so the full host-layer killer move is available
+on `dev`: `watch -l` the corrupted Rust state + `reverse-continue` lands on the writing line,
+and `rr record --chaos` still captures races as replayable recordings. Record the emulator
+process on `dev`, `rr pack` the trace (self-contained), and hand it to the verifier to
+interrogate the *same execution*. `tools/rr/preflight.sh` detects the missing PMU and points
+at rr-soft; see `tools/rr/README.md` for the `dev`/rr-soft setup. This makes `dev` a genuine
+**verifier** box, not just a fast worker loop — the two-command "who corrupted this?" answer
+works there even though the Mac and a vanilla cloud VM can't.
 
 ## Verifier charter
 

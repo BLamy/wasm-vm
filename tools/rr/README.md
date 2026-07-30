@@ -26,9 +26,31 @@ rr needs **Linux** and **hardware performance counters (PMU)**.
 | Linux bare metal (x86_64 or aarch64) | ✅ | needs `perf_event_paranoid ≤ 1` |
 | Docker on a **Linux host** | ✅ | `--cap-add=SYS_PTRACE --security-opt seccomp=unconfined`, host paranoid knob still applies |
 | GitHub Actions Linux runners | ⚠️ usually | run `tools/rr/preflight.sh` as the job's first step; skip-with-noise if it fails |
-| Cloud VMs | ⚠️ | only with vPMU (e.g. `*.metal` instances); preflight first |
+| Cloud VMs **with mainline rr** | ⚠️ | only with vPMU (e.g. `*.metal` instances); preflight first |
+| Cloud VMs **with rr-soft** — incl. `ssh dev` | ✅ | software instruction counters, **no PMU needed**; see "rr-soft" below |
 | **macOS (this dev machine)** | ❌ | no rr, period |
-| Docker Desktop / UTM / any VM on Apple Silicon | ❌ | PMU is not virtualized |
+| Docker Desktop / UTM / any VM on Apple Silicon | ❌ | PMU is not virtualized (mainline rr); rr-soft may work |
+
+## rr-soft — record/replay on the PMU-less `ssh dev` box
+
+`ssh dev` is a small x86_64 Linux VM (AWS EC2) with sudo root, cgroup v2, and overlayfs — but
+**no hardware PMU** (`ls /sys/bus/event_source/devices/` shows no `cpu` source), so mainline
+`rr record` can't count retired instructions there. **rr-soft** is rr with *software*
+instruction counters (counting via lightweight instrumentation instead of the CPU's PMU), so
+it records and replays on exactly this class of box. Everything the host layer buys you still
+works under rr-soft: `watch -l <lvalue>` + `reverse-continue` to land on the line that wrote
+corrupted state, and `rr record --chaos` to capture races as replayable recordings.
+
+Because the Mac can't run rr at all and a vanilla cloud VM lacks a PMU, `ssh dev` + rr-soft is
+the repo's practical **host-layer verifier box**: record the emulator process there, `rr pack`
+the trace into a self-contained directory, and hand it to the verifier. `tools/rr/preflight.sh`
+detects the missing PMU and points at rr-soft. When to reach for it: any concurrency-touching
+task (atomics, JIT cache, workers/SMP) whose `## Adversarial verification` calls for chaos-mode
+recordings or a "who corrupted this?" watchpoint — the guest-layer trace answers *what* the
+machine did, rr-soft on `dev` answers *why the Rust did it*.
+
+See `AGENTS.md` → "Proving environments" for when to use `dev` as a fast worker loop vs. the
+authoritative emulator proof.
 
 So on this Mac: guest-layer evidence (instruction traces, digests, Spike diffs — see
 `AGENTS.md` "Evidence") is the native currency, and rr recording happens on a Linux box or
