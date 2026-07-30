@@ -131,20 +131,24 @@ a PR number (`gh stack merge <pr#> --yes` merges everything up to and including 
 the method with `--squash`/`--rebase`/`--merge`. Respect the user's requested boundary and make
 the full set that will land clear before applying.
 
-### Deployment & CI cost model (poor-mans-ci)
+### No CI, no GitHub Actions — build local, deploy to Cloudflare
 
-CI does **not** build the browser demo — the wasm/npm build runs once, LOCALLY, in the
-**pre-commit hook** (`tools/git-hooks/pre-commit` → `tools/build-web-dist.sh`), which commits the
-deployable **`web/dist`**. The **`poor-mans-ci`** workflow only *publishes* that committed dist
-(checkout + file copy — no cargo/wasm-pack/npm), deploying `main` → `/main/` and each PR →
-`/pr-<N>/` with a root landing page linking to `/main/` plus every open preview. Install the hook
-once with **`make hooks`**; refresh dist by hand with `make web-dist`. So **PR previews stay free**
-and every stacked PR still gets a live preview.
+**GitHub Actions is DISABLED for this repo** (it was burning ~$60/day of Linux runner minutes:
+the full Rust gauntlet × every push × 19 stacked PRs × several concurrent sessions). There are **no
+workflow files** — do not add any `.github/workflows/*`, and do not re-enable Actions. All
+verification is **local** and all deploys go to **Cloudflare Pages** (free, off GitHub's bill).
 
-The full Rust gauntlet (`ci.yml`) no longer runs on every push or every stacked intermediate PR —
-only on a **PR targeting `main`** and on manual dispatch. During stacked development the gate is
-**local**: `make ci` (the exact mirror of `ci.yml`) plus the pre-commit hook. Pay compute on your
-machine, not the CI bill.
+- **Build**: the wasm/npm build runs LOCALLY. The pre-commit hook
+  (`tools/git-hooks/pre-commit` → `tools/build-web-dist.sh`, installed with `make hooks`) rebuilds and
+  commits the deployable **`web/dist`** when web/wasm sources change. Refresh by hand with `make
+  web-dist`.
+- **Deploy**: `bash tools/deploy-cloudflare.sh` publishes `web/dist` to Cloudflare Pages —
+  **<https://wasm-vm.pages.dev>** (project `wasm-vm`). It stages the large boot artifacts from
+  `releases/` into the dist and enforces Cloudflare's 25 MiB per-file limit. Auth once with
+  `npx wrangler login` (OAuth) or `CLOUDFLARE_API_TOKEN`. No runner minutes, ever.
+- **Verify**: the gate is `make ci` (the full gauntlet, run on your machine) plus the pre-commit
+  hook — pay compute locally, not on a CI bill. The two-layers-of-time-travel evidence (guest traces,
+  rr/rr-soft on `ssh dev`) is still the currency for the worker/verifier loop.
 
 ## Worker protocol
 
@@ -168,10 +172,10 @@ machine, not the CI bill.
        `126 passed, 0 failed` (or the new total), and the roadmap pips you touched show
        `live`/`verified` — one screenshot for the record. Keep it to a single load-and-assert
        pass; don't rebuild the world. Cite the result in your Verification log entry.
-   (c) **Ship it to the preview**: the pre-commit hook rebuilds and commits `web/dist` when web/wasm
-       sources change, so the change actually reaches the PR's `/pr-<N>/` preview (poor-mans-ci
-       deploys the committed dist — see the CI cost model above). Verify `web/dist` is staged in the
-       commit; if the hook was bypassed, `make web-dist` and commit it.
+   (c) **Ship it to the live site**: the pre-commit hook rebuilds and commits `web/dist` when web/wasm
+       sources change; `bash tools/deploy-cloudflare.sh` publishes it to <https://wasm-vm.pages.dev>
+       (no GitHub Actions — see "No CI" below). Verify `web/dist` is staged in the commit; if the hook
+       was bypassed, `make web-dist` and commit it.
    Non-browser work (pure tooling, compliance harness, docs) skips this gate.
 4. **Self-validate freely.** Drive the code however you want — ad-hoc runs, printf, scratch
    binaries. This inner loop is yours; nothing here is evidence.
