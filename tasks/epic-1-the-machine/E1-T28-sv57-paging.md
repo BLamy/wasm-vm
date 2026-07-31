@@ -3,7 +3,7 @@ id: E1-T28
 epic: 1
 title: Sv57 five-level paging — satp MODE=10 (Priv §4.5)
 priority: 142
-status: verification-debt
+status: verified
 depends_on: [E1-T18]
 estimate: L
 capstone: false
@@ -40,13 +40,17 @@ canonical-VA check, not new fault logic.
   MXR/SUM/MPRV interactions.
 
 ## Acceptance criteria
-- [ ] `make riscof` passes the full `vm_sv57` and `vm_pmp/sv57` suites; all 38 entries
-      removed from EXCLUSIONS.md.
-- [ ] Sv39 and Sv48 continue to pass unchanged (the level-count generalization must not
+- [x] `make riscof` passes the full `vm_sv57` and `vm_pmp/sv57` suites; all 38 entries
+      removed from EXCLUSIONS.md. *(2026-07-31: vm_sv57 34/0, vm_pmp 12/0 (incl sv57) vs Sail;
+      EXCLUSIONS.md is EMPTY.)*
+- [x] Sv39 and Sv48 continue to pass unchanged (the level-count generalization must not
       regress the existing modes); `cargo test --workspace` and the E1-T17 TLB/SFENCE tests
-      green.
-- [ ] Non-canonical 57-bit VAs page-fault with the correct cause/tval, byte-exact vs Spike.
-- [ ] The reserved-high-PTE-bit page-fault (the E1-T20 fix) applies at Sv57 too.
+      green. *(2026-07-31: vm_sv39 36/0, vm_sv48 36/0 vs Sail — no regression.)*
+- [x] Non-canonical 57-bit VAs page-fault with the correct cause/tval, byte-exact vs the
+      reference. *(sv57_canonical_{U,S}_mode + spage/nleaf tests pass byte-exact vs Sail;
+      reference is Sail since E1-T26, superseding Spike.)*
+- [x] The reserved-high-PTE-bit page-fault (the E1-T20 fix) applies at Sv57 too. *(sv57_
+      pte_reserved_field, reserved_rsw_pte, reserved_rwx_pte all pass vs Sail.)*
 
 ## Adversarial verification
 Attack level generalization: a superpage at the top (level-4) Sv57 table must map the right
@@ -58,6 +62,36 @@ still-unsupported modes are unchanged. Re-run all vm_* suites from a cold clone;
 Sv57 signatures by hand against Sail.
 
 ## Verification log
+
+### 2026-07-31 — RISCOF Sv57 GREEN vs Sail → verified (118/0 across the vm_* suites)
+
+Ran the architectural-compliance flow (DUT = native wasm-vm; reference = Sail
+`sail_riscv_sim`, the config-honoring golden model per E1-T26) over every paging suite. All
+pass, zero failures, EXCLUSIONS.md empty:
+
+```
+vm_sv57 : 34 passed; 0 failed
+vm_pmp  : 12 passed; 0 failed   (sv39 + sv48 + sv57 PMP)
+vm_sv39 : 36 passed; 0 failed   (no regression)
+vm_sv48 : 36 passed; 0 failed   (no regression)
+                     ─────────
+total   : 118 passed; 0 failed
+```
+
+Maps to the acceptance criteria:
+- **Crit 1** — `vm_sv57` (34/0) + the sv57 cases in `vm_pmp` (12/0) pass; `compliance/EXCLUSIONS.md`
+  carries no Sv57 entries (it is EMPTY).
+- **Crit 2** — `vm_sv39` (36/0) and `vm_sv48` (36/0) still pass — the 5-level generalization did
+  not regress the 3-/4-level walks. (Sv57 unit tests in `crates/core` also green.)
+- **Crit 3** — non-canonical 57-bit VAs fault byte-exact vs Sail: `sv57_canonical_{U,S}_mode`,
+  `sv57_spage_access_U_mode`, `sv57_nleaf_pte_level0_{U,S}_mode` all pass (reference is Sail
+  since E1-T26, superseding the Spike wording in the criterion).
+- **Crit 4** — the reserved-high-PTE-bit fault applies at Sv57: `sv57_pte_reserved_field_S_mode`,
+  `sv57_reserved_rsw_pte_{U,S}_mode`, `sv57_reserved_rwx_pte_{U,S}_mode` all pass.
+
+Reproduce: `RISCOF_SUITE=riscv-arch-test/riscv-test-suite/rv64i_m/vm_sv57 bash tools/run_riscof.sh`
+(and `vm_pmp`, `vm_sv39`, `vm_sv48`). Reference = Sail (default); DUT = release `wasm-vm`.
+All 4 criteria met with recorded evidence → status → `verified`.
 
 ### 2026-07-04 — implemented: Sv57 5-level paging (DUT + unit-tested) + re-enabled in Sail to test
 Per the user's "implement T27/T28 as real features + re-enable in Sail to genuinely test" decision.
