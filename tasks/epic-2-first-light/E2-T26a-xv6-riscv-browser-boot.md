@@ -3,11 +3,20 @@ id: E2-T26a
 epic: 2
 title: "xv6-riscv boots to a $ shell in the browser (descoped follow-up from E2-T26)"
 priority: 227
-status: pending
+status: cancelled
 depends_on: [E2-T26]
 estimate: M
 capstone: false
 ---
+
+## CANCELLED (Brett 2026-07-31) — off the critical path to Docker-in-the-browser
+
+xv6-riscv is a teaching kernel with **no Linux container substrate** — no namespaces, cgroups,
+overlayfs, `pivot_root`, seccomp, or capabilities — so it can never run OCI/Docker workloads,
+which are the project's goal. Its faster boot is irrelevant: CPU-layer optimizations (JIT, etc.)
+speed up *every* guest equally, and a fast boot of a non-container-capable OS yields nothing.
+The real "faster than Alpine while still Docker-capable" lever is a stripped-down **Linux**
+(minimal kernel config + musl userland + lean init), not xv6. Cancelled rather than deferred.
 
 ## Goal
 Boot **xv6-riscv** (the teaching OS) to its `$` shell in the browser tab and run `ls`, as a

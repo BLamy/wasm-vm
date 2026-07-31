@@ -41,9 +41,11 @@ a public URL is not required, `tools/serve-dev.sh` is.
 
 ## Acceptance criteria
 - [x] Fresh clone + documented commands → the browser boots xv6-riscv to `$` and runs `ls`.
-      **DESCOPED (Brett 2026-07-31)** — xv6 is a *separate bare-metal guest* needing its own
-      kernel artifact; split out to follow-up **E2-T26a** so it no longer blocks this capstone.
-      The flagship acceptance (unmodified full-OS Alpine to a browser login) is met below.
+      **DESCOPED → CANCELLED (Brett 2026-07-31, E2-T26a)** — xv6 is a teaching kernel with no
+      Linux container substrate (no namespaces/cgroups/overlayfs), so it can never run the
+      Docker/OCI workloads that are the project's goal; its faster boot is irrelevant. Off the
+      critical path — cancelled, not a pending follow-up. The flagship acceptance (unmodified
+      full-OS Alpine to a browser login) is met below.
 - [x] Fresh clone + documented commands → browser shows Alpine `login:`; root login works.
       **MET + verified** (live Playwright MCP + headless e2e `1 passed (8.9m)`): unmodified
       Alpine 3.20 boots from virtio-blk to `wasm-vm login:`; root logs in and runs commands

@@ -3541,13 +3541,15 @@
         },
         {
           "date": "2026-07-31",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "docs(e1-t28,e2-t26): verified — Sv57 RISCOF green; browser capstone (xv6 descoped)"
+          ]
         }
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-31",
-      "commitCount": 6
+      "commitCount": 7
     },
     {
       "id": "E1-T29",
@@ -5343,7 +5345,7 @@
       "goal": "The Level 2 threshold, demonstrated end-to-end. First the minimal-platform proof: the\nbrowser tab boots **xv6-riscv** to its `$` shell (Layer A + minimal Layer B). Then the full\nmilestone: the same page loads the WASM machine, fetches the pinned Linux kernel and Alpine\next4 image, boots unmodified Linux from virtio-blk to a `login:` prompt in xterm.js; a human\nlogs in, uses `vi`, `top`, and shell scripts, and runs `poweroff` to a clean, UI-acknowledged\nhalt. Real OS kernels — tiny and full — in the tab.",
       "criteria": [
         {
-          "text": "Fresh clone + documented commands → the browser boots xv6-riscv to `$` and runs `ls`. **DESCOPED (Brett 2026-07-31)** — xv6 is a *separate bare-metal guest* needing its own kernel artifact; split out to follow-up **E2-T26a** so it no longer blocks this capstone. The flagship acceptance (unmodified full-OS Alpine to a browser login) is met below.",
+          "text": "Fresh clone + documented commands → the browser boots xv6-riscv to `$` and runs `ls`. **DESCOPED → CANCELLED (Brett 2026-07-31, E2-T26a)** — xv6 is a teaching kernel with no Linux container substrate (no namespaces/cgroups/overlayfs), so it can never run the Docker/OCI workloads that are the project's goal; its faster boot is irrelevant. Off the critical path — cancelled, not a pending follow-up. The flagship acceptance (unmodified full-OS Alpine to a browser login) is met below.",
           "checked": true
         },
         {
@@ -5385,13 +5387,15 @@
         },
         {
           "date": "2026-07-31",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "docs(e1-t28,e2-t26): verified — Sv57 RISCOF green; browser capstone (xv6 descoped)"
+          ]
         }
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-31",
-      "commitCount": 11
+      "commitCount": 12
     },
     {
       "id": "E2-T26a",
@@ -5399,7 +5403,7 @@
       "epicKey": "2",
       "title": "xv6-riscv boots to a $ shell in the browser (descoped follow-up from E2-T26)",
       "priority": 227,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E2-T26"
       ],
@@ -5426,10 +5430,18 @@
       "verificationLog": "_(none yet — pending)_",
       "adversarial": "",
       "file": "tasks/epic-2-first-light/E2-T26a-xv6-riscv-browser-boot.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-07-31",
+          "commits": 1,
+          "labels": [
+            "docs(e1-t28,e2-t26): verified — Sv57 RISCOF green; browser capstone (xv6 descoped)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-07-31",
+      "lastActivity": "2026-07-31",
+      "commitCount": 1
     },
     {
       "id": "E3-T01",
