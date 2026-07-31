@@ -555,7 +555,12 @@ function render() {
   const filtering = !!(state.filters.search || state.filters.status || state.filters.epic);
 
   const countEl = document.getElementById("rm-count");
-  if (countEl) countEl.textContent = `${visible.length} of ${state.data.tasks.length} issues`;
+  if (countEl) {
+    // Cancelled tickets are excluded from the overall count (they don't gate completion).
+    const totalCounted = state.data.tasks.filter((t) => t.status !== "cancelled").length;
+    const visibleCounted = visible.filter((t) => t.status !== "cancelled").length;
+    countEl.textContent = `${visibleCounted} of ${totalCounted} issues`;
+  }
 
   if (state.view === "timeline") {
     renderTimeline(lanes, visible);
@@ -584,8 +589,11 @@ function render() {
     head.append(h("span", "rm-epic-tag", `E${key}`));
     head.append(h("span", "rm-epic-name", epicTitle(key)));
     const verified = tasks.filter((t) => t.status === "verified").length;
+    // Cancelled tickets don't count toward completion — an epic whose only
+    // non-verified tickets are cancelled is done.
+    const counted = tasks.filter((t) => t.status !== "cancelled").length;
     if (done) head.append(h("span", "rm-epic-done", "✓ done"));
-    head.append(h("span", "rm-epic-count", `${verified}/${tasks.length} verified`));
+    head.append(h("span", "rm-epic-count", `${verified}/${counted} verified`));
     head.addEventListener("click", () => {
       collapseOverride.set(key, !lane.classList.contains("collapsed") ? true : false);
       render();
