@@ -3,14 +3,23 @@ id: E3-T19
 epic: 3
 title: Tailscale/Headscale lifecycle and public-relay fallback hardening
 priority: 319
-status: blocked
-blocked_on: [E4-T13]
+status: cancelled
 depends_on: [E3-T16, E3-T17]
 estimate: M
 risk: high
-decomposition: approved
+decomposed_into: [E3-T19a, E3-T19b, E3-T19c, E3-T19d, E3-T19e]
 capstone: false
 ---
+
+### 2026-07-31 — seam decomposition
+
+The six criteria here are separate proof boundaries with very different risk. This planning
+container is replaced by **E3-T19a–E3-T19e** so the deterministic security proofs (relay token
+rejection T19c, secret-free audit T19e) can be verified now, independent of the flaky live-tailnet
+proofs (composed-stack lifecycle T19a, ACL/exit-node T19b, browser-VM HTTPS + identity isolation
+T19d) — the latter stay `blocked_on: [E4-T13]` (the Epic-4 relay/worker) so the live stack is
+reproducible rather than environment-dependent. Downstream deps (E3-T20a, E3-T25b, E3.6-T02)
+now point at the functional base **E3-T19a**; credential hygiene (E3-T26c) points at **E3-T19e**.
 
 ## Goal
 Both shipped network providers are deployable without confusing identity or creating an open

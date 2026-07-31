@@ -4,7 +4,7 @@ epic: 3
 title: "Capstone: a real userland — busybox + QuickJS + interpreted Node.js on a persistent, networked Alpine (webvm parity)"
 priority: 328
 status: pending
-depends_on: [E3-T11, E3-T25, E3-T26, E3-T27]
+depends_on: [E3-T11, E3-T25e, E3-T26d, E3-T27]
 estimate: L
 capstone: true
 ---

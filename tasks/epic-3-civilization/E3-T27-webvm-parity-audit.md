@@ -4,7 +4,7 @@ epic: 3
 title: Side-by-side parity audit against webvm.io/alpine.html
 priority: 327
 status: pending
-depends_on: [E3-T09, E3-T20, E3-T21, E3-T22, E3-T23]
+depends_on: [E3-T09, E3-T20d, E3-T21d, E3-T22, E3-T23]
 estimate: M
 capstone: false
 ---

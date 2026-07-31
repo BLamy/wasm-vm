@@ -3,9 +3,10 @@ id: E3-T20
 epic: 3
 title: Tailscale-backed `apk add` end-to-end with relay fallback
 priority: 320
-status: pending
+status: cancelled
 depends_on: [E3-T11, E3-T15, E3-T16, E3-T17, E3-T19]
 estimate: M
+decomposed_into: [E3-T20a, E3-T20b, E3-T20c, E3-T20d]
 capstone: false
 ---
 
@@ -73,6 +74,12 @@ any manual guest network configuration, hidden fetch path, silent cross-provider
 signature/TLS validation, or traffic attributed to the wrong tailnet node refutes.
 
 ## Verification log
+
+### 2026-07-27 — seam decomposition
+
+The image diagnostic contract, Tailscale primary proof, relay-only proof, and userland stress/
+recovery matrix are separate boundaries. This planning container is replaced by E3-T20a through
+E3-T20d so a provider-specific failure does not rerun unrelated image or userland gates.
 
 ### 2026-07-17 — planning rewrite
 Makes the browser Tailscale node the primary `apk add` proof, keeps the existing public relay as an

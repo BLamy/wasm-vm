@@ -3,9 +3,10 @@ id: E3-T26
 epic: 3
 title: Security pass - COOP/COEP, CSP, and network-provider credential hygiene
 priority: 326
-status: pending
+status: cancelled
 depends_on: [E3-T19, E3-T24]
 estimate: M
+decomposed_into: [E3-T26a, E3-T26b, E3-T26c, E3-T26d]
 capstone: false
 ---
 
@@ -73,4 +74,8 @@ console-injected code under the enforced policy. Finally go offline, reload, and
 `crossOriginIsolated` — SW header loss is the expected place this pass quietly breaks.
 
 ## Verification log
-(empty)
+
+### 2026-07-27 — seam decomposition
+
+Cross-origin isolation, CSP enforcement, credential hygiene, and the frozen full-app audit are
+separate security boundaries. This planning container is replaced by E3-T26a through E3-T26d.

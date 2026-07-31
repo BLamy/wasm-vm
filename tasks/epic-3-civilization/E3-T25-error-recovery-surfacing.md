@@ -3,9 +3,10 @@ id: E3-T25
 epic: 3
 title: Error recovery - network drops and storage failures surfaced sanely
 priority: 325
-status: pending
+status: cancelled
 depends_on: [E3-T10, E3-T20]
 estimate: M
+decomposed_into: [E3-T25a, E3-T25b, E3-T25c, E3-T25d, E3-T25e]
 capstone: false
 ---
 
@@ -72,4 +73,9 @@ data after a mid-transfer drop (provider-side byte accounting). Revoke the Tails
 while relay is healthy and prove recovery fails closed until the user explicitly changes policy.
 
 ## Verification log
-(empty)
+
+### 2026-07-27 — seam decomposition
+
+The taxonomy, network reconnect, chunk pause, storage acknowledgement, and combined diagnostics
+proof have different state owners and attacks. This planning container is replaced by E3-T25a
+through E3-T25e.
