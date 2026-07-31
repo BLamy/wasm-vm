@@ -41,7 +41,7 @@ new_id() {
 json() { printf '"%s"' "$(printf '%s' "${1:-}" | sed 's/\\/\\\\/g; s/"/\\"/g')"; }
 
 usage() {
-  echo "usage: wvrun run [-d] [--name N] [--memory B] [--pids N] <bundle>" >&2
+  echo "usage: wvrun run [-d] [--name N] [--memory B] [--pids N] <bundle> [-- <cmd...>]" >&2
   echo "       wvrun ps [-a] | logs [-f] <ref> | stop <ref> | rm [-f] <ref> | exec [-it] <ref> <cmd…>" >&2
   echo "       wvrun [--interactive] [--memory B] [--pids N] <bundle>   (legacy run-to-exit)" >&2
   exit 2
@@ -144,14 +144,18 @@ container_pid1() {
 # statedir="" → legacy/foreground (interactive keeps the tty). statedir set → tracked (records
 # pid/upid/cg/status/exit into the dir, backgrounds the container so the host pid-1 can be captured).
 container_core() {
-  _int=$1 _mem=$2 _pids=$3 _cgname=$4 _sd=$5 bundle=$6
+  _int=$1 _mem=$2 _pids=$3 _cgname=$4 _sd=$5 bundle=$6; shift 6
+  # Anything left in "$@" is an explicit command override (docker-style `run <img> <cmd…>`).
   rootfs="$bundle/rootfs"
   [ -d "$rootfs" ] || { echo "wvrun: no rootfs/ in bundle $bundle" >&2; return 2; }
   cwd=$(cat "$bundle/config/cwd" 2>/dev/null || true); [ -n "$cwd" ] || cwd=/
 
-  set --
+  # argv precedence: --interactive → /bin/sh; else an explicit command override (already in "$@")
+  # is used as-is; else the bundle's baked config/argv (the image entrypoint).
   if [ "$_int" -eq 1 ]; then
     set -- /bin/sh
+  elif [ $# -gt 0 ]; then
+    :  # command override already in "$@"
   else
     if [ -s "$bundle/config/argv" ]; then
       while IFS= read -r a || [ -n "$a" ]; do set -- "$@" "$a"; done < "$bundle/config/argv"
@@ -260,12 +264,12 @@ wv_run() {
       *)                break ;;
     esac
   done
-  bundle="${1:-}"; [ -n "$bundle" ] || usage
+  bundle="${1:-}"; [ -n "$bundle" ] || usage; shift  # remaining "$@" = optional command override
   [ -d "$bundle/rootfs" ] || { echo "wvrun run: no rootfs/ in bundle $bundle" >&2; return 2; }
   ensure_dirs
 
   if [ "$_detach" -eq 0 ]; then
-    container_core "$_int" "$_mem" "$_pids" "wvrun.fg.$$" "" "$bundle"
+    container_core "$_int" "$_mem" "$_pids" "wvrun.fg.$$" "" "$bundle" "$@"
     return $?
   fi
 
@@ -286,7 +290,7 @@ wv_run() {
   (
     trap '' HUP
     exec >>"$log" 2>&1 </dev/null
-    container_core "$_int" "$_mem" "$_pids" "wvrun.$id" "$sd" "$bundle" || true
+    container_core "$_int" "$_mem" "$_pids" "wvrun.$id" "$sd" "$bundle" "$@" || true
   ) &
   printf '%s\n' "$!" > "$sd/spid"
   printf '%s\n' "$id"
