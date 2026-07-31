@@ -335,33 +335,48 @@ function taskCard(t) {
   return card;
 }
 
-// Decomposed parents rendered as parent groups with their sub-tickets nested
-// underneath — the answer to "show them with their sub-tickets under them" rather
-// than as struck-through "cancelled" cards.
-function decomposedBlock(parents) {
-  const wrap = h("div", "rm-decomp");
-  for (const p of parents) {
-    const group = h("div", "rm-decomp-group");
-    const phead = h("button", "rm-decomp-parent");
-    phead.type = "button";
-    phead.dataset.id = p.id;
-    phead.append(h("span", "rm-card-id", p.id));
-    phead.append(h("span", "rm-decomp-tag", "decomposed"));
-    phead.append(h("span", "rm-decomp-title", p.title));
-    phead.append(h("span", "rm-decomp-count", `${p.decomposed_into.length} sub-ticket${p.decomposed_into.length > 1 ? "s" : ""}`));
-    phead.addEventListener("click", () => openDetail(p.id));
-    group.append(phead);
-
-    const kids = h("div", "rm-decomp-kids");
-    for (const cid of p.decomposed_into) {
-      const child = state.data.tasks.find((x) => x.id === cid);
-      if (child) kids.append(taskCard(child));
-      else kids.append(h("div", "rm-decomp-missing", `${cid} — not found`));
-    }
-    group.append(kids);
-    wrap.append(group);
+// childId → parent task, for every decomposed parent (incl. nested). Rebuilt each
+// render so filtering never desyncs it.
+let PARENTS = new Map();
+function rebuildParentIndex() {
+  PARENTS = new Map();
+  for (const t of state.data.tasks) {
+    if (isDecomposed(t)) for (const cid of t.decomposed_into) PARENTS.set(cid, t);
   }
+}
+
+// Jira-style: sub-tickets keep their own status column but sit inside a subtle grey
+// box headed by a parent-context band (the parent's id + title, clickable). Siblings
+// that land in the same column share one box, so the band isn't repeated. This
+// replaces the old "cancelled" card for decomposed parents — the parent lives only
+// as the band above its children.
+function subGroup(parent, children) {
+  const wrap = h("div", "rm-sub");
+  const ctx = h("button", "rm-sub-ctx");
+  ctx.type = "button";
+  ctx.append(h("span", "rm-sub-ctx-id", parent.id));
+  ctx.append(h("span", "rm-sub-ctx-title", parent.title));
+  ctx.addEventListener("click", (e) => { e.stopPropagation(); openDetail(parent.id); });
+  wrap.append(ctx);
+  for (const c of children) wrap.append(taskCard(c));
   return wrap;
+}
+
+// Lay out a column body: standalone cards render loose; decomposed sub-tickets are
+// grouped by parent (first-occurrence order preserved) into one grey box each.
+function appendColumnCards(body, cards) {
+  const order = [];
+  const groups = new Map();
+  for (const t of cards) {
+    const p = PARENTS.get(t.id);
+    if (!p) { order.push({ solo: t }); continue; }
+    if (!groups.has(p)) { groups.set(p, []); order.push({ parent: p }); }
+    groups.get(p).push(t);
+  }
+  for (const item of order) {
+    if (item.solo) body.append(taskCard(item.solo));
+    else body.append(subGroup(item.parent, groups.get(item.parent)));
+  }
 }
 
 // Jira-style Kanban columns. Each status maps to one column; columns render in
@@ -399,7 +414,7 @@ function kanbanBoard(tasks) {
     chead.append(h("span", "rm-col-count", String(cards.length)));
     column.append(chead);
     const body = h("div", "rm-col-body");
-    for (const t of cards) body.append(taskCard(t));
+    appendColumnCards(body, cards);
     column.append(body);
     board.append(column);
   }
@@ -409,6 +424,7 @@ function kanbanBoard(tasks) {
 function render() {
   const lanes = document.getElementById("rm-lanes");
   if (!lanes || !state.data) return;
+  rebuildParentIndex();
   lanes.replaceChildren();
 
   const visible = state.data.tasks.filter(matchesFilter);
@@ -449,19 +465,12 @@ function render() {
     lane.append(head);
     lane.append(stackBar(tasks));
 
-    // Decomposed parents get their own nested block; their sub-tickets live under
-    // the parent rather than loose in the Kanban, so pull both out of the board.
-    const allParents = tasks.filter(isDecomposed);
-    const childIds = new Set(allParents.flatMap((p) => p.decomposed_into || []));
-    // A parent that is itself another parent's sub-ticket (nested decomposition)
-    // renders as a child card, not a second top-level group.
-    const parents = allParents.filter((p) => !childIds.has(p.id));
-    const boardTasks = tasks.filter((t) => !isDecomposed(t) && !childIds.has(t.id));
+    // Decomposed parents never render as cards (they'd read as "cancelled") — they
+    // appear only as the grey parent-context band above their sub-tickets, which
+    // stay in their own real status columns.
+    const boardTasks = tasks.filter((t) => !isDecomposed(t));
 
-    if (!collapsed) {
-      if (parents.length) lane.append(decomposedBlock(parents));
-      if (boardTasks.length) lane.append(kanbanBoard(boardTasks));
-    }
+    if (!collapsed && boardTasks.length) lane.append(kanbanBoard(boardTasks));
     lanes.append(lane);
   }
 }
