@@ -7139,7 +7139,8 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E3-T19a"
+        "E3-T16",
+        "E3-T17"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -9403,13 +9404,15 @@
         },
         {
           "date": "2026-07-31",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "docs(e3.5): verify T04e + T04d — bundle preflight & multi-registry"
+          ]
         }
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-31",
-      "commitCount": 5
+      "commitCount": 6
     },
     {
       "id": "E3.5-T04e",
@@ -9472,13 +9475,15 @@
         },
         {
           "date": "2026-07-31",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "docs(e3.5): verify T04e + T04d — bundle preflight & multi-registry"
+          ]
         }
       ],
       "firstActivity": "2026-07-07",
       "lastActivity": "2026-07-31",
-      "commitCount": 5
+      "commitCount": 6
     },
     {
       "id": "E3.5-T05",

@@ -4,7 +4,7 @@ epic: 3
 title: Relay token rejection (deterministic, no live tailnet)
 priority: 319.3
 status: pending
-depends_on: [E3-T19a]
+depends_on: [E3-T16, E3-T17]
 estimate: S
 risk: low
 capstone: false
