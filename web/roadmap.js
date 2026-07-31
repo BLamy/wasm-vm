@@ -228,10 +228,13 @@ function matchesFilter(t) {
 
 // Small stacked progress bar: verified vs everything-else, coloured by status.
 function stackBar(tasks) {
-  const total = tasks.length || 1;
-  const order = ["verified", "implemented", "evidence-needed", "in-progress", "verification-debt", "blocked", "pending", "decomposed", "cancelled"];
+  // Cancelled/decomposed tickets don't fill the bar (they don't gate completion),
+  // so exclude them from both the segments and the denominator.
+  const counted = tasks.filter((t) => t.status !== "cancelled");
+  const total = counted.length || 1;
+  const order = ["verified", "implemented", "evidence-needed", "in-progress", "verification-debt", "blocked", "pending"];
   const counts = {};
-  for (const t of tasks) counts[effStatus(t)] = (counts[effStatus(t)] || 0) + 1;
+  for (const t of counted) counts[t.status] = (counts[t.status] || 0) + 1;
   const bar = h("div", "rm-stack");
   for (const s of order) {
     if (!counts[s]) continue;
