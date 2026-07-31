@@ -8,7 +8,9 @@
 # Env: KILLS=5  KILL_MIN=8  KILL_MAX=40  BOOT_TO=900  SEED=<int>  OUT=tests/stress/out
 # Deterministic kill points: pass SEED to reproduce the exact delays (awk-seeded PRNG).
 set -uo pipefail
-here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$here"
+# Repo root is two levels up (this script lives in tests/stress/), not one — the old `/..` landed
+# in tests/ so the release-build + rootfs precheck could never find them.
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"; cd "$here"
 KILLS="${KILLS:-5}"; KILL_MIN="${KILL_MIN:-8}"; KILL_MAX="${KILL_MAX:-40}"; BOOT_TO="${BOOT_TO:-900}"
 SEED="${SEED:-1}"; OUT="${OUT:-tests/stress/out}"
 kernel="releases/kernel/6.6.63/Image"; pristine="releases/rootfs/alpine-rootfs.ext4"; bin="target/release/wasm-vm"
@@ -64,9 +66,12 @@ EXP
     # the echoed command text — that self-poisoning always-red bug is what critic C2 caught.
     send "echo REC\$((6*7))\r"; expect { -timeout 90 "REC42" {} timeout { puts "RECOVER_FAIL no-shell"; exit 4 } }
     # Decide FS health IN-GUEST → an output-only verdict token. FSOK42 = clean journal replay;
-    # FSBAD = ext4/JBD2 errors or a read-only remount in the ring buffer.
-    send "if dmesg | grep -qiE 'ext4.*error|remount.*read-only|JBD2.*Error'; then echo FSBAD; else echo FSOK\$((6*7)); fi\r"
-    expect { -timeout 90 "FSOK42" {} "FSBAD" {} timeout {} }
+    # FSBAD42 = ext4/JBD2 errors or a read-only remount in the ring buffer. BOTH tokens are
+    # computed ($((6*7))=42) so neither appears verbatim in the echoed command — otherwise the
+    # host grep would match `then echo FSBAD` in the command echo and false-fail (critic C2, which
+    # this send only half-fixed: FSOK was output-only but FSBAD was a literal).
+    send "if dmesg | grep -qiE 'ext4.*error|remount.*read-only|JBD2.*Error'; then echo FSBAD\$((6*7)); else echo FSOK\$((6*7)); fi\r"
+    expect { -timeout 90 "FSOK42" {} "FSBAD42" {} timeout {} }
     send "mount | grep ' / '; echo MNT\$((6*7))\r"; expect { -timeout 60 "MNT42" {} timeout {} }
     send "poweroff\r"; expect { -timeout [ge STRESS_BOOT_TO 900] eof {} timeout {} }
 EXP
@@ -76,7 +81,7 @@ EXP
   # and / is still mounted rw ext4 (a string that appears only in `mount` OUTPUT). All four greps
   # target OUTPUT-ONLY tokens, so none can match an echoed command (critic C2 fix).
   if [ "$rc2" -eq 0 ] && grep -q "REC42" "$p2" \
-     && grep -q "FSOK42" "$p2" && ! grep -q "FSBAD" "$p2" \
+     && grep -q "FSOK42" "$p2" && ! grep -q "FSBAD42" "$p2" \
      && grep -qE "on / type ext4 \(rw" "$p2"; then
     echo "kill $k: RECOVERED (clean journal replay, / rw ext4)" >&2
   else
