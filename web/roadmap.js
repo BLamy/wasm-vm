@@ -577,13 +577,14 @@ function render() {
 
   for (const [key, tasks] of groups) {
     const done = epicIsDone(tasks);
-    // Collapsed by default when the epic is done — unless the user overrode it,
-    // or an active filter is narrowing results (then always expand so hits show).
-    let collapsed = done;
+    const allCancelled = tasks.length > 0 && tasks.every((t) => t.status === "cancelled");
+    // Collapsed by default when the epic is done OR fully cancelled — unless the user
+    // overrode it, or an active filter is narrowing results (then always expand so hits show).
+    let collapsed = done || allCancelled;
     if (collapseOverride.has(key)) collapsed = collapseOverride.get(key);
     else if (filtering) collapsed = false;
 
-    const lane = h("section", `rm-lane${collapsed ? " collapsed" : ""}${done ? " done" : ""}`);
+    const lane = h("section", `rm-lane${collapsed ? " collapsed" : ""}${done ? " done" : ""}${allCancelled ? " cancelled" : ""}`);
 
     const head = h("button", "rm-lane-head");
     head.type = "button";
@@ -596,7 +597,8 @@ function render() {
     // non-verified tickets are cancelled is done.
     const counted = tasks.filter((t) => t.status !== "cancelled").length;
     if (done) head.append(h("span", "rm-epic-done", "✓ done"));
-    head.append(h("span", "rm-epic-count", `${verified}/${counted} verified`));
+    else if (allCancelled) head.append(h("span", "rm-epic-done", "✕ cancelled"));
+    head.append(h("span", "rm-epic-count", allCancelled ? `${tasks.length} cancelled` : `${verified}/${counted} verified`));
     head.addEventListener("click", () => {
       collapseOverride.set(key, !lane.classList.contains("collapsed") ? true : false);
       render();
