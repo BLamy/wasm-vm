@@ -839,6 +839,50 @@
       .rm-sub-ctx-title {
         font-size: 11px; color: #6b7684; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
+      /* View toggle (Board / Timeline) */
+      .rm-viewtoggle { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; flex: 0 0 auto; }
+      .rm-vt { background: var(--panel-2); color: var(--muted); border: none; padding: 8px 14px; cursor: pointer; font-size: 13px; }
+      .rm-vt.active { background: var(--cyan); color: #04121a; font-weight: 650; }
+      .rm-vt:not(.active):hover { color: var(--text); background: #1c2129; }
+      /* ── Gantt / timeline view ─────────────────────────────────────────── */
+      .rm-gantt { overflow-x: auto; padding-bottom: 10px; --rm-label-w: 230px; }
+      .rm-gantt-inner { min-width: 900px; }
+      .rm-gantt-axis {
+        position: sticky; top: 59px; z-index: 3; display: grid;
+        grid-template-columns: var(--rm-label-w) 1fr; background: var(--panel); border-bottom: 1px solid var(--line);
+      }
+      .rm-axis-track { position: relative; height: 30px; }
+      .rm-axis-tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--line); }
+      .rm-axis-lbl { position: absolute; top: 8px; font: 10.5px ui-monospace, monospace; color: var(--muted); padding-left: 5px; white-space: nowrap; }
+      .rm-gantt-body { position: relative; }
+      .rm-gridlines { position: absolute; top: 0; bottom: 0; left: var(--rm-label-w); right: 0; z-index: 0; pointer-events: none; }
+      .rm-gridline { position: absolute; top: 0; bottom: 0; border-left: 1px solid rgba(255,255,255,0.045); }
+      .rm-today { position: absolute; top: 0; bottom: 0; border-left: 1.5px dashed var(--red); z-index: 1; pointer-events: none; }
+      .rm-today-lbl { position: absolute; top: 2px; font: 10px ui-monospace, monospace; color: var(--red); padding-left: 4px; }
+      .rm-g-epic {
+        display: grid; grid-template-columns: var(--rm-label-w) 1fr; align-items: center;
+        padding-top: 12px; position: relative; z-index: 1;
+      }
+      .rm-g-epic-name { font-size: 11.5px; font-weight: 650; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 0; }
+      .rm-g-row {
+        display: grid; grid-template-columns: var(--rm-label-w) 1fr; align-items: center; height: 30px;
+        position: relative; z-index: 1; border-bottom: 1px solid rgba(255,255,255,0.03);
+      }
+      .rm-g-row:hover { background: rgba(255,255,255,0.035); }
+      .rm-g-label { display: flex; align-items: center; gap: 7px; padding-right: 12px; overflow: hidden; cursor: pointer; background: none; border: none; text-align: left; }
+      .rm-g-dot-s { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+      .rm-g-id { font: 650 11px ui-monospace, monospace; color: var(--muted); white-space: nowrap; }
+      .rm-g-title { font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .rm-g-track { position: relative; height: 100%; }
+      .rm-g-bar {
+        position: absolute; top: 50%; transform: translateY(-50%); height: 13px; border-radius: 7px;
+        cursor: pointer; min-width: 7px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
+      }
+      .rm-g-bar:hover { filter: brightness(1.15); outline: 1px solid rgba(255,255,255,0.35); }
+      .rm-g-tick { position: absolute; top: 50%; width: 4px; height: 4px; border-radius: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.9); }
+      .rm-gantt-legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 10px 2px 0; color: var(--muted); font-size: 11.5px; }
+      .rm-gantt-legend span { display: inline-flex; align-items: center; gap: 5px; }
+      .rm-gantt-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
       .rm-card.st-decomposed { border-left-color: #7c8aa0; }
       .rm-badge.st-decomposed { color: #9aa7b8; }
       .rm-sub-link {
@@ -930,6 +974,10 @@
           <div id="rm-overall" class="rm-overall"></div>
         </div>
         <div class="rm-toolbar">
+          <div class="rm-viewtoggle" role="tablist" aria-label="Roadmap view">
+            <button id="rm-view-board" class="rm-vt active" type="button" role="tab" aria-selected="true">▤ Board</button>
+            <button id="rm-view-timeline" class="rm-vt" type="button" role="tab" aria-selected="false">▦ Timeline</button>
+          </div>
           <input id="rm-search" type="search" class="rm-search" placeholder="Search issues…  (press /)" aria-label="Search issues" />
           <select id="rm-epic" class="rm-select" aria-label="Filter by epic"><option value="">All epics</option></select>
           <select id="rm-status" class="rm-select" aria-label="Filter by status"><option value="">All statuses</option></select>
