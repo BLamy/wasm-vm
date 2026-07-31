@@ -845,7 +845,9 @@
       .rm-vt.active { background: var(--cyan); color: #04121a; font-weight: 650; }
       .rm-vt:not(.active):hover { color: var(--text); background: #1c2129; }
       /* ── Gantt / timeline view ─────────────────────────────────────────── */
-      .rm-gantt { overflow-x: auto; padding-bottom: 10px; --rm-label-w: 230px; }
+      /* No overflow container here: an overflow-x scroller would become a scroll context and
+         break the date axis's viewport-sticky. Horizontal fit is handled by the min-width inner. */
+      .rm-gantt { padding-bottom: 10px; --rm-label-w: 230px; }
       .rm-gantt-inner { min-width: 900px; }
       .rm-gantt-axis {
         position: sticky; top: 59px; z-index: 3; display: grid;
@@ -863,7 +865,10 @@
         display: grid; grid-template-columns: var(--rm-label-w) 1fr; align-items: center;
         padding-top: 12px; position: relative; z-index: 1;
       }
-      .rm-g-epic-name { font-size: 11.5px; font-weight: 650; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 0; }
+      .rm-g-epic-head { display: flex; align-items: center; gap: 7px; width: 100%; background: none; border: none; cursor: pointer; text-align: left; padding: 4px 0; }
+      .rm-g-epic-head:hover .rm-g-epic-name { color: var(--text); }
+      .rm-g-epic-name { font-size: 11.5px; font-weight: 650; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+      .rm-g-epic-num { font: 11px ui-monospace, monospace; color: var(--muted); background: #1c2129; border-radius: 10px; padding: 0 7px; }
       .rm-g-row {
         display: grid; grid-template-columns: var(--rm-label-w) 1fr; align-items: center; height: 30px;
         position: relative; z-index: 1; border-bottom: 1px solid rgba(255,255,255,0.03);

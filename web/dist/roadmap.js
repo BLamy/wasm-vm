@@ -267,50 +267,7 @@ function overallBurndown(tasks) {
   fill.style.width = pct + "%";
   pbar.append(fill);
   wrap.append(pbar);
-
-  // Derived burndown line across epics.
-  const groups = groupByEpic(active);
-  const W = 520, H = 96, PAD = 6;
-  let cum = 0;
-  const pts = [];
-  const labels = [];
-  groups.forEach(([key, ts], i) => {
-    cum += ts.filter((t) => t.status === "verified").length;
-    const remaining = total - cum;
-    const x = PAD + (groups.length <= 1 ? 0 : (i / (groups.length - 1)) * (W - 2 * PAD));
-    const y = PAD + (total ? (remaining / total) * (H - 2 * PAD) : 0);
-    pts.push([x, y]);
-    labels.push(key);
-  });
-  const svgNS = "http://www.w3.org/2000/svg";
-  const svg = document.createElementNS(svgNS, "svg");
-  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-  svg.setAttribute("class", "rm-burndown");
-  svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label", `Derived burndown: ${total - verified} tasks remaining of ${total}`);
-  if (pts.length) {
-    const line = document.createElementNS(svgNS, "polyline");
-    line.setAttribute("points", pts.map((p) => p.join(",")).join(" "));
-    line.setAttribute("fill", "none");
-    line.setAttribute("stroke", "var(--cyan)");
-    line.setAttribute("stroke-width", "2");
-    // Area under the line.
-    const area = document.createElementNS(svgNS, "polygon");
-    const first = pts[0], last = pts[pts.length - 1];
-    area.setAttribute("points", `${first[0]},${H - PAD} ${pts.map((p) => p.join(",")).join(" ")} ${last[0]},${H - PAD}`);
-    area.setAttribute("fill", "rgba(83,212,255,0.10)");
-    svg.append(area, line);
-    for (const p of pts) {
-      const c = document.createElementNS(svgNS, "circle");
-      c.setAttribute("cx", p[0]);
-      c.setAttribute("cy", p[1]);
-      c.setAttribute("r", "2.5");
-      c.setAttribute("fill", "var(--cyan)");
-      svg.append(c);
-    }
-  }
-  wrap.append(svg);
-  wrap.append(h("div", "rm-overall-foot", "Derived burndown — remaining tasks as the epic sequence advances"));
+  wrap.append(h("div", "rm-overall-foot", `${pct}% verified`));
   return wrap;
 }
 
@@ -406,6 +363,8 @@ function epicIsDone(tasks) {
 // Remember which epics the user has manually toggled so re-renders (filtering,
 // searching) keep their expanded/collapsed state.
 const collapseOverride = new Map();
+// Which epics are collapsed in the Timeline view (independent of the Kanban lanes).
+const timelineCollapse = new Set();
 
 function kanbanBoard(tasks) {
   const board = h("div", "rm-board");
@@ -496,13 +455,24 @@ function renderTimeline(root, visible) {
   }
   body.append(grid);
 
-  // Rows grouped by epic (epic order preserved).
+  // Rows grouped by epic (epic order preserved), each collapsible.
   const groups = groupByEpic(worked);
   for (const [key, tasks] of groups) {
+    const collapsed = timelineCollapse.has(key);
     const eh = h("div", "rm-g-epic");
-    eh.append(h("div", "rm-g-epic-name", `E${key} · ${epicTitle(key)}`));
+    const ehead = h("button", "rm-g-epic-head");
+    ehead.type = "button";
+    ehead.append(h("span", "rm-caret", collapsed ? "▶" : "▼"));
+    ehead.append(h("span", "rm-g-epic-name", `E${key} · ${epicTitle(key)}`));
+    ehead.append(h("span", "rm-g-epic-num", `${tasks.length}`));
+    ehead.addEventListener("click", () => {
+      if (collapsed) timelineCollapse.delete(key); else timelineCollapse.add(key);
+      render();
+    });
+    eh.append(ehead);
     eh.append(h("div"));
     body.append(eh);
+    if (collapsed) continue;
 
     for (const t of tasks) {
       const row = h("div", "rm-g-row");
