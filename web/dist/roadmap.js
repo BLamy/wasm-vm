@@ -401,7 +401,15 @@ const DAY_MS = 86400000;
 
 function renderTimeline(root, visible) {
   const range = state.data.activityRange;
-  const worked = visible.filter((t) => t.firstActivity).sort((a, b) => a.firstActivity.localeCompare(b.firstActivity) || a.id.localeCompare(b.id));
+  // Show ALL tickets (except decomposed parents, which live as their children) — including ones
+  // with no recorded activity. Activity-bearing rows sort by first date; no-activity rows sort
+  // after, by id.
+  const worked = visible.filter((t) => !isDecomposed(t)).sort((a, b) => {
+    if (a.firstActivity && b.firstActivity) return a.firstActivity.localeCompare(b.firstActivity) || a.id.localeCompare(b.id);
+    if (a.firstActivity) return -1;
+    if (b.firstActivity) return 1;
+    return a.id.localeCompare(b.id);
+  });
   if (!range || !worked.length) {
     root.append(h("div", "rm-empty", "No recorded activity to plot for the current filters."));
     return;
@@ -485,20 +493,27 @@ function renderTimeline(root, visible) {
       row.append(label);
 
       const track = h("div", "rm-g-track");
-      const f = parseDay(t.firstActivity).getTime();
-      const l = parseDay(t.lastActivity).getTime();
-      const bar = h("div", "rm-g-bar");
-      bar.style.left = pct(f);
-      bar.style.width = Math.max(frac(l) - frac(f), 0) * 100 + "%";
-      bar.style.background = statusMeta(effStatus(t)).color;
-      bar.title = `${t.id}: ${t.firstActivity} → ${t.lastActivity} · ${t.commitCount} commit${t.commitCount === 1 ? "" : "s"} over ${t.activity.length} day${t.activity.length === 1 ? "" : "s"}`;
-      bar.addEventListener("click", () => openDetail(t.id));
-      track.append(bar);
-      // One tick per active day.
-      for (const e of t.activity) {
-        const tk = h("div", "rm-g-tick");
-        tk.style.left = pct(parseDay(e.date).getTime());
-        track.append(tk);
+      if (t.firstActivity) {
+        const f = parseDay(t.firstActivity).getTime();
+        const l = parseDay(t.lastActivity).getTime();
+        const bar = h("div", "rm-g-bar");
+        bar.style.left = pct(f);
+        bar.style.width = Math.max(frac(l) - frac(f), 0) * 100 + "%";
+        bar.style.background = statusMeta(effStatus(t)).color;
+        bar.title = `${t.id}: ${t.firstActivity} → ${t.lastActivity} · ${t.commitCount} commit${t.commitCount === 1 ? "" : "s"} over ${t.activity.length} day${t.activity.length === 1 ? "" : "s"}`;
+        bar.addEventListener("click", () => openDetail(t.id));
+        track.append(bar);
+        // One tick per active day.
+        for (const e of t.activity) {
+          const tk = h("div", "rm-g-tick");
+          tk.style.left = pct(parseDay(e.date).getTime());
+          track.append(tk);
+        }
+      } else {
+        // No recorded activity yet — show the row with a muted marker instead of a bar.
+        const na = h("div", "rm-g-noact", "no recorded activity");
+        na.title = `${t.id}: no git/verification activity recorded`;
+        track.append(na);
       }
       row.append(track);
       body.append(row);
@@ -509,7 +524,8 @@ function renderTimeline(root, visible) {
   root.append(gantt);
 
   const legend = h("div", "rm-gantt-legend");
-  legend.append(h("span", null, `${worked.length} tickets with recorded activity · ${range.start} → ${range.end}`));
+  const withAct = worked.filter((t) => t.firstActivity).length;
+  legend.append(h("span", null, `${worked.length} tickets · ${withAct} with recorded activity · ${range.start} → ${range.end}`));
   const dotSpan = h("span");
   const dotI = h("i"); dotI.style.background = "var(--green)";
   dotSpan.append(dotI, document.createTextNode("bar = first→last evidence date · tick = an active day"));
