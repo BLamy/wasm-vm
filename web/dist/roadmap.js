@@ -404,7 +404,9 @@ function renderTimeline(root, visible) {
   // Show ALL tickets (except decomposed parents, which live as their children) — including ones
   // with no recorded activity. Activity-bearing rows sort by first date; no-activity rows sort
   // after, by id.
-  const worked = visible.filter((t) => !isDecomposed(t)).sort((a, b) => {
+  // Exclude cancelled tickets (and decomposed parents, which are status:cancelled too). An epic
+  // whose only tickets are cancelled then has zero rows, so groupByEpic drops it entirely.
+  const worked = visible.filter((t) => t.status !== "cancelled" && !isDecomposed(t)).sort((a, b) => {
     if (a.firstActivity && b.firstActivity) return a.firstActivity.localeCompare(b.firstActivity) || a.id.localeCompare(b.id);
     if (a.firstActivity) return -1;
     if (b.firstActivity) return 1;
