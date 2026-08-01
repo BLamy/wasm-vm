@@ -528,6 +528,70 @@ window.wvmDemo = {
   isGuestReady: () => guestReady,
   // Run a shell command in the guest, resolve { stdout, exit } (shared, serialized — see guestExec).
   exec: (cmd, timeoutMs) => guestExec(cmd, timeoutMs),
+  // E3.5-T05e canonical name: a fenced request/response RPC over the one console. Serialized so
+  // back-to-back callers can't interleave; the END marker embeds the guest-computed `$?`, so a
+  // command's own echo can never satisfy its own (unique-id) marker. Returns { stdout, exit }.
+  run: (cmd, timeoutMs) => guestExec(cmd, timeoutMs),
+  // E3.5-T05e: probe the BOOTED guest (not the load-time asset check) for the container runtime —
+  // true only when `/usr/local/bin/wvrun` is executable AND `/opt/containers/index.json` exists.
+  // The public busybox build has neither, so this fails closed there (no pretense of a runtime).
+  async hasContainerRuntime() {
+    if (!linuxCtl) return false;
+    try {
+      const r = await guestExec(
+        "test -x /usr/local/bin/wvrun && test -f /opt/containers/index.json && echo WVRUN_OK",
+        15000,
+      );
+      return r.exit === 0 && r.stdout.includes("WVRUN_OK");
+    } catch {
+      return false;
+    }
+  },
+  // E3.5-T05e: a long-lived STREAMING channel over the same console for `wvrun logs -f <id>` and
+  // interactive `exec -it`. Unlike run()/exec() (fenced request/response), this stays open: it taps
+  // the real console stream, splits on newlines (ANSI/CR stripped like exec), and calls onLine(line)
+  // for each. The returned handle's stop() sends Ctrl-C to end the follow/interactive command WITHOUT
+  // killing the guest shell, and send(bytes) feeds the interactive side (-it). A stream monopolizes
+  // the one console until stop() — that is the honest single-tty multiplexing this task requires.
+  stream(cmd, onLine) {
+    if (!linuxCtl) throw new Error("guest not up");
+    const dec = new TextDecoder();
+    let buf = "";
+    let stopped = false;
+    let sawEcho = false;
+    const onc = (u8) => {
+      buf += dec.decode(u8, { stream: true }).replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, "").replace(/\r/g, "");
+      let nl;
+      while ((nl = buf.indexOf("\n")) !== -1) {
+        const line = buf.slice(0, nl);
+        buf = buf.slice(nl + 1);
+        // Swallow the shell's echo of our own command line so onLine only sees guest output.
+        if (!sawEcho && line.includes(cmd)) {
+          sawEcho = true;
+          continue;
+        }
+        if (!stopped) {
+          try { onLine(line); } catch { /* a broken consumer must not break the stream */ }
+        }
+      }
+    };
+    consoleSubscribers.add(onc);
+    setTimeout(() => ui.typeBytes(new TextEncoder().encode(`${cmd}\r`)), 0);
+    return {
+      // Interactive input for `exec -it`. Deferred via setTimeout(0) because a consumer may call
+      // this from inside onLine (which runs in the console-emit loop); driving the machine
+      // synchronously from there trips the re-entrancy guard and the bytes get dropped.
+      send: (bytes) => { if (!stopped) setTimeout(() => ui.typeBytes(bytes), 0); },
+      stop: () => {
+        if (stopped) return;
+        stopped = true;
+        consoleSubscribers.delete(onc);
+        // Ctrl-C ends the follow/interactive command. Deferred for the same re-entrancy reason:
+        // stop() is typically called from within onLine (a console callback).
+        setTimeout(() => { try { ui.typeBytes(new Uint8Array([0x03])); } catch { /* best-effort */ } }, 0);
+      },
+    };
+  },
 };
 
 // E2-T22: "Fit" re-fits the rendered grid to the panel and surfaces the matching `stty` line.
