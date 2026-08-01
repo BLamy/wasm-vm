@@ -16,7 +16,7 @@ COMMUNITY_REPO="${MIRROR_BASE}/community"
 # Fixed ext4 UUID + a fixed epoch so rebuilds don't drift on random UUID / mtimes.
 FS_UUID="a11ce000-0e2f-4c18-b007-f50000000018"
 export SOURCE_DATE_EPOCH=1731542400 # 2024-11-14, matches the kernel banner date
-IMG_SIZE=512M
+IMG_SIZE="${IMG_SIZE:-512M}"  # override for larger baked-bundle sets (E3.5-T05d glibc images)
 # The riscv64 root package set: alpine-base pulls openrc+busybox+musl+baselayout; busybox-suid
 # gives setuid login/passwd; the rest make it feel like a real system.
 # E3.5-T02: util-linux (real unshare/nsenter/setpriv/pivot_root), iproute2 (ip), e2fsprogs
