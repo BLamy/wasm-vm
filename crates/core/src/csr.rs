@@ -772,6 +772,15 @@ impl Csrs {
             .find(|(a, _)| *a == addr)
             .map_or(0, |(_, v)| *v)
     }
+
+    /// E1-T29 diagnostic: current (mcounteren, scounteren, mode) for the illegal-trap logger.
+    pub(crate) fn counteren_dbg(&self) -> (u64, u64, Priv) {
+        (
+            self.warl_get(MCOUNTEREN),
+            self.warl_get(SCOUNTEREN),
+            self.mode,
+        )
+    }
     /// Write the flat WARL store for `addr`.
     fn warl_set(&mut self, addr: u16, v: u64) {
         match self.warl.iter_mut().find(|(a, _)| *a == addr) {

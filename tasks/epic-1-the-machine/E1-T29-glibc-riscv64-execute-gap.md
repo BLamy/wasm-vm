@@ -3,7 +3,7 @@ id: E1-T29
 epic: 1
 title: "glibc riscv64 binaries SIGILL in-guest — execute-path gap (not a decoder gap)"
 priority: 229
-status: pending
+status: verified
 depends_on: [E1-T28]
 estimate: M
 risk: medium
@@ -51,4 +51,46 @@ If the cause is FP-state, add a unit test that executes an FP op with `mstatus.F
 the trap+re-enable path matches the spec (Priv §3.1.6 FS field).
 
 ## Verification log
-_(none yet — investigation recorded in Context; capture + fix pending)_
+
+### 2026-08-01 — root cause captured, fixed, verified (it was userspace `rdtime`, NOT FP state)
+
+**The Context hypothesis (FP-state gate) was WRONG.** Captured the real fault and fixed it.
+
+**Method — fast native repro (no 40-min Alpine boot).** Built real riscv64 binaries and booted each
+as `/init` in a ~90s busybox initramfs via the native CLI (`wasm-vm boot --initrd …`), with a new
+illegal-instruction trap logger (`RUST_LOG="wvm::trap=info"`):
+- **static glibc** hello (dockcross `-static`) → prints `HELLO_GLIBC_42`, exit 0. **Refutes FP-state**
+  (a static glibc binary uses the same F/D instructions + libc init, yet runs clean).
+- **Debian trixie `/bin/true`** (dynamic glibc PIE) → exit 0, no trap.
+- **Docker Hub `busybox:latest`** (dynamic glibc) → **SIGILL captured**:
+  `illegal-instruction epc=0x…8844 insn=0xc01027f3 mode=U mcounteren=0x7 scounteren=0x0`, and the
+  guest kernel reports `init[1]: unhandled signal 4 … do_trap_insn_illegal` → panic exitcode 0x04.
+
+**Root cause.** `0xc01027f3` decodes to `csrrs x15, time, x0` = **`rdtime`**, a U-mode read of the
+`time` CSR (0xC01). At reset we grant `mcounteren=0x7` but left `scounteren=0` — so the (spec-correct,
+§3.1.10/§4.1.5) counter gate rejects U-mode `rdtime` (U needs mcounteren.TM **and** scounteren.TM).
+This kernel neither sets `scounteren.TM` nor emulates the read, and glibc userland executes a raw
+`rdtime`, so it SIGILLs. musl (Alpine) never does this — hence "musl works, glibc doesn't."
+
+**Fix** (`crates/core/src/lib.rs`, `boot_supervisor`): grant `scounteren=0x7` (CY/TM/IR) at reset,
+mirroring the existing `mcounteren` firmware grant. The spec gate is unchanged — the kernel may still
+restrict userspace by writing scounteren. No instruction semantics change.
+
+**Acceptance criteria:**
+- [x] Exact faulting (PC, insn, cause) captured at runtime — trap-path logger in `hart::take_trap`
+      (+ `csr::counteren_dbg`), recorded above (`insn=0xc01027f3`, IllegalInstruction, U-mode).
+- [x] Root cause named + fixed with spec citation (Priv §3.1.10/§4.1.5 counter-enable gating); no
+      regression: **RISCOF differential 0 fail (`RISCOF_RC=0`)**, core timer/counter suite 0 fail.
+- [x] A stock Docker Hub glibc riscv64 image runs in-guest to real output — `busybox:latest`'s glibc
+      `sh` runs `/init` (`exit 42`) to a clean **`exitcode=0x00002a00`** (was SIGILL exitcode 0x04);
+      static glibc prints `HELLO_GLIBC_42`.
+- [x] Regression test (`crates/core/tests/sbi_timer_fuzz.rs::umode_rdtime_works_after_boot_supervisor_e1t29`):
+      asserts U-mode `rdtime` works after reset **and** still traps when scounteren.TM is cleared
+      (gate intact).
+
+**Adversarial verification.** Reverting the fix (scounteren=0) reproduces the SIGILL; with it,
+busybox glibc runs. No regression proven: RISCOF differential 0-fail (396 Passed, 0 Failed);
+`sbi_timer_fuzz` (6) + `zicntr` (10) pass; the gate still traps U-mode rdtime once scounteren.TM is
+cleared (unit-tested), so the spec behavior is preserved — only the reset default changed.
+
+**All acceptance criteria met with recorded evidence → status flipped to `verified`.**

@@ -766,6 +766,24 @@ impl Hart {
     /// (medeleg delegation to S-mode lands in E1-T11; until then every trap is taken in M.)
     pub fn take_trap(&mut self, trap: Trap, epc: u64) {
         let cause = trap.cause as u64;
+        // E1-T29 diagnostic: surface every illegal-instruction trap so a boot can pinpoint the
+        // decoded-but-execute-REJECTED op that SIGILLs glibc userland (musl runs, glibc doesn't).
+        // `tval` carries the raw faulting instruction for IllegalInstruction (Priv §3.1.16), so
+        // epc + insn together name the exact PC and opcode. Off by default (log-facade gated on a
+        // dedicated target); surface with `RUST_LOG="wvm::trap=info"`. Rare in a healthy boot.
+        if matches!(trap.cause, Exception::IllegalInstruction) {
+            let (mce, sce, mode) = self.csr.counteren_dbg();
+            log::log!(
+                target: "wvm::trap",
+                log::Level::Info,
+                "illegal-instruction epc={:#018x} insn={:#010x} mode={:?} mcounteren={:#x} scounteren={:#x}",
+                epc,
+                trap.tval as u32,
+                mode,
+                mce,
+                sce
+            );
+        }
         // E1-T11: an exception delegated by medeleg (and taken below M) enters S-mode; else M.
         if self.csr.delegates_to_s(cause, false) {
             self.csr.deliver_trap_s(epc, cause, trap.tval);

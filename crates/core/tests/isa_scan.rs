@@ -45,7 +45,11 @@ fn scan(path: &str) {
             match decode(w) {
                 Ok(_) => ok32 += 1,
                 Err(_) => {
-                    let k = ((w & 0x7f) as u8, (w >> 12) as u8 & 0b111, (w >> 25) as u8 & 0x7f);
+                    let k = (
+                        (w & 0x7f) as u8,
+                        (w >> 12) as u8 & 0b111,
+                        (w >> 25) as u8 & 0x7f,
+                    );
                     let e = bad32.entry(k).or_insert((0, w));
                     e.0 += 1;
                 }
@@ -54,15 +58,23 @@ fn scan(path: &str) {
         }
     }
     println!("\n==== {path} ====");
-    println!("16-bit: {ok16}/{n16} decoded, {} undecodable kinds", badc.len());
-    println!("32-bit: {ok32}/{n32} decoded, {} undecodable kinds", bad32.len());
+    println!(
+        "16-bit: {ok16}/{n16} decoded, {} undecodable kinds",
+        badc.len()
+    );
+    println!(
+        "32-bit: {ok32}/{n32} decoded, {} undecodable kinds",
+        bad32.len()
+    );
     let mut v32: Vec<_> = bad32.iter().collect();
-    v32.sort_by(|a, b| b.1 .0.cmp(&a.1 .0));
+    v32.sort_by(|a, b| b.1.0.cmp(&a.1.0));
     for ((op, f3, f7), (cnt, sample)) in v32.iter().take(12) {
-        println!("  32b UNDECODED x{cnt:<6} opcode=0b{op:07b} funct3={f3} funct7=0b{f7:07b} sample=0x{sample:08x}");
+        println!(
+            "  32b UNDECODED x{cnt:<6} opcode=0b{op:07b} funct3={f3} funct7=0b{f7:07b} sample=0x{sample:08x}"
+        );
     }
     let mut vc: Vec<_> = badc.iter().collect();
-    vc.sort_by(|a, b| b.1 .0.cmp(&a.1 .0));
+    vc.sort_by(|a, b| b.1.0.cmp(&a.1.0));
     for ((op, f3), (cnt, sample)) in vc.iter().take(8) {
         println!("  16b UNDECODED x{cnt:<6} op={op:02b} funct3={f3} sample=0x{sample:04x}");
     }
