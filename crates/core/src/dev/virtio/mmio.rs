@@ -179,10 +179,8 @@ impl VirtioMmio {
     /// E3-T12c1: serialize the transport's behavioral lifecycle state — device status, feature
     /// negotiation, queue selector, per-queue config, interrupt status, config generation, and the
     /// kick counters — to a snapshot payload (fixed-layout little-endian). The plugged device (`dev`)
-    /// and its ring position snapshot separately.
-    // Consumed by the Machine-level VIRTIO_BLK/NET `ComponentSnapshot` in the next E3-T12c1 increment
-    // (transport + device ring-index composition); unit-tested standalone now.
-    #[allow(dead_code)]
+    /// and its ring position snapshot separately. Composed by `Machine::save_resume` into the
+    /// VIRTIO_BLK section (transport + device ring indices).
     pub(crate) fn snapshot_transport(&self, out: &mut alloc::vec::Vec<u8>) {
         out.extend_from_slice(&self.status.to_le_bytes());
         out.extend_from_slice(&self.dev_feat_sel.to_le_bytes());
@@ -214,7 +212,6 @@ impl VirtioMmio {
     /// E3-T12c1: restore transport state from a [`crate::resume::Reader`]. ALL-OR-NOTHING — parses the
     /// whole payload into locals first, committing to `self` only if every field reads cleanly, so a
     /// malformed payload leaves the transport untouched.
-    #[allow(dead_code)] // wired into the Machine VIRTIO section in the next E3-T12c1 increment
     pub(crate) fn restore_transport(
         &mut self,
         r: &mut crate::resume::Reader,

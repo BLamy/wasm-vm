@@ -56,17 +56,17 @@ fn sparse_codec_round_trips_and_bounds_a_hostile_run_on_wasm32() {
 #[wasm_bindgen_test]
 fn reserved_section_is_refused_as_unsupported_on_wasm32() {
     // CPU landed in E3-T12b; the virtio sections are still reserved-but-unimplemented.
-    assert!(!is_supported_section(section::VIRTIO_BLK));
+    assert!(!is_supported_section(section::VIRTIO_NET));
     let mut w = SnapshotWriter::new(&[0xC0; 32], &[0xBA; 32], 1);
     w.section(section::RAM, b"ok");
-    w.section(section::VIRTIO_BLK, b"reserved");
+    w.section(section::VIRTIO_NET, b"reserved");
     let blob = w.finish();
     let (_, reader) = SectionReader::new(&blob).unwrap();
     let results: Vec<_> = reader.collect();
     assert_eq!(results[0].as_ref().unwrap().tag, section::RAM);
     assert_eq!(
         results[1],
-        Err(SnapshotError::UnsupportedSection { tag: section::VIRTIO_BLK })
+        Err(SnapshotError::UnsupportedSection { tag: section::VIRTIO_NET })
     );
 }
 

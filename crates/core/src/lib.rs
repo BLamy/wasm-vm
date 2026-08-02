@@ -772,6 +772,29 @@ impl Machine {
         if let Some(clint) = &self.clint {
             w.section(section::CLINT, &clint.borrow().to_snapshot());
         }
+        // E3-T12c1: virtio-blk transport lifecycle + device ring position + FLUSH-forward count. The
+        // disk bytes are the overlay (bound by generation, E3-T12c3), not serialized here; the parked
+        // in-flight set is drained/refused by the quiesce (E3-T12c2) so it is empty at this boundary.
+        if let Some((state, vq)) = &self.blk {
+            if let Some((slot, _)) = self.virtio.first() {
+                let mut v = alloc::vec::Vec::new();
+                slot.borrow().snapshot_transport(&mut v);
+                match vq {
+                    Some(q) => {
+                        v.push(1);
+                        let (la, ui) = q.ring_indices();
+                        v.extend_from_slice(&la.to_le_bytes());
+                        v.extend_from_slice(&ui.to_le_bytes());
+                    }
+                    None => {
+                        v.push(0);
+                        v.extend_from_slice(&[0u8; 4]);
+                    }
+                }
+                v.extend_from_slice(&state.borrow().flush_count.to_le_bytes());
+                w.section(section::VIRTIO_BLK, &v);
+            }
+        }
         // Deterministic-clock phase (E3-T12b): the sub-`clock_div` remainder + `clock_div` itself, so
         // the next `mtime` tick lands at the identical retirement after resume (instruction-exact
         // timer placement). Machine-level state, so it has its own section.
@@ -811,6 +834,38 @@ impl Machine {
                     self.tick_accum = tick_accum;
                     self.clock_div = clock_div;
                     self.sbi_state.stimecmp = stimecmp;
+                }
+                section::VIRTIO_BLK => {
+                    let slot = self
+                        .virtio
+                        .first()
+                        .map(|(s, _)| alloc::rc::Rc::clone(s))
+                        .ok_or(crate::resume::SnapshotError::BadComponentState {
+                            tag: section::VIRTIO_BLK,
+                        })?;
+                    let mut r = crate::resume::Reader::new(sec.payload, section::VIRTIO_BLK);
+                    slot.borrow_mut().restore_transport(&mut r)?;
+                    let has_vq = r.bool()?;
+                    let la = r.u16()?;
+                    let ui = r.u16()?;
+                    let flush = r.u64()?;
+                    r.finish()?;
+                    // Rebuild the ring view from the restored transport config, then set the ring
+                    // position; only if the driver had a ready queue and a live view at save time.
+                    let qs = *slot.borrow().queue(0);
+                    if let Some((state, vq)) = &mut self.blk {
+                        *vq = if has_vq && qs.ready {
+                            dev::virtio::queue::Virtqueue::new(&qs, 256)
+                                .ok()
+                                .map(|mut q| {
+                                    q.set_ring_indices(la, ui);
+                                    q
+                                })
+                        } else {
+                            None
+                        };
+                        state.borrow_mut().flush_count = flush;
+                    }
                 }
                 other => {
                     return Err(crate::resume::SnapshotError::UnsupportedSection { tag: other });

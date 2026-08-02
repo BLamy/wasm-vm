@@ -76,6 +76,7 @@ pub fn is_supported_section(tag: u32) -> bool {
             | section::UART
             | section::RTC
             | section::CLOCK
+            | section::VIRTIO_BLK
     )
 }
 

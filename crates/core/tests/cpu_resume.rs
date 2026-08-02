@@ -154,6 +154,70 @@ fn malformed_cpu_payload_is_rejected_and_leaves_hart_unchanged() {
     assert_eq!(m.hart().to_snapshot(), good);
 }
 
+/// E3-T12c1: the VIRTIO_BLK section (transport lifecycle + device ring position + FLUSH count)
+/// round-trips at the Machine level. Drive the real virtio-blk init sequence over the bus so the
+/// transport carries non-default state (status DRIVER_OK, VERSION_1 negotiated, queue 0 ready with
+/// addresses), snapshot, restore into a fresh machine, and re-serialize — the whole blob (incl the
+/// VIRTIO_BLK section) is byte-identical.
+#[test]
+fn virtio_blk_section_round_trips_at_machine_level() {
+    use wasm_vm_core::block::MemBackend;
+    use wasm_vm_core::platform::virt::DRAM_BASE;
+    const SLOT0: u64 = 0x1000_1000;
+    let (desc, avail, used) = (
+        DRAM_BASE + 0x10_0000,
+        DRAM_BASE + 0x11_0000,
+        DRAM_BASE + 0x12_0000,
+    );
+
+    let build = || {
+        let mut m = Machine::new(RAM_BYTES);
+        m.enable_clint(10);
+        let _ = m.enable_plic();
+        let _ = m.enable_virtio_blk(Box::new(MemBackend::new(alloc_vec_zeros(4096))));
+        m
+    };
+    // The driver init sequence (mirrors crates/core/tests/virtio_blk.rs): ACK→DRIVER, negotiate
+    // VERSION_1, FEATURES_OK, program queue 0 (num + desc/driver/device addrs), QueueReady, DRIVER_OK.
+    let init: &[(u64, u32)] = &[
+        (0x70, 1),
+        (0x70, 3),
+        (0x24, 0),
+        (0x20, 0),
+        (0x24, 1),
+        (0x20, 1),
+        (0x70, 11),
+        (0x30, 0),
+        (0x38, 8),
+        (0x80, desc as u32),
+        (0x84, (desc >> 32) as u32),
+        (0x90, avail as u32),
+        (0x94, (avail >> 32) as u32),
+        (0xa0, used as u32),
+        (0xa4, (used >> 32) as u32),
+        (0x44, 1),
+        (0x70, 15),
+    ];
+
+    let mut a = build();
+    for &(off, val) in init {
+        a.bus_mut().store32(SLOT0 + off, val).unwrap();
+    }
+    let blob = a.save_resume();
+
+    let mut b = build(); // fresh, un-programmed — the transport comes entirely from the snapshot
+    b.load_resume(&blob).expect("load_resume");
+    assert_eq!(
+        b.save_resume(),
+        blob,
+        "VIRTIO_BLK section (transport + ring position + flush count) must round-trip"
+    );
+}
+
+fn alloc_vec_zeros(n: usize) -> Vec<u8> {
+    vec![0u8; n]
+}
+
 // ── AC1, timer-interrupt-placement leg ────────────────────────────────────────────────────────
 // A snapshot taken with an S-timer ARMED (deadline in the CLINT, STIE/SIE enabled in the CPU) must,
 // on restore, deliver that interrupt at the IDENTICAL instruction. This needs BOTH the CPU section
