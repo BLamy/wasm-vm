@@ -337,6 +337,15 @@ verify-E3-T24a:
 	cd web && npx playwright test tests/e3-t24a-boot-progress.spec.js --reporter=list
 	@echo "verify-E3-T24a (typed honest boot-progress): OK"
 
+.PHONY: verify-E3-T24c
+verify-E3-T24c:
+	# The versioned offline app shell against a real browser service worker + Playwright offline mode:
+	# offline load after one visit, atomic version purge (no half-old/half-new), the SW cache is
+	# separate from IndexedDB and never holds disk chunks, and cached responses keep their headers.
+	$(MAKE) web-build
+	cd web && npx playwright test tests/e3-t24c-offline-shell.spec.js --reporter=list
+	@echo "verify-E3-T24c (versioned offline app shell): OK"
+
 .PHONY: verify-E3.5-T05a
 verify-E3.5-T05a:
 	# The Docker tab's bundled-busybox Run boots the REAL guest and runs one real command, streaming

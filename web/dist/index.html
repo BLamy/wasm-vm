@@ -1181,5 +1181,17 @@
     <script type="module" src="./ide.js"></script>
     <script type="module" src="./docs-mount.js"></script>
     <script type="module" src="./main.js"></script>
+    <!-- E3-T24c: register the versioned offline app-shell service worker. Progressive enhancement —
+         the site works without it; it adds offline load + faster repeat visits. Registration failure
+         is non-fatal (logged at debug). ?nosw disables it (used by tests that must bypass caching). -->
+    <script>
+      if ("serviceWorker" in navigator && !new URLSearchParams(location.search).has("nosw")) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .catch((e) => console.debug("[sw] register failed", e));
+        });
+      }
+    </script>
   </body>
 </html>

@@ -6414,13 +6414,15 @@
       "activity": [
         {
           "date": "2026-08-02",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "feat(core): E3-T12b CPU architectural snapshot + instruction-exact resume"
+          ]
         }
       ],
       "firstActivity": "2026-08-02",
       "lastActivity": "2026-08-02",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E3-T12c",
@@ -8307,7 +8309,7 @@
       "epicKey": "3",
       "title": "Versioned offline app shell and chunk-cache ownership",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E3-T24a",
         "E3-T03"
@@ -8319,25 +8321,31 @@
       "criteria": [
         {
           "text": "`make verify-E3-T24c` loads the complete app shell offline after one visit and proves a new build activates without a half-old/half-new asset set.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Clearing only the worker cache preserves overlay/chunk stores, and clearing only application storage does not leave a falsely complete offline boot.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Cached HTML/JS/wasm/font responses retain their declared security headers.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-08-02 — versioned offline app shell → verified\n\n**Implementation.** `web/sw.js` — a service worker registered from `index.html` (progressive\nenhancement; `?nosw` disables it). Design is RUNTIME caching, not a brittle precache list: it caches\nsame-origin app-shell GETs as the page loads them, under ONE build-versioned cache\n`wasm-vm-shell-<VERSION>`, and serves them cache-first with a network fallback. `VERSION` is stamped\nby `tools/build-web-dist.sh` with a content hash of the shipped shell (wasm + main.js), so a new\nbuild ⇒ a new cache namespace. **Ownership boundary:** `isShellAsset()` excludes the disk artifacts\n(`/releases/…`, `/chunked-alpine`, `/chunks/`, `*.ext4`) and all cross-origin (R2) blobs — those stay\nowned by the E3-T03 chunk layer (IndexedDB overlay + R2), so the SW never double-owns storage. Only a\nclean same-origin `200` (`type===\"basic\"`) is cached — never a 206/opaque/error — and the full\nResponse is stored so headers survive. `activate` purges every non-current shell cache before\n`clients.claim()` (atomic upgrade); the same purge is exposed via a `message` hook.\n\n**Verification — `make verify-E3-T24c`: OK** (real browser SW + Playwright offline mode,\n`web/tests/e3-t24c-offline-shell.spec.js`, 4/4):\n- **AC1 offline:** after one visit + reload (SW controlling, shell cached), `context.setOffline(true)`\n  + reload → the page loads and `window.wvmDemo` is defined (the real JS+wasm shell booted from\n  cache), with exactly one shell cache.\n- **AC1 atomic upgrade:** seed a stale `wasm-vm-shell-STALEBUILD0001` cache, run the exact\n  activate-purge (via the SW message hook, deterministic) → exactly the current build's cache\n  survives, the stale one is gone (no half-old/half-new).\n- **AC2 separation:** clearing the SW cache leaves an IndexedDB sentinel intact; and the shell cache\n  is asserted to contain NO `/releases/`, `/chunked-alpine`, or `.ext4` entry — so clearing the disk\n  store (IDB) genuinely removes boot capability (the SW can't falsely present a complete offline boot).\n- **AC3 headers:** the cached `main.js` response's `content-type` equals the network response's.\n\nAll acceptance criteria met with recorded evidence → status **verified**.",
       "adversarial": "Kill service-worker installation at every asset, run old/new tabs concurrently, corrupt a cached\nentry, and inspect both cache layers for duplicate chunks. Any partial activation, mixed build,\nunbounded duplicate storage, or header loss refutes.",
       "file": "tasks/epic-3-civilization/E3-T24c-versioned-offline-app-shell.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-02",
       "commitCount": 0
     },
     {

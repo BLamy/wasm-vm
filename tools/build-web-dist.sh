@@ -61,6 +61,15 @@ fi
 # artifacts.json (relative ./releases/… URLs; poor-mans-ci fills web/dist/releases at deploy).
 [ -e web/artifacts.json ] && cp web/artifacts.json "$DIST/"
 
+# E3-T24c: stamp the app-shell service worker with a build version = short content hash of the shell
+# bytes that change per build (the wasm + main.js). A new build ⇒ new cache namespace ⇒ the SW's
+# `activate` atomically drops the old cache (no half-old/half-new asset set).
+if [ -e "$DIST/sw.js" ]; then
+  ver=$( { cat "$DIST"/pkg/*_bg.wasm "$DIST/main.js" 2>/dev/null; } | { shasum -a 256 2>/dev/null || sha256sum; } | cut -c1-12 )
+  sed -e "s/__SW_VERSION__/${ver}/g" "$DIST/sw.js" > "$DIST/sw.js.tmp" && mv "$DIST/sw.js.tmp" "$DIST/sw.js"
+  echo "[web-dist] stamped sw.js app-shell version=${ver}"
+fi
+
 # GitHub Pages: don't run Jekyll over the output.
 touch "$DIST/.nojekyll"
 
