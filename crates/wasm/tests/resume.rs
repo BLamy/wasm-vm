@@ -56,17 +56,17 @@ fn sparse_codec_round_trips_and_bounds_a_hostile_run_on_wasm32() {
 #[wasm_bindgen_test]
 fn reserved_section_is_refused_as_unsupported_on_wasm32() {
     // CPU landed in E3-T12b; the virtio sections are still reserved-but-unimplemented.
-    assert!(!is_supported_section(section::VIRTIO_NET));
+    assert!(!is_supported_section(section::VIRTIO_RNG));
     let mut w = SnapshotWriter::new(&[0xC0; 32], &[0xBA; 32], 1);
     w.section(section::RAM, b"ok");
-    w.section(section::VIRTIO_NET, b"reserved");
+    w.section(section::VIRTIO_RNG, b"reserved");
     let blob = w.finish();
     let (_, reader) = SectionReader::new(&blob).unwrap();
     let results: Vec<_> = reader.collect();
     assert_eq!(results[0].as_ref().unwrap().tag, section::RAM);
     assert_eq!(
         results[1],
-        Err(SnapshotError::UnsupportedSection { tag: section::VIRTIO_NET })
+        Err(SnapshotError::UnsupportedSection { tag: section::VIRTIO_RNG })
     );
 }
 
@@ -92,4 +92,28 @@ fn cpu_section_round_trips_on_wasm32() {
     assert_eq!(b.hart().regs.pc, 0x8020_1234);
     assert_eq!(b.hart().regs.read(5), 0xdead_beef_0000_0007);
     assert_eq!(b.hart().resv, Some((0x8000_0040, 8)));
+}
+
+/// E3-T12c1: the VIRTIO_BLK section round-trips on real wasm32 too (same fixed-LE codec). Enable
+/// virtio-blk, poke the transport status via one MMIO write so it is non-default, save→load into a
+/// fresh machine, and re-serialize byte-identically.
+#[wasm_bindgen_test]
+fn virtio_blk_section_round_trips_on_wasm32() {
+    use wasm_vm_core::block::MemBackend;
+    use wasm_vm_core::bus::Bus;
+    assert!(is_supported_section(section::VIRTIO_BLK));
+    let build = || {
+        let mut m = wasm_vm_core::Machine::new(1 << 16);
+        m.enable_clint(10);
+        let _ = m.enable_plic();
+        let _ = m.enable_virtio_blk(Box::new(MemBackend::new(vec![0u8; 4096])));
+        m
+    };
+    let mut a = build();
+    a.bus_mut().store32(0x1000_1000 + 0x70, 1).unwrap(); // STATUS=ACKNOWLEDGE → non-default transport
+    let blob = a.save_resume();
+
+    let mut b = build();
+    b.load_resume(&blob).unwrap();
+    assert_eq!(b.save_resume(), blob, "VIRTIO_BLK section round-trips on wasm32");
 }

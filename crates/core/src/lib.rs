@@ -793,6 +793,32 @@ impl Machine {
             v.extend_from_slice(&state.borrow().flush_count.to_le_bytes());
             w.section(section::VIRTIO_BLK, &v);
         }
+        // E3-T12c1: virtio-net transport + BOTH ring positions (receiveq/transmitq) + counters. The
+        // backend's live connections cannot resume (peers/TCP state are gone — the guest sees drops,
+        // E3-T25); but the transport + ring state must match the guest's driver so it isn't wedged.
+        if let (Some((state, rx_vq, tx_vq)), Some((slot, _))) = (&self.net, self.virtio.get(1)) {
+            let mut v = alloc::vec::Vec::new();
+            slot.borrow().snapshot_transport(&mut v);
+            for q in [rx_vq, tx_vq] {
+                match q {
+                    Some(vq) => {
+                        v.push(1);
+                        let (la, ui) = vq.ring_indices();
+                        v.extend_from_slice(&la.to_le_bytes());
+                        v.extend_from_slice(&ui.to_le_bytes());
+                    }
+                    None => {
+                        v.push(0);
+                        v.extend_from_slice(&[0u8; 4]);
+                    }
+                }
+            }
+            let st = state.borrow();
+            v.extend_from_slice(&st.rx_dropped.to_le_bytes());
+            v.extend_from_slice(&st.tx_count.to_le_bytes());
+            v.extend_from_slice(&st.rx_count.to_le_bytes());
+            w.section(section::VIRTIO_NET, &v);
+        }
         // Deterministic-clock phase (E3-T12b): the sub-`clock_div` remainder + `clock_div` itself, so
         // the next `mtime` tick lands at the identical retirement after resume (instruction-exact
         // timer placement). Machine-level state, so it has its own section.
@@ -863,6 +889,55 @@ impl Machine {
                             None
                         };
                         state.borrow_mut().flush_count = flush;
+                    }
+                }
+                section::VIRTIO_NET => {
+                    let slot = self
+                        .virtio
+                        .get(1)
+                        .map(|(s, _)| alloc::rc::Rc::clone(s))
+                        .ok_or(crate::resume::SnapshotError::BadComponentState {
+                            tag: section::VIRTIO_NET,
+                        })?;
+                    let mut r = crate::resume::Reader::new(sec.payload, section::VIRTIO_NET);
+                    slot.borrow_mut().restore_transport(&mut r)?;
+                    let rx_has = r.bool()?;
+                    let rx_la = r.u16()?;
+                    let rx_ui = r.u16()?;
+                    let tx_has = r.bool()?;
+                    let tx_la = r.u16()?;
+                    let tx_ui = r.u16()?;
+                    let rx_dropped = r.u64()?;
+                    let tx_count = r.u64()?;
+                    let rx_count = r.u64()?;
+                    r.finish()?;
+                    let qs0 = *slot.borrow().queue(0);
+                    let qs1 = *slot.borrow().queue(1);
+                    if let Some((state, rx_vq, tx_vq)) = &mut self.net {
+                        *rx_vq = if rx_has && qs0.ready {
+                            dev::virtio::queue::Virtqueue::new(&qs0, 256)
+                                .ok()
+                                .map(|mut q| {
+                                    q.set_ring_indices(rx_la, rx_ui);
+                                    q
+                                })
+                        } else {
+                            None
+                        };
+                        *tx_vq = if tx_has && qs1.ready {
+                            dev::virtio::queue::Virtqueue::new(&qs1, 256)
+                                .ok()
+                                .map(|mut q| {
+                                    q.set_ring_indices(tx_la, tx_ui);
+                                    q
+                                })
+                        } else {
+                            None
+                        };
+                        let mut st = state.borrow_mut();
+                        st.rx_dropped = rx_dropped;
+                        st.tx_count = tx_count;
+                        st.rx_count = rx_count;
                     }
                 }
                 other => {

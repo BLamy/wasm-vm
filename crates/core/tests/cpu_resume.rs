@@ -154,14 +154,15 @@ fn malformed_cpu_payload_is_rejected_and_leaves_hart_unchanged() {
     assert_eq!(m.hart().to_snapshot(), good);
 }
 
-/// E3-T12c1: the VIRTIO_BLK section (transport lifecycle + device ring position + FLUSH count)
-/// round-trips at the Machine level. Drive the real virtio-blk init sequence over the bus so the
-/// transport carries non-default state (status DRIVER_OK, VERSION_1 negotiated, queue 0 ready with
-/// addresses), snapshot, restore into a fresh machine, and re-serialize — the whole blob (incl the
-/// VIRTIO_BLK section) is byte-identical.
+/// E3-T12c1: the VIRTIO_BLK + VIRTIO_NET sections (transport lifecycle + device ring position(s) +
+/// counters) round-trip at the Machine level. Drive the real virtio-blk init sequence over the bus so
+/// the blk transport carries non-default state (status DRIVER_OK, VERSION_1 negotiated, queue 0 ready
+/// with addresses); net is enabled in slot 1 so its section is exercised too. Snapshot, restore into a
+/// fresh machine, and re-serialize — the whole blob (incl both virtio sections) is byte-identical.
 #[test]
-fn virtio_blk_section_round_trips_at_machine_level() {
+fn virtio_blk_and_net_sections_round_trip_at_machine_level() {
     use wasm_vm_core::block::MemBackend;
+    use wasm_vm_core::dev::virtio::net::LoopbackBackend;
     use wasm_vm_core::platform::virt::DRAM_BASE;
     const SLOT0: u64 = 0x1000_1000;
     let (desc, avail, used) = (
@@ -175,6 +176,9 @@ fn virtio_blk_section_round_trips_at_machine_level() {
         m.enable_clint(10);
         let _ = m.enable_plic();
         let _ = m.enable_virtio_blk(Box::new(MemBackend::new(alloc_vec_zeros(4096))));
+        // Net in slot 1 too — so save/load exercises the VIRTIO_NET section (two vqs + counters)
+        // alongside blk; the non-default transport/ring codec is proven by the blk init drive below.
+        let _ = m.enable_virtio_net(Box::new(LoopbackBackend::new()));
         m
     };
     // The driver init sequence (mirrors crates/core/tests/virtio_blk.rs): ACK→DRIVER, negotiate

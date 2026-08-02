@@ -337,6 +337,21 @@ verify-E3-T24a:
 	cd web && npx playwright test tests/e3-t24a-boot-progress.spec.js --reporter=list
 	@echo "verify-E3-T24a (typed honest boot-progress): OK"
 
+.PHONY: verify-E3-T12c1
+verify-E3-T12c1:
+	# Virtio transport + device (blk & net) snapshot visitors.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib -- -D warnings
+	cargo clippy -p wasm-vm-core --test cpu_resume -- -D warnings
+	# Transport round-trip + malformed-rejected (mmio unit test); the section framework now marks
+	# VIRTIO_BLK/NET supported + VIRTIO_RNG reserved (resume_tests).
+	cargo test -p wasm-vm-core --lib -- transport_snapshot resume
+	# Machine-level VIRTIO_BLK + VIRTIO_NET section round-trip (drives the real init sequence).
+	cargo test -p wasm-vm-core --test cpu_resume virtio
+	# Same fixed-LE virtio payload round-trips on real wasm32.
+	$(MAKE) _v-wasm
+	@echo "verify-E3-T12c1 (virtio transport+device snapshot visitors): OK"
+
 .PHONY: verify-E3-T24c
 verify-E3-T24c:
 	# The versioned offline app shell against a real browser service worker + Playwright offline mode:

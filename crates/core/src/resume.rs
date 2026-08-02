@@ -41,6 +41,9 @@ pub mod section {
     /// Machine-level state — kept OFF the CLINT's RefCell so the per-instruction tick stays a plain
     /// field write — but it must be snapshotted for instruction-exact timer placement on resume.
     pub const CLOCK: u32 = 9;
+    /// virtio-rng slot — a real device the machine can enable, whose snapshot visitor is a later
+    /// increment; reserved-but-unsupported for now (its ring state matters far less than blk/net).
+    pub const VIRTIO_RNG: u32 = 10;
 }
 
 /// Is `tag` a section number this format family reserves (the whole reserved universe, whether or
@@ -57,6 +60,7 @@ pub fn is_known_section(tag: u32) -> bool {
             | section::VIRTIO_NET
             | section::RTC
             | section::CLOCK
+            | section::VIRTIO_RNG
     )
 }
 
@@ -77,6 +81,7 @@ pub fn is_supported_section(tag: u32) -> bool {
             | section::RTC
             | section::CLOCK
             | section::VIRTIO_BLK
+            | section::VIRTIO_NET
     )
 }
 
