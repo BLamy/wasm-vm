@@ -368,6 +368,23 @@ verify-E3-T12c2:
 	$(MAKE) _v-wasm
 	@echo "verify-E3-T12c2 (bounded virtqueue quiesce before snapshot): OK"
 
+.PHONY: verify-E3-T12c3
+verify-E3-T12c3:
+	# Overlay-generation snapshot coherence: no stale/foreign restore, refused before any mutation.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib -- -D warnings
+	cargo clippy -p wasm-vm-core --test snapshot_coherence -- -D warnings
+	# AC1 (changed base hash OR bumped generation → typed refusal BEFORE any CPU/RAM mutation; target
+	# byte-identical), AC2 (matching base+generation resumes), AC3 (same snapshot refused once the
+	# overlay advanced), plus the monotonic-generation invariant.
+	cargo test -p wasm-vm-core --test snapshot_coherence
+	# The coherence guard must not regress the existing snapshot round-trips (CPU/blk/net sections).
+	cargo test -p wasm-vm-core --test cpu_resume
+	# Header parse + validate_for guards still hold (resume_tests) on the fixed-LE codec, incl. wasm32.
+	cargo test -p wasm-vm-core --lib resume
+	$(MAKE) _v-wasm
+	@echo "verify-E3-T12c3 (overlay-generation snapshot coherence): OK"
+
 .PHONY: verify-E3-T24c
 verify-E3-T24c:
 	# The versioned offline app shell against a real browser service worker + Playwright offline mode:

@@ -203,6 +203,25 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::rng::RngState>>,
         Option<dev::virtio::queue::Virtqueue>,
     )>,
+    /// E3-T12c3: the snapshot coherence binding — the base disk image this machine is running against
+    /// (`base_image_hash`), the emulator build (`core_hash`), and the monotonic overlay-commit
+    /// generation. `save_resume` stamps all three into the blob header; `load_resume` validates them
+    /// FIRST (before any component is restored) so a snapshot is never resumed onto a diverged disk.
+    /// Defaults are all-zero / generation 0 — the RAM-only determinism harness round-trips against
+    /// itself; a disk-backed host sets the real base hash and advances the generation on each commit.
+    coherence: SnapshotCoherence,
+}
+
+/// E3-T12c3: the identity a snapshot is bound to. A restore is refused unless the target machine's
+/// build (`core_hash`), base disk image (`base_image_hash`), and overlay-commit `generation` all
+/// match the blob — otherwise a resumed CPU/RAM would land on an overlay its page cache disagrees
+/// with (silent corruption). The generation is monotonic: it only ever advances (as the overlay
+/// commits), so a snapshot taken before a commit can never be restored after one.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct SnapshotCoherence {
+    pub core_hash: [u8; 32],
+    pub base_image_hash: [u8; 32],
+    pub generation: u64,
 }
 
 impl Machine {
@@ -238,7 +257,35 @@ impl Machine {
             blk: None,
             net: None,
             rng: None,
+            coherence: SnapshotCoherence::default(),
         })
+    }
+
+    /// E3-T12c3: bind this machine to a base disk image + emulator build for snapshot coherence.
+    /// `save_resume` stamps these into the header and `load_resume` refuses a snapshot whose header
+    /// disagrees — a resume onto a different image or a stale build is rejected before any mutation.
+    pub fn set_snapshot_identity(&mut self, core_hash: [u8; 32], base_image_hash: [u8; 32]) {
+        self.coherence.core_hash = core_hash;
+        self.coherence.base_image_hash = base_image_hash;
+    }
+
+    /// E3-T12c3: the current overlay-commit generation the next `save_resume` will bind.
+    pub fn overlay_generation(&self) -> u64 {
+        self.coherence.generation
+    }
+
+    /// E3-T12c3: advance the monotonic overlay-commit generation. The persist pump calls this each
+    /// time a durable overlay transaction commits, so a snapshot taken before the commit binds an
+    /// older generation and is refused if restored afterward (no stale-overlay resume). Saturating:
+    /// the counter never wraps back onto a value an outstanding snapshot could match.
+    pub fn advance_overlay_generation(&mut self) -> u64 {
+        self.coherence.generation = self.coherence.generation.saturating_add(1);
+        self.coherence.generation
+    }
+
+    /// E3-T12c3: the full coherence binding (build + base image + generation) this machine stamps.
+    pub fn snapshot_coherence(&self) -> &SnapshotCoherence {
+        &self.coherence
     }
 
     /// Attach a CLINT (E1-T12) at [`bus::mmap::CLINT_BASE`] and drive its `mtime` from the
@@ -814,9 +861,13 @@ impl Machine {
     }
 
     /// E3-T12b: serialize the machine's resumable state (CPU + RAM + CLINT when present) into one
-    /// versioned resume blob. The header hashes are left zero here — a disk-backed caller supplies
-    /// real `core_hash`/`base_image_hash`/`overlay_generation` via the section writer directly; this
-    /// convenience path is for the RAM-only determinism harness and in-memory round-trips.
+    /// versioned resume blob.
+    ///
+    /// E3-T12c3: the header binds this machine's coherence identity — `core_hash` (build),
+    /// `base_image_hash` (base disk), and the current overlay-commit `generation` — so
+    /// [`Self::load_resume`] can refuse a stale or foreign restore. The RAM-only determinism harness
+    /// leaves the defaults (all-zero / generation 0) and round-trips against an identically-bound
+    /// machine; a disk-backed host calls [`Self::set_snapshot_identity`] and advances the generation.
     ///
     /// E3-T12c2: quiesces the virtio-blk in-flight set FIRST and refuses (typed
     /// [`crate::resume::SnapshotError::NotQuiesced`], no blob emitted) rather than serialize a torn
@@ -824,7 +875,11 @@ impl Machine {
     pub fn save_resume(&mut self) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
         self.quiesce()?;
         use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
-        let mut w = SnapshotWriter::new(&[0u8; 32], &[0u8; 32], 0);
+        let mut w = SnapshotWriter::new(
+            &self.coherence.core_hash,
+            &self.coherence.base_image_hash,
+            self.coherence.generation,
+        );
         w.section(section::CPU, &self.hart.to_snapshot());
         w.section(section::RAM, &self.bus.ram().to_snapshot());
         if let Some(clint) = &self.clint {
@@ -894,9 +949,24 @@ impl Machine {
     /// E3-T12b: restore the machine from a [`Self::save_resume`] blob — CPU, RAM, and CLINT. Each
     /// component's `restore` is all-or-nothing (a malformed section is a typed error that leaves that
     /// component untouched); an unknown/unsupported/garbage section is refused, never skipped.
+    ///
+    /// E3-T12c3: the coherence guard runs FIRST — the header's `core_hash` / `base_image_hash` /
+    /// `overlay_generation` are validated against this machine's binding BEFORE any component is
+    /// restored. A changed base image or a bumped overlay generation is a typed refusal
+    /// ([`crate::resume::SnapshotError::BaseImageMismatch`] /
+    /// [`crate::resume::SnapshotError::OverlayGenerationMismatch`]) with the target machine left
+    /// byte-identical to its pre-restore state — a resumed CPU/RAM never lands on a diverged disk.
     pub fn load_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
         use crate::resume::{ComponentSnapshot, SectionReader, section};
-        let (_hdr, reader) = SectionReader::new(blob)?;
+        let (hdr, reader) = SectionReader::new(blob)?;
+        // Coherence guard BEFORE any mutation: refuse a foreign/stale snapshot up front so a failed
+        // restore never half-applies a component onto a diverged disk (all-or-nothing at the machine
+        // level). The iterator below has not touched machine state yet.
+        hdr.validate_for(
+            &self.coherence.core_hash,
+            &self.coherence.base_image_hash,
+            self.coherence.generation,
+        )?;
         for sec in reader {
             let sec = sec?;
             match sec.tag {

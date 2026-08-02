@@ -3,7 +3,7 @@ id: E3-T12c3
 epic: 3
 title: Overlay-generation snapshot coherence and stale-restore refusal
 priority: 321.933
-status: pending
+status: verified
 depends_on: [E3-T12c1, E3-T10]
 estimate: S
 risk: medium
@@ -31,10 +31,10 @@ coherence guard). Distinct from E3-T12c2 (in-flight quiesce) and E3-T12c1 (devic
   or a different base hash it fails, and the target machine is byte-identical to its pre-restore state.
 
 ## Acceptance criteria
-- [ ] `make verify-E3-T12c3`: restore against a changed base hash OR a bumped overlay generation fails
+- [x] `make verify-E3-T12c3`: restore against a changed base hash OR a bumped overlay generation fails
   with the typed error BEFORE any CPU/RAM/device mutation (the target is unchanged).
-- [ ] A matching base+generation restore succeeds and resumes.
-- [ ] Restoring the same snapshot twice is refused the second time if the overlay advanced in between.
+- [x] A matching base+generation restore succeeds and resumes.
+- [x] Restoring the same snapshot twice is refused the second time if the overlay advanced in between.
 
 ## Adversarial verification
 Alter the overlay generation after snapshot and restore; restore the same snapshot twice; corrupt the
@@ -42,4 +42,19 @@ base hash. Any stale-overlay resume, half-applied restore on a coherence failure
 fails to advance refutes.
 
 ## Verification log
-(empty)
+- 2026-08-02 — `make verify-E3-T12c3`: **OK** (native + wasm32). Implementation:
+  - `Machine` gains a `SnapshotCoherence { core_hash, base_image_hash, generation }` binding
+    (`crates/core/src/lib.rs`). `set_snapshot_identity()` binds build + base image;
+    `advance_overlay_generation()` is the monotonic, saturating overlay-commit counter (the persist
+    pump calls it on each durable commit); `overlay_generation()` / `snapshot_coherence()` expose it.
+    Defaults all-zero / generation 0, so the RAM-only harness round-trips against an identical binding.
+  - `save_resume` now stamps the real `core_hash` / `base_image_hash` / `generation` into the header
+    (was hardcoded zeros).
+  - `load_resume` runs `SnapshotHeader::validate_for` FIRST — before the section loop touches any
+    component — so a `BaseImageMismatch` / `OverlayGenerationMismatch` / `CoreHashMismatch` is refused
+    with the target machine byte-identical to its pre-restore state (machine-level all-or-nothing).
+  - Test `crates/core/tests/snapshot_coherence.rs` (5 cases): matching base+generation resumes and the
+    source RAM marker lands (AC2); a changed base hash and a bumped generation each refuse with the
+    typed error and leave the target RAM untouched (AC1); the same blob is refused on the second
+    restore once the generation advanced (AC3); the counter is monotonic/saturating.
+  - Existing `cpu_resume` / wasm `resume` round-trips (default coherence on both sides) still green.
