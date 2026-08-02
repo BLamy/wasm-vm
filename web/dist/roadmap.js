@@ -193,7 +193,7 @@ const state = {
   data: null,
   epics: [],
   filters: { search: "", epic: "", status: "" },
-  view: "kanban", // "kanban" | "timeline"
+  view: "timeline", // "kanban" | "timeline"
 };
 
 function epicTitle(key) {
