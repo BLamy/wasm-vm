@@ -6430,12 +6430,17 @@
       "epicKey": "3",
       "title": "Virtio quiesce and overlay-generation snapshot coherence",
       "priority": null,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E3-T12b",
         "E3-T08"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E3-T12c1",
+        "E3-T12c2",
+        "E3-T12c3",
+        "E3-T12c4"
+      ],
       "estimate": "S",
       "capstone": false,
       "goal": "Create a coherent snapshot boundary across virtio devices, guest page cache, and persistent overlay\ngeneration by draining or refusing in-flight work before serialization.",
@@ -6458,6 +6463,162 @@
       "verificationLog": "(empty)",
       "adversarial": "Snapshot during every virtqueue transition and a guest copy, alter the overlay after snapshot, and\nrestore the same snapshot twice. Any disk/page-cache divergence, duplicated completion, stale-overlay\nresume, or unbounded quiesce wait refutes.",
       "file": "tasks/epic-3-civilization/E3-T12c-device-quiesce-overlay-coherence.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E3-T12c1",
+      "epic": "3",
+      "epicKey": "3",
+      "title": "Virtio transport + device snapshot visitors",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3-T12b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Give the production machine's virtio stack a complete, versioned snapshot section: the MMIO transport\nlifecycle state and each device's queue ring position serialize and restore byte-identically, so a\nresumed machine's virtio driver ⇄ device handshake continues exactly where it left off.",
+      "criteria": [
+        {
+          "text": "`make verify-E3-T12c1`: a virtio device round-trips through the container format byte-identically (transport features/status/queue-config + ring indices), native and wasm32.",
+          "checked": false
+        },
+        {
+          "text": "A truncated / over-long / bad-discriminant payload is a typed `BadComponentState`, device unchanged.",
+          "checked": false
+        },
+        {
+          "text": "After save→load into a dirty machine, the device re-serializes byte-identically to the snapshot (every field overwritten exactly once).",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Delete/reorder each serialized field, flip the ready bit, and restore into a device with a different\nnegotiated feature set. Any surviving mutant, partial mutation on error, or host-width-dependent\nencoding refutes.",
+      "file": "tasks/epic-3-civilization/E3-T12c1-virtio-snapshot-visitors.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E3-T12c2",
+      "epic": "3",
+      "epicKey": "3",
+      "title": "Bounded virtqueue quiesce before snapshot",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3-T12c1",
+        "E3-T08"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Guarantee a coherent snapshot boundary: no in-flight virtqueue descriptor, parked async request, or\nunacknowledged durable write is left half-processed across a snapshot. The machine either reaches an\nempty in-flight set or refuses the snapshot with a typed error — never serializes a torn state.",
+      "criteria": [
+        {
+          "text": "`make verify-E3-T12c2`: with a chain parked on a resolvable event, quiesce drains to empty and the snapshot proceeds; with a chain parked on an unresolvable event, quiesce refuses within a bounded pass count (no unbounded wait) and the snapshot is refused, not torn.",
+          "checked": false
+        },
+        {
+          "text": "A completed request is neither replayed nor lost across quiesce→snapshot→restore (the used-ring index is exact).",
+          "checked": false
+        },
+        {
+          "text": "`save_resume` on a non-quiesced machine returns the typed refusal and does not emit a blob.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Snapshot at every virtqueue transition (mid-pop, post-exec pre-publish, parked). Force a parked chain\non a chunk that never arrives and assert the quiesce is bounded and refuses. Any torn boundary,\nduplicated completion, lost request, or unbounded quiesce refutes.",
+      "file": "tasks/epic-3-civilization/E3-T12c2-virtqueue-quiesce.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E3-T12c3",
+      "epic": "3",
+      "epicKey": "3",
+      "title": "Overlay-generation snapshot coherence and stale-restore refusal",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3-T12c1",
+        "E3-T10"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Bind every snapshot to the exact base image and overlay generation it was taken against, and refuse —\nbefore mutating any machine state — to restore a snapshot onto a diverged disk. A resumed CPU/RAM must\nnever land on an overlay the guest's page cache disagrees with (silent corruption).",
+      "criteria": [
+        {
+          "text": "`make verify-E3-T12c3`: restore against a changed base hash OR a bumped overlay generation fails with the typed error BEFORE any CPU/RAM/device mutation (the target is unchanged).",
+          "checked": false
+        },
+        {
+          "text": "A matching base+generation restore succeeds and resumes.",
+          "checked": false
+        },
+        {
+          "text": "Restoring the same snapshot twice is refused the second time if the overlay advanced in between.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Alter the overlay generation after snapshot and restore; restore the same snapshot twice; corrupt the\nbase hash. Any stale-overlay resume, half-applied restore on a coherence failure, or generation that\nfails to advance refutes.",
+      "file": "tasks/epic-3-civilization/E3-T12c3-overlay-generation-coherence.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E3-T12c4",
+      "epic": "3",
+      "epicKey": "3",
+      "title": "Boot-level snapshot disk coherence (sync/snapshot/restore → fsck clean)",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3-T12c1",
+        "E3-T12c2",
+        "E3-T12c3"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "The end-to-end integration proof: a real Alpine boot that `sync`s, snapshots, restores, continues, and\npowers off leaves the ext4 root `fsck.ext4 -n` clean, with no replayed or lost completed request —\ndemonstrating the c1 (device serialization) + c2 (quiesce) + c3 (overlay coherence) pieces compose into\na coherent whole-machine snapshot across the disk.",
+      "criteria": [
+        {
+          "text": "Boot → `sync` → snapshot → restore → continue → poweroff, then `fsck.ext4 -n` on the ext4 root is clean (recorded on dev).",
+          "checked": false
+        },
+        {
+          "text": "A completed request issued before the snapshot is neither replayed nor lost after restore (an echo-proof marker written pre-snapshot is present, exactly once, post-restore).",
+          "checked": false
+        },
+        {
+          "text": "The restored machine boots to a usable shell and executes a fresh guest-computed command.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Snapshot mid-`sync` and immediately after; restore and diff the disk against a straight-through boot;\nrun the fsck on a deliberately torn snapshot (quiesce disabled) and confirm it is dirty (non-vacuity of\nthe clean result). Any disk divergence, duplicated completion, or dirty fsck on the quiesced path\nrefutes.",
+      "file": "tasks/epic-3-civilization/E3-T12c4-boot-disk-coherence-fsck.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -8340,13 +8501,15 @@
       "activity": [
         {
           "date": "2026-08-02",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "feat(web): E3-T24c versioned offline app-shell service worker"
+          ]
         }
       ],
       "firstActivity": "2026-08-02",
       "lastActivity": "2026-08-02",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E3-T24d",

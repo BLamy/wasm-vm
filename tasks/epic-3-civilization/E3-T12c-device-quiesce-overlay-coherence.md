@@ -3,12 +3,22 @@ id: E3-T12c
 epic: 3
 title: Virtio quiesce and overlay-generation snapshot coherence
 priority: 321.93
-status: pending
+status: cancelled
 depends_on: [E3-T12b, E3-T08]
 estimate: S
 risk: high
+decomposed_into: [E3-T12c1, E3-T12c2, E3-T12c3, E3-T12c4]
 capstone: false
 ---
+
+## Seam decomposition (2026-08-02)
+Split into four independently-verifiable sub-tickets so each lands with its own recorded evidence and
+the high-risk device-snapshot work isn't one monolithic pass:
+- **E3-T12c1** — virtio transport + device snapshot visitors (pure serialization; native round-trip).
+- **E3-T12c2** — bounded virtqueue quiesce (drain-or-refuse in-flight; native fault injection).
+- **E3-T12c3** — overlay-generation coherence + stale-restore refusal (native; before-mutation guard).
+- **E3-T12c4** — boot-level fsck coherence proof (the boot-gated integration AC; runs on `ssh dev`).
+The original goal/ACs below are the union these four satisfy.
 
 ## Goal
 Create a coherent snapshot boundary across virtio devices, guest page cache, and persistent overlay
