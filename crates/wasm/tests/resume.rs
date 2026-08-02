@@ -55,16 +55,41 @@ fn sparse_codec_round_trips_and_bounds_a_hostile_run_on_wasm32() {
 
 #[wasm_bindgen_test]
 fn reserved_section_is_refused_as_unsupported_on_wasm32() {
-    assert!(!is_supported_section(section::CPU));
+    // CPU landed in E3-T12b; the virtio sections are still reserved-but-unimplemented.
+    assert!(!is_supported_section(section::VIRTIO_BLK));
     let mut w = SnapshotWriter::new(&[0xC0; 32], &[0xBA; 32], 1);
     w.section(section::RAM, b"ok");
-    w.section(section::CPU, b"reserved");
+    w.section(section::VIRTIO_BLK, b"reserved");
     let blob = w.finish();
     let (_, reader) = SectionReader::new(&blob).unwrap();
     let results: Vec<_> = reader.collect();
     assert_eq!(results[0].as_ref().unwrap().tag, section::RAM);
     assert_eq!(
         results[1],
-        Err(SnapshotError::UnsupportedSection { tag: section::CPU })
+        Err(SnapshotError::UnsupportedSection { tag: section::VIRTIO_BLK })
     );
+}
+
+/// E3-T12b AC3: the wasm32 build accepts the SAME versioned CPU payload — the fixed-LE encoding is
+/// host-width-independent by construction, proven by execution here, not assertion. Poke distinct
+/// architectural state (pc, an x-reg, an f-reg, a held reservation), round-trip through
+/// save_resume/load_resume into a dirty machine, and confirm the CPU section restores byte-identically.
+#[wasm_bindgen_test]
+fn cpu_section_round_trips_on_wasm32() {
+    assert!(is_supported_section(section::CPU));
+    let mut a = wasm_vm_core::Machine::new(1 << 16);
+    a.hart_mut().regs.pc = 0x8020_1234;
+    a.hart_mut().regs.write(5, 0xdead_beef_0000_0007);
+    a.hart_mut().fregs.write_raw(3, 0x4009_21fb_5444_2d18);
+    a.hart_mut().resv = Some((0x8000_0040, 8));
+    let blob = a.save_resume();
+    let cpu = a.hart().to_snapshot();
+
+    let mut b = wasm_vm_core::Machine::new(1 << 16);
+    b.hart_mut().regs.write(5, 0x1); // dirty target
+    b.load_resume(&blob).unwrap();
+    assert_eq!(b.hart().to_snapshot(), cpu);
+    assert_eq!(b.hart().regs.pc, 0x8020_1234);
+    assert_eq!(b.hart().regs.read(5), 0xdead_beef_0000_0007);
+    assert_eq!(b.hart().resv, Some((0x8000_0040, 8)));
 }

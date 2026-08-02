@@ -109,11 +109,11 @@ fn an_unknown_section_fails_loudly() {
 
 #[test]
 fn a_reserved_but_unimplemented_section_is_refused_as_unsupported() {
-    // CPU / virtio tags are reserved format numbers with no restorer in the E3-T12a foundation. The
+    // The virtio tags are reserved format numbers with no restorer yet (CPU landed in E3-T12b). The
     // reader must recognise them yet refuse them loudly — accepting-and-skipping a section a restore
     // loop can't apply is the half-applied hazard the format forbids — and it must be a *distinct*
     // error from a garbage tag so the reserved-vs-unknown boundary is observable and frozen.
-    for tag in [section::CPU, section::VIRTIO_BLK, section::VIRTIO_NET] {
+    for tag in [section::VIRTIO_BLK, section::VIRTIO_NET] {
         assert!(super::is_known_section(tag), "reserved tag stays known");
         assert!(
             !super::is_supported_section(tag),
@@ -130,6 +130,7 @@ fn a_reserved_but_unimplemented_section_is_refused_as_unsupported() {
     }
     // Every supported tag, by contrast, reads its opaque payload straight back.
     for tag in [
+        section::CPU,
         section::RAM,
         section::CLINT,
         section::PLIC,

@@ -781,6 +781,88 @@ impl Csrs {
             self.mode,
         )
     }
+
+    /// E3-T12b: append EVERY architectural CSR field to a CPU-section payload, fixed-layout
+    /// little-endian. Exhaustive by design — the determinism trace-diff refutes any omission. The
+    /// WARL table is emitted in canonical (tag-sorted) order so the encoding is order-independent.
+    pub(crate) fn snapshot_bytes(&self, out: &mut Vec<u8>) {
+        out.push(self.mode as u8);
+        out.extend_from_slice(&self.mstatus.to_le_bytes());
+        out.extend_from_slice(&self.mcause.to_le_bytes());
+        out.push(self.fflags);
+        out.push(self.frm);
+        let mut warl = self.warl.clone();
+        warl.sort_by_key(|(a, _)| *a);
+        out.extend_from_slice(&(warl.len() as u32).to_le_bytes());
+        for (a, v) in &warl {
+            out.extend_from_slice(&a.to_le_bytes());
+            out.extend_from_slice(&v.to_le_bytes());
+        }
+        out.extend_from_slice(&self.mcycle.to_le_bytes());
+        out.extend_from_slice(&self.minstret.to_le_bytes());
+        out.push(self.wrote_mcycle as u8);
+        out.push(self.wrote_minstret as u8);
+        out.extend_from_slice(&self.time.to_le_bytes());
+        self.pmp.snapshot_bytes(out);
+        out.push(self.sv48 as u8);
+        out.push(self.sv57 as u8);
+        out.extend_from_slice(&self.probe_reads.to_le_bytes());
+        out.extend_from_slice(&self.probe_value.to_le_bytes());
+        out.extend_from_slice(&self.trig_select.to_le_bytes());
+        out.extend_from_slice(&self.trig_tdata1.to_le_bytes());
+        out.extend_from_slice(&self.trig_tdata2.to_le_bytes());
+        out.extend_from_slice(&self.trig_tcontrol.to_le_bytes());
+        out.push(self.triggers_armed as u8);
+    }
+
+    /// E3-T12b: parse a fresh `Csrs` from a CPU-section [`crate::resume::Reader`]. PURE — it builds a
+    /// local (never mutates a live hart), so the caller commits only after the whole section parses,
+    /// upholding all-or-nothing restore. `sv48`/`sv57` come from the payload (the `core_hash` guard
+    /// already ensures the same build, so they match — carried for a complete round-trip).
+    pub(crate) fn parse(
+        r: &mut crate::resume::Reader,
+    ) -> Result<Self, crate::resume::SnapshotError> {
+        let err = || crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::CPU,
+        };
+        let mut c = Csrs::at_reset();
+        c.mode = match r.u8()? {
+            0 => Priv::U,
+            1 => Priv::S,
+            3 => Priv::M,
+            _ => return Err(err()),
+        };
+        c.mstatus = r.u64()?;
+        c.mcause = r.u64()?;
+        c.fflags = r.u8()?;
+        c.frm = r.u8()?;
+        let n = r.u32()? as usize;
+        // No with_capacity(n): a hostile count grows only as reads succeed (each entry is 10 bytes;
+        // the bounds-checked reader errors once the section is exhausted), so it can't over-allocate.
+        let mut warl = Vec::new();
+        for _ in 0..n {
+            let a = r.u16()?;
+            let v = r.u64()?;
+            warl.push((a, v));
+        }
+        c.warl = warl;
+        c.mcycle = r.u64()?;
+        c.minstret = r.u64()?;
+        c.wrote_mcycle = r.bool()?;
+        c.wrote_minstret = r.bool()?;
+        c.time = r.u64()?;
+        c.pmp.restore_bytes(r)?;
+        c.sv48 = r.bool()?;
+        c.sv57 = r.bool()?;
+        c.probe_reads = r.u64()?;
+        c.probe_value = r.u64()?;
+        c.trig_select = r.u64()?;
+        c.trig_tdata1 = r.u64()?;
+        c.trig_tdata2 = r.u64()?;
+        c.trig_tcontrol = r.u64()?;
+        c.triggers_armed = r.bool()?;
+        Ok(c)
+    }
     /// Write the flat WARL store for `addr`.
     fn warl_set(&mut self, addr: u16, v: u64) {
         match self.warl.iter_mut().find(|(a, _)| *a == addr) {

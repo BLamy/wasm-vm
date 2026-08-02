@@ -760,6 +760,66 @@ impl Machine {
         &self.hart
     }
 
+    /// E3-T12b: serialize the machine's resumable state (CPU + RAM + CLINT when present) into one
+    /// versioned resume blob. The header hashes are left zero here — a disk-backed caller supplies
+    /// real `core_hash`/`base_image_hash`/`overlay_generation` via the section writer directly; this
+    /// convenience path is for the RAM-only determinism harness and in-memory round-trips.
+    pub fn save_resume(&self) -> alloc::vec::Vec<u8> {
+        use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
+        let mut w = SnapshotWriter::new(&[0u8; 32], &[0u8; 32], 0);
+        w.section(section::CPU, &self.hart.to_snapshot());
+        w.section(section::RAM, &self.bus.ram().to_snapshot());
+        if let Some(clint) = &self.clint {
+            w.section(section::CLINT, &clint.borrow().to_snapshot());
+        }
+        // Deterministic-clock phase (E3-T12b): the sub-`clock_div` remainder + `clock_div` itself, so
+        // the next `mtime` tick lands at the identical retirement after resume (instruction-exact
+        // timer placement). Machine-level state, so it has its own section.
+        let mut clock = alloc::vec::Vec::with_capacity(24);
+        clock.extend_from_slice(&self.tick_accum.to_le_bytes());
+        clock.extend_from_slice(&self.clock_div.to_le_bytes());
+        // The built-in-SBI S-timer deadline (`stimecmp`) drives mip.STIP = (mtime >= stimecmp) each
+        // boundary; without it a timer-armed guest resumes with the S-timer cancelled and the
+        // interrupt lands at a different instruction (E3-T12b timer-placement).
+        clock.extend_from_slice(&self.sbi_state.stimecmp.to_le_bytes());
+        w.section(section::CLOCK, &clock);
+        w.finish()
+    }
+
+    /// E3-T12b: restore the machine from a [`Self::save_resume`] blob — CPU, RAM, and CLINT. Each
+    /// component's `restore` is all-or-nothing (a malformed section is a typed error that leaves that
+    /// component untouched); an unknown/unsupported/garbage section is refused, never skipped.
+    pub fn load_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        use crate::resume::{ComponentSnapshot, SectionReader, section};
+        let (_hdr, reader) = SectionReader::new(blob)?;
+        for sec in reader {
+            let sec = sec?;
+            match sec.tag {
+                section::CPU => self.hart.restore(sec.payload)?,
+                section::RAM => self.bus.ram_mut().restore(sec.payload)?,
+                section::CLINT => {
+                    if let Some(clint) = &self.clint {
+                        clint.borrow_mut().restore(sec.payload)?;
+                    }
+                }
+                section::CLOCK => {
+                    let mut r = crate::resume::Reader::new(sec.payload, section::CLOCK);
+                    let tick_accum = r.u64()?;
+                    let clock_div = r.u64()?;
+                    let stimecmp = r.u64()?;
+                    r.finish()?;
+                    self.tick_accum = tick_accum;
+                    self.clock_div = clock_div;
+                    self.sbi_state.stimecmp = stimecmp;
+                }
+                other => {
+                    return Err(crate::resume::SnapshotError::UnsupportedSection { tag: other });
+                }
+            }
+        }
+        Ok(())
+    }
+
     /// RISCOF signature dump (E1-T20): the memory region `[begin, end)` formatted as the
     /// arch-test signature — one `granularity`-byte little-endian value per line, lowercase
     /// hex, zero-padded to `2*granularity` digits. Only `granularity == 4` (the RISCOF default)

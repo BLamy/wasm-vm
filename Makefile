@@ -308,6 +308,24 @@ verify-E3-T12a:
 	$(MAKE) _v-wasm
 	@echo "verify-E3-T12a (bounded snapshot foundation freeze): OK"
 
+.PHONY: verify-E3-T12b
+verify-E3-T12b:
+	# The CPU architectural-state snapshot section + instruction-exact resume.
+	cargo fmt --check -p wasm-vm-core
+	# Scoped to the lib + THIS task's test (sibling test binaries carry unrelated lint debt that must
+	# neither mask nor block this target — same discipline as verify-E3-T12a).
+	cargo clippy -p wasm-vm-core --lib -- -D warnings
+	cargo clippy -p wasm-vm-core --test cpu_resume -- -D warnings
+	# Section framework now supports CPU (crates/core/src/resume_tests.rs), reserved list = virtio only.
+	cargo test -p wasm-vm-core --lib resume
+	# AC1 instruction-exact resume (trace byte-identical vs continuation across N, incl. mid-atomic/CSR
+	# snapshot points), AC2 dirty-target overwrite + malformed-leaves-hart-unchanged, whole-machine
+	# save/load round-trip (crates/core/tests/cpu_resume.rs).
+	cargo test -p wasm-vm-core --test cpu_resume
+	# AC3 native/wasm accept the SAME versioned CPU payload — the fixed-LE codec round-trips on wasm32.
+	$(MAKE) _v-wasm
+	@echo "verify-E3-T12b (CPU snapshot + instruction-exact resume): OK"
+
 .PHONY: verify-E3-T24a
 verify-E3-T24a:
 	# The progress MODEL's invariants (monotonic, no fake 99%, byte-weight <15% divergence, per-stage

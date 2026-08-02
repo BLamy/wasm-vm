@@ -6384,7 +6384,7 @@
       "epicKey": "3",
       "title": "CPU architectural snapshot and instruction-exact resume",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E3-T12a"
       ],
@@ -6395,25 +6395,31 @@
       "criteria": [
         {
           "text": "`make verify-E3-T12b` passes and the post-restore M-instruction trace is byte-identical, including timer-interrupt placement.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Dirty-target restore proves every architectural field is overwritten exactly once while malformed input leaves the target unchanged.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Native and wasm32 builds accept the same versioned CPU payload.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-08-02 — CPU snapshot section + instruction-exact resume → verified\n\n**Implementation.** The CPU section (`resume::section::CPU`) now has a restorer: `impl\nComponentSnapshot for Hart` (crates/core/src/hart/mod.rs) serializes the COMPLETE hart state —\n`pc`, `x1..=x31` (x0 hardwired 0), `f0..=f31`, the LR/SC reservation, and every CSR field via\n`Csrs::snapshot_bytes`/`Csrs::parse` (mode, mstatus/mcause, fflags/frm, the tag-sorted WARL table,\nmcycle/minstret + their per-step write flags, the `time` shadow, PMP cfg/addr, Sv48/Sv57, the PROBE\n+ debug-trigger CSRs). Restore is **all-or-nothing**: `Csrs::parse` builds a fresh `Csrs` and `Hart`\nparses everything into locals via a bounds-checked `resume::Reader`, committing to `self` only after\nthe whole payload parses and `finish()` confirms no trailing bytes. `Machine::save_resume`/\n`load_resume` compose CPU + RAM + CLINT sections. `is_supported_section` now includes CPU.\n\n**Two real completeness bugs found + fixed** (the timer-placement leg refuted the first attempts,\nexactly as designed): (1) `Machine::tick_accum`, the sub-`clock_div` `mtime` remainder, was not\nsnapshotted → the next tick landed at a different retirement on resume; (2) `SbiState::stimecmp`, the\nbuilt-in-SBI S-timer deadline, was not snapshotted → a timer-armed guest resumed with the S-timer\ncancelled. Both are now carried in a new **CLOCK section** (`tick_accum` + `clock_div` + `stimecmp`),\nkeeping component snapshots pure and `tick_accum` off the CLINT's hot-path RefCell.\n\n**Verification — `make verify-E3-T12b`: OK** (fmt + scoped clippy + the tests below; native + wasm32):\n- **AC1 (instruction-exact resume):** `resume_trace_matches_continuation` — for rv64ud-p-fmadd\n  (f-regs/fcsr), rv64ua-p-lrsc (reservation), rv64mi-p-csr (WARL CSRs), rv64mi-p-zicntr (counters),\n  at N ∈ {37,111,233,400}: run N, snapshot, run M=220 into a HashSink; restore the blob into a DIRTY\n  machine (advanced to N+137) and rerun M — trace hash + retire count byte-identical. An omitted CPU\n  field would reset to its `at_reset` default and diverge. Plus **timer placement**:\n  `resume_places_the_timer_interrupt_identically` boots an S-timer-armed guest (CLINT + STIE/SIE),\n  snapshots before the fire, and proves the resumed run delivers the interrupt at the identical\n  instruction (hashes equal; non-vacuity asserted — the handler actually fired).\n- **AC2:** `restore_over_dirty_state_is_byte_identical` (restore over arbitrary dirty state\n  re-serializes byte-identically → every field overwritten once); `malformed_cpu_payload_is_rejected_\n  and_leaves_hart_unchanged` (truncated / trailing-garbage / bad-Priv-discriminant / huge-WARL-count\n  → typed `BadComponentState`, hart untouched).\n- **AC3:** `crates/wasm/tests/resume.rs::cpu_section_round_trips_on_wasm32` round-trips the same\n  fixed-LE CPU payload through save/load on real wasm32 (host-width-independent by construction).\n\nAll acceptance criteria met with recorded evidence → status **verified**.",
       "adversarial": "Delete or reorder each serialized CPU field, snapshot immediately around trap/interrupt/LR-SC\nboundaries, and restore into deliberately dirty state. Any mutant surviving the trace diff, partial\nmutation on error, or host-width-dependent encoding refutes.",
       "file": "tasks/epic-3-civilization/E3-T12b-cpu-deterministic-resume.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-02",
       "commitCount": 0
     },
     {
@@ -9010,13 +9016,15 @@
         },
         {
           "date": "2026-08-02",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "docs(e3.5): clear all verification debt (T01/T04b/T04c verified)"
+          ]
         }
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-08-02",
-      "commitCount": 6
+      "commitCount": 7
     },
     {
       "id": "E3.5-T02",
@@ -9366,13 +9374,15 @@
         },
         {
           "date": "2026-08-02",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "docs(e3.5): clear all verification debt (T01/T04b/T04c verified)"
+          ]
         }
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-08-02",
-      "commitCount": 5
+      "commitCount": 6
     },
     {
       "id": "E3.5-T04c",
@@ -9427,13 +9437,15 @@
         },
         {
           "date": "2026-08-02",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "docs(e3.5): clear all verification debt (T01/T04b/T04c verified)"
+          ]
         }
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-08-02",
-      "commitCount": 5
+      "commitCount": 6
     },
     {
       "id": "E3.5-T04d",

@@ -248,6 +248,75 @@ const fn amo_d(op: crate::decode::AmoOp, old: u64, rhs: u64) -> u64 {
     }
 }
 
+/// E3-T12b: the CPU architectural-state snapshot section. Serializes the hart's COMPLETE execution
+/// state — pc, x1..=x31 (x0 is hardwired 0), f0..=f31, the LR/SC reservation, and every CSR field
+/// (privilege, mstatus/mcause, fflags/frm, the WARL table, cycle/instret + their per-step write
+/// flags, the `time` shadow, PMP, Sv48/Sv57 config, the PROBE + debug-trigger CSRs) — so a restore
+/// continues to an instruction-identical trace. Restore is ALL-OR-NOTHING: the whole payload is
+/// parsed into locals and only committed to `self` once it parses and is fully consumed, so a
+/// malformed section leaves the hart untouched.
+impl crate::resume::ComponentSnapshot for Hart {
+    const SECTION: u32 = crate::resume::section::CPU;
+
+    fn to_snapshot(&self) -> alloc::vec::Vec<u8> {
+        let mut v = alloc::vec::Vec::new();
+        v.extend_from_slice(&self.regs.pc.to_le_bytes());
+        for i in 1..32u8 {
+            v.extend_from_slice(&self.regs.read(i).to_le_bytes());
+        }
+        for i in 0..32u8 {
+            v.extend_from_slice(&self.fregs.read_raw(i).to_le_bytes());
+        }
+        match self.resv {
+            Some((addr, w)) => {
+                v.push(1);
+                v.extend_from_slice(&addr.to_le_bytes());
+                v.push(w);
+            }
+            None => v.push(0),
+        }
+        self.csr.snapshot_bytes(&mut v);
+        v
+    }
+
+    fn restore(&mut self, payload: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        let mut r = crate::resume::Reader::new(payload, Self::SECTION);
+        let pc = r.u64()?;
+        let mut x = [0u64; 32];
+        for xi in x.iter_mut().skip(1) {
+            *xi = r.u64()?;
+        }
+        let mut f = [0u64; 32];
+        for fi in f.iter_mut() {
+            *fi = r.u64()?;
+        }
+        let resv = match r.u8()? {
+            0 => None,
+            1 => {
+                let addr = r.u64()?;
+                let w = r.u8()?;
+                Some((addr, w))
+            }
+            _ => {
+                return Err(crate::resume::SnapshotError::BadComponentState { tag: Self::SECTION });
+            }
+        };
+        let csr = crate::csr::Csrs::parse(&mut r)?;
+        r.finish()?;
+        // Commit — every architectural field overwritten exactly once (x0 stays hardwired 0).
+        self.regs.pc = pc;
+        for i in 1..32u8 {
+            self.regs.write(i, x[i as usize]);
+        }
+        for i in 0..32u8 {
+            self.fregs.write_raw(i, f[i as usize]);
+        }
+        self.resv = resv;
+        self.csr = csr;
+        Ok(())
+    }
+}
+
 /// Do the store range `[addr, addr+len)` and the reservation `(ra, rw)` overlap? An
 /// overlapping ordinary store invalidates the LR/SC reservation (A-extension spec).
 #[inline(always)]

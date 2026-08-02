@@ -37,6 +37,10 @@ pub mod section {
     pub const VIRTIO_BLK: u32 = 6;
     pub const VIRTIO_NET: u32 = 7;
     pub const RTC: u32 = 8;
+    /// E3-T12b: the deterministic-clock phase (the sub-`clock_div` `mtime` remainder + `clock_div`).
+    /// Machine-level state — kept OFF the CLINT's RefCell so the per-instruction tick stays a plain
+    /// field write — but it must be snapshotted for instruction-exact timer placement on resume.
+    pub const CLOCK: u32 = 9;
 }
 
 /// Is `tag` a section number this format family reserves (the whole reserved universe, whether or
@@ -52,20 +56,89 @@ pub fn is_known_section(tag: u32) -> bool {
             | section::VIRTIO_BLK
             | section::VIRTIO_NET
             | section::RTC
+            | section::CLOCK
     )
 }
 
 /// Is `tag` a section this build actually has a restorer for? The bounded-component foundation
-/// (E3-T12a) ships RAM + CLINT + PLIC + UART + RTC; the CPU and virtio sections are reserved
-/// numbers whose visitors land in later integration passes (E3-T12b/c). A known-but-unsupported tag
+/// ships CPU (E3-T12b) + RAM + CLINT + PLIC + UART + RTC; the virtio sections are reserved
+/// numbers whose visitors land in later integration passes (E3-T12c). A known-but-unsupported tag
 /// is refused loudly ([`SnapshotError::UnsupportedSection`]) rather than accepted and skipped. When a
 /// visitor lands, its tag moves here and the reserved list shrinks — no format-version bump needed
 /// because the reader already fails closed on it.
 pub fn is_supported_section(tag: u32) -> bool {
     matches!(
         tag,
-        section::RAM | section::CLINT | section::PLIC | section::UART | section::RTC
+        section::CPU
+            | section::RAM
+            | section::CLINT
+            | section::PLIC
+            | section::UART
+            | section::RTC
+            | section::CLOCK
     )
+}
+
+/// A bounds-checked little-endian cursor for component `restore` parsers (E3-T12b). Every read is
+/// fallible: a short payload yields `Err(BadComponentState { tag })` rather than a panic, and the
+/// section-level all-or-nothing contract is upheld by parsing wholly into locals before the caller
+/// commits. `finish()` refuses trailing garbage so a longer-than-expected payload is also rejected.
+pub struct Reader<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    tag: u32,
+}
+
+impl<'a> Reader<'a> {
+    pub fn new(buf: &'a [u8], tag: u32) -> Self {
+        Reader { buf, pos: 0, tag }
+    }
+    fn err(&self) -> SnapshotError {
+        SnapshotError::BadComponentState { tag: self.tag }
+    }
+    fn take(&mut self, n: usize) -> Result<&'a [u8], SnapshotError> {
+        let end = self.pos.checked_add(n).ok_or_else(|| self.err())?;
+        if end > self.buf.len() {
+            return Err(self.err());
+        }
+        let s = &self.buf[self.pos..end];
+        self.pos = end;
+        Ok(s)
+    }
+    pub fn u8(&mut self) -> Result<u8, SnapshotError> {
+        Ok(self.take(1)?[0])
+    }
+    pub fn bool(&mut self) -> Result<bool, SnapshotError> {
+        // Only 0/1 are legal — any other byte is a malformed (or hand-edited) payload.
+        match self.u8()? {
+            0 => Ok(false),
+            1 => Ok(true),
+            _ => Err(self.err()),
+        }
+    }
+    pub fn u16(&mut self) -> Result<u16, SnapshotError> {
+        let b = self.take(2)?;
+        Ok(u16::from_le_bytes([b[0], b[1]]))
+    }
+    pub fn u32(&mut self) -> Result<u32, SnapshotError> {
+        let b = self.take(4)?;
+        Ok(u32::from_le_bytes([b[0], b[1], b[2], b[3]]))
+    }
+    pub fn u64(&mut self) -> Result<u64, SnapshotError> {
+        let b = self.take(8)?;
+        Ok(u64::from_le_bytes([
+            b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+        ]))
+    }
+    /// Assert the payload is fully consumed — a trailing byte means the payload is longer than this
+    /// build's encoding (corrupt / version-skewed), rejected rather than silently ignored.
+    pub fn finish(self) -> Result<(), SnapshotError> {
+        if self.pos == self.buf.len() {
+            Ok(())
+        } else {
+            Err(self.err())
+        }
+    }
 }
 
 /// A rejected snapshot — every failure is one of these, never a panic.
