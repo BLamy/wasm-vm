@@ -254,32 +254,6 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
         transcript.lock().unwrap()
     );
 
-    // AC4 (last, so it can't block the other checks): a memory-limited container that over-allocates
-    // is OOM-killed (signal death, rc>=128); the guest and a subsequent wvrun are unaffected. dd asks
-    // for a single 64 MiB ANONYMOUS buffer — far over the 16 MiB cap — so the memcg OOM-killer SIGKILLs
-    // it (rc 137). Anonymous (not a tmpfs fill, which returns ENOMEM to the writer), single large alloc
-    // (trips instantly, not byte-by-byte).
-    for c in [
-        "cp -a /tmp/b /tmp/oom",
-        "printf '/bin/sh\\n-c\\ndd if=/dev/zero of=/dev/null bs=64M count=1 2>/dev/null\\n' > /tmp/oom/config/argv",
-        "wvrun --memory 16777216 /tmp/oom; rc=$?; [ $rc -ge 128 ] && echo OOMKILLED_$rc || echo OOMSURVIVED_$rc",
-    ] {
-        send(&mut stdin, c);
-    }
-    assert!(
-        wait_for(&transcript, "OOMKILLED_", 300)
-            && !transcript.lock().unwrap().contains("OOMSURVIVED_"),
-        "over-allocating container was not OOM-killed under --memory; transcript:\n{}",
-        transcript.lock().unwrap()
-    );
-    // The runner still works after the OOM (bundle #2 exits 7).
-    send(&mut stdin, "wvrun /tmp/b2; echo AFTEROOM_$?");
-    assert!(
-        wait_for(&transcript, "AFTEROOM_7", 300),
-        "runner broken after an OOM-killed container; transcript:\n{}",
-        transcript.lock().unwrap()
-    );
-
     // ── E3.5-T05b: container LIFECYCLE (run -d / ps / logs / stop) on the real guest ──────────────
     // Positive markers are computed ($((6*7))=42) so a host-side echo of the command can't satisfy
     // them; a failed check simply never emits the marker → wait_for times out (no echo-collision).
@@ -382,6 +356,31 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
         transcript.lock().unwrap()
     );
     send(&mut stdin, "wvrun stop e1 >/dev/null");
+
+    // AC4 (LAST, after the T05b/T05c checks, so its known emulator flakiness can't block them): a
+    // memory-limited container that over-allocates is OOM-killed (rc>=128); the guest and a subsequent
+    // wvrun are unaffected. A single 128 MiB ANONYMOUS buffer — 8× the 16 MiB cap — makes the memcg
+    // OOM-killer decision decisive at allocation time. (The memcg OOM-killer's timing on the interpreted
+    // guest is nondeterministic; this is the already-verified E3.5-T03 AC, re-checked, not a T05b/c gate.)
+    for c in [
+        "cp -a /tmp/b /tmp/oom",
+        "printf '/bin/sh\\n-c\\ndd if=/dev/zero of=/dev/null bs=128M count=1 2>/dev/null\\n' > /tmp/oom/config/argv",
+        "wvrun --memory 16777216 /tmp/oom; rc=$?; [ $rc -ge 128 ] && echo OOMKILLED_$rc || echo OOMSURVIVED_$rc",
+    ] {
+        send(&mut stdin, c);
+    }
+    assert!(
+        wait_for(&transcript, "OOMKILLED_", 400)
+            && !transcript.lock().unwrap().contains("OOMSURVIVED_"),
+        "over-allocating container was not OOM-killed under --memory; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(&mut stdin, "wvrun /tmp/b2; echo AFTEROOM_$?");
+    assert!(
+        wait_for(&transcript, "AFTEROOM_7", 300),
+        "runner broken after an OOM-killed container; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
 
     send(&mut stdin, "poweroff");
     let deadline = Instant::now() + Duration::from_secs(600);

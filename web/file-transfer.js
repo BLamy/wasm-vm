@@ -15,6 +15,15 @@ function safePercent(done, total) {
   return total === 0 ? 100 : Math.min(100, Math.floor((done / total) * 100));
 }
 
+function terminalUploadError(record) {
+  const terminal = record?.diagnostic?.terminal;
+  const code = record?.error || terminal?.error || "Unknown";
+  const transition = terminal?.transition ? ` during ${terminal.transition}` : "";
+  const error = new Error(`guest upload ${code}${transition}`);
+  error.diagnostic = record?.diagnostic ?? null;
+  return error;
+}
+
 async function hashFile(file, FileSha256, signal) {
   const hasher = new FileSha256();
   const reader = file.stream().getReader();
@@ -141,7 +150,7 @@ export function createFileTransferUI({
       const current = controller.fileTransferStatus().uploads.find((item) => item.id === stream);
       if (current?.state === "complete") return current;
       if (current?.state === "partial") throw new DOMException("Upload cancelled", "AbortError");
-      if (current?.state === "error") throw new Error("guest rejected the upload");
+      if (current?.state === "error") throw terminalUploadError(current);
       await delay();
     }
     throw new DOMException("Upload cancelled", "AbortError");
@@ -175,7 +184,7 @@ export function createFileTransferUI({
             const snapshot = controller.fileTransferStatus();
             const current = snapshot.uploads.find((item) => item.id === transfer.stream);
             if (!current || current.buffered + value.byteLength <= snapshot.maxBuffered) break;
-            if (current.state === "error") throw new Error("guest rejected the upload");
+            if (current.state === "error") throw terminalUploadError(current);
             await delay();
           }
           controller.pushFileUpload(transfer.stream, value, false);
@@ -191,7 +200,18 @@ export function createFileTransferUI({
       transfer.state = "complete";
       transfer.label = "complete — SHA-256 verified";
       render();
-    } catch (error) {
+    } catch (caught) {
+      let error = caught;
+      if (transfer.stream != null && controller) {
+        try {
+          const terminal = controller.fileTransferStatus().uploads
+            .find((item) => item.id === transfer.stream);
+          if (terminal?.diagnostic) {
+            transfer.diagnostic = terminal.diagnostic;
+            if (caught?.name !== "AbortError") error = terminalUploadError(terminal);
+          }
+        } catch {}
+      }
       if (transfer.stream != null) {
         try { controller?.cancelFileUpload(transfer.stream); } catch {}
       }

@@ -50,6 +50,37 @@ pub enum ErrorCode {
     Io = 15,
 }
 
+impl ErrorCode {
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::UnsupportedVersion => "UnsupportedVersion",
+            Self::BadFrame => "BadFrame",
+            Self::BadState => "BadState",
+            Self::BadName => "BadName",
+            Self::BadOffset => "BadOffset",
+            Self::TooLarge => "TooLarge",
+            Self::Busy => "Busy",
+            Self::Quota => "Quota",
+            Self::FlowControl => "FlowControl",
+            Self::HashMismatch => "HashMismatch",
+            Self::SourceChanged => "SourceChanged",
+            Self::Cancelled => "Cancelled",
+            Self::Timeout => "Timeout",
+            Self::CompletionUnknown => "CompletionUnknown",
+            Self::Io => "Io",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct StorageWriteDiagnostic {
+    offset: u64,
+    bytes: usize,
+    started_ms: u64,
+    completed_ms: u64,
+    error: Option<ErrorCode>,
+}
+
 #[derive(Debug, Default)]
 pub struct Output {
     pub frames: Vec<Vec<u8>>,
@@ -95,6 +126,7 @@ pub struct Session {
     rx: Vec<u8>,
     state: State,
     last_activity_ms: u64,
+    last_storage_write: Option<StorageWriteDiagnostic>,
 }
 
 impl Session {
@@ -105,6 +137,7 @@ impl Session {
                 rx: Vec::new(),
                 state: State::AwaitHelloAck,
                 last_activity_ms: now_ms,
+                last_storage_write: None,
             },
             frame(HELLO, 0, &[VERSION]),
         )
@@ -130,6 +163,7 @@ impl Session {
                     source,
                 },
                 last_activity_ms: now_ms,
+                last_storage_write: None,
             },
             frame(HELLO, 0, &[VERSION]),
         ))
@@ -181,15 +215,17 @@ impl Session {
             && now_ms.saturating_sub(self.last_activity_ms) >= IDLE_TIMEOUT_MS
         {
             let stream = self.stream_id().unwrap_or(1);
+            let detail =
+                self.terminal_detail("idle-timeout", None, stream, ErrorCode::Timeout, now_ms);
             self.state = State::Terminal;
             self.rx.clear();
-            failure(stream, ErrorCode::Timeout)
+            failure_with_detail(stream, ErrorCode::Timeout, &detail)
         } else {
             Output::default()
         }
     }
 
-    fn note_io_progress(&mut self, now_ms: u64) {
+    pub fn note_io_progress(&mut self, now_ms: u64) {
         self.last_activity_ms = now_ms;
     }
 
@@ -210,6 +246,62 @@ impl Session {
             | State::AwaitComplete { stream, .. } => Some(stream),
             _ => None,
         }
+    }
+
+    fn state_name(&self) -> &'static str {
+        match self.state {
+            State::AwaitHelloAck => "AwaitHelloAck",
+            State::Ready => "Ready",
+            State::Receiving { .. } => "Receiving",
+            State::AwaitAccept { .. } => "AwaitAccept",
+            State::Sending { .. } => "Sending",
+            State::AwaitComplete { .. } => "AwaitComplete",
+            State::Terminal => "Terminal",
+        }
+    }
+
+    fn byte_offset(&self) -> u64 {
+        match &self.state {
+            State::Receiving { offset, .. } => *offset,
+            State::Sending { acked, .. } => *acked,
+            State::AwaitComplete { total, .. } => *total,
+            _ => 0,
+        }
+    }
+
+    fn terminal_detail(
+        &self,
+        transition: &str,
+        frame_kind: Option<u8>,
+        stream: u32,
+        error: ErrorCode,
+        at_ms: u64,
+    ) -> String {
+        let frame_kind = frame_kind.map_or_else(|| "null".to_owned(), |kind| kind.to_string());
+        let storage = self.last_storage_write.as_ref().map_or_else(
+            || "null".to_owned(),
+            |write| {
+                let error = write
+                    .error
+                    .map_or_else(|| "null".to_owned(), |code| format!("\"{}\"", code.name()));
+                format!(
+                    "{{\"offset\":{},\"bytes\":{},\"startedMs\":{},\"completedMs\":{},\"durationMs\":{},\"error\":{error}}}",
+                    write.offset,
+                    write.bytes,
+                    write.started_ms,
+                    write.completed_ms,
+                    write.completed_ms.saturating_sub(write.started_ms),
+                )
+            },
+        );
+        format!(
+            "{{\"component\":\"guest\",\"transition\":\"{transition}\",\"fromState\":\"{}\",\"frameKind\":{frame_kind},\"error\":\"{}\",\"stream\":{stream},\"byteOffset\":{},\"atMs\":{at_ms},\"lastActivityMs\":{},\"idleMs\":{},\"storageWrite\":{storage}}}",
+            self.state_name(),
+            error.name(),
+            self.byte_offset(),
+            self.last_activity_ms,
+            at_ms.saturating_sub(self.last_activity_ms),
+        )
     }
 
     fn handle(&mut self, incoming: Frame, output: &mut Output) {
@@ -280,12 +372,33 @@ impl Session {
                             *output = failure(*stream, ErrorCode::BadOffset);
                             return;
                         }
-                        if let Err(error) = upload
+                        let write_started_ms = monotonic_ms();
+                        let write_result = upload
                             .as_mut()
                             .ok_or(ErrorCode::BadState)
-                            .and_then(|upload| upload.write_chunk(at, bytes).map_err(map_storage))
-                        {
-                            *output = failure(*stream, error);
+                            .and_then(|upload| upload.write_chunk(at, bytes).map_err(map_storage));
+                        let write_completed_ms = monotonic_ms();
+                        let write_error = write_result.as_ref().err().copied();
+                        self.last_storage_write = Some(StorageWriteDiagnostic {
+                            offset: at,
+                            bytes: bytes.len(),
+                            started_ms: write_started_ms,
+                            completed_ms: write_completed_ms,
+                            error: write_error,
+                        });
+                        if let Err(error) = write_result {
+                            let detail = format!(
+                                "{{\"component\":\"guest\",\"transition\":\"storage-write-error\",\"fromState\":\"Receiving\",\"frameKind\":{DATA},\"error\":\"{}\",\"stream\":{},\"byteOffset\":{},\"atMs\":{write_completed_ms},\"lastActivityMs\":{},\"idleMs\":{},\"storageWrite\":{{\"offset\":{at},\"bytes\":{},\"startedMs\":{write_started_ms},\"completedMs\":{write_completed_ms},\"durationMs\":{},\"error\":\"{}\"}}}}",
+                                error.name(),
+                                *stream,
+                                *offset,
+                                self.last_activity_ms,
+                                write_completed_ms.saturating_sub(self.last_activity_ms),
+                                bytes.len(),
+                                write_completed_ms.saturating_sub(write_started_ms),
+                                error.name(),
+                            );
+                            *output = failure_with_detail(*stream, error, &detail);
                             return;
                         }
                         hasher.update(bytes);
@@ -483,6 +596,14 @@ fn failure(stream: u32, code: ErrorCode) -> Output {
     }
 }
 
+fn failure_with_detail(stream: u32, code: ErrorCode, detail: &str) -> Output {
+    Output {
+        frames: vec![error_frame_with_detail(stream.max(1), code, detail)],
+        close: true,
+        complete: false,
+    }
+}
+
 pub fn connect_reserved() -> std::io::Result<TcpStream> {
     let stream = TcpStream::connect_timeout(&ENDPOINT.into(), Duration::from_secs(5))?;
     stream.set_read_timeout(Some(Duration::from_secs(1)))?;
@@ -637,6 +758,16 @@ pub fn heartbeat_frame() -> Vec<u8> {
 fn error_frame(stream: u32, code: ErrorCode) -> Vec<u8> {
     let mut payload = (code as u16).to_be_bytes().to_vec();
     payload.extend_from_slice(&0u16.to_be_bytes());
+    frame(ERROR, stream, &payload)
+}
+
+fn error_frame_with_detail(stream: u32, code: ErrorCode, detail: &str) -> Vec<u8> {
+    let detail = detail.as_bytes();
+    let detail_len = detail.len().min(u16::MAX as usize);
+    let mut payload = Vec::with_capacity(4 + detail_len);
+    payload.extend_from_slice(&(code as u16).to_be_bytes());
+    payload.extend_from_slice(&(detail_len as u16).to_be_bytes());
+    payload.extend_from_slice(&detail[..detail_len]);
     frame(ERROR, stream, &payload)
 }
 

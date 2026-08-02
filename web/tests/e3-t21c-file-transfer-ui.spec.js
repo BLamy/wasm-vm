@@ -162,6 +162,98 @@ test("streams 100 MiB upload with bounded heap, matching SHA, empty-file and hos
   expect(errors).toEqual([]);
 });
 
+test("surfaces machine-readable peer timeout diagnostics instead of generic BadState", async ({ page }) => {
+  await page.goto("/?testHooks=1");
+  await page.waitForFunction(() => globalThis.__wasmVmFileTransferUI);
+  const result = await page.evaluate(async () => {
+    const ui = globalThis.__wasmVmFileTransferUI;
+    const diagnostic = {
+      slot: 0,
+      connectionId: 9,
+      socketState: "CloseWait",
+      reconnects: 2,
+      terminal: {
+        connectionId: 9,
+        stream: 1,
+        fromState: "Sending",
+        transition: "peer-error",
+        frameKind: 10,
+        error: "Timeout",
+        byteOffset: 25 * 1024 * 1024,
+        atMs: 50_000,
+        lastActivityMs: 10_000,
+        idleMs: 40_000,
+        activeSinceMs: 1_000,
+        peerDetail: "{\"component\":\"guest\",\"storageWrite\":{\"durationMs\":40000}}",
+      },
+    };
+    const record = {
+      id: 1,
+      slot: 0,
+      sent: 0,
+      total: 1,
+      buffered: 0,
+      state: "error",
+      error: "Timeout",
+      diagnostic,
+    };
+    const calls = [];
+    ui.attachController({
+      fileTransferReady: () => {
+        calls.push("ready");
+        return true;
+      },
+      setFileDownloadReady: () => {},
+      beginFileUpload: () => {
+        calls.push("begin");
+        return 1;
+      },
+      pushFileUpload: () => {
+        calls.push("push");
+        throw new Error("push file upload: BadState");
+      },
+      cancelFileUpload: () => calls.push("cancel"),
+      dismissFileUpload: () => {
+        calls.push("dismiss");
+        return false;
+      },
+      fileTransferStatus: () => {
+        calls.push("status");
+        return { maxBuffered: 8 * 1024 * 1024, uploads: [record], downloads: [] };
+      },
+      takeFileDownloadChunk: () => new Uint8Array(),
+      dismissFileDownload: () => true,
+      cancelFileDownload: () => {},
+    });
+    ui.enqueueFiles([{
+      name: "slow.bin",
+      size: 1,
+      stream: () => new ReadableStream({
+        start(controller) {
+          controller.enqueue(Uint8Array.of(0x78));
+          controller.close();
+        },
+      }),
+    }]);
+    for (let attempt = 0; attempt < 1_000; attempt += 1) {
+      const transfer = ui.snapshot().find((item) => item.name === "slow.bin");
+      if (transfer?.state === "error") return transfer;
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+    throw new Error(
+      `diagnostic upload did not terminalize: ${JSON.stringify({ snapshot: ui.snapshot(), calls })}`,
+    );
+  });
+  expect(result.label).toBe("error — guest upload Timeout during peer-error");
+  expect(result.diagnostic.slot).toBe(0);
+  expect(result.diagnostic.connectionId).toBe(9);
+  expect(result.diagnostic.socketState).toBe("CloseWait");
+  expect(result.diagnostic.reconnects).toBe(2);
+  expect(result.diagnostic.terminal.error).toBe("Timeout");
+  expect(result.diagnostic.terminal.byteOffset).toBe(25 * 1024 * 1024);
+  expect(result.diagnostic.terminal.peerDetail).toContain("\"storageWrite\"");
+});
+
 test("streams 100 MiB guest download with bounded heap and exposes partial cancellation", async ({ page }) => {
   await page.goto("/?testHooks=1");
   await page.waitForFunction(() => globalThis.__wasmVmFileTransferUI);
