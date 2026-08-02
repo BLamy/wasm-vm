@@ -773,7 +773,7 @@ impl Csrs {
             .map_or(0, |(_, v)| *v)
     }
 
-    /// E1-T29 diagnostic: current (mcounteren, scounteren, mode) for the illegal-trap logger.
+    /// E1-T30 diagnostic: current (mcounteren, scounteren, mode) for the illegal-trap logger.
     pub(crate) fn counteren_dbg(&self) -> (u64, u64, Priv) {
         (
             self.warl_get(MCOUNTEREN),

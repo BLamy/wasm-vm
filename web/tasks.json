@@ -56,7 +56,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-07-31"
+    "end": "2026-08-01"
   },
   "tasks": [
     {
@@ -3594,19 +3594,27 @@
             "E1-T29: debug-spec mcontrol triggers → rv64mi-p-breakpoint passes (0 deferrals)",
             "E1-T29: scope debug triggers (last capstone deferral) — branch + plan"
           ]
+        },
+        {
+          "date": "2026-08-01",
+          "commits": 2,
+          "labels": [
+            "feat(e3.5-t05d): bake glibc bundles (debian, busybox:latest) — unblocked by E1-T29",
+            "fix(core): E1-T29 glibc riscv64 SIGILL — grant scounteren so userspace rdtime works"
+          ]
         }
       ],
       "firstActivity": "2026-07-04",
-      "lastActivity": "2026-07-04",
-      "commitCount": 4
+      "lastActivity": "2026-08-01",
+      "commitCount": 6
     },
     {
-      "id": "E1-T29",
+      "id": "E1-T30",
       "epic": "1",
       "epicKey": "1",
       "title": "glibc riscv64 binaries SIGILL in-guest — execute-path gap (not a decoder gap)",
       "priority": 229,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E1-T28"
       ],
@@ -3634,24 +3642,19 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "_(none yet — investigation recorded in Context; capture + fix pending)_",
+      "verificationLog": "### 2026-08-01 — root cause captured, fixed, verified (it was userspace `rdtime`, NOT FP state)\n\n**The Context hypothesis (FP-state gate) was WRONG.** Captured the real fault and fixed it.\n\n**Method — fast native repro (no 40-min Alpine boot).** Built real riscv64 binaries and booted each\nas `/init` in a ~90s busybox initramfs via the native CLI (`wasm-vm boot --initrd …`), with a new\nillegal-instruction trap logger (`RUST_LOG=\"wvm::trap=info\"`):\n- **static glibc** hello (dockcross `-static`) → prints `HELLO_GLIBC_42`, exit 0. **Refutes FP-state**\n  (a static glibc binary uses the same F/D instructions + libc init, yet runs clean).\n- **Debian trixie `/bin/true`** (dynamic glibc PIE) → exit 0, no trap.\n- **Docker Hub `busybox:latest`** (dynamic glibc) → **SIGILL captured**:\n  `illegal-instruction epc=0x…8844 insn=0xc01027f3 mode=U mcounteren=0x7 scounteren=0x0`, and the\n  guest kernel reports `init[1]: unhandled signal 4 … do_trap_insn_illegal` → panic exitcode 0x04.\n\n**Root cause.** `0xc01027f3` decodes to `csrrs x15, time, x0` = **`rdtime`**, a U-mode read of the\n`time` CSR (0xC01). At reset we grant `mcounteren=0x7` but left `scounteren=0` — so the (spec-correct,\n§3.1.10/§4.1.5) counter gate rejects U-mode `rdtime` (U needs mcounteren.TM **and** scounteren.TM).\nThis kernel neither sets `scounteren.TM` nor emulates the read, and glibc userland executes a raw\n`rdtime`, so it SIGILLs. musl (Alpine) never does this — hence \"musl works, glibc doesn't.\"\n\n**Fix** (`crates/core/src/lib.rs`, `boot_supervisor`): grant `scounteren=0x7` (CY/TM/IR) at reset,\nmirroring the existing `mcounteren` firmware grant. The spec gate is unchanged — the kernel may still\nrestrict userspace by writing scounteren. No instruction semantics change.\n\n**Acceptance criteria:**\n- [x] Exact faulting (PC, insn, cause) captured at runtime — trap-path logger in `hart::take_trap`\n      (+ `csr::counteren_dbg`), recorded above (`insn=0xc01027f3`, IllegalInstruction, U-mode).\n- [x] Root cause named + fixed with spec citation (Priv §3.1.10/§4.1.5 counter-enable gating); no\n      regression: **RISCOF differential 0 fail (`RISCOF_RC=0`)**, core timer/counter suite 0 fail.\n- [x] A stock Docker Hub glibc riscv64 image runs in-guest to real output — `busybox:latest`'s glibc\n      `sh` runs `/init` (`exit 42`) to a clean **`exitcode=0x00002a00`** (was SIGILL exitcode 0x04);\n      static glibc prints `HELLO_GLIBC_42`.\n- [x] Regression test (`crates/core/tests/sbi_timer_fuzz.rs::umode_rdtime_works_after_boot_supervisor_e1t29`):\n      asserts U-mode `rdtime` works after reset **and** still traps when scounteren.TM is cleared\n      (gate intact).\n\n**Adversarial verification.** Reverting the fix (scounteren=0) reproduces the SIGILL; with it,\nbusybox glibc runs. No regression proven: RISCOF differential 0-fail (396 Passed, 0 Failed);\n`sbi_timer_fuzz` (6) + `zicntr` (10) pass; the gate still traps U-mode rdtime once scounteren.TM is\ncleared (unit-tested), so the spec behavior is preserved — only the reset default changed.\n\n**All acceptance criteria met with recorded evidence → status flipped to `verified`.**",
       "adversarial": "Confirm the fix is the real cause, not a mask: with the fix reverted the glibc bundle SIGILLs; with\nit, it runs. Prove no regression: RISCOF differential still 0-fail, Alpine boots 3× (E2-T19 harness).\nIf the cause is FP-state, add a unit test that executes an FP op with `mstatus.FS=Off` and asserts\nthe trap+re-enable path matches the spec (Priv §3.1.6 FS field).",
-      "file": "tasks/epic-1-the-machine/E1-T29-glibc-riscv64-execute-gap.md",
+      "file": "tasks/epic-1-the-machine/E1-T30-glibc-riscv64-execute-gap.md",
       "activity": [
         {
-          "date": "2026-07-04",
-          "commits": 4,
-          "labels": [
-            "E1-T29: debug-spec mcontrol triggers → rv64mi-p-breakpoint passes (0 deferrals) (#54)",
-            "E1-T29: mark verified (critic) — final capstone deferral cleared",
-            "E1-T29: debug-spec mcontrol triggers → rv64mi-p-breakpoint passes (0 deferrals)",
-            "E1-T29: scope debug triggers (last capstone deferral) — branch + plan"
-          ]
+          "date": "2026-08-01",
+          "commits": 0,
+          "labels": []
         }
       ],
-      "firstActivity": "2026-07-04",
-      "lastActivity": "2026-07-04",
-      "commitCount": 4
+      "firstActivity": "2026-08-01",
+      "lastActivity": "2026-08-01",
+      "commitCount": 0
     },
     {
       "id": "E2-T01",
@@ -9854,13 +9857,22 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 5,
-      "verificationLog": "**2026-08-01 — baked bundles RUN in-guest (musl set, 4/4) → verified.** Reliable Rust RUN-gate\n`crates/cli/tests/boot_bake_gate.rs` boots the SERVED rootfs and runs each baked bundle via\n`wvrun run /opt/containers/<name> -- <smoke>`:\n\n```\nRESULT alpine PASS      (sh -c 'echo AL_42')\nRESULT busybox PASS     (sh -c 'echo BB_42')\nRESULT redis PASS       (redis-server --version -> \"Redis server v=...\")\nRESULT memcached PASS   (memcached --version -> \"memcached 1.6.x\")\nBAKE_GATE: 4/4 passed   GATE_EXIT=0\n```\n\n**Key finding + pivot (see E1-T29).** The first pass baked stock Docker Hub images (busybox,\nmemcached, caddy) which all `Illegal instruction` in-guest. Investigation (`crates/core/tests/\nisa_scan.rs`) proved it is NOT a decoder gap — the interpreter decodes 100% of their `.text`;\nthey are **glibc** binaries hitting a decoded-but-execute-rejected path (FP-state/`mstatus.FS`\nsuspect), while **musl** runs. Filed as **E1-T29**. Per that finding the baked set was pivoted to\nmusl/baseline-rv64gc images, which run: alpine (musl), busybox (Alpine's musl busybox), redis:alpine,\nmemcached:alpine. Non-vacuity of the gate is proven by the earlier glibc FAILs.\n\n**Chunked image + sizes (crit 4/5).** `/opt/containers/index.json` catalogs the 4 (name/ref/libc/\nrootfsBytes/rootfsEntries). Bundle rootfs sizes: alpine 7.1 MB, busybox 1.4 MB, redis 125.1 MB,\nmemcached 11.7 MB (~145 MB baked). The served ext4 was rebuilt (`tools/build-rootfs.sh`) and\nRE-CHUNKED (`tools/chunk_image.py split`, 4096×128 KiB, 2127 unique after dedup); `chunk_image.py\nverify` OK — reassembles to the exact rootfs (sha256 round-trips), and those bytes are what the\ngate ran. Chunked store grew 130 MB -> 266 MB (lazy-fetched, so only touched chunks download). New\nchunks + manifest synced to R2 (`chunked-alpine/`); web redeployed (artifacts-alpine.json ->\nrootfs sha256 079706bd...). AC4's \"works from the lazy-chunked boot\" holds by byte-equivalence: the\nchunked image reassembles to the exact rootfs the gate ran (round-trip verified); a live in-browser\nwvrun is the same bytes.\n\nWvrun gained a docker-style command override (`run <bundle> -- <cmd>`) to echo-prove shells and, later,\ndrive the Docker-tab UI. Stock glibc/Debian images are excluded pending E1-T29.\n\n_pending_",
+      "verificationLog": "**2026-08-01 — baked bundles RUN in-guest (musl set, 4/4) → verified.** Reliable Rust RUN-gate\n`crates/cli/tests/boot_bake_gate.rs` boots the SERVED rootfs and runs each baked bundle via\n`wvrun run /opt/containers/<name> -- <smoke>`:\n\n```\nRESULT alpine PASS      (sh -c 'echo AL_42')\nRESULT busybox PASS     (sh -c 'echo BB_42')\nRESULT redis PASS       (redis-server --version -> \"Redis server v=...\")\nRESULT memcached PASS   (memcached --version -> \"memcached 1.6.x\")\nBAKE_GATE: 4/4 passed   GATE_EXIT=0\n```\n\n**Key finding + pivot (see E1-T30).** The first pass baked stock Docker Hub images (busybox,\nmemcached, caddy) which all `Illegal instruction` in-guest. Investigation (`crates/core/tests/\nisa_scan.rs`) proved it is NOT a decoder gap — the interpreter decodes 100% of their `.text`;\nthey are **glibc** binaries hitting a decoded-but-execute-rejected path (FP-state/`mstatus.FS`\nsuspect), while **musl** runs. Filed as **E1-T30**. Per that finding the baked set was pivoted to\nmusl/baseline-rv64gc images, which run: alpine (musl), busybox (Alpine's musl busybox), redis:alpine,\nmemcached:alpine. Non-vacuity of the gate is proven by the earlier glibc FAILs.\n\n**Chunked image + sizes (crit 4/5).** `/opt/containers/index.json` catalogs the 4 (name/ref/libc/\nrootfsBytes/rootfsEntries). Bundle rootfs sizes: alpine 7.1 MB, busybox 1.4 MB, redis 125.1 MB,\nmemcached 11.7 MB (~145 MB baked). The served ext4 was rebuilt (`tools/build-rootfs.sh`) and\nRE-CHUNKED (`tools/chunk_image.py split`, 4096×128 KiB, 2127 unique after dedup); `chunk_image.py\nverify` OK — reassembles to the exact rootfs (sha256 round-trips), and those bytes are what the\ngate ran. Chunked store grew 130 MB -> 266 MB (lazy-fetched, so only touched chunks download). New\nchunks + manifest synced to R2 (`chunked-alpine/`); web redeployed (artifacts-alpine.json ->\nrootfs sha256 079706bd...). AC4's \"works from the lazy-chunked boot\" holds by byte-equivalence: the\nchunked image reassembles to the exact rootfs the gate ran (round-trip verified); a live in-browser\nwvrun is the same bytes.\n\nWvrun gained a docker-style command override (`run <bundle> -- <cmd>`) to echo-prove shells and, later,\ndrive the Docker-tab UI. Stock glibc/Debian images are excluded pending E1-T30.\n\n### 2026-08-01 — glibc bundles added (E1-T30 unblocked them) + redeployed\n\nE1-T30 root-caused the glibc SIGILL (it was userspace `rdtime`, NOT the FP-state gate the earlier\nnote suspected — see E1-T30) and FIXED it (grant `scounteren=0x7` at reset). With glibc riscv64 now\nrunning in-guest, the baked set was extended with two **glibc** bundles alongside the musl four:\n- **debian** (`debian:trixie-slim`, glibc) — 70.7 MB rootfs, 3245 entries, entry `bash`.\n- **busybox-glibc** (`busybox:latest`, glibc) — 3.3 MB rootfs, 448 entries, entry `sh` — the exact\n  image class that used to SIGILL.\nBoth pass `oci validate` (entrypoint = runnable riscv64 ELF, dynamic, `ld-linux-riscv64-lp64d.so.1`).\n\n`/opt/containers/index.json` now catalogs 6 (name/ref/libc/…). The ext4 rootfs was rebuilt\n(`IMG_SIZE=768M` — `build-rootfs.sh` made size-overridable; ~284 MB used, fsck clean, foreign-ELF scan\nriscv64-only) and confirmed via `debugfs` to contain `/opt/containers/{debian,busybox-glibc}`.\nRe-chunked (`chunk_image.py split`, 6144×128 KiB; `verify` OK — sha256 round-trips; base-boot chunks\nkeep their content-addressed hashes so the boot-profile stays valid). New chunks + manifest synced to\nR2 (`chunked-alpine/`, image_len 805306368); `artifacts-alpine.json` regenerated (rootfs sha\n`dfdb7b7c…`). Redeployed to Cloudflare (`wasm-vm.pages.dev`) with the E1-T30-fixed wasm — verified\nlive: deployed manifest rootfs sha `dfdb7b7c`, R2 manifest image_len 805306368/6144 chunks, wasm\nHTTP 200. glibc containers now run in the browser build.",
       "adversarial": "Prove NON-vacuity: a deliberately-broken bundle (entry chmod -x, or a truncated layer) FAILS the RUN\ngate (so a PASS means something). Confirm a baked image's rootfs is the REAL image (spot-check an\nentry binary is riscv64 ELF, not a placeholder). Reproducibility: the rootfs MANIFEST/FILE-MANIFEST\ndrift gate accounts for the new `/opt/containers/*` files (reviewed, not silently accepted). Confirm\nlazy-chunk boot fetches only touched chunks when running one bundle (a baked image doesn't force the\nwhole image resident).",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05d-baked-image-bundles.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-01",
+          "commits": 2,
+          "labels": [
+            "feat(e3.5-t05d): bake glibc bundles (debian, busybox:latest) — unblocked by E1-T29",
+            "feat(e3.5-t05d): bake musl containers that RUN in-guest — verified 4/4"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-01",
+      "lastActivity": "2026-08-01",
+      "commitCount": 2
     },
     {
       "id": "E3.5-T05e",
@@ -9901,13 +9913,22 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "_pending_",
+      "verificationLog": "### 2026-08-01 — channel mechanism proven GREEN in a real browser (busybox); Alpine AC1 in progress\n\n**Implementation** (`web/main.js`, `window.wvmDemo`, commit `19773e6`):\n- `run(cmd)` — canonical name for the serialized fenced RPC (shares `guestExec`: sends\n  `<cmd>; printf '\\n__WVEND_<rid>_%s\\n' \"$?\"`, unique per-call `rid`, END marker binds to the exact\n  id + guest-computed `$?`; promise-chained so back-to-back callers can't interleave).\n- `hasContainerRuntime()` — real in-guest probe (`test -x /usr/local/bin/wvrun && test -f\n  /opt/containers/index.json`), fail-closed (false when absent). NOT the load-time asset guess.\n- `stream(cmd, onLine) → {send, stop}` — long-lived follow/interactive channel for `logs -f` / `exec\n  -it`: taps the real console, splits on newlines (ANSI/CR stripped), swallows the command echo.\n  **Re-entrancy fix:** `send()`/`stop()` defer their `ui.typeBytes` via `setTimeout(0)` — a consumer\n  typically calls `stop()` from inside `onLine` (which runs in the console-emit loop), and driving the\n  machine synchronously from there trips the WasmMachine re-entrancy guard and drops the bytes\n  (exactly the \"no re-entrant call into WasmMachine\" concern in the adversarial section). First test\n  run caught this (Ctrl-C dropped, console error); the fix made it green.\n\n**Playwright proof** (`web/tests/e3-t05e-guest-ui-channel.spec.js`), real interpreted RISC-V guest,\nreal console byte stream (`onConsole`) + real input bridge (`sendInput`) — markers are guest-computed\n(`$((6*7))→42`), so a host-side literal echo cannot satisfy them.\n\nTest 1 — **fenced RPC, serialization, streaming & fail-closed runtime (busybox)** — **PASS (1.3m,\nRC=0)**, covering the runtime-agnostic ACs on the fast/reliable busybox userland:\n- AC (run): `run(\"echo RPC_$((6*7))\")` → stdout `RPC_42`, exit 0 (guest-computed).\n- AC5 (fail-closed): `hasContainerRuntime()` === **false** on the busybox build (real in-guest probe).\n- AC2 (fencing): back-to-back `run(\"echo A_$((1+1))\")` / `run(\"echo B_$((2+2))\")` → A→2, B→4, no\n  cross-contamination.\n- AC4 (non-zero exit): `run(\"false\")` → exit **1**, not swallowed.\n- Adversarial marker-spoof: `printf '__WVEND_deadbeef_0\\n'; echo REAL_$((3+4))` → the fake\n  wrong-id marker does NOT end the RPC; stdout `REAL_7`, exit 0.\n- AC3 (streaming): `stream()` of a live 8-iteration emitter delivered successive `STREAM_0,1,2…` in\n  order; `stop()` ended it and a fresh `run(\"echo ALIVE_$((5+5))\")` → `ALIVE_10` proved the guest\n  survived (stop() did not kill the shell). Zero console errors after the re-entrancy fix.\n\nTest 2 — **hasContainerRuntime() true + `wvrun ps` (Alpine)** — the two container-runtime-specific\nassertions (AC1). Uses the SAME bridge code (same `run`/`hasContainerRuntime` proven green above),\nagainst the chunked Alpine guest (which ships wvrun + baked bundles). **Not yet green in-browser on\nthis host:** the interpreted Alpine boot-to-login is ~40 min in the browser, and this dev machine\ncould not sustain it — four separate runs were reaped by the OS mid-boot (~15-25 min in, before\n`login:`; memory pressure, aggravated by ~20 orphaned `@playwright/mcp` node processes). This is an\nenvironment limit, not a code defect: the busybox test proves the identical bridge code end-to-end in\na real browser, and `crates/cli/tests/boot_bake_gate.rs` proves wvrun + the baked bundles run\nin-guest (4/4). AC1's remaining gap is purely \"the browser Alpine guest reaches login and the same\nbridge returns true there,\" which needs a host that can hold the ~40-min boot (e.g. a build box, or\nrunning with local `assetBase` chunks + the orphan MCP procs cleared).\n\n**Status: implemented; channel mechanism verified (busybox, green); AC1 (Alpine-in-browser) pending a\nhost that can sustain the boot.** Kept `pending` rather than flipping to `verified` — the charter\nrequires AC1's own recorded green evidence, which this host cannot currently produce.",
       "adversarial": "Marker-spoof: a command that PRINTS a fake `__WVEND_...` line must not prematurely end another RPC (ids\nare per-call random; the parser binds to the exact issued id). Backpressure: a command emitting a large\nburst does not drop the END marker (the parser is byte-stream robust, not line-count bounded). Re-entrancy:\nissuing an RPC from inside an `onConsole` callback respects the existing `setTimeout(0)` guard (no\n\"re-entrant call into WasmMachine\"). Guest reboot mid-RPC → the pending RPC rejects with a typed error,\nthe queue drains, no permanent hang.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05e-guest-ui-rpc-bridge.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-01",
+          "commits": 2,
+          "labels": [
+            "docs(E3.5-T05e): record channel-mechanism proof (busybox green); AC1 env-blocked",
+            "feat(web): E3.5-T05e structured guest⇄UI channel (run/stream/hasContainerRuntime)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-01",
+      "lastActivity": "2026-08-01",
+      "commitCount": 2
     },
     {
       "id": "E3.5-T05f",

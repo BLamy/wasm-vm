@@ -292,7 +292,7 @@ fn guest_cannot_clear_stip_via_sip_csrc() {
     );
 }
 
-/// ATTACK 4 / E1-T29: counter grant scope after boot_supervisor. Both mcounteren AND scounteren
+/// ATTACK 4 / E1-T30: counter grant scope after boot_supervisor. Both mcounteren AND scounteren
 /// grant CY/TM/IR, so S-mode AND U-mode `rdtime` work — stock glibc riscv64 binaries execute a raw
 /// userspace `rdtime` (captured SIGILL: insn=0xc01027f3) that used to trap when scounteren=0. The
 /// spec gate itself is unchanged: clearing scounteren.TM makes U-mode `rdtime` trap again.
@@ -303,24 +303,24 @@ fn umode_rdtime_works_after_boot_supervisor_e1t29() {
     m.enable_builtin_sbi();
     m.boot_supervisor(0, 0);
     let csr = &mut m.hart_mut().csr;
-    // scounteren reads 0x7 from S (E1-T29 grants CY/TM/IR at reset).
+    // scounteren reads 0x7 from S (E1-T30 grants CY/TM/IR at reset).
     let sc = csr
         .access(0x106, CsrOp::Set, 0, true, false, 0)
         .expect("scounteren readable from S");
     assert_eq!(
         sc, 0x7,
-        "E1-T29: scounteren must grant CY/TM/IR after boot_supervisor"
+        "E1-T30: scounteren must grant CY/TM/IR after boot_supervisor"
     );
     // S-mode rdtime: OK (mcounteren.TM granted).
     assert!(
         csr.access(0xC01, CsrOp::Set, 0, true, false, 0).is_ok(),
         "S-mode rdtime must work after boot_supervisor"
     );
-    // U-mode rdtime: now OK too (the E1-T29 fix — was a SIGILL for glibc userland).
+    // U-mode rdtime: now OK too (the E1-T30 fix — was a SIGILL for glibc userland).
     csr.mode = Priv::U;
     assert!(
         csr.access(0xC01, CsrOp::Set, 0, true, false, 0).is_ok(),
-        "E1-T29: U-mode rdtime must work (glibc userland reads the time CSR)"
+        "E1-T30: U-mode rdtime must work (glibc userland reads the time CSR)"
     );
     // Spec gate still holds: if the kernel clears scounteren.TM, U-mode rdtime traps again.
     csr.mode = Priv::S;

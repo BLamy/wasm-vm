@@ -602,12 +602,12 @@ impl Machine {
             .expect("medeleg write from M cannot fail");
         // E2-T05: grant S-mode the CY/TM/IR counters (mcounteren = 0x7) — the kernel's
         // sched_clock reads `time` via rdtime, which traps without this (OpenSBI grants the
-        // same). E1-T29: scounteren is granted too (just below) so U-mode rdtime works.
+        // same). E1-T30: scounteren is granted too (just below) so U-mode rdtime works.
         self.hart
             .csr
             .access(MCOUNTEREN, CsrOp::Write, 0x7, false, false, 0)
             .expect("mcounteren write from M cannot fail");
-        // E1-T29: also grant U-mode CY/TM/IR via scounteren (=0x7) so userspace `rdtime` works.
+        // E1-T30: also grant U-mode CY/TM/IR via scounteren (=0x7) so userspace `rdtime` works.
         // Stock glibc riscv64 binaries (e.g. Docker Hub busybox:latest) execute a raw userspace
         // `rdtime` (CSR `time`=0xC01) — captured SIGILL: epc in libc, insn=0xc01027f3. Our gate is
         // spec-correct (U-mode counter reads need mcounteren.TM AND scounteren.TM, §3.1.10/§4.1.5),
@@ -616,7 +616,7 @@ impl Machine {
         // scounteren at reset mirrors firmware/platforms that expose userspace counters (the same
         // rationale as mcounteren above); the kernel remains free to restrict it by writing the CSR.
         // Verified: with this, busybox:latest glibc runs to a normal exit (was SIGILL); musl (Alpine)
-        // is unaffected (it never executes userspace rdtime). See E1-T29 verification log.
+        // is unaffected (it never executes userspace rdtime). See E1-T30 verification log.
         self.hart
             .csr
             .access(crate::csr::SCOUNTEREN, CsrOp::Write, 0x7, false, false, 0)

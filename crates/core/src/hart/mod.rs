@@ -766,7 +766,7 @@ impl Hart {
     /// (medeleg delegation to S-mode lands in E1-T11; until then every trap is taken in M.)
     pub fn take_trap(&mut self, trap: Trap, epc: u64) {
         let cause = trap.cause as u64;
-        // E1-T29 diagnostic: surface every illegal-instruction trap so a boot can pinpoint the
+        // E1-T30 diagnostic: surface every illegal-instruction trap so a boot can pinpoint the
         // decoded-but-execute-REJECTED op that SIGILLs glibc userland (musl runs, glibc doesn't).
         // `tval` carries the raw faulting instruction for IllegalInstruction (Priv §3.1.16), so
         // epc + insn together name the exact PC and opcode. Off by default (log-facade gated on a
