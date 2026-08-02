@@ -775,25 +775,23 @@ impl Machine {
         // E3-T12c1: virtio-blk transport lifecycle + device ring position + FLUSH-forward count. The
         // disk bytes are the overlay (bound by generation, E3-T12c3), not serialized here; the parked
         // in-flight set is drained/refused by the quiesce (E3-T12c2) so it is empty at this boundary.
-        if let Some((state, vq)) = &self.blk {
-            if let Some((slot, _)) = self.virtio.first() {
-                let mut v = alloc::vec::Vec::new();
-                slot.borrow().snapshot_transport(&mut v);
-                match vq {
-                    Some(q) => {
-                        v.push(1);
-                        let (la, ui) = q.ring_indices();
-                        v.extend_from_slice(&la.to_le_bytes());
-                        v.extend_from_slice(&ui.to_le_bytes());
-                    }
-                    None => {
-                        v.push(0);
-                        v.extend_from_slice(&[0u8; 4]);
-                    }
+        if let (Some((state, vq)), Some((slot, _))) = (&self.blk, self.virtio.first()) {
+            let mut v = alloc::vec::Vec::new();
+            slot.borrow().snapshot_transport(&mut v);
+            match vq {
+                Some(q) => {
+                    v.push(1);
+                    let (la, ui) = q.ring_indices();
+                    v.extend_from_slice(&la.to_le_bytes());
+                    v.extend_from_slice(&ui.to_le_bytes());
                 }
-                v.extend_from_slice(&state.borrow().flush_count.to_le_bytes());
-                w.section(section::VIRTIO_BLK, &v);
+                None => {
+                    v.push(0);
+                    v.extend_from_slice(&[0u8; 4]);
+                }
             }
+            v.extend_from_slice(&state.borrow().flush_count.to_le_bytes());
+            w.section(section::VIRTIO_BLK, &v);
         }
         // Deterministic-clock phase (E3-T12b): the sub-`clock_div` remainder + `clock_div` itself, so
         // the next `mtime` tick lands at the identical retirement after resume (instruction-exact
