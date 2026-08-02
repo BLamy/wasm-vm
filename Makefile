@@ -352,6 +352,22 @@ verify-E3-T12c1:
 	$(MAKE) _v-wasm
 	@echo "verify-E3-T12c1 (virtio transport+device snapshot visitors): OK"
 
+.PHONY: verify-E3-T12c2
+verify-E3-T12c2:
+	# Bounded virtqueue quiesce before snapshot: no half-processed request crosses a snapshot.
+	cargo fmt --check -p wasm-vm-core
+	cargo clippy -p wasm-vm-core --lib -- -D warnings
+	cargo clippy -p wasm-vm-core --test virtio_blk_quiesce -- -D warnings
+	# AC1 (resolvable → drains + snapshots; unresolvable → BOUNDED refusal, no unbounded wait),
+	# AC2 (completed request's used-ring index exact across quiesce→snapshot→restore), AC3
+	# (save_resume on a non-quiesced machine returns the typed refusal and emits no blob).
+	cargo test -p wasm-vm-core --test virtio_blk_quiesce
+	# The quiesce gate must not regress the existing snapshot round-trips (blk/net/CPU sections).
+	cargo test -p wasm-vm-core --test cpu_resume
+	# Same fixed-LE snapshot path (now quiesce-gated) still round-trips on real wasm32.
+	$(MAKE) _v-wasm
+	@echo "verify-E3-T12c2 (bounded virtqueue quiesce before snapshot): OK"
+
 .PHONY: verify-E3-T24c
 verify-E3-T24c:
 	# The versioned offline app shell against a real browser service worker + Playwright offline mode:

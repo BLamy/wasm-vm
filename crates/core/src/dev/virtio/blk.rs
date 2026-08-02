@@ -123,6 +123,21 @@ impl BlkState {
             .any(|(_, r)| matches!(r, ParkReason::Write))
     }
 
+    /// E3-T12c2: the in-flight (parked) residual for the snapshot quiesce boundary — `None` when the
+    /// set is empty (quiesced), otherwise the first parked chain's reason and the total parked count.
+    /// The quiesce drains what it can synchronously; whatever remains after the bounded budget is the
+    /// typed refusal this reports. First-park order is the drain order (`service` re-executes parked
+    /// chains front-to-back), so the head's reason is the one blocking progress.
+    pub fn residual(&self) -> Option<(crate::resume::QuiesceReason, usize)> {
+        let (_, reason) = self.parked.first()?;
+        let reason = match reason {
+            ParkReason::Chunk(_) => crate::resume::QuiesceReason::Chunk,
+            ParkReason::Flush => crate::resume::QuiesceReason::Flush,
+            ParkReason::Write => crate::resume::QuiesceReason::Write,
+        };
+        Some((reason, self.parked.len()))
+    }
+
     /// E2-T19: start recording serviced requests for `--blk-log`.
     pub fn enable_log(&mut self) {
         if self.blk_log.is_none() {

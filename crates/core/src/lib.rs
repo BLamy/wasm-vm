@@ -760,11 +760,69 @@ impl Machine {
         &self.hart
     }
 
+    /// E3-T12c2: the maximum number of service passes [`Self::quiesce`] spends draining the virtio-blk
+    /// in-flight set before it refuses the snapshot. A hard upper bound so a chain parked on a
+    /// never-arriving event yields a *bounded* refusal, never an unbounded wait. Each pass re-executes
+    /// every parked chain once; a resolvable event (a resident chunk, a now-durable flush/write) drains
+    /// on the pass after it resolves, so a few passes suffice for genuinely drainable state.
+    pub const QUIESCE_MAX_PASSES: u32 = 16;
+
+    /// E3-T12c2: drive the virtio-blk in-flight (parked) set to empty within a bounded number of
+    /// service passes, or refuse with the residual reason. Guarantees a coherent snapshot boundary:
+    /// on `Ok(())` no descriptor chain is half-processed (nothing parked); on
+    /// [`crate::resume::SnapshotError::NotQuiesced`] the caller must NOT serialize — the state is torn
+    /// and a snapshot would double-complete or lose the parked request on restore.
+    ///
+    /// Each pass re-services the device (which re-executes parked chains; a chain whose event has
+    /// resolved completes and drops out, one still waiting is re-parked). The loop terminates as soon
+    /// as the set is empty, or after [`Self::QUIESCE_MAX_PASSES`] — never waits unboundedly on an event
+    /// that will not arrive (a base-chunk fetch with no fetch layer, a durability barrier that never
+    /// clears). No blk device ⇒ trivially quiesced.
+    pub fn quiesce(&mut self) -> Result<(), crate::resume::SnapshotError> {
+        // No block device (or the ring was never brought up) means there is nothing to drain.
+        if self.blk.is_none() {
+            return Ok(());
+        }
+        for _ in 0..Self::QUIESCE_MAX_PASSES {
+            // Already empty — quiesced. Checked BEFORE servicing so an already-coherent machine is
+            // never mutated (no spurious used-ring push or IRQ) by the quiesce itself.
+            if self
+                .blk
+                .as_ref()
+                .is_some_and(|(state, _)| state.borrow().residual().is_none())
+            {
+                return Ok(());
+            }
+            // One drain pass. `service` proceeds even without a fresh kick when the parked set is
+            // non-empty (E3-T02), re-executing each parked chain; a resolved event completes it.
+            if let Some((state, vq)) = &mut self.blk {
+                let slot = alloc::rc::Rc::clone(&self.virtio[0].0);
+                dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
+            }
+        }
+        // Budget exhausted with chains still parked → typed refusal carrying the residual.
+        match self
+            .blk
+            .as_ref()
+            .and_then(|(state, _)| state.borrow().residual())
+        {
+            Some((reason, in_flight)) => {
+                Err(crate::resume::SnapshotError::NotQuiesced { reason, in_flight })
+            }
+            None => Ok(()),
+        }
+    }
+
     /// E3-T12b: serialize the machine's resumable state (CPU + RAM + CLINT when present) into one
     /// versioned resume blob. The header hashes are left zero here — a disk-backed caller supplies
     /// real `core_hash`/`base_image_hash`/`overlay_generation` via the section writer directly; this
     /// convenience path is for the RAM-only determinism harness and in-memory round-trips.
-    pub fn save_resume(&self) -> alloc::vec::Vec<u8> {
+    ///
+    /// E3-T12c2: quiesces the virtio-blk in-flight set FIRST and refuses (typed
+    /// [`crate::resume::SnapshotError::NotQuiesced`], no blob emitted) rather than serialize a torn
+    /// boundary — a parked descriptor chain must never be captured half-processed.
+    pub fn save_resume(&mut self) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        self.quiesce()?;
         use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
         let mut w = SnapshotWriter::new(&[0u8; 32], &[0u8; 32], 0);
         w.section(section::CPU, &self.hart.to_snapshot());
@@ -830,7 +888,7 @@ impl Machine {
         // interrupt lands at a different instruction (E3-T12b timer-placement).
         clock.extend_from_slice(&self.sbi_state.stimecmp.to_le_bytes());
         w.section(section::CLOCK, &clock);
-        w.finish()
+        Ok(w.finish())
     }
 
     /// E3-T12b: restore the machine from a [`Self::save_resume`] blob — CPU, RAM, and CLINT. Each

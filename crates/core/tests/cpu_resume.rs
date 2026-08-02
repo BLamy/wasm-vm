@@ -50,7 +50,7 @@ fn resume_trace_matches_continuation() {
             // Reference: run N, snapshot, then run M capturing the continuation's trace.
             let mut a = load(name);
             let _ = a.run_traced(n, &mut NullSink);
-            let blob = a.save_resume();
+            let blob = a.save_resume().unwrap();
             let mut hc = HashSink::new();
             let _ = a.run_traced(m_instrs, &mut hc);
 
@@ -207,12 +207,12 @@ fn virtio_blk_and_net_sections_round_trip_at_machine_level() {
     for &(off, val) in init {
         a.bus_mut().store32(SLOT0 + off, val).unwrap();
     }
-    let blob = a.save_resume();
+    let blob = a.save_resume().unwrap();
 
     let mut b = build(); // fresh, un-programmed — the transport comes entirely from the snapshot
     b.load_resume(&blob).expect("load_resume");
     assert_eq!(
-        b.save_resume(),
+        b.save_resume().unwrap(),
         blob,
         "VIRTIO_BLK section (transport + ring position + flush count) must round-trip"
     );
@@ -332,7 +332,7 @@ fn resume_places_the_timer_interrupt_identically() {
     let (n, m_instrs) = (200u64, 900u64);
     let mut a = build();
     let _ = a.run_traced(n, &mut NullSink);
-    let blob = a.save_resume();
+    let blob = a.save_resume().unwrap();
     let mut hc = HashSink::new();
     let _ = a.run_traced(m_instrs, &mut hc);
 
@@ -361,7 +361,7 @@ fn resume_places_the_timer_interrupt_identically() {
 fn whole_machine_resume_round_trips() {
     let mut a = load("rv64ud-p-fmadd");
     let _ = a.run_traced(500, &mut NullSink);
-    let blob = a.save_resume();
+    let blob = a.save_resume().unwrap();
     let cpu = a.hart().to_snapshot();
 
     let mut b = load("rv64ud-p-fmadd");
@@ -373,7 +373,7 @@ fn whole_machine_resume_round_trips() {
         "resumed CPU section differs after save/load"
     );
     assert_eq!(
-        b.save_resume(),
+        b.save_resume().unwrap(),
         blob,
         "resume blob is not canonical across a round-trip"
     );

@@ -3,7 +3,7 @@ id: E3-T12c2
 epic: 3
 title: Bounded virtqueue quiesce before snapshot
 priority: 321.932
-status: pending
+status: verified
 depends_on: [E3-T12c1, E3-T08]
 estimate: S
 risk: high
@@ -32,12 +32,12 @@ non-empty `parked` set.
   refusal, not an infinite wait).
 
 ## Acceptance criteria
-- [ ] `make verify-E3-T12c2`: with a chain parked on a resolvable event, quiesce drains to empty and
+- [x] `make verify-E3-T12c2`: with a chain parked on a resolvable event, quiesce drains to empty and
   the snapshot proceeds; with a chain parked on an unresolvable event, quiesce refuses within a bounded
   pass count (no unbounded wait) and the snapshot is refused, not torn.
-- [ ] A completed request is neither replayed nor lost across quiesce→snapshot→restore (the used-ring
+- [x] A completed request is neither replayed nor lost across quiesce→snapshot→restore (the used-ring
   index is exact).
-- [ ] `save_resume` on a non-quiesced machine returns the typed refusal and does not emit a blob.
+- [x] `save_resume` on a non-quiesced machine returns the typed refusal and does not emit a blob.
 
 ## Adversarial verification
 Snapshot at every virtqueue transition (mid-pop, post-exec pre-publish, parked). Force a parked chain
@@ -45,4 +45,19 @@ on a chunk that never arrives and assert the quiesce is bounded and refuses. Any
 duplicated completion, lost request, or unbounded quiesce refutes.
 
 ## Verification log
-(empty)
+- 2026-08-02 — `make verify-E3-T12c2`: **OK** (native + wasm32). Implementation:
+  - `Machine::quiesce()` (`crates/core/src/lib.rs`) — bounded-iteration (`QUIESCE_MAX_PASSES = 16`)
+    drain of the virtio-blk parked set via re-`service`; returns `Ok(())` when the in-flight set is
+    empty (checked BEFORE any service pass, so an already-coherent machine is never mutated) or the
+    typed `SnapshotError::NotQuiesced { reason, in_flight }` when the budget is exhausted. No blk ⇒
+    trivially quiesced. Never waits unboundedly.
+  - `Machine::save_resume()` now returns `Result<Vec<u8>, SnapshotError>` and calls `quiesce()` first
+    — a non-quiesced machine returns the typed refusal and emits no blob (AC3).
+  - `SnapshotError::NotQuiesced` + `QuiesceReason { Chunk, Flush, Write }` in `resume.rs`;
+    `BlkState::residual()` maps the head parked reason + count (build-agnostic mirror of `ParkReason`).
+  - Test `crates/core/tests/virtio_blk_quiesce.rs` (3 cases): resolvable FLUSH drains to empty then
+    snapshots and round-trips the used-ring index exactly into a fresh machine (AC1-resolvable + AC2);
+    unresolvable never-arriving chunk refuses within the bounded budget with `NotQuiesced{Chunk}`, no
+    partial completion (AC1-unresolvable + AC3); empty in-flight set is a no-op quiesce.
+  - Existing `cpu_resume` / wasm `resume` round-trips updated for the fallible `save_resume` and still
+    green (the quiesce gate does not regress blk/net/CPU section round-trips).

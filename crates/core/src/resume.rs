@@ -184,6 +184,28 @@ pub enum SnapshotError {
     /// A component-state section payload was the wrong length or otherwise malformed for its
     /// component (`tag`) — restore refuses it rather than half-applying a corrupt state.
     BadComponentState { tag: u32 },
+    /// E3-T12c2: a snapshot was requested while the virtio-blk device still had `in_flight` parked
+    /// descriptor chains that could not be drained within the bounded quiesce pass budget. Rather
+    /// than serialize a torn boundary (a half-processed request that would double-complete or vanish
+    /// on restore), the save REFUSES — the caller retries or falls back. `reason` names the residual
+    /// the drain could not clear; `in_flight` is how many chains remain parked.
+    NotQuiesced {
+        reason: QuiesceReason,
+        in_flight: usize,
+    },
+}
+
+/// E3-T12c2: why the virtio-blk in-flight set could not be drained to empty at a snapshot boundary —
+/// the residual [`SnapshotError::NotQuiesced`] carries. A build-agnostic mirror of the device's park
+/// reasons so the resume format does not depend on the block-device types.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum QuiesceReason {
+    /// A read/write parked awaiting a base-chunk fetch that never arrived within the budget.
+    Chunk,
+    /// A FLUSH parked awaiting a durability barrier the backend did not clear within the budget.
+    Flush,
+    /// A persistent WRITE parked awaiting its durable commit within the budget.
+    Write,
 }
 
 /// A machine component (CLINT, PLIC, UART, …) whose full state serializes to a resume-format

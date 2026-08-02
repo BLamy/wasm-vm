@@ -82,7 +82,7 @@ fn cpu_section_round_trips_on_wasm32() {
     a.hart_mut().regs.write(5, 0xdead_beef_0000_0007);
     a.hart_mut().fregs.write_raw(3, 0x4009_21fb_5444_2d18);
     a.hart_mut().resv = Some((0x8000_0040, 8));
-    let blob = a.save_resume();
+    let blob = a.save_resume().unwrap();
     let cpu = a.hart().to_snapshot();
 
     let mut b = wasm_vm_core::Machine::new(1 << 16);
@@ -111,9 +111,9 @@ fn virtio_blk_section_round_trips_on_wasm32() {
     };
     let mut a = build();
     a.bus_mut().store32(0x1000_1000 + 0x70, 1).unwrap(); // STATUS=ACKNOWLEDGE → non-default transport
-    let blob = a.save_resume();
+    let blob = a.save_resume().unwrap();
 
     let mut b = build();
     b.load_resume(&blob).unwrap();
-    assert_eq!(b.save_resume(), blob, "VIRTIO_BLK section round-trips on wasm32");
+    assert_eq!(b.save_resume().unwrap(), blob, "VIRTIO_BLK section round-trips on wasm32");
 }
