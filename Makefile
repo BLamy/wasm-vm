@@ -316,6 +316,13 @@ verify-E3-T22b:
 	cd web && node --check paste.js && node --check terminal.js
 	@echo "verify-E3-T22b (paste pipeline framing): OK"
 
+.PHONY: verify-E3.5-T04f
+verify-E3.5-T04f:
+	# Content-addressed layer-cache core — put-once / verify-on-read / dedupe / LRU, node unit tests.
+	cd web && node --test tests/oci-blob-cache.test.mjs
+	cd web && node --check oci-blob-cache.js
+	@echo "verify-E3.5-T04f (layer-cache core): OK"
+
 .PHONY: verify-E3-T21d
 verify-E3-T21d:
 	$(MAKE) web-build
