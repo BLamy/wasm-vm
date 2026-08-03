@@ -80,6 +80,11 @@ if [ -e "$DIST/landing.html" ] && [ -e "$DIST/index.html" ]; then
   sed -e 's#\./landing\.html#./#g' "$DIST/app.html" > "$DIST/app.html.tmp" && mv "$DIST/app.html.tmp" "$DIST/app.html"
   sed -e 's#\./index\.html#./app.html#g' -e 's#\./landing\.html#./#g' \
       "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
+  # Other pages that link to the app by its dev name (index.html) — e.g. docs.html's "Launch" CTA —
+  # must point at /app.html in the deployed layout too.
+  for f in docs.html; do
+    [ -e "$DIST/$f" ] && sed -e 's#\./index\.html#./app.html#g' "$DIST/$f" > "$DIST/$f.tmp" && mv "$DIST/$f.tmp" "$DIST/$f"
+  done
   echo "[web-dist] deploy root: / = landing, /app.html = app"
 fi
 

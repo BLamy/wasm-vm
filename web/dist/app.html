@@ -21,11 +21,17 @@
         --cyan: #53d4ff;
       }
       * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
       body {
         margin: 0;
         background: var(--bg);
         color: var(--text);
+        -webkit-tap-highlight-color: transparent; /* no grey flash on tap (iOS) */
       }
+      /* iOS zooms the page when focusing an input whose font-size is < 16px — pin the interactive
+         controls to 16px on TOUCH devices so tapping search / a filter never triggers that jarring
+         zoom. Scoped to coarse pointers so desktop keeps its compact sizing. */
+      @media (pointer: coarse) { input, select, textarea { font-size: 16px; } }
       header {
         display: flex;
         justify-content: space-between;
@@ -33,11 +39,7 @@
         align-items: center;
         padding: 14px 18px;
         border-bottom: 1px solid var(--line);
-        background: linear-gradient(to bottom, rgba(13, 16, 21, 0.86), rgba(13, 16, 21, 0.62));
-        backdrop-filter: blur(12px) saturate(140%);
-        position: sticky;
-        top: 0;
-        z-index: 30;
+        background: linear-gradient(to bottom, rgba(13, 16, 21, 0.92), rgba(13, 16, 21, 0.82));
       }
       h1, h2 { letter-spacing: 0; }
       h1 {
@@ -737,6 +739,12 @@
         .network-config { grid-template-columns: 1fr 1fr; }
         .dk-side { flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--line); }
         .rm-detail { width: 100%; }
+        /* Roadmap header: stack the headline + progress card instead of forcing two columns (which
+           squeezed the title to one word per line and overlapped the card on phones). The ID-scoped
+           selector is deliberate — the base `.rm-top` rule is defined LATER in the source, so a plain
+           `.rm-top` override here would lose on source order. */
+        #panel-roadmap .rm-top { grid-template-columns: 1fr; }
+        #panel-roadmap .rm-overall-card { max-width: 560px; }
       }
 
       /* ── Linear-style roadmap (Roadmap tab) ──────────────────────────────── */

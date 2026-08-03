@@ -9,16 +9,19 @@
 import * as THREE from "three";
 
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Mobile / touch: fewer particles + a lower pixel-ratio cap so the shader stays smooth and easy on the
+// battery on phones (the fragment shader is the cost driver — halving the pixel ratio ~halves its work).
+const MOBILE = matchMedia("(max-width: 820px), (pointer: coarse)").matches;
 
 export function initHero(canvas) {
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: !MOBILE, alpha: true, powerPreference: "high-performance" });
   } catch {
     document.body.classList.add("no-webgl");
     return () => {};
   }
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.5 : 2));
   renderer.setClearColor(0x000000, 0);
 
   const scene = new THREE.Scene();
@@ -112,7 +115,7 @@ export function initHero(canvas) {
   const bgCam = new THREE.Camera();
 
   // --- Layer 2: the "instruction pipeline" — points swept along a torus knot ---
-  const COUNT = 9000;
+  const COUNT = MOBILE ? 3800 : 9000;
   const pos = new Float32Array(COUNT * 3);
   const seed = new Float32Array(COUNT);       // per-particle phase
   const rad = new Float32Array(COUNT);        // tube radius offset
@@ -191,7 +194,7 @@ export function initHero(canvas) {
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
     bg.material.uniforms.uRes.value.set(w, h);
-    points.material.uniforms.uSize.value = Math.min(devicePixelRatio, 2);
+    points.material.uniforms.uSize.value = Math.min(devicePixelRatio, MOBILE ? 1.5 : 2);
   }
   addEventListener("resize", resize); resize();
 
