@@ -6,6 +6,8 @@
 // UMD globals loaded via <script> in index.html (no bundler): `Terminal` (@xterm/xterm) and
 // `FitAddon` (@xterm/addon-fit).
 
+import { createOsc52Handler } from "./osc52.js";
+
 // Bytes handed to the guest per drain tick. Bounds a single JS→wasm copy so a huge paste never
 // becomes one giant allocation; the guest's RX FIFO paces the actual consumption underneath.
 const INPUT_CHUNK = 4096;
@@ -88,6 +90,25 @@ export function createLinuxTerminal(containerEl) {
 
   term.onData((str) => feed(enc.encode(str)));
 
+  // E3-T22a: OSC 52 clipboard copy. A guest `ESC]52;c;<base64>` sets the host clipboard; a rejected
+  // write (denied permission / no transient activation / insecure context) surfaces a non-destructive
+  // affordance instead of dropping silently. The clipboard-READ query (`52;c;?`) stays OFF by default
+  // (a guest read of the host clipboard is an exfiltration channel); `setClipboardRead(true)` opts in.
+  let allowClipboardRead = false;
+  let onCopyBlocked = null; // set by the host UI to show a "copied — click to confirm" affordance
+  const oscHandler = createOsc52Handler({
+    writeClipboard: (text) =>
+      navigator.clipboard?.writeText
+        ? navigator.clipboard.writeText(text)
+        : Promise.reject(new Error("clipboard unavailable")),
+    readClipboard: () => navigator.clipboard.readText(),
+    allowRead: () => allowClipboardRead, // thunk — the live toggle is honored per-invocation
+    onCopyBlocked: (text) => { if (onCopyBlocked) onCopyBlocked(text); },
+    respond: (payload) => feed(enc.encode(`\x1b]52;${payload}\x07`)),
+  });
+  // xterm strips the `ESC]52;` framing and passes the handler the data string.
+  try { term.registerOscHandler(52, oscHandler); } catch { /* older xterm without OSC hooks */ }
+
   return {
     term,
     fit,
@@ -102,5 +123,13 @@ export function createLinuxTerminal(containerEl) {
     // it implicitly, so manual typing silently goes nowhere until this is called (after boot
     // and whenever the Terminal tab is (re)shown from a display:none panel).
     focus() { try { term.focus(); } catch { /* ignore */ } },
+    // E3-T22a: opt in to answering guest clipboard-READ queries (`OSC 52 ; c ; ?`). Default off —
+    // a guest reading the host clipboard is an exfiltration channel, so this must be explicit.
+    setClipboardRead(enabled) { allowClipboardRead = !!enabled; },
+    clipboardReadEnabled: () => allowClipboardRead,
+    // E3-T22a: register a callback shown when a clipboard WRITE is blocked (denied permission / no
+    // transient activation / insecure context) — the "copied — click to confirm" affordance. The
+    // payload is preserved so the click can complete the write; nothing is ever dropped silently.
+    onClipboardCopyBlocked(fn) { onCopyBlocked = fn; },
   };
 }

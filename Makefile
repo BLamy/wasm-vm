@@ -297,6 +297,16 @@ verify-E3-T19c:
 	cargo test -p wasm-vm-cli --test wvrelay_token_rejection
 	@echo "verify-E3-T19c (relay token rejection, server-side): OK"
 
+.PHONY: verify-E3-T22a
+verify-E3-T22a:
+	# OSC 52 copy handler — deterministic parse/cap/gate logic, node unit tests (no browser needed).
+	# AC1 (c;<base64> decodes + writes once; a rejected write routes to onCopyBlocked), AC2 (oversize
+	# + malformed classify invalid, no decode/throw), AC3 (query gated off by default; honored live).
+	cd web && node --test tests/osc52.test.mjs
+	# The terminal wiring stays syntactically valid (it imports ./osc52.js and registers the handler).
+	cd web && node --check osc52.js && node --check terminal.js
+	@echo "verify-E3-T22a (OSC 52 copy handler): OK"
+
 .PHONY: verify-E3-T21d
 verify-E3-T21d:
 	$(MAKE) web-build
