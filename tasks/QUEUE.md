@@ -9,7 +9,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 ## Next up (deps satisfied, in priority order)
 
 1. **E3.5-T04** — Registry/layer persistence — digest-deduped layer cache in browser storage **[DECOMPOSE BEFORE START]**
-1. **E3.5-T04g** — Layer cache IndexedDB backing + importer pull-through + cacheStats surface
 1. **E3.5-T05e** — "Sub-capstone: structured guest⇄UI channel + Alpine boot bridge" **[DECOMPOSE BEFORE START]**
 1. **E3-T19a** — Composed-stack node lifecycle and reload-restore
 1. **E3-T22** — Clipboard integration - OSC 52 copy, paste injection, bracketed paste **[DECOMPOSE BEFORE START]**
@@ -137,8 +136,8 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `312.39` [E3.5-T04e](epic-3.5-oci-workloads/E3.5-T04e-bundle-validate.md) — Bundle preflight — `oci validate` checks a bundle is runnable without a boot *(deps: E3.5-T03)*
 - [ ] `312.4` [E3.5-T04](epic-3.5-oci-workloads/E3.5-T04-registry-layer-persistence.md) — Registry/layer persistence — digest-deduped layer cache in browser storage *(deps: E3.5-T01, E3-T05)*
 - [x] `312.41` [E3.5-T04f](epic-3.5-oci-workloads/E3.5-T04f-layer-cache-core.md) — Content-addressed layer-cache core — put-once, verify-on-read, dedupe, LRU *(deps: E3.5-T01)*
-- [ ] `312.42` [E3.5-T04g](epic-3.5-oci-workloads/E3.5-T04g-layer-cache-idb-wiring.md) — Layer cache IndexedDB backing + importer pull-through + cacheStats surface *(deps: E3.5-T04f, E3-T05, E3-T10)*
-- [ ] `312.43` [E3.5-T04h](epic-3.5-oci-workloads/E3.5-T04h-layer-cache-e2e.md) — Layer cache browser E2E — reload survival, dedupe, tamper refetch (Playwright) *(deps: E3.5-T04g)*
+- [b] `312.42` [E3.5-T04g](epic-3.5-oci-workloads/E3.5-T04g-layer-cache-idb-wiring.md) — Layer cache IndexedDB backing + importer pull-through + cacheStats surface *(deps: E3.5-T04f, E3-T05, E3-T10)*
+- [b] `312.43` [E3.5-T04h](epic-3.5-oci-workloads/E3.5-T04h-layer-cache-e2e.md) — Layer cache browser E2E — reload survival, dedupe, tamper refetch (Playwright) *(deps: E3.5-T04g)*
 - [x] `312.45` [E3.5-T05a](epic-3.5-oci-workloads/E3.5-T05a-visible-docker-busybox.md) — Visible Docker tab — boot bundled busybox and run one real guest command *(deps: E2-T22, E3-T05)*
 - [x] `312.46` [E3.5-T05b](epic-3.5-oci-workloads/E3.5-T05b-wvrun-container-lifecycle.md) — "Sub-capstone: wvrun container lifecycle — run -d, ps, logs, stop" *(deps: E3.5-T03, E3.5-T05a)*
 - [x] `312.47` [E3.5-T05c](epic-3.5-oci-workloads/E3.5-T05c-wvrun-exec-into-container.md) — "Sub-capstone: wvrun exec — enter a running container's namespaces" *(deps: E3.5-T05b)*
