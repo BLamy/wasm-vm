@@ -101,6 +101,7 @@ export function createLinuxTerminal(containerEl) {
   // (a guest read of the host clipboard is an exfiltration channel); `setClipboardRead(true)` opts in.
   let allowClipboardRead = false;
   let onCopyBlocked = null; // set by the host UI to show a "copied — click to confirm" affordance
+  let onCopied = null; // set by the host UI to show a "copied!" confirmation on a successful write
   const oscHandler = createOsc52Handler({
     writeClipboard: (text) =>
       navigator.clipboard?.writeText
@@ -108,6 +109,7 @@ export function createLinuxTerminal(containerEl) {
         : Promise.reject(new Error("clipboard unavailable")),
     readClipboard: () => navigator.clipboard.readText(),
     allowRead: () => allowClipboardRead, // thunk — the live toggle is honored per-invocation
+    onCopied: (text) => { if (onCopied) onCopied(text); },
     onCopyBlocked: (text) => { if (onCopyBlocked) onCopyBlocked(text); },
     respond: (payload) => feed(enc.encode(`\x1b]52;${payload}\x07`)),
   });
@@ -159,6 +161,9 @@ export function createLinuxTerminal(containerEl) {
     // transient activation / insecure context) — the "copied — click to confirm" affordance. The
     // payload is preserved so the click can complete the write; nothing is ever dropped silently.
     onClipboardCopyBlocked(fn) { onCopyBlocked = fn; },
+    // E3-T22a: register a callback fired when a clipboard WRITE succeeds (the "copied!" confirmation),
+    // carrying the decoded text. Symmetric with onClipboardCopyBlocked.
+    onClipboardCopied(fn) { onCopied = fn; },
     // E3-T22b: frame + inject pasted text (newline-normalized, bracketed per the guest's live mode
     // 2004, embedded end-markers neutralized). Used by the DOM paste interceptor and by E2E tests.
     pasteText,

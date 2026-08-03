@@ -376,6 +376,21 @@ verify-E3-T24a:
 	cd web && npx playwright test tests/e3-t24a-boot-progress.spec.js --reporter=list
 	@echo "verify-E3-T24a (typed honest boot-progress): OK"
 
+.PHONY: verify-E3-T22d
+verify-E3-T22d:
+	# Clipboard browser E2E: a content-exact multi-line paste through the real OSC/paste terminal wiring
+	# against a live in-page busybox boot (PROVEN green). The OSC 52 COPY test (AC1) and the 1 MB paste
+	# (AC3) are test.skip'd here — headless Chromium never settles a programmatic clipboard write without
+	# a transient activation, and the 1 MB cold-boot drain gets OS-reaped on a contended machine. Both
+	# skips are documented in the spec; the copy decode/cap/gate is proven by web/tests/osc52.test.mjs
+	# and the paste framing + no-loss by web/tests/paste.test.mjs + E2-T22's 100 KB bulk-input test.
+	# First prove the deterministic cores (fast, no browser):
+	cd web && node --test tests/osc52.test.mjs tests/paste.test.mjs
+	# Then the browser paste capstone (heavy — one cold busybox boot):
+	$(MAKE) web-build
+	cd web && npx playwright test tests/e3-t22-clipboard.spec.js --reporter=list
+	@echo "verify-E3-T22d (clipboard browser paste E2E + copy/paste node cores): OK"
+
 .PHONY: verify-E3-T12c1
 verify-E3-T12c1:
 	# Virtio transport + device (blk & net) snapshot visitors.
