@@ -166,6 +166,26 @@
       .term-bar span { margin-left: 8px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
       .term pre { margin: 0; padding: 20px 22px; font-family: var(--mono); font-size: 13px; line-height: 1.65; color: #cdd6e4; overflow-x: auto; }
       .term .c { color: var(--cyan); } .term .m { color: var(--mint); } .term .d { color: #6b7a8d; }
+      .term-bar .term-boot {
+        margin-left: auto; font: 600 12px var(--font); color: #04141c; cursor: pointer;
+        background: linear-gradient(180deg, #a8ecff, var(--cyan)); border: 0; border-radius: 7px; padding: 5px 12px;
+        box-shadow: 0 6px 18px -10px rgba(83,212,255,0.9); transition: transform .15s, filter .2s;
+      }
+      .term-bar .term-boot:hover { transform: translateY(-1px); filter: brightness(1.06); }
+      .term-body { position: relative; min-height: 300px; }
+      .term-body.live { min-height: 460px; }
+      .term-overlay {
+        position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 14px; text-align: center; padding: 24px;
+        background: radial-gradient(60% 80% at 50% 45%, rgba(5,8,14,0.7), rgba(5,8,14,0.92));
+        backdrop-filter: blur(2px); transition: opacity .3s;
+      }
+      .term-overlay p { color: var(--muted); font-size: 0.92rem; max-width: 340px; margin: 0; }
+      .term-overlay p em { color: var(--ink); font-style: normal; font-weight: 600; }
+      .term-body.booting .term-overlay, .term-body.live .term-overlay { opacity: 0; pointer-events: none; }
+      .term-body.booting > pre { display: none; }   /* swap the mock log out for the real iframe */
+      .term-body iframe { display: block; width: 100%; height: 460px; border: 0; background: #070a10; }
+      @media (max-width: 820px) { .term-body iframe, .term-body.live { height: 380px; min-height: 380px; } }
 
       /* reveal on scroll */
       .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s cubic-bezier(.2,.8,.2,1), transform .7s cubic-bezier(.2,.8,.2,1); }
@@ -313,9 +333,14 @@
             <div class="layer metal reveal d3"><span class="lv">L1</span><div class="ly-main"><div class="lt">Your browser tab</div><div class="ld">no plugins, no server round-trips — it all runs on your machine</div></div></div>
           </div>
 
-          <div class="term reveal d1">
-            <div class="term-bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>wasm-vm — ttyS0</span></div>
-            <pre><span class="d"># booting unmodified Alpine riscv64 in WebAssembly…</span>
+          <!-- Live boot: clicking Boot swaps the mock for a real, chrome-free busybox boot in an iframe
+               (lazy — the ~22 MB kernel + wasm load only on click, never on initial page load). -->
+          <div class="term reveal d1" id="live-term" data-embed-src="./app.html?embed=1&amp;noAutoBoot#ide">
+            <div class="term-bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>wasm-vm — ttyS0</span>
+              <button class="term-boot" id="live-boot-btn">▶ Boot it live</button>
+            </div>
+            <div class="term-body" id="live-body">
+              <pre><span class="d"># booting unmodified Alpine riscv64 in WebAssembly…</span>
 <span class="c">[    0.000000]</span> Linux version 6.6.63 (riscv64) <span class="d">— in your browser</span>
 <span class="c">[    2.664]</span> Run /init as init process
 <span class="m">wasm-vm:~#</span> uname -m
@@ -325,6 +350,11 @@ isa : rv64<span class="c">imafdc</span>
 <span class="m">wasm-vm:~#</span> wvrun run busybox echo "hello from a container"
 hello from a container
 <span class="m">wasm-vm:~#</span> <span class="d">_</span></pre>
+              <div class="term-overlay">
+                <button class="btn" id="live-boot-cta">▶ Boot a real Linux, live</button>
+                <p>Runs entirely in <em>this</em> tab — a real busybox userland in ~15–30s. Nothing leaves your browser.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -398,6 +428,30 @@ hello from a container
         for (const e of entries) if (e.isIntersecting) { countUp(e.target); cio.unobserve(e.target); }
       }, { threshold: 0.6 });
       document.querySelectorAll("[data-count]").forEach((el) => cio.observe(el));
+
+      // Live boot: lazily swap the mock terminal for a REAL chrome-free busybox boot (the app in
+      // ?embed mode). The ~22 MB kernel + wasm load ONLY on click — never on initial page load.
+      const liveTerm = document.getElementById("live-term");
+      if (liveTerm) {
+        const body = document.getElementById("live-body");
+        const src = liveTerm.dataset.embedSrc;
+        let booted = false;
+        const boot = () => {
+          if (booted) return;
+          booted = true;
+          body.classList.add("booting");
+          const iframe = document.createElement("iframe");
+          iframe.title = "wasm-vm live boot";
+          iframe.setAttribute("loading", "lazy");
+          iframe.src = src;
+          iframe.addEventListener("load", () => body.classList.add("live"));
+          body.append(iframe);
+          const btn = document.getElementById("live-boot-btn");
+          if (btn) { btn.textContent = "● booting…"; btn.disabled = true; btn.style.cursor = "default"; }
+        };
+        document.getElementById("live-boot-cta")?.addEventListener("click", boot);
+        document.getElementById("live-boot-btn")?.addEventListener("click", boot);
+      }
     </script>
   </body>
 </html>

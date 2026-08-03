@@ -747,6 +747,14 @@
         #panel-roadmap .rm-overall-card { max-width: 560px; }
       }
 
+      /* Embed mode (?embed): the landing's lazy live-boot iframe loads the app chrome-free — no
+         header, no tabs, no IDE explorer/editor — JUST the guest terminal filling the frame. */
+      html.embed header { display: none; }
+      html.embed .panel:not(#panel-ide) { display: none !important; }
+      html.embed #panel-ide.active { height: 100vh; }
+      html.embed .ide-body, html.embed .ide-hsplit { display: none !important; }
+      html.embed .ide-term-pane { height: 100vh !important; flex: 1 1 auto !important; }
+
       /* ── Linear-style roadmap (Roadmap tab) ──────────────────────────────── */
       #panel-roadmap { position: relative; }
       .rm { padding: 0 0 40px; }
@@ -1206,6 +1214,26 @@
     <script type="module" src="./ide.js"></script>
     <script type="module" src="./docs-mount.js"></script>
     <script type="module" src="./main.js"></script>
+    <!-- Embed mode (?embed): used by the landing page's live-boot iframe. Strips the chrome (see the
+         html.embed CSS), forces the IDE/terminal view, and boots the fast busybox userland. Pair with
+         &noAutoBoot so the background Alpine auto-boot doesn't grab the single guest slot first. -->
+    <script>
+      if (new URLSearchParams(location.search).has("embed")) {
+        document.documentElement.classList.add("embed");
+        if (location.hash.slice(1) !== "ide") location.hash = "ide"; // tabs.js honors this → IDE panel
+        window.addEventListener("load", () => {
+          let tries = 0;
+          const boot = () => {
+            if (window.wvmDemo && typeof window.wvmDemo.runBusybox === "function") {
+              window.wvmDemo.runBusybox();
+            } else if (tries++ < 100) {
+              setTimeout(boot, 100);
+            }
+          };
+          setTimeout(boot, 300);
+        });
+      }
+    </script>
     <!-- E3-T24c: register the versioned offline app-shell service worker. Progressive enhancement —
          the site works without it; it adds offline load + faster repeat visits. Registration failure
          is non-fatal (logged at debug). ?nosw disables it (used by tests that must bypass caching). -->
