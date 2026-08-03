@@ -1,0 +1,10 @@
+#!/bin/sh
+# E3-T22c: pipe stdin to the HOST clipboard via an OSC 52 sequence. Usage: `echo hello | osc52-copy`
+# (or a vim `y` mapping, or tmux copy-mode). Emits  ESC ] 52 ; c ; <base64(stdin)> BEL  to the
+# controlling terminal; the browser terminal's OSC 52 handler (E3-T22a) base64-decodes it and calls
+# navigator.clipboard.writeText — so a guest yank lands on the real host clipboard with no host round
+# trip. Uses only busybox applets (base64, tr, printf), so it needs NO extra packages in the image.
+# The 100 KB hostile-payload cap is enforced by the browser handler, not here.
+set -eu
+b64=$(base64 | tr -d '\n')
+printf '\033]52;c;%s\a' "$b64"

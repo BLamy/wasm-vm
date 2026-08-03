@@ -316,6 +316,14 @@ verify-E3-T22b:
 	cd web && node --check paste.js && node --check terminal.js
 	@echo "verify-E3-T22b (paste pipeline framing): OK"
 
+.PHONY: verify-E3-T22c
+verify-E3-T22c:
+	# Guest clipboard conveniences. The osc52-copy helper's emitted OSC 52 byte sequence is proven
+	# deterministically (no boot); the rootfs wiring (helper + vim/tmux config) stays shell-valid.
+	node --test tools/rootfs/osc52-copy.test.mjs
+	sh -n tools/rootfs/osc52-copy && bash -n tools/rootfs-inner.sh && bash -n tools/build-rootfs.sh
+	@echo "verify-E3-T22c (osc52-copy helper + rootfs wiring): OK"
+
 .PHONY: verify-E3.5-T04f
 verify-E3.5-T04f:
 	# Content-addressed layer-cache core — put-once / verify-on-read / dedupe / LRU, node unit tests.

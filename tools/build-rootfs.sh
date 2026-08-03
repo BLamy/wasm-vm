@@ -64,6 +64,7 @@ docker run --rm \
   -v "$PWD/tools/rootfs/file-transfer.conf:/file-transfer.conf:ro" \
   -v "$PWD/tools/rootfs/wasm-vm-file-agent.initd:/wasm-vm-file-agent.initd:ro" \
   -v "$PWD/tools/rootfs/vm-download:/vm-download:ro" \
+  -v "$PWD/tools/rootfs/osc52-copy:/osc52-copy:ro" \
   -e MAIN_REPO="$MAIN_REPO" \
   -e COMMUNITY_REPO="$COMMUNITY_REPO" \
   -e FS_UUID="$FS_UUID" \

@@ -100,6 +100,33 @@ fi
 # 2e. Hostname.
 echo wasm-vm > "$ROOT/etc/hostname"
 
+# 2e1. E3-T22c: clipboard conveniences. `osc52-copy` pipes stdin to the HOST clipboard via an OSC 52
+# sequence (decoded by the browser terminal's E3-T22a handler) — no host round trip, busybox-only, so
+# it works in the default image with no extra packages. The vim + tmux snippets route yanks through it;
+# they are inert unless those packages are later added to the image (a separate size decision), so they
+# add config only, not bloat. root's HOME is /root.
+install -Dm755 /osc52-copy "$ROOT/usr/local/bin/osc52-copy"
+# vim: send every yank to the host clipboard via osc52-copy. Loaded only if a `vim` is present; busybox
+# `vi` ignores it. Guarded so a vim without the autocmd still starts cleanly.
+cat > "$ROOT/root/.vimrc" <<'VIMRC'
+" E3-T22c: mirror vim yanks to the host clipboard over OSC 52 (via /usr/local/bin/osc52-copy).
+if executable('osc52-copy')
+  augroup Osc52Yank
+    autocmd!
+    autocmd TextYankPost * if v:event.operator ==# 'y'
+      \ | call system('osc52-copy', join(v:event.regcontents, "\n"))
+      \ | endif
+  augroup END
+endif
+VIMRC
+# tmux: route copy-mode selections to the host clipboard; `set-clipboard on` makes tmux emit OSC 52
+# itself, and the terminal-features line tells tmux the outer terminal understands it. Inert without tmux.
+cat > "$ROOT/root/.tmux.conf" <<'TMUXCONF'
+# E3-T22c: host clipboard integration over OSC 52.
+set -s set-clipboard on
+set -as terminal-features ',*:clipboard'
+TMUXCONF
+
 # The production guest uses HTTPS through either the T17 Tailscale provider or T16 relay fallback.
 # Keep both official repositories explicit; apk signatures stay mandatory and TLS remains opaque.
 cat > "$ROOT/etc/apk/repositories" <<REPOSITORIES
@@ -155,7 +182,10 @@ link_svc default wasm-vm-file-agent
     /etc/init.d/wasm-vm-file-agent \
     /etc/wasm-vm/file-transfer.conf \
     /usr/libexec/wasm-vm/wvft-agent \
-    /usr/bin/vm-download
+    /usr/bin/vm-download \
+    /usr/local/bin/osc52-copy \
+    /root/.vimrc \
+    /root/.tmux.conf
   do
     mode=$(stat -c '%a' "$ROOT$path")
     digest=$(sha256sum "$ROOT$path" | awk '{print $1}')
