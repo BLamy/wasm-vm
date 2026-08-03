@@ -33,13 +33,28 @@
         align-items: center;
         padding: 14px 18px;
         border-bottom: 1px solid var(--line);
-        background: #0d1015;
+        background: linear-gradient(to bottom, rgba(13, 16, 21, 0.86), rgba(13, 16, 21, 0.62));
+        backdrop-filter: blur(12px) saturate(140%);
+        position: sticky;
+        top: 0;
+        z-index: 30;
       }
       h1, h2 { letter-spacing: 0; }
       h1 {
         font-size: 16px;
         margin: 0;
         font-weight: 650;
+      }
+      /* Glowing brand dot, matched to the landing page. */
+      h1::before {
+        content: "";
+        display: inline-block;
+        width: 9px; height: 9px;
+        border-radius: 50%;
+        margin-right: 10px;
+        vertical-align: middle;
+        background: radial-gradient(circle at 30% 30%, #d6f4ff, var(--cyan));
+        box-shadow: 0 0 12px var(--cyan), 0 0 26px rgba(83, 212, 255, 0.5);
       }
       .version {
         color: var(--muted);
@@ -461,7 +476,7 @@
       }
       .tab {
         border: 1px solid transparent;
-        border-radius: 8px;
+        border-radius: 9px;
         background: transparent;
         color: var(--muted);
         font-size: 13px;
@@ -469,12 +484,14 @@
         padding: 7px 15px;
         min-height: 34px;
         cursor: pointer;
+        transition: color .18s, background .18s, border-color .18s, box-shadow .25s;
       }
-      .tab:hover { color: var(--text); background: var(--panel-2); }
+      .tab:hover { color: var(--text); background: rgba(120, 160, 200, 0.08); }
       .tab.active {
         color: var(--text);
-        background: var(--panel-2);
-        border-color: var(--line);
+        background: linear-gradient(180deg, rgba(83, 212, 255, 0.15), rgba(83, 212, 255, 0.05));
+        border-color: rgba(83, 212, 255, 0.35);
+        box-shadow: 0 0 22px -8px rgba(83, 212, 255, 0.7);
       }
       .tab .tab-dot {
         display: inline-block;
