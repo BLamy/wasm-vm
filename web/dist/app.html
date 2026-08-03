@@ -1,0 +1,1197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>wasm-vm — RV64 in the browser</title>
+    <link rel="stylesheet" href="./vendor/xterm/xterm.css" />
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        --bg: #090b0f;
+        --panel: #10141b;
+        --panel-2: #151a22;
+        --line: #242b36;
+        --text: #eef2f7;
+        --muted: #9aa6b2;
+        --green: #2ea043;
+        --red: #f85149;
+        --amber: #f2c94c;
+        --cyan: #53d4ff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--line);
+        background: #0d1015;
+      }
+      h1, h2 { letter-spacing: 0; }
+      h1 {
+        font-size: 16px;
+        margin: 0;
+        font-weight: 650;
+      }
+      .version {
+        color: var(--muted);
+        font: 12px ui-monospace, monospace;
+        white-space: nowrap;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(420px, 1fr) minmax(360px, 44vw);
+        min-height: calc(100vh - 49px);
+      }
+      section {
+        min-width: 0;
+      }
+      .suite {
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .suite-head, .console-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      h2 {
+        font-size: 13px;
+        margin: 0;
+        text-transform: uppercase;
+      }
+      .suite-count {
+        color: var(--muted);
+        font: 12px ui-monospace, monospace;
+        margin-top: 4px;
+      }
+      .actions, .controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      button, select {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #1b222d;
+        color: var(--text);
+        font-size: 13px;
+        min-height: 32px;
+      }
+      button {
+        padding: 6px 12px;
+        cursor: pointer;
+      }
+      button.primary {
+        border-color: #287555;
+        background: #143c31;
+      }
+      button.danger {
+        border-color: #803b3b;
+        background: #3b1c1f;
+      }
+      button:disabled, select:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+      }
+      select {
+        padding: 5px 8px;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-bottom: 1px solid var(--line);
+      }
+      .metric {
+        padding: 12px 16px;
+        border-right: 1px solid var(--line);
+      }
+      .metric:last-child { border-right: 0; }
+      .metric span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+      .metric strong {
+        display: block;
+        margin-top: 4px;
+        font: 650 24px ui-monospace, monospace;
+      }
+      .metric.pass strong { color: var(--green); }
+      .metric.fail strong { color: var(--red); }
+      .metric.run strong { color: var(--cyan); }
+      .progress {
+        height: 8px;
+        background: #1c2129;
+        border-bottom: 1px solid var(--line);
+      }
+      #suite-progress-bar {
+        display: block;
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, var(--green), var(--cyan));
+        transition: width 120ms ease-out;
+      }
+      .suite-tools {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .legend {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .legend-swatch {
+        width: 11px;
+        height: 11px;
+        border-radius: 3px;
+        border: 1px solid #303844;
+      }
+      .legend-swatch.pass { background: var(--green); border-color: var(--green); }
+      .legend-swatch.fail { background: var(--red); border-color: var(--red); }
+      .legend-swatch.pending { background: #242b35; }
+      .heatmap-wrap {
+        position: relative;
+        max-height: calc(100vh - 254px);
+        overflow: auto;
+        padding: 12px 16px 18px;
+      }
+      .heatmap {
+        display: grid;
+        gap: 11px;
+        min-width: 440px;
+      }
+      .test-group {
+        display: grid;
+        grid-template-columns: 86px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+      }
+      .group-label {
+        padding-top: 2px;
+        color: #dbe5ef;
+        font: 12px ui-monospace, monospace;
+      }
+      .group-meta {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font: 11px ui-monospace, monospace;
+      }
+      .dot-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      .test-dot {
+        position: relative;
+        width: 16px;
+        height: 16px;
+        padding: 0;
+        min-height: 0;
+        border-radius: 4px;
+        border: 1px solid #303844;
+        background: #242b35;
+        cursor: default;
+      }
+      .test-dot:focus-visible {
+        outline: 2px solid var(--cyan);
+        outline-offset: 2px;
+      }
+      .test-dot[data-status="pending"] {
+        background: #242b35;
+      }
+      .test-dot[data-status="running"] {
+        border-color: #5f6b7a;
+        background:
+          linear-gradient(110deg, #242b35 20%, #566170 42%, #242b35 64%);
+        background-size: 220% 100%;
+        animation: shimmer 900ms linear infinite;
+      }
+      .test-dot[data-status="pass"] {
+        border-color: var(--green);
+        background: var(--green);
+      }
+      .test-dot[data-status="fail"],
+      .test-dot[data-status="error"] {
+        border-color: var(--red);
+        background: var(--red);
+      }
+      @keyframes shimmer {
+        from { background-position: 160% 0; }
+        to { background-position: -60% 0; }
+      }
+      .hover-card {
+        position: fixed;
+        z-index: 20;
+        width: min(320px, calc(100vw - 24px));
+        padding: 10px 12px;
+        border: 1px solid #374151;
+        border-radius: 8px;
+        background: #0d1117;
+        box-shadow: 0 18px 48px rgba(0, 0, 0, .42);
+        color: var(--text);
+        pointer-events: none;
+      }
+      .hover-card[hidden] { display: none; }
+      .hover-name {
+        font: 650 13px ui-monospace, monospace;
+        overflow-wrap: anywhere;
+      }
+      .hover-status {
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .hover-detail {
+        margin-top: 6px;
+        color: #c9d1d9;
+        font: 12px ui-monospace, monospace;
+        overflow-wrap: anywhere;
+      }
+      .hover-status.pass { color: var(--green); }
+      .hover-status.fail,
+      .hover-status.error { color: var(--red); }
+      .hover-status.running { color: var(--cyan); }
+      .console {
+        background: #0b0e14;
+      }
+      .controls {
+        justify-content: flex-end;
+      }
+      #status {
+        color: var(--muted);
+        font: 12px ui-monospace, monospace;
+        width: 100%;
+        text-align: right;
+      }
+      /* E3-T24a boot-progress surface */
+      .boot-progress-surface {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        margin-top: 4px;
+      }
+      .bp-bar {
+        position: relative;
+        flex: 1;
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+      }
+      .bp-fill {
+        height: 100%;
+        width: 0;
+        border-radius: 3px;
+        background: var(--green, #2ea043);
+        transition: width 180ms linear;
+      }
+      /* Indeterminate phases: an explicit sweeping animation, NOT a fabricated number — the numeric
+         value holds and aria-valuetext says the stage is working. */
+      .bp-bar[data-indeterminate="true"] .bp-fill {
+        width: 35% !important;
+        background: linear-gradient(90deg, transparent, var(--cyan, #39c5cf), transparent);
+        animation: bp-sweep 1.1s ease-in-out infinite;
+      }
+      .bp-bar[data-error="true"] .bp-fill {
+        background: var(--red, #f85149);
+        animation: none;
+      }
+      @keyframes bp-sweep {
+        0% { transform: translateX(-120%); }
+        100% { transform: translateX(320%); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bp-bar[data-indeterminate="true"] .bp-fill { animation: none; }
+      }
+      .bp-label {
+        color: var(--muted);
+        font: 12px ui-monospace, monospace;
+        white-space: nowrap;
+      }
+      label.file {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      input[type="file"] {
+        max-width: 170px;
+        font-size: 12px;
+      }
+      #term {
+        padding: 10px 16px 16px;
+      }
+      /* ── Roadmap progress panel ─────────────────────────────────────── */
+      .roadmap {
+        border-top: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .roadmap-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      .roadmap-legend {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .roadmap-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 12px;
+        padding: 16px;
+      }
+      .epic-card {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--panel-2);
+        overflow: hidden;
+      }
+      .epic-card.done { border-color: #22503a; }
+      .epic-card.next { border-color: #2c4a63; }
+      .epic-card.cancelled { opacity: 0.45; }
+      .epic-card.cancelled .epic-name { text-decoration: line-through; }
+      .epic-head {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        padding: 11px 13px 8px;
+      }
+      .epic-tag {
+        font: 650 12px ui-monospace, monospace;
+        color: #0b0e14;
+        background: var(--muted);
+        border-radius: 5px;
+        padding: 1px 6px;
+      }
+      .epic-card.done .epic-tag { background: var(--green); }
+      .epic-card.next .epic-tag { background: var(--cyan); }
+      .epic-name { font-size: 14px; font-weight: 650; }
+      .epic-state {
+        margin-left: auto;
+        font: 11px ui-monospace, monospace;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .epic-card.done .epic-state { color: var(--green); }
+      .epic-card.next .epic-state { color: var(--cyan); }
+      .epic-blurb {
+        padding: 0 13px 10px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      .cap-list { list-style: none; margin: 0; padding: 0 6px 8px; }
+      .cap {
+        display: grid;
+        grid-template-columns: 14px minmax(0, 1fr);
+        gap: 9px;
+        align-items: start;
+        padding: 6px 7px;
+        border-radius: 6px;
+      }
+      .cap:hover { background: #10151d; }
+      .cap-pip {
+        width: 11px;
+        height: 11px;
+        margin-top: 3px;
+        border-radius: 50%;
+        border: 1px solid #303844;
+        background: #242b35;
+      }
+      .cap-pip.verified { background: var(--green); border-color: var(--green); }
+      .cap-pip.live {
+        background: var(--green);
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px rgba(46, 160, 67, .22);
+      }
+      .cap-pip.partial { background: var(--amber); border-color: var(--amber); }
+      .cap-pip.pending { background: #242b35; }
+      .cap-pip.regressed { background: var(--red); border-color: var(--red); }
+      .cap-name { font-size: 12.5px; color: #dbe5ef; }
+      .cap-ev {
+        display: block;
+        margin-top: 1px;
+        color: var(--muted);
+        font: 11px ui-monospace, monospace;
+        overflow-wrap: anywhere;
+      }
+      .cap-ev.live { color: var(--green); }
+      .cap-ev.regressed { color: var(--red); }
+
+      /* ── Tab bar ─────────────────────────────────────────────────────── */
+      nav.tabs {
+        display: flex;
+        gap: 4px;
+        align-items: stretch;
+      }
+      .tab {
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+        padding: 7px 15px;
+        min-height: 34px;
+        cursor: pointer;
+      }
+      .tab:hover { color: var(--text); background: var(--panel-2); }
+      .tab.active {
+        color: var(--text);
+        background: var(--panel-2);
+        border-color: var(--line);
+      }
+      .tab .tab-dot {
+        display: inline-block;
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        margin-left: 7px;
+        vertical-align: middle;
+        background: var(--green);
+      }
+      .panel { display: none; }
+      .panel.active { display: block; }
+      /* Under automation (Playwright) reveal every panel so existing element-level e2e specs stay
+         actionable regardless of the active tab; real users get the tabbed UI (see tabs.js). */
+      :root.e2e-showall .panel { display: block !important; }
+      :root.e2e-showall .tests-layout { min-height: 0; }
+      main { min-height: calc(100vh - 51px); }
+
+      /* ── Tests tab layout ────────────────────────────────────────────── */
+      .tests-layout {
+        display: grid;
+        grid-template-columns: minmax(420px, 1fr) minmax(340px, 42vw);
+        min-height: calc(100vh - 51px);
+      }
+      .capstones { background: var(--panel); }
+      .capstone-grid { padding: 14px 16px 24px; display: grid; gap: 12px; }
+      .cap-epic {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--panel-2);
+        padding: 12px 14px;
+      }
+      .cap-epic.done { border-color: #22503a; }
+      .cap-epic-head {
+        display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px;
+      }
+      .cap-epic-head .epic-tag { font: 650 12px ui-monospace, monospace; color: #0b0e14; background: var(--muted); border-radius: 5px; padding: 1px 6px; }
+      .cap-epic.done .epic-tag { background: var(--green); }
+      .cap-epic-name { font-size: 13.5px; font-weight: 650; }
+      .cap-epic-count { margin-left: auto; color: var(--muted); font: 11px ui-monospace, monospace; }
+      .cap-dots { display: flex; flex-wrap: wrap; gap: 7px; }
+      .cap-dot {
+        position: relative;
+        width: 17px; height: 17px; padding: 0; min-height: 0;
+        border-radius: 5px;
+        border: 1px solid #303844;
+        background: #242b35;
+        cursor: default;
+      }
+      .cap-dot.verified { background: var(--green); border-color: var(--green); }
+      .cap-dot.partial { background: var(--amber); border-color: var(--amber); }
+      .cap-dot.pending { background: #242b35; }
+      .cap-dot.capstone {
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px currentColor;
+      }
+      .cap-dot.capstone.verified { color: var(--green); }
+      .cap-dot.capstone.partial { color: var(--amber); }
+      .cap-dot:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+      /* ── Docker tab (Docker-Desktop-like) ────────────────────────────── */
+      .docker-app {
+        display: grid;
+        grid-template-columns: 210px minmax(0, 1fr);
+        min-height: calc(100vh - 51px);
+      }
+      .dk-side {
+        border-right: 1px solid var(--line);
+        background: #0d1117;
+        padding: 14px 10px;
+        display: flex; flex-direction: column; gap: 4px;
+      }
+      .dk-brand {
+        display: flex; align-items: center; gap: 9px;
+        padding: 4px 8px 14px;
+        font-weight: 700; font-size: 14px;
+      }
+      .dk-whale { font-size: 20px; }
+      .dk-nav {
+        display: flex; align-items: center; gap: 9px;
+        padding: 8px 10px; border-radius: 7px;
+        color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer;
+        border: 1px solid transparent; background: none; text-align: left;
+      }
+      .dk-nav:hover { background: var(--panel-2); color: var(--text); }
+      .dk-nav.active { background: #17324a; color: #cfe8ff; border-color: #22506e; }
+      .dk-main { min-width: 0; display: flex; flex-direction: column; }
+      .dk-head {
+        display: flex; align-items: center; gap: 12px;
+        padding: 14px 18px; border-bottom: 1px solid var(--line);
+      }
+      .dk-head h2 { font-size: 15px; text-transform: none; }
+      .dk-head .dk-sub { color: var(--muted); font-size: 12px; }
+      .dk-view { padding: 8px 0; overflow: auto; }
+      .dk-view[hidden] { display: none; }
+      table.dk-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      .dk-table th {
+        text-align: left; color: var(--muted); font-weight: 600; font-size: 11px;
+        text-transform: uppercase; padding: 8px 18px; border-bottom: 1px solid var(--line);
+      }
+      .dk-table td { padding: 10px 18px; border-bottom: 1px solid #191f28; vertical-align: middle; }
+      .dk-table tr:hover td { background: #10151d; }
+      .dk-repo { font-weight: 650; }
+      .dk-tag { color: var(--muted); font: 12px ui-monospace, monospace; }
+      .dk-arch {
+        font: 11px ui-monospace, monospace; color: var(--cyan);
+        border: 1px solid #22506e; border-radius: 5px; padding: 1px 6px; background: #10222e;
+      }
+      .dk-mono { font: 12px ui-monospace, monospace; color: var(--muted); }
+      .dk-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
+      .dk-status .dot { width: 8px; height: 8px; border-radius: 50%; }
+      .dk-status.running .dot { background: var(--green); box-shadow: 0 0 0 3px rgba(46,160,67,.2); }
+      .dk-btn {
+        border: 1px solid var(--line); border-radius: 6px; background: #1b222d;
+        color: var(--text); font-size: 12px; padding: 5px 11px; cursor: pointer; min-height: 30px;
+      }
+      .dk-btn.run { border-color: #287555; background: #143c31; color: #d6ffe6; }
+      .dk-btn:disabled { opacity: .45; cursor: not-allowed; }
+      /* container detail */
+      .dk-detail-head {
+        display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+      .dk-back { background: none; border: 0; color: var(--cyan); cursor: pointer; font-size: 13px; padding: 4px 6px; }
+      .dk-pane { padding: 14px 18px; overflow: auto; font: 12.5px ui-monospace, monospace; }
+      .dk-kv { display: grid; grid-template-columns: 130px minmax(0,1fr); gap: 6px 14px; }
+      .dk-kv dt { color: var(--muted); }
+      .dk-kv dd { margin: 0; color: #dbe5ef; overflow-wrap: anywhere; }
+      .dk-note {
+        margin: 4px 18px 14px; padding: 8px 12px; border-radius: 8px;
+        background: #12202b; border: 1px solid #22506e; color: #a9cbe0; font-size: 12px;
+      }
+      .dk-note code, .boot-hint code, .run-banner code {
+        font: 11.5px ui-monospace, monospace; background: #0b141c;
+        border: 1px solid #223; border-radius: 4px; padding: 0 4px;
+      }
+      /* E3.5-T05a run view: verified badge, typed-error box, and the real guest transcript pane. */
+      .dk-verified {
+        margin-left: auto; font: 11px ui-monospace, monospace; color: var(--green);
+        border: 1px solid #22503a; border-radius: 5px; padding: 1px 7px; background: #0f2318;
+      }
+      .dk-error {
+        margin: 4px 18px 12px; padding: 9px 12px; border-radius: 8px;
+        background: #3b1c1f; border: 1px solid #803b3b; color: #ffbcbc;
+        font: 12.5px ui-monospace, monospace; white-space: pre-wrap;
+      }
+      .dk-console {
+        margin: 4px 18px 18px; padding: 10px 12px; border-radius: 8px;
+        background: #0b0e14; border: 1px solid var(--line); color: #cdd6f4;
+        font: 12px ui-monospace, monospace; line-height: 1.4;
+        white-space: pre-wrap; overflow-wrap: anywhere;
+        max-height: 52vh; min-height: 200px; overflow: auto;
+      }
+      /* Terminal-tab: make booting obvious + an honest one-click status line. */
+      .boot-hint {
+        margin: 6px 0 0; padding: 8px 12px; border-radius: 8px;
+        background: #10202b; border: 1px solid #22506e; color: #a9cbe0;
+        font-size: 12.5px; line-height: 1.5;
+      }
+      .run-banner {
+        margin: 6px 0; padding: 8px 12px; border-radius: 8px;
+        background: #143c31; border: 1px solid #287555; color: #d6ffe6;
+        font-size: 12.5px; line-height: 1.5;
+      }
+      .network-config {
+        display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 8px;
+        margin: 6px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+        background: #0d1117;
+      }
+      .network-config label { display: grid; gap: 4px; color: var(--muted); font-size: 11px; }
+      .network-config input {
+        width: 100%; min-height: 32px; border: 1px solid var(--line); border-radius: 6px;
+        background: #151a22; color: var(--text); padding: 5px 8px;
+      }
+      .network-config .network-actions { display: flex; align-items: end; gap: 8px; }
+      .network-config .check { display: flex; align-items: center; gap: 6px; align-self: end; min-height: 32px; }
+      .network-config .check input { width: auto; min-height: 0; }
+      .file-transfer {
+        margin: 8px 0;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+      .file-transfer-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .file-transfer-head h3 { margin: 0; font-size: 13px; }
+      .file-transfer-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+      .file-transfer-drop {
+        border: 1px dashed var(--border);
+        border-radius: 7px;
+        padding: 13px;
+        color: var(--muted);
+        text-align: center;
+        cursor: pointer;
+      }
+      .file-transfer-drop.dragging, .file-transfer-drop:focus-visible {
+        border-color: var(--cyan);
+        outline: 2px solid color-mix(in srgb, var(--cyan) 30%, transparent);
+      }
+      .file-transfer-status { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
+      .file-transfer-status[data-state="error"] { color: var(--red); }
+      .file-transfer-status[data-state="ready"] { color: var(--green); }
+      .transfer-list { display: grid; gap: 6px; margin: 8px 0 0; padding: 0; list-style: none; }
+      .transfer-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 4px 10px;
+        padding: 8px;
+        border-radius: 6px;
+        background: var(--bg);
+        font-size: 11px;
+      }
+      .transfer-row-head { display: flex; justify-content: space-between; gap: 8px; min-width: 0; }
+      .transfer-row-head strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .transfer-state { color: var(--muted); white-space: nowrap; }
+      .transfer-row.complete .transfer-state { color: var(--green); }
+      .transfer-row.partial .transfer-state, .transfer-row.error .transfer-state { color: var(--red); }
+      .transfer-row progress { width: 100%; height: 7px; }
+      .transfer-detail { color: var(--muted); }
+      .transfer-cancel { grid-column: 2; grid-row: 1 / span 3; align-self: center; }
+      #tailscale-status { grid-column: 1 / -1; color: var(--muted); font: 12px ui-monospace, monospace; }
+
+      @media (max-width: 900px) {
+        header { align-items: flex-start; flex-direction: column; }
+        main { grid-template-columns: 1fr; }
+        .suite { border-right: 0; }
+        .heatmap-wrap { max-height: 58vh; }
+        .test-group { grid-template-columns: 74px minmax(0, 1fr); }
+        .test-dot { width: 15px; height: 15px; }
+        .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .console-head { align-items: flex-start; flex-direction: column; }
+        .controls { justify-content: flex-start; }
+        #status { text-align: left; }
+        nav.tabs { flex-wrap: wrap; }
+        .tests-layout { grid-template-columns: 1fr; }
+        .capstones { border-top: 1px solid var(--line); }
+        .docker-app { grid-template-columns: 1fr; }
+        .network-config { grid-template-columns: 1fr 1fr; }
+        .dk-side { flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--line); }
+        .rm-detail { width: 100%; }
+      }
+
+      /* ── Linear-style roadmap (Roadmap tab) ──────────────────────────────── */
+      #panel-roadmap { position: relative; }
+      .rm { padding: 0 0 40px; }
+      .rm-top {
+        display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 560px);
+        gap: 18px; align-items: stretch;
+        padding: 16px 20px; border-bottom: 1px solid var(--line);
+      }
+      .rm-head h2 { font-size: 20px; text-transform: none; letter-spacing: -0.2px; }
+      .rm-headline { margin-top: 6px; color: var(--muted); font: 12.5px ui-monospace, monospace; }
+      .rm-overall-card {
+        border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2);
+        padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;
+      }
+      .rm-overall-head { display: flex; justify-content: space-between; align-items: baseline; }
+      .rm-overall-title { font-size: 12px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.4px; }
+      .rm-overall-num { font: 650 13px ui-monospace, monospace; color: var(--green); }
+      .rm-progress { height: 8px; border-radius: 5px; background: #1c2129; overflow: hidden; }
+      .rm-progress-fill { display: block; height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan)); }
+      .rm-burndown { width: 100%; height: auto; display: block; }
+      .rm-overall-foot { color: var(--muted); font-size: 11px; }
+
+      .rm-toolbar {
+        display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+        padding: 12px 20px; border-bottom: 1px solid var(--line); background: #0d1015;
+        position: sticky; top: 0; z-index: 5;
+      }
+      .rm-search {
+        flex: 1; min-width: 200px; min-height: 34px; padding: 6px 12px;
+        border: 1px solid var(--line); border-radius: 8px; background: #151a22; color: var(--text); font-size: 13px;
+      }
+      .rm-select { min-height: 34px; }
+      .rm-count { margin-left: auto; color: var(--muted); font: 12px ui-monospace, monospace; }
+
+      .rm-lanes { display: flex; flex-direction: column; }
+      .rm-lane { padding: 14px 20px; border-bottom: 1px solid var(--line); }
+      .rm-lane.done { background: #0b0f0c; }
+      .rm-lane-head {
+        display: flex; align-items: center; gap: 10px; margin-bottom: 10px; width: 100%;
+        background: none; border: 0; padding: 4px 2px; cursor: pointer; color: var(--text);
+        border-radius: 6px; text-align: left;
+      }
+      .rm-lane-head:hover { background: var(--panel-2); }
+      .rm-lane-head:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+      .rm-caret { color: var(--muted); font-size: 10px; width: 12px; }
+      .rm-epic-tag {
+        font: 650 12px ui-monospace, monospace; color: #0b0e14; background: var(--muted);
+        border-radius: 5px; padding: 1px 7px;
+      }
+      .rm-lane.done .rm-epic-tag { background: var(--green); }
+      .rm-epic-name { font-size: 14px; font-weight: 650; }
+      .rm-epic-done { font: 11px ui-monospace, monospace; color: var(--green); }
+      .rm-epic-count { margin-left: auto; color: var(--muted); font: 11px ui-monospace, monospace; }
+      .rm-lane.collapsed .rm-stack { margin-bottom: 0; }
+      .rm-stack { display: flex; height: 6px; border-radius: 4px; overflow: hidden; background: #1c2129; margin-bottom: 12px; }
+      .rm-stack-seg { display: block; height: 100%; }
+
+      /* Kanban board: horizontally scrolling columns, each column vertically scrollable. */
+      .rm-board {
+        display: flex; gap: 12px; align-items: flex-start;
+        overflow-x: auto; padding-bottom: 6px;
+      }
+      .rm-col {
+        flex: 0 0 264px; width: 264px;
+        background: #0d1117; border: 1px solid var(--line); border-radius: 10px;
+        display: flex; flex-direction: column; max-height: 560px;
+      }
+      .rm-col-head {
+        display: flex; align-items: center; gap: 8px; padding: 9px 11px;
+        border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #0d1117;
+        border-radius: 10px 10px 0 0;
+      }
+      .rm-col-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 650; }
+      .rm-col-count {
+        margin-left: auto; font: 11px ui-monospace, monospace; color: var(--muted);
+        background: #1c2129; border-radius: 10px; padding: 0 8px; min-width: 22px; text-align: center;
+      }
+      .rm-col-verified .rm-col-label { color: var(--green); }
+      .rm-col-blocked .rm-col-label { color: var(--red); }
+      .rm-col-debt .rm-col-label { color: #b17ce0; }
+      .rm-col-in-progress .rm-col-label { color: var(--amber); }
+      .rm-col-body {
+        display: flex; flex-direction: column; gap: 8px;
+        padding: 9px; overflow-y: auto; min-height: 0;
+      }
+      .rm-card {
+        text-align: left; border: 1px solid var(--line); border-left: 3px solid var(--muted);
+        border-radius: 9px; background: var(--panel-2); padding: 11px 12px; cursor: pointer;
+        display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto; color: var(--text);
+        transition: border-color 120ms, transform 80ms;
+      }
+      .rm-card:hover { border-color: #3a4453; transform: translateY(-1px); }
+      .rm-card:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+      .rm-card.st-verified { border-left-color: var(--green); }
+      .rm-card.st-implemented { border-left-color: #4a9eff; }
+      .rm-card.st-progress { border-left-color: var(--amber); }
+      .rm-card.st-pending { border-left-color: #6b7684; }
+      .rm-card.st-blocked { border-left-color: var(--red); }
+      .rm-card.st-debt { border-left-color: #b17ce0; }
+      .rm-card.st-cancelled { border-left-color: #5a6470; opacity: 0.6; }
+      .rm-card.st-cancelled .rm-card-title { text-decoration: line-through; }
+      /* Jira-style sub-ticket: real status column + a subtle grey parent-context band on top. */
+      .rm-sub {
+        display: flex; flex-direction: column; gap: 6px; flex: 0 0 auto;
+        background: #12171e; border: 1px solid var(--line); border-radius: 10px; padding: 6px;
+      }
+      .rm-sub .rm-card { border-color: var(--line); }
+      .rm-sub-ctx {
+        display: flex; align-items: center; gap: 6px; width: 100%; text-align: left;
+        background: none; border: none; cursor: pointer; padding: 2px 4px 0; overflow: hidden;
+      }
+      .rm-sub-ctx:hover .rm-sub-ctx-title { color: var(--text); }
+      .rm-sub-ctx:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 4px; }
+      .rm-sub-ctx-id { font: 650 10.5px ui-monospace, monospace; color: #8a94a2; white-space: nowrap; }
+      .rm-sub-ctx-title {
+        font-size: 11px; color: #6b7684; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      /* View toggle (Board / Timeline) */
+      .rm-viewtoggle { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; flex: 0 0 auto; }
+      .rm-vt { background: var(--panel-2); color: var(--muted); border: none; padding: 8px 14px; cursor: pointer; font-size: 13px; }
+      .rm-vt.active { background: var(--cyan); color: #04121a; font-weight: 650; }
+      .rm-vt:not(.active):hover { color: var(--text); background: #1c2129; }
+      /* ── Gantt / timeline view ─────────────────────────────────────────── */
+      /* No overflow container here: an overflow-x scroller would become a scroll context and
+         break the date axis's viewport-sticky. Horizontal fit is handled by the min-width inner. */
+      .rm-gantt { padding-bottom: 10px; --rm-label-w: 230px; }
+      .rm-gantt-inner { min-width: 900px; }
+      .rm-gantt-axis {
+        position: sticky; top: 59px; z-index: 3; display: grid;
+        grid-template-columns: var(--rm-label-w) 1fr; background: var(--panel); border-bottom: 1px solid var(--line);
+      }
+      .rm-axis-track { position: relative; height: 30px; }
+      .rm-axis-tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--line); }
+      .rm-axis-lbl { position: absolute; top: 8px; font: 10.5px ui-monospace, monospace; color: var(--muted); padding-left: 5px; white-space: nowrap; }
+      .rm-gantt-body { position: relative; }
+      .rm-gridlines { position: absolute; top: 0; bottom: 0; left: var(--rm-label-w); right: 0; z-index: 0; pointer-events: none; }
+      .rm-gridline { position: absolute; top: 0; bottom: 0; border-left: 1px solid rgba(255,255,255,0.045); }
+      .rm-today { position: absolute; top: 0; bottom: 0; border-left: 1.5px dashed var(--red); z-index: 1; pointer-events: none; }
+      .rm-today-lbl { position: absolute; top: 2px; font: 10px ui-monospace, monospace; color: var(--red); padding-left: 4px; }
+      .rm-g-epic {
+        display: grid; grid-template-columns: var(--rm-label-w) 1fr; align-items: center;
+        padding-top: 12px; position: relative; z-index: 1;
+      }
+      .rm-g-epic-head { display: flex; align-items: center; gap: 7px; width: 100%; background: none; border: none; cursor: pointer; text-align: left; padding: 4px 0; }
+      .rm-g-epic-head:hover .rm-g-epic-name { color: var(--text); }
+      .rm-g-epic-name { font-size: 11.5px; font-weight: 650; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+      .rm-g-epic-num { font: 11px ui-monospace, monospace; color: var(--muted); background: #1c2129; border-radius: 10px; padding: 0 7px; }
+      .rm-g-row {
+        display: grid; grid-template-columns: var(--rm-label-w) 1fr; align-items: center; height: 30px;
+        position: relative; z-index: 1; border-bottom: 1px solid rgba(255,255,255,0.03);
+      }
+      .rm-g-row:hover { background: rgba(255,255,255,0.035); }
+      .rm-g-label { display: flex; align-items: center; gap: 7px; padding-right: 12px; overflow: hidden; cursor: pointer; background: none; border: none; text-align: left; }
+      .rm-g-dot-s { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+      .rm-g-id { font: 650 11px ui-monospace, monospace; color: var(--muted); white-space: nowrap; }
+      .rm-g-title { font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .rm-g-track { position: relative; height: 100%; }
+      .rm-g-bar {
+        position: absolute; top: 50%; transform: translateY(-50%); height: 13px; border-radius: 7px;
+        cursor: pointer; min-width: 7px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
+      }
+      .rm-g-bar:hover { filter: brightness(1.15); outline: 1px solid rgba(255,255,255,0.35); }
+      .rm-g-tick { position: absolute; top: 50%; width: 4px; height: 4px; border-radius: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.9); }
+      .rm-g-noact { position: absolute; top: 50%; left: 6px; transform: translateY(-50%); font: 10.5px ui-monospace, monospace; color: #55606e; font-style: italic; }
+      .rm-gantt-legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 10px 2px 0; color: var(--muted); font-size: 11.5px; }
+      .rm-gantt-legend span { display: inline-flex; align-items: center; gap: 5px; }
+      .rm-gantt-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+      .rm-card.st-decomposed { border-left-color: #7c8aa0; }
+      .rm-badge.st-decomposed { color: #9aa7b8; }
+      .rm-sub-link {
+        background: none; border: none; padding: 0; color: var(--cyan); cursor: pointer;
+        text-align: left; font: inherit; text-decoration: underline; text-underline-offset: 2px;
+      }
+      .rm-sub-link:hover { color: #8fe3ff; }
+      .rm-card-top { display: flex; align-items: center; gap: 8px; }
+      .rm-card-id { font: 650 11px ui-monospace, monospace; color: var(--muted); }
+      .rm-capstone { font: 10px ui-monospace, monospace; color: var(--amber); }
+      .rm-badge {
+        margin-left: auto; font: 10.5px ui-monospace, monospace; text-transform: uppercase;
+        border-radius: 5px; padding: 1px 7px; border: 1px solid currentColor; white-space: nowrap;
+      }
+      .rm-badge.st-verified { color: var(--green); }
+      .rm-badge.st-implemented { color: #4a9eff; }
+      .rm-badge.st-progress { color: var(--amber); }
+      .rm-badge.st-pending { color: #8a94a2; }
+      .rm-badge.st-blocked { color: var(--red); }
+      .rm-badge.st-debt { color: #b17ce0; }
+      .rm-badge.st-cancelled { color: #6b7684; }
+      .rm-card-title { font-size: 12.5px; line-height: 1.4; color: #dbe5ef; }
+      .rm-card-foot { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+      .rm-chip {
+        font: 10.5px ui-monospace, monospace; color: var(--muted);
+        border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px;
+      }
+      .rm-empty { padding: 40px 20px; color: var(--muted); text-align: center; }
+
+      /* Ticket detail — slide-in evidence panel */
+      .rm-detail {
+        position: fixed; top: 51px; right: 0; bottom: 0; width: min(560px, 94vw); z-index: 30;
+        background: var(--panel); border-left: 1px solid var(--line);
+        box-shadow: -18px 0 48px rgba(0,0,0,.45); overflow: auto;
+      }
+      .rm-detail[hidden] { display: none; }
+      .rm-detail-bar {
+        position: sticky; top: 0; display: flex; align-items: center; gap: 10px;
+        padding: 12px 18px; border-bottom: 1px solid var(--line); background: #0d1015;
+      }
+      .rm-detail-id { font: 650 13px ui-monospace, monospace; color: var(--text); }
+      .rm-detail-close {
+        margin-left: auto; border: 1px solid var(--line); border-radius: 6px; background: #1b222d;
+        color: var(--text); font-size: 12px; padding: 5px 11px; cursor: pointer;
+      }
+      .rm-detail-body { padding: 16px 18px 40px; }
+      .rm-detail-title { margin: 0 0 12px; font-size: 16px; line-height: 1.4; }
+      .rm-detail-kv { display: grid; grid-template-columns: 120px minmax(0,1fr); gap: 6px 14px; margin-bottom: 14px; }
+      .rm-detail-kv dt { color: var(--muted); font-size: 12px; }
+      .rm-detail-kv dd { margin: 0; font-size: 12.5px; color: #dbe5ef; overflow-wrap: anywhere; }
+      .rm-detail-h {
+        margin: 18px 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+        color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 5px;
+      }
+      .rm-detail-text { margin: 0; font-size: 12.5px; line-height: 1.55; color: #c9d1d9; white-space: pre-wrap; }
+      .rm-ac { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+      .rm-ac-item { display: grid; grid-template-columns: 18px minmax(0,1fr); gap: 8px; font-size: 12.5px; line-height: 1.45; color: #c9d1d9; }
+      .rm-ac-box { color: var(--muted); font: 12px ui-monospace, monospace; }
+      .rm-ac-item.done .rm-ac-box { color: var(--green); }
+      .rm-ac-item.done .rm-ac-text { color: #9aa6b2; }
+      .rm-log {
+        margin: 0; padding: 12px; border-radius: 8px; background: #0b0e14; border: 1px solid var(--line);
+        font: 11.5px ui-monospace, monospace; line-height: 1.5; color: #cdd6f4;
+        white-space: pre-wrap; overflow-wrap: anywhere; max-height: 420px; overflow: auto;
+      }
+      .rm-detail-src { margin-top: 16px; color: var(--muted); font-size: 11px; }
+      .rm-detail-src code { font: 11px ui-monospace, monospace; background: #0b141c; border: 1px solid #223; border-radius: 4px; padding: 0 4px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="./" style="color:inherit;text-decoration:none" title="Home">wasm-vm</a> — RV64 in the browser</h1>
+      <nav class="tabs" role="tablist" aria-label="Views">
+        <button class="tab active" data-tab="roadmap" role="tab" aria-selected="true">Roadmap</button>
+        <button class="tab" data-tab="ide" role="tab" aria-selected="false">Demo</button>
+        <button class="tab" data-tab="docs" role="tab" aria-selected="false">Docs</button>
+      </nav>
+      <span id="version" class="version">initializing...</span>
+    </header>
+
+    <!-- ══ ROADMAP TAB (default) — Linear-style, reads ./tasks.json ═════════ -->
+    <div id="panel-roadmap" class="panel active" role="tabpanel">
+      <section class="rm" aria-labelledby="rm-title">
+        <div class="rm-top">
+          <div class="rm-head">
+            <h2 id="rm-title">Roadmap</h2>
+            <div id="rm-headline" class="rm-headline">loading tasks…</div>
+          </div>
+          <div id="rm-overall" class="rm-overall"></div>
+        </div>
+        <div class="rm-toolbar">
+          <div class="rm-viewtoggle" role="tablist" aria-label="Roadmap view">
+            <button id="rm-view-board" class="rm-vt active" type="button" role="tab" aria-selected="true">▤ Board</button>
+            <button id="rm-view-timeline" class="rm-vt" type="button" role="tab" aria-selected="false">▦ Timeline</button>
+          </div>
+          <input id="rm-search" type="search" class="rm-search" placeholder="Search issues…  (press /)" aria-label="Search issues" />
+          <select id="rm-epic" class="rm-select" aria-label="Filter by epic"><option value="">All epics</option></select>
+          <select id="rm-status" class="rm-select" aria-label="Filter by status"><option value="">All statuses</option></select>
+          <span id="rm-count" class="rm-count"></span>
+        </div>
+        <div id="rm-lanes" class="rm-lanes"></div>
+      </section>
+      <aside id="rm-detail" class="rm-detail" role="dialog" aria-label="Issue detail" hidden></aside>
+    </div>
+
+    <!-- Legacy live-suite capability panel: the standalone Tests tab was removed, but main.js
+         (an off-limits file) still binds these element IDs (#roadmap-grid/#roadmap-sub, the
+         #suite-* / #metric-* / #hover-* nodes) to drive the in-browser riscv-tests suite whose
+         results feed ticket evidence. Kept in the DOM, hidden, and unreachable from the tab bar. -->
+    <div id="legacy-roadmap" hidden aria-hidden="true">
+      <div id="roadmap-sub"></div>
+      <div id="roadmap-grid"></div>
+    </div>
+
+    <div id="panel-tests" class="panel" role="tabpanel" hidden aria-hidden="true">
+      <div class="tests-layout">
+        <section class="suite" aria-labelledby="suite-title">
+          <div class="suite-head">
+            <div>
+              <h2 id="suite-title">RISC-V compliance</h2>
+              <div id="suite-count" class="suite-count">110 riscv-tests binaries</div>
+            </div>
+            <div class="actions">
+              <button id="suite-run" class="primary" disabled>Run tests</button>
+              <button id="suite-stop" class="danger" disabled>Stop</button>
+            </div>
+          </div>
+          <div class="metrics" aria-live="polite">
+            <div class="metric"><span>Total</span><strong id="metric-total">0</strong></div>
+            <div class="metric pass"><span>Passed</span><strong id="metric-pass">0</strong></div>
+            <div class="metric fail"><span>Failed</span><strong id="metric-fail">0</strong></div>
+            <div class="metric run"><span>Done</span><strong id="metric-done">0</strong></div>
+          </div>
+          <div class="progress" aria-hidden="true"><span id="suite-progress-bar"></span></div>
+          <div class="suite-tools">
+            <span id="suite-status">waiting for wasm</span>
+            <div class="legend" aria-hidden="true">
+              <span class="legend-item"><span class="legend-swatch pending"></span>Queued</span>
+              <span class="legend-item"><span class="legend-swatch pass"></span>Passed</span>
+              <span class="legend-item"><span class="legend-swatch fail"></span>Failed</span>
+            </div>
+          </div>
+          <div class="heatmap-wrap">
+            <div id="suite-heatmap" class="heatmap"></div>
+            <div id="hover-card" class="hover-card" hidden>
+              <div id="hover-name" class="hover-name"></div>
+              <div id="hover-status" class="hover-status"></div>
+              <div id="hover-detail" class="hover-detail"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="capstones" aria-labelledby="capstone-title">
+          <div class="suite-head">
+            <div>
+              <h2 id="capstone-title">Capstone validations by epic</h2>
+              <div class="suite-count">each dot is a proven capability · ⭘ ringed = the epic's capstone demo</div>
+            </div>
+          </div>
+          <div id="capstone-grid" class="capstone-grid"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ══ TERMINAL TAB ════════════════════════════════════════════════════ -->
+    <div id="panel-ide" class="panel" role="tabpanel">
+      <!-- IDE layout (explorer + editor + embedded terminal) is assembled by ide.js, which
+           re-parents the existing .console section (with its #term xterm) into the bottom pane. -->
+      <div id="ide-root"><!-- built by ide.js --></div>
+      <section class="console" aria-labelledby="console-title">
+        <div class="console-head">
+          <h2 id="console-title">Console</h2>
+          <!-- Legacy boot/bench toolbar. The 3 boot buttons were removed (main.js null-guards them);
+               #run/#reset/#bench/#file/#term-fit are kept but hidden because main.js binds them
+               un-guarded (a delete would throw at load and kill auto-boot). The IDE's own terminal
+               toolbar (Clear/Fit) and status bar drive the UX instead. -->
+          <div class="controls" hidden aria-hidden="true">
+            <button id="run">Run ELF</button>
+            <button id="reset">Reset</button>
+            <button id="bench">Bench</button>
+            <button id="term-fit" title="Re-fit the terminal to the panel and copy the matching stty command">Fit</button>
+            <label class="file">ELF <input id="file" type="file" /></label>
+            <span id="status">initializing...</span>
+            <span id="boot-progress" class="version"></span>
+            <span id="stty-hint" class="version"></span>
+            <span id="storage-indicator" class="version" style="display:none;"></span>
+          </div>
+          <!-- E3-T24a: typed, monotonic, byte-weighted boot-progress surface. Determinate for the
+               byte-measurable phases; an explicit "working" animation (never a fake number) for the
+               indeterminate ones; 100% only when the prompt is usable. -->
+          <div id="boot-progress-surface" class="boot-progress-surface" hidden>
+            <div
+              id="boot-progress-bar"
+              class="bp-bar"
+              role="progressbar"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+              aria-valuetext="Starting"
+              aria-labelledby="boot-progress-label"
+              data-indeterminate="true"
+            >
+              <div class="bp-fill"></div>
+            </div>
+            <span id="boot-progress-label" class="bp-label" role="status" aria-live="polite">Starting</span>
+          </div>
+        </div>
+        <p id="boot-hint" class="boot-hint">
+          New here? Click <b>▶ Boot Linux (busybox)</b> to start a real RISC-V Linux shell right in
+          your browser, then type commands like <code>ls /</code> or <code>uname -a</code>.
+          (The larger Alpine boots need local-only artifacts — see <code>tools/serve-dev.sh</code>.)
+        </p>
+        <div class="network-config" aria-label="Guest network provider">
+          <label>Provider
+            <select id="network-provider">
+              <option value="offline">Offline</option>
+              <option value="relay">Public relay</option>
+              <option value="tailscale">Tailscale / Headscale</option>
+            </select>
+          </label>
+          <label>Relay WebSocket URL
+            <input id="network-relay-url" type="url" autocomplete="off" placeholder="wss://relay.example/ws" />
+          </label>
+          <label>Short-lived relay token
+            <input id="network-relay-token" type="password" autocomplete="off" placeholder="HELLO-only; never stored or placed in the URL" />
+          </label>
+          <label>Control server
+            <input id="tailscale-control-url" type="url" autocomplete="off" placeholder="https://controlplane.tailscale.com" />
+          </label>
+          <label>Browser node hostname
+            <input id="tailscale-hostname" value="wasm-vm-browser" autocomplete="off" />
+          </label>
+          <label>One-time auth key
+            <input id="tailscale-auth-key" type="password" autocomplete="off" placeholder="not persisted or logged" />
+          </label>
+          <label>Exit node ID
+            <input id="tailscale-exit-node" autocomplete="off" placeholder="optional stable node ID" />
+          </label>
+          <label class="check"><input id="tailscale-accept-dns" type="checkbox" checked /> Accept MagicDNS</label>
+          <div class="network-actions">
+            <button id="tailscale-login" type="button">Login</button>
+            <button id="tailscale-logout" type="button" class="danger">Logout &amp; revoke</button>
+          </div>
+          <div id="tailscale-status" role="status">Tailscale provider idle; no Worker or runtime artifact loaded.</div>
+        </div>
+        <section id="file-transfer" class="file-transfer" aria-labelledby="file-transfer-title">
+          <div class="file-transfer-head">
+            <h3 id="file-transfer-title">Host ↔ Alpine files</h3>
+            <div class="file-transfer-actions">
+              <button id="file-transfer-choose" type="button">Choose files</button>
+              <button id="file-transfer-download-folder" type="button">Choose download folder</button>
+            </div>
+          </div>
+          <input id="file-transfer-input" type="file" multiple hidden />
+          <div id="file-transfer-drop" class="file-transfer-drop" role="button" tabindex="0"
+               aria-describedby="file-transfer-status">
+            Drop files here to stream them into Alpine (two simultaneous uploads maximum).
+          </div>
+          <p id="file-transfer-status" class="file-transfer-status" role="status" aria-live="polite">
+            Boot Alpine to enable the private WVFT file-transfer agent.
+          </p>
+          <ul id="file-transfer-list" class="transfer-list" aria-label="File transfers"></ul>
+        </section>
+        <!-- Docker "Run" writes here: an honest status line for the in-browser container boot. -->
+        <div id="run-banner" class="run-banner" style="display:none;"></div>
+        <!-- E3-T09: shown when another tab holds the writer Web Lock (this boot is read-only) -->
+        <div id="ro-banner" style="display:none; background:#4a3320; color:#f0c674; border:1px solid #6a4a20; border-radius:8px; padding:8px 12px; margin:6px 0; font:13px ui-monospace, monospace;"></div>
+        <!-- E3-T10: persist() denial covers private/incognito and ordinary best-effort storage. -->
+        <div id="storage-warning" style="display:none; background:#4a3320; color:#f0c674; border:1px solid #6a4a20; border-radius:8px; padding:8px 12px; margin:6px 0; font:13px ui-monospace, monospace;"></div>
+        <!-- E3-T10: shown (VM paused) when a durable write hits the origin storage quota -->
+        <div id="quota-dialog" style="display:none; background:#4a2020; color:#f0a0a0; border:1px solid #6a2020; border-radius:8px; padding:8px 12px; margin:6px 0; font:13px ui-monospace, monospace;"></div>
+        <div id="term"></div>
+      </section>
+    </div>
+
+    <!-- ══ DOCS TAB ════════════════════════════════════════════════════════ -->
+    <!-- In-app docs mount point. A separate docstream (React) renderer is mounted into #docs-mount;
+         keeping it a tab (not a page link) means switching to Docs never reloads the SPA and never
+         interrupts the background Alpine boot. -->
+    <div id="panel-docs" class="panel" role="tabpanel">
+      <div id="docs-mount">
+        <p style="padding:24px;color:#9aa6b2;font:14px ui-monospace,monospace">Loading docs…</p>
+      </div>
+    </div>
+
+    <!-- xterm.js UMD build + fit addon (pinned via package-lock.json + npm ci — no CDN). -->
+    <script src="./vendor/xterm/xterm.js"></script>
+    <script src="./vendor/xterm/addon-fit.js"></script>
+    <script type="module" src="./tabs.js"></script>
+    <script type="module" src="./ide.js"></script>
+    <script type="module" src="./docs-mount.js"></script>
+    <script type="module" src="./main.js"></script>
+    <!-- E3-T24c: register the versioned offline app-shell service worker. Progressive enhancement —
+         the site works without it; it adds offline load + faster repeat visits. Registration failure
+         is non-fatal (logged at debug). ?nosw disables it (used by tests that must bypass caching). -->
+    <script>
+      if ("serviceWorker" in navigator && !new URLSearchParams(location.search).has("nosw")) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .catch((e) => console.debug("[sw] register failed", e));
+        });
+      }
+    </script>
+  </body>
+</html>
