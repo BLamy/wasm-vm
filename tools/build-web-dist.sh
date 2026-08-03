@@ -68,6 +68,21 @@ if [ -e web/node_modules/three/build/three.module.js ]; then
   fi
 fi
 
+# DEPLOY-TIME ROOT SWAP: the marketing landing becomes the site root (/) and the app moves to
+# /app.html. The SOURCE tree deliberately keeps web/index.html = the APP so the dev server (serves
+# web/ at /) and the whole Playwright suite (which goto("/") expecting the app) stay unchanged — the
+# swap exists ONLY in the deployed dist. Cross-links are fixed for the deployed layout: in the app,
+# the home link (./landing.html) points at /; in the landing, every Launch/CTA (./index.html) points
+# at /app.html.
+if [ -e "$DIST/landing.html" ] && [ -e "$DIST/index.html" ]; then
+  mv "$DIST/index.html" "$DIST/app.html"
+  mv "$DIST/landing.html" "$DIST/index.html"
+  sed -e 's#\./landing\.html#./#g' "$DIST/app.html" > "$DIST/app.html.tmp" && mv "$DIST/app.html.tmp" "$DIST/app.html"
+  sed -e 's#\./index\.html#./app.html#g' -e 's#\./landing\.html#./#g' \
+      "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
+  echo "[web-dist] deploy root: / = landing, /app.html = app"
+fi
+
 # artifacts.json (relative ./releases/… URLs; poor-mans-ci fills web/dist/releases at deploy).
 [ -e web/artifacts.json ] && cp web/artifacts.json "$DIST/"
 
