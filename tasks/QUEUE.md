@@ -13,7 +13,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 1. **E3-T19a** — Composed-stack node lifecycle and reload-restore
 1. **E3-T22** — Clipboard integration - OSC 52 copy, paste injection, bracketed paste **[DECOMPOSE BEFORE START]**
 1. **E3-T22c** — Guest image clipboard conveniences — vim OSC52 yank, tmux set-clipboard
-1. **E3-T22d** — Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 
 
 ## Epic 0 — `epic-0-ignition`
