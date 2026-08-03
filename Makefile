@@ -307,6 +307,15 @@ verify-E3-T22a:
 	cd web && node --check osc52.js && node --check terminal.js
 	@echo "verify-E3-T22a (OSC 52 copy handler): OK"
 
+.PHONY: verify-E3-T22b
+verify-E3-T22b:
+	# Paste framing — deterministic newline normalization + bracketed wrap + embedded end-marker
+	# neutralization (paste-injection defense), node unit tests (no browser needed).
+	cd web && node --test tests/paste.test.mjs
+	# The terminal wiring (paste interceptor + pasteText) stays syntactically valid.
+	cd web && node --check paste.js && node --check terminal.js
+	@echo "verify-E3-T22b (paste pipeline framing): OK"
+
 .PHONY: verify-E3-T21d
 verify-E3-T21d:
 	$(MAKE) web-build

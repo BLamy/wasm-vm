@@ -7,6 +7,7 @@
 // `FitAddon` (@xterm/addon-fit).
 
 import { createOsc52Handler } from "./osc52.js";
+import { framePaste } from "./paste.js";
 
 // Bytes handed to the guest per drain tick. Bounds a single JS→wasm copy so a huge paste never
 // becomes one giant allocation; the guest's RX FIFO paces the actual consumption underneath.
@@ -33,6 +34,10 @@ export function createLinuxTerminal(containerEl) {
     fontFamily: "ui-monospace, monospace",
     fontSize: 13,
     theme: { background: "#0b0e14", foreground: "#cdd6f4" },
+    // E3-T22b: we OWN paste framing (framePaste: newline normalization + bracketed wrap + embedded
+    // end-marker neutralization). Tell xterm not to also add 200~/201~, so paste is never double-framed
+    // and the paste-injection defense is ours, not the library's.
+    ignoreBracketedPasteMode: true,
   });
   const fit = new FitAddon.FitAddon();
   term.loadAddon(fit);
@@ -109,6 +114,29 @@ export function createLinuxTerminal(containerEl) {
   // xterm strips the `ESC]52;` framing and passes the handler the data string.
   try { term.registerOscHandler(52, oscHandler); } catch { /* older xterm without OSC hooks */ }
 
+  // E3-T22b: frame + inject a paste. `bracketed` is snapshotted from the guest's live DECSET-2004
+  // state ONCE per paste (no torn half-bracket if the guest toggles mid-paste). feed() then chunks it
+  // through the same backpressure queue as typed input.
+  function pasteText(text) {
+    const bracketed = !!(term.modes && term.modes.bracketedPasteMode);
+    feed(enc.encode(framePaste(String(text ?? ""), { bracketed })));
+  }
+  // Own the paste at the DOM level (capture phase → before xterm's textarea handler), so our framing
+  // is the only framing and the injection defense is enforced. `ignoreBracketedPasteMode` above keeps
+  // xterm from re-wrapping if this ever doesn't fire (degraded but never double-framed).
+  try {
+    containerEl.addEventListener(
+      "paste",
+      (e) => {
+        const text = (e.clipboardData && e.clipboardData.getData("text")) || "";
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        pasteText(text);
+      },
+      true,
+    );
+  } catch { /* no DOM (unit env) — pasteText() is still callable directly */ }
+
   return {
     term,
     fit,
@@ -131,5 +159,9 @@ export function createLinuxTerminal(containerEl) {
     // transient activation / insecure context) — the "copied — click to confirm" affordance. The
     // payload is preserved so the click can complete the write; nothing is ever dropped silently.
     onClipboardCopyBlocked(fn) { onCopyBlocked = fn; },
+    // E3-T22b: frame + inject pasted text (newline-normalized, bracketed per the guest's live mode
+    // 2004, embedded end-markers neutralized). Used by the DOM paste interceptor and by E2E tests.
+    pasteText,
+    bracketedPasteEnabled: () => !!(term.modes && term.modes.bracketedPasteMode),
   };
 }
