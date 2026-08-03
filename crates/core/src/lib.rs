@@ -885,6 +885,20 @@ impl Machine {
         if let Some(clint) = &self.clint {
             w.section(section::CLINT, &clint.borrow().to_snapshot());
         }
+        // E3-T12c4: the interrupt controller + console + RTC device state. Without these a resumed
+        // guest lands with a live driver (its register writes are in the restored RAM) but a
+        // freshly-reset device — the UART's RX-interrupt-enable is lost and the console wedges, the
+        // PLIC's enables/priorities are gone and external IRQs never route. Restoring them makes the
+        // resumed machine's devices agree with the guest's driver state.
+        if let Some(plic) = &self.plic {
+            w.section(section::PLIC, &plic.borrow().to_snapshot());
+        }
+        if let Some((uart, _)) = &self.uart {
+            w.section(section::UART, &uart.borrow().to_snapshot());
+        }
+        if let Some((rtc, _)) = &self.rtc {
+            w.section(section::RTC, &rtc.borrow().to_snapshot());
+        }
         // E3-T12c1: virtio-blk transport lifecycle + device ring position + FLUSH-forward count. The
         // disk bytes are the overlay (bound by generation, E3-T12c3), not serialized here; the parked
         // in-flight set is drained/refused by the quiesce (E3-T12c2) so it is empty at this boundary.
@@ -975,6 +989,23 @@ impl Machine {
                 section::CLINT => {
                     if let Some(clint) = &self.clint {
                         clint.borrow_mut().restore(sec.payload)?;
+                    }
+                }
+                // E3-T12c4: interrupt controller / console / RTC device state — restore so the
+                // resumed devices match the guest driver (RX IRQ enable, PLIC enables, RTC alarm).
+                section::PLIC => {
+                    if let Some(plic) = &self.plic {
+                        plic.borrow_mut().restore(sec.payload)?;
+                    }
+                }
+                section::UART => {
+                    if let Some((uart, _)) = &self.uart {
+                        uart.borrow_mut().restore(sec.payload)?;
+                    }
+                }
+                section::RTC => {
+                    if let Some((rtc, _)) = &self.rtc {
+                        rtc.borrow_mut().restore(sec.payload)?;
                     }
                 }
                 section::CLOCK => {

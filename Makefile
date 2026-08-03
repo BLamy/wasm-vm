@@ -385,6 +385,21 @@ verify-E3-T12c3:
 	$(MAKE) _v-wasm
 	@echo "verify-E3-T12c3 (overlay-generation snapshot coherence): OK"
 
+.PHONY: verify-E3-T12c4
+verify-E3-T12c4:
+	# Boot-level snapshot disk coherence: the c1+c2+c3 pieces compose into a coherent whole-machine
+	# snapshot across a real Linux boot. Fmt/clippy the CLI plumbing + the resume-section round-trips.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-cli
+	cargo clippy -p wasm-vm-core --lib -- -D warnings
+	cargo clippy -p wasm-vm-cli --bins --test boot_snapshot_resume -- -D warnings
+	# The device-section round-trips the boot path depends on (CPU/CLINT/PLIC/UART/RTC/virtio) stay green.
+	cargo test -p wasm-vm-core --test cpu_resume --test snapshot_coherence --test virtio_blk_quiesce
+	# The boot-gated integration proofs are #[ignore]d full Linux boots — run explicitly against a
+	# release build + artifacts (busybox smoke locally, Alpine+fsck on `ssh dev`, as E2-T19/E2-T24):
+	#   cargo build --release -p wasm-vm-cli
+	#   cargo test --release -p wasm-vm-cli --test boot_snapshot_resume -- --ignored --nocapture
+	@echo "verify-E3-T12c4 (unit gate OK; boot proofs are #[ignore]d — see the recipe comment)"
+
 .PHONY: verify-E3-T24c
 verify-E3-T24c:
 	# The versioned offline app shell against a real browser service worker + Playwright offline mode:

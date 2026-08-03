@@ -102,6 +102,23 @@ pub struct BootArgs {
     /// of long Linux boots where a full multi-billion-line canonical trace is impractical.
     #[arg(long)]
     pub evidence: Option<PathBuf>,
+    /// E3-T12c4: take a whole-machine resume snapshot (`Machine::save_resume`) the first time the
+    /// guest console prints `--snapshot-trigger`, write it to this path, and exit 0. The snapshot
+    /// quiesces the virtio-blk in-flight set first (E3-T12c2) and refuses (exit 103, no file) if it
+    /// cannot — so it is never torn. Pair with a guest `sync` before the trigger so the `--drive`
+    /// file matches the snapshotted page cache; resume the blob into a fresh process with
+    /// `--resume-from` against the SAME `--drive`.
+    #[arg(long, requires = "snapshot_trigger")]
+    pub snapshot_out: Option<PathBuf>,
+    /// E3-T12c4: the guest-console marker that triggers `--snapshot-out`. Choose an output-only
+    /// string the guest prints (e.g. `echo WVSNAP_NOW`) so the command echo can't self-trigger.
+    #[arg(long)]
+    pub snapshot_trigger: Option<String>,
+    /// E3-T12c4: restore a `--snapshot-out` blob into the assembled machine BEFORE running (instead
+    /// of a cold kernel boot). The blob's coherence header is validated against this machine first
+    /// (E3-T12c3); reopen the SAME `--drive` image the snapshot was taken against.
+    #[arg(long)]
+    pub resume_from: Option<PathBuf>,
 }
 
 /// Guest console → this process's stdout. Shared with the SBI console channel; a closed pipe
@@ -148,6 +165,74 @@ impl wasm_vm_core::dev::rtc::WallClock for SystemClock {
     }
 }
 
+/// E3-T12c4: watches the guest console stream for the `--snapshot-trigger` marker and, on its FIRST
+/// sighting, takes a whole-machine `save_resume` snapshot to `out`. Split-across-quanta safe (keeps a
+/// short rolling tail like [`BootProfiler`]). `fired` once the blob is written; `refused` carries the
+/// typed reason if the snapshot could not be taken (a non-quiesced machine) or the file write failed —
+/// in which case NO blob exists and the boot exits non-zero rather than emit a torn snapshot.
+struct SnapshotOnMarker {
+    trigger: String,
+    out: PathBuf,
+    tail: String,
+    fired: bool,
+    refused: Option<String>,
+}
+
+impl SnapshotOnMarker {
+    fn new(trigger: String, out: PathBuf) -> Self {
+        Self {
+            trigger,
+            out,
+            tail: String::new(),
+            fired: false,
+            refused: None,
+        }
+    }
+
+    /// Feed one quantum's console output; if the trigger is seen (and not already fired/refused),
+    /// snapshot the machine to `out`. Returns true when the boot should STOP (snapshot taken, or an
+    /// unrecoverable refusal). The machine is passed `&mut` because `save_resume` quiesces first.
+    fn feed(&mut self, out: &[u8], m: &mut Machine) -> bool {
+        if self.fired || self.refused.is_some() {
+            return false;
+        }
+        self.tail.push_str(&String::from_utf8_lossy(out));
+        if self.tail.contains(&self.trigger) {
+            match m.save_resume() {
+                Ok(blob) => match std::fs::write(&self.out, &blob) {
+                    Ok(()) => {
+                        eprintln!(
+                            "wasm-vm: snapshot ({} bytes) written to {} at trigger {:?}",
+                            blob.len(),
+                            self.out.display(),
+                            self.trigger
+                        );
+                        self.fired = true;
+                    }
+                    Err(e) => {
+                        self.refused = Some(format!("cannot write {}: {e}", self.out.display()));
+                    }
+                },
+                Err(e) => {
+                    // A non-quiesced machine (a parked in-flight request that would not drain) is a
+                    // typed refusal — never a torn blob (E3-T12c2).
+                    self.refused = Some(format!("save_resume refused: {e:?}"));
+                }
+            }
+            return true;
+        }
+        // Bounded tail: keep enough that a marker split across quanta still matches.
+        if self.tail.len() > 512 {
+            let mut cut = self.tail.len() - 256;
+            while cut < self.tail.len() && !self.tail.is_char_boundary(cut) {
+                cut += 1;
+            }
+            self.tail = self.tail.split_off(cut);
+        }
+        false
+    }
+}
+
 pub fn boot(a: BootArgs) -> ExitCode {
     let kernel = match std::fs::read(&a.kernel) {
         Ok(b) => b,
@@ -184,6 +269,11 @@ pub fn boot(a: BootArgs) -> ExitCode {
 
     // E2-T25: a boot profiler covering the FIRST boot (the baseline). Reboots are not profiled.
     let mut profiler = a.profile_boot.then(BootProfiler::new);
+    // E3-T12c4: arm the snapshot-on-marker watcher (requires --snapshot-trigger, enforced by clap).
+    let mut snap = match (&a.snapshot_out, &a.snapshot_trigger) {
+        (Some(out), Some(trigger)) => Some(SnapshotOnMarker::new(trigger.clone(), out.clone())),
+        _ => None,
+    };
 
     let mut boot_num = 0u32;
     loop {
@@ -195,6 +285,29 @@ pub fn boot(a: BootArgs) -> ExitCode {
             Ok(v) => v,
             Err(code) => return code,
         };
+        // E3-T12c4: restore a snapshot into the freshly-assembled machine BEFORE running — the
+        // coherence header is validated first (E3-T12c3); RAM/CPU/CLINT/virtio transport are
+        // overwritten from the blob (the cold kernel placement above is discarded, intentionally).
+        if boot_num == 1
+            && let Some(path) = &a.resume_from
+        {
+            let blob = match std::fs::read(path) {
+                Ok(b) => b,
+                Err(e) => {
+                    eprintln!("wasm-vm: cannot read resume blob {}: {e}", path.display());
+                    return ExitCode::from(2);
+                }
+            };
+            if let Err(e) = m.load_resume(&blob) {
+                eprintln!("wasm-vm: resume refused ({e:?}) — {}", path.display());
+                return ExitCode::from(103);
+            }
+            eprintln!(
+                "wasm-vm: resumed {} bytes from {} — continuing guest",
+                blob.len(),
+                path.display()
+            );
+        }
         let mut hash = HashSink::new();
         let outcome = if a.evidence.is_some() {
             run_machine(
@@ -205,6 +318,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 stdin_rx.as_ref(),
                 &mut pending,
                 profiler.as_mut().filter(|_| boot_num == 1),
+                snap.as_mut(),
                 &mut hash,
             )
         } else {
@@ -217,12 +331,26 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 stdin_rx.as_ref(),
                 &mut pending,
                 profiler.as_mut().filter(|_| boot_num == 1),
+                snap.as_mut(),
                 &mut null,
             )
         };
         // Final drain before we act on the outcome.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
+        // E3-T12c4: the snapshot-on-marker watcher stopped the run — resolve it BEFORE the normal
+        // outcome match. A written blob is a clean exit (0); a refusal (non-quiesced machine or a
+        // failed write, so NO blob exists) exits non-zero rather than pretend a snapshot was taken.
+        if let Some(s) = snap.as_ref() {
+            if let Some(err) = &s.refused {
+                eprintln!("wasm-vm: {err}");
+                return ExitCode::from(103);
+            }
+            if s.fired {
+                eprintln!("wasm-vm: snapshot complete — exiting");
+                return ExitCode::SUCCESS;
+            }
+        }
         if boot_num == 1
             && let Some(p) = profiler.as_ref()
         {
@@ -582,6 +710,7 @@ fn run_machine<T: TraceSink>(
     stdin_rx: Option<&mpsc::Receiver<Vec<u8>>>,
     pending: &mut std::collections::VecDeque<u8>,
     profiler: Option<&mut BootProfiler>,
+    mut snap: Option<&mut SnapshotOnMarker>,
     sink: &mut T,
 ) -> RunOutcome {
     let mut profiler = profiler;
@@ -603,6 +732,13 @@ fn run_machine<T: TraceSink>(
             if p.done {
                 return RunOutcome::MaxInstrs;
             }
+        }
+        // E3-T12c4: scan for the snapshot trigger; on its first sighting take the resume snapshot
+        // (quiesce + save_resume) and STOP — boot() resolves the fired/refused result.
+        if let Some(s) = snap.as_deref_mut()
+            && s.feed(&out, m)
+        {
+            return RunOutcome::MaxInstrs;
         }
         // E2-T19: drain the virtio-blk request trace → stderr (when --blk-log).
         if a.blk_log {
