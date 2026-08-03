@@ -386,8 +386,11 @@ fn alpine_sync_snapshot_restore_fsck_clean() {
         tb.lock().unwrap()
     );
     // Clean poweroff → OpenRC unmounts + syncs the ext4 root → the image is left cleanly unmounted.
+    // The OpenRC shutdown runlevel is itself slow in the interpreter (and slower on a loaded 2-core
+    // box), so allow generous wall time — the disk-coherence proof depends on a CLEAN unmount, not a
+    // fast one.
     send(&mut b_in, "poweroff");
-    let code_b = wait_exit(&mut b.0, 300);
+    let code_b = wait_exit(&mut b.0, 900);
     drop(b_in);
     let _ = br1.join();
     let _ = br2.join();

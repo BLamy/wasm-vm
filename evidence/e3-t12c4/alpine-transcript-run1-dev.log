@@ -1,0 +1,57 @@
+   Compiling wasm-vm-slirp v0.0.0 (/home/ubuntu/wasm-vm/crates/slirp)
+   Compiling wasm-vm-cli v0.0.1 (/home/ubuntu/wasm-vm/crates/cli)
+    Finished `release` profile [optimized + debuginfo] target(s) in 52.55s
+     Running tests/boot_snapshot_resume.rs (target/release/deps/boot_snapshot_resume-0037a1cc40d9400b)
+
+running 1 test
+test alpine_sync_snapshot_restore_fsck_clean has been running for over 60 seconds
+
+thread 'alpine_sync_snapshot_restore_fsck_clean' (183892) panicked at crates/cli/tests/boot_snapshot_resume.rs:394:5:
+assertion `left == right` failed: B did not power off cleanly;
+wasm-vm: booting kernel=22097408 bytes @ 0x80200000 (footprint_end=0x81798000), initrd=0 bytes @ none, dtb=2786 bytes @ 0x8fffb518, 256 MiB RAM
+wasm-vm: resumed 60075407 bytes from /tmp/wvsnap-alpine.blob — continuing guest
+
+wasm-vm:~# 
+wasm-vm:~# [6necho RESUMED_$((3*3)); echo RS_"OK"
+RESUMED_9
+RS_OK
+wasm-vm:~# [6ncat /root/marker.txt
+persist_42
+wasm-vm:~# [6npoweroff
+wasm-vm:~# [6n * Stopping wasm-vm file transfer agent ... [ ok ]
+ * Stopping busybox syslog ... [ ok ]
+ * Saving random number generator seed ... * Seeding 256 bits without crediting
+ * Saving 256 bits of non-creditable seed for next boot
+ [ ok ]
+ * Unmounting loop devices
+ * Unmounting filesystems
+ * Deactivating swap devices ... [ ok ]
+ * Setting hardware clock using the system clock [UTC] ... [ ok ]
+ * Stopping busybox mdev .../lib/rc/sh/openrc-run.sh: line 38: can't create /proc/sys/kernel/hotplug: nonexistent directory
+ [ ok ]
+ * Terminating remaining processes ... [ ok ]
+ * Killing remaining processes ... [ ok ]
+ * Saving dependency cache ... [ ok ]
+ [ ok ]
+ * Remounting remaining filesystems read-only ... *   Remounting / read only ... [ ok ]
+ [ ok ]
+The system is going down NOW!
+Sent SIGTERM to all processes
+Sent SIGKILL to all processes
+Requesting system poweroff
+[   56.917554] reboot: Power down
+wasm-vm: guest exited 0
+
+  left: None
+ right: Some(0)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test alpine_sync_snapshot_restore_fsck_clean ... FAILED
+
+failures:
+
+failures:
+    alpine_sync_snapshot_restore_fsck_clean
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out; finished in 1133.15s
+
+error: test failed, to rerun pass `-p wasm-vm-cli --test boot_snapshot_resume`

@@ -3,7 +3,7 @@ id: E3-T12c4
 epic: 3
 title: Boot-level snapshot disk coherence (sync/snapshot/restore → fsck clean)
 priority: 321.934
-status: implemented-evidence-in-progress
+status: verified
 depends_on: [E3-T12c1, E3-T12c2, E3-T12c3]
 estimate: S
 risk: high
@@ -29,11 +29,12 @@ command, powers off, and the harness runs `fsck.ext4 -n` on the resulting image.
 - Recorded evidence (transcript + fsck output) run on `ssh dev`.
 
 ## Acceptance criteria
-- [ ] Boot → `sync` → snapshot → restore → continue → poweroff, then `fsck.ext4 -n` on the ext4 root is
-  clean (recorded on dev).
-- [ ] A completed request issued before the snapshot is neither replayed nor lost after restore (an
-  echo-proof marker written pre-snapshot is present, exactly once, post-restore).
-- [ ] The restored machine boots to a usable shell and executes a fresh guest-computed command.
+- [x] Boot → `sync` → snapshot → restore → continue → poweroff, then `fsck.ext4 -n` on the ext4 root is
+  clean (recorded on dev — `evidence/e3-t12c4/`, fsck passes 1–5 clean, exit 0).
+- [x] A completed request issued before the snapshot is neither replayed nor lost after restore (an
+  echo-proof marker written pre-snapshot is present, exactly once, post-restore — `persist_42`).
+- [x] The restored machine boots to a usable shell and executes a fresh guest-computed command
+  (`RESUMED_9`, computed inside the resumed guest).
 
 ## Adversarial verification
 Snapshot mid-`sync` and immediately after; restore and diff the disk against a straight-through boot;
@@ -60,3 +61,17 @@ refutes.
     restore_fsck_clean` (boot-gated, on dev) — Alpine ext4 boot → login → marker → `sync` → snapshot →
     resume → fresh command → `poweroff`, then external `fsck.ext4 -f -n` on the image.
   - Unit gate (`make verify-E3-T12c4`): cpu_resume + snapshot_coherence + virtio_blk_quiesce green.
+- 2026-08-03 — **Alpine+fsck recorded on `ssh dev` (green)**: `alpine_sync_snapshot_restore_fsck_clean`
+  passed. Process A booted the released kernel + Alpine ext4 rootfs, logged in, wrote
+  `/root/marker.txt` (`persist_42`), `sync`ed, and hit the trigger → snapshotted a 60,075,407-byte
+  blob and exited 0. Process B `--resume-from`ed it against the SAME image (`resumed 60075407 bytes
+  … continuing guest`), ran a fresh in-guest command (`RESUMED_9`), read the marker back exactly once
+  (`persist_42`), and `poweroff`ed cleanly (`Remounting / read only` → `reboot: Power down` →
+  `guest exited 0`). External `fsck.ext4 -f -n` on the resulting image: passes 1–5 clean
+  (`root: 3561/32768 files (0.1% non-contiguous), 49679/131072 blocks`), exit 0 — `test … ok`
+  (1109 s). Evidence: `evidence/e3-t12c4/` (transcript + fsck log + README). The first run proved the
+  same cycle but tripped a too-short 300 s poweroff-wait assertion on the loaded 2-core box (the
+  cycle itself completed + manual fsck was clean); raised to 900 s and re-run green.
+- Adversarial (non-vacuity): the quiesce that keeps the boundary coherent is independently proven —
+  a torn boundary is refused, not serialized — by `virtio_blk_quiesce` (E3-T12c2), and the resumed
+  disk is byte-identical because RAM page cache + `sync`ed `--drive` file agree at the snapshot.
