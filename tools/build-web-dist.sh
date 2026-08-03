@@ -58,6 +58,16 @@ if [ -e "$DIST/index.html" ]; then
       "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
 fi
 
+# Vendor three.js (the landing page's WebGL hero) the same way, and rewrite landing.html's importmap.
+if [ -e web/node_modules/three/build/three.module.js ]; then
+  mkdir -p "$DIST/vendor/three"
+  cp web/node_modules/three/build/three.module.js "$DIST/vendor/three/three.module.js"
+  if [ -e "$DIST/landing.html" ]; then
+    sed -e 's#\./node_modules/three/build/three\.module\.js#./vendor/three/three.module.js#g' \
+        "$DIST/landing.html" > "$DIST/landing.html.tmp" && mv "$DIST/landing.html.tmp" "$DIST/landing.html"
+  fi
+fi
+
 # artifacts.json (relative ./releases/… URLs; poor-mans-ci fills web/dist/releases at deploy).
 [ -e web/artifacts.json ] && cp web/artifacts.json "$DIST/"
 
