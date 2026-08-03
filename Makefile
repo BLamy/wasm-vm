@@ -284,6 +284,19 @@ verify-E3-T19:
 	cd web && npx playwright test tests/e3-t17-provider-selection.spec.js tests/e3-t19-provider-security.spec.js
 	@echo "verify-E3-T19 (provider lifecycle + relay security): OK"
 
+.PHONY: verify-E3-T19c
+verify-E3-T19c:
+	# Relay token rejection — deterministic, no live tailnet. Server-side enforcement proven by a
+	# direct WebSocket attempt against the real wvrelay binary.
+	cargo fmt --check -p wasm-vm-cli -p wasm-vm-slirp
+	cargo clippy -p wasm-vm-cli --test wvrelay_token_rejection -- -D warnings
+	# The token-verification unit boundary (signature / expiry / lifetime / origin), injected clock.
+	cargo test -p wasm-vm-slirp --lib relay_security
+	# End-to-end server-side rejection: absent / expired / wrong-origin token + disallowed handshake
+	# Origin are all closed before OPEN; a valid token opens the protected path.
+	cargo test -p wasm-vm-cli --test wvrelay_token_rejection
+	@echo "verify-E3-T19c (relay token rejection, server-side): OK"
+
 .PHONY: verify-E3-T21d
 verify-E3-T21d:
 	$(MAKE) web-build
