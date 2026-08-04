@@ -169,6 +169,31 @@ fn walk_leaf(
     eff: Priv,
     levels: usize,
 ) -> Result<(u64, usize), Trap> {
+    // E4-T01 phase 3: this is the COLD path — `translate_cached` calls it ONLY on a TLB miss, so
+    // the hot TLB-hit path never reaches here and reads no clock. When profiling is armed the bus
+    // hands back a host timestamp; we bracket the whole walk with two reads and attribute the delta
+    // to `Subsystem::MmuWalk`. `prof_timer_now` is `None` on any un-armed bus → zero overhead.
+    match bus.prof_timer_now() {
+        Some(t0) => {
+            let r = walk_leaf_inner(csr, bus, va, access, eff, levels);
+            let dt = bus.prof_timer_now().map_or(0, |t1| t1.saturating_sub(t0));
+            bus.prof_note_walk(dt);
+            r
+        }
+        None => walk_leaf_inner(csr, bus, va, access, eff, levels),
+    }
+}
+
+/// The untimed table walk (see [`walk_leaf`] for the timing wrapper). Split out so the cold
+/// page-walk timer can bracket a single call site across all of `walk_leaf`'s early-return faults.
+fn walk_leaf_inner(
+    csr: &Csrs,
+    bus: &mut impl Bus,
+    va: u64,
+    access: Access,
+    eff: Priv,
+    levels: usize,
+) -> Result<(u64, usize), Trap> {
     let fault = |e: Exception| Trap { cause: e, tval: va };
     let satp = csr.satp();
     let mut table = (satp & ((1 << 44) - 1)) << 12;

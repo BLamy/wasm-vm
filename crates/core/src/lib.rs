@@ -193,6 +193,18 @@ pub struct Machine {
     /// native and a wasm run sample the identical instruction stream.
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     prof_lcg: u32,
+    /// E4-T01 phase 3: the injected monotonic host timer (outer crates provide the impl; core stays
+    /// `no_std`). Set by [`Self::set_host_timer`], which also arms profiling and hands the same `Rc`
+    /// to the bus so the cold device/walk paths can time themselves. `run_traced` reads it ONCE at
+    /// entry and ONCE at exit to measure the total profiled wall-span (CPU time is that total minus
+    /// the cold device+walk time — the hot loop reads no clock).
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    host_timer: Option<alloc::rc::Rc<dyn prof::HostTimer>>,
+    /// E4-T01 phase 3: total profiled host nanoseconds measured across `run_traced` calls (the once-
+    /// per-run entry→exit delta, accumulated). Fed to [`Self::prof_report`] as the span CPU-interp
+    /// time is derived from by subtraction. Zero when no timer is injected.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    prof_total_ns: u64,
     /// E2-T17: the syscon test finisher's shared reset latch, when [`Self::enable_syscon`]
     /// attached it. The run loop drains it and returns [`RunOutcome::Reset`]. (Only read on
     /// the real-CSR path; the quarantined zicsr-stub build compiles the drain + `enable_syscon`
@@ -283,6 +295,8 @@ impl Machine {
             profiling: false,
             prof_countdown: PROF_STRIDE_BASE,
             prof_lcg: 0x1234_5678,
+            host_timer: None,
+            prof_total_ns: 0,
             syscon: None,
             virtio: alloc::vec::Vec::new(),
             blk: None,
@@ -554,11 +568,31 @@ impl Machine {
         }
     }
 
-    /// E4-T01: the accumulated profile as a ranked [`prof::ProfReport`]. `total_ns` is the caller's
-    /// externally-measured wall span for the profiled run (the Phase-3 host timer feeds it; pass 0
-    /// when only the hot-PC histogram is wanted). `top_k` bounds the hot-region list.
+    /// E4-T01 phase 3: inject the monotonic host timer AND arm profiling. The same `Rc` is handed to
+    /// the bus so the cold device-dispatch and page-walk paths can bracket themselves; `run_traced`
+    /// reads it once per run at entry/exit for the total wall-span. Outer crates provide the impl
+    /// (native `Instant`, wasm `performance.now()`); tests use [`prof::FixedTimer`].
+    pub fn set_host_timer(&mut self, timer: alloc::rc::Rc<dyn prof::HostTimer>) {
+        self.host_timer = Some(alloc::rc::Rc::clone(&timer));
+        self.bus.set_host_timer(timer);
+        self.set_profiling(true);
+    }
+
+    /// E4-T01 phase 3: total profiled host nanoseconds measured by `run_traced` (entry→exit,
+    /// accumulated across runs). Feed this to [`Self::prof_report`] as `total_ns` for the
+    /// CPU-by-subtraction accounting. Zero when no [`Self::set_host_timer`] was injected.
+    pub fn prof_total_ns(&self) -> u64 {
+        self.prof_total_ns
+    }
+
+    /// E4-T01: the accumulated profile as a ranked [`prof::ProfReport`]. `total_ns` is the profiled
+    /// wall span (pass [`Self::prof_total_ns`] for the timer-measured span, or 0 when only the
+    /// hot-PC histogram is wanted). CPU-interp time is derived as `total_ns −` the cold device+walk
+    /// time folded in from the bus; `top_k` bounds the hot-region list. Non-mutating and idempotent.
     pub fn prof_report(&self, total_ns: u64, top_k: usize) -> prof::ProfReport {
-        self.prof.report(total_ns, top_k)
+        let ta = self.bus.time_accum();
+        self.prof
+            .report_with_time(total_ns, top_k, &ta.ns, ta.walk_count)
     }
 
     /// E4-T01: the next PC-sampling stride — [`PROF_STRIDE_BASE`] plus a deterministic LCG jitter in
@@ -1456,7 +1490,33 @@ impl Machine {
     /// `--trace`). Termination and the "logged once" HTIF command watch are identical to
     /// `run` — the ONE place the run-loop / HTIF state machine lives, so a traced run and
     /// an untraced run can never diverge in when they stop.
+    /// Run up to `max_instrs`, timing the total profiled wall-span ONCE at entry and ONCE at exit
+    /// (E4-T01 phase 3) — never inside the loop. When profiling is armed with a host timer, the
+    /// entry→exit delta accumulates into `prof_total_ns`, the span CPU-interp time is later derived
+    /// from by subtraction. The `_inner` body holds the actual loop and is untouched by profiling.
     pub fn run_traced<T: trace::TraceSink>(&mut self, max_instrs: u64, sink: &mut T) -> RunOutcome {
+        // One timer read at entry (cold, once per run) — only when profiling armed with a timer.
+        let t0 = if self.profiling {
+            self.host_timer.as_ref().map(|t| t.now_ns())
+        } else {
+            None
+        };
+        let outcome = self.run_traced_inner(max_instrs, sink);
+        // One timer read at exit; accumulate the total profiled span. The device+walk time timed on
+        // the cold paths is a SUBSET of this span, so `total − (device + walk)` is the interpreter's.
+        if let (Some(t0), Some(t)) = (t0, self.host_timer.as_ref()) {
+            self.prof_total_ns = self
+                .prof_total_ns
+                .saturating_add(t.now_ns().saturating_sub(t0));
+        }
+        outcome
+    }
+
+    fn run_traced_inner<T: trace::TraceSink>(
+        &mut self,
+        max_instrs: u64,
+        sink: &mut T,
+    ) -> RunOutcome {
         for _ in 0..max_instrs {
             // E2-T17: a syscon finisher write (poweroff/reboot/fail) during the previous
             // instruction ends the run before the next one executes.

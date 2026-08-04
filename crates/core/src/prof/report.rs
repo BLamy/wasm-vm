@@ -56,6 +56,39 @@ impl Subsystem {
         Subsystem::Other,
     ];
 
+    /// Map an MMIO window's base address (the canonical guest memory map, [`crate::platform::virt`])
+    /// to the subsystem that owns it, so the cold device-dispatch timer (E4-T01 phase 3) attributes
+    /// a device access's host-time to the right bucket. The virtio slots are keyed by slot index:
+    /// slot 0 is virtio-blk, slot 1 virtio-net, slot 2 virtio-rng (the order the machine attaches
+    /// backends); any further slot, or an address matching no known device, is [`Subsystem::Other`].
+    pub fn for_device_base(base: u64) -> Subsystem {
+        use crate::platform::virt;
+        match base {
+            virt::CLINT_BASE => Subsystem::Clint,
+            virt::PLIC_BASE => Subsystem::Plic,
+            virt::UART0_BASE => Subsystem::Uart,
+            virt::RTC_BASE => Subsystem::Rtc,
+            virt::TEST_BASE => Subsystem::Syscon,
+            _ => {
+                // virtio-mmio slot i lives at VIRTIO_BASE + i*VIRTIO_STRIDE.
+                let slots =
+                    virt::VIRTIO_BASE..virt::VIRTIO_BASE + virt::VIRTIO_COUNT * virt::VIRTIO_STRIDE;
+                if slots.contains(&base)
+                    && (base - virt::VIRTIO_BASE).is_multiple_of(virt::VIRTIO_STRIDE)
+                {
+                    match (base - virt::VIRTIO_BASE) / virt::VIRTIO_STRIDE {
+                        0 => Subsystem::VirtioBlk,
+                        1 => Subsystem::VirtioNet,
+                        2 => Subsystem::VirtioRng,
+                        _ => Subsystem::Other,
+                    }
+                } else {
+                    Subsystem::Other
+                }
+            }
+        }
+    }
+
     /// Stable short name (used in both the text table and JSON keys).
     pub fn name(&self) -> &'static str {
         match self {
