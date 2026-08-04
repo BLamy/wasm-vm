@@ -2,7 +2,11 @@ import { createIPN } from "./tailscale-connect/pkg.js";
 
 const DEFAULT_DOH_JSON_ENDPOINT = "https://cloudflare-dns.com/dns-query";
 
-function normalizeSnapshot(value) {
+// E3-T19a: the persist/restore validation boundary. Persisted Tailscale state may ONLY be the Go
+// IPN's hex-encoded key material (node/machine keys) — never arbitrary data. This rejects a non-hex,
+// oversized, array, or non-object saved state, so a tampered localStorage entry (or a stray auth key,
+// which is not hex) can never be restored into the runtime. Exported for deterministic unit tests.
+export function normalizeSnapshot(value) {
   if (value == null) return {};
   if (typeof value !== "object" || Array.isArray(value)) {
     throw new Error("persisted Tailscale state is not an object");

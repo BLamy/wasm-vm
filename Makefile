@@ -297,6 +297,16 @@ verify-E3-T19c:
 	cargo test -p wasm-vm-cli --test wvrelay_token_rejection
 	@echo "verify-E3-T19c (relay token rejection, server-side): OK"
 
+.PHONY: verify-E3-T19a-state
+verify-E3-T19a-state:
+	# E3-T19a (deterministic slice): the persist/restore validation boundary — only hex key material
+	# is ever restored; tampered / oversized / non-hex / array / non-object saved state is rejected, so
+	# a stray auth key can never be restored. The live docker-compose tailnet-HTTPS + reload proof is
+	# blocked_on E4-T13 (kept off the flaky live path deliberately; see the ticket).
+	cd web && node --test tests/tailscale-state.test.mjs
+	cd web && node --check tailscale-runtime.js
+	@echo "verify-E3-T19a-state (Tailscale persist/restore validation): OK"
+
 .PHONY: verify-E3-T22a
 verify-E3-T22a:
 	# OSC 52 copy handler — deterministic parse/cap/gate logic, node unit tests (no browser needed).
