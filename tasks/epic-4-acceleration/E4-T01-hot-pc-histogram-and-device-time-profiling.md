@@ -3,7 +3,7 @@ id: E4-T01
 epic: 4
 title: Profiling infrastructure — hot-PC histograms and per-device time accounting
 priority: 401
-status: pending
+status: partially-verified
 depends_on: [E3]
 estimate: M
 capstone: false
@@ -117,8 +117,24 @@ guest — gross disagreement (>2x on any top-5 region) is a refutation.
   suite green (lib 147, prof integration 5, all binaries); wasm32 + zicsr-stub + clippy `-D warnings`
   clean (also cleared pre-existing test-clippy debt on the branch, commit `9622051`). Honest limitation:
   CPU-interp accuracy is bounded by the single total-span measurement.
-- **REMAINING:** phase 4 (native `--profile`/`--symbols`/`--profile-json` CLI + `MonotonicTimer(Instant)`
-  + System.map symbolizer + committed native-Alpine example report + the <10%/0% overhead A/B), phase 5
-  (wasm `getProfile()` + `performance.now()` timer), phase 6 (browser evidence — Alpine top-5 symbols +
-  native-vs-wasm diff, the OS-reaping Alpine-boot leg → nightly/`dev`). The measurement ENGINE (hot-PC +
-  time accounting, the risk-bearing core) is complete and native-verified; phases 4–5 are surfaces.
+- 2026-08-04 — **Phase 4 (native CLI surface) landed (commit `29457d9`).** `--profile` / `--symbols
+  <System.map>` / `--profile-json` on the boot CLI; `MonotonicTimer` (`Instant`-based `HostTimer`); a
+  System.map parser + nearest-preceding symbolizer (2 unit tests); the hot-PC + subsystem-time report
+  printed at first-boot exit. **Validated end-to-end on a real native busybox boot** (evidence
+  `evidence/e4-t01/native-busybox-profile.txt`): 36,874 PC samples at kernel VIRTUAL PCs
+  (`0xffffffff80…` — directly System.map-symbolizable, vindicating the phase-2 virtual-PC choice);
+  CPU-by-subtraction exact (`cpu_interp = total − mmu_walk − plic`); MMU-walk time separated (352 ms /
+  345 k walks); collisions 0.6%; `PROFILE_HOTPC_JSON` emitted. **Overhead A/B** (20 M-instr boot, debug):
+  OFF ~51.2 s vs ON ~51.5 s — within noise (~0.5%), far under the 10% ceiling (**AC3**), since timing is
+  cold-path-only.
+- 2026-08-04 — **Phase 5 (wasm surface) landed (commit `67dfd93`).** `JsHostTimer` (`performance.now()`,
+  Window- or Worker-scoped); `WasmLinux::setProfiling(on)` (arms + injects the timer) and `getProfile()`
+  returning the same `{ totalNs, sampleCount, walkCount, collisions, regions, subsystems }` shape as the
+  native report / `getStats` (pc as hex string). web-sys `Performance` feature enabled. Compiles clean for
+  wasm32 (clippy `-D warnings`).
+- **The full profiler is implemented across phases 1–5** (engine + native CLI + wasm surface), native-
+  verified end-to-end. **Verification debt (phase 6):** the in-browser evidence — an Alpine boot's top-5
+  kernel symbols via `getProfile` + a native-vs-wasm report diff (**AC1 Alpine-symbol leg + AC4**) — is
+  the OS-reaping Alpine-browser-boot path (see [[browser-alpine-boot-reaped-on-mac]]); run it on `dev`/
+  nightly. Everything provable headlessly is done and green (native busybox profile is the committed
+  example report standing in for the Alpine one until the browser leg runs).
