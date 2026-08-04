@@ -121,6 +121,15 @@ pub struct BootLayout {
 /// A full Level-0 machine: one hart on a system bus, plus optional HTIF exit
 /// watching. Grown from the E0-T01 placeholder — the `new`/`ram_len` surface is
 /// preserved (E0-T01's verified tests and the wasm wrapper depend on it).
+/// E4-T01: the base PC-sampling stride — a prime near 1024 so ~1 retire in ~1024 is sampled. The
+/// actual stride is this plus a small per-sample jitter (see `prof_next_stride`); a prime base plus
+/// jitter means no power-of-two or round loop period can systematically dodge every sample.
+const PROF_STRIDE_BASE: u32 = 1021;
+/// E4-T01: jitter span added to [`PROF_STRIDE_BASE`] each sample (stride ∈ 1021..=1148). Only the
+/// (real-CSR) sampler reads it; the quarantined zicsr-stub build compiles the sampler out.
+#[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+const PROF_STRIDE_JITTER: u32 = 128;
+
 pub struct Machine {
     hart: Hart,
     bus: SystemBus,
@@ -167,6 +176,23 @@ pub struct Machine {
     /// E2-T20: storm detection armed (default on). When on, the run loop checks the detector
     /// each quantum and prints a diagnosis to the log on a fire.
     storm_detect: bool,
+    /// E4-T01: the always-compiled hot-PC / per-subsystem profiler ([`prof::ProfStats`]). Sampling
+    /// is RUNTIME-gated by [`Self::set_profiling`] (default OFF) — the same always-on-struct +
+    /// runtime-flag shape as `storm_detect`, so a normal (unprofiled) run pays only a single
+    /// not-taken branch per retire.
+    prof: prof::ProfStats,
+    /// E4-T01: profiler armed. Off by default; the native `--profile` path and the wasm `getProfile`
+    /// surface arm it.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    profiling: bool,
+    /// E4-T01: retires remaining until the next PC sample. Counts down; on zero we sample and reload
+    /// it with a fresh jittered stride so no fixed loop period can hide in a sampling blind spot.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    prof_countdown: u32,
+    /// E4-T01: LCG state feeding the per-sample stride jitter. Deterministic (no wall clock) so a
+    /// native and a wasm run sample the identical instruction stream.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    prof_lcg: u32,
     /// E2-T17: the syscon test finisher's shared reset latch, when [`Self::enable_syscon`]
     /// attached it. The run loop drains it and returns [`RunOutcome::Reset`]. (Only read on
     /// the real-CSR path; the quarantined zicsr-stub build compiles the drain + `enable_syscon`
@@ -253,6 +279,10 @@ impl Machine {
             rtc: None,
             irqstats: diag::irqstats::IrqStats::new(),
             storm_detect: true,
+            prof: prof::ProfStats::new(),
+            profiling: false,
+            prof_countdown: PROF_STRIDE_BASE,
+            prof_lcg: 0x1234_5678,
             syscon: None,
             virtio: alloc::vec::Vec::new(),
             blk: None,
@@ -512,6 +542,34 @@ impl Machine {
     /// per-trap `storm_check` a single early-return branch.
     pub fn set_storm_detect(&mut self, on: bool) {
         self.storm_detect = on;
+    }
+
+    /// E4-T01: arm/disarm the hot-PC + subsystem profiler (default off). Arming resets the sampling
+    /// countdown so the first sample lands a full stride into the profiled span. When off, the run
+    /// loop's sampling is a single not-taken branch per retire.
+    pub fn set_profiling(&mut self, on: bool) {
+        self.profiling = on;
+        if on {
+            self.prof_countdown = PROF_STRIDE_BASE;
+        }
+    }
+
+    /// E4-T01: the accumulated profile as a ranked [`prof::ProfReport`]. `total_ns` is the caller's
+    /// externally-measured wall span for the profiled run (the Phase-3 host timer feeds it; pass 0
+    /// when only the hot-PC histogram is wanted). `top_k` bounds the hot-region list.
+    pub fn prof_report(&self, total_ns: u64, top_k: usize) -> prof::ProfReport {
+        self.prof.report(total_ns, top_k)
+    }
+
+    /// E4-T01: the next PC-sampling stride — [`PROF_STRIDE_BASE`] plus a deterministic LCG jitter in
+    /// `0..PROF_STRIDE_JITTER`. The jitter is what stops a loop whose length divides the base stride
+    /// from being sampled always-at-the-same-instruction (or never); the LCG carries no wall clock so
+    /// native and wasm sample identically.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline]
+    fn prof_next_stride(&mut self) -> u32 {
+        self.prof_lcg = self.prof_lcg.wrapping_mul(1664525).wrapping_add(1013904223);
+        PROF_STRIDE_BASE + (self.prof_lcg >> 24) % PROF_STRIDE_JITTER
     }
 
     /// E2-T20 `--stats`: the counter dump, with the latest PLIC claim counts synced in first
@@ -1464,6 +1522,11 @@ impl Machine {
                 self.storm_check(); // CRITIC #1: an INTERRUPT storm must be detected too
                 continue;
             }
+            // E4-T01: capture the PC of the instruction ABOUT to execute — after `step_traced` it has
+            // already advanced to the successor, so the retired instruction's address must be read
+            // here. A single register-resident field read; the sampling decision itself is gated below.
+            #[cfg_attr(feature = "zicsr-stub", allow(unused_variables))]
+            let prof_pc = self.hart.regs.pc;
             let step_result = self.hart.step_traced(&mut self.bus, sink);
             // E1-T12: an instruction retired iff the step succeeded — advance the deterministic
             // retire-count clock ONLY then (a delivered trap or a taken interrupt retires nothing).
@@ -1471,6 +1534,17 @@ impl Machine {
             if step_result.is_ok() {
                 self.advance_clock();
                 self.irqstats.on_retire(); // E2-T20 progress denominator
+                // E4-T01: hot-PC sampling — only when armed, and only 1-in-~1024 retires (a jittered
+                // stride) so the histogram write is off the per-instruction hot path. We record the
+                // guest VIRTUAL PC: it is what `System.map` symbolizes and the guest-virtual address
+                // space a future JIT keys blocks on, so on-sample physical translation buys nothing.
+                if self.profiling {
+                    self.prof_countdown = self.prof_countdown.saturating_sub(1);
+                    if self.prof_countdown == 0 {
+                        self.prof.record_pc(prof_pc);
+                        self.prof_countdown = self.prof_next_stride();
+                    }
+                }
                 if self.hart.last_was_wfi {
                     self.irqstats.on_wfi();
                     self.hart.last_was_wfi = false;
