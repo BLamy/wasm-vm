@@ -41,7 +41,27 @@ Split from **E3-T19** on 2026-07-31 (seam decomposition) so each network proof i
   - tampered / oversized / array / non-object / non-string-value saved state is refused, never restored.
   - This is the reload-restore boundary of AC2: a reload with saved state + no auth key restores the
     same identity without re-provisioning (`shouldProvision` is false unless a fresh auth key is present).
-- REMAINING (AC1 + the live AC2/AC3 transcript): the `docker compose up` fresh-stack proof (browser VM
+- 2026-08-03 — **LIVE stack proof: AC2/AC3 GREEN against real Headscale.** Brought up the full
+  `docker compose --profile relay` stack (Headscale 0.29.2 + DERP + fixture + exit + relay, all
+  healthy on a fresh `down -v`) and ran the E3-T19 browser suite. Root-caused why the guest specs were
+  "flaky/broken": they were STALE — they clicked the removed `#boot-alpine` button and filled the
+  relocated provider form. Fixed to the current API (`wvmDemo.bootAlpine()` + set config via
+  `evaluate`; `?assetBase=/releases` for local chunks) — committed. Result: **6/8 specs pass GREEN
+  live**:
+  - `e3-t17-headscale-worker` (26s) — real Headscale registration; **survives Worker restart WITHOUT
+    retaining the auth key** (`firstIdentity === secondIdentity`, addr 100.64.0.3; state keys are
+    hex `_machinekey`/`profile-…`; auth key absent from all messages). **This IS E3-T19a AC2 + AC3, live.**
+  - revoke (56s) — node revocation kills the flow; denied (32s) — ACL blocks the peer (**E3-T19b**);
+    identity-attacks (13s) — copied-key / node-key-collision rejected (**E3-T19d**); compose-relay
+    (2.2s) — relay reaches public, no token leak; control-outage (2.6s) — stopped control fails the
+    identity without relay fallback, no key leak.
+- REMAINING (AC1 — the guest-HTTPS-through-provider transcript): the two Alpine `guest-https` boots
+  (tailscale + relay). The specs are un-stale'd, but completing the ~40-min in-browser Alpine boot
+  over the tailnet is the flaky/OS-reaping path (chunk-serving is entangled with the compose `app`
+  container that `reuseExistingServer` picks up on :8123). This is exactly the live path the ticket
+  defers via `blocked_on: E4-T13`. Run `tools/verify/e3-t19-live-proof.sh` on a host that sustains the
+  boot; the other 6 legs are proven green. The live AC2/AC3 for E3-T19a itself are now DONE.
+- (superseded note) REMAINING (AC1 + the live AC2/AC3 transcript): the `docker compose up` fresh-stack proof (browser VM
   resolves + reaches a tailnet HTTPS fixture; one node; reload restores; auth key absent from IDB/LS/URL
   by inspection). Deliberately deferred — it is the flaky ~40-min browser-Alpine-over-tailnet path that
   OS-reaps on this mac (see [[browser-alpine-boot-reaped-on-mac]], [[e3-t19-proof-needs-fresh-stack]]),
