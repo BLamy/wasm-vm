@@ -82,8 +82,23 @@ guest — gross disagreement (>2x on any top-5 region) is a refutation.
   - **Feature-gated `profiling`** (like `trace`): hooks `#[cfg(feature="profiling")]`; when on-but-runtime-
     off, cost is one bool branch (like `storm_detect`); when off, compiles to nothing (`check-zero-cost.sh`).
   - **Phases (each independently testable/committable):** (1) pure core logic — histogram/clock/report +
-    native unit tests [IN PROGRESS]; (2) sample hook + phys-PC translate + synthetic-64-byte-loop
-    integration test; (3) per-subsystem time accounting (`FixedTimer` deterministic tests + device-hammer
-    test); (4) native CLI surface + committed native-Alpine example report + overhead A/B; (5) wasm
-    `getProfile()`; (6) browser evidence (Alpine System.map top-5 symbols + native-vs-wasm diff) — the
-    OS-reaping Alpine-boot leg, deferred to the nightly/`dev` lane (see [[browser-alpine-boot-reaped-on-mac]]).
+    native unit tests; (2) sample hook + synthetic-64-byte-loop integration test; (3) per-subsystem time
+    accounting (`FixedTimer` deterministic tests + device-hammer test); (4) native CLI surface + committed
+    native-Alpine example report + overhead A/B; (5) wasm `getProfile()`; (6) browser evidence (Alpine
+    System.map top-5 symbols + native-vs-wasm diff) — the OS-reaping Alpine-boot leg, deferred to the
+    nightly/`dev` lane (see [[browser-alpine-boot-reaped-on-mac]]).
+- 2026-08-04 — **Phase 1 (pure core) landed (commit `ce9da4b`).** `crates/core/src/prof/` — `HotHistogram`
+  (8192-slot direct-mapped, Fibonacci-hashed, weak-incumbent eviction + visible `collisions`, ~128 KiB
+  bound), `HostTimer` trait + `FixedTimer` mock (documented why it's separate from the epoch `WallClock`),
+  `Subsystem`/`HotRegion`/`ProfReport` (`to_text`/hand-rolled `to_json`), and the `ProfStats` aggregate.
+  12 native tests; no_std wasm32 clean; `pub mod prof;` added. Not yet wired to `Machine`.
+- 2026-08-04 — **Phase 2 (sample hook) landed (commit `0781a19`).** `ProfStats` + a runtime `profiling`
+  flag wired onto `Machine`; the sample fires at the `run_traced` retire site, gated OFF by default (one
+  not-taken branch/retire, `storm_detect` shape), sampling ~1-in-1024 at a jittered prime stride
+  (`1021 + LCG jitter`, deterministic → native==wasm). Records the guest VIRTUAL PC (System.map- and
+  JIT-block-relevant; on-sample physical translation deemed unnecessary — a documented deviation from the
+  plan's "physical PC"). `set_profiling`/`prof_report` accessors. Integration test `prof_sampling.rs` (3):
+  a tight two-instruction loop concentrates ≥80% of samples in its 64-byte region, zero collisions;
+  inert-until-armed; deterministic across identical runs. `determinism`/`cpu_resume` unchanged (gated-off
+  hook is a hot-path no-op). NEXT: phase 3 — per-subsystem host-time accounting (cold-path clock wraps +
+  CPU-by-subtraction) using the `HostTimer` trait.
