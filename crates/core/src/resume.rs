@@ -296,6 +296,118 @@ impl SnapshotHeader {
     }
 }
 
+/// E3-T12d: why a stored snapshot must be discarded in favour of a cold boot. Every reason a
+/// browser reload can reject a persisted snapshot collapses to one of these, so the UI/host has a
+/// *typed* answer (not a free-form string) for "why did we cold-boot?". The variants partition the
+/// whole failure space: nothing stored, a header/section the parser rejects, a foreign build, a
+/// foreign base image, or a stale overlay generation. Deliberately build-agnostic (mirrors, but does
+/// not re-expose, the [`SnapshotError`] space) so the persistence layer can log/branch on it without
+/// depending on the device internals.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ColdBootReason {
+    /// No snapshot is persisted for this base image — first boot, or it was cleared.
+    Missing,
+    /// The blob is truncated, has bad magic, an unknown version, or any malformed/oversized section —
+    /// i.e. it does not parse as a coherent container. Never resumed.
+    Corrupt,
+    /// The snapshot was written by a different emulator build (`core_hash` differs) — resuming it
+    /// could land on divergent instruction semantics.
+    ForeignBuild,
+    /// The snapshot rides a different base disk image (`base_image_hash` differs).
+    ForeignImage,
+    /// The overlay has advanced past (or diverged from) the snapshot's generation — resuming a stale
+    /// CPU/RAM state over a newer disk is the silent-corruption case.
+    Stale { snapshot: u64, current: u64 },
+}
+
+impl ColdBootReason {
+    /// Map a restore-time [`SnapshotError`] onto the cold-boot reason space. The coherence variants
+    /// map one-to-one; everything else (bad magic, truncation, version, unknown/unsupported/oversized
+    /// section, malformed component/sparse state, a not-quiesced blob that should never have been
+    /// stored) is [`Self::Corrupt`] — none of them is safe to resume.
+    pub fn from_snapshot_error(err: &SnapshotError) -> Self {
+        match err {
+            SnapshotError::CoreHashMismatch => ColdBootReason::ForeignBuild,
+            SnapshotError::BaseImageMismatch => ColdBootReason::ForeignImage,
+            SnapshotError::OverlayGenerationMismatch { snapshot, current } => {
+                ColdBootReason::Stale {
+                    snapshot: *snapshot,
+                    current: *current,
+                }
+            }
+            _ => ColdBootReason::Corrupt,
+        }
+    }
+
+    /// A stable, machine-readable code for logs and the JS decision API. Kept in lockstep with the
+    /// variants so the browser layer can branch on a string without re-deriving the taxonomy.
+    pub fn code(&self) -> &'static str {
+        match self {
+            ColdBootReason::Missing => "missing",
+            ColdBootReason::Corrupt => "corrupt",
+            ColdBootReason::ForeignBuild => "foreign_build",
+            ColdBootReason::ForeignImage => "foreign_image",
+            ColdBootReason::Stale { .. } => "stale",
+        }
+    }
+}
+
+/// E3-T12d: the resume-vs-cold-boot decision for a persisted snapshot. `Resume` means the stored
+/// blob's header is coherent with the live machine identity and it is safe to hand to
+/// [`crate::Machine::load_resume`]; `ColdBoot` carries the typed reason it was rejected.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RestoreDecision {
+    Resume,
+    ColdBoot(ColdBootReason),
+}
+
+impl RestoreDecision {
+    /// Decide from a stored blob (`None` = nothing persisted) against the live machine identity. This
+    /// is the *header-level* gate — cheap, no section walk — mirroring exactly the guard
+    /// [`crate::Machine::load_resume`] runs first, so a `Resume` verdict here means the coherence
+    /// guard will not be what rejects the subsequent load. A blob whose header does not even parse is
+    /// [`ColdBootReason::Corrupt`]. The final section-level integrity is still enforced by
+    /// `load_resume` itself (map its error via [`ColdBootReason::from_snapshot_error`]).
+    pub fn decide(
+        stored: Option<&[u8]>,
+        expected_core_hash: &[u8; 32],
+        expected_base_image_hash: &[u8; 32],
+        current_overlay_generation: u64,
+    ) -> RestoreDecision {
+        let Some(blob) = stored else {
+            return RestoreDecision::ColdBoot(ColdBootReason::Missing);
+        };
+        let header = match SnapshotHeader::parse(blob) {
+            Ok((header, _)) => header,
+            Err(err) => {
+                return RestoreDecision::ColdBoot(ColdBootReason::from_snapshot_error(&err));
+            }
+        };
+        match header.validate_for(
+            expected_core_hash,
+            expected_base_image_hash,
+            current_overlay_generation,
+        ) {
+            Ok(()) => RestoreDecision::Resume,
+            Err(err) => RestoreDecision::ColdBoot(ColdBootReason::from_snapshot_error(&err)),
+        }
+    }
+
+    /// `true` iff this is a `Resume`.
+    pub fn is_resume(&self) -> bool {
+        matches!(self, RestoreDecision::Resume)
+    }
+
+    /// The cold-boot reason code, or `"resume"` for a resume verdict — the single string the JS
+    /// decision API surfaces.
+    pub fn code(&self) -> &'static str {
+        match self {
+            RestoreDecision::Resume => "resume",
+            RestoreDecision::ColdBoot(reason) => reason.code(),
+        }
+    }
+}
+
 /// Builds a snapshot blob: fixed header, then TLV sections in the order added.
 pub struct SnapshotWriter {
     buf: Vec<u8>,
