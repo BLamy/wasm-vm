@@ -65,6 +65,12 @@ export class WasmLinux {
     fileTransferStatus(): string;
     finishFileDownload(id: number, success: boolean): void;
     /**
+     * E4-T01: the accumulated profile as a plain JS object — `{ totalNs, sampleCount, walkCount,
+     * collisions, regions: [{ pc, samples, pct }], subsystems: [{ name, ns }] }` — mirroring the
+     * `getStats` surface the UI already consumes. `pc` is a hex string (a guest PC exceeds 2^53).
+     */
+    getProfile(): any;
+    /**
      * E3-T10: whether the overlay has unpersisted (dirty) blocks. In persistent writer mode these
      * belong to a virtio WRITE that has not been acknowledged; the quota dialog uses this to say
      * Retry may still complete it, while Continue returns IOERR.
@@ -196,6 +202,12 @@ export class WasmLinux {
      */
     setDiskReadOnly(): boolean;
     setFileDownloadReady(ready: boolean): void;
+    /**
+     * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
+     * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
+     * timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.
+     */
+    setProfiling(on: boolean): boolean;
     /**
      * Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
      * devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
@@ -367,6 +379,7 @@ export interface InitOutput {
     readonly wasmlinux_fileTransferReady: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_fileTransferStatus: (a: number) => [number, number, number, number];
     readonly wasmlinux_finishFileDownload: (a: number, b: number, c: number) => [number, number];
+    readonly wasmlinux_getProfile: (a: number) => [number, number, number];
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
     readonly wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
     readonly wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];
@@ -388,6 +401,7 @@ export interface InitOutput {
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
+    readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];
@@ -413,11 +427,11 @@ export interface InitOutput {
     readonly slirpTailscaleCommand: (a: number, b: number) => number;
     readonly wasm_bindgen__convert__closures_____invoke__h1dbcf2b5dd15a422: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h8c3f0668a05de02f: (a: number, b: number, c: any, d: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h01e5690ea5c427fa: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h01e5690ea5c427fa_2: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h01e5690ea5c427fa_3: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h01e5690ea5c427fa_4: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h8a336183bfcd1160: (a: number, b: number) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82_2: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82_3: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82_4: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h7b5e0ac436d9ba2e: (a: number, b: number) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;

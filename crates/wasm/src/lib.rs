@@ -669,6 +669,44 @@ impl wasm_vm_core::dev::rtc::WallClock for JsWallClock {
     }
 }
 
+/// E4-T01: the monotonic host timer the profiler samples on its cold paths, browser side —
+/// `performance.now()` (high-resolution + monotonic within the realm), unlike the wall-clock
+/// `JsWallClock`. Works in a Window OR a Worker (the emulator runs in a Web Worker). wasm-only.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+pub struct JsHostTimer {
+    perf: web_sys::Performance,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl JsHostTimer {
+    /// `None` if no global exposes a `performance` object (then profiling can't be armed here).
+    fn new() -> Option<JsHostTimer> {
+        use wasm_bindgen::JsCast;
+        let global = js_sys::global();
+        let perf = if let Some(w) = global.dyn_ref::<web_sys::Window>() {
+            w.performance()
+        } else if let Some(s) = global.dyn_ref::<web_sys::WorkerGlobalScope>() {
+            s.performance()
+        } else {
+            None
+        }?;
+        Some(JsHostTimer { perf })
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::prof::HostTimer for JsHostTimer {
+    fn now_ns(&self) -> u64 {
+        // performance.now() is f64 milliseconds; ×1e6 → ns. Guard the (impossible) negative.
+        let ms = self.perf.now();
+        if ms <= 0.0 {
+            0
+        } else {
+            (ms * 1_000_000.0) as u64
+        }
+    }
+}
+
 /// E2-T21: a browser-side unmodified-Linux boot. Unlike [`WasmMachine`] (bare-metal ELF + a
 /// Uart0 stub), this assembles the full `virt` platform (CLINT/PLIC/16550/virtio/goldfish-RTC/
 /// syscon/built-in SBI) via the SHARED [`Machine::place_and_boot`] and boots a kernel `Image`
@@ -1253,6 +1291,77 @@ impl WasmLinux {
     pub fn state_digest(&self) -> Result<String, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
         Ok(inner.machine.snapshot().hex_digest())
+    }
+
+    /// E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
+    /// `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
+    /// timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.
+    #[wasm_bindgen(js_name = setProfiling)]
+    pub fn set_profiling(&self, on: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if on {
+            match JsHostTimer::new() {
+                Some(timer) => {
+                    inner.machine.set_host_timer(std::rc::Rc::new(timer));
+                    Ok(true)
+                }
+                None => Ok(false),
+            }
+        } else {
+            inner.machine.set_profiling(false);
+            Ok(true)
+        }
+    }
+
+    /// E4-T01: the accumulated profile as a plain JS object — `{ totalNs, sampleCount, walkCount,
+    /// collisions, regions: [{ pc, samples, pct }], subsystems: [{ name, ns }] }` — mirroring the
+    /// `getStats` surface the UI already consumes. `pc` is a hex string (a guest PC exceeds 2^53).
+    #[wasm_bindgen(js_name = getProfile)]
+    pub fn get_profile(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let report = inner.machine.prof_report(inner.machine.prof_total_ns(), 10);
+        let obj = js_sys::Object::new();
+        let set = |k: &str, v: &JsValue| {
+            let _ = js_sys::Reflect::set(&obj, &JsValue::from_str(k), v);
+        };
+        set("totalNs", &JsValue::from_f64(report.total_ns as f64));
+        set(
+            "sampleCount",
+            &JsValue::from_f64(report.sample_count as f64),
+        );
+        set("walkCount", &JsValue::from_f64(report.walk_count as f64));
+        set("collisions", &JsValue::from_f64(report.collisions as f64));
+        let regions = js_sys::Array::new();
+        for r in &report.top_regions {
+            let o = js_sys::Object::new();
+            let _ = js_sys::Reflect::set(
+                &o,
+                &JsValue::from_str("pc"),
+                &JsValue::from_str(&format!("0x{:016x}", r.phys_pc)),
+            );
+            let _ = js_sys::Reflect::set(
+                &o,
+                &JsValue::from_str("samples"),
+                &JsValue::from_f64(r.samples as f64),
+            );
+            let _ = js_sys::Reflect::set(&o, &JsValue::from_str("pct"), &JsValue::from_f64(r.pct));
+            regions.push(&o);
+        }
+        set("regions", &regions);
+        let subsystems = js_sys::Array::new();
+        for (sub, ns) in &report.subsystem_ns {
+            let o = js_sys::Object::new();
+            let _ = js_sys::Reflect::set(
+                &o,
+                &JsValue::from_str("name"),
+                &JsValue::from_str(sub.name()),
+            );
+            let _ =
+                js_sys::Reflect::set(&o, &JsValue::from_str("ns"), &JsValue::from_f64(*ns as f64));
+            subsystems.push(&o);
+        }
+        set("subsystems", &subsystems);
+        Ok(obj.into())
     }
 
     /// Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).
