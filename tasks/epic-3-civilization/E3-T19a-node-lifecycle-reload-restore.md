@@ -26,6 +26,13 @@ Split from **E3-T19** on 2026-07-31 (seam decomposition) so each network proof i
 - [ ] A fresh browser profile provisions exactly one node; a page reload restores it without re-running the auth-key exchange.
 - [ ] The ephemeral auth key is never written to IndexedDB / localStorage / the URL (verified by inspection after provisioning).
 
+## Verification debt
+The guest-HTTPS acceptance leg (AC1) is **verification debt as of 2026-08-04**: root-caused (interpreter-
+slow TLS ClientHello races the remote's idle-timeout; relay/entropy/egress/cert all exonerated — see the
+2026-08-04 log entries + [[e3-t19-guest-https-flake]]) but not fixed. The fix is a user-pending choice
+between a relay-only lazy-connect protocol change and the E4-T13 JIT; deferred deliberately. The
+deterministic security slice + live AC2/AC3 are DONE (below).
+
 ## Verification log
 - 2026-08-03 — **Deterministic security slice landed (persist/restore validation); the live tailnet
   proof stays `blocked_on: E4-T13`.** The identity-persistence machinery already exists from E3-T17
