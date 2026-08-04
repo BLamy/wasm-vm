@@ -186,7 +186,7 @@ fn frame(dst: [u8; 6], src: [u8; 6], tag: u8) -> Vec<u8> {
     f.extend_from_slice(&dst);
     f.extend_from_slice(&src);
     f.extend_from_slice(&[0x08, 0x00]); // IPv4 ethertype
-    f.extend(std::iter::repeat(tag).take(46));
+    f.extend(std::iter::repeat_n(tag, 46));
     f
 }
 

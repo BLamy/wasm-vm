@@ -113,6 +113,9 @@ fn a_reserved_but_unimplemented_section_is_refused_as_unsupported() {
     // + VIRTIO_NET in E3-T12c1). The reader must recognise it yet refuse it loudly — accepting-and-
     // skipping a section a restore loop can't apply is the half-applied hazard the format forbids —
     // and it must be a *distinct* error from a garbage tag so the reserved-vs-unknown boundary holds.
+    // A list (currently one entry) of reserved-but-unsupported tags; it grows as reserved format
+    // numbers are added before their restorers, so keep the loop shape rather than a scalar.
+    #[allow(clippy::single_element_loop)]
     for tag in [section::VIRTIO_RNG] {
         assert!(super::is_known_section(tag), "reserved tag stays known");
         assert!(
