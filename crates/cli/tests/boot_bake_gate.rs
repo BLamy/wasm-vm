@@ -33,14 +33,19 @@ fn wait_for(buf: &Arc<Mutex<String>>, needle: &str, secs: u64) -> bool {
     }
 }
 
-fn spawn_reader<R: Read + Send + 'static>(mut r: R, t: Arc<Mutex<String>>) -> std::thread::JoinHandle<()> {
+fn spawn_reader<R: Read + Send + 'static>(
+    mut r: R,
+    t: Arc<Mutex<String>>,
+) -> std::thread::JoinHandle<()> {
     std::thread::spawn(move || {
         let mut chunk = [0u8; 512];
         while let Ok(n) = r.read(&mut chunk) {
             if n == 0 {
                 break;
             }
-            t.lock().unwrap().push_str(&String::from_utf8_lossy(&chunk[..n]));
+            t.lock()
+                .unwrap()
+                .push_str(&String::from_utf8_lossy(&chunk[..n]));
         }
     })
 }
@@ -94,13 +99,21 @@ fn baked_containers_run_in_guest() {
         stdin.flush().ok();
     };
 
-    assert!(wait_for(&transcript, "login:", 2400), "no login; transcript:\n{}", transcript.lock().unwrap());
+    assert!(
+        wait_for(&transcript, "login:", 2400),
+        "no login; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
     send(&mut stdin, "root");
     std::thread::sleep(Duration::from_secs(3));
     send(&mut stdin, "");
     std::thread::sleep(Duration::from_secs(2));
     send(&mut stdin, "echo SHELL_\"UP\"");
-    assert!(wait_for(&transcript, "SHELL_UP", 300), "no shell; transcript:\n{}", transcript.lock().unwrap());
+    assert!(
+        wait_for(&transcript, "SHELL_UP", 300),
+        "no shell; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
 
     // (name, smoke command run via `wvrun run <bundle> -- <cmd>`, output-only needle).
     // Shells: computed marker (echoed cmd has $((6*7)), output has 42). Servers: version banner
@@ -114,7 +127,10 @@ fn baked_containers_run_in_guest() {
     let mut passed: Vec<&str> = vec![];
     let mut failed: Vec<&str> = vec![];
     for (name, cmd, needle) in gates {
-        send(&mut stdin, &format!("wvrun run /opt/containers/{name} -- {cmd}"));
+        send(
+            &mut stdin,
+            &format!("wvrun run /opt/containers/{name} -- {cmd}"),
+        );
         let ok = wait_for(&transcript, needle, 600);
         println!("\nRESULT {name} {}", if ok { "PASS" } else { "FAIL" });
         if ok {
@@ -131,10 +147,24 @@ fn baked_containers_run_in_guest() {
     let _ = wait_for(&transcript, "reboot: Power down", 600);
     drop(stdin);
 
-    println!("\nBAKE_GATE: {}/{} passed ({:?})", passed.len(), gates.len(), passed);
-    assert!(failed.is_empty(), "baked images failed the RUN gate: {failed:?}\ntranscript tail:\n{}",
+    println!(
+        "\nBAKE_GATE: {}/{} passed ({:?})",
+        passed.len(),
+        gates.len(),
+        passed
+    );
+    assert!(
+        failed.is_empty(),
+        "baked images failed the RUN gate: {failed:?}\ntranscript tail:\n{}",
         {
             let t = transcript.lock().unwrap();
-            t.chars().rev().take(2000).collect::<String>().chars().rev().collect::<String>()
-        });
+            t.chars()
+                .rev()
+                .take(2000)
+                .collect::<String>()
+                .chars()
+                .rev()
+                .collect::<String>()
+        }
+    );
 }

@@ -317,7 +317,10 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
         transcript.lock().unwrap()
     );
     // Marker computed INSIDE the container by the exec'd shell (pid+mount+uts ns join).
-    send(&mut stdin, "sleep 2; wvrun exec e1 sh -c 'echo INEXEC_$((6*7))'");
+    send(
+        &mut stdin,
+        "sleep 2; wvrun exec e1 sh -c 'echo INEXEC_$((6*7))'",
+    );
     assert!(
         wait_for(&transcript, "INEXEC_42", 180),
         "wvrun exec did not run a command inside the container; transcript:\n{}",
