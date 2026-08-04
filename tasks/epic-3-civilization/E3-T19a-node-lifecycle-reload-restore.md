@@ -61,6 +61,22 @@ Split from **E3-T19** on 2026-07-31 (seam decomposition) so each network proof i
   container that `reuseExistingServer` picks up on :8123). This is exactly the live path the ticket
   defers via `blocked_on: E4-T13`. Run `tools/verify/e3-t19-live-proof.sh` on a host that sustains the
   boot; the other 6 legs are proven green. The live AC2/AC3 for E3-T19a itself are now DONE.
+- 2026-08-04 — **Full stack set up + validated on the Linux `dev` VM: reaping SOLVED, but guest-HTTPS
+  is a genuine flaky bit for BOTH providers.** Brought the whole `docker compose --profile relay` stack
+  up on dev (installed compose v2 plugin, added user to docker group, relay built from source, fixed a
+  real nginx bug — request-time upstream resolution, committed `95de030`). Ran the guest-HTTPS proof on
+  dev for BOTH providers:
+  - **The Alpine guest boots to a shell in ~37 min with NO reap** (macOS jetsam is the only reaper —
+    Linux dev sustains it; see [[browser-alpine-boot-reaped-on-mac]]). `E3T19_DHCP_OK` (10.0.2.15).
+  - **Providers connect live**: the tailscale node `wasm-vm-guest-exit-compose` registered with the real
+    Headscale (browser@ / js); the relay authenticated + `connects_accepted:1, rejected:0`.
+  - **But `E3T19_GUEST_HTTPS_FAIL … rc=1` for BOTH tailscale AND relay** — the guest's `wget https://1.1.1.1/`
+    doesn't complete. Relay side: the connection is accepted and ~322 bytes (the outbound ClientHello)
+    flow, but the handshake never finishes. This exactly reproduces the pre-existing documented "guest-HTTPS
+    flaky for both providers, needs a decision" — a real functional issue in the HTTPS-through-provider
+    path under the slow 2-core boot (the browser network worker/route not staying live through/after the
+    37-min boot), NOT the reaping and NOT a regression. This is precisely what `blocked_on: E4-T13` (the
+    faster worker) is meant to unblock.
 - (superseded note) REMAINING (AC1 + the live AC2/AC3 transcript): the `docker compose up` fresh-stack proof (browser VM
   resolves + reaches a tailnet HTTPS fixture; one node; reload restores; auth key absent from IDB/LS/URL
   by inspection). Deliberately deferred — it is the flaky ~40-min browser-Alpine-over-tailnet path that
