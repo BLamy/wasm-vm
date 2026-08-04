@@ -100,5 +100,25 @@ guest — gross disagreement (>2x on any top-5 region) is a refutation.
   plan's "physical PC"). `set_profiling`/`prof_report` accessors. Integration test `prof_sampling.rs` (3):
   a tight two-instruction loop concentrates ≥80% of samples in its 64-byte region, zero collisions;
   inert-until-armed; deterministic across identical runs. `determinism`/`cpu_resume` unchanged (gated-off
-  hook is a hot-path no-op). NEXT: phase 3 — per-subsystem host-time accounting (cold-path clock wraps +
-  CPU-by-subtraction) using the `HostTimer` trait.
+  hook is a hot-path no-op).
+- 2026-08-04 — **Phase 3 (per-subsystem host-time accounting) landed (commit `efbe3fb`).** The `HostTimer`
+  is injected onto `Machine` (`set_host_timer`) and threaded to `SystemBus`; time is read ONLY on cold
+  paths — the cold `load_device`/`store_device` MMIO dispatch (bracketing just `dev.read/write`, timer +
+  accumulator passed as extra params so the split-borrow that keeps `ram` alive is preserved; args built
+  only in the cold `Err(Access)` arm so pure-RAM traffic pays nothing), the cold `walk_leaf` TLB-miss
+  walk (split into a timing wrapper + `walk_leaf_inner`; hot `translate_cached` untouched), and once per
+  run (`run_traced` split into a timing wrapper + `run_traced_inner`). CPU-interp time is DERIVED as
+  `total − (device + walk)` at report time (idempotent), so the per-instruction hot path reads the clock
+  ZERO extra times. `Subsystem::for_device_base` maps a `Window.start` to its subsystem. New test
+  `prof_time_accounting.rs` (2, deterministic timer): device ns attributed to the RIGHT subsystem +
+  CpuInterp-by-subtraction non-negative + report idempotent; profiling-off reads no clock (all ns 0).
+  **Deferred (documented in-file):** the MMU-walk ns assertion (a full Sv39/S-mode/TLB-miss guest is
+  disproportionate for a unit test; the identical timer-bracket is proven by the device test). Full core
+  suite green (lib 147, prof integration 5, all binaries); wasm32 + zicsr-stub + clippy `-D warnings`
+  clean (also cleared pre-existing test-clippy debt on the branch, commit `9622051`). Honest limitation:
+  CPU-interp accuracy is bounded by the single total-span measurement.
+- **REMAINING:** phase 4 (native `--profile`/`--symbols`/`--profile-json` CLI + `MonotonicTimer(Instant)`
+  + System.map symbolizer + committed native-Alpine example report + the <10%/0% overhead A/B), phase 5
+  (wasm `getProfile()` + `performance.now()` timer), phase 6 (browser evidence — Alpine top-5 symbols +
+  native-vs-wasm diff, the OS-reaping Alpine-boot leg → nightly/`dev`). The measurement ENGINE (hot-PC +
+  time accounting, the risk-bearing core) is complete and native-verified; phases 4–5 are surfaces.
