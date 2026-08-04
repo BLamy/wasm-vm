@@ -77,6 +77,29 @@ Split from **E3-T19** on 2026-07-31 (seam decomposition) so each network proof i
     path under the slow 2-core boot (the browser network worker/route not staying live through/after the
     37-min boot), NOT the reaping and NOT a regression. This is precisely what `blocked_on: E4-T13` (the
     faster worker) is meant to unblock.
+- 2026-08-04 — **Root-cause narrowed: the relay is EXONERATED; guest-HTTPS is a guest-side bug common
+  to both providers — NOT the relay and NOT E4-T13/JIT.** Debugged the `bytes_accounted:322` symptom
+  cheaply (seconds, no 38-min boot) with a new reusable diagnostic `tools/verify/relay-tls-probe.mjs`:
+  a hand-built WS client that speaks the ws_proxy wire protocol (HELLO v1 / OPEN / WINDOW / DATA) and
+  layers a REAL Node `tls.connect` over a relay stream.
+  - **Ran it against a local `wvrelay` → 1.1.1.1:443: full TLS 1.3 handshake COMPLETES** (`authorized=true`,
+    3714-byte ServerHello+cert, then a 696-byte HTTP response flows back). Peer cert is `cloudflare-dns.com`
+    with **IP SANs incl. 1.1.1.1**, so cert-vs-IP is not the guest's problem either. → **the relay's
+    bidirectional data path is fully functional for HTTPS.**
+  - `record_quota_bytes` bills BOTH directions (driver.rs:405 guest→backend, :460 backend→guest), so the
+    dev run's `bytes_accounted:322` ≈ the outbound ClientHello ALONE means **1.1.1.1's response never came
+    back through the relay** — the relay's `read_pump` (driver.rs:759) only reads the backend after the
+    guest grants WINDOW credit, so the guest side never effectively granted/delivered it.
+  - The failure reproduces for **tailscale too** (which doesn't touch wvrelay), so the common culprit is
+    upstream of the provider: the guest-side slirp TCP stack ↔ `WsConnector`/browser transport.
+    `WsConnector::handle_event` DOES grant `INITIAL_WINDOW` on `Opened` and refill on `recv`
+    (ws_connector.rs:350-358) — logic looks right — so the suspect is the WINDOW/inbound-DATA **pumping
+    under the real browser transport**, not the state machine.
+  - **Consequence for this ticket:** `blocked_on: E4-T13` (the faster JIT worker) rests on a *speed*
+    hypothesis that this refutes — the boot completes and the relay path is fine; it's a functional
+    data-path bug. The real next step is instrumenting the guest run (does the initial WINDOW frame reach
+    the relay; do inbound DATA frames reach `WsConnector::recv` → guest TCP), which needs a browser run or
+    a native slirp-stack↔WsConnector integration harness — a decoupled bug, not a JIT dependency.
 - (superseded note) REMAINING (AC1 + the live AC2/AC3 transcript): the `docker compose up` fresh-stack proof (browser VM
   resolves + reaches a tailnet HTTPS fixture; one node; reload restores; auth key absent from IDB/LS/URL
   by inspection). Deliberately deferred — it is the flaky ~40-min browser-Alpine-over-tailnet path that
