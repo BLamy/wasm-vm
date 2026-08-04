@@ -55,20 +55,31 @@ test("clean composed browser VM completes public HTTPS through the explicitly se
     return false;
   }, needle, { timeout });
 
-  await page.goto("/");
+  // ?noAutoBoot so the background offline Alpine auto-boot doesn't grab the guest slot before we boot
+  // WITH the selected network provider. assetBase points the chunked-Alpine image at the LOCAL
+  // serve-dev copy (releases/chunked-alpine) instead of R2 — self-contained for the compose proof and,
+  // crucially, no per-chunk R2 latency (the boot completes in-budget instead of being OS-reaped).
+  const assetBase = process.env.E3_T19_ASSET_BASE ?? "/releases";
+  await page.goto(`/?noAutoBoot&assetBase=${encodeURIComponent(assetBase)}`);
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 120_000 });
-  await page.selectOption("#network-provider", PROVIDER);
-  if (PROVIDER === "tailscale") {
-    await page.fill("#tailscale-control-url", CONTROL_URL);
-    await page.fill("#tailscale-hostname", "wasm-vm-guest-exit-compose");
-    await page.fill("#tailscale-auth-key", AUTH_KEY);
-    await page.fill("#tailscale-exit-node", EXIT_NODE_ID);
-    await page.check("#tailscale-accept-dns");
-  } else {
-    await page.fill("#network-relay-url", "ws://localhost:18081");
-    await page.fill("#network-relay-token", RELAY_TOKEN);
-  }
-  await page.click("#boot-alpine");
+  // The provider form was relocated into the IDE and is not on the default view, so set the values the
+  // boot path reads (networkProviderEl + the tailscale/relay inputs) directly — works on hidden nodes —
+  // then boot Alpine via the current programmatic API (the old #boot-alpine button was removed).
+  await page.evaluate((cfg) => {
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+    set("network-provider", cfg.provider);
+    if (cfg.provider === "tailscale") {
+      set("tailscale-control-url", cfg.controlUrl);
+      set("tailscale-hostname", "wasm-vm-guest-exit-compose");
+      set("tailscale-auth-key", cfg.authKey);
+      set("tailscale-exit-node", cfg.exitNodeId);
+      const dns = document.getElementById("tailscale-accept-dns"); if (dns) dns.checked = true;
+    } else {
+      set("network-relay-url", "ws://localhost:18081");
+      set("network-relay-token", cfg.relayToken);
+    }
+  }, { provider: PROVIDER, controlUrl: CONTROL_URL, authKey: AUTH_KEY, exitNodeId: EXIT_NODE_ID, relayToken: RELAY_TOKEN });
+  await page.evaluate(() => window.wvmDemo.bootAlpine());
 
   let sawOpenRC = false;
   for (let i = 0; i < 360; i += 1) {

@@ -4,10 +4,10 @@ const RELAY_TOKEN = process.env.E3_T19_RELAY_TOKEN ?? "";
 
 test("E3-T19 composed relay reaches a public endpoint only after explicit selection", async ({ page }) => {
   test.skip(!RELAY_TOKEN, "set E3_T19_RELAY_TOKEN from the composed relay issuer");
-  await page.goto("/");
-  await page.selectOption("#network-provider", "relay");
-  await page.fill("#network-relay-url", "ws://localhost:18081");
-  await page.fill("#network-relay-token", RELAY_TOKEN);
+  await page.goto("/?noAutoBoot");
+  // This proof drives the relay via a RAW WebSocket in-page (below) — it does not go through the app's
+  // provider UI, so no DOM setup is needed here. (The old #network-provider/#network-relay-* form was
+  // relocated into the IDE and is no longer on the default view.)
 
   const result = await page.evaluate(async (token) => {
     const frame = (stream, opcode, payload = new Uint8Array()) => {
