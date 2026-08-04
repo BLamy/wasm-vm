@@ -25,6 +25,12 @@ export class FileSha256 {
 export class WasmLinux {
     free(): void;
     [Symbol.dispose](): void;
+    /**
+     * Advance the overlay commit generation and return the new value. A stored snapshot taken before
+     * the advance now fails the coherence guard (`"stale"`) — this is how a durable overlay commit
+     * invalidates a now-inconsistent CPU/RAM snapshot.
+     */
+    advanceOverlayGeneration(): number;
     beginFileUpload(slot: number, name: string, total: number, sha256_hex: string): number;
     /**
      * E3-T03 dev-mode recorder: the ordered first-touch chunk-access list of this boot as a JSON
@@ -65,6 +71,19 @@ export class WasmLinux {
      */
     hasUnpersisted(): boolean;
     /**
+     * Persist an externally supplied snapshot blob (AC3 import) into the snapshot store for THIS boot's
+     * base image. The blob is bound to this base's namespace; a foreign blob imported here still fails
+     * the coherence guard on restore. Error `"not_persistent"` off the persistent path.
+     */
+    importStoredSnapshot(blob: Uint8Array): Promise<void>;
+    /**
+     * Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
+     * FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
+     * typed reason (`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`) in the error
+     * message rather than a device-internal string. NOT async (pure state application).
+     */
+    loadSnapshotBlob(blob: Uint8Array): void;
+    /**
      * Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
      * `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
      */
@@ -99,6 +118,11 @@ export class WasmLinux {
      */
     noteFileTransferPersist(): void;
     /**
+     * The current overlay commit generation (the snapshot coherence's third binding). `u64` fits
+     * exactly in an `f64` for every realistic generation count.
+     */
+    overlayGeneration(): number;
+    /**
      * E3-T02: the chunk indices the virtio-blk device is currently parked on (guest reads awaiting a
      * lazy fetch). Empty for a non-chunked boot or when nothing is parked. The JS driver calls this
      * after each `runChunk` and, if non-empty, awaits `fetchPending` before the next `runChunk`.
@@ -114,6 +138,13 @@ export class WasmLinux {
      */
     persistPending(): Promise<number>;
     /**
+     * Convenience: take a resume snapshot AND durably persist it to the snapshot IndexedDB store in one
+     * call. The `RefCell` borrow is scoped to `save_resume` + reading `snapshot_base`; the store I/O
+     * runs after it is dropped, never across the borrow. No-op error `"not_persistent"` off the
+     * persistent path (there is no snapshot store to write to).
+     */
+    persistSnapshot(): Promise<void>;
+    /**
      * E3-T08/E3-T10 persistence pressure —
      * `{ pendingBlocks, pendingBytes, flushWaiting, writeWaiting }`. The JS pump persists
      * immediately when a guest WRITE or FLUSH is parked awaiting durable commit; pending bytes
@@ -123,6 +154,19 @@ export class WasmLinux {
     persistStats(): any;
     pushFileUpload(stream: number, bytes: Uint8Array, finished: boolean): number;
     /**
+     * Read the persisted snapshot blob back (reassembled), or `null` if none is stored / not on the
+     * persistent path. Async (IndexedDB). The JS restore-decision hook feeds this into
+     * [`Self::restore_decision_code`] and, on a `"resume"` verdict, into [`Self::load_snapshot_blob`].
+     */
+    readStoredSnapshot(): Promise<any>;
+    /**
+     * The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
+     * against THIS boot's build identity + base binding + `current_generation`. Returns the stable
+     * code (`"resume"`/`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`). Off the
+     * persistent path (no base binding) there is no snapshot to resume: always `"missing"`.
+     */
+    restoreDecisionCode(stored: Uint8Array | null | undefined, current_generation: number): string;
+    /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
      * 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
      * `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
@@ -131,6 +175,15 @@ export class WasmLinux {
      * `"trap:<cause>"` once terminal.
      */
     runChunk(max_instrs: number, persist_max_dirty_bytes?: number | null): any;
+    /**
+     * Take a whole-machine resume snapshot and return its bytes as a `Uint8Array`. NOT async and NOT
+     * persisting — kept synchronous so the `RefCell` borrow is never held across an `await` (the JS
+     * caller may drive persistence itself, or use [`Self::persist_snapshot`]). `save_resume` quiesces
+     * virtio-blk first; if the in-flight set cannot drain, the error message starts with
+     * `"not_quiesced"` so the caller can retry rather than treat it as a hard failure; any other error
+     * starts with `"save_error"`.
+     */
+    saveSnapshot(): any;
     /**
      * Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).
      */
@@ -301,6 +354,7 @@ export interface InitOutput {
     readonly filesha256_update: (a: number, b: number, c: number) => [number, number];
     readonly overlayDbName: (a: number, b: number) => [number, number, number, number];
     readonly version: () => [number, number];
+    readonly wasmlinux_advanceOverlayGeneration: (a: number) => [number, number, number];
     readonly wasmlinux_beginFileUpload: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number];
     readonly wasmlinux_bootProfile: (a: number) => [number, number, number, number];
     readonly wasmlinux_cancelFileDownload: (a: number, b: number) => [number, number];
@@ -314,16 +368,23 @@ export interface InitOutput {
     readonly wasmlinux_fileTransferStatus: (a: number) => [number, number, number, number];
     readonly wasmlinux_finishFileDownload: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
+    readonly wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
+    readonly wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];
     readonly wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: any) => any;
     readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_noteFileTransferPersist: (a: number) => [number, number];
+    readonly wasmlinux_overlayGeneration: (a: number) => [number, number, number];
     readonly wasmlinux_pendingChunks: (a: number) => [number, number, number, number];
     readonly wasmlinux_persistPending: (a: number) => any;
+    readonly wasmlinux_persistSnapshot: (a: number) => any;
     readonly wasmlinux_persistStats: (a: number) => [number, number, number];
     readonly wasmlinux_pushFileUpload: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
+    readonly wasmlinux_readStoredSnapshot: (a: number) => any;
+    readonly wasmlinux_restoreDecisionCode: (a: number, b: number, c: number, d: number) => [number, number, number, number];
     readonly wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmlinux_saveSnapshot: (a: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];

@@ -636,6 +636,25 @@ window.__dhcpStats = () => linuxCtl?.dhcpStats?.() ?? null;
 window.__persist = () => linuxCtl?.persist?.() ?? Promise.resolve(0);
 // E3-T10 proof hook: `{ pendingBlocks, pendingBytes, flushWaiting, writeWaiting }`.
 window.__persistStats = () => linuxCtl?.persistStats?.() ?? null;
+// E3-T12d resume-snapshot hooks (persistent boot only) — a Playwright spec drives save → advance gen
+// → decision === "stale", and save → reload → decision === "resume".
+// Take + durably persist a whole-machine resume snapshot; resolves true on success.
+window.__snapshotSave = async () => {
+  if (!linuxCtl?.snapshotSave) return false;
+  await linuxCtl.snapshotSave();
+  return true;
+};
+// The resume-vs-cold-boot verdict for the persisted snapshot against the live machine identity.
+window.__snapshotDecision = async () => linuxCtl?.snapshotDecision?.() ?? "missing";
+// Advance the overlay commit generation (invalidates a prior snapshot → "stale"). Returns new gen.
+window.__snapshotAdvanceGen = () => linuxCtl?.snapshotAdvanceGen?.() ?? 0;
+// AC3 export/import: raw persisted-blob bytes out, and persist an external blob into this base's store.
+window.__snapshotExport = async () => linuxCtl?.snapshotExport?.() ?? null;
+window.__snapshotImport = async (bytes) => {
+  if (!linuxCtl?.snapshotImport) return false;
+  await linuxCtl.snapshotImport(bytes);
+  return true;
+};
 
 const statusEl = document.getElementById("status");
 const versionEl = document.getElementById("version");

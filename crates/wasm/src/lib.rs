@@ -19,6 +19,9 @@ use wasm_vm_core::bus::mmap::{UART0_BASE, UART0_LEN};
 use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
 use wasm_vm_core::trace::{TraceRecord, TraceSink, fmt_canonical};
 use wasm_vm_core::{Machine, RunOutcome};
+// E3-T12d: the resume-snapshot format + coherence/restore-decision types (browser persistence glue).
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+use wasm_vm_core::resume;
 
 // E3-net: browser-only (the boot site that consumes these is wasm+non-zicsr-gated), so gate the whole
 // toggle to the same cfg — otherwise the const/fn are dead code on the native `-D warnings` clippy job.
@@ -232,6 +235,9 @@ mod doh_fetch;
 // The web-sys IndexedDB durable-overlay store is browser-only.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod idb_store;
+// E3-T12d: the web-sys IndexedDB durable resume-snapshot store (chunked blob) is browser-only.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod snapshot_store;
 // E3-net: JS WebSocket callbacks ↔ synchronous ws-proxy connector queues.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod ws_transport;
@@ -676,6 +682,19 @@ pub struct WasmLinux {
     inner: RefCell<LinuxInner>,
 }
 
+/// E3-T12d build-stable snapshot identity: the crate version zero-padded into 32 bytes. Changes across
+/// releases so a snapshot taken by a different build fails the coherence guard (a `CoreHashMismatch`
+/// cold boot). A semantic change WITHIN one published version is out of scope (documented); a git-hash
+/// identity is a future refinement.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+fn build_core_hash() -> [u8; 32] {
+    let v = env!("CARGO_PKG_VERSION").as_bytes();
+    let mut h = [0u8; 32];
+    let n = v.len().min(32);
+    h[..n].copy_from_slice(&v[..n]);
+    h
+}
+
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 struct LinuxInner {
     machine: Machine,
@@ -697,6 +716,11 @@ struct LinuxInner {
     /// E3-T21c: bounded browser producer/consumer queues plus the shared slirp backend handle.
     /// Present only for slirp boots; the emulator still owns the sole `NetBackend` adapter.
     file_transfers: Option<browser_file_transfer::BrowserFileTransfers>,
+    /// E3-T12d: the base-image binding for the durable resume-snapshot store, present only for a
+    /// `newChunkedDiskPersistent` boot (`None` otherwise). The snapshot DB is namespaced by it, and
+    /// the restore-decision guard needs it as the expected `base_image_hash`. Off the persistent path
+    /// there is no snapshot store, so the decision is always `"missing"`.
+    snapshot_base: Option<[u8; 32]>,
 }
 
 /// Which block device (if any) backs the boot: none (initramfs), an in-memory image, or a lazily
@@ -962,6 +986,9 @@ impl WasmLinux {
         let mut persist = None;
         let mut disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>> = None;
         let mut file_transfers = None;
+        // E3-T12d: the base binding for the durable resume-snapshot store — stamped only on the
+        // persistent path (where a snapshot can be taken and restored). `None` elsewhere.
+        let mut snapshot_base: Option<[u8; 32]> = None;
         match disk {
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
             DiskChoice::Mem(image) => {
@@ -994,6 +1021,14 @@ impl WasmLinux {
                 queue,
                 read_only,
             } => {
+                // E3-T12d: bind the resume snapshot to this base image + stamp the machine's coherence
+                // header, so a snapshot taken here fails the guard if reloaded against a foreign build
+                // or a foreign base image. `base_hash()` is the same binding the snapshot store is
+                // namespaced by. Overlay generation starts at the machine default (0) and advances only
+                // on an explicit commit.
+                let base_binding = manifest.base_hash();
+                machine.set_snapshot_identity(build_core_hash(), base_binding);
+                snapshot_base = Some(base_binding);
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let overlay = wasm_vm_storage::WriteBackOverlay::with_shared_queue(
@@ -1108,6 +1143,7 @@ impl WasmLinux {
                 persist,
                 disk_ro,
                 file_transfers,
+                snapshot_base,
             }),
         })
     }
@@ -1438,6 +1474,156 @@ impl WasmLinux {
         let pairs: Vec<(u64, u64)> = batch.iter().map(|(b, g, _)| (*b, *g)).collect();
         queue.borrow_mut().mark_persisted(&pairs);
         Ok(batch.len() as u32)
+    }
+
+    // ── E3-T12d: browser resume-snapshot persistence + restore selection ──────────────────────────
+
+    /// Take a whole-machine resume snapshot and return its bytes as a `Uint8Array`. NOT async and NOT
+    /// persisting — kept synchronous so the `RefCell` borrow is never held across an `await` (the JS
+    /// caller may drive persistence itself, or use [`Self::persist_snapshot`]). `save_resume` quiesces
+    /// virtio-blk first; if the in-flight set cannot drain, the error message starts with
+    /// `"not_quiesced"` so the caller can retry rather than treat it as a hard failure; any other error
+    /// starts with `"save_error"`.
+    #[wasm_bindgen(js_name = saveSnapshot)]
+    pub fn save_snapshot(&self) -> Result<JsValue, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let blob = inner.machine.save_resume().map_err(|e| match e {
+            resume::SnapshotError::NotQuiesced { reason, in_flight } => {
+                JsError::new(&format!("not_quiesced: {reason:?} in_flight={in_flight}"))
+            }
+            other => JsError::new(&format!("save_error: {other:?}")),
+        })?;
+        Ok(js_sys::Uint8Array::from(&blob[..]).into())
+    }
+
+    /// Convenience: take a resume snapshot AND durably persist it to the snapshot IndexedDB store in one
+    /// call. The `RefCell` borrow is scoped to `save_resume` + reading `snapshot_base`; the store I/O
+    /// runs after it is dropped, never across the borrow. No-op error `"not_persistent"` off the
+    /// persistent path (there is no snapshot store to write to).
+    #[wasm_bindgen(js_name = persistSnapshot)]
+    pub async fn persist_snapshot(&self) -> Result<(), JsError> {
+        let (blob, base) = {
+            let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+            let Some(base) = inner.snapshot_base else {
+                return Err(JsError::new("not_persistent"));
+            };
+            let blob = inner.machine.save_resume().map_err(|e| match e {
+                resume::SnapshotError::NotQuiesced { reason, in_flight } => {
+                    JsError::new(&format!("not_quiesced: {reason:?} in_flight={in_flight}"))
+                }
+                other => JsError::new(&format!("save_error: {other:?}")),
+            })?;
+            (blob, base)
+        };
+        let store = snapshot_store::SnapshotStore::open(&base)
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+        store
+            .save(&blob, &base)
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot save: {e:?}")))?;
+        Ok(())
+    }
+
+    /// Read the persisted snapshot blob back (reassembled), or `null` if none is stored / not on the
+    /// persistent path. Async (IndexedDB). The JS restore-decision hook feeds this into
+    /// [`Self::restore_decision_code`] and, on a `"resume"` verdict, into [`Self::load_snapshot_blob`].
+    #[wasm_bindgen(js_name = readStoredSnapshot)]
+    pub async fn read_stored_snapshot(&self) -> Result<JsValue, JsError> {
+        let base = {
+            let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            match inner.snapshot_base {
+                Some(base) => base,
+                None => return Ok(JsValue::NULL),
+            }
+        };
+        let store = snapshot_store::SnapshotStore::open(&base)
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+        match store
+            .load()
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot load: {e:?}")))?
+        {
+            Some(blob) => Ok(js_sys::Uint8Array::from(&blob[..]).into()),
+            None => Ok(JsValue::NULL),
+        }
+    }
+
+    /// Persist an externally supplied snapshot blob (AC3 import) into the snapshot store for THIS boot's
+    /// base image. The blob is bound to this base's namespace; a foreign blob imported here still fails
+    /// the coherence guard on restore. Error `"not_persistent"` off the persistent path.
+    #[wasm_bindgen(js_name = importStoredSnapshot)]
+    pub async fn import_stored_snapshot(&self, blob: Vec<u8>) -> Result<(), JsError> {
+        let base = {
+            let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            match inner.snapshot_base {
+                Some(base) => base,
+                None => return Err(JsError::new("not_persistent")),
+            }
+        };
+        let store = snapshot_store::SnapshotStore::open(&base)
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+        store
+            .save(&blob, &base)
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot import: {e:?}")))?;
+        Ok(())
+    }
+
+    /// The current overlay commit generation (the snapshot coherence's third binding). `u64` fits
+    /// exactly in an `f64` for every realistic generation count.
+    #[wasm_bindgen(js_name = overlayGeneration)]
+    pub fn overlay_generation(&self) -> Result<f64, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.machine.overlay_generation() as f64)
+    }
+
+    /// Advance the overlay commit generation and return the new value. A stored snapshot taken before
+    /// the advance now fails the coherence guard (`"stale"`) — this is how a durable overlay commit
+    /// invalidates a now-inconsistent CPU/RAM snapshot.
+    #[wasm_bindgen(js_name = advanceOverlayGeneration)]
+    pub fn advance_overlay_generation(&self) -> Result<f64, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(inner.machine.advance_overlay_generation() as f64)
+    }
+
+    /// The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
+    /// against THIS boot's build identity + base binding + `current_generation`. Returns the stable
+    /// code (`"resume"`/`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`). Off the
+    /// persistent path (no base binding) there is no snapshot to resume: always `"missing"`.
+    #[wasm_bindgen(js_name = restoreDecisionCode)]
+    pub fn restore_decision_code(
+        &self,
+        stored: Option<Vec<u8>>,
+        current_generation: f64,
+    ) -> Result<String, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some(base) = inner.snapshot_base else {
+            return Ok("missing".to_string());
+        };
+        let core = build_core_hash();
+        let decision = resume::RestoreDecision::decide(
+            stored.as_deref(),
+            &core,
+            &base,
+            current_generation as u64,
+        );
+        Ok(decision.code().to_string())
+    }
+
+    /// Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
+    /// FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
+    /// typed reason (`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`) in the error
+    /// message rather than a device-internal string. NOT async (pure state application).
+    #[wasm_bindgen(js_name = loadSnapshotBlob)]
+    pub fn load_snapshot_blob(&self, blob: Vec<u8>) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .machine
+            .load_resume(&blob)
+            .map_err(|e| JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code()))
     }
 
     /// E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)

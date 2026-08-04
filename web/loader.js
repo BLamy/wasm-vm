@@ -536,6 +536,28 @@ export async function startLinuxBoot(opts = {}) {
       // E3-T10: does the overlay hold bytes that have not reached IndexedDB? A parked WRITE means
       // these are explicitly unacknowledged to the guest.
       hasUnpersisted: () => { try { return machine.hasUnpersisted(); } catch { return false; } },
+      // E3-T12d: browser resume-snapshot persistence + restore selection ------------------------
+      // Take a whole-machine resume snapshot and durably persist it to the snapshot IndexedDB store.
+      // Resolves when the store's commit-marker meta transaction completes. No-op off the persistent
+      // path (persistSnapshot returns "not_persistent"); swallowed to a rejected Promise the caller
+      // handles.
+      snapshotSave: () => machine.persistSnapshot(),
+      // The reassembled persisted snapshot blob (Uint8Array), or null if none / non-persistent.
+      snapshotRead: () => machine.readStoredSnapshot(),
+      // The header-level resume-vs-cold-boot verdict for the persisted snapshot against THIS boot's
+      // build identity + base binding + current overlay generation. Reads the stored blob, then asks
+      // the coherence guard. One of resume/missing/corrupt/foreign_build/foreign_image/stale.
+      snapshotDecision: async () => {
+        const stored = await machine.readStoredSnapshot();
+        return machine.restoreDecisionCode(stored ?? null, machine.overlayGeneration());
+      },
+      // Advance the overlay commit generation — a durable-commit event that invalidates (→ "stale")
+      // any snapshot taken before it. Returns the new generation.
+      snapshotAdvanceGen: () => machine.advanceOverlayGeneration(),
+      // AC3 export/import: raw stored-blob bytes out, and persist an external blob into this base's
+      // snapshot store (still coherence-guarded on restore).
+      snapshotExport: () => machine.readStoredSnapshot(),
+      snapshotImport: (bytes) => machine.importStoredSnapshot(bytes),
       // Current {usage, quota} for the storage indicator.
       storageEstimate: () => (navigator.storage?.estimate ? navigator.storage.estimate() : Promise.resolve({})),
       // E3-T10 (critic BUG-4): close the IndexedDB connection so reset-disk's deleteDatabase can

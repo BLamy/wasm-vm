@@ -83,6 +83,19 @@ export class WasmLinux {
         wasm.__wbg_wasmlinux_free(ptr, 0);
     }
     /**
+     * Advance the overlay commit generation and return the new value. A stored snapshot taken before
+     * the advance now fails the coherence guard (`"stale"`) — this is how a durable overlay commit
+     * invalidates a now-inconsistent CPU/RAM snapshot.
+     * @returns {number}
+     */
+    advanceOverlayGeneration() {
+        const ret = wasm.wasmlinux_advanceOverlayGeneration(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0];
+    }
+    /**
      * @param {number} slot
      * @param {string} name
      * @param {number} total
@@ -255,6 +268,34 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * Persist an externally supplied snapshot blob (AC3 import) into the snapshot store for THIS boot's
+     * base image. The blob is bound to this base's namespace; a foreign blob imported here still fails
+     * the coherence guard on restore. Error `"not_persistent"` off the persistent path.
+     * @param {Uint8Array} blob
+     * @returns {Promise<void>}
+     */
+    importStoredSnapshot(blob) {
+        const ptr0 = passArray8ToWasm0(blob, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_importStoredSnapshot(this.__wbg_ptr, ptr0, len0);
+        return ret;
+    }
+    /**
+     * Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
+     * FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
+     * typed reason (`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`) in the error
+     * message rather than a device-internal string. NOT async (pure state application).
+     * @param {Uint8Array} blob
+     */
+    loadSnapshotBlob(blob) {
+        const ptr0 = passArray8ToWasm0(blob, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_loadSnapshotBlob(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
      * `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
      * @param {number} ram_mib
@@ -379,6 +420,18 @@ export class WasmLinux {
         }
     }
     /**
+     * The current overlay commit generation (the snapshot coherence's third binding). `u64` fits
+     * exactly in an `f64` for every realistic generation count.
+     * @returns {number}
+     */
+    overlayGeneration() {
+        const ret = wasm.wasmlinux_overlayGeneration(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0];
+    }
+    /**
      * E3-T02: the chunk indices the virtio-blk device is currently parked on (guest reads awaiting a
      * lazy fetch). Empty for a non-chunked boot or when nothing is parked. The JS driver calls this
      * after each `runChunk` and, if non-empty, awaits `fetchPending` before the next `runChunk`.
@@ -404,6 +457,17 @@ export class WasmLinux {
      */
     persistPending() {
         const ret = wasm.wasmlinux_persistPending(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * Convenience: take a resume snapshot AND durably persist it to the snapshot IndexedDB store in one
+     * call. The `RefCell` borrow is scoped to `save_resume` + reading `snapshot_base`; the store I/O
+     * runs after it is dropped, never across the borrow. No-op error `"not_persistent"` off the
+     * persistent path (there is no snapshot store to write to).
+     * @returns {Promise<void>}
+     */
+    persistSnapshot() {
+        const ret = wasm.wasmlinux_persistSnapshot(this.__wbg_ptr);
         return ret;
     }
     /**
@@ -437,6 +501,45 @@ export class WasmLinux {
         return ret[0] >>> 0;
     }
     /**
+     * Read the persisted snapshot blob back (reassembled), or `null` if none is stored / not on the
+     * persistent path. Async (IndexedDB). The JS restore-decision hook feeds this into
+     * [`Self::restore_decision_code`] and, on a `"resume"` verdict, into [`Self::load_snapshot_blob`].
+     * @returns {Promise<any>}
+     */
+    readStoredSnapshot() {
+        const ret = wasm.wasmlinux_readStoredSnapshot(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
+     * against THIS boot's build identity + base binding + `current_generation`. Returns the stable
+     * code (`"resume"`/`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`). Off the
+     * persistent path (no base binding) there is no snapshot to resume: always `"missing"`.
+     * @param {Uint8Array | null | undefined} stored
+     * @param {number} current_generation
+     * @returns {string}
+     */
+    restoreDecisionCode(stored, current_generation) {
+        let deferred3_0;
+        let deferred3_1;
+        try {
+            var ptr0 = isLikeNone(stored) ? 0 : passArray8ToWasm0(stored, wasm.__wbindgen_malloc);
+            var len0 = WASM_VECTOR_LEN;
+            const ret = wasm.wasmlinux_restoreDecisionCode(this.__wbg_ptr, ptr0, len0, current_generation);
+            var ptr2 = ret[0];
+            var len2 = ret[1];
+            if (ret[3]) {
+                ptr2 = 0; len2 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred3_0 = ptr2;
+            deferred3_1 = len2;
+            return getStringFromWasm0(ptr2, len2);
+        } finally {
+            wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
+        }
+    }
+    /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
      * 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
      * `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
@@ -449,6 +552,22 @@ export class WasmLinux {
      */
     runChunk(max_instrs, persist_max_dirty_bytes) {
         const ret = wasm.wasmlinux_runChunk(this.__wbg_ptr, max_instrs, isLikeNone(persist_max_dirty_bytes) ? Number.MAX_SAFE_INTEGER : (persist_max_dirty_bytes) >>> 0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Take a whole-machine resume snapshot and return its bytes as a `Uint8Array`. NOT async and NOT
+     * persisting — kept synchronous so the `RefCell` borrow is never held across an `await` (the JS
+     * caller may drive persistence itself, or use [`Self::persist_snapshot`]). `save_resume` quiesces
+     * virtio-blk first; if the in-flight set cannot drain, the error message starts with
+     * `"not_quiesced"` so the caller can retry rather than treat it as a hard failure; any other error
+     * starts with `"save_error"`.
+     * @returns {any}
+     */
+    saveSnapshot() {
+        const ret = wasm.wasmlinux_saveSnapshot(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -944,6 +1063,10 @@ function __wbg_get_imports() {
             const ret = arg0.call(arg1, arg2);
             return ret;
         }, arguments); },
+        __wbg_clear_772d79d5d3e7307a: function() { return handleError(function (arg0) {
+            const ret = arg0.clear();
+            return ret;
+        }, arguments); },
         __wbg_close_4c3686e8e8c6d353: function(arg0) {
             arg0.close();
         },
@@ -1431,32 +1554,32 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000001: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 264, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 290, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h1dbcf2b5dd15a422);
             return ret;
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 150, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 148, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h01e5690ea5c427fa);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 150, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 148, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h01e5690ea5c427fa_2);
             return ret;
         },
         __wbindgen_cast_0000000000000004: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 150, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 148, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h01e5690ea5c427fa_3);
             return ret;
         },
         __wbindgen_cast_0000000000000005: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 150, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 148, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h01e5690ea5c427fa_4);
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 154, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 152, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h8a336183bfcd1160);
             return ret;
         },

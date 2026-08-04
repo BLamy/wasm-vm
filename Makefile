@@ -472,6 +472,25 @@ verify-E3-T12c4:
 	#   cargo test --release -p wasm-vm-cli --test boot_snapshot_resume -- --ignored --nocapture
 	@echo "verify-E3-T12c4 (unit gate OK; boot proofs are #[ignore]d — see the recipe comment)"
 
+.PHONY: verify-E3-T12d
+verify-E3-T12d:
+	# Browser snapshot persistence + restore selection: the wasm-bindgen + IndexedDB + JS glue on top
+	# of the pure, native-tested foundation (RestoreDecision/ColdBootReason + the snapmeta chunk codec).
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-storage -p wasm-vm-wasm
+	# The wasm crate is wasm32-only; the pure crates it depends on must also lint clean for that target.
+	cargo clippy -p wasm-vm-core -p wasm-vm-storage -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+	# AC gate on the pure layer: the header-level resume-vs-cold-boot decision (missing/corrupt/
+	# foreign_build/foreign_image/stale/resume) and the snapshot chunk meta + reassembly codec.
+	cargo test -p wasm-vm-core --test restore_decision
+	cargo test -p wasm-vm-storage snapmeta
+	# The browser leg (save → reload → decision "resume"; advance generation → decision "stale") is a
+	# Playwright spec. It needs a PERSISTENT boot — the only shape that owns a snapshot store — which
+	# today is the chunked-Alpine image; busybox is initramfs-only (no persistence). That boot OS-reaps
+	# on this mac and its artifacts are gitignored, so the spec SKIPs without them (never in CI, exactly
+	# like idb-persist). NOT run here — run explicitly on a box that can sustain the boot:
+	#   $(MAKE) web-build && cd web && npx playwright test tests/e3-t12d-snapshot-restore.spec.js
+	@echo "verify-E3-T12d : OK"
+
 .PHONY: verify-E3-T24c
 verify-E3-T24c:
 	# The versioned offline app shell against a real browser service worker + Playwright offline mode:
