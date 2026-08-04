@@ -14,7 +14,7 @@
 
 use std::cell::Cell;
 use std::io::{self, Read, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 use std::rc::Rc;
 use std::sync::mpsc;
@@ -69,6 +69,17 @@ pub struct BootArgs {
     /// MMIO access counts, as pretty text + JSON, when the boot reaches userland (or at exit).
     #[arg(long)]
     pub profile_boot: bool,
+    /// E4-T01: sample the hottest guest PCs + attribute host wall-time per subsystem, printed at
+    /// exit (of the first boot). Injects a monotonic `Instant` timer read only on cold paths.
+    #[arg(long)]
+    pub profile: bool,
+    /// E4-T01: resolve the hot PC regions to kernel symbols using a `System.map` file
+    /// (`<hex addr> <type> <name>` lines). Only meaningful with `--profile`.
+    #[arg(long)]
+    pub symbols: Option<PathBuf>,
+    /// E4-T01: also emit the profile as a machine-readable `PROFILE_HOTPC_JSON` line on stdout.
+    #[arg(long)]
+    pub profile_json: bool,
     /// E3-T13: attach a virtio-net device (slot 1) with the loopback backend — the guest sees
     /// `eth0` (MAC 52:54:00:12:34:56); transmitted frames echo back with src/dst MAC swapped.
     #[arg(long)]
@@ -163,6 +174,51 @@ impl wasm_vm_core::dev::rtc::WallClock for SystemClock {
             .map(|d| d.as_nanos() as u64)
             .unwrap_or(0)
     }
+}
+
+/// E4-T01: the monotonic host timer the profiler samples on its cold paths. `Instant`-based (unlike
+/// the epoch `SystemClock`), so the elapsed-nanosecond deltas the profiler brackets are non-decreasing.
+/// Lives in the CLI because core bans host time sources for determinism.
+struct MonotonicTimer {
+    start: std::time::Instant,
+}
+
+impl MonotonicTimer {
+    fn new() -> Self {
+        Self {
+            start: std::time::Instant::now(),
+        }
+    }
+}
+
+impl wasm_vm_core::prof::HostTimer for MonotonicTimer {
+    fn now_ns(&self) -> u64 {
+        self.start.elapsed().as_nanos() as u64
+    }
+}
+
+/// E4-T01: parse a `System.map` (`<hex addr> <type> <name>` lines) into an address-sorted symbol
+/// table for resolving hot PCs. Malformed lines are skipped (never a panic).
+fn parse_system_map(path: &Path) -> std::io::Result<Vec<(u64, String)>> {
+    let text = std::fs::read_to_string(path)?;
+    let mut syms: Vec<(u64, String)> = text
+        .lines()
+        .filter_map(|line| {
+            let mut it = line.split_whitespace();
+            let addr = u64::from_str_radix(it.next()?, 16).ok()?;
+            let _type = it.next()?; // symbol type letter (T/t/D/…) — unused
+            let name = it.next()?;
+            Some((addr, name.to_string()))
+        })
+        .collect();
+    syms.sort_by_key(|(addr, _)| *addr);
+    Ok(syms)
+}
+
+/// The symbol whose address is the greatest `<= pc` (nearest-preceding lookup over the sorted table).
+fn symbolize<'a>(syms: &'a [(u64, String)], pc: u64) -> Option<&'a str> {
+    let idx = syms.partition_point(|(addr, _)| *addr <= pc);
+    (idx > 0).then(|| syms[idx - 1].1.as_str())
 }
 
 /// E3-T12c4: watches the guest console stream for the `--snapshot-trigger` marker and, on its FIRST
@@ -359,6 +415,27 @@ pub fn boot(a: BootArgs) -> ExitCode {
         if a.stats {
             eprint!("{}", m.stats_dump()); // E2-T20
         }
+        // E4-T01: the hot-PC + subsystem-time report for the first boot. `total_ns` is the wall span
+        // the machine measured around its own run; CPU-interp is derived from it by subtraction.
+        if boot_num == 1 && a.profile {
+            let report = m.prof_report(m.prof_total_ns(), 10);
+            eprint!("{}", report.to_text());
+            if let Some(path) = &a.symbols {
+                match parse_system_map(path) {
+                    Ok(syms) => {
+                        eprintln!("E4-T01 hot symbols (nearest preceding):");
+                        for r in &report.top_regions {
+                            let name = symbolize(&syms, r.phys_pc).unwrap_or("<unknown>");
+                            eprintln!("  {:>6.2}%  0x{:016x}  {name}", r.pct, r.phys_pc);
+                        }
+                    }
+                    Err(e) => eprintln!("wasm-vm: cannot read --symbols {}: {e}", path.display()),
+                }
+            }
+            if a.profile_json {
+                println!("PROFILE_HOTPC_JSON {}", report.to_json());
+            }
+        }
         if let Some(path) = &a.evidence {
             let evidence = format!(
                 "wasm-vm boot evidence v1\ntrace fnv64={:016x}\ntrace retired={}\n{}\noutcome={outcome:?}\n",
@@ -437,6 +514,9 @@ fn assemble(
     let ram_bytes = a.ram_mib.saturating_mul(1024 * 1024);
     let mut m = Machine::new(ram_bytes);
     m.set_storm_detect(!a.no_storm_detect); // E2-T20
+    if a.profile {
+        m.set_host_timer(Rc::new(MonotonicTimer::new())); // E4-T01: arms profiling + injects the timer
+    }
 
     // --- devices, in dependency order (PLIC before its consumers) ---
     m.enable_clint(10);
@@ -844,5 +924,38 @@ mod critic_profiler_tests {
         assert!(!p.done);
         p.feed(b"wasm-vm login: ", 99);
         assert!(p.done, "getty-login is terminal");
+    }
+}
+
+#[cfg(test)]
+mod e4t01_symbolizer_tests {
+    use super::symbolize;
+
+    // A tiny address-sorted symbol table like a parsed System.map.
+    fn table() -> Vec<(u64, String)> {
+        vec![
+            (0x8000_0000, "_start".to_string()),
+            (0x8000_0100, "memcpy".to_string()),
+            (0x8000_0200, "schedule".to_string()),
+        ]
+    }
+
+    #[test]
+    fn resolves_to_the_nearest_preceding_symbol() {
+        let t = table();
+        // Exactly on a symbol, and anywhere inside its span, resolves to that symbol.
+        assert_eq!(symbolize(&t, 0x8000_0100), Some("memcpy"));
+        assert_eq!(symbolize(&t, 0x8000_0140), Some("memcpy"));
+        assert_eq!(symbolize(&t, 0x8000_01FF), Some("memcpy"));
+        assert_eq!(symbolize(&t, 0x8000_0200), Some("schedule"));
+        // Past the last symbol still attributes to it (no upper bound in a flat map).
+        assert_eq!(symbolize(&t, 0x8000_9999), Some("schedule"));
+    }
+
+    #[test]
+    fn a_pc_below_every_symbol_is_unknown() {
+        let t = table();
+        assert_eq!(symbolize(&t, 0x7FFF_FFFF), None);
+        assert_eq!(symbolize(&[], 0x8000_0000), None);
     }
 }

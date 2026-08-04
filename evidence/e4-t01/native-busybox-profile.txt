@@ -1,0 +1,16 @@
+=== profile ===
+total_ns=125168704121  samples=36874  walks=345753  collisions=209
+hot regions (phys_pc: samples pct):
+  #0 0xffffffff8055f300: 1787 4.85%
+  #1 0xffffffff8055f2c0: 1625 4.41%
+  #2 0xffffffff80984580: 1337 3.63%
+  #3 0xffffffff80a45d40: 1206 3.27%
+  #4 0xffffffff80a45cc0: 1145 3.11%
+  #5 0xffffffff8055f340: 1139 3.09%
+  #6 0xffffffff8055efc0: 1091 2.96%
+  #7 0xffffffff809845c0: 1074 2.91%
+  #8 0xffffffff80a45d00: 898 2.44%
+  #9 0xffffffff8055f280: 755 2.05%
+subsystem ns: cpu_interp=124816009970 mmu_walk=352650818 plic=43333
+wasm-vm: reached --max-instrs 40000000
+PROFILE_HOTPC_JSON {"total_ns":125168704121,"sample_count":36874,"walk_count":345753,"collisions":209,"regions":[{"phys_pc":"0xffffffff8055f300","samples":1787,"pct":4.85},{"phys_pc":"0xffffffff8055f2c0","samples":1625,"pct":4.41},{"phys_pc":"0xffffffff80984580","samples":1337,"pct":3.63},{"phys_pc":"0xffffffff80a45d40","samples":1206,"pct":3.27},{"phys_pc":"0xffffffff80a45cc0","samples":1145,"pct":3.11},{"phys_pc":"0xffffffff8055f340","samples":1139,"pct":3.09},{"phys_pc":"0xffffffff8055efc0","samples":1091,"pct":2.96},{"phys_pc":"0xffffffff809845c0","samples":1074,"pct":2.91},{"phys_pc":"0xffffffff80a45d00","samples":898,"pct":2.44},{"phys_pc":"0xffffffff8055f280","samples":755,"pct":2.05}],"subsystems":[{"name":"cpu_interp","ns":124816009970},{"name":"mmu_walk","ns":352650818},{"name":"clint","ns":0},{"name":"plic","ns":43333},{"name":"uart","ns":0},{"name":"virtio_blk","ns":0},{"name":"virtio_net","ns":0},{"name":"virtio_rng","ns":0},{"name":"rtc","ns":0},{"name":"syscon","ns":0},{"name":"other","ns":0}]}
