@@ -20,7 +20,8 @@ fn ram_snapshot_round_trips_byte_identically_on_wasm32() {
     // absolute guest address, so span offsets are added to the RAM base.
     let mut r = Ram::new(1 << 16).unwrap();
     let base = r.base();
-    r.write_slice(base + 0x1000, &[1, 2, 3, 4, 5, 6, 7, 8]).unwrap();
+    r.write_slice(base + 0x1000, &[1, 2, 3, 4, 5, 6, 7, 8])
+        .unwrap();
     r.write_slice(base + 0xFF00, &[0xAA; 16]).unwrap();
 
     let snap = r.to_snapshot();
@@ -66,7 +67,9 @@ fn reserved_section_is_refused_as_unsupported_on_wasm32() {
     assert_eq!(results[0].as_ref().unwrap().tag, section::RAM);
     assert_eq!(
         results[1],
-        Err(SnapshotError::UnsupportedSection { tag: section::VIRTIO_RNG })
+        Err(SnapshotError::UnsupportedSection {
+            tag: section::VIRTIO_RNG
+        })
     );
 }
 
@@ -115,5 +118,9 @@ fn virtio_blk_section_round_trips_on_wasm32() {
 
     let mut b = build();
     b.load_resume(&blob).unwrap();
-    assert_eq!(b.save_resume().unwrap(), blob, "VIRTIO_BLK section round-trips on wasm32");
+    assert_eq!(
+        b.save_resume().unwrap(),
+        blob,
+        "VIRTIO_BLK section round-trips on wasm32"
+    );
 }
