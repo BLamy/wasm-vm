@@ -56,4 +56,27 @@ caching stale results; (4) delete the benchmark overlay and rerun — the harnes
 loudly, not silently benchmark a different binary from the base image.
 
 ## Verification log
-(empty)
+- 2026-08-04 — **Design + phased plan.** Findings that reshape the premises:
+  - **Docker is the repo's canonical reproducible-build path** (`tools/toolchain/`, `tools/build-rootfs.sh`
+    + `tools/rootfs.Dockerfile`, `tools/build-initramfs.sh`, `tools/build-kernel.sh`), all pinned by Ubuntu
+    digest. "No local cross-toolchain" is a non-issue — mirror that pattern.
+  - The ticket's "~0.3-MIPS interpreter" is the DEBUG build; the **release** interpreter is ~27–35 MIPS
+    (`docs/perf/level1-baseline.md`), so a ≥10s CoreMark run is practical — the harness MUST use
+    `target/release/wasm-vm` (like `tools/boot-alpine.sh`). Never bench debug.
+  - The existing `tools/toolchain` gcc is bare-metal **newlib** (wrong here); CoreMark/Dhrystone must be
+    **riscv64-linux glibc/musl static ELFs** (Linux ABI, `clock_gettime`/`write`).
+  - Console scripting reuses the boot CLI (`crates/cli/src/boot.rs` `--no-input` + stdin→UART); `bench.py`
+    drives via the boot process's stdin/stdout — no emulator change (except possibly making `--drive` a
+    `Vec` to attach the bench overlay as a 2nd drive — `boot.rs:44,527`).
+  - Guest-vs-host timing check: honest framing — this is an instruction-stepped interpreter, so guest-
+    elapsed vs host-wall diverge BY DESIGN; a 1:1 check would false-positive. Instead record both + their
+    ratio and flag deviation from the baseline ratio (that's the real anti-cheat signal for adversarial #2).
+  - **Phases:** (1) vendor CoreMark(EEMBC pinned)+Dhrystone source + PROVENANCE; (2) `bench/toolchain/`
+    pinned Docker cross-gcc (mirror `tools/toolchain/`); (3) `bench/build.sh` → committed `coremark.rv64`/
+    `dhrystone.rv64` + SHA256SUMS + MANIFEST (AC4 byte-identical via `SOURCE_DATE_EPOCH` + pinned apt);
+    (4) `bench/mkimage.sh` → `bench.ext4` (reuse `tools/rootfs-inner.sh:204-253` mke2fs recipe) as a 2nd
+    `--drive` (fails loudly if absent — adversarial #4); (5) `tools/bench.py run {coremark,dhrystone}
+    --engine native` (median-of-3, CRC-validated parse, JSON schema `{bench,score,runs,engine,commit,
+    config,date}`); (6) timing cross-check + tamper detection; (7) `bench/README.md` + Makefile target;
+    (8) browser engine via Playwright — **reaping-deferred** to dev/nightly (Alpine browser boot OS-reaps
+    here, see [[browser-alpine-boot-reaped-on-mac]]). Phases 1–7 are headlessly verifiable on release.
