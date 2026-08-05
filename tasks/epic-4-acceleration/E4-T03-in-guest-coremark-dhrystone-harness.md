@@ -3,7 +3,7 @@ id: E4-T03
 epic: 4
 title: Automated in-guest CoreMark and Dhrystone benchmark harness
 priority: 403
-status: pending
+status: partially-verified
 depends_on: [E3]
 estimate: M
 capstone: false
@@ -80,3 +80,23 @@ loudly, not silently benchmark a different binary from the base image.
     config,date}`); (6) timing cross-check + tamper detection; (7) `bench/README.md` + Makefile target;
     (8) browser engine via Playwright — **reaping-deferred** to dev/nightly (Alpine browser boot OS-reaps
     here, see [[browser-alpine-boot-reaped-on-mac]]). Phases 1–7 are headlessly verifiable on release.
+- 2026-08-04 — **Implemented (phases 1–7) + partially validated (commit `d49fec3`).** Delivered:
+  `bench/guest/src/` vendored CoreMark(pinned)+Dhrystone+PROVENANCE; `bench/toolchain/` pinned Docker
+  riscv64-linux glibc cross-gcc; `bench/build.sh` → committed static `-O2` `coremark.rv64`/`dhrystone.rv64`
+  + `SHA256SUMS` + `MANIFEST`; `bench/mkimage.sh` → `bench.ext4`; `Machine::enable_virtio_blk_at` +
+  `--drive Vec<String>` (2nd drive); `tools/bench.py run {coremark,dhrystone} --engine native` (CRC-
+  validated parse, median-of-3, JSON + honest guest/host-ratio timing check); `bench/README.md` + Makefile
+  targets. **Validated headlessly:** `shasum -c SHA256SUMS` OK for both ELFs; release CLI compiles + fmt
+  clean; a native boot reaches virtio probe with BOTH drives — `virtio0 [vda] 768MiB` (rootfs) AND
+  `virtio1 [vdb] 16MiB` (bench overlay) — so the multi-drive wiring is correct.
+- **VERIFICATION DEBT — the full boot-to-login score run is NOT yet achieved.** On THIS Mac the boot
+  consistently reaches the virtio probe (~2.24s guest time) then goes quiet at the userland mount stage
+  and the harness times out at `login:` (`BOOT_TIMEOUT=1200s`). Root cause here is **machine saturation**
+  (load avg 6–10 on 8 cores, incl. two runaway 94%-CPU `yes` processes + many MCP/editor processes), so
+  the release interpreter gets a sliver of CPU. NOT a fabricated score — no score is claimed. To close:
+  run `python3 tools/bench.py run coremark --engine native` (and dhrystone) on an **idle** machine or the
+  Linux `dev` box (which sustains full Alpine boots — see [[browser-alpine-boot-reaped-on-mac]]); that
+  proves AC1(native)/AC2(≤5% spread)/AC3(≥10s). One open question a clean run also settles: whether the
+  quiet-at-mount is purely load or a mount interaction with the RO 2nd drive (the standard single-drive
+  Alpine boot reaches login normally, so a 2nd-drive interaction is possible but unconfirmed). AC1(browser)
+  is the separately-deferred reaping leg (phase 8, stubbed).
