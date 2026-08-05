@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 106,
-    "total": 304
+    "verified": 129,
+    "total": 322
   },
   "epics": [
     {
@@ -56,7 +56,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-08-02"
+    "end": "2026-08-04"
   },
   "tasks": [
     {
@@ -6504,8 +6504,9 @@
       "activity": [
         {
           "date": "2026-08-02",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "feat(virtio): E3-T12c1 complete — VIRTIO_NET section + verify target; c1 verified (blk+net, native+wasm)",
             "feat(virtio): E3-T12c1 — VIRTIO_BLK section (transport + ring position + flush count), Machine round-trip verified",
             "chore(virtio): mark E3-T12c1 transport snapshot methods pending-wiring (silence dead_code until the Machine VIRTIO section lands)",
             "feat(virtio): E3-T12c1 begin — VirtioMmio transport snapshot/restore primitive (round-trip + malformed-rejected)"
@@ -6514,7 +6515,7 @@
       ],
       "firstActivity": "2026-08-02",
       "lastActivity": "2026-08-02",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E3-T12c2",
@@ -6522,7 +6523,7 @@
       "epicKey": "3",
       "title": "Bounded virtqueue quiesce before snapshot",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E3-T12c1",
         "E3-T08"
@@ -6534,26 +6535,34 @@
       "criteria": [
         {
           "text": "`make verify-E3-T12c2`: with a chain parked on a resolvable event, quiesce drains to empty and the snapshot proceeds; with a chain parked on an unresolvable event, quiesce refuses within a bounded pass count (no unbounded wait) and the snapshot is refused, not torn.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "A completed request is neither replayed nor lost across quiesce→snapshot→restore (the used-ring index is exact).",
-          "checked": false
+          "checked": true
         },
         {
           "text": "`save_resume` on a non-quiesced machine returns the typed refusal and does not emit a blob.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "- 2026-08-02 — `make verify-E3-T12c2`: **OK** (native + wasm32). Implementation:\n  - `Machine::quiesce()` (`crates/core/src/lib.rs`) — bounded-iteration (`QUIESCE_MAX_PASSES = 16`)\n    drain of the virtio-blk parked set via re-`service`; returns `Ok(())` when the in-flight set is\n    empty (checked BEFORE any service pass, so an already-coherent machine is never mutated) or the\n    typed `SnapshotError::NotQuiesced { reason, in_flight }` when the budget is exhausted. No blk ⇒\n    trivially quiesced. Never waits unboundedly.\n  - `Machine::save_resume()` now returns `Result<Vec<u8>, SnapshotError>` and calls `quiesce()` first\n    — a non-quiesced machine returns the typed refusal and emits no blob (AC3).\n  - `SnapshotError::NotQuiesced` + `QuiesceReason { Chunk, Flush, Write }` in `resume.rs`;\n    `BlkState::residual()` maps the head parked reason + count (build-agnostic mirror of `ParkReason`).\n  - Test `crates/core/tests/virtio_blk_quiesce.rs` (3 cases): resolvable FLUSH drains to empty then\n    snapshots and round-trips the used-ring index exactly into a fresh machine (AC1-resolvable + AC2);\n    unresolvable never-arriving chunk refuses within the bounded budget with `NotQuiesced{Chunk}`, no\n    partial completion (AC1-unresolvable + AC3); empty in-flight set is a no-op quiesce.\n  - Existing `cpu_resume` / wasm `resume` round-trips updated for the fallible `save_resume` and still\n    green (the quiesce gate does not regress blk/net/CPU section round-trips).",
       "adversarial": "Snapshot at every virtqueue transition (mid-pop, post-exec pre-publish, parked). Force a parked chain\non a chunk that never arrives and assert the quiesce is bounded and refuses. Any torn boundary,\nduplicated completion, lost request, or unbounded quiesce refutes.",
       "file": "tasks/epic-3-civilization/E3-T12c2-virtqueue-quiesce.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 1,
+          "labels": [
+            "feat(virtio): E3-T12c2 — bounded virtqueue quiesce before snapshot; verified"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-02",
+      "commitCount": 1
     },
     {
       "id": "E3-T12c3",
@@ -6561,7 +6570,7 @@
       "epicKey": "3",
       "title": "Overlay-generation snapshot coherence and stale-restore refusal",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E3-T12c1",
         "E3-T10"
@@ -6573,26 +6582,34 @@
       "criteria": [
         {
           "text": "`make verify-E3-T12c3`: restore against a changed base hash OR a bumped overlay generation fails with the typed error BEFORE any CPU/RAM/device mutation (the target is unchanged).",
-          "checked": false
+          "checked": true
         },
         {
           "text": "A matching base+generation restore succeeds and resumes.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Restoring the same snapshot twice is refused the second time if the overlay advanced in between.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "- 2026-08-02 — `make verify-E3-T12c3`: **OK** (native + wasm32). Implementation:\n  - `Machine` gains a `SnapshotCoherence { core_hash, base_image_hash, generation }` binding\n    (`crates/core/src/lib.rs`). `set_snapshot_identity()` binds build + base image;\n    `advance_overlay_generation()` is the monotonic, saturating overlay-commit counter (the persist\n    pump calls it on each durable commit); `overlay_generation()` / `snapshot_coherence()` expose it.\n    Defaults all-zero / generation 0, so the RAM-only harness round-trips against an identical binding.\n  - `save_resume` now stamps the real `core_hash` / `base_image_hash` / `generation` into the header\n    (was hardcoded zeros).\n  - `load_resume` runs `SnapshotHeader::validate_for` FIRST — before the section loop touches any\n    component — so a `BaseImageMismatch` / `OverlayGenerationMismatch` / `CoreHashMismatch` is refused\n    with the target machine byte-identical to its pre-restore state (machine-level all-or-nothing).\n  - Test `crates/core/tests/snapshot_coherence.rs` (5 cases): matching base+generation resumes and the\n    source RAM marker lands (AC2); a changed base hash and a bumped generation each refuse with the\n    typed error and leave the target RAM untouched (AC1); the same blob is refused on the second\n    restore once the generation advanced (AC3); the counter is monotonic/saturating.\n  - Existing `cpu_resume` / wasm `resume` round-trips (default coherence on both sides) still green.",
       "adversarial": "Alter the overlay generation after snapshot and restore; restore the same snapshot twice; corrupt the\nbase hash. Any stale-overlay resume, half-applied restore on a coherence failure, or generation that\nfails to advance refutes.",
       "file": "tasks/epic-3-civilization/E3-T12c3-overlay-generation-coherence.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 1,
+          "labels": [
+            "feat(virtio): E3-T12c3 — overlay-generation snapshot coherence; verified"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-02",
+      "commitCount": 1
     },
     {
       "id": "E3-T12c4",
@@ -6600,7 +6617,7 @@
       "epicKey": "3",
       "title": "Boot-level snapshot disk coherence (sync/snapshot/restore → fsck clean)",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E3-T12c1",
         "E3-T12c2",
@@ -6612,27 +6629,41 @@
       "goal": "The end-to-end integration proof: a real Alpine boot that `sync`s, snapshots, restores, continues, and\npowers off leaves the ext4 root `fsck.ext4 -n` clean, with no replayed or lost completed request —\ndemonstrating the c1 (device serialization) + c2 (quiesce) + c3 (overlay coherence) pieces compose into\na coherent whole-machine snapshot across the disk.",
       "criteria": [
         {
-          "text": "Boot → `sync` → snapshot → restore → continue → poweroff, then `fsck.ext4 -n` on the ext4 root is clean (recorded on dev).",
-          "checked": false
+          "text": "Boot → `sync` → snapshot → restore → continue → poweroff, then `fsck.ext4 -n` on the ext4 root is clean (recorded on dev — `evidence/e3-t12c4/`, fsck passes 1–5 clean, exit 0).",
+          "checked": true
         },
         {
-          "text": "A completed request issued before the snapshot is neither replayed nor lost after restore (an echo-proof marker written pre-snapshot is present, exactly once, post-restore).",
-          "checked": false
+          "text": "A completed request issued before the snapshot is neither replayed nor lost after restore (an echo-proof marker written pre-snapshot is present, exactly once, post-restore — `persist_42`).",
+          "checked": true
         },
         {
-          "text": "The restored machine boots to a usable shell and executes a fresh guest-computed command.",
-          "checked": false
+          "text": "The restored machine boots to a usable shell and executes a fresh guest-computed command (`RESUMED_9`, computed inside the resumed guest).",
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "- 2026-08-02 — Implementation + plumbing landed; busybox smoke green locally; Alpine+fsck evidence\n  running on `ssh dev`.\n  - CLI plumbing (`crates/cli/src/boot.rs`): `--snapshot-out PATH` + `--snapshot-trigger MARKER`\n    (a `SnapshotOnMarker` watcher scans the guest console; on the trigger it `save_resume`s to the\n    blob and exits 0 — a non-quiesced machine is a typed refusal, exit 103, no blob) and\n    `--resume-from PATH` (validates the coherence header, then restores CPU/RAM/CLINT/PLIC/UART/RTC/\n    virtio into the assembled machine before running).\n  - Snapshot completeness fix (`crates/core/src/lib.rs`): `save_resume`/`load_resume` now also carry\n    PLIC + UART + RTC device sections. Without UART the resumed guest kept its driver state (in RAM)\n    but a freshly-reset device — RX-interrupt-enable lost, console wedged. Adding the device sections\n    makes the resumed devices agree with the guest driver (proven: the busybox resume console was\n    dead before the fix, usable after).\n  - `crates/cli/tests/boot_snapshot_resume.rs`: `busybox_snapshot_resume_roundtrip` (fast local\n    smoke, **PASS**) — boot → shell → pre-snapshot marker → snapshot → resume → the marker survives\n    exactly once AND the resumed shell runs a fresh guest-computed command; `alpine_sync_snapshot_\n    restore_fsck_clean` (boot-gated, on dev) — Alpine ext4 boot → login → marker → `sync` → snapshot →\n    resume → fresh command → `poweroff`, then external `fsck.ext4 -f -n` on the image.\n  - Unit gate (`make verify-E3-T12c4`): cpu_resume + snapshot_coherence + virtio_blk_quiesce green.\n- 2026-08-03 — **Alpine+fsck recorded on `ssh dev` (green)**: `alpine_sync_snapshot_restore_fsck_clean`\n  passed. Process A booted the released kernel + Alpine ext4 rootfs, logged in, wrote\n  `/root/marker.txt` (`persist_42`), `sync`ed, and hit the trigger → snapshotted a 60,075,407-byte\n  blob and exited 0. Process B `--resume-from`ed it against the SAME image (`resumed 60075407 bytes\n  … continuing guest`), ran a fresh in-guest command (`RESUMED_9`), read the marker back exactly once\n  (`persist_42`), and `poweroff`ed cleanly (`Remounting / read only` → `reboot: Power down` →\n  `guest exited 0`). External `fsck.ext4 -f -n` on the resulting image: passes 1–5 clean\n  (`root: 3561/32768 files (0.1% non-contiguous), 49679/131072 blocks`), exit 0 — `test … ok`\n  (1109 s). Evidence: `evidence/e3-t12c4/` (transcript + fsck log + README). The first run proved the\n  same cycle but tripped a too-short 300 s poweroff-wait assertion on the loaded 2-core box (the\n  cycle itself completed + manual fsck was clean); raised to 900 s and re-run green.\n- Adversarial (non-vacuity): the quiesce that keeps the boundary coherent is independently proven —\n  a torn boundary is refused, not serialized — by `virtio_blk_quiesce` (E3-T12c2), and the resumed\n  disk is byte-identical because RAM page cache + `sync`ed `--drive` file agree at the snapshot.",
       "adversarial": "Snapshot mid-`sync` and immediately after; restore and diff the disk against a straight-through boot;\nrun the fsck on a deliberately torn snapshot (quiesce disabled) and confirm it is dirty (non-vacuity of\nthe clean result). Any disk divergence, duplicated completion, or dirty fsck on the quiesced path\nrefutes.",
       "file": "tasks/epic-3-civilization/E3-T12c4-boot-disk-coherence-fsck.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 2,
+          "labels": [
+            "test(snapshot): E3-T12c4 verified — Alpine sync→snapshot→restore→poweroff, fsck clean on dev",
+            "feat(snapshot): E3-T12c4 — boot-level snapshot resume plumbing + device completeness"
+          ]
+        },
+        {
+          "date": "2026-08-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-03",
+      "commitCount": 2
     },
     {
       "id": "E3-T12d",
@@ -6640,7 +6671,7 @@
       "epicKey": "3",
       "title": "Browser snapshot persistence and restore selection",
       "priority": null,
-      "status": "pending",
+      "status": "partially-verified",
       "depends_on": [
         "E3-T12c"
       ],
@@ -6664,13 +6695,24 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "- 2026-08-04 — **Foundation: the two risk-bearing PURE layers landed + native-tested (commit `6c78f9e`).**\n  The c1–c4 Rust snapshot machinery (`Machine::save_resume`/`load_resume`, coherence header) was\n  complete but NOT exposed to the browser; T12d adds the browser decision + storage on top. Two pure,\n  headlessly-tested layers first:\n  - `crates/core/src/resume.rs`: `RestoreDecision` + `ColdBootReason`. `RestoreDecision::decide(stored,\n    core, base, gen)` is the typed resume-vs-cold-boot gate — it mirrors the guard `load_resume` runs\n    first, so a `Resume` verdict means coherence won't be what rejects the load. The whole failure space\n    partitions into typed reasons: `missing` / `corrupt` / `foreign_build` / `foreign_image` / `stale`.\n    `ColdBootReason::from_snapshot_error` maps a restore-time `SnapshotError` onto the SAME space, so a\n    pre-check and a load failure yield one uniform reason (AC2's \"typed reason\"). 11 tests\n    (`crates/core/tests/restore_decision.rs`).\n  - `crates/storage/src/snapmeta.rs`: `SnapshotMeta` (identity + shape), `snapshot_store_name`\n    (per-base-image namespaced `wvsn-<hex>`), and the chunking codec. `reassemble()` validates\n    completeness against the meta (every chunk present with its EXACT expected length) → a torn/half-\n    published store is a typed `TornChunk` error → cold boot, never a truncated resume (AC2 adversarial:\n    \"any half-published snapshot selected for restore … refutes\"). `SNAPSHOT_CHUNK=1MiB` streams the\n    ~60 MB blob without a second whole-blob copy (AC1 memory bound). 11 tests (`snapmeta/tests.rs`).\n- IN PROGRESS: the browser plumbing (wasm-bindgen `saveSnapshot`/`loadSnapshotBlob`/`overlayGeneration`/\n  `advanceOverlayGeneration`/`restoreDecisionCode` on `WasmLinux`; an IndexedDB `SnapshotStore` mirroring\n  `idb_store.rs` with strict-durability chunked save/load + quota surfacing; JS `window.__snapshot*` test\n  hooks; `make verify-E3-T12d`). The full in-browser production-sized save→reload→restore proof (AC1) is\n  the OS-reaping-prone Alpine-boot path (see [[browser-alpine-boot-reaped-on-mac]]) — provable on `dev`,\n  like E3-T19; the busybox-persistent path exercises the decision/store logic headlessly-fast.\n- 2026-08-04 — **Browser plumbing landed + `make verify-E3-T12d` GREEN (commit `c588599`).** Marking\n  `partially-verified`: the mechanism is complete and the risk-bearing logic is proven natively, but two\n  items are honest verification debt (below).\n  - `crates/wasm/src/snapshot_store.rs`: IndexedDB `SnapshotStore` mirroring `idb_store.rs` — `chunks`\n    (key=index) + `meta` (key 0) stores, strict-durability txns, quota-name surfacing, versionchange\n    auto-close. `save()` clears old chunks, streams 1 MiB chunks in 16-chunk batched strict txns (slices\n    only — no whole-blob dup), writes `meta` LAST as the all-present commit marker; `load()` reassembles\n    via the codec (a torn store → \"corrupt\").\n  - `crates/wasm/src/lib.rs`: `build_core_hash()` (crate-version identity), `snapshot_base` on\n    `LinuxInner`, `set_snapshot_identity(build_core_hash(), base_binding)` on the persistent path, and\n    `#[wasm_bindgen]` `saveSnapshot`/`persistSnapshot`/`readStoredSnapshot`/`importStoredSnapshot`/\n    `overlayGeneration`/`advanceOverlayGeneration`/`restoreDecisionCode`/`loadSnapshotBlob` (maps\n    `ColdBootReason::code()`). JS controller + `window.__snapshot*` hooks in `web/loader.js`/`main.js`.\n    Spec `web/tests/e3-t12d-snapshot-restore.spec.js` (skips without the chunked-Alpine artifact).\n  - `make verify-E3-T12d`: fmt-check + wasm32 clippy `-D warnings` (core/storage/wasm) + the two native\n    suites (`restore_decision` 11, `snapmeta` 11) — **passes.** wasm-bindgen link verified via the\n    pre-commit `wasm-pack build --release`.",
       "adversarial": "Kill the tab during each storage phase, truncate or swap snapshot objects, exhaust quota, and race\ntwo tabs opening the same snapshot. Any half-published snapshot selected for restore, silent data\nloss, whole-RAM duplicate allocation, or ambiguous fallback refutes.",
       "file": "tasks/epic-3-civilization/E3-T12d-browser-snapshot-storage-selection.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-04",
+          "commits": 5,
+          "labels": [
+            "docs(snapshot): E3-T12d partially-verified — mechanism done, 2 verification debts logged",
+            "docs(snapshot): E3-T12d verification log — foundation + browser-plumbing status",
+            "style(wasm): rustfmt resume.rs test (E3-T12d fmt pass)",
+            "feat(wasm): E3-T12d — browser resume-snapshot persistence + restore selection"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-04",
+      "lastActivity": "2026-08-04",
+      "commitCount": 5
     },
     {
       "id": "E3-T12e",
@@ -7304,11 +7346,28 @@
           "labels": [
             "E3-T19: record provider hardening performance blocker"
           ]
+        },
+        {
+          "date": "2026-08-03",
+          "commits": 2,
+          "labels": [
+            "docs(tailscale): E3-T19 live proof — 6/8 specs GREEN, E3-T19a AC2/AC3 live",
+            "fix(test): E3-T19 guest specs — current boot API + local chunks (unstale)"
+          ]
+        },
+        {
+          "date": "2026-08-04",
+          "commits": 3,
+          "labels": [
+            "debug(tailscale): E3-T19 guest-HTTPS — relay exonerated, root cause is interpreter-slow ClientHello",
+            "docs(tailscale): E3-T19 validated on dev — reaping solved, guest-HTTPS the flaky bit",
+            "fix(deploy): E3-T19 nginx — resolve headscale upstream at request time"
+          ]
         }
       ],
       "firstActivity": "2026-07-17",
-      "lastActivity": "2026-07-27",
-      "commitCount": 13
+      "lastActivity": "2026-08-04",
+      "commitCount": 18
     },
     {
       "id": "E3-T19a",
@@ -7341,13 +7400,31 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "_(none yet — pending)_",
+      "verificationLog": "- 2026-08-03 — **Deterministic security slice landed (persist/restore validation); the live tailnet\n  proof stays `blocked_on: E4-T13`.** The identity-persistence machinery already exists from E3-T17\n  (`main.js` `loadTailscaleState`/`storageUpdate` → localStorage; `tailscale-runtime.js` restores from\n  it, `delete`s the auth key from config + clears it from the DOM on first status). The security-\n  critical enforcement point — what every reload runs before restoring identity — is\n  `normalizeSnapshot`, now exported + covered by `web/tests/tailscale-state.test.mjs` (11 node cases,\n  green via `make verify-E3-T19a-state`):\n  - persisted state is accepted ONLY as the Go IPN's hex-encoded key material (even-length [0-9a-f],\n    ≤256-char keys, ≤1 MiB values); a fresh profile normalizes `null`→`{}`.\n  - a NON-HEX value is rejected — so a stray `tskey-auth-…` (not hex) could never be restored, on top\n    of the runtime deleting the key from config/DOM (AC3, the \"auth key never persisted\" invariant).\n  - tampered / oversized / array / non-object / non-string-value saved state is refused, never restored.\n  - This is the reload-restore boundary of AC2: a reload with saved state + no auth key restores the\n    same identity without re-provisioning (`shouldProvision` is false unless a fresh auth key is present).\n- 2026-08-03 — **LIVE stack proof: AC2/AC3 GREEN against real Headscale.** Brought up the full\n  `docker compose --profile relay` stack (Headscale 0.29.2 + DERP + fixture + exit + relay, all\n  healthy on a fresh `down -v`) and ran the E3-T19 browser suite. Root-caused why the guest specs were\n  \"flaky/broken\": they were STALE — they clicked the removed `#boot-alpine` button and filled the\n  relocated provider form. Fixed to the current API (`wvmDemo.bootAlpine()` + set config via\n  `evaluate`; `?assetBase=/releases` for local chunks) — committed. Result: **6/8 specs pass GREEN\n  live**:\n  - `e3-t17-headscale-worker` (26s) — real Headscale registration; **survives Worker restart WITHOUT\n    retaining the auth key** (`firstIdentity === secondIdentity`, addr 100.64.0.3; state keys are\n    hex `_machinekey`/`profile-…`; auth key absent from all messages). **This IS E3-T19a AC2 + AC3, live.**\n  - revoke (56s) — node revocation kills the flow; denied (32s) — ACL blocks the peer (**E3-T19b**);\n    identity-attacks (13s) — copied-key / node-key-collision rejected (**E3-T19d**); compose-relay\n    (2.2s) — relay reaches public, no token leak; control-outage (2.6s) — stopped control fails the\n    identity without relay fallback, no key leak.\n- REMAINING (AC1 — the guest-HTTPS-through-provider transcript): the two Alpine `guest-https` boots\n  (tailscale + relay). The specs are un-stale'd, but completing the ~40-min in-browser Alpine boot\n  over the tailnet is the flaky/OS-reaping path (chunk-serving is entangled with the compose `app`\n  container that `reuseExistingServer` picks up on :8123). This is exactly the live path the ticket\n  defers via `blocked_on: E4-T13`. Run `tools/verify/e3-t19-live-proof.sh` on a host that sustains the\n  boot; the other 6 legs are proven green. The live AC2/AC3 for E3-T19a itself are now DONE.\n- 2026-08-04 — **Full stack set up + validated on the Linux `dev` VM: reaping SOLVED, but guest-HTTPS\n  is a genuine flaky bit for BOTH providers.** Brought the whole `docker compose --profile relay` stack\n  up on dev (installed compose v2 plugin, added user to docker group, relay built from source, fixed a\n  real nginx bug — request-time upstream resolution, committed `95de030`). Ran the guest-HTTPS proof on\n  dev for BOTH providers:\n  - **The Alpine guest boots to a shell in ~37 min with NO reap** (macOS jetsam is the only reaper —\n    Linux dev sustains it; see [[browser-alpine-boot-reaped-on-mac]]). `E3T19_DHCP_OK` (10.0.2.15).\n  - **Providers connect live**: the tailscale node `wasm-vm-guest-exit-compose` registered with the real\n    Headscale (browser@ / js); the relay authenticated + `connects_accepted:1, rejected:0`.\n  - **But `E3T19_GUEST_HTTPS_FAIL … rc=1` for BOTH tailscale AND relay** — the guest's `wget https://1.1.1.1/`\n    doesn't complete. Relay side: the connection is accepted and ~322 bytes (the outbound ClientHello)\n    flow, but the handshake never finishes. This exactly reproduces the pre-existing documented \"guest-HTTPS\n    flaky for both providers, needs a decision\" — a real functional issue in the HTTPS-through-provider\n    path under the slow 2-core boot (the browser network worker/route not staying live through/after the\n    37-min boot), NOT the reaping and NOT a regression. This is precisely what `blocked_on: E4-T13` (the\n    faster worker) is meant to unblock.\n- 2026-08-04 — **Root-cause narrowed: the relay is EXONERATED; guest-HTTPS is a guest-side bug common\n  to both providers — NOT the relay and NOT E4-T13/JIT.** Debugged the `bytes_accounted:322` symptom\n  cheaply (seconds, no 38-min boot) with a new reusable diagnostic `tools/verify/relay-tls-probe.mjs`:\n  a hand-built WS client that speaks the ws_proxy wire protocol (HELLO v1 / OPEN / WINDOW / DATA) and\n  layers a REAL Node `tls.connect` over a relay stream.\n  - **Ran it against a local `wvrelay` → 1.1.1.1:443: full TLS 1.3 handshake COMPLETES** (`authorized=true`,\n    3714-byte ServerHello+cert, then a 696-byte HTTP response flows back). Peer cert is `cloudflare-dns.com`\n    with **IP SANs incl. 1.1.1.1**, so cert-vs-IP is not the guest's problem either. → **the relay's\n    bidirectional data path is fully functional for HTTPS.**\n  - `record_quota_bytes` bills BOTH directions (driver.rs:405 guest→backend, :460 backend→guest), so the\n    dev run's `bytes_accounted:322` ≈ the outbound ClientHello ALONE means **1.1.1.1's response never came\n    back through the relay** — the relay's `read_pump` (driver.rs:759) only reads the backend after the\n    guest grants WINDOW credit, so the guest side never effectively granted/delivered it.\n  - The failure reproduces for **tailscale too** (which doesn't touch wvrelay), so the common culprit is\n    upstream of the provider: the guest-side slirp TCP stack ↔ `WsConnector`/browser transport.\n    `WsConnector::handle_event` DOES grant `INITIAL_WINDOW` on `Opened` and refill on `recv`\n    (ws_connector.rs:350-358) — logic looks right — so the suspect is the WINDOW/inbound-DATA **pumping\n    under the real browser transport**, not the state machine.\n  - **Consequence for this ticket:** `blocked_on: E4-T13` (the faster JIT worker) rests on a *speed*\n    hypothesis that this refutes — the boot completes and the relay path is fine; it's a functional\n    data-path bug. The real next step is instrumenting the guest run (does the initial WINDOW frame reach\n    the relay; do inbound DATA frames reach `WsConnector::recv` → guest TCP), which needs a browser run or\n    a native slirp-stack↔WsConnector integration harness — a decoupled bug, not a JIT dependency.\n- (superseded note) REMAINING (AC1 + the live AC2/AC3 transcript): the `docker compose up` fresh-stack proof (browser VM\n  resolves + reaches a tailnet HTTPS fixture; one node; reload restores; auth key absent from IDB/LS/URL\n  by inspection). Deliberately deferred — it is the flaky ~40-min browser-Alpine-over-tailnet path that\n  OS-reaps on this mac (see [[browser-alpine-boot-reaped-on-mac]], [[e3-t19-proof-needs-fresh-stack]]),\n  which is exactly why the ticket is `blocked_on: E4-T13` (the non-flaky Epic-4 relay/worker). Run\n  `tools/verify/e3-t19-live-proof.sh` on a host that can sustain the boot once E4-T13 lands.",
       "adversarial": "",
       "file": "tasks/epic-3-civilization/E3-T19a-node-lifecycle-reload-restore.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-03",
+          "commits": 2,
+          "labels": [
+            "docs(tailscale): E3-T19 live proof — 6/8 specs GREEN, E3-T19a AC2/AC3 live",
+            "test(tailscale): E3-T19a — deterministic persist/restore validation boundary"
+          ]
+        },
+        {
+          "date": "2026-08-04",
+          "commits": 3,
+          "labels": [
+            "docs(tailscale): mark E3-T19a guest-HTTPS as verification debt (root-caused, fix deferred)",
+            "debug(tailscale): E3-T19 guest-HTTPS — relay exonerated, root cause is interpreter-slow ClientHello",
+            "docs(tailscale): E3-T19 validated on dev — reaping solved, guest-HTTPS the flaky bit"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-03",
+      "lastActivity": "2026-08-04",
+      "commitCount": 5
     },
     {
       "id": "E3-T19b",
@@ -7393,7 +7470,7 @@
       "epicKey": "3",
       "title": "Relay token rejection (deterministic, no live tailnet)",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E3-T16",
         "E3-T17"
@@ -7405,20 +7482,20 @@
       "criteria": [
         {
           "text": "Relay connections with an absent, expired, or wrong-origin token are closed before OPEN.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "A valid token is accepted and the protected path succeeds.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Rejection is enforced server-side (not just client-gated) — proven by a direct WebSocket attempt.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "_(none yet — pending)_",
+      "criteriaDone": 3,
+      "verificationLog": "- 2026-08-03 — `make verify-E3-T19c`: **OK**. No live tailnet; deterministic. The server enforces two\n  layers, both BEFORE any OPEN:\n  1. **Handshake Origin allowlist** (`ws_adapter::handle_secure_conn`) — the WS `Origin` header must be\n     in `WVRELAY_ALLOWED_ORIGINS`, else the connection is dropped right after upgrade (no server HELLO).\n  2. **Origin-bound HMAC token** (`driver::on_ws_message` → `verify_relay_token`) — the first frame must\n     be a HELLO whose token verifies (signature, expiry, ≤15-min lifetime, origin == the handshake\n     origin), else `RelayError::Authentication` closes the connection.\n  - New end-to-end proof `crates/cli/tests/wvrelay_token_rejection.rs` (5 cases) spawns the ACTUAL\n    `wvrelay` binary with security enabled and drives it with a raw `tokio-tungstenite` client:\n    `valid_token_opens_the_protected_path` (AC2 — OPEN→OPEN_OK through the relay);\n    `absent_token`/`wrong_origin_token`/`expired_token`/`disallowed_handshake_origin` each confirm the\n    server closes the connection and NEVER grants OPEN (AC1+AC3). The relay's own structured logs\n    corroborate the reason for each: `relay_authentication_rejected {Malformed|WrongOrigin|Expired}`,\n    `relay_origin_rejected`, `relay_session_authenticated`. Expiry is deterministic via a 1-second TTL\n    + short sleep (bounded, no wall-clock flake).\n  - The token-verification unit boundary (injected clock: wrong-origin, expired, tampered signature,\n    round-trip) stays green via `wasm_vm_slirp` `relay_security` tests.",
       "adversarial": "",
       "file": "tasks/epic-3-civilization/E3-T19c-relay-token-rejection.md",
       "activity": [
@@ -7428,11 +7505,23 @@
           "labels": [
             "fix(e3-t19c): repoint to E3-T16/T17 so token-rejection proof is actionable now"
           ]
+        },
+        {
+          "date": "2026-08-02",
+          "commits": 1,
+          "labels": [
+            "test(relay): E3-T19c — server-side relay token rejection, verified"
+          ]
+        },
+        {
+          "date": "2026-08-03",
+          "commits": 0,
+          "labels": []
         }
       ],
       "firstActivity": "2026-07-31",
-      "lastActivity": "2026-07-31",
-      "commitCount": 1
+      "lastActivity": "2026-08-03",
+      "commitCount": 2
     },
     {
       "id": "E3-T19d",
@@ -8248,7 +8337,12 @@
       "depends_on": [
         "E2"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E3-T22a",
+        "E3-T22b",
+        "E3-T22c",
+        "E3-T22d"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "Real clipboard flow between guest and host: guest programs emitting OSC 52 sequences set the\nhost clipboard; host paste (Ctrl+Shift+V / context menu) injects into the guest tty with\nbracketed-paste framing when the guest has enabled it; vim/tmux clipboard workflows in the\nguest behave like a native terminal.",
@@ -8279,10 +8373,220 @@
       "verificationLog": "(empty)",
       "adversarial": "Treat the guest as hostile. Emit a 10 MB OSC 52 payload — cap must hold, terminal must stay\nresponsive. Emit malformed base64 and unterminated OSC sequences — parser hangs refute.\nPaste hostile content: text containing `\\x1b[201~` (bracket-escape injection — the classic\npaste-injection CVE class) must not terminate bracketing early in a way that lets the\nremainder execute; verify the implementation strips/escapes embedded end-markers. Race:\npaste while the guest rapidly toggles mode 2004. Attempt clipboard read from the guest with\nthe toggle off via both the query form and timing tricks — any leak refutes. Confirm the\npermission-denied path (deny clipboard permission at the browser level) shows the fallback\naffordance and never throws unhandled.",
       "file": "tasks/epic-3-civilization/E3-T22-clipboard-osc52.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 2,
+          "labels": [
+            "chore(tasks): regenerate QUEUE after E3-T22/E3.5-T04 decompositions + status updates",
+            "feat(web): E3-T22a — OSC 52 clipboard-copy handler (decompose E3-T22)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-02",
+      "commitCount": 2
+    },
+    {
+      "id": "E3-T22a",
+      "epic": "3",
+      "epicKey": "3",
+      "title": "OSC 52 copy handler — decode, size cap, permission-failure UX, read-query gated off",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E2-T22"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "A guest program emitting `OSC 52 ; c ; <base64>` sets the host clipboard through the in-page terminal,\nwith a hostile-guest size cap, a permission-failure affordance that never drops silently, and the\nclipboard-READ query form (`52;c;?`) gated behind an explicit toggle that defaults OFF (a guest read\nof the host clipboard is an exfiltration channel).",
+      "criteria": [
+        {
+          "text": "`make verify-E3-T22a` (node --test): `52;c;<base64 of \"hi\">` decodes to `hi` and calls writeClipboard once; a rejected writeClipboard routes to `onCopyBlocked` with the same text.",
+          "checked": true
+        },
+        {
+          "text": "A `>maxEncodedBytes` payload and a malformed-base64 payload are classified invalid — no decode, no clipboard call, no throw.",
+          "checked": true
+        },
+        {
+          "text": "`52;c;?` yields no clipboard read while the toggle is off; with `allowRead` on it calls readClipboard and answers.",
+          "checked": true
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 3,
+      "verificationLog": "- 2026-08-03 — `make verify-E3-T22a`: **OK** (15 node --test cases). `web/osc52.js` is a pure module:\n  `parseOsc52(data)` classifies `copy` / `query` / `invalid` (strict base64, cap enforced BEFORE\n  decode, selection-field validation, UTF-8 multibyte round-trip), and `createOsc52Handler(...)`\n  returns the `registerOscHandler(52, …)` callback — writes the clipboard once on a valid copy, routes\n  a rejected write to `onCopyBlocked` (the preserved-payload confirm affordance, never a silent drop),\n  and gates the read-query (`52;c;?`) behind a LIVE `allowRead` thunk (default off; honored per\n  invocation, proven by flipping the toggle mid-test). A 10 MB payload hits the cap promptly (no giant\n  decode). Wired into `web/terminal.js` (guarded `registerOscHandler`, `navigator.clipboard`, read\n  toggle default-off via `setClipboardRead`, and `onClipboardCopyBlocked` for the host affordance);\n  `node --check` confirms the wiring stays syntactically valid. The in-browser Clipboard-API exercise\n  (real copy asserted via `readText`) is the E3-T22d capstone.",
+      "adversarial": "A 10 MB payload must hit the cap and return promptly (no giant allocation, terminal responsive). A\nmalformed/garbage base64 payload and non-`c` selections must classify without panicking. With the read\ntoggle off, both the query form and any timing trick must yield nothing.",
+      "file": "tasks/epic-3-civilization/E3-T22a-osc52-copy.md",
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 1,
+          "labels": [
+            "feat(web): E3-T22a — OSC 52 clipboard-copy handler (decompose E3-T22)"
+          ]
+        },
+        {
+          "date": "2026-08-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-03",
+      "commitCount": 1
+    },
+    {
+      "id": "E3-T22b",
+      "epic": "3",
+      "epicKey": "3",
+      "title": "Paste pipeline — bracketed-paste framing, newline normalization, chunked injection",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E2-T22"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Host paste injects into the guest tty: when the guest has enabled bracketed paste (DECSET 2004,\ntracked by xterm.js) the text is wrapped in `ESC[200~ … ESC[201~`; newlines normalize to CR; large\npastes chunk against the tty ring so no bytes drop; and an embedded end-marker in hostile pasted\ncontent cannot terminate bracketing early (the paste-injection CVE class).",
+      "criteria": [
+        {
+          "text": "`make verify-E3-T22b` (node --test): CRLF/LF/CR all normalize to CR; bracketed mode wraps exactly once; content containing `ESC[201~` is neutralized (no early bracket termination).",
+          "checked": true
+        },
+        {
+          "text": "A multi-megabyte paste frames + chunks without loss or reorder (byte-identical reassembly).",
+          "checked": true
+        },
+        {
+          "text": "With mode 2004 unset, no bracket markers are added (documented fallback).",
+          "checked": true
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 3,
+      "verificationLog": "- 2026-08-03 — `make verify-E3-T22b`: **OK** (8 node --test cases). `web/paste.js` is a pure module:\n  `framePaste(text, {bracketed})` normalizes CRLF/LF/CR → a single CR, and when `bracketed` wraps in\n  `ESC[200~ … ESC[201~` after neutralizing every embedded `ESC[201~` (paste-injection defense — a\n  hostile `safe␛[201~rm -rf /` stays inert data inside the bracket; only our own end marker survives,\n  and it is last). Mode-2004-unset adds no markers (documented fallback). A 2 MB paste frames\n  byte-identically (stripping the wrapper recovers the normalized input exactly; one `\\n`→`\\r` keeps\n  length). Wired into `web/terminal.js`: `ignoreBracketedPasteMode: true` (xterm never double-wraps),\n  a capture-phase DOM `paste` interceptor that frames via `framePaste` with a ONE-SHOT snapshot of the\n  live `term.modes.bracketedPasteMode` (no torn half-bracket on a mid-paste toggle) and feeds through\n  the existing backpressure/chunk queue, plus a `pasteText()` controller method for the E2E. The\n  in-browser paste E2E (1 MB paste → `cat > file` sha256, zero-commands-until-Enter) is the E3-T22d\n  capstone; the chunk/reorder guarantee is the E2-T22 tty-queue's own proof.",
+      "adversarial": "Paste `\\x1b[201~rm -rf /\\n` outside/inside bracketed mode — the end-marker must not split the frame\nsuch that the tail executes. Race a paste against rapid 2004 toggling — the framing decision uses one\nconsistent snapshot, never a torn half-bracket.",
+      "file": "tasks/epic-3-civilization/E3-T22b-paste-pipeline.md",
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 1,
+          "labels": [
+            "feat(web): E3-T22b — paste pipeline framing (bracketed, newline-norm, injection defense)"
+          ]
+        },
+        {
+          "date": "2026-08-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-03",
+      "commitCount": 1
+    },
+    {
+      "id": "E3-T22c",
+      "epic": "3",
+      "epicKey": "3",
+      "title": "Guest image clipboard conveniences — vim OSC52 yank, tmux set-clipboard",
+      "priority": null,
+      "status": "partially-verified",
+      "depends_on": [
+        "E3-T22a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "The served guest image makes clipboard workflows work out of the box: a vim yank emits OSC 52 (so it\nlands on the host clipboard), and tmux `set -s set-clipboard on` routes copies through OSC 52.",
+      "criteria": [
+        {
+          "text": "In guest vim (image defaults), yanking a line emits an OSC 52 sequence that reaches the host clipboard via the E3-T22a handler.",
+          "checked": false
+        },
+        {
+          "text": "tmux copy-mode yank routes through OSC 52.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 2,
+      "criteriaDone": 0,
+      "verificationLog": "- 2026-08-03 — **helper deterministically verified + wired into the image; the vim/tmux-in-image AC is\n  boot-gated debt.** Delivered the ticket's \"yank-to-OSC52 helper\" branch with NO new packages (busybox\n  base64+printf), so it works in the default image:\n  - `tools/rootfs/osc52-copy` — pipe stdin to the host clipboard via `ESC]52;c;<base64>BEL`; the browser\n    terminal's E3-T22a handler decodes it. `make verify-E3-T22c` (4 node --test cases, green) execs the\n    helper under `/bin/sh` and asserts the exact byte sequence, UTF-8 round-trip, single-line payload\n    (base64 wrap newlines stripped so the OSC can't self-terminate), and empty-input clipboard-clear.\n  - Wired into the rootfs build: `tools/build-rootfs.sh` bind-mount + `tools/rootfs-inner.sh` installs\n    `/usr/local/bin/osc52-copy` and drops `/root/.vimrc` (TextYankPost → osc52-copy, guarded by\n    `executable('osc52-copy')`) + `/root/.tmux.conf` (`set-clipboard on`). The configs are INERT unless\n    vim/tmux are added, so they add config, not image size. Added all three to the rootfs drift-gate\n    manifest. Shell syntax validated.\n  - REMAINING (boot-gated + a product decision): the AC \"in guest vim, yanking a line emits OSC 52\"\n    needs full `vim` (busybox `vi` has no clipboard hooks) — i.e. `apk add vim tmux` (~30 MB), a served\n    image-size call — plus an Alpine-boot proof on a host that can sustain it (browser Alpine reaps here;\n    see [[browser-alpine-boot-reaped-on-mac]]). The helper + configs make that a config-flip once the\n    packages are added.",
+      "adversarial": "",
+      "file": "tasks/epic-3-civilization/E3-T22c-guest-clipboard-conveniences.md",
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 1,
+          "labels": [
+            "feat(rootfs): E3-T22c — osc52-copy guest clipboard helper + vim/tmux wiring"
+          ]
+        },
+        {
+          "date": "2026-08-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-03",
+      "commitCount": 1
+    },
+    {
+      "id": "E3-T22d",
+      "epic": "3",
+      "epicKey": "3",
+      "title": "Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256",
+      "priority": null,
+      "status": "partially-verified",
+      "depends_on": [
+        "E3-T22a",
+        "E3-T22b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "End-to-end browser proof of the clipboard flow against a real guest: a scripted guest `printf` of an\nOSC 52 sequence is asserted via a host clipboard read, and a scripted 1 MB paste into `cat > file` is\nasserted byte-identical by guest sha256.",
+      "criteria": [
+        {
+          "text": "Scripted guest OSC 52 copy asserted via `navigator.clipboard.readText()` (or the confirm flow).",
+          "checked": false
+        },
+        {
+          "text": "1 MB paste into `cat > /root/paste.txt` yields a byte-identical file (sha256), no dropped or reordered chunks.",
+          "checked": false
+        },
+        {
+          "text": "Multi-line paste with bracketed paste on executes zero commands until Enter.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "- 2026-08-03 — **paste E2E GREEN in a real browser; copy + 1 MB skipped as documented environment\n  debt.** `web/tests/e3-t22-clipboard.spec.js` drives a live in-page busybox boot and injects through\n  the real terminal bridge (`window.__term`).\n  - **AC2/AC3 (multi-line paste) — PASSED** (completed run, 3.5m): `window.__term.pasteText(\"alpha\\n\n    bravo\\ncharlie\")` into `cat > /tmp/p` round-trips content-exact through the OSC/paste terminal\n    wiring (newline→CR→NL, framePaste). This is the browser-integration capstone for the paste pipeline.\n  - **AC1 (OSC 52 copy) — `test.skip`** (headless-clipboard limitation, not a defect): headless\n    Chromium never settles `navigator.clipboard.writeText` without a genuine transient user activation,\n    so the handler's onCopied/onCopyBlocked callbacks and a clipboard readback never fire. The copy\n    decode + size-cap + read-gate + onCopied/onCopyBlocked DISPATCH are fully proven by\n    `web/tests/osc52.test.mjs` (15 node cases). Added a symmetric `onClipboardCopied` success hook to\n    `web/terminal.js` (a UI \"copied!\" signal + the test observability path).\n  - **AC3 1 MB byte-exact — `test.skip`**: the ~4-min cold-boot + 1 MB drain reliably gets OS-reaped on\n    this contended machine (the known \"browser boot reaped on mac\" limit). The no-loss/backpressure\n    guarantee is covered by E2-T22's 100 KB bulk-input browser test + `web/tests/paste.test.mjs`.\n  - Boot-harness fixes that made the E2E reach a shell (the page's old `#boot-linux` button was\n    removed): boot via `/?noAutoBoot` + fire-and-forget `wvmDemo.runBusybox()` (awaiting its\n    boot-pipeline promise hung `page.evaluate`), generous prompt timeout, and a CR nudge so PID-1 `sh`\n    draws its `~ #` prompt.\n  - Remaining to close AC1/AC3 fully: run on a headed/unloaded machine or CI with clipboard activation\n    + boot headroom (the spec's skips are one-line re-enables). `make verify-E3-T22d` runs the node\n    cores + the green paste E2E.",
+      "adversarial": "",
+      "file": "tasks/epic-3-civilization/E3-T22d-clipboard-e2e-capstone.md",
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 1,
+          "labels": [
+            "test(web): E3-T22d — clipboard browser E2E (paste GREEN; copy+1MB documented debt)"
+          ]
+        },
+        {
+          "date": "2026-08-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-03",
+      "commitCount": 1
     },
     {
       "id": "E3-T23",
@@ -9424,11 +9728,19 @@
             "E3.5-T04 (pass 2): pull-through layer cache — native cacheStats + dedupe (#152)",
             "E3.5-T04 (pass 1): content-addressed blob store — native no_std core (#151)"
           ]
+        },
+        {
+          "date": "2026-08-02",
+          "commits": 2,
+          "labels": [
+            "feat(oci): E3.5-T04f — content-addressed layer-cache core (decompose E3.5-T04)",
+            "chore(tasks): regenerate QUEUE after E3-T22/E3.5-T04 decompositions + status updates"
+          ]
         }
       ],
       "firstActivity": "2026-07-08",
-      "lastActivity": "2026-07-09",
-      "commitCount": 14
+      "lastActivity": "2026-08-02",
+      "commitCount": 16
     },
     {
       "id": "E3.5-T04a",
@@ -9769,6 +10081,153 @@
       "firstActivity": "2026-07-07",
       "lastActivity": "2026-07-31",
       "commitCount": 6
+    },
+    {
+      "id": "E3.5-T04f",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Content-addressed layer-cache core — put-once, verify-on-read, dedupe, LRU",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E3.5-T01"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "The deterministic, storage-agnostic heart of the browser OCI layer cache: content-addressed\nput-once/get-forever keyed by sha256 digest, deduped across images, VERIFIED-ON-READ (re-hash on\nload; a tampered/corrupt blob is evicted and reported as a miss, never trusted), with LRU eviction of\nUNPINNED blobs under a byte budget and a pin/unpin API.",
+      "criteria": [
+        {
+          "text": "make verify-E3.5-T04f (node --test): a round-trip put/get verifies; a put of bytes that don't hash to the digest is rejected (nothing stored); a second put of a present digest is a dedup no-op; two images sharing a base layer store it once.",
+          "checked": true
+        },
+        {
+          "text": "Verified-on-read: bytes tampered in the backing store are evicted + reported as a miss (never returned/unpacked); orphan meta (blob gone) is cleaned up.",
+          "checked": true
+        },
+        {
+          "text": "LRU eviction removes only the oldest UNPINNED blobs under the byte budget; pinned blobs survive.",
+          "checked": true
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 3,
+      "verificationLog": "- 2026-08-03 — make verify-E3.5-T04f: OK (10 node --test cases). Pure module over injected async KV\n  stores; verified-on-read (sha256 re-hash) evicts tampered/orphan entries as misses; dedupe stores a\n  shared base layer once; LRU eviction respects recency + pins. The IndexedDB backing + importer\n  pull-through (E3.5-T04g) and the Playwright reload-survival/dedupe/tamper proof (E3.5-T04h) are the\n  browser leaves.",
+      "adversarial": "Wrong-bytes-under-a-correct-key and a truncated value are both caught on read (digest re-check) and\nevicted. A single blob over budget is not silently trusted. Covered by the node suite.",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T04f-layer-cache-core.md",
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 1,
+          "labels": [
+            "feat(oci): E3.5-T04f — content-addressed layer-cache core (decompose E3.5-T04)"
+          ]
+        },
+        {
+          "date": "2026-08-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-03",
+      "commitCount": 1
+    },
+    {
+      "id": "E3.5-T04g",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Layer cache IndexedDB backing + importer pull-through + cacheStats surface",
+      "priority": null,
+      "status": "blocked",
+      "depends_on": [
+        "E3.5-T04f",
+        "E3-T05",
+        "E3-T10"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Back the E3.5-T04f cache with real IndexedDB (versioned stores oci-blobs + oci-meta, the E3-T05\nIdbStore pattern), wire the browser OCI importer to check the cache BEFORE any network fetch (hits\nlogged + counted), integrate storage pressure with the E3-T10 quota story, and expose a cacheStats JS\nsurface + boot-panel readout.",
+      "criteria": [
+        {
+          "text": "The importer resolves a needed layer from the cache with zero network when present; a miss fetches, verifies, and populates the cache.",
+          "checked": false
+        },
+        {
+          "text": "Cache size + hit/miss counters surfaced to JS and visible in the demo boot panel.",
+          "checked": false
+        },
+        {
+          "text": "Under a tiny budget, unpinned LRU blobs evict; running an image pins its layers.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T04g-layer-cache-idb-wiring.md",
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 2,
+          "labels": [
+            "chore(oci): mark E3.5-T04g/h blocked — no in-browser registry pull exists yet",
+            "feat(oci): E3.5-T04f — content-addressed layer-cache core (decompose E3.5-T04)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-02",
+      "commitCount": 2
+    },
+    {
+      "id": "E3.5-T04h",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Layer cache browser E2E — reload survival, dedupe, tamper refetch (Playwright)",
+      "priority": null,
+      "status": "blocked",
+      "depends_on": [
+        "E3.5-T04g"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "The browser proof (Playwright, E3-T05 double-boot pattern): pull a small riscv64 image, reload, pull\nagain is 100% cache hits with ZERO blob bytes over the network (request interception proves it); two\nimages sharing base layers store each shared layer once; a blob tampered via IDB is detected on read,\nevicted, and refetched.",
+      "criteria": [
+        {
+          "text": "Pull, reload, re-pull: 0 blob bytes over the network (intercepts prove), manifest re-resolution allowed.",
+          "checked": false
+        },
+        {
+          "text": "Shared base layers stored once (store-size accounting).",
+          "checked": false
+        },
+        {
+          "text": "IDB-tampered blob detected on read, evicted, refetched, never unpacked.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T04h-layer-cache-e2e.md",
+      "activity": [
+        {
+          "date": "2026-08-02",
+          "commits": 2,
+          "labels": [
+            "chore(oci): mark E3.5-T04g/h blocked — no in-browser registry pull exists yet",
+            "feat(oci): E3.5-T04f — content-addressed layer-cache core (decompose E3.5-T04)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-02",
+      "lastActivity": "2026-08-02",
+      "commitCount": 2
     },
     {
       "id": "E3.5-T05",
@@ -10134,7 +10593,7 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-08-01 — channel mechanism proven GREEN in a real browser (busybox); Alpine AC1 in progress\n\n**Implementation** (`web/main.js`, `window.wvmDemo`, commit `19773e6`):\n- `run(cmd)` — canonical name for the serialized fenced RPC (shares `guestExec`: sends\n  `<cmd>; printf '\\n__WVEND_<rid>_%s\\n' \"$?\"`, unique per-call `rid`, END marker binds to the exact\n  id + guest-computed `$?`; promise-chained so back-to-back callers can't interleave).\n- `hasContainerRuntime()` — real in-guest probe (`test -x /usr/local/bin/wvrun && test -f\n  /opt/containers/index.json`), fail-closed (false when absent). NOT the load-time asset guess.\n- `stream(cmd, onLine) → {send, stop}` — long-lived follow/interactive channel for `logs -f` / `exec\n  -it`: taps the real console, splits on newlines (ANSI/CR stripped), swallows the command echo.\n  **Re-entrancy fix:** `send()`/`stop()` defer their `ui.typeBytes` via `setTimeout(0)` — a consumer\n  typically calls `stop()` from inside `onLine` (which runs in the console-emit loop), and driving the\n  machine synchronously from there trips the WasmMachine re-entrancy guard and drops the bytes\n  (exactly the \"no re-entrant call into WasmMachine\" concern in the adversarial section). First test\n  run caught this (Ctrl-C dropped, console error); the fix made it green.\n\n**Playwright proof** (`web/tests/e3-t05e-guest-ui-channel.spec.js`), real interpreted RISC-V guest,\nreal console byte stream (`onConsole`) + real input bridge (`sendInput`) — markers are guest-computed\n(`$((6*7))→42`), so a host-side literal echo cannot satisfy them.\n\nTest 1 — **fenced RPC, serialization, streaming & fail-closed runtime (busybox)** — **PASS (1.3m,\nRC=0)**, covering the runtime-agnostic ACs on the fast/reliable busybox userland:\n- AC (run): `run(\"echo RPC_$((6*7))\")` → stdout `RPC_42`, exit 0 (guest-computed).\n- AC5 (fail-closed): `hasContainerRuntime()` === **false** on the busybox build (real in-guest probe).\n- AC2 (fencing): back-to-back `run(\"echo A_$((1+1))\")` / `run(\"echo B_$((2+2))\")` → A→2, B→4, no\n  cross-contamination.\n- AC4 (non-zero exit): `run(\"false\")` → exit **1**, not swallowed.\n- Adversarial marker-spoof: `printf '__WVEND_deadbeef_0\\n'; echo REAL_$((3+4))` → the fake\n  wrong-id marker does NOT end the RPC; stdout `REAL_7`, exit 0.\n- AC3 (streaming): `stream()` of a live 8-iteration emitter delivered successive `STREAM_0,1,2…` in\n  order; `stop()` ended it and a fresh `run(\"echo ALIVE_$((5+5))\")` → `ALIVE_10` proved the guest\n  survived (stop() did not kill the shell). Zero console errors after the re-entrancy fix.\n\nTest 2 — **hasContainerRuntime() true + `wvrun ps` (Alpine)** — the two container-runtime-specific\nassertions (AC1). Uses the SAME bridge code (same `run`/`hasContainerRuntime` proven green above),\nagainst the chunked Alpine guest (which ships wvrun + baked bundles). **Not yet green in-browser on\nthis host:** the interpreted Alpine boot-to-login is ~40 min in the browser, and this dev machine\ncould not sustain it — four separate runs were reaped by the OS mid-boot (~15-25 min in, before\n`login:`; memory pressure, aggravated by ~20 orphaned `@playwright/mcp` node processes). This is an\nenvironment limit, not a code defect: the busybox test proves the identical bridge code end-to-end in\na real browser, and `crates/cli/tests/boot_bake_gate.rs` proves wvrun + the baked bundles run\nin-guest (4/4). AC1's remaining gap is purely \"the browser Alpine guest reaches login and the same\nbridge returns true there,\" which needs a host that can hold the ~40-min boot (e.g. a build box, or\nrunning with local `assetBase` chunks + the orphan MCP procs cleared).\n\n**Status: implemented; channel mechanism verified (busybox, green); AC1 (Alpine-in-browser) pending a\nhost that can sustain the boot.** Kept `pending` rather than flipping to `verified` — the charter\nrequires AC1's own recorded green evidence, which this host cannot currently produce.",
+      "verificationLog": "### 2026-08-01 — channel mechanism proven GREEN in a real browser (busybox); Alpine AC1 in progress\n\n**Implementation** (`web/main.js`, `window.wvmDemo`, commit `19773e6`):\n- `run(cmd)` — canonical name for the serialized fenced RPC (shares `guestExec`: sends\n  `<cmd>; printf '\\n__WVEND_<rid>_%s\\n' \"$?\"`, unique per-call `rid`, END marker binds to the exact\n  id + guest-computed `$?`; promise-chained so back-to-back callers can't interleave).\n- `hasContainerRuntime()` — real in-guest probe (`test -x /usr/local/bin/wvrun && test -f\n  /opt/containers/index.json`), fail-closed (false when absent). NOT the load-time asset guess.\n- `stream(cmd, onLine) → {send, stop}` — long-lived follow/interactive channel for `logs -f` / `exec\n  -it`: taps the real console, splits on newlines (ANSI/CR stripped), swallows the command echo.\n  **Re-entrancy fix:** `send()`/`stop()` defer their `ui.typeBytes` via `setTimeout(0)` — a consumer\n  typically calls `stop()` from inside `onLine` (which runs in the console-emit loop), and driving the\n  machine synchronously from there trips the WasmMachine re-entrancy guard and drops the bytes\n  (exactly the \"no re-entrant call into WasmMachine\" concern in the adversarial section). First test\n  run caught this (Ctrl-C dropped, console error); the fix made it green.\n\n**Playwright proof** (`web/tests/e3-t05e-guest-ui-channel.spec.js`), real interpreted RISC-V guest,\nreal console byte stream (`onConsole`) + real input bridge (`sendInput`) — markers are guest-computed\n(`$((6*7))→42`), so a host-side literal echo cannot satisfy them.\n\nTest 1 — **fenced RPC, serialization, streaming & fail-closed runtime (busybox)** — **PASS (1.3m,\nRC=0)**, covering the runtime-agnostic ACs on the fast/reliable busybox userland:\n- AC (run): `run(\"echo RPC_$((6*7))\")` → stdout `RPC_42`, exit 0 (guest-computed).\n- AC5 (fail-closed): `hasContainerRuntime()` === **false** on the busybox build (real in-guest probe).\n- AC2 (fencing): back-to-back `run(\"echo A_$((1+1))\")` / `run(\"echo B_$((2+2))\")` → A→2, B→4, no\n  cross-contamination.\n- AC4 (non-zero exit): `run(\"false\")` → exit **1**, not swallowed.\n- Adversarial marker-spoof: `printf '__WVEND_deadbeef_0\\n'; echo REAL_$((3+4))` → the fake\n  wrong-id marker does NOT end the RPC; stdout `REAL_7`, exit 0.\n- AC3 (streaming): `stream()` of a live 8-iteration emitter delivered successive `STREAM_0,1,2…` in\n  order; `stop()` ended it and a fresh `run(\"echo ALIVE_$((5+5))\")` → `ALIVE_10` proved the guest\n  survived (stop() did not kill the shell). Zero console errors after the re-entrancy fix.\n\nTest 2 — **hasContainerRuntime() true + `wvrun ps` (Alpine)** — the two container-runtime-specific\nassertions (AC1). Uses the SAME bridge code (same `run`/`hasContainerRuntime` proven green above),\nagainst the chunked Alpine guest (which ships wvrun + baked bundles). **Not yet green in-browser on\nthis host:** the interpreted Alpine boot-to-login is ~40 min in the browser, and this dev machine\ncould not sustain it — four separate runs were reaped by the OS mid-boot (~15-25 min in, before\n`login:`; memory pressure, aggravated by ~20 orphaned `@playwright/mcp` node processes). This is an\nenvironment limit, not a code defect: the busybox test proves the identical bridge code end-to-end in\na real browser, and `crates/cli/tests/boot_bake_gate.rs` proves wvrun + the baked bundles run\nin-guest (4/4). AC1's remaining gap is purely \"the browser Alpine guest reaches login and the same\nbridge returns true there,\" which needs a host that can hold the ~40-min boot (e.g. a build box, or\nrunning with local `assetBase` chunks + the orphan MCP procs cleared).\n\n**Status: implemented; channel mechanism verified (busybox, green); AC1 (Alpine-in-browser) pending a\nhost that can sustain the boot.** Kept `pending` rather than flipping to `verified` — the charter\nrequires AC1's own recorded green evidence, which this host cannot currently produce.\n\n### 2026-08-03 — fenced-RPC parser extracted + hardened with deterministic node tests\n\nThe fence/parse logic `main.js`'s `guestExec` implements inline is now also a pure, node-testable\nmodule `web/guest-rpc.js` (`stripConsole`, `endMarkerRegex`, `formatRpcCommand`, `createFencedRpc`).\n`node --test web/tests/guest-rpc.test.mjs` (10 cases, green) proves the ADVERSARIAL contract\ndeterministically — previously only browser-covered:\n- **marker-spoof**: a different rid's `__WVEND_other_0` printed as command output does NOT settle this\n  RPC; only the exact-id marker does.\n- the echoed `printf '…%s\\n'` (ends in `%s`, no digit) can never satisfy the id's marker (`(\\d+)`).\n- marker split across feeds still matches (byte-stream robust, not line-count bounded); a 100k-line\n  burst before the marker loses nothing.\n- ANSI/CR stripped before matching; regex-special chars in an rid are escaped (no wildcard match);\n  echoed command line stripped from stdout; non-zero exit surfaced.\nThe main.js wiring adopting this module + the Alpine boot bridge (`bootAlpine`) + Playwright remain the\nopen ACs. Run: `cd web && node --test tests/guest-rpc.test.mjs`.",
       "adversarial": "Marker-spoof: a command that PRINTS a fake `__WVEND_...` line must not prematurely end another RPC (ids\nare per-call random; the parser binds to the exact issued id). Backpressure: a command emitting a large\nburst does not drop the END marker (the parser is byte-stream robust, not line-count bounded). Re-entrancy:\nissuing an RPC from inside an `onConsole` callback respects the existing `setTimeout(0)` guard (no\n\"re-entrant call into WasmMachine\"). Guest reboot mid-RPC → the pending RPC rejects with a typed error,\nthe queue drains, no permanent hang.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05e-guest-ui-rpc-bridge.md",
       "activity": [
@@ -10145,11 +10604,23 @@
             "docs(E3.5-T05e): record channel-mechanism proof (busybox green); AC1 env-blocked",
             "feat(web): E3.5-T05e structured guest⇄UI channel (run/stream/hasContainerRuntime)"
           ]
+        },
+        {
+          "date": "2026-08-02",
+          "commits": 1,
+          "labels": [
+            "test(oci): E3.5-T05e — extract + deterministically test the fenced guest⇄UI RPC parser"
+          ]
+        },
+        {
+          "date": "2026-08-03",
+          "commits": 0,
+          "labels": []
         }
       ],
       "firstActivity": "2026-08-01",
-      "lastActivity": "2026-08-01",
-      "commitCount": 2
+      "lastActivity": "2026-08-03",
+      "commitCount": 3
     },
     {
       "id": "E3.5-T05f",
@@ -11975,7 +12446,7 @@
       "epicKey": "4",
       "title": "Profiling infrastructure — hot-PC histograms and per-device time accounting",
       "priority": 401,
-      "status": "pending",
+      "status": "partially-verified",
       "depends_on": [
         "E3"
       ],
@@ -12003,13 +12474,24 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "- 2026-08-04 — **Design + phased plan (opens Epic 4's measurement backbone).** Precedents to mirror:\n  `crates/core/src/diag/irqstats.rs` (always-on no_std fixed-array counters + `dump()`), `trace.rs` (the\n  monomorphize-to-nothing zero-cost hook), and E2-T25's existing per-device MMIO hit accounting\n  (`Window.hits` mmio.rs:90, `SystemBus::device_hits()` mmio.rs:165, cold `load_device`/`store_device`\n  mmio.rs:187, `BootProfiler::report` cli/boot.rs:654). Gap: no monotonic host-time trait exists\n  (`WallClock`/`Date.now()` is epoch, not `Instant`/`performance.now()`), so a new `HostTimer` trait is\n  needed.\n  - **Sample site:** the retire point in `Machine::run_traced` (lib.rs:1467-1479), beside\n    `irqstats.on_retire()`; sample `hart.regs.pc` BEFORE `step_traced`. Downsample with a\n    jittered/prime stride (~1021 + small LCG jitter) so no fixed loop period hides in a blind spot\n    (adversarial check 3). Physical PC via an on-sample `mmu::translate` (affordable at 1-in-~1000).\n  - **Time accounting — instrument only COLD paths, attribute the hot path by subtraction:** device time\n    wraps the cold `load_device`/`store_device`; MMU-walk time wraps only the cold `walk_leaf` (TLB miss),\n    never `translate_cached`; total run wall-time measured once per `run_traced`; CPU-interp = total −\n    (device + walk). So the per-instruction hot loop reads the clock ZERO times → achievable <10% enabled /\n    0% disabled (criterion 3). Honest limitation to document: CPU time is by subtraction, accuracy bounded\n    by the single total-wall measurement.\n  - **Histogram:** 64-byte-region buckets (`pc>>6`), a fixed 8192-slot direct-mapped tag table\n    (`region*GOLDEN64 >> (64-log2)`), evict-low-count-else-count-`collisions` so aliasing is visible;\n    ~96 KiB bounded regardless of guest size; `top(k)` for the ranked report.\n  - **Surfaces:** `--profile`/`--symbols`/`--profile-json` CLI (native `MonotonicTimer(Instant)`) +\n    `getProfile()` wasm (`performance.now()`), mirroring `getStats`/`JsWallClock`.\n  - **Feature-gated `profiling`** (like `trace`): hooks `#[cfg(feature=\"profiling\")]`; when on-but-runtime-\n    off, cost is one bool branch (like `storm_detect`); when off, compiles to nothing (`check-zero-cost.sh`).\n  - **Phases (each independently testable/committable):** (1) pure core logic — histogram/clock/report +\n    native unit tests; (2) sample hook + synthetic-64-byte-loop integration test; (3) per-subsystem time\n    accounting (`FixedTimer` deterministic tests + device-hammer test); (4) native CLI surface + committed\n    native-Alpine example report + overhead A/B; (5) wasm `getProfile()`; (6) browser evidence (Alpine\n    System.map top-5 symbols + native-vs-wasm diff) — the OS-reaping Alpine-boot leg, deferred to the\n    nightly/`dev` lane (see [[browser-alpine-boot-reaped-on-mac]]).\n- 2026-08-04 — **Phase 1 (pure core) landed (commit `ce9da4b`).** `crates/core/src/prof/` — `HotHistogram`\n  (8192-slot direct-mapped, Fibonacci-hashed, weak-incumbent eviction + visible `collisions`, ~128 KiB\n  bound), `HostTimer` trait + `FixedTimer` mock (documented why it's separate from the epoch `WallClock`),\n  `Subsystem`/`HotRegion`/`ProfReport` (`to_text`/hand-rolled `to_json`), and the `ProfStats` aggregate.\n  12 native tests; no_std wasm32 clean; `pub mod prof;` added. Not yet wired to `Machine`.\n- 2026-08-04 — **Phase 2 (sample hook) landed (commit `0781a19`).** `ProfStats` + a runtime `profiling`\n  flag wired onto `Machine`; the sample fires at the `run_traced` retire site, gated OFF by default (one\n  not-taken branch/retire, `storm_detect` shape), sampling ~1-in-1024 at a jittered prime stride\n  (`1021 + LCG jitter`, deterministic → native==wasm). Records the guest VIRTUAL PC (System.map- and\n  JIT-block-relevant; on-sample physical translation deemed unnecessary — a documented deviation from the\n  plan's \"physical PC\"). `set_profiling`/`prof_report` accessors. Integration test `prof_sampling.rs` (3):\n  a tight two-instruction loop concentrates ≥80% of samples in its 64-byte region, zero collisions;\n  inert-until-armed; deterministic across identical runs. `determinism`/`cpu_resume` unchanged (gated-off\n  hook is a hot-path no-op).\n- 2026-08-04 — **Phase 3 (per-subsystem host-time accounting) landed (commit `efbe3fb`).** The `HostTimer`\n  is injected onto `Machine` (`set_host_timer`) and threaded to `SystemBus`; time is read ONLY on cold\n  paths — the cold `load_device`/`store_device` MMIO dispatch (bracketing just `dev.read/write`, timer +\n  accumulator passed as extra params so the split-borrow that keeps `ram` alive is preserved; args built\n  only in the cold `Err(Access)` arm so pure-RAM traffic pays nothing), the cold `walk_leaf` TLB-miss\n  walk (split into a timing wrapper + `walk_leaf_inner`; hot `translate_cached` untouched), and once per\n  run (`run_traced` split into a timing wrapper + `run_traced_inner`). CPU-interp time is DERIVED as\n  `total − (device + walk)` at report time (idempotent), so the per-instruction hot path reads the clock\n  ZERO extra times. `Subsystem::for_device_base` maps a `Window.start` to its subsystem. New test\n  `prof_time_accounting.rs` (2, deterministic timer): device ns attributed to the RIGHT subsystem +\n  CpuInterp-by-subtraction non-negative + report idempotent; profiling-off reads no clock (all ns 0).\n  **Deferred (documented in-file):** the MMU-walk ns assertion (a full Sv39/S-mode/TLB-miss guest is\n  disproportionate for a unit test; the identical timer-bracket is proven by the device test). Full core\n  suite green (lib 147, prof integration 5, all binaries); wasm32 + zicsr-stub + clippy `-D warnings`\n  clean (also cleared pre-existing test-clippy debt on the branch, commit `9622051`). Honest limitation:\n  CPU-interp accuracy is bounded by the single total-span measurement.\n- 2026-08-04 — **Phase 4 (native CLI surface) landed (commit `29457d9`).** `--profile` / `--symbols\n  <System.map>` / `--profile-json` on the boot CLI; `MonotonicTimer` (`Instant`-based `HostTimer`); a\n  System.map parser + nearest-preceding symbolizer (2 unit tests); the hot-PC + subsystem-time report\n  printed at first-boot exit. **Validated end-to-end on a real native busybox boot** (evidence\n  `evidence/e4-t01/native-busybox-profile.txt`): 36,874 PC samples at kernel VIRTUAL PCs\n  (`0xffffffff80…` — directly System.map-symbolizable, vindicating the phase-2 virtual-PC choice);\n  CPU-by-subtraction exact (`cpu_interp = total − mmu_walk − plic`); MMU-walk time separated (352 ms /\n  345 k walks); collisions 0.6%; `PROFILE_HOTPC_JSON` emitted. **Overhead A/B** (20 M-instr boot, debug):\n  OFF ~51.2 s vs ON ~51.5 s — within noise (~0.5%), far under the 10% ceiling (**AC3**), since timing is\n  cold-path-only.\n- 2026-08-04 — **Phase 5 (wasm surface) landed (commit `67dfd93`).** `JsHostTimer` (`performance.now()`,\n  Window- or Worker-scoped); `WasmLinux::setProfiling(on)` (arms + injects the timer) and `getProfile()`\n  returning the same `{ totalNs, sampleCount, walkCount, collisions, regions, subsystems }` shape as the\n  native report / `getStats` (pc as hex string). web-sys `Performance` feature enabled. Compiles clean for\n  wasm32 (clippy `-D warnings`).\n- **The full profiler is implemented across phases 1–5** (engine + native CLI + wasm surface), native-\n  verified end-to-end. **Verification debt (phase 6):** the in-browser evidence — an Alpine boot's top-5\n  kernel symbols via `getProfile` + a native-vs-wasm report diff (**AC1 Alpine-symbol leg + AC4**) — is\n  the OS-reaping Alpine-browser-boot path (see [[browser-alpine-boot-reaped-on-mac]]); run it on `dev`/\n  nightly. Everything provable headlessly is done and green (native busybox profile is the committed\n  example report standing in for the Alpine one until the browser leg runs).",
       "adversarial": "Refute by demonstrating the profiler lies. Attack angles: (1) run a synthetic guest binary\nthat spends 90% of retired instructions in one known 64-byte loop — if the histogram does\nnot attribute ≥80% of samples to that region, refuted; (2) run a workload that hammers one\ndevice (dd to virtio-blk) and confirm that device dominates device-time accounting — if\nUART or CPU absorbs the time, refuted; (3) sampling bias: construct a loop whose length is\na multiple of the sampling stride N and show whether aliasing hides hot PCs (stride must be\nrandomized or prime-adjusted; systematic blind spots are a refutation); (4) enable profiling\nin the browser build and diff the report against the native build for the same deterministic\nguest — gross disagreement (>2x on any top-5 region) is a refutation.",
       "file": "tasks/epic-4-acceleration/E4-T01-hot-pc-histogram-and-device-time-profiling.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-04",
+          "commits": 9,
+          "labels": [
+            "docs(prof): E4-T01 partially-verified — phases 1-5 complete, phase-6 browser evidence is debt",
+            "docs(prof): E4-T01 log — phase 3 (time accounting) landed; engine complete",
+            "docs(prof): E4-T01 log — phases 1 & 2 landed",
+            "docs(prof): E4-T01 design + phased plan; phase 1 (pure core) landed"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-04",
+      "lastActivity": "2026-08-04",
+      "commitCount": 9
     },
     {
       "id": "E4-T02",
