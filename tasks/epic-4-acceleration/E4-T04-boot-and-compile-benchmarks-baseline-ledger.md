@@ -59,6 +59,7 @@ _Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
 - **In-guest `gcc -O2` bench** (phases 2-3) — needs `apk.static`/`mke2fs` Linux tooling absent on macOS; build the ~300MB gcc overlay + run the compile on `dev`. Plus **browser-engine baselines** (reaping-deferred). Boot bench + ledger are native-verified.
 
 ## Verification log
+- 2026-08-05 — **gcc-bench TOOLING cleared on `dev` (the Linux-tooling debt); the NUMBER is still compiling.** `bench/mk-gcc-image.sh` builds a real pinned Alpine riscv64 toolchain overlay (gcc 13.2.1_git20240309-r1 / musl-dev 1.2.5-r3 / binutils 2.42-r1, 130 MiB, sha256 `167ff7a9…`, gitignored) via `apk.static`; vendored miniz 3.0.2 + PROVENANCE + `gcc-MANIFEST.txt`; `tools/bench.py gcc` runs `gcc -O2 -c miniz.c`, asserts nonzero `.o` + captures the `-O2` command line + `.o` sha256. **No number yet (no fabrication):** the `-O2` compile runs the interpreter at ~1-2 MIPS (gcc's memory/branch-heavy code hammers the translate + device-sync path) → 80+ min on dev's 2 cores; left running (`ssh dev 'cat /tmp/gcc-1run.json'`). Remaining debt: the gcc guest-seconds + a ledger entry once it finishes (it will — cc1 runs correctly, no OOM). commit `710089a`.
 - 2026-08-05 — **Phases 1/4/5 landed + validated (commits `4d19194`, `50343e3`); status
   partially-verified.** Boot wall-clock bench, the hash-chained ledger, and the Level-3 baseline doc are
   done and native-verified; the in-guest gcc bench (phases 2-3) is honest debt.

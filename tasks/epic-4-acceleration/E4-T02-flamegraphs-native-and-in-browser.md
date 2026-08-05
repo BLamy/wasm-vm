@@ -59,6 +59,7 @@ _Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
 - **CLEARED on `dev` (2026-08-05):** a live Chrome DevTools performance profile of the wasm build booting in-browser was captured on `dev` (the mac reaps this boot) — `evidence/e4-t02/browser-boot.cpuprofile.gz` (3 MB uncompressed). The `-g`-preserved name section yields demangled `wasm_vm_core::*` frames. Native flamegraph pipeline + this browser capture together satisfy the ticket; no debt remains.
 
 ## Verification log
+- 2026-08-05 — **Browser CAPTURE cleared on `dev` (the reaping leg).** A real V8 CPU profile of a LIVE in-browser chunked-Alpine boot in headless chromium (373k samples, `evidence/e4-t02/browser-boot.cpuprofile.gz` + `browser-capture.md`): **89.3% host self-time in wasm, top-3 wasm funcs ≈47%, the `performance.now()` wasm-bindgen boundary = 7.1%** (the browser-side echo of the native device-sync cost — consistent with the native 47% finding). Remaining debt: the served RELEASE wasm has NO name section, so frames are `wasm-function[N]`; DEMANGLED browser frames need the `-g` (`wasm-opt -g`) bundle built with wasm-pack — dev has no wasm32 toolchain. The capture PATH is proven; only the symbolized-frames variant remains. commit `710089a`.
 - 2026-08-05 — **Native flamegraph pipeline done + a real capture landed (commits `19c07e6`, `6d26fa7`);
   status partially-verified (browser CAPTURE reaping-deferred).** Profiler: `samply` (no-sudo OS sampler
   on macOS; exports a committable/re-openable Firefox-Profiler JSON — chosen over cargo-flamegraph which

@@ -61,6 +61,7 @@ _Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
 - **Phase-6 browser evidence** (AC1 Alpine-symbol leg + AC4 native-vs-wasm profile diff) — the Alpine-in-browser boot OS-reaps on this mac. Run on `dev` via `getProfile()` against a live Alpine boot; diff native vs wasm reports.
 
 ## Verification log
+- 2026-08-05 — **Browser profiling INFRA ready on `dev`; the live capture is still debt.** Wired `web/loader.js` `?profile=1` (arms `setProfiling` from instruction 0 + exposes `window.__machine`), `web/main.js` boot hooks, `tools/e4-browser-profile.mjs` (pulls `getProfile()` post-login); the symbolize pipeline is verified against `System.map` (native hot PCs → memset / raid6 / memmap_init). Fixed a real driver bug (waiting on xterm's `.xterm-rows` viewport misses scrolled-off boot lines → now polls `window.__consoleBytes`). BUT the in-browser boot didn't reach `login:` in the window (~35 min uncontended, and it was sharing the 2-core box with the gcc compile) → `getProfile` NOT captured. Remaining debt: a SOLO in-browser boot on dev to grab the report + native-vs-wasm diff. commit `710089a`.
 - 2026-08-04 — **Design + phased plan (opens Epic 4's measurement backbone).** Precedents to mirror:
   `crates/core/src/diag/irqstats.rs` (always-on no_std fixed-array counters + `dump()`), `trace.rs` (the
   monomorphize-to-nothing zero-cost hook), and E2-T25's existing per-device MMIO hit accounting
