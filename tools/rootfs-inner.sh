@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # E2-T18 in-container build: cross-install + configure the Alpine riscv64 root and pack it into
 # an ext4 image. Runs inside tools/rootfs.Dockerfile (host-arch Alpine); env from build-rootfs.sh:
-#   MIRROR FS_UUID SOURCE_DATE_EPOCH IMG_SIZE PKGS ALPINE_BRANCH
+#   MAIN_REPO COMMUNITY_REPO FS_UUID SOURCE_DATE_EPOCH IMG_SIZE PKGS EXTRA_PKGS
+#   LOCKED_INSTALL ALPINE_BRANCH
 set -euo pipefail
 ROOT=/rootfs
 mkdir -p "$ROOT"
@@ -12,8 +13,27 @@ mkdir -p "$ROOT"
 # 60ac2099, which lives under /usr/share/apk/keys/riscv64 (NOT the default /etc/apk/keys), so
 # without this apk reports "UNTRUSTED signature". We do NOT use --allow-untrusted (critic #1):
 # a MITM/mirror-compromise now fails closed.
-apk.static --arch riscv64 -X "$MIRROR" --keys-dir /usr/share/apk/keys/riscv64 -U \
-  --root "$ROOT" --initdb --no-scripts add $PKGS
+if [ "${LOCKED_INSTALL:-0}" = 1 ] && [ -s /out/MANIFEST.txt ]; then
+  # Convert `name-version-rN` to apk's exact constraint `name=version-rN`. Package names may
+  # contain dashes, so split only at the final version beginning with a digit.
+  mapfile -t INSTALL_PKGS < <(sed -E 's/-([0-9][^-]*-r[0-9]+)$/=\1/' /out/MANIFEST.txt)
+else
+  read -r -a INSTALL_PKGS <<< "$PKGS"
+fi
+apk.static --arch riscv64 -X "$MAIN_REPO" -X "$COMMUNITY_REPO" \
+  --keys-dir /usr/share/apk/keys/riscv64 -U \
+  --root "$ROOT" --initdb --no-scripts add "${INSTALL_PKGS[@]}"
+
+# Churn attacks add one package only AFTER recreating the exact locked base. This preserves the
+# base package extraction/directory-entry order instead of asking apk to resolve one combined world
+# where a new dependency can be interleaved ahead of dozens of existing packages and cascade the
+# ext4 layout. It is also the honest CDN update model: stable base plus an explicit addition.
+if [ -n "${EXTRA_PKGS:-}" ]; then
+  read -r -a EXTRA_INSTALL_PKGS <<< "$EXTRA_PKGS"
+  apk.static --arch riscv64 -X "$MAIN_REPO" -X "$COMMUNITY_REPO" \
+    --keys-dir /usr/share/apk/keys/riscv64 -U \
+    --root "$ROOT" --no-scripts add "${EXTRA_INSTALL_PKGS[@]}"
+fi
 
 # Record exactly what landed → drift lock (host diffs this against the committed manifest).
 apk.static --root "$ROOT" info -v | sort > /out/MANIFEST.new
@@ -80,10 +100,52 @@ fi
 # 2e. Hostname.
 echo wasm-vm > "$ROOT/etc/hostname"
 
-# 2e2. NO networking. The E2-T12 kernel is built without CONFIG_NET (no network stack until a
-# later epic), so the `networking` service is not linked into any runlevel below — running it
-# on a netless kernel is pointless work that only slows the boot and litters the log with
-# `net.* unknown key` sysctl errors. (A NIC + networking arrives with the network epic.)
+# 2e1. E3-T22c: clipboard conveniences. `osc52-copy` pipes stdin to the HOST clipboard via an OSC 52
+# sequence (decoded by the browser terminal's E3-T22a handler) — no host round trip, busybox-only, so
+# it works in the default image with no extra packages. The vim + tmux snippets route yanks through it;
+# they are inert unless those packages are later added to the image (a separate size decision), so they
+# add config only, not bloat. root's HOME is /root.
+install -Dm755 /osc52-copy "$ROOT/usr/local/bin/osc52-copy"
+# vim: send every yank to the host clipboard via osc52-copy. Loaded only if a `vim` is present; busybox
+# `vi` ignores it. Guarded so a vim without the autocmd still starts cleanly.
+cat > "$ROOT/root/.vimrc" <<'VIMRC'
+" E3-T22c: mirror vim yanks to the host clipboard over OSC 52 (via /usr/local/bin/osc52-copy).
+if executable('osc52-copy')
+  augroup Osc52Yank
+    autocmd!
+    autocmd TextYankPost * if v:event.operator ==# 'y'
+      \ | call system('osc52-copy', join(v:event.regcontents, "\n"))
+      \ | endif
+  augroup END
+endif
+VIMRC
+# tmux: route copy-mode selections to the host clipboard; `set-clipboard on` makes tmux emit OSC 52
+# itself, and the terminal-features line tells tmux the outer terminal understands it. Inert without tmux.
+cat > "$ROOT/root/.tmux.conf" <<'TMUXCONF'
+# E3-T22c: host clipboard integration over OSC 52.
+set -s set-clipboard on
+set -as terminal-features ',*:clipboard'
+TMUXCONF
+
+# The production guest uses HTTPS through either the T17 Tailscale provider or T16 relay fallback.
+# Keep both official repositories explicit; apk signatures stay mandatory and TLS remains opaque.
+cat > "$ROOT/etc/apk/repositories" <<REPOSITORIES
+$MAIN_REPO
+$COMMUNITY_REPO
+REPOSITORIES
+
+# 2e2. E3-T14 networking. The current kernel has CONFIG_NET + CONFIG_VIRTIO_NET and the image's
+# alpine-base dependency includes ifupdown-ng. Bring the slirp-backed eth0 up through DHCP during
+# the default runlevel; the guest receives 10.0.2.15/24, gateway 10.0.2.2, and DNS 10.0.2.3. Keeping
+# this in the image (rather than typing `ip addr` in demos) is what makes networking an OS capability.
+mkdir -p "$ROOT/etc/network"
+cat > "$ROOT/etc/network/interfaces" <<'INTERFACES'
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+INTERFACES
 
 # 2f. OpenRC runlevels — symlink the services a headless serial boot needs, tolerantly (only if
 # the init script exists, so a package-set change never breaks the build). /dev is auto-mounted
@@ -99,7 +161,45 @@ link_svc() { # $1=runlevel $2=service
 }
 for s in devfs dmesg mdev sysfs hwdrivers; do link_svc sysinit "$s"; done
 for s in modules hwclock swap hostname bootmisc syslog seedrng; do link_svc boot "$s"; done
+link_svc default networking
 for s in killprocs savecache mount-ro; do link_svc shutdown "$s"; done
+
+# 2g. E3-T21b2c WVFT agent. Every path is fixed at image-build time. The guest service opens two
+# outbound connections to the VM-private slirp endpoint; it does not listen on any interface.
+install -Dm755 /wvft-agent-riscv64 "$ROOT/usr/libexec/wasm-vm/wvft-agent"
+install -Dm644 /file-transfer.conf "$ROOT/etc/wasm-vm/file-transfer.conf"
+install -Dm755 /wasm-vm-file-agent.initd "$ROOT/etc/init.d/wasm-vm-file-agent"
+install -Dm755 /vm-download "$ROOT/usr/bin/vm-download"
+install -d -m0750 "$ROOT/var/lib/wasm-vm/transfer"
+install -d -m0750 "$ROOT/var/lib/wasm-vm/transfer/inbox"
+install -d -m0750 "$ROOT/var/lib/wasm-vm/transfer/outbox"
+link_svc default wasm-vm-file-agent
+
+# APK's package lock cannot cover these custom inputs. Record bytes, modes, and deterministic
+# directory paths so the host-side drift gate can reject an unreviewed image capability change.
+{
+  for path in \
+    /etc/init.d/wasm-vm-file-agent \
+    /etc/wasm-vm/file-transfer.conf \
+    /usr/libexec/wasm-vm/wvft-agent \
+    /usr/bin/vm-download \
+    /usr/local/bin/osc52-copy \
+    /root/.vimrc \
+    /root/.tmux.conf
+  do
+    mode=$(stat -c '%a' "$ROOT$path")
+    digest=$(sha256sum "$ROOT$path" | awk '{print $1}')
+    printf '%s 0%s %s\n' "$digest" "$mode" "$path"
+  done
+  for path in \
+    /var/lib/wasm-vm/transfer \
+    /var/lib/wasm-vm/transfer/inbox \
+    /var/lib/wasm-vm/transfer/outbox
+  do
+    mode=$(stat -c '%a' "$ROOT$path")
+    printf '%s 0%s %s\n' directory "$mode" "$path"
+  done
+} | sort -k3,3 > /out/FILE-MANIFEST.new
 
 # 3. Pack into a reproducible ext4 (fixed UUID; mke2fs -d needs no privileges/loop mounts).
 # `-O ^metadata_csum`: disable ext4 metadata checksums. mke2fs 1.47 enables them by default,
@@ -131,10 +231,47 @@ fi
 if [ -f /wvrun.sh ]; then
   install -Dm755 /wvrun.sh "$ROOT/usr/local/bin/wvrun"
 fi
+# E3.5-T03 (AC6): the static seccomp helper wvrun execs the container through.
+if [ -f /wvseccomp-riscv64 ]; then
+  install -Dm755 /wvseccomp-riscv64 "$ROOT/usr/local/bin/wvseccomp"
+fi
+# E3.5-T05d: bake pre-built, digest-verified OCI bundles into /opt/containers/<name> so
+# `wvrun /opt/containers/<name>` runs a REAL container in the browser with ZERO network. Each bundle
+# is rootfs/ + config/ (from tools/build-container-bundle.sh); index.json is the Docker-tab catalog.
+if [ -d /container-bundles ]; then
+  install -d "$ROOT/opt/containers"
+  for d in /container-bundles/*/; do
+    name=$(basename "$d")
+    [ -d "${d}bundle/rootfs" ] || continue
+    cp -a "${d}bundle" "$ROOT/opt/containers/$name"
+  done
+  [ -f /container-bundles/index.json ] && install -Dm644 /container-bundles/index.json "$ROOT/opt/containers/index.json"
+fi
 
 find "$ROOT" -exec touch -h -d "@$SOURCE_DATE_EPOCH" {} +
 rm -f /out/alpine-rootfs.ext4
 mke2fs -q -t ext4 -O ^metadata_csum -L root -U "$FS_UUID" -E "root_owner=0:0,hash_seed=$FS_UUID" -d "$ROOT" /out/alpine-rootfs.ext4 "$IMG_SIZE"
+
+# `touch` pins mtime/atime but necessarily advances the SOURCE tree's ctime to the real
+# container clock. `mke2fs -d` copies that ctime into each destination inode even while
+# E2FSPROGS_FAKE_TIME correctly pins the filesystem/superblock and inode creation times.
+# The result is one changing byte at inode offset 0x0c for every imported inode — exactly
+# the residual E3-T11 drift in chunks 2-4. ext4 ctime is historical metadata here (the image
+# has never been mounted), so normalize it after population with the same pinned e2fsprogs.
+#
+# Address inodes by their image path rather than by source inode number. Quoting/escaping
+# keeps the batch correct for whitespace, quotes, and backslashes; repeated hard-link paths
+# harmlessly write the same value. No data/block allocation changes in this pass.
+CTIME_CMDS=/tmp/debugfs-normalize-ctime.cmds
+: > "$CTIME_CMDS"
+while IFS= read -r -d '' source_path; do
+  image_path=${source_path#"$ROOT"}
+  if [ -z "$image_path" ]; then image_path=/; fi
+  image_path=${image_path//\\/\\\\}
+  image_path=${image_path//\"/\\\"}
+  printf 'set_inode_field "%s" ctime %s\n' "$image_path" "$SOURCE_DATE_EPOCH" >> "$CTIME_CMDS"
+done < <(find "$ROOT" -print0)
+debugfs -w -f "$CTIME_CMDS" /out/alpine-rootfs.ext4 >/tmp/debugfs-normalize-ctime.log 2>&1
 
 # 4. fsck must report the freshly built image CLEAN (no orphan inodes from the build).
 echo "--- fsck.ext4 -f -n ---"

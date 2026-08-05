@@ -114,6 +114,42 @@ fn renew_via_ciaddr_gets_ack() {
 }
 
 #[test]
+fn diagnostics_distinguish_initial_request_from_renew_ack() {
+    let server = DhcpServer::new();
+    let stats = server.stats_handle();
+
+    server
+        .handle(&build_req(DISCOVER, None, Ipv4Addr::UNSPECIFIED))
+        .unwrap();
+    server
+        .handle(&build_req(REQUEST, Some(net::GUEST), Ipv4Addr::UNSPECIFIED))
+        .unwrap();
+    server
+        .handle(&build_req(REQUEST, None, net::GUEST))
+        .unwrap();
+    server
+        .handle(&build_req(
+            REQUEST,
+            Some(Ipv4Addr::new(10, 0, 2, 99)),
+            Ipv4Addr::UNSPECIFIED,
+        ))
+        .unwrap();
+
+    assert_eq!(
+        stats.snapshot(),
+        DhcpStats {
+            discovers: 1,
+            offers: 1,
+            requests: 3,
+            acks: 2,
+            renew_requests: 1,
+            renew_acks: 1,
+            naks: 1,
+        }
+    );
+}
+
+#[test]
 fn request_for_wrong_address_gets_nak() {
     let wrong = Ipv4Addr::new(10, 0, 2, 99);
     let reply = DhcpServer::new()

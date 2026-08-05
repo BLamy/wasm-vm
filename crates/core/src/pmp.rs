@@ -61,6 +61,29 @@ impl Pmp {
         self.cfg.iter().any(|c| c & CFG_A != 0)
     }
 
+    /// E3-T12b: append the full PMP state (all `NUM_ENTRIES` cfg bytes + addr words) to a CPU-section
+    /// payload, fixed-layout little-endian. Every architectural field, no elision.
+    pub(crate) fn snapshot_bytes(&self, out: &mut alloc::vec::Vec<u8>) {
+        out.extend_from_slice(&self.cfg);
+        for a in &self.addr {
+            out.extend_from_slice(&a.to_le_bytes());
+        }
+    }
+    /// E3-T12b: restore PMP state from a [`crate::resume::Reader`]. Called on a LOCAL Pmp during
+    /// [`crate::csr::Csrs::parse`] so a mid-parse error never touches the live hart (all-or-nothing).
+    pub(crate) fn restore_bytes(
+        &mut self,
+        r: &mut crate::resume::Reader,
+    ) -> Result<(), crate::resume::SnapshotError> {
+        for c in self.cfg.iter_mut() {
+            *c = r.u8()?;
+        }
+        for a in self.addr.iter_mut() {
+            *a = r.u64()?;
+        }
+        Ok(())
+    }
+
     // ── CSR views ─────────────────────────────────────────────────────────────────
     /// Read an even pmpcfg CSR (`pmpcfg{0,2,4,…,14}` on RV64 — odd CSRs are illegal). `bank` is
     /// the CSR index, so bank `2b` maps to entries `[8b, 8b+8)`: eight cfg bytes packed

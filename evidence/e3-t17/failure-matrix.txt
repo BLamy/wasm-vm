@@ -1,0 +1,56 @@
+E3-T17 production Worker failure matrix — 2026-07-20
+
+All cases used the pinned `tailscale-connect/main.wasm` through the production dedicated Worker.
+Auth keys were shell-local environment variables and were not printed, stored, or placed in URLs.
+Each failure test sent protocol HELLO and attempted TCP OPEN to the live tailnet-only fixture at
+100.64.0.25:18000; no case emitted OPEN_OK.
+
+wrong-control
+  control: http://127.0.0.1:8080/not-headscale
+  terminalState: NeedsLogin
+  flowError: connect tcp 100.64.0.25:18000: network is unreachable
+  wire: OPEN_FAIL stream 9
+  result: 1 passed (4.1s)
+
+unreachable-control
+  control: http://127.0.0.1:65534
+  terminalState: NeedsLogin
+  flowError: connect tcp 100.64.0.25:18000: network is unreachable
+  wire: OPEN_FAIL stream 9
+  result: 1 passed (4.0s)
+
+corrupt-state
+  input: {_machinekey: "not-a-valid-machine-state"}
+  terminalState: runtime_unavailable
+  detail: persisted Tailscale state is malformed
+  network frames: none
+  result: 1 passed (4.0s)
+
+reused-key
+  setup: a fresh one-time ephemeral key first registered/restored node 31 and was logged out;
+         the exact same key was then supplied to a fresh Worker
+  terminalState: NeedsLogin
+  flowError: connect tcp 100.64.0.25:18000: network is unreachable
+  wire: OPEN_FAIL stream 9
+  result: consumer proof 1 passed (11.0s); reuse proof 1 passed (3.6s)
+
+expired-key
+  setup: a fresh ephemeral key with one-second expiry was held for two seconds before use
+  terminalState: NeedsLogin
+  flowError: connect tcp 100.64.0.25:18000: network is unreachable
+  wire: OPEN_FAIL stream 9
+  result: 1 passed (3.7s)
+
+admin-revoked-node
+  setup: node 35 `wasm-vm-browser-revocation-bound` registered as 100.64.0.35, restored the
+         identical identity without an auth key, and reached the independent fixture twice
+  attack: the test deleted exact Headscale node ID 35 through the admin CLI, waited the declared
+          30-second peer-map propagation bound, then attempted a fresh tailnet TCP flow
+  result: postLogoutOpenFailed=true; no post-revocation OPEN_OK; 1 passed (56.9s)
+
+Permanent commands:
+  npx playwright test tests/e3-t17-failure-matrix.spec.js --reporter=line
+  npx playwright test tests/e3-t17-headscale-worker.spec.js --reporter=line
+
+The opt-in environment variables and local Headscale key/admin setup are described by the tests;
+the committed tests never contain credentials or depend on a fixed key.

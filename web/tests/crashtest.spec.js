@@ -33,8 +33,8 @@ test.describe("E3-T08: tab-kill crash consistency on the durable overlay", () =>
 
     const bootToShell = async (page) => {
       await page.goto("/?persist=1");
-      await expect(page.locator("#boot-alpine-chunked")).toBeEnabled();
-      await page.click("#boot-alpine-chunked");
+      await expect(page.locator("#boot-alpine")).toBeEnabled();
+      await page.click("#boot-alpine");
       let sawOpenRC = false;
       for (let i = 0; i < 900; i++) {
         const t = await page.locator(rows).textContent().catch(() => "");

@@ -7,7 +7,16 @@ status: pending
 depends_on: [E2]
 estimate: M
 capstone: false
+decomposed_into: [E3-T22a, E3-T22b, E3-T22c, E3-T22d]
 ---
+
+> **Decomposed 2026-08-03** into independent boundaries so the deterministic parse/framing logic is
+> node-unit-testable apart from the flaky browser-clipboard E2E:
+> - **E3-T22a** — OSC 52 copy handler (decode, size cap, permission-failure UX, read-query gated off).
+> - **E3-T22b** — Paste pipeline (bracketed-paste framing, newline normalization, chunked injection,
+>   end-marker stripping).
+> - **E3-T22c** — Guest image conveniences (vim OSC52 yank, tmux set-clipboard).
+> - **E3-T22d** — Browser E2E capstone (scripted copy via clipboard read, 1 MB paste sha256).
 
 ## Goal
 Real clipboard flow between guest and host: guest programs emitting OSC 52 sequences set the

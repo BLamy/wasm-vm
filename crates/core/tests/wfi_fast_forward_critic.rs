@@ -12,6 +12,7 @@ use wasm_vm_core::Machine;
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
 use wasm_vm_core::csr::{CsrOp, MIE, MSTATUS, MTVEC};
+use wasm_vm_core::dev::virtio::net::{NetBackend, PcapBackend};
 
 const CODE: u64 = DRAM_BASE;
 const HANDLER: u64 = DRAM_BASE + 0x2000;
@@ -146,5 +147,51 @@ fn masked_pending_interrupt_wfi_time_behavior() {
     assert!(
         mt < 1_000,
         "masked-pending WFI must not fast-forward the clock (mtime={mt})"
+    );
+}
+
+struct ExternalIoPending;
+
+impl NetBackend for ExternalIoPending {
+    fn external_io_pending(&self) -> bool {
+        true
+    }
+
+    fn tx(&mut self, _frame: &[u8]) {}
+
+    fn rx(&mut self) -> Option<Vec<u8>> {
+        None
+    }
+
+    fn rx_ready(&self) -> bool {
+        false
+    }
+}
+
+/// A browser WebSocket can deliver a packet only after `runChunk` returns to JavaScript. If WFI
+/// jumps straight to a socket timeout first, a reply already in flight loses the race by
+/// construction. External-I/O-pending backends therefore suppress the jump; the ordinary
+/// instruction budget becomes the deterministic host-yield boundary.
+#[test]
+fn external_network_io_suppresses_wfi_deadline_jump() {
+    let mut m = idle_machine();
+    let clint = m.enable_clint(100);
+    clint.borrow_mut().mtimecmp = 500_000;
+    set_csr(&mut m, MIE, 1 << 7);
+    set_csr(&mut m, MSTATUS, 1 << 3);
+    m.enable_plic();
+    m.enable_virtio_slots(None);
+    let _ = m.enable_virtio_net(Box::new(PcapBackend::new(ExternalIoPending)));
+
+    let _ = m.run(20);
+
+    assert!(
+        clint.borrow().mtime < 500_000,
+        "host I/O must get a chunk boundary before the guest timer deadline"
+    );
+    assert_ne!(
+        m.hart_mut().regs.pc,
+        HANDLER,
+        "the timer must not fire before the host can deliver pending I/O"
     );
 }

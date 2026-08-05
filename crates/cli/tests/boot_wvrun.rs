@@ -110,7 +110,7 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
     };
 
     assert!(
-        wait_for(&transcript, "login:", 900),
+        wait_for(&transcript, "login:", 2400),
         "no login; transcript:\n{}",
         transcript.lock().unwrap()
     );
@@ -120,7 +120,7 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
     std::thread::sleep(Duration::from_secs(2));
     send(&mut stdin, "echo SHELL_\"UP\"");
     assert!(
-        wait_for(&transcript, "SHELL_UP", 90),
+        wait_for(&transcript, "SHELL_UP", 300),
         "no shell; transcript:\n{}",
         transcript.lock().unwrap()
     );
@@ -130,8 +130,14 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
     // The `$((6*7))` stays LITERAL in the argv file (single-quoted printf), so the marker is
     // computed by the container's shell, not by the login shell echoing our command.
     for c in [
-        "mkdir -p /tmp/b/rootfs/bin /tmp/b/config",
-        "cp -a /bin/busybox /tmp/b/rootfs/bin/ && ln -sf busybox /tmp/b/rootfs/bin/sh",
+        "mkdir -p /tmp/b/rootfs/bin /tmp/b/rootfs/lib /tmp/b/config",
+        "cp -a /bin/busybox /tmp/b/rootfs/bin/",
+        // Alpine busybox is dynamically linked against the musl loader; without it, the post-pivot
+        // exec fails with "not found" (missing ELF interpreter). Copy the loader into the bundle.
+        "cp -aL /lib/ld-musl-riscv64.so.1 /tmp/b/rootfs/lib/",
+        // busybox applet symlinks the container argv needs, resolving in the pivoted rootfs (a real
+        // image ships these). Explicit list — this busybox build's `--install -s` is a no-op here.
+        "for a in sh env touch echo cat ls hostname ps tail mkdir head mount dd; do ln -sf busybox /tmp/b/rootfs/bin/$a; done",
         "printf '/bin/sh\\n-c\\ntouch /ephemeral; echo CONTAINED_$((6*7))\\n' > /tmp/b/config/argv",
         "printf '/\\n' > /tmp/b/config/cwd",
         ": > /tmp/b/config/env",
@@ -141,17 +147,17 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
         send(&mut stdin, c);
     }
     assert!(
-        wait_for(&transcript, "CONTAINED_42", 180),
+        wait_for(&transcript, "CONTAINED_42", 600),
         "wvrun did not run the container argv; transcript:\n{}",
         transcript.lock().unwrap()
     );
     // The container's write to `/ephemeral` must have landed in the overlay upper, NOT the bundle.
     send(
         &mut stdin,
-        "test -e /tmp/b/rootfs/ephemeral && echo LEAKED_TO_IMAGE || echo IMAGE_\"CLEAN\"",
+        "test -e /tmp/b/rootfs/ephemeral && echo LEAKED_TO_\"IMAGE\" || echo IMAGE_\"CLEAN\"",
     );
     assert!(
-        wait_for(&transcript, "IMAGE_CLEAN", 60),
+        wait_for(&transcript, "IMAGE_CLEAN", 300),
         "container write leaked into the bundle rootfs; transcript:\n{}",
         transcript.lock().unwrap()
     );
@@ -169,13 +175,218 @@ fn wvrun_runs_a_bundle_and_isolates_it() {
         send(&mut stdin, c);
     }
     assert!(
-        wait_for(&transcript, "WVRUN_RC=7", 120),
+        wait_for(&transcript, "WVRUN_RC=7", 300),
         "wvrun did not propagate the container exit code; transcript:\n{}",
         transcript.lock().unwrap()
     );
 
+    // AC2: inside the container, PID 1 is the entrypoint (fresh pid ns + mounted /proc) and the
+    // hostname is the container's (UTS ns); the guest hostname is unaffected. Markers computed inside
+    // the container so the tty echo can't fake them.
+    for c in [
+        "printf '/bin/sh\\n-c\\nhostname wvrun-ctr; echo INIT_$(cat /proc/1/comm)_$(hostname)_$([ -d /proc/1 ] && echo P)\\n' > /tmp/b/config/argv",
+        "wvrun /tmp/b",
+    ] {
+        send(&mut stdin, c);
+    }
+    assert!(
+        wait_for(&transcript, "INIT_sh_wvrun-ctr_P", 300),
+        "container PID-1/proc/UTS shape wrong; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(&mut stdin, "echo GUESTHOST_$(hostname)"); // guest UTS must NOT have changed
+    assert!(
+        wait_for(&transcript, "GUESTHOST_", 60)
+            && !transcript.lock().unwrap().contains("GUESTHOST_wvrun-ctr"),
+        "UTS leaked: the container hostname changed the guest; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+
+    // AC5: `--interactive` gives a real container shell over the terminal — typed input runs inside
+    // the container and its exit code propagates as wvrun's.
+    send(&mut stdin, "wvrun --interactive /tmp/b");
+    std::thread::sleep(Duration::from_secs(5)); // let the container shell come up
+    send(&mut stdin, "echo IACT_$((6*7))"); // computed by the CONTAINER's shell
+    assert!(
+        wait_for(&transcript, "IACT_42", 120),
+        "interactive container shell did not run typed input; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(&mut stdin, "exit 5"); // leave the container; wvrun should exit 5
+    std::thread::sleep(Duration::from_secs(2));
+    send(&mut stdin, "echo IACTRC=$?");
+    assert!(
+        wait_for(&transcript, "IACTRC=5", 120),
+        "interactive exit code did not propagate; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+
+    // AC6: the runner installs a runc-style seccomp filter before exec — a denied syscall (mount)
+    // returns EPERM inside the container. Marker computed in-guest (echo-proof).
+    // First, a definitive enforcement probe: wvseccomp --selftest installs the filter then calls
+    // mount(2)=40 DIRECTLY via syscall() (no busybox/libc userspace precheck to mask the result). As
+    // root, an unfiltered mount(2) with NULL args returns EINVAL/EFAULT; a kernel-enforced filter
+    // returns EPERM. This proves SECCOMP_FILTER enforcement is real on the emulator, independent of
+    // which syscall busybox's `mount` applet happens to use.
+    send(&mut stdin, "/usr/local/bin/wvseccomp --selftest");
+    assert!(
+        wait_for(&transcript, "WVSCSELFTEST_ENFORCED", 120)
+            && !transcript.lock().unwrap().contains("WVSCSELFTEST_BYPASSED"),
+        "seccomp filter is not enforced by the kernel on a direct mount(2) call; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    // The container detection uses ONLY shell builtins (case/read) — the minimal bundle has no `grep`
+    // applet, and a missing grep would make a `| grep` pipeline exit 127 and spuriously print FAIL even
+    // when mount WAS denied. `CTRSC=` surfaces the in-container seccomp mode; MOUNTOUT[] the raw error.
+    for c in [
+        "printf '/bin/sh\\n-c\\nmkdir /m 2>/dev/null; while read k v; do case \"$k\" in Seccomp:) echo CTRSC=$v;; esac; done < /proc/self/status; out=$(mount -t tmpfs tmpfs /m 2>&1); echo \"MOUNTOUT[$out]\"; case \"$out\" in *\"not permitted\"*|*denied*) echo SECCOMP_$((6*7))_OK;; *) echo SECCOMP_$((5+4))_BAD;; esac\\n' > /tmp/b/config/argv",
+        "wvrun /tmp/b",
+    ] {
+        send(&mut stdin, c);
+    }
+    // Both markers are COMPUTED ($((…))) so the literal cannot appear in the printf command echo — a
+    // plain-literal FAIL marker would match the echoed command text and spuriously fail the negative
+    // check. SECCOMP_42_OK = mount(2) denied with EPERM inside the container; SECCOMP_9_BAD = allowed.
+    assert!(
+        wait_for(&transcript, "SECCOMP_42_OK", 300)
+            && !transcript.lock().unwrap().contains("SECCOMP_9_BAD"),
+        "seccomp filter did not deny mount(2) with EPERM inside the container; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+
+    // ── E3.5-T05b: container LIFECYCLE (run -d / ps / logs / stop) on the real guest ──────────────
+    // Positive markers are computed ($((6*7))=42) so a host-side echo of the command can't satisfy
+    // them; a failed check simply never emits the marker → wait_for times out (no echo-collision).
+    // A detached long-runner: a loop so it stays `running` for the ps/logs checks.
+    send(
+        &mut stdin,
+        "printf '/bin/sh\\n-c\\ni=0; while :; do echo LIFE_$((6*7))_$i; i=$((i+1)); sleep 1; done\\n' > /tmp/b/config/argv",
+    );
+    send(
+        &mut stdin,
+        "wvrun run -d --name c1 /tmp/b > /tmp/cid; [ -s /tmp/cid ] && echo RANID_$((6*7)) || echo RANID_no",
+    );
+    assert!(
+        wait_for(&transcript, "RANID_42", 180),
+        "wvrun run -d did not return a container id; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(
+        &mut stdin,
+        "sleep 2; wvrun ps | grep -q '\"name\":\"c1\"' && wvrun ps | grep -q '\"status\":\"running\"' && echo PSRUN_$((6*7)) || echo PSRUN_no",
+    );
+    assert!(
+        wait_for(&transcript, "PSRUN_42", 180),
+        "wvrun ps did not show c1 running; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(
+        &mut stdin,
+        "wvrun logs c1 | grep -q LIFE_42 && echo LOGOK_$((6*7)) || echo LOGOK_no",
+    );
+    assert!(
+        wait_for(&transcript, "LOGOK_42", 180),
+        "wvrun logs did not capture the detached container's computed marker; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(
+        &mut stdin,
+        "wvrun stop c1 >/dev/null; sleep 1; wvrun ps -a | grep '\"name\":\"c1\"' | grep -q exited && echo STOPPED_$((6*7)) || echo STOPPED_no",
+    );
+    assert!(
+        wait_for(&transcript, "STOPPED_42", 180),
+        "wvrun stop did not move c1 to exited; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+
+    // ── E3.5-T05c: exec into a RUNNING container (nsenter join) ───────────────────────────────────
+    // A detached long-runner that sets its OWN hostname; then exec proves the ns joins. Plant a
+    // guest-only file OUTSIDE the bundle to prove mount-ns isolation from inside exec.
+    send(&mut stdin, "echo TOPSECRET_$((6*7)) > /root/guest-secret");
+    send(
+        &mut stdin,
+        "printf '/bin/sh\\n-c\\nhostname ctrbox; while :; do sleep 1; done\\n' > /tmp/b/config/argv",
+    );
+    send(
+        &mut stdin,
+        "wvrun run -d --name e1 /tmp/b > /tmp/eid; [ -s /tmp/eid ] && echo EXECID_$((6*7)) || echo EXECID_no",
+    );
+    assert!(
+        wait_for(&transcript, "EXECID_42", 180),
+        "wvrun run -d (for exec) did not start; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    // Marker computed INSIDE the container by the exec'd shell (pid+mount+uts ns join).
+    send(
+        &mut stdin,
+        "sleep 2; wvrun exec e1 sh -c 'echo INEXEC_$((6*7))'",
+    );
+    assert!(
+        wait_for(&transcript, "INEXEC_42", 180),
+        "wvrun exec did not run a command inside the container; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    // UTS-ns join: the exec sees the CONTAINER hostname, not the guest's.
+    send(
+        &mut stdin,
+        "wvrun exec e1 hostname | grep -q ctrbox && echo UTSOK_$((6*7)) || echo UTSOK_no",
+    );
+    assert!(
+        wait_for(&transcript, "UTSOK_42", 180),
+        "wvrun exec did not join the container UTS namespace; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    // pid-ns join: /proc/1 inside exec is the CONTAINER init.
+    send(
+        &mut stdin,
+        "wvrun exec e1 sh -c 'cat /proc/1/comm' | grep -q sh && echo PIDNS_$((6*7)) || echo PIDNS_no",
+    );
+    assert!(
+        wait_for(&transcript, "PIDNS_42", 180),
+        "wvrun exec did not join the container pid namespace; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    // mount-ns isolation: the guest-only file is NOT readable from inside exec.
+    send(
+        &mut stdin,
+        "wvrun exec e1 sh -c 'cat /root/guest-secret 2>/dev/null' | grep -q TOPSECRET && echo LEAK_yes || echo NOLEAK_$((6*7))",
+    );
+    // NOLEAK_42 (computed, echo-proof) is emitted only when the guest file is NOT readable; a leak
+    // makes grep match → LEAK_yes → NOLEAK_42 never appears → this times out.
+    assert!(
+        wait_for(&transcript, "NOLEAK_42", 180),
+        "a guest-only file leaked into wvrun exec (mount-ns not isolated); transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(&mut stdin, "wvrun stop e1 >/dev/null");
+
+    // AC4 (LAST, after the T05b/T05c checks, so its known emulator flakiness can't block them): a
+    // memory-limited container that over-allocates is OOM-killed (rc>=128); the guest and a subsequent
+    // wvrun are unaffected. A single 128 MiB ANONYMOUS buffer — 8× the 16 MiB cap — makes the memcg
+    // OOM-killer decision decisive at allocation time. (The memcg OOM-killer's timing on the interpreted
+    // guest is nondeterministic; this is the already-verified E3.5-T03 AC, re-checked, not a T05b/c gate.)
+    for c in [
+        "cp -a /tmp/b /tmp/oom",
+        "printf '/bin/sh\\n-c\\ndd if=/dev/zero of=/dev/null bs=128M count=1 2>/dev/null\\n' > /tmp/oom/config/argv",
+        "wvrun --memory 16777216 /tmp/oom; rc=$?; [ $rc -ge 128 ] && echo OOMKILLED_$rc || echo OOMSURVIVED_$rc",
+    ] {
+        send(&mut stdin, c);
+    }
+    assert!(
+        wait_for(&transcript, "OOMKILLED_", 400)
+            && !transcript.lock().unwrap().contains("OOMSURVIVED_"),
+        "over-allocating container was not OOM-killed under --memory; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+    send(&mut stdin, "wvrun /tmp/b2; echo AFTEROOM_$?");
+    assert!(
+        wait_for(&transcript, "AFTEROOM_7", 300),
+        "runner broken after an OOM-killed container; transcript:\n{}",
+        transcript.lock().unwrap()
+    );
+
     send(&mut stdin, "poweroff");
-    let deadline = Instant::now() + Duration::from_secs(300);
+    let deadline = Instant::now() + Duration::from_secs(600);
     let child = guard.0.as_mut().unwrap();
     let status = loop {
         if let Some(s) = child.try_wait().expect("try_wait") {

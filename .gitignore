@@ -21,6 +21,14 @@ web/node_modules/
 web/pkg/
 web/assets/*.elf
 web/assets/riscv-tests/
+
+# poor-mans-ci: web/dist is the deployable site, BUILT LOCALLY by the pre-commit hook and COMMITTED
+# so CI only deploys (no CI build). Track it despite the broad dist/ & pkg/ ignores above; but the
+# large boot artifacts (kernel Image + initramfs) are copied in from releases/ at deploy time, so
+# keep web/dist/releases/ out of git (no ~22 MB kernel duplicated per web change).
+!web/dist/
+!web/dist/**
+web/dist/releases/
 .claude/worktrees/
 .DS_Store
 **/.DS_Store
@@ -41,6 +49,8 @@ compliance/sail-riscv/
 # `bash tools/build-rootfs.sh` and pinned by releases/rootfs/MANIFEST.txt (package-level; see build-rootfs.sh drift gate), so it's not tracked.
 releases/rootfs/*.ext4
 releases/rootfs/MANIFEST.new
+releases/rootfs/FILE-MANIFEST.new
+releases/wvft-agent-riscv64
 
 # Playwright test artifacts (E2-T21)
 web/test-results/
@@ -57,3 +67,9 @@ web/artifacts-alpine.json
 
 # E3-T02 local-only chunked Alpine image (built by `wasm-vm chunk`; derived from the ext4)
 releases/chunked-alpine/
+
+releases/wvseccomp-riscv64
+
+# Container bundles baked into the Alpine rootfs (rebuild: tools/build-container-bundle.sh <img>).
+# 82M of pulled/unpacked images — rebuildable, like releases/rootfs; not committed.
+releases/container-bundles/

@@ -3,9 +3,10 @@ id: E3-T24
 epic: 3
 title: Loading and boot UX - progress, snapshot fast path, offline assets
 priority: 324
-status: pending
+status: cancelled
 depends_on: [E3-T03, E3-T12]
 estimate: M
+decomposed_into: [E3-T24a, E3-T24b, E3-T24c, E3-T24d]
 capstone: false
 ---
 
@@ -64,4 +65,8 @@ divergence refutes. Kill the page during SW install (first ever visit) and reloa
 half-populated precache serving a broken shell refutes.
 
 ## Verification log
-(empty)
+
+### 2026-07-27 — seam decomposition
+
+Typed progress, snapshot-path selection, service-worker lifecycle, and the combined offline proof
+are independently testable. This planning container is replaced by E3-T24a through E3-T24d.

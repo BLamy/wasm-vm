@@ -44,27 +44,44 @@ if mount -t tmpfs tmpfs /tmp/smoke-tmpfs 2>/dev/null \
 else bad TMPFS "tmpfs mount/read failed"; fi
 
 # 5. OVERLAYFS — lower (ext4) + upper/work (tmpfs): a whiteout and an override across layers.
+#    overlayfs requires upperdir AND workdir on the SAME filesystem, so put both under one tmpfs
+#    mount (the earlier version mounted tmpfs on upper only, leaving work on ext4 → EXDEV). lower may
+#    live on a different fs (ext4), which is what a real container overlay does.
 ov=/tmp/smoke-ov
-rm -rf "$ov"; mkdir -p "$ov"/lower "$ov"/upper "$ov"/work "$ov"/merged
+rm -rf "$ov"; mkdir -p "$ov"/lower "$ov"/mnt "$ov"/merged
 echo base > "$ov"/lower/keep; echo orig > "$ov"/lower/over; echo del > "$ov"/lower/gone
-mount -t tmpfs tmpfs "$ov"/upper 2>/dev/null || true
-if mount -t overlay overlay -o "lowerdir=$ov/lower,upperdir=$ov/upper,workdir=$ov/work" "$ov"/merged 2>/dev/null; then
+mount -t tmpfs tmpfs "$ov"/mnt 2>/dev/null || true
+mkdir -p "$ov"/mnt/upper "$ov"/mnt/work
+grep -qw overlay /proc/filesystems || echo "SMOKE OVERLAYFS NOTE: overlay absent from /proc/filesystems"
+oerr=$(mount -t overlay overlay -o "lowerdir=$ov/lower,upperdir=$ov/mnt/upper,workdir=$ov/mnt/work" "$ov"/merged 2>&1)
+if [ $? -eq 0 ]; then
   echo new > "$ov"/merged/over            # override a lower file
   rm -f "$ov"/merged/gone                 # whiteout a lower file
   if grep -q '^base$' "$ov"/merged/keep && grep -q '^new$' "$ov"/merged/over && [ ! -e "$ov"/merged/gone ]; then
     ok OVERLAYFS
   else bad OVERLAYFS "overlay read/override/whiteout wrong"; fi
   umount "$ov"/merged 2>/dev/null
-else bad OVERLAYFS "overlay mount failed"; fi
+else bad OVERLAYFS "overlay mount failed: ${oerr:-unknown}"; fi
 
-# 6. PIVOT_ROOT — the runner's rootfs switch, inside a mount namespace.
-if unshare -m sh -c '
-  newroot=/tmp/smoke-root; rm -rf "$newroot"; mkdir -p "$newroot/old" "$newroot/bin" "$newroot/proc"
-  # A minimal root: bind busybox in so /bin/sh exists after the pivot.
-  mount --bind / "$newroot" 2>/dev/null || { cp -a /bin/busybox "$newroot/bin/" 2>/dev/null; ln -sf busybox "$newroot/bin/sh"; }
-  cd "$newroot" && pivot_root . old 2>/dev/null || exit 1
-  /bin/busybox echo PIVOT_$((6*7))
-' 2>/dev/null | grep -q '^PIVOT_42$'; then ok PIVOT_ROOT; else bad PIVOT_ROOT "pivot_root inside a mount ns failed"; fi
+# 6. PIVOT_ROOT — the runner's rootfs switch, inside a mount namespace. new_root MUST be a mount
+#    point and its parent propagation MUST be private, so: make the ns's mounts private, mount a fresh
+#    tmpfs as the new root, THEN populate it (the earlier version pre-created old/ then `mount --bind /`
+#    shadowed it, so put_old vanished; and it never made / rprivate). Failures print their reason.
+perr=$(unshare -m sh -c '
+  mount --make-rprivate / 2>/dev/null || true
+  nr=/tmp/smoke-root; rm -rf "$nr"; mkdir -p "$nr"
+  mount -t tmpfs tmpfs "$nr" || { echo "newroot tmpfs mount failed:$?"; exit 1; }
+  mkdir -p "$nr/old"
+  echo here > "$nr/pivoted"        # a marker that exists ONLY in the new root
+  cd "$nr" && pivot_root . old || { echo "pivot_root syscall failed:$?"; exit 1; }
+  # Post-pivot the fresh root holds no binaries (and Alpine busybox is dynamically linked, so an
+  # external exec would fail for lack of the musl loader) — prove the switch with shell BUILTINS only:
+  # the marker is reachable at the new / iff the root really pivoted, and echo emits the check token.
+  [ -f /pivoted ] || { echo "post-pivot root wrong (marker missing)"; exit 1; }
+  echo PIVOT_$((6*7))
+' 2>&1)
+if printf '%s\n' "$perr" | grep -q '^PIVOT_42$'; then ok PIVOT_ROOT
+else bad PIVOT_ROOT "pivot_root inside a mount ns failed: $(printf '%s' "$perr" | tr '\n' ' ')"; fi
 
 # 7. CGROUP v2 memory limit → OOM kill (memcg accounting + the OOM killer must work).
 #    Availability test keys on the controllers FILE (-f, not -d — it is a file; critic LOW false-FAIL),

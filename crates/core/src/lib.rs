@@ -40,6 +40,7 @@ pub mod mmio;
 pub mod mmu;
 pub mod platform;
 pub mod pmp;
+pub mod prof;
 pub mod ram;
 pub mod resume;
 pub mod sbi;
@@ -120,6 +121,15 @@ pub struct BootLayout {
 /// A full Level-0 machine: one hart on a system bus, plus optional HTIF exit
 /// watching. Grown from the E0-T01 placeholder — the `new`/`ram_len` surface is
 /// preserved (E0-T01's verified tests and the wasm wrapper depend on it).
+/// E4-T01: the base PC-sampling stride — a prime near 1024 so ~1 retire in ~1024 is sampled. The
+/// actual stride is this plus a small per-sample jitter (see `prof_next_stride`); a prime base plus
+/// jitter means no power-of-two or round loop period can systematically dodge every sample.
+const PROF_STRIDE_BASE: u32 = 1021;
+/// E4-T01: jitter span added to [`PROF_STRIDE_BASE`] each sample (stride ∈ 1021..=1148). Only the
+/// (real-CSR) sampler reads it; the quarantined zicsr-stub build compiles the sampler out.
+#[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+const PROF_STRIDE_JITTER: u32 = 128;
+
 pub struct Machine {
     hart: Hart,
     bus: SystemBus,
@@ -166,6 +176,35 @@ pub struct Machine {
     /// E2-T20: storm detection armed (default on). When on, the run loop checks the detector
     /// each quantum and prints a diagnosis to the log on a fire.
     storm_detect: bool,
+    /// E4-T01: the always-compiled hot-PC / per-subsystem profiler ([`prof::ProfStats`]). Sampling
+    /// is RUNTIME-gated by [`Self::set_profiling`] (default OFF) — the same always-on-struct +
+    /// runtime-flag shape as `storm_detect`, so a normal (unprofiled) run pays only a single
+    /// not-taken branch per retire.
+    prof: prof::ProfStats,
+    /// E4-T01: profiler armed. Off by default; the native `--profile` path and the wasm `getProfile`
+    /// surface arm it.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    profiling: bool,
+    /// E4-T01: retires remaining until the next PC sample. Counts down; on zero we sample and reload
+    /// it with a fresh jittered stride so no fixed loop period can hide in a sampling blind spot.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    prof_countdown: u32,
+    /// E4-T01: LCG state feeding the per-sample stride jitter. Deterministic (no wall clock) so a
+    /// native and a wasm run sample the identical instruction stream.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    prof_lcg: u32,
+    /// E4-T01 phase 3: the injected monotonic host timer (outer crates provide the impl; core stays
+    /// `no_std`). Set by [`Self::set_host_timer`], which also arms profiling and hands the same `Rc`
+    /// to the bus so the cold device/walk paths can time themselves. `run_traced` reads it ONCE at
+    /// entry and ONCE at exit to measure the total profiled wall-span (CPU time is that total minus
+    /// the cold device+walk time — the hot loop reads no clock).
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    host_timer: Option<alloc::rc::Rc<dyn prof::HostTimer>>,
+    /// E4-T01 phase 3: total profiled host nanoseconds measured across `run_traced` calls (the once-
+    /// per-run entry→exit delta, accumulated). Fed to [`Self::prof_report`] as the span CPU-interp
+    /// time is derived from by subtraction. Zero when no timer is injected.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    prof_total_ns: u64,
     /// E2-T17: the syscon test finisher's shared reset latch, when [`Self::enable_syscon`]
     /// attached it. The run loop drains it and returns [`RunOutcome::Reset`]. (Only read on
     /// the real-CSR path; the quarantined zicsr-stub build compiles the drain + `enable_syscon`
@@ -195,6 +234,33 @@ pub struct Machine {
         Option<dev::virtio::queue::Virtqueue>,
         Option<dev::virtio::queue::Virtqueue>,
     )>,
+    /// virtio-rng service state (shared source state + the persistent requestq ring view), when
+    /// [`Self::enable_virtio_rng`] plugged an entropy source into slot 2. Serviced at every
+    /// boundary the guest has kicked. Seeds the guest CRNG so early TLS handshakes don't stall.
+    #[allow(clippy::type_complexity)]
+    rng: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::rng::RngState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+    )>,
+    /// E3-T12c3: the snapshot coherence binding — the base disk image this machine is running against
+    /// (`base_image_hash`), the emulator build (`core_hash`), and the monotonic overlay-commit
+    /// generation. `save_resume` stamps all three into the blob header; `load_resume` validates them
+    /// FIRST (before any component is restored) so a snapshot is never resumed onto a diverged disk.
+    /// Defaults are all-zero / generation 0 — the RAM-only determinism harness round-trips against
+    /// itself; a disk-backed host sets the real base hash and advances the generation on each commit.
+    coherence: SnapshotCoherence,
+}
+
+/// E3-T12c3: the identity a snapshot is bound to. A restore is refused unless the target machine's
+/// build (`core_hash`), base disk image (`base_image_hash`), and overlay-commit `generation` all
+/// match the blob — otherwise a resumed CPU/RAM would land on an overlay its page cache disagrees
+/// with (silent corruption). The generation is monotonic: it only ever advances (as the overlay
+/// commits), so a snapshot taken before a commit can never be restored after one.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct SnapshotCoherence {
+    pub core_hash: [u8; 32],
+    pub base_image_hash: [u8; 32],
+    pub generation: u64,
 }
 
 impl Machine {
@@ -225,11 +291,46 @@ impl Machine {
             rtc: None,
             irqstats: diag::irqstats::IrqStats::new(),
             storm_detect: true,
+            prof: prof::ProfStats::new(),
+            profiling: false,
+            prof_countdown: PROF_STRIDE_BASE,
+            prof_lcg: 0x1234_5678,
+            host_timer: None,
+            prof_total_ns: 0,
             syscon: None,
             virtio: alloc::vec::Vec::new(),
             blk: None,
             net: None,
+            rng: None,
+            coherence: SnapshotCoherence::default(),
         })
+    }
+
+    /// E3-T12c3: bind this machine to a base disk image + emulator build for snapshot coherence.
+    /// `save_resume` stamps these into the header and `load_resume` refuses a snapshot whose header
+    /// disagrees — a resume onto a different image or a stale build is rejected before any mutation.
+    pub fn set_snapshot_identity(&mut self, core_hash: [u8; 32], base_image_hash: [u8; 32]) {
+        self.coherence.core_hash = core_hash;
+        self.coherence.base_image_hash = base_image_hash;
+    }
+
+    /// E3-T12c3: the current overlay-commit generation the next `save_resume` will bind.
+    pub fn overlay_generation(&self) -> u64 {
+        self.coherence.generation
+    }
+
+    /// E3-T12c3: advance the monotonic overlay-commit generation. The persist pump calls this each
+    /// time a durable overlay transaction commits, so a snapshot taken before the commit binds an
+    /// older generation and is refused if restored afterward (no stale-overlay resume). Saturating:
+    /// the counter never wraps back onto a value an outstanding snapshot could match.
+    pub fn advance_overlay_generation(&mut self) -> u64 {
+        self.coherence.generation = self.coherence.generation.saturating_add(1);
+        self.coherence.generation
+    }
+
+    /// E3-T12c3: the full coherence binding (build + base image + generation) this machine stamps.
+    pub fn snapshot_coherence(&self) -> &SnapshotCoherence {
+        &self.coherence
     }
 
     /// Attach a CLINT (E1-T12) at [`bus::mmap::CLINT_BASE`] and drive its `mtime` from the
@@ -389,6 +490,37 @@ impl Machine {
         (alloc::rc::Rc::clone(&self.virtio[1].0), state)
     }
 
+    /// Attach a virtio-rng device (DeviceID 4) backed by `source` in slot 2. The eight slots must
+    /// already exist ([`Self::enable_virtio_slots`]/`enable_virtio_blk` first) — rng installs into
+    /// the empty slot 2 (the DTB already advertises all eight windows, so the kernel's
+    /// `virtio-rng`/`rng-core` probe binds it with no DTB change). The kernel feeds the delivered
+    /// bytes into its CRNG, so guest `getrandom(2)`/`/dev/urandom` seed promptly and early TLS
+    /// handshakes stop stalling on entropy. Returns (slot-2 handle, shared rng state).
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_rng(
+        &mut self,
+        source: alloc::boxed::Box<dyn dev::virtio::rng::EntropySource>,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::rng::RngState>>,
+    ) {
+        assert!(
+            self.virtio.len() > 2,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_rng"
+        );
+        let (devhalf, state) = dev::virtio::rng::new(source);
+        assert!(
+            self.virtio[2]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(devhalf))
+                .is_ok(),
+            "virtio slot 2 already has a device"
+        );
+        self.rng = Some((alloc::rc::Rc::clone(&state), None));
+        (alloc::rc::Rc::clone(&self.virtio[2].0), state)
+    }
+
     /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,
     /// with `clock` as its wall-clock source (`SystemTime` in the CLI, `Date.now()` in wasm, a
     /// mock in tests). Matches the `google,goldfish-rtc` node the DTB advertises — without it
@@ -426,6 +558,54 @@ impl Machine {
         self.storm_detect = on;
     }
 
+    /// E4-T01: arm/disarm the hot-PC + subsystem profiler (default off). Arming resets the sampling
+    /// countdown so the first sample lands a full stride into the profiled span. When off, the run
+    /// loop's sampling is a single not-taken branch per retire.
+    pub fn set_profiling(&mut self, on: bool) {
+        self.profiling = on;
+        if on {
+            self.prof_countdown = PROF_STRIDE_BASE;
+        }
+    }
+
+    /// E4-T01 phase 3: inject the monotonic host timer AND arm profiling. The same `Rc` is handed to
+    /// the bus so the cold device-dispatch and page-walk paths can bracket themselves; `run_traced`
+    /// reads it once per run at entry/exit for the total wall-span. Outer crates provide the impl
+    /// (native `Instant`, wasm `performance.now()`); tests use [`prof::FixedTimer`].
+    pub fn set_host_timer(&mut self, timer: alloc::rc::Rc<dyn prof::HostTimer>) {
+        self.host_timer = Some(alloc::rc::Rc::clone(&timer));
+        self.bus.set_host_timer(timer);
+        self.set_profiling(true);
+    }
+
+    /// E4-T01 phase 3: total profiled host nanoseconds measured by `run_traced` (entry→exit,
+    /// accumulated across runs). Feed this to [`Self::prof_report`] as `total_ns` for the
+    /// CPU-by-subtraction accounting. Zero when no [`Self::set_host_timer`] was injected.
+    pub fn prof_total_ns(&self) -> u64 {
+        self.prof_total_ns
+    }
+
+    /// E4-T01: the accumulated profile as a ranked [`prof::ProfReport`]. `total_ns` is the profiled
+    /// wall span (pass [`Self::prof_total_ns`] for the timer-measured span, or 0 when only the
+    /// hot-PC histogram is wanted). CPU-interp time is derived as `total_ns −` the cold device+walk
+    /// time folded in from the bus; `top_k` bounds the hot-region list. Non-mutating and idempotent.
+    pub fn prof_report(&self, total_ns: u64, top_k: usize) -> prof::ProfReport {
+        let ta = self.bus.time_accum();
+        self.prof
+            .report_with_time(total_ns, top_k, &ta.ns, ta.walk_count)
+    }
+
+    /// E4-T01: the next PC-sampling stride — [`PROF_STRIDE_BASE`] plus a deterministic LCG jitter in
+    /// `0..PROF_STRIDE_JITTER`. The jitter is what stops a loop whose length divides the base stride
+    /// from being sampled always-at-the-same-instruction (or never); the LCG carries no wall clock so
+    /// native and wasm sample identically.
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[inline]
+    fn prof_next_stride(&mut self) -> u32 {
+        self.prof_lcg = self.prof_lcg.wrapping_mul(1664525).wrapping_add(1013904223);
+        PROF_STRIDE_BASE + (self.prof_lcg >> 24) % PROF_STRIDE_JITTER
+    }
+
     /// E2-T20 `--stats`: the counter dump, with the latest PLIC claim counts synced in first
     /// (they otherwise only refresh when the storm detector runs).
     pub fn stats_dump(&mut self) -> alloc::string::String {
@@ -461,6 +641,15 @@ impl Machine {
         self.blk
             .as_ref()
             .is_some_and(|(s, _)| s.borrow().flush_waiting())
+    }
+
+    /// E3-T10: whether a persistent virtio-blk WRITE is parked before used-ring acknowledgement,
+    /// awaiting the host durable transaction. The wasm driver must prioritize `persistPending`
+    /// while this is true; quota failure then resolves the same request with IOERR.
+    pub fn blk_write_waiting(&self) -> bool {
+        self.blk
+            .as_ref()
+            .is_some_and(|(s, _)| s.borrow().write_waiting())
     }
 
     pub fn pending_blk_chunks(&self) -> alloc::vec::Vec<usize> {
@@ -553,11 +742,25 @@ impl Machine {
             .expect("medeleg write from M cannot fail");
         // E2-T05: grant S-mode the CY/TM/IR counters (mcounteren = 0x7) — the kernel's
         // sched_clock reads `time` via rdtime, which traps without this (OpenSBI grants the
-        // same). scounteren stays kernel-owned.
+        // same). E1-T30: scounteren is granted too (just below) so U-mode rdtime works.
         self.hart
             .csr
             .access(MCOUNTEREN, CsrOp::Write, 0x7, false, false, 0)
             .expect("mcounteren write from M cannot fail");
+        // E1-T30: also grant U-mode CY/TM/IR via scounteren (=0x7) so userspace `rdtime` works.
+        // Stock glibc riscv64 binaries (e.g. Docker Hub busybox:latest) execute a raw userspace
+        // `rdtime` (CSR `time`=0xC01) — captured SIGILL: epc in libc, insn=0xc01027f3. Our gate is
+        // spec-correct (U-mode counter reads need mcounteren.TM AND scounteren.TM, §3.1.10/§4.1.5),
+        // but this kernel leaves scounteren=0 and neither emulates the read nor uses only the vDSO,
+        // so the read traps IllegalInstruction → the kernel delivers SIGILL and glibc dies. Granting
+        // scounteren at reset mirrors firmware/platforms that expose userspace counters (the same
+        // rationale as mcounteren above); the kernel remains free to restrict it by writing the CSR.
+        // Verified: with this, busybox:latest glibc runs to a normal exit (was SIGILL); musl (Alpine)
+        // is unaffected (it never executes userspace rdtime). See E1-T30 verification log.
+        self.hart
+            .csr
+            .access(crate::csr::SCOUNTEREN, CsrOp::Write, 0x7, false, false, 0)
+            .expect("scounteren write from M cannot fail");
         self.hart.csr.mode = Priv::S;
         self.hart.regs.pc = platform::virt::KERNEL_BASE;
         self.hart.regs.write(10, hartid); // a0
@@ -695,6 +898,306 @@ impl Machine {
     }
     pub fn hart(&self) -> &Hart {
         &self.hart
+    }
+
+    /// E3-T12c2: the maximum number of service passes [`Self::quiesce`] spends draining the virtio-blk
+    /// in-flight set before it refuses the snapshot. A hard upper bound so a chain parked on a
+    /// never-arriving event yields a *bounded* refusal, never an unbounded wait. Each pass re-executes
+    /// every parked chain once; a resolvable event (a resident chunk, a now-durable flush/write) drains
+    /// on the pass after it resolves, so a few passes suffice for genuinely drainable state.
+    pub const QUIESCE_MAX_PASSES: u32 = 16;
+
+    /// E3-T12c2: drive the virtio-blk in-flight (parked) set to empty within a bounded number of
+    /// service passes, or refuse with the residual reason. Guarantees a coherent snapshot boundary:
+    /// on `Ok(())` no descriptor chain is half-processed (nothing parked); on
+    /// [`crate::resume::SnapshotError::NotQuiesced`] the caller must NOT serialize — the state is torn
+    /// and a snapshot would double-complete or lose the parked request on restore.
+    ///
+    /// Each pass re-services the device (which re-executes parked chains; a chain whose event has
+    /// resolved completes and drops out, one still waiting is re-parked). The loop terminates as soon
+    /// as the set is empty, or after [`Self::QUIESCE_MAX_PASSES`] — never waits unboundedly on an event
+    /// that will not arrive (a base-chunk fetch with no fetch layer, a durability barrier that never
+    /// clears). No blk device ⇒ trivially quiesced.
+    pub fn quiesce(&mut self) -> Result<(), crate::resume::SnapshotError> {
+        // No block device (or the ring was never brought up) means there is nothing to drain.
+        if self.blk.is_none() {
+            return Ok(());
+        }
+        for _ in 0..Self::QUIESCE_MAX_PASSES {
+            // Already empty — quiesced. Checked BEFORE servicing so an already-coherent machine is
+            // never mutated (no spurious used-ring push or IRQ) by the quiesce itself.
+            if self
+                .blk
+                .as_ref()
+                .is_some_and(|(state, _)| state.borrow().residual().is_none())
+            {
+                return Ok(());
+            }
+            // One drain pass. `service` proceeds even without a fresh kick when the parked set is
+            // non-empty (E3-T02), re-executing each parked chain; a resolved event completes it.
+            if let Some((state, vq)) = &mut self.blk {
+                let slot = alloc::rc::Rc::clone(&self.virtio[0].0);
+                dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
+            }
+        }
+        // Budget exhausted with chains still parked → typed refusal carrying the residual.
+        match self
+            .blk
+            .as_ref()
+            .and_then(|(state, _)| state.borrow().residual())
+        {
+            Some((reason, in_flight)) => {
+                Err(crate::resume::SnapshotError::NotQuiesced { reason, in_flight })
+            }
+            None => Ok(()),
+        }
+    }
+
+    /// E3-T12b: serialize the machine's resumable state (CPU + RAM + CLINT when present) into one
+    /// versioned resume blob.
+    ///
+    /// E3-T12c3: the header binds this machine's coherence identity — `core_hash` (build),
+    /// `base_image_hash` (base disk), and the current overlay-commit `generation` — so
+    /// [`Self::load_resume`] can refuse a stale or foreign restore. The RAM-only determinism harness
+    /// leaves the defaults (all-zero / generation 0) and round-trips against an identically-bound
+    /// machine; a disk-backed host calls [`Self::set_snapshot_identity`] and advances the generation.
+    ///
+    /// E3-T12c2: quiesces the virtio-blk in-flight set FIRST and refuses (typed
+    /// [`crate::resume::SnapshotError::NotQuiesced`], no blob emitted) rather than serialize a torn
+    /// boundary — a parked descriptor chain must never be captured half-processed.
+    pub fn save_resume(&mut self) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        self.quiesce()?;
+        use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
+        let mut w = SnapshotWriter::new(
+            &self.coherence.core_hash,
+            &self.coherence.base_image_hash,
+            self.coherence.generation,
+        );
+        w.section(section::CPU, &self.hart.to_snapshot());
+        w.section(section::RAM, &self.bus.ram().to_snapshot());
+        if let Some(clint) = &self.clint {
+            w.section(section::CLINT, &clint.borrow().to_snapshot());
+        }
+        // E3-T12c4: the interrupt controller + console + RTC device state. Without these a resumed
+        // guest lands with a live driver (its register writes are in the restored RAM) but a
+        // freshly-reset device — the UART's RX-interrupt-enable is lost and the console wedges, the
+        // PLIC's enables/priorities are gone and external IRQs never route. Restoring them makes the
+        // resumed machine's devices agree with the guest's driver state.
+        if let Some(plic) = &self.plic {
+            w.section(section::PLIC, &plic.borrow().to_snapshot());
+        }
+        if let Some((uart, _)) = &self.uart {
+            w.section(section::UART, &uart.borrow().to_snapshot());
+        }
+        if let Some((rtc, _)) = &self.rtc {
+            w.section(section::RTC, &rtc.borrow().to_snapshot());
+        }
+        // E3-T12c1: virtio-blk transport lifecycle + device ring position + FLUSH-forward count. The
+        // disk bytes are the overlay (bound by generation, E3-T12c3), not serialized here; the parked
+        // in-flight set is drained/refused by the quiesce (E3-T12c2) so it is empty at this boundary.
+        if let (Some((state, vq)), Some((slot, _))) = (&self.blk, self.virtio.first()) {
+            let mut v = alloc::vec::Vec::new();
+            slot.borrow().snapshot_transport(&mut v);
+            match vq {
+                Some(q) => {
+                    v.push(1);
+                    let (la, ui) = q.ring_indices();
+                    v.extend_from_slice(&la.to_le_bytes());
+                    v.extend_from_slice(&ui.to_le_bytes());
+                }
+                None => {
+                    v.push(0);
+                    v.extend_from_slice(&[0u8; 4]);
+                }
+            }
+            v.extend_from_slice(&state.borrow().flush_count.to_le_bytes());
+            w.section(section::VIRTIO_BLK, &v);
+        }
+        // E3-T12c1: virtio-net transport + BOTH ring positions (receiveq/transmitq) + counters. The
+        // backend's live connections cannot resume (peers/TCP state are gone — the guest sees drops,
+        // E3-T25); but the transport + ring state must match the guest's driver so it isn't wedged.
+        if let (Some((state, rx_vq, tx_vq)), Some((slot, _))) = (&self.net, self.virtio.get(1)) {
+            let mut v = alloc::vec::Vec::new();
+            slot.borrow().snapshot_transport(&mut v);
+            for q in [rx_vq, tx_vq] {
+                match q {
+                    Some(vq) => {
+                        v.push(1);
+                        let (la, ui) = vq.ring_indices();
+                        v.extend_from_slice(&la.to_le_bytes());
+                        v.extend_from_slice(&ui.to_le_bytes());
+                    }
+                    None => {
+                        v.push(0);
+                        v.extend_from_slice(&[0u8; 4]);
+                    }
+                }
+            }
+            let st = state.borrow();
+            v.extend_from_slice(&st.rx_dropped.to_le_bytes());
+            v.extend_from_slice(&st.tx_count.to_le_bytes());
+            v.extend_from_slice(&st.rx_count.to_le_bytes());
+            w.section(section::VIRTIO_NET, &v);
+        }
+        // Deterministic-clock phase (E3-T12b): the sub-`clock_div` remainder + `clock_div` itself, so
+        // the next `mtime` tick lands at the identical retirement after resume (instruction-exact
+        // timer placement). Machine-level state, so it has its own section.
+        let mut clock = alloc::vec::Vec::with_capacity(24);
+        clock.extend_from_slice(&self.tick_accum.to_le_bytes());
+        clock.extend_from_slice(&self.clock_div.to_le_bytes());
+        // The built-in-SBI S-timer deadline (`stimecmp`) drives mip.STIP = (mtime >= stimecmp) each
+        // boundary; without it a timer-armed guest resumes with the S-timer cancelled and the
+        // interrupt lands at a different instruction (E3-T12b timer-placement).
+        clock.extend_from_slice(&self.sbi_state.stimecmp.to_le_bytes());
+        w.section(section::CLOCK, &clock);
+        Ok(w.finish())
+    }
+
+    /// E3-T12b: restore the machine from a [`Self::save_resume`] blob — CPU, RAM, and CLINT. Each
+    /// component's `restore` is all-or-nothing (a malformed section is a typed error that leaves that
+    /// component untouched); an unknown/unsupported/garbage section is refused, never skipped.
+    ///
+    /// E3-T12c3: the coherence guard runs FIRST — the header's `core_hash` / `base_image_hash` /
+    /// `overlay_generation` are validated against this machine's binding BEFORE any component is
+    /// restored. A changed base image or a bumped overlay generation is a typed refusal
+    /// ([`crate::resume::SnapshotError::BaseImageMismatch`] /
+    /// [`crate::resume::SnapshotError::OverlayGenerationMismatch`]) with the target machine left
+    /// byte-identical to its pre-restore state — a resumed CPU/RAM never lands on a diverged disk.
+    pub fn load_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        use crate::resume::{ComponentSnapshot, SectionReader, section};
+        let (hdr, reader) = SectionReader::new(blob)?;
+        // Coherence guard BEFORE any mutation: refuse a foreign/stale snapshot up front so a failed
+        // restore never half-applies a component onto a diverged disk (all-or-nothing at the machine
+        // level). The iterator below has not touched machine state yet.
+        hdr.validate_for(
+            &self.coherence.core_hash,
+            &self.coherence.base_image_hash,
+            self.coherence.generation,
+        )?;
+        for sec in reader {
+            let sec = sec?;
+            match sec.tag {
+                section::CPU => self.hart.restore(sec.payload)?,
+                section::RAM => self.bus.ram_mut().restore(sec.payload)?,
+                section::CLINT => {
+                    if let Some(clint) = &self.clint {
+                        clint.borrow_mut().restore(sec.payload)?;
+                    }
+                }
+                // E3-T12c4: interrupt controller / console / RTC device state — restore so the
+                // resumed devices match the guest driver (RX IRQ enable, PLIC enables, RTC alarm).
+                section::PLIC => {
+                    if let Some(plic) = &self.plic {
+                        plic.borrow_mut().restore(sec.payload)?;
+                    }
+                }
+                section::UART => {
+                    if let Some((uart, _)) = &self.uart {
+                        uart.borrow_mut().restore(sec.payload)?;
+                    }
+                }
+                section::RTC => {
+                    if let Some((rtc, _)) = &self.rtc {
+                        rtc.borrow_mut().restore(sec.payload)?;
+                    }
+                }
+                section::CLOCK => {
+                    let mut r = crate::resume::Reader::new(sec.payload, section::CLOCK);
+                    let tick_accum = r.u64()?;
+                    let clock_div = r.u64()?;
+                    let stimecmp = r.u64()?;
+                    r.finish()?;
+                    self.tick_accum = tick_accum;
+                    self.clock_div = clock_div;
+                    self.sbi_state.stimecmp = stimecmp;
+                }
+                section::VIRTIO_BLK => {
+                    let slot = self
+                        .virtio
+                        .first()
+                        .map(|(s, _)| alloc::rc::Rc::clone(s))
+                        .ok_or(crate::resume::SnapshotError::BadComponentState {
+                            tag: section::VIRTIO_BLK,
+                        })?;
+                    let mut r = crate::resume::Reader::new(sec.payload, section::VIRTIO_BLK);
+                    slot.borrow_mut().restore_transport(&mut r)?;
+                    let has_vq = r.bool()?;
+                    let la = r.u16()?;
+                    let ui = r.u16()?;
+                    let flush = r.u64()?;
+                    r.finish()?;
+                    // Rebuild the ring view from the restored transport config, then set the ring
+                    // position; only if the driver had a ready queue and a live view at save time.
+                    let qs = *slot.borrow().queue(0);
+                    if let Some((state, vq)) = &mut self.blk {
+                        *vq = if has_vq && qs.ready {
+                            dev::virtio::queue::Virtqueue::new(&qs, 256)
+                                .ok()
+                                .map(|mut q| {
+                                    q.set_ring_indices(la, ui);
+                                    q
+                                })
+                        } else {
+                            None
+                        };
+                        state.borrow_mut().flush_count = flush;
+                    }
+                }
+                section::VIRTIO_NET => {
+                    let slot = self
+                        .virtio
+                        .get(1)
+                        .map(|(s, _)| alloc::rc::Rc::clone(s))
+                        .ok_or(crate::resume::SnapshotError::BadComponentState {
+                            tag: section::VIRTIO_NET,
+                        })?;
+                    let mut r = crate::resume::Reader::new(sec.payload, section::VIRTIO_NET);
+                    slot.borrow_mut().restore_transport(&mut r)?;
+                    let rx_has = r.bool()?;
+                    let rx_la = r.u16()?;
+                    let rx_ui = r.u16()?;
+                    let tx_has = r.bool()?;
+                    let tx_la = r.u16()?;
+                    let tx_ui = r.u16()?;
+                    let rx_dropped = r.u64()?;
+                    let tx_count = r.u64()?;
+                    let rx_count = r.u64()?;
+                    r.finish()?;
+                    let qs0 = *slot.borrow().queue(0);
+                    let qs1 = *slot.borrow().queue(1);
+                    if let Some((state, rx_vq, tx_vq)) = &mut self.net {
+                        *rx_vq = if rx_has && qs0.ready {
+                            dev::virtio::queue::Virtqueue::new(&qs0, 256)
+                                .ok()
+                                .map(|mut q| {
+                                    q.set_ring_indices(rx_la, rx_ui);
+                                    q
+                                })
+                        } else {
+                            None
+                        };
+                        *tx_vq = if tx_has && qs1.ready {
+                            dev::virtio::queue::Virtqueue::new(&qs1, 256)
+                                .ok()
+                                .map(|mut q| {
+                                    q.set_ring_indices(tx_la, tx_ui);
+                                    q
+                                })
+                        } else {
+                            None
+                        };
+                        let mut st = state.borrow_mut();
+                        st.rx_dropped = rx_dropped;
+                        st.tx_count = tx_count;
+                        st.rx_count = rx_count;
+                    }
+                }
+                other => {
+                    return Err(crate::resume::SnapshotError::UnsupportedSection { tag: other });
+                }
+            }
+        }
+        Ok(())
     }
 
     /// RISCOF signature dump (E1-T20): the memory region `[begin, end)` formatted as the
@@ -903,6 +1406,16 @@ impl Machine {
         }
     }
 
+    /// Whether a network backend is waiting on an event that only the host can deliver between
+    /// execution chunks. Fast-forwarding WFI to a guest timer deadline in this state can make a
+    /// socket timeout fire before the browser gets a chance to run its WebSocket callback.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn external_net_io_pending(&self) -> bool {
+        self.net
+            .as_ref()
+            .is_some_and(|(state, _, _)| state.borrow().backend.external_io_pending())
+    }
+
     /// E2-T20: run the sliding-window interrupt-storm detector. Called only when a trap lands
     /// (event-driven, so zero cost while quiet — a trap during normal operation is rare, and
     /// during a storm the detector is exactly what we want running). Syncs the PLIC claim
@@ -977,7 +1490,33 @@ impl Machine {
     /// `--trace`). Termination and the "logged once" HTIF command watch are identical to
     /// `run` — the ONE place the run-loop / HTIF state machine lives, so a traced run and
     /// an untraced run can never diverge in when they stop.
+    /// Run up to `max_instrs`, timing the total profiled wall-span ONCE at entry and ONCE at exit
+    /// (E4-T01 phase 3) — never inside the loop. When profiling is armed with a host timer, the
+    /// entry→exit delta accumulates into `prof_total_ns`, the span CPU-interp time is later derived
+    /// from by subtraction. The `_inner` body holds the actual loop and is untouched by profiling.
     pub fn run_traced<T: trace::TraceSink>(&mut self, max_instrs: u64, sink: &mut T) -> RunOutcome {
+        // One timer read at entry (cold, once per run) — only when profiling armed with a timer.
+        let t0 = if self.profiling {
+            self.host_timer.as_ref().map(|t| t.now_ns())
+        } else {
+            None
+        };
+        let outcome = self.run_traced_inner(max_instrs, sink);
+        // One timer read at exit; accumulate the total profiled span. The device+walk time timed on
+        // the cold paths is a SUBSET of this span, so `total − (device + walk)` is the interpreter's.
+        if let (Some(t0), Some(t)) = (t0, self.host_timer.as_ref()) {
+            self.prof_total_ns = self
+                .prof_total_ns
+                .saturating_add(t.now_ns().saturating_sub(t0));
+        }
+        outcome
+    }
+
+    fn run_traced_inner<T: trace::TraceSink>(
+        &mut self,
+        max_instrs: u64,
+        sink: &mut T,
+    ) -> RunOutcome {
         for _ in 0..max_instrs {
             // E2-T17: a syscon finisher write (poweroff/reboot/fail) during the previous
             // instruction ends the run before the next one executes.
@@ -1015,6 +1554,12 @@ impl Machine {
                     let slot = alloc::rc::Rc::clone(&self.virtio[1].0);
                     dev::virtio::net::service(&slot, rx_vq, tx_vq, state, &mut self.bus);
                 }
+                // virtio-rng: fill guest entropy requests the same boundary the driver kicked, so
+                // the CRNG seeds without waiting on the run loop.
+                if let Some((state, vq)) = &mut self.rng {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[2].0);
+                    dev::virtio::rng::service(&slot, vq, state, &mut self.bus);
+                }
                 // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
                 for (slot, line) in &self.virtio {
                     line.set(slot.borrow().irq_level());
@@ -1037,6 +1582,11 @@ impl Machine {
                 self.storm_check(); // CRITIC #1: an INTERRUPT storm must be detected too
                 continue;
             }
+            // E4-T01: capture the PC of the instruction ABOUT to execute — after `step_traced` it has
+            // already advanced to the successor, so the retired instruction's address must be read
+            // here. A single register-resident field read; the sampling decision itself is gated below.
+            #[cfg_attr(feature = "zicsr-stub", allow(unused_variables))]
+            let prof_pc = self.hart.regs.pc;
             let step_result = self.hart.step_traced(&mut self.bus, sink);
             // E1-T12: an instruction retired iff the step succeeded — advance the deterministic
             // retire-count clock ONLY then (a delivered trap or a taken interrupt retires nothing).
@@ -1044,6 +1594,17 @@ impl Machine {
             if step_result.is_ok() {
                 self.advance_clock();
                 self.irqstats.on_retire(); // E2-T20 progress denominator
+                // E4-T01: hot-PC sampling — only when armed, and only 1-in-~1024 retires (a jittered
+                // stride) so the histogram write is off the per-instruction hot path. We record the
+                // guest VIRTUAL PC: it is what `System.map` symbolizes and the guest-virtual address
+                // space a future JIT keys blocks on, so on-sample physical translation buys nothing.
+                if self.profiling {
+                    self.prof_countdown = self.prof_countdown.saturating_sub(1);
+                    if self.prof_countdown == 0 {
+                        self.prof.record_pc(prof_pc);
+                        self.prof_countdown = self.prof_next_stride();
+                    }
+                }
                 if self.hart.last_was_wfi {
                     self.irqstats.on_wfi();
                     self.hart.last_was_wfi = false;
@@ -1052,7 +1613,9 @@ impl Machine {
                     // None above), so this WFI is a real idle wait. Skip the idle spin by jumping
                     // mtime to the nearest armed timer deadline — deterministic, so native and
                     // wasm agree. Turns a ~20× `sleep` into near-real-time. No-op if no timer armed.
-                    self.wfi_fast_forward();
+                    if !self.external_net_io_pending() {
+                        self.wfi_fast_forward();
+                    }
                 }
             }
             if let Err(trap) = step_result {

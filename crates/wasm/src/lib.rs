@@ -19,6 +19,202 @@ use wasm_vm_core::bus::mmap::{UART0_BASE, UART0_LEN};
 use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
 use wasm_vm_core::trace::{TraceRecord, TraceSink, fmt_canonical};
 use wasm_vm_core::{Machine, RunOutcome};
+// E3-T12d: the resume-snapshot format + coherence/restore-decision types (browser persistence glue).
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+use wasm_vm_core::resume;
+
+// E3-net: browser-only (the boot site that consumes these is wasm+non-zicsr-gated), so gate the whole
+// toggle to the same cfg — otherwise the const/fn are dead code on the native `-D warnings` clippy job.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod slirp_net {
+    use core::cell::RefCell;
+    use core::sync::atomic::{AtomicBool, AtomicU32, Ordering};
+    use wasm_bindgen::JsCast;
+    use wasm_bindgen::prelude::*;
+
+    /// Gateway MAC for the browser slirp local stack (distinct from the guest's virtio-net MAC
+    /// 52:54:00:12:34:56). The guest learns it via ARP for the gateway 10.0.2.2.
+    pub(crate) const SLIRP_GATEWAY_MAC: [u8; 6] = [0x52, 0x54, 0x00, 0x12, 0x34, 0x02];
+
+    /// When set, boots wire virtio-net to the slirp LOCAL stack (DHCP/ARP/ICMP) instead of loopback.
+    /// Single-threaded browser → a plain atomic suffices. Set via `setSlirpNet` BEFORE booting.
+    static SLIRP_NET: AtomicBool = AtomicBool::new(false);
+    static SLIRP_LEASE_SECS: AtomicU32 = AtomicU32::new(wasm_vm_slirp::dhcp::DEFAULT_LEASE_SECS);
+    static SLIRP_MTU: AtomicU32 = AtomicU32::new(wasm_vm_slirp::dhcp::DEFAULT_MTU as u32);
+    std::thread_local! {
+        static SLIRP_RELAY_URL: RefCell<Option<String>> = const { RefCell::new(None) };
+        static SLIRP_RELAY_TOKEN: RefCell<Option<String>> = const { RefCell::new(None) };
+        static SLIRP_TAILSCALE_WORKER: RefCell<Option<(String, JsValue)>> = const { RefCell::new(None) };
+        static SLIRP_TAILSCALE_CONTROL: RefCell<Option<JsValue>> = const { RefCell::new(None) };
+        static SLIRP_DOH_ENDPOINT: RefCell<Option<String>> = const { RefCell::new(None) };
+        static SLIRP_DHCP_STATS: RefCell<Option<wasm_vm_slirp::DhcpStatsHandle>> = const { RefCell::new(None) };
+    }
+
+    pub(crate) fn slirp_net_enabled() -> bool {
+        SLIRP_NET.load(Ordering::Relaxed)
+    }
+
+    pub(crate) fn slirp_relay_url() -> Option<String> {
+        SLIRP_RELAY_URL.with(|url| url.borrow().clone())
+    }
+
+    pub(crate) fn take_slirp_relay_token() -> Vec<u8> {
+        SLIRP_RELAY_TOKEN.with(|token| token.borrow_mut().take().unwrap_or_default().into_bytes())
+    }
+
+    pub(crate) fn take_slirp_tailscale_worker() -> Option<(String, JsValue)> {
+        SLIRP_TAILSCALE_WORKER.with(|slot| slot.borrow_mut().take())
+    }
+
+    pub(crate) fn set_slirp_tailscale_control(worker: Option<JsValue>) {
+        SLIRP_TAILSCALE_CONTROL.with(|slot| *slot.borrow_mut() = worker);
+    }
+
+    pub(crate) fn slirp_doh_endpoint() -> String {
+        SLIRP_DOH_ENDPOINT.with(|endpoint| {
+            endpoint
+                .borrow()
+                .clone()
+                .unwrap_or_else(|| crate::doh_fetch::DEFAULT_DOH_ENDPOINT.to_owned())
+        })
+    }
+
+    pub(crate) fn slirp_lease_secs() -> u32 {
+        SLIRP_LEASE_SECS.load(Ordering::Relaxed).max(1)
+    }
+
+    pub(crate) fn slirp_mtu() -> u16 {
+        SLIRP_MTU.load(Ordering::Relaxed).clamp(576, 1500) as u16
+    }
+
+    pub(crate) fn set_slirp_dhcp_stats(stats: wasm_vm_slirp::DhcpStatsHandle) {
+        SLIRP_DHCP_STATS.with(|slot| *slot.borrow_mut() = Some(stats));
+    }
+
+    /// Choose the slirp local network stack (vs the default loopback) for subsequent boots.
+    #[wasm_bindgen(js_name = setSlirpNet)]
+    pub fn set_slirp_net(on: bool) {
+        SLIRP_NET.store(on, Ordering::Relaxed);
+        SLIRP_DHCP_STATS.with(|slot| *slot.borrow_mut() = None);
+    }
+
+    /// Configure the WebSocket relay used for outbound TCP on subsequent slirp boots. An empty URL
+    /// keeps the local-only DHCP/ARP/ICMP stack.
+    #[wasm_bindgen(js_name = setSlirpRelay)]
+    pub fn set_slirp_relay(url: String) {
+        SLIRP_RELAY_URL.with(|slot| {
+            *slot.borrow_mut() = if url.trim().is_empty() {
+                None
+            } else {
+                Some(url)
+            };
+        });
+    }
+
+    /// Stage a short-lived relay credential for exactly the next boot. It is kept out of URLs and
+    /// consumed when the connector is constructed, so a later boot cannot silently replay it.
+    #[wasm_bindgen(js_name = setSlirpRelayToken)]
+    pub fn set_slirp_relay_token(token: String) {
+        SLIRP_RELAY_TOKEN.with(|slot| {
+            *slot.borrow_mut() = if token.is_empty() { None } else { Some(token) };
+        });
+    }
+
+    /// Configure the dedicated Tailscale provider Worker for the next slirp boot. The structured
+    /// config is consumed when the Worker starts; credentials are never placed in the Worker URL.
+    /// Empty `url` selects no Tailscale provider and drops any previously staged config.
+    #[wasm_bindgen(js_name = setSlirpTailscaleWorker)]
+    pub fn set_slirp_tailscale_worker(url: String, config: JsValue) {
+        SLIRP_TAILSCALE_WORKER.with(|slot| {
+            *slot.borrow_mut() = if url.trim().is_empty() {
+                None
+            } else {
+                Some((url, config))
+            };
+        });
+    }
+
+    /// Send a credential-free lifecycle command to the active provider Worker. Returns false when
+    /// no Tailscale provider owns this boot (relay/offline selection never creates a Worker).
+    #[wasm_bindgen(js_name = slirpTailscaleCommand)]
+    pub fn slirp_tailscale_command(command: String) -> bool {
+        if !matches!(command.as_str(), "login" | "logout" | "dispose") {
+            return false;
+        }
+        SLIRP_TAILSCALE_CONTROL.with(|slot| {
+            let Some(worker) = slot.borrow().as_ref().cloned() else {
+                return false;
+            };
+            let Ok(post) = js_sys::Reflect::get(&worker, &JsValue::from_str("postMessage")) else {
+                return false;
+            };
+            let Some(post) = post.dyn_ref::<js_sys::Function>() else {
+                return false;
+            };
+            let message = js_sys::Object::new();
+            if js_sys::Reflect::set(
+                &message,
+                &JsValue::from_str("type"),
+                &JsValue::from_str(&command),
+            )
+            .is_err()
+            {
+                return false;
+            }
+            post.call1(&worker, &message).is_ok()
+        })
+    }
+
+    /// Configure the RFC 8484 wire-format DoH endpoint. Empty restores the production default.
+    #[wasm_bindgen(js_name = setSlirpDohEndpoint)]
+    pub fn set_slirp_doh_endpoint(endpoint: String) {
+        SLIRP_DOH_ENDPOINT.with(|slot| {
+            *slot.borrow_mut() = if endpoint.trim().is_empty() {
+                None
+            } else {
+                Some(endpoint)
+            };
+        });
+    }
+
+    /// Configure the DHCP lease duration for subsequent boots (used by the renewal acceptance).
+    #[wasm_bindgen(js_name = setSlirpDhcpLeaseSeconds)]
+    pub fn set_slirp_dhcp_lease_seconds(seconds: u32) {
+        SLIRP_LEASE_SECS.store(seconds.max(1), Ordering::Relaxed);
+    }
+
+    /// Configure the DHCP-advertised link MTU for subsequent boots.
+    #[wasm_bindgen(js_name = setSlirpMtu)]
+    pub fn set_slirp_mtu(mtu: u32) {
+        SLIRP_MTU.store(mtu.clamp(576, 1500), Ordering::Relaxed);
+    }
+
+    /// Snapshot the current boot's production DHCP exchanges for evidence and diagnostics.
+    #[wasm_bindgen(js_name = slirpDhcpStats)]
+    pub fn slirp_dhcp_stats() -> String {
+        SLIRP_DHCP_STATS.with(|slot| {
+            let Some(handle) = slot.borrow().as_ref().cloned() else {
+                return "null".to_owned();
+            };
+            let stats = handle.snapshot();
+            format!(
+                "{{\"discovers\":{},\"offers\":{},\"requests\":{},\"acks\":{},\"renewRequests\":{},\"renewAcks\":{},\"naks\":{}}}",
+                stats.discovers,
+                stats.offers,
+                stats.requests,
+                stats.acks,
+                stats.renew_requests,
+                stats.renew_acks,
+                stats.naks,
+            )
+        })
+    }
+}
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+use slirp_net::{
+    SLIRP_GATEWAY_MAC, set_slirp_dhcp_stats, slirp_doh_endpoint, slirp_lease_secs, slirp_mtu,
+    slirp_net_enabled, slirp_relay_url, take_slirp_relay_token, take_slirp_tailscale_worker,
+};
 
 // E3-T02 lazy-fetch backend. Compiled where it is actually used: the normal wasm build (behind
 // `newChunkedDisk`) and native unit tests. Excluded from the zicsr-stub wasm build and the native
@@ -33,9 +229,67 @@ mod storage_err;
 // The web-sys `fetch` glue is browser-only.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod http_fetch;
+// E3-T15: browser DoH fetch transport + bounded poll-driven DNS worker.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod doh_fetch;
 // The web-sys IndexedDB durable-overlay store is browser-only.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod idb_store;
+// E3-T12d: the web-sys IndexedDB durable resume-snapshot store (chunked blob) is browser-only.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod snapshot_store;
+// E3-net: JS WebSocket callbacks ↔ synchronous ws-proxy connector queues.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod ws_transport;
+#[cfg(any(all(target_arch = "wasm32", not(feature = "zicsr-stub")), test))]
+mod ws_transport_state;
+// virtio-rng entropy source backed by the browser CSPRNG (`crypto.getRandomValues`).
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod crypto_entropy;
+// E3-T21c: browser producer/consumer queues over the VM-private WVFT agent sockets.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod browser_file_transfer;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod tailscale_dns;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod worker_transport;
+
+/// Incremental SHA-256 for browser `File.stream()` inputs. The UI hashes in bounded chunks before
+/// offering a WVFT upload, avoiding `File.arrayBuffer()` and its whole-file heap spike.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+pub struct FileSha256(Option<browser_file_transfer::IncrementalSha256>);
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl Default for FileSha256 {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+impl FileSha256 {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Self {
+        Self(Some(browser_file_transfer::IncrementalSha256::new()))
+    }
+
+    pub fn update(&mut self, bytes: &[u8]) -> Result<(), JsError> {
+        self.0
+            .as_mut()
+            .ok_or_else(|| JsError::new("SHA-256 already finished"))?
+            .update(bytes);
+        Ok(())
+    }
+
+    pub fn finish(&mut self) -> Result<String, JsError> {
+        self.0
+            .take()
+            .map(browser_file_transfer::IncrementalSha256::finish)
+            .ok_or_else(|| JsError::new("SHA-256 already finished"))
+    }
+}
 
 /// One-time browser diagnostics setup: route `log` to the JS console and install the
 /// panic hook that turns Rust panics into readable console errors. Idempotent.
@@ -415,6 +669,44 @@ impl wasm_vm_core::dev::rtc::WallClock for JsWallClock {
     }
 }
 
+/// E4-T01: the monotonic host timer the profiler samples on its cold paths, browser side —
+/// `performance.now()` (high-resolution + monotonic within the realm), unlike the wall-clock
+/// `JsWallClock`. Works in a Window OR a Worker (the emulator runs in a Web Worker). wasm-only.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+pub struct JsHostTimer {
+    perf: web_sys::Performance,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl JsHostTimer {
+    /// `None` if no global exposes a `performance` object (then profiling can't be armed here).
+    fn new() -> Option<JsHostTimer> {
+        use wasm_bindgen::JsCast;
+        let global = js_sys::global();
+        let perf = if let Some(w) = global.dyn_ref::<web_sys::Window>() {
+            w.performance()
+        } else if let Some(s) = global.dyn_ref::<web_sys::WorkerGlobalScope>() {
+            s.performance()
+        } else {
+            None
+        }?;
+        Some(JsHostTimer { perf })
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::prof::HostTimer for JsHostTimer {
+    fn now_ns(&self) -> u64 {
+        // performance.now() is f64 milliseconds; ×1e6 → ns. Guard the (impossible) negative.
+        let ms = self.perf.now();
+        if ms <= 0.0 {
+            0
+        } else {
+            (ms * 1_000_000.0) as u64
+        }
+    }
+}
+
 /// E2-T21: a browser-side unmodified-Linux boot. Unlike [`WasmMachine`] (bare-metal ELF + a
 /// Uart0 stub), this assembles the full `virt` platform (CLINT/PLIC/16550/virtio/goldfish-RTC/
 /// syscon/built-in SBI) via the SHARED [`Machine::place_and_boot`] and boots a kernel `Image`
@@ -426,6 +718,19 @@ impl wasm_vm_core::dev::rtc::WallClock for JsWallClock {
 #[wasm_bindgen]
 pub struct WasmLinux {
     inner: RefCell<LinuxInner>,
+}
+
+/// E3-T12d build-stable snapshot identity: the crate version zero-padded into 32 bytes. Changes across
+/// releases so a snapshot taken by a different build fails the coherence guard (a `CoreHashMismatch`
+/// cold boot). A semantic change WITHIN one published version is out of scope (documented); a git-hash
+/// identity is a future refinement.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+fn build_core_hash() -> [u8; 32] {
+    let v = env!("CARGO_PKG_VERSION").as_bytes();
+    let mut h = [0u8; 32];
+    let n = v.len().min(32);
+    h[..n].copy_from_slice(&v[..n]);
+    h
 }
 
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
@@ -446,6 +751,14 @@ struct LinuxInner {
     /// disk live (the "continue read-only" choice after a storage-quota hit). `None` off the
     /// persistent path.
     disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>>,
+    /// E3-T21c: bounded browser producer/consumer queues plus the shared slirp backend handle.
+    /// Present only for slirp boots; the emulator still owns the sole `NetBackend` adapter.
+    file_transfers: Option<browser_file_transfer::BrowserFileTransfers>,
+    /// E3-T12d: the base-image binding for the durable resume-snapshot store, present only for a
+    /// `newChunkedDiskPersistent` boot (`None` otherwise). The snapshot DB is namespaced by it, and
+    /// the restore-decision guard needs it as the expected `base_image_hash`. Off the persistent path
+    /// there is no snapshot store, so the decision is always `"missing"`.
+    snapshot_base: Option<[u8; 32]>,
 }
 
 /// Which block device (if any) backs the boot: none (initramfs), an in-memory image, or a lazily
@@ -710,6 +1023,10 @@ impl WasmLinux {
         let mut fetch = None;
         let mut persist = None;
         let mut disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>> = None;
+        let mut file_transfers = None;
+        // E3-T12d: the base binding for the durable resume-snapshot store — stamped only on the
+        // persistent path (where a snapshot can be taken and restored). `None` elsewhere.
+        let mut snapshot_base: Option<[u8; 32]> = None;
         match disk {
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
             DiskChoice::Mem(image) => {
@@ -742,6 +1059,14 @@ impl WasmLinux {
                 queue,
                 read_only,
             } => {
+                // E3-T12d: bind the resume snapshot to this base image + stamp the machine's coherence
+                // header, so a snapshot taken here fails the guard if reloaded against a foreign build
+                // or a foreign base image. `base_hash()` is the same binding the snapshot store is
+                // namespaced by. Overlay generation starts at the machine default (0) and advances only
+                // on an explicit commit.
+                let base_binding = manifest.base_hash();
+                machine.set_snapshot_identity(build_core_hash(), base_binding);
+                snapshot_base = Some(base_binding);
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let overlay = wasm_vm_storage::WriteBackOverlay::with_shared_queue(
@@ -751,7 +1076,8 @@ impl WasmLinux {
                 );
                 let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &manifest)
                     .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
-                let mut backend = chunked::ChunkedBackend::from_disk(disk, store.clone());
+                let mut backend =
+                    chunked::ChunkedBackend::from_persistent_disk(disk, store.clone());
                 if read_only {
                     // E3-T09: writes refused at this seam; the device advertises F_RO; and no
                     // persist pump exists (`persist` stays None), so an RO tab cannot touch
@@ -778,11 +1104,65 @@ impl WasmLinux {
                 let _ = machine.enable_virtio_slots(None);
             }
         }
-        // E3-T13: loopback-backed virtio-net in slot 1 on every boot shape — the guest sees
-        // eth0 (MAC 52:54:00:12:34:56); E3-T14 swaps the loopback for the slirp stack.
-        let _ = machine.enable_virtio_net(Box::new(
-            wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
-        ));
+        // virtio-net in slot 1 on every boot shape — the guest sees eth0 (MAC 52:54:00:12:34:56).
+        // Default: E3-T13 loopback (frames echo back). With `setSlirpNet(true)`, E3-net swaps in the
+        // synchronous slirp LOCAL stack so the guest can DHCP a real IP (10.0.2.15) and reach the
+        // gateway (10.0.2.2) — no tokio, no outbound yet (that's the WebSocket-relay slice).
+        if slirp_net_enabled() {
+            let start = js_sys::Date::now();
+            let clock = Box::new(move || (js_sys::Date::now() - start) as i64);
+            let (backend, dns): (_, Box<dyn wasm_vm_slirp::DnsService>) =
+                if let Some((url, config)) = take_slirp_tailscale_worker() {
+                    let transport =
+                        worker_transport::BrowserWorkerTransport::connect(&url, &config)?;
+                    let dns = Box::new(transport.dns_service());
+                    let connector = wasm_vm_slirp::WsConnector::new(transport, Vec::new());
+                    (
+                        wasm_vm_slirp::SlirpLocalBackend::with_connector(
+                            SLIRP_GATEWAY_MAC,
+                            clock,
+                            Box::new(connector),
+                        ),
+                        dns,
+                    )
+                } else if let Some(url) = slirp_relay_url() {
+                    let transport = ws_transport::BrowserWebSocketTransport::connect(&url)?;
+                    let connector =
+                        wasm_vm_slirp::WsConnector::new(transport, take_slirp_relay_token());
+                    (
+                        wasm_vm_slirp::SlirpLocalBackend::with_connector(
+                            SLIRP_GATEWAY_MAC,
+                            clock,
+                            Box::new(connector),
+                        ),
+                        Box::new(doh_fetch::BrowserDnsService::new(slirp_doh_endpoint())),
+                    )
+                } else {
+                    (
+                        wasm_vm_slirp::SlirpLocalBackend::new(SLIRP_GATEWAY_MAC, clock),
+                        Box::new(doh_fetch::BrowserDnsService::new(slirp_doh_endpoint())),
+                    )
+                };
+            let dhcp = wasm_vm_slirp::DhcpServer::new()
+                .with_lease_secs(slirp_lease_secs())
+                .with_mtu(slirp_mtu());
+            set_slirp_dhcp_stats(dhcp.stats_handle());
+            let backend = backend.with_dhcp_server(dhcp).with_dns_service(dns);
+            let (transfers, shared) = browser_file_transfer::BrowserFileTransfers::new(backend);
+            let _ = machine
+                .enable_virtio_net(Box::new(browser_file_transfer::SharedSlirpBackend(shared)));
+            file_transfers = Some(transfers);
+        } else {
+            let _ = machine.enable_virtio_net(Box::new(
+                wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
+            ));
+        }
+        // virtio-rng in slot 2 on every boot, backed by the browser CSPRNG
+        // (`crypto.getRandomValues`). The guest binds it as `/dev/hwrng` and seeds its CRNG from
+        // it, so `getrandom(2)`/`/dev/urandom` are ready early — without it the interpreted guest
+        // scavenges entropy from interrupt jitter for many seconds, long enough that the first TLS
+        // ClientHello's `RAND_bytes` stalls or fails (the E3-T19 guest-HTTPS flakiness).
+        let _ = machine.enable_virtio_rng(Box::new(crypto_entropy::CryptoEntropy));
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));
@@ -800,15 +1180,24 @@ impl WasmLinux {
                 fetch,
                 persist,
                 disk_ro,
+                file_transfers,
+                snapshot_base,
             }),
         })
     }
 
     /// Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
-    /// 16550 RX, and return `{ done: bool, state: string|null }`. `state` is `"poweroff"`,
-    /// `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or `"trap:<cause>"` once terminal.
+    /// 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
+    /// `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
+    /// that limit so JS can durably drain it before the guest can race arbitrarily far ahead.
+    /// `state` is `"poweroff"`, `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or
+    /// `"trap:<cause>"` once terminal.
     #[wasm_bindgen(js_name = runChunk)]
-    pub fn run_chunk(&self, max_instrs: u32) -> Result<JsValue, JsError> {
+    pub fn run_chunk(
+        &self,
+        max_instrs: u32,
+        persist_max_dirty_bytes: Option<u32>,
+    ) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         if inner.finished.is_none() {
             let mut sink = wasm_vm_core::trace::NullSink;
@@ -817,8 +1206,12 @@ impl WasmLinux {
             // of the budget on a near-empty FIFO. Instead, when input is queued, run in short slices
             // and top up the FIFO between them so the guest drains it many times within one budget
             // (bulk paste / held-key autorepeat throughput ~ slices × FIFO depth). When nothing is
-            // queued this collapses to a single full-budget run — the quiet path pays nothing.
+            // queued this collapses to a single full-budget run — unless persistent-disk pressure
+            // also needs a boundary. Without that boundary one 2M-instruction slice can complete an
+            // 80 MiB `dd` before IndexedDB reports quota exhaustion, falsely returning success to
+            // the guest before the UI can pause it (E3-T10 acceptance finding).
             const INPUT_SLICE: u64 = 16_384;
+            const PERSIST_SLICE: u64 = 16_384;
             let mut remaining = max_instrs as u64;
             let outcome = loop {
                 // Feed queued host input into the RX FIFO, up to its free space (no overrun).
@@ -830,14 +1223,30 @@ impl WasmLinux {
                         inner.uart.borrow_mut().push_input(&batch);
                     }
                 }
-                let step = if inner.pending.is_empty() {
-                    remaining
-                } else {
+                let persistence_bounded =
+                    persist_max_dirty_bytes.is_some() && inner.persist.is_some();
+                let step = if !inner.pending.is_empty() {
                     INPUT_SLICE.min(remaining)
+                } else if persistence_bounded {
+                    PERSIST_SLICE.min(remaining)
+                } else {
+                    remaining
                 };
                 let oc = inner.machine.run_traced(step, &mut sink);
                 remaining -= step;
-                if remaining == 0 || !matches!(oc, RunOutcome::MaxInstrs) {
+                let persistence_due = persistence_bounded
+                    && (inner.machine.blk_write_waiting()
+                        || persist_max_dirty_bytes.is_some_and(|limit| {
+                            limit > 0
+                                && inner.persist.as_ref().is_some_and(|(_, queue)| {
+                                    queue
+                                        .borrow()
+                                        .unpersisted_count()
+                                        .saturating_mul(wasm_vm_storage::OVERLAY_BLOCK)
+                                        >= limit as usize
+                                })
+                        }));
+                if remaining == 0 || persistence_due || !matches!(oc, RunOutcome::MaxInstrs) {
                     break oc;
                 }
             };
@@ -876,12 +1285,231 @@ impl WasmLinux {
         Ok(obj.into())
     }
 
+    /// Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
+    /// devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
+    #[wasm_bindgen(js_name = stateDigest)]
+    pub fn state_digest(&self) -> Result<String, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.machine.snapshot().hex_digest())
+    }
+
+    /// E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
+    /// `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
+    /// timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.
+    #[wasm_bindgen(js_name = setProfiling)]
+    pub fn set_profiling(&self, on: bool) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if on {
+            match JsHostTimer::new() {
+                Some(timer) => {
+                    inner.machine.set_host_timer(std::rc::Rc::new(timer));
+                    Ok(true)
+                }
+                None => Ok(false),
+            }
+        } else {
+            inner.machine.set_profiling(false);
+            Ok(true)
+        }
+    }
+
+    /// E4-T01: the accumulated profile as a plain JS object — `{ totalNs, sampleCount, walkCount,
+    /// collisions, regions: [{ pc, samples, pct }], subsystems: [{ name, ns }] }` — mirroring the
+    /// `getStats` surface the UI already consumes. `pc` is a hex string (a guest PC exceeds 2^53).
+    #[wasm_bindgen(js_name = getProfile)]
+    pub fn get_profile(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let report = inner.machine.prof_report(inner.machine.prof_total_ns(), 10);
+        let obj = js_sys::Object::new();
+        let set = |k: &str, v: &JsValue| {
+            let _ = js_sys::Reflect::set(&obj, &JsValue::from_str(k), v);
+        };
+        set("totalNs", &JsValue::from_f64(report.total_ns as f64));
+        set(
+            "sampleCount",
+            &JsValue::from_f64(report.sample_count as f64),
+        );
+        set("walkCount", &JsValue::from_f64(report.walk_count as f64));
+        set("collisions", &JsValue::from_f64(report.collisions as f64));
+        let regions = js_sys::Array::new();
+        for r in &report.top_regions {
+            let o = js_sys::Object::new();
+            let _ = js_sys::Reflect::set(
+                &o,
+                &JsValue::from_str("pc"),
+                &JsValue::from_str(&format!("0x{:016x}", r.phys_pc)),
+            );
+            let _ = js_sys::Reflect::set(
+                &o,
+                &JsValue::from_str("samples"),
+                &JsValue::from_f64(r.samples as f64),
+            );
+            let _ = js_sys::Reflect::set(&o, &JsValue::from_str("pct"), &JsValue::from_f64(r.pct));
+            regions.push(&o);
+        }
+        set("regions", &regions);
+        let subsystems = js_sys::Array::new();
+        for (sub, ns) in &report.subsystem_ns {
+            let o = js_sys::Object::new();
+            let _ = js_sys::Reflect::set(
+                &o,
+                &JsValue::from_str("name"),
+                &JsValue::from_str(sub.name()),
+            );
+            let _ =
+                js_sys::Reflect::set(&o, &JsValue::from_str("ns"), &JsValue::from_f64(*ns as f64));
+            subsystems.push(&o);
+        }
+        set("subsystems", &subsystems);
+        Ok(obj.into())
+    }
+
     /// Queue host keystrokes for the guest's `ttyS0` (fed to the RX FIFO across `runChunk`s).
     #[wasm_bindgen(js_name = sendInput)]
     pub fn send_input(&self, bytes: &[u8]) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         inner.pending.extend(bytes.iter().copied());
         Ok(())
+    }
+
+    #[wasm_bindgen(js_name = fileTransferReady)]
+    pub fn file_transfer_ready(&self, slot: u32) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner
+            .file_transfers
+            .as_ref()
+            .is_some_and(|transfers| transfers.ready(slot as usize)))
+    }
+
+    #[wasm_bindgen(js_name = setFileDownloadReady)]
+    pub fn set_file_download_ready(&self, ready: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .set_download_ready(ready);
+        Ok(())
+    }
+
+    #[wasm_bindgen(js_name = beginFileUpload)]
+    pub fn begin_file_upload(
+        &self,
+        slot: u32,
+        name: String,
+        total: u32,
+        sha256_hex: String,
+    ) -> Result<u32, JsError> {
+        let sha256 = browser_file_transfer::parse_sha256(&sha256_hex)
+            .map_err(|error| JsError::new(&format!("file upload SHA-256: {error:?}")))?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .begin_upload(slot as usize, name, total as u64, sha256)
+            .map_err(|error| JsError::new(&format!("begin file upload: {error:?}")))
+    }
+
+    #[wasm_bindgen(js_name = pushFileUpload)]
+    pub fn push_file_upload(
+        &self,
+        stream: u32,
+        bytes: &[u8],
+        finished: bool,
+    ) -> Result<u32, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let buffered = inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .push_upload(stream, bytes, finished)
+            .map_err(|error| JsError::new(&format!("push file upload: {error:?}")))?;
+        Ok(buffered as u32)
+    }
+
+    #[wasm_bindgen(js_name = cancelFileUpload)]
+    pub fn cancel_file_upload(&self, stream: u32) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .cancel(stream)
+            .map_err(|error| JsError::new(&format!("cancel file upload: {error:?}")))
+    }
+
+    #[wasm_bindgen(js_name = dismissFileUpload)]
+    pub fn dismiss_file_upload(&self, stream: u32) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(inner
+            .file_transfers
+            .as_mut()
+            .is_some_and(|transfers| transfers.dismiss_upload(stream)))
+    }
+
+    #[wasm_bindgen(js_name = cancelFileDownload)]
+    pub fn cancel_file_download(&self, id: u32) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .cancel_download(id)
+            .map_err(|error| JsError::new(&format!("cancel file download: {error:?}")))
+    }
+
+    #[wasm_bindgen(js_name = finishFileDownload)]
+    pub fn finish_file_download(&self, id: u32, success: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .file_transfers
+            .as_mut()
+            .ok_or_else(|| JsError::new("file transfer requires a slirp boot"))?
+            .finish_download(id, success)
+            .map_err(|error| JsError::new(&format!("finish file download: {error:?}")))
+    }
+
+    #[wasm_bindgen(js_name = fileTransferStatus)]
+    pub fn file_transfer_status(&self) -> Result<String, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.file_transfers.as_ref().map_or_else(
+            || "{\"maxBuffered\":0,\"uploads\":[],\"downloads\":[]}".into(),
+            |t| t.status_json(),
+        ))
+    }
+
+    /// E3-T21d: the persistent driver calls this right after `persistPending` so a durable IndexedDB
+    /// flush pause — during which the guest is frozen and cannot ACK or heartbeat an in-flight file
+    /// transfer — does not accrue against the WVFT idle-timeout budget. No-op when nothing is
+    /// transferring or off the slirp path.
+    #[wasm_bindgen(js_name = noteFileTransferPersist)]
+    pub fn note_file_transfer_persist(&self) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if let Some(transfers) = inner.file_transfers.as_mut() {
+            transfers.note_persist();
+        }
+        Ok(())
+    }
+
+    #[wasm_bindgen(js_name = takeFileDownloadChunk)]
+    pub fn take_file_download_chunk(&self, id: u32) -> Result<js_sys::Uint8Array, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let bytes = inner
+            .file_transfers
+            .as_mut()
+            .and_then(|transfers| transfers.take_download_chunk(id))
+            .unwrap_or_default();
+        Ok(js_sys::Uint8Array::from(bytes.as_slice()))
+    }
+
+    #[wasm_bindgen(js_name = dismissFileDownload)]
+    pub fn dismiss_file_download(&self, id: u32) -> Result<bool, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(inner
+            .file_transfers
+            .as_mut()
+            .is_some_and(|transfers| transfers.dismiss_download(id)))
     }
 
     /// E3-T02: the chunk indices the virtio-blk device is currently parked on (guest reads awaiting a
@@ -940,9 +1568,10 @@ impl WasmLinux {
             batch.iter().map(|(b, _, bytes)| (*b, *bytes)).collect();
         if let Err(e) = idb.persist(&blocks).await {
             // E3-T10: classify the failure. On QuotaExceeded we DELIBERATELY do NOT
-            // mark_persisted — the dirty blocks stay pending, so no write is lost: freeing space
-            // and retrying, or flipping the disk read-only, keeps the filesystem consistent. The
-            // error is tagged so the loader can pause + show the quota dialog (vs a generic fail).
+            // mark_persisted — the dirty blocks stay pending and the persistent virtio WRITE that
+            // produced them remains outside the used ring. Freeing space + retry may complete it;
+            // Continue read-only resolves it with IOERR. The error is tagged so the loader can
+            // pause + show the quota dialog (vs a generic failure).
             let name = e.as_string().unwrap_or_else(|| format!("{e:?}"));
             let kind = storage_err::StorageError::classify(&name);
             if kind.is_quota() {
@@ -956,12 +1585,156 @@ impl WasmLinux {
         Ok(batch.len() as u32)
     }
 
-    /// E3-T08: persistence pressure — `{ pendingBlocks, pendingBytes, flushWaiting }`. The JS pump
-    /// reads this each tick: `flushWaiting` (a guest FLUSH is parked awaiting the durable commit)
-    /// means persist IMMEDIATELY — the guest's `sync` is blocked on it; `pendingBytes` over the
-    /// driver's dirty-bytes threshold means apply backpressure (persist before the next run slice)
-    /// so an unflushed session cannot accumulate unbounded dirty state. Zeros for non-persistent
-    /// boots.
+    // ── E3-T12d: browser resume-snapshot persistence + restore selection ──────────────────────────
+
+    /// Take a whole-machine resume snapshot and return its bytes as a `Uint8Array`. NOT async and NOT
+    /// persisting — kept synchronous so the `RefCell` borrow is never held across an `await` (the JS
+    /// caller may drive persistence itself, or use [`Self::persist_snapshot`]). `save_resume` quiesces
+    /// virtio-blk first; if the in-flight set cannot drain, the error message starts with
+    /// `"not_quiesced"` so the caller can retry rather than treat it as a hard failure; any other error
+    /// starts with `"save_error"`.
+    #[wasm_bindgen(js_name = saveSnapshot)]
+    pub fn save_snapshot(&self) -> Result<JsValue, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let blob = inner.machine.save_resume().map_err(|e| match e {
+            resume::SnapshotError::NotQuiesced { reason, in_flight } => {
+                JsError::new(&format!("not_quiesced: {reason:?} in_flight={in_flight}"))
+            }
+            other => JsError::new(&format!("save_error: {other:?}")),
+        })?;
+        Ok(js_sys::Uint8Array::from(&blob[..]).into())
+    }
+
+    /// Convenience: take a resume snapshot AND durably persist it to the snapshot IndexedDB store in one
+    /// call. The `RefCell` borrow is scoped to `save_resume` + reading `snapshot_base`; the store I/O
+    /// runs after it is dropped, never across the borrow. No-op error `"not_persistent"` off the
+    /// persistent path (there is no snapshot store to write to).
+    #[wasm_bindgen(js_name = persistSnapshot)]
+    pub async fn persist_snapshot(&self) -> Result<(), JsError> {
+        let (blob, base) = {
+            let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+            let Some(base) = inner.snapshot_base else {
+                return Err(JsError::new("not_persistent"));
+            };
+            let blob = inner.machine.save_resume().map_err(|e| match e {
+                resume::SnapshotError::NotQuiesced { reason, in_flight } => {
+                    JsError::new(&format!("not_quiesced: {reason:?} in_flight={in_flight}"))
+                }
+                other => JsError::new(&format!("save_error: {other:?}")),
+            })?;
+            (blob, base)
+        };
+        let store = snapshot_store::SnapshotStore::open(&base)
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+        store
+            .save(&blob, &base)
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot save: {e:?}")))?;
+        Ok(())
+    }
+
+    /// Read the persisted snapshot blob back (reassembled), or `null` if none is stored / not on the
+    /// persistent path. Async (IndexedDB). The JS restore-decision hook feeds this into
+    /// [`Self::restore_decision_code`] and, on a `"resume"` verdict, into [`Self::load_snapshot_blob`].
+    #[wasm_bindgen(js_name = readStoredSnapshot)]
+    pub async fn read_stored_snapshot(&self) -> Result<JsValue, JsError> {
+        let base = {
+            let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            match inner.snapshot_base {
+                Some(base) => base,
+                None => return Ok(JsValue::NULL),
+            }
+        };
+        let store = snapshot_store::SnapshotStore::open(&base)
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+        match store
+            .load()
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot load: {e:?}")))?
+        {
+            Some(blob) => Ok(js_sys::Uint8Array::from(&blob[..]).into()),
+            None => Ok(JsValue::NULL),
+        }
+    }
+
+    /// Persist an externally supplied snapshot blob (AC3 import) into the snapshot store for THIS boot's
+    /// base image. The blob is bound to this base's namespace; a foreign blob imported here still fails
+    /// the coherence guard on restore. Error `"not_persistent"` off the persistent path.
+    #[wasm_bindgen(js_name = importStoredSnapshot)]
+    pub async fn import_stored_snapshot(&self, blob: Vec<u8>) -> Result<(), JsError> {
+        let base = {
+            let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            match inner.snapshot_base {
+                Some(base) => base,
+                None => return Err(JsError::new("not_persistent")),
+            }
+        };
+        let store = snapshot_store::SnapshotStore::open(&base)
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+        store
+            .save(&blob, &base)
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot import: {e:?}")))?;
+        Ok(())
+    }
+
+    /// The current overlay commit generation (the snapshot coherence's third binding). `u64` fits
+    /// exactly in an `f64` for every realistic generation count.
+    #[wasm_bindgen(js_name = overlayGeneration)]
+    pub fn overlay_generation(&self) -> Result<f64, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.machine.overlay_generation() as f64)
+    }
+
+    /// Advance the overlay commit generation and return the new value. A stored snapshot taken before
+    /// the advance now fails the coherence guard (`"stale"`) — this is how a durable overlay commit
+    /// invalidates a now-inconsistent CPU/RAM snapshot.
+    #[wasm_bindgen(js_name = advanceOverlayGeneration)]
+    pub fn advance_overlay_generation(&self) -> Result<f64, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(inner.machine.advance_overlay_generation() as f64)
+    }
+
+    /// The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
+    /// against THIS boot's build identity + base binding + `current_generation`. Returns the stable
+    /// code (`"resume"`/`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`). Off the
+    /// persistent path (no base binding) there is no snapshot to resume: always `"missing"`.
+    #[wasm_bindgen(js_name = restoreDecisionCode)]
+    pub fn restore_decision_code(
+        &self,
+        stored: Option<Vec<u8>>,
+        current_generation: f64,
+    ) -> Result<String, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some(base) = inner.snapshot_base else {
+            return Ok("missing".to_string());
+        };
+        let core = build_core_hash();
+        let decision = resume::RestoreDecision::decide(
+            stored.as_deref(),
+            &core,
+            &base,
+            current_generation as u64,
+        );
+        Ok(decision.code().to_string())
+    }
+
+    /// Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
+    /// FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
+    /// typed reason (`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`) in the error
+    /// message rather than a device-internal string. NOT async (pure state application).
+    #[wasm_bindgen(js_name = loadSnapshotBlob)]
+    pub fn load_snapshot_blob(&self, blob: Vec<u8>) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .machine
+            .load_resume(&blob)
+            .map_err(|e| JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code()))
+    }
+
     /// E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
     /// can proceed instead of blocking on our open handle. Call before wiping; the machine must
     /// not persist afterward. No-op off the persistent path.
@@ -990,9 +1763,9 @@ impl WasmLinux {
         }
     }
 
-    /// E3-T10: whether the overlay has unpersisted (dirty) blocks — after a quota hit the caller
-    /// checks this to decide whether flipping read-only is enough (pending writes will retry once
-    /// space is freed) vs. data that can never become durable.
+    /// E3-T10: whether the overlay has unpersisted (dirty) blocks. In persistent writer mode these
+    /// belong to a virtio WRITE that has not been acknowledged; the quota dialog uses this to say
+    /// Retry may still complete it, while Continue returns IOERR.
     #[wasm_bindgen(js_name = hasUnpersisted)]
     pub fn has_unpersisted(&self) -> Result<bool, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
@@ -1002,17 +1775,25 @@ impl WasmLinux {
             .is_some_and(|(_, q)| !q.borrow().is_empty()))
     }
 
+    /// E3-T08/E3-T10 persistence pressure —
+    /// `{ pendingBlocks, pendingBytes, flushWaiting, writeWaiting }`. The JS pump persists
+    /// immediately when a guest WRITE or FLUSH is parked awaiting durable commit; pending bytes
+    /// over the configured threshold remain the generic write-back backpressure signal. Zeros for
+    /// non-persistent boots.
     #[wasm_bindgen(js_name = persistStats)]
     pub fn persist_stats(&self) -> Result<JsValue, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
         let obj = js_sys::Object::new();
-        let (blocks, waiting) = match &inner.persist {
+        let (blocks, flush_waiting, write_waiting) = match &inner.persist {
             Some((_, q)) => {
                 let n = q.borrow().unpersisted_count();
-                let w = inner.machine.blk_flush_waiting();
-                (n, w)
+                (
+                    n,
+                    inner.machine.blk_flush_waiting(),
+                    inner.machine.blk_write_waiting(),
+                )
             }
-            None => (0, false),
+            None => (0, false, false),
         };
         let _ = js_sys::Reflect::set(
             &obj,
@@ -1024,7 +1805,16 @@ impl WasmLinux {
             &"pendingBytes".into(),
             &JsValue::from_f64((blocks * wasm_vm_storage::OVERLAY_BLOCK) as f64),
         );
-        let _ = js_sys::Reflect::set(&obj, &"flushWaiting".into(), &JsValue::from_bool(waiting));
+        let _ = js_sys::Reflect::set(
+            &obj,
+            &"flushWaiting".into(),
+            &JsValue::from_bool(flush_waiting),
+        );
+        let _ = js_sys::Reflect::set(
+            &obj,
+            &"writeWaiting".into(),
+            &JsValue::from_bool(write_waiting),
+        );
         Ok(obj.into())
     }
 

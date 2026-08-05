@@ -38,7 +38,7 @@ async fn ipv6_only_addresses_are_filtered_out() {
         }
         // Some platforms reject a bare `::1` as a host in lookup_host → Failed is also acceptable here.
         Resolution::Failed => {}
-        Resolution::NxDomain => panic!("native resolver never fabricates NxDomain"),
+        Resolution::NxDomain => panic!("an IPv6 literal is malformed for the A-only resolver"),
     }
 }
 
@@ -71,12 +71,12 @@ async fn a_malformed_host_fails_fast_not_hangs() {
 }
 
 /// Requires real DNS — run with `cargo test -- --ignored`. A guaranteed-nonexistent `.invalid` name
-/// (RFC 2606) must fail fast (we map NXDOMAIN → Failed/SERVFAIL, never hang).
+/// (RFC 2606) must fail fast and preserve the OS resolver's authoritative NXDOMAIN.
 #[tokio::test]
 #[ignore = "needs network / a real resolver"]
 async fn nonexistent_name_fails_fast() {
     let r = NativeResolver::new().with_timeout(Duration::from_secs(3));
     let out = tokio::time::timeout(Duration::from_secs(4), r.resolve("no-such-host.invalid")).await;
     assert!(out.is_ok(), "did not hang");
-    assert_eq!(out.unwrap(), Resolution::Failed);
+    assert_eq!(out.unwrap(), Resolution::NxDomain);
 }

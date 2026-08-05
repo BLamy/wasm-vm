@@ -37,8 +37,8 @@ test.describe("E3-T13: browser Alpine detects eth0; loopback frames flow", () =>
     const text = () => page.locator(rows).textContent().catch(() => "");
 
     await page.goto("/");
-    await expect(page.locator("#boot-alpine-chunked")).toBeEnabled();
-    await page.click("#boot-alpine-chunked");
+    await expect(page.locator("#boot-alpine")).toBeEnabled();
+    await page.click("#boot-alpine");
     let sawOpenRC = false;
     let loggedIn = false;
     for (let i = 0; i < 900; i++) {

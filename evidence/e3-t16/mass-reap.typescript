@@ -1,0 +1,31 @@
+^D    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.24s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_slirp-2865e65db2e03583)
+
+running 1 test
+test ws_proxy::driver::driver_tests::dropping_one_transport_reaps_500_real_backend_sockets ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 215 filtered out; finished in 0.12s
+
+     Running tests/local_backend_dhcp.rs (target/debug/deps/local_backend_dhcp-3213ab664e864179)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/outbound_sync.rs (target/debug/deps/outbound_sync-389595c5e3f67f97)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/udp_ws_e2e.rs (target/debug/deps/udp_ws_e2e-4f23626262264c04)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/ws_connector_e2e.rs (target/debug/deps/ws_connector_e2e-7351acfeb822678c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s

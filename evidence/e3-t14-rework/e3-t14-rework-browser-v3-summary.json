@@ -1,0 +1,14 @@
+{
+  "url": "http://127.0.0.1:8123/?slirpRelay=ws://127.0.0.1:8082&final=5",
+  "suite": {
+    "total": "126",
+    "passed": "126",
+    "failed": "0",
+    "done": "126",
+    "status": "complete in 14.3s"
+  },
+  "networkPip": "cap-pip verified",
+  "networkEvidence": "browser Alpine DHCP + ping + byte-exact TCP wget + datagram-exact external UDP through WebSocket relay (E3-T14)",
+  "livePips": 12,
+  "consoleErrors": []
+}

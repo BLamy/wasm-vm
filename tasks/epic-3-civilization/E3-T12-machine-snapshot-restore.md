@@ -3,9 +3,10 @@ id: E3-T12
 epic: 3
 title: Full machine snapshot and restore with instant-resume boot
 priority: 322
-status: pending
+status: cancelled
 depends_on: [E3-T08, E3.5-T05a]
 estimate: L
+decomposed_into: [E3-T12a, E3-T12b, E3-T12c, E3-T12d, E3-T12e]
 capstone: false
 ---
 
@@ -74,6 +75,14 @@ documented behavior (overlay generation mismatch → refuse); if it silently res
 newer disk, that is the corruption case — refute.
 
 ## Verification log
+
+### 2026-07-27 — seam decomposition
+
+The remaining snapshot work crosses five independently falsifiable boundaries: verification of the
+landed container/component foundation, CPU determinism, device/disk quiescence, browser persistence,
+and the Docker-tab instant-resume proof. This planning container is replaced by E3-T12a through
+E3-T12e. Existing Pass 1-5 history below remains evidence input to E3-T12a, not an implicit verified
+status.
 
 ### Pass 1 — resume-snapshot format + zero-elision codec, native core (PR #153, stacked on #152)
 **Delivered:** `crates/core/src/resume.rs` — the versioned, sectioned (TLV) container the whole-machine

@@ -83,7 +83,7 @@ fn roundtrip(m: &mut Machine, rx_seq: &mut u16, tx_seq: &mut u16, rx_head: u16, 
     frame.extend_from_slice(&[0xde, 0xad, 0xbe, 0xef, 0x00, 0x01]);
     frame.extend_from_slice(&MAC);
     frame.extend_from_slice(&[0x08, 0x00]);
-    frame.extend(std::iter::repeat(0xA5u8).take(46));
+    frame.extend(std::iter::repeat_n(0xA5u8, 46));
     for i in 0..NET_HDR_LEN {
         m.bus_mut().store8(TX_BUF + i as u64, 0).unwrap();
     }

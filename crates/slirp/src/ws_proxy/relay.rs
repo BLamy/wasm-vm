@@ -74,6 +74,8 @@ pub enum RelayError {
     Mux(MuxError),
     /// A socket event named a stream the relay is not tracking (driver bug or a late event).
     UnknownStream(u32),
+    /// The public relay's HELLO token was absent, expired, forged, or bound to another Origin.
+    Authentication,
 }
 
 impl From<SessionError> for RelayError {
@@ -125,6 +127,14 @@ impl RelayCore {
     /// Number of live streams (for the driver's bookkeeping / leak checks).
     pub fn live_streams(&self) -> usize {
         self.session.mux().map_or(0, |m| m.live_count())
+    }
+
+    /// Whether the shared wire id is already occupied by a TCP stream, including a connect that has
+    /// not completed yet. The relay driver uses this beside its UDP map to enforce one namespace.
+    pub fn has_stream(&self, stream: u32) -> bool {
+        self.session
+            .mux()
+            .is_some_and(|mux| mux.get(stream).is_some())
     }
 
     /// Feed one decoded inbound WS frame. Before the handshake, the frame must be the guest's

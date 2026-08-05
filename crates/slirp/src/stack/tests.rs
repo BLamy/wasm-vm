@@ -21,7 +21,7 @@ fn gw_ip() -> smoltcp::wire::Ipv4Address {
 }
 
 /// Hand-build a 42-byte ethernet-framed ARP request: "who has 10.0.2.2? tell 10.0.2.15".
-fn arp_request() -> Vec<u8> {
+fn arp_request_for(target: Ipv4Addr) -> Vec<u8> {
     let mut f = vec![0u8; 42];
     // Ethernet: dst broadcast, src guest, ethertype ARP (0x0806).
     f[0..6].copy_from_slice(&[0xff; 6]);
@@ -36,8 +36,12 @@ fn arp_request() -> Vec<u8> {
     f[22..28].copy_from_slice(&GUEST_MAC); // sender HW
     f[28..32].copy_from_slice(&net::GUEST.octets()); // sender IP 10.0.2.15
     // target HW = 0, target IP = 10.0.2.2.
-    f[38..42].copy_from_slice(&net::GATEWAY.octets());
+    f[38..42].copy_from_slice(&target.octets());
     f
+}
+
+fn arp_request() -> Vec<u8> {
+    arp_request_for(net::GATEWAY)
 }
 
 #[test]
@@ -68,6 +72,18 @@ fn gateway_answers_arp_for_its_ip() {
         &net::GUEST.octets(),
         "reply target IP is the guest"
     );
+}
+
+#[test]
+fn dns_address_answers_arp_without_claiming_the_rest_of_the_subnet() {
+    let mut s = SlirpStack::new(GW_MAC);
+    s.inject(arp_request_for(net::DNS));
+    s.poll(10);
+    let egress = s.take_egress();
+    assert_eq!(egress.len(), 1, "the internal resolver answers ARP");
+    assert_eq!(&egress[0][20..22], &[0x00, 0x02]);
+    assert_eq!(&egress[0][28..32], &net::DNS.octets());
+    assert_eq!(&egress[0][38..42], &net::GUEST.octets());
 }
 
 /// Build an ethernet-framed IPv4 ICMP echo request from the guest to the gateway (smoltcp emits the
@@ -303,6 +319,67 @@ fn tcp_data_path_and_teardown() {
     assert_eq!(s.tcp_send(h, b"x"), 0, "send on a removed handle is 0");
     assert!(!s.tcp_can_send(h), "can_send on a removed handle is false");
     s.tcp_close(h); // no-op, must not panic
+}
+
+#[test]
+fn permanent_dns_tcp_listener_accepts_framed_queries_and_sends_framed_answers() {
+    use crate::dns::{TYPE_A, build_query, nxdomain, parse_query};
+    use crate::dns_tcp::frame_message;
+    use smoltcp::socket::tcp::State;
+
+    let mut s = SlirpStack::new(GW_MAC);
+    s.inject(arp_request_for(net::DNS));
+    s.poll(1);
+    let _ = s.take_egress();
+
+    s.inject(tcp_syn(net::DNS, 4053, 53));
+    s.poll(2);
+    let syn_ack = s.take_egress();
+    assert_eq!(syn_ack.len(), 1);
+    let ip = Ipv4Packet::new_checked(&syn_ack[0][14..]).unwrap();
+    let tcp = TcpPacket::new_checked(ip.payload()).unwrap();
+    assert!(tcp.syn() && tcp.ack());
+    let server_isn = tcp.seq_number().0 as i64;
+
+    s.inject(tcp_seg(
+        net::DNS,
+        4053,
+        53,
+        1001,
+        Some(server_isn + 1),
+        false,
+        &[],
+    ));
+    s.poll(3);
+    let _ = s.take_egress();
+    assert_eq!(s.dns_tcp_state(), State::Established);
+
+    let query = build_query(0xCAFE, "fallback.test", TYPE_A);
+    let framed_query = frame_message(&query).unwrap();
+    s.inject(tcp_seg(
+        net::DNS,
+        4053,
+        53,
+        1001,
+        Some(server_isn + 1),
+        false,
+        &framed_query,
+    ));
+    s.poll(4);
+    let _ = s.take_egress();
+    assert_eq!(s.dns_tcp_recv(), framed_query);
+
+    let answer = nxdomain(&parse_query(&query).unwrap());
+    let framed_answer = frame_message(&answer).unwrap();
+    assert_eq!(s.dns_tcp_send(&framed_answer), framed_answer.len());
+    s.poll(5);
+    let egress = s.take_egress();
+    assert!(
+        egress.iter().any(|frame| frame
+            .windows(framed_answer.len())
+            .any(|w| w == framed_answer)),
+        "the TCP listener returns the length-prefixed DNS response"
+    );
 }
 
 #[test]

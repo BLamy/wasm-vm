@@ -74,9 +74,13 @@ result login [run_wait "echo LOGIN\$((6*7))" "LOGIN42" 90]
 #    write-read coherency or writeback bug — makes the shell print DISKBAD, so the DISKOK42 needle
 #    never appears and the step FAILs. drop_caches is the difference between a real device read and
 #    a cached same-file compare (critic C1).
-run_wait "dd if=/dev/urandom of=/root/blob bs=1M count=$dd_mb 2>/dev/null; echo WROTE\$((6*7))" "WROTE42" 600
-run_wait "md5sum /root/blob | cut -d' ' -f1 > /root/sum1; sync; echo SUMA\$((6*7))" "SUMA42" 300
-run_wait "sync; echo 3 > /proc/sys/vm/drop_caches 2>/dev/null; md5sum /root/blob | cut -d' ' -f1 > /root/sum2; echo SUMB\$((6*7))" "SUMB42" 300
+# IO-step timeouts must SCALE with the payload: in the interpreter a real device-read md5sum
+# (sum2, after drop_caches) of N MiB is slow, so a fixed 300 s falsely fails at larger sizes
+# (the cmp step then runs before sum2 is written). ~30 s/MiB + a 300 s floor covers it.
+set io_to [expr {300 + $dd_mb * 30}]
+run_wait "dd if=/dev/urandom of=/root/blob bs=1M count=$dd_mb 2>/dev/null; echo WROTE\$((6*7))" "WROTE42" $io_to
+run_wait "md5sum /root/blob | cut -d' ' -f1 > /root/sum1; sync; echo SUMA\$((6*7))" "SUMA42" $io_to
+run_wait "sync; echo 3 > /proc/sys/vm/drop_caches 2>/dev/null; md5sum /root/blob | cut -d' ' -f1 > /root/sum2; echo SUMB\$((6*7))" "SUMB42" $io_to
 result disk_md5 [run_wait "if cmp -s /root/sum1 /root/sum2; then echo DISKOK\$((6*7)); else echo DISKBAD; fi" "DISKOK42" 60]
 
 # 4. Parallel writers — N concurrent dd must all complete and the fs stay consistent.
@@ -104,8 +108,18 @@ run_wait "dd if=/dev/zero of=/root/load bs=1M count=32 2>/dev/null & echo LOADED
 set t0 [clock milliseconds]
 set echoed [run_wait "echo PING\$((6*7))" "PING42" 60]
 set lat [expr {[clock milliseconds]-$t0}]
-result interactivity $echoed "echo_latency_ms=$lat"
+# Criterion 3: GATE the latency, don't just record it — the shell must execute a command under
+# background dd load within STRESS_LAT_MAX_MS (default 2000; smoke baseline was ~525 ms).
+set lat_max [getenv STRESS_LAT_MAX_MS 2000]
+result interactivity [expr {$echoed && $lat < $lat_max}] "echo_latency_ms=$lat max_ms=$lat_max"
 run_wait "wait; sync; echo LOADDONE\$((6*7))" "LOADDONE42" 600
+
+# 6b. /proc/interrupts sanity (criterion 5): interrupts are actually being delivered — the sum of
+#     per-CPU counts across all IRQ lines must be > 0 (the timer alone guarantees this). The verdict
+#     is an OUTPUT-ONLY token (INTR42 via $((6*7))) so the echoed command text can't satisfy the
+#     needle (critic C1 vacuity guard).
+set introk [run_wait "c=\$(awk 'NR>1{s+=\$2} END{print s+0}' /proc/interrupts); if test \$c -gt 0; then echo INTR\$((6*7)); else echo INTRBAD; fi" "INTR42" 60]
+result interrupts $introk
 
 # 7. Clean sync + poweroff. The OpenRC shutdown RUNLEVEL (stop every service, unmount, remount-ro,
 #    SBI power-down) is CPU-bound and can run LONGER than a boot, so: (a) match the kernel's

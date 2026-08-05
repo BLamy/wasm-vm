@@ -24,8 +24,8 @@ const bannerVisible = (page) =>
 
 const startBoot = async (page) => {
   await page.goto("/?persist=1");
-  await expect(page.locator("#boot-alpine-chunked")).toBeEnabled();
-  await page.click("#boot-alpine-chunked");
+  await expect(page.locator("#boot-alpine")).toBeEnabled();
+  await page.click("#boot-alpine");
 };
 
 test.describe("E3-T09: multi-tab single-writer", () => {

@@ -14,25 +14,39 @@ pub mod connector;
 pub mod device;
 pub mod dhcp;
 pub mod dns;
+pub mod dns_service;
 pub mod dns_tcp;
 pub mod doh;
 #[cfg(all(test, feature = "native"))]
 mod e2e_pump_stack;
+pub mod file_transfer;
+pub mod local_backend;
 pub mod manager;
 pub mod nat;
 #[cfg(feature = "native")]
 pub mod native;
+#[cfg(feature = "native")]
+pub mod native_dns;
 #[cfg(feature = "native")]
 pub mod native_resolver;
 #[cfg(feature = "native")]
 pub mod pump;
 pub mod resolver;
 pub mod stack;
+// E3-net slice 2a: the synchronous, poll-driven outbound connector (browser-compatible) + its native
+// `std::net` implementation. The trait is always available; `StdConnector` is native-only (real
+// sockets don't exist on wasm32).
+#[cfg(not(target_arch = "wasm32"))]
+pub mod std_connector;
+pub mod sync_connector;
 pub mod tcp;
 pub mod udp;
 pub mod udp_frame;
 #[cfg(all(test, feature = "native"))]
 mod udp_integration_tests;
+// E3-net slice 2b: the browser outbound path — a SyncConnector tunnelling guest flows through the
+// ws-proxy relay over a pluggable FrameTransport. Pure state machine (no sockets) → compiles for wasm.
+pub mod ws_connector;
 pub mod ws_proxy;
 
 pub use manager::{Action, FlowManager, FrameOutcome};
@@ -40,21 +54,34 @@ pub use manager::{Action, FlowManager, FrameOutcome};
 pub use bridge::Bridge;
 pub use connector::{ConnectError, OutboundConnector};
 pub use device::SlirpDevice;
-pub use dhcp::DhcpServer;
+pub use dhcp::{DhcpServer, DhcpStats, DhcpStatsHandle};
 pub use dns::{Answer, Query, ResponseInfo, build_query, parse_query, parse_response};
+pub use dns_service::{DnsCompletion, DnsRequest, DnsService, MAX_PENDING_DNS};
 pub use dns_tcp::{TcpFrame, frame_message, next_message};
 pub use doh::{DohResolver, DohTransport};
+pub use file_transfer::{
+    CommitDisposition, ConnectionId as FileTransferConnectionId, ErrorCode as FileTransferError,
+    FileTransferService, ServiceOutput as FileTransferOutput, TransferSink, TransferSource,
+    TransferStore,
+};
+pub use local_backend::SlirpLocalBackend;
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
 #[cfg(feature = "native")]
 pub use native::NativeConnector;
 #[cfg(feature = "native")]
+pub use native_dns::NativeDnsService;
+#[cfg(feature = "native")]
 pub use native_resolver::NativeResolver;
 #[cfg(feature = "native")]
-pub use pump::{PumpStats, pump_flow};
+pub use pump::{PumpEvent, PumpStats, pump_flow};
 pub use resolver::{DnsForwarder, Resolution, Resolver, TtlCache};
 pub use stack::SlirpStack;
+#[cfg(not(target_arch = "wasm32"))]
+pub use std_connector::StdConnector;
+pub use sync_connector::{ConnId, ConnStatus, DatagramId, SyncConnector};
 pub use udp::{UdpReply, UdpServices};
 pub use udp_frame::{GuestUdp, build_udp_frame, parse_udp};
+pub use ws_connector::{FrameTransport, WsConnector};
 pub use ws_proxy::{
     Frame as WsFrame, HandshakeError as WsHandshakeError, Mux as WsMux, MuxError as WsMuxError,
     MuxEvent as WsMuxEvent, Role as WsRole, Session as WsSession, SessionError as WsSessionError,

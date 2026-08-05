@@ -176,6 +176,92 @@ impl VirtioMmio {
         &self.queues[idx % MAX_QUEUES]
     }
 
+    /// E3-T12c1: serialize the transport's behavioral lifecycle state — device status, feature
+    /// negotiation, queue selector, per-queue config, interrupt status, config generation, and the
+    /// kick counters — to a snapshot payload (fixed-layout little-endian). The plugged device (`dev`)
+    /// and its ring position snapshot separately. Composed by `Machine::save_resume` into the
+    /// VIRTIO_BLK section (transport + device ring indices).
+    pub(crate) fn snapshot_transport(&self, out: &mut alloc::vec::Vec<u8>) {
+        out.extend_from_slice(&self.status.to_le_bytes());
+        out.extend_from_slice(&self.dev_feat_sel.to_le_bytes());
+        out.extend_from_slice(&self.drv_feat_sel.to_le_bytes());
+        out.extend_from_slice(&self.driver_features.to_le_bytes());
+        out.extend_from_slice(&self.queue_sel.to_le_bytes());
+        out.extend_from_slice(&self.int_status.to_le_bytes());
+        out.extend_from_slice(&self.config_gen.to_le_bytes());
+        match self.last_notify {
+            Some(q) => {
+                out.push(1);
+                out.extend_from_slice(&q.to_le_bytes());
+            }
+            None => {
+                out.push(0);
+                out.extend_from_slice(&0u32.to_le_bytes());
+            }
+        }
+        out.extend_from_slice(&self.notify_count.to_le_bytes());
+        for q in &self.queues {
+            out.extend_from_slice(&q.num.to_le_bytes());
+            out.push(q.ready as u8);
+            out.extend_from_slice(&q.desc.to_le_bytes());
+            out.extend_from_slice(&q.driver.to_le_bytes());
+            out.extend_from_slice(&q.device.to_le_bytes());
+        }
+    }
+
+    /// E3-T12c1: restore transport state from a [`crate::resume::Reader`]. ALL-OR-NOTHING — parses the
+    /// whole payload into locals first, committing to `self` only if every field reads cleanly, so a
+    /// malformed payload leaves the transport untouched.
+    pub(crate) fn restore_transport(
+        &mut self,
+        r: &mut crate::resume::Reader,
+    ) -> Result<(), crate::resume::SnapshotError> {
+        let status = r.u32()?;
+        let dev_feat_sel = r.u32()?;
+        let drv_feat_sel = r.u32()?;
+        let driver_features = r.u64()?;
+        let queue_sel = r.u32()?;
+        let int_status = r.u32()?;
+        let config_gen = r.u32()?;
+        let has_notify = r.bool()?;
+        let notify_q = r.u32()?;
+        let notify_count = r.u64()?;
+        let mut queues = [QueueState::default(); MAX_QUEUES];
+        for slot in queues.iter_mut() {
+            let num = r.u32()?;
+            let ready = r.bool()?;
+            let desc = r.u64()?;
+            let driver = r.u64()?;
+            let device = r.u64()?;
+            *slot = QueueState {
+                num,
+                ready,
+                desc,
+                driver,
+                device,
+            };
+        }
+        // Commit (dev + config bytes are unchanged; only lifecycle/ring config is restored).
+        self.status = status;
+        self.dev_feat_sel = dev_feat_sel;
+        self.drv_feat_sel = drv_feat_sel;
+        self.driver_features = driver_features;
+        self.queue_sel = queue_sel;
+        self.int_status = int_status;
+        self.config_gen = config_gen;
+        self.last_notify = if has_notify { Some(notify_q) } else { None };
+        self.notify_count = notify_count;
+        self.queues = queues;
+        Ok(())
+    }
+
+    /// Test-only: set a queue's state directly, standing in for the driver's MMIO register
+    /// programming so a device `service()` can be exercised without replaying the whole lifecycle.
+    #[cfg(test)]
+    pub(crate) fn set_queue_for_test(&mut self, idx: usize, qs: QueueState) {
+        self.queues[idx % MAX_QUEUES] = qs;
+    }
+
     fn sel_queue_mut(&mut self) -> &mut QueueState {
         &mut self.queues[(self.queue_sel as usize) % MAX_QUEUES]
     }
@@ -396,6 +482,62 @@ impl MmioDevice for VirtioMmio {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// E3-T12c1: the transport lifecycle state round-trips through the snapshot codec byte-identically,
+    /// and a malformed (truncated) payload is refused with the transport left untouched.
+    #[test]
+    fn transport_snapshot_round_trips_and_rejects_malformed() {
+        use crate::resume::{Reader, SnapshotError, section};
+        let mut m = VirtioMmio::empty();
+        m.status = 0xF;
+        m.drv_feat_sel = 1;
+        m.driver_features = 0x1_0000_0001;
+        m.queue_sel = 2;
+        m.int_status = 1;
+        m.config_gen = 3;
+        m.last_notify = Some(0);
+        m.notify_count = 42;
+        m.set_queue_for_test(
+            0,
+            QueueState {
+                num: 256,
+                ready: true,
+                desc: 0x1000,
+                driver: 0x2000,
+                device: 0x3000,
+            },
+        );
+        let mut buf = alloc::vec::Vec::new();
+        m.snapshot_transport(&mut buf);
+
+        // Restore into a fresh transport → re-serializes byte-identically (complete, canonical).
+        let mut m2 = VirtioMmio::empty();
+        let mut r = Reader::new(&buf, section::VIRTIO_BLK);
+        m2.restore_transport(&mut r).unwrap();
+        let mut buf2 = alloc::vec::Vec::new();
+        m2.snapshot_transport(&mut buf2);
+        assert_eq!(buf, buf2);
+        assert_eq!(m2.status, 0xF);
+        assert_eq!(m2.driver_features, 0x1_0000_0001);
+        assert_eq!(*m2.queue(0), *m.queue(0));
+
+        // Malformed (truncated) → typed error, target unchanged.
+        let mut m3 = VirtioMmio::empty();
+        m3.status = 0xABC;
+        let mut before = alloc::vec::Vec::new();
+        m3.snapshot_transport(&mut before);
+        let mut rt = Reader::new(&buf[..buf.len() - 1], section::VIRTIO_BLK);
+        assert!(matches!(
+            m3.restore_transport(&mut rt),
+            Err(SnapshotError::BadComponentState { .. })
+        ));
+        let mut after = alloc::vec::Vec::new();
+        m3.snapshot_transport(&mut after);
+        assert_eq!(
+            before, after,
+            "malformed restore must leave the transport untouched"
+        );
+    }
 
     /// Minimal backend for lifecycle tests: blk-shaped placeholder (DeviceID 2).
     struct BlkStub {

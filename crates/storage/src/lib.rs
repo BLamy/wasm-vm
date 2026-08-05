@@ -25,6 +25,7 @@ pub mod oci;
 mod overlay;
 mod prefetch;
 mod pullthrough;
+mod snapmeta;
 mod writeback;
 pub use blobstore::{BlobBackend, BlobError, BlobId, BlobStore, MemBlobBackend, blob_id};
 pub use cache::{BlockCache, CacheMetrics};
@@ -39,6 +40,10 @@ pub use overlay::{
 };
 pub use prefetch::{PrefetchTracker, Readahead, boot_prefetch};
 pub use pullthrough::{LayerFetcher, PullError, PullReport, pull_through};
+pub use snapmeta::{
+    SNAPSHOT_CHUNK, SNAPSHOT_DB_VERSION, SNAPSHOT_META_FORMAT, SnapshotMeta, SnapshotStoreError,
+    chunk_count_for, reassemble, snapshot_store_name,
+};
 pub use writeback::{PersistQueue, SharedPersistQueue, WriteBackOverlay};
 
 /// The one format version this reader understands. Bumped only on an incompatible change; unknown

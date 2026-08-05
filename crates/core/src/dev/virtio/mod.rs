@@ -7,6 +7,7 @@ pub mod blk;
 pub mod mmio;
 pub mod net;
 pub mod queue;
+pub mod rng;
 
 /// Standard virtio feature bit the transport ALWAYS offers (spec 1.2 §6.1): bit 32,
 /// "this device complies with virtio 1.x" — mandatory for non-legacy operation.

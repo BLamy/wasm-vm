@@ -1,0 +1,2 @@
+wasm-vm E3-T14 native Alpine slirp acceptance
+guest TCP -> smoltcp NAT -> NativeConnector -> real loopback HTTP

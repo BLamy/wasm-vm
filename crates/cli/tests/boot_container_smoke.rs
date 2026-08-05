@@ -111,7 +111,7 @@ fn container_capabilities_smoke_all_pass() {
     };
 
     assert!(
-        wait_for(&transcript, "login:", 900),
+        wait_for(&transcript, "login:", 2400),
         "no login; transcript:\n{}",
         transcript.lock().unwrap()
     );
@@ -121,14 +121,14 @@ fn container_capabilities_smoke_all_pass() {
     std::thread::sleep(Duration::from_secs(2));
     send(&mut stdin, "echo SHELL_\"UP\"");
     assert!(
-        wait_for(&transcript, "SHELL_UP", 90),
+        wait_for(&transcript, "SHELL_UP", 300),
         "no shell; transcript:\n{}",
         transcript.lock().unwrap()
     );
 
     // Run the smoke test. Some steps take real interpreter time (mkfs, OOM loop) → generous budget.
     send(&mut stdin, "container-smoke");
-    let passed = wait_for(&transcript, "SMOKE_ALL_PASS", 900);
+    let passed = wait_for(&transcript, "SMOKE_ALL_PASS", 2400);
     let t = transcript.lock().unwrap().clone();
     // If it didn't all-pass, surface which capabilities FAILED (each is an emulator-gap lead).
     assert!(

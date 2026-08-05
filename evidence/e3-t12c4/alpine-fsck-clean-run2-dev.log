@@ -1,0 +1,19 @@
+   Compiling wasm-vm-cli v0.0.1 (/home/ubuntu/wasm-vm/crates/cli)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.76s
+     Running tests/boot_snapshot_resume.rs (target/release/deps/boot_snapshot_resume-0037a1cc40d9400b)
+
+running 1 test
+test alpine_sync_snapshot_restore_fsck_clean has been running for over 60 seconds
+fsck.ext4 -n clean:
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+root: 3561/32768 files (0.1% non-contiguous), 49679/131072 blocks
+e2fsck 1.47.0 (5-Feb-2023)
+
+test alpine_sync_snapshot_restore_fsck_clean ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 1109.36s
+

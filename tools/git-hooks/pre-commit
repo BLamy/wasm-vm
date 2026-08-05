@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# poor-mans-ci pre-commit hook: when a commit changes the browser demo or its wasm inputs, rebuild the
+# deployable web/dist LOCALLY and stage it into the same commit. poor-mans-ci then just publishes that
+# committed dist — no wasm/npm/cargo build runs in CI (the reason CI cost dropped).
+#
+# Install:  make hooks           (sets core.hooksPath = tools/git-hooks)
+# Bypass:   SKIP_WEB_BUILD=1 git commit …   (or git commit --no-verify to skip all hooks)
+set -euo pipefail
+
+[ "${SKIP_WEB_BUILD:-0}" = "1" ] && { echo "[pre-commit] SKIP_WEB_BUILD=1 — not rebuilding web/dist"; exit 0; }
+
+repo=$(git rev-parse --show-toplevel)
+cd "$repo"
+
+# Only rebuild when the STAGED changes touch the wasm build's real inputs — the browser source or the
+# crates the wasm module compiles from. Doc/task/tooling/CLI-only commits skip the (slow) wasm build.
+staged=$(git diff --cached --name-only)
+needs_build=0
+while IFS= read -r f; do
+  [ -n "$f" ] || continue
+  case "$f" in
+    web/dist/*) ;;                                   # our own output — never a trigger
+    web/node_modules/* | web/test-results/* | web/playwright-report/*) ;;
+    web/* | crates/wasm/* | crates/core/* | crates/slirp/* | Cargo.lock)
+      needs_build=1 ;;
+  esac
+done <<EOF
+$staged
+EOF
+
+[ "$needs_build" = "1" ] || exit 0
+
+if ! command -v wasm-pack >/dev/null 2>&1; then
+  echo "[pre-commit] WARNING: web/wasm sources changed but wasm-pack is not installed —" >&2
+  echo "  web/dist was NOT rebuilt, so this commit's deploy may be stale." >&2
+  echo "  Install wasm-pack (cargo install wasm-pack) and re-commit, or run 'make web-dist'" >&2
+  echo "  then 'git add web/dist' before committing. Bypass this notice with SKIP_WEB_BUILD=1." >&2
+  exit 0   # warn, don't block — a missing local toolchain must not wedge commits
+fi
+
+echo "[pre-commit] web/wasm sources changed — rebuilding web/dist locally…"
+bash tools/build-web-dist.sh
+git add web/dist
+echo "[pre-commit] staged web/dist into this commit."

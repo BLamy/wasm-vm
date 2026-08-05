@@ -98,6 +98,15 @@ struct Window {
 pub struct SystemBus {
     ram: Ram,
     windows: Vec<Window>,
+    /// E4-T01 phase 3: the injected monotonic host timer, present only while profiling is armed
+    /// ([`Self::set_host_timer`]). The COLD device dispatch and the COLD page-walk path read it to
+    /// bracket a device/table-walk service call; `None` (the default) means every timer read is
+    /// skipped, so a normal run pays nothing.
+    host_timer: Option<Rc<dyn crate::prof::HostTimer>>,
+    /// E4-T01 phase 3: per-subsystem host-time accumulated by the cold paths (see
+    /// [`crate::prof::TimeAccum`]). The `Machine` folds this snapshot into the profile at report
+    /// time; timing lives here because the cold paths physically run at the bus.
+    time: crate::prof::TimeAccum,
 }
 
 impl SystemBus {
@@ -105,7 +114,24 @@ impl SystemBus {
         Self {
             ram,
             windows: Vec::new(),
+            host_timer: None,
+            time: crate::prof::TimeAccum::new(),
         }
+    }
+
+    /// E4-T01 phase 3: arm cold-path host-time accounting by injecting the monotonic timer. The
+    /// `Machine` calls this when profiling is enabled; passing the timer here (not just onto the
+    /// `Machine`) is what lets the cold device/walk paths — which only ever see the bus — read a
+    /// clock without a borrow conflict against guest RAM.
+    pub fn set_host_timer(&mut self, timer: Rc<dyn crate::prof::HostTimer>) {
+        self.host_timer = Some(timer);
+    }
+
+    /// E4-T01 phase 3: the per-subsystem cold-path time snapshot, folded into the profile by
+    /// [`crate::Machine::prof_report`]. Read-only (the report never mutates it), so repeated reports
+    /// are idempotent.
+    pub fn time_accum(&self) -> &crate::prof::TimeAccum {
+        &self.time
     }
 
     /// Attach `dev` at `[base, base + len)`. Rejects zero-length windows, windows whose
@@ -178,16 +204,50 @@ impl SystemBus {
     }
 }
 
-// The cold device paths are free functions taking ONLY `&mut [Window]` — never
-// `&mut SystemBus`. This is deliberate hot-path engineering: if these calls took the
-// whole bus, the optimizer would have to assume they can move `ram`'s buffer and
-// re-load its pointer/length after every potential device call, taxing pure-RAM
-// traffic. With split borrows, `ram` provably survives any fallback call unchanged.
+// The cold device paths are free functions taking ONLY `&mut [Window]` (plus the profiling timer
+// ref and its `&mut TimeAccum`, both disjoint from `ram`) — never `&mut SystemBus`. This is
+// deliberate hot-path engineering: if these calls took the whole bus, the optimizer would have to
+// assume they can move `ram`'s buffer and re-load its pointer/length after every potential device
+// call, taxing pure-RAM traffic. With split borrows, `ram` provably survives any fallback call
+// unchanged — and the added timer/accumulator params are still disjoint from `ram`, so the guarantee
+// holds. The profiling args are constructed only in the cold `Err(Access)` fallback arm, so pure-RAM
+// traffic never touches them.
+
+/// E4-T01 phase 3: time one device service call and attribute the delta to the window's subsystem.
+/// `timer` is `Some` only when profiling is armed; when `None` the call runs untimed (zero clock
+/// reads). Bracketing ONLY the `dev.read`/`dev.write` isolates device host-time from the dispatch
+/// bookkeeping around it.
+#[inline]
+fn timed_dev<T>(
+    timer: Option<&dyn crate::prof::HostTimer>,
+    accum: &mut crate::prof::TimeAccum,
+    base: u64,
+    call: impl FnOnce() -> T,
+) -> T {
+    match timer {
+        Some(t) => {
+            let t0 = t.now_ns();
+            let r = call();
+            accum.add_ns(
+                crate::prof::Subsystem::for_device_base(base),
+                t.now_ns().saturating_sub(t0),
+            );
+            r
+        }
+        None => call(),
+    }
+}
 
 /// Full containment → alignment → device read, masked to width (a buggy device
 /// returning stray high bits cannot corrupt a narrow load).
 #[cold]
-fn load_device(windows: &mut [Window], addr: u64, width: Width) -> Result<u64, BusFault> {
+fn load_device(
+    windows: &mut [Window],
+    timer: Option<&dyn crate::prof::HostTimer>,
+    accum: &mut crate::prof::TimeAccum,
+    addr: u64,
+    width: Width,
+) -> Result<u64, BusFault> {
     let w = width.bytes();
     let Some(win) = windows
         .iter_mut()
@@ -199,15 +259,17 @@ fn load_device(windows: &mut [Window], addr: u64, width: Width) -> Result<u64, B
     if addr & (w - 1) != 0 {
         return Err(BusFault::Misaligned);
     }
-    win.dev
-        .read(addr - win.start, width)
-        .map(|v| v & width.mask())
+    let base = win.start;
+    let off = addr - base;
+    timed_dev(timer, accum, base, || win.dev.read(off, width)).map(|v| v & width.mask())
 }
 
 /// Full containment → alignment → device write. Mirrors [`load_device`].
 #[cold]
 fn store_device(
     windows: &mut [Window],
+    timer: Option<&dyn crate::prof::HostTimer>,
+    accum: &mut crate::prof::TimeAccum,
     addr: u64,
     width: Width,
     value: u64,
@@ -223,7 +285,9 @@ fn store_device(
     if addr & (w - 1) != 0 {
         return Err(BusFault::Misaligned);
     }
-    win.dev.write(addr - win.start, width, value)
+    let base = win.start;
+    let off = addr - base;
+    timed_dev(timer, accum, base, || win.dev.write(off, width, value))
 }
 
 // RAM first: Ok and Misaligned are final (Misaligned proves full containment in RAM,
@@ -237,9 +301,14 @@ macro_rules! sysbus_load {
         #[inline(always)]
         fn $name(&mut self, addr: u64) -> Result<$ty, BusFault> {
             match self.ram.$name(addr) {
-                Err(BusFault::Access) => {
-                    load_device(&mut self.windows, addr, $width).map(|v| v as $ty)
-                }
+                Err(BusFault::Access) => load_device(
+                    &mut self.windows,
+                    self.host_timer.as_deref(),
+                    &mut self.time,
+                    addr,
+                    $width,
+                )
+                .map(|v| v as $ty),
                 ram_result => ram_result,
             }
         }
@@ -251,9 +320,14 @@ macro_rules! sysbus_store {
         #[inline(always)]
         fn $name(&mut self, addr: u64, val: $ty) -> Result<(), BusFault> {
             match self.ram.$name(addr, val) {
-                Err(BusFault::Access) => {
-                    store_device(&mut self.windows, addr, $width, u64::from(val))
-                }
+                Err(BusFault::Access) => store_device(
+                    &mut self.windows,
+                    self.host_timer.as_deref(),
+                    &mut self.time,
+                    addr,
+                    $width,
+                    u64::from(val),
+                ),
                 ram_result => ram_result,
             }
         }
@@ -275,6 +349,17 @@ impl Bus for SystemBus {
         // — a misaligned access touching a window (or straddling out of RAM) keeps the
         // `*AddrMisaligned` trap. Delegates to the RAM's own containment check.
         self.ram.ram_contains(addr, len)
+    }
+
+    /// E4-T01 phase 3: hand the cold page-walk path a host timestamp when profiling is armed.
+    fn prof_timer_now(&self) -> Option<u64> {
+        self.host_timer.as_ref().map(|t| t.now_ns())
+    }
+
+    /// E4-T01 phase 3: attribute one timed page-table walk to [`crate::prof::Subsystem::MmuWalk`].
+    fn prof_note_walk(&mut self, ns: u64) {
+        self.time.note_walk();
+        self.time.add_ns(crate::prof::Subsystem::MmuWalk, ns);
     }
 }
 

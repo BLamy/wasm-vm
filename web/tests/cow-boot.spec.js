@@ -29,8 +29,8 @@ test.describe("E3-T04: Alpine read-write on the CoW overlay", () => {
     });
 
     await page.goto("/");
-    await expect(page.locator("#boot-alpine-chunked")).toBeEnabled();
-    await page.click("#boot-alpine-chunked");
+    await expect(page.locator("#boot-alpine")).toBeEnabled();
+    await page.click("#boot-alpine");
 
     // Gate on OpenRC (late boot) before trusting the login prompt.
     let sawOpenRC = false;

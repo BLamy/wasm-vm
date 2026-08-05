@@ -1,0 +1,10 @@
+e2fsck 1.47.0 (5-Feb-2023)
+JOURNAL_REPLAY_RC=0
+e2fsck 1.47.0 (5-Feb-2023)
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+root: 1277/32768 files (0.2% non-contiguous), 13713/131072 blocks
+FSCK_RC=0

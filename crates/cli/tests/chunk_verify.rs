@@ -129,8 +129,8 @@ fn churn_zero_for_identical_builds_and_measured_for_a_small_change() {
     let c = td.path().join("c");
     std::fs::create_dir_all(&c).unwrap();
     chunk(&c, &changed, 1024);
-    // 20 chunks total; one changed on each side of the union → ~2/21 ≈ 9.5%. Assert the guard
-    // passes at 50% (the pipeline's unstable-layout ceiling) but the churn is small and nonzero.
+    // 20 old chunks; one old cache object is invalidated → 5.0% churn and 95.0% retention.
+    // Additions are reported separately rather than double-counting one replacement.
     bin()
         .args(["chunk-churn", "--old"])
         .arg(a.join("art"))
@@ -139,7 +139,8 @@ fn churn_zero_for_identical_builds_and_measured_for_a_small_change() {
         .args(["--max-churn-pct", "50"])
         .assert()
         .success()
-        .stdout(predicate::str::contains("changed"));
+        .stdout(predicate::str::contains("5.0% churn"))
+        .stdout(predicate::str::contains("95.0% retained"));
 
     // And the guard TRIPS when the ceiling is set below the actual churn.
     bin()

@@ -37,9 +37,17 @@ pub mod section {
     pub const VIRTIO_BLK: u32 = 6;
     pub const VIRTIO_NET: u32 = 7;
     pub const RTC: u32 = 8;
+    /// E3-T12b: the deterministic-clock phase (the sub-`clock_div` `mtime` remainder + `clock_div`).
+    /// Machine-level state — kept OFF the CLINT's RefCell so the per-instruction tick stays a plain
+    /// field write — but it must be snapshotted for instruction-exact timer placement on resume.
+    pub const CLOCK: u32 = 9;
+    /// virtio-rng slot — a real device the machine can enable, whose snapshot visitor is a later
+    /// increment; reserved-but-unsupported for now (its ring state matters far less than blk/net).
+    pub const VIRTIO_RNG: u32 = 10;
 }
 
-/// Is `tag` a section this build understands?
+/// Is `tag` a section number this format family reserves (the whole reserved universe, whether or
+/// not *this* build can restore it)? A tag outside this set is a garbage/foreign tag.
 pub fn is_known_section(tag: u32) -> bool {
     matches!(
         tag,
@@ -51,7 +59,92 @@ pub fn is_known_section(tag: u32) -> bool {
             | section::VIRTIO_BLK
             | section::VIRTIO_NET
             | section::RTC
+            | section::CLOCK
+            | section::VIRTIO_RNG
     )
+}
+
+/// Is `tag` a section this build actually has a restorer for? The bounded-component foundation
+/// ships CPU (E3-T12b) + RAM + CLINT + PLIC + UART + RTC; the virtio sections are reserved
+/// numbers whose visitors land in later integration passes (E3-T12c). A known-but-unsupported tag
+/// is refused loudly ([`SnapshotError::UnsupportedSection`]) rather than accepted and skipped. When a
+/// visitor lands, its tag moves here and the reserved list shrinks — no format-version bump needed
+/// because the reader already fails closed on it.
+pub fn is_supported_section(tag: u32) -> bool {
+    matches!(
+        tag,
+        section::CPU
+            | section::RAM
+            | section::CLINT
+            | section::PLIC
+            | section::UART
+            | section::RTC
+            | section::CLOCK
+            | section::VIRTIO_BLK
+            | section::VIRTIO_NET
+    )
+}
+
+/// A bounds-checked little-endian cursor for component `restore` parsers (E3-T12b). Every read is
+/// fallible: a short payload yields `Err(BadComponentState { tag })` rather than a panic, and the
+/// section-level all-or-nothing contract is upheld by parsing wholly into locals before the caller
+/// commits. `finish()` refuses trailing garbage so a longer-than-expected payload is also rejected.
+pub struct Reader<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    tag: u32,
+}
+
+impl<'a> Reader<'a> {
+    pub fn new(buf: &'a [u8], tag: u32) -> Self {
+        Reader { buf, pos: 0, tag }
+    }
+    fn err(&self) -> SnapshotError {
+        SnapshotError::BadComponentState { tag: self.tag }
+    }
+    fn take(&mut self, n: usize) -> Result<&'a [u8], SnapshotError> {
+        let end = self.pos.checked_add(n).ok_or_else(|| self.err())?;
+        if end > self.buf.len() {
+            return Err(self.err());
+        }
+        let s = &self.buf[self.pos..end];
+        self.pos = end;
+        Ok(s)
+    }
+    pub fn u8(&mut self) -> Result<u8, SnapshotError> {
+        Ok(self.take(1)?[0])
+    }
+    pub fn bool(&mut self) -> Result<bool, SnapshotError> {
+        // Only 0/1 are legal — any other byte is a malformed (or hand-edited) payload.
+        match self.u8()? {
+            0 => Ok(false),
+            1 => Ok(true),
+            _ => Err(self.err()),
+        }
+    }
+    pub fn u16(&mut self) -> Result<u16, SnapshotError> {
+        let b = self.take(2)?;
+        Ok(u16::from_le_bytes([b[0], b[1]]))
+    }
+    pub fn u32(&mut self) -> Result<u32, SnapshotError> {
+        let b = self.take(4)?;
+        Ok(u32::from_le_bytes([b[0], b[1], b[2], b[3]]))
+    }
+    pub fn u64(&mut self) -> Result<u64, SnapshotError> {
+        let b = self.take(8)?;
+        Ok(u64::from_le_bytes([
+            b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+        ]))
+    }
+    /// Assert the payload is fully consumed — a trailing byte means the payload is longer than this
+    /// build's encoding (corrupt / version-skewed), rejected rather than silently ignored.
+    pub fn finish(self) -> Result<(), SnapshotError> {
+        if self.pos == self.buf.len() {
+            Ok(())
+        } else {
+            Err(self.err())
+        }
+    }
 }
 
 /// A rejected snapshot — every failure is one of these, never a panic.
@@ -70,8 +163,14 @@ pub enum SnapshotError {
     /// The overlay has advanced since the snapshot (or is otherwise inconsistent) — refuse rather
     /// than resume a stale CPU/RAM state over a newer disk (the corruption case).
     OverlayGenerationMismatch { snapshot: u64, current: u64 },
-    /// A section tag this build does not understand — fail loudly.
+    /// A section tag this build does not understand at all — fail loudly.
     UnknownSection { tag: u32 },
+    /// A section tag this format family reserves but this build has no restorer for yet (e.g. the
+    /// CPU / virtio sections, whose visitors are later integration passes). Recognised, but refused
+    /// rather than accepted-and-silently-skipped — the same "must not be half-applied" rule as an
+    /// unknown tag, kept a *distinct* variant so a reserved-not-yet-implemented section is
+    /// observably different from a garbage tag.
+    UnsupportedSection { tag: u32 },
     /// A section's declared length exceeds the bytes remaining in the blob.
     SectionLengthOverflow { tag: u32 },
     /// The zero-elision payload decoded to a different length than expected, or is malformed.
@@ -85,6 +184,28 @@ pub enum SnapshotError {
     /// A component-state section payload was the wrong length or otherwise malformed for its
     /// component (`tag`) — restore refuses it rather than half-applying a corrupt state.
     BadComponentState { tag: u32 },
+    /// E3-T12c2: a snapshot was requested while the virtio-blk device still had `in_flight` parked
+    /// descriptor chains that could not be drained within the bounded quiesce pass budget. Rather
+    /// than serialize a torn boundary (a half-processed request that would double-complete or vanish
+    /// on restore), the save REFUSES — the caller retries or falls back. `reason` names the residual
+    /// the drain could not clear; `in_flight` is how many chains remain parked.
+    NotQuiesced {
+        reason: QuiesceReason,
+        in_flight: usize,
+    },
+}
+
+/// E3-T12c2: why the virtio-blk in-flight set could not be drained to empty at a snapshot boundary —
+/// the residual [`SnapshotError::NotQuiesced`] carries. A build-agnostic mirror of the device's park
+/// reasons so the resume format does not depend on the block-device types.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum QuiesceReason {
+    /// A read/write parked awaiting a base-chunk fetch that never arrived within the budget.
+    Chunk,
+    /// A FLUSH parked awaiting a durability barrier the backend did not clear within the budget.
+    Flush,
+    /// A persistent WRITE parked awaiting its durable commit within the budget.
+    Write,
 }
 
 /// A machine component (CLINT, PLIC, UART, …) whose full state serializes to a resume-format
@@ -172,6 +293,118 @@ impl SnapshotHeader {
             });
         }
         Ok(())
+    }
+}
+
+/// E3-T12d: why a stored snapshot must be discarded in favour of a cold boot. Every reason a
+/// browser reload can reject a persisted snapshot collapses to one of these, so the UI/host has a
+/// *typed* answer (not a free-form string) for "why did we cold-boot?". The variants partition the
+/// whole failure space: nothing stored, a header/section the parser rejects, a foreign build, a
+/// foreign base image, or a stale overlay generation. Deliberately build-agnostic (mirrors, but does
+/// not re-expose, the [`SnapshotError`] space) so the persistence layer can log/branch on it without
+/// depending on the device internals.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ColdBootReason {
+    /// No snapshot is persisted for this base image — first boot, or it was cleared.
+    Missing,
+    /// The blob is truncated, has bad magic, an unknown version, or any malformed/oversized section —
+    /// i.e. it does not parse as a coherent container. Never resumed.
+    Corrupt,
+    /// The snapshot was written by a different emulator build (`core_hash` differs) — resuming it
+    /// could land on divergent instruction semantics.
+    ForeignBuild,
+    /// The snapshot rides a different base disk image (`base_image_hash` differs).
+    ForeignImage,
+    /// The overlay has advanced past (or diverged from) the snapshot's generation — resuming a stale
+    /// CPU/RAM state over a newer disk is the silent-corruption case.
+    Stale { snapshot: u64, current: u64 },
+}
+
+impl ColdBootReason {
+    /// Map a restore-time [`SnapshotError`] onto the cold-boot reason space. The coherence variants
+    /// map one-to-one; everything else (bad magic, truncation, version, unknown/unsupported/oversized
+    /// section, malformed component/sparse state, a not-quiesced blob that should never have been
+    /// stored) is [`Self::Corrupt`] — none of them is safe to resume.
+    pub fn from_snapshot_error(err: &SnapshotError) -> Self {
+        match err {
+            SnapshotError::CoreHashMismatch => ColdBootReason::ForeignBuild,
+            SnapshotError::BaseImageMismatch => ColdBootReason::ForeignImage,
+            SnapshotError::OverlayGenerationMismatch { snapshot, current } => {
+                ColdBootReason::Stale {
+                    snapshot: *snapshot,
+                    current: *current,
+                }
+            }
+            _ => ColdBootReason::Corrupt,
+        }
+    }
+
+    /// A stable, machine-readable code for logs and the JS decision API. Kept in lockstep with the
+    /// variants so the browser layer can branch on a string without re-deriving the taxonomy.
+    pub fn code(&self) -> &'static str {
+        match self {
+            ColdBootReason::Missing => "missing",
+            ColdBootReason::Corrupt => "corrupt",
+            ColdBootReason::ForeignBuild => "foreign_build",
+            ColdBootReason::ForeignImage => "foreign_image",
+            ColdBootReason::Stale { .. } => "stale",
+        }
+    }
+}
+
+/// E3-T12d: the resume-vs-cold-boot decision for a persisted snapshot. `Resume` means the stored
+/// blob's header is coherent with the live machine identity and it is safe to hand to
+/// [`crate::Machine::load_resume`]; `ColdBoot` carries the typed reason it was rejected.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RestoreDecision {
+    Resume,
+    ColdBoot(ColdBootReason),
+}
+
+impl RestoreDecision {
+    /// Decide from a stored blob (`None` = nothing persisted) against the live machine identity. This
+    /// is the *header-level* gate — cheap, no section walk — mirroring exactly the guard
+    /// [`crate::Machine::load_resume`] runs first, so a `Resume` verdict here means the coherence
+    /// guard will not be what rejects the subsequent load. A blob whose header does not even parse is
+    /// [`ColdBootReason::Corrupt`]. The final section-level integrity is still enforced by
+    /// `load_resume` itself (map its error via [`ColdBootReason::from_snapshot_error`]).
+    pub fn decide(
+        stored: Option<&[u8]>,
+        expected_core_hash: &[u8; 32],
+        expected_base_image_hash: &[u8; 32],
+        current_overlay_generation: u64,
+    ) -> RestoreDecision {
+        let Some(blob) = stored else {
+            return RestoreDecision::ColdBoot(ColdBootReason::Missing);
+        };
+        let header = match SnapshotHeader::parse(blob) {
+            Ok((header, _)) => header,
+            Err(err) => {
+                return RestoreDecision::ColdBoot(ColdBootReason::from_snapshot_error(&err));
+            }
+        };
+        match header.validate_for(
+            expected_core_hash,
+            expected_base_image_hash,
+            current_overlay_generation,
+        ) {
+            Ok(()) => RestoreDecision::Resume,
+            Err(err) => RestoreDecision::ColdBoot(ColdBootReason::from_snapshot_error(&err)),
+        }
+    }
+
+    /// `true` iff this is a `Resume`.
+    pub fn is_resume(&self) -> bool {
+        matches!(self, RestoreDecision::Resume)
+    }
+
+    /// The cold-boot reason code, or `"resume"` for a resume verdict — the single string the JS
+    /// decision API surfaces.
+    pub fn code(&self) -> &'static str {
+        match self {
+            RestoreDecision::Resume => "resume",
+            RestoreDecision::ColdBoot(reason) => reason.code(),
+        }
     }
 }
 
@@ -267,6 +500,13 @@ impl<'a> Iterator for SectionReader<'a> {
         if !is_known_section(tag) {
             self.done = true;
             return Some(Err(SnapshotError::UnknownSection { tag }));
+        }
+        // A reserved tag with no restorer in this build is refused loudly, not accepted-and-skipped:
+        // silently dropping a section a restore loop can't apply is exactly the half-applied hazard
+        // the format forbids. The length is still bounds-checked above, so this stays panic-free.
+        if !is_supported_section(tag) {
+            self.done = true;
+            return Some(Err(SnapshotError::UnsupportedSection { tag }));
         }
         self.pos = end;
         Some(Ok(Section {

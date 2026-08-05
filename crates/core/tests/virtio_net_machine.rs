@@ -114,7 +114,7 @@ fn machine_loopback_roundtrip_slot1() {
     frame.extend_from_slice(&nbr);
     frame.extend_from_slice(&MAC);
     frame.extend_from_slice(&[0x08, 0x00]);
-    frame.extend(std::iter::repeat(0xC3u8).take(46));
+    frame.extend(std::iter::repeat_n(0xC3u8, 46));
     for i in 0..NET_HDR_LEN {
         m.bus_mut().store8(TX_BUF + i as u64, 0).unwrap();
     }
@@ -161,7 +161,7 @@ fn machine_loopback_roundtrip_slot1() {
     assert_eq!(state.borrow().rx_dropped, 0);
 
     // ACK the interrupt through the real register; level drops.
-    let int = m.bus_mut().load32(SLOT1 + 0x60).unwrap() as u32;
+    let int = m.bus_mut().load32(SLOT1 + 0x60).unwrap();
     assert_ne!(int & 1, 0, "USED_RING bit set");
     m.bus_mut().store32(SLOT1 + 0x64, int).unwrap();
     assert!(!slot.borrow().irq_level(), "IRQ cleared after ACK");

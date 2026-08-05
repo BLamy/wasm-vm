@@ -12,15 +12,17 @@ PMP, so signatures diverged on tests our machine handles correctly for the ISA i
 
 E1-T26 switched the reference to the canonical **RISC-V Sail model** (`sail_riscv_sim`, a
 config-honoring golden model), with `compliance/sail/sail_config_override.json` pinning Sail to
-our declared ISA (rv64gc + S/U + Sv39/Sv48; misaligned scalar supported; Svnapot/Svpbmt/Sv57/
-Svrsw60t59b disabled). Against that reference the **entire suite passes with 0 failures**, so
-there is nothing to exclude:
+our declared ISA (rv64gc + S/U + Sv39/Sv48/**Sv57**; misaligned scalar supported;
+Svnapot/Svpbmt/Svrsw60t59b disabled). Against that reference the **entire suite passes with 0
+failures**, so there is nothing to exclude:
 
 - **Misaligned load/store (8 `privilege/misalign-*`)** — our machine supports hardware
   misaligned access (`hw_data_misaligned_support: True`); Sail honors the declaration and
   agrees. (Spike could not — it always traps misaligned.)
-- **Sv57 (38 `vm_sv57` / `vm_pmp/sv57`)** — our machine implements up to Sv48 and WARL-rejects
-  satp MODE=10; Sail configured without Sv57 agrees. A legal ISA subset (Priv §4.1.11).
+- **Sv57 (formerly 38 `vm_sv57` / `vm_pmp/sv57`)** — the DUT now **implements Sv57** (5-level
+  page walk, `satp` MODE=10; E1-T28), so Sail is left with Sv57 **enabled** (its default): the
+  `vm_sv57` / `vm_pmp/sv57` tests genuinely run the 5-level walk against BOTH and their signatures
+  match. No longer excluded. (Was previously excluded when the DUT capped at Sv48.)
 - **64-region PMP (4 `pmpm_all_entries_check`)** — our machine declares 16 PMP entries; the
   64-region case is gated off by the DUT platform and Sail matches.
 

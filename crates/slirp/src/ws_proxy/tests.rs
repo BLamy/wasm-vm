@@ -41,6 +41,25 @@ fn every_frame_round_trips() {
             stream: 7,
             credit: 65536,
         },
+        Frame::UdpOpen {
+            stream: 0x8000_0001,
+            host: "1.1.1.1".to_string(),
+            port: 53,
+        },
+        Frame::UdpOpenOk {
+            stream: 0x8000_0001,
+        },
+        Frame::UdpOpenFail {
+            stream: 0x8000_0001,
+            code: 1,
+        },
+        Frame::UdpData {
+            stream: 0x8000_0001,
+            bytes: b"one datagram".to_vec(),
+        },
+        Frame::UdpClose {
+            stream: 0x8000_0001,
+        },
     ];
     for f in frames {
         let wire = f.encode().expect("encodes");
@@ -88,6 +107,28 @@ fn conformance_vectors_are_byte_exact() {
         Frame::Rst { stream: 9 }.encode().unwrap(),
         vec![0, 0, 0, 9, 7]
     );
+    // UDP_DATA stream 0x80000001: op 12, one datagram payload.
+    assert_eq!(
+        Frame::UdpData {
+            stream: 0x8000_0001,
+            bytes: b"dns".to_vec()
+        }
+        .encode()
+        .unwrap(),
+        vec![0x80, 0, 0, 1, 12, b'd', b'n', b's']
+    );
+}
+
+#[test]
+fn udp_datagram_size_limit_is_enforced_on_encode_and_decode() {
+    let too_large = Frame::UdpData {
+        stream: 0x8000_0001,
+        bytes: vec![0; MAX_DATAGRAM_BYTES + 1],
+    };
+    assert!(too_large.encode().is_none(), "oversize UDP never encodes");
+    let mut wire = vec![0x80, 0, 0, 1, 12];
+    wire.resize(5 + MAX_DATAGRAM_BYTES + 1, 0);
+    assert!(Frame::decode(&wire).is_none(), "oversize UDP never decodes");
 }
 
 #[test]

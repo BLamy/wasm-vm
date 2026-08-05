@@ -58,4 +58,19 @@ pub trait Bus {
         let _ = (addr, len);
         false
     }
+
+    /// E4-T01 phase 3: the profiler's monotonic host time in ns, or `None` when profiling is not
+    /// armed on this bus. Read ONLY on the COLD page-table-walk path ([`crate::mmu`]'s `walk_leaf`,
+    /// reached only on a TLB miss) to bracket the walk — never on the hot TLB-hit path. The default
+    /// returns `None` so a bus without a timer (every test/oracle bus) spends nothing.
+    fn prof_timer_now(&self) -> Option<u64> {
+        None
+    }
+
+    /// E4-T01 phase 3: attribute `ns` nanoseconds of page-table-walk time (and count one walk).
+    /// Called only from the cold walk path, only when [`Self::prof_timer_now`] returned `Some`.
+    /// Default is a no-op.
+    fn prof_note_walk(&mut self, ns: u64) {
+        let _ = ns;
+    }
 }

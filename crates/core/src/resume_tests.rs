@@ -14,8 +14,10 @@ const CORE: [u8; 32] = [0xC0; 32];
 const BASE: [u8; 32] = [0xBA; 32];
 
 fn sample_blob() -> Vec<u8> {
+    // Two *supported* tags carrying opaque payloads: the reader yields section bytes without
+    // restoring them, so these exercise the TLV framing independent of any component codec.
     let mut w = SnapshotWriter::new(&CORE, &BASE, 7);
-    w.section(section::CPU, b"cpu-state");
+    w.section(section::CLINT, b"clint-state");
     w.section(section::RAM, b"ram-state");
     w.finish()
 }
@@ -31,8 +33,8 @@ fn header_round_trips_and_sections_read_back_in_order() {
 
     let sections: Vec<_> = reader.map(|r| r.unwrap()).collect();
     assert_eq!(sections.len(), 2);
-    assert_eq!(sections[0].tag, section::CPU);
-    assert_eq!(sections[0].payload, b"cpu-state");
+    assert_eq!(sections[0].tag, section::CLINT);
+    assert_eq!(sections[0].payload, b"clint-state");
     assert_eq!(sections[1].tag, section::RAM);
     assert_eq!(sections[1].payload, b"ram-state");
 }
@@ -93,16 +95,62 @@ fn the_coherence_guards_refuse_a_mismatch() {
 #[test]
 fn an_unknown_section_fails_loudly() {
     let mut w = SnapshotWriter::new(&CORE, &BASE, 0);
-    w.section(section::CPU, b"ok");
+    w.section(section::RAM, b"ok");
     w.section(0xDEAD_BEEF, b"from a newer build"); // a tag this build doesn't know
     let blob = w.finish();
     let (_, reader) = SectionReader::new(&blob).unwrap();
     let results: Vec<_> = reader.collect();
-    assert_eq!(results[0].as_ref().unwrap().tag, section::CPU);
+    assert_eq!(results[0].as_ref().unwrap().tag, section::RAM);
     assert_eq!(
         results[1],
         Err(SnapshotError::UnknownSection { tag: 0xDEAD_BEEF })
     );
+}
+
+#[test]
+fn a_reserved_but_unimplemented_section_is_refused_as_unsupported() {
+    // VIRTIO_RNG is a reserved format number with no restorer yet (CPU landed in E3-T12b, VIRTIO_BLK
+    // + VIRTIO_NET in E3-T12c1). The reader must recognise it yet refuse it loudly — accepting-and-
+    // skipping a section a restore loop can't apply is the half-applied hazard the format forbids —
+    // and it must be a *distinct* error from a garbage tag so the reserved-vs-unknown boundary holds.
+    // A list (currently one entry) of reserved-but-unsupported tags; it grows as reserved format
+    // numbers are added before their restorers, so keep the loop shape rather than a scalar.
+    #[allow(clippy::single_element_loop)]
+    for tag in [section::VIRTIO_RNG] {
+        assert!(super::is_known_section(tag), "reserved tag stays known");
+        assert!(
+            !super::is_supported_section(tag),
+            "reserved tag has no restorer yet"
+        );
+        let mut w = SnapshotWriter::new(&CORE, &BASE, 0);
+        w.section(section::RAM, b"ok");
+        w.section(tag, b"reserved payload");
+        let blob = w.finish();
+        let (_, reader) = SectionReader::new(&blob).unwrap();
+        let results: Vec<_> = reader.collect();
+        assert_eq!(results[0].as_ref().unwrap().tag, section::RAM);
+        assert_eq!(results[1], Err(SnapshotError::UnsupportedSection { tag }));
+    }
+    // Every supported tag, by contrast, reads its opaque payload straight back.
+    for tag in [
+        section::CPU,
+        section::RAM,
+        section::CLINT,
+        section::PLIC,
+        section::UART,
+        section::RTC,
+        section::VIRTIO_BLK,
+        section::VIRTIO_NET,
+    ] {
+        assert!(super::is_supported_section(tag));
+        let mut w = SnapshotWriter::new(&CORE, &BASE, 0);
+        w.section(tag, b"payload");
+        let blob = w.finish();
+        let (_, reader) = SectionReader::new(&blob).unwrap();
+        let section = reader.map(|r| r.unwrap()).next().unwrap();
+        assert_eq!(section.tag, tag);
+        assert_eq!(section.payload, b"payload");
+    }
 }
 
 #[test]

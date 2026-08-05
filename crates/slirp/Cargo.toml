@@ -8,16 +8,21 @@ repository.workspace = true
 # parses/answers guest frames (ARP + ICMP echo now; TCP bridge next). tokio (the NativeConnector)
 # still arrives later behind a feature so the browser build never pulls it.
 # `native` (default) pulls tokio for the `NativeConnector` (the real outbound socket path used by the
-# native harness). A future wasm build of this crate would use `default-features = false` so the
-# browser never pulls tokio; the browser (crates/wasm) doesn't depend on this crate today regardless.
+# native harness). The wasm build uses this crate with `default-features = false`, so the browser
+# gets the local stack and WebSocket connector without pulling tokio.
 [features]
 default = ["native"]
 # `native` pulls tokio (the NativeConnector + relay driver) and tokio-tungstenite (the WS-wire
 # adapter that bridges a real WebSocket to the relay). No TLS: the relay terminates plaintext WS;
 # TLS belongs at the ingress. The browser build (`default-features = false`) pulls none of this.
-native = ["dep:tokio", "dep:tokio-tungstenite", "dep:futures-util"]
+native = ["dep:tokio", "dep:tokio-tungstenite", "dep:futures-util", "dep:libc"]
 
 [dependencies]
+# E3-net (browser networking): the local-stack NetBackend impl needs the machine's NetBackend trait.
+# default-features off (no `trace`/`std` core features). NOTE: this crate is NOT no_std — it uses std
+# and enables smoltcp's `std` feature; it compiles for wasm32-unknown-unknown because that target
+# provides std. (local_backend.rs is written alloc-only, but the crate around it is std.)
+wasm-vm-core = { workspace = true }
 futures-util = { version = "0.3", default-features = false, features = ["sink", "std"], optional = true }
 smoltcp = { version = "0.13", default-features = false, features = [
     "std",
@@ -42,6 +47,9 @@ tokio = { version = "1", optional = true, default-features = false, features = [
     "macros",
 ] }
 tokio-tungstenite = { version = "0.24", default-features = false, features = ["handshake"], optional = true }
+libc = { version = "0.2", optional = true }
+sha2 = { version = "0.10", default-features = false }
+unicode-normalization = "0.1"
 
 [dev-dependencies]
 tokio = { version = "1", default-features = false, features = [

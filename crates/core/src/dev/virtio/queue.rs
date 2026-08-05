@@ -130,6 +130,19 @@ impl Virtqueue {
         self.size
     }
 
+    /// E3-T12c1: the device's ring position — `(last_avail_idx, used_idx)` — the free-running shadows
+    /// that must round-trip through a snapshot so a resumed device neither replays a consumed
+    /// descriptor nor re-publishes a used one.
+    pub(crate) fn ring_indices(&self) -> (u16, u16) {
+        (self.last_avail_idx, self.used_idx)
+    }
+
+    /// E3-T12c1: restore the ring position after rebuilding the queue view from transport config.
+    pub(crate) fn set_ring_indices(&mut self, last_avail: u16, used: u16) {
+        self.last_avail_idx = last_avail;
+        self.used_idx = used;
+    }
+
     /// Bytes `[addr, addr+len)` fully inside guest DRAM (overflow-safe).
     fn dram_ok(bus: &SystemBus, addr: u64, len: u64) -> bool {
         let end = DRAM_BASE + bus.ram().len() as u64;

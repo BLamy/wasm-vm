@@ -1,0 +1,10 @@
+{
+  "relay": "ws://127.0.0.1:54403",
+  "expectedBytes": 104857600,
+  "expectedSha256": "20492a4d0d84f8beb1767f6616229f85d44c2827b64bdbfb260ee12fa1109e0e",
+  "wgetExitCode": 0,
+  "receivedBytes": 104857600,
+  "receivedSha256": "20492a4d0d84f8beb1767f6616229f85d44c2827b64bdbfb260ee12fa1109e0e",
+  "seconds": 3224,
+  "consoleErrors": []
+}

@@ -41,19 +41,122 @@ The same agent may play both roles on *different* tasks — never both roles on 
 
 ```
 pending → in-progress → implemented → verified   (terminal; only the verifier sets this)
-                              ↘ refuted → in-progress (worker reworks, re-records)
+                │             ↘ evidence-needed   (proof gap; code not refuted)
+                └──────────────↘ refuted → in-progress (semantic rework)
+
+verification-debt = historical landed work parked outside the active lane
+blocked = acceptance is impossible until the named external/roadmap dependency changes
 ```
 
 Statuses live in each task file's frontmatter. After any status change:
 `python3 tools/build_queue.py` regenerates `tasks/QUEUE.md`, then commit. One task
-in-flight at a time; a task's `depends_on` must all be `verified` before starting it.
+in-flight at a time across `in-progress`, `implemented`, `evidence-needed`, and `refuted`;
+a task's `depends_on` must all be `verified` before starting it. Run
+`python3 tools/check_task_policy.py` before rebuilding the queue. Historical code that landed
+without current exact-head evidence is `verification-debt`, not active work and not `verified`.
+A `blocked` task must name `blocked_on` and include an exact repro in its Verification log. It
+leaves the active lane so independent eligible work can proceed, but its dependents remain gated.
+
+## Risk and task-size policy
+
+Before a pending task enters the active lane, add `risk: low | medium | high` to its frontmatter.
+Security/identity boundaries, guest architectural semantics, persistence, concurrency, JIT code,
+and cross-host deployment default to `high`. Ordinary isolated runtime features default to
+`medium`. Documentation, declarative metadata, and visual-only work may be `low` when they cannot
+change runtime behavior.
+
+An `M`, `L`, or `XL` pending task is a planning container, not executable work. Split it into
+ordered `S` task files with one boundary and one deterministic acceptance command each; mark the
+parent `cancelled` and point it at the replacements. `build_queue.py` labels unsplit large work
+`DECOMPOSE BEFORE START`, and `check_task_policy.py` rejects it if activated. A genuinely atomic
+exception needs `decomposition: approved` plus a written `## Execution slices` section.
+
+Verification cost follows risk:
+
+| Risk | Worker submission | Fresh verifier |
+|---|---|---|
+| low | relevant format/lint/build plus direct deterministic acceptance | inspect the direct result; no automatic cold clone, sabotage, or novel attack |
+| medium | affected crates/tests, affected target build, and relevant browser path | acceptance criteria plus one bounded novel attack; cold clone only for portability/deployment claims |
+| high | full prescribed gauntlet, threat-model attacks, exact-head evidence, and final cold clone | full charter below, scoped to the claim and changed security boundary |
+
+Broad workspace, cross-target, stress, and compliance suites remain CI/nightly regression walls.
+During implementation use the narrowest gate that can falsify the changed behavior, then run the
+risk-tier submission once at the frozen head.
+
+### Re-verification is incremental
+
+A verifier records each prediction as `HELD`, `FAILED`, or `NEEDS EVIDENCE`. A later verifier must
+carry `HELD` results forward when their code, dependency boundary, and evidence digest are unchanged.
+Do not re-litigate them merely because another criterion failed.
+
+`evidence-needed` means the product claim was not contradicted. If the response changes only tests,
+fixtures, recording scripts, or evidence, rerun the missing proof and checks for the touched harness;
+do not restart unrelated workspace gates. If runtime semantics change, return to `in-progress` and
+rerun the gates selected by the task's risk. Run the pristine-clone proof once, on the final exact
+head, unless the failure itself was a portability or environment-isolation finding.
+
+## Pull requests: GitHub-native stacked PRs, merge only on explicit request
+
+All stacked-PR work uses GitHub's native **stacked pull requests** primitive
+(<https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart>), driven by
+the **`gh-stack`** CLI extension (the `gh-stack` skill has the full command reference — invoke
+it before non-trivial stack work). A stack is an ordered chain of branches, each PR based on
+the one below it, rooted on `main`; the **bottom** is closest to trunk, the **top** furthest.
+Foundational changes go in lower branches, dependents above.
+
+**All `gh stack` commands must be non-interactive** (they hang on a prompt/TUI otherwise):
+- `gh stack view --json` — never bare `view` (it opens a TUI).
+- `gh stack submit --auto` — auto-generate PR titles; never bare `submit`.
+- `gh stack init <branch…>` / `gh stack add <branch>` — always pass branch names.
+- `gh stack checkout <pr|branch>` — always pass an argument; if a different local stack already
+  tracks those branches, `gh stack unstack --local` first.
+
+Normal progress means **continuing the stack**: `gh stack add <branch>` for each new task layer,
+commit deliberately (plain `git add`/`git commit` — one logical concern per branch), then
+`gh stack submit --auto` to create/update the PRs. Use `gh stack sync` / `gh stack rebase
+--upstack` to repair descendants after a lower-layer change. For branches created by an external
+tool (e.g. codex/jj/Sapling), adopt them into a native stack with `gh stack link <bottom> …
+<top>` (bottom-to-top; PR numbers are used as-is, nothing is pushed) — this registers the stack
+on GitHub without merging or touching code.
+
+**Never merge a PR unless the user explicitly asks for a merge in the current request.** A task
+being verified, CI being green, an approval, a request to publish/push/open/update/link a PR, or
+instructions to keep working are **not** merge authorization. Without an explicit merge request,
+keep stacking and leave every PR open. Do not enable auto-merge, enqueue a merge, click a GitHub
+merge control, call a merge API, run `gh pr merge`, `gh stack merge`, or merge locally.
+
+When the user explicitly asks to merge, use **`gh stack merge --yes`** (plain `gh pr merge` does
+not work on stacks). It merges the stack bottom-to-top atomically (all-or-nothing); scope it with
+a PR number (`gh stack merge <pr#> --yes` merges everything up to and including that PR) and pick
+the method with `--squash`/`--rebase`/`--merge`. Respect the user's requested boundary and make
+the full set that will land clear before applying.
+
+### No CI, no GitHub Actions — build local, deploy to Cloudflare
+
+**GitHub Actions is DISABLED for this repo** (it was burning ~$60/day of Linux runner minutes:
+the full Rust gauntlet × every push × 19 stacked PRs × several concurrent sessions). There are **no
+workflow files** — do not add any `.github/workflows/*`, and do not re-enable Actions. All
+verification is **local** and all deploys go to **Cloudflare Pages** (free, off GitHub's bill).
+
+- **Build**: the wasm/npm build runs LOCALLY. The pre-commit hook
+  (`tools/git-hooks/pre-commit` → `tools/build-web-dist.sh`, installed with `make hooks`) rebuilds and
+  commits the deployable **`web/dist`** when web/wasm sources change. Refresh by hand with `make
+  web-dist`.
+- **Deploy**: `bash tools/deploy-cloudflare.sh` publishes `web/dist` to Cloudflare Pages —
+  **<https://wasm-vm.pages.dev>** (project `wasm-vm`). It stages the large boot artifacts from
+  `releases/` into the dist and enforces Cloudflare's 25 MiB per-file limit. Auth once with
+  `npx wrangler login` (OAuth) or `CLOUDFLARE_API_TOKEN`. No runner minutes, ever.
+- **Verify**: the gate is `make ci` (the full gauntlet, run on your machine) plus the pre-commit
+  hook — pay compute locally, not on a CI bill. The two-layers-of-time-travel evidence (guest traces,
+  rr/rr-soft on `ssh dev`) is still the currency for the worker/verifier loop.
 
 ## Worker protocol
 
 1. **Pick work.** Top entry of "Next up" in `tasks/QUEUE.md`. Read the whole task file —
    the Adversarial verification section tells you how you'll be attacked; build for it.
 2. Set `status: in-progress`, rebuild queue, commit.
-3. **Implement.** Gates in ascending cost, any failure returns to the top:
+3. **Implement.** Select gates from the risk table, in ascending cost. A semantic failure returns
+   to the top of that selected set:
    `cargo fmt --check` → `cargo clippy -- -D warnings` → native tests →
    `cargo build --target wasm32-unknown-unknown` (+ wasm tests where they exist).
 3a. **Browser-impacting work ⇒ prove it in the browser, and show it on the demo.** If a change
@@ -69,10 +172,14 @@ in-flight at a time; a task's `depends_on` must all be `verified` before startin
        `126 passed, 0 failed` (or the new total), and the roadmap pips you touched show
        `live`/`verified` — one screenshot for the record. Keep it to a single load-and-assert
        pass; don't rebuild the world. Cite the result in your Verification log entry.
+   (c) **Ship it to the live site**: the pre-commit hook rebuilds and commits `web/dist` when web/wasm
+       sources change; `bash tools/deploy-cloudflare.sh` publishes it to <https://wasm-vm.pages.dev>
+       (no GitHub Actions — see "No CI" below). Verify `web/dist` is staged in the commit; if the hook
+       was bypassed, `make web-dist` and commit it.
    Non-browser work (pure tooling, compliance harness, docs) skips this gate.
 4. **Self-validate freely.** Drive the code however you want — ad-hoc runs, printf, scratch
    binaries. This inner loop is yours; nothing here is evidence.
-5. **Record the final happy run.** When satisfied, run the *same* validation one more time
+5. **Record the final happy run.** When satisfied, run the risk-tier submission once
    under recording (see Evidence below). Make the recorded run count: every behavior your
    diff changes should actually execute during it, because the verifier will hold the
    recording against the diff. Changed code the recording never ran is either unproven or
@@ -91,7 +198,7 @@ where behavior contradicts the task, and for any changed line your run never exe
 | Layer | Records | Tooling | Runs where |
 |---|---|---|---|
 | **Guest** (the machine we emulate) | every retired guest instruction, architectural state digests, diffs vs Spike/QEMU | trace infra (E0-T16), snapshot digests (E0-T17), differential harness (E0-T20) | everywhere — native, wasm, including this Mac |
-| **Host** (the Rust process itself) | the entire emulator process: all threads, syscalls, memory — replayable in gdb with reverse execution | rr — see `tools/rr/README.md` | **Linux with PMU access only** (remote box or CI runner; *not* macOS, not Docker Desktop on Apple Silicon) |
+| **Host** (the Rust process itself) | the entire emulator process: all threads, syscalls, memory — replayable in gdb with reverse execution | rr / **rr-soft** — see `tools/rr/README.md` | **Linux** — a PMU box or CI runner for mainline rr; the PMU-less `ssh dev` box via **rr-soft** (software counters); *not* macOS |
 
 - The guest layer answers *"did the machine do the right thing?"* It is the emulator being
   its own Replay browser, and it's mandatory evidence for every task once trace infra
@@ -107,6 +214,55 @@ where behavior contradicts the task, and for any changed line your run never exe
 Record with `tools/rr/record-test.sh` (builds the test binary first so the trace holds the
 test, not the compiler; `rr pack`s the trace so it's a self-contained directory you can
 hand to the verifier). Traces land in `rr-traces/` (gitignored).
+
+### Proving environments: this Mac, `ssh dev`, and the emulator
+
+Three places work gets proven, in increasing authority. Use the cheapest one that can
+actually falsify the claim, then escalate — but the **authoritative** proof for a task's
+acceptance is always the one its acceptance criteria name (a recorded emulator boot, a
+Playwright run on the built page, a guest trace/digest), never a fast-path pre-check.
+
+- **This Mac (local).** Native Rust tests, guest-layer evidence (instruction traces,
+  digests, Spike/QEMU diffs), `make web-build` + Playwright. No rr here — Apple Silicon has
+  no virtualizable PMU. Fastest loop for anything that doesn't need a real Linux kernel.
+
+- **`ssh dev` — the fast Linux fast-path.** A small x86_64 Linux box (AWS EC2, sudo root,
+  cgroup v2, overlayfs, static busybox) reachable at `ssh dev`. Use it to **iterate
+  arch-agnostic guest-side logic that needs real Linux kernel features** — namespaces,
+  cgroups, overlayfs, `pivot_root`, seccomp, POSIX-sh tooling like `wvrun` — in **seconds**,
+  instead of 15–40-minute interpreted-riscv emulator boots. The pattern: get the logic green
+  on `dev` with a throwaway native bundle (see `tools/guest/wvrun-lifecycle-test.sh`), *then*
+  confirm the arch-specific behaviour with **one** emulator boot. It is also the box for
+  **host-layer rr/rr-soft** (below), since the Mac can't run rr at all.
+
+  What `dev` does **not** prove — do not let a green run there stand in for the real proof:
+  - It is **x86_64, not riscv** — it cannot catch riscv codegen/arch bugs, and it cannot
+    reproduce the interpreted guest's *timing*. (Real example: a pid-capture loop that spun
+    500 subprocesses was instant on `dev` but hung the interpreted guest for minutes — only
+    the emulator boot surfaced it.)
+  - Its cgroup v2 is **systemd-delegated**, so root-level cgroup joins/placement behave
+    differently than the emulator's clean cgroup hierarchy — treat cgroup-placement quirks
+    there as environment noise, not guest truth.
+  - It's a **pre-check, not evidence.** The Verification log cites the emulator/browser/rr
+    proof; `dev` runs are how you got there fast, mentioned but not counted.
+
+- **The emulator (native riscv boot / wasm in the browser).** The authoritative guest
+  environment. Slow (interpreted), so reserve it for the confirming run(s) a task's
+  acceptance requires — and expect it to catch exactly the arch/timing issues `dev` can't.
+
+### rr-soft on `ssh dev` (host-layer time travel without a PMU)
+
+Mainline rr needs a hardware PMU; `ssh dev` is a cloud VM with **no vPMU** (its
+`/sys/bus/event_source/devices` has no `cpu` source), so plain `rr record` can't count
+retired instructions there. **rr-soft** — rr with *software* instruction counters — records
+and replays on exactly such PMU-less boxes, so the full host-layer killer move is available
+on `dev`: `watch -l` the corrupted Rust state + `reverse-continue` lands on the writing line,
+and `rr record --chaos` still captures races as replayable recordings. Record the emulator
+process on `dev`, `rr pack` the trace (self-contained), and hand it to the verifier to
+interrogate the *same execution*. `tools/rr/preflight.sh` detects the missing PMU and points
+at rr-soft; see `tools/rr/README.md` for the `dev`/rr-soft setup. This makes `dev` a genuine
+**verifier** box, not just a fast worker loop — the two-command "who corrupted this?" answer
+works there even though the Mac and a vanilla cloud VM can't.
 
 ## Verifier charter
 
@@ -154,10 +310,11 @@ rule: acceptance commands must pass from a pristine clone in a scratch dir with 
 env (`RUSTFLAGS`, `CARGO_*`, `RUST_LOG` unset). "Works on the implementer's machine" is a
 refutation, not an excuse.
 
-**RUN THE TASK'S OWN ATTACKS.** Execute every angle in the task's Adversarial verification
-section — with your own seeds, never the worker's — and invent at least one attack the
-section doesn't list. Sabotage-check the tests once per task: break the implementation in a
-scratch branch and confirm the worker's tests actually go red.
+**RUN THE RISK-TIER ATTACKS.** High-risk tasks execute every angle in the task's Adversarial
+verification section with independent seeds, invent one bounded attack, and sabotage-check the
+new tests once. Medium-risk tasks cover the acceptance criteria and one bounded novel attack.
+Low-risk tasks verify the direct result. Never expand a task with an unrelated requirement: file
+it as follow-up work instead.
 
 **SUITE (only if correctness + coverage hold).** Judge what survives as a permanent
 artifact — this is the duty that compounds:

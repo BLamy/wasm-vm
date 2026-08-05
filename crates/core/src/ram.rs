@@ -348,6 +348,26 @@ mod resume_snapshot_tests {
     }
 
     #[test]
+    #[cfg_attr(target_arch = "wasm32", ignore = "256 MiB body is host-only")]
+    fn a_mostly_zero_256_mib_ram_encodes_under_15_percent_and_restores_byte_identically() {
+        // AC #3 verbatim: a mostly-zero 256 MiB RAM model encodes below 15% of raw size and restores
+        // byte-identically. In practice a handful of non-zero spans elide to kilobytes, but the test
+        // fixes the exact scale the acceptance criterion names rather than extrapolating from 1 MiB.
+        const LEN: usize = 256 << 20;
+        let r = patterned(LEN);
+        let snap = r.to_snapshot();
+        let pct = snap.len() * 100 / r.len();
+        assert!(pct < 15, "256 MiB RAM elided to {pct}% (< 15% required)");
+        let mut restored = Ram::new(LEN).unwrap();
+        restored.restore(&snap).unwrap();
+        assert_eq!(
+            restored.as_bytes(),
+            r.as_bytes(),
+            "256 MiB RAM restored byte-identically"
+        );
+    }
+
+    #[test]
     fn restoring_a_wrong_size_snapshot_is_refused_without_mutating() {
         let src = patterned(4096);
         let snap = src.to_snapshot();

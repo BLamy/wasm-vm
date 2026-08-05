@@ -14,13 +14,14 @@
 
 use std::cell::Cell;
 use std::io::{self, Read, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 use std::rc::Rc;
 use std::sync::mpsc;
 
 use clap::Args;
 use wasm_vm_core::dev::console::ConsoleSink;
+use wasm_vm_core::trace::{HashSink, NullSink, TraceSink};
 use wasm_vm_core::{Machine, RunOutcome, platform};
 
 use crate::file_backend;
@@ -68,15 +69,67 @@ pub struct BootArgs {
     /// MMIO access counts, as pretty text + JSON, when the boot reaches userland (or at exit).
     #[arg(long)]
     pub profile_boot: bool,
+    /// E4-T01: sample the hottest guest PCs + attribute host wall-time per subsystem, printed at
+    /// exit (of the first boot). Injects a monotonic `Instant` timer read only on cold paths.
+    #[arg(long)]
+    pub profile: bool,
+    /// E4-T01: resolve the hot PC regions to kernel symbols using a `System.map` file
+    /// (`<hex addr> <type> <name>` lines). Only meaningful with `--profile`.
+    #[arg(long)]
+    pub symbols: Option<PathBuf>,
+    /// E4-T01: also emit the profile as a machine-readable `PROFILE_HOTPC_JSON` line on stdout.
+    #[arg(long)]
+    pub profile_json: bool,
     /// E3-T13: attach a virtio-net device (slot 1) with the loopback backend — the guest sees
     /// `eth0` (MAC 52:54:00:12:34:56); transmitted frames echo back with src/dst MAC swapped.
     #[arg(long)]
     pub net: bool,
     /// E3-T14: attach virtio-net (slot 1) backed by the slirp user-mode network stack instead of
-    /// loopback — guest-initiated TCP is NATed onto real outbound sockets. Takes precedence over
-    /// `--net`. (DHCP/DNS auto-config is a later pass; for now a guest needs a static address.)
+    /// loopback — DHCP configures `eth0`, and guest-initiated TCP/UDP is NATed onto real outbound
+    /// sockets, with internal DHCP and host-resolver-backed DNS. Takes precedence over `--net`.
     #[arg(long)]
     pub net_slirp: bool,
+    /// Attach a virtio-rng entropy device (slot 2) backed by the OS CSPRNG (`getrandom`). The guest
+    /// binds it as `/dev/hwrng` and seeds its CRNG from it. Off by default so deterministic boot
+    /// evidence is unaffected; turn it on for network/TLS workloads that need prompt entropy.
+    #[arg(long)]
+    pub virtio_rng: bool,
+    /// DHCP lease advertised by slirp, in seconds. Short values make renewal tests deterministic.
+    #[arg(long, default_value_t = wasm_vm_slirp::dhcp::DEFAULT_LEASE_SECS)]
+    pub net_slirp_lease_secs: u32,
+    /// Link MTU advertised by slirp DHCP option 26.
+    #[arg(long, default_value_t = wasm_vm_slirp::dhcp::DEFAULT_MTU)]
+    pub net_slirp_mtu: u16,
+    /// Host-selected regular file to upload to the guest agent once its private WVFT connection is
+    /// ready. Repeat for an ordered queue. The protocol receives only each basename and its bytes.
+    #[arg(long, requires = "net_slirp")]
+    pub wvft_upload: Vec<PathBuf>,
+    /// Host-selected directory that receives guest `vm-download` basenames through WVFT. The guest
+    /// cannot escape this root or select any other host path.
+    #[arg(long, requires = "net_slirp")]
+    pub wvft_download_dir: Option<PathBuf>,
+    /// Write compact guest-layer evidence at exit: a rolling digest of every retired instruction,
+    /// retired count, and final architectural-state SHA-256. Intended for reopenable verification
+    /// of long Linux boots where a full multi-billion-line canonical trace is impractical.
+    #[arg(long)]
+    pub evidence: Option<PathBuf>,
+    /// E3-T12c4: take a whole-machine resume snapshot (`Machine::save_resume`) the first time the
+    /// guest console prints `--snapshot-trigger`, write it to this path, and exit 0. The snapshot
+    /// quiesces the virtio-blk in-flight set first (E3-T12c2) and refuses (exit 103, no file) if it
+    /// cannot — so it is never torn. Pair with a guest `sync` before the trigger so the `--drive`
+    /// file matches the snapshotted page cache; resume the blob into a fresh process with
+    /// `--resume-from` against the SAME `--drive`.
+    #[arg(long, requires = "snapshot_trigger")]
+    pub snapshot_out: Option<PathBuf>,
+    /// E3-T12c4: the guest-console marker that triggers `--snapshot-out`. Choose an output-only
+    /// string the guest prints (e.g. `echo WVSNAP_NOW`) so the command echo can't self-trigger.
+    #[arg(long)]
+    pub snapshot_trigger: Option<String>,
+    /// E3-T12c4: restore a `--snapshot-out` blob into the assembled machine BEFORE running (instead
+    /// of a cold kernel boot). The blob's coherence header is validated against this machine first
+    /// (E3-T12c3); reopen the SAME `--drive` image the snapshot was taken against.
+    #[arg(long)]
+    pub resume_from: Option<PathBuf>,
 }
 
 /// Guest console → this process's stdout. Shared with the SBI console channel; a closed pipe
@@ -123,6 +176,119 @@ impl wasm_vm_core::dev::rtc::WallClock for SystemClock {
     }
 }
 
+/// E4-T01: the monotonic host timer the profiler samples on its cold paths. `Instant`-based (unlike
+/// the epoch `SystemClock`), so the elapsed-nanosecond deltas the profiler brackets are non-decreasing.
+/// Lives in the CLI because core bans host time sources for determinism.
+struct MonotonicTimer {
+    start: std::time::Instant,
+}
+
+impl MonotonicTimer {
+    fn new() -> Self {
+        Self {
+            start: std::time::Instant::now(),
+        }
+    }
+}
+
+impl wasm_vm_core::prof::HostTimer for MonotonicTimer {
+    fn now_ns(&self) -> u64 {
+        self.start.elapsed().as_nanos() as u64
+    }
+}
+
+/// E4-T01: parse a `System.map` (`<hex addr> <type> <name>` lines) into an address-sorted symbol
+/// table for resolving hot PCs. Malformed lines are skipped (never a panic).
+fn parse_system_map(path: &Path) -> std::io::Result<Vec<(u64, String)>> {
+    let text = std::fs::read_to_string(path)?;
+    let mut syms: Vec<(u64, String)> = text
+        .lines()
+        .filter_map(|line| {
+            let mut it = line.split_whitespace();
+            let addr = u64::from_str_radix(it.next()?, 16).ok()?;
+            let _type = it.next()?; // symbol type letter (T/t/D/…) — unused
+            let name = it.next()?;
+            Some((addr, name.to_string()))
+        })
+        .collect();
+    syms.sort_by_key(|(addr, _)| *addr);
+    Ok(syms)
+}
+
+/// The symbol whose address is the greatest `<= pc` (nearest-preceding lookup over the sorted table).
+fn symbolize<'a>(syms: &'a [(u64, String)], pc: u64) -> Option<&'a str> {
+    let idx = syms.partition_point(|(addr, _)| *addr <= pc);
+    (idx > 0).then(|| syms[idx - 1].1.as_str())
+}
+
+/// E3-T12c4: watches the guest console stream for the `--snapshot-trigger` marker and, on its FIRST
+/// sighting, takes a whole-machine `save_resume` snapshot to `out`. Split-across-quanta safe (keeps a
+/// short rolling tail like [`BootProfiler`]). `fired` once the blob is written; `refused` carries the
+/// typed reason if the snapshot could not be taken (a non-quiesced machine) or the file write failed —
+/// in which case NO blob exists and the boot exits non-zero rather than emit a torn snapshot.
+struct SnapshotOnMarker {
+    trigger: String,
+    out: PathBuf,
+    tail: String,
+    fired: bool,
+    refused: Option<String>,
+}
+
+impl SnapshotOnMarker {
+    fn new(trigger: String, out: PathBuf) -> Self {
+        Self {
+            trigger,
+            out,
+            tail: String::new(),
+            fired: false,
+            refused: None,
+        }
+    }
+
+    /// Feed one quantum's console output; if the trigger is seen (and not already fired/refused),
+    /// snapshot the machine to `out`. Returns true when the boot should STOP (snapshot taken, or an
+    /// unrecoverable refusal). The machine is passed `&mut` because `save_resume` quiesces first.
+    fn feed(&mut self, out: &[u8], m: &mut Machine) -> bool {
+        if self.fired || self.refused.is_some() {
+            return false;
+        }
+        self.tail.push_str(&String::from_utf8_lossy(out));
+        if self.tail.contains(&self.trigger) {
+            match m.save_resume() {
+                Ok(blob) => match std::fs::write(&self.out, &blob) {
+                    Ok(()) => {
+                        eprintln!(
+                            "wasm-vm: snapshot ({} bytes) written to {} at trigger {:?}",
+                            blob.len(),
+                            self.out.display(),
+                            self.trigger
+                        );
+                        self.fired = true;
+                    }
+                    Err(e) => {
+                        self.refused = Some(format!("cannot write {}: {e}", self.out.display()));
+                    }
+                },
+                Err(e) => {
+                    // A non-quiesced machine (a parked in-flight request that would not drain) is a
+                    // typed refusal — never a torn blob (E3-T12c2).
+                    self.refused = Some(format!("save_resume refused: {e:?}"));
+                }
+            }
+            return true;
+        }
+        // Bounded tail: keep enough that a marker split across quanta still matches.
+        if self.tail.len() > 512 {
+            let mut cut = self.tail.len() - 256;
+            while cut < self.tail.len() && !self.tail.is_char_boundary(cut) {
+                cut += 1;
+            }
+            self.tail = self.tail.split_off(cut);
+        }
+        false
+    }
+}
+
 pub fn boot(a: BootArgs) -> ExitCode {
     let kernel = match std::fs::read(&a.kernel) {
         Ok(b) => b,
@@ -159,6 +325,11 @@ pub fn boot(a: BootArgs) -> ExitCode {
 
     // E2-T25: a boot profiler covering the FIRST boot (the baseline). Reboots are not profiled.
     let mut profiler = a.profile_boot.then(BootProfiler::new);
+    // E3-T12c4: arm the snapshot-on-marker watcher (requires --snapshot-trigger, enforced by clap).
+    let mut snap = match (&a.snapshot_out, &a.snapshot_trigger) {
+        (Some(out), Some(trigger)) => Some(SnapshotOnMarker::new(trigger.clone(), out.clone())),
+        _ => None,
+    };
 
     let mut boot_num = 0u32;
     loop {
@@ -170,18 +341,72 @@ pub fn boot(a: BootArgs) -> ExitCode {
             Ok(v) => v,
             Err(code) => return code,
         };
-        let outcome = run_machine(
-            &a,
-            &mut m,
-            &uart,
-            &console,
-            stdin_rx.as_ref(),
-            &mut pending,
-            profiler.as_mut().filter(|_| boot_num == 1),
-        );
+        // E3-T12c4: restore a snapshot into the freshly-assembled machine BEFORE running — the
+        // coherence header is validated first (E3-T12c3); RAM/CPU/CLINT/virtio transport are
+        // overwritten from the blob (the cold kernel placement above is discarded, intentionally).
+        if boot_num == 1
+            && let Some(path) = &a.resume_from
+        {
+            let blob = match std::fs::read(path) {
+                Ok(b) => b,
+                Err(e) => {
+                    eprintln!("wasm-vm: cannot read resume blob {}: {e}", path.display());
+                    return ExitCode::from(2);
+                }
+            };
+            if let Err(e) = m.load_resume(&blob) {
+                eprintln!("wasm-vm: resume refused ({e:?}) — {}", path.display());
+                return ExitCode::from(103);
+            }
+            eprintln!(
+                "wasm-vm: resumed {} bytes from {} — continuing guest",
+                blob.len(),
+                path.display()
+            );
+        }
+        let mut hash = HashSink::new();
+        let outcome = if a.evidence.is_some() {
+            run_machine(
+                &a,
+                &mut m,
+                &uart,
+                &console,
+                stdin_rx.as_ref(),
+                &mut pending,
+                profiler.as_mut().filter(|_| boot_num == 1),
+                snap.as_mut(),
+                &mut hash,
+            )
+        } else {
+            let mut null = NullSink;
+            run_machine(
+                &a,
+                &mut m,
+                &uart,
+                &console,
+                stdin_rx.as_ref(),
+                &mut pending,
+                profiler.as_mut().filter(|_| boot_num == 1),
+                snap.as_mut(),
+                &mut null,
+            )
+        };
         // Final drain before we act on the outcome.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
+        // E3-T12c4: the snapshot-on-marker watcher stopped the run — resolve it BEFORE the normal
+        // outcome match. A written blob is a clean exit (0); a refusal (non-quiesced machine or a
+        // failed write, so NO blob exists) exits non-zero rather than pretend a snapshot was taken.
+        if let Some(s) = snap.as_ref() {
+            if let Some(err) = &s.refused {
+                eprintln!("wasm-vm: {err}");
+                return ExitCode::from(103);
+            }
+            if s.fired {
+                eprintln!("wasm-vm: snapshot complete — exiting");
+                return ExitCode::SUCCESS;
+            }
+        }
         if boot_num == 1
             && let Some(p) = profiler.as_ref()
         {
@@ -189,6 +414,42 @@ pub fn boot(a: BootArgs) -> ExitCode {
         }
         if a.stats {
             eprint!("{}", m.stats_dump()); // E2-T20
+        }
+        // E4-T01: the hot-PC + subsystem-time report for the first boot. `total_ns` is the wall span
+        // the machine measured around its own run; CPU-interp is derived from it by subtraction.
+        if boot_num == 1 && a.profile {
+            let report = m.prof_report(m.prof_total_ns(), 10);
+            eprint!("{}", report.to_text());
+            if let Some(path) = &a.symbols {
+                match parse_system_map(path) {
+                    Ok(syms) => {
+                        eprintln!("E4-T01 hot symbols (nearest preceding):");
+                        for r in &report.top_regions {
+                            let name = symbolize(&syms, r.phys_pc).unwrap_or("<unknown>");
+                            eprintln!("  {:>6.2}%  0x{:016x}  {name}", r.pct, r.phys_pc);
+                        }
+                    }
+                    Err(e) => eprintln!("wasm-vm: cannot read --symbols {}: {e}", path.display()),
+                }
+            }
+            if a.profile_json {
+                println!("PROFILE_HOTPC_JSON {}", report.to_json());
+            }
+        }
+        if let Some(path) = &a.evidence {
+            let evidence = format!(
+                "wasm-vm boot evidence v1\ntrace fnv64={:016x}\ntrace retired={}\n{}\noutcome={outcome:?}\n",
+                hash.hash(),
+                hash.retired(),
+                m.snapshot().state_sha256_line(),
+            );
+            if let Err(e) = std::fs::write(path, evidence) {
+                eprintln!(
+                    "wasm-vm: cannot write boot evidence {}: {e}",
+                    path.display()
+                );
+                return ExitCode::from(74);
+            }
         }
 
         match outcome {
@@ -253,6 +514,9 @@ fn assemble(
     let ram_bytes = a.ram_mib.saturating_mul(1024 * 1024);
     let mut m = Machine::new(ram_bytes);
     m.set_storm_detect(!a.no_storm_detect); // E2-T20
+    if a.profile {
+        m.set_host_timer(Rc::new(MonotonicTimer::new())); // E4-T01: arms profiling + injects the timer
+    }
 
     // --- devices, in dependency order (PLIC before its consumers) ---
     m.enable_clint(10);
@@ -298,15 +562,31 @@ fn assemble(
     if a.net_slirp {
         // E3-T14: slirp-backed virtio-net in slot 1 — the guest's frames terminate in the
         // user-mode TCP/IP stack and guest-initiated TCP is NATed onto real outbound sockets.
-        let _ = m.enable_virtio_net(Box::new(crate::net_backend::SlirpBackend::new(
-            crate::net_backend::GATEWAY_MAC,
-        )));
+        let config = crate::net_backend::SlirpConfig {
+            lease_secs: a.net_slirp_lease_secs.max(1),
+            mtu: a.net_slirp_mtu.clamp(576, 1500),
+        };
+        let file_transfer = crate::file_transfer_fixture::FileTransferFixture {
+            uploads: a.wvft_upload.clone(),
+            download_dir: a.wvft_download_dir.clone(),
+        };
+        let _ = m.enable_virtio_net(Box::new(
+            crate::net_backend::SlirpBackend::with_config_and_file_transfer(
+                crate::net_backend::GATEWAY_MAC,
+                config,
+                file_transfer,
+            ),
+        ));
     } else if a.net {
         // E3-T13: loopback-backed virtio-net in slot 1 (the DTB already advertises all 8
         // slots, so the stock virtio_net driver probes it with no DTB change).
         let _ = m.enable_virtio_net(Box::new(
             wasm_vm_core::dev::virtio::net::LoopbackBackend::new(),
         ));
+    }
+    if a.virtio_rng {
+        // virtio-rng in slot 2, backed by the OS CSPRNG — seeds the guest CRNG promptly.
+        let _ = m.enable_virtio_rng(Box::new(crate::os_entropy::OsEntropy));
     }
 
     // Built-in SBI firmware + its console channel (earlycon=sbi / legacy putchar).
@@ -499,7 +779,10 @@ impl BootProfiler {
     }
 }
 
-fn run_machine(
+// These references are the long-lived boot-loop state; bundling them into a one-use context solely
+// to satisfy the argument-count style lint would obscure their ownership and widen unrelated churn.
+#[allow(clippy::too_many_arguments)]
+fn run_machine<T: TraceSink>(
     a: &BootArgs,
     m: &mut Machine,
     uart: &Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
@@ -507,6 +790,8 @@ fn run_machine(
     stdin_rx: Option<&mpsc::Receiver<Vec<u8>>>,
     pending: &mut std::collections::VecDeque<u8>,
     profiler: Option<&mut BootProfiler>,
+    mut snap: Option<&mut SnapshotOnMarker>,
+    sink: &mut T,
 ) -> RunOutcome {
     let mut profiler = profiler;
     let mut total = 0u64;
@@ -515,8 +800,7 @@ fn run_machine(
             return RunOutcome::MaxInstrs;
         }
         let step = a.quantum.min(a.max_instrs - total);
-        let mut sink = wasm_vm_core::trace::NullSink;
-        let o = m.run_traced(step, &mut sink);
+        let o = m.run_traced(step, sink);
         // Drain UART output → stdout every quantum so the boot log streams live.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
@@ -528,6 +812,13 @@ fn run_machine(
             if p.done {
                 return RunOutcome::MaxInstrs;
             }
+        }
+        // E3-T12c4: scan for the snapshot trigger; on its first sighting take the resume snapshot
+        // (quiesce + save_resume) and STOP — boot() resolves the fired/refused result.
+        if let Some(s) = snap.as_deref_mut()
+            && s.feed(&out, m)
+        {
+            return RunOutcome::MaxInstrs;
         }
         // E2-T19: drain the virtio-blk request trace → stderr (when --blk-log).
         if a.blk_log {
@@ -633,5 +924,38 @@ mod critic_profiler_tests {
         assert!(!p.done);
         p.feed(b"wasm-vm login: ", 99);
         assert!(p.done, "getty-login is terminal");
+    }
+}
+
+#[cfg(test)]
+mod e4t01_symbolizer_tests {
+    use super::symbolize;
+
+    // A tiny address-sorted symbol table like a parsed System.map.
+    fn table() -> Vec<(u64, String)> {
+        vec![
+            (0x8000_0000, "_start".to_string()),
+            (0x8000_0100, "memcpy".to_string()),
+            (0x8000_0200, "schedule".to_string()),
+        ]
+    }
+
+    #[test]
+    fn resolves_to_the_nearest_preceding_symbol() {
+        let t = table();
+        // Exactly on a symbol, and anywhere inside its span, resolves to that symbol.
+        assert_eq!(symbolize(&t, 0x8000_0100), Some("memcpy"));
+        assert_eq!(symbolize(&t, 0x8000_0140), Some("memcpy"));
+        assert_eq!(symbolize(&t, 0x8000_01FF), Some("memcpy"));
+        assert_eq!(symbolize(&t, 0x8000_0200), Some("schedule"));
+        // Past the last symbol still attributes to it (no upper bound in a flat map).
+        assert_eq!(symbolize(&t, 0x8000_9999), Some("schedule"));
+    }
+
+    #[test]
+    fn a_pc_below_every_symbol_is_unknown() {
+        let t = table();
+        assert_eq!(symbolize(&t, 0x7FFF_FFFF), None);
+        assert_eq!(symbolize(&[], 0x8000_0000), None);
     }
 }

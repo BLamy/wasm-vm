@@ -1,0 +1,317 @@
+booting unmodified Alpine (ext4 rootfs over virtio-blk) in wasm — large image, ~minutes to login:…
+[terminal 228x26 — click "Fit" then run: stty rows 26 cols 228]
+[    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024
+[    0.000000] Machine model: riscv-virtio,qemu
+[    0.000000] SBI specification v2.0 detected
+[    0.000000] SBI implementation ID=0x574d Version=0x100
+[    0.000000] SBI TIME extension detected
+[    0.000000] SBI IPI extension detected
+[    0.000000] SBI RFENCE extension detected
+[    0.000000] SBI SRST extension detected
+[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')
+[    0.000000] printk: bootconsole [sbi0] enabled
+[    0.000000] efi: UEFI not found.
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x000000008fffffff]
+[    0.000000] SBI HSM extension detected
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acdfim
+[    0.000000] riscv: ELF capabilities acdfim
+[    0.000000] percpu: Embedded 18 pages/cpu s41720 r0 d32008 u73728
+[    0.000000] Kernel command line: root=/dev/vda rw console=ttyS0 earlycon=sbi
+[    0.000000] Dentry cache hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 64512
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]       fixmap : 0xff1bfffffea00000 - 0xff1bffffff000000   (6144 kB)
+[    0.000000]       pci io : 0xff1bffffff000000 - 0xff1c000000000000   (  16 MB)
+[    0.000000]      vmemmap : 0xff1c000000000000 - 0xff20000000000000   (1024 TB)
+[    0.000000]      vmalloc : 0xff20000000000000 - 0xff60000000000000   (16384 TB)
+[    0.000000]      modules : 0xffffffff01598000 - 0xffffffff80000000   (2026 MB)
+[    0.000000]       lowmem : 0xff60000000000000 - 0xff60000010000000   ( 256 MB)
+[    0.000000]       kernel : 0xffffffff80000000 - 0xffffffffffffffff   (2047 MB)
+[    0.000000] Memory: 218608K/262144K available (9839K kernel code, 5043K rwdata, 4096K rodata, 2200K init, 529K bss, 43536K reserved, 0K cma-reserved)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu:     RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=1.
+[    0.000000] rcu:     RCU debug extended QS entry/exit.
+[    0.000000]  Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 64 local interrupts mapped
+[    0.000000] plic: plic@c000000: mapped 95 interrupts with 1 handlers for 2 contexts.
+[    0.000000] riscv: providing IPIs using SBI IPI extension
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns
+[    0.000002] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns
+[    0.001286] Console: colour dummy device 80x25
+[    0.001485] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=40000)
+[    0.001642] pid_max: default: 32768 minimum: 301
+[    0.002146] LSM: initializing lsm=capability,integrity
+[    0.002872] Mount-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.003007] Mountpoint-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.014496] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+[    0.015198] riscv: ELF compat mode unsupported
+[    0.015279] ASID allocator using 16 bits (65536 entries)
+[    0.016145] rcu: Hierarchical SRCU implementation.
+[    0.016219] rcu:     Max phase no-delay instances is 1000.
+[    0.017830] EFI services will not be available.
+[    0.018670] smp: Bringing up secondary CPUs ...
+[    0.018778] smp: Brought up 1 node, 1 CPU
+[    0.021285] devtmpfs: initialized
+[    0.031815] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.031968] futex hash table entries: 256 (order: 2, 16384 bytes, linear)
+[    0.033010] pinctrl core: initialized pinctrl subsystem
+[    0.042620] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.047016] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations
+[    0.047229] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.047554] audit: initializing netlink subsys (disabled)
+[    0.050645] thermal_sys: Registered thermal governor 'step_wise'
+[    0.050815] audit: type=2000 audit(0.044:1): state=initialized audit_enabled=0 res=1
+[    0.051054] cpuidle: using governor menu
+[    0.073090] cpu0: Ratio of byte access time to unaligned word access is 7.98, unaligned accesses are fast
+[    0.093989] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.094087] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.161963] raid6: int64x8  gen()    42 MB/s
+[    0.230527] raid6: int64x4  gen()    57 MB/s
+[    0.298860] raid6: int64x2  gen()    58 MB/s
+[    0.367454] raid6: int64x1  gen()    52 MB/s
+[    0.367536] raid6: using algorithm int64x2 gen() 58 MB/s
+[    0.436121] raid6: .... xor() 32 MB/s, rmw enabled
+[    0.436201] raid6: using intx1 recovery algorithm
+[    0.436632] ACPI: Interpreter disabled.
+[    0.437433] iommu: Default domain type: Translated
+[    0.437515] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.440974] SCSI subsystem initialized
+[    0.450184] clocksource: Switched to clocksource riscv_clocksource
+[    0.452446] pnp: PnP ACPI: disabled
+[    0.514353] NET: Registered PF_INET protocol family
+[    0.515754] IP idents hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.524932] tcp_listen_portaddr_hash hash table entries: 128 (order: 0, 4096 bytes, linear)
+[    0.525125] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.525279] TCP established hash table entries: 2048 (order: 2, 16384 bytes, linear)
+[    0.525653] TCP bind hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.526879] TCP: Hash tables configured (established 2048 bind 2048)
+[    0.527253] UDP hash table entries: 256 (order: 2, 24576 bytes, linear)
+[    0.527635] UDP-Lite hash table entries: 256 (order: 2, 24576 bytes, linear)
+[    0.528619] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.531631] RPC: Registered named UNIX socket transport module.
+[    0.531719] RPC: Registered udp transport module.
+[    0.531799] RPC: Registered tcp transport module.
+[    0.531878] RPC: Registered tcp-with-tls transport module.
+[    0.531963] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    0.532248] kvm [1]: hypervisor extension not available
+[    0.537593] workingset: timestamp_bits=46 max_order=16 bucket_order=0
+[    0.541205] NFS: Registering the id_resolver key type
+[    0.541478] Key type id_resolver registered
+[    0.541556] Key type id_legacy registered
+[    0.541758] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+[    0.541874] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+[    0.543028] 9p: Installing v9fs 9p2000 file system support
+[    1.695923] NET: Registered PF_ALG protocol family
+[    1.696024] xor: measuring software checksum speed
+[    1.714922]    8regs           :   174 MB/sec
+[    1.733812]    8regs_prefetch  :   174 MB/sec
+[    1.752720]    32regs          :   174 MB/sec
+[    1.771665]    32regs_prefetch :   173 MB/sec
+[    1.771749] xor: using function: 32regs (174 MB/sec)
+[    1.772049] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 246)
+[    1.772152] io scheduler mq-deadline registered
+[    1.772236] io scheduler kyber registered
+[    1.772389] io scheduler bfq registered
+[    2.173730] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    2.187410] printk: console [ttyS0] disabled
+[    2.189618] 10000000.serial: ttyS0 at MMIO 0x10000000 (irq = 12, base_baud = 230400) is a 16550A
+[    2.189830] printk: console [ttyS0] enabled
+[    2.190004] printk: bootconsole [sbi0] disabled
+[    2.189830] printk: console [ttyS0] enabled
+[    2.190004] printk: bootconsole [sbi0] disabled
+[    2.192613] SuperH (H)SCI(F) driver initialized
+[    2.232685] loop: module loaded
+[    2.233013] virtio_blk virtio0: 1/0/0 default/read/poll queues
+[    2.234555] virtio_blk virtio0: [vda] 1048576 512-byte logical blocks (537 MB/512 MiB)
+[    2.262869] mousedev: PS/2 mouse device common for all mice
+[    2.265826] goldfish_rtc 101000.rtc: registered as rtc0
+[    2.266035] goldfish_rtc 101000.rtc: setting system clock to 2026-07-16T22:48:53 UTC (1784242133)
+[    2.269142] syscon-poweroff poweroff: pm_power_off already claimed for sbi_srst_power_off
+[    2.269389] syscon-poweroff: probe of poweroff failed with error -16
+[    2.271920] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    2.274918] sdhci: Secure Digital Host Controller Interface driver
+[    2.275069] sdhci: Copyright(c) Pierre Ossman
+[    2.276119] sdhci-pltfm: SDHCI platform and OF driver helper
+[    2.280272] IPVS: Registered protocols (TCP, UDP)
+[    2.280442] IPVS: Connection hash table configured (size=4096, memory=32Kbytes)
+[    2.281653] IPVS: ipvs loaded.
+[    2.281783] IPVS: [rr] scheduler registered.
+[    2.283533] Initializing XFRM netlink socket
+[    2.283923] NET: Registered PF_INET6 protocol family
+[    2.291938] Segment Routing with IPv6
+[    2.292571] In-situ OAM (IOAM) with IPv6
+[    2.293621] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    2.297768] NET: Registered PF_PACKET protocol family
+[    2.298107] Bridge firewalling registered
+[    2.298541] 8021q: 802.1Q VLAN Support v1.8
+[    2.299119] 9pnet: Installing 9P2000 support
+[    2.299822] Key type dns_resolver registered
+[    2.520163] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+[    2.532369] Btrfs loaded, zoned=no, fsverity=no
+[    2.541053] Legacy PMU implementation is available
+[    2.542314] clk: Disabling unused clocks
+[    2.568482] EXT4-fs (vda): mounted filesystem a11ce000-0e2f-4c18-b007-f50000000018 r/w with ordered data mode. Quota mode: disabled.
+[    2.568769] VFS: Mounted root (ext4 filesystem) on device 254:0.
+[    2.569409] devtmpfs: mounted
+[    2.576014] Freeing unused kernel image (initmem) memory: 2200K
+[    2.576172] Run /sbin/init as init process
+
+   OpenRC 0.54 is starting up Linux 6.6.63 (riscv64)
+
+ * Mounting /proc ... [ ok ]
+ * Mounting /run ... [ ok ]
+ * /run/openrc: creating directory
+ * /run/lock: creating directory
+ * /run/lock: correcting owner
+ * Caching service dependencies ... [ ok ]
+ * Remounting devtmpfs on /dev ... [ ok ]
+ * Mounting /dev/mqueue ... [ ok ]
+ * Mounting /dev/pts ... [ ok ]
+ * Mounting /dev/shm ... [ ok ]
+ * Mounting /sys ... [ ok ]
+ * Mounting security filesystem ... [ ok ]
+ * Mounting debug filesystem ... [ ok ]
+ * Starting busybox mdev .../lib/rc/sh/openrc-run.sh: line 15: can't create /proc/sys/kernel/hotplug: nonexistent directory
+ [ !! ]
+ * Scanning hardware for mdev ... [ ok ]
+ * Loading hardware drivers ... [ ok ]
+ * Loading modules ...modprobe: can't change directory to '/lib/modules': No such file or directory
+modprobe: can't change directory to '/lib/modules': No such file or directory
+ [ ok ]
+ * Setting system clock using the hardware clock [UTC] ...hwclock: select() to /dev/rtc0 to wait for clock tick timed out
+ * Failed to set the system clock
+ [ !! ]
+ * Checking local filesystems  ... [ ok ]
+ * Remounting filesystems ... [ ok ]
+ * Activating swap devices ... [ ok ]
+ * Mounting local filesystems ... [ ok ]
+ * Migrating /var/lock to /run/lock ... [ ok ]
+ * Creating user login records ... [ ok ]
+ * Cleaning /tmp directory ... [ ok ]
+ * Setting hostname ... [ ok ]
+ * Seeding random number generator ... * Saving 256 bits of non-creditable seed for next boot
+ [ ok ]
+ * Starting busybox syslog ... [ ok ]
+ * Starting networking ... *   lo ... [ ok ]
+ *   eth0 ...udhcpc: started, v1.36.1
+udhcpc: broadcasting discover
+udhcpc: broadcasting select for 10.0.2.15, server 10.0.2.2
+udhcpc: lease of 10.0.2.15 obtained from 10.0.2.2, lease time 60
+ [ ok ]
+
+Welcome to Alpine Linux 3.20
+Kernel 6.6.63 on an riscv64 (/dev/ttyS0)
+
+wasm-vm login: root
+Welcome to Alpine!
+
+The Alpine Wiki contains a large amount of how-to guides and general
+information about administrating Alpine systems.
+See <https://wiki.alpinelinux.org/>.
+
+You can setup the system with the command: setup-alpine
+
+You may change this message by editing /etc/motd.
+
+wasm-vm:~# 
+wasm-vm:~# ip -4 addr show dev eth0; ip route; cat /etc/resolv.conf; echo E3T15_
+"AUTO_OK"
+3: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    inet 10.0.2.15/24 scope global eth0
+       valid_lft forever preferred_lft forever
+default via 10.0.2.2 dev eth0 metric 203 
+10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15 
+nameserver 10.0.2.3
+E3T15_AUTO_OK
+wasm-vm:~# start=$(date +%s); nslookup -type=A fail.test; rc=$?; elapsed=$(($(da
+te +%s)-start)); echo E3T15_"FAIL_RESULT" rc=$rc elapsed=$elapsed; echo E3T15_"S
+ERVFAIL_DONE"
+Server:         10.0.2.3
+Address:        10.0.2.3:53
+
+** server can't find fail.test: SERVFAIL
+
+E3T15_FAIL_RESULT rc=1 elapsed=0
+E3T15_SERVFAIL_DONE
+wasm-vm:~# start=$(date +%s); wget -T 5 -O /tmp/e3t15-fail http://fail.test/; rc
+=$?; elapsed=$(($(date +%s)-start)); echo E3T15_"WGET_FAIL" rc=$rc elapsed=$elap
+sed; echo E3T15_"WGET_DONE"
+wget: bad address 'fail.test'
+E3T15_WGET_FAIL rc=1 elapsed=5
+E3T15_WGET_DONE
+wasm-vm:~# nslookup dl-cdn.alpinelinux.org; echo E3T15_"PUBLIC_OK"
+Server:         10.0.2.3
+Address:        10.0.2.3:53
+
+Non-authoritative answer:
+Name:   dl-cdn.alpinelinux.org
+Address: 192.0.2.42
+
+Non-authoritative answer:
+
+E3T15_PUBLIC_OK
+wasm-vm:~# nslookup -type=A cache.test; nslookup -type=A cache.test; echo E3T15_
+"CACHE_OK"
+Server:         10.0.2.3
+Address:        10.0.2.3:53
+
+Non-authoritative answer:
+Name:   cache.test
+Address: 192.0.2.42
+
+Server:         10.0.2.3
+Address:        10.0.2.3:53
+
+Non-authoritative answer:
+Name:   cache.test
+Address: 192.0.2.42
+
+E3T15_CACHE_OK
+wasm-vm:~# printf '\022\064\001\000\000\001\000\000\000\000\000\000\005large\004
+test\000\000\001\000\001' >/tmp/dns.q; cat /tmp/dns.q | nc -u -w 2 10.0.2.3 53 >
+/tmp/dns.udp; flags=$(dd if=/tmp/dns.udp bs=1 skip=2 count=2 2>/dev/null | hexdu
+mp -v -e '2/1 "%02x"'); ping -c 1 -W 1 large.test; ping_rc=$?; echo E3T15_"TCP_P
+ROOF" udp_flags=$flags ping_rc=$ping_rc; echo E3T15_"TCP_FALLBACK_OK"
+PING large.test (192.0.2.1): 56 data bytes
+
+--- large.test ping statistics ---
+1 packets transmitted, 0 packets received, 100% packet loss
+E3T15_TCP_PROOF udp_flags=8380 ping_rc=1
+E3T15_TCP_FALLBACK_OK
+wasm-vm:~# start=$(date +%s); nslookup -type=A nxdomain.test; rc=$?; elapsed=$((
+$(date +%s)-start)); echo E3T15_"NXDOMAIN" rc=$rc elapsed=$elapsed; echo E3T15_"
+NXDOMAIN_DONE"
+Server:         10.0.2.3
+Address:        10.0.2.3:53
+
+** server can't find nxdomain.test: NXDOMAIN
+
+E3T15_NXDOMAIN rc=1 elapsed=0
+E3T15_NXDOMAIN_DONE
+wasm-vm:~# sleep 35; ping -c 1 -W 3 10.0.2.2; ip -4 addr show dev eth0; echo E3T
+15_"RENEW_OK"
+PING 10.0.2.2 (10.0.2.2): 56 data bytes
+64 bytes from 10.0.2.2: seq=0 ttl=64 time=0.414 ms
+
+--- 10.0.2.2 ping statistics ---
+1 packets transmitted, 1 packets received, 0% packet loss
+round-trip min/avg/max = 0.414/0.414/0.414 ms
+3: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    inet 10.0.2.15/24 scope global eth0
+       valid_lft forever preferred_lft forever
+E3T15_RENEW_OK
+wasm-vm:~# 

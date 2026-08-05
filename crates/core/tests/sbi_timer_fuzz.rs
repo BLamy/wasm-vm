@@ -292,30 +292,44 @@ fn guest_cannot_clear_stip_via_sip_csrc() {
     );
 }
 
-/// ATTACK 4: mcounteren grant scope — S-mode rdtime works after boot_supervisor, but U-mode
-/// rdtime still traps (scounteren stays 0, kernel-owned).
+/// ATTACK 4 / E1-T30: counter grant scope after boot_supervisor. Both mcounteren AND scounteren
+/// grant CY/TM/IR, so S-mode AND U-mode `rdtime` work — stock glibc riscv64 binaries execute a raw
+/// userspace `rdtime` (captured SIGILL: insn=0xc01027f3) that used to trap when scounteren=0. The
+/// spec gate itself is unchanged: clearing scounteren.TM makes U-mode `rdtime` trap again.
 #[test]
-fn umode_rdtime_still_traps_scounteren_zero() {
+fn umode_rdtime_works_after_boot_supervisor_e1t29() {
     let mut m = Machine::new(RAM);
     m.enable_clint(CLOCK_DIV);
     m.enable_builtin_sbi();
     m.boot_supervisor(0, 0);
     let csr = &mut m.hart_mut().csr;
-    // scounteren reads 0 from S.
+    // scounteren reads 0x7 from S (E1-T30 grants CY/TM/IR at reset).
     let sc = csr
         .access(0x106, CsrOp::Set, 0, true, false, 0)
         .expect("scounteren readable from S");
-    assert_eq!(sc, 0, "scounteren must stay 0 (kernel-owned)");
+    assert_eq!(
+        sc, 0x7,
+        "E1-T30: scounteren must grant CY/TM/IR after boot_supervisor"
+    );
     // S-mode rdtime: OK (mcounteren.TM granted).
     assert!(
         csr.access(0xC01, CsrOp::Set, 0, true, false, 0).is_ok(),
         "S-mode rdtime must work after boot_supervisor"
     );
-    // U-mode rdtime: must trap.
+    // U-mode rdtime: now OK too (the E1-T30 fix — was a SIGILL for glibc userland).
+    csr.mode = Priv::U;
+    assert!(
+        csr.access(0xC01, CsrOp::Set, 0, true, false, 0).is_ok(),
+        "E1-T30: U-mode rdtime must work (glibc userland reads the time CSR)"
+    );
+    // Spec gate still holds: if the kernel clears scounteren.TM, U-mode rdtime traps again.
+    csr.mode = Priv::S;
+    csr.access(0x106, CsrOp::Write, 0, true, false, 0)
+        .expect("clear scounteren from S");
     csr.mode = Priv::U;
     assert!(
         csr.access(0xC01, CsrOp::Set, 0, true, false, 0).is_err(),
-        "U-mode rdtime must trap with scounteren=0"
+        "U-mode rdtime must still trap when scounteren.TM is cleared (gate intact)"
     );
 }
 

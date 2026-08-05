@@ -49,6 +49,28 @@ async fn connects_to_a_live_listener_and_round_trips() {
 }
 
 #[tokio::test]
+async fn deterministic_host_map_dials_loopback_for_a_test_net_guest_target() {
+    use std::collections::BTreeMap;
+    use std::net::{IpAddr, Ipv4Addr};
+
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let port = listener.local_addr().unwrap().port();
+    let accepted = tokio::spawn(async move { listener.accept().await.map(|_| ()) });
+    let test_net = IpAddr::V4(Ipv4Addr::new(192, 0, 2, 1));
+    let loopback = IpAddr::V4(Ipv4Addr::LOCALHOST);
+    let connector = NativeConnector::new().with_host_map(BTreeMap::from([(test_net, loopback)]));
+
+    connector
+        .connect(test_net, port)
+        .await
+        .expect("mapped TEST-NET target must dial the loopback listener");
+    accepted
+        .await
+        .expect("accept task")
+        .expect("loopback listener accepted the mapped connection");
+}
+
+#[tokio::test]
 async fn connect_to_a_closed_port_is_refused() {
     // Bind to grab a free port, then drop the listener → the port is closed.
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();

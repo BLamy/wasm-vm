@@ -3,9 +3,10 @@ id: E3-T21
 epic: 3
 title: Host to guest file transfer - drag-and-drop upload and download
 priority: 321
-status: pending
+status: cancelled
 depends_on: [E3-T08, E3-T14]
 estimate: L
+decomposed_into: [E3-T21a, E3-T21b, E3-T21c, E3-T21d]
 capstone: false
 ---
 
@@ -13,6 +14,9 @@ capstone: false
 Files cross the host/guest boundary in both directions: dragging a file onto the page lands
 it in the guest at `~/uploads/`, and a guest-side command (`vm-download <path>`) triggers a
 browser download of a guest file — built on an explicitly decided mechanism.
+
+This planning container was decomposed on 2026-07-22 into E3-T21a through E3-T21d. Do not
+implement it directly.
 
 ## Context
 Decide the mechanism first, in-task, with a short decision doc comparing: (a) **virtio-9p /

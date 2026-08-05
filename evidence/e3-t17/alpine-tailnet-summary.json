@@ -1,0 +1,18 @@
+{
+  "hostname": "wasm-vm-alpine-tailnet-rerun",
+  "peerName": "wasm-vm-tailnet-fixture.example.com",
+  "peerPort": 18000,
+  "peerUdpPort": 19000,
+  "dhcpStats": {
+    "discovers": 1,
+    "offers": 1,
+    "requests": 1,
+    "acks": 1,
+    "renewRequests": 0,
+    "renewAcks": 0,
+    "naks": 0
+  },
+  "status": "Tailscale: Running · wasm-vm-alpine-tailnet-rerun.example.com. (100.64.0.16, fd7a:115c:a1e0::10)",
+  "consoleErrors": [],
+  "tailscaleArtifactRequests": 1
+}
