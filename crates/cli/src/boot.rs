@@ -67,6 +67,11 @@ pub struct BootArgs {
     /// E2-T20: print the interrupt/trap counters at exit.
     #[arg(long)]
     pub stats: bool,
+    /// E4-T05: enable the predecoded basic-block cache (decode memoization with page-granular
+    /// invalidation). Additive and default-off; semantically identical to the legacy path
+    /// (proven byte-identical by `predecode_diff`). A perf lever for Phase C measurement.
+    #[arg(long)]
+    pub block_cache: bool,
     /// E2-T25: emit a boot phase-timing table (wall ms, retired, MIPS per phase) + per-device
     /// MMIO access counts, as pretty text + JSON, when the boot reaches userland (or at exit).
     #[arg(long)]
@@ -541,6 +546,7 @@ fn assemble(
     let ram_bytes = a.ram_mib.saturating_mul(1024 * 1024);
     let mut m = Machine::new(ram_bytes);
     m.set_storm_detect(!a.no_storm_detect); // E2-T20
+    m.set_block_cache(a.block_cache); // E4-T05: default off; additive decode-cache toggle
     if a.profile {
         m.set_host_timer(Rc::new(MonotonicTimer::new())); // E4-T01: arms profiling + injects the timer
     }

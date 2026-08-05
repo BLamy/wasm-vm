@@ -16,6 +16,7 @@
 //! with a page-level has-code bitmap. See E4-T05 for the phased plan.
 
 use crate::decode::Instr;
+use alloc::collections::BTreeSet;
 
 /// Guest page granularity used for block boundaries + code-page keying. 4 KiB — the Sv39
 /// base page. Using the base page (rather than a superpage) only makes blocks stop *more*
@@ -123,6 +124,13 @@ pub struct BlockCache {
     slots: alloc::vec::Vec<Option<DecodedBlock>>,
     mask: usize,
     generation: u64,
+    /// E4-T05 Phase B: the page-level "has-code" set (the E4-T17 SMC precursor). Every physical
+    /// page frame that has ever held ≥1 inserted block in the CURRENT generation. A store (guest
+    /// OR device/DMA) whose frame is NOT in this set cannot have hit cached code, so it needs no
+    /// scan — this is what lets the cache RETAIN blocks across ordinary data stores instead of the
+    /// Phase-A whole-cache flush. Cleared on a full `flush` (all blocks become invisible anyway);
+    /// stale membership is only ever a wasted scan (conservative-safe), never a missed flush.
+    has_code: BTreeSet<u64>,
 }
 
 impl BlockCache {
@@ -136,13 +144,35 @@ impl BlockCache {
             slots,
             mask: cap - 1,
             generation: 1,
+            has_code: BTreeSet::new(),
         }
     }
 
     /// Invalidate the entire cache in O(1) (generation bump). Every block built in an older
-    /// generation becomes invisible.
+    /// generation becomes invisible. The has-code set is cleared too: every frame's blocks are
+    /// now invisible, so no frame "has code" until the next insert re-populates it.
     pub fn flush(&mut self) {
         self.generation = self.generation.wrapping_add(1);
+        self.has_code.clear();
+    }
+
+    /// E4-T05 Phase B: page-granular invalidation. Drop every live block whose `page_frame` ==
+    /// `frame` (self-modifying code / DMA-into-code precursor). Returns `true` iff `frame` was a
+    /// code page (had ≥1 cached block) — the caller uses that to decide whether an in-flight block
+    /// cursor may now be stale. A frame with no cached code is an O(1) set-miss: the common case
+    /// for an ordinary data store, so the cache is retained. When `frame` DID have code, the slot
+    /// table is scanned once (O(capacity)) and matching blocks are dropped — including any stale
+    /// (older-generation) leftovers in that frame, which is harmless cleanup.
+    pub fn flush_page(&mut self, frame: u64) -> bool {
+        if !self.has_code.remove(&frame) {
+            return false;
+        }
+        for slot in self.slots.iter_mut() {
+            if slot.as_ref().is_some_and(|b| b.page_frame == frame) {
+                *slot = None;
+            }
+        }
+        true
     }
 
     #[inline]
@@ -177,6 +207,9 @@ impl BlockCache {
     /// replacement; correctness is unaffected).
     pub fn insert(&mut self, mut block: DecodedBlock) {
         block.block_gen = self.generation;
+        // Record the block's physical page as "has code" so a later store into it is caught by
+        // `flush_page` (Phase-B page-granular SMC/DMA invalidation).
+        self.has_code.insert(block.page_frame);
         let start = self.hash(block.phys_start);
         for i in 0..MAX_PROBE {
             let idx = (start + i) & self.mask;

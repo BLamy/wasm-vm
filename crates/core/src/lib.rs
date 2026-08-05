@@ -302,7 +302,7 @@ impl Machine {
     /// allocation is refused, so a hostile RAM size becomes a caught error rather than a
     /// process abort. `Ram::new` allocates through `try_reserve_exact`.
     pub fn try_new(ram_bytes: usize) -> Result<Self, ram::OutOfMemory> {
-        Ok(Self {
+        let mut m = Self {
             hart: Hart::new(),
             bus: SystemBus::new(Ram::new(ram_bytes)?),
             htif: None,
@@ -336,7 +336,11 @@ impl Machine {
             block_cache_enabled: cfg!(feature = "predecode"),
             block_cache: dispatch::BlockCache::with_capacity(1 << 12),
             block_cursor: None,
-        })
+        };
+        // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
+        // stores AND device/DMA writes feed page-granular invalidation.
+        m.bus.arm_code_write_tracking(m.block_cache_enabled);
+        Ok(m)
     }
 
     /// E4-T05: the A/B toggle — turn the predecoded block cache on/off at runtime. Flushing on
@@ -346,6 +350,8 @@ impl Machine {
         self.block_cache_enabled = on;
         self.block_cache.flush();
         self.block_cursor = None;
+        // E4-T05 Phase B: keep the bus write log armed in lockstep with the cache.
+        self.bus.arm_code_write_tracking(on);
     }
 
     /// E4-T05: whether the predecoded block cache is currently active.
@@ -358,6 +364,8 @@ impl Machine {
     pub fn set_block_cache_capacity(&mut self, capacity: usize) {
         self.block_cache = dispatch::BlockCache::with_capacity(capacity);
         self.block_cursor = None;
+        // Fresh cache ⇒ no cached code ⇒ any pending write frames are moot.
+        self.bus.code_write_log_mut().clear();
     }
 
     /// E3-T12c3: bind this machine to a base disk image + emulator build for snapshot coherence.
@@ -1642,18 +1650,52 @@ impl Machine {
             rd: (rd != 0).then_some((rd, value)),
             mem,
         });
-        // Phase A conservative invalidation (correct-but-slow; Phase B refines it):
-        //  - `fence.i` orders a prior code write against this fetch stream → flush all.
-        //  - ANY guest store may have patched cached code (SMC) → flush all, and drop the
-        //    cursor so the NEXT op re-fetches fresh bytes (reproduces an intra-block SMC patch).
-        // Both are O(1) generation bumps.
-        if matches!(op.instr, crate::decode::Instr::FenceI)
-            || mem.map(|m| m.is_store).unwrap_or(false)
-        {
+        // E4-T05 Phase B invalidation:
+        //  - `fence.i` orders a prior code write against this fetch stream → whole-cache flush
+        //    (O(1) generation bump); conservative and cheap for a rare op.
+        //  - a store (this op's `mem.is_store`, incl. SC/AMO) reached RAM via the bus, which
+        //    recorded its physical frame(s). Drain that log through PAGE-GRANULAR invalidation:
+        //    only a store into a frame that actually holds cached code drops blocks (and the
+        //    cursor). Ordinary data stores are set-misses → the cache is RETAINED (the Phase-B
+        //    win over Phase A's flush-everything).
+        if matches!(op.instr, crate::decode::Instr::FenceI) {
             self.block_cache.flush();
             self.block_cursor = None;
+        } else {
+            self.drain_code_writes();
         }
         Ok(())
+    }
+
+    /// E4-T05 Phase B: drain the bus's physical-frame write log (guest stores AND device/DMA
+    /// writes — both reach RAM through the same physical `store*`) into the block cache's
+    /// page-granular invalidation. If any drained frame held cached code, the in-flight block
+    /// cursor may point into a just-dropped block, so it is reset (conservative-safe — a
+    /// spurious reset only costs a rebuild). Cheap when the log is empty (the common case).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn drain_code_writes(&mut self) {
+        if !self.block_cache_enabled {
+            return;
+        }
+        // Disjoint borrows: drain the bus log while page-invalidating the cache.
+        let Self {
+            bus,
+            block_cache,
+            block_cursor,
+            ..
+        } = self;
+        let log = bus.code_write_log_mut();
+        if log.is_empty() {
+            return;
+        }
+        let mut flushed = false;
+        for &frame in log.iter() {
+            flushed |= block_cache.flush_page(frame);
+        }
+        log.clear();
+        if flushed {
+            *block_cursor = None;
+        }
     }
 
     /// E4-T05: return the [`MicroOp`](dispatch::MicroOp) to execute at virtual address `pc`,
@@ -1796,6 +1838,13 @@ impl Machine {
                 self.sync_plic();
                 // E2-T05: refresh the built-in-SBI S-timer level (STIP) before sampling.
                 self.sync_sbi_timer();
+                // E4-T05 Phase B: the device services above may have DMA'd into guest RAM (a
+                // virtio-blk read completion writing sector bytes, virtio-net rx, virtio-rng,
+                // a used-ring publish). Those writes went through the bus and were logged by
+                // physical frame; drain them through page-granular invalidation so a guest that
+                // DMAs code then jumps to it can never execute a stale cached block. (Phase C
+                // does NOT touch this — the device sync above is still per-retire.)
+                self.drain_code_writes();
             }
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
             // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the
