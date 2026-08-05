@@ -198,6 +198,7 @@ impl ProfStats {
             sample_count: self.sample_count,
             walk_count,
             collisions: self.hist.collisions(),
+            discovery: crate::dispatch::DiscoveryStats::default(),
         }
     }
 }

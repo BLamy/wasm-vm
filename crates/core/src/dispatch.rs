@@ -16,7 +16,8 @@
 //! with a page-level has-code bitmap. See E4-T05 for the phased plan.
 
 use crate::decode::Instr;
-use alloc::collections::BTreeSet;
+use alloc::collections::{BTreeMap, BTreeSet, VecDeque};
+use alloc::vec::Vec;
 
 /// Guest page granularity used for block boundaries + code-page keying. 4 KiB — the Sv39
 /// base page. Using the base page (rather than a superpage) only makes blocks stop *more*
@@ -223,5 +224,648 @@ impl BlockCache {
             }
         }
         self.slots[start] = Some(block);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// E4-T08: hotness counters + translation-candidate block discovery.
+//
+// The block cache (above) learns to NOMINATE JIT candidates. Each time a block
+// is ENTERED at its physical entry PC (the `next_micro_op` slow path — a cursor
+// miss re-keys and rebuilds the block, i.e. one loop iteration = one entry), a
+// saturating u32 execution counter is bumped. When the counter crosses the
+// design-doc hotness threshold (E4-T06 §1: N = 64) the block is nominated: a
+// [`TranslationRequest`] snapshotting the entry PC, the raw instruction BYTES,
+// the per-op lengths, and the terminator kind is pushed onto a bounded FIFO.
+//
+// This is DISCOVERY ONLY. No translator consumes the queue yet (E4-T09/T10). It
+// is also OBSERVATION ONLY: counting + nomination never touch the executed
+// architectural sequence, so the `predecode_diff` byte-identity gate is
+// unaffected (the counters/queue are read only by tests and `ProfStats`).
+//
+// The single load-bearing safety property (E4-T06 §5, this ticket's adversarial
+// AC) is *never install a translation for bytes that no longer match memory*.
+// Two independent defenses enforce it: (1) a GENERATION counter bumped by ANY
+// invalidation event (fence.i / SMC page-flush / whole-cache flush); a request
+// stamped with an older generation is stale. (2) the snapshotted `code_bytes`
+// are compared against live guest memory at (mock) install time. Either
+// mismatch drops the request. See [`BlockDiscovery::install_check`].
+// ---------------------------------------------------------------------------
+
+/// Hotness threshold: promote a block at its `N`-th execution (E4-T06 §1, `N = 64`).
+/// A TUNABLE, not a law — the one config point for the promotion policy. Low enough
+/// that a boot's hot kernel loops promote early, high enough that one-shot init code
+/// never compiles.
+pub const HOT_THRESHOLD: u32 = 64;
+
+/// Bounded FIFO capacity for pending [`TranslationRequest`]s. Overflow degrades
+/// gracefully (nominations are dropped and counted) — no unbounded growth under a
+/// flood of unique hot blocks (`gcc`-style workloads).
+pub const MAX_QUEUE: usize = 4096;
+
+/// Cap on the live hotness-counter map (blocks being counted toward the threshold, in
+/// the current generation). Bounds memory under a flood of unique COLD blocks: once
+/// full, new keys are not tracked (counted as `counts_dropped`) rather than growing
+/// without bound. Nominated blocks leave this map, so it only ever holds sub-threshold
+/// candidates.
+pub const MAX_COUNTS: usize = 1 << 16;
+
+/// The classified block terminator, captured in a [`TranslationRequest`] so the
+/// translator (E4-T09+) knows how the block exits without re-decoding. `None` means the
+/// block hit the 128-op cap or a page edge with no architectural terminator (a
+/// fall-through block).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TerminatorKind {
+    /// A conditional branch (`beq`/`bne`/`blt`/`bge`/`bltu`/`bgeu`).
+    Branch,
+    /// `jal`.
+    Jal,
+    /// `jalr`.
+    Jalr,
+    /// `ecall`.
+    Ecall,
+    /// `ebreak`.
+    Ebreak,
+    /// `fence.i`.
+    FenceI,
+    /// `mret`.
+    Mret,
+    /// `sret`.
+    Sret,
+    /// `wfi`.
+    Wfi,
+    /// `sfence.vma`.
+    SfenceVma,
+    /// `fence`.
+    Fence,
+    /// Any CSR read-write (`csrrw`/`csrrs`/`csrrc` + immediate forms).
+    Csr,
+    /// No architectural terminator (fell through the 128-op cap / page edge).
+    None,
+}
+
+impl TerminatorKind {
+    /// Classify a single instruction's terminator kind. Returns [`TerminatorKind::None`]
+    /// for any non-terminator (see [`is_terminator`]).
+    pub fn of(instr: &Instr) -> Self {
+        use Instr::*;
+        match instr {
+            Beq { .. } | Bne { .. } | Blt { .. } | Bge { .. } | Bltu { .. } | Bgeu { .. } => {
+                TerminatorKind::Branch
+            }
+            Jal { .. } => TerminatorKind::Jal,
+            Jalr { .. } => TerminatorKind::Jalr,
+            Ecall => TerminatorKind::Ecall,
+            Ebreak => TerminatorKind::Ebreak,
+            FenceI => TerminatorKind::FenceI,
+            Mret => TerminatorKind::Mret,
+            Sret => TerminatorKind::Sret,
+            Wfi => TerminatorKind::Wfi,
+            SfenceVma { .. } => TerminatorKind::SfenceVma,
+            Fence { .. } => TerminatorKind::Fence,
+            Csrrw { .. }
+            | Csrrs { .. }
+            | Csrrc { .. }
+            | Csrrwi { .. }
+            | Csrrsi { .. }
+            | Csrrci { .. } => TerminatorKind::Csr,
+            _ => TerminatorKind::None,
+        }
+    }
+
+    /// The terminator kind of a walked block (its last op), or [`TerminatorKind::None`]
+    /// for an empty/fall-through block.
+    pub fn of_block(ops: &[MicroOp]) -> Self {
+        match ops.last() {
+            Some(op) => TerminatorKind::of(&op.instr),
+            None => TerminatorKind::None,
+        }
+    }
+
+    /// E4-T06 "what is never JITted": a block whose terminator is a CSR read-write (can
+    /// change `mstatus`/`satp`/`mie` mid-stream) or `wfi` (the idle path is runtime-owned)
+    /// is EXCLUDED from nomination — it stays in the interpreter (T0/T1). This is the one
+    /// config point for the exclusion policy; the other terminators (branch/jal/jalr/ecall/
+    /// ebreak/xret/fence) side-exit and are translatable up to the terminator.
+    pub fn is_excluded(&self) -> bool {
+        matches!(self, TerminatorKind::Csr | TerminatorKind::Wfi)
+    }
+}
+
+/// A nominated translation candidate: everything the (future) translator needs to compile
+/// a block WITHOUT re-reading guest memory, plus the coherence stamp that makes installing
+/// stale bytes impossible.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TranslationRequest {
+    /// Physical address of the block's entry instruction (the cache key).
+    pub phys_pc: u64,
+    /// Raw guest instruction bytes, entry→terminator, little-endian, `sum(op_lens)` long —
+    /// the SNAPSHOT compared against live memory at install time (compare-at-install).
+    pub code_bytes: Vec<u8>,
+    /// Per-op guest lengths (2 or 4), in program order; parallel to the ops the bytes encode.
+    pub op_lens: Vec<u8>,
+    /// The block's terminator kind (how it exits).
+    pub terminator: TerminatorKind,
+    /// The discovery generation this request was stamped in. A later invalidation bumps the
+    /// live generation; a request whose `generation` no longer matches is stale and dropped.
+    pub generation: u64,
+}
+
+impl TranslationRequest {
+    /// Build a request snapshotting a walked block's raw bytes + lengths + terminator.
+    fn from_block(phys_pc: u64, ops: &[MicroOp], generation: u64) -> Self {
+        let mut code_bytes = Vec::with_capacity(ops.len() * 4);
+        let mut op_lens = Vec::with_capacity(ops.len());
+        for op in ops {
+            op_lens.push(op.len);
+            // Little-endian raw parcel: `len` bytes of `raw` (2 for compressed, 4 for full).
+            for b in 0..op.len {
+                code_bytes.push((op.raw >> (8 * u32::from(b))) as u8);
+            }
+        }
+        Self {
+            phys_pc,
+            code_bytes,
+            op_lens,
+            terminator: TerminatorKind::of_block(ops),
+            generation,
+        }
+    }
+}
+
+/// Per-block nomination state (the dedup state machine): a block is COLD until its counter
+/// crosses the threshold, then it transitions once and never re-nominates within a
+/// generation. Any invalidation clears the state so a re-decoded hot block can be
+/// re-nominated afresh (with new bytes + a new generation).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum NomState {
+    /// Nominated: a request is (or was) enqueued for this block. Suppresses re-nomination.
+    Queued,
+    /// Excluded from translation (CSR/wfi terminator). Suppresses counting + nomination.
+    Excluded,
+}
+
+/// A snapshot of the discovery counters, exported through the profiling stats (E4-T01).
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct DiscoveryStats {
+    /// Blocks successfully nominated (a request pushed onto the queue).
+    pub nominated: u64,
+    /// Re-nomination attempts suppressed by dedup (block already Queued/Excluded).
+    pub deduped: u64,
+    /// Requests found stale at (mock) install time — old generation OR bytes no longer
+    /// matching live guest memory — and dropped rather than installed.
+    pub dropped_stale: u64,
+    /// Nominations dropped because the FIFO was full (graceful overflow).
+    pub dropped_overflow: u64,
+    /// Cold candidates not tracked because the counter map was full (flood bound).
+    pub counts_dropped: u64,
+    /// Blocks excluded from nomination by policy (CSR/wfi terminator).
+    pub excluded: u64,
+    /// Current pending-queue depth.
+    pub queue_depth: usize,
+    /// High-water mark of the pending queue over the run.
+    pub queue_hwm: usize,
+    /// Live sub-threshold candidates currently being counted.
+    pub candidates: usize,
+    /// The current discovery generation (bumped by every invalidation).
+    pub generation: u64,
+}
+
+/// The E4-T08 block-discovery front end: hotness counters, the dedup state machine, the
+/// bounded nomination FIFO, the invalidation generation, and the observable stats. Owned by
+/// the `Machine` alongside the [`BlockCache`]; driven only when the block cache is enabled.
+pub struct BlockDiscovery {
+    /// Invalidation generation. Bumped by fence.i / SMC page-flush / whole-cache flush; the
+    /// stamp every fresh request carries and the value install-time validation compares against.
+    generation: u64,
+    /// Live per-block execution counters (phys entry PC → saturating count), current generation.
+    /// A block leaves this map the moment it is nominated (or excluded).
+    counts: BTreeMap<u64, u32>,
+    /// Dedup state for blocks past the threshold (phys entry PC → [`NomState`]).
+    state: BTreeMap<u64, NomState>,
+    /// Bounded FIFO of pending nominations.
+    queue: VecDeque<TranslationRequest>,
+    stats: DiscoveryStats,
+    queue_cap: usize,
+    counts_cap: usize,
+    /// Promotion threshold (defaults to [`HOT_THRESHOLD`]). Runtime-tunable — E4-T08 owns the
+    /// swept value; the design-doc number is the starting point, falsifiable by a ledger regression.
+    threshold: u32,
+}
+
+impl Default for BlockDiscovery {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl BlockDiscovery {
+    /// A fresh discovery front end at generation 1 with the default bounds.
+    pub fn new() -> Self {
+        Self::with_bounds(MAX_QUEUE, MAX_COUNTS)
+    }
+
+    /// A discovery front end with explicit bounds (tests use small caps to exercise overflow).
+    pub fn with_bounds(queue_cap: usize, counts_cap: usize) -> Self {
+        Self {
+            generation: 1,
+            counts: BTreeMap::new(),
+            state: BTreeMap::new(),
+            queue: VecDeque::new(),
+            stats: DiscoveryStats {
+                generation: 1,
+                ..DiscoveryStats::default()
+            },
+            queue_cap: queue_cap.max(1),
+            counts_cap: counts_cap.max(1),
+            threshold: HOT_THRESHOLD,
+        }
+    }
+
+    /// Set the promotion threshold (minimum 1). Used to sweep the tunable and to exercise
+    /// nomination with short guests in tests.
+    pub fn set_threshold(&mut self, threshold: u32) {
+        self.threshold = threshold.max(1);
+    }
+
+    /// The current promotion threshold.
+    pub fn threshold(&self) -> u32 {
+        self.threshold
+    }
+
+    /// Reset ALL discovery state (a config change: cache toggle / resize / snapshot restore).
+    /// Bumps the generation so any request already handed to a consumer is treated as stale.
+    pub fn reset(&mut self) {
+        let hwm = self.stats.queue_hwm;
+        self.generation = self.generation.wrapping_add(1);
+        self.counts.clear();
+        self.state.clear();
+        self.queue.clear();
+        self.stats = DiscoveryStats {
+            generation: self.generation,
+            queue_hwm: hwm,
+            ..DiscoveryStats::default()
+        };
+    }
+
+    /// Record an invalidation (fence.i / SMC page-flush / whole-cache flush): bump the
+    /// generation and clear the per-block hotness + dedup state so a re-decoded hot block is
+    /// re-nominated from scratch. Pending queued requests are LEFT in place deliberately — they
+    /// now carry a stale generation and are dropped at [`Self::install_check`], which is what the
+    /// adversarial "never install stale bytes" test observes. Cheap: two `clear`s of typically
+    /// small maps.
+    pub fn on_invalidate(&mut self) {
+        self.generation = self.generation.wrapping_add(1);
+        self.stats.generation = self.generation;
+        self.counts.clear();
+        self.state.clear();
+    }
+
+    /// Note one execution (entry) of the block at physical `phys` whose walked ops are `ops`.
+    /// Bumps the saturating counter; on crossing [`HOT_THRESHOLD`] exactly once, nominates the
+    /// block (or marks it excluded). Dedup: a block already past the threshold returns
+    /// immediately. This is the hot-path hook — cheap for the common (already-decided or
+    /// still-cold) block: one map probe plus, while cold, one increment.
+    pub fn on_block_entry(&mut self, phys: u64, ops: &[MicroOp]) {
+        // Already decided (nominated or excluded): dedup — never re-enqueue.
+        if self.state.contains_key(&phys) {
+            self.stats.deduped = self.stats.deduped.saturating_add(1);
+            return;
+        }
+        let count = match self.counts.get_mut(&phys) {
+            Some(c) => {
+                *c = c.saturating_add(1);
+                *c
+            }
+            None => {
+                if self.counts.len() >= self.counts_cap {
+                    // Counter map full: stop tracking new cold blocks (flood bound).
+                    self.stats.counts_dropped = self.stats.counts_dropped.saturating_add(1);
+                    return;
+                }
+                self.counts.insert(phys, 1);
+                1
+            }
+        };
+        if count == self.threshold {
+            self.nominate(phys, ops);
+        }
+    }
+
+    /// Transition a block past the threshold: drop it from the counter map, then either exclude
+    /// it (CSR/wfi terminator) or push a fresh [`TranslationRequest`]. Marks the block Queued/
+    /// Excluded so it never re-nominates within this generation (dedup). Fires EXACTLY once per
+    /// block per generation because the caller only reaches here on `count == HOT_THRESHOLD`.
+    fn nominate(&mut self, phys: u64, ops: &[MicroOp]) {
+        self.counts.remove(&phys);
+        let term = TerminatorKind::of_block(ops);
+        if term.is_excluded() {
+            self.state.insert(phys, NomState::Excluded);
+            self.stats.excluded = self.stats.excluded.saturating_add(1);
+            return;
+        }
+        // Mark Queued regardless of whether the push succeeds, so an overflow-dropped block does
+        // not re-nominate every subsequent execution (no renomination storm).
+        self.state.insert(phys, NomState::Queued);
+        if self.queue.len() >= self.queue_cap {
+            self.stats.dropped_overflow = self.stats.dropped_overflow.saturating_add(1);
+            return;
+        }
+        self.queue
+            .push_back(TranslationRequest::from_block(phys, ops, self.generation));
+        self.stats.nominated = self.stats.nominated.saturating_add(1);
+        if self.queue.len() > self.stats.queue_hwm {
+            self.stats.queue_hwm = self.queue.len();
+        }
+    }
+
+    /// Validate a request at (mock) install time. Returns `true` iff it is safe to install:
+    /// the request's generation still matches the live generation AND its snapshotted
+    /// `code_bytes` still equal the live guest bytes `live_bytes`. Any mismatch is a stale
+    /// request — counted (`dropped_stale`) and refused. This is the single choke point the
+    /// "never installs stale bytes" claim rests on.
+    pub fn install_check(&mut self, req: &TranslationRequest, live_bytes: &[u8]) -> bool {
+        let ok = req.generation == self.generation && req.code_bytes == live_bytes;
+        if !ok {
+            self.stats.dropped_stale = self.stats.dropped_stale.saturating_add(1);
+        }
+        ok
+    }
+
+    /// Drain the pending queue (a trivial consumer for tests / the future compile queue).
+    pub fn take_requests(&mut self) -> Vec<TranslationRequest> {
+        self.queue.drain(..).collect()
+    }
+
+    /// Peek the next pending request without removing it.
+    pub fn peek_request(&self) -> Option<&TranslationRequest> {
+        self.queue.front()
+    }
+
+    /// The current observable counters (queue depth reflects the live queue length).
+    pub fn stats(&self) -> DiscoveryStats {
+        DiscoveryStats {
+            queue_depth: self.queue.len(),
+            candidates: self.counts.len(),
+            ..self.stats
+        }
+    }
+
+    /// The live discovery generation (bumped by every invalidation).
+    pub fn generation(&self) -> u64 {
+        self.generation
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::decode::Instr;
+
+    /// A non-terminator body op (`addi`), 4 bytes, with a distinguishable raw word.
+    fn body(raw: u32) -> MicroOp {
+        MicroOp {
+            instr: Instr::Addi {
+                rd: 1,
+                rs1: 0,
+                imm: 1,
+            },
+            len: 4,
+            raw,
+        }
+    }
+
+    /// A `beq` terminator, 4 bytes.
+    fn term(raw: u32) -> MicroOp {
+        MicroOp {
+            instr: Instr::Beq {
+                rs1: 0,
+                rs2: 0,
+                imm: 8,
+            },
+            len: 4,
+            raw,
+        }
+    }
+
+    /// A minimal hot block: one body op + a branch terminator.
+    fn block() -> [MicroOp; 2] {
+        [body(0x0010_8093), term(0x0000_0063)]
+    }
+
+    #[test]
+    fn counter_increments_and_fires_exactly_once() {
+        let mut d = BlockDiscovery::new();
+        let ops = block();
+        // Execute the block far more than the threshold.
+        for _ in 0..1000 {
+            d.on_block_entry(0x8000_0000, &ops);
+        }
+        let s = d.stats();
+        // Fires EXACTLY once — one request, not 937.
+        assert_eq!(s.nominated, 1, "threshold must fire exactly once");
+        assert_eq!(s.queue_depth, 1);
+        // Every post-threshold execution was deduped: 1000 - 64 = 936.
+        assert_eq!(s.deduped, 1000 - u64::from(HOT_THRESHOLD));
+    }
+
+    #[test]
+    fn no_nomination_below_threshold() {
+        let mut d = BlockDiscovery::new();
+        let ops = block();
+        for _ in 0..(HOT_THRESHOLD - 1) {
+            d.on_block_entry(0x8000_0000, &ops);
+        }
+        assert_eq!(
+            d.stats().nominated,
+            0,
+            "must not nominate before the 64th entry"
+        );
+        // The 64th entry nominates.
+        d.on_block_entry(0x8000_0000, &ops);
+        assert_eq!(d.stats().nominated, 1);
+    }
+
+    #[test]
+    fn dedup_across_distinct_blocks() {
+        let mut d = BlockDiscovery::new();
+        let a = block();
+        let b = block();
+        for _ in 0..HOT_THRESHOLD {
+            d.on_block_entry(0x8000_0000, &a);
+            d.on_block_entry(0x9000_0000, &b);
+        }
+        let s = d.stats();
+        assert_eq!(
+            s.nominated, 2,
+            "two distinct hot blocks nominate independently"
+        );
+        assert_eq!(s.queue_depth, 2);
+    }
+
+    #[test]
+    fn translation_request_shape() {
+        let mut d = BlockDiscovery::new();
+        let ops = block();
+        for _ in 0..HOT_THRESHOLD {
+            d.on_block_entry(0x8000_0000, &ops);
+        }
+        let reqs = d.take_requests();
+        assert_eq!(reqs.len(), 1);
+        let r = &reqs[0];
+        assert_eq!(r.phys_pc, 0x8000_0000);
+        assert_eq!(r.terminator, TerminatorKind::Branch);
+        assert_eq!(r.op_lens, alloc::vec![4u8, 4u8]);
+        assert_eq!(r.generation, 1);
+        // Bytes are the little-endian raw words of the two ops.
+        assert_eq!(
+            r.code_bytes,
+            alloc::vec![0x93, 0x80, 0x10, 0x00, 0x63, 0x00, 0x00, 0x00]
+        );
+        // Draining emptied the queue.
+        assert_eq!(d.stats().queue_depth, 0);
+    }
+
+    #[test]
+    fn csr_and_wfi_blocks_are_excluded() {
+        let mut d = BlockDiscovery::new();
+        let csr = [MicroOp {
+            instr: Instr::Csrrw {
+                rd: 0,
+                rs1: 1,
+                csr: 0x300,
+            },
+            len: 4,
+            raw: 0x3000_9073,
+        }];
+        let wfi = [MicroOp {
+            instr: Instr::Wfi,
+            len: 4,
+            raw: 0x1050_0073,
+        }];
+        for _ in 0..HOT_THRESHOLD {
+            d.on_block_entry(0x8000_0000, &csr);
+            d.on_block_entry(0x9000_0000, &wfi);
+        }
+        let s = d.stats();
+        assert_eq!(s.nominated, 0, "excluded blocks never enqueue");
+        assert_eq!(s.excluded, 2);
+        assert_eq!(s.queue_depth, 0);
+    }
+
+    #[test]
+    fn requeue_after_invalidation_no_stale_survives() {
+        let mut d = BlockDiscovery::new();
+        let old = block();
+        for _ in 0..HOT_THRESHOLD {
+            d.on_block_entry(0x8000_0000, &old);
+        }
+        let stale = d.take_requests().pop().unwrap();
+        assert_eq!(stale.generation, 1);
+
+        // Invalidate (fence.i / SMC): the block is re-decoded DIFFERENTLY.
+        d.on_invalidate();
+        assert_eq!(d.generation(), 2);
+
+        // The OLD request must fail install validation against the NEW bytes AND the bumped gen.
+        let new_ops = [body(0xDEAD_BEEF), term(0x0000_0063)];
+        let new_bytes: alloc::vec::Vec<u8> = {
+            let mut v = alloc::vec::Vec::new();
+            for op in &new_ops {
+                for b in 0..op.len {
+                    v.push((op.raw >> (8 * u32::from(b))) as u8);
+                }
+            }
+            v
+        };
+        assert!(
+            !d.install_check(&stale, &new_bytes),
+            "stale request must never install against new bytes"
+        );
+        assert_eq!(d.stats().dropped_stale, 1);
+
+        // The re-decoded hot block RE-NOMINATES afresh with the new generation + new bytes.
+        for _ in 0..HOT_THRESHOLD {
+            d.on_block_entry(0x8000_0000, &new_ops);
+        }
+        let fresh = d.take_requests().pop().unwrap();
+        assert_eq!(
+            fresh.generation, 2,
+            "re-nomination carries the new generation"
+        );
+        assert_eq!(fresh.code_bytes, new_bytes);
+        // A fresh request DOES validate against live (new) bytes.
+        assert!(d.install_check(&fresh, &new_bytes));
+    }
+
+    #[test]
+    fn stale_generation_alone_blocks_install_even_if_bytes_match() {
+        // Race the generation check: bytes unchanged but an invalidation bumped the generation.
+        let mut d = BlockDiscovery::new();
+        let ops = block();
+        for _ in 0..HOT_THRESHOLD {
+            d.on_block_entry(0x8000_0000, &ops);
+        }
+        let req = d.take_requests().pop().unwrap();
+        let live = req.code_bytes.clone();
+        assert!(
+            d.install_check(&req, &live),
+            "current-gen matching request installs"
+        );
+        d.on_invalidate();
+        assert!(
+            !d.install_check(&req, &live),
+            "same bytes but stale generation must NOT install"
+        );
+    }
+
+    #[test]
+    fn queue_overflow_degrades_gracefully() {
+        // Tiny queue; flood with unique hot blocks — the queue is bounded and overflow counted.
+        let mut d = BlockDiscovery::with_bounds(4, 1 << 20);
+        let ops = block();
+        for i in 0..100u64 {
+            let phys = 0x8000_0000 + i * 0x1000;
+            for _ in 0..HOT_THRESHOLD {
+                d.on_block_entry(phys, &ops);
+            }
+        }
+        let s = d.stats();
+        assert_eq!(s.queue_depth, 4, "queue never exceeds its bound");
+        assert_eq!(s.nominated, 4);
+        assert_eq!(
+            s.dropped_overflow, 96,
+            "excess nominations dropped + counted"
+        );
+    }
+
+    #[test]
+    fn counter_map_is_bounded_under_cold_flood() {
+        // Tiny counter cap; flood with unique COLD blocks (each entered once) — the map is bounded
+        // and untracked cold blocks are counted, never leaking.
+        let mut d = BlockDiscovery::with_bounds(1 << 20, 8);
+        let ops = block();
+        for i in 0..1000u64 {
+            d.on_block_entry(0x8000_0000 + i * 0x1000, &ops);
+        }
+        let s = d.stats();
+        assert!(s.candidates <= 8, "counter map stays within its cap");
+        assert_eq!(s.counts_dropped, 1000 - 8);
+        assert_eq!(s.nominated, 0);
+    }
+
+    #[test]
+    fn reset_clears_state_and_bumps_generation() {
+        let mut d = BlockDiscovery::new();
+        let ops = block();
+        for _ in 0..HOT_THRESHOLD {
+            d.on_block_entry(0x8000_0000, &ops);
+        }
+        assert_eq!(d.stats().nominated, 1);
+        d.reset();
+        let s = d.stats();
+        assert_eq!(s.nominated, 0);
+        assert_eq!(s.queue_depth, 0);
+        assert_eq!(s.generation, 2);
     }
 }

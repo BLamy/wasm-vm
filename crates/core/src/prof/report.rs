@@ -137,6 +137,10 @@ pub struct ProfReport {
     /// Histogram aliasing count — non-zero ⇒ the hot list may be missing a region (see
     /// [`crate::prof::histogram::HotHistogram::collisions`]).
     pub collisions: u64,
+    /// E4-T08: the block-discovery counters (blocks nominated / deduped / dropped-stale, queue
+    /// depth + high-water mark). Filled by [`crate::Machine::prof_report`]; default/zero when a
+    /// report is built directly off a [`super::ProfStats`] with no machine attached.
+    pub discovery: crate::dispatch::DiscoveryStats,
 }
 
 impl ProfReport {
@@ -163,6 +167,11 @@ impl ProfReport {
             }
         }
         s.push('\n');
+        let d = &self.discovery;
+        s.push_str(&format!(
+            "jit discovery: nominated={} deduped={} dropped_stale={} dropped_overflow={} queue={} hwm={} candidates={} gen={}\n",
+            d.nominated, d.deduped, d.dropped_stale, d.dropped_overflow, d.queue_depth, d.queue_hwm, d.candidates, d.generation,
+        ));
         s
     }
 
@@ -187,9 +196,27 @@ impl ProfReport {
             }
             subs.push_str(&format!("{{\"name\":\"{}\",\"ns\":{}}}", sub.name(), ns));
         }
+        let d = &self.discovery;
+        let discovery = format!(
+            "{{\"nominated\":{},\"deduped\":{},\"dropped_stale\":{},\"dropped_overflow\":{},\"queue_depth\":{},\"queue_hwm\":{},\"candidates\":{},\"generation\":{}}}",
+            d.nominated,
+            d.deduped,
+            d.dropped_stale,
+            d.dropped_overflow,
+            d.queue_depth,
+            d.queue_hwm,
+            d.candidates,
+            d.generation,
+        );
         format!(
-            "{{\"total_ns\":{},\"sample_count\":{},\"walk_count\":{},\"collisions\":{},\"regions\":[{}],\"subsystems\":[{}]}}",
-            self.total_ns, self.sample_count, self.walk_count, self.collisions, regions, subs
+            "{{\"total_ns\":{},\"sample_count\":{},\"walk_count\":{},\"collisions\":{},\"regions\":[{}],\"subsystems\":[{}],\"discovery\":{}}}",
+            self.total_ns,
+            self.sample_count,
+            self.walk_count,
+            self.collisions,
+            regions,
+            subs,
+            discovery
         )
     }
 }

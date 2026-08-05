@@ -276,6 +276,13 @@ pub struct Machine {
     /// expected next VA)`. A branch/jump/interrupt/trap moves the PC off `next VA`, invalidating
     /// the cursor so the next step re-keys by physical PC (handling branches into mid-block).
     block_cursor: Option<(u64, usize, u64)>,
+    /// E4-T08: hotness counters + translation-candidate discovery. The block cache learns to
+    /// NOMINATE JIT candidates: each block entry bumps a saturating counter, and crossing the
+    /// design-doc threshold enqueues a `TranslationRequest` (dedup'd, requeued after any
+    /// invalidation via a generation bump). Discovery is OBSERVATION-ONLY — it never changes the
+    /// executed sequence, so `predecode_diff` byte-identity is preserved — and nothing consumes
+    /// the queue yet (the translator is E4-T09/T10).
+    discovery: dispatch::BlockDiscovery,
     /// E4-T05 Phase C: interrupt/device-sync BATCHING. A DISTINCT toggle from
     /// `block_cache_enabled` (batching requires the cache, but the cache runs WITHOUT batching as
     /// the byte-identical Phase-A/B mode the `predecode_diff` gate proves). When on, the device
@@ -346,6 +353,7 @@ impl Machine {
             // the differential harness flips it at runtime via `set_block_cache`.
             block_cache_enabled: cfg!(feature = "predecode"),
             block_cache: dispatch::BlockCache::with_capacity(1 << 12),
+            discovery: dispatch::BlockDiscovery::new(),
             block_cursor: None,
             // E4-T05 Phase C: batching is OFF by default even under `predecode` (the cache stays
             // byte-identical); it is opted in explicitly via `set_interrupt_batching`.
@@ -364,6 +372,8 @@ impl Machine {
         self.block_cache_enabled = on;
         self.block_cache.flush();
         self.block_cursor = None;
+        // E4-T08: a cache toggle wholesale-flushes blocks; reset the discovery state to match.
+        self.discovery.reset();
         // E4-T05 Phase B: keep the bus write log armed in lockstep with the cache.
         self.bus.arm_code_write_tracking(on);
     }
@@ -393,8 +403,42 @@ impl Machine {
     pub fn set_block_cache_capacity(&mut self, capacity: usize) {
         self.block_cache = dispatch::BlockCache::with_capacity(capacity);
         self.block_cursor = None;
+        // E4-T08: a fresh cache has no blocks; reset discovery so stale counts/requests are dropped.
+        self.discovery.reset();
         // Fresh cache ⇒ no cached code ⇒ any pending write frames are moot.
         self.bus.code_write_log_mut().clear();
+    }
+
+    /// E4-T08: set the hotness promotion threshold (the tunable `N`; default
+    /// [`dispatch::HOT_THRESHOLD`] = 64). E4-T08 owns sweeping this against the ledger; tests use a
+    /// low value to nominate with short guests. Persists across a cache toggle.
+    pub fn set_hotness_threshold(&mut self, threshold: u32) {
+        self.discovery.set_threshold(threshold);
+    }
+
+    /// E4-T08: a snapshot of the block-discovery counters — blocks nominated, deduped,
+    /// dropped-stale, queue depth + high-water mark, and the live generation. Exposed for the
+    /// profiling report and for tests; also folded into [`Self::prof_report`].
+    pub fn discovery_stats(&self) -> dispatch::DiscoveryStats {
+        self.discovery.stats()
+    }
+
+    /// E4-T08: drain the pending translation-candidate FIFO (a trivial consumer; the real compile
+    /// queue is E4-T21). Each request carries its coherence generation — validate with
+    /// [`Self::discovery_install_check`] before acting on it.
+    pub fn take_translation_requests(&mut self) -> alloc::vec::Vec<dispatch::TranslationRequest> {
+        self.discovery.take_requests()
+    }
+
+    /// E4-T08: validate a translation request at (mock) install time against live guest memory —
+    /// returns `true` only if its generation is current AND its snapshotted bytes still match. The
+    /// choke point behind the "never install stale bytes" guarantee.
+    pub fn discovery_install_check(
+        &mut self,
+        req: &dispatch::TranslationRequest,
+        live_bytes: &[u8],
+    ) -> bool {
+        self.discovery.install_check(req, live_bytes)
     }
 
     /// E3-T12c3: bind this machine to a base disk image + emulator build for snapshot coherence.
@@ -713,8 +757,12 @@ impl Machine {
     /// time folded in from the bus; `top_k` bounds the hot-region list. Non-mutating and idempotent.
     pub fn prof_report(&self, total_ns: u64, top_k: usize) -> prof::ProfReport {
         let ta = self.bus.time_accum();
-        self.prof
-            .report_with_time(total_ns, top_k, &ta.ns, ta.walk_count)
+        let mut report = self
+            .prof
+            .report_with_time(total_ns, top_k, &ta.ns, ta.walk_count);
+        // E4-T08: surface the block-discovery counters through the profiling report.
+        report.discovery = self.discovery.stats();
+        report
     }
 
     /// E4-T01: the next PC-sampling stride — [`PROF_STRIDE_BASE`] plus a deterministic LCG jitter in
@@ -1323,6 +1371,8 @@ impl Machine {
         // pre-restore physical layout) is now stale — flush the cache and drop the cursor.
         self.block_cache.flush();
         self.block_cursor = None;
+        // E4-T08: the restored physical layout invalidates every nominated block — reset discovery.
+        self.discovery.reset();
         Ok(())
     }
 
@@ -1690,6 +1740,10 @@ impl Machine {
         if matches!(op.instr, crate::decode::Instr::FenceI) {
             self.block_cache.flush();
             self.block_cursor = None;
+            // E4-T08: fence.i orders a prior code write against the fetch stream — any block may
+            // now decode differently. Bump the discovery generation so pending requests go stale
+            // and hot blocks re-nominate from scratch.
+            self.discovery.on_invalidate();
         } else {
             self.drain_code_writes();
         }
@@ -1711,6 +1765,7 @@ impl Machine {
             bus,
             block_cache,
             block_cursor,
+            discovery,
             ..
         } = self;
         let log = bus.code_write_log_mut();
@@ -1724,6 +1779,10 @@ impl Machine {
         log.clear();
         if flushed {
             *block_cursor = None;
+            // E4-T08: a store landed on a code page (SMC / DMA-into-code) and dropped ≥1 cached
+            // block. Bump the discovery generation so any pending request for the overwritten bytes
+            // is dropped at install time and the re-decoded block re-nominates fresh.
+            discovery.on_invalidate();
         }
     }
 
@@ -1796,6 +1855,11 @@ impl Machine {
             }
         }
 
+        // E4-T08: this is a block ENTRY (a cursor miss re-keyed and rebuilt the block at `phys`).
+        // Bump the hotness counter and, on crossing the threshold, nominate a TranslationRequest.
+        // Observation-only: it reads the walked ops and mutates only the discovery side-structure,
+        // never the executed sequence — so the retire trace is byte-identical (`predecode_diff`).
+        self.discovery.on_block_entry(phys, &ops);
         self.block_cache
             .insert(dispatch::DecodedBlock::new(phys, ops, total_len));
         // Entry op (index 0) is consumed now; the cursor resumes at index 1.
