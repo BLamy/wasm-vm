@@ -89,7 +89,23 @@ loudly, not silently benchmark a different binary from the base image.
   targets. **Validated headlessly:** `shasum -c SHA256SUMS` OK for both ELFs; release CLI compiles + fmt
   clean; a native boot reaches virtio probe with BOTH drives — `virtio0 [vda] 768MiB` (rootfs) AND
   `virtio1 [vdb] 16MiB` (bench overlay) — so the multi-drive wiring is correct.
-- **VERIFICATION DEBT — the full boot-to-login score run is NOT yet achieved.** On THIS Mac the boot
+- 2026-08-05 — **DEBT CLEARED for the native Dhrystone path — and it turned up 3 REAL bugs (one in the
+  emulator core), all fixed (commit `010446f`).** Insisting on a genuine score (no fabrication) exposed:
+  (1) **CORE bug** — `Machine` serviced only a single virtio-blk (`self.blk`); the 2nd drive from
+  `enable_virtio_blk_at` was attached but never serviced in the run loop, so the guest HUNG the instant it
+  read `/dev/vdb` (boot froze right after the vdb probe — this is what looked like "machine load"). Fixed
+  with an `extra_blk` list serviced at the same boundary (read-only → skipped by quiesce/snapshot). (2)
+  harness mount path off by one dir (`/mnt` vs `/mnt/bench`). (3) `Console.expect` discarded the matched-
+  and-earlier buffer so `run_text` was empty at parse time. **Now fully validated native-Dhrystone**
+  (`evidence/e4-t03/dhrystone-native.json`): reproducible ELF (sha256 recorded) → boot with vda+vdb →
+  login → mount → run → CRC-validated parse (`Int_Glob=5` ✓) → **189.717 DMIPS** (333333 dhry/s) → JSON.
+  `timing_check` honestly reports the host/guest ratio (15.3× under load — score is guest-instruction-
+  derived, so load-independent). AC1(native, dhrystone) ✓.
+- **REMAINING (just needs CPU time on an idle box):** a CoreMark native run (AC3 ≥10s) and median-of-3
+  (AC2 ≤5% spread) — each in-guest run is ~1.5 min guest but ~20+ min wall on THIS saturated machine
+  (load 6, runaway `yes` procs); run on an idle machine / `dev`. Plus AC1(browser), the phase-8 reaping-
+  deferred leg. The harness + the hard bugs are done; the rest is unattended runtime.
+- **(superseded) VERIFICATION DEBT — the full boot-to-login score run is NOT yet achieved.** On THIS Mac the boot
   consistently reaches the virtio probe (~2.24s guest time) then goes quiet at the userland mount stage
   and the harness times out at `login:` (`BOOT_TIMEOUT=1200s`). Root cause here is **machine saturation**
   (load avg 6–10 on 8 cores, incl. two runaway 94%-CPU `yes` processes + many MCP/editor processes), so
