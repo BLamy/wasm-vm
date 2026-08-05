@@ -61,6 +61,33 @@
       "spread": 0.0138,
       "unit": "seconds",
       "vm_build": "release"
+    },
+    {
+      "baseline": "level3-interpreter",
+      "bench": "gcc",
+      "commit": "unknown",
+      "config": {
+        "compile_cmd": "/mnt/usr/bin/gcc --sysroot=/mnt -B/mnt/usr/bin -O2 -frandom-seed=miniz -c /mnt/src/miniz.c -o /tmp/miniz.o",
+        "gcc_ext4_sha256": "167ff7a91ab6d4625bc4d68108595b2b693f1345f4ba1386df24e7ea6541d630",
+        "gcc_package": "gcc-13.2.1_git20240309-r1",
+        "o_sha256": "97198b27557042fb84de54881c5fb577505b4ee77c41bc056612be6173e5faca",
+        "o_size_bytes": 302904,
+        "o_sizes_all": [
+          302904
+        ],
+        "ram_mib": 768,
+        "source_date_epoch": 1704067200,
+        "vm_build": "release",
+        "workload": "miniz-3.0.2 miniz.c (amalgamated, ~9.3 kLoC)"
+      },
+      "date": "2026-08-05T21:11:52.585560+00:00",
+      "engine": "native",
+      "higher_is_better": false,
+      "prev_sha256": "452775c27413b79e35674e5bba6e9e02b4c361d4bf0c683a6f797c57757cda75",
+      "score": 163.98,
+      "spread": 0.0,
+      "unit": "seconds",
+      "vm_build": "release"
     }
   ],
   "schema_version": 1
