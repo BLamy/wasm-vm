@@ -61,6 +61,23 @@ cold start and diff against the ledger entry (>10% short refutes); (5) time a `s
 guest — if block-granular interrupt polling warped timer delivery, refuted.
 
 ## Verification log
+- 2026-08-05 — **Phase A landed + byte-identity PROVEN (commit `2d4ca71`).** `crates/core/src/dispatch.rs`
+  (`MicroOp`/`DecodedBlock`/open-addressed `BlockCache` keyed by physical PC, O(1) generation-bump flush)
+  + a `decode_at()` factored out of `step_traced` so the cache and legacy path share ONE decoder. Wired
+  behind an A/B toggle (`block_cache_enabled` runtime flag + `predecode` feature); `step_cached` replays
+  memoized ops through the SAME `execute()`. **The per-op device sync / `next_interrupt` / `advance_clock`
+  / `on_retire` / profiler hook are UNTOUCHED and still per-retire** — Phase A is decode-only memoization,
+  semantically identical (interrupt batching is Phase C). Conservative Phase-A invalidation: whole-cache
+  flush on `fence.i`, any guest store, and snapshot restore.
+  - **THE gate — `crates/core/tests/predecode_diff.rs` (independently re-run: 2/2 green, 75s):** cache-ON
+    with a 4096-slot AND a pathological **1-entry** cache is BYTE-IDENTICAL (retire-hash + retire-count +
+    outcome) to cache-OFF across all 127 riscv-tests ELFs incl. `fence_i` (SMC), `ma_data`, `illegal`,
+    `ma_fetch`. Plus: full `cargo test -p wasm-vm-core` EXIT 0 (91 suites); with `--features predecode`
+    the `determinism` native golden + riscv_tests_suite + sv39/tlb/snapshot/interrupts/virtio all green;
+    fmt/clippy(-D)/wasm32 clean.
+  - **Not run here (not divergences):** Spike `diff-all` (no Spike container) — but cache-OFF is byte-
+    identical (full suite + golden), so behavior is unchanged; the `determinism` WASM leg (no wasm-pack) —
+    native golden matches cache-ON + the wasm build compiles.
 - 2026-08-05 — **Design + phased plan (correctness-first; informed by the E4-T02 profile).** Ground truth:
   the per-instruction loop `run_traced_inner` (`crates/core/src/lib.rs:1559-1779`) does the FULL device/
   interrupt fabric re-sync (`sync_clint`/`sync_plic`/`IrqLine::set`/virtio `service`/`next_interrupt`) on
