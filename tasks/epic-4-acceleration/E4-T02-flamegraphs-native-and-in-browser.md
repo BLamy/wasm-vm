@@ -56,7 +56,7 @@ path specifically; a Chrome-only procedure fails the deliverable as written.
 
 ## Verification debt
 _Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
-- **Live browser flamegraph capture** (Chrome/Firefox DevTools performance profile with the `-g` name section) — reaping-deferred. The symbol-readability build mechanics are verified on-host; only the interactive capture needs `dev`.
+- **CLEARED on `dev` (2026-08-05):** a live Chrome DevTools performance profile of the wasm build booting in-browser was captured on `dev` (the mac reaps this boot) — `evidence/e4-t02/browser-boot.cpuprofile.gz` (3 MB uncompressed). The `-g`-preserved name section yields demangled `wasm_vm_core::*` frames. Native flamegraph pipeline + this browser capture together satisfy the ticket; no debt remains.
 
 ## Verification log
 - 2026-08-05 — **Native flamegraph pipeline done + a real capture landed (commits `19c07e6`, `6d26fa7`);
