@@ -55,6 +55,10 @@ reproducibility claim; (2) tamper check: patch the guest to report a fake elapse
 caching stale results; (4) delete the benchmark overlay and rerun — the harness must fail
 loudly, not silently benchmark a different binary from the base image.
 
+## Verification debt
+_Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
+- **Browser engine leg** (AC1 `--engine browser`: in-browser CoreMark/Dhrystone) — reaping-deferred; the Playwright spec + endpoints are engine-identical, so a `dev` browser run drops in. Native engine is fully verified.
+
 ## Verification log
 - 2026-08-04 — **Design + phased plan.** Findings that reshape the premises:
   - **Docker is the repo's canonical reproducible-build path** (`tools/toolchain/`, `tools/build-rootfs.sh`

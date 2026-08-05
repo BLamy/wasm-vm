@@ -54,6 +54,10 @@ compiles at `-O2` (check the command line in the console log) and produces a non
 (4) mutate one ledger entry and confirm `report`/`record` tooling detects schema violations
 or at least never silently rewrites history (append-only property).
 
+## Verification debt
+_Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
+- **In-guest `gcc -O2` bench** (phases 2-3) — needs `apk.static`/`mke2fs` Linux tooling absent on macOS; build the ~300MB gcc overlay + run the compile on `dev`. Plus **browser-engine baselines** (reaping-deferred). Boot bench + ledger are native-verified.
+
 ## Verification log
 - 2026-08-05 — **Phases 1/4/5 landed + validated (commits `4d19194`, `50343e3`); status
   partially-verified.** Boot wall-clock bench, the hash-chained ledger, and the Level-3 baseline doc are

@@ -54,6 +54,10 @@ claims dispatch is X% of time, hack in a no-op-dispatch microbenchmark or use E4
 counters to bound it — a claim off by >2x is a refutation; (4) attempt the Firefox capture
 path specifically; a Chrome-only procedure fails the deliverable as written.
 
+## Verification debt
+_Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
+- **Live browser flamegraph capture** (Chrome/Firefox DevTools performance profile with the `-g` name section) — reaping-deferred. The symbol-readability build mechanics are verified on-host; only the interactive capture needs `dev`.
+
 ## Verification log
 - 2026-08-05 — **Native flamegraph pipeline done + a real capture landed (commits `19c07e6`, `6d26fa7`);
   status partially-verified (browser CAPTURE reaping-deferred).** Profiler: `samply` (no-sudo OS sampler

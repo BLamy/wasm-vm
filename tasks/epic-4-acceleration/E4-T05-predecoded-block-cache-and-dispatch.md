@@ -60,6 +60,10 @@ must be no virtual-address staleness; (4) re-measure the claimed CoreMark uplift
 cold start and diff against the ledger entry (>10% short refutes); (5) time a `sleep 1` in
 guest — if block-granular interrupt polling warped timer delivery, refuted.
 
+## Verification debt
+_Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
+- **CoreMark host-side uplift** (AC1 ≥1.3×) — the guest-clock score is instruction-derived, so the speedup is a host wall-clock ratio; measuring now (cache-OFF vs cache+batching back-to-back). Plus **Phase D** dispatch micro-tuning and **browser-engine ledger entries** (reaping-deferred). Correctness (byte-identical cache, verdict-identical/deterministic/≤128-latency batching) is verified.
+
 ## Verification log
 - 2026-08-05 — **Phase B landed (page-granular invalidation) — byte-identity HELD (commit `03c55b9`).**
   Replaced Phase A's flush-whole-cache-on-any-store with a page-level has-code bitmap (`BTreeSet` of

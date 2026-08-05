@@ -12705,18 +12705,18 @@
       "activity": [
         {
           "date": "2026-08-05",
-          "commits": 6,
+          "commits": 7,
           "labels": [
+            "fix(status): E4-T05 pending -> partially-verified (Phases A/B/C done); regen roadmap",
             "docs(dispatch): E4-T05 Phase B validated — page-granular invalidation, SMC-diff green, byte-identical",
             "docs(dispatch): E4-T05 Phase A validated — cache-on == cache-off byte-identical (127 riscv-tests)",
-            "docs(dispatch): E4-T05 design + phased plan (physical-PC block cache, interrupt batching)",
-            "feat(dispatch): E4-T05 Phase C — interrupt/device-sync poll at block boundaries"
+            "docs(dispatch): E4-T05 design + phased plan (physical-PC block cache, interrupt batching)"
           ]
         }
       ],
       "firstActivity": "2026-08-05",
       "lastActivity": "2026-08-05",
-      "commitCount": 6
+      "commitCount": 7
     },
     {
       "id": "E4-T06",

@@ -56,6 +56,10 @@ randomized or prime-adjusted; systematic blind spots are a refutation); (4) enab
 in the browser build and diff the report against the native build for the same deterministic
 guest — gross disagreement (>2x on any top-5 region) is a refutation.
 
+## Verification debt
+_Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
+- **Phase-6 browser evidence** (AC1 Alpine-symbol leg + AC4 native-vs-wasm profile diff) — the Alpine-in-browser boot OS-reaps on this mac. Run on `dev` via `getProfile()` against a live Alpine boot; diff native vs wasm reports.
+
 ## Verification log
 - 2026-08-04 — **Design + phased plan (opens Epic 4's measurement backbone).** Precedents to mirror:
   `crates/core/src/diag/irqstats.rs` (always-on no_std fixed-array counters + `dump()`), `trace.rs` (the
