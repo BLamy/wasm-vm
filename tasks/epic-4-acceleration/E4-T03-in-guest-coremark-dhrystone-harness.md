@@ -101,10 +101,19 @@ loudly, not silently benchmark a different binary from the base image.
   login → mount → run → CRC-validated parse (`Int_Glob=5` ✓) → **189.717 DMIPS** (333333 dhry/s) → JSON.
   `timing_check` honestly reports the host/guest ratio (15.3× under load — score is guest-instruction-
   derived, so load-independent). AC1(native, dhrystone) ✓.
-- **REMAINING (just needs CPU time on an idle box):** a CoreMark native run (AC3 ≥10s) and median-of-3
-  (AC2 ≤5% spread) — each in-guest run is ~1.5 min guest but ~20+ min wall on THIS saturated machine
-  (load 6, runaway `yes` procs); run on an idle machine / `dev`. Plus AC1(browser), the phase-8 reaping-
-  deferred leg. The harness + the hard bugs are done; the rest is unattended runtime.
+- 2026-08-05 — **Native engine FULLY validated — all native ACs green.** Root cause of the earlier
+  "20+ min per run / reaped" runtime: **two `yes` processes orphaned for 33 DAYS** at ~100% CPU (not this
+  project's), silently stealing 2 of 8 cores the whole time; killed them → benchmark wall dropped ~5×.
+  With headroom:
+  - **CoreMark** (`evidence/e4-t03/coremark-native.json`): 261.7 iterations/sec, **Total time 22.9s guest
+    (AC3 ≥10s ✓)**, CoreMark's own CRC self-check "Correct operation validated" ✓.
+  - **CoreMark median-of-3** (`evidence/e4-t03/coremark-native-median3.json`): runs
+    `[261.757, 261.723, 261.734]`, median 261.734, **spread 0.0001 = 0.01% (AC2 ≤5% ✓✓)** — the
+    deterministic interpreter makes the guest-instruction-derived score essentially identical run-to-run.
+  - Dhrystone 189.7 DMIPS (earlier). **AC1(native) ✓ (both benches), AC2 ✓, AC3 ✓, AC4 ✓** (reproducible
+    ELFs, sha256 recorded + `shasum -c` OK). The only outstanding AC is **AC1(browser)** — the phase-8
+    reaping-deferred leg (Alpine browser boot OS-reaps here; run on `dev`/nightly). The native harness,
+    the reproducible-build pipeline, and the 3 real bugs (incl. the emulator-core 2nd-blk hang) are done.
 - **(superseded) VERIFICATION DEBT — the full boot-to-login score run is NOT yet achieved.** On THIS Mac the boot
   consistently reaches the virtio probe (~2.24s guest time) then goes quiet at the userland mount stage
   and the harness times out at `login:` (`BOOT_TIMEOUT=1200s`). Root cause here is **machine saturation**

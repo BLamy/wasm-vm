@@ -1,0 +1,32 @@
+{
+  "bench": "coremark",
+  "score": 261.734,
+  "unit": "iterations/sec",
+  "runs": [
+    261.757,
+    261.723,
+    261.734
+  ],
+  "spread": 0.0001,
+  "noise_warning": false,
+  "engine": "native",
+  "commit": "05bb0fe90e4666fcd2bd07f999e614d0be4d58f3",
+  "config": {
+    "gcc": "gcc-13-riscv64-linux-gnu 13.3.0",
+    "flags": "-static -O2 -g0 -march=rv64gc -mabi=lp64d",
+    "iterations": 6000,
+    "vm_build": "release",
+    "ram_mib": 256,
+    "binary_sha256": "4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937"
+  },
+  "date": "2026-08-05T04:52:24.295850+00:00",
+  "timing_check": {
+    "note": "guest elapsed is instruction-count-derived (clock_div=10, 10 MHz timebase); the policed invariant is host/guest ratio vs baseline, not 1:1",
+    "guest_elapsed_s": 22.924,
+    "host_elapsed_s": 279.001,
+    "ratio": 12.171,
+    "baseline_ratio": null,
+    "deviation": null,
+    "flagged": false
+  }
+}
