@@ -10,6 +10,7 @@ members = [
     "crates/wasm",
     "crates/wasm-emit",
     "crates/jit-translate",
+    "crates/jit-runtime",
     "crates/cli",
     "tools/fuzz",
 ]

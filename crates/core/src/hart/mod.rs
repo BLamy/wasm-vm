@@ -922,6 +922,56 @@ impl Hart {
         }
     }
 
+    /// E4-T10: perform a JIT-emitted load — the `env.load(addr, kind)` host import. `addr` is the
+    /// guest effective (virtual) address; `kind` is the width+signedness code the translator emits
+    /// (`0 lb, 1 lh, 2 lw, 3 ld, 4 lbu, 5 lhu, 6 lwu`). Reuses the interpreter's translated +
+    /// PMP-checked + bus-routed load path (incl. triggers, misaligned-RAM, MMIO), so the value —
+    /// and any device-read side effect — is byte-identical to the interpreter. A fault returns the
+    /// precise [`Trap`]; the executor unwinds the block on it (the run loop then interprets it).
+    pub fn jit_load(&mut self, bus: &mut impl Bus, addr: u64, kind: i32) -> Result<i64, Trap> {
+        Ok(match kind {
+            0 => cload8(&self.csr, &mut self.tlb, bus, addr)? as i8 as i64,
+            1 => cload16(&self.csr, &mut self.tlb, bus, addr)? as i16 as i64,
+            2 => cload32(&self.csr, &mut self.tlb, bus, addr)? as i32 as i64,
+            3 => cload64(&self.csr, &mut self.tlb, bus, addr)? as i64,
+            4 => u64::from(cload8(&self.csr, &mut self.tlb, bus, addr)?) as i64,
+            5 => u64::from(cload16(&self.csr, &mut self.tlb, bus, addr)?) as i64,
+            6 => u64::from(cload32(&self.csr, &mut self.tlb, bus, addr)?) as i64,
+            _ => {
+                return Err(Trap {
+                    cause: Exception::IllegalInstruction,
+                    tval: 0,
+                });
+            }
+        })
+    }
+
+    /// E4-T10: perform a JIT-emitted store — the `env.store(addr, val, width)` host import. `width`
+    /// is 1/2/4/8 bytes. Reuses the interpreter's translated + PMP-checked + bus-routed store path,
+    /// so the memory/MMIO effect is byte-identical to the interpreter. A fault returns the precise
+    /// [`Trap`] (the block is unwound and re-interpreted).
+    pub fn jit_store(
+        &mut self,
+        bus: &mut impl Bus,
+        addr: u64,
+        val: i64,
+        width: i32,
+    ) -> Result<(), Trap> {
+        match width {
+            1 => cstore8(&self.csr, &mut self.tlb, bus, addr, val as u8)?,
+            2 => cstore16(&self.csr, &mut self.tlb, bus, addr, val as u16)?,
+            4 => cstore32(&self.csr, &mut self.tlb, bus, addr, val as u32)?,
+            8 => cstore64(&self.csr, &mut self.tlb, bus, addr, val as u64)?,
+            _ => {
+                return Err(Trap {
+                    cause: Exception::IllegalInstruction,
+                    tval: 0,
+                });
+            }
+        }
+        Ok(())
+    }
+
     /// Execute a decoded instruction. Returns the retire info `(rd, value, mem)` for the
     /// trace record — `(rd, value)` is what was written to the register file (rd == 0
     /// meaning no architectural write) and `mem` the memory op if any. Every arm either

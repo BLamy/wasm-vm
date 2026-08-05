@@ -1,0 +1,22 @@
+# E4-T10: the NATIVE JIT runtime. Implements `wasm_vm_core::jit::CompiledBlockExecutor` with
+# wasmtime — it consumes the E4-T08 translation queue via the `Machine` run loop, translates each
+# hot `DecodedBlock` with E4-T09's `translate_block`, instantiates the emitted module under
+# wasmtime, and executes it against the live guest `Hart` + `SystemBus` (memory reached through the
+# interpreter's own translated load/store path). `crates/core` stays `no_std` and holds no engine;
+# this crate is native-only (the browser executor `WebAssembly.Module` is E4-T19).
+[package]
+name = "wasm-vm-jit-runtime"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lib]
+name = "jit_runtime"
+
+[dependencies]
+wasm-vm-core = { workspace = true, default-features = false, features = ["std"] }
+wasm-vm-jit-translate = { path = "../jit-translate" }
+wasmtime = { version = "35", default-features = false, features = ["cranelift", "runtime"] }
+anyhow = "1"

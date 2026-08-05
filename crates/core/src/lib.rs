@@ -36,6 +36,7 @@ pub mod dispatch;
 pub mod fdt;
 pub mod hart;
 pub mod htif;
+pub mod jit;
 pub mod loader;
 pub mod mmio;
 pub mod mmu;
@@ -294,6 +295,15 @@ pub struct Machine {
     /// only the SAMPLING of the resulting interrupt defers ≤128 retires (architecturally legal —
     /// interrupts need only be taken in a timely manner). NOT byte-identical to legacy by design.
     interrupt_batching: bool,
+    /// E4-T10: the compiled-block (T2) executor, when a native/browser JIT runtime is installed via
+    /// [`Self::set_executor`]. Core stays `no_std` and holds no engine — the run loop drives this
+    /// trait object: at a block boundary, if `jit_enabled` and the block is compiled, it executes
+    /// via the executor INSTEAD of interpreting; a miss (uncompiled / faulted-out) falls back to the
+    /// interpreter. `None` on every build until a runtime is installed.
+    executor: Option<jit::BoxedExecutor>,
+    /// E4-T10: the JIT on/off runtime flag. Effective only with the block cache on and an executor
+    /// installed (see [`Self::jit_active`]). Off by default so every existing path is unchanged.
+    jit_enabled: bool,
 }
 
 /// E3-T12c3: the identity a snapshot is bound to. A restore is refused unless the target machine's
@@ -358,6 +368,8 @@ impl Machine {
             // E4-T05 Phase C: batching is OFF by default even under `predecode` (the cache stays
             // byte-identical); it is opted in explicitly via `set_interrupt_batching`.
             interrupt_batching: false,
+            executor: None,
+            jit_enabled: false,
         };
         // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
         // stores AND device/DMA writes feed page-granular invalidation.
@@ -374,6 +386,10 @@ impl Machine {
         self.block_cursor = None;
         // E4-T08: a cache toggle wholesale-flushes blocks; reset the discovery state to match.
         self.discovery.reset();
+        // E4-T10: a wholesale flush drops every compiled block too — they mirror the cache.
+        if let Some(e) = self.executor.as_mut() {
+            e.invalidate_all();
+        }
         // E4-T05 Phase B: keep the bus write log armed in lockstep with the cache.
         self.bus.arm_code_write_tracking(on);
     }
@@ -405,6 +421,10 @@ impl Machine {
         self.block_cursor = None;
         // E4-T08: a fresh cache has no blocks; reset discovery so stale counts/requests are dropped.
         self.discovery.reset();
+        // E4-T10: fresh cache ⇒ every compiled block is stale; drop them all.
+        if let Some(e) = self.executor.as_mut() {
+            e.invalidate_all();
+        }
         // Fresh cache ⇒ no cached code ⇒ any pending write frames are moot.
         self.bus.code_write_log_mut().clear();
     }
@@ -439,6 +459,42 @@ impl Machine {
         live_bytes: &[u8],
     ) -> bool {
         self.discovery.install_check(req, live_bytes)
+    }
+
+    /// E4-T10: install a compiled-block executor (a native/browser JIT runtime). The run loop
+    /// drives it once the JIT is enabled and the block cache is on. Installing a fresh executor
+    /// (or replacing one) drops any previously compiled state by construction.
+    pub fn set_executor(&mut self, executor: jit::BoxedExecutor) {
+        self.executor = Some(executor);
+    }
+
+    /// E4-T10: reclaim the installed executor (e.g. to read its stats after a run). Leaves the
+    /// machine with no executor, so the JIT is inert until one is set again.
+    pub fn take_executor(&mut self) -> Option<jit::BoxedExecutor> {
+        self.executor.take()
+    }
+
+    /// E4-T10: borrow the installed executor (stats: compiled/executed/retired counts).
+    pub fn executor(&self) -> Option<&dyn jit::CompiledBlockExecutor> {
+        self.executor.as_deref()
+    }
+
+    /// E4-T10: the JIT on/off runtime flag. Enabling it also turns on the block cache (the JIT
+    /// consumes the cache's block discovery). Disabling drops all compiled state to guarantee the
+    /// interpreter and JIT paths never share a stale block.
+    pub fn set_jit(&mut self, on: bool) {
+        self.jit_enabled = on;
+        if on {
+            self.set_block_cache(true);
+        } else if let Some(e) = self.executor.as_mut() {
+            e.invalidate_all();
+        }
+    }
+
+    /// E4-T10: is the JIT effectively active — enabled, an executor installed, and the block cache
+    /// on (the discovery front end the JIT feeds off)?
+    pub fn jit_active(&self) -> bool {
+        self.jit_enabled && self.block_cache_enabled && self.executor.is_some()
     }
 
     /// E3-T12c3: bind this machine to a base disk image + emulator build for snapshot coherence.
@@ -1373,6 +1429,10 @@ impl Machine {
         self.block_cursor = None;
         // E4-T08: the restored physical layout invalidates every nominated block — reset discovery.
         self.discovery.reset();
+        // E4-T10: recompile from cold on the restored image — every compiled block is stale.
+        if let Some(e) = self.executor.as_mut() {
+            e.invalidate_all();
+        }
         Ok(())
     }
 
@@ -1744,6 +1804,10 @@ impl Machine {
             // now decode differently. Bump the discovery generation so pending requests go stale
             // and hot blocks re-nominate from scratch.
             self.discovery.on_invalidate();
+            // E4-T10: fence.i is a whole-cache flush — every compiled block is dropped too.
+            if let Some(e) = self.executor.as_mut() {
+                e.invalidate_all();
+            }
         } else {
             self.drain_code_writes();
         }
@@ -1766,6 +1830,7 @@ impl Machine {
             block_cache,
             block_cursor,
             discovery,
+            executor,
             ..
         } = self;
         let log = bus.code_write_log_mut();
@@ -1774,7 +1839,14 @@ impl Machine {
         }
         let mut flushed = false;
         for &frame in log.iter() {
-            flushed |= block_cache.flush_page(frame);
+            if block_cache.flush_page(frame) {
+                flushed = true;
+                // E4-T10: the SMC / DMA-into-code store dropped this frame's cached blocks — drop
+                // the matching compiled blocks so the executor recompiles from the new bytes.
+                if let Some(e) = executor.as_mut() {
+                    e.invalidate_page(frame);
+                }
+            }
         }
         log.clear();
         if flushed {
@@ -1890,6 +1962,153 @@ impl Machine {
         }
     }
 
+    /// E4-T10: drain the block-discovery FIFO and install compiled blocks. For each nominated
+    /// request, the snapshotted bytes are re-validated against LIVE guest memory (the E4-T08
+    /// `install_check` — guards SMC/stale between nomination and install); on success the (still
+    /// physically-keyed) decoded block is handed to the executor, which translates + compiles +
+    /// registers it. Called at block boundaries; cheap when the queue is empty (the common case).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn pump_jit_translations(&mut self) {
+        use crate::bus::Bus;
+        if self.executor.is_none() {
+            return;
+        }
+        let reqs = self.discovery.take_requests();
+        if reqs.is_empty() {
+            return;
+        }
+        let mut exec = self.executor.take().expect("executor present");
+        for req in &reqs {
+            // Re-read the live physical bytes for the block and validate: a store/`fence.i` between
+            // nomination and now would fail this and the request is dropped (never compile stale code).
+            let n = req.code_bytes.len();
+            let mut live = alloc::vec::Vec::with_capacity(n);
+            let mut ok = true;
+            for i in 0..n {
+                match self.bus.load8(req.phys_pc.wrapping_add(i as u64)) {
+                    Ok(b) => live.push(b),
+                    Err(_) => {
+                        ok = false;
+                        break;
+                    }
+                }
+            }
+            if !ok || !self.discovery.install_check(req, &live) {
+                continue;
+            }
+            // The predecoded block is still cached (physical keying); hand a clone to the executor.
+            if let Some(block) = self.block_cache.get(req.phys_pc) {
+                let block = block.clone();
+                exec.install(&block);
+            }
+        }
+        self.executor = Some(exec);
+    }
+
+    /// E4-T10: try to execute the compiled block at the current PC via the JIT. Returns:
+    /// * `None` — the JIT did NOT run this block (not enabled at a boundary, not compiled, or it
+    ///   faulted out mid-block leaving hart state untouched); the caller interprets instead.
+    /// * `Some(Ok(()))` — a compiled block ran to a `FALLTHROUGH`/`BRANCH_TAKEN` exit: registers,
+    ///   PC, and the retire clock are already committed (the clock advanced once per guest op the
+    ///   block retired, preserving `mtime`-at-retire determinism); the caller skips the interpreter.
+    /// * `Some(Err(trap))` — the block's terminator (`ecall`/`ebreak`) traps: the body ops' retires
+    ///   are committed, PC is left at the faulting instruction, and the runtime-derived (mode-correct)
+    ///   trap is returned for the loop's normal trap-delivery path, with NO intervening boundary poll
+    ///   (so interrupt timing matches the interpreter exactly).
+    ///
+    /// The device/interrupt sample already happened at this boundary (in the loop, before this call),
+    /// and `mtime` advances per retired op below, so the E4-T05 interrupt-batching semantics are
+    /// preserved: a compiled block is exactly one `DecodedBlock` (≤128 ops), sampled at its entry.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn try_jit_block(&mut self) -> Option<Result<(), Trap>> {
+        let pc = self.hart.regs.pc;
+        // Physical key. `fetch_phys` is a warm TLB lookup at a boundary (the interpreter would do
+        // the same fetch); a fetch fault means "not a JIT block" — interpret so the fault is precise.
+        let phys = self.hart.fetch_phys(&mut self.bus, pc).ok()?;
+        if !self.executor.as_ref()?.is_compiled(phys) {
+            return None;
+        }
+        // Op count + terminator, read from the still-cached decoded block (physical keying).
+        let (nops, terminator) = {
+            let b = self.block_cache.get(phys)?;
+            (b.ops.len(), b.ops.last().map(|o| o.instr))
+        };
+        // Take the executor out so it can borrow hart + bus for the duration of the call.
+        let mut exec = self.executor.take().expect("compiled ⇒ executor present");
+        let exit = exec.execute(phys, &mut self.hart, &mut self.bus);
+        self.executor = Some(exec);
+        let exit = exit?; // None ⇒ faulted out; hart untouched ⇒ fall back to the interpreter.
+
+        // PC is about to jump to a block entry; the block cursor no longer describes it.
+        self.block_cursor = None;
+        match exit.code {
+            jit::ExitCode::Fallthrough | jit::ExitCode::BranchTaken => {
+                self.hart.regs.pc = exit.next_pc;
+                // Every guest op in the block retired: advance the retire clock once per op so
+                // `mtime` (retire-derived) lands identically to the interpreter, and feed the
+                // storm/progress denominator identically.
+                for _ in 0..nops {
+                    self.advance_clock();
+                    self.irqstats.on_retire();
+                }
+                // A JIT block ending in `fence.i` must still order the fetch stream: perform the
+                // same whole-cache + compiled invalidation the interpreter's `step_cached` does.
+                if matches!(terminator, Some(crate::decode::Instr::FenceI)) {
+                    self.block_cache.flush();
+                    self.discovery.on_invalidate();
+                    if let Some(e) = self.executor.as_mut() {
+                        e.invalidate_all();
+                    }
+                } else {
+                    // A JIT store may have landed on a code page (SMC/DMA-into-code) — drain the
+                    // bus write log through page-granular invalidation, exactly like the interpreter.
+                    self.drain_code_writes();
+                }
+                Some(Ok(()))
+            }
+            jit::ExitCode::Trap => {
+                // The trapping terminator (`ecall`/`ebreak`) retires NOTHING; only the `nops-1`
+                // body ops did. Advance the clock for those.
+                let retired = nops.saturating_sub(1);
+                for _ in 0..retired {
+                    self.advance_clock();
+                    self.irqstats.on_retire();
+                }
+                // Leave PC at the faulting instruction and derive the trap from the CURRENT
+                // privilege mode (the block cannot know it) so the cause matches the interpreter.
+                self.hart.regs.pc = exit.next_pc;
+                let trap = match terminator {
+                    Some(crate::decode::Instr::Ecall) => Trap {
+                        cause: match self.hart.csr.mode {
+                            crate::csr::Priv::U => hart::Exception::EcallFromU,
+                            crate::csr::Priv::S => hart::Exception::EcallFromS,
+                            crate::csr::Priv::M => hart::Exception::EcallFromM,
+                        },
+                        tval: 0,
+                    },
+                    _ => Trap {
+                        // `ebreak` (the only other trapping terminator the translator emits):
+                        // Breakpoint with tval = the faulting PC (matches the interpreter).
+                        cause: hart::Exception::Breakpoint,
+                        tval: exit.next_pc,
+                    },
+                };
+                Some(Err(trap))
+            }
+            jit::ExitCode::Reserved(_) => {
+                // The E4-T09 translator never emits these; on a clean return the executor already
+                // committed registers, so re-interpreting would double-execute. Commit PC and treat
+                // as a benign fall-through (defensive — unreachable for the current translator).
+                self.hart.regs.pc = exit.next_pc;
+                for _ in 0..nops {
+                    self.advance_clock();
+                    self.irqstats.on_retire();
+                }
+                Some(Ok(()))
+            }
+        }
+    }
+
     fn run_traced_inner<T: trace::TraceSink>(
         &mut self,
         max_instrs: u64,
@@ -1973,6 +2192,11 @@ impl Machine {
                 // DMAs code then jumps to it can never execute a stale cached block. (Phase C
                 // does NOT touch this — the device sync above is still per-retire.)
                 self.drain_code_writes();
+                // E4-T10: at a block boundary, install any newly-nominated hot blocks into the
+                // executor (validated against live memory). Cheap when the queue is empty.
+                if self.jit_enabled {
+                    self.pump_jit_translations();
+                }
             }
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
             // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the
@@ -1999,18 +2223,31 @@ impl Machine {
             // `next_interrupt`, `advance_clock`, `on_retire`, and the profiler hook — is UNCHANGED
             // and still runs PER RETIRE. So the ONLY cache-on vs cache-off difference is memoized
             // decode; the retire trace must be byte-identical. (Batching those is Phase C.)
+            // E4-T10: at a block boundary, if the JIT is active and this block is compiled, run it
+            // via the executor INSTEAD of interpreting. `try_jit_block` commits the retire clock for
+            // the block's ops itself (so the per-op accounting below is skipped for a JIT run).
             #[cfg(not(feature = "zicsr-stub"))]
-            let step_result = if self.block_cache_enabled {
-                self.step_cached(sink)
+            let jit_attempt = if self.jit_active() && sample_boundary {
+                self.try_jit_block()
             } else {
-                self.hart.step_traced(&mut self.bus, sink)
+                None
+            };
+            #[cfg(not(feature = "zicsr-stub"))]
+            let ran_via_jit = jit_attempt.is_some();
+            #[cfg(not(feature = "zicsr-stub"))]
+            let step_result = match jit_attempt {
+                Some(r) => r,
+                None if self.block_cache_enabled => self.step_cached(sink),
+                None => self.hart.step_traced(&mut self.bus, sink),
             };
             #[cfg(feature = "zicsr-stub")]
             let step_result = self.hart.step_traced(&mut self.bus, sink);
             // E1-T12: an instruction retired iff the step succeeded — advance the deterministic
             // retire-count clock ONLY then (a delivered trap or a taken interrupt retires nothing).
+            // A JIT run already advanced the clock per retired op inside `try_jit_block`, so this
+            // per-op accounting runs only for an interpreted step.
             #[cfg(not(feature = "zicsr-stub"))]
-            if step_result.is_ok() {
+            if !ran_via_jit && step_result.is_ok() {
                 self.advance_clock();
                 self.irqstats.on_retire(); // E2-T20 progress denominator
                 // E4-T01: hot-PC sampling — only when armed, and only 1-in-~1024 retires (a jittered
