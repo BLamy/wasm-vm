@@ -2058,4 +2058,19 @@ impl Hart {
         r.pc = next_pc;
         Ok((rd, value, mem))
     }
+
+    /// E4-T09 JIT differential oracle. Executes ONE decoded instruction and applies its
+    /// full architectural retirement (register writeback, `pc` update, memory side effects
+    /// through `bus`), exposing the crate-internal [`Self::execute`] as the reference the
+    /// `jit-translate` cross-engine equivalence harness compares generated WASM against.
+    /// This is the single semantics source of truth; the JIT must be byte-identical to it.
+    pub fn exec_oracle(
+        &mut self,
+        bus: &mut impl Bus,
+        instr: Instr,
+        insn_len: u64,
+        raw_insn: u64,
+    ) -> Result<(), Trap> {
+        self.execute(bus, instr, insn_len, raw_insn).map(|_| ())
+    }
 }

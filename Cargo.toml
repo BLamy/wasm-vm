@@ -9,6 +9,7 @@ members = [
     "crates/wvseccomp",
     "crates/wasm",
     "crates/wasm-emit",
+    "crates/jit-translate",
     "crates/cli",
     "tools/fuzz",
 ]

@@ -1,0 +1,740 @@
+//! # `jit-translate` — E4-T09: RV64I basic-block → WASM function translation
+//!
+//! The heart of the WASM JIT (`docs/jit-architecture.md` §3–§4). [`translate_block`] turns exactly
+//! one predecoded [`DecodedBlock`] (RV64I only) into one WASM *module* exporting a single function
+//! `run(state_base: i32) -> i32` that implements the frozen E4-T06 ABI:
+//!
+//! * **Register mapping — lazy load, eager writeback.** Guest x1..x31 live in WASM `i64` locals. A
+//!   register is loaded from the `CpuState` region of linear memory (`state_base + 8*r`) on first
+//!   read in the block and kept in its local thereafter; `x0` reads fold to `i64.const 0` and writes
+//!   are discarded. Every register a block dirties is written back to linear memory at *every* exit
+//!   point (the correct-and-simple discipline of §3.2 — writeback the whole dirty set before any
+//!   exit / any op that could be observed by the runtime).
+//! * **Exits.** The block writes `exit_pc` (next guest PC) + `exit_reason` into the header and
+//!   returns an [`ExitCode`]: straight-line end / not-taken branch → [`ExitCode::Fallthrough`];
+//!   taken branch / `jal` / `jalr` → [`ExitCode::BranchTaken`]; `ecall`/`ebreak` → [`ExitCode::Trap`].
+//! * **Loads/stores** side-exit to two runtime imports (`env.load` / `env.store`) — the real inline
+//!   TLB fast path is E4-T11. The imports carry the effective address + width, matching the
+//!   interpreter's memory effects exactly.
+//!
+//! Semantics are taken verbatim from `wasm-vm-core`'s `Hart::execute` (the reference), not guessed:
+//! `*W` ops compute in i32 then sign-extend, RV64 shifts mask to 6 bits (5 for `*W`), `jalr` clears
+//! bit 0, `slt`/`sltu` are signed/unsigned. The differential harness (`tests/differential.rs`) proves
+//! byte-identity under wasmtime against `Hart::exec_oracle`.
+//!
+//! Scope is **RV64I base integer only**. M/A/F/D and CSR/system instructions are out of scope
+//! (later tickets E4-T13/T14/T15/T12); [`translate_block`] returns [`TranslateError::Unsupported`]
+//! for them so the caller keeps interpreting the block.
+
+#![no_std]
+#![forbid(unsafe_code)]
+
+extern crate alloc;
+
+use alloc::vec::Vec;
+use wasm_emit::{
+    BlockType, ExportKind, FuncBuilder, FuncType, Limits, MemType, ModuleBuilder, ValType,
+};
+use wasm_vm_core::decode::Instr;
+use wasm_vm_core::dispatch::{DecodedBlock, is_terminator};
+
+/// The frozen `CpuState` linear-memory layout (subset E4-T09 touches), byte offsets from the
+/// `state_base` argument (`docs/jit-architecture.md` §3.1). Kept as a struct — not scattered
+/// literals — so the one authoritative definition is here and the harness reads back through the
+/// *same* offsets a mutation would have to change in lock-step (adversarial #3 pins the literals
+/// independently in the test).
+#[derive(Clone, Copy, Debug)]
+pub struct Abi {
+    /// Base of the `x[0..32]` guest integer register array (each register is 8 bytes).
+    pub xreg_base: u32,
+    /// `exit_reason` — the [`ExitCode`] the block wrote before returning.
+    pub exit_reason: u32,
+    /// `exit_pc` — the guest PC to resume at.
+    pub exit_pc: u32,
+    /// `exit_info` — aux payload (trap cause for `ecall`/`ebreak`).
+    pub exit_info: u32,
+}
+
+impl Abi {
+    /// The frozen layout from §3.1: `x[]` at `+0x000`, `exit_reason` `+0x218`, `exit_pc` `+0x220`,
+    /// `exit_info` `+0x228`.
+    pub const FROZEN: Abi = Abi {
+        xreg_base: 0x000,
+        exit_reason: 0x218,
+        exit_pc: 0x220,
+        exit_info: 0x228,
+    };
+}
+
+/// The frozen 9-variant exit-code enum (`docs/jit-architecture.md` §3.3). E4-T09 emits the first
+/// three; the rest are reserved for later tickets (MMIO/MMU/CALL_INTERP/NOT_COMPILED/BUDGET).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(i32)]
+pub enum ExitCode {
+    Fallthrough = 0,
+    BranchTaken = 1,
+    Trap = 2,
+    InterruptPoll = 3,
+    Mmio = 4,
+    MmuMiss = 5,
+    CallInterp = 6,
+    NotCompiled = 7,
+    Budget = 8,
+}
+
+/// Why a block could not be translated. The only case E4-T09 raises is an out-of-scope opcode.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TranslateError {
+    /// An instruction outside the RV64I base integer ISA (M/A/F/D, CSR, xRET, sfence, wfi). The
+    /// caller keeps the block in the interpreter (T0/T1).
+    Unsupported,
+    /// Structural invariant violated (a terminator not at the block end). Should never happen for a
+    /// well-formed `DecodedBlock`.
+    Malformed,
+}
+
+// ── module layout constants ─────────────────────────────────────────────────
+const STATE_BASE: u32 = 0; // param local 0 — the CpuState base address (i32)
+const LOAD_IMPORT: u32 = 0; // env.load(addr i64, kind i32) -> i64
+const STORE_IMPORT: u32 = 1; // env.store(addr i64, val i64, width i32)
+const ALIGN8: u32 = 3; // log2(8) memarg alignment hint for i64 loads/stores
+
+/// Load "kind" codes passed to the `env.load` import: width + signedness, matching the
+/// interpreter's extension rules for `lb/lh/lw/ld/lbu/lhu/lwu`.
+mod load_kind {
+    pub const LB: i32 = 0;
+    pub const LH: i32 = 1;
+    pub const LW: i32 = 2;
+    pub const LD: i32 = 3;
+    pub const LBU: i32 = 4;
+    pub const LHU: i32 = 5;
+    pub const LWU: i32 = 6;
+}
+
+/// Per-register allocation state for one block translation.
+struct Regs {
+    /// Local index holding guest register `r`, once materialized (loaded or written).
+    local: [Option<u32>; 32],
+    /// Whether guest register `r` was modified and must be written back at exits.
+    dirty: [bool; 32],
+}
+
+impl Regs {
+    fn new() -> Self {
+        Regs {
+            local: [None; 32],
+            dirty: [false; 32],
+        }
+    }
+}
+
+/// Translate one RV64I [`DecodedBlock`] into a complete WASM module (bytes). The module exports:
+/// * memory `"mem"` (the CpuState + register-file region — the harness fills it before the call),
+/// * function `"run"` with signature `(i32) -> i32` (the block; arg = `state_base`, ret = exit code).
+///
+/// and imports `env.load` / `env.store` for memory access (the E4-T11 fast path replaces these).
+/// The guest PC used for PC-relative ops (`auipc`, `jal`, branch targets) is the block's
+/// `phys_start` — under the physical keying the JIT uses, that is the block's entry PC.
+pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, TranslateError> {
+    let mut m = ModuleBuilder::new();
+    let load_ty = m.add_type(FuncType::new(
+        &[ValType::I64, ValType::I32],
+        &[ValType::I64],
+    ));
+    let store_ty = m.add_type(FuncType::new(
+        &[ValType::I64, ValType::I64, ValType::I32],
+        &[],
+    ));
+    let _l = m.import_func("env", "load", load_ty);
+    let _s = m.import_func("env", "store", store_ty);
+    debug_assert_eq!(_l, LOAD_IMPORT);
+    debug_assert_eq!(_s, STORE_IMPORT);
+
+    let run_ty = m.add_type(FuncType::new(&[ValType::I32], &[ValType::I32]));
+    let run_idx = m.add_function(run_ty);
+    m.add_memory(MemType {
+        limits: Limits::new(1),
+    });
+    m.export("mem", ExportKind::Memory, 0);
+    m.export("run", ExportKind::Func, run_idx);
+
+    let mut f = FuncBuilder::new(&[ValType::I32]); // param 0 = state_base
+    emit_body(&mut f, block, abi)?;
+    m.add_code(f.finish());
+    Ok(m.finish())
+}
+
+/// Emit the function body for `block` into `f`.
+fn emit_body(f: &mut FuncBuilder, block: &DecodedBlock, abi: &Abi) -> Result<(), TranslateError> {
+    // Pre-flight: reject any out-of-scope op before emitting a single byte, so a partially-emitted
+    // module can never escape (the caller gets a clean Unsupported and keeps interpreting).
+    for op in &block.ops {
+        if !supported(&op.instr) {
+            return Err(TranslateError::Unsupported);
+        }
+    }
+
+    let mut regs = Regs::new();
+    let base_pc = block.phys_start;
+    let mut pc = base_pc;
+    let n = block.ops.len();
+    let mut terminated = false;
+
+    for (i, op) in block.ops.iter().enumerate() {
+        let len = op.len as u64;
+        let pc_next = pc.wrapping_add(len);
+        let last = i == n - 1;
+        if is_terminator(&op.instr) {
+            if !last {
+                return Err(TranslateError::Malformed);
+            }
+            emit_terminator(f, &mut regs, abi, op.instr, pc, pc_next);
+            terminated = true;
+        } else {
+            emit_alu(f, &mut regs, abi, op.instr, pc, pc_next);
+        }
+        pc = pc_next;
+    }
+
+    // Fall-through block (128-op cap / page edge with no architectural terminator): resume at the
+    // byte after the block.
+    if !terminated {
+        let end_pc = base_pc.wrapping_add(block.total_len);
+        writeback(f, &regs, abi);
+        write_pc_const(f, abi, end_pc);
+        write_reason(f, abi, ExitCode::Fallthrough);
+        f.i32_const(ExitCode::Fallthrough as i32);
+        f.return_();
+    }
+
+    Ok(())
+}
+
+/// Whether an instruction is inside E4-T09's RV64I base scope.
+fn supported(instr: &Instr) -> bool {
+    use Instr::*;
+    matches!(
+        instr,
+        Lui { .. }
+            | Auipc { .. }
+            | Jal { .. }
+            | Jalr { .. }
+            | Beq { .. }
+            | Bne { .. }
+            | Blt { .. }
+            | Bge { .. }
+            | Bltu { .. }
+            | Bgeu { .. }
+            | Lb { .. }
+            | Lh { .. }
+            | Lw { .. }
+            | Ld { .. }
+            | Lbu { .. }
+            | Lhu { .. }
+            | Lwu { .. }
+            | Sb { .. }
+            | Sh { .. }
+            | Sw { .. }
+            | Sd { .. }
+            | Addi { .. }
+            | Slti { .. }
+            | Sltiu { .. }
+            | Xori { .. }
+            | Ori { .. }
+            | Andi { .. }
+            | Slli { .. }
+            | Srli { .. }
+            | Srai { .. }
+            | Add { .. }
+            | Sub { .. }
+            | Sll { .. }
+            | Slt { .. }
+            | Sltu { .. }
+            | Xor { .. }
+            | Srl { .. }
+            | Sra { .. }
+            | Or { .. }
+            | And { .. }
+            | Addiw { .. }
+            | Slliw { .. }
+            | Srliw { .. }
+            | Sraiw { .. }
+            | Addw { .. }
+            | Subw { .. }
+            | Sllw { .. }
+            | Srlw { .. }
+            | Sraw { .. }
+            | Ecall
+            | Ebreak
+            | Fence { .. }
+            | FenceI
+    )
+}
+
+// ── register materialization ────────────────────────────────────────────────
+
+/// Push guest register `r`'s live value onto the WASM stack as an `i64`. `x0` folds to a constant 0;
+/// any other register is lazily loaded from `state_base + 8*r` into its local on first use.
+fn push_reg(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, r: u8) {
+    if r == 0 {
+        f.i64_const(0);
+        return;
+    }
+    let local = match regs.local[r as usize] {
+        Some(l) => l,
+        None => {
+            let l = f.local(ValType::I64);
+            f.local_get(STATE_BASE);
+            f.i64_load(ALIGN8, abi.xreg_base + u32::from(r) * 8);
+            f.local_set(l);
+            regs.local[r as usize] = Some(l);
+            l
+        }
+    };
+    f.local_get(local);
+}
+
+/// Push guest register `r` truncated to its low 32 bits (`i32`) — the operand form for `*W` ops.
+fn push_reg_i32(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, r: u8) {
+    push_reg(f, regs, abi, r);
+    f.i32_wrap_i64();
+}
+
+/// Consume the `i64` on top of the stack as the new value of guest register `rd`. Writes to `x0`
+/// are discarded (the value is dropped); otherwise the register's local is set and marked dirty.
+fn set_reg(f: &mut FuncBuilder, regs: &mut Regs, rd: u8) {
+    if rd == 0 {
+        f.drop();
+        return;
+    }
+    let local = match regs.local[rd as usize] {
+        Some(l) => l,
+        None => {
+            // Written before ever read: allocate a local but emit no load (fully overwritten).
+            let l = f.local(ValType::I64);
+            regs.local[rd as usize] = Some(l);
+            l
+        }
+    };
+    f.local_set(local);
+    regs.dirty[rd as usize] = true;
+}
+
+/// Write every dirty register back to the `x[]` array in linear memory. Called at every exit point,
+/// before the block returns (the eager-writeback discipline). `x0` is never written back.
+fn writeback(f: &mut FuncBuilder, regs: &Regs, abi: &Abi) {
+    for r in 1..32u8 {
+        if regs.dirty[r as usize] {
+            let l = regs.local[r as usize].expect("dirty register must have a local");
+            f.local_get(STATE_BASE);
+            f.local_get(l);
+            f.i64_store(ALIGN8, abi.xreg_base + u32::from(r) * 8);
+        }
+    }
+}
+
+fn write_pc_const(f: &mut FuncBuilder, abi: &Abi, pc: u64) {
+    f.local_get(STATE_BASE);
+    f.i64_const(pc as i64);
+    f.i64_store(ALIGN8, abi.exit_pc);
+}
+
+fn write_pc_local(f: &mut FuncBuilder, abi: &Abi, local: u32) {
+    f.local_get(STATE_BASE);
+    f.local_get(local);
+    f.i64_store(ALIGN8, abi.exit_pc);
+}
+
+fn write_reason(f: &mut FuncBuilder, abi: &Abi, code: ExitCode) {
+    f.local_get(STATE_BASE);
+    f.i64_const(code as i64);
+    f.i64_store(ALIGN8, abi.exit_reason);
+}
+
+fn write_info_const(f: &mut FuncBuilder, abi: &Abi, v: i64) {
+    f.local_get(STATE_BASE);
+    f.i64_const(v);
+    f.i64_store(ALIGN8, abi.exit_info);
+}
+
+// ── ALU / load / store (non-terminator) lowering ────────────────────────────
+
+fn emit_alu(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, instr: Instr, pc: u64, _pc_next: u64) {
+    use Instr::*;
+    match instr {
+        // ── U-type ──
+        Lui { rd, imm } => {
+            f.i64_const(imm);
+            set_reg(f, regs, rd);
+        }
+        Auipc { rd, imm } => {
+            f.i64_const(pc.wrapping_add(imm as u64) as i64);
+            set_reg(f, regs, rd);
+        }
+        // ── OP-IMM ──
+        Addi { rd, rs1, imm } => {
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(imm);
+            f.i64_add();
+            set_reg(f, regs, rd);
+        }
+        Slti { rd, rs1, imm } => {
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(imm);
+            f.i64_lt_s();
+            f.i64_extend_i32_u();
+            set_reg(f, regs, rd);
+        }
+        Sltiu { rd, rs1, imm } => {
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(imm); // `imm as u64` — same bit pattern; i64.lt_u is a 64-bit unsigned cmp
+            f.i64_lt_u();
+            f.i64_extend_i32_u();
+            set_reg(f, regs, rd);
+        }
+        Xori { rd, rs1, imm } => {
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(imm);
+            f.i64_xor();
+            set_reg(f, regs, rd);
+        }
+        Ori { rd, rs1, imm } => {
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(imm);
+            f.i64_or();
+            set_reg(f, regs, rd);
+        }
+        Andi { rd, rs1, imm } => {
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(imm);
+            f.i64_and();
+            set_reg(f, regs, rd);
+        }
+        Slli { rd, rs1, shamt } => {
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(i64::from(shamt));
+            f.i64_shl();
+            set_reg(f, regs, rd);
+        }
+        Srli { rd, rs1, shamt } => {
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(i64::from(shamt));
+            f.i64_shr_u();
+            set_reg(f, regs, rd);
+        }
+        Srai { rd, rs1, shamt } => {
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(i64::from(shamt));
+            f.i64_shr_s();
+            set_reg(f, regs, rd);
+        }
+        // ── OP-IMM-32 (*W) ──
+        Addiw { rd, rs1, imm } => {
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(imm);
+            f.i64_add();
+            f.i32_wrap_i64();
+            f.i64_extend_i32_s();
+            set_reg(f, regs, rd);
+        }
+        Slliw { rd, rs1, shamt } => {
+            push_reg_i32(f, regs, abi, rs1);
+            f.i32_const(i32::from(shamt));
+            f.i32_shl();
+            f.i64_extend_i32_s();
+            set_reg(f, regs, rd);
+        }
+        Srliw { rd, rs1, shamt } => {
+            push_reg_i32(f, regs, abi, rs1);
+            f.i32_const(i32::from(shamt));
+            f.i32_shr_u();
+            f.i64_extend_i32_s();
+            set_reg(f, regs, rd);
+        }
+        Sraiw { rd, rs1, shamt } => {
+            push_reg_i32(f, regs, abi, rs1);
+            f.i32_const(i32::from(shamt));
+            f.i32_shr_s();
+            f.i64_extend_i32_s();
+            set_reg(f, regs, rd);
+        }
+        // ── OP (R-type) ──
+        Add { rd, rs1, rs2 } => {
+            push_reg(f, regs, abi, rs1);
+            push_reg(f, regs, abi, rs2);
+            f.i64_add();
+            set_reg(f, regs, rd);
+        }
+        Sub { rd, rs1, rs2 } => {
+            push_reg(f, regs, abi, rs1);
+            push_reg(f, regs, abi, rs2);
+            f.i64_sub();
+            set_reg(f, regs, rd);
+        }
+        // RV64 register shifts use rs2[5:0]; i64.shl/shr already mask the count mod 64.
+        Sll { rd, rs1, rs2 } => {
+            push_reg(f, regs, abi, rs1);
+            push_reg(f, regs, abi, rs2);
+            f.i64_shl();
+            set_reg(f, regs, rd);
+        }
+        Srl { rd, rs1, rs2 } => {
+            push_reg(f, regs, abi, rs1);
+            push_reg(f, regs, abi, rs2);
+            f.i64_shr_u();
+            set_reg(f, regs, rd);
+        }
+        Sra { rd, rs1, rs2 } => {
+            push_reg(f, regs, abi, rs1);
+            push_reg(f, regs, abi, rs2);
+            f.i64_shr_s();
+            set_reg(f, regs, rd);
+        }
+        Slt { rd, rs1, rs2 } => {
+            push_reg(f, regs, abi, rs1);
+            push_reg(f, regs, abi, rs2);
+            f.i64_lt_s();
+            f.i64_extend_i32_u();
+            set_reg(f, regs, rd);
+        }
+        Sltu { rd, rs1, rs2 } => {
+            push_reg(f, regs, abi, rs1);
+            push_reg(f, regs, abi, rs2);
+            f.i64_lt_u();
+            f.i64_extend_i32_u();
+            set_reg(f, regs, rd);
+        }
+        Xor { rd, rs1, rs2 } => {
+            push_reg(f, regs, abi, rs1);
+            push_reg(f, regs, abi, rs2);
+            f.i64_xor();
+            set_reg(f, regs, rd);
+        }
+        Or { rd, rs1, rs2 } => {
+            push_reg(f, regs, abi, rs1);
+            push_reg(f, regs, abi, rs2);
+            f.i64_or();
+            set_reg(f, regs, rd);
+        }
+        And { rd, rs1, rs2 } => {
+            push_reg(f, regs, abi, rs1);
+            push_reg(f, regs, abi, rs2);
+            f.i64_and();
+            set_reg(f, regs, rd);
+        }
+        // ── OP-32 (*W), rs2[4:0] shift, 32-bit compute then sign-extend ──
+        Addw { rd, rs1, rs2 } => {
+            push_reg_i32(f, regs, abi, rs1);
+            push_reg_i32(f, regs, abi, rs2);
+            f.i32_add();
+            f.i64_extend_i32_s();
+            set_reg(f, regs, rd);
+        }
+        Subw { rd, rs1, rs2 } => {
+            push_reg_i32(f, regs, abi, rs1);
+            push_reg_i32(f, regs, abi, rs2);
+            f.i32_sub();
+            f.i64_extend_i32_s();
+            set_reg(f, regs, rd);
+        }
+        Sllw { rd, rs1, rs2 } => {
+            push_reg_i32(f, regs, abi, rs1);
+            push_reg_i32(f, regs, abi, rs2); // i32.shl masks count mod 32 == rs2 & 0x1F
+            f.i32_shl();
+            f.i64_extend_i32_s();
+            set_reg(f, regs, rd);
+        }
+        Srlw { rd, rs1, rs2 } => {
+            push_reg_i32(f, regs, abi, rs1);
+            push_reg_i32(f, regs, abi, rs2);
+            f.i32_shr_u();
+            f.i64_extend_i32_s();
+            set_reg(f, regs, rd);
+        }
+        Sraw { rd, rs1, rs2 } => {
+            push_reg_i32(f, regs, abi, rs1);
+            push_reg_i32(f, regs, abi, rs2);
+            f.i32_shr_s();
+            f.i64_extend_i32_s();
+            set_reg(f, regs, rd);
+        }
+        // ── loads (side-exit to env.load) ──
+        Lb { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LB),
+        Lh { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LH),
+        Lw { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LW),
+        Ld { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LD),
+        Lbu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LBU),
+        Lhu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LHU),
+        Lwu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LWU),
+        // ── stores (side-exit to env.store) ──
+        Sb { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 1),
+        Sh { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 2),
+        Sw { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 4),
+        Sd { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 8),
+        // FENCE retires as a no-op mid-block only if it were non-terminating; but FENCE/FENCE.I are
+        // terminators handled elsewhere. Anything else was rejected by `supported`.
+        _ => unreachable!("emit_alu called on a non-RV64I / terminator op"),
+    }
+}
+
+/// `rd = extend(mem[rs1 + imm])` via the `env.load` import. Registers are written back before the
+/// call (the "materialize before a potentially-trapping op" rule); the import returns the already
+/// width/sign-extended value.
+fn emit_load(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    rd: u8,
+    rs1: u8,
+    imm: i64,
+    kind: i32,
+) {
+    writeback(f, regs, abi);
+    // effective address = rs1 + imm (wrapping u64)
+    push_reg(f, regs, abi, rs1);
+    f.i64_const(imm);
+    f.i64_add();
+    f.i32_const(kind);
+    f.call(LOAD_IMPORT);
+    set_reg(f, regs, rd);
+}
+
+/// `mem[rs1 + imm] = rs2` (low `width` bytes) via the `env.store` import.
+fn emit_store(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    rs1: u8,
+    rs2: u8,
+    imm: i64,
+    width: i32,
+) {
+    writeback(f, regs, abi);
+    push_reg(f, regs, abi, rs1);
+    f.i64_const(imm);
+    f.i64_add();
+    push_reg(f, regs, abi, rs2);
+    f.i32_const(width);
+    f.call(STORE_IMPORT);
+}
+
+// ── terminator lowering ─────────────────────────────────────────────────────
+
+fn emit_terminator(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    instr: Instr,
+    pc: u64,
+    pc_next: u64,
+) {
+    use Instr::*;
+    match instr {
+        Beq { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Eq),
+        Bne { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ne),
+        Blt { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Lt),
+        Bge { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ge),
+        Bltu { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ltu),
+        Bgeu { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Geu),
+        Jal { rd, imm } => {
+            // link = pc + insn_len; target = pc + imm
+            if rd != 0 {
+                f.i64_const(pc_next as i64);
+                set_reg(f, regs, rd);
+            }
+            writeback(f, regs, abi);
+            write_pc_const(f, abi, pc.wrapping_add(imm as u64));
+            write_reason(f, abi, ExitCode::BranchTaken);
+            f.i32_const(ExitCode::BranchTaken as i32);
+            f.return_();
+        }
+        Jalr { rd, rs1, imm } => {
+            // target = (rs1 + imm) & !1, computed from the OLD rs1 before the link overwrites rd.
+            let scratch = f.local(ValType::I64);
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(imm);
+            f.i64_add();
+            f.i64_const(-2); // 0xFFFF_FFFF_FFFF_FFFE == !1 — clears bit 0
+            f.i64_and();
+            f.local_set(scratch);
+            if rd != 0 {
+                f.i64_const(pc_next as i64);
+                set_reg(f, regs, rd);
+            }
+            writeback(f, regs, abi);
+            write_pc_local(f, abi, scratch);
+            write_reason(f, abi, ExitCode::BranchTaken);
+            f.i32_const(ExitCode::BranchTaken as i32);
+            f.return_();
+        }
+        Ecall => emit_trap(f, regs, abi, pc, 11), // EcallFromM (default oracle mode = M), tval 0
+        Ebreak => emit_trap(f, regs, abi, pc, 3), // Breakpoint, tval = pc
+        // FENCE / FENCE.I retire as a no-op in the single-thread model; resume at the next PC.
+        Fence { .. } | FenceI => {
+            writeback(f, regs, abi);
+            write_pc_const(f, abi, pc_next);
+            write_reason(f, abi, ExitCode::Fallthrough);
+            f.i32_const(ExitCode::Fallthrough as i32);
+            f.return_();
+        }
+        _ => unreachable!("emit_terminator on a non-terminator / out-of-scope op"),
+    }
+}
+
+#[derive(Clone, Copy)]
+enum Cmp {
+    Eq,
+    Ne,
+    Lt,
+    Ge,
+    Ltu,
+    Geu,
+}
+
+#[allow(clippy::too_many_arguments)]
+fn emit_branch(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    rs1: u8,
+    rs2: u8,
+    imm: i64,
+    pc: u64,
+    pc_next: u64,
+    cmp: Cmp,
+) {
+    push_reg(f, regs, abi, rs1);
+    push_reg(f, regs, abi, rs2);
+    match cmp {
+        Cmp::Eq => f.i64_eq(),
+        Cmp::Ne => f.i64_ne(),
+        Cmp::Lt => f.i64_lt_s(),
+        Cmp::Ge => f.i64_ge_s(),
+        Cmp::Ltu => f.i64_lt_u(),
+        Cmp::Geu => f.i64_ge_u(),
+    }
+    // Taken path: resume at pc + imm.
+    f.if_(BlockType::Empty);
+    writeback(f, regs, abi);
+    write_pc_const(f, abi, pc.wrapping_add(imm as u64));
+    write_reason(f, abi, ExitCode::BranchTaken);
+    f.i32_const(ExitCode::BranchTaken as i32);
+    f.return_();
+    f.end();
+    // Not-taken fall-through: resume at pc + insn_len. The dirty set is identical on both edges
+    // (a branch reads but never writes registers), so both exits flush the same registers.
+    writeback(f, regs, abi);
+    write_pc_const(f, abi, pc_next);
+    write_reason(f, abi, ExitCode::Fallthrough);
+    f.i32_const(ExitCode::Fallthrough as i32);
+    f.return_();
+}
+
+fn emit_trap(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, pc: u64, cause: i64) {
+    writeback(f, regs, abi);
+    write_pc_const(f, abi, pc); // trap leaves PC at the faulting instruction
+    write_info_const(f, abi, cause);
+    write_reason(f, abi, ExitCode::Trap);
+    f.i32_const(ExitCode::Trap as i32);
+    f.return_();
+}
