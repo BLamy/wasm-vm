@@ -3,7 +3,7 @@ id: E4-T02
 epic: 4
 title: Host-side flamegraphs for native and in-browser builds
 priority: 402
-status: pending
+status: partially-verified
 depends_on: [E4-T01]
 estimate: M
 capstone: false
@@ -55,4 +55,28 @@ counters to bound it — a claim off by >2x is a refutation; (4) attempt the Fir
 path specifically; a Chrome-only procedure fails the deliverable as written.
 
 ## Verification log
+- 2026-08-05 — **Native flamegraph pipeline done + a real capture landed (commits `19c07e6`, `6d26fa7`);
+  status partially-verified (browser CAPTURE reaping-deferred).** Profiler: `samply` (no-sudo OS sampler
+  on macOS; exports a committable/re-openable Firefox-Profiler JSON — chosen over cargo-flamegraph which
+  needs dtrace/sudo). Symbol readability: additive `[profile.profiling]` (`inherits=release, debug=true,
+  strip=false`) — release already carries `debug=2` via `.cargo/config.toml`, so the profiling profile is
+  the portable guarantee; release build unaffected; CoreMark on the profiling binary = 261.734 it/s,
+  identical to baseline (0% overhead, well inside AC). WASM adversarial finding: a bare `wasm-pack build
+  --profiling` ships NO `name` section (wasm-opt strips it), so browser frames would be anonymous — fixed
+  with `[package.metadata.wasm-pack.profile.profiling] wasm-opt=['-O','-g']` (restores a 123 KB name
+  section, 208 demangled `wasm_vm_core::*` funcs, verified via `wasm-objdump -h`); shipped release wasm
+  stays stripped.
+  - **REAL top host hotspots** (from `evidence/e4-t02/boot-native.samply.json.gz`, 323k samples,
+    atos-symbolicated; CoreMark profile agrees ±1pt): `Machine::sync_plic` 24.1%, `mmu::translate_cached`
+    9.8%, `run_traced_inner` dispatch 9.5%, `IrqLine::set` 7.7%, `sync_clint` 7.1%. **Bucketed: per-quantum
+    device/interrupt re-sync ≈ 47% (dominant), address translation ≈ 24%, dispatch+execute 13–23%, decode
+    9%.** KEY finding that redirects E4-T05/T06: **dispatch is second-order; the per-quantum device re-sync
+    is the real host bottleneck** — the quantum-boundary sync cadence, not the decode/dispatch loop, is
+    where the win is.
+  - Artifacts: `evidence/e4-t02/{boot-native.samply.json.gz, boot-native.folded, coremark-native.samply.json.gz,
+    hotspots-summary.md}`; procedure at `docs/perf/flamegraphs.md`.
+  - **DEBT:** the live BROWSER capture (Chrome/Firefox DevTools) — reaping-deferred (Alpine wasm boot
+    OS-reaps here, same as E4-T03/T04). The hard part (build-flag mechanics for symbolicated browser
+    frames) IS verified on-host; only the interactive capture needs a machine that holds the boot.
+
 (empty)
