@@ -459,6 +459,32 @@ impl Machine {
         (alloc::rc::Rc::clone(&slots[0]), state)
     }
 
+    /// E4-T03: attach an ADDITIONAL virtio-blk device (DeviceID 2) backed by `backend` into an
+    /// already-existing EMPTY slot (`enable_virtio_blk`/`enable_virtio_slots` first). The benchmark
+    /// harness attaches its read-only overlay as a second drive (slot 1) so the guest sees `/dev/vdb`
+    /// alongside the root `/dev/vda`, without disturbing the single-drive path. Returns the shared
+    /// blk state. Panics if `slot` is out of range or already occupied (a wiring bug).
+    pub fn enable_virtio_blk_at(
+        &mut self,
+        slot: usize,
+        backend: alloc::boxed::Box<dyn block::BlockBackend>,
+    ) -> alloc::rc::Rc<core::cell::RefCell<dev::virtio::blk::BlkState>> {
+        assert!(
+            slot < self.virtio.len(),
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_blk_at"
+        );
+        let (devhalf, state) = dev::virtio::blk::new(backend);
+        assert!(
+            self.virtio[slot]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(devhalf))
+                .is_ok(),
+            "virtio slot {slot} already has a device"
+        );
+        state
+    }
+
     /// E3-T13: attach a virtio-net device (DeviceID 1) backed by `backend` in slot 1. The
     /// eight slots must already exist ([`Self::enable_virtio_blk`] or
     /// [`Self::enable_virtio_slots`] first) — net installs into the empty slot 1 (the DTB

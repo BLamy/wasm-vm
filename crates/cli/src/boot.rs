@@ -37,9 +37,11 @@ pub struct BootArgs {
     /// Kernel command line (`/chosen/bootargs`).
     #[arg(long, default_value = "console=ttyS0 earlycon=sbi")]
     pub append: String,
-    /// Attach a virtio-blk drive in slot 0: `file=IMG` or `file=IMG,ro` (mmap-backed).
+    /// Attach a virtio-blk drive: `file=IMG` or `file=IMG,ro` (mmap-backed). The first `--drive`
+    /// claims slot 0 (`/dev/vda`); repeat the flag to attach further drives into the next empty
+    /// slots (`/dev/vdb`, …) — the E4-T03 bench harness attaches its read-only overlay this way.
     #[arg(long)]
-    pub drive: Option<String>,
+    pub drive: Vec<String>,
     /// Guest RAM size in MiB (DTB places itself near the top of DRAM).
     #[arg(long, default_value_t = 256)]
     pub ram_mib: usize,
@@ -216,7 +218,7 @@ fn parse_system_map(path: &Path) -> std::io::Result<Vec<(u64, String)>> {
 }
 
 /// The symbol whose address is the greatest `<= pc` (nearest-preceding lookup over the sorted table).
-fn symbolize<'a>(syms: &'a [(u64, String)], pc: u64) -> Option<&'a str> {
+fn symbolize(syms: &[(u64, String)], pc: u64) -> Option<&str> {
     let idx = syms.partition_point(|(addr, _)| *addr <= pc);
     (idx > 0).then(|| syms[idx - 1].1.as_str())
 }
@@ -309,7 +311,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
     };
 
     // E2-T19 critic advisory: --blk-log without --drive can't trace anything (no blk device).
-    if a.blk_log && a.drive.is_none() {
+    if a.blk_log && a.drive.is_empty() {
         eprintln!("wasm-vm: --blk-log has no effect without --drive (no virtio-blk device)");
     }
 
@@ -499,6 +501,31 @@ pub fn boot(a: BootArgs) -> ExitCode {
 /// Build a fresh machine for one boot: RAM + all devices + the boot triple in DRAM, entered at
 /// the ADR-0002 contract. Returns the machine and the UART handle, or an `ExitCode` for a fatal
 /// setup error. Called once per boot (reboot rebuilds from scratch → devices reset, RAM zeroed).
+/// Parse one `--drive` spec (`file=IMG` or `file=IMG,ro`) and open its file backend. Returns the
+/// boxed backend, or an `ExitCode` (2) after printing a diagnostic — the same failure shape the
+/// single-drive path used before E4-T03 made `--drive` repeatable.
+fn open_drive_backend(spec: &str) -> Result<Box<dyn wasm_vm_core::block::BlockBackend>, ExitCode> {
+    let (path, ro) = match spec.strip_suffix(",ro") {
+        Some(rest) => (rest, true),
+        None => (spec, false),
+    };
+    let Some(path) = path.strip_prefix("file=") else {
+        eprintln!("wasm-vm: --drive expects file=IMG[,ro]");
+        return Err(ExitCode::from(2));
+    };
+    let opened = if ro {
+        file_backend::FileBackend::open_read_only(Path::new(path))
+            .map(|b| Box::new(b) as Box<dyn wasm_vm_core::block::BlockBackend>)
+    } else {
+        file_backend::FileBackend::open(Path::new(path))
+            .map(|b| Box::new(b) as Box<dyn wasm_vm_core::block::BlockBackend>)
+    };
+    opened.map_err(|e| {
+        eprintln!("wasm-vm: cannot open drive {path}: {e}");
+        ExitCode::from(2)
+    })
+}
+
 fn assemble(
     a: &BootArgs,
     kernel: &[u8],
@@ -526,38 +553,22 @@ fn assemble(
     let uart = m.enable_uart16550();
     // virtio: a real blk device if --drive was given, else the 8 empty mmio slots the DTB
     // advertises (the kernel probes each address; an unbacked window would fault).
-    if let Some(spec) = &a.drive {
-        let (path, ro) = match spec.strip_suffix(",ro") {
-            Some(rest) => (rest, true),
-            None => (spec.as_str(), false),
-        };
-        let Some(path) = path.strip_prefix("file=") else {
-            eprintln!("wasm-vm: --drive expects file=IMG[,ro]");
-            return Err(ExitCode::from(2));
-        };
-        let backend: Box<dyn wasm_vm_core::block::BlockBackend> = if ro {
-            match file_backend::FileBackend::open_read_only(std::path::Path::new(path)) {
-                Ok(b) => Box::new(b),
-                Err(e) => {
-                    eprintln!("wasm-vm: cannot open drive {path}: {e}");
-                    return Err(ExitCode::from(2));
-                }
+    if a.drive.is_empty() {
+        let _ = m.enable_virtio_slots(None);
+    } else {
+        // First drive claims slot 0 (/dev/vda); each subsequent --drive installs into the next
+        // empty slot (/dev/vdb, …). E4-T03 attaches the read-only bench overlay as a 2nd drive.
+        for (i, spec) in a.drive.iter().enumerate() {
+            let backend = open_drive_backend(spec)?;
+            if i == 0 {
+                let _ = m.enable_virtio_blk(backend);
+            } else {
+                let _ = m.enable_virtio_blk_at(i, backend);
             }
-        } else {
-            match file_backend::FileBackend::open(std::path::Path::new(path)) {
-                Ok(b) => Box::new(b),
-                Err(e) => {
-                    eprintln!("wasm-vm: cannot open drive {path}: {e}");
-                    return Err(ExitCode::from(2));
-                }
-            }
-        };
-        let _ = m.enable_virtio_blk(backend);
+        }
         if a.blk_log {
             m.enable_blk_log(); // E2-T19: trace requests to stderr
         }
-    } else {
-        let _ = m.enable_virtio_slots(None);
     }
     if a.net_slirp {
         // E3-T14: slirp-backed virtio-net in slot 1 — the guest's frames terminate in the

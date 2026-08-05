@@ -3,7 +3,8 @@
 # disagree, that's a bug (E0-T02).
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke bench-l1 riscof diff-all diff-selftest diff-qemu \
-        exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json
+        exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
+        bench-guest-build bench-coremark bench-dhrystone
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -150,6 +151,20 @@ hooks:
 # the node/browser rows come from web/bench-node.mjs and the demo page's Bench button.
 bench:
 	cargo bench -p wasm-vm-cli --bench interp
+
+# E4-T03: in-guest CoreMark/Dhrystone harness. `bench-guest-build` rebuilds the pinned riscv64
+# ELFs + the ext4 overlay inside the pinned Docker toolchain (needs Docker); the run targets boot
+# the release wasm-vm on Alpine and emit a JSON score (each cold run takes minutes on the
+# interpreter). Browser engine is reaping-deferred (see bench/README.md).
+bench-guest-build:
+	bash bench/build.sh
+	bash bench/mkimage.sh
+
+bench-coremark:
+	python3 tools/bench.py run coremark --engine native
+
+bench-dhrystone:
+	python3 tools/bench.py run dhrystone --engine native
 
 # E0 capstone (E0-T26): the automated proof — Hello from RV64 with native == node-wasm ==
 # Spike traces byte-for-byte — then the manual browser checklist. Run from a cold clone
