@@ -382,6 +382,23 @@ if (bootAlpineFullBtn) {
       "debug boot: loading the full Alpine ext4 image before virtio-blk startup…",
     ));
 }
+// E4-T01/T02 browser-evidence hooks (additive, test-only): the served index.html on this branch
+// does not expose the #boot-alpine button, so provide a programmatic trigger that runs the SAME
+// chunked lazy-fetch Alpine boot the button would, plus a wasm-readiness getter so a Playwright
+// driver can wait before booting. Inert unless called.
+window.__wasmReady = () => wasmReady;
+window.__bootAlpineChunked = () =>
+  runLinuxBoot(
+    {
+      manifestUrl: "./artifacts-alpine.json",
+      mode: "chunked",
+      imageManifestUrl: R2_ASSETS + "/chunked-alpine/manifest.json",
+      cacheBudgetMib: 0,
+      ramMib: 256,
+      fileTransfer: true,
+    },
+    "E4 browser profiling boot (chunked Alpine, lazy fetch)",
+  );
 // ── Docker tab ⇄ real boot bridge ─────────────────────────────────────────────
 // The Docker "Run" button drives the SAME real boot machinery as this Terminal tab — it never
 // simulates a shell. For busybox we boot the real busybox userland on RISC-V Linux (the initramfs

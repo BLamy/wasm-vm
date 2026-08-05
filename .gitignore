@@ -73,3 +73,9 @@ releases/wvseccomp-riscv64
 # Container bundles baked into the Alpine rootfs (rebuild: tools/build-container-bundle.sh <img>).
 # 82M of pulled/unpacked images — rebuildable, like releases/rootfs; not committed.
 releases/container-bundles/
+
+# E4-T04 in-guest gcc compile-benchmark overlay (~130 MB gcc+musl-dev+binutils; rebuild:
+# bench/mk-gcc-image.sh). Durable committed artifacts are the builder + bench/guest/gcc-MANIFEST.txt
+# (pinned resolved package set + overlay sha256) + the vendored miniz sources — not the overlay.
+bench/guest/gcc.ext4
+bench/guest/gcc-MANIFEST.new

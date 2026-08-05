@@ -39,6 +39,8 @@ BENCH_DIR = os.path.join(REPO, "bench", "guest")
 KERNEL = os.path.join(REPO, "releases", "kernel", "6.6.63", "Image")
 ROOTFS = os.path.join(REPO, "releases", "rootfs", "alpine-rootfs.ext4")
 BENCH_EXT4 = os.path.join(BENCH_DIR, "bench.ext4")
+GCC_EXT4 = os.path.join(BENCH_DIR, "gcc.ext4")
+GCC_MANIFEST = os.path.join(BENCH_DIR, "gcc-MANIFEST.txt")
 # Default is the release binary (the frozen baseline binary — never change this default).
 # E4-T02 lets the flamegraph doc point the SAME harness at the `--profile profiling` binary
 # (readable symbols) via WASM_VM_BIN, to (a) profile a CoreMark run and (b) prove the profiling
@@ -62,6 +64,20 @@ GCC = "gcc-13-riscv64-linux-gnu 13.3.0"
 COMMON_FLAGS = "-static -O2 -g0 -march=rv64gc -mabi=lp64d"
 COREMARK_ITERATIONS = 6000
 DHRYSTONE_ITERS = 30_000_000
+
+# E4-T04 in-guest gcc compile bench: overlay + reproducible-compile knobs (kept in sync with
+# bench/mk-gcc-image.sh). The overlay is gitignored; its integrity is pinned by the sha256 recorded
+# in gcc-MANIFEST.txt (adversarial #4 — a deleted/tampered overlay fails loudly).
+GCC_SOURCE_DATE_EPOCH = 1704067200
+GCC_RUN_TIMEOUT = 5400.0   # a full miniz -O2 compile on the interpreter is ~1 h on a slow 2-core box
+# gcc -O2 of a ~9 kLoC TU retires FAR more guest instructions than a boot; give the whole
+# boot+compile a generous instruction ceiling so a slow compile is never truncated mid-run.
+GCC_MAX_INSTRS = 300_000_000_000
+# gcc -O2 needs a real working set; with only 256 MiB the guest THRASHES the read-only overlay's
+# page cache (endless reclaim/re-fault → billions of wasted kernel instructions, an unrealistic
+# "compile time"). Give the gcc guest a comfortable RAM budget so the number reflects the compiler,
+# not page-reclaim churn. Override with WASM_VM_GCC_RAM_MIB.
+GCC_RAM_MIB = int(os.environ.get("WASM_VM_GCC_RAM_MIB", "768"))
 
 
 def sha256_file(path):
@@ -463,7 +479,211 @@ def cmd_run_boot(args):
     return 0
 
 
+def _gcc_manifest_sha():
+    """Read the pinned gcc.ext4 sha256 out of gcc-MANIFEST.txt (the committed anti-drift record)."""
+    if not os.path.exists(GCC_MANIFEST):
+        fail(f"missing {GCC_MANIFEST} — run bench/mk-gcc-image.sh")
+    with open(GCC_MANIFEST) as f:
+        for line in f:
+            m = re.match(r"\s*gcc_ext4_sha256:\s*([0-9a-f]{64})", line)
+            if m:
+                return m.group(1)
+    fail("gcc-MANIFEST.txt has no gcc_ext4_sha256 line")
+
+
+def verify_gcc_overlay():
+    """Adversarial #4 for the gcc overlay: it is gitignored (build-on-demand), so pin it by the
+    sha256 recorded in the committed gcc-MANIFEST.txt. A missing/tampered overlay fails LOUDLY."""
+    if not os.path.exists(GCC_EXT4):
+        fail(f"missing gcc overlay {GCC_EXT4} — build it: bench/mk-gcc-image.sh (adversarial #4)")
+    want = _gcc_manifest_sha()
+    got = sha256_file(GCC_EXT4)
+    if got != want:
+        fail(f"gcc.ext4 sha256 mismatch: have {got}, gcc-MANIFEST.txt says {want} "
+             f"(rebuild with bench/mk-gcc-image.sh — refusing to benchmark an unpinned overlay)")
+    return want
+
+
+def run_gcc_once(echo=False):
+    """Boot, mount the gcc overlay read-only, compile miniz.c at -O2 in-guest, and return
+    {score(guest seconds), host_elapsed, guest_elapsed, o_size, o_sha256, cmdline, rc}.
+
+    Determinism of the emitted .o: SOURCE_DATE_EPOCH + -frandom-seed. Guest seconds come from
+    /proc/uptime (instruction-count-derived guest clock), the host-independent duration metric;
+    host_elapsed is captured for the honest host/guest ratio note (same framing as the micro-benches).
+    """
+    nonce = "%08x" % random.randrange(1 << 32)
+    start_typed = f'echo BENCH""START{nonce}'
+    end_typed = f'echo BENCH""END{nonce}'
+    start_re = rf"(?m)^BENCHSTART{nonce}\s*$"
+    end_re = rf"(?m)^BENCHEND{nonce}\s*$"
+
+    cmd = [
+        VM_BIN, "boot",
+        "--kernel", KERNEL,
+        "--drive", f"file={ROOTFS}",
+        "--drive", f"file={GCC_EXT4},ro",
+        "--append", "root=/dev/vda rw console=ttyS0 earlycon=sbi",
+        "--ram-mib", str(GCC_RAM_MIB),
+        "--max-instrs", str(GCC_MAX_INSTRS),
+    ]
+    cmd += shlex.split(os.environ.get("WASM_VM_BOOT_EXTRA", ""))
+    proc = subprocess.Popen(
+        cmd, cwd=REPO, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+    )
+    con = Console(proc, echo=echo)
+    try:
+        con.expect(r"login:", BOOT_TIMEOUT)
+        con.send("root")
+        m = con.expect(r"(Password:|# )", 180.0)
+        if m.group(1) == "Password:":
+            con.send("")
+            con.expect(r"# ", 120.0)
+        con.send("mount -o ro /dev/vdb /mnt && echo MOUNT_OK || echo MOUNT_FAIL")
+        con.expect(r"(?m)^MOUNT_(OK|FAIL)\s*$", 120.0)
+        # Compile bracketed by sentinels. The gcc-wrap shim echoes the fully-resolved command
+        # line (adversarial #3: -O2 must really reach gcc); /proc/uptime brackets guest seconds;
+        # rc + .o size + .o sha256 are emitted on a single RESULT line for the parser.
+        compile_cmd = (
+            "rm -f /tmp/miniz.o; "
+            "T0=$(cut -d' ' -f1 /proc/uptime); "
+            "SOURCE_DATE_EPOCH=%d /mnt/gcc-wrap -O2 -frandom-seed=miniz "
+            "-c /mnt/src/miniz.c -o /tmp/miniz.o; RC=$?; "
+            "T1=$(cut -d' ' -f1 /proc/uptime); "
+            "SZ=$(wc -c < /tmp/miniz.o 2>/dev/null || echo 0); "
+            "SH=$(sha256sum /tmp/miniz.o 2>/dev/null | cut -d' ' -f1); "
+            "echo GCC_RESULT rc=$RC secs=$(awk \"BEGIN{print $T1-$T0}\") osize=$SZ osha=$SH"
+        ) % GCC_SOURCE_DATE_EPOCH
+        con.send(start_typed)
+        con.expect(start_re, 120.0)
+        host_t0 = time.monotonic()
+        con.send(compile_cmd)
+        con.send(end_typed)
+        con.expect(end_re, GCC_RUN_TIMEOUT)
+        host_elapsed = time.monotonic() - host_t0
+        run_text = con.before
+        con.send("poweroff -f")
+        try:
+            proc.wait(timeout=60)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+    finally:
+        if proc.poll() is None:
+            proc.kill()
+
+    cmdline_m = re.search(r"(?m)^GCC_CMDLINE:\s*(.+?)\s*$", run_text)
+    res_m = re.search(
+        r"(?m)^GCC_RESULT rc=(\d+) secs=([0-9.]+) osize=(\d+) osha=([0-9a-f]*)\s*$", run_text)
+    if not res_m:
+        fail("gcc bench: no GCC_RESULT line (compile did not complete). "
+             "Console tail:\n" + run_text[-600:])
+    rc = int(res_m.group(1))
+    guest_secs = float(res_m.group(2))
+    o_size = int(res_m.group(3))
+    o_sha = res_m.group(4)
+    if rc != 0:
+        fail(f"gcc bench: compile returned nonzero rc={rc} (cmdline: {cmdline_m and cmdline_m.group(1)})")
+    if o_size <= 0:
+        fail("gcc bench: produced a ZERO-byte .o (adversarial #3 — no real compilation happened)")
+    cmdline = cmdline_m.group(1) if cmdline_m else None
+    if not cmdline or "-O2" not in cmdline:
+        fail(f"gcc bench: resolved command line missing -O2 (got: {cmdline!r})")
+    return {"score": guest_secs, "guest_elapsed": guest_secs, "host_elapsed": host_elapsed,
+            "o_size": o_size, "o_sha256": o_sha, "cmdline": cmdline, "rc": rc}
+
+
+def cmd_run_gcc(args):
+    overlay_sha = verify_gcc_overlay()
+    ensure_vm()
+    if not os.path.exists(KERNEL):
+        fail(f"missing kernel {KERNEL}")
+    if not os.path.exists(ROOTFS):
+        fail(f"missing Alpine rootfs {ROOTFS}")
+
+    results = []
+    for i in range(args.runs):
+        print(f"bench: gcc native run {i + 1}/{args.runs}…", file=sys.stderr)
+        results.append(run_gcc_once(echo=args.verbose))
+
+    scores = [r["score"] for r in results]
+    median = statistics.median(scores)
+    spread = (max(scores) - min(scores)) / median if median else 0.0
+    noise_warning = spread > 0.05
+
+    med_idx = scores.index(sorted(scores)[len(scores) // 2])
+    med = results[med_idx]
+    ratio = med["host_elapsed"] / med["guest_elapsed"] if med["guest_elapsed"] else None
+
+    # The emitted .o must be byte-stable across runs (SOURCE_DATE_EPOCH + -frandom-seed); a moving
+    # sha256 would signal nondeterministic codegen. Assert all runs agree.
+    o_shas = {r["o_sha256"] for r in results if r["o_sha256"]}
+    o_sizes = {r["o_size"] for r in results}
+    if len(o_shas) > 1:
+        fail(f"gcc bench: .o sha256 varies across runs {o_shas} — nondeterministic compile")
+
+    out = {
+        "bench": "gcc",
+        "score": round(median, 3),
+        "unit": "seconds",
+        "higher_is_better": False,
+        "runs": [round(s, 3) for s in scores],
+        "spread": round(spread, 4),
+        "noise_warning": noise_warning,
+        "engine": args.engine,
+        "commit": git_rev(),
+        "config": {
+            "workload": "miniz-3.0.2 miniz.c (amalgamated, ~9.3 kLoC)",
+            "compile_cmd": med["cmdline"],
+            "gcc_package": _gcc_pkg_from_manifest(),
+            "source_date_epoch": GCC_SOURCE_DATE_EPOCH,
+            "o_size_bytes": med["o_size"],
+            "o_sizes_all": sorted(o_sizes),
+            "o_sha256": med["o_sha256"],
+            "gcc_ext4_sha256": overlay_sha,
+            "vm_build": "release",
+            "ram_mib": GCC_RAM_MIB,
+        },
+        "date": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "timing_check": {
+            "note": "score is in-guest seconds (from /proc/uptime, instruction-count-derived "
+                    "guest clock — host-independent). host_elapsed is recorded only for the honest "
+                    "host/guest ratio, never to alter the score. The .o is byte-stable "
+                    "(SOURCE_DATE_EPOCH + -frandom-seed); its sha256 is the anti-drift anchor.",
+            "guest_elapsed_s": round(med["guest_elapsed"], 3),
+            "host_elapsed_s": round(med["host_elapsed"], 3),
+            "ratio": round(ratio, 3) if ratio else None,
+        },
+    }
+    text = json.dumps(out, indent=2)
+    print(text)
+    if args.json:
+        with open(args.json, "w") as f:
+            f.write(text + "\n")
+    if getattr(args, "ledger", False):
+        ledger_append(out, args.baseline)
+    return 0
+
+
+def _gcc_pkg_from_manifest():
+    try:
+        with open(GCC_MANIFEST) as f:
+            for line in f:
+                m = re.match(r"\s*gcc_package:\s*(\S+)", line)
+                if m:
+                    return m.group(1)
+    except OSError:
+        pass
+    return "unknown"
+
+
 def cmd_run(args):
+    if args.bench == "gcc":
+        if args.engine == "browser":
+            _browser_defer(args)
+        if args.engine != "native":
+            raise SystemExit(f"unknown engine {args.engine}")
+        return cmd_run_gcc(args)
     if args.bench == "boot":
         if args.engine == "browser":
             _browser_defer(args)
@@ -679,7 +899,7 @@ def main():
         description="macro + micro benchmark harness and baseline ledger (E4-T03/T04)")
     sub = ap.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("run", help="boot the VM and run a benchmark")
-    r.add_argument("bench", choices=["coremark", "dhrystone", "boot"])
+    r.add_argument("bench", choices=["coremark", "dhrystone", "boot", "gcc"])
     r.add_argument("--engine", default="native", choices=["native", "browser"])
     r.add_argument("--runs", type=int, default=3)
     r.add_argument("--json", help="also write the JSON result to this path")

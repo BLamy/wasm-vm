@@ -4,7 +4,7 @@
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
-        bench-guest-build bench-coremark bench-dhrystone
+        bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -165,6 +165,16 @@ bench-coremark:
 
 bench-dhrystone:
 	python3 tools/bench.py run dhrystone --engine native
+
+# E4-T04: in-guest gcc -O2 compile macro bench. `bench-gcc-build` cross-installs a pinned Alpine
+# gcc/musl-dev/binutils toolchain into the ~130 MB gcc.ext4 overlay (gitignored; needs Docker);
+# `bench-gcc` boots the release wasm-vm, mounts it read-only, and compiles the vendored miniz.c.
+# A single run is many minutes on the interpreter (full Alpine boot + a real -O2 compile).
+bench-gcc-build:
+	bash bench/mk-gcc-image.sh
+
+bench-gcc:
+	python3 tools/bench.py run gcc --engine native
 
 # E0 capstone (E0-T26): the automated proof — Hello from RV64 with native == node-wasm ==
 # Spike traces byte-for-byte — then the manual browser checklist. Run from a cold clone

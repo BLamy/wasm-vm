@@ -326,6 +326,19 @@ export async function startLinuxBoot(opts = {}) {
       machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
     }
 
+    // E4-T01/T02 browser-evidence hook (additive, default-off): expose the raw WasmLinux instance
+    // so a Playwright driver can pull getProfile() after boot, and — when the page is opened with
+    // `?profile=1` — arm the sampled hot-PC + subsystem-time profiler from the very first
+    // instruction (setProfiling injects the JsHostTimer). Inert unless the query param is present.
+    try {
+      window.__machine = machine;
+      const wantProfile = new URLSearchParams(location.search).get("profile");
+      if (wantProfile === "1" && typeof machine.setProfiling === "function") {
+        machine.setProfiling(true);
+        window.__profilingArmed = true;
+      }
+    } catch { /* non-window scope (worker) — no test hook */ }
+
     let stopped = false;
     let paused = false;
     // Exactly one `tick` may be pending at a time. `resume()` guarding only on `paused` is not
