@@ -225,6 +225,18 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::blk::BlkState>>,
         Option<dev::virtio::queue::Virtqueue>,
     )>,
+    /// E4-T03: ADDITIONAL virtio-blk devices attached via [`Self::enable_virtio_blk_at`] (the bench
+    /// harness's read-only overlay as `/dev/vdb`). Each entry is `(shared state, lazily-built ring
+    /// view, virtio slot index)`; serviced at the same instruction boundary as the primary `blk` so
+    /// the guest's reads complete — without which the guest hangs the moment it first reads the drive.
+    /// These carry no writes/flush, so — unlike the primary `blk` — they are intentionally NOT drained
+    /// by `quiesce` or serialized by the snapshot (a read-only drive has nothing to lose on restart).
+    #[allow(clippy::type_complexity)]
+    extra_blk: alloc::vec::Vec<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::blk::BlkState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        usize,
+    )>,
     /// E3-T13: virtio-net service state (shared backend state + the persistent receiveq /
     /// transmitq ring views), when [`Self::enable_virtio_net`] plugged a backend into slot 1.
     /// Serviced at every boundary the guest has kicked OR the backend has an rx frame ready.
@@ -300,6 +312,7 @@ impl Machine {
             syscon: None,
             virtio: alloc::vec::Vec::new(),
             blk: None,
+            extra_blk: alloc::vec::Vec::new(),
             net: None,
             rng: None,
             coherence: SnapshotCoherence::default(),
@@ -482,6 +495,11 @@ impl Machine {
                 .is_ok(),
             "virtio slot {slot} already has a device"
         );
+        // Register it for run-loop servicing (the ring view builds lazily on the guest's first kick,
+        // like the primary blk). Omitting this is exactly the hang: the device probes but its reads
+        // never complete.
+        self.extra_blk
+            .push((alloc::rc::Rc::clone(&state), None, slot));
         state
     }
 
@@ -1572,6 +1590,14 @@ impl Machine {
                 // completed request's used-ring interrupt lands this same boundary.
                 if let Some((state, vq)) = &mut self.blk {
                     let slot = alloc::rc::Rc::clone(&self.virtio[0].0);
+                    dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
+                }
+                // E4-T03: service each ADDITIONAL (read-only) blk device on the same boundary, so a
+                // guest read of `/dev/vdb…` completes promptly. Index-based to keep the `extra_blk`
+                // borrow disjoint from `self.virtio` / `self.bus`.
+                for i in 0..self.extra_blk.len() {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[self.extra_blk[i].2].0);
+                    let (state, vq, _) = &mut self.extra_blk[i];
                     dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
                 }
                 // E3-T13: service virtio-net kicks (and async backend rx frames) the same

@@ -126,6 +126,10 @@ class Console:
     def __init__(self, proc, echo=False):
         self.proc = proc
         self.buf = ""
+        # The text consumed BEFORE the most recent match (everything between the previous match and
+        # this one) — this is what the caller scrapes for a benchmark's output, since `expect` drops
+        # the matched-and-earlier bytes from `buf`.
+        self.before = ""
         self.echo = echo
         self.fd = proc.stdout.fileno()
 
@@ -135,6 +139,7 @@ class Console:
         # First check anything already buffered.
         m = rx.search(self.buf)
         if m:
+            self.before = self.buf[: m.start()]
             self.buf = self.buf[m.end():]
             return m
         while time.monotonic() < deadline:
@@ -150,6 +155,7 @@ class Console:
                 self.buf += text
                 m = rx.search(self.buf)
                 if m:
+                    self.before = self.buf[: m.start()]
                     self.buf = self.buf[m.end():]
                     return m
             if self.proc.poll() is not None and not r:
@@ -238,7 +244,9 @@ def run_once(bench, echo=False):
         if m.group(1) == "Password:":
             con.send("")
             con.expect(r"# ", 120.0)
-        con.send("mkdir -p /mnt/bench; mount -o ro /dev/vdb /mnt/bench && echo MOUNT_OK || echo MOUNT_FAIL")
+        # The overlay stages the ELFs under /bench/ (mkimage.sh), so mount at /mnt and the binaries
+        # land at /mnt/bench/<name> — matching the exec path below.
+        con.send("mount -o ro /dev/vdb /mnt && echo MOUNT_OK || echo MOUNT_FAIL")
         con.expect(r"(?m)^MOUNT_(OK|FAIL)\s*$", 120.0)
         con.send(start_typed)
         con.expect(start_re, 120.0)
@@ -247,7 +255,7 @@ def run_once(bench, echo=False):
         con.send(end_typed)
         con.expect(end_re, RUN_TIMEOUT)
         host_elapsed = time.monotonic() - host_t0
-        run_text = con.buf  # everything captured between start and end sentinels
+        run_text = con.before  # the text between the START and END sentinels (the benchmark's output)
         con.send("poweroff -f")
         try:
             proc.wait(timeout=60)
