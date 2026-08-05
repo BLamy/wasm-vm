@@ -61,6 +61,24 @@ cold start and diff against the ledger entry (>10% short refutes); (5) time a `s
 guest — if block-granular interrupt polling warped timer delivery, refuted.
 
 ## Verification log
+- 2026-08-05 — **Phase B landed (page-granular invalidation) — byte-identity HELD (commit `03c55b9`).**
+  Replaced Phase A's flush-whole-cache-on-any-store with a page-level has-code bitmap (`BTreeSet` of
+  physical frames holding cached blocks; `flush_page` is an O(1) set-miss for the common data-store case,
+  so the cache RETAINS blocks). Clever unification: **all** guest RAM writes — guest stores AND every
+  device DMA — reach RAM through `bus.storeN` with a PHYSICAL address, so a single `code_write_log` at the
+  `SystemBus` (armed when the cache is on) catches everything; `drain_code_writes` invalidates touched
+  code frames after each step + device-service boundary. Every DMA path verified routed through it
+  (virtio-blk read completion, virtio-net rx, virtio-rng, virtqueue used-ring publish, T_GET_ID).
+  `fence.i`/reset/restore full-flush unchanged. **Phase C untouched** — interrupts/`sync_*`/`advance_clock`/
+  `on_retire` still per-retire. Added additive `wasm-vm boot --block-cache` (default off).
+  - **Gates (independently re-ran the new SMC one — green, 0.58s):** `predecode_diff` byte-identical
+    (cache-on 4096 + 1-entry ≡ cache-off across 127 riscv-tests); NEW `predecode_smc_diff` — a store
+    patches a cached instruction WITHOUT `fence.i`, cache-off acc=8 (patch seen; a stale block gives 20),
+    cache-on big+1-entry identical → the store-triggered page invalidation fires. Full `cargo test
+    -p wasm-vm-core` EXIT 0; `--features predecode` determinism golden + riscv_tests_suite green;
+    fmt/clippy(-D)/wasm32 clean.
+  - CoreMark-with-cache NOT measured (honest): reaping-prone boot + the bench doesn't forward `--block-cache`,
+    and decode-only is only ~1.05-1.1× anyway (the ≥1.3× is Phase C) — no fabricated number.
 - 2026-08-05 — **Phase A landed + byte-identity PROVEN (commit `2d4ca71`).** `crates/core/src/dispatch.rs`
   (`MicroOp`/`DecodedBlock`/open-addressed `BlockCache` keyed by physical PC, O(1) generation-bump flush)
   + a `decode_at()` factored out of `step_traced` so the cache and legacy path share ONE decoder. Wired
