@@ -65,6 +65,22 @@ _Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
 - **CoreMark host-side uplift** (AC1 ≥1.3×) — the guest-clock score is instruction-derived, so the speedup is a host wall-clock ratio; measuring now (cache-OFF vs cache+batching back-to-back). Plus **Phase D** dispatch micro-tuning and **browser-engine ledger entries** (reaping-deferred). Correctness (byte-identical cache, verdict-identical/deterministic/≤128-latency batching) is verified.
 
 ## Verification log
+- 2026-08-05 — **Phase C (interrupt batching) + the UPLIFT landed (commits `fa9a711`, `d860afc`).** The
+  device fabric sync + `next_interrupt` move to block boundaries behind a SEPARATE `set_interrupt_batching`
+  toggle (cache stays byte-identical under `predecode_diff`); `advance_clock`/`on_retire`/profiler stay
+  per-retire. **Correctness independently re-verified** (`predecode_batching.rs`, 3/3): every riscv-tests
+  ELF (incl. `rv64mi`/timer) reaches the SAME verdict batched as legacy; native batched runs are byte-
+  identically deterministic; mtimecmp mid-block latency ≤128 (AC #4 ✓). AC #3 (SMC+fence.i) `predecode_smc_diff`,
+  AC #5 (no page-spanning block) debug-assert — both green.
+  - **AC #1 (≥1.3× CoreMark) — MET at 2.24× native** (`evidence/e4-t05/uplift.md`): back-to-back on the
+    same idle machine, cache-OFF 431.7s vs cache+batching 192.3s host wall-clock. The guest CoreMark score
+    is identical (261.7 it/s — instruction-derived), so the emulator speedup is the host-wall ratio; the
+    win is batching the ~47% per-instruction device/interrupt sync (E4-T02) to block boundaries. Far above
+    the 1.3× bar.
+  - **Verification debt (→ dev):** the AC literally names the *browser* CoreMark + a both-engines ledger
+    entry, and the wasm32 riscv-tests-with-batching leg — the reaping-deferred browser legs; being cleared
+    on `dev`. Phase D (dispatch micro-tuning) is an optional further increment. The core optimization
+    (cache + invalidation + interrupt batching) and its 2.24× native uplift are DONE and proven.
 - 2026-08-05 — **Phase B landed (page-granular invalidation) — byte-identity HELD (commit `03c55b9`).**
   Replaced Phase A's flush-whole-cache-on-any-store with a page-level has-code bitmap (`BTreeSet` of
   physical frames holding cached blocks; `flush_page` is an O(1) set-miss for the common data-store case,
