@@ -28,6 +28,7 @@ import os
 import random
 import re
 import select
+import shlex
 import statistics
 import subprocess
 import sys
@@ -265,6 +266,10 @@ def run_once(bench, echo=False):
         "--ram-mib", str(RAM_MIB),
         "--max-instrs", str(MAX_INSTRS),
     ]
+    # E4-T05: additive, default-off passthrough of extra boot flags (e.g. the Phase-A/B block
+    # cache + Phase-C interrupt batching) without changing the frozen default command. Set
+    # WASM_VM_BOOT_EXTRA="--block-cache --interrupt-batching" to measure the accelerated path.
+    cmd += shlex.split(os.environ.get("WASM_VM_BOOT_EXTRA", ""))
     proc = subprocess.Popen(
         cmd, cwd=REPO, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,

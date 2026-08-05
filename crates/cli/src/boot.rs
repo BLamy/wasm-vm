@@ -72,6 +72,12 @@ pub struct BootArgs {
     /// (proven byte-identical by `predecode_diff`). A perf lever for Phase C measurement.
     #[arg(long)]
     pub block_cache: bool,
+    /// E4-T05 Phase C: batch the interrupt/device-sync poll to block boundaries (≤128 instrs)
+    /// instead of per-instruction — the CoreMark lever (device sync was 47% of host time per
+    /// E4-T02). Requires `--block-cache`. NOT byte-identical to the legacy path by design; timer
+    /// latency stays bounded to one block. Default off.
+    #[arg(long)]
+    pub interrupt_batching: bool,
     /// E2-T25: emit a boot phase-timing table (wall ms, retired, MIPS per phase) + per-device
     /// MMIO access counts, as pretty text + JSON, when the boot reaches userland (or at exit).
     #[arg(long)]
@@ -547,6 +553,7 @@ fn assemble(
     let mut m = Machine::new(ram_bytes);
     m.set_storm_detect(!a.no_storm_detect); // E2-T20
     m.set_block_cache(a.block_cache); // E4-T05: default off; additive decode-cache toggle
+    m.set_interrupt_batching(a.interrupt_batching); // E4-T05 Phase C: block-boundary interrupt poll
     if a.profile {
         m.set_host_timer(Rc::new(MonotonicTimer::new())); // E4-T01: arms profiling + injects the timer
     }

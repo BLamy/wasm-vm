@@ -276,6 +276,17 @@ pub struct Machine {
     /// expected next VA)`. A branch/jump/interrupt/trap moves the PC off `next VA`, invalidating
     /// the cursor so the next step re-keys by physical PC (handling branches into mid-block).
     block_cursor: Option<(u64, usize, u64)>,
+    /// E4-T05 Phase C: interrupt/device-sync BATCHING. A DISTINCT toggle from
+    /// `block_cache_enabled` (batching requires the cache, but the cache runs WITHOUT batching as
+    /// the byte-identical Phase-A/B mode the `predecode_diff` gate proves). When on, the device
+    /// fabric re-sync (`sync_clint`/UART/RTC/virtio/`sync_plic`/`sync_sbi_timer`/DMA-drain) and the
+    /// `next_interrupt` sampling are moved from PER-RETIRE to the BLOCK BOUNDARY — sampled once per
+    /// `DecodedBlock` (≤128 ops) instead of once per instruction. The retire-count clock
+    /// (`advance_clock`), `irqstats.on_retire`, the profiler hook, and per-op trap/ecall/WFI
+    /// handling stay per-retire, so `mtime` still crosses `mtimecmp` at the identical retire index;
+    /// only the SAMPLING of the resulting interrupt defers ≤128 retires (architecturally legal —
+    /// interrupts need only be taken in a timely manner). NOT byte-identical to legacy by design.
+    interrupt_batching: bool,
 }
 
 /// E3-T12c3: the identity a snapshot is bound to. A restore is refused unless the target machine's
@@ -336,6 +347,9 @@ impl Machine {
             block_cache_enabled: cfg!(feature = "predecode"),
             block_cache: dispatch::BlockCache::with_capacity(1 << 12),
             block_cursor: None,
+            // E4-T05 Phase C: batching is OFF by default even under `predecode` (the cache stays
+            // byte-identical); it is opted in explicitly via `set_interrupt_batching`.
+            interrupt_batching: false,
         };
         // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
         // stores AND device/DMA writes feed page-granular invalidation.
@@ -357,6 +371,21 @@ impl Machine {
     /// E4-T05: whether the predecoded block cache is currently active.
     pub fn block_cache_enabled(&self) -> bool {
         self.block_cache_enabled
+    }
+
+    /// E4-T05 Phase C: turn interrupt/device-sync BATCHING on/off. Distinct from
+    /// [`Self::set_block_cache`] — batching requires the cache (it is a no-op without it), but the
+    /// cache runs independently WITHOUT batching as the byte-identical mode. Flushing the cursor on
+    /// a transition keeps boundary bookkeeping consistent.
+    pub fn set_interrupt_batching(&mut self, on: bool) {
+        self.interrupt_batching = on;
+        self.block_cursor = None;
+    }
+
+    /// E4-T05 Phase C: whether interrupt/device-sync batching is active (and effective — it
+    /// requires the block cache to be on).
+    pub fn interrupt_batching(&self) -> bool {
+        self.interrupt_batching && self.block_cache_enabled
     }
 
     /// E4-T05: resize the block cache (rounded up to a power of two). `capacity == 1` is the
@@ -1774,6 +1803,29 @@ impl Machine {
         Ok(first)
     }
 
+    /// E4-T05 Phase C: is the hart about to execute the ENTRY of a (fresh) basic block, i.e. a
+    /// block boundary where interrupts/devices must be re-sampled under batching? True unless the
+    /// next step is a live continuation of the block currently being replayed — mirroring exactly
+    /// the fast-path hit test in [`Self::next_micro_op`] (same VA, block still cached, op present).
+    /// A branch/jump/trap/ecall/WFI (all block terminators) moves the PC off the cursor's expected
+    /// VA, so the following step is a boundary and re-syncs — matching the legacy per-op behavior at
+    /// every point interrupt-enable state could have changed. Because the answer depends only on the
+    /// block structure (terminators / 128-op cap / page edges), never on cache capacity (a block is
+    /// never evicted mid-replay by its own straight-line execution), the boundaries — and thus the
+    /// interrupt-sampling points — are deterministic across cache sizes.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn at_block_boundary(&self) -> bool {
+        let pc = self.hart.regs.pc;
+        match self.block_cursor {
+            Some((key, idx, next_va)) if next_va == pc => self
+                .block_cache
+                .get(key)
+                .and_then(|b| b.ops.get(idx))
+                .is_none(),
+            _ => true,
+        }
+    }
+
     fn run_traced_inner<T: trace::TraceSink>(
         &mut self,
         max_instrs: u64,
@@ -1786,11 +1838,23 @@ impl Machine {
             if let Some(reason) = self.syscon.as_ref().and_then(|c| *c.borrow()) {
                 return RunOutcome::Reset(reason);
             }
+            // E4-T05 Phase C: when interrupt batching is on, the device-fabric re-sync + the
+            // `next_interrupt` sampling below run ONLY at a block boundary (once per DecodedBlock,
+            // ≤128 ops), not per instruction. Mid-block they are skipped: no CSR/xret/wfi/fence can
+            // change interrupt-enable state mid-block (all are terminators), and no device state
+            // changes mid-block (device service is itself batched here), so the only new mid-block
+            // interrupt source is `mtime` crossing `mtimecmp` — and `mtime` still advances
+            // per-retire (`advance_clock`), so that interrupt becomes pending at the identical
+            // retire index and is merely SAMPLED at the next boundary (≤128 retires later). With
+            // batching OFF (incl. cache-on/batching-off, the byte-identical mode) this is `true`
+            // every iteration, so the legacy per-op behavior is bit-for-bit preserved.
+            #[cfg(not(feature = "zicsr-stub"))]
+            let sample_boundary = !self.interrupt_batching() || self.at_block_boundary();
             // E1-T12: refresh the CLINT-driven interrupt LEVELS (MTIP = mtime >= mtimecmp, MSIP
             // = msip) into `mip` before sampling — a continuously re-evaluated level, so a
             // just-crossed timer fires and a raised `mtimecmp` clears MTIP with no CSR access.
             #[cfg(not(feature = "zicsr-stub"))]
-            {
+            if sample_boundary {
                 self.sync_clint();
                 // E2-T07: tick the UART char-timeout clock and mirror its level into the
                 // PLIC BEFORE sync_plic samples EIP, so a UART edge lands this boundary.
@@ -1851,8 +1915,10 @@ impl Machine {
             // next instruction — sepc/mepc then points at the resume address (the interrupted
             // instruction fully retired or never ran). Taking the trap clears xIE, so a pending
             // line does not re-fire while its handler runs. (No real CSR file under zicsr-stub.)
+            // E4-T05 Phase C: sample interrupts only at a block boundary when batching (see above);
+            // `sample_boundary` is always `true` when batching is off, so this is unchanged there.
             #[cfg(not(feature = "zicsr-stub"))]
-            if let Some((cause, to_s)) = self.hart.csr.next_interrupt() {
+            if sample_boundary && let Some((cause, to_s)) = self.hart.csr.next_interrupt() {
                 let epc = self.hart.regs.pc;
                 self.hart.take_interrupt(cause, to_s, epc);
                 self.irqstats.on_interrupt(cause); // E2-T20 storm counter
