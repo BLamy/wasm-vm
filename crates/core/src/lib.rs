@@ -32,6 +32,7 @@ pub mod decode;
 pub mod decode_c;
 pub mod dev;
 pub mod diag;
+pub mod dispatch;
 pub mod fdt;
 pub mod hart;
 pub mod htif;
@@ -261,6 +262,20 @@ pub struct Machine {
     /// Defaults are all-zero / generation 0 — the RAM-only determinism harness round-trips against
     /// itself; a disk-backed host sets the real base hash and advances the generation on each commit.
     coherence: SnapshotCoherence,
+    /// E4-T05 Phase A: the predecoded block cache. A/B TOGGLE — `block_cache_enabled` (runtime,
+    /// default OFF unless the `predecode` feature flips it) selects the cached vs the legacy
+    /// decode path IN ONE BINARY, so the differential harness can prove cache-ON produces
+    /// BYTE-IDENTICAL retire traces to cache-OFF. The cache memoizes decode ONLY: execution
+    /// still feeds each micro-op through the SAME `execute()` and the run loop still re-syncs
+    /// devices + samples interrupts PER RETIRE (interrupt batching is Phase C, untouched here).
+    block_cache_enabled: bool,
+    /// The physically-keyed decoded-block store (Phase A: conservatively flushed on `fence.i`
+    /// and on any guest store — correct but slow; Phase B adds the page-level has-code bitmap).
+    block_cache: dispatch::BlockCache,
+    /// Cursor into the block currently being replayed: `(entry phys key, next op index,
+    /// expected next VA)`. A branch/jump/interrupt/trap moves the PC off `next VA`, invalidating
+    /// the cursor so the next step re-keys by physical PC (handling branches into mid-block).
+    block_cursor: Option<(u64, usize, u64)>,
 }
 
 /// E3-T12c3: the identity a snapshot is bound to. A restore is refused unless the target machine's
@@ -316,7 +331,33 @@ impl Machine {
             net: None,
             rng: None,
             coherence: SnapshotCoherence::default(),
+            // E4-T05: default the toggle to the `predecode` feature (OFF in the normal build);
+            // the differential harness flips it at runtime via `set_block_cache`.
+            block_cache_enabled: cfg!(feature = "predecode"),
+            block_cache: dispatch::BlockCache::with_capacity(1 << 12),
+            block_cursor: None,
         })
+    }
+
+    /// E4-T05: the A/B toggle — turn the predecoded block cache on/off at runtime. Flushing on
+    /// every transition guarantees the two paths never share a stale block, so a differential
+    /// run can flip mid-stream and still be byte-identical.
+    pub fn set_block_cache(&mut self, on: bool) {
+        self.block_cache_enabled = on;
+        self.block_cache.flush();
+        self.block_cursor = None;
+    }
+
+    /// E4-T05: whether the predecoded block cache is currently active.
+    pub fn block_cache_enabled(&self) -> bool {
+        self.block_cache_enabled
+    }
+
+    /// E4-T05: resize the block cache (rounded up to a power of two). `capacity == 1` is the
+    /// adversarial pathological-eviction mode — a 1-entry cache that must STILL be byte-identical.
+    pub fn set_block_cache_capacity(&mut self, capacity: usize) {
+        self.block_cache = dispatch::BlockCache::with_capacity(capacity);
+        self.block_cursor = None;
     }
 
     /// E3-T12c3: bind this machine to a base disk image + emulator build for snapshot coherence.
@@ -1241,6 +1282,10 @@ impl Machine {
                 }
             }
         }
+        // E4-T05: a restore swaps CPU + RAM wholesale, so any predecoded block (keyed by the
+        // pre-restore physical layout) is now stale — flush the cache and drop the cursor.
+        self.block_cache.flush();
+        self.block_cursor = None;
         Ok(())
     }
 
@@ -1556,6 +1601,137 @@ impl Machine {
         outcome
     }
 
+    /// E4-T05 Phase A: execute EXACTLY ONE instruction using the predecoded block cache,
+    /// returning the SAME `Result<(), Trap>` contract as [`Hart::step_traced`]. It replays a
+    /// memoized micro-op instead of re-fetching/decoding, but performs the identical
+    /// architectural sequence — counter arm, execute-trigger check, `execute`, `retire_tick`,
+    /// retire hook — so the retire trace is byte-identical to the legacy path. Only decode is
+    /// memoized. Called once per outer-loop iteration, so the loop's per-op device sync +
+    /// interrupt sampling stay per-retire (interrupt batching is Phase C).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn step_cached<T: trace::TraceSink>(&mut self, sink: &mut T) -> Result<(), Trap> {
+        // Same ordering as `step_traced`: arm counters, then the execute-address trigger check,
+        // BEFORE obtaining the instruction.
+        self.hart.csr.arm_counters();
+        let pc = self.hart.regs.pc;
+        if !self.hart.csr.triggers_idle()
+            && self
+                .hart
+                .csr
+                .trigger_fires(pc, crate::csr::TrigKind::Execute)
+        {
+            return Err(Trap {
+                cause: hart::Exception::Breakpoint,
+                tval: pc,
+            });
+        }
+        // Fetch the micro-op: a cursor hit replays a cached op with NO re-translation (safe —
+        // a block never leaves its physical page, so the entry translation covers every op); a
+        // miss (re)builds the block at pc's physical address, reproducing any fetch/decode trap.
+        let op = self.next_micro_op(pc)?;
+        let (rd, value, mem) = self.hart.execute(
+            &mut self.bus,
+            op.instr,
+            u64::from(op.len),
+            u64::from(op.raw),
+        )?;
+        self.hart.csr.retire_tick();
+        sink.retire(&trace::TraceRecord {
+            pc,
+            insn: op.raw,
+            rd: (rd != 0).then_some((rd, value)),
+            mem,
+        });
+        // Phase A conservative invalidation (correct-but-slow; Phase B refines it):
+        //  - `fence.i` orders a prior code write against this fetch stream → flush all.
+        //  - ANY guest store may have patched cached code (SMC) → flush all, and drop the
+        //    cursor so the NEXT op re-fetches fresh bytes (reproduces an intra-block SMC patch).
+        // Both are O(1) generation bumps.
+        if matches!(op.instr, crate::decode::Instr::FenceI)
+            || mem.map(|m| m.is_store).unwrap_or(false)
+        {
+            self.block_cache.flush();
+            self.block_cursor = None;
+        }
+        Ok(())
+    }
+
+    /// E4-T05: return the [`MicroOp`](dispatch::MicroOp) to execute at virtual address `pc`,
+    /// serving it from the block cache. A valid cursor (same expected VA, block still live)
+    /// replays the next cached op with no translation; otherwise the block at `pc` is (re)built
+    /// by walking [`Hart::decode_at`] to the first terminator / page boundary / 128-op cap. On a
+    /// fetch/decode fault the precise trap is returned (identical to the legacy path).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn next_micro_op(&mut self, pc: u64) -> Result<dispatch::MicroOp, Trap> {
+        // Fast path: continue the block we are mid-replay of.
+        if let Some((key, idx, next_va)) = self.block_cursor
+            && next_va == pc
+            && let Some(op) = self
+                .block_cache
+                .get(key)
+                .and_then(|b| b.ops.get(idx).copied())
+        {
+            self.block_cursor = Some((key, idx + 1, pc.wrapping_add(u64::from(op.len))));
+            return Ok(op);
+        }
+        self.block_cursor = None;
+
+        // Decode the entry op FIRST (this is the translation the legacy path would do — it fills
+        // the TLB identically), then key by physical PC (now a guaranteed TLB hit, no state change).
+        let first = self.hart.decode_at(&mut self.bus, pc)?;
+        let phys = self.hart.fetch_phys(&mut self.bus, pc)?;
+
+        // An entry op that straddles a physical page cannot live in a page-bounded block; run it
+        // uncached (byte-identical — `decode_at` already did the split fetch). Cursor stays None.
+        let page_off = pc & (dispatch::PAGE - 1);
+        if page_off + u64::from(first.len) > dispatch::PAGE {
+            return Ok(first);
+        }
+
+        // Walk contiguous ops within this physical page to the first terminator / page edge / cap.
+        let mut ops = alloc::vec::Vec::with_capacity(8);
+        let mut total_len = u64::from(first.len);
+        ops.push(first);
+        let page_base = pc & !(dispatch::PAGE - 1);
+        if !dispatch::is_terminator(&first.instr) {
+            let mut va = pc.wrapping_add(u64::from(first.len));
+            while ops.len() < dispatch::MAX_BLOCK_OPS {
+                // Stop if the next op would begin in a different physical page.
+                if (va & !(dispatch::PAGE - 1)) != page_base {
+                    break;
+                }
+                let op = match self.hart.decode_at(&mut self.bus, va) {
+                    Ok(op) => op,
+                    // A fetch/decode fault ahead ends the block here; it is reproduced precisely
+                    // when execution reaches that VA and rebuilds a fresh (trapping) block there.
+                    Err(_) => break,
+                };
+                // An op straddling the page boundary belongs to the next block, not this one.
+                if (va & (dispatch::PAGE - 1)) + u64::from(op.len) > dispatch::PAGE {
+                    break;
+                }
+                debug_assert_eq!(
+                    va & !(dispatch::PAGE - 1),
+                    page_base,
+                    "block op must not leave the entry physical page"
+                );
+                total_len += u64::from(op.len);
+                let is_term = dispatch::is_terminator(&op.instr);
+                ops.push(op);
+                if is_term {
+                    break;
+                }
+                va = va.wrapping_add(u64::from(op.len));
+            }
+        }
+
+        self.block_cache
+            .insert(dispatch::DecodedBlock::new(phys, ops, total_len));
+        // Entry op (index 0) is consumed now; the cursor resumes at index 1.
+        self.block_cursor = Some((phys, 1, pc.wrapping_add(u64::from(first.len))));
+        Ok(first)
+    }
+
     fn run_traced_inner<T: trace::TraceSink>(
         &mut self,
         max_instrs: u64,
@@ -1639,6 +1815,18 @@ impl Machine {
             // here. A single register-resident field read; the sampling decision itself is gated below.
             #[cfg_attr(feature = "zicsr-stub", allow(unused_variables))]
             let prof_pc = self.hart.regs.pc;
+            // E4-T05: when the block cache is enabled, decode is served from the memoized block
+            // (via `step_cached`); everything ELSE in this loop body — the per-op device sync,
+            // `next_interrupt`, `advance_clock`, `on_retire`, and the profiler hook — is UNCHANGED
+            // and still runs PER RETIRE. So the ONLY cache-on vs cache-off difference is memoized
+            // decode; the retire trace must be byte-identical. (Batching those is Phase C.)
+            #[cfg(not(feature = "zicsr-stub"))]
+            let step_result = if self.block_cache_enabled {
+                self.step_cached(sink)
+            } else {
+                self.hart.step_traced(&mut self.bus, sink)
+            };
+            #[cfg(feature = "zicsr-stub")]
             let step_result = self.hart.step_traced(&mut self.bus, sink);
             // E1-T12: an instruction retired iff the step succeeded — advance the deterministic
             // retire-count clock ONLY then (a delivered trap or a taken interrupt retires nothing).

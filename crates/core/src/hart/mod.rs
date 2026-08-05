@@ -723,9 +723,71 @@ impl Hart {
                 tval: pc,
             });
         }
+        // E4-T05: fetch/translate/expand-C/decode is factored into the SHARED `decode_at`, so
+        // the legacy path and the predecoded block cache decode through ONE function (no
+        // divergence). It returns the decoded micro-op or the precise fetch/decode trap.
+        let op = match self.decode_at(bus, pc) {
+            Ok(op) => op,
+            Err(trap) => {
+                // The base decoder rejects CSR/xRET encodings. With the quarantined
+                // zicsr-stub feature on, execute them there (they retire and are traced —
+                // never silently skipped). `trap.tval` carries the raw fetched bits; CSR/xRET
+                // are always 4-byte, so for a decode-rejected 32-bit word it equals `insn`.
+                // (Compressed ops never expand to CSR/xRET, so the 16-bit-tval illegal-
+                // compressed case simply fails the stub's opcode test and re-returns the trap.)
+                #[cfg(feature = "zicsr-stub")]
+                if trap.cause == Exception::IllegalInstruction {
+                    let insn = trap.tval as u32;
+                    if let Some((rd, value)) =
+                        crate::zicsr_stub::execute(&mut self.regs, &mut self.csrs, insn)
+                    {
+                        sink.retire(&crate::trace::TraceRecord {
+                            pc,
+                            insn,
+                            rd: (rd != 0).then_some((rd, value)),
+                            mem: None,
+                        });
+                        return Ok(());
+                    }
+                }
+                return Err(trap);
+            }
+        };
+        let (rd, value, mem) = self.execute(bus, op.instr, u64::from(op.len), u64::from(op.raw))?;
+        // E1-T14: the instruction retired (execute returned Ok) — advance mcycle/minstret AFTER
+        // execute, so a `csrr` that just read them observed the pre-retire count (matches Spike).
+        self.csr.retire_tick();
+        // Retirement hook — reached only when execute() returns Ok, so no record is
+        // emitted for a faulting instruction (trap-purity contract). Built and passed
+        // generically; with NullSink the optimizer erases all of this (E0-T15 proof).
+        sink.retire(&crate::trace::TraceRecord {
+            pc,
+            insn: op.raw,
+            // x0 / no-write instructions omit the register field.
+            rd: (rd != 0).then_some((rd, value)),
+            mem,
+        });
+        Ok(())
+    }
+
+    /// E4-T05: the SHARED decoder — fetch + translate + PMP-check + C-expand + decode of the
+    /// instruction at virtual address `va`, returning the predecoded [`MicroOp`] or the
+    /// precise fetch/decode [`Trap`] (page fault 12 / instr access fault 1 / instr address
+    /// misaligned 0 / illegal instruction 2). This is EXACTLY the front half of
+    /// [`step_traced`]; both the legacy path and the block cache decode through it so there
+    /// is a single source of truth. It performs NO architectural side effects (no counter
+    /// arm, no retire) — the caller owns those.
+    ///
+    /// [`MicroOp`]: crate::dispatch::MicroOp
+    /// [`step_traced`]: Self::step_traced
+    pub(crate) fn decode_at(
+        &mut self,
+        bus: &mut impl Bus,
+        va: u64,
+    ) -> Result<crate::dispatch::MicroOp, Trap> {
         // E1-T16/T15: translate + PMP-check the fetch of the low parcel (Sv39 page fault 12 /
         // instruction access fault 1, TRUE current mode). Fetch the 16-bit parcel from the PA.
-        let lo_pa = fetch_xlate(&self.csr, &mut self.tlb, bus, pc)?;
+        let lo_pa = fetch_xlate(&self.csr, &mut self.tlb, bus, va)?;
         // Fetch the low 16-bit parcel (C extension: `parcel[1:0] != 0b11` ⇒ a 16-bit
         // compressed instruction; else a 32-bit instruction whose upper half is a SEPARATE
         // access, so a straddling second half can fault precisely).
@@ -734,19 +796,19 @@ impl Hart {
             Err(BusFault::Access) => {
                 return Err(Trap {
                     cause: Exception::InstrAccessFault,
-                    tval: pc,
+                    tval: va,
                 });
             }
             Err(BusFault::Misaligned) => {
                 return Err(Trap {
                     cause: Exception::InstrAddrMisaligned,
-                    tval: pc,
+                    tval: va,
                 });
             }
         };
-        // `insn` is the word fed to decode/execute (the 32-bit expansion for a compressed
-        // op); `trace_insn` is the raw fetched bits for the trace; `insn_len` is 2 or 4.
-        let (insn, insn_len, trace_insn): (u32, u64, u32) = if lo & 0b11 != 0b11 {
+        // `insn` is the word fed to decode (the 32-bit expansion for a compressed op);
+        // `trace_insn` is the raw fetched bits for the trace; `insn_len` is 2 or 4.
+        let (insn, insn_len, trace_insn): (u32, u8, u32) = if lo & 0b11 != 0b11 {
             match crate::decode_c::expand_c(lo) {
                 Ok(w) => (w, 2, u32::from(lo)),
                 // A reserved compressed encoding (incl. the all-zeros parcel) is illegal;
@@ -763,65 +825,46 @@ impl Hart {
             // it independently, so a 32-bit instruction straddling a page boundary faults
             // precisely on the second parcel (tval = the second page's VA; mepc stays the
             // instruction start).
-            let hi_pa = fetch_xlate(&self.csr, &mut self.tlb, bus, pc.wrapping_add(2))?;
+            let hi_pa = fetch_xlate(&self.csr, &mut self.tlb, bus, va.wrapping_add(2))?;
             let hi = match bus.load16(hi_pa) {
                 Ok(w) => w,
                 Err(BusFault::Access) => {
                     return Err(Trap {
                         cause: Exception::InstrAccessFault,
-                        tval: pc.wrapping_add(2),
+                        tval: va.wrapping_add(2),
                     });
                 }
                 Err(BusFault::Misaligned) => {
                     return Err(Trap {
                         cause: Exception::InstrAddrMisaligned,
-                        tval: pc.wrapping_add(2),
+                        tval: va.wrapping_add(2),
                     });
                 }
             };
             let w = (u32::from(hi) << 16) | u32::from(lo);
             (w, 4, w)
         };
-        let instr = match decode(insn) {
-            Ok(instr) => instr,
-            Err(_) => {
-                // The base decoder rejects CSR/xRET encodings. With the quarantined
-                // zicsr-stub feature on, try to execute them there (they retire and are
-                // traced — never silently skipped). Otherwise it is an illegal insn.
-                // (Compressed ops never expand to CSR/xRET, so this path is 32-bit only.)
-                #[cfg(feature = "zicsr-stub")]
-                if let Some((rd, value)) =
-                    crate::zicsr_stub::execute(&mut self.regs, &mut self.csrs, insn)
-                {
-                    sink.retire(&crate::trace::TraceRecord {
-                        pc,
-                        insn: trace_insn,
-                        rd: (rd != 0).then_some((rd, value)),
-                        mem: None,
-                    });
-                    return Ok(());
-                }
-                return Err(Trap {
-                    cause: Exception::IllegalInstruction,
-                    tval: u64::from(trace_insn),
-                });
-            }
-        };
-        let (rd, value, mem) = self.execute(bus, instr, insn_len, u64::from(trace_insn))?;
-        // E1-T14: the instruction retired (execute returned Ok) — advance mcycle/minstret AFTER
-        // execute, so a `csrr` that just read them observed the pre-retire count (matches Spike).
-        self.csr.retire_tick();
-        // Retirement hook — reached only when execute() returns Ok, so no record is
-        // emitted for a faulting instruction (trap-purity contract). Built and passed
-        // generically; with NullSink the optimizer erases all of this (E0-T15 proof).
-        sink.retire(&crate::trace::TraceRecord {
-            pc,
-            insn: trace_insn,
-            // x0 / no-write instructions omit the register field.
-            rd: (rd != 0).then_some((rd, value)),
-            mem,
-        });
-        Ok(())
+        match decode(insn) {
+            Ok(instr) => Ok(crate::dispatch::MicroOp {
+                instr,
+                len: insn_len,
+                raw: trace_insn,
+            }),
+            // The base decoder rejects CSR/xRET encodings (and, under `zicsr-stub`, they stay
+            // illegal here — the caller reroutes them to the stub). `tval` is the raw fetched
+            // word so the caller can recover `insn` for the stub / for the mtval payload.
+            Err(_) => Err(Trap {
+                cause: Exception::IllegalInstruction,
+                tval: u64::from(trace_insn),
+            }),
+        }
+    }
+
+    /// E4-T05: translate + PMP-check an instruction fetch at `va`, returning the physical
+    /// address — the block cache's key. A thin wrapper over the fetch translation used by
+    /// [`decode_at`] so the cache can key a block by physical PC without re-deriving it.
+    pub(crate) fn fetch_phys(&mut self, bus: &mut impl Bus, va: u64) -> Result<u64, Trap> {
+        fetch_xlate(&self.csr, &mut self.tlb, bus, va)
     }
 
     /// Deliver a synchronous exception (E1-T10): the single trap-entry path. `step`/`execute`
@@ -883,7 +926,10 @@ impl Hart {
     /// trace record — `(rd, value)` is what was written to the register file (rd == 0
     /// meaning no architectural write) and `mem` the memory op if any. Every arm either
     /// fully retires (writeback + PC advance) or returns a trap having touched nothing.
-    fn execute(
+    ///
+    /// `pub(crate)` so the E4-T05 block-cache executor ([`crate::Machine::step_cached`]) can
+    /// feed a memoized micro-op into the SAME execute the legacy path uses.
+    pub(crate) fn execute(
         &mut self,
         bus: &mut impl Bus,
         instr: Instr,
