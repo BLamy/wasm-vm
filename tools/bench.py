@@ -162,6 +162,31 @@ class Console:
                 break
         raise TimeoutError(f"timed out waiting for /{pattern}/ after {timeout}s")
 
+    def wait_first_byte(self, timeout):
+        """Block until the FIRST byte is written to the console UART, buffering it, and return the
+        host monotonic timestamp of that first output. This is the engine-identical boot-start
+        endpoint (genuine first UART byte — this SBI prints no OpenSBI banner; the first line is the
+        kernel's `earlycon`/`Linux version` output)."""
+        deadline = time.monotonic() + timeout
+        if self.buf:
+            return time.monotonic()
+        while time.monotonic() < deadline:
+            r, _, _ = select.select([self.fd], [], [], min(1.0, deadline - time.monotonic()))
+            if r:
+                chunk = os.read(self.fd, 65536)
+                if not chunk:
+                    break
+                t = time.monotonic()
+                text = chunk.decode("utf-8", "replace")
+                if self.echo:
+                    sys.stderr.write(text)
+                    sys.stderr.flush()
+                self.buf += text
+                return t
+            if self.proc.poll() is not None and not r:
+                break
+        raise TimeoutError(f"no UART output within {timeout}s (boot never started)")
+
     def send(self, line):
         self.proc.stdin.write((line + "\n").encode())
         self.proc.stdin.flush()
@@ -206,8 +231,14 @@ def parse_dhrystone(text):
 
 
 BENCHES = {
-    "coremark": {"bin": "coremark.rv64", "parse": parse_coremark, "unit": "iterations/sec"},
-    "dhrystone": {"bin": "dhrystone.rv64", "parse": parse_dhrystone, "unit": "DMIPS"},
+    "coremark": {"bin": "coremark.rv64", "parse": parse_coremark,
+                 "unit": "iterations/sec", "higher_is_better": True},
+    "dhrystone": {"bin": "dhrystone.rv64", "parse": parse_dhrystone,
+                  "unit": "DMIPS", "higher_is_better": True},
+    # boot is a macro benchmark: no in-guest ELF/overlay, no parse fn — it wall-clocks the boot
+    # itself (OpenSBI first UART byte → getty login:) and reads a deterministic retired-instruction
+    # anchor from --profile-boot's PROFILE_JSON. Handled by its own code path in cmd_run.
+    "boot": {"bin": None, "parse": None, "unit": "seconds", "higher_is_better": False},
 }
 
 
@@ -269,20 +300,176 @@ def run_once(bench, echo=False):
     return {"score": score, "guest_elapsed": guest_elapsed, "host_elapsed": host_elapsed}
 
 
+def _browser_defer(args):
+    """Every bench shares the same browser-engine defer: the Alpine browser boot OS-reaps on the
+    dev mac (see E3), so --engine browser is nightly-only unless --allow-browser is forced."""
+    if not getattr(args, "allow_browser", False):
+        raise SystemExit(
+            "browser engine deferred to nightly — Alpine browser boot OS-reaps on this mac "
+            "(see E3); pass --allow-browser to override at your own risk"
+        )
+    raise SystemExit("browser engine not implemented (Phase 8 reaping-deferred)")
+
+
+BOOT_APPEND = "root=/dev/vda rw console=ttyS0 earlycon=sbi"
+# The boot bench stops itself at getty-login (--profile-boot's terminal marker), so it needs far
+# fewer instructions than a full benchmark run; keep a generous budget so a slow cold boot fits.
+BOOT_MAX_INSTRS = 20_000_000_000
+# A cold Alpine boot reaches getty-login in a few minutes now that the box has headroom. Cap the
+# per-run wait well under BOOT_TIMEOUT (used by the micro-benches) so a genuine boot failure surfaces
+# fast instead of silently burning 20 min. The first UART byte lands in ~1s, login in ~2–4 min.
+BOOT_BENCH_TIMEOUT = 600.0
+
+
+def run_boot_once(echo=False):
+    """Wall-clock a single cold boot: first UART byte written by the guest (t0) → getty `login:`.
+
+    Runs with --profile-boot, which (a) makes the VM halt itself at the login marker so no shell
+    interaction / kill is needed, and (b) prints a PROFILE_JSON line to stderr whose `total_retired`
+    is the retired-instruction count AT getty-login — a deterministic, host-noise-free anchor.
+
+    Returns {boot_wall_s, boot_retired_instrs}.
+    """
+    cmd = [
+        VM_BIN, "boot",
+        "--kernel", KERNEL,
+        "--drive", f"file={ROOTFS}",
+        "--append", BOOT_APPEND,
+        "--ram-mib", str(RAM_MIB),
+        "--max-instrs", str(BOOT_MAX_INSTRS),
+        "--profile-boot",
+    ]
+    proc = subprocess.Popen(
+        cmd, cwd=REPO, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    con = Console(proc, echo=echo)
+    t0 = None
+    boot_wall_s = None
+    try:
+        # t0 = the genuine FIRST UART byte written by the guest (engine-identical start endpoint).
+        # This VM's SBI prints no OpenSBI banner; the first line is the kernel's earlycon output.
+        t0 = con.wait_first_byte(BOOT_BENCH_TIMEOUT)
+        con.expect(r"login:", BOOT_BENCH_TIMEOUT)
+        boot_wall_s = time.monotonic() - t0
+        # --profile-boot halts the VM at the login marker; collect the rest (incl. PROFILE_JSON on
+        # stderr). communicate drains both pipes so the child can't block on a full stderr buffer.
+        try:
+            _, err = proc.communicate(timeout=120)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            _, err = proc.communicate()
+    finally:
+        if proc.poll() is None:
+            proc.kill()
+
+    err_text = err.decode("utf-8", "replace") if err else ""
+    m = re.search(r"PROFILE_JSON\s+(\{.*\})", err_text)
+    if not m:
+        fail("boot bench: no PROFILE_JSON line on stderr (did --profile-boot reach getty-login?)")
+    try:
+        prof = json.loads(m.group(1))
+    except json.JSONDecodeError as e:
+        fail(f"boot bench: malformed PROFILE_JSON ({e})")
+    retired = prof.get("total_retired")
+    if not isinstance(retired, int):
+        fail(f"boot bench: PROFILE_JSON has no integer total_retired (got {retired!r})")
+    return {"boot_wall_s": boot_wall_s, "boot_retired_instrs": retired}
+
+
+def cmd_run_boot(args):
+    if os.path.exists(VM_BIN):
+        pass
+    else:
+        ensure_vm()
+    if not os.path.exists(KERNEL):
+        fail(f"missing kernel {KERNEL}")
+    if not os.path.exists(ROOTFS):
+        fail(f"missing Alpine rootfs {ROOTFS} (build it: tools/build-rootfs.sh)")
+
+    results = []
+    for i in range(args.runs):
+        print(f"bench: boot native run {i + 1}/{args.runs}…", file=sys.stderr)
+        results.append(run_boot_once(echo=args.verbose))
+
+    walls = [r["boot_wall_s"] for r in results]
+    retireds = [r["boot_retired_instrs"] for r in results]
+    # boot_retired_instrs is a near-deterministic anchor. In practice it is NOT bit-exact: the
+    # --profile-boot report stamps the retired count in the console-feed quantum where `login:` is
+    # first *seen*, and that quantum boundary isn't instruction-aligned to the exact login byte, so
+    # the value jitters by ~0.2% across runs (real boot execution is instruction-count-deterministic
+    # by design; this is measurement granularity, not guest nondeterminism). We assert the anchor is
+    # stable within a TIGHT tolerance — a value that moves by >1% would signal real nondeterminism.
+    retired_median = int(statistics.median(retireds))
+    retired_spread = (max(retireds) - min(retireds)) / retired_median if retired_median else 0.0
+    RETIRED_TOL = 0.01
+    if retired_spread > RETIRED_TOL:
+        fail(f"boot_retired_instrs spread {retired_spread:.4f} exceeds {RETIRED_TOL} "
+             f"across runs {retireds} — the getty-login anchor is not stable (refuted)")
+    boot_retired_instrs = retired_median
+
+    median = statistics.median(walls)
+    spread = (max(walls) - min(walls)) / median if median else 0.0
+    noise_warning = spread > 0.05
+
+    out = {
+        "bench": "boot",
+        "score": round(median, 3),
+        "unit": BENCHES["boot"]["unit"],
+        "higher_is_better": BENCHES["boot"]["higher_is_better"],
+        "runs": [round(w, 3) for w in walls],
+        "spread": round(spread, 4),
+        "noise_warning": noise_warning,
+        "boot_retired_instrs": boot_retired_instrs,
+        "boot_retired_runs": retireds,
+        "boot_retired_spread": round(retired_spread, 5),
+        "engine": args.engine,
+        "commit": git_rev(),
+        "config": {
+            "kernel": os.path.relpath(KERNEL, REPO),
+            "rootfs": os.path.relpath(ROOTFS, REPO),
+            "append": BOOT_APPEND,
+            "vm_build": "release",
+            "ram_mib": RAM_MIB,
+        },
+        "date": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "timing_check": {
+            "note": "boot_wall_s is host-dependent (tens of seconds on the ~30 MIPS interpreter); "
+                    "boot_retired_instrs is the near-deterministic anchor (median; jitters ~0.2% "
+                    "from profiler quantum granularity, asserted stable within 1%). Endpoints: "
+                    "first UART byte written by the guest (t0; this SBI prints no OpenSBI banner) "
+                    "→ getty 'login:'.",
+            "boot_retired_instrs": boot_retired_instrs,
+            "boot_retired_spread": round(retired_spread, 5),
+            "runs_wall_s": [round(w, 3) for w in walls],
+        },
+    }
+    text = json.dumps(out, indent=2)
+    print(text)
+    if args.json:
+        with open(args.json, "w") as f:
+            f.write(text + "\n")
+    if getattr(args, "ledger", False):
+        ledger_append(out, args.baseline)
+    return 0
+
+
 def cmd_run(args):
+    if args.bench == "boot":
+        if args.engine == "browser":
+            _browser_defer(args)
+        if args.engine != "native":
+            raise SystemExit(f"unknown engine {args.engine}")
+        return cmd_run_boot(args)
+
     if args.engine == "browser":
-        if not args.allow_browser:
-            raise SystemExit(
-                "browser engine deferred to nightly — Alpine browser boot OS-reaps on this mac "
-                "(see E3); pass --allow-browser to override at your own risk"
-            )
-        raise SystemExit("browser engine not implemented (Phase 8 reaping-deferred)")
+        _browser_defer(args)
     if args.engine != "native":
         raise SystemExit(f"unknown engine {args.engine}")
 
     bench = args.bench
     if bench not in BENCHES:
-        raise SystemExit(f"unknown benchmark {bench} (expected coremark|dhrystone)")
+        raise SystemExit(f"unknown benchmark {bench} (expected coremark|dhrystone|boot)")
 
     digest = verify_artifacts(BENCHES[bench]["bin"])
     ensure_vm()
@@ -313,6 +500,7 @@ def cmd_run(args):
         "bench": bench,
         "score": round(median, 3),
         "unit": BENCHES[bench]["unit"],
+        "higher_is_better": BENCHES[bench]["higher_is_better"],
         "runs": [round(s, 3) for s in scores],
         "spread": round(spread, 4),
         "noise_warning": noise_warning,
@@ -343,20 +531,169 @@ def cmd_run(args):
     if args.json:
         with open(args.json, "w") as f:
             f.write(text + "\n")
+    if getattr(args, "ledger", False):
+        ledger_append(out, args.baseline)
+    return 0
+
+
+# ---- ledger (Phase 4): append-only, hash-chained baseline history --------------------------------
+
+LEDGER = os.path.join(REPO, "bench", "ledger.json")
+GENESIS_PREV = "0" * 64
+ENTRY_KEYS = ("bench", "engine", "score", "unit", "higher_is_better", "spread",
+              "commit", "vm_build", "baseline", "config", "date", "prev_sha256")
+
+
+def _canonical_sha256(entry):
+    """sha256 of an entry's canonical JSON — the link the next entry chains onto."""
+    return hashlib.sha256(
+        json.dumps(entry, sort_keys=True).encode("utf-8")
+    ).hexdigest()
+
+
+def load_ledger():
+    if not os.path.exists(LEDGER):
+        return {"schema_version": 1, "entries": []}
+    with open(LEDGER) as f:
+        return json.load(f)
+
+
+def save_ledger(ledger):
+    with open(LEDGER, "w") as f:
+        f.write(json.dumps(ledger, indent=2, sort_keys=True) + "\n")
+
+
+def entry_from_result(result, baseline):
+    """Project a `run`-emitted result dict onto the fixed ledger entry schema (minus prev_sha256,
+    filled by the append). NEVER mutates existing entries — only builds a new one."""
+    return {
+        "bench": result["bench"],
+        "engine": result["engine"],
+        "score": result["score"],
+        "unit": result["unit"],
+        "higher_is_better": result.get(
+            "higher_is_better", BENCHES.get(result["bench"], {}).get("higher_is_better", True)
+        ),
+        "spread": result.get("spread", 0.0),
+        "commit": result.get("commit", git_rev()),
+        "vm_build": result.get("config", {}).get("vm_build", "release"),
+        "baseline": baseline,
+        "config": result.get("config", {}),
+        "date": result.get("date", datetime.datetime.now(datetime.timezone.utc).isoformat()),
+    }
+
+
+def ledger_append(result, baseline):
+    """Append ONE hash-chained entry built from a result dict. Append-only: existing entries are
+    read but never reordered or rewritten."""
+    ledger = load_ledger()
+    entries = ledger.setdefault("entries", [])
+    entry = entry_from_result(result, baseline)
+    entry["prev_sha256"] = GENESIS_PREV if not entries else _canonical_sha256(entries[-1])
+    entries.append(entry)
+    save_ledger(ledger)
+    print(f"bench: appended {entry['bench']}/{entry['engine']} "
+          f"score={entry['score']} {entry['unit']} to {os.path.relpath(LEDGER, REPO)}",
+          file=sys.stderr)
+    return entry
+
+
+def cmd_record(args):
+    with open(args.result) as f:
+        result = json.load(f)
+    ledger_append(result, args.baseline)
+    return 0
+
+
+def verify_chain(ledger):
+    """Return a list of human-readable break descriptions (empty == chain valid). Detects a mutated
+    historical entry: any change to entry N breaks entry N+1's prev_sha256 link (adversarial #4)."""
+    breaks = []
+    entries = ledger.get("entries", [])
+    prev_hash = GENESIS_PREV
+    for i, entry in enumerate(entries):
+        missing = [k for k in ENTRY_KEYS if k not in entry]
+        if missing:
+            breaks.append(f"entry {i} ({entry.get('bench', '?')}) missing keys: {missing}")
+        if entry.get("prev_sha256") != prev_hash:
+            breaks.append(
+                f"entry {i} ({entry.get('bench', '?')}): prev_sha256 "
+                f"{entry.get('prev_sha256')} != expected {prev_hash} (chain broken / tampered)"
+            )
+        prev_hash = _canonical_sha256(entry)
+    return breaks
+
+
+def cmd_report(args):
+    ledger = load_ledger()
+    entries = ledger.get("entries", [])
+
+    if args.verify:
+        breaks = verify_chain(ledger)
+        if breaks:
+            print("bench: LEDGER VERIFY FAILED — hash chain / schema broken:", file=sys.stderr)
+            for b in breaks:
+                print(f"  - {b}", file=sys.stderr)
+            return 1
+        print(f"bench: ledger OK — {len(entries)} entries, hash chain intact", file=sys.stderr)
+
+    # Group by bench, preserving insertion order.
+    by_bench = {}
+    for e in entries:
+        by_bench.setdefault(e["bench"], []).append(e)
+
+    benches = [args.bench] if args.bench else list(by_bench.keys())
+    for bench in benches:
+        rows = by_bench.get(bench, [])
+        if not rows:
+            print(f"\n== {bench} ==  (no entries)")
+            continue
+        base = next((r for r in rows if r.get("baseline") == "level3-interpreter"), None)
+        print(f"\n== {bench} ==  ({rows[0]['unit']}, "
+              f"{'higher' if rows[0].get('higher_is_better') else 'lower'} is better)")
+        print(f"{'date':25}  {'commit':10}  {'engine':8}  {'score':>12}  "
+              f"{'spread':>8}  {'speedup':>8}")
+        for r in rows:
+            speedup = "-"
+            if base and base["score"]:
+                if r.get("higher_is_better", True):
+                    speedup = f"{r['score'] / base['score']:.2f}x"
+                else:
+                    speedup = f"{base['score'] / r['score']:.2f}x" if r["score"] else "-"
+            print(f"{r['date'][:25]:25}  {r['commit'][:10]:10}  {r['engine']:8}  "
+                  f"{r['score']:>12}  {r.get('spread', 0):>8}  {speedup:>8}")
     return 0
 
 
 def main():
-    ap = argparse.ArgumentParser(description="in-guest CoreMark/Dhrystone benchmark harness (E4-T03)")
+    ap = argparse.ArgumentParser(
+        description="macro + micro benchmark harness and baseline ledger (E4-T03/T04)")
     sub = ap.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("run", help="boot the VM and run a benchmark")
-    r.add_argument("bench", choices=["coremark", "dhrystone"])
+    r.add_argument("bench", choices=["coremark", "dhrystone", "boot"])
     r.add_argument("--engine", default="native", choices=["native", "browser"])
     r.add_argument("--runs", type=int, default=3)
     r.add_argument("--json", help="also write the JSON result to this path")
     r.add_argument("--verbose", action="store_true", help="stream the guest console to stderr")
     r.add_argument("--allow-browser", action="store_true", help="override the browser-engine defer")
+    r.add_argument("--ledger", action="store_true",
+                   help="append the result to bench/ledger.json after a successful run")
+    r.add_argument("--baseline", default=None,
+                   help="baseline tag for the ledger entry (e.g. level3-interpreter)")
     r.set_defaults(func=cmd_run)
+
+    rec = sub.add_parser("record", help="append a run-emitted JSON result to bench/ledger.json")
+    rec.add_argument("result", help="path to a `run --json` result file")
+    rec.add_argument("--baseline", default=None,
+                     help="baseline tag (e.g. level3-interpreter)")
+    rec.set_defaults(func=cmd_record)
+
+    rep = sub.add_parser("report", help="print per-bench ledger history")
+    rep.add_argument("--bench", default=None, help="restrict to one benchmark")
+    rep.add_argument("--verify", action="store_true",
+                     help="walk the hash chain + validate schema; nonzero exit on any break")
+    rep.set_defaults(func=cmd_report)
+
     args = ap.parse_args()
     raise SystemExit(args.func(args))
 

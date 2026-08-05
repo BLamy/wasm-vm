@@ -30,6 +30,7 @@ tools/bench.py        the harness (boot + console-drive + parse + JSON)
 ```
 python3 tools/bench.py run coremark  --engine native            # median-of-3, JSON to stdout
 python3 tools/bench.py run dhrystone --engine native --runs 3 --json out.json
+python3 tools/bench.py run boot      --engine native --runs 3    # macro bench: cold-boot wall clock
 make bench-coremark          # convenience targets
 make bench-dhrystone
 ```
@@ -95,6 +96,58 @@ are the durable artifact; the image is how you reproduce them. `mkimage.sh` pack
 The harness enforces the pins at run time: it refuses to run unless each ELF's sha256 matches
 `SHA256SUMS` and `bench.ext4` exists (**adversarial #4** — a deleted/tampered overlay fails loudly
 instead of silently benchmarking a different binary from the base rootfs).
+
+## Boot macro benchmark (E4-T04)
+
+`run boot` wall-clocks a cold boot with **byte-pattern-defined endpoints** (not eyeballed):
+
+- **t0** = the genuine **first UART byte** written by the guest. This VM's SBI prints **no OpenSBI
+  banner** (SBI impl ID `0x574d` = "WM"), so the first console output is the kernel's `earlycon`
+  line — captured by `Console.wait_first_byte`, the engine-identical start endpoint.
+- **t1** = the getty **`login:`** regex on the serial console. `boot_wall_s = t1 − t0`.
+
+It boots with **no** second drive and `--profile-boot`, which halts the VM at the login marker (no
+shell interaction / kill needed) and prints a `PROFILE_JSON {…}` line on stderr. Its `total_retired`
+is recorded as **`boot_retired_instrs`** — the retired-instruction count *at* getty-login (median of
+the runs). It is a **near-deterministic, host-noise-free anchor**: honestly it is **not bit-exact** —
+it jitters ~0.2% because the profiler stamps the retired count in the console-feed quantum where
+`login:` is first *seen*, a boundary not instruction-aligned to the exact login byte (the boot
+execution itself is instruction-count deterministic by design). The harness asserts the anchor is
+stable **within 1%** across runs; more movement would signal real nondeterminism. `boot_wall_s` is
+the only host-noisy metric →
+median-of-3 with the same `spread` / `noise_warning` reporting as the micro-benches. Schema fields:
+`unit:"seconds"`, `higher_is_better:false`, plus `boot_retired_instrs`.
+
+## Ledger — append-only, hash-chained baseline history (E4-T04)
+
+`bench/ledger.json` accumulates every recorded baseline/measurement. It is **append-only** and
+**tamper-evident** via a per-entry `prev_sha256` **hash chain**.
+
+```
+python3 tools/bench.py run boot --engine native --ledger --baseline level3-interpreter
+python3 tools/bench.py record out.json --baseline level3-interpreter   # append an existing result
+python3 tools/bench.py report                                          # per-bench history + speedup
+python3 tools/bench.py report --bench boot                             # one bench
+python3 tools/bench.py report --verify                                 # walk chain; nonzero on break
+```
+
+**Schema.** `{"schema_version": 1, "entries": [ … ]}`, written back with
+`json.dumps(ledger, indent=2, sort_keys=True)`. Each entry:
+
+```
+{ bench, engine, score, unit, higher_is_better, spread,
+  commit,            # emulator git HEAD at measurement time
+  vm_build,          # "release"
+  baseline,          # e.g. "level3-interpreter" (null for ad-hoc runs)
+  config,            # the run's config block (flags, iterations, kernel/rootfs, …)
+  date,              # ISO-8601 UTC
+  prev_sha256 }      # sha256 of the PREVIOUS entry's canonical JSON (json.dumps(entry, sort_keys=True))
+```
+
+The first entry's `prev_sha256` is a fixed **genesis** constant (64 zeros). `record`/`run --ledger`
+**never** reorder or rewrite existing entries — they only append. `report --verify` recomputes the
+chain and validates the required keys, exiting nonzero on any break: **mutating one historical entry
+breaks the next entry's `prev_sha256` link and is detected** (adversarial #4).
 
 ## Browser engine — reaping-deferred
 

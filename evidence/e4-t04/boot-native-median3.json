@@ -1,0 +1,40 @@
+{
+  "bench": "boot",
+  "score": 375.386,
+  "unit": "seconds",
+  "higher_is_better": false,
+  "runs": [
+    373.853,
+    379.051,
+    375.386
+  ],
+  "spread": 0.0138,
+  "noise_warning": false,
+  "boot_retired_instrs": 2971174099,
+  "boot_retired_runs": [
+    2968774127,
+    2971774044,
+    2971174099
+  ],
+  "boot_retired_spread": 0.00101,
+  "engine": "native",
+  "commit": "e7d3f6214f38ce89781b991ef154b2ff8a5f3587",
+  "config": {
+    "kernel": "releases/kernel/6.6.63/Image",
+    "rootfs": "releases/rootfs/alpine-rootfs.ext4",
+    "append": "root=/dev/vda rw console=ttyS0 earlycon=sbi",
+    "vm_build": "release",
+    "ram_mib": 256
+  },
+  "date": "2026-08-05T06:04:09.068507+00:00",
+  "timing_check": {
+    "note": "boot_wall_s is host-dependent (tens of seconds on the ~30 MIPS interpreter); boot_retired_instrs is the near-deterministic anchor (median; jitters ~0.2% from profiler quantum granularity, asserted stable within 1%). Endpoints: first UART byte written by the guest (t0; this SBI prints no OpenSBI banner) \u2192 getty 'login:'.",
+    "boot_retired_instrs": 2971174099,
+    "boot_retired_spread": 0.00101,
+    "runs_wall_s": [
+      373.853,
+      379.051,
+      375.386
+    ]
+  }
+}

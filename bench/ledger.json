@@ -1,0 +1,67 @@
+{
+  "entries": [
+    {
+      "baseline": "level3-interpreter",
+      "bench": "dhrystone",
+      "commit": "010446f009677070f47a16f842b5c219b0158907",
+      "config": {
+        "binary_sha256": "eb21029f56d9774e9fa621ad8ef29b5f1fc8a2d5f7875d7c3eb5714fff5427d3",
+        "flags": "-static -O2 -g0 -march=rv64gc -mabi=lp64d",
+        "gcc": "gcc-13-riscv64-linux-gnu 13.3.0",
+        "iterations": 30000000,
+        "ram_mib": 256,
+        "vm_build": "release"
+      },
+      "date": "2026-08-05T03:53:42.883931+00:00",
+      "engine": "native",
+      "higher_is_better": true,
+      "prev_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "score": 189.717,
+      "spread": 0.0,
+      "unit": "DMIPS",
+      "vm_build": "release"
+    },
+    {
+      "baseline": "level3-interpreter",
+      "bench": "coremark",
+      "commit": "05bb0fe90e4666fcd2bd07f999e614d0be4d58f3",
+      "config": {
+        "binary_sha256": "4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937",
+        "flags": "-static -O2 -g0 -march=rv64gc -mabi=lp64d",
+        "gcc": "gcc-13-riscv64-linux-gnu 13.3.0",
+        "iterations": 6000,
+        "ram_mib": 256,
+        "vm_build": "release"
+      },
+      "date": "2026-08-05T04:52:24.295850+00:00",
+      "engine": "native",
+      "higher_is_better": true,
+      "prev_sha256": "cb8fd2650205dbee0c5a5c39804b790596a9fcf92c1ccd6b41e120bd022b7de0",
+      "score": 261.734,
+      "spread": 0.0001,
+      "unit": "iterations/sec",
+      "vm_build": "release"
+    },
+    {
+      "baseline": "level3-interpreter",
+      "bench": "boot",
+      "commit": "e7d3f6214f38ce89781b991ef154b2ff8a5f3587",
+      "config": {
+        "append": "root=/dev/vda rw console=ttyS0 earlycon=sbi",
+        "kernel": "releases/kernel/6.6.63/Image",
+        "ram_mib": 256,
+        "rootfs": "releases/rootfs/alpine-rootfs.ext4",
+        "vm_build": "release"
+      },
+      "date": "2026-08-05T06:04:09.068507+00:00",
+      "engine": "native",
+      "higher_is_better": false,
+      "prev_sha256": "f4a5ec63383de67a6eb3b204213f0a07b40b0b642140b0e18895bde03fe021de",
+      "score": 375.386,
+      "spread": 0.0138,
+      "unit": "seconds",
+      "vm_build": "release"
+    }
+  ],
+  "schema_version": 1
+}
