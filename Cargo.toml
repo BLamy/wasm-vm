@@ -28,3 +28,14 @@ env_logger = "0.11"
 console_log = "1"
 console_error_panic_hook = "0.1"
 memmap2 = "0.9"
+
+# E4-T02 flamegraphs: a profiling build that is byte-for-byte the release optimisation pipeline
+# (opt-level 3, same codegen-units / lto) but keeps full DWARF debuginfo so `samply` can attribute
+# host samples to readable Rust frame names. Additive — it does NOT mutate `[profile.release]`, so
+# the shipped release binary and every existing bench number are unchanged. Build the emulator for
+# profiling with:  `cargo build --profile profiling -p wasm-vm-cli`  (binary: target/profiling/wasm-vm).
+# See docs/perf/flamegraphs.md.
+[profile.profiling]
+inherits = "release"
+debug = true          # full DWARF line tables + symbols; no effect on codegen/optimisation
+strip = false         # never strip — stripping is what produces anonymous [unknown] frames

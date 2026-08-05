@@ -38,7 +38,11 @@ BENCH_DIR = os.path.join(REPO, "bench", "guest")
 KERNEL = os.path.join(REPO, "releases", "kernel", "6.6.63", "Image")
 ROOTFS = os.path.join(REPO, "releases", "rootfs", "alpine-rootfs.ext4")
 BENCH_EXT4 = os.path.join(BENCH_DIR, "bench.ext4")
-VM_BIN = os.path.join(REPO, "target", "release", "wasm-vm")
+# Default is the release binary (the frozen baseline binary — never change this default).
+# E4-T02 lets the flamegraph doc point the SAME harness at the `--profile profiling` binary
+# (readable symbols) via WASM_VM_BIN, to (a) profile a CoreMark run and (b) prove the profiling
+# build's score is within 15% of release (representativeness). Purely additive; unset = unchanged.
+VM_BIN = os.environ.get("WASM_VM_BIN", os.path.join(REPO, "target", "release", "wasm-vm"))
 SHA256SUMS = os.path.join(BENCH_DIR, "SHA256SUMS")
 
 RAM_MIB = 256

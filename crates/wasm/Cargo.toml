@@ -68,3 +68,12 @@ zicsr-stub = ["wasm-vm-core/zicsr-stub"]
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
+
+# E4-T02 flamegraphs: `wasm-pack build --profiling` runs `wasm-opt`, whose DEFAULT strips the
+# custom `name` section — so a plain `--profiling` build shows anonymous `wasm-function[N]` frames
+# in Chrome/Firefox despite the "profiling" label. Passing `-g` to wasm-opt makes it PRESERVE the
+# name section through optimisation, so browser profiles show demangled Rust frames. Verify after a
+# build with:  `wasm-objdump -h pkg/wasm_vm_wasm_bg.wasm | grep name`  (must list a "name" Custom
+# section). See docs/perf/flamegraphs.md.
+[package.metadata.wasm-pack.profile.profiling]
+wasm-opt = ['-O', '-g']
