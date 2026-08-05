@@ -61,4 +61,38 @@ cold start and diff against the ledger entry (>10% short refutes); (5) time a `s
 guest — if block-granular interrupt polling warped timer delivery, refuted.
 
 ## Verification log
-(empty)
+- 2026-08-05 — **Design + phased plan (correctness-first; informed by the E4-T02 profile).** Ground truth:
+  the per-instruction loop `run_traced_inner` (`crates/core/src/lib.rs:1559-1779`) does the FULL device/
+  interrupt fabric re-sync (`sync_clint`/`sync_plic`/`IrqLine::set`/virtio `service`/`next_interrupt`) on
+  EVERY retired instruction (lines 1571-1636) — so E4-T02's "47% device sync" is per-retire, and batching
+  it to block boundaries is the real ≥1.3× lever (the decode cache alone attacks only the ~9% decode →
+  ~1.05-1.1×). Decode is per-instruction in `hart/mod.rs:707-825`; the `Instr` enum (`decode.rs:91`) is
+  ALREADY fully field-extracted (C pre-expanded), so a micro-op ≈ `(Instr, len:u8, raw:u32)` and the cache
+  memoizes the front half of `step_traced` and replays into the SAME `execute()` — low correctness risk
+  for the cache itself.
+  - **`DecodedBlock`** (new `crates/core/src/dispatch.rs`): ops from entry PC to first terminator
+    (branch/jal/jalr/ecall/ebreak/xret/wfi/fence.i/sfence/CSR-write) OR physical-page boundary OR 128 ops;
+    per-op guest length; never straddles a page. Built by a `decode_at()` factored out of `step_traced`
+    (one shared decoder → no divergence).
+  - **Cache:** open-addressed hash keyed by PHYSICAL PC (TCG `tb_phys_hash` style — paging remaps of the
+    same physical code reuse the block, no flush).
+  - **Invalidation (complete trigger list — a miss = silent divergence):** `fence.i` → full flush;
+    store into a code page → `flush_page` via a page-level "has-code" bitmap (E4-T17 SMC precursor);
+    **device/DMA writes into RAM → same page check (easily-missed trigger)**; reset + snapshot-restore →
+    full flush; `sfence.vma`/`satp` → no block flush (physical keying), TLB flush unchanged.
+  - **Interrupt/device-sync batching (Phase C — the win, highest risk):** move lines 1571-1636 to block
+    boundaries; keep `advance_clock` (the E1-T12 retire clock — determinism), `irqstats.on_retire`, and the
+    E4-T01 profiler hook PER-RETIRE. Correctness: CSR writes are terminators (no mid-block mie/mstatus
+    change), so the only mid-block new-interrupt source is `mtime` crossing `mtimecmp` → latency bounded
+    ≤128 retires (AC #4); mtime still advances per-retire so the interrupt becomes pending at the identical
+    retire index, only its SAMPLING defers ≤128 instrs (architecturally legal). WFI is a terminator → idle
+    path unchanged.
+  - **Validation (non-negotiable):** an A/B toggle (runtime flag + `predecode` feature) runs cache-ON vs
+    cache-OFF in one binary and asserts BYTE-IDENTICAL retire traces; every phase keeps
+    `riscv-tests-suite` + `determinism` + `diff-all` (Spike lockstep) + a byte-identical Alpine boot green;
+    plus a pathological 1-entry-cache differential mode, SMC+fence.i, mid-block mtimecmp-latency, and
+    dual-VA-same-phys tests.
+  - **Phases (each differential-gated):** A cache, semantically identical (interrupts still per-op) [low
+    risk]; B invalidation [medium]; C interrupt-poll-at-block-boundary [highest]; D dispatch micro-tuning
+    (dense-match, keep-or-revert individually); E re-measure the E4-T04 ledger (≥1.3× CoreMark vs the 261.7
+    baseline). Honest: the ≥1.3× must come from Phase C, not the cache.
