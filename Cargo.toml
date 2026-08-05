@@ -8,6 +8,7 @@ members = [
     "crates/file-agent",
     "crates/wvseccomp",
     "crates/wasm",
+    "crates/wasm-emit",
     "crates/cli",
     "tools/fuzz",
 ]

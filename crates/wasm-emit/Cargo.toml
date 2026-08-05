@@ -1,0 +1,33 @@
+# E4-T07: the hand-rolled WASM module emitter the JIT (E4-T09…T20) calls at runtime to turn a
+# translated guest block into real WebAssembly bytecode. It lives in its own crate — small, hot,
+# load-bearing — rather than pulling `wasm-encoder`+friends into the JIT: v86 hand-rolls exactly this
+# (`src/rust/wasmgen`) and the scope here is the JIT's need (§3 ABI, §7 budgets of
+# docs/jit-architecture.md), not general WASM authoring.
+#
+# ZERO runtime dependencies (AC: `cargo tree -p wasm-emit -e normal` shows only workspace crates —
+# and there are none). `no_std + alloc` so it compiles for wasm32-unknown-unknown, because the JIT
+# itself runs *inside* a wasm module in the browser and calls this emitter there. `wasmparser` /
+# `wasmtime` are DEV-dependencies only: they validate + execute the emitter's output in tests, and
+# are native-only so they never leak into the wasm build.
+[package]
+name = "wasm-vm-wasm-emit"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lib]
+name = "wasm_emit"
+
+[dependencies]
+
+[dev-dependencies]
+# Validity oracle: every emitted module is fed through `wasmparser::Validator` with the threads
+# feature on (AC 3a). Not a runtime dep — tests only.
+wasmparser = "0.240"
+# Property-test engine for the LEB128 round-trip + randomized straight-line function generator.
+proptest = "1"
+# Executable smoke test (AC 3d): run an emitted add-function natively and assert the result. Native
+# only — dev-deps are not compiled for the wasm32 target, so this never bloats the browser build.
+wasmtime = { version = "35", default-features = false, features = ["cranelift", "runtime"] }
