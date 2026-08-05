@@ -55,4 +55,27 @@ compiles at `-O2` (check the command line in the console log) and produces a non
 or at least never silently rewrites history (append-only property).
 
 ## Verification log
-(empty)
+- 2026-08-05 — **Design + phased plan (builds on the E4-T03 harness).** Key decisions:
+  - **Boot bench:** host wall-clock between the `OpenSBI` banner (t0 — genuinely its first UART output,
+    engine-identical) and the `login:` regex, via the E4-T03 `Console` loop; PLUS a deterministic
+    `boot_retired_instrs` companion from `--profile-boot`'s `PROFILE_JSON` (regression anchor + cross-
+    engine equality check). `boot_wall_s` is the only host-noise metric → median-of-3 + 5% agreement.
+    Honest: baseline boot_wall is tens-of-seconds on the ~30 MIPS interpreter; the capstone "<5s" is a
+    FUTURE target measured against this metric, not the baseline value.
+  - **In-guest gcc bench:** bake REAL pinned Alpine gcc into an overlay via `apk.static` cross-install
+    (reuse `tools/rootfs-inner.sh`'s recipe) — not tcc/chibicc (they ignore `-O2`, failing adversarial
+    #3). Compile vendored `miniz.c` (~10 kLoC) `-O2 -c` with `-frandom-seed` + `SOURCE_DATE_EPOCH`
+    (deterministic `.o`); score = guest seconds (duration) + `.o` size/sha256 + echoed command line.
+    Runtime is many minutes on the interpreter — the slowest bench. **DECISION (repo size):** the gcc
+    overlay is ~256–400 MB — DO NOT commit it; gitignore it, commit the reproducible `bench/mk-gcc-image.sh`
+    + pinned `gcc-MANIFEST.txt` + its sha256 (build-on-demand), unlike the small committed E4-T03 ELFs.
+  - **Ledger `bench/ledger.json`:** append-only `{schema_version, entries:[…]}`, each entry with a
+    `prev_sha256` HASH-CHAIN (tamper-evident — satisfies adversarial #4), `higher_is_better` to
+    distinguish rates (dhry/coremark) from durations (boot/gcc). `bench.py record <result.json>` appends
+    (never reorders); `bench.py report --verify` walks the chain + computes speedup vs `level3-interpreter`.
+  - **Level-3 baseline** = the 4 benches on release, seeded with the measured Dhrystone 189.7 DMIPS +
+    CoreMark 261.7 iter/s + boot + gcc; documented in a new `docs/perf/level3-interpreter-baseline.md`.
+  - **Phases:** (1) boot bench [native]; (2) gcc overlay builder + hashes; (3) gcc bench; (4) ledger
+    `record`/`report` + hash-chain + seed; (5) baseline doc + adversarial re-measure. Native fully
+    verifiable now (box has headroom — the 33-day `yes` orphans were killed); browser stays reaping-
+    deferred (AC "both engines" collides with reaping — record native now, mark browser deferred).
