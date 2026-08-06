@@ -3,7 +3,7 @@ id: E4-T15
 epic: 4
 title: F/D floating-point policy in the JIT — measured decision and implementation
 priority: 415
-status: pending
+status: verified
 depends_on: [E4-T12]
 estimate: M
 capstone: false
@@ -64,6 +64,7 @@ output digits exactly; (5) check fflags accrual across a block boundary side-exi
 sticky bits refute.
 
 ## Verification log
+- 2026-08-05 — **VERIFIED (commit `4921210`) — a MEASURED decision: side-exit-all.** Measured FP frequency with an opt-in opcode classifier (`WASM_VM_FP_HISTOGRAM`) deliberately independent of the interpreter's decoder (doubles as the adversarial independent recount): on a native busybox boot to userland — **322,388,374 retired instructions, 1,284 F/D = 0.000398% (~1 in 251,000), and ZERO FP-COMPUTE ops** (all 1,284 are fld/fsd context save/restore + register-spill memcpy; every arith/fma/cvt/cmp/sqrt op executes 0×). CoreMark/Dhrystone static scan 0.24% FP, confined to libc printf — the scored hot loops are 0% FP. Classifier sanity: rv64ud-p-fadd scans 18.87%, rv64ui-p-add 0.00%. **Decision (a) side-exit-all:** the <0.001% Amdahl upside cannot justify replicating RISC-V softfloat corners (canonical NaN, FLEN-64 NaN-boxing of f32, the 5 accrued fflags, dynamic `frm` rounding, fma single-rounding) in wasm f32/f64 whose NaN payloads are engine-nondeterministic. **What ships:** nothing translated — `translate_block` excludes all F/D opcodes → any FP-containing block returns `Unsupported` → the interpreter runs it on the audited `rustc_apfloat` softfloat. FP is identical to the interpreter BY CONSTRUCTION (no second FP impl to diverge). **Gates (independently re-ran):** `fp_ops_are_unsupported` — every F/D variant (solo + buried among translatable integer ops) → `Unsupported`; `fp_suites_verdict_identical_under_jit` — all rv64uf-p + rv64ud-p ELFs reach the SAME Pass verdict interp vs JIT-forced (threshold 1, 1-entry flapping cache; no fflags/NaN-box/rounding lost across tier switches); whole-corpus verdict-identical + all E4-T09..T14 gates green; clippy(-D)/fmt clean. Deliverables: `docs/jit-fp-policy.md`, `evidence/e4-t15/fp-share.md` (+ raw boot log), `docs/jit-architecture.md` §9.4/§10 marked RESOLVED. Deferred (noted): browser rv64uf/ud (E4-T19; native wasmtime proves it), gcc-O2/python-float dynamic shares (those benches deferred).
 
 ### 2026-08-05 — MEASURED decision: (a) side-exit-all. Verified.
 
