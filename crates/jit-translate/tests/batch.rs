@@ -1,0 +1,144 @@
+//! E4-T19 AC3 — intra-batch direct-call codegen, asserted in the EMITTED WASM BYTES.
+//!
+//! A within-batch statically-known edge MUST lower to a direct `call` (opcode `0x10`) into the
+//! successor block's function in the SAME module — never `call_indirect` (`0x11`, the cross-batch /
+//! dispatch primitive). We build a 2-block batch (block0 `jal`s block1; block1 `jal`s block0), then
+//! walk the generated module with `wasmparser` and assert both intra edges are `Operator::Call` to
+//! the successor's function index and that NO `Operator::CallIndirect` exists anywhere in the batch.
+
+use jit_translate::{Abi, translate_batch};
+use wasm_vm_core::decode::Instr;
+use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
+use wasmparser::{Operator, Parser, Payload};
+
+fn op(instr: Instr) -> MicroOp {
+    MicroOp {
+        instr,
+        len: 4,
+        raw: 0,
+    }
+}
+
+fn block(phys: u64, instrs: &[Instr]) -> DecodedBlock {
+    let ops: Vec<MicroOp> = instrs.iter().copied().map(op).collect();
+    let total = 4 * ops.len() as u64;
+    DecodedBlock::new(phys, ops, total)
+}
+
+/// Collect the operators of every code-section function, in order.
+fn functions_ops(bytes: &[u8]) -> Vec<Vec<Operator<'_>>> {
+    let mut out = Vec::new();
+    for payload in Parser::new(0).parse_all(bytes) {
+        if let Payload::CodeSectionEntry(body) = payload.expect("parse") {
+            let mut ops = Vec::new();
+            let mut reader = body.get_operators_reader().expect("ops reader");
+            while !reader.eof() {
+                ops.push(reader.read().expect("op"));
+            }
+            out.push(ops);
+        }
+    }
+    out
+}
+
+#[test]
+fn intra_batch_edge_is_direct_call_not_call_indirect() {
+    // block0 @ 0x8000_0000 : addi x1,x1,1 ; jal x0,+4          → block1 (edge 0)
+    // block1 @ 0x8000_0008 : addi x2,x2,1 ; jal x0,-12         → block0 (edge 0)
+    let b0 = block(
+        0x8000_0000,
+        &[
+            Instr::Addi {
+                rd: 1,
+                rs1: 1,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: 4 }, // pc(jal)=..04, +4 → ..08
+        ],
+    );
+    let b1 = block(
+        0x8000_0008,
+        &[
+            Instr::Addi {
+                rd: 2,
+                rs1: 2,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: -12 }, // pc(jal)=..0C, -12 → ..00
+        ],
+    );
+    // Both edges are intra-batch: block0.edge0 → local 1, block1.edge0 → local 0.
+    let intra = [[Some(1usize), None], [Some(0usize), None]];
+    let bytes = translate_batch(&[b0, b1], &Abi::FROZEN, &intra).expect("batch translates");
+
+    // The whole module must be valid WASM.
+    wasmparser::Validator::new_with_features(wasmparser::WasmFeatures::all())
+        .validate_all(&bytes)
+        .expect("batch module must validate");
+
+    let funcs = functions_ops(&bytes);
+    assert_eq!(funcs.len(), 2, "one function per block in the batch");
+
+    // The five env.* imports occupy func indices 0..5, so block{i}'s function is index 5+i.
+    // block0 must directly CALL block1's function (index 6); block1 must CALL block0's (index 5).
+    let mut direct_calls = 0usize;
+    let mut indirect_calls = 0usize;
+    let want = [6u32, 5u32]; // func0 → run1 (idx6), func1 → run0 (idx5)
+    for (i, ops) in funcs.iter().enumerate() {
+        let mut saw_want = false;
+        for o in ops {
+            match o {
+                Operator::Call { function_index } => {
+                    direct_calls += 1;
+                    if *function_index == want[i] {
+                        saw_want = true;
+                    }
+                }
+                Operator::CallIndirect { .. } => indirect_calls += 1,
+                _ => {}
+            }
+        }
+        assert!(
+            saw_want,
+            "block{i}'s intra-batch edge must be a direct `call` to func {}",
+            want[i]
+        );
+    }
+    assert!(
+        direct_calls >= 2,
+        "both intra-batch edges must emit a direct call (got {direct_calls})"
+    );
+    assert_eq!(
+        indirect_calls, 0,
+        "a within-batch edge must NEVER emit call_indirect (found {indirect_calls})"
+    );
+}
+
+#[test]
+fn single_block_batch_matches_translate_block_shape() {
+    // A batch of one block with no intra edges: valid module, exactly one function, no calls beyond
+    // the memory imports (which are not `call` ops), and no call_indirect.
+    let b = block(
+        0x8000_0000,
+        &[
+            Instr::Addi {
+                rd: 1,
+                rs1: 0,
+                imm: 7,
+            },
+            Instr::Jal { rd: 0, imm: 0 }, // self-loop; edge leaves the batch (None)
+        ],
+    );
+    let bytes = translate_batch(&[b], &Abi::FROZEN, &[[None, None]]).expect("translates");
+    wasmparser::Validator::new_with_features(wasmparser::WasmFeatures::all())
+        .validate_all(&bytes)
+        .expect("validates");
+    let funcs = functions_ops(&bytes);
+    assert_eq!(funcs.len(), 1);
+    for o in &funcs[0] {
+        assert!(
+            !matches!(o, Operator::Call { .. } | Operator::CallIndirect { .. }),
+            "a no-intra single-block batch makes no in-module calls"
+        );
+    }
+}

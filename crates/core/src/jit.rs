@@ -103,6 +103,42 @@ pub trait CompiledBlockExecutor {
     /// cannot translate (out-of-scope opcode) is silently skipped (it stays in the interpreter).
     fn install(&mut self, block: &DecodedBlock);
 
+    /// E4-T19: translate + compile a GROUP of blocks (a connected component of the observed-edge
+    /// graph) into ONE module of K functions — the batching unit (`docs/jit-architecture.md` §7),
+    /// which amortizes per-Module / `WebAssembly.compile` fixed cost the browser is bound by.
+    /// `intra[i][e]` is `Some(local)` iff block `i`'s edge `e` (0 = taken/sole/fall-through,
+    /// 1 = branch not-taken) targets block `local` IN THIS SAME group — that edge is lowered to an
+    /// intra-batch direct call; cross-batch edges reuse E4-T18's funcref-table link slots. The
+    /// default impl installs each block singly (a valid non-batching executor); the wasmtime executor
+    /// overrides it to build one module. A group whose translation fails (an out-of-scope op in ANY
+    /// member) falls back to per-block installation of the translatable members.
+    fn install_batch(&mut self, blocks: &[DecodedBlock], _intra: &[[Option<usize>; 2]]) {
+        for b in blocks {
+            self.install(b);
+        }
+    }
+
+    /// E4-T19: set the batching knob K — the maximum number of blocks packed into one module. `1`
+    /// is the adversarial one-block-per-module mode (registry-accounting stress). Default no-op.
+    fn set_batch_size(&mut self, _k: usize) {}
+
+    /// E4-T19: the current batching K.
+    fn batch_size(&self) -> usize {
+        1
+    }
+
+    /// E4-T19 instance registry: number of live WASM Modules/Instances (batches) — the raw material
+    /// for E4-T20's budgets. With no batching this equals [`Self::compiled_count`].
+    fn module_count(&self) -> usize {
+        self.compiled_count()
+    }
+
+    /// E4-T19 instance registry: estimated bytes held live across all Modules+Instances (emitted
+    /// code size plus a fixed per-instance overhead estimate). Accurate accounting is the AC.
+    fn estimated_bytes(&self) -> u64 {
+        0
+    }
+
     /// Is a compiled block registered for physical entry PC `phys_pc`?
     fn is_compiled(&self, phys_pc: u64) -> bool;
 

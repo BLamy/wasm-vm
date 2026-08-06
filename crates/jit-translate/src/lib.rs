@@ -61,6 +61,15 @@ pub struct Abi {
     /// before each `run` call. The block emits every guest-visible PC relative to this (see
     /// `push_pc_rel`) so compiled code is correct under paging and when reused from a new VA.
     pub entry_pc: u32,
+    /// E4-T19: `chain_enabled` — a one-byte flag in the CpuState header the runtime writes before a
+    /// `run` call. When ZERO (the deterministic native default), an intra-batch statically-known edge
+    /// takes the plain "write exit protocol + return" path — byte-for-byte the E4-T18 per-block
+    /// behavior, so the retire clock / interrupt batching stay exactly as proven. When NON-zero (the
+    /// browser in-wasm chaining path, deferred to E4-T25's differential harness) the same edge instead
+    /// makes a DIRECT `call` to the successor block's function in the SAME module (no `call_indirect`,
+    /// no dispatch bounce), tail-returning its exit code. The direct call is emitted unconditionally
+    /// into the bytes (AC3), gated at runtime by this flag.
+    pub chain_enabled: u32,
     /// How generated loads/stores reach guest memory (E4-T11).
     pub mem: MemModel,
     /// E4-T11 inline-TLB layout (only consulted when `mem == InlineTlb`). Byte offsets into the ONE
@@ -139,6 +148,7 @@ impl Abi {
         exit_pc: 0x220,
         exit_info: 0x228,
         entry_pc: 0x230,
+        chain_enabled: 0x250,
         mem: MemModel::SoftmmuImports,
         tlb: TlbLayout::FROZEN,
     };
@@ -150,6 +160,7 @@ impl Abi {
         exit_pc: 0x220,
         exit_info: 0x228,
         entry_pc: 0x230,
+        chain_enabled: 0x250,
         mem: MemModel::InlineTlb,
         tlb: TlbLayout::FROZEN,
     };
@@ -345,13 +356,129 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     m.export("run", ExportKind::Func, run_idx);
 
     let mut f = FuncBuilder::new(&[ValType::I32]); // param 0 = state_base
-    emit_body(&mut f, block, abi)?;
+    emit_body(&mut f, block, abi, [None, None])?;
     m.add_code(f.finish());
     Ok(m.finish())
 }
 
-/// Emit the function body for `block` into `f`.
-fn emit_body(f: &mut FuncBuilder, block: &DecodedBlock, abi: &Abi) -> Result<(), TranslateError> {
+/// The wasm function index of the first defined block function in a module: the five `env.*` imports
+/// (`load`, `store`, `amo`, `lr`, `sc`) occupy indices 0..5, so the first `run` function is index 5.
+/// In `InlineTlb` mode the shared memory is imported too, but that lives in a separate index space
+/// and does not shift function indices.
+const RUN_FUNC_BASE: u32 = 5;
+
+/// E4-T19: translate a GROUP of blocks (a connected component of the observed-edge graph) into ONE
+/// WASM module exporting one function per block (`run0`, `run1`, …) plus the shared memory `mem`.
+/// This is the batching unit (`docs/jit-architecture.md` §7): K blocks share a single Module +
+/// Instance, amortizing the per-Module/`WebAssembly.compile` fixed cost the browser is bound by.
+///
+/// `intra[i][e]` is `Some(local)` iff block `i`'s outgoing edge `e` (0 = taken / sole / fall-through,
+/// 1 = a conditional branch's not-taken side) targets another block `local` IN THIS SAME group — in
+/// which case that edge is lowered to a DIRECT `call run{local}` (opcode `0x10`, NOT `call_indirect`
+/// `0x11`), gated by the `chain_enabled` header flag (§ABI). Cross-batch / dynamic edges are `None`
+/// and return to the dispatch loop, where E4-T18's funcref-table link-slots take over.
+///
+/// Returns `Unsupported` if ANY block contains an out-of-scope op (the caller falls back to
+/// installing the supported blocks singly), so a partly-untranslatable group never yields a
+/// half-built module.
+pub fn translate_batch(
+    blocks: &[DecodedBlock],
+    abi: &Abi,
+    intra: &[[Option<usize>; 2]],
+) -> Result<Vec<u8>, TranslateError> {
+    debug_assert_eq!(blocks.len(), intra.len());
+    // Pre-flight the WHOLE group first: one out-of-scope op fails the batch cleanly.
+    for block in blocks {
+        for op in &block.ops {
+            if !supported(&op.instr) {
+                return Err(TranslateError::Unsupported);
+            }
+        }
+    }
+    let mut m = ModuleBuilder::new();
+    let load_ty = m.add_type(FuncType::new(
+        &[ValType::I64, ValType::I32],
+        &[ValType::I64],
+    ));
+    let store_ty = m.add_type(FuncType::new(
+        &[ValType::I64, ValType::I64, ValType::I32],
+        &[],
+    ));
+    let (load_name, store_name) = match abi.mem {
+        MemModel::SoftmmuImports => ("load", "store"),
+        MemModel::InlineTlb => ("softmmu_load", "softmmu_store"),
+    };
+    m.import_func("env", load_name, load_ty);
+    m.import_func("env", store_name, store_ty);
+    let amo_ty = m.add_type(FuncType::new(
+        &[ValType::I64, ValType::I64, ValType::I32, ValType::I32],
+        &[ValType::I64],
+    ));
+    let lr_ty = m.add_type(FuncType::new(
+        &[ValType::I64, ValType::I32],
+        &[ValType::I64],
+    ));
+    let sc_ty = m.add_type(FuncType::new(
+        &[ValType::I64, ValType::I64, ValType::I32],
+        &[ValType::I64],
+    ));
+    m.import_func("env", "amo", amo_ty);
+    m.import_func("env", "lr", lr_ty);
+    m.import_func("env", "sc", sc_ty);
+
+    let run_ty = m.add_type(FuncType::new(&[ValType::I32], &[ValType::I32]));
+    // One defined function per block; capture their indices (they are RUN_FUNC_BASE + i).
+    for i in 0..blocks.len() {
+        let idx = m.add_function(run_ty);
+        debug_assert_eq!(idx, RUN_FUNC_BASE + i as u32);
+    }
+    match abi.mem {
+        MemModel::SoftmmuImports => {
+            m.add_memory(MemType {
+                limits: Limits::new(1),
+            });
+            m.export("mem", ExportKind::Memory, 0);
+        }
+        MemModel::InlineTlb => {
+            m.import_memory(
+                "env",
+                "mem",
+                MemType {
+                    limits: Limits::new(1),
+                },
+            );
+        }
+    }
+    // Export each block function under a stable per-index name the executor looks up.
+    let mut name = alloc::string::String::new();
+    for i in 0..blocks.len() {
+        use core::fmt::Write;
+        name.clear();
+        let _ = write!(name, "run{i}");
+        m.export(&name, ExportKind::Func, RUN_FUNC_BASE + i as u32);
+    }
+    // Emit each block body, resolving its intra-group successors to concrete wasm func indices.
+    for (i, block) in blocks.iter().enumerate() {
+        let resolved = [
+            intra[i][0].map(|l| RUN_FUNC_BASE + l as u32),
+            intra[i][1].map(|l| RUN_FUNC_BASE + l as u32),
+        ];
+        let mut f = FuncBuilder::new(&[ValType::I32]);
+        emit_body(&mut f, block, abi, resolved)?;
+        m.add_code(f.finish());
+    }
+    Ok(m.finish())
+}
+
+/// Emit the function body for `block` into `f`. `intra[e]` is the wasm function index of the
+/// same-module successor for edge `e` (0 = taken/sole/fall-through, 1 = branch not-taken), or `None`
+/// when the edge leaves the batch / is dynamic (a `jalr` target).
+fn emit_body(
+    f: &mut FuncBuilder,
+    block: &DecodedBlock,
+    abi: &Abi,
+    intra: [Option<u32>; 2],
+) -> Result<(), TranslateError> {
     // Pre-flight: reject any out-of-scope op before emitting a single byte, so a partially-emitted
     // module can never escape (the caller gets a clean Unsupported and keeps interpreting).
     for op in &block.ops {
@@ -382,7 +509,7 @@ fn emit_body(f: &mut FuncBuilder, block: &DecodedBlock, abi: &Abi) -> Result<(),
             if !last {
                 return Err(TranslateError::Malformed);
             }
-            emit_terminator(f, &mut regs, abi, op.instr, pc, pc_next);
+            emit_terminator(f, &mut regs, abi, op.instr, pc, pc_next, intra);
             terminated = true;
         } else {
             emit_alu(f, &mut regs, abi, op.instr, pc, pc_next);
@@ -391,17 +518,72 @@ fn emit_body(f: &mut FuncBuilder, block: &DecodedBlock, abi: &Abi) -> Result<(),
     }
 
     // Fall-through block (128-op cap / page edge with no architectural terminator): resume at the
-    // byte after the block.
+    // byte after the block (edge 0, the sole successor).
     if !terminated {
         let end_pc = base_pc.wrapping_add(block.total_len);
-        writeback(f, &regs, abi);
-        write_pc_const(f, &regs, abi, end_pc);
-        write_reason(f, abi, ExitCode::Fallthrough);
-        f.i32_const(ExitCode::Fallthrough as i32);
-        f.return_();
+        emit_exit(
+            f,
+            &regs,
+            abi,
+            ExitCode::Fallthrough,
+            PcSrc::Const(end_pc),
+            intra[0],
+        );
     }
 
     Ok(())
+}
+
+/// Where a block's resume PC comes from at an exit: a compile-time constant (virtual, PC-relative)
+/// or an already-materialized WASM local (a `jalr` register target).
+enum PcSrc {
+    Const(u64),
+    Local(u32),
+}
+
+/// E4-T19: the shared exit epilogue. Writes back dirty registers, sets `exit_pc` + `exit_reason`,
+/// then EITHER returns the exit code (the deterministic native path, and every cross-batch / dynamic
+/// edge) OR — for a statically-known intra-batch successor `intra` — emits a `chain_enabled`-gated
+/// DIRECT `call` to that successor, tail-returning its exit code. The direct `call` (opcode `0x10`)
+/// is always present in the emitted bytes; `chain_enabled == 0` (native) simply takes the plain
+/// return arm, so behavior is byte-identical to E4-T18 per-block execution.
+fn emit_exit(
+    f: &mut FuncBuilder,
+    regs: &Regs,
+    abi: &Abi,
+    code: ExitCode,
+    pc: PcSrc,
+    intra: Option<u32>,
+) {
+    writeback(f, regs, abi);
+    match pc {
+        PcSrc::Const(v) => write_pc_const(f, regs, abi, v),
+        PcSrc::Local(l) => write_pc_local(f, abi, l),
+    }
+    write_reason(f, abi, code);
+    match intra {
+        None => {
+            f.i32_const(code as i32);
+            f.return_();
+        }
+        Some(func_index) => {
+            // if (chain_enabled) { entry_pc := exit_pc; return call run{succ} } else { return code }
+            f.local_get(STATE_BASE);
+            f.i32_load8_u(0, abi.chain_enabled);
+            f.if_(BlockType::Value(ValType::I32));
+            // The successor reads its entry virtual PC from `entry_pc`; hand it this exit_pc.
+            f.local_get(STATE_BASE);
+            f.local_get(STATE_BASE);
+            f.i64_load(ALIGN8, abi.exit_pc);
+            f.i64_store(ALIGN8, abi.entry_pc);
+            f.local_get(STATE_BASE);
+            f.call(func_index);
+            f.else_();
+            f.i32_const(code as i32);
+            f.end();
+            f.return_();
+        }
+    }
 }
 
 /// Whether an instruction is inside E4-T09's RV64I base scope.
@@ -1409,26 +1591,42 @@ fn emit_terminator(
     instr: Instr,
     pc: u64,
     pc_next: u64,
+    intra: [Option<u32>; 2],
 ) {
     use Instr::*;
     match instr {
-        Beq { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Eq),
-        Bne { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ne),
-        Blt { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Lt),
-        Bge { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ge),
-        Bltu { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ltu),
-        Bgeu { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Geu),
+        Beq { rs1, rs2, imm } => {
+            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Eq, intra)
+        }
+        Bne { rs1, rs2, imm } => {
+            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ne, intra)
+        }
+        Blt { rs1, rs2, imm } => {
+            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Lt, intra)
+        }
+        Bge { rs1, rs2, imm } => {
+            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ge, intra)
+        }
+        Bltu { rs1, rs2, imm } => {
+            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ltu, intra)
+        }
+        Bgeu { rs1, rs2, imm } => {
+            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Geu, intra)
+        }
         Jal { rd, imm } => {
             // link = pc + insn_len; target = pc + imm (both PC-relative → virtual, E4-T16)
             if rd != 0 {
                 push_pc_rel(f, regs, pc_next);
                 set_reg(f, regs, rd);
             }
-            writeback(f, regs, abi);
-            write_pc_const(f, regs, abi, pc.wrapping_add(imm as u64));
-            write_reason(f, abi, ExitCode::BranchTaken);
-            f.i32_const(ExitCode::BranchTaken as i32);
-            f.return_();
+            emit_exit(
+                f,
+                regs,
+                abi,
+                ExitCode::BranchTaken,
+                PcSrc::Const(pc.wrapping_add(imm as u64)),
+                intra[0],
+            );
         }
         Jalr { rd, rs1, imm } => {
             // target = (rs1 + imm) & !1, computed from the OLD rs1 before the link overwrites rd.
@@ -1445,21 +1643,28 @@ fn emit_terminator(
                 push_pc_rel(f, regs, pc_next);
                 set_reg(f, regs, rd);
             }
-            writeback(f, regs, abi);
-            write_pc_local(f, abi, scratch);
-            write_reason(f, abi, ExitCode::BranchTaken);
-            f.i32_const(ExitCode::BranchTaken as i32);
-            f.return_();
+            // A `jalr` target is a runtime register value — never a static intra-batch edge.
+            emit_exit(
+                f,
+                regs,
+                abi,
+                ExitCode::BranchTaken,
+                PcSrc::Local(scratch),
+                None,
+            );
         }
         Ecall => emit_trap(f, regs, abi, pc, 11), // EcallFromM (default oracle mode = M), tval 0
         Ebreak => emit_trap(f, regs, abi, pc, 3), // Breakpoint, tval = pc
-        // FENCE / FENCE.I retire as a no-op in the single-thread model; resume at the next PC.
+        // FENCE / FENCE.I retire as a no-op in the single-thread model; resume at the next PC (edge 0).
         Fence { .. } | FenceI => {
-            writeback(f, regs, abi);
-            write_pc_const(f, regs, abi, pc_next);
-            write_reason(f, abi, ExitCode::Fallthrough);
-            f.i32_const(ExitCode::Fallthrough as i32);
-            f.return_();
+            emit_exit(
+                f,
+                regs,
+                abi,
+                ExitCode::Fallthrough,
+                PcSrc::Const(pc_next),
+                intra[0],
+            );
         }
         _ => unreachable!("emit_terminator on a non-terminator / out-of-scope op"),
     }
@@ -1486,6 +1691,7 @@ fn emit_branch(
     pc: u64,
     pc_next: u64,
     cmp: Cmp,
+    intra: [Option<u32>; 2],
 ) {
     push_reg(f, regs, abi, rs1);
     push_reg(f, regs, abi, rs2);
@@ -1497,21 +1703,27 @@ fn emit_branch(
         Cmp::Ltu => f.i64_lt_u(),
         Cmp::Geu => f.i64_ge_u(),
     }
-    // Taken path: resume at pc + imm.
+    // Taken path (edge 0): resume at pc + imm.
     f.if_(BlockType::Empty);
-    writeback(f, regs, abi);
-    write_pc_const(f, regs, abi, pc.wrapping_add(imm as u64));
-    write_reason(f, abi, ExitCode::BranchTaken);
-    f.i32_const(ExitCode::BranchTaken as i32);
-    f.return_();
+    emit_exit(
+        f,
+        regs,
+        abi,
+        ExitCode::BranchTaken,
+        PcSrc::Const(pc.wrapping_add(imm as u64)),
+        intra[0],
+    );
     f.end();
-    // Not-taken fall-through: resume at pc + insn_len. The dirty set is identical on both edges
-    // (a branch reads but never writes registers), so both exits flush the same registers.
-    writeback(f, regs, abi);
-    write_pc_const(f, regs, abi, pc_next);
-    write_reason(f, abi, ExitCode::Fallthrough);
-    f.i32_const(ExitCode::Fallthrough as i32);
-    f.return_();
+    // Not-taken fall-through (edge 1): resume at pc + insn_len. The dirty set is identical on both
+    // edges (a branch reads but never writes registers), so both exits flush the same registers.
+    emit_exit(
+        f,
+        regs,
+        abi,
+        ExitCode::Fallthrough,
+        PcSrc::Const(pc_next),
+        intra[1],
+    );
 }
 
 fn emit_trap(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, pc: u64, cause: i64) {

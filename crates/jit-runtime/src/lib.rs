@@ -31,7 +31,7 @@
 use std::collections::HashMap;
 
 use anyhow::anyhow;
-use jit_translate::{Abi, translate_block};
+use jit_translate::{Abi, translate_batch};
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::DecodedBlock;
 use wasm_vm_core::hart::{Hart, Trap};
@@ -78,7 +78,31 @@ struct Compiled {
     /// E4-T18: number of outgoing link-slots (2 for a conditional branch — taken + not-taken —
     /// else 1). A dynamic-target `jalr`/single-successor still has 1 slot but it is never linked.
     nslots: u8,
+    /// E4-T19: the batch (WASM Module/Instance) this block was compiled into. All blocks sharing a
+    /// `batch_id` share one Module, one Instance, and one linear memory. On a page-granular SMC
+    /// invalidation touching ANY member, the WHOLE batch is retired (the documented option — no stale
+    /// intra-batch direct call can survive because the module is dropped atomically).
+    batch_id: u32,
 }
+
+/// E4-T19 instance-registry entry: one live WASM Module/Instance holding `members.len()` compiled
+/// block functions, with an estimated live-byte cost (emitted code + a fixed per-instance overhead).
+struct Batch {
+    /// Physical entry PCs of the blocks compiled into this module.
+    members: Vec<u64>,
+    /// Estimated bytes held live by this Module+Instance (accounting for E4-T20 budgets).
+    est_bytes: u64,
+}
+
+/// E4-T19 registry estimate: fixed per-Instance overhead beyond the emitted code bytes — dominated by
+/// the module's one-page (64 KiB) `CpuState` linear memory plus wasmtime instance metadata. A coarse
+/// but consistent native estimate; the browser cross-check (performance.memory) is dev debt.
+const INSTANCE_OVERHEAD_BYTES: u64 = 64 * 1024;
+
+/// E4-T19 default batching K (`docs/jit-architecture.md` §7 D9/D10: ~64 blocks/module). UA-probed in
+/// the browser; the native default and the single override knob ([`WasmtimeExecutor::set_batch_size`])
+/// live here.
+pub const DEFAULT_BATCH_SIZE: usize = 64;
 
 /// E4-T18: the dispatch-stub sentinel a link-slot holds when NOT linked to a successor — reading it
 /// means "return to the dispatch loop". (In the browser in-wasm form this is the funcref-table index
@@ -114,6 +138,13 @@ pub struct WasmtimeExecutor {
     free_slots1: Vec<u32>,
     free_slots2: Vec<u32>,
     stats: ChainStats,
+    // ── E4-T19 batching + instance registry ──
+    /// The batching knob K (max blocks packed into one module).
+    batch_size: usize,
+    /// Live Modules/Instances by id — the instance registry.
+    batches: HashMap<u32, Batch>,
+    /// Monotonic batch-id allocator.
+    next_batch_id: u32,
 }
 
 impl Default for WasmtimeExecutor {
@@ -278,6 +309,21 @@ impl WasmtimeExecutor {
             free_slots1: Vec::new(),
             free_slots2: Vec::new(),
             stats: ChainStats::default(),
+            batch_size: DEFAULT_BATCH_SIZE,
+            batches: HashMap::new(),
+            next_batch_id: 0,
+        }
+    }
+
+    /// E4-T19: retire an entire batch (Module/Instance) — remove every member block (E4-T18 unlink so
+    /// no live slot points into or out of it) and drop the registry entry. The unit of SMC/eviction
+    /// invalidation, so a stale intra-batch direct call can never run dead bytes: the whole module
+    /// goes at once.
+    fn retire_batch(&mut self, batch_id: u32) {
+        if let Some(b) = self.batches.remove(&batch_id) {
+            for phys in b.members {
+                self.remove_block(phys);
+            }
         }
     }
 
@@ -381,15 +427,50 @@ impl WasmtimeExecutor {
 
 impl CompiledBlockExecutor for WasmtimeExecutor {
     fn install(&mut self, block: &DecodedBlock) {
-        // Already compiled (dedup): the run loop only nominates once per generation, but be robust.
-        if self.blocks.contains_key(&block.phys_start) {
+        // A lone block is a one-function batch — route through the same path so the registry, the
+        // per-function export naming, and the batch retirement invariant all stay consistent.
+        self.install_batch(std::slice::from_ref(block), &[[None, None]]);
+    }
+
+    fn install_batch(&mut self, blocks: &[DecodedBlock], intra: &[[Option<usize>; 2]]) {
+        debug_assert_eq!(blocks.len(), intra.len());
+        // Drop already-compiled members (dedup) and re-index the intra edges onto the kept set.
+        let keep: Vec<usize> = (0..blocks.len())
+            .filter(|&i| !self.blocks.contains_key(&blocks[i].phys_start))
+            .collect();
+        if keep.is_empty() {
             return;
         }
-        // Translate → emitted WASM. An out-of-scope opcode (M/A/F/D, CSR, …) is `Unsupported`: skip,
-        // leaving the block to the interpreter.
-        let bytes = match translate_block(block, &Abi::FROZEN) {
+        let mut new_local = vec![None; blocks.len()];
+        for (nl, &oi) in keep.iter().enumerate() {
+            new_local[oi] = Some(nl);
+        }
+        let kept_blocks: Vec<DecodedBlock> = keep.iter().map(|&i| blocks[i].clone()).collect();
+        let kept_intra: Vec<[Option<usize>; 2]> = keep
+            .iter()
+            .map(|&i| {
+                let mut e = [None, None];
+                for k in 0..2 {
+                    // An edge that pointed at a now-dropped (already-compiled) member becomes a
+                    // cross-batch edge (dispatch / funcref link), which is always correct.
+                    e[k] = intra[i][k].and_then(|t| new_local.get(t).copied().flatten());
+                }
+                e
+            })
+            .collect();
+
+        let bytes = match translate_batch(&kept_blocks, &Abi::FROZEN, &kept_intra) {
             Ok(b) => b,
-            Err(_) => return,
+            Err(_) => {
+                // An out-of-scope op failed the whole group. Fall back to installing each member as
+                // its own one-block module; a member that is itself untranslatable is simply skipped.
+                if kept_blocks.len() > 1 {
+                    for b in &kept_blocks {
+                        self.install_batch(std::slice::from_ref(b), &[[None, None]]);
+                    }
+                }
+                return;
+            }
         };
         let module = match Module::new(&self.engine, &bytes) {
             Ok(m) => m,
@@ -403,25 +484,54 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             Some(m) => m,
             None => return,
         };
-        let run = match instance.get_typed_func::<i32, i32>(&mut self.store, "run") {
-            Ok(f) => f,
-            Err(_) => return,
-        };
-        // E4-T18: give the block a table index + stub-initialized link-slots (1 or 2).
-        let nslots = Self::nslots_for(block);
-        let (table_index, slot_base) = self.alloc_block(block.phys_start, nslots);
-        self.blocks.insert(
-            block.phys_start,
-            Compiled {
-                run,
-                mem,
-                page_frame: block.page_frame,
-                nops: block.ops.len() as u64,
-                table_index,
-                slot_base,
-                nslots,
-            },
-        );
+        let batch_id = self.next_batch_id;
+        self.next_batch_id = self.next_batch_id.wrapping_add(1);
+        let mut members = Vec::with_capacity(kept_blocks.len());
+        for (nl, b) in kept_blocks.iter().enumerate() {
+            let name = format!("run{nl}");
+            let run = match instance.get_typed_func::<i32, i32>(&mut self.store, &name) {
+                Ok(f) => f,
+                Err(_) => continue,
+            };
+            let nslots = Self::nslots_for(b);
+            let (table_index, slot_base) = self.alloc_block(b.phys_start, nslots);
+            self.blocks.insert(
+                b.phys_start,
+                Compiled {
+                    run,
+                    mem,
+                    page_frame: b.page_frame,
+                    nops: b.ops.len() as u64,
+                    table_index,
+                    slot_base,
+                    nslots,
+                    batch_id,
+                },
+            );
+            members.push(b.phys_start);
+        }
+        if members.is_empty() {
+            return;
+        }
+        // Registry accounting: emitted code bytes + one fixed per-instance overhead per module.
+        let est_bytes = bytes.len() as u64 + INSTANCE_OVERHEAD_BYTES;
+        self.batches.insert(batch_id, Batch { members, est_bytes });
+    }
+
+    fn set_batch_size(&mut self, k: usize) {
+        self.batch_size = k.max(1);
+    }
+
+    fn batch_size(&self) -> usize {
+        self.batch_size
+    }
+
+    fn module_count(&self) -> usize {
+        self.batches.len()
+    }
+
+    fn estimated_bytes(&self) -> u64 {
+        self.batches.values().map(|b| b.est_bytes).sum()
     }
 
     fn is_compiled(&self, phys_pc: u64) -> bool {
@@ -533,20 +643,29 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
         self.free_table.clear();
         self.free_slots1.clear();
         self.free_slots2.clear();
+        self.batches.clear();
     }
 
     fn invalidate_page(&mut self, frame: u64) {
-        // E4-T18: collect the dead blocks first, then unlink+remove each so every incoming edge
-        // (from surviving predecessors on OTHER pages) is restored to the dispatch stub — no live
-        // slot may point into a block this page just dropped.
-        let dead: Vec<u64> = self
-            .blocks
-            .iter()
-            .filter(|(_, c)| c.page_frame == frame)
-            .map(|(&p, _)| p)
-            .collect();
-        for phys in dead {
-            self.remove_block(phys);
+        // E4-T19: whole-batch retirement. A page-granular SMC store that hits ANY block in a batch
+        // retires the ENTIRE batch (Module/Instance) — because intra-batch edges are DIRECT calls
+        // baked into one module, a partial kill could leave a live block direct-calling dead bytes;
+        // dropping the whole module atomically makes that impossible. The surviving members fall back
+        // to T1 and recompile (into fresh batches) on re-execution. `remove_block` (E4-T18) restores
+        // every incoming link-slot from surviving predecessors on OTHER pages to the dispatch stub.
+        let dead_batches: Vec<u32> = {
+            let mut ids: Vec<u32> = self
+                .blocks
+                .values()
+                .filter(|c| c.page_frame == frame)
+                .map(|c| c.batch_id)
+                .collect();
+            ids.sort_unstable();
+            ids.dedup();
+            ids
+        };
+        for bid in dead_batches {
+            self.retire_batch(bid);
         }
     }
 

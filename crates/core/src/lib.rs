@@ -301,6 +301,15 @@ pub struct Machine {
     /// via the executor INSTEAD of interpreting; a miss (uncompiled / faulted-out) falls back to the
     /// interpreter. `None` on every build until a runtime is installed.
     executor: Option<jit::BoxedExecutor>,
+    /// E4-T19: block boundaries elapsed since the last JIT compile-queue drain. The queue is drained
+    /// into BATCHES (connected components) rather than one block at a time, so a burst of newly-hot
+    /// blocks is allowed to ACCUMULATE for up to [`JIT_PUMP_INTERVAL`] boundaries (or until it reaches
+    /// [`JIT_BATCH_TRIGGER`]) before being packed into modules — this is what lets `pump` see a whole
+    /// component at once instead of a trickle of singletons. Bounded either way, so compilation is
+    /// deferred by at most a few boundaries and never starved. Read only on the real-CSR run-loop
+    /// path; the quarantined `zicsr-stub` build compiles the pump out, so the field is dead there.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_pump_ticks: u32,
     /// E4-T10: the JIT on/off runtime flag. Effective only with the block cache on and an executor
     /// installed (see [`Self::jit_active`]). Off by default so every existing path is unchanged.
     jit_enabled: bool,
@@ -354,6 +363,144 @@ fn chain_edge(terminator: Option<crate::decode::Instr>, code: jit::ExitCode) -> 
     }
 }
 
+/// E4-T19: drain the JIT compile queue once it holds this many pending blocks — a batch's worth is
+/// ready to pack (mirrors the design's compile-queue depth, `docs/jit-architecture.md` §7 D10).
+#[cfg(not(feature = "zicsr-stub"))]
+const JIT_BATCH_TRIGGER: usize = 32;
+
+/// E4-T19: force a compile-queue drain at least every this many block boundaries even below the
+/// trigger, so a small hot component (fewer than [`JIT_BATCH_TRIGGER`] blocks) still compiles promptly
+/// while accumulating enough to batch as one connected component.
+#[cfg(not(feature = "zicsr-stub"))]
+const JIT_PUMP_INTERVAL: u32 = 64;
+
+/// E4-T19: the static successor PHYSICAL PCs of a decoded block — `[edge0, edge1]` where edge 0 is
+/// the taken / sole / fall-through successor and edge 1 is a conditional branch's not-taken side.
+/// A successor is returned ONLY when it lies on the SAME physical page as the block, so its physical
+/// address is exactly `phys_start + byte_offset` with no paging ambiguity (a block never crosses a
+/// page, so its own bytes are identity-mapped within the page). Cross-page and dynamic (`jalr`)
+/// targets are `None` — they become cross-batch edges (dispatch / E4-T18 funcref links), always
+/// correct. Used purely to GROUP the compile queue; a conservative `None` only means "don't batch
+/// these together", never a correctness change.
+#[cfg(not(feature = "zicsr-stub"))]
+fn static_successors(b: &dispatch::DecodedBlock) -> [Option<u64>; 2] {
+    use crate::decode::Instr::*;
+    let base = b.phys_start;
+    let page = base & !(dispatch::PAGE - 1);
+    let same_page = |t: u64| ((t & !(dispatch::PAGE - 1)) == page).then_some(t);
+    let last = match b.ops.last() {
+        Some(o) => o,
+        None => return [None, None],
+    };
+    let last_len = last.len as u64;
+    let term_off = b.total_len.saturating_sub(last_len); // byte offset of the terminator op
+    if !dispatch::is_terminator(&last.instr) {
+        // Fell through the 128-op cap / page edge: sole successor is the next byte after the block.
+        return [same_page(base.wrapping_add(b.total_len)), None];
+    }
+    match last.instr {
+        Jal { imm, .. } => [
+            same_page(base.wrapping_add(term_off).wrapping_add(imm as u64)),
+            None,
+        ],
+        Beq { imm, .. }
+        | Bne { imm, .. }
+        | Blt { imm, .. }
+        | Bge { imm, .. }
+        | Bltu { imm, .. }
+        | Bgeu { imm, .. } => [
+            same_page(base.wrapping_add(term_off).wrapping_add(imm as u64)),
+            same_page(base.wrapping_add(b.total_len)),
+        ],
+        // `fence`/`fence.i` fall through to the next block (sole edge); `jalr`/`ecall`/`ebreak`/CSR
+        // have no static successor.
+        Fence { .. } | FenceI => [same_page(base.wrapping_add(b.total_len)), None],
+        _ => [None, None],
+    }
+}
+
+/// E4-T19: partition `blocks` into batches (each a `Vec` of indices into `blocks`) by connected
+/// components of the undirected static-edge graph, then split any component larger than `k` into
+/// chunks of ≤ `k`. A union-find over the block set; edges are the same-page static successors that
+/// land on another drained block. Splitting an oversized component only turns some intra-batch edges
+/// into cross-batch ones (still correct), so `k` is a hard cap on module size.
+#[cfg(not(feature = "zicsr-stub"))]
+fn group_into_batches(
+    blocks: &[dispatch::DecodedBlock],
+    k: usize,
+) -> alloc::vec::Vec<alloc::vec::Vec<usize>> {
+    let n = blocks.len();
+    if n == 0 {
+        return alloc::vec::Vec::new();
+    }
+    let phys_to_idx: alloc::collections::BTreeMap<u64, usize> = blocks
+        .iter()
+        .enumerate()
+        .map(|(i, b)| (b.phys_start, i))
+        .collect();
+    // Union-find.
+    let mut parent: alloc::vec::Vec<usize> = (0..n).collect();
+    fn find(parent: &mut [usize], mut x: usize) -> usize {
+        while parent[x] != x {
+            parent[x] = parent[parent[x]];
+            x = parent[x];
+        }
+        x
+    }
+    for (i, b) in blocks.iter().enumerate() {
+        for succ in static_successors(b).into_iter().flatten() {
+            if let Some(&j) = phys_to_idx.get(&succ) {
+                let (ri, rj) = (find(&mut parent, i), find(&mut parent, j));
+                if ri != rj {
+                    parent[ri] = rj;
+                }
+            }
+        }
+    }
+    // Bucket indices by component root, preserving insertion order within each component.
+    let mut comps: alloc::collections::BTreeMap<usize, alloc::vec::Vec<usize>> =
+        alloc::collections::BTreeMap::new();
+    for i in 0..n {
+        let r = find(&mut parent, i);
+        comps.entry(r).or_default().push(i);
+    }
+    // Emit components, chunking oversized ones to the batch-size cap.
+    let mut out = alloc::vec::Vec::new();
+    for (_, members) in comps {
+        for chunk in members.chunks(k) {
+            out.push(chunk.to_vec());
+        }
+    }
+    out
+}
+
+/// E4-T19: for a batch (a slice of indices into `blocks`), compute the per-block intra-batch edge map
+/// `intra[local][edge] = Some(local_of_successor)` when that static successor is another block IN THE
+/// SAME batch, else `None`. Edge 0 = taken/sole/fall-through, edge 1 = branch not-taken — matching
+/// `chain_edge` and the translator's edge numbering.
+#[cfg(not(feature = "zicsr-stub"))]
+fn intra_edges_for_group(
+    blocks: &[dispatch::DecodedBlock],
+    group: &[usize],
+) -> alloc::vec::Vec<[Option<usize>; 2]> {
+    // Map a block's phys → its LOCAL index within this batch.
+    let local_of: alloc::collections::BTreeMap<u64, usize> = group
+        .iter()
+        .enumerate()
+        .map(|(l, &gi)| (blocks[gi].phys_start, l))
+        .collect();
+    group
+        .iter()
+        .map(|&gi| {
+            let succ = static_successors(&blocks[gi]);
+            [
+                succ[0].and_then(|p| local_of.get(&p).copied()),
+                succ[1].and_then(|p| local_of.get(&p).copied()),
+            ]
+        })
+        .collect()
+}
+
 impl Machine {
     /// Create a machine with `ram_bytes` of zeroed guest RAM at `DRAM_BASE`, an
     /// empty hart (PC 0), and no HTIF watch. Panics only on allocation failure — use
@@ -405,6 +552,7 @@ impl Machine {
             // byte-identical); it is opted in explicitly via `set_interrupt_batching`.
             interrupt_batching: false,
             executor: None,
+            jit_pump_ticks: 0,
             jit_enabled: false,
         };
         // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
@@ -565,6 +713,31 @@ impl Machine {
             .as_deref()
             .map(|e| e.chain_stats())
             .unwrap_or_default()
+    }
+
+    /// E4-T19: set the batching knob K (max blocks packed into one WASM module). `1` forces the
+    /// one-block-per-module mode. No-op without an executor.
+    pub fn set_batch_size(&mut self, k: usize) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_batch_size(k);
+        }
+    }
+
+    /// E4-T19: the current batching K (1 if no executor is installed).
+    pub fn batch_size(&self) -> usize {
+        self.executor
+            .as_deref()
+            .map(|e| e.batch_size())
+            .unwrap_or(1)
+    }
+
+    /// E4-T19 instance registry: `(live module/instance count, estimated live bytes)` across every
+    /// compiled batch — the raw material for E4-T20's budgets. `(0, 0)` without an executor.
+    pub fn jit_registry(&self) -> (usize, u64) {
+        self.executor
+            .as_deref()
+            .map(|e| (e.module_count(), e.estimated_bytes()))
+            .unwrap_or((0, 0))
     }
 
     /// E3-T12c3: bind this machine to a base disk image + emulator build for snapshot coherence.
@@ -1815,6 +1988,15 @@ impl Machine {
             None
         };
         let outcome = self.run_traced_inner(max_instrs, sink);
+        // E4-T19: flush any blocks still queued for compilation as a final batch. The periodic
+        // deferral in the loop lets a connected component ACCUMULATE before compiling (real batching);
+        // this end-of-run drain guarantees a short run whose hot blocks nominated but never reached a
+        // periodic pump still compiles them — compilation is deferred by at most one run, never lost.
+        #[cfg(not(feature = "zicsr-stub"))]
+        if self.jit_enabled {
+            self.jit_pump_ticks = 0;
+            self.pump_jit_translations();
+        }
         // One timer read at exit; accumulate the total profiled span. The device+walk time timed on
         // the cold paths is a SUBSET of this span, so `total − (device + walk)` is the interpreter's.
         if let (Some(t0), Some(t)) = (t0, self.host_timer.as_ref()) {
@@ -2050,6 +2232,8 @@ impl Machine {
             return;
         }
         let mut exec = self.executor.take().expect("executor present");
+        // ── 1. Validate each request against live memory and collect the still-valid decoded blocks. ──
+        let mut valid: alloc::vec::Vec<dispatch::DecodedBlock> = alloc::vec::Vec::new();
         for req in &reqs {
             // Re-read the live physical bytes for the block and validate: a store/`fence.i` between
             // nomination and now would fail this and the request is dropped (never compile stale code).
@@ -2068,11 +2252,20 @@ impl Machine {
             if !ok || !self.discovery.install_check(req, &live) {
                 continue;
             }
-            // The predecoded block is still cached (physical keying); hand a clone to the executor.
+            // The predecoded block is still cached (physical keying); take a clone for the batch.
             if let Some(block) = self.block_cache.get(req.phys_pc) {
-                let block = block.clone();
-                exec.install(&block);
+                valid.push(block.clone());
             }
+        }
+        // ── 2. Group the drained blocks into batches by connected components of the observed static-
+        //       edge graph (E4-T19 §7), capped at the executor's batch-size K, then install each
+        //       group as ONE module with intra-batch edges lowered to direct calls. ──
+        let k = exec.batch_size().max(1);
+        for group in group_into_batches(&valid, k) {
+            let group_blocks: alloc::vec::Vec<dispatch::DecodedBlock> =
+                group.iter().map(|&i| valid[i].clone()).collect();
+            let intra = intra_edges_for_group(&valid, &group);
+            exec.install_batch(&group_blocks, &intra);
         }
         self.executor = Some(exec);
     }
@@ -2382,10 +2575,19 @@ impl Machine {
                 // DMAs code then jumps to it can never execute a stale cached block. (Phase C
                 // does NOT touch this — the device sync above is still per-retire.)
                 self.drain_code_writes();
-                // E4-T10: at a block boundary, install any newly-nominated hot blocks into the
-                // executor (validated against live memory). Cheap when the queue is empty.
+                // E4-T19: at a block boundary, drain the compile queue into BATCHES — but let a burst
+                // of newly-hot blocks accumulate first, so a connected component compiles as ONE
+                // module rather than a trickle of one-block modules. Drain when the queue reaches
+                // `JIT_BATCH_TRIGGER` (a batch's worth is ready) or every `JIT_PUMP_INTERVAL`
+                // boundaries (flush stragglers). Cheap when the queue is empty.
                 if self.jit_enabled {
-                    self.pump_jit_translations();
+                    self.jit_pump_ticks = self.jit_pump_ticks.wrapping_add(1);
+                    if self.discovery.queue_len() >= JIT_BATCH_TRIGGER
+                        || self.jit_pump_ticks >= JIT_PUMP_INTERVAL
+                    {
+                        self.jit_pump_ticks = 0;
+                        self.pump_jit_translations();
+                    }
                 }
             }
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the

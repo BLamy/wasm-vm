@@ -3,7 +3,7 @@ id: E4-T19
 epic: 4
 title: WebAssembly.Module batching strategy and cross-browser instantiation costs
 priority: 419
-status: pending
+status: partially-verified
 depends_on: [E4-T10, E4-T18]
 estimate: M
 capstone: false
@@ -66,5 +66,55 @@ accurate within 10% of browser-reported memory growth); (4) measure first-execut
 latency of a fresh batch (engine baseline-compile warm-up) and confirm it doesn't violate
 the E4-T06 pause targets on the worst browser.
 
+## Design decisions (as built)
+
+- **Batching = module packing + intra-batch direct calls.** The compile queue is drained in GROUPS:
+  `Machine::pump_jit_translations` accumulates newly-hot blocks (deferred up to `JIT_PUMP_INTERVAL=64`
+  boundaries or `JIT_BATCH_TRIGGER=32` queued, flushed at run end), then `group_into_batches` unions
+  them into connected components of the observed same-page static-edge graph (`static_successors`),
+  capped at K. Each component → one `translate_batch` module of K functions (`run0..runK-1`, one shared
+  `mem`). `intra_edges_for_group` marks the within-batch edges; those lower to a **direct `call`**
+  (opcode `0x10`) to the successor's function — never `call_indirect`. Cross-batch / dynamic edges
+  reuse E4-T18's funcref-table link slots (Rust-orchestrated).
+- **`chain_enabled` gate (determinism preserved).** The intra-batch direct call is emitted
+  unconditionally but gated by a one-byte `chain_enabled` header flag (ABI `+0x250`). The native
+  executor leaves it **0**, so every block takes the plain "write exit protocol + return" arm — byte-
+  for-byte the E4-T18 per-block path, so the retire clock / interrupt batching (the load-bearing E4-T05
+  constraint) are untouched. The in-wasm chaining path (`chain_enabled=1`) is the BROWSER form, its
+  determinism deferred to the E4-T25 differential harness.
+- **Partial-batch invalidation = WHOLE-batch retirement** (the ticket's allowed option). A page-
+  granular SMC store hitting ANY member retires the entire Module/Instance (`invalidate_page` →
+  `retire_batch`), so a stale intra-batch direct call can never run dead bytes; survivors fall back to
+  T1 and recompile into fresh batches. Chosen over per-block prologue generation-checks because the
+  direct calls are baked into one module — atomic drop is simplest and provably safe.
+- **Instance registry.** Every live Module/Instance is a `Batch { members, est_bytes }`;
+  `module_count()` + `estimated_bytes()` (emitted code + a 64 KiB/instance overhead estimate) surface
+  via `Machine::jit_registry()`.
+- **K knob + A/B flag.** `set_batch_size(k)` (default 64, UA-probed in the browser) is also the
+  batched-vs-unbatched A/B switch (`k=1` = one-block-per-module).
+
 ## Verification log
-(empty)
+
+**Verified here (native, headless — full output pasted in the PR):**
+- AC3 intra-batch direct-call codegen — `jit-translate/tests/batch.rs` (2/2): a within-batch edge is
+  `Operator::Call` to the successor func index; ZERO `call_indirect` in the module. GREEN.
+- AC5 verdict-identical WITH batching ON — `cargo test -p wasm-vm-jit-runtime` all green:
+  `riscv_tests_verdict_identical_with_jit` + `m_and_c_suites_execute_in_jit_tier` (jit_execution 12),
+  chaining 4, invalidation 10, precise_traps 3, batching 3. GREEN.
+- Adversarial #2 partial-batch invalidation — `jit-runtime/tests/batching.rs::partial_batch_invalidation_retires_whole_batch`:
+  8-block one-module batch, SMC-kill one → whole batch retired (registry 0), byte-identical recompile. GREEN.
+- Adversarial #3 registry accounting — `…::registry_accounting_is_accurate_at_k1`: K=1, module_count ==
+  compiled_count, positive per-module bytes, zeroes on whole-cache flush. GREEN.
+- `jit-translate` differential (100k) GREEN; `predecode_diff` byte-identical GREEN; wasm32 no_std core
+  build GREEN; fmt clean.
+
+**Verification debt (browser / dev — this mac OS-reaps long browser runs):**
+- [AC1] Cost-matrix JSON for Chrome/Firefox/Safari-substitute — harness committed + runnable
+  (`bench/module-costs/`, one command `./run.sh`); `results/` ships EMPTY (no fabricated numbers).
+  Live capture on the Linux dev box.
+- [AC2] gcc batched-vs-unbatched compile-stall factor — A/B flag wired (`set_batch_size(1)` vs `(64)`);
+  the gcc bench row itself is still deferred (Level-3 baseline), so the measured factor is dev debt.
+- [AC4] instance-count cliff limits + the ≥4× budget margin — measured by the committed harness on dev.
+- Adversarial #1 (K robustness across machines/versions) and #4 (first-execution warm-up vs the E4-T06
+  pause target) — both browser-measurement, dev debt.
+- The in-wasm `chain_enabled=1` chaining path's determinism — deferred to the E4-T25 differential harness.

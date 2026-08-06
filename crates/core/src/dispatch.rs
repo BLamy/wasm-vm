@@ -655,6 +655,13 @@ impl BlockDiscovery {
         self.queue.front()
     }
 
+    /// E4-T19: current pending-queue depth (cheap — the live `VecDeque` length). Used by the run
+    /// loop to decide when to drain the queue into a batch (accumulate a connected component before
+    /// compiling), without cloning the full stats struct on every block boundary.
+    pub fn queue_len(&self) -> usize {
+        self.queue.len()
+    }
+
     /// The current observable counters (queue depth reflects the live queue length).
     pub fn stats(&self) -> DiscoveryStats {
         DiscoveryStats {

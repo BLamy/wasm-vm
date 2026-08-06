@@ -374,6 +374,22 @@ for pathological or multi-workload sessions, not the common case. (gcc's own led
 *deferred* per the Level-3 baseline — the arithmetic here is bounded by block counts, not a measured
 gcc run, and is flagged as a hypothesis to confirm when E4-T04's gcc bench lands.)
 
+**E4-T19 amendment (batching as built).** The compile queue is drained in GROUPS: newly-hot blocks
+accumulate, then union into connected components of the observed same-page static-edge graph, each
+component compiled as ONE module of K functions (`run0..runK-1`, one shared `mem`). **K defaults to 64**
+(the §7 number; UA-probed in the browser, one override via `set_batch_size`, which doubles as the
+batched-vs-unbatched A/B flag at `K=1`). **Within-batch static edges lower to a direct `call`**
+(no `call_indirect`, no dispatch bounce); cross-batch / dynamic edges use E4-T18's funcref-table link
+slots. The direct call is gated by a one-byte **`chain_enabled` header flag (ABI `+0x250`)**: the
+native executor leaves it 0 (plain return per block — the E4-T18 behavior, so the retire-clock /
+interrupt-batching determinism of §3.4 is byte-identical), and the in-wasm chaining path (`=1`) is the
+browser form (determinism validated by the E4-T25 differential harness). **Partial-batch invalidation
+retires the WHOLE batch atomically** (`invalidate_page` → drop the Module/Instance), so no stale intra-
+batch direct call can run dead bytes; survivors fall back to T1 and recompile. A per-Module/Instance
+registry (count + estimated bytes) is the raw material for the E4-T20 budgets. Cross-browser
+compile/instantiate/instance-cliff costs are measured by `bench/module-costs/` (harness committed;
+live capture is dev debt — the mac reaps long browser runs).
+
 **Native backend may differ.** Natively (the CLI) we are not bound by `WebAssembly.compile` caps and
 could use Cranelift or direct machine-code emission; but to keep **one** codegen path audited against
 the differential harness (E4-T25), the default is to run the *same* emitted-WASM through a native WASM
