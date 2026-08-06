@@ -487,6 +487,64 @@ fn build_jit(
     linker
         .func_wrap("env", "softmmu_store", softmmu_store)
         .unwrap();
+    // E4-T14: the A-extension imports are always declared by the translator; register them so any
+    // module instantiates (these inline-TLB tests never compile A ops, so they are never called).
+    linker
+        .func_wrap(
+            "env",
+            "amo",
+            |caller: Caller<'_, Ctx>,
+             addr: i64,
+             val: i64,
+             op: i32,
+             width: i32|
+             -> anyhow::Result<i64> {
+                let hart = unsafe { &mut *caller.data().hart };
+                let base = caller.data().mem.unwrap().data_ptr(&caller);
+                let mut bus = RawBus {
+                    base,
+                    mmio_reads: 0,
+                    mmio_writes: 0,
+                };
+                hart.jit_amo(&mut bus, addr as u64, val, op, width)
+                    .map_err(|_| anyhow::anyhow!("amo fault"))
+            },
+        )
+        .unwrap();
+    linker
+        .func_wrap(
+            "env",
+            "lr",
+            |caller: Caller<'_, Ctx>, addr: i64, width: i32| -> anyhow::Result<i64> {
+                let hart = unsafe { &mut *caller.data().hart };
+                let base = caller.data().mem.unwrap().data_ptr(&caller);
+                let mut bus = RawBus {
+                    base,
+                    mmio_reads: 0,
+                    mmio_writes: 0,
+                };
+                hart.jit_lr(&mut bus, addr as u64, width)
+                    .map_err(|_| anyhow::anyhow!("lr fault"))
+            },
+        )
+        .unwrap();
+    linker
+        .func_wrap(
+            "env",
+            "sc",
+            |caller: Caller<'_, Ctx>, addr: i64, val: i64, width: i32| -> anyhow::Result<i64> {
+                let hart = unsafe { &mut *caller.data().hart };
+                let base = caller.data().mem.unwrap().data_ptr(&caller);
+                let mut bus = RawBus {
+                    base,
+                    mmio_reads: 0,
+                    mmio_writes: 0,
+                };
+                hart.jit_sc(&mut bus, addr as u64, val, width)
+                    .map_err(|_| anyhow::anyhow!("sc fault"))
+            },
+        )
+        .unwrap();
 
     let compile = |store: &mut Store<Ctx>, linker: &Linker<Ctx>, instr: Instr| {
         let bytes = translate_block(&one_op_block(instr), &Abi::INLINE_TLB).unwrap();

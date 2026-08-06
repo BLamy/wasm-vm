@@ -142,6 +142,86 @@ impl WasmtimeExecutor {
                 },
             )
             .expect("register env.store");
+        // E4-T14: the A-extension imports. Each bridges to the interpreter's OWN atomic +
+        // reservation code (`Hart::jit_amo/jit_lr/jit_sc`) through the same live-guest pointers
+        // env.load/env.store use — byte-identical semantics and a single shared `resv` state, so a
+        // JIT/interpreter tier switch mid-LR/SC stays coherent. A fault records the precise trap and
+        // unwinds the module, exactly like env.load/env.store.
+        linker
+            .func_wrap(
+                "env",
+                "amo",
+                |mut caller: Caller<'_, HostCtx>,
+                 addr: i64,
+                 val: i64,
+                 op: i32,
+                 width: i32|
+                 -> anyhow::Result<i64> {
+                    let (hart, bus) = {
+                        let c = caller.data();
+                        (c.hart, c.bus)
+                    };
+                    // SAFETY: see env.load above.
+                    let hart = unsafe { &mut *hart };
+                    let bus = unsafe { &mut *bus };
+                    match hart.jit_amo(bus, addr as u64, val, op, width) {
+                        Ok(v) => Ok(v),
+                        Err(t) => {
+                            caller.data_mut().trap = Some(t);
+                            Err(anyhow!("jit amo fault"))
+                        }
+                    }
+                },
+            )
+            .expect("register env.amo");
+        linker
+            .func_wrap(
+                "env",
+                "lr",
+                |mut caller: Caller<'_, HostCtx>, addr: i64, width: i32| -> anyhow::Result<i64> {
+                    let (hart, bus) = {
+                        let c = caller.data();
+                        (c.hart, c.bus)
+                    };
+                    // SAFETY: see env.load above.
+                    let hart = unsafe { &mut *hart };
+                    let bus = unsafe { &mut *bus };
+                    match hart.jit_lr(bus, addr as u64, width) {
+                        Ok(v) => Ok(v),
+                        Err(t) => {
+                            caller.data_mut().trap = Some(t);
+                            Err(anyhow!("jit lr fault"))
+                        }
+                    }
+                },
+            )
+            .expect("register env.lr");
+        linker
+            .func_wrap(
+                "env",
+                "sc",
+                |mut caller: Caller<'_, HostCtx>,
+                 addr: i64,
+                 val: i64,
+                 width: i32|
+                 -> anyhow::Result<i64> {
+                    let (hart, bus) = {
+                        let c = caller.data();
+                        (c.hart, c.bus)
+                    };
+                    // SAFETY: see env.load above.
+                    let hart = unsafe { &mut *hart };
+                    let bus = unsafe { &mut *bus };
+                    match hart.jit_sc(bus, addr as u64, val, width) {
+                        Ok(v) => Ok(v),
+                        Err(t) => {
+                            caller.data_mut().trap = Some(t);
+                            Err(anyhow!("jit sc fault"))
+                        }
+                    }
+                },
+            )
+            .expect("register env.sc");
         let store = Store::new(&engine, HostCtx::EMPTY);
         WasmtimeExecutor {
             engine,

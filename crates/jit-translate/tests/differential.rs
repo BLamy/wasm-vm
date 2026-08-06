@@ -40,6 +40,11 @@ fn ram_read(ram: &[u8], addr: u64, n: usize) -> u64 {
     }
     v
 }
+/// Independent overlap test for reservation invalidation (mirrors `hart::overlaps`).
+fn store_overlaps(addr: u64, len: u64, ra: u64, rw: u64) -> bool {
+    addr < ra.wrapping_add(rw) && ra < addr.wrapping_add(len)
+}
+
 fn ram_write(ram: &mut [u8], addr: u64, n: usize, val: u64) {
     for i in 0..n {
         ram[((addr.wrapping_add(i as u64)) & RAM_MASK) as usize] = (val >> (8 * i)) as u8;
@@ -164,6 +169,38 @@ fn terminator_exit(instr: &Instr, before: &[u64; 32]) -> ExitCode {
 // ── wasm engine ─────────────────────────────────────────────────────────────
 struct WasmData {
     ram: Vec<u8>,
+    /// E4-T14: the LR/SC reservation `(addr, width)`, maintained INDEPENDENTLY of the interpreter
+    /// (the differential-test philosophy) so a divergence in the reservation protocol shows up as a
+    /// register/RAM mismatch rather than moving in lock-step with `Hart::resv`.
+    resv: Option<(u64, u8)>,
+}
+
+/// Independent AMO RMW (mirrors `hart::amo_w`/`amo_d`) — an operand-order-faithful reimplementation.
+fn amo_apply(op: i32, width: usize, old: u64, rhs: u64) -> u64 {
+    macro_rules! by_width {
+        ($ity:ty, $uty:ty) => {{
+            let o = old as $uty;
+            let r = rhs as $uty;
+            let res = match op {
+                0 => r,                                  // swap
+                1 => o.wrapping_add(r),                  // add
+                2 => o ^ r,                              // xor
+                3 => o & r,                              // and
+                4 => o | r,                              // or
+                5 => (o as $ity).min(r as $ity) as $uty, // min (signed)
+                6 => (o as $ity).max(r as $ity) as $uty, // max (signed)
+                7 => o.min(r),                           // minu
+                8 => o.max(r),                           // maxu
+                _ => unreachable!("bad amo op"),
+            };
+            res as u64
+        }};
+    }
+    match width {
+        4 => by_width!(i32, u32),
+        8 => by_width!(i64, u64),
+        _ => unreachable!("bad amo width"),
+    }
 }
 
 fn run_wasm(block: &DecodedBlock, init: &[u64; 32], ram0: &[u8]) -> Outcome {
@@ -175,7 +212,13 @@ fn run_wasm(block: &DecodedBlock, init: &[u64; 32], ram0: &[u8]) -> Outcome {
 
     let engine = Engine::default();
     let module = Module::new(&engine, &bytes).expect("module compiles");
-    let mut store = Store::new(&engine, WasmData { ram: ram0.to_vec() });
+    let mut store = Store::new(
+        &engine,
+        WasmData {
+            ram: ram0.to_vec(),
+            resv: None,
+        },
+    );
     let mut linker = Linker::new(&engine);
     linker
         .func_wrap(
@@ -202,8 +245,82 @@ fn run_wasm(block: &DecodedBlock, init: &[u64; 32], ram0: &[u8]) -> Outcome {
             "env",
             "store",
             |mut caller: wasmtime::Caller<'_, WasmData>, addr: i64, val: i64, width: i32| {
-                let ram = &mut caller.data_mut().ram;
-                ram_write(ram, addr as u64, width as usize, val as u64);
+                let d = caller.data_mut();
+                ram_write(&mut d.ram, addr as u64, width as usize, val as u64);
+                // A plain store clears an overlapping reservation (mirrors the interpreter tail).
+                if let Some((ra, rw)) = d.resv
+                    && store_overlaps(addr as u64, width as u64, ra, rw as u64)
+                {
+                    d.resv = None;
+                }
+            },
+        )
+        .unwrap();
+    // E4-T14: A-extension imports, independently reimplemented against the flat RAM + `resv`.
+    linker
+        .func_wrap(
+            "env",
+            "amo",
+            |mut caller: wasmtime::Caller<'_, WasmData>,
+             addr: i64,
+             val: i64,
+             op: i32,
+             width: i32|
+             -> i64 {
+                let a = addr as u64;
+                let w = width as usize;
+                let d = caller.data_mut();
+                let old = ram_read(&d.ram, a, w);
+                let new = amo_apply(op, w, old, val as u64);
+                ram_write(&mut d.ram, a, w, new);
+                if let Some((ra, rw)) = d.resv
+                    && store_overlaps(a, width as u64, ra, rw as u64)
+                {
+                    d.resv = None;
+                }
+                // rd gets the ORIGINAL value, sign-extended for `.w`.
+                match w {
+                    4 => old as u32 as i32 as i64,
+                    8 => old as i64,
+                    _ => unreachable!(),
+                }
+            },
+        )
+        .unwrap();
+    linker
+        .func_wrap(
+            "env",
+            "lr",
+            |mut caller: wasmtime::Caller<'_, WasmData>, addr: i64, width: i32| -> i64 {
+                let a = addr as u64;
+                let w = width as usize;
+                let d = caller.data_mut();
+                let v = ram_read(&d.ram, a, w);
+                d.resv = Some((a, width as u8));
+                match w {
+                    4 => v as u32 as i32 as i64,
+                    8 => v as i64,
+                    _ => unreachable!(),
+                }
+            },
+        )
+        .unwrap();
+    linker
+        .func_wrap(
+            "env",
+            "sc",
+            |mut caller: wasmtime::Caller<'_, WasmData>, addr: i64, val: i64, width: i32| -> i64 {
+                let a = addr as u64;
+                let w = width as usize;
+                let d = caller.data_mut();
+                let success = d.resv == Some((a, width as u8));
+                d.resv = None;
+                if success {
+                    ram_write(&mut d.ram, a, w, val as u64);
+                    0
+                } else {
+                    1
+                }
             },
         )
         .unwrap();
@@ -1334,5 +1451,386 @@ fn randomized_differential_longblocks() {
         let body_len = 40 + (rng.next() % 80) as usize; // long blocks up to ~120 ops
         let instrs: Vec<Instr> = (0..body_len).map(|_| rand_alu_or_m(&mut rng)).collect();
         assert_equiv(&instrs, false, &init, &ram, "long fall-through block");
+    }
+}
+
+// ── E4-T14: A-extension (AMO + LR/SC) differential coverage ─────────────────
+use wasm_vm_core::decode::AmoOp;
+
+/// A 1 MiB flat RAM with `val` (low `width` bytes) written at `addr`.
+fn ram_with(addr: u64, width: usize, val: u64) -> Vec<u8> {
+    let mut ram = vec![0u8; 1 << RAM_BITS];
+    ram_write(&mut ram, addr, width, val);
+    ram
+}
+
+/// Corner operands that stress signed/unsigned min/max boundaries and add overflow.
+const AMO_CORNERS: [u64; 7] = [
+    0,
+    1,
+    0xFFFF_FFFF_FFFF_FFFF, // -1
+    0x8000_0000_0000_0000, // i64::MIN
+    0x7FFF_FFFF_FFFF_FFFF, // i64::MAX
+    0x0000_0000_8000_0000, // i32::MIN in low word
+    0x0000_0000_7FFF_FFFF, // i32::MAX in low word
+];
+
+#[test]
+fn amo_all_ops_w_and_d_corners() {
+    let addr = 0x200u64; // aligned for both .w (4) and .d (8)
+    let ops = [
+        AmoOp::Swap,
+        AmoOp::Add,
+        AmoOp::Xor,
+        AmoOp::And,
+        AmoOp::Or,
+        AmoOp::Min,
+        AmoOp::Max,
+        AmoOp::Minu,
+        AmoOp::Maxu,
+    ];
+    for op in ops {
+        for &memval in &AMO_CORNERS {
+            for &rs2val in &AMO_CORNERS {
+                let mut init = [0u64; 32];
+                init[1] = addr; // rs1 = address
+                init[2] = rs2val; // rs2 = operand
+                // .w
+                let ram = ram_with(addr, 4, memval);
+                assert_equiv(
+                    &[Instr::AmoW {
+                        op,
+                        rd: 3,
+                        rs1: 1,
+                        rs2: 2,
+                        aq: false,
+                        rl: false,
+                    }],
+                    false,
+                    &init,
+                    &ram,
+                    &format!("amo.w {op:?} mem={memval:#x} rs2={rs2val:#x}"),
+                );
+                // .d
+                let ram = ram_with(addr, 8, memval);
+                assert_equiv(
+                    &[Instr::AmoD {
+                        op,
+                        rd: 3,
+                        rs1: 1,
+                        rs2: 2,
+                        aq: false,
+                        rl: false,
+                    }],
+                    false,
+                    &init,
+                    &ram,
+                    &format!("amo.d {op:?} mem={memval:#x} rs2={rs2val:#x}"),
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn lrsc_directed_sequences() {
+    let addr = 0x200u64;
+    let mut init = [0u64; 32];
+    init[1] = addr; // rs1 = address
+    init[2] = 0xDEAD_BEEF_CAFE_F00D; // rs2 = value to SC / store
+    let ram = ram_with(addr, 8, 0x1122_3344_5566_7788);
+
+    // (1) LR.W then SC.W success (uninterrupted): rd(SC)=0, memory = rs2 low32.
+    assert_equiv(
+        &[
+            Instr::LrW {
+                rd: 4,
+                rs1: 1,
+                aq: false,
+                rl: false,
+            },
+            Instr::ScW {
+                rd: 5,
+                rs1: 1,
+                rs2: 2,
+                aq: false,
+                rl: false,
+            },
+        ],
+        false,
+        &init,
+        &ram,
+        "lr.w / sc.w success",
+    );
+
+    // (2) LR.D then SC.D success.
+    assert_equiv(
+        &[
+            Instr::LrD {
+                rd: 4,
+                rs1: 1,
+                aq: false,
+                rl: false,
+            },
+            Instr::ScD {
+                rd: 5,
+                rs1: 1,
+                rs2: 2,
+                aq: false,
+                rl: false,
+            },
+        ],
+        false,
+        &init,
+        &ram,
+        "lr.d / sc.d success",
+    );
+
+    // (3) LR then intervening plain store to the reserved addr → SC fails (rd=1), no SC store.
+    assert_equiv(
+        &[
+            Instr::LrW {
+                rd: 4,
+                rs1: 1,
+                aq: false,
+                rl: false,
+            },
+            Instr::Sw {
+                rs1: 1,
+                rs2: 2,
+                imm: 0,
+            },
+            Instr::ScW {
+                rd: 5,
+                rs1: 1,
+                rs2: 2,
+                aq: false,
+                rl: false,
+            },
+        ],
+        false,
+        &init,
+        &ram,
+        "lr / store / sc fail",
+    );
+
+    // (4) SC without a prior LR fails (rd=1), no store.
+    assert_equiv(
+        &[Instr::ScW {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+            aq: false,
+            rl: false,
+        }],
+        false,
+        &init,
+        &ram,
+        "sc without lr fails",
+    );
+
+    // (5) Width mismatch: LR.W then SC.D fails (rd=1).
+    assert_equiv(
+        &[
+            Instr::LrW {
+                rd: 4,
+                rs1: 1,
+                aq: false,
+                rl: false,
+            },
+            Instr::ScD {
+                rd: 5,
+                rs1: 1,
+                rs2: 2,
+                aq: false,
+                rl: false,
+            },
+        ],
+        false,
+        &init,
+        &ram,
+        "lr.w / sc.d width mismatch fails",
+    );
+
+    // (6) back-to-back LR/LR/SC honors the LATEST reservation (same addr, both valid → success).
+    assert_equiv(
+        &[
+            Instr::LrW {
+                rd: 4,
+                rs1: 1,
+                aq: false,
+                rl: false,
+            },
+            Instr::LrW {
+                rd: 6,
+                rs1: 1,
+                aq: false,
+                rl: false,
+            },
+            Instr::ScW {
+                rd: 5,
+                rs1: 1,
+                rs2: 2,
+                aq: false,
+                rl: false,
+            },
+        ],
+        false,
+        &init,
+        &ram,
+        "lr/lr/sc latest reservation",
+    );
+
+    // (7) SC to a DIFFERENT (also-reserved-width) address than the LR fails.
+    let mut init2 = init;
+    init2[7] = addr + 8; // rs=7 holds a different aligned addr
+    assert_equiv(
+        &[
+            Instr::LrW {
+                rd: 4,
+                rs1: 1,
+                aq: false,
+                rl: false,
+            },
+            Instr::ScW {
+                rd: 5,
+                rs1: 7,
+                rs2: 2,
+                aq: false,
+                rl: false,
+            },
+        ],
+        false,
+        &init2,
+        &ram,
+        "sc wrong address fails",
+    );
+
+    // (8) AMO between LR and SC clears the reservation → SC fails.
+    assert_equiv(
+        &[
+            Instr::LrW {
+                rd: 4,
+                rs1: 1,
+                aq: false,
+                rl: false,
+            },
+            Instr::AmoW {
+                op: AmoOp::Add,
+                rd: 8,
+                rs1: 1,
+                rs2: 2,
+                aq: false,
+                rl: false,
+            },
+            Instr::ScW {
+                rd: 5,
+                rs1: 1,
+                rs2: 2,
+                aq: false,
+                rl: false,
+            },
+        ],
+        false,
+        &init,
+        &ram,
+        "amo between lr/sc clears reservation",
+    );
+}
+
+/// Randomized interleaving of LR/SC/AMO with plain stores, JIT vs interpreter (memory + regs +
+/// reservation, the last compared implicitly through SC success/fail).
+#[test]
+fn a_extension_randomized() {
+    let mut rng = Rng(0xA70_1234);
+    for _ in 0..2000 {
+        // A small pool of aligned addresses so reservations and stores frequently alias.
+        let addrs = [0x100u64, 0x108, 0x200, 0x208];
+        let mut init = [0u64; 32];
+        // rs 1..=4 hold addresses, rs 5..=8 hold values.
+        for k in 0..4u8 {
+            init[(1 + k) as usize] = addrs[k as usize];
+            init[(5 + k) as usize] = rng.next();
+        }
+        let ram = rand_ram(&mut rng);
+        let mut instrs = Vec::new();
+        let body = 1 + (rng.next() % 8) as usize;
+        for _ in 0..body {
+            let ar = 1 + (rng.next() % 4) as u8; // address reg
+            let vr = 5 + (rng.next() % 4) as u8; // value reg
+            let dr = 9 + (rng.next() % 20) as u8; // dest reg (never an addr/val reg)
+            let width8 = rng.next().is_multiple_of(2);
+            instrs.push(match rng.next() % 5 {
+                0 if width8 => Instr::LrD {
+                    rd: dr,
+                    rs1: ar,
+                    aq: false,
+                    rl: false,
+                },
+                0 => Instr::LrW {
+                    rd: dr,
+                    rs1: ar,
+                    aq: false,
+                    rl: false,
+                },
+                1 if width8 => Instr::ScD {
+                    rd: dr,
+                    rs1: ar,
+                    rs2: vr,
+                    aq: false,
+                    rl: false,
+                },
+                1 => Instr::ScW {
+                    rd: dr,
+                    rs1: ar,
+                    rs2: vr,
+                    aq: false,
+                    rl: false,
+                },
+                2 if width8 => Instr::Sd {
+                    rs1: ar,
+                    rs2: vr,
+                    imm: 0,
+                },
+                2 => Instr::Sw {
+                    rs1: ar,
+                    rs2: vr,
+                    imm: 0,
+                },
+                _ => {
+                    let op = [
+                        AmoOp::Swap,
+                        AmoOp::Add,
+                        AmoOp::Xor,
+                        AmoOp::And,
+                        AmoOp::Or,
+                        AmoOp::Min,
+                        AmoOp::Max,
+                        AmoOp::Minu,
+                        AmoOp::Maxu,
+                    ][(rng.next() % 9) as usize];
+                    if width8 {
+                        Instr::AmoD {
+                            op,
+                            rd: dr,
+                            rs1: ar,
+                            rs2: vr,
+                            aq: false,
+                            rl: false,
+                        }
+                    } else {
+                        Instr::AmoW {
+                            op,
+                            rd: dr,
+                            rs1: ar,
+                            rs2: vr,
+                            aq: false,
+                            rl: false,
+                        }
+                    }
+                }
+            });
+        }
+        assert_equiv(&instrs, false, &init, &ram, "randomized A sequence");
     }
 }

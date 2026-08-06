@@ -969,7 +969,183 @@ impl Hart {
                 });
             }
         }
+        // A-extension reservation invalidation (E1-T04, mirrored for the JIT store path): a
+        // successful plain store that overlaps the reservation granule clears it. In the
+        // interpreter this lives in the retire tail of `execute`; the JIT store import bypasses
+        // that path, so it must fire the SAME invalidation here or an interpreter-LR / JIT-store /
+        // interpreter-SC sequence would let a stale reservation survive (tier-switch incoherence).
+        // Runs only after a successful (non-faulting) store, matching the interpreter (a faulting
+        // store never invalidates).
+        if let Some((ra, rw)) = self.resv
+            && overlaps(addr, u64::from(width as u32), ra, u64::from(rw))
+        {
+            self.resv = None;
+        }
         Ok(())
+    }
+
+    /// E4-T14: perform a JIT-emitted LR (load-reserved) — the `env.lr(addr, width)` host import.
+    /// `width` is 4 (`lr.w`) or 8 (`lr.d`). Byte-identical to the interpreter's `LrW`/`LrD` arms:
+    /// natural-alignment pre-check (misaligned → `LoadAddrMisaligned`, reservation untouched), the
+    /// interpreter's translated + PMP-checked load, then the reservation set to `(addr, width)` in
+    /// the SHARED `self.resv` — so a JIT LR + interpreter SC (or vice versa across a tier switch) is
+    /// coherent. Returns the sign-extended loaded value (rd), or the precise fault [`Trap`].
+    pub fn jit_lr(&mut self, bus: &mut impl Bus, addr: u64, width: i32) -> Result<i64, Trap> {
+        match width {
+            4 => {
+                if !addr.is_multiple_of(4) {
+                    return Err(Trap {
+                        cause: Exception::LoadAddrMisaligned,
+                        tval: addr,
+                    });
+                }
+                let v = cload32(&self.csr, &mut self.tlb, bus, addr)?;
+                self.resv = Some((addr, 4));
+                Ok(sext32(v) as i64)
+            }
+            8 => {
+                if !addr.is_multiple_of(8) {
+                    return Err(Trap {
+                        cause: Exception::LoadAddrMisaligned,
+                        tval: addr,
+                    });
+                }
+                let v = cload64(&self.csr, &mut self.tlb, bus, addr)?;
+                self.resv = Some((addr, 8));
+                Ok(v as i64)
+            }
+            _ => Err(Trap {
+                cause: Exception::IllegalInstruction,
+                tval: 0,
+            }),
+        }
+    }
+
+    /// E4-T14: perform a JIT-emitted SC (store-conditional) — the `env.sc(addr, val, width)` host
+    /// import. Byte-identical to the interpreter's `ScW`/`ScD` arms: natural-alignment pre-check
+    /// (misaligned → `StoreAddrMisaligned`, reservation preserved), then success IFF the SHARED
+    /// reservation is exactly `(addr, width)` (a width or address mismatch fails). Either outcome
+    /// consumes the reservation. On success the value is stored and `0` is returned; on failure
+    /// nothing is stored and `1` is returned. Returns the precise fault [`Trap`] on a store fault.
+    pub fn jit_sc(
+        &mut self,
+        bus: &mut impl Bus,
+        addr: u64,
+        val: i64,
+        width: i32,
+    ) -> Result<i64, Trap> {
+        match width {
+            4 => {
+                if !addr.is_multiple_of(4) {
+                    return Err(Trap {
+                        cause: Exception::StoreAddrMisaligned,
+                        tval: addr,
+                    });
+                }
+                let success = self.resv == Some((addr, 4));
+                self.resv = None;
+                if success {
+                    cstore32(&self.csr, &mut self.tlb, bus, addr, val as u32)?;
+                    Ok(0)
+                } else {
+                    Ok(1)
+                }
+            }
+            8 => {
+                if !addr.is_multiple_of(8) {
+                    return Err(Trap {
+                        cause: Exception::StoreAddrMisaligned,
+                        tval: addr,
+                    });
+                }
+                let success = self.resv == Some((addr, 8));
+                self.resv = None;
+                if success {
+                    cstore64(&self.csr, &mut self.tlb, bus, addr, val as u64)?;
+                    Ok(0)
+                } else {
+                    Ok(1)
+                }
+            }
+            _ => Err(Trap {
+                cause: Exception::IllegalInstruction,
+                tval: 0,
+            }),
+        }
+    }
+
+    /// E4-T14: perform a JIT-emitted AMO — the `env.amo(addr, val, op, width)` host import. `op` is
+    /// the [`crate::decode::AmoOp`] discriminant the translator emits (0 swap, 1 add, 2 xor, 3 and,
+    /// 4 or, 5 min, 6 max, 7 minu, 8 maxu). Byte-identical to the interpreter's `AmoW`/`AmoD` arms:
+    /// natural-alignment pre-check (misaligned → `StoreAddrMisaligned`), atomic (single-hart RMW)
+    /// load → op → store through the interpreter's AMO-translated path, and — like every successful
+    /// store — clears an overlapping reservation. Returns the ORIGINAL loaded value, sign-extended
+    /// for `.w`, or the precise fault [`Trap`].
+    pub fn jit_amo(
+        &mut self,
+        bus: &mut impl Bus,
+        addr: u64,
+        val: i64,
+        op: i32,
+        width: i32,
+    ) -> Result<i64, Trap> {
+        let amo_op = match op {
+            0 => crate::decode::AmoOp::Swap,
+            1 => crate::decode::AmoOp::Add,
+            2 => crate::decode::AmoOp::Xor,
+            3 => crate::decode::AmoOp::And,
+            4 => crate::decode::AmoOp::Or,
+            5 => crate::decode::AmoOp::Min,
+            6 => crate::decode::AmoOp::Max,
+            7 => crate::decode::AmoOp::Minu,
+            8 => crate::decode::AmoOp::Maxu,
+            _ => {
+                return Err(Trap {
+                    cause: Exception::IllegalInstruction,
+                    tval: 0,
+                });
+            }
+        };
+        let (old, len) = match width {
+            4 => {
+                if !addr.is_multiple_of(4) {
+                    return Err(Trap {
+                        cause: Exception::StoreAddrMisaligned,
+                        tval: addr,
+                    });
+                }
+                let old = camoload32(&self.csr, &mut self.tlb, bus, addr)?;
+                let new = amo_w(amo_op, old, val as u32);
+                cstore32(&self.csr, &mut self.tlb, bus, addr, new)?;
+                (sext32(old) as i64, 4u64)
+            }
+            8 => {
+                if !addr.is_multiple_of(8) {
+                    return Err(Trap {
+                        cause: Exception::StoreAddrMisaligned,
+                        tval: addr,
+                    });
+                }
+                let old = camoload64(&self.csr, &mut self.tlb, bus, addr)?;
+                let new = amo_d(amo_op, old, val as u64);
+                cstore64(&self.csr, &mut self.tlb, bus, addr, new)?;
+                (old as i64, 8u64)
+            }
+            _ => {
+                return Err(Trap {
+                    cause: Exception::IllegalInstruction,
+                    tval: 0,
+                });
+            }
+        };
+        // The AMO write is a store: clear an overlapping reservation, as the interpreter's retire
+        // tail does for the AMO `mem` op.
+        if let Some((ra, rw)) = self.resv
+            && overlaps(addr, len, ra, u64::from(rw))
+        {
+            self.resv = None;
+        }
+        Ok(old)
     }
 
     /// Execute a decoded instruction. Returns the retire info `(rd, value, mem)` for the

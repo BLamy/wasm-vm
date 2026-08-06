@@ -180,7 +180,33 @@ pub enum TranslateError {
 const STATE_BASE: u32 = 0; // param local 0 — the CpuState base address (i32)
 const LOAD_IMPORT: u32 = 0; // env.load(addr i64, kind i32) -> i64
 const STORE_IMPORT: u32 = 1; // env.store(addr i64, val i64, width i32)
+// E4-T14 A-extension imports. AMO/LR/SC route through the runtime, which calls the interpreter's
+// OWN atomic + reservation code (`Hart::jit_amo/jit_lr/jit_sc`) — byte-identical semantics AND a
+// single shared `resv` state, so a JIT/interp tier switch mid-LR/SC is coherent. (The forward-
+// looking inline wasm-atomic-RMW form the ticket also envisions needs guest RAM in the wasm linear
+// memory, which the integrated executor does not have yet — E4-T11 deferred that — so it is not the
+// integrated path; see the module docs.)
+const AMO_IMPORT: u32 = 2; // env.amo(addr i64, val i64, op i32, width i32) -> i64 (old value)
+const LR_IMPORT: u32 = 3; // env.lr(addr i64, width i32) -> i64 (rd value)
+const SC_IMPORT: u32 = 4; // env.sc(addr i64, val i64, width i32) -> i64 (0 success / 1 fail)
 const ALIGN8: u32 = 3; // log2(8) memarg alignment hint for i64 loads/stores
+
+/// The `AmoOp` discriminant passed to the `env.amo` import — MUST match the mapping
+/// `Hart::jit_amo` decodes (0 swap … 8 maxu).
+fn amo_op_code(op: wasm_vm_core::decode::AmoOp) -> i32 {
+    use wasm_vm_core::decode::AmoOp::*;
+    match op {
+        Swap => 0,
+        Add => 1,
+        Xor => 2,
+        And => 3,
+        Or => 4,
+        Min => 5,
+        Max => 6,
+        Minu => 7,
+        Maxu => 8,
+    }
+}
 
 /// Load "kind" codes passed to the `env.load` import: width + signedness, matching the
 /// interpreter's extension rules for `lb/lh/lw/ld/lbu/lhu/lwu`.
@@ -240,6 +266,25 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     let _s = m.import_func("env", store_name, store_ty);
     debug_assert_eq!(_l, LOAD_IMPORT);
     debug_assert_eq!(_s, STORE_IMPORT);
+    // E4-T14: the A-extension imports (always declared; the runtime + harness register all three).
+    let amo_ty = m.add_type(FuncType::new(
+        &[ValType::I64, ValType::I64, ValType::I32, ValType::I32],
+        &[ValType::I64],
+    ));
+    let lr_ty = m.add_type(FuncType::new(
+        &[ValType::I64, ValType::I32],
+        &[ValType::I64],
+    ));
+    let sc_ty = m.add_type(FuncType::new(
+        &[ValType::I64, ValType::I64, ValType::I32],
+        &[ValType::I64],
+    ));
+    let _a = m.import_func("env", "amo", amo_ty);
+    let _lr = m.import_func("env", "lr", lr_ty);
+    let _sc = m.import_func("env", "sc", sc_ty);
+    debug_assert_eq!(_a, AMO_IMPORT);
+    debug_assert_eq!(_lr, LR_IMPORT);
+    debug_assert_eq!(_sc, SC_IMPORT);
 
     let run_ty = m.add_type(FuncType::new(&[ValType::I32], &[ValType::I32]));
     let run_idx = m.add_function(run_ty);
@@ -387,6 +432,13 @@ fn supported(instr: &Instr) -> bool {
             | Divuw { .. }
             | Remw { .. }
             | Remuw { .. }
+            // ── A extension (E4-T14) ──
+            | LrW { .. }
+            | LrD { .. }
+            | ScW { .. }
+            | ScD { .. }
+            | AmoW { .. }
+            | AmoD { .. }
             | Ecall
             | Ebreak
             | Fence { .. }
@@ -722,6 +774,17 @@ fn emit_alu(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, instr: Instr, pc: u
         Divuw { rd, rs1, rs2 } => emit_div_rem32(f, regs, abi, rd, rs1, rs2, DivKind::Divu),
         Remw { rd, rs1, rs2 } => emit_div_rem32(f, regs, abi, rd, rs1, rs2, DivKind::Rem),
         Remuw { rd, rs1, rs2 } => emit_div_rem32(f, regs, abi, rd, rs1, rs2, DivKind::Remu),
+        // ── A extension (E4-T14): route to the runtime imports (interpreter's own atomic code) ──
+        LrW { rd, rs1, .. } => emit_lr(f, regs, abi, rd, rs1, 4, pc),
+        LrD { rd, rs1, .. } => emit_lr(f, regs, abi, rd, rs1, 8, pc),
+        ScW { rd, rs1, rs2, .. } => emit_sc(f, regs, abi, rd, rs1, rs2, 4, pc),
+        ScD { rd, rs1, rs2, .. } => emit_sc(f, regs, abi, rd, rs1, rs2, 8, pc),
+        AmoW {
+            op, rd, rs1, rs2, ..
+        } => emit_amo(f, regs, abi, rd, rs1, rs2, amo_op_code(op), 4, pc),
+        AmoD {
+            op, rd, rs1, rs2, ..
+        } => emit_amo(f, regs, abi, rd, rs1, rs2, amo_op_code(op), 8, pc),
         // FENCE retires as a no-op mid-block only if it were non-terminating; but FENCE/FENCE.I are
         // terminators handled elsewhere. Anything else was rejected by `supported`.
         _ => unreachable!("emit_alu called on a non-RV64I / terminator op"),
@@ -788,6 +851,70 @@ fn emit_store(
         }
         MemModel::InlineTlb => emit_store_tlb(f, regs, abi, rs1, rs2, imm, width),
     }
+}
+
+// ── A extension (E4-T14): LR / SC / AMO via runtime imports ─────────────────
+//
+// All three route to a host import that calls the interpreter's OWN atomic + reservation code, so
+// the memory effect, the returned value, AND the shared `resv` state are byte-identical to the
+// interpreter — which is what makes an interpreter/JIT tier switch mid-LR/SC coherent. The address
+// is `rs1` (the A extension has no offset immediate). Like loads/stores, each op can trap
+// (misalignment / access fault), so it obeys the precise-state discipline: flush the dirty set and
+// materialize `exit_pc = pc` BEFORE the call, so a fault side-exits precisely (no re-interpretation
+// of the block from entry, which would replay any earlier committing store).
+
+/// `rd = sext(LR.width(mem[rs1]))`, setting the reservation. → `env.lr(addr, width) -> i64`.
+fn emit_lr(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, rd: u8, rs1: u8, width: i32, pc: u64) {
+    writeback(f, regs, abi);
+    write_pc_const(f, abi, pc);
+    push_reg(f, regs, abi, rs1);
+    f.i32_const(width);
+    f.call(LR_IMPORT);
+    set_reg(f, regs, rd);
+}
+
+/// `rd = SC.width(mem[rs1], rs2)` (0 success / 1 fail). → `env.sc(addr, val, width) -> i64`.
+#[allow(clippy::too_many_arguments)]
+fn emit_sc(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    rd: u8,
+    rs1: u8,
+    rs2: u8,
+    width: i32,
+    pc: u64,
+) {
+    writeback(f, regs, abi);
+    write_pc_const(f, abi, pc);
+    push_reg(f, regs, abi, rs1);
+    push_reg(f, regs, abi, rs2);
+    f.i32_const(width);
+    f.call(SC_IMPORT);
+    set_reg(f, regs, rd);
+}
+
+/// `rd = sext(old); mem[rs1] = amo_op(old, rs2)`. → `env.amo(addr, val, op, width) -> i64`.
+#[allow(clippy::too_many_arguments)]
+fn emit_amo(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    rd: u8,
+    rs1: u8,
+    rs2: u8,
+    op: i32,
+    width: i32,
+    pc: u64,
+) {
+    writeback(f, regs, abi);
+    write_pc_const(f, abi, pc);
+    push_reg(f, regs, abi, rs1);
+    push_reg(f, regs, abi, rs2);
+    f.i32_const(op);
+    f.i32_const(width);
+    f.call(AMO_IMPORT);
+    set_reg(f, regs, rd);
 }
 
 // ── E4-T11 inline direct-mapped TLB fast path ───────────────────────────────

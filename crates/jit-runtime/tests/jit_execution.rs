@@ -469,7 +469,7 @@ mod riscv_tests_gate {
                 continue;
             }
             let name = path.file_name().unwrap().to_string_lossy().into_owned();
-            if !(name.contains("rv64um") || name.contains("rv64uc")) {
+            if !(name.contains("rv64um") || name.contains("rv64uc") || name.contains("rv64ua")) {
                 continue;
             }
             let elf = std::fs::read(&path).unwrap();
@@ -521,8 +521,8 @@ mod riscv_tests_gate {
             checked += 1;
         }
         assert!(
-            checked >= 13,
-            "expected the rv64um + rv64uc ELFs, saw {checked}"
+            checked >= 30,
+            "expected the rv64um + rv64uc + rv64ua ELFs, saw {checked}"
         );
         // These riscv-tests are largely straight-line (each block executed once, then the pass path
         // ecalls out), so JIT RE-ENTRY (`executed_blocks`) is legitimately near-zero — the exclusion
