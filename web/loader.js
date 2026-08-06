@@ -22,6 +22,15 @@ import init, {
   setSlirpMtu,
   slirpDhcpStats,
 } from "./pkg/wasm_vm_wasm.js";
+import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
+
+/** Gunzip `bytes` (a gzip member) to a Uint8Array via the platform DecompressionStream. */
+async function gunzip(bytes) {
+  const ds = new DecompressionStream("gzip");
+  const stream = new Blob([bytes]).stream().pipeThrough(ds);
+  const buf = await new Response(stream).arrayBuffer();
+  return new Uint8Array(buf);
+}
 
 /** Fetch `url` into one preallocated buffer, reporting `(loaded, total)`; `total` is null when
  *  the server sends no Content-Length (progress must degrade to indeterminate, not lie). */
@@ -339,6 +348,69 @@ export async function startLinuxBoot(opts = {}) {
       }
     } catch { /* non-window scope (worker) — no test hook */ }
 
+    // E4 restore-on-first-load (busybox/initramfs path): instead of executing the ~40 s Linux boot,
+    // restore a shipped, build-time boot snapshot into the just-constructed machine and go straight to
+    // the run loop. The machine already cold-booted in its constructor (place_and_boot), so ANY failure
+    // here — a missing/incoherent/corrupt snapshot, a network or decompression error — simply falls
+    // through to that cold-booted machine: a clean full boot, never a broken state.
+    //
+    // Coherence is bound, not bypassed: stampBootSnapshotIdentity binds this machine to build_core_hash
+    // + the kernel/initramfs base id, and restoreDecisionCode must return "resume" before we load the
+    // blob. A snapshot from an older build ("foreign_build") or a different kernel ("foreign_image") is
+    // rejected → cold boot. Re-seeding is automatic: the goldfish RTC (Date.now) and virtio-rng
+    // (crypto.getRandomValues) are LIVE browser-backed sources read on demand, not frozen snapshot
+    // state, so wall-clock time and entropy self-reseed after restore; a fresh DHCP lease is a slirp
+    // (Alpine) concern, N/A for the offline busybox default.
+    let restoredFromBootSnapshot = false;
+    const bootSnap = manifest.artifacts?.bootSnapshot;
+    if (mode === "initramfs" && bootSnap && opts.bootSnapshot !== false) {
+      try {
+        const baseId = await deriveBootSnapshotBaseId(km.sha256, manifest.artifacts.initramfs.sha256);
+        machine.stampBootSnapshotIdentity(baseId);
+        // Repeat-load fast path: a previously cached copy in the snapshot IndexedDB store (imported
+        // below on first load) restores with no network fetch at all.
+        let blob = null;
+        const cached = await machine.readStoredSnapshot();
+        if (cached && machine.restoreDecisionCode(cached, machine.overlayGeneration()) === "resume") {
+          blob = cached;
+        }
+        // The pure 3-way decision (unit-tested): a user snapshot would win, else a coherent boot
+        // snapshot restores, else cold boot. Busybox has no user snapshot, so this selects the boot
+        // snapshot whenever it is coherent.
+        const wantRestore = decideBootPath({
+          hasUserSnapshot: false,
+          bootSnapshotAvailable: true,
+          bootSnapshotDecision: blob ? "resume" : "pending",
+        });
+        if (!blob && wantRestore !== "user_snapshot") {
+          onState("restoring");
+          const gz = await fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t));
+          const got = await sha256hex(gz);
+          if (got !== bootSnap.sha256) {
+            throw new Error(`boot snapshot integrity: expected ${bootSnap.sha256}, got ${got}`);
+          }
+          const bytes = await gunzip(gz);
+          const decision = machine.restoreDecisionCode(bytes, machine.overlayGeneration());
+          if (decision === "resume") {
+            blob = bytes;
+            // Cache for instant repeat loads (still coherence-guarded on the next restore).
+            try { await machine.importStoredSnapshot(bytes); } catch { /* cache best-effort */ }
+          } else {
+            console.warn(`wasm-vm: boot snapshot not coherent (${decision}) — cold booting`);
+          }
+        }
+        if (blob) {
+          machine.loadSnapshotBlob(blob);
+          restoredFromBootSnapshot = true;
+          onState("restored");
+        }
+      } catch (e) {
+        // Fall back to the cold-booted machine — never a broken state.
+        console.warn("wasm-vm: boot-snapshot restore failed, cold booting:", e?.message || e);
+        restoredFromBootSnapshot = false;
+      }
+    }
+
     let stopped = false;
     let paused = false;
     // Exactly one `tick` may be pending at a time. `resume()` guarding only on `paused` is not
@@ -503,6 +575,8 @@ export async function startLinuxBoot(opts = {}) {
         }
       },
       isPaused: () => paused,
+      // E4: true when this boot skipped the Linux boot by restoring a shipped boot snapshot.
+      restoredFromBootSnapshot: () => restoredFromBootSnapshot,
       stateDigest: () => machine.stateDigest(),
       // E3-T15 verifier evidence: production DHCP exchanges from this exact guest boot.
       dhcpStats: () => JSON.parse(slirpDhcpStats()),

@@ -209,6 +209,19 @@ export class WasmLinux {
      */
     setProfiling(on: boolean): boolean;
     /**
+     * E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
+     * shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise sets no
+     * snapshot identity — `snapshot_base` stays `None` and every restore verdict is `"missing"`).
+     *
+     * The core identity is [`build_core_hash`] (the crate version), so a snapshot produced by a
+     * DIFFERENT build fails the `CoreHashMismatch` guard and the caller falls back to a cold boot —
+     * the guard is bound, never bypassed. `base_id` (32 bytes) binds the snapshot to a specific
+     * kernel+initramfs pair (the JS caller derives it from the boot manifest's artifact hashes); a
+     * snapshot for a different kernel/initramfs fails `BaseImageMismatch`. Overlay generation stays 0
+     * (the initramfs path has no durable overlay to invalidate against).
+     */
+    stampBootSnapshotIdentity(base_id: Uint8Array): void;
+    /**
      * Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
      * devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
      */
@@ -412,6 +425,7 @@ export interface InitOutput {
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_enableJit: (a: number, b: number) => [number, number];

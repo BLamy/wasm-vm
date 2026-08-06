@@ -213,6 +213,31 @@ pub struct BootArgs {
     /// (E3-T12c3); reopen the SAME `--drive` image the snapshot was taken against.
     #[arg(long)]
     pub resume_from: Option<PathBuf>,
+    /// E4 boot-snapshot: stamp the snapshot's coherence `core_hash` (64 hex chars → 32 bytes) so the
+    /// shipped browser boot-snapshot binds to the matching wasm build. The browser derives the same
+    /// value from its crate version; a mismatch makes the coherence guard reject the snapshot (cold
+    /// boot fallback). Requires `--snapshot-out`.
+    #[arg(long, requires = "snapshot_out")]
+    pub snapshot_core_id: Option<String>,
+    /// E4 boot-snapshot: stamp the snapshot's coherence `base_image_hash` (64 hex chars → 32 bytes),
+    /// binding it to a specific kernel+initramfs pair. Requires `--snapshot-out`.
+    #[arg(long, requires = "snapshot_out")]
+    pub snapshot_base_id: Option<String>,
+}
+
+/// Decode exactly 32 bytes from a 64-char lowercase/uppercase hex string (the snapshot identity
+/// stamp). Returns a clear message on any malformed input.
+fn parse_id32(hex: &str) -> Result<[u8; 32], String> {
+    let hex = hex.trim();
+    if hex.len() != 64 {
+        return Err(format!("expected 64 hex chars, got {}", hex.len()));
+    }
+    let mut out = [0u8; 32];
+    for (i, byte) in out.iter_mut().enumerate() {
+        *byte = u8::from_str_radix(&hex[i * 2..i * 2 + 2], 16)
+            .map_err(|e| format!("bad hex at byte {i}: {e}"))?;
+    }
+    Ok(out)
 }
 
 /// Guest console → this process's stdout. Shared with the SBI console channel; a closed pipe
@@ -504,6 +529,33 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 blob.len(),
                 path.display()
             );
+        }
+        // E4 boot-snapshot: stamp the coherence identity BEFORE the snapshot watcher can fire, so the
+        // written blob's header binds to the intended build (`--snapshot-core-id`) and kernel+initramfs
+        // (`--snapshot-base-id`). Off these flags the machine keeps its default all-zero identity (the
+        // proven E3-T12c round-trip). clap already gates both on `--snapshot-out`.
+        if a.snapshot_core_id.is_some() || a.snapshot_base_id.is_some() {
+            let core = match &a.snapshot_core_id {
+                Some(h) => match parse_id32(h) {
+                    Ok(v) => v,
+                    Err(e) => {
+                        eprintln!("wasm-vm: bad --snapshot-core-id: {e}");
+                        return ExitCode::from(2);
+                    }
+                },
+                None => [0u8; 32],
+            };
+            let base = match &a.snapshot_base_id {
+                Some(h) => match parse_id32(h) {
+                    Ok(v) => v,
+                    Err(e) => {
+                        eprintln!("wasm-vm: bad --snapshot-base-id: {e}");
+                        return ExitCode::from(2);
+                    }
+                },
+                None => [0u8; 32],
+            };
+            m.set_snapshot_identity(core, base);
         }
         // E4-T15: opt-in FP-share measurement. When WASM_VM_FP_HISTOGRAM is set, run the boot under
         // the counting sink and emit FP_SHARE_JSON — the dynamic F/D instruction share that grounds

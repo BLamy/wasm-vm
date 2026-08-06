@@ -97,6 +97,52 @@ fn cpu_section_round_trips_on_wasm32() {
     assert_eq!(b.hart().resv, Some((0x8000_0040, 8)));
 }
 
+/// E4 restore-on-first-load: the boot-snapshot coherence guard on real wasm32. A snapshot stamped
+/// with a machine's identity restores into an identically-stamped machine (the shipped boot-snapshot
+/// happy path), while the SAME snapshot bytes are REJECTED (`CoreHashMismatch`) by a machine carrying
+/// a different build identity — the "stale shipped snapshot from an old build" case that must fall
+/// back to a cold boot. Proven by execution on the 32-bit target, not just asserted natively.
+#[wasm_bindgen_test]
+fn stamped_boot_snapshot_restores_only_for_matching_identity_on_wasm32() {
+    use wasm_vm_core::resume::SnapshotError;
+
+    // Zero-pad a version string into 32 bytes, exactly like the browser's `build_core_hash()`.
+    const fn core_id(v: &[u8]) -> [u8; 32] {
+        let mut out = [0u8; 32];
+        let mut i = 0;
+        while i < v.len() {
+            out[i] = v[i];
+            i += 1;
+        }
+        out
+    }
+    const CORE_A: [u8; 32] = core_id(b"0.0.1");
+    const CORE_B: [u8; 32] = core_id(b"0.0.2");
+    const BASE: [u8; 32] = [0xBA; 32];
+
+    // Producer: a machine stamped with build A's identity, some architectural state, snapshot taken.
+    let mut producer = wasm_vm_core::Machine::new(1 << 16);
+    producer.set_snapshot_identity(CORE_A, BASE);
+    producer.hart_mut().regs.pc = 0x8020_abcd;
+    producer.hart_mut().regs.write(7, 0x1234_5678_9abc_def0);
+    let blob = producer.save_resume().unwrap();
+
+    // Matching build A → restores, state applied.
+    let mut same = wasm_vm_core::Machine::new(1 << 16);
+    same.set_snapshot_identity(CORE_A, BASE);
+    same.load_resume(&blob).unwrap();
+    assert_eq!(same.hart().regs.pc, 0x8020_abcd);
+    assert_eq!(same.hart().regs.read(7), 0x1234_5678_9abc_def0);
+
+    // Different build B → rejected; the caller falls back to a cold boot.
+    let mut foreign = wasm_vm_core::Machine::new(1 << 16);
+    foreign.set_snapshot_identity(CORE_B, BASE);
+    assert_eq!(
+        foreign.load_resume(&blob),
+        Err(SnapshotError::CoreHashMismatch)
+    );
+}
+
 /// E3-T12c1: the VIRTIO_BLK section round-trips on real wasm32 too (same fixed-LE codec). Enable
 /// virtio-blk, poke the transport status via one MMIO write so it is non-default, save→load into a
 /// fresh machine, and re-serialize byte-identically.

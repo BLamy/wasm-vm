@@ -1758,6 +1758,31 @@ impl WasmLinux {
             .map_err(|e| JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code()))
     }
 
+    /// E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
+    /// shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise sets no
+    /// snapshot identity — `snapshot_base` stays `None` and every restore verdict is `"missing"`).
+    ///
+    /// The core identity is [`build_core_hash`] (the crate version), so a snapshot produced by a
+    /// DIFFERENT build fails the `CoreHashMismatch` guard and the caller falls back to a cold boot —
+    /// the guard is bound, never bypassed. `base_id` (32 bytes) binds the snapshot to a specific
+    /// kernel+initramfs pair (the JS caller derives it from the boot manifest's artifact hashes); a
+    /// snapshot for a different kernel/initramfs fails `BaseImageMismatch`. Overlay generation stays 0
+    /// (the initramfs path has no durable overlay to invalidate against).
+    #[wasm_bindgen(js_name = stampBootSnapshotIdentity)]
+    pub fn stamp_boot_snapshot_identity(&self, base_id: &[u8]) -> Result<(), JsError> {
+        if base_id.len() != 32 {
+            return Err(JsError::new(
+                "stampBootSnapshotIdentity: base_id must be 32 bytes",
+            ));
+        }
+        let mut base = [0u8; 32];
+        base.copy_from_slice(base_id);
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_snapshot_identity(build_core_hash(), base);
+        inner.snapshot_base = Some(base);
+        Ok(())
+    }
+
     /// E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
     /// can proceed instead of blocking on our open handle. Call before wiping; the machine must
     /// not persist afterward. No-op off the persistent path.

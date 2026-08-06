@@ -46,6 +46,7 @@ export const wasmlinux_sendInput: (a: number, b: number, c: number) => [number, 
 export const wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
 export const wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
 export const wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
+export const wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
 export const wasmlinux_stateDigest: (a: number) => [number, number, number, number];
 export const wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
 export const wasmmachine_enableJit: (a: number, b: number) => [number, number];

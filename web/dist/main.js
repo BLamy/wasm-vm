@@ -152,6 +152,7 @@ async function runLinuxBoot(opts, banner) {
     term.writeln(`\x1b[90m[network: slirp outbound via ${slirpRelay}]\x1b[0m`);
   }
   const pct = {};
+  const bootT0 = (typeof performance !== "undefined" ? performance.now() : Date.now());
   bootProgress.begin();
   resetGuestReady();
   const imageLen = opts.imageLen ?? 536870912; // chunked image length; for byte-fraction honesty
@@ -170,7 +171,21 @@ async function runLinuxBoot(opts, banner) {
       slirpDoh,
       slirpLeaseSecs: opts.slirpLeaseSecs ?? query.get("slirpLeaseSecs") ?? 86400,
       slirpMtu: opts.slirpMtu ?? query.get("slirpMtu") ?? 1500,
-      onState: (s) => { setStatus(`linux: ${s}`); bootProgress.onState(s); },
+      onState: (s) => {
+        // E4 restore-on-first-load: a visible stopwatch instead of the "booting" progress bar when
+        // the shipped boot snapshot is being restored.
+        if (s === "restoring") {
+          setStatus("restoring host from build-time snapshot…");
+          term.writeln("\x1b[90m[fast-boot: restoring host from a build-time snapshot instead of booting Linux]\x1b[0m");
+        } else if (s === "restored") {
+          const secs = (((typeof performance !== "undefined" ? performance.now() : Date.now()) - bootT0) / 1000).toFixed(2);
+          setStatus(`host restored in ${secs}s`);
+          term.writeln(`\x1b[32m[fast-boot: host ready in ${secs}s (restored, no Linux boot)]\x1b[0m`);
+        } else {
+          setStatus(`linux: ${s}`);
+        }
+        bootProgress.onState(s);
+      },
       onProgress: (role, loaded, total) => {
         pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;
         bootProgressEl.textContent = Object.entries(pct).map(([k, v]) => `${k} ${v}`).join("  ");
@@ -641,6 +656,8 @@ window.__linux = {
   pause: () => linuxCtl?.pause(),
   resume: () => linuxCtl?.resume(),
   isPaused: () => !!linuxCtl?.isPaused(),
+  // E4: did this boot skip the Linux boot by restoring the shipped boot snapshot?
+  restoredFromBootSnapshot: () => !!linuxCtl?.restoredFromBootSnapshot?.(),
 };
 // E3-T21c proof hook: the UI must not mistake an attached controller for guest-agent readiness.
 window.__fileTransferReady = () =>

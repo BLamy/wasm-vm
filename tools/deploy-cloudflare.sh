@@ -29,6 +29,11 @@ echo "[deploy] repointing manifests at R2 ($R2_PUBLIC) …"
 for m in "$DIST/artifacts.json" "$DIST/artifacts-alpine.json"; do
   [ -f "$m" ] || continue
   sed "s#\"releases/#\"$R2_PUBLIC/#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m"
+  # E4 boot snapshot: the compressed busybox boot snapshot is small (a few MB) and ships ON Pages, so
+  # repoint ONLY its URL back to the relative releases/ path (the generic rewrite above sent it to R2,
+  # where it is not uploaded). If a future snapshot exceeds the 25 MiB Pages cap, upload it to R2 and
+  # drop this line so its URL stays R2-hosted.
+  sed "s#\"$R2_PUBLIC/boot-snapshot/#\"releases/boot-snapshot/#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m"
 done
 # Do NOT ship the big artifacts with the site.
 rm -rf "$DIST/releases/kernel" "$DIST/releases/initramfs" "$DIST/releases/chunked-alpine" 2>/dev/null || true

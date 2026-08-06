@@ -11,6 +11,11 @@ entries=(
   "kernel   kernel/6.6.63/Image"
   "initramfs initramfs/initramfs.cpio.gz"
 )
+# E4 restore-on-first-load: the shipped, build-time busybox boot snapshot (gzip). OPTIONAL — included
+# only when tools/build-boot-snapshot.sh has produced it, so a manifest without it simply cold-boots.
+if [ -f "releases/boot-snapshot/busybox-ready.snap.gz" ]; then
+  entries+=("bootSnapshot boot-snapshot/busybox-ready.snap.gz")
+fi
 
 json='{\n  "generated": "content-hashed; regenerate with tools/gen-web-manifest.sh",\n  "artifacts": {\n'
 first=1

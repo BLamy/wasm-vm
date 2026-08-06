@@ -636,6 +636,27 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
+     * shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise sets no
+     * snapshot identity — `snapshot_base` stays `None` and every restore verdict is `"missing"`).
+     *
+     * The core identity is [`build_core_hash`] (the crate version), so a snapshot produced by a
+     * DIFFERENT build fails the `CoreHashMismatch` guard and the caller falls back to a cold boot —
+     * the guard is bound, never bypassed. `base_id` (32 bytes) binds the snapshot to a specific
+     * kernel+initramfs pair (the JS caller derives it from the boot manifest's artifact hashes); a
+     * snapshot for a different kernel/initramfs fails `BaseImageMismatch`. Overlay generation stays 0
+     * (the initramfs path has no durable overlay to invalidate against).
+     * @param {Uint8Array} base_id
+     */
+    stampBootSnapshotIdentity(base_id) {
+        const ptr0 = passArray8ToWasm0(base_id, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_stampBootSnapshotIdentity(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
      * devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
      * @returns {string}

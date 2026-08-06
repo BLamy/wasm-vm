@@ -147,6 +147,12 @@ web-build:
 	mkdir -p web/releases/kernel/6.6.63 web/releases/initramfs
 	cp releases/kernel/6.6.63/Image web/releases/kernel/6.6.63/Image
 	cp releases/initramfs/initramfs.cpio.gz web/releases/initramfs/initramfs.cpio.gz
+	# E4 restore-on-first-load: the (optional) compressed busybox boot snapshot, if built. Small
+	# enough to ship on Pages (deploy-cloudflare.sh keeps its URL relative, unlike kernel/initramfs).
+	@if [ -f releases/boot-snapshot/busybox-ready.snap.gz ]; then \
+	  mkdir -p web/releases/boot-snapshot; \
+	  cp releases/boot-snapshot/busybox-ready.snap.gz web/releases/boot-snapshot/busybox-ready.snap.gz; \
+	fi
 	bash tools/gen-web-manifest.sh
 
 # Regenerate web/tasks.json from the /tasks folder (the roadmap's single source of truth).
