@@ -13381,7 +13381,7 @@
       "epicKey": "4",
       "title": "Block chaining — direct linking between translated blocks and safe unlinking",
       "priority": 418,
-      "status": "verification-debt",
+      "status": "in-progress",
       "depends_on": [
         "E4-T16"
       ],
@@ -13435,7 +13435,7 @@
       "epicKey": "4",
       "title": "WebAssembly.Module batching strategy and cross-browser instantiation costs",
       "priority": 419,
-      "status": "verification-debt",
+      "status": "in-progress",
       "depends_on": [
         "E4-T10",
         "E4-T18"
@@ -13490,7 +13490,7 @@
       "epicKey": "4",
       "title": "JIT cache management — memory and module budgets, eviction, and stats",
       "priority": 420,
-      "status": "verification-debt",
+      "status": "in-progress",
       "depends_on": [
         "E4-T17",
         "E4-T19"
@@ -13545,7 +13545,7 @@
       "epicKey": "4",
       "title": "JIT compilation off the hot path — compile queue, async installs, pause targets",
       "priority": 421,
-      "status": "verification-debt",
+      "status": "in-progress",
       "depends_on": [
         "E4-T20"
       ],
@@ -13707,7 +13707,7 @@
       "epicKey": "4",
       "title": "Timekeeping under JIT and worker — mtime sources, hybrid clocking, no time warps",
       "priority": 424,
-      "status": "verification-debt",
+      "status": "in-progress",
       "depends_on": [
         "E4-T12",
         "E4-T23"
@@ -13762,7 +13762,7 @@
       "epicKey": "4",
       "title": "Lockstep interpreter-vs-JIT differential verification and randomized fuzzing",
       "priority": 425,
-      "status": "verification-debt",
+      "status": "in-progress",
       "depends_on": [
         "E4-T13",
         "E4-T14",

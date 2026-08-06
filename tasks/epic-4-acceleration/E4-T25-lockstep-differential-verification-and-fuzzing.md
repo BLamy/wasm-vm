@@ -3,7 +3,7 @@ id: E4-T25
 epic: 4
 title: Lockstep interpreter-vs-JIT differential verification and randomized fuzzing
 priority: 425
-status: verification-debt
+status: in-progress
 depends_on: [E4-T13, E4-T14, E4-T15, E4-T18]
 estimate: L
 capstone: false

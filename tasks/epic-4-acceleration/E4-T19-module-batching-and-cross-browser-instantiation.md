@@ -3,7 +3,7 @@ id: E4-T19
 epic: 4
 title: WebAssembly.Module batching strategy and cross-browser instantiation costs
 priority: 419
-status: verification-debt
+status: in-progress
 depends_on: [E4-T10, E4-T18]
 estimate: M
 capstone: false

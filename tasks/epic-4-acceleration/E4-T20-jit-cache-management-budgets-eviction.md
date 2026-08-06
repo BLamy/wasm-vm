@@ -3,7 +3,7 @@ id: E4-T20
 epic: 4
 title: JIT cache management — memory and module budgets, eviction, and stats
 priority: 420
-status: verification-debt
+status: in-progress
 depends_on: [E4-T17, E4-T19]
 estimate: M
 capstone: false
