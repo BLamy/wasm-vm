@@ -13984,11 +13984,18 @@
           "labels": [
             "E3-T19: record provider hardening performance blocker"
           ]
+        },
+        {
+          "date": "2026-08-06",
+          "commits": 1,
+          "labels": [
+            "docs(e4): add E4-T29 — wire the JIT runtime into the runnable VM"
+          ]
         }
       ],
       "firstActivity": "2026-07-27",
-      "lastActivity": "2026-07-27",
-      "commitCount": 1
+      "lastActivity": "2026-08-06",
+      "commitCount": 2
     },
     {
       "id": "E4-T29",
@@ -13996,7 +14003,7 @@
       "epicKey": "4",
       "title": "Wire the JIT runtime into the runnable VM — native CLI executor + browser executor",
       "priority": 428,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T10",
         "E4-T19",
@@ -14040,10 +14047,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Refute that integration is real and safe. (1) **Flag-off inertness:** diff every determinism/\ndifferential/boot-anchor gate at `--jit` off against pre-T29 HEAD — any change refutes \"additive,\ninterpreter untouched.\" (2) **On-path correctness:** run a real workload (CoreMark, then a paging\nguest) under `--jit` and lockstep/spot-check against the interpreter — a divergence is a genuine\nJIT-in-anger bug (add the repro to the E4-T25 corpus). (3) **Self-modifying guest under JIT:**\nboot a guest whose userspace writes code (the E4-T28 V8/FENCE.I case in miniature) and confirm no\nstale-block execution (E4-T16/T17 hold end-to-end, not just in unit tests). (4) **Browser fallback\nhonesty:** load without COOP/COEP and confirm the interpreter fallback engages cleanly (no half-\ninitialized executor). (5) **Measurement integrity:** confirm the recorded uplift is the JIT, not\nnoise — interpreter vs `--jit` A/B on the same dev box, ratios reported (ties into E4-T27).",
       "file": "tasks/epic-4-acceleration/E4-T29-wire-jit-runtime-into-runnable-vm.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-06",
+          "commits": 1,
+          "labels": [
+            "docs(e4): add E4-T29 — wire the JIT runtime into the runnable VM"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-06",
+      "lastActivity": "2026-08-06",
+      "commitCount": 1
     },
     {
       "id": "E5-T01",

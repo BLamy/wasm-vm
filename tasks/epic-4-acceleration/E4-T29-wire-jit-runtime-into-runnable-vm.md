@@ -3,7 +3,7 @@ id: E4-T29
 epic: 4
 title: Wire the JIT runtime into the runnable VM — native CLI executor + browser executor
 priority: 428
-status: pending
+status: in-progress
 depends_on: [E4-T10, E4-T19, E4-T20, E4-T21, E4-T22, E4-T23]
 estimate: L
 capstone: false
