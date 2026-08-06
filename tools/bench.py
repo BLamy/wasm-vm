@@ -263,7 +263,7 @@ BENCHES = {
 }
 
 
-def run_once(bench, echo=False, warm=False):
+def run_once(bench, echo=False, warm=False, jit=False):
     """Run `bench` once in a fresh VM.
 
     E4-T21 cold-vs-warm mode:
@@ -297,6 +297,11 @@ def run_once(bench, echo=False, warm=False):
     # cache + Phase-C interrupt batching) without changing the frozen default command. Set
     # WASM_VM_BOOT_EXTRA="--block-cache --interrupt-batching" to measure the accelerated path.
     cmd += shlex.split(os.environ.get("WASM_VM_BOOT_EXTRA", ""))
+    # E4-T29 (NATIVE): opt-in JIT passthrough. `--jit` attaches the wasmtime executor in the boot
+    # path; default off so the interpreter-oracle baseline is untouched. The JIT summary prints to the
+    # (discarded) stderr — use --verbose to see JIT_STATS_JSON.
+    if jit:
+        cmd.append("--jit")
     proc = subprocess.Popen(
         cmd, cwd=REPO, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
@@ -726,7 +731,7 @@ def cmd_run(args):
     results = []
     for i in range(args.runs):
         print(f"bench: {bench} native {mode} run {i + 1}/{args.runs}…", file=sys.stderr)
-        results.append(run_once(bench, echo=args.verbose, warm=warm))
+        results.append(run_once(bench, echo=args.verbose, warm=warm, jit=getattr(args, "jit", False)))
 
     scores = [r["score"] for r in results]
     median = statistics.median(scores)
@@ -755,6 +760,7 @@ def cmd_run(args):
         "noise_warning": noise_warning,
         "engine": args.engine,
         "mode": mode,
+        "jit": getattr(args, "jit", False),  # E4-T29: interpreter (False) vs wasmtime JIT (True)
         "commit": git_rev(),
         "config": {
             "gcc": GCC,
@@ -986,6 +992,9 @@ def main():
                         "before the measured pass. Ledger both to keep the cold/warm gap honest.")
     r.add_argument("--json", help="also write the JSON result to this path")
     r.add_argument("--verbose", action="store_true", help="stream the guest console to stderr")
+    r.add_argument("--jit", action="store_true",
+                   help="E4-T29 (NATIVE): attach the wasmtime JIT executor (--jit) in the boot path; "
+                        "default off keeps the interpreter-oracle baseline. Records the JIT ledger entry.")
     r.add_argument("--allow-browser", action="store_true", help="override the browser-engine defer")
     r.add_argument("--ledger", action="store_true",
                    help="append the result to bench/ledger.json after a successful run")

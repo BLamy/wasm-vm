@@ -27,6 +27,10 @@ zicsr-stub = ["wasm-vm-core/zicsr-stub"]
 
 [dependencies]
 wasm-vm-core = { workspace = true, features = ["std", "trace"] }
+# E4-T29 Phase 1 (NATIVE): the wasmtime-backed CompiledBlockExecutor — the SAME reference executor
+# every jit-runtime test attaches. Gated behind the opt-in `--jit` flag; with the flag off no
+# executor is constructed and the interpreter default (the deterministic oracle) is untouched.
+wasm-vm-jit-runtime = { path = "../jit-runtime" }
 getrandom = "0.2"
 wasm-vm-storage = { path = "../storage" }
 # E3-T14: wire the slirp user-mode network stack (its native NativeConnector path) behind

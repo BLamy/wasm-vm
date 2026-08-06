@@ -137,6 +137,17 @@ pub struct BootArgs {
     /// latency stays bounded to one block. Default off.
     #[arg(long)]
     pub interrupt_batching: bool,
+    /// E4-T29 (NATIVE): attach the wasmtime-backed JIT executor (the reference executor every
+    /// jit-runtime test uses) and enable the JIT. Default OFF — with the flag absent NO executor is
+    /// constructed and the boot is byte-identical to the interpreter oracle. Turning it on also turns
+    /// on the block cache (`set_jit` does) and the block-boundary interrupt poll, matching the proven
+    /// test configuration.
+    #[arg(long)]
+    pub jit: bool,
+    /// E4-T29: hotness threshold (executions before a block is nominated for translation). Only
+    /// meaningful with `--jit`; unset keeps the core default.
+    #[arg(long)]
+    pub jit_threshold: Option<u32>,
     /// E2-T25: emit a boot phase-timing table (wall ms, retired, MIPS per phase) + per-device
     /// MMIO access counts, as pretty text + JSON, when the boot reaches userland (or at exit).
     #[arg(long)]
@@ -361,6 +372,64 @@ impl SnapshotOnMarker {
     }
 }
 
+/// E4-T29: print the JIT activity summary to stderr after a `--jit` run. Sources every number from
+/// the accessors the `Machine`/executor already expose (discovery, chaining, cache/eviction stats),
+/// so it works for the CLI-integrated executor exactly as it does in the jit-runtime tests. `jit_active`
+/// being false here means the flag was set but discovery/executor never armed — surfaced explicitly so
+/// a silent no-op JIT boot can't masquerade as a real one.
+pub fn print_jit_stats(m: &Machine) {
+    let d = m.discovery_stats();
+    let chain = m.chain_stats();
+    let cache = m.jit_cache_stats();
+    let (modules, est_bytes) = m.jit_registry();
+    let (executed, retired_via_jit) = m
+        .executor()
+        .map(|e| (e.executed_blocks(), e.retired_via_jit()))
+        .unwrap_or((0, 0));
+    let compiled = m.executor().map(|e| e.compiled_count()).unwrap_or(0);
+    eprintln!("=== E4-T29 JIT summary ===");
+    eprintln!(
+        "jit_active={}  blocks_compiled={}  blocks_executed={}  retired_via_jit={}",
+        m.jit_active(),
+        compiled,
+        executed,
+        retired_via_jit,
+    );
+    eprintln!(
+        "discovery: nominated={} deduped={} excluded={} dropped_stale={} dropped_overflow={} queue_hwm={}",
+        d.nominated, d.deduped, d.excluded, d.dropped_stale, d.dropped_overflow, d.queue_hwm,
+    );
+    eprintln!(
+        "chaining: links_made={} links_cut={} dispatch_entries={} max_chain_depth={} links_followed={}",
+        chain.links_made,
+        chain.links_cut,
+        chain.dispatch_entries,
+        chain.max_chain_depth,
+        chain.total_links_followed(),
+    );
+    eprintln!(
+        "cache: modules={} est_bytes={} installs={} retranslations={} evictions={} flushes={} generation={}",
+        modules,
+        est_bytes,
+        cache.installs,
+        cache.retranslations,
+        cache.evictions,
+        cache.flushes,
+        cache.generation,
+    );
+    // Machine-readable one-liner for the bench harness / CI to scrape.
+    eprintln!(
+        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{}}}",
+        compiled,
+        executed,
+        retired_via_jit,
+        chain.links_made,
+        chain.dispatch_entries,
+        cache.installs,
+        cache.evictions,
+    );
+}
+
 pub fn boot(a: BootArgs) -> ExitCode {
     let kernel = match std::fs::read(&a.kernel) {
         Ok(b) => b,
@@ -514,6 +583,10 @@ pub fn boot(a: BootArgs) -> ExitCode {
         if a.stats {
             eprint!("{}", m.stats_dump()); // E2-T20
         }
+        // E4-T29: JIT activity summary at exit (blocks compiled/executed, chaining, cache/eviction).
+        if a.jit {
+            print_jit_stats(&m);
+        }
         // E4-T01: the hot-PC + subsystem-time report for the first boot. `total_ns` is the wall span
         // the machine measured around its own run; CPU-interp is derived from it by subtraction.
         if boot_num == 1 && a.profile {
@@ -640,6 +713,19 @@ fn assemble(
     m.set_storm_detect(!a.no_storm_detect); // E2-T20
     m.set_block_cache(a.block_cache); // E4-T05: default off; additive decode-cache toggle
     m.set_interrupt_batching(a.interrupt_batching); // E4-T05 Phase C: block-boundary interrupt poll
+    // E4-T29 (NATIVE): opt-in JIT. Construct the wasmtime executor exactly as the jit-runtime tests
+    // do, then enable the JIT. `set_jit(true)` also turns the block cache on (discovery is the JIT's
+    // front end); the block-boundary interrupt poll matches the proven test config. Off by default:
+    // when `--jit` is absent the executor stays `None` and `try_jit_block` is a no-op, so the boot is
+    // byte-identical to the interpreter oracle.
+    if a.jit {
+        m.set_executor(Box::new(jit_runtime::WasmtimeExecutor::new()));
+        if let Some(t) = a.jit_threshold {
+            m.set_hotness_threshold(t);
+        }
+        m.set_jit(true);
+        m.set_interrupt_batching(true);
+    }
     if a.profile {
         m.set_host_timer(Rc::new(MonotonicTimer::new())); // E4-T01: arms profiling + injects the timer
     }

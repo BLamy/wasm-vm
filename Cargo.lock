@@ -2311,6 +2311,7 @@ dependencies = [
  "tokio-tungstenite",
  "ureq",
  "wasm-vm-core",
+ "wasm-vm-jit-runtime",
  "wasm-vm-slirp",
  "wasm-vm-storage",
  "zstd",

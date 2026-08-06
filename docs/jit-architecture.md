@@ -519,6 +519,43 @@ budget arithmetic. Review comments + resolutions are appended here on completion
 
 *(Review log: pending separate-session review.)*
 
+## 12. Runtime integration (E4-T29) — attaching the executor to the runnable VM
+
+Sections 1–11 prove the JIT correct as a *component*; this section is how it is *attached* so a real
+booted guest runs translated blocks. The contract is **default = interpreter oracle**: the executor is
+opt-in and, when absent, the run loop's `try_jit_block` hook is a no-op, so every determinism /
+differential / boot-anchor gate is byte-identical to a no-JIT build.
+
+### 12.1 Native (Phase 1 — landed)
+
+`crates/cli` depends on `wasm-vm-jit-runtime` and exposes a `--jit` flag (default OFF) on both the
+`run` and `boot` subcommands. When set, the boot/run path constructs the executor exactly as every
+`jit-runtime` test does and enables the JIT **before** the run loop:
+
+```rust
+m.set_executor(Box::new(jit_runtime::WasmtimeExecutor::new()));
+if let Some(t) = jit_threshold { m.set_hotness_threshold(t); }
+m.set_jit(true);            // also turns the block cache on — discovery is the JIT's front end
+m.set_interrupt_batching(true); // block-boundary interrupt poll (the proven test config)
+```
+
+Lifecycle: the executor lives as long as the `Machine`. A guest reboot rebuilds the `Machine` from
+scratch, so a fresh executor is constructed per boot (no compiled state survives a reboot — the same
+guarantee `set_executor` gives by construction). Teardown is implicit (the executor drops with the
+`Machine`); `take_executor` is available to reclaim it for post-run stats. `boot::print_jit_stats`
+emits a human summary + a `JIT_STATS_JSON` line (blocks compiled/executed, chaining, cache/eviction)
+at exit under `--jit`. `tools/bench.py run coremark --jit` threads the flag through for A/B ledgering
+against the interpreter baseline.
+
+Flag probe: there is no UA/isolation probe natively — `--jit` is an explicit operator opt-in, kept out
+of the default so the deterministic oracle and reproducible boot-instruction anchors are untouched.
+
+### 12.2 Browser (Phase 2 — remaining T29 scope, NOT yet wired)
+
+The in-wasm `CompiledBlockExecutor` in `crates/wasm`, driven from the E4-T22 worker with the E4-T18
+funcref-table / E4-T19 batch protocol and a `crossOriginIsolated`-gated interpreter fallback, is the
+remaining half of this ticket and is deferred to its own change.
+
 ## Cross-reference
 
 - Profiling: `docs/perf/flamegraphs.md`, `evidence/e4-t02/hotspots-summary.md`,
