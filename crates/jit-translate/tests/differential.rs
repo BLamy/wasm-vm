@@ -1834,3 +1834,189 @@ fn a_extension_randomized() {
         assert_equiv(&instrs, false, &init, &ram, "randomized A sequence");
     }
 }
+
+// ── E4-T15: F/D floating-point side-exit-all policy ─────────────────────────
+//
+// The measured decision (docs/jit-fp-policy.md, evidence/e4-t15/fp-share.md): FP is vanishingly
+// rare (0.0004% of a Linux boot, 0 FP-compute ops; CoreMark/Dhrystone hot loops are 0% FP), so
+// every F/D op SIDE-EXITS to the interpreter's proven softfloat rather than being translated to
+// wasm f32/f64 (whose NaN payloads are engine-nondeterministic and whose fflags/rounding would risk
+// divergence). This is enforced structurally: `translate_block` must report ANY block containing an
+// F/D op as `Unsupported`, so the caller keeps the whole block in the interpreter. FP correctness is
+// then identical to the interpreter BY CONSTRUCTION (there is no second FP implementation).
+#[test]
+fn fp_ops_are_unsupported() {
+    use jit_translate::TranslateError;
+    use wasm_vm_core::decode::{FpArithOp, FpCmpOp, FpFusedOp, FpIntWidth, FpSgnjOp, Instr::*};
+
+    // One representative of every F and D op family — load/store, arith, sqrt, fused, sgnj, minmax,
+    // compare, class, both move directions, every convert. If translation ever silently starts
+    // accepting one of these, this list breaks and forces a re-justification against the policy.
+    let fp_ops = [
+        Flw {
+            rd: 1,
+            rs1: 2,
+            imm: 0,
+        },
+        Fsw {
+            rs1: 2,
+            rs2: 1,
+            imm: 0,
+        },
+        FpArithS {
+            op: FpArithOp::Add,
+            rd: 1,
+            rs1: 2,
+            rs2: 3,
+            rm: 7,
+        },
+        FsqrtS {
+            rd: 1,
+            rs1: 2,
+            rm: 7,
+        },
+        FpFusedS {
+            op: FpFusedOp::Madd,
+            rd: 1,
+            rs1: 2,
+            rs2: 3,
+            rs3: 4,
+            rm: 7,
+        },
+        FsgnjS {
+            op: FpSgnjOp::J,
+            rd: 1,
+            rs1: 2,
+            rs2: 3,
+        },
+        FminmaxS {
+            is_max: false,
+            rd: 1,
+            rs1: 2,
+            rs2: 3,
+        },
+        FpCmpS {
+            op: FpCmpOp::Eq,
+            rd: 1,
+            rs1: 2,
+            rs2: 3,
+        },
+        FclassS { rd: 1, rs1: 2 },
+        FmvXW { rd: 1, rs1: 2 },
+        FmvWX { rd: 1, rs1: 2 },
+        FcvtToIntS {
+            width: FpIntWidth::W,
+            rd: 1,
+            rs1: 2,
+            rm: 7,
+        },
+        FcvtFromIntS {
+            width: FpIntWidth::W,
+            rd: 1,
+            rs1: 2,
+            rm: 7,
+        },
+        Fld {
+            rd: 1,
+            rs1: 2,
+            imm: 0,
+        },
+        Fsd {
+            rs1: 2,
+            rs2: 1,
+            imm: 0,
+        },
+        FpArithD {
+            op: FpArithOp::Div,
+            rd: 1,
+            rs1: 2,
+            rs2: 3,
+            rm: 7,
+        },
+        FsqrtD {
+            rd: 1,
+            rs1: 2,
+            rm: 7,
+        },
+        FpFusedD {
+            op: FpFusedOp::Nmadd,
+            rd: 1,
+            rs1: 2,
+            rs2: 3,
+            rs3: 4,
+            rm: 7,
+        },
+        FsgnjD {
+            op: FpSgnjOp::Jx,
+            rd: 1,
+            rs1: 2,
+            rs2: 3,
+        },
+        FminmaxD {
+            is_max: true,
+            rd: 1,
+            rs1: 2,
+            rs2: 3,
+        },
+        FpCmpD {
+            op: FpCmpOp::Lt,
+            rd: 1,
+            rs1: 2,
+            rs2: 3,
+        },
+        FclassD { rd: 1, rs1: 2 },
+        FmvXD { rd: 1, rs1: 2 },
+        FmvDX { rd: 1, rs1: 2 },
+        FcvtToIntD {
+            width: FpIntWidth::L,
+            rd: 1,
+            rs1: 2,
+            rm: 7,
+        },
+        FcvtFromIntD {
+            width: FpIntWidth::Lu,
+            rd: 1,
+            rs1: 2,
+            rm: 7,
+        },
+        FcvtSD {
+            rd: 1,
+            rs1: 2,
+            rm: 7,
+        },
+        FcvtDS {
+            rd: 1,
+            rs1: 2,
+            rm: 7,
+        },
+    ];
+    for instr in fp_ops {
+        // A block that is JUST the FP op must be rejected…
+        let solo = make_block(&[instr]);
+        assert_eq!(
+            translate_block(&solo, &Abi::FROZEN),
+            Err(TranslateError::Unsupported),
+            "FP op {instr:?} must side-exit (Unsupported), never translate"
+        );
+        // …and so must a block where the FP op is buried among translatable integer ops — the WHOLE
+        // block side-exits to the interpreter, not just the FP instruction.
+        let mixed = make_block(&[
+            Addi {
+                rd: 5,
+                rs1: 0,
+                imm: 1,
+            },
+            instr,
+            Addi {
+                rd: 6,
+                rs1: 0,
+                imm: 2,
+            },
+        ]);
+        assert_eq!(
+            translate_block(&mixed, &Abi::FROZEN),
+            Err(TranslateError::Unsupported),
+            "a block containing FP op {instr:?} must side-exit entirely"
+        );
+    }
+}

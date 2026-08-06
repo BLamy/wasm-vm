@@ -402,8 +402,12 @@ gcc working-set arithmetic (gcc bench deferred), and that single-tier T2 suffice
    permission corner is a security/correctness bug. **Spike:** E4-T11 fuzz the inline probe against the
    Rust walker (part of E4-T25).
 4. **FP policy (§1, E4-T15)** — emitting native WASM f64 risks NaN-boxing/`fcsr` divergence from our
-   softfloat; side-exiting every FP op is safe but may cap FP-heavy workloads. Left to E4-T15's
-   *measured* decision; flagged because it is the one place "fast" and "provably identical" conflict.
+   softfloat; side-exiting every FP op is safe but may cap FP-heavy workloads. Flagged because it is
+   the one place "fast" and "provably identical" conflict. **RESOLVED (E4-T15, 2026-08-05):
+   side-exit-all.** Measured dynamic F/D share is 0.0004 % of a Linux boot (0 FP-compute ops) and
+   ~0 % in the CoreMark/Dhrystone hot loops; the Amdahl upside of translating FP is < 0.001 %, far
+   under the correctness risk. Every F/D op keeps its block interpreted. See `docs/jit-fp-policy.md`
+   + `evidence/e4-t15/fp-share.md`.
 
 ---
 
@@ -427,7 +431,8 @@ gcc working-set arithmetic (gcc bench deferred), and that single-tier T2 suffice
 
 - Exact `N` and any per-workload adaptivity → **E4-T08**.
 - Inline-TLB probe shape + PMP caching in linear memory → **E4-T11**.
-- FP: inline f64 vs softfloat side-exit (measured) → **E4-T15**.
+- FP: inline f64 vs softfloat side-exit (measured) → **E4-T15 — RESOLVED: side-exit-all (0.0004 %
+  measured dynamic FP share; `docs/jit-fp-policy.md`).**
 - SMC granularity beyond whole-frame `flush_page` → **E4-T17**.
 - Chaining link-slot protocol through the funcref table → **E4-T18**.
 - Cross-browser `WebAssembly.compile` latency vs the 5 ms budget → **E4-T19**.

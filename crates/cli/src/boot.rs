@@ -26,6 +26,65 @@ use wasm_vm_core::{Machine, RunOutcome, platform};
 
 use crate::file_backend;
 
+/// E4-T15: an opt-in retirement sink that counts the DYNAMIC share of F/D floating-point
+/// instructions in a real guest run, to ground the JIT FP-translation policy decision in a
+/// measured number rather than an assertion. Enabled only when `WASM_VM_FP_HISTOGRAM` is set in
+/// the environment, so the production boot path (which uses `NullSink`) is untouched.
+///
+/// The classifier is deliberately INDEPENDENT of `wasm_vm_core::decode` — it inspects the raw
+/// retired instruction bits directly (the RISC-V opcode map) so it doubles as the adversarial
+/// "recompute the F/D share independently" cross-check (E4-T15 verification §1). It handles both
+/// 32-bit and RVC 16-bit encodings (in RV64 the only compressed FP ops are C.FLD/C.FSD/C.FLDSP/
+/// C.FSDSP — double load/store).
+#[derive(Default)]
+struct FpShareSink {
+    total: u64,
+    fp: u64,
+    fp_ldst: u64,
+    fp_compute: u64,
+}
+
+impl FpShareSink {
+    /// `true` iff the raw retired instruction bits are an F/D op. Standard RISC-V opcode map:
+    /// 32-bit LOAD-FP(0x07)/STORE-FP(0x27)/MADD(0x43)/MSUB(0x47)/NMSUB(0x4b)/NMADD(0x4f)/
+    /// OP-FP(0x53); RVC quadrant-0 funct3=001/101 (C.FLD/C.FSD) and quadrant-2 funct3=001/101
+    /// (C.FLDSP/C.FSDSP).
+    fn is_fp(raw: u32) -> (bool, bool) {
+        // returns (is_fp, is_load_store_fp)
+        if raw & 0b11 == 0b11 {
+            match raw & 0x7f {
+                0x07 | 0x27 => (true, true),                       // LOAD-FP / STORE-FP
+                0x43 | 0x47 | 0x4b | 0x4f | 0x53 => (true, false), // MADD/MSUB/NMSUB/NMADD/OP-FP
+                _ => (false, false),
+            }
+        } else {
+            let quadrant = raw & 0b11;
+            let funct3 = (raw >> 13) & 0b111;
+            match (quadrant, funct3) {
+                (0b00, 0b001) | (0b00, 0b101) => (true, true), // C.FLD / C.FSD
+                (0b10, 0b001) | (0b10, 0b101) => (true, true), // C.FLDSP / C.FSDSP
+                _ => (false, false),
+            }
+        }
+    }
+}
+
+impl TraceSink for FpShareSink {
+    #[inline]
+    fn retire(&mut self, r: &wasm_vm_core::trace::TraceRecord) {
+        self.total += 1;
+        let (is_fp, is_ldst) = Self::is_fp(r.insn);
+        if is_fp {
+            self.fp += 1;
+            if is_ldst {
+                self.fp_ldst += 1;
+            } else {
+                self.fp_compute += 1;
+            }
+        }
+    }
+}
+
 #[derive(Args)]
 pub struct BootArgs {
     /// Path to the flat kernel `Image` (raw Linux/RISC-V boot binary, not an ELF).
@@ -377,8 +436,35 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 path.display()
             );
         }
+        // E4-T15: opt-in FP-share measurement. When WASM_VM_FP_HISTOGRAM is set, run the boot under
+        // the counting sink and emit FP_SHARE_JSON — the dynamic F/D instruction share that grounds
+        // the JIT FP-translation policy. Off by default (production path uses NullSink below).
+        let fp_hist = std::env::var("WASM_VM_FP_HISTOGRAM").is_ok();
         let mut hash = HashSink::new();
-        let outcome = if a.evidence.is_some() {
+        let outcome = if fp_hist {
+            let mut fp = FpShareSink::default();
+            let o = run_machine(
+                &a,
+                &mut m,
+                &uart,
+                &console,
+                stdin_rx.as_ref(),
+                &mut pending,
+                profiler.as_mut().filter(|_| boot_num == 1),
+                snap.as_mut(),
+                &mut fp,
+            );
+            let pct = if fp.total == 0 {
+                0.0
+            } else {
+                100.0 * fp.fp as f64 / fp.total as f64
+            };
+            eprintln!(
+                "FP_SHARE_JSON {{\"total_retired\":{},\"fp\":{},\"fp_ldst\":{},\"fp_compute\":{},\"fp_pct\":{:.6}}}",
+                fp.total, fp.fp, fp.fp_ldst, fp.fp_compute, pct
+            );
+            o
+        } else if a.evidence.is_some() {
             run_machine(
                 &a,
                 &mut m,

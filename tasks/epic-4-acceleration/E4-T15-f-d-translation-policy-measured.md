@@ -64,4 +64,47 @@ output digits exactly; (5) check fflags accrual across a block boundary side-exi
 sticky bits refute.
 
 ## Verification log
-(empty)
+
+### 2026-08-05 — MEASURED decision: (a) side-exit-all. Verified.
+
+**Measured F/D dynamic share** (real numbers, full method in `evidence/e4-t15/fp-share.md`; classifier
+is independent of the interpreter decoder — raw RISC-V opcode map — so it is also the adversarial
+independent recount, §1):
+
+- **Busybox Linux boot to userland** (native release, `WASM_VM_FP_HISTOGRAM=1 … --profile-boot`):
+  322,388,374 retired instructions, **1,284 F/D (0.000398 %, ~1 in 251,000)** — and **0 FP-compute
+  ops**; all 1,284 are fld/fsd (FP-context save/restore + register-spill memcpy). Every op with a
+  NaN/fflags/rounding divergence risk (arith/fma/cvt/cmp/sgnj/minmax/sqrt) executes **0 times**.
+- **CoreMark / Dhrystone** (static `.text` scan, same classifier): 0.246 % / 0.242 % FP, all in
+  libc `printf`/float-formatting run once at score time — the scored hot loops are 0 % FP (CoreMark
+  and Dhrystone are integer benchmarks by design). Classifier sanity: `rv64ud-p-fadd` scans 18.87 %
+  FP, `rv64ui-p-add` 0.00 %.
+- **Amdahl bound:** boot speedup from making every FP op free = 1/(1−0.00000398) ≈ 1.000004× (<0.0004 %);
+  CoreMark/Dhrystone hot loops 0 % ⇒ 0 %. Translating F/D cannot move any target benchmark.
+
+**Decision: (a) side-exit-all.** FP is far too rare to justify the correctness risk of replicating
+RISC-V softfloat (canonical NaN, FLEN-64 NaN-boxing of f32, the 5 accrued fflags, dynamic `frm`
+rounding, fma single-rounding) in wasm f32/f64 whose NaN payloads are engine-nondeterministic. Every
+F/D op keeps its block out of the JIT and runs on the proven `rustc_apfloat` interpreter softfloat.
+Full rationale + re-open condition in `docs/jit-fp-policy.md`.
+
+**What ships:** nothing translated. `jit_translate::translate_block` excludes all F/D opcodes from
+`supported()`, so any block containing an F/D op returns `Unsupported` ⇒ the interpreter runs the
+whole block. FP results are identical to the interpreter BY CONSTRUCTION (no second FP implementation
+exists to diverge), so no differential-of-a-translated-op was needed (none is translated).
+
+**Correctness gates (all green):**
+- `jit-translate/tests/differential.rs::fp_ops_are_unsupported` — every F/D variant (solo block AND
+  buried among translatable integer ops) returns `TranslateError::Unsupported`. PASS.
+- `jit-runtime/tests/jit_execution.rs::fp_suites_verdict_identical_under_jit` — every `rv64uf-p-*` and
+  `rv64ud-p-*` ELF reaches the same Pass verdict interpreter-vs-JIT-forced (threshold 1, 1-entry
+  flapping cache) — i.e. rv64uf + rv64ud green with JIT on, no fflags/NaN-box/rounding state lost
+  across tier switches. PASS.
+- Existing `riscv_tests_verdict_identical_with_jit` (whole corpus incl. uf/ud) + `m_and_c_suites…` +
+  full `wasm-vm-jit-runtime` suite still green. `cargo fmt --check` clean.
+
+**Deferred:** browser rv64uf/ud JIT run (native wasmtime executor proves it; browser executor is
+E4-T19); gcc-O2 / python3-float dynamic FP shares (those benches deferred per the Level-3 baseline —
+the boot measurement + integer-benchmark hot loops already bound the decision). The FP microbenchmark
+the AC lists is moot under side-exit-all (FP always interprets); the measured 0.0004 % share is the
+number that backs the decision.

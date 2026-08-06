@@ -454,6 +454,52 @@ mod riscv_tests_gate {
         eprintln!("JIT verdict-identical across {n} riscv-tests ELFs ({n_ui} rv64ui)");
     }
 
+    /// E4-T15 AC: the rv64uf (F) and rv64ud (D) floating-point suites reach the SAME verdict with
+    /// the JIT forced on as under the interpreter — and it must be Pass. Under the measured
+    /// side-exit-all FP policy (`docs/jit-fp-policy.md`) every F/D op keeps its block out of the JIT
+    /// (`translate_block` → `Unsupported`, proven op-by-op in `jit-translate/tests/differential.rs::
+    /// fp_ops_are_unsupported`), so the FP work runs on the interpreter's `rustc_apfloat` softfloat
+    /// and JIT/interp results are identical by construction. This test CONFIRMS that end to end: the
+    /// full ELF (mixed integer + FP blocks, integer blocks compiling under the tiny flapping cache)
+    /// still passes, so no fflags/NaN-box/rounding state is lost across the JIT/interp tier switches.
+    #[test]
+    fn fp_suites_verdict_identical_under_jit() {
+        let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/riscv-tests-bin");
+        let mut n_uf = 0u32;
+        let mut n_ud = 0u32;
+        for entry in std::fs::read_dir(&dir).expect("riscv-tests-bin dir") {
+            let path = entry.unwrap().path();
+            if path.extension().is_some() || !path.is_file() {
+                continue;
+            }
+            let name = path.file_name().unwrap().to_string_lossy().into_owned();
+            let is_uf = name.contains("rv64uf");
+            let is_ud = name.contains("rv64ud");
+            if !(is_uf || is_ud) {
+                continue;
+            }
+            let elf = std::fs::read(&path).unwrap();
+            if elf.get(..4) != Some(b"\x7fELF") {
+                continue;
+            }
+            let interp = classify(&elf, false);
+            let jit = classify(&elf, true);
+            assert_eq!(
+                interp, jit,
+                "{name}: JIT changed the FP verdict (interp={interp:?} jit={jit:?})"
+            );
+            assert_eq!(jit, Verdict::Pass, "{name}: FP suite not a Pass under JIT");
+            if is_uf {
+                n_uf += 1;
+            } else {
+                n_ud += 1;
+            }
+        }
+        assert!(n_uf > 0, "expected rv64uf-p-* ELFs, saw {n_uf}");
+        assert!(n_ud > 0, "expected rv64ud-p-* ELFs, saw {n_ud}");
+        eprintln!("FP suites verdict-identical under JIT: {n_uf} rv64uf + {n_ud} rv64ud ELFs Pass");
+    }
+
     /// E4-T13 AC: the rv64um (M) and rv64uc (C) suites now run PREDOMINANTLY in the JIT tier —
     /// their blocks must actually compile + execute (executed_blocks > 0), not fall back to the
     /// interpreter as they did before M/C translation existed. Verdict stays Pass, and the JIT
