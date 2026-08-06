@@ -3,7 +3,7 @@ id: E4-T27
 epic: 4
 title: Performance regression CI — benchmark thresholds that fail the build
 priority: 427
-status: pending
+status: verification-debt
 depends_on: [E4-T04, E4-T21, E4-T23]
 estimate: M
 capstone: false
@@ -63,5 +63,46 @@ T23 — an ungated headline metric (e.g. boot time missing) refutes; (5) confirm
 job cannot be skipped by label/path filters on JIT-touching changes (try to merge a
 dispatch-loop change with `[skip perf]` — success refutes the wiring).
 
+## Verification debt (dedicated runner / CI-admin / dev)
+The GATE LOGIC (statistics, thresholds, regression detection, bless, trend) is landed and
+verified headlessly with synthetic/recorded data. The following need a dedicated/self-hosted
+`perf-runner` and live CI wiring, tracked honestly as debt (this mac is shared + thermally
+variable and OS-reaps long runs — NO fabricated runner numbers recorded):
+- AC2: a no-op commit passing 10 consecutive perf CI runs with zero false failures on the
+  actual runner class (noise-immunity in situ).
+- Adversarial #2: 25 real-runner runs across a day, count spurious hard-fails (must be ≤1).
+- Adversarial #3: live interleaved A/B *rebuilding + running* the baseline commit (not a cached
+  candidate binary); cache-poison detection. `bench_ci.py run` orchestrates this; the multi-minute
+  live boot loop is runner-only.
+- Live merge-queue wiring + an in-CI hard-fail demonstration (`.github/workflows/perf-regression.yml`
+  drops in; its `unit` job runs anywhere, the `perf` job targets `[self-hosted, perf-runner]`).
+- Browser-bench headless-Chromium version pinning → flip the `mmio_*`/`echo`/`keystroke` metrics
+  from `advisory` to `gating` in `bench/thresholds.toml`.
+- Published-from-CI trend dashboard (Pages) — deferred until the perf job emits real samples.
+
 ## Verification log
-(empty)
+- 2026-08-06 — E4-T27 **partially-verified** (gate logic, headless, synthetic/recorded data).
+  Files: `tools/bench_ci.py` (A/B + stats + threshold-eval + evaluate/run/trend/selftest),
+  `tools/bench_ci_test.py` (16 unit tests), `bench/thresholds.toml`, `tools/bench.py` (+`bless`),
+  `bench/RUNNER.md`, `.github/workflows/perf-regression.yml`, `bench/README.md`, `Makefile`
+  (`perf-gate`/`perf-trend`).
+  - Statistics unit tests: `python3 tools/bench_ci_test.py` → **16/16 green**. Covers median-of-5,
+    MAD outlier rejection (clean series untouched; injected flier dropped; MAD==0 no divide-by-zero),
+    and ratio-based A/B host-variance immunity (scaling both arms by a constant leaves the verdict
+    unchanged).
+  - **AC1** (synthetic 10% CoreMark regression): `bench_ci.py evaluate` on injected candidate
+    (261.7→235.5) → **HARD FAIL, exit 1**, report names CoreMark, measured Δ +10.01%, worst-metric
+    ledger history shown.
+  - **AC3** (latency gate): injected JIT-pause p100 = 10 ms vs 5 ms budget → **HARD FAIL, exit 1**
+    ("budget breach: 10.000 ms > budget 5.000").
+  - **AC4** (bless): no `--rationale` → refused (argparse exit 2); whitespace rationale → FATAL
+    refusal; with rationale → baseline promoted (coremark 261.7→471.1, `bless` block with rationale
+    + blessed_by + supersedes_score), `report --verify` **exit 0** after bless; historical-entry
+    tamper still detected (**exit 1**, chain break named). Ledger restored to pristine baseline
+    afterward (no fabricated score shipped).
+  - **AC5** (trend page): `bench_ci.py trend` → one command, valid `<!doctype>` HTML with rows +
+    sparklines for coremark/dhrystone/boot/gcc.
+  - No-false-positive sanity: within-noise candidate → **PASS, exit 0**.
+  - Adversarial #4 (threshold coverage): `test_threshold_coverage_headline_metrics` asserts all 10
+    headline E4-T04/T21/T23 metrics are gated. Adversarial #5 (no skip): the workflow has no
+    path/label skip filter for the perf job (documented in the YAML).

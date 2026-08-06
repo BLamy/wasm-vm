@@ -1,0 +1,84 @@
+# E4-T27 — performance-regression gate (drops in when the dedicated runner is provisioned).
+#
+# STATUS: the statistics + threshold + regression-detection + bless + trend machinery is
+# landed and unit-verified (python3 tools/bench_ci_test.py, 16/16 green). The LIVE perf job
+# below is written to spec but is VERIFICATION DEBT: it requires a dedicated / self-hosted
+# runner class (label `perf-runner`) — a shared, thermally-variable GitHub-hosted runner
+# cannot meet the noise-immunity AC (10 consecutive no-op runs, zero false fails). See
+# bench/RUNNER.md for the runner setup (pinning, warmup, browser-version capture).
+#
+# The `unit` job DOES run on any runner and is the always-on guard for the gate's own logic.
+
+name: perf-regression
+
+on:
+  merge_group: {}            # merge-queue: every candidate is gated before it lands
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# IMPORTANT (adversarial #5): this workflow has NO paths: / paths-ignore: filter and does not
+# honour any `[skip perf]` marker. A dispatch-loop / JIT-touching change cannot skip the gate.
+concurrency:
+  group: perf-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # Always-on: proves the gate's math on every push, on cheap shared runners. Cannot be skipped.
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }   # 3.11+ for tomllib
+      - name: perf-gate unit tests (statistics + thresholds + coverage)
+        run: python3 tools/bench_ci.py selftest
+      - name: threshold coverage vs headline metric list
+        run: python3 tools/bench_ci_test.py
+      - name: ledger hash-chain intact
+        run: python3 tools/bench.py report --verify
+
+  # LIVE A/B perf gate — dedicated runner only (verification debt until `perf-runner` exists).
+  perf:
+    needs: unit
+    runs-on: [self-hosted, perf-runner]    # pinned, isolated, thermally stable box
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }           # need the baseline commit for the A/B rebuild
+      - name: capture runner + browser provenance
+        run: |
+          uname -a | tee runner-provenance.txt
+          rustc --version | tee -a runner-provenance.txt
+          (chromium --version || google-chrome --version) | tee -a runner-provenance.txt || true
+      - name: build release wasm-vm
+        run: cargo build --release -p wasm-vm-cli
+      - name: interleaved A/B run (baseline = merge target)
+        # Rebuilds AND runs the baseline commit (adversarial #3: not a cached candidate binary),
+        # interleaving baseline/candidate to cancel host drift; writes samples.json.
+        run: |
+          python3 tools/bench_ci.py run \
+            --baseline-commit "${{ github.event.merge_group.base_sha || github.sha }}" \
+            --metrics coremark,dhrystone,boot \
+            --pairs 5 --samples-out samples.json
+      - name: evaluate gate (hard-fails on >7% regression or any latency-budget breach)
+        run: python3 tools/bench_ci.py evaluate --candidate samples.json --json-out verdict.json
+      - name: render trend page
+        if: always()
+        run: python3 tools/bench_ci.py trend --out bench/trend.html
+      - name: upload artifacts (samples, verdict, trend, provenance)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-${{ github.sha }}
+          path: |
+            samples.json
+            verdict.json
+            bench/trend.html
+            runner-provenance.txt
+
+  # OPTIONAL: publish the trend dashboard (Pages). Deferred until the perf job runs on a real
+  # runner producing real samples — do not publish fabricated numbers.
+  # publish-trend:
+  #   needs: perf
+  #   ...

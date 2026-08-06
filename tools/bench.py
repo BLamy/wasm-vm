@@ -915,6 +915,63 @@ def cmd_report(args):
     return 0
 
 
+def _git_user():
+    try:
+        name = subprocess.check_output(["git", "config", "user.name"], cwd=REPO, text=True).strip()
+        email = subprocess.check_output(["git", "config", "user.email"], cwd=REPO, text=True).strip()
+        return f"{name} <{email}>" if name else (email or "unknown")
+    except Exception:
+        return "unknown"
+
+
+def cmd_bless(args):
+    """E4-T27: promote a NEW rolling-best baseline for one benchmark — the ONLY sanctioned way
+    the baseline moves (no silent ratchet-down). Requires a non-empty RATIONALE string, recorded
+    auditably in the ledger as a `bless` block, and appended through the SAME hash chain so the
+    promotion is tamper-evident. `report --verify` stays exit-0 after a bless."""
+    rationale = (args.rationale or "").strip()
+    if not rationale:
+        fail("bless refused: --rationale is REQUIRED (no silent baseline ratchet — record WHY). "
+             "Example: --rationale 'E4-T21 async JIT lifts warm CoreMark 1.8x; cold within band'")
+
+    higher_is_better = args.higher_is_better
+    if higher_is_better is None:
+        higher_is_better = BENCHES.get(args.bench, {}).get("higher_is_better", True)
+    unit = args.unit or BENCHES.get(args.bench, {}).get("unit", "")
+
+    ledger = load_ledger()
+    entries = ledger.setdefault("entries", [])
+    prior = [e for e in entries if e.get("bench") == args.bench]
+    superseded = prior[-1]["score"] if prior else None
+
+    entry = {
+        "bench": args.bench,
+        "engine": args.engine,
+        "score": args.score,
+        "unit": unit,
+        "higher_is_better": higher_is_better,
+        "spread": 0.0,
+        "commit": args.commit or git_rev(),
+        "vm_build": "release",
+        "baseline": "rolling-best",
+        "config": {"blessed": True, "source": args.source or "manual"},
+        "date": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "bless": {
+            "rationale": rationale,
+            "blessed_by": _git_user(),
+            "supersedes_score": superseded,
+            "supersedes_commit": (prior[-1].get("commit") if prior else None),
+        },
+    }
+    entry["prev_sha256"] = GENESIS_PREV if not entries else _canonical_sha256(entries[-1])
+    entries.append(entry)
+    save_ledger(ledger)
+    print(f"bench: BLESSED new rolling-best {args.bench}={args.score} {unit} "
+          f"(was {superseded}) — rationale recorded, hash chain extended",
+          file=sys.stderr)
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="macro + micro benchmark harness and baseline ledger (E4-T03/T04)")
@@ -947,6 +1004,19 @@ def main():
     rep.add_argument("--verify", action="store_true",
                      help="walk the hash chain + validate schema; nonzero exit on any break")
     rep.set_defaults(func=cmd_report)
+
+    bl = sub.add_parser("bless", help="E4-T27: promote a new rolling-best baseline (requires --rationale)")
+    bl.add_argument("bench", help="benchmark name (coremark, dhrystone, boot, gcc, fp_micro, …)")
+    bl.add_argument("--score", type=float, required=True, help="the new blessed baseline score")
+    bl.add_argument("--rationale", required=True,
+                    help="REQUIRED: why this baseline moves (recorded auditably in the ledger)")
+    bl.add_argument("--unit", default=None, help="unit override (default from BENCHES)")
+    bl.add_argument("--engine", default="native", choices=["native", "browser"])
+    bl.add_argument("--higher-is-better", dest="higher_is_better", action="store_true", default=None)
+    bl.add_argument("--lower-is-better", dest="higher_is_better", action="store_false")
+    bl.add_argument("--commit", default=None, help="commit to record (default: git HEAD)")
+    bl.add_argument("--source", default=None, help="provenance note (e.g. 'A/B run job #123')")
+    bl.set_defaults(func=cmd_bless)
 
     args = ap.parse_args()
     raise SystemExit(args.func(args))

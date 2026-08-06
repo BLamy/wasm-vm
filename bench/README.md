@@ -149,6 +149,42 @@ The first entry's `prev_sha256` is a fixed **genesis** constant (64 zeros). `rec
 chain and validates the required keys, exiting nonzero on any break: **mutating one historical entry
 breaks the next entry's `prev_sha256` link and is detected** (adversarial #4).
 
+## Performance-regression gate (E4-T27)
+
+`tools/bench_ci.py` turns the ledger into a **merge-blocking invariant**: a regression fails
+the build. Noise is fought with four layered mitigations (all standard practice):
+
+1. **Interleaved A/B** (`bench_ci.py run`): rebuild + run the baseline commit and the candidate
+   commit *alternately* in one job, compare **ratios not absolutes** — a throttled host scales
+   both arms equally, so the verdict is invariant (unit-tested `test_ab_host_variance_immune`).
+2. **Robust statistics**: median-of-5 with **MAD outlier rejection** (`robust_center`) — a single
+   hiccup run cannot move the verdict.
+3. **Two-tier response**: soft **WARN** at > 3 %, hard **FAIL** at > 7 %, plus absolute
+   **latency budgets** (JIT pause p100 < 5 ms, MMIO/echo/keystroke budgets) whose breach is an
+   unconditional hard fail.
+4. **Rolling-best baseline** moved ONLY by explicit `tools/bench.py bless` (no silent
+   ratchet-down); the **trend page** surfaces cumulative sub-threshold drift.
+
+Thresholds live in **`bench/thresholds.toml`** (every bench + latency metric, soft/hard bands,
+`gate = gating|advisory` — native gates, browser is advisory until the pinned-Chromium runner
+lands). The statistics + threshold-eval core is **pure and unit-tested** (no benchmark run):
+
+```
+python3 tools/bench_ci.py selftest                       # 16 unit tests (or python3 tools/bench_ci_test.py)
+python3 tools/bench_ci.py evaluate --candidate s.json    # the CI gate: exit 1 on hard fail
+python3 tools/bench_ci.py run --baseline-commit <ref> …  # live interleaved A/B (needs the runner)
+python3 tools/bench_ci.py trend --out bench/trend.html   # static dashboard from the ledger
+python3 tools/bench.py bless coremark --score S --rationale "why"   # promote a new baseline
+```
+
+`evaluate` samples JSON: `{"metrics": {"<metric>": {"candidate": [..], "baseline": [..]}}}` —
+omit `baseline` to take it from the ledger's latest entry for that bench. Runner setup
+(frequency pinning, warmup, browser-version capture) is in **`bench/RUNNER.md`**; the drop-in CI
+job is **`.github/workflows/perf-regression.yml`** (the `unit` job always runs; the live `perf`
+job needs the dedicated `perf-runner`). `bless` records an auditable `bless` block
+(`rationale`, `blessed_by`, `supersedes_score`) and appends through the **same hash chain**, so
+`report --verify` stays green and any historical tamper is still detected.
+
 ## Browser engine — reaping-deferred
 
 `--engine browser` is intentionally **not** run here. The Alpine browser boot OS-reaps on the

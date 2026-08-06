@@ -2,7 +2,7 @@
 # parallel; locally they run in the order listed under `ci`. If this file and ci.yml
 # disagree, that's a bug (E0-T02).
 
-.PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke bench-l1 riscof diff-all diff-selftest diff-qemu \
+.PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
         bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc
 
@@ -78,6 +78,15 @@ determinism:
 # E1-T23: perf-smoke (release ALU MIPS ≥ floor) — mirrors ci.yml's `perf-smoke` job.
 perf-smoke:
 	cargo test -p wasm-vm-core --release --test perf_baseline perf_smoke_alu_above_floor -- --ignored --nocapture
+
+# E4-T27: perf-regression gate — statistics/threshold/bless machinery selftest + ledger chain verify.
+perf-gate:
+	python3 tools/bench_ci.py selftest
+	python3 tools/bench.py report --verify
+
+# E4-T27: render the trend dashboard from the ledger (one command, clean checkout).
+perf-trend:
+	python3 tools/bench_ci.py trend --out bench/trend.html
 
 # E1-T23: regenerate the native Level-1 MIPS baseline table.
 bench-l1:
