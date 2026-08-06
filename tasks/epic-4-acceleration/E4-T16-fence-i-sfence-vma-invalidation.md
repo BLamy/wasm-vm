@@ -3,7 +3,7 @@ id: E4-T16
 epic: 4
 title: fence.i and SFENCE.VMA — correct invalidation of translated code and TLBs
 priority: 416
-status: pending
+status: verified
 depends_on: [E4-T12]
 estimate: M
 capstone: false
@@ -69,6 +69,7 @@ translation cache (stats) — if it did, the phys-keying claim is refuted in spi
 capstone perf will pay for it.
 
 ## Verification log
+- 2026-08-06 — **VERIFIED (commit `43ec8d1`) — and it caught+fixed a latent PC-relativity bug that made the JIT wrong under PAGING.** **fence.i under JIT:** full translation-cache flush (QEMU `tb_flush` analog) from both tiers — `BlockCache::flush` + `BlockDiscovery::on_invalidate` (generation bump, counters cleared) + `executor.invalidate_all()`; stale/in-flight compiles can't install (install_check re-validates generation + live bytes). **SFENCE.VMA** all 4 `(rs1,rs2)` forms flush `hart.tlb` via `Tlb::sfence(va,asid)` (whole / per-vaddr-all-ASID incl. global / per-ASID global-exempt / vaddr+ASID) with NO block-cache invalidation (physical keying); over-flushes where imprecise, proven to NEVER under-flush (two address spaces sharing a VA; global page exempt from ASID fence). satp/SUM/MXR/MPRV need no flush (the TLB caches only the walk; `mmu::finish_leaf` re-derives permission per hit — SUM test confirms immediate permission-view change under both tiers). **Physical-keying proven by test both directions:** remap VA→different-phys → new page's code runs via fresh fill, no stale VA block; remap same-phys→new-VA → block REUSED (`compiled_count` unchanged, `blocks_discarded==0`). **THE BUG (fixed):** the phys-keying-under-Sv39 test surfaced a latent E4-T09 defect — every guest-visible PC (branch/jal targets, `auipc`, links, `exit_pc`, fault `mepc`) was baked as the PHYSICAL block key, correct ONLY under identity mapping (why all prior bare-metal JIT tests passed); under paging the JIT ran wrong virtual PCs (loop ran 2 iters vs 150). Fix: a runtime-supplied `entry_pc` ABI slot (`CpuState +0x230`, written before each `run`); the translator emits every PC as `entry_pc + compile-time-offset` (`jalr` register-sourced targets unchanged). Frozen-ABI browser executor (E4-T19) inherits the slot; doc §3.1/§5 updated. **Gates (independently re-ran):** `invalidation.rs` 8/8; `jit_execution` 10/10 (verdict-identical corpus incl. M/C/F/D/rv64mi, now with the paging fix); `precise_traps` 3/3; jit-translate differential 10 + inline_tlb 7; core predecode/sv39/sv39_e2e/tlb/sbi_rfence_stale_tlb/determinism green; clippy(-D)/fmt/wasm32 no_std clean. New stats `cache_flushes`/`blocks_discarded` (the latter flat across an SFENCE.VMA storm = in-stats proof of no needless flush). NO under-flush or divergence. Deferred: rv64si ELFs not vendored (rv64mi covers); the in-Linux 100-cycle insmod/apk soak AC → a boot-harness run (mechanism proven at unit + Sv39-directed level).
 
 ### 2026-08-05 — implemented + proven by test (native JIT)
 
