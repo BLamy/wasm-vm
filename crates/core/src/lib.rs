@@ -49,6 +49,7 @@ pub mod resume;
 pub mod sbi;
 pub mod snapshot;
 pub mod softfloat;
+pub mod time;
 pub mod tlb;
 pub mod trace;
 #[cfg(feature = "zicsr-stub")]
@@ -145,10 +146,24 @@ pub struct Machine {
     /// CLINT shared state (E1-T12), present when [`Self::enable_clint`] attached the device.
     /// The run loop advances `mtime` from the retire count and samples MTIP/MSIP into `mip`.
     clint: Option<alloc::rc::Rc<core::cell::RefCell<dev::clint::ClintState>>>,
-    /// `mtime` advances one tick per `clock_div` retired instructions (deterministic clock).
+    /// `mtime` advances one tick per `clock_div` retired instructions (deterministic clock). This is
+    /// the ICount [`time::TimeMode`] — the default, and the source the E4-T25 lockstep/fuzz rig runs
+    /// under so timer interrupts land at identical retire indices on both engines.
     clock_div: u64,
     /// Sub-divider remainder: retirements not yet worth a whole `mtime` tick.
     tick_accum: u64,
+    /// E4-T24: when `Some`, `mtime` is driven from the injected host wall clock (scaled to the DT
+    /// timebase, with the monotonicity-clamp + slew + jump policy) instead of the retire count. The
+    /// per-retire `advance_clock` is then a no-op; `mtime` is recomputed at each block boundary from
+    /// [`Self::mono_clock`]. `None` (the default) keeps the deterministic ICount clock so every
+    /// existing determinism / lockstep / predecode-diff gate stays byte-identical.
+    wall_time: Option<time::TimeSource>,
+    /// E4-T24: the injected monotonic host clock (CLI `Instant`, browser `performance.now()`, or a
+    /// test mock). Read only on the wall-clock path so `crates/core` never names a host time API.
+    mono_clock: Option<alloc::boxed::Box<dyn time::MonotonicClock>>,
+    /// E4-T24: the last discontinuous `mtime` jump (the documented suspend/resume exception), for the
+    /// host to surface / the guest to resync from the RTC. Cleared by [`Self::take_time_jump`].
+    last_time_jump: Option<time::TimeJump>,
     /// PLIC shared state (E1-T13), present when [`Self::enable_plic`] attached the device. The
     /// run loop samples the per-context EIP levels into `mip.MEIP`/`mip.SEIP`.
     plic: Option<alloc::rc::Rc<core::cell::RefCell<dev::plic::PlicState>>>,
@@ -573,6 +588,9 @@ impl Machine {
             jit_pump_ticks: 0,
             jit_enabled: false,
             compile_queue: compile_queue::CompileQueue::default(),
+            wall_time: None,
+            mono_clock: None,
+            last_time_jump: None,
         };
         // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
         // stores AND device/DMA writes feed page-granular invalidation.
@@ -880,6 +898,13 @@ impl Machine {
         self.tick_accum = 0;
         self.clint = Some(alloc::rc::Rc::clone(&state));
         state
+    }
+
+    /// E4-T24: the current guest `mtime` (0 when no CLINT is attached). One read point for tests and
+    /// hosts that sample the clock — the value CLINT reads, mtimecmp scheduling, and SBI-time queries
+    /// all agree on.
+    pub fn clint_mtime(&self) -> u64 {
+        self.clint.as_ref().map_or(0, |c| c.borrow().mtime)
     }
 
     /// Attach a PLIC (E1-T13) at [`bus::mmap::PLIC_BASE`] and drive `mip.MEIP` (hart-0 M context
@@ -1927,6 +1952,12 @@ impl Machine {
     /// lands at the same retire index). A no-op when no CLINT is attached.
     #[cfg(not(feature = "zicsr-stub"))]
     fn advance_clock(&mut self) {
+        // E4-T24: in WallClock mode `mtime` is host-derived and recomputed at the block boundary
+        // (`sample_wall_clock`), so the retire count must NOT drive it. Default (ICount) path below is
+        // byte-identical to the legacy retire clock.
+        if self.wall_time.is_some() {
+            return;
+        }
         if let Some(clint) = &self.clint {
             self.tick_accum += 1;
             if self.tick_accum >= self.clock_div {
@@ -1936,6 +1967,59 @@ impl Machine {
                 s.mtime = s.mtime.wrapping_add(ticks);
             }
         }
+    }
+
+    /// E4-T24: recompute `mtime` from the injected host wall clock at a block boundary — the ONE place
+    /// wall-derived `mtime` is produced, so CLINT reads, mtimecmp scheduling, and SBI-time queries all
+    /// see a single clamped-monotone value. Applies the [`time::TimeSource`] clamp + slew + jump
+    /// policy; a documented suspend/resume jump is stashed in [`Self::last_time_jump`]. A no-op unless
+    /// wall-clock mode is armed (default ICount path never enters here).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn sample_wall_clock(&mut self) {
+        let (Some(ts), Some(clock), Some(clint)) =
+            (&mut self.wall_time, &self.mono_clock, &self.clint)
+        else {
+            return;
+        };
+        let host_ns = clock.now_nanos();
+        let current = clint.borrow().mtime;
+        let (mtime, jump) = ts.sample_wall(host_ns, current);
+        clint.borrow_mut().mtime = mtime;
+        if let Some(j) = jump {
+            self.last_time_jump = Some(j);
+        }
+    }
+
+    /// E4-T24: switch `mtime` to WallClock mode — host-wall-derived (scaled to the DT timebase) with
+    /// the monotonicity-clamp + slew + jump policy — driven by the injected monotonic `clock`. Requires
+    /// a CLINT (the `mtime` register lives there). Off by default: the deterministic ICount clock is
+    /// what the lockstep/determinism gates depend on.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn set_wall_clock(
+        &mut self,
+        clock: alloc::boxed::Box<dyn time::MonotonicClock>,
+        policy: time::WallClockPolicy,
+    ) {
+        let mut ts =
+            time::TimeSource::wall_clock(u64::from(platform::virt::TIMEBASE_FREQ_HZ), policy);
+        // Seed the monotone floor from the current mtime so the clock can't be dragged backward.
+        if let Some(clint) = &self.clint {
+            ts.sync_floor(clint.borrow().mtime);
+        }
+        self.wall_time = Some(ts);
+        self.mono_clock = Some(clock);
+    }
+
+    /// E4-T24: revert to the deterministic ICount clock (retire-derived `mtime`).
+    pub fn set_icount_clock(&mut self) {
+        self.wall_time = None;
+        self.mono_clock = None;
+    }
+
+    /// E4-T24: take the last discontinuous `mtime` jump (suspend/resume exception), if any — the host
+    /// surfaces it and the guest resyncs from the RTC.
+    pub fn take_time_jump(&mut self) -> Option<time::TimeJump> {
+        self.last_time_jump.take()
     }
 
     /// E2-T23b: deterministic idle fast-forward ("tickless idle"). Called right after a `WFI`
@@ -1955,6 +2039,12 @@ impl Machine {
     /// caught by [`Self::wfi_watchdog_check`]) there is no deadline to jump to and this is a no-op.
     #[cfg(not(feature = "zicsr-stub"))]
     fn wfi_fast_forward(&mut self) {
+        // E4-T24: the idle fast-forward jumps `mtime` to the next timer deadline — a determinism-
+        // preserving ICount trick. In WallClock mode `mtime` IS real time, so a `sleep` must actually
+        // wait; jumping would make it return early. Let the wall clock advance mtime instead.
+        if self.wall_time.is_some() {
+            return;
+        }
         let Some(clint) = &self.clint else { return };
         // Sweep-critic (E2-T23b LOW): a pending+enabled interrupt (mip & mie != 0) satisfies
         // the WFI wake condition RIGHT NOW (per the ISA, even with global xIE=0) — no time
@@ -2677,6 +2767,10 @@ impl Machine {
             // just-crossed timer fires and a raised `mtimecmp` clears MTIP with no CSR access.
             #[cfg(not(feature = "zicsr-stub"))]
             if sample_boundary {
+                // E4-T24: in WallClock mode, recompute `mtime` from the host clock BEFORE sync_clint
+                // samples the MTIP level, so a just-elapsed wall deadline fires this boundary. No-op on
+                // the default ICount path.
+                self.sample_wall_clock();
                 self.sync_clint();
                 // E2-T07: tick the UART char-timeout clock and mirror its level into the
                 // PLIC BEFORE sync_plic samples EIP, so a UART edge lands this boundary.
