@@ -21,6 +21,12 @@ name = "jit_translate"
 wasm-vm-core = { workspace = true }
 wasm-vm-wasm-emit = { path = "../wasm-emit" }
 
+[features]
+# E4-T25 verification doctrine ONLY: compiles in the deliberate-mis-translation hooks used to prove
+# the lockstep/fuzz rig can catch a JIT bug. OFF by default — the shipped translator never carries a
+# mutation (every hook predicate folds to `false` and is optimized away).
+mutation-testing = []
+
 [dev-dependencies]
 # Executes every generated module natively and compares against the interpreter oracle (the whole
 # point of the ticket). Native-only — never compiled for wasm32.

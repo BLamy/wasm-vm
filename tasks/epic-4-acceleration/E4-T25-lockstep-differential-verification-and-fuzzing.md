@@ -3,7 +3,7 @@ id: E4-T25
 epic: 4
 title: Lockstep interpreter-vs-JIT differential verification and randomized fuzzing
 priority: 425
-status: pending
+status: partially-verified
 depends_on: [E4-T13, E4-T14, E4-T15, E4-T18]
 estimate: L
 capstone: false
@@ -69,4 +69,66 @@ refutes E4-T15/T09 claims; (5) burn real hours: a 4-hour fresh-seed fuzz session
 new divergence is, definitionally, a refutation of the epic's correctness story to date.
 
 ## Verification log
-(empty)
+
+### 2026-08-06 — interrupt-free lockstep core + fuzzer + minimizer (partially-verified)
+
+Built the headless core (interrupt-free, deterministic block lockstep) — the leg that is fully
+doable before E4-T24 ICount. Master = JIT (wasmtime), shadow = `Hart::exec_oracle`; the fuzzer emits
+seeded, corner-value-heavy RV64IMA(+mixed-width C) blocks from randomized architectural states and
+lockstep replays each recorded block from an identical prior state, comparing the full `ArchState`.
+
+Files:
+- `crates/jit-translate/src/lib.rs` — test-only mutation hooks behind the `mutation-testing` feature
+  (`mut_hooks` + `pub mod mutation`); 5 deliberate, never-shipped mis-translations. OFF by default →
+  every hook folds to `false` and is optimized out (clippy-clean, translator bytes unchanged).
+- `crates/jit-translate/Cargo.toml`, `crates/jit-runtime/Cargo.toml` — `mutation-testing` feature +
+  `wasmparser`/`wasmprinter` dev-deps.
+- `crates/jit-runtime/tests/lockstep_fuzz.rs` — `ArchState` (pc, x1..31, f-regs+fcsr, privilege,
+  mstatus/mepc/mcause/mtval/sepc/scause/stval/satp, full-RAM FNV backstop) + exhaustive-destructure
+  comparator; block-boundary lockstep; seeded splitmix64 fuzzer; instruction-bisection minimizer;
+  divergence report with wasm disassembly (wasmprinter).
+- `crates/jit-runtime/tests/lockstep_fuzz/corpus.rs` + `crates/jit-runtime/corpus/` — regression
+  corpus (6 minimized repros replayed clean every run) + human-readable repro artifacts.
+
+Gates run (all green, output pasted in the task report):
+- **AC2 killer gate** (`ac2_fuzzer_catches_and_minimizes_injected_bug`, `--features
+  mutation-testing`): mis-translated SRAW caught at program 11 / block 3, auto-minimized to **1
+  instruction** (≤20). Full report saved to `corpus/sraw-wrong-shift-mask.repro.txt`.
+- **Adversarial #1 mutation-adequacy sweep** (`adversarial_mutation_adequacy_sweep`): all 5 injected
+  bugs (sraw-shift-mask, lw-dropped-sign-ext, taken-branch-skips-writeback, div-by-zero-wrong,
+  jalr-omits-bit0-clear) caught + minimized to ≤2 instrs within a 100k-block budget. NO survivors.
+- **AC3 comparator-completeness audit** (`comparator_completeness_audit`): all 14 `ArchState` fields
+  compared (compile-time exhaustive destructure + runtime per-field flip).
+- **AC5 offline repro** (`ac5_repro_reproduces_offline`): a caught div-by-zero repro reproduced from
+  its captured prior-state + RAM + block alone.
+- **Clean run** (`fuzz_clean_no_divergence_small`, correct translator): ~4k blocks / ~24k instrs,
+  ZERO divergences.
+- Regressions stay green: `jit-runtime` full suite, `jit-translate` differential (10 pass), core
+  `predecode_diff`, wasm32 no_std core build, `crates/wasm` release build, clippy -D warnings
+  (default + `mutation-testing`) + fmt clean.
+
+### Verification debt (deferred — needs the Linux `dev` box / long soak / browser / E4-T24)
+- **AC1** — lockstep over 500M Alpine-boot instructions ≤30 min native: needs `dev`; the
+  WITH-interrupts form is additionally gated on **E4-T24 ICount** (identical instruction-boundary
+  alignment) — otherwise benign timer-interrupt skew drowns the comparison. `fuzz_clean_no_divergence_soak`
+  (~1M blocks, `--ignored`) is wired for the CI/dev soak.
+- **AC4** — 1M-fuzz-program replay: `dev` soak (`--ignored` soak test drops in).
+- **Adversarial #2** — opcode×exit-kind coverage instrumentation at full scale.
+- **Adversarial #3** — write-digest collision craft + full-hash-backstop-catches-within-N: the lossy
+  `write_digest` is implemented and documented (collision tolerance stated), `ram_hash` is the
+  backstop, but the adversarial collision harness is not yet wired. (Note: the current comparator
+  hashes full RAM every block, strictly stronger than the every-N schedule.)
+- **Adversarial #4** — in-browser 50M-instruction lockstep (wasmtime-vs-browser NaN/engine
+  divergence): the mac OS-reaps browser boots; run on `dev`/CI.
+- **Adversarial #5** — 4-hour fresh-seed fuzz session: `dev`.
+- **Deliverable — integrated `--lockstep` engine mode over the real `Machine`**: this leg runs the
+  standalone block harness (flat wrapping RAM, E4-T09 imports) rather than the live `Machine`
+  run-loop; wiring lockstep into `Machine` alongside device sync + MMU is follow-up work. Trapping
+  blocks (e.g. misaligned atomics) are currently SKIPPED (out of the interrupt-free scope; precise-
+  trap JIT/interp equivalence is covered by `crates/jit-runtime/tests/precise_traps.rs`).
+- **Ticket-named mutations not expressible in this translator** (honest note): "dropped fflags" — FP
+  side-exits entirely (E4-T15), so there is no JIT fflags path to break; "stale-local reuse across a
+  call-out" — the shipped softmmu path materializes operands inline before the call-out, so there is
+  no stale-local site. Both were substituted with equally-subtle in-scope bugs (div-by-zero-wrong,
+  jalr-omits-bit0-clear) to keep the sweep at 5 genuine, caught mutations.
+- No fabricated numbers: only gates actually run above are claimed green.

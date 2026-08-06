@@ -2361,6 +2361,8 @@ dependencies = [
  "anyhow",
  "wasm-vm-core",
  "wasm-vm-jit-translate",
+ "wasmparser 0.235.0",
+ "wasmprinter",
  "wasmtime",
 ]
 

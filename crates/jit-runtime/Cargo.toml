@@ -20,3 +20,14 @@ wasm-vm-core = { workspace = true, default-features = false, features = ["std"] 
 wasm-vm-jit-translate = { path = "../jit-translate" }
 wasmtime = { version = "35", default-features = false, features = ["cranelift", "runtime"] }
 anyhow = "1"
+
+[dev-dependencies]
+# E4-T25 lockstep/fuzz harness: validate every generated module and disassemble the offending
+# block's wasm bytes into a repro report.
+wasmparser = "0.235"
+wasmprinter = "0.235"
+
+[features]
+# E4-T25: forwards the translator's deliberate-mutation hooks so the fuzzer/lockstep tests can prove
+# the rig catches a mis-translation. OFF by default (the clean-run + existing gates never see it).
+mutation-testing = ["wasm-vm-jit-translate/mutation-testing"]

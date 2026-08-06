@@ -42,6 +42,97 @@ use wasm_emit::{
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::{DecodedBlock, is_terminator};
 
+// ── E4-T25 test-only mutation hooks ─────────────────────────────────────────
+//
+// The verification doctrine (E4-T25) must PROVE its lockstep/fuzz rig can actually catch a
+// mis-translation, not just hope so. To do that without ever shipping a broken translator, this
+// crate carries a set of DELIBERATE mis-translations behind the `mutation-testing` cargo feature
+// (OFF by default → the entire mechanism compiles to `false` and is optimized away, so the shipped
+// translator is byte-for-byte unchanged). When the feature is on, a test sets the active mutation
+// via the `mutation` module and every generated block for the process emits the buggy form at the
+// hooked codegen site, so the fuzzer/lockstep comparator observes a JIT-vs-interpreter divergence.
+//
+// The registry is a single process-global atomic (works in `no_std` via `core::sync::atomic`; the
+// tests drive it single-threaded). Each hook is a `#[inline]` predicate that is a literal `false`
+// when the feature is off, so no shipping code path branches on it.
+#[allow(dead_code)] // NONE + ACTIVE are only read under the `mutation-testing` feature.
+pub(crate) mod mut_hooks {
+    use core::sync::atomic::AtomicU8;
+    /// No mutation — the correct translator.
+    pub const NONE: u8 = 0;
+    /// SRAW emitted as a 64-bit arithmetic shift (wrong operand width + shift mask: 6-bit mod-64 on
+    /// the full 64-bit `rs1` instead of a 5-bit mod-32 on `(i32)rs1`). The ticket's named
+    /// "off-by-one shift mask" / "mis-translate SRAW" bug.
+    pub const SHIFT_MASK_WRONG: u8 = 1;
+    /// LW lowered with the LWU (zero-extending) load kind — the dropped sign-extension bug.
+    pub const LW_DROP_SEXT: u8 = 2;
+    /// A conditional branch's TAKEN exit skips the dirty-register writeback — the "wrong writeback on
+    /// a taken-branch exit" bug (a register dirtied before the branch is not flushed to memory).
+    pub const TAKEN_BRANCH_NO_WRITEBACK: u8 = 3;
+    /// DIV/REM drop the architectural divide-by-zero override `select`, so `x/0` yields the sanitized
+    /// `x/1 == x` instead of the RISC-V-defined `-1` (div) / dividend (rem). A semantic-mine bug.
+    pub const DIV_ZERO_WRONG: u8 = 4;
+    /// JALR omits the mandatory `target & !1` bit-0 clear — diverges only on odd computed targets.
+    pub const JALR_NO_CLEAR_BIT0: u8 = 5;
+    pub(crate) static ACTIVE: AtomicU8 = AtomicU8::new(NONE);
+}
+
+/// E4-T25: the process-global mutation registry (test-only, `mutation-testing` feature). Setting a
+/// non-`NONE` mutation makes every subsequently-translated block emit that deliberate bug.
+#[cfg(feature = "mutation-testing")]
+pub mod mutation {
+    use super::mut_hooks;
+    pub use super::mut_hooks::{
+        DIV_ZERO_WRONG, JALR_NO_CLEAR_BIT0, LW_DROP_SEXT, NONE, SHIFT_MASK_WRONG,
+        TAKEN_BRANCH_NO_WRITEBACK,
+    };
+    use core::sync::atomic::Ordering;
+    /// Human-readable name for a mutation code (for repro reports).
+    pub fn name(m: u8) -> &'static str {
+        match m {
+            NONE => "none",
+            SHIFT_MASK_WRONG => "sraw-wrong-shift-mask",
+            LW_DROP_SEXT => "lw-dropped-sign-extension",
+            TAKEN_BRANCH_NO_WRITEBACK => "taken-branch-skips-writeback",
+            DIV_ZERO_WRONG => "div-by-zero-wrong-result",
+            JALR_NO_CLEAR_BIT0 => "jalr-omits-bit0-clear",
+            _ => "unknown",
+        }
+    }
+    /// The full set of injected bugs the adversarial mutation-adequacy sweep runs over.
+    pub const ALL: [u8; 5] = [
+        SHIFT_MASK_WRONG,
+        LW_DROP_SEXT,
+        TAKEN_BRANCH_NO_WRITEBACK,
+        DIV_ZERO_WRONG,
+        JALR_NO_CLEAR_BIT0,
+    ];
+    /// Activate mutation `m` for all subsequent translations in this process.
+    pub fn set(m: u8) {
+        mut_hooks::ACTIVE.store(m, Ordering::SeqCst);
+    }
+    /// Restore the correct translator.
+    pub fn clear() {
+        set(NONE);
+    }
+    /// The currently-active mutation.
+    pub fn active() -> u8 {
+        mut_hooks::ACTIVE.load(Ordering::SeqCst)
+    }
+}
+
+#[inline(always)]
+fn mutation_is(_m: u8) -> bool {
+    #[cfg(feature = "mutation-testing")]
+    {
+        mut_hooks::ACTIVE.load(core::sync::atomic::Ordering::SeqCst) == _m
+    }
+    #[cfg(not(feature = "mutation-testing"))]
+    {
+        false
+    }
+}
+
 /// The frozen `CpuState` linear-memory layout (subset E4-T09 touches), byte offsets from the
 /// `state_base` argument (`docs/jit-architecture.md` §3.1). Kept as a struct — not scattered
 /// literals — so the one authoritative definition is here and the harness reads back through the
@@ -950,16 +1041,33 @@ fn emit_alu(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, instr: Instr, pc: u
             set_reg(f, regs, rd);
         }
         Sraw { rd, rs1, rs2 } => {
-            push_reg_i32(f, regs, abi, rs1);
-            push_reg_i32(f, regs, abi, rs2);
-            f.i32_shr_s();
-            f.i64_extend_i32_s();
-            set_reg(f, regs, rd);
+            if mutation_is(mut_hooks::SHIFT_MASK_WRONG) {
+                // BUG (E4-T25 injected): 64-bit arithmetic shift of the full rs1 by rs2 mod 64,
+                // instead of the *W form (i32 rs1, mask mod 32, then sign-extend).
+                push_reg(f, regs, abi, rs1);
+                push_reg(f, regs, abi, rs2);
+                f.i64_shr_s();
+                set_reg(f, regs, rd);
+            } else {
+                push_reg_i32(f, regs, abi, rs1);
+                push_reg_i32(f, regs, abi, rs2);
+                f.i32_shr_s();
+                f.i64_extend_i32_s();
+                set_reg(f, regs, rd);
+            }
         }
         // ── loads (side-exit to env.load) ──
         Lb { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LB, pc),
         Lh { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LH, pc),
-        Lw { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LW, pc),
+        Lw { rd, rs1, imm } => {
+            // BUG (E4-T25 injected): lower LW with the zero-extending LWU kind (dropped sign-ext).
+            let kind = if mutation_is(mut_hooks::LW_DROP_SEXT) {
+                load_kind::LWU
+            } else {
+                load_kind::LW
+            };
+            emit_load(f, regs, abi, rd, rs1, imm, kind, pc)
+        }
         Ld { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LD, pc),
         Lbu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LBU, pc),
         Lhu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LHU, pc),
@@ -1506,16 +1614,22 @@ fn emit_div_rem64(
         DivKind::Remu => f.i64_rem_u(),
     }
     f.local_set(q);
-    // Architectural override for the zero-divisor case. (Overflow is already correct: with denom==1,
-    // Div gives a/1==INT_MIN and Rem gives a%1==0.)
-    match kind {
-        DivKind::Div | DivKind::Divu => f.i64_const(-1), // div/0 → all-ones (−1 == u64::MAX)
-        DivKind::Rem | DivKind::Remu => f.local_get(a),  // rem/0 → dividend
+    if mutation_is(mut_hooks::DIV_ZERO_WRONG) {
+        // BUG (E4-T25 injected): drop the architectural divide-by-zero override, so x/0 yields the
+        // sanitized x/1 == x instead of the RISC-V-defined -1 (div) / dividend (rem).
+        f.local_get(q);
+    } else {
+        // Architectural override for the zero-divisor case. (Overflow is already correct: with
+        // denom==1, Div gives a/1==INT_MIN and Rem gives a%1==0.)
+        match kind {
+            DivKind::Div | DivKind::Divu => f.i64_const(-1), // div/0 → all-ones (−1 == u64::MAX)
+            DivKind::Rem | DivKind::Remu => f.local_get(a),  // rem/0 → dividend
+        }
+        f.local_get(q);
+        f.local_get(b);
+        f.i64_eqz(); // cond: divisor was zero
+        f.select();
     }
-    f.local_get(q);
-    f.local_get(b);
-    f.i64_eqz(); // cond: divisor was zero
-    f.select();
     set_reg(f, regs, rd);
 }
 
@@ -1634,8 +1748,12 @@ fn emit_terminator(
             push_reg(f, regs, abi, rs1);
             f.i64_const(imm);
             f.i64_add();
-            f.i64_const(-2); // 0xFFFF_FFFF_FFFF_FFFE == !1 — clears bit 0
-            f.i64_and();
+            if !mutation_is(mut_hooks::JALR_NO_CLEAR_BIT0) {
+                f.i64_const(-2); // 0xFFFF_FFFF_FFFF_FFFE == !1 — clears bit 0
+                f.i64_and();
+            }
+            // BUG (E4-T25 injected) when JALR_NO_CLEAR_BIT0: the `& !1` above is omitted, leaving the
+            // low bit set on an odd computed target.
             f.local_set(scratch);
             if rd != 0 {
                 // link = pc + insn_len is PC-relative → virtual (E4-T16). The jalr TARGET in
@@ -1705,14 +1823,24 @@ fn emit_branch(
     }
     // Taken path (edge 0): resume at pc + imm.
     f.if_(BlockType::Empty);
-    emit_exit(
-        f,
-        regs,
-        abi,
-        ExitCode::BranchTaken,
-        PcSrc::Const(pc.wrapping_add(imm as u64)),
-        intra[0],
-    );
+    if mutation_is(mut_hooks::TAKEN_BRANCH_NO_WRITEBACK) {
+        // BUG (E4-T25 injected): the taken exit writes exit_pc + reason but SKIPS the dirty-register
+        // writeback, so any register dirtied before the branch is never flushed to memory.
+        let target = pc.wrapping_add(imm as u64);
+        write_pc_const(f, regs, abi, target);
+        write_reason(f, abi, ExitCode::BranchTaken);
+        f.i32_const(ExitCode::BranchTaken as i32);
+        f.return_();
+    } else {
+        emit_exit(
+            f,
+            regs,
+            abi,
+            ExitCode::BranchTaken,
+            PcSrc::Const(pc.wrapping_add(imm as u64)),
+            intra[0],
+        );
+    }
     f.end();
     // Not-taken fall-through (edge 1): resume at pc + insn_len. The dirty set is identical on both
     // edges (a branch reads but never writes registers), so both exits flush the same registers.
