@@ -5,10 +5,12 @@ import assert from "node:assert/strict";
 
 import {
   selectCpuBackend,
+  selectJitBackend,
   probeIsolation,
   chooseCpuBackend,
   BACKEND_WORKER_SHARED,
   BACKEND_SINGLE_THREAD,
+  JIT_DEFAULT_THRESHOLD,
 } from "../cpu-isolation.js";
 
 const isolated = {
@@ -81,6 +83,47 @@ test("chooseCpuBackend warns exactly once on fallback", () => {
   assert.equal(r.backend, BACKEND_SINGLE_THREAD);
   assert.equal(warnings.length, 1);
   assert.match(warnings[0], /single-threaded fallback/);
+});
+
+// ── E4-T29 Phase 2: the browser-JIT gate ─────────────────────────────────────
+
+test("selectJitBackend attaches the JIT when cross-origin isolated (worker-shared)", () => {
+  const r = selectJitBackend(isolated);
+  assert.equal(r.jit, true);
+  assert.equal(r.threshold, JIT_DEFAULT_THRESHOLD);
+  assert.match(r.reason, /isolated/);
+});
+
+test("selectJitBackend → interpreter-only (no JIT) when NOT isolated", () => {
+  const r = selectJitBackend({ ...isolated, crossOriginIsolated: false });
+  assert.equal(r.jit, false);
+  assert.equal(r.threshold, 0);
+  assert.match(r.reason, /interpreter-only/);
+});
+
+test("selectJitBackend → interpreter-only on every single-thread fallback cause", () => {
+  for (const bad of [
+    { ...isolated, hasSharedArrayBuffer: false },
+    { ...isolated, hasAtomics: false },
+    { ...isolated, hasWorker: false },
+    { ...isolated, forceSingleThread: true },
+    {},
+    undefined,
+  ]) {
+    assert.equal(selectJitBackend(bad).jit, false, JSON.stringify(bad));
+  }
+});
+
+test("selectJitBackend honours an explicit opt-out even when isolated", () => {
+  const r = selectJitBackend({ ...isolated, jit: false });
+  assert.equal(r.jit, false);
+  assert.match(r.reason, /disabled by request/);
+});
+
+test("selectJitBackend passes a custom threshold through when isolated", () => {
+  const r = selectJitBackend({ ...isolated, jitThreshold: 7 });
+  assert.equal(r.jit, true);
+  assert.equal(r.threshold, 7);
 });
 
 test("chooseCpuBackend does not warn when the shared backend is selected", () => {

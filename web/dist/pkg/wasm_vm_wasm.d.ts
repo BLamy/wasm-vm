@@ -223,6 +223,16 @@ export class WasmMachine {
     free(): void;
     [Symbol.dispose](): void;
     /**
+     * E4-T29 Phase 2: attach the in-wasm (browser) JIT executor to this machine and arm tier-up.
+     * Mirrors the native CLI `--jit` wiring (constructs the executor, calls `set_executor`, turns on
+     * the block cache + interrupt batching + hotness discovery) so a booted browser guest executes
+     * translated blocks. The interpreter stays the oracle: with the JIT off (this never called) the
+     * run loop is byte-identical to the pre-T29 path. `threshold` is the hotness count before a block
+     * is nominated for compilation (1 = eager, for tests). The caller is responsible for gating this
+     * on `crossOriginIsolated` (E4-T22 `selectJitBackend`) — see `web/cpu-isolation.js`.
+     */
+    enableJit(threshold: number): void;
+    /**
      * E2-T20: the interrupt/trap counters + storm/WFI diagnosis as a JS object
      * `{ retired, wfi, exceptions:[16], interrupts:[16], claims:[32], storm:bool, wfiReport:string|null }`.
      * E2-T26's UI surfaces these so a browser boot that death-spirals shows a diagnosis instead
@@ -404,6 +414,7 @@ export interface InitOutput {
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
+    readonly wasmmachine_enableJit: (a: number, b: number) => [number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];
     readonly wasmmachine_loadElf: (a: number, b: number, c: number) => [number, number];
     readonly wasmmachine_new: (a: number) => [number, number, number];
@@ -427,11 +438,15 @@ export interface InitOutput {
     readonly slirpTailscaleCommand: (a: number, b: number) => number;
     readonly wasm_bindgen__convert__closures_____invoke__h1dbcf2b5dd15a422: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h8c3f0668a05de02f: (a: number, b: number, c: any, d: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82_2: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82_3: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82_4: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h7b5e0ac436d9ba2e: (a: number, b: number) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_6: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_7: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_8: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628: (a: number, b: number, c: bigint, d: number) => bigint;
+    readonly wasm_bindgen__convert__closures_____invoke__hccc6447b5e5e2a92: (a: number, b: number, c: bigint, d: bigint, e: number, f: number) => bigint;
+    readonly wasm_bindgen__convert__closures_____invoke__hb536c899e9023450: (a: number, b: number, c: bigint, d: bigint, e: number) => bigint;
+    readonly wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8: (a: number, b: number, c: bigint, d: bigint, e: number) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h880302392ebe5c09: (a: number, b: number) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;

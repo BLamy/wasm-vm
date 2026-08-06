@@ -22,9 +22,12 @@ import {
   CELL,
   STATE,
 } from "./cpu-control-block.js";
+import { selectJitBackend, probeIsolation } from "./cpu-isolation.js";
 
 let cells = null;
 let running = false;
+// E4-T29 Phase 2: the JIT gate for this worker, decided ONCE at boot from the isolation snapshot.
+let jitPlan = { jit: false, threshold: 0, reason: "undecided" };
 
 self.addEventListener("message", (event) => {
   const msg = event.data;
@@ -45,10 +48,28 @@ async function boot({ wasmModule, wasmUrl, sharedMemory, controlSab, bootParams 
   const imports = makeImports(sharedMemory);
   const instance = await WebAssembly.instantiate(module, imports);
 
+  // E4-T29 Phase 2: decide the JIT gate. The worker only runs at all when the page is cross-origin
+  // isolated (E4-T22), so `selectJitBackend` returns jit:true here unless the guest opted out
+  // (bootParams.jit === false). When jit is false — or if this ever runs un-isolated — the guest
+  // stays on the interpreter with NO executor attached (clean fallback, no half-init). The actual
+  // `WasmMachine.enableJit(threshold)` call is made by the shared-pkg dispatch init once its entry
+  // point lands (E4-T10/T11 wiring); the plan is decided and surfaced here.
+  jitPlan = selectJitBackend({
+    ...probeIsolation(self),
+    jit: bootParams ? bootParams.jit : undefined,
+    jitThreshold: bootParams ? bootParams.jitThreshold : undefined,
+  });
+  // The shared-pkg dispatch init installs `self.enableJitOnInstance` (calls
+  // `WasmMachine.enableJit(threshold)` under the hood). Until that entry point lands it is absent, so
+  // this is a clean no-op — never a half-attached executor.
+  if (jitPlan.jit && typeof self.enableJitOnInstance === "function") {
+    self.enableJitOnInstance(instance, jitPlan.threshold);
+  }
+
   // The wasm-bindgen glue for the shared build initialises against this same instance/memory.
   // (Wiring the generated `initSync(module, memory)` entry point is done by the loader that
   // imports the shared pkg; here we hold the raw instance for the dispatch loop.)
-  self.postMessage({ type: "ready" });
+  self.postMessage({ type: "ready", jit: jitPlan.jit, jitReason: jitPlan.reason });
 
   runLoop(instance, bootParams);
 }

@@ -15,6 +15,9 @@ use core::fmt::Write as _;
 use core::sync::atomic::{AtomicBool, Ordering};
 
 use wasm_bindgen::prelude::*;
+// E4-T29 Phase 2: the in-wasm (browser) compiled-block executor.
+mod jit_browser;
+pub use jit_browser::BrowserExecutor;
 use wasm_vm_core::bus::mmap::{UART0_BASE, UART0_LEN};
 use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
 use wasm_vm_core::trace::{TraceRecord, TraceSink, fmt_canonical};
@@ -479,6 +482,26 @@ impl WasmMachine {
             .map_err(|e| JsError::new(&format!("load_elf failed: {e:?}")))?;
         inner.loaded = true;
         inner.exited = false;
+        Ok(())
+    }
+
+    /// E4-T29 Phase 2: attach the in-wasm (browser) JIT executor to this machine and arm tier-up.
+    /// Mirrors the native CLI `--jit` wiring (constructs the executor, calls `set_executor`, turns on
+    /// the block cache + interrupt batching + hotness discovery) so a booted browser guest executes
+    /// translated blocks. The interpreter stays the oracle: with the JIT off (this never called) the
+    /// run loop is byte-identical to the pre-T29 path. `threshold` is the hotness count before a block
+    /// is nominated for compilation (1 = eager, for tests). The caller is responsible for gating this
+    /// on `crossOriginIsolated` (E4-T22 `selectJitBackend`) — see `web/cpu-isolation.js`.
+    #[wasm_bindgen(js_name = enableJit)]
+    pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .machine
+            .set_executor(Box::new(jit_browser::BrowserExecutor::new()));
+        inner.machine.set_block_cache(true);
+        inner.machine.set_interrupt_batching(true);
+        inner.machine.set_hotness_threshold(threshold.max(1));
+        inner.machine.set_jit(true);
         Ok(())
     }
 

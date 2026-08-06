@@ -550,11 +550,35 @@ against the interpreter baseline.
 Flag probe: there is no UA/isolation probe natively — `--jit` is an explicit operator opt-in, kept out
 of the default so the deterministic oracle and reproducible boot-instruction anchors are untouched.
 
-### 12.2 Browser (Phase 2 — remaining T29 scope, NOT yet wired)
+### 12.2 Browser (Phase 2 — in-wasm executor, WIRED)
 
-The in-wasm `CompiledBlockExecutor` in `crates/wasm`, driven from the E4-T22 worker with the E4-T18
-funcref-table / E4-T19 batch protocol and a `crossOriginIsolated`-gated interpreter fallback, is the
-remaining half of this ticket and is deferred to its own change.
+`crates/wasm/src/jit_browser.rs` provides `BrowserExecutor`, the second `CompiledBlockExecutor`
+backend. It drives the browser's own `WebAssembly.Module` / `WebAssembly.Instance`
+(`js_sys::WebAssembly`, synchronous — legal on the E4-T22 CPU worker) over the SAME frozen E4-T09 ABI
+bytes `jit-translate` emits for the native path. Its load/store/AMO/LR/SC imports are wasm-bindgen
+`Closure`s that route through a thread-local live-guest pointer (the browser analogue of the native
+`HostCtx`) into `Hart::jit_load`/`jit_store`/… so every JIT memory access is translated + PMP-checked
++ bus-routed byte-identically to the interpreter, and a fault throws to unwind the module call (the
+E4-T12 precise side-exit). Every backend-agnostic obligation — physical-PC keying (E4-T16),
+page-granular SMC invalidation (E4-T17), the funcref link-slot chaining table + unlink-completeness
+(E4-T18), whole-batch retirement (E4-T19), and the budget/eviction state machine (E4-T20) — is the
+same bookkeeping as `WasmtimeExecutor`; only compile/instantiate, the imports, and CpuState sync
+(through a `Uint8Array` view) are browser-specific.
+
+Attach: `WasmMachine.enableJit(threshold)` (`crates/wasm/src/lib.rs`) constructs the executor and arms
+tier-up, mirroring the native `--jit` wiring. The E4-T22 worker gates it: `selectJitBackend`
+(`web/cpu-isolation.js`) returns `jit:true` ONLY when the worker-shared (cross-origin isolated)
+backend is selected, so a non-isolated / fallback load runs the interpreter with no executor attached
+(no half-init). The memory model is the frozen `SoftmmuImports` (E4-T11's inline-TLB shared-memory
+fast path stays deferred).
+
+Verification: the headless parity gate (`crates/wasm/tests/jit_browser_parity.rs`, run under
+`wasm-pack test --node` with the real `WebAssembly` global) executes I/M/A blocks through the real
+`BrowserExecutor` compile+instantiate+invoke path and asserts the full architectural state is
+byte-identical to the interpreter oracle, plus compile/cache/invalidate/chain/evict unit gates. The
+in-browser Alpine `--jit` boot-to-login and the in-browser CoreMark ≥10× (T28 capstone) remain
+dev/browser verification debt — the Mac OS-reaps long browser boots; the Playwright path is wired to
+drop in.
 
 ## Cross-reference
 

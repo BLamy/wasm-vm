@@ -64,6 +64,41 @@ function single(reason) {
   return { backend: BACKEND_SINGLE_THREAD, shared: false, wasmVariant: "fallback", reason };
 }
 
+// E4-T29 Phase 2: default hotness threshold before a block is nominated for browser-JIT compilation.
+// A small positive number; `WasmMachine.enableJit` clamps to ≥1. Kept here so the JS gate and the
+// Rust attach agree on the tunable.
+export const JIT_DEFAULT_THRESHOLD = 32;
+
+/**
+ * E4-T29 Phase 2: decide whether to attach the in-wasm (browser) JIT executor. The JIT is the
+ * capstone-path acceleration, but its compiled blocks share the guest `WebAssembly.Memory` the
+ * threaded worker owns — so it is ONLY attached when the worker-shared backend is selected
+ * (cross-origin isolated). In every non-isolated / fallback case the guest runs the interpreter with
+ * NO half-initialized executor, exactly the E4-T22 discipline. Pure + unit-testable in node.
+ *
+ * @param {object} env  the same capability snapshot `selectCpuBackend` consumes, plus:
+ *   @param {boolean} [env.jit=true]        explicit opt-out (`?nojit=1` → false)
+ *   @param {number}  [env.jitThreshold]    override the hotness threshold
+ * @returns {{jit:boolean, threshold:number, reason:string}}
+ */
+export function selectJitBackend(env) {
+  const cpu = selectCpuBackend(env);
+  const wantJit = !env || env.jit !== false;
+  const threshold = (env && env.jitThreshold) || JIT_DEFAULT_THRESHOLD;
+  if (cpu.backend !== BACKEND_WORKER_SHARED) {
+    // No isolation → no shared memory → interpreter only. Clean fallback, no executor constructed.
+    return { jit: false, threshold: 0, reason: `interpreter-only: ${cpu.reason}` };
+  }
+  if (!wantJit) {
+    return { jit: false, threshold: 0, reason: "browser JIT disabled by request (jit:false)" };
+  }
+  return {
+    jit: true,
+    threshold,
+    reason: "cross-origin isolated: in-wasm JIT executor attached over shared guest memory",
+  };
+}
+
 /**
  * Read the live browser/globalThis capabilities into the snapshot `selectCpuBackend` consumes.
  * Kept separate so the decision logic stays pure and testable.

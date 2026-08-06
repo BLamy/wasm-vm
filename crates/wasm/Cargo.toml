@@ -13,6 +13,9 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 wasm-vm-core = { workspace = true, features = ["trace"] }
 wasm-vm-storage = { path = "../storage" }
+# E4-T29 Phase 2: the browser (WebAssembly.compile/instantiate) JIT executor translates hot blocks
+# with the SAME frozen ABI the native wasmtime path uses.
+wasm-vm-jit-translate = { path = "../jit-translate" }
 # E3-net: the browser slirp local stack (DHCP/ARP/ICMP). default-features off → no tokio in the browser.
 wasm-vm-slirp = { path = "../slirp", default-features = false }
 wasm-bindgen = { workspace = true }
