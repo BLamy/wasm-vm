@@ -31,6 +31,17 @@ wasm:
 	wasm-pack build crates/wasm --target web
 	wasm-pack test --node crates/wasm
 
+# E4-T22: the SHARED-MEMORY (threaded CPU worker) variant of the main core module. Needs nightly +
+# rust-src (build-std recompiles std with +atomics). Emits an IMPORTED shared `env.memory`; the
+# single-threaded fallback stays on `make wasm` above. See docs/e4-t22-cpu-worker-coop-coep.md.
+wasm-shared:
+	bash tools/build-web-shared.sh
+
+# E4-T22: node unit tests for the CPU-backend isolation probe + shared control-block signalling
+# (headless; the browser worker-boot leg is Playwright web/tests/e4-t22-*.spec.js, run on dev).
+web-test-cpu-worker:
+	node --test web/tests/cpu-isolation.test.mjs web/tests/cpu-control-block.test.mjs
+
 # Explicit {std,trace} powerset natively + the two no_std combos on wasm32 (E0-T15),
 # mirroring ci.yml's `features` + `features-wasm` jobs.
 features:
