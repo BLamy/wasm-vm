@@ -2,9 +2,9 @@
 id: E4-T28
 epic: 4
 title: "Capstone: interactive/fast Node.js (Bun stretch), 10x CoreMark, sub-5s boot, zero regressions"
-priority: 428
+priority: 429
 status: pending
-depends_on: [E4-T24, E4-T26, E4-T27]
+depends_on: [E4-T24, E4-T26, E4-T27, E4-T29]
 estimate: L
 capstone: true
 ---

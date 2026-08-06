@@ -13930,12 +13930,13 @@
       "epic": "4",
       "epicKey": "4",
       "title": "Capstone: interactive/fast Node.js (Bun stretch), 10x CoreMark, sub-5s boot, zero regressions",
-      "priority": 428,
+      "priority": 429,
       "status": "pending",
       "depends_on": [
         "E4-T24",
         "E4-T26",
-        "E4-T27"
+        "E4-T27",
+        "E4-T29"
       ],
       "decomposed_into": [],
       "estimate": "L",
@@ -13988,6 +13989,61 @@
       "firstActivity": "2026-07-27",
       "lastActivity": "2026-07-27",
       "commitCount": 1
+    },
+    {
+      "id": "E4-T29",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Wire the JIT runtime into the runnable VM — native CLI executor + browser executor",
+      "priority": 428,
+      "status": "pending",
+      "depends_on": [
+        "E4-T10",
+        "E4-T19",
+        "E4-T20",
+        "E4-T21",
+        "E4-T22",
+        "E4-T23"
+      ],
+      "decomposed_into": [],
+      "estimate": "L",
+      "capstone": false,
+      "goal": "The verified JIT stops being dark-shipped and actually drives the VM. `Machine::set_executor`\n— today called **only** in `jit-runtime` tests — is invoked from the real boot paths so a\nbooted guest executes translated blocks: **native** via the wasmtime-backed `WasmtimeExecutor`\nbehind a CLI flag (interpreter stays the default oracle), and **in-browser** via an in-wasm\nexecutor driven from the E4-T22 CPU worker. This is the missing link between \"JIT proven\ncorrect as a component\" (E4-T05..T27) and \"JIT makes the product fast\" (E4-T28 capstone): it\nis the prerequisite that turns every deferred CoreMark/gcc *uplift* number and the ≥10×\ncapstone from unmeasurable into measurable.",
+      "criteria": [
+        {
+          "text": "`--jit` native boot: unmodified Alpine boots to `login:` with the JIT active (stats show >0 blocks compiled and >0 chained), architecturally identical to the interpreter boot (same login reached; retired-instruction path consistent modulo documented JIT effects).",
+          "checked": false
+        },
+        {
+          "text": "Interpreter remains the default with `--jit` OFF: determinism, `predecode_diff`, the differential harnesses, and boot-instruction anchors are byte-identical to pre-T29 HEAD.",
+          "checked": false
+        },
+        {
+          "text": "Native JIT CoreMark on the dev box records a **real** ledger entry and shows measurable uplift over the `level3-interpreter` baseline (number recorded, not asserted ≥10× — that threshold is the T28 capstone's job).",
+          "checked": false
+        },
+        {
+          "text": "Browser JIT: a booted browser guest executes translated blocks (stats visible in the overlay/console), with a clean interpreter fallback when `crossOriginIsolated` is false.",
+          "checked": false
+        },
+        {
+          "text": "Full riscv-tests verdict-identical with the *integrated* native executor (not just the test harness) — reuses E4-T26's matrix driven through the CLI path.",
+          "checked": false
+        },
+        {
+          "text": "No new `clippy -D warnings` / `fmt` violations; `crates/wasm` release build stays green.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 6,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Refute that integration is real and safe. (1) **Flag-off inertness:** diff every determinism/\ndifferential/boot-anchor gate at `--jit` off against pre-T29 HEAD — any change refutes \"additive,\ninterpreter untouched.\" (2) **On-path correctness:** run a real workload (CoreMark, then a paging\nguest) under `--jit` and lockstep/spot-check against the interpreter — a divergence is a genuine\nJIT-in-anger bug (add the repro to the E4-T25 corpus). (3) **Self-modifying guest under JIT:**\nboot a guest whose userspace writes code (the E4-T28 V8/FENCE.I case in miniature) and confirm no\nstale-block execution (E4-T16/T17 hold end-to-end, not just in unit tests). (4) **Browser fallback\nhonesty:** load without COOP/COEP and confirm the interpreter fallback engages cleanly (no half-\ninitialized executor). (5) **Measurement integrity:** confirm the recorded uplift is the JIT, not\nnoise — interpreter vs `--jit` A/B on the same dev box, ratios reported (ties into E4-T27).",
+      "file": "tasks/epic-4-acceleration/E4-T29-wire-jit-runtime-into-runnable-vm.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
     },
     {
       "id": "E5-T01",
