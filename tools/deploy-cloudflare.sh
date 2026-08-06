@@ -35,6 +35,15 @@ for m in "$DIST/artifacts.json" "$DIST/artifacts-alpine.json"; do
   # drop this line so its URL stays R2-hosted.
   sed "s#\"$R2_PUBLIC/boot-snapshot/#\"releases/boot-snapshot/#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m"
 done
+# E4 boot snapshot ships ON Pages (URL kept relative above), so the FILE must be present under
+# $DIST/releases/ — build-web-dist.sh deliberately skips releases/, so copy it here at deploy time
+# (same "poor-mans-ci at deploy time" pattern as the kernel, except this one stays on Pages).
+if [ -f releases/boot-snapshot/busybox-ready.snap.gz ]; then
+  mkdir -p "$DIST/releases/boot-snapshot"
+  cp releases/boot-snapshot/busybox-ready.snap.gz "$DIST/releases/boot-snapshot/busybox-ready.snap.gz"
+  echo "[deploy] shipped boot snapshot ($(du -h "$DIST/releases/boot-snapshot/busybox-ready.snap.gz" | cut -f1)) on Pages"
+fi
+
 # Do NOT ship the big artifacts with the site.
 rm -rf "$DIST/releases/kernel" "$DIST/releases/initramfs" "$DIST/releases/chunked-alpine" 2>/dev/null || true
 
