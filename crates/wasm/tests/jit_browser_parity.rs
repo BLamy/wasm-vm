@@ -20,6 +20,7 @@
 //! (a real in-browser boot is dev/browser verification debt: the Mac OS-reaps browser boots).
 
 #![cfg(target_arch = "wasm32")]
+#![allow(clippy::identity_op)] // the RV64 field-encoders keep every field term for legibility
 
 use wasm_bindgen_test::*;
 use wasm_vm_core::Machine;
