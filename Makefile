@@ -40,7 +40,9 @@ wasm-shared:
 # E4-T22: node unit tests for the CPU-backend isolation probe + shared control-block signalling
 # (headless; the browser worker-boot leg is Playwright web/tests/e4-t22-*.spec.js, run on dev).
 web-test-cpu-worker:
-	node --test web/tests/cpu-isolation.test.mjs web/tests/cpu-control-block.test.mjs
+	node --test web/tests/cpu-isolation.test.mjs web/tests/cpu-control-block.test.mjs web/tests/device-proxy.test.mjs
+	# E4-T23 adversarial #5: worker-side device code must not reach a main-thread-only API.
+	node tools/worker-device-audit.mjs
 
 # Explicit {std,trace} powerset natively + the two no_std combos on wasm32 (E0-T15),
 # mirroring ci.yml's `features` + `features-wasm` jobs.

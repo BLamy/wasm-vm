@@ -303,6 +303,146 @@ fn interrupt_fires_inside_chained_loop() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
+// 2b. E4-T23 AC5 — a DEVICE completion (external/PLIC interrupt, the shape of a virtio-blk
+// submit→completion) delivered inside a chained hot loop. This is the interrupt-INJECTION path
+// T23 introduces: a backend completion sets a PLIC source pending; the run loop mirrors it into
+// mip.MEIP; and E4-T18's per-link boundary poll takes it INSIDE the chain (dispatch re-entered),
+// byte-identically to the interpreter. Modelled natively: warm the loop so it JIT-compiles + chains
+// with interrupts masked, THEN assert the completion (pending against the hot, chained loop) is
+// delivered within the chain budget and the handler runs.
+// ════════════════════════════════════════════════════════════════════════════
+
+// PLIC register addresses (mirror crates/core/tests/plic.rs).
+fn plic_priority(id: u64) -> u64 {
+    wasm_vm_core::bus::mmap::PLIC_BASE + 4 * id
+}
+fn plic_enable(ctx: u64) -> u64 {
+    wasm_vm_core::bus::mmap::PLIC_BASE + 0x2000 + 0x80 * ctx
+}
+fn plic_threshold(ctx: u64) -> u64 {
+    wasm_vm_core::bus::mmap::PLIC_BASE + 0x0020_0000 + 0x1000 * ctx
+}
+
+#[test]
+fn device_completion_fires_inside_chained_loop() {
+    const HANDLER: u64 = DRAM_BASE + 0x2000;
+    const SENTINEL: u64 = 0x333;
+    const BLK_SRC: u64 = 1; // virtio-blk PLIC source id (VIRTIO_IRQ_BASE)
+    const MEIE: u64 = 1 << 11; // mie.MEIE — machine external interrupt enable
+
+    let mut m = Machine::new(8 * 1024 * 1024);
+    load_loop(&mut m, -1);
+    // Trap handler: write a sentinel into x5, then spin (never mret, so no claim/complete needed —
+    // matches the timer test's handler shape).
+    m.bus_mut()
+        .store32(HANDLER, enc_addi(5, 0, SENTINEL as i32))
+        .unwrap();
+    m.bus_mut().store32(HANDLER + 4, enc_jal(0, 0)).unwrap();
+
+    let plic = m.enable_plic();
+    // Program the PLIC exactly as a driver would for the blk source: priority 1, enabled in M
+    // context 0, threshold 0. (The device level is still LOW — no completion yet.)
+    m.bus_mut().store32(plic_priority(BLK_SRC), 1).unwrap();
+    m.bus_mut().store32(plic_enable(0), 1 << BLK_SRC).unwrap();
+    m.bus_mut().store32(plic_threshold(0), 0).unwrap();
+    set_csr(&mut m, MTVEC, HANDLER);
+
+    // Interpreter ORACLE: same setup, no JIT — where does the handler run, and with what state?
+    let oracle = {
+        let mut mo = Machine::new(8 * 1024 * 1024);
+        load_loop(&mut mo, -1);
+        mo.bus_mut()
+            .store32(HANDLER, enc_addi(5, 0, SENTINEL as i32))
+            .unwrap();
+        mo.bus_mut().store32(HANDLER + 4, enc_jal(0, 0)).unwrap();
+        let plico = mo.enable_plic();
+        mo.bus_mut().store32(plic_priority(BLK_SRC), 1).unwrap();
+        mo.bus_mut().store32(plic_enable(0), 1 << BLK_SRC).unwrap();
+        mo.bus_mut().store32(plic_threshold(0), 0).unwrap();
+        set_csr(&mut mo, MTVEC, HANDLER);
+        mo.hart_mut().regs.write(1, 100_000);
+        mo.hart_mut().regs.write(2, 0);
+        mo.hart_mut().regs.pc = A;
+        // Warm phase: interrupts masked; run a bounded slice.
+        set_csr(&mut mo, MSTATUS, 0);
+        set_csr(&mut mo, MIE, 0);
+        mo.run(2_000);
+        // The completion arrives: device raises the blk source, kernel had enabled MEIE + MIE.
+        plico.borrow_mut().set_level(BLK_SRC as usize, true);
+        set_csr(&mut mo, MSTATUS, 1 << 3);
+        set_csr(&mut mo, MIE, MEIE);
+        mo.run(40_000);
+        (mo.hart().regs.read(5), mo.hart().regs.read(2))
+    };
+    assert_eq!(
+        oracle.0, SENTINEL,
+        "oracle: interpreter must take the external interrupt"
+    );
+
+    arm_jit(&mut m);
+    m.hart_mut().regs.write(1, 100_000);
+    m.hart_mut().regs.write(2, 0);
+    m.hart_mut().regs.pc = A;
+
+    // Warm phase: interrupts masked → the loop JIT-compiles and CHAINS with no interrupt to take.
+    set_csr(&mut m, MSTATUS, 0);
+    set_csr(&mut m, MIE, 0);
+    m.run(2_000);
+    let warm = m.chain_stats();
+    assert!(
+        warm.links_made >= 2,
+        "the loop must have chained during the warm phase (got links_made={})",
+        warm.links_made
+    );
+    assert_ne!(
+        m.hart().regs.read(5),
+        SENTINEL,
+        "no interrupt should have fired while masked"
+    );
+    let x5_before = m.hart().regs.read(5);
+    let dispatch_before = m.chain_stats().dispatch_entries;
+    // x2 counts loop iterations; capture it at the instant of injection so we can bound how far the
+    // loop runs BEFORE the completion is delivered — the "within the chain budget" measurement.
+    let x2_at_injection = m.hart().regs.read(2);
+
+    // The backend completion lands: set the blk PLIC source pending (the interrupt-injection path),
+    // and the guest kernel unmasks. mip.MEIP is now asserted against the HOT, chained loop.
+    plic.borrow_mut().set_level(BLK_SRC as usize, true);
+    set_csr(&mut m, MSTATUS, 1 << 3);
+    set_csr(&mut m, MIE, MEIE);
+    m.run(40_000);
+
+    // The completion interrupt was delivered INSIDE the chained loop: the handler ran, and dispatch
+    // was re-entered so the boundary poll could deliver it (E4-T18 per-link interrupt budget).
+    assert_eq!(
+        m.hart().regs.read(5),
+        SENTINEL,
+        "the device-completion (external/PLIC) interrupt must be taken inside the chained loop"
+    );
+    assert_ne!(x5_before, SENTINEL);
+    assert!(
+        m.chain_stats().dispatch_entries > dispatch_before,
+        "the chained loop must re-enter dispatch so the boundary poll delivers the completion"
+    );
+    // WITHIN THE CHAIN BUDGET (the AC5 substance): the loop advanced only a handful of iterations
+    // between the completion landing and the interrupt being taken — NOT the thousands it would take
+    // if the device IRQ were only sampled when the chain exhausts its depth budget / falls out of
+    // the loop. Before the `sync_plic()` fix in the chain poll this delta was ~30 000; the bound
+    // below (a few chain-depth budgets of 2-block iterations) is the regression guard.
+    let delivered_after = m.hart().regs.read(2) - x2_at_injection;
+    assert!(
+        delivered_after <= 64,
+        "device completion must fire within the chain budget (loop advanced {} iters, want ≤ 64)",
+        delivered_after
+    );
+    // The interpreter oracle also takes the same external interrupt (handler runs) — the delivery
+    // MECHANISM is identical; exact-cycle timing under interrupt batching is intentionally coarse
+    // (batching defers sampling ≤128 retires — see Machine::interrupt_batching), so byte-identical
+    // *architectural effect* is covered by the ISA lockstep suite, not an exact-count compare here.
+    let _ = oracle;
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // 3. Chain-depth budget — bounds chain length, no unbounded recursion
 // ════════════════════════════════════════════════════════════════════════════
 

@@ -2471,11 +2471,21 @@ impl Machine {
                         break Some(Ok(())); // chain-depth bound: force a dispatch return.
                     }
                     // Interrupt/instruction budget across chains: refresh the timer levels (mtime
-                    // advanced per retired op above) and, if an interrupt is now pending, return to
-                    // dispatch so the boundary poll delivers it — a timer thus fires within one
-                    // block (≤128 ops) of becoming pending even inside a fully-chained loop.
+                    // advanced per retired op above) AND re-mirror the PLIC external-interrupt levels
+                    // and, if an interrupt is now pending, return to dispatch so the boundary poll
+                    // delivers it — a timer OR a device completion thus fires within one block
+                    // (≤128 ops) of becoming pending even inside a fully-chained loop.
+                    //
+                    // E4-T23: `sync_plic()` is what makes an INJECTED device completion (virtio-blk /
+                    // net → a PLIC source pending bit, set by the backend on the other thread) take
+                    // effect INSIDE the chain. Without it a device IRQ would only be sampled when the
+                    // chain happens to exit to dispatch (the chain-depth bound / a fetch miss), so a
+                    // blk-completion could be delayed by thousands of loop iterations — refuted by
+                    // `device_completion_fires_inside_chained_loop`. The level is already asserted by
+                    // the device; this only mirrors it into `mip`, so it is cheap and side-effect-free.
                     self.sync_clint();
                     self.sync_sbi_timer();
+                    self.sync_plic();
                     if self.hart.csr.next_interrupt().is_some() {
                         break Some(Ok(()));
                     }
