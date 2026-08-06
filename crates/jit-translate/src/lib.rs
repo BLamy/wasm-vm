@@ -57,6 +57,10 @@ pub struct Abi {
     pub exit_pc: u32,
     /// `exit_info` — aux payload (trap cause for `ecall`/`ebreak`).
     pub exit_info: u32,
+    /// E4-T16: `entry_pc` — the guest VIRTUAL PC the block was entered at, written by the runtime
+    /// before each `run` call. The block emits every guest-visible PC relative to this (see
+    /// `push_pc_rel`) so compiled code is correct under paging and when reused from a new VA.
+    pub entry_pc: u32,
     /// How generated loads/stores reach guest memory (E4-T11).
     pub mem: MemModel,
     /// E4-T11 inline-TLB layout (only consulted when `mem == InlineTlb`). Byte offsets into the ONE
@@ -134,6 +138,7 @@ impl Abi {
         exit_reason: 0x218,
         exit_pc: 0x220,
         exit_info: 0x228,
+        entry_pc: 0x230,
         mem: MemModel::SoftmmuImports,
         tlb: TlbLayout::FROZEN,
     };
@@ -144,6 +149,7 @@ impl Abi {
         exit_reason: 0x218,
         exit_pc: 0x220,
         exit_info: 0x228,
+        entry_pc: 0x230,
         mem: MemModel::InlineTlb,
         tlb: TlbLayout::FROZEN,
     };
@@ -226,14 +232,38 @@ struct Regs {
     local: [Option<u32>; 32],
     /// Whether guest register `r` was modified and must be written back at exits.
     dirty: [bool; 32],
+    /// E4-T16: the block's entry PC the compile-time PC constants are relative to (`phys_start`).
+    /// Every guest-visible PC the block writes (branch/jal targets, `auipc`, link values, `exit_pc`,
+    /// fault mepc) is emitted as `entry_local + (abs - base_pc)` so it is the running guest's VIRTUAL
+    /// PC, not the physical block key — the phys-keying invariant requires a block reused from a
+    /// DIFFERENT virtual address to produce correct virtual PCs, so the entry VA is a RUNTIME input.
+    base_pc: u64,
+    /// The WASM local (i64) holding the runtime-supplied entry virtual PC (loaded from
+    /// `abi.entry_pc` at the function prologue).
+    entry_local: u32,
 }
 
 impl Regs {
-    fn new() -> Self {
+    fn new(base_pc: u64, entry_local: u32) -> Self {
         Regs {
             local: [None; 32],
             dirty: [false; 32],
+            base_pc,
+            entry_local,
         }
+    }
+}
+
+/// E4-T16: push the guest VIRTUAL PC for compile-time-absolute `abs` onto the stack as an i64 —
+/// `entry_local + (abs - base_pc)`. `abs` is a physical-keyed constant (`base_pc`-relative); the
+/// delta is a fixed compile-time offset added to the runtime entry VA, so a block reused from a new
+/// virtual mapping (the phys-keying reuse case) still writes correct virtual PCs.
+fn push_pc_rel(f: &mut FuncBuilder, regs: &Regs, abs: u64) {
+    f.local_get(regs.entry_local);
+    let delta = abs.wrapping_sub(regs.base_pc) as i64;
+    if delta != 0 {
+        f.i64_const(delta);
+        f.i64_add();
     }
 }
 
@@ -242,8 +272,10 @@ impl Regs {
 /// * function `"run"` with signature `(i32) -> i32` (the block; arg = `state_base`, ret = exit code).
 ///
 /// and imports `env.load` / `env.store` for memory access (the E4-T11 fast path replaces these).
-/// The guest PC used for PC-relative ops (`auipc`, `jal`, branch targets) is the block's
-/// `phys_start` — under the physical keying the JIT uses, that is the block's entry PC.
+/// PC-relative ops (`auipc`, `jal`, branch targets, link values, fault mepc) are emitted relative to
+/// the runtime-supplied entry VIRTUAL PC (`abi.entry_pc`, written before each call), NOT the block's
+/// physical `phys_start` key — so translated control flow is correct under paging (virtual PC !=
+/// physical key, E4-T16) and when a physically-keyed block is reused from a new virtual mapping.
 pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, TranslateError> {
     let mut m = ModuleBuilder::new();
     // Both memory models expose the same two memory-access imports (`(va,kind)->val` load,
@@ -328,8 +360,16 @@ fn emit_body(f: &mut FuncBuilder, block: &DecodedBlock, abi: &Abi) -> Result<(),
         }
     }
 
-    let mut regs = Regs::new();
     let base_pc = block.phys_start;
+    // E4-T16: load the runtime-supplied entry VIRTUAL PC into a local at the prologue. Every PC the
+    // block writes is computed relative to it (see `push_pc_rel`), so the compiled block is correct
+    // under paging (guest virtual PC != physical block key) AND when reused from a new virtual
+    // mapping. Emitted first, so it is always initialized before any branch.
+    let entry_local = f.local(ValType::I64);
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.entry_pc);
+    f.local_set(entry_local);
+    let mut regs = Regs::new(base_pc, entry_local);
     let mut pc = base_pc;
     let n = block.ops.len();
     let mut terminated = false;
@@ -355,7 +395,7 @@ fn emit_body(f: &mut FuncBuilder, block: &DecodedBlock, abi: &Abi) -> Result<(),
     if !terminated {
         let end_pc = base_pc.wrapping_add(block.total_len);
         writeback(f, &regs, abi);
-        write_pc_const(f, abi, end_pc);
+        write_pc_const(f, &regs, abi, end_pc);
         write_reason(f, abi, ExitCode::Fallthrough);
         f.i32_const(ExitCode::Fallthrough as i32);
         f.return_();
@@ -508,9 +548,9 @@ fn writeback(f: &mut FuncBuilder, regs: &Regs, abi: &Abi) {
     }
 }
 
-fn write_pc_const(f: &mut FuncBuilder, abi: &Abi, pc: u64) {
+fn write_pc_const(f: &mut FuncBuilder, regs: &Regs, abi: &Abi, pc: u64) {
     f.local_get(STATE_BASE);
-    f.i64_const(pc as i64);
+    push_pc_rel(f, regs, pc); // E4-T16: virtual PC = entry_pc + (pc - base_pc)
     f.i64_store(ALIGN8, abi.exit_pc);
 }
 
@@ -543,7 +583,8 @@ fn emit_alu(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, instr: Instr, pc: u
             set_reg(f, regs, rd);
         }
         Auipc { rd, imm } => {
-            f.i64_const(pc.wrapping_add(imm as u64) as i64);
+            // E4-T16: auipc is PC-relative → virtual entry_pc + (pc + imm - base_pc).
+            push_pc_rel(f, regs, pc.wrapping_add(imm as u64));
             set_reg(f, regs, rd);
         }
         // ── OP-IMM ──
@@ -809,7 +850,7 @@ fn emit_load(
     pc: u64,
 ) {
     writeback(f, regs, abi);
-    write_pc_const(f, abi, pc);
+    write_pc_const(f, regs, abi, pc);
     match abi.mem {
         MemModel::SoftmmuImports => {
             // effective address = rs1 + imm (wrapping u64)
@@ -839,7 +880,7 @@ fn emit_store(
     pc: u64,
 ) {
     writeback(f, regs, abi);
-    write_pc_const(f, abi, pc);
+    write_pc_const(f, regs, abi, pc);
     match abi.mem {
         MemModel::SoftmmuImports => {
             push_reg(f, regs, abi, rs1);
@@ -866,7 +907,7 @@ fn emit_store(
 /// `rd = sext(LR.width(mem[rs1]))`, setting the reservation. → `env.lr(addr, width) -> i64`.
 fn emit_lr(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, rd: u8, rs1: u8, width: i32, pc: u64) {
     writeback(f, regs, abi);
-    write_pc_const(f, abi, pc);
+    write_pc_const(f, regs, abi, pc);
     push_reg(f, regs, abi, rs1);
     f.i32_const(width);
     f.call(LR_IMPORT);
@@ -886,7 +927,7 @@ fn emit_sc(
     pc: u64,
 ) {
     writeback(f, regs, abi);
-    write_pc_const(f, abi, pc);
+    write_pc_const(f, regs, abi, pc);
     push_reg(f, regs, abi, rs1);
     push_reg(f, regs, abi, rs2);
     f.i32_const(width);
@@ -908,7 +949,7 @@ fn emit_amo(
     pc: u64,
 ) {
     writeback(f, regs, abi);
-    write_pc_const(f, abi, pc);
+    write_pc_const(f, regs, abi, pc);
     push_reg(f, regs, abi, rs1);
     push_reg(f, regs, abi, rs2);
     f.i32_const(op);
@@ -1378,13 +1419,13 @@ fn emit_terminator(
         Bltu { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ltu),
         Bgeu { rs1, rs2, imm } => emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Geu),
         Jal { rd, imm } => {
-            // link = pc + insn_len; target = pc + imm
+            // link = pc + insn_len; target = pc + imm (both PC-relative → virtual, E4-T16)
             if rd != 0 {
-                f.i64_const(pc_next as i64);
+                push_pc_rel(f, regs, pc_next);
                 set_reg(f, regs, rd);
             }
             writeback(f, regs, abi);
-            write_pc_const(f, abi, pc.wrapping_add(imm as u64));
+            write_pc_const(f, regs, abi, pc.wrapping_add(imm as u64));
             write_reason(f, abi, ExitCode::BranchTaken);
             f.i32_const(ExitCode::BranchTaken as i32);
             f.return_();
@@ -1399,7 +1440,9 @@ fn emit_terminator(
             f.i64_and();
             f.local_set(scratch);
             if rd != 0 {
-                f.i64_const(pc_next as i64);
+                // link = pc + insn_len is PC-relative → virtual (E4-T16). The jalr TARGET in
+                // `scratch` came from a register (already a virtual address), so it is unchanged.
+                push_pc_rel(f, regs, pc_next);
                 set_reg(f, regs, rd);
             }
             writeback(f, regs, abi);
@@ -1413,7 +1456,7 @@ fn emit_terminator(
         // FENCE / FENCE.I retire as a no-op in the single-thread model; resume at the next PC.
         Fence { .. } | FenceI => {
             writeback(f, regs, abi);
-            write_pc_const(f, abi, pc_next);
+            write_pc_const(f, regs, abi, pc_next);
             write_reason(f, abi, ExitCode::Fallthrough);
             f.i32_const(ExitCode::Fallthrough as i32);
             f.return_();
@@ -1457,7 +1500,7 @@ fn emit_branch(
     // Taken path: resume at pc + imm.
     f.if_(BlockType::Empty);
     writeback(f, regs, abi);
-    write_pc_const(f, abi, pc.wrapping_add(imm as u64));
+    write_pc_const(f, regs, abi, pc.wrapping_add(imm as u64));
     write_reason(f, abi, ExitCode::BranchTaken);
     f.i32_const(ExitCode::BranchTaken as i32);
     f.return_();
@@ -1465,7 +1508,7 @@ fn emit_branch(
     // Not-taken fall-through: resume at pc + insn_len. The dirty set is identical on both edges
     // (a branch reads but never writes registers), so both exits flush the same registers.
     writeback(f, regs, abi);
-    write_pc_const(f, abi, pc_next);
+    write_pc_const(f, regs, abi, pc_next);
     write_reason(f, abi, ExitCode::Fallthrough);
     f.i32_const(ExitCode::Fallthrough as i32);
     f.return_();
@@ -1473,7 +1516,7 @@ fn emit_branch(
 
 fn emit_trap(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, pc: u64, cause: i64) {
     writeback(f, regs, abi);
-    write_pc_const(f, abi, pc); // trap leaves PC at the faulting instruction
+    write_pc_const(f, regs, abi, pc); // trap leaves PC at the faulting instruction
     write_info_const(f, abi, cause);
     write_reason(f, abi, ExitCode::Trap);
     f.i32_const(ExitCode::Trap as i32);

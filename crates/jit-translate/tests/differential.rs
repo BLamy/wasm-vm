@@ -28,6 +28,9 @@ const RAM_MASK: u64 = (1u64 << RAM_BITS) - 1;
 // translator's offsets (adversarial #3) diverges this readback instead of moving in lock-step.
 const OFF_XREG: usize = 0x000;
 const OFF_EXIT_PC: usize = 0x220;
+/// E4-T16: the runtime-supplied entry virtual PC slot. The bare harness maps virtual == physical, so
+/// it writes `BASE_PC` here; the block then emits absolute PCs identical to the interpreter's.
+const OFF_ENTRY_PC: usize = 0x230;
 
 // ── flat wrapping RAM (identical model for the oracle bus and the wasm imports) ──
 /// Read `n` little-endian bytes at `addr` with each byte independently address-masked, so a
@@ -337,6 +340,9 @@ fn run_wasm(block: &DecodedBlock, init: &[u64; 32], ram0: &[u8]) -> Outcome {
         mem.write(&mut store, off, &init[r as usize].to_le_bytes())
             .unwrap();
     }
+    // E4-T16: supply the entry virtual PC (== BASE_PC in this identity-mapped harness).
+    mem.write(&mut store, OFF_ENTRY_PC, &BASE_PC.to_le_bytes())
+        .unwrap();
     let run = instance
         .get_typed_func::<i32, i32>(&mut store, "run")
         .expect("run export");

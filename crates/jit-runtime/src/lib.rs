@@ -299,6 +299,17 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             )
             .expect("CpuState reg write in bounds");
         }
+        // E4-T16: write the guest VIRTUAL entry PC so the block emits PC-relative (virtual) targets.
+        // Under paging the physical block key `phys_pc` != the guest virtual PC; the compiled block
+        // computes every guest-visible PC as `entry_pc + delta`, so control flow, `auipc`, link
+        // values, and fault mepc are the running guest's virtual addresses — and a physically-keyed
+        // block reused from a NEW virtual mapping still produces correct PCs.
+        mem.write(
+            &mut self.store,
+            abi::ENTRY_PC as usize,
+            &hart.regs.pc.to_le_bytes(),
+        )
+        .expect("CpuState entry_pc write in bounds");
         // Present the live guest to the load/store imports for the duration of the call.
         {
             let ctx = self.store.data_mut();

@@ -151,8 +151,9 @@ crossing). A `CpuState` header is reserved at a fixed base `CPU_STATE_BASE` (bel
 | `+0x218` | 8 | `exit_reason` (the exit-code enum, §3.3, written by the block before it returns) | ABI |
 | `+0x220` | 8 | `exit_pc` (guest PC to resume at — fall-through PC, trap PC, or successor entry) | ABI |
 | `+0x228` | 8 | `exit_info` (aux: trap cause / faulting vaddr / MMIO addr — see §3.3) | ABI |
-| `+0x230` | 8 | `block_budget` (ops remaining before a mandatory boundary return, §3.4) | ABI |
-| `+0x238` | … | mirror of the mutable CSRs a compiled block may *read* (`mstatus`, `satp`, `sstatus.SIE`, `mie`/`mip` snapshot) — **read-only to generated code**; any *write* is a terminator side-exit | `csr` |
+| `+0x230` | 8 | `entry_pc` (guest **virtual** PC the block was entered at — written by the runtime before each `run`; the block emits every guest-visible PC relative to it, so control flow is correct under paging and when a physically-keyed block is reused from a new VA — E4-T16) | ABI |
+| `+0x238` | 8 | `block_budget` (ops remaining before a mandatory boundary return, §3.4) | ABI |
+| `+0x240` | … | mirror of the mutable CSRs a compiled block may *read* (`mstatus`, `satp`, `sstatus.SIE`, `mie`/`mip` snapshot) — **read-only to generated code**; any *write* is a terminator side-exit | `csr` |
 
 Offsets are frozen here. The exact struct is emitted by E4-T07 from a single `#[repr(C)]` Rust
 definition so host and codegen never drift; a `const_assert` on each offset guards it.
@@ -278,11 +279,11 @@ with no flush, so `sfence.vma`/`satp` writes cost **zero** block invalidation. T
 
 | Event | Spec / mechanism | Effect on block cache | Effect on compiled T2 code | Owner |
 |---|---|---|---|---|
-| **`fence.i`** | Zifencei — I-fetch sees prior stores | **full flush** (`BlockCache::flush`, O(1) gen-bump) | all compiled fns dropped (their module refs released for GC, §7) | E4-T16 |
+| **`fence.i`** | Zifencei — I-fetch sees prior stores | **full flush** (`BlockCache::flush`, O(1) gen-bump) | all compiled fns dropped (their module refs released for GC, §7) | E4-T16 ✓ proven (`jit-runtime/tests/invalidation.rs::fence_i_invalidates_translated_block`) |
 | **Store into a code page (SMC)** | store to a phys page holding cached blocks | `flush_page(frame)` via the `has_code` bitmap (O(1) set-miss for ordinary data stores) | compiled fns for that frame dropped; the frame is *pinned to T1* on the next compile if it thrashes | **E4-T17** |
 | **Device/DMA write into RAM** | all DMA reaches RAM via `bus.storeN` with a **physical** addr; E4-T05 already routes every DMA (virtio-blk/net/rng, used-ring, T_GET_ID) through the `code_write_log` | same `flush_page` path as an SMC store (the easily-missed trigger — explicitly covered) | same as SMC | E4-T17 |
-| **`sfence.vma rs1,rs2`** (all forms: whole-TLB, per-vaddr, per-ASID, vaddr+ASID) | Sv39 TLB coherence only | **no block flush** — blocks are physically keyed | **none** — TLB flush only (`hart.tlb`); compiled code untouched | E4-T16 |
-| **`satp` write (ASID / mode / PPN change)** | address-space switch | **no block flush** (physical keying); TLB flushed per spec | **none** | E4-T16 |
+| **`sfence.vma rs1,rs2`** (all forms: whole-TLB, per-vaddr, per-ASID, vaddr+ASID) | Sv39 TLB coherence only | **no block flush** — blocks are physically keyed | **none** — TLB flush only (`hart.tlb`); compiled code untouched | E4-T16 ✓ proven (`invalidation.rs`: all four forms, remap-to-diff-phys + reuse-same-phys-new-VA, `blocks_discarded == 0`) |
+| **`satp` write (ASID / mode / PPN change)** | address-space switch | **no block flush** (physical keying); TLB **not** flushed by hardware — the ASID/mode tag + `finish_leaf` re-derivation keep entries safe until software fences (spec §4.2.1) | **none** | E4-T16 ✓ proven |
 | **Reset / power-cycle** | `Machine::reset` | **full flush** | all compiled fns dropped | E4-T05 (done) |
 | **Snapshot restore** | `restore` overwrites RAM + arch state | **full flush** | all compiled fns dropped; recompile from cold on the restored image | E4-T05 (done) + E4-T20 |
 | **Eviction (budget, §7)** | code-cache over budget | LRU-drop compiled fns (keep or rebuild T1) | dropped module(s) released; block falls back to T1 until re-hot | E4-T20 |
@@ -292,6 +293,15 @@ Note the ASID subtlety the verifier is told to check: because blocks are **physi
 invalidates only TLB entries, never blocks — correct precisely because a block's identity is its
 physical bytes, independent of which ASID mapped them. The `has_code` bitmap is conservative-safe:
 stale membership is only ever a wasted scan, never a missed flush (proven in E4-T05 Phase B).
+
+**PC-relativity is what makes physical keying sound for *compiled* code (E4-T16).** A block keyed by
+physical bytes may be entered from *any* virtual address that maps to those bytes, so the compiled
+function must not bake an absolute virtual PC. It reads the runtime-supplied `entry_pc` (§3.1,
+`+0x230`) and emits every guest-visible PC — branch/jal targets, `auipc`, link values, `exit_pc`, and
+the precise-fault `mepc` — as `entry_pc + (compile-time offset)`. `jalr` targets come from a register
+(already virtual) and need no adjustment. Without this, a compiled block run under paging (guest
+virtual PC ≠ physical key) or reused from a second VA would emit physical PCs — the exact divergence
+`invalidation.rs::sfence_vma_remap_to_different_phys` / `sfence_vma_reuse_same_phys_new_va` refute.
 
 **E4-T17 relationship (SMC).** The `has_code` page bitmap built in E4-T05 Phase B *is* the SMC-dirty
 precursor. E4-T17 upgrades it (per-page dirty tracking / write-protect-style granularity) so that

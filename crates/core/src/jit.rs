@@ -32,6 +32,11 @@ pub mod abi {
     pub const EXIT_PC: u32 = 0x220;
     /// `exit_info` — aux payload (trap cause for `ecall`/`ebreak`).
     pub const EXIT_INFO: u32 = 0x228;
+    /// E4-T16 `entry_pc` — the guest VIRTUAL PC the block is entered at. The executor writes the
+    /// live `hart.regs.pc` here before each `run` call; the compiled block reads it and emits every
+    /// guest-visible PC relative to it, so translated control flow is correct under paging (guest
+    /// virtual PC != physical block key) and when a physically-keyed block is reused from a new VA.
+    pub const ENTRY_PC: u32 = 0x230;
 }
 
 /// The frozen exit-code enum (`docs/jit-architecture.md` §3.3). The E4-T09 translator emits only

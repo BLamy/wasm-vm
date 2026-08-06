@@ -440,7 +440,13 @@ impl Machine {
     /// dropped-stale, queue depth + high-water mark, and the live generation. Exposed for the
     /// profiling report and for tests; also folded into [`Self::prof_report`].
     pub fn discovery_stats(&self) -> dispatch::DiscoveryStats {
-        self.discovery.stats()
+        let mut s = self.discovery.stats();
+        // E4-T16: fold in the block-cache invalidation-event counters so a test can assert on
+        // whole-cache flushes and page-discarded blocks without assembling a full prof report.
+        let (cache_flushes, blocks_discarded) = self.block_cache.invalidation_stats();
+        s.cache_flushes = cache_flushes;
+        s.blocks_discarded = blocks_discarded;
+        s
     }
 
     /// E4-T08: drain the pending translation-candidate FIFO (a trivial consumer; the real compile
@@ -818,6 +824,12 @@ impl Machine {
             .report_with_time(total_ns, top_k, &ta.ns, ta.walk_count);
         // E4-T08: surface the block-discovery counters through the profiling report.
         report.discovery = self.discovery.stats();
+        // E4-T16: fold in the block-cache invalidation-event counters (whole-cache flushes +
+        // blocks discarded by page-granular SMC/DMA invalidation). `blocks_discarded` staying flat
+        // across an SFENCE.VMA storm is the "phys-keying means SFENCE.VMA does not kill blocks" proof.
+        let (cache_flushes, blocks_discarded) = self.block_cache.invalidation_stats();
+        report.discovery.cache_flushes = cache_flushes;
+        report.discovery.blocks_discarded = blocks_discarded;
         report
     }
 

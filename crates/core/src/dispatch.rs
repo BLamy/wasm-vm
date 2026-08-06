@@ -132,6 +132,15 @@ pub struct BlockCache {
     /// Phase-A whole-cache flush. Cleared on a full `flush` (all blocks become invisible anyway);
     /// stale membership is only ever a wasted scan (conservative-safe), never a missed flush.
     has_code: BTreeSet<u64>,
+    /// E4-T16 invalidation-event stats: whole-cache flushes performed (`fence.i` / reset /
+    /// snapshot-restore / toggle — the QEMU `tb_flush` analog).
+    flushes: u64,
+    /// E4-T16 invalidation-event stats: live blocks dropped by page-granular invalidation
+    /// (`flush_page`, i.e. self-modifying code / DMA-into-code). SFENCE.VMA is deliberately
+    /// ABSENT here — a virtual remap never discards a physically-keyed block (the phys-keying
+    /// argument this ticket proves by test), so this counter staying flat across an SFENCE.VMA
+    /// storm is itself the "SFENCE.VMA didn't nuke the translation cache" evidence.
+    blocks_discarded: u64,
 }
 
 impl BlockCache {
@@ -146,7 +155,17 @@ impl BlockCache {
             mask: cap - 1,
             generation: 1,
             has_code: BTreeSet::new(),
+            flushes: 0,
+            blocks_discarded: 0,
         }
+    }
+
+    /// E4-T16 invalidation-event stats: `(whole_cache_flushes, blocks_discarded_by_page_flush)`.
+    /// Surfaced through [`DiscoveryStats`] in the profiling report so the adversarial "SFENCE.VMA
+    /// must NOT nuke the translation cache" check can assert `blocks_discarded` stays flat across a
+    /// remap storm.
+    pub fn invalidation_stats(&self) -> (u64, u64) {
+        (self.flushes, self.blocks_discarded)
     }
 
     /// Invalidate the entire cache in O(1) (generation bump). Every block built in an older
@@ -155,6 +174,7 @@ impl BlockCache {
     pub fn flush(&mut self) {
         self.generation = self.generation.wrapping_add(1);
         self.has_code.clear();
+        self.flushes = self.flushes.saturating_add(1);
     }
 
     /// E4-T05 Phase B: page-granular invalidation. Drop every live block whose `page_frame` ==
@@ -171,6 +191,7 @@ impl BlockCache {
         for slot in self.slots.iter_mut() {
             if slot.as_ref().is_some_and(|b| b.page_frame == frame) {
                 *slot = None;
+                self.blocks_discarded = self.blocks_discarded.saturating_add(1);
             }
         }
         true
@@ -429,6 +450,13 @@ pub struct DiscoveryStats {
     pub candidates: usize,
     /// The current discovery generation (bumped by every invalidation).
     pub generation: u64,
+    /// E4-T16: whole block-cache flushes performed over the run (`fence.i` / reset — QEMU
+    /// `tb_flush` analog). Filled from [`BlockCache::invalidation_stats`] by the profiling report.
+    pub cache_flushes: u64,
+    /// E4-T16: live decoded blocks discarded by page-granular invalidation (SMC / DMA-into-code).
+    /// SFENCE.VMA never contributes here (phys-keying), so a flat value across a remap storm is the
+    /// "SFENCE.VMA didn't kill translations" proof-in-stats.
+    pub blocks_discarded: u64,
 }
 
 /// The E4-T08 block-discovery front end: hotness counters, the dedup state machine, the
