@@ -3,7 +3,7 @@ id: E4-T02
 epic: 4
 title: Host-side flamegraphs for native and in-browser builds
 priority: 402
-status: partially-verified
+status: verification-debt
 depends_on: [E4-T01]
 estimate: M
 capstone: false

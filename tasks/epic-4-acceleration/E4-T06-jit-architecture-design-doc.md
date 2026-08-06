@@ -3,7 +3,7 @@ id: E4-T06
 epic: 4
 title: JIT architecture design document — tiering, block shape, side exits, budgets
 priority: 406
-status: partially-verified
+status: verification-debt
 depends_on: [E4-T02, E4-T05]
 estimate: M
 capstone: false

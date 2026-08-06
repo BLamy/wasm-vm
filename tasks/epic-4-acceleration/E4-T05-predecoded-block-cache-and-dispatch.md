@@ -3,7 +3,7 @@ id: E4-T05
 epic: 4
 title: Interpreter pre-optimization — predecoded basic-block cache and dispatch tuning
 priority: 405
-status: partially-verified
+status: verification-debt
 depends_on: [E4-T01, E4-T04]
 estimate: L
 capstone: false

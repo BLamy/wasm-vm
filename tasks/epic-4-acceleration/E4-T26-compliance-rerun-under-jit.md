@@ -3,7 +3,7 @@ id: E4-T26
 epic: 4
 title: Full riscv-tests and RISCOF compliance rerun under JIT — the correctness gate
 priority: 426
-status: partially-verified
+status: verification-debt
 depends_on: [E4-T16, E4-T17, E4-T25]
 estimate: M
 capstone: false

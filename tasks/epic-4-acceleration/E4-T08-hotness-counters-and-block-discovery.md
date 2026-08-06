@@ -3,7 +3,7 @@ id: E4-T08
 epic: 4
 title: Hotness counters and translation-candidate block discovery
 priority: 408
-status: partially-verified
+status: verification-debt
 depends_on: [E4-T05, E4-T06]
 estimate: S
 capstone: false

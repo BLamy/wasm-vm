@@ -3,7 +3,7 @@ id: E4-T03
 epic: 4
 title: Automated in-guest CoreMark and Dhrystone benchmark harness
 priority: 403
-status: partially-verified
+status: verification-debt
 depends_on: [E3]
 estimate: M
 capstone: false

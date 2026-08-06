@@ -3,7 +3,7 @@ id: E4-T11
 epic: 4
 title: Guest memory access from JIT code — inline TLB fastpath and softmmu fallback
 priority: 411
-status: partially-verified
+status: verification-debt
 depends_on: [E4-T10]
 estimate: L
 capstone: false

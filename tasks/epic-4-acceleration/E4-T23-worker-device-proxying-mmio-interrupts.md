@@ -3,7 +3,7 @@ id: E4-T23
 epic: 4
 title: Main-thread and worker device proxying — MMIO round trips and interrupt injection
 priority: 423
-status: partially-verified
+status: verification-debt
 depends_on: [E4-T22]
 estimate: L
 capstone: false

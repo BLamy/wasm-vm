@@ -3,7 +3,7 @@ id: E4-T01
 epic: 4
 title: Profiling infrastructure — hot-PC histograms and per-device time accounting
 priority: 401
-status: partially-verified
+status: verification-debt
 depends_on: [E3]
 estimate: M
 capstone: false

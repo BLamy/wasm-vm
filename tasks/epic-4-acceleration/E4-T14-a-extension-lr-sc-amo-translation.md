@@ -3,7 +3,7 @@ id: E4-T14
 epic: 4
 title: A extension in translated code — LR/SC reservations and AMOs
 priority: 414
-status: partially-verified
+status: verification-debt
 depends_on: [E4-T12]
 estimate: M
 capstone: false

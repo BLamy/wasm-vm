@@ -3,7 +3,7 @@ id: E3-T22c
 epic: 3
 title: Guest image clipboard conveniences — vim OSC52 yank, tmux set-clipboard
 priority: 322.3
-status: partially-verified
+status: verification-debt
 depends_on: [E3-T22a]
 estimate: S
 risk: low

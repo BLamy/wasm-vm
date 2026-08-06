@@ -3,7 +3,7 @@ id: E4-T13
 epic: 4
 title: M (multiply/divide) and C (compressed) extensions in translated code
 priority: 413
-status: partially-verified
+status: verification-debt
 depends_on: [E4-T12]
 estimate: M
 capstone: false

@@ -3,7 +3,7 @@ id: E4-T04
 epic: 4
 title: Macro benchmarks and the interpreter baseline ledger
 priority: 404
-status: partially-verified
+status: verification-debt
 depends_on: [E4-T03]
 estimate: M
 capstone: false

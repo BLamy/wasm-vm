@@ -3,7 +3,7 @@ id: E4-T17
 epic: 4
 title: Self-modifying code detection via page-granular protection bitmaps
 priority: 417
-status: partially-verified
+status: verification-debt
 depends_on: [E4-T11, E4-T16]
 estimate: L
 capstone: false

@@ -13707,7 +13707,7 @@
       "epicKey": "4",
       "title": "Timekeeping under JIT and worker — mtime sources, hybrid clocking, no time warps",
       "priority": 424,
-      "status": "pending",
+      "status": "verification-debt",
       "depends_on": [
         "E4-T12",
         "E4-T23"
@@ -13740,13 +13740,21 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "**2026-08-06 — headless core VERIFIED (native).** Files: `crates/core/src/time.rs` (new),\n`crates/core/src/lib.rs` (TimeSource wiring: fields, `advance_clock` guard, `sample_wall_clock`,\n`set_wall_clock`/`set_icount_clock`/`take_time_jump`/`clint_mtime`, `wfi_fast_forward` guard, `time`\nmodule), `crates/jit-runtime/tests/timekeeping.rs` (new).\n\nGates run + passed (real output):\n- **AC5 ICount determinism** — `icount_two_runs_identical_mtime_trace`: two JIT runs byte-identical —\n  *\"325 trace samples, timer fired at retired=Some(6311)\"*, identical across both runs; exactly one\n  timer interrupt.\n- **AC3 CLOCK_MONOTONIC never decreases** — `clock_monotonic_never_decreases_under_churn`: *\"mtime\n  monotone across 52800 samples of JIT/interp/eviction churn (evictions=9998)\"* — asserted non-\n  decreasing at every sample.\n- **Monotonicity clamp + slew unit tests** (`time` module, 6 tests): clamp under jittery-backward host,\n  bounded slew for a moderate (5 s) gap capped at 2× real per sample, jump-with-notification for a\n  6-hour gap landing exactly at the wall target + re-anchor, software-write floor, ICount purity.\n- **ICount-lockstep-with-interrupts (the E4-T25 leg deferred)** —\n  `icount_lockstep_with_timer_interrupts_byte_identical`: JIT master vs shadow interpreter byte-\n  identical WITH a timer interrupt — *\"retired=9009, mtime=9009, timer_ints=1, jit_blocks_exec=2937\"*,\n  identical registers/PC/mtime/retired/interrupt-count.\n- Regressions green: `wasm-vm-core` full suite (169 lib + all integration incl. `determinism`, `clint`,\n  `interrupts`, `plic`; `predecode_diff` 76.9 s + `predecode_smc_diff` 125 s byte-identical, 0 failed);\n  `wasm-vm-jit-runtime` full suite (verdict-identical 16, `lockstep_fuzz` 5, `chaining`, `eviction`,\n  `timekeeping` 3 — 0 failed); wasm32 `no_std` core build (+`trace`) clean; `crates/wasm` release build\n  clean; `clippy` (core+jit-runtime, tests) clean; `fmt --check` clean.",
       "adversarial": "Refute with clock cruelty. Attack angles: (1) benchmark-integrity attack: verify CoreMark\nscores are computed against honest time — cross-check guest-reported elapsed vs host wall\nclock during a JIT run (a too-slow mtime inflates scores; >2% skew refutes and invalidates\nthe epic's headline numbers — this check is mandatory); (2) warp hunt: flip visibility\non/off every 500 ms for 5 minutes during a `while true; do date; done` loop — any\nbackward or > slew-bound forward jump in output refutes; (3) storm test: set mtimecmp\nstorms (100 Hz guest timer via a test kernel config or hrtimer-heavy workload) and\ncompare tick counts guest-side vs expected over 60 s — drift > 1% refutes; (4) suspend\nthe worker (DevTools pause) 30 s mid-boot and resume — kernel calibration (lpj/timebase)\nmust not be poisoned into permanent misbehavior; (5) run the E4-T25 lockstep rig in\nICount mode twice and byte-diff the traces — nondeterminism refutes the mode's claim.",
       "file": "tasks/epic-4-acceleration/E4-T24-timekeeping-under-jit-and-worker.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-06",
+          "commits": 1,
+          "labels": [
+            "feat(core): E4-T24 timekeeping under JIT — TimeSource (ICount + WallClock), no time warps"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-06",
+      "lastActivity": "2026-08-06",
+      "commitCount": 1
     },
     {
       "id": "E4-T25",
@@ -13867,7 +13875,7 @@
       "epicKey": "4",
       "title": "Performance regression CI — benchmark thresholds that fail the build",
       "priority": 427,
-      "status": "pending",
+      "status": "verification-debt",
       "depends_on": [
         "E4-T04",
         "E4-T21",
@@ -13901,13 +13909,21 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "- 2026-08-06 — E4-T27 **partially-verified** (gate logic, headless, synthetic/recorded data).\n  Files: `tools/bench_ci.py` (A/B + stats + threshold-eval + evaluate/run/trend/selftest),\n  `tools/bench_ci_test.py` (16 unit tests), `bench/thresholds.toml`, `tools/bench.py` (+`bless`),\n  `bench/RUNNER.md`, `.github/workflows/perf-regression.yml`, `bench/README.md`, `Makefile`\n  (`perf-gate`/`perf-trend`).\n  - Statistics unit tests: `python3 tools/bench_ci_test.py` → **16/16 green**. Covers median-of-5,\n    MAD outlier rejection (clean series untouched; injected flier dropped; MAD==0 no divide-by-zero),\n    and ratio-based A/B host-variance immunity (scaling both arms by a constant leaves the verdict\n    unchanged).\n  - **AC1** (synthetic 10% CoreMark regression): `bench_ci.py evaluate` on injected candidate\n    (261.7→235.5) → **HARD FAIL, exit 1**, report names CoreMark, measured Δ +10.01%, worst-metric\n    ledger history shown.\n  - **AC3** (latency gate): injected JIT-pause p100 = 10 ms vs 5 ms budget → **HARD FAIL, exit 1**\n    (\"budget breach: 10.000 ms > budget 5.000\").\n  - **AC4** (bless): no `--rationale` → refused (argparse exit 2); whitespace rationale → FATAL\n    refusal; with rationale → baseline promoted (coremark 261.7→471.1, `bless` block with rationale\n    + blessed_by + supersedes_score), `report --verify` **exit 0** after bless; historical-entry\n    tamper still detected (**exit 1**, chain break named). Ledger restored to pristine baseline\n    afterward (no fabricated score shipped).\n  - **AC5** (trend page): `bench_ci.py trend` → one command, valid `<!doctype>` HTML with rows +\n    sparklines for coremark/dhrystone/boot/gcc.\n  - No-false-positive sanity: within-noise candidate → **PASS, exit 0**.\n  - Adversarial #4 (threshold coverage): `test_threshold_coverage_headline_metrics` asserts all 10\n    headline E4-T04/T21/T23 metrics are gated. Adversarial #5 (no skip): the workflow has no\n    path/label skip filter for the perf job (documented in the YAML).",
       "adversarial": "Refute the gate's sensitivity and its honesty. Attack angles: (1) sneak regressions under\nthe threshold: submit five stacked commits each costing ~2% (below soft band) — if the\nrolling-baseline scheme lets 10% cumulative erosion through un-flagged, the design is\nrefuted as specified (the rolling-best + trend alarms must catch cumulative drift; verify\nthe mechanism, not the intention); (2) false-positive bombardment: run the suite 25 times\nacross a day on the real runner and count spurious hard-fails — >1 refutes the statistics;\n(3) gaming check: verify the interleaved A/B actually rebuilds and runs the baseline\ncommit (not a cached binary of the candidate); poison the cache and confirm detection;\n(4) threshold coverage: grep thresholds.toml against the full metric list from E4-T04/T21/\nT23 — an ungated headline metric (e.g. boot time missing) refutes; (5) confirm the perf\njob cannot be skipped by label/path filters on JIT-touching changes (try to merge a\ndispatch-loop change with `[skip perf]` — success refutes the wiring).",
       "file": "tasks/epic-4-acceleration/E4-T27-perf-regression-ci-gates.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-06",
+          "commits": 1,
+          "labels": [
+            "feat(bench): E4-T27 perf-regression gate — A/B stats, thresholds, bless, trend"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-06",
+      "lastActivity": "2026-08-06",
+      "commitCount": 1
     },
     {
       "id": "E4-T28",
