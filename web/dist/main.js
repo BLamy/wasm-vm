@@ -181,7 +181,11 @@ async function runLinuxBoot(opts, banner) {
           const secs = (((typeof performance !== "undefined" ? performance.now() : Date.now()) - bootT0) / 1000).toFixed(2);
           setStatus(`host restored in ${secs}s`);
           term.writeln(`\x1b[32m[fast-boot: host ready in ${secs}s (restored, no Linux boot)]\x1b[0m`);
-        } else {
+          // A restored guest is frozen at its shell prompt and emits NO console output, so the
+          // prompt-in-stream detector below (which normally calls markGuestReady) never fires. Signal
+          // readiness explicitly here so the Docker/IDE tabs unlock and isGuestReady() is true. (The
+          // prompt itself is nudged into view after startLinuxBoot returns, once linuxCtl exists.)
+          markGuestReady();
           setStatus(`linux: ${s}`);
         }
         bootProgress.onState(s);
@@ -301,6 +305,12 @@ async function runLinuxBoot(opts, banner) {
       },
     });
     const ctlForRelease = linuxCtl;
+    // A restored guest is parked at its shell prompt with no pending output; send a newline so the
+    // shell re-renders its prompt instead of showing a blank terminal. (markGuestReady already fired
+    // in onState("restored").) Best-effort — a cold boot ignores this.
+    try {
+      if (linuxCtl?.restoredFromBootSnapshot?.()) linuxCtl.sendInput?.(new Uint8Array([0x0a]));
+    } catch { /* prompt nudge is best-effort */ }
     fileTransferUI.attachController(opts.fileTransfer ? linuxCtl : null);
     // E3-T24a: a lazy/chunked image reports no per-fetch bytes, so drive the byte-weighted `chunk`
     // phase from the loader's running counter until the prompt is reached or the boot ends.
@@ -1276,11 +1286,20 @@ setInteractiveState();
   } catch {
     /* probe failure = treat as absent; buttons already work locally */
   }
-  // Auto-boot Alpine in the BACKGROUND as the shared host for the whole app (IDE + Docker both use it).
-  // It boots once, no matter which tab is showing; the console renders on the IDE/Terminal tab and the
-  // Docker/IDE tabs unlock via the `wvm:guest-ready` event. `?noAutoBoot` opts out (e.g. for tests).
-  if (alpineAvailable && !linuxCtl && !new URLSearchParams(location.search).has("noAutoBoot")) {
-    setTimeout(() => { try { window.wvmDemo.bootAlpine(); } catch {} }, 400);
+  // Auto-boot the shared host for the whole app (IDE + Docker both use it). DEFAULT is busybox, which
+  // restores from the shipped build-time snapshot in ~1s instead of a full Linux boot. Alpine (the
+  // container-capable host with wvrun + OCI bundles) is opt-in via `?guest=alpine`, since it still
+  // cold-boots until its own snapshot exists. `?guest=busybox` forces the default explicitly.
+  // `?noAutoBoot` opts out entirely (e.g. for tests). Guest choice also honors `?boot=` as an alias.
+  const _bootQ = new URLSearchParams(location.search);
+  const _guest = (_bootQ.get("guest") || _bootQ.get("boot") || "busybox").toLowerCase();
+  if (!linuxCtl && !_bootQ.has("noAutoBoot")) {
+    setTimeout(() => {
+      try {
+        if (_guest === "alpine" && alpineAvailable) window.wvmDemo.bootAlpine();
+        else window.wvmDemo.runBusybox(); // default: fast snapshot restore
+      } catch {}
+    }, 400);
   }
   // The riscv-tests suite no longer auto-runs on load (Brett 2026-07-06): 126 in-browser
   // binaries take real time and CPU — run it via the "Run tests" button instead. The
