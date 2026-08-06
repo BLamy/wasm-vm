@@ -3,7 +3,7 @@ id: E4-T21
 epic: 4
 title: JIT compilation off the hot path — compile queue, async installs, pause targets
 priority: 421
-status: in-progress
+status: verification-debt
 depends_on: [E4-T20]
 estimate: M
 capstone: false

@@ -3,7 +3,7 @@ id: E4-T24
 epic: 4
 title: Timekeeping under JIT and worker — mtime sources, hybrid clocking, no time warps
 priority: 424
-status: in-progress
+status: verification-debt
 depends_on: [E4-T12, E4-T23]
 estimate: M
 capstone: false

@@ -3,7 +3,7 @@ id: E4-T18
 epic: 4
 title: Block chaining — direct linking between translated blocks and safe unlinking
 priority: 418
-status: in-progress
+status: verification-debt
 depends_on: [E4-T16]
 estimate: L
 capstone: false
