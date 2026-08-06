@@ -269,6 +269,34 @@ fn make_block(instrs: &[Instr]) -> DecodedBlock {
     DecodedBlock::new(BASE_PC, ops, total)
 }
 
+/// Build a block from `(instr, len)` pairs — models a predecoded run of mixed 2-byte (compressed,
+/// already expanded to their 32-bit form) and 4-byte instructions. `total_len` is the exact byte
+/// span, so the fall-through PC + branch targets + block byte-range all depend on the per-op lengths.
+fn make_block_lens(pairs: &[(Instr, u8)]) -> DecodedBlock {
+    let ops: Vec<MicroOp> = pairs
+        .iter()
+        .map(|&(instr, len)| MicroOp { instr, len, raw: 0 })
+        .collect();
+    let total: u64 = pairs.iter().map(|&(_, len)| len as u64).sum();
+    DecodedBlock::new(BASE_PC, ops, total)
+}
+
+fn assert_equiv_lens(
+    pairs: &[(Instr, u8)],
+    has_term: bool,
+    init: &[u64; 32],
+    ram0: &[u8],
+    label: &str,
+) {
+    let block = make_block_lens(pairs);
+    let o = run_oracle(&block.ops, has_term, init, ram0);
+    let w = run_wasm(&block, init, ram0);
+    assert_eq!(o.regs, w.regs, "register file diverged: {label}");
+    assert_eq!(o.pc, w.pc, "next-PC diverged: {label}");
+    assert_eq!(o.exit, w.exit, "exit code diverged: {label}");
+    assert!(o.ram == w.ram, "guest RAM diverged: {label}");
+}
+
 fn assert_equiv(instrs: &[Instr], has_term: bool, init: &[u64; 32], ram0: &[u8], label: &str) {
     let block = make_block(instrs);
     let o = run_oracle(&block.ops, has_term, init, ram0);
@@ -386,6 +414,54 @@ fn rand_alu(rng: &mut Rng) -> Instr {
     }
 }
 
+/// A pseudo-random M-extension op (all 13 forms).
+fn rand_m(rng: &mut Rng) -> Instr {
+    use Instr::*;
+    let (rd, rs1, rs2) = (rng.reg(), rng.reg(), rng.reg());
+    match rng.next() % 13 {
+        0 => Mul { rd, rs1, rs2 },
+        1 => Mulh { rd, rs1, rs2 },
+        2 => Mulhsu { rd, rs1, rs2 },
+        3 => Mulhu { rd, rs1, rs2 },
+        4 => Div { rd, rs1, rs2 },
+        5 => Divu { rd, rs1, rs2 },
+        6 => Rem { rd, rs1, rs2 },
+        7 => Remu { rd, rs1, rs2 },
+        8 => Mulw { rd, rs1, rs2 },
+        9 => Divw { rd, rs1, rs2 },
+        10 => Divuw { rd, rs1, rs2 },
+        11 => Remw { rd, rs1, rs2 },
+        _ => Remuw { rd, rs1, rs2 },
+    }
+}
+
+/// A body op biased toward M ops (half the time) for the M-heavy campaign.
+fn rand_alu_or_m(rng: &mut Rng) -> Instr {
+    if rng.next().is_multiple_of(2) {
+        rand_m(rng)
+    } else {
+        rand_alu(rng)
+    }
+}
+
+/// The corner values the M-extension differential must hammer (as u64 bit patterns).
+const CORNERS: &[u64] = &[
+    0,
+    1,
+    u64::MAX, // -1
+    2,
+    0xFFFF_FFFF_FFFF_FFFE, // -2
+    i64::MIN as u64,       // INT64_MIN
+    i64::MAX as u64,       // INT64_MAX
+    0x0000_0000_8000_0000, // INT32_MIN in low 32
+    0x0000_0000_7FFF_FFFF, // INT32_MAX in low 32
+    0xFFFF_FFFF_8000_0000, // sign-extended INT32_MIN
+    0x0000_0000_FFFF_FFFF, // u32::MAX in low 32
+    0x0000_0000_0000_0004, // power of two
+    0x0000_0001_0000_0000, // 2^32
+    0x8000_0000_0000_0001,
+];
+
 /// A pseudo-random supported terminator. Even B-immediates keep targets aligned.
 fn rand_term(rng: &mut Rng) -> Instr {
     use Instr::*;
@@ -460,11 +536,13 @@ fn is_term_instr(instr: &Instr) -> bool {
 fn rand_init(rng: &mut Rng) -> [u64; 32] {
     let mut r = [0u64; 32];
     for v in r.iter_mut().skip(1) {
-        // Mix of RAM-window addresses (so loads/stores hit interesting spots) and wild values.
-        *v = match rng.next() % 3 {
+        // Mix of RAM-window addresses (so loads/stores hit interesting spots), wild values, and the
+        // M-extension corner values (so random M ops actually exercise the div/overflow guards).
+        *v = match rng.next() % 4 {
             0 => rng.next() & RAM_MASK,             // small in-window address
             1 => rng.next(),                        // full 64-bit
-            _ => (rng.next() as i32 as i64) as u64, // sign-extended 32-bit
+            2 => (rng.next() as i32 as i64) as u64, // sign-extended 32-bit
+            _ => CORNERS[(rng.next() as usize) % CORNERS.len()], // corner value
         };
     }
     r
@@ -757,6 +835,421 @@ fn directed_edge_cases() {
     );
 }
 
+// ── M-extension corner-case differential (E4-T13) ────────────────────────────
+//
+// For every M op, cross-product every corner value against every corner value as (rs1, rs2) and
+// assert the generated block matches the interpreter — and, critically, that `run` NEVER traps
+// (the wasm div/rem trap is refuted by `run_wasm`'s `.expect("run traps never")`, which runs the
+// generated code under wasmtime with the trap actually attempted).
+#[test]
+fn m_extension_corner_cross_product() {
+    use Instr::*;
+    let ops: &[Instr] = &[
+        Mul {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Mulh {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Mulhsu {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Mulhu {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Div {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Divu {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Rem {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Remu {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Mulw {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Divw {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Divuw {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Remw {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        Remuw {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+    ];
+    let ram = vec![0u8; 1 << RAM_BITS];
+    let mut cases = 0u64;
+    for &instr in ops {
+        for &x in CORNERS {
+            for &y in CORNERS {
+                let mut init = [0u64; 32];
+                init[1] = x;
+                init[2] = y;
+                assert_equiv(&[instr], false, &init, &ram, "M corner cross-product");
+                cases += 1;
+            }
+        }
+    }
+    eprintln!("M-extension corner cross-product: {cases} cases, zero divergences, zero wasm traps");
+}
+
+/// The specific mines the ticket names: div-by-zero, *W overflow, 64-bit overflow, mixed-sign MULHSU.
+#[test]
+fn m_extension_directed_mines() {
+    use Instr::*;
+    let ram = vec![0u8; 1 << RAM_BITS];
+    let case = |x: u64, y: u64, instr: Instr, label: &str| {
+        let mut init = [0u64; 32];
+        init[1] = x;
+        init[2] = y;
+        assert_equiv(&[instr], false, &init, &ram, label);
+    };
+    // div x,y,0 → -1 (no trap)
+    case(
+        1234,
+        0,
+        Div {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "div /0 → -1",
+    );
+    case(
+        1234,
+        0,
+        Divu {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "divu /0 → all-ones",
+    );
+    case(
+        1234,
+        0,
+        Rem {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "rem /0 → dividend",
+    );
+    case(
+        1234,
+        0,
+        Remu {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "remu /0 → dividend",
+    );
+    // divw INT32_MIN,-1 → INT32_MIN (sext), no trap
+    case(
+        0x0000_0000_8000_0000,
+        u64::MAX,
+        Divw {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "divw INT32_MIN/-1",
+    );
+    case(
+        0x0000_0000_8000_0000,
+        u64::MAX,
+        Remw {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "remw INT32_MIN/-1 → 0",
+    );
+    case(
+        0x0000_0000_8000_0000,
+        0,
+        Divuw {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "divuw /0",
+    );
+    // rem INT64_MIN,-1 → 0 (no trap)
+    case(
+        i64::MIN as u64,
+        u64::MAX,
+        Rem {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "rem INT64_MIN/-1 → 0",
+    );
+    case(
+        i64::MIN as u64,
+        u64::MAX,
+        Div {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "div INT64_MIN/-1 → INT64_MIN",
+    );
+    // MULHSU mixed sign: rs1 negative, rs2 with the high bit set (large unsigned)
+    case(
+        u64::MAX,
+        0x8000_0000_0000_0000,
+        Mulhsu {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "mulhsu -1 × 2^63",
+    );
+    case(
+        i64::MIN as u64,
+        u64::MAX,
+        Mulhsu {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "mulhsu INT64_MIN × u64::MAX",
+    );
+    case(
+        u64::MAX,
+        u64::MAX,
+        Mulh {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "mulh -1 × -1 → 0",
+    );
+    case(
+        u64::MAX,
+        u64::MAX,
+        Mulhu {
+            rd: 5,
+            rs1: 1,
+            rs2: 2,
+        },
+        "mulhu -1 × -1 → -2",
+    );
+}
+
+// ── C-extension PC-arithmetic gate (E4-T13) ──────────────────────────────────
+//
+// A guest of only compressed instructions (each len 2, already expanded to its 32-bit form by the
+// predecoder) ending in `c.bnez` (an expanded `Bne rs2==x0`) whose taken target is pc + 2·k. The
+// generated block must compute every PC off the per-op 2-byte length: the fall-through PC, the
+// branch target (relative to the 2-byte-aligned instruction PC), and the block byte-range. We check
+// the resume PC + registers against the interpreter for BOTH taken and not-taken outcomes.
+#[test]
+fn c_extension_pc_arithmetic() {
+    use Instr::*;
+    let ram = vec![0u8; 1 << RAM_BITS];
+    // Body: five compressed 16-bit ops (c.li / c.addi-style, modeled as Addi len 2), then c.bnez.
+    // c.addi x8, x8, 1  (×5) → x8 = init + 5, all at 2-byte spacing.
+    let body: [(Instr, u8); 5] = [
+        (
+            Addi {
+                rd: 8,
+                rs1: 8,
+                imm: 1,
+            },
+            2,
+        ),
+        (
+            Addi {
+                rd: 8,
+                rs1: 8,
+                imm: 1,
+            },
+            2,
+        ),
+        (
+            Addi {
+                rd: 8,
+                rs1: 8,
+                imm: 1,
+            },
+            2,
+        ),
+        (
+            Addi {
+                rd: 8,
+                rs1: 8,
+                imm: 1,
+            },
+            2,
+        ),
+        (
+            Addi {
+                rd: 8,
+                rs1: 8,
+                imm: 1,
+            },
+            2,
+        ),
+    ];
+    // c.bnez x8, target ; target = pc + 2·k. c.bnez expands to `Bne x8, x0, imm`.
+    for k in [-4i64, -2, 2, 4, 8] {
+        let target_off = 2 * k; // even, 2-byte multiple
+        let mut pairs: Vec<(Instr, u8)> = body.to_vec();
+        pairs.push((
+            Bne {
+                rs1: 8,
+                rs2: 0,
+                imm: target_off,
+            },
+            2,
+        ));
+
+        // Taken: x8 != 0 after the adds.
+        let mut init = [0u64; 32];
+        init[8] = 3;
+        assert_equiv_lens(&pairs, true, &init, &ram, "c.bnez taken pc+2k");
+
+        // Not taken: make x8 == 0 after the +5 adds (start at -5).
+        let mut init0 = [0u64; 32];
+        init0[8] = (-5i64) as u64;
+        assert_equiv_lens(&pairs, true, &init0, &ram, "c.bnez not-taken fallthrough");
+    }
+
+    // Mixed 2/4-byte block ending in a compressed jal (c.j → Jal x0, imm, len 2): the link value of a
+    // compressed call is pc+2, and the fall-through/byte-range must stay exact across widths.
+    let mixed: [(Instr, u8); 4] = [
+        (
+            Addi {
+                rd: 8,
+                rs1: 8,
+                imm: 7,
+            },
+            2,
+        ), // compressed
+        (
+            Add {
+                rd: 9,
+                rs1: 8,
+                rs2: 8,
+            },
+            4,
+        ), // full 32-bit
+        (
+            Addi {
+                rd: 10,
+                rs1: 9,
+                imm: -1,
+            },
+            2,
+        ), // compressed
+        (Jal { rd: 1, imm: 6 }, 2), // c.jal: link = pc+2, target = pc+6
+    ];
+    let init = [0u64; 32];
+    assert_equiv_lens(
+        &mixed,
+        true,
+        &init,
+        &ram,
+        "mixed-width block, c.jal link=pc+2",
+    );
+
+    // Compressed jalr (c.jr / c.jalr → Jalr, len 2): link (if any) is pc+2.
+    let mut init2 = [0u64; 32];
+    init2[14] = BASE_PC + 0x40;
+    let cjalr: [(Instr, u8); 2] = [
+        (
+            Addi {
+                rd: 8,
+                rs1: 8,
+                imm: 1,
+            },
+            2,
+        ),
+        (
+            Jalr {
+                rd: 1,
+                rs1: 14,
+                imm: 0,
+            },
+            2,
+        ), // c.jalr: link = pc+2
+    ];
+    assert_equiv_lens(&cjalr, true, &init2, &ram, "c.jalr link=pc+2");
+
+    // Fall-through block of compressed ops with NO terminator: resume PC = base + total_len (2·n).
+    let ft: [(Instr, u8); 3] = [
+        (
+            Addi {
+                rd: 8,
+                rs1: 8,
+                imm: 1,
+            },
+            2,
+        ),
+        (
+            Addi {
+                rd: 9,
+                rs1: 9,
+                imm: 2,
+            },
+            2,
+        ),
+        (
+            Addi {
+                rd: 10,
+                rs1: 10,
+                imm: 3,
+            },
+            2,
+        ),
+    ];
+    assert_equiv_lens(
+        &ft,
+        false,
+        &init,
+        &ram,
+        "compressed fall-through, pc = base + 2n",
+    );
+}
+
 // ── randomized differential ─────────────────────────────────────────────────
 fn random_campaign(seed: u64, blocks: usize) {
     let mut rng = Rng(seed);
@@ -764,7 +1257,7 @@ fn random_campaign(seed: u64, blocks: usize) {
         let init = rand_init(&mut rng);
         let ram = rand_ram(&mut rng);
         let body_len = (rng.next() % 8) as usize; // 0..7 body ops
-        let mut instrs: Vec<Instr> = (0..body_len).map(|_| rand_alu(&mut rng)).collect();
+        let mut instrs: Vec<Instr> = (0..body_len).map(|_| rand_alu_or_m(&mut rng)).collect();
         let want_term = !rng.next().is_multiple_of(3); // ~2/3 of blocks end in a terminator
         if want_term {
             instrs.push(rand_term(&mut rng));
@@ -773,7 +1266,14 @@ fn random_campaign(seed: u64, blocks: usize) {
             instrs.push(rand_alu(&mut rng)); // a block must be non-empty
         }
         let has_term = is_term_instr(instrs.last().unwrap());
-        assert_equiv(&instrs, has_term, &init, &ram, "random block");
+        // Randomly assign each op a 2- or 4-byte length (compressed/uncompressed mix). Both engines
+        // use the SAME per-op length, so this exclusively stresses the PC-arithmetic bookkeeping
+        // (fall-through PC, branch/jal targets, link values, block byte-range) across mixed widths.
+        let pairs: Vec<(Instr, u8)> = instrs
+            .iter()
+            .map(|&i| (i, if rng.next().is_multiple_of(2) { 2 } else { 4 }))
+            .collect();
+        assert_equiv_lens(&pairs, has_term, &init, &ram, "random block (mixed widths)");
     }
 }
 
@@ -832,7 +1332,7 @@ fn randomized_differential_longblocks() {
         let init = rand_init(&mut rng);
         let ram = rand_ram(&mut rng);
         let body_len = 40 + (rng.next() % 80) as usize; // long blocks up to ~120 ops
-        let instrs: Vec<Instr> = (0..body_len).map(|_| rand_alu(&mut rng)).collect();
+        let instrs: Vec<Instr> = (0..body_len).map(|_| rand_alu_or_m(&mut rng)).collect();
         assert_equiv(&instrs, false, &init, &ram, "long fall-through block");
     }
 }

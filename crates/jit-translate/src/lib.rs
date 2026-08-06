@@ -22,9 +22,13 @@
 //! bit 0, `slt`/`sltu` are signed/unsigned. The differential harness (`tests/differential.rs`) proves
 //! byte-identity under wasmtime against `Hart::exec_oracle`.
 //!
-//! Scope is **RV64I base integer only**. M/A/F/D and CSR/system instructions are out of scope
-//! (later tickets E4-T13/T14/T15/T12); [`translate_block`] returns [`TranslateError::Unsupported`]
-//! for them so the caller keeps interpreting the block.
+//! Scope is **RV64I base integer + the M (multiply/divide) extension** (E4-T13 added M with exact
+//! RISC-V corner-case semantics — the div/rem trap guards + the composed MULH* high-multiply). C
+//! (compressed) ops arrive pre-expanded to their 32-bit form from the E4-T05 predecoder, each with a
+//! per-op 2-byte length, so all PC arithmetic (fall-through, branch/jal targets, `pc+2` link values,
+//! block byte-ranges) is length-driven and correct for mixed-width blocks. A/F/D and CSR/system
+//! instructions remain out of scope (later tickets); [`translate_block`] returns
+//! [`TranslateError::Unsupported`] for them so the caller keeps interpreting the block.
 
 #![no_std]
 #![forbid(unsafe_code)]
@@ -164,7 +168,7 @@ pub enum ExitCode {
 /// Why a block could not be translated. The only case E4-T09 raises is an out-of-scope opcode.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TranslateError {
-    /// An instruction outside the RV64I base integer ISA (M/A/F/D, CSR, xRET, sfence, wfi). The
+    /// An instruction outside the translated ISA (RV64I + M): A/F/D, CSR, xRET, sfence, wfi. The
     /// caller keeps the block in the interpreter (T0/T1).
     Unsupported,
     /// Structural invariant violated (a terminator not at the block end). Should never happen for a
@@ -369,6 +373,20 @@ fn supported(instr: &Instr) -> bool {
             | Sllw { .. }
             | Srlw { .. }
             | Sraw { .. }
+            // ── M extension (E4-T13) ──
+            | Mul { .. }
+            | Mulh { .. }
+            | Mulhsu { .. }
+            | Mulhu { .. }
+            | Div { .. }
+            | Divu { .. }
+            | Rem { .. }
+            | Remu { .. }
+            | Mulw { .. }
+            | Divw { .. }
+            | Divuw { .. }
+            | Remw { .. }
+            | Remuw { .. }
             | Ecall
             | Ebreak
             | Fence { .. }
@@ -676,6 +694,34 @@ fn emit_alu(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, instr: Instr, pc: u
         Sh { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 2, pc),
         Sw { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 4, pc),
         Sd { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 8, pc),
+        // ── M extension: multiply (E4-T13) ──
+        Mul { rd, rs1, rs2 } => {
+            // Low 64 bits of the product; signedness is irrelevant for the low half.
+            push_reg(f, regs, abi, rs1);
+            push_reg(f, regs, abi, rs2);
+            f.i64_mul();
+            set_reg(f, regs, rd);
+        }
+        Mulh { rd, rs1, rs2 } => emit_mulh(f, regs, abi, rd, rs1, rs2, MulhKind::Ss),
+        Mulhsu { rd, rs1, rs2 } => emit_mulh(f, regs, abi, rd, rs1, rs2, MulhKind::Su),
+        Mulhu { rd, rs1, rs2 } => emit_mulh(f, regs, abi, rd, rs1, rs2, MulhKind::Uu),
+        Mulw { rd, rs1, rs2 } => {
+            // Low 32 bits of the product, then sign-extend to 64.
+            push_reg_i32(f, regs, abi, rs1);
+            push_reg_i32(f, regs, abi, rs2);
+            f.i32_mul();
+            f.i64_extend_i32_s();
+            set_reg(f, regs, rd);
+        }
+        // ── M extension: divide / remainder (E4-T13) ──
+        Div { rd, rs1, rs2 } => emit_div_rem64(f, regs, abi, rd, rs1, rs2, DivKind::Div),
+        Divu { rd, rs1, rs2 } => emit_div_rem64(f, regs, abi, rd, rs1, rs2, DivKind::Divu),
+        Rem { rd, rs1, rs2 } => emit_div_rem64(f, regs, abi, rd, rs1, rs2, DivKind::Rem),
+        Remu { rd, rs1, rs2 } => emit_div_rem64(f, regs, abi, rd, rs1, rs2, DivKind::Remu),
+        Divw { rd, rs1, rs2 } => emit_div_rem32(f, regs, abi, rd, rs1, rs2, DivKind::Div),
+        Divuw { rd, rs1, rs2 } => emit_div_rem32(f, regs, abi, rd, rs1, rs2, DivKind::Divu),
+        Remw { rd, rs1, rs2 } => emit_div_rem32(f, regs, abi, rd, rs1, rs2, DivKind::Rem),
+        Remuw { rd, rs1, rs2 } => emit_div_rem32(f, regs, abi, rd, rs1, rs2, DivKind::Remu),
         // FENCE retires as a no-op mid-block only if it were non-terminating; but FENCE/FENCE.I are
         // terminators handled elsewhere. Anything else was rejected by `supported`.
         _ => unreachable!("emit_alu called on a non-RV64I / terminator op"),
@@ -896,6 +942,294 @@ fn emit_store_tlb(
     f.i32_const(width);
     f.call(STORE_IMPORT);
     f.end();
+}
+
+// ── M extension: multiply-high and guarded divide/remainder (E4-T13) ─────────
+//
+// The two semantic mines this ticket exists to defuse:
+//
+// 1. **Divide by zero and INT_MIN/−1 overflow.** wasm `i64.div_s/div_u/rem_s/rem_u` (and the i32
+//    forms) *trap* on a zero divisor and on the signed `INT_MIN / -1` overflow, whereas RISC-V
+//    *defines* results (`div/0 → -1`, `divu/0 → 2^XLEN-1`, `rem/0 → dividend`, overflow →
+//    `div=INT_MIN, rem=0`). A trap here would escape the generated function as a wasm trap — never
+//    allowed. So the divisor fed to the wasm op is *sanitized* to `1` in exactly the cases that would
+//    trap (making the wasm op total and harmless), and a `select` afterwards substitutes the
+//    architectural result. With denom forced to 1: `Div` overflow yields `a/1 == INT_MIN` (already
+//    correct, no extra select needed) and `Rem` overflow yields `a%1 == 0` (correct); only the
+//    zero-divisor case needs the final `select`.
+//
+// 2. **MULH / MULHSU / MULHU** have no single wasm opcode. We compose the high 64 bits of the 64×64
+//    product from four 32-bit partial products (schoolbook long multiplication, all unsigned), giving
+//    the *unsigned* high word; the signed variants then apply the standard two's-complement
+//    corrections `high_signed = high_unsigned - (a<0 ? b : 0) - (b<0 ? a : 0)` (MULH) or just
+//    `- (a<0 ? b : 0)` (MULHSU, whose rs1 is signed and rs2 unsigned).
+
+#[derive(Clone, Copy)]
+enum MulhKind {
+    /// MULH — both operands signed.
+    Ss,
+    /// MULHSU — rs1 signed, rs2 unsigned (the asymmetric one).
+    Su,
+    /// MULHU — both operands unsigned.
+    Uu,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum DivKind {
+    Div,
+    Divu,
+    Rem,
+    Remu,
+}
+
+/// Leave the *unsigned* high 64 bits of `a_local * b_local` (both i64) on the wasm stack, composed
+/// from four 32-bit partial products so no wider-than-64 arithmetic is needed:
+/// `hi = ah*bh + (al*bh>>32) + (ah*bl>>32) + ((al*bl>>32 + (al*bh&M) + (ah*bl&M)) >> 32)`.
+fn emit_mul_high_unsigned(f: &mut FuncBuilder, a_local: u32, b_local: u32) {
+    const M: i64 = 0xFFFF_FFFF;
+    let al = f.local(ValType::I64);
+    let ah = f.local(ValType::I64);
+    let bl = f.local(ValType::I64);
+    let bh = f.local(ValType::I64);
+    let lh = f.local(ValType::I64); // al*bh
+    let hl = f.local(ValType::I64); // ah*bl
+    // Split both operands into 32-bit halves.
+    f.local_get(a_local);
+    f.i64_const(M);
+    f.i64_and();
+    f.local_set(al);
+    f.local_get(a_local);
+    f.i64_const(32);
+    f.i64_shr_u();
+    f.local_set(ah);
+    f.local_get(b_local);
+    f.i64_const(M);
+    f.i64_and();
+    f.local_set(bl);
+    f.local_get(b_local);
+    f.i64_const(32);
+    f.i64_shr_u();
+    f.local_set(bh);
+    // lh = al*bh, hl = ah*bl (each < 2^64, no overflow).
+    f.local_get(al);
+    f.local_get(bh);
+    f.i64_mul();
+    f.local_set(lh);
+    f.local_get(ah);
+    f.local_get(bl);
+    f.i64_mul();
+    f.local_set(hl);
+    // cross = (al*bl >> 32) + (lh & M) + (hl & M)
+    f.local_get(al);
+    f.local_get(bl);
+    f.i64_mul();
+    f.i64_const(32);
+    f.i64_shr_u();
+    f.local_get(lh);
+    f.i64_const(M);
+    f.i64_and();
+    f.i64_add();
+    f.local_get(hl);
+    f.i64_const(M);
+    f.i64_and();
+    f.i64_add();
+    // >> 32 → carry into the high word
+    f.i64_const(32);
+    f.i64_shr_u();
+    // + ah*bh
+    f.local_get(ah);
+    f.local_get(bh);
+    f.i64_mul();
+    f.i64_add();
+    // + lh>>32
+    f.local_get(lh);
+    f.i64_const(32);
+    f.i64_shr_u();
+    f.i64_add();
+    // + hl>>32
+    f.local_get(hl);
+    f.i64_const(32);
+    f.i64_shr_u();
+    f.i64_add();
+}
+
+fn emit_mulh(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    rd: u8,
+    rs1: u8,
+    rs2: u8,
+    kind: MulhKind,
+) {
+    let a = f.local(ValType::I64);
+    let b = f.local(ValType::I64);
+    push_reg(f, regs, abi, rs1);
+    f.local_set(a);
+    push_reg(f, regs, abi, rs2);
+    f.local_set(b);
+    emit_mul_high_unsigned(f, a, b);
+    // Signed corrections (two's-complement identity). rs1 is `a`, rs2 is `b`.
+    match kind {
+        MulhKind::Uu => {}
+        MulhKind::Su => {
+            // high_signed(a signed × b unsigned) = high_unsigned - (a<0 ? b : 0)
+            f.local_get(b);
+            f.i64_const(0);
+            f.local_get(a);
+            f.i64_const(0);
+            f.i64_lt_s(); // a < 0
+            f.select();
+            f.i64_sub();
+        }
+        MulhKind::Ss => {
+            // high_signed = high_unsigned - (b<0 ? a : 0) - (a<0 ? b : 0)
+            f.local_get(a);
+            f.i64_const(0);
+            f.local_get(b);
+            f.i64_const(0);
+            f.i64_lt_s(); // b < 0
+            f.select();
+            f.i64_sub();
+            f.local_get(b);
+            f.i64_const(0);
+            f.local_get(a);
+            f.i64_const(0);
+            f.i64_lt_s(); // a < 0
+            f.select();
+            f.i64_sub();
+        }
+    }
+    set_reg(f, regs, rd);
+}
+
+/// Guarded RV64 (XLEN) divide/remainder — see the section header for why the divisor is sanitized.
+fn emit_div_rem64(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    rd: u8,
+    rs1: u8,
+    rs2: u8,
+    kind: DivKind,
+) {
+    let a = f.local(ValType::I64);
+    let b = f.local(ValType::I64);
+    let denom = f.local(ValType::I64);
+    let q = f.local(ValType::I64);
+    push_reg(f, regs, abi, rs1);
+    f.local_set(a);
+    push_reg(f, regs, abi, rs2);
+    f.local_set(b);
+    // denom = sanitize(b): force to 1 in the cases the wasm op would trap on.
+    f.i64_const(1); // value chosen when the guard fires
+    f.local_get(b); // value otherwise
+    match kind {
+        DivKind::Div | DivKind::Rem => {
+            // guard = (b == 0) | (a == INT64_MIN & b == -1)
+            f.local_get(b);
+            f.i64_eqz();
+            f.local_get(a);
+            f.i64_const(i64::MIN);
+            f.i64_eq();
+            f.local_get(b);
+            f.i64_const(-1);
+            f.i64_eq();
+            f.i32_and();
+            f.i32_or();
+        }
+        DivKind::Divu | DivKind::Remu => {
+            // guard = (b == 0) — unsigned ops have no overflow case.
+            f.local_get(b);
+            f.i64_eqz();
+        }
+    }
+    f.select();
+    f.local_set(denom);
+    // Raw (now trap-free) wasm op.
+    f.local_get(a);
+    f.local_get(denom);
+    match kind {
+        DivKind::Div => f.i64_div_s(),
+        DivKind::Divu => f.i64_div_u(),
+        DivKind::Rem => f.i64_rem_s(),
+        DivKind::Remu => f.i64_rem_u(),
+    }
+    f.local_set(q);
+    // Architectural override for the zero-divisor case. (Overflow is already correct: with denom==1,
+    // Div gives a/1==INT_MIN and Rem gives a%1==0.)
+    match kind {
+        DivKind::Div | DivKind::Divu => f.i64_const(-1), // div/0 → all-ones (−1 == u64::MAX)
+        DivKind::Rem | DivKind::Remu => f.local_get(a),  // rem/0 → dividend
+    }
+    f.local_get(q);
+    f.local_get(b);
+    f.i64_eqz(); // cond: divisor was zero
+    f.select();
+    set_reg(f, regs, rd);
+}
+
+/// Guarded 32-bit (`*W`) divide/remainder: compute on the low 32 bits, then sign-extend to 64.
+fn emit_div_rem32(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    rd: u8,
+    rs1: u8,
+    rs2: u8,
+    kind: DivKind,
+) {
+    let a = f.local(ValType::I32);
+    let b = f.local(ValType::I32);
+    let denom = f.local(ValType::I32);
+    let q = f.local(ValType::I32);
+    push_reg_i32(f, regs, abi, rs1);
+    f.local_set(a);
+    push_reg_i32(f, regs, abi, rs2);
+    f.local_set(b);
+    f.i32_const(1);
+    f.local_get(b);
+    match kind {
+        DivKind::Div | DivKind::Rem => {
+            // guard = (b == 0) | (a == INT32_MIN & b == -1)
+            f.local_get(b);
+            f.i32_eqz();
+            f.local_get(a);
+            f.i32_const(i32::MIN);
+            f.i32_eq();
+            f.local_get(b);
+            f.i32_const(-1);
+            f.i32_eq();
+            f.i32_and();
+            f.i32_or();
+        }
+        DivKind::Divu | DivKind::Remu => {
+            f.local_get(b);
+            f.i32_eqz();
+        }
+    }
+    f.select();
+    f.local_set(denom);
+    f.local_get(a);
+    f.local_get(denom);
+    match kind {
+        DivKind::Div => f.i32_div_s(),
+        DivKind::Divu => f.i32_div_u(),
+        DivKind::Rem => f.i32_rem_s(),
+        DivKind::Remu => f.i32_rem_u(),
+    }
+    f.local_set(q);
+    match kind {
+        DivKind::Div | DivKind::Divu => f.i32_const(-1),
+        DivKind::Rem | DivKind::Remu => f.local_get(a),
+    }
+    f.local_get(q);
+    f.local_get(b);
+    f.i32_eqz();
+    f.select();
+    // *W results are always sign-extended from bit 31 (DIVUW's 0xFFFF_FFFF reads back as all-ones).
+    f.i64_extend_i32_s();
+    set_reg(f, regs, rd);
 }
 
 // ── terminator lowering ─────────────────────────────────────────────────────
