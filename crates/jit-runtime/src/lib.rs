@@ -33,7 +33,7 @@ use std::collections::HashMap;
 use anyhow::anyhow;
 use jit_translate::{Abi, translate_block};
 use wasm_vm_core::dispatch::DecodedBlock;
-use wasm_vm_core::hart::Hart;
+use wasm_vm_core::hart::{Hart, Trap};
 use wasm_vm_core::jit::{CompiledBlockExecutor, ExitCode, JitExit, abi};
 use wasm_vm_core::mmio::SystemBus;
 use wasmtime::{Caller, Engine, Instance, Linker, Memory, Module, Store, TypedFunc};
@@ -44,14 +44,17 @@ use wasmtime::{Caller, Engine, Instance, Linker, Memory, Module, Store, TypedFun
 struct HostCtx {
     hart: *mut Hart,
     bus: *mut SystemBus,
-    trapped: bool,
+    /// E4-T12: the PRECISE trap a faulting load/store produced (cause + `mtval`), recorded by the
+    /// import before it unwinds the module call. `None` means "no fault this call". This is what
+    /// lets a mem fault side-exit precisely instead of re-interpreting the block from entry.
+    trap: Option<Trap>,
 }
 
 impl HostCtx {
     const EMPTY: HostCtx = HostCtx {
         hart: std::ptr::null_mut(),
         bus: std::ptr::null_mut(),
-        trapped: false,
+        trap: None,
     };
 }
 
@@ -103,8 +106,10 @@ impl WasmtimeExecutor {
                     let bus = unsafe { &mut *bus };
                     match hart.jit_load(bus, addr as u64, kind) {
                         Ok(v) => Ok(v),
-                        Err(_) => {
-                            caller.data_mut().trapped = true;
+                        Err(t) => {
+                            // Record the PRECISE trap and unwind: `execute` reads it back and
+                            // delivers the trap from the block's already-written-back state.
+                            caller.data_mut().trap = Some(t);
                             Err(anyhow!("jit load fault"))
                         }
                     }
@@ -129,8 +134,8 @@ impl WasmtimeExecutor {
                     let bus = unsafe { &mut *bus };
                     match hart.jit_store(bus, addr as u64, val, width) {
                         Ok(()) => Ok(()),
-                        Err(_) => {
-                            caller.data_mut().trapped = true;
+                        Err(t) => {
+                            caller.data_mut().trap = Some(t);
                             Err(anyhow!("jit store fault"))
                         }
                     }
@@ -219,21 +224,43 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             let ctx = self.store.data_mut();
             ctx.hart = hart as *mut Hart;
             ctx.bus = bus as *mut SystemBus;
-            ctx.trapped = false;
+            ctx.trap = None;
         }
         let call = run.call(&mut self.store, 0);
-        // Clear the pointers before doing anything else (they must never outlive the borrows).
-        {
+        // Clear the pointers before doing anything else (they must never outlive the borrows), and
+        // take the precise trap (if a load/store faulted) out of the context.
+        let fault = {
             let ctx = self.store.data_mut();
             ctx.hart = std::ptr::null_mut();
             ctx.bus = std::ptr::null_mut();
-        }
+            ctx.trap.take()
+        };
         let code = match call {
             Ok(c) => c,
             Err(_) => {
-                // A load/store fault (or any wasm trap) unwound the block: commit NOTHING so the run
-                // loop re-interprets it from the entry with hart state intact (precise deopt).
-                return None;
+                // The block unwound. If it was a PRECISE memory fault (E4-T12), deliver it exactly:
+                // the translator wrote back every dirty register AND `exit_pc = faulting PC` BEFORE
+                // the access (§4), so the module's CpuState region holds architecturally-precise
+                // registers as of the prior instruction and `exit_pc` is the faulting PC. Sync those
+                // back and hand the interpreter-produced Trap to the run loop — NO re-interpretation
+                // from entry, so any earlier committing side-effect (an MMIO store) is never
+                // re-executed (the MMIO-write-then-fault double-execute corner E4-T10 flagged).
+                let trap = fault?; // no recorded trap ⇒ unexpected wasm trap: fall back (re-interp)
+                for r in 1..32u8 {
+                    let off = abi::XREG_BASE + u32::from(r) * 8;
+                    let mut b = [0u8; 8];
+                    mem.read(&self.store, off as usize, &mut b)
+                        .expect("CpuState reg read in bounds");
+                    hart.regs.write(r, u64::from_le_bytes(b));
+                }
+                let faulting_pc = self.read_u64(mem, abi::EXIT_PC);
+                self.executed_blocks += 1;
+                return Some(JitExit {
+                    code: ExitCode::Trap,
+                    next_pc: faulting_pc,
+                    exit_info: trap.cause as u64,
+                    trap: Some(trap),
+                });
             }
         };
         // Clean return: sync registers back (skip x0), then read the frozen exit protocol.
@@ -254,6 +281,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             code: ExitCode::from_i32(code),
             next_pc,
             exit_info,
+            trap: None,
         })
     }
 

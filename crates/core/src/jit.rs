@@ -62,16 +62,30 @@ impl ExitCode {
     }
 }
 
-/// The result of a clean compiled-block execution (the block did not fault out). `next_pc` /
-/// `exit_info` mirror the header slots the block wrote before returning.
+/// The result of a compiled-block execution. `next_pc` / `exit_info` mirror the header slots the
+/// block wrote before returning.
+///
+/// E4-T12 adds `trap`: a PRECISE memory-fault side-exit. When a load/store in a compiled block
+/// faults, the runtime does NOT unwind-and-re-interpret (which would re-execute any committing
+/// side-effect earlier in the block — the MMIO-write-then-fault double-execute bug); instead it
+/// reads back the block's already-written-back register file + faulting PC (the writeback-before-
+/// any-trapping-op discipline, `docs/jit-architecture.md` §4) and hands the exact interpreter-
+/// produced [`Trap`](crate::hart::Trap) here. The run loop delivers it through the normal
+/// `take_trap` path, so mcause/mtval/mepc are produced by the ONE trusted trap implementation.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct JitExit {
     /// The exit code the block returned.
     pub code: ExitCode,
-    /// Guest PC to resume at (the header `exit_pc`).
+    /// Guest PC to resume at (the header `exit_pc`) — for a `Trap`/mem-fault exit this is the
+    /// faulting instruction's PC (→ `mepc`).
     pub next_pc: u64,
-    /// Aux payload (the header `exit_info`): trap cause for a `Trap` exit.
+    /// Aux payload (the header `exit_info`): trap cause for an `ecall`/`ebreak` `Trap` exit.
     pub exit_info: u64,
+    /// `Some` iff a load/store faulted: the precise trap (cause + `mtval`) the interpreter's own
+    /// translated/PMP-checked access path produced. The register file in the module's `CpuState`
+    /// region is architecturally precise as of the instruction BEFORE the faulting one, and the
+    /// runtime has already synced it back into `hart.regs`.
+    pub trap: Option<crate::hart::Trap>,
 }
 
 /// The platform-boundary trait the run loop calls to run T2 (compiled) blocks. Implemented natively

@@ -2028,10 +2028,20 @@ impl Machine {
         if !self.executor.as_ref()?.is_compiled(phys) {
             return None;
         }
-        // Op count + terminator, read from the still-cached decoded block (physical keying).
-        let (nops, terminator) = {
+        // Op count + terminator + per-op byte lengths, read from the still-cached decoded block
+        // (physical keying). The lengths let a PRECISE mem-fault side-exit (below) compute how many
+        // instructions retired before the faulting one, so the retire clock advances by exactly that.
+        let (nops, terminator, op_lens, block_phys) = {
             let b = self.block_cache.get(phys)?;
-            (b.ops.len(), b.ops.last().map(|o| o.instr))
+            (
+                b.ops.len(),
+                b.ops.last().map(|o| o.instr),
+                b.ops
+                    .iter()
+                    .map(|o| o.len as u64)
+                    .collect::<alloc::vec::Vec<u64>>(),
+                b.phys_start,
+            )
         };
         // Take the executor out so it can borrow hart + bus for the duration of the call.
         let mut exec = self.executor.take().expect("compiled ⇒ executor present");
@@ -2067,8 +2077,38 @@ impl Machine {
                 Some(Ok(()))
             }
             jit::ExitCode::Trap => {
-                // The trapping terminator (`ecall`/`ebreak`) retires NOTHING; only the `nops-1`
-                // body ops did. Advance the clock for those.
+                // E4-T12: a PRECISE mid-block memory fault carries the interpreter-produced `Trap`
+                // (cause + `mtval`) directly. `exit.next_pc` is the faulting instruction's PC; the
+                // executor already synced the precise register file (as of the instruction before
+                // it) back into `hart.regs`. Advance the retire clock by exactly the number of ops
+                // that retired before the faulting one (found by walking the block's op lengths to
+                // the faulting PC), leave PC at the faulting instruction, and hand the trap to the
+                // loop's normal `take_trap` delivery — so mcause/mtval/mepc come from the ONE
+                // trusted implementation and no already-committed side-effect is re-executed.
+                if let Some(trap) = exit.trap {
+                    let faulting_pc = exit.next_pc;
+                    let mut retired = 0u64;
+                    let mut p = block_phys;
+                    for len in &op_lens {
+                        if p == faulting_pc {
+                            break;
+                        }
+                        p = p.wrapping_add(*len);
+                        retired += 1;
+                    }
+                    for _ in 0..retired {
+                        self.advance_clock();
+                        self.irqstats.on_retire();
+                    }
+                    self.hart.regs.pc = faulting_pc;
+                    // A store before the fault may have hit a code page (SMC/DMA-into-code); drain
+                    // the bus write log through page-granular invalidation, exactly as the
+                    // interpreter would after that store retired.
+                    self.drain_code_writes();
+                    return Some(Err(trap));
+                }
+                // Otherwise: the trapping terminator (`ecall`/`ebreak`) retires NOTHING; only the
+                // `nops-1` body ops did. Advance the clock for those.
                 let retired = nops.saturating_sub(1);
                 for _ in 0..retired {
                     self.advance_clock();

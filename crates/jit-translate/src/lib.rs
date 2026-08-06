@@ -664,27 +664,31 @@ fn emit_alu(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, instr: Instr, pc: u
             set_reg(f, regs, rd);
         }
         // ── loads (side-exit to env.load) ──
-        Lb { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LB),
-        Lh { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LH),
-        Lw { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LW),
-        Ld { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LD),
-        Lbu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LBU),
-        Lhu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LHU),
-        Lwu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LWU),
+        Lb { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LB, pc),
+        Lh { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LH, pc),
+        Lw { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LW, pc),
+        Ld { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LD, pc),
+        Lbu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LBU, pc),
+        Lhu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LHU, pc),
+        Lwu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LWU, pc),
         // ── stores (side-exit to env.store) ──
-        Sb { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 1),
-        Sh { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 2),
-        Sw { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 4),
-        Sd { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 8),
+        Sb { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 1, pc),
+        Sh { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 2, pc),
+        Sw { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 4, pc),
+        Sd { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 8, pc),
         // FENCE retires as a no-op mid-block only if it were non-terminating; but FENCE/FENCE.I are
         // terminators handled elsewhere. Anything else was rejected by `supported`.
         _ => unreachable!("emit_alu called on a non-RV64I / terminator op"),
     }
 }
 
-/// `rd = extend(mem[rs1 + imm])`. Registers are written back before any access (the "materialize
-/// before a potentially-trapping op" rule). Dispatches on the memory model: always-call-out (E4-T09)
-/// or the inline-TLB fast path (E4-T11).
+/// `rd = extend(mem[rs1 + imm])`. Registers are written back AND the faulting-instruction PC is
+/// materialized into `exit_pc` before any access (the "materialize before a potentially-trapping
+/// op" rule, `docs/jit-architecture.md` §4). So if the access faults, the runtime sees the precise
+/// register file (as of the prior instruction) plus `exit_pc = pc` (→ `mepc`), and delivers the
+/// trap without re-interpreting the block from entry (which would replay any earlier side-effect).
+/// Dispatches on the memory model: always-call-out (E4-T09) or the inline-TLB fast path (E4-T11).
+#[allow(clippy::too_many_arguments)]
 fn emit_load(
     f: &mut FuncBuilder,
     regs: &mut Regs,
@@ -693,8 +697,10 @@ fn emit_load(
     rs1: u8,
     imm: i64,
     kind: i32,
+    pc: u64,
 ) {
     writeback(f, regs, abi);
+    write_pc_const(f, abi, pc);
     match abi.mem {
         MemModel::SoftmmuImports => {
             // effective address = rs1 + imm (wrapping u64)
@@ -709,7 +715,10 @@ fn emit_load(
     }
 }
 
-/// `mem[rs1 + imm] = rs2` (low `width` bytes).
+/// `mem[rs1 + imm] = rs2` (low `width` bytes). Same precise-state discipline as [`emit_load`]:
+/// writeback + `exit_pc = pc` before the access, so a fault side-exits precisely and any earlier
+/// committing store (e.g. an MMIO write) is never re-executed.
+#[allow(clippy::too_many_arguments)]
 fn emit_store(
     f: &mut FuncBuilder,
     regs: &mut Regs,
@@ -718,8 +727,10 @@ fn emit_store(
     rs2: u8,
     imm: i64,
     width: i32,
+    pc: u64,
 ) {
     writeback(f, regs, abi);
+    write_pc_const(f, abi, pc);
     match abi.mem {
         MemModel::SoftmmuImports => {
             push_reg(f, regs, abi, rs1);
