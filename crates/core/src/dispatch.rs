@@ -496,6 +496,11 @@ pub struct BlockDiscovery {
     counts: BTreeMap<u64, u32>,
     /// Dedup state for blocks past the threshold (phys entry PC → [`NomState`]).
     state: BTreeMap<u64, NomState>,
+    /// E4-T21: extra executions observed for a block AFTER it was nominated (Queued) but BEFORE its
+    /// compile has been installed — the "how hot is this pending job" signal the compile queue orders
+    /// by, so a block still running hot while it waits compiles ahead of a one-shot straggler.
+    /// Cleared by every invalidation / renominate (its priority is meaningless once re-nominated).
+    queued_hits: BTreeMap<u64, u32>,
     /// Bounded FIFO of pending nominations.
     queue: VecDeque<TranslationRequest>,
     stats: DiscoveryStats,
@@ -524,6 +529,7 @@ impl BlockDiscovery {
             generation: 1,
             counts: BTreeMap::new(),
             state: BTreeMap::new(),
+            queued_hits: BTreeMap::new(),
             queue: VecDeque::new(),
             stats: DiscoveryStats {
                 generation: 1,
@@ -553,6 +559,7 @@ impl BlockDiscovery {
         self.generation = self.generation.wrapping_add(1);
         self.counts.clear();
         self.state.clear();
+        self.queued_hits.clear();
         self.queue.clear();
         self.stats = DiscoveryStats {
             generation: self.generation,
@@ -570,6 +577,7 @@ impl BlockDiscovery {
     pub fn renominate(&mut self, phys_pc: u64) {
         self.counts.remove(&phys_pc);
         self.state.remove(&phys_pc);
+        self.queued_hits.remove(&phys_pc);
     }
 
     /// Record an invalidation (fence.i / SMC page-flush / whole-cache flush): bump the
@@ -583,6 +591,7 @@ impl BlockDiscovery {
         self.stats.generation = self.generation;
         self.counts.clear();
         self.state.clear();
+        self.queued_hits.clear();
     }
 
     /// Note one execution (entry) of the block at physical `phys` whose walked ops are `ops`.
@@ -592,8 +601,13 @@ impl BlockDiscovery {
     /// still-cold) block: one map probe plus, while cold, one increment.
     pub fn on_block_entry(&mut self, phys: u64, ops: &[MicroOp]) {
         // Already decided (nominated or excluded): dedup — never re-enqueue.
-        if self.state.contains_key(&phys) {
+        if let Some(st) = self.state.get(&phys) {
             self.stats.deduped = self.stats.deduped.saturating_add(1);
+            // E4-T21: a still-hot Queued block keeps accruing priority while it waits to compile.
+            if *st == NomState::Queued {
+                let h = self.queued_hits.entry(phys).or_insert(0);
+                *h = h.saturating_add(1);
+            }
             return;
         }
         let count = match self.counts.get_mut(&phys) {
@@ -685,6 +699,15 @@ impl BlockDiscovery {
     /// The live discovery generation (bumped by every invalidation).
     pub fn generation(&self) -> u64 {
         self.generation
+    }
+
+    /// E4-T21: the current hotness of the pending (or just-drained) block at `phys` — the promotion
+    /// threshold plus any extra executions observed while it waited in the nomination queue. Used by
+    /// the compile queue to order compilation (hotter first). A block that has run only exactly the
+    /// threshold count reports `threshold`; one that kept spinning reports more.
+    pub fn queued_hotness(&self, phys: u64) -> u32 {
+        self.threshold
+            .saturating_add(self.queued_hits.get(&phys).copied().unwrap_or(0))
     }
 }
 

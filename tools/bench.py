@@ -263,7 +263,18 @@ BENCHES = {
 }
 
 
-def run_once(bench, echo=False):
+def run_once(bench, echo=False, warm=False):
+    """Run `bench` once in a fresh VM.
+
+    E4-T21 cold-vs-warm mode:
+      * cold (warm=False): a fresh VM whose translation cache starts EMPTY, so the measured run
+        pays every JIT compile stall inline — the "cold CoreMark" the ≥70%-of-warm AC compares.
+      * warm (warm=True): run the benchmark binary ONCE untimed first (in the SAME guest session) to
+        populate the JIT translation cache, THEN measure a second pass whose hot blocks are already
+        compiled — the "warm CoreMark" ceiling. The warm-up shares the guest process (and thus the
+        VM's live executor + block cache) with the measured pass, which is the whole point.
+    Both are ledgered separately by the caller so the cold/warm gap stays honest.
+    """
     spec = BENCHES[bench]
     binname = spec["bin"]
     nonce = "%08x" % random.randrange(1 << 32)
@@ -304,6 +315,12 @@ def run_once(bench, echo=False):
         # land at /mnt/bench/<name> — matching the exec path below.
         con.send("mount -o ro /dev/vdb /mnt && echo MOUNT_OK || echo MOUNT_FAIL")
         con.expect(r"(?m)^MOUNT_(OK|FAIL)\s*$", 120.0)
+        # E4-T21 warm mode: an untimed warm-up pass populates the JIT translation cache before the
+        # measured pass, so the timed run's hot blocks are already compiled (the "warm" ceiling).
+        if warm:
+            con.send(f"/mnt/bench/{binname} >/dev/null 2>&1 || true")
+            con.send("echo WARMUP_DONE")
+            con.expect(r"(?m)^WARMUP_DONE\s*$", RUN_TIMEOUT)
         con.send(start_typed)
         con.expect(start_re, 120.0)
         host_t0 = time.monotonic()
@@ -703,10 +720,13 @@ def cmd_run(args):
     digest = verify_artifacts(BENCHES[bench]["bin"])
     ensure_vm()
 
+    # E4-T21: cold (fresh empty translation cache) vs warm (pre-warmed) benchmark mode.
+    mode = getattr(args, "mode", "cold")
+    warm = mode == "warm"
     results = []
     for i in range(args.runs):
-        print(f"bench: {bench} native run {i + 1}/{args.runs}…", file=sys.stderr)
-        results.append(run_once(bench, echo=args.verbose))
+        print(f"bench: {bench} native {mode} run {i + 1}/{args.runs}…", file=sys.stderr)
+        results.append(run_once(bench, echo=args.verbose, warm=warm))
 
     scores = [r["score"] for r in results]
     median = statistics.median(scores)
@@ -734,6 +754,7 @@ def cmd_run(args):
         "spread": round(spread, 4),
         "noise_warning": noise_warning,
         "engine": args.engine,
+        "mode": mode,
         "commit": git_rev(),
         "config": {
             "gcc": GCC,
@@ -902,6 +923,10 @@ def main():
     r.add_argument("bench", choices=["coremark", "dhrystone", "boot", "gcc"])
     r.add_argument("--engine", default="native", choices=["native", "browser"])
     r.add_argument("--runs", type=int, default=3)
+    r.add_argument("--mode", default="cold", choices=["cold", "warm"],
+                   help="E4-T21: cold = fresh empty JIT translation cache each run (pays compile "
+                        "stalls inline); warm = an untimed warm-up pass pre-populates the cache "
+                        "before the measured pass. Ledger both to keep the cold/warm gap honest.")
     r.add_argument("--json", help="also write the JSON result to this path")
     r.add_argument("--verbose", action="store_true", help="stream the guest console to stderr")
     r.add_argument("--allow-browser", action="store_true", help="override the browser-engine defer")

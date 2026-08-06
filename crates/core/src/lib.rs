@@ -27,6 +27,7 @@ extern crate alloc;
 
 pub mod block;
 pub mod bus;
+pub mod compile_queue;
 pub mod csr;
 pub mod decode;
 pub mod decode_c;
@@ -313,6 +314,13 @@ pub struct Machine {
     /// E4-T10: the JIT on/off runtime flag. Effective only with the block cache on and an executor
     /// installed (see [`Self::jit_active`]). Off by default so every existing path is unchanged.
     jit_enabled: bool,
+    /// E4-T21: the priority compile-staging queue between discovery and the executor. Discovery's
+    /// FIFO nominations are drained into this at a boundary, re-ordered by hotness, admission-
+    /// controlled (bounded, drop-and-recount), and stale-cancelled on a generation bump before the
+    /// install step feeds the executor. Keeps compilation off the guest hot path and orders it so
+    /// the hottest block compiles first. See [`compile_queue::CompileQueue`].
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    compile_queue: compile_queue::CompileQueue,
 }
 
 /// E3-T12c3: the identity a snapshot is bound to. A restore is refused unless the target machine's
@@ -373,6 +381,16 @@ const JIT_BATCH_TRIGGER: usize = 32;
 /// while accumulating enough to batch as one connected component.
 #[cfg(not(feature = "zicsr-stub"))]
 const JIT_PUMP_INTERVAL: u32 = 64;
+
+/// E4-T21: the maximum number of blocks INSTALLED (translated + compiled + registered) in a single
+/// [`Machine::pump_jit_translations`] call — the per-boundary install-step work bound that keeps the
+/// JIT-attributable execution-thread pause bounded (the ≤5 ms target, `docs/jit-architecture.md` §7
+/// D10). Popping the compile queue hottest-first up to this budget means a compile storm is spread
+/// across many boundaries instead of one long stall; the leftover stays queued (priority preserved)
+/// for the next boundary. The `JitPauseStats::max_install_blocks` counter asserts this bound is never
+/// exceeded (the headless stand-in for the wall-clock histogram).
+#[cfg(not(feature = "zicsr-stub"))]
+const JIT_INSTALL_BUDGET: usize = 64;
 
 /// E4-T19: the static successor PHYSICAL PCs of a decoded block — `[edge0, edge1]` where edge 0 is
 /// the taken / sole / fall-through successor and edge 1 is a conditional branch's not-taken side.
@@ -554,6 +572,7 @@ impl Machine {
             executor: None,
             jit_pump_ticks: 0,
             jit_enabled: false,
+            compile_queue: compile_queue::CompileQueue::default(),
         };
         // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
         // stores AND device/DMA writes feed page-granular invalidation.
@@ -2070,7 +2089,15 @@ impl Machine {
         #[cfg(not(feature = "zicsr-stub"))]
         if self.jit_enabled {
             self.jit_pump_ticks = 0;
-            self.pump_jit_translations();
+            // Flush every still-queued block: each pump installs up to JIT_INSTALL_BUDGET, so loop
+            // until both the discovery FIFO and the priority compile queue are drained (bounded —
+            // the queues are finite and shrink each pass; the cap guards against any pathology).
+            for _ in 0..(dispatch::MAX_QUEUE / JIT_INSTALL_BUDGET + 2) {
+                if self.discovery.queue_len() == 0 && self.compile_queue.is_empty() {
+                    break;
+                }
+                self.pump_jit_translations();
+            }
         }
         // One timer read at exit; accumulate the total profiled span. The device+walk time timed on
         // the cold paths is a SUBSET of this span, so `total − (device + walk)` is the interpreter's.
@@ -2302,13 +2329,43 @@ impl Machine {
         if self.executor.is_none() {
             return;
         }
-        let reqs = self.discovery.take_requests();
-        if reqs.is_empty() {
+        // ── E4-T21: stage discovery's FIFO nominations into the priority compile queue. ──
+        // Drain the discovery FIFO and admit each as a CompileJob tagged with its live hotness, so
+        // the hottest pending block compiles first. Admission is bounded + drop-and-recount, so a
+        // flood of unique hot blocks never grows memory or blocks execution — dropped jobs are fed
+        // back to discovery for later re-nomination.
+        for req in self.discovery.take_requests() {
+            let hotness = self.discovery.queued_hotness(req.phys_pc);
+            self.compile_queue
+                .push(compile_queue::CompileJob { req, hotness });
+        }
+        // Cancellation on generation bump: any job whose generation went stale while it waited is
+        // dropped here (a cheap first line of defence; the per-block install_check below is the
+        // authoritative one). This models async-with-delay: the world can change under a queued job.
+        self.compile_queue.cancel_stale(self.discovery.generation());
+        // Recount jobs the queue dropped under backpressure so a still-hot block is re-nominated
+        // instead of being suppressed by dedup forever.
+        for phys in self.compile_queue.take_recount() {
+            self.discovery.renominate(phys);
+        }
+        if self.compile_queue.is_empty() {
             return;
         }
+        // ── E4-T21: pop the hottest jobs up to the per-boundary INSTALL budget (bounds the stall). ──
+        let mut reqs: alloc::vec::Vec<dispatch::TranslationRequest> = alloc::vec::Vec::new();
+        while reqs.len() < JIT_INSTALL_BUDGET {
+            match self.compile_queue.pop_hottest() {
+                Some(job) => reqs.push(job.req),
+                None => break,
+            }
+        }
+        // Pause instrumentation: time the install step (translate/validate/batch/install) when a host
+        // timer is injected; always record the WORK done (blocks + bytes) as the headless bound.
+        let t0 = self.host_timer.as_ref().map(|t| t.now_ns());
         let mut exec = self.executor.take().expect("executor present");
         // ── 1. Validate each request against live memory and collect the still-valid decoded blocks. ──
         let mut valid: alloc::vec::Vec<dispatch::DecodedBlock> = alloc::vec::Vec::new();
+        let mut installed_bytes: u64 = 0;
         for req in &reqs {
             // Re-read the live physical bytes for the block and validate: a store/`fence.i` between
             // nomination and now would fail this and the request is dropped (never compile stale code).
@@ -2329,6 +2386,7 @@ impl Machine {
             }
             // The predecoded block is still cached (physical keying); take a clone for the batch.
             if let Some(block) = self.block_cache.get(req.phys_pc) {
+                installed_bytes = installed_bytes.saturating_add(req.code_bytes.len() as u64);
                 valid.push(block.clone());
             }
         }
@@ -2348,6 +2406,14 @@ impl Machine {
             self.discovery.renominate(phys);
         }
         self.executor = Some(exec);
+        // E4-T21: record this install step's pause (wall ns when timed, always the work bound). The
+        // block count fed the executor is `valid.len()`, hard-capped at `JIT_INSTALL_BUDGET`.
+        let pause_ns = match (t0, self.host_timer.as_ref()) {
+            (Some(t0), Some(t)) => t.now_ns().saturating_sub(t0),
+            _ => 0,
+        };
+        self.prof
+            .record_jit_pause(pause_ns, valid.len() as u64, installed_bytes);
     }
 
     /// E4-T10: try to execute the compiled block at the current PC via the JIT. Returns:

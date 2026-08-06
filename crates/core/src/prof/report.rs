@@ -144,6 +144,9 @@ pub struct ProfReport {
     /// E4-T20: the JIT translation-cache accounting (usage vs budget, evictions, re-translation
     /// rate). `Some` only when [`crate::Machine::prof_report`] is called with an executor installed.
     pub jit_cache: Option<crate::jit::JitCacheStats>,
+    /// E4-T21: JIT-attributable execution-thread pause instrumentation (compile-queue drains +
+    /// installs, and the headless per-install work bound).
+    pub jit_pause: crate::prof::JitPauseStats,
 }
 
 impl ProfReport {
@@ -180,6 +183,14 @@ impl ProfReport {
                 "jit cache: code_bytes={}/{} batches={}/{} evictions={} flushes={} installs={} retranslations={} rate={:.4} gen={}\n",
                 j.code_bytes, j.budget.code_bytes, j.batches, j.budget.max_batches,
                 j.evictions, j.flushes, j.installs, j.retranslations, j.retranslation_rate(), j.generation,
+            ));
+        }
+        let p = &self.jit_pause;
+        if p.count > 0 {
+            s.push_str(&format!(
+                "jit pause: samples={} max_ns={} mean_ns={} p95_ns={} over_5ms={} max_install_blocks={} max_install_bytes={}\n",
+                p.count, p.max_ns, p.mean_ns(), p.percentile_ns(0.95), p.over_target,
+                p.max_install_blocks, p.max_install_bytes,
             ));
         }
         s
