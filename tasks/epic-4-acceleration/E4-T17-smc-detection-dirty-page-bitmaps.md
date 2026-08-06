@@ -3,7 +3,7 @@ id: E4-T17
 epic: 4
 title: Self-modifying code detection via page-granular protection bitmaps
 priority: 417
-status: pending
+status: partially-verified
 depends_on: [E4-T11, E4-T16]
 estimate: L
 capstone: false
@@ -67,6 +67,7 @@ progress with bounded per-iteration cost (no O(n²) interval-list behavior); (5)
 E4-T16 guest-JIT loop 100k times with bitmaps on.
 
 ## Verification log
+- 2026-08-06 — **Page-granular SMC correctness + near-free fence.i done + verified (commit `3b209ce`); status partially-verified (workload-scale torture/perf ACs deferred).** Much was already page-granular (E4-T05/T10/T11's unified `code_write_log` bus choke point → `drain_code_writes` per-retire/boundary → `flush_page`/`invalidate_page`); the gap was fence.i. **Unified page bitmap:** one `has_code` set in `BlockCache` is authoritative for BOTH caches (a compiled block always came from a still-cached `DecodedBlock`, so the decode-cache bitmap covers the compiled cache). **`invalidate_page(frame)`** = `blocks.retain(|_,c| c.page_frame != frame)` — drops only overlapping compiled fns, keeps the rest's funcref/instance live (blocks never span a physical page → frame-equality is the exact overlap test; a straddling store logs both frames). **fence.i near-free:** downgraded to a no-op + stat (`note_fence_i`) — correct because every code write invalidates its page EAGERLY at store time, so by fence.i retirement the fetch stream is already coherent (a valid icache-less RISC-V impl — strictly more eager, never stale); un-dirtied pages' blocks survive. DMA writes hit the same `code_write_log`. **Gates (independently re-ran):** `invalidation.rs` **12/12** — page-granular differential (store page A → A dropped, **page B SURVIVES** (`is_compiled`, `cache_flushes` flat, `blocks_discarded` advanced), re-entry runs NEW code; non-code-page store invalidates nothing; byte-identical JIT vs interp), fence.i-near-free (no code write → drops nothing), adjacent-page-no-invalidate; `predecode_smc_diff` byte-identical; `riscv_tests_verdict_identical_with_jit` (>50 ELFs, rv64mi) + all E4-T09..T16 gates (precise_traps 3, jit_execution 10) + determinism + reset + snapshot_coherence + csr green; wasm32 no_std; clippy(-D)/fmt clean. **Under-invalidation search: NONE** — every store path (interp, JIT store/AMO/LR-SC imports, DMA, host pokes) reaches RAM through the single `code_write_log`; no stale block survived any overlapping store. **Deferred debt:** the full in-guest SMC torture suite (exec churn / in-guest JIT) and the 100k write/execute ping-pong wall-clock PERF AC — workload-scale, belong with a booted-guest harness (directed differential + byte-identical corpus prove the correctness here).
 
 ### 2026-08-06 — page-granular SMC + near-free fence.i (verified)
 
