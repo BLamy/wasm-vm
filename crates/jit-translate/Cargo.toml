@@ -27,3 +27,5 @@ wasm-vm-wasm-emit = { path = "../wasm-emit" }
 wasmtime = { version = "35", default-features = false, features = ["cranelift", "runtime"] }
 # Validity oracle: every generated module is fed through `wasmparser::Validator` (AC 3).
 wasmparser = "0.240"
+# E4-T11 inline-TLB harness: host import error type + the softmmu bridge.
+anyhow = "1"

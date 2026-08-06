@@ -2368,6 +2368,7 @@ dependencies = [
 name = "wasm-vm-jit-translate"
 version = "0.0.1"
 dependencies = [
+ "anyhow",
  "wasm-vm-core",
  "wasm-vm-wasm-emit",
  "wasmparser 0.240.0",

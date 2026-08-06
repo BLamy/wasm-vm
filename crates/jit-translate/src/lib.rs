@@ -53,16 +53,95 @@ pub struct Abi {
     pub exit_pc: u32,
     /// `exit_info` — aux payload (trap cause for `ecall`/`ebreak`).
     pub exit_info: u32,
+    /// How generated loads/stores reach guest memory (E4-T11).
+    pub mem: MemModel,
+    /// E4-T11 inline-TLB layout (only consulted when `mem == InlineTlb`). Byte offsets into the ONE
+    /// shared linear memory; the runtime lays the memory out at exactly these offsets.
+    pub tlb: TlbLayout,
+}
+
+/// How translated loads/stores reach guest memory (`docs/jit-architecture.md` §4.2 / E4-T11).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum MemModel {
+    /// E4-T09 default: every load/store side-exits to the `env.load` / `env.store` imports; the
+    /// runtime performs the whole translated + PMP-checked access. Simple and always correct; one
+    /// host call-out per access.
+    SoftmmuImports,
+    /// E4-T11: the block inlines a direct-mapped software-TLB probe against arrays in the shared
+    /// linear memory. On a hit (page cached with the right permission, naturally aligned) it does a
+    /// raw `i64.load`/`store` straight into the guest-RAM window — no host call. On a miss (cold /
+    /// tag mismatch / misaligned-or-straddling) it calls `env.softmmu_load` / `env.softmmu_store`,
+    /// which runs the interpreter's exact `cload*`/`cstore*` path, fills the TLB, and returns.
+    InlineTlb,
+}
+
+/// Fixed byte layout of the inline-TLB arrays + guest-RAM window inside the shared linear memory
+/// (E4-T11). Three direct-mapped arrays (read / write / execute) of `entries` slots, each slot
+/// `{ tag: i64, addend: i64 }` (16 bytes). `tag == (vpage) | VALID` selects the page (VALID is
+/// bit 0, free because a 4 KiB page base has zero low bits); `addend` is chosen so the hit-path host
+/// linear address is exactly `vaddr + addend`. Separate read/write arrays are what make a store to a
+/// read-only page always miss (its write slot is never filled) — the permission distinction the
+/// interpreter enforces, encoded structurally.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct TlbLayout {
+    /// Number of slots per array (power of two; index = `vpn & (entries-1)`).
+    pub entries: u32,
+    /// Byte base of the LOAD (read-permission) TLB array.
+    pub read_base: u32,
+    /// Byte base of the STORE (write-permission) TLB array.
+    pub write_base: u32,
+    /// Byte base of the FETCH (execute-permission) TLB array — reserved; fetch is not JITted.
+    pub exec_base: u32,
+    /// Byte offset in the linear memory where guest physical `dram_base` maps (page-aligned).
+    pub ram_base: u32,
+    /// The guest physical address that maps to `ram_base` (normally `DRAM_BASE`).
+    pub dram_base: u64,
+}
+
+impl TlbLayout {
+    /// Bytes per slot (`{tag,addend}` = 2×8).
+    pub const SLOT: u32 = 16;
+    /// Slot field: the `tag` i64.
+    pub const TAG_OFF: u32 = 0;
+    /// Slot field: the `addend` i64.
+    pub const ADDEND_OFF: u32 = 8;
+    /// The tag's VALID bit (bit 0; a page base's low 12 bits are always zero, so bit 0 is free).
+    pub const VALID: i64 = 1;
+
+    /// The frozen E4-T11 layout: 256 slots/array, arrays at 0x1000/0x2000/0x3000, guest RAM at
+    /// 0x4000. `dram_base` is the canonical `DRAM_BASE` (0x8000_0000). Total linear-memory size the
+    /// runtime must allocate is `ram_base + ram_bytes`.
+    pub const FROZEN: TlbLayout = TlbLayout {
+        entries: 256,
+        read_base: 0x1000,
+        write_base: 0x2000,
+        exec_base: 0x3000,
+        ram_base: 0x4000,
+        dram_base: 0x8000_0000,
+    };
 }
 
 impl Abi {
     /// The frozen layout from §3.1: `x[]` at `+0x000`, `exit_reason` `+0x218`, `exit_pc` `+0x220`,
-    /// `exit_info` `+0x228`.
+    /// `exit_info` `+0x228`. Memory model defaults to the E4-T09 softmmu imports (the E4-T10
+    /// executor and the E4-T09 differential harness use this).
     pub const FROZEN: Abi = Abi {
         xreg_base: 0x000,
         exit_reason: 0x218,
         exit_pc: 0x220,
         exit_info: 0x228,
+        mem: MemModel::SoftmmuImports,
+        tlb: TlbLayout::FROZEN,
+    };
+
+    /// The frozen layout with the E4-T11 inline-TLB memory model selected.
+    pub const INLINE_TLB: Abi = Abi {
+        xreg_base: 0x000,
+        exit_reason: 0x218,
+        exit_pc: 0x220,
+        exit_info: 0x228,
+        mem: MemModel::InlineTlb,
+        tlb: TlbLayout::FROZEN,
     };
 }
 
@@ -137,6 +216,10 @@ impl Regs {
 /// `phys_start` — under the physical keying the JIT uses, that is the block's entry PC.
 pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, TranslateError> {
     let mut m = ModuleBuilder::new();
+    // Both memory models expose the same two memory-access imports (`(va,kind)->val` load,
+    // `(va,val,width)->()` store) as function indices 0 and 1. In `SoftmmuImports` mode EVERY access
+    // calls them; in `InlineTlb` mode only a fast-path MISS does. Keeping the signatures identical
+    // means the runtime registers one pair of host functions for both.
     let load_ty = m.add_type(FuncType::new(
         &[ValType::I64, ValType::I32],
         &[ValType::I64],
@@ -145,17 +228,39 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
         &[ValType::I64, ValType::I64, ValType::I32],
         &[],
     ));
-    let _l = m.import_func("env", "load", load_ty);
-    let _s = m.import_func("env", "store", store_ty);
+    let (load_name, store_name) = match abi.mem {
+        MemModel::SoftmmuImports => ("load", "store"),
+        MemModel::InlineTlb => ("softmmu_load", "softmmu_store"),
+    };
+    let _l = m.import_func("env", load_name, load_ty);
+    let _s = m.import_func("env", store_name, store_ty);
     debug_assert_eq!(_l, LOAD_IMPORT);
     debug_assert_eq!(_s, STORE_IMPORT);
 
     let run_ty = m.add_type(FuncType::new(&[ValType::I32], &[ValType::I32]));
     let run_idx = m.add_function(run_ty);
-    m.add_memory(MemType {
-        limits: Limits::new(1),
-    });
-    m.export("mem", ExportKind::Memory, 0);
+    match abi.mem {
+        MemModel::SoftmmuImports => {
+            // The module owns a private one-page linear memory (CpuState only); guest RAM is behind
+            // the imports.
+            m.add_memory(MemType {
+                limits: Limits::new(1),
+            });
+            m.export("mem", ExportKind::Memory, 0);
+        }
+        MemModel::InlineTlb => {
+            // The block accesses guest RAM directly, so it IMPORTS the one shared linear memory the
+            // runtime lays out (CpuState + TLB arrays + guest RAM at the frozen offsets). Min 1 page;
+            // the host supplies a memory large enough for `ram_base + ram_bytes`.
+            m.import_memory(
+                "env",
+                "mem",
+                MemType {
+                    limits: Limits::new(1),
+                },
+            );
+        }
+    }
     m.export("run", ExportKind::Func, run_idx);
 
     let mut f = FuncBuilder::new(&[ValType::I32]); // param 0 = state_base
@@ -577,9 +682,9 @@ fn emit_alu(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, instr: Instr, pc: u
     }
 }
 
-/// `rd = extend(mem[rs1 + imm])` via the `env.load` import. Registers are written back before the
-/// call (the "materialize before a potentially-trapping op" rule); the import returns the already
-/// width/sign-extended value.
+/// `rd = extend(mem[rs1 + imm])`. Registers are written back before any access (the "materialize
+/// before a potentially-trapping op" rule). Dispatches on the memory model: always-call-out (E4-T09)
+/// or the inline-TLB fast path (E4-T11).
 fn emit_load(
     f: &mut FuncBuilder,
     regs: &mut Regs,
@@ -590,16 +695,21 @@ fn emit_load(
     kind: i32,
 ) {
     writeback(f, regs, abi);
-    // effective address = rs1 + imm (wrapping u64)
-    push_reg(f, regs, abi, rs1);
-    f.i64_const(imm);
-    f.i64_add();
-    f.i32_const(kind);
-    f.call(LOAD_IMPORT);
-    set_reg(f, regs, rd);
+    match abi.mem {
+        MemModel::SoftmmuImports => {
+            // effective address = rs1 + imm (wrapping u64)
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(imm);
+            f.i64_add();
+            f.i32_const(kind);
+            f.call(LOAD_IMPORT);
+            set_reg(f, regs, rd);
+        }
+        MemModel::InlineTlb => emit_load_tlb(f, regs, abi, rd, rs1, imm, kind),
+    }
 }
 
-/// `mem[rs1 + imm] = rs2` (low `width` bytes) via the `env.store` import.
+/// `mem[rs1 + imm] = rs2` (low `width` bytes).
 fn emit_store(
     f: &mut FuncBuilder,
     regs: &mut Regs,
@@ -610,12 +720,171 @@ fn emit_store(
     width: i32,
 ) {
     writeback(f, regs, abi);
+    match abi.mem {
+        MemModel::SoftmmuImports => {
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(imm);
+            f.i64_add();
+            push_reg(f, regs, abi, rs2);
+            f.i32_const(width);
+            f.call(STORE_IMPORT);
+        }
+        MemModel::InlineTlb => emit_store_tlb(f, regs, abi, rs1, rs2, imm, width),
+    }
+}
+
+// ── E4-T11 inline direct-mapped TLB fast path ───────────────────────────────
+//
+// The load-`kind` codes double as the width (in bytes) + signedness selector. The width guards the
+// natural-alignment test (an aligned access to a 4 KiB-divisible width can never straddle a page, so
+// the single alignment check subsumes the straddle check); the raw wasm opcode does the extension.
+fn load_kind_width(kind: i32) -> i64 {
+    match kind {
+        load_kind::LB | load_kind::LBU => 1,
+        load_kind::LH | load_kind::LHU => 2,
+        load_kind::LW | load_kind::LWU => 4,
+        load_kind::LD => 8,
+        _ => unreachable!("bad load kind"),
+    }
+}
+
+/// Emit `eaddr = base + ((va >> 12) & (entries-1)) * SLOT` (an i32 linear address of the TLB slot for
+/// `va`'s page) into local `eaddr`. `va_local` holds the effective address.
+fn emit_slot_addr(f: &mut FuncBuilder, tlb: &TlbLayout, va_local: u32, base: u32, eaddr: u32) {
+    f.local_get(va_local);
+    f.i64_const(12);
+    f.i64_shr_u();
+    f.i64_const(i64::from(tlb.entries - 1));
+    f.i64_and();
+    f.i64_const(i64::from(TlbLayout::SLOT));
+    f.i64_mul();
+    f.i32_wrap_i64();
+    f.i32_const(base as i32);
+    f.i32_add();
+    f.local_set(eaddr);
+}
+
+/// Push the i32 boolean `aligned(va,width) && slot.tag == want_tag(va)` — the fast-path-taken
+/// predicate. `eaddr` must already hold the slot address.
+fn emit_hit_predicate(f: &mut FuncBuilder, va_local: u32, eaddr: u32, width: i64) {
+    // aligned: (va & (width-1)) == 0. Width 1 is always aligned.
+    if width == 1 {
+        f.i32_const(1);
+    } else {
+        f.local_get(va_local);
+        f.i64_const(width - 1);
+        f.i64_and();
+        f.i64_eqz();
+    }
+    // tag match: slot.tag == (va & ~0xFFF) | VALID
+    f.local_get(eaddr);
+    f.i64_load(0, TlbLayout::TAG_OFF);
+    f.local_get(va_local);
+    f.i64_const(!0xFFF_i64);
+    f.i64_and();
+    f.i64_const(TlbLayout::VALID);
+    f.i64_or();
+    f.i64_eq();
+    f.i32_and();
+}
+
+/// Push the i32 host linear address `wrap((va + slot.addend))` for a fast-path hit. `eaddr` holds the
+/// slot address; the addend is chosen so this lands exactly on the guest byte in the RAM window.
+fn emit_hit_host_addr(f: &mut FuncBuilder, va_local: u32, eaddr: u32) {
+    f.local_get(va_local);
+    f.local_get(eaddr);
+    f.i64_load(0, TlbLayout::ADDEND_OFF);
+    f.i64_add();
+    f.i32_wrap_i64();
+}
+
+fn emit_load_tlb(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    rd: u8,
+    rs1: u8,
+    imm: i64,
+    kind: i32,
+) {
+    let tlb = &abi.tlb;
+    let width = load_kind_width(kind);
+    let va = f.local(ValType::I64);
+    let eaddr = f.local(ValType::I32);
+    // va = rs1 + imm
     push_reg(f, regs, abi, rs1);
     f.i64_const(imm);
     f.i64_add();
+    f.local_set(va);
+    emit_slot_addr(f, tlb, va, tlb.read_base, eaddr);
+    emit_hit_predicate(f, va, eaddr, width);
+    f.if_(BlockType::Value(ValType::I64));
+    // HIT: raw width/sign-extending load at the host address.
+    emit_hit_host_addr(f, va, eaddr);
+    match kind {
+        load_kind::LB => f.i64_load8_s(0, 0),
+        load_kind::LBU => f.i64_load8_u(0, 0),
+        load_kind::LH => f.i64_load16_s(0, 0),
+        load_kind::LHU => f.i64_load16_u(0, 0),
+        load_kind::LW => f.i64_load32_s(0, 0),
+        load_kind::LWU => f.i64_load32_u(0, 0),
+        load_kind::LD => f.i64_load(0, 0),
+        _ => unreachable!("bad load kind"),
+    }
+    f.else_();
+    // MISS: the softmmu does the whole access (translate + PMP + RAM/MMIO) and fills the TLB.
+    f.local_get(va);
+    f.i32_const(kind);
+    f.call(LOAD_IMPORT);
+    f.end();
+    set_reg(f, regs, rd);
+}
+
+fn emit_store_tlb(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    rs1: u8,
+    rs2: u8,
+    imm: i64,
+    width: i32,
+) {
+    let tlb = &abi.tlb;
+    let w = i64::from(width);
+    let va = f.local(ValType::I64);
+    let eaddr = f.local(ValType::I32);
+    // Materialize BOTH source registers into locals in the COMMON path, before the branch. If `rs2`
+    // were loaded lazily inside one arm, the other arm would see an uninitialized (zero) local — a
+    // silent wrong-value store. (This is the store analogue of always pre-loading the address base.)
+    push_reg(f, regs, abi, rs1);
+    f.i64_const(imm);
+    f.i64_add();
+    f.local_set(va);
+    let sval = f.local(ValType::I64);
     push_reg(f, regs, abi, rs2);
+    f.local_set(sval);
+    // Store uses the WRITE array — a read-only page is never filled here, so its store always misses
+    // to the softmmu, which faults exactly as the interpreter.
+    emit_slot_addr(f, tlb, va, tlb.write_base, eaddr);
+    emit_hit_predicate(f, va, eaddr, w);
+    f.if_(BlockType::Empty);
+    // HIT: raw store [host_addr, value]. Address must be pushed before the value.
+    emit_hit_host_addr(f, va, eaddr);
+    f.local_get(sval);
+    match width {
+        1 => f.i64_store8(0, 0),
+        2 => f.i64_store16(0, 0),
+        4 => f.i64_store32(0, 0),
+        8 => f.i64_store(0, 0),
+        _ => unreachable!("bad store width"),
+    }
+    f.else_();
+    // MISS: softmmu performs the access + fills the TLB.
+    f.local_get(va);
+    f.local_get(sval);
     f.i32_const(width);
     f.call(STORE_IMPORT);
+    f.end();
 }
 
 // ── terminator lowering ─────────────────────────────────────────────────────
