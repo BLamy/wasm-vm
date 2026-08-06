@@ -389,6 +389,13 @@ mod riscv_tests_gate {
     /// Run one ELF to completion. `jit`: interpreter-only when false; block cache + interrupt
     /// batching + JIT (threshold 1, a deliberately tiny cache to force flapping) when true.
     fn classify(elf: &[u8], jit: bool) -> Verdict {
+        classify_budget(elf, jit, None)
+    }
+
+    /// As `classify`, but when `max_batches` is `Some(n)` the JIT cache budget is forced to `n`
+    /// live batches (E4-T20) — pathological eviction churn — via the batch-LRU policy.
+    fn classify_budget(elf: &[u8], jit: bool, max_batches: Option<usize>) -> Verdict {
+        use wasm_vm_core::jit::{EvictPolicy, JitCacheBudget};
         let mut m = Machine::new(64 * 1024 * 1024);
         m.load_elf(elf).unwrap();
         if jit {
@@ -399,6 +406,13 @@ mod riscv_tests_gate {
             // flapping between tiers). Neither may corrupt state.
             m.set_block_cache_capacity(1);
             m.set_hotness_threshold(1);
+            if let Some(n) = max_batches {
+                m.set_evict_policy(EvictPolicy::BatchLru);
+                m.set_jit_budget(JitCacheBudget {
+                    max_batches: n,
+                    ..JitCacheBudget::DEFAULT
+                });
+            }
             m.set_jit(true);
         }
         match m.run(5_000_000) {
@@ -452,6 +466,36 @@ mod riscv_tests_gate {
         assert!(n > 50, "expected the full riscv-tests corpus, saw {n}");
         assert!(n_ui > 0, "expected rv64ui tests, saw {n_ui}");
         eprintln!("JIT verdict-identical across {n} riscv-tests ELFs ({n_ui} rv64ui)");
+    }
+
+    /// E4-T20 AC4: the full riscv-tests corpus stays byte-identical to the interpreter with the JIT
+    /// cache budget forced to `max_batches = 2` — pathological eviction churn (installing a 3rd batch
+    /// evicts the LRU batch down to the low-water mark on essentially every drain). Under-invalidation
+    /// or a stale call into an evicted batch would flip a verdict; none may.
+    #[test]
+    fn riscv_tests_verdict_identical_with_max_batches_2() {
+        let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/riscv-tests-bin");
+        let mut n = 0u32;
+        for entry in std::fs::read_dir(&dir).expect("riscv-tests-bin dir") {
+            let path = entry.unwrap().path();
+            if path.extension().is_some() || !path.is_file() {
+                continue;
+            }
+            let elf = std::fs::read(&path).unwrap();
+            if elf.get(..4) != Some(b"\x7fELF") {
+                continue;
+            }
+            let name = path.file_name().unwrap().to_string_lossy().into_owned();
+            let interp = classify(&elf, false);
+            let jit2 = classify_budget(&elf, true, Some(2));
+            assert_eq!(
+                interp, jit2,
+                "{name}: max_batches=2 eviction churn changed the verdict (interp={interp:?} jit={jit2:?})"
+            );
+            n += 1;
+        }
+        assert!(n > 50, "expected the full riscv-tests corpus, saw {n}");
+        eprintln!("JIT verdict-identical at max_batches=2 across {n} riscv-tests ELFs");
     }
 
     /// E4-T15 AC: the rv64uf (F) and rv64ud (D) floating-point suites reach the SAME verdict with

@@ -740,6 +740,79 @@ impl Machine {
             .unwrap_or((0, 0))
     }
 
+    /// E4-T20: set the JIT translation-cache budget enforced at install time (code bytes, live
+    /// batch count, table slots, metadata bytes). No-op without an executor.
+    pub fn set_jit_budget(&mut self, budget: jit::JitCacheBudget) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_jit_budget(budget);
+        }
+    }
+
+    /// E4-T20: select the eviction policy (full generational flush vs batch-LRU). No-op without an
+    /// executor.
+    pub fn set_evict_policy(&mut self, policy: jit::EvictPolicy) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_evict_policy(policy);
+        }
+    }
+
+    /// E4-T20: a snapshot of the JIT cache accounting (usage vs budget, evictions, re-translation
+    /// rate). Default (zeroed) without an executor.
+    pub fn jit_cache_stats(&self) -> jit::JitCacheStats {
+        self.executor
+            .as_deref()
+            .map(|e| e.jit_cache_stats())
+            .unwrap_or_default()
+    }
+
+    /// E4-T20 (AC3 directed-test / debug hook): force-evict the batch owning the block at `phys_pc`
+    /// through the single ordered `evict_batch` obligation path. Returns `true` iff a batch was
+    /// evicted.
+    pub fn evict_jit_batch_containing(&mut self, phys_pc: u64) -> bool {
+        let (evicted, list) = match self.executor.as_mut() {
+            Some(e) => (e.evict_batch_containing(phys_pc), e.take_evicted()),
+            None => return false,
+        };
+        // Re-nominate the evicted blocks so they re-translate when hot again (AC3).
+        for phys in list {
+            self.discovery.renominate(phys);
+        }
+        evicted
+    }
+
+    /// E4-T20: the `jitstat` debug dump — current usage vs budgets, eviction activity, and the
+    /// re-translation (thrash) rate. Usable as the browser-console `jitstat` payload.
+    pub fn jitstat(&self) -> alloc::string::String {
+        use alloc::format;
+        let s = self.jit_cache_stats();
+        let (modules, est) = self.jit_registry();
+        format!(
+            "=== jitstat ===\n\
+             policy={:?} generation={}\n\
+             code_bytes={}/{} ({:.1}%)  batches={}/{}  table_slots={}/{}  metadata_bytes={}/{}\n\
+             modules={} est_bytes={}\n\
+             evictions={} flushes={} installs={} retranslations={} retranslation_rate={:.4}\n",
+            s.policy,
+            s.generation,
+            s.code_bytes,
+            s.budget.code_bytes,
+            100.0 * s.code_bytes as f64 / s.budget.code_bytes.max(1) as f64,
+            s.batches,
+            s.budget.max_batches,
+            s.table_slots,
+            s.budget.table_slots,
+            s.metadata_bytes,
+            s.budget.metadata_bytes,
+            modules,
+            est,
+            s.evictions,
+            s.flushes,
+            s.installs,
+            s.retranslations,
+            s.retranslation_rate(),
+        )
+    }
+
     /// E3-T12c3: bind this machine to a base disk image + emulator build for snapshot coherence.
     /// `save_resume` stamps these into the header and `load_resume` refuses a snapshot whose header
     /// disagrees — a resume onto a different image or a stale build is rejected before any mutation.
@@ -1068,6 +1141,8 @@ impl Machine {
         report.discovery.cache_flushes = cache_flushes;
         report.discovery.blocks_discarded = blocks_discarded;
         report.discovery.fence_i = self.block_cache.fence_i_noops();
+        // E4-T20: fold in the JIT translation-cache accounting when an executor is installed.
+        report.jit_cache = self.executor.as_deref().map(|e| e.jit_cache_stats());
         report
     }
 
@@ -2266,6 +2341,11 @@ impl Machine {
                 group.iter().map(|&i| valid[i].clone()).collect();
             let intra = intra_edges_for_group(&valid, &group);
             exec.install_batch(&group_blocks, &intra);
+        }
+        // E4-T20: any batch the install-time budget enforcement EVICTED must be re-nominated in
+        // discovery, else dedup would suppress its re-translation forever (AC3 thrash signal).
+        for phys in exec.take_evicted() {
+            self.discovery.renominate(phys);
         }
         self.executor = Some(exec);
     }

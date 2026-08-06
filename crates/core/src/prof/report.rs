@@ -141,6 +141,9 @@ pub struct ProfReport {
     /// depth + high-water mark). Filled by [`crate::Machine::prof_report`]; default/zero when a
     /// report is built directly off a [`super::ProfStats`] with no machine attached.
     pub discovery: crate::dispatch::DiscoveryStats,
+    /// E4-T20: the JIT translation-cache accounting (usage vs budget, evictions, re-translation
+    /// rate). `Some` only when [`crate::Machine::prof_report`] is called with an executor installed.
+    pub jit_cache: Option<crate::jit::JitCacheStats>,
 }
 
 impl ProfReport {
@@ -172,6 +175,13 @@ impl ProfReport {
             "jit discovery: nominated={} deduped={} dropped_stale={} dropped_overflow={} queue={} hwm={} candidates={} gen={}\n",
             d.nominated, d.deduped, d.dropped_stale, d.dropped_overflow, d.queue_depth, d.queue_hwm, d.candidates, d.generation,
         ));
+        if let Some(j) = &self.jit_cache {
+            s.push_str(&format!(
+                "jit cache: code_bytes={}/{} batches={}/{} evictions={} flushes={} installs={} retranslations={} rate={:.4} gen={}\n",
+                j.code_bytes, j.budget.code_bytes, j.batches, j.budget.max_batches,
+                j.evictions, j.flushes, j.installs, j.retranslations, j.retranslation_rate(), j.generation,
+            ));
+        }
         s
     }
 

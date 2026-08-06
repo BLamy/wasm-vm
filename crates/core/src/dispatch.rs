@@ -561,6 +561,17 @@ impl BlockDiscovery {
         };
     }
 
+    /// E4-T20: reset the hotness + dedup state for ONE block (its physical entry PC) WITHOUT a
+    /// generation bump, so a block whose compiled batch was budget-EVICTED is re-nominated from cold
+    /// the next time it runs hot. Unlike [`Self::on_invalidate`] this is surgical — other blocks'
+    /// counters and the decoded-block cache are untouched (a batch-LRU eviction must not flush the
+    /// whole decoded cache). The still-valid decoded bytes stay cached; only the "already nominated"
+    /// suppression is cleared so re-translation can happen.
+    pub fn renominate(&mut self, phys_pc: u64) {
+        self.counts.remove(&phys_pc);
+        self.state.remove(&phys_pc);
+    }
+
     /// Record an invalidation (fence.i / SMC page-flush / whole-cache flush): bump the
     /// generation and clear the per-block hotness + dedup state so a re-decoded hot block is
     /// re-nominated from scratch. Pending queued requests are LEFT in place deliberately — they

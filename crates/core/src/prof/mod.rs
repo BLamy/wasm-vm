@@ -199,6 +199,7 @@ impl ProfStats {
             walk_count,
             collisions: self.hist.collisions(),
             discovery: crate::dispatch::DiscoveryStats::default(),
+            jit_cache: None,
         }
     }
 }

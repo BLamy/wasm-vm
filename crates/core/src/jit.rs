@@ -93,6 +93,104 @@ pub struct JitExit {
     pub trap: Option<crate::hart::Trap>,
 }
 
+/// E4-T20: the translation-cache budget (`docs/jit-architecture.md` §7 D10). Enforced at install
+/// time; when a would-be install pushes any dimension over its high-water mark, eviction runs down
+/// to a low-water mark (hysteresis) before the new batch is admitted. Because dropping a wasm
+/// Instance's references does NOT free its memory synchronously (browser GC / wasmtime Store
+/// reality), enforcement uses OUR OWN byte estimates ([`CompiledBlockExecutor::estimated_bytes`]),
+/// never observed engine/browser memory.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct JitCacheBudget {
+    /// Max estimated live translated-code bytes (emitted WASM + per-instance overhead).
+    pub code_bytes: u64,
+    /// Max live Modules/Instances (batches). Eviction granularity is the batch (E4-T19): you cannot
+    /// free half a Module.
+    pub max_batches: usize,
+    /// Max allocated funcref-table slots (block table indices).
+    pub table_slots: usize,
+    /// Max estimated metadata bytes (link-slot array + table + incoming-edge maps).
+    pub metadata_bytes: u64,
+}
+
+impl JitCacheBudget {
+    /// The `docs/jit-architecture.md` §7 default: 32 MiB code, 256 Modules. `table_slots` /
+    /// `metadata_bytes` are generous headroom around those (≈128 blocks/batch × 256 batches).
+    pub const DEFAULT: JitCacheBudget = JitCacheBudget {
+        code_bytes: 32 * 1024 * 1024,
+        max_batches: 256,
+        table_slots: 256 * 128,
+        metadata_bytes: 8 * 1024 * 1024,
+    };
+}
+
+impl Default for JitCacheBudget {
+    fn default() -> Self {
+        JitCacheBudget::DEFAULT
+    }
+}
+
+/// E4-T20: the two eviction policies A/B'd behind a flag. Both drive the SAME single
+/// [`evict_batch`](CompiledBlockExecutor::evict_batch_containing) obligation path; they differ only
+/// in WHICH batches they pick at the high-water mark.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum EvictPolicy {
+    /// (a) Full generational flush at high-water — QEMU `tb_flush` style: drop the whole cache, let
+    /// hot code re-translate. Simple, correct, competitive.
+    Flush,
+    /// (b) Batch-LRU by last-executed coarse tick (stamped at dispatch entries; chained execution
+    /// updates lazily). Evicts the least-recently-run batch repeatedly down to the low-water mark.
+    BatchLru,
+}
+
+impl Default for EvictPolicy {
+    /// Provisional default pending the A/B ledger (deferred to dev). `BatchLru` is the more graceful
+    /// degrader under a working set that fits after a little churn; the choice is recorded as debt.
+    fn default() -> Self {
+        EvictPolicy::BatchLru
+    }
+}
+
+/// E4-T20: a snapshot of the JIT translation-cache accounting — current usage vs budget, eviction
+/// activity, and the re-translation rate (blocks recompiled after eviction — the thrash signal).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+pub struct JitCacheStats {
+    /// Current estimated live code bytes.
+    pub code_bytes: u64,
+    /// Current live batch (Module/Instance) count.
+    pub batches: usize,
+    /// Current allocated table slots.
+    pub table_slots: usize,
+    /// Current estimated metadata bytes.
+    pub metadata_bytes: u64,
+    /// The active budget.
+    pub budget: JitCacheBudget,
+    /// The active policy.
+    pub policy: EvictPolicy,
+    /// Cumulative batches evicted (budget-driven, through the single `evict_batch` path).
+    pub evictions: u64,
+    /// Cumulative full generational-flush events.
+    pub flushes: u64,
+    /// Cumulative blocks recompiled AFTER having been evicted — the thrash numerator. Divide by
+    /// `installs` for the re-translation rate.
+    pub retranslations: u64,
+    /// Cumulative blocks installed (compiled) — the re-translation-rate denominator.
+    pub installs: u64,
+    /// The eviction/invalidation generation counter (E4-T08); bumped on every evict/flush so any
+    /// stale cached reference is refused.
+    pub generation: u64,
+}
+
+impl JitCacheStats {
+    /// Re-translation rate = retranslations / installs (the thrash signal). `0.0` before any install.
+    pub fn retranslation_rate(&self) -> f64 {
+        if self.installs == 0 {
+            0.0
+        } else {
+            self.retranslations as f64 / self.installs as f64
+        }
+    }
+}
+
 /// The platform-boundary trait the run loop calls to run T2 (compiled) blocks. Implemented natively
 /// by `wasm-vm-jit-runtime` (wasmtime); the browser impl is E4-T19. Object-safe so [`Machine`] can
 /// hold a `Box<dyn CompiledBlockExecutor>` without pulling any engine into `no_std` core.
@@ -167,6 +265,45 @@ pub trait CompiledBlockExecutor {
     /// Count of guest instructions retired inside JIT-executed blocks (numerator of the
     /// translated-instruction ratio).
     fn retired_via_jit(&self) -> u64;
+
+    // ── E4-T20: cache budgets, eviction policy, and stats (default impls: an executor with no
+    //    budget enforcement is a valid degenerate) ──
+
+    /// Set the translation-cache budget enforced at install time.
+    fn set_jit_budget(&mut self, _budget: JitCacheBudget) {}
+
+    /// The active budget.
+    fn jit_budget(&self) -> JitCacheBudget {
+        JitCacheBudget::DEFAULT
+    }
+
+    /// Select the eviction policy (A/B flag).
+    fn set_evict_policy(&mut self, _policy: EvictPolicy) {}
+
+    /// The active eviction policy.
+    fn evict_policy(&self) -> EvictPolicy {
+        EvictPolicy::default()
+    }
+
+    /// A snapshot of the cache accounting (usage vs budget, evictions, re-translation rate).
+    fn jit_cache_stats(&self) -> JitCacheStats {
+        JitCacheStats::default()
+    }
+
+    /// E4-T20: drain the list of physical entry PCs whose compiled batch was EVICTED (budget-driven
+    /// or directed) since the last drain. The run loop feeds these back to block discovery
+    /// ([`crate::dispatch::BlockDiscovery::renominate`]) so an evicted-but-still-hot block is
+    /// re-nominated and re-translated instead of being suppressed by dedup forever. Default empty.
+    fn take_evicted(&mut self) -> alloc::vec::Vec<u64> {
+        alloc::vec::Vec::new()
+    }
+
+    /// Directed-test / debug hook (AC3 "eviction under fire"): force-evict the batch that owns the
+    /// block at `phys_pc`, through the single ordered `evict_batch` obligation path. Returns `true`
+    /// iff a batch was evicted. A no-op that returns `false` if no such block is compiled.
+    fn evict_batch_containing(&mut self, _phys_pc: u64) -> bool {
+        false
+    }
 
     // ── E4-T18: block chaining (default impls: a non-chaining executor is a valid degenerate) ──
 

@@ -32,12 +32,14 @@ use std::collections::HashMap;
 
 use anyhow::anyhow;
 use jit_translate::{Abi, translate_batch};
+use std::collections::HashSet;
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::DecodedBlock;
 use wasm_vm_core::hart::{Hart, Trap};
+
 use wasm_vm_core::jit::{
-    CHAIN_DEPTH_BUDGET_DEFAULT, CHAIN_DEPTH_HIST_LEN, ChainStats, CompiledBlockExecutor, ExitCode,
-    JitExit, abi,
+    CHAIN_DEPTH_BUDGET_DEFAULT, CHAIN_DEPTH_HIST_LEN, ChainStats, CompiledBlockExecutor,
+    EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats, JitExit, abi,
 };
 use wasm_vm_core::mmio::SystemBus;
 use wasmtime::{Caller, Engine, Instance, Linker, Memory, Module, Store, TypedFunc};
@@ -92,6 +94,9 @@ struct Batch {
     members: Vec<u64>,
     /// Estimated bytes held live by this Module+Instance (accounting for E4-T20 budgets).
     est_bytes: u64,
+    /// E4-T20: coarse tick of the most recent execution of ANY member — the batch-LRU key. Stamped
+    /// at each dispatch entry into a member (`execute`); chained execution updates it lazily.
+    last_tick: u64,
 }
 
 /// E4-T19 registry estimate: fixed per-Instance overhead beyond the emitted code bytes — dominated by
@@ -145,6 +150,29 @@ pub struct WasmtimeExecutor {
     batches: HashMap<u32, Batch>,
     /// Monotonic batch-id allocator.
     next_batch_id: u32,
+    // ── E4-T20 budgets + eviction ──
+    /// The translation-cache budget enforced at install time.
+    budget: JitCacheBudget,
+    /// The active eviction policy (A/B flag).
+    policy: EvictPolicy,
+    /// Coarse execution tick — the batch-LRU clock, advanced once per `execute`.
+    clock: u64,
+    /// Eviction/invalidation generation (E4-T08); bumped by every `evict_batch`/flush.
+    generation: u64,
+    /// Physical entry PCs that have been EVICTED and not yet re-installed — the re-translation
+    /// (thrash) detector: installing a block whose phys is in this set counts one re-translation.
+    evicted_phys: HashSet<u64>,
+    /// Cumulative budget-driven batch evictions.
+    evictions: u64,
+    /// Cumulative full generational-flush events.
+    flushes: u64,
+    /// Cumulative blocks recompiled after eviction (thrash numerator).
+    retranslations: u64,
+    /// Cumulative blocks installed (thrash denominator).
+    installs: u64,
+    /// Physical entry PCs evicted since the last [`Self::take_evicted`] drain — fed back to block
+    /// discovery so an evicted-but-hot block is re-nominated (E4-T20 AC3).
+    newly_evicted: Vec<u64>,
 }
 
 impl Default for WasmtimeExecutor {
@@ -312,6 +340,143 @@ impl WasmtimeExecutor {
             batch_size: DEFAULT_BATCH_SIZE,
             batches: HashMap::new(),
             next_batch_id: 0,
+            budget: JitCacheBudget::DEFAULT,
+            policy: EvictPolicy::default(),
+            clock: 0,
+            generation: 0,
+            evicted_phys: HashSet::new(),
+            evictions: 0,
+            flushes: 0,
+            retranslations: 0,
+            installs: 0,
+            newly_evicted: Vec::new(),
+        }
+    }
+
+    /// E4-T20: estimated metadata bytes — the link-slot array, the block table, and the
+    /// incoming-edge map. Coarse but consistent (matches the budget's `metadata_bytes` meaning).
+    fn metadata_bytes_est(&self) -> u64 {
+        let slots = (self.slots.len() * 4) as u64;
+        let table = (self.table.len() * 8) as u64;
+        let incoming: u64 = self.incoming.values().map(|v| (v.len() * 4) as u64).sum();
+        slots + table + incoming
+    }
+
+    /// E4-T20: pick the least-recently-executed batch (smallest `last_tick`) — the batch-LRU victim.
+    fn lru_victim(&self) -> Option<u32> {
+        self.batches
+            .iter()
+            .min_by_key(|(id, b)| (b.last_tick, **id))
+            .map(|(id, _)| *id)
+    }
+
+    /// E4-T20 — THE eviction correctness core. A SINGLE ordered path that discharges every eviction
+    /// obligation for one batch, in this DOCUMENTED order (`docs/jit-architecture.md` §5 eviction
+    /// row); both policies and the directed AC3 hook call exactly this. Ordering is load-bearing:
+    /// edges MUST be unlinked before the table entry is freed, or a live link-slot could reach a
+    /// freed/re-used table slot (the ordering attack in the ticket's adversarial §2).
+    ///
+    /// 1. **Unlink incoming + outgoing edges** (E4-T18): `remove_block` restores the dispatch stub in
+    ///    every incoming slot from live predecessors AND clears this block's own outgoing slots.
+    /// 2. **Uninstall the table entry / slot range** (E4-T18): `remove_block` frees the table index
+    ///    and slot range so no `call_indirect` can reach the dead block.
+    /// 3. **Clear the SMC page registration** (E4-T17): dropping the block from `self.blocks` removes
+    ///    its `page_frame` membership, so a later `invalidate_page` no longer scans it.
+    /// 4. **Drop the Instance references + decrement the registry** (`batches.remove`). The wasm
+    ///    Instance memory itself is freed only when the Store drops — the GC reality the budget
+    ///    accounts for with OUR byte estimate, never observed engine memory.
+    /// 5. **Bump the generation** (E4-T08) so any stale cached reference is refused.
+    ///
+    /// Post-conditions (debug-asserted): the batch is gone; no evicted member is live or in the
+    /// table map; and NO live link-slot points into any of the evicted members' (now-freed) table
+    /// indices.
+    fn evict_batch(&mut self, batch_id: u32) -> bool {
+        let Some(b) = self.batches.remove(&batch_id) else {
+            return false;
+        };
+        let members = b.members;
+        // Capture the members' table indices BEFORE unlink, for the post-condition scan.
+        #[cfg(debug_assertions)]
+        let dead_tis: Vec<u32> = members
+            .iter()
+            .filter_map(|p| self.phys_to_index.get(p).copied())
+            .collect();
+        // Steps 1–3 per member, in order, via the audited E4-T18 unlink core.
+        for &phys in &members {
+            self.remove_block(phys);
+            // Step: retranslation bookkeeping — this block may come back hot later.
+            self.evicted_phys.insert(phys);
+            // Feed the evicted PC back to discovery (via the run loop) so it can be re-nominated.
+            self.newly_evicted.push(phys);
+        }
+        // Step 4: registry decrement already done by `batches.remove` above.
+        // Step 5: bump the generation.
+        self.generation = self.generation.wrapping_add(1);
+        self.evictions += 1;
+        // Post-conditions.
+        debug_assert!(!self.batches.contains_key(&batch_id));
+        #[cfg(debug_assertions)]
+        {
+            for &phys in &members {
+                debug_assert!(
+                    !self.blocks.contains_key(&phys),
+                    "evicted member still live in block cache"
+                );
+                debug_assert!(
+                    !self.phys_to_index.contains_key(&phys),
+                    "evicted member still in table map"
+                );
+            }
+            debug_assert!(
+                self.slots.iter().all(|s| !dead_tis.contains(s)),
+                "a live link-slot still points into the evicted batch (unlink/uninstall ordering bug)"
+            );
+        }
+        true
+    }
+
+    /// E4-T20: enforce the budget for a would-be install of `incoming_bytes` and `incoming_batches`
+    /// new batches. If any dimension would cross its high-water mark, evict per the active policy
+    /// down to the low-water mark (hysteresis) so admission does not immediately re-trigger.
+    fn enforce_budget(&mut self, incoming_bytes: u64, incoming_batches: usize) {
+        let bud = self.budget;
+        let over_high = |s: &Self| {
+            s.batches.len() + incoming_batches > bud.max_batches
+                || s.estimated_bytes() + incoming_bytes > bud.code_bytes
+                || s.table.len() > bud.table_slots
+                || s.metadata_bytes_est() > bud.metadata_bytes
+        };
+        if !over_high(self) {
+            return;
+        }
+        match self.policy {
+            EvictPolicy::Flush => {
+                // Full generational flush (QEMU tb_flush): drop the whole cache through the one
+                // ordered path, then it is a single flush event.
+                let ids: Vec<u32> = self.batches.keys().copied().collect();
+                for id in ids {
+                    self.evict_batch(id);
+                }
+                self.flushes += 1;
+            }
+            EvictPolicy::BatchLru => {
+                // Evict the least-recently-executed batch repeatedly down to the low-water mark
+                // (75% of each budget), always leaving room for the incoming batch.
+                let low_batches = ((bud.max_batches * 3) / 4)
+                    .min(bud.max_batches.saturating_sub(incoming_batches));
+                let low_bytes = (bud.code_bytes / 4) * 3;
+                while !self.batches.is_empty()
+                    && (self.batches.len() + incoming_batches > low_batches
+                        || self.estimated_bytes() + incoming_bytes > low_bytes
+                        || self.table.len() > bud.table_slots
+                        || self.metadata_bytes_est() > bud.metadata_bytes)
+                {
+                    let Some(victim) = self.lru_victim() else {
+                        break;
+                    };
+                    self.evict_batch(victim);
+                }
+            }
         }
     }
 
@@ -472,6 +637,10 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                 return;
             }
         };
+        // E4-T20: enforce the budget BEFORE admitting the new batch, so eviction makes room for it
+        // (rather than evicting the batch we just installed). One batch of `est_bytes` incoming.
+        let est_bytes = bytes.len() as u64 + INSTANCE_OVERHEAD_BYTES;
+        self.enforce_budget(est_bytes, 1);
         let module = match Module::new(&self.engine, &bytes) {
             Ok(m) => m,
             Err(_) => return,
@@ -493,6 +662,12 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                 Ok(f) => f,
                 Err(_) => continue,
             };
+            // E4-T20: thrash accounting — a block coming back after having been evicted is a
+            // re-translation.
+            if self.evicted_phys.remove(&b.phys_start) {
+                self.retranslations += 1;
+            }
+            self.installs += 1;
             let nslots = Self::nslots_for(b);
             let (table_index, slot_base) = self.alloc_block(b.phys_start, nslots);
             self.blocks.insert(
@@ -514,8 +689,14 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             return;
         }
         // Registry accounting: emitted code bytes + one fixed per-instance overhead per module.
-        let est_bytes = bytes.len() as u64 + INSTANCE_OVERHEAD_BYTES;
-        self.batches.insert(batch_id, Batch { members, est_bytes });
+        self.batches.insert(
+            batch_id,
+            Batch {
+                members,
+                est_bytes,
+                last_tick: self.clock,
+            },
+        );
     }
 
     fn set_batch_size(&mut self, k: usize) {
@@ -539,10 +720,16 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
     }
 
     fn execute(&mut self, phys_pc: u64, hart: &mut Hart, bus: &mut SystemBus) -> Option<JitExit> {
-        let (run, mem, nops) = {
+        let (run, mem, nops, batch_id) = {
             let c = self.blocks.get(&phys_pc)?;
-            (c.run.clone(), c.mem, c.nops)
+            (c.run.clone(), c.mem, c.nops, c.batch_id)
         };
+        // E4-T20: stamp the batch-LRU clock at this dispatch entry (chained execution updates the
+        // owning batch's tick lazily, on each re-entry through `execute`).
+        self.clock = self.clock.wrapping_add(1);
+        if let Some(b) = self.batches.get_mut(&batch_id) {
+            b.last_tick = self.clock;
+        }
         // Sync guest registers into the module's CpuState region (x0..x31; x0 is a hardwired 0).
         for r in 0..32u8 {
             let off = abi::XREG_BASE + u32::from(r) * 8;
@@ -644,6 +831,10 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
         self.free_slots1.clear();
         self.free_slots2.clear();
         self.batches.clear();
+        // E4-T20: a whole-cache flush bumps the generation and clears the post-eviction
+        // re-translation tracking (those blocks are gone by reset/fence.i, not by budget churn).
+        self.generation = self.generation.wrapping_add(1);
+        self.evicted_phys.clear();
     }
 
     fn invalidate_page(&mut self, frame: u64) {
@@ -755,5 +946,52 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 
     fn chain_stats(&self) -> ChainStats {
         self.stats
+    }
+
+    // ── E4-T20: budgets, eviction policy, stats ──
+
+    fn set_jit_budget(&mut self, budget: JitCacheBudget) {
+        self.budget = budget;
+        // A shrunk budget applies immediately: evict down to fit (no incoming batch this call).
+        self.enforce_budget(0, 0);
+    }
+
+    fn jit_budget(&self) -> JitCacheBudget {
+        self.budget
+    }
+
+    fn set_evict_policy(&mut self, policy: EvictPolicy) {
+        self.policy = policy;
+    }
+
+    fn evict_policy(&self) -> EvictPolicy {
+        self.policy
+    }
+
+    fn jit_cache_stats(&self) -> JitCacheStats {
+        JitCacheStats {
+            code_bytes: self.estimated_bytes(),
+            batches: self.batches.len(),
+            table_slots: self.table.len(),
+            metadata_bytes: self.metadata_bytes_est(),
+            budget: self.budget,
+            policy: self.policy,
+            evictions: self.evictions,
+            flushes: self.flushes,
+            retranslations: self.retranslations,
+            installs: self.installs,
+            generation: self.generation,
+        }
+    }
+
+    fn take_evicted(&mut self) -> Vec<u64> {
+        std::mem::take(&mut self.newly_evicted)
+    }
+
+    fn evict_batch_containing(&mut self, phys_pc: u64) -> bool {
+        let Some(bid) = self.blocks.get(&phys_pc).map(|c| c.batch_id) else {
+            return false;
+        };
+        self.evict_batch(bid)
     }
 }
