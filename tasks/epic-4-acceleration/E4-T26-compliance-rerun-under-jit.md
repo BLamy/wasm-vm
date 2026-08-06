@@ -3,7 +3,7 @@ id: E4-T26
 epic: 4
 title: Full riscv-tests and RISCOF compliance rerun under JIT — the correctness gate
 priority: 426
-status: pending
+status: partially-verified
 depends_on: [E4-T16, E4-T17, E4-T25]
 estimate: M
 capstone: false
@@ -60,4 +60,44 @@ on a cold clone (no cached translations/artifacts) — cache-dependent green ref
 a churn cell that never evicts is testing nothing and refutes that row's claim.
 
 ## Verification log
-(empty)
+
+### 2026-08-06 — native riscv-tests matrix landed + verified (headless)
+
+Driver: `crates/jit-runtime/tests/jit_execution.rs` mod `jit_config_matrix` — parameterized over
+four `JitConfig` rows, each running the WHOLE vendored corpus (127 ELFs) and asserting every ELF's
+JIT verdict == the interpreter verdict. Repro: `tools/compliance.py --jit <config|all>`.
+
+Real output (`cargo test -p wasm-vm-jit-runtime --test jit_execution jit_config_matrix -- --nocapture`):
+
+```
+[jit-default]    verdict-identical across 127 riscv-tests ELFs (threshold=64, chaining=true)  — 2 blocks compiled,    0 evictions
+[jit-threshold0] verdict-identical across 127 riscv-tests ELFs (threshold=1,  chaining=true)  — 5019 blocks compiled, 0 evictions
+[jit-churn]      verdict-identical across 127 riscv-tests ELFs (threshold=1, max_batches=2)    — 159 blocks compiled,  66 evictions
+[jit-nochain]    verdict-identical across 127 riscv-tests ELFs (threshold=1,  chaining=false) — 5019 blocks compiled, 0 evictions
+no-waivers gate: 127 ELFs, matrix corpus == Epic 1 baseline
+test result: ok. 5 passed; 0 failed
+```
+
+Gates run + green here:
+- All four native JIT configs verdict-identical over the full corpus (above).
+- `tools/compliance.py --jit threshold0` — end-to-end from a clean invocation, exit 0.
+- Zero-waivers: `evidence/e4-t26/manifest-diff.txt` empty (`no_waivers_vs_epic1_baseline` in-test).
+- churn actually churns: 66 batch evictions (adversarial verification #5).
+- threshold0 forces every block (incl. F/D/CSR/ecall never-translated blocks) through the JIT
+  pipeline (5019 compiled) — closes the "the JIT never saw them" gap; suites still Pass.
+- `cargo fmt` (touched files) + `cargo clippy -p wasm-vm-jit-runtime --tests -D warnings` clean.
+- `predecode_diff` byte-identical (2 passed).
+- `docs/jit-architecture.md` §10a: authoritative never-translated list + threshold0 cross-ref.
+
+No failures found → no new corpus repro needed (the four configs are all verdict-identical).
+
+### Verification debt (deferred — honest)
+- **RISCOF signature-vs-Sail under jit-threshold0**: RISCOF venv present, but the Sail reference
+  binary (`sail_riscv_sim`) is NOT installed on this mac. Runner wired
+  (`tools/compliance.py --riscof --jit <c>` → `WASMVM_JIT=<c> bash tools/run_riscof.sh`); dev-box
+  command documented. NOTE: `tools/run_riscof.sh` does not yet consume `WASMVM_JIT` — the DUT
+  plugin must be taught to force the config knobs (follow-up on dev).
+- **Browser cells** (Chrome/Firefox riscv-tests + RISCOF): mac OS-reaps long browser boots → dev/CI.
+- **CI branch-protection wiring + ≤90-min parallel matrix budget**: needs repo admin.
+- Unchanged-from-HEAD gates not re-run here (no code touched in those crates): lockstep_fuzz full
+  suite, jit-translate differential, wasm32 no_std + `crates/wasm` release build.

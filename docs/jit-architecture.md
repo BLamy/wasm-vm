@@ -481,6 +481,34 @@ gcc working-set arithmetic (gcc bench deferred), and that single-tier T2 suffice
 
 ---
 
+## 10a. The final "what is NEVER translated" list — closed by the threshold-0 compliance run (E4-T26)
+
+§1 listed what is never JITted "day one". E4-T26 makes that list **authoritative and enforced**.
+A block containing any of the following is returned `Unsupported` by `translate_block` (proven
+op-by-op in `crates/jit-translate/tests/differential.rs`) and stays on the interpreter (T1/T0) via
+the JIT pipeline's **fallback-decision path** — it is *not* that "the JIT never saw" these blocks:
+
+| Class | Why interpreter-only | Policy source |
+|---|---|---|
+| **F/D floating-point** (rv64uf/rv64ud ops) | side-exit-all to the proven `rustc_apfloat` softfloat — measured dynamic FP share 0.0004 % of a Linux boot; inline f64 risks NaN-box/`fcsr` divergence (also: no_std wasm32 has no f64 intrinsics) | E4-T15 / `docs/jit-fp-policy.md` |
+| **CSR read/write** (`csrrw*`/`csrrs*`/`csrrc*`) | a CSR write can change `mstatus`/`satp`/`mie` mid-stream — device-sync + translation semantics; already an E4-T05 block terminator, side-exit per E4-T12 | E4-T05 / E4-T12 |
+| **`ecall`/`ebreak`/`wfi`/`sfence.vma`/`fence`/`fence.i`** | terminators the runtime owns (SBI, trap delivery, idle path, TLB/cache coherence) | §1 / E4-T12 |
+| **Cold code + thrashing SMC hot regions** | below the hotness threshold, or a page whose blocks are repeatedly killed by self-modification (pinned to interp to avoid compile churn) | §1 / E4-T17 |
+
+**The threshold-0 evidence proves these still execute correctly via fallback, not that the JIT
+silently skipped them.** The `jit-threshold0` matrix row (`crates/jit-runtime/tests/jit_execution.rs`
+`jit_config_matrix::matrix_jit_threshold0`) forces the hotness threshold to its minimum (1), so
+**every** block — including every F/D, CSR, and `ecall` block above — is nominated on its first
+execution and driven through the JIT pipeline's translate + fallback-decision code. Across the whole
+Epic 1 riscv-tests corpus (**127 ELFs incl. rv64uf/rv64ud/rv64mi CSR+trap suites**) the verdict stays
+**byte/verdict-identical to the interpreter** with **5019 blocks compiled** — the mixed integer
+blocks compile, the never-translated blocks take the fallback path, and the suites (rv64uf/rv64ud
+included) still **Pass**. This is the enforced gate: a single non-identical ELF in any of the four
+configs (`jit-default`, `jit-threshold0`, `jit-churn`, `jit-nochain`) is a refutation.
+
+Reproduce any cell: `tools/compliance.py --jit <config>`. Manifest diff vs the Epic 1 baseline
+(zero waivers) + per-config pass counts: `evidence/e4-t26/`.
+
 ## 11. Review
 
 Per the AC ("doc reviewed in a separate session; review comments and resolutions committed"), this
