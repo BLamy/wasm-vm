@@ -32,9 +32,13 @@ use std::collections::HashMap;
 
 use anyhow::anyhow;
 use jit_translate::{Abi, translate_block};
+use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::DecodedBlock;
 use wasm_vm_core::hart::{Hart, Trap};
-use wasm_vm_core::jit::{CompiledBlockExecutor, ExitCode, JitExit, abi};
+use wasm_vm_core::jit::{
+    CHAIN_DEPTH_BUDGET_DEFAULT, CHAIN_DEPTH_HIST_LEN, ChainStats, CompiledBlockExecutor, ExitCode,
+    JitExit, abi,
+};
 use wasm_vm_core::mmio::SystemBus;
 use wasmtime::{Caller, Engine, Instance, Linker, Memory, Module, Store, TypedFunc};
 
@@ -66,7 +70,20 @@ struct Compiled {
     mem: Memory,
     page_frame: u64,
     nops: u64,
+    /// E4-T18: this block's stable table index (its funcref-table slot in the browser form; here the
+    /// identity a link-slot stores). Freed on invalidation so the entry is never called after death.
+    table_index: u32,
+    /// E4-T18: base into [`WasmtimeExecutor::slots`] of this block's outgoing link-slots.
+    slot_base: u32,
+    /// E4-T18: number of outgoing link-slots (2 for a conditional branch — taken + not-taken —
+    /// else 1). A dynamic-target `jalr`/single-successor still has 1 slot but it is never linked.
+    nslots: u8,
 }
+
+/// E4-T18: the dispatch-stub sentinel a link-slot holds when NOT linked to a successor — reading it
+/// means "return to the dispatch loop". (In the browser in-wasm form this is the funcref-table index
+/// of the dispatch stub; here it is an out-of-band marker.)
+const STUB: u32 = u32::MAX;
 
 /// The native wasmtime-backed [`CompiledBlockExecutor`].
 pub struct WasmtimeExecutor {
@@ -76,6 +93,27 @@ pub struct WasmtimeExecutor {
     blocks: HashMap<u64, Compiled>,
     executed_blocks: u64,
     retired_via_jit: u64,
+    // ── E4-T18 chaining state ──
+    /// A/B flag; on by default so the JIT chains once armed.
+    chaining: bool,
+    /// Max links per chain before a mandatory dispatch return.
+    chain_depth_budget: u32,
+    /// The link-slot array (the "fixed linear-memory array" of the design; here a `Vec`). Each slot
+    /// holds a successor's `table_index` or [`STUB`]. Indexed by `slot_base + edge`.
+    slots: Vec<u32>,
+    /// Table index → the physical entry PC of the live block that owns it (`None` = freed).
+    table: Vec<Option<u64>>,
+    /// Physical entry PC → table index, for the live blocks (mirrors `table`).
+    phys_to_index: HashMap<u64, u32>,
+    /// Incoming-edge map: target table index → the slot indices that currently point at it. This is
+    /// what unlink walks to restore stubs on invalidation; pruned as links are cut.
+    incoming: HashMap<u32, Vec<u32>>,
+    /// Free lists so table indices and slot ranges are reused after invalidation (bounds growth
+    /// under eviction/SMC churn). Slot ranges are size-classed (1 or 2).
+    free_table: Vec<u32>,
+    free_slots1: Vec<u32>,
+    free_slots2: Vec<u32>,
+    stats: ChainStats,
 }
 
 impl Default for WasmtimeExecutor {
@@ -230,6 +268,106 @@ impl WasmtimeExecutor {
             blocks: HashMap::new(),
             executed_blocks: 0,
             retired_via_jit: 0,
+            chaining: true,
+            chain_depth_budget: CHAIN_DEPTH_BUDGET_DEFAULT,
+            slots: Vec::new(),
+            table: Vec::new(),
+            phys_to_index: HashMap::new(),
+            incoming: HashMap::new(),
+            free_table: Vec::new(),
+            free_slots1: Vec::new(),
+            free_slots2: Vec::new(),
+            stats: ChainStats::default(),
+        }
+    }
+
+    /// E4-T18: how many outgoing link-slots a block needs — 2 for a conditional branch (taken +
+    /// not-taken edges are both statically known), else 1.
+    fn nslots_for(block: &DecodedBlock) -> u8 {
+        match block.ops.last().map(|o| &o.instr) {
+            Some(
+                Instr::Beq { .. }
+                | Instr::Bne { .. }
+                | Instr::Blt { .. }
+                | Instr::Bge { .. }
+                | Instr::Bltu { .. }
+                | Instr::Bgeu { .. },
+            ) => 2,
+            _ => 1,
+        }
+    }
+
+    /// E4-T18: allocate a table index + a stub-initialized slot range for a freshly compiled block,
+    /// registering it in `table`/`phys_to_index`. Reuses freed entries first.
+    fn alloc_block(&mut self, phys: u64, nslots: u8) -> (u32, u32) {
+        let table_index = self.free_table.pop().unwrap_or_else(|| {
+            let i = self.table.len() as u32;
+            self.table.push(None);
+            i
+        });
+        self.table[table_index as usize] = Some(phys);
+        self.phys_to_index.insert(phys, table_index);
+        let free = if nslots == 1 {
+            &mut self.free_slots1
+        } else {
+            &mut self.free_slots2
+        };
+        let slot_base = match free.pop() {
+            Some(b) => {
+                for e in 0..u32::from(nslots) {
+                    self.slots[(b + e) as usize] = STUB;
+                }
+                b
+            }
+            None => {
+                let b = self.slots.len() as u32;
+                for _ in 0..nslots {
+                    self.slots.push(STUB);
+                }
+                b
+            }
+        };
+        (table_index, slot_base)
+    }
+
+    /// E4-T18 unlink core: remove the block at `phys` and PROVABLY cut every edge touching it —
+    /// restore the dispatch stub in every incoming slot (from live predecessors) AND clear this
+    /// block's own outgoing slots (pruning their targets' incoming lists), then free its table index
+    /// and slot range. After this returns no live slot points into (or out of) the dead block.
+    fn remove_block(&mut self, phys: u64) {
+        let Some(c) = self.blocks.remove(&phys) else {
+            return;
+        };
+        let di = c.table_index;
+        // 1. Every slot that pointed AT this dead block → stub.
+        if let Some(incoming) = self.incoming.remove(&di) {
+            for s in incoming {
+                if self.slots[s as usize] != STUB {
+                    self.slots[s as usize] = STUB;
+                    self.stats.links_cut += 1;
+                }
+            }
+        }
+        // 2. This block's own outgoing slots → stub, pruning the target's incoming list.
+        for e in 0..u32::from(c.nslots) {
+            let s = c.slot_base + e;
+            let cur = self.slots[s as usize];
+            if cur != STUB {
+                if let Some(v) = self.incoming.get_mut(&cur) {
+                    v.retain(|x| *x != s);
+                }
+                self.slots[s as usize] = STUB;
+                self.stats.links_cut += 1;
+            }
+        }
+        // 3. Free the table entry + slot range so a call can never reach the dead block again.
+        self.table[di as usize] = None;
+        self.phys_to_index.remove(&phys);
+        self.free_table.push(di);
+        if c.nslots == 1 {
+            self.free_slots1.push(c.slot_base);
+        } else {
+            self.free_slots2.push(c.slot_base);
         }
     }
 
@@ -269,6 +407,9 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             Ok(f) => f,
             Err(_) => return,
         };
+        // E4-T18: give the block a table index + stub-initialized link-slots (1 or 2).
+        let nslots = Self::nslots_for(block);
+        let (table_index, slot_base) = self.alloc_block(block.phys_start, nslots);
         self.blocks.insert(
             block.phys_start,
             Compiled {
@@ -276,6 +417,9 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                 mem,
                 page_frame: block.page_frame,
                 nops: block.ops.len() as u64,
+                table_index,
+                slot_base,
+                nslots,
             },
         );
     }
@@ -377,11 +521,33 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
     }
 
     fn invalidate_all(&mut self) {
+        // E4-T18: tear down every live link (count them cut) then drop all chaining state. The
+        // stats counters persist so an A/B report survives a whole-cache flush.
+        let live_links = self.slots.iter().filter(|&&s| s != STUB).count() as u64;
+        self.stats.links_cut += live_links;
         self.blocks.clear();
+        self.slots.clear();
+        self.table.clear();
+        self.phys_to_index.clear();
+        self.incoming.clear();
+        self.free_table.clear();
+        self.free_slots1.clear();
+        self.free_slots2.clear();
     }
 
     fn invalidate_page(&mut self, frame: u64) {
-        self.blocks.retain(|_, c| c.page_frame != frame);
+        // E4-T18: collect the dead blocks first, then unlink+remove each so every incoming edge
+        // (from surviving predecessors on OTHER pages) is restored to the dispatch stub — no live
+        // slot may point into a block this page just dropped.
+        let dead: Vec<u64> = self
+            .blocks
+            .iter()
+            .filter(|(_, c)| c.page_frame == frame)
+            .map(|(&p, _)| p)
+            .collect();
+        for phys in dead {
+            self.remove_block(phys);
+        }
     }
 
     fn compiled_count(&self) -> usize {
@@ -394,5 +560,81 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 
     fn retired_via_jit(&self) -> u64 {
         self.retired_via_jit
+    }
+
+    // ── E4-T18: chaining ──
+
+    fn set_chaining(&mut self, on: bool) {
+        self.chaining = on;
+    }
+
+    fn chaining(&self) -> bool {
+        self.chaining
+    }
+
+    fn set_chain_depth_budget(&mut self, n: u32) {
+        self.chain_depth_budget = n.max(1);
+    }
+
+    fn chain_depth_budget(&self) -> u32 {
+        self.chain_depth_budget
+    }
+
+    fn link_edge(&mut self, from_phys: u64, edge: u8, to_phys: u64) {
+        if !self.chaining {
+            return;
+        }
+        // Both endpoints must be live-compiled; the successor's table index is what the slot holds.
+        let Some(&ti) = self.phys_to_index.get(&to_phys) else {
+            return;
+        };
+        let (slot_base, nslots) = match self.blocks.get(&from_phys) {
+            Some(c) => (c.slot_base, c.nslots),
+            None => return,
+        };
+        if edge >= nslots {
+            // Out-of-range edge (a dynamic `jalr` target) — never statically linked.
+            return;
+        }
+        let slot = slot_base + u32::from(edge);
+        let cur = self.slots[slot as usize];
+        if cur == ti {
+            return; // already linked to this successor — count the edge only once.
+        }
+        if cur != STUB {
+            // Re-target: drop the stale incoming record (shouldn't happen for a static edge, but
+            // keep the map exact).
+            if let Some(v) = self.incoming.get_mut(&cur) {
+                v.retain(|x| *x != slot);
+            }
+        }
+        self.slots[slot as usize] = ti;
+        self.incoming.entry(ti).or_default().push(slot);
+        self.stats.links_made += 1;
+    }
+
+    fn linked_target(&self, from_phys: u64, edge: u8) -> Option<u64> {
+        let c = self.blocks.get(&from_phys)?;
+        if edge >= c.nslots {
+            return None;
+        }
+        let slot = self.slots[(c.slot_base + u32::from(edge)) as usize];
+        if slot == STUB {
+            return None;
+        }
+        self.table[slot as usize]
+    }
+
+    fn note_chain(&mut self, depth: u32) {
+        self.stats.dispatch_entries += 1;
+        if depth > self.stats.max_chain_depth {
+            self.stats.max_chain_depth = depth;
+        }
+        let bucket = (depth as usize).min(CHAIN_DEPTH_HIST_LEN - 1);
+        self.stats.depth_hist[bucket] += 1;
+    }
+
+    fn chain_stats(&self) -> ChainStats {
+        self.stats
     }
 }

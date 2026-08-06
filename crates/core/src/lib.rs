@@ -318,6 +318,42 @@ pub struct SnapshotCoherence {
     pub generation: u64,
 }
 
+/// E4-T18: the outcome of running one compiled block in a chain (see `Machine::run_one_jit_block`).
+#[cfg(not(feature = "zicsr-stub"))]
+enum BlockStep {
+    /// A clean `FALLTHROUGH`/`BRANCH_TAKEN` exit; PC committed at the successor. `edge` is the
+    /// static outgoing edge for chaining, or `None` for a dynamic (`jalr`) / non-linkable exit.
+    Committed { edge: Option<u8> },
+    /// A `Trap` exit (precise mem-fault / `ecall` / `ebreak`); ends the chain with this result.
+    Trapped(Result<(), Trap>),
+}
+
+/// E4-T18: which outgoing link-slot edge a block's clean exit corresponds to, or `None` if the edge
+/// must NOT be statically linked (a dynamic `jalr` target, or a defensive `Reserved` exit). Edge 0
+/// is the taken / sole / fall-through successor; edge 1 is a conditional branch's not-taken side.
+#[cfg(not(feature = "zicsr-stub"))]
+fn chain_edge(terminator: Option<crate::decode::Instr>, code: jit::ExitCode) -> Option<u8> {
+    use crate::decode::Instr::*;
+    match terminator {
+        // Conditional branch: two static edges — taken (BranchTaken → 0), not-taken (Fallthrough → 1).
+        Some(Beq { .. } | Bne { .. } | Blt { .. } | Bge { .. } | Bltu { .. } | Bgeu { .. }) => {
+            match code {
+                jit::ExitCode::BranchTaken => Some(0),
+                jit::ExitCode::Fallthrough => Some(1),
+                _ => None,
+            }
+        }
+        // Direct jump: one static edge.
+        Some(Jal { .. }) => (code == jit::ExitCode::BranchTaken).then_some(0),
+        // Indirect jump: the target is a register value — never statically linkable.
+        Some(Jalr { .. }) => None,
+        // No architectural terminator (128-op cap / page edge) or a fence: sole fall-through edge.
+        Some(Fence { .. } | FenceI) | None => (code == jit::ExitCode::Fallthrough).then_some(0),
+        // Anything else (ecall/ebreak) exits via Trap, not a chain edge.
+        _ => None,
+    }
+}
+
 impl Machine {
     /// Create a machine with `ram_bytes` of zeroed guest RAM at `DRAM_BASE`, an
     /// empty hart (PC 0), and no HTIF watch. Panics only on allocation failure — use
@@ -502,6 +538,33 @@ impl Machine {
     /// on (the discovery front end the JIT feeds off)?
     pub fn jit_active(&self) -> bool {
         self.jit_enabled && self.block_cache_enabled && self.executor.is_some()
+    }
+
+    /// E4-T18: A/B flag — turn direct block→block chaining on/off on the installed executor. With
+    /// chaining off, the dispatch loop returns after every compiled block (the E4-T10 behavior);
+    /// with it on, hot edges are followed directly through link-slots. No-op without an executor.
+    pub fn set_chaining(&mut self, on: bool) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_chaining(on);
+        }
+    }
+
+    /// E4-T18: set the chain-depth budget (max links per chain before a mandatory dispatch return;
+    /// clamped to ≥ 1, where 1 is the degenerate "no chaining past one link" mode). No-op without an
+    /// executor.
+    pub fn set_chain_depth_budget(&mut self, n: u32) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_chain_depth_budget(n);
+        }
+    }
+
+    /// E4-T18: a snapshot of the chaining statistics (links made/cut, dispatch-loop entries, and the
+    /// chain-depth histogram). Empty if no executor is installed.
+    pub fn chain_stats(&self) -> jit::ChainStats {
+        self.executor
+            .as_deref()
+            .map(|e| e.chain_stats())
+            .unwrap_or_default()
     }
 
     /// E3-T12c3: bind this machine to a base disk image + emulator build for snapshot coherence.
@@ -2028,15 +2091,93 @@ impl Machine {
     /// The device/interrupt sample already happened at this boundary (in the loop, before this call),
     /// and `mtime` advances per retired op below, so the E4-T05 interrupt-batching semantics are
     /// preserved: a compiled block is exactly one `DecodedBlock` (≤128 ops), sampled at its entry.
+    /// E4-T18: run the compiled block at the current PC and, if chaining is on, keep following
+    /// direct block→block links (through the executor's link-slots) instead of returning to the
+    /// dispatch loop on every edge — up to the chain-depth budget, and re-checking the
+    /// interrupt/instruction budget at EVERY link so a timer still fires inside a chained loop.
+    ///
+    /// Returns exactly as [`Self::run_one_jit_block`] does for the LAST block in the chain: `None`
+    /// (not run / faulted out — interpret), `Some(Ok(()))` (chain committed; resume at the current
+    /// PC), or `Some(Err(trap))` (the terminal block trapped). Every non-terminal block in the chain
+    /// has already committed its registers, PC, and retire clock.
     #[cfg(not(feature = "zicsr-stub"))]
     fn try_jit_block(&mut self) -> Option<Result<(), Trap>> {
-        let pc = self.hart.regs.pc;
-        // Physical key. `fetch_phys` is a warm TLB lookup at a boundary (the interpreter would do
-        // the same fetch); a fetch fault means "not a JIT block" — interpret so the fault is precise.
-        let phys = self.hart.fetch_phys(&mut self.bus, pc).ok()?;
+        let pc0 = self.hart.regs.pc;
+        let mut phys = self.hart.fetch_phys(&mut self.bus, pc0).ok()?;
         if !self.executor.as_ref()?.is_compiled(phys) {
             return None;
         }
+        let chaining = self.executor.as_ref()?.chaining();
+        let budget = self.executor.as_ref()?.chain_depth_budget().max(1);
+        let mut depth: u32 = 0;
+        // The edge just traversed to reach `phys` (from_phys, edge) — linked lazily on arrival.
+        let mut pending_link: Option<(u64, u8)> = None;
+        let result = loop {
+            // Lazily link the edge we followed to get here (predecessor → this block). Both are
+            // compiled (checked before we set `pending_link`); the executor records the incoming
+            // edge and writes the successor's table index into the slot.
+            if let (Some((from, edge)), Some(e)) = (pending_link.take(), self.executor.as_mut()) {
+                e.link_edge(from, edge, phys);
+            }
+            match self.run_one_jit_block(phys) {
+                None => break None, // faulted out (or meta gone): interpret this block from entry.
+                Some(BlockStep::Trapped(r)) => break Some(r),
+                Some(BlockStep::Committed { edge }) => {
+                    // The block ran clean; PC now sits at its successor's entry.
+                    if !chaining {
+                        break Some(Ok(()));
+                    }
+                    depth += 1;
+                    if depth >= budget {
+                        break Some(Ok(())); // chain-depth bound: force a dispatch return.
+                    }
+                    // Interrupt/instruction budget across chains: refresh the timer levels (mtime
+                    // advanced per retired op above) and, if an interrupt is now pending, return to
+                    // dispatch so the boundary poll delivers it — a timer thus fires within one
+                    // block (≤128 ops) of becoming pending even inside a fully-chained loop.
+                    self.sync_clint();
+                    self.sync_sbi_timer();
+                    if self.hart.csr.next_interrupt().is_some() {
+                        break Some(Ok(()));
+                    }
+                    // Follow the edge only if the successor is itself compiled; otherwise return to
+                    // dispatch (which will interpret / compile it).
+                    let from = phys;
+                    let next_phys = match self.hart.fetch_phys(&mut self.bus, self.hart.regs.pc) {
+                        Ok(p) => p,
+                        Err(_) => break Some(Ok(())),
+                    };
+                    if !self
+                        .executor
+                        .as_ref()
+                        .is_some_and(|e| e.is_compiled(next_phys))
+                    {
+                        break Some(Ok(()));
+                    }
+                    // Record the edge to link on arrival (only static edges carry an `edge`; a
+                    // dynamic `jalr` target has `edge == None` — followed but never linked).
+                    pending_link = edge.map(|e| (from, e));
+                    phys = next_phys;
+                }
+            }
+        };
+        // Stats: one dispatch-loop entry per chain, with its depth binned into the histogram.
+        if let Some(e) = self.executor.as_mut() {
+            e.note_chain(depth);
+        }
+        result
+    }
+
+    /// E4-T18: execute exactly ONE compiled block at physical entry `phys` (the former body of
+    /// `try_jit_block`), committing its registers / PC / retire clock. Returns:
+    /// * `None` — the block faulted out mid-op (hart untouched) or its decoded meta vanished; the
+    ///   caller interprets it from entry.
+    /// * `Some(BlockStep::Committed { edge })` — a `FALLTHROUGH`/`BRANCH_TAKEN` exit; `edge` is the
+    ///   block's static outgoing edge for chaining (`Some(0)` sole/taken, `Some(1)` not-taken,
+    ///   `None` = a dynamic `jalr` target that must not be statically linked).
+    /// * `Some(BlockStep::Trapped(r))` — a `Trap` exit (precise mem-fault / `ecall` / `ebreak`).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn run_one_jit_block(&mut self, phys: u64) -> Option<BlockStep> {
         // Op count + terminator + per-op byte lengths, read from the still-cached decoded block
         // (physical keying). The lengths let a PRECISE mem-fault side-exit (below) compute how many
         // instructions retired before the faulting one, so the retire clock advances by exactly that.
@@ -2080,7 +2221,9 @@ impl Machine {
                     self.block_cache.note_fence_i();
                 }
                 self.drain_code_writes();
-                Some(Ok(()))
+                Some(BlockStep::Committed {
+                    edge: chain_edge(terminator, exit.code),
+                })
             }
             jit::ExitCode::Trap => {
                 // E4-T12: a PRECISE mid-block memory fault carries the interpreter-produced `Trap`
@@ -2111,7 +2254,7 @@ impl Machine {
                     // the bus write log through page-granular invalidation, exactly as the
                     // interpreter would after that store retired.
                     self.drain_code_writes();
-                    return Some(Err(trap));
+                    return Some(BlockStep::Trapped(Err(trap)));
                 }
                 // Otherwise: the trapping terminator (`ecall`/`ebreak`) retires NOTHING; only the
                 // `nops-1` body ops did. Advance the clock for those.
@@ -2139,7 +2282,7 @@ impl Machine {
                         tval: exit.next_pc,
                     },
                 };
-                Some(Err(trap))
+                Some(BlockStep::Trapped(Err(trap)))
             }
             jit::ExitCode::Reserved(_) => {
                 // The E4-T09 translator never emits these; on a clean return the executor already
@@ -2150,7 +2293,8 @@ impl Machine {
                     self.advance_clock();
                     self.irqstats.on_retire();
                 }
-                Some(Ok(()))
+                // Reserved never carries a static successor edge — do not chain-link it.
+                Some(BlockStep::Committed { edge: None })
             }
         }
     }

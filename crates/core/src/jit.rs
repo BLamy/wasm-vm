@@ -131,7 +131,114 @@ pub trait CompiledBlockExecutor {
     /// Count of guest instructions retired inside JIT-executed blocks (numerator of the
     /// translated-instruction ratio).
     fn retired_via_jit(&self) -> u64;
+
+    // ── E4-T18: block chaining (default impls: a non-chaining executor is a valid degenerate) ──
+
+    /// A/B flag: enable/disable direct block→block chaining. With chaining off every block returns
+    /// to the dispatch loop (the E4-T10 behavior); with it on the dispatch loop follows link-slots.
+    fn set_chaining(&mut self, _on: bool) {}
+
+    /// Whether chaining is currently enabled.
+    fn chaining(&self) -> bool {
+        false
+    }
+
+    /// Set the chain-depth budget (max links per chain before a mandatory dispatch return, ≥ 1).
+    fn set_chain_depth_budget(&mut self, _n: u32) {}
+
+    /// The current chain-depth budget.
+    fn chain_depth_budget(&self) -> u32 {
+        1
+    }
+
+    /// Lazily link `edge` (0 = taken / sole / fall-through successor, 1 = not-taken) of the block at
+    /// `from_phys` to the compiled successor at `to_phys`, recording the edge in the incoming-edges
+    /// map. A no-op if either block is not live-compiled, `edge` is out of range for the block
+    /// (a dynamic `jalr` target passes an out-of-range edge so it is never linked), the edge is
+    /// already linked to the same target, or chaining is off. Counts one `links_made` on the
+    /// transition from stub → linked.
+    fn link_edge(&mut self, _from_phys: u64, _edge: u8, _to_phys: u64) {}
+
+    /// The successor a block's link-slot currently points at, or `None` if the slot holds the
+    /// dispatch stub / the edge is out of range / the block is not compiled. Used by the dispatch
+    /// loop to follow a link and by the unlink-completeness test to assert slot contents.
+    fn linked_target(&self, _from_phys: u64, _edge: u8) -> Option<u64> {
+        None
+    }
+
+    /// Record that a chain of `depth` links returned to the dispatch loop (updates the histogram,
+    /// `max_chain_depth`, and `dispatch_entries`).
+    fn note_chain(&mut self, _depth: u32) {}
+
+    /// A snapshot of the chaining statistics (links made/cut, dispatch entries, depth histogram).
+    fn chain_stats(&self) -> ChainStats {
+        ChainStats::default()
+    }
 }
 
 /// A boxed executor, held by [`Machine`](crate::Machine). Aliased for readability at the field.
 pub type BoxedExecutor = Box<dyn CompiledBlockExecutor>;
+
+// ── E4-T18: block chaining (direct linking + safe unlinking) ─────────────────
+
+/// E4-T18 default chain-depth budget: the maximum number of direct block→block links traversed
+/// before the chain MUST return to the dispatch loop. This bounds (a) unbounded wasm call-stack
+/// growth in the browser in-wasm `call_indirect` epilogue form (the native wasmtime orchestration
+/// cannot grow the wasm stack — every `execute` fully returns — but it honors the identical budget
+/// so the two backends behave the same), and (b) starvation of the boundary poll. `32` mirrors the
+/// order-of-magnitude of the E4-T08 hotness threshold / batching unit and keeps the dispatch-loop
+/// re-entry frequent enough that device/interrupt sampling stays responsive; it is a tunable
+/// (`Machine::set_chain_depth_budget`), swept against the ledger like the other budgets. Interrupt
+/// latency itself does NOT depend on this number — the instruction/interrupt budget is checked at
+/// EVERY link (see `Machine::try_jit_block`), so a timer is delivered within one block (≤128 ops)
+/// of becoming pending regardless of the chain-depth budget, even at budget = 1 (degenerate).
+pub const CHAIN_DEPTH_BUDGET_DEFAULT: u32 = 32;
+
+/// Number of buckets in the chain-depth histogram (`ChainStats::depth_hist`). Depth `d` is counted
+/// in bucket `min(d, CHAIN_DEPTH_HIST_LEN - 1)`, so the last bucket is "that-many-or-more links".
+pub const CHAIN_DEPTH_HIST_LEN: usize = 65;
+
+/// E4-T18 chaining statistics (A/B + the histogram the ticket asks for). All counters are cumulative
+/// across a run; `invalidate_all` tears live links down (counted in `links_cut`) but preserves the
+/// counters so an A/B report survives a cache toggle.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ChainStats {
+    /// Edges linked (a link-slot written from the dispatch stub to a live successor's table index).
+    /// Counted once per distinct edge — re-traversing an already-linked edge does not re-count.
+    pub links_made: u64,
+    /// Link-slots restored to the dispatch stub by an invalidation (SMC / fence.i-path / eviction /
+    /// reset). The unlink-completeness invariant: after any invalidation NO live slot points into a
+    /// dead block, and every such restoration is counted here.
+    pub links_cut: u64,
+    /// Times a chain ended and control returned to the dispatch loop (the "dispatch-loop entries"
+    /// stat — one per chain, however many links it followed).
+    pub dispatch_entries: u64,
+    /// The deepest chain (most links followed before a dispatch return) seen this run.
+    pub max_chain_depth: u32,
+    /// Histogram of chain depths: `depth_hist[min(depth, LEN-1)]` incremented per dispatch entry.
+    pub depth_hist: [u64; CHAIN_DEPTH_HIST_LEN],
+}
+
+impl Default for ChainStats {
+    fn default() -> Self {
+        ChainStats {
+            links_made: 0,
+            links_cut: 0,
+            dispatch_entries: 0,
+            max_chain_depth: 0,
+            depth_hist: [0; CHAIN_DEPTH_HIST_LEN],
+        }
+    }
+}
+
+impl ChainStats {
+    /// Total links followed across all chains this run (Σ depth) — the numerator of "links per
+    /// dispatch entry", the direct measure of how much dispatch-loop bouncing chaining removed.
+    pub fn total_links_followed(&self) -> u64 {
+        self.depth_hist
+            .iter()
+            .enumerate()
+            .map(|(d, n)| d as u64 * n)
+            .sum()
+    }
+}
