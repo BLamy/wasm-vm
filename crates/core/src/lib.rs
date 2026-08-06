@@ -446,6 +446,7 @@ impl Machine {
         let (cache_flushes, blocks_discarded) = self.block_cache.invalidation_stats();
         s.cache_flushes = cache_flushes;
         s.blocks_discarded = blocks_discarded;
+        s.fence_i = self.block_cache.fence_i_noops();
         s
     }
 
@@ -830,6 +831,7 @@ impl Machine {
         let (cache_flushes, blocks_discarded) = self.block_cache.invalidation_stats();
         report.discovery.cache_flushes = cache_flushes;
         report.discovery.blocks_discarded = blocks_discarded;
+        report.discovery.fence_i = self.block_cache.fence_i_noops();
         report
     }
 
@@ -1801,28 +1803,23 @@ impl Machine {
             rd: (rd != 0).then_some((rd, value)),
             mem,
         });
-        // E4-T05 Phase B invalidation:
-        //  - `fence.i` orders a prior code write against this fetch stream → whole-cache flush
-        //    (O(1) generation bump); conservative and cheap for a rare op.
+        // E4-T17 page-granular invalidation (supersedes E4-T16's conservative fence.i flush):
         //  - a store (this op's `mem.is_store`, incl. SC/AMO) reached RAM via the bus, which
         //    recorded its physical frame(s). Drain that log through PAGE-GRANULAR invalidation:
         //    only a store into a frame that actually holds cached code drops blocks (and the
-        //    cursor). Ordinary data stores are set-misses → the cache is RETAINED (the Phase-B
-        //    win over Phase A's flush-everything).
+        //    cursor). Ordinary data stores are set-misses → the cache is RETAINED.
+        //  - `fence.i` is now NEAR-FREE: it drops NO blocks. Every code-writing store already
+        //    invalidated its physical page eagerly at store time (the drain below fires per retire),
+        //    so by the time `fence.i` retires the fetch stream is already coherent — RISC-V permits
+        //    (indeed this is a valid icache-less implementation), and un-dirtied pages' blocks
+        //    SURVIVE the fence (the E4-T16 whole-cache flush no longer fires). We only note the event
+        //    and clear the cursor (a terminator ends the block); the drain still runs to sweep any
+        //    frame written but not yet drained (a `fence.i`-adjacent host/DMA poke).
         if matches!(op.instr, crate::decode::Instr::FenceI) {
-            self.block_cache.flush();
+            self.block_cache.note_fence_i();
             self.block_cursor = None;
-            // E4-T08: fence.i orders a prior code write against the fetch stream — any block may
-            // now decode differently. Bump the discovery generation so pending requests go stale
-            // and hot blocks re-nominate from scratch.
-            self.discovery.on_invalidate();
-            // E4-T10: fence.i is a whole-cache flush — every compiled block is dropped too.
-            if let Some(e) = self.executor.as_mut() {
-                e.invalidate_all();
-            }
-        } else {
-            self.drain_code_writes();
         }
+        self.drain_code_writes();
         Ok(())
     }
 
@@ -2073,19 +2070,16 @@ impl Machine {
                     self.advance_clock();
                     self.irqstats.on_retire();
                 }
-                // A JIT block ending in `fence.i` must still order the fetch stream: perform the
-                // same whole-cache + compiled invalidation the interpreter's `step_cached` does.
+                // E4-T17: a JIT block ending in `fence.i` orders the fetch stream the SAME near-free
+                // way `step_cached` does — the block's own stores were logged and are drained
+                // page-granularly below, so any page this block wrote (incl. its own, the self-write
+                // corner) is invalidated; `fence.i` itself drops NOTHING, so un-dirtied pages' blocks
+                // survive. Note the event, then drain: a store may have landed on a code page
+                // (SMC / DMA-into-code / self-write) and must invalidate exactly that page.
                 if matches!(terminator, Some(crate::decode::Instr::FenceI)) {
-                    self.block_cache.flush();
-                    self.discovery.on_invalidate();
-                    if let Some(e) = self.executor.as_mut() {
-                        e.invalidate_all();
-                    }
-                } else {
-                    // A JIT store may have landed on a code page (SMC/DMA-into-code) — drain the
-                    // bus write log through page-granular invalidation, exactly like the interpreter.
-                    self.drain_code_writes();
+                    self.block_cache.note_fence_i();
                 }
+                self.drain_code_writes();
                 Some(Ok(()))
             }
             jit::ExitCode::Trap => {

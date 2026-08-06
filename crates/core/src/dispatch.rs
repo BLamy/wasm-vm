@@ -141,6 +141,14 @@ pub struct BlockCache {
     /// argument this ticket proves by test), so this counter staying flat across an SFENCE.VMA
     /// storm is itself the "SFENCE.VMA didn't nuke the translation cache" evidence.
     blocks_discarded: u64,
+    /// E4-T17 invalidation-event stats: `fence.i` instructions retired while the page bitmap is
+    /// authoritative. `fence.i` is now NEAR-FREE — a no-op-plus-this-counter — because every
+    /// code-writing store (guest / DMA / host) has ALREADY invalidated its physical page eagerly at
+    /// store time (the `has_code` bitmap → `flush_page` path), so by the time a `fence.i` retires the
+    /// I-fetch stream is already coherent and there is nothing left to flush. Un-dirtied pages' blocks
+    /// therefore SURVIVE a `fence.i` (the E4-T16 whole-cache flush no longer fires). A rising value
+    /// with a FLAT `flushes` across a `fence.i`-heavy workload is the "fence.i is near-free" evidence.
+    fence_i_noops: u64,
 }
 
 impl BlockCache {
@@ -157,7 +165,19 @@ impl BlockCache {
             has_code: BTreeSet::new(),
             flushes: 0,
             blocks_discarded: 0,
+            fence_i_noops: 0,
         }
+    }
+
+    /// E4-T17: record a NEAR-FREE `fence.i` — the page bitmap already made the fetch stream coherent
+    /// at store time, so `fence.i` drops NO blocks and only bumps this counter. See `fence_i_noops`.
+    pub fn note_fence_i(&mut self) {
+        self.fence_i_noops = self.fence_i_noops.saturating_add(1);
+    }
+
+    /// E4-T17: number of near-free `fence.i` events retired (no whole-cache flush performed).
+    pub fn fence_i_noops(&self) -> u64 {
+        self.fence_i_noops
     }
 
     /// E4-T16 invalidation-event stats: `(whole_cache_flushes, blocks_discarded_by_page_flush)`.
@@ -457,6 +477,11 @@ pub struct DiscoveryStats {
     /// SFENCE.VMA never contributes here (phys-keying), so a flat value across a remap storm is the
     /// "SFENCE.VMA didn't kill translations" proof-in-stats.
     pub blocks_discarded: u64,
+    /// E4-T17: near-free `fence.i` events (no whole-cache flush; the page bitmap was already
+    /// authoritative). A rising `fence_i` with a FLAT `cache_flushes` is the "fence.i near-free"
+    /// evidence — un-dirtied pages' blocks survive the fence. Filled from
+    /// [`BlockCache::fence_i_noops`] by [`crate::Machine::discovery_stats`] / the profiling report.
+    pub fence_i: u64,
 }
 
 /// The E4-T08 block-discovery front end: hotness counters, the dedup state machine, the

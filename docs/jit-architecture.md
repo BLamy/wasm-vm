@@ -279,7 +279,7 @@ with no flush, so `sfence.vma`/`satp` writes cost **zero** block invalidation. T
 
 | Event | Spec / mechanism | Effect on block cache | Effect on compiled T2 code | Owner |
 |---|---|---|---|---|
-| **`fence.i`** | Zifencei — I-fetch sees prior stores | **full flush** (`BlockCache::flush`, O(1) gen-bump) | all compiled fns dropped (their module refs released for GC, §7) | E4-T16 ✓ proven (`jit-runtime/tests/invalidation.rs::fence_i_invalidates_translated_block`) |
+| **`fence.i`** | Zifencei — I-fetch sees prior stores | **near-free no-op** (`BlockCache::note_fence_i`) — the page bitmap is authoritative: every code write already invalidated its page eagerly at store time, so `fence.i` drops **no** blocks and un-dirtied pages survive | **none dropped** — compiled fns for pages the guest actually wrote were already released at that store; the rest survive | **E4-T17** ✓ (`jit-runtime/tests/invalidation.rs::fence_i_is_near_free`, `fence_i_invalidates_translated_block`) — was E4-T16 full-flush |
 | **Store into a code page (SMC)** | store to a phys page holding cached blocks | `flush_page(frame)` via the `has_code` bitmap (O(1) set-miss for ordinary data stores) | compiled fns for that frame dropped; the frame is *pinned to T1* on the next compile if it thrashes | **E4-T17** |
 | **Device/DMA write into RAM** | all DMA reaches RAM via `bus.storeN` with a **physical** addr; E4-T05 already routes every DMA (virtio-blk/net/rng, used-ring, T_GET_ID) through the `code_write_log` | same `flush_page` path as an SMC store (the easily-missed trigger — explicitly covered) | same as SMC | E4-T17 |
 | **`sfence.vma rs1,rs2`** (all forms: whole-TLB, per-vaddr, per-ASID, vaddr+ASID) | Sv39 TLB coherence only | **no block flush** — blocks are physically keyed | **none** — TLB flush only (`hart.tlb`); compiled code untouched | E4-T16 ✓ proven (`invalidation.rs`: all four forms, remap-to-diff-phys + reuse-same-phys-new-VA, `blocks_discarded == 0`) |
@@ -307,6 +307,20 @@ virtual PC ≠ physical key) or reused from a second VA would emit physical PCs 
 precursor. E4-T17 upgrades it (per-page dirty tracking / write-protect-style granularity) so that
 compiled hot code coexists with nearby data writes without a full-frame kill; the matrix row for SMC
 is the contract E4-T17 must preserve.
+
+**E4-T17 landed (page-granular precision + near-free `fence.i`).** The `has_code` page bitmap is now
+authoritative for BOTH the decoded-block cache (`BlockCache::flush_page`) and the compiled-block cache
+(`CompiledBlockExecutor::invalidate_page`, which drops only compiled fns whose physical frame matches).
+A code-writing store — guest, JIT-fastpath, AMO, or device/DMA — routes through the single
+`SystemBus::code_write_log` choke point and is drained page-granularly, so a store into page A
+invalidates only page A's blocks while page B's blocks (decoded AND compiled) survive. Because every
+such write invalidates its page *eagerly at store time*, `fence.i` no longer needs a whole-cache flush:
+it is downgraded to a near-free no-op-plus-stats (`BlockCache::note_fence_i`, surfaced as
+`DiscoveryStats::fence_i`). This is a valid RISC-V implementation (equivalent to having no I-cache —
+strictly more eager than the spec requires, never stale). Reset / snapshot-restore / cache-toggle
+remain whole-cache flushes (rare, not the hot path). Proven: `jit-runtime/tests/invalidation.rs`
+(`page_granular_store_invalidates_only_written_page`, `store_to_non_code_page_invalidates_nothing`,
+`fence_i_is_near_free`) + the byte-identical `predecode_smc_diff.rs`.
 
 ---
 

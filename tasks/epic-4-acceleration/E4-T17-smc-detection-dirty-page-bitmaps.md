@@ -67,4 +67,49 @@ progress with bounded per-iteration cost (no O(n²) interval-list behavior); (5)
 E4-T16 guest-JIT loop 100k times with bitmaps on.
 
 ## Verification log
-(empty)
+
+### 2026-08-06 — page-granular SMC + near-free fence.i (verified)
+
+**Design.** A single per-physical-page `has_code` bitmap (`dispatch::BlockCache`) is authoritative for
+BOTH caches: a page is "code" iff a decoded OR compiled block starts in it (the compiled cache mirrors
+the decode cache — every compiled block came from a still-cached `DecodedBlock`, so the decode-cache
+bitmap covers it). Every successful RAM store — guest, JIT fastpath, AMO, and device/DMA — routes
+through the one `SystemBus::code_write_log` choke point (physical frame(s), start+end for a straddling
+store). `Machine::drain_code_writes` drains it per-retire (interpreter) and per-boundary (JIT / device
+service): a frame that is a bitmap set-miss does nothing (data-store fast path); a frame that holds
+code calls `BlockCache::flush_page(frame)` (drops only that page's decoded blocks) AND
+`CompiledBlockExecutor::invalidate_page(frame)` (drops only compiled fns whose `page_frame == frame`,
+keeping the rest live). Blocks never span a physical page (E4-T05), so frame equality is the exact
+overlap test.
+
+**fence.i near-free.** Because every code write invalidates its page EAGERLY at store time, `fence.i`
+no longer needs a whole-cache flush — downgraded to a no-op-plus-stats (`BlockCache::note_fence_i`,
+surfaced as `DiscoveryStats::fence_i`). Un-dirtied pages' blocks (decoded + compiled) survive a
+`fence.i`. This is a valid RISC-V implementation (equivalent to no I-cache — strictly more eager than
+the spec, never stale). Reset / snapshot-restore / cache-toggle stay whole-cache (rare, not hot).
+
+**Gates (all green).**
+- Page-granular differential (`jit-runtime/tests/invalidation.rs`): `page_granular_store_invalidates_
+  only_written_page` — store into page A drops A's block, page B SURVIVES (`is_compiled` + `cache_flushes`
+  flat, `blocks_discarded` advanced); re-entry runs the NEW code (x2+=10). `store_to_non_code_page_
+  invalidates_nothing` — a data-page store is a bitmap miss (nothing dropped). `two_page_smc_byte_
+  identical_jit_vs_interp` — full patch scenario byte-identical JIT vs interpreter.
+- `fence_i_is_near_free` — a `fence.i` with no code write drops NOTHING (both pages survive; `fence_i`
+  stat advances, `cache_flushes` flat). `fence_i_invalidates_translated_block` (was E4-T16 whole-flush)
+  updated: new code runs, `cache_flushes` stays flat (page-granular drop, not a flush).
+- SMC still correct: `predecode_smc_diff::smc_store_patches_cached_block_is_byte_identical` (store patches
+  a cached instruction w/o fence.i) byte-identical (off/big/1-entry caches).
+- Whole-corpus JIT-on verdict-identical: `jit_execution::riscv_tests_verdict_identical_with_jit` (>50
+  ELFs) + `rv64mi_suite_verdict_identical_under_jit` + all E4-T09..T16 gates (invalidation.rs 12,
+  precise_traps 3, jit_execution 10) green. `predecode_diff` (byte-identity), `hotness_discovery`,
+  `predecode_batching`, `determinism`, `reset`, `snapshot_coherence`, `csr` green.
+- core `cargo test` green; wasm32-unknown-unknown no_std core builds; `cargo fmt`; `clippy -D warnings`.
+
+**Under-invalidation search:** none found. Every store path (interpreter store, JIT fastpath store/AMO/
+LR/SC imports, device/DMA, host bus pokes) reaches RAM via `bus.storeN` → `code_write_log`, the one
+choke point drained page-granularly. No stale block survived an overlapping store in any gate.
+
+**Deferred (out of scope, noted honestly):** the full in-guest SMC torture suite (exec churn, in-guest
+JIT) and the perf 100k write/execute ping-pong wall-clock AC are not added here — the directed
+page-granular differential + byte-identical corpus prove correctness; the workload-scale perf ACs
+belong with a booted-guest harness (E4-T18 unlink + a guest image), not this unit change.

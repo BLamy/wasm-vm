@@ -6,8 +6,13 @@
 //! What is proven here:
 //! * `fence_i_invalidates_translated_block` — a block executes (and JIT-compiles), the guest stores
 //!   DIFFERENT code over it, runs `fence.i`, and re-executes: the NEW code runs, the recompiled
-//!   block is JIT-served, and the final state equals the interpreter. `fence.i` performs a full
-//!   translation-cache flush (the QEMU `tb_flush` analog) — asserted via the `cache_flushes` stat.
+//!   block is JIT-served, and the final state equals the interpreter. E4-T17: `fence.i` is NEAR-FREE
+//!   (no whole-cache flush — `cache_flushes` stays flat, `fence_i` counts the event); the stale block
+//!   was dropped by the PAGE-GRANULAR drain of the code-page store, not by the fence.
+//! * `page_granular_store_invalidates_only_written_page` / `store_to_non_code_page_invalidates_nothing`
+//!   / `fence_i_is_near_free` / `two_page_smc_byte_identical_jit_vs_interp` — the E4-T17 core:
+//!   a store into page A invalidates only page A's blocks (page B survives), a store to a non-code
+//!   page invalidates nothing, `fence.i` drops nothing, and the whole SMC scenario is byte-identical.
 //! * `sfence_vma_remap_to_different_phys` — the core AC + physical-keying direction (a): a hot VA
 //!   is remapped to a DIFFERENT physical page with different code; after `sfence.vma` the correct
 //!   (new physical) block runs via a fresh TLB fill, no stale VA-keyed block survives.
@@ -113,9 +118,9 @@ fn run_fence_i(jit: bool) -> ([u64; 32], u64) {
     let cache_flushes_before = m.discovery_stats().cache_flushes;
 
     // Guest self-modifies the loop body: x2 += 1  →  x2 += 10 (different code, same phys page).
+    // E4-T17: this code-page write is logged at the bus and invalidated PAGE-GRANULARLY (eagerly, at
+    // the next drain boundary), NOT by the following fence.i — which is now near-free.
     m.bus_mut().store32(DRAM_BASE, enc_addi(2, 2, 10)).unwrap();
-    // Guest executes fence.i through the run loop so the Machine-level full flush fires (the
-    // tb_flush analog: whole block cache + discovery generation + every compiled block dropped).
     let exec_before = if jit {
         m.executor().unwrap().executed_blocks()
     } else {
@@ -131,15 +136,21 @@ fn run_fence_i(jit: bool) -> ([u64; 32], u64) {
     m.run(K * 3 + 20);
 
     if jit {
-        // fence.i is a full flush: the stat must have advanced (tb_flush analog).
+        // E4-T17: fence.i is NEAR-FREE — it performs NO whole-cache flush. The stale block was
+        // dropped by the PAGE-GRANULAR drain of the code-page write, not by fence.i.
+        assert_eq!(
+            m.discovery_stats().cache_flushes,
+            cache_flushes_before,
+            "fence.i must NOT perform a whole-cache flush (near-free, page bitmap authoritative)"
+        );
         assert!(
-            m.discovery_stats().cache_flushes > cache_flushes_before,
-            "fence.i must perform a whole-cache flush"
+            m.discovery_stats().fence_i > 0,
+            "the retired fence.i must be counted as a near-free event"
         );
         // The recompiled (new-bytes) block must be JIT-served in phase 2.
         assert!(
             m.executor().unwrap().executed_blocks() > exec_before,
-            "the recompiled block must be JIT-served after fence.i"
+            "the recompiled block must be JIT-served after the code overwrite"
         );
     }
     (regs(&m), m.hart().regs.pc)
@@ -657,4 +668,232 @@ fn rv64mi_suite_verdict_identical_under_jit() {
     }
     assert!(n >= 10, "expected the rv64mi suite, saw {n}");
     eprintln!("rv64mi verdict-identical under JIT across {n} ELFs");
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// 9. E4-T17 — page-granular SMC: a store into a translated page invalidates ONLY
+//    that page's blocks; blocks on OTHER code pages survive.
+// ════════════════════════════════════════════════════════════════════════════
+
+// Bare-metal (M-mode, identity) two-page layout, well clear of each other:
+const PGA: u64 = DRAM_BASE + 0x0000; // code page A, entry block at PGA
+const PGB: u64 = DRAM_BASE + 0x1000; // code page B, entry block at PGB
+const SPIN: u64 = DRAM_BASE + 0x2000; // a harmless spin on its own page (drain trampoline)
+const DATA: u64 = DRAM_BASE + 0x8000; // a NON-code data page
+
+/// A counted loop that adds `imm` to `acc` for `cnt` iterations then spins:
+/// off0 addi acc,acc,imm ; off4 addi cnt,cnt,-1 ; off8 bne cnt,x0,-8 ; off12 jal x0,0
+fn loop_page(acc: u32, cnt: u32, imm: i32) -> [u32; 4] {
+    [
+        enc_addi(acc, acc, imm),
+        enc_addi(cnt, cnt, -1),
+        enc_bne(cnt, 0, -8),
+        enc_jal(0, 0),
+    ]
+}
+
+fn poke(m: &mut Machine, base: u64, words: &[u32]) {
+    for (i, w) in words.iter().enumerate() {
+        m.bus_mut().store32(base + 4 * i as u64, *w).unwrap();
+    }
+}
+
+/// Warm both pages so their entry blocks compile. Page A: x2 += 1 (x1 iters). Page B: x4 += 1
+/// (x3 iters). Returns the armed machine with both blocks compiled + registered.
+fn machine_two_hot_pages() -> Machine {
+    const K: u64 = 40;
+    let mut m = Machine::new(16 * 1024 * 1024);
+    poke(&mut m, PGA, &loop_page(2, 1, 1));
+    poke(&mut m, PGB, &loop_page(4, 3, 1));
+    poke(&mut m, SPIN, &[enc_jal(0, 0)]);
+    arm_jit(&mut m);
+    // Warm A.
+    m.hart_mut().regs.write(1, K);
+    m.hart_mut().regs.write(2, 0);
+    m.hart_mut().regs.pc = PGA;
+    m.run(K * 3 + 40);
+    // Warm B.
+    m.hart_mut().regs.write(3, K);
+    m.hart_mut().regs.write(4, 0);
+    m.hart_mut().regs.pc = PGB;
+    m.run(K * 3 + 40);
+    m
+}
+
+/// Poke `words` at `base` (a bus store → code_write_log), then spin once so the run loop's
+/// boundary drain fires page-granular invalidation without re-entering A or B.
+fn write_then_drain(m: &mut Machine, base: u64, words: &[u32]) {
+    poke(m, base, words);
+    m.hart_mut().regs.pc = SPIN;
+    m.run(1);
+}
+
+#[test]
+fn page_granular_store_invalidates_only_written_page() {
+    let mut m = machine_two_hot_pages();
+    assert!(
+        m.executor().unwrap().is_compiled(PGA) && m.executor().unwrap().is_compiled(PGB),
+        "both page A and page B blocks must compile"
+    );
+    let flushes_before = m.discovery_stats().cache_flushes;
+    let discarded_before = m.discovery_stats().blocks_discarded;
+
+    // Store into page A ONLY (patch its body immediate). Page B is untouched.
+    write_then_drain(&mut m, PGA, &loop_page(2, 1, 10));
+
+    let exec = m.executor().unwrap();
+    assert!(
+        !exec.is_compiled(PGA),
+        "page A's block MUST be invalidated by a store into its page"
+    );
+    assert!(
+        exec.is_compiled(PGB),
+        "page B's block MUST SURVIVE — a store into page A must not touch it"
+    );
+    // Page-granular, not whole-cache: the flush counter stays flat; blocks_discarded advanced.
+    assert_eq!(
+        m.discovery_stats().cache_flushes,
+        flushes_before,
+        "a code-page store must NOT trigger a whole-cache flush (page-granular precision)"
+    );
+    assert!(
+        m.discovery_stats().blocks_discarded > discarded_before,
+        "the store into page A must have discarded page A's block(s)"
+    );
+
+    // Re-enter page A: the NEW code (x2 += 10) must run — no stale block survived (under-invalidation
+    // would replay x2 += 1). Also confirm page B still computes correctly (its block survived).
+    const K: u64 = 40;
+    m.hart_mut().regs.write(1, K);
+    m.hart_mut().regs.write(2, 0);
+    m.hart_mut().regs.pc = PGA;
+    m.run(K * 3 + 40);
+    assert_eq!(
+        m.hart().regs.read(2),
+        10 * K,
+        "page A must run the NEW code after the store (no stale block)"
+    );
+    m.hart_mut().regs.write(3, K);
+    m.hart_mut().regs.write(4, 0);
+    m.hart_mut().regs.pc = PGB;
+    m.run(K * 3 + 40);
+    assert_eq!(
+        m.hart().regs.read(4),
+        K,
+        "page B (untouched) must still run its original code"
+    );
+}
+
+#[test]
+fn store_to_non_code_page_invalidates_nothing() {
+    let mut m = machine_two_hot_pages();
+    let flushes_before = m.discovery_stats().cache_flushes;
+    let discarded_before = m.discovery_stats().blocks_discarded;
+
+    // A store to a NON-code data page must be a bitmap set-miss → no invalidation at all.
+    write_then_drain(&mut m, DATA, &[0xDEAD_BEEFu32, 0x0BAD_F00D]);
+
+    let exec = m.executor().unwrap();
+    assert!(
+        exec.is_compiled(PGA) && exec.is_compiled(PGB),
+        "a store to a non-code page must invalidate NOTHING"
+    );
+    assert_eq!(
+        m.discovery_stats().cache_flushes,
+        flushes_before,
+        "non-code store: no whole-cache flush"
+    );
+    assert_eq!(
+        m.discovery_stats().blocks_discarded,
+        discarded_before,
+        "non-code store: no page-granular discard either"
+    );
+}
+
+#[test]
+fn fence_i_is_near_free() {
+    let mut m = machine_two_hot_pages();
+    assert!(
+        m.executor().unwrap().is_compiled(PGA) && m.executor().unwrap().is_compiled(PGB),
+        "both blocks compiled before fence.i"
+    );
+    let flushes_before = m.discovery_stats().cache_flushes;
+    let discarded_before = m.discovery_stats().blocks_discarded;
+    let fence_i_before = m.discovery_stats().fence_i;
+
+    // Execute a fence.i with NO preceding code write. Near-free: it must drop NOTHING — both pages'
+    // (un-dirtied) blocks survive.
+    poke(&mut m, SPIN, &[FENCE_I, enc_jal(0, 0)]);
+    m.hart_mut().regs.pc = SPIN;
+    m.run(2);
+
+    let exec = m.executor().unwrap();
+    assert!(
+        exec.is_compiled(PGA) && exec.is_compiled(PGB),
+        "fence.i is near-free: un-dirtied pages' compiled blocks must SURVIVE"
+    );
+    assert_eq!(
+        m.discovery_stats().cache_flushes,
+        flushes_before,
+        "fence.i must NOT whole-cache flush"
+    );
+    assert_eq!(
+        m.discovery_stats().blocks_discarded,
+        discarded_before,
+        "fence.i with no code write must discard nothing"
+    );
+    assert!(
+        m.discovery_stats().fence_i > fence_i_before,
+        "the retired fence.i must be counted (no-op-plus-stats)"
+    );
+}
+
+/// The core E4-T17 differential: the full SMC scenario (compile two pages, patch one, re-run both)
+/// must be byte-identical between the JIT and the interpreter — under-invalidation on either page
+/// would diverge.
+fn two_page_smc_scenario(jit: bool) -> [u64; 32] {
+    const K: u64 = 40;
+    let mut m = Machine::new(16 * 1024 * 1024);
+    poke(&mut m, PGA, &loop_page(2, 1, 1));
+    poke(&mut m, PGB, &loop_page(4, 3, 1));
+    poke(&mut m, SPIN, &[enc_jal(0, 0)]);
+    if jit {
+        arm_jit(&mut m);
+    } else {
+        m.set_block_cache(true);
+    }
+    // Warm both.
+    m.hart_mut().regs.write(1, K);
+    m.hart_mut().regs.write(2, 0);
+    m.hart_mut().regs.pc = PGA;
+    m.run(K * 3 + 40);
+    m.hart_mut().regs.write(3, K);
+    m.hart_mut().regs.write(4, 0);
+    m.hart_mut().regs.pc = PGB;
+    m.run(K * 3 + 40);
+    // Patch page A (x2 += 1 → x2 += 7), drain, re-run A then B.
+    write_then_drain(&mut m, PGA, &loop_page(2, 1, 7));
+    m.hart_mut().regs.write(1, K);
+    m.hart_mut().regs.write(2, 0);
+    m.hart_mut().regs.pc = PGA;
+    m.run(K * 3 + 40);
+    m.hart_mut().regs.write(3, K);
+    m.hart_mut().regs.write(4, 0);
+    m.hart_mut().regs.pc = PGB;
+    m.run(K * 3 + 40);
+    regs(&m)
+}
+
+#[test]
+fn two_page_smc_byte_identical_jit_vs_interp() {
+    let ri = two_page_smc_scenario(false);
+    let rj = two_page_smc_scenario(true);
+    assert_eq!(ri[2], 7 * 40, "interp: page A new code (x2 += 7) must run");
+    assert_eq!(ri[4], 40, "interp: page B code unchanged");
+    for i in 1..32 {
+        assert_eq!(
+            ri[i], rj[i],
+            "reg x{i} diverged JIT vs interp on two-page SMC"
+        );
+    }
 }
