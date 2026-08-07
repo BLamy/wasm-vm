@@ -93,6 +93,13 @@ export class WasmLinux {
      */
     importStoredSnapshot(blob: Uint8Array): Promise<void>;
     /**
+     * E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
+     * `{hasExecutor, compiledBlocks, executedBlocks, retiredViaJit}` read straight from the installed
+     * executor — `executedBlocks > 0` is the definitive evidence translated code executed (not merely
+     * that `enableJit` was called). `hasExecutor:false` means no JIT is attached at all.
+     */
+    jitStats(): any;
+    /**
      * Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
      * FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
      * typed reason (`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`) in the error
@@ -436,6 +443,7 @@ export interface InitOutput {
     readonly wasmlinux_getProfile: (a: number) => [number, number, number];
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
     readonly wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
+    readonly wasmlinux_jitStats: (a: number) => [number, number, number];
     readonly wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];

@@ -310,6 +310,20 @@ export class WasmLinux {
         return ret;
     }
     /**
+     * E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
+     * `{hasExecutor, compiledBlocks, executedBlocks, retiredViaJit}` read straight from the installed
+     * executor — `executedBlocks > 0` is the definitive evidence translated code executed (not merely
+     * that `enableJit` was called). `hasExecutor:false` means no JIT is attached at all.
+     * @returns {any}
+     */
+    jitStats() {
+        const ret = wasm.wasmlinux_jitStats(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
      * FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
      * typed reason (`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`) in the error
