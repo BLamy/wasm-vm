@@ -31,6 +31,21 @@ Current **Chrome** and **Firefox** (both ship `WebAssembly`, ES modules, and
 `application/wasm` streaming). The terminal is raw byte output at Level 0 — keyboard input,
 resize, and full ANSI apps arrive with the real UART in Epic 2.
 
+## Docs and media embeds
+
+The in-app **Docs** tab loads [`docs.html`](./docs.html), which includes the
+package integration guide for `@brett_lamy/viz-engine`, `@brett_lamy/docstream`,
+and `@brett_lamy/docstream-editor`. The source guide is
+[`docs/embedding-guide.md`](../docs/embedding-guide.md).
+
+Use `VizPlayer` for authored timeline scenes, `VideoEmbed` for direct or hosted
+video, and Docstream's built-in `ReplayPreview` for public Loop QA task,
+exploration, journey, or test-run URLs. The markdown remains portable:
+
+```md
+{% embed url="https://loop-qa.replay.io/projects/project-id/journeys/journey-id" /%}
+```
+
 ## Files
 
 - `index.html` — page + xterm.js UMD include + `main.js` module.

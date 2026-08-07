@@ -279,6 +279,7 @@
       <li><a href="#containers">Run containers</a></li>
       <li><a href="#byoi">Bring your own image</a></li>
       <li><a href="#frontend">Build your own frontend</a></li>
+      <li><a href="#media">VizPlayer + Docstream embeds</a></li>
       <li><a href="#caveats">Caveats &amp; limits</a></li>
     </ol>
   </nav>
@@ -618,6 +619,101 @@ term.<span class="f">onData</span>((s) => ctl.<span class="f">sendInput</span>(<
         a readiness gate, and <code>exec()</code> calls that parse <code>wvrun</code> output. Everything
         else — tabs, a container table, log panes — is ordinary UI on top of these primitives.
       </p>
+    </section>
+
+    <section id="media">
+      <p class="kicker">Step 6</p>
+      <h2>Publish explainers and replayable docs</h2>
+      <p>
+        The VM loader remains the runtime boundary. The presentation layer can use the same
+        package set as the rest of the docs stack: <code>@brett_lamy/viz-engine</code>
+        owns the declarative timeline engine and <code>VizPlayer</code>, while
+        <code>@brett_lamy/docstream</code> renders markdown embeds with its built-in
+        <code>ReplayPreview</code> and the engine's <code>VideoEmbed</code>.
+      </p>
+
+      <h3>Author a narrated scene with <code>VizPlayer</code></h3>
+      <p>
+        Use <code>VizPlayer</code> for an authored SVG explainer: the timeline is seekable,
+        loopable, and can follow narration audio. It is independent of the VM boot path, so a
+        docs page can explain boot, paging, OCI layers, or a network packet flow without coupling
+        the animation to the guest's wall-clock speed.
+      </p>
+      <div class="codeblock" data-lang="tsx"><pre><span class="k">import</span> { Timeline, VizPlayer } <span class="k">from</span> <span class="s">"@brett_lamy/viz-engine"</span>;
+<span class="k">import</span> <span class="s">"@brett_lamy/viz-engine/styles.css"</span>;
+
+<span class="k">const</span> timeline = <span class="k">new</span> <span class="f">Timeline</span>();
+<span class="k">const</span> opacity = timeline.<span class="f">channel</span>(<span class="s">"opacity"</span>, <span class="n">0</span>);
+timeline.<span class="f">tween</span>(opacity, <span class="n">1</span>, { at: <span class="n">0</span>, dur: <span class="n">0.5</span> });
+
+<span class="k">export function</span> <span class="f">BootExplainer</span>() {
+  <span class="k">return</span> (
+    &lt;<span class="f">VizPlayer</span>
+      scene={{
+        timeline,
+        render: (state) =&gt; &lt;<span class="f">circle</span> cx=<span class="s">"640"</span> cy=<span class="s">"360"</span> r=<span class="s">"80"</span>
+          opacity={state.<span class="f">get</span>(opacity)} /&gt;,
+      }}
+      loop
+    /&gt;
+  );
+}</pre></div>
+
+      <h3>Use Docstream for markdown embeds</h3>
+      <p>
+        Once the package releases are available, install them in a React documentation app. The
+        editor and renderer preserve the portable GitBook-style <code>embed</code> block; no
+        player-specific component has to be serialized into the document.
+      </p>
+      <div class="codeblock" data-lang="sh"><pre>npm install @brett_lamy/viz-engine @brett_lamy/docstream @brett_lamy/docstream-editor</pre></div>
+      <div class="codeblock" data-lang="tsx"><pre><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+<span class="k">import</span> { GitbookStreamdown } <span class="k">from</span> <span class="s">"@brett_lamy/docstream"</span>;
+<span class="k">import</span> { GitbookEditor } <span class="k">from</span> <span class="s">"@brett_lamy/docstream-editor"</span>;
+<span class="k">import</span> <span class="s">"@brett_lamy/docstream/styles.css"</span>;
+<span class="k">import</span> <span class="s">"@brett_lamy/docstream-editor/styles.css"</span>;
+
+<span class="k">const</span> markdown = <span class="s">`# Boot trace
+
+{% embed url="https://loop-qa.replay.io/projects/project-id/journeys/journey-id" /%}
+
+{% embed url="https://cdn.example.com/wasm-vm-boot.mp4" /%}`</span>;
+
+<span class="k">export function</span> <span class="f">ReadOnlyDoc</span>() {
+  <span class="k">return</span> &lt;<span class="f">GitbookStreamdown</span> markdown={markdown} /&gt;;
+}
+
+<span class="k">export function</span> <span class="f">EditableDoc</span>() {
+  <span class="k">const</span> [value, setValue] = <span class="f">useState</span>(markdown);
+  <span class="k">return</span> &lt;<span class="f">GitbookEditor</span> markdown={value} onChange={setValue} /&gt;;
+}</pre></div>
+
+      <p>For a custom layout, the same media boundary is available directly:</p>
+      <div class="codeblock" data-lang="tsx"><pre><span class="k">import</span> { VideoEmbed } <span class="k">from</span> <span class="s">"@brett_lamy/viz-engine"</span>;
+
+&lt;<span class="f">VideoEmbed</span> src=<span class="s">"./recordings/wasm-vm-boot.mp4"</span> title=<span class="s">"wasm-vm boot"</span> /&gt;</pre></div>
+
+      <h3>Embed a replay directly</h3>
+      <p>
+        When a page needs a custom layout instead of a markdown block, import
+        <code>ReplayPreview</code> from Docstream. Public project URLs for tasks,
+        explorations, journeys, and test runs are converted to Loop QA's chrome-free public
+        route automatically. Native rrweb event arrays and CORS-enabled event endpoints are also
+        supported.
+      </p>
+      <div class="codeblock" data-lang="tsx"><pre><span class="k">import</span> { ReplayPreview } <span class="k">from</span> <span class="s">"@brett_lamy/docstream"</span>;
+
+&lt;<span class="f">ReplayPreview</span>
+  source=<span class="s">"https://loop-qa.replay.io/projects/project-id/tasks/task-id"</span>
+  title=<span class="s">"wasm-vm browser run"</span>
+/&gt;</pre></div>
+
+      <div class="callout">
+        <span class="tag">Choose the right surface.</span>
+        Use <code>VizPlayer</code> for authored timeline scenes, <code>VideoEmbed</code> for a
+        direct <code>.mp4</code>/<code>.webm</code>/<code>.ogg</code> asset or hosted player, and
+        <code>ReplayPreview</code> for a public Loop QA recording. Replay URLs must be publicly
+        viewable and iframe-embeddable; private or localhost assets are not exposed by the preview.
+      </div>
     </section>
 
     <section id="caveats">

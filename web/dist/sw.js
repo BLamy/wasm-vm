@@ -81,7 +81,12 @@ self.addEventListener("fetch", (event) => {
       const hit = await cache.match(req);
       if (hit) return hit; // offline-first within a build version
       try {
-        const resp = await fetch(req);
+        // Bypass the BROWSER HTTP cache on the network fetch (cache: "reload"). A new build version has
+        // an empty SW cache, so this is a miss and we fetch from the network — but a plain fetch(req)
+        // would hit the browser's HTTP cache, which Cloudflare populates with a long TTL, so a fresh
+        // deploy would re-cache STALE bytes into the new SW cache (the recurring "prod serves the old
+        // main.js after deploy" bug). Reloading forces truly-fresh bytes for the app shell.
+        const resp = await fetch(new Request(req, { cache: "reload" }));
         // Cache the FULL response (headers intact — AC3) but only a clean 200 (never a 206 range, an
         // opaque, or an error) so a transient failure can't poison the offline shell.
         if (resp && resp.status === 200 && resp.type === "basic") {

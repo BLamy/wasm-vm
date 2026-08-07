@@ -111,6 +111,12 @@ export async function startLinuxBootWorker(opts = {}) {
     get(target, prop) {
       if (prop in target) return target[prop];
       if (typeof prop !== "string") return undefined;
+      // CRITICAL: `await proxy` (main.js does `linuxCtl = await _bootLinux(...)`) probes `.then`. If we
+      // returned an rpc function here, `await` would treat the proxy as a THENABLE and call
+      // `.then(resolve, reject)` — but rpc strips those callbacks to null, so resolve/reject never fire
+      // and the await hangs forever, so main.js's whole post-boot block (input wiring, __linuxCtl hook)
+      // never runs. Return undefined for thenable probes so the proxy is a plain object, not a thenable.
+      if (prop === "then" || prop === "catch" || prop === "finally") return undefined;
       // Any other controller method → async RPC into the worker's real controller.
       return (...args) => rpc(prop, args);
     },

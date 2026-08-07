@@ -29,6 +29,8 @@ and self-hosting.
   evidence (rr traces + guest instruction traces), and the verifier charter.
 - **`tasks/`** — the full work breakdown: one folder per epic, one file per task,
   `tasks/QUEUE.md` as the global priority queue.
+- **`docs/embedding-guide.md`** — use `VizPlayer`, `VideoEmbed`, and Docstream's
+  built-in `ReplayPreview` for explainers, videos, and public Loop QA replays.
 - **`tools/build_queue.py`** — regenerates `tasks/QUEUE.md` from task frontmatter.
 
 Execution model: one task at a time, top of queue, and no task is done until an
