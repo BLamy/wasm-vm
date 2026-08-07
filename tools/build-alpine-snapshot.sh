@@ -73,42 +73,86 @@ echo "[alpine-snapshot] booting Alpine to a post-login shell and snapshotting (t
 # OUTPUT-ONLY marker. The typed command echoes as `echo WVSNAP"READY"` (a quote between P and R, so the
 # literal marker never appears in the echo); only the command's STDOUT prints `WVSNAPREADY`, so the
 # trigger fires at a genuinely idle, logged-in shell — not on the getty banner (see the native proof).
-printf 'root\n\necho WVSNAP"READY"\n' | "$BIN" boot \
+# Device topology MUST match the browser chunked/persistent Alpine machine (crates/wasm assemble):
+# virtio-blk slot 0 (--drive), virtio-net slot 1 (--net), virtio-rng slot 2 (--virtio-rng) — all three
+# are attached on EVERY browser boot, so the snapshot's device sections must carry them or load_resume
+# rejects the topology mismatch. (Mirrors tools/build-boot-snapshot.sh for busybox.)
+# getty FLUSHES pre-typed input when it starts, so input must arrive AFTER the `login:` prompt is up —
+# not piped at t=0. We feed the boot's stdin through a FIFO held open by a background writer that watches
+# the console log for `login:` and only then sends `root`, an empty line (empty-password answer), and the
+# OUTPUT-ONLY marker `echo WVSNAP"READY"` (the typed echo carries a quote between P and R, so the literal
+# marker only appears in the command's STDOUT → the trigger fires at a genuinely idle, logged-in shell).
+FIFO=$(mktemp -u -t wvin.XXXXXX); mkfifo "$FIFO"
+BOOTLOG=$(mktemp -t alpine-boot-log.XXXXXX)
+trap 'rm -f "$WORK" "$RAW_SNAP" "$RAW_DELTA" "$FIFO" "$BOOTLOG"' EXIT
+(
+  # Hold the FIFO open for writing for the whole boot so the CLI never sees stdin EOF.
+  exec 3>"$FIFO"
+  # Wait for the login prompt to appear in the tee'd console log.
+  for _ in $(seq 1 1200); do grep -q "login:" "$BOOTLOG" 2>/dev/null && break; sleep 1; done
+  sleep 2; printf 'root\n'  >&3      # username
+  sleep 3; printf '\n'      >&3      # answer a possible empty-password prompt / redraw the shell
+  sleep 3; printf 'echo WVSNAP"READY"\n' >&3   # output-only marker at the shell
+  sleep 8; printf 'echo WVSNAP"READY"\n' >&3   # retry once in case the first landed during login
+  sleep 30                            # keep the FIFO writer alive until the snapshot triggers
+) &
+WRITER=$!
+
+# Device topology MUST match the browser chunked/persistent Alpine machine (crates/wasm assemble):
+# virtio-blk slot 0 (--drive), virtio-net slot 1 (--net), virtio-rng slot 2 (--virtio-rng) — all three
+# are attached on EVERY browser boot, so the snapshot's device sections must carry them or load_resume
+# rejects the topology mismatch. (Mirrors tools/build-boot-snapshot.sh for busybox.) The console is
+# tee'd to $BOOTLOG so the input writer can watch for `login:`.
+"$BIN" boot \
   --kernel "$KERNEL" \
   --drive "file=$WORK" \
+  --net \
+  --virtio-rng \
   --append "root=/dev/vda rw console=ttyS0 earlycon=sbi" \
   --max-instrs 60000000000 \
   --snapshot-trigger "WVSNAPREADY" \
   --snapshot-out "$RAW_SNAP" \
   --snapshot-core-id "$CORE_HEX" \
-  --snapshot-base-id "$BASE_HEX"
+  --snapshot-base-id "$BASE_HEX" < "$FIFO" | tee "$BOOTLOG"
+kill "$WRITER" 2>/dev/null || true
 
 [ -s "$RAW_SNAP" ] || { echo "build-alpine-snapshot: no snapshot written" >&2; exit 1; }
 
-# ── Compute the overlay-delta: every 4 KiB block where the post-boot ext4 differs from the CHUNK BASE.
-echo "[alpine-snapshot] computing overlay-delta vs the chunked base (drift-proof)…"
-python3 - "$WORK" "$CHUNK_MANIFEST" "$CHUNK_DIR" "$BASE_HEX" "$RAW_DELTA" <<'PY'
-import json,sys,hashlib,struct
-work,manifest_path,chunk_dir,base_hex,out=sys.argv[1:6]
+# ── Compute the overlay-delta, coherent against the DEPLOYED R2 chunk base (base_hash in the manifest)
+# WITHOUT fetching R2. A block is included (with its POST-BOOT content) when EITHER:
+#   (a) the boot WROTE it (post-boot ext4 ≠ pristine)          — the copy-on-write set, OR
+#   (b) it lies in a chunk that DRIFTS (SHA-256 of the pristine's chunk ≠ the manifest's chunk hash) —
+#       i.e. the R2 base serves different bytes there than the pristine the guest booted from. Seeding
+#       the post-boot (== pristine for untouched) content for those blocks makes the overlay override the
+#       R2 base's drifted bytes, so every cache-miss read returns what the restored guest expects.
+# (b) is what makes the artifact coherent against a base that has drifted from the on-disk pristine —
+# the block-0 superblock plus ~dozens of other chunks here. Untouched, non-drifting blocks fall through
+# to the R2 base, which is byte-identical there.
+echo "[alpine-snapshot] computing overlay-delta (writes ∪ drifted-chunk coverage vs the R2 base)…"
+python3 - "$WORK" "$PRISTINE" "$CHUNK_MANIFEST" "$BASE_HEX" "$RAW_DELTA" <<'PY'
+import json,sys,struct,hashlib
+work,pristine,manifest_path,base_hex,out=sys.argv[1:6]
 m=json.load(open(manifest_path))
-cs=m["chunk_size"]; image_len=m["image_len"]; chunks=m["chunks"]
+image_len=m["image_len"]; cs=m["chunk_size"]; chunks=m["chunks"]
 OB=4096
-def base_block(i):
-    # bytes [i*OB, i*OB+OB) of the reassembled chunk base, read from the content-addressed chunk object.
-    start=i*OB
-    ci=start//cs; off=start-ci*cs
-    with open(f"{chunk_dir}/{chunks[ci]}","rb") as f:
-        f.seek(off); b=f.read(OB)
-    if len(b)<OB: b=b+b"\x00"*(OB-len(b))
-    return b
+per_chunk=cs//OB
+# (b) which chunks drift: pristine chunk content hash != manifest chunk hash → cover ALL their blocks.
+drift_chunks=set()
+with open(pristine,"rb") as p:
+    for ci,exp in enumerate(chunks):
+        if hashlib.sha256(p.read(cs)).hexdigest()!=exp:
+            drift_chunks.add(ci)
 blocks=[]
 nblk=(image_len+OB-1)//OB
-with open(work,"rb") as w:
+with open(work,"rb") as w, open(pristine,"rb") as p:
     for i in range(nblk):
         w.seek(i*OB); wb=w.read(OB)
+        p.seek(i*OB); pb=p.read(OB)
         if len(wb)<OB: wb=wb+b"\x00"*(OB-len(wb))
-        if wb!=base_block(i):
+        if len(pb)<OB: pb=pb+b"\x00"*(OB-len(pb))
+        if wb!=pb or (i//per_chunk) in drift_chunks:
             blocks.append((i,wb))
+print(f"overlay-delta: {len(drift_chunks)} drifting chunks covered",file=sys.stderr)
 # WVOD1: magic(5) block_size(u32) image_len(u64) base_binding(32) generation(u64) count(u32) [idx(u64)+block]
 base_binding=bytes.fromhex(base_hex)
 with open(out,"wb") as o:
