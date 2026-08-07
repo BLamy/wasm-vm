@@ -342,6 +342,7 @@ async function runLinuxBoot(opts, banner) {
       const reason = halt[state] || (state?.startsWith?.("exited") ? state : state?.startsWith?.("fail") ? state : null);
       if (reason) {
         setStatus(`⏻ machine halted — ${reason}`);
+        setGuestChip(null);
         term.writeln(`\r\n\x1b[7m machine halted (${reason}) — click "Boot Linux"/"Boot Alpine" to boot a fresh machine \x1b[0m`);
       } else {
         setStatus(`linux: ${state}`);
@@ -535,6 +536,7 @@ window.wvmDemo = {
       'Booting a real RISC-V Linux guest → <b>busybox</b> userland… watch the console below; ' +
       'you will land at the <code>#</code> shell prompt in a few seconds.',
     );
+    setGuestChip("busybox");
     await runLinuxBoot({ manifestUrl: "./artifacts.json" }, "booting the real busybox userland on RISC-V Linux (in wasm)…");
     return linuxCtl ? { ok: true } : { ok: false, error: lastBootError || "boot failed" };
   },
@@ -549,6 +551,7 @@ window.wvmDemo = {
       'Booting <b>Alpine</b> (lazy chunk fetch) to run real OCI containers via <code>wvrun</code>… ' +
       'this takes a few minutes on the interpreted CPU — the console below is the real guest.',
     );
+    setGuestChip("alpine");
     await runLinuxBoot(
       {
         manifestUrl: "./artifacts-alpine.json",
@@ -743,6 +746,25 @@ window.__suiteResults = suiteResults;
 
 function setStatus(text) {
   statusEl.textContent = text;
+}
+
+// The terminal-bar chip that tells the user which guest userland the CLI runs in: `root@busybox` /
+// `root@alpine`. Called when a boot starts; cleared when the machine halts. (The host is `wasm-vm`, the
+// guest hostname, but the useful distinction for the user is which userland/runtime is live.)
+let currentGuestKind = null;
+function setGuestChip(kind) {
+  currentGuestKind = kind;
+  const el = document.getElementById("ide-term-who");
+  if (!el) return;
+  if (kind) {
+    el.textContent = `root@${kind}`;
+    el.title = kind === "alpine"
+      ? "Alpine Linux userland — container-capable (wvrun / OCI)"
+      : "busybox userland (initramfs)";
+    el.hidden = false;
+  } else {
+    el.hidden = true;
+  }
 }
 
 function setSuiteStatus(text) {
