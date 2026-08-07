@@ -25,6 +25,33 @@ import init, {
 } from "./pkg/wasm_vm_wasm.js";
 import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
 
+// Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
+// runs on the main thread (a Web Worker offload is a larger follow-up), so a long synchronous run slice
+// janks the page's rendering/animation. `setTimeout(tick,0)` is clamped to ~4 ms once nested, which
+// forces LARGE slices to keep throughput and makes the jank worse. A MessageChannel post reschedules
+// immediately AND still returns to the event loop between slices, so the browser can paint/handle input
+// between short slices — smooth page, full throughput. Falls back to setTimeout where unavailable.
+const _yieldChan = typeof MessageChannel !== "undefined" ? new MessageChannel() : null;
+let _yieldCb = null;
+if (_yieldChan) {
+  _yieldChan.port1.onmessage = () => {
+    const cb = _yieldCb;
+    _yieldCb = null;
+    if (cb) cb();
+  };
+  _yieldChan.port1.start?.();
+}
+function yieldToMain(cb) {
+  // The run loop holds the single-tick invariant (`tickScheduled`), so at most one yield is ever
+  // outstanding; if one somehow is, fall back to setTimeout rather than dropping the callback.
+  if (_yieldChan && _yieldCb === null) {
+    _yieldCb = cb;
+    _yieldChan.port2.postMessage(0);
+  } else {
+    setTimeout(cb, 0);
+  }
+}
+
 /** Gunzip `bytes` (a gzip member) to a Uint8Array via the platform DecompressionStream. */
 async function gunzip(bytes) {
   const ds = new DecompressionStream("gzip");
@@ -111,7 +138,7 @@ async function sha256hex(bytes) {
  *   onProgress(role, loaded, total)   per-artifact bytes
  *   onOutput(u8)  console bytes (feed to the terminal)
  *   onError(err)  a specific, surfaced failure (HTTP status / hash mismatch / boot error)
- *   quantum       instructions per run tick (default 2_000_000)
+ *   quantum       instructions per run slice (default 500_000; see the option below)
  * Returns a controller: { sendInput(bytes), stop(), whenDone: Promise<string> }.
  */
 // E3-T10: "reset disk" — delete THIS image's durable overlay (its own IndexedDB database),
@@ -172,7 +199,11 @@ export async function startLinuxBoot(opts = {}) {
     // is PAUSED before returning; the UI shows the dialog and calls the returned controller's
     // resumeAfterQuota()/continueReadOnly()/resetDisk() to act.
     onQuota = () => {},
-    quantum = 2_000_000,
+    // Instructions per synchronous run slice. Kept modest so a slice is only a few ms of main-thread
+    // time — short enough that the browser paints/handles input between slices (smooth page/animation).
+    // Combined with the no-clamp MessageChannel yield (see yieldToMain), throughput stays high. A larger
+    // value trades page responsiveness for raw guest throughput (e.g. headless benches may pass more).
+    quantum = 500_000,
   } = opts;
   // E3-T09 (critic BUG-1): hoisted ABOVE the try so the catch can release a granted writer
   // lock when boot fails AFTER acquisition — otherwise a banner-less zombie tab strands the
@@ -477,7 +508,7 @@ export async function startLinuxBoot(opts = {}) {
     const schedule = () => {
       if (tickScheduled || stopped || paused || quotaPaused) return;
       tickScheduled = true;
-      setTimeout(tick, 0);
+      yieldToMain(tick);
     };
     // E3-T10: shared handler for a persist failure on EITHER pump site. A StorageFull is
     // RECOVERABLE — the dirty blocks stay pending (persistPending never marked them). While the
