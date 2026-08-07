@@ -328,6 +328,60 @@ pub fn overlay_db_name(manifest_json: &str) -> Result<String, JsError> {
     Ok(wasm_vm_storage::overlay_store_name(&manifest.base_hash()))
 }
 
+/// E4 Alpine restore-on-load: seed the IndexedDB copy-on-write overlay for this chunked image with the
+/// shipped `WVOD1` overlay-delta (the ~1 MB set of post-boot-dirtied 4 KiB blocks) BEFORE constructing
+/// the persistent machine, so a subsequent [`WasmLinux::new_chunked_disk_persistent`]'s `load_blocks()`
+/// picks them up and the restored guest's cache-miss disk reads return the *post-boot* block content.
+///
+/// Coherence is bound, not bypassed:
+/// * the delta's `base_binding`/`image_len` must match this manifest's `base_hash`/`image_len`
+///   (`delta_base_mismatch` otherwise) — a delta for a different chunked base is rejected;
+/// * seeding is done **only into a brand-new overlay store** (no meta record yet). If an overlay
+///   already exists (the user has their own durable disk state) it is left untouched and this returns
+///   `false` — the boot then proceeds over that existing overlay, never clobbered by pristine-boot blocks.
+///
+/// Returns `true` iff the delta was seeded (a fresh store), `false` if an overlay already existed.
+/// The paired RAM snapshot rides the same overlay generation (0 for a fresh store); the restore's
+/// `restoreDecisionCode` guard enforces the core-hash + base + generation triple before `loadSnapshotBlob`.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen(js_name = seedOverlayDelta)]
+pub async fn seed_overlay_delta(
+    manifest_json: String,
+    delta_bytes: Vec<u8>,
+) -> Result<bool, JsError> {
+    let manifest = wasm_vm_storage::ImageManifest::from_json(&manifest_json)
+        .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
+    let base_binding = manifest.base_hash();
+    let delta = wasm_vm_storage::OverlayDelta::from_bytes(&delta_bytes)
+        .map_err(|e| JsError::new(&format!("overlay delta parse: {e:?}")))?;
+    if delta.base_binding != base_binding || delta.image_len != manifest.image_len {
+        return Err(JsError::new("delta_base_mismatch"));
+    }
+
+    let idb = idb_store::IdbStore::open(&base_binding)
+        .await
+        .map_err(|e| JsError::new(&format!("IndexedDB open: {e:?}")))?;
+    // Only seed a brand-new store — never clobber an existing user overlay.
+    if idb
+        .read_meta()
+        .await
+        .map_err(|e| JsError::new(&format!("IndexedDB read meta: {e:?}")))?
+        .is_some()
+    {
+        return Ok(false);
+    }
+    idb.write_meta(&wasm_vm_storage::OverlayMeta::new(&manifest).to_bytes())
+        .await
+        .map_err(|e| JsError::new(&format!("IndexedDB write meta: {e:?}")))?;
+    // Persist the delta blocks in bounded batches so a single strict txn is never the whole delta.
+    for batch in delta.blocks.chunks(64) {
+        idb.persist(batch)
+            .await
+            .map_err(|e| JsError::new(&format!("IndexedDB seed persist: {e:?}")))?;
+    }
+    Ok(true)
+}
+
 /// The E0-T14 golden `loops.elf` (the pinned benchmark workload) and its retired count.
 const BENCH_ELF: &[u8] = include_bytes!("../../../guest/prebuilt/loops.elf");
 const BENCH_RETIRED_PER_RUN: u64 = 48;

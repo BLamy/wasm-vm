@@ -15,6 +15,39 @@ use wasm_vm_core::resume::{
 };
 
 #[wasm_bindgen_test]
+fn overlay_delta_round_trips_and_bounds_on_wasm32() {
+    // E4 Alpine restore-on-load: the shipped overlay-delta (WVOD1) parses under the same 32-bit
+    // checked_mul bound on real wasm32. A round-trip is byte-identical, a hostile count can't
+    // over-allocate, and the base-binding is preserved (the coherence key the browser seed checks
+    // against the chunk manifest's base_hash before touching IndexedDB).
+    use wasm_vm_storage::{OVERLAY_BLOCK, OverlayDelta, OverlayDeltaError};
+
+    let delta = OverlayDelta {
+        image_len: 805306368,
+        base_binding: [0x5Au8; 32],
+        generation: 0,
+        blocks: vec![(0, [0xABu8; OVERLAY_BLOCK]), (199, [0xCDu8; OVERLAY_BLOCK])],
+    };
+    let bytes = delta.to_bytes();
+    let parsed = OverlayDelta::from_bytes(&bytes).unwrap();
+    assert_eq!(parsed, delta);
+    assert_eq!(parsed.base_binding, [0x5Au8; 32]);
+
+    // A truncated blob is refused (not a panic / over-read) on wasm32.
+    assert_eq!(
+        OverlayDelta::from_bytes(&bytes[..bytes.len() - 1]),
+        Err(OverlayDeltaError::Truncated)
+    );
+    // A forged header claiming a huge block count must not allocate past the buffer.
+    let mut forged = bytes.clone();
+    forged[57..61].copy_from_slice(&u32::MAX.to_le_bytes());
+    assert_eq!(
+        OverlayDelta::from_bytes(&forged),
+        Err(OverlayDeltaError::Truncated)
+    );
+}
+
+#[wasm_bindgen_test]
 fn ram_snapshot_round_trips_byte_identically_on_wasm32() {
     // Mostly-zero RAM with a few non-zero spans — the realistic snapshot shape. write_slice takes an
     // absolute guest address, so span offsets are added to the RAM base.

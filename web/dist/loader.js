@@ -12,6 +12,7 @@
 import init, {
   WasmLinux,
   overlayDbName,
+  seedOverlayDelta,
   setSlirpNet,
   setSlirpRelay,
   setSlirpRelayToken,
@@ -186,6 +187,12 @@ export async function startLinuxBoot(opts = {}) {
   try {
     const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
     const km = manifest.artifacts.kernel;
+    // E4 restore-on-load artifacts (busybox: bootSnapshot only; Alpine chunked: bootSnapshot RAM +
+    // overlayDelta). Hoisted so both the pre-construction overlay seed and the post-construction RAM
+    // restore can see them. `alpineRamBlob` is the RAM blob to restore once the chunked machine exists.
+    const bootSnap = manifest.artifacts?.bootSnapshot;
+    const overlayDeltaEntry = manifest.artifacts?.overlayDelta;
+    let alpineRamBlob = null;
 
     onState("fetching");
     // The kernel is always fetched whole (small). The rootfs is fetched whole for disk/initramfs
@@ -325,6 +332,34 @@ export async function startLinuxBoot(opts = {}) {
         const est = navigator.storage?.estimate ? await navigator.storage.estimate() : {};
         onStorage({ usage: est.usage ?? null, quota: est.quota ?? null, granted });
       } catch { /* storage API absent → no indicator */ }
+      // E4 Alpine restore-on-load (chunked/persistent path): if this manifest ships a coherent
+      // build-time boot snapshot (RAM blob) + overlay-delta (the ~1 MB of post-boot-dirtied disk
+      // blocks), seed the delta into the brand-new IndexedDB overlay NOW — BEFORE constructing the
+      // persistent machine — so its load_blocks() picks them up and the restored guest's cache-miss
+      // disk reads return post-boot content. Then (after construction) loadSnapshotBlob restores RAM,
+      // landing straight at a ready, container-capable shell instead of the ~15-min cold boot.
+      //
+      // Writer tabs only (a read-only tab must never write IndexedDB). seedOverlayDelta is a no-op
+      // (returns false) if an overlay already exists, so a user's own durable disk is never clobbered.
+      // Any failure here falls through to the normal chunked cold boot — never a broken state.
+      if (!lockReadOnly && bootSnap && overlayDeltaEntry && opts.bootSnapshot !== false) {
+        try {
+          onState("restoring");
+          const dgz = await fetchWithProgress(overlayDeltaEntry.url, (l, t) => onProgress("overlayDelta", l, t));
+          if ((await sha256hex(dgz)) !== overlayDeltaEntry.sha256) throw new Error("overlay delta integrity");
+          const deltaBytes = await gunzip(dgz);
+          const rgz = await fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t));
+          if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
+          const ramBytes = await gunzip(rgz);
+          const seeded = await seedOverlayDelta(imageManifestText, deltaBytes);
+          // Only arm the RAM restore when we actually seeded a fresh overlay: restoring RAM over a
+          // pre-existing (user) overlay would be disk-incoherent.
+          if (seeded) alpineRamBlob = ramBytes;
+        } catch (e) {
+          console.warn("wasm-vm: Alpine overlay-delta seed failed, cold booting:", e?.message || e);
+          alpineRamBlob = null;
+        }
+      }
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
       machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, lockReadOnly, (u8) => onOutput(u8));
     } else if (isChunked) {
@@ -362,7 +397,26 @@ export async function startLinuxBoot(opts = {}) {
     // state, so wall-clock time and entropy self-reseed after restore; a fresh DHCP lease is a slirp
     // (Alpine) concern, N/A for the offline busybox default.
     let restoredFromBootSnapshot = false;
-    const bootSnap = manifest.artifacts?.bootSnapshot;
+    // E4 Alpine (chunked/persistent) restore: the overlay was already seeded with the post-boot disk
+    // delta BEFORE construction; now restore the paired RAM blob. The persistent machine's snapshot
+    // identity is already the chunk manifest's base_hash (set in newChunkedDiskPersistent), so
+    // restoreDecisionCode enforces the core-hash + base + overlay-generation triple. A foreign/stale
+    // RAM blob (or a generation mismatch) is rejected → the machine keeps its fresh chunked cold boot.
+    if (alpineRamBlob) {
+      try {
+        const decision = machine.restoreDecisionCode(alpineRamBlob, machine.overlayGeneration());
+        if (decision === "resume") {
+          machine.loadSnapshotBlob(alpineRamBlob);
+          restoredFromBootSnapshot = true;
+          onState("restored");
+        } else {
+          console.warn(`wasm-vm: Alpine boot snapshot not coherent (${decision}) — cold booting`);
+        }
+      } catch (e) {
+        console.warn("wasm-vm: Alpine RAM restore failed, cold booting:", e?.message || e);
+        restoredFromBootSnapshot = false;
+      }
+    }
     if (mode === "initramfs" && bootSnap && opts.bootSnapshot !== false) {
       try {
         const baseId = await deriveBootSnapshotBaseId(km.sha256, manifest.artifacts.initramfs.sha256);

@@ -9,6 +9,7 @@ export const filesha256_finish: (a: number) => [number, number, number, number];
 export const filesha256_new: () => number;
 export const filesha256_update: (a: number, b: number, c: number) => [number, number];
 export const overlayDbName: (a: number, b: number) => [number, number, number, number];
+export const seedOverlayDelta: (a: number, b: number, c: number, d: number) => any;
 export const version: () => [number, number];
 export const wasmlinux_advanceOverlayGeneration: (a: number) => [number, number, number];
 export const wasmlinux_beginFileUpload: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number];

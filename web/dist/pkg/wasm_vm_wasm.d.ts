@@ -322,6 +322,25 @@ export function initLogging(): void;
 export function overlayDbName(manifest_json: string): string;
 
 /**
+ * E4 Alpine restore-on-load: seed the IndexedDB copy-on-write overlay for this chunked image with the
+ * shipped `WVOD1` overlay-delta (the ~1 MB set of post-boot-dirtied 4 KiB blocks) BEFORE constructing
+ * the persistent machine, so a subsequent [`WasmLinux::new_chunked_disk_persistent`]'s `load_blocks()`
+ * picks them up and the restored guest's cache-miss disk reads return the *post-boot* block content.
+ *
+ * Coherence is bound, not bypassed:
+ * * the delta's `base_binding`/`image_len` must match this manifest's `base_hash`/`image_len`
+ *   (`delta_base_mismatch` otherwise) — a delta for a different chunked base is rejected;
+ * * seeding is done **only into a brand-new overlay store** (no meta record yet). If an overlay
+ *   already exists (the user has their own durable disk state) it is left untouched and this returns
+ *   `false` — the boot then proceeds over that existing overlay, never clobbered by pristine-boot blocks.
+ *
+ * Returns `true` iff the delta was seeded (a fresh store), `false` if an overlay already existed.
+ * The paired RAM snapshot rides the same overlay generation (0 for a fresh store); the restore's
+ * `restoreDecisionCode` guard enforces the core-hash + base + generation triple before `loadSnapshotBlob`.
+ */
+export function seedOverlayDelta(manifest_json: string, delta_bytes: Uint8Array): Promise<boolean>;
+
+/**
  * Configure the DHCP lease duration for subsequent boots (used by the renewal acceptance).
  */
 export function setSlirpDhcpLeaseSeconds(seconds: number): void;
@@ -388,6 +407,7 @@ export interface InitOutput {
     readonly filesha256_new: () => number;
     readonly filesha256_update: (a: number, b: number, c: number) => [number, number];
     readonly overlayDbName: (a: number, b: number) => [number, number, number, number];
+    readonly seedOverlayDelta: (a: number, b: number, c: number, d: number) => any;
     readonly version: () => [number, number];
     readonly wasmlinux_advanceOverlayGeneration: (a: number) => [number, number, number];
     readonly wasmlinux_beginFileUpload: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number];

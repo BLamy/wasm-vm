@@ -555,7 +555,12 @@ window.wvmDemo = {
         mode: "chunked",
         imageManifestUrl: R2_ASSETS + "/chunked-alpine/manifest.json",
         cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
-        persist: new URLSearchParams(location.search).get("persist") === "1",
+        // E4 Alpine restore-on-load needs the persistent (IndexedDB overlay) path: the seeded
+        // post-boot disk delta lives in that overlay. Default ON so the shipped RAM snapshot + delta
+        // restore in ~1s; `?persist=0` forces the non-persistent lazy boot (no restore).
+        persist: new URLSearchParams(location.search).get("persist") !== "0",
+        // `?noSnapshot` disables the boot-snapshot restore (cold-boot baseline for A/B timing).
+        bootSnapshot: !new URLSearchParams(location.search).has("noSnapshot"),
         ramMib: 256,
         fileTransfer: true,
       },

@@ -38,11 +38,14 @@ done
 # E4 boot snapshot ships ON Pages (URL kept relative above), so the FILE must be present under
 # $DIST/releases/ — build-web-dist.sh deliberately skips releases/, so copy it here at deploy time
 # (same "poor-mans-ci at deploy time" pattern as the kernel, except this one stays on Pages).
-if [ -f releases/boot-snapshot/busybox-ready.snap.gz ]; then
-  mkdir -p "$DIST/releases/boot-snapshot"
-  cp releases/boot-snapshot/busybox-ready.snap.gz "$DIST/releases/boot-snapshot/busybox-ready.snap.gz"
-  echo "[deploy] shipped boot snapshot ($(du -h "$DIST/releases/boot-snapshot/busybox-ready.snap.gz" | cut -f1)) on Pages"
-fi
+mkdir -p "$DIST/releases/boot-snapshot"
+# busybox (initramfs) + Alpine (chunked) restore artifacts all ship ON Pages (each < 25 MiB).
+for snap in busybox-ready.snap.gz alpine-ready.snap.gz alpine-overlay-delta.bin.gz; do
+  if [ -f "releases/boot-snapshot/$snap" ]; then
+    cp "releases/boot-snapshot/$snap" "$DIST/releases/boot-snapshot/$snap"
+    echo "[deploy] shipped $snap ($(du -h "releases/boot-snapshot/$snap" | cut -f1)) on Pages"
+  fi
+done
 
 # Do NOT ship the big artifacts with the site.
 rm -rf "$DIST/releases/kernel" "$DIST/releases/initramfs" "$DIST/releases/chunked-alpine" 2>/dev/null || true
