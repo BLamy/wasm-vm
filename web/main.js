@@ -7,6 +7,14 @@ import init, { FileSha256, WasmMachine, version, bench } from "./pkg/wasm_vm_was
 import { RISCV_TESTS } from "./riscv-tests.js";
 import { ROADMAP } from "./roadmap.js";
 import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
+import { startLinuxBootWorker } from "./linux-worker-host.js";
+
+// E4-T22: run the CPU dispatch loop on a dedicated Web Worker (off the main thread) when the page is
+// opened with `?worker=1`. Drop-in for startLinuxBoot with the same opts/controller contract; the
+// worker isn't subject to the main-thread setTimeout/paint throttle (the measured cause of slow Node).
+// Opt-in for now — the main-thread path stays the default until the worker path is browser-verified.
+const _useCpuWorker = new URLSearchParams(location.search).get("worker") === "1";
+const _bootLinux = _useCpuWorker ? startLinuxBootWorker : startLinuxBoot;
 import { createLinuxTerminal } from "./terminal.js";
 import { createFileTransferUI } from "./file-transfer.js";
 import { createBootProgressSurface } from "./boot-progress.js";
@@ -157,7 +165,7 @@ async function runLinuxBoot(opts, banner) {
   resetGuestReady();
   const imageLen = opts.imageLen ?? 536870912; // chunked image length; for byte-fraction honesty
   try {
-    linuxCtl = await startLinuxBoot({
+    linuxCtl = await _bootLinux({
       ...opts,
       // E3-net: `?slirpNet` in the URL boots with the slirp local stack (real DHCP/ARP/ICMP) instead
       // of the loopback backend — so the guest can pull a real IP and reach the gateway.
@@ -305,6 +313,9 @@ async function runLinuxBoot(opts, banner) {
       },
     });
     const ctlForRelease = linuxCtl;
+    // E4-T22 test hook: expose the boot controller (worker proxy or main-thread) so a Playwright driver
+    // can drive input / time workloads. Inert for users.
+    try { window.__linuxCtl = linuxCtl; } catch { /* worker scope */ }
     // A restored guest is parked at its shell prompt with no pending output; send a newline so the
     // shell re-renders its prompt instead of showing a blank terminal. (markGuestReady already fired
     // in onState("restored").) Best-effort — a cold boot ignores this.
