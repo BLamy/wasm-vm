@@ -1,0 +1,30 @@
+{
+  "bench": "dhrystone",
+  "score": 189.717,
+  "unit": "DMIPS",
+  "runs": [
+    189.717
+  ],
+  "spread": 0.0,
+  "noise_warning": false,
+  "engine": "native",
+  "commit": "010446f009677070f47a16f842b5c219b0158907",
+  "config": {
+    "gcc": "gcc-13-riscv64-linux-gnu 13.3.0",
+    "flags": "-static -O2 -g0 -march=rv64gc -mabi=lp64d",
+    "iterations": 30000000,
+    "vm_build": "release",
+    "ram_mib": 256,
+    "binary_sha256": "eb21029f56d9774e9fa621ad8ef29b5f1fc8a2d5f7875d7c3eb5714fff5427d3"
+  },
+  "date": "2026-08-05T03:53:42.883931+00:00",
+  "timing_check": {
+    "note": "guest elapsed is instruction-count-derived (clock_div=10, 10 MHz timebase); the policed invariant is host/guest ratio vs baseline, not 1:1",
+    "guest_elapsed_s": 90.0,
+    "host_elapsed_s": 1379.397,
+    "ratio": 15.327,
+    "baseline_ratio": null,
+    "deviation": null,
+    "flagged": false
+  }
+}

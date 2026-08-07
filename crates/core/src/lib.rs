@@ -27,14 +27,17 @@ extern crate alloc;
 
 pub mod block;
 pub mod bus;
+pub mod compile_queue;
 pub mod csr;
 pub mod decode;
 pub mod decode_c;
 pub mod dev;
 pub mod diag;
+pub mod dispatch;
 pub mod fdt;
 pub mod hart;
 pub mod htif;
+pub mod jit;
 pub mod loader;
 pub mod mmio;
 pub mod mmu;
@@ -46,6 +49,7 @@ pub mod resume;
 pub mod sbi;
 pub mod snapshot;
 pub mod softfloat;
+pub mod time;
 pub mod tlb;
 pub mod trace;
 #[cfg(feature = "zicsr-stub")]
@@ -142,10 +146,24 @@ pub struct Machine {
     /// CLINT shared state (E1-T12), present when [`Self::enable_clint`] attached the device.
     /// The run loop advances `mtime` from the retire count and samples MTIP/MSIP into `mip`.
     clint: Option<alloc::rc::Rc<core::cell::RefCell<dev::clint::ClintState>>>,
-    /// `mtime` advances one tick per `clock_div` retired instructions (deterministic clock).
+    /// `mtime` advances one tick per `clock_div` retired instructions (deterministic clock). This is
+    /// the ICount [`time::TimeMode`] — the default, and the source the E4-T25 lockstep/fuzz rig runs
+    /// under so timer interrupts land at identical retire indices on both engines.
     clock_div: u64,
     /// Sub-divider remainder: retirements not yet worth a whole `mtime` tick.
     tick_accum: u64,
+    /// E4-T24: when `Some`, `mtime` is driven from the injected host wall clock (scaled to the DT
+    /// timebase, with the monotonicity-clamp + slew + jump policy) instead of the retire count. The
+    /// per-retire `advance_clock` is then a no-op; `mtime` is recomputed at each block boundary from
+    /// [`Self::mono_clock`]. `None` (the default) keeps the deterministic ICount clock so every
+    /// existing determinism / lockstep / predecode-diff gate stays byte-identical.
+    wall_time: Option<time::TimeSource>,
+    /// E4-T24: the injected monotonic host clock (CLI `Instant`, browser `performance.now()`, or a
+    /// test mock). Read only on the wall-clock path so `crates/core` never names a host time API.
+    mono_clock: Option<alloc::boxed::Box<dyn time::MonotonicClock>>,
+    /// E4-T24: the last discontinuous `mtime` jump (the documented suspend/resume exception), for the
+    /// host to surface / the guest to resync from the RTC. Cleared by [`Self::take_time_jump`].
+    last_time_jump: Option<time::TimeJump>,
     /// PLIC shared state (E1-T13), present when [`Self::enable_plic`] attached the device. The
     /// run loop samples the per-context EIP levels into `mip.MEIP`/`mip.SEIP`.
     plic: Option<alloc::rc::Rc<core::cell::RefCell<dev::plic::PlicState>>>,
@@ -225,6 +243,18 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::blk::BlkState>>,
         Option<dev::virtio::queue::Virtqueue>,
     )>,
+    /// E4-T03: ADDITIONAL virtio-blk devices attached via [`Self::enable_virtio_blk_at`] (the bench
+    /// harness's read-only overlay as `/dev/vdb`). Each entry is `(shared state, lazily-built ring
+    /// view, virtio slot index)`; serviced at the same instruction boundary as the primary `blk` so
+    /// the guest's reads complete — without which the guest hangs the moment it first reads the drive.
+    /// These carry no writes/flush, so — unlike the primary `blk` — they are intentionally NOT drained
+    /// by `quiesce` or serialized by the snapshot (a read-only drive has nothing to lose on restart).
+    #[allow(clippy::type_complexity)]
+    extra_blk: alloc::vec::Vec<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::blk::BlkState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        usize,
+    )>,
     /// E3-T13: virtio-net service state (shared backend state + the persistent receiveq /
     /// transmitq ring views), when [`Self::enable_virtio_net`] plugged a backend into slot 1.
     /// Serviced at every boundary the guest has kicked OR the backend has an rx frame ready.
@@ -249,6 +279,63 @@ pub struct Machine {
     /// Defaults are all-zero / generation 0 — the RAM-only determinism harness round-trips against
     /// itself; a disk-backed host sets the real base hash and advances the generation on each commit.
     coherence: SnapshotCoherence,
+    /// E4-T05 Phase A: the predecoded block cache. A/B TOGGLE — `block_cache_enabled` (runtime,
+    /// default OFF unless the `predecode` feature flips it) selects the cached vs the legacy
+    /// decode path IN ONE BINARY, so the differential harness can prove cache-ON produces
+    /// BYTE-IDENTICAL retire traces to cache-OFF. The cache memoizes decode ONLY: execution
+    /// still feeds each micro-op through the SAME `execute()` and the run loop still re-syncs
+    /// devices + samples interrupts PER RETIRE (interrupt batching is Phase C, untouched here).
+    block_cache_enabled: bool,
+    /// The physically-keyed decoded-block store (Phase A: conservatively flushed on `fence.i`
+    /// and on any guest store — correct but slow; Phase B adds the page-level has-code bitmap).
+    block_cache: dispatch::BlockCache,
+    /// Cursor into the block currently being replayed: `(entry phys key, next op index,
+    /// expected next VA)`. A branch/jump/interrupt/trap moves the PC off `next VA`, invalidating
+    /// the cursor so the next step re-keys by physical PC (handling branches into mid-block).
+    block_cursor: Option<(u64, usize, u64)>,
+    /// E4-T08: hotness counters + translation-candidate discovery. The block cache learns to
+    /// NOMINATE JIT candidates: each block entry bumps a saturating counter, and crossing the
+    /// design-doc threshold enqueues a `TranslationRequest` (dedup'd, requeued after any
+    /// invalidation via a generation bump). Discovery is OBSERVATION-ONLY — it never changes the
+    /// executed sequence, so `predecode_diff` byte-identity is preserved — and nothing consumes
+    /// the queue yet (the translator is E4-T09/T10).
+    discovery: dispatch::BlockDiscovery,
+    /// E4-T05 Phase C: interrupt/device-sync BATCHING. A DISTINCT toggle from
+    /// `block_cache_enabled` (batching requires the cache, but the cache runs WITHOUT batching as
+    /// the byte-identical Phase-A/B mode the `predecode_diff` gate proves). When on, the device
+    /// fabric re-sync (`sync_clint`/UART/RTC/virtio/`sync_plic`/`sync_sbi_timer`/DMA-drain) and the
+    /// `next_interrupt` sampling are moved from PER-RETIRE to the BLOCK BOUNDARY — sampled once per
+    /// `DecodedBlock` (≤128 ops) instead of once per instruction. The retire-count clock
+    /// (`advance_clock`), `irqstats.on_retire`, the profiler hook, and per-op trap/ecall/WFI
+    /// handling stay per-retire, so `mtime` still crosses `mtimecmp` at the identical retire index;
+    /// only the SAMPLING of the resulting interrupt defers ≤128 retires (architecturally legal —
+    /// interrupts need only be taken in a timely manner). NOT byte-identical to legacy by design.
+    interrupt_batching: bool,
+    /// E4-T10: the compiled-block (T2) executor, when a native/browser JIT runtime is installed via
+    /// [`Self::set_executor`]. Core stays `no_std` and holds no engine — the run loop drives this
+    /// trait object: at a block boundary, if `jit_enabled` and the block is compiled, it executes
+    /// via the executor INSTEAD of interpreting; a miss (uncompiled / faulted-out) falls back to the
+    /// interpreter. `None` on every build until a runtime is installed.
+    executor: Option<jit::BoxedExecutor>,
+    /// E4-T19: block boundaries elapsed since the last JIT compile-queue drain. The queue is drained
+    /// into BATCHES (connected components) rather than one block at a time, so a burst of newly-hot
+    /// blocks is allowed to ACCUMULATE for up to [`JIT_PUMP_INTERVAL`] boundaries (or until it reaches
+    /// [`JIT_BATCH_TRIGGER`]) before being packed into modules — this is what lets `pump` see a whole
+    /// component at once instead of a trickle of singletons. Bounded either way, so compilation is
+    /// deferred by at most a few boundaries and never starved. Read only on the real-CSR run-loop
+    /// path; the quarantined `zicsr-stub` build compiles the pump out, so the field is dead there.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_pump_ticks: u32,
+    /// E4-T10: the JIT on/off runtime flag. Effective only with the block cache on and an executor
+    /// installed (see [`Self::jit_active`]). Off by default so every existing path is unchanged.
+    jit_enabled: bool,
+    /// E4-T21: the priority compile-staging queue between discovery and the executor. Discovery's
+    /// FIFO nominations are drained into this at a boundary, re-ordered by hotness, admission-
+    /// controlled (bounded, drop-and-recount), and stale-cancelled on a generation bump before the
+    /// install step feeds the executor. Keeps compilation off the guest hot path and orders it so
+    /// the hottest block compiles first. See [`compile_queue::CompileQueue`].
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    compile_queue: compile_queue::CompileQueue,
 }
 
 /// E3-T12c3: the identity a snapshot is bound to. A restore is refused unless the target machine's
@@ -263,6 +350,190 @@ pub struct SnapshotCoherence {
     pub generation: u64,
 }
 
+/// E4-T18: the outcome of running one compiled block in a chain (see `Machine::run_one_jit_block`).
+#[cfg(not(feature = "zicsr-stub"))]
+enum BlockStep {
+    /// A clean `FALLTHROUGH`/`BRANCH_TAKEN` exit; PC committed at the successor. `edge` is the
+    /// static outgoing edge for chaining, or `None` for a dynamic (`jalr`) / non-linkable exit.
+    Committed { edge: Option<u8> },
+    /// A `Trap` exit (precise mem-fault / `ecall` / `ebreak`); ends the chain with this result.
+    Trapped(Result<(), Trap>),
+}
+
+/// E4-T18: which outgoing link-slot edge a block's clean exit corresponds to, or `None` if the edge
+/// must NOT be statically linked (a dynamic `jalr` target, or a defensive `Reserved` exit). Edge 0
+/// is the taken / sole / fall-through successor; edge 1 is a conditional branch's not-taken side.
+#[cfg(not(feature = "zicsr-stub"))]
+fn chain_edge(terminator: Option<crate::decode::Instr>, code: jit::ExitCode) -> Option<u8> {
+    use crate::decode::Instr::*;
+    match terminator {
+        // Conditional branch: two static edges — taken (BranchTaken → 0), not-taken (Fallthrough → 1).
+        Some(Beq { .. } | Bne { .. } | Blt { .. } | Bge { .. } | Bltu { .. } | Bgeu { .. }) => {
+            match code {
+                jit::ExitCode::BranchTaken => Some(0),
+                jit::ExitCode::Fallthrough => Some(1),
+                _ => None,
+            }
+        }
+        // Direct jump: one static edge.
+        Some(Jal { .. }) => (code == jit::ExitCode::BranchTaken).then_some(0),
+        // Indirect jump: the target is a register value — never statically linkable.
+        Some(Jalr { .. }) => None,
+        // No architectural terminator (128-op cap / page edge) or a fence: sole fall-through edge.
+        Some(Fence { .. } | FenceI) | None => (code == jit::ExitCode::Fallthrough).then_some(0),
+        // Anything else (ecall/ebreak) exits via Trap, not a chain edge.
+        _ => None,
+    }
+}
+
+/// E4-T19: drain the JIT compile queue once it holds this many pending blocks — a batch's worth is
+/// ready to pack (mirrors the design's compile-queue depth, `docs/jit-architecture.md` §7 D10).
+#[cfg(not(feature = "zicsr-stub"))]
+const JIT_BATCH_TRIGGER: usize = 32;
+
+/// E4-T19: force a compile-queue drain at least every this many block boundaries even below the
+/// trigger, so a small hot component (fewer than [`JIT_BATCH_TRIGGER`] blocks) still compiles promptly
+/// while accumulating enough to batch as one connected component.
+#[cfg(not(feature = "zicsr-stub"))]
+const JIT_PUMP_INTERVAL: u32 = 64;
+
+/// E4-T21: the maximum number of blocks INSTALLED (translated + compiled + registered) in a single
+/// [`Machine::pump_jit_translations`] call — the per-boundary install-step work bound that keeps the
+/// JIT-attributable execution-thread pause bounded (the ≤5 ms target, `docs/jit-architecture.md` §7
+/// D10). Popping the compile queue hottest-first up to this budget means a compile storm is spread
+/// across many boundaries instead of one long stall; the leftover stays queued (priority preserved)
+/// for the next boundary. The `JitPauseStats::max_install_blocks` counter asserts this bound is never
+/// exceeded (the headless stand-in for the wall-clock histogram).
+#[cfg(not(feature = "zicsr-stub"))]
+const JIT_INSTALL_BUDGET: usize = 64;
+
+/// E4-T19: the static successor PHYSICAL PCs of a decoded block — `[edge0, edge1]` where edge 0 is
+/// the taken / sole / fall-through successor and edge 1 is a conditional branch's not-taken side.
+/// A successor is returned ONLY when it lies on the SAME physical page as the block, so its physical
+/// address is exactly `phys_start + byte_offset` with no paging ambiguity (a block never crosses a
+/// page, so its own bytes are identity-mapped within the page). Cross-page and dynamic (`jalr`)
+/// targets are `None` — they become cross-batch edges (dispatch / E4-T18 funcref links), always
+/// correct. Used purely to GROUP the compile queue; a conservative `None` only means "don't batch
+/// these together", never a correctness change.
+#[cfg(not(feature = "zicsr-stub"))]
+fn static_successors(b: &dispatch::DecodedBlock) -> [Option<u64>; 2] {
+    use crate::decode::Instr::*;
+    let base = b.phys_start;
+    let page = base & !(dispatch::PAGE - 1);
+    let same_page = |t: u64| ((t & !(dispatch::PAGE - 1)) == page).then_some(t);
+    let last = match b.ops.last() {
+        Some(o) => o,
+        None => return [None, None],
+    };
+    let last_len = last.len as u64;
+    let term_off = b.total_len.saturating_sub(last_len); // byte offset of the terminator op
+    if !dispatch::is_terminator(&last.instr) {
+        // Fell through the 128-op cap / page edge: sole successor is the next byte after the block.
+        return [same_page(base.wrapping_add(b.total_len)), None];
+    }
+    match last.instr {
+        Jal { imm, .. } => [
+            same_page(base.wrapping_add(term_off).wrapping_add(imm as u64)),
+            None,
+        ],
+        Beq { imm, .. }
+        | Bne { imm, .. }
+        | Blt { imm, .. }
+        | Bge { imm, .. }
+        | Bltu { imm, .. }
+        | Bgeu { imm, .. } => [
+            same_page(base.wrapping_add(term_off).wrapping_add(imm as u64)),
+            same_page(base.wrapping_add(b.total_len)),
+        ],
+        // `fence`/`fence.i` fall through to the next block (sole edge); `jalr`/`ecall`/`ebreak`/CSR
+        // have no static successor.
+        Fence { .. } | FenceI => [same_page(base.wrapping_add(b.total_len)), None],
+        _ => [None, None],
+    }
+}
+
+/// E4-T19: partition `blocks` into batches (each a `Vec` of indices into `blocks`) by connected
+/// components of the undirected static-edge graph, then split any component larger than `k` into
+/// chunks of ≤ `k`. A union-find over the block set; edges are the same-page static successors that
+/// land on another drained block. Splitting an oversized component only turns some intra-batch edges
+/// into cross-batch ones (still correct), so `k` is a hard cap on module size.
+#[cfg(not(feature = "zicsr-stub"))]
+fn group_into_batches(
+    blocks: &[dispatch::DecodedBlock],
+    k: usize,
+) -> alloc::vec::Vec<alloc::vec::Vec<usize>> {
+    let n = blocks.len();
+    if n == 0 {
+        return alloc::vec::Vec::new();
+    }
+    let phys_to_idx: alloc::collections::BTreeMap<u64, usize> = blocks
+        .iter()
+        .enumerate()
+        .map(|(i, b)| (b.phys_start, i))
+        .collect();
+    // Union-find.
+    let mut parent: alloc::vec::Vec<usize> = (0..n).collect();
+    fn find(parent: &mut [usize], mut x: usize) -> usize {
+        while parent[x] != x {
+            parent[x] = parent[parent[x]];
+            x = parent[x];
+        }
+        x
+    }
+    for (i, b) in blocks.iter().enumerate() {
+        for succ in static_successors(b).into_iter().flatten() {
+            if let Some(&j) = phys_to_idx.get(&succ) {
+                let (ri, rj) = (find(&mut parent, i), find(&mut parent, j));
+                if ri != rj {
+                    parent[ri] = rj;
+                }
+            }
+        }
+    }
+    // Bucket indices by component root, preserving insertion order within each component.
+    let mut comps: alloc::collections::BTreeMap<usize, alloc::vec::Vec<usize>> =
+        alloc::collections::BTreeMap::new();
+    for i in 0..n {
+        let r = find(&mut parent, i);
+        comps.entry(r).or_default().push(i);
+    }
+    // Emit components, chunking oversized ones to the batch-size cap.
+    let mut out = alloc::vec::Vec::new();
+    for (_, members) in comps {
+        for chunk in members.chunks(k) {
+            out.push(chunk.to_vec());
+        }
+    }
+    out
+}
+
+/// E4-T19: for a batch (a slice of indices into `blocks`), compute the per-block intra-batch edge map
+/// `intra[local][edge] = Some(local_of_successor)` when that static successor is another block IN THE
+/// SAME batch, else `None`. Edge 0 = taken/sole/fall-through, edge 1 = branch not-taken — matching
+/// `chain_edge` and the translator's edge numbering.
+#[cfg(not(feature = "zicsr-stub"))]
+fn intra_edges_for_group(
+    blocks: &[dispatch::DecodedBlock],
+    group: &[usize],
+) -> alloc::vec::Vec<[Option<usize>; 2]> {
+    // Map a block's phys → its LOCAL index within this batch.
+    let local_of: alloc::collections::BTreeMap<u64, usize> = group
+        .iter()
+        .enumerate()
+        .map(|(l, &gi)| (blocks[gi].phys_start, l))
+        .collect();
+    group
+        .iter()
+        .map(|&gi| {
+            let succ = static_successors(&blocks[gi]);
+            [
+                succ[0].and_then(|p| local_of.get(&p).copied()),
+                succ[1].and_then(|p| local_of.get(&p).copied()),
+            ]
+        })
+        .collect()
+}
+
 impl Machine {
     /// Create a machine with `ram_bytes` of zeroed guest RAM at `DRAM_BASE`, an
     /// empty hart (PC 0), and no HTIF watch. Panics only on allocation failure — use
@@ -275,7 +546,7 @@ impl Machine {
     /// allocation is refused, so a hostile RAM size becomes a caught error rather than a
     /// process abort. `Ram::new` allocates through `try_reserve_exact`.
     pub fn try_new(ram_bytes: usize) -> Result<Self, ram::OutOfMemory> {
-        Ok(Self {
+        let mut m = Self {
             hart: Hart::new(),
             bus: SystemBus::new(Ram::new(ram_bytes)?),
             htif: None,
@@ -300,10 +571,283 @@ impl Machine {
             syscon: None,
             virtio: alloc::vec::Vec::new(),
             blk: None,
+            extra_blk: alloc::vec::Vec::new(),
             net: None,
             rng: None,
             coherence: SnapshotCoherence::default(),
-        })
+            // E4-T05: default the toggle to the `predecode` feature (OFF in the normal build);
+            // the differential harness flips it at runtime via `set_block_cache`.
+            block_cache_enabled: cfg!(feature = "predecode"),
+            block_cache: dispatch::BlockCache::with_capacity(1 << 12),
+            discovery: dispatch::BlockDiscovery::new(),
+            block_cursor: None,
+            // E4-T05 Phase C: batching is OFF by default even under `predecode` (the cache stays
+            // byte-identical); it is opted in explicitly via `set_interrupt_batching`.
+            interrupt_batching: false,
+            executor: None,
+            jit_pump_ticks: 0,
+            jit_enabled: false,
+            compile_queue: compile_queue::CompileQueue::default(),
+            wall_time: None,
+            mono_clock: None,
+            last_time_jump: None,
+        };
+        // E4-T05 Phase B: arm the bus's physical-frame write log iff the cache is on, so guest
+        // stores AND device/DMA writes feed page-granular invalidation.
+        m.bus.arm_code_write_tracking(m.block_cache_enabled);
+        Ok(m)
+    }
+
+    /// E4-T05: the A/B toggle — turn the predecoded block cache on/off at runtime. Flushing on
+    /// every transition guarantees the two paths never share a stale block, so a differential
+    /// run can flip mid-stream and still be byte-identical.
+    pub fn set_block_cache(&mut self, on: bool) {
+        self.block_cache_enabled = on;
+        self.block_cache.flush();
+        self.block_cursor = None;
+        // E4-T08: a cache toggle wholesale-flushes blocks; reset the discovery state to match.
+        self.discovery.reset();
+        // E4-T10: a wholesale flush drops every compiled block too — they mirror the cache.
+        if let Some(e) = self.executor.as_mut() {
+            e.invalidate_all();
+        }
+        // E4-T05 Phase B: keep the bus write log armed in lockstep with the cache.
+        self.bus.arm_code_write_tracking(on);
+    }
+
+    /// E4-T05: whether the predecoded block cache is currently active.
+    pub fn block_cache_enabled(&self) -> bool {
+        self.block_cache_enabled
+    }
+
+    /// E4-T05 Phase C: turn interrupt/device-sync BATCHING on/off. Distinct from
+    /// [`Self::set_block_cache`] — batching requires the cache (it is a no-op without it), but the
+    /// cache runs independently WITHOUT batching as the byte-identical mode. Flushing the cursor on
+    /// a transition keeps boundary bookkeeping consistent.
+    pub fn set_interrupt_batching(&mut self, on: bool) {
+        self.interrupt_batching = on;
+        self.block_cursor = None;
+    }
+
+    /// E4-T05 Phase C: whether interrupt/device-sync batching is active (and effective — it
+    /// requires the block cache to be on).
+    pub fn interrupt_batching(&self) -> bool {
+        self.interrupt_batching && self.block_cache_enabled
+    }
+
+    /// E4-T05: resize the block cache (rounded up to a power of two). `capacity == 1` is the
+    /// adversarial pathological-eviction mode — a 1-entry cache that must STILL be byte-identical.
+    pub fn set_block_cache_capacity(&mut self, capacity: usize) {
+        self.block_cache = dispatch::BlockCache::with_capacity(capacity);
+        self.block_cursor = None;
+        // E4-T08: a fresh cache has no blocks; reset discovery so stale counts/requests are dropped.
+        self.discovery.reset();
+        // E4-T10: fresh cache ⇒ every compiled block is stale; drop them all.
+        if let Some(e) = self.executor.as_mut() {
+            e.invalidate_all();
+        }
+        // Fresh cache ⇒ no cached code ⇒ any pending write frames are moot.
+        self.bus.code_write_log_mut().clear();
+    }
+
+    /// E4-T08: set the hotness promotion threshold (the tunable `N`; default
+    /// [`dispatch::HOT_THRESHOLD`] = 64). E4-T08 owns sweeping this against the ledger; tests use a
+    /// low value to nominate with short guests. Persists across a cache toggle.
+    pub fn set_hotness_threshold(&mut self, threshold: u32) {
+        self.discovery.set_threshold(threshold);
+    }
+
+    /// E4-T08: a snapshot of the block-discovery counters — blocks nominated, deduped,
+    /// dropped-stale, queue depth + high-water mark, and the live generation. Exposed for the
+    /// profiling report and for tests; also folded into [`Self::prof_report`].
+    pub fn discovery_stats(&self) -> dispatch::DiscoveryStats {
+        let mut s = self.discovery.stats();
+        // E4-T16: fold in the block-cache invalidation-event counters so a test can assert on
+        // whole-cache flushes and page-discarded blocks without assembling a full prof report.
+        let (cache_flushes, blocks_discarded) = self.block_cache.invalidation_stats();
+        s.cache_flushes = cache_flushes;
+        s.blocks_discarded = blocks_discarded;
+        s.fence_i = self.block_cache.fence_i_noops();
+        s
+    }
+
+    /// E4-T08: drain the pending translation-candidate FIFO (a trivial consumer; the real compile
+    /// queue is E4-T21). Each request carries its coherence generation — validate with
+    /// [`Self::discovery_install_check`] before acting on it.
+    pub fn take_translation_requests(&mut self) -> alloc::vec::Vec<dispatch::TranslationRequest> {
+        self.discovery.take_requests()
+    }
+
+    /// E4-T08: validate a translation request at (mock) install time against live guest memory —
+    /// returns `true` only if its generation is current AND its snapshotted bytes still match. The
+    /// choke point behind the "never install stale bytes" guarantee.
+    pub fn discovery_install_check(
+        &mut self,
+        req: &dispatch::TranslationRequest,
+        live_bytes: &[u8],
+    ) -> bool {
+        self.discovery.install_check(req, live_bytes)
+    }
+
+    /// E4-T10: install a compiled-block executor (a native/browser JIT runtime). The run loop
+    /// drives it once the JIT is enabled and the block cache is on. Installing a fresh executor
+    /// (or replacing one) drops any previously compiled state by construction.
+    pub fn set_executor(&mut self, executor: jit::BoxedExecutor) {
+        self.executor = Some(executor);
+    }
+
+    /// E4-T10: reclaim the installed executor (e.g. to read its stats after a run). Leaves the
+    /// machine with no executor, so the JIT is inert until one is set again.
+    pub fn take_executor(&mut self) -> Option<jit::BoxedExecutor> {
+        self.executor.take()
+    }
+
+    /// E4-T10: borrow the installed executor (stats: compiled/executed/retired counts).
+    pub fn executor(&self) -> Option<&dyn jit::CompiledBlockExecutor> {
+        self.executor.as_deref()
+    }
+
+    /// E4-T10: the JIT on/off runtime flag. Enabling it also turns on the block cache (the JIT
+    /// consumes the cache's block discovery). Disabling drops all compiled state to guarantee the
+    /// interpreter and JIT paths never share a stale block.
+    pub fn set_jit(&mut self, on: bool) {
+        self.jit_enabled = on;
+        if on {
+            self.set_block_cache(true);
+        } else if let Some(e) = self.executor.as_mut() {
+            e.invalidate_all();
+        }
+    }
+
+    /// E4-T10: is the JIT effectively active — enabled, an executor installed, and the block cache
+    /// on (the discovery front end the JIT feeds off)?
+    pub fn jit_active(&self) -> bool {
+        self.jit_enabled && self.block_cache_enabled && self.executor.is_some()
+    }
+
+    /// E4-T18: A/B flag — turn direct block→block chaining on/off on the installed executor. With
+    /// chaining off, the dispatch loop returns after every compiled block (the E4-T10 behavior);
+    /// with it on, hot edges are followed directly through link-slots. No-op without an executor.
+    pub fn set_chaining(&mut self, on: bool) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_chaining(on);
+        }
+    }
+
+    /// E4-T18: set the chain-depth budget (max links per chain before a mandatory dispatch return;
+    /// clamped to ≥ 1, where 1 is the degenerate "no chaining past one link" mode). No-op without an
+    /// executor.
+    pub fn set_chain_depth_budget(&mut self, n: u32) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_chain_depth_budget(n);
+        }
+    }
+
+    /// E4-T18: a snapshot of the chaining statistics (links made/cut, dispatch-loop entries, and the
+    /// chain-depth histogram). Empty if no executor is installed.
+    pub fn chain_stats(&self) -> jit::ChainStats {
+        self.executor
+            .as_deref()
+            .map(|e| e.chain_stats())
+            .unwrap_or_default()
+    }
+
+    /// E4-T19: set the batching knob K (max blocks packed into one WASM module). `1` forces the
+    /// one-block-per-module mode. No-op without an executor.
+    pub fn set_batch_size(&mut self, k: usize) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_batch_size(k);
+        }
+    }
+
+    /// E4-T19: the current batching K (1 if no executor is installed).
+    pub fn batch_size(&self) -> usize {
+        self.executor
+            .as_deref()
+            .map(|e| e.batch_size())
+            .unwrap_or(1)
+    }
+
+    /// E4-T19 instance registry: `(live module/instance count, estimated live bytes)` across every
+    /// compiled batch — the raw material for E4-T20's budgets. `(0, 0)` without an executor.
+    pub fn jit_registry(&self) -> (usize, u64) {
+        self.executor
+            .as_deref()
+            .map(|e| (e.module_count(), e.estimated_bytes()))
+            .unwrap_or((0, 0))
+    }
+
+    /// E4-T20: set the JIT translation-cache budget enforced at install time (code bytes, live
+    /// batch count, table slots, metadata bytes). No-op without an executor.
+    pub fn set_jit_budget(&mut self, budget: jit::JitCacheBudget) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_jit_budget(budget);
+        }
+    }
+
+    /// E4-T20: select the eviction policy (full generational flush vs batch-LRU). No-op without an
+    /// executor.
+    pub fn set_evict_policy(&mut self, policy: jit::EvictPolicy) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_evict_policy(policy);
+        }
+    }
+
+    /// E4-T20: a snapshot of the JIT cache accounting (usage vs budget, evictions, re-translation
+    /// rate). Default (zeroed) without an executor.
+    pub fn jit_cache_stats(&self) -> jit::JitCacheStats {
+        self.executor
+            .as_deref()
+            .map(|e| e.jit_cache_stats())
+            .unwrap_or_default()
+    }
+
+    /// E4-T20 (AC3 directed-test / debug hook): force-evict the batch owning the block at `phys_pc`
+    /// through the single ordered `evict_batch` obligation path. Returns `true` iff a batch was
+    /// evicted.
+    pub fn evict_jit_batch_containing(&mut self, phys_pc: u64) -> bool {
+        let (evicted, list) = match self.executor.as_mut() {
+            Some(e) => (e.evict_batch_containing(phys_pc), e.take_evicted()),
+            None => return false,
+        };
+        // Re-nominate the evicted blocks so they re-translate when hot again (AC3).
+        for phys in list {
+            self.discovery.renominate(phys);
+        }
+        evicted
+    }
+
+    /// E4-T20: the `jitstat` debug dump — current usage vs budgets, eviction activity, and the
+    /// re-translation (thrash) rate. Usable as the browser-console `jitstat` payload.
+    pub fn jitstat(&self) -> alloc::string::String {
+        use alloc::format;
+        let s = self.jit_cache_stats();
+        let (modules, est) = self.jit_registry();
+        format!(
+            "=== jitstat ===\n\
+             policy={:?} generation={}\n\
+             code_bytes={}/{} ({:.1}%)  batches={}/{}  table_slots={}/{}  metadata_bytes={}/{}\n\
+             modules={} est_bytes={}\n\
+             evictions={} flushes={} installs={} retranslations={} retranslation_rate={:.4}\n",
+            s.policy,
+            s.generation,
+            s.code_bytes,
+            s.budget.code_bytes,
+            100.0 * s.code_bytes as f64 / s.budget.code_bytes.max(1) as f64,
+            s.batches,
+            s.budget.max_batches,
+            s.table_slots,
+            s.budget.table_slots,
+            s.metadata_bytes,
+            s.budget.metadata_bytes,
+            modules,
+            est,
+            s.evictions,
+            s.flushes,
+            s.installs,
+            s.retranslations,
+            s.retranslation_rate(),
+        )
     }
 
     /// E3-T12c3: bind this machine to a base disk image + emulator build for snapshot coherence.
@@ -354,6 +898,13 @@ impl Machine {
         self.tick_accum = 0;
         self.clint = Some(alloc::rc::Rc::clone(&state));
         state
+    }
+
+    /// E4-T24: the current guest `mtime` (0 when no CLINT is attached). One read point for tests and
+    /// hosts that sample the clock — the value CLINT reads, mtimecmp scheduling, and SBI-time queries
+    /// all agree on.
+    pub fn clint_mtime(&self) -> u64 {
+        self.clint.as_ref().map_or(0, |c| c.borrow().mtime)
     }
 
     /// Attach a PLIC (E1-T13) at [`bus::mmap::PLIC_BASE`] and drive `mip.MEIP` (hart-0 M context
@@ -457,6 +1008,37 @@ impl Machine {
         let slots = self.enable_virtio_slots(Some(alloc::boxed::Box::new(devhalf)));
         self.blk = Some((alloc::rc::Rc::clone(&state), None));
         (alloc::rc::Rc::clone(&slots[0]), state)
+    }
+
+    /// E4-T03: attach an ADDITIONAL virtio-blk device (DeviceID 2) backed by `backend` into an
+    /// already-existing EMPTY slot (`enable_virtio_blk`/`enable_virtio_slots` first). The benchmark
+    /// harness attaches its read-only overlay as a second drive (slot 1) so the guest sees `/dev/vdb`
+    /// alongside the root `/dev/vda`, without disturbing the single-drive path. Returns the shared
+    /// blk state. Panics if `slot` is out of range or already occupied (a wiring bug).
+    pub fn enable_virtio_blk_at(
+        &mut self,
+        slot: usize,
+        backend: alloc::boxed::Box<dyn block::BlockBackend>,
+    ) -> alloc::rc::Rc<core::cell::RefCell<dev::virtio::blk::BlkState>> {
+        assert!(
+            slot < self.virtio.len(),
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_blk_at"
+        );
+        let (devhalf, state) = dev::virtio::blk::new(backend);
+        assert!(
+            self.virtio[slot]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(devhalf))
+                .is_ok(),
+            "virtio slot {slot} already has a device"
+        );
+        // Register it for run-loop servicing (the ring view builds lazily on the guest's first kick,
+        // like the primary blk). Omitting this is exactly the hang: the device probes but its reads
+        // never complete.
+        self.extra_blk
+            .push((alloc::rc::Rc::clone(&state), None, slot));
+        state
     }
 
     /// E3-T13: attach a virtio-net device (DeviceID 1) backed by `backend` in slot 1. The
@@ -591,8 +1173,21 @@ impl Machine {
     /// time folded in from the bus; `top_k` bounds the hot-region list. Non-mutating and idempotent.
     pub fn prof_report(&self, total_ns: u64, top_k: usize) -> prof::ProfReport {
         let ta = self.bus.time_accum();
-        self.prof
-            .report_with_time(total_ns, top_k, &ta.ns, ta.walk_count)
+        let mut report = self
+            .prof
+            .report_with_time(total_ns, top_k, &ta.ns, ta.walk_count);
+        // E4-T08: surface the block-discovery counters through the profiling report.
+        report.discovery = self.discovery.stats();
+        // E4-T16: fold in the block-cache invalidation-event counters (whole-cache flushes +
+        // blocks discarded by page-granular SMC/DMA invalidation). `blocks_discarded` staying flat
+        // across an SFENCE.VMA storm is the "phys-keying means SFENCE.VMA does not kill blocks" proof.
+        let (cache_flushes, blocks_discarded) = self.block_cache.invalidation_stats();
+        report.discovery.cache_flushes = cache_flushes;
+        report.discovery.blocks_discarded = blocks_discarded;
+        report.discovery.fence_i = self.block_cache.fence_i_noops();
+        // E4-T20: fold in the JIT translation-cache accounting when an executor is installed.
+        report.jit_cache = self.executor.as_deref().map(|e| e.jit_cache_stats());
+        report
     }
 
     /// E4-T01: the next PC-sampling stride — [`PROF_STRIDE_BASE`] plus a deterministic LCG jitter in
@@ -1197,6 +1792,16 @@ impl Machine {
                 }
             }
         }
+        // E4-T05: a restore swaps CPU + RAM wholesale, so any predecoded block (keyed by the
+        // pre-restore physical layout) is now stale — flush the cache and drop the cursor.
+        self.block_cache.flush();
+        self.block_cursor = None;
+        // E4-T08: the restored physical layout invalidates every nominated block — reset discovery.
+        self.discovery.reset();
+        // E4-T10: recompile from cold on the restored image — every compiled block is stale.
+        if let Some(e) = self.executor.as_mut() {
+            e.invalidate_all();
+        }
         Ok(())
     }
 
@@ -1347,6 +1952,12 @@ impl Machine {
     /// lands at the same retire index). A no-op when no CLINT is attached.
     #[cfg(not(feature = "zicsr-stub"))]
     fn advance_clock(&mut self) {
+        // E4-T24: in WallClock mode `mtime` is host-derived and recomputed at the block boundary
+        // (`sample_wall_clock`), so the retire count must NOT drive it. Default (ICount) path below is
+        // byte-identical to the legacy retire clock.
+        if self.wall_time.is_some() {
+            return;
+        }
         if let Some(clint) = &self.clint {
             self.tick_accum += 1;
             if self.tick_accum >= self.clock_div {
@@ -1356,6 +1967,59 @@ impl Machine {
                 s.mtime = s.mtime.wrapping_add(ticks);
             }
         }
+    }
+
+    /// E4-T24: recompute `mtime` from the injected host wall clock at a block boundary — the ONE place
+    /// wall-derived `mtime` is produced, so CLINT reads, mtimecmp scheduling, and SBI-time queries all
+    /// see a single clamped-monotone value. Applies the [`time::TimeSource`] clamp + slew + jump
+    /// policy; a documented suspend/resume jump is stashed in [`Self::last_time_jump`]. A no-op unless
+    /// wall-clock mode is armed (default ICount path never enters here).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn sample_wall_clock(&mut self) {
+        let (Some(ts), Some(clock), Some(clint)) =
+            (&mut self.wall_time, &self.mono_clock, &self.clint)
+        else {
+            return;
+        };
+        let host_ns = clock.now_nanos();
+        let current = clint.borrow().mtime;
+        let (mtime, jump) = ts.sample_wall(host_ns, current);
+        clint.borrow_mut().mtime = mtime;
+        if let Some(j) = jump {
+            self.last_time_jump = Some(j);
+        }
+    }
+
+    /// E4-T24: switch `mtime` to WallClock mode — host-wall-derived (scaled to the DT timebase) with
+    /// the monotonicity-clamp + slew + jump policy — driven by the injected monotonic `clock`. Requires
+    /// a CLINT (the `mtime` register lives there). Off by default: the deterministic ICount clock is
+    /// what the lockstep/determinism gates depend on.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn set_wall_clock(
+        &mut self,
+        clock: alloc::boxed::Box<dyn time::MonotonicClock>,
+        policy: time::WallClockPolicy,
+    ) {
+        let mut ts =
+            time::TimeSource::wall_clock(u64::from(platform::virt::TIMEBASE_FREQ_HZ), policy);
+        // Seed the monotone floor from the current mtime so the clock can't be dragged backward.
+        if let Some(clint) = &self.clint {
+            ts.sync_floor(clint.borrow().mtime);
+        }
+        self.wall_time = Some(ts);
+        self.mono_clock = Some(clock);
+    }
+
+    /// E4-T24: revert to the deterministic ICount clock (retire-derived `mtime`).
+    pub fn set_icount_clock(&mut self) {
+        self.wall_time = None;
+        self.mono_clock = None;
+    }
+
+    /// E4-T24: take the last discontinuous `mtime` jump (suspend/resume exception), if any — the host
+    /// surfaces it and the guest resyncs from the RTC.
+    pub fn take_time_jump(&mut self) -> Option<time::TimeJump> {
+        self.last_time_jump.take()
     }
 
     /// E2-T23b: deterministic idle fast-forward ("tickless idle"). Called right after a `WFI`
@@ -1375,6 +2039,12 @@ impl Machine {
     /// caught by [`Self::wfi_watchdog_check`]) there is no deadline to jump to and this is a no-op.
     #[cfg(not(feature = "zicsr-stub"))]
     fn wfi_fast_forward(&mut self) {
+        // E4-T24: the idle fast-forward jumps `mtime` to the next timer deadline — a determinism-
+        // preserving ICount trick. In WallClock mode `mtime` IS real time, so a `sleep` must actually
+        // wait; jumping would make it return early. Let the wall clock advance mtime instead.
+        if self.wall_time.is_some() {
+            return;
+        }
         let Some(clint) = &self.clint else { return };
         // Sweep-critic (E2-T23b LOW): a pending+enabled interrupt (mip & mie != 0) satisfies
         // the WFI wake condition RIGHT NOW (per the ISA, even with global xIE=0) — no time
@@ -1502,6 +2172,23 @@ impl Machine {
             None
         };
         let outcome = self.run_traced_inner(max_instrs, sink);
+        // E4-T19: flush any blocks still queued for compilation as a final batch. The periodic
+        // deferral in the loop lets a connected component ACCUMULATE before compiling (real batching);
+        // this end-of-run drain guarantees a short run whose hot blocks nominated but never reached a
+        // periodic pump still compiles them — compilation is deferred by at most one run, never lost.
+        #[cfg(not(feature = "zicsr-stub"))]
+        if self.jit_enabled {
+            self.jit_pump_ticks = 0;
+            // Flush every still-queued block: each pump installs up to JIT_INSTALL_BUDGET, so loop
+            // until both the discovery FIFO and the priority compile queue are drained (bounded —
+            // the queues are finite and shrink each pass; the cap guards against any pathology).
+            for _ in 0..(dispatch::MAX_QUEUE / JIT_INSTALL_BUDGET + 2) {
+                if self.discovery.queue_len() == 0 && self.compile_queue.is_empty() {
+                    break;
+                }
+                self.pump_jit_translations();
+            }
+        }
         // One timer read at exit; accumulate the total profiled span. The device+walk time timed on
         // the cold paths is a SUBSET of this span, so `total − (device + walk)` is the interpreter's.
         if let (Some(t0), Some(t)) = (t0, self.host_timer.as_ref()) {
@@ -1510,6 +2197,545 @@ impl Machine {
                 .saturating_add(t.now_ns().saturating_sub(t0));
         }
         outcome
+    }
+
+    /// E4-T05 Phase A: execute EXACTLY ONE instruction using the predecoded block cache,
+    /// returning the SAME `Result<(), Trap>` contract as [`Hart::step_traced`]. It replays a
+    /// memoized micro-op instead of re-fetching/decoding, but performs the identical
+    /// architectural sequence — counter arm, execute-trigger check, `execute`, `retire_tick`,
+    /// retire hook — so the retire trace is byte-identical to the legacy path. Only decode is
+    /// memoized. Called once per outer-loop iteration, so the loop's per-op device sync +
+    /// interrupt sampling stay per-retire (interrupt batching is Phase C).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn step_cached<T: trace::TraceSink>(&mut self, sink: &mut T) -> Result<(), Trap> {
+        // Same ordering as `step_traced`: arm counters, then the execute-address trigger check,
+        // BEFORE obtaining the instruction.
+        self.hart.csr.arm_counters();
+        let pc = self.hart.regs.pc;
+        if !self.hart.csr.triggers_idle()
+            && self
+                .hart
+                .csr
+                .trigger_fires(pc, crate::csr::TrigKind::Execute)
+        {
+            return Err(Trap {
+                cause: hart::Exception::Breakpoint,
+                tval: pc,
+            });
+        }
+        // Fetch the micro-op: a cursor hit replays a cached op with NO re-translation (safe —
+        // a block never leaves its physical page, so the entry translation covers every op); a
+        // miss (re)builds the block at pc's physical address, reproducing any fetch/decode trap.
+        let op = self.next_micro_op(pc)?;
+        let (rd, value, mem) = self.hart.execute(
+            &mut self.bus,
+            op.instr,
+            u64::from(op.len),
+            u64::from(op.raw),
+        )?;
+        self.hart.csr.retire_tick();
+        sink.retire(&trace::TraceRecord {
+            pc,
+            insn: op.raw,
+            rd: (rd != 0).then_some((rd, value)),
+            mem,
+        });
+        // E4-T17 page-granular invalidation (supersedes E4-T16's conservative fence.i flush):
+        //  - a store (this op's `mem.is_store`, incl. SC/AMO) reached RAM via the bus, which
+        //    recorded its physical frame(s). Drain that log through PAGE-GRANULAR invalidation:
+        //    only a store into a frame that actually holds cached code drops blocks (and the
+        //    cursor). Ordinary data stores are set-misses → the cache is RETAINED.
+        //  - `fence.i` is now NEAR-FREE: it drops NO blocks. Every code-writing store already
+        //    invalidated its physical page eagerly at store time (the drain below fires per retire),
+        //    so by the time `fence.i` retires the fetch stream is already coherent — RISC-V permits
+        //    (indeed this is a valid icache-less implementation), and un-dirtied pages' blocks
+        //    SURVIVE the fence (the E4-T16 whole-cache flush no longer fires). We only note the event
+        //    and clear the cursor (a terminator ends the block); the drain still runs to sweep any
+        //    frame written but not yet drained (a `fence.i`-adjacent host/DMA poke).
+        if matches!(op.instr, crate::decode::Instr::FenceI) {
+            self.block_cache.note_fence_i();
+            self.block_cursor = None;
+        }
+        self.drain_code_writes();
+        Ok(())
+    }
+
+    /// E4-T05 Phase B: drain the bus's physical-frame write log (guest stores AND device/DMA
+    /// writes — both reach RAM through the same physical `store*`) into the block cache's
+    /// page-granular invalidation. If any drained frame held cached code, the in-flight block
+    /// cursor may point into a just-dropped block, so it is reset (conservative-safe — a
+    /// spurious reset only costs a rebuild). Cheap when the log is empty (the common case).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn drain_code_writes(&mut self) {
+        if !self.block_cache_enabled {
+            return;
+        }
+        // Disjoint borrows: drain the bus log while page-invalidating the cache.
+        let Self {
+            bus,
+            block_cache,
+            block_cursor,
+            discovery,
+            executor,
+            ..
+        } = self;
+        let log = bus.code_write_log_mut();
+        if log.is_empty() {
+            return;
+        }
+        let mut flushed = false;
+        for &frame in log.iter() {
+            if block_cache.flush_page(frame) {
+                flushed = true;
+                // E4-T10: the SMC / DMA-into-code store dropped this frame's cached blocks — drop
+                // the matching compiled blocks so the executor recompiles from the new bytes.
+                if let Some(e) = executor.as_mut() {
+                    e.invalidate_page(frame);
+                }
+            }
+        }
+        log.clear();
+        if flushed {
+            *block_cursor = None;
+            // E4-T08: a store landed on a code page (SMC / DMA-into-code) and dropped ≥1 cached
+            // block. Bump the discovery generation so any pending request for the overwritten bytes
+            // is dropped at install time and the re-decoded block re-nominates fresh.
+            discovery.on_invalidate();
+        }
+    }
+
+    /// E4-T05: return the [`MicroOp`](dispatch::MicroOp) to execute at virtual address `pc`,
+    /// serving it from the block cache. A valid cursor (same expected VA, block still live)
+    /// replays the next cached op with no translation; otherwise the block at `pc` is (re)built
+    /// by walking [`Hart::decode_at`] to the first terminator / page boundary / 128-op cap. On a
+    /// fetch/decode fault the precise trap is returned (identical to the legacy path).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn next_micro_op(&mut self, pc: u64) -> Result<dispatch::MicroOp, Trap> {
+        // Fast path: continue the block we are mid-replay of.
+        if let Some((key, idx, next_va)) = self.block_cursor
+            && next_va == pc
+            && let Some(op) = self
+                .block_cache
+                .get(key)
+                .and_then(|b| b.ops.get(idx).copied())
+        {
+            self.block_cursor = Some((key, idx + 1, pc.wrapping_add(u64::from(op.len))));
+            return Ok(op);
+        }
+        self.block_cursor = None;
+
+        // Decode the entry op FIRST (this is the translation the legacy path would do — it fills
+        // the TLB identically), then key by physical PC (now a guaranteed TLB hit, no state change).
+        let first = self.hart.decode_at(&mut self.bus, pc)?;
+        let phys = self.hart.fetch_phys(&mut self.bus, pc)?;
+
+        // An entry op that straddles a physical page cannot live in a page-bounded block; run it
+        // uncached (byte-identical — `decode_at` already did the split fetch). Cursor stays None.
+        let page_off = pc & (dispatch::PAGE - 1);
+        if page_off + u64::from(first.len) > dispatch::PAGE {
+            return Ok(first);
+        }
+
+        // Walk contiguous ops within this physical page to the first terminator / page edge / cap.
+        let mut ops = alloc::vec::Vec::with_capacity(8);
+        let mut total_len = u64::from(first.len);
+        ops.push(first);
+        let page_base = pc & !(dispatch::PAGE - 1);
+        if !dispatch::is_terminator(&first.instr) {
+            let mut va = pc.wrapping_add(u64::from(first.len));
+            while ops.len() < dispatch::MAX_BLOCK_OPS {
+                // Stop if the next op would begin in a different physical page.
+                if (va & !(dispatch::PAGE - 1)) != page_base {
+                    break;
+                }
+                let op = match self.hart.decode_at(&mut self.bus, va) {
+                    Ok(op) => op,
+                    // A fetch/decode fault ahead ends the block here; it is reproduced precisely
+                    // when execution reaches that VA and rebuilds a fresh (trapping) block there.
+                    Err(_) => break,
+                };
+                // An op straddling the page boundary belongs to the next block, not this one.
+                if (va & (dispatch::PAGE - 1)) + u64::from(op.len) > dispatch::PAGE {
+                    break;
+                }
+                debug_assert_eq!(
+                    va & !(dispatch::PAGE - 1),
+                    page_base,
+                    "block op must not leave the entry physical page"
+                );
+                total_len += u64::from(op.len);
+                let is_term = dispatch::is_terminator(&op.instr);
+                ops.push(op);
+                if is_term {
+                    break;
+                }
+                va = va.wrapping_add(u64::from(op.len));
+            }
+        }
+
+        // E4-T08: this is a block ENTRY (a cursor miss re-keyed and rebuilt the block at `phys`).
+        // Bump the hotness counter and, on crossing the threshold, nominate a TranslationRequest.
+        // Observation-only: it reads the walked ops and mutates only the discovery side-structure,
+        // never the executed sequence — so the retire trace is byte-identical (`predecode_diff`).
+        self.discovery.on_block_entry(phys, &ops);
+        self.block_cache
+            .insert(dispatch::DecodedBlock::new(phys, ops, total_len));
+        // Entry op (index 0) is consumed now; the cursor resumes at index 1.
+        self.block_cursor = Some((phys, 1, pc.wrapping_add(u64::from(first.len))));
+        Ok(first)
+    }
+
+    /// E4-T05 Phase C: is the hart about to execute the ENTRY of a (fresh) basic block, i.e. a
+    /// block boundary where interrupts/devices must be re-sampled under batching? True unless the
+    /// next step is a live continuation of the block currently being replayed — mirroring exactly
+    /// the fast-path hit test in [`Self::next_micro_op`] (same VA, block still cached, op present).
+    /// A branch/jump/trap/ecall/WFI (all block terminators) moves the PC off the cursor's expected
+    /// VA, so the following step is a boundary and re-syncs — matching the legacy per-op behavior at
+    /// every point interrupt-enable state could have changed. Because the answer depends only on the
+    /// block structure (terminators / 128-op cap / page edges), never on cache capacity (a block is
+    /// never evicted mid-replay by its own straight-line execution), the boundaries — and thus the
+    /// interrupt-sampling points — are deterministic across cache sizes.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn at_block_boundary(&self) -> bool {
+        let pc = self.hart.regs.pc;
+        match self.block_cursor {
+            Some((key, idx, next_va)) if next_va == pc => self
+                .block_cache
+                .get(key)
+                .and_then(|b| b.ops.get(idx))
+                .is_none(),
+            _ => true,
+        }
+    }
+
+    /// E4-T10: drain the block-discovery FIFO and install compiled blocks. For each nominated
+    /// request, the snapshotted bytes are re-validated against LIVE guest memory (the E4-T08
+    /// `install_check` — guards SMC/stale between nomination and install); on success the (still
+    /// physically-keyed) decoded block is handed to the executor, which translates + compiles +
+    /// registers it. Called at block boundaries; cheap when the queue is empty (the common case).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn pump_jit_translations(&mut self) {
+        use crate::bus::Bus;
+        if self.executor.is_none() {
+            return;
+        }
+        // ── E4-T21: stage discovery's FIFO nominations into the priority compile queue. ──
+        // Drain the discovery FIFO and admit each as a CompileJob tagged with its live hotness, so
+        // the hottest pending block compiles first. Admission is bounded + drop-and-recount, so a
+        // flood of unique hot blocks never grows memory or blocks execution — dropped jobs are fed
+        // back to discovery for later re-nomination.
+        for req in self.discovery.take_requests() {
+            let hotness = self.discovery.queued_hotness(req.phys_pc);
+            self.compile_queue
+                .push(compile_queue::CompileJob { req, hotness });
+        }
+        // Cancellation on generation bump: any job whose generation went stale while it waited is
+        // dropped here (a cheap first line of defence; the per-block install_check below is the
+        // authoritative one). This models async-with-delay: the world can change under a queued job.
+        self.compile_queue.cancel_stale(self.discovery.generation());
+        // Recount jobs the queue dropped under backpressure so a still-hot block is re-nominated
+        // instead of being suppressed by dedup forever.
+        for phys in self.compile_queue.take_recount() {
+            self.discovery.renominate(phys);
+        }
+        if self.compile_queue.is_empty() {
+            return;
+        }
+        // ── E4-T21: pop the hottest jobs up to the per-boundary INSTALL budget (bounds the stall). ──
+        let mut reqs: alloc::vec::Vec<dispatch::TranslationRequest> = alloc::vec::Vec::new();
+        while reqs.len() < JIT_INSTALL_BUDGET {
+            match self.compile_queue.pop_hottest() {
+                Some(job) => reqs.push(job.req),
+                None => break,
+            }
+        }
+        // Pause instrumentation: time the install step (translate/validate/batch/install) when a host
+        // timer is injected; always record the WORK done (blocks + bytes) as the headless bound.
+        let t0 = self.host_timer.as_ref().map(|t| t.now_ns());
+        let mut exec = self.executor.take().expect("executor present");
+        // ── 1. Validate each request against live memory and collect the still-valid decoded blocks. ──
+        let mut valid: alloc::vec::Vec<dispatch::DecodedBlock> = alloc::vec::Vec::new();
+        let mut installed_bytes: u64 = 0;
+        for req in &reqs {
+            // Re-read the live physical bytes for the block and validate: a store/`fence.i` between
+            // nomination and now would fail this and the request is dropped (never compile stale code).
+            let n = req.code_bytes.len();
+            let mut live = alloc::vec::Vec::with_capacity(n);
+            let mut ok = true;
+            for i in 0..n {
+                match self.bus.load8(req.phys_pc.wrapping_add(i as u64)) {
+                    Ok(b) => live.push(b),
+                    Err(_) => {
+                        ok = false;
+                        break;
+                    }
+                }
+            }
+            if !ok || !self.discovery.install_check(req, &live) {
+                continue;
+            }
+            // The predecoded block is still cached (physical keying); take a clone for the batch.
+            if let Some(block) = self.block_cache.get(req.phys_pc) {
+                installed_bytes = installed_bytes.saturating_add(req.code_bytes.len() as u64);
+                valid.push(block.clone());
+            }
+        }
+        // ── 2. Group the drained blocks into batches by connected components of the observed static-
+        //       edge graph (E4-T19 §7), capped at the executor's batch-size K, then install each
+        //       group as ONE module with intra-batch edges lowered to direct calls. ──
+        let k = exec.batch_size().max(1);
+        for group in group_into_batches(&valid, k) {
+            let group_blocks: alloc::vec::Vec<dispatch::DecodedBlock> =
+                group.iter().map(|&i| valid[i].clone()).collect();
+            let intra = intra_edges_for_group(&valid, &group);
+            exec.install_batch(&group_blocks, &intra);
+        }
+        // E4-T20: any batch the install-time budget enforcement EVICTED must be re-nominated in
+        // discovery, else dedup would suppress its re-translation forever (AC3 thrash signal).
+        for phys in exec.take_evicted() {
+            self.discovery.renominate(phys);
+        }
+        self.executor = Some(exec);
+        // E4-T21: record this install step's pause (wall ns when timed, always the work bound). The
+        // block count fed the executor is `valid.len()`, hard-capped at `JIT_INSTALL_BUDGET`.
+        let pause_ns = match (t0, self.host_timer.as_ref()) {
+            (Some(t0), Some(t)) => t.now_ns().saturating_sub(t0),
+            _ => 0,
+        };
+        self.prof
+            .record_jit_pause(pause_ns, valid.len() as u64, installed_bytes);
+    }
+
+    /// E4-T10: try to execute the compiled block at the current PC via the JIT. Returns:
+    /// * `None` — the JIT did NOT run this block (not enabled at a boundary, not compiled, or it
+    ///   faulted out mid-block leaving hart state untouched); the caller interprets instead.
+    /// * `Some(Ok(()))` — a compiled block ran to a `FALLTHROUGH`/`BRANCH_TAKEN` exit: registers,
+    ///   PC, and the retire clock are already committed (the clock advanced once per guest op the
+    ///   block retired, preserving `mtime`-at-retire determinism); the caller skips the interpreter.
+    /// * `Some(Err(trap))` — the block's terminator (`ecall`/`ebreak`) traps: the body ops' retires
+    ///   are committed, PC is left at the faulting instruction, and the runtime-derived (mode-correct)
+    ///   trap is returned for the loop's normal trap-delivery path, with NO intervening boundary poll
+    ///   (so interrupt timing matches the interpreter exactly).
+    ///
+    /// The device/interrupt sample already happened at this boundary (in the loop, before this call),
+    /// and `mtime` advances per retired op below, so the E4-T05 interrupt-batching semantics are
+    /// preserved: a compiled block is exactly one `DecodedBlock` (≤128 ops), sampled at its entry.
+    /// E4-T18: run the compiled block at the current PC and, if chaining is on, keep following
+    /// direct block→block links (through the executor's link-slots) instead of returning to the
+    /// dispatch loop on every edge — up to the chain-depth budget, and re-checking the
+    /// interrupt/instruction budget at EVERY link so a timer still fires inside a chained loop.
+    ///
+    /// Returns exactly as [`Self::run_one_jit_block`] does for the LAST block in the chain: `None`
+    /// (not run / faulted out — interpret), `Some(Ok(()))` (chain committed; resume at the current
+    /// PC), or `Some(Err(trap))` (the terminal block trapped). Every non-terminal block in the chain
+    /// has already committed its registers, PC, and retire clock.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn try_jit_block(&mut self) -> Option<Result<(), Trap>> {
+        let pc0 = self.hart.regs.pc;
+        let mut phys = self.hart.fetch_phys(&mut self.bus, pc0).ok()?;
+        if !self.executor.as_ref()?.is_compiled(phys) {
+            return None;
+        }
+        let chaining = self.executor.as_ref()?.chaining();
+        let budget = self.executor.as_ref()?.chain_depth_budget().max(1);
+        let mut depth: u32 = 0;
+        // The edge just traversed to reach `phys` (from_phys, edge) — linked lazily on arrival.
+        let mut pending_link: Option<(u64, u8)> = None;
+        let result = loop {
+            // Lazily link the edge we followed to get here (predecessor → this block). Both are
+            // compiled (checked before we set `pending_link`); the executor records the incoming
+            // edge and writes the successor's table index into the slot.
+            if let (Some((from, edge)), Some(e)) = (pending_link.take(), self.executor.as_mut()) {
+                e.link_edge(from, edge, phys);
+            }
+            match self.run_one_jit_block(phys) {
+                None => break None, // faulted out (or meta gone): interpret this block from entry.
+                Some(BlockStep::Trapped(r)) => break Some(r),
+                Some(BlockStep::Committed { edge }) => {
+                    // The block ran clean; PC now sits at its successor's entry.
+                    if !chaining {
+                        break Some(Ok(()));
+                    }
+                    depth += 1;
+                    if depth >= budget {
+                        break Some(Ok(())); // chain-depth bound: force a dispatch return.
+                    }
+                    // Interrupt/instruction budget across chains: refresh the timer levels (mtime
+                    // advanced per retired op above) AND re-mirror the PLIC external-interrupt levels
+                    // and, if an interrupt is now pending, return to dispatch so the boundary poll
+                    // delivers it — a timer OR a device completion thus fires within one block
+                    // (≤128 ops) of becoming pending even inside a fully-chained loop.
+                    //
+                    // E4-T23: `sync_plic()` is what makes an INJECTED device completion (virtio-blk /
+                    // net → a PLIC source pending bit, set by the backend on the other thread) take
+                    // effect INSIDE the chain. Without it a device IRQ would only be sampled when the
+                    // chain happens to exit to dispatch (the chain-depth bound / a fetch miss), so a
+                    // blk-completion could be delayed by thousands of loop iterations — refuted by
+                    // `device_completion_fires_inside_chained_loop`. The level is already asserted by
+                    // the device; this only mirrors it into `mip`, so it is cheap and side-effect-free.
+                    self.sync_clint();
+                    self.sync_sbi_timer();
+                    self.sync_plic();
+                    if self.hart.csr.next_interrupt().is_some() {
+                        break Some(Ok(()));
+                    }
+                    // Follow the edge only if the successor is itself compiled; otherwise return to
+                    // dispatch (which will interpret / compile it).
+                    let from = phys;
+                    let next_phys = match self.hart.fetch_phys(&mut self.bus, self.hart.regs.pc) {
+                        Ok(p) => p,
+                        Err(_) => break Some(Ok(())),
+                    };
+                    if !self
+                        .executor
+                        .as_ref()
+                        .is_some_and(|e| e.is_compiled(next_phys))
+                    {
+                        break Some(Ok(()));
+                    }
+                    // Record the edge to link on arrival (only static edges carry an `edge`; a
+                    // dynamic `jalr` target has `edge == None` — followed but never linked).
+                    pending_link = edge.map(|e| (from, e));
+                    phys = next_phys;
+                }
+            }
+        };
+        // Stats: one dispatch-loop entry per chain, with its depth binned into the histogram.
+        if let Some(e) = self.executor.as_mut() {
+            e.note_chain(depth);
+        }
+        result
+    }
+
+    /// E4-T18: execute exactly ONE compiled block at physical entry `phys` (the former body of
+    /// `try_jit_block`), committing its registers / PC / retire clock. Returns:
+    /// * `None` — the block faulted out mid-op (hart untouched) or its decoded meta vanished; the
+    ///   caller interprets it from entry.
+    /// * `Some(BlockStep::Committed { edge })` — a `FALLTHROUGH`/`BRANCH_TAKEN` exit; `edge` is the
+    ///   block's static outgoing edge for chaining (`Some(0)` sole/taken, `Some(1)` not-taken,
+    ///   `None` = a dynamic `jalr` target that must not be statically linked).
+    /// * `Some(BlockStep::Trapped(r))` — a `Trap` exit (precise mem-fault / `ecall` / `ebreak`).
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn run_one_jit_block(&mut self, phys: u64) -> Option<BlockStep> {
+        // Op count + terminator + per-op byte lengths, read from the still-cached decoded block
+        // (physical keying). The lengths let a PRECISE mem-fault side-exit (below) compute how many
+        // instructions retired before the faulting one, so the retire clock advances by exactly that.
+        let (nops, terminator, op_lens, block_phys) = {
+            let b = self.block_cache.get(phys)?;
+            (
+                b.ops.len(),
+                b.ops.last().map(|o| o.instr),
+                b.ops
+                    .iter()
+                    .map(|o| o.len as u64)
+                    .collect::<alloc::vec::Vec<u64>>(),
+                b.phys_start,
+            )
+        };
+        // Take the executor out so it can borrow hart + bus for the duration of the call.
+        let mut exec = self.executor.take().expect("compiled ⇒ executor present");
+        let exit = exec.execute(phys, &mut self.hart, &mut self.bus);
+        self.executor = Some(exec);
+        let exit = exit?; // None ⇒ faulted out; hart untouched ⇒ fall back to the interpreter.
+
+        // PC is about to jump to a block entry; the block cursor no longer describes it.
+        self.block_cursor = None;
+        match exit.code {
+            jit::ExitCode::Fallthrough | jit::ExitCode::BranchTaken => {
+                self.hart.regs.pc = exit.next_pc;
+                // Every guest op in the block retired: advance the retire clock once per op so
+                // `mtime` (retire-derived) lands identically to the interpreter, and feed the
+                // storm/progress denominator identically.
+                for _ in 0..nops {
+                    self.advance_clock();
+                    self.irqstats.on_retire();
+                }
+                // E4-T17: a JIT block ending in `fence.i` orders the fetch stream the SAME near-free
+                // way `step_cached` does — the block's own stores were logged and are drained
+                // page-granularly below, so any page this block wrote (incl. its own, the self-write
+                // corner) is invalidated; `fence.i` itself drops NOTHING, so un-dirtied pages' blocks
+                // survive. Note the event, then drain: a store may have landed on a code page
+                // (SMC / DMA-into-code / self-write) and must invalidate exactly that page.
+                if matches!(terminator, Some(crate::decode::Instr::FenceI)) {
+                    self.block_cache.note_fence_i();
+                }
+                self.drain_code_writes();
+                Some(BlockStep::Committed {
+                    edge: chain_edge(terminator, exit.code),
+                })
+            }
+            jit::ExitCode::Trap => {
+                // E4-T12: a PRECISE mid-block memory fault carries the interpreter-produced `Trap`
+                // (cause + `mtval`) directly. `exit.next_pc` is the faulting instruction's PC; the
+                // executor already synced the precise register file (as of the instruction before
+                // it) back into `hart.regs`. Advance the retire clock by exactly the number of ops
+                // that retired before the faulting one (found by walking the block's op lengths to
+                // the faulting PC), leave PC at the faulting instruction, and hand the trap to the
+                // loop's normal `take_trap` delivery — so mcause/mtval/mepc come from the ONE
+                // trusted implementation and no already-committed side-effect is re-executed.
+                if let Some(trap) = exit.trap {
+                    let faulting_pc = exit.next_pc;
+                    let mut retired = 0u64;
+                    let mut p = block_phys;
+                    for len in &op_lens {
+                        if p == faulting_pc {
+                            break;
+                        }
+                        p = p.wrapping_add(*len);
+                        retired += 1;
+                    }
+                    for _ in 0..retired {
+                        self.advance_clock();
+                        self.irqstats.on_retire();
+                    }
+                    self.hart.regs.pc = faulting_pc;
+                    // A store before the fault may have hit a code page (SMC/DMA-into-code); drain
+                    // the bus write log through page-granular invalidation, exactly as the
+                    // interpreter would after that store retired.
+                    self.drain_code_writes();
+                    return Some(BlockStep::Trapped(Err(trap)));
+                }
+                // Otherwise: the trapping terminator (`ecall`/`ebreak`) retires NOTHING; only the
+                // `nops-1` body ops did. Advance the clock for those.
+                let retired = nops.saturating_sub(1);
+                for _ in 0..retired {
+                    self.advance_clock();
+                    self.irqstats.on_retire();
+                }
+                // Leave PC at the faulting instruction and derive the trap from the CURRENT
+                // privilege mode (the block cannot know it) so the cause matches the interpreter.
+                self.hart.regs.pc = exit.next_pc;
+                let trap = match terminator {
+                    Some(crate::decode::Instr::Ecall) => Trap {
+                        cause: match self.hart.csr.mode {
+                            crate::csr::Priv::U => hart::Exception::EcallFromU,
+                            crate::csr::Priv::S => hart::Exception::EcallFromS,
+                            crate::csr::Priv::M => hart::Exception::EcallFromM,
+                        },
+                        tval: 0,
+                    },
+                    _ => Trap {
+                        // `ebreak` (the only other trapping terminator the translator emits):
+                        // Breakpoint with tval = the faulting PC (matches the interpreter).
+                        cause: hart::Exception::Breakpoint,
+                        tval: exit.next_pc,
+                    },
+                };
+                Some(BlockStep::Trapped(Err(trap)))
+            }
+            jit::ExitCode::Reserved(_) => {
+                // The E4-T09 translator never emits these; on a clean return the executor already
+                // committed registers, so re-interpreting would double-execute. Commit PC and treat
+                // as a benign fall-through (defensive — unreachable for the current translator).
+                self.hart.regs.pc = exit.next_pc;
+                for _ in 0..nops {
+                    self.advance_clock();
+                    self.irqstats.on_retire();
+                }
+                // Reserved never carries a static successor edge — do not chain-link it.
+                Some(BlockStep::Committed { edge: None })
+            }
+        }
     }
 
     fn run_traced_inner<T: trace::TraceSink>(
@@ -1524,11 +2750,27 @@ impl Machine {
             if let Some(reason) = self.syscon.as_ref().and_then(|c| *c.borrow()) {
                 return RunOutcome::Reset(reason);
             }
+            // E4-T05 Phase C: when interrupt batching is on, the device-fabric re-sync + the
+            // `next_interrupt` sampling below run ONLY at a block boundary (once per DecodedBlock,
+            // ≤128 ops), not per instruction. Mid-block they are skipped: no CSR/xret/wfi/fence can
+            // change interrupt-enable state mid-block (all are terminators), and no device state
+            // changes mid-block (device service is itself batched here), so the only new mid-block
+            // interrupt source is `mtime` crossing `mtimecmp` — and `mtime` still advances
+            // per-retire (`advance_clock`), so that interrupt becomes pending at the identical
+            // retire index and is merely SAMPLED at the next boundary (≤128 retires later). With
+            // batching OFF (incl. cache-on/batching-off, the byte-identical mode) this is `true`
+            // every iteration, so the legacy per-op behavior is bit-for-bit preserved.
+            #[cfg(not(feature = "zicsr-stub"))]
+            let sample_boundary = !self.interrupt_batching() || self.at_block_boundary();
             // E1-T12: refresh the CLINT-driven interrupt LEVELS (MTIP = mtime >= mtimecmp, MSIP
             // = msip) into `mip` before sampling — a continuously re-evaluated level, so a
             // just-crossed timer fires and a raised `mtimecmp` clears MTIP with no CSR access.
             #[cfg(not(feature = "zicsr-stub"))]
-            {
+            if sample_boundary {
+                // E4-T24: in WallClock mode, recompute `mtime` from the host clock BEFORE sync_clint
+                // samples the MTIP level, so a just-elapsed wall deadline fires this boundary. No-op on
+                // the default ICount path.
+                self.sample_wall_clock();
                 self.sync_clint();
                 // E2-T07: tick the UART char-timeout clock and mirror its level into the
                 // PLIC BEFORE sync_plic samples EIP, so a UART edge lands this boundary.
@@ -1546,6 +2788,14 @@ impl Machine {
                 // completed request's used-ring interrupt lands this same boundary.
                 if let Some((state, vq)) = &mut self.blk {
                     let slot = alloc::rc::Rc::clone(&self.virtio[0].0);
+                    dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
+                }
+                // E4-T03: service each ADDITIONAL (read-only) blk device on the same boundary, so a
+                // guest read of `/dev/vdb…` completes promptly. Index-based to keep the `extra_blk`
+                // borrow disjoint from `self.virtio` / `self.bus`.
+                for i in 0..self.extra_blk.len() {
+                    let slot = alloc::rc::Rc::clone(&self.virtio[self.extra_blk[i].2].0);
+                    let (state, vq, _) = &mut self.extra_blk[i];
                     dev::virtio::blk::service(&slot, vq, state, &mut self.bus);
                 }
                 // E3-T13: service virtio-net kicks (and async backend rx frames) the same
@@ -1568,14 +2818,37 @@ impl Machine {
                 self.sync_plic();
                 // E2-T05: refresh the built-in-SBI S-timer level (STIP) before sampling.
                 self.sync_sbi_timer();
+                // E4-T05 Phase B: the device services above may have DMA'd into guest RAM (a
+                // virtio-blk read completion writing sector bytes, virtio-net rx, virtio-rng,
+                // a used-ring publish). Those writes went through the bus and were logged by
+                // physical frame; drain them through page-granular invalidation so a guest that
+                // DMAs code then jumps to it can never execute a stale cached block. (Phase C
+                // does NOT touch this — the device sync above is still per-retire.)
+                self.drain_code_writes();
+                // E4-T19: at a block boundary, drain the compile queue into BATCHES — but let a burst
+                // of newly-hot blocks accumulate first, so a connected component compiles as ONE
+                // module rather than a trickle of one-block modules. Drain when the queue reaches
+                // `JIT_BATCH_TRIGGER` (a batch's worth is ready) or every `JIT_PUMP_INTERVAL`
+                // boundaries (flush stragglers). Cheap when the queue is empty.
+                if self.jit_enabled {
+                    self.jit_pump_ticks = self.jit_pump_ticks.wrapping_add(1);
+                    if self.discovery.queue_len() >= JIT_BATCH_TRIGGER
+                        || self.jit_pump_ticks >= JIT_PUMP_INTERVAL
+                    {
+                        self.jit_pump_ticks = 0;
+                        self.pump_jit_translations();
+                    }
+                }
             }
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
             // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the
             // next instruction — sepc/mepc then points at the resume address (the interrupted
             // instruction fully retired or never ran). Taking the trap clears xIE, so a pending
             // line does not re-fire while its handler runs. (No real CSR file under zicsr-stub.)
+            // E4-T05 Phase C: sample interrupts only at a block boundary when batching (see above);
+            // `sample_boundary` is always `true` when batching is off, so this is unchanged there.
             #[cfg(not(feature = "zicsr-stub"))]
-            if let Some((cause, to_s)) = self.hart.csr.next_interrupt() {
+            if sample_boundary && let Some((cause, to_s)) = self.hart.csr.next_interrupt() {
                 let epc = self.hart.regs.pc;
                 self.hart.take_interrupt(cause, to_s, epc);
                 self.irqstats.on_interrupt(cause); // E2-T20 storm counter
@@ -1587,11 +2860,36 @@ impl Machine {
             // here. A single register-resident field read; the sampling decision itself is gated below.
             #[cfg_attr(feature = "zicsr-stub", allow(unused_variables))]
             let prof_pc = self.hart.regs.pc;
+            // E4-T05: when the block cache is enabled, decode is served from the memoized block
+            // (via `step_cached`); everything ELSE in this loop body — the per-op device sync,
+            // `next_interrupt`, `advance_clock`, `on_retire`, and the profiler hook — is UNCHANGED
+            // and still runs PER RETIRE. So the ONLY cache-on vs cache-off difference is memoized
+            // decode; the retire trace must be byte-identical. (Batching those is Phase C.)
+            // E4-T10: at a block boundary, if the JIT is active and this block is compiled, run it
+            // via the executor INSTEAD of interpreting. `try_jit_block` commits the retire clock for
+            // the block's ops itself (so the per-op accounting below is skipped for a JIT run).
+            #[cfg(not(feature = "zicsr-stub"))]
+            let jit_attempt = if self.jit_active() && sample_boundary {
+                self.try_jit_block()
+            } else {
+                None
+            };
+            #[cfg(not(feature = "zicsr-stub"))]
+            let ran_via_jit = jit_attempt.is_some();
+            #[cfg(not(feature = "zicsr-stub"))]
+            let step_result = match jit_attempt {
+                Some(r) => r,
+                None if self.block_cache_enabled => self.step_cached(sink),
+                None => self.hart.step_traced(&mut self.bus, sink),
+            };
+            #[cfg(feature = "zicsr-stub")]
             let step_result = self.hart.step_traced(&mut self.bus, sink);
             // E1-T12: an instruction retired iff the step succeeded — advance the deterministic
             // retire-count clock ONLY then (a delivered trap or a taken interrupt retires nothing).
+            // A JIT run already advanced the clock per retired op inside `try_jit_block`, so this
+            // per-op accounting runs only for an interpreted step.
             #[cfg(not(feature = "zicsr-stub"))]
-            if step_result.is_ok() {
+            if !ran_via_jit && step_result.is_ok() {
                 self.advance_clock();
                 self.irqstats.on_retire(); // E2-T20 progress denominator
                 // E4-T01: hot-PC sampling — only when armed, and only 1-in-~1024 retires (a jittered

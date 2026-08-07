@@ -75,7 +75,12 @@ const OFF_NR: u32 = 0;
 const OFF_ARCH: u32 = 4;
 
 fn stmt(code: u16, k: u32) -> SockFilter {
-    SockFilter { code, jt: 0, jf: 0, k }
+    SockFilter {
+        code,
+        jt: 0,
+        jf: 0,
+        k,
+    }
 }
 fn jump(code: u16, k: u32, jt: u8, jf: u8) -> SockFilter {
     SockFilter { code, jt, jf, k }
@@ -99,7 +104,10 @@ fn build_program() -> Vec<SockFilter> {
         p.push(jump(BPF_JMP | BPF_JEQ | BPF_K, nr, jt, 0));
     }
     p.push(stmt(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
-    p.push(stmt(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | (libc::EPERM as u32)));
+    p.push(stmt(
+        BPF_RET | BPF_K,
+        SECCOMP_RET_ERRNO | (libc::EPERM as u32),
+    ));
     p
 }
 

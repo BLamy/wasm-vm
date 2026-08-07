@@ -68,5 +68,59 @@ Atomics ordering used correctly; a data race visible as stale reads refutes); us
 resume without guest time explosion (full fix is E4-T24; here, no crash/deadlock);
 (5) kill the worker via DevTools and confirm the page surfaces a fatal-but-clean error.
 
+## Status
+partially-verified (2026-08-06) — all headlessly-verifiable gates green; the live browser
+worker-boot legs are tracked as verification debt below (they OS-reap on this macOS host; run on the
+Linux `dev` box).
+
+## Deliverables landed (this pass)
+- Shared-memory build: `tools/build-web-shared.sh` — nightly + `-Z build-std`,
+  `+atomics,+bulk-memory,+mutable-globals`, `--shared-memory --import-memory --max-memory=2GiB`.
+  Emits a module that IMPORTS a shared `env.memory`. Makefile target `wasm-shared`. The
+  single-threaded fallback is the existing stable `make wasm` (non-shared, internal memory).
+- `web/cpu-isolation.js` — `crossOriginIsolated` probe + PURE `selectCpuBackend` decision (shared
+  worker vs single-thread fallback; no half-init; `?singlethread=1` override).
+- `web/cpu-control-block.js` — shared control block (Int32 SAB): WFI park/wake via
+  `Atomics.wait`/`notify` on a monotonic IRQ cell, and the interim synchronous MMIO request/response
+  cell.
+- `web/cpu-worker.js` + `web/cpu-worker-host.js` — dedicated CPU worker bootstrap (instantiate core
+  against the imported shared memory; boot handshake; dispatch/WFI loop) and the main-thread
+  controller (spawn, handshake, interrupt wake, MMIO servicing pump, clean fatal on worker crash).
+- COOP/COEP: dev server already sends the headers (`tools/serve-dev.sh`); production header docs +
+  the header-injection service-worker shim `web/coi-serviceworker.js` (+ `-register.js`) for
+  header-less static hosts (GitHub Pages), all in `docs/e4-t22-cpu-worker-coop-coep.md`.
+- CI: `web/playwright.e4-t22.config.js` (Chrome + Firefox matrix) + specs
+  `web/tests/e4-t22-cpu-worker.spec.js` and `web/tests/e4-t22-fallback-no-headers.spec.js`.
+
 ## Verification log
-(empty)
+- 2026-08-06 — SHARED core builds clean: `bash tools/build-web-shared.sh` →
+  `- memory[0] pages: initial=19 max=32768 shared <- env.memory` (wasm-objdump on the built
+  `wasm_vm_wasm.wasm`). Nightly + build-std, `+atomics,+bulk-memory,+mutable-globals`.
+- 2026-08-06 — FALLBACK core builds clean: `cargo build -p wasm-vm-wasm --release --target
+  wasm32-unknown-unknown` (pinned stable) → non-shared internal memory (`memory[0] initial=19`, no
+  `shared`, no import). Both variants compile.
+- 2026-08-06 — probe→selection unit-tested: `node --test web/tests/cpu-isolation.test.mjs
+  web/tests/cpu-control-block.test.mjs` → 16/16 pass. isolated=true ⇒ `worker-shared`;
+  isolated/SAB/Atomics/Worker missing or `?singlethread=1` ⇒ `single-thread` fallback; warns exactly
+  once on fallback; empty env never throws. Control-block: monotonic IRQ counter, shared-buffer
+  visibility across attach, 64-bit MMIO request/respond round-trip.
+- 2026-08-06 — no regressions: `node --test web/tests/*.test.mjs` → 70/70 pass.
+- 2026-08-06 — no Rust source touched (build wiring only), so `fmt`/`clippy` are N/A for this pass.
+
+## Verification debt (browser/dev legs — OS-reap on this macOS host; run on `dev`)
+- Live Alpine boot to login with the CPU on the worker, Chrome + Firefox
+  (`web/playwright.e4-t22.config.js`); interpreter + JIT both worker-side (JIT itself is E4-T07..T11,
+  not yet built — `runSlice`/`run_slice` is a placeholder until the shared dispatch export lands).
+- wasm-bindgen threading-glue for the shared pkg: the global `wasm-bindgen` CLI here is 0.2.108 vs
+  the crate's 0.2.126, so the `--target web` transform is deferred to dev (via the version-matched
+  wasm-pack). The raw shared+imported module is proven headlessly; the JS glue is not generated here.
+- Main-thread responsiveness (rAF gap ≤ 20 ms p99 during CoreMark) — needs measurement on dev.
+- WFI idle < 2% host CPU + keypress wake ≤ 20 ms — profiler measurement on dev.
+- Non-isolated fallback served without headers (`web/tests/e4-t22-fallback-no-headers.spec.js`,
+  `E4T22_NOHEADERS_URL` → `make web-serve`) — browser leg on dev; the selection LOGIC is unit-tested
+  headlessly.
+- SW header-injection shim flipping `crossOriginIsolated` on second load (adversarial #1),
+  wake-storm (#2), memory-model stale-read (#3), tab-lifecycle (#4), worker-kill fatal (#5) — all
+  browser legs on dev.
+- Memory/instance measurements and riscv-tests green in the worker configuration — browser runner on
+  dev.

@@ -1,0 +1,37 @@
+# E4-T09: the core JIT translator. Turns ONE predecoded RV64I basic block (a `DecodedBlock` from
+# `wasm-vm-core`'s dispatch front end) into ONE WASM function implementing the E4-T06 ABI, via the
+# `wasm-emit` byte-level emitter. Correctness-critical: the generated code must be semantically
+# identical to the interpreter's `execute`, proven by the native differential harness (tests/) which
+# runs generated functions under wasmtime against `Hart::exec_oracle` from random register states.
+#
+# `no_std + alloc` so the translator core compiles for wasm32 (the JIT runs inside a wasm module in
+# the browser). wasmtime / wasmparser are DEV-dependencies only (native test harness).
+[package]
+name = "wasm-vm-jit-translate"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lib]
+name = "jit_translate"
+
+[dependencies]
+wasm-vm-core = { workspace = true }
+wasm-vm-wasm-emit = { path = "../wasm-emit" }
+
+[features]
+# E4-T25 verification doctrine ONLY: compiles in the deliberate-mis-translation hooks used to prove
+# the lockstep/fuzz rig can catch a JIT bug. OFF by default — the shipped translator never carries a
+# mutation (every hook predicate folds to `false` and is optimized away).
+mutation-testing = []
+
+[dev-dependencies]
+# Executes every generated module natively and compares against the interpreter oracle (the whole
+# point of the ticket). Native-only — never compiled for wasm32.
+wasmtime = { version = "35", default-features = false, features = ["cranelift", "runtime"] }
+# Validity oracle: every generated module is fed through `wasmparser::Validator` (AC 3).
+wasmparser = "0.240"
+# E4-T11 inline-TLB harness: host import error type + the softmmu bridge.
+anyhow = "1"

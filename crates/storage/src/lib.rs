@@ -23,6 +23,7 @@ mod dbmeta;
 mod fetch;
 pub mod oci;
 mod overlay;
+mod overlay_delta;
 mod prefetch;
 mod pullthrough;
 mod snapmeta;
@@ -38,6 +39,7 @@ pub use overlay::{
     MemOverlay, OVERLAY_BLOCK, OVERLAY_FORMAT_VERSION, OverlayBackend, OverlayDisk, OverlayError,
     OverlayOutcome,
 };
+pub use overlay_delta::{OVERLAY_DELTA_MAGIC, OverlayDelta, OverlayDeltaError};
 pub use prefetch::{PrefetchTracker, Readahead, boot_prefetch};
 pub use pullthrough::{LayerFetcher, PullError, PullReport, pull_through};
 pub use snapmeta::{

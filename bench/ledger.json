@@ -1,0 +1,94 @@
+{
+  "entries": [
+    {
+      "baseline": "level3-interpreter",
+      "bench": "dhrystone",
+      "commit": "010446f009677070f47a16f842b5c219b0158907",
+      "config": {
+        "binary_sha256": "eb21029f56d9774e9fa621ad8ef29b5f1fc8a2d5f7875d7c3eb5714fff5427d3",
+        "flags": "-static -O2 -g0 -march=rv64gc -mabi=lp64d",
+        "gcc": "gcc-13-riscv64-linux-gnu 13.3.0",
+        "iterations": 30000000,
+        "ram_mib": 256,
+        "vm_build": "release"
+      },
+      "date": "2026-08-05T03:53:42.883931+00:00",
+      "engine": "native",
+      "higher_is_better": true,
+      "prev_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "score": 189.717,
+      "spread": 0.0,
+      "unit": "DMIPS",
+      "vm_build": "release"
+    },
+    {
+      "baseline": "level3-interpreter",
+      "bench": "coremark",
+      "commit": "05bb0fe90e4666fcd2bd07f999e614d0be4d58f3",
+      "config": {
+        "binary_sha256": "4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937",
+        "flags": "-static -O2 -g0 -march=rv64gc -mabi=lp64d",
+        "gcc": "gcc-13-riscv64-linux-gnu 13.3.0",
+        "iterations": 6000,
+        "ram_mib": 256,
+        "vm_build": "release"
+      },
+      "date": "2026-08-05T04:52:24.295850+00:00",
+      "engine": "native",
+      "higher_is_better": true,
+      "prev_sha256": "cb8fd2650205dbee0c5a5c39804b790596a9fcf92c1ccd6b41e120bd022b7de0",
+      "score": 261.734,
+      "spread": 0.0001,
+      "unit": "iterations/sec",
+      "vm_build": "release"
+    },
+    {
+      "baseline": "level3-interpreter",
+      "bench": "boot",
+      "commit": "e7d3f6214f38ce89781b991ef154b2ff8a5f3587",
+      "config": {
+        "append": "root=/dev/vda rw console=ttyS0 earlycon=sbi",
+        "kernel": "releases/kernel/6.6.63/Image",
+        "ram_mib": 256,
+        "rootfs": "releases/rootfs/alpine-rootfs.ext4",
+        "vm_build": "release"
+      },
+      "date": "2026-08-05T06:04:09.068507+00:00",
+      "engine": "native",
+      "higher_is_better": false,
+      "prev_sha256": "f4a5ec63383de67a6eb3b204213f0a07b40b0b642140b0e18895bde03fe021de",
+      "score": 375.386,
+      "spread": 0.0138,
+      "unit": "seconds",
+      "vm_build": "release"
+    },
+    {
+      "baseline": "level3-interpreter",
+      "bench": "gcc",
+      "commit": "unknown",
+      "config": {
+        "compile_cmd": "/mnt/usr/bin/gcc --sysroot=/mnt -B/mnt/usr/bin -O2 -frandom-seed=miniz -c /mnt/src/miniz.c -o /tmp/miniz.o",
+        "gcc_ext4_sha256": "167ff7a91ab6d4625bc4d68108595b2b693f1345f4ba1386df24e7ea6541d630",
+        "gcc_package": "gcc-13.2.1_git20240309-r1",
+        "o_sha256": "97198b27557042fb84de54881c5fb577505b4ee77c41bc056612be6173e5faca",
+        "o_size_bytes": 302904,
+        "o_sizes_all": [
+          302904
+        ],
+        "ram_mib": 768,
+        "source_date_epoch": 1704067200,
+        "vm_build": "release",
+        "workload": "miniz-3.0.2 miniz.c (amalgamated, ~9.3 kLoC)"
+      },
+      "date": "2026-08-05T21:11:52.585560+00:00",
+      "engine": "native",
+      "higher_is_better": false,
+      "prev_sha256": "452775c27413b79e35674e5bba6e9e02b4c361d4bf0c683a6f797c57757cda75",
+      "score": 163.98,
+      "spread": 0.0,
+      "unit": "seconds",
+      "vm_build": "release"
+    }
+  ],
+  "schema_version": 1
+}

@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>E4-T19 module-cost harness</title>
+  </head>
+  <body>
+    <h1>E4-T19 WebAssembly module-cost matrix</h1>
+    <pre id="log">loading…</pre>
+    <script type="module">
+      import { genModule } from "./gen-module.mjs";
+
+      const log = (s) => {
+        document.getElementById("log").textContent += "\n" + s;
+      };
+
+      // Median of `reps` timings (ms) of an async `fn`.
+      async function medianMs(fn, reps) {
+        const ts = [];
+        for (let i = 0; i < reps; i++) {
+          const t0 = performance.now();
+          await fn();
+          ts.push(performance.now() - t0);
+        }
+        ts.sort((a, b) => a - b);
+        return ts[ts.length >> 1];
+      }
+
+      // The whole matrix — exposed to Playwright via window.__runCostMatrix().
+      async function runCostMatrix() {
+        const sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256];
+        const reps = 15;
+        const compile = [];
+        const instantiate = [];
+        for (const n of sizes) {
+          const bytes = genModule(n, 8);
+          const compileMs = await medianMs(async () => {
+            await WebAssembly.compile(bytes);
+          }, reps);
+          const mod = await WebAssembly.compile(bytes);
+          const instMs = await medianMs(async () => {
+            await WebAssembly.instantiate(mod);
+          }, reps);
+          compile.push({ funcs: n, bytes: bytes.length, ms: compileMs });
+          instantiate.push({ funcs: n, bytes: bytes.length, ms: instMs });
+          log(`n=${n} bytes=${bytes.length} compile=${compileMs.toFixed(3)}ms inst=${instMs.toFixed(3)}ms`);
+        }
+
+        // Instance-count cliff: hold N live instances of a 64-func module; record wall time + whether
+        // instantiation starts throwing (the browser's practical live-instance cap).
+        const cliffBytes = genModule(64, 8);
+        const cliffMod = await WebAssembly.compile(cliffBytes);
+        const cliff = [];
+        for (const target of [1000, 5000, 10000]) {
+          const held = [];
+          let failedAt = null;
+          const t0 = performance.now();
+          try {
+            for (let i = 0; i < target; i++) {
+              const { instance } = await WebAssembly.instantiate(cliffMod);
+              held.push(instance);
+            }
+          } catch (e) {
+            failedAt = held.length;
+          }
+          const ms = performance.now() - t0;
+          const mem = performance.memory ? performance.memory.usedJSHeapSize : null;
+          cliff.push({ target, live: held.length, failedAt, ms, usedJSHeapSize: mem });
+          log(`cliff target=${target} live=${held.length} failedAt=${failedAt} ms=${ms.toFixed(1)}`);
+          // release before the next tier
+          held.length = 0;
+        }
+
+        return {
+          userAgent: navigator.userAgent,
+          hardwareConcurrency: navigator.hardwareConcurrency,
+          // performance.memory is Chromium-only; null elsewhere (documented per-browser).
+          hasPerfMemory: !!performance.memory,
+          reps,
+          compile,
+          instantiate,
+          cliff,
+          generatedAt: new Date().toISOString(),
+        };
+      }
+
+      window.__runCostMatrix = runCostMatrix;
+      log("ready");
+    </script>
+  </body>
+</html>

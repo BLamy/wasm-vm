@@ -3,7 +3,7 @@ id: E4-T09
 epic: 4
 title: RV64I basic-block translation to WASM with locals-based register mapping
 priority: 409
-status: pending
+status: verified
 depends_on: [E4-T07, E4-T08]
 estimate: L
 capstone: false
@@ -59,4 +59,5 @@ against tests reading the same wrong offsets); (4) validate 1k generated modules
 actual browser (`WebAssembly.validate`) to catch wasmtime-tolerated encoding quirks.
 
 ## Verification log
+- 2026-08-05 — **VERIFIED (commit `09f8eb1`).** New `crates/jit-translate` (pkg `wasm-vm-jit-translate`, `no_std`+alloc, wasm32 clean): `translate_block(&DecodedBlock, &Abi) -> Vec<u8>` emits one WASM module exporting `run(state_base:i32)->i32` per the E4-T06 §3 ABI — guest x1..x31 ↔ i64 locals (x0 folded to const-0 / writes dropped), lazy-load from `state_base+8*r` on first read, eager writeback of the dirty set at every exit + before every load/store (materialize-before-trap, §4). **Full RV64I:** lui/auipc, all OP-IMM + OP, all `*W` word ops (i32 then `extend_i32_s`, correct 32-bit sign-ext), all loads/stores, all branches, jal/jalr (bit-0 cleared), ecall/ebreak→TRAP, fence/fence.i→nop; shifts use WASM's mod-64/mod-32 masking matching `rs2&0x3F`/`&0x1F`; semantics lifted verbatim from `Hart::execute`. Load/store = side-exit to `env.load`/`env.store` imports (inline TLB is E4-T11). M/A/F/D/CSR/xret return `Unsupported` → caller keeps interpreting (correctly scoped; those are E4-T12/13/14/15). **THE differential AC (independently re-ran, 3/3 non-ignored green in 49s + the subagent's ignored 100k/20k):** for each block, run the real interpreter (`Hart::exec_oracle`) from random regs → capture regs+next-PC+exit+RAM, translate → run the generated fn under **wasmtime** with the same `CpuState` image → assert IDENTICAL. Directed edge cases (addiw/`*W` sign-ext, sra/srl shift-mask, slt/sltu boundary, x0 discard+RAW, jalr bit-0+rd==rs1, branch taken/not, ecall/ebreak, sd/ld round-trip, dirty-local-live-at-both-exits) + **randomized 3k / 100k / 20k-longblocks (≤120 ops) — ALL PASS, ZERO divergences.** Every module `wasmparser`-valid. Translation budget **2.71 µs/block** median (< 50 µs). fmt/clippy(-D) clean. (Browser `WebAssembly.validate` not run — the ticket states 'no browser in the loop yet'; wasmparser-all-features is the native stand-in.)
 (empty)

@@ -1,0 +1,9 @@
+{
+  "generated": "LOCAL-ONLY production Alpine manifest (tools/gen-alpine-manifest.sh)",
+  "artifacts": {
+    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58", "size": 22097408 },
+    "rootfs": { "url": "releases/rootfs/alpine-rootfs.ext4", "sha256": "f1b544d459a2e347ead9d7620aee931d593dd930f7681ea6cfe415d839d7a9cd", "size": 805306368 },
+    "bootSnapshot": { "url": "releases/boot-snapshot/alpine-ready.snap.gz", "sha256": "827c4962709be827c98a020802188e33f59f9c17137129954576da3c70a854ba", "size": 15292188 },
+    "overlayDelta": { "url": "releases/boot-snapshot/alpine-overlay-delta.bin.gz", "sha256": "117a82c0e4a301eb92dbaa3339428f4555f5effb7da47cb93320dc1b73dea23c", "size": 303356 }
+  }
+}

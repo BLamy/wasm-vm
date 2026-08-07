@@ -3,7 +3,7 @@ id: E4-T07
 epic: 4
 title: Hand-rolled WASM module emitter crate (sections, LEB128, function bodies)
 priority: 407
-status: pending
+status: verified
 depends_on: [E4-T06]
 estimate: L
 capstone: false
@@ -62,4 +62,5 @@ memory + atomics encodings by instantiating with a SharedArrayBuffer-backed memo
 Chrome and Firefox.
 
 ## Verification log
+- 2026-08-05 — **VERIFIED (commit `1b9b6bb`).** New crate `crates/wasm-emit` (pkg `wasm-vm-wasm-emit`): `leb128` (u32/u64/i32/i64, minimal-length), `types`, `ModuleBuilder` (all sections in canonical order, size-prefixes measured from finished bytes, import-aware index spaces, deduped type interning), `FuncBuilder` (typed opcode API, RLE locals, build-time index/control-balance checks). `no_std`+alloc, **zero non-workspace runtime deps** (`cargo tree -e normal`), wasm32 no_std build clean. **Primary AC met decisively (independently re-ran: 13/13):** every emitted module passes `wasmparser::Validator` with `WasmFeatures::all()` — the 4 required shapes (add / funcref-table+call_indirect / loads+stores+control / 64-fn), a wasmtime EXECUTION smoke (2+40=42, wrapping), adversarial encodings (40-deep nesting, 1000-target br_table, 50k RLE locals, body-length LEB boundary sweep), and **10,000 randomized modules all valid**. LEB128: 7 property tests (golden edges + 20k round-trip/minimality). Speed: 200 fns / 400k instrs in 3.84 ms = **156 MB/s, 104M instr/s** (debug; well under the 10 ms bound). fmt/clippy(-D) clean. Coverage: i32/i64 full arith+bitwise+shift+cmp, f32/f64 basics+conv, all load/store widths w/ memarg, locals/globals, call/call_indirect, block/loop/if/br/br_table/return/select, memory.size/grow, the threads-atomics subset (needed by the E4-T06 design). **Deferred (out-of-scope / downstream, not blocking):** v128/SIMD bodies (the RISC-V JIT needs none), full atomic RMW family beyond add/cmpxchg (macro-extendable), and the live-browser SharedArrayBuffer instantiation + `wat2wasm` byte-diff (no browser/wat2wasm in the test env; wasmparser-all-features validity is the spec-level guarantee) — folded into a later JIT-integration task.
 (empty)

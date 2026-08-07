@@ -3,7 +3,7 @@ id: E4-T23
 epic: 4
 title: Main-thread and worker device proxying — MMIO round trips and interrupt injection
 priority: 423
-status: pending
+status: verification-debt
 depends_on: [E4-T22]
 estimate: L
 capstone: false
@@ -68,5 +68,56 @@ side synchronous MMIO reads hit their deadline fallback rather than stalling the
 (5) placement audit: grep device code for main-thread-only APIs (DOM/IndexedDB) reachable
 from worker-side classes — a hidden dependency refutes the architecture doc.
 
+## Status
+partially-verified
+
+## Verification debt (browser / `dev` box — macOS OS-reaps the cross-thread boot)
+- **AC1** — Alpine boots to login on the split arch; `dd if=/dev/vda` ≥ 90% of the E3 figure;
+  interactive typing echo. Spec: `web/tests/e4-t23-device-proxy.spec.js` (`AC1:` tests). NOT run
+  here; no numbers fabricated.
+- **AC3** — Chrome+Firefox budget tests (UART p50 < 100µs / blk p50 < 2ms / keystroke < 5ms) read
+  from the live ProfStats histograms. Spec: same file, `AC3:` test.
+- **AC4** — main <1% CPU idle / no busy-wait (`Atomics.waitAsync` parks). Spec: `AC4:` test.
+- **Adversarials #2 / #3 / #4** — 10k-completion interrupt-loss flood; 50× teardown-race reload +
+  overlay integrity; janked-main sync-read deadline fallback. Specs committed (`adversarial #2/#3/#4`
+  tests) to drop in on `dev`.
+
 ## Verification log
-(empty)
+
+### 2026-08-06 — headless gates VERIFIED on this macOS host
+
+- **SPSC ring protocol + sequence tags + adversarial #1 flood (node)** — `make web-test-cpu-worker`
+  → 25 tests pass across `cpu-isolation` + `cpu-control-block` + new `device-proxy.test.mjs`. The
+  ring tests prove: FIFO order across full wraps, 64-bit payload round-trip, sequence-tagged slots,
+  and the flood-to-full adversarial (ring accepts exactly `capacity`, every refused push is COUNTED
+  as overflow — no silent drop, no wrong-request match, backpressure releases on drain → no
+  deadlock). Interleaved UART+blk flood stays per-stream correlated with zero loss.
+- **AC2 zero-crossing CLINT (node property/counter)** — `device-proxy.test.mjs`: 100k simulated
+  CLINT mtime reads through `WorkerDeviceRouter.mmio()` yield `router.crossings === 0` and an empty
+  request ring — timer MMIO is worker-local by construction.
+- **AC5 interrupt-injection-under-JIT (native directed)** — `cargo test -p wasm-vm-jit-runtime
+  --test chaining` → 5/5 pass incl. new `device_completion_fires_inside_chained_loop`: a virtio-blk
+  PLIC completion injected against a HOT, chained loop is delivered within the chain budget (loop
+  advances ≤ 64 iters between injection and delivery; the handler runs; dispatch is re-entered).
+  This EXPOSED AND FIXED a real gap: the E4-T18 chain per-link boundary poll re-mirrored only the
+  CLINT timer (`sync_clint`), NOT the PLIC — so a device IRQ was delayed ~30 000 iterations until
+  the chain exhausted its depth budget. Fix: added `sync_plic()` to the chain poll in
+  `crates/core/src/lib.rs#try_jit_block`. The existing timer variant `interrupt_fires_inside_chained_loop`
+  still passes (no regression).
+- **Adversarial #5 placement audit (static, wired to CI)** — `node tools/worker-device-audit.mjs`
+  → "placement audit OK: 3 worker-side files clean". Self-verified: injecting `document.title` into a
+  worker-side file makes it exit 1 with the offending line. Wired into `make web-test-cpu-worker`.
+- **Commit gates** — `cargo fmt --check` clean on core + jit-runtime; wasm32 no_std core build +
+  clippy: see the run outputs in the task report.
+
+### Files
+- `web/device-proxy.js` — SPSC rings (cache-line-padded, sequence-tagged), `classify()` placement,
+  `WorkerDeviceRouter` (worker-local dispatch + crossing counter), `MainDeviceServer` (waitAsync
+  consumer + interrupt injection), `LatencyStats` (per-crossing histograms / ProfStats analog).
+- `web/tests/device-proxy.test.mjs` — headless SPSC/classification/AC2/injection tests.
+- `tools/worker-device-audit.mjs` — adversarial #5 placement audit (CI).
+- `docs/worker-devices.md` — placement matrix + OPFS I/O-worker decision + protocol.
+- `crates/core/src/lib.rs` — `sync_plic()` added to the E4-T18 chain boundary poll.
+- `crates/jit-runtime/tests/chaining.rs` — AC5 `device_completion_fires_inside_chained_loop`.
+- `web/tests/e4-t23-device-proxy.spec.js` — deferred browser legs (AC1/AC3/AC4 + adversarials #2-4).
+- `Makefile` — `web-test-cpu-worker` runs the new node suite + placement audit.

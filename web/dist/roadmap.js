@@ -732,6 +732,13 @@ function wireControls() {
   };
   boardBtn?.addEventListener("click", () => setView("kanban"));
   timelineBtn?.addEventListener("click", () => setView("timeline"));
+  // Reflect the initial view on the segmented control so the highlighted segment always
+  // matches what's actually rendered (default is the Gantt/timeline view). initRoadmap()
+  // calls render() right after this, so we only sync the button state here — no extra render.
+  boardBtn?.classList.toggle("active", state.view === "kanban");
+  boardBtn?.setAttribute("aria-selected", String(state.view === "kanban"));
+  timelineBtn?.classList.toggle("active", state.view === "timeline");
+  timelineBtn?.setAttribute("aria-selected", String(state.view === "timeline"));
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeDetail();
     if (e.key === "/" && document.activeElement !== search && !document.getElementById("rm-detail")?.hidden === false) {

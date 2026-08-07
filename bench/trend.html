@@ -1,0 +1,30 @@
+<!doctype html><meta charset='utf-8'>
+<title>wasm-vm performance trend</title>
+<style>
+      body{font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;margin:2rem;color:#1a1a1a;background:#fafafa}
+      h1{font-size:1.4rem} h2{font-size:1.05rem;margin-top:1.6rem}
+      table{border-collapse:collapse;margin:.4rem 0 1rem;font-size:12.5px}
+      th,td{border:1px solid #ddd;padding:3px 8px;text-align:right} th{background:#eef}
+      td.l,th.l{text-align:left} .spark{vertical-align:middle;background:#fff;border:1px solid #eee}
+      .bless{color:#6a1b9a;font-weight:600} .meta{color:#666;font-size:12px}
+      @media(prefers-color-scheme:dark){body{background:#161616;color:#e6e6e6}
+        th{background:#26304a} th,td{border-color:#333} .spark{background:#1e1e1e;border-color:#333}}
+    </style>
+<h1>wasm-vm performance trend</h1>
+<p class='meta'>generated 2026-08-06T14:05:25.393401+00:00 — 4 ledger entries, 4 benchmarks. Source: bench/ledger.json (hash-chained).</p>
+<h2>boot <span class='meta'>(seconds, lower is better)</span> <svg width="180" height="32" viewBox="0 0 180 32" preserveAspectRatio="none" class="spark"><polyline fill="none" stroke="#5b8def" stroke-width="1.5" points="0.0,30.0"/><circle cx="0.0" cy="30.0" r="2.6" fill="#2e7d32"/></svg></h2>
+<table><tr><th class='l'>date</th><th class='l'>commit</th><th class='l'>baseline</th><th>score</th><th>Δ%</th><th>spread</th></tr>
+<tr><td class='l'>2026-08-05T06:04:09</td><td class='l'>e7d3f6214f</td><td class='l'>level3-interpreter</td><td>375.386</td><td>-</td><td>0.0138</td></tr>
+</table>
+<h2>coremark <span class='meta'>(iterations/sec, higher is better)</span> <svg width="180" height="32" viewBox="0 0 180 32" preserveAspectRatio="none" class="spark"><polyline fill="none" stroke="#5b8def" stroke-width="1.5" points="0.0,30.0"/><circle cx="0.0" cy="30.0" r="2.6" fill="#2e7d32"/></svg></h2>
+<table><tr><th class='l'>date</th><th class='l'>commit</th><th class='l'>baseline</th><th>score</th><th>Δ%</th><th>spread</th></tr>
+<tr><td class='l'>2026-08-05T04:52:24</td><td class='l'>05bb0fe90e</td><td class='l'>level3-interpreter</td><td>261.734</td><td>-</td><td>0.0001</td></tr>
+</table>
+<h2>dhrystone <span class='meta'>(DMIPS, higher is better)</span> <svg width="180" height="32" viewBox="0 0 180 32" preserveAspectRatio="none" class="spark"><polyline fill="none" stroke="#5b8def" stroke-width="1.5" points="0.0,30.0"/><circle cx="0.0" cy="30.0" r="2.6" fill="#2e7d32"/></svg></h2>
+<table><tr><th class='l'>date</th><th class='l'>commit</th><th class='l'>baseline</th><th>score</th><th>Δ%</th><th>spread</th></tr>
+<tr><td class='l'>2026-08-05T03:53:42</td><td class='l'>010446f009</td><td class='l'>level3-interpreter</td><td>189.717</td><td>-</td><td>0.0</td></tr>
+</table>
+<h2>gcc <span class='meta'>(seconds, lower is better)</span> <svg width="180" height="32" viewBox="0 0 180 32" preserveAspectRatio="none" class="spark"><polyline fill="none" stroke="#5b8def" stroke-width="1.5" points="0.0,30.0"/><circle cx="0.0" cy="30.0" r="2.6" fill="#2e7d32"/></svg></h2>
+<table><tr><th class='l'>date</th><th class='l'>commit</th><th class='l'>baseline</th><th>score</th><th>Δ%</th><th>spread</th></tr>
+<tr><td class='l'>2026-08-05T21:11:52</td><td class='l'>unknown</td><td class='l'>level3-interpreter</td><td>163.98</td><td>-</td><td>0.0</td></tr>
+</table>

@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: partially-verified
+status: verification-debt
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high

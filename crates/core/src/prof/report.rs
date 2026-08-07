@@ -137,6 +137,16 @@ pub struct ProfReport {
     /// Histogram aliasing count — non-zero ⇒ the hot list may be missing a region (see
     /// [`crate::prof::histogram::HotHistogram::collisions`]).
     pub collisions: u64,
+    /// E4-T08: the block-discovery counters (blocks nominated / deduped / dropped-stale, queue
+    /// depth + high-water mark). Filled by [`crate::Machine::prof_report`]; default/zero when a
+    /// report is built directly off a [`super::ProfStats`] with no machine attached.
+    pub discovery: crate::dispatch::DiscoveryStats,
+    /// E4-T20: the JIT translation-cache accounting (usage vs budget, evictions, re-translation
+    /// rate). `Some` only when [`crate::Machine::prof_report`] is called with an executor installed.
+    pub jit_cache: Option<crate::jit::JitCacheStats>,
+    /// E4-T21: JIT-attributable execution-thread pause instrumentation (compile-queue drains +
+    /// installs, and the headless per-install work bound).
+    pub jit_pause: crate::prof::JitPauseStats,
 }
 
 impl ProfReport {
@@ -163,6 +173,26 @@ impl ProfReport {
             }
         }
         s.push('\n');
+        let d = &self.discovery;
+        s.push_str(&format!(
+            "jit discovery: nominated={} deduped={} dropped_stale={} dropped_overflow={} queue={} hwm={} candidates={} gen={}\n",
+            d.nominated, d.deduped, d.dropped_stale, d.dropped_overflow, d.queue_depth, d.queue_hwm, d.candidates, d.generation,
+        ));
+        if let Some(j) = &self.jit_cache {
+            s.push_str(&format!(
+                "jit cache: code_bytes={}/{} batches={}/{} evictions={} flushes={} installs={} retranslations={} rate={:.4} gen={}\n",
+                j.code_bytes, j.budget.code_bytes, j.batches, j.budget.max_batches,
+                j.evictions, j.flushes, j.installs, j.retranslations, j.retranslation_rate(), j.generation,
+            ));
+        }
+        let p = &self.jit_pause;
+        if p.count > 0 {
+            s.push_str(&format!(
+                "jit pause: samples={} max_ns={} mean_ns={} p95_ns={} over_5ms={} max_install_blocks={} max_install_bytes={}\n",
+                p.count, p.max_ns, p.mean_ns(), p.percentile_ns(0.95), p.over_target,
+                p.max_install_blocks, p.max_install_bytes,
+            ));
+        }
         s
     }
 
@@ -187,9 +217,27 @@ impl ProfReport {
             }
             subs.push_str(&format!("{{\"name\":\"{}\",\"ns\":{}}}", sub.name(), ns));
         }
+        let d = &self.discovery;
+        let discovery = format!(
+            "{{\"nominated\":{},\"deduped\":{},\"dropped_stale\":{},\"dropped_overflow\":{},\"queue_depth\":{},\"queue_hwm\":{},\"candidates\":{},\"generation\":{}}}",
+            d.nominated,
+            d.deduped,
+            d.dropped_stale,
+            d.dropped_overflow,
+            d.queue_depth,
+            d.queue_hwm,
+            d.candidates,
+            d.generation,
+        );
         format!(
-            "{{\"total_ns\":{},\"sample_count\":{},\"walk_count\":{},\"collisions\":{},\"regions\":[{}],\"subsystems\":[{}]}}",
-            self.total_ns, self.sample_count, self.walk_count, self.collisions, regions, subs
+            "{{\"total_ns\":{},\"sample_count\":{},\"walk_count\":{},\"collisions\":{},\"regions\":[{}],\"subsystems\":[{}],\"discovery\":{}}}",
+            self.total_ns,
+            self.sample_count,
+            self.walk_count,
+            self.collisions,
+            regions,
+            subs,
+            discovery
         )
     }
 }

@@ -13,6 +13,9 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 wasm-vm-core = { workspace = true, features = ["trace"] }
 wasm-vm-storage = { path = "../storage" }
+# E4-T29 Phase 2: the browser (WebAssembly.compile/instantiate) JIT executor translates hot blocks
+# with the SAME frozen ABI the native wasmtime path uses.
+wasm-vm-jit-translate = { path = "../jit-translate" }
 # E3-net: the browser slirp local stack (DHCP/ARP/ICMP). default-features off → no tokio in the browser.
 wasm-vm-slirp = { path = "../slirp", default-features = false }
 wasm-bindgen = { workspace = true }
@@ -68,3 +71,12 @@ zicsr-stub = ["wasm-vm-core/zicsr-stub"]
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
+
+# E4-T02 flamegraphs: `wasm-pack build --profiling` runs `wasm-opt`, whose DEFAULT strips the
+# custom `name` section — so a plain `--profiling` build shows anonymous `wasm-function[N]` frames
+# in Chrome/Firefox despite the "profiling" label. Passing `-g` to wasm-opt makes it PRESERVE the
+# name section through optimisation, so browser profiles show demangled Rust frames. Verify after a
+# build with:  `wasm-objdump -h pkg/wasm_vm_wasm_bg.wasm | grep name`  (must list a "name" Custom
+# section). See docs/perf/flamegraphs.md.
+[package.metadata.wasm-pack.profile.profiling]
+wasm-opt = ['-O', '-g']

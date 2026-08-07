@@ -107,6 +107,17 @@ pub struct SystemBus {
     /// [`crate::prof::TimeAccum`]). The `Machine` folds this snapshot into the profile at report
     /// time; timing lives here because the cold paths physically run at the bus.
     time: crate::prof::TimeAccum,
+    /// E4-T05 Phase B: when armed (the block cache is on), every SUCCESSFUL RAM store — a guest
+    /// store AND any device/DMA write (virtio-blk read completion, virtio-net rx, virtio-rng,
+    /// used-ring publish: they ALL reach RAM through `store*` with a physical address) — appends
+    /// its touched physical page frame(s) here. The `Machine` drains this log after each step and
+    /// after each device-service boundary and routes the frames through the block cache's
+    /// page-level has-code invalidation. This single choke point makes DMA-writes-code
+    /// invalidation impossible to miss: it is the same physical-frame path guest SMC takes.
+    track_code_writes: bool,
+    /// Physical page frames (`addr >> 12`) written since the last drain. Dups are fine — the
+    /// drain is idempotent and dedups implicitly (a repeat frame is a set-miss after the first).
+    code_write_log: Vec<u64>,
 }
 
 impl SystemBus {
@@ -116,7 +127,24 @@ impl SystemBus {
             windows: Vec::new(),
             host_timer: None,
             time: crate::prof::TimeAccum::new(),
+            track_code_writes: false,
+            code_write_log: Vec::new(),
         }
+    }
+
+    /// E4-T05 Phase B: arm/disarm physical-frame recording of RAM stores. The `Machine` arms this
+    /// exactly when the block cache is enabled, so the normal (cache-off) build pays only one
+    /// predictable, never-taken branch per store and never touches the log.
+    pub fn arm_code_write_tracking(&mut self, on: bool) {
+        self.track_code_writes = on;
+        self.code_write_log.clear();
+    }
+
+    /// E4-T05 Phase B: the mutable write-frame log, for the `Machine` to drain into the block
+    /// cache's page-granular invalidation. Exposed (not drained here) so the drain can hold a
+    /// disjoint `&mut` on both the bus and the cache.
+    pub fn code_write_log_mut(&mut self) -> &mut Vec<u64> {
+        &mut self.code_write_log
     }
 
     /// E4-T01 phase 3: arm cold-path host-time accounting by injecting the monotonic timer. The
@@ -328,7 +356,22 @@ macro_rules! sysbus_store {
                     $width,
                     u64::from(val),
                 ),
-                ram_result => ram_result,
+                // A store that reached RAM (Ok) may have overwritten cached code. Record the
+                // physical page frame(s) it touched so the Machine can page-invalidate the block
+                // cache (E4-T05 Phase B). Both the start and end frames are logged so a misaligned
+                // (E1-T26) RAM store that straddles a page boundary invalidates BOTH pages.
+                Ok(()) => {
+                    if self.track_code_writes {
+                        let start = addr >> 12;
+                        self.code_write_log.push(start);
+                        let end = addr.wrapping_add(core::mem::size_of::<$ty>() as u64 - 1) >> 12;
+                        if end != start {
+                            self.code_write_log.push(end);
+                        }
+                    }
+                    Ok(())
+                }
+                other => other,
             }
         }
     };

@@ -8,10 +8,12 @@
 
 pub mod clock;
 pub mod histogram;
+pub mod pause;
 pub mod report;
 
 pub use clock::{FixedTimer, HostTimer};
 pub use histogram::HotHistogram;
+pub use pause::JitPauseStats;
 pub use report::{HotRegion, ProfReport, Subsystem};
 
 /// The per-subsystem host-time accumulator the COLD paths write to during a run (E4-T01 phase 3).
@@ -84,6 +86,9 @@ pub struct ProfStats {
     sample_count: u64,
     /// Page-table walks noted over the run.
     walk_count: u64,
+    /// E4-T21: JIT-attributable execution-thread pause instrumentation (compile-queue drains +
+    /// installs). See [`pause::JitPauseStats`].
+    jit_pause: JitPauseStats,
 }
 
 impl Default for ProfStats {
@@ -100,7 +105,20 @@ impl ProfStats {
             ns: [0; Subsystem::ALL.len()],
             sample_count: 0,
             walk_count: 0,
+            jit_pause: JitPauseStats::new(),
         }
+    }
+
+    /// E4-T21: record one JIT-attributable execution-thread pause (a compile-queue drain / install
+    /// step) of `ns` nanoseconds that installed `blocks` blocks totalling `bytes` emitted bytes.
+    #[inline]
+    pub fn record_jit_pause(&mut self, ns: u64, blocks: u64, bytes: u64) {
+        self.jit_pause.record(ns, blocks, bytes);
+    }
+
+    /// E4-T21: the JIT pause instrumentation snapshot.
+    pub fn jit_pause(&self) -> JitPauseStats {
+        self.jit_pause
     }
 
     /// Record one PC sample (buckets into the histogram; bumps the denominator).
@@ -198,6 +216,9 @@ impl ProfStats {
             sample_count: self.sample_count,
             walk_count,
             collisions: self.hist.collisions(),
+            discovery: crate::dispatch::DiscoveryStats::default(),
+            jit_cache: None,
+            jit_pause: self.jit_pause,
         }
     }
 }

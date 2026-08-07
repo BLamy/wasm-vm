@@ -3,7 +3,7 @@ id: E4-T06
 epic: 4
 title: JIT architecture design document — tiering, block shape, side exits, budgets
 priority: 406
-status: pending
+status: verification-debt
 depends_on: [E4-T02, E4-T05]
 estimate: M
 capstone: false
@@ -63,4 +63,5 @@ blocks-per-module and module cap, confirm a gcc-sized working set fits or has a 
 eviction story.
 
 ## Verification log
+- 2026-08-05 — **`docs/jit-architecture.md` written + committed (`245bb53`); status partially-verified (doc complete; the AC's separate-session REVIEW is the remaining step).** 462 lines / 14 sections, every load-bearing decision committed with real cited numbers (device-sync 47%, browser 89%-in-wasm + 7.1% bindgen boundary, the measured **2.24× E4-T05 uplift**, 261.7 CoreMark / 189.7 DMIPS / ~30 MIPS baseline — 19 evidence citations, none invented). Commits: **3 tiers** (interp → E4-T05 block cache → ONE JIT tier; 2nd tier only if E4-T28 shows ≥2× left); promote at the **64th** block execution; translation unit = the E4-T05 `DecodedBlock` verbatim; frozen `CpuState` layout + **9-variant `ExitCode`** ABI; retire-clock per-op + device/interrupt sampling batched to block boundary (preserves E4-T05 determinism); invalidation reuses physical-PC keying + `has_code` bitmap (full matrix incl. ASID/sfence); emit real WASM ~64 blocks/module via funcref-table chaining, 32 MiB code cache / 256 Modules / <5 ms pause LRU. ADR log D1–D11, every decision tied to a ledger/test falsifiability gate, open questions assigned to specific E4 tasks. **4 highest-risk items flagged for spikes:** (1) batching+retire-clock determinism through compiled code (→E4-T25 differential); (2) browser module budget + funcref-table chaining vs 5 ms (→E4-T19); (3) inline-TLB coherence with the audited walker (→E4-T11 fuzz); (4) FP inline-vs-softfloat (→E4-T15). Honest: the gcc working-set budget arithmetic is flagged a hypothesis (that bench row is deferred). REMAINING (debt): the formal separate-session review (§11 stub) — a process step for a later session.
 (empty)

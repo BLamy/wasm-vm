@@ -152,6 +152,7 @@ async function runLinuxBoot(opts, banner) {
     term.writeln(`\x1b[90m[network: slirp outbound via ${slirpRelay}]\x1b[0m`);
   }
   const pct = {};
+  const bootT0 = (typeof performance !== "undefined" ? performance.now() : Date.now());
   bootProgress.begin();
   resetGuestReady();
   const imageLen = opts.imageLen ?? 536870912; // chunked image length; for byte-fraction honesty
@@ -170,7 +171,25 @@ async function runLinuxBoot(opts, banner) {
       slirpDoh,
       slirpLeaseSecs: opts.slirpLeaseSecs ?? query.get("slirpLeaseSecs") ?? 86400,
       slirpMtu: opts.slirpMtu ?? query.get("slirpMtu") ?? 1500,
-      onState: (s) => { setStatus(`linux: ${s}`); bootProgress.onState(s); },
+      onState: (s) => {
+        // E4 restore-on-first-load: a visible stopwatch instead of the "booting" progress bar when
+        // the shipped boot snapshot is being restored.
+        if (s === "restoring") {
+          setStatus("restoring host from build-time snapshot…");
+          term.writeln("\x1b[90m[fast-boot: restoring host from a build-time snapshot instead of booting Linux]\x1b[0m");
+        } else if (s === "restored") {
+          const secs = (((typeof performance !== "undefined" ? performance.now() : Date.now()) - bootT0) / 1000).toFixed(2);
+          setStatus(`host restored in ${secs}s`);
+          term.writeln(`\x1b[32m[fast-boot: host ready in ${secs}s (restored, no Linux boot)]\x1b[0m`);
+          // A restored guest is frozen at its shell prompt and emits NO console output, so the
+          // prompt-in-stream detector below (which normally calls markGuestReady) never fires. Signal
+          // readiness explicitly here so the Docker/IDE tabs unlock and isGuestReady() is true. (The
+          // prompt itself is nudged into view after startLinuxBoot returns, once linuxCtl exists.)
+          markGuestReady();
+          setStatus(`linux: ${s}`);
+        }
+        bootProgress.onState(s);
+      },
       onProgress: (role, loaded, total) => {
         pct[role] = total ? `${((loaded / total) * 100) | 0}%` : `${(loaded / 1048576).toFixed(1)}MB`;
         bootProgressEl.textContent = Object.entries(pct).map(([k, v]) => `${k} ${v}`).join("  ");
@@ -286,6 +305,12 @@ async function runLinuxBoot(opts, banner) {
       },
     });
     const ctlForRelease = linuxCtl;
+    // A restored guest is parked at its shell prompt with no pending output; send a newline so the
+    // shell re-renders its prompt instead of showing a blank terminal. (markGuestReady already fired
+    // in onState("restored").) Best-effort — a cold boot ignores this.
+    try {
+      if (linuxCtl?.restoredFromBootSnapshot?.()) linuxCtl.sendInput?.(new Uint8Array([0x0a]));
+    } catch { /* prompt nudge is best-effort */ }
     fileTransferUI.attachController(opts.fileTransfer ? linuxCtl : null);
     // E3-T24a: a lazy/chunked image reports no per-fetch bytes, so drive the byte-weighted `chunk`
     // phase from the loader's running counter until the prompt is reached or the boot ends.
@@ -317,6 +342,7 @@ async function runLinuxBoot(opts, banner) {
       const reason = halt[state] || (state?.startsWith?.("exited") ? state : state?.startsWith?.("fail") ? state : null);
       if (reason) {
         setStatus(`⏻ machine halted — ${reason}`);
+        setGuestChip(null);
         term.writeln(`\r\n\x1b[7m machine halted (${reason}) — click "Boot Linux"/"Boot Alpine" to boot a fresh machine \x1b[0m`);
       } else {
         setStatus(`linux: ${state}`);
@@ -382,6 +408,23 @@ if (bootAlpineFullBtn) {
       "debug boot: loading the full Alpine ext4 image before virtio-blk startup…",
     ));
 }
+// E4-T01/T02 browser-evidence hooks (additive, test-only): the served index.html on this branch
+// does not expose the #boot-alpine button, so provide a programmatic trigger that runs the SAME
+// chunked lazy-fetch Alpine boot the button would, plus a wasm-readiness getter so a Playwright
+// driver can wait before booting. Inert unless called.
+window.__wasmReady = () => wasmReady;
+window.__bootAlpineChunked = () =>
+  runLinuxBoot(
+    {
+      manifestUrl: "./artifacts-alpine.json",
+      mode: "chunked",
+      imageManifestUrl: R2_ASSETS + "/chunked-alpine/manifest.json",
+      cacheBudgetMib: 0,
+      ramMib: 256,
+      fileTransfer: true,
+    },
+    "E4 browser profiling boot (chunked Alpine, lazy fetch)",
+  );
 // ── Docker tab ⇄ real boot bridge ─────────────────────────────────────────────
 // The Docker "Run" button drives the SAME real boot machinery as this Terminal tab — it never
 // simulates a shell. For busybox we boot the real busybox userland on RISC-V Linux (the initramfs
@@ -456,6 +499,8 @@ const R2_ASSETS =
   "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev";
 // Whether the Alpine (container-capable) artifacts are deployed — set by the load-time probe below.
 let alpineAvailable = false;
+// E3.6-T05: whether the node-preinstalled Alpine artifacts are deployed (the default flavor).
+let nodeAlpineAvailable = false;
 // Guest readiness: flips true when the booted guest reaches a usable shell prompt. The Docker/IDE tabs
 // gate on this; a `wvm:guest-ready` window event fires once per boot. Reset when a new boot starts.
 let guestReady = false;
@@ -469,6 +514,41 @@ function resetGuestReady() {
   guestReady = false;
   promptTail = "";
   try { window.dispatchEvent(new Event("wvm:guest-booting")); } catch {}
+}
+
+// E3.6-T05: shared body for the Alpine-family chunked/restore boots (bare Alpine + node-Alpine). Both
+// use the SAME chunked base (R2 chunked-alpine) + the SAME persistent restore path; only the manifest
+// (which names the RAM snapshot + overlay-delta to restore) and the guest chip differ.
+async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl) {
+  if (linuxCtl) return { ok: true, already: true };
+  lastBootError = null;
+  const _imgManifest = imageManifestUrl || (R2_ASSETS + "/chunked-alpine/manifest.json");
+  // Return-visit fast-restore is handled in loader.js: the RAM restore is armed whenever a coherent,
+  // unmodified overlay is present (not only on a fresh seed), so reloads restore instead of cold-booting;
+  // a MODIFIED overlay is rejected by restoreDecisionCode → cold boot. `?keep`/`?persist=1`/`?noSnapshot`
+  // are honored in the loader.
+  setRunBanner(
+    'Booting <b>Alpine</b> (lazy chunk fetch)… restoring a build-time snapshot — the console below is the real guest.',
+  );
+  setGuestChip(chip);
+  await runLinuxBoot(
+    {
+      manifestUrl,
+      mode: "chunked",
+      imageManifestUrl: _imgManifest,
+      cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
+      // The restore needs the persistent (IndexedDB overlay) path: the seeded post-boot disk delta
+      // lives in that overlay. Default ON so the shipped RAM snapshot + delta restore in ~1s;
+      // `?persist=0` forces the non-persistent lazy boot (no restore).
+      persist: new URLSearchParams(location.search).get("persist") !== "0",
+      // `?noSnapshot` disables the boot-snapshot restore (cold-boot baseline for A/B timing).
+      bootSnapshot: !new URLSearchParams(location.search).has("noSnapshot"),
+      ramMib: 256,
+      fileTransfer: true,
+    },
+    "booting production Alpine via LAZY CHUNK FETCH — only touched chunks download…",
+  );
+  return linuxCtl ? { ok: true } : { ok: false, error: lastBootError || "boot failed" };
 }
 
 window.wvmDemo = {
@@ -493,6 +573,7 @@ window.wvmDemo = {
       'Booting a real RISC-V Linux guest → <b>busybox</b> userland… watch the console below; ' +
       'you will land at the <code>#</code> shell prompt in a few seconds.',
     );
+    setGuestChip("busybox");
     await runLinuxBoot({ manifestUrl: "./artifacts.json" }, "booting the real busybox userland on RISC-V Linux (in wasm)…");
     return linuxCtl ? { ok: true } : { ok: false, error: lastBootError || "boot failed" };
   },
@@ -501,25 +582,24 @@ window.wvmDemo = {
   // { ok:true, already:true } if already up, or { ok:false, error } if the boot refused/failed. Needs
   // the Alpine artifacts to be deployed (artifacts-alpine.json + releases/chunked-alpine/).
   async bootAlpine() {
-    if (linuxCtl) return { ok: true, already: true };
-    lastBootError = null;
-    setRunBanner(
-      'Booting <b>Alpine</b> (lazy chunk fetch) to run real OCI containers via <code>wvrun</code>… ' +
-      'this takes a few minutes on the interpreted CPU — the console below is the real guest.',
+    return bootAlpineFlavor("./artifacts-alpine.json", "alpine");
+  },
+  // E3.6-T05: boot the NODE-preinstalled Alpine guest — same chunked base + restore machinery, but the
+  // shipped RAM snapshot + overlay-delta land at a shell with `node` already on PATH (no boot, no apk
+  // wait). This is the default autoboot flavor. Needs artifacts-node-alpine.json (built by
+  // tools/build-node-alpine-snapshot.sh) deployed alongside the chunked-alpine base.
+  async bootNodeAlpine() {
+    // E3.6-T05: node-preinstalled Alpine restore. Node is baked into a re-chunked base
+    // (chunked-node-alpine), so it is lazy-loaded from that base on cache-miss disk reads exactly like
+    // Node is baked INTO its own re-chunked base (chunked-node-alpine on R2), so node's files
+    // lazy-load from that base on cache-miss reads exactly like the OS. The shipped RAM snapshot is
+    // small (page cache dropped before capture) and the overlay-delta tiny (boot writes ∪ drift). The
+    // snapshot in artifacts-node-alpine.json is stamped to the chunked-node-alpine base_hash.
+    return bootAlpineFlavor(
+      "./artifacts-node-alpine.json",
+      "node-alpine",
+      R2_ASSETS + "/chunked-node-alpine/manifest.json",
     );
-    await runLinuxBoot(
-      {
-        manifestUrl: "./artifacts-alpine.json",
-        mode: "chunked",
-        imageManifestUrl: R2_ASSETS + "/chunked-alpine/manifest.json",
-        cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
-        persist: new URLSearchParams(location.search).get("persist") === "1",
-        ramMib: 256,
-        fileTransfer: true,
-      },
-      "booting production Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login…",
-    );
-    return linuxCtl ? { ok: true } : { ok: false, error: lastBootError || "boot failed" };
   },
   // True only once the booted guest actually has the container runtime (Alpine, not the busybox
   // initramfs). The Docker tab uses this to know whether it can run wvrun.
@@ -624,6 +704,8 @@ window.__linux = {
   pause: () => linuxCtl?.pause(),
   resume: () => linuxCtl?.resume(),
   isPaused: () => !!linuxCtl?.isPaused(),
+  // E4: did this boot skip the Linux boot by restoring the shipped boot snapshot?
+  restoredFromBootSnapshot: () => !!linuxCtl?.restoredFromBootSnapshot?.(),
 };
 // E3-T21c proof hook: the UI must not mistake an attached controller for guest-agent readiness.
 window.__fileTransferReady = () =>
@@ -694,6 +776,27 @@ window.__suiteResults = suiteResults;
 
 function setStatus(text) {
   statusEl.textContent = text;
+}
+
+// The terminal-bar chip that tells the user which guest userland the CLI runs in: `root@busybox` /
+// `root@alpine`. Called when a boot starts; cleared when the machine halts. (The host is `wasm-vm`, the
+// guest hostname, but the useful distinction for the user is which userland/runtime is live.)
+let currentGuestKind = null;
+function setGuestChip(kind) {
+  currentGuestKind = kind;
+  const el = document.getElementById("ide-term-who");
+  if (!el) return;
+  if (kind) {
+    el.textContent = `root@${kind}`;
+    el.title = kind === "node-alpine"
+      ? "Alpine Linux userland with Node.js preinstalled — container-capable (wvrun / OCI)"
+      : kind === "alpine"
+      ? "Alpine Linux userland — container-capable (wvrun / OCI)"
+      : "busybox userland (initramfs)";
+    el.hidden = false;
+  } else {
+    el.hidden = true;
+  }
 }
 
 function setSuiteStatus(text) {
@@ -1242,11 +1345,34 @@ setInteractiveState();
   } catch {
     /* probe failure = treat as absent; buttons already work locally */
   }
-  // Auto-boot Alpine in the BACKGROUND as the shared host for the whole app (IDE + Docker both use it).
-  // It boots once, no matter which tab is showing; the console renders on the IDE/Terminal tab and the
-  // Docker/IDE tabs unlock via the `wvm:guest-ready` event. `?noAutoBoot` opts out (e.g. for tests).
-  if (alpineAvailable && !linuxCtl && !new URLSearchParams(location.search).has("noAutoBoot")) {
-    setTimeout(() => { try { window.wvmDemo.bootAlpine(); } catch {} }, 400);
+  // E3.6-T05: probe for the NODE-preinstalled Alpine manifest (the default flavor). Present on the
+  // deploy (shipped alongside the chunked base); absent on a bare local checkout, in which case the
+  // default falls back to the busybox fast-restore below.
+  try {
+    const probe = await fetch("./artifacts-node-alpine.json", { method: "GET", cache: "no-store" });
+    const text = probe.ok ? await probe.text() : "";
+    nodeAlpineAvailable = probe.ok && !text.trimStart().startsWith("<");
+  } catch {
+    nodeAlpineAvailable = false;
+  }
+  // Auto-boot the shared host for the whole app (IDE + Docker both use it). E3.6-T05 DEFAULT is
+  // node-alpine: it restores (in ~1s from the shipped RAM snapshot + overlay-delta) an Alpine host with
+  // Node.js already on PATH — no boot, no apk wait. `?guest=alpine` restores the bare (container-capable)
+  // Alpine; `?guest=busybox` the busybox fast-restore. If the node-alpine artifacts aren't deployed, the
+  // default falls back to busybox (always available). `?noAutoBoot` opts out entirely (e.g. for tests).
+  // Guest choice also honors `?boot=` as an alias.
+  const _bootQ = new URLSearchParams(location.search);
+  const _guest = (_bootQ.get("guest") || _bootQ.get("boot") || "node-alpine").toLowerCase();
+  if (!linuxCtl && !_bootQ.has("noAutoBoot")) {
+    setTimeout(() => {
+      try {
+        if ((_guest === "node-alpine" || _guest === "nodealpine") && nodeAlpineAvailable) window.wvmDemo.bootNodeAlpine();
+        else if (_guest === "alpine" && alpineAvailable) window.wvmDemo.bootAlpine();
+        else if (_guest === "busybox") window.wvmDemo.runBusybox();
+        // Default flavor requested but its artifacts aren't here → busybox fast-restore (always works).
+        else window.wvmDemo.runBusybox();
+      } catch {}
+    }, 400);
   }
   // The riscv-tests suite no longer auto-runs on load (Brett 2026-07-06): 126 in-browser
   // binaries take real time and CPU — run it via the "Run tests" button instead. The

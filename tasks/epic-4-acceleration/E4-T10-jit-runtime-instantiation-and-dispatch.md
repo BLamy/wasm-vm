@@ -3,7 +3,7 @@ id: E4-T10
 epic: 4
 title: JIT runtime — module instantiation, host imports, and dispatch-loop integration
 priority: 410
-status: pending
+status: verified
 depends_on: [E4-T09]
 estimate: L
 capstone: false
@@ -63,4 +63,5 @@ same 1k random blocks from E4-T09's rig — engine-behavior divergence refutes t
 bytes both paths" claim.
 
 ## Verification log
+- 2026-08-05 — **VERIFIED (commit `59f2f99`).** The JIT executes in-loop, byte-identical to the interpreter, determinism + E4-T05 batching preserved. `crates/core/src/jit.rs` (no_std, NO engine — wasm32 build clean) defines the `CompiledBlockExecutor` trait + frozen `ExitCode`/CpuState ABI; `Machine` holds an `Option<Box<dyn CompiledBlockExecutor>>`. New native `crates/jit-runtime` (pkg `wasm-vm-jit-runtime`) implements it with wasmtime: drains the E4-T08 queue → E4-T09 `translate_block` → compile/instantiate → cache by phys-PC. Guest x-regs sync `hart.regs` ↔ the module's CpuState memory; `env.load`/`env.store` route through the interpreter's OWN `cload*`/`cstore*` (Sv39 translate + PMP + triggers + MMIO) via a scoped raw-pointer trampoline in the wasmtime Store — so JIT memory is byte-identical to interp, and a bus fault traps the import → re-interpret with hart untouched. Exit protocol in `run_traced_inner`: FALLTHROUGH/BRANCH_TAKEN commit regs+PC and advance the retire clock ONCE PER RETIRED OP (mtime crosses mtimecmp at the identical index → determinism + batching intact); ecall/ebreak deliver a runtime-derived mode-correct precise trap; fence.i/SMC/DMA-flush/toggle/reset/restore all drop compiled blocks. **Gates (independently re-ran: 7/7 green, 71s):** `riscv_tests_verdict_identical_with_jit` — the full corpus (n>50 incl. rv64ui) reaches the SAME pass/fail verdict interp vs JIT-forced-on, under the adversarial threshold-1 + **1-entry cache** (max tier flapping); hot-loop actually JIT-executes (>0 blocks, ≥90% retires compiled, final state == interp); determinism (two JIT runs identical, JIT-on == interp-off on ALU/branch/load/store); SMC drops the compiled block; branch-into-uncompiled falls back; trapping terminator leaves precise state. Core regressions (predecode/batching/SMC/determinism/hotness) still green; clippy(-D)/fmt clean; CLI/wasm build. NO divergence. **Deferred (separate tickets, not E4-T10 debt):** browser executor (E4-T19), block chaining (E4-T18), code-cache eviction (E4-T20), inline TLB (E4-T11), full-boot-with-JIT; and the mid-block-fault-after-committing-MMIO precise-deopt corner (E4-T12, not reachable by the rv64ui gate workloads).
 (empty)

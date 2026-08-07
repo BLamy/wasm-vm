@@ -49,6 +49,16 @@ export class WasmLinux {
     dismissFileDownload(id: number): boolean;
     dismissFileUpload(stream: number): boolean;
     /**
+     * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
+     * arm tier-up — the `WasmLinux` twin of `WasmMachine::enable_jit`. The deployed demo constructs a
+     * `WasmLinux` on the main thread (see `web/loader.js`), so without this the browser guest never
+     * tiers up regardless of cross-origin isolation. The interpreter stays the oracle: with the JIT
+     * off (this never called) `runChunk` is byte-identical to the pre-T29 path. `threshold` is the
+     * hotness count before a block is nominated (see `web/cpu-isolation.js` `JIT_DEFAULT_THRESHOLD`).
+     * The caller gates this on `crossOriginIsolated`.
+     */
+    enableJit(threshold: number): void;
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
@@ -209,6 +219,19 @@ export class WasmLinux {
      */
     setProfiling(on: boolean): boolean;
     /**
+     * E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
+     * shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise sets no
+     * snapshot identity — `snapshot_base` stays `None` and every restore verdict is `"missing"`).
+     *
+     * The core identity is [`build_core_hash`] (the crate version), so a snapshot produced by a
+     * DIFFERENT build fails the `CoreHashMismatch` guard and the caller falls back to a cold boot —
+     * the guard is bound, never bypassed. `base_id` (32 bytes) binds the snapshot to a specific
+     * kernel+initramfs pair (the JS caller derives it from the boot manifest's artifact hashes); a
+     * snapshot for a different kernel/initramfs fails `BaseImageMismatch`. Overlay generation stays 0
+     * (the initramfs path has no durable overlay to invalidate against).
+     */
+    stampBootSnapshotIdentity(base_id: Uint8Array): void;
+    /**
      * Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
      * devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
      */
@@ -222,6 +245,16 @@ export class WasmLinux {
 export class WasmMachine {
     free(): void;
     [Symbol.dispose](): void;
+    /**
+     * E4-T29 Phase 2: attach the in-wasm (browser) JIT executor to this machine and arm tier-up.
+     * Mirrors the native CLI `--jit` wiring (constructs the executor, calls `set_executor`, turns on
+     * the block cache + interrupt batching + hotness discovery) so a booted browser guest executes
+     * translated blocks. The interpreter stays the oracle: with the JIT off (this never called) the
+     * run loop is byte-identical to the pre-T29 path. `threshold` is the hotness count before a block
+     * is nominated for compilation (1 = eager, for tests). The caller is responsible for gating this
+     * on `crossOriginIsolated` (E4-T22 `selectJitBackend`) — see `web/cpu-isolation.js`.
+     */
+    enableJit(threshold: number): void;
     /**
      * E2-T20: the interrupt/trap counters + storm/WFI diagnosis as a JS object
      * `{ retired, wfi, exceptions:[16], interrupts:[16], claims:[32], storm:bool, wfiReport:string|null }`.
@@ -299,6 +332,25 @@ export function initLogging(): void;
 export function overlayDbName(manifest_json: string): string;
 
 /**
+ * E4 Alpine restore-on-load: seed the IndexedDB copy-on-write overlay for this chunked image with the
+ * shipped `WVOD1` overlay-delta (the ~1 MB set of post-boot-dirtied 4 KiB blocks) BEFORE constructing
+ * the persistent machine, so a subsequent [`WasmLinux::new_chunked_disk_persistent`]'s `load_blocks()`
+ * picks them up and the restored guest's cache-miss disk reads return the *post-boot* block content.
+ *
+ * Coherence is bound, not bypassed:
+ * * the delta's `base_binding`/`image_len` must match this manifest's `base_hash`/`image_len`
+ *   (`delta_base_mismatch` otherwise) — a delta for a different chunked base is rejected;
+ * * seeding is done **only into a brand-new overlay store** (no meta record yet). If an overlay
+ *   already exists (the user has their own durable disk state) it is left untouched and this returns
+ *   `false` — the boot then proceeds over that existing overlay, never clobbered by pristine-boot blocks.
+ *
+ * Returns `true` iff the delta was seeded (a fresh store), `false` if an overlay already existed.
+ * The paired RAM snapshot rides the same overlay generation (0 for a fresh store); the restore's
+ * `restoreDecisionCode` guard enforces the core-hash + base + generation triple before `loadSnapshotBlob`.
+ */
+export function seedOverlayDelta(manifest_json: string, delta_bytes: Uint8Array): Promise<boolean>;
+
+/**
  * Configure the DHCP lease duration for subsequent boots (used by the renewal acceptance).
  */
 export function setSlirpDhcpLeaseSeconds(seconds: number): void;
@@ -365,6 +417,7 @@ export interface InitOutput {
     readonly filesha256_new: () => number;
     readonly filesha256_update: (a: number, b: number, c: number) => [number, number];
     readonly overlayDbName: (a: number, b: number) => [number, number, number, number];
+    readonly seedOverlayDelta: (a: number, b: number, c: number, d: number) => any;
     readonly version: () => [number, number];
     readonly wasmlinux_advanceOverlayGeneration: (a: number) => [number, number, number];
     readonly wasmlinux_beginFileUpload: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number];
@@ -374,6 +427,7 @@ export interface InitOutput {
     readonly wasmlinux_closeStorage: (a: number) => [number, number];
     readonly wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_enableJit: (a: number, b: number) => [number, number];
     readonly wasmlinux_fetchPending: (a: number) => any;
     readonly wasmlinux_fetchStats: (a: number) => [number, number, number];
     readonly wasmlinux_fileTransferReady: (a: number, b: number) => [number, number, number];
@@ -402,8 +456,10 @@ export interface InitOutput {
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
+    readonly wasmmachine_enableJit: (a: number, b: number) => [number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];
     readonly wasmmachine_loadElf: (a: number, b: number, c: number) => [number, number];
     readonly wasmmachine_new: (a: number) => [number, number, number];
@@ -427,11 +483,15 @@ export interface InitOutput {
     readonly slirpTailscaleCommand: (a: number, b: number) => number;
     readonly wasm_bindgen__convert__closures_____invoke__h1dbcf2b5dd15a422: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h8c3f0668a05de02f: (a: number, b: number, c: any, d: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82_2: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82_3: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h3df8871946095a82_4: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h7b5e0ac436d9ba2e: (a: number, b: number) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_6: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_7: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_8: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628: (a: number, b: number, c: bigint, d: number) => bigint;
+    readonly wasm_bindgen__convert__closures_____invoke__hccc6447b5e5e2a92: (a: number, b: number, c: bigint, d: bigint, e: number, f: number) => bigint;
+    readonly wasm_bindgen__convert__closures_____invoke__hb536c899e9023450: (a: number, b: number, c: bigint, d: bigint, e: number) => bigint;
+    readonly wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8: (a: number, b: number, c: bigint, d: bigint, e: number) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h880302392ebe5c09: (a: number, b: number) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;

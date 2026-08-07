@@ -15,6 +15,9 @@ use core::fmt::Write as _;
 use core::sync::atomic::{AtomicBool, Ordering};
 
 use wasm_bindgen::prelude::*;
+// E4-T29 Phase 2: the in-wasm (browser) compiled-block executor.
+mod jit_browser;
+pub use jit_browser::BrowserExecutor;
 use wasm_vm_core::bus::mmap::{UART0_BASE, UART0_LEN};
 use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
 use wasm_vm_core::trace::{TraceRecord, TraceSink, fmt_canonical};
@@ -325,6 +328,60 @@ pub fn overlay_db_name(manifest_json: &str) -> Result<String, JsError> {
     Ok(wasm_vm_storage::overlay_store_name(&manifest.base_hash()))
 }
 
+/// E4 Alpine restore-on-load: seed the IndexedDB copy-on-write overlay for this chunked image with the
+/// shipped `WVOD1` overlay-delta (the ~1 MB set of post-boot-dirtied 4 KiB blocks) BEFORE constructing
+/// the persistent machine, so a subsequent [`WasmLinux::new_chunked_disk_persistent`]'s `load_blocks()`
+/// picks them up and the restored guest's cache-miss disk reads return the *post-boot* block content.
+///
+/// Coherence is bound, not bypassed:
+/// * the delta's `base_binding`/`image_len` must match this manifest's `base_hash`/`image_len`
+///   (`delta_base_mismatch` otherwise) — a delta for a different chunked base is rejected;
+/// * seeding is done **only into a brand-new overlay store** (no meta record yet). If an overlay
+///   already exists (the user has their own durable disk state) it is left untouched and this returns
+///   `false` — the boot then proceeds over that existing overlay, never clobbered by pristine-boot blocks.
+///
+/// Returns `true` iff the delta was seeded (a fresh store), `false` if an overlay already existed.
+/// The paired RAM snapshot rides the same overlay generation (0 for a fresh store); the restore's
+/// `restoreDecisionCode` guard enforces the core-hash + base + generation triple before `loadSnapshotBlob`.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen(js_name = seedOverlayDelta)]
+pub async fn seed_overlay_delta(
+    manifest_json: String,
+    delta_bytes: Vec<u8>,
+) -> Result<bool, JsError> {
+    let manifest = wasm_vm_storage::ImageManifest::from_json(&manifest_json)
+        .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
+    let base_binding = manifest.base_hash();
+    let delta = wasm_vm_storage::OverlayDelta::from_bytes(&delta_bytes)
+        .map_err(|e| JsError::new(&format!("overlay delta parse: {e:?}")))?;
+    if delta.base_binding != base_binding || delta.image_len != manifest.image_len {
+        return Err(JsError::new("delta_base_mismatch"));
+    }
+
+    let idb = idb_store::IdbStore::open(&base_binding)
+        .await
+        .map_err(|e| JsError::new(&format!("IndexedDB open: {e:?}")))?;
+    // Only seed a brand-new store — never clobber an existing user overlay.
+    if idb
+        .read_meta()
+        .await
+        .map_err(|e| JsError::new(&format!("IndexedDB read meta: {e:?}")))?
+        .is_some()
+    {
+        return Ok(false);
+    }
+    idb.write_meta(&wasm_vm_storage::OverlayMeta::new(&manifest).to_bytes())
+        .await
+        .map_err(|e| JsError::new(&format!("IndexedDB write meta: {e:?}")))?;
+    // Persist the delta blocks in bounded batches so a single strict txn is never the whole delta.
+    for batch in delta.blocks.chunks(64) {
+        idb.persist(batch)
+            .await
+            .map_err(|e| JsError::new(&format!("IndexedDB seed persist: {e:?}")))?;
+    }
+    Ok(true)
+}
+
 /// The E0-T14 golden `loops.elf` (the pinned benchmark workload) and its retired count.
 const BENCH_ELF: &[u8] = include_bytes!("../../../guest/prebuilt/loops.elf");
 const BENCH_RETIRED_PER_RUN: u64 = 48;
@@ -479,6 +536,26 @@ impl WasmMachine {
             .map_err(|e| JsError::new(&format!("load_elf failed: {e:?}")))?;
         inner.loaded = true;
         inner.exited = false;
+        Ok(())
+    }
+
+    /// E4-T29 Phase 2: attach the in-wasm (browser) JIT executor to this machine and arm tier-up.
+    /// Mirrors the native CLI `--jit` wiring (constructs the executor, calls `set_executor`, turns on
+    /// the block cache + interrupt batching + hotness discovery) so a booted browser guest executes
+    /// translated blocks. The interpreter stays the oracle: with the JIT off (this never called) the
+    /// run loop is byte-identical to the pre-T29 path. `threshold` is the hotness count before a block
+    /// is nominated for compilation (1 = eager, for tests). The caller is responsible for gating this
+    /// on `crossOriginIsolated` (E4-T22 `selectJitBackend`) — see `web/cpu-isolation.js`.
+    #[wasm_bindgen(js_name = enableJit)]
+    pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .machine
+            .set_executor(Box::new(jit_browser::BrowserExecutor::new()));
+        inner.machine.set_block_cache(true);
+        inner.machine.set_interrupt_batching(true);
+        inner.machine.set_hotness_threshold(threshold.max(1));
+        inner.machine.set_jit(true);
         Ok(())
     }
 
@@ -1186,6 +1263,26 @@ impl WasmLinux {
         })
     }
 
+    /// E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
+    /// arm tier-up — the `WasmLinux` twin of `WasmMachine::enable_jit`. The deployed demo constructs a
+    /// `WasmLinux` on the main thread (see `web/loader.js`), so without this the browser guest never
+    /// tiers up regardless of cross-origin isolation. The interpreter stays the oracle: with the JIT
+    /// off (this never called) `runChunk` is byte-identical to the pre-T29 path. `threshold` is the
+    /// hotness count before a block is nominated (see `web/cpu-isolation.js` `JIT_DEFAULT_THRESHOLD`).
+    /// The caller gates this on `crossOriginIsolated`.
+    #[wasm_bindgen(js_name = enableJit)]
+    pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .machine
+            .set_executor(Box::new(jit_browser::BrowserExecutor::new()));
+        inner.machine.set_block_cache(true);
+        inner.machine.set_interrupt_batching(true);
+        inner.machine.set_hotness_threshold(threshold.max(1));
+        inner.machine.set_jit(true);
+        Ok(())
+    }
+
     /// Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
     /// 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
     /// `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
@@ -1733,6 +1830,31 @@ impl WasmLinux {
             .machine
             .load_resume(&blob)
             .map_err(|e| JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code()))
+    }
+
+    /// E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
+    /// shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise sets no
+    /// snapshot identity — `snapshot_base` stays `None` and every restore verdict is `"missing"`).
+    ///
+    /// The core identity is [`build_core_hash`] (the crate version), so a snapshot produced by a
+    /// DIFFERENT build fails the `CoreHashMismatch` guard and the caller falls back to a cold boot —
+    /// the guard is bound, never bypassed. `base_id` (32 bytes) binds the snapshot to a specific
+    /// kernel+initramfs pair (the JS caller derives it from the boot manifest's artifact hashes); a
+    /// snapshot for a different kernel/initramfs fails `BaseImageMismatch`. Overlay generation stays 0
+    /// (the initramfs path has no durable overlay to invalidate against).
+    #[wasm_bindgen(js_name = stampBootSnapshotIdentity)]
+    pub fn stamp_boot_snapshot_identity(&self, base_id: &[u8]) -> Result<(), JsError> {
+        if base_id.len() != 32 {
+            return Err(JsError::new(
+                "stampBootSnapshotIdentity: base_id must be 32 bytes",
+            ));
+        }
+        let mut base = [0u8; 32];
+        base.copy_from_slice(base_id);
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_snapshot_identity(build_core_hash(), base);
+        inner.snapshot_base = Some(base);
+        Ok(())
     }
 
     /// E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)

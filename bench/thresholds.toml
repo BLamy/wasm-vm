@@ -1,0 +1,137 @@
+# E4-T27 — performance-regression thresholds (the gated invariant).
+#
+# Every metric below is evaluated by tools/bench_ci.py against the E4-T04 ledger baseline
+# using the interleaved A/B runner (compare RATIOS, not absolutes). Two-tier response:
+#   * soft band  (regression > soft_pct)  -> WARN  (annotates the build, does not fail it)
+#   * hard band  (regression > hard_pct)  -> FAIL  (fails the build)
+# Latency metrics additionally carry an absolute BUDGET: any budget breach is a HARD fail
+# regardless of the delta versus baseline (kind = "budget").
+#
+# Gating weight: native benches carry the gating weight (low variance, instruction-count
+# derived guest clock). Browser benches run at LOOSER bands and are advisory only until the
+# pinned-headless-Chromium runner lands (gate = "advisory" -> never fails the build, only warns).
+#
+# regression_pct convention (computed by bench_ci.evaluate_metric):
+#   throughput metric (higher_is_better=true):  100 * (baseline - candidate) / baseline
+#   latency/time metric (higher_is_better=false): 100 * (candidate - baseline) / baseline
+# so a POSITIVE regression_pct always means "got worse".
+
+schema_version = 1
+
+# --- global defaults (per-metric keys override these) -------------------------------------
+[defaults]
+soft_pct = 3.0          # > 3% worse -> soft warning
+hard_pct = 7.0          # > 7% worse -> hard fail
+min_samples = 3         # refuse to gate on fewer than this many A/B pairs
+
+[gating]
+# native carries the gating weight; browser is advisory (looser + never fails) until the
+# pinned headless-Chromium runner is stood up (see bench/RUNNER.md, verification debt).
+native = "gating"
+browser = "advisory"
+browser_soft_pct = 6.0
+browser_hard_pct = 12.0
+
+# --- throughput / macro benchmarks (E4-T03/T04) -------------------------------------------
+[bench.coremark]
+metric = "coremark"
+unit = "iterations/sec"
+higher_is_better = true
+engine = "native"
+gate = "gating"
+soft_pct = 3.0
+hard_pct = 7.0
+
+[bench.dhrystone]
+metric = "dhrystone"
+unit = "DMIPS"
+higher_is_better = true
+engine = "native"
+gate = "gating"
+soft_pct = 3.0
+hard_pct = 7.0
+
+[bench.boot]
+metric = "boot"
+unit = "seconds"
+higher_is_better = false
+engine = "native"
+gate = "gating"
+soft_pct = 3.0
+hard_pct = 7.0
+
+[bench.gcc]
+metric = "gcc"
+unit = "seconds"
+higher_is_better = false
+engine = "native"
+gate = "gating"
+soft_pct = 3.0
+hard_pct = 7.0
+
+[bench.fp_micro]
+# FP micro (softfloat_bench.rs, E4 FP work): host-native criterion micro-bench, ns/op.
+metric = "fp_micro"
+unit = "ns/op"
+higher_is_better = false
+engine = "native"
+gate = "gating"
+soft_pct = 3.0
+hard_pct = 7.0
+
+# --- latency metrics (E4-T21 JIT pause, E4-T23 MMIO / echo) --------------------------------
+# kind = "budget": candidate median above `budget` is an unconditional HARD fail (AC3).
+[latency.jit_pause_p100]
+metric = "jit_pause_p100_ms"
+unit = "ms"
+higher_is_better = false
+kind = "budget"
+budget = 5.0            # E4-T21: no single JIT-attributable execution-thread stall > 5 ms
+engine = "native"
+gate = "gating"
+soft_pct = 3.0
+hard_pct = 7.0
+
+[latency.mmio_uart_rt_p50]
+metric = "mmio_uart_rt_p50_us"
+unit = "us"
+higher_is_better = false
+kind = "budget"
+budget = 100.0         # E4-T23: UART char round-trip p50 < 100 µs (worker-local path)
+engine = "browser"
+gate = "advisory"
+soft_pct = 6.0
+hard_pct = 12.0
+
+[latency.mmio_blk_read_p50]
+metric = "mmio_blk_read_p50_ms"
+unit = "ms"
+higher_is_better = false
+kind = "budget"
+budget = 2.0           # E4-T23: virtio-blk 4 KiB read submit->completion-irq p50 < 2 ms
+engine = "browser"
+gate = "advisory"
+soft_pct = 6.0
+hard_pct = 12.0
+
+[latency.echo_latency_p99]
+metric = "echo_latency_p99_ms"
+unit = "ms"
+higher_is_better = false
+kind = "budget"
+budget = 50.0          # E4-T21: any echo > 50 ms attributable to JIT is a regression
+engine = "browser"
+gate = "advisory"
+soft_pct = 6.0
+hard_pct = 12.0
+
+[latency.keystroke_visible_p99]
+metric = "keystroke_visible_p99_ms"
+unit = "ms"
+higher_is_better = false
+kind = "budget"
+budget = 5.0           # E4-T23: keystroke -> guest-visible < 5 ms
+engine = "browser"
+gate = "advisory"
+soft_pct = 6.0
+hard_pct = 12.0

@@ -26,12 +26,34 @@ fi
 R2_PUBLIC="https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev"
 echo "[deploy] repointing manifests at R2 ($R2_PUBLIC) …"
 [ -f web/artifacts-alpine.json ] && cp web/artifacts-alpine.json "$DIST/artifacts-alpine.json"
-for m in "$DIST/artifacts.json" "$DIST/artifacts-alpine.json"; do
+# E3.6-T05: the node-preinstalled Alpine manifest (the default flavor) ships too.
+[ -f web/artifacts-node-alpine.json ] && cp web/artifacts-node-alpine.json "$DIST/artifacts-node-alpine.json"
+for m in "$DIST/artifacts.json" "$DIST/artifacts-alpine.json" "$DIST/artifacts-node-alpine.json"; do
   [ -f "$m" ] || continue
   sed "s#\"releases/#\"$R2_PUBLIC/#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m"
+  # All boot snapshots (busybox, bare-Alpine, AND node-Alpine now that Node is baked into a re-chunked
+  # base → RAM snap ~15 MiB, delta ~12 KiB) are < 25 MiB and ship ON Pages, so repoint their
+  # boot-snapshot URLs back to the relative releases/ path (the generic rewrite above sent them to R2).
+  # Pages is served fresh per-deploy; this also avoids R2 public-edge cache staleness on snapshot updates.
+  sed "s#\"$R2_PUBLIC/boot-snapshot/#\"releases/boot-snapshot/#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m"
 done
-# Do NOT ship the big artifacts with the site.
-rm -rf "$DIST/releases/kernel" "$DIST/releases/initramfs" "$DIST/releases/chunked-alpine" 2>/dev/null || true
+# E4 boot snapshot ships ON Pages (URL kept relative above), so the FILE must be present under
+# $DIST/releases/ — build-web-dist.sh deliberately skips releases/, so copy it here at deploy time
+# (same "poor-mans-ci at deploy time" pattern as the kernel, except this one stays on Pages).
+mkdir -p "$DIST/releases/boot-snapshot"
+# busybox (initramfs) + bare-Alpine (chunked) restore artifacts ship ON Pages (each < 25 MiB). The
+# E3.6-T05 node-alpine snapshot (~55 MiB) + overlay-delta (~24 MiB) are NOT here — they exceed the Pages
+# cap and are uploaded to R2 (s3://wasm-vm/boot-snapshot/) separately; their manifest URLs stay R2-pointed.
+for snap in busybox-ready.snap.gz alpine-ready.snap.gz alpine-overlay-delta.bin.gz node-alpine-ready.snap.gz node-alpine-overlay-delta.bin.gz; do
+  if [ -f "releases/boot-snapshot/$snap" ]; then
+    cp "releases/boot-snapshot/$snap" "$DIST/releases/boot-snapshot/$snap"
+    echo "[deploy] shipped $snap ($(du -h "releases/boot-snapshot/$snap" | cut -f1)) on Pages"
+  fi
+done
+
+# Do NOT ship the big artifacts with the site. The chunked bases (chunked-alpine + E3.6-T05
+# chunked-node-alpine) live on R2, uploaded separately; their manifest URLs are rewritten to R2 above.
+rm -rf "$DIST/releases/kernel" "$DIST/releases/initramfs" "$DIST/releases/chunked-alpine" "$DIST/releases/chunked-node-alpine" 2>/dev/null || true
 
 # Fail fast on any file over Cloudflare Pages' 25 MiB per-file limit.
 big=$(find "$DIST" -type f -size +25M -print)

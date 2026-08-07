@@ -3,7 +3,7 @@ id: E4-T12
 epic: 4
 title: Trap side-exits with precise state and the CSR/system-instruction policy
 priority: 412
-status: pending
+status: verified
 depends_on: [E4-T11]
 estimate: L
 capstone: false
@@ -66,4 +66,5 @@ a block-boundary/instruction boundary consistent with the budget rules — an in
 E4-T25-style register-file comparison on `stress-ng --fault` inside Alpine for 60 s.
 
 ## Verification log
+- 2026-08-05 — **VERIFIED (commit `6fd81dd`).** Precise trap side-exits + CSR policy, no trap-state divergence, no double-side-effect. **Precise state:** `emit_load`/`emit_store` write the faulting instruction's PC into the `exit_pc` header slot BEFORE the access (on top of the existing dirty-reg writeback), so at any faulting op the CpuState holds a register file precise as of the prior instruction + `exit_pc` = the faulting PC; `mcause`/`mtval` are NEVER re-derived by the JIT — the import calls the interpreter's `Hart::jit_load`/`jit_store` so the returned `Trap` is byte-identical. **The MMIO-write-then-fault corner (the E4-T10-flagged headline fix):** memory faults NO LONGER re-interpret the block from entry (which replayed a committed MMIO store); instead the import records the precise `Trap` in `HostCtx`, `execute()` reads back the written-back regs + `exit_pc` and returns `JitExit{Trap, precise_trap}`, and the run loop delivers it via `take_trap`, advancing the retire clock by exactly the ops retired before the faulting one — the block is never replayed, so an earlier committing store executes EXACTLY ONCE. **CSR/system policy (E4-T06) confirmed:** discovery `Excluded`s CSR/mret/sret/wfi/sfence blocks (never queued) AND `translate_block` returns `Unsupported` for any non-RV64I op → such blocks always hand off to the interpreter; no CSR/system op is ever emitted. **Gates (independently re-ran):** `precise_traps` 3/3 — mcause+mtval+mepc+full x0..x31 IDENTICAL to interp for load-fault at first/middle/last op, store-fault, the adversarial faulting-store-base-overwritten-earlier (mtval reflects new dataflow), ecall/ebreak. `mmio_store_then_fault_commits_once` — UART THR byte emitted EXACTLY once (`==[0x5A]`), JIT confirmed to have run, trap precise. `riscv_tests_verdict_identical_with_jit` 7/7 incl. all 17 `rv64mi-*` machine-mode trap/CSR ELFs (threshold 1 + 1-entry flapping cache). predecode/batching/determinism/SMC + all E4-T09/T10/T11 gates green; 157 core lib tests; wasm32 no_std; clippy(-D)/fmt clean. Note: `rv64si-*` ELFs aren't vendored in `tests/riscv-tests-bin` so that suite wasn't run — rv64mi covers machine-mode traps.
 (empty)

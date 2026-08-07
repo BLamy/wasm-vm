@@ -128,6 +128,16 @@ struct RunArgs {
     /// E2-T20: disable the always-on interrupt-storm / WFI-deadlock detectors.
     #[arg(long)]
     no_storm_detect: bool,
+    /// E4-T29 (NATIVE): attach the wasmtime-backed JIT executor and enable the JIT for this run.
+    /// Default OFF — with the flag absent NO executor is constructed and the run is byte-identical to
+    /// the interpreter oracle. Handy for on-path correctness: run an ELF twice (with/without `--jit`,
+    /// both `--dump-state`) and the `state sha256=` lines must match.
+    #[arg(long)]
+    jit: bool,
+    /// E4-T29: hotness threshold (executions before a block is nominated). Only meaningful with
+    /// `--jit`; unset keeps the core default.
+    #[arg(long)]
+    jit_threshold: Option<u32>,
 }
 
 /// Guest console → this process's stdout, streamed (no unbounded buffering). A closed
@@ -291,6 +301,17 @@ fn run(a: RunArgs) -> ExitCode {
         }
     };
 
+    // E4-T29 (NATIVE): opt-in JIT. Constructed exactly as the jit-runtime tests do; off by default so
+    // the executor stays `None` and the run is byte-identical to the interpreter oracle.
+    if a.jit {
+        m.set_executor(Box::new(jit_runtime::WasmtimeExecutor::new()));
+        if let Some(t) = a.jit_threshold {
+            m.set_hotness_threshold(t);
+        }
+        m.set_jit(true);
+        m.set_interrupt_batching(true);
+    }
+
     let (canonical, json) = match (open_trace(&a.trace), open_trace(&a.trace_json)) {
         (Ok(c), Ok(j)) => (c, j),
         (Err(e), _) | (_, Err(e)) => {
@@ -383,6 +404,12 @@ fn run(a: RunArgs) -> ExitCode {
     eprintln!("retired={}", sink.count);
     if a.stats {
         eprint!("{}", m.stats_dump()); // E2-T20
+    }
+    // E4-T29: JIT activity summary (blocks compiled/executed, chaining, cache). Reuses the boot
+    // path's printer so `run --jit` and `boot --jit` report identically.
+    #[cfg(not(feature = "zicsr-stub"))]
+    if a.jit {
+        boot::print_jit_stats(&m);
     }
 
     // RISCOF signature dump (E1-T20): write the begin_signature..end_signature region after the

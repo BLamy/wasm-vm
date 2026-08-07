@@ -15,6 +15,39 @@ use wasm_vm_core::resume::{
 };
 
 #[wasm_bindgen_test]
+fn overlay_delta_round_trips_and_bounds_on_wasm32() {
+    // E4 Alpine restore-on-load: the shipped overlay-delta (WVOD1) parses under the same 32-bit
+    // checked_mul bound on real wasm32. A round-trip is byte-identical, a hostile count can't
+    // over-allocate, and the base-binding is preserved (the coherence key the browser seed checks
+    // against the chunk manifest's base_hash before touching IndexedDB).
+    use wasm_vm_storage::{OVERLAY_BLOCK, OverlayDelta, OverlayDeltaError};
+
+    let delta = OverlayDelta {
+        image_len: 805306368,
+        base_binding: [0x5Au8; 32],
+        generation: 0,
+        blocks: vec![(0, [0xABu8; OVERLAY_BLOCK]), (199, [0xCDu8; OVERLAY_BLOCK])],
+    };
+    let bytes = delta.to_bytes();
+    let parsed = OverlayDelta::from_bytes(&bytes).unwrap();
+    assert_eq!(parsed, delta);
+    assert_eq!(parsed.base_binding, [0x5Au8; 32]);
+
+    // A truncated blob is refused (not a panic / over-read) on wasm32.
+    assert_eq!(
+        OverlayDelta::from_bytes(&bytes[..bytes.len() - 1]),
+        Err(OverlayDeltaError::Truncated)
+    );
+    // A forged header claiming a huge block count must not allocate past the buffer.
+    let mut forged = bytes.clone();
+    forged[57..61].copy_from_slice(&u32::MAX.to_le_bytes());
+    assert_eq!(
+        OverlayDelta::from_bytes(&forged),
+        Err(OverlayDeltaError::Truncated)
+    );
+}
+
+#[wasm_bindgen_test]
 fn ram_snapshot_round_trips_byte_identically_on_wasm32() {
     // Mostly-zero RAM with a few non-zero spans — the realistic snapshot shape. write_slice takes an
     // absolute guest address, so span offsets are added to the RAM base.
@@ -95,6 +128,52 @@ fn cpu_section_round_trips_on_wasm32() {
     assert_eq!(b.hart().regs.pc, 0x8020_1234);
     assert_eq!(b.hart().regs.read(5), 0xdead_beef_0000_0007);
     assert_eq!(b.hart().resv, Some((0x8000_0040, 8)));
+}
+
+/// E4 restore-on-first-load: the boot-snapshot coherence guard on real wasm32. A snapshot stamped
+/// with a machine's identity restores into an identically-stamped machine (the shipped boot-snapshot
+/// happy path), while the SAME snapshot bytes are REJECTED (`CoreHashMismatch`) by a machine carrying
+/// a different build identity — the "stale shipped snapshot from an old build" case that must fall
+/// back to a cold boot. Proven by execution on the 32-bit target, not just asserted natively.
+#[wasm_bindgen_test]
+fn stamped_boot_snapshot_restores_only_for_matching_identity_on_wasm32() {
+    use wasm_vm_core::resume::SnapshotError;
+
+    // Zero-pad a version string into 32 bytes, exactly like the browser's `build_core_hash()`.
+    const fn core_id(v: &[u8]) -> [u8; 32] {
+        let mut out = [0u8; 32];
+        let mut i = 0;
+        while i < v.len() {
+            out[i] = v[i];
+            i += 1;
+        }
+        out
+    }
+    const CORE_A: [u8; 32] = core_id(b"0.0.1");
+    const CORE_B: [u8; 32] = core_id(b"0.0.2");
+    const BASE: [u8; 32] = [0xBA; 32];
+
+    // Producer: a machine stamped with build A's identity, some architectural state, snapshot taken.
+    let mut producer = wasm_vm_core::Machine::new(1 << 16);
+    producer.set_snapshot_identity(CORE_A, BASE);
+    producer.hart_mut().regs.pc = 0x8020_abcd;
+    producer.hart_mut().regs.write(7, 0x1234_5678_9abc_def0);
+    let blob = producer.save_resume().unwrap();
+
+    // Matching build A → restores, state applied.
+    let mut same = wasm_vm_core::Machine::new(1 << 16);
+    same.set_snapshot_identity(CORE_A, BASE);
+    same.load_resume(&blob).unwrap();
+    assert_eq!(same.hart().regs.pc, 0x8020_abcd);
+    assert_eq!(same.hart().regs.read(7), 0x1234_5678_9abc_def0);
+
+    // Different build B → rejected; the caller falls back to a cold boot.
+    let mut foreign = wasm_vm_core::Machine::new(1 << 16);
+    foreign.set_snapshot_identity(CORE_B, BASE);
+    assert_eq!(
+        foreign.load_resume(&blob),
+        Err(SnapshotError::CoreHashMismatch)
+    );
 }
 
 /// E3-T12c1: the VIRTIO_BLK section round-trips on real wasm32 too (same fixed-LE codec). Enable

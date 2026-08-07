@@ -2,8 +2,9 @@
 # parallel; locally they run in the order listed under `ci`. If this file and ci.yml
 # disagree, that's a bug (E0-T02).
 
-.PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke bench-l1 riscof diff-all diff-selftest diff-qemu \
-        exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json
+.PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
+        exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
+        bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -29,6 +30,19 @@ wasm:
 		exit 1; }
 	wasm-pack build crates/wasm --target web
 	wasm-pack test --node crates/wasm
+
+# E4-T22: the SHARED-MEMORY (threaded CPU worker) variant of the main core module. Needs nightly +
+# rust-src (build-std recompiles std with +atomics). Emits an IMPORTED shared `env.memory`; the
+# single-threaded fallback stays on `make wasm` above. See docs/e4-t22-cpu-worker-coop-coep.md.
+wasm-shared:
+	bash tools/build-web-shared.sh
+
+# E4-T22: node unit tests for the CPU-backend isolation probe + shared control-block signalling
+# (headless; the browser worker-boot leg is Playwright web/tests/e4-t22-*.spec.js, run on dev).
+web-test-cpu-worker:
+	node --test web/tests/cpu-isolation.test.mjs web/tests/cpu-control-block.test.mjs web/tests/device-proxy.test.mjs
+	# E4-T23 adversarial #5: worker-side device code must not reach a main-thread-only API.
+	node tools/worker-device-audit.mjs
 
 # Explicit {std,trace} powerset natively + the two no_std combos on wasm32 (E0-T15),
 # mirroring ci.yml's `features` + `features-wasm` jobs.
@@ -64,6 +78,15 @@ determinism:
 # E1-T23: perf-smoke (release ALU MIPS ≥ floor) — mirrors ci.yml's `perf-smoke` job.
 perf-smoke:
 	cargo test -p wasm-vm-core --release --test perf_baseline perf_smoke_alu_above_floor -- --ignored --nocapture
+
+# E4-T27: perf-regression gate — statistics/threshold/bless machinery selftest + ledger chain verify.
+perf-gate:
+	python3 tools/bench_ci.py selftest
+	python3 tools/bench.py report --verify
+
+# E4-T27: render the trend dashboard from the ledger (one command, clean checkout).
+perf-trend:
+	python3 tools/bench_ci.py trend --out bench/trend.html
 
 # E1-T23: regenerate the native Level-1 MIPS baseline table.
 bench-l1:
@@ -124,6 +147,12 @@ web-build:
 	mkdir -p web/releases/kernel/6.6.63 web/releases/initramfs
 	cp releases/kernel/6.6.63/Image web/releases/kernel/6.6.63/Image
 	cp releases/initramfs/initramfs.cpio.gz web/releases/initramfs/initramfs.cpio.gz
+	# E4 restore-on-first-load: the (optional) compressed busybox boot snapshot, if built. Small
+	# enough to ship on Pages (deploy-cloudflare.sh keeps its URL relative, unlike kernel/initramfs).
+	@if [ -f releases/boot-snapshot/busybox-ready.snap.gz ]; then \
+	  mkdir -p web/releases/boot-snapshot; \
+	  cp releases/boot-snapshot/busybox-ready.snap.gz web/releases/boot-snapshot/busybox-ready.snap.gz; \
+	fi
 	bash tools/gen-web-manifest.sh
 
 # Regenerate web/tasks.json from the /tasks folder (the roadmap's single source of truth).
@@ -150,6 +179,30 @@ hooks:
 # the node/browser rows come from web/bench-node.mjs and the demo page's Bench button.
 bench:
 	cargo bench -p wasm-vm-cli --bench interp
+
+# E4-T03: in-guest CoreMark/Dhrystone harness. `bench-guest-build` rebuilds the pinned riscv64
+# ELFs + the ext4 overlay inside the pinned Docker toolchain (needs Docker); the run targets boot
+# the release wasm-vm on Alpine and emit a JSON score (each cold run takes minutes on the
+# interpreter). Browser engine is reaping-deferred (see bench/README.md).
+bench-guest-build:
+	bash bench/build.sh
+	bash bench/mkimage.sh
+
+bench-coremark:
+	python3 tools/bench.py run coremark --engine native
+
+bench-dhrystone:
+	python3 tools/bench.py run dhrystone --engine native
+
+# E4-T04: in-guest gcc -O2 compile macro bench. `bench-gcc-build` cross-installs a pinned Alpine
+# gcc/musl-dev/binutils toolchain into the ~130 MB gcc.ext4 overlay (gitignored; needs Docker);
+# `bench-gcc` boots the release wasm-vm, mounts it read-only, and compiles the vendored miniz.c.
+# A single run is many minutes on the interpreter (full Alpine boot + a real -O2 compile).
+bench-gcc-build:
+	bash bench/mk-gcc-image.sh
+
+bench-gcc:
+	python3 tools/bench.py run gcc --engine native
 
 # E0 capstone (E0-T26): the automated proof — Hello from RV64 with native == node-wasm ==
 # Spike traces byte-for-byte — then the manual browser checklist. Run from a cold clone

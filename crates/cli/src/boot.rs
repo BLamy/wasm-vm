@@ -26,6 +26,65 @@ use wasm_vm_core::{Machine, RunOutcome, platform};
 
 use crate::file_backend;
 
+/// E4-T15: an opt-in retirement sink that counts the DYNAMIC share of F/D floating-point
+/// instructions in a real guest run, to ground the JIT FP-translation policy decision in a
+/// measured number rather than an assertion. Enabled only when `WASM_VM_FP_HISTOGRAM` is set in
+/// the environment, so the production boot path (which uses `NullSink`) is untouched.
+///
+/// The classifier is deliberately INDEPENDENT of `wasm_vm_core::decode` — it inspects the raw
+/// retired instruction bits directly (the RISC-V opcode map) so it doubles as the adversarial
+/// "recompute the F/D share independently" cross-check (E4-T15 verification §1). It handles both
+/// 32-bit and RVC 16-bit encodings (in RV64 the only compressed FP ops are C.FLD/C.FSD/C.FLDSP/
+/// C.FSDSP — double load/store).
+#[derive(Default)]
+struct FpShareSink {
+    total: u64,
+    fp: u64,
+    fp_ldst: u64,
+    fp_compute: u64,
+}
+
+impl FpShareSink {
+    /// `true` iff the raw retired instruction bits are an F/D op. Standard RISC-V opcode map:
+    /// 32-bit LOAD-FP(0x07)/STORE-FP(0x27)/MADD(0x43)/MSUB(0x47)/NMSUB(0x4b)/NMADD(0x4f)/
+    /// OP-FP(0x53); RVC quadrant-0 funct3=001/101 (C.FLD/C.FSD) and quadrant-2 funct3=001/101
+    /// (C.FLDSP/C.FSDSP).
+    fn is_fp(raw: u32) -> (bool, bool) {
+        // returns (is_fp, is_load_store_fp)
+        if raw & 0b11 == 0b11 {
+            match raw & 0x7f {
+                0x07 | 0x27 => (true, true),                       // LOAD-FP / STORE-FP
+                0x43 | 0x47 | 0x4b | 0x4f | 0x53 => (true, false), // MADD/MSUB/NMSUB/NMADD/OP-FP
+                _ => (false, false),
+            }
+        } else {
+            let quadrant = raw & 0b11;
+            let funct3 = (raw >> 13) & 0b111;
+            match (quadrant, funct3) {
+                (0b00, 0b001) | (0b00, 0b101) => (true, true), // C.FLD / C.FSD
+                (0b10, 0b001) | (0b10, 0b101) => (true, true), // C.FLDSP / C.FSDSP
+                _ => (false, false),
+            }
+        }
+    }
+}
+
+impl TraceSink for FpShareSink {
+    #[inline]
+    fn retire(&mut self, r: &wasm_vm_core::trace::TraceRecord) {
+        self.total += 1;
+        let (is_fp, is_ldst) = Self::is_fp(r.insn);
+        if is_fp {
+            self.fp += 1;
+            if is_ldst {
+                self.fp_ldst += 1;
+            } else {
+                self.fp_compute += 1;
+            }
+        }
+    }
+}
+
 #[derive(Args)]
 pub struct BootArgs {
     /// Path to the flat kernel `Image` (raw Linux/RISC-V boot binary, not an ELF).
@@ -37,9 +96,11 @@ pub struct BootArgs {
     /// Kernel command line (`/chosen/bootargs`).
     #[arg(long, default_value = "console=ttyS0 earlycon=sbi")]
     pub append: String,
-    /// Attach a virtio-blk drive in slot 0: `file=IMG` or `file=IMG,ro` (mmap-backed).
+    /// Attach a virtio-blk drive: `file=IMG` or `file=IMG,ro` (mmap-backed). The first `--drive`
+    /// claims slot 0 (`/dev/vda`); repeat the flag to attach further drives into the next empty
+    /// slots (`/dev/vdb`, …) — the E4-T03 bench harness attaches its read-only overlay this way.
     #[arg(long)]
-    pub drive: Option<String>,
+    pub drive: Vec<String>,
     /// Guest RAM size in MiB (DTB places itself near the top of DRAM).
     #[arg(long, default_value_t = 256)]
     pub ram_mib: usize,
@@ -65,6 +126,28 @@ pub struct BootArgs {
     /// E2-T20: print the interrupt/trap counters at exit.
     #[arg(long)]
     pub stats: bool,
+    /// E4-T05: enable the predecoded basic-block cache (decode memoization with page-granular
+    /// invalidation). Additive and default-off; semantically identical to the legacy path
+    /// (proven byte-identical by `predecode_diff`). A perf lever for Phase C measurement.
+    #[arg(long)]
+    pub block_cache: bool,
+    /// E4-T05 Phase C: batch the interrupt/device-sync poll to block boundaries (≤128 instrs)
+    /// instead of per-instruction — the CoreMark lever (device sync was 47% of host time per
+    /// E4-T02). Requires `--block-cache`. NOT byte-identical to the legacy path by design; timer
+    /// latency stays bounded to one block. Default off.
+    #[arg(long)]
+    pub interrupt_batching: bool,
+    /// E4-T29 (NATIVE): attach the wasmtime-backed JIT executor (the reference executor every
+    /// jit-runtime test uses) and enable the JIT. Default OFF — with the flag absent NO executor is
+    /// constructed and the boot is byte-identical to the interpreter oracle. Turning it on also turns
+    /// on the block cache (`set_jit` does) and the block-boundary interrupt poll, matching the proven
+    /// test configuration.
+    #[arg(long)]
+    pub jit: bool,
+    /// E4-T29: hotness threshold (executions before a block is nominated for translation). Only
+    /// meaningful with `--jit`; unset keeps the core default.
+    #[arg(long)]
+    pub jit_threshold: Option<u32>,
     /// E2-T25: emit a boot phase-timing table (wall ms, retired, MIPS per phase) + per-device
     /// MMIO access counts, as pretty text + JSON, when the boot reaches userland (or at exit).
     #[arg(long)]
@@ -130,6 +213,31 @@ pub struct BootArgs {
     /// (E3-T12c3); reopen the SAME `--drive` image the snapshot was taken against.
     #[arg(long)]
     pub resume_from: Option<PathBuf>,
+    /// E4 boot-snapshot: stamp the snapshot's coherence `core_hash` (64 hex chars → 32 bytes) so the
+    /// shipped browser boot-snapshot binds to the matching wasm build. The browser derives the same
+    /// value from its crate version; a mismatch makes the coherence guard reject the snapshot (cold
+    /// boot fallback). Requires `--snapshot-out`.
+    #[arg(long, requires = "snapshot_out")]
+    pub snapshot_core_id: Option<String>,
+    /// E4 boot-snapshot: stamp the snapshot's coherence `base_image_hash` (64 hex chars → 32 bytes),
+    /// binding it to a specific kernel+initramfs pair. Requires `--snapshot-out`.
+    #[arg(long, requires = "snapshot_out")]
+    pub snapshot_base_id: Option<String>,
+}
+
+/// Decode exactly 32 bytes from a 64-char lowercase/uppercase hex string (the snapshot identity
+/// stamp). Returns a clear message on any malformed input.
+fn parse_id32(hex: &str) -> Result<[u8; 32], String> {
+    let hex = hex.trim();
+    if hex.len() != 64 {
+        return Err(format!("expected 64 hex chars, got {}", hex.len()));
+    }
+    let mut out = [0u8; 32];
+    for (i, byte) in out.iter_mut().enumerate() {
+        *byte = u8::from_str_radix(&hex[i * 2..i * 2 + 2], 16)
+            .map_err(|e| format!("bad hex at byte {i}: {e}"))?;
+    }
+    Ok(out)
 }
 
 /// Guest console → this process's stdout. Shared with the SBI console channel; a closed pipe
@@ -216,7 +324,7 @@ fn parse_system_map(path: &Path) -> std::io::Result<Vec<(u64, String)>> {
 }
 
 /// The symbol whose address is the greatest `<= pc` (nearest-preceding lookup over the sorted table).
-fn symbolize<'a>(syms: &'a [(u64, String)], pc: u64) -> Option<&'a str> {
+fn symbolize(syms: &[(u64, String)], pc: u64) -> Option<&str> {
     let idx = syms.partition_point(|(addr, _)| *addr <= pc);
     (idx > 0).then(|| syms[idx - 1].1.as_str())
 }
@@ -289,6 +397,64 @@ impl SnapshotOnMarker {
     }
 }
 
+/// E4-T29: print the JIT activity summary to stderr after a `--jit` run. Sources every number from
+/// the accessors the `Machine`/executor already expose (discovery, chaining, cache/eviction stats),
+/// so it works for the CLI-integrated executor exactly as it does in the jit-runtime tests. `jit_active`
+/// being false here means the flag was set but discovery/executor never armed — surfaced explicitly so
+/// a silent no-op JIT boot can't masquerade as a real one.
+pub fn print_jit_stats(m: &Machine) {
+    let d = m.discovery_stats();
+    let chain = m.chain_stats();
+    let cache = m.jit_cache_stats();
+    let (modules, est_bytes) = m.jit_registry();
+    let (executed, retired_via_jit) = m
+        .executor()
+        .map(|e| (e.executed_blocks(), e.retired_via_jit()))
+        .unwrap_or((0, 0));
+    let compiled = m.executor().map(|e| e.compiled_count()).unwrap_or(0);
+    eprintln!("=== E4-T29 JIT summary ===");
+    eprintln!(
+        "jit_active={}  blocks_compiled={}  blocks_executed={}  retired_via_jit={}",
+        m.jit_active(),
+        compiled,
+        executed,
+        retired_via_jit,
+    );
+    eprintln!(
+        "discovery: nominated={} deduped={} excluded={} dropped_stale={} dropped_overflow={} queue_hwm={}",
+        d.nominated, d.deduped, d.excluded, d.dropped_stale, d.dropped_overflow, d.queue_hwm,
+    );
+    eprintln!(
+        "chaining: links_made={} links_cut={} dispatch_entries={} max_chain_depth={} links_followed={}",
+        chain.links_made,
+        chain.links_cut,
+        chain.dispatch_entries,
+        chain.max_chain_depth,
+        chain.total_links_followed(),
+    );
+    eprintln!(
+        "cache: modules={} est_bytes={} installs={} retranslations={} evictions={} flushes={} generation={}",
+        modules,
+        est_bytes,
+        cache.installs,
+        cache.retranslations,
+        cache.evictions,
+        cache.flushes,
+        cache.generation,
+    );
+    // Machine-readable one-liner for the bench harness / CI to scrape.
+    eprintln!(
+        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{}}}",
+        compiled,
+        executed,
+        retired_via_jit,
+        chain.links_made,
+        chain.dispatch_entries,
+        cache.installs,
+        cache.evictions,
+    );
+}
+
 pub fn boot(a: BootArgs) -> ExitCode {
     let kernel = match std::fs::read(&a.kernel) {
         Ok(b) => b,
@@ -309,7 +475,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
     };
 
     // E2-T19 critic advisory: --blk-log without --drive can't trace anything (no blk device).
-    if a.blk_log && a.drive.is_none() {
+    if a.blk_log && a.drive.is_empty() {
         eprintln!("wasm-vm: --blk-log has no effect without --drive (no virtio-blk device)");
     }
 
@@ -364,8 +530,62 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 path.display()
             );
         }
+        // E4 boot-snapshot: stamp the coherence identity BEFORE the snapshot watcher can fire, so the
+        // written blob's header binds to the intended build (`--snapshot-core-id`) and kernel+initramfs
+        // (`--snapshot-base-id`). Off these flags the machine keeps its default all-zero identity (the
+        // proven E3-T12c round-trip). clap already gates both on `--snapshot-out`.
+        if a.snapshot_core_id.is_some() || a.snapshot_base_id.is_some() {
+            let core = match &a.snapshot_core_id {
+                Some(h) => match parse_id32(h) {
+                    Ok(v) => v,
+                    Err(e) => {
+                        eprintln!("wasm-vm: bad --snapshot-core-id: {e}");
+                        return ExitCode::from(2);
+                    }
+                },
+                None => [0u8; 32],
+            };
+            let base = match &a.snapshot_base_id {
+                Some(h) => match parse_id32(h) {
+                    Ok(v) => v,
+                    Err(e) => {
+                        eprintln!("wasm-vm: bad --snapshot-base-id: {e}");
+                        return ExitCode::from(2);
+                    }
+                },
+                None => [0u8; 32],
+            };
+            m.set_snapshot_identity(core, base);
+        }
+        // E4-T15: opt-in FP-share measurement. When WASM_VM_FP_HISTOGRAM is set, run the boot under
+        // the counting sink and emit FP_SHARE_JSON — the dynamic F/D instruction share that grounds
+        // the JIT FP-translation policy. Off by default (production path uses NullSink below).
+        let fp_hist = std::env::var("WASM_VM_FP_HISTOGRAM").is_ok();
         let mut hash = HashSink::new();
-        let outcome = if a.evidence.is_some() {
+        let outcome = if fp_hist {
+            let mut fp = FpShareSink::default();
+            let o = run_machine(
+                &a,
+                &mut m,
+                &uart,
+                &console,
+                stdin_rx.as_ref(),
+                &mut pending,
+                profiler.as_mut().filter(|_| boot_num == 1),
+                snap.as_mut(),
+                &mut fp,
+            );
+            let pct = if fp.total == 0 {
+                0.0
+            } else {
+                100.0 * fp.fp as f64 / fp.total as f64
+            };
+            eprintln!(
+                "FP_SHARE_JSON {{\"total_retired\":{},\"fp\":{},\"fp_ldst\":{},\"fp_compute\":{},\"fp_pct\":{:.6}}}",
+                fp.total, fp.fp, fp.fp_ldst, fp.fp_compute, pct
+            );
+            o
+        } else if a.evidence.is_some() {
             run_machine(
                 &a,
                 &mut m,
@@ -414,6 +634,10 @@ pub fn boot(a: BootArgs) -> ExitCode {
         }
         if a.stats {
             eprint!("{}", m.stats_dump()); // E2-T20
+        }
+        // E4-T29: JIT activity summary at exit (blocks compiled/executed, chaining, cache/eviction).
+        if a.jit {
+            print_jit_stats(&m);
         }
         // E4-T01: the hot-PC + subsystem-time report for the first boot. `total_ns` is the wall span
         // the machine measured around its own run; CPU-interp is derived from it by subtraction.
@@ -499,6 +723,31 @@ pub fn boot(a: BootArgs) -> ExitCode {
 /// Build a fresh machine for one boot: RAM + all devices + the boot triple in DRAM, entered at
 /// the ADR-0002 contract. Returns the machine and the UART handle, or an `ExitCode` for a fatal
 /// setup error. Called once per boot (reboot rebuilds from scratch → devices reset, RAM zeroed).
+/// Parse one `--drive` spec (`file=IMG` or `file=IMG,ro`) and open its file backend. Returns the
+/// boxed backend, or an `ExitCode` (2) after printing a diagnostic — the same failure shape the
+/// single-drive path used before E4-T03 made `--drive` repeatable.
+fn open_drive_backend(spec: &str) -> Result<Box<dyn wasm_vm_core::block::BlockBackend>, ExitCode> {
+    let (path, ro) = match spec.strip_suffix(",ro") {
+        Some(rest) => (rest, true),
+        None => (spec, false),
+    };
+    let Some(path) = path.strip_prefix("file=") else {
+        eprintln!("wasm-vm: --drive expects file=IMG[,ro]");
+        return Err(ExitCode::from(2));
+    };
+    let opened = if ro {
+        file_backend::FileBackend::open_read_only(Path::new(path))
+            .map(|b| Box::new(b) as Box<dyn wasm_vm_core::block::BlockBackend>)
+    } else {
+        file_backend::FileBackend::open(Path::new(path))
+            .map(|b| Box::new(b) as Box<dyn wasm_vm_core::block::BlockBackend>)
+    };
+    opened.map_err(|e| {
+        eprintln!("wasm-vm: cannot open drive {path}: {e}");
+        ExitCode::from(2)
+    })
+}
+
 fn assemble(
     a: &BootArgs,
     kernel: &[u8],
@@ -514,6 +763,21 @@ fn assemble(
     let ram_bytes = a.ram_mib.saturating_mul(1024 * 1024);
     let mut m = Machine::new(ram_bytes);
     m.set_storm_detect(!a.no_storm_detect); // E2-T20
+    m.set_block_cache(a.block_cache); // E4-T05: default off; additive decode-cache toggle
+    m.set_interrupt_batching(a.interrupt_batching); // E4-T05 Phase C: block-boundary interrupt poll
+    // E4-T29 (NATIVE): opt-in JIT. Construct the wasmtime executor exactly as the jit-runtime tests
+    // do, then enable the JIT. `set_jit(true)` also turns the block cache on (discovery is the JIT's
+    // front end); the block-boundary interrupt poll matches the proven test config. Off by default:
+    // when `--jit` is absent the executor stays `None` and `try_jit_block` is a no-op, so the boot is
+    // byte-identical to the interpreter oracle.
+    if a.jit {
+        m.set_executor(Box::new(jit_runtime::WasmtimeExecutor::new()));
+        if let Some(t) = a.jit_threshold {
+            m.set_hotness_threshold(t);
+        }
+        m.set_jit(true);
+        m.set_interrupt_batching(true);
+    }
     if a.profile {
         m.set_host_timer(Rc::new(MonotonicTimer::new())); // E4-T01: arms profiling + injects the timer
     }
@@ -526,38 +790,22 @@ fn assemble(
     let uart = m.enable_uart16550();
     // virtio: a real blk device if --drive was given, else the 8 empty mmio slots the DTB
     // advertises (the kernel probes each address; an unbacked window would fault).
-    if let Some(spec) = &a.drive {
-        let (path, ro) = match spec.strip_suffix(",ro") {
-            Some(rest) => (rest, true),
-            None => (spec.as_str(), false),
-        };
-        let Some(path) = path.strip_prefix("file=") else {
-            eprintln!("wasm-vm: --drive expects file=IMG[,ro]");
-            return Err(ExitCode::from(2));
-        };
-        let backend: Box<dyn wasm_vm_core::block::BlockBackend> = if ro {
-            match file_backend::FileBackend::open_read_only(std::path::Path::new(path)) {
-                Ok(b) => Box::new(b),
-                Err(e) => {
-                    eprintln!("wasm-vm: cannot open drive {path}: {e}");
-                    return Err(ExitCode::from(2));
-                }
+    if a.drive.is_empty() {
+        let _ = m.enable_virtio_slots(None);
+    } else {
+        // First drive claims slot 0 (/dev/vda); each subsequent --drive installs into the next
+        // empty slot (/dev/vdb, …). E4-T03 attaches the read-only bench overlay as a 2nd drive.
+        for (i, spec) in a.drive.iter().enumerate() {
+            let backend = open_drive_backend(spec)?;
+            if i == 0 {
+                let _ = m.enable_virtio_blk(backend);
+            } else {
+                let _ = m.enable_virtio_blk_at(i, backend);
             }
-        } else {
-            match file_backend::FileBackend::open(std::path::Path::new(path)) {
-                Ok(b) => Box::new(b),
-                Err(e) => {
-                    eprintln!("wasm-vm: cannot open drive {path}: {e}");
-                    return Err(ExitCode::from(2));
-                }
-            }
-        };
-        let _ = m.enable_virtio_blk(backend);
+        }
         if a.blk_log {
             m.enable_blk_log(); // E2-T19: trace requests to stderr
         }
-    } else {
-        let _ = m.enable_virtio_slots(None);
     }
     if a.net_slirp {
         // E3-T14: slirp-backed virtio-net in slot 1 — the guest's frames terminate in the

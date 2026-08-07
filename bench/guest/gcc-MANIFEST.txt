@@ -1,0 +1,29 @@
+# E4-T04 in-guest gcc benchmark overlay — pinned resolved package set.
+# Regenerate with bench/mk-gcc-image.sh. The overlay (gcc.ext4) is GITIGNORED; this manifest
+# + bench/mk-gcc-image.sh + the vendored miniz sources are the durable committed artifacts.
+alpine_branch:      v3.20
+main_repo:          https://dl-cdn.alpinelinux.org/alpine/v3.20/main
+community_repo:     https://dl-cdn.alpinelinux.org/alpine/v3.20/community
+requested_pkgs:     gcc musl-dev binutils
+gcc_package:        gcc-13.2.1_git20240309-r1
+fs_uuid:            9ccc0000-0000-4004-a000-9cc000000004
+source_date_epoch:  1704067200
+img_size:           512M
+gcc_ext4_sha256:    167ff7a91ab6d4625bc4d68108595b2b693f1345f4ba1386df24e7ea6541d630
+
+# Fully-resolved installed package set (name-version-rN), sorted:
+  binutils-2.42-r1
+  gcc-13.2.1_git20240309-r1
+  gmp-6.3.0-r1
+  isl26-0.26-r1
+  jansson-2.14-r4
+  libatomic-13.2.1_git20240309-r1
+  libgcc-13.2.1_git20240309-r1
+  libgomp-13.2.1_git20240309-r1
+  libstdc++-13.2.1_git20240309-r1
+  mpc1-1.3.1-r1
+  mpfr4-4.2.1-r0
+  musl-1.2.5-r3
+  musl-dev-1.2.5-r3
+  zlib-1.3.2-r0
+  zstd-libs-1.5.6-r0

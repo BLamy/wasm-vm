@@ -12,6 +12,7 @@
 import init, {
   WasmLinux,
   overlayDbName,
+  seedOverlayDelta,
   setSlirpNet,
   setSlirpRelay,
   setSlirpRelayToken,
@@ -22,6 +23,42 @@ import init, {
   setSlirpMtu,
   slirpDhcpStats,
 } from "./pkg/wasm_vm_wasm.js";
+import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
+
+// Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
+// runs on the main thread (a Web Worker offload is a larger follow-up), so a long synchronous run slice
+// janks the page's rendering/animation. `setTimeout(tick,0)` is clamped to ~4 ms once nested, which
+// forces LARGE slices to keep throughput and makes the jank worse. A MessageChannel post reschedules
+// immediately AND still returns to the event loop between slices, so the browser can paint/handle input
+// between short slices — smooth page, full throughput. Falls back to setTimeout where unavailable.
+const _yieldChan = typeof MessageChannel !== "undefined" ? new MessageChannel() : null;
+let _yieldCb = null;
+if (_yieldChan) {
+  _yieldChan.port1.onmessage = () => {
+    const cb = _yieldCb;
+    _yieldCb = null;
+    if (cb) cb();
+  };
+  _yieldChan.port1.start?.();
+}
+function yieldToMain(cb) {
+  // The run loop holds the single-tick invariant (`tickScheduled`), so at most one yield is ever
+  // outstanding; if one somehow is, fall back to setTimeout rather than dropping the callback.
+  if (_yieldChan && _yieldCb === null) {
+    _yieldCb = cb;
+    _yieldChan.port2.postMessage(0);
+  } else {
+    setTimeout(cb, 0);
+  }
+}
+
+/** Gunzip `bytes` (a gzip member) to a Uint8Array via the platform DecompressionStream. */
+async function gunzip(bytes) {
+  const ds = new DecompressionStream("gzip");
+  const stream = new Blob([bytes]).stream().pipeThrough(ds);
+  const buf = await new Response(stream).arrayBuffer();
+  return new Uint8Array(buf);
+}
 
 /** Fetch `url` into one preallocated buffer, reporting `(loaded, total)`; `total` is null when
  *  the server sends no Content-Length (progress must degrade to indeterminate, not lie). */
@@ -101,7 +138,7 @@ async function sha256hex(bytes) {
  *   onProgress(role, loaded, total)   per-artifact bytes
  *   onOutput(u8)  console bytes (feed to the terminal)
  *   onError(err)  a specific, surfaced failure (HTTP status / hash mismatch / boot error)
- *   quantum       instructions per run tick (default 2_000_000)
+ *   quantum       instructions per run slice (default 500_000; see the option below)
  * Returns a controller: { sendInput(bytes), stop(), whenDone: Promise<string> }.
  */
 // E3-T10: "reset disk" — delete THIS image's durable overlay (its own IndexedDB database),
@@ -162,7 +199,11 @@ export async function startLinuxBoot(opts = {}) {
     // is PAUSED before returning; the UI shows the dialog and calls the returned controller's
     // resumeAfterQuota()/continueReadOnly()/resetDisk() to act.
     onQuota = () => {},
-    quantum = 2_000_000,
+    // Instructions per synchronous run slice. Kept modest so a slice is only a few ms of main-thread
+    // time — short enough that the browser paints/handles input between slices (smooth page/animation).
+    // Combined with the no-clamp MessageChannel yield (see yieldToMain), throughput stays high. A larger
+    // value trades page responsiveness for raw guest throughput (e.g. headless benches may pass more).
+    quantum = 500_000,
   } = opts;
   // E3-T09 (critic BUG-1): hoisted ABOVE the try so the catch can release a granted writer
   // lock when boot fails AFTER acquisition — otherwise a banner-less zombie tab strands the
@@ -177,6 +218,12 @@ export async function startLinuxBoot(opts = {}) {
   try {
     const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
     const km = manifest.artifacts.kernel;
+    // E4 restore-on-load artifacts (busybox: bootSnapshot only; Alpine chunked: bootSnapshot RAM +
+    // overlayDelta). Hoisted so both the pre-construction overlay seed and the post-construction RAM
+    // restore can see them. `alpineRamBlob` is the RAM blob to restore once the chunked machine exists.
+    const bootSnap = manifest.artifacts?.bootSnapshot;
+    const overlayDeltaEntry = manifest.artifacts?.overlayDelta;
+    let alpineRamBlob = null;
 
     onState("fetching");
     // The kernel is always fetched whole (small). The rootfs is fetched whole for disk/initramfs
@@ -316,6 +363,38 @@ export async function startLinuxBoot(opts = {}) {
         const est = navigator.storage?.estimate ? await navigator.storage.estimate() : {};
         onStorage({ usage: est.usage ?? null, quota: est.quota ?? null, granted });
       } catch { /* storage API absent → no indicator */ }
+      // E4 Alpine restore-on-load (chunked/persistent path): if this manifest ships a coherent
+      // build-time boot snapshot (RAM blob) + overlay-delta (the ~1 MB of post-boot-dirtied disk
+      // blocks), seed the delta into the brand-new IndexedDB overlay NOW — BEFORE constructing the
+      // persistent machine — so its load_blocks() picks them up and the restored guest's cache-miss
+      // disk reads return post-boot content. Then (after construction) loadSnapshotBlob restores RAM,
+      // landing straight at a ready, container-capable shell instead of the ~15-min cold boot.
+      //
+      // Writer tabs only (a read-only tab must never write IndexedDB). seedOverlayDelta is a no-op
+      // (returns false) if an overlay already exists, so a user's own durable disk is never clobbered.
+      // Any failure here falls through to the normal chunked cold boot — never a broken state.
+      if (!lockReadOnly && bootSnap && overlayDeltaEntry && opts.bootSnapshot !== false) {
+        try {
+          onState("restoring");
+          const dgz = await fetchWithProgress(overlayDeltaEntry.url, (l, t) => onProgress("overlayDelta", l, t));
+          if ((await sha256hex(dgz)) !== overlayDeltaEntry.sha256) throw new Error("overlay delta integrity");
+          const deltaBytes = await gunzip(dgz);
+          const rgz = await fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t));
+          if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
+          const ramBytes = await gunzip(rgz);
+          const seeded = await seedOverlayDelta(imageManifestText, deltaBytes);
+          // Arm the RAM restore whether we FRESHLY seeded (first visit) OR a coherent overlay already
+          // exists (return visit — the post-boot disk delta is already in it, unmodified). The gate is
+          // the post-construction restoreDecisionCode below: it enforces the core-hash + base +
+          // overlay-generation triple, so a MODIFIED overlay (user wrote to disk) is rejected → cold
+          // boot, while an unmodified one fast-restores every load instead of cold-booting.
+          void seeded;
+          alpineRamBlob = ramBytes;
+        } catch (e) {
+          console.warn("wasm-vm: Alpine overlay-delta seed failed, cold booting:", e?.message || e);
+          alpineRamBlob = null;
+        }
+      }
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
       machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, lockReadOnly, (u8) => onOutput(u8));
     } else if (isChunked) {
@@ -324,6 +403,121 @@ export async function startLinuxBoot(opts = {}) {
       machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
     } else {
       machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
+    }
+
+    // E4-T29 Phase 2: arm the in-wasm browser JIT on the main-thread Linux path. The demo runs
+    // WasmLinux directly (not the cpu-worker), so the JIT is dark unless enabled HERE. Gate on
+    // cross-origin isolation (runtime WebAssembly codegen is only sound/allowed there) exactly like
+    // web/cpu-isolation.js selectJitBackend; `?jit=0` forces interpreter-only for an A/B. The
+    // interpreter stays the oracle — enableJit only arms tier-up of hot blocks.
+    try {
+      const _jitQ = new URLSearchParams(location.search).get("jit");
+      const _wantJit = _jitQ !== "0" && globalThis.crossOriginIsolated === true;
+      if (_wantJit && typeof machine.enableJit === "function") {
+        machine.enableJit(32); // JIT_DEFAULT_THRESHOLD
+        try { window.__jit = { enabled: true, threshold: 32 }; } catch { /* worker scope */ }
+        console.info("wasm-vm: browser JIT enabled (crossOriginIsolated, threshold=32)");
+      } else {
+        try { window.__jit = { enabled: false, reason: _jitQ === "0" ? "forced-off" : (globalThis.crossOriginIsolated ? "no-enableJit" : "not-cross-origin-isolated") }; } catch { /* worker scope */ }
+        console.info("wasm-vm: browser JIT NOT enabled —", _jitQ === "0" ? "forced-off (?jit=0)" : (globalThis.crossOriginIsolated ? "machine has no enableJit" : "page not cross-origin isolated"));
+      }
+    } catch (e) {
+      console.warn("wasm-vm: enableJit gate failed:", e?.message || e);
+    }
+
+    // E4-T01/T02 browser-evidence hook (additive, default-off): expose the raw WasmLinux instance
+    // so a Playwright driver can pull getProfile() after boot, and — when the page is opened with
+    // `?profile=1` — arm the sampled hot-PC + subsystem-time profiler from the very first
+    // instruction (setProfiling injects the JsHostTimer). Inert unless the query param is present.
+    try {
+      window.__machine = machine;
+      const wantProfile = new URLSearchParams(location.search).get("profile");
+      if (wantProfile === "1" && typeof machine.setProfiling === "function") {
+        machine.setProfiling(true);
+        window.__profilingArmed = true;
+      }
+    } catch { /* non-window scope (worker) — no test hook */ }
+
+    // E4 restore-on-first-load (busybox/initramfs path): instead of executing the ~40 s Linux boot,
+    // restore a shipped, build-time boot snapshot into the just-constructed machine and go straight to
+    // the run loop. The machine already cold-booted in its constructor (place_and_boot), so ANY failure
+    // here — a missing/incoherent/corrupt snapshot, a network or decompression error — simply falls
+    // through to that cold-booted machine: a clean full boot, never a broken state.
+    //
+    // Coherence is bound, not bypassed: stampBootSnapshotIdentity binds this machine to build_core_hash
+    // + the kernel/initramfs base id, and restoreDecisionCode must return "resume" before we load the
+    // blob. A snapshot from an older build ("foreign_build") or a different kernel ("foreign_image") is
+    // rejected → cold boot. Re-seeding is automatic: the goldfish RTC (Date.now) and virtio-rng
+    // (crypto.getRandomValues) are LIVE browser-backed sources read on demand, not frozen snapshot
+    // state, so wall-clock time and entropy self-reseed after restore; a fresh DHCP lease is a slirp
+    // (Alpine) concern, N/A for the offline busybox default.
+    let restoredFromBootSnapshot = false;
+    // E4 Alpine (chunked/persistent) restore: the overlay was already seeded with the post-boot disk
+    // delta BEFORE construction; now restore the paired RAM blob. The persistent machine's snapshot
+    // identity is already the chunk manifest's base_hash (set in newChunkedDiskPersistent), so
+    // restoreDecisionCode enforces the core-hash + base + overlay-generation triple. A foreign/stale
+    // RAM blob (or a generation mismatch) is rejected → the machine keeps its fresh chunked cold boot.
+    if (alpineRamBlob) {
+      try {
+        const decision = machine.restoreDecisionCode(alpineRamBlob, machine.overlayGeneration());
+        if (decision === "resume") {
+          machine.loadSnapshotBlob(alpineRamBlob);
+          restoredFromBootSnapshot = true;
+          onState("restored");
+        } else {
+          console.warn(`wasm-vm: Alpine boot snapshot not coherent (${decision}) — cold booting`);
+        }
+      } catch (e) {
+        console.warn("wasm-vm: Alpine RAM restore failed, cold booting:", e?.message || e);
+        restoredFromBootSnapshot = false;
+      }
+    }
+    if (mode === "initramfs" && bootSnap && opts.bootSnapshot !== false) {
+      try {
+        const baseId = await deriveBootSnapshotBaseId(km.sha256, manifest.artifacts.initramfs.sha256);
+        machine.stampBootSnapshotIdentity(baseId);
+        // Repeat-load fast path: a previously cached copy in the snapshot IndexedDB store (imported
+        // below on first load) restores with no network fetch at all.
+        let blob = null;
+        const cached = await machine.readStoredSnapshot();
+        if (cached && machine.restoreDecisionCode(cached, machine.overlayGeneration()) === "resume") {
+          blob = cached;
+        }
+        // The pure 3-way decision (unit-tested): a user snapshot would win, else a coherent boot
+        // snapshot restores, else cold boot. Busybox has no user snapshot, so this selects the boot
+        // snapshot whenever it is coherent.
+        const wantRestore = decideBootPath({
+          hasUserSnapshot: false,
+          bootSnapshotAvailable: true,
+          bootSnapshotDecision: blob ? "resume" : "pending",
+        });
+        if (!blob && wantRestore !== "user_snapshot") {
+          onState("restoring");
+          const gz = await fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t));
+          const got = await sha256hex(gz);
+          if (got !== bootSnap.sha256) {
+            throw new Error(`boot snapshot integrity: expected ${bootSnap.sha256}, got ${got}`);
+          }
+          const bytes = await gunzip(gz);
+          const decision = machine.restoreDecisionCode(bytes, machine.overlayGeneration());
+          if (decision === "resume") {
+            blob = bytes;
+            // Cache for instant repeat loads (still coherence-guarded on the next restore).
+            try { await machine.importStoredSnapshot(bytes); } catch { /* cache best-effort */ }
+          } else {
+            console.warn(`wasm-vm: boot snapshot not coherent (${decision}) — cold booting`);
+          }
+        }
+        if (blob) {
+          machine.loadSnapshotBlob(blob);
+          restoredFromBootSnapshot = true;
+          onState("restored");
+        }
+      } catch (e) {
+        // Fall back to the cold-booted machine — never a broken state.
+        console.warn("wasm-vm: boot-snapshot restore failed, cold booting:", e?.message || e);
+        restoredFromBootSnapshot = false;
+      }
     }
 
     let stopped = false;
@@ -338,7 +532,7 @@ export async function startLinuxBoot(opts = {}) {
     const schedule = () => {
       if (tickScheduled || stopped || paused || quotaPaused) return;
       tickScheduled = true;
-      setTimeout(tick, 0);
+      yieldToMain(tick);
     };
     // E3-T10: shared handler for a persist failure on EITHER pump site. A StorageFull is
     // RECOVERABLE — the dirty blocks stay pending (persistPending never marked them). While the
@@ -490,6 +684,8 @@ export async function startLinuxBoot(opts = {}) {
         }
       },
       isPaused: () => paused,
+      // E4: true when this boot skipped the Linux boot by restoring a shipped boot snapshot.
+      restoredFromBootSnapshot: () => restoredFromBootSnapshot,
       stateDigest: () => machine.stateDigest(),
       // E3-T15 verifier evidence: production DHCP exchanges from this exact guest boot.
       dhcpStats: () => JSON.parse(slirpDhcpStats()),

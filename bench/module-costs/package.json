@@ -1,0 +1,14 @@
+{
+  "name": "wasm-vm-module-costs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "E4-T19 cross-browser WebAssembly module-cost matrix (compile/instantiate/instance-cliff).",
+  "scripts": {
+    "matrix": "playwright test --config playwright.config.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.0",
+    "http-server": "^14.1.1"
+  }
+}

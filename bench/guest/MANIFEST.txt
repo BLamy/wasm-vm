@@ -1,0 +1,16 @@
+# E4-T03 benchmark ELF build manifest — regenerate with bench/build.sh
+date_generated:        2026-08-05T01:39:19Z  # informational only; ELFs are epoch-pinned
+source_date_epoch:     1704067200
+base_image_digest:     ubuntu@sha256:4fbb8e6a8395de5a7550b33509421a2bafbc0aab6c06ba2cef9ebffbc7092d90
+toolchain_image_id:    sha256:86406c1ffbe7462f9ec25304495d683af55524ebaec91268b1607d4666b3fd0f
+build_platform:        linux/amd64
+gcc_package:           gcc-13-riscv64-linux-gnu=13.3.0-6ubuntu2~24.04.1cross1
+gcc_version:           13.3.0
+libc_package:          libc6-dev-riscv64-cross=2.39-0ubuntu8cross1
+coremark_iterations:   6000
+dhrystone_dhry_iters:  30000000
+common_flags:          -static -O2 -g0 -march=rv64gc -mabi=lp64d -ffile-prefix-map=/Users/brettlamy/Dev/wasm-vm=. -ffile-prefix-map=/work=.
+
+# sha256 (also in SHA256SUMS):
+  4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937  coremark.rv64
+  eb21029f56d9774e9fa621ad8ef29b5f1fc8a2d5f7875d7c3eb5714fff5427d3  dhrystone.rv64

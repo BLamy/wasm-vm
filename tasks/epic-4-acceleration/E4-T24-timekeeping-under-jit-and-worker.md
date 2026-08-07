@@ -3,7 +3,7 @@ id: E4-T24
 epic: 4
 title: Timekeeping under JIT and worker — mtime sources, hybrid clocking, no time warps
 priority: 424
-status: pending
+status: verification-debt
 depends_on: [E4-T12, E4-T23]
 estimate: M
 capstone: false
@@ -67,5 +67,73 @@ the worker (DevTools pause) 30 s mid-boot and resume — kernel calibration (lpj
 must not be poisoned into permanent misbehavior; (5) run the E4-T25 lockstep rig in
 ICount mode twice and byte-diff the traces — nondeterminism refutes the mode's claim.
 
+## Design (as built)
+
+`TimeSource` (`crates/core/src/time.rs`) is the ONE owner of `mtime` derivation, in two modes:
+
+- **ICount** (default): `mtime = retired / clock_div`, a pure function of the retire count — byte-for-
+  byte the E1-T12 retire clock. `Machine::advance_clock` stays on this path unchanged, so every
+  determinism / lockstep / `predecode_diff` gate is untouched. This is the mode the E4-T25 rig runs
+  under so timer interrupts land at identical retire indices on both engines.
+- **WallClock**: host-wall-derived, scaled to `TIMEBASE_FREQ_HZ` (10 MHz), via an injected
+  `MonotonicClock` (no host time API named in `no_std` core; integer-only math — no f64 intrinsics).
+  `TimeSource::sample_wall(host_ns, current_mtime)` applies, in one place: (1) a **monotonicity clamp**
+  (`last_mtime` floor — never regresses even if the injected host clock jitters backward; also honors a
+  software `mtime` write as a floor); (2) **gap detection** (deadline overshoot vs `gap_threshold` =
+  100 ms); (3) **bounded slew** for a moderate gap — catch up at ≤ `slew_multiplier` (2×) real time
+  until it converges, never a raw jump; (4) the **jump-with-notification exception** for a gap >
+  `max_slew_gap` (10 s): jump straight to the wall target, re-anchor, and raise a `TimeJump` so the host
+  surfaces it and the guest resyncs from the RTC (mirrors hardware suspend/resume). Bounds are the
+  documented `WallClockPolicy::DEFAULT` constants; a 6-hour background gap therefore does NOT replay 6
+  hours of ticks.
+
+`Machine::set_wall_clock(clock, policy)` arms wall mode; `sample_wall_clock()` recomputes `mtime` once
+per block boundary (before `sync_clint` samples MTIP) so CLINT reads, `mtimecmp`/`stimecmp` scheduling,
+and the `rdtime`/SBI-time shadow all see the single clamped value. `wfi_fast_forward` is a no-op in wall
+mode (jumping to a deadline would make `sleep` return early). `take_time_jump()` drains the resync
+notification. The goldfish RTC (`dev/rtc.rs`) already reads real wall time independently, so its `date`
+value and a wall-mtime jump agree — the verified resync path.
+
 ## Verification log
-(empty)
+
+**2026-08-06 — headless core VERIFIED (native).** Files: `crates/core/src/time.rs` (new),
+`crates/core/src/lib.rs` (TimeSource wiring: fields, `advance_clock` guard, `sample_wall_clock`,
+`set_wall_clock`/`set_icount_clock`/`take_time_jump`/`clint_mtime`, `wfi_fast_forward` guard, `time`
+module), `crates/jit-runtime/tests/timekeeping.rs` (new).
+
+Gates run + passed (real output):
+- **AC5 ICount determinism** — `icount_two_runs_identical_mtime_trace`: two JIT runs byte-identical —
+  *"325 trace samples, timer fired at retired=Some(6311)"*, identical across both runs; exactly one
+  timer interrupt.
+- **AC3 CLOCK_MONOTONIC never decreases** — `clock_monotonic_never_decreases_under_churn`: *"mtime
+  monotone across 52800 samples of JIT/interp/eviction churn (evictions=9998)"* — asserted non-
+  decreasing at every sample.
+- **Monotonicity clamp + slew unit tests** (`time` module, 6 tests): clamp under jittery-backward host,
+  bounded slew for a moderate (5 s) gap capped at 2× real per sample, jump-with-notification for a
+  6-hour gap landing exactly at the wall target + re-anchor, software-write floor, ICount purity.
+- **ICount-lockstep-with-interrupts (the E4-T25 leg deferred)** —
+  `icount_lockstep_with_timer_interrupts_byte_identical`: JIT master vs shadow interpreter byte-
+  identical WITH a timer interrupt — *"retired=9009, mtime=9009, timer_ints=1, jit_blocks_exec=2937"*,
+  identical registers/PC/mtime/retired/interrupt-count.
+- Regressions green: `wasm-vm-core` full suite (169 lib + all integration incl. `determinism`, `clint`,
+  `interrupts`, `plic`; `predecode_diff` 76.9 s + `predecode_smc_diff` 125 s byte-identical, 0 failed);
+  `wasm-vm-jit-runtime` full suite (verdict-identical 16, `lockstep_fuzz` 5, `chaining`, `eviction`,
+  `timekeeping` 3 — 0 failed); wasm32 `no_std` core build (+`trace`) clean; `crates/wasm` release build
+  clean; `clippy` (core+jit-runtime, tests) clean; `fmt --check` clean.
+
+## Verification debt (deferred — needs booted-guest / browser on Linux `dev`; the mac reaps browser boots)
+
+- **AC1** — in-guest `time sleep 1` = 1.0 s ± 50 ms foreground under JIT. Needs WallClock mode driven by
+  a real host `performance.now()`/`Instant` in a booted guest. Injection point exists:
+  `Machine::set_wall_clock(Box<dyn MonotonicClock>, WallClockPolicy)`. NO number recorded.
+- **AC2** — scripted 10-min background throttle → guest `date` monotonic on resume, no RCU-stall/soft-
+  lockup in dmesg, shell responsive < 2 s. The gap-detection + slew POLICY that makes this safe is
+  verified headless above; the browser `visibilitychange` hook that FEEDS gap detection into
+  `sample_wall`, and the booted-guest run, are dev/browser debt. NO number recorded.
+- **AC4** — timer-delivery error p99 < 1 ms foreground under CoreMark (histogram). Needs a booted
+  CoreMark run in wall mode. NO number recorded.
+- **Adversarial** benchmark-integrity skew check, visibility-flip warp hunt, 100 Hz storm drift,
+  DevTools-pause mid-boot — all need the booted guest / browser; deferred with the above. NO numbers
+  recorded.
+- **Browser wiring**: `set_wall_clock` injection + `take_time_jump` surfacing + the `visibilitychange`
+  listener belong in `crates/wasm` / the worker JS; they drop onto the verified core API on `dev`.
