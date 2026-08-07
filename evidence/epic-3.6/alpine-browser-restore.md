@@ -93,15 +93,21 @@ additionally refuses a delta whose `base_binding` ≠ the manifest `base_hash`.
   `WVSNAPREADY`), snapshots at that idle shell. **RAM snapshot 60,430,185 B raw → 15,292,188 B gz**
   (`sha256 827c4962…`); **overlay-delta 5,897,509 B raw → 303,356 B gz** (`sha256 117a82c0…`, 1437 blocks).
   Both stamped `core_id=302e302e31…` (v0.0.1) + `base_id=03a8026f…` (chunk manifest `base_hash`, == R2).
-- **Browser restore (Playwright):** _(see status below)_
+- **Browser restore (Playwright, DEPLOYED site `https://f5561c04.wasm-vm.pages.dev`):** ✅
+  - `?guest=alpine` → **`window.__linux.restoredFromBootSnapshot() === true`**, `wvmDemo.isGuestReady()
+    === true` (a ready shell, NOT a login prompt), wall-time **13.5 s** (network-bound: 15 MB RAM snap +
+    22 MB kernel + 296 KB delta; the RAM restore itself is sub-second, cf. the native 0.62 s).
+  - In the restored guest: `cat /etc/alpine-release` → **3.20.10** (disk read coherent), `id -un` →
+    **root** (post-login), `wvrun` present/invokable (**container-capable**), `/proc/uptime` → **64.57**
+    (guest uptime PRESERVED across snapshot/restore — a restored guest, not a fresh boot).
+  - **Cold-boot A/B** (`?guest=alpine&noSnapshot`): after 35 s, `restoredFromBootSnapshot() === false`
+    and `isGuestReady() === false` — still cold-booting (a full cold boot is ~15 min to a shell). The
+    snapshot path reaches a ready, container-capable shell ~2 orders of magnitude faster.
 
-## Status / what remains
+## Status
 
-- Implementation, native capture, and coherent artifacts (bound to the deployed R2 base `03a8026f`) are
-  **done**; the manifest advertises them and the deploy script ships them on Pages.
-- The RAM snapshot (15.3 MB gz) is < 25 MiB so it ships on Pages like busybox; the overlay-delta (296 KB)
-  is committed. The 130 MB chunked base stays on R2 (unchanged; the delta is bound to it).
-- **Remaining:** the deployed-site Playwright measurement (restore vs cold `?noSnapshot`) — requires
-  `bash tools/deploy-cloudflare.sh` to publish the new `artifacts-alpine.json` + the two snapshot files,
-  then a Playwright run asserting `window.__linux.restoredFromBootSnapshot() === true`, a ready shell
-  (not a login prompt), and `wvrun` availability, with wall-time A/B.
+**Complete and verified end-to-end on the deployed production site.** Implementation, native capture,
+coherent artifacts (bound to the deployed R2 base `03a8026f`), manifest, deploy, and the live Playwright
+restore (with numbers above) are all done. The RAM snapshot (15.3 MB gz) ships on Pages like busybox; the
+overlay-delta (296 KB) is committed; the 130 MB chunked base stays on R2 (the delta is bound to it via
+the drifted-chunk coverage, so no R2 re-upload was needed).
