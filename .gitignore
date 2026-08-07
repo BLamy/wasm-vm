@@ -79,3 +79,8 @@ releases/container-bundles/
 # (pinned resolved package set + overlay sha256) + the vendored miniz sources — not the overlay.
 bench/guest/gcc.ext4
 bench/guest/gcc-MANIFEST.new
+
+# Agent/session scratch (Claude Code runtime, Playwright MCP output)
+.claude/
+.agents/
+.playwright-mcp/
