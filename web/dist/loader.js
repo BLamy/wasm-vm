@@ -383,9 +383,13 @@ export async function startLinuxBoot(opts = {}) {
           if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
           const ramBytes = await gunzip(rgz);
           const seeded = await seedOverlayDelta(imageManifestText, deltaBytes);
-          // Only arm the RAM restore when we actually seeded a fresh overlay: restoring RAM over a
-          // pre-existing (user) overlay would be disk-incoherent.
-          if (seeded) alpineRamBlob = ramBytes;
+          // Arm the RAM restore whether we FRESHLY seeded (first visit) OR a coherent overlay already
+          // exists (return visit — the post-boot disk delta is already in it, unmodified). The gate is
+          // the post-construction restoreDecisionCode below: it enforces the core-hash + base +
+          // overlay-generation triple, so a MODIFIED overlay (user wrote to disk) is rejected → cold
+          // boot, while an unmodified one fast-restores every load instead of cold-booting.
+          void seeded;
+          alpineRamBlob = ramBytes;
         } catch (e) {
           console.warn("wasm-vm: Alpine overlay-delta seed failed, cold booting:", e?.message || e);
           alpineRamBlob = null;

@@ -522,6 +522,11 @@ function resetGuestReady() {
 async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl) {
   if (linuxCtl) return { ok: true, already: true };
   lastBootError = null;
+  const _imgManifest = imageManifestUrl || (R2_ASSETS + "/chunked-alpine/manifest.json");
+  // Return-visit fast-restore is handled in loader.js: the RAM restore is armed whenever a coherent,
+  // unmodified overlay is present (not only on a fresh seed), so reloads restore instead of cold-booting;
+  // a MODIFIED overlay is rejected by restoreDecisionCode → cold boot. `?keep`/`?persist=1`/`?noSnapshot`
+  // are honored in the loader.
   setRunBanner(
     'Booting <b>Alpine</b> (lazy chunk fetch)… restoring a build-time snapshot — the console below is the real guest.',
   );
@@ -530,7 +535,7 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl) {
     {
       manifestUrl,
       mode: "chunked",
-      imageManifestUrl: imageManifestUrl || (R2_ASSETS + "/chunked-alpine/manifest.json"),
+      imageManifestUrl: _imgManifest,
       cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
       // The restore needs the persistent (IndexedDB overlay) path: the seeded post-boot disk delta
       // lives in that overlay. Default ON so the shipped RAM snapshot + delta restore in ~1s;
@@ -584,15 +589,16 @@ window.wvmDemo = {
   // wait). This is the default autoboot flavor. Needs artifacts-node-alpine.json (built by
   // tools/build-node-alpine-snapshot.sh) deployed alongside the chunked-alpine base.
   async bootNodeAlpine() {
-    // E3.6-T05: node-preinstalled Alpine restore. Node was `apk add`-ed into the OVERLAY (not a
-    // re-chunked base), so the disk delta rides the SAME chunked-alpine base as bare Alpine — only the
-    // shipped RAM snapshot + overlay-delta (both on R2, big: ~55 MB + ~24 MB) differ. seedOverlayDelta
-    // is base-hash-namespaced + no-ops if an overlay already exists, so a returning bare-Alpine user
-    // cold-boots instead of getting an incoherent restore; a fresh load (the default) restores Node.
+    // E3.6-T05: node-preinstalled Alpine restore. Node is baked into a re-chunked base
+    // (chunked-node-alpine), so it is lazy-loaded from that base on cache-miss disk reads exactly like
+    // the OS — the RAM snapshot is small (~15 MB gz, page cache dropped before capture) and the
+    // overlay-delta is tiny (runtime writes ∪ pristine↔R2 drift). seedOverlayDelta is base-hash-
+    // namespaced + no-ops if an overlay already exists, so a returning bare-Alpine user cold-boots
+    // instead of getting an incoherent restore; a fresh load (the default) restores Node.
     return bootAlpineFlavor(
       "./artifacts-node-alpine.json",
       "node-alpine",
-      R2_ASSETS + "/chunked-alpine/manifest.json",
+      R2_ASSETS + "/chunked-node-alpine/manifest.json",
     );
   },
   // True only once the booted guest actually has the container runtime (Alpine, not the busybox
