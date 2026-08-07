@@ -13,13 +13,13 @@
     },
     "bootSnapshot": {
       "url": "releases/boot-snapshot/node-alpine-ready.snap.gz",
-      "sha256": "58c9079da2f62207007efbdb7552d739d38b7b3b98ae33f4c2f59e2644ebeaf1",
-      "size": 25334324
+      "sha256": "a820682fac49012ec7c4c72c959148e12d5c218cb0e3c6683e70cbdbba2a573c",
+      "size": 25328301
     },
     "overlayDelta": {
       "url": "releases/boot-snapshot/node-alpine-overlay-delta.bin.gz",
-      "sha256": "90647ee89b57241bec3a4ca5681022c13f674887ee5754dc1f347aa3ced68d88",
-      "size": 16124
+      "sha256": "86762117ff5af0ba9413fa6445189da6e757b8ce2cd1f500fab79d8f62bb728b",
+      "size": 16538
     }
   }
 }
