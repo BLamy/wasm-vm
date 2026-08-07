@@ -499,6 +499,8 @@ const R2_ASSETS =
   "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev";
 // Whether the Alpine (container-capable) artifacts are deployed — set by the load-time probe below.
 let alpineAvailable = false;
+// E3.6-T05: whether the node-preinstalled Alpine artifacts are deployed (the default flavor).
+let nodeAlpineAvailable = false;
 // Guest readiness: flips true when the booted guest reaches a usable shell prompt. The Docker/IDE tabs
 // gate on this; a `wvm:guest-ready` window event fires once per boot. Reset when a new boot starts.
 let guestReady = false;
@@ -512,6 +514,36 @@ function resetGuestReady() {
   guestReady = false;
   promptTail = "";
   try { window.dispatchEvent(new Event("wvm:guest-booting")); } catch {}
+}
+
+// E3.6-T05: shared body for the Alpine-family chunked/restore boots (bare Alpine + node-Alpine). Both
+// use the SAME chunked base (R2 chunked-alpine) + the SAME persistent restore path; only the manifest
+// (which names the RAM snapshot + overlay-delta to restore) and the guest chip differ.
+async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl) {
+  if (linuxCtl) return { ok: true, already: true };
+  lastBootError = null;
+  setRunBanner(
+    'Booting <b>Alpine</b> (lazy chunk fetch)… restoring a build-time snapshot — the console below is the real guest.',
+  );
+  setGuestChip(chip);
+  await runLinuxBoot(
+    {
+      manifestUrl,
+      mode: "chunked",
+      imageManifestUrl: imageManifestUrl || (R2_ASSETS + "/chunked-alpine/manifest.json"),
+      cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
+      // The restore needs the persistent (IndexedDB overlay) path: the seeded post-boot disk delta
+      // lives in that overlay. Default ON so the shipped RAM snapshot + delta restore in ~1s;
+      // `?persist=0` forces the non-persistent lazy boot (no restore).
+      persist: new URLSearchParams(location.search).get("persist") !== "0",
+      // `?noSnapshot` disables the boot-snapshot restore (cold-boot baseline for A/B timing).
+      bootSnapshot: !new URLSearchParams(location.search).has("noSnapshot"),
+      ramMib: 256,
+      fileTransfer: true,
+    },
+    "booting production Alpine via LAZY CHUNK FETCH — only touched chunks download…",
+  );
+  return linuxCtl ? { ok: true } : { ok: false, error: lastBootError || "boot failed" };
 }
 
 window.wvmDemo = {
@@ -545,31 +577,23 @@ window.wvmDemo = {
   // { ok:true, already:true } if already up, or { ok:false, error } if the boot refused/failed. Needs
   // the Alpine artifacts to be deployed (artifacts-alpine.json + releases/chunked-alpine/).
   async bootAlpine() {
-    if (linuxCtl) return { ok: true, already: true };
-    lastBootError = null;
-    setRunBanner(
-      'Booting <b>Alpine</b> (lazy chunk fetch) to run real OCI containers via <code>wvrun</code>… ' +
-      'this takes a few minutes on the interpreted CPU — the console below is the real guest.',
+    return bootAlpineFlavor("./artifacts-alpine.json", "alpine");
+  },
+  // E3.6-T05: boot the NODE-preinstalled Alpine guest — same chunked base + restore machinery, but the
+  // shipped RAM snapshot + overlay-delta land at a shell with `node` already on PATH (no boot, no apk
+  // wait). This is the default autoboot flavor. Needs artifacts-node-alpine.json (built by
+  // tools/build-node-alpine-snapshot.sh) deployed alongside the chunked-alpine base.
+  async bootNodeAlpine() {
+    // E3.6-T05: node-preinstalled Alpine restore. Node was `apk add`-ed into the OVERLAY (not a
+    // re-chunked base), so the disk delta rides the SAME chunked-alpine base as bare Alpine — only the
+    // shipped RAM snapshot + overlay-delta (both on R2, big: ~55 MB + ~24 MB) differ. seedOverlayDelta
+    // is base-hash-namespaced + no-ops if an overlay already exists, so a returning bare-Alpine user
+    // cold-boots instead of getting an incoherent restore; a fresh load (the default) restores Node.
+    return bootAlpineFlavor(
+      "./artifacts-node-alpine.json",
+      "node-alpine",
+      R2_ASSETS + "/chunked-alpine/manifest.json",
     );
-    setGuestChip("alpine");
-    await runLinuxBoot(
-      {
-        manifestUrl: "./artifacts-alpine.json",
-        mode: "chunked",
-        imageManifestUrl: R2_ASSETS + "/chunked-alpine/manifest.json",
-        cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
-        // E4 Alpine restore-on-load needs the persistent (IndexedDB overlay) path: the seeded
-        // post-boot disk delta lives in that overlay. Default ON so the shipped RAM snapshot + delta
-        // restore in ~1s; `?persist=0` forces the non-persistent lazy boot (no restore).
-        persist: new URLSearchParams(location.search).get("persist") !== "0",
-        // `?noSnapshot` disables the boot-snapshot restore (cold-boot baseline for A/B timing).
-        bootSnapshot: !new URLSearchParams(location.search).has("noSnapshot"),
-        ramMib: 256,
-        fileTransfer: true,
-      },
-      "booting production Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login…",
-    );
-    return linuxCtl ? { ok: true } : { ok: false, error: lastBootError || "boot failed" };
   },
   // True only once the booted guest actually has the container runtime (Alpine, not the busybox
   // initramfs). The Docker tab uses this to know whether it can run wvrun.
@@ -758,7 +782,9 @@ function setGuestChip(kind) {
   if (!el) return;
   if (kind) {
     el.textContent = `root@${kind}`;
-    el.title = kind === "alpine"
+    el.title = kind === "node-alpine"
+      ? "Alpine Linux userland with Node.js preinstalled — container-capable (wvrun / OCI)"
+      : kind === "alpine"
       ? "Alpine Linux userland — container-capable (wvrun / OCI)"
       : "busybox userland (initramfs)";
     el.hidden = false;
@@ -1313,18 +1339,32 @@ setInteractiveState();
   } catch {
     /* probe failure = treat as absent; buttons already work locally */
   }
-  // Auto-boot the shared host for the whole app (IDE + Docker both use it). DEFAULT is busybox, which
-  // restores from the shipped build-time snapshot in ~1s instead of a full Linux boot. Alpine (the
-  // container-capable host with wvrun + OCI bundles) is opt-in via `?guest=alpine`, since it still
-  // cold-boots until its own snapshot exists. `?guest=busybox` forces the default explicitly.
-  // `?noAutoBoot` opts out entirely (e.g. for tests). Guest choice also honors `?boot=` as an alias.
+  // E3.6-T05: probe for the NODE-preinstalled Alpine manifest (the default flavor). Present on the
+  // deploy (shipped alongside the chunked base); absent on a bare local checkout, in which case the
+  // default falls back to the busybox fast-restore below.
+  try {
+    const probe = await fetch("./artifacts-node-alpine.json", { method: "GET", cache: "no-store" });
+    const text = probe.ok ? await probe.text() : "";
+    nodeAlpineAvailable = probe.ok && !text.trimStart().startsWith("<");
+  } catch {
+    nodeAlpineAvailable = false;
+  }
+  // Auto-boot the shared host for the whole app (IDE + Docker both use it). E3.6-T05 DEFAULT is
+  // node-alpine: it restores (in ~1s from the shipped RAM snapshot + overlay-delta) an Alpine host with
+  // Node.js already on PATH — no boot, no apk wait. `?guest=alpine` restores the bare (container-capable)
+  // Alpine; `?guest=busybox` the busybox fast-restore. If the node-alpine artifacts aren't deployed, the
+  // default falls back to busybox (always available). `?noAutoBoot` opts out entirely (e.g. for tests).
+  // Guest choice also honors `?boot=` as an alias.
   const _bootQ = new URLSearchParams(location.search);
-  const _guest = (_bootQ.get("guest") || _bootQ.get("boot") || "busybox").toLowerCase();
+  const _guest = (_bootQ.get("guest") || _bootQ.get("boot") || "node-alpine").toLowerCase();
   if (!linuxCtl && !_bootQ.has("noAutoBoot")) {
     setTimeout(() => {
       try {
-        if (_guest === "alpine" && alpineAvailable) window.wvmDemo.bootAlpine();
-        else window.wvmDemo.runBusybox(); // default: fast snapshot restore
+        if ((_guest === "node-alpine" || _guest === "nodealpine") && nodeAlpineAvailable) window.wvmDemo.bootNodeAlpine();
+        else if (_guest === "alpine" && alpineAvailable) window.wvmDemo.bootAlpine();
+        else if (_guest === "busybox") window.wvmDemo.runBusybox();
+        // Default flavor requested but its artifacts aren't here → busybox fast-restore (always works).
+        else window.wvmDemo.runBusybox();
       } catch {}
     }, 400);
   }
