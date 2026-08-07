@@ -71,7 +71,12 @@ trap 'rm -f "$WORK" "$RAW_SNAP" "$RAW_DELTA" "$FIFO" "$BOOTLOG"' EXIT
   # (`echo WVSNAP"READY"` — a quote between P and R so the echoed command never prints the literal
   # marker) is gated behind `node --version && npm --version`, so the snapshot fires ONLY at a shell
   # where Node is verified on PATH.
-  sleep 3; printf 'udhcpc -i eth0 2>&1; apk update 2>&1; apk add nodejs npm 2>&1; node --version && npm --version && echo WVSNAP"READY"\n' >&3
+  # After node is verified on PATH, evict the clean page cache (sync + drop_caches) so the ~40 MB of
+  # node/npm files the apk pulled in are NOT carried in the RAM snapshot. Node is on PATH but NOT
+  # running (no live V8 heap), so the snapshot is a small Alpine RAM image (~15 MB gz, like bare
+  # Alpine) rather than a fat 55 MB one; the node files are lazy-loaded from the re-chunked base on
+  # cache-miss disk reads after restore.
+  sleep 3; printf 'udhcpc -i eth0 2>&1; apk update 2>&1; apk add nodejs npm 2>&1; node --version && npm --version && sync && echo 3 > /proc/sys/vm/drop_caches && echo WVSNAP"READY"\n' >&3
   sleep 5400                          # keep the FIFO writer alive across the boot + apk install
 ) &
 WRITER=$!

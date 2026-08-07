@@ -591,10 +591,10 @@ window.wvmDemo = {
   async bootNodeAlpine() {
     // E3.6-T05: node-preinstalled Alpine restore. Node is baked into a re-chunked base
     // (chunked-node-alpine), so it is lazy-loaded from that base on cache-miss disk reads exactly like
-    // the OS — the RAM snapshot is small (~15 MB gz, page cache dropped before capture) and the
-    // overlay-delta is tiny (runtime writes ∪ pristine↔R2 drift). seedOverlayDelta is base-hash-
-    // namespaced + no-ops if an overlay already exists, so a returning bare-Alpine user cold-boots
-    // instead of getting an incoherent restore; a fresh load (the default) restores Node.
+    // Node is baked INTO its own re-chunked base (chunked-node-alpine on R2), so node's files
+    // lazy-load from that base on cache-miss reads exactly like the OS. The shipped RAM snapshot is
+    // small (page cache dropped before capture) and the overlay-delta tiny (boot writes ∪ drift). The
+    // snapshot in artifacts-node-alpine.json is stamped to the chunked-node-alpine base_hash.
     return bootAlpineFlavor(
       "./artifacts-node-alpine.json",
       "node-alpine",

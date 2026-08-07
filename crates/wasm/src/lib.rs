@@ -1263,6 +1263,26 @@ impl WasmLinux {
         })
     }
 
+    /// E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
+    /// arm tier-up — the `WasmLinux` twin of `WasmMachine::enable_jit`. The deployed demo constructs a
+    /// `WasmLinux` on the main thread (see `web/loader.js`), so without this the browser guest never
+    /// tiers up regardless of cross-origin isolation. The interpreter stays the oracle: with the JIT
+    /// off (this never called) `runChunk` is byte-identical to the pre-T29 path. `threshold` is the
+    /// hotness count before a block is nominated (see `web/cpu-isolation.js` `JIT_DEFAULT_THRESHOLD`).
+    /// The caller gates this on `crossOriginIsolated`.
+    #[wasm_bindgen(js_name = enableJit)]
+    pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .machine
+            .set_executor(Box::new(jit_browser::BrowserExecutor::new()));
+        inner.machine.set_block_cache(true);
+        inner.machine.set_interrupt_batching(true);
+        inner.machine.set_hotness_threshold(threshold.max(1));
+        inner.machine.set_jit(true);
+        Ok(())
+    }
+
     /// Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
     /// 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
     /// `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches

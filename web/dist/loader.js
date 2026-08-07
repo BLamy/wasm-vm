@@ -405,6 +405,26 @@ export async function startLinuxBoot(opts = {}) {
       machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
     }
 
+    // E4-T29 Phase 2: arm the in-wasm browser JIT on the main-thread Linux path. The demo runs
+    // WasmLinux directly (not the cpu-worker), so the JIT is dark unless enabled HERE. Gate on
+    // cross-origin isolation (runtime WebAssembly codegen is only sound/allowed there) exactly like
+    // web/cpu-isolation.js selectJitBackend; `?jit=0` forces interpreter-only for an A/B. The
+    // interpreter stays the oracle — enableJit only arms tier-up of hot blocks.
+    try {
+      const _jitQ = new URLSearchParams(location.search).get("jit");
+      const _wantJit = _jitQ !== "0" && globalThis.crossOriginIsolated === true;
+      if (_wantJit && typeof machine.enableJit === "function") {
+        machine.enableJit(32); // JIT_DEFAULT_THRESHOLD
+        try { window.__jit = { enabled: true, threshold: 32 }; } catch { /* worker scope */ }
+        console.info("wasm-vm: browser JIT enabled (crossOriginIsolated, threshold=32)");
+      } else {
+        try { window.__jit = { enabled: false, reason: _jitQ === "0" ? "forced-off" : (globalThis.crossOriginIsolated ? "no-enableJit" : "not-cross-origin-isolated") }; } catch { /* worker scope */ }
+        console.info("wasm-vm: browser JIT NOT enabled —", _jitQ === "0" ? "forced-off (?jit=0)" : (globalThis.crossOriginIsolated ? "machine has no enableJit" : "page not cross-origin isolated"));
+      }
+    } catch (e) {
+      console.warn("wasm-vm: enableJit gate failed:", e?.message || e);
+    }
+
     // E4-T01/T02 browser-evidence hook (additive, default-off): expose the raw WasmLinux instance
     // so a Playwright driver can pull getProfile() after boot, and — when the page is opened with
     // `?profile=1` — arm the sampled hot-PC + subsystem-time profiler from the very first

@@ -189,6 +189,22 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
+     * arm tier-up — the `WasmLinux` twin of `WasmMachine::enable_jit`. The deployed demo constructs a
+     * `WasmLinux` on the main thread (see `web/loader.js`), so without this the browser guest never
+     * tiers up regardless of cross-origin isolation. The interpreter stays the oracle: with the JIT
+     * off (this never called) `runChunk` is byte-identical to the pre-T29 path. `threshold` is the
+     * hotness count before a block is nominated (see `web/cpu-isolation.js` `JIT_DEFAULT_THRESHOLD`).
+     * The caller gates this on `crossOriginIsolated`.
+     * @param {number} threshold
+     */
+    enableJit(threshold) {
+        const ret = wasm.wasmlinux_enableJit(this.__wbg_ptr, threshold);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both

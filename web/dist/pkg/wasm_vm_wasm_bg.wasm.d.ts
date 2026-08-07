@@ -19,6 +19,7 @@ export const wasmlinux_cancelFileUpload: (a: number, b: number) => [number, numb
 export const wasmlinux_closeStorage: (a: number) => [number, number];
 export const wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
 export const wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
+export const wasmlinux_enableJit: (a: number, b: number) => [number, number];
 export const wasmlinux_fetchPending: (a: number) => any;
 export const wasmlinux_fetchStats: (a: number) => [number, number, number];
 export const wasmlinux_fileTransferReady: (a: number, b: number) => [number, number, number];

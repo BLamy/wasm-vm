@@ -31,14 +31,11 @@ echo "[deploy] repointing manifests at R2 ($R2_PUBLIC) …"
 for m in "$DIST/artifacts.json" "$DIST/artifacts-alpine.json" "$DIST/artifacts-node-alpine.json"; do
   [ -f "$m" ] || continue
   sed "s#\"releases/#\"$R2_PUBLIC/#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m"
-  # E4 boot snapshot: the compressed busybox + bare-Alpine boot snapshots are small (< 25 MiB) and ship
-  # ON Pages, so repoint their boot-snapshot URLs back to the relative releases/ path (the generic
-  # rewrite above sent them to R2). EXCEPTION (E3.6-T05): the node-alpine snapshot (~55 MiB) + overlay
-  # delta (~24 MiB) exceed the 25 MiB Pages cap, so they STAY on R2 — do NOT rewrite them back.
-  case "$m" in
-    *artifacts-node-alpine.json) : ;;  # node-alpine boot-snapshot + delta stay R2-hosted
-    *) sed "s#\"$R2_PUBLIC/boot-snapshot/#\"releases/boot-snapshot/#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m" ;;
-  esac
+  # All boot snapshots (busybox, bare-Alpine, AND node-Alpine now that Node is baked into a re-chunked
+  # base → RAM snap ~15 MiB, delta ~12 KiB) are < 25 MiB and ship ON Pages, so repoint their
+  # boot-snapshot URLs back to the relative releases/ path (the generic rewrite above sent them to R2).
+  # Pages is served fresh per-deploy; this also avoids R2 public-edge cache staleness on snapshot updates.
+  sed "s#\"$R2_PUBLIC/boot-snapshot/#\"releases/boot-snapshot/#g" "$m" > "$m.tmp" && mv "$m.tmp" "$m"
 done
 # E4 boot snapshot ships ON Pages (URL kept relative above), so the FILE must be present under
 # $DIST/releases/ — build-web-dist.sh deliberately skips releases/, so copy it here at deploy time
@@ -47,7 +44,7 @@ mkdir -p "$DIST/releases/boot-snapshot"
 # busybox (initramfs) + bare-Alpine (chunked) restore artifacts ship ON Pages (each < 25 MiB). The
 # E3.6-T05 node-alpine snapshot (~55 MiB) + overlay-delta (~24 MiB) are NOT here — they exceed the Pages
 # cap and are uploaded to R2 (s3://wasm-vm/boot-snapshot/) separately; their manifest URLs stay R2-pointed.
-for snap in busybox-ready.snap.gz alpine-ready.snap.gz alpine-overlay-delta.bin.gz; do
+for snap in busybox-ready.snap.gz alpine-ready.snap.gz alpine-overlay-delta.bin.gz node-alpine-ready.snap.gz node-alpine-overlay-delta.bin.gz; do
   if [ -f "releases/boot-snapshot/$snap" ]; then
     cp "releases/boot-snapshot/$snap" "$DIST/releases/boot-snapshot/$snap"
     echo "[deploy] shipped $snap ($(du -h "releases/boot-snapshot/$snap" | cut -f1)) on Pages"

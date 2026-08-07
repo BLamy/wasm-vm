@@ -49,6 +49,16 @@ export class WasmLinux {
     dismissFileDownload(id: number): boolean;
     dismissFileUpload(stream: number): boolean;
     /**
+     * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
+     * arm tier-up — the `WasmLinux` twin of `WasmMachine::enable_jit`. The deployed demo constructs a
+     * `WasmLinux` on the main thread (see `web/loader.js`), so without this the browser guest never
+     * tiers up regardless of cross-origin isolation. The interpreter stays the oracle: with the JIT
+     * off (this never called) `runChunk` is byte-identical to the pre-T29 path. `threshold` is the
+     * hotness count before a block is nominated (see `web/cpu-isolation.js` `JIT_DEFAULT_THRESHOLD`).
+     * The caller gates this on `crossOriginIsolated`.
+     */
+    enableJit(threshold: number): void;
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
@@ -417,6 +427,7 @@ export interface InitOutput {
     readonly wasmlinux_closeStorage: (a: number) => [number, number];
     readonly wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_enableJit: (a: number, b: number) => [number, number];
     readonly wasmlinux_fetchPending: (a: number) => any;
     readonly wasmlinux_fetchStats: (a: number) => [number, number, number];
     readonly wasmlinux_fileTransferReady: (a: number, b: number) => [number, number, number];

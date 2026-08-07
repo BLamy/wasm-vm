@@ -1,9 +1,25 @@
 {
   "generated": "LOCAL-ONLY node-preinstalled Alpine manifest (tools/gen-node-alpine-manifest.sh)",
   "artifacts": {
-    "kernel": { "url": "releases/kernel/6.6.63/Image", "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58", "size": 22097408 },
-    "rootfs": { "url": "releases/rootfs/alpine-rootfs.ext4", "sha256": "f1b544d459a2e347ead9d7620aee931d593dd930f7681ea6cfe415d839d7a9cd", "size": 805306368 },
-    "bootSnapshot": { "url": "releases/boot-snapshot/node-alpine-ready.snap.gz", "sha256": "43b755a64cd47508ef037ea88a6e700c0399d12f49e183649c61a29ba1f222e7", "size": 55309778 },
-    "overlayDelta": { "url": "releases/boot-snapshot/node-alpine-overlay-delta.bin.gz", "sha256": "60c9dc609090ff6c6ec75d243c4ab61cd1e313947822f3e294057f76c2877688", "size": 24258743 }
+    "kernel": {
+      "url": "releases/kernel/6.6.63/Image",
+      "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58",
+      "size": 22097408
+    },
+    "rootfs": {
+      "url": "releases/rootfs/alpine-rootfs.ext4",
+      "sha256": "f1b544d459a2e347ead9d7620aee931d593dd930f7681ea6cfe415d839d7a9cd",
+      "size": 805306368
+    },
+    "bootSnapshot": {
+      "url": "releases/boot-snapshot/node-alpine-ready.snap.gz",
+      "sha256": "58c9079da2f62207007efbdb7552d739d38b7b3b98ae33f4c2f59e2644ebeaf1",
+      "size": 25334324
+    },
+    "overlayDelta": {
+      "url": "releases/boot-snapshot/node-alpine-overlay-delta.bin.gz",
+      "sha256": "90647ee89b57241bec3a4ca5681022c13f674887ee5754dc1f347aa3ced68d88",
+      "size": 16124
+    }
   }
 }
