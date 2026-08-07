@@ -28,6 +28,7 @@ export const wasmlinux_finishFileDownload: (a: number, b: number, c: number) => 
 export const wasmlinux_getProfile: (a: number) => [number, number, number];
 export const wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
 export const wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
+export const wasmlinux_jitStats: (a: number) => [number, number, number];
 export const wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];
 export const wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
 export const wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];

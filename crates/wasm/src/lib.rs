@@ -1283,6 +1283,34 @@ impl WasmLinux {
         Ok(())
     }
 
+    /// E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
+    /// `{hasExecutor, compiledBlocks, executedBlocks, retiredViaJit}` read straight from the installed
+    /// executor — `executedBlocks > 0` is the definitive evidence translated code executed (not merely
+    /// that `enableJit` was called). `hasExecutor:false` means no JIT is attached at all.
+    #[wasm_bindgen(js_name = jitStats)]
+    pub fn jit_stats(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let obj = js_sys::Object::new();
+        let set = |k: &str, v: &JsValue| {
+            let _ = js_sys::Reflect::set(&obj, &JsValue::from_str(k), v);
+        };
+        match inner.machine.executor() {
+            Some(e) => {
+                set("hasExecutor", &JsValue::from_bool(true));
+                set("compiledBlocks", &JsValue::from_f64(e.compiled_count() as f64));
+                set("executedBlocks", &JsValue::from_f64(e.executed_blocks() as f64));
+                set("retiredViaJit", &JsValue::from_f64(e.retired_via_jit() as f64));
+            }
+            None => {
+                set("hasExecutor", &JsValue::from_bool(false));
+                set("compiledBlocks", &JsValue::from_f64(0.0));
+                set("executedBlocks", &JsValue::from_f64(0.0));
+                set("retiredViaJit", &JsValue::from_f64(0.0));
+            }
+        }
+        Ok(obj.into())
+    }
+
     /// Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
     /// 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
     /// `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
