@@ -124,3 +124,25 @@ Linux `dev` box).
   browser legs on dev.
 - Memory/instance measurements and riscv-tests green in the worker configuration — browser runner on
   dev.
+
+## Verification log — 2026-08-07 (pragmatic first cut: CPU-on-worker via postMessage)
+
+Ahead of the full shared-guest-RAM design, landed a **pragmatic CPU-on-worker path** that reuses the
+entire verified `startLinuxBoot` stack (chunked disk + snapshot restore + node-alpine + IndexedDB
+overlay) inside a dedicated Web Worker, bridging console/input over `postMessage`. This gets the dispatch
+loop off the main thread — the measured cause of slow in-browser Node (native interp does `node -e` in
+~3s; browser was 100-200s from the main-thread setTimeout/paint throttle, NOT the interpreter). No
+SharedArrayBuffer / COOP-COEP required for this path.
+
+- `web/linux-worker.js` + `web/linux-worker-host.js`: `startLinuxBootWorker(opts)` is a drop-in for
+  `startLinuxBoot` (same callback/controller contract); JS-Proxy controller forwards any method as async
+  RPC; `whenDone` bridged as a real thenable; output batched into transferable buffers. `web/main.js`
+  routes through it when `?worker=1` (opt-in; main-thread stays default). `window.__linuxCtl` test hook.
+- **[✓] Live-verified (Playwright, https://wasm-vm.pages.dev/?worker=1):** busybox restores in **0.69s
+  INSIDE THE WORKER**, clean prompt, zero errors; `echo WORKER_OK_$((21+21))` → **WORKER_OK_42** — the
+  full input→worker→guest→output→xterm round-trip works. loader.js was already worker-safe (guards all
+  `window`/`document`).
+- **verification-debt:** node-alpine-in-worker OOMs headless Chrome (101 MB snapshot + 256 MB guest RAM
+  peak) → the node-speed **worker-vs-main** measurement needs a real browser / `dev`. The full SAB
+  shared-guest-RAM design (zero-copy main-thread reads for the IDE/framebuffer) remains the follow-on;
+  this cut delivers the off-main-thread execution + interactive I/O that fast Node needs first.
