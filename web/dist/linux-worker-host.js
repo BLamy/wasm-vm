@@ -74,8 +74,18 @@ export async function startLinuxBootWorker(opts = {}) {
   const rpc = (method, args = []) =>
     new Promise((resolve, reject) => {
       const id = ++rpcSeq;
+      // Function arguments (callbacks) can't be structured-cloned across the worker boundary — such
+      // methods aren't bridged in this first cut. Strip them to null and guard the postMessage so a
+      // non-cloneable arg resolves to undefined instead of throwing a DataCloneError that would crash
+      // the whole boot (which previously left window.__linuxCtl unset and the guest "not up").
+      const safeArgs = Array.isArray(args) ? args.map((a) => (typeof a === "function" ? null : a)) : args;
       rpcPending.set(id, { resolve, reject });
-      worker.postMessage({ type: "rpc", id, method, args });
+      try {
+        worker.postMessage({ type: "rpc", id, method, args: safeArgs });
+      } catch {
+        rpcPending.delete(id);
+        resolve(undefined);
+      }
     });
 
   // Controller proxy — same surface main.js/loader consumers use. A few methods have local semantics
