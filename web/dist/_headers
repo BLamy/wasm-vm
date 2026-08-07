@@ -1,0 +1,7 @@
+# Cloudflare Pages headers. Cross-origin isolation so SharedArrayBuffer is available and the
+# JIT (E4-T29 browser executor) activates. COEP=credentialless (not require-corp) because the
+# large boot artifacts live on cross-origin R2 (pub-…r2.dev) with no CORP header — credentialless
+# loads cross-origin no-cors subresources without needing CORP, and keeps crossOriginIsolated true.
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: credentialless

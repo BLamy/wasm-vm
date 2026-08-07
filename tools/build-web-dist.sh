@@ -30,6 +30,10 @@ for f in web/*.js web/*.mjs web/*.html web/*.json; do
   cp "$f" "$DIST/"
 done
 
+# Cloudflare Pages headers file (cross-origin isolation for the JIT). Extensionless, so the glob
+# above misses it — copy explicitly into the deploy root.
+[ -e web/_headers ] && cp web/_headers "$DIST/_headers"
+
 # App subdirectories that are real source (worker, tailscale connect assets).
 [ -d web/tailscale-connect ] && cp -R web/tailscale-connect "$DIST/tailscale-connect"
 

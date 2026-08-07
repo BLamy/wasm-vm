@@ -84,3 +84,8 @@ bench/guest/gcc-MANIFEST.new
 .claude/
 .agents/
 .playwright-mcp/
+
+# Local secrets — never commit (Cloudflare/R2 creds, etc.)
+.env
+.env.*
+!.env.example
