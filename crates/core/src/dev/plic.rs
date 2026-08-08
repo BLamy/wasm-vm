@@ -59,14 +59,6 @@ pub struct PlicState {
     /// E2-T20: per-source CLAIM counts (index by source id) — the storm detector's "which
     /// line is hot" signal. Plain increment; never affects behaviour.
     claim_count: [u64; NUM_SOURCES],
-    /// Perf (interpreter hotspot): cached `eip(context)` results. `best_source` is an O(NUM_SOURCES)
-    /// scan and `eip` is sampled into `mip` every block boundary (see `Machine::sync_plic`), which the
-    /// profiler showed as ~20% of interpreter self-time. The result changes ONLY when an input changes
-    /// (`level`/`claimed`/`enable`/`priority`/`threshold`), so recompute lazily: any mutator sets
-    /// `eip_dirty`, and `eip` recomputes+caches both contexts on the next read. Behaviourally identical
-    /// — a pure memoization of a side-effect-free query.
-    eip_dirty: core::cell::Cell<bool>,
-    eip_cache: core::cell::Cell<[bool; 2]>,
 }
 
 impl PlicState {
@@ -127,7 +119,6 @@ impl crate::resume::ComponentSnapshot for PlicState {
         }
         // Diagnostic counter restarts from the resume point (behaviourally inert).
         self.claim_count = [0; NUM_SOURCES];
-        self.eip_dirty.set(true); // restored state → recompute the memoized eip on next read
         Ok(())
     }
 }
@@ -141,8 +132,6 @@ impl Default for PlicState {
             level: 0,
             claimed: [0; NUM_CONTEXTS],
             claim_count: [0; NUM_SOURCES],
-            eip_dirty: core::cell::Cell::new(true),
-            eip_cache: core::cell::Cell::new([false; 2]),
         }
     }
 }
@@ -163,23 +152,13 @@ impl PlicState {
             } else {
                 self.level &= !bit;
             }
-            self.eip_dirty.set(true); // `level` feeds `pending()` → `eip`
         }
     }
 
     /// Is the external-interrupt line asserted for `context`? True while some pending+enabled
     /// source has priority strictly above the context threshold.
-    ///
-    /// Perf: memoized. `best_source` is an O(NUM_SOURCES) scan sampled every block boundary; the
-    /// result is invariant between input changes, so recompute BOTH contexts once when `eip_dirty`
-    /// and serve cached reads otherwise (interior mutability — the query stays `&self`).
     pub fn eip(&self, context: usize) -> bool {
-        if self.eip_dirty.get() {
-            self.eip_cache
-                .set([self.best_source(0) != 0, self.best_source(1) != 0]);
-            self.eip_dirty.set(false);
-        }
-        self.eip_cache.get()[context]
+        self.best_source(context) != 0
     }
 
     /// The id the given context would claim: the highest-priority pending+enabled source above
@@ -212,7 +191,6 @@ impl PlicState {
         if id != 0 {
             self.claimed[context] |= 1u32 << id;
             self.claim_count[id] += 1; // E2-T20: storm "hot line" counter
-            self.eip_dirty.set(true); // `claimed` feeds `pending()` → `eip`
         }
         id as u32
     }
@@ -226,7 +204,6 @@ impl PlicState {
         let bit = 1u32 << id;
         if self.claimed[context] & bit != 0 {
             self.claimed[context] &= !bit;
-            self.eip_dirty.set(true); // reopening the gateway can re-assert `eip`
         }
     }
 }
@@ -319,10 +296,6 @@ impl MmioDevice for Plic {
 
     fn write(&mut self, offset: u64, _width: Width, value: u64) -> Result<(), BusFault> {
         let mut s = self.state.borrow_mut();
-        // Any PLIC config write (priority/enable/threshold/complete) can change `eip`; invalidate the
-        // memoized result. Writes are rare vs the per-boundary `eip` reads, so over-invalidating a
-        // read-only-region write is negligible.
-        s.eip_dirty.set(true);
         let v = value as u32;
         if offset < 0x1000 {
             let i = (offset / 4) as usize;
