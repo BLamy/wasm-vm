@@ -43,6 +43,11 @@ pub const NUM_ENTRIES: usize = 64;
 pub struct Pmp {
     cfg: [u8; NUM_ENTRIES],
     addr: [u64; NUM_ENTRIES],
+    /// Perf: cached `any_armed()`. It was an O(NUM_ENTRIES=64) scan run on EVERY instruction fetch
+    /// (via `pmp_ok`'s fast-path gate) — the profiler showed it as ~40% of pure-compute interpreter
+    /// self-time. `cfg` (the only input) changes ONLY in `write_cfg`/`restore_bytes` (rare — PMP is
+    /// configured at boot), so recompute the flag there and serve O(1) reads. Behaviourally identical.
+    armed: bool,
 }
 
 impl Default for Pmp {
@@ -51,14 +56,22 @@ impl Default for Pmp {
         Self {
             cfg: [0; NUM_ENTRIES],
             addr: [0; NUM_ENTRIES],
+            armed: false,
         }
     }
 }
 
 impl Pmp {
     /// True if any entry is armed (A != OFF) — the fast-path gate for the hot memory path.
+    /// O(1) cached read; `armed` is recomputed by the (rare) `cfg` mutators (`write_cfg`,
+    /// `restore_bytes`). See the `armed` field comment.
     pub fn any_armed(&self) -> bool {
-        self.cfg.iter().any(|c| c & CFG_A != 0)
+        self.armed
+    }
+
+    /// Recompute the cached `armed` flag from `cfg`. Called only by the `cfg` mutators.
+    fn refresh_armed(&mut self) {
+        self.armed = self.cfg.iter().any(|c| c & CFG_A != 0);
     }
 
     /// E3-T12b: append the full PMP state (all `NUM_ENTRIES` cfg bytes + addr words) to a CPU-section
@@ -81,6 +94,7 @@ impl Pmp {
         for a in self.addr.iter_mut() {
             *a = r.u64()?;
         }
+        self.refresh_armed(); // restored `cfg` → refresh the cached `any_armed` gate
         Ok(())
     }
 
@@ -114,6 +128,7 @@ impl Pmp {
             }
             self.cfg[i] = c;
         }
+        self.refresh_armed(); // `cfg` changed → refresh the cached `any_armed` gate
     }
     /// Read `pmpaddr[i]` (address[55:2]; [63:54] read 0).
     pub fn read_addr(&self, i: usize) -> u64 {
@@ -194,5 +209,6 @@ impl Pmp {
     pub fn allow_all(&mut self) {
         self.cfg[0] = CFG_R | CFG_W | CFG_X | (A_NAPOT << 3);
         self.addr[0] = ADDR_MASK; // NAPOT with all trailing ones → entire address space
+        self.refresh_armed(); // arms entry 0 directly → refresh the cached `any_armed` gate
     }
 }
