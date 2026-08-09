@@ -421,7 +421,12 @@ export async function startLinuxBoot(opts = {}) {
       const _jitQ = _q.get("jit");
       const _thrRaw = opts.jitThreshold ?? _q.get("jitThreshold");
       const _threshold = Math.max(1, Number(_thrRaw) || 32);
-      const _wantJit = _jitQ !== "0" && globalThis.crossOriginIsolated === true;
+      // OPT-IN (?jit=1) for now: default-on caused a prod OOM — the browser JIT's compiled blocks
+      // hold WebAssembly.Module/Instance objects in wasm-bindgen's externref table, and without
+      // browser-verified cache eviction they accumulate until "RangeError: WebAssembly" in
+      // addToExternrefTable0 (DevTools "potential out-of-memory crash"). Re-enable by default once
+      // the E4-T20 budget/eviction path is proven in-browser (and frees its externref entries).
+      const _wantJit = _jitQ === "1" && globalThis.crossOriginIsolated === true;
       if (_wantJit && typeof machine.enableJit === "function") {
         machine.enableJit(_threshold);
         try { window.__jit = { enabled: true, threshold: _threshold }; } catch { /* worker scope */ }
