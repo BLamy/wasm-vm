@@ -170,6 +170,64 @@ fn pmp_change_invalidates_cached_interior_permission() {
 }
 
 #[test]
+fn privilege_change_invalidates_cached_interior_permission() {
+    // An unlocked PMP entry is bypassed in M-mode but enforced in S-mode. Build a three-op block
+    // in M with execute denied only for the interior region, then change ONLY privilege. A cache
+    // keyed solely by PMP-register revision would replay the denied second op in S-mode.
+    const ADDI_X5_ONE: u32 = (1 << 20) | (5 << 7) | 0x13;
+    const ADDI_X6_ONE: u32 = (1 << 20) | (6 << 7) | 0x13;
+    const JAL_BACK_8: u32 = 0xff9f_f06f;
+
+    for cache_on in [false, true] {
+        let mut m = Machine::new(8 * 1024 * 1024);
+        m.bus_mut().store32(DRAM_BASE, ADDI_X5_ONE).unwrap();
+        m.bus_mut().store32(DRAM_BASE + 4, ADDI_X6_ONE).unwrap();
+        m.bus_mut().store32(DRAM_BASE + 8, JAL_BACK_8).unwrap();
+
+        // entry0: [0, DRAM+4) RX; entry1: [DRAM+4, DRAM+page) R-only. Both are unlocked,
+        // therefore M-mode may execute the whole block while S-mode may execute only its entry.
+        m.hart_mut().csr.pmp.write_addr(0, (DRAM_BASE + 4) >> 2);
+        m.hart_mut()
+            .csr
+            .pmp
+            .write_addr(1, (DRAM_BASE + 0x1000) >> 2);
+        let entry_rx = PMP_R | 4 | PMP_TOR;
+        let interior_r = PMP_R | PMP_TOR;
+        m.hart_mut()
+            .csr
+            .access(
+                PMPCFG0,
+                CsrOp::Write,
+                entry_rx | (interior_r << 8),
+                false,
+                false,
+                0,
+            )
+            .unwrap();
+        m.hart_mut().csr.mode = Priv::M;
+        m.hart_mut().regs.pc = DRAM_BASE;
+        m.set_block_cache(cache_on);
+        assert_eq!(m.run(3), RunOutcome::MaxInstrs);
+
+        // Do not touch PMP state: privilege alone changes the unlocked entries' effect.
+        m.hart_mut().csr.mode = Priv::S;
+        m.hart_mut().regs.pc = DRAM_BASE;
+        m.hart_mut().regs.write(5, 0);
+        m.hart_mut().regs.write(6, 0);
+
+        let trap = trapped(m.run(2));
+        assert_eq!(m.hart().regs.read(5), 1, "entry retired; cache={cache_on}");
+        assert_eq!(
+            m.hart().regs.read(6),
+            0,
+            "denied interior did not retire; cache={cache_on}"
+        );
+        assert_eq!(trap.cause, Exception::InstrAccessFault);
+        assert_eq!(trap.tval, DRAM_BASE + 4);
+    }
+}
+
+#[test]
 fn two_virtual_aliases_reuse_one_physical_entry() {
     const VA_A: u64 = 0x1000_0000;
     const VA_B: u64 = 0x2000_0000;

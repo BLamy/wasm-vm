@@ -298,8 +298,11 @@ pub struct Machine {
     /// counts every execution for JIT tier-up, while these counters describe decode-cache work.
     block_entry_hits: u64,
     block_builds: u64,
-    /// Last PMP revision whose execute permissions the decoded/compiled caches reflect.
+    /// Last PMP state whose execute permissions the decoded/compiled caches reflect. Effective
+    /// permissions depend on both the PMP registers and the current privilege: unlocked entries
+    /// are bypassed in M-mode but enforced in S/U-mode.
     pmp_revision_seen: u64,
+    pmp_mode_seen: csr::Priv,
     /// E4-T08: hotness counters + translation-candidate discovery. The block cache learns to
     /// NOMINATE JIT candidates: each block entry bumps a saturating counter, and crossing the
     /// design-doc threshold enqueues a `TranslationRequest` (dedup'd, requeued after any
@@ -591,6 +594,7 @@ impl Machine {
             block_entry_hits: 0,
             block_builds: 0,
             pmp_revision_seen: 0,
+            pmp_mode_seen: csr::Priv::M,
             // E4-T05 Phase C: batching is OFF by default even under `predecode` (the cache stays
             // byte-identical); it is opted in explicitly via `set_interrupt_batching`.
             interrupt_batching: false,
@@ -619,6 +623,7 @@ impl Machine {
         self.block_builds = 0;
         // The cache is empty after this toggle, so it already reflects the current permissions.
         self.pmp_revision_seen = self.hart.csr.pmp.revision();
+        self.pmp_mode_seen = self.hart.csr.mode;
         // E4-T08: a cache toggle wholesale-flushes blocks; reset the discovery state to match.
         self.discovery.reset();
         // E4-T10: a wholesale flush drops every compiled block too — they mirror the cache.
@@ -642,17 +647,19 @@ impl Machine {
     }
 
     /// PMP regions may split a physical page, while decoded/JIT caches are page-keyed. Any
-    /// effective PMP CSR change therefore invalidates all cached code before another block runs;
-    /// rechecking only the entry parcel would let a denied interior instruction replay from a
-    /// cursor. PMP writes are boot-time rare, so this stays completely off the steady-state path
-    /// except for one integer comparison at block/run boundaries.
+    /// effective PMP CSR or privilege change therefore invalidates all cached code before another
+    /// block runs; rechecking only the entry parcel would let a denied interior instruction replay
+    /// from a cursor. These changes are rare, so this stays off the steady-state path except for two
+    /// integer comparisons at block/run boundaries.
     #[cfg(not(feature = "zicsr-stub"))]
     fn sync_pmp_code_permissions(&mut self) {
         let revision = self.hart.csr.pmp.revision();
-        if revision == self.pmp_revision_seen {
+        let mode = self.hart.csr.mode;
+        if revision == self.pmp_revision_seen && mode == self.pmp_mode_seen {
             return;
         }
         self.pmp_revision_seen = revision;
+        self.pmp_mode_seen = mode;
         self.block_cache.flush();
         self.block_cursor = None;
         self.discovery.on_invalidate();
@@ -684,6 +691,7 @@ impl Machine {
         self.block_entry_hits = 0;
         self.block_builds = 0;
         self.pmp_revision_seen = self.hart.csr.pmp.revision();
+        self.pmp_mode_seen = self.hart.csr.mode;
         // E4-T08: a fresh cache has no blocks; reset discovery so stale counts/requests are dropped.
         self.discovery.reset();
         // E4-T10: fresh cache ⇒ every compiled block is stale; drop them all.
@@ -1841,6 +1849,7 @@ impl Machine {
         self.block_cache.flush();
         self.block_cursor = None;
         self.pmp_revision_seen = self.hart.csr.pmp.revision();
+        self.pmp_mode_seen = self.hart.csr.mode;
         // E4-T08: the restored physical layout invalidates every nominated block — reset discovery.
         self.discovery.reset();
         // E4-T10: recompile from cold on the restored image — every compiled block is stale.
