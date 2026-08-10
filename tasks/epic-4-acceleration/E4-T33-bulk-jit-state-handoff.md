@@ -3,7 +3,7 @@ id: E4-T33
 epic: 4
 title: Bulk JIT CPU-state handoff and bounded browser handle lifetime
 priority: 432
-status: in-progress
+status: implemented
 depends_on: [E4-T31]
 estimate: S
 risk: high
@@ -135,3 +135,67 @@ clone: `/private/tmp/wasm-vm-e4t33-verifier.7nxRyt/repo`, submission head
 `b75a2d4783fcf85c687b4c241935915cb1d417f4`, scrubbed of `RUSTFLAGS`, `RUST_LOG`, and `CARGO_*` build
 overrides. The cold clone reproduced the browser failure as exactly 2 subarray calls versus 0 and
 the native failures as exactly 1,024 and 128 equality probes.
+
+### 2026-08-10 — worker — repaired implementation
+
+Runtime/test/build commit: `8ef240df8ee9690a1f7f0a36af99de208ead04bf`. Full repaired evidence,
+diff coverage, exact command results, rr-soft manifests, browser artifacts, pristine-clone proof,
+and deployment URLs: `evidence/e4-t33/README.md`.
+
+The P1 repair retains a Box-stable 568-byte host image and one outer-Wasm `Uint8Array`, using one
+direct TypedArray `set` each way. The promoted clean dispatch now observes zero `subarray` calls;
+pre-call growth, mid-call clean growth, and mid-call precise-fault growth refresh the detached view
+without changing the externref floor. Unrecorded browser exceptions and native Wasmtime traps now
+fail closed after host-pointer cleanup, so already-observed MMIO is never replayed by the interpreter.
+The P6 repair keys the private integer mixer once per executor; both 1,024-key arbitrary-alignment
+and 128-PC mapped-DRAM chosen-cluster attacks pass while u64/u32 hot lookups remain one keyed mix.
+
+Final release evidence on the exact work budget measured 61.026 interpreter / 439.354 JIT MIPS for
+the 64-op acceptance workload (7.199x), versus the unchanged-runtime 238.552 JIT baseline (1.842x
+same-workload uplift). The six-op boundary diagnostic measured 41.698 / 55.233 MIPS (1.325x), versus
+the 10.267 JIT baseline (5.380x uplift). All counter, PC, register, and exact-budget assertions passed.
+
+Final gates:
+
+```text
+cargo fmt --all -- --check
+git diff --check
+cargo clippy -p wasm-vm-core -p wasm-vm-jit-translate -p wasm-vm-jit-runtime \
+  -p wasm-vm-cli --all-targets -- -D warnings
+cargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown --release -- -D warnings
+cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release
+cargo test -p wasm-vm-jit-runtime
+cargo test -p wasm-vm-cli --test run
+cargo test -p wasm-vm-core --test async_compile_pipeline \
+  interpreter_progresses_while_compiler_stalled -- --exact
+bash tools/check-zero-cost.sh --selftest
+wasm-pack test --node crates/wasm
+wasm-pack test --node crates/wasm --test jit_browser_parity -- \
+  browser_handles_remain_bounded_across_retranslation_churn \
+  --include-ignored --exact --nocapture
+cargo test -p wasm-vm-jit-runtime --release --test perf_handoff \
+  -- --ignored --nocapture --test-threads=1
+make web-build
+cd web && E3_T17_DEMO=1 npx playwright test \
+  tests/e3-t17-demo-proof.spec.js --reporter=list
+```
+
+All passed. Runtime totals include lib 4/4, batching 3/3, chaining 6/6, eviction 3/3,
+invalidation 13/13, JIT execution 20/20, lockstep 3/3, precise traps 5/5, and timekeeping 3/3;
+CLI integration passed 22/22. The full Node/Wasm matrix passed, and the explicit ignored stress
+passed 1/1 after 4,096 exact-state churn cycles with active eviction/retranslation and K+2 batch
+ownership. The real browser compliance gate passed 1/1 with `126 passed, 0 failed, complete` and
+zero console errors.
+
+On `ssh dev`, rr-soft 5.9.0 `-W --chaos` recordings of the native fail-closed MMIO path, keyed-cache
+collision attack, and precise all-register fault all passed, packed, and autopilot-replayed. Their
+manifest SHA-256 values are `ae567b153e85bd165c2fdb2d486a56befe040d434853941a31fa2648f887849b`,
+`559b78b2fb4bee8424bff0e6aa96801434b8d39a5666b7b`, and
+`64e928674c1cbe1fdb3e852b0ba7bff75457a31f5e668d45429201a9226993e1` under
+`rr-traces/e4-t33-repair/`.
+
+A pristine archive of `8ef240d` contains the generated inline snippet referenced by the committed
+Wasm glue. Cloudflare deployed the exact build at `https://719132bb.wasm-vm.pages.dev` and production
+`https://wasm-vm.pages.dev`; the live app reached `guest ready` and a real `~ #` with zero console
+errors/warnings, and the deployed snippet returned HTTP 200 with the byte-identical committed hash.
+The E4-T33 roadmap capability remains `in-progress` pending a fresh adversarial verifier.

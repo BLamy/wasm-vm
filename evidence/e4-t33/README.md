@@ -1,137 +1,170 @@
-# E4-T33 worker evidence
+# E4-T33 repaired worker evidence
 
-Frozen runtime/test implementation: `f725abf23f85ba2e98d6fa13d07affce07737ec4`
-(Apple Silicon macOS, 2026-08-10).
-This worker did not deploy; the fresh verifier owns promotion and the subsequent live-site update.
+Frozen runtime/test/build commit: `8ef240df8ee9690a1f7f0a36af99de208ead04bf`
+(Apple Silicon macOS plus x86_64 Linux rr-soft, 2026-08-10). This is a worker
+submission after the refutation recorded in the task log; it is not a verifier verdict.
 
-## Before/after release performance
+## Refutation repairs
 
-The benchmark-only baseline commit `73d1e88ad60f0e548edc98bdb41b34e6347ce097` contains the
-new harness on the unchanged E4-T31 runtime. Both baseline and final measurements used the same
-command, five alternating samples per engine, untimed warmup, and exact architectural work:
+- Browser dispatch now keeps a Box-stable 568-byte `CpuStateHandoff` image and one cached
+  `Uint8Array` view into the outer Wasm memory. Each direction is one direct TypedArray `set`; the
+  promoted clean-dispatch attack observes zero `Uint8Array.prototype.subarray` calls. A detached
+  outer view is refreshed immediately before copy-in and again after the compiled call, covering
+  outer-memory growth both before dispatch and inside imported MMIO.
+- Clean growth, growth followed by a recorded precise fault, and an unrecorded JavaScript exception
+  all keep the externref floor stable. Recorded faults commit the precise module register image;
+  unrecorded post-dispatch exceptions clear host pointers and rethrow a fixed primitive sentinel, so
+  the core cannot replay already-observed MMIO.
+- Native Wasmtime also fails closed after an unclassified engine trap. A malicious injected module
+  dirties module x5, performs one MMIO write, then executes `unreachable`; the test proves one write,
+  no Hart register/PC commit, cleared host pointers, and a later clean dispatch.
+- The four private native registries use a fast per-executor secret-keyed integer mixer. The
+  promoted attacks constructing 1,024 arbitrary aligned keys and 128 mapped-DRAM PCs against the
+  old public permutation now remain below their bounded probe thresholds. The secret is acquired
+  only when the executor is constructed; u64/u32 lookups remain one keyed SplitMix operation.
+- SoftMMU single-block and batch memories remain fixed at one page, while InlineTLB single/batch
+  memories remain imported/growable. `execute(None)` remains a pure pre-dispatch metadata miss;
+  once native or browser execution begins, unexpected engine failure is fail-closed rather than an
+  interpreter fallback.
+
+## Exact release performance
+
+Both baseline and final measurements used the ignored release-only `perf_handoff` harness, five
+alternating samples per engine, untimed warmup, and exact architectural work. The benchmark-only
+baseline commit is `73d1e88ad60f0e548edc98bdb41b34e6347ce097`; the final numbers below are from
+`8ef240d` after the keyed mixer and fail-closed repairs.
 
 ```text
 cargo test -p wasm-vm-jit-runtime --release --test perf_handoff \
   -- --ignored --nocapture --test-threads=1
 
                                       interpreter   JIT       JIT/interpreter
-baseline 64-op, 6,400,000 retired       76.083      238.552       3.135x
-final    64-op, 6,400,000 retired       81.092      608.741       7.507x
+baseline 64-op, 6,400,000 retired          —        238.552          —
+final    64-op, 6,400,000 retired       61.026      439.354       7.199x
 
-baseline six-op, 6,000,000 retired      26.773       10.267       0.383x
-final    six-op, 6,000,000 retired      62.692       87.625       1.398x
+baseline six-op, 6,000,000 retired         —         10.267          —
+final    six-op, 6,000,000 retired      41.698       55.233       1.325x
 ```
 
-The acceptance workload's same-workload JIT uplift is `608.741 / 238.552 = 2.551x`; the final JIT
-is 7.507x the production fast interpreter. Even the six-op worst-case boundary diagnostic now
-beats the interpreter. Every measured run asserts exact IRQ-retired, `mcycle`, `minstret`, JIT
-retirement, PC, and register-oracle state before reporting MIPS.
+The same-workload JIT uplift is `439.354 / 238.552 = 1.842x` for the acceptance workload and
+`55.233 / 10.267 = 5.380x` for the six-op boundary diagnostic. Every sample asserts the exact
+retired budget, IRQ retirement, `mcycle`, `minstret`, JIT retirement, PC, and register oracle.
 
-## Bulk handoff and precise-fault attacks
+## Bulk handoff, fault, and lifetime attacks
 
-The shared codec pins `[0x000, 0x238)` to exactly 568 little-endian bytes. Native Wasmtime performs
-one direct fixed-memory slice copy in and one out; the browser executor performs one
-`Uint8Array.copy_from` and one `copy_to` through a stable batch-owned view. Both precise-fault tests
-dirty x1 through x30, fault the following load into a distinct x31 sentinel, and assert x0, every
-writable register, cause, tval, virtual fault PC, and caller-owned PC. Unexpected engine traps do
-not authorize state readback.
+The shared codec pins `[0x000, 0x238)` to exactly 568 little-endian bytes for the current integer
+translator. Native Wasmtime performs one direct fixed-memory slice copy each way. The browser uses
+one retained outer-Wasm view and one batch-owned child view, with no per-dispatch Function/view
+clone and zero slice-glue `subarray` calls. Native and browser precise-fault tests dirty x1 through
+x30, fault the following load into a distinct x31 sentinel, and assert x0, all writable registers,
+cause, tval, virtual fault PC, and caller-owned PC.
 
-SoftMMU single-block and batch modules now declare private memory with `min=1,max=1`; directed
-parser tests prove InlineTLB single/batch memories remain imported and growable. The browser attack
-retains the 568-byte view, requires `memory.grow(1)` to throw, and proves the view's buffer identity
-and length do not change.
+The ignored Node stress runs 4,096 install/execute/evict cycles with a two-batch budget. It proves
+active eviction/retranslation, exact final x0..x31 state and exits, and the ownership equation
+`executor_floor + compiled_count + 2*module_count`: a K-block batch owns K Functions plus one state
+view and one Instance (`K+2`). Invalidation returns to the executor floor and dropping the executor
+returns to the global baseline. This exact bound is stronger than guessing the historical
+`addToExternrefTable0` OOM threshold, which the repository never recorded numerically.
 
-## Browser ownership and churn
+## Final local gates
 
 ```text
-wasm-pack test --node crates/wasm --test jit_browser_parity
-  PASS: 9 passed, 0 failed, 1 ignored
-
+cargo fmt --all -- --check
+git diff --check
+cargo clippy -p wasm-vm-core -p wasm-vm-jit-translate \
+  -p wasm-vm-jit-runtime -p wasm-vm-cli --all-targets -- -D warnings
+cargo clippy -p wasm-vm-wasm --lib \
+  --target wasm32-unknown-unknown --release -- -D warnings
+cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release
+cargo test -p wasm-vm-jit-runtime
+cargo test -p wasm-vm-cli --test run
+cargo test -p wasm-vm-core --test async_compile_pipeline \
+  interpreter_progresses_while_compiler_stalled -- --exact
+bash tools/check-zero-cost.sh --selftest
+wasm-pack test --node crates/wasm
 wasm-pack test --node crates/wasm --test jit_browser_parity -- \
   browser_handles_remain_bounded_across_retranslation_churn \
   --include-ignored --exact --nocapture
-  PASS: 1 passed, 0 failed; 4,096 install/execute/evict cycles
+make web-build
+cd web && E3_T17_DEMO=1 npx playwright test \
+  tests/e3-t17-demo-proof.spec.js --reporter=list
 ```
 
-The ownership test establishes the exact algebra rather than guessing a historical OOM threshold:
-a K=64 batch adds exactly K Functions + one state view + one Instance (`K+2` externrefs); under a
-two-batch LRU budget every cycle equals `executor_floor + compiled_count + 2*module_count`; explicit
-invalidation returns to the executor floor, and dropping the executor returns to the global
-baseline. The 4,096-cycle rotating retranslation attack also proves active evictions and
-retranslations, at most two live blocks/modules, all x0..x31 final values, every per-call exit PC,
-and the final caller-owned PC. The repository has no trustworthy numeric record of the old
-`addToExternrefTable0` failure point, so this evidence does not invent one; exact bounded ownership
-is the stronger invariant, with the long run proving it under churn.
+All passed. Runtime totals were lib 4/4, batching 3/3, chaining 6/6, eviction 3/3,
+invalidation 13/13, JIT execution 20/20, lockstep 3/3 plus one intentionally ignored heavy soak,
+precise traps 5/5, and timekeeping 3/3. CLI integration was 22/22. The full Node/Wasm matrix passed;
+browser parity was 14 passed plus the one explicit ignored churn test, which separately passed 1/1
+in 0.35 seconds. The real browser compliance gate passed 1/1 in 1.2 minutes and asserted the full
+`126 passed, 0 failed, complete` result with zero console errors. The only Wasm-test warning is the
+pre-existing unused `Exception` import in `crates/wasm/tests/hart_ctrl.rs`.
 
-## Correctness and build gates
+## Host-layer rr-soft evidence
+
+The exact `8ef240d` sources were built on `ssh dev` with cargo 1.97.1 and recorded by rr-soft 5.9.0
+using software counters and chaos scheduling. Each trace was packed, copied to this Mac, and
+successfully replayed with `rr replay -W -a` on the Linux host:
 
 ```text
-cargo fmt --all -- --check                                      PASS
-cargo clippy -p wasm-vm-core -p wasm-vm-jit-translate \
-  -p wasm-vm-jit-runtime -p wasm-vm-cli --all-targets \
-  -- -D warnings                                                 PASS
-cargo clippy -p wasm-vm-wasm --lib \
-  --target wasm32-unknown-unknown --release -- -D warnings       PASS
+rr-traces/e4-t33-repair/e4-t33-failclosed
+  tests::unexpected_engine_trap_after_mmio_fails_closed_without_register_commit
+  PASS 1/1; manifest SHA-256 ae567b153e85bd165c2fdb2d486a56befe040d434853941a31fa2648f887849b
 
-cargo test -p wasm-vm-core                                      PASS
-cargo test -p wasm-vm-jit-translate                             PASS
-cargo test -p wasm-vm-jit-runtime                               PASS
-cargo test -p wasm-vm-cli                                       PASS
-cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown \
-  --release                                                      PASS
-wasm-pack test --node crates/wasm                               PASS
-make web-build                                                   PASS
+rr-traces/e4-t33-repair/e4-t33-keyed-cache
+  tests::deterministic_jit_hasher_resists_chosen_probe_clusters
+  PASS 1/1; manifest SHA-256 559b78b2fb4bee8424bff0e6aa96801434b8d39a5666b7b
+
+rr-traces/e4-t33-repair/e4-t33-precise-bulk
+  bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault
+  PASS 1/1; manifest SHA-256 64e928674c1cbe1fdb3e852b0ba7bff75457a31f5e668d45429201a9226993e1
 ```
 
-Affected runtime totals include batching 3/3, chaining 6/6, eviction 3/3, invalidation 13/13,
-JIT execution 20/20, precise traps 4/4, and timekeeping 3/3. CLI totals include 53 unit tests,
-22 integrated run tests, and the relay/token/chunk suites. The full Node Wasm matrix, wrapper
-tests, browser I/M/A parity, SMC invalidation, linking, exact budgeting, precise traps, and the
-explicit long churn gate are green. The only emitted Wasm-test warning is the pre-existing unused
-`Exception` import in `crates/wasm/tests/hart_ctrl.rs`.
+The trace directories are intentionally gitignored; adjacent `.sha256` manifests enumerate every
+packed file. The remote disk initially reached 100% and the linker failed with SIGBUS before any
+test ran. Removing only this worker's abandoned remote tree/failed outputs plus recoverable apt
+cache restored space; the clean rebuild, recordings, pack, and replay then succeeded.
 
-## Diff-to-evidence audit
+## Portability, browser, and deployment evidence
 
-- `core/hart/regs.rs` and `core/jit.rs`: codec layout, endian bytes, and x0 preservation are covered
-  by `cpu_state_handoff_pins_frozen_layout_endian_and_x0` plus both integrated fault paths.
-- `jit-runtime/src/lib.rs`: one-copy native handoff and clean/fault exits are covered by the JIT,
-  precise-trap, chaining, invalidation, and perf suites. The mixed integer hasher has a 32K-key
-  aligned/same-low-bit insert/get/remove adversarial unit test; all four registries are exercised by
-  batching, chaining, eviction, and SMC invalidation.
-- `jit-translate`: single/batch SoftMMU fixed memory and single/batch InlineTLB growability are
-  parser-asserted; browser view growth rejection covers the runtime invariant.
-- `wasm/jit_browser.rs`: I/M/A, precise trap, SMC, chain, eviction, exact K+2 ownership, full-register
-  churn, invalidation, and drop-floor tests cover clean exits and every changed lifecycle path.
-- `web/roadmap.js`: the E4 capability remains `in-progress` until a fresh critic verifies it; the
-  rebuilt page and filtered E4-T33 row are captured below.
+A pristine archive of `8ef240d` at `/tmp/wasm-vm-e4t33-dist.gcQQ4w/repo` contains the generated
+inline module named by `web/dist/pkg/wasm_vm_wasm.js`:
 
-## Fresh browser observation
+```text
+clean-clone-snippet: PASS ./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js
+```
 
-Fresh COOP/COEP origin:
-`http://127.0.0.1:8147/?guest=busybox&nosw&worker=0&jit=0`.
+This catches the nested wasm-pack `.gitignore` failure from the superseded pre-freeze commit. The
+final build removes that copied ignore file and tracks the snippet deterministically.
 
-- Fast BusyBox snapshot restore reached `guest ready` and a real `~ #` prompt in 0.41 seconds.
-- The built suite marker reported `126 passed`; console errors and warnings were both zero.
-- Filtering the roadmap to E4-T33 produced exactly one matching issue.
-- An aggressive `?jit=1&jitThreshold=1` page loaded with zero console errors, but main-thread Linux
-  saturated DOM automation. This is not claimed as a responsive JIT-demo success; moving the whole
-  machine to the default Web Worker remains E4-T32.
+Fresh local page evidence at port 8167 reached a real BusyBox `~ #` in 0.69 seconds, reported
+`guest ready`, exposed exactly one filtered E4-T33 roadmap row, and emitted zero errors/warnings.
+The roadmap capability deliberately remains `in-progress` until the fresh critic returns.
 
 Artifacts:
 
-- `browser-bulk-jit.jpg` — SHA-256
-  `8d783bb16165726fd6c913a8a770577f1229387bd2ec5364093f7b92aae2b0a6`
-- `browser-roadmap.jpg` — SHA-256
-  `e30a4778a85f91e56464756df0a1ac2811286e4caab64501e2c52ce32e5036c5`
+- `browser-repair-demo.jpg` — SHA-256
+  `d0f7915e1962775fa8bf21f69cdbecc7b2635b370f63f7f3505ef30bbb86b8ee`
+- `browser-repair-roadmap.jpg` — SHA-256
+  `b4acaca5529585b88c5f8350414c71eca7b65e904c27321b5059980850f54eee`
+- `browser-repair-task.jpg` — SHA-256
+  `7aa84d87a5e93ddc0b28e96fcc9d9363c6ed50885afabe7ab623ff3b5aad4f1a`
+  (rebuilt task detail showing the repair entry and `implemented` status)
 
-## Verification-log draft
+Cloudflare Pages production deployment completed from `8ef240d`:
 
-`f725abf23f85ba2e98d6fa13d07affce07737ec4` removes scalar register crossings from both executors,
-freezes the 568-byte state
-view lifetime, bounds browser roots to K+2 per batch, preserves exact precise-fault state, and moves
-native registry lookup off SipHash without changing the guarded executor protocol. The exact-head
-native/Wasm/browser gates above are green; paired same-workload release evidence records a 2.551x
-JIT uplift and a final 7.507x JIT/interpreter ratio. The 4,096-cycle tiny-budget attack proves exact
-externref ownership, active eviction/retranslation, and full-register architectural parity. The
-fresh rebuilt demo restores BusyBox to a real prompt with zero console errors/warnings and surfaces
-E4-T33 as in progress. Submitted for a separate adversarial verifier; not deployed and not verified.
+- immutable preview: `https://719132bb.wasm-vm.pages.dev`
+- production: `https://wasm-vm.pages.dev`
+- live `app.html?guest=busybox&nosw&worker=0&jit=0`: real `~ #`, `guest ready`, zero console
+  errors/warnings
+- deployed `pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js`: HTTP 200, 170 bytes, SHA-256
+  `b42727c1c9a8e533cd165ce533824d67bd20bd55e690e123787965f164fde04d`, byte-identical to `web/dist`
+
+## Claim
+
+`8ef240d` removes scalar register crossings from both executors, reuses stable browser views without
+slice-glue allocation, bounds browser roots to K+2 per batch, preserves exact clean and precise-fault
+state across outer-memory growth, fails closed after post-dispatch engine exceptions, and makes the
+native registry mixer resistant to the promoted chosen-cluster attacks without losing the release
+speed gate. Exact-head native/Wasm/browser tests, 4,096-cycle churn, paired release measurements,
+three replayable rr-soft recordings, pristine-clone packaging, a 126/0 browser run, and the live
+Cloudflare deployment support that claim. Submitted for a separate adversarial verifier; not
+worker-verified.
