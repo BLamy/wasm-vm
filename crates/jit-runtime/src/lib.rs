@@ -1024,7 +1024,54 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 
 #[cfg(test)]
 mod tests {
-    use super::JitMap;
+    use super::{JitKeyHasher, JitMap};
+    use std::hash::{Hash, Hasher};
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    static EQUALITY_PROBES: AtomicUsize = AtomicUsize::new(0);
+
+    #[derive(Clone, Copy)]
+    struct ProbeKey(u64);
+
+    impl Hash for ProbeKey {
+        fn hash<H: Hasher>(&self, state: &mut H) {
+            state.write_u64(self.0);
+        }
+    }
+
+    impl PartialEq for ProbeKey {
+        fn eq(&self, other: &Self) -> bool {
+            EQUALITY_PROBES.fetch_add(1, Ordering::Relaxed);
+            self.0 == other.0
+        }
+    }
+
+    impl Eq for ProbeKey {}
+
+    fn undo_xor_right(mut value: u64, shift: u32) -> u64 {
+        let mut distance = shift;
+        while distance < 64 {
+            value ^= value >> distance;
+            distance *= 2;
+        }
+        value
+    }
+
+    fn inverse_odd(value: u64) -> u64 {
+        let mut inverse = value;
+        for _ in 0..6 {
+            inverse = inverse.wrapping_mul(2u64.wrapping_sub(value.wrapping_mul(inverse)));
+        }
+        inverse
+    }
+
+    fn unmix_jit_hash(mut hash: u64) -> u64 {
+        hash = undo_xor_right(hash, 31);
+        hash = hash.wrapping_mul(inverse_odd(0x94d0_49bb_1331_11eb));
+        hash = undo_xor_right(hash, 27);
+        hash = hash.wrapping_mul(inverse_odd(0xbf58_476d_1ce4_e5b9));
+        undo_xor_right(hash, 30)
+    }
 
     #[test]
     fn mixed_jit_maps_survive_aligned_same_low_bit_churn() {
@@ -1065,5 +1112,82 @@ mod tests {
             assert_eq!(id_map.remove(&key), Some(i.rotate_left(7)));
         }
         assert!(id_map.is_empty());
+    }
+
+    #[test]
+    fn deterministic_jit_hasher_resists_chosen_probe_clusters() {
+        const N: usize = 1_024;
+        const BUCKET_BITS: u32 = 15;
+        const LOW_BUCKET: u64 = 0x1234;
+        const CONTROL_TAG: u64 = 0x55;
+
+        // The seedless SplitMix finalizer is a public permutation. Choose output hashes with the
+        // same HashMap bucket bits and SwissTable h2 tag, invert them, and retain instruction-aligned
+        // input keys. A caller controlling the physical-key space can build the whole cluster
+        // without observing any executor-local secret.
+        let mut keys = Vec::with_capacity(N + 1);
+        for middle in 0u64.. {
+            let hash = (CONTROL_TAG << 57) | (middle << BUCKET_BITS) | LOW_BUCKET;
+            let key = unmix_jit_hash(hash);
+            if key & 3 != 0 {
+                continue;
+            }
+            assert_eq!(JitKeyHasher::mix(key), hash);
+            keys.push(ProbeKey(key));
+            if keys.len() == N + 1 {
+                break;
+            }
+        }
+
+        let mut map = JitMap::<ProbeKey, u64>::default();
+        map.reserve(N);
+        for (index, key) in keys[..N].iter().copied().enumerate() {
+            assert_eq!(map.insert(key, index as u64), None);
+        }
+        EQUALITY_PROBES.store(0, Ordering::Relaxed);
+        assert_eq!(map.get(&keys[N]), None);
+        let probes = EQUALITY_PROBES.load(Ordering::Relaxed);
+        assert!(
+            probes < 64,
+            "guest-chosen aligned PCs formed a {probes}-entry probe cluster in a {N}-entry JIT map"
+        );
+    }
+
+    #[test]
+    fn mapped_dram_pcs_do_not_form_chosen_probe_clusters() {
+        const N: usize = 128;
+        const BASE: u64 = 0x8000_0000;
+        const SPAN: u64 = 128 * 1024 * 1024;
+        const BUCKET_MASK: u64 = 0xff;
+
+        // Even without inverting the mixer or leaving the default 128 MiB DRAM window, a guest can
+        // scan aligned code addresses and select PCs with one ideal bucket and one h2 control tag.
+        let reference = JitKeyHasher::mix(BASE);
+        let wanted_bucket = reference & BUCKET_MASK;
+        let wanted_tag = reference >> 57;
+        let mut keys = Vec::with_capacity(N + 1);
+        for key in (BASE..BASE + SPAN).step_by(4) {
+            let hash = JitKeyHasher::mix(key);
+            if hash & BUCKET_MASK == wanted_bucket && hash >> 57 == wanted_tag {
+                keys.push(ProbeKey(key));
+                if keys.len() == N + 1 {
+                    break;
+                }
+            }
+        }
+        assert_eq!(keys.len(), N + 1, "attack must stay inside mapped DRAM");
+
+        let mut map = JitMap::<ProbeKey, u64>::default();
+        map.reserve(N);
+        for (index, key) in keys[..N].iter().copied().enumerate() {
+            assert_eq!(map.insert(key, index as u64), None);
+        }
+        EQUALITY_PROBES.store(0, Ordering::Relaxed);
+        assert_eq!(map.get(&keys[N]), None);
+        let probes = EQUALITY_PROBES.load(Ordering::Relaxed);
+        assert!(
+            probes < 32,
+            "mapped guest PCs formed a {probes}-entry probe cluster in a {N}-entry JIT map"
+        );
     }
 }

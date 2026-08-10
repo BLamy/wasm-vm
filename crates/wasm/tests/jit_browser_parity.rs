@@ -35,6 +35,37 @@ use wasm_vm_core::mmio::SystemBus;
 use wasm_vm_core::ram::Ram;
 use wasm_vm_wasm::BrowserExecutor;
 
+#[wasm_bindgen::prelude::wasm_bindgen(inline_js = r#"
+let originalUint8Subarray;
+let uint8SubarrayCalls = 0;
+
+export function beginUint8SubarrayAudit() {
+    if (originalUint8Subarray !== undefined) {
+        throw new Error("Uint8Array.subarray audit is already active");
+    }
+    originalUint8Subarray = Uint8Array.prototype.subarray;
+    uint8SubarrayCalls = 0;
+    Uint8Array.prototype.subarray = function(...args) {
+        uint8SubarrayCalls += 1;
+        return originalUint8Subarray.apply(this, args);
+    };
+}
+
+export function finishUint8SubarrayAudit() {
+    const calls = uint8SubarrayCalls;
+    Uint8Array.prototype.subarray = originalUint8Subarray;
+    originalUint8Subarray = undefined;
+    uint8SubarrayCalls = 0;
+    return calls;
+}
+"#)]
+extern "C" {
+    #[wasm_bindgen(js_name = beginUint8SubarrayAudit)]
+    fn begin_uint8_subarray_audit();
+    #[wasm_bindgen(js_name = finishUint8SubarrayAudit)]
+    fn finish_uint8_subarray_audit() -> u32;
+}
+
 // ── tiny RV64 encoders ───────────────────────────────────────────────────────
 fn enc_addi(rd: u32, rs1: u32, imm: i32) -> u32 {
     ((imm as u32) << 20) | (rs1 << 15) | (0b000 << 12) | (rd << 7) | 0b0010011
@@ -334,6 +365,68 @@ fn bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault() {
     }
     assert_eq!(hart.regs.read(30), FAULT_ADDR);
     assert_eq!(hart.regs.read(31), seed(31));
+}
+
+#[wasm_bindgen_test]
+fn browser_dispatch_reuses_memory_views_without_subarray_allocation() {
+    let decoded = block(
+        DRAM_BASE,
+        &[Instr::Addi {
+            rd: 5,
+            rs1: 5,
+            imm: 1,
+        }],
+    );
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    let mut hart = Hart::default();
+    hart.regs.write(5, 41);
+    hart.regs.pc = DRAM_BASE;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+
+    begin_uint8_subarray_audit();
+    let exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("compiled block exits cleanly");
+    let subarray_calls = finish_uint8_subarray_audit();
+
+    assert_eq!(exit.code, ExitCode::Fallthrough);
+    assert_eq!(hart.regs.read(5), 42);
+    assert_eq!(
+        subarray_calls, 0,
+        "a retained handoff view must not construct Uint8Array subviews per dispatch"
+    );
+}
+
+#[wasm_bindgen_test]
+fn execute_miss_preserves_public_guard_and_guest_state() {
+    let decoded = block(
+        DRAM_BASE,
+        &[Instr::Addi {
+            rd: 5,
+            rs1: 5,
+            imm: 1,
+        }],
+    );
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    let before_stats = executor.jit_cache_stats();
+    let mut hart = Hart::default();
+    hart.regs.write(5, 41);
+    hart.regs.pc = DRAM_BASE + 0x1000;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+
+    assert!(!executor.is_compiled(DRAM_BASE + 0x1000));
+    assert!(
+        executor
+            .execute(DRAM_BASE + 0x1000, &mut hart, &mut bus)
+            .is_none(),
+        "execute must preserve the public is_compiled guard on a cache miss"
+    );
+    assert_eq!(executor.jit_cache_stats(), before_stats);
+    assert_eq!(executor.executed_blocks(), 0);
+    assert_eq!(hart.regs.read(5), 41);
+    assert_eq!(hart.regs.pc, DRAM_BASE + 0x1000);
 }
 
 #[wasm_bindgen_test]

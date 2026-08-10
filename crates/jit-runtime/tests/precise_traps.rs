@@ -421,3 +421,43 @@ fn bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault() {
     assert_eq!(hart.regs.read(30), FAULT_ADDR);
     assert_eq!(hart.regs.read(31), seed(31));
 }
+
+#[test]
+fn execute_miss_preserves_public_guard_and_guest_state() {
+    use wasm_vm_core::decode::Instr;
+    use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
+    use wasm_vm_core::hart::Hart;
+
+    let block = DecodedBlock::new(
+        DRAM_BASE,
+        vec![MicroOp {
+            instr: Instr::Addi {
+                rd: 5,
+                rs1: 5,
+                imm: 1,
+            },
+            len: 4,
+            raw: 0,
+        }],
+        4,
+    );
+    let mut executor = WasmtimeExecutor::new();
+    executor.install(&block);
+    let before_stats = executor.jit_cache_stats();
+    let mut hart = Hart::default();
+    hart.regs.write(5, 41);
+    hart.regs.pc = DRAM_BASE + 0x1000;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+
+    assert!(!executor.is_compiled(DRAM_BASE + 0x1000));
+    assert!(
+        executor
+            .execute(DRAM_BASE + 0x1000, &mut hart, &mut bus)
+            .is_none(),
+        "execute must preserve the public is_compiled guard on a cache miss"
+    );
+    assert_eq!(executor.jit_cache_stats(), before_stats);
+    assert_eq!(executor.executed_blocks(), 0);
+    assert_eq!(hart.regs.read(5), 41);
+    assert_eq!(hart.regs.pc, DRAM_BASE + 0x1000);
+}
