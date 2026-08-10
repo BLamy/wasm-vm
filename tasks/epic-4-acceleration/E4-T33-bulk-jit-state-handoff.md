@@ -3,7 +3,7 @@ id: E4-T33
 epic: 4
 title: Bulk JIT CPU-state handoff and bounded browser handle lifetime
 priority: 432
-status: pending
+status: in-progress
 depends_on: [E4-T31]
 estimate: S
 risk: high
@@ -33,4 +33,3 @@ cache budget, and run enough hot blocks to exceed the old failure point. Any los
 trap, unbounded live handle count, or JIT slowdown refutes the change.
 
 ## Verification log
-

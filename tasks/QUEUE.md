@@ -12,7 +12,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 1. **E3.5-T05e** — "Sub-capstone: structured guest⇄UI channel + Alpine boot bridge" **[DECOMPOSE BEFORE START]**
 1. **E3-T19a** — Composed-stack node lifecycle and reload-restore
 1. **E3-T22** — Clipboard integration - OSC 52 copy, paste injection, bracketed paste **[DECOMPOSE BEFORE START]**
-1. **E4-T33** — Bulk JIT CPU-state handoff and bounded browser handle lifetime
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -297,7 +296,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [ ] `429` [E4-T28](epic-4-acceleration/E4-T28-capstone-10x-acceleration.md) — "Capstone: interactive/fast Node.js (Bun stretch), 10x CoreMark, sub-5s boot, zero regressions" **[CAPSTONE]** *(deps: E4-T24, E4-T26, E4-T27, E4-T29, E4-T30, E4-T31, E4-T33, E4-T32)*
 - [x] `430` [E4-T30](epic-4-acceleration/E4-T30-predecode-entry-hit-fast-interpreter.md) — Predecode entry-hit reuse and production fast-interpreter mode *(deps: E1)*
 - [x] `431` [E4-T31](epic-4-acceleration/E4-T31-bounded-jit-work-retirement.md) — Bounded JIT work and exact retirement accounting *(deps: E4-T30)*
-- [ ] `432` [E4-T33](epic-4-acceleration/E4-T33-bulk-jit-state-handoff.md) — Bulk JIT CPU-state handoff and bounded browser handle lifetime *(deps: E4-T31)*
+- [~] `432` [E4-T33](epic-4-acceleration/E4-T33-bulk-jit-state-handoff.md) — Bulk JIT CPU-state handoff and bounded browser handle lifetime *(deps: E4-T31)*
 - [ ] `433` [E4-T32](epic-4-acceleration/E4-T32-default-whole-machine-worker.md) — Default whole-machine Web Worker with controller parity *(deps: E4-T33)*
 
 ## Epic 5 — `epic-5-the-window`
