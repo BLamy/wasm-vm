@@ -293,6 +293,13 @@ pub struct Machine {
     /// expected next VA)`. A branch/jump/interrupt/trap moves the PC off `next VA`, invalidating
     /// the cursor so the next step re-keys by physical PC (handling branches into mid-block).
     block_cursor: Option<(u64, usize, u64)>,
+    /// E4-T30: production-visible proof that entry PCs reuse the predecoded cache instead of
+    /// rebuilding it. `(hits, builds)` is deliberately separate from `BlockDiscovery`: discovery
+    /// counts every execution for JIT tier-up, while these counters describe decode-cache work.
+    block_entry_hits: u64,
+    block_builds: u64,
+    /// Last PMP revision whose execute permissions the decoded/compiled caches reflect.
+    pmp_revision_seen: u64,
     /// E4-T08: hotness counters + translation-candidate discovery. The block cache learns to
     /// NOMINATE JIT candidates: each block entry bumps a saturating counter, and crossing the
     /// design-doc threshold enqueues a `TranslationRequest` (dedup'd, requeued after any
@@ -581,6 +588,9 @@ impl Machine {
             block_cache: dispatch::BlockCache::with_capacity(1 << 12),
             discovery: dispatch::BlockDiscovery::new(),
             block_cursor: None,
+            block_entry_hits: 0,
+            block_builds: 0,
+            pmp_revision_seen: 0,
             // E4-T05 Phase C: batching is OFF by default even under `predecode` (the cache stays
             // byte-identical); it is opted in explicitly via `set_interrupt_batching`.
             interrupt_batching: false,
@@ -605,6 +615,10 @@ impl Machine {
         self.block_cache_enabled = on;
         self.block_cache.flush();
         self.block_cursor = None;
+        self.block_entry_hits = 0;
+        self.block_builds = 0;
+        // The cache is empty after this toggle, so it already reflects the current permissions.
+        self.pmp_revision_seen = self.hart.csr.pmp.revision();
         // E4-T08: a cache toggle wholesale-flushes blocks; reset the discovery state to match.
         self.discovery.reset();
         // E4-T10: a wholesale flush drops every compiled block too — they mirror the cache.
@@ -618,6 +632,33 @@ impl Machine {
     /// E4-T05: whether the predecoded block cache is currently active.
     pub fn block_cache_enabled(&self) -> bool {
         self.block_cache_enabled
+    }
+
+    /// E4-T30 entry-cache accounting: `(entry_hits, block_builds)` since the last cache toggle or
+    /// resize. A hot taken loop should build once, then record one hit per later entry. This is
+    /// observation-only and never participates in architectural state or snapshots.
+    pub fn block_cache_entry_stats(&self) -> (u64, u64) {
+        (self.block_entry_hits, self.block_builds)
+    }
+
+    /// PMP regions may split a physical page, while decoded/JIT caches are page-keyed. Any
+    /// effective PMP CSR change therefore invalidates all cached code before another block runs;
+    /// rechecking only the entry parcel would let a denied interior instruction replay from a
+    /// cursor. PMP writes are boot-time rare, so this stays completely off the steady-state path
+    /// except for one integer comparison at block/run boundaries.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn sync_pmp_code_permissions(&mut self) {
+        let revision = self.hart.csr.pmp.revision();
+        if revision == self.pmp_revision_seen {
+            return;
+        }
+        self.pmp_revision_seen = revision;
+        self.block_cache.flush();
+        self.block_cursor = None;
+        self.discovery.on_invalidate();
+        if let Some(e) = self.executor.as_mut() {
+            e.invalidate_all();
+        }
     }
 
     /// E4-T05 Phase C: turn interrupt/device-sync BATCHING on/off. Distinct from
@@ -640,6 +681,9 @@ impl Machine {
     pub fn set_block_cache_capacity(&mut self, capacity: usize) {
         self.block_cache = dispatch::BlockCache::with_capacity(capacity);
         self.block_cursor = None;
+        self.block_entry_hits = 0;
+        self.block_builds = 0;
+        self.pmp_revision_seen = self.hart.csr.pmp.revision();
         // E4-T08: a fresh cache has no blocks; reset discovery so stale counts/requests are dropped.
         self.discovery.reset();
         // E4-T10: fresh cache ⇒ every compiled block is stale; drop them all.
@@ -1796,6 +1840,7 @@ impl Machine {
         // pre-restore physical layout) is now stale — flush the cache and drop the cursor.
         self.block_cache.flush();
         self.block_cursor = None;
+        self.pmp_revision_seen = self.hart.csr.pmp.revision();
         // E4-T08: the restored physical layout invalidates every nominated block — reset discovery.
         self.discovery.reset();
         // E4-T10: recompile from cold on the restored image — every compiled block is stale.
@@ -2223,9 +2268,10 @@ impl Machine {
                 tval: pc,
             });
         }
-        // Fetch the micro-op: a cursor hit replays a cached op with NO re-translation (safe —
-        // a block never leaves its physical page, so the entry translation covers every op); a
-        // miss (re)builds the block at pc's physical address, reproducing any fetch/decode trap.
+        // Fetch the micro-op: a cursor hit replays a cached op with NO re-translation. Page-table
+        // permissions stay valid for that page until SFENCE.VMA, while an effective PMP change
+        // bumps its revision and flushes this cursor at the next block boundary. A miss (re)builds
+        // the block at pc's physical address, reproducing any fetch/decode trap.
         let op = self.next_micro_op(pc)?;
         let (rd, value, mem) = self.hart.execute(
             &mut self.bus,
@@ -2324,10 +2370,34 @@ impl Machine {
         }
         self.block_cursor = None;
 
-        // Decode the entry op FIRST (this is the translation the legacy path would do — it fills
-        // the TLB identically), then key by physical PC (now a guaranteed TLB hit, no state change).
-        let first = self.hart.decode_at(&mut self.bus, pc)?;
+        // A device/DMA write can land between host run chunks, before any guest instruction gets
+        // the usual post-retire drain. Sweep that log at the boundary before an entry-cache hit so
+        // the first instruction after resume cannot execute stale code. Guest stores are already
+        // drained after their own retirement; the common boundary path only observes an empty log.
+        self.drain_code_writes();
+
+        // E4-T30: translate + PMP-check the CURRENT entry before consulting physically-keyed code.
+        // This preserves execute-permission faults after a cached hit and fills the same TLB entry
+        // `decode_at` uses. The old path decoded first and then unconditionally rebuilt/reinserted
+        // the whole block at every branch target, making the "cache" ~4.7x slower on a hot loop.
         let phys = self.hart.fetch_phys(&mut self.bus, pc)?;
+
+        // Entry hit: reuse the cached first op and resume its cursor. Discovery MUST still observe
+        // every entry — otherwise a cache hit would prevent the JIT hotness counter reaching its
+        // threshold. SMC/DMA writes already remove the whole physical page before this lookup.
+        if let Some(block) = self.block_cache.get(phys)
+            && let Some(first) = block.ops.first().copied()
+        {
+            self.discovery.on_block_entry(phys, &block.ops);
+            self.block_cursor = Some((phys, 1, pc.wrapping_add(u64::from(first.len))));
+            self.block_entry_hits = self.block_entry_hits.saturating_add(1);
+            return Ok(first);
+        }
+
+        // Miss: decode through the single shared decoder, then walk and insert exactly as before.
+        // `fetch_phys` above populated/checked the TLB, so this first decode's translation is a hit.
+        let first = self.hart.decode_at(&mut self.bus, pc)?;
+        self.block_builds = self.block_builds.saturating_add(1);
 
         // An entry op that straddles a physical page cannot live in a page-bounded block; run it
         // uncached (byte-identical — `decode_at` already did the split fetch). Cursor stays None.
@@ -2743,6 +2813,18 @@ impl Machine {
         max_instrs: u64,
         sink: &mut T,
     ) -> RunOutcome {
+        // A host/device can mutate RAM through `bus_mut()` while execution is yielded between
+        // bounded run calls. Drain once before even considering a saved mid-block cursor: waiting
+        // until the next post-retire drain would execute one stale cached instruction on resume.
+        // Device service performed later in this run is covered by the boundary drain in
+        // `next_micro_op`; guest stores retain their existing post-retire drain.
+        #[cfg(not(feature = "zicsr-stub"))]
+        if self.block_cache_enabled {
+            self.sync_pmp_code_permissions();
+        }
+        #[cfg(not(feature = "zicsr-stub"))]
+        self.drain_code_writes();
+
         for _ in 0..max_instrs {
             // E2-T17: a syscon finisher write (poweroff/reboot/fail) during the previous
             // instruction ends the run before the next one executes.
@@ -2762,6 +2844,13 @@ impl Machine {
             // every iteration, so the legacy per-op behavior is bit-for-bit preserved.
             #[cfg(not(feature = "zicsr-stub"))]
             let sample_boundary = !self.interrupt_batching() || self.at_block_boundary();
+            // CSR writes that change PMP are block terminators. Invalidate decoded/compiled code
+            // at that next boundary before the JIT or cursor can reuse permissions from the old
+            // configuration. Direct host mutations between run calls are caught by the entry sync.
+            #[cfg(not(feature = "zicsr-stub"))]
+            if self.block_cache_enabled && sample_boundary {
+                self.sync_pmp_code_permissions();
+            }
             // E1-T12: refresh the CLINT-driven interrupt LEVELS (MTIP = mtime >= mtimecmp, MSIP
             // = msip) into `mip` before sampling — a continuously re-evaluated level, so a
             // just-crossed timer fires and a raised `mtimecmp` clears MTIP with no CSR access.

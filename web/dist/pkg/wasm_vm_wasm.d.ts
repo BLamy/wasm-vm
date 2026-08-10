@@ -50,12 +50,8 @@ export class WasmLinux {
     dismissFileUpload(stream: number): boolean;
     /**
      * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
-     * arm tier-up — the `WasmLinux` twin of `WasmMachine::enable_jit`. The deployed demo constructs a
-     * `WasmLinux` on the main thread (see `web/loader.js`), so without this the browser guest never
-     * tiers up regardless of cross-origin isolation. The interpreter stays the oracle: with the JIT
-     * off (this never called) `runChunk` is byte-identical to the pre-T29 path. `threshold` is the
-     * hotness count before a block is nominated (see `web/cpu-isolation.js` `JIT_DEFAULT_THRESHOLD`).
-     * The caller gates this on `crossOriginIsolated`.
+     * arm tier-up. The accelerated interpreter remains the fallback for cold/untranslatable blocks;
+     * the caller gates this on `crossOriginIsolated`.
      */
     enableJit(threshold: number): void;
     /**
@@ -218,6 +214,13 @@ export class WasmLinux {
      * persistent path. Returns true if a disk flag was flipped.
      */
     setDiskReadOnly(): boolean;
+    /**
+     * E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
+     * physical-entry predecode reuse with the proven <=128-retire interrupt/device batching. The
+     * caller can turn it off for a byte-identical legacy A/B; enabling JIT later turns it back on
+     * because the compiled tier consumes the same block-discovery front end.
+     */
+    setFastInterpreter(on: boolean): void;
     setFileDownloadReady(ready: boolean): void;
     /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
@@ -462,6 +465,7 @@ export interface InitOutput {
     readonly wasmlinux_saveSnapshot: (a: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
+    readonly wasmlinux_setFastInterpreter: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];

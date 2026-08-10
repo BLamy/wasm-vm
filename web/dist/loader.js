@@ -204,6 +204,9 @@ export async function startLinuxBoot(opts = {}) {
     // Combined with the no-clamp MessageChannel yield (see yieldToMain), throughput stays high. A larger
     // value trades page responsiveness for raw guest throughput (e.g. headless benches may pass more).
     quantum = 500_000,
+    // E4-T30: the production interpreter uses the predecoded entry cache plus bounded (<=128 retire)
+    // interrupt/device batching. `false` is the byte-identical legacy A/B path for diagnosis.
+    fastInterpreter = true,
   } = opts;
   // E3-T09 (critic BUG-1): hoisted ABOVE the try so the catch can release a granted writer
   // lock when boot fails AFTER acquisition — otherwise a banner-less zombie tab strands the
@@ -404,6 +407,23 @@ export async function startLinuxBoot(opts = {}) {
     } else {
       machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
     }
+
+    // E4-T30: remove the old browser default that left the proven 2.24x block-boundary batching win
+    // dark. This call is deliberately before enableJit: cold/untranslatable code keeps using the fast
+    // interpreter, while `fastInterpreter=false` remains an explicit legacy differential path.
+    if (typeof machine.setFastInterpreter === "function") {
+      machine.setFastInterpreter(Boolean(fastInterpreter));
+    }
+    try {
+      window.__interpreter = {
+        fast: Boolean(fastInterpreter),
+        blockCache: Boolean(fastInterpreter),
+        interruptBatching: Boolean(fastInterpreter),
+      };
+    } catch { /* worker scope */ }
+    try {
+      document.documentElement.dataset.interpreter = fastInterpreter ? "fast" : "legacy";
+    } catch { /* worker scope */ }
 
     // E4-T29 Phase 2: arm the in-wasm browser JIT on the main-thread Linux path. The demo runs
     // WasmLinux directly (not the cpu-worker), so the JIT is dark unless enabled HERE. Gate on

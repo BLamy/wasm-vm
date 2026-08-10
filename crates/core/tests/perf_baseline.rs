@@ -125,8 +125,14 @@ fn workloads() -> Vec<(&'static str, Vec<u32>, bool)> {
 
 /// Run one workload once for `BUDGET` retires; return (MIPS, retired). Asserts the run neither
 /// trapped nor exited (an infinite loop must hit the budget) and that `minstret == BUDGET`.
-fn measure(code: &[u32], fp: bool) -> (f64, u64) {
+fn measure_mode(code: &[u32], fp: bool, fast_interpreter: bool) -> (f64, u64) {
     let mut m = build(code, fp);
+    // Keep the benchmark mode explicit even when the crate is built with the historical
+    // `predecode` feature (which changes Machine's construction default). E4-T30's production
+    // fast mode is the cache AND bounded interrupt batching; benchmarking cache-only measures a
+    // diagnostic differential path that the browser no longer selects.
+    m.set_block_cache(fast_interpreter);
+    m.set_interrupt_batching(fast_interpreter);
     let t = Instant::now();
     let outcome = m.run(BUDGET);
     let secs = t.elapsed().as_secs_f64();
@@ -141,6 +147,10 @@ fn measure(code: &[u32], fp: bool) -> (f64, u64) {
         "minstret {retired} != budget {BUDGET} — MIPS denominator wrong"
     );
     ((BUDGET as f64) / secs / 1e6, retired)
+}
+
+fn measure(code: &[u32], fp: bool) -> (f64, u64) {
+    measure_mode(code, fp, false)
 }
 
 fn median_spread(mut v: Vec<f64>) -> (f64, f64) {
@@ -196,4 +206,42 @@ fn perf_smoke_alu_above_floor() {
          (or genuinely slow CI hardware; re-examine the floor + record the host)"
     );
     println!("perf-smoke: alu median {median:.1} MIPS ≥ floor {FLOOR_MIPS}");
+}
+
+/// E4-T30 acceptance: compare the exact production fast-interpreter combination against the
+/// legacy per-instruction path on one frozen binary. This is a differential ratio rather than an
+/// absolute host-speed assertion, while the existing smoke test remains the committed MIPS floor.
+#[test]
+#[ignore = "perf differential; run --release --ignored --nocapture"]
+fn perf_fast_interpreter_does_not_trail_legacy() {
+    let (_, code, fp) = workloads().into_iter().next().unwrap();
+    let _ = measure_mode(&code, fp, false);
+    let _ = measure_mode(&code, fp, true);
+
+    // Pair samples and alternate their order so host thermal/scheduler drift cannot systematically
+    // favor the mode that happens to run first or last.
+    let mut legacy = Vec::with_capacity(RUNS);
+    let mut fast = Vec::with_capacity(RUNS);
+    for i in 0..RUNS {
+        if i % 2 == 0 {
+            legacy.push(measure_mode(&code, fp, false).0);
+            fast.push(measure_mode(&code, fp, true).0);
+        } else {
+            fast.push(measure_mode(&code, fp, true).0);
+            legacy.push(measure_mode(&code, fp, false).0);
+        }
+    }
+    legacy.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    fast.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    let legacy_median = legacy[RUNS / 2];
+    let fast_median = fast[RUNS / 2];
+    let ratio = fast_median / legacy_median;
+
+    eprintln!(
+        "fast-interpreter: legacy={legacy_median:.1} MIPS fast={fast_median:.1} MIPS ratio={ratio:.2}x"
+    );
+    assert!(
+        fast_median >= legacy_median,
+        "production fast interpreter {fast_median:.1} MIPS trails legacy {legacy_median:.1} MIPS"
+    );
 }

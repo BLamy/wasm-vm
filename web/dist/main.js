@@ -167,6 +167,10 @@ async function runLinuxBoot(opts, banner) {
   try {
     linuxCtl = await _bootLinux({
       ...opts,
+      // E4-T30: production fast interpreter by default; `?slowInterp=1` preserves the legacy
+      // instruction-at-a-time A/B path. Pass it as DATA so the whole-machine worker sees the page's
+      // choice instead of trying to read the worker script URL.
+      fastInterpreter: opts.fastInterpreter ?? query.get("slowInterp") !== "1",
       // E3-net: `?slirpNet` in the URL boots with the slirp local stack (real DHCP/ARP/ICMP) instead
       // of the loopback backend — so the guest can pull a real IP and reach the gateway.
       slirpNet: opts.slirpNet ?? (

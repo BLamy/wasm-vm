@@ -47,6 +47,7 @@ export const wasmlinux_runChunk: (a: number, b: number, c: number) => [number, n
 export const wasmlinux_saveSnapshot: (a: number) => [number, number, number];
 export const wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
 export const wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
+export const wasmlinux_setFastInterpreter: (a: number, b: number) => [number, number];
 export const wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
 export const wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
 export const wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];

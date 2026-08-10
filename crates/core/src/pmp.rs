@@ -39,7 +39,7 @@ pub const NUM_ENTRIES: usize = 64;
 
 /// The 16-entry PMP unit. `cfg[i]` is entry i's configuration byte; `addr[i]` is its raw pmpaddr
 /// value (address[55:2]).
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct Pmp {
     cfg: [u8; NUM_ENTRIES],
     addr: [u64; NUM_ENTRIES],
@@ -48,7 +48,20 @@ pub struct Pmp {
     /// self-time. `cfg` (the only input) changes ONLY in `write_cfg`/`restore_bytes` (rare — PMP is
     /// configured at boot), so recompute the flag there and serve O(1) reads. Behaviourally identical.
     armed: bool,
+    /// Microarchitectural change detector for decoded/compiled code caches. PMP regions can split a
+    /// page, so validating only a cached block's entry parcel is insufficient after a CSR write;
+    /// Machine observes this revision at execution boundaries and invalidates all cached code.
+    /// Deliberately excluded from architectural equality and snapshots.
+    revision: u64,
 }
+
+impl PartialEq for Pmp {
+    fn eq(&self, other: &Self) -> bool {
+        self.cfg == other.cfg && self.addr == other.addr && self.armed == other.armed
+    }
+}
+
+impl Eq for Pmp {}
 
 impl Default for Pmp {
     /// Reset: every entry A=OFF, L=0 (Priv §3.7 recommendation).
@@ -57,6 +70,7 @@ impl Default for Pmp {
             cfg: [0; NUM_ENTRIES],
             addr: [0; NUM_ENTRIES],
             armed: false,
+            revision: 0,
         }
     }
 }
@@ -67,6 +81,15 @@ impl Pmp {
     /// `restore_bytes`). See the `armed` field comment.
     pub fn any_armed(&self) -> bool {
         self.armed
+    }
+
+    /// Monotonic microarchitectural revision, bumped only when effective PMP state changes.
+    pub(crate) fn revision(&self) -> u64 {
+        self.revision
+    }
+
+    fn bump_revision(&mut self) {
+        self.revision = self.revision.wrapping_add(1);
     }
 
     /// Recompute the cached `armed` flag from `cfg`. Called only by the `cfg` mutators.
@@ -88,6 +111,8 @@ impl Pmp {
         &mut self,
         r: &mut crate::resume::Reader,
     ) -> Result<(), crate::resume::SnapshotError> {
+        let old_cfg = self.cfg;
+        let old_addr = self.addr;
         for c in self.cfg.iter_mut() {
             *c = r.u8()?;
         }
@@ -95,6 +120,9 @@ impl Pmp {
             *a = r.u64()?;
         }
         self.refresh_armed(); // restored `cfg` → refresh the cached `any_armed` gate
+        if self.cfg != old_cfg || self.addr != old_addr {
+            self.bump_revision();
+        }
         Ok(())
     }
 
@@ -113,6 +141,7 @@ impl Pmp {
     /// Write a pmpcfg bank. Each byte is WARL-legalized (reserved bits cleared) and skipped if
     /// its entry is LOCKED (L=1) — a locked cfg/addr can't change until reset.
     pub fn write_cfg(&mut self, bank: usize, v: u64) {
+        let old = self.cfg;
         let base = bank * 4;
         for k in 0..8 {
             let i = base + k;
@@ -129,6 +158,9 @@ impl Pmp {
             self.cfg[i] = c;
         }
         self.refresh_armed(); // `cfg` changed → refresh the cached `any_armed` gate
+        if self.cfg != old {
+            self.bump_revision();
+        }
     }
     /// Read `pmpaddr[i]` (address[55:2]; [63:54] read 0).
     pub fn read_addr(&self, i: usize) -> u64 {
@@ -146,7 +178,11 @@ impl Pmp {
                 return;
             }
         }
-        self.addr[i] = v & ADDR_MASK;
+        let v = v & ADDR_MASK;
+        if self.addr[i] != v {
+            self.addr[i] = v;
+            self.bump_revision();
+        }
     }
 
     // ── the check ─────────────────────────────────────────────────────────────────
@@ -207,8 +243,13 @@ impl Pmp {
     /// everything" grant OpenSBI/the riscv-tests p-env install (and bare-metal test harnesses
     /// need) so S/U can touch memory. pmpaddr0 = all-ones NAPOT covers the whole space.
     pub fn allow_all(&mut self) {
+        let changed =
+            self.cfg[0] != CFG_R | CFG_W | CFG_X | (A_NAPOT << 3) || self.addr[0] != ADDR_MASK;
         self.cfg[0] = CFG_R | CFG_W | CFG_X | (A_NAPOT << 3);
         self.addr[0] = ADDR_MASK; // NAPOT with all trailing ones → entire address space
         self.refresh_armed(); // arms entry 0 directly → refresh the cached `any_armed` gate
+        if changed {
+            self.bump_revision();
+        }
     }
 }

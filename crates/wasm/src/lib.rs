@@ -1263,13 +1263,21 @@ impl WasmLinux {
         })
     }
 
+    /// E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
+    /// physical-entry predecode reuse with the proven <=128-retire interrupt/device batching. The
+    /// caller can turn it off for a byte-identical legacy A/B; enabling JIT later turns it back on
+    /// because the compiled tier consumes the same block-discovery front end.
+    #[wasm_bindgen(js_name = setFastInterpreter)]
+    pub fn set_fast_interpreter(&self, on: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_block_cache(on);
+        inner.machine.set_interrupt_batching(on);
+        Ok(())
+    }
+
     /// E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
-    /// arm tier-up — the `WasmLinux` twin of `WasmMachine::enable_jit`. The deployed demo constructs a
-    /// `WasmLinux` on the main thread (see `web/loader.js`), so without this the browser guest never
-    /// tiers up regardless of cross-origin isolation. The interpreter stays the oracle: with the JIT
-    /// off (this never called) `runChunk` is byte-identical to the pre-T29 path. `threshold` is the
-    /// hotness count before a block is nominated (see `web/cpu-isolation.js` `JIT_DEFAULT_THRESHOLD`).
-    /// The caller gates this on `crossOriginIsolated`.
+    /// arm tier-up. The accelerated interpreter remains the fallback for cold/untranslatable blocks;
+    /// the caller gates this on `crossOriginIsolated`.
     #[wasm_bindgen(js_name = enableJit)]
     pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
@@ -1297,9 +1305,18 @@ impl WasmLinux {
         match inner.machine.executor() {
             Some(e) => {
                 set("hasExecutor", &JsValue::from_bool(true));
-                set("compiledBlocks", &JsValue::from_f64(e.compiled_count() as f64));
-                set("executedBlocks", &JsValue::from_f64(e.executed_blocks() as f64));
-                set("retiredViaJit", &JsValue::from_f64(e.retired_via_jit() as f64));
+                set(
+                    "compiledBlocks",
+                    &JsValue::from_f64(e.compiled_count() as f64),
+                );
+                set(
+                    "executedBlocks",
+                    &JsValue::from_f64(e.executed_blocks() as f64),
+                );
+                set(
+                    "retiredViaJit",
+                    &JsValue::from_f64(e.retired_via_jit() as f64),
+                );
             }
             None => {
                 set("hasExecutor", &JsValue::from_bool(false));

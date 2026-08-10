@@ -22,8 +22,9 @@ hatch.
 
 - A deterministic loop test proves one block build followed by entry hits while JIT discovery still
   counts every block entry.
-- The release pure-ALU microbenchmark with the cache on is at least 1.5x its pre-fix cache-on result,
-  does not trail cache-off, and stays above the committed performance floor.
+- The release pure-ALU microbenchmark with the production cache + bounded-batching mode is at least
+  1.5x its pre-fix cache-only result, does not trail cache-off legacy mode on the same binary, and
+  stays above the committed performance floor.
 - PMP execute permission, paging aliases, SMC/DMA invalidation, `fence.i`, pathological one-entry
   eviction, and cache-on/off retire traces remain correct.
 - Browser Linux enables the proven cache + <=128-retire interrupt batching by default; a query option
@@ -38,4 +39,3 @@ and sabotage the hit path so discovery is not incremented. Any stale instruction
 trace divergence, or JIT threshold that never fires refutes the change.
 
 ## Verification log
-
