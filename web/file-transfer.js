@@ -4,6 +4,12 @@ const UPLOAD_WORKERS = 2;
 const POLL_MS = 24;
 
 const delay = (ms = POLL_MS) => new Promise((resolve) => setTimeout(resolve, ms));
+const ignoreRejection = (operation) => {
+  try {
+    const value = typeof operation === "function" ? operation() : operation;
+    void Promise.resolve(value).catch(() => {});
+  } catch { /* legacy synchronous controller parity */ }
+};
 
 function formatBytes(value) {
   if (value < 1024) return `${value} B`;
@@ -95,11 +101,83 @@ export function createFileTransferUI({
   const uploadQueue = [];
   const claimedSlots = new Set();
   const downloadWriters = new Map();
+  const downloadDestinationTails = new Map();
+  const directoryIds = new WeakMap();
   let controller = null;
   let directory = null;
   let stopped = false;
   let nextLocalId = 0;
-  let workersRunning = false;
+  let nextDirectoryId = 0;
+  let workersRunningGeneration = null;
+  let controllerGeneration = 0;
+  let pollWake = null;
+  const downloadKey = (generation, id) => `download-${generation}-${id}`;
+  const slotKey = (generation, slot) => `${generation}:${slot}`;
+  const destinationKey = (targetDirectory, name) => {
+    if ((typeof targetDirectory === "object" && targetDirectory) || typeof targetDirectory === "function") {
+      if (!directoryIds.has(targetDirectory)) directoryIds.set(targetDirectory, ++nextDirectoryId);
+      return `${directoryIds.get(targetDirectory)}:${name}`;
+    }
+    return `unknown:${name}`;
+  };
+  const wakePoll = () => {
+    const wake = pollWake;
+    pollWake = null;
+    wake?.();
+  };
+  const hasActiveTransfers = () => uploadQueue.length > 0 ||
+    [...transfers.values()].some((transfer) =>
+      transfer.state === "queued" || transfer.state === "hashing" || transfer.state === "active");
+  const pollIsArmed = () => Boolean(directory) || hasActiveTransfers();
+
+  // FileSystemWritableFileStream commits its replacement on close. Two generations closing the
+  // same destination out of order can therefore let an old download overwrite a newer one even if
+  // every RPC/UI mutation is generation-guarded. Reserve a destination before createWritable and
+  // hold it through the writer's terminal close/abort operation.
+  async function acquireDownloadDestination(targetDirectory, name) {
+    const key = destinationKey(targetDirectory, name);
+    const previous = downloadDestinationTails.get(key) ?? Promise.resolve();
+    let releasePromise;
+    const released = new Promise((resolve) => { releasePromise = resolve; });
+    const tail = previous.catch(() => {}).then(() => released);
+    downloadDestinationTails.set(key, tail);
+    await previous.catch(() => {});
+    let didRelease = false;
+    return () => {
+      if (didRelease) return;
+      didRelease = true;
+      releasePromise();
+      void tail.then(() => {
+        if (downloadDestinationTails.get(key) === tail) downloadDestinationTails.delete(key);
+      });
+    };
+  }
+
+  async function runDownloadWriterOperation(writer, operation) {
+    if (writer.terminalPromise) throw new Error("download writer is already settling");
+    const active = Promise.resolve().then(operation);
+    writer.operationPromise = active;
+    try {
+      return await active;
+    } finally {
+      if (writer.operationPromise === active) writer.operationPromise = null;
+    }
+  }
+
+  function settleDownloadWriter(writer, method, reason) {
+    if (writer.terminalPromise) return writer.terminalPromise;
+    const prior = writer.operationPromise ?? Promise.resolve();
+    writer.terminalPromise = prior.catch(() => {}).then(() => {
+      const operation = writer.writable?.[method];
+      if (typeof operation === "function") return operation.call(writer.writable, reason);
+      return undefined;
+    }).finally(() => {
+      const release = writer.releaseDestination;
+      writer.releaseDestination = null;
+      release?.();
+    });
+    return writer.terminalPromise;
+  }
 
   const render = () => {
     list.replaceChildren(
@@ -134,10 +212,15 @@ export function createFileTransferUI({
   async function waitForSlot(signal) {
     while (!signal.aborted) {
       if (!controller) throw new Error("Boot Alpine before uploading files");
+      const currentController = controller;
+      const generation = controllerGeneration;
       for (let slot = 0; slot < UPLOAD_WORKERS; slot += 1) {
-        if (!claimedSlots.has(slot) && controller.fileTransferReady(slot)) {
-          claimedSlots.add(slot);
-          return slot;
+        const claim = slotKey(generation, slot);
+        const ready = !claimedSlots.has(claim) && await currentController.fileTransferReady(slot);
+        if (currentController !== controller || generation !== controllerGeneration) break;
+        if (ready) {
+          claimedSlots.add(claim);
+          return { slot, claim, currentController, generation };
         }
       }
       await delay();
@@ -145,9 +228,13 @@ export function createFileTransferUI({
     throw new DOMException("Upload cancelled", "AbortError");
   }
 
-  async function waitForUploadState(stream, signal) {
+  async function waitForUploadState(currentController, generation, stream, signal) {
     while (!signal.aborted) {
-      const current = controller.fileTransferStatus().uploads.find((item) => item.id === stream);
+      const snapshot = await currentController.fileTransferStatus();
+      if (currentController !== controller || generation !== controllerGeneration) {
+        throw new Error("file-transfer controller changed during upload");
+      }
+      const current = snapshot.uploads.find((item) => item.id === stream);
       if (current?.state === "complete") return current;
       if (current?.state === "partial") throw new DOMException("Upload cancelled", "AbortError");
       if (current?.state === "error") throw terminalUploadError(current);
@@ -158,6 +245,9 @@ export function createFileTransferUI({
 
   async function uploadFile(file, transfer) {
     let slot = null;
+    let slotClaim = null;
+    let currentController = null;
+    let generation = 0;
     try {
       transfer.state = "hashing";
       transfer.label = "hashing locally";
@@ -166,10 +256,15 @@ export function createFileTransferUI({
       transfer.state = "queued";
       transfer.label = "waiting for guest agent";
       render();
-      slot = await waitForSlot(transfer.abort.signal);
+      ({ slot, claim: slotClaim, currentController, generation } = await waitForSlot(transfer.abort.signal));
+      transfer.ownerController = currentController;
+      transfer.ownerGeneration = generation;
       transfer.state = "active";
       transfer.label = "uploading";
-      transfer.stream = controller.beginFileUpload(slot, file.name, file.size, sha256);
+      transfer.stream = await currentController.beginFileUpload(slot, file.name, file.size, sha256);
+      if (currentController !== controller || generation !== controllerGeneration) {
+        throw new Error("file-transfer controller changed during upload");
+      }
       render();
 
       const reader = file.stream().getReader();
@@ -181,30 +276,37 @@ export function createFileTransferUI({
           const { done, value } = await reader.read();
           if (done) break;
           while (true) {
-            const snapshot = controller.fileTransferStatus();
+            const snapshot = await currentController.fileTransferStatus();
+            if (currentController !== controller || generation !== controllerGeneration) {
+              throw new Error("file-transfer controller changed during upload");
+            }
             const current = snapshot.uploads.find((item) => item.id === transfer.stream);
             if (!current || current.buffered + value.byteLength <= snapshot.maxBuffered) break;
             if (current.state === "error") throw terminalUploadError(current);
             await delay();
           }
-          controller.pushFileUpload(transfer.stream, value, false);
+          await currentController.pushFileUpload(transfer.stream, value, false);
+          if (transfer.abort.signal.aborted) throw new DOMException("Upload cancelled", "AbortError");
+          if (currentController !== controller || generation !== controllerGeneration) {
+            throw new Error("file-transfer controller changed during upload");
+          }
           transfer.done += value.byteLength;
           render();
         }
       } finally {
         reader.releaseLock();
       }
-      controller.pushFileUpload(transfer.stream, new Uint8Array(), true);
-      await waitForUploadState(transfer.stream, transfer.abort.signal);
+      await currentController.pushFileUpload(transfer.stream, new Uint8Array(), true);
+      await waitForUploadState(currentController, generation, transfer.stream, transfer.abort.signal);
       transfer.done = transfer.total;
       transfer.state = "complete";
       transfer.label = "complete — SHA-256 verified";
       render();
     } catch (caught) {
       let error = caught;
-      if (transfer.stream != null && controller) {
+      if (transfer.stream != null && currentController) {
         try {
-          const terminal = controller.fileTransferStatus().uploads
+          const terminal = (await currentController.fileTransferStatus()).uploads
             .find((item) => item.id === transfer.stream);
           if (terminal?.diagnostic) {
             transfer.diagnostic = terminal.diagnostic;
@@ -213,20 +315,21 @@ export function createFileTransferUI({
         } catch {}
       }
       if (transfer.stream != null) {
-        try { controller?.cancelFileUpload(transfer.stream); } catch {}
+        try { await currentController?.cancelFileUpload(transfer.stream); } catch {}
       }
       fail(transfer, error);
     } finally {
       if (transfer.stream != null) {
-        try { controller?.dismissFileUpload(transfer.stream); } catch {}
+        try { await currentController?.dismissFileUpload(transfer.stream); } catch {}
       }
-      if (slot != null) claimedSlots.delete(slot);
+      if (slotClaim != null) claimedSlots.delete(slotClaim);
     }
   }
 
   async function runUploadWorkers() {
-    if (workersRunning) return;
-    workersRunning = true;
+    const poolGeneration = controllerGeneration;
+    if (workersRunningGeneration === poolGeneration) return;
+    workersRunningGeneration = poolGeneration;
     const worker = async () => {
       while (uploadQueue.length) {
         const item = uploadQueue.shift();
@@ -234,7 +337,7 @@ export function createFileTransferUI({
       }
     };
     await Promise.all(Array.from({ length: UPLOAD_WORKERS }, worker));
-    workersRunning = false;
+    if (workersRunningGeneration === poolGeneration) workersRunningGeneration = null;
     if (uploadQueue.length) void runUploadWorkers();
   }
 
@@ -264,92 +367,147 @@ export function createFileTransferUI({
         label: "queued",
         abort: new AbortController(),
         stream: null,
+        ownerController: null,
+        ownerGeneration: 0,
       };
       transfers.set(transfer.key, transfer);
       uploadQueue.push({ file, transfer });
     }
     render();
     setStatus(`${selected.length} upload${selected.length === 1 ? "" : "s"} queued.`);
+    wakePoll();
     void runUploadWorkers();
     return true;
   }
 
-  async function openDownloadWriter(record) {
-    if (downloadWriters.has(record.id) || !directory) return;
-    const transfer = transfers.get(`download-${record.id}`);
+  async function openDownloadWriter(record, currentController, generation) {
+    const key = downloadKey(generation, record.id);
+    const targetDirectory = directory;
+    if (downloadWriters.has(key) || !targetDirectory) return;
+    const transfer = transfers.get(key);
     if (!transfer || transfer.state === "complete" || transfer.state === "partial" || transfer.state === "error") {
       return;
     }
     // Reserve the ID before either awaited picker call. The monitor can poll again while the
     // browser is opening the handle; without this reservation two writers can race, and the
     // empty loser may truncate a download that the winner just completed.
-    downloadWriters.set(record.id, { writable: null, busy: true });
+    const reservation = {
+      writable: null,
+      busy: true,
+      operationPromise: null,
+      terminalPromise: null,
+      releaseDestination: null,
+    };
+    downloadWriters.set(key, reservation);
     try {
-      const handle = await directory.getFileHandle(record.name, { create: true });
+      const handle = await targetDirectory.getFileHandle(record.name, { create: true });
+      if (
+        currentController !== controller ||
+        generation !== controllerGeneration ||
+        downloadWriters.get(key) !== reservation
+      ) return;
+      reservation.releaseDestination = await acquireDownloadDestination(targetDirectory, record.name);
+      if (
+        currentController !== controller ||
+        generation !== controllerGeneration ||
+        downloadWriters.get(key) !== reservation
+      ) {
+        reservation.releaseDestination();
+        reservation.releaseDestination = null;
+        return;
+      }
       const writable = await handle.createWritable();
-      downloadWriters.set(record.id, { writable, busy: false });
+      reservation.writable = writable;
+      if (
+        currentController !== controller ||
+        generation !== controllerGeneration ||
+        downloadWriters.get(key) !== reservation
+      ) {
+        await settleDownloadWriter(reservation, "abort", "file-transfer controller changed");
+        return;
+      }
+      reservation.busy = false;
       transfer.label = "downloading";
       render();
     } catch (error) {
-      downloadWriters.delete(record.id);
-      try { controller.cancelFileDownload(record.id); } catch {}
+      if (reservation.writable) {
+        try { await settleDownloadWriter(reservation, "abort", error); } catch {}
+      } else if (reservation.releaseDestination) {
+        reservation.releaseDestination();
+        reservation.releaseDestination = null;
+      }
+      if (downloadWriters.get(key) === reservation) downloadWriters.delete(key);
+      if (currentController !== controller || generation !== controllerGeneration) return;
+      try { await currentController.cancelFileDownload(record.id); } catch {}
       fail(transfer, error);
     }
   }
 
-  async function drainDownload(record) {
-    const writer = downloadWriters.get(record.id);
-    const transfer = transfers.get(`download-${record.id}`);
+  async function drainDownload(record, currentController, generation) {
+    const key = downloadKey(generation, record.id);
+    const writer = downloadWriters.get(key);
+    const transfer = transfers.get(key);
     if (!writer?.writable || writer.busy || !transfer) return;
+    const stale = () => currentController !== controller || generation !== controllerGeneration;
     writer.busy = true;
     try {
       while (true) {
-        const chunk = controller.takeFileDownloadChunk(record.id);
+        const chunk = await currentController.takeFileDownloadChunk(record.id);
+        if (stale()) return;
         if (!chunk.byteLength) break;
-        await writer.writable.write(chunk);
+        await runDownloadWriterOperation(writer, () => writer.writable.write(chunk));
+        if (stale()) return;
         transfer.done += chunk.byteLength;
         render();
       }
       if (record.state === "awaiting-save" && record.buffered === 0) {
-        await writer.writable.close();
-        controller.finishFileDownload(record.id, true);
+        await settleDownloadWriter(writer, "close");
+        if (stale()) return;
+        await currentController.finishFileDownload(record.id, true);
+        if (stale()) return;
+        await currentController.dismissFileDownload(record.id);
+        if (stale()) return;
         transfer.done = transfer.total;
         transfer.state = "complete";
         transfer.label = "complete — SHA-256 verified";
-        downloadWriters.delete(record.id);
-        controller.dismissFileDownload(record.id);
+        downloadWriters.delete(key);
         render();
       } else if (record.state === "partial") {
-        await writer.writable.abort("guest cancelled transfer");
-        downloadWriters.delete(record.id);
+        await settleDownloadWriter(writer, "abort", "guest cancelled transfer");
+        if (stale()) return;
+        await currentController.dismissFileDownload(record.id);
+        if (stale()) return;
+        downloadWriters.delete(key);
         transfer.state = "partial";
         transfer.label = `partial — cancelled after ${formatBytes(transfer.done)}`;
-        controller.dismissFileDownload(record.id);
         render();
       }
     } catch (error) {
-      try { await writer.writable.abort(error); } catch {}
-      downloadWriters.delete(record.id);
+      if (stale()) return;
+      try { await settleDownloadWriter(writer, "abort", error); } catch {}
+      if (stale()) return;
+      downloadWriters.delete(key);
       try {
-        if (record.state === "awaiting-save") controller.finishFileDownload(record.id, false);
-        else controller.cancelFileDownload(record.id);
+        if (record.state === "awaiting-save") await currentController.finishFileDownload(record.id, false);
+        else await currentController.cancelFileDownload(record.id);
       } catch {}
-      try { controller.dismissFileDownload(record.id); } catch {}
+      if (stale()) return;
+      try { await currentController.dismissFileDownload(record.id); } catch {}
+      if (stale()) return;
       fail(transfer, error);
     } finally {
       writer.busy = false;
     }
   }
 
-  function syncDownloads() {
-    if (!controller) return;
-    const snapshot = controller.fileTransferStatus();
+  function syncDownloads(snapshot, currentController, generation) {
     for (const record of snapshot.downloads) {
-      const key = `download-${record.id}`;
+      const key = downloadKey(generation, record.id);
       if (!transfers.has(key)) {
         transfers.set(key, {
           key,
           id: record.id,
+          generation,
           direction: "download",
           name: record.name,
           total: record.total,
@@ -366,23 +524,36 @@ export function createFileTransferUI({
         transfer.state !== "partial" &&
         transfer.state !== "error"
       ) {
-        void openDownloadWriter(record).then(() => drainDownload(record));
+        void openDownloadWriter(record, currentController, generation)
+          .then(() => drainDownload(record, currentController, generation));
       }
     }
   }
 
   async function poll() {
     while (!stopped) {
+      // An attached controller alone is idle: do not serialize status and enqueue a Worker RPC
+      // forever when the user never enabled downloads or queued an upload. Choosing a destination
+      // arms guest-initiated download discovery; an upload/active transfer also wakes the monitor.
+      if (!pollIsArmed()) {
+        await new Promise((resolve) => { pollWake = resolve; });
+        continue;
+      }
       try {
-        syncDownloads();
         if (controller) {
-          const downloads = controller.fileTransferStatus().downloads;
-          await Promise.all(downloads.map(drainDownload));
+          const currentController = controller;
+          const generation = controllerGeneration;
+          const snapshot = await currentController.fileTransferStatus();
+          if (currentController !== controller || generation !== controllerGeneration) continue;
+          syncDownloads(snapshot, currentController, generation);
+          await Promise.all(snapshot.downloads.map((record) =>
+            drainDownload(record, currentController, generation)));
         }
       } catch (error) {
         setStatus(`File transfer monitor error: ${error?.message || error}`, "error");
       }
-      await delay();
+      const active = hasActiveTransfers();
+      await delay(active ? POLL_MS : 500);
     }
   }
 
@@ -390,10 +561,11 @@ export function createFileTransferUI({
     if (transfer.direction === "upload") {
       transfer.abort.abort();
       if (transfer.stream != null) {
-        try { controller?.cancelFileUpload(transfer.stream); } catch {}
+        const owner = transfer.ownerController;
+        ignoreRejection(() => owner?.cancelFileUpload(transfer.stream));
       }
     } else {
-      try { controller?.cancelFileDownload(transfer.id); } catch {}
+      ignoreRejection(() => controller?.cancelFileDownload(transfer.id));
     }
     transfer.state = "partial";
     transfer.label = `partial — cancelled after ${formatBytes(transfer.done)}`;
@@ -437,9 +609,9 @@ export function createFileTransferUI({
   chooseDownload.addEventListener("click", async () => {
     try {
       directory = await openDirectory();
-      controller?.setFileDownloadReady(true);
+      await controller?.setFileDownloadReady(true);
+      wakePoll();
       setStatus(`Downloads stream directly into “${directory.name || "selected folder"}”.`, "ready");
-      syncDownloads();
     } catch (error) {
       if (error?.name !== "AbortError") setStatus(`Cannot open download folder: ${error?.message || error}`, "error");
     }
@@ -448,11 +620,43 @@ export function createFileTransferUI({
   void poll();
   return {
     attachController(next) {
-      if (controller && controller !== next) {
-        try { controller.setFileDownloadReady(false); } catch {}
+      const previous = controller;
+      if (previous !== next) {
+        controllerGeneration += 1;
+        if (previous) ignoreRejection(() => previous.setFileDownloadReady(false));
+        for (const writer of downloadWriters.values()) {
+          if (writer.writable) {
+            ignoreRejection(() => settleDownloadWriter(
+              writer,
+              "abort",
+              "file-transfer controller changed",
+            ));
+          }
+        }
+        downloadWriters.clear();
+        let changed = false;
+        for (const transfer of transfers.values()) {
+          if (transfer.direction === "upload" &&
+              (transfer.state === "queued" || transfer.state === "hashing" || transfer.state === "active")) {
+            transfer.abort.abort();
+            transfer.state = "partial";
+            transfer.label = `partial — controller changed after ${formatBytes(transfer.done)}`;
+            changed = true;
+          }
+          if (transfer.direction === "download" && transfer.state === "active") {
+            transfer.state = "partial";
+            transfer.label = `partial — controller changed after ${formatBytes(transfer.done)}`;
+            changed = true;
+          }
+        }
+        if (changed) render();
       }
       controller = next;
-      if (controller) controller.setFileDownloadReady(Boolean(directory));
+      // Old-generation workers may be stuck inside an uncooperative controller Promise even after
+      // their AbortSignal fires. A generation-owned pool lets fresh uploads start immediately; late
+      // old finally blocks release only their generation-qualified slot claims.
+      if (uploadQueue.length) void runUploadWorkers();
+      if (controller) ignoreRejection(() => controller.setFileDownloadReady(Boolean(directory)));
       setStatus(
         next
           ? "WVFT controller attached; uploads wait for two bounded guest-agent connections."
@@ -463,12 +667,13 @@ export function createFileTransferUI({
     enqueueFiles,
     setDownloadDirectory(next) {
       directory = next;
-      controller?.setFileDownloadReady(Boolean(directory));
-      syncDownloads();
+      ignoreRejection(() => controller?.setFileDownloadReady(Boolean(directory)));
+      if (directory) wakePoll();
     },
-    snapshot: () => [...transfers.values()].map(({ abort, ...transfer }) => ({ ...transfer })),
+    snapshot: () => [...transfers.values()].map(({ abort, ownerController, ...transfer }) => ({ ...transfer })),
     stop() {
       stopped = true;
+      wakePoll();
     },
   };
 }

@@ -14,7 +14,7 @@ test("busybox fast-boot restores from the shipped boot snapshot (no Linux boot)"
   const marks = [];
   page.on("console", (m) => marks.push(m.text()));
 
-  await page.goto("/");
+  await page.goto("/?noAutoBoot=1");
   // Kick the busybox boot (the same entry point main.js's Boot button calls). Don't await — restore
   // completes mid-boot and we poll the flag below.
   await page.evaluate(() => { window.wvmDemo?.runBusybox?.(); });

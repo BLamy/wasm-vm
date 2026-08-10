@@ -13,7 +13,7 @@
 //!   coarse power-of-two bucket array give p50/p95/p100 without unbounded storage.
 //! * **Work** (`blocks`/`bytes` per install step): a HEADLESS, deterministic bound — the install step
 //!   is cheap by construction (table writes + a map insert per block), so a unit test can assert
-//!   `max_install_blocks` never exceeds the per-pump install budget without needing a wall clock. This
+//!   `max_submitted_blocks` never exceeds the per-pump submission budget without needing a wall clock. This
 //!   is the "install-step work is bounded" assertion the ticket asks for as the headless stand-in.
 //!
 //! Pure `no_std` + `alloc`-free fixed arrays, same determinism discipline as the irqstats counters.
@@ -43,13 +43,47 @@ pub struct JitPauseStats {
     pub over_target: u64,
     /// Power-of-two duration histogram (see [`PAUSE_BUCKETS`]); the percentile source.
     pub buckets: [u64; PAUSE_BUCKETS],
-    /// Largest number of blocks installed in a SINGLE install step (the headless work bound — must
-    /// stay ≤ the per-pump install budget, asserted by unit test with no wall clock).
-    pub max_install_blocks: u64,
-    /// Largest emitted-code bytes handled in a single install step (secondary work bound).
-    pub max_install_bytes: u64,
-    /// Cumulative blocks installed through the timed path (denominator for "bytes per block").
-    pub total_install_blocks: u64,
+    /// Largest number of queued translation requests examined in one pump, including requests later
+    /// refused as stale or missing from the decoded cache.
+    pub max_attempted_blocks: u64,
+    /// Cumulative queued translation requests examined through the timed path.
+    pub total_attempted_blocks: u64,
+    /// Largest number of validated blocks submitted to the executor in one step. An executor may
+    /// skip duplicates or translation/module failures, so actual compiled truth remains its
+    /// `compiled_count`; this is the conservative synchronous-work bound.
+    pub max_submitted_blocks: u64,
+    /// Largest source-code byte count submitted in a single step (secondary work bound).
+    pub max_submitted_bytes: u64,
+    /// Cumulative validated blocks submitted through the timed path.
+    pub total_submitted_blocks: u64,
+    /// Number of public run calls whose JIT work was summarized. This is distinct from `count`,
+    /// which counts individual periodic/final install steps.
+    pub run_count: u64,
+    /// Translation attempts made by the most recently completed public run call.
+    pub last_run_attempted_blocks: u64,
+    /// Largest aggregate translation-attempt count observed in one public run call.
+    pub max_run_attempted_blocks: u64,
+    /// Blocks submitted by the most recently completed public run call (periodic plus final pump).
+    pub last_run_submitted_blocks: u64,
+    /// Largest aggregate submission count observed in any one public run call. Browser executors bind
+    /// this to their cooperative-slice budget; it is the deterministic counterpart to max wall time.
+    pub max_run_submitted_blocks: u64,
+    /// Discovery nominations staged by the most recently completed public run call.
+    pub last_run_staged_nominations: u64,
+    /// Largest aggregate nomination-staging count observed in any one public run call.
+    pub max_run_staged_nominations: u64,
+    /// Final-pump count in the most recent run call. E4-T32 requires this to be at most one.
+    pub last_final_pumps: u64,
+    /// Largest final-pump count observed in one run call (the old drain-all loop made this >1).
+    pub max_final_pumps: u64,
+    /// Translation attempts made by the most recent run's single final pump.
+    pub last_final_attempted_blocks: u64,
+    /// Largest attempt count made by a final pump in any one run call.
+    pub max_final_attempted_blocks: u64,
+    /// Blocks submitted by the most recent run's single final pump.
+    pub last_final_submitted_blocks: u64,
+    /// Largest block count submitted by a final pump in any one run call.
+    pub max_final_submitted_blocks: u64,
 }
 
 impl Default for JitPauseStats {
@@ -67,16 +101,31 @@ impl JitPauseStats {
             sum_ns: 0,
             over_target: 0,
             buckets: [0; PAUSE_BUCKETS],
-            max_install_blocks: 0,
-            max_install_bytes: 0,
-            total_install_blocks: 0,
+            max_attempted_blocks: 0,
+            total_attempted_blocks: 0,
+            max_submitted_blocks: 0,
+            max_submitted_bytes: 0,
+            total_submitted_blocks: 0,
+            run_count: 0,
+            last_run_attempted_blocks: 0,
+            max_run_attempted_blocks: 0,
+            last_run_submitted_blocks: 0,
+            max_run_submitted_blocks: 0,
+            last_run_staged_nominations: 0,
+            max_run_staged_nominations: 0,
+            last_final_pumps: 0,
+            max_final_pumps: 0,
+            last_final_attempted_blocks: 0,
+            max_final_attempted_blocks: 0,
+            last_final_submitted_blocks: 0,
+            max_final_submitted_blocks: 0,
         }
     }
 
-    /// Record one JIT-attributable execution-thread pause of `ns` nanoseconds that installed
-    /// `blocks` blocks totalling `bytes` emitted bytes. `ns` may be 0 when no host timer is injected
+    /// Record one JIT-attributable execution-thread pause of `ns` nanoseconds that submitted
+    /// `blocks` validated blocks totalling `bytes` source bytes. `ns` may be 0 when no host timer is injected
     /// (the work bounds are still recorded — the headless path).
-    pub fn record(&mut self, ns: u64, blocks: u64, bytes: u64) {
+    pub fn record(&mut self, ns: u64, attempted: u64, submitted: u64, bytes: u64) {
         self.count = self.count.saturating_add(1);
         self.sum_ns = self.sum_ns.saturating_add(ns);
         if ns > self.max_ns {
@@ -87,13 +136,42 @@ impl JitPauseStats {
         }
         let b = bucket_of(ns);
         self.buckets[b] = self.buckets[b].saturating_add(1);
-        if blocks > self.max_install_blocks {
-            self.max_install_blocks = blocks;
+        self.max_attempted_blocks = self.max_attempted_blocks.max(attempted);
+        self.total_attempted_blocks = self.total_attempted_blocks.saturating_add(attempted);
+        if submitted > self.max_submitted_blocks {
+            self.max_submitted_blocks = submitted;
         }
-        if bytes > self.max_install_bytes {
-            self.max_install_bytes = bytes;
+        if bytes > self.max_submitted_bytes {
+            self.max_submitted_bytes = bytes;
         }
-        self.total_install_blocks = self.total_install_blocks.saturating_add(blocks);
+        self.total_submitted_blocks = self.total_submitted_blocks.saturating_add(submitted);
+    }
+
+    /// Record the compile work attributable to one completed public run call. This separate
+    /// aggregation proves a sequence of individually bounded pumps cannot add up to unbounded work
+    /// inside one browser `runChunk`.
+    pub fn record_run(
+        &mut self,
+        attempted: u64,
+        submitted: u64,
+        staged_nominations: u64,
+        final_pumps: u64,
+        final_attempted: u64,
+        final_submitted: u64,
+    ) {
+        self.run_count = self.run_count.saturating_add(1);
+        self.last_run_attempted_blocks = attempted;
+        self.max_run_attempted_blocks = self.max_run_attempted_blocks.max(attempted);
+        self.last_run_submitted_blocks = submitted;
+        self.max_run_submitted_blocks = self.max_run_submitted_blocks.max(submitted);
+        self.last_run_staged_nominations = staged_nominations;
+        self.max_run_staged_nominations = self.max_run_staged_nominations.max(staged_nominations);
+        self.last_final_pumps = final_pumps;
+        self.max_final_pumps = self.max_final_pumps.max(final_pumps);
+        self.last_final_attempted_blocks = final_attempted;
+        self.max_final_attempted_blocks = self.max_final_attempted_blocks.max(final_attempted);
+        self.last_final_submitted_blocks = final_submitted;
+        self.max_final_submitted_blocks = self.max_final_submitted_blocks.max(final_submitted);
     }
 
     /// Mean pause nanoseconds (0 if no samples).
@@ -147,20 +225,34 @@ mod tests {
     #[test]
     fn work_bound_tracks_max() {
         let mut s = JitPauseStats::new();
-        s.record(0, 3, 300);
-        s.record(0, 7, 100);
-        s.record(0, 2, 900);
-        assert_eq!(s.max_install_blocks, 7);
-        assert_eq!(s.max_install_bytes, 900);
-        assert_eq!(s.total_install_blocks, 12);
+        s.record(0, 4, 3, 300);
+        s.record(0, 8, 7, 100);
+        s.record(0, 2, 2, 900);
+        assert_eq!(s.max_submitted_blocks, 7);
+        assert_eq!(s.max_submitted_bytes, 900);
+        assert_eq!(s.total_submitted_blocks, 12);
+        assert_eq!(s.max_attempted_blocks, 8);
+        assert_eq!(s.total_attempted_blocks, 14);
         assert_eq!(s.count, 3);
+        s.record_run(14, 12, 20, 1, 3, 2);
+        s.record_run(5, 4, 5, 0, 0, 0);
+        assert_eq!(s.run_count, 2);
+        assert_eq!(s.last_run_submitted_blocks, 4);
+        assert_eq!(s.max_run_submitted_blocks, 12);
+        assert_eq!(s.last_run_attempted_blocks, 5);
+        assert_eq!(s.max_run_attempted_blocks, 14);
+        assert_eq!(s.last_run_staged_nominations, 5);
+        assert_eq!(s.max_run_staged_nominations, 20);
+        assert_eq!(s.last_final_pumps, 0);
+        assert_eq!(s.max_final_pumps, 1);
+        assert_eq!(s.max_final_submitted_blocks, 2);
     }
 
     #[test]
     fn over_target_and_max_ns() {
         let mut s = JitPauseStats::new();
-        s.record(1_000_000, 1, 1); // 1 ms — under
-        s.record(6_000_000, 1, 1); // 6 ms — over
+        s.record(1_000_000, 1, 1, 1); // 1 ms — under
+        s.record(6_000_000, 1, 1, 1); // 6 ms — over
         assert_eq!(s.over_target, 1);
         assert_eq!(s.max_ns, 6_000_000);
         // p100 is the exact max; a low quantile is well under it.

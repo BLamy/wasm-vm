@@ -109,11 +109,33 @@ impl ProfStats {
         }
     }
 
-    /// E4-T21: record one JIT-attributable execution-thread pause (a compile-queue drain / install
-    /// step) of `ns` nanoseconds that installed `blocks` blocks totalling `bytes` emitted bytes.
+    /// E4-T21: record one JIT-attributable execution-thread pause (staging, validation and executor
+    /// submission) of `ns` nanoseconds for `blocks` validated blocks and `bytes` source bytes.
     #[inline]
-    pub fn record_jit_pause(&mut self, ns: u64, blocks: u64, bytes: u64) {
-        self.jit_pause.record(ns, blocks, bytes);
+    pub fn record_jit_pause(&mut self, ns: u64, attempted: u64, submitted: u64, bytes: u64) {
+        self.jit_pause.record(ns, attempted, submitted, bytes);
+    }
+
+    /// E4-T32: summarize all synchronous JIT work performed by one public run call, including
+    /// bounded nomination staging and whether its bounded final pump ran.
+    #[inline]
+    pub fn record_jit_run(
+        &mut self,
+        attempted: u64,
+        submitted: u64,
+        staged_nominations: u64,
+        final_pumps: u64,
+        final_attempted: u64,
+        final_submitted: u64,
+    ) {
+        self.jit_pause.record_run(
+            attempted,
+            submitted,
+            staged_nominations,
+            final_pumps,
+            final_attempted,
+            final_submitted,
+        );
     }
 
     /// E4-T21: the JIT pause instrumentation snapshot.

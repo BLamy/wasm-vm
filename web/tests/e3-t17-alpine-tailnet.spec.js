@@ -57,7 +57,7 @@ test("stock Alpine uses the browser Headscale node for DHCP, MagicDNS, TCP, and 
     return false;
   }, needle, { timeout });
 
-  await page.goto("/");
+  await page.goto("/?noAutoBoot=1");
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 120_000 });
   await page.selectOption("#network-provider", "tailscale");
   await page.fill("#tailscale-control-url", CONTROL_URL);
@@ -66,6 +66,13 @@ test("stock Alpine uses the browser Headscale node for DHCP, MagicDNS, TCP, and 
   if (EXIT_NODE_ID) await page.fill("#tailscale-exit-node", EXIT_NODE_ID);
   await page.check("#tailscale-accept-dns");
   await page.click("#boot-alpine");
+  await page.waitForFunction(
+    () => document.documentElement.dataset.linuxBackend === "whole-machine-worker",
+    null,
+    { timeout: 120_000 },
+  );
+  expect(await page.evaluate(() => document.documentElement.dataset.linuxBackend))
+    .toBe("whole-machine-worker");
 
   let sawOpenRC = false;
   for (let i = 0; i < 360; i += 1) {

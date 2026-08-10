@@ -244,6 +244,8 @@ fn report_json_shape_and_contents() {
         p.record_pc(0xBEEF00);
     }
     p.add_ns(Subsystem::Clint, 9);
+    p.record_jit_pause(123, 7, 5, 99);
+    p.record_jit_run(7, 5, 11, 1, 2, 1);
     let json = p.report(77, 4).to_json();
     // Shape sanity via string checks (no serde in core).
     assert!(
@@ -253,6 +255,16 @@ fn report_json_shape_and_contents() {
     assert!(json.contains("\"total_ns\":77"));
     assert!(json.contains("\"regions\":["));
     assert!(json.contains("\"subsystems\":["));
+    assert!(json.contains("\"count\":1,\"max_ns\":123,\"sum_ns\":123"));
+    assert!(json.contains("\"max_attempted_blocks\":7,\"total_attempted_blocks\":7"));
+    assert!(json.contains("\"max_submitted_blocks\":5,\"max_submitted_bytes\":99"));
+    assert!(json.contains("\"total_submitted_blocks\":5,\"run_count\":1"));
+    assert!(json.contains("\"last_run_attempted_blocks\":7,\"max_run_attempted_blocks\":7"));
+    assert!(json.contains("\"last_run_submitted_blocks\":5,\"max_run_submitted_blocks\":5"));
+    assert!(json.contains("\"last_run_staged_nominations\":11,\"max_run_staged_nominations\":11"));
+    assert!(json.contains("\"last_final_pumps\":1,\"max_final_pumps\":1"));
+    assert!(json.contains("\"last_final_attempted_blocks\":2,\"max_final_attempted_blocks\":2"));
+    assert!(json.contains("\"last_final_submitted_blocks\":1,\"max_final_submitted_blocks\":1"));
     assert!(json.contains("0xbeef00"), "top region pc present: {json}");
     assert!(
         json.contains("\"name\":\"clint\",\"ns\":9"),

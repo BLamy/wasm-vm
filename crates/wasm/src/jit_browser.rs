@@ -715,6 +715,18 @@ impl CompiledBlockExecutor for BrowserExecutor {
         );
     }
 
+    /// `WebAssembly.Module` construction is synchronous in this executor. Keep one host
+    /// `runChunk` to eight validated block submissions total (across every periodic pump plus its final
+    /// pump), so terminal input, output, and Worker RPC tasks regain the event loop between bounded
+    /// compile bursts. Backlog remains queued and progresses on later chunks.
+    fn max_translation_attempts_per_run(&self) -> usize {
+        8
+    }
+
+    fn max_staged_nominations_per_run(&self) -> usize {
+        64
+    }
+
     fn set_batch_size(&mut self, k: usize) {
         self.batch_size = k.max(1);
     }

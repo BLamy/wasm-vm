@@ -31,7 +31,7 @@ async function readGuest(page, expr, timeout = 20000) {
 
 test("two-clock model: RTC wall-correct, mtime execution-paced, suspend-safe", async ({ page }) => {
   test.setTimeout(240_000);
-  await page.goto("/");
+  await page.goto("/?noAutoBoot=1");
   await page.click("#boot-linux");
   await expect(page.locator(rows)).toContainText("busybox userland up", { timeout: 180_000 });
   await expect(page.locator(rows)).toContainText("~ #");

@@ -327,6 +327,24 @@ pub trait CompiledBlockExecutor {
         1
     }
 
+    /// Maximum number of newly translated blocks this executor may install during one public
+    /// [`Machine::run`](crate::Machine::run) / `run_traced` call. Browser `runChunk` calls are the
+    /// Worker scheduler's cooperative slices: allowing every periodic pump plus the final flush to
+    /// install without a shared per-call ceiling turns one nominally bounded CPU quantum into an
+    /// unbounded synchronous `WebAssembly.Module` compile stall. Native/mock executors retain the
+    /// historical 64-block ceiling; the browser overrides this with a smaller latency budget.
+    fn max_translation_attempts_per_run(&self) -> usize {
+        64
+    }
+
+    /// Maximum discovery nominations staged into the priority compile queue during one public
+    /// cooperative run. Staging a full discovery flood is itself synchronous work (including the
+    /// bounded queue's backpressure comparisons), so it needs an aggregate ceiling independent of
+    /// the smaller block-submission ceiling.
+    fn max_staged_nominations_per_run(&self) -> usize {
+        256
+    }
+
     /// E4-T19 instance registry: number of live WASM Modules/Instances (batches) — the raw material
     /// for E4-T20's budgets. With no batching this equals [`Self::compiled_count`].
     fn module_count(&self) -> usize {

@@ -8,6 +8,7 @@
 import { defineConfig } from "@playwright/test";
 
 const PORT = 8123;
+const nodeBenchmark = process.env.E4T32_NODE_BENCH === "1";
 
 export default defineConfig({
   testDir: "./tests",
@@ -20,11 +21,16 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: "retain-on-failure",
+    // E4-T32 compares the user's foreground interaction path. Pin the expensive acceptance matrix
+    // to a real headed window so a default-headless invocation cannot share its resumable ledger.
+    ...(nodeBenchmark ? { headless: false } : {}),
   },
   webServer: {
     command: `bash ../tools/serve-dev.sh ${PORT}`,
     url: `http://localhost:${PORT}/artifacts.json`,
-    reuseExistingServer: true,
+    // Performance evidence must never inherit an unrelated/stale server on :8123 that lacks the
+    // verified local Node-asset route. Ordinary functional specs retain the convenient reuse path.
+    reuseExistingServer: !nodeBenchmark,
     timeout: 30_000,
   },
 });

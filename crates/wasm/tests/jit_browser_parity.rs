@@ -133,6 +133,15 @@ fn enc_bne(rs1: u32, rs2: u32, off: i32) -> u32 {
         | ((o >> 11) & 1) << 7
         | 0b1100011
 }
+fn enc_jal(rd: u32, off: i32) -> u32 {
+    let o = off as u32;
+    ((o >> 20) & 1) << 31
+        | ((o >> 1) & 0x3ff) << 21
+        | ((o >> 11) & 1) << 20
+        | ((o >> 12) & 0xff) << 12
+        | (rd << 7)
+        | 0b1101111
+}
 fn enc_mul(rd: u32, rs1: u32, rs2: u32) -> u32 {
     (0b0000001 << 25) | (rs2 << 20) | (rs1 << 15) | (0b000 << 12) | (rd << 7) | 0b0110011
 }
@@ -276,6 +285,74 @@ fn browser_jit_matches_interpreter_a_block() {
         executed > 0,
         "the browser JIT must actually execute blocks (A)"
     );
+}
+
+#[wasm_bindgen_test]
+fn browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs() {
+    const BLOCKS: usize = 40;
+    const INTERNAL_RUNS: usize = 31;
+    const WORK: u64 = 16_384;
+    let program: Vec<u32> = (0..BLOCKS)
+        .map(|index| {
+            let offset = if index + 1 == BLOCKS {
+                -((BLOCKS as i32 - 1) * 4)
+            } else {
+                4
+            };
+            enc_jal(0, offset)
+        })
+        .collect();
+
+    let mut oracle = Machine::new(8 * 1024 * 1024);
+    poke(&mut oracle, DRAM_BASE, &program);
+    oracle.hart_mut().regs.pc = DRAM_BASE;
+
+    let mut browser = Machine::new(8 * 1024 * 1024);
+    poke(&mut browser, DRAM_BASE, &program);
+    browser.hart_mut().regs.pc = DRAM_BASE;
+    browser.set_executor(Box::new(BrowserExecutor::new()));
+    browser.set_block_cache(true);
+    browser.set_interrupt_batching(true);
+    browser.set_hotness_threshold(1);
+    browser.set_jit(true);
+
+    // WasmLinux::runChunk uses this exact outer scope around its UART/persistence sub-runs. Four
+    // internal calls must share the BrowserExecutor's eight-block budget instead of resetting it.
+    browser.begin_cooperative_run();
+    for _ in 0..INTERNAL_RUNS {
+        oracle.run(WORK);
+        browser.run(WORK);
+    }
+    browser.end_cooperative_run(wasm_vm_core::RunOutcome::MaxInstrs);
+    let first = browser.prof_report(0, 0).jit_pause;
+    assert_eq!(first.last_run_attempted_blocks, 8);
+    assert_eq!(first.last_run_submitted_blocks, 8);
+    assert_eq!(first.max_run_attempted_blocks, 8);
+    assert_eq!(first.max_run_submitted_blocks, 8);
+    assert!(first.last_run_staged_nominations <= 64);
+    assert!(first.max_run_staged_nominations <= 64);
+    assert!(first.last_final_pumps <= 1);
+    assert_eq!(browser.executor().unwrap().compiled_count(), 8);
+    assert_eq!(state(&oracle), state(&browser));
+
+    // The remaining thirty-two blocks are not dropped: later JS-visible chunks install them under
+    // the same eight-at-a-time ceiling, and compiled execution preserves architectural parity.
+    for _ in 0..4 {
+        browser.begin_cooperative_run();
+        for _ in 0..INTERNAL_RUNS {
+            oracle.run(WORK);
+            browser.run(WORK);
+        }
+        browser.end_cooperative_run(wasm_vm_core::RunOutcome::MaxInstrs);
+        let stats = browser.prof_report(0, 0).jit_pause;
+        assert!(stats.last_run_attempted_blocks <= 8);
+        assert!(stats.last_run_submitted_blocks <= 8);
+        assert!(stats.last_run_staged_nominations <= 64);
+        assert!(stats.max_final_pumps <= 1);
+    }
+    assert_eq!(browser.executor().unwrap().compiled_count(), BLOCKS);
+    assert_eq!(state(&oracle), state(&browser));
+    assert!(browser.executor().unwrap().executed_blocks() > 0);
 }
 
 #[wasm_bindgen_test]

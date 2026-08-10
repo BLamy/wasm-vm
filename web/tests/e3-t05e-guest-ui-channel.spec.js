@@ -46,7 +46,7 @@ test("E3.5-T05e: fenced RPC, serialization, streaming & fail-closed runtime (bus
     if (m.type() === "error" && !m.text().includes("favicon")) errors.push(m.text());
   });
 
-  await page.goto("/?testHooks=1");
+  await page.goto("/?testHooks=1&noAutoBoot=1");
   await page.waitForFunction(() => window.wvmDemo && typeof window.wvmDemo.run === "function");
   await tapConsole(page);
   await page.evaluate(() => window.wvmDemo.runBusybox());
@@ -124,7 +124,7 @@ test("E3.5-T05e: hasContainerRuntime() true + wvrun ps over the channel (Alpine)
   test.skip(!haveAlpine, "needs the local Alpine chunk image (artifacts-alpine.json + chunked-alpine/)");
   test.setTimeout(3_600_000); // interpreted Alpine boot alone can take ~20-40 min
 
-  await page.goto("/?testHooks=1");
+  await page.goto("/?testHooks=1&noAutoBoot=1");
   await page.waitForFunction(() => window.wvmDemo && typeof window.wvmDemo.bootAlpine === "function");
   await tapConsole(page);
 

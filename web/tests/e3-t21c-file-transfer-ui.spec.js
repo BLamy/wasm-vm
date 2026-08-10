@@ -8,7 +8,7 @@ test("streams 100 MiB upload with bounded heap, matching SHA, empty-file and hos
   page.on("console", (message) => {
     if (message.type() === "error" && !message.text().includes("favicon")) errors.push(message.text());
   });
-  await page.goto("/?testHooks=1");
+  await page.goto("/?testHooks=1&noAutoBoot=1");
   await page.waitForFunction(() => globalThis.__wasmVmFileTransferUI);
 
   const chunk = Buffer.alloc(MIB, 0x5a);
@@ -163,7 +163,7 @@ test("streams 100 MiB upload with bounded heap, matching SHA, empty-file and hos
 });
 
 test("surfaces machine-readable peer timeout diagnostics instead of generic BadState", async ({ page }) => {
-  await page.goto("/?testHooks=1");
+  await page.goto("/?testHooks=1&noAutoBoot=1");
   await page.waitForFunction(() => globalThis.__wasmVmFileTransferUI);
   const result = await page.evaluate(async () => {
     const ui = globalThis.__wasmVmFileTransferUI;
@@ -255,7 +255,7 @@ test("surfaces machine-readable peer timeout diagnostics instead of generic BadS
 });
 
 test("streams 100 MiB guest download with bounded heap and exposes partial cancellation", async ({ page }) => {
-  await page.goto("/?testHooks=1");
+  await page.goto("/?testHooks=1&noAutoBoot=1");
   await page.waitForFunction(() => globalThis.__wasmVmFileTransferUI);
   const expected = createHash("sha256");
   for (let index = 0; index < 100; index += 1) expected.update(Buffer.alloc(MIB, 0x5a));
@@ -395,7 +395,7 @@ test("streams 100 MiB guest download with bounded heap and exposes partial cance
 });
 
 test("writer close failure is reported before WVFT completion", async ({ page }) => {
-  await page.goto("/?testHooks=1");
+  await page.goto("/?testHooks=1&noAutoBoot=1");
   await page.waitForFunction(() => globalThis.__wasmVmFileTransferUI);
   const result = await page.evaluate(async () => {
     const ui = globalThis.__wasmVmFileTransferUI;

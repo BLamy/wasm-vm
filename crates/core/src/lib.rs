@@ -336,6 +336,32 @@ pub struct Machine {
     /// path; the quarantined `zicsr-stub` build compiles the pump out, so the field is dead there.
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     jit_pump_ticks: u32,
+    /// E4-T32: blocks still allowed to enter the synchronous compiler during the current public
+    /// `run` call. This is reset from the installed executor at each call and shared by every
+    /// periodic pump plus the one bounded final pump, so a browser `runChunk` has one hard compile
+    /// budget rather than an accidental budget per block boundary.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_run_attempt_remaining: usize,
+    /// Discovery nominations still allowed to enter the priority queue during the current public
+    /// run. This separately bounds synchronous staging/backpressure work before compilation.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_run_staging_remaining: usize,
+    /// True while a host cooperative slice is active. Normally one `run_traced` call owns the
+    /// scope; browser `runChunk` opens it around all of its internal UART/persistence sub-runs.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_run_scope_active: bool,
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_run_submissions_before: u64,
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_run_staged_nominations: u64,
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_run_attempted_blocks: u64,
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_run_final_pumps: u64,
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_run_final_attempted_blocks: u64,
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_run_final_submitted_blocks: u64,
     /// E4-T10: the JIT on/off runtime flag. Effective only with the block cache on and an executor
     /// installed (see [`Self::jit_active`]). Off by default so every existing path is unchanged.
     jit_enabled: bool,
@@ -417,12 +443,12 @@ const JIT_BATCH_TRIGGER: usize = 32;
 #[cfg(not(feature = "zicsr-stub"))]
 const JIT_PUMP_INTERVAL: u32 = 64;
 
-/// E4-T21: the maximum number of blocks INSTALLED (translated + compiled + registered) in a single
-/// [`Machine::pump_jit_translations`] call — the per-boundary install-step work bound that keeps the
+/// E4-T21: the maximum number of validated blocks SUBMITTED for translation/compilation in a single
+/// [`Machine::pump_jit_translations`] call — the per-boundary submission work bound that keeps the
 /// JIT-attributable execution-thread pause bounded (the ≤5 ms target, `docs/jit-architecture.md` §7
 /// D10). Popping the compile queue hottest-first up to this budget means a compile storm is spread
 /// across many boundaries instead of one long stall; the leftover stays queued (priority preserved)
-/// for the next boundary. The `JitPauseStats::max_install_blocks` counter asserts this bound is never
+/// for the next boundary. The `JitPauseStats::max_submitted_blocks` counter asserts this bound is never
 /// exceeded (the headless stand-in for the wall-clock histogram).
 #[cfg(not(feature = "zicsr-stub"))]
 const JIT_INSTALL_BUDGET: usize = 64;
@@ -610,6 +636,15 @@ impl Machine {
             interrupt_batching: false,
             executor: None,
             jit_pump_ticks: 0,
+            jit_run_attempt_remaining: 0,
+            jit_run_staging_remaining: 0,
+            jit_run_scope_active: false,
+            jit_run_submissions_before: 0,
+            jit_run_staged_nominations: 0,
+            jit_run_attempted_blocks: 0,
+            jit_run_final_pumps: 0,
+            jit_run_final_attempted_blocks: 0,
+            jit_run_final_submitted_blocks: 0,
             jit_enabled: false,
             compile_queue: compile_queue::CompileQueue::default(),
             wall_time: None,
@@ -2229,6 +2264,96 @@ impl Machine {
         false
     }
 
+    /// Open one host cooperative-execution scope around one or more [`Self::run_traced`] calls.
+    /// Browser `WasmLinux::runChunk` uses this because it may split one JS-visible quantum into
+    /// several internal UART/persistence runs; all of them must share one aggregate synchronous JIT
+    /// submission budget. Ordinary callers need not use this API: an unscoped `run_traced` call opens
+    /// and closes its own scope automatically.
+    pub fn begin_cooperative_run(&mut self) {
+        #[cfg(not(feature = "zicsr-stub"))]
+        {
+            assert!(
+                !self.jit_run_scope_active,
+                "cooperative run scopes must not nest"
+            );
+            self.jit_run_scope_active = true;
+            self.jit_run_submissions_before = self.prof.jit_pause().total_submitted_blocks;
+            self.jit_run_staged_nominations = 0;
+            self.jit_run_attempted_blocks = 0;
+            self.jit_run_final_pumps = 0;
+            self.jit_run_final_attempted_blocks = 0;
+            self.jit_run_final_submitted_blocks = 0;
+            self.jit_run_attempt_remaining = if self.jit_enabled {
+                self.executor
+                    .as_ref()
+                    .map(|exec| exec.max_translation_attempts_per_run())
+                    .unwrap_or(0)
+            } else {
+                0
+            };
+            self.jit_run_staging_remaining = if self.jit_enabled {
+                self.executor
+                    .as_ref()
+                    .map(|exec| exec.max_staged_nominations_per_run())
+                    .unwrap_or(0)
+            } else {
+                0
+            };
+        }
+    }
+
+    /// Close a scope opened by [`Self::begin_cooperative_run`] and publish its aggregate compile
+    /// counters. Panics on mismatched calls: silently resetting a live scope would reopen the exact
+    /// unbounded-per-`runChunk` bug this boundary exists to prevent.
+    pub fn end_cooperative_run(&mut self, _outcome: RunOutcome) {
+        #[cfg(not(feature = "zicsr-stub"))]
+        {
+            assert!(
+                self.jit_run_scope_active,
+                "no cooperative run scope is active"
+            );
+            // Only the host-visible MaxInstrs boundary gets a final pump. Internal UART/persistence
+            // sub-runs do not flush independently, and a terminal trap/exit/reset does not compile
+            // dead backlog. The final pump sits outside run_traced's timer, so explicitly fold its
+            // measured pause into total_ns.
+            if self.jit_enabled
+                && _outcome == RunOutcome::MaxInstrs
+                && self.jit_run_attempt_remaining > 0
+                && (!self.compile_queue.is_empty()
+                    || (self.jit_run_staging_remaining > 0 && self.discovery.queue_len() > 0))
+            {
+                self.jit_pump_ticks = 0;
+                let pause_before = self.prof.jit_pause().sum_ns;
+                self.jit_run_final_pumps = 1;
+                let (attempted, submitted) = self.pump_jit_translations();
+                self.jit_run_final_attempted_blocks = attempted as u64;
+                self.jit_run_final_submitted_blocks = submitted as u64;
+                let final_pause_ns = self.prof.jit_pause().sum_ns.saturating_sub(pause_before);
+                if self.profiling {
+                    self.prof_total_ns = self.prof_total_ns.saturating_add(final_pause_ns);
+                }
+            }
+            if self.jit_enabled {
+                let submitted = self
+                    .prof
+                    .jit_pause()
+                    .total_submitted_blocks
+                    .saturating_sub(self.jit_run_submissions_before);
+                self.prof.record_jit_run(
+                    self.jit_run_attempted_blocks,
+                    submitted,
+                    self.jit_run_staged_nominations,
+                    self.jit_run_final_pumps,
+                    self.jit_run_final_attempted_blocks,
+                    self.jit_run_final_submitted_blocks,
+                );
+            }
+            self.jit_run_scope_active = false;
+            self.jit_run_attempt_remaining = 0;
+            self.jit_run_staging_remaining = 0;
+        }
+    }
+
     /// Like [`Self::run`], but feeds every retired instruction to `sink` (E0-T18's
     /// `--trace`). Termination and the "logged once" HTIF command watch are identical to
     /// `run` — the ONE place the run-loop / HTIF state machine lives, so a traced run and
@@ -2244,30 +2369,23 @@ impl Machine {
         } else {
             None
         };
-        let outcome = self.run_traced_inner(max_instrs, sink);
-        // E4-T19: flush any blocks still queued for compilation as a final batch. The periodic
-        // deferral in the loop lets a connected component ACCUMULATE before compiling (real batching);
-        // this end-of-run drain guarantees a short run whose hot blocks nominated but never reached a
-        // periodic pump still compiles them — compilation is deferred by at most one run, never lost.
         #[cfg(not(feature = "zicsr-stub"))]
-        if self.jit_enabled {
-            self.jit_pump_ticks = 0;
-            // Flush every still-queued block: each pump installs up to JIT_INSTALL_BUDGET, so loop
-            // until both the discovery FIFO and the priority compile queue are drained (bounded —
-            // the queues are finite and shrink each pass; the cap guards against any pathology).
-            for _ in 0..(dispatch::MAX_QUEUE / JIT_INSTALL_BUDGET + 2) {
-                if self.discovery.queue_len() == 0 && self.compile_queue.is_empty() {
-                    break;
-                }
-                self.pump_jit_translations();
-            }
+        let owns_cooperative_scope = !self.jit_run_scope_active;
+        #[cfg(not(feature = "zicsr-stub"))]
+        if owns_cooperative_scope {
+            self.begin_cooperative_run();
         }
+        let outcome = self.run_traced_inner(max_instrs, sink);
         // One timer read at exit; accumulate the total profiled span. The device+walk time timed on
         // the cold paths is a SUBSET of this span, so `total − (device + walk)` is the interpreter's.
         if let (Some(t0), Some(t)) = (t0, self.host_timer.as_ref()) {
             self.prof_total_ns = self
                 .prof_total_ns
                 .saturating_add(t.now_ns().saturating_sub(t0));
+        }
+        #[cfg(not(feature = "zicsr-stub"))]
+        if owns_cooperative_scope {
+            self.end_cooperative_run(outcome);
         }
         outcome
     }
@@ -2512,17 +2630,32 @@ impl Machine {
     /// physically-keyed) decoded block is handed to the executor, which translates + compiles +
     /// registers it. Called at block boundaries; cheap when the queue is empty (the common case).
     #[cfg(not(feature = "zicsr-stub"))]
-    fn pump_jit_translations(&mut self) {
+    fn pump_jit_translations(&mut self) -> (usize, usize) {
         use crate::bus::Bus;
-        if self.executor.is_none() {
-            return;
+        if self.executor.is_none() || self.jit_run_attempt_remaining == 0 {
+            return (0, 0);
         }
+        if self.compile_queue.is_empty()
+            && (self.discovery.queue_len() == 0 || self.jit_run_staging_remaining == 0)
+        {
+            return (0, 0);
+        }
+        // Include nomination staging, stale cancellation and backpressure/recount work in the same
+        // wall-time pause as validation/compilation. Previously the timer started after an unbounded
+        // discovery drain, hiding the very Worker stall this instrumentation is meant to expose.
+        let t0 = self.host_timer.as_ref().map(|t| t.now_ns());
         // ── E4-T21: stage discovery's FIFO nominations into the priority compile queue. ──
-        // Drain the discovery FIFO and admit each as a CompileJob tagged with its live hotness, so
-        // the hottest pending block compiles first. Admission is bounded + drop-and-recount, so a
-        // flood of unique hot blocks never grows memory or blocks execution — dropped jobs are fed
-        // back to discovery for later re-nomination.
-        for req in self.discovery.take_requests() {
+        // Admit only the aggregate staging budget for this host-visible cooperative run. Remaining
+        // FIFO work stays in discovery for later slices, while the priority queue still compiles the
+        // hottest admitted block first.
+        let staging_budget = self.jit_run_staging_remaining;
+        let staged = self.discovery.take_requests_bounded(staging_budget);
+        self.jit_run_staging_remaining =
+            self.jit_run_staging_remaining.saturating_sub(staged.len());
+        self.jit_run_staged_nominations = self
+            .jit_run_staged_nominations
+            .saturating_add(staged.len() as u64);
+        for req in staged {
             let hotness = self.discovery.queued_hotness(req.phys_pc);
             self.compile_queue
                 .push(compile_queue::CompileJob { req, hotness });
@@ -2536,20 +2669,15 @@ impl Machine {
         for phys in self.compile_queue.take_recount() {
             self.discovery.renominate(phys);
         }
-        if self.compile_queue.is_empty() {
-            return;
-        }
         // ── E4-T21: pop the hottest jobs up to the per-boundary INSTALL budget (bounds the stall). ──
         let mut reqs: alloc::vec::Vec<dispatch::TranslationRequest> = alloc::vec::Vec::new();
-        while reqs.len() < JIT_INSTALL_BUDGET {
+        let attempt_budget = JIT_INSTALL_BUDGET.min(self.jit_run_attempt_remaining);
+        while reqs.len() < attempt_budget {
             match self.compile_queue.pop_hottest() {
                 Some(job) => reqs.push(job.req),
                 None => break,
             }
         }
-        // Pause instrumentation: time the install step (translate/validate/batch/install) when a host
-        // timer is injected; always record the WORK done (blocks + bytes) as the headless bound.
-        let t0 = self.host_timer.as_ref().map(|t| t.now_ns());
         let mut exec = self.executor.take().expect("executor present");
         // ── 1. Validate each request against live memory and collect the still-valid decoded blocks. ──
         let mut valid: alloc::vec::Vec<dispatch::DecodedBlock> = alloc::vec::Vec::new();
@@ -2569,13 +2697,21 @@ impl Machine {
                     }
                 }
             }
-            if !ok || !self.discovery.install_check(req, &live) {
+            if !ok {
+                self.discovery.renominate(req.phys_pc);
+                continue;
+            }
+            if !self.discovery.install_check(req, &live) {
                 continue;
             }
             // The predecoded block is still cached (physical keying); take a clone for the batch.
             if let Some(block) = self.block_cache.get(req.phys_pc) {
                 installed_bytes = installed_bytes.saturating_add(req.code_bytes.len() as u64);
                 valid.push(block.clone());
+            } else {
+                // A bounded/evicting decoded cache can lose this block while its nomination waits.
+                // Clear the Queued dedup state so a later execution rebuilds and re-nominates it.
+                self.discovery.renominate(req.phys_pc);
             }
         }
         // ── 2. Group the drained blocks into batches by connected components of the observed static-
@@ -2600,8 +2736,17 @@ impl Machine {
             (Some(t0), Some(t)) => t.now_ns().saturating_sub(t0),
             _ => 0,
         };
-        self.prof
-            .record_jit_pause(pause_ns, valid.len() as u64, installed_bytes);
+        self.prof.record_jit_pause(
+            pause_ns,
+            reqs.len() as u64,
+            valid.len() as u64,
+            installed_bytes,
+        );
+        self.jit_run_attempt_remaining = self.jit_run_attempt_remaining.saturating_sub(reqs.len());
+        self.jit_run_attempted_blocks = self
+            .jit_run_attempted_blocks
+            .saturating_add(reqs.len() as u64);
+        (reqs.len(), valid.len())
     }
 
     /// E4-T31: commit one compiled exit's exact retirement span into every counter that the
@@ -3007,7 +3152,10 @@ impl Machine {
                 // module rather than a trickle of one-block modules. Drain when the queue reaches
                 // `JIT_BATCH_TRIGGER` (a batch's worth is ready) or every `JIT_PUMP_INTERVAL`
                 // boundaries (flush stragglers). Cheap when the queue is empty.
-                if self.jit_enabled {
+                if self.jit_enabled
+                    && self.jit_run_attempt_remaining > 0
+                    && (!self.compile_queue.is_empty() || self.jit_run_staging_remaining > 0)
+                {
                     self.jit_pump_ticks = self.jit_pump_ticks.wrapping_add(1);
                     if self.discovery.queue_len() >= JIT_BATCH_TRIGGER
                         || self.jit_pump_ticks >= JIT_PUMP_INTERVAL

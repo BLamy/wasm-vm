@@ -1343,7 +1343,7 @@ impl WasmLinux {
     }
 
     /// Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
-    /// 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
+    /// 16550 RX, and return `{ done: bool, state: string|null, retired: number }`. A persistent caller may pass
     /// `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
     /// that limit so JS can durably drain it before the guest can race arbitrarily far ahead.
     /// `state` is `"poweroff"`, `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or
@@ -1355,6 +1355,7 @@ impl WasmLinux {
         persist_max_dirty_bytes: Option<u32>,
     ) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let retired_before = inner.machine.irq_stats().retired;
         if inner.finished.is_none() {
             let mut sink = wasm_vm_core::trace::NullSink;
             // Interleave RX refills with execution. The 16550 RX FIFO is 16 bytes; feeding it only
@@ -1369,6 +1370,11 @@ impl WasmLinux {
             const INPUT_SLICE: u64 = 16_384;
             const PERSIST_SLICE: u64 = 16_384;
             let mut remaining = max_instrs as u64;
+            // All internal UART/persistence sub-runs are one JS-visible cooperative Worker slice.
+            // Share one browser-executor submission budget across them; otherwise each 16,384-op
+            // refill boundary would reset the budget and one runChunk could still compile hundreds
+            // of blocks synchronously before input/RPC tasks regain the event loop.
+            inner.machine.begin_cooperative_run();
             let outcome = loop {
                 // Feed queued host input into the RX FIFO, up to its free space (no overrun).
                 if !inner.pending.is_empty() {
@@ -1406,6 +1412,7 @@ impl WasmLinux {
                     break oc;
                 }
             };
+            inner.machine.end_cooperative_run(outcome);
             // Drain the 16550 TX into the console buffer.
             let uart_out = inner.uart.borrow_mut().take_output();
             inner.out.borrow_mut().extend_from_slice(&uart_out);
@@ -1438,11 +1445,17 @@ impl WasmLinux {
                 let _ = js_sys::Reflect::set(&obj, &"state".into(), &JsValue::NULL);
             }
         }
+        let retired = inner
+            .machine
+            .irq_stats()
+            .retired
+            .wrapping_sub(retired_before);
+        let _ = js_sys::Reflect::set(&obj, &"retired".into(), &JsValue::from_f64(retired as f64));
         Ok(obj.into())
     }
 
-    /// Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
-    /// devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
+    /// Final/current guest-RAM SHA-256 for browser evidence. This is the `mem_digest` portion of the
+    /// native snapshot contract; registers and device state are intentionally not encoded here.
     #[wasm_bindgen(js_name = stateDigest)]
     pub fn state_digest(&self) -> Result<String, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
@@ -1517,6 +1530,47 @@ impl WasmLinux {
             subsystems.push(&o);
         }
         set("subsystems", &subsystems);
+        let pause = report.jit_pause;
+        let jit_pause = js_sys::Object::new();
+        let set_pause = |k: &str, v: u64| {
+            let _ = js_sys::Reflect::set(
+                &jit_pause,
+                &JsValue::from_str(k),
+                &JsValue::from_f64(v as f64),
+            );
+        };
+        set_pause("count", pause.count);
+        set_pause("maxNs", pause.max_ns);
+        set_pause("sumNs", pause.sum_ns);
+        set_pause("overTarget", pause.over_target);
+        set_pause("maxAttemptedBlocks", pause.max_attempted_blocks);
+        set_pause("totalAttemptedBlocks", pause.total_attempted_blocks);
+        set_pause("maxSubmittedBlocks", pause.max_submitted_blocks);
+        set_pause("maxSubmittedBytes", pause.max_submitted_bytes);
+        set_pause("totalSubmittedBlocks", pause.total_submitted_blocks);
+        set_pause("runCount", pause.run_count);
+        set_pause("lastRunAttemptedBlocks", pause.last_run_attempted_blocks);
+        set_pause("maxRunAttemptedBlocks", pause.max_run_attempted_blocks);
+        set_pause("lastRunSubmittedBlocks", pause.last_run_submitted_blocks);
+        set_pause("maxRunSubmittedBlocks", pause.max_run_submitted_blocks);
+        set_pause(
+            "lastRunStagedNominations",
+            pause.last_run_staged_nominations,
+        );
+        set_pause("maxRunStagedNominations", pause.max_run_staged_nominations);
+        set_pause("lastFinalPumps", pause.last_final_pumps);
+        set_pause("maxFinalPumps", pause.max_final_pumps);
+        set_pause(
+            "lastFinalAttemptedBlocks",
+            pause.last_final_attempted_blocks,
+        );
+        set_pause("maxFinalAttemptedBlocks", pause.max_final_attempted_blocks);
+        set_pause(
+            "lastFinalSubmittedBlocks",
+            pause.last_final_submitted_blocks,
+        );
+        set_pause("maxFinalSubmittedBlocks", pause.max_final_submitted_blocks);
+        set("jitPause", &jit_pause);
         Ok(obj.into())
     }
 
@@ -2034,6 +2088,7 @@ impl WasmLinux {
                 let prefetch = js_sys::Object::new();
                 set_num(&prefetch, "issued", m.prefetch_issued as f64);
                 set_num(&prefetch, "used", m.prefetch_used as f64);
+                set_num(&prefetch, "profileEntries", s.boot_profile.len() as f64);
                 let acc = m
                     .prefetch_used
                     .saturating_mul(100)

@@ -145,7 +145,7 @@ pub struct ProfReport {
     /// rate). `Some` only when [`crate::Machine::prof_report`] is called with an executor installed.
     pub jit_cache: Option<crate::jit::JitCacheStats>,
     /// E4-T21: JIT-attributable execution-thread pause instrumentation (compile-queue drains +
-    /// installs, and the headless per-install work bound).
+    /// executor submissions, and the headless per-submission work bound).
     pub jit_pause: crate::prof::JitPauseStats,
 }
 
@@ -188,9 +188,14 @@ impl ProfReport {
         let p = &self.jit_pause;
         if p.count > 0 {
             s.push_str(&format!(
-                "jit pause: samples={} max_ns={} mean_ns={} p95_ns={} over_5ms={} max_install_blocks={} max_install_bytes={}\n",
+                "jit pause: samples={} max_ns={} mean_ns={} p95_ns={} over_5ms={} max_attempted_blocks={} max_submitted_blocks={} max_submitted_bytes={} run_count={} last_run_attempted={} max_run_attempted={} last_run_submitted={} max_run_submitted={} last_run_staged={} max_run_staged={} last_final_pumps={} max_final_pumps={} last_final_attempted={} max_final_attempted={} last_final_submitted={} max_final_submitted={}\n",
                 p.count, p.max_ns, p.mean_ns(), p.percentile_ns(0.95), p.over_target,
-                p.max_install_blocks, p.max_install_bytes,
+                p.max_attempted_blocks, p.max_submitted_blocks, p.max_submitted_bytes, p.run_count,
+                p.last_run_attempted_blocks, p.max_run_attempted_blocks,
+                p.last_run_submitted_blocks, p.max_run_submitted_blocks,
+                p.last_run_staged_nominations, p.max_run_staged_nominations, p.last_final_pumps,
+                p.max_final_pumps, p.last_final_attempted_blocks, p.max_final_attempted_blocks,
+                p.last_final_submitted_blocks, p.max_final_submitted_blocks,
             ));
         }
         s
@@ -229,15 +234,42 @@ impl ProfReport {
             d.candidates,
             d.generation,
         );
+        let p = &self.jit_pause;
+        let jit_pause = format!(
+            "{{\"count\":{},\"max_ns\":{},\"sum_ns\":{},\"over_target\":{},\"max_attempted_blocks\":{},\"total_attempted_blocks\":{},\"max_submitted_blocks\":{},\"max_submitted_bytes\":{},\"total_submitted_blocks\":{},\"run_count\":{},\"last_run_attempted_blocks\":{},\"max_run_attempted_blocks\":{},\"last_run_submitted_blocks\":{},\"max_run_submitted_blocks\":{},\"last_run_staged_nominations\":{},\"max_run_staged_nominations\":{},\"last_final_pumps\":{},\"max_final_pumps\":{},\"last_final_attempted_blocks\":{},\"max_final_attempted_blocks\":{},\"last_final_submitted_blocks\":{},\"max_final_submitted_blocks\":{}}}",
+            p.count,
+            p.max_ns,
+            p.sum_ns,
+            p.over_target,
+            p.max_attempted_blocks,
+            p.total_attempted_blocks,
+            p.max_submitted_blocks,
+            p.max_submitted_bytes,
+            p.total_submitted_blocks,
+            p.run_count,
+            p.last_run_attempted_blocks,
+            p.max_run_attempted_blocks,
+            p.last_run_submitted_blocks,
+            p.max_run_submitted_blocks,
+            p.last_run_staged_nominations,
+            p.max_run_staged_nominations,
+            p.last_final_pumps,
+            p.max_final_pumps,
+            p.last_final_attempted_blocks,
+            p.max_final_attempted_blocks,
+            p.last_final_submitted_blocks,
+            p.max_final_submitted_blocks,
+        );
         format!(
-            "{{\"total_ns\":{},\"sample_count\":{},\"walk_count\":{},\"collisions\":{},\"regions\":[{}],\"subsystems\":[{}],\"discovery\":{}}}",
+            "{{\"total_ns\":{},\"sample_count\":{},\"walk_count\":{},\"collisions\":{},\"regions\":[{}],\"subsystems\":[{}],\"discovery\":{},\"jit_pause\":{}}}",
             self.total_ns,
             self.sample_count,
             self.walk_count,
             self.collisions,
             regions,
             subs,
-            discovery
+            discovery,
+            jit_pause,
         )
     }
 }
