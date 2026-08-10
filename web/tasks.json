@@ -56,7 +56,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-08-09"
+    "end": "2026-08-10"
   },
   "tasks": [
     {
@@ -14203,8 +14203,9 @@
       "activity": [
         {
           "date": "2026-08-09",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e4): prove bounded JIT accounting",
             "chore(e4): submit bounded JIT accounting proof",
             "chore(e4): prioritize bounded JIT accounting"
           ]
@@ -14212,7 +14213,7 @@
       ],
       "firstActivity": "2026-08-09",
       "lastActivity": "2026-08-09",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E4-T32",
@@ -14253,7 +14254,7 @@
       "epicKey": "4",
       "title": "Bulk JIT CPU-state handoff and bounded browser handle lifetime",
       "priority": 432,
-      "status": "pending",
+      "status": "implemented",
       "depends_on": [
         "E4-T31"
       ],
@@ -14264,7 +14265,7 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-08-10 — worker — implemented\n\nRuntime/test commit: `f725abf23f85ba2e98d6fa13d07affce07737ec4`. Full evidence and\ndiff-to-test coverage audit: `evidence/e4-t33/README.md`. Browser artifacts:\n`evidence/e4-t33/browser-bulk-jit.jpg` and `evidence/e4-t33/browser-roadmap.jpg`.\n\nThe unchanged-runtime benchmark baseline is `73d1e88ad60f0e548edc98bdb41b34e6347ce097`.\nThe identical five-sample, exact-budget 64-op workload measured 76.083 interpreter / 238.552 scalar\nJIT MIPS at baseline and 81.092 interpreter / 608.741 bulk JIT MIPS at the frozen runtime commit:\n2.551x same-workload JIT uplift and 7.507x final JIT/interpreter. The six-op boundary diagnostic\nalso moved from 10.267 JIT / 26.773 interpreter (0.383x) to 87.625 / 62.692 (1.398x).\n\nFinal worker commands:\n\n```text\ncargo fmt --all -- --check\ncargo clippy -p wasm-vm-core -p wasm-vm-jit-translate -p wasm-vm-jit-runtime \\\n  -p wasm-vm-cli --all-targets -- -D warnings\ncargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown --release -- -D warnings\ncargo test -p wasm-vm-core\ncargo test -p wasm-vm-jit-translate\ncargo test -p wasm-vm-jit-runtime\ncargo test -p wasm-vm-cli\ncargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release\nwasm-pack test --node crates/wasm\ncargo test -p wasm-vm-jit-runtime --release --test perf_handoff \\\n  -- --ignored --nocapture --test-threads=1\nwasm-pack test --node crates/wasm --test jit_browser_parity -- \\\n  browser_handles_remain_bounded_across_retranslation_churn \\\n  --include-ignored --exact --nocapture\nmake web-build\n```\n\nAll passed. A strengthened post-audit precise-fault test dirties x1 through x30 before faulting a\nload into the x31 sentinel and is green in both native and browser executors. The explicit 4,096\ncycle, two-batch-budget browser attack passed with active eviction/retranslation, exact K+2 batch\nownership, bounded externref counts, full x0..x31 parity, exact exits, and baseline handle counts\nafter invalidation/drop. Native I/M/A, precise-trap, SMC invalidation, chaining, eviction, timing,\nintegrated CLI, and full Node Wasm suites remained green.\n\nThe fresh COOP/COEP demo at port 8147 restored BusyBox to a real `~ #` in 0.41 seconds, reported\n`126 passed`, surfaced exactly one filtered E4-T33 roadmap issue, and emitted zero console errors or\nwarnings. Aggressive main-thread `jit=1&jitThreshold=1` loaded without console errors but saturated\nDOM automation; responsive worker-default JIT remains E4-T32 and is not claimed here. The E4-T33\nroadmap capability deliberately remains `in-progress` pending this task's separate adversarial\nverifier. No deployment was performed.",
       "adversarial": "Force a memory fault after dirty register writeback, evict while repeatedly retranslating, set a tiny\ncache budget, and run enough hot blocks to exceed the old failure point. Any lost register, imprecise\ntrap, unbounded live handle count, or JIT slowdown refutes the change.",
       "file": "tasks/epic-4-acceleration/E4-T33-bulk-jit-state-handoff.md",
       "activity": [
@@ -14274,11 +14275,18 @@
           "labels": [
             "chore(e4): prioritize bounded JIT accounting"
           ]
+        },
+        {
+          "date": "2026-08-10",
+          "commits": 1,
+          "labels": [
+            "chore(e4): start bulk JIT state handoff"
+          ]
         }
       ],
       "firstActivity": "2026-08-09",
-      "lastActivity": "2026-08-09",
-      "commitCount": 1
+      "lastActivity": "2026-08-10",
+      "commitCount": 2
     },
     {
       "id": "E5-T01",
