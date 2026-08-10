@@ -3,7 +3,7 @@ id: E4-T30
 epic: 4
 title: Predecode entry-hit reuse and production fast-interpreter mode
 priority: 430
-status: implemented
+status: verified
 depends_on: [E1]
 estimate: S
 risk: high
@@ -116,3 +116,41 @@ legacy_path_traps_at_s_mode_interior_pmp_permission -- --exact --nocapture`; sam
 - EVIDENCE: updated `evidence/e4-t30/README.md` and `browser-console.txt`; repair screenshot
   `browser-fast-interpreter-repair.jpg` has SHA-256
   `0c40856df721a3ab125f95e650c9e1e8391a155e6fbbcb99dbff76f935a15fbf`.
+
+### 2026-08-09 — verifier — VERDICT: verified
+
+- P1 entry reuse, discovery, invalidation, and differential behavior — HELD (carried forward where
+  unchanged). Predicted the repaired mode key would leave the previously verified hot-entry and
+  byte-identical paths unchanged; the focused exact-tree matrix passed 28 tests across
+  `hotness_discovery`, `boot_contract`, `pmp`, `predecode_batching`, `predecode_diff`,
+  `predecode_entry_safety`, and `predecode_smc_diff` (one artifact-gated OpenSBI case ignored).
+- P2 unlocked-PMP M→S repair — HELD. Predicted both cache-off and cache-on would retire the permitted
+  entry (`x5=1`), reject the cached interior (`x6=0`), and report `InstrAccessFault` at
+  `DRAM_BASE+4`; the promoted `privilege_change_invalidates_cached_interior_permission` passed in
+  the working tree and again from scrubbed cold clone
+  `/private/tmp/e4t30-reverify.VvrBbO/repo` at exact head `259c851`.
+- P3 novel in-run privilege transition — HELD. Predicted a guest `mret` from M to S would terminate
+  its decoded block, make the following boundary observe S-mode, and flush before reusing an
+  M-mode-prewarmed successor. The verifier-promoted
+  `guest_mret_invalidates_cached_interior_permission_before_successor` passed with S-mode selected,
+  `x5=1`, `x6=0`, and a precise fault at the denied successor interior.
+- PERF — HELD. The independent paired release rerun measured legacy `31.9 MIPS` versus fast
+  `49.3 MIPS` (`1.55x`), while the absolute smoke rerun measured `33.4 MIPS >= 15`; the extra mode
+  comparison did not erase the submitted acceleration.
+- BUILD — HELD. `cargo fmt --all -- --check`, strict all-target core+wasm clippy, and the wasm32
+  release build passed. The worker browser evidence digest independently matched
+  `0c40856df721a3ab125f95e650c9e1e8391a155e6fbbcb99dbff76f935a15fbf`; the browser surface itself
+  is unchanged by the runtime-only repair, so its prior fresh-origin result is carried forward.
+- COVERAGE: constructor/toggle/resize initialization and the unchanged-mode fast return were
+  exercised by the focused matrix; the changed-mode flush/cursor path was exercised by both PMP
+  attacks. Restore's assignment is waived as empty-cache bookkeeping (restore already flushes all
+  decoded/compiled code, so a different sentinel can only cause one redundant flush). Comments are
+  non-executable. SUITE: promoted the guest-`mret` regression into `predecode_entry_safety`.
+
+Commands: `cargo test -p wasm-vm-core --test hotness_discovery --test boot_contract --test pmp
+--test predecode_diff --test predecode_smc_diff --test predecode_batching --test
+predecode_entry_safety`; `cargo test -p wasm-vm-core --release --test perf_baseline
+perf_fast_interpreter_does_not_trail_legacy -- --ignored --exact --nocapture`; same for
+`perf_smoke_alu_above_floor`; `cargo fmt --all -- --check`; `cargo clippy -p wasm-vm-core -p
+wasm-vm-wasm --all-targets -- -D warnings`; `cargo build -p wasm-vm-wasm
+--target wasm32-unknown-unknown --release`; scrubbed cold-clone promoted-test command at `259c851`.

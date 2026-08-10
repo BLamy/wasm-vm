@@ -6,7 +6,7 @@ use wasm_vm_core::Machine;
 use wasm_vm_core::RunOutcome;
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
-use wasm_vm_core::csr::{CsrOp, PMPCFG0, Priv, SATP};
+use wasm_vm_core::csr::{CsrOp, MEPC, MSTATUS, PMPCFG0, Priv, SATP};
 use wasm_vm_core::hart::{Exception, Trap};
 
 const V: u64 = 1;
@@ -225,6 +225,73 @@ fn privilege_change_invalidates_cached_interior_permission() {
         assert_eq!(trap.cause, Exception::InstrAccessFault);
         assert_eq!(trap.tval, DRAM_BASE + 4);
     }
+}
+
+#[test]
+fn guest_mret_invalidates_cached_interior_permission_before_successor() {
+    // Novel verifier attack: unlike a host mutation between run chunks, MRET changes privilege
+    // *inside* one run. Because xRET is a block terminator, the successor boundary must observe the
+    // new S-mode before re-entering code that was decoded under M-mode's unlocked-PMP bypass.
+    const MRET: u32 = 0x3020_0073;
+    const ADDI_X5_ONE: u32 = (1 << 20) | (5 << 7) | 0x13;
+    const ADDI_X6_ONE: u32 = (1 << 20) | (6 << 7) | 0x13;
+    const JAL_BACK_8: u32 = 0xff9f_f06f;
+    const TARGET: u64 = DRAM_BASE + 0x100;
+    const MPP_S: u64 = 1 << 11;
+
+    let mut m = Machine::new(8 * 1024 * 1024);
+    m.bus_mut().store32(DRAM_BASE, MRET).unwrap();
+    m.bus_mut().store32(TARGET, ADDI_X5_ONE).unwrap();
+    m.bus_mut().store32(TARGET + 4, ADDI_X6_ONE).unwrap();
+    m.bus_mut().store32(TARGET + 8, JAL_BACK_8).unwrap();
+
+    // [0, TARGET+4) is RX; [TARGET+4, end-of-page) is R-only. Unlocked entries are bypassed
+    // while prewarming in M-mode, then enforced immediately after MRET selects S-mode.
+    m.hart_mut().csr.pmp.write_addr(0, (TARGET + 4) >> 2);
+    m.hart_mut()
+        .csr
+        .pmp
+        .write_addr(1, (DRAM_BASE + 0x1000) >> 2);
+    let entry_rx = PMP_R | 4 | PMP_TOR;
+    let interior_r = PMP_R | PMP_TOR;
+    m.hart_mut()
+        .csr
+        .access(
+            PMPCFG0,
+            CsrOp::Write,
+            entry_rx | (interior_r << 8),
+            false,
+            false,
+            0,
+        )
+        .unwrap();
+    m.hart_mut().csr.mode = Priv::M;
+    m.hart_mut().regs.pc = TARGET;
+    m.set_block_cache(true);
+    assert_eq!(m.run(3), RunOutcome::MaxInstrs, "prewarm as M-mode");
+
+    m.hart_mut().regs.write(5, 0);
+    m.hart_mut().regs.write(6, 0);
+    m.hart_mut().regs.pc = DRAM_BASE;
+    m.hart_mut()
+        .csr
+        .access(MEPC, CsrOp::Write, TARGET, false, false, 0)
+        .unwrap();
+    m.hart_mut()
+        .csr
+        .access(MSTATUS, CsrOp::Write, MPP_S, false, false, 0)
+        .unwrap();
+
+    let trap = trapped(m.run(3));
+    assert_eq!(m.hart().csr.mode, Priv::S, "MRET selected S-mode");
+    assert_eq!(m.hart().regs.read(5), 1, "S-mode entry retired");
+    assert_eq!(
+        m.hart().regs.read(6),
+        0,
+        "denied cached interior did not retire"
+    );
+    assert_eq!(trap.cause, Exception::InstrAccessFault);
+    assert_eq!(trap.tval, TARGET + 4);
 }
 
 #[test]
