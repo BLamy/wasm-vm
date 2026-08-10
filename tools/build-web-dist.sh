@@ -39,6 +39,11 @@ done
 
 # The built wasm ES module (from make web-build).
 cp -R web/pkg "$DIST/pkg"
+# wasm-pack places `*` in pkg/.gitignore because its publish directory is normally generated. The
+# deploy bundle itself is committed, however, and inline-js bindings import files below pkg/snippets.
+# Remove the nested ignore rule so the pre-commit `git add web/dist` cannot silently omit a runtime
+# dependency and leave an exact-clone deployment with a 404.
+rm -f "$DIST/pkg/.gitignore"
 
 # Small runtime assets (guest ELFs, riscv-tests) — NOT web/releases (large; deploy-time copy).
 if [ -d web/assets ]; then

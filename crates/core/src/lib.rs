@@ -2651,16 +2651,17 @@ impl Machine {
             let block_budget = remaining_work - work_used;
             let Some(step) = self.run_one_jit_block(phys, block_budget) else {
                 // The first block left the hart untouched, so the caller can interpret it. If a
-                // LATER block refused the short tail or unexpectedly failed, prior blocks already
-                // committed: return their progress and let the next dispatch handle this PC.
+                // LATER block refused the short tail or hit a defensive pre-call metadata miss,
+                // prior blocks already committed: return their progress and let the next dispatch
+                // handle this PC.
                 break (work_used != 0).then_some(JitProgress {
                     result: Ok(()),
                     work_used,
                 });
             };
             ran_any = true;
-            // Link only after the successor really ran. A short-tail refusal or an unexpected
-            // executor fallback must not publish an edge as though it executed.
+            // Link only after the successor really ran. A short-tail refusal or defensive pre-call
+            // cache miss must not publish an edge as though it executed.
             if let (Some((from, edge)), Some(e)) = (pending_link.take(), self.executor.as_mut()) {
                 e.link_edge(from, edge, phys);
             }
@@ -2787,7 +2788,10 @@ impl Machine {
         let mut exec = self.executor.take().expect("compiled ⇒ executor present");
         let exit = exec.execute(phys, &mut self.hart, &mut self.bus);
         self.executor = Some(exec);
-        let exit = exit?; // None ⇒ faulted out; hart untouched ⇒ fall back to the interpreter.
+        // `None` is exclusively a defensive pre-call executor metadata miss; compiled code did not
+        // run, so interpreting from entry is replay-safe. Recorded faults return `Some(Trap)`, and
+        // an unclassified failure after dispatch fails closed inside the executor.
+        let exit = exit?;
 
         // PC is about to jump to a block entry; the block cursor no longer describes it.
         self.block_cursor = None;

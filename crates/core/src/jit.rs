@@ -11,9 +11,10 @@
 //!
 //! The executor reaches guest memory through the SAME [`Hart`]/[`SystemBus`] the interpreter uses
 //! ([`Hart::jit_load`] / [`Hart::jit_store`]), so a JIT load/store is translated, PMP-checked, and
-//! routed to RAM/MMIO byte-identically to the interpreter — and a faulting access unwinds the block
-//! (executor returns `None`) so the run loop falls back to interpreting it, leaving hart state
-//! untouched (precise deopt for the E4-T09 translator's never-faulting memory ABI).
+//! routed to RAM/MMIO byte-identically to the interpreter. A recorded guest fault returns a precise
+//! [`JitExit`]; an unclassified engine failure after dispatch must fail closed because an imported
+//! access may already have committed a side effect. `None` is reserved for a pre-call cache miss,
+//! where interpreting from the same entry is provably replay-safe.
 
 use crate::dispatch::DecodedBlock;
 use crate::hart::Hart;
@@ -48,11 +49,12 @@ pub mod abi {
     pub const CHAIN_ENABLED: u32 = 0x250;
 }
 
-/// Reusable byte-exact image of the frozen portion of a compiled module's `CpuState` memory.
+/// Reusable transport buffer spanning the compiled module's frozen handoff byte range.
 ///
-/// The handoff is bytes rather than a `repr(C)` integer struct so it is alignment-independent and
-/// remains little-endian-correct on every Rust host. Executors transfer the whole image with one
-/// engine call in each direction; all register and exit decoding stays inside Rust.
+/// The current translator consumes x0..x31 plus `entry_pc` on entry and produces x0..x31 plus the
+/// exit header on return. Reserved gaps inside the 568-byte range are transported but intentionally
+/// carry no architectural claim. The buffer uses words rather than a `repr(C)` field struct so its
+/// byte view stays alignment-independent and little-endian-correct on every Rust host.
 pub struct CpuStateHandoff {
     // Stored as little-endian words so common little-endian hosts can marshal the whole register
     // file with one native slice copy. Byte accessors expose the identical frozen ABI image.
@@ -68,7 +70,8 @@ impl Default for CpuStateHandoff {
 }
 
 impl CpuStateHandoff {
-    /// Marshal the live integer registers and virtual entry PC into the frozen layout.
+    /// Marshal the live integer registers and virtual entry PC. Reserved gaps and the prior exit
+    /// header need not be initialized because generated code never consumes them on entry.
     pub fn prepare(&mut self, hart: &Hart) {
         #[cfg(target_endian = "little")]
         self.words[..32].copy_from_slice(hart.regs.jit_words());
@@ -139,7 +142,7 @@ impl CpuStateHandoff {
 
 /// The frozen exit-code enum (`docs/jit-architecture.md` §3.3). The E4-T09 translator emits only
 /// the first three; the rest are reserved for later tickets and surfaced here so the run loop can
-/// fall back defensively if it ever sees one.
+/// preserve the already-committed compiled state defensively if it ever sees one.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ExitCode {
     /// Block ran to its end; resume at `next_pc`.
@@ -149,7 +152,8 @@ pub enum ExitCode {
     /// A guest trap (`ecall`/`ebreak`) must be delivered at `next_pc`.
     Trap,
     /// Any reserved variant (MMIO/MMU_MISS/CALL_INTERP/NOT_COMPILED/BUDGET/INTERRUPT_POLL) — not
-    /// produced by the E4-T09 translator; treated as a fall-back-to-interpreter signal.
+    /// produced by the E4-T09 translator; treated as a benign unlinked fall-through because the
+    /// module register image has already been committed.
     Reserved(i32),
 }
 
@@ -343,9 +347,11 @@ pub trait CompiledBlockExecutor {
     /// on a clean return; guest memory is reached through `hart`'s translated load/store path so
     /// effects match the interpreter exactly.
     ///
-    /// Returns `Some(exit)` on a clean return, or `None` if the block faulted out (a bus fault in a
-    /// load/store import) — in which case `hart` state is LEFT UNTOUCHED so the run loop can fall
-    /// back to interpreting the block from its entry.
+    /// Returns `Some(exit)` on a clean return or a recorded precise guest fault. A defensive cache
+    /// miss returns `None` before calling compiled code and without committing a module register
+    /// image, allowing the guarded run loop to interpret from the same entry. Once the call has been
+    /// attempted, an unclassified engine failure must fail closed rather than return `None`: an
+    /// imported access may already have changed RAM, MMIO, or reservation state.
     fn execute(&mut self, phys_pc: u64, hart: &mut Hart, bus: &mut SystemBus) -> Option<JitExit>;
 
     /// Drop every compiled block (`fence.i` / whole-cache flush / reset / snapshot restore).

@@ -24,13 +24,17 @@
 //!    (batched at the boundary, per E4-T05).
 //! 4. **Sync-out / exit.** On a clean return the registers are copied back into `hart.regs` and the
 //!    frozen exit protocol (`exit_pc` / `exit_reason` / `exit_info`) is read from linear memory. A
-//!    recorded guest-memory fault commits its precise dirty-register prefix; an unexpected engine
-//!    trap commits nothing and returns `None` for interpreter fallback.
+//!    recorded guest-memory fault commits its precise dirty-register prefix. An unexpected engine
+//!    trap commits no module register image and fails closed after clearing the host pointers: once
+//!    an imported access may have run, returning `None` would let the interpreter replay an MMIO or
+//!    RAM side effect.
 //!
-//! The browser executor (`WebAssembly.Module`) and block chaining are later tickets (E4-T19/T18).
+//! The browser executor mirrors this contract with `WebAssembly.Module`; both executors expose the
+//! same bounded host-side chaining and cache-lifecycle interface.
 
+use std::collections::hash_map::RandomState;
 use std::collections::{HashMap, HashSet};
-use std::hash::{BuildHasherDefault, Hasher};
+use std::hash::{BuildHasher, Hasher};
 
 use anyhow::anyhow;
 use jit_translate::{Abi, translate_batch};
@@ -45,11 +49,11 @@ use wasm_vm_core::jit::{
 use wasm_vm_core::mmio::SystemBus;
 use wasmtime::{Caller, Engine, Instance, Linker, Memory, Module, Store, TypedFunc};
 
-/// Deterministic integer-key mixer for the JIT's private registries. Physical PCs and compact table
-/// ids are already integer identities; SipHash's per-call DOS-hardening is costly at every compiled
-/// block boundary. This SplitMix64 finalizer preserves constant-time lookup without using raw
-/// identity hashing (aligned or same-low-bit guest addresses still avalanche across the table).
-#[derive(Default)]
+/// Fast integer-key hasher for the JIT's private registries. Physical PCs and compact table ids are
+/// integer identities, so paying SipHash's full byte-stream cost at every compiled-block boundary
+/// is unnecessary. A per-executor secret is mixed into the integer before the SplitMix64 finalizer,
+/// preventing a guest from precomputing SwissTable bucket/tag collisions against a public
+/// permutation while retaining the two specialized one-word lookup paths.
 struct JitKeyHasher(u64);
 
 impl JitKeyHasher {
@@ -70,10 +74,10 @@ impl Hasher for JitKeyHasher {
     }
 
     fn write(&mut self, bytes: &[u8]) {
-        // The four registries below use only u64/u32 keys and therefore dispatch to the specialized
-        // methods. Keep a deterministic, mixed fallback so the alias remains sound if a small
-        // integer-like key type later delegates through `write`.
-        let mut value = 0xcbf2_9ce4_8422_2325u64;
+        // Production registries use only u64/u32 and hit the specialized methods below. Accumulate
+        // generic chunks from the keyed current state so a future composite key cannot discard an
+        // earlier `Hasher::write` call.
+        let mut value = self.0;
         for &byte in bytes {
             value ^= u64::from(byte);
             value = value.wrapping_mul(0x0000_0100_0000_01b3);
@@ -83,16 +87,47 @@ impl Hasher for JitKeyHasher {
 
     #[inline]
     fn write_u64(&mut self, value: u64) {
-        self.0 = Self::mix(value);
+        self.0 = Self::mix(self.0 ^ value);
     }
 
     #[inline]
     fn write_u32(&mut self, value: u32) {
-        self.0 = Self::mix(u64::from(value));
+        self.0 = Self::mix(self.0 ^ u64::from(value));
     }
 }
 
-type JitMap<K, V> = HashMap<K, V, BuildHasherDefault<JitKeyHasher>>;
+/// One randomized builder is created per executor and cloned into its four registries. RandomState
+/// is consulted only here, never on the lookup hot path.
+#[derive(Clone)]
+struct JitBuildHasher {
+    secret: u64,
+}
+
+impl Default for JitBuildHasher {
+    fn default() -> Self {
+        let random = RandomState::new();
+        let mut seeder = random.build_hasher();
+        seeder.write_u64(0x6a69_742d_6d61_7073);
+        // Keep zero out of the key space so the public unkeyed permutation is never the live map,
+        // without discarding a bit of entropy from ordinary seeds.
+        let secret = match seeder.finish() {
+            0 => 0xa076_1d64_78bd_642f,
+            secret => secret,
+        };
+        Self { secret }
+    }
+}
+
+impl BuildHasher for JitBuildHasher {
+    type Hasher = JitKeyHasher;
+
+    #[inline]
+    fn build_hasher(&self) -> Self::Hasher {
+        JitKeyHasher(self.secret)
+    }
+}
+
+type JitMap<K, V> = HashMap<K, V, JitBuildHasher>;
 
 /// Store data: raw pointers to the live guest state, valid only for the duration of one `run` call
 /// (set immediately before, cleared immediately after — the module never escapes the call, so the
@@ -167,8 +202,8 @@ pub struct WasmtimeExecutor {
     engine: Engine,
     linker: Linker<HostCtx>,
     store: Store<HostCtx>,
-    /// Reused exact image of `[abi::XREG_BASE, abi::HANDOFF_END)`, transferred with one direct
-    /// fixed-memory slice copy in each direction per committed compiled exit.
+    /// Reused transport buffer spanning `[abi::XREG_BASE, abi::HANDOFF_END)`, transferred with one
+    /// direct fixed-memory slice copy in each direction per committed compiled exit.
     handoff: CpuStateHandoff,
     blocks: JitMap<u64, Compiled>,
     executed_blocks: u64,
@@ -371,26 +406,27 @@ impl WasmtimeExecutor {
             )
             .expect("register env.sc");
         let store = Store::new(&engine, HostCtx::EMPTY);
+        let registry_hasher = JitBuildHasher::default();
         WasmtimeExecutor {
             engine,
             linker,
             store,
             handoff: CpuStateHandoff::default(),
-            blocks: JitMap::default(),
+            blocks: JitMap::with_hasher(registry_hasher.clone()),
             executed_blocks: 0,
             retired_via_jit: 0,
             chaining: true,
             chain_depth_budget: CHAIN_DEPTH_BUDGET_DEFAULT,
             slots: Vec::new(),
             table: Vec::new(),
-            phys_to_index: JitMap::default(),
-            incoming: JitMap::default(),
+            phys_to_index: JitMap::with_hasher(registry_hasher.clone()),
+            incoming: JitMap::with_hasher(registry_hasher.clone()),
             free_table: Vec::new(),
             free_slots1: Vec::new(),
             free_slots2: Vec::new(),
             stats: ChainStats::default(),
             batch_size: DEFAULT_BATCH_SIZE,
-            batches: JitMap::default(),
+            batches: JitMap::with_hasher(registry_hasher),
             next_batch_id: 0,
             budget: JitCacheBudget::DEFAULT,
             policy: EvictPolicy::default(),
@@ -798,7 +834,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
         };
         let code = match call {
             Ok(c) => c,
-            Err(_) => {
+            Err(error) => {
                 // The block unwound. If it was a PRECISE memory fault (E4-T12), deliver it exactly:
                 // the translator wrote back every dirty register AND `exit_pc = faulting PC` BEFORE
                 // the access (§4), so the module's CpuState region holds architecturally-precise
@@ -806,7 +842,14 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                 // back and hand the interpreter-produced Trap to the run loop — NO re-interpretation
                 // from entry, so any earlier committing side-effect (an MMIO store) is never
                 // re-executed (the MMIO-write-then-fault double-execute corner E4-T10 flagged).
-                let trap = fault?; // no recorded trap ⇒ unexpected wasm trap: fall back (re-interp)
+                let Some(trap) = fault else {
+                    // The module call was attempted, so an import may already have committed RAM,
+                    // MMIO, or reservation state. `None` is reserved for the lookup miss above;
+                    // returning it here would make the core interpret the block from entry and
+                    // duplicate that side effect. HostCtx was cleared before this branch, so fail
+                    // closed without committing the module's register image.
+                    panic!("unexpected compiled-block engine trap after dispatch: {error}");
+                };
                 self.handoff.as_mut_bytes().copy_from_slice(
                     &mem.data(&self.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize],
                 );
@@ -1024,9 +1067,19 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 
 #[cfg(test)]
 mod tests {
-    use super::{JitKeyHasher, JitMap};
+    use super::{Batch, Compiled, INSTANCE_OVERHEAD_BYTES, JitKeyHasher, JitMap, WasmtimeExecutor};
     use std::hash::{Hash, Hasher};
+    use std::panic::{AssertUnwindSafe, catch_unwind};
     use std::sync::atomic::{AtomicUsize, Ordering};
+    use wasm_emit::{ExportKind, FuncBuilder, FuncType, Limits, MemType, ModuleBuilder, ValType};
+    use wasm_vm_core::bus::mmap::DRAM_BASE;
+    use wasm_vm_core::decode::Instr;
+    use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
+    use wasm_vm_core::hart::Hart;
+    use wasm_vm_core::jit::{CompiledBlockExecutor, ExitCode, abi};
+    use wasm_vm_core::mmio::{RecordingDevice, SystemBus, Width};
+    use wasm_vm_core::ram::Ram;
+    use wasmtime::Module;
 
     static EQUALITY_PROBES: AtomicUsize = AtomicUsize::new(0);
 
@@ -1189,5 +1242,143 @@ mod tests {
             probes < 32,
             "mapped guest PCs formed a {probes}-entry probe cluster in a {N}-entry JIT map"
         );
+    }
+
+    fn unexpected_store_trap_module(mmio: u64, value: u64, dirty_x5: u64) -> Vec<u8> {
+        let mut module = ModuleBuilder::new();
+        let store_type = module.add_type(FuncType::new(
+            &[ValType::I64, ValType::I64, ValType::I32],
+            &[],
+        ));
+        let store = module.import_func("env", "store", store_type);
+        let run_type = module.add_type(FuncType::new(&[ValType::I32], &[ValType::I32]));
+        let run = module.add_function(run_type);
+        let memory = module.add_memory(MemType {
+            limits: Limits::bounded(1, 1),
+        });
+        module.export("mem", ExportKind::Memory, memory);
+        module.export("run", ExportKind::Func, run);
+
+        let mut body = FuncBuilder::new(&[ValType::I32]);
+        // Dirty the module image first. An unexpected trap must not commit this value to Hart.
+        body.local_get(0);
+        body.i32_const((abi::XREG_BASE + 5 * 8) as i32);
+        body.i32_add();
+        body.i64_const(dirty_x5 as i64);
+        body.i64_store(3, 0);
+        // Commit one observable imported side effect, then trap without recording a guest fault.
+        body.i64_const(mmio as i64);
+        body.i64_const(value as i64);
+        body.i32_const(8);
+        body.call(store);
+        body.unreachable();
+        module.add_code(body.finish());
+        module.finish()
+    }
+
+    fn inject_test_module(executor: &mut WasmtimeExecutor, phys: u64, bytes: &[u8]) {
+        let module = Module::new(&executor.engine, bytes).expect("compile malicious test module");
+        let instance = executor
+            .linker
+            .instantiate(&mut executor.store, &module)
+            .expect("instantiate malicious test module");
+        let mem = instance
+            .get_memory(&mut executor.store, "mem")
+            .expect("test module memory");
+        let run = instance
+            .get_typed_func::<i32, i32>(&mut executor.store, "run")
+            .expect("test module run");
+        let batch_id = executor.next_batch_id;
+        executor.next_batch_id = executor.next_batch_id.wrapping_add(1);
+        let (table_index, slot_base) = executor.alloc_block(phys, 1);
+        executor.blocks.insert(
+            phys,
+            Compiled {
+                run,
+                mem,
+                page_frame: phys >> 12,
+                table_index,
+                slot_base,
+                nslots: 1,
+                batch_id,
+            },
+        );
+        executor.batches.insert(
+            batch_id,
+            Batch {
+                members: vec![phys],
+                est_bytes: bytes.len() as u64 + INSTANCE_OVERHEAD_BYTES,
+                last_tick: executor.clock,
+            },
+        );
+    }
+
+    #[test]
+    fn unexpected_engine_trap_after_mmio_fails_closed_without_register_commit() {
+        const BAD_PHYS: u64 = DRAM_BASE;
+        const CLEAN_PHYS: u64 = DRAM_BASE + 0x1000;
+        const VIRTUAL_PC: u64 = 0x4000_1000;
+        const MMIO: u64 = 0x1000_0000;
+        const VALUE: u64 = 0x1122_3344_5566_7788;
+        const X5_INITIAL: u64 = 0xaaaa_bbbb_cccc_dddd;
+        const X5_MODULE_DIRTY: u64 = 0xdead_beef_cafe_f00d;
+
+        let mut executor = WasmtimeExecutor::new();
+        let malicious = unexpected_store_trap_module(MMIO, VALUE, X5_MODULE_DIRTY);
+        inject_test_module(&mut executor, BAD_PHYS, &malicious);
+
+        let mut hart = Hart::default();
+        hart.regs.pc = VIRTUAL_PC;
+        hart.regs.write(5, X5_INITIAL);
+        let mut bus = SystemBus::new(Ram::new(64 * 1024).expect("test RAM"));
+        let (device, log) = RecordingDevice::new(0);
+        bus.attach(MMIO, 0x100, Box::new(device))
+            .expect("attach recording MMIO");
+
+        let failure = catch_unwind(AssertUnwindSafe(|| {
+            executor.execute(BAD_PHYS, &mut hart, &mut bus)
+        }));
+        assert!(
+            failure.is_err(),
+            "an unclassified post-dispatch engine trap must fail closed"
+        );
+        assert_eq!(
+            log.borrow().writes.as_slice(),
+            &[(0, Width::B8, VALUE)],
+            "the already-committed MMIO write must occur exactly once"
+        );
+        assert_eq!(hart.regs.read(5), X5_INITIAL, "module x5 was committed");
+        assert_eq!(hart.regs.pc, VIRTUAL_PC, "module PC was committed");
+        assert_eq!(executor.executed_blocks, 0);
+        assert!(executor.store.data().hart.is_null());
+        assert!(executor.store.data().bus.is_null());
+        assert_eq!(executor.store.data().trap, None);
+
+        // Catching the deliberate test panic must not leave HostCtx poisoned: a separate ordinary
+        // translated block can still dispatch through the same Store and executor.
+        let clean = DecodedBlock::new(
+            CLEAN_PHYS,
+            vec![MicroOp {
+                instr: Instr::Addi {
+                    rd: 5,
+                    rs1: 5,
+                    imm: 1,
+                },
+                len: 4,
+                raw: 0,
+            }],
+            4,
+        );
+        executor.install(&clean);
+        hart.regs.pc = CLEAN_PHYS;
+        let exit = executor
+            .execute(CLEAN_PHYS, &mut hart, &mut bus)
+            .expect("clean dispatch after caught test panic");
+        assert_eq!(exit.code, ExitCode::Fallthrough);
+        assert_eq!(hart.regs.read(5), X5_INITIAL.wrapping_add(1));
+        assert_eq!(log.borrow().writes.len(), 1, "clean block replayed MMIO");
+        assert!(executor.store.data().hart.is_null());
+        assert!(executor.store.data().bus.is_null());
+        assert_eq!(executor.store.data().trap, None);
     }
 }

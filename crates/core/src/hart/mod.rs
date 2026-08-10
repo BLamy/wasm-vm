@@ -927,7 +927,7 @@ impl Hart {
     /// (`0 lb, 1 lh, 2 lw, 3 ld, 4 lbu, 5 lhu, 6 lwu`). Reuses the interpreter's translated +
     /// PMP-checked + bus-routed load path (incl. triggers, misaligned-RAM, MMIO), so the value —
     /// and any device-read side effect — is byte-identical to the interpreter. A fault returns the
-    /// precise [`Trap`]; the executor unwinds the block on it (the run loop then interprets it).
+    /// precise [`Trap`]; the executor unwinds the module and returns a precise compiled side-exit.
     pub fn jit_load(&mut self, bus: &mut impl Bus, addr: u64, kind: i32) -> Result<i64, Trap> {
         Ok(match kind {
             0 => cload8(&self.csr, &mut self.tlb, bus, addr)? as i8 as i64,
@@ -949,7 +949,7 @@ impl Hart {
     /// E4-T10: perform a JIT-emitted store — the `env.store(addr, val, width)` host import. `width`
     /// is 1/2/4/8 bytes. Reuses the interpreter's translated + PMP-checked + bus-routed store path,
     /// so the memory/MMIO effect is byte-identical to the interpreter. A fault returns the precise
-    /// [`Trap`] (the block is unwound and re-interpreted).
+    /// [`Trap`] (the module is unwound and the executor returns a precise compiled side-exit).
     pub fn jit_store(
         &mut self,
         bus: &mut impl Bus,

@@ -22,16 +22,20 @@
 #![cfg(target_arch = "wasm32")]
 #![allow(clippy::identity_op)] // the RV64 field-encoders keep every field term for legibility
 
-use wasm_bindgen::externref_heap_live_count;
+use std::cell::Cell;
+use std::rc::Rc;
+
+use js_sys::{Function, Object, WebAssembly};
+use wasm_bindgen::{JsCast, closure::Closure, externref_heap_live_count};
 use wasm_bindgen_test::*;
 use wasm_vm_core::Machine;
-use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
+use wasm_vm_core::bus::{Bus, BusFault};
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
 use wasm_vm_core::hart::{Exception, Hart, Trap};
 use wasm_vm_core::jit::{CompiledBlockExecutor, EvictPolicy, ExitCode, JitCacheBudget};
-use wasm_vm_core::mmio::SystemBus;
+use wasm_vm_core::mmio::{MmioDevice, SystemBus, Width};
 use wasm_vm_core::ram::Ram;
 use wasm_vm_wasm::BrowserExecutor;
 
@@ -58,12 +62,23 @@ export function finishUint8SubarrayAudit() {
     uint8SubarrayCalls = 0;
     return calls;
 }
+
+export function catchesJsException(callback) {
+    try {
+        callback();
+        return false;
+    } catch {
+        return true;
+    }
+}
 "#)]
 extern "C" {
     #[wasm_bindgen(js_name = beginUint8SubarrayAudit)]
     fn begin_uint8_subarray_audit();
     #[wasm_bindgen(js_name = finishUint8SubarrayAudit)]
     fn finish_uint8_subarray_audit() -> u32;
+    #[wasm_bindgen(js_name = catchesJsException)]
+    fn catches_js_exception(callback: &Function) -> bool;
 }
 
 // ── tiny RV64 encoders ───────────────────────────────────────────────────────
@@ -379,6 +394,13 @@ fn browser_dispatch_reuses_memory_views_without_subarray_allocation() {
     );
     let mut executor = BrowserExecutor::new();
     executor.install(&decoded);
+    let outer_memory = wasm_bindgen::memory().unchecked_into::<WebAssembly::Memory>();
+    let old_outer_buffer = outer_memory.buffer();
+    outer_memory.grow(1);
+    assert!(
+        !Object::is(old_outer_buffer.as_ref(), outer_memory.buffer().as_ref()),
+        "outer wasm growth must replace the buffer and detach the executor's cached source view"
+    );
     let mut hart = Hart::default();
     hart.regs.write(5, 41);
     hart.regs.pc = DRAM_BASE;
@@ -396,6 +418,255 @@ fn browser_dispatch_reuses_memory_views_without_subarray_allocation() {
         subarray_calls, 0,
         "a retained handoff view must not construct Uint8Array subviews per dispatch"
     );
+}
+
+struct GrowOuterMemoryOnWrite {
+    memory: WebAssembly::Memory,
+    writes: Rc<Cell<u32>>,
+    fault: bool,
+}
+
+impl MmioDevice for GrowOuterMemoryOnWrite {
+    fn read(&mut self, _offset: u64, _width: Width) -> Result<u64, BusFault> {
+        Ok(0)
+    }
+
+    fn write(&mut self, _offset: u64, width: Width, _value: u64) -> Result<(), BusFault> {
+        assert_eq!(width, Width::B8);
+        self.memory.grow(1);
+        self.writes.set(self.writes.get() + 1);
+        if self.fault {
+            Err(BusFault::Access)
+        } else {
+            Ok(())
+        }
+    }
+}
+
+#[wasm_bindgen_test]
+fn browser_handoff_refreshes_after_outer_growth_during_compiled_call() {
+    const MMIO_BASE: u64 = 0x1000_0000;
+    let decoded = block(
+        DRAM_BASE,
+        &[
+            Instr::Addi {
+                rd: 5,
+                rs1: 5,
+                imm: 1,
+            },
+            Instr::Sd {
+                rs1: 6,
+                rs2: 5,
+                imm: 0,
+            },
+        ],
+    );
+    let writes = Rc::new(Cell::new(0));
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    bus.attach(
+        MMIO_BASE,
+        8,
+        Box::new(GrowOuterMemoryOnWrite {
+            memory: wasm_bindgen::memory().unchecked_into::<WebAssembly::Memory>(),
+            writes: Rc::clone(&writes),
+            fault: false,
+        }),
+    )
+    .unwrap();
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    let mut hart = Hart::default();
+    hart.regs.write(5, 41);
+    hart.regs.write(6, MMIO_BASE);
+    hart.regs.pc = DRAM_BASE;
+    let live_before = externref_heap_live_count();
+
+    begin_uint8_subarray_audit();
+    let exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("compiled MMIO store exits cleanly after growing outer memory");
+    let subarray_calls = finish_uint8_subarray_audit();
+
+    assert_eq!(subarray_calls, 0);
+    assert_eq!(exit.code, ExitCode::Fallthrough);
+    assert_eq!(exit.next_pc, DRAM_BASE + 8);
+    assert_eq!(writes.get(), 1);
+    assert_eq!(hart.regs.read(5), 42);
+    assert_eq!(hart.regs.read(6), MMIO_BASE);
+    assert_eq!(
+        externref_heap_live_count(),
+        live_before,
+        "refresh must replace, not accumulate, the detached outer-memory view"
+    );
+}
+
+#[wasm_bindgen_test]
+fn browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault() {
+    const MMIO_BASE: u64 = 0x1000_0000;
+    const VIRTUAL_PC: u64 = 0x4000_1000;
+    let decoded = block(
+        DRAM_BASE,
+        &[
+            Instr::Addi {
+                rd: 5,
+                rs1: 5,
+                imm: 1,
+            },
+            Instr::Sd {
+                rs1: 6,
+                rs2: 5,
+                imm: 0,
+            },
+        ],
+    );
+    let writes = Rc::new(Cell::new(0));
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    bus.attach(
+        MMIO_BASE,
+        8,
+        Box::new(GrowOuterMemoryOnWrite {
+            memory: wasm_bindgen::memory().unchecked_into::<WebAssembly::Memory>(),
+            writes: Rc::clone(&writes),
+            fault: true,
+        }),
+    )
+    .unwrap();
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    let mut hart = Hart::default();
+    hart.regs.write(5, 41);
+    hart.regs.write(6, MMIO_BASE);
+    hart.regs.pc = VIRTUAL_PC;
+    let live_before = externref_heap_live_count();
+
+    begin_uint8_subarray_audit();
+    let exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("recorded MMIO fault remains precise after growing outer memory");
+    let subarray_calls = finish_uint8_subarray_audit();
+
+    assert_eq!(subarray_calls, 0);
+    assert_eq!(exit.code, ExitCode::Trap);
+    assert_eq!(
+        exit.trap,
+        Some(Trap {
+            cause: Exception::StoreAccessFault,
+            tval: MMIO_BASE,
+        })
+    );
+    assert_eq!(exit.next_pc, VIRTUAL_PC + 4);
+    assert_eq!(exit.exit_info, Exception::StoreAccessFault as u64);
+    assert_eq!(writes.get(), 1);
+    assert_eq!(hart.regs.pc, VIRTUAL_PC, "the caller owns PC commit");
+    assert_eq!(hart.regs.read(5), 42);
+    assert_eq!(hart.regs.read(6), MMIO_BASE);
+    assert_eq!(
+        externref_heap_live_count(),
+        live_before,
+        "fault readback must replace, not accumulate, the detached outer-memory view"
+    );
+}
+
+struct ThrowJsOnWrite {
+    writes: Rc<Cell<u32>>,
+}
+
+impl MmioDevice for ThrowJsOnWrite {
+    fn read(&mut self, _offset: u64, _width: Width) -> Result<u64, BusFault> {
+        Ok(0)
+    }
+
+    fn write(&mut self, _offset: u64, width: Width, _value: u64) -> Result<(), BusFault> {
+        assert_eq!(width, Width::B8);
+        self.writes.set(self.writes.get() + 1);
+        wasm_bindgen::throw_str("unexpected-jit-engine-trap")
+    }
+}
+
+#[wasm_bindgen_test]
+fn unexpected_js_exception_fails_closed_without_commit_and_cleans_host() {
+    const MMIO_BASE: u64 = 0x1000_0000;
+    const CLEAN_PHYS: u64 = DRAM_BASE + 0x1000;
+    const VIRTUAL_PC: u64 = 0x4000_1000;
+    let faulting = block(
+        DRAM_BASE,
+        &[
+            Instr::Addi {
+                rd: 5,
+                rs1: 5,
+                imm: 1,
+            },
+            Instr::Sd {
+                rs1: 6,
+                rs2: 5,
+                imm: 0,
+            },
+        ],
+    );
+    let clean = block(
+        CLEAN_PHYS,
+        &[Instr::Addi {
+            rd: 7,
+            rs1: 7,
+            imm: 1,
+        }],
+    );
+    let writes = Rc::new(Cell::new(0));
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    bus.attach(
+        MMIO_BASE,
+        8,
+        Box::new(ThrowJsOnWrite {
+            writes: Rc::clone(&writes),
+        }),
+    )
+    .unwrap();
+    let mut executor = Box::new(BrowserExecutor::new());
+    executor.install(&faulting);
+    executor.install(&clean);
+    let mut hart = Box::new(Hart::default());
+    hart.regs.write(5, 41);
+    hart.regs.write(6, MMIO_BASE);
+    hart.regs.write(7, 9);
+    hart.regs.pc = VIRTUAL_PC;
+    let mut bus = Box::new(bus);
+    let executor_ptr = executor.as_mut() as *mut BrowserExecutor;
+    let hart_ptr = hart.as_mut() as *mut Hart;
+    let bus_ptr = bus.as_mut() as *mut SystemBus;
+    let callback = Closure::<dyn FnMut()>::new(move || {
+        // SAFETY: the three boxes stay alive and unmoved until this one-shot callback is dropped.
+        // No other references are used while JS synchronously invokes it. The fatal exception
+        // abandons this callback's stack, but BrowserExecutor clears HOST before rethrowing.
+        unsafe {
+            let _ = (&mut *executor_ptr).execute(DRAM_BASE, &mut *hart_ptr, &mut *bus_ptr);
+        }
+    });
+    let live_before = externref_heap_live_count();
+
+    assert!(
+        catches_js_exception(callback.as_ref().unchecked_ref()),
+        "an unrecorded exception must propagate instead of returning None for replay"
+    );
+    assert_eq!(externref_heap_live_count(), live_before);
+    drop(callback);
+    assert_eq!(
+        writes.get(),
+        1,
+        "the imported MMIO side effect is not rolled back"
+    );
+    assert_eq!(hart.regs.pc, VIRTUAL_PC);
+    assert_eq!(hart.regs.read(5), 41, "dirty module x5 must not commit");
+    assert_eq!(hart.regs.read(6), MMIO_BASE);
+    assert_eq!(hart.regs.read(7), 9);
+
+    hart.regs.pc = VIRTUAL_PC + 0x1000;
+    let clean_exit = executor
+        .execute(CLEAN_PHYS, &mut hart, &mut bus)
+        .expect("a later clean dispatch must work after HOST cleanup");
+    assert_eq!(clean_exit.code, ExitCode::Fallthrough);
+    assert_eq!(clean_exit.next_pc, VIRTUAL_PC + 0x1004);
+    assert_eq!(hart.regs.read(5), 41);
+    assert_eq!(hart.regs.read(7), 10);
 }
 
 #[wasm_bindgen_test]

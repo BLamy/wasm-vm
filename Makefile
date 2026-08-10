@@ -139,7 +139,7 @@ web-build:
 	wasm-pack build crates/wasm --target web
 	cd web && npm ci --no-audit --no-fund
 	mkdir -p web/pkg web/assets/riscv-tests
-	cp crates/wasm/pkg/* web/pkg/
+	cp -R crates/wasm/pkg/. web/pkg/
 	cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
 	cp tests/riscv-tests-bin/* web/assets/riscv-tests/
 	# Boot artifacts must live UNDER web/ (the Pages publish_dir) so they deploy with the site.

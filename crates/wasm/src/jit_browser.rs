@@ -34,6 +34,7 @@
 //! imports. This is why the executor is faithful to the native reference AND headlessly verifiable in
 //! node against `Hart::exec_oracle`.
 
+use alloc::boxed::Box;
 use alloc::format;
 use alloc::vec::Vec;
 use core::cell::RefCell;
@@ -74,6 +75,34 @@ thread_local! {
     }) };
 }
 
+#[wasm_bindgen(inline_js = r#"
+export function throwJitMemFault() {
+    throw null;
+}
+
+export function invokeJitBlock(run) {
+    try {
+        return run(0);
+    } catch {
+        return NaN;
+    }
+}
+"#)]
+extern "C" {
+    #[wasm_bindgen(js_name = throwJitMemFault)]
+    fn throw_jit_mem_fault();
+    #[wasm_bindgen(js_name = invokeJitBlock)]
+    fn invoke_jit_block(run: &Function) -> f64;
+}
+
+#[cold]
+fn throw_jit_sentinel() -> ! {
+    throw_jit_mem_fault();
+    // SAFETY: the inline JS function above unconditionally throws before it can return. Keeping the
+    // sentinel entirely in JS avoids both Rust-string decoding and a leaked `JsValue` externref.
+    unsafe { core::hint::unreachable_unchecked() }
+}
+
 /// Run `f` against the live guest for a value-returning import (load/AMO/LR/SC). On a fault it records
 /// the precise trap and throws a JS exception, which unwinds the compiled module call (a wasm trap)
 /// so `execute` can side-exit precisely — the browser analogue of the native `Err`-unwind.
@@ -94,7 +123,7 @@ where
         Ok(v) => v,
         Err(t) => {
             HOST.with(|c| c.borrow_mut().trap = Some(t));
-            wasm_bindgen::throw_str("jit-mem-fault")
+            throw_jit_sentinel()
         }
     }
 }
@@ -133,6 +162,55 @@ struct Batch {
     _instance: WebAssembly::Instance,
 }
 
+/// Rust-side transport image plus one retained JS view into the outer wasm module's linear memory.
+/// The box pins the image's linear-memory offset across executor moves. A wasm memory growth detaches
+/// the old ArrayBuffer, so transfers recreate the view only when its byte length becomes zero.
+struct BrowserHandoff {
+    // Drop the JS alias before releasing its Box-backed Rust allocation.
+    view: Uint8Array,
+    image: Box<CpuStateHandoff>,
+}
+
+impl BrowserHandoff {
+    fn new() -> Self {
+        let mut image = Box::new(CpuStateHandoff::default());
+        let view = Self::view_for(image.as_mut());
+        Self { view, image }
+    }
+
+    fn view_for(image: &mut CpuStateHandoff) -> Uint8Array {
+        let memory = wasm_bindgen::memory().unchecked_into::<WebAssembly::Memory>();
+        let byte_offset = image.as_mut_bytes().as_mut_ptr() as u32;
+        Uint8Array::new_with_byte_offset_and_length(
+            &memory.buffer(),
+            byte_offset,
+            abi::HANDOFF_LEN as u32,
+        )
+    }
+
+    fn ensure_live_view(&mut self) {
+        if self.view.byte_length() != abi::HANDOFF_LEN as u32 {
+            self.view = Self::view_for(self.image.as_mut());
+        }
+    }
+
+    fn copy_into_module(&mut self, state: &Uint8Array, hart: &Hart) {
+        self.image.prepare(hart);
+        self.ensure_live_view();
+        state.set(self.view.as_ref(), 0);
+    }
+
+    fn copy_from_module(&mut self, state: &Uint8Array, hart: &mut Hart) {
+        // Imported guest accesses run in the outer wasm module and may grow its linear memory. Check
+        // again after the compiled call before copying into the cached Rust-side transport image.
+        self.ensure_live_view();
+        // SAFETY INVARIANT: `image` is Box-stable and never replaced; typed-array `set` is
+        // synchronous, and no Rust reference into `image` remains live across this JS mutation.
+        self.view.set(state.as_ref(), 0);
+        self.image.commit_registers(hart);
+    }
+}
+
 /// E4-T19 registry estimate: fixed per-Instance overhead beyond emitted code (dominated by the
 /// module's one-page 64 KiB `CpuState` memory). Matches the native estimate so budgets behave the same.
 const INSTANCE_OVERHEAD_BYTES: u64 = 64 * 1024;
@@ -154,8 +232,9 @@ pub struct BrowserExecutor {
     _closures_amo: Closure<dyn FnMut(i64, i64, i32, i32) -> i64>,
     _closures_lr: Closure<dyn FnMut(i64, i32) -> i64>,
     _closures_sc: Closure<dyn FnMut(i64, i64, i32) -> i64>,
-    /// Reused Rust-side image; browser dispatch allocates no state buffer or view.
-    handoff: CpuStateHandoff,
+    /// Box-stable Rust image plus one cached outer-wasm view. The view is part of the executor's
+    /// fixed externref floor and is refreshed only if outer memory growth detached it.
+    handoff: BrowserHandoff,
     blocks: HashMap<u64, Compiled>,
     executed_blocks: u64,
     retired_via_jit: u64,
@@ -230,7 +309,7 @@ impl BrowserExecutor {
             _closures_amo: amo,
             _closures_lr: lr,
             _closures_sc: sc,
-            handoff: CpuStateHandoff::default(),
+            handoff: BrowserHandoff::new(),
             blocks: HashMap::new(),
             executed_blocks: 0,
             retired_via_jit: 0,
@@ -463,50 +542,49 @@ impl BrowserExecutor {
     fn invoke(
         run: &Function,
         state: &Uint8Array,
-        handoff: &mut CpuStateHandoff,
+        handoff: &mut BrowserHandoff,
         hart: &mut Hart,
         bus: &mut SystemBus,
     ) -> Option<JitExit> {
-        handoff.prepare(hart);
-        state.copy_from(handoff.as_bytes());
+        handoff.copy_into_module(state, hart);
         HOST.with(|context| {
             let mut context = context.borrow_mut();
             context.hart = hart as *mut Hart;
             context.bus = bus as *mut SystemBus;
             context.trap = None;
         });
-        let call = run.call1(&JsValue::NULL, &JsValue::from_f64(0.0));
+        // Keep the exception entirely in JS. Bringing a caught exception back as
+        // `Result<JsValue, JsValue>` roots one externref per fault in wasm-bindgen's table.
+        let returned = invoke_jit_block(run);
         let fault = HOST.with(|context| {
             let mut context = context.borrow_mut();
             context.hart = core::ptr::null_mut();
             context.bus = core::ptr::null_mut();
             context.trap.take()
         });
-        let code = match call {
-            Ok(value) => value.as_f64().map(|value| value as i32),
-            Err(_) => None,
-        };
+        let code = (!returned.is_nan()).then_some(returned as i32);
         let Some(code) = code else {
-            // Unexpected Wasm traps still return `None` without committing state. Only a trap
-            // recorded by the trusted guest-memory import authorizes precise-state readback.
-            let trap = fault?;
-            state.copy_to(handoff.as_mut_bytes());
-            handoff.commit_registers(hart);
-            return Some(JitExit {
-                code: ExitCode::Trap,
-                next_pc: handoff.exit_pc(),
-                exit_info: trap.cause as u64,
-                trap: Some(trap),
-            });
+            if let Some(trap) = fault {
+                handoff.copy_from_module(state, hart);
+                return Some(JitExit {
+                    code: ExitCode::Trap,
+                    next_pc: handoff.image.exit_pc(),
+                    exit_info: trap.cause as u64,
+                    trap: Some(trap),
+                });
+            }
+            // An unrecorded exception may have happened after an imported RAM/MMIO side effect.
+            // Returning `None` would make core replay the block and duplicate it. HOST is already
+            // cleared above, so fail closed without committing the module register image.
+            throw_jit_sentinel();
         };
 
-        state.copy_to(handoff.as_mut_bytes());
-        handoff.commit_registers(hart);
-        debug_assert_eq!(code, handoff.exit_reason());
+        handoff.copy_from_module(state, hart);
+        debug_assert_eq!(code, handoff.image.exit_reason());
         Some(JitExit {
             code: ExitCode::from_i32(code),
-            next_pc: handoff.exit_pc(),
-            exit_info: handoff.exit_info(),
+            next_pc: handoff.image.exit_pc(),
+            exit_info: handoff.image.exit_info(),
             trap: None,
         })
     }
