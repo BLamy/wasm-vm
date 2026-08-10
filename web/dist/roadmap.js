@@ -104,7 +104,7 @@ export const ROADMAP = [
     caps: [
       { name: "Fast predecoded interpreter", status: "verified", evidence: "E4-T30: exact-entry hit path, differential corpus, and live busybox proof" },
       { name: "Exact bounded JIT work + retirement", status: "verified", evidence: "E4-T31: budgets, traps, counters, trace gating, CLI, and Wasm wrapper" },
-      { name: "Bulk JIT state handoff + bounded browser handles", status: "in-progress", evidence: "E4-T33: one 568-byte transfer each way; exact fault state; 4,096-cycle externref/eviction stress" },
+      { name: "Bulk JIT state handoff + bounded browser handles", status: "verified", evidence: "E4-T33: one 568-byte transfer each way; exact fault state; 4,096-cycle externref/eviction stress" },
       { name: "Default whole-machine Web Worker", status: "in-progress", evidence: "E4-T32: worker-default controller parity implemented; exact-head Node parity evidence in progress" },
     ],
   },
