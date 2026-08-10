@@ -3,7 +3,7 @@ id: E4-T30
 epic: 4
 title: Predecode entry-hit reuse and production fast-interpreter mode
 priority: 430
-status: implemented
+status: in-progress
 depends_on: [E1]
 estimate: S
 risk: high
@@ -61,3 +61,39 @@ trace divergence, or JIT threshold that never fires refutes the change.
   `37d43d60b89ebfbce995ad7269eb24800be885174ef336de884217c7177bd762`). The recording proves the
   default browser selection and real guest prompt; deterministic native tests cover every changed
   cache/PMP/invalidation path.
+
+### 2026-08-09 — verifier — VERDICT: refuted
+
+- P1 entry reuse + discovery — HELD. Predicted the 210-retire loop would report exactly 108 entry
+  hits / 2 builds while nominating the hot loop once; the focused exact-head run passed
+  `hotness_discovery` 3/3, including that accounting. The full focused command also passed
+  `boot_contract`, `pmp`, `predecode_batching`, `predecode_diff`, `predecode_entry_safety`, and
+  `predecode_smc_diff`: 26 passed, 0 failed, 1 environment-gated OpenSBI test ignored.
+- P2 effective PMP permission across privilege transition — FAILED. Predicted that code decoded and
+  cached in M-mode under an *unlocked* TOR region would still raise `InstrAccessFault` when the same
+  physical block was re-entered in S-mode and its interior region lacked X. In a scrubbed cold clone
+  of exact head `df14e18`, the cache-off oracle trapped at `0x80000004`, but cache-on returned
+  `MaxInstrs` with `x5=1`, **`x6=1`**, and `pc=0x80000008`: the S-mode-denied interior instruction
+  retired. `sync_pmp_code_permissions` keys validity only to PMP CSR revision
+  (`crates/core/src/lib.rs:644-662`), which is unchanged by M→S; the entry path validates only the
+  first parcel and the cursor then replays interior ops without fetch/PMP checks
+  (`crates/core/src/lib.rs:2359-2394`). Unlocked PMP explicitly bypasses checks in M but not S
+  (`crates/core/src/pmp.rs:212-238`). Demand: include effective fetch privilege in cache permission
+  validity (or otherwise revalidate/flush before reuse), promote this regression, and re-record.
+- COLD/RECHECK: retained verifier harness
+  `/private/tmp/e4-t30-verify.hs5ShL/repo/crates/core/tests/e4t30_verifier_pmp_mode.rs`
+  (SHA-256 `2482ca060379e69f7aeb17dee6fd21d5dbd0d6d668e515ff074c6d5c0aedef55`). With
+  `RUST_LOG`, `RUSTFLAGS`, `CARGO_TARGET_DIR`, and `CARGO_BUILD_TARGET` unset, the cache-off oracle
+  passed in 0.04s; the cache-on attack failed identically twice, the final run printing
+  `cached outcome=MaxInstrs x5=1 x6=1 pc=0x80000008` before failing in 0.04s.
+- COVERAGE/SUITE: performance, wasm/browser promotion, and remaining changed-hunk coverage were not
+  adjudicated after the architectural/security refutation. No verifier test is promoted into the
+  green suite until the runtime defect is fixed; the retained cold-clone harness is the exact
+  regression to promote in the repair.
+
+Commands: `cargo test -p wasm-vm-core --test hotness_discovery --test boot_contract --test pmp
+--test predecode_diff --test predecode_smc_diff --test predecode_batching --test
+predecode_entry_safety`; `env -u RUST_LOG -u RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET
+cargo test -p wasm-vm-core --test e4t30_verifier_pmp_mode
+legacy_path_traps_at_s_mode_interior_pmp_permission -- --exact --nocapture`; same command with
+`cached_m_mode_block_rechecks_s_mode_interior_pmp_permission` (failed as predicted).
