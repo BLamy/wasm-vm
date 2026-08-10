@@ -35,6 +35,7 @@ import {
 import { createNodeAttemptJournal } from "./helpers/e4-t32-node-attempt-journal.mjs";
 import {
   classifyNodeSessionFailure,
+  isIgnorableFaviconConsoleError,
   markNodeProductFailure,
   serializeNodeFailure,
 } from "./helpers/e4-t32-node-failure.mjs";
@@ -598,9 +599,12 @@ async function runNodeVariantSession(browser, {
   try {
     page = await browser.newPage();
     page.on("console", (message) => {
-      if (message.type() === "error" && !message.text().includes("favicon")) {
-        errors.push(message.text());
-      }
+      const entry = {
+        type: message.type(),
+        text: message.text(),
+        url: message.location().url,
+      };
+      if (entry.type === "error" && !isIgnorableFaviconConsoleError(entry)) errors.push(entry.text);
     });
     page.on("pageerror", (error) => errors.push(error.message));
     page.on("request", (request) => {

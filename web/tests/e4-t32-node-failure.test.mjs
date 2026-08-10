@@ -5,6 +5,7 @@ import test from "node:test";
 import {
   NodeProductRefutationError,
   classifyNodeSessionFailure,
+  isIgnorableFaviconConsoleError,
   markNodeProductFailure,
   serializeNodeFailure,
 } from "./helpers/e4-t32-node-failure.mjs";
@@ -35,6 +36,30 @@ test("page-close failure dominates a prior product failure as harness evidence",
 test("marking an already typed product failure is idempotent", () => {
   const failure = markNodeProductFailure("node", new Error("boom"));
   assert.equal(markNodeProductFailure("other", failure), failure);
+});
+
+test("only the exact favicon resource failure is waived; another 404 still refutes", () => {
+  const text = "Failed to load resource: the server responded with a status of 404 (File not found)";
+  assert.equal(isIgnorableFaviconConsoleError({
+    type: "error",
+    text,
+    url: "http://localhost:8123/favicon.ico",
+  }), true);
+  assert.equal(isIgnorableFaviconConsoleError({
+    type: "error",
+    text,
+    url: "http://localhost:8123/missing-runtime.js",
+  }), false);
+  assert.equal(isIgnorableFaviconConsoleError({
+    type: "error",
+    text: "Uncaught Error: favicon runtime failure",
+    url: "http://localhost:8123/favicon.ico",
+  }), false);
+
+  const nonFavicon = markNodeProductFailure("product-assertion", new Error(text));
+  const classified = classifyNodeSessionFailure(nonFavicon);
+  assert.equal(classified.sessionError.code, "E4T32_PRODUCT_REFUTATION");
+  assert.equal(classified.harnessError, null);
 });
 
 test("the acceptance environment pins a headed browser in Playwright config", () => {

@@ -30,6 +30,15 @@ export function markNodeProductFailure(phase, error) {
   return new NodeProductRefutationError(phase, error);
 }
 
+export function isIgnorableFaviconConsoleError({ type, text, url }) {
+  if (type !== "error" || !text.startsWith("Failed to load resource:")) return false;
+  try {
+    return new URL(url).pathname === "/favicon.ico";
+  } catch {
+    return false;
+  }
+}
+
 export function classifyNodeSessionFailure(error) {
   const sessionError = serializeNodeFailure(error);
   if (error instanceof NodeProductRefutationError || error?.code === "E4T32_PRODUCT_REFUTATION") {
