@@ -187,7 +187,7 @@ export class WasmLinux {
     restoreDecisionCode(stored: Uint8Array | null | undefined, current_generation: number): string;
     /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
-     * 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
+     * 16550 RX, and return `{ done: bool, state: string|null, retired: number }`. A persistent caller may pass
      * `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
      * that limit so JS can durably drain it before the guest can race arbitrarily far ahead.
      * `state` is `"poweroff"`, `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or
@@ -242,8 +242,8 @@ export class WasmLinux {
      */
     stampBootSnapshotIdentity(base_id: Uint8Array): void;
     /**
-     * Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
-     * devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
+     * Final/current guest-RAM SHA-256 for browser evidence. This is the `mem_digest` portion of the
+     * native snapshot contract; registers and device state are intentionally not encoded here.
      */
     stateDigest(): string;
     takeFileDownloadChunk(id: number): Uint8Array;

@@ -24,6 +24,7 @@ import init, {
   slirpDhcpStats,
 } from "./pkg/wasm_vm_wasm.js";
 import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
+import { createTaskQuiescence } from "./task-quiescence.js";
 
 // Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
 // runs on the main thread (a Web Worker offload is a larger follow-up), so a long synchronous run slice
@@ -207,7 +208,25 @@ export async function startLinuxBoot(opts = {}) {
     // E4-T30: the production interpreter uses the predecoded entry cache plus bounded (<=128 retire)
     // interrupt/device batching. `false` is the byte-identical legacy A/B path for diagnosis.
     fastInterpreter = true,
+    // E4-T32: policy is selected by the page and passed as data to a whole-machine worker. Undefined
+    // preserves direct-loader compatibility; the page makes the production default explicit.
+    jit = undefined,
+    jitThreshold = undefined,
+    profile = undefined,
+    // Deterministic parity/test seam: restore the machine but do not execute the first scheduler
+    // slice until the owner explicitly resumes it. Production callers leave this false.
+    startPaused = false,
+    // Dedicated workers use timer tasks between slices so Worker "message" tasks (input/RPC/fetch
+    // completions) cannot be starved by a self-perpetuating MessageChannel task source.
+    workerMode = false,
   } = opts;
+  let outputCalls = 0;
+  let outputBytes = 0;
+  const emitOutput = (bytes) => {
+    outputCalls += 1;
+    outputBytes += bytes?.byteLength ?? bytes?.length ?? 0;
+    onOutput(bytes);
+  };
   // E3-T09 (critic BUG-1): hoisted ABOVE the try so the catch can release a granted writer
   // lock when boot fails AFTER acquisition — otherwise a banner-less zombie tab strands the
   // lock until close and every other tab silently boots read-only.
@@ -242,13 +261,15 @@ export async function startLinuxBoot(opts = {}) {
       imageManifestText = await fetchAsset(imageManifestUrl, "chunked image manifest");
       // E3-T03: an optional boot-profile.json (ordered chunk indices) prefetched up front. Best-
       // effort — a missing profile just means no boot-profile prefetch (readahead still applies).
-      try {
-        const pr = await fetch(bootProfileUrl, { cache: "default" });
-        if (pr.ok) {
-          const arr = await pr.json();
-          if (Array.isArray(arr)) bootProfile = Uint32Array.from(arr.filter((n) => Number.isInteger(n) && n >= 0));
-        }
-      } catch { /* no profile → readahead-only */ }
+      if (bootProfileUrl) {
+        try {
+          const pr = await fetch(bootProfileUrl, { cache: "default" });
+          if (pr.ok) {
+            const arr = await pr.json();
+            if (Array.isArray(arr)) bootProfile = Uint32Array.from(arr.filter((n) => Number.isInteger(n) && n >= 0));
+          }
+        } catch { /* no profile → readahead-only */ }
+      }
     } else {
       const secondary = manifest.artifacts[role];
       if (!secondary) throw new Error(`manifest has no '${role}' artifact for boot mode '${mode}'`);
@@ -399,13 +420,13 @@ export async function startLinuxBoot(opts = {}) {
         }
       }
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
-      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, lockReadOnly, (u8) => onOutput(u8));
+      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, lockReadOnly, emitOutput);
     } else if (isChunked) {
-      machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, (u8) => onOutput(u8));
+      machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, emitOutput);
     } else if (mode === "disk") {
-      machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
+      machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, emitOutput);
     } else {
-      machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, (u8) => onOutput(u8));
+      machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, emitOutput);
     }
 
     // E4-T30: remove the old browser default that left the proven 2.24x block-boundary batching win
@@ -432,28 +453,26 @@ export async function startLinuxBoot(opts = {}) {
     // interpreter stays the oracle — enableJit only arms tier-up of hot blocks.
     try {
       // `?jit=0` forces interpreter-only; `?jitThreshold=N` tunes the hotness count before a block is
-      // nominated for compilation (default 32). Lower = compile more aggressively (helps cold/one-shot
-      // code like V8 startup at the cost of per-block compile overhead); higher = only very hot loops.
-      // The experiment behind the E4-T22 finding: node -e startup is cold code the default threshold
-      // never tiers up — a low threshold is the lever to test. `opts.jitThreshold` lets the worker path
-      // (where loader runs off-page and location.search is empty) pass it through bootParams too.
+      // nominated for compilation (default 512). Lower = compile more aggressively at the cost of
+      // synchronous compilation stalls; measured cold Node startup regressed at thresholds 32..256.
+      // `opts.jitThreshold` lets the worker path (where loader runs off-page and location.search is
+      // empty) receive the page-selected policy through bootParams.
       const _q = new URLSearchParams(location.search);
-      const _jitQ = _q.get("jit");
-      const _thrRaw = opts.jitThreshold ?? _q.get("jitThreshold");
-      const _threshold = Math.max(1, Number(_thrRaw) || 32);
-      // OPT-IN (?jit=1) for now: default-on caused a prod OOM — the browser JIT's compiled blocks
-      // hold WebAssembly.Module/Instance objects in wasm-bindgen's externref table, and without
-      // browser-verified cache eviction they accumulate until "RangeError: WebAssembly" in
-      // addToExternrefTable0 (DevTools "potential out-of-memory crash"). Re-enable by default once
-      // the E4-T20 budget/eviction path is proven in-browser (and frees its externref entries).
-      const _wantJit = _jitQ === "1" && globalThis.crossOriginIsolated === true;
+      const _jitQ = jit ?? (_q.get("jit") === "1" ? true : _q.get("jit") === "0" ? false : undefined);
+      const _thrRaw = jitThreshold ?? _q.get("jitThreshold");
+      const _threshold = Math.max(1, Number(_thrRaw) || 512);
+      // E4-T33 proved bounded browser handles and repaired the bulk handoff. Cold Node startup still
+      // measures faster in the fast interpreter, so JIT is an explicit experiment until the runtime
+      // work in E4-T34 changes that result.
+      const _wantJit = (_jitQ ?? false) && globalThis.crossOriginIsolated === true;
       if (_wantJit && typeof machine.enableJit === "function") {
         machine.enableJit(_threshold);
         try { window.__jit = { enabled: true, threshold: _threshold }; } catch { /* worker scope */ }
         console.info("wasm-vm: browser JIT enabled (crossOriginIsolated, threshold=" + _threshold + ")");
       } else {
-        try { window.__jit = { enabled: false, reason: _jitQ === "0" ? "forced-off" : (globalThis.crossOriginIsolated ? "no-enableJit" : "not-cross-origin-isolated") }; } catch { /* worker scope */ }
-        console.info("wasm-vm: browser JIT NOT enabled —", _jitQ === "0" ? "forced-off (?jit=0)" : (globalThis.crossOriginIsolated ? "machine has no enableJit" : "page not cross-origin isolated"));
+        const reason = _jitQ === false ? "forced-off" : (globalThis.crossOriginIsolated ? "no-enableJit" : "not-cross-origin-isolated");
+        try { window.__jit = { enabled: false, reason }; } catch { /* worker scope */ }
+        console.info("wasm-vm: browser JIT NOT enabled —", reason);
       }
     } catch (e) {
       console.warn("wasm-vm: enableJit gate failed:", e?.message || e);
@@ -463,14 +482,12 @@ export async function startLinuxBoot(opts = {}) {
     // so a Playwright driver can pull getProfile() after boot, and — when the page is opened with
     // `?profile=1` — arm the sampled hot-PC + subsystem-time profiler from the very first
     // instruction (setProfiling injects the JsHostTimer). Inert unless the query param is present.
-    try {
-      window.__machine = machine;
-      const wantProfile = new URLSearchParams(location.search).get("profile");
-      if (wantProfile === "1" && typeof machine.setProfiling === "function") {
-        machine.setProfiling(true);
-        window.__profilingArmed = true;
-      }
-    } catch { /* non-window scope (worker) — no test hook */ }
+    const wantProfile = profile ?? (new URLSearchParams(location.search).get("profile") === "1");
+    if (wantProfile && typeof machine.setProfiling === "function") {
+      machine.setProfiling(true);
+      globalThis.__profilingArmed = true;
+    }
+    try { window.__machine = machine; } catch { /* worker scope: profiling is still armed above */ }
 
     // E4 restore-on-first-load (busybox/initramfs path): instead of executing the ~40 s Linux boot,
     // restore a shipped, build-time boot snapshot into the just-constructed machine and go straight to
@@ -555,7 +572,34 @@ export async function startLinuxBoot(opts = {}) {
     }
 
     let stopped = false;
-    let paused = false;
+    let paused = Boolean(startPaused);
+    // E4-T32: a worker is still one JS event loop. A 20M-instruction slice made every input/RPC and
+    // output flush wait behind seconds of synchronous runChunk work. Keep the page-selected slice at
+    // <=500k. Do not shrink from one slow JIT compilation: that work is not proportional to the retire
+    // budget, and an earlier adaptive attempt collapsed to 1k + the timer clamp (starving throughput).
+    const maxQuantum = Math.max(1_000, Math.min(500_000, Number(quantum) || 500_000));
+    let runQuantum = maxQuantum;
+    let sliceCount = 0;
+    let sliceTotalMs = 0;
+    let sliceMaxMs = 0;
+    const sliceBoundsMs = [4, 8, 16, 32, 64, 128, 256, 512, 1_000, Infinity];
+    const sliceHistogram = sliceBoundsMs.map(() => 0);
+    let stretchMaxMs = 0;
+    let lastSliceStart = 0;
+    let requestedInstructions = 0;
+    let retiredInstructions = 0;
+    let fetchWaits = 0;
+    let fetchRequestedChunks = 0;
+    let fetchWaitTotalMs = 0;
+    let fetchWaitMaxMs = 0;
+    let inputCalls = 0;
+    let inputBytes = 0;
+    let schedulerYields = 0;
+    let timerYields = 0;
+    let mainThreadYields = 0;
+    const workerPostTask = workerMode && typeof globalThis.scheduler?.postTask === "function"
+      ? globalThis.scheduler.postTask.bind(globalThis.scheduler)
+      : null;
     // Exactly one `tick` may be pending at a time. `resume()` guarding only on `paused` is not
     // enough: a rapid pause→resume while a tick is already pending would schedule a SECOND chain,
     // and both would then self-perpetuate (two concurrent loops, double CPU). This flag makes
@@ -563,10 +607,42 @@ export async function startLinuxBoot(opts = {}) {
     let tickScheduled = false;
     let resolveDone;
     const whenDone = new Promise((r) => (resolveDone = r));
+    let doneSettled = false;
+    let pendingFinishState = null;
+    let taskQuiescence;
+    const settleFinished = () => {
+      if (doneSettled || pendingFinishState == null || taskQuiescence?.isActive()) return;
+      doneSettled = true;
+      resolveDone(pendingFinishState);
+    };
+    const finish = (state) => {
+      if (doneSettled || pendingFinishState != null) return;
+      pendingFinishState = state;
+      stopped = true;
+      tickScheduled = false;
+      settleFinished();
+    };
     const schedule = () => {
       if (tickScheduled || stopped || paused || quotaPaused) return;
       tickScheduled = true;
-      yieldToMain(tick);
+      if (workerPostTask) {
+        // Scheduler tasks avoid the recursive-timer 4–5ms clamp. Ordering against Worker messages
+        // is implementation-defined, so browser gates measure input/RPC latency under load instead
+        // of treating this scheduling primitive as a fairness guarantee.
+        schedulerYields += 1;
+        void workerPostTask(tick, { priority: "user-visible" }).catch((error) => {
+          tickScheduled = false;
+          onState("error");
+          onError(error);
+          finish("error");
+        });
+      } else if (workerMode) {
+        timerYields += 1;
+        setTimeout(tick, 0);
+      } else {
+        mainThreadYields += 1;
+        yieldToMain(tick);
+      }
     };
     // E3-T10: shared handler for a persist failure on EITHER pump site. A StorageFull is
     // RECOVERABLE — the dirty blocks stay pending (persistPending never marked them). While the
@@ -590,17 +666,16 @@ export async function startLinuxBoot(opts = {}) {
         onQuota({ usage: est.usage ?? null, quota: est.quota ?? null, unsaved });
         return true;
       }
-      tickScheduled = false;
       onState("error");
       onError(e);
-      resolveDone("error");
+      finish("error");
       return true;
     };
     // `tick` is async so chunked mode can `await` the lazy chunk fetch between run quanta. To keep
     // the E2-T23 C3 single-tick invariant across the await, `tickScheduled` stays TRUE for the whole
     // duration of a tick (run + fetch) and is cleared only at the end — so any `schedule()` during
     // the fetch is a no-op and no second loop can start.
-    const tick = async () => {
+    const runTick = async () => {
       if (stopped || paused || quotaPaused) { tickScheduled = false; return; }
       // E3-T08/E3-T10 durability pressure, checked BEFORE the run slice:
       //  - writeWaiting: a guest WRITE has changed the synchronous overlay but is still outside
@@ -634,36 +709,55 @@ export async function startLinuxBoot(opts = {}) {
         // short internal instruction slices and yields early, so a high-throughput guest write
         // cannot finish an entire command inside one 2M-instruction quantum before the IDB pump
         // gets a chance to report quota exhaustion.
-        res = machine.runChunk(quantum, usePersist ? maxDirtyBytes : undefined);
+        const sliceStart = typeof performance !== "undefined" ? performance.now() : Date.now();
+        if (lastSliceStart) stretchMaxMs = Math.max(stretchMaxMs, sliceStart - lastSliceStart);
+        lastSliceStart = sliceStart;
+        res = machine.runChunk(runQuantum, usePersist ? maxDirtyBytes : undefined);
+        const sliceMs = (typeof performance !== "undefined" ? performance.now() : Date.now()) - sliceStart;
+        sliceCount += 1;
+        sliceTotalMs += sliceMs;
+        sliceMaxMs = Math.max(sliceMaxMs, sliceMs);
+        requestedInstructions += runQuantum;
+        retiredInstructions += Number(res.retired) || 0;
+        const bucket = sliceBoundsMs.findIndex((bound) => sliceMs <= bound);
+        sliceHistogram[bucket < 0 ? sliceHistogram.length - 1 : bucket] += 1;
       } catch (e) {
-        tickScheduled = false;
         onState("error");
         onError(e);
-        resolveDone("error");
+        finish("error");
         return;
       }
       if (res.done) {
-        tickScheduled = false;
         // Compact guest-layer evidence for long Linux runs: surface the same architectural state
         // SHA-256 contract as native boot evidence. It is printed into the terminal so the browser
         // screenshot/transcript carries a reopenable, stale-run-detecting fingerprint.
-        try {
-          onOutput(new TextEncoder().encode(`\r\nstate sha256=${machine.stateDigest()}\r\n`));
-        } catch { /* a terminal state is still reported even if evidence formatting fails */ }
+        if (!workerMode) {
+          try {
+            emitOutput(new TextEncoder().encode(`\r\nstate sha256=${machine.stateDigest()}\r\n`));
+          } catch { /* a terminal state is still reported even if evidence formatting fails */ }
+        }
         onState("done");
-        resolveDone(res.state);
+        finish(res.state);
         return;
       }
       // E3-T02 chunked boot: a guest disk read may have parked awaiting a chunk. Fetch every parked
       // chunk (hash-verified in wasm) before the next quantum, or the parked reads never complete.
       if (isChunked) {
         try {
-          if (machine.pendingChunks().length > 0) await machine.fetchPending();
+          const pending = machine.pendingChunks();
+          if (pending.length > 0) {
+            const fetchStart = typeof performance !== "undefined" ? performance.now() : Date.now();
+            fetchWaits += 1;
+            fetchRequestedChunks += pending.length;
+            await machine.fetchPending();
+            const fetchMs = (typeof performance !== "undefined" ? performance.now() : Date.now()) - fetchStart;
+            fetchWaitTotalMs += fetchMs;
+            fetchWaitMaxMs = Math.max(fetchWaitMaxMs, fetchMs);
+          }
         } catch (e) {
-          tickScheduled = false;
           onState("error");
           onError(e);
-          resolveDone("error");
+          finish("error");
           return;
         }
         if (stopped || paused) { tickScheduled = false; return; }
@@ -693,15 +787,27 @@ export async function startLinuxBoot(opts = {}) {
       tickScheduled = false;
       schedule();
     };
+    // `stop()` is a storage quiescence barrier, not merely a scheduler flag. A tick can be awaiting
+    // lazy fetch or IndexedDB persistence after its synchronous runChunk. Keep that exact Promise
+    // and settle whenDone only from the idle edge, after the pump has returned completely.
+    taskQuiescence = createTaskQuiescence(settleFinished);
+    const tick = () => taskQuiescence.run(runTick);
     schedule();
 
     return {
+      backend: "main-thread",
       sendInput: (bytes) => {
-        if (!stopped) machine.sendInput(bytes);
+        if (!stopped) {
+          inputCalls += 1;
+          inputBytes += bytes?.byteLength ?? bytes?.length ?? 0;
+          machine.sendInput(bytes);
+        }
       },
-      stop: () => {
-        stopped = true;
-        resolveDone("stopped");
+      stop: async () => {
+        finish("stopped");
+        await taskQuiescence.stop();
+        settleFinished();
+        return whenDone;
       },
       // E2-T23: pause/resume the executor. Because guest `mtime` is a DETERMINISTIC retire-count
       // clock (not a wall clock), pausing simply stops retiring instructions → guest monotonic
@@ -721,6 +827,36 @@ export async function startLinuxBoot(opts = {}) {
       // E4: true when this boot skipped the Linux boot by restoring a shipped boot snapshot.
       restoredFromBootSnapshot: () => restoredFromBootSnapshot,
       stateDigest: () => machine.stateDigest(),
+      jitStats: () => (typeof machine.jitStats === "function" ? machine.jitStats() : null),
+      profileStats: () => (typeof machine.getProfile === "function" ? machine.getProfile() : null),
+      schedulerStats: () => ({
+        quantum: runQuantum,
+        maxQuantum,
+        slices: sliceCount,
+        totalSliceMs: sliceTotalMs,
+        averageSliceMs: sliceCount ? sliceTotalMs / sliceCount : 0,
+        maxSliceMs: sliceMaxMs,
+        sliceHistogram: sliceBoundsMs.map((bound, index) => ({
+          leMs: Number.isFinite(bound) ? bound : null,
+          count: sliceHistogram[index],
+        })),
+        maxStretchGapMs: stretchMaxMs,
+        requestedInstructions,
+        retiredInstructions,
+        fetchWaits,
+        fetchRequestedChunks,
+        fetchWaitTotalMs,
+        fetchWaitMaxMs,
+        outputCalls,
+        outputBytes,
+        inputCalls,
+        inputBytes,
+        yieldMode: workerPostTask ? "scheduler.postTask" : workerMode ? "timer" : "message-channel",
+        schedulerYields,
+        timerYields,
+        mainThreadYields,
+      }),
+      tailscaleCommand: (command) => slirpTailscaleCommand(command),
       // E3-T15 verifier evidence: production DHCP exchanges from this exact guest boot.
       dhcpStats: () => JSON.parse(slirpDhcpStats()),
       // E3-T21c: bounded browser producer/consumer queues over the VM-private WVFT endpoint.

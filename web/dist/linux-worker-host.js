@@ -1,19 +1,32 @@
-// E4-T22 (pragmatic first cut) — main-thread side of the CPU-on-a-worker bridge. `startLinuxBootWorker`
-// is a drop-in for loader.js `startLinuxBoot`: SAME opts (callbacks + data) and SAME returned controller
-// shape, but the heavy `startLinuxBoot` work runs inside linux-worker.js off the main thread. Callbacks
-// stay main-side (they touch the DOM/xterm); the worker relays their invocations over postMessage, and
-// the returned controller proxies method calls back to the worker.
-//
-// Why: the interpreter/JIT dispatch loop no longer shares the main thread with page paint/input and is
-// not subject to the setTimeout/background-tab throttle — the measured cause of slow in-browser Node.
+// E4-T32: page-side entry point for the whole-machine worker. The protocol module owns the
+// allow-listed controller surface, byte ownership, fatal settlement, and stop/terminate ordering.
+import { createLinuxWorkerClient } from "./linux-worker-protocol.js";
+
+// Main-thread controllers do not own their outer storage lifecycle in stop(); whole-worker
+// controllers do. Keep the page's destructive-reset/reboot path ordered and backend-neutral.
+export async function stopLinuxController(controller) {
+  if (!controller) return;
+  let firstError = null;
+  try { await controller.stop?.(); } catch (error) { firstError = error; }
+  if (controller.backend !== "whole-machine-worker") {
+    try { await controller.releaseWriterLock?.(); } catch (error) { firstError ??= error; }
+    try { await controller.closeStorage?.(); } catch (error) { firstError ??= error; }
+  }
+  if (firstError) throw firstError;
+}
 
 export async function startLinuxBootWorker(opts = {}) {
-  const worker = new Worker(new URL("./linux-worker.js", import.meta.url), {
+  const WorkerCtor = opts.WorkerCtor ?? globalThis.Worker;
+  if (typeof WorkerCtor !== "function") {
+    throw new Error("whole-machine Web Worker is unavailable");
+  }
+
+  const worker = new WorkerCtor(new URL("./linux-worker.js", import.meta.url), {
     type: "module",
-    name: "wasm-vm-cpu",
+    name: "wasm-vm-linux",
   });
 
-  // Callbacks are NOT structured-cloneable — keep them main-side; only the data opts cross to the worker.
+  // DOM/xterm callbacks stay on the page. Everything else is structured-clone boot data.
   const {
     onState = () => {},
     onProgress = () => {},
@@ -22,103 +35,46 @@ export async function startLinuxBootWorker(opts = {}) {
     onWriterStatus = () => {},
     onStorage = () => {},
     onQuota = () => {},
+    onTailscaleEvent = (message) => globalThis.__wasmVmTailscaleEvent?.(message),
+    onWorker = () => {},
+    workerHeartbeatIntervalMs,
+    workerHeartbeatTimeoutMs,
+    workerBootTimeoutMs,
+    WorkerCtor: _ignored,
     ...dataOpts
   } = opts;
+  try { onWorker(worker); } catch (error) {
+    worker.terminate();
+    throw error;
+  }
 
-  let restoredCache = false;
-  let readyResolve;
-  const ready = new Promise((r) => { readyResolve = r; });
-  // `whenDone` is a PROMISE property on the controller (resolves when the guest halts), not a method —
-  // consumers do `linuxCtl.whenDone.then(...)`. Bridge it so the proxy exposes a real thenable.
-  let doneResolve;
-  const whenDone = new Promise((r) => { doneResolve = r; });
-  const rpcPending = new Map();
-  let rpcSeq = 0;
-  let fatalErr = null;
-
-  worker.onmessage = (e) => {
-    const m = e.data;
-    if (!m) return;
-    switch (m.type) {
-      case "state": onState(m.s); break;
-      case "progress": onProgress(m.label, m.l, m.t); break;
-      case "output": { if (!worker.__gotOut) { worker.__gotOut = true; console.info("[cpu-worker-host] first output " + m.buf.byteLength + "B → onOutput"); } onOutput(new Uint8Array(m.buf)); break; }
-      case "error": onError(new Error(m.error)); break;
-      case "storage": onStorage(m.info); break;
-      case "writer": onWriterStatus(m.info); break;
-      case "quota": onQuota(m.info); break;
-      case "ready": restoredCache = !!m.restored; console.info("[cpu-worker-host] ready restored=" + restoredCache); readyResolve(); break;
-      case "done": doneResolve(m.state); break;
-      case "fatal":
-        fatalErr = new Error(m.error);
-        onError(fatalErr);
-        readyResolve();
-        break;
-      case "rpc-result": {
-        const p = rpcPending.get(m.id);
-        if (p) { rpcPending.delete(m.id); m.err ? p.reject(new Error(m.err)) : p.resolve(m.res); }
-        break;
-      }
-    }
-  };
-  worker.onerror = (ev) => {
-    fatalErr = new Error(ev.message || "cpu worker error");
-    onError(fatalErr);
-    readyResolve();
-  };
-
-  worker.postMessage({ type: "boot", opts: dataOpts });
-  await ready;
-  if (fatalErr) throw fatalErr;
-
-  const rpc = (method, args = []) =>
-    new Promise((resolve, reject) => {
-      const id = ++rpcSeq;
-      // Function arguments (callbacks) can't be structured-cloned across the worker boundary — such
-      // methods aren't bridged in this first cut. Strip them to null and guard the postMessage so a
-      // non-cloneable arg resolves to undefined instead of throwing a DataCloneError that would crash
-      // the whole boot (which previously left window.__linuxCtl unset and the guest "not up").
-      const safeArgs = Array.isArray(args) ? args.map((a) => (typeof a === "function" ? null : a)) : args;
-      rpcPending.set(id, { resolve, reject });
-      try {
-        worker.postMessage({ type: "rpc", id, method, args: safeArgs });
-      } catch {
-        rpcPending.delete(id);
-        resolve(undefined);
-      }
-    });
-
-  // Controller proxy — same surface main.js/loader consumers use. A few methods have local semantics
-  // (fire-and-forget input, cached restore flag, terminate); EVERY other property resolves to an async
-  // RPC that invokes the real controller method inside the worker. Using a JS Proxy means main.js can
-  // call ANY controller method (fetchStats, persistPending, hasUnpersisted, saveSnapshot…) and it
-  // forwards correctly as a promise — no per-method allow-list to drift out of sync (which previously
-  // surfaced as `cannot read properties of undefined (reading 'then')` for an unlisted method).
-  const local = {
-    sendInput(bytes) {
-      const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
-      const copy = b.slice().buffer; // transfer a private copy
-      worker.postMessage({ type: "input", bytes: copy }, [copy]);
-    },
-    // Known synchronously at boot from the worker's "ready" message (main.js calls this right after boot).
-    restoredFromBootSnapshot: () => restoredCache,
-    // Promise property (not a method) — resolves when the guest halts.
-    whenDone,
-    stop() { try { worker.terminate(); } catch { /* already gone */ } },
-    _worker: worker,
-  };
-  return new Proxy(local, {
-    get(target, prop) {
-      if (prop in target) return target[prop];
-      if (typeof prop !== "string") return undefined;
-      // CRITICAL: `await proxy` (main.js does `linuxCtl = await _bootLinux(...)`) probes `.then`. If we
-      // returned an rpc function here, `await` would treat the proxy as a THENABLE and call
-      // `.then(resolve, reject)` — but rpc strips those callbacks to null, so resolve/reject never fire
-      // and the await hangs forever, so main.js's whole post-boot block (input wiring, __linuxCtl hook)
-      // never runs. Return undefined for thenable probes so the proxy is a plain object, not a thenable.
-      if (prop === "then" || prop === "catch" || prop === "finally") return undefined;
-      // Any other controller method → async RPC into the worker's real controller.
-      return (...args) => rpc(prop, args);
-    },
+  let detachVisibility = () => {};
+  const client = createLinuxWorkerClient(worker, {
+    onState,
+    onProgress,
+    onOutput,
+    onError,
+    onWriterStatus,
+    onStorage,
+    onQuota,
+    onTailscaleEvent,
+    heartbeatIntervalMs: workerHeartbeatIntervalMs,
+    heartbeatTimeoutMs: workerHeartbeatTimeoutMs,
+    bootTimeoutMs: workerBootTimeoutMs,
+    isHeartbeatSuspended: () => globalThis.document?.hidden === true,
+    onTerminate: () => detachVisibility(),
   });
+  if (globalThis.document?.addEventListener) {
+    const onVisibility = () => client.setHeartbeatSuspended(globalThis.document.hidden);
+    globalThis.document.addEventListener("visibilitychange", onVisibility);
+    detachVisibility = () => globalThis.document.removeEventListener("visibilitychange", onVisibility);
+    onVisibility();
+  }
+  worker.addEventListener?.("error", (event) => {
+    client.fail(new Error(event?.message || "whole-machine worker error"));
+  });
+  worker.addEventListener?.("messageerror", () => {
+    client.fail(new Error("whole-machine worker received an un-clonable message"));
+  });
+  return client.boot(dataOpts);
 }
