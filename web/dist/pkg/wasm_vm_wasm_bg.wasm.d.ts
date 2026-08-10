@@ -55,6 +55,7 @@ export const wasmlinux_stateDigest: (a: number) => [number, number, number, numb
 export const wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
 export const wasmmachine_enableJit: (a: number, b: number) => [number, number];
 export const wasmmachine_getStats: (a: number) => [number, number, number];
+export const wasmmachine_jitStats: (a: number) => [number, number, number];
 export const wasmmachine_loadElf: (a: number, b: number, c: number) => [number, number];
 export const wasmmachine_new: (a: number) => [number, number, number];
 export const wasmmachine_ramLen: (a: number) => [number, number, number];

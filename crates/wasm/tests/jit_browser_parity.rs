@@ -194,6 +194,49 @@ fn browser_jit_matches_interpreter_a_block() {
     );
 }
 
+#[wasm_bindgen_test]
+fn browser_jit_six_op_loop_is_exactly_budgeted() {
+    // Five ALU ops plus a backward branch. Before E4-T31 one `run(1000)` dispatch could execute
+    // roughly 32 whole blocks per host slot; now the compiled tier may consume only the exact tail.
+    let prog = [
+        enc_addi(1, 1, 1),
+        enc_addi(2, 2, 1),
+        enc_addi(3, 3, 1),
+        enc_addi(4, 4, 1),
+        enc_addi(5, 5, 1),
+        enc_bne(31, 0, -20),
+    ];
+    let mut m = Machine::new(8 * 1024 * 1024);
+    poke(&mut m, DRAM_BASE, &prog);
+    m.hart_mut().regs.write(31, 1);
+    m.hart_mut().regs.pc = DRAM_BASE;
+    m.set_executor(Box::new(BrowserExecutor::new()));
+    m.set_block_cache(true);
+    m.set_interrupt_batching(true);
+    m.set_hotness_threshold(1);
+    m.set_jit(true);
+    m.run(192); // warm + end-of-run compile flush
+    assert!(m.executor().unwrap().is_compiled(DRAM_BASE));
+
+    m.hart_mut().regs.pc = DRAM_BASE;
+    let executed_before = m.executor().unwrap().executed_blocks();
+    let jit_before = m.executor().unwrap().retired_via_jit();
+    let retired_before = m.irq_stats().retired;
+    assert_eq!(m.run(5), wasm_vm_core::RunOutcome::MaxInstrs);
+    assert_eq!(m.irq_stats().retired - retired_before, 5);
+    assert_eq!(m.executor().unwrap().executed_blocks(), executed_before);
+    assert_eq!(m.executor().unwrap().retired_via_jit(), jit_before);
+
+    m.hart_mut().regs.pc = DRAM_BASE;
+    let executed_before = m.executor().unwrap().executed_blocks();
+    let jit_before = m.executor().unwrap().retired_via_jit();
+    let retired_before = m.irq_stats().retired;
+    assert_eq!(m.run(1_000), wasm_vm_core::RunOutcome::MaxInstrs);
+    assert_eq!(m.irq_stats().retired - retired_before, 1_000);
+    assert!(m.executor().unwrap().executed_blocks() > executed_before);
+    assert_eq!(m.executor().unwrap().retired_via_jit() - jit_before, 996);
+}
+
 // ── compile/instantiate + cache/invalidate + chaining unit gate ──────────────
 //
 // Drives the executor object directly (no run loop) to prove the E4-T16/T17/T18/T19/T20 obligations

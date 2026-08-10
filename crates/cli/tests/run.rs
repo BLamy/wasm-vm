@@ -89,6 +89,72 @@ fn max_instrs_on_infinite_loop_exits_102_with_retired_count() {
         .stderr(predicate::str::contains("retired=10"));
 }
 
+fn jit_json(stderr: &str) -> serde_json::Value {
+    let line = stderr
+        .lines()
+        .find_map(|line| line.strip_prefix("JIT_STATS_JSON "))
+        .expect("JIT_STATS_JSON line");
+    serde_json::from_str(line).expect("valid JIT stats JSON")
+}
+
+#[test]
+fn jit_hot_loop_reports_exact_bounded_retirement() {
+    let f = elf_file(&guest_hot_loop());
+    let out = wasm_vm()
+        .arg("run")
+        .arg(f.path())
+        .args(["--max-instrs", "1000", "--jit", "--jit-threshold", "1"])
+        .assert()
+        .code(102)
+        .get_output()
+        .clone();
+    let stderr = String::from_utf8(out.stderr).unwrap();
+    assert!(stderr.lines().any(|line| line == "retired=1000"));
+    let stats = jit_json(&stderr);
+    let executed = stats["blocks_executed"].as_u64().unwrap();
+    let retired_jit = stats["retired_via_jit"].as_u64().unwrap();
+    assert!(executed > 0, "hot loop must really execute via JIT");
+    assert!(
+        retired_jit > 0 && retired_jit <= 1000,
+        "JIT retirement cannot exceed the host budget: {retired_jit}"
+    );
+}
+
+#[test]
+fn traced_jit_hot_loop_is_truthful_and_interpreted() {
+    let f = elf_file(&guest_hot_loop());
+    let trace = tempfile::NamedTempFile::new().unwrap();
+    let out = wasm_vm()
+        .arg("run")
+        .arg(f.path())
+        .args([
+            "--max-instrs",
+            "1000",
+            "--jit",
+            "--jit-threshold",
+            "1",
+            "--trace",
+        ])
+        .arg(trace.path())
+        .assert()
+        .code(102)
+        .get_output()
+        .clone();
+    let stderr = String::from_utf8(out.stderr).unwrap();
+    assert!(stderr.lines().any(|line| line == "retired=1000"));
+    assert_eq!(
+        std::fs::read_to_string(trace.path())
+            .unwrap()
+            .lines()
+            .count(),
+        1000,
+        "one canonical record per retirement"
+    );
+    let stats = jit_json(&stderr);
+    assert_eq!(stats["blocks_executed"].as_u64(), Some(0));
+    assert_eq!(stats["retired_via_jit"].as_u64(), Some(0));
+}
+
 #[test]
 fn max_instrs_zero_still_dumps_state() {
     // Angle 3: --max-instrs 0 executes nothing but must still emit a valid state dump.

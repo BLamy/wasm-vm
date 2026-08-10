@@ -110,14 +110,12 @@ where
 // ── registry entries (identical shape to the native executor, engine handle swapped) ──
 
 /// One compiled block: its exported `run{n}` function, the module's `CpuState` memory, source page
-/// frame (page-granular invalidation), guest op count (retire-clock accounting), and the E4-T18/T19
-/// chaining/batch identity. The only difference from the native `Compiled` is `run`/`mem` are JS
-/// handles.
+/// frame (page-granular invalidation), and E4-T18/T19 chaining/batch identity. The only difference
+/// from the native `Compiled` is `run`/`mem` are JS handles.
 struct Compiled {
     run: Function,
     mem: WebAssembly::Memory,
     page_frame: u64,
-    nops: u64,
     table_index: u32,
     slot_base: u32,
     nslots: u8,
@@ -539,7 +537,6 @@ impl CompiledBlockExecutor for BrowserExecutor {
                     run,
                     mem: mem.clone(),
                     page_frame: b.page_frame,
-                    nops: b.ops.len() as u64,
                     table_index,
                     slot_base,
                     nslots,
@@ -583,9 +580,9 @@ impl CompiledBlockExecutor for BrowserExecutor {
     }
 
     fn execute(&mut self, phys_pc: u64, hart: &mut Hart, bus: &mut SystemBus) -> Option<JitExit> {
-        let (run, mem, nops, batch_id) = {
+        let (run, mem, batch_id) = {
             let c = self.blocks.get(&phys_pc)?;
-            (c.run.clone(), c.mem.clone(), c.nops, c.batch_id)
+            (c.run.clone(), c.mem.clone(), c.batch_id)
         };
         self.clock = self.clock.wrapping_add(1);
         if let Some(b) = self.batches.get_mut(&batch_id) {
@@ -642,7 +639,6 @@ impl CompiledBlockExecutor for BrowserExecutor {
         let exit_info = Self::read_u64(&mem, abi::EXIT_INFO);
         debug_assert_eq!(code, Self::read_u64(&mem, abi::EXIT_REASON) as i32);
         self.executed_blocks += 1;
-        self.retired_via_jit += nops;
         Some(JitExit {
             code: ExitCode::from_i32(code),
             next_pc,
@@ -694,6 +690,10 @@ impl CompiledBlockExecutor for BrowserExecutor {
 
     fn retired_via_jit(&self) -> u64 {
         self.retired_via_jit
+    }
+
+    fn note_jit_retired(&mut self, retired: u64) {
+        self.retired_via_jit = self.retired_via_jit.wrapping_add(retired);
     }
 
     // ── E4-T18 chaining ──

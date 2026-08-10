@@ -266,6 +266,11 @@ pub trait CompiledBlockExecutor {
     /// translated-instruction ratio).
     fn retired_via_jit(&self) -> u64;
 
+    /// E4-T31: record the exact retirement count the core committed for a compiled exit. The core,
+    /// not the executor, owns this count because it can distinguish a clean block from a precise
+    /// mid-block trap. Default no-op keeps simple/mock executors source-compatible.
+    fn note_jit_retired(&mut self, _retired: u64) {}
+
     // ── E4-T20: cache budgets, eviction policy, and stats (default impls: an executor with no
     //    budget enforcement is a valid degenerate) ──
 

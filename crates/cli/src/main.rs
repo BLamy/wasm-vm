@@ -162,11 +162,10 @@ impl ConsoleSink for StdoutConsole {
     }
 }
 
-/// Trace sink that also counts retirements. Feeds up to two writers (canonical and/or
-/// JSON) so `--trace` and `--trace-json` can be given together. Write errors are latched
-/// and reported once, at exit.
+/// Trace sink that feeds up to two writers (canonical and/or JSON) so `--trace` and
+/// `--trace-json` can be given together. Write errors are latched and reported once, at exit;
+/// retirement reporting comes from the core's authoritative counter.
 struct CliSink {
-    count: u64,
     canonical: Option<Box<dyn Write>>,
     json: Option<Box<dyn Write>>,
     err: Option<io::Error>,
@@ -174,7 +173,6 @@ struct CliSink {
 
 impl TraceSink for CliSink {
     fn retire(&mut self, r: &TraceRecord) {
-        self.count += 1;
         if let Some(w) = self.canonical.as_mut()
             && let Err(e) = writeln!(w, "{}", fmt_canonical(r))
         {
@@ -368,13 +366,21 @@ fn run(a: RunArgs) -> ExitCode {
         };
     }
 
+    let tracing = canonical.is_some() || json.is_some();
     let mut sink = CliSink {
-        count: 0,
         canonical,
         json,
         err: None,
     };
-    let outcome = m.run_traced(a.max_instrs, &mut sink);
+    let retired_before = m.irq_stats().retired;
+    // A real trace needs one interpreter-produced record per retirement. With no writers, use the
+    // zero-record run path so an armed JIT stays active and report the authoritative core counter.
+    let outcome = if tracing {
+        m.run_traced(a.max_instrs, &mut sink)
+    } else {
+        m.run(a.max_instrs)
+    };
+    let retired = m.irq_stats().retired.wrapping_sub(retired_before);
 
     // Flush + surface trace-writer errors (a full disk mid-trace must not pass silently).
     let mut trace_io_failed = false;
@@ -401,7 +407,7 @@ fn run(a: RunArgs) -> ExitCode {
         let _ = so.flush();
     }
 
-    eprintln!("retired={}", sink.count);
+    eprintln!("retired={retired}");
     if a.stats {
         eprint!("{}", m.stats_dump()); // E2-T20
     }

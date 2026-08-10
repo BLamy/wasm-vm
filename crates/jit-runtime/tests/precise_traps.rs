@@ -23,6 +23,7 @@ use jit_runtime::WasmtimeExecutor;
 
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::{DRAM_BASE, UART0_BASE};
+use wasm_vm_core::csr::{CsrOp, MCYCLE, MINSTRET};
 use wasm_vm_core::hart::{Exception, Trap};
 use wasm_vm_core::{Machine, RunOutcome};
 
@@ -85,6 +86,17 @@ fn jit_cfg(m: &mut Machine) {
     m.set_interrupt_batching(true);
     m.set_hotness_threshold(1);
     m.set_jit(true);
+}
+
+fn set_csr(m: &mut Machine, addr: u16, value: u64) {
+    m.hart_mut()
+        .csr
+        .access(addr, CsrOp::Write, value, false, false, 0)
+        .unwrap();
+}
+
+fn read_csr(m: &mut Machine, addr: u16) -> u64 {
+    m.hart_mut().csr.read(addr)
 }
 
 /// The precise architectural state captured at a trap: the trap (cause + `mtval`), the full
@@ -291,7 +303,12 @@ fn mmio_store_then_fault_commits_once() {
     m.hart_mut().regs.write(11, UART0_BASE);
     m.hart_mut().regs.write(13, FAULT_ADDR);
     m.hart_mut().regs.pc = DRAM_BASE;
+    m.enable_clint(1);
+    set_csr(&mut m, MCYCLE, 100);
+    set_csr(&mut m, MINSTRET, 200);
     let executed_before = m.executor().unwrap().executed_blocks();
+    let jit_retired_before = m.executor().unwrap().retired_via_jit();
+    let retired_before = m.irq_stats().retired;
     let oc = m.run(50);
     let jtrap = match oc {
         RunOutcome::Trapped(t) => t,
@@ -303,6 +320,15 @@ fn mmio_store_then_fault_commits_once() {
         m.executor().unwrap().executed_blocks() > executed_before,
         "the block must have actually run via the JIT (not just interpreted)"
     );
+    assert_eq!(
+        m.executor().unwrap().retired_via_jit() - jit_retired_before,
+        1,
+        "only the MMIO store before the fault retired via JIT"
+    );
+    assert_eq!(m.irq_stats().retired - retired_before, 1);
+    assert_eq!(read_csr(&mut m, MCYCLE), 101);
+    assert_eq!(read_csr(&mut m, MINSTRET), 201);
+    assert_eq!(m.clint_mtime(), 1);
     // THE assertion: the observable MMIO side effect happened EXACTLY ONCE, not twice.
     assert_eq!(
         jbyte,

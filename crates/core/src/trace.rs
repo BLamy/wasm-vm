@@ -44,6 +44,15 @@ pub struct TraceRecord {
 /// [`retire`]: TraceSink::retire
 pub trait TraceSink {
     fn retire(&mut self, record: &TraceRecord);
+
+    /// Whether the consumer needs one concrete record per retired instruction. Compiled blocks do
+    /// not currently reconstruct their intermediate records, so an observing sink keeps execution
+    /// on the interpreter path rather than silently omitting JIT retirements. Defaults to observing:
+    /// only an explicitly zero-record sink may opt into compiled execution.
+    #[inline(always)]
+    fn wants_records(&self) -> bool {
+        true
+    }
 }
 
 /// The zero-cost default: an empty force-inlined sink the optimizer erases.
@@ -52,6 +61,11 @@ pub struct NullSink;
 impl TraceSink for NullSink {
     #[inline(always)]
     fn retire(&mut self, _record: &TraceRecord) {}
+
+    #[inline(always)]
+    fn wants_records(&self) -> bool {
+        false
+    }
 }
 
 /// A rolling FNV-1a-64 fold over retire records — the E1-T22 native-vs-WASM determinism

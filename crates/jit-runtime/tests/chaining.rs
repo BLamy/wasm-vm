@@ -242,6 +242,45 @@ fn store_to_non_code_page_cuts_no_links() {
     );
 }
 
+#[test]
+fn chain_successor_that_does_not_fit_preserves_prior_progress() {
+    // A and B are both two-op blocks. With only three work slots left, A may commit through the
+    // JIT, but chained B must refuse its one-slot tail and return A's already-committed progress.
+    // Dispatch then interprets exactly B's first op; returning `None` for the whole chain here would
+    // replay A and overshoot/mutate state twice.
+    let mut m = Machine::new(8 * 1024 * 1024);
+    load_loop(&mut m, -1);
+    arm_jit(&mut m);
+    m.hart_mut().regs.write(1, 100);
+    m.hart_mut().regs.pc = A;
+    assert_eq!(m.run(200), RunOutcome::MaxInstrs);
+    assert!(m.executor().unwrap().is_compiled(A));
+    assert!(m.executor().unwrap().is_compiled(B));
+
+    m.hart_mut().regs.write(1, 10);
+    m.hart_mut().regs.write(2, 0);
+    m.hart_mut().regs.pc = A;
+    let executed_before = m.executor().unwrap().executed_blocks();
+    let jit_retired_before = m.executor().unwrap().retired_via_jit();
+    let retired_before = m.irq_stats().retired;
+
+    assert_eq!(m.run(3), RunOutcome::MaxInstrs);
+    assert_eq!(m.irq_stats().retired - retired_before, 3);
+    assert_eq!(
+        m.executor().unwrap().executed_blocks() - executed_before,
+        1,
+        "only A fits in the compiled portion"
+    );
+    assert_eq!(
+        m.executor().unwrap().retired_via_jit() - jit_retired_before,
+        2,
+        "A's two retires must survive B's short-tail refusal"
+    );
+    assert_eq!(m.hart().regs.read(2), 1, "A must commit exactly once");
+    assert_eq!(m.hart().regs.read(1), 9, "only B's addi may interpret");
+    assert_eq!(m.hart().regs.pc, B + 4);
+}
+
 // ════════════════════════════════════════════════════════════════════════════
 // 2. Interrupt budget across chains — a timer fires inside a chained loop
 // ════════════════════════════════════════════════════════════════════════════

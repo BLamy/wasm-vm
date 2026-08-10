@@ -65,13 +65,11 @@ impl HostCtx {
 }
 
 /// One compiled block: its wasmtime instance handle, `run` entry, `CpuState` memory, source page
-/// frame (for page-granular invalidation), and guest op count (for the retire-clock accounting the
-/// run loop performs).
+/// frame (for page-granular invalidation), and chaining/batch identity.
 struct Compiled {
     run: TypedFunc<i32, i32>,
     mem: Memory,
     page_frame: u64,
-    nops: u64,
     /// E4-T18: this block's stable table index (its funcref-table slot in the browser form; here the
     /// identity a link-slot stores). Freed on invalidation so the entry is never called after death.
     table_index: u32,
@@ -676,7 +674,6 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                     run,
                     mem,
                     page_frame: b.page_frame,
-                    nops: b.ops.len() as u64,
                     table_index,
                     slot_base,
                     nslots,
@@ -720,9 +717,9 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
     }
 
     fn execute(&mut self, phys_pc: u64, hart: &mut Hart, bus: &mut SystemBus) -> Option<JitExit> {
-        let (run, mem, nops, batch_id) = {
+        let (run, mem, batch_id) = {
             let c = self.blocks.get(&phys_pc)?;
-            (c.run.clone(), c.mem, c.nops, c.batch_id)
+            (c.run.clone(), c.mem, c.batch_id)
         };
         // E4-T20: stamp the batch-LRU clock at this dispatch entry (chained execution updates the
         // owning batch's tick lazily, on each re-entry through `execute`).
@@ -808,7 +805,6 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
         // The return value is the authoritative exit code; `exit_reason` in memory mirrors it.
         debug_assert_eq!(code, self.read_u64(mem, abi::EXIT_REASON) as i32);
         self.executed_blocks += 1;
-        self.retired_via_jit += nops;
         Some(JitExit {
             code: ExitCode::from_i32(code),
             next_pc,
@@ -870,6 +866,10 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 
     fn retired_via_jit(&self) -> u64 {
         self.retired_via_jit
+    }
+
+    fn note_jit_retired(&mut self, retired: u64) {
+        self.retired_via_jit = self.retired_via_jit.wrapping_add(retired);
     }
 
     // ── E4-T18: chaining ──

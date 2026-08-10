@@ -432,18 +432,14 @@ impl ConsoleSink for JsConsole {
     }
 }
 
-/// A trace sink that counts retirements and, when tracing is on, appends canonical lines.
+/// An observing sink that appends one canonical line for every interpreted retirement.
 struct RunSink<'a> {
-    retired: u64,
-    trace: Option<&'a mut String>,
+    trace: &'a mut String,
 }
 
 impl TraceSink for RunSink<'_> {
     fn retire(&mut self, r: &TraceRecord) {
-        self.retired += 1;
-        if let Some(buf) = self.trace.as_mut() {
-            let _ = writeln!(buf, "{}", fmt_canonical(r));
-        }
+        let _ = writeln!(self.trace, "{}", fmt_canonical(r));
     }
 }
 
@@ -466,6 +462,38 @@ pub struct WasmMachine {
 /// Maps a failed re-entrant borrow to a catchable JsError.
 fn reentrant() -> JsError {
     JsError::new("re-entrant call into WasmMachine (a console callback cannot drive the machine)")
+}
+
+/// Shared JS shape for both bare-metal and Linux wrappers' proof that translated code actually ran.
+fn jit_stats_object(machine: &Machine) -> JsValue {
+    let obj = js_sys::Object::new();
+    let set = |k: &str, v: &JsValue| {
+        let _ = js_sys::Reflect::set(&obj, &JsValue::from_str(k), v);
+    };
+    match machine.executor() {
+        Some(e) => {
+            set("hasExecutor", &JsValue::from_bool(true));
+            set(
+                "compiledBlocks",
+                &JsValue::from_f64(e.compiled_count() as f64),
+            );
+            set(
+                "executedBlocks",
+                &JsValue::from_f64(e.executed_blocks() as f64),
+            );
+            set(
+                "retiredViaJit",
+                &JsValue::from_f64(e.retired_via_jit() as f64),
+            );
+        }
+        None => {
+            set("hasExecutor", &JsValue::from_bool(false));
+            set("compiledBlocks", &JsValue::from_f64(0.0));
+            set("executedBlocks", &JsValue::from_f64(0.0));
+            set("retiredViaJit", &JsValue::from_f64(0.0));
+        }
+    }
+    obj.into()
 }
 
 #[wasm_bindgen]
@@ -648,6 +676,14 @@ impl WasmMachine {
         }
         Ok(obj.into())
     }
+
+    /// E4-T31: the bare-metal wrapper's authoritative compiled-tier counters. This mirrors the
+    /// Linux wrapper and lets hosts distinguish a bounded JIT run from an interpreted trace run.
+    #[wasm_bindgen(js_name = jitStats)]
+    pub fn jit_stats(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(jit_stats_object(&inner.machine))
+    }
 }
 
 impl WasmMachine {
@@ -663,8 +699,10 @@ impl WasmMachine {
         Ok(())
     }
 
-    /// Run the engine for `budget` instructions with the counting/tracing sink, splitting
-    /// the `Inner` borrow so the trace buffer and the machine are borrowed disjointly.
+    /// Run the engine for `budget` work slots, splitting the `Inner` borrow so the trace buffer and
+    /// machine are disjoint. Tracing forces one-record-per-retire interpretation; otherwise the
+    /// zero-record path keeps an armed JIT active. The core retirement delta is authoritative for
+    /// both modes (a sink cannot count the interior of a compiled block).
     fn drive(inner: &mut Inner, budget: u64) -> (RunOutcome, u64) {
         let Inner {
             machine,
@@ -672,12 +710,15 @@ impl WasmMachine {
             trace_on,
             ..
         } = inner;
-        let mut sink = RunSink {
-            retired: 0,
-            trace: if *trace_on { Some(trace) } else { None },
+        let retired_before = machine.irq_stats().retired;
+        let outcome = if *trace_on {
+            let mut sink = RunSink { trace };
+            machine.run_traced(budget, &mut sink)
+        } else {
+            machine.run(budget)
         };
-        let outcome = machine.run_traced(budget, &mut sink);
-        (outcome, sink.retired)
+        let retired = machine.irq_stats().retired.wrapping_sub(retired_before);
+        (outcome, retired)
     }
 
     fn status_object(
@@ -1298,34 +1339,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = jitStats)]
     pub fn jit_stats(&self) -> Result<JsValue, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
-        let obj = js_sys::Object::new();
-        let set = |k: &str, v: &JsValue| {
-            let _ = js_sys::Reflect::set(&obj, &JsValue::from_str(k), v);
-        };
-        match inner.machine.executor() {
-            Some(e) => {
-                set("hasExecutor", &JsValue::from_bool(true));
-                set(
-                    "compiledBlocks",
-                    &JsValue::from_f64(e.compiled_count() as f64),
-                );
-                set(
-                    "executedBlocks",
-                    &JsValue::from_f64(e.executed_blocks() as f64),
-                );
-                set(
-                    "retiredViaJit",
-                    &JsValue::from_f64(e.retired_via_jit() as f64),
-                );
-            }
-            None => {
-                set("hasExecutor", &JsValue::from_bool(false));
-                set("compiledBlocks", &JsValue::from_f64(0.0));
-                set("executedBlocks", &JsValue::from_f64(0.0));
-                set("retiredViaJit", &JsValue::from_f64(0.0));
-            }
-        }
-        Ok(obj.into())
+        Ok(jit_stats_object(&inner.machine))
     }
 
     /// Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the

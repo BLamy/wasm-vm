@@ -10,6 +10,9 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen_test::wasm_bindgen_test;
 use wasm_vm_wasm::WasmMachine;
 
+#[path = "../../cli/tests/common/mod.rs"]
+mod guest_forge;
+
 const HELLO: &[u8] = include_bytes!("../../../guest/prebuilt/hello.elf");
 const LOOPS: &[u8] = include_bytes!("../../../guest/prebuilt/loops.elf");
 const LOOPS_GOLDEN: &str = include_str!("../../../docs/golden/loops.trace.txt");
@@ -69,6 +72,44 @@ fn loops_trace_first_40_lines_match_golden() {
     assert_eq!(
         first40, LOOPS_GOLDEN,
         "canonical trace drifted from the E0-T16 golden"
+    );
+}
+
+#[wasm_bindgen_test]
+fn jit_hot_loop_step_and_trace_report_exact_retirements() {
+    let m = WasmMachine::new(8).unwrap();
+    m.load_elf(&guest_forge::guest_hot_loop()).unwrap();
+    m.enable_jit(1).unwrap();
+
+    // Trace-off drive uses the zero-record/JIT path, but the JS return value comes from the core's
+    // exact IrqStats delta rather than a sink that cannot see compiled-block interiors.
+    assert_eq!(m.step(1_000).unwrap(), 1_000);
+    let jit_before_trace = m.jit_stats().unwrap();
+    let executed_before_trace = get_num(&jit_before_trace, "executedBlocks").unwrap();
+    let retired_jit_before_trace = get_num(&jit_before_trace, "retiredViaJit").unwrap();
+    assert!(
+        executed_before_trace > 0.0,
+        "trace-off step must use the JIT"
+    );
+    assert!(
+        retired_jit_before_trace > 0.0 && retired_jit_before_trace <= 1_000.0,
+        "compiled retirement must be positive and bounded"
+    );
+
+    // Turning tracing on forces interpretation and yields one concrete canonical line per retire.
+    m.set_trace(true).unwrap();
+    assert_eq!(m.step(1_000).unwrap(), 1_000);
+    assert_eq!(m.take_trace().unwrap().lines().count(), 1_000);
+    let jit_after_trace = m.jit_stats().unwrap();
+    assert_eq!(
+        get_num(&jit_after_trace, "executedBlocks"),
+        Some(executed_before_trace),
+        "observing trace must not execute compiled blocks"
+    );
+    assert_eq!(
+        get_num(&jit_after_trace, "retiredViaJit"),
+        Some(retired_jit_before_trace),
+        "observing trace must not add hidden JIT retirements"
     );
 }
 

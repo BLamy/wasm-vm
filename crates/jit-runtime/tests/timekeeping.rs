@@ -81,9 +81,8 @@ fn arm_jit(m: &mut Machine) {
 /// pure function of the program — IDENTICAL under the interpreter and the JIT.
 ///
 /// The guest halts via a syscon poweroff after the loop, so BOTH engines stop at the identical
-/// instruction (and hence identical retired count / mtime) — the block-atomic JIT and the
-/// instruction-at-a-time interpreter converge on the same terminus rather than on a `run()` budget
-/// (which counts dispatch iterations, not instructions, and would let a chained JIT overshoot).
+/// instruction (and hence identical retired count / mtime). The explicit terminus also proves timer
+/// behavior independently of the exact bounded-`run` regression covered in `jit_execution`.
 fn build_timer_machine(mtimecmp: u64) -> Machine {
     const HANDLER: u64 = DRAM_BASE + 0x2000;
     const ITERS: u64 = 3000;

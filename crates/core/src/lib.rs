@@ -365,9 +365,19 @@ pub struct SnapshotCoherence {
 enum BlockStep {
     /// A clean `FALLTHROUGH`/`BRANCH_TAKEN` exit; PC committed at the successor. `edge` is the
     /// static outgoing edge for chaining, or `None` for a dynamic (`jalr`) / non-linkable exit.
-    Committed { edge: Option<u8> },
-    /// A `Trap` exit (precise mem-fault / `ecall` / `ebreak`); ends the chain with this result.
-    Trapped(Result<(), Trap>),
+    Committed { edge: Option<u8>, retired: u64 },
+    /// A `Trap` exit (precise mem-fault / `ecall` / `ebreak`); `retired` body ops committed before
+    /// the faulting instruction, which consumes one work slot but does not retire.
+    Trapped { trap: Trap, retired: u64 },
+}
+
+/// E4-T31: one bounded JIT dispatch result. `work_used` is the exact number of outer-loop work
+/// slots consumed by all compiled blocks in the chain (clean retires, plus one faulting attempt for
+/// a terminal trap), and is always in `1..=remaining_work`.
+#[cfg(not(feature = "zicsr-stub"))]
+struct JitProgress {
+    result: Result<(), Trap>,
+    work_used: u64,
 }
 
 /// E4-T18: which outgoing link-slot edge a block's clean exit corresponds to, or `None` if the edge
@@ -2001,11 +2011,11 @@ impl Machine {
         }
     }
 
-    /// E1-T12: advance `mtime` by one tick per `clock_div` retired instructions — the
-    /// deterministic clock source (native and wasm retire identically, so a timer interrupt
-    /// lands at the same retire index). A no-op when no CLINT is attached.
+    /// E1-T12/E4-T31: advance `mtime` for `retired` instructions in one exact span. `u128`
+    /// arithmetic preserves the sub-`clock_div` residue without overflowing when a large host run
+    /// budget is supplied. A no-op in wall-clock mode or when no CLINT is attached.
     #[cfg(not(feature = "zicsr-stub"))]
-    fn advance_clock(&mut self) {
+    fn advance_clock_by(&mut self, retired: u64) {
         // E4-T24: in WallClock mode `mtime` is host-derived and recomputed at the block boundary
         // (`sample_wall_clock`), so the retire count must NOT drive it. Default (ICount) path below is
         // byte-identical to the legacy retire clock.
@@ -2013,14 +2023,23 @@ impl Machine {
             return;
         }
         if let Some(clint) = &self.clint {
-            self.tick_accum += 1;
-            if self.tick_accum >= self.clock_div {
-                let ticks = self.tick_accum / self.clock_div;
-                self.tick_accum %= self.clock_div;
+            let divisor = u128::from(self.clock_div.max(1));
+            let total = u128::from(self.tick_accum) + u128::from(retired);
+            let ticks = total / divisor;
+            self.tick_accum = (total % divisor) as u64;
+            if ticks != 0 {
                 let mut s = clint.borrow_mut();
-                s.mtime = s.mtime.wrapping_add(ticks);
+                // Casting truncates modulo 2^64, which is exactly the value a wrapping u64 mtime
+                // addition observes even for the theoretical `u64::MAX` run-budget edge.
+                s.mtime = s.mtime.wrapping_add(ticks as u64);
             }
         }
+    }
+
+    /// The one-instruction interpreter wrapper around [`Self::advance_clock_by`].
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn advance_clock(&mut self) {
+        self.advance_clock_by(1);
     }
 
     /// E4-T24: recompute `mtime` from the injected host wall clock at a block boundary — the ONE place
@@ -2585,16 +2604,23 @@ impl Machine {
             .record_jit_pause(pause_ns, valid.len() as u64, installed_bytes);
     }
 
-    /// E4-T10: try to execute the compiled block at the current PC via the JIT. Returns:
-    /// * `None` — the JIT did NOT run this block (not enabled at a boundary, not compiled, or it
-    ///   faulted out mid-block leaving hart state untouched); the caller interprets instead.
-    /// * `Some(Ok(()))` — a compiled block ran to a `FALLTHROUGH`/`BRANCH_TAKEN` exit: registers,
-    ///   PC, and the retire clock are already committed (the clock advanced once per guest op the
-    ///   block retired, preserving `mtime`-at-retire determinism); the caller skips the interpreter.
-    /// * `Some(Err(trap))` — the block's terminator (`ecall`/`ebreak`) traps: the body ops' retires
-    ///   are committed, PC is left at the faulting instruction, and the runtime-derived (mode-correct)
-    ///   trap is returned for the loop's normal trap-delivery path, with NO intervening boundary poll
-    ///   (so interrupt timing matches the interpreter exactly).
+    /// E4-T31: commit one compiled exit's exact retirement span into every counter that the
+    /// interpreter advances per successful instruction. The block translator excludes CSR ops, so
+    /// one bulk addition is architecturally equivalent to `retire_tick()` after every op.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn account_jit_retired(&mut self, retired: u64) {
+        self.hart.csr.retire_span(retired);
+        self.advance_clock_by(retired);
+        self.irqstats.on_retire_n(retired);
+        if let Some(exec) = self.executor.as_mut() {
+            exec.note_jit_retired(retired);
+        }
+    }
+
+    /// E4-T10/E4-T31: try to execute a compiled chain at the current PC within
+    /// `remaining_work`. `None` means the first block did not run and the caller may interpret it;
+    /// `Some(progress)` means at least one block committed and reports the exact work consumed plus
+    /// its clean/trapping result. A later short-tail refusal preserves prior progress.
     ///
     /// The device/interrupt sample already happened at this boundary (in the loop, before this call),
     /// and `mtime` advances per retired op below, so the E4-T05 interrupt-batching semantics are
@@ -2604,12 +2630,11 @@ impl Machine {
     /// dispatch loop on every edge — up to the chain-depth budget, and re-checking the
     /// interrupt/instruction budget at EVERY link so a timer still fires inside a chained loop.
     ///
-    /// Returns exactly as [`Self::run_one_jit_block`] does for the LAST block in the chain: `None`
-    /// (not run / faulted out — interpret), `Some(Ok(()))` (chain committed; resume at the current
-    /// PC), or `Some(Err(trap))` (the terminal block trapped). Every non-terminal block in the chain
-    /// has already committed its registers, PC, and retire clock.
+    /// Every committed block updates registers, PC, clocks, and retirement statistics before the
+    /// next link is considered. A faulting instruction consumes one work slot but does not retire.
     #[cfg(not(feature = "zicsr-stub"))]
-    fn try_jit_block(&mut self) -> Option<Result<(), Trap>> {
+    fn try_jit_block(&mut self, remaining_work: u64) -> Option<JitProgress> {
+        debug_assert!(remaining_work > 0);
         let pc0 = self.hart.regs.pc;
         let mut phys = self.hart.fetch_phys(&mut self.bus, pc0).ok()?;
         if !self.executor.as_ref()?.is_compiled(phys) {
@@ -2618,26 +2643,63 @@ impl Machine {
         let chaining = self.executor.as_ref()?.chaining();
         let budget = self.executor.as_ref()?.chain_depth_budget().max(1);
         let mut depth: u32 = 0;
+        let mut work_used = 0u64;
+        let mut ran_any = false;
         // The edge just traversed to reach `phys` (from_phys, edge) — linked lazily on arrival.
         let mut pending_link: Option<(u64, u8)> = None;
         let result = loop {
-            // Lazily link the edge we followed to get here (predecessor → this block). Both are
-            // compiled (checked before we set `pending_link`); the executor records the incoming
-            // edge and writes the successor's table index into the slot.
+            let block_budget = remaining_work - work_used;
+            let Some(step) = self.run_one_jit_block(phys, block_budget) else {
+                // The first block left the hart untouched, so the caller can interpret it. If a
+                // LATER block refused the short tail or unexpectedly failed, prior blocks already
+                // committed: return their progress and let the next dispatch handle this PC.
+                break (work_used != 0).then_some(JitProgress {
+                    result: Ok(()),
+                    work_used,
+                });
+            };
+            ran_any = true;
+            // Link only after the successor really ran. A short-tail refusal or an unexpected
+            // executor fallback must not publish an edge as though it executed.
             if let (Some((from, edge)), Some(e)) = (pending_link.take(), self.executor.as_mut()) {
                 e.link_edge(from, edge, phys);
             }
-            match self.run_one_jit_block(phys) {
-                None => break None, // faulted out (or meta gone): interpret this block from entry.
-                Some(BlockStep::Trapped(r)) => break Some(r),
-                Some(BlockStep::Committed { edge }) => {
+            match step {
+                BlockStep::Trapped { trap, retired } => {
+                    let step_work = retired
+                        .checked_add(1)
+                        .expect("a compiled block cannot retire u64::MAX instructions");
+                    debug_assert!(step_work <= block_budget);
+                    work_used += step_work;
+                    break Some(JitProgress {
+                        result: Err(trap),
+                        work_used,
+                    });
+                }
+                BlockStep::Committed { edge, retired } => {
+                    debug_assert!(retired > 0 && retired <= block_budget);
+                    work_used += retired;
                     // The block ran clean; PC now sits at its successor's entry.
+                    // Ending exactly on the host budget is not a new instruction boundary inside
+                    // this call: do not sample devices/interrupts until the next `run` invocation.
+                    if work_used == remaining_work {
+                        break Some(JitProgress {
+                            result: Ok(()),
+                            work_used,
+                        });
+                    }
                     if !chaining {
-                        break Some(Ok(()));
+                        break Some(JitProgress {
+                            result: Ok(()),
+                            work_used,
+                        });
                     }
                     depth += 1;
                     if depth >= budget {
-                        break Some(Ok(())); // chain-depth bound: force a dispatch return.
+                        break Some(JitProgress {
+                            result: Ok(()),
+                            work_used,
+                        }); // chain-depth bound: force a dispatch return.
                     }
                     // Interrupt/instruction budget across chains: refresh the timer levels (mtime
                     // advanced per retired op above) AND re-mirror the PLIC external-interrupt levels
@@ -2656,21 +2718,32 @@ impl Machine {
                     self.sync_sbi_timer();
                     self.sync_plic();
                     if self.hart.csr.next_interrupt().is_some() {
-                        break Some(Ok(()));
+                        break Some(JitProgress {
+                            result: Ok(()),
+                            work_used,
+                        });
                     }
                     // Follow the edge only if the successor is itself compiled; otherwise return to
                     // dispatch (which will interpret / compile it).
                     let from = phys;
                     let next_phys = match self.hart.fetch_phys(&mut self.bus, self.hart.regs.pc) {
                         Ok(p) => p,
-                        Err(_) => break Some(Ok(())),
+                        Err(_) => {
+                            break Some(JitProgress {
+                                result: Ok(()),
+                                work_used,
+                            });
+                        }
                     };
                     if !self
                         .executor
                         .as_ref()
                         .is_some_and(|e| e.is_compiled(next_phys))
                     {
-                        break Some(Ok(()));
+                        break Some(JitProgress {
+                            result: Ok(()),
+                            work_used,
+                        });
                     }
                     // Record the edge to link on arrival (only static edges carry an `edge`; a
                     // dynamic `jalr` target has `edge == None` — followed but never linked).
@@ -2680,7 +2753,7 @@ impl Machine {
             }
         };
         // Stats: one dispatch-loop entry per chain, with its depth binned into the histogram.
-        if let Some(e) = self.executor.as_mut() {
+        if ran_any && let Some(e) = self.executor.as_mut() {
             e.note_chain(depth);
         }
         result
@@ -2688,29 +2761,28 @@ impl Machine {
 
     /// E4-T18: execute exactly ONE compiled block at physical entry `phys` (the former body of
     /// `try_jit_block`), committing its registers / PC / retire clock. Returns:
-    /// * `None` — the block faulted out mid-op (hart untouched) or its decoded meta vanished; the
-    ///   caller interprets it from entry.
-    /// * `Some(BlockStep::Committed { edge })` — a `FALLTHROUGH`/`BRANCH_TAKEN` exit; `edge` is the
-    ///   block's static outgoing edge for chaining (`Some(0)` sole/taken, `Some(1)` not-taken,
-    ///   `None` = a dynamic `jalr` target that must not be statically linked).
-    /// * `Some(BlockStep::Trapped(r))` — a `Trap` exit (precise mem-fault / `ecall` / `ebreak`).
+    /// * `None` — the block did not run (metadata vanished or it cannot fit in the remaining tail),
+    ///   so the caller may interpret it from entry.
+    /// * `Some(BlockStep::Committed { edge, retired })` — a clean exit and its exact retirement
+    ///   span; `edge` identifies a static successor for chaining.
+    /// * `Some(BlockStep::Trapped { trap, retired })` — a precise trap plus the body prefix that
+    ///   committed before the faulting instruction.
     #[cfg(not(feature = "zicsr-stub"))]
-    fn run_one_jit_block(&mut self, phys: u64) -> Option<BlockStep> {
-        // Op count + terminator + per-op byte lengths, read from the still-cached decoded block
-        // (physical keying). The lengths let a PRECISE mem-fault side-exit (below) compute how many
-        // instructions retired before the faulting one, so the retire clock advances by exactly that.
-        let (nops, terminator, op_lens, block_phys) = {
+    fn run_one_jit_block(&mut self, phys: u64, remaining_work: u64) -> Option<BlockStep> {
+        // Op count + terminator from the physically-keyed decoded block. A block too large for the
+        // remaining host tail is refused BEFORE touching executor/hart state, so the interpreter can
+        // consume exactly the remaining instruction attempts without overshoot.
+        let (nops, terminator) = {
             let b = self.block_cache.get(phys)?;
-            (
-                b.ops.len(),
-                b.ops.last().map(|o| o.instr),
-                b.ops
-                    .iter()
-                    .map(|o| o.len as u64)
-                    .collect::<alloc::vec::Vec<u64>>(),
-                b.phys_start,
-            )
+            (b.ops.len() as u64, b.ops.last().map(|o| o.instr))
         };
+        if nops == 0 || nops > remaining_work {
+            return None;
+        }
+        // A host-side direct CSR write may leave the one-instruction suppression flags armed. JIT
+        // candidates contain no CSR ops, so clear stale flags once at block entry before bulk-retire.
+        self.hart.csr.arm_counters();
+        let entry_pc = self.hart.regs.pc;
         // Take the executor out so it can borrow hart + bus for the duration of the call.
         let mut exec = self.executor.take().expect("compiled ⇒ executor present");
         let exit = exec.execute(phys, &mut self.hart, &mut self.bus);
@@ -2722,13 +2794,7 @@ impl Machine {
         match exit.code {
             jit::ExitCode::Fallthrough | jit::ExitCode::BranchTaken => {
                 self.hart.regs.pc = exit.next_pc;
-                // Every guest op in the block retired: advance the retire clock once per op so
-                // `mtime` (retire-derived) lands identically to the interpreter, and feed the
-                // storm/progress denominator identically.
-                for _ in 0..nops {
-                    self.advance_clock();
-                    self.irqstats.on_retire();
-                }
+                self.account_jit_retired(nops);
                 // E4-T17: a JIT block ending in `fence.i` orders the fetch stream the SAME near-free
                 // way `step_cached` does — the block's own stores were logged and are drained
                 // page-granularly below, so any page this block wrote (incl. its own, the self-write
@@ -2741,6 +2807,7 @@ impl Machine {
                 self.drain_code_writes();
                 Some(BlockStep::Committed {
                     edge: chain_edge(terminator, exit.code),
+                    retired: nops,
                 })
             }
             jit::ExitCode::Trap => {
@@ -2754,33 +2821,40 @@ impl Machine {
                 // trusted implementation and no already-committed side-effect is re-executed.
                 if let Some(trap) = exit.trap {
                     let faulting_pc = exit.next_pc;
-                    let mut retired = 0u64;
-                    let mut p = block_phys;
-                    for len in &op_lens {
-                        if p == faulting_pc {
-                            break;
-                        }
-                        p = p.wrapping_add(*len);
-                        retired += 1;
-                    }
-                    for _ in 0..retired {
-                        self.advance_clock();
-                        self.irqstats.on_retire();
-                    }
+                    // `exit.next_pc` is a guest VIRTUAL PC. Walking from the physical block key is
+                    // accidentally correct only under identity mapping; use the virtual entry PC so
+                    // Sv39 aliases account the exact prefix too. The executor writes only a static
+                    // per-op PC from this trusted block; an out-of-block value is an internal ABI
+                    // violation and must fail closed rather than fabricate architectural counters.
+                    let retired = {
+                        let block = self
+                            .block_cache
+                            .get(phys)
+                            .expect("executed JIT block metadata remains live until write drain");
+                        let mut pc = entry_pc;
+                        block
+                            .ops
+                            .iter()
+                            .position(|op| {
+                                let matches = pc == faulting_pc;
+                                pc = pc.wrapping_add(u64::from(op.len));
+                                matches
+                            })
+                            .expect("JIT precise-trap PC must name an op in its decoded block")
+                            as u64
+                    };
+                    self.account_jit_retired(retired);
                     self.hart.regs.pc = faulting_pc;
                     // A store before the fault may have hit a code page (SMC/DMA-into-code); drain
                     // the bus write log through page-granular invalidation, exactly as the
                     // interpreter would after that store retired.
                     self.drain_code_writes();
-                    return Some(BlockStep::Trapped(Err(trap)));
+                    return Some(BlockStep::Trapped { trap, retired });
                 }
                 // Otherwise: the trapping terminator (`ecall`/`ebreak`) retires NOTHING; only the
                 // `nops-1` body ops did. Advance the clock for those.
                 let retired = nops.saturating_sub(1);
-                for _ in 0..retired {
-                    self.advance_clock();
-                    self.irqstats.on_retire();
-                }
+                self.account_jit_retired(retired);
                 // Leave PC at the faulting instruction and derive the trap from the CURRENT
                 // privilege mode (the block cannot know it) so the cause matches the interpreter.
                 self.hart.regs.pc = exit.next_pc;
@@ -2800,19 +2874,19 @@ impl Machine {
                         tval: exit.next_pc,
                     },
                 };
-                Some(BlockStep::Trapped(Err(trap)))
+                Some(BlockStep::Trapped { trap, retired })
             }
             jit::ExitCode::Reserved(_) => {
                 // The E4-T09 translator never emits these; on a clean return the executor already
                 // committed registers, so re-interpreting would double-execute. Commit PC and treat
                 // as a benign fall-through (defensive — unreachable for the current translator).
                 self.hart.regs.pc = exit.next_pc;
-                for _ in 0..nops {
-                    self.advance_clock();
-                    self.irqstats.on_retire();
-                }
+                self.account_jit_retired(nops);
                 // Reserved never carries a static successor edge — do not chain-link it.
-                Some(BlockStep::Committed { edge: None })
+                Some(BlockStep::Committed {
+                    edge: None,
+                    retired: nops,
+                })
             }
         }
     }
@@ -2834,7 +2908,8 @@ impl Machine {
         #[cfg(not(feature = "zicsr-stub"))]
         self.drain_code_writes();
 
-        for _ in 0..max_instrs {
+        let mut remaining_work = max_instrs;
+        while remaining_work != 0 {
             // E2-T17: a syscon finisher write (poweroff/reboot/fail) during the previous
             // instruction ends the run before the next one executes.
             #[cfg(not(feature = "zicsr-stub"))]
@@ -2951,6 +3026,9 @@ impl Machine {
                 self.hart.take_interrupt(cause, to_s, epc);
                 self.irqstats.on_interrupt(cause); // E2-T20 storm counter
                 self.storm_check(); // CRITIC #1: an INTERRUPT storm must be detected too
+                // Preserve the established `run(N)` contract: a taken boundary interrupt consumes
+                // one bounded work slot even though it retires no guest instruction.
+                remaining_work -= 1;
                 continue;
             }
             // E4-T01: capture the PC of the instruction ABOUT to execute — after `step_traced` it has
@@ -2967,21 +3045,21 @@ impl Machine {
             // via the executor INSTEAD of interpreting. `try_jit_block` commits the retire clock for
             // the block's ops itself (so the per-op accounting below is skipped for a JIT run).
             #[cfg(not(feature = "zicsr-stub"))]
-            let jit_attempt = if self.jit_active() && sample_boundary {
-                self.try_jit_block()
+            let jit_attempt = if self.jit_active() && sample_boundary && !sink.wants_records() {
+                self.try_jit_block(remaining_work)
             } else {
                 None
             };
             #[cfg(not(feature = "zicsr-stub"))]
-            let ran_via_jit = jit_attempt.is_some();
-            #[cfg(not(feature = "zicsr-stub"))]
-            let step_result = match jit_attempt {
-                Some(r) => r,
-                None if self.block_cache_enabled => self.step_cached(sink),
-                None => self.hart.step_traced(&mut self.bus, sink),
+            let (step_result, ran_via_jit, work_used) = match jit_attempt {
+                Some(progress) => (progress.result, true, progress.work_used),
+                None if self.block_cache_enabled => (self.step_cached(sink), false, 1),
+                None => (self.hart.step_traced(&mut self.bus, sink), false, 1),
             };
             #[cfg(feature = "zicsr-stub")]
-            let step_result = self.hart.step_traced(&mut self.bus, sink);
+            let (step_result, work_used) = (self.hart.step_traced(&mut self.bus, sink), 1u64);
+            debug_assert!(work_used > 0 && work_used <= remaining_work);
+            remaining_work -= work_used;
             // E1-T12: an instruction retired iff the step succeeded — advance the deterministic
             // retire-count clock ONLY then (a delivered trap or a taken interrupt retires nothing).
             // A JIT run already advanced the clock per retired op inside `try_jit_block`, so this

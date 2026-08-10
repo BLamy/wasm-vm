@@ -273,6 +273,11 @@ export class WasmMachine {
      */
     getStats(): any;
     /**
+     * E4-T31: the bare-metal wrapper's authoritative compiled-tier counters. This mirrors the
+     * Linux wrapper and lets hosts distinguish a bounded JIT run from an interpreted trace run.
+     */
+    jitStats(): any;
+    /**
      * Load a bare-metal rv64 ELF. A malformed image throws a `JsError` naming the
      * `ElfError` variant and leaves the machine usable (RAM is validated before it is
      * written).
@@ -473,6 +478,7 @@ export interface InitOutput {
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_enableJit: (a: number, b: number) => [number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];
+    readonly wasmmachine_jitStats: (a: number) => [number, number, number];
     readonly wasmmachine_loadElf: (a: number, b: number, c: number) => [number, number];
     readonly wasmmachine_new: (a: number) => [number, number, number];
     readonly wasmmachine_ramLen: (a: number) => [number, number, number];

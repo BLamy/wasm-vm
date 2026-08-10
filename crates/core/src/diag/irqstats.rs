@@ -82,10 +82,17 @@ impl IrqStats {
         Self::default()
     }
 
+    /// `n` retired instructions (the progress denominator). The compiled tier commits a CSR-free
+    /// block at once; wrapping matches the architectural counters' cumulative-u64 semantics.
+    #[inline]
+    pub(crate) fn on_retire_n(&mut self, n: u64) {
+        self.retired = self.retired.wrapping_add(n);
+    }
+
     /// One retired instruction (the progress denominator). A single increment.
     #[inline]
     pub fn on_retire(&mut self) {
-        self.retired += 1;
+        self.on_retire_n(1);
     }
 
     /// A synchronous exception was delivered (`scause` low bits).
