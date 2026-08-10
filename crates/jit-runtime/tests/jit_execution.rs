@@ -20,7 +20,7 @@ use jit_runtime::WasmtimeExecutor;
 
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
-use wasm_vm_core::csr::{CsrOp, MCYCLE, MINSTRET, Priv};
+use wasm_vm_core::csr::{CsrOp, MCYCLE, MIE, MINSTRET, MSTATUS, MTVEC, Priv};
 use wasm_vm_core::hart::Exception;
 use wasm_vm_core::trace::HashSink;
 use wasm_vm_core::{Machine, RunOutcome};
@@ -250,6 +250,105 @@ fn six_op_loop_respects_exact_budget_tail_counters_clock_and_trace_gate() {
     m.hart_mut().regs.pc = DRAM_BASE;
     assert_eq!(m.run(6), RunOutcome::MaxInstrs);
     assert!(m.executor().unwrap().executed_blocks() > exec_before);
+}
+
+#[test]
+fn pending_interrupt_consumes_only_budget_slot_before_compiled_entry() {
+    // Compile a two-op loop, then present an already-pending machine-software interrupt with a
+    // one-slot host budget. The interrupt must consume that slot before the compiled block runs:
+    // trap entry changes PC and IrqStats, but no retirement-owned clock or JIT statistic advances.
+    const HANDLER: u64 = DRAM_BASE + 0x2000;
+    let mut m = Machine::new(8 * 1024 * 1024);
+    poke(&mut m, DRAM_BASE, &[enc_addi(5, 5, 1), enc_jal(0, -4)]);
+    poke(&mut m, HANDLER, &[enc_addi(6, 0, 1), enc_jal(0, 0)]);
+    m.hart_mut().regs.pc = DRAM_BASE;
+    m.set_executor(Box::new(WasmtimeExecutor::new()));
+    m.set_block_cache(true);
+    m.set_interrupt_batching(true);
+    m.set_hotness_threshold(1);
+    m.set_jit(true);
+    assert_eq!(m.run(192), RunOutcome::MaxInstrs);
+    assert!(m.executor().unwrap().is_compiled(DRAM_BASE));
+
+    let clint = m.enable_clint(7);
+    clint.borrow_mut().msip = true;
+    set_csr(&mut m, MSTATUS, 1 << 3); // global machine interrupts
+    set_csr(&mut m, MIE, 1 << 3); // machine-software interrupt
+    set_csr(&mut m, MTVEC, HANDLER);
+    set_csr(&mut m, MCYCLE, 100);
+    set_csr(&mut m, MINSTRET, 200);
+    m.hart_mut().regs.write(5, 0);
+    m.hart_mut().regs.write(6, 0);
+    m.hart_mut().regs.pc = DRAM_BASE;
+
+    let executed_before = m.executor().unwrap().executed_blocks();
+    let jit_retired_before = m.executor().unwrap().retired_via_jit();
+    let retired_before = m.irq_stats().retired;
+    let interrupts_before = m.irq_stats().int[3];
+
+    assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+    assert_eq!(m.hart().regs.pc, HANDLER, "handler body must not execute");
+    assert_eq!(m.hart().regs.read(5), 0, "compiled loop must not enter");
+    assert_eq!(m.hart().regs.read(6), 0, "handler op must not overshoot");
+    assert_eq!(m.irq_stats().retired, retired_before);
+    assert_eq!(m.irq_stats().int[3] - interrupts_before, 1);
+    assert_eq!(read_csr(&mut m, MCYCLE), 100);
+    assert_eq!(read_csr(&mut m, MINSTRET), 200);
+    assert_eq!(m.clint_mtime(), 0);
+    assert_eq!(m.executor().unwrap().executed_blocks(), executed_before);
+    assert_eq!(m.executor().unwrap().retired_via_jit(), jit_retired_before);
+}
+
+#[test]
+fn compiled_first_op_fault_consumes_one_work_and_retires_zero() {
+    // Put one load in the final word of a physical page, making it a genuine one-op decoded/JIT
+    // block. After compiling with a valid address, fault that first op under run(1). The compiled
+    // attempt consumes the sole work slot but commits no retirement, counter, clock, or rd effect.
+    const CODE: u64 = DRAM_BASE + 0x0ffc;
+    const VALID: u64 = DRAM_BASE + 0x3000;
+    const FAULT: u64 = 0x4000_0000;
+    let mut m = Machine::new(8 * 1024 * 1024);
+    poke(&mut m, CODE, &[enc_lw(6, 8, 0)]);
+    m.bus_mut().store32(VALID, 0x1234_5678).unwrap();
+    m.set_executor(Box::new(WasmtimeExecutor::new()));
+    m.set_block_cache(true);
+    m.set_interrupt_batching(true);
+    m.set_hotness_threshold(1);
+    m.set_jit(true);
+
+    // The compile queue flushes on a bounded boundary cadence; repeatedly execute exactly this
+    // page-edge block until it is installed, resetting PC between one-slot runs.
+    for _ in 0..80 {
+        m.hart_mut().regs.write(8, VALID);
+        m.hart_mut().regs.pc = CODE;
+        assert_eq!(m.run(1), RunOutcome::MaxInstrs);
+    }
+    assert!(m.executor().unwrap().is_compiled(CODE));
+
+    m.enable_clint(7);
+    set_csr(&mut m, MCYCLE, 100);
+    set_csr(&mut m, MINSTRET, 200);
+    m.hart_mut().regs.write(6, 0xfeed_face);
+    m.hart_mut().regs.write(8, FAULT);
+    m.hart_mut().regs.pc = CODE;
+    let executed_before = m.executor().unwrap().executed_blocks();
+    let jit_retired_before = m.executor().unwrap().retired_via_jit();
+    let retired_before = m.irq_stats().retired;
+
+    let trap = match m.run(1) {
+        RunOutcome::Trapped(trap) => trap,
+        other => panic!("expected first-op compiled fault, got {other:?}"),
+    };
+    assert_eq!(trap.cause, Exception::LoadAccessFault);
+    assert_eq!(trap.tval, FAULT);
+    assert_eq!(m.hart().regs.pc, CODE);
+    assert_eq!(m.hart().regs.read(6), 0xfeed_face);
+    assert_eq!(m.executor().unwrap().executed_blocks() - executed_before, 1);
+    assert_eq!(m.executor().unwrap().retired_via_jit(), jit_retired_before);
+    assert_eq!(m.irq_stats().retired, retired_before);
+    assert_eq!(read_csr(&mut m, MCYCLE), 100);
+    assert_eq!(read_csr(&mut m, MINSTRET), 200);
+    assert_eq!(m.clint_mtime(), 0);
 }
 
 // ── JIT-on == interp-off on a set of programs (incl. memory) ──────────────────
