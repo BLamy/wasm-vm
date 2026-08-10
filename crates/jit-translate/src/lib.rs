@@ -425,9 +425,10 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     match abi.mem {
         MemModel::SoftmmuImports => {
             // The module owns a private one-page linear memory (CpuState only); guest RAM is behind
-            // the imports.
+            // the imports. Pinning max=1 makes a cached browser Uint8Array view stable: generated
+            // SoftMMU code never grows this private state memory.
             m.add_memory(MemType {
-                limits: Limits::new(1),
+                limits: Limits::bounded(1, 1),
             });
             m.export("mem", ExportKind::Memory, 0);
         }
@@ -526,7 +527,9 @@ pub fn translate_batch(
     match abi.mem {
         MemModel::SoftmmuImports => {
             m.add_memory(MemType {
-                limits: Limits::new(1),
+                // See `translate_block`: a fixed private memory is the browser view-lifetime
+                // contract. InlineTlb's imported guest memory deliberately remains growable.
+                limits: Limits::bounded(1, 1),
             });
             m.export("mem", ExportKind::Memory, 0);
         }

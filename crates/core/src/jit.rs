@@ -26,6 +26,8 @@ use alloc::boxed::Box;
 pub mod abi {
     /// Base of the `x[0..32]` guest integer register array (each register 8 bytes).
     pub const XREG_BASE: u32 = 0x000;
+    /// End of the integer-register array.
+    pub const XREG_END: u32 = XREG_BASE + 32 * 8;
     /// `exit_reason` — the [`super::ExitCode`] the block wrote before returning.
     pub const EXIT_REASON: u32 = 0x218;
     /// `exit_pc` — the guest PC to resume at.
@@ -37,6 +39,102 @@ pub mod abi {
     /// guest-visible PC relative to it, so translated control flow is correct under paging (guest
     /// virtual PC != physical block key) and when a physically-keyed block is reused from a new VA.
     pub const ENTRY_PC: u32 = 0x230;
+    /// Exclusive end of the state transferred between a hart and a compiled module.
+    pub const HANDOFF_END: u32 = ENTRY_PC + 8;
+    /// Exact byte length of the one-call CPU-state handoff.
+    pub const HANDOFF_LEN: usize = (HANDOFF_END - XREG_BASE) as usize;
+    /// E4-T19 intra-module chaining flag. It is deliberately outside [`HANDOFF_END`]: executors
+    /// currently leave it zero and perform bounded chaining in the host dispatch loop.
+    pub const CHAIN_ENABLED: u32 = 0x250;
+}
+
+/// Reusable byte-exact image of the frozen portion of a compiled module's `CpuState` memory.
+///
+/// The handoff is bytes rather than a `repr(C)` integer struct so it is alignment-independent and
+/// remains little-endian-correct on every Rust host. Executors transfer the whole image with one
+/// engine call in each direction; all register and exit decoding stays inside Rust.
+pub struct CpuStateHandoff {
+    // Stored as little-endian words so common little-endian hosts can marshal the whole register
+    // file with one native slice copy. Byte accessors expose the identical frozen ABI image.
+    words: [u64; abi::HANDOFF_LEN / 8],
+}
+
+impl Default for CpuStateHandoff {
+    fn default() -> Self {
+        Self {
+            words: [0; abi::HANDOFF_LEN / 8],
+        }
+    }
+}
+
+impl CpuStateHandoff {
+    /// Marshal the live integer registers and virtual entry PC into the frozen layout.
+    pub fn prepare(&mut self, hart: &Hart) {
+        #[cfg(target_endian = "little")]
+        self.words[..32].copy_from_slice(hart.regs.jit_words());
+        #[cfg(target_endian = "big")]
+        for register in 0..32u8 {
+            self.put_u64(
+                abi::XREG_BASE + u32::from(register) * 8,
+                hart.regs.read(register),
+            );
+        }
+        self.put_u64(abi::ENTRY_PC, hart.regs.pc);
+    }
+
+    /// Commit the compiled module's integer-register image. `x0` is intentionally skipped so the
+    /// architectural hardwired-zero invariant remains owned by `XRegs`.
+    pub fn commit_registers(&self, hart: &mut Hart) {
+        #[cfg(target_endian = "little")]
+        hart.regs.jit_commit_words(&self.words[..32]);
+        #[cfg(target_endian = "big")]
+        for register in 1..32u8 {
+            hart.regs.write(
+                register,
+                self.get_u64(abi::XREG_BASE + u32::from(register) * 8),
+            );
+        }
+    }
+
+    /// Exit reason mirrored by the compiled block in the state header.
+    pub fn exit_reason(&self) -> i32 {
+        self.get_u64(abi::EXIT_REASON) as i32
+    }
+
+    /// Guest PC materialized by the compiled block for its clean or precise-trap exit.
+    pub fn exit_pc(&self) -> u64 {
+        self.get_u64(abi::EXIT_PC)
+    }
+
+    /// Auxiliary exit payload written by the compiled block.
+    pub fn exit_info(&self) -> u64 {
+        self.get_u64(abi::EXIT_INFO)
+    }
+
+    /// Immutable bytes for a bulk engine write.
+    pub fn as_bytes(&self) -> &[u8; abi::HANDOFF_LEN] {
+        // SAFETY: `words` is fully initialized, exactly HANDOFF_LEN bytes long, and every byte
+        // pattern is valid for `u8`. The returned borrow cannot outlive `self`.
+        unsafe { &*self.words.as_ptr().cast::<[u8; abi::HANDOFF_LEN]>() }
+    }
+
+    /// Mutable bytes for a bulk engine read.
+    pub fn as_mut_bytes(&mut self) -> &mut [u8; abi::HANDOFF_LEN] {
+        // SAFETY: same layout argument as `as_bytes`; the exclusive borrow prevents aliasing.
+        unsafe { &mut *self.words.as_mut_ptr().cast::<[u8; abi::HANDOFF_LEN]>() }
+    }
+
+    fn put_u64(&mut self, offset: u32, value: u64) {
+        debug_assert_eq!(offset % 8, 0);
+        let index = ((offset - abi::XREG_BASE) / 8) as usize;
+        self.words[index] = value.to_le();
+    }
+
+    fn get_u64(&self, offset: u32) -> u64 {
+        debug_assert_eq!(offset % 8, 0);
+        let index = ((offset - abi::XREG_BASE) / 8) as usize;
+        u64::from_le(self.words[index])
+    }
 }
 
 /// The frozen exit-code enum (`docs/jit-architecture.md` §3.3). The E4-T09 translator emits only
@@ -418,5 +516,67 @@ impl ChainStats {
             .enumerate()
             .map(|(d, n)| d as u64 * n)
             .sum()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{CpuStateHandoff, abi};
+    use crate::hart::Hart;
+
+    #[test]
+    fn cpu_state_handoff_pins_frozen_layout_endian_and_x0() {
+        assert_eq!(abi::XREG_END, 0x100);
+        assert_eq!(abi::HANDOFF_END, 0x238);
+        assert_eq!(abi::HANDOFF_LEN, 568);
+        const { assert!(abi::HANDOFF_END < abi::CHAIN_ENABLED) };
+
+        let mut hart = Hart::default();
+        hart.regs.pc = 0x0123_4567_89ab_cdef;
+        for register in 1..32u8 {
+            hart.regs.write(
+                register,
+                0x8000_0000_0000_0000 | (u64::from(register) * 0x0102_0304_0506_0708),
+            );
+        }
+        let mut handoff = CpuStateHandoff::default();
+        handoff.prepare(&hart);
+
+        assert_eq!(handoff.as_bytes().len(), 568);
+        assert_eq!(&handoff.as_bytes()[0..8], &0u64.to_le_bytes());
+        for register in 1..32u8 {
+            let start = register as usize * 8;
+            assert_eq!(
+                &handoff.as_bytes()[start..start + 8],
+                &hart.regs.read(register).to_le_bytes()
+            );
+        }
+        assert_eq!(
+            &handoff.as_bytes()[abi::ENTRY_PC as usize..abi::HANDOFF_END as usize],
+            &hart.regs.pc.to_le_bytes()
+        );
+
+        handoff.put_u64(abi::XREG_BASE, u64::MAX);
+        for register in 1..32u8 {
+            handoff.put_u64(
+                abi::XREG_BASE + u32::from(register) * 8,
+                0xfedc_ba98_7654_0000 | u64::from(register),
+            );
+        }
+        handoff.put_u64(abi::EXIT_REASON, 2);
+        handoff.put_u64(abi::EXIT_PC, 0x8877_6655_4433_2211);
+        handoff.put_u64(abi::EXIT_INFO, 0xff00_ee11_dd22_cc33);
+        handoff.commit_registers(&mut hart);
+
+        assert_eq!(hart.regs.read(0), 0);
+        for register in 1..32u8 {
+            assert_eq!(
+                hart.regs.read(register),
+                0xfedc_ba98_7654_0000 | u64::from(register)
+            );
+        }
+        assert_eq!(handoff.exit_reason(), 2);
+        assert_eq!(handoff.exit_pc(), 0x8877_6655_4433_2211);
+        assert_eq!(handoff.exit_info(), 0xff00_ee11_dd22_cc33);
     }
 }

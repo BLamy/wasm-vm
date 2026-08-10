@@ -99,12 +99,13 @@ export const ROADMAP = [
   {
     epic: "E4",
     title: "Acceleration",
-    status: "pending",
-    blurb: "Profiling, flamegraphs, in-guest CoreMark/Dhrystone, boot + compile benchmark ledger.",
+    status: "in-progress",
+    blurb: "Fast interpreter and bounded JIT paths are proven; the whole-machine worker is the remaining demo-default boundary.",
     caps: [
-      { name: "Hot-PC profiling + flamegraphs", status: "pending" },
-      { name: "In-guest CoreMark / Dhrystone", status: "pending" },
-      { name: "Boot + compile benchmark ledger", status: "pending" },
+      { name: "Fast predecoded interpreter", status: "verified", evidence: "E4-T30: exact-entry hit path, differential corpus, and live busybox proof" },
+      { name: "Exact bounded JIT work + retirement", status: "verified", evidence: "E4-T31: budgets, traps, counters, trace gating, CLI, and Wasm wrapper" },
+      { name: "Bulk JIT state handoff + bounded browser handles", status: "in-progress", evidence: "E4-T33: one 568-byte transfer each way; exact fault state; 4,096-cycle externref/eviction stress" },
+      { name: "Default whole-machine Web Worker", status: "pending", evidence: "E4-T32: controller parity and worker-default demo path pending" },
     ],
   },
   {

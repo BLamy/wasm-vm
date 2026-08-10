@@ -22,13 +22,17 @@
 #![cfg(target_arch = "wasm32")]
 #![allow(clippy::identity_op)] // the RV64 field-encoders keep every field term for legibility
 
+use wasm_bindgen::externref_heap_live_count;
 use wasm_bindgen_test::*;
 use wasm_vm_core::Machine;
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
-use wasm_vm_core::jit::CompiledBlockExecutor;
+use wasm_vm_core::hart::{Exception, Hart, Trap};
+use wasm_vm_core::jit::{CompiledBlockExecutor, EvictPolicy, ExitCode, JitCacheBudget};
+use wasm_vm_core::mmio::SystemBus;
+use wasm_vm_core::ram::Ram;
 use wasm_vm_wasm::BrowserExecutor;
 
 // ── tiny RV64 encoders ───────────────────────────────────────────────────────
@@ -255,6 +259,189 @@ fn block(phys: u64, ops: &[Instr]) -> DecodedBlock {
         .collect();
     let total = 4 * ops.len() as u64;
     DecodedBlock::new(phys, ops, total)
+}
+
+#[wasm_bindgen_test]
+fn bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault() {
+    const FAULT_ADDR: u64 = 0x5000_0000;
+    const VIRTUAL_PC: u64 = 0x4000_1000;
+    let seed =
+        |register: u8| 0x8000_0000_0000_0000 | (u64::from(register) << 32) | u64::from(register);
+    let mut ops = Vec::new();
+    for register in 1..=29u8 {
+        ops.push(MicroOp {
+            instr: Instr::Addi {
+                rd: register,
+                rs1: register,
+                imm: 1,
+            },
+            len: 4,
+            raw: 0,
+        });
+    }
+    ops.push(MicroOp {
+        instr: Instr::Addi {
+            rd: 30,
+            rs1: 30,
+            imm: 1,
+        },
+        len: 4,
+        raw: 0,
+    });
+    ops.push(MicroOp {
+        instr: Instr::Lw {
+            rd: 31,
+            rs1: 30,
+            imm: 0,
+        },
+        len: 4,
+        raw: 0,
+    });
+    let decoded = DecodedBlock::new(DRAM_BASE, ops, 31 * 4);
+
+    let mut hart = Hart::default();
+    for register in 1..32u8 {
+        hart.regs.write(register, seed(register));
+    }
+    hart.regs.write(30, FAULT_ADDR - 1);
+    hart.regs.pc = VIRTUAL_PC;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    assert!(
+        executor.fixed_state_view_survives_rejected_growth(DRAM_BASE),
+        "fixed SoftMMU memory must reject growth without detaching the retained 568-byte view"
+    );
+
+    let exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("recorded precise fault returns an exit");
+    assert_eq!(executor.executed_blocks(), 1);
+    assert_eq!(exit.code, ExitCode::Trap);
+    assert_eq!(
+        exit.trap,
+        Some(Trap {
+            cause: Exception::LoadAccessFault,
+            tval: FAULT_ADDR,
+        })
+    );
+    assert_eq!(exit.next_pc, VIRTUAL_PC + 30 * 4);
+    assert_eq!(exit.exit_info, Exception::LoadAccessFault as u64);
+    assert_eq!(hart.regs.pc, VIRTUAL_PC, "the caller owns PC commit");
+    assert_eq!(hart.regs.read(0), 0);
+    for register in 1..=29u8 {
+        assert_eq!(hart.regs.read(register), seed(register).wrapping_add(1));
+    }
+    assert_eq!(hart.regs.read(30), FAULT_ADDR);
+    assert_eq!(hart.regs.read(31), seed(31));
+}
+
+#[wasm_bindgen_test]
+#[ignore = "long browser externref/eviction churn; run explicitly for E4-T33 evidence"]
+fn browser_handles_remain_bounded_across_retranslation_churn() {
+    const BATCH_BLOCKS: usize = 64;
+    const ROTATING_BLOCKS: usize = 8;
+    const ITERATIONS: usize = 4_096;
+
+    let one_add = |phys| {
+        block(
+            phys,
+            &[Instr::Addi {
+                rd: 5,
+                rs1: 5,
+                imm: 1,
+            }],
+        )
+    };
+    let dense: Vec<DecodedBlock> = (0..BATCH_BLOCKS)
+        .map(|index| one_add(DRAM_BASE + index as u64 * 4))
+        .collect();
+    let rotating: Vec<DecodedBlock> = (0..ROTATING_BLOCKS)
+        .map(|index| one_add(DRAM_BASE + 0x1_0000 + index as u64 * 0x1000))
+        .collect();
+
+    let baseline = externref_heap_live_count();
+    let mut executor = BrowserExecutor::new();
+    let executor_floor = externref_heap_live_count();
+
+    executor.install_batch(&dense, &vec![[None, None]; BATCH_BLOCKS]);
+    assert_eq!(executor.compiled_count(), BATCH_BLOCKS);
+    assert_eq!(executor.module_count(), 1);
+    assert_eq!(
+        externref_heap_live_count(),
+        executor_floor + BATCH_BLOCKS as u32 + 2,
+        "one K-block batch owns exactly K Functions, one state view, and one Instance"
+    );
+    executor.invalidate_all();
+    assert_eq!(externref_heap_live_count(), executor_floor);
+
+    executor.set_batch_size(1);
+    executor.set_evict_policy(EvictPolicy::BatchLru);
+    executor.set_jit_budget(JitCacheBudget {
+        max_batches: 2,
+        ..JitCacheBudget::DEFAULT
+    });
+    let seed =
+        |register: u8| 0x8000_0000_0000_0000 | (u64::from(register) << 32) | u64::from(register);
+    let mut hart = Hart::default();
+    for register in 1..32u8 {
+        hart.regs.write(register, seed(register));
+    }
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    for iteration in 0..ITERATIONS {
+        let decoded = &rotating[iteration % ROTATING_BLOCKS];
+        executor.install(decoded);
+        hart.regs.pc = decoded.phys_start;
+        let exit = executor
+            .execute(decoded.phys_start, &mut hart, &mut bus)
+            .expect("one-op ALU block exits cleanly");
+        assert_eq!(exit.code, ExitCode::Fallthrough);
+        assert_eq!(exit.next_pc, decoded.phys_start + 4);
+        let _ = executor.take_evicted();
+
+        assert!(executor.module_count() <= 2);
+        assert!(executor.compiled_count() <= 2);
+        assert_eq!(
+            externref_heap_live_count(),
+            executor_floor + executor.compiled_count() as u32 + 2 * executor.module_count() as u32,
+            "live browser handles must equal Functions + one view/Instance pair per batch"
+        );
+    }
+    assert_eq!(executor.executed_blocks(), ITERATIONS as u64);
+    assert_eq!(hart.regs.read(0), 0);
+    for register in 1..32u8 {
+        let expected = if register == 5 {
+            seed(register).wrapping_add(ITERATIONS as u64)
+        } else {
+            seed(register)
+        };
+        assert_eq!(
+            hart.regs.read(register),
+            expected,
+            "register x{register} diverged during browser handoff churn"
+        );
+    }
+    assert_eq!(
+        hart.regs.pc,
+        rotating[(ITERATIONS - 1) % ROTATING_BLOCKS].phys_start,
+        "direct executor leaves caller-owned PC at the final entry"
+    );
+    let stats = executor.jit_cache_stats();
+    assert!(stats.evictions > 0, "tiny budget must actively evict");
+    assert!(
+        stats.retranslations > 0,
+        "rotating evicted blocks must be retranslated"
+    );
+    assert_eq!(
+        stats.installs,
+        (BATCH_BLOCKS + ITERATIONS) as u64,
+        "install accounting includes the initial ownership batch and every churn translation"
+    );
+
+    executor.invalidate_all();
+    assert_eq!(externref_heap_live_count(), executor_floor);
+    drop(executor);
+    assert_eq!(externref_heap_live_count(), baseline);
 }
 
 #[wasm_bindgen_test]

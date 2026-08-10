@@ -25,6 +25,9 @@ use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::{DRAM_BASE, UART0_BASE};
 use wasm_vm_core::csr::{CsrOp, MCYCLE, MINSTRET};
 use wasm_vm_core::hart::{Exception, Trap};
+use wasm_vm_core::jit::{CompiledBlockExecutor, ExitCode};
+use wasm_vm_core::mmio::SystemBus;
+use wasm_vm_core::ram::Ram;
 use wasm_vm_core::{Machine, RunOutcome};
 
 // ── tiny RV64 encoders ───────────────────────────────────────────────────────
@@ -343,4 +346,78 @@ fn mmio_store_then_fault_commits_once() {
         DRAM_BASE + 4,
         "mepc must be the faulting store's PC"
     );
+}
+
+#[test]
+fn bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault() {
+    use wasm_vm_core::decode::Instr;
+    use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
+    use wasm_vm_core::hart::Hart;
+
+    const VIRTUAL_PC: u64 = 0x4000_1000;
+    let seed =
+        |register: u8| 0x8000_0000_0000_0000 | (u64::from(register) << 32) | u64::from(register);
+    let mut ops = Vec::new();
+    for register in 1..=29u8 {
+        ops.push(MicroOp {
+            instr: Instr::Addi {
+                rd: register,
+                rs1: register,
+                imm: 1,
+            },
+            len: 4,
+            raw: 0,
+        });
+    }
+    ops.push(MicroOp {
+        instr: Instr::Addi {
+            rd: 30,
+            rs1: 30,
+            imm: 1,
+        },
+        len: 4,
+        raw: 0,
+    });
+    ops.push(MicroOp {
+        instr: Instr::Lw {
+            rd: 31,
+            rs1: 30,
+            imm: 0,
+        },
+        len: 4,
+        raw: 0,
+    });
+    let block = DecodedBlock::new(DRAM_BASE, ops, 31 * 4);
+
+    let mut hart = Hart::default();
+    for register in 1..32u8 {
+        hart.regs.write(register, seed(register));
+    }
+    hart.regs.write(30, FAULT_ADDR - 1);
+    hart.regs.pc = VIRTUAL_PC;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    let mut executor = WasmtimeExecutor::new();
+    executor.install(&block);
+
+    let exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("recorded precise fault returns an exit");
+    assert_eq!(executor.executed_blocks(), 1);
+    assert_eq!(exit.code, ExitCode::Trap);
+    assert_eq!(
+        exit.trap,
+        Some(Trap {
+            cause: Exception::LoadAccessFault,
+            tval: FAULT_ADDR,
+        })
+    );
+    assert_eq!(exit.next_pc, VIRTUAL_PC + 30 * 4);
+    assert_eq!(exit.exit_info, Exception::LoadAccessFault as u64);
+    assert_eq!(hart.regs.pc, VIRTUAL_PC, "the caller owns PC commit");
+    assert_eq!(hart.regs.read(0), 0);
+    for register in 1..=29u8 {
+        assert_eq!(hart.regs.read(register), seed(register).wrapping_add(1));
+    }
+    assert_eq!(hart.regs.read(30), FAULT_ADDR);
+    assert_eq!(hart.regs.read(31), seed(31));
 }

@@ -1,5 +1,5 @@
 //! E4-T33 release benchmark: compare the production fast interpreter with the native JIT on the
-//! the same pure-ALU loops and exact architectural work budgets. The six-op loop remains the
+//! same pure-ALU loops and exact architectural work budgets. The six-op loop remains the
 //! worst-case fixed-boundary diagnostic; a 64-op ALU block is the acceptance workload that
 //! amortizes one mandatory JIT boundary across a production-sized decoded block.
 //!
@@ -203,23 +203,22 @@ fn paired(workload: &Workload) -> (f64, f64, f64) {
     (interpreter_median, jit_median, ratio)
 }
 
+fn require_release_build() {
+    #[cfg(debug_assertions)]
+    panic!("perf_handoff must be run with --release");
+}
+
 #[test]
 #[ignore = "release performance differential; run explicitly with --ignored --nocapture"]
 fn six_op_boundary_diagnostic() {
-    assert!(
-        !cfg!(debug_assertions),
-        "perf_handoff must be run with --release"
-    );
+    require_release_build();
     let _ = paired(&tiny_workload());
 }
 
 #[test]
 #[ignore = "release performance differential; run explicitly with --ignored --nocapture"]
 fn bulk_handoff_jit_beats_production_fast_interpreter() {
-    assert!(
-        !cfg!(debug_assertions),
-        "perf_handoff must be run with --release"
-    );
+    require_release_build();
     let (interpreter_median, jit_median, ratio) = paired(&dense_workload());
     assert!(
         ratio > 1.0,
