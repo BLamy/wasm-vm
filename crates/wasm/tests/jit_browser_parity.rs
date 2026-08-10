@@ -42,6 +42,8 @@ use wasm_vm_wasm::BrowserExecutor;
 #[wasm_bindgen::prelude::wasm_bindgen(inline_js = r#"
 let originalUint8Subarray;
 let uint8SubarrayCalls = 0;
+let originalUint8ArrayConstructor;
+let uint8ArrayConstructorCalls = 0;
 
 export function beginUint8SubarrayAudit() {
     if (originalUint8Subarray !== undefined) {
@@ -63,6 +65,28 @@ export function finishUint8SubarrayAudit() {
     return calls;
 }
 
+export function beginUint8ArrayConstructorAudit() {
+    if (originalUint8ArrayConstructor !== undefined) {
+        throw new Error("Uint8Array constructor audit is already active");
+    }
+    originalUint8ArrayConstructor = globalThis.Uint8Array;
+    uint8ArrayConstructorCalls = 0;
+    globalThis.Uint8Array = new Proxy(originalUint8ArrayConstructor, {
+        construct(target, args, newTarget) {
+            uint8ArrayConstructorCalls += 1;
+            return Reflect.construct(target, args, newTarget);
+        },
+    });
+}
+
+export function finishUint8ArrayConstructorAudit() {
+    const calls = uint8ArrayConstructorCalls;
+    globalThis.Uint8Array = originalUint8ArrayConstructor;
+    originalUint8ArrayConstructor = undefined;
+    uint8ArrayConstructorCalls = 0;
+    return calls;
+}
+
 export function catchesJsException(callback) {
     try {
         callback();
@@ -71,14 +95,24 @@ export function catchesJsException(callback) {
         return true;
     }
 }
+
+export function throwUnexpectedJitException() {
+    throw 1;
+}
 "#)]
 extern "C" {
     #[wasm_bindgen(js_name = beginUint8SubarrayAudit)]
     fn begin_uint8_subarray_audit();
     #[wasm_bindgen(js_name = finishUint8SubarrayAudit)]
     fn finish_uint8_subarray_audit() -> u32;
+    #[wasm_bindgen(js_name = beginUint8ArrayConstructorAudit)]
+    fn begin_uint8_array_constructor_audit();
+    #[wasm_bindgen(js_name = finishUint8ArrayConstructorAudit)]
+    fn finish_uint8_array_constructor_audit() -> u32;
     #[wasm_bindgen(js_name = catchesJsException)]
     fn catches_js_exception(callback: &Function) -> bool;
+    #[wasm_bindgen(js_name = throwUnexpectedJitException)]
+    fn throw_unexpected_jit_exception();
 }
 
 // ── tiny RV64 encoders ───────────────────────────────────────────────────────
@@ -383,6 +417,48 @@ fn bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault() {
 }
 
 #[wasm_bindgen_test]
+fn browser_clean_dispatch_reuses_cached_outer_view_without_constructor() {
+    let decoded = block(
+        DRAM_BASE,
+        &[Instr::Addi {
+            rd: 5,
+            rs1: 5,
+            imm: 1,
+        }],
+    );
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    let mut hart = Hart::default();
+    hart.regs.write(5, 40);
+    hart.regs.pc = DRAM_BASE;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+
+    // Installation may itself grow the outer Wasm memory after the executor created its first
+    // view. Allow the first dispatch to perform that required one-time refresh, then prove steady
+    // clean dispatches do not construct another view.
+    let warm_exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("warm compiled block exits cleanly");
+    assert_eq!(warm_exit.code, ExitCode::Fallthrough);
+    assert_eq!(hart.regs.read(5), 41);
+
+    begin_uint8_array_constructor_audit();
+    for expected in [42, 43] {
+        let exit = executor
+            .execute(DRAM_BASE, &mut hart, &mut bus)
+            .expect("compiled block exits cleanly");
+        assert_eq!(exit.code, ExitCode::Fallthrough);
+        assert_eq!(hart.regs.read(5), expected);
+    }
+    let constructor_calls = finish_uint8_array_constructor_audit();
+
+    assert_eq!(
+        constructor_calls, 0,
+        "clean dispatches must reuse the retained outer-Wasm handoff view"
+    );
+}
+
+#[wasm_bindgen_test]
 fn browser_dispatch_reuses_memory_views_without_subarray_allocation() {
     let decoded = block(
         DRAM_BASE,
@@ -407,13 +483,19 @@ fn browser_dispatch_reuses_memory_views_without_subarray_allocation() {
     let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
 
     begin_uint8_subarray_audit();
+    begin_uint8_array_constructor_audit();
     let exit = executor
         .execute(DRAM_BASE, &mut hart, &mut bus)
         .expect("compiled block exits cleanly");
+    let constructor_calls = finish_uint8_array_constructor_audit();
     let subarray_calls = finish_uint8_subarray_audit();
 
     assert_eq!(exit.code, ExitCode::Fallthrough);
     assert_eq!(hart.regs.read(5), 42);
+    assert_eq!(
+        constructor_calls, 1,
+        "one detached pre-call view must be rebound exactly once"
+    );
     assert_eq!(
         subarray_calls, 0,
         "a retained handoff view must not construct Uint8Array subviews per dispatch"
@@ -446,6 +528,7 @@ impl MmioDevice for GrowOuterMemoryOnWrite {
 #[wasm_bindgen_test]
 fn browser_handoff_refreshes_after_outer_growth_during_compiled_call() {
     const MMIO_BASE: u64 = 0x1000_0000;
+    const WARM_PHYS: u64 = DRAM_BASE + 0x1000;
     let decoded = block(
         DRAM_BASE,
         &[
@@ -461,6 +544,14 @@ fn browser_handoff_refreshes_after_outer_growth_during_compiled_call() {
             },
         ],
     );
+    let warm = block(
+        WARM_PHYS,
+        &[Instr::Addi {
+            rd: 7,
+            rs1: 7,
+            imm: 1,
+        }],
+    );
     let writes = Rc::new(Cell::new(0));
     let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
     bus.attach(
@@ -475,19 +566,27 @@ fn browser_handoff_refreshes_after_outer_growth_during_compiled_call() {
     .unwrap();
     let mut executor = BrowserExecutor::new();
     executor.install(&decoded);
+    executor.install(&warm);
     let mut hart = Hart::default();
     hart.regs.write(5, 41);
     hart.regs.write(6, MMIO_BASE);
+    hart.regs.pc = WARM_PHYS;
+    executor
+        .execute(WARM_PHYS, &mut hart, &mut bus)
+        .expect("warm dispatch refreshes any view detached during installation");
     hart.regs.pc = DRAM_BASE;
     let live_before = externref_heap_live_count();
 
     begin_uint8_subarray_audit();
+    begin_uint8_array_constructor_audit();
     let exit = executor
         .execute(DRAM_BASE, &mut hart, &mut bus)
         .expect("compiled MMIO store exits cleanly after growing outer memory");
+    let constructor_calls = finish_uint8_array_constructor_audit();
     let subarray_calls = finish_uint8_subarray_audit();
 
     assert_eq!(subarray_calls, 0);
+    assert_eq!(constructor_calls, 1, "mid-call growth requires one rebind");
     assert_eq!(exit.code, ExitCode::Fallthrough);
     assert_eq!(exit.next_pc, DRAM_BASE + 8);
     assert_eq!(writes.get(), 1);
@@ -504,6 +603,7 @@ fn browser_handoff_refreshes_after_outer_growth_during_compiled_call() {
 fn browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault() {
     const MMIO_BASE: u64 = 0x1000_0000;
     const VIRTUAL_PC: u64 = 0x4000_1000;
+    const WARM_PHYS: u64 = DRAM_BASE + 0x1000;
     let decoded = block(
         DRAM_BASE,
         &[
@@ -519,6 +619,14 @@ fn browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault() {
             },
         ],
     );
+    let warm = block(
+        WARM_PHYS,
+        &[Instr::Addi {
+            rd: 7,
+            rs1: 7,
+            imm: 1,
+        }],
+    );
     let writes = Rc::new(Cell::new(0));
     let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
     bus.attach(
@@ -533,19 +641,27 @@ fn browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault() {
     .unwrap();
     let mut executor = BrowserExecutor::new();
     executor.install(&decoded);
+    executor.install(&warm);
     let mut hart = Hart::default();
     hart.regs.write(5, 41);
     hart.regs.write(6, MMIO_BASE);
+    hart.regs.pc = WARM_PHYS;
+    executor
+        .execute(WARM_PHYS, &mut hart, &mut bus)
+        .expect("warm dispatch refreshes any view detached during installation");
     hart.regs.pc = VIRTUAL_PC;
     let live_before = externref_heap_live_count();
 
     begin_uint8_subarray_audit();
+    begin_uint8_array_constructor_audit();
     let exit = executor
         .execute(DRAM_BASE, &mut hart, &mut bus)
         .expect("recorded MMIO fault remains precise after growing outer memory");
+    let constructor_calls = finish_uint8_array_constructor_audit();
     let subarray_calls = finish_uint8_subarray_audit();
 
     assert_eq!(subarray_calls, 0);
+    assert_eq!(constructor_calls, 1, "faulting growth requires one rebind");
     assert_eq!(exit.code, ExitCode::Trap);
     assert_eq!(
         exit.trap,
@@ -579,7 +695,8 @@ impl MmioDevice for ThrowJsOnWrite {
     fn write(&mut self, _offset: u64, width: Width, _value: u64) -> Result<(), BusFault> {
         assert_eq!(width, Width::B8);
         self.writes.set(self.writes.get() + 1);
-        wasm_bindgen::throw_str("unexpected-jit-engine-trap")
+        throw_unexpected_jit_exception();
+        unreachable!("the inline JavaScript helper always throws")
     }
 }
 
@@ -628,8 +745,13 @@ fn unexpected_js_exception_fails_closed_without_commit_and_cleans_host() {
     hart.regs.write(5, 41);
     hart.regs.write(6, MMIO_BASE);
     hart.regs.write(7, 9);
-    hart.regs.pc = VIRTUAL_PC;
+    hart.regs.pc = CLEAN_PHYS;
     let mut bus = Box::new(bus);
+    executor
+        .execute(CLEAN_PHYS, &mut hart, &mut bus)
+        .expect("warm dispatch refreshes any view detached during installation");
+    hart.regs.write(7, 9);
+    hart.regs.pc = VIRTUAL_PC;
     let executor_ptr = executor.as_mut() as *mut BrowserExecutor;
     let hart_ptr = hart.as_mut() as *mut Hart;
     let bus_ptr = bus.as_mut() as *mut SystemBus;
@@ -643,10 +765,16 @@ fn unexpected_js_exception_fails_closed_without_commit_and_cleans_host() {
     });
     let live_before = externref_heap_live_count();
 
+    begin_uint8_subarray_audit();
+    begin_uint8_array_constructor_audit();
     assert!(
         catches_js_exception(callback.as_ref().unchecked_ref()),
         "an unrecorded exception must propagate instead of returning None for replay"
     );
+    let constructor_calls = finish_uint8_array_constructor_audit();
+    let subarray_calls = finish_uint8_subarray_audit();
+    assert_eq!(constructor_calls, 0, "exception path rebuilt a live view");
+    assert_eq!(subarray_calls, 0, "exception path created a subarray");
     assert_eq!(externref_heap_live_count(), live_before);
     drop(callback);
     assert_eq!(

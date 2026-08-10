@@ -1067,8 +1067,11 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 
 #[cfg(test)]
 mod tests {
-    use super::{Batch, Compiled, INSTANCE_OVERHEAD_BYTES, JitKeyHasher, JitMap, WasmtimeExecutor};
-    use std::hash::{Hash, Hasher};
+    use super::{
+        Batch, Compiled, INSTANCE_OVERHEAD_BYTES, JitBuildHasher, JitKeyHasher, JitMap,
+        WasmtimeExecutor,
+    };
+    use std::hash::{BuildHasher, Hash, Hasher};
     use std::panic::{AssertUnwindSafe, catch_unwind};
     use std::sync::atomic::{AtomicUsize, Ordering};
     use wasm_emit::{ExportKind, FuncBuilder, FuncType, Limits, MemType, ModuleBuilder, ValType};
@@ -1241,6 +1244,64 @@ mod tests {
         assert!(
             probes < 32,
             "mapped guest PCs formed a {probes}-entry probe cluster in a {N}-entry JIT map"
+        );
+    }
+
+    #[test]
+    fn keyed_hasher_accumulates_repeated_writes_without_resetting_the_secret() {
+        let builder = JitBuildHasher::default();
+
+        let finish = |words: &[u64]| {
+            let mut hasher = builder.build_hasher();
+            for &word in words {
+                hasher.write_u64(word);
+            }
+            hasher.finish()
+        };
+
+        let first_only = finish(&[0x1111]);
+        let second_only = finish(&[0x2222]);
+        let first_then_second = finish(&[0x1111, 0x2222]);
+        let second_then_first = finish(&[0x2222, 0x1111]);
+
+        assert_ne!(
+            first_then_second, second_only,
+            "the second write reset keyed state"
+        );
+        assert_ne!(
+            first_then_second, first_only,
+            "the second write was ignored"
+        );
+        assert_ne!(
+            first_then_second, second_then_first,
+            "write order was discarded"
+        );
+
+        let mut generic = builder.build_hasher();
+        generic.write(b"first");
+        generic.write(b"second");
+        let combined_generic = generic.finish();
+        let mut suffix_only = builder.build_hasher();
+        suffix_only.write(b"second");
+        assert_ne!(
+            combined_generic,
+            suffix_only.finish(),
+            "generic Hasher::write reset the prior keyed state"
+        );
+    }
+
+    #[test]
+    fn independent_executors_do_not_reuse_a_public_fixed_hash_permutation() {
+        let mut outputs = std::collections::HashSet::new();
+        for _ in 0..8 {
+            let executor = WasmtimeExecutor::new();
+            let mut hasher = executor.blocks.hasher().build_hasher();
+            hasher.write_u64(0x8000_1000);
+            outputs.insert(hasher.finish());
+        }
+        assert!(
+            outputs.len() > 1,
+            "independent JIT registries reused one fixed public hash permutation"
         );
     }
 
