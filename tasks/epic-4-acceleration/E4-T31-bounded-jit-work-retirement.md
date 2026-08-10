@@ -3,7 +3,7 @@ id: E4-T31
 epic: 4
 title: Bounded JIT work and exact retirement accounting
 priority: 431
-status: implemented
+status: verified
 depends_on: [E4-T30]
 estimate: S
 risk: high
@@ -67,3 +67,52 @@ before any throughput claim or main-thread worker quantum depends on them.
   main-thread JIT page remained unresponsive, honestly preserving E4-T33/E4-T32 as required work.
 - EVIDENCE: `evidence/e4-t31/README.md` and `browser-fallback.jpg` (SHA-256
   `3c22907f2852b7c41c928c36930b4c201d1347eab2db749a4565f4071d038264`).
+
+### 2026-08-09 — fresh verifier — `3ce38b00`
+
+VERDICT: verified
+
+- P1 EXACT BOUND — HELD. Predicted the six-op loop would refuse a five-slot compiled tail, commit
+  one six-op block plus two interpreted ops for `run(8)`, and retire exactly 1,000,000 work for the
+  million budget. The release regression at `crates/jit-runtime/tests/jit_execution.rs:162` held
+  all three, including 999,996 JIT retirements. Replacing the runtime with pre-fix `92d6c27` in the
+  disposable clone made the same test fail at line 195 with 960 retirements for `run(5)` (192x).
+- P2 ACCOUNTING — HELD. Predicted clean, partial-fault, builtin-SBI, and timer-bearing JIT exits
+  would agree across core retirement, `mcycle`/`minstret`, CLINT residue, `IrqStats`, executor,
+  CLI, and Wasm reporting. The six-op/SBI/timekeeping regressions (`jit_execution.rs:162,583`,
+  `timekeeping.rs:175,211,272`), core CLINT/Zicntr tests, CLI 22/22, browser executor 8/8, and Wasm
+  wrapper 9/9 all held; the evidence screenshot digest independently matched
+  `3c22907f2852b7c41c928c36930b4c201d1347eab2db749a4565f4071d038264`.
+- P3 TRACE TRUTH — HELD. Predicted an observing sink would produce one record per retirement and
+  execute zero compiled blocks while `NullSink` retained JIT. The million regression's HashSink,
+  traced CLI test (`crates/cli/tests/run.rs:124`), and traced Wasm wrapper test
+  (`crates/wasm/tests/wrapper.rs:79`) held exactly.
+- P4 PRECISE STATE — HELD. Predicted a too-large chained successor would preserve earlier progress,
+  a Sv39 fault would count its virtual-PC prefix, and an MMIO store before a fault would occur once.
+  The directed release cases at `chaining.rs:246`, `invalidation.rs:306`, and
+  `precise_traps.rs:245` held; the complete affected native suites passed 45/45 and browser executor
+  parity passed 8/8, retaining chaining, SMC, and invalidation coverage.
+- NOVEL EXACT-WORK EDGES — HELD. Predicted a pending MSIP at the first `run(1)` boundary would enter
+  `mtvec` but retire/execute nothing, and a compiled first-op load fault would consume one work slot
+  with zero retirement or side effect. Promoted regressions at `jit_execution.rs:256,303` held.
+  Sabotaging only the interrupt `remaining_work -= 1` in a disposable clone made the first test fail
+  at line 290 with PC `mtvec+4`, proving the assertion is load-bearing.
+- COVERAGE — HELD. The exact-tail, chain, clean/fault/SBI/interrupt, counter/CLINT, trace, Sv39,
+  MMIO, CLI, and native/browser-Wasm cases execute every behavioral runtime hunk. The trait's
+  default no-op is waived as mock compatibility (both real executor implementations ran), the
+  `Reserved` exit is waived as a translator-unreachable defensive arm, and type/docs plus generated
+  bindings/service-worker bytes are waived as non-branching/generated surfaces. No claimed behavior
+  remains unexecuted.
+- MOCK/ENV — HELD. A `--no-local` pristine clone of verifier head `3ce38b00`, with `RUSTFLAGS`,
+  `CARGO_ENCODED_RUSTFLAGS`, `CARGO_TARGET_DIR`, `CARGO_BUILD_TARGET`, and `RUST_LOG` unset, passed
+  the full release `jit_execution` target 20/20. No ignored test, inherited flag, or self-derived
+  golden was required.
+- SUITE: promoted the two exact-work edge regressions in verifier commit `3ce38b00`; retained the
+  worker's deterministic tail/chaining/counter/trace/CLI/Wasm/Sv39/MMIO/SBI coverage.
+
+Commands: directed release cases for six-op, chaining-tail, SBI, Sv39, MMIO, timekeeping,
+CLINT/Zicntr, CLI and Wasm; affected native JIT suites 45/45; core lib 169/169; CLI 22/22; matching
+`wasm-bindgen-test-runner` 0.2.126 browser 8/8 and wrapper 9/9; `cargo fmt --all -- --check`; strict
+native and affected-Wasm clippy; wasm32 release build; `tools/check-zero-cost.sh --selftest`; scrubbed
+cold-clone `jit_execution` 20/20; pre-fix and interrupt-budget sabotage runs (both failed as
+predicted).
