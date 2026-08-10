@@ -2,9 +2,9 @@
 id: E4-T32
 epic: 4
 title: Default whole-machine Web Worker with controller parity
-priority: 432
+priority: 433
 status: pending
-depends_on: [E4-T31]
+depends_on: [E4-T33]
 estimate: S
 risk: high
 capstone: false
@@ -35,4 +35,3 @@ the main-thread fallback. A Promise mistaken for a synchronous value, lost byte 
 main-thread long task refutes the change.
 
 ## Verification log
-

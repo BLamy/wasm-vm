@@ -1,0 +1,47 @@
+---
+id: E4-T31
+epic: 4
+title: Bounded JIT work and exact retirement accounting
+priority: 431
+status: in-progress
+depends_on: [E4-T30]
+estimate: S
+risk: high
+capstone: false
+---
+
+## Goal
+
+Make a bounded `run(N)` mean the same thing under the interpreter and JIT. Cap every compiled block
+and host-side chain by remaining work, account clean and faulting compiled retirements exactly in all
+architectural/diagnostic clocks, and keep instruction-observing traces truthful by interpreting
+when the compiled backend cannot emit per-retire records.
+
+## Acceptance criteria
+
+- A nontrapping `run(N)` performs exactly `N` work slots/retirements with JIT and chaining enabled;
+  a block larger than the remaining tail falls back without overshoot.
+- Clean and partial-trap compiled exits update `mcycle`, `minstret`, CLINT `mtime` residue,
+  `IrqStats`, executor JIT stats, CLI reporting, and Wasm wrapper reporting exactly once.
+- Observing trace sinks produce one truthful record per retirement and do not silently omit compiled
+  instructions; the zero-record sink retains the JIT fast path.
+- Precise trap PCs remain virtual-address correct under paging, prior MMIO effects never replay, and
+  chaining/SMC/invalidation behavior remains green in native and browser executor tests.
+- The exact pre-fix six-op-loop overshoot is reproduced, then fixed: a 1,000,000 budget cannot report
+  more than 1,000,000 retired work or monopolize a browser chunk by running a hidden chain multiple.
+
+## Adversarial verification
+
+Use a remaining budget smaller than a compiled block; fault in the middle after an observable MMIO
+store; chain into a successor that no longer fits; write counters immediately before JIT entry; and
+run a traced hot loop with JIT armed. Any overshoot, double side effect, missing trace, wrong virtual
+fault PC, lost clock residue, or counter disagreement refutes the change.
+
+## Verification log
+
+### 2026-08-09 — planner — activated after verified E4-T30
+
+The pre-split exact-head probe ran a six-op hot loop with `--max-instrs 1000000 --jit
+--jit-threshold 1`: the JIT executed about 191.9M instructions (roughly 192x the budget), took
+48.78s, and CLI reporting showed only 378 retirements. This task fixes bounded work and accounting
+before any throughput claim or main-thread worker quantum depends on them.

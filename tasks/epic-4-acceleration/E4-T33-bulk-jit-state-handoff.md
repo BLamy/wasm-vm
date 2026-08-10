@@ -1,10 +1,10 @@
 ---
-id: E4-T31
+id: E4-T33
 epic: 4
 title: Bulk JIT CPU-state handoff and bounded browser handle lifetime
-priority: 431
+priority: 432
 status: pending
-depends_on: [E4-T30]
+depends_on: [E4-T31]
 estimate: S
 risk: high
 capstone: false
@@ -21,7 +21,7 @@ instead of constructing/cloning JS handles on every register access and dispatch
 - Native and browser executors perform O(1) state-copy calls per block, with no per-register memory
   reads/writes and no per-dispatch browser `Function`/memory-view clone.
 - The release JIT pure-ALU benchmark is faster than the interpreter on the same frozen head and the
-  before/after MIPS ratio is recorded.
+  before/after MIPS ratio is recorded against the now-exact E4-T31 work budget.
 - A long browser-executor stress run completes with bounded live modules/handles, active eviction,
   no `addToExternrefTable0` growth failure, and identical final architectural state.
 - Precise traps, I/M/A parity, SMC invalidation, eviction, and integrated CLI JIT tests remain green.

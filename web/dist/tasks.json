@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 136,
-    "total": 327
+    "total": 328
   },
   "epics": [
     {
@@ -14009,6 +14009,7 @@
         "E4-T29",
         "E4-T30",
         "E4-T31",
+        "E4-T33",
         "E4-T32"
       ],
       "decomposed_into": [],
@@ -14159,42 +14160,48 @@
       "activity": [
         {
           "date": "2026-08-09",
-          "commits": 4,
+          "commits": 5,
           "labels": [
+            "test(e4): verify fast interpreter privilege safety",
             "chore(e4): resubmit E4-T30 after PMP repair",
             "verify(e4): refute E4-T30 PMP privilege reuse",
-            "chore(e4): submit E4-T30 for verification",
-            "perf(core): reuse predecoded block entries"
+            "chore(e4): submit E4-T30 for verification"
           ]
         }
       ],
       "firstActivity": "2026-08-09",
       "lastActivity": "2026-08-09",
-      "commitCount": 4
+      "commitCount": 5
     },
     {
       "id": "E4-T31",
       "epic": "4",
       "epicKey": "4",
-      "title": "Bulk JIT CPU-state handoff and bounded browser handle lifetime",
+      "title": "Bounded JIT work and exact retirement accounting",
       "priority": 431,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T30"
       ],
       "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
-      "goal": "Remove the per-register host boundary from both JIT executors. Marshal the frozen CPU-state region\nin one bulk write and one bulk read per compiled block, and retain a stable browser typed-array view\ninstead of constructing/cloning JS handles on every register access and dispatch.",
+      "goal": "Make a bounded `run(N)` mean the same thing under the interpreter and JIT. Cap every compiled block\nand host-side chain by remaining work, account clean and faulting compiled retirements exactly in all\narchitectural/diagnostic clocks, and keep instruction-observing traces truthful by interpreting\nwhen the compiled backend cannot emit per-retire records.",
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
-      "adversarial": "Force a memory fault after dirty register writeback, evict while repeatedly retranslating, set a tiny\ncache budget, and run enough hot blocks to exceed the old failure point. Any lost register, imprecise\ntrap, unbounded live handle count, or JIT slowdown refutes the change.",
-      "file": "tasks/epic-4-acceleration/E4-T31-bulk-jit-state-handoff.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
+      "verificationLog": "### 2026-08-09 — planner — activated after verified E4-T30\n\nThe pre-split exact-head probe ran a six-op hot loop with `--max-instrs 1000000 --jit\n--jit-threshold 1`: the JIT executed about 191.9M instructions (roughly 192x the budget), took\n48.78s, and CLI reporting showed only 378 retirements. This task fixes bounded work and accounting\nbefore any throughput claim or main-thread worker quantum depends on them.",
+      "adversarial": "Use a remaining budget smaller than a compiled block; fault in the middle after an observable MMIO\nstore; chain into a successor that no longer fits; write counters immediately before JIT entry; and\nrun a traced hot loop with JIT armed. Any overshoot, double side effect, missing trace, wrong virtual\nfault PC, lost clock residue, or counter disagreement refutes the change.",
+      "file": "tasks/epic-4-acceleration/E4-T31-bounded-jit-work-retirement.md",
+      "activity": [
+        {
+          "date": "2026-08-09",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-08-09",
+      "lastActivity": "2026-08-09",
       "commitCount": 0
     },
     {
@@ -14202,10 +14209,10 @@
       "epic": "4",
       "epicKey": "4",
       "title": "Default whole-machine Web Worker with controller parity",
-      "priority": 432,
+      "priority": 433,
       "status": "pending",
       "depends_on": [
-        "E4-T31"
+        "E4-T33"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -14217,6 +14224,31 @@
       "verificationLog": "",
       "adversarial": "Exercise every controller method from the UI, upload/download across the worker boundary, background\nand resume the tab, kill the worker, run without JIT/isolation, and compare guest output/digests with\nthe main-thread fallback. A Promise mistaken for a synchronous value, lost byte buffer, hung boot, or\nmain-thread long task refutes the change.",
       "file": "tasks/epic-4-acceleration/E4-T32-default-whole-machine-worker.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T33",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Bulk JIT CPU-state handoff and bounded browser handle lifetime",
+      "priority": 432,
+      "status": "pending",
+      "depends_on": [
+        "E4-T31"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Remove the per-register host boundary from both JIT executors. Marshal the frozen CPU-state region\nin one bulk write and one bulk read per compiled block, and retain a stable browser typed-array view\ninstead of constructing/cloning JS handles on every register access and dispatch.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Force a memory fault after dirty register writeback, evict while repeatedly retranslating, set a tiny\ncache budget, and run enough hot blocks to exceed the old failure point. Any lost register, imprecise\ntrap, unbounded live handle count, or JIT slowdown refutes the change.",
+      "file": "tasks/epic-4-acceleration/E4-T33-bulk-jit-state-handoff.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
