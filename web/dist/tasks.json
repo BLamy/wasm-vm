@@ -14065,11 +14065,18 @@
           "labels": [
             "docs(e4): add E4-T29 — wire the JIT runtime into the runnable VM"
           ]
+        },
+        {
+          "date": "2026-08-09",
+          "commits": 1,
+          "labels": [
+            "chore(e4): prioritize bounded JIT accounting"
+          ]
         }
       ],
       "firstActivity": "2026-07-27",
-      "lastActivity": "2026-08-06",
-      "commitCount": 2
+      "lastActivity": "2026-08-09",
+      "commitCount": 3
     },
     {
       "id": "E4-T29",
@@ -14179,7 +14186,7 @@
       "epicKey": "4",
       "title": "Bounded JIT work and exact retirement accounting",
       "priority": 431,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E4-T30"
       ],
@@ -14190,19 +14197,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-08-09 — planner — activated after verified E4-T30\n\nThe pre-split exact-head probe ran a six-op hot loop with `--max-instrs 1000000 --jit\n--jit-threshold 1`: the JIT executed about 191.9M instructions (roughly 192x the budget), took\n48.78s, and CLI reporting showed only 378 retirements. This task fixes bounded work and accounting\nbefore any throughput claim or main-thread worker quantum depends on them.",
+      "verificationLog": "### 2026-08-09 — planner — activated after verified E4-T30\n\nThe pre-split exact-head probe ran a six-op hot loop with `--max-instrs 1000000 --jit\n--jit-threshold 1`: the JIT executed about 191.9M instructions (roughly 192x the budget), took\n48.78s, and CLI reporting showed only 378 retirements. This task fixes bounded work and accounting\nbefore any throughput claim or main-thread worker quantum depends on them.\n\n### 2026-08-09 — worker — implemented `fad321f6`\n\n- BUDGET: the run loop now subtracts exact `JitProgress.work_used`; each compiled block refuses a\n  short remaining tail before touching state, and a later chained refusal preserves already\n  committed progress. Taken interrupts and builtin-SBI `continue` paths still consume one bounded\n  work slot.\n- RETIREMENT: core-owned spans update `mcycle`, `minstret`, CLINT residue, `IrqStats`, and native /\n  browser executor statistics exactly once. A partial precise fault accounts only its committed\n  prefix; virtual fault PCs are walked from the virtual entry, not the physical cache key.\n- TRACE/REPORTING: observing sinks force interpretation so no records disappear. CLI and Wasm\n  wrappers report authoritative core counter deltas; a zero-record sink retains compiled execution.\n- PROOF: the release million-work six-op regression passed in 0.08s with exactly 1,000,000 total and\n  999,996 JIT retirements (pre-fix: about 191.9M hidden JIT retirements / 48.78s). Native affected\n  JIT suites passed 42/42; core+CLINT+Zicntr 191/191; CLI 22/22; browser executor 8/8; Wasm wrapper\n  9/9. The SBI, short-tail chain, MMIO-once fault, Sv39 virtual-PC, and trace attacks all passed.\n- BUILD/BROWSER: format, native strict clippy, affected wasm clippy, wasm32 release build,\n  zero-cost trace selftest, and hook-driven `make web-build` passed. The rebuilt `?jit=0` fallback\n  restored BusyBox to `~ #` / `guest ready` with zero console errors/warnings. An aggressive live\n  main-thread JIT page remained unresponsive, honestly preserving E4-T33/E4-T32 as required work.\n- EVIDENCE: `evidence/e4-t31/README.md` and `browser-fallback.jpg` (SHA-256\n  `3c22907f2852b7c41c928c36930b4c201d1347eab2db749a4565f4071d038264`).",
       "adversarial": "Use a remaining budget smaller than a compiled block; fault in the middle after an observable MMIO\nstore; chain into a successor that no longer fits; write counters immediately before JIT entry; and\nrun a traced hot loop with JIT armed. Any overshoot, double side effect, missing trace, wrong virtual\nfault PC, lost clock residue, or counter disagreement refutes the change.",
       "file": "tasks/epic-4-acceleration/E4-T31-bounded-jit-work-retirement.md",
       "activity": [
         {
           "date": "2026-08-09",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "chore(e4): prioritize bounded JIT accounting"
+          ]
         }
       ],
       "firstActivity": "2026-08-09",
       "lastActivity": "2026-08-09",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E4-T32",
@@ -14224,10 +14233,18 @@
       "verificationLog": "",
       "adversarial": "Exercise every controller method from the UI, upload/download across the worker boundary, background\nand resume the tab, kill the worker, run without JIT/isolation, and compare guest output/digests with\nthe main-thread fallback. A Promise mistaken for a synchronous value, lost byte buffer, hung boot, or\nmain-thread long task refutes the change.",
       "file": "tasks/epic-4-acceleration/E4-T32-default-whole-machine-worker.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-09",
+          "commits": 1,
+          "labels": [
+            "chore(e4): prioritize bounded JIT accounting"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-09",
+      "lastActivity": "2026-08-09",
+      "commitCount": 1
     },
     {
       "id": "E4-T33",
@@ -14249,10 +14266,18 @@
       "verificationLog": "",
       "adversarial": "Force a memory fault after dirty register writeback, evict while repeatedly retranslating, set a tiny\ncache budget, and run enough hot blocks to exceed the old failure point. Any lost register, imprecise\ntrap, unbounded live handle count, or JIT slowdown refutes the change.",
       "file": "tasks/epic-4-acceleration/E4-T33-bulk-jit-state-handoff.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-08-09",
+          "commits": 1,
+          "labels": [
+            "chore(e4): prioritize bounded JIT accounting"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-09",
+      "lastActivity": "2026-08-09",
+      "commitCount": 1
     },
     {
       "id": "E5-T01",

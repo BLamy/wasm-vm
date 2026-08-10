@@ -3,7 +3,7 @@ id: E4-T31
 epic: 4
 title: Bounded JIT work and exact retirement accounting
 priority: 431
-status: in-progress
+status: implemented
 depends_on: [E4-T30]
 estimate: S
 risk: high
@@ -45,3 +45,25 @@ The pre-split exact-head probe ran a six-op hot loop with `--max-instrs 1000000 
 --jit-threshold 1`: the JIT executed about 191.9M instructions (roughly 192x the budget), took
 48.78s, and CLI reporting showed only 378 retirements. This task fixes bounded work and accounting
 before any throughput claim or main-thread worker quantum depends on them.
+
+### 2026-08-09 — worker — implemented `fad321f6`
+
+- BUDGET: the run loop now subtracts exact `JitProgress.work_used`; each compiled block refuses a
+  short remaining tail before touching state, and a later chained refusal preserves already
+  committed progress. Taken interrupts and builtin-SBI `continue` paths still consume one bounded
+  work slot.
+- RETIREMENT: core-owned spans update `mcycle`, `minstret`, CLINT residue, `IrqStats`, and native /
+  browser executor statistics exactly once. A partial precise fault accounts only its committed
+  prefix; virtual fault PCs are walked from the virtual entry, not the physical cache key.
+- TRACE/REPORTING: observing sinks force interpretation so no records disappear. CLI and Wasm
+  wrappers report authoritative core counter deltas; a zero-record sink retains compiled execution.
+- PROOF: the release million-work six-op regression passed in 0.08s with exactly 1,000,000 total and
+  999,996 JIT retirements (pre-fix: about 191.9M hidden JIT retirements / 48.78s). Native affected
+  JIT suites passed 42/42; core+CLINT+Zicntr 191/191; CLI 22/22; browser executor 8/8; Wasm wrapper
+  9/9. The SBI, short-tail chain, MMIO-once fault, Sv39 virtual-PC, and trace attacks all passed.
+- BUILD/BROWSER: format, native strict clippy, affected wasm clippy, wasm32 release build,
+  zero-cost trace selftest, and hook-driven `make web-build` passed. The rebuilt `?jit=0` fallback
+  restored BusyBox to `~ #` / `guest ready` with zero console errors/warnings. An aggressive live
+  main-thread JIT page remained unresponsive, honestly preserving E4-T33/E4-T32 as required work.
+- EVIDENCE: `evidence/e4-t31/README.md` and `browser-fallback.jpg` (SHA-256
+  `3c22907f2852b7c41c928c36930b4c201d1347eab2db749a4565f4071d038264`).
