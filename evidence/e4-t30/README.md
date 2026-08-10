@@ -1,7 +1,6 @@
 # E4-T30 worker evidence
 
-Frozen working-tree evidence recorded on 2026-08-09 (Apple Silicon macOS). The implementation
-commit is recorded in the task verification log after this evidence is committed.
+Frozen implementation evidence recorded on 2026-08-09 (Apple Silicon macOS), commit `c648468`.
 
 ## Performance
 

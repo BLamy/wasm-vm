@@ -3,7 +3,7 @@ id: E4-T30
 epic: 4
 title: Predecode entry-hit reuse and production fast-interpreter mode
 priority: 430
-status: in-progress
+status: implemented
 depends_on: [E1]
 estimate: S
 risk: high
@@ -39,3 +39,25 @@ and sabotage the hit path so discovery is not incremented. Any stale instruction
 trace divergence, or JIT threshold that never fires refutes the change.
 
 ## Verification log
+
+### 2026-08-09 — worker — implemented `c648468`
+
+- PERF: the paired release differential measured legacy `44.7 MIPS` versus production fast mode
+  `70.4 MIPS` (`1.57x`); the independent pre-fix cache-on measurement was `5.7 MIPS`, making the
+  final production mode `12.35x` that result. The committed absolute smoke floor passed at
+  `44.8 MIPS >= 15`.
+- CORRECTNESS: `cargo test -p wasm-vm-core` passed the full non-ignored matrix. The focused cache,
+  PMP, virtual-alias, SMC/DMA, one-entry-eviction, RISC-V corpus, batching, and mid-block external
+  write attacks passed under `hotness_discovery`, `pmp`, `predecode_diff`,
+  `predecode_smc_diff`, `predecode_batching`, and `predecode_entry_safety`.
+- BUILD: `cargo fmt --all -- --check`, strict all-target clippy for core + wasm, the wasm32 release
+  build, and `make web-build` passed. The pre-commit hook rebuilt and staged `web/dist`.
+- BROWSER: a fresh-origin final bundle at
+  `http://127.0.0.1:8129/?guest=busybox&nosw&jit=0&worker=0` reported
+  `data-interpreter=fast`, restored the real BusyBox guest to `~ #`, and showed `guest ready` with
+  zero console errors/warnings. `?slowInterp=1` reported `data-interpreter=legacy`.
+- EVIDENCE: `evidence/e4-t30/README.md`, `browser-console.txt`, and
+  `browser-fast-interpreter.jpg` (SHA-256
+  `37d43d60b89ebfbce995ad7269eb24800be885174ef336de884217c7177bd762`). The recording proves the
+  default browser selection and real guest prompt; deterministic native tests cover every changed
+  cache/PMP/invalidation path.

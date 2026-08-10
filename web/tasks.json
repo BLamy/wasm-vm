@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 129,
-    "total": 322
+    "verified": 135,
+    "total": 327
   },
   "epics": [
     {
@@ -56,7 +56,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-08-06"
+    "end": "2026-08-09"
   },
   "tasks": [
     {
@@ -10885,6 +10885,69 @@
       "commitCount": 1
     },
     {
+      "id": "E3.6-T05",
+      "epic": "3.6",
+      "epicKey": "3.6",
+      "title": "Node-preinstalled Alpine snapshot as the default — instant Node.js in the VM",
+      "priority": 365,
+      "status": "verification-debt",
+      "depends_on": [
+        "E3.6-T04"
+      ],
+      "decomposed_into": [],
+      "estimate": "M",
+      "capstone": false,
+      "goal": "The default demo restores, in ~1 second, an Alpine host with **Node.js already installed** — so the\nVM is instantly ready to run `node` programs with no boot and no `apk` wait. This is the payoff of the\nepic-3.6 snapshot-restore work (busybox restore already ships at ~0.68 s; the browser Alpine restore is\nthe immediate prerequisite): freeze a *batteries-included* image and make restoring it the default.",
+      "criteria": [
+        {
+          "text": "Default demo restores to a ready shell in ~seconds (sub-second RAM restore) with `node` on PATH — Playwright-verified on the deployed site: `restoredFromBootSnapshot()===true` AND `node --version` returns a version.",
+          "checked": false
+        },
+        {
+          "text": "A real Node program runs in the VM and produces correct output — Playwright-verified: e.g. `node -e 'console.log(6*7)'` → `42`, and a multi-line script (fs read/write, a small compute) runs.",
+          "checked": false
+        },
+        {
+          "text": "A `node` HTTP server started in-guest serves a request (guest-local or via the slirp stack) — or, if networking is out of scope here, a scripted `node` workload runs to completion with a recorded wall-time (JIT on vs off, ties to E4-T28).",
+          "checked": false
+        },
+        {
+          "text": "Coherence guard holds: a stale/foreign snapshot or mismatched overlay generation falls back to a clean cold boot, never a broken guest.",
+          "checked": false
+        },
+        {
+          "text": "Snapshot artifact size + restore time recorded in `evidence/epic-3.6/`; no fabricated numbers.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 5,
+      "criteriaDone": 0,
+      "verificationLog": "**2026-08-07 (rev 2) — re-chunked Node BASE (not a delta) + main-thread JIT wired + deployed.**\n\n- **Node baked into a RE-CHUNKED lazy-load base** (the architecture the delta approach missed). Two-boot\n  pipeline on `dev` (`/tmp/build-node-base2.sh`): boot `alpine-rootfs.ext4` under `--net-slirp`, root-login\n  then `udhcpc -i eth0; apk add nodejs npm` (`OK: 86 MiB in 92 packages`, `v20.15.1`, npm `10.9.1-r0`) →\n  **chunk the Node ext4 into a fresh base** (2400 dedup'd 128 KiB chunks, `base_hash ac6a2988…`) → boot 2\n  snapshots the node-ready shell stamped with that base-id.\n- **Artifacts (real, much smaller than the delta approach):** RAM snap 101,203,980 B raw → **25,334,324 B\n  gz** (`58c9079d…`); overlay-delta **16,124 B** gz / 83 blocks (`90647ee8…`) — Node now lives in the base,\n  so the delta is ~16 KB vs the old 24 MB. Both under the 25 MiB Pages cap → ship on Pages. Node chunks\n  uploaded to R2 `s3://wasm-vm/chunked-node-alpine/`; R2 `base_hash` re-verified `== ac6a2988…`.\n- **[✓] AC1 fast restore — live-verified on https://wasm-vm.pages.dev/ (`?guest=node-alpine`, the default):**\n  console prints `[fast-boot: host ready in 5.20s (restored, no Linux boot)]`, `root@node-alpine` chip\n  present. Coherence guard holds (R2 base_hash == snapshot base-id).\n- **JIT (E4-T29) now armed on the deployed demo.** Root cause it was interpreted: the demo runs `WasmLinux`\n  on the **main thread** (`web/loader.js`), and only `WasmMachine` exposed `enableJit` — the main-thread path\n  never armed it, regardless of `crossOriginIsolated`. Fix: added `WasmLinux::enableJit` (crates/wasm/src/lib.rs,\n  mirrors `WasmMachine`) + a COI-gated `machine.enableJit(32)` in loader.js with a `?jit=0` opt-out. Live-verified:\n  `window.__jit === {enabled:true, threshold:32}`, `crossOriginIsolated===true`, `machine.enableJit` a function.\n\n**verification-debt (honest):**\n- `node -e 'console.log(6*7)' → 42` **NOT captured in the automated browser** — under Playwright the\n  `setTimeout` run-loop is throttled, so `node -e` ran >4 min WITHOUT completing in BOTH `jit=1` (~202 s) and\n  `jit=0` (~241 s) samples; the guest stepped correctly the whole time (stateDigest advancing, zero\n  console errors). This is automation-tab throttling, not a guest fault. Needs a **focused/foreground** browser\n  (or a non-setTimeout run-loop) to capture `42` and a real wall-time.\n- **JIT gives no measurable speedup for `node -e`**: startup is V8 **cold code** (never tiers up), and\n  **main-thread** compilation is synchronous + the Linux guest bails frequently (MMIO/MMU/interrupts), so\n  naive main-thread JIT adds overhead. Real speedup needs the **async cpu-worker compile path** (E4-T22/T28).\n  JIT *activates* (requirement met) but \"fast Node\" remains open → tie to E4-T28.\n\n**2026-08-07 (rev 1) — implemented + deployed + Playwright-verified on production. Full evidence:\n`evidence/epic-3.6/node-alpine.md`.**\n\n- **Node baked via apk, snapshotted node-ready.** `tools/build-node-alpine-snapshot.sh` boots Alpine\n  under `--net-slirp` (real mirrors via slirp NAT), `apk add nodejs npm` (`nodejs 20.15.1-r0` + `npm`,\n  `OK: 86 MiB in 92 packages`, `v20.15.1`), snapshot gated behind `node --version && npm --version`.\n- **Artifacts (real):** RAM snapshot 221,831,892 B raw → 55,309,778 B gz (`43b755a6…`); overlay-delta\n  75,858,397 B raw (18,484 blocks) → 24,258,743 B gz (`60c9dc60…`). Node rides the disk OVERLAY over the\n  existing `chunked-alpine` base (base_hash `03a8026f…`) — no re-chunk. Both gz exceed the 25 MiB Pages\n  cap → uploaded to R2 (`s3://wasm-vm/boot-snapshot/`), public-URL 200-checked.\n- **Selector + default:** `?guest=busybox|alpine|node-alpine`, node-alpine the DEFAULT autoboot;\n  busybox/alpine still selectable; `?noAutoBoot` + busybox cold-boot fallback preserved.\n- **[✓] AC1 restored to a node-ready shell** — deployed default: `restoredFromBootSnapshot()===true`,\n  `isGuestReady()===true`, chip `root@node-alpine`, Alpine prompt. Restore ~15.5 s (warm HTTP cache;\n  cold adds the 79 MB R2 download) vs ~15-min cold boot+install.\n- **[✓] AC2 a real Node program runs** — `node -e 'console.log(6*7)'` → **42**; adversarial single\n  process: runtime sum 1..1000 + write/read-back → **`ADV_500500_v=500500`** (non-canned compute + live\n  coherent fs). Playwright on https://wasm-vm.pages.dev.\n- **[✓] AC4 coherence guard holds** — reused unchanged (restoreDecisionCode triple + seedOverlayDelta\n  base-binding + no-op-if-overlay-exists → cold boot, never a broken guest).\n- **[✓] AC5 sizes + restore time recorded** (above / evidence doc); no fabricated numbers.\n- **[~] AC3 node HTTP server / recorded workload** — not exercised; a scripted node workload DID run to\n  completion with a recorded wall-time (~55 s adversarial program, interpreted). HTTP-server-in-guest\n  deferred.\n- **Adversarial verification:** (1)+(2) runtime-computed non-canned result ✓; (3) write-then-read-back\n  ✓; (4) startup-to-first-output measured (**~55–80 s per node invocation, interpreted**) — the site is\n  NOT cross-origin isolated so there is **no JIT**; the snapshot removes boot+install cost, not V8's\n  interpreted startup. Honest result: working but slow; JIT (COI) is the lever (E4-T28). (5) no\n  FENCE.I/i-cache faults observed (interpreter path).\n- **Native round-trip (dev):** resume of the reconstructed post-install ext4 lands at the node-ready\n  Alpine shell (`resumed 221831892 bytes — continuing guest`, `wasm-vm:~#`); a fresh native `node`\n  invocation did not print within budget (native interpreter V8 startup too slow) — browser gate is\n  authoritative for Node-runs.\n\n**verification-debt:** AC3 in-guest HTTP server deferred; native `node`-prints-output too slow to\ncapture (browser proof stands in); clean cold-cache (first-visit) restore wall-time not isolated from\nHTTP caching.",
+      "adversarial": "Confirm it is a REAL Node, not a frozen illusion: (1) run a program that computes a non-trivial result at\nruntime (not a canned string) and check the output; (2) `node -e` with input that varies per run (read\nargv / Date-independent math) to prove live execution; (3) restore, then WRITE a file with node and read\nit back — proves the restored fs is live and coherent; (4) measure `node` startup-to-first-output on the\nrestored host and compare to a cold `apk add nodejs && node` path — the snapshot must eliminate the boot +\ninstall cost; (5) run under JIT and confirm no FENCE.I/i-cache faults from V8's own codegen.",
+      "file": "tasks/epic-3.6-live-pull/E3.6-T05-node-preinstalled-snapshot-default.md",
+      "activity": [
+        {
+          "date": "2026-08-06",
+          "commits": 1,
+          "labels": [
+            "docs(e3.6): E3.6-T05 — Node-preinstalled Alpine snapshot as default + validate node"
+          ]
+        },
+        {
+          "date": "2026-08-07",
+          "commits": 3,
+          "labels": [
+            "feat(e3.6-t05): re-chunked Node base + main-thread browser JIT",
+            "feat(demo): E3.6-T05 node-preinstalled Alpine snapshot as the default",
+            "Epic-4 accel + E3.6-T05 re-chunked Node base & browser JIT (#187)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-06",
+      "lastActivity": "2026-08-07",
+      "commitCount": 4
+    },
+    {
       "id": "E3.75-T01",
       "epic": "3.75",
       "epicKey": "3.75",
@@ -13641,11 +13704,18 @@
           "labels": [
             "feat(web): E4-T22 CPU-on-Web-Worker + SharedArrayBuffer guest RAM"
           ]
+        },
+        {
+          "date": "2026-08-07",
+          "commits": 1,
+          "labels": [
+            "docs(e4-t22): verification log — CPU-on-worker pragmatic first cut"
+          ]
         }
       ],
       "firstActivity": "2026-08-06",
-      "lastActivity": "2026-08-06",
-      "commitCount": 1
+      "lastActivity": "2026-08-07",
+      "commitCount": 2
     },
     {
       "id": "E4-T23",
@@ -13762,7 +13832,7 @@
       "epicKey": "4",
       "title": "Lockstep interpreter-vs-JIT differential verification and randomized fuzzing",
       "priority": 425,
-      "status": "in-progress",
+      "status": "verification-debt",
       "depends_on": [
         "E4-T13",
         "E4-T14",
@@ -13936,7 +14006,10 @@
         "E4-T24",
         "E4-T26",
         "E4-T27",
-        "E4-T29"
+        "E4-T29",
+        "E4-T30",
+        "E4-T31",
+        "E4-T32"
       ],
       "decomposed_into": [],
       "estimate": "L",
@@ -14050,18 +14123,101 @@
       "activity": [
         {
           "date": "2026-08-06",
-          "commits": 4,
+          "commits": 6,
           "labels": [
+            "feat(wasm): E4-T29 Phase 2 — in-wasm browser JIT executor (JIT->VM integration complete)",
             "docs(e4): E4-T29 Phase 1 — add busybox --jit boot proof to verification log",
             "feat(cli): E4-T29 Phase 1 — wire the native JIT into the CLI behind --jit",
-            "chore(roadmap): E4-T29 in-progress — native JIT->CLI integration started",
-            "docs(e4): add E4-T29 — wire the JIT runtime into the runnable VM"
+            "chore(roadmap): E4-T29 in-progress — native JIT->CLI integration started"
           ]
         }
       ],
       "firstActivity": "2026-08-06",
       "lastActivity": "2026-08-06",
-      "commitCount": 4
+      "commitCount": 6
+    },
+    {
+      "id": "E4-T30",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Predecode entry-hit reuse and production fast-interpreter mode",
+      "priority": 430,
+      "status": "implemented",
+      "depends_on": [
+        "E1"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Turn the existing predecoded block cache into an actual hot-loop acceleration: a repeated\nphysical entry PC reuses its decoded block instead of decoding, allocating, walking, and\nreinserting that block on every branch. Once the regression is removed, make block caching plus\nbounded interrupt batching the browser Linux interpreter's default, with an explicit A/B escape\nhatch.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-08-09 — worker — implemented `c648468`\n\n- PERF: the paired release differential measured legacy `44.7 MIPS` versus production fast mode\n  `70.4 MIPS` (`1.57x`); the independent pre-fix cache-on measurement was `5.7 MIPS`, making the\n  final production mode `12.35x` that result. The committed absolute smoke floor passed at\n  `44.8 MIPS >= 15`.\n- CORRECTNESS: `cargo test -p wasm-vm-core` passed the full non-ignored matrix. The focused cache,\n  PMP, virtual-alias, SMC/DMA, one-entry-eviction, RISC-V corpus, batching, and mid-block external\n  write attacks passed under `hotness_discovery`, `pmp`, `predecode_diff`,\n  `predecode_smc_diff`, `predecode_batching`, and `predecode_entry_safety`.\n- BUILD: `cargo fmt --all -- --check`, strict all-target clippy for core + wasm, the wasm32 release\n  build, and `make web-build` passed. The pre-commit hook rebuilt and staged `web/dist`.\n- BROWSER: a fresh-origin final bundle at\n  `http://127.0.0.1:8129/?guest=busybox&nosw&jit=0&worker=0` reported\n  `data-interpreter=fast`, restored the real BusyBox guest to `~ #`, and showed `guest ready` with\n  zero console errors/warnings. `?slowInterp=1` reported `data-interpreter=legacy`.\n- EVIDENCE: `evidence/e4-t30/README.md`, `browser-console.txt`, and\n  `browser-fast-interpreter.jpg` (SHA-256\n  `37d43d60b89ebfbce995ad7269eb24800be885174ef336de884217c7177bd762`). The recording proves the\n  default browser selection and real guest prompt; deterministic native tests cover every changed\n  cache/PMP/invalidation path.",
+      "adversarial": "Predict then attack: revoke execute permission after a cached hit; execute one physical page through\ntwo virtual aliases; patch a cached instruction with a guest store and DMA; use a one-entry cache;\nand sabotage the hit path so discovery is not incremented. Any stale instruction, skipped fault,\ntrace divergence, or JIT threshold that never fires refutes the change.",
+      "file": "tasks/epic-4-acceleration/E4-T30-predecode-entry-hit-fast-interpreter.md",
+      "activity": [
+        {
+          "date": "2026-08-09",
+          "commits": 1,
+          "labels": [
+            "perf(core): reuse predecoded block entries"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-09",
+      "lastActivity": "2026-08-09",
+      "commitCount": 1
+    },
+    {
+      "id": "E4-T31",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Bulk JIT CPU-state handoff and bounded browser handle lifetime",
+      "priority": 431,
+      "status": "pending",
+      "depends_on": [
+        "E4-T30"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Remove the per-register host boundary from both JIT executors. Marshal the frozen CPU-state region\nin one bulk write and one bulk read per compiled block, and retain a stable browser typed-array view\ninstead of constructing/cloning JS handles on every register access and dispatch.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Force a memory fault after dirty register writeback, evict while repeatedly retranslating, set a tiny\ncache budget, and run enough hot blocks to exceed the old failure point. Any lost register, imprecise\ntrap, unbounded live handle count, or JIT slowdown refutes the change.",
+      "file": "tasks/epic-4-acceleration/E4-T31-bulk-jit-state-handoff.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T32",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Default whole-machine Web Worker with controller parity",
+      "priority": 432,
+      "status": "pending",
+      "depends_on": [
+        "E4-T31"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make the proven whole-`WasmLinux` worker the demo default so CPU/JIT execution, lazy disk fetches,\nand persistence pumping do not block paint or input. Replace the generic promise-for-everything proxy\nwith an explicit asynchronous controller contract and update every UI consumer to honor it.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Exercise every controller method from the UI, upload/download across the worker boundary, background\nand resume the tab, kill the worker, run without JIT/isolation, and compare guest output/digests with\nthe main-thread fallback. A Promise mistaken for a synchronous value, lost byte buffer, hung boot, or\nmain-thread long task refutes the change.",
+      "file": "tasks/epic-4-acceleration/E4-T32-default-whole-machine-worker.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
     },
     {
       "id": "E5-T01",
