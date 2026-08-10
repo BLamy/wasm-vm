@@ -3,7 +3,7 @@ id: E4-T30
 epic: 4
 title: Predecode entry-hit reuse and production fast-interpreter mode
 priority: 430
-status: in-progress
+status: implemented
 depends_on: [E1]
 estimate: S
 risk: high
@@ -97,3 +97,22 @@ predecode_entry_safety`; `env -u RUST_LOG -u RUSTFLAGS -u CARGO_TARGET_DIR -u CA
 cargo test -p wasm-vm-core --test e4t30_verifier_pmp_mode
 legacy_path_traps_at_s_mode_interior_pmp_permission -- --exact --nocapture`; same command with
 `cached_m_mode_block_rechecks_s_mode_interior_pmp_permission` (failed as predicted).
+
+### 2026-08-09 — worker — repair implemented `b392b88`
+
+- REFUTATION FIX: decoded/compiled cache permission validity now keys on both the effective PMP
+  revision and current privilege. An M→S/U transition flushes the cache and live cursor before
+  reuse, closing the unlocked-PMP bypass without adding per-instruction permission walks.
+- PROMOTED ATTACK: `privilege_change_invalidates_cached_interior_permission` builds the verifier's
+  three-op M-mode block with an S-mode-denied interior instruction, changes no PMP CSR, and proves
+  both cache-off and cache-on fault at `0x80000004` with `x6=0`.
+- CORRECTNESS: the full `cargo test -p wasm-vm-core` matrix passed, as did the focused seven-target
+  cache/PMP/differential suite (including the RISC-V cache and batching corpora).
+- PERF: the repaired release differential measured legacy `38.4 MIPS` versus fast `60.2 MIPS`
+  (`1.57x`); the absolute smoke gate passed at `38.4 MIPS >= 15`.
+- BUILD/BROWSER: format, strict core+wasm clippy, and the wasm32 release build passed. Fresh origin
+  `http://127.0.0.1:8130/?guest=busybox&nosw&jit=0&worker=0` reported the fast interpreter,
+  restored BusyBox to `~ #` / `guest ready`, and emitted zero console errors or warnings.
+- EVIDENCE: updated `evidence/e4-t30/README.md` and `browser-console.txt`; repair screenshot
+  `browser-fast-interpreter-repair.jpg` has SHA-256
+  `0c40856df721a3ab125f95e650c9e1e8391a155e6fbbcb99dbff76f935a15fbf`.

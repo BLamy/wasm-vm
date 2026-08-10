@@ -1,6 +1,8 @@
 # E4-T30 worker evidence
 
-Frozen implementation evidence recorded on 2026-08-09 (Apple Silicon macOS), commit `c648468`.
+Initial implementation evidence was recorded on 2026-08-09 (Apple Silicon macOS), commit
+`c648468`. After the fresh verifier refuted privilege-insensitive PMP cache validity, the repair
+was frozen at `b392b88` and the affected gates were re-recorded as follows.
 
 ## Performance
 
@@ -14,6 +16,14 @@ $ cargo test -p wasm-vm-core --release --test perf_baseline \
     perf_smoke_alu_above_floor -- --ignored --nocapture
 perf-smoke: alu median 44.8 MIPS ≥ floor 15
 test result: ok. 1 passed; 0 failed
+```
+
+Repair-head rerun:
+
+```text
+fast-interpreter: legacy=38.4 MIPS fast=60.2 MIPS ratio=1.57x
+perf-smoke: alu median 38.4 MIPS >= floor 15
+test result: ok. 1 passed; 0 failed (each command)
 ```
 
 The independent pre-fix audit at `f2260c7` measured the cache-on diagnostic path at 5.7 MIPS,
@@ -43,7 +53,10 @@ make web-build
 
 The directed entry-safety test covers execute permission revoked for a cached entry, execute
 permission revoked only for an interior instruction, two virtual aliases sharing one physical
-block, and a DMA-style code patch made while a bounded run is yielded mid-block.
+block, and a DMA-style code patch made while a bounded run is yielded mid-block. The promoted
+verifier regression additionally builds a three-op block in M-mode under unlocked TOR PMP, changes
+only privilege to S-mode, and proves both cache-off and cache-on fault at the denied interior PC
+without retiring that instruction.
 
 ## Browser proof
 
@@ -58,3 +71,12 @@ Fresh origin: `http://127.0.0.1:8129/?guest=busybox&nosw&jit=0&worker=0`
 Screenshot: `browser-fast-interpreter.jpg`
 
 SHA-256: `37d43d60b89ebfbce995ad7269eb24800be885174ef336de884217c7177bd762`
+
+Repair-head fresh origin:
+`http://127.0.0.1:8130/?guest=busybox&nosw&jit=0&worker=0`
+
+- `data-interpreter="fast"`
+- restored BusyBox reached `~ #` and `guest ready`
+- console errors: 0; console warnings: 0
+- Screenshot: `browser-fast-interpreter-repair.jpg`
+- SHA-256: `0c40856df721a3ab125f95e650c9e1e8391a155e6fbbcb99dbff76f935a15fbf`

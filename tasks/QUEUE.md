@@ -294,7 +294,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [d] `427` [E4-T27](epic-4-acceleration/E4-T27-perf-regression-ci-gates.md) — Performance regression CI — benchmark thresholds that fail the build *(deps: E4-T04, E4-T21, E4-T23)*
 - [d] `428` [E4-T29](epic-4-acceleration/E4-T29-wire-jit-runtime-into-runnable-vm.md) — Wire the JIT runtime into the runnable VM — native CLI executor + browser executor *(deps: E4-T10, E4-T19, E4-T20, E4-T21, E4-T22, E4-T23)*
 - [ ] `429` [E4-T28](epic-4-acceleration/E4-T28-capstone-10x-acceleration.md) — "Capstone: interactive/fast Node.js (Bun stretch), 10x CoreMark, sub-5s boot, zero regressions" **[CAPSTONE]** *(deps: E4-T24, E4-T26, E4-T27, E4-T29, E4-T30, E4-T31, E4-T32)*
-- [~] `430` [E4-T30](epic-4-acceleration/E4-T30-predecode-entry-hit-fast-interpreter.md) — Predecode entry-hit reuse and production fast-interpreter mode *(deps: E1)*
+- [?] `430` [E4-T30](epic-4-acceleration/E4-T30-predecode-entry-hit-fast-interpreter.md) — Predecode entry-hit reuse and production fast-interpreter mode *(deps: E1)*
 - [ ] `431` [E4-T31](epic-4-acceleration/E4-T31-bulk-jit-state-handoff.md) — Bulk JIT CPU-state handoff and bounded browser handle lifetime *(deps: E4-T30)*
 - [ ] `432` [E4-T32](epic-4-acceleration/E4-T32-default-whole-machine-worker.md) — Default whole-machine Web Worker with controller parity *(deps: E4-T31)*
 
