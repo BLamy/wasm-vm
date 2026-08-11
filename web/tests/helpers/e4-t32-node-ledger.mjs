@@ -1,3 +1,5 @@
+import { validateNodeProcessOracleEvidence } from "./e4-t32-node-oracle.mjs";
+
 const VERSION = 2;
 const MAX_ATTEMPTS = 3;
 
@@ -66,6 +68,22 @@ const expectedPlan = () => E4T32_NODE_SLOT_PLAN.map((slot) => ({ ...slot }));
 
 const attemptToken = (attemptId) => Buffer.from(attemptId, "utf8").toString("base64url");
 
+export function nodeBenchmarkSequencePrefix({ attemptOrdinal, slotId, attemptId } = {}) {
+  if (!Number.isSafeInteger(attemptOrdinal) || attemptOrdinal < 0) {
+    fail("invalid-attempt-order", "sequence prefix requires a non-negative attempt ordinal");
+  }
+  if (typeof slotId !== "string" || !slotId || typeof attemptId !== "string" || !attemptId) {
+    fail("invalid-sequence-prefix", "sequence prefix requires slot and attempt identity");
+  }
+  const safe = (value) => value.replaceAll(/[^a-z0-9]+/gi, "_").replaceAll(/^_+|_+$/g, "");
+  const slotToken = safe(slotId);
+  const attemptSuffix = safe(attemptId.slice(-12));
+  if (!slotToken || !attemptSuffix) {
+    fail("invalid-sequence-prefix", "slot and attempt identity must contain safe sequence bytes");
+  }
+  return `a${attemptOrdinal}_${slotToken}_${attemptSuffix}`;
+}
+
 export function nodeBenchmarkAttemptArtifactName(attemptOrdinal, attemptId, phase) {
   if (!Number.isSafeInteger(attemptOrdinal) || attemptOrdinal < 0) {
     fail("invalid-attempt-order", "attempt ordinal must be a non-negative safe integer");
@@ -92,7 +110,7 @@ function validateCalibration(calibration, label, { optional = false } = {}) {
   return cloneJson(calibration, label);
 }
 
-function acceptedSessionProblem(session, slot) {
+function acceptedSessionProblem(session, slot, attempt) {
   if (!session || typeof session !== "object" || Array.isArray(session)) {
     return "accepted attempt has no session object";
   }
@@ -105,6 +123,11 @@ function acceptedSessionProblem(session, slot) {
   if (!Array.isArray(session.runs) || session.runs.length !== 2) {
     return "accepted session must contain exactly two runs";
   }
+  const expectedSequencePrefix = nodeBenchmarkSequencePrefix(attempt);
+  if (session.sequencePrefix !== expectedSequencePrefix) {
+    return `session sequence prefix ${session.sequencePrefix} does not match ${expectedSequencePrefix}`;
+  }
+  const nodePids = new Set();
   for (const [index, run] of session.runs.entries()) {
     if (!run || typeof run !== "object" || Array.isArray(run)) {
       return `run ${index} is not an object`;
@@ -114,6 +137,17 @@ function acceptedSessionProblem(session, slot) {
         return `run ${index}.${field} must be a non-negative finite number`;
       }
     }
+    try {
+      validateNodeProcessOracleEvidence(run);
+    } catch (error) {
+      return `run ${index} has invalid Node oracle evidence: ${error.message}`;
+    }
+    if (run.exit !== 0) return `run ${index} Node process exited ${run.exit}`;
+    if (run.nodeSequence !== `${expectedSequencePrefix}_${index}`) {
+      return `run ${index} sequence ${run.nodeSequence} does not match its accepted attempt`;
+    }
+    if (nodePids.has(run.nodePid)) return `run ${index} reuses Node PID ${run.nodePid}`;
+    nodePids.add(run.nodePid);
   }
   return null;
 }
@@ -153,7 +187,7 @@ function classifyFinishedEvent(event, ledgerIdentity, slot) {
   if (event.session === null) {
     return { outcome: "refuted", reason: "missing-session" };
   }
-  if (acceptedSessionProblem(event.session, slot)) {
+  if (acceptedSessionProblem(event.session, slot, event)) {
     return { outcome: "refuted", reason: "invalid-session" };
   }
   return { outcome: "accepted", reason: "clean" };

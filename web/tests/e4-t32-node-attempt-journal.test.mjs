@@ -11,6 +11,7 @@ import {
   deriveNodeBenchmarkResults,
   finishNodeBenchmarkAttempt,
   nextNodeBenchmarkSlot,
+  nodeBenchmarkSequencePrefix,
   nodeBenchmarkLedgerStatus,
 } from "./helpers/e4-t32-node-ledger.mjs";
 import {
@@ -38,14 +39,33 @@ const dirtyCalibration = (label) => ({
 });
 
 function sessionFor(open) {
+  const sequencePrefix = nodeBenchmarkSequencePrefix(open);
+  const run = (index, firstMs, completeMs) => {
+    const nodePid = 900 + index;
+    const nodeSequence = `${sequencePrefix}_${index}`;
+    const completionMarker = `__E4T32_NODE_DONE_${nodeSequence}_${nodePid}_0`;
+    return {
+      firstMs,
+      completeMs,
+      stretchMs: completeMs - firstMs,
+      exit: 0,
+      nodeSequence,
+      nodeCommand: "node -e 'console.log(3)'",
+      nodePid,
+      outputLine: "3",
+      completionMarker,
+      oracleTranscript: `3\n${completionMarker}\n`,
+    };
+  };
   return {
     variant: open.variant,
     passIndex: open.passIndex,
     backend: open.variant === "main-interp" ? "main-thread" : "whole-machine-worker",
     runs: [
-      { firstMs: 100, completeMs: 120, stretchMs: 20 },
-      { firstMs: 80, completeMs: 99, stretchMs: 19 },
+      run(0, 100, 120),
+      run(1, 80, 99),
     ],
+    sequencePrefix,
   };
 }
 
@@ -147,6 +167,25 @@ test("crash after a clean post artifact recovers the first clean attempt as acce
       recovered.event.session.cpuPreflight.before.label,
       "before",
       "recovery must attach the staged calibration evidence to the accepted session",
+    );
+    assert.deepEqual(
+      recovered.event.session.runs.map((run) => ({
+        nodeSequence: run.nodeSequence,
+        nodeCommand: run.nodeCommand,
+        nodePid: run.nodePid,
+        outputLine: run.outputLine,
+        completionMarker: run.completionMarker,
+        oracleTranscript: run.oracleTranscript,
+      })),
+      sessionFor(begun.event).runs.map((run) => ({
+        nodeSequence: run.nodeSequence,
+        nodeCommand: run.nodeCommand,
+        nodePid: run.nodePid,
+        outputLine: run.outputLine,
+        completionMarker: run.completionMarker,
+        oracleTranscript: run.oracleTranscript,
+      })),
+      "crash recovery must retain every bounded raw Node oracle field",
     );
   });
 });

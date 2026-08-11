@@ -14,6 +14,7 @@ import {
   mergeNodeBenchmarkLedgers,
   nextNodeBenchmarkSlot,
   nodeBenchmarkAttemptArtifactName,
+  nodeBenchmarkSequencePrefix,
   nodeBenchmarkLedgerStatus,
   parseNodeBenchmarkLedger,
   serializeNodeBenchmarkLedger,
@@ -37,15 +38,29 @@ const identity = {
 const calibration = (clean, label) => ({ clean, label, samples: 8 });
 
 function sessionFor(slot, firstValues = [100, 200]) {
+  const sequencePrefix = nodeBenchmarkSequencePrefix(slot);
   return {
     variant: slot.variant,
     passIndex: slot.passIndex,
     backend: slot.variant === "main-interp" ? "main-thread" : "whole-machine-worker",
-    runs: firstValues.map((firstMs, index) => ({
-      firstMs,
-      completeMs: firstMs + 10 + index,
-      stretchMs: 10 + index,
-    })),
+    runs: firstValues.map((firstMs, index) => {
+      const nodePid = 800 + index;
+      const nodeSequence = `${sequencePrefix}_${index}`;
+      const completionMarker = `__E4T32_NODE_DONE_${nodeSequence}_${nodePid}_0`;
+      return {
+        firstMs,
+        completeMs: firstMs + 10 + index,
+        stretchMs: 10 + index,
+        exit: 0,
+        nodeSequence,
+        nodeCommand: "node -e 'console.log(3)'",
+        nodePid,
+        outputLine: "3",
+        completionMarker,
+        oracleTranscript: `3\n${completionMarker}\n`,
+      };
+    }),
+    sequencePrefix,
   };
 }
 
@@ -398,10 +413,30 @@ test("serialization and cross-invocation merge accept only an exact append-only 
   const begun = begin(initial, "cross-invocation").ledger;
   const persistedBefore = serializeNodeBenchmarkLedger(begun);
   const invocationTwo = parseNodeBenchmarkLedger(persistedBefore);
+  const expectedSession = sessionFor(activeNodeBenchmarkAttempt(invocationTwo));
   const extended = finishClean(invocationTwo, "cross-invocation").ledger;
   const merged = mergeNodeBenchmarkLedgers(persistedBefore, serializeNodeBenchmarkLedger(extended));
   assert.equal(nodeBenchmarkLedgerStatus(merged), "running");
   assert.equal(nextNodeBenchmarkSlot(merged).id, "p0:worker-interp");
+  assert.deepEqual(
+    deriveNodeBenchmarkResults(merged)["main-interp"].runs.map((run) => ({
+      nodeSequence: run.nodeSequence,
+      nodeCommand: run.nodeCommand,
+      nodePid: run.nodePid,
+      outputLine: run.outputLine,
+      completionMarker: run.completionMarker,
+      oracleTranscript: run.oracleTranscript,
+    })),
+    expectedSession.runs.map((run) => ({
+      nodeSequence: run.nodeSequence,
+      nodeCommand: run.nodeCommand,
+      nodePid: run.nodePid,
+      outputLine: run.outputLine,
+      completionMarker: run.completionMarker,
+      oracleTranscript: run.oracleTranscript,
+    })),
+    "accepted ledger serialization must retain the bounded raw Node oracle",
+  );
   assert.equal(serializeNodeBenchmarkLedger(begun), persistedBefore, "old revision stays immutable");
 
   const divergent = finishNodeBenchmarkAttempt(invocationTwo, {
@@ -422,6 +457,63 @@ test("serialization and cross-invocation merge accept only an exact append-only 
     () => validateNodeBenchmarkLedger(tampered),
     (error) => error.code === "invalid-event-outcome",
   );
+});
+
+test("an accepted ledger fails closed when any required Node oracle field is missing or mismatched", () => {
+  const base = createNodeBenchmarkLedger(identity);
+  const mutations = [
+    (run) => { delete run.nodeCommand; },
+    (run) => { run.nodePid = 0; },
+    (run) => { run.outputLine = "4"; },
+    (run) => { run.completionMarker += "_other"; },
+    (run) => { run.oracleTranscript += "unbounded terminal noise\n"; },
+    (run) => {
+      run.nodeSequence = "syntactically_valid_but_wrong";
+      run.completionMarker = `__E4T32_NODE_DONE_${run.nodeSequence}_${run.nodePid}_${run.exit}`;
+      run.oracleTranscript = `3\n${run.completionMarker}\n`;
+    },
+    (run) => {
+      run.exit = 1;
+      run.completionMarker = `__E4T32_NODE_DONE_${run.nodeSequence}_${run.nodePid}_${run.exit}`;
+      run.oracleTranscript = `3\n${run.completionMarker}\n`;
+    },
+  ];
+  for (const [index, mutate] of mutations.entries()) {
+    const attemptId = `invalid-oracle-${index}`;
+    const begun = beginNodeBenchmarkAttempt(base, { attemptId, identity });
+    const session = sessionFor(activeNodeBenchmarkAttempt(begun.ledger));
+    mutate(session.runs[0]);
+    const finished = finishNodeBenchmarkAttempt(begun.ledger, {
+      attemptId,
+      identity,
+      preCalibration: calibration(true, "before"),
+      postCalibration: calibration(true, "after"),
+      session,
+    });
+    assert.equal(finished.event.outcome, "refuted");
+    assert.equal(finished.event.reason, "invalid-session");
+  }
+
+  const duplicatePidAttempt = beginNodeBenchmarkAttempt(base, {
+    attemptId: "duplicate-node-pid",
+    identity,
+  });
+  const duplicatePidSession = sessionFor(activeNodeBenchmarkAttempt(duplicatePidAttempt.ledger));
+  const duplicatePid = duplicatePidSession.runs[0].nodePid;
+  duplicatePidSession.runs[1].nodePid = duplicatePid;
+  duplicatePidSession.runs[1].completionMarker =
+    `__E4T32_NODE_DONE_${duplicatePidSession.runs[1].nodeSequence}_${duplicatePid}_0`;
+  duplicatePidSession.runs[1].oracleTranscript =
+    `3\n${duplicatePidSession.runs[1].completionMarker}\n`;
+  const duplicateFinish = finishNodeBenchmarkAttempt(duplicatePidAttempt.ledger, {
+    attemptId: "duplicate-node-pid",
+    identity,
+    preCalibration: calibration(true, "before"),
+    postCalibration: calibration(true, "after"),
+    session: duplicatePidSession,
+  });
+  assert.equal(duplicateFinish.event.outcome, "refuted");
+  assert.equal(duplicateFinish.event.reason, "invalid-session");
 });
 
 test("missing or duplicate pass identity is a refutation, never accepted evidence", () => {

@@ -14,11 +14,13 @@ export const E4T32_NODE_IDENTITY_REQUIRED_TRACKED_FILES = Object.freeze([
   "web/tests/e4-t32-node-attempt-journal.test.mjs",
   "web/tests/e4-t32-node-ledger-store.test.mjs",
   "web/tests/e4-t32-node-ledger.test.mjs",
+  "web/tests/e4-t32-node-oracle.test.mjs",
   "web/tests/helpers/e4-t32-node-identity.mjs",
   "web/tests/helpers/e4-t32-node-failure.mjs",
   "web/tests/helpers/e4-t32-node-attempt-journal.mjs",
   "web/tests/helpers/e4-t32-node-ledger-store.mjs",
   "web/tests/helpers/e4-t32-node-ledger.mjs",
+  "web/tests/helpers/e4-t32-node-oracle.mjs",
   "tools/prepare-e4-t32-node-assets.py",
   "tools/serve-dev.sh",
 ]);

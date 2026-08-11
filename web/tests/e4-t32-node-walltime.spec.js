@@ -25,6 +25,7 @@ import {
   createNodeBenchmarkLedger,
   deriveNodeBenchmarkResults,
   nextNodeBenchmarkSlot,
+  nodeBenchmarkSequencePrefix,
   nodeBenchmarkLedgerStatus,
   serializeNodeBenchmarkLedger,
 } from "./helpers/e4-t32-node-ledger.mjs";
@@ -40,6 +41,10 @@ import {
   serializeNodeFailure,
 } from "./helpers/e4-t32-node-failure.mjs";
 import { createNodeBenchmarkIdentity } from "./helpers/e4-t32-node-identity.mjs";
+import {
+  createNodeProcessOracleSpec,
+  validateNodeProcessOracleEvidence,
+} from "./helpers/e4-t32-node-oracle.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -430,12 +435,14 @@ const commandWindow = ({ schedulerBefore, schedulerAfter, fetchBefore, fetchAfte
 };
 
 async function runNodeProcess(page, sequence, { timeoutMs = 300_000, progressIntervalMs = 0 } = {}) {
+  const oracleSpec = createNodeProcessOracleSpec(sequence);
   try {
-    return await page.evaluate(async ({ sequence, timeoutMs, progressIntervalMs }) => {
-    // Keep every timed sample byte-identical to the user's report. The trailing shell marker is
-    // generated from the runtime shell PID and exit status, so the echoed source cannot satisfy it.
-    const command = `node -e 'console.log(3)'; rc=$?; printf '\\n__NODE_DONE_%s_%s\\n' "$$" "$rc"`;
-    if (/[\r\n]/.test(command)) throw new Error("Node benchmark command contains an embedded line terminator");
+    return await page.evaluate(async ({ oracleSpec, timeoutMs, progressIntervalMs }) => {
+    // The exact Node argv/code remains byte-identical to the user's report. The shell runs that
+    // child in the background only so `$!` captures the PID that execs Node, waits for it, then
+    // emits a concrete sequence/PID/exit marker that cannot occur in the echoed command source.
+    const outputPattern = new RegExp(oracleSpec.outputPatternSource);
+    const completionPattern = new RegExp(oracleSpec.completionPatternSource);
     const decoder = new TextDecoder();
     let text = "";
     let firstMs = null;
@@ -447,37 +454,61 @@ async function runNodeProcess(page, sequence, { timeoutMs = 300_000, progressInt
       let unsubscribe = () => {};
       let timer;
       let progressTimer = null;
-      const maybeResolve = () => {
-        if (completeMs == null) return;
-        unsubscribe();
-        clearTimeout(timer);
-        if (progressTimer != null) clearInterval(progressTimer);
-        resolve({
-          firstMs,
-          completeMs,
-          stretchMs: firstMs == null ? null : completeMs - firstMs,
-          exit,
-          sawExpected: firstMs != null,
-          progress,
-        });
-      };
       unsubscribe = window.wvmDemo.onConsole((bytes) => {
-        text += decoder.decode(bytes, { stream: true })
+        text = (text + decoder.decode(bytes, { stream: true })
           .replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, "")
-          .replace(/\r/g, "");
+          .replace(/\r/g, "")).slice(-4096);
         // The echoed source contains `console.log(3)`, never a standalone output line containing 3.
-        if (firstMs == null && /(?:^|\n)3\n/.test(text)) firstMs = performance.now() - started;
-        const match = text.match(/__NODE_DONE_[0-9]+_([0-9]+)\n/);
-        if (match && completeMs == null) {
+        const outputMatch = text.match(outputPattern);
+        if (firstMs == null && outputMatch) firstMs = performance.now() - started;
+        const match = text.match(completionPattern);
+        if (match && completeMs == null && outputMatch?.index < match.index) {
+          const nodePid = Number(match[2]);
+          const markerExit = Number(match[3]);
+          if (!outputMatch || !Number.isSafeInteger(nodePid) || nodePid <= 0 ||
+              !Number.isSafeInteger(markerExit) || markerExit < 0 || markerExit > 255) {
+            return;
+          }
+          const outputLine = outputMatch[1];
+          const completionMarker = match[1];
+          const oracleTranscript = `${outputLine}\n${completionMarker}\n`;
+          if (oracleTranscript.length > oracleSpec.maxTranscriptChars ||
+              oracleSpec.shellCommand.includes(completionMarker)) {
+            unsubscribe();
+            clearTimeout(timer);
+            if (progressTimer != null) clearInterval(progressTimer);
+            reject(new Error(`E4T32_NODE_ORACLE_INVALID ${oracleSpec.sequence}`));
+            return;
+          }
           completeMs = performance.now() - started;
-          exit = Number(match[1]);
-          maybeResolve();
+          exit = markerExit;
+          const result = {
+            firstMs,
+            completeMs,
+            stretchMs: firstMs == null ? null : completeMs - firstMs,
+            exit,
+            sawExpected: firstMs != null,
+            nodeSequence: oracleSpec.sequence,
+            nodeCommand: oracleSpec.nodeCommand,
+            nodePid,
+            outputLine,
+            completionMarker,
+            oracleTranscript,
+            progress,
+          };
+          unsubscribe();
+          clearTimeout(timer);
+          if (progressTimer != null) clearInterval(progressTimer);
+          resolve(result);
+          return;
         }
       });
       timer = setTimeout(() => {
         unsubscribe();
         if (progressTimer != null) clearInterval(progressTimer);
-        reject(new Error(`E4T32_NODE_PROCESS_TIMEOUT ${sequence}; tail=${text.slice(-500)}`));
+        reject(new Error(
+          `E4T32_NODE_PROCESS_TIMEOUT ${oracleSpec.sequence}; tail=${text.slice(-500)}`,
+        ));
       }, timeoutMs);
       if (progressIntervalMs > 0) {
         const sampleProgress = async () => {
@@ -491,10 +522,13 @@ async function runNodeProcess(page, sequence, { timeoutMs = 300_000, progressInt
             ]);
             const sample = { elapsedMs: performance.now() - started, scheduler, fetch, jit };
             progress.push(sample);
-            console.log("E4T32_NODE_PROGRESS=" + JSON.stringify({ sequence, ...sample }));
+            console.log("E4T32_NODE_PROGRESS=" + JSON.stringify({
+              sequence: oracleSpec.sequence,
+              ...sample,
+            }));
           } catch (error) {
             console.log("E4T32_NODE_PROGRESS_ERROR=" + JSON.stringify({
-              sequence,
+              sequence: oracleSpec.sequence,
               elapsedMs: performance.now() - started,
               error: error?.message || String(error),
             }));
@@ -502,9 +536,9 @@ async function runNodeProcess(page, sequence, { timeoutMs = 300_000, progressInt
         };
         progressTimer = setInterval(() => void sampleProgress(), progressIntervalMs);
       }
-      window.wvmDemo.sendInput(new TextEncoder().encode(command + "\r"));
+      window.wvmDemo.sendInput(new TextEncoder().encode(oracleSpec.shellCommand + "\r"));
     });
-    }, { sequence, timeoutMs, progressIntervalMs });
+    }, { oracleSpec, timeoutMs, progressIntervalMs });
   } catch (error) {
     if (error?.message?.includes("E4T32_NODE_PROCESS_TIMEOUT")) {
       throw markNodeProductFailure("fresh-node-process", error);
@@ -693,6 +727,15 @@ async function runNodeVariantSession(browser, {
       const fetchAfter = await page.evaluate(() => window.__chunkedStats());
       expect(run.sawExpected).toBe(true);
       expect(run.exit).toBe(0);
+      expect(run.nodeCommand).toBe("node -e 'console.log(3)'");
+      expect(run.nodeSequence).toBe(sequence);
+      expect(run.outputLine).toBe("3");
+      expect(run.completionMarker).toBe(
+        `__E4T32_NODE_DONE_${sequence}_${run.nodePid}_${run.exit}`,
+      );
+      expect(run.oracleTranscript).toBe(`3\n${run.completionMarker}\n`);
+      expect(run.oracleTranscript.length).toBeLessThanOrEqual(512);
+      validateNodeProcessOracleEvidence(run);
       run.jitBefore = processJitBefore;
       run.jitAfter = processJitAfter;
       run.jitDelta = jitDelta(processJitBefore, processJitAfter);
@@ -706,6 +749,10 @@ async function runNodeVariantSession(browser, {
       });
       runs.push(run);
     }
+    expect(runs.every((run) => Number.isSafeInteger(run.nodePid) && run.nodePid > 0),
+      `${variant} pass ${passIndex} must record positive Node PIDs`).toBe(true);
+    expect(new Set(runs.map((run) => run.nodePid)).size,
+      `${variant} pass ${passIndex} fresh processes must have distinct Node PIDs`).toBe(runs.length);
     const responsivenessProbe = variant === "worker-interp" && passIndex === 0
       ? await runNodeResponsivenessProbe(page, sequencePrefix)
       : null;
@@ -718,6 +765,7 @@ async function runNodeVariantSession(browser, {
     session = {
       variant,
       passIndex,
+      sequencePrefix,
       runs,
       responsivenessProbe,
       backend: await page.evaluate(() => document.documentElement.dataset.linuxBackend),
@@ -805,6 +853,12 @@ const logNodeLeg = (variant, session, attemptId = null) => {
       completeMs,
       stretchMs,
       exit,
+      nodeCommand,
+      nodeSequence,
+      nodePid,
+      outputLine,
+      completionMarker,
+      oracleTranscript,
       jitDelta: delta,
       commandWindow: windowStats,
     }) => ({
@@ -812,6 +866,12 @@ const logNodeLeg = (variant, session, attemptId = null) => {
       completeMs,
       stretchMs,
       exit,
+      nodeCommand,
+      nodeSequence,
+      nodePid,
+      outputLine,
+      completionMarker,
+      oracleTranscript,
       jitDelta: delta,
       commandWindow: windowStats,
     })),
@@ -1088,7 +1148,7 @@ test.describe("E4-T32 real Node foreground wall time", () => {
       const startedArtifact = persistedBegun.artifact;
       await attachAttemptArtifact(testInfo, begun.event.artifactName, startedArtifact.filePath);
 
-      const label = `a${begun.event.attemptOrdinal}_${slot.id.replaceAll(/[^a-z0-9]+/gi, "_")}_${attemptId.slice(-12)}`;
+      const label = nodeBenchmarkSequencePrefix(begun.event);
       let preCalibration = null;
       let harnessError = null;
       try {
