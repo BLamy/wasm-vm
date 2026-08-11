@@ -3,7 +3,7 @@ id: E4-T32
 epic: 4
 title: Default whole-machine Web Worker with controller parity
 priority: 433
-status: implemented
+status: evidence-needed
 depends_on: [E4-T33]
 estimate: S
 risk: high
@@ -90,3 +90,29 @@ timekeeping + whole-worker browser set 25/25, `make web-build`, and the 126/0 br
 speed target is deliberately not claimed: subsequent Node first output remains about 20.97 seconds
 and completion about 25 seconds. E4-T34 owns making the JIT actually accelerate that real workload.
 This task remains `implemented` until a fresh verifier attacks the submitted evidence.
+
+### 2026-08-10 — verifier — VERDICT: needs-evidence
+
+- **P8 Node oracle recording — NEEDS EVIDENCE.** Predicted that each accepted fresh `node -e`
+  process would leave an independently inspectable non-echo oracle in the frozen artifact. The
+  harness matches a standalone `3` and completion marker at
+  `web/tests/e4-t32-node-walltime.spec.js:432-475`, but reduces it to timings, `sawExpected`, and
+  exit at lines 455-462, then omits the oracle from the durable leg at lines 798-829. Observed ledger
+  path `events[1].session.runs[0]` at
+  `evidence/e4-t32/node-walltime-aca4484/E4T32_NODE_LEDGER_V2.json:1` has no raw terminal capture,
+  concrete marker, command, or process identity; line 437's `$$` is the shell PID, not Node's PID.
+  The product claim was not contradicted, but acceptance lines 28-31 explicitly require a recorded
+  fresh, non-echo-spoofable matrix. Bind a bounded per-process oracle capture or equivalent guest/host
+  trace into the hashed attempt sidecars/ledger, then rerun only that evidence/harness boundary.
+- **P1-P7 and P9-P15 — HELD.** Exact ledger identity, six-slot ordering, all 30 sidecars and 12
+  preflights, physical/logical/result/aggregate hashes, and parity/JIT math independently recomputed.
+  Fresh gates passed core, 85 Node cases, 25 browser cases, the pristine clone, and the bounded
+  subarray mutation attack. Selected-JIT sustained-load input/RPC measured 208.990/89.100 ms with
+  positive translated execution. rr event 459 exposed the claimed budget state 8/32/32 and terminal
+  `Exited(0)` state with zero attempts/final pumps; protocol events 6779-6796 exposed 22 passes and
+  zero failures. Full details and commands: `evidence/e4-t32/VERIFIER-REPORT.md`.
+- **COVERAGE:** all behavioral hunks map to core/rr, protocol, whole-worker, transfer, or Node
+  ledger suites; tooling/static/generated hunks are explicitly waived in the report. No dead or
+  unexecuted product behavior was found.
+- **SUITE:** no promotion until the recording gap clears. Sabotaging private byte ownership made the
+  existing test fail on a detached caller buffer, confirming it is load-bearing.
