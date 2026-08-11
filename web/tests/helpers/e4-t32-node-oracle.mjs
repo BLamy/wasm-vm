@@ -2,8 +2,12 @@ import { createHash } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 
 export const E4T32_NODE_COMMAND = "node -e 'console.log(3)'";
-export const E4T32_NODE_ORACLE_SCHEMA = "e4-t32-node-byte-frame-v1";
+export const E4T32_NODE_ORACLE_SCHEMA = "e4-t32-node-byte-frame-v2";
+export const E4T32_NODE_ORACLE_GRAMMAR = "tty-yellow-v1";
 export const E4T32_NODE_ORACLE_FRAME_MAX_BYTES = 512;
+
+const OUTPUT_ANSI_OPEN = "\x1b[33m";
+const OUTPUT_ANSI_RESET = "\x1b[39m";
 
 const SEQUENCE_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,95}$/;
 
@@ -39,27 +43,31 @@ const asBytes = (value, label = "terminal capture") => {
 };
 
 const byteRange = (start, length) => Object.freeze({ start, end: start + length });
+const shQuote = (value) => `'${value.replaceAll("'", `'"'"'`)}'`;
 
 const outputPattern = (spec) => (
   `^(__E4T32_NODE_BEGIN_${escapeRegExp(spec.token)}_([1-9][0-9]*))` +
-  `(\\r?\\n)(3)\\3`
+  `(\\r?\\n)(${escapeRegExp(OUTPUT_ANSI_OPEN)})(3)` +
+  `(${escapeRegExp(OUTPUT_ANSI_RESET)})\\3`
 );
 
 const framePattern = (spec, anchoredEnd) => (
   outputPattern(spec) +
-  `(__E4T32_NODE_DONE_${escapeRegExp(spec.token)}_\\2_([0-9]+))\\3` +
+  `(__E4T32_NODE_DONE_${escapeRegExp(spec.token)}_\\2_(0))\\3` +
   (anchoredEnd ? "$" : "")
 );
 
 export function createNodeProcessOracleSpec(sequenceValue) {
   const sequence = assertSequence(sequenceValue);
   const token = sequenceToken(sequence);
-  // The asynchronous item is the exact external Node command. BusyBox therefore records the PID
-  // of the child that directly execs Node. BEGIN is emitted only after `$!` is captured so any
-  // interactive-shell launch notice remains outside the authoritative byte frame.
+  // The outer interactive shell backgrounds one noninteractive sh. That process emits BEGIN with
+  // its own PID and then execs the exact Node argv, preserving the PID. The outer `$!` therefore
+  // names the Node process and can emit DONE after wait, while BEGIN necessarily precedes output.
+  const innerScript =
+    `printf '\\n__E4T32_NODE_BEGIN_%s_%s\\n' "$1" "$$"; ` +
+    `exec ${E4T32_NODE_COMMAND}`;
   const shellCommand =
-    `${E4T32_NODE_COMMAND} & node_pid=$!; ` +
-    `printf '\\n__E4T32_NODE_BEGIN_%s_%s\\n' '${token}' "$node_pid"; ` +
+    `sh -c ${shQuote(innerScript)} e4t32-node-oracle ${shQuote(token)} & node_pid=$!; ` +
     `wait "$node_pid"; rc=$?; ` +
     `printf '__E4T32_NODE_DONE_%s_%s_%s\\n' '${token}' "$node_pid" "$rc"`;
   if (/[\r\n]/.test(shellCommand)) {
@@ -68,6 +76,7 @@ export function createNodeProcessOracleSpec(sequenceValue) {
   const spec = {
     sequence,
     token,
+    outputGrammar: E4T32_NODE_ORACLE_GRAMMAR,
     nodeCommand: E4T32_NODE_COMMAND,
     shellCommand,
     beginPrefix: `__E4T32_NODE_BEGIN_${token}_`,
@@ -152,7 +161,7 @@ export function createNodeOracleFrameCollector(spec) {
           outputCompletedNow,
           frame: frame.slice(0, frameEnd),
           nodePid: Number(match[2]),
-          exit: Number(match[6]),
+          exit: Number(match[8]),
         };
       }
       const completionStart = raw.indexOf(spec.completionPrefix);
@@ -174,7 +183,7 @@ export function createNodeOracleFrameCollector(spec) {
 function parseStrictFrame(frameValue, specValue) {
   const spec = createNodeProcessOracleSpec(specValue?.sequence);
   if (specValue?.nodeCommand !== spec.nodeCommand || specValue?.shellCommand !== spec.shellCommand ||
-      specValue?.token !== spec.token) {
+      specValue?.token !== spec.token || specValue?.outputGrammar !== spec.outputGrammar) {
     fail("invalid-spec", "Node oracle spec does not match its sequence");
   }
   const bytes = asBytes(frameValue, "Node terminal frame");
@@ -189,20 +198,22 @@ function parseStrictFrame(frameValue, specValue) {
   const raw = bytes.toString("latin1");
   const match = raw.match(new RegExp(spec.completeFramePatternSource));
   if (!match || match[0].length !== raw.length) {
-    fail("invalid-frame", "Node terminal frame is not exactly BEGIN, output 3, and DONE");
+    fail("invalid-frame", "Node terminal frame is not exactly BEGIN, yellow TTY output 3, and DONE");
   }
 
   const beginMarker = match[1];
   const nodePid = Number(match[2]);
   const newlineBytes = Buffer.from(match[3], "latin1");
-  const outputLine = match[4];
-  const completionMarker = match[5];
-  const exit = Number(match[6]);
+  const outputAnsiOpen = match[4];
+  const outputLine = match[5];
+  const outputAnsiReset = match[6];
+  const completionMarker = match[7];
+  const exit = Number(match[8]);
   if (!Number.isSafeInteger(nodePid) || nodePid <= 0) {
     fail("invalid-node-pid", `Node oracle PID is not a positive safe integer: ${match[2]}`);
   }
   if (!Number.isSafeInteger(exit) || exit < 0 || exit > 255) {
-    fail("invalid-exit", `Node oracle exit status is invalid: ${match[6]}`);
+    fail("invalid-exit", `Node oracle exit status is invalid: ${match[8]}`);
   }
   if (spec.shellCommand.includes(beginMarker) || spec.shellCommand.includes(completionMarker)) {
     fail("echo-spoofable", "concrete PID-bearing Node marker appears in submitted source");
@@ -214,8 +225,12 @@ function parseStrictFrame(frameValue, specValue) {
   cursor = offsets.beginMarker.end;
   offsets.beginLineEnding = byteRange(cursor, newlineBytes.byteLength);
   cursor = offsets.beginLineEnding.end;
-  offsets.outputLine = byteRange(cursor, Buffer.byteLength(outputLine, "ascii"));
-  cursor = offsets.outputLine.end;
+  offsets.outputAnsiOpen = byteRange(cursor, Buffer.byteLength(outputAnsiOpen, "latin1"));
+  cursor = offsets.outputAnsiOpen.end;
+  offsets.outputValue = byteRange(cursor, Buffer.byteLength(outputLine, "ascii"));
+  cursor = offsets.outputValue.end;
+  offsets.outputAnsiReset = byteRange(cursor, Buffer.byteLength(outputAnsiReset, "latin1"));
+  cursor = offsets.outputAnsiReset.end;
   offsets.outputLineEnding = byteRange(cursor, newlineBytes.byteLength);
   cursor = offsets.outputLineEnding.end;
   offsets.completionMarker = byteRange(cursor, Buffer.byteLength(completionMarker, "ascii"));
@@ -242,6 +257,7 @@ function evidenceFromStrictFrame(frameValue, specValue) {
   const base64 = parsed.bytes.toString("base64");
   return {
     oracleSchema: E4T32_NODE_ORACLE_SCHEMA,
+    outputGrammar: E4T32_NODE_ORACLE_GRAMMAR,
     nodeSequence: parsed.spec.sequence,
     nodeToken: parsed.spec.token,
     nodeCommand: parsed.spec.nodeCommand,
@@ -268,7 +284,7 @@ export function createNodeProcessOracleEvidence(frameValue, specValue) {
 export function parseNodeProcessOracle(captureValue, specValue) {
   const spec = createNodeProcessOracleSpec(specValue?.sequence);
   if (specValue?.nodeCommand !== spec.nodeCommand || specValue?.shellCommand !== spec.shellCommand ||
-      specValue?.token !== spec.token) {
+      specValue?.token !== spec.token || specValue?.outputGrammar !== spec.outputGrammar) {
     fail("invalid-spec", "Node oracle spec does not match its sequence");
   }
   const capture = asBytes(captureValue);
@@ -327,6 +343,7 @@ export function validateNodeProcessOracleEvidence(value) {
   const expected = evidenceFromStrictFrame(decoded, spec);
   for (const field of [
     "oracleSchema",
+    "outputGrammar",
     "nodeSequence",
     "nodeToken",
     "nodeCommand",

@@ -423,10 +423,10 @@ async function runNodeProcess(page, sequence, { timeoutMs = 300_000, progressInt
       timeoutMs,
       progressIntervalMs,
     }) => {
-    // The exact Node argv/code remains byte-identical to the user's report. The shell runs that
-    // simple external command in the background only so `$!` captures the child that execs Node.
-    // BEGIN opens the authoritative raw-byte frame after launch; no decoded/sanitized terminal
-    // text can contribute to the process oracle.
+    // The exact Node argv/code remains byte-identical to the user's report. The interactive shell
+    // backgrounds one noninteractive sh; it emits BEGIN and execs Node, so its `$$` remains the
+    // outer shell's `$!` Node PID. The exact colored TTY bytes form the authoritative raw frame;
+    // no decoded/sanitized terminal text can contribute to the process oracle.
     const collectorFactory = new Function(`return (${collectorFactorySource})`)();
     const collector = collectorFactory(oracleSpec);
     const byteText = (bytes) => {
@@ -729,6 +729,7 @@ async function runNodeVariantSession(browser, {
       expect(run.exit).toBe(0);
       expect(run.nodeCommand).toBe("node -e 'console.log(3)'");
       expect(run.nodeSequence).toBe(sequence);
+      expect(run.outputGrammar).toBe("tty-yellow-v1");
       expect(run.outputLine).toBe("3");
       expect(run.beginMarker).toBe(
         `__E4T32_NODE_BEGIN_${run.nodeToken}_${run.nodePid}`,
@@ -861,6 +862,7 @@ const logNodeLeg = (variant, session, attemptId = null) => {
       nodePid,
       outputLine,
       oracleSchema,
+      outputGrammar,
       beginMarker,
       completionMarker,
       terminalFrame,
@@ -877,6 +879,7 @@ const logNodeLeg = (variant, session, attemptId = null) => {
       nodePid,
       outputLine,
       oracleSchema,
+      outputGrammar,
       beginMarker,
       completionMarker,
       terminalFrame,

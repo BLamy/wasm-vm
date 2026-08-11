@@ -46,15 +46,16 @@ const dirtyCalibration = (label) => cpuCalibrationFixture({ clean: false, label 
 const oracleFor = (nodeSequence, nodePid, exit = 0) => {
   const spec = createNodeProcessOracleSpec(nodeSequence);
   const raw = Buffer.from(
-    `__E4T32_NODE_BEGIN_${spec.token}_${nodePid}\n3\n` +
+    `__E4T32_NODE_BEGIN_${spec.token}_${nodePid}\n\x1b[33m3\x1b[39m\n` +
     `__E4T32_NODE_DONE_${spec.token}_${nodePid}_${exit}\n`,
-    "ascii",
+    "latin1",
   );
   return createNodeProcessOracleEvidence(raw, spec);
 };
 
 const oracleProjection = (run) => ({
   oracleSchema: run.oracleSchema,
+  outputGrammar: run.outputGrammar,
   nodeSequence: run.nodeSequence,
   nodeToken: run.nodeToken,
   nodeCommand: run.nodeCommand,
