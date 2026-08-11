@@ -3,7 +3,7 @@ id: E4-T32
 epic: 4
 title: Default whole-machine Web Worker with controller parity
 priority: 433
-status: evidence-needed
+status: implemented
 depends_on: [E4-T33]
 estimate: S
 risk: high
@@ -183,3 +183,36 @@ returns to `implemented`, never `verified`, pending a fresh adversarial review o
   are in `evidence/e4-t32/VERIFIER-REPORT.md`.
 - **COVERAGE/SUITE:** no runtime or product hunk moved. No new test is promoted until the raw
   recording gap closes; unchanged load-bearing suites remain credited.
+
+### 2026-08-11 — worker — implemented (authoritative raw-byte oracle recorded)
+
+Runtime semantics remain frozen at `aca44846c85ea1e07c9c6d7534203fbab3f3b9f5`; final
+evidence-harness head is `6b5db489ba451b279490277a8bd983f563c239c1`. No runtime, JIT policy,
+or built Wasm byte changed. This evidence-only repair closes the verifier's remaining P8 demand:
+each exact `node -e 'console.log(3)'` process now preserves an authoritative bounded raw terminal
+frame, Node PID, runtime-only token, zero exit, byte length, SHA-256, newline form, and exact marker,
+ANSI, value, and line-ending offsets. The accepted grammar is only BEGIN + default-TTY yellow `3` +
+PID-bound DONE; noise, stale output, generic ANSI, mixed EOL, truncation, PID/token mismatch,
+nonzero exit, and synthesized-transcript equivalence fail closed.
+
+The headed six-slot matrix passed in 14.6 minutes with six clean accepted attempts. Worker/main
+ratios were 1.016815 first-output median, 1.015728 completion median, 1.011718 cold first output,
+1.011835 cold completion, 1.005051 subsequent first-output median, and 0.990066 maximum stretch.
+Worker rAF p99 was at most 18.660 ms; sustained-load input/RPC completed in 113.925/51.095 ms.
+JIT512 executed 25,369,611 translated blocks and retired 136,016,872 instructions through JIT.
+
+The 46-file / 1,130,926-byte bundle is under
+`evidence/e4-t32/node-walltime-6b5db48/`. Results, aggregate, and physical-ledger SHA-256 values are
+`4cdc3563489c36bd7955991db6c879b32dd2d5595583ad1f591334b935699bc9`,
+`fc49673f493f4eb6f915e7f9ee6516fd07f50ee660ad0192c9a8bb22f8f1174d`, and
+`298b4445d151e6f096deba21eb57ca3b80d93a4de2cc7d3d0a0e42227d586308`; canonical root inventory
+SHA-256 is `3f69ac799dd8498ec821670e5979aad16b564ee9d37328763ee13748f9e2f575`.
+The focused raw-oracle/ledger/journal suite passed 41/41, the complete Node harness suite passed
+89/89, and a fresh read-only critic held the exact byte grammar, split-boundary, mutation, PID,
+recovery, and persistence attacks.
+
+The strict speed target remains explicitly unclaimed. Main interpreter still needs about 87.4 s to
+first output after restore and 90.4 s to complete; fresh subsequent processes need about 21.2 s to
+first output and 25.2 s to complete. Worker timings remain within the E4-T32 parity budget, but are
+not near-instant. E4-T34 owns real interpreter/JIT acceleration. This task returns to `implemented`,
+never `verified`, pending a fresh adversarial verifier of the promoted raw-frame bundle.

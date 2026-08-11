@@ -20,10 +20,11 @@ responsiveness, not that acceleration target.
 ## Frozen revisions
 
 - Runtime/evidence head: `aca44846c85ea1e07c9c6d7534203fbab3f3b9f5`.
-- Final Node evidence-harness head: `6155f216d9c347fb44e58cbaa13b81eda357c87e`.
-- `8302ea7` durably records the exact Node command, standalone output, child PID, concrete completion
-  marker, bounded terminal transcript, exit status, and timing for every process. `6155f21` adds the
-  immutable absolute CPU-capacity admission rule used live, in the ledger, and during crash recovery.
+- Final authoritative raw-frame harness head:
+  `6b5db489ba451b279490277a8bd983f563c239c1`.
+- `6155f21` supplies the immutable absolute CPU-capacity admission rule. `5b0f0bc` preserves
+  bounded raw terminal bytes, and `6b5db48` binds the oracle to the exact default-TTY byte grammar,
+  Node PID, zero exit, offsets, and content hash.
 - No execution runtime, JIT policy, or built Wasm byte changed after `aca4484`; later changes are
   tests, evidence, and task/roadmap metadata, so the held browser, guest, and rr evidence remains
   incremental-valid.
@@ -43,6 +44,10 @@ ab3e6fc chore(e4): submit whole-worker evidence
 3a497a5 chore(e4): record E4-T32 verifier evidence gap
 8302ea7 test(web): persist exact Node process oracle
 6155f21 test(web): bind Node CPU calibration capacity
+ca0753b chore(e4): promote final whole-worker evidence
+08378a1 chore(e4): retain Node raw-evidence gate
+5b0f0bc test(e4): preserve raw Node terminal oracle
+6b5db48 test(e4): bind Node oracle to TTY bytes
 ```
 
 ## Exact restored-Node matrix
@@ -54,10 +59,17 @@ and the new immutable absolute-capacity rule:
 
 ```sh
 cd web
-E4T32_NODE_BENCH=1 \
-E4T32_NODE_ASSET_DIR=/private/tmp/wasm-vm-node-profile.dN7cbx/r2-node \
-E4T32_NODE_EVIDENCE_DIR=/private/tmp/e4t32-node-absolute-6155f216.o0xM1c \
-npx playwright test tests/e4-t32-node-walltime.spec.js --headed --workers=1
+env -u E4T32_CPU_PREFLIGHT_ONLY \
+  -u E4T32_NODE_DIAG \
+  -u E4T32_NODE_DIAG_PROGRESS \
+  -u E4T32_NODE_DIAG_WORKER_FIRST \
+  -u E4T32_NODE_VARIANTS \
+  E4T32_NODE_ASSET_DIR=/private/tmp/wasm-vm-node-profile.dN7cbx/r2-node \
+  E4T32_NODE_ASSET_BASE=/e4t32-node-assets \
+  E4T32_NODE_EVIDENCE_DIR=/private/tmp/e4t32-node-yellow-matrix-6b5db48.3s4nW6 \
+  E4T32_NODE_BENCH=1 \
+  npx playwright test tests/e4-t32-node-walltime.spec.js \
+    --grep 'same-head worker interpreter parity plus truthful JIT/scheduler evidence'
 ```
 
 Inside the guest, every timed sample executes exactly:
@@ -66,39 +78,59 @@ Inside the guest, every timed sample executes exactly:
 node -e 'console.log(3)'
 ```
 
-The shell source contains placeholders, never the concrete process marker. After launching the exact
-Node argv in the background it captures `$!`, waits for that child, and emits a runtime-only marker
-containing the attempt-derived sequence, positive Node PID, and exit status. The oracle requires a
-standalone `3` before that exact marker. Every run durably preserves `nodeCommand`, `nodePid`,
-`nodeSequence`, `outputLine`, `completionMarker`, the sanitized at-most-512-character
-`oracleTranscript`, `exit`, and both timings in its session sidecar, accepted ledger, and final
-result. Each session's two PIDs are distinct; the attempt sequence scopes PID reuse across restored
-guests. Missing, reordered, mismatched, nonzero-exit, or echo-spoofed evidence fails closed.
+The interactive shell starts one background `sh -c`; that inner shell prints BEGIN(token,$$) and
+then `exec`s the exact Node command. The outer shell captures `$!`, waits, and prints
+DONE(token,$!,exit). Consequently inner `$$`, outer `$!`, and the Node PID are identical, while
+BEGIN necessarily precedes Node output. The echoed source contains placeholders, never a concrete
+token, PID, or completion marker.
+
+The authoritative `e4-t32-node-byte-frame-v2` / `tty-yellow-v1` record is at most 512 raw bytes and
+accepts exactly:
+
+`BEGIN(token,pid) + EOL + ESC[33m + 3 + ESC[39m + EOL + DONE(token,same-pid,0) + EOL`
+
+EOL is uniformly LF or CRLF. The harness performs no generic ANSI stripping and accepts no plain,
+noisy, mixed-newline, truncated, reordered, or appended alternative. It persists canonical base64,
+byte length, SHA-256, newline style, and exact half-open offsets for both markers, all three line
+endings, ANSI open/reset, and the value byte. First-output time is recorded only after the colored
+`3` line ending; completion is recorded at DONE's line ending. All twelve accepted frames were
+112-byte CRLF records and independently revalidated from their persisted bytes.
 
 Every accepted session restored the pinned node-Alpine snapshot. The immutable local mirror contains
 2,400 distinct chunks / 314,572,800 bytes and uses manifest SHA-256
 `ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1`; the matrix asserted zero
 `r2.dev` requests. Candidate identity SHA-256 is
-`86a6c601fe97addd56e8e5d8aacbb0242183ea5b6730ed0e50dfdf22702cd706`.
+`c11d11e9ac3ce04fffded404245b3b9e19545ed06bc7cbc44b0849cd8c0f374c`.
 
-Result: **PASS**, six accepted clean slots, no discarded attempt, 14.7 minutes total.
+Result: **PASS**, six accepted clean slots, no discarded attempt, 14.6 minutes total.
 
 | Metric | main interpreter | worker interpreter | worker/main |
 |---|---:|---:|---:|
-| first-output median, all processes | 53,723.223 ms | 53,997.735 ms | 1.005110 |
-| completion median, all processes | 57,222.475 ms | 57,482.462 ms | 1.004543 |
-| first process after restore | 87,083.697 ms | 87,370.895 ms | 1.003298 |
-| completion after restore | 90,097.155 ms | 90,381.698 ms | 1.003158 |
-| subsequent-process first-output median | 20,827.570 ms | 20,723.350 ms | 0.994996 |
-| subsequent-process first-output max | 20,964.070 ms | 20,880.510 ms | 0.996014 |
-| max output-to-completion stretch | 3,995.000 ms | 3,969.705 ms | 0.993668 |
+| first-output median, all processes | 53,963.065 ms | 54,870.443 ms | 1.016815 |
+| completion median, all processes | 57,494.005 ms | 58,398.293 ms | 1.015728 |
+| first process after restore | 87,425.247 ms | 88,449.697 ms | 1.011718 |
+| completion after restore | 90,396.733 ms | 91,466.545 ms | 1.011835 |
+| subsequent-process first-output median | 21,235.215 ms | 21,342.470 ms | 1.005051 |
+| subsequent-process first-output max | 21,347.115 ms | 21,644.920 ms | 1.013951 |
+| max output-to-completion stretch | 4,090.100 ms | 4,049.470 ms | 0.990066 |
 
 Every worker ratio is below the task's 1.10 ceiling. Worker-interpreter rAF p99 was at most
-18.585 ms. The synchronized sustained-load probe observed terminal input in 175.220 ms and a cheap
-controller RPC in 51.085 ms. The selected `jitThreshold=512` sessions retired 132,315,918 guest
-instructions through JIT blocks and executed 24,458,996 blocks during the measured processes. Their
-subsequent-process first-output median was 21,855.890 ms, 4.94% slower than main interpreter;
+18.660 ms. The synchronized sustained-load probe observed terminal input in 113.925 ms and a cheap
+controller RPC in 51.095 ms. The selected `jitThreshold=512` sessions retired 136,016,872 guest
+instructions through JIT blocks and executed 25,369,611 blocks during the measured processes. Their
+subsequent-process first-output median was 22,086.932 ms, 4.01% slower than main interpreter;
 therefore JIT is truthfully exercised but is not the production default.
+
+All frames are 112-byte CRLF `tty-yellow-v1` records:
+
+| Slot | PID | Raw frame SHA-256 | PID | Raw frame SHA-256 |
+|---|---:|---|---:|---|
+| p0 main interpreter | 839 | `591c905ae15198469856367ee18a9e5d05e7105974bfa7f884b3ac8b6d6c070a` | 846 | `d31c32c1630017a440fc036312d9ce9317d8a4c6fc262e91bfc447055b8732cb` |
+| p0 worker interpreter | 838 | `4c49abadb52296d457667e9ec9a661e83c3a07bc4f8f857020bb3c4e7c79f13c` | 846 | `191ccf6520a7dcba9c37d965ea70813ed2e062da52d09911e088b6e69a4bee3e` |
+| p0 worker JIT512 | 838 | `58770630d43da1ce6f3d8d60f2e90dc47df549baa67840084947cf9b5225160b` | 846 | `2439550f8e90813a4bc0ee89ad5eb569f907d518c24d3009a28c19ed208f6b98` |
+| p1 worker JIT512 | 838 | `5b0339d4708582cfdb02009ccc1f441936bf9e11092a61461a7de3e34ad000ce` | 846 | `4a1592283ac15ff7ec5d9c641180932ee77a893a60b62a9553e8f38ff8f14015` |
+| p1 worker interpreter | 838 | `d5c28471290b449bf590436081c4b8cd52ef2255842005e491fdbf50035e3b4f` | 846 | `d0a12e1c9f2bd7e514e6ff2bc127221363f6f313461715ab33492f3570ba726d` |
+| p1 main interpreter | 839 | `e28a243a3fbcdedcfbf1d349a49c67428df9f3c55a4b176df1198bcd87b4306a` | 846 | `d1d4a4ef123a471d89f7688e6d6b66fcd75eae41f87af7a3bc71686c0461a1c9` |
 
 ### Immutable CPU-capacity admission
 
@@ -115,9 +147,10 @@ version are identity-bound.
 
 Both raw realm medians must independently fall within reciprocal factors `[1/1.05, 1.05]` of that
 reference before **and** after each slot, in addition to the relative checksum/realm/pair rules. The
-12 matrix phases ranged from 316.800–343.750 ms for Window and 319.900–337.850 ms for Worker;
-absolute ratios ranged 0.962552–1.044436 and 0.970202–1.024642 respectively. The standalone gate
-recorded 317.550/319.700 ms, absolute ratios 0.964831/0.969596, and 8/8 relative pairs. Canonical
+12 matrix phases ranged from 316.850–333.850 ms for Window and 318.600–331.650 ms for Worker;
+absolute ratios ranged 0.962704–1.014356 and 0.966260–1.005838 respectively. The standalone gate
+recorded 316.550/317.000 ms, absolute ratios 0.961793/0.961407, realm ratio 1.001422, paired ratio
+0.999525, and 8/8 relative pairs. Canonical
 evaluation is shared by the live path, ledger finish, and crash recovery; serialized `clean` or
 derived medians are never trusted. A dirty preflight runs no Node process, and a dirty postflight
 immutably excludes the completed session.
@@ -130,28 +163,30 @@ the same condition calibration-contaminated before any product verdict.
 
 ### Durable artifact inventory
 
-The unchanged 46-file, 1,070,124-byte bundle is committed under
-`evidence/e4-t32/node-walltime-6155f21/`:
+The unchanged 46-file, 1,130,926-byte bundle is committed under
+`evidence/e4-t32/node-walltime-6b5db48/`:
 
 - `E4T32_NODE_RESULTS.json`: SHA-256
-  `a656321d6fad9fa51b31b57e8f6aa429242f511f90e5497fd2c63c2fb3bee6d3`.
+  `4cdc3563489c36bd7955991db6c879b32dd2d5595583ad1f591334b935699bc9`.
 - `E4T32_NODE_AGGREGATE.json`: SHA-256
-  `87f82788d7f7583e4e8aad7ffb6c21732c2b8dabb4beb99e611427f01d09ece4`.
+  `fc49673f493f4eb6f915e7f9ee6516fd07f50ee660ad0192c9a8bb22f8f1174d`.
 - `E4T32_NODE_LEDGER_V2.json`: physical SHA-256
-  `b6c62884c097d44c259d662fcec1defe5fe997f4e9216117b98d0d0a7778bfdd`;
+  `298b4445d151e6f096deba21eb57ca3b80d93a4de2cc7d3d0a0e42227d586308`;
   canonical logical SHA-256
-  `8d26f4ecf80310f729b7cbd66f3ceb4f8077e2990c458fed7359c7486cce6768`.
+  `fe58edde486305e9d76209a518df24b60a67e8d47cd4d6130e2399dbf7bfa61a`.
 - `E4T32_CPU_PREFLIGHT_standalone.json`: SHA-256
-  `7dc066a690298a765f76d1246b1b58bc34a1d1d68790c1155c990d0e25e5ff0a`.
+  `9db9f356a184021879694aab5859c673cefffea75c99b92731f9057469bed5ca`.
 - Auditor canonical `{path,bytes,sha256}` root inventory SHA-256 (records sorted by relative path,
   then stable JSON serialized with recursively sorted object keys)
-  `74ee019c19c0ea1889d1e7694547998c9f18e72b4b6c26cf8b9a7b727ee0c0ff`.
+  `3f69ac799dd8498ec821670e5979aad16b564ee9d37328763ee13748f9e2f575`.
 - Sorted `sha256␠␠path\n` inventory text SHA-256
-  `fc5ce66a24e16f61c4dd0c7e3d63050f25d4c19fa1fae1c8e5fdb623779be0c0`.
+  `59d5a665feae371ad7ef77a636ac5fac14b337152d733242748f96f8180a351a`.
 - Attempt-sidecar canonical manifest SHA-256
-  `0de10dc6e1fee3043dab7e5ad22d56b2f66a363c689d72845a00eac0f82c81cb`.
+  `1939faa7afac4c8e91dbd8fe87d5343d4332ab5d3af05603fc914e30742c9cc8`.
 - The 12 slot-preflight canonical manifest SHA-256
-  `20a10382a36f7cfed0dcba9cea2b1670107981c184713f7aa788cc0a3d72d83f`.
+  `5e70769570a8c58b5acff429929e41e6f735d1247444c02377eeaab2115b9498`.
+- The 13-file preflight canonical manifest, explicitly including the standalone gate, SHA-256
+  `d971c948e08bcfe3a9789012ec56e38904fd7490728e2ccfcbaac6a7b272f234`.
 
 ## Browser proof
 
@@ -220,8 +255,8 @@ The frozen runtime passed:
 - `cargo test -p wasm-vm-core`, including the eight async-compile budget/eventual-progress attacks.
 - full `wasm-pack test --node crates/wasm`.
 - `node --test web/tests/e4-t32-worker-protocol.test.mjs`: 22/22.
-- event-sourced Node calibration/oracle/ledger/store/journal/identity/failure suites: 81/81 at
-  evidence-harness head `6155f21`.
+- event-sourced Node oracle/calibration/ledger/store/journal/identity/failure suites: 89/89 at
+  authoritative raw-frame head `6b5db48`.
 - whole-worker browser proof including explicit selected JIT, default interpreter, timer fallback,
   worker failure, start-paused parity, cross-flavor ownership, and teardown: 9/9.
 - final harness-sensitive browser set:
@@ -235,10 +270,11 @@ task; affected crates passed and this submission does not claim that unrelated d
 ## Fresh-verifier handoff
 
 The verifier should attack runtime head `aca4484`, carry forward the held browser/rr results whose
-product boundary is unchanged, and independently inspect evidence-harness head `6155f21` plus the
-new 46-file Node bundle. It should recompute both inventory manifests, physical/logical ledger
+product boundary is unchanged, and independently inspect evidence-harness head `6b5db48` plus the
+new `evidence/e4-t32/node-walltime-6b5db48/` 46-file Node bundle. It should recompute both inventory
+manifests, physical/logical ledger
 digests, absolute reference medians from the exact `ab3e6fc` commit bytes, all 12 pre/post admission
-decisions, the 12 PID/marker/output transcripts, aggregate timings, and worker/main ratios. It should
+decisions, the 12 PID-bound raw byte frames, aggregate timings, and worker/main ratios. It should
 also retain the earlier attacks on silent Worker termination, held RPC/cleanup races, controller
 generation reuse, background/resume heartbeat grace, selected-JIT input during compile pressure,
 and same-command main/worker state/output parity. Only the fresh verifier may change this task from
