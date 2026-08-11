@@ -3,7 +3,7 @@ id: E4-T32
 epic: 4
 title: Default whole-machine Web Worker with controller parity
 priority: 433
-status: evidence-needed
+status: implemented
 depends_on: [E4-T33]
 estimate: S
 risk: high
@@ -116,3 +116,45 @@ This task remains `implemented` until a fresh verifier attacks the submitted evi
   unexecuted product behavior was found.
 - **SUITE:** no promotion until the recording gap clears. Sabotaging private byte ownership made the
   existing test fail on a detached caller buffer, confirming it is load-bearing.
+
+### 2026-08-10 — worker — implemented (evidence gap repaired)
+
+Runtime semantics remain frozen at `aca44846c85ea1e07c9c6d7534203fbab3f3b9f5`; the final
+evidence-harness head is `6155f216d9c347fb44e58cbaa13b81eda357c87e`. No execution runtime,
+JIT policy, or built Wasm byte changed; later deltas are tests, evidence, and task metadata.
+`8302ea7` repairs the verifier's P8 gap by durably
+recording every exact `node -e 'console.log(3)'` command, standalone `3`, positive Node PID,
+attempt-bound runtime marker, bounded transcript, zero exit, and timings in the session sidecar,
+accepted ledger, and result. `6155f21` adds a canonical absolute CPU-capacity evaluator shared by
+live admission, ledger finish, and crash recovery; it verifies exact prior committed reference bytes
+(`ab3e6fc4...`, physical SHA-256 `787e4478...`, logical SHA-256 `f3e58428...`) and rejects globally
+slow pre/post samples instead of trusting relative parity or serialized `clean` fields.
+
+Exact final command, from `web/`:
+
+```sh
+E4T32_NODE_BENCH=1 \
+E4T32_NODE_ASSET_DIR=/private/tmp/wasm-vm-node-profile.dN7cbx/r2-node \
+E4T32_NODE_EVIDENCE_DIR=/private/tmp/e4t32-node-absolute-6155f216.o0xM1c \
+npx playwright test tests/e4-t32-node-walltime.spec.js --headed --workers=1
+```
+
+The six-slot balanced matrix passed in 14.7 minutes with six accepted attempts and no discarded
+attempt. Worker/main ratios were 1.005110 first-output median, 1.004543 completion median, 1.003298
+cold first output, 1.003158 cold completion, 0.994996 subsequent median, 0.996014 subsequent max,
+and 0.993668 stretch; all remain below 1.10. Sustained-load worker input/RPC measured
+175.220/51.085 ms with rAF p99 18.585 ms. Explicit JIT512 executed 24,458,996 translated blocks and
+retired 132,315,918 instructions through JIT, while remaining honestly non-default because its warm
+first-output median was 21,855.890 ms.
+
+The unchanged 46-file / 1,070,124-byte artifact is committed under
+`evidence/e4-t32/node-walltime-6155f21/`. Result/aggregate/physical-ledger SHA-256 values are
+`a656321d6fad9fa51b31b57e8f6aa429242f511f90e5497fd2c63c2fb3bee6d3`,
+`87f82788d7f7583e4e8aad7ffb6c21732c2b8dabb4beb99e611427f01d09ece4`, and
+`b6c62884c097d44c259d662fcec1defe5fe997f4e9216117b98d0d0a7778bfdd`; canonical root inventory
+SHA-256 is `74ee019c19c0ea1889d1e7694547998c9f18e72b4b6c26cf8b9a7b727ee0c0ff`. The exact
+reference derivation, all phase hashes, oracle records, aggregate figures, prior relative-only
+false-refutation diagnosis, and verifier commands are in `evidence/e4-t32/README.md`. The strict
+Node speed target remains unclaimed: a fresh warm process still takes roughly 20.7–21.9 seconds to
+first output and 24.5–26.1 seconds to complete; E4-T34 owns that runtime/JIT acceleration. This task
+returns to `implemented`, never `verified`, pending a fresh adversarial review of the new evidence.
