@@ -20,6 +20,8 @@ import {
   serializeNodeBenchmarkLedger,
   validateNodeBenchmarkLedger,
 } from "./helpers/e4-t32-node-ledger.mjs";
+import { E4T32_CPU_CALIBRATION_POLICY } from "./helpers/e4-t32-node-calibration.mjs";
+import { cpuCalibrationFixture } from "./helpers/e4-t32-node-calibration-fixture.mjs";
 
 const identity = {
   commit: "0123456789abcdef",
@@ -33,9 +35,10 @@ const identity = {
     },
   },
   matrix: { processesPerSession: 2, localAssets: true },
+  policy: { preflight: structuredClone(E4T32_CPU_CALIBRATION_POLICY) },
 };
 
-const calibration = (clean, label) => ({ clean, label, samples: 8 });
+const calibration = (clean, label) => cpuCalibrationFixture({ clean, label });
 
 function sessionFor(slot, firstValues = [100, 200]) {
   const sequencePrefix = nodeBenchmarkSequencePrefix(slot);
@@ -137,6 +140,32 @@ test("fixed plan is balanced, ordered, and only exposes the earliest incomplete 
   assert.deepEqual(initial.events, [], "begin must return a new append-only ledger");
 });
 
+test("finish and replay reject forged clean absolute-capacity evidence", () => {
+  let ledger = createNodeBenchmarkLedger(identity);
+  ledger = begin(ledger, "forged-capacity").ledger;
+  const open = activeNodeBenchmarkAttempt(ledger);
+  const forged = calibration(false, "slow-but-relative");
+  forged.clean = true;
+  assert.throws(
+    () => finishNodeBenchmarkAttempt(ledger, {
+      attemptId: open.attemptId,
+      identity,
+      preCalibration: forged,
+      postCalibration: calibration(true, "after"),
+      session: sessionFor(open),
+    }),
+    (error) => error.code === "invalid-calibration",
+  );
+
+  const accepted = finishClean(ledger, "forged-capacity", [100, 200]).ledger;
+  const tampered = structuredClone(accepted);
+  tampered.events.at(-1).preCalibration = forged;
+  assert.throws(
+    () => validateNodeBenchmarkLedger(tampered),
+    (error) => error.code === "invalid-calibration",
+  );
+});
+
 test("started and finished event/artifact IDs cannot collide", () => {
   let ledger = createNodeBenchmarkLedger(identity);
   const first = begin(ledger, "same-ish/a");
@@ -218,6 +247,7 @@ test("deep identity mismatch fails closed at begin and at finish", () => {
       sha256: "ac6a2988",
     },
     commit: "0123456789abcdef",
+    policy: structuredClone(identity.policy),
   };
   assert.doesNotThrow(() => beginNodeBenchmarkAttempt(initial, {
     attemptId: "deep-equal",
@@ -267,7 +297,12 @@ test("resume identity rejects every frozen candidate, harness, host, policy, and
     },
     harness: { playwright: "1.49.1", browserVersion: "131", browserSha256: "browser-a" },
     host: { platform: "darwin", arch: "arm64", logicalCpus: 8, cpuModels: ["Apple M2"] },
-    policy: { version: "v2", plan: E4T32_NODE_SLOT_PLAN, urls: { p0: "/?worker=0" } },
+    policy: {
+      version: "v3",
+      plan: E4T32_NODE_SLOT_PLAN,
+      urls: { p0: "/?worker=0" },
+      preflight: structuredClone(E4T32_CPU_CALIBRATION_POLICY),
+    },
     guest: {
       nodeManifestSha256: "node-a",
       kernelSha256: "kernel-a",
@@ -289,7 +324,7 @@ test("resume identity rejects every frozen candidate, harness, host, policy, and
     ["OS", (value) => { value.host.platform = "linux"; }],
     ["architecture", (value) => { value.host.arch = "x64"; }],
     ["CPU", (value) => { value.host.cpuModels = ["other"] ; }],
-    ["policy", (value) => { value.policy.version = "v3"; }],
+    ["policy", (value) => { value.policy.version = "v4"; }],
     ["URL", (value) => { value.policy.urls.p0 = "/?jit=1"; }],
     ["Node manifest", (value) => { value.guest.nodeManifestSha256 = "node-b"; }],
     ["kernel", (value) => { value.guest.kernelSha256 = "kernel-b"; }],

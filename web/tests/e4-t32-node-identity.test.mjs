@@ -5,11 +5,16 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
+import { chromium } from "@playwright/test";
 
 import {
   E4T32_NODE_IDENTITY_REQUIRED_TRACKED_FILES,
   createNodeBenchmarkIdentity,
 } from "./helpers/e4-t32-node-identity.mjs";
+import { E4T32_CPU_CALIBRATION_POLICY } from "./helpers/e4-t32-node-calibration.mjs";
+
+const sourceRepoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 
@@ -47,11 +52,22 @@ function fixture() {
   git(repoRoot, "init", "-q");
   git(repoRoot, "config", "user.name", "E4 T32");
   git(repoRoot, "config", "user.email", "e4-t32@example.test");
+  const sourceGitCommonDir = path.resolve(
+    sourceRepoRoot,
+    git(sourceRepoRoot, "rev-parse", "--git-common-dir"),
+  );
+  fs.mkdirSync(path.join(repoRoot, ".git/objects/info"), { recursive: true });
+  fs.writeFileSync(
+    path.join(repoRoot, ".git/objects/info/alternates"),
+    `${path.join(sourceGitCommonDir, "objects")}\n`,
+  );
   write(repoRoot, ".gitignore", "/web/pkg/\n");
   for (const relativePath of E4T32_NODE_IDENTITY_REQUIRED_TRACKED_FILES) {
     const contents = relativePath === "web/artifacts-node-alpine.json"
       ? `${JSON.stringify(guestManifest())}\n`
-      : `fixture:${relativePath}\n`;
+      : relativePath === E4T32_CPU_CALIBRATION_POLICY.reference.repoPath
+        ? fs.readFileSync(path.join(sourceRepoRoot, relativePath))
+        : `fixture:${relativePath}\n`;
     write(repoRoot, relativePath, contents);
   }
   write(repoRoot, "web/pkg/wasm_vm.js", "export const generated = 1;\n");
@@ -63,7 +79,8 @@ function fixture() {
   const evidenceDir = path.join(repoRoot, "evidence/e4-t32/node-walltime");
   const nodeAssetDir = path.join(repoRoot, ".node-assets");
   const manifestBytes = Buffer.from("immutable node chunk manifest\n");
-  const browserExecutablePath = write(repoRoot, ".node-assets/browser", "browser-v1\n");
+  const browserBytes = fs.readFileSync(chromium.executablePath());
+  const browserExecutablePath = write(repoRoot, ".node-assets/Chromium", browserBytes);
   write(repoRoot, ".node-assets/manifest.json", manifestBytes);
   write(repoRoot, "evidence/e4-t32/node-walltime/prior-attempt.json", "{}\n");
 
@@ -77,7 +94,7 @@ function fixture() {
       { id: "p0:worker-interp", passIndex: 0, variant: "worker-interp" },
     ],
     policy: {
-      version: "e4-t32-node-ledger-v2",
+      version: "e4-t32-node-ledger-v3-absolute-capacity",
       maxAttemptsPerSlot: 3,
       processesPerSession: 2,
       processTimeoutMs: 300_000,
@@ -86,23 +103,24 @@ function fixture() {
         "p0:worker-interp": "/?guest=node-alpine&jit=0",
       },
       browserMode: "headed-foreground",
+      preflight: structuredClone(E4T32_CPU_CALIBRATION_POLICY),
     },
     browserMetadata: {
       type: "chromium",
-      version: "140.0.1",
+      version: "131.0.6778.33",
       executablePath: browserExecutablePath,
       headless: false,
     },
-    playwrightMetadata: { version: "1.55.0" },
+    playwrightMetadata: { version: "1.49.1" },
     hostMetadata: {
       platform: "darwin",
-      release: "25.0.0",
+      release: "25.2.0",
       arch: "arm64",
       machine: "arm64",
-      logicalCpus: 12,
-      cpuModels: ["Apple M4 Pro"],
+      logicalCpus: 8,
+      cpuModels: ["Apple M2"],
     },
-    runtimeMetadata: { nodeVersion: "v24.5.0" },
+    runtimeMetadata: { nodeVersion: "v23.11.0" },
   };
   return {
     repoRoot,
@@ -207,6 +225,39 @@ test("Node manifest bytes are hashed and must match the declared immutable diges
   }
 });
 
+test("capacity reference bytes and immutable policy are verified before identity creation", () => {
+  const current = fixture();
+  try {
+    const identity = createNodeBenchmarkIdentity(current.input);
+    assert.equal(
+      identity.policy.preflight.reference.physicalSha256,
+      E4T32_CPU_CALIBRATION_POLICY.reference.physicalSha256,
+    );
+
+    const changedPolicy = clone(current.input);
+    changedPolicy.policy.preflight.absolute.upperFactor += 0.01;
+    expectCode(() => createNodeBenchmarkIdentity(changedPolicy), "invalid-calibration-policy");
+
+    const referencePath = E4T32_CPU_CALIBRATION_POLICY.reference.repoPath;
+    fs.appendFileSync(path.join(current.repoRoot, referencePath), "\n");
+    git(current.repoRoot, "add", referencePath);
+    git(current.repoRoot, "commit", "-qm", "tamper calibration reference");
+    expectCode(() => createNodeBenchmarkIdentity(current.input), "invalid-calibration-reference");
+  } finally {
+    current.close();
+  }
+});
+
+test("capacity provenance commit must be locally interrogable, not metadata-only", () => {
+  const current = fixture();
+  try {
+    fs.unlinkSync(path.join(current.repoRoot, ".git/objects/info/alternates"));
+    expectCode(() => createNodeBenchmarkIdentity(current.input), "invalid-calibration-reference");
+  } finally {
+    current.close();
+  }
+});
+
 test("every resumability metadata boundary changes the identity hash", async (t) => {
   const current = fixture();
   try {
@@ -216,16 +267,6 @@ test("every resumability metadata boundary changes the identity hash", async (t)
       ["max attempts", (input) => { input.policy.maxAttemptsPerSlot = 4; }],
       ["URL", (input) => { input.policy.urls["p0:worker-interp"] += "&assetBase=/other"; }],
       ["policy", (input) => { input.policy.processTimeoutMs += 1; }],
-      ["Node runtime", (input) => { input.runtimeMetadata.nodeVersion = "v24.6.0"; }],
-      ["Playwright", (input) => { input.playwrightMetadata.version = "1.56.0"; }],
-      ["browser type", (input) => { input.browserMetadata.type = "chromium-beta"; }],
-      ["browser version", (input) => { input.browserMetadata.version = "140.0.2"; }],
-      ["browser headless mode", (input) => { input.browserMetadata.headless = true; }],
-      ["OS platform", (input) => { input.hostMetadata.platform = "linux"; }],
-      ["OS release", (input) => { input.hostMetadata.release = "25.1.0"; }],
-      ["architecture", (input) => { input.hostMetadata.arch = "x64"; }],
-      ["CPU model", (input) => { input.hostMetadata.cpuModels = ["Apple M4 Max"]; }],
-      ["CPU count", (input) => { input.hostMetadata.logicalCpus = 14; }],
     ];
     for (const [label, mutate] of cases) {
       await t.test(label, () => {
@@ -234,14 +275,34 @@ test("every resumability metadata boundary changes the identity hash", async (t)
         assert.notEqual(createNodeBenchmarkIdentity(input).identitySha256, baseline.identitySha256);
       });
     }
+    const incompatibleCases = [
+      ["Node runtime", (input) => { input.runtimeMetadata.nodeVersion = "v24.6.0"; }],
+      ["Playwright", (input) => { input.playwrightMetadata.version = "1.56.0"; }],
+      ["browser type", (input) => { input.browserMetadata.type = "chromium-beta"; }],
+      ["browser version", (input) => { input.browserMetadata.version = "131.0.6778.34"; }],
+      ["browser headless mode", (input) => { input.browserMetadata.headless = true; }],
+      ["OS platform", (input) => { input.hostMetadata.platform = "linux"; }],
+      ["OS release", (input) => { input.hostMetadata.release = "25.1.0"; }],
+      ["architecture", (input) => { input.hostMetadata.arch = "x64"; }],
+      ["CPU model", (input) => { input.hostMetadata.cpuModels = ["Apple M4 Max"]; }],
+      ["CPU count", (input) => { input.hostMetadata.logicalCpus = 14; }],
+    ];
+    for (const [label, mutate] of incompatibleCases) {
+      await t.test(label, () => {
+        const input = clone(current.input);
+        mutate(input);
+        expectCode(() => createNodeBenchmarkIdentity(input), "calibration-incompatible");
+      });
+    }
 
     await t.test("browser executable", () => {
       write(current.repoRoot, ".node-assets/browser", "browser-v2\n");
-      assert.notEqual(
-        createNodeBenchmarkIdentity(current.input).identitySha256,
-        baseline.identitySha256,
+      current.input.browserMetadata.executablePath = path.join(current.repoRoot, ".node-assets/browser");
+      expectCode(
+        () => createNodeBenchmarkIdentity(current.input),
+        "calibration-incompatible",
       );
-      write(current.repoRoot, ".node-assets/browser", "browser-v1\n");
+      current.input.browserMetadata.executablePath = path.join(current.repoRoot, ".node-assets/Chromium");
     });
 
     await t.test("commit HEAD", () => {

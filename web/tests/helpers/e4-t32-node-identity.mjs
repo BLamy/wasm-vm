@@ -3,6 +3,12 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
+import {
+  assertCpuCalibrationCompatibility,
+  validateCpuCalibrationPolicy,
+  verifyCpuCalibrationReferenceLedger,
+} from "./e4-t32-node-calibration.mjs";
+
 export const E4T32_NODE_IDENTITY_SCHEMA_VERSION = 1;
 
 export const E4T32_NODE_IDENTITY_REQUIRED_TRACKED_FILES = Object.freeze([
@@ -15,12 +21,16 @@ export const E4T32_NODE_IDENTITY_REQUIRED_TRACKED_FILES = Object.freeze([
   "web/tests/e4-t32-node-ledger-store.test.mjs",
   "web/tests/e4-t32-node-ledger.test.mjs",
   "web/tests/e4-t32-node-oracle.test.mjs",
+  "web/tests/e4-t32-node-calibration.test.mjs",
   "web/tests/helpers/e4-t32-node-identity.mjs",
   "web/tests/helpers/e4-t32-node-failure.mjs",
   "web/tests/helpers/e4-t32-node-attempt-journal.mjs",
   "web/tests/helpers/e4-t32-node-ledger-store.mjs",
   "web/tests/helpers/e4-t32-node-ledger.mjs",
   "web/tests/helpers/e4-t32-node-oracle.mjs",
+  "web/tests/helpers/e4-t32-node-calibration.mjs",
+  "web/tests/helpers/e4-t32-node-calibration-fixture.mjs",
+  "evidence/e4-t32/node-walltime-aca4484/E4T32_NODE_LEDGER_V2.json",
   "tools/prepare-e4-t32-node-assets.py",
   "tools/serve-dev.sh",
 ]);
@@ -77,6 +87,19 @@ const git = (repoRoot, args) => {
     return execFileSync("git", args, {
       cwd: repoRoot,
       encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+  } catch (error) {
+    const detail = String(error.stderr || error.message || "git failed").trim();
+    fail("git-error", `${args.join(" ")} failed: ${detail}`);
+  }
+};
+
+const gitBytes = (repoRoot, args) => {
+  try {
+    return execFileSync("git", args, {
+      cwd: repoRoot,
+      encoding: null,
       stdio: ["ignore", "pipe", "pipe"],
     });
   } catch (error) {
@@ -248,6 +271,11 @@ const validatePlanAndPolicy = (planValue, policyValue) => {
     fail("invalid-metadata", "policy.urls must be an object keyed by slot id");
   }
   for (const slot of plan) requireStringField(policy.urls, slot.id, "policy.urls");
+  try {
+    policy.preflight = validateCpuCalibrationPolicy(policy.preflight);
+  } catch (error) {
+    fail("invalid-calibration-policy", error.message);
+  }
   return { plan, policy };
 };
 
@@ -340,6 +368,29 @@ export function createNodeBenchmarkIdentity({
     fail("invalid-metadata", "hostMetadata.cpuModels must contain at least one CPU model");
   }
   const validated = validatePlanAndPolicy(plan, policy);
+  const referencePath = resolveRequiredPath(
+    absoluteRepoRoot,
+    validated.policy.preflight.reference.repoPath,
+  );
+  try {
+    const worktreeReference = fs.readFileSync(referencePath.absolutePath);
+    const committedReference = gitBytes(absoluteRepoRoot, [
+      "show",
+      `${validated.policy.preflight.reference.evidenceCommit}:${referencePath.relativePath}`,
+    ]);
+    verifyCpuCalibrationReferenceLedger(worktreeReference, validated.policy.preflight);
+    verifyCpuCalibrationReferenceLedger(committedReference, validated.policy.preflight);
+    if (!worktreeReference.equals(committedReference)) {
+      fail("invalid-calibration-reference", "worktree capacity reference differs from its provenance commit");
+    }
+  } catch (error) {
+    fail("invalid-calibration-reference", error.message);
+  }
+  try {
+    assertCpuCalibrationCompatibility({ browser, playwright, runtime, host }, validated.policy.preflight);
+  } catch (error) {
+    fail("calibration-incompatible", error.message);
+  }
 
   const identity = {
     schemaVersion: E4T32_NODE_IDENTITY_SCHEMA_VERSION,

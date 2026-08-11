@@ -45,6 +45,12 @@ import {
   createNodeProcessOracleSpec,
   validateNodeProcessOracleEvidence,
 } from "./helpers/e4-t32-node-oracle.mjs";
+import {
+  E4T32_CPU_KERNEL_SOURCE,
+  E4T32_CPU_CALIBRATION_POLICY,
+  evaluateCpuCalibrationEvidence,
+  validatePersistedCpuCalibration,
+} from "./helpers/e4-t32-node-calibration.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -128,20 +134,13 @@ async function nodeBenchmarkIdentity(browser, plan) {
     expectedNodeManifestSha256,
     plan,
     policy: {
-      version: "e4-t32-node-ledger-v2",
+      version: "e4-t32-node-ledger-v3-absolute-capacity",
       maxAttemptsPerSlot: E4T32_NODE_MAX_ATTEMPTS_PER_SLOT,
       processTimeoutMs: 300_000,
       processesPerSession: 2,
       maxWorkerRegressionRatio: 1.10,
       preflight: {
-        warmupsPerRealm: 3,
-        warmupIterations: 5_000_000,
-        pairs: 8,
-        timedIterations: 50_000_000,
-        realmRatio: [1 / 1.05, 1.05],
-        pairRatio: [1 / 1.10, 1.10],
-        requiredPairsWithinBudget: 7,
-        minimumMedianMs: 100,
+        ...structuredClone(E4T32_CPU_CALIBRATION_POLICY),
       },
       urls: Object.fromEntries(plan.map((slot) => [slot.id, variantUrl(slot.variant)])),
       nodeAssetBase,
@@ -259,17 +258,10 @@ async function cpuRealmPreflight(browser, label, testInfo = null) {
   let result;
   try {
     await page.goto("about:blank");
-    result = await page.evaluate(async () => {
-      const kernel = (iterations) => {
-        let a = 305419896 | 0;
-        let b = -1698898192 | 0;
-        for (let i = 0; i < iterations; i += 1) {
-          a = (Math.imul(a ^ (i | 0), 1664525) + 1013904223) | 0;
-          b = (Math.imul(b + (i | 0), 1103515245) + 12345) | 0;
-        }
-        return (a ^ b) >>> 0;
-      };
-      const kernelSource = kernel.toString();
+    result = await page.evaluate(async ({ kernelSource, benchmark }) => {
+      // Compile the exact immutable reference kernel in both realms. The evaluator hashes the
+      // persisted source, so a source/config drift fails closed before any Node sample can run.
+      const kernel = (0, eval)(`(${kernelSource})`);
       const workerUrl = URL.createObjectURL(new Blob([
         `const kernel=${kernelSource};onmessage=({data})=>{const started=performance.now();` +
         `const checksum=kernel(data.iterations);postMessage({id:data.id,elapsedMs:performance.now()-started,checksum});};`,
@@ -292,10 +284,7 @@ async function cpuRealmPreflight(browser, label, testInfo = null) {
         const checksum = kernel(iterations);
         return { elapsedMs: performance.now() - started, checksum };
       };
-      const warmupsPerRealm = 3;
-      const warmupIterations = 5_000_000;
-      const pairs = 8;
-      const timedIterations = 50_000_000;
+      const { warmupsPerRealm, warmupIterations, pairs, timedIterations } = benchmark;
       const warmupChecksums = [];
       try {
         for (let i = 0; i < warmupsPerRealm; i += 1) warmupChecksums.push(runMain(warmupIterations).checksum);
@@ -335,6 +324,7 @@ async function cpuRealmPreflight(browser, label, testInfo = null) {
           warmupIterations,
           pairs,
           timedIterations,
+          warmupChecksums,
           mainMedianMs,
           workerMedianMs,
           realmMedianRatio: workerMedianMs / mainMedianMs,
@@ -348,38 +338,21 @@ async function cpuRealmPreflight(browser, label, testInfo = null) {
         worker.terminate();
         URL.revokeObjectURL(workerUrl);
       }
+    }, {
+      kernelSource: E4T32_CPU_KERNEL_SOURCE,
+      benchmark: E4T32_CPU_CALIBRATION_POLICY.benchmark,
     });
   } finally {
     await page.close();
   }
-  const lowerRealmRatio = 1 / 1.05;
-  const upperRealmRatio = 1.05;
-  const lowerPairRatio = 1 / 1.10;
-  const upperPairRatio = 1.10;
-  const pairsWithinBudget = result.samples.filter(
-    (sample) => sample.ratio >= lowerPairRatio && sample.ratio <= upperPairRatio,
-  ).length;
-  const pass = result.checksumsMatch &&
-    result.mainMedianMs >= 100 && result.workerMedianMs >= 100 &&
-    result.realmMedianRatio >= lowerRealmRatio && result.realmMedianRatio <= upperRealmRatio &&
-    result.pairedRatioMedian >= lowerRealmRatio && result.pairedRatioMedian <= upperRealmRatio &&
-    pairsWithinBudget >= 7;
-  const evidence = {
+  const calibration = evaluateCpuCalibrationEvidence({
     kind: "e4-t32-window-worker-cpu-preflight",
     label,
     timestamp: new Date().toISOString(),
-    rule: {
-      lowerRealmRatio,
-      upperRealmRatio,
-      lowerPairRatio,
-      upperPairRatio,
-      requiredPairsWithinBudget: 7,
-      pairsWithinBudget,
-      pass,
-    },
     hostCpu: hostCpuDelta(cpuBefore, hostCpuSnapshot()),
     result,
-  };
+  }, E4T32_CPU_CALIBRATION_POLICY);
+  const { evidence } = calibration;
   const evidenceName = `E4T32_CPU_PREFLIGHT_${label.replace(/[^a-z0-9_-]+/gi, "_")}.json`;
   const evidencePath = await writeEvidence(evidenceName, evidence);
   if (testInfo) {
@@ -389,16 +362,20 @@ async function cpuRealmPreflight(browser, label, testInfo = null) {
     });
   }
   console.log("E4T32_CPU_PREFLIGHT=" + JSON.stringify(evidence));
-  if (!pass) {
+  if (!calibration.clean) {
     const error = new Error(
-      `E4T32_ENV_CONTAMINATED ${label}: realm=${result.realmMedianRatio.toFixed(4)} ` +
-      `paired=${result.pairedRatioMedian.toFixed(4)} pairs=${pairsWithinBudget}/${result.pairs}`,
+      `E4T32_ENV_CONTAMINATED ${label}: main=${result.mainMedianMs.toFixed(3)}ms ` +
+      `worker=${result.workerMedianMs.toFixed(3)}ms; ` +
+      `absolute=${evidence.rule.absolute.main.pass}/${evidence.rule.absolute.worker.pass}; ` +
+      `realm=${result.realmMedianRatio.toFixed(4)} paired=${result.pairedRatioMedian.toFixed(4)} ` +
+      `pairs=${evidence.rule.relative.pairsWithinBudget}/${result.pairs}`,
     );
     error.code = "E4T32_ENV_CONTAMINATED";
     error.evidence = evidence;
+    error.calibration = calibration;
     throw error;
   }
-  return evidence;
+  return calibration;
 }
 
 const jitDelta = (before, after) => ({
@@ -1043,7 +1020,7 @@ test.describe("E4-T32 real Node foreground wall time", () => {
           throw postflightError;
         }
         if (sessionError) throw sessionError;
-        session.cpuPreflight = { before, after };
+        session.cpuPreflight = { before: before.evidence, after: after.evidence };
         results[variant].sessions.push(session);
         logNodeLeg(variant, session);
       }
@@ -1152,15 +1129,10 @@ test.describe("E4-T32 real Node foreground wall time", () => {
       let preCalibration = null;
       let harnessError = null;
       try {
-        const evidence = await cpuRealmPreflight(browser, `${label}_before`, testInfo);
-        preCalibration = { clean: true, evidence };
+        preCalibration = await cpuRealmPreflight(browser, `${label}_before`, testInfo);
       } catch (error) {
         if (error.code === "E4T32_ENV_CONTAMINATED") {
-          preCalibration = {
-            clean: false,
-            evidence: error.evidence,
-            error: errorEvidence(error),
-          };
+          preCalibration = error.calibration;
         } else {
           harnessError = errorEvidence(error);
         }
@@ -1173,7 +1145,12 @@ test.describe("E4-T32 real Node foreground wall time", () => {
       let postCalibration = null;
       let sessionArtifact = null;
       let postArtifact = null;
-      if (preCalibration?.clean && harnessError === null) {
+      const verifiedPreCalibration = preCalibration == null
+        ? null
+        : validatePersistedCpuCalibration(preCalibration, identity.policy.preflight, {
+          label: `${label} preCalibration`,
+        });
+      if (verifiedPreCalibration?.clean && harnessError === null) {
         try {
           session = await runNodeVariantSession(browser, {
             variant: slot.variant,
@@ -1200,15 +1177,10 @@ test.describe("E4-T32 real Node foreground wall time", () => {
           sessionArtifact.filePath,
         );
         try {
-          const evidence = await cpuRealmPreflight(browser, `${label}_after`, testInfo);
-          postCalibration = { clean: true, evidence };
+          postCalibration = await cpuRealmPreflight(browser, `${label}_after`, testInfo);
         } catch (error) {
           if (error.code === "E4T32_ENV_CONTAMINATED") {
-            postCalibration = {
-              clean: false,
-              evidence: error.evidence,
-              error: errorEvidence(error),
-            };
+            postCalibration = error.calibration;
           } else {
             harnessError ??= errorEvidence(error);
           }

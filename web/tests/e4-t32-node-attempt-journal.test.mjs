@@ -19,24 +19,24 @@ import {
   nodeAttemptPhaseArtifactName,
 } from "./helpers/e4-t32-node-attempt-journal.mjs";
 import {
+  atomicReplaceJson,
   readJson,
   writeJsonExclusiveAtomic,
 } from "./helpers/e4-t32-node-ledger-store.mjs";
+import { E4T32_CPU_CALIBRATION_POLICY } from "./helpers/e4-t32-node-calibration.mjs";
+import { cpuCalibrationFixture } from "./helpers/e4-t32-node-calibration-fixture.mjs";
 
 const identity = {
   identitySha256: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
   candidate: { head: "0123456789abcdef", clean: true },
-  policy: { version: "e4-t32-v2" },
+  policy: {
+    version: "e4-t32-v3",
+    preflight: structuredClone(E4T32_CPU_CALIBRATION_POLICY),
+  },
 };
 
-const cleanCalibration = (label) => ({
-  clean: true,
-  evidence: { label, realmRatio: 1.001, pairsHeld: 8 },
-});
-const dirtyCalibration = (label) => ({
-  clean: false,
-  evidence: { label, realmRatio: 1.3, pairsHeld: 6 },
-});
+const cleanCalibration = (label) => cpuCalibrationFixture({ clean: true, label });
+const dirtyCalibration = (label) => cpuCalibrationFixture({ clean: false, label });
 
 function sessionFor(open) {
   const sequencePrefix = nodeBenchmarkSequencePrefix(open);
@@ -186,6 +186,23 @@ test("crash after a clean post artifact recovers the first clean attempt as acce
         oracleTranscript: run.oracleTranscript,
       })),
       "crash recovery must retain every bounded raw Node oracle field",
+    );
+  });
+});
+
+test("recovery recomputes absolute capacity and rejects forged clean phase evidence", async () => {
+  await withJournal(async ({ journal }) => {
+    const begun = await beginPersisted(journal, "forged-recovery-capacity");
+    await writeCompletePhases(journal, begun.event);
+    const preName = nodeAttemptPhaseArtifactName(begun.event, "pre");
+    const pre = await journal.readArtifact(preName);
+    const forged = dirtyCalibration("slow-but-relative");
+    forged.clean = true;
+    pre.value.preCalibration = forged;
+    await atomicReplaceJson(pre.filePath, pre.value);
+    await assert.rejects(
+      journal.recoverOpenAttempt(begun.ledger, begun.event),
+      (error) => error.code === "EINVALIDCALIBRATION",
     );
   });
 });

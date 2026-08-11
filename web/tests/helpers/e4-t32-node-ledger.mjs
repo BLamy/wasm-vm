@@ -1,4 +1,8 @@
 import { validateNodeProcessOracleEvidence } from "./e4-t32-node-oracle.mjs";
+import {
+  validateCpuCalibrationPolicy,
+  validatePersistedCpuCalibration,
+} from "./e4-t32-node-calibration.mjs";
 
 const VERSION = 2;
 const MAX_ATTEMPTS = 3;
@@ -99,15 +103,23 @@ export function nodeBenchmarkAttemptArtifactName(attemptOrdinal, attemptId, phas
 
 const eventId = (attemptId, phase) => `attempt-${phase}:${attemptToken(attemptId)}`;
 
-function validateCalibration(calibration, label, { optional = false } = {}) {
-  if (calibration === null && optional) return null;
-  if (!calibration || typeof calibration !== "object" || Array.isArray(calibration)) {
-    fail("invalid-calibration", `${label} must be a JSON object`);
+function calibrationPolicy(identity, label = "identity") {
+  try {
+    return validateCpuCalibrationPolicy(identity?.policy?.preflight);
+  } catch (error) {
+    fail("invalid-calibration-policy", `${label} CPU calibration policy: ${error.message}`);
   }
-  if (typeof calibration.clean !== "boolean") {
-    fail("invalid-calibration", `${label}.clean must be boolean`);
+}
+
+function validateCalibration(calibration, label, identity, { optional = false } = {}) {
+  try {
+    return validatePersistedCpuCalibration(calibration, calibrationPolicy(identity), {
+      optional,
+      label,
+    });
+  } catch (error) {
+    fail("invalid-calibration", `${label}: ${error.message}`);
   }
-  return cloneJson(calibration, label);
 }
 
 function acceptedSessionProblem(session, slot, attempt) {
@@ -170,8 +182,18 @@ function classifyFinishedEvent(event, ledgerIdentity, slot) {
   if (sessionSlotMismatch(event.session, slot)) {
     return { outcome: "refuted", reason: "session-slot-mismatch" };
   }
-  const preClean = event.preCalibration?.clean === true;
-  const postClean = event.postCalibration?.clean === true;
+  const preClean = validateCalibration(
+    event.preCalibration,
+    `attempt ${event.attemptId} preCalibration`,
+    ledgerIdentity,
+    { optional: true },
+  )?.clean === true;
+  const postClean = validateCalibration(
+    event.postCalibration,
+    `attempt ${event.attemptId} postCalibration`,
+    ledgerIdentity,
+    { optional: true },
+  )?.clean === true;
   if (!preClean || !postClean) {
     if (event.sessionError !== null) {
       return {
@@ -272,8 +294,18 @@ function replayLedger(ledger) {
       fail("invalid-artifact-name", `finished attempt ${event.attemptId} artifact name is not canonical`);
     }
     cloneJson(event.identity, `attempt ${event.attemptId} identity`);
-    validateCalibration(event.preCalibration, `attempt ${event.attemptId} preCalibration`, { optional: true });
-    validateCalibration(event.postCalibration, `attempt ${event.attemptId} postCalibration`, { optional: true });
+    validateCalibration(
+      event.preCalibration,
+      `attempt ${event.attemptId} preCalibration`,
+      ledger.identity,
+      { optional: true },
+    );
+    validateCalibration(
+      event.postCalibration,
+      `attempt ${event.attemptId} postCalibration`,
+      ledger.identity,
+      { optional: true },
+    );
     if (event.session !== null) cloneJson(event.session, `attempt ${event.attemptId} session`);
     if (event.sessionError !== null) cloneJson(event.sessionError, `attempt ${event.attemptId} sessionError`);
     if (event.harnessError !== null) cloneJson(event.harnessError, `attempt ${event.attemptId} harnessError`);
@@ -334,6 +366,7 @@ export function validateNodeBenchmarkLedger(value) {
     fail("missing-identity", "ledger identity is required");
   }
   cloneJson(ledger.identity, "ledger identity");
+  calibrationPolicy(ledger.identity, "ledger identity");
   if (!Array.isArray(ledger.events)) fail("invalid-ledger", "ledger.events must be an array");
   replayLedger(ledger);
   return ledger;
@@ -418,8 +451,18 @@ export function finishNodeBenchmarkAttempt(value, input) {
   if (input.attemptId !== state.open.attemptId) {
     fail("finish-mismatch", `open attempt is ${state.open.attemptId}, not ${input.attemptId}`);
   }
-  const preCalibration = validateCalibration(input.preCalibration ?? null, "preCalibration", { optional: true });
-  const postCalibration = validateCalibration(input.postCalibration ?? null, "postCalibration", { optional: true });
+  const preCalibration = validateCalibration(
+    input.preCalibration ?? null,
+    "preCalibration",
+    ledger.identity,
+    { optional: true },
+  );
+  const postCalibration = validateCalibration(
+    input.postCalibration ?? null,
+    "postCalibration",
+    ledger.identity,
+    { optional: true },
+  );
   const session = input.session == null ? null : cloneJson(input.session, "session");
   const sessionError = input.sessionError == null ? null : cloneJson(input.sessionError, "sessionError");
   const harnessError = input.harnessError == null ? null : cloneJson(input.harnessError, "harnessError");

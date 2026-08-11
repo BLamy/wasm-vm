@@ -16,6 +16,10 @@ import {
   readJson,
   writeJsonExclusiveAtomic,
 } from "./e4-t32-node-ledger-store.mjs";
+import {
+  validateCpuCalibrationPolicy,
+  validatePersistedCpuCalibration,
+} from "./e4-t32-node-calibration.mjs";
 
 const PHASES = new Set(["pre", "session", "post"]);
 
@@ -118,6 +122,12 @@ export function createNodeAttemptJournal({ evidenceDir, ledgerPath, identity, no
     fail("EINVALIDCONFIG", "ledgerPath is required");
   }
   const frozenIdentity = cloneJson(identity, "journal identity");
+  let frozenCalibrationPolicy;
+  try {
+    frozenCalibrationPolicy = validateCpuCalibrationPolicy(frozenIdentity?.policy?.preflight);
+  } catch (error) {
+    fail("EINVALIDCONFIG", `identity CPU calibration policy: ${error.message}`);
+  }
   const identityPrefix = frozenIdentity?.identitySha256?.slice(0, 16);
   if (typeof identityPrefix !== "string" || !/^[0-9a-f]{16}$/i.test(identityPrefix)) {
     fail("EINVALIDCONFIG", "identity.identitySha256 must begin with 16 hexadecimal characters");
@@ -136,6 +146,17 @@ export function createNodeAttemptJournal({ evidenceDir, ledgerPath, identity, no
   const assertIdentity = (candidate, label) => {
     if (!sameJson(candidate, frozenIdentity)) {
       fail("EIDENTITY", `${label} does not match the journal identity`);
+    }
+  };
+
+  const validateCalibration = (value, label, { optional = false } = {}) => {
+    try {
+      return validatePersistedCpuCalibration(value, frozenCalibrationPolicy, {
+        optional,
+        label,
+      });
+    } catch (error) {
+      fail("EINVALIDCALIBRATION", `${label}: ${error.message}`);
     }
   };
 
@@ -203,10 +224,8 @@ export function createNodeAttemptJournal({ evidenceDir, ledgerPath, identity, no
     if (preCalibration == null && harnessError == null) {
       fail("EINVALIDPRE", "pre artifact needs preCalibration or harnessError");
     }
-    if (preCalibration != null && typeof preCalibration?.clean !== "boolean") {
-      fail("EINVALIDPRE", "preCalibration.clean must be boolean");
-    }
-    return publishPhase(startedEvent, "pre", { preCalibration, harnessError });
+    const canonical = validateCalibration(preCalibration, "preCalibration", { optional: true });
+    return publishPhase(startedEvent, "pre", { preCalibration: canonical, harnessError });
   };
 
   const writeSession = async (startedEvent, { session = null, sessionError = null } = {}) => {
@@ -218,10 +237,8 @@ export function createNodeAttemptJournal({ evidenceDir, ledgerPath, identity, no
     startedEvent,
     { postCalibration = null, harnessError = null, identityAfterVerified = false } = {},
   ) => {
-    if (postCalibration != null && typeof postCalibration?.clean !== "boolean") {
-      fail("EINVALIDPOST", "postCalibration.clean must be boolean");
-    }
-    const body = { postCalibration, harnessError, identityAfterVerified };
+    const canonical = validateCalibration(postCalibration, "postCalibration", { optional: true });
+    const body = { postCalibration: canonical, harnessError, identityAfterVerified };
     assertTerminalPost(body, "post artifact");
     return publishPhase(startedEvent, "post", body);
   };
@@ -406,10 +423,12 @@ export function createNodeAttemptJournal({ evidenceDir, ledgerPath, identity, no
     if (preCalibration == null && preHarnessError == null) {
       fail("EINVALIDPRE", `pre artifact has no verdict: ${pre.relativeName}`);
     }
-    if (preCalibration != null && typeof preCalibration?.clean !== "boolean") {
-      fail("EINVALIDPRE", `pre artifact has invalid calibration: ${pre.relativeName}`);
-    }
-    if (preHarnessError != null || preCalibration.clean === false) {
+    const canonicalPre = validateCalibration(
+      preCalibration,
+      `pre artifact ${pre.relativeName}`,
+      { optional: true },
+    );
+    if (preHarnessError != null || canonicalPre?.clean === false) {
       if (sessionArtifact || post) {
         fail("EPHASEORDER", "session/post artifact follows a terminal pre artifact");
       }
@@ -418,7 +437,7 @@ export function createNodeAttemptJournal({ evidenceDir, ledgerPath, identity, no
         phaseArtifacts: { pre, session: null, post: null },
         ...await finishAndPersist(ledger, {
           attemptId: open.attemptId,
-          preCalibration,
+          preCalibration: canonicalPre,
           postCalibration: null,
           session: null,
           sessionError: null,
@@ -445,10 +464,11 @@ export function createNodeAttemptJournal({ evidenceDir, ledgerPath, identity, no
 
     assertSessionResult(sessionArtifact.value, `session artifact ${sessionArtifact.relativeName}`);
     assertTerminalPost(post.value, `post artifact ${post.relativeName}`);
-    const postCalibration = post.value.postCalibration ?? null;
-    if (postCalibration != null && typeof postCalibration?.clean !== "boolean") {
-      fail("EINVALIDPOST", `post artifact has invalid calibration: ${post.relativeName}`);
-    }
+    const postCalibration = validateCalibration(
+      post.value.postCalibration ?? null,
+      `post artifact ${post.relativeName}`,
+      { optional: true },
+    );
     const session = sessionArtifact.value.session == null
       ? null
       : cloneJson(sessionArtifact.value.session, "recovered session");
@@ -457,7 +477,7 @@ export function createNodeAttemptJournal({ evidenceDir, ledgerPath, identity, no
       : cloneJson(sessionArtifact.value.sessionError, "recovered session error");
     if (session) {
       session.cpuPreflight = {
-        before: preCalibration.evidence ?? null,
+        before: canonicalPre.evidence ?? null,
         after: postCalibration?.evidence ?? null,
       };
     }
@@ -466,7 +486,7 @@ export function createNodeAttemptJournal({ evidenceDir, ledgerPath, identity, no
       phaseArtifacts: { pre, session: sessionArtifact, post },
       ...await finishAndPersist(ledger, {
         attemptId: open.attemptId,
-        preCalibration,
+        preCalibration: canonicalPre,
         postCalibration,
         session,
         sessionError,
