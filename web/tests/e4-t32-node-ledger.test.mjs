@@ -22,6 +22,10 @@ import {
 } from "./helpers/e4-t32-node-ledger.mjs";
 import { E4T32_CPU_CALIBRATION_POLICY } from "./helpers/e4-t32-node-calibration.mjs";
 import { cpuCalibrationFixture } from "./helpers/e4-t32-node-calibration-fixture.mjs";
+import {
+  createNodeProcessOracleEvidence,
+  createNodeProcessOracleSpec,
+} from "./helpers/e4-t32-node-oracle.mjs";
 
 const identity = {
   commit: "0123456789abcdef",
@@ -40,6 +44,29 @@ const identity = {
 
 const calibration = (clean, label) => cpuCalibrationFixture({ clean, label });
 
+const oracleFor = (nodeSequence, nodePid, exit = 0) => {
+  const spec = createNodeProcessOracleSpec(nodeSequence);
+  const raw = Buffer.from(
+    `__E4T32_NODE_BEGIN_${spec.token}_${nodePid}\n3\n` +
+    `__E4T32_NODE_DONE_${spec.token}_${nodePid}_${exit}\n`,
+    "ascii",
+  );
+  return createNodeProcessOracleEvidence(raw, spec);
+};
+
+const oracleProjection = (run) => ({
+  oracleSchema: run.oracleSchema,
+  nodeSequence: run.nodeSequence,
+  nodeToken: run.nodeToken,
+  nodeCommand: run.nodeCommand,
+  nodePid: run.nodePid,
+  outputLine: run.outputLine,
+  beginMarker: run.beginMarker,
+  completionMarker: run.completionMarker,
+  terminalFrame: run.terminalFrame,
+  exit: run.exit,
+});
+
 function sessionFor(slot, firstValues = [100, 200]) {
   const sequencePrefix = nodeBenchmarkSequencePrefix(slot);
   return {
@@ -49,18 +76,11 @@ function sessionFor(slot, firstValues = [100, 200]) {
     runs: firstValues.map((firstMs, index) => {
       const nodePid = 800 + index;
       const nodeSequence = `${sequencePrefix}_${index}`;
-      const completionMarker = `__E4T32_NODE_DONE_${nodeSequence}_${nodePid}_0`;
       return {
         firstMs,
         completeMs: firstMs + 10 + index,
         stretchMs: 10 + index,
-        exit: 0,
-        nodeSequence,
-        nodeCommand: "node -e 'console.log(3)'",
-        nodePid,
-        outputLine: "3",
-        completionMarker,
-        oracleTranscript: `3\n${completionMarker}\n`,
+        ...oracleFor(nodeSequence, nodePid),
       };
     }),
     sequencePrefix,
@@ -454,22 +474,8 @@ test("serialization and cross-invocation merge accept only an exact append-only 
   assert.equal(nodeBenchmarkLedgerStatus(merged), "running");
   assert.equal(nextNodeBenchmarkSlot(merged).id, "p0:worker-interp");
   assert.deepEqual(
-    deriveNodeBenchmarkResults(merged)["main-interp"].runs.map((run) => ({
-      nodeSequence: run.nodeSequence,
-      nodeCommand: run.nodeCommand,
-      nodePid: run.nodePid,
-      outputLine: run.outputLine,
-      completionMarker: run.completionMarker,
-      oracleTranscript: run.oracleTranscript,
-    })),
-    expectedSession.runs.map((run) => ({
-      nodeSequence: run.nodeSequence,
-      nodeCommand: run.nodeCommand,
-      nodePid: run.nodePid,
-      outputLine: run.outputLine,
-      completionMarker: run.completionMarker,
-      oracleTranscript: run.oracleTranscript,
-    })),
+    deriveNodeBenchmarkResults(merged)["main-interp"].runs.map(oracleProjection),
+    expectedSession.runs.map(oracleProjection),
     "accepted ledger serialization must retain the bounded raw Node oracle",
   );
   assert.equal(serializeNodeBenchmarkLedger(begun), persistedBefore, "old revision stays immutable");
@@ -501,16 +507,17 @@ test("an accepted ledger fails closed when any required Node oracle field is mis
     (run) => { run.nodePid = 0; },
     (run) => { run.outputLine = "4"; },
     (run) => { run.completionMarker += "_other"; },
-    (run) => { run.oracleTranscript += "unbounded terminal noise\n"; },
     (run) => {
-      run.nodeSequence = "syntactically_valid_but_wrong";
-      run.completionMarker = `__E4T32_NODE_DONE_${run.nodeSequence}_${run.nodePid}_${run.exit}`;
-      run.oracleTranscript = `3\n${run.completionMarker}\n`;
+      run.terminalFrame.base64 = Buffer.concat([
+        Buffer.from(run.terminalFrame.base64, "base64"),
+        Buffer.from("unbounded terminal noise\n", "ascii"),
+      ]).toString("base64");
     },
     (run) => {
-      run.exit = 1;
-      run.completionMarker = `__E4T32_NODE_DONE_${run.nodeSequence}_${run.nodePid}_${run.exit}`;
-      run.oracleTranscript = `3\n${run.completionMarker}\n`;
+      Object.assign(run, oracleFor("syntactically_valid_but_wrong", run.nodePid, run.exit));
+    },
+    (run) => {
+      Object.assign(run, oracleFor(run.nodeSequence, run.nodePid, 1));
     },
   ];
   for (const [index, mutate] of mutations.entries()) {
@@ -535,11 +542,10 @@ test("an accepted ledger fails closed when any required Node oracle field is mis
   });
   const duplicatePidSession = sessionFor(activeNodeBenchmarkAttempt(duplicatePidAttempt.ledger));
   const duplicatePid = duplicatePidSession.runs[0].nodePid;
-  duplicatePidSession.runs[1].nodePid = duplicatePid;
-  duplicatePidSession.runs[1].completionMarker =
-    `__E4T32_NODE_DONE_${duplicatePidSession.runs[1].nodeSequence}_${duplicatePid}_0`;
-  duplicatePidSession.runs[1].oracleTranscript =
-    `3\n${duplicatePidSession.runs[1].completionMarker}\n`;
+  Object.assign(
+    duplicatePidSession.runs[1],
+    oracleFor(duplicatePidSession.runs[1].nodeSequence, duplicatePid),
+  );
   const duplicateFinish = finishNodeBenchmarkAttempt(duplicatePidAttempt.ledger, {
     attemptId: "duplicate-node-pid",
     identity,

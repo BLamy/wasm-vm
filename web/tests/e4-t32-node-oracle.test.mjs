@@ -1,131 +1,312 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
   E4T32_NODE_COMMAND,
-  E4T32_NODE_ORACLE_TRANSCRIPT_MAX_CHARS,
+  E4T32_NODE_ORACLE_FRAME_MAX_BYTES,
+  E4T32_NODE_ORACLE_SCHEMA,
+  createNodeOracleFrameCollector,
+  createNodeProcessOracleEvidence,
   createNodeProcessOracleSpec,
   parseNodeProcessOracle,
   requireNodeProcessOracle,
   validateNodeProcessOracleEvidence,
 } from "./helpers/e4-t32-node-oracle.mjs";
 
-const marker = (sequence, pid, exit = 0) => `__E4T32_NODE_DONE_${sequence}_${pid}_${exit}`;
-const capture = (spec, pid, exit = 0) => (
-  `${spec.shellCommand}\n3\n${marker(spec.sequence, pid, exit)}\n`
+const beginMarker = (spec, pid) => `__E4T32_NODE_BEGIN_${spec.token}_${pid}`;
+const completionMarker = (spec, pid, exit = 0) => (
+  `__E4T32_NODE_DONE_${spec.token}_${pid}_${exit}`
+);
+const frame = (spec, pid, exit = 0, newline = "\n") => (
+  `${beginMarker(spec, pid)}${newline}3${newline}${completionMarker(spec, pid, exit)}${newline}`
+);
+const evidence = (spec, pid = 731, exit = 0, newline = "\n") => (
+  createNodeProcessOracleEvidence(Buffer.from(frame(spec, pid, exit, newline), "ascii"), spec)
 );
 
-test("the submitted source preserves exact Node argv/code without embedding its concrete marker", () => {
+const clone = (value) => structuredClone(value);
+
+const setRawFrame = (value, bytes) => {
+  const mutated = clone(value);
+  mutated.terminalFrame.base64 = Buffer.from(bytes).toString("base64");
+  mutated.terminalFrame.byteLength = bytes.length;
+  mutated.terminalFrame.sha256 = createHash("sha256").update(bytes).digest("hex");
+  return mutated;
+};
+
+test("the submitted source preserves exact Node argv/code and concrete markers remain runtime-only", () => {
   const spec = createNodeProcessOracleSpec("p0_worker_0");
   assert.equal(spec.nodeCommand, "node -e 'console.log(3)'");
   assert.equal(spec.nodeCommand, E4T32_NODE_COMMAND);
+  assert.match(spec.token, /^[0-9a-f]{24}$/);
   assert.ok(spec.shellCommand.startsWith(`${E4T32_NODE_COMMAND} & node_pid=$!;`));
+  assert.ok(spec.shellCommand.includes("printf '\\n__E4T32_NODE_BEGIN_%s_%s\\n'"));
   assert.ok(spec.shellCommand.includes("wait \"$node_pid\""));
   assert.ok(spec.shellCommand.includes("__E4T32_NODE_DONE_%s_%s_%s"));
   assert.equal(/[\r\n]/.test(spec.shellCommand), false);
-  assert.equal(spec.shellCommand.includes(marker(spec.sequence, 731, 0)), false);
+  assert.equal(spec.shellCommand.includes(beginMarker(spec, 731)), false);
+  assert.equal(spec.shellCommand.includes(completionMarker(spec, 731)), false);
   assert.equal(parseNodeProcessOracle(`${spec.shellCommand}\n`, spec), null);
 });
 
-test("a runtime standalone output and concrete PID marker produce a bounded interrogable oracle", () => {
+test("a raw LF frame persists canonical bytes, hash, and exact half-open offsets", () => {
   const spec = createNodeProcessOracleSpec("p0_worker_0");
-  const oracle = requireNodeProcessOracle(capture(spec, 731), spec);
-  assert.deepEqual(oracle, {
-    nodeSequence: spec.sequence,
-    nodeCommand: E4T32_NODE_COMMAND,
-    nodePid: 731,
-    outputLine: "3",
-    completionMarker: marker(spec.sequence, 731, 0),
-    oracleTranscript: `3\n${marker(spec.sequence, 731, 0)}\n`,
-    exit: 0,
-  });
-  assert.ok(oracle.oracleTranscript.length <= E4T32_NODE_ORACLE_TRANSCRIPT_MAX_CHARS);
-  assert.equal(oracle.oracleTranscript.includes(spec.shellCommand), false);
+  const oracle = evidence(spec);
+  assert.equal(oracle.oracleSchema, E4T32_NODE_ORACLE_SCHEMA);
+  assert.equal(oracle.nodeSequence, spec.sequence);
+  assert.equal(oracle.nodeToken, spec.token);
+  assert.equal(oracle.nodeCommand, E4T32_NODE_COMMAND);
+  assert.equal(oracle.nodePid, 731);
+  assert.equal(oracle.outputLine, "3");
+  assert.equal(oracle.beginMarker, beginMarker(spec, 731));
+  assert.equal(oracle.completionMarker, completionMarker(spec, 731));
+  assert.equal(oracle.exit, 0);
+  assert.equal(Object.hasOwn(oracle, "oracleTranscript"), false);
+  assert.equal(oracle.terminalFrame.encoding, "base64");
+  assert.equal(oracle.terminalFrame.newline, "lf");
+  assert.equal(Buffer.from(oracle.terminalFrame.base64, "base64").toString("ascii"), frame(spec, 731));
+  assert.equal(oracle.terminalFrame.byteLength, Buffer.byteLength(frame(spec, 731)));
+  assert.equal(
+    oracle.terminalFrame.sha256,
+    createHash("sha256").update(frame(spec, 731), "ascii").digest("hex"),
+  );
+  const ranges = Object.values(oracle.terminalFrame.offsets);
+  assert.equal(ranges[0].start, 0);
+  for (let index = 1; index < ranges.length; index += 1) {
+    assert.equal(ranges[index].start, ranges[index - 1].end);
+  }
+  assert.equal(ranges.at(-1).end, oracle.terminalFrame.byteLength);
   assert.equal(validateNodeProcessOracleEvidence(oracle), oracle);
 });
 
-test("two fresh runs retain distinct positive Node PIDs", () => {
-  const firstSpec = createNodeProcessOracleSpec("p0_worker_0");
-  const secondSpec = createNodeProcessOracleSpec("p0_worker_1");
-  const runs = [
-    requireNodeProcessOracle(capture(firstSpec, 731), firstSpec),
-    requireNodeProcessOracle(capture(secondSpec, 744), secondSpec),
-  ];
-  assert.equal(runs.every((run) => Number.isSafeInteger(run.nodePid) && run.nodePid > 0), true);
-  assert.equal(new Set(runs.map((run) => run.nodePid)).size, 2);
+test("a consistently CRLF-delimited byte frame is accepted without normalization", () => {
+  const spec = createNodeProcessOracleSpec("p0_worker_crlf");
+  const oracle = evidence(spec, 744, 0, "\r\n");
+  assert.equal(oracle.terminalFrame.newline, "crlf");
+  assert.equal(
+    Buffer.from(oracle.terminalFrame.base64, "base64").toString("latin1"),
+    frame(spec, 744, 0, "\r\n"),
+  );
+  assert.equal(oracle.terminalFrame.offsets.beginLineEnding.end -
+    oracle.terminalFrame.offsets.beginLineEnding.start, 2);
+  assert.equal(validateNodeProcessOracleEvidence(oracle), oracle);
 });
 
-test("the generated shell line records the distinct PIDs of two real exact Node invocations", () => {
+test("the browser byte collector survives every split and scopes out pre-BEGIN and prompt bytes", () => {
+  const spec = createNodeProcessOracleSpec("split_worker_0");
+  const browserFactory = new Function(`return (${createNodeOracleFrameCollector.toString()})`)();
+  const exact = Buffer.from(frame(spec, 812), "ascii");
+  const capture = Buffer.concat([
+    Buffer.from(`${spec.shellCommand}\r\n[1] 812\r\nstale 3\r\n`, "ascii"),
+    exact,
+    Buffer.from("wasm-vm:~# ", "ascii"),
+  ]);
+  for (let split = 0; split <= capture.length; split += 1) {
+    const collector = browserFactory(spec);
+    const first = collector.push(capture.subarray(0, split));
+    assert.notEqual(first.status, "invalid", `split ${split} first callback`);
+    const last = first.status === "complete" ? first : collector.push(capture.subarray(split));
+    assert.equal(last.status, "complete", `split ${split}`);
+    assert.deepEqual(Buffer.from(last.frame), exact, `split ${split} exact bytes`);
+    assert.equal(last.nodePid, 812);
+    assert.equal(last.exit, 0);
+  }
+
+  const bytewise = browserFactory(spec);
+  let completed = null;
+  let outputTransitions = 0;
+  for (let offset = 0; offset < capture.length; offset += 1) {
+    const event = bytewise.push(Uint8Array.of(capture[offset]));
+    assert.notEqual(event.status, "invalid", `bytewise callback at offset ${offset}`);
+    if (event.outputCompletedNow) outputTransitions += 1;
+    if (event.status === "complete") {
+      completed = event;
+      break;
+    }
+  }
+  assert.equal(outputTransitions, 1, "first-output timing has one exact framed transition");
+  assert.deepEqual(Buffer.from(completed.frame), exact);
+});
+
+test("two real shells record distinct direct-exec Node PIDs with the unchanged command", () => {
   const specs = [
     createNodeProcessOracleSpec("host_exact_0"),
     createNodeProcessOracleSpec("host_exact_1"),
   ];
   const runs = specs.map((spec) => requireNodeProcessOracle(
-    execFileSync("/bin/sh", ["-c", spec.shellCommand], { encoding: "utf8" }),
+    execFileSync("/bin/sh", ["-c", spec.shellCommand]),
     spec,
   ));
   assert.deepEqual(runs.map((run) => run.outputLine), ["3", "3"]);
   assert.equal(runs.every((run) => run.nodePid > 0 && run.exit === 0), true);
   assert.equal(new Set(runs.map((run) => run.nodePid)).size, 2);
+  assert.equal(runs.every((run) => validateNodeProcessOracleEvidence(run) === run), true);
 });
 
-test("missing or mismatched output, sequence, PID, and marker fail closed", () => {
-  const spec = createNodeProcessOracleSpec("p0_worker_0");
-  const cases = [
-    `${spec.shellCommand}\n${marker(spec.sequence, 731, 0)}\n`,
-    `${spec.shellCommand}\n3\n`,
-    `${spec.shellCommand}\n3\n${marker("p0_worker_1", 731, 0)}\n`,
-    `${spec.shellCommand}\n3\n${marker(spec.sequence, 0, 0)}\n`,
-    `${spec.shellCommand}\n3\n__E4T32_NODE_DONE_%s_%s_%s\n`,
+test("stale output before BEGIN cannot satisfy the frame and valid framed output still can", () => {
+  const spec = createNodeProcessOracleSpec("stale_before_begin");
+  const valid = requireNodeProcessOracle(
+    Buffer.from(`3\nnoise\n${frame(spec, 900)}`, "ascii"),
+    spec,
+  );
+  assert.equal(valid.nodePid, 900);
+
+  const raced = createNodeOracleFrameCollector(spec);
+  const event = raced.push(Buffer.from(
+    `3\n${beginMarker(spec, 900)}\n${completionMarker(spec, 900)}\n`,
+    "ascii",
+  ));
+  assert.deepEqual(
+    { status: event.status, reason: event.reason },
+    { status: "invalid", reason: "done-without-exact-frame" },
+    "child output racing before BEGIN fails closed",
+  );
+});
+
+test("rolling pre-BEGIN capture never turns a glued marker into a line-aligned frame", () => {
+  const spec = createNodeProcessOracleSpec("glued_boundary");
+  const exact = Buffer.from(frame(spec, 901), "ascii");
+  const glued = Buffer.concat([Buffer.from("x", "ascii"), exact]);
+  const split = spec.beginPrefix.length + 33;
+  const collector = createNodeOracleFrameCollector(spec);
+  const first = collector.push(glued.subarray(0, split));
+  const second = collector.push(glued.subarray(split));
+  assert.equal(first.status, "seeking");
+  assert.equal(second.status, "seeking");
+  assert.equal(parseNodeProcessOracle(glued, spec), null);
+
+  const followedByRealFrame = Buffer.concat([glued, Buffer.from("\n", "ascii"), exact]);
+  const recovered = requireNodeProcessOracle(followedByRealFrame, spec);
+  assert.equal(recovered.nodePid, 901, "only the later line-aligned frame is authoritative");
+});
+
+test("noise, ANSI, mixed newlines, ordering, and duplicate markers fail the exact grammar", () => {
+  const spec = createNodeProcessOracleSpec("strict_grammar");
+  const invalidFrames = [
+    `${beginMarker(spec, 731)}\n3\nnoise\n${completionMarker(spec, 731)}\n`,
+    `${beginMarker(spec, 731)}\n\x1b[32m3\x1b[0m\n${completionMarker(spec, 731)}\n`,
+    `${beginMarker(spec, 731)}\r\n3\n${completionMarker(spec, 731)}\r\n`,
+    `${beginMarker(spec, 731)}\r3\r${completionMarker(spec, 731)}\r`,
+    `${beginMarker(spec, 731)}\n${completionMarker(spec, 731)}\n3\n`,
+    `${beginMarker(spec, 731)}\n3\n${beginMarker(spec, 731)}\n${completionMarker(spec, 731)}\n`,
+    `${beginMarker(spec, 731)}\n3\n${completionMarker(spec, 732)}\n`,
+    `${beginMarker(spec, 731)}\n3\n${completionMarker(spec, 731)}\nnoise`,
   ];
-  for (const terminal of cases) {
+  for (const [index, raw] of invalidFrames.entries()) {
     assert.throws(
-      () => requireNodeProcessOracle(terminal, spec),
-      (error) => error.code === "incomplete-oracle",
+      () => createNodeProcessOracleEvidence(Buffer.from(raw, "latin1"), spec),
+      undefined,
+      `invalid frame ${index}`,
     );
   }
-  assert.throws(
-    () => requireNodeProcessOracle(capture(spec, 731, 999), spec),
-    (error) => error.code === "invalid-exit",
-  );
-  assert.throws(
-    () => requireNodeProcessOracle(
-      `${spec.shellCommand}\n${marker(spec.sequence, 731, 0)}\n3\n`,
-      spec,
-    ),
-    (error) => error.code === "incomplete-oracle",
-    "output after completion cannot satisfy the process oracle",
-  );
+});
 
-  const valid = requireNodeProcessOracle(capture(spec, 731), spec);
+test("the verifier stale-3/noise attack fails even with recomputed raw hash and length", () => {
+  const spec = createNodeProcessOracleSpec("verifier_attack");
+  const valid = evidence(spec, 731);
+  const cleanBytes = Buffer.from(valid.terminalFrame.base64, "base64");
+  const markerStart = valid.terminalFrame.offsets.completionMarker.start;
+  const noisyBytes = Buffer.concat([
+    cleanBytes.subarray(0, markerStart),
+    Buffer.from("stale 3\nnoise\n", "ascii"),
+    cleanBytes.subarray(markerStart),
+  ]);
+  const noisy = setRawFrame(valid, noisyBytes);
+  // Simulate an attacker also shifting every completion-side offset coherently.
+  const added = noisyBytes.length - cleanBytes.length;
+  for (const key of ["completionMarker", "completionLineEnding"]) {
+    noisy.terminalFrame.offsets[key].start += added;
+    noisy.terminalFrame.offsets[key].end += added;
+  }
+  assert.throws(
+    () => validateNodeProcessOracleEvidence(noisy),
+    (error) => error.code === "invalid-frame",
+  );
+});
+
+test("canonical base64, SHA, length, every offset, and all derived fields are recomputed", () => {
+  const spec = createNodeProcessOracleSpec("metadata_attack");
+  const valid = evidence(spec, 731);
   const mutations = [
-    ["command", { ...valid, nodeCommand: "node -e 'console.log(4)'" }],
-    ["output", { ...valid, outputLine: "4" }],
-    ["PID", { ...valid, nodePid: 732 }],
-    ["sequence", { ...valid, nodeSequence: "valid_but_wrong" }],
-    ["marker", { ...valid, completionMarker: marker(spec.sequence, 732, 0) }],
-    ["transcript", { ...valid, oracleTranscript: `${valid.oracleTranscript}guest noise\n` }],
+    (value) => { value.oracleSchema = "old-schema"; },
+    (value) => { value.nodeSequence = "syntactically_valid_but_wrong"; },
+    (value) => { value.nodeToken = "0".repeat(24); },
+    (value) => { value.nodeCommand = "node -e 'console.log(4)'"; },
+    (value) => { value.nodePid += 1; },
+    (value) => { value.outputLine = "4"; },
+    (value) => { value.beginMarker += "_other"; },
+    (value) => { value.completionMarker += "_other"; },
+    (value) => { value.exit = 1; },
+    (value) => { value.oracleTranscript = `3\n${value.completionMarker}\n`; },
+    (value) => { value.terminalFrame.base64 += "\n"; },
+    (value) => { value.terminalFrame.byteLength += 1; },
+    (value) => { value.terminalFrame.sha256 = "0".repeat(64); },
+    (value) => { value.terminalFrame.newline = "crlf"; },
   ];
-  for (const [label, evidence] of mutations) {
-    assert.throws(() => validateNodeProcessOracleEvidence(evidence), undefined, label);
+  for (const key of Object.keys(valid.terminalFrame.offsets)) {
+    mutations.push((value) => { value.terminalFrame.offsets[key].start += 1; });
+    mutations.push((value) => { value.terminalFrame.offsets[key].end += 1; });
+  }
+  for (const [index, mutate] of mutations.entries()) {
+    const value = clone(valid);
+    mutate(value);
+    assert.throws(() => validateNodeProcessOracleEvidence(value), undefined, `mutation ${index}`);
   }
 });
 
-test("the walltime source durably projects every oracle field into E4T32_NODE_LEG", () => {
+test("missing, truncated, echo-only, and oversized captures fail closed", () => {
+  const spec = createNodeProcessOracleSpec("bounded_capture");
+  assert.equal(parseNodeProcessOracle(Buffer.from(spec.shellCommand, "ascii"), spec), null);
+  assert.throws(
+    () => requireNodeProcessOracle(Buffer.from(`${beginMarker(spec, 731)}\n3\n`, "ascii"), spec),
+    (error) => error.code === "incomplete-oracle",
+  );
+  assert.throws(
+    () => createNodeProcessOracleEvidence(
+      Buffer.concat([
+        Buffer.from(`${beginMarker(spec, 731)}\n3\n`, "ascii"),
+        Buffer.alloc(E4T32_NODE_ORACLE_FRAME_MAX_BYTES, 0x78),
+        Buffer.from(`${completionMarker(spec, 731)}\n`, "ascii"),
+      ]),
+      spec,
+    ),
+    (error) => error.code === "oracle-too-large",
+  );
+  const collector = createNodeOracleFrameCollector(spec);
+  const overflow = collector.push(Buffer.concat([
+    Buffer.from(`${beginMarker(spec, 731)}\n3\n`, "ascii"),
+    Buffer.alloc(E4T32_NODE_ORACLE_FRAME_MAX_BYTES, 0x78),
+  ]));
+  assert.equal(overflow.status, "invalid");
+  assert.match(overflow.reason, /^overflow:/);
+});
+
+test("the walltime source uses the shared byte collector and projects the raw frame into every leg", () => {
   const source = readFileSync(new URL("./e4-t32-node-walltime.spec.js", import.meta.url), "utf8");
-  assert.match(source, /createNodeProcessOracleSpec,[\s\S]*from "\.\/helpers\/e4-t32-node-oracle\.mjs"/);
+  assert.match(source, /createNodeOracleFrameCollector,[\s\S]*createNodeProcessOracleEvidence/);
+  assert.match(source, /collectorFactorySource = createNodeOracleFrameCollector\.toString\(\)/);
+  assert.doesNotMatch(source, /oracleTranscript/);
+  const processSource = source.slice(
+    source.indexOf("async function runNodeProcess"),
+    source.indexOf("async function runNodeResponsivenessProbe"),
+  );
+  assert.doesNotMatch(processSource, /TextDecoder|replace\(\/\\x1b|replace\(\/\\r/);
   for (const field of [
+    "oracleSchema",
     "nodeSequence",
+    "nodeToken",
     "nodeCommand",
     "nodePid",
     "outputLine",
+    "beginMarker",
     "completionMarker",
-    "oracleTranscript",
+    "terminalFrame",
   ]) {
     const occurrences = source.match(new RegExp(`\\b${field}\\b`, "g"))?.length ?? 0;
-    assert.ok(occurrences >= 4, `${field} must survive process capture and leg serialization`);
+    assert.ok(occurrences >= 2, `${field} must survive process capture and leg serialization`);
   }
   assert.match(source, /E4T32_NODE_LEG=/);
 });

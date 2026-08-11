@@ -42,6 +42,8 @@ import {
 } from "./helpers/e4-t32-node-failure.mjs";
 import { createNodeBenchmarkIdentity } from "./helpers/e4-t32-node-identity.mjs";
 import {
+  createNodeOracleFrameCollector,
+  createNodeProcessOracleEvidence,
   createNodeProcessOracleSpec,
   validateNodeProcessOracleEvidence,
 } from "./helpers/e4-t32-node-oracle.mjs";
@@ -413,78 +415,85 @@ const commandWindow = ({ schedulerBefore, schedulerAfter, fetchBefore, fetchAfte
 
 async function runNodeProcess(page, sequence, { timeoutMs = 300_000, progressIntervalMs = 0 } = {}) {
   const oracleSpec = createNodeProcessOracleSpec(sequence);
+  const collectorFactorySource = createNodeOracleFrameCollector.toString();
   try {
-    return await page.evaluate(async ({ oracleSpec, timeoutMs, progressIntervalMs }) => {
+    const captured = await page.evaluate(async ({
+      oracleSpec,
+      collectorFactorySource,
+      timeoutMs,
+      progressIntervalMs,
+    }) => {
     // The exact Node argv/code remains byte-identical to the user's report. The shell runs that
-    // child in the background only so `$!` captures the PID that execs Node, waits for it, then
-    // emits a concrete sequence/PID/exit marker that cannot occur in the echoed command source.
-    const outputPattern = new RegExp(oracleSpec.outputPatternSource);
-    const completionPattern = new RegExp(oracleSpec.completionPatternSource);
-    const decoder = new TextDecoder();
-    let text = "";
+    // simple external command in the background only so `$!` captures the child that execs Node.
+    // BEGIN opens the authoritative raw-byte frame after launch; no decoded/sanitized terminal
+    // text can contribute to the process oracle.
+    const collectorFactory = new Function(`return (${collectorFactorySource})`)();
+    const collector = collectorFactory(oracleSpec);
+    const byteText = (bytes) => {
+      let value = "";
+      for (let offset = 0; offset < bytes.length; offset += 128) {
+        value += String.fromCharCode(...bytes.subarray(offset, offset + 128));
+      }
+      return value;
+    };
+    const base64Bytes = (bytes) => btoa(byteText(bytes));
     let firstMs = null;
     let completeMs = null;
-    let exit = null;
     const progress = [];
     const started = performance.now();
     return new Promise((resolve, reject) => {
       let unsubscribe = () => {};
       let timer;
       let progressTimer = null;
+      let settled = false;
+      const cleanup = () => {
+        unsubscribe();
+        clearTimeout(timer);
+        if (progressTimer != null) clearInterval(progressTimer);
+      };
+      const rejectOracle = (reason) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        reject(new Error(`E4T32_NODE_ORACLE_INVALID ${oracleSpec.sequence} ${reason}`));
+      };
       unsubscribe = window.wvmDemo.onConsole((bytes) => {
-        text = (text + decoder.decode(bytes, { stream: true })
-          .replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, "")
-          .replace(/\r/g, "")).slice(-4096);
-        // The echoed source contains `console.log(3)`, never a standalone output line containing 3.
-        const outputMatch = text.match(outputPattern);
-        if (firstMs == null && outputMatch) firstMs = performance.now() - started;
-        const match = text.match(completionPattern);
-        if (match && completeMs == null && outputMatch?.index < match.index) {
-          const nodePid = Number(match[2]);
-          const markerExit = Number(match[3]);
-          if (!outputMatch || !Number.isSafeInteger(nodePid) || nodePid <= 0 ||
-              !Number.isSafeInteger(markerExit) || markerExit < 0 || markerExit > 255) {
-            return;
-          }
-          const outputLine = outputMatch[1];
-          const completionMarker = match[1];
-          const oracleTranscript = `${outputLine}\n${completionMarker}\n`;
-          if (oracleTranscript.length > oracleSpec.maxTranscriptChars ||
-              oracleSpec.shellCommand.includes(completionMarker)) {
-            unsubscribe();
-            clearTimeout(timer);
-            if (progressTimer != null) clearInterval(progressTimer);
-            reject(new Error(`E4T32_NODE_ORACLE_INVALID ${oracleSpec.sequence}`));
+        if (settled) return;
+        const event = collector.push(bytes);
+        if (event.outputCompletedNow && firstMs == null) firstMs = performance.now() - started;
+        if (event.status === "invalid") {
+          rejectOracle(event.reason);
+          return;
+        }
+        if (event.status === "complete" && completeMs == null) {
+          if (firstMs == null || !Number.isSafeInteger(event.nodePid) || event.nodePid <= 0 ||
+              !Number.isSafeInteger(event.exit) || event.exit < 0 || event.exit > 255) {
+            rejectOracle("invalid-derived-fields");
             return;
           }
           completeMs = performance.now() - started;
-          exit = markerExit;
           const result = {
             firstMs,
             completeMs,
-            stretchMs: firstMs == null ? null : completeMs - firstMs,
-            exit,
-            sawExpected: firstMs != null,
-            nodeSequence: oracleSpec.sequence,
-            nodeCommand: oracleSpec.nodeCommand,
-            nodePid,
-            outputLine,
-            completionMarker,
-            oracleTranscript,
+            stretchMs: completeMs - firstMs,
+            sawExpected: true,
+            capturedNodePid: event.nodePid,
+            capturedExit: event.exit,
+            terminalFrameBase64: base64Bytes(event.frame),
             progress,
           };
-          unsubscribe();
-          clearTimeout(timer);
-          if (progressTimer != null) clearInterval(progressTimer);
+          settled = true;
+          cleanup();
           resolve(result);
-          return;
         }
       });
       timer = setTimeout(() => {
-        unsubscribe();
-        if (progressTimer != null) clearInterval(progressTimer);
+        if (settled) return;
+        settled = true;
+        cleanup();
         reject(new Error(
-          `E4T32_NODE_PROCESS_TIMEOUT ${oracleSpec.sequence}; tail=${text.slice(-500)}`,
+          `E4T32_NODE_PROCESS_TIMEOUT ${oracleSpec.sequence}; rawTailBase64=` +
+          base64Bytes(collector.diagnosticTail()),
         ));
       }, timeoutMs);
       if (progressIntervalMs > 0) {
@@ -515,10 +524,24 @@ async function runNodeProcess(page, sequence, { timeoutMs = 300_000, progressInt
       }
       window.wvmDemo.sendInput(new TextEncoder().encode(oracleSpec.shellCommand + "\r"));
     });
-    }, { oracleSpec, timeoutMs, progressIntervalMs });
+    }, { oracleSpec, collectorFactorySource, timeoutMs, progressIntervalMs });
+    const oracle = createNodeProcessOracleEvidence(
+      Buffer.from(captured.terminalFrameBase64, "base64"),
+      oracleSpec,
+    );
+    if (captured.capturedNodePid !== oracle.nodePid || captured.capturedExit !== oracle.exit) {
+      throw new Error(`E4T32_NODE_ORACLE_INVALID ${sequence} page-derived-fields`);
+    }
+    const { capturedNodePid: _capturedNodePid, capturedExit: _capturedExit,
+      terminalFrameBase64: _terminalFrameBase64, ...timing } = captured;
+    return { ...timing, ...oracle };
   } catch (error) {
     if (error?.message?.includes("E4T32_NODE_PROCESS_TIMEOUT")) {
       throw markNodeProductFailure("fresh-node-process", error);
+    }
+    if (error?.message?.includes("E4T32_NODE_ORACLE_INVALID") ||
+        error?.name === "NodeProcessOracleError") {
+      throw markNodeProductFailure("fresh-node-oracle", error);
     }
     throw error;
   }
@@ -707,11 +730,13 @@ async function runNodeVariantSession(browser, {
       expect(run.nodeCommand).toBe("node -e 'console.log(3)'");
       expect(run.nodeSequence).toBe(sequence);
       expect(run.outputLine).toBe("3");
-      expect(run.completionMarker).toBe(
-        `__E4T32_NODE_DONE_${sequence}_${run.nodePid}_${run.exit}`,
+      expect(run.beginMarker).toBe(
+        `__E4T32_NODE_BEGIN_${run.nodeToken}_${run.nodePid}`,
       );
-      expect(run.oracleTranscript).toBe(`3\n${run.completionMarker}\n`);
-      expect(run.oracleTranscript.length).toBeLessThanOrEqual(512);
+      expect(run.completionMarker).toBe(
+        `__E4T32_NODE_DONE_${run.nodeToken}_${run.nodePid}_${run.exit}`,
+      );
+      expect(run.terminalFrame.byteLength).toBeLessThanOrEqual(512);
       validateNodeProcessOracleEvidence(run);
       run.jitBefore = processJitBefore;
       run.jitAfter = processJitAfter;
@@ -832,10 +857,13 @@ const logNodeLeg = (variant, session, attemptId = null) => {
       exit,
       nodeCommand,
       nodeSequence,
+      nodeToken,
       nodePid,
       outputLine,
+      oracleSchema,
+      beginMarker,
       completionMarker,
-      oracleTranscript,
+      terminalFrame,
       jitDelta: delta,
       commandWindow: windowStats,
     }) => ({
@@ -845,10 +873,13 @@ const logNodeLeg = (variant, session, attemptId = null) => {
       exit,
       nodeCommand,
       nodeSequence,
+      nodeToken,
       nodePid,
       outputLine,
+      oracleSchema,
+      beginMarker,
       completionMarker,
-      oracleTranscript,
+      terminalFrame,
       jitDelta: delta,
       commandWindow: windowStats,
     })),

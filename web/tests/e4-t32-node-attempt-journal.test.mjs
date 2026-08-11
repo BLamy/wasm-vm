@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -25,6 +26,10 @@ import {
 } from "./helpers/e4-t32-node-ledger-store.mjs";
 import { E4T32_CPU_CALIBRATION_POLICY } from "./helpers/e4-t32-node-calibration.mjs";
 import { cpuCalibrationFixture } from "./helpers/e4-t32-node-calibration-fixture.mjs";
+import {
+  createNodeProcessOracleEvidence,
+  createNodeProcessOracleSpec,
+} from "./helpers/e4-t32-node-oracle.mjs";
 
 const identity = {
   identitySha256: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
@@ -38,23 +43,39 @@ const identity = {
 const cleanCalibration = (label) => cpuCalibrationFixture({ clean: true, label });
 const dirtyCalibration = (label) => cpuCalibrationFixture({ clean: false, label });
 
+const oracleFor = (nodeSequence, nodePid, exit = 0) => {
+  const spec = createNodeProcessOracleSpec(nodeSequence);
+  const raw = Buffer.from(
+    `__E4T32_NODE_BEGIN_${spec.token}_${nodePid}\n3\n` +
+    `__E4T32_NODE_DONE_${spec.token}_${nodePid}_${exit}\n`,
+    "ascii",
+  );
+  return createNodeProcessOracleEvidence(raw, spec);
+};
+
+const oracleProjection = (run) => ({
+  oracleSchema: run.oracleSchema,
+  nodeSequence: run.nodeSequence,
+  nodeToken: run.nodeToken,
+  nodeCommand: run.nodeCommand,
+  nodePid: run.nodePid,
+  outputLine: run.outputLine,
+  beginMarker: run.beginMarker,
+  completionMarker: run.completionMarker,
+  terminalFrame: run.terminalFrame,
+  exit: run.exit,
+});
+
 function sessionFor(open) {
   const sequencePrefix = nodeBenchmarkSequencePrefix(open);
   const run = (index, firstMs, completeMs) => {
     const nodePid = 900 + index;
     const nodeSequence = `${sequencePrefix}_${index}`;
-    const completionMarker = `__E4T32_NODE_DONE_${nodeSequence}_${nodePid}_0`;
     return {
       firstMs,
       completeMs,
       stretchMs: completeMs - firstMs,
-      exit: 0,
-      nodeSequence,
-      nodeCommand: "node -e 'console.log(3)'",
-      nodePid,
-      outputLine: "3",
-      completionMarker,
-      oracleTranscript: `3\n${completionMarker}\n`,
+      ...oracleFor(nodeSequence, nodePid),
     };
   };
   return {
@@ -169,24 +190,36 @@ test("crash after a clean post artifact recovers the first clean attempt as acce
       "recovery must attach the staged calibration evidence to the accepted session",
     );
     assert.deepEqual(
-      recovered.event.session.runs.map((run) => ({
-        nodeSequence: run.nodeSequence,
-        nodeCommand: run.nodeCommand,
-        nodePid: run.nodePid,
-        outputLine: run.outputLine,
-        completionMarker: run.completionMarker,
-        oracleTranscript: run.oracleTranscript,
-      })),
-      sessionFor(begun.event).runs.map((run) => ({
-        nodeSequence: run.nodeSequence,
-        nodeCommand: run.nodeCommand,
-        nodePid: run.nodePid,
-        outputLine: run.outputLine,
-        completionMarker: run.completionMarker,
-        oracleTranscript: run.oracleTranscript,
-      })),
+      recovered.event.session.runs.map(oracleProjection),
+      sessionFor(begun.event).runs.map(oracleProjection),
       "crash recovery must retain every bounded raw Node oracle field",
     );
+  });
+});
+
+test("crash recovery revalidates authoritative raw terminal bytes instead of trusting sidecars", async () => {
+  await withJournal(async ({ journal }) => {
+    const begun = await beginPersisted(journal, "raw-frame-sabotage");
+    await writeCompletePhases(journal, begun.event);
+    const sessionName = nodeAttemptPhaseArtifactName(begun.event, "session");
+    const artifact = await journal.readArtifact(sessionName);
+    const run = artifact.value.session.runs[0];
+    const clean = Buffer.from(run.terminalFrame.base64, "base64");
+    const markerStart = run.terminalFrame.offsets.completionMarker.start;
+    const noisy = Buffer.concat([
+      clean.subarray(0, markerStart),
+      Buffer.from("stale 3\nnoise\n", "ascii"),
+      clean.subarray(markerStart),
+    ]);
+    run.terminalFrame.base64 = noisy.toString("base64");
+    run.terminalFrame.byteLength = noisy.length;
+    run.terminalFrame.sha256 = createHash("sha256").update(noisy).digest("hex");
+    await atomicReplaceJson(artifact.filePath, artifact.value);
+
+    const recovered = await journal.recoverOpenAttempt(await journal.loadLedger(), begun.event);
+    assert.equal(recovered.event.outcome, "refuted");
+    assert.equal(recovered.event.reason, "invalid-session");
+    assert.equal(deriveNodeBenchmarkResults(recovered.ledger)["main-interp"].runs.length, 0);
   });
 });
 
