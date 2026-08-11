@@ -58,3 +58,38 @@ Frozen before inspecting the worker evidence artifacts at submission
   protocol, then the original buffer will be mutated immediately. The receiving controller must see
   only the original subarray bytes and the caller's backing buffer must remain attached and retain
   its full original length.
+
+## Incremental evidence-gap predictions (2026-08-10)
+
+Frozen at submission `ca0753b06784706e7c32efb587b84b8da66c0efd`, after orienting on the
+task and harness diff but before opening `node-walltime-6155f21` or its updated README.
+
+- **I1 frozen runtime boundary:** commits after `3a497a5` must change only the Node evidence
+  harness, its deterministic tests, evidence, and generated/task metadata. The runtime source and
+  built Wasm digests covered by P1-P7/P9-P15 must remain byte-identical, so those HELD predictions
+  carry forward without a new broad runtime or cold-clone run.
+- **I2 independently observable process oracle:** the accepted ledger and every corresponding
+  session sidecar must expose exactly twelve successful invocations of the exact command
+  `node -e 'console.log(3)'`. Each record must contain a standalone `3`, a positive actual Node
+  child PID, zero exit, and a bounded concrete marker/transcript that binds its attempt-derived
+  sequence, PID, and exit. All twelve sequences and PIDs must be distinct, and no submitted shell
+  source may contain its concrete marker, so terminal echo alone cannot satisfy the oracle.
+- **I3 attempt/ledger binding:** the six accepted slots must retain the prescribed counterbalanced
+  order, with two oracle records bound to each slot's canonical attempt prefix. Started/session/
+  finished sidecars, the accepted ledger, results, and aggregate must agree on attempt identity;
+  no discarded or recovered attempt may contribute to medians.
+- **I4 absolute calibration provenance:** the identity must bind the capacity baseline to the exact
+  committed bytes of the prior accepted ledger at its declared provenance commit, with independently
+  reproduced physical and canonical-logical hashes. Every accepted pre/post calibration must derive
+  its verdict from raw checksums and timing samples under the identity-bound policy, pass both the
+  relative main/Worker balance and absolute capacity bands, and match its serialized derived rule;
+  changing a raw duration while retaining `clean: true` must be rejected.
+- **I5 recomputed claims:** accepted-only raw runs must reproduce the submitted first-output,
+  completion, cold, later-run, and stretch ratios below `1.10`; both Worker variants must retain rAF
+  p99 at or below `20 ms`, the responsiveness probe must be finite, and JIT512 must report positive
+  translated execution/retirement. Result, aggregate, physical-ledger, logical-ledger, inventory,
+  identity, sidecar, and calibration hashes must reproduce from committed bytes and canonical data.
+- **I6 load-bearing validation:** the focused calibration/oracle/ledger/journal/identity tests must
+  pass unchanged. In disposable copies, falsifying one accepted oracle field and independently
+  scaling one raw calibration timing while preserving its serialized verdict must make validation
+  fail closed.

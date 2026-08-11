@@ -3,7 +3,7 @@ id: E4-T32
 epic: 4
 title: Default whole-machine Web Worker with controller parity
 priority: 433
-status: implemented
+status: evidence-needed
 depends_on: [E4-T33]
 estimate: S
 risk: high
@@ -158,3 +158,28 @@ false-refutation diagnosis, and verifier commands are in `evidence/e4-t32/README
 Node speed target remains unclaimed: a fresh warm process still takes roughly 20.7–21.9 seconds to
 first output and 24.5–26.1 seconds to complete; E4-T34 owns that runtime/JIT acceleration. This task
 returns to `implemented`, never `verified`, pending a fresh adversarial review of the new evidence.
+
+### 2026-08-10 — verifier — VERDICT: needs-evidence
+
+- **P8 raw process oracle — NEEDS EVIDENCE.** Predicted a frozen, independently interrogable
+  terminal record for each exact Node process. The new bundle contains all twelve exact command,
+  sequence, positive PID, standalone-output, zero-exit, concrete-marker, and transcript fields, but
+  `web/tests/e4-t32-node-walltime.spec.js:423-451` discards its bounded raw terminal buffer and
+  synthesizes `oracleTranscript` from two regex captures. A clean stream and
+  `UNRELATED_STALE_OUTPUT\n3\nNODE_NEVER_PROVEN_AND_INTERVENING_NOISE\n<marker>` produce the same
+  validated persisted object, so the artifact cannot expose intervening output or independently
+  attribute the retained `3` to the measured child. Persist the bounded raw slice from command echo
+  through marker (with offsets/hash), or an equivalent guest exec/output trace, and rerun only the
+  Node matrix evidence boundary.
+- **Absolute calibration and artifact identity — HELD.** Exact `ab3e6fc4` reference bytes and
+  physical/logical hashes reproduce; all 12 pre/post verdicts recompute from raw samples. Six clean
+  counterbalanced attempts, 30 sidecars, 12 unique attempt-scoped process identities, all declared
+  inventory/result/ledger hashes, the seven parity ratios, four Worker rAF p99 values, input/RPC,
+  and positive JIT execution/retirement independently match. Requested oracle-field and raw-sample
+  sabotage both failed closed; the focused harness suite passed 81/81.
+- **P1-P7/P9-P15 — CARRIED HELD.** Runtime and built Wasm are unchanged from the prior verified
+  boundary, so browser/rr/cold-clone/controller findings are not re-litigated. Full predictions,
+  hashes, commands, the stream-equivalence attack, and non-blocking harness-hardening observations
+  are in `evidence/e4-t32/VERIFIER-REPORT.md`.
+- **COVERAGE/SUITE:** no runtime or product hunk moved. No new test is promoted until the raw
+  recording gap closes; unchanged load-bearing suites remain credited.

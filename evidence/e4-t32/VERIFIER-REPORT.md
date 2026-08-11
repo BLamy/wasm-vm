@@ -89,3 +89,95 @@ so previously held hashes/gates may be carried forward where their boundary and 
 - **SUITE:** no new test promoted while the recording gap remains. Existing deterministic ownership,
   compile-budget, lifecycle, file-transfer, and whole-worker tests are load-bearing; the immediate
   mutation probe is redundant with their stable ownership contract and was discarded.
+
+---
+
+## 2026-08-10 incremental re-verification at `ca0753b`
+
+**VERDICT: needs-evidence.** Runtime behavior remains unrefuted, the new capacity admission holds,
+and the committed matrix is internally coherent. P8 is still not independently interrogable,
+because the field named `oracleTranscript` is reconstructed from regex captures after the bounded
+raw terminal buffer is discarded. The rerun therefore preserves parser conclusions rather than the
+terminal recording needed to distinguish measured Node output from unrelated output before the
+completion marker.
+
+### Incremental prediction results
+
+- **I1 HELD; P1-P7/P9-P15 carried forward.** `3a497a5..ca0753b` changes only the Node evidence
+  harness/tests, evidence, and task/generated metadata. Runtime source and the generated Wasm remain
+  frozen; `web/pkg/wasm_vm_wasm_bg.wasm` is still
+  `6c2f93745877550b74c031d0d170539a1b29cc910aabdf09c7239394455c64a1`.
+- **I2 NEEDS EVIDENCE.** The ledger has twelve exact commands, standalone-output fields, positive
+  PIDs, zero exits, attempt-scoped sequences, markers, and reconstructed transcripts. All twelve
+  sequence/PID identities are unique, and each restored session has two distinct PIDs. Raw PIDs
+  repeat as `838` x4, `839` x2, and `846` x6 because each independent snapshot restore resets guest
+  process state; the frozen prediction that all twelve numeric PIDs would differ was over-strong and
+  is not a task finding. The recording finding below remains.
+- **I3 HELD.** Exactly six clean attempts occupy the fixed counterbalanced order, with no discarded
+  or recovered attempt. All 30 phase sidecars bind to the corresponding started/finished event and
+  identity; the pre/post root evidence files match the ledger evidence byte-for-canonical-byte.
+- **I4 HELD.** The reference worktree bytes equal
+  `ab3e6fc4:evidence/e4-t32/node-walltime-aca4484/E4T32_NODE_LEDGER_V2.json`. Independently
+  reproduced physical/logical hashes are `787e44783bfe73a1e716661e8e9da5d6e00715b660504970faaae9838c02d130`
+  and `f3e584282ebe150fce9e128b126aa6502e6264334c2ad7653a24fd9ad0d1bea0`;
+  the 12 accepted old phase medians derive the exact 329.125/329.7250000014901 ms capacity
+  baseline. Every new phase's raw pairs, alternating order, checksums, summaries, relative verdict,
+  and absolute verdict recompute. Window/Worker phase medians span 316.800-343.750 and
+  319.900-337.850 ms; absolute ratios span 0.962552-1.044436 and 0.970202-1.024642.
+- **I5 HELD.** Result, aggregate, physical-ledger, logical-ledger, candidate identity, source,
+  generated-package, sidecar, and inventory identities reproduce. The 46-file / 1,070,124-byte
+  bundle inventory is `74ee019c19c0ea1889d1e7694547998c9f18e72b4b6c26cf8b9a7b727ee0c0ff`;
+  result/aggregate/physical/logical ledger hashes are `a656321d6fad9fa51b31b57e8f6aa429242f511f90e5497fd2c63c2fb3bee6d3`,
+  `87f82788d7f7583e4e8aad7ffb6c21732c2b8dabb4beb99e611427f01d09ece4`,
+  `b6c62884c097d44c259d662fcec1defe5fe997f4e9216117b98d0d0a7778bfdd`, and
+  `8d26f4ecf80310f729b7cbd66f3ceb4f8077e2990c458fed7359c7486cce6768`.
+  Recomputed worker/main ratios are 1.005110 first, 1.004543 completion, 1.003298 cold first,
+  1.003158 cold completion, 0.994996 later median, 0.996014 later max, and 0.993668 stretch.
+  Worker rAF p99 is 18.585-18.660 ms; input/RPC is 175.220/51.085 ms; JIT512 executed
+  24,458,996 blocks and retired 132,315,918 instructions through JIT.
+- **I6 HELD for canonical-field sabotage, but the novel raw-stream attack exposed the remaining
+  gap.** The focused calibration/oracle/ledger/journal/identity/store/failure suite passed 81/81.
+  Mutating one accepted output field and independently mutating a raw calibration sample both made
+  ledger validation fail closed. The stream-equivalence attack below instead survives because the
+  distinguishing raw bytes are intentionally discarded.
+
+### Remaining finding
+
+**NEEDS EVIDENCE — `oracleTranscript` is a synthesized reduction, not a frozen terminal
+capture.** `runNodeProcess` retains sanitized terminal text only in memory at
+`web/tests/e4-t32-node-walltime.spec.js:423-437`, extracts two regex groups at lines 438-450, then
+constructs `${outputLine}\n${completionMarker}\n` at line 451 and persists only those reduced
+fields at lines 462-474. The shared helper repeats that construction at
+`web/tests/helpers/e4-t32-node-oracle.mjs:55-69`, and validation requires the reconstruction rather
+than raw bytes at lines 126-129.
+
+A bounded novel attack supplied (A) the submitted source, standalone `3`, and marker, and (B)
+`UNRELATED_STALE_OUTPUT\n3\nNODE_NEVER_PROVEN_AND_INTERVENING_NOISE\n<marker>`. Both produced
+byte-identical validated oracle objects. Consequently the committed artifact cannot show that no
+unrelated output intervened, or independently attribute the retained `3` to the child waited on by
+the marker. This is the same acceptance-critical raw-recording gap identified in the first verdict,
+not a runtime contradiction.
+
+**Demand:** persist the bounded raw sanitized terminal slice from subscription/command echo through
+the concrete marker (including exact output/marker offsets or an equivalent hash-bound raw record),
+or record a guest exec/output trace that binds the Node PID and output. Then rerun only the six-slot
+Node evidence boundary; unchanged runtime, rr, browser, cold-clone, and HELD results carry forward.
+
+### Commands and suite disposition
+
+- `node --test tests/e4-t32-node-calibration.test.mjs tests/e4-t32-node-oracle.test.mjs
+  tests/e4-t32-node-ledger.test.mjs tests/e4-t32-node-attempt-journal.test.mjs
+  tests/e4-t32-node-identity.test.mjs tests/e4-t32-node-ledger-store.test.mjs
+  tests/e4-t32-node-failure.test.mjs`: 81/81 passed.
+- Independent Node auditors recomputed the commit-object provenance, canonical identities, all
+  phase/sample verdicts, sidecar bindings, raw run aggregates, ratios, responsiveness, and JIT
+  counters without calling the production reducer.
+- Sabotage: accepted `outputLine = "4"` was rejected as `refuted/invalid-session`; one raw
+  preflight duration mutation was rejected on recomputed pair-ratio mismatch.
+- The current artifact's twelve timing triples are coherent and its calibration samples are stable.
+  Separate probes found future-harness hardening opportunities (explicit timing relationships,
+  per-sample absolute dispersion, and canonical decimal marker spelling), but none contradicts this
+  exact evidence and none expands the present demand.
+- **SUITE:** no promotion while the raw-recording gap remains. The two requested mutation checks are
+  already load-bearing in the focused suites; the stream-equivalence probe is retained here as the
+  exact verifier demand.
