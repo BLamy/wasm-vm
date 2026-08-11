@@ -3,7 +3,7 @@ id: E4-T32
 epic: 4
 title: Default whole-machine Web Worker with controller parity
 priority: 433
-status: implemented
+status: verified
 depends_on: [E4-T33]
 estimate: S
 risk: high
@@ -216,3 +216,50 @@ first output after restore and 90.4 s to complete; fresh subsequent processes ne
 first output and 25.2 s to complete. Worker timings remain within the E4-T32 parity budget, but are
 not near-instant. E4-T34 owns real interpreter/JIT acceleration. This task returns to `implemented`,
 never `verified`, pending a fresh adversarial verifier of the promoted raw-frame bundle.
+
+### 2026-08-11 — verifier (fresh session) — VERDICT: verified
+
+- **P8 authoritative Node process oracle — HELD.** Predicted that all twelve accepted samples would
+  expose a bounded, independently decodable record tying the exact `node -e 'console.log(3)'`
+  command to a real exec-preserved PID, runtime output, and zero exit without admitting the prior
+  stale-output equivalence. Every run in
+  `evidence/e4-t32/node-walltime-6b5db48/E4T32_NODE_LEDGER_V2.json` independently decoded as one
+  112-byte CRLF frame: PID/token-bound BEGIN, exact `ESC[33m3ESC[39m`, and same-PID/token DONE(0).
+  Canonical base64, SHA-256, byte length, all eight half-open offsets, command, sequence token,
+  marker fields, and the 62-byte first-output / 112-byte completion transitions recomputed. Numeric
+  PIDs recur after independent snapshot restores, as expected; all twelve sequence/token/PID frame
+  identities are unique and each session's two live process PIDs differ.
+- **P8 falsification attacks — HELD.** Every one of the 113 frame split boundaries and bytewise input
+  produced exactly one output transition and the same frame. Disposable-ledger mutations for the
+  verifier's exact stale `3` plus intervening-noise attack, stale output before BEGIN, plain/noisy
+  output inside the frame, wrong ANSI, mismatched DONE PID, truncation, appended bytes,
+  noncanonical base64, shifted offsets, and forged slow raw calibration all failed closed. The
+  BEGIN($$)-then-exec / outer-$!-wait-DONE shell shape preserved the exact Node argv once and bound
+  both markers to the waited process.
+- **Matrix, identity, and admission — HELD.** The promoted directory is byte-identical to the frozen
+  source run and contains 46 files / 1,130,926 bytes. Canonical inventory, result, aggregate,
+  physical-ledger, and logical-ledger SHA-256 values independently reproduced as `3f69ac79...`,
+  `4cdc3563...`, `fc49673f...`, `298b4445...`, and `fe58edde...`. Exactly six clean slots occupy the
+  fixed counterbalanced order; all 30 sidecars and 12 root preflights agree with the accepted ledger.
+  The exact `ab3e6fc4` reference bytes reproduce 329.125/329.7250000014901 ms capacity medians and
+  all twelve pre/post decisions recompute from raw samples. Worker/main ratios are 1.016815 first,
+  1.015728 completion, 1.011718 cold first, 1.011835 cold completion, 1.005051 later median,
+  1.013951 later max, and 0.990066 stretch. Worker rAF p99 is at most 18.660 ms; input/RPC is
+  113.925/51.095 ms; JIT512 executed 25,369,611 blocks and retired 136,016,872 instructions through
+  JIT.
+- **P1-P7 and P9-P15 — CARRIED HELD.** `08378a1..6b5db48` changes only the five Node oracle/harness
+  files; execution runtime and the built Wasm remain unchanged from the previously attacked boundary
+  (`6c2f93745877550b74c031d0d170539a1b29cc910aabdf09c7239394455c64a1`). The prior browser,
+  controller, transfer-ownership, rr-soft, selected-JIT, parity, and cold-clone results therefore
+  remain incremental-valid.
+- **COVERAGE/SUITE:** the shared byte collector/parser/validator and ledger/journal persistence hunks
+  are exercised by the 89-case deterministic Node suite and the mutation matrix; the wall-time
+  capture/projection hunk executed twelve times in the accepted same-head browser matrix. No changed
+  behavioral hunk is dead or unproved. The exact grammar, split-boundary, metadata mutation, raw
+  calibration, and crash-recovery tests are retained as the promoted suite.
+
+Commands: `node --check web/tests/e4-t32-node-walltime.spec.js`; `node --test` over the seven
+`e4-t32-node-*.test.mjs` files (89/89); independent artifact/sidecar/frame/calibration/result audit;
+disposable sabotage under `/private/tmp/e4t32-fresh-verifier-sabotage.QKK7Tw`;
+`git diff --check 08378a1..6b5db48`; `python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`;
+`make tasks-json`; `make web-dist`.
