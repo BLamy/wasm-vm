@@ -180,6 +180,11 @@ hooks:
 bench:
 	cargo bench -p wasm-vm-cli --bench interp
 
+# Refresh the homepage's native-host-relative Node baseline. Browser-only rows remain explicitly
+# pending until their adapter captures the same fixture; this avoids publishing incomparable values.
+bench-node-runtimes:
+	node tools/run-node-benchmarks.mjs --output web/benchmarks.json
+
 # E4-T03: in-guest CoreMark/Dhrystone harness. `bench-guest-build` rebuilds the pinned riscv64
 # ELFs + the ext4 overlay inside the pinned Docker toolchain (needs Docker); the run targets boot
 # the release wasm-vm on Alpine and emit a JSON score (each cold run takes minutes on the

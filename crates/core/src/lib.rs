@@ -264,6 +264,10 @@ pub struct Machine {
         Option<dev::virtio::queue::Virtqueue>,
         Option<dev::virtio::queue::Virtqueue>,
     )>,
+    /// Host-side control for the stable virtio-net adapter. The guest-visible device and queues
+    /// remain intact when an embedding switches from WebSocket to DERP/Headscale or another
+    /// backend at a quiescent run boundary.
+    net_backend: Option<dev::virtio::net::NetBackendHandle>,
     /// virtio-rng service state (shared source state + the persistent requestq ring view), when
     /// [`Self::enable_virtio_rng`] plugged an entropy source into slot 2. Serviced at every
     /// boundary the guest has kicked. Seeds the guest CRNG so early TLS handshakes don't stall.
@@ -619,6 +623,7 @@ impl Machine {
             blk: None,
             extra_blk: alloc::vec::Vec::new(),
             net: None,
+            net_backend: None,
             rng: None,
             coherence: SnapshotCoherence::default(),
             // E4-T05: default the toggle to the `predecode` feature (OFF in the normal build);
@@ -1156,7 +1161,8 @@ impl Machine {
             self.virtio.len() > 1,
             "enable_virtio_slots/enable_virtio_blk before enable_virtio_net"
         );
-        let (devhalf, state) = dev::virtio::net::new(backend);
+        let (switchable, control) = dev::virtio::net::NetBackendHandle::new(backend);
+        let (devhalf, state) = dev::virtio::net::new(alloc::boxed::Box::new(switchable));
         assert!(
             self.virtio[1]
                 .0
@@ -1166,7 +1172,23 @@ impl Machine {
             "virtio slot 1 already has a device"
         );
         self.net = Some((alloc::rc::Rc::clone(&state), None, None));
+        self.net_backend = Some(control);
         (alloc::rc::Rc::clone(&self.virtio[1].0), state)
+    }
+
+    /// Replace the host-side virtio-net backend while preserving the guest-visible device,
+    /// negotiated features, MAC, and queue positions. This must be called between `run`/`step`
+    /// calls, never from a backend callback. Existing backend-owned frames and socket state are
+    /// discarded at the handoff; the guest remains attached to the same virtio NIC.
+    pub fn replace_virtio_net_backend(
+        &mut self,
+        backend: alloc::boxed::Box<dyn dev::virtio::net::NetBackend>,
+    ) -> Result<(), &'static str> {
+        let Some(control) = &self.net_backend else {
+            return Err("virtio-net is not enabled");
+        };
+        control.replace(backend);
+        Ok(())
     }
 
     /// Attach a virtio-rng device (DeviceID 4) backed by `source` in slot 2. The eight slots must

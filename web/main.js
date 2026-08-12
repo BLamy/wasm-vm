@@ -29,8 +29,11 @@ const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
 const TEST_MAX_INSTRS = 1_000_000;
 const SYS_EXIT = 93n;
 const TAILSCALE_STATE_KEY = "wasm-vm.tailscale-state.v1";
+const NETWORK_CONFIG_KEY = "wasm-vm.network-config.v1";
+const NETWORK_PROVIDERS = new Set(["offline", "websocket", "tailscale", "headscale", "relay"]);
 
 const networkProviderEl = document.getElementById("network-provider");
+const networkWebsocketEl = document.getElementById("network-websocket-url");
 const networkRelayEl = document.getElementById("network-relay-url");
 const networkRelayTokenEl = document.getElementById("network-relay-token");
 const tailscaleControlEl = document.getElementById("tailscale-control-url");
@@ -39,6 +42,122 @@ const tailscaleAuthEl = document.getElementById("tailscale-auth-key");
 const tailscaleExitNodeEl = document.getElementById("tailscale-exit-node");
 const tailscaleAcceptDnsEl = document.getElementById("tailscale-accept-dns");
 const tailscaleStatusEl = document.getElementById("tailscale-status");
+const tailscaleLoginLinkEl = document.getElementById("tailscale-login-link");
+const networkHelpEl = document.getElementById("network-help");
+let tailscaleLoginPopup = null;
+
+function loadNetworkConfig() {
+  try {
+    const raw = localStorage.getItem(NETWORK_CONFIG_KEY);
+    if (!raw) return null;
+    const value = JSON.parse(raw);
+    return value && typeof value === "object" && !Array.isArray(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function persistNetworkConfig() {
+  try {
+    localStorage.setItem(NETWORK_CONFIG_KEY, JSON.stringify({
+      provider: NETWORK_PROVIDERS.has(networkProviderEl?.value) ? networkProviderEl.value : "offline",
+      websocketUrl: networkWebsocketEl?.value.trim() || "",
+      relayUrl: networkRelayEl?.value.trim() || "",
+      controlUrl: tailscaleControlEl?.value.trim() || "",
+      hostname: tailscaleHostnameEl?.value.trim() || "wasm-vm-browser",
+      exitNodeId: tailscaleExitNodeEl?.value.trim() || "",
+      acceptDns: Boolean(tailscaleAcceptDnsEl?.checked),
+    }));
+  } catch { /* storage may be unavailable */ }
+}
+
+function restoreNetworkConfig() {
+  const saved = loadNetworkConfig();
+  if (!saved) return;
+  if (NETWORK_PROVIDERS.has(saved.provider) && networkProviderEl) networkProviderEl.value = saved.provider;
+  if (typeof saved.websocketUrl === "string" && networkWebsocketEl) networkWebsocketEl.value = saved.websocketUrl;
+  if (typeof saved.relayUrl === "string" && networkRelayEl) networkRelayEl.value = saved.relayUrl;
+  if (typeof saved.controlUrl === "string" && tailscaleControlEl) tailscaleControlEl.value = saved.controlUrl;
+  if (typeof saved.hostname === "string" && saved.hostname && tailscaleHostnameEl) tailscaleHostnameEl.value = saved.hostname;
+  if (typeof saved.exitNodeId === "string" && tailscaleExitNodeEl) tailscaleExitNodeEl.value = saved.exitNodeId;
+  if (typeof saved.acceptDns === "boolean" && tailscaleAcceptDnsEl) tailscaleAcceptDnsEl.checked = saved.acceptDns;
+}
+
+restoreNetworkConfig();
+
+function refreshNetworkHelp() {
+  if (!networkHelpEl) return;
+  const provider = networkProviderEl?.value ?? "offline";
+  networkHelpEl.textContent = provider === "tailscale"
+    ? "Public Tailscale signs in at login.tailscale.com and uses the public DERP map."
+    : provider === "headscale"
+      ? "Private Headscale uses the same Tailscale client against the control server above."
+      : provider === "websocket"
+        ? "WebSocket is the default browser transport; configure its endpoint before booting."
+        : provider === "relay"
+          ? "Private wvrelay is an advanced compatibility transport, separate from Headscale."
+          : "Offline keeps the guest on its local network only.";
+}
+
+for (const element of [
+  networkProviderEl,
+  networkWebsocketEl,
+  networkRelayEl,
+  tailscaleControlEl,
+  tailscaleHostnameEl,
+  tailscaleExitNodeEl,
+  tailscaleAcceptDnsEl,
+]) {
+  element?.addEventListener("change", () => {
+    persistNetworkConfig();
+    refreshNetworkHelp();
+    if (element === networkProviderEl && linuxCtl && tailscaleStatusEl) {
+      const labels = {
+        offline: "Offline",
+        websocket: "WebSocket",
+        tailscale: "Public Tailscale",
+        headscale: "Private Headscale",
+        relay: "Private wvrelay",
+      };
+      tailscaleStatusEl.textContent = `${labels[networkProviderEl.value] ?? "Network"} selected; reboot the guest to apply it.`;
+    }
+  });
+}
+refreshNetworkHelp();
+
+function showTailscaleLoginUrl(rawUrl) {
+  if (typeof rawUrl !== "string" || !rawUrl.trim()) {
+    if (tailscaleLoginLinkEl) tailscaleLoginLinkEl.hidden = true;
+    return;
+  }
+  let url;
+  try {
+    url = new URL(rawUrl, location.href);
+    if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error("unsupported login URL");
+  } catch {
+    if (tailscaleStatusEl) tailscaleStatusEl.textContent = "Tailscale returned an invalid login URL.";
+    if (tailscaleLoginLinkEl) tailscaleLoginLinkEl.hidden = true;
+    return;
+  }
+  if (tailscaleLoginLinkEl) {
+    tailscaleLoginLinkEl.href = url.href;
+    tailscaleLoginLinkEl.hidden = false;
+  }
+  // Match almostnode's browser adapter: open a named popup once, then let the control plane
+  // redirect it. Popup blockers are handled by the visible fallback link rather than by retrying
+  // through another provider.
+  try {
+    if (!tailscaleLoginPopup || tailscaleLoginPopup.closed) {
+      tailscaleLoginPopup = window.open("about:blank", "wasm-vm-tailscale-login", "popup,width=460,height=640");
+    }
+    if (tailscaleLoginPopup && !tailscaleLoginPopup.closed) {
+      tailscaleLoginPopup.location.replace(url.href);
+      tailscaleLoginPopup.focus?.();
+    }
+  } catch {
+    // The link remains available when the browser blocks scripted popups.
+  }
+}
 
 function loadTailscaleState() {
   try {
@@ -75,6 +194,10 @@ globalThis.__wasmVmTailscaleEvent = (message) => {
       const self = status.netMap?.self;
       const identity = self?.name ? ` · ${self.name}${self.addresses?.length ? ` (${self.addresses.join(", ")})` : ""}` : "";
       if (tailscaleStatusEl) tailscaleStatusEl.textContent = `Tailscale: ${status.state ?? "unknown"}${identity}`;
+      if (status.loginUrl) showTailscaleLoginUrl(status.loginUrl);
+      else if (status.state === "Running" || status.state === "Stopped" || status.state === "NoState") {
+        if (tailscaleLoginLinkEl) tailscaleLoginLinkEl.hidden = true;
+      }
       return;
     }
     if (message.type === "failed" && tailscaleStatusEl) {
@@ -100,6 +223,15 @@ async function sendTailscaleCommand(command) {
 
 document.getElementById("tailscale-login")?.addEventListener("click", async () => {
   try {
+    if (networkProviderEl && !["tailscale", "headscale"].includes(networkProviderEl.value)) {
+      networkProviderEl.value = "tailscale";
+      if (tailscaleStatusEl) {
+        tailscaleStatusEl.textContent = linuxCtl
+          ? "Tailscale selected; reboot the guest to apply this network provider, then log in."
+          : "Tailscale selected; boot the guest to start the Tailscale Worker, then log in.";
+      }
+      if (linuxCtl) return;
+    }
     if (!await sendTailscaleCommand("login") && tailscaleStatusEl) {
       tailscaleStatusEl.textContent = "Boot with the Tailscale provider before requesting login.";
     }
@@ -111,6 +243,9 @@ document.getElementById("tailscale-logout")?.addEventListener("click", async () 
   try {
     localStorage.removeItem(TAILSCALE_STATE_KEY);
     if (tailscaleAuthEl) tailscaleAuthEl.value = "";
+    if (tailscaleLoginLinkEl) tailscaleLoginLinkEl.hidden = true;
+    try { tailscaleLoginPopup?.close?.(); } catch { /* popup may already be gone */ }
+    tailscaleLoginPopup = null;
     const sent = await sendTailscaleCommand("logout");
     if (tailscaleStatusEl) {
       tailscaleStatusEl.textContent = sent
@@ -445,11 +580,20 @@ async function runLinuxBootOwned(opts, banner, request) {
   const selectedQuantum = Number.isFinite(quantumCandidate)
     ? Math.max(1_000, Math.min(500_000, Math.floor(quantumCandidate)))
     : 500_000;
-  const slirpRelay = opts.slirpRelay ?? query.get("slirpRelay") ?? networkRelayEl?.value ?? "";
+  const websocketRelay = opts.slirpWebsocket ?? query.get("slirpWebsocket") ?? networkWebsocketEl?.value ?? "";
+  const privateRelay = opts.slirpRelay ?? query.get("slirpRelay") ?? networkRelayEl?.value ?? "";
   const slirpDoh = opts.slirpDoh ?? query.get("slirpDoh") ?? "";
+  const selectedProvider = networkProviderEl?.value ?? "offline";
   const slirpProvider = opts.slirpProvider ?? query.get("slirpProvider") ??
-    (opts.slirpTailscale ? "tailscale" : slirpRelay ? "relay" : networkProviderEl?.value ?? "offline");
-  const slirpTailscale = opts.slirpTailscale ?? (slirpProvider === "tailscale" ? {
+    (opts.slirpTailscale
+      ? "tailscale"
+      : query.has("slirpWebsocket") || websocketRelay
+        ? "websocket"
+        : query.has("slirpRelay") || privateRelay
+          ? "relay"
+          : selectedProvider);
+  const slirpRelay = slirpProvider === "websocket" ? websocketRelay : privateRelay;
+  const slirpTailscale = opts.slirpTailscale ?? (["tailscale", "headscale"].includes(slirpProvider) ? {
     workerUrl: "./tailscale-worker.js",
     config: {
       wasmUrl: "./tailscale-connect/main.wasm",
@@ -517,7 +661,9 @@ async function runLinuxBootOwned(opts, banner, request) {
       ),
       slirpProvider,
       slirpRelay,
-      slirpRelayToken: slirpProvider === "relay" ? networkRelayTokenEl?.value ?? "" : "",
+      slirpRelayToken: slirpProvider === "relay" || slirpProvider === "websocket"
+        ? networkRelayTokenEl?.value ?? ""
+        : "",
       slirpTailscale,
       slirpDoh,
       slirpLeaseSecs: opts.slirpLeaseSecs ?? query.get("slirpLeaseSecs") ?? 86400,
@@ -549,7 +695,10 @@ async function runLinuxBootOwned(opts, banner, request) {
         bootProgress.onProgress(role, loaded, total);
       },
       onOutput: (u8) => {
-        ui.write(u8);
+        // Background control-plane RPCs (container ps/logs/exec and restore-time cache priming)
+        // still flow through the real console subscriber, but never leak their shell echo or
+        // fencing marker into the user's terminal. Foreground guest input remains unchanged.
+        if (!quietGuestExec) ui.write(u8);
         emitConsole(u8);
         // E3-T24a: the honest 100% signal is a usable prompt, detected in the guest console stream.
         try {
@@ -682,6 +831,35 @@ async function runLinuxBootOwned(opts, banner, request) {
     // was null and the event handler had nothing to pause. Reconcile once before advertising ready.
     if (document.hidden) {
       try { await ctlForRelease.pause(); } catch { /* terminal settlement owns the visible error */ }
+    }
+    // The shipped Node snapshot deliberately drops Linux's page cache to keep the RAM artifact
+    // small. Without a short prime, the first user command has to fault in the Node ELF, shared
+    // libraries, and common built-ins and can look like a cold boot even though the guest restored.
+    // Start that prime in the restored guest's background shell. It is deliberately quiet and
+    // non-blocking: the prompt becomes ready immediately, while the first normal `node` command
+    // benefits from the same guest page cache once the background process has finished. The
+    // opt-out remains available for measurements and debugging via ?nodeWarmup=0.
+    const nodeWarmupEnabled = restoredReadyPending && currentGuestKind === "node-alpine" &&
+      query.get("nodeWarmup") !== "0" && !query.has("startPaused") && !document.hidden;
+    if (nodeWarmupEnabled && linuxCtl === ctlForRelease) {
+      document.documentElement.dataset.nodeWarmup = "scheduled";
+      void guestExec(
+        "node -e 'for (const m of [\"fs\",\"path\",\"util\",\"events\",\"stream\",\"buffer\"]) require(m)' >/dev/null 2>&1 &",
+        120000,
+        (bytes) => ctlForRelease.sendInput?.(bytes),
+        { quiet: true },
+      ).then((warm) => {
+        document.documentElement.dataset.nodeWarmup = warm.exit === 0 ? "complete" : "failed";
+      }).catch((error) => {
+        // A warmup failure must never turn a usable restored shell into a failed boot. The next
+        // command simply pays the normal cold-cache cost; keep the failure out of the terminal.
+        document.documentElement.dataset.nodeWarmup = "failed";
+        console.warn("wasm-vm: background Node cache prime failed; continuing:", error?.message || error);
+      });
+    } else if (restoredReadyPending && currentGuestKind === "node-alpine") {
+      document.documentElement.dataset.nodeWarmup = query.get("nodeWarmup") === "0"
+        ? "disabled"
+        : "deferred";
     }
     if (linuxCtl === ctlForRelease && restoredReadyPending) {
       // Restores resume at an already-usable prompt and therefore never emit one of the cold-boot
@@ -852,10 +1030,13 @@ function emitConsole(u8) {
 // guest at a shell (see isGuestReady). Serialized via a promise chain so callers don't interleave.
 let execChain = Promise.resolve();
 let execSeq = 0;
-function guestExec(cmd, timeoutMs = 60000) {
+let quietGuestExec = false;
+function guestExec(cmd, timeoutMs = 60000, sendBytes = null, options = {}) {
   const task = () =>
     new Promise((resolve, reject) => {
       if (!linuxCtl) return reject(new Error("guest not up"));
+      const quiet = options?.quiet === true;
+      if (quiet) quietGuestExec = true;
       const rid = `${Date.now().toString(36)}${execSeq++}`;
       const endRe = new RegExp(`__WVEND_${rid}_(\\d+)`);
       const dec = new TextDecoder();
@@ -872,10 +1053,21 @@ function guestExec(cmd, timeoutMs = 60000) {
           resolve({ stdout: out, exit });
         }
       };
-      const cleanup = () => { clearTimeout(timer); consoleSubscribers.delete(onc); };
+      const cleanup = () => {
+        clearTimeout(timer);
+        consoleSubscribers.delete(onc);
+        if (quiet) quietGuestExec = false;
+      };
       consoleSubscribers.add(onc);
       const timer = setTimeout(() => { cleanup(); reject(new Error("guest command timed out")); }, timeoutMs);
-      setTimeout(() => ui.typeBytes(new TextEncoder().encode(`${cmd}; printf '\\n__WVEND_${rid}_%s\\n' "$?"\r`)), 0);
+      setTimeout(() => {
+        const bytes = new TextEncoder().encode(`${cmd}; printf '\\n__WVEND_${rid}_%s\\n' "$?"\r`);
+        // Boot-time cache priming runs before the terminal input sink is attached. It still uses
+        // the real controller input bridge, but accepts a direct sender for that one serialized
+        // command; normal callers continue through the terminal backpressure queue.
+        if (sendBytes) sendBytes(bytes);
+        else ui.typeBytes(bytes);
+      }, 0);
     });
   execChain = execChain.then(task, task);
   return execChain;
@@ -1021,11 +1213,11 @@ window.wvmDemo = {
   // True once the booted guest has reached a usable shell prompt (Docker/IDE tabs gate on this).
   isGuestReady: () => guestReady,
   // Run a shell command in the guest, resolve { stdout, exit } (shared, serialized — see guestExec).
-  exec: (cmd, timeoutMs) => guestExec(cmd, timeoutMs),
+  exec: (cmd, timeoutMs, options) => guestExec(cmd, timeoutMs, null, options),
   // E3.5-T05e canonical name: a fenced request/response RPC over the one console. Serialized so
   // back-to-back callers can't interleave; the END marker embeds the guest-computed `$?`, so a
   // command's own echo can never satisfy its own (unique-id) marker. Returns { stdout, exit }.
-  run: (cmd, timeoutMs) => guestExec(cmd, timeoutMs),
+  run: (cmd, timeoutMs, options) => guestExec(cmd, timeoutMs, null, options),
   // E3.5-T05e: probe the BOOTED guest (not the load-time asset check) for the container runtime —
   // true only when `/usr/local/bin/wvrun` is executable AND `/opt/containers/index.json` exists.
   // The public busybox build has neither, so this fails closed there (no pretense of a runtime).

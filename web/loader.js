@@ -965,24 +965,45 @@ export function resolveSlirpProvider(opts = {}) {
     : null;
   const workerUrl = typeof tailscale?.workerUrl === "string" ? tailscale.workerUrl.trim() : "";
   const requested = typeof opts.slirpProvider === "string" ? opts.slirpProvider.trim() : "";
-  const provider = requested || (workerUrl ? "tailscale" : relayUrl ? "relay" : "offline");
+  // `websocket` is the ordinary browser transport. `tailscale` is the official public
+  // Tailscale control plane + DERP path when controlUrl is blank. `headscale` is the same
+  // Tailscale client pointed at a private Headscale control plane. `relay` is retained as an
+  // explicit private/self-hosted wvrelay compatibility path; it is not a Headscale network.
+  const aliases = {
+    "public-relay": "tailscale",
+    "tailscale-public": "tailscale",
+    "headscale-private": "headscale",
+    "private-tailscale": "headscale",
+    "private-relay": "headscale",
+    "private-wvrelay": "relay",
+  };
+  const normalizedRequested = aliases[requested] ?? requested;
+  const provider = normalizedRequested || (
+    workerUrl ? "tailscale" : relayUrl ? (typeof opts.slirpWebsocket === "string" ? "websocket" : "relay") : "offline"
+  );
 
-  if (!new Set(["tailscale", "relay", "offline"]).has(provider)) {
+  if (!new Set(["tailscale", "headscale", "relay", "websocket", "offline"]).has(provider)) {
     throw new Error(`unknown slirp provider: ${provider}`);
   }
-  if (provider === "tailscale" && !workerUrl) {
-    throw new Error("tailscale provider requires slirpTailscale.workerUrl");
+  if ((provider === "tailscale" || provider === "headscale") && !workerUrl) {
+    throw new Error(`${provider} provider requires slirpTailscale.workerUrl`);
   }
-  if (provider === "relay" && !relayUrl) {
-    throw new Error("relay provider requires slirpRelay");
+  if (provider === "headscale" && !String(tailscale?.config?.controlUrl ?? "").trim()) {
+    throw new Error("headscale provider requires slirpTailscale.config.controlUrl");
+  }
+  if (provider === "tailscale" && String(tailscale?.config?.controlUrl ?? "").trim()) {
+    throw new Error("tailscale public provider requires a blank controlUrl; choose headscale for a private control plane");
+  }
+  if ((provider === "relay" || provider === "websocket") && !relayUrl) {
+    throw new Error(`${provider} provider requires slirpRelay`);
   }
 
   return {
     provider,
-    relayUrl: provider === "relay" ? relayUrl : "",
-    relayToken: provider === "relay" ? relayToken : "",
-    workerUrl: provider === "tailscale" ? workerUrl : "",
-    workerConfig: provider === "tailscale" ? (tailscale?.config ?? {}) : {},
+    relayUrl: provider === "relay" || provider === "websocket" ? relayUrl : "",
+    relayToken: provider === "relay" || provider === "websocket" ? relayToken : "",
+    workerUrl: provider === "tailscale" || provider === "headscale" ? workerUrl : "",
+    workerConfig: provider === "tailscale" || provider === "headscale" ? (tailscale?.config ?? {}) : {},
   };
 }
 

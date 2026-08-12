@@ -251,6 +251,8 @@
     .layout { grid-template-columns: 1fr; }
     nav.toc { display: none; }
     main { padding: 24px 20px 90px; }
+    .layout, main, section { min-width: 0; max-width: 100%; overflow-x: hidden; }
+    .codeblock pre { max-width: 100%; }
     header.top { padding: 11px 16px; }
     header.top .meta { display: none; }               /* the middle tagline crowds the bar on phones */
     header.top .brand-sub { display: none; }           /* keep just "● wasm-vm" on phones */
@@ -280,6 +282,7 @@
       <li><a href="#byoi">Bring your own image</a></li>
       <li><a href="#frontend">Build your own frontend</a></li>
       <li><a href="#media">VizPlayer + Docstream embeds</a></li>
+      <li><a href="#product-contract">ProofMesh product contract</a></li>
       <li><a href="#caveats">Caveats &amp; limits</a></li>
     </ol>
   </nav>
@@ -301,6 +304,17 @@
         they mirror the module's actual exports (<code>web/loader.js</code>) and in-guest tooling —
         but you consume them today by vendoring the built <code>pkg/</code> ES module and the
         loader into your own static site, not by <code>npm install</code>.
+      </div>
+
+      <div class="callout">
+        <span class="tag">Product design first.</span>
+        The next product layer is documented as a future-facing contract: passkey-owned encrypted
+        volumes, verified block sources, and a builder/critic work market. Read the
+        <a href="./products.html">product suite</a>,
+        <a href="./work-market.html">work-market protocol</a>, and
+        <a href="./security.html">security model</a> before integrating against implementation
+        details. The canonical proposal is tracked in the repository's
+        <a href="https://github.com/BLamy/wasm-vm/tree/main/docs/product" target="_blank" rel="noopener">product docs</a>.
       </div>
 
       <h3>What it gives you</h3>
@@ -714,6 +728,33 @@ timeline.<span class="f">tween</span>(opacity, <span class="n">1</span>, { at: <
         <code>ReplayPreview</code> for a public Loop QA recording. Replay URLs must be publicly
         viewable and iframe-embeddable; private or localhost assets are not exposed by the preview.
       </div>
+    </section>
+
+    <section id="product-contract">
+      <p class="kicker">Future-facing contract</p>
+      <h2>ProofMesh: storage, peers, and verifiable work</h2>
+      <p>
+        The current embedding guide explains the live machine. The product roadmap adds a second
+        layer: a passkey-owned encrypted volume, verified content-addressed block sources, and a
+        builder/critic market for reproducible software improvements.
+      </p>
+      <ul>
+        <li><strong>Identity:</strong> WebAuthn authenticates the user; a feature-detected PRF and
+          recovery slots may unlock a locally generated volume key.</li>
+        <li><strong>Storage:</strong> immutable base blocks stay deduplicated while user writes
+          become authenticated encrypted generations.</li>
+        <li><strong>Work:</strong> a frozen ticket commits the source, benchmark, verifier, and
+          acceptance rule before a builder or critic starts.</li>
+        <li><strong>Settlement:</strong> independent critics return signed attestations; a quorum
+          and challenge window decide whether the artifact is accepted.</li>
+      </ul>
+      <p>
+        These are proposed product APIs, not claims about every live export. Read the
+        <a href="./products.html">product suite</a>,
+        <a href="./work-market.html">work-market protocol</a>,
+        <a href="./security.html">security model</a>, and
+        <a href="./roadmap.html">roadmap</a> for the intended boundary.
+      </p>
     </section>
 
     <section id="caveats">

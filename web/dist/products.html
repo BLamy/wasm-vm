@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>wasm-vm — Products</title>
+  <meta name="description" content="A browser-native Linux computer, encrypted personal storage, verified block delivery, and a future market for useful software work." />
+  <link rel="stylesheet" href="./marketing.css" />
+</head>
+<body>
+  <header class="site-header"><div class="wrap nav">
+    <a class="brand" href="./"><span class="dot"></span><code>wasm-vm</code></a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="./products.html" aria-current="page">Products</a><a href="./work-market.html">Work market</a><a href="./security.html">Security</a><a href="./roadmap.html">Roadmap</a><a href="./docs.html">Docs</a><a class="nav-cta" href="./app.html">Launch demo →</a>
+    </nav>
+  </div></header>
+
+  <main>
+    <section class="hero"><div class="wrap">
+      <span class="eyebrow">Product suite · proofmesh/0.1</span>
+      <h1>A computer, a storage network, and a <span class="accent">work market</span> in one browser.</h1>
+      <p class="lede">wasm-vm starts with a real Linux machine in WebAssembly. ProofMesh extends it with passkey-owned storage and a builder/critic network for work that can be reproduced instead of merely promised.</p>
+      <div class="actions"><a class="button" href="./app.html">Launch the live machine →</a><a class="button secondary" href="./roadmap.html">See the roadmap</a></div>
+    </div></section>
+
+    <section class="section"><div class="wrap">
+      <span class="kicker">Four surfaces</span><h2>One foundation, different ways to use it.</h2>
+      <p class="intro">The current demo is the machine. The other surfaces are designed as explicit products, with their own contracts and acceptance gates.</p>
+      <div class="grid">
+        <article class="card"><div class="icon">🐧</div><span class="status live">Live now</span><h2>Browser Linux</h2><p>Boot an unmodified riscv64 Linux guest in a browser tab, with a terminal, persistence, networking, and real userland workloads.</p><ul><li>Rust RV64 virtual machine</li><li>WebAssembly execution</li><li>Linux, Alpine, OCI workloads</li></ul><a class="link" href="./app.html">Open the machine →</a></article>
+        <article class="card"><div class="icon">🔐</div><span class="status design">Designing</span><h2>Private volumes</h2><p>Layer a writable user volume over an immutable base image. Passkeys unlock encrypted generations; peers only receive verified ciphertext.</p><ul><li>Passkey and recovery slots</li><li>Authenticated encrypted shards</li><li>Local-first snapshots</li></ul><a class="link" href="./security.html">Explore the trust model →</a></article>
+        <article class="card"><div class="icon">🧩</div><span class="status design">Designing</span><h2>Verified block network</h2><p>Request only the blocks the guest needs. HTTP, local cache, WebRTC, and torrent-like peers become interchangeable transport sources.</p><ul><li>Content-addressed manifests</li><li>Demand paging and cancellable read-ahead</li><li>Hash before cache insertion</li></ul><a class="link" href="./security.html#distribution">See distribution →</a></article>
+        <article class="card"><div class="icon">⚙️</div><span class="status plan">Planned</span><h2>Work market</h2><p>Publish a frozen optimization ticket, fund it, and let builders compete to produce a faster artifact with a reproducible proof bundle.</p><ul><li>Reverse auctions and bounties</li><li>Deterministic acceptance rules</li><li>Artifact and benchmark hashes</li></ul><a class="link" href="./work-market.html">See the protocol →</a></article>
+        <article class="card"><div class="icon">🧪</div><span class="status plan">Planned</span><h2>Critic network</h2><p>Several independent critics check semantics, performance, security, reproducibility, and supply chain before a result settles.</p><ul><li>Quorum and challenge windows</li><li>Signed attestations</li><li>Failure bounties and bonds</li></ul><a class="link" href="./work-market.html#critics">Meet the critics →</a></article>
+        <article class="card"><div class="icon">🧱</div><span class="status live">API first</span><h2>Embedding layer</h2><p>Build your own Linux experience with an asynchronous controller API designed for workers, storage backends, peers, and long-running work.</p><ul><li>Typed lifecycle and errors</li><li>Explicit byte ownership</li><li>Progress and cancellation</li></ul><a class="link" href="./docs.html#overview">Read the embedding guide →</a></article>
+      </div>
+    </div></section>
+
+    <section class="section"><div class="wrap">
+      <span class="kicker">The boundary</span><h2>Distributed delivery first. Distributed execution later.</h2>
+      <p class="intro">A peer can seed an immutable block without becoming a trusted server. The guest still runs locally in the browser. Only after process placement and coordinated services span nodes will we call the operating environment distributed.</p>
+      <div class="panel"><pre><span class="comment">// immutable content and private state meet at the browser</span>
+web seeds / peers → verified base blocks → local Linux guest
+                                  ↘ encrypted user overlay
+requester → frozen work ticket → builder → independent critics → settlement</pre></div>
+    </div></section>
+  </main>
+
+  <footer><div class="wrap footer-inner"><span><strong>wasm-vm</strong> · a Linux computer in a browser</span><nav class="footer-links"><a href="./">Home</a><a href="./work-market.html">Work market</a><a href="./security.html">Security</a><a href="./roadmap.html">Roadmap</a><a href="./docs.html">Docs</a><a href="https://github.com/BLamy/wasm-vm" target="_blank" rel="noopener">GitHub</a></nav></div></footer>
+</body>
+</html>

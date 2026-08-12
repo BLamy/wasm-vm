@@ -21,7 +21,7 @@ rm -rf "$DIST"
 mkdir -p "$DIST"
 
 # Top-level app source: js/mjs/html/json, minus build/test scaffolding and the deploy-time manifest.
-for f in web/*.js web/*.mjs web/*.html web/*.json; do
+for f in web/*.js web/*.mjs web/*.html web/*.json web/*.css; do
   [ -e "$f" ] || continue
   b=$(basename "$f")
   case "$b" in
@@ -89,10 +89,10 @@ if [ -e "$DIST/landing.html" ] && [ -e "$DIST/index.html" ]; then
   sed -e 's#\./landing\.html#./#g' "$DIST/app.html" > "$DIST/app.html.tmp" && mv "$DIST/app.html.tmp" "$DIST/app.html"
   sed -e 's#\./index\.html#./app.html#g' -e 's#\./landing\.html#./#g' \
       "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
-  # Other pages that link to the app by its dev name (index.html) — e.g. docs.html's "Launch" CTA —
-  # must point at /app.html in the deployed layout too.
-  for f in docs.html; do
-    [ -e "$DIST/$f" ] && sed -e 's#\./index\.html#./app.html#g' "$DIST/$f" > "$DIST/$f.tmp" && mv "$DIST/$f.tmp" "$DIST/$f"
+  # Other pages that link to the app or marketing landing by their dev names must point at the
+  # deploy-time locations too. Keep the source tree's simple relative links for local serving.
+  for f in docs.html products.html work-market.html security.html roadmap.html; do
+    [ -e "$DIST/$f" ] && sed -e 's#\./index\.html#./app.html#g' -e 's#\./landing\.html#./#g' "$DIST/$f" > "$DIST/$f.tmp" && mv "$DIST/$f.tmp" "$DIST/$f"
   done
   echo "[web-dist] deploy root: / = landing, /app.html = app"
 fi

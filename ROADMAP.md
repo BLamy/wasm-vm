@@ -7,6 +7,13 @@ WASM-compiled virtual machine that boots real, unmodified Linux in a browser tab
 end state being full parity with (and then transcendence of) https://webvm.io/alpine.html:
 a persistent, networked, GUI-capable Linux system that lives at a URL.
 
+The product layer above this machine is documented separately in
+[`docs/product/proofmesh-whitepaper.md`](docs/product/proofmesh-whitepaper.md), with the
+future-facing API in [`docs/product/proofmesh-api.md`](docs/product/proofmesh-api.md) and the
+delivery plan in [`docs/product/proofmesh-roadmap.md`](docs/product/proofmesh-roadmap.md).
+Those documents describe the intended passkey-owned encrypted storage and builder/critic work
+market before implementation APIs are frozen.
+
 Like Kurzweil's law of accelerating returns, each level here is not just "more features" —
 each level is a *phase change* that makes the next level cheaper to reach. The interpreter
 makes the CPU debuggable; the compliant CPU makes Linux bootable; booted Linux makes the

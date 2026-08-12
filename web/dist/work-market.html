@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>wasm-vm — Verifiable work market</title>
+  <meta name="description" content="A builder and critic protocol for reproducible software improvements." />
+  <link rel="stylesheet" href="./marketing.css" />
+</head>
+<body>
+  <header class="site-header"><div class="wrap nav">
+    <a class="brand" href="./"><span class="dot"></span><code>wasm-vm</code></a>
+    <nav class="nav-links" aria-label="Primary navigation"><a href="./products.html">Products</a><a href="./work-market.html" aria-current="page">Work market</a><a href="./security.html">Security</a><a href="./roadmap.html">Roadmap</a><a href="./docs.html">Docs</a><a class="nav-cta" href="./app.html">Launch demo →</a></nav>
+  </div></header>
+
+  <main>
+    <section class="hero"><div class="wrap">
+      <span class="eyebrow">ProofMesh · verifiable useful work</span>
+      <h1>Ask for a result. Pay for <span class="accent">evidence</span>.</h1>
+      <p class="lede">A requester freezes a benchmark and verifier. A builder submits an artifact. Independent critics replay it, challenge it, and sign the result before settlement.</p>
+      <div class="actions"><a class="button" href="./products.html">Explore the suite →</a><a class="button secondary" href="https://github.com/BLamy/wasm-vm/blob/main/docs/product/proofmesh-api.md" target="_blank" rel="noopener">Read the API on GitHub ↗</a></div>
+    </div></section>
+
+    <section class="section"><div class="wrap">
+      <span class="kicker">The protocol</span><h2>A work ticket is a frozen contract.</h2>
+      <p class="intro">“Improve this 10×” becomes a content-addressed source tree, baseline, verifier, workload, metric, environment, and acceptance rule. The phrase is not left to a subjective review.</p>
+      <div class="panel"><pre>{
+  <span class="key">"protocolVersion"</span>: <span class="value">"proofmesh/0.1"</span>,
+  <span class="key">"baseline"</span>: <span class="value">"sha256:…"</span>,
+  <span class="key">"verifier"</span>: <span class="value">"sha256:…"</span>,
+  <span class="key">"benchmark"</span>: { <span class="key">"metric"</span>: <span class="value">"median_guest_cycles"</span>, <span class="key">"repetitions"</span>: <span class="value">7</span> },
+  <span class="key">"correctness"</span>: <span class="value">"differential-trace-equal"</span>,
+  <span class="key">"acceptance"</span>: { <span class="key">"maximum"</span>: <span class="value">100000000</span> }
+}</pre></div>
+    </div></section>
+
+    <section class="section" id="critics"><div class="wrap">
+      <span class="kicker">Builder → critics → settlement</span><h2>Independent checks, not one green checkbox.</h2>
+      <div class="steps">
+        <article class="step"><div><h3>Freeze the ticket</h3><p>The requester deposits the reward and commits the exact source, benchmark, verifier, policy, and deadline.</p></div></article>
+        <article class="step"><div><h3>Build the artifact</h3><p>A builder submits a patch, reproducible build manifest, measurements, and proof bundle.</p></div></article>
+        <article class="step"><div><h3>Assign diverse critics</h3><p>Critics check semantics, performance, security, dependencies, and reproducibility from independent environments.</p></div></article>
+        <article class="step"><div><h3>Commit, reveal, challenge</h3><p>Verdicts are committed before other reports are visible. A replayable counterexample can open a challenge window.</p></div></article>
+        <article class="step"><div><h3>Settle the evidence</h3><p>A quorum of signed attestations settles the ticket. Review fees, failure bounties, bonds, and the builder reward follow the policy.</p></div></article>
+      </div>
+      <div class="callout"><strong>Critic incentive:</strong> critics are paid for a valid review, not simply for approving. Finding a real failure earns a bounty; a false approval risks stake.</div>
+    </div></section>
+
+    <section class="section"><div class="wrap">
+      <span class="kicker">Three proof levels</span><h2>Use the cheapest proof that preserves trust.</h2>
+      <div class="grid three">
+        <article class="card"><span class="status live">First implementation</span><h3>Deterministic replay</h3><p>Run the artifact in a fixed sandbox and compare outputs, guest traces, state digests, and resource counters.</p></article>
+        <article class="card"><span class="status design">Network scale</span><h3>Redundant critics</h3><p>Several critics run the verifier independently. Disagreements escalate to additional replay or a challenge game.</p></article>
+        <article class="card"><span class="status plan">Selective</span><h3>Cryptographic proofs</h3><p>zkVM, SNARK, or STARK bundles can prove a specified computation. They do not make an ambiguous benchmark precise.</p></article>
+      </div>
+    </div></section>
+
+    <section class="section"><div class="wrap">
+      <span class="kicker">Economics</span><h2>Start with escrow. Earn the right to add a token.</h2>
+      <p class="intro">The security comes from the frozen verifier and the critic protocol, not from a coin. The first release uses inspectable credits or escrow records. A native staking asset can come later, after demand, dispute rates, and critic economics are measurable.</p>
+      <div class="actions"><a class="button" href="./roadmap.html">See the release tracks →</a><a class="button secondary" href="https://github.com/BLamy/wasm-vm/blob/main/docs/product/proofmesh-whitepaper.md" target="_blank" rel="noopener">Read the white paper ↗</a></div>
+    </div></section>
+  </main>
+
+  <footer><div class="wrap footer-inner"><span><strong>wasm-vm</strong> · evidence before settlement</span><nav class="footer-links"><a href="./products.html">Products</a><a href="./security.html">Security</a><a href="./roadmap.html">Roadmap</a><a href="./docs.html">Docs</a></nav></div></footer>
+</body>
+</html>

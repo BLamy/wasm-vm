@@ -720,6 +720,8 @@
       .transfer-detail { color: var(--muted); }
       .transfer-cancel { grid-column: 2; grid-row: 1 / span 3; align-self: center; }
       #tailscale-status { grid-column: 1 / -1; color: var(--muted); font: 12px ui-monospace, monospace; }
+      #tailscale-login-link { grid-column: 1 / -1; color: var(--accent); font-size: 12px; }
+      .network-help { grid-column: 1 / -1; color: var(--muted); font-size: 11px; line-height: 1.45; margin: 0; }
 
       @media (max-width: 900px) {
         header { align-items: flex-start; flex-direction: column; }
@@ -1137,19 +1139,24 @@
         <div class="network-config" aria-label="Guest network provider">
           <label>Provider
             <select id="network-provider">
-              <option value="offline">Offline</option>
-              <option value="relay">Public relay</option>
-              <option value="tailscale">Tailscale / Headscale</option>
+              <option value="offline" selected>Offline</option>
+              <option value="websocket">WebSocket (default when configured)</option>
+              <option value="tailscale">Public relay (Tailscale DERP)</option>
+              <option value="headscale">Private Headscale (self-hosted Tailscale)</option>
+              <option value="relay">Private wvrelay (legacy advanced)</option>
             </select>
           </label>
-          <label>Relay WebSocket URL
+          <label>WebSocket endpoint
+            <input id="network-websocket-url" type="url" autocomplete="off" placeholder="wss://your-websocket-relay.example/ws" />
+          </label>
+          <label>Private wvrelay WebSocket URL
             <input id="network-relay-url" type="url" autocomplete="off" placeholder="wss://relay.example/ws" />
           </label>
           <label>Short-lived relay token
             <input id="network-relay-token" type="password" autocomplete="off" placeholder="HELLO-only; never stored or placed in the URL" />
           </label>
-          <label>Control server
-            <input id="tailscale-control-url" type="url" autocomplete="off" placeholder="https://controlplane.tailscale.com" />
+          <label>Headscale control server (blank = public Tailscale)
+            <input id="tailscale-control-url" type="url" autocomplete="off" placeholder="https://headscale.example.com" />
           </label>
           <label>Browser node hostname
             <input id="tailscale-hostname" value="wasm-vm-browser" autocomplete="off" />
@@ -1162,10 +1169,17 @@
           </label>
           <label class="check"><input id="tailscale-accept-dns" type="checkbox" checked /> Accept MagicDNS</label>
           <div class="network-actions">
-            <button id="tailscale-login" type="button">Login</button>
+            <button id="tailscale-login" type="button">Login with Tailscale</button>
             <button id="tailscale-logout" type="button" class="danger">Logout &amp; revoke</button>
           </div>
           <div id="tailscale-status" role="status">Tailscale provider idle; no Worker or runtime artifact loaded.</div>
+          <a id="tailscale-login-link" hidden target="_blank" rel="noopener noreferrer">Continue to Tailscale login</a>
+          <p id="network-help" class="network-help">
+            Public Tailscale uses the official control plane and public DERP relays. Private Headscale
+            uses the same client against your control server. WebSocket is the ordinary browser transport;
+            enter its endpoint before booting. Switching applies to the next guest boot and never falls
+            back to another identity silently.
+          </p>
         </div>
         <section id="file-transfer" class="file-transfer" aria-labelledby="file-transfer-title">
           <div class="file-transfer-head">

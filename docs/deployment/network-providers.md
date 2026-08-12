@@ -1,9 +1,35 @@
 # Network provider deployment
 
-E3-T19 ships three explicit browser policies: `tailscale`, `relay`, and `offline`. Selection is
+E3-T19 ships five explicit browser policies: `tailscale`, `headscale`, `websocket`, `relay`, and `offline`. Selection is
 fail-closed. An ACL denial, expired/revoked node, or unavailable Tailscale control plane is shown as
 that provider's failure; it never retries through the relay under a different identity. An operator
-may expose a separate user action that explicitly selects `relay` and supplies a fresh token.
+may expose separate user actions that explicitly select a private `relay` or a configured `websocket`
+endpoint and supply a fresh token where required.
+
+The browser UI names the transports deliberately:
+
+- **Public Tailscale (DERP)** (`tailscale`) uses the official Tailscale control plane when the
+  control-server field is blank. The in-browser Tailscale client then uses Tailscale's public DERP
+  map for its transport; this is the public relay path, not `wvrelay`.
+- **Private Headscale** (`headscale`, also `private-relay`) uses the same in-browser Tailscale client with an operator-owned
+  Headscale control URL. It is the private-tailnet equivalent of the public Tailscale mode and requires
+  `slirpTailscale.config.controlUrl`.
+- **Private wvrelay** (`relay`) uses an operator-owned authenticated `wvrelay` endpoint. It is an
+  advanced compatibility transport for the historical `?slirpRelay=...` path, not a Headscale network.
+- **WebSocket** (`websocket`) uses the ordinary browser WebSocket connector against the endpoint
+  entered in the WebSocket field. It is the default transport when an endpoint is configured. It is
+  intentionally not guessed from the page origin: static Pages has no socket listener, so a missing
+  endpoint fails closed instead of silently becoming a private or Tailscale connection.
+- **Offline** (`offline`) keeps the guest's local slirp stack but provides no outbound transport.
+
+Provider selection is applied at guest boot. The guest always talks to the same virtio-net device:
+the core owns a stable `SwitchableNetBackend` adapter and the host may replace the concrete backend
+at a quiescent run boundary without changing the guest's MAC, queues, or negotiated features. A
+handoff deliberately drops the old backend's in-flight socket state; it never silently combines two
+identities or replays stale frames. The browser UI still uses stop/reboot as its conservative
+operator workflow, while native/embedded hosts can call `Machine::replace_virtio_net_backend` when
+they have explicitly quiesced the machine. Tailscale login state itself is persisted and the login
+popup can be reopened without entering a key again.
 
 ## Local Headscale proof bundle
 

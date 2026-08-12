@@ -288,6 +288,9 @@ if (root) {
 
   const api = () => window.wvmDemo;
   const ready = () => !!(api() && api().isGuestReady && api().isGuestReady());
+  // Explorer/Docker RPCs are control-plane work. Keep their fenced shell echo and marker out of
+  // the user's foreground terminal; the returned stdout is rendered in the owning pane instead.
+  const bgExec = (cmd, timeoutMs) => api().exec(cmd, timeoutMs, { quiet: true });
 
   // ── Activity bar / sidebar ──────────────────────────────────────────────────
   const sideEl = q("#ide-side");
@@ -372,7 +375,15 @@ if (root) {
   function refreshNet() {
     const sel = document.getElementById("network-provider");
     const v = sel ? sel.value : "offline";
-    const label = v === "offline" ? "offline" : v === "relay" ? "relay" : "tailscale";
+    const label = v === "offline"
+      ? "offline"
+      : v === "websocket"
+        ? "websocket"
+        : v === "relay"
+          ? "private wvrelay"
+          : v === "headscale"
+            ? "private Headscale"
+            : "public Tailscale / DERP";
     netTxt.textContent = "Network: " + label;
     netDot.className = "ide-sb-dot" + (v === "offline" ? " off" : " ready");
   }
@@ -515,7 +526,7 @@ if (root) {
     return rows;
   }
   async function listDir(dir) {
-    const res = await api().exec("ls -la " + shq(dir), 30000);
+    const res = await bgExec("ls -la " + shq(dir), 30000);
     if (res.exit !== 0) throw new Error(res.stdout.trim() || ("cannot read " + dir));
     return parseLs(res.stdout);
   }
@@ -582,7 +593,7 @@ if (root) {
     tabs.push(t);
     activateTab(key);
     try {
-      const res = await api().exec("cat " + shq(path), 45000);
+      const res = await bgExec("cat " + shq(path), 45000);
       if (res.exit !== 0) throw new Error(res.stdout.trim() || "cat failed");
       t.savedText = res.stdout; t.value = res.stdout; t.loaded = true;
       if (activeKey === key) {
@@ -608,7 +619,7 @@ if (root) {
     try {
       const b64 = toB64(taEl.value);
       const cmd = "printf %s " + shq(b64) + " | base64 -d > " + shq(t.path);
-      const res = await api().exec(cmd, 60000);
+      const res = await bgExec(cmd, 60000);
       if (res.exit !== 0) throw new Error(res.stdout.trim() || ("write failed (exit " + res.exit + ")"));
       t.savedText = taEl.value; t.value = taEl.value;
       refreshSave(); setStatus("saved ✓", "ok");
@@ -671,7 +682,7 @@ if (root) {
     btn.disabled = true; btn.textContent = "…";
     try {
       const { cmd } = wvrunRunCmd(img);
-      await api().exec(cmd, 60000);
+      await bgExec(cmd, 60000);
       await refreshContainers();
     } catch (e) { /* surfaced via container list refresh */ }
     finally { btn.disabled = false; btn.textContent = "▶ Run"; }
@@ -683,7 +694,7 @@ if (root) {
     if (!list) return;
     psInFlight = true;
     try {
-      const res = await api().exec("wvrun ps -a", 30000);
+      const res = await bgExec("wvrun ps -a", 30000);
       renderContainerList(list, parsePs(res.stdout));
     } catch (e) {
       list.replaceChildren(mk("div", "ide-dk-note", "wvrun ps failed: " + (e.message || e)));
@@ -730,7 +741,7 @@ if (root) {
 
     const refreshLogs = async () => {
       try {
-        const res = await api().exec("wvrun logs " + shq(t.id), 30000);
+        const res = await bgExec("wvrun logs " + shq(t.id), 30000);
         t.logsEl.textContent = res.stdout.trim() || "(no output yet)";
       } catch (e) { t.logsEl.textContent = "wvrun logs failed: " + (e.message || e); }
     };
@@ -748,7 +759,7 @@ if (root) {
       t.logsEl.textContent += `\n$ ${cmd}\n`;
       execInput.value = "";
       try {
-        const res = await api().exec("wvrun exec " + shq(t.id) + " sh -c " + shq(cmd), 45000);
+        const res = await bgExec("wvrun exec " + shq(t.id) + " sh -c " + shq(cmd), 45000);
         t.logsEl.textContent += (res.stdout || "") + (res.exit ? `[exit ${res.exit}]\n` : "");
       } catch (err) { t.logsEl.textContent += "exec failed: " + (err.message || err) + "\n"; }
       t.logsEl.scrollTop = t.logsEl.scrollHeight;

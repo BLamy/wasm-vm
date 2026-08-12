@@ -4,9 +4,10 @@ A user-mode TCP/IP stack that terminates the guest's ethernet world entirely in 
 gets outbound networking (DNS, HTTP, `apk`, pulling OCI images from inside the guest) with **no
 privileged host networking** — no TUN/TAP, no root, works in a browser tab. smoltcp parses and
 answers the guest's frames; guest-initiated TCP and UDP flows are NATed onto abstract connector
-traits. The native harness backs them with real sockets, while the browser tunnels them over a
-multiplexed WebSocket to `wvrelay`. TCP uses credit-controlled byte streams; UDP uses dedicated
-datagram frames so message boundaries remain intact. DHCP is implemented; DNS wiring remains T15.
+traits. The native harness backs them with real sockets. Browser boots can use the ordinary
+WebSocket connector, the compatibility `wvrelay`, or the Tailscale client (public DERP or a private
+Headscale control plane). TCP uses credit-controlled byte streams; UDP uses dedicated datagram frames
+so message boundaries remain intact. DHCP is implemented; DNS wiring remains T15.
 
 This is the largest networking task; it lands in passes. **This doc is a deliverable and is kept in
 sync with the code** — a contract stated here but not implemented is a bug.
@@ -28,7 +29,11 @@ name resolution in booted Alpine. External TCP and UDP destinations are NATed ou
 ## Architecture
 
 ```
- guest ── virtio-net frames ──▶ ┌──────────────── slirp crate ────────────────┐
+ guest ── virtio-net frames ──▶ ┌──────────── stable virtio adapter ───────────┐
+                                │  SwitchableNetBackend (host handoff boundary) │
+                                └───────────────────┬──────────────────────────┘
+                                                    ▼
+                                ┌──────────────── slirp crate ────────────────┐
                                 │  phy::Device  ⇄  smoltcp Interface           │
    (Vec<u8> ethernet frames,    │      │              │ owns 10.0.2.2/.3,      │
     the E3-T13 NetBackend seam) │      │              │ answers ARP/ICMP,      │
@@ -41,8 +46,15 @@ name resolution in booted Alpine. External TCP and UDP destinations are NATed ou
                                         connector(host, port)
                                           → NativeConnector (tokio)
                                           → StdConnector (sync tests)
-                                          → WsConnector → wvrelay [browser]
+                                          → WsConnector → WebSocket / wvrelay / Tailscale [browser]
 ```
+
+The virtio adapter is the VM boundary: the guest does not know whether the host connector is an
+ordinary WebSocket, the public Tailscale DERP path, a private Headscale network, a native socket, or
+offline loopback. A host can replace the adapter's concrete `NetBackend` only between run calls;
+the handoff drops old connector-owned flows and preserves the virtio device identity and queue
+layout. This keeps provider policy out of guest networking and makes a future live provider switch a
+host concern rather than a kernel/driver change.
 
 - **phy::Device glue** *(pass 2a — implemented, `device.rs`)* — a `smoltcp::phy::Device` impl over
   two `Vec<u8>` frame queues: RX = frames from the guest (the E3-T13 `NetBackend` seam), TX = replies
@@ -77,8 +89,9 @@ name resolution in booted Alpine. External TCP and UDP destinations are NATed ou
   ```
   `NativeConnector` = `tokio::net::TcpStream` (async bridge tests). Production native and browser
   use the synchronous sibling trait `SyncConnector`: `StdConnector` owns OS sockets, while
-  `WsConnector` multiplexes flow-control-aware streams over a browser
-  `WebSocket` to `wvrelay`, which owns the real sockets. **Contract:** connect either yields a duplex
+  `WsConnector` multiplexes flow-control-aware streams over a browser WebSocket transport. That
+  transport may be the ordinary socket endpoint, compatibility `wvrelay`, or the Tailscale Worker
+  backed by public DERP/Headscale. **Contract:** connect either yields a duplex
   stream or fails
   within the connect timeout with a typed error the stack maps to a guest RST.
 - **FlowTable** — the NAT table (this pass): entries keyed by `(proto, guest_ip, guest_port,
@@ -140,7 +153,7 @@ bounds, and peak-RSS delta.
    (`any_ip` + `open_tcp`, `stack.rs`) — a guest SYN to an arbitrary external host handshakes
    (SYN → SYN-ACK).
 4. **Data paths (done):** `SlirpLocalBackend` is shared by the native CLI (`StdConnector`) and wasm
-   (`WsConnector` + browser `WebSocket` + `wvrelay`); the async `Bridge` + `NativeConnector` remains
+   (`WsConnector` + browser WebSocket, `wvrelay`, or Tailscale Worker); the async `Bridge` + `NativeConnector` remains
    independently tested. DHCP is driven in both backends. Evidence: real browser Alpine
    DHCP/ping/wget with a host-matching SHA-256; 50 concurrent distinct TCP flows; 100 MiB byte-exact
    each direction with bounded memory; half-close/refusal/backpressure suites; and external UDP

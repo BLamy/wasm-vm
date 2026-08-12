@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>wasm-vm — Passkeys and encrypted volumes</title>
+  <meta name="description" content="How passkey-controlled encrypted user volumes and verified peer delivery are designed." />
+  <link rel="stylesheet" href="./marketing.css" />
+</head>
+<body>
+  <header class="site-header"><div class="wrap nav">
+    <a class="brand" href="./landing.html"><span class="dot"></span><code>wasm-vm</code></a>
+    <nav class="nav-links" aria-label="Primary navigation"><a href="./products.html">Products</a><a href="./work-market.html">Work market</a><a href="./security.html" aria-current="page">Security</a><a href="./roadmap.html">Roadmap</a><a href="./docs.html">Docs</a><a class="nav-cta" href="./index.html">Launch demo →</a></nav>
+  </div></header>
+
+  <main>
+    <section class="hero"><div class="wrap">
+      <span class="eyebrow">Private by default · designed for verification</span>
+      <h1>Your Linux state, <span class="accent">your keys</span>.</h1>
+      <p class="lede">The operating-system base can be public and deduplicated. User writes are different: they are encrypted into authenticated shards before they leave the browser.</p>
+      <div class="actions"><a class="button" href="./products.html">See all products →</a><a class="button secondary" href="./docs.html#byoi">Read the current storage docs</a></div>
+    </div></section>
+
+    <section class="section"><div class="wrap">
+      <span class="kicker">Key hierarchy</span><h2>Passkeys unlock a key hierarchy, not a raw password.</h2>
+      <p class="intro">WebAuthn authenticates the user. Where WebAuthn PRF is available, its credential-bound output can unwrap a random volume key. Recovery and multiple passkeys are first-class.</p>
+      <div class="panel"><pre>passkey authentication / PRF capability
+                  ↓
+          key-encryption key (KEK)
+                  ↓
+             random volume key
+                  ↓
+       generation + shard encryption keys
+                  ↓
+       authenticated encrypted user shards</pre></div>
+      <div class="callout"><strong>Recovery is part of the product:</strong> users can enroll a second passkey or encrypted recovery slot. Losing the only credential must not be a surprise discovered after the last browser cache is gone.</div>
+    </div></section>
+
+    <section class="section" id="distribution"><div class="wrap">
+      <span class="kicker">Peer delivery</span><h2>Peers transport bytes. Hashes decide meaning.</h2>
+      <p class="intro">The browser requests a digest, verifies the returned bytes, and only then inserts them into the guest cache. The transport can be same-origin HTTP, a local cache, WebRTC, or a torrent-like peer.</p>
+      <div class="grid two">
+        <article class="card"><div class="icon">📦</div><h3>Immutable base image</h3><p>Linux kernel, rootfs, and public assets are content-addressed and deduplicated. A peer can seed them without being trusted as an authority.</p><ul><li>Manifest and block digests</li><li>Demand paging</li><li>Cancellable read-ahead</li></ul></article>
+        <article class="card"><div class="icon">🔒</div><h3>Private overlay generations</h3><p>User writes become encrypted snapshots. Sharing is explicit: local-only, invited peers, or public seeding are different policies.</p><ul><li>Authenticated ciphertext</li><li>Generation parents</li><li>Replay and rollback hooks</li></ul></article>
+      </div>
+    </div></section>
+
+    <section class="section"><div class="wrap">
+      <span class="kicker">Threat model</span><h2>What this protects—and what it cannot.</h2>
+      <div class="grid two">
+        <article class="card"><h3>Protected by design</h3><ul><li>Peers cannot alter a verified block unnoticed.</li><li>Storage peers cannot read encrypted user shards without a key.</li><li>Old manifests cannot silently reinterpret a newer generation.</li><li>Critics can reject an artifact with replayable evidence.</li></ul></article>
+        <article class="card"><h3>Still requires care</h3><ul><li>A compromised page can see plaintext while the guest is unlocked.</li><li>Encryption does not hide shard sizes, timing, or popularity.</li><li>Published ciphertext may be retained by peers indefinitely.</li><li>A weak benchmark or verifier cannot be repaired by cryptography.</li></ul></article>
+      </div>
+    </div></section>
+
+    <section class="section"><div class="wrap">
+      <span class="kicker">Planned API</span><h2>Transport-independent storage.</h2>
+      <div class="panel"><pre><span class="comment">// the guest never learns which source supplied the block</span>
+await mesh.peers.request({
+  digest: <span class="value">"sha256:…"</span>,
+  priority: <span class="value">"fault"</span>,
+  deadline: <span class="value">performance.now() + 500</span>
+});</pre></div>
+      <div class="actions"><a class="button" href="./roadmap.html">Follow the security roadmap →</a><a class="button secondary" href="https://github.com/BLamy/wasm-vm/blob/main/docs/product/proofmesh-api.md" target="_blank" rel="noopener">Read the proposed API ↗</a></div>
+    </div></section>
+  </main>
+
+  <footer><div class="wrap footer-inner"><span><strong>wasm-vm</strong> · verified bytes, user-owned state</span><nav class="footer-links"><a href="./products.html">Products</a><a href="./work-market.html">Work market</a><a href="./roadmap.html">Roadmap</a><a href="./docs.html">Docs</a></nav></div></footer>
+</body>
+</html>

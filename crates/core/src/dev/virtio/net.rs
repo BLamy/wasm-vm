@@ -91,6 +91,66 @@ pub trait NetBackend {
     fn rx_ready(&self) -> bool;
 }
 
+/// Host-side control handle for a virtio-net backend that can be replaced at a run boundary.
+///
+/// The guest never sees this indirection: the virtio device, queues, MAC, and negotiated feature
+/// set remain unchanged while the host changes where ethernet frames are sourced/sent. Callers
+/// must replace a backend while the machine is quiescent (not from inside `poll`, `tx`, `rx`, or
+/// `rx_ready`). Replacing a backend drops frames and connection state owned by the old backend;
+/// the guest's virtio device state is deliberately retained and the new backend starts at a clean
+/// transport boundary.
+#[derive(Clone)]
+pub struct NetBackendHandle {
+    inner: Rc<RefCell<Box<dyn NetBackend>>>,
+}
+
+impl NetBackendHandle {
+    /// Build a switchable adapter and its host-side control handle.
+    pub fn new(initial: Box<dyn NetBackend>) -> (SwitchableNetBackend, Self) {
+        let inner = Rc::new(RefCell::new(initial));
+        (
+            SwitchableNetBackend {
+                inner: Rc::clone(&inner),
+            },
+            Self { inner },
+        )
+    }
+
+    /// Replace the host backend. This is intentionally a complete backend replacement rather than
+    /// a transport-specific operation, so the core remains unaware of WebSockets, DERP, Headscale,
+    /// or any native relay implementation.
+    pub fn replace(&self, backend: Box<dyn NetBackend>) {
+        *self.inner.borrow_mut() = backend;
+    }
+}
+
+/// Stable virtio-facing adapter whose implementation can be changed by [`NetBackendHandle`].
+pub struct SwitchableNetBackend {
+    inner: Rc<RefCell<Box<dyn NetBackend>>>,
+}
+
+impl NetBackend for SwitchableNetBackend {
+    fn poll(&mut self) {
+        self.inner.borrow_mut().poll();
+    }
+
+    fn external_io_pending(&self) -> bool {
+        self.inner.borrow().external_io_pending()
+    }
+
+    fn tx(&mut self, frame: &[u8]) {
+        self.inner.borrow_mut().tx(frame);
+    }
+
+    fn rx(&mut self) -> Option<Vec<u8>> {
+        self.inner.borrow_mut().rx()
+    }
+
+    fn rx_ready(&self) -> bool {
+        self.inner.borrow().rx_ready()
+    }
+}
+
 /// The v1 loopback backend: echoes every transmitted frame back to the guest with src/dst MAC
 /// swapped (so an ARP/ping to a made-up neighbor returns as if the neighbor answered). Proves
 /// the rx/tx paths before any real network stack exists. The staging queue is bounded
@@ -522,5 +582,56 @@ pub fn service(
         if rx_irq || tx_irq {
             slot.borrow_mut().raise_used_irq();
         }
+    }
+}
+
+#[cfg(test)]
+mod switch_tests {
+    use super::{NetBackend, NetBackendHandle};
+    use alloc::collections::VecDeque;
+
+    struct TaggedBackend {
+        tag: u8,
+        rx: VecDeque<Vec<u8>>,
+    }
+
+    impl TaggedBackend {
+        fn new(tag: u8) -> Self {
+            Self {
+                tag,
+                rx: VecDeque::new(),
+            }
+        }
+    }
+
+    impl NetBackend for TaggedBackend {
+        fn tx(&mut self, _frame: &[u8]) {
+            self.rx.push_back(vec![self.tag]);
+        }
+
+        fn rx(&mut self) -> Option<Vec<u8>> {
+            self.rx.pop_front()
+        }
+
+        fn rx_ready(&self) -> bool {
+            !self.rx.is_empty()
+        }
+    }
+
+    #[test]
+    fn replacing_backend_keeps_adapter_identity_and_drops_old_frames() {
+        let (mut adapter, handle) = NetBackendHandle::new(Box::new(TaggedBackend::new(1)));
+        adapter.tx(&[0]);
+        assert_eq!(adapter.rx(), Some(vec![1]));
+
+        adapter.tx(&[0]);
+        handle.replace(Box::new(TaggedBackend::new(2)));
+        assert_eq!(
+            adapter.rx(),
+            None,
+            "old backend frames must not cross the handoff"
+        );
+        adapter.tx(&[0]);
+        assert_eq!(adapter.rx(), Some(vec![2]));
     }
 }

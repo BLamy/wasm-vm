@@ -31,6 +31,12 @@ and self-hosting.
   `tasks/QUEUE.md` as the global priority queue.
 - **`docs/embedding-guide.md`** — use `VizPlayer`, `VideoEmbed`, and Docstream's
   built-in `ReplayPreview` for explainers, videos, and public Loop QA replays.
+- **`docs/product/proofmesh-whitepaper.md`** — product proposal for passkey-owned encrypted
+  volumes, verified block delivery, and the builder/critic work market.
+- **`docs/product/proofmesh-api.md`** — future-facing API contract; implementation should target
+  this asynchronous, content-addressed boundary rather than expose internal worker details.
+- **`docs/product/proofmesh-roadmap.md`** — phased delivery plan from the local proof loop to a
+  distributed operating environment.
 - **`tools/build_queue.py`** — regenerates `tasks/QUEUE.md` from task frontmatter.
 
 Execution model: one task at a time, top of queue, and no task is done until an

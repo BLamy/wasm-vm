@@ -19,7 +19,8 @@ message carries exactly one canonical `ws-proxy` frame in an `ArrayBuffer` or `U
   `dispose` deterministically closes every flow and releases every callback before the Worker exits.
 - `{ type: "lookup", id, name }` asks the active IPN to resolve one MagicDNS/tailnet name. At most
   64 lookups are live; the Rust forwarder retains DNS wire parsing, response construction, and TTL
-  caching. This control exists only for the Tailscale provider—relay/offline continue using DoH.
+  caching. This control exists for both public Tailscale and private Headscale providers—wvrelay,
+  ordinary WebSocket, and offline continue using DoH.
 
 ## Worker to main thread
 
@@ -38,9 +39,9 @@ message carries exactly one canonical `ws-proxy` frame in an `ArrayBuffer` or `U
 The pinned Go/Wasm bridge exposes generic bounded TCP and UDP sessions (`dialTCP`, `dialUDP`,
 `read`, `write`, `shutdownWrite`, and `close`) plus `lookup`. The Worker drives only those methods.
 The whole-body `ipn.fetch` API is not imported or called by this transport. Runtime and 25 MiB-class
-Wasm artifact loading begins only after the `tailscale` provider has been selected; `relay` and
-`offline` selection stage an empty Worker URL and therefore cannot create the Worker or request its
-artifact.
+Wasm artifact loading begins only after the `tailscale` or `headscale` provider has been selected;
+`relay`, `websocket`, and `offline` selection stage an empty Worker URL and therefore cannot create
+the Worker or request its artifact.
 
 ## Failure and bounds
 
