@@ -63,6 +63,7 @@ function fakeController(events, done) {
     persist: () => 0,
     persistStats: () => ({ pendingBytes: 0 }),
     readOnly: () => false,
+    overlaySeedIdentity: () => "d".repeat(64),
     resumeAfterQuota: () => true,
     continueReadOnly: () => true,
     hasUnpersisted: () => false,

@@ -81,7 +81,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     return outcome;
   };
 
-  test("overlayDbName is per-image + reset deletes only that DB", async ({ page }) => {
+  test("overlayDbName isolates exact warm releases + reset deletes only that DB", async ({ page }) => {
     await page.goto("/?noAutoBoot=1");
     await page.waitForFunction(() => window.__ready === true, null, { timeout: 60_000 });
     // Drive the exported helpers directly (no full boot): name derivation + scoped delete.
@@ -90,6 +90,10 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
       await mod.default();
       const m1 = await (await fetch("./releases/chunked-alpine/manifest.json")).text();
       const name = mod.overlayDbName(m1);
+      const seedA = "a".repeat(64);
+      const seedB = "b".repeat(64);
+      const seededName = mod.overlayDbName(m1, seedA);
+      const nextSeededName = mod.overlayDbName(m1, seedB);
       // A different manifest (mutate the last chunk hash → a different, still-valid image) →
       // different base hash → different DB name.
       const alt = JSON.parse(m1);
@@ -106,6 +110,8 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
         });
       await open(name);
       await open(name2);
+      await open(seededName);
+      await open(nextSeededName);
       const del = (n) =>
         new Promise((res, rej) => {
           const r = indexedDB.deleteDatabase(n);
@@ -113,14 +119,27 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
           r.onerror = () => rej(r.error);
           r.onblocked = () => res();
         });
-      await del(name);
+      await del(seededName);
       const list = (await indexedDB.databases()).map((d) => d.name);
-      return { name, name2, distinct: name !== name2, survivorPresent: list.includes(name2), deletedGone: !list.includes(name) };
+      return {
+        name,
+        name2,
+        seededName,
+        nextSeededName,
+        distinct: name !== name2,
+        legacySurvives: list.includes(name),
+        secondImageSurvives: list.includes(name2),
+        nextSeedSurvives: list.includes(nextSeededName),
+        deletedGone: !list.includes(seededName),
+      };
     });
     expect(result.name).toMatch(/^wvov-/);
+    expect(result.seededName).toBe(`${result.name}-seed-${"a".repeat(64)}`);
     expect(result.distinct, "different images → different DB names").toBe(true);
-    expect(result.deletedGone, "reset deleted the target DB").toBe(true);
-    expect(result.survivorPresent, "a second image's overlay survives the reset").toBe(true);
+    expect(result.deletedGone, "reset deleted only the exact warm-release DB").toBe(true);
+    expect(result.legacySurvives, "the legacy user overlay survives a warm reset").toBe(true);
+    expect(result.secondImageSurvives, "a second image's overlay survives the reset").toBe(true);
+    expect(result.nextSeedSurvives, "another warm release survives the reset").toBe(true);
   });
 
   test("storage status is populated on a persistent boot", async ({ page }) => {

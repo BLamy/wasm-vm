@@ -2,6 +2,7 @@
 //! errors, never silent reuse), and DB-name namespacing by base binding.
 use super::*;
 use crate::{ImageManifest, Layout, OVERLAY_FORMAT_VERSION, OverlayError};
+use alloc::format;
 use alloc::vec;
 
 fn manifest(bytes: &[u8]) -> ImageManifest {
@@ -84,4 +85,22 @@ fn store_name_is_namespaced_by_base_binding() {
     assert!(na[5..].bytes().all(|c| c.is_ascii_hexdigit()));
     // Deterministic for the same base.
     assert_eq!(na, overlay_store_name(&a.base_hash()));
+}
+
+#[test]
+fn seeded_store_name_is_exactly_namespaced_without_changing_legacy() {
+    let base = manifest(&vec![1u8; 4096]).base_hash();
+    let old_name = overlay_store_name(&base);
+    let seed_a = [0xabu8; 32];
+    let seed_b = [0xcdu8; 32];
+
+    let a = overlay_seed_store_name(&base, &seed_a);
+    let b = overlay_seed_store_name(&base, &seed_b);
+
+    assert_eq!(old_name, overlay_store_name(&base));
+    assert_ne!(a, old_name, "a warm seed never aliases the legacy user DB");
+    assert_ne!(a, b, "different exact deltas get independent stores");
+    assert_eq!(a, overlay_seed_store_name(&base, &seed_a));
+    assert_eq!(a, format!("{old_name}-seed-{}", "ab".repeat(32)));
+    assert_eq!(a.len(), 5 + 64 + 6 + 64);
 }

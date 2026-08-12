@@ -310,6 +310,17 @@ pub fn init_logging() {
     init_diagnostics();
 }
 
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+fn parse_overlay_seed_identity(identity: Option<String>) -> Result<Option<[u8; 32]>, JsError> {
+    identity
+        .map(|hex| {
+            browser_file_transfer::parse_sha256(&hex).map_err(|_| {
+                JsError::new("overlay seed identity must be exactly 64 hex characters")
+            })
+        })
+        .transpose()
+}
+
 /// The core crate version, exposed to JS.
 #[wasm_bindgen]
 pub fn version() -> String {
@@ -319,13 +330,22 @@ pub fn version() -> String {
 /// E3-T10: the IndexedDB database name that holds a given image's durable overlay — so the
 /// "reset disk" flow can `indexedDB.deleteDatabase(name)` for THIS image only (a second image's
 /// overlay, in a different DB, survives). Same derivation the durable store uses
-/// (`overlay_store_name(base_hash)`), so it always matches.
+/// (`overlay_store_name(base_hash)` for legacy boots, or the exact shipped RAM+delta pair's
+/// independent seed namespace), so it always matches. Omitting `seed_identity` preserves the
+/// legacy name.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 #[wasm_bindgen(js_name = overlayDbName)]
-pub fn overlay_db_name(manifest_json: &str) -> Result<String, JsError> {
+pub fn overlay_db_name(
+    manifest_json: &str,
+    seed_identity: Option<String>,
+) -> Result<String, JsError> {
     let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
         .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
-    Ok(wasm_vm_storage::overlay_store_name(&manifest.base_hash()))
+    let base_binding = manifest.base_hash();
+    Ok(match parse_overlay_seed_identity(seed_identity)? {
+        Some(identity) => wasm_vm_storage::overlay_seed_store_name(&base_binding, &identity),
+        None => wasm_vm_storage::overlay_store_name(&base_binding),
+    })
 }
 
 /// E4 Alpine restore-on-load: seed the IndexedDB copy-on-write overlay for this chunked image with the
@@ -350,6 +370,7 @@ pub fn overlay_db_name(manifest_json: &str) -> Result<String, JsError> {
 pub async fn seed_overlay_delta(
     manifest_json: String,
     delta_bytes: Vec<u8>,
+    seed_identity: Option<String>,
 ) -> Result<bool, JsError> {
     let manifest = wasm_vm_storage::ImageManifest::from_json(&manifest_json)
         .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
@@ -360,7 +381,8 @@ pub async fn seed_overlay_delta(
         return Err(JsError::new("delta_base_mismatch"));
     }
 
-    let idb = idb_store::IdbStore::open(&base_binding)
+    let seed_identity = parse_overlay_seed_identity(seed_identity)?;
+    let idb = idb_store::IdbStore::open(&base_binding, seed_identity.as_ref())
         .await
         .map_err(|e| JsError::new(&format!("IndexedDB open: {e:?}")))?;
     let meta = idb
@@ -1045,13 +1067,15 @@ impl WasmLinux {
         bootargs: String,
         read_only: bool,
         output: js_sys::Function,
+        seed_identity: Option<String>,
     ) -> Result<WasmLinux, JsError> {
         let manifest = wasm_vm_storage::ImageManifest::from_json(&manifest_json)
             .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
         let base_binding = manifest.base_hash();
 
         // Open the durable store and reconcile its meta record with this base.
-        let idb = idb_store::IdbStore::open(&base_binding)
+        let seed_identity = parse_overlay_seed_identity(seed_identity)?;
+        let idb = idb_store::IdbStore::open(&base_binding, seed_identity.as_ref())
             .await
             .map_err(|e| JsError::new(&format!("IndexedDB open: {e:?}")))?;
         match idb

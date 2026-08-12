@@ -447,12 +447,17 @@ function renderLinuxQuotaDialog(request, getController, { usage, quota, unsaved 
     const typed = prompt('This deletes every saved change to the Alpine disk. Type RESET to confirm:');
     if (typed !== "RESET" || !linuxOwnerControlIsCurrent(el, request, owner)) return;
     el.style.display = "none";
+    const resetManifestUrl = request.imageManifestUrl ?? "./releases/chunked-alpine/manifest.json";
+    let resetSeedIdentity = null;
+    try { resetSeedIdentity = await owner.overlaySeedIdentity?.() ?? null; } catch {}
     // close THIS tab's IndexedDB connection before deleteDatabase, or deletion can block forever.
     let cleared = false;
     try { cleared = await retireLinuxController(owner); } catch {}
     if (!cleared || linuxCtl || linuxBootPromise || linuxActiveRequest || linuxBootRequest) return;
     try {
-      await resetDisk();
+      // Delete only the namespace owned by this exact warm snapshot release. The legacy per-base
+      // overlay (and older warm releases) remain untouched and recoverable.
+      await resetDisk(resetManifestUrl, resetSeedIdentity);
       // A programmatic replacement can claim the page while deletion is pending. Do not let this
       // old capability rewrite its status or buttons after the new claim.
       if (linuxCtl || linuxBootPromise || linuxActiveRequest || linuxBootRequest) return;
@@ -520,6 +525,7 @@ function runLinuxBoot(opts, banner, { requestKey = opts.manifestUrl, onClaim = n
   const request = {
     key: requestKey,
     manifestUrl: opts.manifestUrl ?? null,
+    imageManifestUrl: opts.imageManifestUrl ?? null,
     generation: ++linuxBootGeneration,
   };
   linuxBootRequest = request;

@@ -408,9 +408,10 @@ export class WasmLinux {
      * @param {string} bootargs
      * @param {boolean} read_only
      * @param {Function} output
+     * @param {string | null} [seed_identity]
      * @returns {Promise<WasmLinux>}
      */
-    static newChunkedDiskPersistent(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, bootargs, read_only, output) {
+    static newChunkedDiskPersistent(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, bootargs, read_only, output, seed_identity) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -421,7 +422,9 @@ export class WasmLinux {
         const len3 = WASM_VECTOR_LEN;
         const ptr4 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len4 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_newChunkedDiskPersistent(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, read_only, output);
+        var ptr5 = isLikeNone(seed_identity) ? 0 : passStringToWasm0(seed_identity, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len5 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_newChunkedDiskPersistent(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, read_only, output, ptr5, len5);
         return ret;
     }
     /**
@@ -962,28 +965,33 @@ export function initLogging() {
  * E3-T10: the IndexedDB database name that holds a given image's durable overlay — so the
  * "reset disk" flow can `indexedDB.deleteDatabase(name)` for THIS image only (a second image's
  * overlay, in a different DB, survives). Same derivation the durable store uses
- * (`overlay_store_name(base_hash)`), so it always matches.
+ * (`overlay_store_name(base_hash)` for legacy boots, or the exact shipped RAM+delta pair's
+ * independent seed namespace), so it always matches. Omitting `seed_identity` preserves the
+ * legacy name.
  * @param {string} manifest_json
+ * @param {string | null} [seed_identity]
  * @returns {string}
  */
-export function overlayDbName(manifest_json) {
-    let deferred3_0;
-    let deferred3_1;
+export function overlayDbName(manifest_json, seed_identity) {
+    let deferred4_0;
+    let deferred4_1;
     try {
         const ptr0 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
-        const ret = wasm.overlayDbName(ptr0, len0);
-        var ptr2 = ret[0];
-        var len2 = ret[1];
+        var ptr1 = isLikeNone(seed_identity) ? 0 : passStringToWasm0(seed_identity, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        const ret = wasm.overlayDbName(ptr0, len0, ptr1, len1);
+        var ptr3 = ret[0];
+        var len3 = ret[1];
         if (ret[3]) {
-            ptr2 = 0; len2 = 0;
+            ptr3 = 0; len3 = 0;
             throw takeFromExternrefTable0(ret[2]);
         }
-        deferred3_0 = ptr2;
-        deferred3_1 = len2;
-        return getStringFromWasm0(ptr2, len2);
+        deferred4_0 = ptr3;
+        deferred4_1 = len3;
+        return getStringFromWasm0(ptr3, len3);
     } finally {
-        wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
+        wasm.__wbindgen_free(deferred4_0, deferred4_1, 1);
     }
 }
 
@@ -1007,14 +1015,17 @@ export function overlayDbName(manifest_json) {
  * `restoreDecisionCode` guard enforces the core-hash + base + generation triple before `loadSnapshotBlob`.
  * @param {string} manifest_json
  * @param {Uint8Array} delta_bytes
+ * @param {string | null} [seed_identity]
  * @returns {Promise<boolean>}
  */
-export function seedOverlayDelta(manifest_json, delta_bytes) {
+export function seedOverlayDelta(manifest_json, delta_bytes, seed_identity) {
     const ptr0 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len0 = WASM_VECTOR_LEN;
     const ptr1 = passArray8ToWasm0(delta_bytes, wasm.__wbindgen_malloc);
     const len1 = WASM_VECTOR_LEN;
-    const ret = wasm.seedOverlayDelta(ptr0, len0, ptr1, len1);
+    var ptr2 = isLikeNone(seed_identity) ? 0 : passStringToWasm0(seed_identity, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var len2 = WASM_VECTOR_LEN;
+    const ret = wasm.seedOverlayDelta(ptr0, len0, ptr1, len1, ptr2, len2);
     return ret;
 }
 

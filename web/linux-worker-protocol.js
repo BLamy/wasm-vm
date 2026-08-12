@@ -46,6 +46,7 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "persist",
   "persistStats",
   "readOnly",
+  "overlaySeedIdentity",
   "resumeAfterQuota",
   "continueReadOnly",
   "hasUnpersisted",
