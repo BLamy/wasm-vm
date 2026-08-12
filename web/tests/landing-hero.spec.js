@@ -12,6 +12,7 @@ test("landing keeps the background shader and omits the scroll-reactive foregrou
   await expect(canvas).toBeVisible();
   await expect(canvas).toHaveAttribute("data-hero-background", "shader-active");
   await expect(canvas).toHaveAttribute("data-hero-foreground", "none");
+  await expect(canvas).toHaveCSS("background-image", /radial-gradient/);
 
   await page.evaluate(() => scrollTo(0, document.body.scrollHeight));
   await expect(canvas).toHaveAttribute("data-hero-background", "shader-active");
