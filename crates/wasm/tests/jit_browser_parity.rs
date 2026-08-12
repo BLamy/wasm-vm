@@ -22,14 +22,98 @@
 #![cfg(target_arch = "wasm32")]
 #![allow(clippy::identity_op)] // the RV64 field-encoders keep every field term for legibility
 
+use std::cell::Cell;
+use std::rc::Rc;
+
+use js_sys::{Function, Object, WebAssembly};
+use wasm_bindgen::{JsCast, closure::Closure, externref_heap_live_count};
 use wasm_bindgen_test::*;
 use wasm_vm_core::Machine;
-use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
+use wasm_vm_core::bus::{Bus, BusFault};
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
-use wasm_vm_core::jit::CompiledBlockExecutor;
+use wasm_vm_core::hart::{Exception, Hart, Trap};
+use wasm_vm_core::jit::{CompiledBlockExecutor, EvictPolicy, ExitCode, JitCacheBudget};
+use wasm_vm_core::mmio::{MmioDevice, SystemBus, Width};
+use wasm_vm_core::ram::Ram;
 use wasm_vm_wasm::BrowserExecutor;
+
+#[wasm_bindgen::prelude::wasm_bindgen(inline_js = r#"
+let originalUint8Subarray;
+let uint8SubarrayCalls = 0;
+let originalUint8ArrayConstructor;
+let uint8ArrayConstructorCalls = 0;
+
+export function beginUint8SubarrayAudit() {
+    if (originalUint8Subarray !== undefined) {
+        throw new Error("Uint8Array.subarray audit is already active");
+    }
+    originalUint8Subarray = Uint8Array.prototype.subarray;
+    uint8SubarrayCalls = 0;
+    Uint8Array.prototype.subarray = function(...args) {
+        uint8SubarrayCalls += 1;
+        return originalUint8Subarray.apply(this, args);
+    };
+}
+
+export function finishUint8SubarrayAudit() {
+    const calls = uint8SubarrayCalls;
+    Uint8Array.prototype.subarray = originalUint8Subarray;
+    originalUint8Subarray = undefined;
+    uint8SubarrayCalls = 0;
+    return calls;
+}
+
+export function beginUint8ArrayConstructorAudit() {
+    if (originalUint8ArrayConstructor !== undefined) {
+        throw new Error("Uint8Array constructor audit is already active");
+    }
+    originalUint8ArrayConstructor = globalThis.Uint8Array;
+    uint8ArrayConstructorCalls = 0;
+    globalThis.Uint8Array = new Proxy(originalUint8ArrayConstructor, {
+        construct(target, args, newTarget) {
+            uint8ArrayConstructorCalls += 1;
+            return Reflect.construct(target, args, newTarget);
+        },
+    });
+}
+
+export function finishUint8ArrayConstructorAudit() {
+    const calls = uint8ArrayConstructorCalls;
+    globalThis.Uint8Array = originalUint8ArrayConstructor;
+    originalUint8ArrayConstructor = undefined;
+    uint8ArrayConstructorCalls = 0;
+    return calls;
+}
+
+export function catchesJsException(callback) {
+    try {
+        callback();
+        return false;
+    } catch {
+        return true;
+    }
+}
+
+export function throwUnexpectedJitException() {
+    throw 1;
+}
+"#)]
+extern "C" {
+    #[wasm_bindgen(js_name = beginUint8SubarrayAudit)]
+    fn begin_uint8_subarray_audit();
+    #[wasm_bindgen(js_name = finishUint8SubarrayAudit)]
+    fn finish_uint8_subarray_audit() -> u32;
+    #[wasm_bindgen(js_name = beginUint8ArrayConstructorAudit)]
+    fn begin_uint8_array_constructor_audit();
+    #[wasm_bindgen(js_name = finishUint8ArrayConstructorAudit)]
+    fn finish_uint8_array_constructor_audit() -> u32;
+    #[wasm_bindgen(js_name = catchesJsException)]
+    fn catches_js_exception(callback: &Function) -> bool;
+    #[wasm_bindgen(js_name = throwUnexpectedJitException)]
+    fn throw_unexpected_jit_exception();
+}
 
 // ── tiny RV64 encoders ───────────────────────────────────────────────────────
 fn enc_addi(rd: u32, rs1: u32, imm: i32) -> u32 {
@@ -48,6 +132,15 @@ fn enc_bne(rs1: u32, rs2: u32, off: i32) -> u32 {
         | ((o >> 1) & 0xf) << 8
         | ((o >> 11) & 1) << 7
         | 0b1100011
+}
+fn enc_jal(rd: u32, off: i32) -> u32 {
+    let o = off as u32;
+    ((o >> 20) & 1) << 31
+        | ((o >> 1) & 0x3ff) << 21
+        | ((o >> 11) & 1) << 20
+        | ((o >> 12) & 0xff) << 12
+        | (rd << 7)
+        | 0b1101111
 }
 fn enc_mul(rd: u32, rs1: u32, rs2: u32) -> u32 {
     (0b0000001 << 25) | (rs2 << 20) | (rs1 << 15) | (0b000 << 12) | (rd << 7) | 0b0110011
@@ -194,6 +287,117 @@ fn browser_jit_matches_interpreter_a_block() {
     );
 }
 
+#[wasm_bindgen_test]
+fn browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs() {
+    const BLOCKS: usize = 40;
+    const INTERNAL_RUNS: usize = 31;
+    const WORK: u64 = 16_384;
+    let program: Vec<u32> = (0..BLOCKS)
+        .map(|index| {
+            let offset = if index + 1 == BLOCKS {
+                -((BLOCKS as i32 - 1) * 4)
+            } else {
+                4
+            };
+            enc_jal(0, offset)
+        })
+        .collect();
+
+    let mut oracle = Machine::new(8 * 1024 * 1024);
+    poke(&mut oracle, DRAM_BASE, &program);
+    oracle.hart_mut().regs.pc = DRAM_BASE;
+
+    let mut browser = Machine::new(8 * 1024 * 1024);
+    poke(&mut browser, DRAM_BASE, &program);
+    browser.hart_mut().regs.pc = DRAM_BASE;
+    browser.set_executor(Box::new(BrowserExecutor::new()));
+    browser.set_block_cache(true);
+    browser.set_interrupt_batching(true);
+    browser.set_hotness_threshold(1);
+    browser.set_jit(true);
+
+    // WasmLinux::runChunk uses this exact outer scope around its UART/persistence sub-runs. Four
+    // internal calls must share the BrowserExecutor's eight-block budget instead of resetting it.
+    browser.begin_cooperative_run();
+    for _ in 0..INTERNAL_RUNS {
+        oracle.run(WORK);
+        browser.run(WORK);
+    }
+    browser.end_cooperative_run(wasm_vm_core::RunOutcome::MaxInstrs);
+    let first = browser.prof_report(0, 0).jit_pause;
+    assert_eq!(first.last_run_attempted_blocks, 8);
+    assert_eq!(first.last_run_submitted_blocks, 8);
+    assert_eq!(first.max_run_attempted_blocks, 8);
+    assert_eq!(first.max_run_submitted_blocks, 8);
+    assert!(first.last_run_staged_nominations <= 64);
+    assert!(first.max_run_staged_nominations <= 64);
+    assert!(first.last_final_pumps <= 1);
+    assert_eq!(browser.executor().unwrap().compiled_count(), 8);
+    assert_eq!(state(&oracle), state(&browser));
+
+    // The remaining thirty-two blocks are not dropped: later JS-visible chunks install them under
+    // the same eight-at-a-time ceiling, and compiled execution preserves architectural parity.
+    for _ in 0..4 {
+        browser.begin_cooperative_run();
+        for _ in 0..INTERNAL_RUNS {
+            oracle.run(WORK);
+            browser.run(WORK);
+        }
+        browser.end_cooperative_run(wasm_vm_core::RunOutcome::MaxInstrs);
+        let stats = browser.prof_report(0, 0).jit_pause;
+        assert!(stats.last_run_attempted_blocks <= 8);
+        assert!(stats.last_run_submitted_blocks <= 8);
+        assert!(stats.last_run_staged_nominations <= 64);
+        assert!(stats.max_final_pumps <= 1);
+    }
+    assert_eq!(browser.executor().unwrap().compiled_count(), BLOCKS);
+    assert_eq!(state(&oracle), state(&browser));
+    assert!(browser.executor().unwrap().executed_blocks() > 0);
+}
+
+#[wasm_bindgen_test]
+fn browser_jit_six_op_loop_is_exactly_budgeted() {
+    // Five ALU ops plus a backward branch. Before E4-T31 one `run(1000)` dispatch could execute
+    // roughly 32 whole blocks per host slot; now the compiled tier may consume only the exact tail.
+    let prog = [
+        enc_addi(1, 1, 1),
+        enc_addi(2, 2, 1),
+        enc_addi(3, 3, 1),
+        enc_addi(4, 4, 1),
+        enc_addi(5, 5, 1),
+        enc_bne(31, 0, -20),
+    ];
+    let mut m = Machine::new(8 * 1024 * 1024);
+    poke(&mut m, DRAM_BASE, &prog);
+    m.hart_mut().regs.write(31, 1);
+    m.hart_mut().regs.pc = DRAM_BASE;
+    m.set_executor(Box::new(BrowserExecutor::new()));
+    m.set_block_cache(true);
+    m.set_interrupt_batching(true);
+    m.set_hotness_threshold(1);
+    m.set_jit(true);
+    m.run(192); // warm + end-of-run compile flush
+    assert!(m.executor().unwrap().is_compiled(DRAM_BASE));
+
+    m.hart_mut().regs.pc = DRAM_BASE;
+    let executed_before = m.executor().unwrap().executed_blocks();
+    let jit_before = m.executor().unwrap().retired_via_jit();
+    let retired_before = m.irq_stats().retired;
+    assert_eq!(m.run(5), wasm_vm_core::RunOutcome::MaxInstrs);
+    assert_eq!(m.irq_stats().retired - retired_before, 5);
+    assert_eq!(m.executor().unwrap().executed_blocks(), executed_before);
+    assert_eq!(m.executor().unwrap().retired_via_jit(), jit_before);
+
+    m.hart_mut().regs.pc = DRAM_BASE;
+    let executed_before = m.executor().unwrap().executed_blocks();
+    let jit_before = m.executor().unwrap().retired_via_jit();
+    let retired_before = m.irq_stats().retired;
+    assert_eq!(m.run(1_000), wasm_vm_core::RunOutcome::MaxInstrs);
+    assert_eq!(m.irq_stats().retired - retired_before, 1_000);
+    assert!(m.executor().unwrap().executed_blocks() > executed_before);
+    assert_eq!(m.executor().unwrap().retired_via_jit() - jit_before, 996);
+}
+
 // ── compile/instantiate + cache/invalidate + chaining unit gate ──────────────
 //
 // Drives the executor object directly (no run loop) to prove the E4-T16/T17/T18/T19/T20 obligations
@@ -212,6 +416,601 @@ fn block(phys: u64, ops: &[Instr]) -> DecodedBlock {
         .collect();
     let total = 4 * ops.len() as u64;
     DecodedBlock::new(phys, ops, total)
+}
+
+#[wasm_bindgen_test]
+fn bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault() {
+    const FAULT_ADDR: u64 = 0x5000_0000;
+    const VIRTUAL_PC: u64 = 0x4000_1000;
+    let seed =
+        |register: u8| 0x8000_0000_0000_0000 | (u64::from(register) << 32) | u64::from(register);
+    let mut ops = Vec::new();
+    for register in 1..=29u8 {
+        ops.push(MicroOp {
+            instr: Instr::Addi {
+                rd: register,
+                rs1: register,
+                imm: 1,
+            },
+            len: 4,
+            raw: 0,
+        });
+    }
+    ops.push(MicroOp {
+        instr: Instr::Addi {
+            rd: 30,
+            rs1: 30,
+            imm: 1,
+        },
+        len: 4,
+        raw: 0,
+    });
+    ops.push(MicroOp {
+        instr: Instr::Lw {
+            rd: 31,
+            rs1: 30,
+            imm: 0,
+        },
+        len: 4,
+        raw: 0,
+    });
+    let decoded = DecodedBlock::new(DRAM_BASE, ops, 31 * 4);
+
+    let mut hart = Hart::default();
+    for register in 1..32u8 {
+        hart.regs.write(register, seed(register));
+    }
+    hart.regs.write(30, FAULT_ADDR - 1);
+    hart.regs.pc = VIRTUAL_PC;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    assert!(
+        executor.fixed_state_view_survives_rejected_growth(DRAM_BASE),
+        "fixed SoftMMU memory must reject growth without detaching the retained 568-byte view"
+    );
+
+    let exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("recorded precise fault returns an exit");
+    assert_eq!(executor.executed_blocks(), 1);
+    assert_eq!(exit.code, ExitCode::Trap);
+    assert_eq!(
+        exit.trap,
+        Some(Trap {
+            cause: Exception::LoadAccessFault,
+            tval: FAULT_ADDR,
+        })
+    );
+    assert_eq!(exit.next_pc, VIRTUAL_PC + 30 * 4);
+    assert_eq!(exit.exit_info, Exception::LoadAccessFault as u64);
+    assert_eq!(hart.regs.pc, VIRTUAL_PC, "the caller owns PC commit");
+    assert_eq!(hart.regs.read(0), 0);
+    for register in 1..=29u8 {
+        assert_eq!(hart.regs.read(register), seed(register).wrapping_add(1));
+    }
+    assert_eq!(hart.regs.read(30), FAULT_ADDR);
+    assert_eq!(hart.regs.read(31), seed(31));
+}
+
+#[wasm_bindgen_test]
+fn browser_clean_dispatch_reuses_cached_outer_view_without_constructor() {
+    let decoded = block(
+        DRAM_BASE,
+        &[Instr::Addi {
+            rd: 5,
+            rs1: 5,
+            imm: 1,
+        }],
+    );
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    let mut hart = Hart::default();
+    hart.regs.write(5, 40);
+    hart.regs.pc = DRAM_BASE;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+
+    // Installation may itself grow the outer Wasm memory after the executor created its first
+    // view. Allow the first dispatch to perform that required one-time refresh, then prove steady
+    // clean dispatches do not construct another view.
+    let warm_exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("warm compiled block exits cleanly");
+    assert_eq!(warm_exit.code, ExitCode::Fallthrough);
+    assert_eq!(hart.regs.read(5), 41);
+
+    begin_uint8_array_constructor_audit();
+    for expected in [42, 43] {
+        let exit = executor
+            .execute(DRAM_BASE, &mut hart, &mut bus)
+            .expect("compiled block exits cleanly");
+        assert_eq!(exit.code, ExitCode::Fallthrough);
+        assert_eq!(hart.regs.read(5), expected);
+    }
+    let constructor_calls = finish_uint8_array_constructor_audit();
+
+    assert_eq!(
+        constructor_calls, 0,
+        "clean dispatches must reuse the retained outer-Wasm handoff view"
+    );
+}
+
+#[wasm_bindgen_test]
+fn browser_dispatch_reuses_memory_views_without_subarray_allocation() {
+    let decoded = block(
+        DRAM_BASE,
+        &[Instr::Addi {
+            rd: 5,
+            rs1: 5,
+            imm: 1,
+        }],
+    );
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    let outer_memory = wasm_bindgen::memory().unchecked_into::<WebAssembly::Memory>();
+    let old_outer_buffer = outer_memory.buffer();
+    outer_memory.grow(1);
+    assert!(
+        !Object::is(old_outer_buffer.as_ref(), outer_memory.buffer().as_ref()),
+        "outer wasm growth must replace the buffer and detach the executor's cached source view"
+    );
+    let mut hart = Hart::default();
+    hart.regs.write(5, 41);
+    hart.regs.pc = DRAM_BASE;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+
+    begin_uint8_subarray_audit();
+    begin_uint8_array_constructor_audit();
+    let exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("compiled block exits cleanly");
+    let constructor_calls = finish_uint8_array_constructor_audit();
+    let subarray_calls = finish_uint8_subarray_audit();
+
+    assert_eq!(exit.code, ExitCode::Fallthrough);
+    assert_eq!(hart.regs.read(5), 42);
+    assert_eq!(
+        constructor_calls, 1,
+        "one detached pre-call view must be rebound exactly once"
+    );
+    assert_eq!(
+        subarray_calls, 0,
+        "a retained handoff view must not construct Uint8Array subviews per dispatch"
+    );
+}
+
+struct GrowOuterMemoryOnWrite {
+    memory: WebAssembly::Memory,
+    writes: Rc<Cell<u32>>,
+    fault: bool,
+}
+
+impl MmioDevice for GrowOuterMemoryOnWrite {
+    fn read(&mut self, _offset: u64, _width: Width) -> Result<u64, BusFault> {
+        Ok(0)
+    }
+
+    fn write(&mut self, _offset: u64, width: Width, _value: u64) -> Result<(), BusFault> {
+        assert_eq!(width, Width::B8);
+        self.memory.grow(1);
+        self.writes.set(self.writes.get() + 1);
+        if self.fault {
+            Err(BusFault::Access)
+        } else {
+            Ok(())
+        }
+    }
+}
+
+#[wasm_bindgen_test]
+fn browser_handoff_refreshes_after_outer_growth_during_compiled_call() {
+    const MMIO_BASE: u64 = 0x1000_0000;
+    const WARM_PHYS: u64 = DRAM_BASE + 0x1000;
+    let decoded = block(
+        DRAM_BASE,
+        &[
+            Instr::Addi {
+                rd: 5,
+                rs1: 5,
+                imm: 1,
+            },
+            Instr::Sd {
+                rs1: 6,
+                rs2: 5,
+                imm: 0,
+            },
+        ],
+    );
+    let warm = block(
+        WARM_PHYS,
+        &[Instr::Addi {
+            rd: 7,
+            rs1: 7,
+            imm: 1,
+        }],
+    );
+    let writes = Rc::new(Cell::new(0));
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    bus.attach(
+        MMIO_BASE,
+        8,
+        Box::new(GrowOuterMemoryOnWrite {
+            memory: wasm_bindgen::memory().unchecked_into::<WebAssembly::Memory>(),
+            writes: Rc::clone(&writes),
+            fault: false,
+        }),
+    )
+    .unwrap();
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    executor.install(&warm);
+    let mut hart = Hart::default();
+    hart.regs.write(5, 41);
+    hart.regs.write(6, MMIO_BASE);
+    hart.regs.pc = WARM_PHYS;
+    executor
+        .execute(WARM_PHYS, &mut hart, &mut bus)
+        .expect("warm dispatch refreshes any view detached during installation");
+    hart.regs.pc = DRAM_BASE;
+    let live_before = externref_heap_live_count();
+
+    begin_uint8_subarray_audit();
+    begin_uint8_array_constructor_audit();
+    let exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("compiled MMIO store exits cleanly after growing outer memory");
+    let constructor_calls = finish_uint8_array_constructor_audit();
+    let subarray_calls = finish_uint8_subarray_audit();
+
+    assert_eq!(subarray_calls, 0);
+    assert_eq!(constructor_calls, 1, "mid-call growth requires one rebind");
+    assert_eq!(exit.code, ExitCode::Fallthrough);
+    assert_eq!(exit.next_pc, DRAM_BASE + 8);
+    assert_eq!(writes.get(), 1);
+    assert_eq!(hart.regs.read(5), 42);
+    assert_eq!(hart.regs.read(6), MMIO_BASE);
+    assert_eq!(
+        externref_heap_live_count(),
+        live_before,
+        "refresh must replace, not accumulate, the detached outer-memory view"
+    );
+}
+
+#[wasm_bindgen_test]
+fn browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault() {
+    const MMIO_BASE: u64 = 0x1000_0000;
+    const VIRTUAL_PC: u64 = 0x4000_1000;
+    const WARM_PHYS: u64 = DRAM_BASE + 0x1000;
+    let decoded = block(
+        DRAM_BASE,
+        &[
+            Instr::Addi {
+                rd: 5,
+                rs1: 5,
+                imm: 1,
+            },
+            Instr::Sd {
+                rs1: 6,
+                rs2: 5,
+                imm: 0,
+            },
+        ],
+    );
+    let warm = block(
+        WARM_PHYS,
+        &[Instr::Addi {
+            rd: 7,
+            rs1: 7,
+            imm: 1,
+        }],
+    );
+    let writes = Rc::new(Cell::new(0));
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    bus.attach(
+        MMIO_BASE,
+        8,
+        Box::new(GrowOuterMemoryOnWrite {
+            memory: wasm_bindgen::memory().unchecked_into::<WebAssembly::Memory>(),
+            writes: Rc::clone(&writes),
+            fault: true,
+        }),
+    )
+    .unwrap();
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    executor.install(&warm);
+    let mut hart = Hart::default();
+    hart.regs.write(5, 41);
+    hart.regs.write(6, MMIO_BASE);
+    hart.regs.pc = WARM_PHYS;
+    executor
+        .execute(WARM_PHYS, &mut hart, &mut bus)
+        .expect("warm dispatch refreshes any view detached during installation");
+    hart.regs.pc = VIRTUAL_PC;
+    let live_before = externref_heap_live_count();
+
+    begin_uint8_subarray_audit();
+    begin_uint8_array_constructor_audit();
+    let exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("recorded MMIO fault remains precise after growing outer memory");
+    let constructor_calls = finish_uint8_array_constructor_audit();
+    let subarray_calls = finish_uint8_subarray_audit();
+
+    assert_eq!(subarray_calls, 0);
+    assert_eq!(constructor_calls, 1, "faulting growth requires one rebind");
+    assert_eq!(exit.code, ExitCode::Trap);
+    assert_eq!(
+        exit.trap,
+        Some(Trap {
+            cause: Exception::StoreAccessFault,
+            tval: MMIO_BASE,
+        })
+    );
+    assert_eq!(exit.next_pc, VIRTUAL_PC + 4);
+    assert_eq!(exit.exit_info, Exception::StoreAccessFault as u64);
+    assert_eq!(writes.get(), 1);
+    assert_eq!(hart.regs.pc, VIRTUAL_PC, "the caller owns PC commit");
+    assert_eq!(hart.regs.read(5), 42);
+    assert_eq!(hart.regs.read(6), MMIO_BASE);
+    assert_eq!(
+        externref_heap_live_count(),
+        live_before,
+        "fault readback must replace, not accumulate, the detached outer-memory view"
+    );
+}
+
+struct ThrowJsOnWrite {
+    writes: Rc<Cell<u32>>,
+}
+
+impl MmioDevice for ThrowJsOnWrite {
+    fn read(&mut self, _offset: u64, _width: Width) -> Result<u64, BusFault> {
+        Ok(0)
+    }
+
+    fn write(&mut self, _offset: u64, width: Width, _value: u64) -> Result<(), BusFault> {
+        assert_eq!(width, Width::B8);
+        self.writes.set(self.writes.get() + 1);
+        throw_unexpected_jit_exception();
+        unreachable!("the inline JavaScript helper always throws")
+    }
+}
+
+#[wasm_bindgen_test]
+fn unexpected_js_exception_fails_closed_without_commit_and_cleans_host() {
+    const MMIO_BASE: u64 = 0x1000_0000;
+    const CLEAN_PHYS: u64 = DRAM_BASE + 0x1000;
+    const VIRTUAL_PC: u64 = 0x4000_1000;
+    let faulting = block(
+        DRAM_BASE,
+        &[
+            Instr::Addi {
+                rd: 5,
+                rs1: 5,
+                imm: 1,
+            },
+            Instr::Sd {
+                rs1: 6,
+                rs2: 5,
+                imm: 0,
+            },
+        ],
+    );
+    let clean = block(
+        CLEAN_PHYS,
+        &[Instr::Addi {
+            rd: 7,
+            rs1: 7,
+            imm: 1,
+        }],
+    );
+    let writes = Rc::new(Cell::new(0));
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    bus.attach(
+        MMIO_BASE,
+        8,
+        Box::new(ThrowJsOnWrite {
+            writes: Rc::clone(&writes),
+        }),
+    )
+    .unwrap();
+    let mut executor = Box::new(BrowserExecutor::new());
+    executor.install(&faulting);
+    executor.install(&clean);
+    let mut hart = Box::new(Hart::default());
+    hart.regs.write(5, 41);
+    hart.regs.write(6, MMIO_BASE);
+    hart.regs.write(7, 9);
+    hart.regs.pc = CLEAN_PHYS;
+    let mut bus = Box::new(bus);
+    executor
+        .execute(CLEAN_PHYS, &mut hart, &mut bus)
+        .expect("warm dispatch refreshes any view detached during installation");
+    hart.regs.write(7, 9);
+    hart.regs.pc = VIRTUAL_PC;
+    let executor_ptr = executor.as_mut() as *mut BrowserExecutor;
+    let hart_ptr = hart.as_mut() as *mut Hart;
+    let bus_ptr = bus.as_mut() as *mut SystemBus;
+    let callback = Closure::<dyn FnMut()>::new(move || {
+        // SAFETY: the three boxes stay alive and unmoved until this one-shot callback is dropped.
+        // No other references are used while JS synchronously invokes it. The fatal exception
+        // abandons this callback's stack, but BrowserExecutor clears HOST before rethrowing.
+        unsafe {
+            let _ = (&mut *executor_ptr).execute(DRAM_BASE, &mut *hart_ptr, &mut *bus_ptr);
+        }
+    });
+    let live_before = externref_heap_live_count();
+
+    begin_uint8_subarray_audit();
+    begin_uint8_array_constructor_audit();
+    assert!(
+        catches_js_exception(callback.as_ref().unchecked_ref()),
+        "an unrecorded exception must propagate instead of returning None for replay"
+    );
+    let constructor_calls = finish_uint8_array_constructor_audit();
+    let subarray_calls = finish_uint8_subarray_audit();
+    assert_eq!(constructor_calls, 0, "exception path rebuilt a live view");
+    assert_eq!(subarray_calls, 0, "exception path created a subarray");
+    assert_eq!(externref_heap_live_count(), live_before);
+    drop(callback);
+    assert_eq!(
+        writes.get(),
+        1,
+        "the imported MMIO side effect is not rolled back"
+    );
+    assert_eq!(hart.regs.pc, VIRTUAL_PC);
+    assert_eq!(hart.regs.read(5), 41, "dirty module x5 must not commit");
+    assert_eq!(hart.regs.read(6), MMIO_BASE);
+    assert_eq!(hart.regs.read(7), 9);
+
+    hart.regs.pc = VIRTUAL_PC + 0x1000;
+    let clean_exit = executor
+        .execute(CLEAN_PHYS, &mut hart, &mut bus)
+        .expect("a later clean dispatch must work after HOST cleanup");
+    assert_eq!(clean_exit.code, ExitCode::Fallthrough);
+    assert_eq!(clean_exit.next_pc, VIRTUAL_PC + 0x1004);
+    assert_eq!(hart.regs.read(5), 41);
+    assert_eq!(hart.regs.read(7), 10);
+}
+
+#[wasm_bindgen_test]
+fn execute_miss_preserves_public_guard_and_guest_state() {
+    let decoded = block(
+        DRAM_BASE,
+        &[Instr::Addi {
+            rd: 5,
+            rs1: 5,
+            imm: 1,
+        }],
+    );
+    let mut executor = BrowserExecutor::new();
+    executor.install(&decoded);
+    let before_stats = executor.jit_cache_stats();
+    let mut hart = Hart::default();
+    hart.regs.write(5, 41);
+    hart.regs.pc = DRAM_BASE + 0x1000;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+
+    assert!(!executor.is_compiled(DRAM_BASE + 0x1000));
+    assert!(
+        executor
+            .execute(DRAM_BASE + 0x1000, &mut hart, &mut bus)
+            .is_none(),
+        "execute must preserve the public is_compiled guard on a cache miss"
+    );
+    assert_eq!(executor.jit_cache_stats(), before_stats);
+    assert_eq!(executor.executed_blocks(), 0);
+    assert_eq!(hart.regs.read(5), 41);
+    assert_eq!(hart.regs.pc, DRAM_BASE + 0x1000);
+}
+
+#[wasm_bindgen_test]
+#[ignore = "long browser externref/eviction churn; run explicitly for E4-T33 evidence"]
+fn browser_handles_remain_bounded_across_retranslation_churn() {
+    const BATCH_BLOCKS: usize = 64;
+    const ROTATING_BLOCKS: usize = 8;
+    const ITERATIONS: usize = 4_096;
+
+    let one_add = |phys| {
+        block(
+            phys,
+            &[Instr::Addi {
+                rd: 5,
+                rs1: 5,
+                imm: 1,
+            }],
+        )
+    };
+    let dense: Vec<DecodedBlock> = (0..BATCH_BLOCKS)
+        .map(|index| one_add(DRAM_BASE + index as u64 * 4))
+        .collect();
+    let rotating: Vec<DecodedBlock> = (0..ROTATING_BLOCKS)
+        .map(|index| one_add(DRAM_BASE + 0x1_0000 + index as u64 * 0x1000))
+        .collect();
+
+    let baseline = externref_heap_live_count();
+    let mut executor = BrowserExecutor::new();
+    let executor_floor = externref_heap_live_count();
+
+    executor.install_batch(&dense, &vec![[None, None]; BATCH_BLOCKS]);
+    assert_eq!(executor.compiled_count(), BATCH_BLOCKS);
+    assert_eq!(executor.module_count(), 1);
+    assert_eq!(
+        externref_heap_live_count(),
+        executor_floor + BATCH_BLOCKS as u32 + 2,
+        "one K-block batch owns exactly K Functions, one state view, and one Instance"
+    );
+    executor.invalidate_all();
+    assert_eq!(externref_heap_live_count(), executor_floor);
+
+    executor.set_batch_size(1);
+    executor.set_evict_policy(EvictPolicy::BatchLru);
+    executor.set_jit_budget(JitCacheBudget {
+        max_batches: 2,
+        ..JitCacheBudget::DEFAULT
+    });
+    let seed =
+        |register: u8| 0x8000_0000_0000_0000 | (u64::from(register) << 32) | u64::from(register);
+    let mut hart = Hart::default();
+    for register in 1..32u8 {
+        hart.regs.write(register, seed(register));
+    }
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    for iteration in 0..ITERATIONS {
+        let decoded = &rotating[iteration % ROTATING_BLOCKS];
+        executor.install(decoded);
+        hart.regs.pc = decoded.phys_start;
+        let exit = executor
+            .execute(decoded.phys_start, &mut hart, &mut bus)
+            .expect("one-op ALU block exits cleanly");
+        assert_eq!(exit.code, ExitCode::Fallthrough);
+        assert_eq!(exit.next_pc, decoded.phys_start + 4);
+        let _ = executor.take_evicted();
+
+        assert!(executor.module_count() <= 2);
+        assert!(executor.compiled_count() <= 2);
+        assert_eq!(
+            externref_heap_live_count(),
+            executor_floor + executor.compiled_count() as u32 + 2 * executor.module_count() as u32,
+            "live browser handles must equal Functions + one view/Instance pair per batch"
+        );
+    }
+    assert_eq!(executor.executed_blocks(), ITERATIONS as u64);
+    assert_eq!(hart.regs.read(0), 0);
+    for register in 1..32u8 {
+        let expected = if register == 5 {
+            seed(register).wrapping_add(ITERATIONS as u64)
+        } else {
+            seed(register)
+        };
+        assert_eq!(
+            hart.regs.read(register),
+            expected,
+            "register x{register} diverged during browser handoff churn"
+        );
+    }
+    assert_eq!(
+        hart.regs.pc,
+        rotating[(ITERATIONS - 1) % ROTATING_BLOCKS].phys_start,
+        "direct executor leaves caller-owned PC at the final entry"
+    );
+    let stats = executor.jit_cache_stats();
+    assert!(stats.evictions > 0, "tiny budget must actively evict");
+    assert!(
+        stats.retranslations > 0,
+        "rotating evicted blocks must be retranslated"
+    );
+    assert_eq!(
+        stats.installs,
+        (BATCH_BLOCKS + ITERATIONS) as u64,
+        "install accounting includes the initial ownership batch and every churn translation"
+    );
+
+    executor.invalidate_all();
+    assert_eq!(externref_heap_live_count(), executor_floor);
+    drop(executor);
+    assert_eq!(externref_heap_live_count(), baseline);
 }
 
 #[wasm_bindgen_test]

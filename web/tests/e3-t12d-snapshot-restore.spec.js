@@ -52,7 +52,7 @@ test.describe("E3-T12d: browser resume-snapshot persistence + restore selection"
     };
 
     // ── Boot 1: take + persist a whole-machine snapshot at the fresh-boot generation (0) ─────────
-    await page.goto("/?persist=1");
+    await page.goto("/?persist=1&noAutoBoot=1");
     await bootToLogin();
 
     // Before any snapshot the store is empty → the header-level decision is "missing".

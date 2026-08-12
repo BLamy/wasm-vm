@@ -14,7 +14,7 @@ const LONG_TRANSFER_TIMEOUT = 90 * 60_000;
 const POLL_INTERVAL = 10_000;
 
 async function bootToRoot(page) {
-  await page.goto("/?persist=1&testHooks=1");
+  await page.goto("/?persist=1&testHooks=1&noAutoBoot=1");
   await expect(page.locator("#boot-alpine")).toBeEnabled();
   await page.click("#boot-alpine");
   let sawOpenRC = false;
@@ -33,7 +33,7 @@ async function bootToRoot(page) {
   await page.waitForTimeout(2_000);
   await type("echo E3T21D_SHELL_$((6*7))\r");
   await expect(page.locator(rows)).toContainText("E3T21D_SHELL_42", { timeout: 60_000 });
-  await page.waitForFunction(() => window.__fileTransferReady().some(Boolean), null, {
+  await page.waitForFunction(async () => (await window.__fileTransferReady()).some(Boolean), null, {
     polling: 1_000,
     timeout: 300_000,
   });

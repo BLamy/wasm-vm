@@ -46,6 +46,18 @@ impl XRegs {
             self.regs[r as usize] = v;
         }
     }
+
+    /// Crate-private bulk view used by the compiled-state handoff. The backing x0 word is always
+    /// zero because every architectural mutation still goes through [`Self::write`].
+    pub(crate) fn jit_words(&self) -> &[u64; 32] {
+        &self.regs
+    }
+
+    /// Commit a bulk compiled register image while preserving the hardwired x0 word.
+    pub(crate) fn jit_commit_words(&mut self, words: &[u64]) {
+        debug_assert!(words.len() >= 32);
+        self.regs[1..].copy_from_slice(&words[1..32]);
+    }
 }
 
 /// Stable dump format (consumed by the CLI in E0-T18, snapshots in E0-T17, and trace

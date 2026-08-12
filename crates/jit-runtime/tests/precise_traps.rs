@@ -23,7 +23,11 @@ use jit_runtime::WasmtimeExecutor;
 
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::{DRAM_BASE, UART0_BASE};
+use wasm_vm_core::csr::{CsrOp, MCYCLE, MINSTRET};
 use wasm_vm_core::hart::{Exception, Trap};
+use wasm_vm_core::jit::{CompiledBlockExecutor, ExitCode};
+use wasm_vm_core::mmio::SystemBus;
+use wasm_vm_core::ram::Ram;
 use wasm_vm_core::{Machine, RunOutcome};
 
 // ── tiny RV64 encoders ───────────────────────────────────────────────────────
@@ -85,6 +89,17 @@ fn jit_cfg(m: &mut Machine) {
     m.set_interrupt_batching(true);
     m.set_hotness_threshold(1);
     m.set_jit(true);
+}
+
+fn set_csr(m: &mut Machine, addr: u16, value: u64) {
+    m.hart_mut()
+        .csr
+        .access(addr, CsrOp::Write, value, false, false, 0)
+        .unwrap();
+}
+
+fn read_csr(m: &mut Machine, addr: u16) -> u64 {
+    m.hart_mut().csr.read(addr)
 }
 
 /// The precise architectural state captured at a trap: the trap (cause + `mtval`), the full
@@ -291,7 +306,12 @@ fn mmio_store_then_fault_commits_once() {
     m.hart_mut().regs.write(11, UART0_BASE);
     m.hart_mut().regs.write(13, FAULT_ADDR);
     m.hart_mut().regs.pc = DRAM_BASE;
+    m.enable_clint(1);
+    set_csr(&mut m, MCYCLE, 100);
+    set_csr(&mut m, MINSTRET, 200);
     let executed_before = m.executor().unwrap().executed_blocks();
+    let jit_retired_before = m.executor().unwrap().retired_via_jit();
+    let retired_before = m.irq_stats().retired;
     let oc = m.run(50);
     let jtrap = match oc {
         RunOutcome::Trapped(t) => t,
@@ -303,6 +323,15 @@ fn mmio_store_then_fault_commits_once() {
         m.executor().unwrap().executed_blocks() > executed_before,
         "the block must have actually run via the JIT (not just interpreted)"
     );
+    assert_eq!(
+        m.executor().unwrap().retired_via_jit() - jit_retired_before,
+        1,
+        "only the MMIO store before the fault retired via JIT"
+    );
+    assert_eq!(m.irq_stats().retired - retired_before, 1);
+    assert_eq!(read_csr(&mut m, MCYCLE), 101);
+    assert_eq!(read_csr(&mut m, MINSTRET), 201);
+    assert_eq!(m.clint_mtime(), 1);
     // THE assertion: the observable MMIO side effect happened EXACTLY ONCE, not twice.
     assert_eq!(
         jbyte,
@@ -317,4 +346,118 @@ fn mmio_store_then_fault_commits_once() {
         DRAM_BASE + 4,
         "mepc must be the faulting store's PC"
     );
+}
+
+#[test]
+fn bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault() {
+    use wasm_vm_core::decode::Instr;
+    use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
+    use wasm_vm_core::hart::Hart;
+
+    const VIRTUAL_PC: u64 = 0x4000_1000;
+    let seed =
+        |register: u8| 0x8000_0000_0000_0000 | (u64::from(register) << 32) | u64::from(register);
+    let mut ops = Vec::new();
+    for register in 1..=29u8 {
+        ops.push(MicroOp {
+            instr: Instr::Addi {
+                rd: register,
+                rs1: register,
+                imm: 1,
+            },
+            len: 4,
+            raw: 0,
+        });
+    }
+    ops.push(MicroOp {
+        instr: Instr::Addi {
+            rd: 30,
+            rs1: 30,
+            imm: 1,
+        },
+        len: 4,
+        raw: 0,
+    });
+    ops.push(MicroOp {
+        instr: Instr::Lw {
+            rd: 31,
+            rs1: 30,
+            imm: 0,
+        },
+        len: 4,
+        raw: 0,
+    });
+    let block = DecodedBlock::new(DRAM_BASE, ops, 31 * 4);
+
+    let mut hart = Hart::default();
+    for register in 1..32u8 {
+        hart.regs.write(register, seed(register));
+    }
+    hart.regs.write(30, FAULT_ADDR - 1);
+    hart.regs.pc = VIRTUAL_PC;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+    let mut executor = WasmtimeExecutor::new();
+    executor.install(&block);
+
+    let exit = executor
+        .execute(DRAM_BASE, &mut hart, &mut bus)
+        .expect("recorded precise fault returns an exit");
+    assert_eq!(executor.executed_blocks(), 1);
+    assert_eq!(exit.code, ExitCode::Trap);
+    assert_eq!(
+        exit.trap,
+        Some(Trap {
+            cause: Exception::LoadAccessFault,
+            tval: FAULT_ADDR,
+        })
+    );
+    assert_eq!(exit.next_pc, VIRTUAL_PC + 30 * 4);
+    assert_eq!(exit.exit_info, Exception::LoadAccessFault as u64);
+    assert_eq!(hart.regs.pc, VIRTUAL_PC, "the caller owns PC commit");
+    assert_eq!(hart.regs.read(0), 0);
+    for register in 1..=29u8 {
+        assert_eq!(hart.regs.read(register), seed(register).wrapping_add(1));
+    }
+    assert_eq!(hart.regs.read(30), FAULT_ADDR);
+    assert_eq!(hart.regs.read(31), seed(31));
+}
+
+#[test]
+fn execute_miss_preserves_public_guard_and_guest_state() {
+    use wasm_vm_core::decode::Instr;
+    use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
+    use wasm_vm_core::hart::Hart;
+
+    let block = DecodedBlock::new(
+        DRAM_BASE,
+        vec![MicroOp {
+            instr: Instr::Addi {
+                rd: 5,
+                rs1: 5,
+                imm: 1,
+            },
+            len: 4,
+            raw: 0,
+        }],
+        4,
+    );
+    let mut executor = WasmtimeExecutor::new();
+    executor.install(&block);
+    let before_stats = executor.jit_cache_stats();
+    let mut hart = Hart::default();
+    hart.regs.write(5, 41);
+    hart.regs.pc = DRAM_BASE + 0x1000;
+    let mut bus = SystemBus::new(Ram::new(64 * 1024).unwrap());
+
+    assert!(!executor.is_compiled(DRAM_BASE + 0x1000));
+    assert!(
+        executor
+            .execute(DRAM_BASE + 0x1000, &mut hart, &mut bus)
+            .is_none(),
+        "execute must preserve the public is_compiled guard on a cache miss"
+    );
+    assert_eq!(executor.jit_cache_stats(), before_stats);
+    assert_eq!(executor.executed_blocks(), 0);
+    assert_eq!(hart.regs.read(5), 41);
+    assert_eq!(hart.regs.pc, DRAM_BASE + 0x1000);
 }

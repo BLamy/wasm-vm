@@ -31,10 +31,15 @@ async function readGuest(page, expr, timeout = 20000) {
 
 test("two-clock model: RTC wall-correct, mtime execution-paced, suspend-safe", async ({ page }) => {
   test.setTimeout(240_000);
-  await page.goto("/");
-  await page.click("#boot-linux");
-  await expect(page.locator(rows)).toContainText("busybox userland up", { timeout: 180_000 });
-  await expect(page.locator(rows)).toContainText("~ #");
+  await page.goto("/?noAutoBoot=1");
+  await page.waitForFunction(() => window.__ready === true && !!window.wvmDemo?.runBusybox);
+  const boot = await page.evaluate(() => window.wvmDemo.runBusybox());
+  expect(boot).toEqual({ ok: true });
+  await page.waitForFunction(() => window.wvmDemo.isGuestReady(), null, { timeout: 180_000 });
+  expect(await page.evaluate(() => window.__linux.restoredFromBootSnapshot())).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.dataset.linuxBackend))
+    .toBe("whole-machine-worker");
+  expect(await readGuest(page, "echo 7")).toBe("7");
 
   // (A) The guest software clock (`date`) is EXECUTION-PACED via the deterministic retire-count
   // clocksource. With the E2-T23b WFI fast-forward, idle is compressed to ~0 wall time, so the
@@ -78,14 +83,14 @@ test("two-clock model: RTC wall-correct, mtime execution-paced, suspend-safe", a
   // pause, and APPEAR only after resume. This assertion fails if pause is a no-op (the command
   // would run and echo during the "pause"), so it actually proves execution froze.
   const tag = `FROZENPROBE_${++seq}`;
-  await page.evaluate(() => window.__linux.pause());
-  expect(await page.evaluate(() => window.__linux.isPaused())).toBe(true);
+  await page.evaluate(async () => { await window.__linux.pause(); });
+  expect(await page.evaluate(async () => await window.__linux.isPaused())).toBe(true);
   await page.evaluate((c) => window.__term.typeBytes(new TextEncoder().encode(c + "\r")), `echo ${tag}`);
   const pw0 = Date.now();
   await page.waitForTimeout(6000); // 6s real time, still paused
   // The probe must NOT have executed or even echoed — the executor is frozen.
   expect(await page.locator(rows).textContent()).not.toContain(tag);
-  await page.evaluate(() => window.__linux.resume());
+  await page.evaluate(async () => { await window.__linux.resume(); });
   const pausedWall = (Date.now() - pw0) / 1000;
   // On resume the queued command runs (input was buffered, not lost) → the tag appears.
   await expect(page.locator(rows)).toContainText(tag, { timeout: 30000 });

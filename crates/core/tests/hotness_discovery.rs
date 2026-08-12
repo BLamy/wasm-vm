@@ -81,6 +81,15 @@ fn hot_loop_nominates_once_and_reports() {
     let mut sink = HashSink::new();
     m.run_traced(210, &mut sink);
 
+    // E4-T30: the loop body is decoded once, then its 99 later taken entries hit the cache. The
+    // terminal self-loop builds once and hits 9 more times in the remaining 10-instruction budget.
+    // This exact accounting catches the old regression where every branch entry rebuilt the block.
+    assert_eq!(
+        m.block_cache_entry_stats(),
+        (108, 2),
+        "hot entries must reuse both decoded blocks instead of rebuilding them"
+    );
+
     let s = m.discovery_stats();
     assert_eq!(
         s.nominated, 1,

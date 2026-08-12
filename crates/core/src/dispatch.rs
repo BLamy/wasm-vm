@@ -675,6 +675,14 @@ impl BlockDiscovery {
         self.queue.drain(..).collect()
     }
 
+    /// Remove at most `max` pending nominations, preserving FIFO order and leaving the remainder
+    /// queued for a later cooperative host slice. The browser JIT uses this bounded form so moving
+    /// a discovery flood into its priority queue cannot monopolize the Worker event loop.
+    pub fn take_requests_bounded(&mut self, max: usize) -> Vec<TranslationRequest> {
+        let count = max.min(self.queue.len());
+        self.queue.drain(..count).collect()
+    }
+
     /// Peek the next pending request without removing it.
     pub fn peek_request(&self) -> Option<&TranslationRequest> {
         self.queue.front()

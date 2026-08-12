@@ -350,19 +350,23 @@ impl Csrs {
         self.wrote_minstret = false;
     }
 
-    /// Zicntr (E1-T14): advance the retired-instruction counters. Called once per successfully
-    /// retired instruction, AFTER `execute` — so a `csrr` reading `minstret`/`mcycle` observes
-    /// the count as it stood BEFORE that instruction retired (matching Spike). Our interpreter
-    /// retires one instruction per step, so `mcycle` tracks `minstret` (documented; no IPC claim).
-    /// If THIS instruction wrote a counter (`csrw mcycle`/`csrw minstret`), that counter is NOT
-    /// also incremented — the written value stands, exactly as Spike does.
-    pub fn retire_tick(&mut self) {
+    /// Zicntr (E1-T14/E4-T31): advance the retired-instruction counters by `retired`. The JIT may
+    /// retire a CSR-free block at once, so this is the bulk-equivalent of repeated
+    /// [`Self::retire_tick`] calls. If the current instruction wrote a counter, its write stands and
+    /// suppresses the corresponding increment exactly as on the one-instruction interpreter path.
+    pub(crate) fn retire_span(&mut self, retired: u64) {
         if !self.wrote_mcycle {
-            self.mcycle = self.mcycle.wrapping_add(1);
+            self.mcycle = self.mcycle.wrapping_add(retired);
         }
         if !self.wrote_minstret {
-            self.minstret = self.minstret.wrapping_add(1);
+            self.minstret = self.minstret.wrapping_add(retired);
         }
+    }
+
+    /// Zicntr (E1-T14): advance the counters after one successfully retired instruction. A `csrr`
+    /// observes the pre-retire count; a `csrw` to a counter suppresses that counter's own tick.
+    pub fn retire_tick(&mut self) {
+        self.retire_span(1);
     }
 
     /// Refresh the `time` counter's window onto the CLINT `mtime` (E1-T14). The machine calls

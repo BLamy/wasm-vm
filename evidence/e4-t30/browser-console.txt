@@ -1,0 +1,9 @@
+Final fresh-origin browser run:
+errors: 0
+warnings: 0
+info: wasm-vm: browser JIT NOT enabled - forced-off (?jit=0)
+
+Repair head b392b88, fresh origin 8130:
+errors: 0
+warnings: 0
+info: wasm-vm: browser JIT NOT enabled - forced-off (?jit=0)

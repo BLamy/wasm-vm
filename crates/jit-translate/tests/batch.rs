@@ -6,10 +6,10 @@
 //! walk the generated module with `wasmparser` and assert both intra edges are `Operator::Call` to
 //! the successor's function index and that NO `Operator::CallIndirect` exists anywhere in the batch.
 
-use jit_translate::{Abi, translate_batch};
+use jit_translate::{Abi, translate_batch, translate_block};
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
-use wasmparser::{Operator, Parser, Payload};
+use wasmparser::{Operator, Parser, Payload, TypeRef};
 
 fn op(instr: Instr) -> MicroOp {
     MicroOp {
@@ -39,6 +39,44 @@ fn functions_ops(bytes: &[u8]) -> Vec<Vec<Operator<'_>>> {
         }
     }
     out
+}
+
+fn assert_fixed_private_state_memory(bytes: &[u8]) {
+    let mut memories = Vec::new();
+    for payload in Parser::new(0).parse_all(bytes) {
+        if let Payload::MemorySection(section) = payload.expect("parse") {
+            memories.extend(section.into_iter().map(|memory| memory.expect("memory")));
+        }
+    }
+    assert_eq!(memories.len(), 1, "SoftMMU module owns one state memory");
+    let memory = memories[0];
+    assert_eq!(memory.initial, 1);
+    assert_eq!(memory.maximum, Some(1));
+    assert!(!memory.shared);
+    assert!(!memory.memory64);
+}
+
+fn assert_growable_imported_guest_memory(bytes: &[u8]) {
+    let mut memories = Vec::new();
+    for payload in Parser::new(0).parse_all(bytes) {
+        if let Payload::ImportSection(section) = payload.expect("parse") {
+            for import in section {
+                let import = import.expect("import");
+                if let TypeRef::Memory(memory) = import.ty {
+                    memories.push(memory);
+                }
+            }
+        }
+    }
+    assert_eq!(memories.len(), 1, "InlineTlb imports one guest memory");
+    let memory = memories[0];
+    assert_eq!(memory.initial, 1);
+    assert_eq!(
+        memory.maximum, None,
+        "InlineTlb guest memory stays growable"
+    );
+    assert!(!memory.shared);
+    assert!(!memory.memory64);
 }
 
 #[test]
@@ -141,4 +179,31 @@ fn single_block_batch_matches_translate_block_shape() {
             "a no-intra single-block batch makes no in-module calls"
         );
     }
+}
+
+#[test]
+fn softmmu_state_memory_is_fixed_for_stable_browser_views() {
+    let b = block(
+        0x8000_0000,
+        &[
+            Instr::Addi {
+                rd: 1,
+                rs1: 1,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: -4 },
+        ],
+    );
+    let single = translate_block(&b, &Abi::FROZEN).expect("single translates");
+    assert_fixed_private_state_memory(&single);
+    let batch = translate_batch(core::slice::from_ref(&b), &Abi::FROZEN, &[[None, None]])
+        .expect("batch translates");
+    assert_fixed_private_state_memory(&batch);
+
+    let inline_single = translate_block(&b, &Abi::INLINE_TLB).expect("inline single translates");
+    assert_growable_imported_guest_memory(&inline_single);
+    let inline_batch =
+        translate_batch(core::slice::from_ref(&b), &Abi::INLINE_TLB, &[[None, None]])
+            .expect("inline batch translates");
+    assert_growable_imported_guest_memory(&inline_batch);
 }

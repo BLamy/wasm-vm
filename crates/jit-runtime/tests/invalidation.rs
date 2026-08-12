@@ -34,12 +34,16 @@ use jit_runtime::WasmtimeExecutor;
 
 use wasm_vm_core::bus::Bus;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
-use wasm_vm_core::csr::{CsrOp, MEDELEG, Priv, SATP};
+use wasm_vm_core::csr::{CsrOp, MCYCLE, MEDELEG, MINSTRET, Priv, SATP};
+use wasm_vm_core::hart::Exception;
 use wasm_vm_core::{Machine, RunOutcome};
 
 // ── RV64 encoders ────────────────────────────────────────────────────────────
 fn enc_addi(rd: u32, rs1: u32, imm: i32) -> u32 {
     ((imm as u32) << 20) | (rs1 << 15) | (0b000 << 12) | (rd << 7) | 0b0010011
+}
+fn enc_lw(rd: u32, rs1: u32, imm: i32) -> u32 {
+    ((imm as u32) << 20) | (rs1 << 15) | (0b010 << 12) | (rd << 7) | 0b0000011
 }
 fn enc_bne(rs1: u32, rs2: u32, off: i32) -> u32 {
     let o = off as u32;
@@ -240,6 +244,10 @@ fn set_csr(m: &mut Machine, a: u16, v: u64) {
         .unwrap();
 }
 
+fn read_csr(m: &mut Machine, a: u16) -> u64 {
+    m.hart_mut().csr.read(a)
+}
+
 /// The virtual code-page layout used by the SFENCE.VMA tests. A register-only loop (x2 += IMM,
 /// x1 iterations) that exits to a spin, plus an on-demand `sfence.vma` at a fixed offset and a
 /// separate flush stub. `imm` distinguishes physical code pages.
@@ -273,6 +281,7 @@ const PSTUB: u64 = DRAM_BASE + 0x30_2000; // flush-stub page (never remapped)
 const VCODE: u64 = 0x1000_0000;
 const VCODE2: u64 = 0x1000_2000; // an alternate VA in a distinct page
 const VSTUB: u64 = 0x2000_0000;
+const VFAULT: u64 = 0x3000_0000;
 
 /// Build an S-mode Sv39 machine with PMP open and page faults delegated to S. Returns the machine
 /// and its page-table builder. Stub sfence encoding is caller-poked at `PSTUB`.
@@ -291,6 +300,71 @@ fn paged(jit: bool, asid: u64, root: u64) -> (Machine, Pt) {
         arm_jit(&mut m);
     }
     (m, pt)
+}
+
+#[test]
+fn precise_fault_retirement_uses_virtual_entry_pc() {
+    // A physically-keyed compiled block executes through a different virtual address. Its precise
+    // load-page-fault PC is virtual too, so the committed prefix must be counted by walking from
+    // VCODE, never from the physical cache key P1.
+    let (mut m, mut pt) = paged(true, 1, PT_ROOT_A);
+    poke_page(
+        &mut m,
+        P1,
+        &[enc_addi(5, 0, 1), enc_lw(6, 8, 0), enc_jal(0, 0)],
+    );
+    pt.map(&mut m, VCODE, P1, RX);
+
+    m.hart_mut().regs.write(8, VFAULT);
+    m.hart_mut().regs.pc = VCODE;
+    let warm_trap = match m.run(8) {
+        RunOutcome::Trapped(trap) => trap,
+        other => panic!("warm run expected LoadPageFault, got {other:?}"),
+    };
+    assert_eq!(warm_trap.cause, Exception::LoadPageFault);
+    assert_eq!(warm_trap.tval, VFAULT);
+    assert!(
+        m.executor().unwrap().is_compiled(P1),
+        "the physical block must compile after the first faulting run"
+    );
+
+    // Direct host CSR writes intentionally leave the one-instruction suppression flags armed.
+    // Compiled entry must clear them and account exactly the one addi before the fault.
+    m.enable_clint(1);
+    m.hart_mut().csr.mode = Priv::M;
+    set_csr(&mut m, MCYCLE, 100);
+    set_csr(&mut m, MINSTRET, 200);
+    m.hart_mut().csr.mode = Priv::S;
+    m.hart_mut().regs.write(5, 0);
+    m.hart_mut().regs.write(6, 0xfeed_face);
+    m.hart_mut().regs.write(8, VFAULT);
+    m.hart_mut().regs.pc = VCODE;
+    let executed_before = m.executor().unwrap().executed_blocks();
+    let jit_retired_before = m.executor().unwrap().retired_via_jit();
+    let retired_before = m.irq_stats().retired;
+
+    let trap = match m.run(8) {
+        RunOutcome::Trapped(trap) => trap,
+        other => panic!("compiled run expected LoadPageFault, got {other:?}"),
+    };
+    assert_eq!(trap.cause, Exception::LoadPageFault);
+    assert_eq!(trap.tval, VFAULT);
+    assert_eq!(m.hart().regs.pc, VCODE + 4, "fault PC must remain virtual");
+    assert_eq!(m.hart().regs.read(5), 1, "the prefix addi must commit");
+    assert_eq!(
+        m.hart().regs.read(6),
+        0xfeed_face,
+        "the faulting load must not write its destination"
+    );
+    assert_eq!(m.executor().unwrap().executed_blocks() - executed_before, 1);
+    assert_eq!(
+        m.executor().unwrap().retired_via_jit() - jit_retired_before,
+        1
+    );
+    assert_eq!(m.irq_stats().retired - retired_before, 1);
+    assert_eq!(read_csr(&mut m, MCYCLE), 101);
+    assert_eq!(read_csr(&mut m, MINSTRET), 201);
+    assert_eq!(m.clint_mtime(), 1);
 }
 
 /// Run the loop at `VCODE` to completion (spin), for `K` iterations.

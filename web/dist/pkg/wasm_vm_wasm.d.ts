@@ -50,12 +50,8 @@ export class WasmLinux {
     dismissFileUpload(stream: number): boolean;
     /**
      * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
-     * arm tier-up — the `WasmLinux` twin of `WasmMachine::enable_jit`. The deployed demo constructs a
-     * `WasmLinux` on the main thread (see `web/loader.js`), so without this the browser guest never
-     * tiers up regardless of cross-origin isolation. The interpreter stays the oracle: with the JIT
-     * off (this never called) `runChunk` is byte-identical to the pre-T29 path. `threshold` is the
-     * hotness count before a block is nominated (see `web/cpu-isolation.js` `JIT_DEFAULT_THRESHOLD`).
-     * The caller gates this on `crossOriginIsolated`.
+     * arm tier-up. The accelerated interpreter remains the fallback for cold/untranslatable blocks;
+     * the caller gates this on `crossOriginIsolated`.
      */
     enableJit(threshold: number): void;
     /**
@@ -92,6 +88,13 @@ export class WasmLinux {
      * the coherence guard on restore. Error `"not_persistent"` off the persistent path.
      */
     importStoredSnapshot(blob: Uint8Array): Promise<void>;
+    /**
+     * E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
+     * `{hasExecutor, compiledBlocks, executedBlocks, retiredViaJit}` read straight from the installed
+     * executor — `executedBlocks > 0` is the definitive evidence translated code executed (not merely
+     * that `enableJit` was called). `hasExecutor:false` means no JIT is attached at all.
+     */
+    jitStats(): any;
     /**
      * Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
      * FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
@@ -184,7 +187,7 @@ export class WasmLinux {
     restoreDecisionCode(stored: Uint8Array | null | undefined, current_generation: number): string;
     /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
-     * 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
+     * 16550 RX, and return `{ done: bool, state: string|null, retired: number }`. A persistent caller may pass
      * `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
      * that limit so JS can durably drain it before the guest can race arbitrarily far ahead.
      * `state` is `"poweroff"`, `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or
@@ -211,6 +214,13 @@ export class WasmLinux {
      * persistent path. Returns true if a disk flag was flipped.
      */
     setDiskReadOnly(): boolean;
+    /**
+     * E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
+     * physical-entry predecode reuse with the proven <=128-retire interrupt/device batching. The
+     * caller can turn it off for a byte-identical legacy A/B; enabling JIT later turns it back on
+     * because the compiled tier consumes the same block-discovery front end.
+     */
+    setFastInterpreter(on: boolean): void;
     setFileDownloadReady(ready: boolean): void;
     /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
@@ -232,8 +242,8 @@ export class WasmLinux {
      */
     stampBootSnapshotIdentity(base_id: Uint8Array): void;
     /**
-     * Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
-     * devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
+     * Final/current guest-RAM SHA-256 for browser evidence. This is the `mem_digest` portion of the
+     * native snapshot contract; registers and device state are intentionally not encoded here.
      */
     stateDigest(): string;
     takeFileDownloadChunk(id: number): Uint8Array;
@@ -262,6 +272,11 @@ export class WasmMachine {
      * of a silently-pinned tab.
      */
     getStats(): any;
+    /**
+     * E4-T31: the bare-metal wrapper's authoritative compiled-tier counters. This mirrors the
+     * Linux wrapper and lets hosts distinguish a bounded JIT run from an interpreted trace run.
+     */
+    jitStats(): any;
     /**
      * Load a bare-metal rv64 ELF. A malformed image throws a `JsError` naming the
      * `ElfError` variant and leaves the machine usable (RAM is validated before it is
@@ -436,6 +451,7 @@ export interface InitOutput {
     readonly wasmlinux_getProfile: (a: number) => [number, number, number];
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
     readonly wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
+    readonly wasmlinux_jitStats: (a: number) => [number, number, number];
     readonly wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];
@@ -454,6 +470,7 @@ export interface InitOutput {
     readonly wasmlinux_saveSnapshot: (a: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
+    readonly wasmlinux_setFastInterpreter: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
@@ -461,6 +478,7 @@ export interface InitOutput {
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_enableJit: (a: number, b: number) => [number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];
+    readonly wasmmachine_jitStats: (a: number) => [number, number, number];
     readonly wasmmachine_loadElf: (a: number, b: number, c: number) => [number, number];
     readonly wasmmachine_new: (a: number) => [number, number, number];
     readonly wasmmachine_ramLen: (a: number) => [number, number, number];

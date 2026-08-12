@@ -25,8 +25,8 @@
 //!    load/store is translated + PMP-checked + bus-routed byte-identically to the interpreter. A fault
 //!    records the precise [`Trap`] and throws, unwinding the module call exactly like the native
 //!    `Err`-unwind (E4-T12 precise memory-fault side-exit).
-//! 3. **CpuState sync** — register sync-in / read-back through a `Uint8Array` view of the module's
-//!    exported `mem`, instead of `wasmtime::Memory::read`/`write`.
+//! 3. **CpuState sync** — one stable `Uint8Array` view per batch bulk-copies the frozen handoff
+//!    region, instead of crossing the JS boundary once per register.
 //!
 //! The memory model is the frozen [`MemModel::SoftmmuImports`](jit_translate::MemModel) — the
 //! integrated path (E4-T11's inline-TLB shared-memory fast path is deferred), identical to the native
@@ -34,6 +34,7 @@
 //! imports. This is why the executor is faithful to the native reference AND headlessly verifiable in
 //! node against `Hart::exec_oracle`.
 
+use alloc::boxed::Box;
 use alloc::format;
 use alloc::vec::Vec;
 use core::cell::RefCell;
@@ -47,7 +48,7 @@ use wasm_vm_core::dispatch::DecodedBlock;
 use wasm_vm_core::hart::{Hart, Trap};
 use wasm_vm_core::jit::{
     CHAIN_DEPTH_BUDGET_DEFAULT, CHAIN_DEPTH_HIST_LEN, ChainStats, CompiledBlockExecutor,
-    EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats, JitExit, abi,
+    CpuStateHandoff, EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats, JitExit, abi,
 };
 use wasm_vm_core::mmio::SystemBus;
 
@@ -74,6 +75,34 @@ thread_local! {
     }) };
 }
 
+#[wasm_bindgen(inline_js = r#"
+export function throwJitMemFault() {
+    throw null;
+}
+
+export function invokeJitBlock(run) {
+    try {
+        return run(0);
+    } catch {
+        return NaN;
+    }
+}
+"#)]
+extern "C" {
+    #[wasm_bindgen(js_name = throwJitMemFault)]
+    fn throw_jit_mem_fault();
+    #[wasm_bindgen(js_name = invokeJitBlock)]
+    fn invoke_jit_block(run: &Function) -> f64;
+}
+
+#[cold]
+fn throw_jit_sentinel() -> ! {
+    throw_jit_mem_fault();
+    // SAFETY: the inline JS function above unconditionally throws before it can return. Keeping the
+    // sentinel entirely in JS avoids both Rust-string decoding and a leaked `JsValue` externref.
+    unsafe { core::hint::unreachable_unchecked() }
+}
+
 /// Run `f` against the live guest for a value-returning import (load/AMO/LR/SC). On a fault it records
 /// the precise trap and throws a JS exception, which unwinds the compiled module call (a wasm trap)
 /// so `execute` can side-exit precisely — the browser analogue of the native `Err`-unwind.
@@ -94,7 +123,7 @@ where
         Ok(v) => v,
         Err(t) => {
             HOST.with(|c| c.borrow_mut().trap = Some(t));
-            wasm_bindgen::throw_str("jit-mem-fault")
+            throw_jit_sentinel()
         }
     }
 }
@@ -109,15 +138,11 @@ where
 
 // ── registry entries (identical shape to the native executor, engine handle swapped) ──
 
-/// One compiled block: its exported `run{n}` function, the module's `CpuState` memory, source page
-/// frame (page-granular invalidation), guest op count (retire-clock accounting), and the E4-T18/T19
-/// chaining/batch identity. The only difference from the native `Compiled` is `run`/`mem` are JS
-/// handles.
+/// One compiled block: its exported `run{n}` function, source page frame (page-granular
+/// invalidation), and E4-T18/T19 chaining/batch identity. The batch owns the one shared state view.
 struct Compiled {
     run: Function,
-    mem: WebAssembly::Memory,
     page_frame: u64,
-    nops: u64,
     table_index: u32,
     slot_base: u32,
     nslots: u8,
@@ -130,8 +155,60 @@ struct Batch {
     members: Vec<u64>,
     est_bytes: u64,
     last_tick: u64,
+    /// One exact view of `[abi::XREG_BASE, abi::HANDOFF_END)`. SoftMMU state memories are fixed at
+    /// one page, so their ArrayBuffer can never be detached by `memory.grow`.
+    state: Uint8Array,
     /// Kept alive so the instance (and its functions/memory) survive until the batch is retired.
     _instance: WebAssembly::Instance,
+}
+
+/// Rust-side transport image plus one retained JS view into the outer wasm module's linear memory.
+/// The box pins the image's linear-memory offset across executor moves. A wasm memory growth detaches
+/// the old ArrayBuffer, so transfers recreate the view only when its byte length becomes zero.
+struct BrowserHandoff {
+    // Drop the JS alias before releasing its Box-backed Rust allocation.
+    view: Uint8Array,
+    image: Box<CpuStateHandoff>,
+}
+
+impl BrowserHandoff {
+    fn new() -> Self {
+        let mut image = Box::new(CpuStateHandoff::default());
+        let view = Self::view_for(image.as_mut());
+        Self { view, image }
+    }
+
+    fn view_for(image: &mut CpuStateHandoff) -> Uint8Array {
+        let memory = wasm_bindgen::memory().unchecked_into::<WebAssembly::Memory>();
+        let byte_offset = image.as_mut_bytes().as_mut_ptr() as u32;
+        Uint8Array::new_with_byte_offset_and_length(
+            &memory.buffer(),
+            byte_offset,
+            abi::HANDOFF_LEN as u32,
+        )
+    }
+
+    fn ensure_live_view(&mut self) {
+        if self.view.byte_length() != abi::HANDOFF_LEN as u32 {
+            self.view = Self::view_for(self.image.as_mut());
+        }
+    }
+
+    fn copy_into_module(&mut self, state: &Uint8Array, hart: &Hart) {
+        self.image.prepare(hart);
+        self.ensure_live_view();
+        state.set(self.view.as_ref(), 0);
+    }
+
+    fn copy_from_module(&mut self, state: &Uint8Array, hart: &mut Hart) {
+        // Imported guest accesses run in the outer wasm module and may grow its linear memory. Check
+        // again after the compiled call before copying into the cached Rust-side transport image.
+        self.ensure_live_view();
+        // SAFETY INVARIANT: `image` is Box-stable and never replaced; typed-array `set` is
+        // synchronous, and no Rust reference into `image` remains live across this JS mutation.
+        self.view.set(state.as_ref(), 0);
+        self.image.commit_registers(hart);
+    }
 }
 
 /// E4-T19 registry estimate: fixed per-Instance overhead beyond emitted code (dominated by the
@@ -155,6 +232,9 @@ pub struct BrowserExecutor {
     _closures_amo: Closure<dyn FnMut(i64, i64, i32, i32) -> i64>,
     _closures_lr: Closure<dyn FnMut(i64, i32) -> i64>,
     _closures_sc: Closure<dyn FnMut(i64, i64, i32) -> i64>,
+    /// Box-stable Rust image plus one cached outer-wasm view. The view is part of the executor's
+    /// fixed externref floor and is refreshed only if outer memory growth detached it.
+    handoff: BrowserHandoff,
     blocks: HashMap<u64, Compiled>,
     executed_blocks: u64,
     retired_via_jit: u64,
@@ -229,6 +309,7 @@ impl BrowserExecutor {
             _closures_amo: amo,
             _closures_lr: lr,
             _closures_sc: sc,
+            handoff: BrowserHandoff::new(),
             blocks: HashMap::new(),
             executed_blocks: 0,
             retired_via_jit: 0,
@@ -258,6 +339,40 @@ impl BrowserExecutor {
         }
     }
 
+    /// Directed-test hook for the cached-view invariant. The private SoftMMU memory must reject a
+    /// one-page growth without detaching or replacing the retained handoff view's buffer.
+    #[doc(hidden)]
+    pub fn fixed_state_view_survives_rejected_growth(&self, phys_pc: u64) -> bool {
+        let Some(compiled) = self.blocks.get(&phys_pc) else {
+            return false;
+        };
+        let Some(batch) = self.batches.get(&compiled.batch_id) else {
+            return false;
+        };
+        let exports = batch._instance.exports();
+        let Some(memory) = Reflect::get(&exports, &JsValue::from_str("mem"))
+            .ok()
+            .and_then(|value| value.dyn_into::<WebAssembly::Memory>().ok())
+        else {
+            return false;
+        };
+        let Some(grow) = Reflect::get(memory.as_ref(), &JsValue::from_str("grow"))
+            .ok()
+            .and_then(|value| value.dyn_into::<Function>().ok())
+        else {
+            return false;
+        };
+        let before_len = batch.state.length();
+        let before_buffer = batch.state.buffer();
+        let rejected = grow
+            .call1(memory.as_ref(), &JsValue::from_f64(1.0))
+            .is_err();
+        let after_buffer = batch.state.buffer();
+        rejected
+            && batch.state.length() == before_len
+            && Object::is(before_buffer.as_ref(), after_buffer.as_ref())
+    }
+
     fn metadata_bytes_est(&self) -> u64 {
         let slots = (self.slots.len() * 4) as u64;
         let table = (self.table.len() * 8) as u64;
@@ -278,15 +393,17 @@ impl BrowserExecutor {
     /// references + decrement the registry, (5) bump the generation. Ordering is load-bearing (unlink
     /// BEFORE the table slot is freed).
     fn evict_batch(&mut self, batch_id: u32) -> bool {
-        let Some(b) = self.batches.remove(&batch_id) else {
+        let Some(batch) = self.batches.remove(&batch_id) else {
             return false;
         };
-        let members = b.members;
-        for &phys in &members {
+        // Keep the batch's Instance + state view rooted until every member Function has been
+        // removed. Then all K+2 browser roots die together at the explicit drop.
+        for &phys in &batch.members {
             self.remove_block(phys);
             self.evicted_phys.insert(phys);
             self.newly_evicted.push(phys);
         }
+        drop(batch);
         self.generation = self.generation.wrapping_add(1);
         self.evictions += 1;
         debug_assert!(!self.batches.contains_key(&batch_id));
@@ -333,10 +450,11 @@ impl BrowserExecutor {
 
     /// E4-T19: retire an entire batch (Module/Instance) — the unit of SMC/eviction invalidation.
     fn retire_batch(&mut self, batch_id: u32) {
-        if let Some(b) = self.batches.remove(&batch_id) {
-            for phys in b.members {
+        if let Some(batch) = self.batches.remove(&batch_id) {
+            for &phys in &batch.members {
                 self.remove_block(phys);
             }
+            drop(batch);
         }
     }
 
@@ -421,23 +539,54 @@ impl BrowserExecutor {
         }
     }
 
-    /// Read a little-endian `u64` from the module's `CpuState` memory at `off`.
-    fn read_u64(mem: &WebAssembly::Memory, off: u32) -> u64 {
-        let view = Uint8Array::new(&mem.buffer());
-        let mut b = [0u8; 8];
-        for (i, slot) in b.iter_mut().enumerate() {
-            *slot = view.get_index(off + i as u32);
-        }
-        u64::from_le_bytes(b)
-    }
+    fn invoke(
+        run: &Function,
+        state: &Uint8Array,
+        handoff: &mut BrowserHandoff,
+        hart: &mut Hart,
+        bus: &mut SystemBus,
+    ) -> Option<JitExit> {
+        handoff.copy_into_module(state, hart);
+        HOST.with(|context| {
+            let mut context = context.borrow_mut();
+            context.hart = hart as *mut Hart;
+            context.bus = bus as *mut SystemBus;
+            context.trap = None;
+        });
+        // Keep the exception entirely in JS. Bringing a caught exception back as
+        // `Result<JsValue, JsValue>` roots one externref per fault in wasm-bindgen's table.
+        let returned = invoke_jit_block(run);
+        let fault = HOST.with(|context| {
+            let mut context = context.borrow_mut();
+            context.hart = core::ptr::null_mut();
+            context.bus = core::ptr::null_mut();
+            context.trap.take()
+        });
+        let code = (!returned.is_nan()).then_some(returned as i32);
+        let Some(code) = code else {
+            if let Some(trap) = fault {
+                handoff.copy_from_module(state, hart);
+                return Some(JitExit {
+                    code: ExitCode::Trap,
+                    next_pc: handoff.image.exit_pc(),
+                    exit_info: trap.cause as u64,
+                    trap: Some(trap),
+                });
+            }
+            // An unrecorded exception may have happened after an imported RAM/MMIO side effect.
+            // Returning `None` would make core replay the block and duplicate it. HOST is already
+            // cleared above, so fail closed without committing the module register image.
+            throw_jit_sentinel();
+        };
 
-    /// Write a little-endian `u64` into the module's `CpuState` memory at `off`.
-    fn write_u64(mem: &WebAssembly::Memory, off: u32, v: u64) {
-        let view = Uint8Array::new(&mem.buffer());
-        let b = v.to_le_bytes();
-        for (i, byte) in b.iter().enumerate() {
-            view.set_index(off + i as u32, *byte);
-        }
+        handoff.copy_from_module(state, hart);
+        debug_assert_eq!(code, handoff.image.exit_reason());
+        Some(JitExit {
+            code: ExitCode::from_i32(code),
+            next_pc: handoff.image.exit_pc(),
+            exit_info: handoff.image.exit_info(),
+            trap: None,
+        })
     }
 }
 
@@ -514,6 +663,11 @@ impl CompiledBlockExecutor for BrowserExecutor {
             Some(m) => m,
             None => return,
         };
+        let state = Uint8Array::new_with_byte_offset_and_length(
+            &mem.buffer(),
+            abi::XREG_BASE,
+            abi::HANDOFF_LEN as u32,
+        );
 
         let batch_id = self.next_batch_id;
         self.next_batch_id = self.next_batch_id.wrapping_add(1);
@@ -537,9 +691,7 @@ impl CompiledBlockExecutor for BrowserExecutor {
                 b.phys_start,
                 Compiled {
                     run,
-                    mem: mem.clone(),
                     page_frame: b.page_frame,
-                    nops: b.ops.len() as u64,
                     table_index,
                     slot_base,
                     nslots,
@@ -557,9 +709,22 @@ impl CompiledBlockExecutor for BrowserExecutor {
                 members,
                 est_bytes,
                 last_tick: self.clock,
+                state,
                 _instance: instance,
             },
         );
+    }
+
+    /// `WebAssembly.Module` construction is synchronous in this executor. Keep one host
+    /// `runChunk` to eight validated block submissions total (across every periodic pump plus its final
+    /// pump), so terminal input, output, and Worker RPC tasks regain the event loop between bounded
+    /// compile bursts. Backlog remains queued and progresses on later chunks.
+    fn max_translation_attempts_per_run(&self) -> usize {
+        8
+    }
+
+    fn max_staged_nominations_per_run(&self) -> usize {
+        64
     }
 
     fn set_batch_size(&mut self, k: usize) {
@@ -583,72 +748,19 @@ impl CompiledBlockExecutor for BrowserExecutor {
     }
 
     fn execute(&mut self, phys_pc: u64, hart: &mut Hart, bus: &mut SystemBus) -> Option<JitExit> {
-        let (run, mem, nops, batch_id) = {
-            let c = self.blocks.get(&phys_pc)?;
-            (c.run.clone(), c.mem.clone(), c.nops, c.batch_id)
+        let exit = {
+            let compiled = self.blocks.get(&phys_pc)?;
+            let batch = self.batches.get_mut(&compiled.batch_id)?;
+            // A miss is a pure interpreter fallback. Advance the LRU clock only after both the
+            // block and its owning batch were found and a compiled call will actually be attempted.
+            self.clock = self.clock.wrapping_add(1);
+            batch.last_tick = self.clock;
+            Self::invoke(&compiled.run, &batch.state, &mut self.handoff, hart, bus)
         };
-        self.clock = self.clock.wrapping_add(1);
-        if let Some(b) = self.batches.get_mut(&batch_id) {
-            b.last_tick = self.clock;
-        }
-        // Sync guest registers into the module's CpuState region (x0..x31; x0 is a hardwired 0).
-        for r in 0..32u8 {
-            let off = abi::XREG_BASE + u32::from(r) * 8;
-            Self::write_u64(&mem, off, hart.regs.read(r));
-        }
-        // E4-T16: the guest VIRTUAL entry PC, so the block emits PC-relative (virtual) targets.
-        Self::write_u64(&mem, abi::ENTRY_PC, hart.regs.pc);
-        // Present the live guest to the imports for the duration of the call.
-        HOST.with(|c| {
-            let mut c = c.borrow_mut();
-            c.hart = hart as *mut Hart;
-            c.bus = bus as *mut SystemBus;
-            c.trap = None;
-        });
-        let call = run.call1(&JsValue::NULL, &JsValue::from_f64(0.0));
-        let fault = HOST.with(|c| {
-            let mut c = c.borrow_mut();
-            c.hart = core::ptr::null_mut();
-            c.bus = core::ptr::null_mut();
-            c.trap.take()
-        });
-        let code = match call {
-            Ok(v) => v.as_f64().map(|f| f as i32),
-            Err(_) => None,
-        };
-        let Some(code) = code else {
-            // The block unwound. A recorded precise trap (E4-T12) → deliver it from the already-
-            // written-back register file + faulting PC; no re-interpretation from entry.
-            let trap = fault?;
-            for r in 1..32u8 {
-                let off = abi::XREG_BASE + u32::from(r) * 8;
-                hart.regs.write(r, Self::read_u64(&mem, off));
-            }
-            let faulting_pc = Self::read_u64(&mem, abi::EXIT_PC);
+        if exit.is_some() {
             self.executed_blocks += 1;
-            return Some(JitExit {
-                code: ExitCode::Trap,
-                next_pc: faulting_pc,
-                exit_info: trap.cause as u64,
-                trap: Some(trap),
-            });
-        };
-        // Clean return: sync registers back (skip x0), then read the frozen exit protocol.
-        for r in 1..32u8 {
-            let off = abi::XREG_BASE + u32::from(r) * 8;
-            hart.regs.write(r, Self::read_u64(&mem, off));
         }
-        let next_pc = Self::read_u64(&mem, abi::EXIT_PC);
-        let exit_info = Self::read_u64(&mem, abi::EXIT_INFO);
-        debug_assert_eq!(code, Self::read_u64(&mem, abi::EXIT_REASON) as i32);
-        self.executed_blocks += 1;
-        self.retired_via_jit += nops;
-        Some(JitExit {
-            code: ExitCode::from_i32(code),
-            next_pc,
-            exit_info,
-            trap: None,
-        })
+        exit
     }
 
     fn invalidate_all(&mut self) {
@@ -694,6 +806,10 @@ impl CompiledBlockExecutor for BrowserExecutor {
 
     fn retired_via_jit(&self) -> u64 {
         self.retired_via_jit
+    }
+
+    fn note_jit_retired(&mut self, retired: u64) {
+        self.retired_via_jit = self.retired_via_jit.wrapping_add(retired);
     }
 
     // ── E4-T18 chaining ──

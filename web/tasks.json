@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 129,
-    "total": 322
+    "verified": 139,
+    "total": 329
   },
   "epics": [
     {
@@ -56,7 +56,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-08-06"
+    "end": "2026-08-11"
   },
   "tasks": [
     {
@@ -10885,6 +10885,69 @@
       "commitCount": 1
     },
     {
+      "id": "E3.6-T05",
+      "epic": "3.6",
+      "epicKey": "3.6",
+      "title": "Node-preinstalled Alpine snapshot as the default — instant Node.js in the VM",
+      "priority": 365,
+      "status": "verification-debt",
+      "depends_on": [
+        "E3.6-T04"
+      ],
+      "decomposed_into": [],
+      "estimate": "M",
+      "capstone": false,
+      "goal": "The default demo restores, in ~1 second, an Alpine host with **Node.js already installed** — so the\nVM is instantly ready to run `node` programs with no boot and no `apk` wait. This is the payoff of the\nepic-3.6 snapshot-restore work (busybox restore already ships at ~0.68 s; the browser Alpine restore is\nthe immediate prerequisite): freeze a *batteries-included* image and make restoring it the default.",
+      "criteria": [
+        {
+          "text": "Default demo restores to a ready shell in ~seconds (sub-second RAM restore) with `node` on PATH — Playwright-verified on the deployed site: `restoredFromBootSnapshot()===true` AND `node --version` returns a version.",
+          "checked": false
+        },
+        {
+          "text": "A real Node program runs in the VM and produces correct output — Playwright-verified: e.g. `node -e 'console.log(6*7)'` → `42`, and a multi-line script (fs read/write, a small compute) runs.",
+          "checked": false
+        },
+        {
+          "text": "A `node` HTTP server started in-guest serves a request (guest-local or via the slirp stack) — or, if networking is out of scope here, a scripted `node` workload runs to completion with a recorded wall-time (JIT on vs off, ties to E4-T28).",
+          "checked": false
+        },
+        {
+          "text": "Coherence guard holds: a stale/foreign snapshot or mismatched overlay generation falls back to a clean cold boot, never a broken guest.",
+          "checked": false
+        },
+        {
+          "text": "Snapshot artifact size + restore time recorded in `evidence/epic-3.6/`; no fabricated numbers.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 5,
+      "criteriaDone": 0,
+      "verificationLog": "**2026-08-07 (rev 2) — re-chunked Node BASE (not a delta) + main-thread JIT wired + deployed.**\n\n- **Node baked into a RE-CHUNKED lazy-load base** (the architecture the delta approach missed). Two-boot\n  pipeline on `dev` (`/tmp/build-node-base2.sh`): boot `alpine-rootfs.ext4` under `--net-slirp`, root-login\n  then `udhcpc -i eth0; apk add nodejs npm` (`OK: 86 MiB in 92 packages`, `v20.15.1`, npm `10.9.1-r0`) →\n  **chunk the Node ext4 into a fresh base** (2400 dedup'd 128 KiB chunks, `base_hash ac6a2988…`) → boot 2\n  snapshots the node-ready shell stamped with that base-id.\n- **Artifacts (real, much smaller than the delta approach):** RAM snap 101,203,980 B raw → **25,334,324 B\n  gz** (`58c9079d…`); overlay-delta **16,124 B** gz / 83 blocks (`90647ee8…`) — Node now lives in the base,\n  so the delta is ~16 KB vs the old 24 MB. Both under the 25 MiB Pages cap → ship on Pages. Node chunks\n  uploaded to R2 `s3://wasm-vm/chunked-node-alpine/`; R2 `base_hash` re-verified `== ac6a2988…`.\n- **[✓] AC1 fast restore — live-verified on https://wasm-vm.pages.dev/ (`?guest=node-alpine`, the default):**\n  console prints `[fast-boot: host ready in 5.20s (restored, no Linux boot)]`, `root@node-alpine` chip\n  present. Coherence guard holds (R2 base_hash == snapshot base-id).\n- **JIT (E4-T29) now armed on the deployed demo.** Root cause it was interpreted: the demo runs `WasmLinux`\n  on the **main thread** (`web/loader.js`), and only `WasmMachine` exposed `enableJit` — the main-thread path\n  never armed it, regardless of `crossOriginIsolated`. Fix: added `WasmLinux::enableJit` (crates/wasm/src/lib.rs,\n  mirrors `WasmMachine`) + a COI-gated `machine.enableJit(32)` in loader.js with a `?jit=0` opt-out. Live-verified:\n  `window.__jit === {enabled:true, threshold:32}`, `crossOriginIsolated===true`, `machine.enableJit` a function.\n\n**verification-debt (honest):**\n- `node -e 'console.log(6*7)' → 42` **NOT captured in the automated browser** — under Playwright the\n  `setTimeout` run-loop is throttled, so `node -e` ran >4 min WITHOUT completing in BOTH `jit=1` (~202 s) and\n  `jit=0` (~241 s) samples; the guest stepped correctly the whole time (stateDigest advancing, zero\n  console errors). This is automation-tab throttling, not a guest fault. Needs a **focused/foreground** browser\n  (or a non-setTimeout run-loop) to capture `42` and a real wall-time.\n- **JIT gives no measurable speedup for `node -e`**: startup is V8 **cold code** (never tiers up), and\n  **main-thread** compilation is synchronous + the Linux guest bails frequently (MMIO/MMU/interrupts), so\n  naive main-thread JIT adds overhead. Real speedup needs the **async cpu-worker compile path** (E4-T22/T28).\n  JIT *activates* (requirement met) but \"fast Node\" remains open → tie to E4-T28.\n\n**2026-08-07 (rev 1) — implemented + deployed + Playwright-verified on production. Full evidence:\n`evidence/epic-3.6/node-alpine.md`.**\n\n- **Node baked via apk, snapshotted node-ready.** `tools/build-node-alpine-snapshot.sh` boots Alpine\n  under `--net-slirp` (real mirrors via slirp NAT), `apk add nodejs npm` (`nodejs 20.15.1-r0` + `npm`,\n  `OK: 86 MiB in 92 packages`, `v20.15.1`), snapshot gated behind `node --version && npm --version`.\n- **Artifacts (real):** RAM snapshot 221,831,892 B raw → 55,309,778 B gz (`43b755a6…`); overlay-delta\n  75,858,397 B raw (18,484 blocks) → 24,258,743 B gz (`60c9dc60…`). Node rides the disk OVERLAY over the\n  existing `chunked-alpine` base (base_hash `03a8026f…`) — no re-chunk. Both gz exceed the 25 MiB Pages\n  cap → uploaded to R2 (`s3://wasm-vm/boot-snapshot/`), public-URL 200-checked.\n- **Selector + default:** `?guest=busybox|alpine|node-alpine`, node-alpine the DEFAULT autoboot;\n  busybox/alpine still selectable; `?noAutoBoot` + busybox cold-boot fallback preserved.\n- **[✓] AC1 restored to a node-ready shell** — deployed default: `restoredFromBootSnapshot()===true`,\n  `isGuestReady()===true`, chip `root@node-alpine`, Alpine prompt. Restore ~15.5 s (warm HTTP cache;\n  cold adds the 79 MB R2 download) vs ~15-min cold boot+install.\n- **[✓] AC2 a real Node program runs** — `node -e 'console.log(6*7)'` → **42**; adversarial single\n  process: runtime sum 1..1000 + write/read-back → **`ADV_500500_v=500500`** (non-canned compute + live\n  coherent fs). Playwright on https://wasm-vm.pages.dev.\n- **[✓] AC4 coherence guard holds** — reused unchanged (restoreDecisionCode triple + seedOverlayDelta\n  base-binding + no-op-if-overlay-exists → cold boot, never a broken guest).\n- **[✓] AC5 sizes + restore time recorded** (above / evidence doc); no fabricated numbers.\n- **[~] AC3 node HTTP server / recorded workload** — not exercised; a scripted node workload DID run to\n  completion with a recorded wall-time (~55 s adversarial program, interpreted). HTTP-server-in-guest\n  deferred.\n- **Adversarial verification:** (1)+(2) runtime-computed non-canned result ✓; (3) write-then-read-back\n  ✓; (4) startup-to-first-output measured (**~55–80 s per node invocation, interpreted**) — the site is\n  NOT cross-origin isolated so there is **no JIT**; the snapshot removes boot+install cost, not V8's\n  interpreted startup. Honest result: working but slow; JIT (COI) is the lever (E4-T28). (5) no\n  FENCE.I/i-cache faults observed (interpreter path).\n- **Native round-trip (dev):** resume of the reconstructed post-install ext4 lands at the node-ready\n  Alpine shell (`resumed 221831892 bytes — continuing guest`, `wasm-vm:~#`); a fresh native `node`\n  invocation did not print within budget (native interpreter V8 startup too slow) — browser gate is\n  authoritative for Node-runs.\n\n**verification-debt:** AC3 in-guest HTTP server deferred; native `node`-prints-output too slow to\ncapture (browser proof stands in); clean cold-cache (first-visit) restore wall-time not isolated from\nHTTP caching.",
+      "adversarial": "Confirm it is a REAL Node, not a frozen illusion: (1) run a program that computes a non-trivial result at\nruntime (not a canned string) and check the output; (2) `node -e` with input that varies per run (read\nargv / Date-independent math) to prove live execution; (3) restore, then WRITE a file with node and read\nit back — proves the restored fs is live and coherent; (4) measure `node` startup-to-first-output on the\nrestored host and compare to a cold `apk add nodejs && node` path — the snapshot must eliminate the boot +\ninstall cost; (5) run under JIT and confirm no FENCE.I/i-cache faults from V8's own codegen.",
+      "file": "tasks/epic-3.6-live-pull/E3.6-T05-node-preinstalled-snapshot-default.md",
+      "activity": [
+        {
+          "date": "2026-08-06",
+          "commits": 1,
+          "labels": [
+            "docs(e3.6): E3.6-T05 — Node-preinstalled Alpine snapshot as default + validate node"
+          ]
+        },
+        {
+          "date": "2026-08-07",
+          "commits": 3,
+          "labels": [
+            "feat(e3.6-t05): re-chunked Node base + main-thread browser JIT",
+            "feat(demo): E3.6-T05 node-preinstalled Alpine snapshot as the default",
+            "Epic-4 accel + E3.6-T05 re-chunked Node base & browser JIT (#187)"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-06",
+      "lastActivity": "2026-08-07",
+      "commitCount": 4
+    },
+    {
       "id": "E3.75-T01",
       "epic": "3.75",
       "epicKey": "3.75",
@@ -13641,11 +13704,18 @@
           "labels": [
             "feat(web): E4-T22 CPU-on-Web-Worker + SharedArrayBuffer guest RAM"
           ]
+        },
+        {
+          "date": "2026-08-07",
+          "commits": 1,
+          "labels": [
+            "docs(e4-t22): verification log — CPU-on-worker pragmatic first cut"
+          ]
         }
       ],
       "firstActivity": "2026-08-06",
-      "lastActivity": "2026-08-06",
-      "commitCount": 1
+      "lastActivity": "2026-08-07",
+      "commitCount": 2
     },
     {
       "id": "E4-T23",
@@ -13762,7 +13832,7 @@
       "epicKey": "4",
       "title": "Lockstep interpreter-vs-JIT differential verification and randomized fuzzing",
       "priority": 425,
-      "status": "in-progress",
+      "status": "verification-debt",
       "depends_on": [
         "E4-T13",
         "E4-T14",
@@ -13936,7 +14006,11 @@
         "E4-T24",
         "E4-T26",
         "E4-T27",
-        "E4-T29"
+        "E4-T29",
+        "E4-T30",
+        "E4-T31",
+        "E4-T33",
+        "E4-T32"
       ],
       "decomposed_into": [],
       "estimate": "L",
@@ -13991,11 +14065,18 @@
           "labels": [
             "docs(e4): add E4-T29 — wire the JIT runtime into the runnable VM"
           ]
+        },
+        {
+          "date": "2026-08-09",
+          "commits": 1,
+          "labels": [
+            "chore(e4): prioritize bounded JIT accounting"
+          ]
         }
       ],
       "firstActivity": "2026-07-27",
-      "lastActivity": "2026-08-06",
-      "commitCount": 2
+      "lastActivity": "2026-08-09",
+      "commitCount": 3
     },
     {
       "id": "E4-T29",
@@ -14050,18 +14131,215 @@
       "activity": [
         {
           "date": "2026-08-06",
-          "commits": 4,
+          "commits": 6,
           "labels": [
+            "feat(wasm): E4-T29 Phase 2 — in-wasm browser JIT executor (JIT->VM integration complete)",
             "docs(e4): E4-T29 Phase 1 — add busybox --jit boot proof to verification log",
             "feat(cli): E4-T29 Phase 1 — wire the native JIT into the CLI behind --jit",
-            "chore(roadmap): E4-T29 in-progress — native JIT->CLI integration started",
-            "docs(e4): add E4-T29 — wire the JIT runtime into the runnable VM"
+            "chore(roadmap): E4-T29 in-progress — native JIT->CLI integration started"
           ]
         }
       ],
       "firstActivity": "2026-08-06",
       "lastActivity": "2026-08-06",
-      "commitCount": 4
+      "commitCount": 6
+    },
+    {
+      "id": "E4-T30",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Predecode entry-hit reuse and production fast-interpreter mode",
+      "priority": 430,
+      "status": "verified",
+      "depends_on": [
+        "E1"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Turn the existing predecoded block cache into an actual hot-loop acceleration: a repeated\nphysical entry PC reuses its decoded block instead of decoding, allocating, walking, and\nreinserting that block on every branch. Once the regression is removed, make block caching plus\nbounded interrupt batching the browser Linux interpreter's default, with an explicit A/B escape\nhatch.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-08-09 — worker — implemented `c648468`\n\n- PERF: the paired release differential measured legacy `44.7 MIPS` versus production fast mode\n  `70.4 MIPS` (`1.57x`); the independent pre-fix cache-on measurement was `5.7 MIPS`, making the\n  final production mode `12.35x` that result. The committed absolute smoke floor passed at\n  `44.8 MIPS >= 15`.\n- CORRECTNESS: `cargo test -p wasm-vm-core` passed the full non-ignored matrix. The focused cache,\n  PMP, virtual-alias, SMC/DMA, one-entry-eviction, RISC-V corpus, batching, and mid-block external\n  write attacks passed under `hotness_discovery`, `pmp`, `predecode_diff`,\n  `predecode_smc_diff`, `predecode_batching`, and `predecode_entry_safety`.\n- BUILD: `cargo fmt --all -- --check`, strict all-target clippy for core + wasm, the wasm32 release\n  build, and `make web-build` passed. The pre-commit hook rebuilt and staged `web/dist`.\n- BROWSER: a fresh-origin final bundle at\n  `http://127.0.0.1:8129/?guest=busybox&nosw&jit=0&worker=0` reported\n  `data-interpreter=fast`, restored the real BusyBox guest to `~ #`, and showed `guest ready` with\n  zero console errors/warnings. `?slowInterp=1` reported `data-interpreter=legacy`.\n- EVIDENCE: `evidence/e4-t30/README.md`, `browser-console.txt`, and\n  `browser-fast-interpreter.jpg` (SHA-256\n  `37d43d60b89ebfbce995ad7269eb24800be885174ef336de884217c7177bd762`). The recording proves the\n  default browser selection and real guest prompt; deterministic native tests cover every changed\n  cache/PMP/invalidation path.\n\n### 2026-08-09 — verifier — VERDICT: refuted\n\n- P1 entry reuse + discovery — HELD. Predicted the 210-retire loop would report exactly 108 entry\n  hits / 2 builds while nominating the hot loop once; the focused exact-head run passed\n  `hotness_discovery` 3/3, including that accounting. The full focused command also passed\n  `boot_contract`, `pmp`, `predecode_batching`, `predecode_diff`, `predecode_entry_safety`, and\n  `predecode_smc_diff`: 26 passed, 0 failed, 1 environment-gated OpenSBI test ignored.\n- P2 effective PMP permission across privilege transition — FAILED. Predicted that code decoded and\n  cached in M-mode under an *unlocked* TOR region would still raise `InstrAccessFault` when the same\n  physical block was re-entered in S-mode and its interior region lacked X. In a scrubbed cold clone\n  of exact head `df14e18`, the cache-off oracle trapped at `0x80000004`, but cache-on returned\n  `MaxInstrs` with `x5=1`, **`x6=1`**, and `pc=0x80000008`: the S-mode-denied interior instruction\n  retired. `sync_pmp_code_permissions` keys validity only to PMP CSR revision\n  (`crates/core/src/lib.rs:644-662`), which is unchanged by M→S; the entry path validates only the\n  first parcel and the cursor then replays interior ops without fetch/PMP checks\n  (`crates/core/src/lib.rs:2359-2394`). Unlocked PMP explicitly bypasses checks in M but not S\n  (`crates/core/src/pmp.rs:212-238`). Demand: include effective fetch privilege in cache permission\n  validity (or otherwise revalidate/flush before reuse), promote this regression, and re-record.\n- COLD/RECHECK: retained verifier harness\n  `/private/tmp/e4-t30-verify.hs5ShL/repo/crates/core/tests/e4t30_verifier_pmp_mode.rs`\n  (SHA-256 `2482ca060379e69f7aeb17dee6fd21d5dbd0d6d668e515ff074c6d5c0aedef55`). With\n  `RUST_LOG`, `RUSTFLAGS`, `CARGO_TARGET_DIR`, and `CARGO_BUILD_TARGET` unset, the cache-off oracle\n  passed in 0.04s; the cache-on attack failed identically twice, the final run printing\n  `cached outcome=MaxInstrs x5=1 x6=1 pc=0x80000008` before failing in 0.04s.\n- COVERAGE/SUITE: performance, wasm/browser promotion, and remaining changed-hunk coverage were not\n  adjudicated after the architectural/security refutation. No verifier test is promoted into the\n  green suite until the runtime defect is fixed; the retained cold-clone harness is the exact\n  regression to promote in the repair.\n\nCommands: `cargo test -p wasm-vm-core --test hotness_discovery --test boot_contract --test pmp\n--test predecode_diff --test predecode_smc_diff --test predecode_batching --test\npredecode_entry_safety`; `env -u RUST_LOG -u RUSTFLAGS -u CARGO_TARGET_DIR -u CARGO_BUILD_TARGET\ncargo test -p wasm-vm-core --test e4t30_verifier_pmp_mode\nlegacy_path_traps_at_s_mode_interior_pmp_permission -- --exact --nocapture`; same command with\n`cached_m_mode_block_rechecks_s_mode_interior_pmp_permission` (failed as predicted).\n\n### 2026-08-09 — worker — repair implemented `b392b88`\n\n- REFUTATION FIX: decoded/compiled cache permission validity now keys on both the effective PMP\n  revision and current privilege. An M→S/U transition flushes the cache and live cursor before\n  reuse, closing the unlocked-PMP bypass without adding per-instruction permission walks.\n- PROMOTED ATTACK: `privilege_change_invalidates_cached_interior_permission` builds the verifier's\n  three-op M-mode block with an S-mode-denied interior instruction, changes no PMP CSR, and proves\n  both cache-off and cache-on fault at `0x80000004` with `x6=0`.\n- CORRECTNESS: the full `cargo test -p wasm-vm-core` matrix passed, as did the focused seven-target\n  cache/PMP/differential suite (including the RISC-V cache and batching corpora).\n- PERF: the repaired release differential measured legacy `38.4 MIPS` versus fast `60.2 MIPS`\n  (`1.57x`); the absolute smoke gate passed at `38.4 MIPS >= 15`.\n- BUILD/BROWSER: format, strict core+wasm clippy, and the wasm32 release build passed. Fresh origin\n  `http://127.0.0.1:8130/?guest=busybox&nosw&jit=0&worker=0` reported the fast interpreter,\n  restored BusyBox to `~ #` / `guest ready`, and emitted zero console errors or warnings.\n- EVIDENCE: updated `evidence/e4-t30/README.md` and `browser-console.txt`; repair screenshot\n  `browser-fast-interpreter-repair.jpg` has SHA-256\n  `0c40856df721a3ab125f95e650c9e1e8391a155e6fbbcb99dbff76f935a15fbf`.\n\n### 2026-08-09 — verifier — VERDICT: verified\n\n- P1 entry reuse, discovery, invalidation, and differential behavior — HELD (carried forward where\n  unchanged). Predicted the repaired mode key would leave the previously verified hot-entry and\n  byte-identical paths unchanged; the focused exact-tree matrix passed 28 tests across\n  `hotness_discovery`, `boot_contract`, `pmp`, `predecode_batching`, `predecode_diff`,\n  `predecode_entry_safety`, and `predecode_smc_diff` (one artifact-gated OpenSBI case ignored).\n- P2 unlocked-PMP M→S repair — HELD. Predicted both cache-off and cache-on would retire the permitted\n  entry (`x5=1`), reject the cached interior (`x6=0`), and report `InstrAccessFault` at\n  `DRAM_BASE+4`; the promoted `privilege_change_invalidates_cached_interior_permission` passed in\n  the working tree and again from scrubbed cold clone\n  `/private/tmp/e4t30-reverify.VvrBbO/repo` at exact head `259c851`.\n- P3 novel in-run privilege transition — HELD. Predicted a guest `mret` from M to S would terminate\n  its decoded block, make the following boundary observe S-mode, and flush before reusing an\n  M-mode-prewarmed successor. The verifier-promoted\n  `guest_mret_invalidates_cached_interior_permission_before_successor` passed with S-mode selected,\n  `x5=1`, `x6=0`, and a precise fault at the denied successor interior.\n- PERF — HELD. The independent paired release rerun measured legacy `31.9 MIPS` versus fast\n  `49.3 MIPS` (`1.55x`), while the absolute smoke rerun measured `33.4 MIPS >= 15`; the extra mode\n  comparison did not erase the submitted acceleration.\n- BUILD — HELD. `cargo fmt --all -- --check`, strict all-target core+wasm clippy, and the wasm32\n  release build passed. The worker browser evidence digest independently matched\n  `0c40856df721a3ab125f95e650c9e1e8391a155e6fbbcb99dbff76f935a15fbf`; the browser surface itself\n  is unchanged by the runtime-only repair, so its prior fresh-origin result is carried forward.\n- COVERAGE: constructor/toggle/resize initialization and the unchanged-mode fast return were\n  exercised by the focused matrix; the changed-mode flush/cursor path was exercised by both PMP\n  attacks. Restore's assignment is waived as empty-cache bookkeeping (restore already flushes all\n  decoded/compiled code, so a different sentinel can only cause one redundant flush). Comments are\n  non-executable. SUITE: promoted the guest-`mret` regression into `predecode_entry_safety`.\n\nCommands: `cargo test -p wasm-vm-core --test hotness_discovery --test boot_contract --test pmp\n--test predecode_diff --test predecode_smc_diff --test predecode_batching --test\npredecode_entry_safety`; `cargo test -p wasm-vm-core --release --test perf_baseline\nperf_fast_interpreter_does_not_trail_legacy -- --ignored --exact --nocapture`; same for\n`perf_smoke_alu_above_floor`; `cargo fmt --all -- --check`; `cargo clippy -p wasm-vm-core -p\nwasm-vm-wasm --all-targets -- -D warnings`; `cargo build -p wasm-vm-wasm\n--target wasm32-unknown-unknown --release`; scrubbed cold-clone promoted-test command at `259c851`.",
+      "adversarial": "Predict then attack: revoke execute permission after a cached hit; execute one physical page through\ntwo virtual aliases; patch a cached instruction with a guest store and DMA; use a one-entry cache;\nand sabotage the hit path so discovery is not incremented. Any stale instruction, skipped fault,\ntrace divergence, or JIT threshold that never fires refutes the change.",
+      "file": "tasks/epic-4-acceleration/E4-T30-predecode-entry-hit-fast-interpreter.md",
+      "activity": [
+        {
+          "date": "2026-08-09",
+          "commits": 5,
+          "labels": [
+            "test(e4): verify fast interpreter privilege safety",
+            "chore(e4): resubmit E4-T30 after PMP repair",
+            "verify(e4): refute E4-T30 PMP privilege reuse",
+            "chore(e4): submit E4-T30 for verification"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-09",
+      "lastActivity": "2026-08-09",
+      "commitCount": 5
+    },
+    {
+      "id": "E4-T31",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Bounded JIT work and exact retirement accounting",
+      "priority": 431,
+      "status": "verified",
+      "depends_on": [
+        "E4-T30"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make a bounded `run(N)` mean the same thing under the interpreter and JIT. Cap every compiled block\nand host-side chain by remaining work, account clean and faulting compiled retirements exactly in all\narchitectural/diagnostic clocks, and keep instruction-observing traces truthful by interpreting\nwhen the compiled backend cannot emit per-retire records.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-08-09 — planner — activated after verified E4-T30\n\nThe pre-split exact-head probe ran a six-op hot loop with `--max-instrs 1000000 --jit\n--jit-threshold 1`: the JIT executed about 191.9M instructions (roughly 192x the budget), took\n48.78s, and CLI reporting showed only 378 retirements. This task fixes bounded work and accounting\nbefore any throughput claim or main-thread worker quantum depends on them.\n\n### 2026-08-09 — worker — implemented `fad321f6`\n\n- BUDGET: the run loop now subtracts exact `JitProgress.work_used`; each compiled block refuses a\n  short remaining tail before touching state, and a later chained refusal preserves already\n  committed progress. Taken interrupts and builtin-SBI `continue` paths still consume one bounded\n  work slot.\n- RETIREMENT: core-owned spans update `mcycle`, `minstret`, CLINT residue, `IrqStats`, and native /\n  browser executor statistics exactly once. A partial precise fault accounts only its committed\n  prefix; virtual fault PCs are walked from the virtual entry, not the physical cache key.\n- TRACE/REPORTING: observing sinks force interpretation so no records disappear. CLI and Wasm\n  wrappers report authoritative core counter deltas; a zero-record sink retains compiled execution.\n- PROOF: the release million-work six-op regression passed in 0.08s with exactly 1,000,000 total and\n  999,996 JIT retirements (pre-fix: about 191.9M hidden JIT retirements / 48.78s). Native affected\n  JIT suites passed 42/42; core+CLINT+Zicntr 191/191; CLI 22/22; browser executor 8/8; Wasm wrapper\n  9/9. The SBI, short-tail chain, MMIO-once fault, Sv39 virtual-PC, and trace attacks all passed.\n- BUILD/BROWSER: format, native strict clippy, affected wasm clippy, wasm32 release build,\n  zero-cost trace selftest, and hook-driven `make web-build` passed. The rebuilt `?jit=0` fallback\n  restored BusyBox to `~ #` / `guest ready` with zero console errors/warnings. An aggressive live\n  main-thread JIT page remained unresponsive, honestly preserving E4-T33/E4-T32 as required work.\n- EVIDENCE: `evidence/e4-t31/README.md` and `browser-fallback.jpg` (SHA-256\n  `3c22907f2852b7c41c928c36930b4c201d1347eab2db749a4565f4071d038264`).\n\n### 2026-08-09 — fresh verifier — `3ce38b00`\n\nVERDICT: verified\n\n- P1 EXACT BOUND — HELD. Predicted the six-op loop would refuse a five-slot compiled tail, commit\n  one six-op block plus two interpreted ops for `run(8)`, and retire exactly 1,000,000 work for the\n  million budget. The release regression at `crates/jit-runtime/tests/jit_execution.rs:162` held\n  all three, including 999,996 JIT retirements. Replacing the runtime with pre-fix `92d6c27` in the\n  disposable clone made the same test fail at line 195 with 960 retirements for `run(5)` (192x).\n- P2 ACCOUNTING — HELD. Predicted clean, partial-fault, builtin-SBI, and timer-bearing JIT exits\n  would agree across core retirement, `mcycle`/`minstret`, CLINT residue, `IrqStats`, executor,\n  CLI, and Wasm reporting. The six-op/SBI/timekeeping regressions (`jit_execution.rs:162,583`,\n  `timekeeping.rs:175,211,272`), core CLINT/Zicntr tests, CLI 22/22, browser executor 8/8, and Wasm\n  wrapper 9/9 all held; the evidence screenshot digest independently matched\n  `3c22907f2852b7c41c928c36930b4c201d1347eab2db749a4565f4071d038264`.\n- P3 TRACE TRUTH — HELD. Predicted an observing sink would produce one record per retirement and\n  execute zero compiled blocks while `NullSink` retained JIT. The million regression's HashSink,\n  traced CLI test (`crates/cli/tests/run.rs:124`), and traced Wasm wrapper test\n  (`crates/wasm/tests/wrapper.rs:79`) held exactly.\n- P4 PRECISE STATE — HELD. Predicted a too-large chained successor would preserve earlier progress,\n  a Sv39 fault would count its virtual-PC prefix, and an MMIO store before a fault would occur once.\n  The directed release cases at `chaining.rs:246`, `invalidation.rs:306`, and\n  `precise_traps.rs:245` held; the complete affected native suites passed 45/45 and browser executor\n  parity passed 8/8, retaining chaining, SMC, and invalidation coverage.\n- NOVEL EXACT-WORK EDGES — HELD. Predicted a pending MSIP at the first `run(1)` boundary would enter\n  `mtvec` but retire/execute nothing, and a compiled first-op load fault would consume one work slot\n  with zero retirement or side effect. Promoted regressions at `jit_execution.rs:256,303` held.\n  Sabotaging only the interrupt `remaining_work -= 1` in a disposable clone made the first test fail\n  at line 290 with PC `mtvec+4`, proving the assertion is load-bearing.\n- COVERAGE — HELD. The exact-tail, chain, clean/fault/SBI/interrupt, counter/CLINT, trace, Sv39,\n  MMIO, CLI, and native/browser-Wasm cases execute every behavioral runtime hunk. The trait's\n  default no-op is waived as mock compatibility (both real executor implementations ran), the\n  `Reserved` exit is waived as a translator-unreachable defensive arm, and type/docs plus generated\n  bindings/service-worker bytes are waived as non-branching/generated surfaces. No claimed behavior\n  remains unexecuted.\n- MOCK/ENV — HELD. A `--no-local` pristine clone of verifier head `3ce38b00`, with `RUSTFLAGS`,\n  `CARGO_ENCODED_RUSTFLAGS`, `CARGO_TARGET_DIR`, `CARGO_BUILD_TARGET`, and `RUST_LOG` unset, passed\n  the full release `jit_execution` target 20/20. No ignored test, inherited flag, or self-derived\n  golden was required.\n- SUITE: promoted the two exact-work edge regressions in verifier commit `3ce38b00`; retained the\n  worker's deterministic tail/chaining/counter/trace/CLI/Wasm/Sv39/MMIO/SBI coverage.\n\nCommands: directed release cases for six-op, chaining-tail, SBI, Sv39, MMIO, timekeeping,\nCLINT/Zicntr, CLI and Wasm; affected native JIT suites 45/45; core lib 169/169; CLI 22/22; matching\n`wasm-bindgen-test-runner` 0.2.126 browser 8/8 and wrapper 9/9; `cargo fmt --all -- --check`; strict\nnative and affected-Wasm clippy; wasm32 release build; `tools/check-zero-cost.sh --selftest`; scrubbed\ncold-clone `jit_execution` 20/20; pre-fix and interrupt-budget sabotage runs (both failed as\npredicted).",
+      "adversarial": "Use a remaining budget smaller than a compiled block; fault in the middle after an observable MMIO\nstore; chain into a successor that no longer fits; write counters immediately before JIT entry; and\nrun a traced hot loop with JIT armed. Any overshoot, double side effect, missing trace, wrong virtual\nfault PC, lost clock residue, or counter disagreement refutes the change.",
+      "file": "tasks/epic-4-acceleration/E4-T31-bounded-jit-work-retirement.md",
+      "activity": [
+        {
+          "date": "2026-08-09",
+          "commits": 3,
+          "labels": [
+            "verify(e4): prove bounded JIT accounting",
+            "chore(e4): submit bounded JIT accounting proof",
+            "chore(e4): prioritize bounded JIT accounting"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-09",
+      "lastActivity": "2026-08-09",
+      "commitCount": 3
+    },
+    {
+      "id": "E4-T32",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Default whole-machine Web Worker with controller parity",
+      "priority": 433,
+      "status": "verified",
+      "depends_on": [
+        "E4-T33"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make the proven whole-`WasmLinux` worker the demo default so CPU/JIT execution, lazy disk fetches,\nand persistence pumping do not block paint or input. Replace the generic promise-for-everything proxy\nwith an explicit asynchronous controller contract and update every UI consumer to honor it.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-08-10 — worker — implemented\n\nRuntime/evidence head: `aca44846c85ea1e07c9c6d7534203fbab3f3b9f5`. Final harness-only\nhead: `2b2c34018cfdc546bb32f7f5d6c27e52d89301cc`. Full artifact ledger, exact commands,\nhashes, rr event anchors, and the verifier attack handoff are in `evidence/e4-t32/README.md`.\n\nThe whole `WasmLinux` machine is now the default Worker backend without an SAB requirement;\n`?worker=0` remains the explicit main-thread fallback. The page/worker boundary is an explicit\nversioned asynchronous controller with exact transferable ownership, FIFO lifecycle/input/RPC,\nbounded heartbeat grace, serialized terminal cleanup, and generation-safe UI/file-transfer\nconsumers. Browser JIT admission is bounded per public cooperative run (at most 8 attempted/submitted\nblocks, 64 staged nominations, and one final pump), with eventual backlog progress and exact\nprofile/accounting evidence. Production defaults honestly to the fast interpreter; explicit\n`?jit=1&jitThreshold=512` runs translated work but is not mislabeled as the faster Node policy.\n\nThe headed foreground restored-Node ledger executed the non-echo-spoofable exact command\n`node -e 'console.log(3)'` across two counterbalanced sessions and two fresh processes per session.\nWorker/main ratios were 1.002964 for first-output median, 1.003548 for completion median, 1.000854\nfor cold completion, 1.002719 for subsequent first-output median, and 1.008775 for subsequent max;\nall are below the 1.10 ceiling. Worker rAF p99 was at most 18.655 ms, sustained-load terminal input\narrived in 114.030 ms, and the cheap controller RPC completed in 53.175 ms. JIT sessions executed\n24,980,311 blocks / retired 134,282,010 guest instructions through JIT. Result JSON SHA-256:\n`638fc97e4b547a06c0b4f791d0d97535337ec7c211ebd71edacee0d1d4715a20`.\n\nThe exact-head demo restored BusyBox in the whole-machine worker, accepted a computed shell command,\nand truthfully displayed `fast interpreter; JIT off; quantum 500000`. The hidden compliance harness\nthen passed 126/0 in 8.7 seconds. The console had zero warnings and no error except the exact allowed\n`/favicon.ico` 404. Browser screenshot SHA-256 values are\n`169887373168405fcb2c40bda2be39e004b64b5a7550e059d6f2d953d7272273` (visible Worker/prompt) and\n`5089dbd32a21d9104400ae04a68cfcee586a5586243e3ddb07ea06e832b5b6ad` (126 green tests).\nThe same bundle deployed at `https://ebbb3c24.wasm-vm.pages.dev` and the production alias; its\n`/app.html` restored BusyBox through `whole-machine-worker` to `~ #` / `guest ready` with no page\nconsole entries.\n\nHost evidence on `ssh dev` recorded three packed rr-soft `-W --chaos` traces at the exact runtime\nsource: the cooperative compile budget (1/1), terminal no-final-pump path (1/1), and complete worker\nprotocol lifecycle suite (22/22). Packed-manifest SHA-256 values are\n`dd06f5027d7feade2708cc0c8caece8ee48614278f0e4442866f465813334e33`,\n`be2da7c99e0e5ae5d7046a22ae985e6671d3cb33ba6d08457163c1cc82db3119`, and\n`1b7050b104b8d39a3ad09021d91b414ca12f90af9232dbacbffe0bc7815e6c8a`; every trace packed,\nre-hashed, and replayed successfully.\n\nFocused gates passed: affected format/strict clippy, full core tests, full Node Wasm tests, protocol\n22/22, ledger/store/journal/identity/failure 63/63, whole-worker 9/9, final async transfer +\ntimekeeping + whole-worker browser set 25/25, `make web-build`, and the 126/0 browser run. The strict\nspeed target is deliberately not claimed: subsequent Node first output remains about 20.97 seconds\nand completion about 25 seconds. E4-T34 owns making the JIT actually accelerate that real workload.\nThis task remains `implemented` until a fresh verifier attacks the submitted evidence.\n\n### 2026-08-10 — verifier — VERDICT: needs-evidence\n\n- **P8 Node oracle recording — NEEDS EVIDENCE.** Predicted that each accepted fresh `node -e`\n  process would leave an independently inspectable non-echo oracle in the frozen artifact. The\n  harness matches a standalone `3` and completion marker at\n  `web/tests/e4-t32-node-walltime.spec.js:432-475`, but reduces it to timings, `sawExpected`, and\n  exit at lines 455-462, then omits the oracle from the durable leg at lines 798-829. Observed ledger\n  path `events[1].session.runs[0]` at\n  `evidence/e4-t32/node-walltime-aca4484/E4T32_NODE_LEDGER_V2.json:1` has no raw terminal capture,\n  concrete marker, command, or process identity; line 437's `$$` is the shell PID, not Node's PID.\n  The product claim was not contradicted, but acceptance lines 28-31 explicitly require a recorded\n  fresh, non-echo-spoofable matrix. Bind a bounded per-process oracle capture or equivalent guest/host\n  trace into the hashed attempt sidecars/ledger, then rerun only that evidence/harness boundary.\n- **P1-P7 and P9-P15 — HELD.** Exact ledger identity, six-slot ordering, all 30 sidecars and 12\n  preflights, physical/logical/result/aggregate hashes, and parity/JIT math independently recomputed.\n  Fresh gates passed core, 85 Node cases, 25 browser cases, the pristine clone, and the bounded\n  subarray mutation attack. Selected-JIT sustained-load input/RPC measured 208.990/89.100 ms with\n  positive translated execution. rr event 459 exposed the claimed budget state 8/32/32 and terminal\n  `Exited(0)` state with zero attempts/final pumps; protocol events 6779-6796 exposed 22 passes and\n  zero failures. Full details and commands: `evidence/e4-t32/VERIFIER-REPORT.md`.\n- **COVERAGE:** all behavioral hunks map to core/rr, protocol, whole-worker, transfer, or Node\n  ledger suites; tooling/static/generated hunks are explicitly waived in the report. No dead or\n  unexecuted product behavior was found.\n- **SUITE:** no promotion until the recording gap clears. Sabotaging private byte ownership made the\n  existing test fail on a detached caller buffer, confirming it is load-bearing.\n\n### 2026-08-10 — worker — implemented (evidence gap repaired)\n\nRuntime semantics remain frozen at `aca44846c85ea1e07c9c6d7534203fbab3f3b9f5`; the final\nevidence-harness head is `6155f216d9c347fb44e58cbaa13b81eda357c87e`. No execution runtime,\nJIT policy, or built Wasm byte changed; later deltas are tests, evidence, and task metadata.\n`8302ea7` repairs the verifier's P8 gap by durably\nrecording every exact `node -e 'console.log(3)'` command, standalone `3`, positive Node PID,\nattempt-bound runtime marker, bounded transcript, zero exit, and timings in the session sidecar,\naccepted ledger, and result. `6155f21` adds a canonical absolute CPU-capacity evaluator shared by\nlive admission, ledger finish, and crash recovery; it verifies exact prior committed reference bytes\n(`ab3e6fc4...`, physical SHA-256 `787e4478...`, logical SHA-256 `f3e58428...`) and rejects globally\nslow pre/post samples instead of trusting relative parity or serialized `clean` fields.\n\nExact final command, from `web/`:\n\n```sh\nE4T32_NODE_BENCH=1 \\\nE4T32_NODE_ASSET_DIR=/private/tmp/wasm-vm-node-profile.dN7cbx/r2-node \\\nE4T32_NODE_EVIDENCE_DIR=/private/tmp/e4t32-node-absolute-6155f216.o0xM1c \\\nnpx playwright test tests/e4-t32-node-walltime.spec.js --headed --workers=1\n```\n\nThe six-slot balanced matrix passed in 14.7 minutes with six accepted attempts and no discarded\nattempt. Worker/main ratios were 1.005110 first-output median, 1.004543 completion median, 1.003298\ncold first output, 1.003158 cold completion, 0.994996 subsequent median, 0.996014 subsequent max,\nand 0.993668 stretch; all remain below 1.10. Sustained-load worker input/RPC measured\n175.220/51.085 ms with rAF p99 18.585 ms. Explicit JIT512 executed 24,458,996 translated blocks and\nretired 132,315,918 instructions through JIT, while remaining honestly non-default because its warm\nfirst-output median was 21,855.890 ms.\n\nThe unchanged 46-file / 1,070,124-byte artifact is committed under\n`evidence/e4-t32/node-walltime-6155f21/`. Result/aggregate/physical-ledger SHA-256 values are\n`a656321d6fad9fa51b31b57e8f6aa429242f511f90e5497fd2c63c2fb3bee6d3`,\n`87f82788d7f7583e4e8aad7ffb6c21732c2b8dabb4beb99e611427f01d09ece4`, and\n`b6c62884c097d44c259d662fcec1defe5fe997f4e9216117b98d0d0a7778bfdd`; canonical root inventory\nSHA-256 is `74ee019c19c0ea1889d1e7694547998c9f18e72b4b6c26cf8b9a7b727ee0c0ff`. The exact\nreference derivation, all phase hashes, oracle records, aggregate figures, prior relative-only\nfalse-refutation diagnosis, and verifier commands are in `evidence/e4-t32/README.md`. The strict\nNode speed target remains unclaimed: a fresh warm process still takes roughly 20.7–21.9 seconds to\nfirst output and 24.5–26.1 seconds to complete; E4-T34 owns that runtime/JIT acceleration. This task\nreturns to `implemented`, never `verified`, pending a fresh adversarial review of the new evidence.\n\n### 2026-08-10 — verifier — VERDICT: needs-evidence\n\n- **P8 raw process oracle — NEEDS EVIDENCE.** Predicted a frozen, independently interrogable\n  terminal record for each exact Node process. The new bundle contains all twelve exact command,\n  sequence, positive PID, standalone-output, zero-exit, concrete-marker, and transcript fields, but\n  `web/tests/e4-t32-node-walltime.spec.js:423-451` discards its bounded raw terminal buffer and\n  synthesizes `oracleTranscript` from two regex captures. A clean stream and\n  `UNRELATED_STALE_OUTPUT\\n3\\nNODE_NEVER_PROVEN_AND_INTERVENING_NOISE\\n<marker>` produce the same\n  validated persisted object, so the artifact cannot expose intervening output or independently\n  attribute the retained `3` to the measured child. Persist the bounded raw slice from command echo\n  through marker (with offsets/hash), or an equivalent guest exec/output trace, and rerun only the\n  Node matrix evidence boundary.\n- **Absolute calibration and artifact identity — HELD.** Exact `ab3e6fc4` reference bytes and\n  physical/logical hashes reproduce; all 12 pre/post verdicts recompute from raw samples. Six clean\n  counterbalanced attempts, 30 sidecars, 12 unique attempt-scoped process identities, all declared\n  inventory/result/ledger hashes, the seven parity ratios, four Worker rAF p99 values, input/RPC,\n  and positive JIT execution/retirement independently match. Requested oracle-field and raw-sample\n  sabotage both failed closed; the focused harness suite passed 81/81.\n- **P1-P7/P9-P15 — CARRIED HELD.** Runtime and built Wasm are unchanged from the prior verified\n  boundary, so browser/rr/cold-clone/controller findings are not re-litigated. Full predictions,\n  hashes, commands, the stream-equivalence attack, and non-blocking harness-hardening observations\n  are in `evidence/e4-t32/VERIFIER-REPORT.md`.\n- **COVERAGE/SUITE:** no runtime or product hunk moved. No new test is promoted until the raw\n  recording gap closes; unchanged load-bearing suites remain credited.\n\n### 2026-08-11 — worker — implemented (authoritative raw-byte oracle recorded)\n\nRuntime semantics remain frozen at `aca44846c85ea1e07c9c6d7534203fbab3f3b9f5`; final\nevidence-harness head is `6b5db489ba451b279490277a8bd983f563c239c1`. No runtime, JIT policy,\nor built Wasm byte changed. This evidence-only repair closes the verifier's remaining P8 demand:\neach exact `node -e 'console.log(3)'` process now preserves an authoritative bounded raw terminal\nframe, Node PID, runtime-only token, zero exit, byte length, SHA-256, newline form, and exact marker,\nANSI, value, and line-ending offsets. The accepted grammar is only BEGIN + default-TTY yellow `3` +\nPID-bound DONE; noise, stale output, generic ANSI, mixed EOL, truncation, PID/token mismatch,\nnonzero exit, and synthesized-transcript equivalence fail closed.\n\nThe headed six-slot matrix passed in 14.6 minutes with six clean accepted attempts. Worker/main\nratios were 1.016815 first-output median, 1.015728 completion median, 1.011718 cold first output,\n1.011835 cold completion, 1.005051 subsequent first-output median, and 0.990066 maximum stretch.\nWorker rAF p99 was at most 18.660 ms; sustained-load input/RPC completed in 113.925/51.095 ms.\nJIT512 executed 25,369,611 translated blocks and retired 136,016,872 instructions through JIT.\n\nThe 46-file / 1,130,926-byte bundle is under\n`evidence/e4-t32/node-walltime-6b5db48/`. Results, aggregate, and physical-ledger SHA-256 values are\n`4cdc3563489c36bd7955991db6c879b32dd2d5595583ad1f591334b935699bc9`,\n`fc49673f493f4eb6f915e7f9ee6516fd07f50ee660ad0192c9a8bb22f8f1174d`, and\n`298b4445d151e6f096deba21eb57ca3b80d93a4de2cc7d3d0a0e42227d586308`; canonical root inventory\nSHA-256 is `3f69ac799dd8498ec821670e5979aad16b564ee9d37328763ee13748f9e2f575`.\nThe focused raw-oracle/ledger/journal suite passed 41/41, the complete Node harness suite passed\n89/89, and a fresh read-only critic held the exact byte grammar, split-boundary, mutation, PID,\nrecovery, and persistence attacks.\n\nThe strict speed target remains explicitly unclaimed. Main interpreter still needs about 87.4 s to\nfirst output after restore and 90.4 s to complete; fresh subsequent processes need about 21.2 s to\nfirst output and 25.2 s to complete. Worker timings remain within the E4-T32 parity budget, but are\nnot near-instant. E4-T34 owns real interpreter/JIT acceleration. This task returns to `implemented`,\nnever `verified`, pending a fresh adversarial verifier of the promoted raw-frame bundle.\n\n### 2026-08-11 — verifier (fresh session) — VERDICT: verified\n\n- **P8 authoritative Node process oracle — HELD.** Predicted that all twelve accepted samples would\n  expose a bounded, independently decodable record tying the exact `node -e 'console.log(3)'`\n  command to a real exec-preserved PID, runtime output, and zero exit without admitting the prior\n  stale-output equivalence. Every run in\n  `evidence/e4-t32/node-walltime-6b5db48/E4T32_NODE_LEDGER_V2.json` independently decoded as one\n  112-byte CRLF frame: PID/token-bound BEGIN, exact `ESC[33m3ESC[39m`, and same-PID/token DONE(0).\n  Canonical base64, SHA-256, byte length, all eight half-open offsets, command, sequence token,\n  marker fields, and the 62-byte first-output / 112-byte completion transitions recomputed. Numeric\n  PIDs recur after independent snapshot restores, as expected; all twelve sequence/token/PID frame\n  identities are unique and each session's two live process PIDs differ.\n- **P8 falsification attacks — HELD.** Every one of the 113 frame split boundaries and bytewise input\n  produced exactly one output transition and the same frame. Disposable-ledger mutations for the\n  verifier's exact stale `3` plus intervening-noise attack, stale output before BEGIN, plain/noisy\n  output inside the frame, wrong ANSI, mismatched DONE PID, truncation, appended bytes,\n  noncanonical base64, shifted offsets, and forged slow raw calibration all failed closed. The\n  BEGIN($$)-then-exec / outer-$!-wait-DONE shell shape preserved the exact Node argv once and bound\n  both markers to the waited process.\n- **Matrix, identity, and admission — HELD.** The promoted directory is byte-identical to the frozen\n  source run and contains 46 files / 1,130,926 bytes. Canonical inventory, result, aggregate,\n  physical-ledger, and logical-ledger SHA-256 values independently reproduced as `3f69ac79...`,\n  `4cdc3563...`, `fc49673f...`, `298b4445...`, and `fe58edde...`. Exactly six clean slots occupy the\n  fixed counterbalanced order; all 30 sidecars and 12 root preflights agree with the accepted ledger.\n  The exact `ab3e6fc4` reference bytes reproduce 329.125/329.7250000014901 ms capacity medians and\n  all twelve pre/post decisions recompute from raw samples. Worker/main ratios are 1.016815 first,\n  1.015728 completion, 1.011718 cold first, 1.011835 cold completion, 1.005051 later median,\n  1.013951 later max, and 0.990066 stretch. Worker rAF p99 is at most 18.660 ms; input/RPC is\n  113.925/51.095 ms; JIT512 executed 25,369,611 blocks and retired 136,016,872 instructions through\n  JIT.\n- **P1-P7 and P9-P15 — CARRIED HELD.** `08378a1..6b5db48` changes only the five Node oracle/harness\n  files; execution runtime and the built Wasm remain unchanged from the previously attacked boundary\n  (`6c2f93745877550b74c031d0d170539a1b29cc910aabdf09c7239394455c64a1`). The prior browser,\n  controller, transfer-ownership, rr-soft, selected-JIT, parity, and cold-clone results therefore\n  remain incremental-valid.\n- **COVERAGE/SUITE:** the shared byte collector/parser/validator and ledger/journal persistence hunks\n  are exercised by the 89-case deterministic Node suite and the mutation matrix; the wall-time\n  capture/projection hunk executed twelve times in the accepted same-head browser matrix. No changed\n  behavioral hunk is dead or unproved. The exact grammar, split-boundary, metadata mutation, raw\n  calibration, and crash-recovery tests are retained as the promoted suite.\n\nCommands: `node --check web/tests/e4-t32-node-walltime.spec.js`; `node --test` over the seven\n`e4-t32-node-*.test.mjs` files (89/89); independent artifact/sidecar/frame/calibration/result audit;\ndisposable sabotage under `/private/tmp/e4t32-fresh-verifier-sabotage.QKK7Tw`;\n`git diff --check 08378a1..6b5db48`; `python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`;\n`make tasks-json`; `make web-dist`.",
+      "adversarial": "Exercise every controller method from the UI, upload/download across the worker boundary, background\nand resume the tab, kill the worker, run without JIT/isolation, and compare guest output/digests with\nthe main-thread fallback. A Promise mistaken for a synchronous value, lost byte buffer, hung boot, or\nmain-thread long task refutes the change. Benchmark the user's exact one-shot Node shape across\nmain-thread interpreter, worker interpreter, and worker JIT policies; a worker that paints smoothly\nbut delays input/output, regresses wall time, or falsely claims translated execution is refuted.",
+      "file": "tasks/epic-4-acceleration/E4-T32-default-whole-machine-worker.md",
+      "activity": [
+        {
+          "date": "2026-08-09",
+          "commits": 1,
+          "labels": [
+            "chore(e4): prioritize bounded JIT accounting"
+          ]
+        },
+        {
+          "date": "2026-08-10",
+          "commits": 6,
+          "labels": [
+            "chore(e4): retain Node raw-evidence gate",
+            "chore(e4): promote final whole-worker evidence",
+            "chore(e4): record E4-T32 verifier evidence gap",
+            "chore(e4): submit whole-worker evidence"
+          ]
+        },
+        {
+          "date": "2026-08-11",
+          "commits": 1,
+          "labels": [
+            "chore(e4): submit authoritative raw-frame evidence"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-09",
+      "lastActivity": "2026-08-11",
+      "commitCount": 8
+    },
+    {
+      "id": "E4-T33",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Bulk JIT CPU-state handoff and bounded browser handle lifetime",
+      "priority": 432,
+      "status": "verified",
+      "depends_on": [
+        "E4-T31"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Remove the per-register host boundary from both JIT executors. Marshal the frozen CPU-state region\nin one bulk write and one bulk read per compiled block, and retain a stable browser typed-array view\ninstead of constructing/cloning JS handles on every register access and dispatch.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-08-10 — worker — implemented\n\nRuntime/test commit: `f725abf23f85ba2e98d6fa13d07affce07737ec4`. Full evidence and\ndiff-to-test coverage audit: `evidence/e4-t33/README.md`. Browser artifacts:\n`evidence/e4-t33/browser-bulk-jit.jpg` and `evidence/e4-t33/browser-roadmap.jpg`.\n\nThe unchanged-runtime benchmark baseline is `73d1e88ad60f0e548edc98bdb41b34e6347ce097`.\nThe identical five-sample, exact-budget 64-op workload measured 76.083 interpreter / 238.552 scalar\nJIT MIPS at baseline and 81.092 interpreter / 608.741 bulk JIT MIPS at the frozen runtime commit:\n2.551x same-workload JIT uplift and 7.507x final JIT/interpreter. The six-op boundary diagnostic\nalso moved from 10.267 JIT / 26.773 interpreter (0.383x) to 87.625 / 62.692 (1.398x).\n\nFinal worker commands:\n\n```text\ncargo fmt --all -- --check\ncargo clippy -p wasm-vm-core -p wasm-vm-jit-translate -p wasm-vm-jit-runtime \\\n  -p wasm-vm-cli --all-targets -- -D warnings\ncargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown --release -- -D warnings\ncargo test -p wasm-vm-core\ncargo test -p wasm-vm-jit-translate\ncargo test -p wasm-vm-jit-runtime\ncargo test -p wasm-vm-cli\ncargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release\nwasm-pack test --node crates/wasm\ncargo test -p wasm-vm-jit-runtime --release --test perf_handoff \\\n  -- --ignored --nocapture --test-threads=1\nwasm-pack test --node crates/wasm --test jit_browser_parity -- \\\n  browser_handles_remain_bounded_across_retranslation_churn \\\n  --include-ignored --exact --nocapture\nmake web-build\n```\n\nAll passed. A strengthened post-audit precise-fault test dirties x1 through x30 before faulting a\nload into the x31 sentinel and is green in both native and browser executors. The explicit 4,096\ncycle, two-batch-budget browser attack passed with active eviction/retranslation, exact K+2 batch\nownership, bounded externref counts, full x0..x31 parity, exact exits, and baseline handle counts\nafter invalidation/drop. Native I/M/A, precise-trap, SMC invalidation, chaining, eviction, timing,\nintegrated CLI, and full Node Wasm suites remained green.\n\nThe fresh COOP/COEP demo at port 8147 restored BusyBox to a real `~ #` in 0.41 seconds, reported\n`126 passed`, surfaced exactly one filtered E4-T33 roadmap issue, and emitted zero console errors or\nwarnings. Aggressive main-thread `jit=1&jitThreshold=1` loaded without console errors but saturated\nDOM automation; responsive worker-default JIT remains E4-T32 and is not claimed here. The E4-T33\nroadmap capability deliberately remains `in-progress` pending this task's separate adversarial\nverifier. No deployment was performed.\n\n### 2026-08-10 — verifier — VERDICT: refuted\n\n- P1 browser zero-allocation state handoff — **FAILED**. Predicted one retained typed-array view on\n  each side and zero per-dispatch view construction. `BrowserExecutor::invoke` calls\n  `state.copy_from` / `copy_to` at `crates/wasm/src/jit_browser.rs:471,493,503`; the frozen built glue\n  lowers both directions through `getArrayU8FromWasm0(...).subarray(...)` at\n  `web/dist/pkg/wasm_vm_wasm.js:1562-1564,1613-1615,1971-1973`. The promoted direct-execution test\n  observed exactly **2** `Uint8Array.prototype.subarray` calls for one clean compiled dispatch\n  (`browser_dispatch_reuses_memory_views_without_subarray_allocation`, failure at\n  `crates/wasm/tests/jit_browser_parity.rs:395`). The worker's K+2 externref invariant cannot see\n  these JS-local temporaries. Retain/rebind the outer-Wasm handoff view too and make the counter zero.\n- P6 private native registry probe tail — **FAILED**. Predicted the replacement mixer would not\n  admit a crafted long probe cluster. Because it is seedless and invertible, the promoted test made\n  1,024 distinct aligned keys share the same low 15 bucket bits and SwissTable h2 tag, then measured\n  **1,024 equality probes** on one miss (`deterministic_jit_hasher_resists_chosen_probe_clusters`,\n  `crates/jit-runtime/src/lib.rs:1150`). A second crafted set stayed inside the default 128 MiB mapped\n  DRAM range and measured a **128-entry probe cluster** from 128 aligned PCs\n  (`mapped_dram_pcs_do_not_form_chosen_probe_clusters`, `crates/jit-runtime/src/lib.rs:1188`). Use a\n  fast per-executor randomized mixer or another registry with a bounded lookup tail, and make both\n  tests green.\n- P2 precise dirty-register fault state — **HELD**. Native and Node browser tests dirtied x1..x30,\n  faulted the x31 load, and preserved x0, x1..x30, x31 sentinel, virtual fault PC, cause, tval, and\n  caller-owned PC exactly.\n- P3 browser ownership/eviction churn — **HELD**. The explicit 4,096-cycle, two-batch-budget Node run\n  preserved the exact K+2 ownership algebra, active eviction/retranslation, full x0..x31 state,\n  per-call exits, invalidate floor, and post-drop baseline.\n- P4 exact-work performance — **HELD for the stated workload**. A fresh five-sample release rerun at\n  this loaded verifier host measured 15.414 interpreter / 88.657 JIT MIPS on the exact 64-op workload\n  (**5.752x**) and 14.555 / 19.679 MIPS on the six-op diagnostic (**1.352x**); all architectural work\n  assertions passed. This does not waive P1/P6.\n- P7 guarded executor protocol — **HELD**. Promoted native and browser tests prove an uncompiled\n  `execute` returns `None` before changing cache stats, execution count, registers, or PC. This locks\n  down the public `is_compiled` / `execute` guard that the worker restored before submission.\n- P8 fixed state memory — **HELD**. SoftMMU single/batch modules parse as min=max=1, InlineTlb remains\n  imported/growable, and the browser rejected `memory.grow(1)` without replacing/detaching the cached\n  view. Sabotaging both SoftMMU declarations back to unbounded made the directed parser test fail\n  (`maximum: None` versus `Some(1)`), after which the runtime diff was restored to zero.\n- COVERAGE — every changed little-endian production exit/lifecycle path was exercised by the focused\n  native/Node gates. Big-endian codec branches are waived as target-specific code unavailable on this\n  Apple Silicon verifier; generic `Hasher::write` is waived because all four production registries use\n  only the exercised `u64`/`u32` specializations. The browser glue allocation was missing from the\n  worker's source-only coverage model and is now a permanent failing regression test.\n- SUITE: promoted the two browser-view/miss tests, the native pure-miss test, and both crafted-cluster\n  tests in `b75a2d4783fcf85c687b4c241935915cb1d417f4`.\n\nCommands: `cargo test -p wasm-vm-core --lib\njit::tests::cpu_state_handoff_pins_frozen_layout_endian_and_x0 -- --exact`; focused native precise\ntrap / guard tests; focused Node browser precise-fault / guard / 4,096-churn tests; release\n`perf_handoff`; translator fixed-memory parser test plus sabotage; promoted refutation tests. Pristine\nclone: `/private/tmp/wasm-vm-e4t33-verifier.7nxRyt/repo`, submission head\n`7ad65fb90327925a66662c96abef99556b435ea6`, verifier-test head\n`b75a2d4783fcf85c687b4c241935915cb1d417f4`, scrubbed of `RUSTFLAGS`, `RUST_LOG`, and `CARGO_*` build\noverrides. The cold clone reproduced the browser failure as exactly 2 subarray calls versus 0 and\nthe native failures as exactly 1,024 and 128 equality probes.\n\n### 2026-08-10 — worker — repaired implementation\n\nRuntime/test/build commit: `8ef240df8ee9690a1f7f0a36af99de208ead04bf`. Full repaired evidence,\ndiff coverage, exact command results, rr-soft manifests, browser artifacts, pristine-clone proof,\nand deployment URLs: `evidence/e4-t33/README.md`.\n\nThe P1 repair retains a Box-stable 568-byte host image and one outer-Wasm `Uint8Array`, using one\ndirect TypedArray `set` each way. The promoted clean dispatch now observes zero `subarray` calls;\npre-call growth, mid-call clean growth, and mid-call precise-fault growth refresh the detached view\nwithout changing the externref floor. Unrecorded browser exceptions and native Wasmtime traps now\nfail closed after host-pointer cleanup, so already-observed MMIO is never replayed by the interpreter.\nThe P6 repair keys the private integer mixer once per executor; both 1,024-key arbitrary-alignment\nand 128-PC mapped-DRAM chosen-cluster attacks pass while u64/u32 hot lookups remain one keyed mix.\n\nFinal release evidence on the exact work budget measured 61.026 interpreter / 439.354 JIT MIPS for\nthe 64-op acceptance workload (7.199x), versus the unchanged-runtime 238.552 JIT baseline (1.842x\nsame-workload uplift). The six-op boundary diagnostic measured 41.698 / 55.233 MIPS (1.325x), versus\nthe 10.267 JIT baseline (5.380x uplift). All counter, PC, register, and exact-budget assertions passed.\n\nFinal gates:\n\n```text\ncargo fmt --all -- --check\ngit diff --check\ncargo clippy -p wasm-vm-core -p wasm-vm-jit-translate -p wasm-vm-jit-runtime \\\n  -p wasm-vm-cli --all-targets -- -D warnings\ncargo clippy -p wasm-vm-wasm --lib --target wasm32-unknown-unknown --release -- -D warnings\ncargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release\ncargo test -p wasm-vm-jit-runtime\ncargo test -p wasm-vm-cli --test run\ncargo test -p wasm-vm-core --test async_compile_pipeline \\\n  interpreter_progresses_while_compiler_stalled -- --exact\nbash tools/check-zero-cost.sh --selftest\nwasm-pack test --node crates/wasm\nwasm-pack test --node crates/wasm --test jit_browser_parity -- \\\n  browser_handles_remain_bounded_across_retranslation_churn \\\n  --include-ignored --exact --nocapture\ncargo test -p wasm-vm-jit-runtime --release --test perf_handoff \\\n  -- --ignored --nocapture --test-threads=1\nmake web-build\ncd web && E3_T17_DEMO=1 npx playwright test \\\n  tests/e3-t17-demo-proof.spec.js --reporter=list\n```\n\nAll passed. Runtime totals include lib 4/4, batching 3/3, chaining 6/6, eviction 3/3,\ninvalidation 13/13, JIT execution 20/20, lockstep 3/3, precise traps 5/5, and timekeeping 3/3;\nCLI integration passed 22/22. The full Node/Wasm matrix passed, and the explicit ignored stress\npassed 1/1 after 4,096 exact-state churn cycles with active eviction/retranslation and K+2 batch\nownership. The real browser compliance gate passed 1/1 with `126 passed, 0 failed, complete` and\nzero console errors.\n\nOn `ssh dev`, rr-soft 5.9.0 `-W --chaos` recordings of the native fail-closed MMIO path, keyed-cache\ncollision attack, and precise all-register fault all passed, packed, and autopilot-replayed. Their\nmanifest SHA-256 values are `ae567b153e85bd165c2fdb2d486a56befe040d434853941a31fa2648f887849b`,\n`559b78b2fb4bee8424bff0e6aa96801434b8d39a5666b7b`, and\n`64e928674c1cbe1fdb3e852b0ba7bff75457a31f5e668d45429201a9226993e1` under\n`rr-traces/e4-t33-repair/`.\n\nA pristine archive of `8ef240d` contains the generated inline snippet referenced by the committed\nWasm glue. Cloudflare deployed the exact build at `https://719132bb.wasm-vm.pages.dev` and production\n`https://wasm-vm.pages.dev`; the live app reached `guest ready` and a real `~ #` with zero console\nerrors/warnings, and the deployed snippet returned HTTP 200 with the byte-identical committed hash.\nThe E4-T33 roadmap capability remains `in-progress` pending a fresh adversarial verifier.\n\n### 2026-08-10 — verifier — VERDICT: verified\n\n- P1 retained browser handoff — **HELD**. Predicted two steady clean dispatches would construct zero\n  `Uint8Array` views, a detached pre-call view would rebind exactly once, clean and precise-fault\n  mid-call growth would each rebind exactly once, and all four paths would make zero `subarray`\n  calls. The promoted Node oracles held, including zero constructors/subarrays for an unexpected\n  primitive JavaScript exception. Replacing the detach guard with an unconditional rebuild made the\n  clean oracle fail with **4 constructors versus 0**, then the runtime diff was restored.\n- P6 private keyed registries — **HELD**. Predicted independent executors would not reuse one public\n  permutation, repeated `Hasher` writes would retain keyed prefix/order, and the old 1,024-key\n  aligned plus 128-PC mapped-DRAM attacks would remain bounded. Eight real executors produced\n  distinct keyed outputs, both repeated-write paths held, and 64 independent processes passed both\n  collision attacks. Fixing the secret to a public constant made the promoted executor oracle fail.\n- P9 fail-closed post-MMIO traps — **HELD**. Native and browser malicious dispatches each performed\n  exactly one MMIO write, committed no dirty module register/PC image, returned no replayable\n  `None`, cleared host state, and allowed a later clean dispatch. The packed native trace reached the\n  fail-closed branch at rr event **1003** (`crates/jit-runtime/src/lib.rs:851`) with the malicious\n  test on its stack, then replayed to PASS 1/1.\n- P2 precise state and P3 bounded ownership — **HELD incrementally**. The repaired clean/fault growth\n  tests preserve exact registers, virtual PC, cause, tval, and caller-owned PC. The explicit 4,096\n  install/execute/evict cycle attack passed with active retranslation, exact K+2 ownership, unchanged\n  externref floors, and exact final architectural state. The precise-fault rr trace entered its\n  all-register oracle at event **488** and replayed to PASS 1/1.\n- P4 exact-work performance — **HELD**. A scrubbed five-sample release rerun measured **40.437\n  interpreter / 267.104 JIT MIPS (6.606x)** on the 64-op acceptance workload and **32.323 / 48.546\n  MIPS (1.502x)** on the six-op boundary diagnostic. Every 6.4M/6.0M budget, counter, PC, register,\n  IRQ, and JIT-retirement assertion held.\n- P5 cold-clone/deploy portability — **HELD**. Exact submission clone\n  `/private/tmp/wasm-vm-e4t33-reverify.HQwtwn/repo` rebuilt/imported the web package with the tracked\n  inline snippet present. The fresh build, committed dist, and immutable Cloudflare preview all\n  contained the same 170-byte snippet with SHA-256\n  `b42727c1c9a8e533cd165ce533824d67bd20bd55e690e123787965f164fde04d`.\n- HOST EVIDENCE — **HELD**. Every file in the three packed rr-soft traces matched its adjacent\n  manifest and all three autopilot replays passed. Correct manifest digests are\n  `ae567b153e85bd165c2fdb2d486a56befe040d434853941a31fa2648f887849b`,\n  `559b78b2fb4bee8424bff0e6aa9683f08ba91e988fe92801434b8d39a5666b7b`, and\n  `64e928674c1cbe1fdb3e852b0ba7bff75457a31f5e668d45429201a9226993e1`; the worker log truncated\n  the middle digest, but the cited trace and manifest themselves are intact and replayable. Changed\n  native source files in the Linux recording tree were byte-identical to runtime `8ef240d`.\n- COVERAGE — **HELD**. Browser clean/pre-growth/mid-growth/precise-fault/unexpected-exception,\n  native precise/fail-closed, u64/u32/generic hashing, cache churn, build packaging, and generated\n  glue paths all executed. The statistically inaccessible `secret == 0` normalization is waived as\n  a defensive branch; docs, dev-dependency metadata, and generated bytes are waived after direct\n  build/import/hash checks. No claimed behavioral hunk remains unexecuted.\n- SUITE: promoted constructor/rebind/exception allocation oracles plus repeated-write and actual\n  per-executor secret oracles in `335c0a5bf6dc89bb85a2fb85c18b44c02e10e221`.\n\nCommands: scrubbed cold-clone runtime lib 6/6; full Node browser parity 15/15 plus one intentional\nignore; explicit ignored 4,096-cycle churn 1/1; release `perf_handoff` 2/2; native all-target and\nwasm32 test-target strict clippy; format/diff checks; 64 independent-process aligned/DRAM attacks;\nunconditional-rebind and fixed-secret sabotage; `make web-build`; cold-clone module import; packed\nrr-soft manifest verification, `rr replay -W -a`, and event breakpoints. Submission head\n`64c6b24b74dacc3f9a931904abe212e5b8f68cd4`; runtime head\n`8ef240df8ee9690a1f7f0a36af99de208ead04bf`.",
+      "adversarial": "Force a memory fault after dirty register writeback, evict while repeatedly retranslating, set a tiny\ncache budget, and run enough hot blocks to exceed the old failure point. Any lost register, imprecise\ntrap, unbounded live handle count, or JIT slowdown refutes the change.",
+      "file": "tasks/epic-4-acceleration/E4-T33-bulk-jit-state-handoff.md",
+      "activity": [
+        {
+          "date": "2026-08-09",
+          "commits": 1,
+          "labels": [
+            "chore(e4): prioritize bounded JIT accounting"
+          ]
+        },
+        {
+          "date": "2026-08-10",
+          "commits": 6,
+          "labels": [
+            "verify(e4): prove repaired bulk JIT handoff",
+            "chore(e4): resubmit bulk JIT handoff repair",
+            "verify(e4): refute bulk JIT handoff proof",
+            "chore(e4): submit bulk JIT handoff proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-09",
+      "lastActivity": "2026-08-10",
+      "commitCount": 7
+    },
+    {
+      "id": "E4-T34",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Short-block JIT acceleration for restored Node startup",
+      "priority": 434,
+      "status": "pending",
+      "depends_on": [
+        "E4-T32"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make the JIT accelerate the real restored node-Alpine workload rather than merely report high\ntranslated retirement. Remove the measured boundary cost of Node/V8's short, memory-heavy and\nindirect basic blocks with one bounded execution seam (for example guarded dynamic-target fusion,\nshared compiled-state chaining, or the equivalent measured design) while preserving exact budgets.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Change a previously monomorphic `jalr` target mid-run, fault in the middle of a fused short-block\nchain, make an interrupt pending at every remaining-budget tail, rewrite a linked page, and churn the\nsmallest cache budget. Compare exact counters/PC/registers against interpreter and require the real\nNode result, not a synthetic ALU proxy. Any stale target, duplicated side effect, budget overshoot,\ncompile pause storm, or JIT wall-time loss refutes the change.",
+      "file": "tasks/epic-4-acceleration/E4-T34-node-short-block-jit.md",
+      "activity": [
+        {
+          "date": "2026-08-10",
+          "commits": 1,
+          "labels": [
+            "chore(e4): split real Node JIT acceleration"
+          ]
+        }
+      ],
+      "firstActivity": "2026-08-10",
+      "lastActivity": "2026-08-10",
+      "commitCount": 1
     },
     {
       "id": "E5-T01",

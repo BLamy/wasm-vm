@@ -39,6 +39,11 @@ done
 
 # The built wasm ES module (from make web-build).
 cp -R web/pkg "$DIST/pkg"
+# wasm-pack places `*` in pkg/.gitignore because its publish directory is normally generated. The
+# deploy bundle itself is committed, however, and inline-js bindings import files below pkg/snippets.
+# Remove the nested ignore rule so the pre-commit `git add web/dist` cannot silently omit a runtime
+# dependency and leave an exact-clone deployment with a 404.
+rm -f "$DIST/pkg/.gitignore"
 
 # Small runtime assets (guest ELFs, riscv-tests) — NOT web/releases (large; deploy-time copy).
 if [ -d web/assets ]; then
@@ -96,10 +101,13 @@ fi
 [ -e web/artifacts.json ] && cp web/artifacts.json "$DIST/"
 
 # E3-T24c: stamp the app-shell service worker with a build version = short content hash of the shell
-# bytes that change per build (the wasm + main.js). A new build ⇒ new cache namespace ⇒ the SW's
-# `activate` atomically drops the old cache (no half-old/half-new asset set).
+# bytes that change per build. A new build ⇒ new cache namespace ⇒ the SW's `activate` atomically
+# drops the old cache (no half-old/half-new asset set). MUST hash EVERY shell asset that can change,
+# not just wasm+main.js — hashing only those meant a loader.js/linux-worker*.js/sw.js-only change did
+# NOT bump the version, so the SW kept serving the STALE module from cache (the "deploy didn't take"
+# bug). Hash all top-level shell JS + the wasm so any shell change busts the cache.
 if [ -e "$DIST/sw.js" ]; then
-  ver=$( { cat "$DIST"/pkg/*_bg.wasm "$DIST/main.js" 2>/dev/null; } | { shasum -a 256 2>/dev/null || sha256sum; } | cut -c1-12 )
+  ver=$( { cat "$DIST"/pkg/*_bg.wasm "$DIST"/*.js 2>/dev/null; } | { shasum -a 256 2>/dev/null || sha256sum; } | cut -c1-12 )
   sed -e "s/__SW_VERSION__/${ver}/g" "$DIST/sw.js" > "$DIST/sw.js.tmp" && mv "$DIST/sw.js.tmp" "$DIST/sw.js"
   echo "[web-dist] stamped sw.js app-shell version=${ver}"
 fi

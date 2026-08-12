@@ -11,9 +11,10 @@
 //!
 //! The executor reaches guest memory through the SAME [`Hart`]/[`SystemBus`] the interpreter uses
 //! ([`Hart::jit_load`] / [`Hart::jit_store`]), so a JIT load/store is translated, PMP-checked, and
-//! routed to RAM/MMIO byte-identically to the interpreter — and a faulting access unwinds the block
-//! (executor returns `None`) so the run loop falls back to interpreting it, leaving hart state
-//! untouched (precise deopt for the E4-T09 translator's never-faulting memory ABI).
+//! routed to RAM/MMIO byte-identically to the interpreter. A recorded guest fault returns a precise
+//! [`JitExit`]; an unclassified engine failure after dispatch must fail closed because an imported
+//! access may already have committed a side effect. `None` is reserved for a pre-call cache miss,
+//! where interpreting from the same entry is provably replay-safe.
 
 use crate::dispatch::DecodedBlock;
 use crate::hart::Hart;
@@ -26,6 +27,8 @@ use alloc::boxed::Box;
 pub mod abi {
     /// Base of the `x[0..32]` guest integer register array (each register 8 bytes).
     pub const XREG_BASE: u32 = 0x000;
+    /// End of the integer-register array.
+    pub const XREG_END: u32 = XREG_BASE + 32 * 8;
     /// `exit_reason` — the [`super::ExitCode`] the block wrote before returning.
     pub const EXIT_REASON: u32 = 0x218;
     /// `exit_pc` — the guest PC to resume at.
@@ -37,11 +40,109 @@ pub mod abi {
     /// guest-visible PC relative to it, so translated control flow is correct under paging (guest
     /// virtual PC != physical block key) and when a physically-keyed block is reused from a new VA.
     pub const ENTRY_PC: u32 = 0x230;
+    /// Exclusive end of the state transferred between a hart and a compiled module.
+    pub const HANDOFF_END: u32 = ENTRY_PC + 8;
+    /// Exact byte length of the one-call CPU-state handoff.
+    pub const HANDOFF_LEN: usize = (HANDOFF_END - XREG_BASE) as usize;
+    /// E4-T19 intra-module chaining flag. It is deliberately outside [`HANDOFF_END`]: executors
+    /// currently leave it zero and perform bounded chaining in the host dispatch loop.
+    pub const CHAIN_ENABLED: u32 = 0x250;
+}
+
+/// Reusable transport buffer spanning the compiled module's frozen handoff byte range.
+///
+/// The current translator consumes x0..x31 plus `entry_pc` on entry and produces x0..x31 plus the
+/// exit header on return. Reserved gaps inside the 568-byte range are transported but intentionally
+/// carry no architectural claim. The buffer uses words rather than a `repr(C)` field struct so its
+/// byte view stays alignment-independent and little-endian-correct on every Rust host.
+pub struct CpuStateHandoff {
+    // Stored as little-endian words so common little-endian hosts can marshal the whole register
+    // file with one native slice copy. Byte accessors expose the identical frozen ABI image.
+    words: [u64; abi::HANDOFF_LEN / 8],
+}
+
+impl Default for CpuStateHandoff {
+    fn default() -> Self {
+        Self {
+            words: [0; abi::HANDOFF_LEN / 8],
+        }
+    }
+}
+
+impl CpuStateHandoff {
+    /// Marshal the live integer registers and virtual entry PC. Reserved gaps and the prior exit
+    /// header need not be initialized because generated code never consumes them on entry.
+    pub fn prepare(&mut self, hart: &Hart) {
+        #[cfg(target_endian = "little")]
+        self.words[..32].copy_from_slice(hart.regs.jit_words());
+        #[cfg(target_endian = "big")]
+        for register in 0..32u8 {
+            self.put_u64(
+                abi::XREG_BASE + u32::from(register) * 8,
+                hart.regs.read(register),
+            );
+        }
+        self.put_u64(abi::ENTRY_PC, hart.regs.pc);
+    }
+
+    /// Commit the compiled module's integer-register image. `x0` is intentionally skipped so the
+    /// architectural hardwired-zero invariant remains owned by `XRegs`.
+    pub fn commit_registers(&self, hart: &mut Hart) {
+        #[cfg(target_endian = "little")]
+        hart.regs.jit_commit_words(&self.words[..32]);
+        #[cfg(target_endian = "big")]
+        for register in 1..32u8 {
+            hart.regs.write(
+                register,
+                self.get_u64(abi::XREG_BASE + u32::from(register) * 8),
+            );
+        }
+    }
+
+    /// Exit reason mirrored by the compiled block in the state header.
+    pub fn exit_reason(&self) -> i32 {
+        self.get_u64(abi::EXIT_REASON) as i32
+    }
+
+    /// Guest PC materialized by the compiled block for its clean or precise-trap exit.
+    pub fn exit_pc(&self) -> u64 {
+        self.get_u64(abi::EXIT_PC)
+    }
+
+    /// Auxiliary exit payload written by the compiled block.
+    pub fn exit_info(&self) -> u64 {
+        self.get_u64(abi::EXIT_INFO)
+    }
+
+    /// Immutable bytes for a bulk engine write.
+    pub fn as_bytes(&self) -> &[u8; abi::HANDOFF_LEN] {
+        // SAFETY: `words` is fully initialized, exactly HANDOFF_LEN bytes long, and every byte
+        // pattern is valid for `u8`. The returned borrow cannot outlive `self`.
+        unsafe { &*self.words.as_ptr().cast::<[u8; abi::HANDOFF_LEN]>() }
+    }
+
+    /// Mutable bytes for a bulk engine read.
+    pub fn as_mut_bytes(&mut self) -> &mut [u8; abi::HANDOFF_LEN] {
+        // SAFETY: same layout argument as `as_bytes`; the exclusive borrow prevents aliasing.
+        unsafe { &mut *self.words.as_mut_ptr().cast::<[u8; abi::HANDOFF_LEN]>() }
+    }
+
+    fn put_u64(&mut self, offset: u32, value: u64) {
+        debug_assert_eq!(offset % 8, 0);
+        let index = ((offset - abi::XREG_BASE) / 8) as usize;
+        self.words[index] = value.to_le();
+    }
+
+    fn get_u64(&self, offset: u32) -> u64 {
+        debug_assert_eq!(offset % 8, 0);
+        let index = ((offset - abi::XREG_BASE) / 8) as usize;
+        u64::from_le(self.words[index])
+    }
 }
 
 /// The frozen exit-code enum (`docs/jit-architecture.md` §3.3). The E4-T09 translator emits only
 /// the first three; the rest are reserved for later tickets and surfaced here so the run loop can
-/// fall back defensively if it ever sees one.
+/// preserve the already-committed compiled state defensively if it ever sees one.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ExitCode {
     /// Block ran to its end; resume at `next_pc`.
@@ -51,7 +152,8 @@ pub enum ExitCode {
     /// A guest trap (`ecall`/`ebreak`) must be delivered at `next_pc`.
     Trap,
     /// Any reserved variant (MMIO/MMU_MISS/CALL_INTERP/NOT_COMPILED/BUDGET/INTERRUPT_POLL) — not
-    /// produced by the E4-T09 translator; treated as a fall-back-to-interpreter signal.
+    /// produced by the E4-T09 translator; treated as a benign unlinked fall-through because the
+    /// module register image has already been committed.
     Reserved(i32),
 }
 
@@ -225,6 +327,24 @@ pub trait CompiledBlockExecutor {
         1
     }
 
+    /// Maximum number of newly translated blocks this executor may install during one public
+    /// [`Machine::run`](crate::Machine::run) / `run_traced` call. Browser `runChunk` calls are the
+    /// Worker scheduler's cooperative slices: allowing every periodic pump plus the final flush to
+    /// install without a shared per-call ceiling turns one nominally bounded CPU quantum into an
+    /// unbounded synchronous `WebAssembly.Module` compile stall. Native/mock executors retain the
+    /// historical 64-block ceiling; the browser overrides this with a smaller latency budget.
+    fn max_translation_attempts_per_run(&self) -> usize {
+        64
+    }
+
+    /// Maximum discovery nominations staged into the priority compile queue during one public
+    /// cooperative run. Staging a full discovery flood is itself synchronous work (including the
+    /// bounded queue's backpressure comparisons), so it needs an aggregate ceiling independent of
+    /// the smaller block-submission ceiling.
+    fn max_staged_nominations_per_run(&self) -> usize {
+        256
+    }
+
     /// E4-T19 instance registry: number of live WASM Modules/Instances (batches) — the raw material
     /// for E4-T20's budgets. With no batching this equals [`Self::compiled_count`].
     fn module_count(&self) -> usize {
@@ -245,9 +365,11 @@ pub trait CompiledBlockExecutor {
     /// on a clean return; guest memory is reached through `hart`'s translated load/store path so
     /// effects match the interpreter exactly.
     ///
-    /// Returns `Some(exit)` on a clean return, or `None` if the block faulted out (a bus fault in a
-    /// load/store import) — in which case `hart` state is LEFT UNTOUCHED so the run loop can fall
-    /// back to interpreting the block from its entry.
+    /// Returns `Some(exit)` on a clean return or a recorded precise guest fault. A defensive cache
+    /// miss returns `None` before calling compiled code and without committing a module register
+    /// image, allowing the guarded run loop to interpret from the same entry. Once the call has been
+    /// attempted, an unclassified engine failure must fail closed rather than return `None`: an
+    /// imported access may already have changed RAM, MMIO, or reservation state.
     fn execute(&mut self, phys_pc: u64, hart: &mut Hart, bus: &mut SystemBus) -> Option<JitExit>;
 
     /// Drop every compiled block (`fence.i` / whole-cache flush / reset / snapshot restore).
@@ -265,6 +387,11 @@ pub trait CompiledBlockExecutor {
     /// Count of guest instructions retired inside JIT-executed blocks (numerator of the
     /// translated-instruction ratio).
     fn retired_via_jit(&self) -> u64;
+
+    /// E4-T31: record the exact retirement count the core committed for a compiled exit. The core,
+    /// not the executor, owns this count because it can distinguish a clean block from a precise
+    /// mid-block trap. Default no-op keeps simple/mock executors source-compatible.
+    fn note_jit_retired(&mut self, _retired: u64) {}
 
     // ── E4-T20: cache budgets, eviction policy, and stats (default impls: an executor with no
     //    budget enforcement is a valid degenerate) ──
@@ -413,5 +540,67 @@ impl ChainStats {
             .enumerate()
             .map(|(d, n)| d as u64 * n)
             .sum()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{CpuStateHandoff, abi};
+    use crate::hart::Hart;
+
+    #[test]
+    fn cpu_state_handoff_pins_frozen_layout_endian_and_x0() {
+        assert_eq!(abi::XREG_END, 0x100);
+        assert_eq!(abi::HANDOFF_END, 0x238);
+        assert_eq!(abi::HANDOFF_LEN, 568);
+        const { assert!(abi::HANDOFF_END < abi::CHAIN_ENABLED) };
+
+        let mut hart = Hart::default();
+        hart.regs.pc = 0x0123_4567_89ab_cdef;
+        for register in 1..32u8 {
+            hart.regs.write(
+                register,
+                0x8000_0000_0000_0000 | (u64::from(register) * 0x0102_0304_0506_0708),
+            );
+        }
+        let mut handoff = CpuStateHandoff::default();
+        handoff.prepare(&hart);
+
+        assert_eq!(handoff.as_bytes().len(), 568);
+        assert_eq!(&handoff.as_bytes()[0..8], &0u64.to_le_bytes());
+        for register in 1..32u8 {
+            let start = register as usize * 8;
+            assert_eq!(
+                &handoff.as_bytes()[start..start + 8],
+                &hart.regs.read(register).to_le_bytes()
+            );
+        }
+        assert_eq!(
+            &handoff.as_bytes()[abi::ENTRY_PC as usize..abi::HANDOFF_END as usize],
+            &hart.regs.pc.to_le_bytes()
+        );
+
+        handoff.put_u64(abi::XREG_BASE, u64::MAX);
+        for register in 1..32u8 {
+            handoff.put_u64(
+                abi::XREG_BASE + u32::from(register) * 8,
+                0xfedc_ba98_7654_0000 | u64::from(register),
+            );
+        }
+        handoff.put_u64(abi::EXIT_REASON, 2);
+        handoff.put_u64(abi::EXIT_PC, 0x8877_6655_4433_2211);
+        handoff.put_u64(abi::EXIT_INFO, 0xff00_ee11_dd22_cc33);
+        handoff.commit_registers(&mut hart);
+
+        assert_eq!(hart.regs.read(0), 0);
+        for register in 1..32u8 {
+            assert_eq!(
+                hart.regs.read(register),
+                0xfedc_ba98_7654_0000 | u64::from(register)
+            );
+        }
+        assert_eq!(handoff.exit_reason(), 2);
+        assert_eq!(handoff.exit_pc(), 0x8877_6655_4433_2211);
+        assert_eq!(handoff.exit_info(), 0xff00_ee11_dd22_cc33);
     }
 }

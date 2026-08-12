@@ -1,4 +1,7 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
+import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+
 
 /**
  * Incremental SHA-256 for browser `File.stream()` inputs. The UI hashes in bounded chunks before
@@ -190,12 +193,8 @@ export class WasmLinux {
     }
     /**
      * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
-     * arm tier-up — the `WasmLinux` twin of `WasmMachine::enable_jit`. The deployed demo constructs a
-     * `WasmLinux` on the main thread (see `web/loader.js`), so without this the browser guest never
-     * tiers up regardless of cross-origin isolation. The interpreter stays the oracle: with the JIT
-     * off (this never called) `runChunk` is byte-identical to the pre-T29 path. `threshold` is the
-     * hotness count before a block is nominated (see `web/cpu-isolation.js` `JIT_DEFAULT_THRESHOLD`).
-     * The caller gates this on `crossOriginIsolated`.
+     * arm tier-up. The accelerated interpreter remains the fallback for cold/untranslatable blocks;
+     * the caller gates this on `crossOriginIsolated`.
      * @param {number} threshold
      */
     enableJit(threshold) {
@@ -308,6 +307,20 @@ export class WasmLinux {
         const len0 = WASM_VECTOR_LEN;
         const ret = wasm.wasmlinux_importStoredSnapshot(this.__wbg_ptr, ptr0, len0);
         return ret;
+    }
+    /**
+     * E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
+     * `{hasExecutor, compiledBlocks, executedBlocks, retiredViaJit}` read straight from the installed
+     * executor — `executedBlocks > 0` is the definitive evidence translated code executed (not merely
+     * that `enableJit` was called). `hasExecutor:false` means no JIT is attached at all.
+     * @returns {any}
+     */
+    jitStats() {
+        const ret = wasm.wasmlinux_jitStats(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
@@ -570,7 +583,7 @@ export class WasmLinux {
     }
     /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
-     * 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
+     * 16550 RX, and return `{ done: bool, state: string|null, retired: number }`. A persistent caller may pass
      * `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
      * that limit so JS can durably drain it before the guest can race arbitrarily far ahead.
      * `state` is `"poweroff"`, `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or
@@ -629,6 +642,19 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
+     * physical-entry predecode reuse with the proven <=128-retire interrupt/device batching. The
+     * caller can turn it off for a byte-identical legacy A/B; enabling JIT later turns it back on
+     * because the compiled tier consumes the same block-discovery front end.
+     * @param {boolean} on
+     */
+    setFastInterpreter(on) {
+        const ret = wasm.wasmlinux_setFastInterpreter(this.__wbg_ptr, on);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * @param {boolean} ready
      */
     setFileDownloadReady(ready) {
@@ -673,8 +699,8 @@ export class WasmLinux {
         }
     }
     /**
-     * Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
-     * devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
+     * Final/current guest-RAM SHA-256 for browser evidence. This is the `mem_digest` portion of the
+     * native snapshot contract; registers and device state are intentionally not encoded here.
      * @returns {string}
      */
     stateDigest() {
@@ -748,6 +774,18 @@ export class WasmMachine {
      */
     getStats() {
         const ret = wasm.wasmmachine_getStats(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * E4-T31: the bare-metal wrapper's authoritative compiled-tier counters. This mirrors the
+     * Linux wrapper and lets hosts distinguish a bounded JIT run from an interpreted trace run.
+     * @returns {any}
+     */
+    jitStats() {
+        const ret = wasm.wasmmachine_jitStats(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -1133,6 +1171,10 @@ function __wbg_get_imports() {
             const ret = arg0 === undefined;
             return ret;
         },
+        __wbg___wbindgen_memory_de265df8aadd6273: function() {
+            const ret = wasm.memory;
+            return ret;
+        },
         __wbg___wbindgen_number_get_394265ed1e1b84ee: function(arg0, arg1) {
             const obj = arg1;
             const ret = typeof(obj) === 'number' ? obj : undefined;
@@ -1166,6 +1208,10 @@ function __wbg_get_imports() {
         }, arguments); },
         __wbg_buffer_0f212447ac64c53b: function(arg0) {
             const ret = arg0.buffer;
+            return ret;
+        },
+        __wbg_byteLength_41862ca4020b9c43: function(arg0) {
+            const ret = arg0.byteLength;
             return ret;
         },
         __wbg_call_8a2dd23819f8a60a: function() { return handleError(function (arg0, arg1) {
@@ -1262,10 +1308,6 @@ function __wbg_get_imports() {
             const ret = arg0.get(arg1);
             return ret;
         }, arguments); },
-        __wbg_get_index_e68b01fac18aa799: function(arg0, arg1) {
-            const ret = arg0[arg1 >>> 0];
-            return ret;
-        },
         __wbg_get_unchecked_6e0ad6d2a41b06f6: function(arg0, arg1) {
             const ret = arg0[arg1 >>> 0];
             return ret;
@@ -1469,6 +1511,10 @@ function __wbg_get_imports() {
                 state0.a = 0;
             }
         },
+        __wbg_new_with_byte_offset_and_length_54c7724ee3ec7d82: function(arg0, arg1, arg2) {
+            const ret = new Uint8Array(arg0, arg1 >>> 0, arg2 >>> 0);
+            return ret;
+        },
         __wbg_new_with_length_3709f79f83165acf: function(arg0) {
             const ret = new BigUint64Array(arg0 >>> 0);
             return ret;
@@ -1578,6 +1624,9 @@ function __wbg_get_imports() {
         __wbg_set_4d7dd76f3dae2926: function(arg0, arg1, arg2) {
             arg0.set(getArrayU8FromWasm0(arg1, arg2));
         },
+        __wbg_set_61e45ae8061eca11: function(arg0, arg1, arg2) {
+            arg0.set(arg1, arg2 >>> 0);
+        },
         __wbg_set_8535240470bf2500: function() { return handleError(function (arg0, arg1, arg2) {
             const ret = Reflect.set(arg0, arg1, arg2);
             return ret;
@@ -1587,9 +1636,6 @@ function __wbg_get_imports() {
         },
         __wbg_set_body_029f2d171e0a005f: function(arg0, arg1) {
             arg0.body = arg1;
-        },
-        __wbg_set_index_0a2d916cd3658df4: function(arg0, arg1, arg2) {
-            arg0[arg1 >>> 0] = arg2;
         },
         __wbg_set_index_c0ab70cbaf022bbb: function(arg0, arg1, arg2) {
             arg0[arg1 >>> 0] = BigInt.asUintN(64, arg2);
@@ -1711,52 +1757,52 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000001: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 373, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 376, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h1dbcf2b5dd15a422);
             return ret;
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I32], shim_idx: 286, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I32], shim_idx: 289, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h3c376d590f4b7628);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32, I32], shim_idx: 288, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32, I32], shim_idx: 291, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__hccc6447b5e5e2a92);
             return ret;
         },
         __wbindgen_cast_0000000000000004: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32], shim_idx: 281, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32], shim_idx: 284, ret: I64, inner_ret: Some(I64) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__hb536c899e9023450);
             return ret;
         },
         __wbindgen_cast_0000000000000005: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32], shim_idx: 291, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [I64, I64, I32], shim_idx: 294, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__hf96fc87adc256ad8);
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 283, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 286, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4);
             return ret;
         },
         __wbindgen_cast_0000000000000007: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 283, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 286, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_6);
             return ret;
         },
         __wbindgen_cast_0000000000000008: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 283, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 286, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_7);
             return ret;
         },
         __wbindgen_cast_0000000000000009: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 283, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 286, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h16552ffdf129f8f4_8);
             return ret;
         },
         __wbindgen_cast_000000000000000a: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 279, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 282, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h880302392ebe5c09);
             return ret;
         },
@@ -1788,6 +1834,8 @@ function __wbg_get_imports() {
     return {
         __proto__: null,
         "./wasm_vm_wasm_bg.js": import0,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import1,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import2,
     };
 }
 

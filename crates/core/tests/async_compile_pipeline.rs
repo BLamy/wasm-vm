@@ -23,6 +23,7 @@ use wasm_vm_core::dispatch::DecodedBlock;
 use wasm_vm_core::hart::Hart;
 use wasm_vm_core::jit::{CompiledBlockExecutor, JitExit};
 use wasm_vm_core::mmio::SystemBus;
+use wasm_vm_core::prof::FixedTimer;
 
 fn enc_addi(rd: u32, rs1: u32, imm: i32) -> u32 {
     ((imm as u32) << 20) | (rs1 << 15) | (0b000 << 12) | (rd << 7) | 0b0010011
@@ -69,14 +70,38 @@ fn state(m: &Machine) -> ([u64; 32], u64) {
 /// bytes it was handed, per phys PC) but `is_compiled` is always false, so the run loop can never run
 /// a compiled block — it must interpret every block. This is the "stalled worker" of AC5, and the
 /// install-record is what AC4 inspects for stale bytes.
-#[derive(Default)]
 struct StalledExecutor {
     /// Every (phys, bytes) install ever REQUESTED — the audit trail for the stale-install check.
     installs: Rc<RefCell<Vec<(u64, Vec<u8>)>>>,
+    run_budget: usize,
+    staging_budget: usize,
+    install_timer: Option<(Rc<FixedTimer>, u64)>,
+}
+
+impl Default for StalledExecutor {
+    fn default() -> Self {
+        Self {
+            installs: Rc::new(RefCell::new(Vec::new())),
+            run_budget: 64,
+            staging_budget: 256,
+            install_timer: None,
+        }
+    }
 }
 
 impl CompiledBlockExecutor for StalledExecutor {
+    fn max_translation_attempts_per_run(&self) -> usize {
+        self.run_budget
+    }
+
+    fn max_staged_nominations_per_run(&self) -> usize {
+        self.staging_budget
+    }
+
     fn install(&mut self, block: &DecodedBlock) {
+        if let Some((timer, ns)) = &self.install_timer {
+            timer.advance(*ns);
+        }
         // Reconstruct the block's raw bytes as the pump validated them (entry→terminator, LE).
         let mut bytes = Vec::new();
         for op in &block.ops {
@@ -148,6 +173,9 @@ fn interpreter_progresses_while_compiler_stalled() {
         &mut mj,
         StalledExecutor {
             installs: Rc::clone(&installs),
+            run_budget: 64,
+            staging_budget: 256,
+            install_timer: None,
         },
     );
     mj.run(iters * 3 + 10);
@@ -205,6 +233,9 @@ fn delayed_install_never_installs_stale_bytes() {
     let installs = Rc::new(RefCell::new(Vec::new()));
     let got = run_program(Some(StalledExecutor {
         installs: Rc::clone(&installs),
+        run_budget: 64,
+        staging_budget: 256,
+        install_timer: None,
     }));
 
     assert_eq!(want.0, got.0, "registers diverged across the SMC boundary");
@@ -231,4 +262,358 @@ fn delayed_install_never_installs_stale_bytes() {
     // proven against the real wasmtime executor by `jit-runtime/tests/invalidation.rs` (fence.i /
     // SMC / DMA) and the byte-identical `predecode_smc_diff` gate, both re-run against this async
     // pump path.
+}
+
+// ── E4-T32: one public run call has one aggregate compile budget ─────────────
+#[test]
+fn run_compile_budget_preserves_backlog_and_eventually_drains() {
+    const BLOCKS: usize = 320;
+    const WORK_PER_RUN: u64 = (BLOCKS as u64) * 2;
+
+    // More distinct blocks than the 256-entry priority queue can hold, all in a threshold=1 ring.
+    // The fake browser-shaped budgets prove one public run stages at most 64 and submits at most 8,
+    // while drop/recount preserves eventual progress under backpressure.
+    let mut program = Vec::with_capacity(BLOCKS);
+    for i in 0..BLOCKS {
+        let offset = if i + 1 == BLOCKS {
+            -((BLOCKS as i32 - 1) * 4)
+        } else {
+            4
+        };
+        program.push(enc_jal(0, offset));
+    }
+
+    let mut oracle = Machine::new(8 * 1024 * 1024);
+    poke(&mut oracle, DRAM_BASE, &program);
+    oracle.hart_mut().regs.pc = DRAM_BASE;
+
+    let installs = Rc::new(RefCell::new(Vec::new()));
+    let mut bounded = Machine::new(8 * 1024 * 1024);
+    poke(&mut bounded, DRAM_BASE, &program);
+    bounded.hart_mut().regs.pc = DRAM_BASE;
+    enable_jit(
+        &mut bounded,
+        StalledExecutor {
+            installs: Rc::clone(&installs),
+            run_budget: 8,
+            staging_budget: 64,
+            install_timer: None,
+        },
+    );
+
+    let first_oracle = oracle.run(WORK_PER_RUN);
+    let first_bounded = bounded.run(WORK_PER_RUN);
+    assert_eq!(first_oracle, first_bounded);
+    let first_installs = installs.borrow().len();
+    assert_eq!(
+        first_installs, 8,
+        "one public run may install exactly the executor's aggregate budget"
+    );
+    assert!(
+        first_installs < BLOCKS,
+        "a run must preserve compile backlog instead of draining the whole queue"
+    );
+    let first_pause = bounded.prof_report(0, 0).jit_pause;
+    assert_eq!(first_pause.last_run_attempted_blocks, 8);
+    assert_eq!(first_pause.last_run_submitted_blocks, 8);
+    assert!(first_pause.last_run_staged_nominations > 0);
+    assert!(first_pause.last_run_staged_nominations <= 64);
+    assert!(first_pause.last_final_pumps <= 1);
+    assert!(first_pause.max_run_submitted_blocks <= 8);
+    assert!(first_pause.max_run_attempted_blocks <= 8);
+    assert!(first_pause.max_run_staged_nominations <= 64);
+    assert!(bounded.discovery_stats().queue_depth > 0);
+
+    // Later host quanta reset both budgets and progress the preserved/recounted backlog.
+    for _ in 0..80 {
+        if installs
+            .borrow()
+            .iter()
+            .map(|(phys, _)| *phys)
+            .collect::<std::collections::BTreeSet<_>>()
+            .len()
+            == BLOCKS
+        {
+            break;
+        }
+        assert_eq!(oracle.run(WORK_PER_RUN), bounded.run(WORK_PER_RUN));
+        let pause = bounded.prof_report(0, 0).jit_pause;
+        assert!(pause.last_run_attempted_blocks <= 8);
+        assert!(pause.last_run_submitted_blocks <= 8);
+        assert!(pause.last_run_staged_nominations <= 64);
+    }
+    let unique: std::collections::BTreeSet<_> =
+        installs.borrow().iter().map(|(phys, _)| *phys).collect();
+    assert_eq!(
+        unique.len(),
+        BLOCKS,
+        "later runs must eventually install the backlog"
+    );
+
+    // Compile bookkeeping is microarchitectural only: work, trap/interrupt, register, PC, CSR, and
+    // RAM state remain byte-identical to the same interpreter quanta.
+    assert_eq!(state(&oracle), state(&bounded));
+    assert_eq!(
+        oracle.snapshot().hex_digest(),
+        bounded.snapshot().hex_digest()
+    );
+    assert_eq!(oracle.irq_stats().retired, bounded.irq_stats().retired);
+    assert_eq!(oracle.irq_stats().exc, bounded.irq_stats().exc);
+    assert_eq!(oracle.irq_stats().int, bounded.irq_stats().int);
+}
+
+#[test]
+fn zero_budget_and_missing_executor_submit_no_compile_work() {
+    let prog = [enc_addi(1, 1, 1), enc_jal(0, -4)];
+    let installs = Rc::new(RefCell::new(Vec::new()));
+    let mut zero = Machine::new(8 * 1024 * 1024);
+    poke(&mut zero, DRAM_BASE, &prog);
+    zero.hart_mut().regs.pc = DRAM_BASE;
+    enable_jit(
+        &mut zero,
+        StalledExecutor {
+            installs: Rc::clone(&installs),
+            run_budget: 0,
+            staging_budget: 0,
+            install_timer: None,
+        },
+    );
+    zero.run(1_000);
+    assert!(
+        installs.borrow().is_empty(),
+        "a zero maximum must remain zero"
+    );
+    let zero_stats = zero.prof_report(0, 0).jit_pause;
+    assert_eq!(zero_stats.run_count, 1);
+    assert_eq!(zero_stats.last_run_attempted_blocks, 0);
+    assert_eq!(zero_stats.last_run_submitted_blocks, 0);
+    assert_eq!(zero_stats.last_final_pumps, 0);
+
+    let mut no_executor = Machine::new(8 * 1024 * 1024);
+    poke(&mut no_executor, DRAM_BASE, &prog);
+    no_executor.hart_mut().regs.pc = DRAM_BASE;
+    no_executor.set_jit(true);
+    no_executor.run(1_000);
+    let missing_stats = no_executor.prof_report(0, 0).jit_pause;
+    assert_eq!(missing_stats.run_count, 1);
+    assert_eq!(missing_stats.last_run_submitted_blocks, 0);
+
+    let mut off = Machine::new(8 * 1024 * 1024);
+    poke(&mut off, DRAM_BASE, &prog);
+    off.hart_mut().regs.pc = DRAM_BASE;
+    off.run(1_000);
+    assert_eq!(off.prof_report(0, 0).jit_pause.run_count, 0);
+}
+
+#[test]
+fn decoded_cache_eviction_consumes_attempt_budget_and_eventually_renominates() {
+    const BLOCKS: usize = 12;
+    const WORK_PER_RUN: u64 = BLOCKS as u64 + 1;
+    let program: Vec<u32> = (0..BLOCKS)
+        .map(|index| {
+            let offset = if index + 1 == BLOCKS {
+                -((BLOCKS as i32 - 1) * 4)
+            } else {
+                4
+            };
+            enc_jal(0, offset)
+        })
+        .collect();
+    let mut oracle = Machine::new(8 * 1024 * 1024);
+    poke(&mut oracle, DRAM_BASE, &program);
+    oracle.hart_mut().regs.pc = DRAM_BASE;
+
+    let installs = Rc::new(RefCell::new(Vec::new()));
+    let mut bounded = Machine::new(8 * 1024 * 1024);
+    poke(&mut bounded, DRAM_BASE, &program);
+    bounded.hart_mut().regs.pc = DRAM_BASE;
+    bounded.set_block_cache_capacity(1);
+    enable_jit(
+        &mut bounded,
+        StalledExecutor {
+            installs: Rc::clone(&installs),
+            run_budget: 8,
+            staging_budget: 64,
+            install_timer: None,
+        },
+    );
+
+    // One long scope reaches several periodic-pump opportunities. Cache capacity 1 makes most of
+    // the first eight requests invalid; they must still consume all eight attempt slots so the four
+    // queued requests cannot leak through a later pump in the same scope.
+    assert_eq!(oracle.run(256), bounded.run(256));
+    let first = bounded.prof_report(0, 0).jit_pause;
+    assert_eq!(first.last_run_attempted_blocks, 8);
+    assert!(first.last_run_submitted_blocks < 8);
+
+    for _ in 0..160 {
+        assert_eq!(oracle.run(WORK_PER_RUN), bounded.run(WORK_PER_RUN));
+        let pause = bounded.prof_report(0, 0).jit_pause;
+        assert!(pause.last_run_attempted_blocks <= 8);
+        if installs
+            .borrow()
+            .iter()
+            .map(|(phys, _)| *phys)
+            .collect::<std::collections::BTreeSet<_>>()
+            .len()
+            == BLOCKS
+        {
+            break;
+        }
+    }
+    let unique = installs
+        .borrow()
+        .iter()
+        .map(|(phys, _)| *phys)
+        .collect::<std::collections::BTreeSet<_>>();
+    assert_eq!(
+        unique.len(),
+        BLOCKS,
+        "decoded-cache misses must clear Queued state so every hot block can be nominated again"
+    );
+    assert_eq!(state(&oracle), state(&bounded));
+    assert_eq!(
+        oracle.snapshot().hex_digest(),
+        bounded.snapshot().hex_digest()
+    );
+}
+
+#[test]
+fn terminal_outer_scope_skips_final_pump_and_preserves_backlog() {
+    const BLOCKS: usize = 16;
+    let program: Vec<u32> = (0..BLOCKS)
+        .map(|index| {
+            let offset = if index + 1 == BLOCKS {
+                -((BLOCKS as i32 - 1) * 4)
+            } else {
+                4
+            };
+            enc_jal(0, offset)
+        })
+        .collect();
+    let mut oracle = Machine::new(8 * 1024 * 1024);
+    poke(&mut oracle, DRAM_BASE, &program);
+    oracle.hart_mut().regs.pc = DRAM_BASE;
+
+    let installs = Rc::new(RefCell::new(Vec::new()));
+    let mut bounded = Machine::new(8 * 1024 * 1024);
+    poke(&mut bounded, DRAM_BASE, &program);
+    bounded.hart_mut().regs.pc = DRAM_BASE;
+    enable_jit(
+        &mut bounded,
+        StalledExecutor {
+            installs: Rc::clone(&installs),
+            run_budget: 64,
+            staging_budget: 256,
+            install_timer: None,
+        },
+    );
+
+    // The inner sub-run creates backlog but stays below both periodic-pump triggers. A terminal
+    // outer result must not compile that now-dead work merely because the inner result was MaxInstrs.
+    bounded.begin_cooperative_run();
+    assert_eq!(oracle.run(BLOCKS as u64), bounded.run(BLOCKS as u64));
+    bounded.end_cooperative_run(wasm_vm_core::RunOutcome::Exited(0));
+    assert!(installs.borrow().is_empty());
+    let terminal = bounded.prof_report(0, 0).jit_pause;
+    assert_eq!(terminal.last_final_pumps, 0);
+    assert_eq!(terminal.last_run_attempted_blocks, 0);
+    assert_eq!(terminal.last_run_submitted_blocks, 0);
+    assert_eq!(state(&oracle), state(&bounded));
+
+    // The backlog survives microarchitecturally and a later non-terminal host quantum installs it.
+    assert_eq!(oracle.run(BLOCKS as u64), bounded.run(BLOCKS as u64));
+    assert_eq!(installs.borrow().len(), BLOCKS);
+    assert_eq!(state(&oracle), state(&bounded));
+    assert_eq!(
+        oracle.snapshot().hex_digest(),
+        bounded.snapshot().hex_digest()
+    );
+}
+
+#[test]
+fn profiling_disabled_does_not_charge_outer_final_pump_to_total_time() {
+    const BLOCKS: usize = 16;
+    const INSTALL_NS: u64 = 1_000;
+    let program: Vec<u32> = (0..BLOCKS)
+        .map(|index| {
+            let offset = if index + 1 == BLOCKS {
+                -((BLOCKS as i32 - 1) * 4)
+            } else {
+                4
+            };
+            enc_jal(0, offset)
+        })
+        .collect();
+    let timer = Rc::new(FixedTimer::new(0));
+    let installs = Rc::new(RefCell::new(Vec::new()));
+    let mut machine = Machine::new(8 * 1024 * 1024);
+    poke(&mut machine, DRAM_BASE, &program);
+    machine.hart_mut().regs.pc = DRAM_BASE;
+    machine.set_host_timer(timer.clone());
+    machine.set_profiling(false);
+    enable_jit(
+        &mut machine,
+        StalledExecutor {
+            installs: Rc::clone(&installs),
+            run_budget: 64,
+            staging_budget: 256,
+            install_timer: Some((timer, INSTALL_NS)),
+        },
+    );
+
+    machine.run(BLOCKS as u64);
+    let pause = machine.prof_report(0, 0).jit_pause;
+    assert_eq!(installs.borrow().len(), BLOCKS);
+    assert_eq!(pause.sum_ns, BLOCKS as u64 * INSTALL_NS);
+    assert_eq!(pause.last_final_pumps, 1);
+    assert_eq!(
+        machine.prof_total_ns(),
+        0,
+        "a retained host timer must not re-enable total-time accounting after profiling is disabled"
+    );
+}
+
+#[test]
+fn profiling_enabled_charges_outer_final_pump_to_total_time_exactly_once() {
+    const BLOCKS: usize = 16;
+    const INSTALL_NS: u64 = 1_000;
+    let program: Vec<u32> = (0..BLOCKS)
+        .map(|index| {
+            let offset = if index + 1 == BLOCKS {
+                -((BLOCKS as i32 - 1) * 4)
+            } else {
+                4
+            };
+            enc_jal(0, offset)
+        })
+        .collect();
+    let timer = Rc::new(FixedTimer::new(0));
+    let installs = Rc::new(RefCell::new(Vec::new()));
+    let mut machine = Machine::new(8 * 1024 * 1024);
+    poke(&mut machine, DRAM_BASE, &program);
+    machine.hart_mut().regs.pc = DRAM_BASE;
+    machine.set_host_timer(timer.clone());
+    machine.set_profiling(true);
+    enable_jit(
+        &mut machine,
+        StalledExecutor {
+            installs: Rc::clone(&installs),
+            run_budget: 64,
+            staging_budget: 256,
+            install_timer: Some((timer, INSTALL_NS)),
+        },
+    );
+
+    machine.run(BLOCKS as u64);
+    let pause = machine.prof_report(0, 0).jit_pause;
+    let expected_ns = BLOCKS as u64 * INSTALL_NS;
+    assert_eq!(installs.borrow().len(), BLOCKS);
+    assert_eq!(pause.sum_ns, expected_ns);
+    assert_eq!(pause.last_final_pumps, 1);
+    assert_eq!(
+        machine.prof_total_ns(),
+        expected_ns,
+        "the outer final pump belongs in prof_total_ns once, without omission or double-counting"
+    );
 }

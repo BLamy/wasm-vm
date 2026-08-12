@@ -71,8 +71,18 @@ function reconstructAndFsck(blocks, evidenceDir) {
 test.describe("E3-T10: storage quota + reset-disk", () => {
   test.skip(!have, "needs releases/chunked-alpine + web/artifacts-alpine.json");
 
+  const bootAlpine = async (page) => {
+    // The current Demo surface intentionally removed the legacy #boot-alpine button. Drive the
+    // same production chunked/persistent path through its public async API and await ownership,
+    // rather than treating a missing synchronous DOM control as a boot timeout.
+    await page.waitForFunction(() => window.__ready === true && !!window.wvmDemo?.bootAlpine);
+    const outcome = await page.evaluate(() => window.wvmDemo.bootAlpine());
+    expect(outcome).toMatchObject({ ok: true });
+    return outcome;
+  };
+
   test("overlayDbName is per-image + reset deletes only that DB", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/?noAutoBoot=1");
     await page.waitForFunction(() => window.__ready === true, null, { timeout: 60_000 });
     // Drive the exported helpers directly (no full boot): name derivation + scoped delete.
     const result = await page.evaluate(async () => {
@@ -113,14 +123,13 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     expect(result.survivorPresent, "a second image's overlay survives the reset").toBe(true);
   });
 
-  test("storage indicator appears on a persistent boot", async ({ page }) => {
-    await page.goto("/?persist=1");
-    await expect(page.locator("#boot-alpine")).toBeEnabled();
-    await page.click("#boot-alpine");
-    // The indicator is populated by onStorage right after the Web-Lock/persist() resolve, well
-    // before login — no full boot needed.
-    await expect(page.locator("#storage-indicator")).toBeVisible({ timeout: 60_000 });
-    await expect(page.locator("#storage-indicator")).toContainText(/MB/);
+  test("storage status is populated on a persistent boot", async ({ page }) => {
+    await page.goto("/?persist=1&noAutoBoot=1");
+    await bootAlpine(page);
+    // onStorage populates the legacy diagnostic even though its containing toolbar is intentionally
+    // hidden by the current IDE shell. The actionable best-effort warning remains a separate visible
+    // banner (next test); this assertion proves the async worker event reached the page boundary.
+    await expect(page.locator("#storage-indicator")).toContainText(/storage .*MB/, { timeout: 60_000 });
   });
 
   test("a denied persist request gives an explicit private/incognito warning", async ({ page }) => {
@@ -130,9 +139,8 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
         value: async () => false,
       });
     });
-    await page.goto("/?persist=1");
-    await expect(page.locator("#boot-alpine")).toBeEnabled();
-    await page.click("#boot-alpine");
+    await page.goto("/?persist=1&noAutoBoot=1");
+    await bootAlpine(page);
     await expect(page.locator("#storage-warning")).toBeVisible({ timeout: 60_000 });
     await expect(page.locator("#storage-warning")).toContainText("private/incognito storage is temporary");
   });
@@ -265,10 +273,9 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
       }
     });
     const bootToShell = async (p) => {
-      await expect(p.locator("#boot-alpine")).toBeEnabled();
       bootNumber += 1;
       await beginTranscript(p, `boot ${bootNumber}`);
-      await p.click("#boot-alpine");
+      await bootAlpine(p);
       let sawOpenRC = false;
       for (let i = 0; i < 900; i++) {
         const text = await p.locator(rows).textContent().catch(() => "");
@@ -288,7 +295,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     // the real transaction is aborted. A near-full origin keeps this three-boot proof bounded while
     // still exercising the production IndexedDB/StorageFull boundary.
     try {
-    await page.goto("/");
+    await page.goto("/?noAutoBoot=1");
     const injectedName = await page.evaluate(async () => {
       const db = await new Promise((resolve, reject) => {
         const req = indexedDB.open("e3t10-quota-preflight", 1);
@@ -317,7 +324,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
       await resetDisk();
     });
     expect(await page.evaluate(() => window.__e3t10Quota.state().quota)).toBe(50 * 1024 * 1024);
-    await page.goto("/?persist=1&persistMax=1048576");
+    await page.goto("/?persist=1&persistMax=1048576&noAutoBoot=1");
     await bootToShell(page);
     await page.evaluate(() => window.__e3t10Quota.enableAfter(1_024));
 
@@ -369,7 +376,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     await page.close({ runBeforeUnload: false });
     page = await context.newPage();
     watchErrors(page);
-    await page.goto("/?persist=1&persistMax=1048576");
+    await page.goto("/?persist=1&persistMax=1048576&noAutoBoot=1");
     await bootToShell(page);
     await type(
       page,
@@ -388,8 +395,8 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     // contract: once the guest command returns, there is no acknowledged dirty backlog for an
     // idle pump to lose. Arm the quota fault, idle, and prove no hidden transaction or dialog can
     // appear because pendingBlocks/writeWaiting/flushWaiting all remain clear.
-    await page.waitForFunction(() => {
-      const s = window.__persistStats?.();
+    await page.waitForFunction(async () => {
+      const s = await window.__persistStats?.();
       return s && s.pendingBlocks === 0 && !s.writeWaiting && !s.flushWaiting;
     }, null, { timeout: 180_000 });
     const idlePutsBefore = await page.evaluate(() => {
@@ -397,8 +404,8 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
       return window.__e3t10Quota.state().blockPuts;
     });
     await page.waitForTimeout(5_000);
-    const idleProof = await page.evaluate(() => ({
-      stats: window.__persistStats(),
+    const idleProof = await page.evaluate(async () => ({
+      stats: await window.__persistStats(),
       puts: window.__e3t10Quota.state().blockPuts,
       dialogVisible: getComputedStyle(document.querySelector("#quota-dialog")).display !== "none",
     }));
@@ -418,7 +425,7 @@ test.describe("E3-T10: storage quota + reset-disk", () => {
     await page.close({ runBeforeUnload: false });
     page = await context.newPage();
     watchErrors(page);
-    await page.goto("/?persist=1&persistMax=1048576");
+    await page.goto("/?persist=1&persistMax=1048576&noAutoBoot=1");
     const persistedBlocks = await exportPersistedBlocks(page);
     fsckProof = reconstructAndFsck(persistedBlocks, evidenceDir);
 

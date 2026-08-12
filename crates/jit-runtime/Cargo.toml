@@ -26,6 +26,9 @@ anyhow = "1"
 # block's wasm bytes into a repro report.
 wasmparser = "0.235"
 wasmprinter = "0.235"
+# E4-T33 fail-closed regression: build a deliberately trapping module through the same byte-level
+# emitter the translator uses, then inject it into the private executor registry.
+wasm-vm-wasm-emit = { path = "../wasm-emit" }
 
 [features]
 # E4-T25: forwards the translator's deliberate-mutation hooks so the fuzzer/lockstep tests can prove

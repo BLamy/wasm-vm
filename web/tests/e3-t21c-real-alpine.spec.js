@@ -11,7 +11,7 @@ const haveAlpine =
 const rows = "#term .xterm-rows";
 
 test("real Wasm incremental SHA-256 accepts a browser File stream", async ({ page }) => {
-  await page.goto("/?testHooks=1");
+  await page.goto("/?testHooks=1&noAutoBoot=1");
   const digest = await page.evaluate(async () => {
     const file = new File(["real browser to guest"], "real-upload.txt");
     const hasher = new window.__wasmVmFileSha256();
@@ -34,7 +34,7 @@ test("real Alpine agent defers guest COMPLETE until browser close", async ({ pag
   page.on("console", (message) => {
     if (message.type() === "error" && !message.text().includes("favicon")) errors.push(message.text());
   });
-  await page.goto("/?testHooks=1");
+  await page.goto("/?testHooks=1&noAutoBoot=1");
   await expect(page.locator("#boot-alpine")).toBeEnabled();
   await page.click("#boot-alpine");
   let sawOpenRC = false;
@@ -64,7 +64,7 @@ test("real Alpine agent defers guest COMPLETE until browser close", async ({ pag
   await type("rc-service wasm-vm-file-agent status; echo WVFT_AGENT_STATUS=$?\r");
   await expect(page.locator(rows)).toContainText("WVFT_AGENT_STATUS=0", { timeout: 120_000 });
   await page.waitForFunction(
-    () => window.__fileTransferReady().some(Boolean),
+    async () => (await window.__fileTransferReady()).some(Boolean),
     null,
     { timeout: 300_000 },
   );

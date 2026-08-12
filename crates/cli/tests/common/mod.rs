@@ -90,6 +90,20 @@ pub fn guest_spin() -> Vec<u8> {
     forge(DRAM_BASE, &asm(&[SPIN]), None)
 }
 
+/// Five ALU ops plus a branch back to entry: the six-op JIT budget regression guest. Unlike the
+/// one-op `SPIN`, one compiled dispatch can otherwise hide many retirements behind one host slot.
+pub fn guest_hot_loop() -> Vec<u8> {
+    let words = [
+        addi(1, 1, 1),
+        addi(2, 2, 1),
+        addi(3, 3, 1),
+        addi(4, 4, 1),
+        addi(5, 5, 1),
+        b_type(-20, 0, 0, 0b000), // beq x0,x0, entry
+    ];
+    forge(DRAM_BASE, &asm(&words), None)
+}
+
 /// Write every byte value 0..=255 to the UART THR, then exit 0.
 pub fn guest_print_all_bytes() -> Vec<u8> {
     let mut w = vec![

@@ -432,18 +432,14 @@ impl ConsoleSink for JsConsole {
     }
 }
 
-/// A trace sink that counts retirements and, when tracing is on, appends canonical lines.
+/// An observing sink that appends one canonical line for every interpreted retirement.
 struct RunSink<'a> {
-    retired: u64,
-    trace: Option<&'a mut String>,
+    trace: &'a mut String,
 }
 
 impl TraceSink for RunSink<'_> {
     fn retire(&mut self, r: &TraceRecord) {
-        self.retired += 1;
-        if let Some(buf) = self.trace.as_mut() {
-            let _ = writeln!(buf, "{}", fmt_canonical(r));
-        }
+        let _ = writeln!(self.trace, "{}", fmt_canonical(r));
     }
 }
 
@@ -466,6 +462,38 @@ pub struct WasmMachine {
 /// Maps a failed re-entrant borrow to a catchable JsError.
 fn reentrant() -> JsError {
     JsError::new("re-entrant call into WasmMachine (a console callback cannot drive the machine)")
+}
+
+/// Shared JS shape for both bare-metal and Linux wrappers' proof that translated code actually ran.
+fn jit_stats_object(machine: &Machine) -> JsValue {
+    let obj = js_sys::Object::new();
+    let set = |k: &str, v: &JsValue| {
+        let _ = js_sys::Reflect::set(&obj, &JsValue::from_str(k), v);
+    };
+    match machine.executor() {
+        Some(e) => {
+            set("hasExecutor", &JsValue::from_bool(true));
+            set(
+                "compiledBlocks",
+                &JsValue::from_f64(e.compiled_count() as f64),
+            );
+            set(
+                "executedBlocks",
+                &JsValue::from_f64(e.executed_blocks() as f64),
+            );
+            set(
+                "retiredViaJit",
+                &JsValue::from_f64(e.retired_via_jit() as f64),
+            );
+        }
+        None => {
+            set("hasExecutor", &JsValue::from_bool(false));
+            set("compiledBlocks", &JsValue::from_f64(0.0));
+            set("executedBlocks", &JsValue::from_f64(0.0));
+            set("retiredViaJit", &JsValue::from_f64(0.0));
+        }
+    }
+    obj.into()
 }
 
 #[wasm_bindgen]
@@ -648,6 +676,14 @@ impl WasmMachine {
         }
         Ok(obj.into())
     }
+
+    /// E4-T31: the bare-metal wrapper's authoritative compiled-tier counters. This mirrors the
+    /// Linux wrapper and lets hosts distinguish a bounded JIT run from an interpreted trace run.
+    #[wasm_bindgen(js_name = jitStats)]
+    pub fn jit_stats(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(jit_stats_object(&inner.machine))
+    }
 }
 
 impl WasmMachine {
@@ -663,8 +699,10 @@ impl WasmMachine {
         Ok(())
     }
 
-    /// Run the engine for `budget` instructions with the counting/tracing sink, splitting
-    /// the `Inner` borrow so the trace buffer and the machine are borrowed disjointly.
+    /// Run the engine for `budget` work slots, splitting the `Inner` borrow so the trace buffer and
+    /// machine are disjoint. Tracing forces one-record-per-retire interpretation; otherwise the
+    /// zero-record path keeps an armed JIT active. The core retirement delta is authoritative for
+    /// both modes (a sink cannot count the interior of a compiled block).
     fn drive(inner: &mut Inner, budget: u64) -> (RunOutcome, u64) {
         let Inner {
             machine,
@@ -672,12 +710,15 @@ impl WasmMachine {
             trace_on,
             ..
         } = inner;
-        let mut sink = RunSink {
-            retired: 0,
-            trace: if *trace_on { Some(trace) } else { None },
+        let retired_before = machine.irq_stats().retired;
+        let outcome = if *trace_on {
+            let mut sink = RunSink { trace };
+            machine.run_traced(budget, &mut sink)
+        } else {
+            machine.run(budget)
         };
-        let outcome = machine.run_traced(budget, &mut sink);
-        (outcome, sink.retired)
+        let retired = machine.irq_stats().retired.wrapping_sub(retired_before);
+        (outcome, retired)
     }
 
     fn status_object(
@@ -1263,13 +1304,21 @@ impl WasmLinux {
         })
     }
 
+    /// E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
+    /// physical-entry predecode reuse with the proven <=128-retire interrupt/device batching. The
+    /// caller can turn it off for a byte-identical legacy A/B; enabling JIT later turns it back on
+    /// because the compiled tier consumes the same block-discovery front end.
+    #[wasm_bindgen(js_name = setFastInterpreter)]
+    pub fn set_fast_interpreter(&self, on: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_block_cache(on);
+        inner.machine.set_interrupt_batching(on);
+        Ok(())
+    }
+
     /// E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
-    /// arm tier-up — the `WasmLinux` twin of `WasmMachine::enable_jit`. The deployed demo constructs a
-    /// `WasmLinux` on the main thread (see `web/loader.js`), so without this the browser guest never
-    /// tiers up regardless of cross-origin isolation. The interpreter stays the oracle: with the JIT
-    /// off (this never called) `runChunk` is byte-identical to the pre-T29 path. `threshold` is the
-    /// hotness count before a block is nominated (see `web/cpu-isolation.js` `JIT_DEFAULT_THRESHOLD`).
-    /// The caller gates this on `crossOriginIsolated`.
+    /// arm tier-up. The accelerated interpreter remains the fallback for cold/untranslatable blocks;
+    /// the caller gates this on `crossOriginIsolated`.
     #[wasm_bindgen(js_name = enableJit)]
     pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
@@ -1283,8 +1332,18 @@ impl WasmLinux {
         Ok(())
     }
 
+    /// E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
+    /// `{hasExecutor, compiledBlocks, executedBlocks, retiredViaJit}` read straight from the installed
+    /// executor — `executedBlocks > 0` is the definitive evidence translated code executed (not merely
+    /// that `enableJit` was called). `hasExecutor:false` means no JIT is attached at all.
+    #[wasm_bindgen(js_name = jitStats)]
+    pub fn jit_stats(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(jit_stats_object(&inner.machine))
+    }
+
     /// Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
-    /// 16550 RX, and return `{ done: bool, state: string|null }`. A persistent caller may pass
+    /// 16550 RX, and return `{ done: bool, state: string|null, retired: number }`. A persistent caller may pass
     /// `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
     /// that limit so JS can durably drain it before the guest can race arbitrarily far ahead.
     /// `state` is `"poweroff"`, `"reboot"`, `"fail:<code>"`, `"exited:<code>"`, or
@@ -1296,6 +1355,7 @@ impl WasmLinux {
         persist_max_dirty_bytes: Option<u32>,
     ) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let retired_before = inner.machine.irq_stats().retired;
         if inner.finished.is_none() {
             let mut sink = wasm_vm_core::trace::NullSink;
             // Interleave RX refills with execution. The 16550 RX FIFO is 16 bytes; feeding it only
@@ -1310,6 +1370,11 @@ impl WasmLinux {
             const INPUT_SLICE: u64 = 16_384;
             const PERSIST_SLICE: u64 = 16_384;
             let mut remaining = max_instrs as u64;
+            // All internal UART/persistence sub-runs are one JS-visible cooperative Worker slice.
+            // Share one browser-executor submission budget across them; otherwise each 16,384-op
+            // refill boundary would reset the budget and one runChunk could still compile hundreds
+            // of blocks synchronously before input/RPC tasks regain the event loop.
+            inner.machine.begin_cooperative_run();
             let outcome = loop {
                 // Feed queued host input into the RX FIFO, up to its free space (no overrun).
                 if !inner.pending.is_empty() {
@@ -1347,6 +1412,7 @@ impl WasmLinux {
                     break oc;
                 }
             };
+            inner.machine.end_cooperative_run(outcome);
             // Drain the 16550 TX into the console buffer.
             let uart_out = inner.uart.borrow_mut().take_output();
             inner.out.borrow_mut().extend_from_slice(&uart_out);
@@ -1379,11 +1445,17 @@ impl WasmLinux {
                 let _ = js_sys::Reflect::set(&obj, &"state".into(), &JsValue::NULL);
             }
         }
+        let retired = inner
+            .machine
+            .irq_stats()
+            .retired
+            .wrapping_sub(retired_before);
+        let _ = js_sys::Reflect::set(&obj, &"retired".into(), &JsValue::from_f64(retired as f64));
         Ok(obj.into())
     }
 
-    /// Final/current architectural-state SHA-256 for browser evidence. This covers registers, CSRs,
-    /// devices, and RAM through the same snapshot contract as native `--dump-state` / boot evidence.
+    /// Final/current guest-RAM SHA-256 for browser evidence. This is the `mem_digest` portion of the
+    /// native snapshot contract; registers and device state are intentionally not encoded here.
     #[wasm_bindgen(js_name = stateDigest)]
     pub fn state_digest(&self) -> Result<String, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
@@ -1458,6 +1530,47 @@ impl WasmLinux {
             subsystems.push(&o);
         }
         set("subsystems", &subsystems);
+        let pause = report.jit_pause;
+        let jit_pause = js_sys::Object::new();
+        let set_pause = |k: &str, v: u64| {
+            let _ = js_sys::Reflect::set(
+                &jit_pause,
+                &JsValue::from_str(k),
+                &JsValue::from_f64(v as f64),
+            );
+        };
+        set_pause("count", pause.count);
+        set_pause("maxNs", pause.max_ns);
+        set_pause("sumNs", pause.sum_ns);
+        set_pause("overTarget", pause.over_target);
+        set_pause("maxAttemptedBlocks", pause.max_attempted_blocks);
+        set_pause("totalAttemptedBlocks", pause.total_attempted_blocks);
+        set_pause("maxSubmittedBlocks", pause.max_submitted_blocks);
+        set_pause("maxSubmittedBytes", pause.max_submitted_bytes);
+        set_pause("totalSubmittedBlocks", pause.total_submitted_blocks);
+        set_pause("runCount", pause.run_count);
+        set_pause("lastRunAttemptedBlocks", pause.last_run_attempted_blocks);
+        set_pause("maxRunAttemptedBlocks", pause.max_run_attempted_blocks);
+        set_pause("lastRunSubmittedBlocks", pause.last_run_submitted_blocks);
+        set_pause("maxRunSubmittedBlocks", pause.max_run_submitted_blocks);
+        set_pause(
+            "lastRunStagedNominations",
+            pause.last_run_staged_nominations,
+        );
+        set_pause("maxRunStagedNominations", pause.max_run_staged_nominations);
+        set_pause("lastFinalPumps", pause.last_final_pumps);
+        set_pause("maxFinalPumps", pause.max_final_pumps);
+        set_pause(
+            "lastFinalAttemptedBlocks",
+            pause.last_final_attempted_blocks,
+        );
+        set_pause("maxFinalAttemptedBlocks", pause.max_final_attempted_blocks);
+        set_pause(
+            "lastFinalSubmittedBlocks",
+            pause.last_final_submitted_blocks,
+        );
+        set_pause("maxFinalSubmittedBlocks", pause.max_final_submitted_blocks);
+        set("jitPause", &jit_pause);
         Ok(obj.into())
     }
 
@@ -1975,6 +2088,7 @@ impl WasmLinux {
                 let prefetch = js_sys::Object::new();
                 set_num(&prefetch, "issued", m.prefetch_issued as f64);
                 set_num(&prefetch, "used", m.prefetch_used as f64);
+                set_num(&prefetch, "profileEntries", s.boot_profile.len() as f64);
                 let acc = m
                     .prefetch_used
                     .saturating_mul(100)

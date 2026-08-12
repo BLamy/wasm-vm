@@ -7,6 +7,19 @@ import init, { FileSha256, WasmMachine, version, bench } from "./pkg/wasm_vm_was
 import { RISCV_TESTS } from "./riscv-tests.js";
 import { ROADMAP } from "./roadmap.js";
 import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
+import { startLinuxBootWorker, stopLinuxController } from "./linux-worker-host.js";
+
+// E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
+// `?worker=0` is the explicit main-thread differential/fallback. If Worker is genuinely unavailable,
+// fall back once with a visible warning; a worker boot failure itself never starts a second machine.
+const _workerQuery = new URLSearchParams(location.search).get("worker");
+const _workerAvailable = typeof globalThis.Worker === "function";
+const _workerRequested = _workerQuery !== "0";
+const _useCpuWorker = _workerRequested && _workerAvailable;
+if (_workerRequested && !_workerAvailable) {
+  console.warn("wasm-vm: whole-machine Worker unavailable; using the main-thread fallback");
+}
+const _bootLinux = _useCpuWorker ? startLinuxBootWorker : startLinuxBoot;
 import { createLinuxTerminal } from "./terminal.js";
 import { createFileTransferUI } from "./file-transfer.js";
 import { createBootProgressSurface } from "./boot-progress.js";
@@ -38,55 +51,74 @@ function loadTailscaleState() {
     }
     return state;
   } catch {
-    localStorage.removeItem(TAILSCALE_STATE_KEY);
+    try { localStorage.removeItem(TAILSCALE_STATE_KEY); } catch { /* storage may be unavailable */ }
     return null;
   }
 }
 
 globalThis.__wasmVmTailscaleEvent = (message) => {
   if (!message || typeof message !== "object") return;
-  if (message.type === "storageUpdate") {
-    const snapshot = message.snapshot;
-    if (snapshot && Object.keys(snapshot).length) {
-      localStorage.setItem(TAILSCALE_STATE_KEY, JSON.stringify(snapshot));
-    } else {
-      localStorage.removeItem(TAILSCALE_STATE_KEY);
+  try {
+    if (message.type === "storageUpdate") {
+      const snapshot = message.snapshot;
+      if (snapshot && Object.keys(snapshot).length) {
+        localStorage.setItem(TAILSCALE_STATE_KEY, JSON.stringify(snapshot));
+      } else {
+        localStorage.removeItem(TAILSCALE_STATE_KEY);
+      }
+      return;
     }
-    return;
-  }
-  if (message.type === "status") {
-    // Once provisioning has started, remove the one-time key from the DOM as well as Worker/Go.
-    if (tailscaleAuthEl) tailscaleAuthEl.value = "";
-    const status = message.status ?? {};
-    const self = status.netMap?.self;
-    const identity = self?.name ? ` · ${self.name}${self.addresses?.length ? ` (${self.addresses.join(", ")})` : ""}` : "";
-    if (tailscaleStatusEl) tailscaleStatusEl.textContent = `Tailscale: ${status.state ?? "unknown"}${identity}`;
-    return;
-  }
-  if (message.type === "failed" && tailscaleStatusEl) {
-    tailscaleStatusEl.textContent = `Tailscale failed: ${message.error?.message ?? "provider stopped"}`;
-    return;
-  }
-  if (message.type === "flowError" && tailscaleStatusEl) {
-    const phase = message.phase ? ` ${message.phase}` : "";
-    tailscaleStatusEl.textContent =
-      `Tailscale ${message.transport ?? "flow"} ${message.stream ?? "?"}${phase} failed: ${message.message ?? "connection failed"}`;
+    if (message.type === "status") {
+      // Once provisioning has started, remove the one-time key from the DOM as well as Worker/Go.
+      if (tailscaleAuthEl) tailscaleAuthEl.value = "";
+      const status = message.status ?? {};
+      const self = status.netMap?.self;
+      const identity = self?.name ? ` · ${self.name}${self.addresses?.length ? ` (${self.addresses.join(", ")})` : ""}` : "";
+      if (tailscaleStatusEl) tailscaleStatusEl.textContent = `Tailscale: ${status.state ?? "unknown"}${identity}`;
+      return;
+    }
+    if (message.type === "failed" && tailscaleStatusEl) {
+      tailscaleStatusEl.textContent = `Tailscale failed: ${message.error?.message ?? "provider stopped"}`;
+      return;
+    }
+    if (message.type === "flowError" && tailscaleStatusEl) {
+      const phase = message.phase ? ` ${message.phase}` : "";
+      tailscaleStatusEl.textContent =
+        `Tailscale ${message.transport ?? "flow"} ${message.stream ?? "?"}${phase} failed: ${message.message ?? "connection failed"}`;
+    }
+  } catch (error) {
+    console.warn("wasm-vm: could not apply Tailscale UI/storage event:", error?.message || error);
+    if (tailscaleStatusEl) tailscaleStatusEl.textContent = `Tailscale status update failed: ${error?.message || error}`;
   }
 };
 
-document.getElementById("tailscale-login")?.addEventListener("click", () => {
-  if (!tailscaleCommand("login") && tailscaleStatusEl) {
-    tailscaleStatusEl.textContent = "Boot with the Tailscale provider before requesting login.";
+async function sendTailscaleCommand(command) {
+  return linuxCtl?.backend === "whole-machine-worker"
+    ? linuxCtl.tailscaleCommand(command)
+    : tailscaleCommand(command);
+}
+
+document.getElementById("tailscale-login")?.addEventListener("click", async () => {
+  try {
+    if (!await sendTailscaleCommand("login") && tailscaleStatusEl) {
+      tailscaleStatusEl.textContent = "Boot with the Tailscale provider before requesting login.";
+    }
+  } catch (error) {
+    if (tailscaleStatusEl) tailscaleStatusEl.textContent = `Tailscale login failed: ${error?.message || error}`;
   }
 });
-document.getElementById("tailscale-logout")?.addEventListener("click", () => {
-  localStorage.removeItem(TAILSCALE_STATE_KEY);
-  if (tailscaleAuthEl) tailscaleAuthEl.value = "";
-  const sent = tailscaleCommand("logout");
-  if (tailscaleStatusEl) {
-    tailscaleStatusEl.textContent = sent
-      ? "Tailscale logout/revocation requested; persisted browser state cleared."
-      : "Persisted browser state cleared; no active Tailscale Worker.";
+document.getElementById("tailscale-logout")?.addEventListener("click", async () => {
+  try {
+    localStorage.removeItem(TAILSCALE_STATE_KEY);
+    if (tailscaleAuthEl) tailscaleAuthEl.value = "";
+    const sent = await sendTailscaleCommand("logout");
+    if (tailscaleStatusEl) {
+      tailscaleStatusEl.textContent = sent
+        ? "Tailscale logout/revocation requested; persisted browser state cleared."
+        : "Persisted browser state cleared; no active Tailscale Worker.";
+    }
+  } catch (error) {
+    if (tailscaleStatusEl) tailscaleStatusEl.textContent = `Tailscale logout failed: ${error?.message || error}`;
   }
 });
 
@@ -121,15 +153,298 @@ const bootProgress = createBootProgressSurface({
 const bootAlpineBtn = document.getElementById("boot-alpine");
 const bootAlpineFullBtn = document.getElementById("boot-alpine-full");
 let linuxCtl = null;
+let linuxBootPromise = null;
+let linuxBootRequest = null;
+let linuxActiveRequest = null;
+let linuxBootGeneration = 0;
+const linuxControllerTeardowns = new WeakMap();
 const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineFullBtn];
-async function runLinuxBoot(opts, banner) {
-  if (linuxCtl) return; // already booting
+
+function teardownLinuxController(controller, { natural = false } = {}) {
+  if (!controller) return Promise.resolve();
+  const prior = linuxControllerTeardowns.get(controller);
+  if (prior) return prior;
+  // The whole-machine runtime owns release/close before natural DONE and terminates immediately
+  // afterward, so never send post-termination RPCs. Main-thread controllers still need their
+  // idempotent stop/release/close sequence on every terminal outcome.
+  const teardown = natural && controller.backend === "whole-machine-worker"
+    ? Promise.resolve()
+    : stopLinuxController(controller);
+  linuxControllerTeardowns.set(controller, teardown);
+  return teardown;
+}
+
+function clearLinuxOwnerUi({ clearBootError = true } = {}) {
+  ui.detachSink();
+  fileTransferUI.attachController(null);
+  // Quota/read-only controls are controller capabilities, not ordinary page chrome. Destroy their
+  // children and generation marker when the owner retires so a visible or retained old button can
+  // never act on whichever controller happens to occupy the global slot next.
+  for (const id of ["quota-dialog", "ro-banner"]) {
+    const control = document.getElementById(id);
+    if (!control) continue;
+    control.style.display = "none";
+    control.replaceChildren();
+    delete control.dataset.linuxOwnerGeneration;
+    if (id === "quota-dialog") delete control.dataset.hits;
+  }
+  try { window.__linuxOwnerUiForTest = null; } catch { /* page-only diagnostic */ }
+  for (const key of ["linuxManifest", "linuxBackend", "jitPolicy", "jitThreshold", "interpreter"]) {
+    delete document.documentElement.dataset[key];
+  }
+  try {
+    window.__jit = null;
+    window.__executionPolicy = null;
+  } catch { /* page-only diagnostics */ }
+  if (clearBootError) lastBootError = null;
+  setRunBanner(null);
+  setGuestChip(null);
+  resetGuestReady();
+}
+
+function clearLinuxControllerOwner(controller) {
+  // Cleanup can race a replacement boot. Only the controller that still owns the page may clear
+  // shared UI/metadata; a late DONE from an older generation must leave the replacement untouched.
+  if (!controller || linuxCtl !== controller) return false;
+  linuxCtl = null;
+  linuxActiveRequest = null;
+  try {
+    if (window.__linuxCtl === controller) window.__linuxCtl = null;
+  } catch { /* page-only diagnostic */ }
+  clearLinuxOwnerUi();
+  return true;
+}
+
+function clearLinuxBootClaim(request) {
+  // A constructor/pre-READY rejection has no controller yet, but onClaim already owns the visible
+  // guest/manifest/banner. Clear that claim only while it is still the current unowned generation;
+  // preserve lastBootError so the initiating caller receives the typed boot failure.
+  if (!request || linuxCtl ||
+      (linuxBootRequest !== request && linuxActiveRequest !== request)) return false;
+  if (linuxBootRequest === request) linuxBootRequest = null;
+  if (linuxActiveRequest === request) linuxActiveRequest = null;
+  clearLinuxOwnerUi({ clearBootError: false });
+  return true;
+}
+
+async function retireLinuxController(controller, { natural = false } = {}) {
+  let cleanupError = null;
+  try {
+    await teardownLinuxController(controller, { natural });
+  } catch (error) {
+    cleanupError = error;
+  }
+  const cleared = clearLinuxControllerOwner(controller);
+  if (cleanupError) throw cleanupError;
+  return cleared;
+}
+
+function linuxRequestCanRenderOwnerUi(request, controller) {
+  if (!request) return false;
+  if (controller) return linuxCtl === controller && linuxActiveRequest === request;
+  // Storage/writer callbacks may fire while _bootLinux is still acquiring the lock, before its
+  // controller Promise resolves. Only the currently claimed, controller-less boot may render then.
+  return !linuxCtl && linuxBootRequest === request;
+}
+
+function markLinuxOwnerControl(element, request) {
+  element.dataset.linuxOwnerGeneration = String(request.generation);
+}
+
+function linuxOwnerControlIsCurrent(element, request, controller) {
+  return element?.dataset.linuxOwnerGeneration === String(request.generation) &&
+    linuxRequestCanRenderOwnerUi(request, controller);
+}
+
+function renderLinuxQuotaDialog(request, getController, { usage, quota, unsaved }) {
+  const controller = getController();
+  if (!linuxRequestCanRenderOwnerUi(request, controller)) return;
+  const el = document.getElementById("quota-dialog");
+  if (!el) return;
+  markLinuxOwnerControl(el, request);
+  const pct = quota ? `${((usage / quota) * 100) | 0}%` : "full";
+  el.style.display = "block";
+  // The pending descriptor has NOT been acknowledged: the guest cannot mistake RAM-only bytes
+  // for a successful write. Retry may persist it; read-only returns EIO for it.
+  const warn = unsaved
+    ? ' <b>One write is waiting for durable storage and has not been acknowledged</b> — free browser storage and Retry to complete it, or Continue read-only to return an I/O error.'
+    : "";
+  el.innerHTML =
+    `<b>Storage full</b> (${pct} of ${(quota / 1048576) | 0}MB). The VM is paused.${warn} ` +
+    '<b>Deleting files inside Alpine will not reclaim browser storage because discard/TRIM is not implemented.</b> ' +
+    '<button id="q-retry">Free browser storage & retry</button> ' +
+    '<button id="q-ro">Continue read-only</button> ' +
+    '<button id="q-reset">Reset disk…</button>';
+  el.dataset.hits = String((Number(el.dataset.hits) || 0) + 1);
+  term.writeln("\r\n\x1b[7m STORAGE FULL — VM paused. Free browser storage then Retry, Continue read-only, or Reset disk. Guest rm cannot reclaim origin quota without TRIM. \x1b[0m");
+
+  document.getElementById("q-retry").onclick = async () => {
+    const owner = getController();
+    if (!linuxOwnerControlIsCurrent(el, request, owner)) return;
+    el.style.display = "none";
+    try { await owner.resumeAfterQuota?.(); } catch (error) {
+      if (linuxCtl === owner) {
+        term.writeln(`\r\n\x1b[31mcould not resume after quota: ${error?.message || error}\x1b[0m`);
+      }
+    }
+  };
+  document.getElementById("q-ro").onclick = async () => {
+    const owner = getController();
+    if (!linuxOwnerControlIsCurrent(el, request, owner)) return;
+    el.style.display = "none";
+    try { await owner.continueReadOnly?.(); } catch (error) {
+      if (linuxCtl === owner) {
+        term.writeln(`\r\n\x1b[31mcould not enter read-only mode: ${error?.message || error}\x1b[0m`);
+      }
+      return;
+    }
+    if (!linuxOwnerControlIsCurrent(el, request, owner)) return;
+    const ro = document.getElementById("ro-banner");
+    if (ro) {
+      markLinuxOwnerControl(ro, request);
+      ro.style.display = "block";
+      ro.textContent = "read-only: storage full — the waiting and all future guest writes return I/O errors";
+    }
+  };
+  document.getElementById("q-reset").onclick = async () => {
+    const owner = getController();
+    if (!linuxOwnerControlIsCurrent(el, request, owner)) return;
+    const typed = prompt('This deletes every saved change to the Alpine disk. Type RESET to confirm:');
+    if (typed !== "RESET" || !linuxOwnerControlIsCurrent(el, request, owner)) return;
+    el.style.display = "none";
+    // close THIS tab's IndexedDB connection before deleteDatabase, or deletion can block forever.
+    let cleared = false;
+    try { cleared = await retireLinuxController(owner); } catch {}
+    if (!cleared || linuxCtl || linuxBootPromise || linuxActiveRequest || linuxBootRequest) return;
+    try {
+      await resetDisk();
+      // A programmatic replacement can claim the page while deletion is pending. Do not let this
+      // old capability rewrite its status or buttons after the new claim.
+      if (linuxCtl || linuxBootPromise || linuxActiveRequest || linuxBootRequest) return;
+      term.writeln("\r\n\x1b[33mdisk reset — reboot for a pristine filesystem\x1b[0m");
+      setStatus("disk reset — click Boot to start fresh");
+      bootBtns.forEach((button) => button && !button.dataset.unavailable && (button.disabled = false));
+    } catch (error) {
+      if (!linuxCtl && !linuxBootPromise) {
+        term.writeln(`\r\n\x1b[31mreset failed: ${error.message || error}\x1b[0m`);
+      }
+    }
+  };
+}
+
+function renderLinuxWriterStatus(request, getController, { readOnly }) {
+  const controller = getController();
+  if (!linuxRequestCanRenderOwnerUi(request, controller)) return;
+  const el = document.getElementById("ro-banner");
+  if (!el) return;
+  markLinuxOwnerControl(el, request);
+  if (!readOnly) {
+    el.style.display = "none";
+    el.replaceChildren();
+    return;
+  }
+  el.style.display = "block";
+  el.innerHTML =
+    'read-only: disk in use by another tab — writes are rejected (guest mounts / ro). ' +
+    '<button id="ro-retry">retry as writer</button>';
+  document.getElementById("ro-retry").addEventListener("click", async () => {
+    const owner = getController();
+    if (!linuxOwnerControlIsCurrent(el, request, owner)) return;
+    let cleared = false;
+    try { cleared = await retireLinuxController(owner); } catch {}
+    if (!cleared || linuxCtl || linuxBootPromise || linuxActiveRequest || linuxBootRequest) return;
+    el.style.display = "none";
+    bootBtns.forEach((button) => button && !button.dataset.unavailable && (button.disabled = false));
+    setStatus("retrying as writer — click the boot button again");
+    term.writeln("\r\n\x1b[33mretry-as-writer: click the Boot button again (lock re-probed at boot)\x1b[0m");
+  });
+  term.writeln("\x1b[33mREAD-ONLY: another tab holds the disk — guest will mount / ro\x1b[0m");
+}
+
+function runLinuxBoot(opts, banner, { requestKey = opts.manifestUrl, onClaim = null } = {}) {
+  if (linuxCtl) {
+    const sameOwner = linuxActiveRequest?.key === requestKey;
+    return Promise.resolve({
+      winner: linuxActiveRequest?.key ?? null,
+      manifestUrl: linuxActiveRequest?.manifestUrl ?? null,
+      already: sameOwner,
+      conflict: !sameOwner,
+    });
+  }
+  if (linuxBootPromise) {
+    if (linuxBootRequest?.key !== requestKey) {
+      return Promise.resolve({
+        winner: linuxBootRequest?.key ?? null,
+        manifestUrl: linuxBootRequest?.manifestUrl ?? null,
+        already: false,
+        conflict: true,
+      });
+    }
+    return linuxBootPromise;
+  }
+  const request = {
+    key: requestKey,
+    manifestUrl: opts.manifestUrl ?? null,
+    generation: ++linuxBootGeneration,
+  };
+  linuxBootRequest = request;
+  let joined;
+  // Publish the single-flight promise before invoking any boot code. This closes the auto-boot vs
+  // click/programmatic race even if a Worker constructor synchronously calls back into the page.
+  // Guest-specific chip/banner mutations also live behind the winning claim, so a different flavor
+  // that joins this promise cannot make the UI lie about which artifacts own the one Worker.
+  joined = Promise.resolve()
+    .then(() => {
+      onClaim?.();
+      document.documentElement.dataset.linuxManifest = request.manifestUrl ?? "";
+      return runLinuxBootOwned(opts, banner, request);
+    })
+    .then(() => ({ winner: request.key, manifestUrl: request.manifestUrl, already: false }))
+    .finally(() => {
+      if (linuxBootRequest === request) linuxBootRequest = null;
+      if (linuxBootPromise === joined) linuxBootPromise = null;
+    });
+  linuxBootPromise = joined;
+  return joined;
+}
+
+async function runLinuxBootOwned(opts, banner, request) {
   bootBtns.forEach((b) => b && (b.disabled = true));
   term.reset();
+  if (_workerRequested && !_workerAvailable) {
+    term.writeln("\x1b[33m[whole-machine Worker unavailable; using explicit main-thread fallback]\x1b[0m");
+  }
   // (No info banner in the terminal — the status bar shows boot/guest state; the console is just the
   // guest's own output.) `banner` is still used by setStatus below.
   void banner;
   const query = new URLSearchParams(location.search);
+  // Resolve the execution policy on the page and pass only concrete values to the worker. A worker
+  // has its own URL (linux-worker.js), so reading location.search there would silently ignore the
+  // user's A/B selection. Explicit page query parameters win over per-guest defaults.
+  const jitQuery = query.get("jit");
+  const selectedFastInterpreter = query.has("slowInterp")
+    ? query.get("slowInterp") !== "1"
+    : (opts.fastInterpreter ?? true);
+  const selectedJit = jitQuery === "0"
+    ? false
+    : jitQuery === "1"
+      ? true
+      : (opts.jit ?? false);
+  const thresholdCandidate = query.has("jitThreshold")
+    ? Number(query.get("jitThreshold"))
+    : Number(opts.jitThreshold ?? 512);
+  // Measured cold Node startup is slower with aggressive tier-up (32..256). Threshold 512 is the
+  // conservative production policy; lower thresholds remain explicit profiling knobs.
+  const selectedJitThreshold = Number.isFinite(thresholdCandidate) && thresholdCandidate >= 1
+    ? Math.floor(thresholdCandidate)
+    : 512;
+  const selectedProfile = query.has("profile")
+    ? query.get("profile") === "1"
+    : Boolean(opts.profile);
+  const quantumCandidate = query.has("quantum") ? Number(query.get("quantum")) : Number(opts.quantum ?? 500_000);
+  const selectedQuantum = Number.isFinite(quantumCandidate)
+    ? Math.max(1_000, Math.min(500_000, Math.floor(quantumCandidate)))
+    : 500_000;
   const slirpRelay = opts.slirpRelay ?? query.get("slirpRelay") ?? networkRelayEl?.value ?? "";
   const slirpDoh = opts.slirpDoh ?? query.get("slirpDoh") ?? "";
   const slirpProvider = opts.slirpProvider ?? query.get("slirpProvider") ??
@@ -153,12 +468,48 @@ async function runLinuxBoot(opts, banner) {
   }
   const pct = {};
   const bootT0 = (typeof performance !== "undefined" ? performance.now() : Date.now());
+  let restoredReadyPending = false;
   bootProgress.begin();
   resetGuestReady();
   const imageLen = opts.imageLen ?? 536870912; // chunked image length; for byte-fraction honesty
+  let bootController = null;
+  let setupFailed = false;
+  const ownerUi = {
+    onQuota: (detail) => renderLinuxQuotaDialog(request, () => bootController, detail),
+    onWriterStatus: (detail) => renderLinuxWriterStatus(request, () => bootController, detail),
+  };
+  if (query.has("testHooks")) {
+    window.__linuxOwnerUiForTest = {
+      generation: request.generation,
+      quota: ownerUi.onQuota,
+      writerStatus: ownerUi.onWriterStatus,
+    };
+  }
   try {
-    linuxCtl = await startLinuxBoot({
+    bootController = await _bootLinux({
       ...opts,
+      // E4-T30: production fast interpreter by default; `?slowInterp=1` preserves the legacy
+      // instruction-at-a-time A/B path. Pass it as DATA so the whole-machine worker sees the page's
+      // choice instead of trying to read the worker script URL.
+      fastInterpreter: selectedFastInterpreter,
+      // E4-T33 bounded compiled handles make JIT safe to request, but the measured cold Node process
+      // is still faster in the interpreter even at threshold 512. Keep the fastest measured policy
+      // as the default; `?jit=1` opts into a truthful JIT experiment and `?jit=0` is an explicit A/B.
+      jit: selectedJit,
+      jitThreshold: selectedJitThreshold,
+      profile: selectedProfile,
+      quantum: selectedQuantum,
+      startPaused: query.has("testHooks") && query.has("startPaused"),
+      // The raw worker is never part of the production controller. A test-only hook can inject a
+      // malformed protocol frame to prove fatal handling without reopening an arbitrary RPC API.
+      onWorker: query.has("testHooks")
+        ? (worker) => { window.__linuxWorkerForTest = worker; }
+        : undefined,
+      workerHeartbeatIntervalMs: query.has("testHooks") ? 50 : undefined,
+      workerHeartbeatTimeoutMs: query.has("testHooks") ? 300 : undefined,
+      workerBootTimeoutMs: query.has("workerBootTimeoutMs")
+        ? Math.max(1, Number(query.get("workerBootTimeoutMs")) || 1)
+        : undefined,
       // E3-net: `?slirpNet` in the URL boots with the slirp local stack (real DHCP/ARP/ICMP) instead
       // of the loopback backend — so the guest can pull a real IP and reach the gateway.
       slirpNet: opts.slirpNet ?? (
@@ -185,7 +536,9 @@ async function runLinuxBoot(opts, banner) {
           // prompt-in-stream detector below (which normally calls markGuestReady) never fires. Signal
           // readiness explicitly here so the Docker/IDE tabs unlock and isGuestReady() is true. (The
           // prompt itself is nudged into view after startLinuxBoot returns, once linuxCtl exists.)
-          markGuestReady();
+          // startLinuxBoot invokes this callback before it returns its controller. Defer the public
+          // ready signal until linuxCtl and every async test/UI hook below are installed.
+          restoredReadyPending = true;
           setStatus(`linux: ${s}`);
         }
         bootProgress.onState(s);
@@ -233,121 +586,138 @@ async function runLinuxBoot(opts, banner) {
       // E3-T10: storage quota hit — the VM is PAUSED; show the actionable dialog. The three
       // choices map to loader controller actions (retry after freeing space / continue
       // read-only / reset disk). No option silently drops a durable write.
-      onQuota: ({ usage, quota, unsaved }) => {
-        const el = document.getElementById("quota-dialog");
-        if (!el) return;
-        const pct = quota ? `${((usage / quota) * 100) | 0}%` : "full";
-        el.style.display = "block";
-        // The pending descriptor has NOT been acknowledged: the guest cannot mistake RAM-only
-        // bytes for a successful write. Retry may persist and complete it; Continue read-only
-        // returns EIO for it. Reload may discard only bytes that never received S_OK.
-        const warn = unsaved
-          ? ' <b>One write is waiting for durable storage and has not been acknowledged</b> — free browser storage and Retry to complete it, or Continue read-only to return an I/O error.'
-          : "";
-        el.innerHTML =
-          `<b>Storage full</b> (${pct} of ${(quota / 1048576) | 0}MB). The VM is paused.${warn} ` +
-          '<b>Deleting files inside Alpine will not reclaim browser storage because discard/TRIM is not implemented.</b> ' +
-          '<button id="q-retry">Free browser storage & retry</button> ' +
-          '<button id="q-ro">Continue read-only</button> ' +
-          '<button id="q-reset">Reset disk…</button>';
-        el.dataset.hits = String((Number(el.dataset.hits) || 0) + 1);
-        term.writeln("\r\n\x1b[7m STORAGE FULL — VM paused. Free browser storage then Retry, Continue read-only, or Reset disk. Guest rm cannot reclaim origin quota without TRIM. \x1b[0m");
-        document.getElementById("q-retry").onclick = () => { el.style.display = "none"; linuxCtl?.resumeAfterQuota?.(); };
-        document.getElementById("q-ro").onclick = () => {
-          el.style.display = "none";
-          linuxCtl?.continueReadOnly?.();
-          const ro = document.getElementById("ro-banner");
-          if (ro) { ro.style.display = "block"; ro.textContent = "read-only: storage full — the waiting and all future guest writes return I/O errors"; }
-        };
-        document.getElementById("q-reset").onclick = async () => {
-          const typed = prompt('This deletes every saved change to the Alpine disk. Type RESET to confirm:');
-          if (typed !== "RESET") return;
-          el.style.display = "none";
-          // Critic BUG-4: close THIS tab's IndexedDB connection before deleteDatabase, or the
-          // delete blocks forever. stop() halts the run loop; closeStorage() drops the handle.
-          if (linuxCtl) {
-            try { linuxCtl.closeStorage(); } catch {}
-            try { linuxCtl.stop(); } catch {}
-            linuxCtl = null;
-          }
-          try {
-            await resetDisk();
-            term.writeln("\r\n\x1b[33mdisk reset — reboot for a pristine filesystem\x1b[0m");
-            setStatus("disk reset — click Boot to start fresh");
-            bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
-          } catch (e) {
-            term.writeln(`\r\n\x1b[31mreset failed: ${e.message || e}\x1b[0m`);
-          }
-        };
-      },
+      onQuota: ownerUi.onQuota,
       // E3-T09: single-writer status. RO → banner + a retry-as-writer affordance (reboot;
       // the Web Lock is re-probed — succeeds once the writer tab is gone).
-      onWriterStatus: ({ readOnly }) => {
-        const el = document.getElementById("ro-banner");
-        if (!el) return;
-        if (readOnly) {
-          el.style.display = "block";
-          el.innerHTML =
-            'read-only: disk in use by another tab — writes are rejected (guest mounts / ro). ' +
-            '<button id="ro-retry">retry as writer</button>';
-          document.getElementById("ro-retry").addEventListener("click", async () => {
-            // Stop the RO machine and reboot; the lock probe runs again at boot.
-            if (linuxCtl) { try { linuxCtl.stop(); } catch {} linuxCtl = null; }
-            el.style.display = "none";
-            bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
-            setStatus("retrying as writer — click the boot button again");
-            term.writeln("\r\n\x1b[33mretry-as-writer: click the Boot button again (lock re-probed at boot)\x1b[0m");
-          });
-          term.writeln("\x1b[33mREAD-ONLY: another tab holds the disk — guest will mount / ro\x1b[0m");
-        } else {
-          el.style.display = "none";
-        }
-      },
+      onWriterStatus: ownerUi.onWriterStatus,
     });
-    const ctlForRelease = linuxCtl;
+    linuxCtl = bootController;
+    linuxActiveRequest = request;
+    const ctlForRelease = bootController;
+    let settlementHandled = false;
+    const finalizeSettlement = async (state, error = null) => {
+      if (settlementHandled) return;
+      settlementHandled = true;
+      let cleared = false;
+      try {
+        cleared = await retireLinuxController(ctlForRelease, { natural: true });
+      } catch (cleanupError) {
+        console.warn("wasm-vm: terminal controller cleanup failed:", cleanupError?.message || cleanupError);
+      }
+      // A replacement can be in-flight while linuxCtl is temporarily null. The owner-generation
+      // result, not merely the current controller slot, decides whether this old settlement may
+      // touch shared status/buttons.
+      if (!cleared || setupFailed || linuxCtl) return;
+      bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
+      if (error) {
+        const message = error?.message || String(error);
+        setStatus(`linux worker fatal: ${message} — reload with ?worker=0 for the main-thread fallback`);
+        term.writeln(`\r\n\x1b[31mwhole-machine worker stopped: ${message} — use ?worker=0 for the main-thread fallback\x1b[0m`);
+        return;
+      }
+      // E2-T26: surface the T17 terminal ExitReason as a distinct HALTED state, not just a status
+      // string — the machine is gone; you must re-boot from a fresh Machine.
+      const halt = { poweroff: "powered off", reboot: "rebooted (halted)", error: "error" };
+      const reason = halt[state] || (state?.startsWith?.("exited")
+        ? state
+        : state?.startsWith?.("fail") ? state : null);
+      if (reason) {
+        setStatus(`⏻ machine halted — ${reason}`);
+        term.writeln(`\r\n\x1b[7m machine halted (${reason}) — click "Boot Linux"/"Boot Alpine" to boot a fresh machine \x1b[0m`);
+      } else {
+        setStatus(`linux: ${state}`);
+      }
+    };
+    // Attach lifecycle ownership immediately after READY, before policy/stats UI awaits. A failed
+    // setup RPC can therefore never orphan an already-running Worker or main-thread storage handle.
+    ctlForRelease.whenDone.then(
+      (state) => { void finalizeSettlement(state); },
+      (error) => { void finalizeSettlement(null, error); },
+    );
+    // E4-T22 test hook: expose the boot controller (worker proxy or main-thread) so a Playwright driver
+    // can drive input / time workloads. Inert for users.
+    try { window.__linuxCtl = linuxCtl; } catch { /* worker scope */ }
+    document.documentElement.dataset.linuxBackend = linuxCtl.backend ?? "main-thread";
+    if (query.has("testHooks") && query.has("testFailInitialJitStats")) {
+      throw new Error("injected initial jitStats setup failure");
+    }
+    const initialJit = await linuxCtl.jitStats?.() ?? null;
+    const jitPolicy = !selectedJit
+      ? (query.get("jit") === "0" ? "forced-off" : "interpreter-faster-for-cold-start")
+      : initialJit?.hasExecutor
+        ? "enabled"
+        : globalThis.crossOriginIsolated ? "unavailable-no-executor" : "unavailable-no-isolation";
+    const backend = linuxCtl.backend ?? "main-thread";
+    const interpreter = selectedFastInterpreter ? "fast" : "legacy";
+    document.documentElement.dataset.jitPolicy = jitPolicy;
+    document.documentElement.dataset.jitThreshold = String(selectedJitThreshold);
+    document.documentElement.dataset.interpreter = interpreter;
+    window.__jit = {
+      enabled: Boolean(initialJit?.hasExecutor),
+      threshold: selectedJitThreshold,
+      reason: jitPolicy,
+      ...(initialJit ?? {}),
+    };
+    window.__executionPolicy = {
+      backend,
+      interpreter,
+      jit: jitPolicy,
+      jitThreshold: selectedJitThreshold,
+      quantum: selectedQuantum,
+    };
+    const jitLabel = jitPolicy === "enabled"
+      ? `JIT enabled, threshold ${selectedJitThreshold}`
+      : jitPolicy === "forced-off"
+        ? "JIT forced off by ?jit=0"
+        : jitPolicy.startsWith("unavailable-")
+          ? (jitPolicy === "unavailable-no-isolation"
+              ? "JIT requested but unavailable without cross-origin isolation"
+              : "JIT requested but this machine exposes no compiled executor")
+          : "JIT off: measured fast interpreter wins cold process startup";
+    term.writeln(`\x1b[90m[execution: ${backend}; ${interpreter} interpreter; ${jitLabel}; quantum ${selectedQuantum}]\x1b[0m`);
+    window.__jitStats = async () => await linuxCtl?.jitStats?.() ?? null;
+    window.__schedulerStats = async () => await linuxCtl?.schedulerStats?.() ?? null;
+    window.__workerRpcStats = async () => await linuxCtl?.workerRpcStats?.() ?? null;
+    // A visibilitychange may have happened while _bootLinux was still awaiting READY, when linuxCtl
+    // was null and the event handler had nothing to pause. Reconcile once before advertising ready.
+    if (document.hidden) {
+      try { await ctlForRelease.pause(); } catch { /* terminal settlement owns the visible error */ }
+    }
+    if (linuxCtl === ctlForRelease && restoredReadyPending) {
+      // Restores resume at an already-usable prompt and therefore never emit one of the cold-boot
+      // READY_MARKERS. Complete both readiness surfaces together: markGuestReady() unlocks the UI,
+      // while the typed ready event stops the 250 ms fetchStats poll below. Leaving the latter dark
+      // caused an otherwise-idle whole-machine Worker to receive four diagnostic RPCs per second.
+      bootProgress.dispatch({ kind: "ready" });
+      markGuestReady();
+    }
     // A restored guest is parked at its shell prompt with no pending output; send a newline so the
-    // shell re-renders its prompt instead of showing a blank terminal. (markGuestReady already fired
-    // in onState("restored").) Best-effort — a cold boot ignores this.
+    // shell re-renders its prompt instead of showing a blank terminal. (markGuestReady has already
+    // fired through the deferred restored-ready block above.) Best-effort — a cold boot ignores this.
     try {
-      if (linuxCtl?.restoredFromBootSnapshot?.()) linuxCtl.sendInput?.(new Uint8Array([0x0a]));
+      if (linuxCtl?.restoredFromBootSnapshot?.()) linuxCtl.sendInput?.(new Uint8Array([0x0d]));
     } catch { /* prompt nudge is best-effort */ }
     fileTransferUI.attachController(opts.fileTransfer ? linuxCtl : null);
     // E3-T24a: a lazy/chunked image reports no per-fetch bytes, so drive the byte-weighted `chunk`
     // phase from the loader's running counter until the prompt is reached or the boot ends.
     if (typeof linuxCtl.fetchStats === "function") {
-      const pollChunks = () => {
+      const pollChunks = async () => {
         if (!linuxCtl || bootProgress.state.ready || bootProgress.state.error) return;
-        const stats = linuxCtl.fetchStats?.();
-        if (stats) {
-          if (stats.error) bootProgress.fail(String(stats.error));
-          else if (stats.bytes > 0) bootProgress.onChunkBytes(stats.bytes, imageLen);
+        try {
+          const stats = await linuxCtl.fetchStats?.();
+          if (stats) {
+            if (stats.error) bootProgress.fail(String(stats.error));
+            else if (stats.bytes > 0) bootProgress.onChunkBytes(stats.bytes, imageLen);
+          }
+        } catch (error) {
+          // A fatal worker path rejects all pending RPCs and separately settles whenDone. Let that
+          // single terminal path own the visible diagnostic instead of creating a page rejection.
+          if (linuxCtl === ctlForRelease) console.debug("chunk stats stopped:", error?.message || error);
         }
-        setTimeout(pollChunks, 250);
+        if (linuxCtl === ctlForRelease) setTimeout(pollChunks, 250);
       };
       setTimeout(pollChunks, 250);
     }
-    linuxCtl.whenDone.then((state) => {
-      // E3-T09 (critic NOTE-1): release the writer lock on EVERY terminal outcome (halt,
-      // error, stop) — release is idempotent, and a future writer-stop UI path must not
-      // strand the lock until tab close.
-      try { ctlForRelease?.releaseWriterLock?.(); } catch {}
-      ui.detachSink();
-      fileTransferUI.attachController(null);
-      bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
-      linuxCtl = null;
-      resetGuestReady();
-      // E2-T26: surface the T17 terminal ExitReason as a distinct HALTED state, not just a status
-      // string — the machine is gone; you must re-boot from a fresh Machine.
-      const halt = { poweroff: "powered off", reboot: "rebooted (halted)", error: "error" };
-      const reason = halt[state] || (state?.startsWith?.("exited") ? state : state?.startsWith?.("fail") ? state : null);
-      if (reason) {
-        setStatus(`⏻ machine halted — ${reason}`);
-        setGuestChip(null);
-        term.writeln(`\r\n\x1b[7m machine halted (${reason}) — click "Boot Linux"/"Boot Alpine" to boot a fresh machine \x1b[0m`);
-      } else {
-        setStatus(`linux: ${state}`);
-      }
-    });
     // Route terminal keystrokes/paste to the guest's ttyS0 via the backpressure bridge.
     ui.attachSink((bytes) => {
       // Defense-in-depth: the wasm machine rejects re-entrant sendInput (a console/output callback
@@ -370,15 +740,31 @@ async function runLinuxBoot(opts, banner) {
     // type immediately without first having to click into it.
     ui.focus();
   } catch (e) {
+    setupFailed = true;
+    if (bootController) {
+      try {
+        await retireLinuxController(bootController);
+      } catch (cleanupError) {
+        console.warn("wasm-vm: failed boot cleanup:", cleanupError?.message || cleanupError);
+      }
+    }
     lastBootError = e.message || String(e); // surfaced to the Docker tab's typed-error path
     term.writeln(`\x1b[31mcannot boot: ${e.message || e}\x1b[0m`);
+    setStatus(_useCpuWorker
+      ? `linux worker fatal: ${lastBootError} — reload with ?worker=0 for the main-thread fallback`
+      : `cannot boot: ${lastBootError}`);
     bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
-    linuxCtl = null;
+    if (!bootController) clearLinuxBootClaim(request);
+    else if (linuxCtl === bootController) clearLinuxControllerOwner(bootController);
   }
 }
 if (bootLinuxBtn) {
   bootLinuxBtn.addEventListener("click", () =>
-    runLinuxBoot({ manifestUrl: "./artifacts.json" }, "booting unmodified Linux 6.6.63 + busybox in wasm…"));
+    runLinuxBoot(
+      { manifestUrl: "./artifacts.json" },
+      "booting unmodified Linux 6.6.63 + busybox in wasm…",
+      { requestKey: "busybox", onClaim: () => setGuestChip("busybox") },
+    ));
 }
 if (bootAlpineBtn) {
   bootAlpineBtn.addEventListener("click", () =>
@@ -399,6 +785,7 @@ if (bootAlpineBtn) {
         fileTransfer: true,
       },
       "booting production Alpine via LAZY CHUNK FETCH — only touched chunks download; ~minutes to login:…",
+      { requestKey: "alpine", onClaim: () => setGuestChip("alpine") },
     ));
 }
 if (bootAlpineFullBtn) {
@@ -406,6 +793,7 @@ if (bootAlpineFullBtn) {
     runLinuxBoot(
       { manifestUrl: "./artifacts-alpine.json", mode: "disk", ramMib: 256, fileTransfer: true },
       "debug boot: loading the full Alpine ext4 image before virtio-blk startup…",
+      { requestKey: "alpine", onClaim: () => setGuestChip("alpine") },
     ));
 }
 // E4-T01/T02 browser-evidence hooks (additive, test-only): the served index.html on this branch
@@ -424,6 +812,7 @@ window.__bootAlpineChunked = () =>
       fileTransfer: true,
     },
     "E4 browser profiling boot (chunked Alpine, lazy fetch)",
+    { requestKey: "alpine", onClaim: () => setGuestChip("alpine") },
   );
 // ── Docker tab ⇄ real boot bridge ─────────────────────────────────────────────
 // The Docker "Run" button drives the SAME real boot machinery as this Terminal tab — it never
@@ -433,7 +822,9 @@ window.__bootAlpineChunked = () =>
 // isolation path (unshare + overlay + pivot_root), which is built and native-tested
 // (crates/cli/tests/boot_wvrun.rs) but not yet baked into the served in-browser image.
 const runBannerEl = document.getElementById("run-banner");
+let currentRunBanner = null;
 function setRunBanner(html) {
+  currentRunBanner = html;
   // Deliberately a no-op now: the Demo tab's blue status bar shows guest/boot state, so we keep the
   // terminal free of info banners. (Signature kept — callers still invoke it.)
   void html;
@@ -519,23 +910,18 @@ function resetGuestReady() {
 // E3.6-T05: shared body for the Alpine-family chunked/restore boots (bare Alpine + node-Alpine). Both
 // use the SAME chunked base (R2 chunked-alpine) + the SAME persistent restore path; only the manifest
 // (which names the RAM snapshot + overlay-delta to restore) and the guest chip differ.
-async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl) {
-  if (linuxCtl) return { ok: true, already: true };
-  lastBootError = null;
+async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfileUrl) {
   const _imgManifest = imageManifestUrl || (R2_ASSETS + "/chunked-alpine/manifest.json");
   // Return-visit fast-restore is handled in loader.js: the RAM restore is armed whenever a coherent,
   // unmodified overlay is present (not only on a fresh seed), so reloads restore instead of cold-booting;
   // a MODIFIED overlay is rejected by restoreDecisionCode → cold boot. `?keep`/`?persist=1`/`?noSnapshot`
   // are honored in the loader.
-  setRunBanner(
-    'Booting <b>Alpine</b> (lazy chunk fetch)… restoring a build-time snapshot — the console below is the real guest.',
-  );
-  setGuestChip(chip);
-  await runLinuxBoot(
+  const boot = await runLinuxBoot(
     {
       manifestUrl,
       mode: "chunked",
       imageManifestUrl: _imgManifest,
+      bootProfileUrl,
       cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
       // The restore needs the persistent (IndexedDB overlay) path: the seeded post-boot disk delta
       // lives in that overlay. Default ON so the shipped RAM snapshot + delta restore in ~1s;
@@ -547,8 +933,23 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl) {
       fileTransfer: true,
     },
     "booting production Alpine via LAZY CHUNK FETCH — only touched chunks download…",
+    {
+      requestKey: chip,
+      onClaim: () => {
+        lastBootError = null;
+        setRunBanner(
+          'Booting <b>Alpine</b> (lazy chunk fetch)… restoring a build-time snapshot — the console below is the real guest.',
+        );
+        setGuestChip(chip);
+      },
+    },
   );
-  return linuxCtl ? { ok: true } : { ok: false, error: lastBootError || "boot failed" };
+  if (boot?.winner !== chip) {
+    return { ok: false, conflict: true, error: `${boot?.winner ?? "another guest"} boot already owns the VM` };
+  }
+  return linuxCtl
+    ? { ok: true, ...(boot?.already ? { already: true } : {}) }
+    : { ok: false, error: lastBootError || "boot failed" };
 }
 
 window.wvmDemo = {
@@ -564,18 +965,27 @@ window.wvmDemo = {
   // already:true } if it was already up, or { ok:false, error } if the real boot path refused to
   // start (e.g. a manifest/integrity failure) — the caller must show that error, never fall back.
   async runBusybox() {
-    if (linuxCtl) {
-      setRunBanner('busybox userland is already live below — you are at the shell. Try <code>ls /</code> or <code>uname -a</code>.');
-      return { ok: true, already: true };
-    }
-    lastBootError = null;
-    setRunBanner(
-      'Booting a real RISC-V Linux guest → <b>busybox</b> userland… watch the console below; ' +
-      'you will land at the <code>#</code> shell prompt in a few seconds.',
+    const boot = await runLinuxBoot(
+      { manifestUrl: "./artifacts.json" },
+      "booting the real busybox userland on RISC-V Linux (in wasm)…",
+      {
+        requestKey: "busybox",
+        onClaim: () => {
+          lastBootError = null;
+          setRunBanner(
+            'Booting a real RISC-V Linux guest → <b>busybox</b> userland… watch the console below; ' +
+            'you will land at the <code>#</code> shell prompt in a few seconds.',
+          );
+          setGuestChip("busybox");
+        },
+      },
     );
-    setGuestChip("busybox");
-    await runLinuxBoot({ manifestUrl: "./artifacts.json" }, "booting the real busybox userland on RISC-V Linux (in wasm)…");
-    return linuxCtl ? { ok: true } : { ok: false, error: lastBootError || "boot failed" };
+    if (boot?.winner !== "busybox") {
+      return { ok: false, conflict: true, error: `${boot?.winner ?? "another guest"} boot already owns the VM` };
+    }
+    return linuxCtl
+      ? { ok: true, ...(boot?.already ? { already: true } : {}) }
+      : { ok: false, error: lastBootError || "boot failed" };
   },
   // Boot the ALPINE guest (chunked, lazy-fetch) — the one that ships `wvrun` + baked OCI bundles at
   // /opt/containers, so the Docker tab can run REAL containers. Resolves { ok:true } once running,
@@ -599,6 +1009,10 @@ window.wvmDemo = {
       "./artifacts-node-alpine.json",
       "node-alpine",
       R2_ASSETS + "/chunked-node-alpine/manifest.json",
+      // The plain-Alpine first-touch profile is actively harmful for the separately re-chunked
+      // Node base: it speculatively fetched ~90 unused chunks during a one-line Node command. Until
+      // a restore-bound Node profile is recorded, demand + sequential readahead is faster and exact.
+      null,
     );
   },
   // True only once the booted guest actually has the container runtime (Alpine, not the busybox
@@ -696,28 +1110,28 @@ window.__term = ui;
 // `date` is correct while `uptime` counts only executed time.
 document.addEventListener("visibilitychange", () => {
   if (!linuxCtl) return;
-  if (document.hidden) linuxCtl.pause();
-  else linuxCtl.resume();
+  const pending = document.hidden ? linuxCtl.pause() : linuxCtl.resume();
+  void Promise.resolve(pending).catch(() => {});
 });
 // Test hook for the timekeeping spec — drive pause/resume without a real tab switch.
 window.__linux = {
   pause: () => linuxCtl?.pause(),
   resume: () => linuxCtl?.resume(),
-  isPaused: () => !!linuxCtl?.isPaused(),
+  isPaused: async () => Boolean(await linuxCtl?.isPaused?.()),
   // E4: did this boot skip the Linux boot by restoring the shipped boot snapshot?
   restoredFromBootSnapshot: () => !!linuxCtl?.restoredFromBootSnapshot?.(),
 };
 // E3-T21c proof hook: the UI must not mistake an attached controller for guest-agent readiness.
-window.__fileTransferReady = () =>
-  [0, 1].map((slot) => Boolean(linuxCtl?.fileTransferReady?.(slot)));
+window.__fileTransferReady = async () =>
+  Promise.all([0, 1].map(async (slot) => Boolean(await linuxCtl?.fileTransferReady?.(slot))));
 // E3-T02 test hook: the chunked-boot lazy-fetch instrumentation ({ fetches, bytes, error } | null).
-window.__chunkedStats = () => linuxCtl?.fetchStats?.() ?? null;
+window.__chunkedStats = async () => await linuxCtl?.fetchStats?.() ?? null;
 // E3-T15 test hook: counters from the production DHCP server for the current guest boot.
-window.__dhcpStats = () => linuxCtl?.dhcpStats?.() ?? null;
+window.__dhcpStats = async () => await linuxCtl?.dhcpStats?.() ?? null;
 // E3-T05 test hook: force a durable flush of the overlay to IndexedDB (Promise → blocks persisted).
 window.__persist = () => linuxCtl?.persist?.() ?? Promise.resolve(0);
 // E3-T10 proof hook: `{ pendingBlocks, pendingBytes, flushWaiting, writeWaiting }`.
-window.__persistStats = () => linuxCtl?.persistStats?.() ?? null;
+window.__persistStats = async () => await linuxCtl?.persistStats?.() ?? null;
 // E3-T12d resume-snapshot hooks (persistent boot only) — a Playwright spec drives save → advance gen
 // → decision === "stale", and save → reload → decision === "resume".
 // Take + durably persist a whole-machine resume snapshot; resolves true on success.
@@ -729,7 +1143,7 @@ window.__snapshotSave = async () => {
 // The resume-vs-cold-boot verdict for the persisted snapshot against the live machine identity.
 window.__snapshotDecision = async () => linuxCtl?.snapshotDecision?.() ?? "missing";
 // Advance the overlay commit generation (invalidates a prior snapshot → "stale"). Returns new gen.
-window.__snapshotAdvanceGen = () => linuxCtl?.snapshotAdvanceGen?.() ?? 0;
+window.__snapshotAdvanceGen = async () => await linuxCtl?.snapshotAdvanceGen?.() ?? 0;
 // AC3 export/import: raw persisted-blob bytes out, and persist an external blob into this base's store.
 window.__snapshotExport = async () => linuxCtl?.snapshotExport?.() ?? null;
 window.__snapshotImport = async (bytes) => {
@@ -784,6 +1198,8 @@ function setStatus(text) {
 let currentGuestKind = null;
 function setGuestChip(kind) {
   currentGuestKind = kind;
+  if (kind) document.documentElement.dataset.linuxGuest = kind;
+  else delete document.documentElement.dataset.linuxGuest;
   const el = document.getElementById("ide-term-who");
   if (!el) return;
   if (kind) {
@@ -1363,14 +1779,44 @@ setInteractiveState();
   // Guest choice also honors `?boot=` as an alias.
   const _bootQ = new URLSearchParams(location.search);
   const _guest = (_bootQ.get("guest") || _bootQ.get("boot") || "node-alpine").toLowerCase();
+  const runConfiguredAutoBoot = () => {
+    if ((_guest === "node-alpine" || _guest === "nodealpine") && nodeAlpineAvailable) {
+      return window.wvmDemo.bootNodeAlpine();
+    }
+    if (_guest === "alpine" && alpineAvailable) return window.wvmDemo.bootAlpine();
+    if (_guest === "busybox") return window.wvmDemo.runBusybox();
+    // Default flavor requested but its artifacts aren't here → busybox fast-restore (always works).
+    return window.wvmDemo.runBusybox();
+  };
+  if (_bootQ.has("testHooks")) {
+    window.__runConfiguredAutoBootForTest = runConfiguredAutoBoot;
+    window.__linuxBootStateForTest = () => ({
+      active: linuxActiveRequest?.key ?? null,
+      inFlight: linuxBootRequest?.key ?? null,
+      manifest: document.documentElement.dataset.linuxManifest ?? null,
+      guest: currentGuestKind,
+      guestReady,
+      runBanner: currentRunBanner,
+      lastBootError,
+    });
+    window.__retireLinuxControllerForTest = async () => {
+      const controller = linuxCtl;
+      if (!controller) return false;
+      return retireLinuxController(controller);
+    };
+  }
   if (!linuxCtl && !_bootQ.has("noAutoBoot")) {
     setTimeout(() => {
       try {
-        if ((_guest === "node-alpine" || _guest === "nodealpine") && nodeAlpineAvailable) window.wvmDemo.bootNodeAlpine();
-        else if (_guest === "alpine" && alpineAvailable) window.wvmDemo.bootAlpine();
-        else if (_guest === "busybox") window.wvmDemo.runBusybox();
-        // Default flavor requested but its artifacts aren't here → busybox fast-restore (always works).
-        else window.wvmDemo.runBusybox();
+        // Invoke the production callback synchronously so its single-flight ownership is claimed
+        // before the diagnostic event. A same-task test listener can then attack it with another
+        // flavor without replacing the real 400 ms auto-boot path.
+        const autoBoot = Promise.resolve(runConfiguredAutoBoot());
+        if (_bootQ.has("testHooks")) {
+          window.__configuredAutoBootPromise = autoBoot;
+          window.dispatchEvent(new Event("wvm:auto-boot-started"));
+        }
+        void autoBoot.catch(() => {});
       } catch {}
     }, 400);
   }
