@@ -1,0 +1,1279 @@
+{
+  "schema": 3,
+  "kind": "node-runtime-benchmark-comparison-v3",
+  "publicationStatus": "competitor-candidate",
+  "updatedAt": "2026-08-12T02:06:43.556Z",
+  "fixture": {
+    "id": "runtime-bench-v1-2m-imul",
+    "iterations": 2000000,
+    "sampleCount": 7,
+    "expectedChecksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+    "programSha256": "47f8dd7007d8d52015d7e29e0964dafd759e917e486b46c25daccde9521a6b12"
+  },
+  "native": {
+    "runtime": "native-node",
+    "label": "Native Node",
+    "status": "measured",
+    "version": "v23.11.0",
+    "executionModel": "Fresh host Node.js process for every command sample",
+    "source": "https://nodejs.org/",
+    "programSha256": "47f8dd7007d8d52015d7e29e0964dafd759e917e486b46c25daccde9521a6b12",
+    "samplesMs": [
+      73.892417,
+      71.92225,
+      73.021083,
+      72.14937499999999,
+      72.150375,
+      71.544625,
+      72.494417
+    ],
+    "checksums": [
+      "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+      "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+      "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+      "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+      "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+      "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+      "RUNTIME_BENCH_v1_76363d7f_79d1baaf"
+    ],
+    "firstMs": 73.892417,
+    "medianMs": 72.150375,
+    "relativeToNative": 1,
+    "commandMetric": {
+      "start": "command-submitted",
+      "stop": "checksum-marker-observed",
+      "freshness": "fresh-command-in-ready-runtime",
+      "mechanism": "Spawn node -e and stop when the checksum marker appears on stdout"
+    },
+    "commandRuns": [
+      {
+        "id": "f9faeee5bd9117c816260135424308461e77957c9cbca722bb4a41e9fe2d7dd9",
+        "index": 0,
+        "elapsedMs": 73.892417,
+        "completeMs": 76.482875,
+        "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "commandSamples[0]",
+        "oracleSha256": "f9faeee5bd9117c816260135424308461e77957c9cbca722bb4a41e9fe2d7dd9"
+      },
+      {
+        "id": "3a0ad11c1a736d7bc16c2b93d46c6c3a370bd6f52253fcae18ecad30ac86c26d",
+        "index": 1,
+        "elapsedMs": 71.92225,
+        "completeMs": 74.06262500000001,
+        "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "commandSamples[1]",
+        "oracleSha256": "3a0ad11c1a736d7bc16c2b93d46c6c3a370bd6f52253fcae18ecad30ac86c26d"
+      },
+      {
+        "id": "b7037a31e1301432eeda21a4e4be5e41961b0df11408ac3cfba283e33c08a77e",
+        "index": 2,
+        "elapsedMs": 73.021083,
+        "completeMs": 75.28954199999998,
+        "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "commandSamples[2]",
+        "oracleSha256": "b7037a31e1301432eeda21a4e4be5e41961b0df11408ac3cfba283e33c08a77e"
+      },
+      {
+        "id": "b271c522849c5a5445b1dc6d5fd9020d54743f06177aabaff5fa0d770c6b84a7",
+        "index": 3,
+        "elapsedMs": 72.14937499999999,
+        "completeMs": 74.390208,
+        "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "commandSamples[3]",
+        "oracleSha256": "b271c522849c5a5445b1dc6d5fd9020d54743f06177aabaff5fa0d770c6b84a7"
+      },
+      {
+        "id": "d801418b9ab4c63510f97d8df09ae0b6bcf573e8f8e8c82de75c5275b7dff883",
+        "index": 4,
+        "elapsedMs": 72.150375,
+        "completeMs": 74.50554199999999,
+        "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "commandSamples[4]",
+        "oracleSha256": "d801418b9ab4c63510f97d8df09ae0b6bcf573e8f8e8c82de75c5275b7dff883"
+      },
+      {
+        "id": "cd0c851fe5a42a15ce9d41b7c2fecd7c4d3fdad457673b2a360751a1f0192f10",
+        "index": 5,
+        "elapsedMs": 71.544625,
+        "completeMs": 73.465125,
+        "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "commandSamples[5]",
+        "oracleSha256": "cd0c851fe5a42a15ce9d41b7c2fecd7c4d3fdad457673b2a360751a1f0192f10"
+      },
+      {
+        "id": "8bc1ba56340f92dd637883b55204350d2f0062026712b1ca995655ef0b311dbf",
+        "index": 6,
+        "elapsedMs": 72.494417,
+        "completeMs": 74.48595899999998,
+        "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "commandSamples[6]",
+        "oracleSha256": "8bc1ba56340f92dd637883b55204350d2f0062026712b1ca995655ef0b311dbf"
+      }
+    ],
+    "readySamplesMs": [
+      25.125374999999963,
+      26.806332999999995,
+      25.662915999999996,
+      24.528374999999983,
+      24.63429199999996,
+      24.769291000000067,
+      24.938332999999943
+    ],
+    "readyMs": 24.938332999999943,
+    "readyMetric": {
+      "start": "runtime-launch-requested",
+      "stop": "first-probe-response-observed",
+      "freshness": "fresh-runtime-session",
+      "mechanism": "Spawn a fresh host Node.js process and stop at its first stdout response"
+    },
+    "readyRuns": [
+      {
+        "id": "b7a585e29fda1960160ce00542e412e3f3625409751ad733600fe704790f6b67",
+        "index": 0,
+        "elapsedMs": 25.125374999999963,
+        "completeMs": 27.07154199999991,
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "readySamples[0]",
+        "oracleSha256": "b7a585e29fda1960160ce00542e412e3f3625409751ad733600fe704790f6b67"
+      },
+      {
+        "id": "8a32ff576e5c43ec24d885316256c63ecd2678b5e28ef79f211a85e2daf72c97",
+        "index": 1,
+        "elapsedMs": 26.806332999999995,
+        "completeMs": 28.634582999999907,
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "readySamples[1]",
+        "oracleSha256": "8a32ff576e5c43ec24d885316256c63ecd2678b5e28ef79f211a85e2daf72c97"
+      },
+      {
+        "id": "2633ee0f987d5c29638b3af32d57cd1b12730a654086fe09d83797e73c5c04b9",
+        "index": 2,
+        "elapsedMs": 25.662915999999996,
+        "completeMs": 27.361541000000102,
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "readySamples[2]",
+        "oracleSha256": "2633ee0f987d5c29638b3af32d57cd1b12730a654086fe09d83797e73c5c04b9"
+      },
+      {
+        "id": "bb09a44ad30e4f706fb25be2f427d3785e735503fc5c5c9d562977942c4360c2",
+        "index": 3,
+        "elapsedMs": 24.528374999999983,
+        "completeMs": 26.593459000000053,
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "readySamples[3]",
+        "oracleSha256": "bb09a44ad30e4f706fb25be2f427d3785e735503fc5c5c9d562977942c4360c2"
+      },
+      {
+        "id": "17cef1e0481af3cf73dc1ae249c0478a251f9ea49dee4e9e0d85a0ab95623c09",
+        "index": 4,
+        "elapsedMs": 24.63429199999996,
+        "completeMs": 26.485500000000002,
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "readySamples[4]",
+        "oracleSha256": "17cef1e0481af3cf73dc1ae249c0478a251f9ea49dee4e9e0d85a0ab95623c09"
+      },
+      {
+        "id": "ccee17f767183339d65c5079d3cf84024992f4b63fe2ec2ba0f794f4ecbed767",
+        "index": 5,
+        "elapsedMs": 24.769291000000067,
+        "completeMs": 26.669708000000014,
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "readySamples[5]",
+        "oracleSha256": "ccee17f767183339d65c5079d3cf84024992f4b63fe2ec2ba0f794f4ecbed767"
+      },
+      {
+        "id": "ddd0df9430b62c31025e4288ea8022971074f45ebfe882557b2b3dbab83b090c",
+        "index": 6,
+        "elapsedMs": 24.938332999999943,
+        "completeMs": 26.90062499999999,
+        "rawArtifactSha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+        "locator": "readySamples[6]",
+        "oracleSha256": "ddd0df9430b62c31025e4288ea8022971074f45ebfe882557b2b3dbab83b090c"
+      }
+    ],
+    "rawEvidence": {
+      "selection": "seven fresh Node command processes and seven separate fresh readiness processes",
+      "artifacts": [
+        {
+          "path": "web/benchmark-evidence/raw/native-node/capture-1-0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d.json",
+          "sha256": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d"
+        }
+      ]
+    },
+    "evidence": {
+      "artifact": {
+        "path": "web/benchmark-native-node.json",
+        "sha256": "3b80e879cfea47dded9df3b0820b156ab0b4d7f2b9e1a0c0579b799d9837ee3a"
+      },
+      "provenance": {
+        "captureId": "e3ee45d599d5771b2a221c1959fe6f44585d3af35bd062b969cc8e151c33ad9f",
+        "collector": {
+          "runtime": "native-node",
+          "path": "web/benchmark-evidence/collectors/native-node-48a04e3dd3467ea3378cd33e2a2198fb23e6e63c441e4e9e1b8df6554319788c.mjs",
+          "sha256": "48a04e3dd3467ea3378cd33e2a2198fb23e6e63c441e4e9e1b8df6554319788c"
+        },
+        "captures": [
+          {
+            "captureId": "0969427cba3aafcb65948c9c20e25d9100fa0eaa06eb4e64af1fe2f0676cc57d",
+            "source": "https://nodejs.org/",
+            "capturedAt": {
+              "startedAt": "2026-08-12T02:06:32.876Z",
+              "finishedAt": "2026-08-12T02:06:33.590Z"
+            },
+            "revision": {
+              "node": "v23.11.0",
+              "executableSha256": "01ca46d5dbf4e6fd39e2cca6154b24e867fae029512b125b1b108ecfbcc1b462"
+            },
+            "browser": null
+          }
+        ]
+      }
+    }
+  },
+  "runtimes": [
+    {
+      "runtime": "webvm",
+      "label": "WebVM",
+      "status": "measured",
+      "version": "v18.20.1",
+      "executionModel": "Node.js in WebVM's i386 Linux virtual machine",
+      "source": "https://webvm.io/",
+      "programSha256": "47f8dd7007d8d52015d7e29e0964dafd759e917e486b46c25daccde9521a6b12",
+      "samplesMs": [
+        18668.892375000003,
+        19765.889499999997,
+        25310.04629199999,
+        20460.753624999998,
+        19997.346042000005,
+        18435.440584000004,
+        18827.411500000002
+      ],
+      "checksums": [
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf"
+      ],
+      "firstMs": 18668.892375000003,
+      "medianMs": 19765.889499999997,
+      "relativeToNative": 273.9540785477553,
+      "commandMetric": {
+        "start": "command-submitted",
+        "stop": "checksum-marker-observed",
+        "freshness": "fresh-command-in-ready-runtime",
+        "mechanism": "Submit node -e in the logged-in terminal and stop at its checksum marker"
+      },
+      "commandRuns": [
+        {
+          "id": "05c8f29647a5a8639fd5b172c0df4cb3c9609d81cb977e665e27f4713f3f1121",
+          "index": 0,
+          "elapsedMs": 18668.892375000003,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "b166fc60f892efd9ef16655bc28c1dd83f9b3f591e4f429c6a89ebd595d98b99",
+          "locator": "samples[0]",
+          "oracleSha256": "05c8f29647a5a8639fd5b172c0df4cb3c9609d81cb977e665e27f4713f3f1121"
+        },
+        {
+          "id": "050eb32b05612c6513a838bd353b3dd51321d316cc49b3601e36ce0715f21670",
+          "index": 1,
+          "elapsedMs": 19765.889499999997,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "78abcc20a7dadf9143409c99b8bf74d9ed81639289069e0b67361cd3d6d0add3",
+          "locator": "samples[0]",
+          "oracleSha256": "050eb32b05612c6513a838bd353b3dd51321d316cc49b3601e36ce0715f21670"
+        },
+        {
+          "id": "2c438d15b88f85ce86de99dfcd82a14e375d308e53e8d542d35766ee6c27f319",
+          "index": 2,
+          "elapsedMs": 25310.04629199999,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "11d2b00afc797251e4c0cdc8925f4bbcf8894a20bb102878f2f96a69cbd8f08c",
+          "locator": "samples[0]",
+          "oracleSha256": "2c438d15b88f85ce86de99dfcd82a14e375d308e53e8d542d35766ee6c27f319"
+        },
+        {
+          "id": "945b230c96ca5b71e49f2ce7992c9cf2973ef8da8b58006a707cc365ba8eb966",
+          "index": 3,
+          "elapsedMs": 20460.753624999998,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "c7f2560628ce90aa0506b20429500fa77ef06274cfcd9c87c8ff747181c2bc69",
+          "locator": "samples[0]",
+          "oracleSha256": "945b230c96ca5b71e49f2ce7992c9cf2973ef8da8b58006a707cc365ba8eb966"
+        },
+        {
+          "id": "9c5c88ecbbd4e8b3147f7833382d1e046d89465e0f147b09e2d4a3fe7525e368",
+          "index": 4,
+          "elapsedMs": 19997.346042000005,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "ad19d8632fdf7d41285673177b60175fb22ee7e3c57e82b4a18af56dc4ed0b87",
+          "locator": "samples[0]",
+          "oracleSha256": "9c5c88ecbbd4e8b3147f7833382d1e046d89465e0f147b09e2d4a3fe7525e368"
+        },
+        {
+          "id": "8c36941073be225fa91ebc1eb161418c6b7d3e772a17ad033250c572854a6eb6",
+          "index": 5,
+          "elapsedMs": 18435.440584000004,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "16982447820fb99fabe2e6f4b5ecae4a98f6a06a6285b02386030f0776595819",
+          "locator": "samples[0]",
+          "oracleSha256": "8c36941073be225fa91ebc1eb161418c6b7d3e772a17ad033250c572854a6eb6"
+        },
+        {
+          "id": "69c403a5e349ddc86c935388f7a252dedc9d015e25d72c161389ebc57b816635",
+          "index": 6,
+          "elapsedMs": 18827.411500000002,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "fc2539e8cc7ccd93e7d1db90db58511491fdc1de54d487268c1fd26e184e94fc",
+          "locator": "samples[0]",
+          "oracleSha256": "69c403a5e349ddc86c935388f7a252dedc9d015e25d72c161389ebc57b816635"
+        }
+      ],
+      "readySamplesMs": [
+        16019.854458,
+        15070.833916,
+        18537.207042000002,
+        21262.929958,
+        17059.33925,
+        15017.111584,
+        14916.892666
+      ],
+      "readyMs": 16019.854458,
+      "readyMetric": {
+        "start": "runtime-launch-requested",
+        "stop": "first-probe-response-observed",
+        "freshness": "fresh-runtime-session",
+        "mechanism": "Navigate a fresh WebVM, log in, and stop when the interactive shell prompt appears"
+      },
+      "readyRuns": [
+        {
+          "id": "0831e37a3bfdd39a91a73f54b595b394cabb5cd93f0677729d3f19703a5fb87e",
+          "index": 0,
+          "elapsedMs": 16019.854458,
+          "rawArtifactSha256": "b166fc60f892efd9ef16655bc28c1dd83f9b3f591e4f429c6a89ebd595d98b99",
+          "locator": "shellReadyMs",
+          "oracleSha256": "0831e37a3bfdd39a91a73f54b595b394cabb5cd93f0677729d3f19703a5fb87e"
+        },
+        {
+          "id": "b3cbb8aa881022936f563be0e6e103925b35a92b189ae3b5709599aafc353ce8",
+          "index": 1,
+          "elapsedMs": 15070.833916,
+          "rawArtifactSha256": "78abcc20a7dadf9143409c99b8bf74d9ed81639289069e0b67361cd3d6d0add3",
+          "locator": "shellReadyMs",
+          "oracleSha256": "b3cbb8aa881022936f563be0e6e103925b35a92b189ae3b5709599aafc353ce8"
+        },
+        {
+          "id": "32cba557ff5bb7d546991feade49afcf83f600f293bd20f47640bf2c76d84992",
+          "index": 2,
+          "elapsedMs": 18537.207042000002,
+          "rawArtifactSha256": "11d2b00afc797251e4c0cdc8925f4bbcf8894a20bb102878f2f96a69cbd8f08c",
+          "locator": "shellReadyMs",
+          "oracleSha256": "32cba557ff5bb7d546991feade49afcf83f600f293bd20f47640bf2c76d84992"
+        },
+        {
+          "id": "bbccbdaddf42a499e4e8c7564c7b6b08b8e1b4950dee5d9ace6c4fe83af69b1a",
+          "index": 3,
+          "elapsedMs": 21262.929958,
+          "rawArtifactSha256": "c7f2560628ce90aa0506b20429500fa77ef06274cfcd9c87c8ff747181c2bc69",
+          "locator": "shellReadyMs",
+          "oracleSha256": "bbccbdaddf42a499e4e8c7564c7b6b08b8e1b4950dee5d9ace6c4fe83af69b1a"
+        },
+        {
+          "id": "a311537e4e056b0c0a9f55502f9d7734a5759f1bcef479649078e465049d2f1a",
+          "index": 4,
+          "elapsedMs": 17059.33925,
+          "rawArtifactSha256": "ad19d8632fdf7d41285673177b60175fb22ee7e3c57e82b4a18af56dc4ed0b87",
+          "locator": "shellReadyMs",
+          "oracleSha256": "a311537e4e056b0c0a9f55502f9d7734a5759f1bcef479649078e465049d2f1a"
+        },
+        {
+          "id": "4beac0884235ed38e80daa4094adc9b68d0d2d546c9dde6a83b0aa5b41c72c31",
+          "index": 5,
+          "elapsedMs": 15017.111584,
+          "rawArtifactSha256": "16982447820fb99fabe2e6f4b5ecae4a98f6a06a6285b02386030f0776595819",
+          "locator": "shellReadyMs",
+          "oracleSha256": "4beac0884235ed38e80daa4094adc9b68d0d2d546c9dde6a83b0aa5b41c72c31"
+        },
+        {
+          "id": "6cacaa0cb1e3d2b07229a7da29e1065fe689c52666750cc0cedc51942ea4522f",
+          "index": 6,
+          "elapsedMs": 14916.892666,
+          "rawArtifactSha256": "fc2539e8cc7ccd93e7d1db90db58511491fdc1de54d487268c1fd26e184e94fc",
+          "locator": "shellReadyMs",
+          "oracleSha256": "6cacaa0cb1e3d2b07229a7da29e1065fe689c52666750cc0cedc51942ea4522f"
+        }
+      ],
+      "rawEvidence": {
+        "selection": "first Node command from each of seven independent fresh WebVM boots",
+        "artifacts": [
+          {
+            "path": "web/benchmark-evidence/raw/webvm/capture-1-b166fc60f892efd9ef16655bc28c1dd83f9b3f591e4f429c6a89ebd595d98b99.json",
+            "sha256": "b166fc60f892efd9ef16655bc28c1dd83f9b3f591e4f429c6a89ebd595d98b99"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webvm/capture-2-78abcc20a7dadf9143409c99b8bf74d9ed81639289069e0b67361cd3d6d0add3.json",
+            "sha256": "78abcc20a7dadf9143409c99b8bf74d9ed81639289069e0b67361cd3d6d0add3"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webvm/capture-3-11d2b00afc797251e4c0cdc8925f4bbcf8894a20bb102878f2f96a69cbd8f08c.json",
+            "sha256": "11d2b00afc797251e4c0cdc8925f4bbcf8894a20bb102878f2f96a69cbd8f08c"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webvm/capture-4-c7f2560628ce90aa0506b20429500fa77ef06274cfcd9c87c8ff747181c2bc69.json",
+            "sha256": "c7f2560628ce90aa0506b20429500fa77ef06274cfcd9c87c8ff747181c2bc69"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webvm/capture-5-ad19d8632fdf7d41285673177b60175fb22ee7e3c57e82b4a18af56dc4ed0b87.json",
+            "sha256": "ad19d8632fdf7d41285673177b60175fb22ee7e3c57e82b4a18af56dc4ed0b87"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webvm/capture-6-16982447820fb99fabe2e6f4b5ecae4a98f6a06a6285b02386030f0776595819.json",
+            "sha256": "16982447820fb99fabe2e6f4b5ecae4a98f6a06a6285b02386030f0776595819"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webvm/capture-7-fc2539e8cc7ccd93e7d1db90db58511491fdc1de54d487268c1fd26e184e94fc.json",
+            "sha256": "fc2539e8cc7ccd93e7d1db90db58511491fdc1de54d487268c1fd26e184e94fc"
+          }
+        ]
+      },
+      "evidence": {
+        "artifact": {
+          "path": "web/benchmark-webvm.json",
+          "sha256": "79aa3cf5d406d1081f524e2becb05fa82062da70d7ec7584398508aa1a0d7f6e"
+        },
+        "provenance": {
+          "captureId": "38244894654c1fe39a43ff0e6fdb6207c0bd0e8cbaa4b8d8c7ff72b6d74b6a5c",
+          "collector": {
+            "runtime": "webvm",
+            "path": "web/benchmark-evidence/collectors/webvm-222914082fd03db260fbfe619b0ee11acbcde275e8bf891ba982b06176189ec7.mjs",
+            "sha256": "222914082fd03db260fbfe619b0ee11acbcde275e8bf891ba982b06176189ec7"
+          },
+          "captures": [
+            {
+              "captureId": "b166fc60f892efd9ef16655bc28c1dd83f9b3f591e4f429c6a89ebd595d98b99",
+              "source": "https://webvm.io/alpine.html",
+              "capturedAt": {
+                "startedAt": "2026-08-11T23:51:51.064Z",
+                "finishedAt": "2026-08-11T23:52:45.502Z"
+              },
+              "revision": {
+                "guestNode": "v18.20.1",
+                "image": "webvm.io/alpine.html"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": null,
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "78abcc20a7dadf9143409c99b8bf74d9ed81639289069e0b67361cd3d6d0add3",
+              "source": "https://webvm.io/alpine.html",
+              "capturedAt": {
+                "startedAt": "2026-08-11T23:52:56.822Z",
+                "finishedAt": "2026-08-11T23:53:53.320Z"
+              },
+              "revision": {
+                "guestNode": "v18.20.1",
+                "image": "webvm.io/alpine.html"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": null,
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "11d2b00afc797251e4c0cdc8925f4bbcf8894a20bb102878f2f96a69cbd8f08c",
+              "source": "https://webvm.io/alpine.html",
+              "capturedAt": {
+                "startedAt": "2026-08-11T23:53:57.057Z",
+                "finishedAt": "2026-08-11T23:55:09.299Z"
+              },
+              "revision": {
+                "guestNode": "v18.20.1",
+                "image": "webvm.io/alpine.html"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": null,
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "c7f2560628ce90aa0506b20429500fa77ef06274cfcd9c87c8ff747181c2bc69",
+              "source": "https://webvm.io/alpine.html",
+              "capturedAt": {
+                "startedAt": "2026-08-11T23:55:15.859Z",
+                "finishedAt": "2026-08-11T23:56:22.126Z"
+              },
+              "revision": {
+                "guestNode": "v18.20.1",
+                "image": "webvm.io/alpine.html"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": null,
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "ad19d8632fdf7d41285673177b60175fb22ee7e3c57e82b4a18af56dc4ed0b87",
+              "source": "https://webvm.io/alpine.html",
+              "capturedAt": {
+                "startedAt": "2026-08-11T23:56:26.712Z",
+                "finishedAt": "2026-08-11T23:57:24.547Z"
+              },
+              "revision": {
+                "guestNode": "v18.20.1",
+                "image": "webvm.io/alpine.html"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": null,
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "16982447820fb99fabe2e6f4b5ecae4a98f6a06a6285b02386030f0776595819",
+              "source": "https://webvm.io/alpine.html",
+              "capturedAt": {
+                "startedAt": "2026-08-11T23:57:28.433Z",
+                "finishedAt": "2026-08-11T23:58:22.625Z"
+              },
+              "revision": {
+                "guestNode": "v18.20.1",
+                "image": "webvm.io/alpine.html"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": null,
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "fc2539e8cc7ccd93e7d1db90db58511491fdc1de54d487268c1fd26e184e94fc",
+              "source": "https://webvm.io/alpine.html",
+              "capturedAt": {
+                "startedAt": "2026-08-11T23:58:28.655Z",
+                "finishedAt": "2026-08-11T23:59:22.576Z"
+              },
+              "revision": {
+                "guestNode": "v18.20.1",
+                "image": "webvm.io/alpine.html"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": null,
+                "mode": "headless"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "runtime": "almostnode",
+      "label": "almostnode",
+      "status": "measured",
+      "version": "v20.0.0 / package 0.4.0",
+      "executionModel": "Browser JavaScript Node-compatibility container",
+      "source": "https://github.com/BLamy/almostnode",
+      "programSha256": "47f8dd7007d8d52015d7e29e0964dafd759e917e486b46c25daccde9521a6b12",
+      "samplesMs": [
+        239.1449999809265,
+        238.21500000357628,
+        236.91499999165535,
+        239.34000000357628,
+        242.37000000476837,
+        244.30000001192093,
+        245.6749999821186
+      ],
+      "checksums": [
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf"
+      ],
+      "firstMs": 239.1449999809265,
+      "medianMs": 239.34000000357628,
+      "relativeToNative": 3.3172384759410645,
+      "commandMetric": {
+        "start": "command-submitted",
+        "stop": "checksum-marker-observed",
+        "freshness": "fresh-command-in-ready-runtime",
+        "mechanism": "Call container.run(node -e) and stop after checksum stdout plus exit"
+      },
+      "commandRuns": [
+        {
+          "id": "77f0a1c5de3c52db8f7be891047c82a8141e59607165bc90f3fed119dde8379c",
+          "index": 0,
+          "elapsedMs": 239.1449999809265,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "37bffc5c8dd0fd3f65966bfbc23e2b129d388fff98bfa14fbcfb84d5d831f92a",
+          "locator": "samples[0]",
+          "oracleSha256": "77f0a1c5de3c52db8f7be891047c82a8141e59607165bc90f3fed119dde8379c"
+        },
+        {
+          "id": "2ce2a93e60a1bf0e75a02a857f2cc3870972c25d8da6b1d7d7bc04c6c0b5bb10",
+          "index": 1,
+          "elapsedMs": 238.21500000357628,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "db6fae9b6fa3bd385cc3689acec039729fc1ec9ba8eda21466fc230139499bde",
+          "locator": "samples[0]",
+          "oracleSha256": "2ce2a93e60a1bf0e75a02a857f2cc3870972c25d8da6b1d7d7bc04c6c0b5bb10"
+        },
+        {
+          "id": "ef1005ad887b442d048b3bba67abe5694a0fe10947bc226322d66ddfb3d0bba5",
+          "index": 2,
+          "elapsedMs": 236.91499999165535,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "c6318c044c8a8c56e527b6beb9544d9d4a857bd234abfa01cb86166733046799",
+          "locator": "samples[0]",
+          "oracleSha256": "ef1005ad887b442d048b3bba67abe5694a0fe10947bc226322d66ddfb3d0bba5"
+        },
+        {
+          "id": "7df9ecec20b8cc71fec402e7087f4a5fe2373251d74367ea3b67a515601d7ea7",
+          "index": 3,
+          "elapsedMs": 239.34000000357628,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "9fe43f2843ec2e8a52a4a0d0677c5e1da6c5fc90db00db507e98b7e035313d0b",
+          "locator": "samples[0]",
+          "oracleSha256": "7df9ecec20b8cc71fec402e7087f4a5fe2373251d74367ea3b67a515601d7ea7"
+        },
+        {
+          "id": "d24346e990286255805218ed1239c411eac1de05f8963951a9de301f30fac905",
+          "index": 4,
+          "elapsedMs": 242.37000000476837,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "916513ad040d70c42e39d09c9b04b8acea2fa88ba872b104b2e231b16fad3d4d",
+          "locator": "samples[0]",
+          "oracleSha256": "d24346e990286255805218ed1239c411eac1de05f8963951a9de301f30fac905"
+        },
+        {
+          "id": "735119503df716b81853721392430b1cf1ea895f94b2eafa8fd6464e9cfa614b",
+          "index": 5,
+          "elapsedMs": 244.30000001192093,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "045f65598c68c1067f5dcb0386f5fdaa839081e13033522e74ecfc055ed10f4c",
+          "locator": "samples[0]",
+          "oracleSha256": "735119503df716b81853721392430b1cf1ea895f94b2eafa8fd6464e9cfa614b"
+        },
+        {
+          "id": "0db117c86340aaa96b4df3de2a0b1e32ac0d2947497de0d90d045c9fa7759bfb",
+          "index": 6,
+          "elapsedMs": 245.6749999821186,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "a209bc8c2f74ec144d1b887b6d6e56851aa761c0565ec9eba56919c085d49e3b",
+          "locator": "samples[0]",
+          "oracleSha256": "0db117c86340aaa96b4df3de2a0b1e32ac0d2947497de0d90d045c9fa7759bfb"
+        }
+      ],
+      "readySamplesMs": [
+        25.939999997615814,
+        25.814999997615814,
+        21.24500000476837,
+        25.78499999642372,
+        25.125,
+        22.87000000476837,
+        27.205000013113022
+      ],
+      "readyMs": 25.78499999642372,
+      "readyMetric": {
+        "start": "runtime-launch-requested",
+        "stop": "first-probe-response-observed",
+        "freshness": "fresh-runtime-session",
+        "mechanism": "Import, createContainer(), and complete node --version in a fresh headless browser"
+      },
+      "readyRuns": [
+        {
+          "id": "b87668668367e7cdecad342d45aa42c62b77a64358f2ba9e6aa86f158b0a4b69",
+          "index": 0,
+          "elapsedMs": 25.939999997615814,
+          "rawArtifactSha256": "37bffc5c8dd0fd3f65966bfbc23e2b129d388fff98bfa14fbcfb84d5d831f92a",
+          "locator": "commandReadyMs",
+          "oracleSha256": "b87668668367e7cdecad342d45aa42c62b77a64358f2ba9e6aa86f158b0a4b69"
+        },
+        {
+          "id": "aec70fad5508a43de0aa4022cf179ce224c3d88c0ab39efda61fc8001c1c3a10",
+          "index": 1,
+          "elapsedMs": 25.814999997615814,
+          "rawArtifactSha256": "db6fae9b6fa3bd385cc3689acec039729fc1ec9ba8eda21466fc230139499bde",
+          "locator": "commandReadyMs",
+          "oracleSha256": "aec70fad5508a43de0aa4022cf179ce224c3d88c0ab39efda61fc8001c1c3a10"
+        },
+        {
+          "id": "98990efd84e0bde07c0ab695db779bd33e59cbcbbe158e613d46e7fb7107e64b",
+          "index": 2,
+          "elapsedMs": 21.24500000476837,
+          "rawArtifactSha256": "c6318c044c8a8c56e527b6beb9544d9d4a857bd234abfa01cb86166733046799",
+          "locator": "commandReadyMs",
+          "oracleSha256": "98990efd84e0bde07c0ab695db779bd33e59cbcbbe158e613d46e7fb7107e64b"
+        },
+        {
+          "id": "fc914e54db7fa70a8848358c0bf4671966e3ba2de479389a9c7e3d0c85d4dfc7",
+          "index": 3,
+          "elapsedMs": 25.78499999642372,
+          "rawArtifactSha256": "9fe43f2843ec2e8a52a4a0d0677c5e1da6c5fc90db00db507e98b7e035313d0b",
+          "locator": "commandReadyMs",
+          "oracleSha256": "fc914e54db7fa70a8848358c0bf4671966e3ba2de479389a9c7e3d0c85d4dfc7"
+        },
+        {
+          "id": "3d064a52e833fe300d445404de226e7b89ae86aa10542faae715d8f4623d5e33",
+          "index": 4,
+          "elapsedMs": 25.125,
+          "rawArtifactSha256": "916513ad040d70c42e39d09c9b04b8acea2fa88ba872b104b2e231b16fad3d4d",
+          "locator": "commandReadyMs",
+          "oracleSha256": "3d064a52e833fe300d445404de226e7b89ae86aa10542faae715d8f4623d5e33"
+        },
+        {
+          "id": "1b61657cccc119085937055198740afeaaf27ef02a17d668072628db938e2d2b",
+          "index": 5,
+          "elapsedMs": 22.87000000476837,
+          "rawArtifactSha256": "045f65598c68c1067f5dcb0386f5fdaa839081e13033522e74ecfc055ed10f4c",
+          "locator": "commandReadyMs",
+          "oracleSha256": "1b61657cccc119085937055198740afeaaf27ef02a17d668072628db938e2d2b"
+        },
+        {
+          "id": "e08d2233c3559f1f3353b39aa57ff8af4d2959228eb82e78274ac0ffa6738dae",
+          "index": 6,
+          "elapsedMs": 27.205000013113022,
+          "rawArtifactSha256": "a209bc8c2f74ec144d1b887b6d6e56851aa761c0565ec9eba56919c085d49e3b",
+          "locator": "commandReadyMs",
+          "oracleSha256": "e08d2233c3559f1f3353b39aa57ff8af4d2959228eb82e78274ac0ffa6738dae"
+        }
+      ],
+      "rawEvidence": {
+        "selection": "first Node command from each of seven independent fresh almostnode containers",
+        "artifacts": [
+          {
+            "path": "web/benchmark-evidence/raw/almostnode/capture-1-37bffc5c8dd0fd3f65966bfbc23e2b129d388fff98bfa14fbcfb84d5d831f92a.json",
+            "sha256": "37bffc5c8dd0fd3f65966bfbc23e2b129d388fff98bfa14fbcfb84d5d831f92a"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/almostnode/capture-2-db6fae9b6fa3bd385cc3689acec039729fc1ec9ba8eda21466fc230139499bde.json",
+            "sha256": "db6fae9b6fa3bd385cc3689acec039729fc1ec9ba8eda21466fc230139499bde"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/almostnode/capture-3-c6318c044c8a8c56e527b6beb9544d9d4a857bd234abfa01cb86166733046799.json",
+            "sha256": "c6318c044c8a8c56e527b6beb9544d9d4a857bd234abfa01cb86166733046799"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/almostnode/capture-4-9fe43f2843ec2e8a52a4a0d0677c5e1da6c5fc90db00db507e98b7e035313d0b.json",
+            "sha256": "9fe43f2843ec2e8a52a4a0d0677c5e1da6c5fc90db00db507e98b7e035313d0b"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/almostnode/capture-5-916513ad040d70c42e39d09c9b04b8acea2fa88ba872b104b2e231b16fad3d4d.json",
+            "sha256": "916513ad040d70c42e39d09c9b04b8acea2fa88ba872b104b2e231b16fad3d4d"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/almostnode/capture-6-045f65598c68c1067f5dcb0386f5fdaa839081e13033522e74ecfc055ed10f4c.json",
+            "sha256": "045f65598c68c1067f5dcb0386f5fdaa839081e13033522e74ecfc055ed10f4c"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/almostnode/capture-7-a209bc8c2f74ec144d1b887b6d6e56851aa761c0565ec9eba56919c085d49e3b.json",
+            "sha256": "a209bc8c2f74ec144d1b887b6d6e56851aa761c0565ec9eba56919c085d49e3b"
+          }
+        ]
+      },
+      "evidence": {
+        "artifact": {
+          "path": "web/benchmark-almostnode.json",
+          "sha256": "4cbd668eb01b3d34ca02ef7f079c12faee2ee7f512f08aa8dffa7028c99f4f18"
+        },
+        "provenance": {
+          "captureId": "a40333dcf04be6407616d4078a12e14407f6f077ce6ecdee4c1e0dfc8c648367",
+          "collector": {
+            "runtime": "almostnode",
+            "path": "web/benchmark-evidence/collectors/almostnode-7dab28d4747cdf344f7e43889d2bbf2b41e07f5a0aecc96b6ea708dce369410e.mjs",
+            "sha256": "7dab28d4747cdf344f7e43889d2bbf2b41e07f5a0aecc96b6ea708dce369410e"
+          },
+          "captures": [
+            {
+              "captureId": "37bffc5c8dd0fd3f65966bfbc23e2b129d388fff98bfa14fbcfb84d5d831f92a",
+              "source": "http://127.0.0.1:4178/examples/index.html",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:01:03.442Z",
+                "finishedAt": "2026-08-12T00:01:03.442Z"
+              },
+              "revision": {
+                "package": "0.4.0",
+                "sourceCommit": "96422c2d1ccf64060c840b013b0e9e42f2763212",
+                "emulatedNode": "v20.0.0"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "db6fae9b6fa3bd385cc3689acec039729fc1ec9ba8eda21466fc230139499bde",
+              "source": "http://127.0.0.1:4178/examples/index.html",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:01:06.243Z",
+                "finishedAt": "2026-08-12T00:01:06.243Z"
+              },
+              "revision": {
+                "package": "0.4.0",
+                "sourceCommit": "96422c2d1ccf64060c840b013b0e9e42f2763212",
+                "emulatedNode": "v20.0.0"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "c6318c044c8a8c56e527b6beb9544d9d4a857bd234abfa01cb86166733046799",
+              "source": "http://127.0.0.1:4178/examples/index.html",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:01:09.083Z",
+                "finishedAt": "2026-08-12T00:01:09.083Z"
+              },
+              "revision": {
+                "package": "0.4.0",
+                "sourceCommit": "96422c2d1ccf64060c840b013b0e9e42f2763212",
+                "emulatedNode": "v20.0.0"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "9fe43f2843ec2e8a52a4a0d0677c5e1da6c5fc90db00db507e98b7e035313d0b",
+              "source": "http://127.0.0.1:4178/examples/index.html",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:01:12.008Z",
+                "finishedAt": "2026-08-12T00:01:12.008Z"
+              },
+              "revision": {
+                "package": "0.4.0",
+                "sourceCommit": "96422c2d1ccf64060c840b013b0e9e42f2763212",
+                "emulatedNode": "v20.0.0"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "916513ad040d70c42e39d09c9b04b8acea2fa88ba872b104b2e231b16fad3d4d",
+              "source": "http://127.0.0.1:4178/examples/index.html",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:01:14.918Z",
+                "finishedAt": "2026-08-12T00:01:14.918Z"
+              },
+              "revision": {
+                "package": "0.4.0",
+                "sourceCommit": "96422c2d1ccf64060c840b013b0e9e42f2763212",
+                "emulatedNode": "v20.0.0"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "045f65598c68c1067f5dcb0386f5fdaa839081e13033522e74ecfc055ed10f4c",
+              "source": "http://127.0.0.1:4178/examples/index.html",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:01:17.751Z",
+                "finishedAt": "2026-08-12T00:01:17.751Z"
+              },
+              "revision": {
+                "package": "0.4.0",
+                "sourceCommit": "96422c2d1ccf64060c840b013b0e9e42f2763212",
+                "emulatedNode": "v20.0.0"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "a209bc8c2f74ec144d1b887b6d6e56851aa761c0565ec9eba56919c085d49e3b",
+              "source": "http://127.0.0.1:4178/examples/index.html",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:01:20.858Z",
+                "finishedAt": "2026-08-12T00:01:20.858Z"
+              },
+              "revision": {
+                "package": "0.4.0",
+                "sourceCommit": "96422c2d1ccf64060c840b013b0e9e42f2763212",
+                "emulatedNode": "v20.0.0"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "runtime": "webcontainers",
+      "label": "WebContainers",
+      "status": "measured",
+      "version": "v22.22.3 / API 1.6.4",
+      "executionModel": "Node.js process in a StackBlitz WebContainer",
+      "source": "https://github.com/stackblitz/webcontainer-core",
+      "programSha256": "47f8dd7007d8d52015d7e29e0964dafd759e917e486b46c25daccde9521a6b12",
+      "samplesMs": [
+        406.7999999821186,
+        375.9399999976158,
+        367.7800000011921,
+        373.4399999976158,
+        381.69999998807907,
+        371.88499999046326,
+        405.5649999976158
+      ],
+      "checksums": [
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+        "RUNTIME_BENCH_v1_76363d7f_79d1baaf"
+      ],
+      "firstMs": 406.7999999821186,
+      "medianMs": 375.9399999976158,
+      "relativeToNative": 5.210506528865801,
+      "commandMetric": {
+        "start": "command-submitted",
+        "stop": "checksum-marker-observed",
+        "freshness": "fresh-command-in-ready-runtime",
+        "mechanism": "Spawn a fresh WebContainer Node process and stop after checksum stdout plus exit"
+      },
+      "commandRuns": [
+        {
+          "id": "b36f6e26c0fe722785a0cdecdad90df0eca0bd3cdfbed86331cc4b662c291b5e",
+          "index": 0,
+          "elapsedMs": 406.7999999821186,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "219eabba2d4e6fec6356f21453215a5bc035666f872f983d4d065e14ecae61e7",
+          "locator": "samples[0]",
+          "oracleSha256": "b36f6e26c0fe722785a0cdecdad90df0eca0bd3cdfbed86331cc4b662c291b5e"
+        },
+        {
+          "id": "98746da3428058809d75061f741c24ae71774d320d2149bef0f71115d8cc237d",
+          "index": 1,
+          "elapsedMs": 375.9399999976158,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "2e20b865c7d413f8f276a0cb06cc0f1564cc390d6849ac78de5d3e0a06ed4b15",
+          "locator": "samples[0]",
+          "oracleSha256": "98746da3428058809d75061f741c24ae71774d320d2149bef0f71115d8cc237d"
+        },
+        {
+          "id": "d78acda85f111838809162f053d0de6db14135034a5a3bad703f2f63f14e78b4",
+          "index": 2,
+          "elapsedMs": 367.7800000011921,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "59fd12d1b397eb3e62c49e9af9ad82f157ed1ed0f2ece894f00b27bd6c2dbca7",
+          "locator": "samples[0]",
+          "oracleSha256": "d78acda85f111838809162f053d0de6db14135034a5a3bad703f2f63f14e78b4"
+        },
+        {
+          "id": "257b3d2ddec6f7a2a56e84665a155a8fb0703623308941f9c079635d7316aa71",
+          "index": 3,
+          "elapsedMs": 373.4399999976158,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "55197b0689346de35db75ae50fe23ac4bea6b4a993aca34a7652c0f86602edcb",
+          "locator": "samples[0]",
+          "oracleSha256": "257b3d2ddec6f7a2a56e84665a155a8fb0703623308941f9c079635d7316aa71"
+        },
+        {
+          "id": "3d2a127fda198315fb3a1eea55189a9b98a1ca0362d94fb3d8a475e65c23b3c9",
+          "index": 4,
+          "elapsedMs": 381.69999998807907,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "cf92e04a28ecfecbd93b02c573f4129998e442963e23b3538b3a2a1d06e8fa95",
+          "locator": "samples[0]",
+          "oracleSha256": "3d2a127fda198315fb3a1eea55189a9b98a1ca0362d94fb3d8a475e65c23b3c9"
+        },
+        {
+          "id": "2c09469487f3596b5f5db54fc2ce90daf97e7c0d56d85675186d53e315601982",
+          "index": 5,
+          "elapsedMs": 371.88499999046326,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "b26cc2a1c401966f1a4b27078d19a377923a712600a017fd6f2044bdc34d58fc",
+          "locator": "samples[0]",
+          "oracleSha256": "2c09469487f3596b5f5db54fc2ce90daf97e7c0d56d85675186d53e315601982"
+        },
+        {
+          "id": "8dfa9302c211f27aa34b8fe249fb18bc3f91ca1ac866d0e81722f2185ba4eb6c",
+          "index": 6,
+          "elapsedMs": 405.5649999976158,
+          "checksum": "RUNTIME_BENCH_v1_76363d7f_79d1baaf",
+          "rawArtifactSha256": "b93fc4cd0921ba516e869bf4d695ad1274bcfdea3910ae8a999eac4ffad18ef2",
+          "locator": "samples[0]",
+          "oracleSha256": "8dfa9302c211f27aa34b8fe249fb18bc3f91ca1ac866d0e81722f2185ba4eb6c"
+        }
+      ],
+      "readySamplesMs": [
+        2879.0799999833107,
+        5546.259999990463,
+        3099.155000001192,
+        3212.764999985695,
+        2492.280000001192,
+        2686.2549999952316,
+        2511.6700000166893
+      ],
+      "readyMs": 2879.0799999833107,
+      "readyMetric": {
+        "start": "runtime-launch-requested",
+        "stop": "first-probe-response-observed",
+        "freshness": "fresh-runtime-session",
+        "mechanism": "Call WebContainer.boot() in a fresh headless browser and stop when it resolves"
+      },
+      "readyRuns": [
+        {
+          "id": "c78b1ddd41f75f4c7cf595343f39cc1e7e1497ff670d8f9a13189304ca1d7a8a",
+          "index": 0,
+          "elapsedMs": 2879.0799999833107,
+          "rawArtifactSha256": "219eabba2d4e6fec6356f21453215a5bc035666f872f983d4d065e14ecae61e7",
+          "locator": "readyMs",
+          "oracleSha256": "c78b1ddd41f75f4c7cf595343f39cc1e7e1497ff670d8f9a13189304ca1d7a8a"
+        },
+        {
+          "id": "47f0c3ab5e74a4c8455333a25fc9418ffe17e6b04455927f9d2e80a7c40842ad",
+          "index": 1,
+          "elapsedMs": 5546.259999990463,
+          "rawArtifactSha256": "2e20b865c7d413f8f276a0cb06cc0f1564cc390d6849ac78de5d3e0a06ed4b15",
+          "locator": "readyMs",
+          "oracleSha256": "47f0c3ab5e74a4c8455333a25fc9418ffe17e6b04455927f9d2e80a7c40842ad"
+        },
+        {
+          "id": "88ff8f7ba6bd55b671d4dcfe45290b27d50eeaafec79ce22d54b3f8bcfcbb3ca",
+          "index": 2,
+          "elapsedMs": 3099.155000001192,
+          "rawArtifactSha256": "59fd12d1b397eb3e62c49e9af9ad82f157ed1ed0f2ece894f00b27bd6c2dbca7",
+          "locator": "readyMs",
+          "oracleSha256": "88ff8f7ba6bd55b671d4dcfe45290b27d50eeaafec79ce22d54b3f8bcfcbb3ca"
+        },
+        {
+          "id": "898c467606d0f3eceb61069952a88df66ce07e2dae2be28b2b563c6b16106683",
+          "index": 3,
+          "elapsedMs": 3212.764999985695,
+          "rawArtifactSha256": "55197b0689346de35db75ae50fe23ac4bea6b4a993aca34a7652c0f86602edcb",
+          "locator": "readyMs",
+          "oracleSha256": "898c467606d0f3eceb61069952a88df66ce07e2dae2be28b2b563c6b16106683"
+        },
+        {
+          "id": "f65d10519131e485d7e3c224181cb40fec8df046f694a1f6bf6cdc4ba7eef285",
+          "index": 4,
+          "elapsedMs": 2492.280000001192,
+          "rawArtifactSha256": "cf92e04a28ecfecbd93b02c573f4129998e442963e23b3538b3a2a1d06e8fa95",
+          "locator": "readyMs",
+          "oracleSha256": "f65d10519131e485d7e3c224181cb40fec8df046f694a1f6bf6cdc4ba7eef285"
+        },
+        {
+          "id": "2858dd1ab118a12616145ee5ef76a7a261fe6046f79e243a5eb22519d371c1f9",
+          "index": 5,
+          "elapsedMs": 2686.2549999952316,
+          "rawArtifactSha256": "b26cc2a1c401966f1a4b27078d19a377923a712600a017fd6f2044bdc34d58fc",
+          "locator": "readyMs",
+          "oracleSha256": "2858dd1ab118a12616145ee5ef76a7a261fe6046f79e243a5eb22519d371c1f9"
+        },
+        {
+          "id": "3af0db1371782b8e75b4e90434e43868bf0e7fb5db20bb32b6fc81498e427707",
+          "index": 6,
+          "elapsedMs": 2511.6700000166893,
+          "rawArtifactSha256": "b93fc4cd0921ba516e869bf4d695ad1274bcfdea3910ae8a999eac4ffad18ef2",
+          "locator": "readyMs",
+          "oracleSha256": "3af0db1371782b8e75b4e90434e43868bf0e7fb5db20bb32b6fc81498e427707"
+        }
+      ],
+      "rawEvidence": {
+        "selection": "first Node command from each of seven independent fresh WebContainer boots",
+        "artifacts": [
+          {
+            "path": "web/benchmark-evidence/raw/webcontainers/capture-1-219eabba2d4e6fec6356f21453215a5bc035666f872f983d4d065e14ecae61e7.json",
+            "sha256": "219eabba2d4e6fec6356f21453215a5bc035666f872f983d4d065e14ecae61e7"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webcontainers/capture-2-2e20b865c7d413f8f276a0cb06cc0f1564cc390d6849ac78de5d3e0a06ed4b15.json",
+            "sha256": "2e20b865c7d413f8f276a0cb06cc0f1564cc390d6849ac78de5d3e0a06ed4b15"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webcontainers/capture-3-59fd12d1b397eb3e62c49e9af9ad82f157ed1ed0f2ece894f00b27bd6c2dbca7.json",
+            "sha256": "59fd12d1b397eb3e62c49e9af9ad82f157ed1ed0f2ece894f00b27bd6c2dbca7"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webcontainers/capture-4-55197b0689346de35db75ae50fe23ac4bea6b4a993aca34a7652c0f86602edcb.json",
+            "sha256": "55197b0689346de35db75ae50fe23ac4bea6b4a993aca34a7652c0f86602edcb"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webcontainers/capture-5-cf92e04a28ecfecbd93b02c573f4129998e442963e23b3538b3a2a1d06e8fa95.json",
+            "sha256": "cf92e04a28ecfecbd93b02c573f4129998e442963e23b3538b3a2a1d06e8fa95"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webcontainers/capture-6-b26cc2a1c401966f1a4b27078d19a377923a712600a017fd6f2044bdc34d58fc.json",
+            "sha256": "b26cc2a1c401966f1a4b27078d19a377923a712600a017fd6f2044bdc34d58fc"
+          },
+          {
+            "path": "web/benchmark-evidence/raw/webcontainers/capture-7-b93fc4cd0921ba516e869bf4d695ad1274bcfdea3910ae8a999eac4ffad18ef2.json",
+            "sha256": "b93fc4cd0921ba516e869bf4d695ad1274bcfdea3910ae8a999eac4ffad18ef2"
+          }
+        ]
+      },
+      "evidence": {
+        "artifact": {
+          "path": "web/benchmark-webcontainers.json",
+          "sha256": "e2f96d03493f81232d78657d5dc79db68dbf3a16c4fbfffebc99034c0832a213"
+        },
+        "provenance": {
+          "captureId": "bf84b48437725ddecc03bfcce43ed6c7145102de4aa6c439824522ef83757ab3",
+          "collector": {
+            "runtime": "webcontainers",
+            "path": "web/benchmark-evidence/collectors/webcontainers-18119dc5afb4fcecf0705d7378f1d09c284cb5ff91cb9e9d3a57e61dea719365.mjs",
+            "sha256": "18119dc5afb4fcecf0705d7378f1d09c284cb5ff91cb9e9d3a57e61dea719365"
+          },
+          "captures": [
+            {
+              "captureId": "219eabba2d4e6fec6356f21453215a5bc035666f872f983d4d065e14ecae61e7",
+              "source": "http://127.0.0.1:4177",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:00:12.441Z",
+                "finishedAt": "2026-08-12T00:00:12.441Z"
+              },
+              "revision": {
+                "api": "1.6.4",
+                "guestNode": "v22.22.3"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "2e20b865c7d413f8f276a0cb06cc0f1564cc390d6849ac78de5d3e0a06ed4b15",
+              "source": "http://127.0.0.1:4177",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:00:21.971Z",
+                "finishedAt": "2026-08-12T00:00:21.971Z"
+              },
+              "revision": {
+                "api": "1.6.4",
+                "guestNode": "v22.22.3"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "59fd12d1b397eb3e62c49e9af9ad82f157ed1ed0f2ece894f00b27bd6c2dbca7",
+              "source": "http://127.0.0.1:4177",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:00:29.250Z",
+                "finishedAt": "2026-08-12T00:00:29.250Z"
+              },
+              "revision": {
+                "api": "1.6.4",
+                "guestNode": "v22.22.3"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "55197b0689346de35db75ae50fe23ac4bea6b4a993aca34a7652c0f86602edcb",
+              "source": "http://127.0.0.1:4177",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:00:36.270Z",
+                "finishedAt": "2026-08-12T00:00:36.270Z"
+              },
+              "revision": {
+                "api": "1.6.4",
+                "guestNode": "v22.22.3"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "cf92e04a28ecfecbd93b02c573f4129998e442963e23b3538b3a2a1d06e8fa95",
+              "source": "http://127.0.0.1:4177",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:00:42.497Z",
+                "finishedAt": "2026-08-12T00:00:42.497Z"
+              },
+              "revision": {
+                "api": "1.6.4",
+                "guestNode": "v22.22.3"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "b26cc2a1c401966f1a4b27078d19a377923a712600a017fd6f2044bdc34d58fc",
+              "source": "http://127.0.0.1:4177",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:00:49.059Z",
+                "finishedAt": "2026-08-12T00:00:49.059Z"
+              },
+              "revision": {
+                "api": "1.6.4",
+                "guestNode": "v22.22.3"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            },
+            {
+              "captureId": "b93fc4cd0921ba516e869bf4d695ad1274bcfdea3910ae8a999eac4ffad18ef2",
+              "source": "http://127.0.0.1:4177",
+              "capturedAt": {
+                "startedAt": "2026-08-12T00:00:55.698Z",
+                "finishedAt": "2026-08-12T00:00:55.698Z"
+              },
+              "revision": {
+                "api": "1.6.4",
+                "guestNode": "v22.22.3"
+              },
+              "browser": {
+                "name": "chromium",
+                "version": "131.0.6778.33",
+                "mode": "headless"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "comparisonId": "0e96e7a36930634b17ee1a2e5f09bf450b556bcb5dd8cf2de6e9b377c5fe4f88"
+}
