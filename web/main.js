@@ -8,6 +8,7 @@ import { RISCV_TESTS } from "./riscv-tests.js";
 import { ROADMAP } from "./roadmap.js";
 import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
 import { startLinuxBootWorker, stopLinuxController } from "./linux-worker-host.js";
+import { resolveOverlayResetSeedIdentity } from "./overlay-reset-target.js";
 
 // E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
 // `?worker=0` is the explicit main-thread differential/fallback. If Worker is genuinely unavailable,
@@ -446,10 +447,15 @@ function renderLinuxQuotaDialog(request, getController, { usage, quota, unsaved 
     if (!linuxOwnerControlIsCurrent(el, request, owner)) return;
     const typed = prompt('This deletes every saved change to the Alpine disk. Type RESET to confirm:');
     if (typed !== "RESET" || !linuxOwnerControlIsCurrent(el, request, owner)) return;
-    el.style.display = "none";
     const resetManifestUrl = request.imageManifestUrl ?? "./releases/chunked-alpine/manifest.json";
-    let resetSeedIdentity = null;
-    try { resetSeedIdentity = await owner.overlaySeedIdentity?.() ?? null; } catch {}
+    let resetSeedIdentity;
+    try {
+      resetSeedIdentity = await resolveOverlayResetSeedIdentity(owner);
+    } catch (error) {
+      term.writeln(`\r\n\x1b[31mreset refused: ${error?.message || error}\x1b[0m`);
+      return;
+    }
+    el.style.display = "none";
     // close THIS tab's IndexedDB connection before deleteDatabase, or deletion can block forever.
     let cleared = false;
     try { cleared = await retireLinuxController(owner); } catch {}
