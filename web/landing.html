@@ -43,6 +43,12 @@
       #hero-canvas {
         position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0;
         display: block;
+        /* Immediate atmospheric fallback while the WebGL shader compiles. The shader is opaque
+           once ready, so this never changes the finished cloud treatment. */
+        background:
+          radial-gradient(52% 42% at 30% 18%, rgba(36, 121, 150, 0.18), transparent 72%),
+          radial-gradient(45% 46% at 78% 70%, rgba(31, 102, 77, 0.14), transparent 74%),
+          var(--bg);
       }
       /* Fallback gradient if WebGL is unavailable */
       body.no-webgl #hero-canvas { display: none; }
