@@ -39,3 +39,29 @@ Node result, not a synthetic ALU proxy. Any stale target, duplicated side effect
 compile pause storm, or JIT wall-time loss refutes the change.
 
 ## Verification log
+
+### 2026-08-12 — worker checkpoint — hidden-primer regression removed
+
+- This is a bounded product correction inside the still-open E4-T34 lane, not a claim that the
+  task's JIT or 20-second acceptance criteria are complete. The restored Node guest no longer starts
+  a full invisible Node process by default; `?nodeWarmup=1` keeps the old behavior available only for
+  controlled experiments. Switching to the Demo tab now re-fits xterm locally instead of clicking
+  the manual Fit action and injecting `stty` into a command already in flight.
+- Frozen wasm: `055fcde43e90dcfe8ee265fe19050b6ba387f607eccfa6430ebdf21247613b61`
+  in both `web/pkg` and `web/dist/pkg`; the regenerated service-worker version is
+  `3de893a6aaa1`. Source and dist copies of `main.js` and `tabs.js` are byte-identical.
+- Accepted default-URL evidence (no `nodeWarmup` query):
+  `/private/tmp/e4t34-prime-ab/default-c/E4T32_NODE_DIAGNOSTIC_RESULTS.json`, SHA-256
+  `f65bbb5daa701b04d184b8f9ea57216106d0f60212acf140c7e95b057fae14cc`. It records a
+  restored whole-machine Worker, `nodeWarmupStateAtCommand=disabled`, zero production-R2 requests,
+  zero browser errors, clean pre/post CPU calibration, exact PID 839 and byte-framed output `3` from
+  the real `node -e 'console.log(3)'`: 94,063.015 ms first output and 97,373.315 ms completion.
+- Two additional clean explicit-off screens were consistent: 90,564.715/93,634.785 ms and
+  92,790.730/95,887.740 ms (first/completion), median 91,677.723/94,761.263 ms. Three opt-in-primer
+  controls were rejected by the host-capacity gate and are not benchmark evidence; their diagnostic
+  timing suggested overlap was neutral-to-worse, never a valid speedup. The measured first-command
+  time therefore remains far above the task target and the next slice must improve it directly.
+- Gates: `make web-dist`; JS syntax and `git diff --check`; focused Playwright tab test 1/1.
+  A fresh critic independently validated the default artifact, source/dist/Wasm binding, and
+  sabotaged the tab test with the old implicit Fit behavior; the sabotage was rejected. Verdict:
+  verified for this correction only, while E4-T34 remains `in-progress`.

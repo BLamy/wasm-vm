@@ -96,8 +96,12 @@ const stableJson = (value) => {
 };
 // SHA-256 of the exact immutable chunk manifest paired with the shipped node-Alpine snapshot.
 const expectedNodeManifestSha256 = "ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1";
+const diagnosticOnlyVariants = (process.env.E4T32_NODE_DIAG_ONLY || "")
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);
 const requiredVariants = diagnostic
-  ? ["main-interp", "worker-interp"]
+  ? (diagnosticOnlyVariants.length ? diagnosticOnlyVariants : ["main-interp", "worker-interp"])
   : ["main-interp", "worker-interp", "worker-jit512"];
 const requestedVariants = (process.env.E4T32_NODE_VARIANTS || "")
   .split(",")
@@ -110,6 +114,9 @@ const variants = [...new Set([...requiredVariants, ...requestedVariants])];
 const urls = {
   "main-interp": "/?guest=node-alpine&nosw&worker=0&jit=0",
   "worker-interp": "/?guest=node-alpine&nosw&jit=0",
+  "worker-interp-prime-default": "/?guest=node-alpine&nosw&jit=0",
+  "worker-interp-prime-off": "/?guest=node-alpine&nosw&jit=0&nodeWarmup=0",
+  "worker-interp-prime-on": "/?guest=node-alpine&nosw&jit=0&nodeWarmup=1",
   "worker-jit32": "/?guest=node-alpine&nosw&jit=1&jitThreshold=32",
   "worker-jit64": "/?guest=node-alpine&nosw&jit=1&jitThreshold=64",
   "worker-jit128": "/?guest=node-alpine&nosw&jit=1&jitThreshold=128",
@@ -669,6 +676,14 @@ async function runNodeVariantSession(browser, {
     expect(browserPresentation.hasFocus, "timed browser page must hold document focus").toBe(true);
     expect(browserPresentation.userAgent, "timed acceptance cannot run in HeadlessChrome")
       .not.toContain("HeadlessChrome");
+    // The Demo tab becomes visible after restore and re-fits xterm on the next animation frame.
+    // Prove that transition has settled and the shell is idle before beginning the exact raw-frame
+    // oracle. This command is outside the timed window and identical in every A/B leg.
+    const shellSettlement = await page.evaluate(async () => {
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      return window.wvmDemo.exec("true", 30_000, { quiet: true });
+    });
+    expect(shellSettlement.exit, `${variant} shell must settle before timing`).toBe(0);
     const restored = await page.evaluate(() => window.__linux?.restoredFromBootSnapshot?.());
     expect(restored, `${variant} pass ${passIndex} must use the shipped Node snapshot`).toBe(true);
     const bootIdentity = await page.evaluate(async () => {
@@ -710,6 +725,9 @@ async function runNodeVariantSession(browser, {
     });
 
     const jitBefore = await page.evaluate(() => window.__jitStats());
+    const nodeWarmupStateAtCommand = await page.evaluate(
+      () => document.documentElement.dataset.nodeWarmup ?? null,
+    );
     const runs = [];
     for (let index = 0; index < processCount; index += 1) {
       const sequence = `${sequencePrefix}_${index}`;
@@ -776,6 +794,7 @@ async function runNodeVariantSession(browser, {
       restored,
       bootIdentity,
       liveNodeManifest,
+      nodeWarmupStateAtCommand,
       productionR2Requests,
       jitBefore,
       jitAfter,
@@ -1051,6 +1070,18 @@ test.describe("E4-T32 real Node foreground wall time", () => {
         }
         if (postflightError) {
           if (sessionError) postflightError.cause = sessionError;
+          if (session) {
+            postflightError.e4t32SessionEvidence = session;
+            await attachEvidence(
+              testInfo,
+              `E4T32_NODE_REJECTED_${variant.replaceAll("-", "_")}.json`,
+              {
+                kind: "e4-t32-node-diagnostic-rejected-v1",
+                reason: errorEvidence(postflightError),
+                session,
+              },
+            );
+          }
           throw postflightError;
         }
         if (sessionError) throw sessionError;
@@ -1060,11 +1091,17 @@ test.describe("E4-T32 real Node foreground wall time", () => {
       }
       summarizeNodeResults(results);
       await attachEvidence(testInfo, "E4T32_NODE_DIAGNOSTIC_RESULTS.json", results);
-      expect(results["main-interp"].sessions.every((session) => session.backend === "main-thread")).toBe(true);
-      expect(results["worker-interp"].sessions.every(
-        (session) => session.backend === "whole-machine-worker",
-      )).toBe(true);
-      if (nodeAssetBase) {
+      if (results["main-interp"]) {
+        expect(results["main-interp"].sessions.every(
+          (session) => session.backend === "main-thread",
+        )).toBe(true);
+      }
+      if (results["worker-interp"]) {
+        expect(results["worker-interp"].sessions.every(
+          (session) => session.backend === "whole-machine-worker",
+        )).toBe(true);
+      }
+      if (nodeAssetBase && results["main-interp"] && results["worker-interp"]) {
         const baseline = results["main-interp"];
         const worker = results["worker-interp"];
         expect(worker.firstMedianMs).toBeLessThanOrEqual(baseline.firstMedianMs * 1.10);

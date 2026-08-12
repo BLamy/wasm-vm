@@ -835,12 +835,11 @@ async function runLinuxBootOwned(opts, banner, request) {
     // The shipped Node snapshot deliberately drops Linux's page cache to keep the RAM artifact
     // small. Without a short prime, the first user command has to fault in the Node ELF, shared
     // libraries, and common built-ins and can look like a cold boot even though the guest restored.
-    // Start that prime in the restored guest's background shell. It is deliberately quiet and
-    // non-blocking: the prompt becomes ready immediately, while the first normal `node` command
-    // benefits from the same guest page cache once the background process has finished. The
-    // opt-out remains available for measurements and debugging via ?nodeWarmup=0.
+    // Keep that prime explicit. It runs on the guest's single hart, so starting it behind the
+    // user's back makes an immediately-entered command compete with an invisible Node process.
+    // `?nodeWarmup=1` remains available for controlled delayed-command experiments.
     const nodeWarmupEnabled = restoredReadyPending && currentGuestKind === "node-alpine" &&
-      query.get("nodeWarmup") !== "0" && !query.has("startPaused") && !document.hidden;
+      query.get("nodeWarmup") === "1" && !query.has("startPaused") && !document.hidden;
     if (nodeWarmupEnabled && linuxCtl === ctlForRelease) {
       document.documentElement.dataset.nodeWarmup = "scheduled";
       void guestExec(
@@ -857,9 +856,9 @@ async function runLinuxBootOwned(opts, banner, request) {
         console.warn("wasm-vm: background Node cache prime failed; continuing:", error?.message || error);
       });
     } else if (restoredReadyPending && currentGuestKind === "node-alpine") {
-      document.documentElement.dataset.nodeWarmup = query.get("nodeWarmup") === "0"
-        ? "disabled"
-        : "deferred";
+      document.documentElement.dataset.nodeWarmup = query.get("nodeWarmup") === "1"
+        ? "deferred"
+        : "disabled";
     }
     if (linuxCtl === ctlForRelease && restoredReadyPending) {
       // Restores resume at an already-usable prompt and therefore never emit one of the cold-boot
