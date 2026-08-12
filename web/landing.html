@@ -202,6 +202,24 @@
       .num .big .sfx { color: var(--mint); -webkit-text-fill-color: var(--mint); }
       .num .lbl { color: var(--muted); font-size: 0.92rem; margin-top: 12px; }
 
+      /* ── Runtime benchmark ── */
+      .bench-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 18px; }
+      .bench-meta { color: var(--muted); font-size: 0.88rem; }
+      .bench-meta code, .bench-note code { color: var(--cyan); font-family: var(--mono); font-size: .9em; }
+      .bench-wrap { overflow-x: auto; margin-top: 28px; border: 1px solid var(--line); border-radius: 16px; }
+      .bench-table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: .91rem; }
+      .bench-table th, .bench-table td { padding: 14px 15px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+      .bench-table th { color: var(--muted); font: 600 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; background: rgba(18,26,38,.5); }
+      .bench-table tr:last-child td { border-bottom: 0; }
+      .bench-table .runtime { color: var(--ink); font-weight: 650; white-space: nowrap; }
+      .bench-table .runtime a:hover { color: var(--cyan); }
+      .bench-table .model { color: var(--muted); max-width: 240px; }
+      .bench-table .number, .bench-table .ratio { font-family: var(--mono); white-space: nowrap; }
+      .bench-table .ratio { color: var(--mint); font-weight: 650; }
+      .bench-table .ready-def { display: block; color: var(--muted); font: 10px/1.45 var(--mono); margin-top: 6px; max-width: 230px; white-space: normal; }
+      .bench-note { color: var(--muted); font-size: .85rem; line-height: 1.6; margin: 16px 0 0; max-width: 900px; }
+      .bench-note a { color: var(--cyan); }
+
       /* ── Boot stack (architecture) ── */
       .stack { display: flex; flex-direction: column; gap: 12px; margin-top: 44px; max-width: 760px; }
       .layer {
@@ -255,6 +273,7 @@
         <a class="brand" href="./landing.html"><span class="dot"></span> <b>wasm-vm</b></a>
         <div class="nav-links">
           <a href="#features">Features</a>
+          <a href="#benchmarks">Benchmarks</a>
           <a href="#how">How it works</a>
           <a href="./docs.html">Docs</a>
           <a href="https://github.com/BLamy/wasm-vm" target="_blank" rel="noopener">GitHub</a>
@@ -314,6 +333,37 @@
             <div class="num"><div class="big" data-count="6">0</div><div class="lbl">RISC-V extensions (IMAFDC)</div></div>
             <div class="num"><div class="big" data-count="1">0<span class="sfx">×</span></div><div class="lbl">browser tab · zero servers</div></div>
           </div>
+        </div>
+      </section>
+
+      <section class="block sheet" id="benchmarks">
+        <div class="wrap">
+          <div class="bench-head reveal">
+            <div>
+              <span class="kicker">Node mechanism matrix</span>
+              <h2 class="h2">One checksum fixture, five runtime mechanisms.</h2>
+              <p class="sub">Every published row requires seven raw-backed command and readiness samples. Command timing uses submit → checksum marker; responsive readiness uses each runtime’s own fresh-launch → first-response path.</p>
+            </div>
+            <div class="bench-meta">Captured <code id="bench-updated">loading…</code></div>
+          </div>
+          <div class="bench-wrap reveal d1">
+            <table class="bench-table" aria-describedby="bench-note">
+              <thead><tr><th>Runtime</th><th>Execution model</th><th>Command median</th><th>First command</th><th>Per-runtime responsive readiness</th><th>vs native</th></tr></thead>
+              <tbody id="bench-rows"><tr><td colspan="6" class="model">Loading raw benchmark evidence…</td></tr></tbody>
+            </table>
+          </div>
+          <p class="bench-note" id="bench-note">
+            Fixture: a stateful, non-foldable 2,000,000-iteration <code>Math.imul</code> recurrence;
+            every sample must print <code>RUNTIME_BENCH_v1_76363d7f_79d1baaf</code>.
+            Command medians cover each mechanism's seven declared fresh-command population and stop at the exact
+            checksum marker; wasm-vm uses the first genuine Node command in each fresh restored VM. Responsive
+            readiness is reported separately, stops at the first exact probe response, and
+            displays the runtime-specific launch mechanism—including snapshot restore versus process launch.
+            Each row preserves its own capture revision, timestamp, browser mode, source, and collector; the
+            comparison does not pretend they came from one campaign. It is a mechanism comparison, not a
+            normalized cold-boot or isolation-equivalence claim.
+            <a href="./benchmarks.json">Raw samples and provenance →</a>
+          </p>
         </div>
       </section>
 
@@ -428,6 +478,412 @@ hello from a container
         for (const e of entries) if (e.isIntersecting) { countUp(e.target); cio.unobserve(e.target); }
       }, { threshold: 0.6 });
       document.querySelectorAll("[data-count]").forEach((el) => cio.observe(el));
+
+      // Publish raw-sample-derived runtime results. This browser-side contract deliberately duplicates the
+      // structural verifier used by tools/node-runtime-benchmark.mjs: parseable partial evidence must fail as
+      // one unavailable table, never as plausible-looking incomplete rows.
+      const benchmarkRows = document.getElementById("bench-rows");
+      const benchmarkDate = document.getElementById("bench-updated");
+      const benchmarkRuntimeIds = ["native-node", "wasm-vm", "webvm", "almostnode", "webcontainers"];
+      const benchmarkLabels = {
+        "native-node": "Native Node",
+        "wasm-vm": "wasm-vm",
+        webvm: "WebVM",
+        almostnode: "almostnode",
+        webcontainers: "WebContainers",
+      };
+      const benchmarkChecksum = "RUNTIME_BENCH_v1_76363d7f_79d1baaf";
+      const benchmarkProgramSha256 = "47f8dd7007d8d52015d7e29e0964dafd759e917e486b46c25daccde9521a6b12";
+      const benchmarkSampleCount = 7;
+      const maximumWasmToWebvmCommandRatio = 1.10;
+      const sha256Pattern = /^[0-9a-f]{64}$/;
+      const closeEnough = (actual, expected) => Number.isFinite(actual) && Number.isFinite(expected)
+        && Math.abs(actual - expected) <= Math.max(1e-6, Math.abs(expected) * 1e-9);
+      const median = (values) => [...values].sort((left, right) => left - right)[3];
+      const requireBenchmark = (condition, message) => {
+        if (!condition) throw new Error(`invalid benchmark evidence: ${message}`);
+      };
+      const nonEmpty = (value) => typeof value === "string" && value.trim().length > 0;
+      const sameJson = (left, right) => JSON.stringify(left) === JSON.stringify(right);
+      const sha256Hex = async (bytes) => [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))]
+        .map((byte) => byte.toString(16).padStart(2, "0")).join("");
+      const sha256Text = (value) => sha256Hex(new TextEncoder().encode(value));
+      const validateMetric = (metric, expected, label) => {
+        requireBenchmark(metric && typeof metric === "object", `${label} metric is missing`);
+        for (const [field, value] of Object.entries(expected)) {
+          requireBenchmark(metric[field] === value, `${label}.${field} must be ${value}`);
+        }
+        requireBenchmark(nonEmpty(metric.mechanism), `${label} mechanism is missing`);
+      };
+      const validateEvidence = (row) => {
+        const evidence = row.evidence;
+        requireBenchmark(evidence && typeof evidence === "object", `${row.runtime} evidence is missing`);
+        requireBenchmark(evidence.artifact?.path === `web/benchmark-${row.runtime}.json`,
+          `${row.runtime} artifact path is not canonical`);
+        requireBenchmark(sha256Pattern.test(evidence.artifact?.sha256), `${row.runtime} artifact digest is invalid`);
+        const provenance = evidence.provenance;
+        requireBenchmark(provenance && sha256Pattern.test(provenance.captureId),
+          `${row.runtime} capture ID is invalid`);
+        requireBenchmark(nonEmpty(provenance.collector?.path)
+          && provenance.collector.runtime === row.runtime
+          && sha256Pattern.test(provenance.collector?.sha256), `${row.runtime} collector evidence is invalid`);
+        requireBenchmark(Array.isArray(provenance.captures) && provenance.captures.length > 0,
+          `${row.runtime} capture provenance is missing`);
+        requireBenchmark(Array.isArray(row.rawEvidence?.artifacts)
+          && row.rawEvidence.artifacts.length > 0
+          && row.rawEvidence.artifacts.every((reference) => nonEmpty(reference.path)
+            && sha256Pattern.test(reference.sha256)), `${row.runtime} raw evidence is missing`);
+        return provenance;
+      };
+      const validateRunRecords = (row) => {
+        requireBenchmark(Array.isArray(row.commandRuns) && row.commandRuns.length === benchmarkSampleCount,
+          `${row.runtime} requires seven command oracle records`);
+        requireBenchmark(Array.isArray(row.readyRuns) && row.readyRuns.length === benchmarkSampleCount,
+          `${row.runtime} requires seven readiness oracle records`);
+        const ids = [...row.commandRuns, ...row.readyRuns].map((record) => record?.id);
+        requireBenchmark(ids.every((id) => sha256Pattern.test(id))
+          && new Set(ids).size === benchmarkSampleCount * 2,
+          `${row.runtime} oracle IDs must be unique`);
+        const oracleDigests = [...row.commandRuns, ...row.readyRuns]
+          .map((record) => record?.oracleSha256);
+        requireBenchmark(oracleDigests.every((value) => sha256Pattern.test(value))
+          && new Set(oracleDigests).size === benchmarkSampleCount * 2,
+        `${row.runtime} execution oracle digests must be unique`);
+        row.commandRuns.forEach((record, index) => {
+          requireBenchmark(record.index === index && record.elapsedMs === row.samplesMs[index]
+            && record.checksum === row.checksums[index] && record.id === record.oracleSha256
+            && sha256Pattern.test(record.rawArtifactSha256) && nonEmpty(record.locator),
+          `${row.runtime} command oracle ${index} does not derive its sample`);
+        });
+        row.readyRuns.forEach((record, index) => {
+          requireBenchmark(record.index === index && record.elapsedMs === row.readySamplesMs[index]
+            && record.id === record.oracleSha256 && sha256Pattern.test(record.rawArtifactSha256)
+            && nonEmpty(record.locator),
+          `${row.runtime} readiness oracle ${index} does not derive its sample`);
+        });
+      };
+      const oracleRecord = async (runtime, kind, index, reference, locator, elapsedMs, checksum, completeMs) => {
+        const oracle = {
+          runtime, kind, index, rawArtifactSha256: reference.sha256, locator, elapsedMs,
+          ...(checksum === undefined ? {} : { checksum }),
+        };
+        const oracleSha256 = await sha256Text(JSON.stringify(oracle));
+        return {
+          id: oracleSha256, index, elapsedMs,
+          ...(Number.isFinite(completeMs) ? { completeMs } : {}),
+          ...(checksum === undefined ? {} : { checksum }),
+          rawArtifactSha256: reference.sha256, locator, oracleSha256,
+        };
+      };
+      const normalizedProgramSha256 = (program) => sha256Text(program.replace(/;/g, ""));
+      const captureMetadata = (runtime, raw, reference) => {
+        const shared = { captureId: reference.sha256, source: raw.source ?? null };
+        if (runtime === "native-node") return {
+          ...shared,
+          capturedAt: { startedAt: raw.startedAt, finishedAt: raw.finishedAt },
+          revision: { node: raw.version, executableSha256: raw.runtimeArtifactSha256 },
+          browser: null,
+        };
+        if (runtime === "webvm") return {
+          ...shared,
+          capturedAt: { startedAt: raw.startedAt, finishedAt: raw.finishedAt },
+          revision: { guestNode: raw.nodeVersion, image: "webvm.io/alpine.html" },
+          browser: { name: "chromium", version: null, mode: "headless" },
+        };
+        if (runtime === "webcontainers") return {
+          ...shared,
+          capturedAt: { startedAt: raw.measuredAt, finishedAt: raw.measuredAt },
+          revision: { api: raw.apiVersion, guestNode: raw.guestNodeVersion },
+          browser: { name: "chromium", version: raw.browserVersion, mode: "headless" },
+        };
+        if (runtime === "almostnode") return {
+          ...shared,
+          capturedAt: { startedAt: raw.measuredAt, finishedAt: raw.measuredAt },
+          revision: {
+            package: raw.packageVersion,
+            sourceCommit: raw.sourceCommit,
+            emulatedNode: raw.emulatedNodeVersion,
+          },
+          browser: { name: "chromium", version: raw.browserVersion, mode: "headless" },
+        };
+        if (runtime === "wasm-vm") return {
+          ...shared,
+          capturedAt: { startedAt: raw.generatedAt, finishedAt: raw.generatedAt },
+          revision: {
+            commit: raw.publicationProvenance?.commit,
+            node: raw.version,
+            runtimeArtifactSha256: raw.publicationProvenance?.runtimeArtifactSha256,
+          },
+          browser: raw.publicationProvenance?.browser ?? null,
+        };
+        throw new Error(`unsupported runtime ${runtime}`);
+      };
+      const validateFixtureBinding = async (runtime, raw) => {
+        if (runtime === "native-node") {
+          requireBenchmark(raw.programSha256 === benchmarkProgramSha256,
+            `${runtime} raw fixture digest differs`);
+        } else if (runtime === "webvm") {
+          requireBenchmark(await normalizedProgramSha256(raw.workload)
+            === await normalizedProgramSha256(`const n=2000000;let x=0x12345678>>>0,y=0x9e3779b9>>>0;for(let i=0;i<n;i++){x=(Math.imul((x^i)>>>0,1664525)+y)>>>0;y=(Math.imul((y+x)>>>0,22695477)+1)>>>0;}console.log("RUNTIME_BENCH_v1_"+x.toString(16).padStart(8,"0")+"_"+y.toString(16).padStart(8,"0"));`),
+          `${runtime} raw fixture tokens differ`);
+        } else if (runtime === "wasm-vm") {
+          requireBenchmark(raw.fixture?.programSha256 === benchmarkProgramSha256,
+            `${runtime} raw fixture digest differs`);
+        } else {
+          requireBenchmark(raw.programSha256 === benchmarkProgramSha256,
+            `${runtime} raw fixture digest differs`);
+        }
+      };
+      const extractRawRuns = async (runtime, raws, references) => {
+        await Promise.all(raws.map((raw) => validateFixtureBinding(runtime, raw)));
+        if (runtime === "native-node") return {
+          commandRuns: await Promise.all(raws[0].commandSamples.map((sample, index) => oracleRecord(
+            runtime, "command", index, references[0], `commandSamples[${index}]`,
+            sample.markerMs, sample.output, sample.completeMs,
+          ))),
+          readyRuns: await Promise.all(raws[0].readySamples.map((sample, index) => oracleRecord(
+            runtime, "ready", index, references[0], `readySamples[${index}]`,
+            sample.markerMs, undefined, sample.completeMs,
+          ))),
+        };
+        if (runtime === "wasm-vm") {
+          const raw = raws[0];
+          requireBenchmark(raws.length === 1
+            && raw.schema === 1 && raw.kind === "wasm-vm-runtime-benchmark-capture-v1",
+          `${runtime} raw capture contract is invalid`);
+          requireBenchmark(!Object.hasOwn(raw.provenance ?? {}, "runtimeRuns")
+            && !Object.hasOwn(raw.provenance ?? {}, "responsiveTerminalSessions"),
+          `${runtime} legacy warm intra-session population is forbidden`);
+          const sessions = raw.provenance?.freshRuntimeSessions;
+          requireBenchmark(Array.isArray(sessions) && sessions.length === benchmarkSampleCount,
+            `${runtime} requires seven fresh paired sessions`);
+          sessions.forEach((session, index) => {
+            requireBenchmark(session.index === index && session.freshBrowserContext === true
+              && session.restoredVm === true && session.firstNodeProcessAfterRestore === true,
+            `${runtime} session ${index} is not a fresh first-Node sample`);
+            requireBenchmark(session.nodeRun?.checksum === benchmarkChecksum
+              && Number.isFinite(session.nodeRun?.elapsedMs) && session.nodeRun.elapsedMs > 0
+              && Number.isFinite(session.readiness?.elapsedMs) && session.readiness.elapsedMs > 0,
+            `${runtime} session ${index} is missing its paired command/readiness oracle`);
+            requireBenchmark(session.nodeIdentity?.execPath === "/usr/bin/node"
+              && session.nodeIdentity?.nodeRealPath === "/usr/bin/node"
+              && session.nodeIdentity?.nodeMagic === "7f454c46"
+              && session.nodeIdentity?.nodeSize > 1000000,
+            `${runtime} session ${index} does not prove a genuine Node ELF`);
+          });
+          return {
+            commandRuns: await Promise.all(sessions.map((session, index) => oracleRecord(
+              runtime, "command", index, references[0],
+              `provenance.freshRuntimeSessions[${index}].nodeRun`,
+              session.nodeRun.elapsedMs, session.nodeRun.checksum, session.nodeRun.completeMs,
+            ))),
+            readyRuns: await Promise.all(sessions.map((session, index) => oracleRecord(
+              runtime, "ready", index, references[0],
+              `provenance.freshRuntimeSessions[${index}].readiness`,
+              session.readiness.elapsedMs, undefined, session.readiness.completionElapsedMs,
+            ))),
+          };
+        }
+        if (runtime === "webvm") return {
+          commandRuns: await Promise.all(raws.map((raw, index) => oracleRecord(
+            runtime, "command", index, references[index], "samples[0]",
+            raw.samples[0].wallMs, raw.samples[0].checksum,
+          ))),
+          readyRuns: await Promise.all(raws.map((raw, index) => oracleRecord(
+            runtime, "ready", index, references[index], "shellReadyMs", raw.shellReadyMs,
+          ))),
+        };
+        return {
+          commandRuns: await Promise.all(raws.map((raw, index) => oracleRecord(
+            runtime, "command", index, references[index], "samples[0]",
+            raw.samples[0].wallMs, raw.samples[0].checksum,
+          ))),
+          readyRuns: await Promise.all(raws.map((raw, index) => oracleRecord(
+            runtime, "ready", index, references[index],
+            runtime === "webcontainers" ? "readyMs" : "commandReadyMs",
+            runtime === "webcontainers" ? raw.readyMs : raw.commandReadyMs,
+          ))),
+        };
+      };
+      const fetchHashedEvidence = async (reference, label) => {
+        requireBenchmark(nonEmpty(reference?.path) && reference.path.startsWith("web/")
+          && sha256Pattern.test(reference.sha256), `${label} reference is invalid`);
+        const response = await fetch(`./${reference.path.slice("web/".length)}`, { cache: "no-store" });
+        requireBenchmark(response.ok, `${label} HTTP ${response.status}`);
+        const bytes = await response.arrayBuffer();
+        requireBenchmark(await sha256Hex(bytes) === reference.sha256, `${label} digest differs`);
+        return bytes;
+      };
+      const validateDeployedArtifact = async (row) => {
+        const bytes = await fetchHashedEvidence(row.evidence.artifact, `${row.runtime} artifact`);
+        const artifact = JSON.parse(new TextDecoder().decode(bytes));
+        requireBenchmark(artifact.schema === 2 && artifact.kind === "node-runtime-benchmark-row-v2",
+          `${row.runtime} deployed artifact contract is invalid`);
+        for (const field of [
+          "runtime", "label", "status", "version", "executionModel", "source", "programSha256",
+          "samplesMs", "checksums", "firstMs", "medianMs", "relativeToNative", "readySamplesMs",
+          "readyMs", "commandMetric", "readyMetric", "commandRuns", "readyRuns", "rawEvidence",
+        ]) {
+          requireBenchmark(sameJson(row[field], artifact[field]),
+            `${row.runtime} ${field} differs from deployed artifact`);
+        }
+        requireBenchmark(sameJson(row.evidence.provenance, artifact.publicationProvenance),
+          `${row.runtime} provenance differs from deployed artifact`);
+        await fetchHashedEvidence(row.evidence.provenance.collector, `${row.runtime} collector`);
+        const rawBytes = await Promise.all(row.rawEvidence.artifacts.map((reference, index) =>
+          fetchHashedEvidence(reference, `${row.runtime} raw ${index}`)));
+        const raws = rawBytes.map((raw) => JSON.parse(new TextDecoder().decode(raw)));
+        const expectedCaptureId = await sha256Text(JSON.stringify({
+          runtime: row.runtime,
+          artifacts: row.rawEvidence.artifacts.map((reference) => reference.sha256),
+          collector: row.evidence.provenance.collector.sha256,
+        }));
+        requireBenchmark(row.evidence.provenance.captureId === expectedCaptureId,
+          `${row.runtime} capture ID does not bind raw bytes`);
+        requireBenchmark(sameJson(row.evidence.provenance.captures,
+          raws.map((raw, index) => captureMetadata(row.runtime, raw, row.rawEvidence.artifacts[index]))),
+        `${row.runtime} capture metadata differs from raw evidence`);
+        const expectedRuns = await extractRawRuns(row.runtime, raws, row.rawEvidence.artifacts);
+        requireBenchmark(sameJson(row.commandRuns, expectedRuns.commandRuns),
+          `${row.runtime} command samples are not raw-derived`);
+        requireBenchmark(sameJson(row.readyRuns, expectedRuns.readyRuns),
+          `${row.runtime} readiness samples are not raw-derived`);
+      };
+      const validateBenchmarkData = async (data) => {
+        requireBenchmark(data?.schema === 3, "schema must be 3");
+        requireBenchmark(data.kind === "node-runtime-benchmark-comparison-v3", "comparison kind is invalid");
+        const candidateOnly = data.publicationStatus === "competitor-candidate";
+        requireBenchmark(candidateOnly || data.publicationStatus === "complete",
+          "benchmark publication is not complete");
+        requireBenchmark(Number.isFinite(Date.parse(data.updatedAt)), "updatedAt is invalid");
+        requireBenchmark(data.fixture?.id === "runtime-bench-v1-2m-imul", "fixture ID drifted");
+        requireBenchmark(data.fixture?.iterations === 2000000, "fixture iteration count drifted");
+        requireBenchmark(data.fixture?.sampleCount === benchmarkSampleCount, "fixture sample count drifted");
+        requireBenchmark(data.fixture?.expectedChecksum === benchmarkChecksum, "fixture checksum drifted");
+        requireBenchmark(data.fixture?.programSha256 === benchmarkProgramSha256, "fixture source hash drifted");
+        requireBenchmark(sha256Pattern.test(data.comparisonId), "comparison ID is invalid");
+        requireBenchmark(data.native && Array.isArray(data.runtimes)
+          && data.runtimes.length === (candidateOnly ? 3 : 4),
+        candidateOnly ? "competitor candidate must contain four measured rows"
+          : "exactly five runtime rows are required");
+        const rows = [data.native, ...data.runtimes];
+        const ids = rows.map((row) => row?.runtime);
+        const expectedIds = candidateOnly
+          ? ["native-node", "webvm", "almostnode", "webcontainers"] : benchmarkRuntimeIds;
+        requireBenchmark(sameJson(ids, expectedIds), "runtime IDs/order are incomplete or duplicated");
+        requireBenchmark(new Set(ids).size === expectedIds.length, "runtime IDs must be unique");
+        const nativeMedian = data.native.medianMs;
+        requireBenchmark(Number.isFinite(nativeMedian) && nativeMedian > 0, "native median is invalid");
+        rows.forEach((row) => {
+          requireBenchmark(row.label === benchmarkLabels[row.runtime], `${row.runtime} label is not canonical`);
+          requireBenchmark(row.status === "measured", `${row.runtime} is not measured`);
+          requireBenchmark(nonEmpty(row.version) && nonEmpty(row.executionModel),
+            `${row.runtime} identity is incomplete`);
+          requireBenchmark(nonEmpty(row.source) && /^https:\/\//.test(row.source),
+            `${row.runtime} source must be HTTPS`);
+          requireBenchmark(row.programSha256 === benchmarkProgramSha256,
+            `${row.runtime} source hash differs`);
+          requireBenchmark(Array.isArray(row.samplesMs) && row.samplesMs.length === benchmarkSampleCount
+            && row.samplesMs.every((value) => Number.isFinite(value) && value > 0),
+          `${row.runtime} requires seven positive command samples`);
+          requireBenchmark(Array.isArray(row.checksums) && row.checksums.length === benchmarkSampleCount
+            && row.checksums.every((value) => value === benchmarkChecksum),
+          `${row.runtime} checksum evidence is invalid`);
+          requireBenchmark(row.firstMs === row.samplesMs[0], `${row.runtime} firstMs is not sample zero`);
+          requireBenchmark(closeEnough(row.medianMs, median(row.samplesMs)),
+            `${row.runtime} command median is invalid`);
+          requireBenchmark(closeEnough(row.relativeToNative, median(row.samplesMs) / nativeMedian),
+            `${row.runtime} native ratio is invalid`);
+          validateMetric(row.commandMetric, {
+            start: "command-submitted",
+            stop: "checksum-marker-observed",
+            freshness: "fresh-command-in-ready-runtime",
+          }, `${row.runtime} command`);
+          requireBenchmark(Array.isArray(row.readySamplesMs)
+            && row.readySamplesMs.length === benchmarkSampleCount
+            && row.readySamplesMs.every((value) => Number.isFinite(value) && value > 0),
+          `${row.runtime} requires seven positive readiness samples`);
+          requireBenchmark(closeEnough(row.readyMs, median(row.readySamplesMs)),
+            `${row.runtime} readiness median is invalid`);
+          validateMetric(row.readyMetric, {
+            start: "runtime-launch-requested",
+            stop: "first-probe-response-observed",
+            freshness: "fresh-runtime-session",
+          }, `${row.runtime} readiness`);
+          validateRunRecords(row);
+          validateEvidence(row);
+        });
+        requireBenchmark(data.native.relativeToNative === 1, "native ratio must be exactly 1");
+        const wasmMedian = rows.find((row) => row.runtime === "wasm-vm")?.medianMs;
+        const webvmMedian = rows.find((row) => row.runtime === "webvm")?.medianMs;
+        if (!candidateOnly) {
+          requireBenchmark(Number.isFinite(wasmMedian) && Number.isFinite(webvmMedian)
+            && wasmMedian <= webvmMedian * maximumWasmToWebvmCommandRatio,
+          "wasm-vm command median exceeds the WebVM +10% publication budget");
+        }
+        const expectedComparisonId = await sha256Text(JSON.stringify({
+          fixture: data.fixture,
+          artifacts: rows.map((row) => ({ runtime: row.runtime, sha256: row.evidence.artifact.sha256 })),
+        }));
+        requireBenchmark(data.comparisonId === expectedComparisonId,
+          "comparison ID does not bind the fixture and ordered artifacts");
+        return rows;
+      };
+      const formatMs = (value) => `${value.toFixed(1)} ms`;
+      const formatRatio = (value) => `${value.toFixed(2)}×`;
+      const makeCell = (text, className = "") => {
+        const td = document.createElement("td");
+        td.className = className;
+        td.textContent = text;
+        return td;
+      };
+      const makeReadyCell = (row) => {
+        const td = makeCell(formatMs(row.readyMs), "number");
+        const definition = document.createElement("span");
+        definition.className = "ready-def";
+        definition.textContent = row.readyMetric.mechanism;
+        td.append(definition);
+        return td;
+      };
+      const renderBenchmarks = async (data) => {
+        const rows = await validateBenchmarkData(data);
+        if (data.publicationStatus === "complete") await Promise.all(rows.map(validateDeployedArtifact));
+        benchmarkDate.textContent = new Date(data.updatedAt).toLocaleString(undefined, {
+          year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+        });
+        const renderedRows = rows.map((row) => {
+          const tr = document.createElement("tr");
+          const runtime = makeCell("", "runtime");
+          const link = document.createElement("a");
+          link.textContent = row.label;
+          link.href = row.source;
+          if (/^https?:/.test(row.source)) { link.target = "_blank"; link.rel = "noopener"; }
+          runtime.append(link);
+          tr.append(
+            runtime,
+            makeCell(row.executionModel, "model"),
+            makeCell(formatMs(row.medianMs), "number"),
+            makeCell(formatMs(row.firstMs), "number"),
+            makeReadyCell(row),
+            makeCell(formatRatio(row.relativeToNative), "ratio"),
+          );
+          return tr;
+        });
+        if (data.publicationStatus === "competitor-candidate") {
+          const pending = document.createElement("tr");
+          pending.innerHTML = '<td class="runtime">wasm-vm</td><td class="model" colspan="4">Seven fresh wasm-vm samples are being re-run; no timing is shown until the raw-backed publication gate passes.</td><td class="number">pending</td>';
+          renderedRows.push(pending);
+        }
+        benchmarkRows.replaceChildren(...renderedRows);
+      };
+      fetch("./benchmarks.json", { cache: "no-store" }).then((response) => {
+        if (!response.ok) throw new Error(`benchmark data HTTP ${response.status}`);
+        return response.json();
+      }).then(renderBenchmarks).catch((error) => {
+        benchmarkDate.textContent = "unavailable";
+        benchmarkRows.innerHTML = `<tr><td colspan="6" class="model">Benchmark evidence unavailable.</td></tr>`;
+        console.error("benchmark table failed:", error);
+      });
 
       // Live boot: lazily swap the mock terminal for a REAL chrome-free busybox boot (the app in
       // ?embed mode). The ~22 MB kernel + wasm load ONLY on click — never on initial page load.
