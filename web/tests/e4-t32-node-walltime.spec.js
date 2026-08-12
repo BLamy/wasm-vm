@@ -64,6 +64,17 @@ const nodeAssetDir = (process.env.E4T32_NODE_ASSET_DIR || "").trim();
 const nodeAssetBase = (
   process.env.E4T32_NODE_ASSET_BASE || (nodeAssetDir ? "/e4t32-node-assets" : "")
 ).replace(/\/+$/, "");
+const warmAssetDir = (process.env.E4T34_WARM_ASSET_DIR || "").trim();
+const fileIdentity = (filePath) => {
+  const bytes = fs.readFileSync(filePath);
+  return { size: bytes.byteLength, sha256: createHash("sha256").update(bytes).digest("hex") };
+};
+const warmCandidate = warmAssetDir
+  ? {
+      bootSnapshot: fileIdentity(path.join(warmAssetDir, "candidate.snap.gz")),
+      overlayDelta: fileIdentity(path.join(warmAssetDir, "candidate.overlay-delta.bin.gz")),
+    }
+  : null;
 const productionAssetBase = "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev";
 const evidenceDir = path.resolve(
   process.env.E4T32_NODE_EVIDENCE_DIR || path.join(repoRoot, "evidence/e4-t32/node-walltime"),
@@ -639,6 +650,22 @@ async function runNodeVariantSession(browser, {
   const productionR2Requests = [];
   try {
     page = await browser.newPage();
+    if (warmCandidate) {
+      await page.route("**/artifacts-node-alpine.json", async (route) => {
+        const response = await route.fetch();
+        const manifest = await response.json();
+        manifest.generated = "E4-T34 local warm-snapshot screen; never publish";
+        manifest.artifacts.bootSnapshot = {
+          url: "/e4t34-warm-assets/candidate.snap.gz",
+          ...warmCandidate.bootSnapshot,
+        };
+        manifest.artifacts.overlayDelta = {
+          url: "/e4t34-warm-assets/candidate.overlay-delta.bin.gz",
+          ...warmCandidate.overlayDelta,
+        };
+        await route.fulfill({ response, json: manifest });
+      });
+    }
     page.on("console", (message) => {
       const entry = {
         type: message.type(),
@@ -684,6 +711,18 @@ async function runNodeVariantSession(browser, {
       return window.wvmDemo.exec("true", 30_000, { quiet: true });
     });
     expect(shellSettlement.exit, `${variant} shell must settle before timing`).toBe(0);
+    const nodeProcessesBefore = await page.evaluate(() => window.wvmDemo.exec(
+      "for p in /proc/[0-9]*; do " +
+        "[ \"$(readlink \"$p/exe\" 2>/dev/null)\" = /usr/bin/node ] && printf '%s\\n' \"${p##*/}\"; " +
+        "done",
+      30_000,
+      { quiet: true },
+    ));
+    expect(nodeProcessesBefore.exit, `${variant} prelaunch Node-process probe`).toBe(0);
+    expect(
+      nodeProcessesBefore.stdout.trim(),
+      `${variant} must not inherit a hidden /usr/bin/node process from its boot snapshot`,
+    ).toBe("");
     const restored = await page.evaluate(() => window.__linux?.restoredFromBootSnapshot?.());
     expect(restored, `${variant} pass ${passIndex} must use the shipped Node snapshot`).toBe(true);
     const bootIdentity = await page.evaluate(async () => {
@@ -795,6 +834,7 @@ async function runNodeVariantSession(browser, {
       bootIdentity,
       liveNodeManifest,
       nodeWarmupStateAtCommand,
+      nodeProcessesBefore,
       productionR2Requests,
       jitBefore,
       jitAfter,

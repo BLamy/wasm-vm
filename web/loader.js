@@ -394,9 +394,10 @@ export async function startLinuxBoot(opts = {}) {
       // disk reads return post-boot content. Then (after construction) loadSnapshotBlob restores RAM,
       // landing straight at a ready, container-capable shell instead of the ~15-min cold boot.
       //
-      // Writer tabs only (a read-only tab must never write IndexedDB). seedOverlayDelta is a no-op
-      // (returns false) if an overlay already exists, so a user's own durable disk is never clobbered.
-      // Any failure here falls through to the normal chunked cold boot — never a broken state.
+      // Writer tabs only (a read-only tab must never write IndexedDB). seedOverlayDelta accepts a
+      // freshly seeded store or an existing store whose valid meta + complete block set byte-match the
+      // shipped delta. Any user block difference returns false without writing; that preserves the
+      // user's overlay and forces the coherent cold boot. Failures do the same — never a broken state.
       if (!lockReadOnly && bootSnap && overlayDeltaEntry && opts.bootSnapshot !== false) {
         try {
           onState("restoring");
@@ -407,13 +408,9 @@ export async function startLinuxBoot(opts = {}) {
           if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
           const ramBytes = await gunzip(rgz);
           const seeded = await seedOverlayDelta(imageManifestText, deltaBytes);
-          // Arm the RAM restore whether we FRESHLY seeded (first visit) OR a coherent overlay already
-          // exists (return visit — the post-boot disk delta is already in it, unmodified). The gate is
-          // the post-construction restoreDecisionCode below: it enforces the core-hash + base +
-          // overlay-generation triple, so a MODIFIED overlay (user wrote to disk) is rejected → cold
-          // boot, while an unmodified one fast-restores every load instead of cold-booting.
-          void seeded;
-          alpineRamBlob = ramBytes;
+          // Arm RAM only when disk equality has already been proven. The post-construction
+          // restoreDecisionCode remains the independent core-hash + base + generation guard.
+          alpineRamBlob = seeded ? ramBytes : null;
         } catch (e) {
           console.warn("wasm-vm: Alpine overlay-delta seed failed, cold booting:", e?.message || e);
           alpineRamBlob = null;

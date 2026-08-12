@@ -355,11 +355,13 @@ export function overlayDbName(manifest_json: string): string;
  * Coherence is bound, not bypassed:
  * * the delta's `base_binding`/`image_len` must match this manifest's `base_hash`/`image_len`
  *   (`delta_base_mismatch` otherwise) — a delta for a different chunked base is rejected;
- * * seeding is done **only into a brand-new overlay store** (no meta record yet). If an overlay
- *   already exists (the user has their own durable disk state) it is left untouched and this returns
- *   `false` — the boot then proceeds over that existing overlay, never clobbered by pristine-boot blocks.
+ * * a brand-new (no meta, no blocks) store is seeded, while an existing store is accepted only when
+ *   its valid meta and complete block-index/value set exactly equal the delta. Any changed, added, or
+ *   removed user block is left untouched and returns `false`, forcing the paired RAM snapshot to be
+ *   skipped and the normal cold boot to continue over that existing overlay.
  *
- * Returns `true` iff the delta was seeded (a fresh store), `false` if an overlay already existed.
+ * Returns `true` iff the delta was freshly seeded or the existing overlay is byte-exact, `false` for
+ * any other existing state. Returning `false` never writes to the store.
  * The paired RAM snapshot rides the same overlay generation (0 for a fresh store); the restore's
  * `restoreDecisionCode` guard enforces the core-hash + base + generation triple before `loadSnapshotBlob`.
  */

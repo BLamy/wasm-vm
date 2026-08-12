@@ -20,6 +20,12 @@ if NODE_ASSET_ROOT:
         raise SystemExit(f"E4T32_NODE_ASSET_DIR has no manifest.json: {NODE_ASSET_ROOT}")
     if not os.path.isdir(os.path.join(NODE_ASSET_ROOT, "chunks")):
         raise SystemExit(f"E4T32_NODE_ASSET_DIR has no chunks/: {NODE_ASSET_ROOT}")
+WARM_ASSET_ROOT = os.environ.get("E4T34_WARM_ASSET_DIR", "").strip()
+if WARM_ASSET_ROOT:
+    WARM_ASSET_ROOT = os.path.realpath(WARM_ASSET_ROOT)
+    for name in ("candidate.snap.gz", "candidate.overlay-delta.bin.gz"):
+        if not os.path.isfile(os.path.join(WARM_ASSET_ROOT, name)):
+            raise SystemExit(f"E4T34_WARM_ASSET_DIR has no {name}: {WARM_ASSET_ROOT}")
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
@@ -43,6 +49,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             if rel == "manifest.json" or re.fullmatch(r"chunks/[0-9a-f]{64}\.bin", rel):
                 return os.path.join(NODE_ASSET_ROOT, *rel.split("/"))
             return os.path.join(NODE_ASSET_ROOT, ".not-found")
+        warm_prefix = "/e4t34-warm-assets/"
+        if WARM_ASSET_ROOT and p.startswith(warm_prefix):
+            rel = p[len(warm_prefix):]
+            if rel in ("candidate.snap.gz", "candidate.overlay-delta.bin.gz"):
+                return os.path.join(WARM_ASSET_ROOT, rel)
+            return os.path.join(WARM_ASSET_ROOT, ".not-found")
         if p.startswith("/releases/"):
             return os.path.join(ROOT, p.lstrip("/"))
         return os.path.join(ROOT, "web", p.lstrip("/"))
@@ -55,7 +67,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         # guess_type() below already emits the one authoritative Content-Type. Adding it here too
         # produces a comma-joined duplicate that Chromium rejects for instantiateStreaming().
         # Content-hashed artifacts + the wasm bundle are immutable → cache hard.
-        if path.startswith(("/releases/", "/e4t32-node-assets/")) or path.endswith((".wasm", "_bg.wasm")):
+        if path.startswith(("/releases/", "/e4t32-node-assets/", "/e4t34-warm-assets/")) or path.endswith((".wasm", "_bg.wasm")):
             self.send_header("Cache-Control", "public, max-age=31536000, immutable")
         super().end_headers()
 
@@ -68,6 +80,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 httpd = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
 extra = f" + E4-T32 Node assets from {NODE_ASSET_ROOT}" if NODE_ASSET_ROOT else ""
+if WARM_ASSET_ROOT:
+    extra += f" + E4-T34 warm candidate from {WARM_ASSET_ROOT}"
 print(f"serving web/ (+ /releases){extra} at http://localhost:{PORT}/  (Ctrl-C to stop)")
 httpd.serve_forever()
 PY

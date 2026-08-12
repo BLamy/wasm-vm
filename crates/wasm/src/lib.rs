@@ -336,11 +336,13 @@ pub fn overlay_db_name(manifest_json: &str) -> Result<String, JsError> {
 /// Coherence is bound, not bypassed:
 /// * the delta's `base_binding`/`image_len` must match this manifest's `base_hash`/`image_len`
 ///   (`delta_base_mismatch` otherwise) — a delta for a different chunked base is rejected;
-/// * seeding is done **only into a brand-new overlay store** (no meta record yet). If an overlay
-///   already exists (the user has their own durable disk state) it is left untouched and this returns
-///   `false` — the boot then proceeds over that existing overlay, never clobbered by pristine-boot blocks.
+/// * a brand-new (no meta, no blocks) store is seeded, while an existing store is accepted only when
+///   its valid meta and complete block-index/value set exactly equal the delta. Any changed, added, or
+///   removed user block is left untouched and returns `false`, forcing the paired RAM snapshot to be
+///   skipped and the normal cold boot to continue over that existing overlay.
 ///
-/// Returns `true` iff the delta was seeded (a fresh store), `false` if an overlay already existed.
+/// Returns `true` iff the delta was freshly seeded or the existing overlay is byte-exact, `false` for
+/// any other existing state. Returning `false` never writes to the store.
 /// The paired RAM snapshot rides the same overlay generation (0 for a fresh store); the restore's
 /// `restoreDecisionCode` guard enforces the core-hash + base + generation triple before `loadSnapshotBlob`.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
@@ -361,14 +363,18 @@ pub async fn seed_overlay_delta(
     let idb = idb_store::IdbStore::open(&base_binding)
         .await
         .map_err(|e| JsError::new(&format!("IndexedDB open: {e:?}")))?;
-    // Only seed a brand-new store — never clobber an existing user overlay.
-    if idb
+    let meta = idb
         .read_meta()
         .await
-        .map_err(|e| JsError::new(&format!("IndexedDB read meta: {e:?}")))?
-        .is_some()
-    {
-        return Ok(false);
+        .map_err(|e| JsError::new(&format!("IndexedDB read meta: {e:?}")))?;
+    let stored_blocks = idb
+        .load_blocks()
+        .await
+        .map_err(|e| JsError::new(&format!("IndexedDB load blocks: {e:?}")))?;
+    match delta.seed_decision(&manifest, meta.as_deref(), &stored_blocks) {
+        wasm_vm_storage::OverlaySeedDecision::ReuseExact => return Ok(true),
+        wasm_vm_storage::OverlaySeedDecision::PreserveExisting => return Ok(false),
+        wasm_vm_storage::OverlaySeedDecision::SeedFresh => {}
     }
     idb.write_meta(&wasm_vm_storage::OverlayMeta::new(&manifest).to_bytes())
         .await
