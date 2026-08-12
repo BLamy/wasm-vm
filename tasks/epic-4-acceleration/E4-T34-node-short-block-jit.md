@@ -3,7 +3,7 @@ id: E4-T34
 epic: 4
 title: Short-block JIT acceleration for restored Node startup
 priority: 434
-status: pending
+status: in-progress
 depends_on: [E4-T32]
 estimate: S
 risk: high
