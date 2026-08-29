@@ -4,7 +4,9 @@
 //! reopen (into `WriteBackOverlay::from_loaded`/`with_shared_queue`) and drains the queue into batched
 //! `readwrite` transactions whose `complete` event is the honest durability barrier.
 //!
-//! Schema: DB name `overlay_store_name(base_hash)` (namespaced per image), version `OVERLAY_DB_VERSION`.
+//! Schema: legacy DBs use `overlay_store_name(base_hash)`; shipped warm seeds use
+//! `overlay_seed_store_name(base_hash, seed_identity)` so a new exact delta never collides with an
+//! older user overlay. Both use version `OVERLAY_DB_VERSION`.
 //! Object stores: `blocks` (key = block index as a number — block indices are far below 2^53 for any
 //! real image, so f64 is exact) and `meta` (the single [`OverlayMeta`] record under key 0).
 
@@ -16,7 +18,9 @@ use web_sys::{IdbDatabase, IdbObjectStore, IdbRequest, IdbTransaction};
 
 use std::collections::BTreeMap;
 
-use wasm_vm_storage::{OVERLAY_BLOCK, OVERLAY_DB_VERSION, overlay_store_name};
+use wasm_vm_storage::{
+    OVERLAY_BLOCK, OVERLAY_DB_VERSION, overlay_seed_store_name, overlay_store_name,
+};
 
 const BLOCKS: &str = "blocks";
 const META: &str = "meta";
@@ -36,9 +40,13 @@ impl IdbStore {
         self.db.close();
     }
 
-    /// Open (creating/upgrading) the overlay DB for the base identified by `base_binding`. Creates the
-    /// `blocks` + `meta` object stores on first use / version upgrade.
-    pub async fn open(base_binding: &[u8; 32]) -> Result<IdbStore, JsValue> {
+    /// Open (creating/upgrading) the overlay DB for the base identified by `base_binding`. A supplied
+    /// seed identity selects an independent warm-seed namespace; `None` preserves the legacy
+    /// per-base namespace. Creates the `blocks` + `meta` object stores on first use / version upgrade.
+    pub async fn open(
+        base_binding: &[u8; 32],
+        seed_identity: Option<&[u8; 32]>,
+    ) -> Result<IdbStore, JsValue> {
         let global = js_sys::global();
         let factory = if let Some(scope) = global.dyn_ref::<web_sys::WorkerGlobalScope>() {
             scope.indexed_db()
@@ -49,7 +57,10 @@ impl IdbStore {
         }?
         .ok_or_else(|| JsValue::from_str("IndexedDB unavailable"))?;
 
-        let name = overlay_store_name(base_binding);
+        let name = seed_identity.map_or_else(
+            || overlay_store_name(base_binding),
+            |identity| overlay_seed_store_name(base_binding, identity),
+        );
         let req = factory.open_with_u32(&name, OVERLAY_DB_VERSION)?;
 
         // Create object stores on upgrade. The DB version is constant (OVERLAY_DB_VERSION), so

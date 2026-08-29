@@ -24,6 +24,7 @@ import init, {
   slirpDhcpStats,
 } from "./pkg/wasm_vm_wasm.js";
 import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
+import { deriveOverlaySeedIdentity } from "./overlay-seed-identity.js";
 import { createTaskQuiescence } from "./task-quiescence.js";
 
 // Responsiveness: a near-zero-delay "yield to the main thread" for rescheduling the run loop. The VM
@@ -142,14 +143,17 @@ async function sha256hex(bytes) {
  *   quantum       instructions per run slice (default 500_000; see the option below)
  * Returns a controller: { sendInput(bytes), stop(), whenDone: Promise<string> }.
  */
-// E3-T10: "reset disk" — delete THIS image's durable overlay (its own IndexedDB database),
-// scoped by the manifest's base hash so a second image's overlay survives. Returns true if a
-// database was deleted. The caller must ensure no tab is booted rw against it (the writer lock
-// makes a live wipe race impossible — a running writer holds the lock; reset from a fresh page).
-export async function resetDisk(manifestUrl = "./releases/chunked-alpine/manifest.json") {
+// E3-T10: "reset disk" — delete THIS image/release's durable overlay (its own IndexedDB database),
+// scoped by the manifest's base hash and optional exact warm-seed identity so a second image, the
+// legacy DB, and older warm releases survive. Returns true if a database was deleted. The caller
+// must ensure no tab is booted rw against it (the writer lock makes a live wipe race impossible).
+export async function resetDisk(
+  manifestUrl = "./releases/chunked-alpine/manifest.json",
+  seedIdentity = null,
+) {
   await init();
   const text = await (await fetch(manifestUrl, { cache: "no-store" })).text();
-  const name = overlayDbName(text);
+  const name = overlayDbName(text, seedIdentity);
   await new Promise((resolve, reject) => {
     const req = indexedDB.deleteDatabase(name);
     let blocked = false;
@@ -245,6 +249,12 @@ export async function startLinuxBoot(opts = {}) {
     // restore can see them. `alpineRamBlob` is the RAM blob to restore once the chunked machine exists.
     const bootSnap = manifest.artifacts?.bootSnapshot;
     const overlayDeltaEntry = manifest.artifacts?.overlayDelta;
+    // The exact RAM+disk pair identity is also the durable-overlay namespace. This keeps a new
+    // shipped warm image independent from the legacy per-base DB (and every older snapshot), even
+    // when a RAM-only release changes while its disk delta happens to remain byte-identical.
+    const overlaySeedIdentity = bootSnap && overlayDeltaEntry && opts.bootSnapshot !== false
+      ? await deriveOverlaySeedIdentity(bootSnap.sha256, overlayDeltaEntry.sha256)
+      : null;
     let alpineRamBlob = null;
 
     onState("fetching");
@@ -346,12 +356,10 @@ export async function startLinuxBoot(opts = {}) {
       // BEFORE the writable store opens; a second tab probes with ifAvailable (queueing would
       // hang its boot) and falls back to a read-only boot: writes rejected at the backend
       // seam, VIRTIO_BLK_F_RO advertised, guest mounts `/` ro, NO persist pump.
-      // E3-T09 (critic BUG-3): key the lock on the MANIFEST CONTENT digest, not the URL
-      // string — the IndexedDB name is keyed on the base hash, so two URL spellings of the
-      // same image must contend for the SAME lock.
-      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(imageManifestText));
-      const hex = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
-      const lockName = `wasm-vm-disk-${hex}`;
+      // E3-T09 (critic BUG-3): derive the lock from the exact active IndexedDB name, not the URL or
+      // raw manifest text. Two semantically identical manifests may have different whitespace/key
+      // order but the same base binding and DB, so only this makes lock ownership exactly match.
+      const lockName = `wasm-vm-disk-${overlayDbName(imageManifestText, overlaySeedIdentity)}`;
       if (navigator.locks) {
         const granted = await new Promise((resolve) => {
           navigator.locks
@@ -394,9 +402,10 @@ export async function startLinuxBoot(opts = {}) {
       // disk reads return post-boot content. Then (after construction) loadSnapshotBlob restores RAM,
       // landing straight at a ready, container-capable shell instead of the ~15-min cold boot.
       //
-      // Writer tabs only (a read-only tab must never write IndexedDB). seedOverlayDelta is a no-op
-      // (returns false) if an overlay already exists, so a user's own durable disk is never clobbered.
-      // Any failure here falls through to the normal chunked cold boot — never a broken state.
+      // Writer tabs only (a read-only tab must never write IndexedDB). The exact release namespace
+      // normally starts fresh; repeated visits reuse it only when valid meta + the complete block set
+      // byte-match the shipped delta. User changes in that namespace return false without writes and
+      // force a coherent cold boot. Legacy and older-release DBs are never opened here.
       if (!lockReadOnly && bootSnap && overlayDeltaEntry && opts.bootSnapshot !== false) {
         try {
           onState("restoring");
@@ -406,21 +415,24 @@ export async function startLinuxBoot(opts = {}) {
           const rgz = await fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t));
           if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
           const ramBytes = await gunzip(rgz);
-          const seeded = await seedOverlayDelta(imageManifestText, deltaBytes);
-          // Arm the RAM restore whether we FRESHLY seeded (first visit) OR a coherent overlay already
-          // exists (return visit — the post-boot disk delta is already in it, unmodified). The gate is
-          // the post-construction restoreDecisionCode below: it enforces the core-hash + base +
-          // overlay-generation triple, so a MODIFIED overlay (user wrote to disk) is rejected → cold
-          // boot, while an unmodified one fast-restores every load instead of cold-booting.
-          void seeded;
-          alpineRamBlob = ramBytes;
+          const seeded = await seedOverlayDelta(imageManifestText, deltaBytes, overlaySeedIdentity);
+          // Arm RAM only when disk equality has already been proven. The post-construction
+          // restoreDecisionCode remains the independent core-hash + base + generation guard.
+          alpineRamBlob = seeded ? ramBytes : null;
+          if (!seeded) {
+            console.warn(
+              "wasm-vm: active warm-release disk has user changes; preserving it and cold booting",
+            );
+            onState("booting");
+          }
         } catch (e) {
           console.warn("wasm-vm: Alpine overlay-delta seed failed, cold booting:", e?.message || e);
           alpineRamBlob = null;
+          onState("booting");
         }
       }
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
-      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, lockReadOnly, emitOutput);
+      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, lockReadOnly, emitOutput, overlaySeedIdentity);
     } else if (isChunked) {
       machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, emitOutput);
     } else if (mode === "disk") {
@@ -826,6 +838,7 @@ export async function startLinuxBoot(opts = {}) {
       isPaused: () => paused,
       // E4: true when this boot skipped the Linux boot by restoring a shipped boot snapshot.
       restoredFromBootSnapshot: () => restoredFromBootSnapshot,
+      overlaySeedIdentity: () => overlaySeedIdentity,
       stateDigest: () => machine.stateDigest(),
       jitStats: () => (typeof machine.jitStats === "function" ? machine.jitStats() : null),
       profileStats: () => (typeof machine.getProfile === "function" ? machine.getProfile() : null),

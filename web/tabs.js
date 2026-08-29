@@ -1,6 +1,6 @@
 // Tab switching for the demo shell. Roadmap is the default tab. Switching to the IDE re-fits xterm
-// (its panel was display:none, so it couldn't size until now — we reuse the existing Fit button's
-// logic). Tabs deep-link via the URL hash so a view can be shared/reloaded.
+// (its panel was display:none, so it couldn't size until now). Tabs deep-link via the URL hash so a
+// view can be shared/reloaded.
 //
 // The standalone "Tests" tab was removed: test evidence now lives inside each roadmap ticket
 // (see roadmap.js). The in-browser riscv-tests suite machinery still exists in main.js, bound to the
@@ -29,11 +29,11 @@ function show(tab) {
     p.classList.toggle("active", p.id === `panel-${tab}`);
   }
   if (tab === "ide") {
-    // The terminal panel was hidden; let layout settle, then re-fit xterm via the Fit button and
-    // focus it so keystrokes land immediately (xterm ignores input unless focused, and a
-    // display:none panel can't hold focus — so it must be re-focused every time it's shown).
+    // The terminal panel was hidden; let layout settle, then re-fit xterm locally and focus it so
+    // keystrokes land immediately. Do not click the manual Fit button here: that button also types
+    // `stty rows …` into the guest, which can interleave with a command already running.
     requestAnimationFrame(() => {
-      document.getElementById("term-fit")?.click();
+      window.__term?.fitNow?.();
       window.__term?.focus?.();
     });
   }

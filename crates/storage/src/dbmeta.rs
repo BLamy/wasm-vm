@@ -110,5 +110,24 @@ pub fn overlay_store_name(base_binding: &[u8; 32]) -> String {
     s
 }
 
+/// The durable store name for a shipped overlay seed, isolated from both the legacy per-base store
+/// and every other seed for that base. `seed_identity` is the SHA-256 identity derived from the
+/// exact RAM-snapshot + disk-delta digest pair published by the boot manifest.
+///
+/// A new warm snapshot must never reuse an older user's overlay merely because both ride the same
+/// immutable base image: that older store may contain valid user writes which make the paired RAM
+/// snapshot incoherent. Giving each exact seed its own store lets the warm snapshot initialize a
+/// fresh namespace while leaving every pre-existing database untouched and recoverable.
+pub fn overlay_seed_store_name(base_binding: &[u8; 32], seed_identity: &[u8; 32]) -> String {
+    let mut s = overlay_store_name(base_binding);
+    s.reserve(6 + 64);
+    s.push_str("-seed-");
+    for b in seed_identity {
+        s.push(char::from_digit((b >> 4) as u32, 16).unwrap());
+        s.push(char::from_digit((b & 0xf) as u32, 16).unwrap());
+    }
+    s
+}
+
 #[cfg(test)]
 mod tests;

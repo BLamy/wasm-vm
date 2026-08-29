@@ -82,3 +82,27 @@ test("Fit button surfaces a matching stty hint", async ({ page }) => {
   const grid = await page.evaluate(() => ({ cols: window.__term.term.cols, rows: window.__term.term.rows }));
   expect(hint).toBe(`stty rows ${grid.rows} cols ${grid.cols}`);
 });
+
+test("switching to Demo refits locally without injecting the manual stty command", async ({ page }) => {
+  const pageErrors = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+  await page.goto("/#roadmap");
+  await page.evaluate(() => {
+    const fitButton = document.getElementById("term-fit");
+    window.__manualFitClicks = 0;
+    fitButton?.addEventListener("click", () => { window.__manualFitClicks += 1; });
+    // The manual handler's only guest-input path starts with this click. Make any attempted use of
+    // that path fail the test synchronously instead of merely checking the visible stty hint.
+    if (fitButton) fitButton.click = () => {
+      window.__manualFitClicks += 1;
+      throw new Error("implicit manual Fit input path");
+    };
+  });
+
+  await page.click('.tab[data-tab="ide"]');
+  await page.waitForTimeout(150);
+
+  expect(await page.evaluate(() => window.__manualFitClicks)).toBe(0);
+  expect(pageErrors).toEqual([]);
+  await expect(page.locator("#panel-ide")).toHaveClass(/active/);
+});

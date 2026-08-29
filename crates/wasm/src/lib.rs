@@ -310,6 +310,17 @@ pub fn init_logging() {
     init_diagnostics();
 }
 
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+fn parse_overlay_seed_identity(identity: Option<String>) -> Result<Option<[u8; 32]>, JsError> {
+    identity
+        .map(|hex| {
+            browser_file_transfer::parse_sha256(&hex).map_err(|_| {
+                JsError::new("overlay seed identity must be exactly 64 hex characters")
+            })
+        })
+        .transpose()
+}
+
 /// The core crate version, exposed to JS.
 #[wasm_bindgen]
 pub fn version() -> String {
@@ -319,13 +330,22 @@ pub fn version() -> String {
 /// E3-T10: the IndexedDB database name that holds a given image's durable overlay — so the
 /// "reset disk" flow can `indexedDB.deleteDatabase(name)` for THIS image only (a second image's
 /// overlay, in a different DB, survives). Same derivation the durable store uses
-/// (`overlay_store_name(base_hash)`), so it always matches.
+/// (`overlay_store_name(base_hash)` for legacy boots, or the exact shipped RAM+delta pair's
+/// independent seed namespace), so it always matches. Omitting `seed_identity` preserves the
+/// legacy name.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 #[wasm_bindgen(js_name = overlayDbName)]
-pub fn overlay_db_name(manifest_json: &str) -> Result<String, JsError> {
+pub fn overlay_db_name(
+    manifest_json: &str,
+    seed_identity: Option<String>,
+) -> Result<String, JsError> {
     let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
         .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
-    Ok(wasm_vm_storage::overlay_store_name(&manifest.base_hash()))
+    let base_binding = manifest.base_hash();
+    Ok(match parse_overlay_seed_identity(seed_identity)? {
+        Some(identity) => wasm_vm_storage::overlay_seed_store_name(&base_binding, &identity),
+        None => wasm_vm_storage::overlay_store_name(&base_binding),
+    })
 }
 
 /// E4 Alpine restore-on-load: seed the IndexedDB copy-on-write overlay for this chunked image with the
@@ -336,11 +356,13 @@ pub fn overlay_db_name(manifest_json: &str) -> Result<String, JsError> {
 /// Coherence is bound, not bypassed:
 /// * the delta's `base_binding`/`image_len` must match this manifest's `base_hash`/`image_len`
 ///   (`delta_base_mismatch` otherwise) — a delta for a different chunked base is rejected;
-/// * seeding is done **only into a brand-new overlay store** (no meta record yet). If an overlay
-///   already exists (the user has their own durable disk state) it is left untouched and this returns
-///   `false` — the boot then proceeds over that existing overlay, never clobbered by pristine-boot blocks.
+/// * a brand-new (no meta, no blocks) store is seeded, while an existing store is accepted only when
+///   its valid meta and complete block-index/value set exactly equal the delta. Any changed, added, or
+///   removed user block is left untouched and returns `false`, forcing the paired RAM snapshot to be
+///   skipped and the normal cold boot to continue over that existing overlay.
 ///
-/// Returns `true` iff the delta was seeded (a fresh store), `false` if an overlay already existed.
+/// Returns `true` iff the delta was freshly seeded or the existing overlay is byte-exact, `false` for
+/// any other existing state. Returning `false` never writes to the store.
 /// The paired RAM snapshot rides the same overlay generation (0 for a fresh store); the restore's
 /// `restoreDecisionCode` guard enforces the core-hash + base + generation triple before `loadSnapshotBlob`.
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
@@ -348,6 +370,7 @@ pub fn overlay_db_name(manifest_json: &str) -> Result<String, JsError> {
 pub async fn seed_overlay_delta(
     manifest_json: String,
     delta_bytes: Vec<u8>,
+    seed_identity: Option<String>,
 ) -> Result<bool, JsError> {
     let manifest = wasm_vm_storage::ImageManifest::from_json(&manifest_json)
         .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
@@ -358,17 +381,22 @@ pub async fn seed_overlay_delta(
         return Err(JsError::new("delta_base_mismatch"));
     }
 
-    let idb = idb_store::IdbStore::open(&base_binding)
+    let seed_identity = parse_overlay_seed_identity(seed_identity)?;
+    let idb = idb_store::IdbStore::open(&base_binding, seed_identity.as_ref())
         .await
         .map_err(|e| JsError::new(&format!("IndexedDB open: {e:?}")))?;
-    // Only seed a brand-new store — never clobber an existing user overlay.
-    if idb
+    let meta = idb
         .read_meta()
         .await
-        .map_err(|e| JsError::new(&format!("IndexedDB read meta: {e:?}")))?
-        .is_some()
-    {
-        return Ok(false);
+        .map_err(|e| JsError::new(&format!("IndexedDB read meta: {e:?}")))?;
+    let stored_blocks = idb
+        .load_blocks()
+        .await
+        .map_err(|e| JsError::new(&format!("IndexedDB load blocks: {e:?}")))?;
+    match delta.seed_decision(&manifest, meta.as_deref(), &stored_blocks) {
+        wasm_vm_storage::OverlaySeedDecision::ReuseExact => return Ok(true),
+        wasm_vm_storage::OverlaySeedDecision::PreserveExisting => return Ok(false),
+        wasm_vm_storage::OverlaySeedDecision::SeedFresh => {}
     }
     idb.write_meta(&wasm_vm_storage::OverlayMeta::new(&manifest).to_bytes())
         .await
@@ -1039,13 +1067,15 @@ impl WasmLinux {
         bootargs: String,
         read_only: bool,
         output: js_sys::Function,
+        seed_identity: Option<String>,
     ) -> Result<WasmLinux, JsError> {
         let manifest = wasm_vm_storage::ImageManifest::from_json(&manifest_json)
             .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
         let base_binding = manifest.base_hash();
 
         // Open the durable store and reconcile its meta record with this base.
-        let idb = idb_store::IdbStore::open(&base_binding)
+        let seed_identity = parse_overlay_seed_identity(seed_identity)?;
+        let idb = idb_store::IdbStore::open(&base_binding, seed_identity.as_ref())
             .await
             .map_err(|e| JsError::new(&format!("IndexedDB open: {e:?}")))?;
         match idb

@@ -121,7 +121,7 @@ export class WasmLinux {
      * silent reuse), loads any previously persisted blocks, and boots over them. Call `persistPending`
      * to flush new writes durably (its Promise resolves on the IndexedDB transaction `complete`).
      */
-    static newChunkedDiskPersistent(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, read_only: boolean, output: Function): Promise<WasmLinux>;
+    static newChunkedDiskPersistent(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, read_only: boolean, output: Function, seed_identity?: string | null): Promise<WasmLinux>;
     /**
      * E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
      * an initramfs. `disk` is MOVED into an in-memory `BlockBackend` (one wasm-side copy — the T21
@@ -342,9 +342,11 @@ export function initLogging(): void;
  * E3-T10: the IndexedDB database name that holds a given image's durable overlay — so the
  * "reset disk" flow can `indexedDB.deleteDatabase(name)` for THIS image only (a second image's
  * overlay, in a different DB, survives). Same derivation the durable store uses
- * (`overlay_store_name(base_hash)`), so it always matches.
+ * (`overlay_store_name(base_hash)` for legacy boots, or the exact shipped RAM+delta pair's
+ * independent seed namespace), so it always matches. Omitting `seed_identity` preserves the
+ * legacy name.
  */
-export function overlayDbName(manifest_json: string): string;
+export function overlayDbName(manifest_json: string, seed_identity?: string | null): string;
 
 /**
  * E4 Alpine restore-on-load: seed the IndexedDB copy-on-write overlay for this chunked image with the
@@ -355,15 +357,17 @@ export function overlayDbName(manifest_json: string): string;
  * Coherence is bound, not bypassed:
  * * the delta's `base_binding`/`image_len` must match this manifest's `base_hash`/`image_len`
  *   (`delta_base_mismatch` otherwise) — a delta for a different chunked base is rejected;
- * * seeding is done **only into a brand-new overlay store** (no meta record yet). If an overlay
- *   already exists (the user has their own durable disk state) it is left untouched and this returns
- *   `false` — the boot then proceeds over that existing overlay, never clobbered by pristine-boot blocks.
+ * * a brand-new (no meta, no blocks) store is seeded, while an existing store is accepted only when
+ *   its valid meta and complete block-index/value set exactly equal the delta. Any changed, added, or
+ *   removed user block is left untouched and returns `false`, forcing the paired RAM snapshot to be
+ *   skipped and the normal cold boot to continue over that existing overlay.
  *
- * Returns `true` iff the delta was seeded (a fresh store), `false` if an overlay already existed.
+ * Returns `true` iff the delta was freshly seeded or the existing overlay is byte-exact, `false` for
+ * any other existing state. Returning `false` never writes to the store.
  * The paired RAM snapshot rides the same overlay generation (0 for a fresh store); the restore's
  * `restoreDecisionCode` guard enforces the core-hash + base + generation triple before `loadSnapshotBlob`.
  */
-export function seedOverlayDelta(manifest_json: string, delta_bytes: Uint8Array): Promise<boolean>;
+export function seedOverlayDelta(manifest_json: string, delta_bytes: Uint8Array, seed_identity?: string | null): Promise<boolean>;
 
 /**
  * Configure the DHCP lease duration for subsequent boots (used by the renewal acceptance).
@@ -431,8 +435,8 @@ export interface InitOutput {
     readonly filesha256_finish: (a: number) => [number, number, number, number];
     readonly filesha256_new: () => number;
     readonly filesha256_update: (a: number, b: number, c: number) => [number, number];
-    readonly overlayDbName: (a: number, b: number) => [number, number, number, number];
-    readonly seedOverlayDelta: (a: number, b: number, c: number, d: number) => any;
+    readonly overlayDbName: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly seedOverlayDelta: (a: number, b: number, c: number, d: number, e: number, f: number) => any;
     readonly version: () => [number, number];
     readonly wasmlinux_advanceOverlayGeneration: (a: number) => [number, number, number];
     readonly wasmlinux_beginFileUpload: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number];
@@ -455,7 +459,7 @@ export interface InitOutput {
     readonly wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];
-    readonly wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: any) => any;
+    readonly wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: any, o: number, p: number) => any;
     readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_noteFileTransferPersist: (a: number) => [number, number];
     readonly wasmlinux_overlayGeneration: (a: number) => [number, number, number];

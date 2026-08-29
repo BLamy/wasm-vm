@@ -8,6 +8,7 @@ import { RISCV_TESTS } from "./riscv-tests.js";
 import { ROADMAP } from "./roadmap.js";
 import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
 import { startLinuxBootWorker, stopLinuxController } from "./linux-worker-host.js";
+import { resolveOverlayResetSeedIdentity } from "./overlay-reset-target.js";
 
 // E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
 // `?worker=0` is the explicit main-thread differential/fallback. If Worker is genuinely unavailable,
@@ -446,13 +447,23 @@ function renderLinuxQuotaDialog(request, getController, { usage, quota, unsaved 
     if (!linuxOwnerControlIsCurrent(el, request, owner)) return;
     const typed = prompt('This deletes every saved change to the Alpine disk. Type RESET to confirm:');
     if (typed !== "RESET" || !linuxOwnerControlIsCurrent(el, request, owner)) return;
+    const resetManifestUrl = request.imageManifestUrl ?? "./releases/chunked-alpine/manifest.json";
+    let resetSeedIdentity;
+    try {
+      resetSeedIdentity = await resolveOverlayResetSeedIdentity(owner);
+    } catch (error) {
+      term.writeln(`\r\n\x1b[31mreset refused: ${error?.message || error}\x1b[0m`);
+      return;
+    }
     el.style.display = "none";
     // close THIS tab's IndexedDB connection before deleteDatabase, or deletion can block forever.
     let cleared = false;
     try { cleared = await retireLinuxController(owner); } catch {}
     if (!cleared || linuxCtl || linuxBootPromise || linuxActiveRequest || linuxBootRequest) return;
     try {
-      await resetDisk();
+      // Delete only the namespace owned by this exact warm snapshot release. The legacy per-base
+      // overlay (and older warm releases) remain untouched and recoverable.
+      await resetDisk(resetManifestUrl, resetSeedIdentity);
       // A programmatic replacement can claim the page while deletion is pending. Do not let this
       // old capability rewrite its status or buttons after the new claim.
       if (linuxCtl || linuxBootPromise || linuxActiveRequest || linuxBootRequest) return;
@@ -520,6 +531,7 @@ function runLinuxBoot(opts, banner, { requestKey = opts.manifestUrl, onClaim = n
   const request = {
     key: requestKey,
     manifestUrl: opts.manifestUrl ?? null,
+    imageManifestUrl: opts.imageManifestUrl ?? null,
     generation: ++linuxBootGeneration,
   };
   linuxBootRequest = request;
@@ -835,12 +847,11 @@ async function runLinuxBootOwned(opts, banner, request) {
     // The shipped Node snapshot deliberately drops Linux's page cache to keep the RAM artifact
     // small. Without a short prime, the first user command has to fault in the Node ELF, shared
     // libraries, and common built-ins and can look like a cold boot even though the guest restored.
-    // Start that prime in the restored guest's background shell. It is deliberately quiet and
-    // non-blocking: the prompt becomes ready immediately, while the first normal `node` command
-    // benefits from the same guest page cache once the background process has finished. The
-    // opt-out remains available for measurements and debugging via ?nodeWarmup=0.
+    // Keep that prime explicit. It runs on the guest's single hart, so starting it behind the
+    // user's back makes an immediately-entered command compete with an invisible Node process.
+    // `?nodeWarmup=1` remains available for controlled delayed-command experiments.
     const nodeWarmupEnabled = restoredReadyPending && currentGuestKind === "node-alpine" &&
-      query.get("nodeWarmup") !== "0" && !query.has("startPaused") && !document.hidden;
+      query.get("nodeWarmup") === "1" && !query.has("startPaused") && !document.hidden;
     if (nodeWarmupEnabled && linuxCtl === ctlForRelease) {
       document.documentElement.dataset.nodeWarmup = "scheduled";
       void guestExec(
@@ -857,9 +868,9 @@ async function runLinuxBootOwned(opts, banner, request) {
         console.warn("wasm-vm: background Node cache prime failed; continuing:", error?.message || error);
       });
     } else if (restoredReadyPending && currentGuestKind === "node-alpine") {
-      document.documentElement.dataset.nodeWarmup = query.get("nodeWarmup") === "0"
-        ? "disabled"
-        : "deferred";
+      document.documentElement.dataset.nodeWarmup = query.get("nodeWarmup") === "1"
+        ? "deferred"
+        : "disabled";
     }
     if (linuxCtl === ctlForRelease && restoredReadyPending) {
       // Restores resume at an already-usable prompt and therefore never emit one of the cold-boot

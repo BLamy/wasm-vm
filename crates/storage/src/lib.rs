@@ -30,7 +30,7 @@ mod snapmeta;
 mod writeback;
 pub use blobstore::{BlobBackend, BlobError, BlobId, BlobStore, MemBlobBackend, blob_id};
 pub use cache::{BlockCache, CacheMetrics};
-pub use dbmeta::{OVERLAY_DB_VERSION, OverlayMeta, overlay_store_name};
+pub use dbmeta::{OVERLAY_DB_VERSION, OverlayMeta, overlay_seed_store_name, overlay_store_name};
 pub use fetch::{
     ChunkRequest, ChunkStore, FetchFailure, ResponseAction, RetryPolicy, classify_response,
     plan_fetches,
@@ -39,7 +39,9 @@ pub use overlay::{
     MemOverlay, OVERLAY_BLOCK, OVERLAY_FORMAT_VERSION, OverlayBackend, OverlayDisk, OverlayError,
     OverlayOutcome,
 };
-pub use overlay_delta::{OVERLAY_DELTA_MAGIC, OverlayDelta, OverlayDeltaError};
+pub use overlay_delta::{
+    OVERLAY_DELTA_MAGIC, OverlayDelta, OverlayDeltaError, OverlaySeedDecision,
+};
 pub use prefetch::{PrefetchTracker, Readahead, boot_prefetch};
 pub use pullthrough::{LayerFetcher, PullError, PullReport, pull_through};
 pub use snapmeta::{
