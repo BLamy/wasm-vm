@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: in-progress
+status: implemented
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -27,6 +27,41 @@ fast busybox guest per the reaping constraint.
 - [x] Multi-line paste with bracketed paste on executes zero commands until Enter.
 
 ## Verification log
+- 2026-08-30 — **worker — implemented at `a6a5dfe799b9cc18b0bf0e0febb231deb235ad38`.** During the
+  adversarial replay of the prior evidence, standalone-output matching exposed a real compatibility
+  failure: the fast BusyBox `ash` guest does not consume DECSET-2004 markers, so the earlier harness
+  could report `HELD` from an echoed command while the pasted `printf` executed early. Runtime fix
+  `41b2c5d4a96647d3876e67acd2a07000616c41cf` now holds bracketed paste in the terminal host, preserves
+  `framePaste` newline normalization and embedded end-marker removal, releases the sanitized body only
+  on an explicit Enter, and cancels it on Ctrl-C. Unbracketed input retains the existing FIFO queue.
+  The proof requires standalone marker lines (allowing only repeated shell-prompt prefixes), so the
+  recording cannot pass on command echo alone.
+
+  **Exact recorded acceptance run:** `make verify-E3-T22d` (23/23 deterministic OSC52+paste tests;
+  `make web-build`; headed Chromium 131.0.6778.33 against
+  `http://127.0.0.1:8123/?noAutoBoot&jit=1`). The run completed in 104.3 seconds with
+  `consoleErrors=[]`, `faviconProbe={"status":404,"url":"http://127.0.0.1:8123/favicon.ico"}`,
+  parsed guest `E3T22D_GUEST_SIZE=1000000`, `fileSize=1,000,000`, `highWater=1,000,000`, and parsed
+  guest SHA `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733`, exactly matching the
+  independently computed expected SHA. It also observed OSC52 copy/readback `hi`, multiline
+  `alpha`/`bravo`/`charlie`, and standalone `E3T22D_HELD` followed by standalone
+  `E3T22D_EXECUTED` after the explicit Enter.
+
+  Evidence: `evidence/e3-t22d/clipboard-browser-2026-08-30.json`
+  (sha256 `22269bf27b48f24d4d49d8e714aaf43f09440b43e00a23ef562aedc3ecd62849`) and
+  `evidence/e3-t22d/clipboard-browser-2026-08-30.png`
+  (sha256 `73df8d5383b607af49fe84feb91def7c423aa29da56aae289174cccfb190e2d4`). Supporting checks:
+  `node --check web/terminal.js`, `node --check tools/verify/e3-t22d-browser-proof.mjs`,
+  `git diff --check`, and the exact target itself. `make web-dist` completed and refreshed the
+  browser-impacting change. The Cloudflare deploy was attempted after the rebuild, but Wrangler
+  remained at OAuth login and the live site still serves the previous terminal bridge; deployment
+  is therefore not claimed.
+
+  **Claim:** At the exact runtime/harness head, a fresh headed Chromium run exercised the real guest
+  clipboard path and terminal queue. The evidence binds AC2 to the guest's numeric file size and
+  actual `sha256sum` line, and binds AC3 to real standalone guest output after host-held paste release,
+  while coverage contains no unexecuted duplicate Playwright-spec diff. Ready for a separate verifier.
+
 - 2026-08-30 — **worker — resumed evidence rework after verifier `c01d6d8f`.** The verifier held the
   parsed guest SHA and all other criteria but correctly rejected `fileSize` because the evidence
   field was still assigned from host `payload.length`; the guest had only emitted a boolean size

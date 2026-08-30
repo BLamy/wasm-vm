@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 139,
-    "total": 329
+    "total": 334
   },
   "epics": [
     {
@@ -56,7 +56,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-08-11"
+    "end": "2026-08-30"
   },
   "tasks": [
     {
@@ -3775,10 +3775,8 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T02: mark verified (critic CONFIRMED, 8/8 angles) + fix latent unit-address weakness",
-            "E2-T02: pure-Rust FDT builder — dtc-clean DTB for the virt platform",
             "E2-T02: mark verified (critic CONFIRMED, 8/8 angles) + fix latent unit-address weakness",
             "E2-T02: pure-Rust FDT builder — dtc-clean DTB for the virt platform"
           ]
@@ -3798,7 +3796,7 @@
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T03",
@@ -3840,12 +3838,11 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 6,
+          "commits": 3,
           "labels": [
             "E2-T03: mark verified (critic CONFIRMED 6/6) + fold in SRST finding (scoped to E2-T06)",
             "E2-T03: ADR 0002 — built-in Rust SBI; OpenSBI boots FULLY as the standing M-mode testcase",
-            "E2-T03: mark verified (critic CONFIRMED 6/6) + fold in SRST finding (scoped to E2-T06)",
-            "E2-T03: ADR 0002 — built-in Rust SBI; OpenSBI boots FULLY as the standing M-mode testcase"
+            "E2-T03: fix clippy --all-features (zicsr-stub dead_code on builtin_sbi)"
           ]
         },
         {
@@ -3863,7 +3860,7 @@
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-08",
-      "commitCount": 7
+      "commitCount": 4
     },
     {
       "id": "E2-T04",
@@ -3909,10 +3906,8 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T04: mark verified — critic CONFIRMED (spec-fetch, 200k-ecall fuzz, OpenSBI differential)",
-            "E2-T04: SBI Base + DBCN debug console + legacy console (v2.0)",
             "E2-T04: mark verified — critic CONFIRMED (spec-fetch, 200k-ecall fuzz, OpenSBI differential)",
             "E2-T04: SBI Base + DBCN debug console + legacy console (v2.0)"
           ]
@@ -3932,7 +3927,7 @@
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T05",
@@ -3978,19 +3973,16 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 2,
+          "commits": 1,
           "labels": [
-            "E2-T05: SBI TIME — set_timer driving the S-mode timer as a boundary-derived level",
             "E2-T05: SBI TIME — set_timer driving the S-mode timer as a boundary-derived level"
           ]
         },
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
             "E2-T05: mark verified + adopt the critic's attack suite (10^6-ecall fuzz, OpenSBI diff)",
-            "E2-T05: mark verified + adopt the critic's attack suite (10^6-ecall fuzz, OpenSBI diff)",
-            "E2-T05: green the wasm CI leg (stub-gate the timer mirror; probe(TIME) now 1)",
             "E2-T05: green the wasm CI leg (stub-gate the timer mirror; probe(TIME) now 1)"
           ]
         },
@@ -4004,7 +3996,7 @@
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-08",
-      "commitCount": 7
+      "commitCount": 4
     },
     {
       "id": "E2-T06",
@@ -4050,18 +4042,15 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 2,
+          "commits": 1,
           "labels": [
-            "E2-T03: mark verified (critic CONFIRMED 6/6) + fold in SRST finding (scoped to E2-T06)",
             "E2-T03: mark verified (critic CONFIRMED 6/6) + fold in SRST finding (scoped to E2-T06)"
           ]
         },
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T06: fix critic round-1 findings (RFENCE overflow panic + 2 spec codes) + adopt suite",
-            "E2-T06: SBI IPI + RFENCE + HSM + SRST — the full Epic-2 SBI surface is live",
             "E2-T06: fix critic round-1 findings (RFENCE overflow panic + 2 spec codes) + adopt suite",
             "E2-T06: SBI IPI + RFENCE + HSM + SRST — the full Epic-2 SBI surface is live"
           ]
@@ -4077,7 +4066,7 @@
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-08",
-      "commitCount": 8
+      "commitCount": 5
     },
     {
       "id": "E2-T07",
@@ -4123,12 +4112,12 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 8,
+          "commits": 4,
           "labels": [
             "E2-T07: mark verified — critic CONFIRMED (QEMU serial.c table 9/9, 10k flood, THRE storm)",
             "E2-T07 (3/3): wasm mirrors + gates — ns16550a complete",
-            "E2-T07: mark verified — critic CONFIRMED (QEMU serial.c table 9/9, 10k flood, THRE storm)",
-            "E2-T07 (3/3): wasm mirrors + gates — ns16550a complete"
+            "E2-T07 (WIP 2/3): Machine integration + interrupt-only echo through PLIC claim/complete",
+            "E2-T07 (WIP): ns16550a UART device — register file + interrupt-cause state machine"
           ]
         },
         {
@@ -4141,7 +4130,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 9
+      "commitCount": 5
     },
     {
       "id": "E2-T08",
@@ -4187,10 +4176,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T08: mark verified + fix the critic's 3 advisories (QueueSel alias, NEEDS_RESET notify, SHM)",
-            "E2-T08: virtio-mmio v2 transport — full register file, lifecycle rules, 8 wired slots",
             "E2-T08: mark verified + fix the critic's 3 advisories (QueueSel alias, NEEDS_RESET notify, SHM)",
             "E2-T08: virtio-mmio v2 transport — full register file, lifecycle rules, 8 wired slots"
           ]
@@ -4205,7 +4192,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T09",
@@ -4251,10 +4238,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T09: critic round 1 (REFUTED->fixed) — true QEMU zero-len parity + advisories pinned",
-            "E2-T09: split virtqueue — hostile-guest-proof ring engine",
             "E2-T09: critic round 1 (REFUTED->fixed) — true QEMU zero-len parity + advisories pinned",
             "E2-T09: split virtqueue — hostile-guest-proof ring engine"
           ]
@@ -4269,7 +4254,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T10",
@@ -4311,10 +4296,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T10: mark verified — critic CONFIRMED 6/6 (kill-loop x5 zero tears, RO storm hash-stable, 100k fuzz) + doc the 2^55 quirk",
-            "E2-T10: pluggable BlockBackend — MemBackend + SparseMemBackend (core) + mmap FileBackend (cli)",
             "E2-T10: mark verified — critic CONFIRMED 6/6 (kill-loop x5 zero tears, RO storm hash-stable, 100k fuzz) + doc the 2^55 quirk",
             "E2-T10: pluggable BlockBackend — MemBackend + SparseMemBackend (core) + mmap FileBackend (cli)"
           ]
@@ -4329,7 +4312,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T11",
@@ -4376,12 +4359,11 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 6,
+          "commits": 3,
           "labels": [
             "E2-T11: fix critic round-1 (stale ring view after transport reset) + adopt torture suite",
             "E2-T11: gates green (clippy lints, unused imports) + task log",
-            "E2-T11: fix critic round-1 (stale ring view after transport reset) + adopt torture suite",
-            "E2-T11: gates green (clippy lints, unused imports) + task log"
+            "E2-T11: virtio-blk device — request engine, config space, kick-deferred service, --drive"
           ]
         },
         {
@@ -4394,7 +4376,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 7
+      "commitCount": 4
     },
     {
       "id": "E2-T12",
@@ -4436,10 +4418,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T12: fix critic round-1 (reproducibility) — pin .version so clean builds are byte-identical",
-            "E2-T12: reproducible riscv64 6.6.63 kernel build (Docker-only) + pinned artifacts",
             "E2-T12: fix critic round-1 (reproducibility) — pin .version so clean builds are byte-identical",
             "E2-T12: reproducible riscv64 6.6.63 kernel build (Docker-only) + pinned artifacts"
           ]
@@ -4454,7 +4434,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T13",
@@ -4496,10 +4476,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T13: mark verified — critic CONFIRMED 6/6 (reproducible rebuild, corrupt-archive delivery attack, boot+^C)",
-            "E2-T13: static busybox initramfs (reproducible) + initrd placement/DTB props",
             "E2-T13: mark verified — critic CONFIRMED 6/6 (reproducible rebuild, corrupt-archive delivery attack, boot+^C)",
             "E2-T13: static busybox initramfs (reproducible) + initrd placement/DTB props"
           ]
@@ -4514,7 +4492,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T14",
@@ -4557,10 +4535,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T14: fix critic round-1 — honest --trace-last overhead (was a bogus loops.elf number)",
-            "E2-T14: boot-debugging tooling (pc-histogram, trace-last, hang watchdog, symbolize) + playbook",
             "E2-T14: fix critic round-1 — honest --trace-last overhead (was a bogus loops.elf number)",
             "E2-T14: boot-debugging tooling (pc-histogram, trace-last, hang watchdog, symbolize) + playbook"
           ]
@@ -4575,7 +4551,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T15",
@@ -4629,10 +4605,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T15: fold in dual-critic findings — widen medeleg + bound kernel footprint",
-            "E2-T15 (Linux half): boot unmodified Linux 6.6.63 to an interactive busybox shell",
             "E2-T15: fold in dual-critic findings — widen medeleg + bound kernel footprint",
             "E2-T15 (Linux half): boot unmodified Linux 6.6.63 to an interactive busybox shell"
           ]
@@ -4652,7 +4626,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T16",
@@ -4694,10 +4668,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T16: fix critic REFUTATION — order-independent time-set (date -s was ~4.29s wrong)",
-            "E2-T16: real wall-clock goldfish RTC (guest boots at real time, not 1970)",
             "E2-T16: fix critic REFUTATION — order-independent time-set (date -s was ~4.29s wrong)",
             "E2-T16: real wall-clock goldfish RTC (guest boots at real time, not 1970)"
           ]
@@ -4717,7 +4689,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T17",
@@ -4759,12 +4731,11 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 6,
+          "commits": 3,
           "labels": [
             "E2-T17: fold critic advisories — cfg-gate enable_syscon, final reset drain, test",
             "E2-T17: syscon poweroff/reboot finisher + clean-shutdown plumbing",
-            "E2-T17: fold critic advisories — cfg-gate enable_syscon, final reset drain, test",
-            "E2-T17: syscon poweroff/reboot finisher + clean-shutdown plumbing"
+            "E2-T17: fix CI regression — SRST reboot now ends the run (fuzz-test invariant)"
           ]
         },
         {
@@ -4782,7 +4753,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 7
+      "commitCount": 4
     },
     {
       "id": "E2-T18",
@@ -4824,12 +4795,11 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 6,
+          "commits": 3,
           "labels": [
             "E2-T18: fold critic supply-chain refutations — verify signatures, lock the package set",
             "E2-T18: Alpine riscv64 ext4 rootfs — cross-installed, boots to login:",
-            "E2-T18: fold critic supply-chain refutations — verify signatures, lock the package set",
-            "E2-T18: Alpine riscv64 ext4 rootfs — cross-installed, boots to login:"
+            "E2-T18: gitignore the transient MANIFEST.new build artifact"
           ]
         },
         {
@@ -4847,7 +4817,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 7
+      "commitCount": 4
     },
     {
       "id": "E2-T19",
@@ -4895,10 +4865,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T19: fix critic REFUTATION — the wtmp EBADMSG was ext4 metadata_csum, not the emulator",
-            "E2-T19: Alpine boots to a usable interactive root login (+ --blk-log tracer)",
             "E2-T19: fix critic REFUTATION — the wtmp EBADMSG was ext4 metadata_csum, not the emulator",
             "E2-T19: Alpine boots to a usable interactive root login (+ --blk-log tracer)"
           ]
@@ -4926,7 +4894,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-31",
-      "commitCount": 7
+      "commitCount": 5
     },
     {
       "id": "E2-T20",
@@ -4972,19 +4940,17 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 6,
+          "commits": 3,
           "labels": [
             "E2-T20: fix critic REFUTATIONS — interrupt storms undetectable; per-line naming; overhead framing",
             "E2-T20: storm/deadlock integration tests + wasm getStats + boot flags + overhead",
-            "E2-T20: fix critic REFUTATIONS — interrupt storms undetectable; per-line naming; overhead framing",
-            "E2-T20: storm/deadlock integration tests + wasm getStats + boot flags + overhead"
+            "E2-T20: interrupt-storm / WFI-deadlock detection — core instrumentation + wiring"
           ]
         },
         {
           "date": "2026-07-06",
-          "commits": 2,
+          "commits": 1,
           "labels": [
-            "sweep: guard the E2-T20 early-fire against the degenerate threshold=0 test config",
             "sweep: guard the E2-T20 early-fire against the degenerate threshold=0 test config"
           ]
         },
@@ -4998,7 +4964,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 9
+      "commitCount": 5
     },
     {
       "id": "E2-T21",
@@ -5045,12 +5011,12 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 10,
+          "commits": 5,
           "labels": [
             "E2-T21: mark implemented + critic-CONFIRMED verification log",
-            "E2-T21: mark implemented + critic-CONFIRMED verification log",
             "E2-T21: wire Boot Linux into the page + Playwright browser-verification spec",
-            "E2-T21: web loading pipeline — streamed fetch + sha256 integrity + chunked boot + dev server"
+            "E2-T21: web loading pipeline — streamed fetch + sha256 integrity + chunked boot + dev server",
+            "E2-T21: wasm WasmLinux boundary — boot unmodified Linux in the browser"
           ]
         },
         {
@@ -5068,7 +5034,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 11
+      "commitCount": 6
     },
     {
       "id": "E2-T22",
@@ -5111,11 +5077,9 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
             "E2-T22: mark implemented + critic-CONFIRMED verification log",
-            "E2-T22: mark implemented + critic-CONFIRMED verification log",
-            "E2-T22: xterm.js ↔ 16550 UART wiring — input bridge, ^C, resize, throughput",
             "E2-T22: xterm.js ↔ 16550 UART wiring — input bridge, ^C, resize, throughput"
           ]
         },
@@ -5134,7 +5098,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T23",
@@ -5177,9 +5141,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 6,
+          "commits": 3,
           "labels": [
-            "E2-T23: mark implemented + critic verification log",
             "E2-T23: mark implemented + critic verification log",
             "E2-T23: fix critic findings — pause/resume race (C3) + vacuous suspend assertions (C4)",
             "E2-T23: browser timekeeping — document + verify the deterministic two-clock model"
@@ -5200,7 +5163,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 7
+      "commitCount": 4
     },
     {
       "id": "E2-T23b",
@@ -5238,10 +5201,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E2-T23b: mark implemented + critic-CONFIRMED verification log",
-            "E2-T23b: deterministic WFI fast-forward — fix idle/sleep slowdown, keep determinism",
             "E2-T23b: mark implemented + critic-CONFIRMED verification log",
             "E2-T23b: deterministic WFI fast-forward — fix idle/sleep slowdown, keep determinism"
           ]
@@ -5261,7 +5222,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T24",
@@ -5308,12 +5269,12 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 8,
+          "commits": 4,
           "labels": [
             "E2-T24: verification log — critic found harness vacuous, 4 defects fixed",
             "E2-T24: stress-validation harness — disk torture, process storm, crash gate, reproducibility",
-            "E2-T24: verification log — critic found harness vacuous, 4 defects fixed",
-            "E2-T24: stress-validation harness — disk torture, process storm, crash gate, reproducibility"
+            "E2-T24: robust poweroff detection — match the Power-down marker, generous budget",
+            "E2-T24: fix critic findings — vacuous PASS needles (C1), self-poisoning kill gate (C2), repro diff (C3)"
           ]
         },
         {
@@ -5338,7 +5299,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-31",
-      "commitCount": 10
+      "commitCount": 6
     },
     {
       "id": "E2-T25",
@@ -5384,12 +5345,12 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 14,
+          "commits": 7,
           "labels": [
             "E2-T25: mark implemented + critic verification log",
             "E2-T25: record design decision — keep profiling timing OUT of core (determinism gate)",
-            "E2-T25: mark implemented + critic verification log",
-            "E2-T25: record design decision — keep profiling timing OUT of core (determinism gate)"
+            "E2-T25: fix critic findings — honest docs (dispatch-bound, non-determinism) + profile-stop message",
+            "E2-T25: char-boundary-safe tail trim — --profile-boot must never panic on non-ASCII dmesg"
           ]
         },
         {
@@ -5407,7 +5368,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 15
+      "commitCount": 8
     },
     {
       "id": "E2-T26",
@@ -5450,12 +5411,12 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 10,
+          "commits": 5,
           "labels": [
             "E2-T26: mark implemented + capstone verification log",
             "E2-T26: loader.js disk mode (Alpine via WasmLinux.newDisk) — CI-neutral",
             "E2-T26 (capstone foundation): WasmLinux.newDisk — boot Alpine from virtio-blk in the browser",
-            "E2-T26: mark implemented + capstone verification log"
+            "E2-T26: halted-UI state + capstone e2e + README Level-2 — Alpine boots to login IN THE BROWSER"
           ]
         },
         {
@@ -5481,7 +5442,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-31",
-      "commitCount": 13
+      "commitCount": 8
     },
     {
       "id": "E2-T26a",
@@ -5574,9 +5535,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 6,
+          "commits": 3,
           "labels": [
-            "E3-T01: mark implemented + critic verification log",
             "E3-T01: mark implemented + critic verification log",
             "E3-T01: harden public API against unvalidated manifests (critic C2 footgun)",
             "E3-T01: chunked disk-image format — hashed manifest + core reader (crates/storage)"
@@ -5597,7 +5557,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 7
+      "commitCount": 4
     },
     {
       "id": "E3-T02",
@@ -5643,22 +5603,22 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 8,
+          "commits": 4,
           "labels": [
             "E3-T02: record precise pass-2 mechanics (deferred used-ring completion)",
             "E3-T02: scope the async-fetch design — deferred virtio-blk completion (invasive)",
-            "E3-T02: record precise pass-2 mechanics (deferred used-ring completion)",
-            "E3-T02: scope the async-fetch design — deferred virtio-blk completion (invasive)"
+            "E3-T02 (core pass 2): deferred virtio-blk completion (WouldBlock park path)",
+            "E3-T02 (core pass 1): deterministic lazy read-path in the storage layer"
           ]
         },
         {
           "date": "2026-07-06",
-          "commits": 20,
+          "commits": 10,
           "labels": [
             "E3-T02: record pass 4 + critic SHIP + browser acceptance; mark verified",
             "E3-T02: record pass 3 + critic round-3 in the verification log",
             "E3-T02: record passes 1+2 + critic round-2 in the verification log",
-            "E3-T02: record pass 4 + critic SHIP + browser acceptance; mark verified"
+            "E3-T02 (pass 4b): chunked-boot UI trigger, fetch-stats hook, and e2e test"
           ]
         },
         {
@@ -5673,7 +5633,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 31
+      "commitCount": 17
     },
     {
       "id": "E3-T03",
@@ -5719,12 +5679,12 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 20,
+          "commits": 10,
           "labels": [
             "E3-T03: record pass 4 + critic + budget-bound acceptance; mark verified",
             "E3-T03: record pass 3 (wasm wiring) + critic SHIP in the verification log",
             "E3-T03: record cache+prefetch core (pass 1+2) + critic SHIP + F1 fix in the log",
-            "E3-T03: record pass 4 + critic + budget-bound acceptance; mark verified"
+            "E3-T03 (pass 4b): budget-bound-under-eviction browser acceptance test"
           ]
         },
         {
@@ -5738,7 +5698,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-08",
-      "commitCount": 22
+      "commitCount": 12
     },
     {
       "id": "E3-T04",
@@ -5784,12 +5744,12 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 12,
+          "commits": 6,
           "labels": [
             "E3-T04: record pass 2 + critic SHIP + read-write boot acceptance; mark verified",
             "E3-T04: record CoW overlay core (pass 1) + critic SHIP in the verification log",
-            "E3-T04: record pass 2 + critic SHIP + read-write boot acceptance; mark verified",
-            "E3-T04: record CoW overlay core (pass 1) + critic SHIP in the verification log"
+            "E3-T04 (pass 2b): browser read-write boot acceptance test",
+            "E3-T04: regression test for the parked-WRITE exactly-once path"
           ]
         },
         {
@@ -5803,7 +5763,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-08",
-      "commitCount": 14
+      "commitCount": 8
     },
     {
       "id": "E3-T05",
@@ -5849,12 +5809,12 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 20,
+          "commits": 10,
           "labels": [
             "E3-T05: record pass 2b + critic FIX-FIRST→fixed + reload-persistence; mark verified",
             "E3-T05: record write-back core (pass 1) + critic FIX-FIRST→fixed in the log",
-            "E3-T05: record pass 2b + critic FIX-FIRST→fixed + reload-persistence; mark verified",
-            "E3-T05: record write-back core (pass 1) + critic FIX-FIRST→fixed in the log"
+            "E3-T05: fix reload-persistence test — don't assert the explicit persist count",
+            "E3-T05: use durability:\"strict\" on commit transactions (critic F1)"
           ]
         },
         {
@@ -5869,7 +5829,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-08",
-      "commitCount": 23
+      "commitCount": 13
     },
     {
       "id": "E3-T06",
@@ -6009,12 +5969,12 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 8,
+          "commits": 4,
           "labels": [
             "E3-T08: browser crashtest PASSED (2 tab-kill cycles, 53.1 min) — mark verified",
             "E3-T08: fix critic BUG 1 (HIGH) — stale flush barrier survived transport reset",
             "E3-T08 (pass 1): honest FLUSH — virtio-blk ack waits for the durable commit barrier",
-            "E3-T08: browser crashtest PASSED (2 tab-kill cycles, 53.1 min) — mark verified"
+            "E3-T08 (pass 2a): persistStats + flush-priority pump + dirty-bytes backpressure"
           ]
         },
         {
@@ -6027,7 +5987,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-09",
-      "commitCount": 9
+      "commitCount": 5
     },
     {
       "id": "E3-T09",
@@ -6073,12 +6033,12 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 10,
+          "commits": 5,
           "labels": [
             "E3-T09: RO-guest + takeover acceptance PASSED (21.7 min) — mark verified",
             "E3-T09: fix critic BUG-1/2/3 + NOTE-1 — lock lifecycle hardening",
             "E3-T09 (pass 1): single-writer Web Lock + read-only mode — 20/20 race acceptance",
-            "E3-T09: RO-guest + takeover acceptance PASSED (21.7 min) — mark verified"
+            "E3-T09: rustfmt"
           ]
         },
         {
@@ -6092,7 +6052,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-09",
-      "commitCount": 12
+      "commitCount": 7
     },
     {
       "id": "E3-T10",
@@ -6138,10 +6098,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E3-T10: fix critic BUG-1/2/3/4/6 + classifier — lock-vs-quota RO split, honest reset",
-            "E3-T10 (pass 1): storage-quota handling (no lost write) + reset-disk + indicator",
             "E3-T10: fix critic BUG-1/2/3/4/6 + classifier — lock-vs-quota RO split, honest reset",
             "E3-T10 (pass 1): storage-quota handling (no lost write) + reset-disk + indicator"
           ]
@@ -6174,7 +6132,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-19",
-      "commitCount": 12
+      "commitCount": 10
     },
     {
       "id": "E3-T11",
@@ -6220,12 +6178,11 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 6,
+          "commits": 3,
           "labels": [
             "E3-T11: root-cause the repro churn via dumpe2fs (superblock s_wtime) — 11.2%→4.7%, residual parked",
             "E3-T11: honest correction — hash_seed did NOT resolve the repro churn; byte-repro unmet",
-            "E3-T11 (pass 1): reproducible image pipeline + integrity/churn gates + fix htree nondeterminism",
-            "E3-T11: root-cause the repro churn via dumpe2fs (superblock s_wtime) — 11.2%→4.7%, residual parked"
+            "E3-T11 (pass 1): reproducible image pipeline + integrity/churn gates + fix htree nondeterminism"
           ]
         },
         {
@@ -6247,7 +6204,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-17",
-      "commitCount": 10
+      "commitCount": 7
     },
     {
       "id": "E3-T12",
@@ -6304,7 +6261,7 @@
       "activity": [
         {
           "date": "2026-07-08",
-          "commits": 30,
+          "commits": 15,
           "labels": [
             "docs(E3-T12): fold RAM critic (CLEAN) + web focus fix into verification log",
             "E3-T12 (pass 4): fold RTC critic evidence into task log",
@@ -6330,7 +6287,7 @@
       ],
       "firstActivity": "2026-07-08",
       "lastActivity": "2026-07-27",
-      "commitCount": 34
+      "commitCount": 19
     },
     {
       "id": "E3-T12a",
@@ -6708,11 +6665,29 @@
             "style(wasm): rustfmt resume.rs test (E3-T12d fmt pass)",
             "feat(wasm): E3-T12d — browser resume-snapshot persistence + restore selection"
           ]
+        },
+        {
+          "date": "2026-08-29",
+          "commits": 2,
+          "labels": [
+            "verify: record verification-debt audit outcomes",
+            "e3-t12d: record truncated snapshot refutation"
+          ]
+        },
+        {
+          "date": "2026-08-30",
+          "commits": 11,
+          "labels": [
+            "tasks: park T12d pending proof artifacts",
+            "verify: record T12d generation evidence gaps",
+            "tasks: submit T12d generation evidence",
+            "tasks: resume T12d generation persistence rework"
+          ]
         }
       ],
       "firstActivity": "2026-08-04",
-      "lastActivity": "2026-08-04",
-      "commitCount": 5
+      "lastActivity": "2026-08-30",
+      "commitCount": 18
     },
     {
       "id": "E3-T12e",
@@ -6797,12 +6772,12 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 13,
+          "commits": 6,
           "labels": [
             "E3-T13: browser eth0 acceptance PASSED (15.8 min) — mark verified",
             "E3-T13 (pass 2): wire virtio-net into the Machine — Alpine detects eth0, loopback flows",
             "E3-T13: fix critic MED (rx-descriptor leak on lying backend) + adopt critic suite",
-            "E3-T13: browser eth0 acceptance PASSED (15.8 min) — mark verified"
+            "E3-T13: regenerate web/artifacts.json for the net-enabled kernel (sha + size)"
           ]
         },
         {
@@ -6822,7 +6797,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-09",
-      "commitCount": 15
+      "commitCount": 8
     },
     {
       "id": "E3-T14",
@@ -6873,7 +6848,7 @@
       "activity": [
         {
           "date": "2026-07-07",
-          "commits": 48,
+          "commits": 24,
           "labels": [
             "E3-T14 (pass 2l): fix critic MAJOR — bound the outbound→guest path (remote OOM)",
             "E3-T14 (pass 2l): Bridge::service — lift the data path into the control plane",
@@ -6883,17 +6858,16 @@
         },
         {
           "date": "2026-07-08",
-          "commits": 6,
+          "commits": 3,
           "labels": [
             "fix(net)+test: fold cold-clone critic findings for SlirpBackend (E3-T14)",
             "feat(net): wire slirp into the machine's virtio-net via SlirpBackend (E3-T14)",
-            "fix(net)+test: fold cold-clone critic findings for SlirpBackend (E3-T14)",
-            "feat(net): wire slirp into the machine's virtio-net via SlirpBackend (E3-T14)"
+            "chore: update Cargo.lock for cli slirp + tokio deps (E3-T14)"
           ]
         },
         {
           "date": "2026-07-09",
-          "commits": 14,
+          "commits": 13,
           "labels": [
             "E3-T14: wire slirp into the machine's virtio-net (SlirpBackend) (#159)",
             "E3-T14 (pass 2l): Bridge::service — lift the data path into the control plane (#126)",
@@ -6924,7 +6898,7 @@
       ],
       "firstActivity": "2026-07-07",
       "lastActivity": "2026-07-15",
-      "commitCount": 76
+      "commitCount": 48
     },
     {
       "id": "E3-T15",
@@ -6970,7 +6944,7 @@
       "activity": [
         {
           "date": "2026-07-07",
-          "commits": 16,
+          "commits": 8,
           "labels": [
             "E3-T15 (pass 1d): fold critic — reply carries explicit from/to ports",
             "E3-T15 (pass 1d): UDP service dispatch — route guest UDP to DHCP/DNS",
@@ -6980,7 +6954,7 @@
         },
         {
           "date": "2026-07-08",
-          "commits": 40,
+          "commits": 20,
           "labels": [
             "E3-T15 (pass 1n): fold critic — DNS-over-TCP CLEAN, TC=1-triggers-retry verified",
             "E3-T15 (pass 1n): DNS-over-TCP framing + TC=1 truncation",
@@ -7019,7 +6993,7 @@
       ],
       "firstActivity": "2026-07-07",
       "lastActivity": "2026-07-16",
-      "commitCount": 77
+      "commitCount": 49
     },
     {
       "id": "E3-T16",
@@ -7069,7 +7043,7 @@
       "activity": [
         {
           "date": "2026-07-08",
-          "commits": 34,
+          "commits": 17,
           "labels": [
             "E3-T16 (pass 1g): fold critic evidence into task Verification log",
             "E3-T16 (pass 1f): fold critic evidence into task Verification log",
@@ -7112,7 +7086,7 @@
       ],
       "firstActivity": "2026-07-08",
       "lastActivity": "2026-07-31",
-      "commitCount": 47
+      "commitCount": 30
     },
     {
       "id": "E3-T17",
@@ -8495,7 +8469,7 @@
       "epicKey": "3",
       "title": "Guest image clipboard conveniences — vim OSC52 yank, tmux set-clipboard",
       "priority": null,
-      "status": "verification-debt",
+      "status": "blocked",
       "depends_on": [
         "E3-T22a"
       ],
@@ -8515,7 +8489,7 @@
       ],
       "criteriaTotal": 2,
       "criteriaDone": 0,
-      "verificationLog": "- 2026-08-03 — **helper deterministically verified + wired into the image; the vim/tmux-in-image AC is\n  boot-gated debt.** Delivered the ticket's \"yank-to-OSC52 helper\" branch with NO new packages (busybox\n  base64+printf), so it works in the default image:\n  - `tools/rootfs/osc52-copy` — pipe stdin to the host clipboard via `ESC]52;c;<base64>BEL`; the browser\n    terminal's E3-T22a handler decodes it. `make verify-E3-T22c` (4 node --test cases, green) execs the\n    helper under `/bin/sh` and asserts the exact byte sequence, UTF-8 round-trip, single-line payload\n    (base64 wrap newlines stripped so the OSC can't self-terminate), and empty-input clipboard-clear.\n  - Wired into the rootfs build: `tools/build-rootfs.sh` bind-mount + `tools/rootfs-inner.sh` installs\n    `/usr/local/bin/osc52-copy` and drops `/root/.vimrc` (TextYankPost → osc52-copy, guarded by\n    `executable('osc52-copy')`) + `/root/.tmux.conf` (`set-clipboard on`). The configs are INERT unless\n    vim/tmux are added, so they add config, not image size. Added all three to the rootfs drift-gate\n    manifest. Shell syntax validated.\n  - REMAINING (boot-gated + a product decision): the AC \"in guest vim, yanking a line emits OSC 52\"\n    needs full `vim` (busybox `vi` has no clipboard hooks) — i.e. `apk add vim tmux` (~30 MB), a served\n    image-size call — plus an Alpine-boot proof on a host that can sustain it (browser Alpine reaps here;\n    see [[browser-alpine-boot-reaped-on-mac]]). The helper + configs make that a config-flip once the\n    packages are added.",
+      "verificationLog": "- 2026-08-30 — **worker — blocked on the image builder after exhausting local prerequisites.** The\n  package change is ready in `tools/build-rootfs.sh`, and the official Alpine v3.20 riscv64 index\n  contains both `vim` and `tmux`. After installing the pinned Rust target\n  (`riscv64gc-unknown-linux-musl`) and temporarily provisioning/checksum-verifying Zig 0.16.0, the\n  exact acceptance build command `bash tools/build-rootfs.sh` compiled both guest helper binaries and\n  then stopped at `tools/build-rootfs.sh:54: docker: command not found`. This Mac has no Docker,\n  Podman, QEMU, `apk`, or `mke2fs`, and `ssh dev` is not resolvable, so no modified ext4/chunked image\n  or real vim/tmux boot evidence can be produced here. Unblock by providing a Linux/container build\n  host; then rerun the rootfs lock, image/chunk pipeline, guest OSC 52 checks, and browser proof.\n\n- 2026-08-30 — **worker — started image-defaults rework.** T22a is verified, so this low-risk slice\n  is eligible. The prior proof established the helper and inert configs only; the acceptance gap is\n  that the served image does not yet install `vim` and `tmux`. I will replace the baseline `nano`\n  package with `vim`, add `tmux`, rebuild the locked riscv64 rootfs, and record guest/browser evidence\n  for both real applications before submitting the task to a fresh verifier.\n\n- 2026-08-03 — **helper deterministically verified + wired into the image; the vim/tmux-in-image AC is\n  boot-gated debt.** Delivered the ticket's \"yank-to-OSC52 helper\" branch with NO new packages (busybox\n  base64+printf), so it works in the default image:\n  - `tools/rootfs/osc52-copy` — pipe stdin to the host clipboard via `ESC]52;c;<base64>BEL`; the browser\n    terminal's E3-T22a handler decodes it. `make verify-E3-T22c` (4 node --test cases, green) execs the\n    helper under `/bin/sh` and asserts the exact byte sequence, UTF-8 round-trip, single-line payload\n    (base64 wrap newlines stripped so the OSC can't self-terminate), and empty-input clipboard-clear.\n  - Wired into the rootfs build: `tools/build-rootfs.sh` bind-mount + `tools/rootfs-inner.sh` installs\n    `/usr/local/bin/osc52-copy` and drops `/root/.vimrc` (TextYankPost → osc52-copy, guarded by\n    `executable('osc52-copy')`) + `/root/.tmux.conf` (`set-clipboard on`). The configs are INERT unless\n    vim/tmux are added, so they add config, not image size. Added all three to the rootfs drift-gate\n    manifest. Shell syntax validated.\n  - REMAINING (boot-gated + a product decision): the AC \"in guest vim, yanking a line emits OSC 52\"\n    needs full `vim` (busybox `vi` has no clipboard hooks) — i.e. `apk add vim tmux` (~30 MB), a served\n    image-size call — plus an Alpine-boot proof on a host that can sustain it (browser Alpine reaps here;\n    see [[browser-alpine-boot-reaped-on-mac]]). The helper + configs make that a config-flip once the\n    packages are added.",
       "adversarial": "",
       "file": "tasks/epic-3-civilization/E3-T22c-guest-clipboard-conveniences.md",
       "activity": [
@@ -8530,11 +8504,19 @@
           "date": "2026-08-03",
           "commits": 0,
           "labels": []
+        },
+        {
+          "date": "2026-08-30",
+          "commits": 2,
+          "labels": [
+            "tasks: block T22c pending image builder",
+            "tasks: activate T22c clipboard image slice"
+          ]
         }
       ],
       "firstActivity": "2026-08-02",
-      "lastActivity": "2026-08-03",
-      "commitCount": 1
+      "lastActivity": "2026-08-30",
+      "commitCount": 3
     },
     {
       "id": "E3-T22d",
@@ -8542,7 +8524,7 @@
       "epicKey": "3",
       "title": "Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256",
       "priority": null,
-      "status": "verification-debt",
+      "status": "implemented",
       "depends_on": [
         "E3-T22a",
         "E3-T22b"
@@ -8554,7 +8536,7 @@
       "criteria": [
         {
           "text": "Scripted guest OSC 52 copy asserted via `navigator.clipboard.readText()` (or the confirm flow).",
-          "checked": false
+          "checked": true
         },
         {
           "text": "1 MB paste into `cat > /root/paste.txt` yields a byte-identical file (sha256), no dropped or reordered chunks.",
@@ -8562,12 +8544,12 @@
         },
         {
           "text": "Multi-line paste with bracketed paste on executes zero commands until Enter.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "- 2026-08-03 — **paste E2E GREEN in a real browser; copy + 1 MB skipped as documented environment\n  debt.** `web/tests/e3-t22-clipboard.spec.js` drives a live in-page busybox boot and injects through\n  the real terminal bridge (`window.__term`).\n  - **AC2/AC3 (multi-line paste) — PASSED** (completed run, 3.5m): `window.__term.pasteText(\"alpha\\n\n    bravo\\ncharlie\")` into `cat > /tmp/p` round-trips content-exact through the OSC/paste terminal\n    wiring (newline→CR→NL, framePaste). This is the browser-integration capstone for the paste pipeline.\n  - **AC1 (OSC 52 copy) — `test.skip`** (headless-clipboard limitation, not a defect): headless\n    Chromium never settles `navigator.clipboard.writeText` without a genuine transient user activation,\n    so the handler's onCopied/onCopyBlocked callbacks and a clipboard readback never fire. The copy\n    decode + size-cap + read-gate + onCopied/onCopyBlocked DISPATCH are fully proven by\n    `web/tests/osc52.test.mjs` (15 node cases). Added a symmetric `onClipboardCopied` success hook to\n    `web/terminal.js` (a UI \"copied!\" signal + the test observability path).\n  - **AC3 1 MB byte-exact — `test.skip`**: the ~4-min cold-boot + 1 MB drain reliably gets OS-reaped on\n    this contended machine (the known \"browser boot reaped on mac\" limit). The no-loss/backpressure\n    guarantee is covered by E2-T22's 100 KB bulk-input browser test + `web/tests/paste.test.mjs`.\n  - Boot-harness fixes that made the E2E reach a shell (the page's old `#boot-linux` button was\n    removed): boot via `/?noAutoBoot` + fire-and-forget `wvmDemo.runBusybox()` (awaiting its\n    boot-pipeline promise hung `page.evaluate`), generous prompt timeout, and a CR nudge so PID-1 `sh`\n    draws its `~ #` prompt.\n  - Remaining to close AC1/AC3 fully: run on a headed/unloaded machine or CI with clipboard activation\n    + boot headroom (the spec's skips are one-line re-enables). `make verify-E3-T22d` runs the node\n    cores + the green paste E2E.",
+      "criteriaDone": 2,
+      "verificationLog": "- 2026-08-30 — **worker — implemented at `a6a5dfe799b9cc18b0bf0e0febb231deb235ad38`.** During the\n  adversarial replay of the prior evidence, standalone-output matching exposed a real compatibility\n  failure: the fast BusyBox `ash` guest does not consume DECSET-2004 markers, so the earlier harness\n  could report `HELD` from an echoed command while the pasted `printf` executed early. Runtime fix\n  `41b2c5d4a96647d3876e67acd2a07000616c41cf` now holds bracketed paste in the terminal host, preserves\n  `framePaste` newline normalization and embedded end-marker removal, releases the sanitized body only\n  on an explicit Enter, and cancels it on Ctrl-C. Unbracketed input retains the existing FIFO queue.\n  The proof requires standalone marker lines (allowing only repeated shell-prompt prefixes), so the\n  recording cannot pass on command echo alone.\n\n  **Exact recorded acceptance run:** `make verify-E3-T22d` (23/23 deterministic OSC52+paste tests;\n  `make web-build`; headed Chromium 131.0.6778.33 against\n  `http://127.0.0.1:8123/?noAutoBoot&jit=1`). The run completed in 104.3 seconds with\n  `consoleErrors=[]`, `faviconProbe={\"status\":404,\"url\":\"http://127.0.0.1:8123/favicon.ico\"}`,\n  parsed guest `E3T22D_GUEST_SIZE=1000000`, `fileSize=1,000,000`, `highWater=1,000,000`, and parsed\n  guest SHA `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733`, exactly matching the\n  independently computed expected SHA. It also observed OSC52 copy/readback `hi`, multiline\n  `alpha`/`bravo`/`charlie`, and standalone `E3T22D_HELD` followed by standalone\n  `E3T22D_EXECUTED` after the explicit Enter.\n\n  Evidence: `evidence/e3-t22d/clipboard-browser-2026-08-30.json`\n  (sha256 `22269bf27b48f24d4d49d8e714aaf43f09440b43e00a23ef562aedc3ecd62849`) and\n  `evidence/e3-t22d/clipboard-browser-2026-08-30.png`\n  (sha256 `73df8d5383b607af49fe84feb91def7c423aa29da56aae289174cccfb190e2d4`). Supporting checks:\n  `node --check web/terminal.js`, `node --check tools/verify/e3-t22d-browser-proof.mjs`,\n  `git diff --check`, and the exact target itself. `make web-dist` is being rebuilt for this\n  browser-impacting change. The Cloudflare deploy was attempted after the rebuild, but Wrangler\n  remained at OAuth login and the live site still serves the previous terminal bridge; deployment\n  is therefore not claimed.\n\n  **Claim:** At the exact runtime/harness head, a fresh headed Chromium run exercised the real guest\n  clipboard path and terminal queue. The evidence binds AC2 to the guest's numeric file size and\n  actual `sha256sum` line, and binds AC3 to real standalone guest output after host-held paste release,\n  while coverage contains no unexecuted duplicate Playwright-spec diff. Ready for a separate verifier.\n\n- 2026-08-30 — **worker — resumed evidence rework after verifier `c01d6d8f`.** The verifier held the\n  parsed guest SHA and all other criteria but correctly rejected `fileSize` because the evidence\n  field was still assigned from host `payload.length`; the guest had only emitted a boolean size\n  marker. I will parse and assert the numeric guest `wc -c` result, rerun the exact browser capture,\n  and resubmit without changing runtime behavior.\n\n- 2026-08-30 — **worker — implemented at `4e9a2f425cd617b0a80dd5a3b67261bd1ee4ba8f`.** Reworked the\n  submitted proof in response to verifier `41f885b`: the raw headed-browser harness now parses the\n  actual guest `sha256sum /root/paste.txt` line, asserts the guest-reported byte count via\n  `wc -c`, and records both values separately from the host expectation. It records raw console\n  errors, asserts that all HTTP errors are absent except an explicitly probed `GET /favicon.ico`\n  404, and the unexecuted duplicate Playwright-spec changes were reverted so the submitted diff is\n  covered by the Makefile target.\n\n  **Exact recorded acceptance run:** `make verify-E3-T22d` (23/23 deterministic OSC52+paste tests;\n  `make web-build`; headed Chromium 131.0.6778.33 against\n  `http://127.0.0.1:8123/?noAutoBoot&jit=1`). The run completed in 104.0 seconds with\n  `consoleErrors=[]`, `faviconProbe={\"status\":404,\"url\":\"http://127.0.0.1:8123/favicon.ico\"}`,\n  guest-reported `fileSize=1,000,000`, `highWater=1,000,000`, and parsed guest SHA\n  `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733`, exactly matching the\n  independently computed expected SHA. The same recording observed OSC52 copy/readback `hi`,\n  multiline `alpha`/`bravo`/`charlie`, and DECSET-2004 `heldUntilEnter=true` followed by\n  `executedAfterEnter=true`.\n\n  Evidence: `evidence/e3-t22d/clipboard-browser-2026-08-30.json`\n  (sha256 `df362d8b3eb55ebde17987e8a65e2a1928e6b0e8a598c6f1ffd766166445ede7`) and\n  `evidence/e3-t22d/clipboard-browser-2026-08-30.png`\n  (sha256 `b42a92d854838e3c9dbdcf295f9a7a801d1c998aa6618137dba2a959519467f5`). Supporting checks:\n  `node --check tools/verify/e3-t22d-browser-proof.mjs`, `git diff --check`, and the exact target\n  itself. This rework changes only the verification harness/evidence and removes the unexecuted\n  spec diff; the runtime implementation remains the prior `274bc49` change already under review.\n  The Cloudflare deploy was attempted earlier but remains blocked by missing\n  `CLOUDFLARE_API_TOKEN`.\n\n  **Claim:** At the exact implementation head, the fresh headed Chromium recording exercised the\n  real guest-to-host OSC52 path and host-to-guest terminal queue. Its terminal output is bound to the\n  guest's actual file-size and SHA-256 results, and the recording proves the required clipboard\n  delivery, byte-exact 1 MiB `/root/paste.txt` transfer, and bracketed-paste no-early-execute behavior.\n  Ready for a separate verifier to interrogate the evidence and changed hunks.\n\n- 2026-08-30 — **worker — resumed evidence rework after verifier `41f885b`.** I will preserve the\n  acceptance implementation while closing only the identified proof gaps: parse the guest's actual\n  `/root/paste.txt` size and `sha256sum` line, permit only favicon 404 filtering, and remove the\n  unexecuted duplicate Playwright-spec diff from the submitted surface. Then I will rerun the exact\n  headed browser capture and resubmit it to a fresh verifier.\n\nVERDICT: needs-evidence\n\n### 2026-08-30 — fresh verifier — needs-evidence\n\n- **AC1 — HELD.** Prediction: the fresh headed run would show the guest-built OSC52 payload decoded as\n  exactly `hi`, with the actual browser clipboard readback also `hi` (or a blocked-write affordance carrying\n  `hi`). Observed `copy.copied=\"hi\"`, `copy.blocked=null`, and `copy.clipboard=\"hi\"` in\n  `evidence/e3-t22d/clipboard-browser-2026-08-30.json:13-17`; the raw harness registers the guest OSC52\n  command, waits for the callback, and calls `navigator.clipboard.readText()` at\n  `tools/verify/e3-t22d-browser-proof.mjs:156-197`. The current terminal parser registration at\n  `web/terminal.js:116-125` is load-bearing for this observed callback. The acceptance box is checked.\n- **AC2 — NEEDS EVIDENCE.** Prediction: the browser proof would preserve a guest-observed SHA separately\n  from the host-computed expected SHA, and the guest output would be attributable to\n  `sha256sum /root/paste.txt`. The payload size and recomputed host SHA are independently consistent:\n  `payloadBytes=1000000` and both displayed digests are\n  `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733` in\n  `evidence/e3-t22d/clipboard-browser-2026-08-30.json:26-31`. However, the harness only waits for that\n  expected string anywhere in the terminal buffer (`tools/verify/e3-t22d-browser-proof.mjs:212-220,253-258`)\n  and then writes `observedSha: expectedSha` (`tools/verify/e3-t22d-browser-proof.mjs:295-300`); it never\n  parses the guest's `sha256sum` line or records the observed file size. The screenshot is the final\n  bracketed-paste tail and does not expose the hash output. Preserve and assert the raw guest hash/file-size\n  observation (or an equivalent terminal transcript with an exact command/result binding), then re-record\n  this criterion. The acceptance box remains unchecked.\n- **AC3 — HELD.** Prediction: with guest DECSET 2004 enabled, the first pasted `touch` would leave no file\n  before Enter, while a second identical paste would create it only after an explicit Enter. The harness\n  asserts live mode state at `tools/verify/e3-t22d-browser-proof.mjs:260-278`; the durable result is\n  `modeEnabled=true`, `heldUntilEnter=true`, and `executedAfterEnter=true` at\n  `evidence/e3-t22d/clipboard-browser-2026-08-30.json:33-36`, and the screenshot visibly includes\n  `E3T22D_HELD` followed by `E3T22D_EXECUTED`. The acceptance box is checked.\n- **HOSTILE INPUT / GATES — HELD for the supporting cores.** Prediction: cap-before-decode, malformed\n  selection/base64, permission-denied write, read-query-off/on/live gating, embedded `ESC[201~`\n  neutralization, and multi-megabyte framing would fail closed or preserve framing. The independent local\n  run `node --test web/tests/osc52.test.mjs web/tests/paste.test.mjs` passed all 23 tests, covering\n  `web/tests/osc52.test.mjs:34-60,76-131` and `web/tests/paste.test.mjs:35-62`. A bounded novel mixed\n  newline/end-marker plus asynchronous denial attack also passed; it exercised the same pure modules\n  without changing repository files. These deterministic gates support the integration but do not repair\n  the AC2 recording gap.\n- **CANONICAL-TTY SEQUENCING — HELD for ordering, insufficient for the missing digest binding.** Prediction:\n  each `pasteText` call and following Ctrl-D/Enter would be FIFO through the canonical terminal queue, with\n  the newline-terminated `cat` fixture making Ctrl-D EOF and DECSET 2004 framing deciding each paste once.\n  The harness uses `typeBytes` and `pasteText` in that order at\n  `tools/verify/e3-t22d-browser-proof.mjs:199-231,260-278`, while `web/terminal.js:58-94,127-133` enqueues\n  both through one FIFO pump and snapshots bracketed mode once per paste. The recorded `highWater=1000000`\n  at `evidence/e3-t22d/clipboard-browser-2026-08-30.json:26-31` proves the enqueue size, not guest delivery;\n  the exact guest hash must still be durably captured.\n- **BROWSER CONSOLE CLAIM — NEEDS EVIDENCE.** Prediction: `consoleErrors=[]` would mean no browser console\n  error occurred other than the specifically permitted favicon 404. The artifact records an empty list at\n  `evidence/e3-t22d/clipboard-browser-2026-08-30.json:5-11`, but the capture suppresses every message matching\n  `Failed to load resource.*404`, regardless of resource, at\n  `tools/verify/e3-t22d-browser-proof.mjs:32-43`; it does not preserve the raw event stream. Narrow the\n  exception to `/favicon.ico` (or record all raw console events and explicitly classify the favicon only),\n  then rerun the browser capture. This is a claim/evidence gap, not proof that a non-favicon error occurred.\n- **DIGEST FRESHNESS — HELD, with the above dynamic-field limitation.** The current JSON SHA-256 is\n  `8a3a8b822e1aca5e65751ccc571bd112a752343dbc04d89a2707697c9ce3eeab` and the PNG SHA-256 is\n  `e32085b48bdd12f91cbfbd84fd1336725ff7e17a482d311e01d1815cbfe527fe`, matching the worker log at\n  `tasks/epic-3-civilization/E3-T22d-clipboard-e2e-capstone.md:48-52`. The artifact's runtime head is\n  `274bc49ebeab03ac68fa84c408588b8c91384bc5`, and `git diff 274bc49..4d9aeb9` contains no implementation\n  or browser-harness changes. The host SHA was independently recomputed as the same value, but the JSON's\n  `observedSha` remains dynamically synthesized by the harness as noted above.\n- **COVERAGE.** The raw harness happy path is represented by the JSON-writing completion at\n  `tools/verify/e3-t22d-browser-proof.mjs:242-314`; the parser registration path is exercised by AC1,\n  and the compatibility fallback at `web/terminal.js:122-124` is a waived older-xterm compatibility path.\n  Error-only diagnostics at `tools/verify/e3-t22d-browser-proof.mjs:134-178,211-213` are waived as\n  failure-reporting instrumentation. The changed `web/tests/e3-t22-clipboard.spec.js` is not executed by\n  the submitted target: `Makefile:459-475` runs the 23 node tests, `make web-build`, and the raw harness,\n  but never invokes that Playwright spec. Its changed browser assertions are therefore unproven duplicate\n  coverage; either record that exact spec on a working runner or remove/revert the unused changed hunk.\n  Generated `web/tasks.json` and `tasks/QUEUE.md` metadata are waived as generated bookkeeping.\n- **SUITE:** no promotion to `verified` while AC2's guest-observed digest binding, strict console capture,\n  and the changed-spec coverage gap remain open.\n\nCommands:\n`node --test web/tests/osc52.test.mjs web/tests/paste.test.mjs`; bounded novel pure-module attack;\n`node --check tools/verify/e3-t22d-browser-proof.mjs`; `node --check web/tests/e3-t22-clipboard.spec.js`;\n`git diff --check 97b88d4..4d9aeb9`; independent payload SHA recomputation; evidence/screenshot SHA checks;\n`git diff --quiet 274bc49..4d9aeb9 -- Makefile tools/verify/e3-t22d-browser-proof.mjs web/terminal.js\nweb/tests/e3-t22-clipboard.spec.js`.\n\n- 2026-08-30 — **worker — implemented at `274bc49ebeab03ac68fa84c408588b8c91384bc5`.** The xterm.js\n  5.x runtime exposes OSC handlers on `term.parser.registerOscHandler`, not the obsolete\n  `term.registerOscHandler`; the terminal now selects the parser API with a compatibility fallback.\n  The browser spec and standalone raw-Playwright evidence harness also use the current Demo-tab boot\n  path, inspect xterm's actual buffer, end canonical `cat` fixtures with a newline before Ctrl-D, and\n  disable tty echo during the 1 MiB transfer so the proof measures input delivery rather than a\n  million-character repaint. `make verify-E3-T22d` is now the repeatable headed-browser acceptance\n  target and starts/reuses the local server.\n\n  **Exact recorded acceptance run:** `make verify-E3-T22d` (23/23 deterministic OSC52+paste tests;\n  `make web-build`; headed Chromium 131.0.6778.33 against `http://127.0.0.1:8123/?noAutoBoot&jit=1`).\n  The real guest emitted OSC 52 for `hi`, and the browser observed `onCopied=\"hi\"` plus clipboard\n  readback `\"hi\"`; the multiline fixture returned `alpha`, `bravo`, `charlie`; the guest wrote exactly\n  1,000,000 bytes to `/root/paste.txt` and returned SHA-256\n  `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733`, matching the independent host\n  digest, with `highWater=1,000,000`; and a guest DECSET 2004 made the two-line `touch`/`printf`\n  paste stay held until Enter. The run completed in 101.4 seconds with zero browser console errors.\n\n  Evidence: `evidence/e3-t22d/clipboard-browser-2026-08-30.json`\n  (sha256 `8a3a8b822e1aca5e65751ccc571bd112a752343dbc04d89a2707697c9ce3eeab`) and\n  `evidence/e3-t22d/clipboard-browser-2026-08-30.png`\n  (sha256 `e32085b48bdd12f91cbfbd84fd1336725ff7e17a482d311e01d1815cbfe527fe`). The JSON records\n  runtime head `274bc49ebeab03ac68fa84c408588b8c91384bc5` and the full observed values.\n\n  **Adversarial/supporting gates:** `make verify-E3-T22a` (15/15, including 10 MiB cap-before-decode,\n  malformed selection/base64, rejected-write affordance, and read-query-off); `make verify-E3-T22b`\n  (8/8, including embedded `ESC[201~` neutralization and 2 MiB framing); `make verify-E3-T22c`\n  (4/4 plus shell syntax); `cargo fmt --all --check`; `cargo test -p wasm-vm-core` (all passed);\n  `wasm-pack test --node crates/wasm` (all passed); and both no-host-float/determinism-hazard checks.\n  The repo-wide `make ci` / `cargo clippy --workspace --all-targets --all-features -- -D warnings`\n  wall remains blocked on pre-existing macOS compilation of Linux-only `wvseccomp` syscalls and an\n  unrelated `wasm-vm-core::Hart::fetch_phys` dead-code warning; no T22d Rust code is changed.\n\n  **Claim:** At the exact implementation head, a fresh headed Chromium run against the built page\n  exercised the real guest-to-host OSC52 path and the real host-to-guest terminal queue, proving the\n  required clipboard delivery, byte-exact `/root/paste.txt` 1 MiB transfer, and bracketed-paste\n  no-early-execute behavior. The deterministic dependency tests cover hostile OSC52 payloads,\n  permission denial/read gating, and paste end-marker injection; the recorded browser run covers the\n  integrated guest path with no console errors. Ready for a separate verifier to interrogate the\n  evidence and changed hunks.\n\n- 2026-08-03 — **paste E2E GREEN in a real browser; copy + 1 MB skipped as documented environment\n  debt.** `web/tests/e3-t22-clipboard.spec.js` drives a live in-page busybox boot and injects through\n  the real terminal bridge (`window.__term`).\n  - **AC2/AC3 (multi-line paste) — PASSED** (completed run, 3.5m): `window.__term.pasteText(\"alpha\\n\n    bravo\\ncharlie\")` into `cat > /tmp/p` round-trips content-exact through the OSC/paste terminal\n    wiring (newline→CR→NL, framePaste). This is the browser-integration capstone for the paste pipeline.\n  - **AC1 (OSC 52 copy) — `test.skip`** (headless-clipboard limitation, not a defect): headless\n    Chromium never settles `navigator.clipboard.writeText` without a genuine transient user activation,\n    so the handler's onCopied/onCopyBlocked callbacks and a clipboard readback never fire. The copy\n    decode + size-cap + read-gate + onCopied/onCopyBlocked DISPATCH are fully proven by\n    `web/tests/osc52.test.mjs` (15 node cases). Added a symmetric `onClipboardCopied` success hook to\n    `web/terminal.js` (a UI \"copied!\" signal + the test observability path).\n  - **AC3 1 MB byte-exact — `test.skip`**: the ~4-min cold-boot + 1 MB drain reliably gets OS-reaped on\n    this contended machine (the known \"browser boot reaped on mac\" limit). The no-loss/backpressure\n    guarantee is covered by E2-T22's 100 KB bulk-input browser test + `web/tests/paste.test.mjs`.\n  - Boot-harness fixes that made the E2E reach a shell (the page's old `#boot-linux` button was\n    removed): boot via `/?noAutoBoot` + fire-and-forget `wvmDemo.runBusybox()` (awaiting its\n    boot-pipeline promise hung `page.evaluate`), generous prompt timeout, and a CR nudge so PID-1 `sh`\n    draws its `~ #` prompt.\n  - Remaining to close AC1/AC3 fully: run on a headed/unloaded machine or CI with clipboard activation\n    + boot headroom (the spec's skips are one-line re-enables). `make verify-E3-T22d` runs the node\n    cores + the green paste E2E.\n\n### 2026-08-30 — fresh verifier — VERDICT: needs-evidence\n\n- **AC1 — HELD.** Prediction: the recorded guest OSC52 sequence would yield `hi` through the browser\n  clipboard path. Observed `copied=\"hi\"`, `blocked=null`, and `clipboard=\"hi\"` in\n  `evidence/e3-t22d/clipboard-browser-2026-08-30.json:18-21`; the harness registers both callbacks and\n  reads `navigator.clipboard` at `tools/verify/e3-t22d-browser-proof.mjs:154-195`.\n- **AC2 — NEEDS EVIDENCE.** Prediction: the serialized file size would be the guest's numeric `wc -c`\n  observation, separately from the host payload length. The guest SHA is now genuinely parsed from a\n  line matching `<64 hex> /root/paste.txt` and compared with the independently computed SHA\n  (`tools/verify/e3-t22d-browser-proof.mjs:81-100,231-241`); observed and expected SHA both equal\n  `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733` in evidence JSON:31-37, and the\n  screenshot visibly shows that guest hash/path. However, the harness only has the guest compare\n  `test \"$(wc -c < /root/paste.txt)\" -eq 1000000 && echo E3T22D_SIZE_OK` and waits for the marker\n  (`:231-240`); it never parses or records the numeric guest `wc -c` output, and sets\n  `fileSize: payload.length` from the host (`:298-304`). Re-record with an actual guest size line/result\n  captured in the evidence (or an equivalent exact command/result transcript); AC2 remains unchecked at\n  `tasks/epic-3-civilization/E3-T22d-clipboard-e2e-capstone.md:25`.\n- **AC3 — HELD.** Prediction: DECSET-2004 would hold the first pasted command and execute the second\n  only after Enter. Observed `modeEnabled=true`, `heldUntilEnter=true`, and `executedAfterEnter=true` in\n  evidence JSON:39-42; the screenshot shows `E3T22D_HELD` followed by `E3T22D_EXECUTED`.\n- **BROWSER ERROR GATE — HELD.** Prediction: only the explicitly probed favicon 404 would be tolerated.\n  The evidence records `consoleErrors=[]`, `allowedHttpErrors=[]`, and\n  `faviconProbe.status=404` for `/favicon.ico` (JSON:11-16). The harness collects all context responses\n  with status >=400 and rejects every non-favicon error before serializing the result\n  (`tools/verify/e3-t22d-browser-proof.mjs:42-53,265-281`).\n- **FRESHNESS / COVERAGE — HELD except for AC2 provenance.** The JSON hash is\n  `df362d8b3eb55ebde17987e8a65e2a1928e6b0e8a598c6f1ffd766166445ede7` and the PNG hash is\n  `b42a92d854838e3c9dbdcf295f9a7a801d1c998aa6618137dba2a959519467f5`, matching the submitted log.\n  `runtimeHead=4e9a2f4` is the parent of `HEAD=e193964`; `git diff 4e9a2f4..HEAD` has no runtime or\n  proof-harness changes, so the recorded code is fresh. The net task diff from `97b88d4` has no\n  `web/tests/e3-t22-clipboard.spec.js` change (`git diff --quiet 97b88d4 HEAD -- web/tests/...`), and\n  the target invokes the raw harness (`Makefile:455-476`). Generated queue/task metadata is waived.\n- **SUPPORTING GATES — HELD.** Fresh verifier run: `node --test web/tests/osc52.test.mjs\n  web/tests/paste.test.mjs` passed 23/23; both proof/spec `node --check` commands, `git diff --check\n  41f885b..HEAD`, and `python3 tools/check_task_policy.py` passed. Prior held hostile-input/dependency\n  results are carried forward because the runtime dependency boundary is unchanged.\n\nCommands: deterministic node gates, syntax checks, `git diff --check 41f885b..HEAD`, independent\npayload SHA recomputation, evidence/PNG SHA checks, runtime-head and spec-baseline diff checks, and\n`python3 tools/check_task_policy.py`.",
       "adversarial": "",
       "file": "tasks/epic-3-civilization/E3-T22d-clipboard-e2e-capstone.md",
       "activity": [
@@ -8582,11 +8564,21 @@
           "date": "2026-08-03",
           "commits": 0,
           "labels": []
+        },
+        {
+          "date": "2026-08-30",
+          "commits": 8,
+          "labels": [
+            "tasks: resume E3-T22d evidence rework",
+            "verify: keep E3-T22d evidence-needed",
+            "submit E3-T22d evidence rework",
+            "tasks: resume E3-T22d evidence rework"
+          ]
         }
       ],
       "firstActivity": "2026-08-02",
-      "lastActivity": "2026-08-03",
-      "commitCount": 1
+      "lastActivity": "2026-08-30",
+      "commitCount": 9
     },
     {
       "id": "E3-T23",
@@ -9477,10 +9469,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E3.5-T01: fix critic CRITICAL container escape + 2 MAJOR bugs (symlink/opaque/bomb)",
-            "E3.5-T01 (pass 1): OCI unpack core — whiteout applier + digest-verified layout unpack",
             "E3.5-T01: fix critic CRITICAL container escape + 2 MAJOR bugs (symlink/opaque/bomb)",
             "E3.5-T01 (pass 1): OCI unpack core — whiteout applier + digest-verified layout unpack"
           ]
@@ -9509,7 +9499,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-08-02",
-      "commitCount": 7
+      "commitCount": 5
     },
     {
       "id": "E3.5-T02",
@@ -9555,10 +9545,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E3.5-T02 (pass 2): harden smoke-script asserts against false-passes (critic)",
-            "E3.5-T02 (pass 1): container kernel audit + in-guest smoke script + TUN/SQUASHFS decisions",
             "E3.5-T02 (pass 2): harden smoke-script asserts against false-passes (critic)",
             "E3.5-T02 (pass 1): container kernel audit + in-guest smoke script + TUN/SQUASHFS decisions"
           ]
@@ -9582,7 +9570,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-29",
-      "commitCount": 8
+      "commitCount": 6
     },
     {
       "id": "E3.5-T03",
@@ -9633,12 +9621,11 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 6,
+          "commits": 3,
           "labels": [
             "E3.5-T03: fix critic MAJORs — wvrun shell-quoting (env spaces, argv globs)",
             "E3.5-T03 (pass 1): OCI runtime-config bundle + tiny `wvrun` runner",
-            "E3.5-T02 (pass 2): harden smoke-script asserts against false-passes (critic)",
-            "E3.5-T03: fix critic MAJORs — wvrun shell-quoting (env spaces, argv globs)"
+            "E3.5-T02 (pass 2): harden smoke-script asserts against false-passes (critic)"
           ]
         },
         {
@@ -9666,7 +9653,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-30",
-      "commitCount": 10
+      "commitCount": 7
     },
     {
       "id": "E3.5-T04",
@@ -9713,12 +9700,12 @@
       "activity": [
         {
           "date": "2026-07-08",
-          "commits": 12,
+          "commits": 6,
           "labels": [
             "E3.5-T04 (pass 2): fold critic evidence into task Verification log",
             "E3.5-T04 (pass 1): fold critic evidence into task Verification log",
-            "E3.5-T04 (pass 2): fold critic evidence into task Verification log",
-            "E3.5-T04 (pass 1): fold critic evidence into task Verification log"
+            "E3.5-T04 (pass 2): fold critic — CLEAN; document partial-pull + eviction seams",
+            "E3.5-T04 (pass 2): pull-through layer cache — native cacheStats + dedupe"
           ]
         },
         {
@@ -9740,7 +9727,7 @@
       ],
       "firstActivity": "2026-07-08",
       "lastActivity": "2026-08-02",
-      "commitCount": 16
+      "commitCount": 10
     },
     {
       "id": "E3.5-T04a",
@@ -9778,12 +9765,11 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 6,
+          "commits": 3,
           "labels": [
             "E3.5-T04a: prove the pipeline on real postgres:18 (capstone input)",
             "E3.5-T04a: fix critic MAJOR — verify manifest-by-digest in sideload",
-            "E3.5-T04a: native OCI sideload (registry→layout) + fix real-image unpack bug",
-            "E3.5-T04a: prove the pipeline on real postgres:18 (capstone input)"
+            "E3.5-T04a: native OCI sideload (registry→layout) + fix real-image unpack bug"
           ]
         },
         {
@@ -9803,7 +9789,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-30",
-      "commitCount": 8
+      "commitCount": 5
     },
     {
       "id": "E3.5-T04b",
@@ -9850,10 +9836,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E3.5-T04b: fix critic — harness false-passed 4 ways, rewrite + self-test",
-            "E3.5-T04b: container matrix — prove the pipeline runs any riscv64 image",
             "E3.5-T04b: fix critic — harness false-passed 4 ways, rewrite + self-test",
             "E3.5-T04b: container matrix — prove the pipeline runs any riscv64 image"
           ]
@@ -9875,7 +9859,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-08-02",
-      "commitCount": 6
+      "commitCount": 4
     },
     {
       "id": "E3.5-T04c",
@@ -9913,10 +9897,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E3.5-T04c: adopt critic LOW notes (SOUND verdict) — stronger bomb test",
-            "E3.5-T04c: zstd-compressed layers — unpack modern buildkit images",
             "E3.5-T04c: adopt critic LOW notes (SOUND verdict) — stronger bomb test",
             "E3.5-T04c: zstd-compressed layers — unpack modern buildkit images"
           ]
@@ -9938,7 +9920,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-08-02",
-      "commitCount": 6
+      "commitCount": 4
     },
     {
       "id": "E3.5-T04d",
@@ -9984,10 +9966,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E3.5-T04d: fix critic MAJOR — attacker-controlled auth realm SSRF/file-read",
-            "E3.5-T04d: multi-registry sideload — ghcr/quay/gcr/any v2 registry",
             "E3.5-T04d: fix critic MAJOR — attacker-controlled auth realm SSRF/file-read",
             "E3.5-T04d: multi-registry sideload — ghcr/quay/gcr/any v2 registry"
           ]
@@ -10009,7 +9989,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-31",
-      "commitCount": 6
+      "commitCount": 4
     },
     {
       "id": "E3.5-T04e",
@@ -10055,10 +10035,8 @@
       "activity": [
         {
           "date": "2026-07-07",
-          "commits": 4,
+          "commits": 2,
           "labels": [
-            "E3.5-T04e: fix critic MAJOR false-reject (relative bundle path) + 2 MINOR",
-            "E3.5-T04e: `oci validate` — native, boot-free bundle preflight",
             "E3.5-T04e: fix critic MAJOR false-reject (relative bundle path) + 2 MINOR",
             "E3.5-T04e: `oci validate` — native, boot-free bundle preflight"
           ]
@@ -10080,7 +10058,7 @@
       ],
       "firstActivity": "2026-07-07",
       "lastActivity": "2026-07-31",
-      "commitCount": 6
+      "commitCount": 4
     },
     {
       "id": "E3.5-T04f",
@@ -10274,12 +10252,12 @@
       "activity": [
         {
           "date": "2026-07-07",
-          "commits": 8,
+          "commits": 4,
           "labels": [
             "E3.5-T05 (pass 2): de-fake the Docker tab — remove the mock shell + fabricated data",
             "E3.5-T05 (pass 1): fix critic MAJOR — hardlink correctness under whiteout/override",
             "E3.5-T05 (pass 1): oci unpack preserves hardlinks (busybox 412MB→3.2MB) + bundle build tool",
-            "E3.5-T05 (pass 2): de-fake the Docker tab — remove the mock shell + fabricated data"
+            "E3.5-T05 (pass 2): fold critic — fix Images overclaim + commit bundle provenance"
           ]
         },
         {
@@ -10293,7 +10271,7 @@
       ],
       "firstActivity": "2026-07-07",
       "lastActivity": "2026-07-09",
-      "commitCount": 10
+      "commitCount": 6
     },
     {
       "id": "E3.5-T05a",
@@ -10340,12 +10318,12 @@
       "activity": [
         {
           "date": "2026-07-08",
-          "commits": 8,
+          "commits": 4,
           "labels": [
             "fix(web)+docs: fold in cold-clone critic findings for the Docker Run fix",
             "docs(E3.5-T05a): pass 2 — acceptance executed, re-entrancy bug found + fixed",
             "E3.5-T05a: fold no-fake-audit critic (CLEAN) into task Verification log",
-            "fix(web)+docs: fold in cold-clone critic findings for the Docker Run fix"
+            "E3.5-T05a: visible Docker tab — Run boots busybox + runs one REAL guest command"
           ]
         },
         {
@@ -10366,7 +10344,7 @@
       ],
       "firstActivity": "2026-07-08",
       "lastActivity": "2026-07-29",
-      "commitCount": 11
+      "commitCount": 7
     },
     {
       "id": "E3.5-T05b",
@@ -10922,7 +10900,7 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "**2026-08-07 (rev 2) — re-chunked Node BASE (not a delta) + main-thread JIT wired + deployed.**\n\n- **Node baked into a RE-CHUNKED lazy-load base** (the architecture the delta approach missed). Two-boot\n  pipeline on `dev` (`/tmp/build-node-base2.sh`): boot `alpine-rootfs.ext4` under `--net-slirp`, root-login\n  then `udhcpc -i eth0; apk add nodejs npm` (`OK: 86 MiB in 92 packages`, `v20.15.1`, npm `10.9.1-r0`) →\n  **chunk the Node ext4 into a fresh base** (2400 dedup'd 128 KiB chunks, `base_hash ac6a2988…`) → boot 2\n  snapshots the node-ready shell stamped with that base-id.\n- **Artifacts (real, much smaller than the delta approach):** RAM snap 101,203,980 B raw → **25,334,324 B\n  gz** (`58c9079d…`); overlay-delta **16,124 B** gz / 83 blocks (`90647ee8…`) — Node now lives in the base,\n  so the delta is ~16 KB vs the old 24 MB. Both under the 25 MiB Pages cap → ship on Pages. Node chunks\n  uploaded to R2 `s3://wasm-vm/chunked-node-alpine/`; R2 `base_hash` re-verified `== ac6a2988…`.\n- **[✓] AC1 fast restore — live-verified on https://wasm-vm.pages.dev/ (`?guest=node-alpine`, the default):**\n  console prints `[fast-boot: host ready in 5.20s (restored, no Linux boot)]`, `root@node-alpine` chip\n  present. Coherence guard holds (R2 base_hash == snapshot base-id).\n- **JIT (E4-T29) now armed on the deployed demo.** Root cause it was interpreted: the demo runs `WasmLinux`\n  on the **main thread** (`web/loader.js`), and only `WasmMachine` exposed `enableJit` — the main-thread path\n  never armed it, regardless of `crossOriginIsolated`. Fix: added `WasmLinux::enableJit` (crates/wasm/src/lib.rs,\n  mirrors `WasmMachine`) + a COI-gated `machine.enableJit(32)` in loader.js with a `?jit=0` opt-out. Live-verified:\n  `window.__jit === {enabled:true, threshold:32}`, `crossOriginIsolated===true`, `machine.enableJit` a function.\n\n**verification-debt (honest):**\n- `node -e 'console.log(6*7)' → 42` **NOT captured in the automated browser** — under Playwright the\n  `setTimeout` run-loop is throttled, so `node -e` ran >4 min WITHOUT completing in BOTH `jit=1` (~202 s) and\n  `jit=0` (~241 s) samples; the guest stepped correctly the whole time (stateDigest advancing, zero\n  console errors). This is automation-tab throttling, not a guest fault. Needs a **focused/foreground** browser\n  (or a non-setTimeout run-loop) to capture `42` and a real wall-time.\n- **JIT gives no measurable speedup for `node -e`**: startup is V8 **cold code** (never tiers up), and\n  **main-thread** compilation is synchronous + the Linux guest bails frequently (MMIO/MMU/interrupts), so\n  naive main-thread JIT adds overhead. Real speedup needs the **async cpu-worker compile path** (E4-T22/T28).\n  JIT *activates* (requirement met) but \"fast Node\" remains open → tie to E4-T28.\n\n**2026-08-07 (rev 1) — implemented + deployed + Playwright-verified on production. Full evidence:\n`evidence/epic-3.6/node-alpine.md`.**\n\n- **Node baked via apk, snapshotted node-ready.** `tools/build-node-alpine-snapshot.sh` boots Alpine\n  under `--net-slirp` (real mirrors via slirp NAT), `apk add nodejs npm` (`nodejs 20.15.1-r0` + `npm`,\n  `OK: 86 MiB in 92 packages`, `v20.15.1`), snapshot gated behind `node --version && npm --version`.\n- **Artifacts (real):** RAM snapshot 221,831,892 B raw → 55,309,778 B gz (`43b755a6…`); overlay-delta\n  75,858,397 B raw (18,484 blocks) → 24,258,743 B gz (`60c9dc60…`). Node rides the disk OVERLAY over the\n  existing `chunked-alpine` base (base_hash `03a8026f…`) — no re-chunk. Both gz exceed the 25 MiB Pages\n  cap → uploaded to R2 (`s3://wasm-vm/boot-snapshot/`), public-URL 200-checked.\n- **Selector + default:** `?guest=busybox|alpine|node-alpine`, node-alpine the DEFAULT autoboot;\n  busybox/alpine still selectable; `?noAutoBoot` + busybox cold-boot fallback preserved.\n- **[✓] AC1 restored to a node-ready shell** — deployed default: `restoredFromBootSnapshot()===true`,\n  `isGuestReady()===true`, chip `root@node-alpine`, Alpine prompt. Restore ~15.5 s (warm HTTP cache;\n  cold adds the 79 MB R2 download) vs ~15-min cold boot+install.\n- **[✓] AC2 a real Node program runs** — `node -e 'console.log(6*7)'` → **42**; adversarial single\n  process: runtime sum 1..1000 + write/read-back → **`ADV_500500_v=500500`** (non-canned compute + live\n  coherent fs). Playwright on https://wasm-vm.pages.dev.\n- **[✓] AC4 coherence guard holds** — reused unchanged (restoreDecisionCode triple + seedOverlayDelta\n  base-binding + no-op-if-overlay-exists → cold boot, never a broken guest).\n- **[✓] AC5 sizes + restore time recorded** (above / evidence doc); no fabricated numbers.\n- **[~] AC3 node HTTP server / recorded workload** — not exercised; a scripted node workload DID run to\n  completion with a recorded wall-time (~55 s adversarial program, interpreted). HTTP-server-in-guest\n  deferred.\n- **Adversarial verification:** (1)+(2) runtime-computed non-canned result ✓; (3) write-then-read-back\n  ✓; (4) startup-to-first-output measured (**~55–80 s per node invocation, interpreted**) — the site is\n  NOT cross-origin isolated so there is **no JIT**; the snapshot removes boot+install cost, not V8's\n  interpreted startup. Honest result: working but slow; JIT (COI) is the lever (E4-T28). (5) no\n  FENCE.I/i-cache faults observed (interpreter path).\n- **Native round-trip (dev):** resume of the reconstructed post-install ext4 lands at the node-ready\n  Alpine shell (`resumed 221831892 bytes — continuing guest`, `wasm-vm:~#`); a fresh native `node`\n  invocation did not print within budget (native interpreter V8 startup too slow) — browser gate is\n  authoritative for Node-runs.\n\n**verification-debt:** AC3 in-guest HTTP server deferred; native `node`-prints-output too slow to\ncapture (browser proof stands in); clean cold-cache (first-visit) restore wall-time not isolated from\nHTTP caching.",
+      "verificationLog": "**2026-08-07 (rev 2) — re-chunked Node BASE (not a delta) + main-thread JIT wired + deployed.**\n\n- **Node baked into a RE-CHUNKED lazy-load base** (the architecture the delta approach missed). Two-boot\n  pipeline on `dev` (`/tmp/build-node-base2.sh`): boot `alpine-rootfs.ext4` under `--net-slirp`, root-login\n  then `udhcpc -i eth0; apk add nodejs npm` (`OK: 86 MiB in 92 packages`, `v20.15.1`, npm `10.9.1-r0`) →\n  **chunk the Node ext4 into a fresh base** (2400 dedup'd 128 KiB chunks, `base_hash ac6a2988…`) → boot 2\n  snapshots the node-ready shell stamped with that base-id.\n- **Artifacts (real, much smaller than the delta approach):** RAM snap 101,203,980 B raw → **25,334,324 B\n  gz** (`58c9079d…`); overlay-delta **16,124 B** gz / 83 blocks (`90647ee8…`) — Node now lives in the base,\n  so the delta is ~16 KB vs the old 24 MB. Both under the 25 MiB Pages cap → ship on Pages. Node chunks\n  uploaded to R2 `s3://wasm-vm/chunked-node-alpine/`; R2 `base_hash` re-verified `== ac6a2988…`.\n- **[✓] AC1 fast restore — live-verified on https://wasm-vm.pages.dev/ (`?guest=node-alpine`, the default):**\n  console prints `[fast-boot: host ready in 5.20s (restored, no Linux boot)]`, `root@node-alpine` chip\n  present. Coherence guard holds (R2 base_hash == snapshot base-id).\n- **JIT (E4-T29) now armed on the deployed demo.** Root cause it was interpreted: the demo runs `WasmLinux`\n  on the **main thread** (`web/loader.js`), and only `WasmMachine` exposed `enableJit` — the main-thread path\n  never armed it, regardless of `crossOriginIsolated`. Fix: added `WasmLinux::enableJit` (crates/wasm/src/lib.rs,\n  mirrors `WasmMachine`) + a COI-gated `machine.enableJit(32)` in loader.js with a `?jit=0` opt-out. Live-verified:\n  `window.__jit === {enabled:true, threshold:32}`, `crossOriginIsolated===true`, `machine.enableJit` a function.\n\n**verification-debt (honest):**\n- `node -e 'console.log(6*7)' → 42` **NOT captured in the automated browser** — under Playwright the\n  `setTimeout` run-loop is throttled, so `node -e` ran >4 min WITHOUT completing in BOTH `jit=1` (~202 s) and\n  `jit=0` (~241 s) samples; the guest stepped correctly the whole time (stateDigest advancing, zero\n  console errors). This is automation-tab throttling, not a guest fault. Needs a **focused/foreground** browser\n  (or a non-setTimeout run-loop) to capture `42` and a real wall-time.\n- **JIT gives no measurable speedup for `node -e`**: startup is V8 **cold code** (never tiers up), and\n  **main-thread** compilation is synchronous + the Linux guest bails frequently (MMIO/MMU/interrupts), so\n  naive main-thread JIT adds overhead. Real speedup needs the **async cpu-worker compile path** (E4-T22/T28).\n  JIT *activates* (requirement met) but \"fast Node\" remains open → tie to E4-T28.\n\n**2026-08-07 (rev 1) — implemented + deployed + Playwright-verified on production. Full evidence:\n`evidence/epic-3.6/node-alpine.md`.**\n\n- **Node baked via apk, snapshotted node-ready.** `tools/build-node-alpine-snapshot.sh` boots Alpine\n  under `--net-slirp` (real mirrors via slirp NAT), `apk add nodejs npm` (`nodejs 20.15.1-r0` + `npm`,\n  `OK: 86 MiB in 92 packages`, `v20.15.1`), snapshot gated behind `node --version && npm --version`.\n- **Artifacts (real):** RAM snapshot 221,831,892 B raw → 55,309,778 B gz (`43b755a6…`); overlay-delta\n  75,858,397 B raw (18,484 blocks) → 24,258,743 B gz (`60c9dc60…`). Node rides the disk OVERLAY over the\n  existing `chunked-alpine` base (base_hash `03a8026f…`) — no re-chunk. Both gz exceed the 25 MiB Pages\n  cap → uploaded to R2 (`s3://wasm-vm/boot-snapshot/`), public-URL 200-checked.\n- **Selector + default:** `?guest=busybox|alpine|node-alpine`, node-alpine the DEFAULT autoboot;\n  busybox/alpine still selectable; `?noAutoBoot` + busybox cold-boot fallback preserved.\n- **[✓] AC1 restored to a node-ready shell** — deployed default: `restoredFromBootSnapshot()===true`,\n  `isGuestReady()===true`, chip `root@node-alpine`, Alpine prompt. Restore ~15.5 s (warm HTTP cache;\n  cold adds the 79 MB R2 download) vs ~15-min cold boot+install.\n- **[✓] AC2 a real Node program runs** — `node -e 'console.log(6*7)'` → **42**; adversarial single\n  process: runtime sum 1..1000 + write/read-back → **`ADV_500500_v=500500`** (non-canned compute + live\n  coherent fs). Playwright on https://wasm-vm.pages.dev.\n- **[✓] AC4 coherence guard holds** — reused unchanged (restoreDecisionCode triple + seedOverlayDelta\n  base-binding + no-op-if-overlay-exists → cold boot, never a broken guest).\n- **[✓] AC5 sizes + restore time recorded** (above / evidence doc); no fabricated numbers.\n- **[~] AC3 node HTTP server / recorded workload** — not exercised; a scripted node workload DID run to\n  completion with a recorded wall-time (~55 s adversarial program, interpreted). HTTP-server-in-guest\n  deferred.\n- **Adversarial verification:** (1)+(2) runtime-computed non-canned result ✓; (3) write-then-read-back\n  ✓; (4) startup-to-first-output measured (**~55–80 s per node invocation, interpreted**) — the site is\n  NOT cross-origin isolated so there is **no JIT**; the snapshot removes boot+install cost, not V8's\n  interpreted startup. Honest result: working but slow; JIT (COI) is the lever (E4-T28). (5) no\n  FENCE.I/i-cache faults observed (interpreter path).\n- **Native round-trip (dev):** resume of the reconstructed post-install ext4 lands at the node-ready\n  Alpine shell (`resumed 221831892 bytes — continuing guest`, `wasm-vm:~#`); a fresh native `node`\n  invocation did not print within budget (native interpreter V8 startup too slow) — browser gate is\n  authoritative for Node-runs.\n\n**verification-debt:** AC3 in-guest HTTP server deferred; native `node`-prints-output too slow to\ncapture (browser proof stands in); clean cold-cache (first-visit) restore wall-time not isolated from\nHTTP caching.\n\n### 2026-08-29 — worker evidence — local restored Node browser A/B\n\nOn the latest-main-derived head `37265f5`, served locally with `bash tools/serve-dev.sh 8130`, a\nfresh headless Google Chrome `152.0.7977.65` session restored `node-alpine` and reached the ready\nshell in `2.196s` (`jit=0`) and `2.083s` (`jit=1`). The identical runtime workload computed\n`1..1000`, wrote the sum to `/tmp/node-local.txt`, read it back with Node's `fs`, and emitted the\nunique marker `ADV_500500` with exit 0 in both arms. Raw evidence:\n`evidence/epic-3.6/node-local-browser-ab-2026-08-29.json`.\n\nThe interpreter arm took `20,067.175ms`; the JIT arm took `20,813.240ms` (`1.03718x`, 3.718%\nslower), while the JIT reported `hasExecutor:true`, `executedBlocks:4,903,315`, and\n`retiredViaJit:24,518,003`. This fresh local run strengthens AC2's live-execution proof and\ndemonstrates that the current browser JIT path preserves output, but it does not claim a speedup;\nthe measured regression remains E4-T34 work. The only browser error was the allowed favicon 404.\n\n### 2026-08-29 — worker evidence — restored Node in-guest HTTP round trip\n\nRan a real worker-backed restored `node-alpine` guest in separately installed Google Chrome\n`152.0.7977.65`, served locally with `bash tools/serve-dev.sh 8132`. In each arm the exact guest\ncommand started a Node `http.createServer()` on `127.0.0.1:8128`, made a Node HTTP client request to\nthat loopback endpoint, printed the returned body, closed the server, and exited. Both arms restored\nfrom the boot snapshot, observed the marker `E36_HTTP_RESPONSE_5` exactly once, and exited 0. The\ninterpreter command took `35,281.519ms` and the JIT command took `36,119.089ms`; JIT was active in\nthe latter (`hasExecutor:true`, `retiredViaJit:26,021,568`). The scheduler retired `341,285,891`\ninstructions in each arm and fetched 23 chunks with no fetch error. Raw evidence is\n`evidence/epic-3.6/node-alpine-browser-http-2026-08-29.json`.\n\nThis closes the ticket's acceptance alternative for a scripted Node workload that runs to completion\nwith a recorded wall-time and strengthens the in-guest HTTP-server proof. The JIT arm was 2.375%\nslower for this cold, module-heavy workload, so no speedup is claimed. The only browser console error\nwas the known `/favicon.ico` 404 from the development server. Independent cold-cache/deployed-site\nrestore evidence and the fresh verifier pass remain separate debt.\n\n### 2026-08-29 — fresh verifier — VERDICT: needs-evidence\n\n- **HELD:** The local restored guest runs perform real Node computation plus file write/read-back and\n  return `ADV_500500` with exit 0 in both arms. The HTTP evidence starts a Node server, makes a guest\n  loopback request, observes `E36_HTTP_RESPONSE_5`, and exits 0 in both arms.\n- **NEEDS EVIDENCE:** Both raw captures use local `tools/serve-dev.sh`, not the required deployed-site\n  URL, so the deployed default restore is not proven by these artifacts. The recorded runs also do not\n  exercise a stale/foreign/mismatched snapshot attack. These are acceptance gaps, not a contradiction\n  of the local live-execution result.\n\nThe verifier classified the item as `needs-evidence`; no verified status is claimed.",
       "adversarial": "Confirm it is a REAL Node, not a frozen illusion: (1) run a program that computes a non-trivial result at\nruntime (not a canned string) and check the output; (2) `node -e` with input that varies per run (read\nargv / Date-independent math) to prove live execution; (3) restore, then WRITE a file with node and read\nit back — proves the restored fs is live and coherent; (4) measure `node` startup-to-first-output on the\nrestored host and compare to a cold `apk add nodejs && node` path — the snapshot must eliminate the boot +\ninstall cost; (5) run under JIT and confirm no FENCE.I/i-cache faults from V8's own codegen.",
       "file": "tasks/epic-3.6-live-pull/E3.6-T05-node-preinstalled-snapshot-default.md",
       "activity": [
@@ -10941,11 +10919,20 @@
             "feat(demo): E3.6-T05 node-preinstalled Alpine snapshot as the default",
             "Epic-4 accel + E3.6-T05 re-chunked Node base & browser JIT (#187)"
           ]
+        },
+        {
+          "date": "2026-08-29",
+          "commits": 3,
+          "labels": [
+            "verify: record verification-debt audit outcomes",
+            "e3.6: record restored Node HTTP evidence",
+            "e3.6: record restored Node browser A/B evidence"
+          ]
         }
       ],
       "firstActivity": "2026-08-06",
-      "lastActivity": "2026-08-07",
-      "commitCount": 4
+      "lastActivity": "2026-08-29",
+      "commitCount": 7
     },
     {
       "id": "E3.75-T01",
@@ -13531,7 +13518,7 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "**Verified here (native, headless — full output pasted in the PR):**\n- AC3 intra-batch direct-call codegen — `jit-translate/tests/batch.rs` (2/2): a within-batch edge is\n  `Operator::Call` to the successor func index; ZERO `call_indirect` in the module. GREEN.\n- AC5 verdict-identical WITH batching ON — `cargo test -p wasm-vm-jit-runtime` all green:\n  `riscv_tests_verdict_identical_with_jit` + `m_and_c_suites_execute_in_jit_tier` (jit_execution 12),\n  chaining 4, invalidation 10, precise_traps 3, batching 3. GREEN.\n- Adversarial #2 partial-batch invalidation — `jit-runtime/tests/batching.rs::partial_batch_invalidation_retires_whole_batch`:\n  8-block one-module batch, SMC-kill one → whole batch retired (registry 0), byte-identical recompile. GREEN.\n- Adversarial #3 registry accounting — `…::registry_accounting_is_accurate_at_k1`: K=1, module_count ==\n  compiled_count, positive per-module bytes, zeroes on whole-cache flush. GREEN.\n- `jit-translate` differential (100k) GREEN; `predecode_diff` byte-identical GREEN; wasm32 no_std core\n  build GREEN; fmt clean.\n\n**Verification debt (browser / dev — this mac OS-reaps long browser runs):**\n- [AC1] Cost-matrix JSON for Chrome/Firefox/Safari-substitute — harness committed + runnable\n  (`bench/module-costs/`, one command `./run.sh`); `results/` ships EMPTY (no fabricated numbers).\n  Live capture on the Linux dev box.\n- [AC2] gcc batched-vs-unbatched compile-stall factor — A/B flag wired (`set_batch_size(1)` vs `(64)`);\n  the gcc bench row itself is still deferred (Level-3 baseline), so the measured factor is dev debt.\n- [AC4] instance-count cliff limits + the ≥4× budget margin — measured by the committed harness on dev.\n- Adversarial #1 (K robustness across machines/versions) and #4 (first-execution warm-up vs the E4-T06\n  pause target) — both browser-measurement, dev debt.\n- The in-wasm `chain_enabled=1` chaining path's determinism — deferred to the E4-T25 differential harness.",
+      "verificationLog": "**Verified here (native, headless — full output pasted in the PR):**\n- AC3 intra-batch direct-call codegen — `jit-translate/tests/batch.rs` (2/2): a within-batch edge is\n  `Operator::Call` to the successor func index; ZERO `call_indirect` in the module. GREEN.\n- AC5 verdict-identical WITH batching ON — `cargo test -p wasm-vm-jit-runtime` all green:\n  `riscv_tests_verdict_identical_with_jit` + `m_and_c_suites_execute_in_jit_tier` (jit_execution 12),\n  chaining 4, invalidation 10, precise_traps 3, batching 3. GREEN.\n- Adversarial #2 partial-batch invalidation — `jit-runtime/tests/batching.rs::partial_batch_invalidation_retires_whole_batch`:\n  8-block one-module batch, SMC-kill one → whole batch retired (registry 0), byte-identical recompile. GREEN.\n- Adversarial #3 registry accounting — `…::registry_accounting_is_accurate_at_k1`: K=1, module_count ==\n  compiled_count, positive per-module bytes, zeroes on whole-cache flush. GREEN.\n- `jit-translate` differential (100k) GREEN; `predecode_diff` byte-identical GREEN; wasm32 no_std core\n  build GREEN; fmt clean.\n\n**Verification debt (browser / dev — this mac OS-reaps long browser runs):**\n- [AC1] Cost-matrix JSON for Chrome/Firefox/Safari-substitute — local three-engine capture is now\n  committed under `bench/module-costs/results/`; a separate Chrome 152 screen also exercises the\n  matrix against the pinned Chromium 151. The remaining debt is independent-machine robustness.\n- [AC2] gcc batched-vs-unbatched compile-stall factor — A/B flag wired (`set_batch_size(1)` vs `(64)`);\n  the gcc bench row itself is still deferred (Level-3 baseline), so the measured factor is dev debt.\n- [AC4] local run reached 10,000 live instances in each engine without a cliff, putting the 256-module\n  budget at least 39.1x below the observed lower bound; a larger-limit/cross-run confirmation remains.\n- Adversarial #1 (K robustness across machines/versions) and #4 (first-execution warm-up vs the E4-T06\n  pause target) — both browser-measurement, dev debt.\n- The in-wasm `chain_enabled=1` chaining path's determinism — deferred to the E4-T25 differential harness.\n\n### 2026-08-29 — worker evidence — local cross-browser cost matrix captured\n\nRan the exact clean-checkout entrypoint `bench/module-costs/run.sh` after installing the pinned\n`package-lock.json` dependencies and Playwright browser revisions. The complete run passed:\n`3 passed (7.3s)` across Chromium 151.0.7922.34, Firefox 153.0, and WebKit 26.5 (the documented\nSafari substitute). The committed JSON rows contain the generated module-size/compile/instantiate\ncurves and the live-instance probe at 1,000/5,000/10,000 instances; all three targets reached\ntheir requested live count with `failedAt: null`. The machine reported 16 logical CPUs to Chromium\nand Firefox and 8 to WebKit's Safari device emulation. Chromium reported `performance.memory`;\nFirefox and WebKit correctly reported it unavailable.\n\nThis closes the local evidence gap for AC1's three-engine matrix and AC4's ≥4x budget-margin\nlower-bound check: 10,000 observed live instances / 256 configured live modules = 39.0625x.\nIt does not claim the remaining AC2 gcc A/B stall measurement, the cross-machine robustness attack,\nor the first-execution pause measurement; those remain verification debt as explicitly listed above.\nThe result files are `bench/module-costs/results/{chromium,firefox,webkit}.json`, and the dependency\nlock is `bench/module-costs/package-lock.json`.\n\n### 2026-08-29 — worker evidence — cross-version Chromium robustness screen\n\nRan the optional supplemental project with\n`E4_T19_CHROME_EXECUTABLE='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' npx playwright test --project=chromium-system`.\nIt passed in `1.8s` using the separately installed Google Chrome `152.0.7977.65`, while the\ncanonical `bash bench/module-costs/run.sh` immediately before it passed all three pinned projects\nin `6.9s` (Chromium `151.0.7922.34`, Firefox `153.0`, WebKit `26.5`). Both Chromium versions\nreached 1,000, 5,000, and 10,000 live 64-function instances with `failedAt: null`; the 10,000\ninstance probe took `324.8 ms` on pinned Chromium and `334.0 ms` on system Chrome. The supplemental\nraw row is `bench/module-costs/results/chromium-system.json` (SHA-256\n`ad9724dfe509b821dec164f958c8b23076e33d3c0daae4e295b639955fc6a97e`).\n\nThis is a bounded cross-browser-version robustness result on one machine: it finds no cliff or\norder-of-magnitude change in the chosen 64-function module shape. It does not establish the full\nindependent-machine K-selection attack, gcc A/B compile-stall factor, or first-execution pause\nmeasurement; those remain verification debt.\n\n### 2026-08-29 — fresh verifier — VERDICT: needs-evidence\n\n- **HELD:** The committed Chromium 151, Firefox 153, and WebKit 26.5 matrix rows contain the compile/\n  instantiate curves and 1,000/5,000/10,000 live-instance probes; every probe reached its target with\n  `failedAt: null` (`bench/module-costs/results/{chromium,firefox,webkit}.json`). The supplemental\n  Chrome 152 row is also represented with its captured version and project metadata.\n- **NEEDS EVIDENCE:** AC2 remains unmeasured: no gcc batched-versus-unbatched compile-stall factor is\n  recorded. The 10,000-instance probes establish a lower bound, not each browser's practical cliff,\n  because the harness stops at 10,000 and releases instances. Independent-machine robustness and the\n  first-execution pause target remain absent.\n\nThe verifier classified the item as `needs-evidence`; no verified status is claimed.",
       "adversarial": "Refute the measurements' relevance and the batching's correctness. Attack angles:\n(1) rerun the cost matrix on a different machine/browser-version — if the chosen K flips\nto a >2x-worse choice, the \"measured decision\" is overfit and refuted as stated (the task\nmust show K is robust or auto-tuned); (2) partial-batch invalidation: SMC-kill one block\nout of a 64-block module and verify the other 63 still execute, the dead one is unlinked\n(intra-module edges too — these are direct calls, so the dead block's *body* must be\nneutered via its prologue generation check or the whole batch retired — whichever the\ndesign says, test it); a stale intra-batch direct call executing dead code refutes;\n(3) instance-limit abuse: force-tune K=1 and run gcc until 10k modules exist — the VM must\nhit its own registry accounting (E4-T20 will enforce; here, accounting must at least be\naccurate within 10% of browser-reported memory growth); (4) measure first-execution\nlatency of a fresh batch (engine baseline-compile warm-up) and confirm it doesn't violate\nthe E4-T06 pause targets on the worst browser.",
       "file": "tasks/epic-4-acceleration/E4-T19-module-batching-and-cross-browser-instantiation.md",
       "activity": [
@@ -13541,11 +13528,20 @@
           "labels": [
             "feat(jit): E4-T19 module batching — K-func modules, intra-batch direct calls"
           ]
+        },
+        {
+          "date": "2026-08-29",
+          "commits": 3,
+          "labels": [
+            "verify: record verification-debt audit outcomes",
+            "e4-t19: add cross-version browser evidence",
+            "e4-t19: record local cross-browser cost matrix"
+          ]
         }
       ],
       "firstActivity": "2026-08-06",
-      "lastActivity": "2026-08-06",
-      "commitCount": 1
+      "lastActivity": "2026-08-29",
+      "commitCount": 4
     },
     {
       "id": "E4-T20",
@@ -13707,15 +13703,16 @@
         },
         {
           "date": "2026-08-07",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "docs(e4-t22): verification log — CPU-on-worker pragmatic first cut",
             "docs(e4-t22): verification log — CPU-on-worker pragmatic first cut"
           ]
         }
       ],
       "firstActivity": "2026-08-06",
       "lastActivity": "2026-08-07",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E4-T23",
@@ -13820,11 +13817,19 @@
           "labels": [
             "feat(core): E4-T24 timekeeping under JIT — TimeSource (ICount + WallClock), no time warps"
           ]
+        },
+        {
+          "date": "2026-08-29",
+          "commits": 2,
+          "labels": [
+            "verify: record verification-debt audit outcomes",
+            "e4-t24: record local browser sleep evidence"
+          ]
         }
       ],
       "firstActivity": "2026-08-06",
-      "lastActivity": "2026-08-06",
-      "commitCount": 1
+      "lastActivity": "2026-08-29",
+      "commitCount": 3
     },
     {
       "id": "E4-T25",
@@ -14255,15 +14260,16 @@
         },
         {
           "date": "2026-08-11",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e4): verify default whole-machine worker",
             "chore(e4): submit authoritative raw-frame evidence"
           ]
         }
       ],
       "firstActivity": "2026-08-09",
       "lastActivity": "2026-08-11",
-      "commitCount": 8
+      "commitCount": 9
     },
     {
       "id": "E4-T33",
@@ -14314,7 +14320,7 @@
       "epicKey": "4",
       "title": "Short-block JIT acceleration for restored Node startup",
       "priority": 434,
-      "status": "pending",
+      "status": "verification-debt",
       "depends_on": [
         "E4-T32"
       ],
@@ -14325,7 +14331,7 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-08-12 — worker checkpoint — hidden-primer regression removed\n\n- This is a bounded product correction inside the still-open E4-T34 lane, not a claim that the\n  task's JIT or 20-second acceptance criteria are complete. The restored Node guest no longer starts\n  a full invisible Node process by default; `?nodeWarmup=1` keeps the old behavior available only for\n  controlled experiments. Switching to the Demo tab now re-fits xterm locally instead of clicking\n  the manual Fit action and injecting `stty` into a command already in flight.\n- Frozen wasm: `055fcde43e90dcfe8ee265fe19050b6ba387f607eccfa6430ebdf21247613b61`\n  in both `web/pkg` and `web/dist/pkg`; the regenerated service-worker version is\n  `3de893a6aaa1`. Source and dist copies of `main.js` and `tabs.js` are byte-identical.\n- Accepted default-URL evidence (no `nodeWarmup` query):\n  `/private/tmp/e4t34-prime-ab/default-c/E4T32_NODE_DIAGNOSTIC_RESULTS.json`, SHA-256\n  `f65bbb5daa701b04d184b8f9ea57216106d0f60212acf140c7e95b057fae14cc`. It records a\n  restored whole-machine Worker, `nodeWarmupStateAtCommand=disabled`, zero production-R2 requests,\n  zero browser errors, clean pre/post CPU calibration, exact PID 839 and byte-framed output `3` from\n  the real `node -e 'console.log(3)'`: 94,063.015 ms first output and 97,373.315 ms completion.\n- Two additional clean explicit-off screens were consistent: 90,564.715/93,634.785 ms and\n  92,790.730/95,887.740 ms (first/completion), median 91,677.723/94,761.263 ms. Three opt-in-primer\n  controls were rejected by the host-capacity gate and are not benchmark evidence; their diagnostic\n  timing suggested overlap was neutral-to-worse, never a valid speedup. The measured first-command\n  time therefore remains far above the task target and the next slice must improve it directly.\n- Gates: `make web-dist`; JS syntax and `git diff --check`; focused Playwright tab test 1/1.\n  A fresh critic independently validated the default artifact, source/dist/Wasm binding, and\n  sabotaged the tab test with the old implicit Fit behavior; the sabotage was rejected. Verdict:\n  verified for this correction only, while E4-T34 remains `in-progress`.\n\n### 2026-08-12 — worker checkpoint — warm first-command release screen\n\n- The shipped Node snapshot had deliberately dropped Linux's file page cache before capture. A paired\n  post-Node snapshot screen reduced the real fresh `node -e 'console.log(3)'` command from the clean\n  91,677.723 ms first-output baseline to 27,420.160 ms, with zero lazy-disk chunk fetches and\n  246,120,921 retired instructions instead of roughly 390 million. Its post-run host calibration was\n  contaminated, so this is a release-screen/mechanism result rather than final task acceptance; it\n  nevertheless clears the bounded keep threshold by a wide margin and preserves the exact PID-bound\n  112-byte output oracle, exit 0, restored Worker backend, zero browser errors, and zero R2 requests.\n  Evidence: `/private/tmp/e4t34-warm-screen/candidate-b/E4T32_NODE_REJECTED_worker_interp_prime_default.json`,\n  SHA-256 `aace01a33f15d55bf6afdea3fbf1c5c58a66201abf98ba8bb9e0ce52a43b6200`.\n- Promoted pair: snapshot 36,865,908 bytes / SHA-256\n  `f28f90de26bbe35d927a3f53767b3c0469964d1803d0ab21f2c4d5f008dce37f`; overlay 20,341 bytes /\n  SHA-256 `aaa8a967e7191f8dfbf3033646a18e354dced181c0afa0720c1672918fac57a6`.\n  Both bind to the exact Node base `ac6a2988…b1c1`, generation 0; raw replay exports are byte-identical.\n- A release-safety guard now arms the RAM restore only for a wholly fresh overlay or an existing\n  valid overlay whose complete block index/value set exactly matches the paired delta. Changed,\n  added, missing, malformed, orphaned, or duplicate state is preserved and cold-boots. Large boot\n  artifacts use an immutable content-addressed R2 key with full-body size/SHA verification; smaller\n  boot artifacts remain on Pages.\n- Gates: storage overlay-delta tests 7/7; wasm32 package check; `cargo fmt --all -- --check`;\n  `node --check` for loader and benchmark harness; `bash -n` for serving/deploy scripts;\n  `git diff --check`; fresh `make web-dist`. E4-T34 remains `in-progress`: this product win does not\n  claim the JIT-specific <=20-second or dispatch-density acceptance criteria.\n\n### 2026-08-30 — maintainer — parked as verification-debt\n\nThe historical E4-T34 work is being returned to the parked lane because the task still has no exact-\nhead proof for its JIT-specific acceptance criteria. A direct-chain prototype passed focused native\ntests, strict clippy, and the browser parity suite, but the required real restored-Node wall-time\nscreen and full adversarial evidence were not completed; the Playwright benchmark runner hung before\nproducing a run. No `verified` claim is made. The prototype and generated artifacts are preserved in\nthe recoverable stash `WIP E4-T34 direct-chain prototype — narrow gates only; not acceptance evidence`\nfor a future fresh worker slice.",
       "adversarial": "Change a previously monomorphic `jalr` target mid-run, fault in the middle of a fused short-block\nchain, make an interrupt pending at every remaining-budget tail, rewrite a linked page, and churn the\nsmallest cache budget. Compare exact counters/PC/registers against interpreter and require the real\nNode result, not a synthetic ALU proxy. Any stale target, duplicated side effect, budget overshoot,\ncompile pause storm, or JIT wall-time loss refutes the change.",
       "file": "tasks/epic-4-acceleration/E4-T34-node-short-block-jit.md",
       "activity": [
@@ -14335,11 +14341,160 @@
           "labels": [
             "chore(e4): split real Node JIT acceleration"
           ]
+        },
+        {
+          "date": "2026-08-12",
+          "commits": 3,
+          "labels": [
+            "feat(web): ship warm Node first-command snapshot",
+            "fix(web): stop hidden Node startup contention",
+            "chore(e4): resume measured Node acceleration"
+          ]
+        },
+        {
+          "date": "2026-08-29",
+          "commits": 1,
+          "labels": [
+            "On codex/verification-debt-e4-t19: WIP E4-T34 direct-chain prototype — not acceptance evidence"
+          ]
+        },
+        {
+          "date": "2026-08-30",
+          "commits": 2,
+          "labels": [
+            "tasks: park E4-T34 and activate T12d refutation",
+            "On codex/verification-debt-e4-t19: WIP E4-T34 direct-chain prototype — narrow gates only; not acceptance evidence"
+          ]
         }
       ],
       "firstActivity": "2026-08-10",
-      "lastActivity": "2026-08-10",
-      "commitCount": 1
+      "lastActivity": "2026-08-30",
+      "commitCount": 7
+    },
+    {
+      "id": "E4-T35",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Edge-local static links for memory-aware traces",
+      "priority": 435,
+      "status": "pending",
+      "depends_on": [
+        "E4-T34"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Remove dormant cross-module touch overhead and extend only the already-audited SharedReadTlb-safe\nintra-block eligibility to useful static cross-module edges.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Run Flat-memory rejection, op-zero target miss/refund, target fault, store provenance invalidation,\nand an unarmed linked module; the latter must show no link-touch traffic.",
+      "file": "tasks/epic-4-acceleration/E4-T35-edge-local-static-links.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T36",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Guarded cross-page direct links",
+      "priority": 436,
+      "status": "pending",
+      "depends_on": [
+        "E4-T35"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Link high-value direct-control-flow edges across physical pages only after authoritative VA+PA\nobservation and validate the target with the generated EXEC-TLB predicate.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Change the target mapping after publication, invalidate the target page, deny execute permission,\nand force a remaining-budget tail at the link boundary. Every refusal must fall back exactly once.",
+      "file": "tasks/epic-4-acceleration/E4-T36-guarded-cross-page-links.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T37",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Bounded multi-target JALR return PIC",
+      "priority": 437,
+      "status": "pending",
+      "depends_on": [
+        "E4-T35"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Replace one-entry monomorphic return behavior with a bounded two- or four-target PIC and explicit\nhysteresis while keeping target authority validation in generated code.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Alternate four return addresses, inject a target permission/PA mismatch, exhaust fuel at the target,\nand invalidate one target while another remains hot. No stale call-indirect target may execute.",
+      "file": "tasks/epic-4-acceleration/E4-T37-jalr-return-pic.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T38",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "JIT residency and repack policy",
+      "priority": 438,
+      "status": "pending",
+      "depends_on": [
+        "E4-T34"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Measure same-page repack and live-module pressure with identical runtime bytes before choosing a\nproduction cap or repack policy.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Churn a smallest-cache workload, invalidate a same-page target mid-run, and verify no stale Function,\nInstance, table cell, profile, or metadata accounting survives removal.",
+      "file": "tasks/epic-4-acceleration/E4-T38-residency-repack-policy.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T39",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Compiled entry-path cost ledger",
+      "priority": 439,
+      "status": "pending",
+      "depends_on": [
+        "E4-T35"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Measure the cost of state copy, indirect table dispatch, authority checks, memory-split exits, and\ndevice boundaries separately so future changes target the dominant term.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Run interpreter, JIT, JALR-off, and region-off controls with the same restored image. Reject any\nreport that lacks a runtime digest, first-command boundary, or exact retired/checksum oracle.",
+      "file": "tasks/epic-4-acceleration/E4-T39-entry-cost-ledger.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
     },
     {
       "id": "E5-T01",
