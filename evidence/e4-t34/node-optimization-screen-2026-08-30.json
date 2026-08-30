@@ -4,6 +4,7 @@
   "recorded_at": "2026-08-30",
   "claim_scope": "Bounded browser-JIT implementation checkpoint; this is not acceptance evidence and does not claim the task is implemented or verified.",
   "source_head_before_commit": "b0fa3e805f87d60a3618724fb3dc58af39d107ec",
+  "implementation_commit": "ff007d2c4fa680829f7c5fc4d72269cf79fb1026",
   "artifact": {
     "build_command": "make web-dist",
     "wasm_sha256": "844b8a0a3f18184ba9f8c94aa7b1927c8da6e02bb3a961ad2012420dd7b3b2cd",

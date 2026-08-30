@@ -109,6 +109,8 @@ for a future fresh worker slice.
   cross-page code invalidation, and a wider but bounded 64 MiB/1024-batch production code working
   set. The existing E4-T32 per-quantum limits remain unchanged at eight translation attempts and
   64 staged nominations.
+- Implementation commit: `ff007d2c4fa680829f7c5fc4d72269cf79fb1026`. The follow-up bookkeeping
+  commit records this hash without changing the runtime implementation.
 - The real restored Node foreground command `node -e 'console.log(3)'` produced exact PID-bound
   byte-framed output and exit 0 in 17,317.110 ms on the worker JIT path. The matched same-head
   main-thread interpreter completed in 22,773.495 ms, a 1.315x completion speedup rather than the
