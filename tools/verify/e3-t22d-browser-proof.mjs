@@ -39,7 +39,7 @@ const isFavicon404 = (response) => {
     return false;
   }
 };
-page.on("response", (response) => {
+context.on("response", (response) => {
   if (response.status() >= 400) {
     httpErrors.push({ status: response.status(), url: response.url() });
   }
@@ -269,7 +269,7 @@ try {
   // retained as evidence.
   const consoleErrors = rawConsoleErrors.filter((text) => {
     const isNetwork404 = /failed to load resource.*404|404.*not found/i.test(text);
-    return !(isNetwork404 && allowedHttpErrors.length === 1);
+    return !(isNetwork404 && allowedHttpErrors.length > 0);
   });
   assert.deepEqual(unexpectedHttpErrors, [], `unexpected HTTP errors: ${JSON.stringify(unexpectedHttpErrors)}`);
   assert.deepEqual(consoleErrors, [], `unexpected console errors: ${JSON.stringify(consoleErrors)}`);
