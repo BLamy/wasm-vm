@@ -524,7 +524,7 @@ async function postReloadGuestFile(allErrors) {
   assert.ok(["alpine", "node-alpine"].includes(fileReloadGuest), `unsupported file-reload guest: ${fileReloadGuest}`);
   const env = await openContext({ label: `post-reload-file-${fileReloadGuest}`, allErrors });
   try {
-    const query = `guest=${fileReloadGuest}&noAutoBoot=1&persist=1&testHooks=1${fileReloadJit ? "&jit=1" : ""}`;
+    const query = `guest=${fileReloadGuest}&noAutoBoot=1&persist=1&testHooks=1${fileReloadJit ? "&jit=1&worker=0" : ""}`;
     await loadShell(env.page, query);
     await bootFlavor(env.page, fileReloadGuest);
     await pause(env.page);
