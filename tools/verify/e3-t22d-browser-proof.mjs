@@ -88,6 +88,7 @@ const waitForGuestSha = async (filePath, timeout = 360_000) => {
   }
 };
 const sleep = (milliseconds) => page.waitForTimeout(milliseconds);
+const guestDrainTimeout = 360_000;
 
 let browserEvidence;
 try {
@@ -216,8 +217,10 @@ try {
       `echo E3T22D_SIZE_OK || echo E3T22D_SIZE_BAD; ` +
       `sha256sum /root/paste.txt; stty echo; echo E3T22D_ECHO_RESTORED\r`,
   );
-  await waitForText("E3T22D_CAT_DONE", 30_000);
-  await waitForText("E3T22D_SIZE_OK", 30_000);
+  // The interpreted guest may take more than 30 seconds to drain a million-byte tty paste before
+  // the shell resumes. Keep the synchronization bound aligned with the digest wait below.
+  await waitForText("E3T22D_CAT_DONE", guestDrainTimeout);
+  await waitForText("E3T22D_SIZE_OK", guestDrainTimeout);
   const observedSha = await waitForGuestSha("/root/paste.txt");
   assert.equal(observedSha, expectedSha, `guest SHA ${observedSha} != host SHA ${expectedSha}`);
   await waitForText("E3T22D_ECHO_RESTORED", 30_000);
