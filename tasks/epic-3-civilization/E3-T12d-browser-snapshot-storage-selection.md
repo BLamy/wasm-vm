@@ -441,3 +441,71 @@ until a new exact-head recording is reviewed by a fresh verifier.
 stopped before the Pages publish because this non-interactive environment has no
 `CLOUDFLARE_API_TOKEN`. The live Pages site is not claimed as updated; rerun after authenticating
 Wrangler or supplying that token.
+
+### 2026-08-30 — fresh verifier — VERDICT: refuted
+
+- **Provenance — HELD.** Prediction: the submitted recording must identify the exact runtime head,
+  match its claimed digest, and include the named screenshot. Observed `runtimeHead` is
+  `3d96209f22b24200385d84bb5a17861f3cf27742` at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:3`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json),
+  the committed JSON SHA-256 is
+  `731eb9348a285947ba33b219f01e4faa3891729eb8effe3ecd3f20056448c8f4`, and the named screenshot
+  exists with SHA-256 `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`.
+  `3d96209` is an ancestor of exact current `HEAD` `18bec4efff5a7c02f816f2a1e006467e1cb1bae1`;
+  the source/runtime diff under review is `3fd720a..3d96209`. The screenshot was inspected and is a
+  roadmap overview, so the JSON—not the screenshot—is relied on for the behavioral values.
+- **AC1 — HELD for the recorded paths.** Prediction: a production-sized snapshot must save, reload,
+  and restore without a second whole-payload staging allocation. The clean whole-machine Worker
+  saved `60,430,185` bytes and kept the exact digest across export/import at
+  [`browser-storage-2026-08-30.json:7-26`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json);
+  the save probe measured `16,811,975 <= 33,554,432` bytes over 66 samples at
+  [`:28-43`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json). The production-sized
+  reload load path separately measured raw overhead `62,603,490`, payload `60,435,397`, and residual
+  staging overhead `2,168,093 <= 33,554,432` at [`:596-611`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+- **AC2 named interruption/quota/object attacks — HELD.** Prediction: clear, chunk, meta, quota, and
+  object-swap faults must never select a half-published resume and must preserve the overlay. The
+  committed record observes `clear -> corrupt`, `chunk -> corrupt`, `meta -> stale`, all with
+  `overlayPreserved: true`, at [`:509-545`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json);
+  quota surfaces `QuotaExceededError`, the live guest exits 0 with `T12D_QUOTA_LIVE`, and the overlay
+  remains intact at [`:547-559`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json). The
+  cross-generation metadata swap selects `corrupt` with `overlayPreserved: true` at
+  [`:581-587`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json). A fresh bounded browser
+  probe also replaced a chunk with a plain object and observed the decision API resolve to the typed
+  value `corrupt`.
+- **AC3 — HELD.** Prediction: export/import must preserve the container byte count and SHA-256.
+  Observed `60,430,185` bytes and digest
+  `27f2f7a954763682fa18b206ba8503cf08f37917cffcbc683cb9f2ab233f67cc` before and after import at
+  [`:11-23`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+- **Two-tab ownership after lease release — FAILED; this refutes the task.** Prediction: once a tab
+  relinquishes the writer lease and another tab acquires it, the old live controller must be unable
+  to mutate the shared snapshot namespace; otherwise the claimed single-writer fence permits a stale
+  writer to destroy a newer owner's snapshot. In a fresh bounded whole-machine-Worker probe, the first
+  controller reported `{backend: "whole-machine-worker", readOnly: false}`, explicitly released its
+  writer lock, and the second controller acquired `{backend: "whole-machine-worker", readOnly: false}`.
+  The old first controller then successfully resolved `snapshotImport(new Uint8Array([1,2,3]))` to
+  `true`; the second controller's decision immediately changed to `corrupt`. The guard only checks
+  the boot-time `lockReadOnly` closure at [`web/loader.js:960-962`](../../web/loader.js) and
+  [`web/loader.js:987-989`](../../web/loader.js), while `releaseWriterLock` clears the release
+  callback but never invalidates that flag at [`web/loader.js:996-1002`](../../web/loader.js). The
+  wasm guards likewise use the construction-time `snapshot_read_only` field at
+  [`crates/wasm/src/lib.rs:1900-1902`](../../crates/wasm/src/lib.rs) and
+  [`crates/wasm/src/lib.rs:2003-2007`](../../crates/wasm/src/lib.rs). Demand that lease relinquishment
+  retire or dynamically fence the old controller, then re-record the two-tab attack.
+- **Coverage — NEEDS EVIDENCE.** The sequential `SnapshotStore::load`, direct wasm restore,
+  read-only save/import, cleanup handlers, and the named browser attack helpers were exercised by the
+  exact-head recording; the independent gates also passed `cargo fmt --all -- --check`, restore
+  decision `11/11`, snapmeta `11/11`, snapshot coherence `5/5`, wasm32 check, and JavaScript syntax
+  checks. The added `snapshotRestore` protocol allow-list/grace entries at
+  [`web/linux-worker-protocol.js:18-25`](../../web/linux-worker-protocol.js) and
+  [`:54-64`](../../web/linux-worker-protocol.js), plus the page hook at
+  [`web/main.js:1371`](../../web/main.js), were not directly called by the submitted harness (the
+  clean reload exercises the loader's internal restore instead). They are declarative/test-surface
+  changes rather than a separate refutation, but remain unproven until an explicit Worker RPC restore
+  call is recorded or the unused surface is removed.
+- **Status:** remains `in-progress` after refutation; no runtime implementation files were changed.
+
+Commands: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test restore_decision`
+(`11/11`); `cargo test -p wasm-vm-storage snapmeta` (`11/11`);
+`cargo test -p wasm-vm-core --test snapshot_coherence` (`5/5`);
+`cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`; JavaScript syntax checks; fresh
+raw-Playwright replay and bounded whole-machine-Worker lease/object probes. No merge or push.
