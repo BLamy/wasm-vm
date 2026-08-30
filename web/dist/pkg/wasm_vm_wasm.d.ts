@@ -177,10 +177,19 @@ export class WasmLinux {
     pushFileUpload(stream: number, bytes: Uint8Array, finished: boolean): number;
     /**
      * Read the persisted snapshot blob back (reassembled), or `null` if none is stored / not on the
-     * persistent path. Async (IndexedDB). The JS restore-decision hook feeds this into
-     * [`Self::restore_decision_code`] and, on a `"resume"` verdict, into [`Self::load_snapshot_blob`].
+     * persistent path. Async (IndexedDB). This is the export/debug surface; production restore uses
+     * [`Self::restore_stored_snapshot`] so the blob never crosses the wasm/JS boundary as a second
+     * whole-payload copy.
      */
     readStoredSnapshot(): Promise<any>;
+    /**
+     * Permanently relinquish this machine's snapshot-writer role. Web Locks releases are dynamic:
+     * another tab may acquire the same namespace while this controller is still alive, so the
+     * construction-time read-only bit alone is not a sufficient fence for a stale controller.
+     * There is intentionally no inverse operation; a new machine must acquire the writer lock
+     * before it can save or import snapshots.
+     */
+    relinquishSnapshotWriter(): void;
     /**
      * The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
      * against THIS boot's build identity + base binding + `current_generation`. Returns the stable
@@ -188,6 +197,14 @@ export class WasmLinux {
      * persistent path (no base binding) there is no snapshot to resume: always `"missing"`.
      */
     restoreDecisionCode(stored: Uint8Array | null | undefined, current_generation: number): string;
+    /**
+     * Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored
+     * blob is held by one Rust allocation while the coherence header is checked and the machine is
+     * restored; unlike `readStoredSnapshot` this path does not create a JS `Uint8Array` boundary copy.
+     * Returns the same typed decision code as `restoreDecisionCode`, with no machine mutation for a
+     * missing, corrupt, foreign, or stale snapshot.
+     */
+    restoreStoredSnapshot(): Promise<string>;
     /**
      * Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
      * 16550 RX, and return `{ done: bool, state: string|null, retired: number }`. A persistent caller may pass
@@ -472,7 +489,9 @@ export interface InitOutput {
     readonly wasmlinux_persistStats: (a: number) => [number, number, number];
     readonly wasmlinux_pushFileUpload: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
     readonly wasmlinux_readStoredSnapshot: (a: number) => any;
+    readonly wasmlinux_relinquishSnapshotWriter: (a: number) => [number, number];
     readonly wasmlinux_restoreDecisionCode: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly wasmlinux_restoreStoredSnapshot: (a: number) => any;
     readonly wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_saveSnapshot: (a: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];

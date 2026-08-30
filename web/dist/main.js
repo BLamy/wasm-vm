@@ -1368,6 +1368,7 @@ window.__snapshotAdvanceGen = async () => await linuxCtl?.snapshotAdvanceGen?.()
 window.__snapshotGeneration = async () => await linuxCtl?.snapshotGeneration?.() ?? 0;
 // AC3 export/import: raw persisted-blob bytes out, and persist an external blob into this base's store.
 window.__snapshotExport = async () => linuxCtl?.snapshotExport?.() ?? null;
+window.__snapshotRestore = async () => linuxCtl?.snapshotRestore?.() ?? "missing";
 window.__snapshotImport = async (bytes) => {
   if (!linuxCtl?.snapshotImport) return false;
   await linuxCtl.snapshotImport(bytes);

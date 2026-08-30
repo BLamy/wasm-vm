@@ -21,6 +21,7 @@ const LONG_RPC_GRACE_MS = Object.freeze({
   snapshotRead: 120_000,
   snapshotDecision: 60_000,
   snapshotExport: 120_000,
+  snapshotRestore: 120_000,
   snapshotImport: 120_000,
   terminalStateDigest: 60_000,
 });
@@ -56,6 +57,7 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "snapshotAdvanceGen",
   "snapshotGeneration",
   "snapshotExport",
+  "snapshotRestore",
   "snapshotImport",
   "storageEstimate",
   "closeStorage",
