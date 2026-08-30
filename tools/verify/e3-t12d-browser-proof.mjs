@@ -581,6 +581,8 @@ async function twoTabRace(allErrors) {
     await bootFlavor(env.page);
     await pause(env.page);
     const before = await readOverlayState(env.page);
+    assert.equal(await saveSnapshot(env.page), true);
+    assert.equal(await env.page.evaluate(() => window.__snapshotDecision()), "resume");
     const second = await env.context.newPage();
     await diagnostics(env.context, second, "two-tab-contender", allErrors);
     await loadShell(second, "noAutoBoot=1&persist=1&worker=0");
