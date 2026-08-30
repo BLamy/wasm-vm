@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: in-progress
+status: implemented
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -27,6 +27,38 @@ fast busybox guest per the reaping constraint.
 - [x] Multi-line paste with bracketed paste on executes zero commands until Enter.
 
 ## Verification log
+- 2026-08-30 — **worker — resubmitted at `450c25108240d1221a3e1ea88e3ca426cb886dc7`.** Addressed
+  verifier `304144b`'s remaining proof gaps. The browser harness now requires the exact probed
+  favicon URL (`http://127.0.0.1:8123/favicon.ico`) rather than a suffix path, and uses
+  `ConsoleMessage.location().url` so an unattributed or non-favicon resource 404 remains fatal. The
+  exact browser recording also drives small commands and controls through the focused xterm textarea,
+  records the real `onData` path, sends ordinary bytes then Ctrl-C while a paste is held, and sends one
+  mixed ordinary-byte-plus-Enter event to exercise both host-hold boundary branches. The evidence keeps
+  only those phase-tagged coverage events rather than serializing every setup keystroke.
+
+  **Exact recorded acceptance run:** `make verify-E3-T22d` passed 23/23 deterministic OSC52+paste
+  tests, `make web-build`, and the headed Chromium 131.0.6778.33 guest run in 105.2 seconds at
+  `http://127.0.0.1:8123/?noAutoBoot&jit=1`. It observed clipboard `hi`, multiline
+  `alpha`/`bravo`/`charlie`, guest size `1,000,000`, and matching independently computed/guest
+  `sha256sum` `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733`. It observed
+  standalone `E3T22D_HELD` before the explicit release and `E3T22D_EXECUTED` afterward. The durable
+  keyboard coverage records 621 real xterm `onData` events, ordinary held `CANCELLED` bytes, `[3]`
+  Ctrl-C cancellation, and `[116,114,117,101,13]` (`true` plus CR) in one release event.
+
+  The browser error evidence records two raw resource-404 console events whose
+  `location.url` is exactly the allowed favicon URL and two matching CDP response records with that
+  exact URL; `consoleErrors=[]` and `unexpectedHttpErrors=[]`. Evidence:
+  `evidence/e3-t22d/clipboard-browser-2026-08-30.json` (sha256
+  `88c16ea6e9b3b6ebb6820d0eb73454af2505547c8a3b0b56b3aeb3fbc865cabb`) and
+  `evidence/e3-t22d/clipboard-browser-2026-08-30.png` (sha256
+  `d98d901a86fbbe060faecbe434f4da3d1a51d466181f4f451418e3ad2ccca5b4`). The runtime mirror in
+  `web/dist` remains byte-identical to `web/terminal.js`; Cloudflare deployment remains unclaimed
+  because the earlier Wrangler OAuth session was not completed.
+
+  **Claim:** The exact-head recording now proves all acceptance behavior, fails closed for
+  unattributed/non-favicon browser errors, and exercises the changed xterm keyboard and mixed-input
+  host-hold branches. Ready for a separate fresh verifier.
+
 - 2026-08-30 — **worker — resumed evidence rework after verifier `304144b`.** AC1–AC3 and the
   host-hold attack held, but the verifier correctly found two proof gaps: the favicon matcher accepted
   suffix paths such as `/assets/favicon.ico`, and the browser recording injected keyboard bytes through

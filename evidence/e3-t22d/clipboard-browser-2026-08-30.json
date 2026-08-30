@@ -1,42 +1,88 @@
 {
   "schema": "e3-t22d-browser-clipboard-v1",
   "capturedOn": "2026-08-30 America/New_York",
-  "runtimeHead": "a1fd96dd84db861f33d0ea43b82389b00e818538",
+  "runtimeHead": "450c25108240d1221a3e1ea88e3ca426cb886dc7",
   "recording": {
     "url": "http://127.0.0.1:8123/?noAutoBoot&jit=1",
     "browser": "Playwright Chromium headed",
     "browserVersion": "131.0.6778.33",
     "sequence": "busybox boot → OSC 52 copy → multiline paste → 1 MiB sha256 → DECSET 2004 held/Enter",
-    "durationSeconds": 103.4,
+    "durationSeconds": 105.2,
     "consoleErrors": [],
     "rawConsoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (File not found)",
-      "Failed to load resource: the server responded with a status of 404 (File not found)"
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      },
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      }
     ],
     "resource404ConsoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (File not found)",
-      "Failed to load resource: the server responded with a status of 404 (File not found)"
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      },
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      }
+    ],
+    "allowedConsole404s": [
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      },
+      {
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+        "location": {
+          "url": "http://127.0.0.1:8123/favicon.ico",
+          "lineNumber": 0,
+          "columnNumber": 0
+        }
+      }
     ],
     "networkErrors": [
       {
-        "requestId": "37579.37",
+        "requestId": "39273.37",
         "status": 404,
         "url": "http://127.0.0.1:8123/favicon.ico"
       },
       {
-        "requestId": "37579.38",
+        "requestId": "39273.36",
         "status": 404,
         "url": "http://127.0.0.1:8123/favicon.ico"
       }
     ],
     "allowedHttpErrors": [
       {
-        "requestId": "37579.37",
+        "requestId": "39273.37",
         "status": 404,
         "url": "http://127.0.0.1:8123/favicon.ico"
       },
       {
-        "requestId": "37579.38",
+        "requestId": "39273.36",
         "status": 404,
         "url": "http://127.0.0.1:8123/favicon.ico"
       }
@@ -44,6 +90,90 @@
     "faviconProbe": {
       "status": 404,
       "url": "http://127.0.0.1:8123/favicon.ico"
+    },
+    "keyboardCoverage": {
+      "path": "focused xterm textarea via Playwright keyboard/insertText",
+      "totalOnDataEvents": 621,
+      "heldCancel": {
+        "ordinaryBytes": [
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              67
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              65
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              78
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              67
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              69
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              76
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              76
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              69
+            ]
+          },
+          {
+            "phase": "held-cancel-bytes",
+            "bytes": [
+              68
+            ]
+          }
+        ],
+        "ctrlC": [
+          {
+            "phase": "held-cancel-control",
+            "bytes": [
+              3
+            ]
+          }
+        ]
+      },
+      "heldRelease": {
+        "ordinaryBytesPlusEnter": [
+          {
+            "phase": "held-release-mixed",
+            "bytes": [
+              116,
+              114,
+              117,
+              101,
+              13
+            ]
+          }
+        ]
+      }
     }
   },
   "copy": {
