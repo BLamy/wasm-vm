@@ -41,6 +41,26 @@ const META_KEY: f64 = 0.0;
 /// 1 MiB `SNAPSHOT_CHUNK`) so a single txn is never the whole multi-tens-of-MiB blob.
 const CHUNKS_PER_TXN: usize = 16;
 
+/// E3-T12d evidence seam. The callback is absent in production, so this is inert; when a browser
+/// proof installs `globalThis.__e3t12dSnapshotProbe`, each boundary records the JS heap sample and
+/// storage phase from the same execution. The callback is deliberately best-effort and can never
+/// affect snapshot semantics.
+fn proof_probe(phase: &str, value: usize) {
+    let global = js_sys::global();
+    let Ok(callback) = js_sys::Reflect::get(&global, &JsValue::from_str("__e3t12dSnapshotProbe"))
+    else {
+        return;
+    };
+    let Some(callback) = callback.dyn_ref::<js_sys::Function>() else {
+        return;
+    };
+    let _ = callback.call2(
+        &global,
+        &JsValue::from_str(phase),
+        &JsValue::from_f64(value as f64),
+    );
+}
+
 /// A handle to the opened snapshot database. `Clone` (the `IdbDatabase` is a cheap JS handle) so the
 /// async persist/restore drivers can clone it and `await` without holding a `RefCell` borrow.
 #[derive(Clone)]
@@ -158,10 +178,12 @@ impl SnapshotStore {
         }
         let digest: [u8; 32] = Sha256::digest(blob).into();
         let meta = SnapshotMeta::new(blob.len() as u64, *base_binding, digest);
+        proof_probe("save-start", blob.len());
 
         // 1. Drop any prior chunk set first — a shorter new snapshot must not inherit stale trailing
         //    chunks that reassembly's exact-count/length check would then trip on.
         self.clear_chunks().await?;
+        proof_probe("clear-committed", blob.len());
 
         // 2. Stream the blob as 1 MiB chunks, batching CHUNKS_PER_TXN puts per strict transaction so a
         //    single txn is bounded rather than the whole blob.
@@ -176,6 +198,7 @@ impl SnapshotStore {
                 in_batch = 0;
             }
             let arr = Uint8Array::from(chunk);
+            proof_probe("chunk-before-put", index);
             store
                 .as_ref()
                 .unwrap()
@@ -184,6 +207,7 @@ impl SnapshotStore {
             if in_batch == CHUNKS_PER_TXN {
                 // Commit this batch (strict complete = durably flushed) before opening the next.
                 await_transaction(batch_start.as_ref().unwrap()).await?;
+                proof_probe("chunk-committed", index);
                 batch_start = None;
                 store = None;
             }
@@ -191,10 +215,17 @@ impl SnapshotStore {
         // Flush a partial trailing batch.
         if let Some(txn) = batch_start.as_ref() {
             await_transaction(txn).await?;
+            proof_probe(
+                "chunk-committed",
+                blob.len().div_ceil(SNAPSHOT_CHUNK).saturating_sub(1),
+            );
         }
 
         // 3. The commit marker: meta present ⇒ every chunk above committed.
-        self.write_meta(&meta.to_bytes()).await
+        proof_probe("meta-before", blob.len());
+        self.write_meta(&meta.to_bytes()).await?;
+        proof_probe("meta-committed", blob.len());
+        Ok(())
     }
 
     /// Invalidate the stored snapshot after an externally supplied blob fails framing or content

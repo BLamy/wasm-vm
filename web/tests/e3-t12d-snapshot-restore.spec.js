@@ -9,11 +9,10 @@
 // IMPORTANT: a resume snapshot can only be taken on a PERSISTENT boot (newChunkedDiskPersistent) —
 // that is the only boot shape that stamps the coherence identity (build + base binding) and owns a
 // snapshot store. Busybox boots from an initramfs (no persistence), so it has no snapshot_base and its
-// decision is always "missing". The only persistent boot shape today is the chunked Alpine image, whose
-// artifacts are gitignored and whose ~12-min browser boot OS-reaps on the mac dev box (see
-// memory/browser-alpine-boot-reaped-on-mac.md) — so, exactly like idb-persist.spec.js, this SKIPS
-// unless the chunked-Alpine artifact is present (never in CI). Run it explicitly on a box that can
-// sustain the boot.
+// decision is always "missing". The production-sized chunked-Alpine image is served by the public R2
+// manifest; only the local kernel and warm boot snapshot need to be present in this checkout. The
+// direct raw-Playwright evidence harness uses the same artifact-bearing browser path because the
+// normal runner deadlocks on this host's Node 24 before discovering tests.
 import { test, expect } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
@@ -21,12 +20,10 @@ import { fileURLToPath } from "node:url";
 
 const rows = "#term .xterm-rows";
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const have =
-  fs.existsSync(path.join(WEB, "artifacts-alpine.json")) &&
-  fs.existsSync(path.resolve(WEB, "../releases/chunked-alpine/manifest.json"));
+const have = fs.existsSync(path.join(WEB, "artifacts-alpine.json"));
 
 test.describe("E3-T12d: browser resume-snapshot persistence + restore selection", () => {
-  test.skip(!have, "needs releases/chunked-alpine + web/artifacts-alpine.json (persistent boot shape)");
+  test.skip(!have, "needs web/artifacts-alpine.json (persistent boot shape)");
 
   test("save → reload → durable overlay write survives and makes the snapshot stale", async ({ page }) => {
     test.setTimeout(1_800_000); // ~30 min: two full persistent boots
@@ -38,17 +35,15 @@ test.describe("E3-T12d: browser resume-snapshot persistence + restore selection"
     });
 
     const bootToLogin = async () => {
-      await expect(page.locator("#boot-alpine")).toBeEnabled();
-      await page.click("#boot-alpine");
-      let sawOpenRC = false;
-      for (let i = 0; i < 900; i++) {
-        const text = await page.locator(rows).textContent().catch(() => "");
-        if (/Kernel panic|Unable to mount root/.test(text)) throw new Error("kernel panic");
-        if (text.includes("OpenRC")) sawOpenRC = true;
-        if (sawOpenRC && text.includes("login:")) return;
-        await page.waitForTimeout(1500);
-      }
-      throw new Error("did not reach login:");
+      await page.waitForFunction(
+        () => window.__ready === true && typeof window.wvmDemo?.bootAlpine === "function",
+        null,
+        { timeout: 120_000 },
+      );
+      expect(await page.evaluate(() => window.wvmDemo.bootAlpine())).toMatchObject({ ok: true });
+      await page.waitForFunction(() => window.wvmDemo?.isGuestReady?.(), null, { timeout: 1_800_000 });
+      const text = await page.locator(rows).textContent().catch(() => "");
+      if (/Kernel panic|Unable to mount root/.test(text)) throw new Error("kernel panic");
     };
 
     // ── Boot 1: quiesce, then take + persist a whole-machine snapshot at a stable generation ─────

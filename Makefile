@@ -550,12 +550,12 @@ verify-E3-T12d:
 	# foreign_build/foreign_image/stale/resume) and the snapshot chunk meta + reassembly codec.
 	cargo test -p wasm-vm-core --test restore_decision
 	cargo test -p wasm-vm-storage snapmeta
-	# The browser leg (save → reload → decision "resume"; advance generation → decision "stale") is a
-	# Playwright spec. It needs a PERSISTENT boot — the only shape that owns a snapshot store — which
-	# today is the chunked-Alpine image; busybox is initramfs-only (no persistence). That boot OS-reaps
-	# on this mac and its artifacts are gitignored, so the spec SKIPs without them (never in CI, exactly
-	# like idb-persist). NOT run here — run explicitly on a box that can sustain the boot:
-	#   $(MAKE) web-build && cd web && npx playwright test tests/e3-t12d-snapshot-restore.spec.js
+	# The raw browser harness records the production whole-machine Worker save/reload path, a main-thread
+	# memory-bound run, transaction interruption/quota attacks, two-tab writer fencing, and the guest file
+	# read after a modified-overlay reload. It starts an ephemeral local server and uses the public R2
+	# chunk manifest plus the checked-in kernel/warm snapshot artifacts.
+	$(MAKE) web-build
+	node tools/verify/e3-t12d-browser-proof.mjs
 	@echo "verify-E3-T12d : OK"
 
 .PHONY: verify-E3-T24c

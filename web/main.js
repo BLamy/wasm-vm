@@ -1115,6 +1115,9 @@ function resetGuestReady() {
 // (which names the RAM snapshot + overlay-delta to restore) and the guest chip differ.
 async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfileUrl) {
   const _imgManifest = imageManifestUrl || (R2_ASSETS + "/chunked-alpine/manifest.json");
+  // The deployed R2 release does not ship an Alpine boot profile yet. Pass an explicit null so
+  // startLinuxBoot does not apply its local-development default and create a misleading 404.
+  const _bootProfile = bootProfileUrl ?? null;
   // Return-visit fast-restore is handled in loader.js: the RAM restore is armed whenever a coherent,
   // unmodified overlay is present (not only on a fresh seed), so reloads restore instead of cold-booting;
   // a MODIFIED overlay is rejected by restoreDecisionCode → cold boot. `?keep`/`?persist=1`/`?noSnapshot`
@@ -1124,7 +1127,7 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfile
       manifestUrl,
       mode: "chunked",
       imageManifestUrl: _imgManifest,
-      bootProfileUrl,
+      bootProfileUrl: _bootProfile,
       cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
       // The restore needs the persistent (IndexedDB overlay) path: the seeded post-boot disk delta
       // lives in that overlay. Default ON so the shipped RAM snapshot + delta restore in ~1s;
