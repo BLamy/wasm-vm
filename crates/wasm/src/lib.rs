@@ -1901,7 +1901,9 @@ impl WasmLinux {
 
     /// Persist an externally supplied snapshot blob (AC3 import) into the snapshot store for THIS boot's
     /// base image. The blob is bound to this base's namespace; a foreign blob imported here still fails
-    /// the coherence guard on restore. Error `"not_persistent"` off the persistent path.
+    /// the coherence guard on restore. Framing-corrupt input is replaced by a zero-length corrupt
+    /// marker so the next decision is typed `"corrupt"` rather than falsely `"resume"`; the live
+    /// machine and overlay are not mutated. Error `"not_persistent"` off the persistent path.
     #[wasm_bindgen(js_name = importStoredSnapshot)]
     pub async fn import_stored_snapshot(&self, blob: Vec<u8>) -> Result<(), JsError> {
         let base = {
@@ -1914,6 +1916,13 @@ impl WasmLinux {
         let store = snapshot_store::SnapshotStore::open(&base)
             .await
             .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+        if resume::validate_container(&blob).is_err() {
+            store
+                .mark_corrupt(&base)
+                .await
+                .map_err(|e| JsError::new(&format!("snapshot corrupt marker: {e:?}")))?;
+            return Ok(());
+        }
         store
             .save(&blob, &base)
             .await

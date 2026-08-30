@@ -181,6 +181,15 @@ impl SnapshotStore {
         self.write_meta(&meta.to_bytes()).await
     }
 
+    /// Replace the stored snapshot with a committed zero-length marker. The marker is deliberately
+    /// not a valid resume container; the restore decision therefore reports `corrupt` while the
+    /// machine's live overlay remains untouched. This lets an invalid external import surface a
+    /// typed cold-boot reason without retaining attacker-controlled bytes or falsely retaining an
+    /// older valid snapshot.
+    pub async fn mark_corrupt(&self, base_binding: &[u8; 32]) -> Result<(), JsValue> {
+        self.save(&[], base_binding).await
+    }
+
     /// Write (or replace) the meta record (strict durability). The snapshot's commit marker.
     async fn write_meta(&self, bytes: &[u8]) -> Result<(), JsValue> {
         let txn = self.rw_strict(META)?;

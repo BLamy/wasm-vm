@@ -4,8 +4,8 @@
 //! truncation/flip), and the RAM zero-elision codec (round-trip, compaction, malformed rejection).
 
 use super::{
-    FORMAT_VERSION, MAGIC, SectionReader, SnapshotError, SnapshotHeader, SnapshotWriter,
-    decode_sparse, encode_sparse, section,
+    ColdBootReason, FORMAT_VERSION, MAGIC, RestoreDecision, SectionReader, SnapshotError,
+    SnapshotHeader, SnapshotWriter, decode_sparse, encode_sparse, section,
 };
 use alloc::vec;
 use alloc::vec::Vec;
@@ -165,6 +165,13 @@ fn a_section_length_past_the_end_is_rejected_not_over_read() {
         results[0],
         Err(SnapshotError::SectionLengthOverflow { tag: section::RAM })
     );
+}
+
+#[test]
+fn restore_decision_rejects_a_truncated_final_section() {
+    let blob = sample_blob();
+    let decision = RestoreDecision::decide(Some(&blob[..blob.len() - 1]), &CORE, &BASE, 7);
+    assert_eq!(decision, RestoreDecision::ColdBoot(ColdBootReason::Corrupt));
 }
 
 #[test]
