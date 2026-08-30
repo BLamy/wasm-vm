@@ -106,6 +106,10 @@ let browserEvidence;
 try {
   const startedAt = Date.now();
   await page.goto(runUrl, { waitUntil: "domcontentloaded", timeout: 120_000 });
+  const faviconProbe = await page.evaluate(async () => {
+    const response = await fetch("/favicon.ico", { cache: "no-store" });
+    return { status: response.status, url: response.url };
+  });
   await page.getByRole("tab", { name: "Demo", exact: true }).click();
   await page.waitForFunction(
     () => window.wvmDemo && typeof window.wvmDemo.runBusybox === "function" && window.__term,
@@ -260,17 +264,19 @@ try {
   await page.screenshot({ path: screenshotPath, fullPage: false });
   const allowedHttpErrors = httpErrors.filter((error) =>
     error.status === 404 && new URL(error.url).pathname.toLowerCase().endsWith("/favicon.ico"));
+  const faviconUrl = new URL(faviconProbe.url);
+  const favicon404Observed = faviconProbe.status === 404 && faviconUrl.pathname.toLowerCase().endsWith("/favicon.ico");
   const unexpectedHttpErrors = httpErrors.filter((error) => !isFavicon404({
     status: () => error.status,
     url: () => error.url,
   }));
-  // Chromium's console text omits the URL for a failed resource. Correlate its lone 404 with the
-  // response URL so the exception is exactly the site's favicon, while every other console error is
-  // retained as evidence.
+  // Chromium's console text omits the URL for a failed resource. Verify the favicon endpoint directly
+  // so the exception is exactly the site's favicon, while every other console error is retained.
   const consoleErrors = rawConsoleErrors.filter((text) => {
     const isNetwork404 = /failed to load resource.*404|404.*not found/i.test(text);
-    return !(isNetwork404 && allowedHttpErrors.length > 0);
+    return !(isNetwork404 && favicon404Observed);
   });
+  assert.equal(favicon404Observed, true, `favicon probe was not the allowed 404: ${JSON.stringify(faviconProbe)}`);
   assert.deepEqual(unexpectedHttpErrors, [], `unexpected HTTP errors: ${JSON.stringify(unexpectedHttpErrors)}`);
   assert.deepEqual(consoleErrors, [], `unexpected console errors: ${JSON.stringify(consoleErrors)}`);
   browserEvidence = {
@@ -285,6 +291,7 @@ try {
       durationSeconds: Number(((Date.now() - startedAt) / 1000).toFixed(1)),
       consoleErrors,
       allowedHttpErrors,
+      faviconProbe,
     },
     copy: copyObservation,
     multiline: { expectedLines: ["alpha", "bravo", "charlie"], observed: true },
