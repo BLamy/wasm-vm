@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: implemented
+status: evidence-needed
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -208,3 +208,44 @@ web/tests/e3-t22-clipboard.spec.js`.
   - Remaining to close AC1/AC3 fully: run on a headed/unloaded machine or CI with clipboard activation
     + boot headroom (the spec's skips are one-line re-enables). `make verify-E3-T22d` runs the node
     cores + the green paste E2E.
+
+### 2026-08-30 — fresh verifier — VERDICT: needs-evidence
+
+- **AC1 — HELD.** Prediction: the recorded guest OSC52 sequence would yield `hi` through the browser
+  clipboard path. Observed `copied="hi"`, `blocked=null`, and `clipboard="hi"` in
+  `evidence/e3-t22d/clipboard-browser-2026-08-30.json:18-21`; the harness registers both callbacks and
+  reads `navigator.clipboard` at `tools/verify/e3-t22d-browser-proof.mjs:154-195`.
+- **AC2 — NEEDS EVIDENCE.** Prediction: the serialized file size would be the guest's numeric `wc -c`
+  observation, separately from the host payload length. The guest SHA is now genuinely parsed from a
+  line matching `<64 hex> /root/paste.txt` and compared with the independently computed SHA
+  (`tools/verify/e3-t22d-browser-proof.mjs:81-100,231-241`); observed and expected SHA both equal
+  `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733` in evidence JSON:31-37, and the
+  screenshot visibly shows that guest hash/path. However, the harness only has the guest compare
+  `test "$(wc -c < /root/paste.txt)" -eq 1000000 && echo E3T22D_SIZE_OK` and waits for the marker
+  (`:231-240`); it never parses or records the numeric guest `wc -c` output, and sets
+  `fileSize: payload.length` from the host (`:298-304`). Re-record with an actual guest size line/result
+  captured in the evidence (or an equivalent exact command/result transcript); AC2 remains unchecked at
+  `tasks/epic-3-civilization/E3-T22d-clipboard-e2e-capstone.md:25`.
+- **AC3 — HELD.** Prediction: DECSET-2004 would hold the first pasted command and execute the second
+  only after Enter. Observed `modeEnabled=true`, `heldUntilEnter=true`, and `executedAfterEnter=true` in
+  evidence JSON:39-42; the screenshot shows `E3T22D_HELD` followed by `E3T22D_EXECUTED`.
+- **BROWSER ERROR GATE — HELD.** Prediction: only the explicitly probed favicon 404 would be tolerated.
+  The evidence records `consoleErrors=[]`, `allowedHttpErrors=[]`, and
+  `faviconProbe.status=404` for `/favicon.ico` (JSON:11-16). The harness collects all context responses
+  with status >=400 and rejects every non-favicon error before serializing the result
+  (`tools/verify/e3-t22d-browser-proof.mjs:42-53,265-281`).
+- **FRESHNESS / COVERAGE — HELD except for AC2 provenance.** The JSON hash is
+  `df362d8b3eb55ebde17987e8a65e2a1928e6b0e8a598c6f1ffd766166445ede7` and the PNG hash is
+  `b42a92d854838e3c9dbdcf295f9a7a801d1c998aa6618137dba2a959519467f5`, matching the submitted log.
+  `runtimeHead=4e9a2f4` is the parent of `HEAD=e193964`; `git diff 4e9a2f4..HEAD` has no runtime or
+  proof-harness changes, so the recorded code is fresh. The net task diff from `97b88d4` has no
+  `web/tests/e3-t22-clipboard.spec.js` change (`git diff --quiet 97b88d4 HEAD -- web/tests/...`), and
+  the target invokes the raw harness (`Makefile:455-476`). Generated queue/task metadata is waived.
+- **SUPPORTING GATES — HELD.** Fresh verifier run: `node --test web/tests/osc52.test.mjs
+  web/tests/paste.test.mjs` passed 23/23; both proof/spec `node --check` commands, `git diff --check
+  41f885b..HEAD`, and `python3 tools/check_task_policy.py` passed. Prior held hostile-input/dependency
+  results are carried forward because the runtime dependency boundary is unchanged.
+
+Commands: deterministic node gates, syntax checks, `git diff --check 41f885b..HEAD`, independent
+payload SHA recomputation, evidence/PNG SHA checks, runtime-head and spec-baseline diff checks, and
+`python3 tools/check_task_policy.py`.
