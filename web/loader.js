@@ -996,6 +996,11 @@ export async function startLinuxBoot(opts = {}) {
       // E3-T09: explicitly release the writer lock (poweroff/stop paths; close/crash releases
       // it automatically via Web Locks semantics).
       releaseWriterLock: () => {
+        // The controller can outlive the Web Lock promise. Fence both JS and wasm before releasing
+        // the lock so a stale controller cannot save/import into the namespace after a new tab owns
+        // it. This is one-way: reacquiring requires constructing a new machine.
+        lockReadOnly = true;
+        try { machine.relinquishSnapshotWriter?.(); } catch {}
         if (releaseLock) {
           releaseLock();
           releaseLock = null;

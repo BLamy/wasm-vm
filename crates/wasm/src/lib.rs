@@ -1918,6 +1918,18 @@ impl WasmLinux {
         Ok(())
     }
 
+    /// Permanently relinquish this machine's snapshot-writer role. Web Locks releases are dynamic:
+    /// another tab may acquire the same namespace while this controller is still alive, so the
+    /// construction-time read-only bit alone is not a sufficient fence for a stale controller.
+    /// There is intentionally no inverse operation; a new machine must acquire the writer lock
+    /// before it can save or import snapshots.
+    #[wasm_bindgen(js_name = relinquishSnapshotWriter)]
+    pub fn relinquish_snapshot_writer(&self) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.snapshot_read_only = true;
+        Ok(())
+    }
+
     /// Read the persisted snapshot blob back (reassembled), or `null` if none is stored / not on the
     /// persistent path. Async (IndexedDB). This is the export/debug surface; production restore uses
     /// [`Self::restore_stored_snapshot`] so the blob never crosses the wasm/JS boundary as a second

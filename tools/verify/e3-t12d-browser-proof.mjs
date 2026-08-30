@@ -413,6 +413,8 @@ async function cleanWorkerProof(allErrors) {
     const reloadMs = Date.now() - reloadStarted;
     await pause(env.page);
     assert.equal(await env.page.evaluate(() => window.__snapshotDecision()), "resume");
+    const workerRestore = await env.page.evaluate(() => window.__linuxCtl.snapshotRestore());
+    assert.equal(workerRestore, "resume");
     return {
       bootMs,
       reloadMs,
@@ -421,6 +423,7 @@ async function cleanWorkerProof(allErrors) {
       roundTrip,
       before,
       afterReload: await env.page.evaluate(() => window.__snapshotDecision()),
+      workerRestore,
     };
   } finally {
     await closeContext(env);
@@ -615,14 +618,31 @@ async function twoTabRace(allErrors) {
       decision: await window.__snapshotDecision(),
     }));
     assert.equal(firstState.readOnly, false);
-    await env.page.close();
+    await env.page.evaluate(() => window.__linuxCtl.releaseWriterLock());
+    assert.equal(await env.page.evaluate(() => window.__linuxCtl.readOnly()), true);
     const takeover = await env.context.newPage();
     await diagnostics(env.context, takeover, "two-tab-takeover", allErrors);
     await loadShell(takeover, "noAutoBoot=1&persist=1&worker=0");
     await startBootWithoutWaiting(takeover);
     assert.equal(await takeover.evaluate(() => window.__linuxCtl.readOnly()), false);
+    let staleWriterError = null;
+    try {
+      await env.page.evaluate(() => window.__linuxCtl.snapshotImport(new Uint8Array([1, 2, 3])));
+    } catch (error) {
+      staleWriterError = String(error?.message || error);
+    }
+    assert.match(staleWriterError || "", /read_only/);
+    const takeoverDecision = await takeover.evaluate(() => window.__snapshotDecision());
+    assert.equal(takeoverDecision, "resume");
+    await env.page.close();
     await takeover.close();
-    return { first: firstState, contender: writerState, overlayPreserved: true, takeoverWriter: true };
+    return {
+      first: firstState,
+      contender: writerState,
+      overlayPreserved: true,
+      takeoverWriter: true,
+      staleWriter: { readOnly: true, snapshotImportError: staleWriterError, takeoverDecision },
+    };
   } finally {
     await closeContext(env);
   }
