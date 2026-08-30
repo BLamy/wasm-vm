@@ -113,8 +113,16 @@ export function createLinuxTerminal(containerEl) {
     onCopyBlocked: (text) => { if (onCopyBlocked) onCopyBlocked(text); },
     respond: (payload) => feed(enc.encode(`\x1b]52;${payload}\x07`)),
   });
-  // xterm strips the `ESC]52;` framing and passes the handler the data string.
-  try { term.registerOscHandler(52, oscHandler); } catch { /* older xterm without OSC hooks */ }
+  // xterm strips the `ESC]52;` framing and passes the handler the data string. In xterm.js 5.x the
+  // parser owns this API (`term.parser.registerOscHandler`); retain the terminal-level fallback for
+  // older builds. A silent no-op here would turn every guest OSC 52 copy into an unobservable drop.
+  try {
+    if (term.parser && typeof term.parser.registerOscHandler === "function") {
+      term.parser.registerOscHandler(52, oscHandler);
+    } else if (typeof term.registerOscHandler === "function") {
+      term.registerOscHandler(52, oscHandler);
+    }
+  } catch { /* xterm without OSC hooks — deterministic handler tests still cover the pure path */ }
 
   // E3-T22b: frame + inject a paste. `bracketed` is snapshotted from the guest's live DECSET-2004
   // state ONCE per paste (no torn half-bracket if the guest toggles mid-paste). feed() then chunks it

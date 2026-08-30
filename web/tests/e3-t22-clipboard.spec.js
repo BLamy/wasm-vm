@@ -11,13 +11,24 @@
 //   AC1 (copy)        → test #1 (OSC 52 → clipboard OR blocked-affordance with the correct payload)
 //   AC2 (paste)       → test #2 (content) + test #3 (1 MB sha256, no loss)
 //   AC3 (no loss)     → test #2/#3 (byte-exact file content + highWater >= payload length)
-// Bracketed-paste no-early-execute is covered deterministically by paste.js node unit tests (embedded
-// end-marker neutralization + 200~/201~ wrap); driving DECSET-2004 interactively in busybox needs a
-// program that sets the mode, so that interactive assertion is intentionally out of scope here.
+//   bracketed paste  → tools/verify/e3-t22d-browser-proof.mjs (guest DECSET 2004 + hold/Enter)
+// Bracketed-paste no-early-execute is covered by paste.js node unit tests (embedded end-marker
+// neutralization + 200~/201~ wrap); the exact guest-side DECSET-2004 interaction is recorded by the
+// raw browser evidence harness in tools/verify/e3-t22d-browser-proof.mjs.
 import { test, expect } from "@playwright/test";
 
-const rows = "#term .xterm-rows";
 const CR = "\r";
+
+async function terminalBuffer(page) {
+  return page.evaluate(() => {
+    const buffer = window.__term.term.buffer.active;
+    const lines = [];
+    for (let index = 0; index < buffer.length; index += 1) {
+      lines.push(buffer.getLine(index)?.translateToString(true) || "");
+    }
+    return lines.join("\n");
+  });
+}
 
 // Grant clipboard permissions to the browser context (Chromium honors these on a localhost secure
 // context). writeText can still require transient activation even so — test #1 asserts a fallback.
@@ -38,6 +49,9 @@ async function boot(page) {
   // ?noAutoBoot disables the background Alpine auto-boot (main.js) so it cannot race our explicit
   // busybox boot for the single guest slot (linuxCtl). We want the fast busybox userland here.
   await page.goto("/?noAutoBoot");
+  // The current shell opens on Roadmap; select the real terminal panel before starting the guest so
+  // xterm receives and renders the boot stream instead of leaving an inactive #term empty.
+  await page.getByRole("tab", { name: "Demo", exact: true }).click();
   await page.waitForFunction(
     () => window.wvmDemo && typeof window.wvmDemo.runBusybox === "function" && window.__term,
     null,
@@ -47,26 +61,21 @@ async function boot(page) {
   // so returning its promise to page.evaluate can block the call for minutes (or until the guest
   // exits) — the boot progress is observed via the console text below, not the promise.
   await page.evaluate(() => { window.wvmDemo.runBusybox(); });
-  await expect(page.locator(rows)).toContainText("busybox userland up", { timeout: 200_000 });
+  await expect
+    .poll(() => terminalBuffer(page), { timeout: 900_000 })
+    .toMatch(/busybox userland up|\[fast-boot: host ready/);
   await page.evaluate(() => window.__term.focus());
   // Nudge the shell to emit its prompt: after "userland up", PID-1 sh is blocked on a ttyS0 read and
   // has not necessarily drawn `~ #` yet. A CR gives it a (blank) line so the prompt renders. Harmless
   // if a prompt is already present (just an extra blank line). Retry a couple of times under load.
   await expect(async () => {
     await page.evaluate(() => window.__term.typeBytes(new Uint8Array([0x0d]))); // CR
-    await expect(page.locator(rows)).toContainText("~ #", { timeout: 10_000 });
+    await expect.poll(() => terminalBuffer(page), { timeout: 10_000 }).toContain("~ #");
   }).toPass({ timeout: 90_000 });
 }
 
-// AC1 (copy) is skipped in headless Chromium: `navigator.clipboard.writeText` neither resolves nor
-// rejects without a genuine transient user activation, so the OSC 52 handler's success/blocked
-// callbacks (and a clipboard readback) never settle — a headless-environment limitation, NOT a defect
-// in the copy path. The OSC 52 decode + size-cap + read-gate + onCopied/onCopyBlocked dispatch are
-// fully proven deterministically by `web/tests/osc52.test.mjs` (15 cases). Re-enable on a headed run
-// or a browser that permits programmatic clipboard writes under granted permissions. The paste E2E
-// (AC2/AC3 below) DOES run green here — the browser-integration capstone for the paste pipeline.
-test.skip("AC1: guest OSC 52 copy delivers decoded text to the host clipboard", async ({ page }) => {
-  test.setTimeout(360_000);
+test("AC1: guest OSC 52 copy delivers decoded text to the host clipboard", async ({ page }) => {
+  test.setTimeout(600_000);
   await boot(page);
 
   // Fallback capture: if navigator.clipboard.writeText is rejected (no transient activation even with
@@ -80,6 +89,10 @@ test.skip("AC1: guest OSC 52 copy delivers decoded text to the host clipboard", 
     window.__term.onClipboardCopied((t) => { window.__lastCopied = t; });
     window.__term.onClipboardCopyBlocked((t) => { window.__lastCopy = t; });
   });
+
+  // Establish a real transient activation before the guest emits OSC 52. Chromium may otherwise
+  // leave writeText pending forever even when the context has clipboard permissions.
+  await page.locator("#term").click();
 
   // The guest emits ESC]52;c;<base64-of-"hi"> — busybox printf + base64 build it, so the base64 is
   // produced BY the guest (a host literal cannot satisfy the decode).
@@ -115,23 +128,18 @@ test("AC2/AC3: multi-line paste reaches the guest content-exact", async ({ page 
   // icrnl maps CR → NL, so the file gets three lines.
   await type(page, "cat > /tmp/p" + CR);
   await page.waitForTimeout(300);
-  await page.evaluate(() => window.__term.pasteText("alpha\nbravo\ncharlie"));
+  await page.evaluate(() => window.__term.pasteText("alpha\nbravo\ncharlie\n"));
   await page.waitForTimeout(300);
   await type(page, "\x04"); // ^D ends cat
 
   await type(page, "cat /tmp/p" + CR);
-  await expect(page.locator(rows)).toContainText("alpha", { timeout: 15_000 });
-  await expect(page.locator(rows)).toContainText("bravo");
-  await expect(page.locator(rows)).toContainText("charlie");
+  await expect.poll(() => terminalBuffer(page), { timeout: 15_000 }).toContain("alpha");
+  await expect.poll(() => terminalBuffer(page), { timeout: 15_000 }).toContain("bravo");
+  await expect.poll(() => terminalBuffer(page), { timeout: 15_000 }).toContain("charlie");
 });
 
-// The 1 MB drain (~4 min of cold-boot + paste on top of the boot) reliably gets OS-reaped on this
-// resource-contended machine before completing (the documented "browser boot reaped on mac" limit), so
-// it is skipped here to keep the verify target green and non-flaky. The no-loss/backpressure guarantee
-// it asserts is already proven by (a) E2-T22's 100 KB bulk-input browser test and (b) paste.js's node
-// framing tests. Re-enable on a headed/unloaded machine or CI with more headroom.
-test.skip("AC2: 1 MB paste is byte-exact through the tty (sha256 match, no loss)", async ({ page }) => {
-  test.setTimeout(420_000);
+test("AC2: 1 MB paste is byte-exact through the tty (sha256 match, no loss)", async ({ page }) => {
+  test.setTimeout(900_000);
   await boot(page);
 
   // Build a ~1 MB payload of short lines (each < the 4095-char canonical tty limit, so cat delivers
@@ -153,7 +161,11 @@ test.skip("AC2: 1 MB paste is byte-exact through the tty (sha256 match, no loss)
       .join("");
   }, payload);
 
-  await type(page, "cat > /tmp/big" + CR);
+  // Avoid making xterm repaint the million bytes echoed by tty canonical mode; the guest file and
+  // sha256 assertion still exercise the complete input queue. Echo is restored after the digest.
+  await type(page, "stty -echo; echo E3T22D_ECHO_OFF" + CR);
+  await expect.poll(() => terminalBuffer(page), { timeout: 30_000 }).toContain("E3T22D_ECHO_OFF");
+  await type(page, "cat > /root/paste.txt" + CR);
   await page.waitForTimeout(300);
   await page.evaluate((p) => window.__term.pasteText(p), payload);
   await type(page, "\x04"); // ^D ends cat
@@ -164,6 +176,28 @@ test.skip("AC2: 1 MB paste is byte-exact through the tty (sha256 match, no loss)
   expect(hw).toBeGreaterThanOrEqual(len);
 
   // The guest computes the sha256 of what it actually received; it must equal the host expectation.
-  await type(page, "sha256sum /tmp/big" + CR);
-  await expect(page.locator(rows)).toContainText(expectedSha, { timeout: 180_000 });
+  await type(page, "sha256sum /root/paste.txt; stty echo; echo E3T22D_ECHO_RESTORED" + CR);
+  await expect.poll(() => terminalBuffer(page), { timeout: 180_000 }).toContain(expectedSha);
+  await expect.poll(() => terminalBuffer(page), { timeout: 30_000 }).toContain("E3T22D_ECHO_RESTORED");
+});
+
+test("AC3: bracketed multi-line paste is held until Enter", async ({ page }) => {
+  test.setTimeout(600_000);
+  await boot(page);
+
+  await type(page, String.raw`printf '\033[?2004h'` + CR);
+  await expect.poll(() => page.evaluate(() => window.__term.bracketedPasteEnabled()), { timeout: 30_000 })
+    .toBe(true);
+  const command = "touch /tmp/e3t22d-bracketed\nprintf E3T22D_SECOND\n";
+  await page.evaluate((value) => window.__term.pasteText(value), command);
+  await page.waitForTimeout(1_000);
+  await type(page, "\x03");
+  await type(page, "test -e /tmp/e3t22d-bracketed && echo E3T22D_EARLY || echo E3T22D_HELD" + CR);
+  await expect.poll(() => terminalBuffer(page), { timeout: 30_000 }).toContain("E3T22D_HELD");
+
+  await page.evaluate((value) => window.__term.pasteText(value), command);
+  await page.waitForTimeout(500);
+  await type(page, CR);
+  await type(page, "test -e /tmp/e3t22d-bracketed && echo E3T22D_EXECUTED || echo E3T22D_MISSING" + CR);
+  await expect.poll(() => terminalBuffer(page), { timeout: 30_000 }).toContain("E3T22D_EXECUTED");
 });

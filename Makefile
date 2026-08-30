@@ -454,17 +454,26 @@ verify-E3-T24a:
 
 .PHONY: verify-E3-T22d
 verify-E3-T22d:
-	# Clipboard browser E2E: a content-exact multi-line paste through the real OSC/paste terminal wiring
-	# against a live in-page busybox boot (PROVEN green). The OSC 52 COPY test (AC1) and the 1 MB paste
-	# (AC3) are test.skip'd here — headless Chromium never settles a programmatic clipboard write without
-	# a transient activation, and the 1 MB cold-boot drain gets OS-reaped on a contended machine. Both
-	# skips are documented in the spec; the copy decode/cap/gate is proven by web/tests/osc52.test.mjs
-	# and the paste framing + no-loss by web/tests/paste.test.mjs + E2-T22's 100 KB bulk-input test.
+	# Clipboard browser E2E: headed Chromium drives the real in-page busybox guest and proves OSC 52
+	# copy, content-exact multiline paste, a 1 MiB /root/paste.txt sha256, and DECSET-2004 hold/Enter.
 	# First prove the deterministic cores (fast, no browser):
 	cd web && node --test tests/osc52.test.mjs tests/paste.test.mjs
-	# Then the browser paste capstone (heavy — one cold busybox boot):
+	# Then the exact browser proof. The raw Playwright API is used because this host's Node 24 deadlocks
+	# the @playwright/test runner before discovery; the script starts/reuses the local server.
 	$(MAKE) web-build
-	cd web && npx playwright test tests/e3-t22-clipboard.spec.js --reporter=list
+	@if curl -fsS http://127.0.0.1:8123/artifacts.json >/dev/null 2>&1; then \
+		E3_T22D_QUERY='noAutoBoot&jit=1' node tools/verify/e3-t22d-browser-proof.mjs; \
+	else \
+		bash tools/serve-dev.sh 8123 >/dev/null 2>&1 & server_pid=$$!; \
+		trap 'kill "$$server_pid" 2>/dev/null || true' EXIT INT TERM; \
+		ready=0; \
+		for attempt in $$(seq 1 30); do \
+			if curl -fsS http://127.0.0.1:8123/artifacts.json >/dev/null 2>&1; then ready=1; break; fi; \
+			sleep 1; \
+		done; \
+		test "$$ready" = 1; \
+		E3_T22D_QUERY='noAutoBoot&jit=1' node tools/verify/e3-t22d-browser-proof.mjs; \
+	fi
 	@echo "verify-E3-T22d (clipboard browser paste E2E + copy/paste node cores): OK"
 
 .PHONY: verify-E3-T12c1
