@@ -32,6 +32,7 @@ const headless = process.env.E3_T12D_HEADLESS === "1";
 const runFileReload = process.env.E3_T12D_FILE_RELOAD !== "0";
 const fileReloadGuest = process.env.E3_T12D_FILE_RELOAD_GUEST || "alpine";
 const fileReloadTimeout = Number(process.env.E3_T12D_FILE_RELOAD_TIMEOUT_MS || 1_800_000);
+const onlyFileReload = process.env.E3_T12D_ONLY_FILE_RELOAD === "1";
 const allowedFaviconUrl = new URL("/favicon.ico", `${base}/`).href;
 const evidencePath = path.join(evidenceDir, "browser-storage-2026-08-30.json");
 const screenshotPath = path.join(evidenceDir, "browser-storage-2026-08-30.png");
@@ -522,7 +523,7 @@ async function postReloadGuestFile(allErrors) {
   assert.ok(["alpine", "node-alpine"].includes(fileReloadGuest), `unsupported file-reload guest: ${fileReloadGuest}`);
   const env = await openContext({ label: `post-reload-file-${fileReloadGuest}`, allErrors });
   try {
-    await loadShell(env.page, `guest=${fileReloadGuest}&noAutoBoot=1&persist=1`);
+    await loadShell(env.page, `guest=${fileReloadGuest}&noAutoBoot=1&persist=1&testHooks=1`);
     await bootFlavor(env.page, fileReloadGuest);
     await pause(env.page);
     assert.equal(await saveSnapshot(env.page), true);
@@ -541,7 +542,18 @@ async function postReloadGuestFile(allErrors) {
     await env.page.waitForFunction(() => window.__ready === true && !!window.wvmDemo, null, { timeout: 120_000 });
     const started = Date.now();
     await bootFlavor(env.page, fileReloadGuest, { waitReady: false });
-    await env.page.waitForFunction(() => window.wvmDemo?.isGuestReady?.(), null, { timeout: fileReloadTimeout });
+    try {
+      await env.page.waitForFunction(() => window.wvmDemo?.isGuestReady?.(), null, { timeout: fileReloadTimeout });
+    } catch (error) {
+      const state = await env.page.evaluate(() => ({
+        ready: window.wvmDemo?.isGuestReady?.() ?? false,
+        up: window.wvmDemo?.isGuestUp?.() ?? false,
+        boot: window.__linuxBootStateForTest?.() ?? null,
+        terminal: document.querySelector("#term .xterm-rows")?.textContent?.slice(-4000) ?? "",
+      })).catch((diagnosticError) => ({ diagnosticError: String(diagnosticError) }));
+      console.error(`[E3-T12D-BOOT-TIMEOUT] ${JSON.stringify(state)}`);
+      throw error;
+    }
     const coldBootMs = Date.now() - started;
     const decision = await env.page.evaluate(() => window.__snapshotDecision());
     const read = await env.page.evaluate(() => window.wvmDemo.run("cat /root/t12d-reload-file", 120_000));
@@ -559,12 +571,14 @@ const allErrors = [];
 const startedAt = Date.now();
 let evidence;
 try {
-  const clean = await cleanWorkerProof(allErrors);
-  const memory = await memoryProof(allErrors);
+  const clean = onlyFileReload ? null : await cleanWorkerProof(allErrors);
+  const memory = onlyFileReload ? null : await memoryProof(allErrors);
   const kill = {};
-  for (const phase of ["clear", "chunk", "meta"]) kill[phase] = await killScenario(phase, allErrors);
-  const quota = await quotaScenario(allErrors);
-  const race = await twoTabRace(allErrors);
+  if (!onlyFileReload) {
+    for (const phase of ["clear", "chunk", "meta"]) kill[phase] = await killScenario(phase, allErrors);
+  }
+  const quota = onlyFileReload ? null : await quotaScenario(allErrors);
+  const race = onlyFileReload ? null : await twoTabRace(allErrors);
   const fileReload = runFileReload ? await postReloadGuestFile(allErrors) : { skipped: true };
   const diagnosticsSummary = allErrors.map((record) => ({
     label: record.label,
