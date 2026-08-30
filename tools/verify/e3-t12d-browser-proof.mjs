@@ -543,6 +543,13 @@ async function postReloadGuestFile(allErrors) {
     assert.ok(generation > 0);
     await env.page.reload({ waitUntil: "domcontentloaded", timeout: 120_000 });
     await env.page.waitForFunction(() => window.__ready === true && !!window.wvmDemo, null, { timeout: 120_000 });
+    await env.page.evaluate(() => {
+      window.__e3t12dRawOutput = "";
+      window.__e3t12dRawOutputUnsubscribe = window.wvmDemo.onConsole((bytes) => {
+        const text = new TextDecoder().decode(bytes);
+        window.__e3t12dRawOutput = (window.__e3t12dRawOutput + text).slice(-4000);
+      });
+    });
     const started = Date.now();
     await bootFlavor(env.page, fileReloadGuest, { waitReady: false });
     try {
@@ -553,6 +560,7 @@ async function postReloadGuestFile(allErrors) {
         up: window.wvmDemo?.isGuestUp?.() ?? false,
         boot: window.__linuxBootStateForTest?.() ?? null,
         terminal: document.querySelector("#term .xterm-rows")?.textContent?.slice(-4000) ?? "",
+        rawOutput: window.__e3t12dRawOutput ?? "",
       })).catch((diagnosticError) => ({ diagnosticError: String(diagnosticError) }));
       console.error(`[E3-T12D-BOOT-TIMEOUT] ${JSON.stringify(state)}`);
       throw error;

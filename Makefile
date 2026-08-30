@@ -555,7 +555,10 @@ verify-E3-T12d:
 	# read after a modified-overlay reload. It starts an ephemeral local server and uses the public R2
 	# chunk manifest plus the checked-in kernel/warm snapshot artifacts.
 	$(MAKE) web-build
-	node tools/verify/e3-t12d-browser-proof.mjs
+	# The modified-overlay continuation uses a proof-only main-thread JIT boot into /bin/sh. This keeps
+	# the storage assertion independent of the much slower OpenRC startup; the clean save/restore proof
+	# above remains the production whole-machine Worker path.
+	E3_T12D_FILE_RELOAD_JIT=1 E3_T12D_FILE_RELOAD_SINGLE_USER=1 node tools/verify/e3-t12d-browser-proof.mjs
 	@echo "verify-E3-T12d : OK"
 
 .PHONY: verify-E3-T24c

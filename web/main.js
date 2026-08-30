@@ -717,7 +717,11 @@ async function runLinuxBootOwned(opts, banner, request) {
           const s = new TextDecoder().decode(u8);
           bootProgress.scanOutput(s);
           promptTail = (promptTail + s).slice(-200);
-          if (/[\w][\w.-]*:~#\s*$/.test(promptTail) || /[~\/]\s*#\s*$/.test(promptTail)) markGuestReady();
+          // xterm answers the guest's cursor-position query with a CSI sequence (for example
+          // ESC[6n) immediately after the prompt. Strip terminal control sequences before matching
+          // the visible shell suffix so that a usable prompt cannot be masked by its own reply.
+          const promptText = promptTail.replace(/\x1b(?:\[[0-?]*[ -/]*[@-~]|[ -/]*[@-~])/g, "");
+          if (/[^\w][\w.-]*:~#\s*$/.test(promptText) || /[~\/]\s*#\s*$/.test(promptText)) markGuestReady();
         } catch {}
       },
       onError: (e) => {
