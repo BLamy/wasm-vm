@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: implemented
+status: verified
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -257,6 +257,64 @@ Commands:
 `git diff --check 97b88d4..4d9aeb9`; independent payload SHA recomputation; evidence/screenshot SHA checks;
 `git diff --quiet 274bc49..4d9aeb9 -- Makefile tools/verify/e3-t22d-browser-proof.mjs web/terminal.js
 web/tests/e3-t22-clipboard.spec.js`.
+
+### 2026-08-30 — fresh adversarial verifier — VERDICT: verified
+
+- **Exact evidence and provenance — HELD.** Prediction: the committed recording artifacts would
+  match the submitted digests and identify the implementation/harness head they exercised.
+  `evidence/e3-t22d/clipboard-browser-2026-08-30.json` hashes to
+  `88c16ea6e9b3b6ebb6820d0eb73454af2505547c8a3b0b56b3aeb3fbc865cabb`, and the PNG hashes to
+  `d98d901a86fbbe060faecbe434f4da3d1a51d466181f4f451418e3ad2ccca5b4`; both match the worker
+  submission. The JSON `runtimeHead` is `450c25108240d1221a3e1ea88e3ca426cb886dc7`. Current
+  `HEAD` is `1de543e36f2b70b13cbe38d370dce987335cda1e`, but the intervening commit changes only
+  evidence/task metadata; `git diff --quiet 450c251..HEAD -- web/terminal.js web/dist/terminal.js
+  tools/verify/e3-t22d-browser-proof.mjs Makefile` held. Thus the recording is exact for the
+  runtime and proof harness, with the later bookkeeping commit explicitly waived.
+- **AC1 — HELD.** Prediction: guest-generated OSC52 would produce `hi` through the live terminal
+  parser and the browser clipboard readback would also be `hi`. The JSON records
+  `copy.copied="hi"`, `copy.blocked=null`, and `copy.clipboard="hi"`; the harness sends the guest
+  `printf` through focused xterm input, waits for the copy callback, and calls
+  `navigator.clipboard.readText()` at `tools/verify/e3-t22d-browser-proof.mjs:236-277`. The
+  parser registration path is in `web/terminal.js:151-160`, and the acceptance box is checked.
+- **AC2 — HELD.** Prediction: a separately recomputed 1 MiB payload would match both a numeric
+  guest `wc -c` result and the guest's actual `sha256sum /root/paste.txt` line. Independently
+  recomputed payload size is `1,000,000` and SHA-256 is
+  `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733`, matching JSON
+  `expectedSha` and `observedSha`; JSON `fileSize` and `guestFileSize` are both `1,000,000`.
+  The harness derives `E3T22D_GUEST_SIZE` from `wc -c < /root/paste.txt` and parses the exact
+  `/root/paste.txt` operand from the guest `sha256sum` line at lines 312-326. The acceptance box
+  is checked.
+- **AC3 — HELD.** Prediction: real DECSET-2004 mode would hold a multiline paste, cancel it on
+  Ctrl-C without creating the file, and release it only at Enter. The recording has
+  `modeEnabled=true`, standalone `E3T22D_HELD` before the second paste, and
+  `E3T22D_EXECUTED` after release; the committed screenshot shows that ordering. The real focused
+  xterm `onData` coverage records nine ordinary `CANCELLED` events plus `[3]` Ctrl-C and one
+  `[116,114,117,101,13]` mixed ordinary-byte-plus-CR event. These exercise `web/terminal.js:102-128`
+  for boundary<0, Ctrl-C cancellation, and boundary>0 release; the parser/paste state is driven by
+  guest `printf '\\033[?2004h'` at `tools/verify/e3-t22d-browser-proof.mjs:329-355`. The
+  acceptance box is checked.
+- **Browser-error gate — HELD.** Prediction: only the exact probed favicon URL/path may be
+  tolerated, while a generic or unattributed 404 and `/assets/favicon.ico` fail closed. Raw
+  console evidence contains two `ConsoleMessage.location().url` values exactly
+  `http://127.0.0.1:8123/favicon.ico`; CDP evidence contains two status-404 response URLs with
+  that exact URL and no other HTTP errors. The harness matches exact URL and `/favicon.ico` path,
+  uses `message.location().url`, compares console/network counts, and rejects non-favicon or
+  unattributed events. A bounded source-predicate attack confirmed generic 404, `/assets/favicon.ico`,
+  non-404 favicon, and unattributed console 404 all reject; exact favicon remains accepted.
+- **Coverage — HELD.** Every behavior-changing runtime hunk in `web/terminal.js` is exercised by
+  the recorded OSC52, unbracketed paste, DECSET-2004 hold/cancel/release, and focused-xterm
+  keyboard phases. The terminal-level OSC fallback and no-DOM catch paths are compatibility or
+  diagnostic paths and are waived. `web/dist/terminal.js` is byte-identical to the source. The raw
+  headed harness and Makefile target cover the submitted proof; generated `web/tasks.json`, queue,
+  and evidence bookkeeping are metadata. The exact changed duplicate Playwright spec is not in the
+  current task diff and therefore creates no unexecuted-hunk gap.
+- **Suite — HELD.** `node --test web/tests/osc52.test.mjs web/tests/paste.test.mjs` passed 23/23;
+  `node --check web/terminal.js`; `node --check tools/verify/e3-t22d-browser-proof.mjs`;
+  `git diff --check 97b88d4..HEAD`; independent payload SHA/size recomputation; evidence digest
+  checks; `python3 tools/check_task_policy.py`; and the bounded browser-error attack all passed.
+
+Status promoted to `verified`; no implementation, harness, fixture, evidence, or unrelated task
+files were changed by this verification.
 
 - 2026-08-30 — **worker — implemented at `274bc49ebeab03ac68fa84c408588b8c91384bc5`.** The xterm.js
   5.x runtime exposes OSC handlers on `term.parser.registerOscHandler`, not the obsolete
