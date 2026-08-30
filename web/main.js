@@ -1115,8 +1115,9 @@ function resetGuestReady() {
 // (which names the RAM snapshot + overlay-delta to restore) and the guest chip differ.
 async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfileUrl) {
   const _imgManifest = imageManifestUrl || (R2_ASSETS + "/chunked-alpine/manifest.json");
-  // The deployed R2 release does not ship an Alpine boot profile yet. Pass an explicit null so
-  // startLinuxBoot does not apply its local-development default and create a misleading 404.
+  // The deployed R2 Alpine release ships its matching ordered first-touch profile. Pass an explicit
+  // value for each caller: Node-Alpine has no restore-bound profile yet, so it intentionally remains
+  // on demand + sequential readahead.
   const _bootProfile = bootProfileUrl ?? null;
   // Return-visit fast-restore is handled in loader.js: the RAM restore is armed whenever a coherent,
   // unmodified overlay is present (not only on a fresh seed), so reloads restore instead of cold-booting;
@@ -1198,7 +1199,12 @@ window.wvmDemo = {
   // { ok:true, already:true } if already up, or { ok:false, error } if the boot refused/failed. Needs
   // the Alpine artifacts to be deployed (artifacts-alpine.json + releases/chunked-alpine/).
   async bootAlpine() {
-    return bootAlpineFlavor("./artifacts-alpine.json", "alpine");
+    return bootAlpineFlavor(
+      "./artifacts-alpine.json",
+      "alpine",
+      undefined,
+      R2_ASSETS + "/chunked-alpine/boot-profile.json",
+    );
   },
   // E3.6-T05: boot the NODE-preinstalled Alpine guest — same chunked base + restore machinery, but the
   // shipped RAM snapshot + overlay-delta land at a shell with `node` already on PATH (no boot, no apk
