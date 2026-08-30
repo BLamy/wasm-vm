@@ -190,7 +190,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `321.932` [E3-T12c2](epic-3-civilization/E3-T12c2-virtqueue-quiesce.md) — Bounded virtqueue quiesce before snapshot *(deps: E3-T12c1, E3-T08)*
 - [x] `321.933` [E3-T12c3](epic-3-civilization/E3-T12c3-overlay-generation-coherence.md) — Overlay-generation snapshot coherence and stale-restore refusal *(deps: E3-T12c1, E3-T10)*
 - [x] `321.934` [E3-T12c4](epic-3-civilization/E3-T12c4-boot-disk-coherence-fsck.md) — Boot-level snapshot disk coherence (sync/snapshot/restore → fsck clean) *(deps: E3-T12c1, E3-T12c2, E3-T12c3)*
-- [?] `321.94` [E3-T12d](epic-3-civilization/E3-T12d-browser-snapshot-storage-selection.md) — Browser snapshot persistence and restore selection *(deps: E3-T12c)*
+- [d] `321.94` [E3-T12d](epic-3-civilization/E3-T12d-browser-snapshot-storage-selection.md) — Browser snapshot persistence and restore selection *(deps: E3-T12c)*
 - [ ] `321.95` [E3-T12e](epic-3-civilization/E3-T12e-docker-tab-instant-resume.md) — Docker-tab instant resume and frozen coherence proof *(deps: E3-T12d, E3.5-T05a)*
 - [-] `322` [E3-T12](epic-3-civilization/E3-T12-machine-snapshot-restore.md) — Full machine snapshot and restore with instant-resume boot *(deps: E3-T08, E3.5-T05a)*
 - [ ] `322` [E3-T22](epic-3-civilization/E3-T22-clipboard-osc52.md) — Clipboard integration - OSC 52 copy, paste injection, bracketed paste *(deps: E2)*

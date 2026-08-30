@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: evidence-needed
+status: verification-debt
 depends_on: [E3-T12c]
 estimate: S
 risk: high
@@ -289,3 +289,12 @@ gaps.
 Commands: `make verify-E3-T12d`; `cargo test -p wasm-vm-storage meta_round_trips_a_durable_generation_and_reads_legacy_as_zero`;
 `git diff --check 6d2b1244352e8963a2877f671d10eaf8c561968e 33fc2308a2516f19191c255e4a1e6fec3831022c`;
 `shasum -a 256 evidence/epic-3-t12d/node-alpine-overlay-generation-2026-08-30.json`.
+
+### 2026-08-30 — worker — parked as verification debt
+
+Fresh verification remains `needs-evidence`, not `verified`. The durable generation commit and
+reopen reconstruction are held, but the exact-head evidence still lacks peak-memory instrumentation,
+interruption/quota/two-tab attacks, a portable artifact-bearing browser run, and the post-reload file
+read that proves changed block bytes and metadata survive together. T12d is therefore leaving the
+active lane with the verifier report preserved; it must return only when those named proof artifacts
+can be recorded.
