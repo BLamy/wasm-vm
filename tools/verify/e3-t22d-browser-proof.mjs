@@ -336,33 +336,44 @@ try {
   assert.equal(bracketedEnabled, true, "guest DECSET 2004 did not reach xterm mode state");
   const bracketedCommand = "touch /tmp/e3t22d-bracketed\nprintf E3T22D_SECOND\n";
   await page.evaluate((value) => window.__term.pasteText(value), bracketedCommand);
-  await page.evaluate(() => { window.__e3t22dKeyboardPhase = "held-cancel"; });
+  await page.evaluate(() => { window.__e3t22dKeyboardPhase = "held-cancel-bytes"; });
   await page.keyboard.type("CANCELLED");
   await sleep(1_000);
+  await page.evaluate(() => { window.__e3t22dKeyboardPhase = "held-cancel-control"; });
   await sendKeyboard("\x03");
+  await page.evaluate(() => { window.__e3t22dKeyboardPhase = "held-cancel-check"; });
   await sendKeyboard("test -e /tmp/e3t22d-bracketed && echo E3T22D_EARLY || echo E3T22D_HELD\r");
   await waitForExactLine("E3T22D_HELD", 30_000);
   await page.evaluate((value) => window.__term.pasteText(value), bracketedCommand);
   await sleep(500);
-  await page.evaluate(() => { window.__e3t22dKeyboardPhase = "held-release"; });
+  await page.evaluate(() => { window.__e3t22dKeyboardPhase = "held-release-mixed"; });
   // insertText is the xterm textarea path and deliberately delivers ordinary bytes plus CR in one
   // onData event, exercising the host-hold boundary>0 FIFO release branch.
   await page.keyboard.insertText("true\r");
+  await page.evaluate(() => { window.__e3t22dKeyboardPhase = "held-release-check"; });
   await sendKeyboard("test -e /tmp/e3t22d-bracketed && echo E3T22D_EXECUTED || echo E3T22D_MISSING\r");
   await waitForExactLine("E3T22D_EXECUTED", 30_000);
 
   const keyboardData = await page.evaluate(() => window.__e3t22dKeyboardData);
-  const heldCancelData = keyboardData.filter(({ phase }) => phase === "held-cancel");
-  const heldReleaseData = keyboardData.filter(({ phase }) => phase === "held-release");
+  const heldCancelData = keyboardData.filter(({ phase }) => phase === "held-cancel-bytes");
+  const heldCancelControlData = keyboardData.filter(({ phase }) => phase === "held-cancel-control");
+  const heldReleaseData = keyboardData.filter(({ phase }) => phase === "held-release-mixed");
   assert(
-    heldCancelData.some(({ bytes }) => bytes.length > 0 && bytes.every((byte) => byte !== 0x03 && byte !== 0x0a && byte !== 0x0d)) &&
-      heldCancelData.some(({ bytes }) => bytes.includes(0x03)),
-    `focused xterm cancel path did not record ordinary bytes plus Ctrl-C: ${JSON.stringify(heldCancelData)}`,
+    heldCancelData.length > 0 && heldCancelData.every(({ bytes }) =>
+      bytes.length > 0 && bytes.every((byte) => byte !== 0x03 && byte !== 0x0a && byte !== 0x0d)) &&
+      heldCancelControlData.some(({ bytes }) => bytes.length === 1 && bytes[0] === 0x03),
+    `focused xterm cancel path did not record ordinary bytes plus Ctrl-C: ${JSON.stringify({ heldCancelData, heldCancelControlData })}`,
   );
   assert(
     heldReleaseData.some(({ bytes }) => bytes.length === 5 && bytes.slice(0, 4).join(",") === "116,114,117,101" && bytes[4] === 0x0d),
     `focused xterm mixed ordinary-byte/Enter event was not recorded: ${JSON.stringify(heldReleaseData)}`,
   );
+  const keyboardCoverage = {
+    path: "focused xterm textarea via Playwright keyboard/insertText",
+    totalOnDataEvents: keyboardData.length,
+    heldCancel: { ordinaryBytes: heldCancelData, ctrlC: heldCancelControlData },
+    heldRelease: { ordinaryBytesPlusEnter: heldReleaseData },
+  };
 
   await page.screenshot({ path: screenshotPath, fullPage: false });
   const networkErrors = cdpHttpErrors;
@@ -406,7 +417,7 @@ try {
       networkErrors,
       allowedHttpErrors,
       faviconProbe,
-      keyboardData,
+      keyboardCoverage,
     },
     copy: copyObservation,
     multiline: { expectedLines: ["alpha", "bravo", "charlie"], observed: true },
