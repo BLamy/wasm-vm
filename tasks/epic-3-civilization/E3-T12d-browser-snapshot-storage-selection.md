@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: implemented
+status: in-progress
 depends_on: [E3-T12c1, E3-T12c2, E3-T12c3, E3-T12c4]
 estimate: S
 risk: high
@@ -544,3 +544,77 @@ raw-Playwright replay and bounded whole-machine-Worker lease/object probes. No m
 OAuth because this environment has no `CLOUDFLARE_API_TOKEN`. The login was stopped before the
 Cloudflare Pages publish; the live Pages site is not claimed as updated. The R2 manifest URL
 changes made by the staging step were reverted locally.
+
+### 2026-08-30 — fresh verifier — VERDICT: refuted
+
+- **Provenance — HELD.** Prediction: the submitted recording must name runtime head
+  `9213b821b2655bf559da548ca7c6748e2b6b0219`, match the requested JSON and screenshot digests, and
+  have no runtime source changes after that head. Observed `runtimeHead` is exactly that value at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:1-5`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json);
+  the JSON SHA-256 is `7b98c136a06c1353c894405dc9a80ec843bf6b9297b022c5ce4a75990dfccb8d`, the
+  screenshot SHA-256 is `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`,
+  `9213b82` is an ancestor of exact `HEAD` `bb7d60c9a3c89ee934ba79d1c636e0d947e8ce20`, and
+  `git diff 9213b82..bb7d60c` contains only evidence/task/queue metadata.
+- **AC1 — HELD within the recorded paths.** Prediction: a production-sized save/reload/restore
+  must remain within the documented 32 MiB staging bound. The recording has a 60,430,185-byte
+  Worker snapshot with `afterReload: "resume"` at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:7-27`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json),
+  save overhead `16,811,975 <= 33,554,432` at
+  [`...json:29-507`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json), and reload residual
+  overhead `2,169,357 <= 33,554,432` at
+  [`...json:596-617`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+- **AC2 interruption/quota/object paths — HELD, but lease safety is refuted below.** Prediction:
+  clear/chunk/meta interruption, quota, and mixed-generation object faults must select only a safe
+  typed result and preserve the overlay. The exact record observes `corrupt`/`corrupt`/`stale` with
+  `overlayPreserved: true` for the three interruption phases, typed `QuotaExceededError` plus a live
+  guest marker, and metadata swap → `corrupt`, all at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:510-594`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+  A fresh current-head object probe additionally observed truncation → `corrupt`, original re-import
+  → `resume`, same-length payload mutation → `corrupt`, and original re-import → `resume`. The prior
+  integrity record independently contains the same attack at
+  [`node-alpine-snapshot-integrity-2026-08-30.json:21-40`](../../evidence/epic-3-t12d/node-alpine-snapshot-integrity-2026-08-30.json).
+- **AC3 — HELD.** Prediction: export/import must preserve the exact container byte count and digest.
+  The recording has equal `60,430,185`-byte before/after values and digest
+  `27f2f7a954763682fa18b206ba8503cf08f37917cffcbc683cb9f2ab233f67cc` at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:11-23`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+- **Explicit Worker `snapshotRestore` RPC — HELD.** Prediction: the named restore operation must
+  cross the Worker protocol and return `resume`, not merely be inferred from boot's internal restore.
+  The exact record reports `workerRestore: "resume"` at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:25-27`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json).
+  A fresh raw Playwright Worker probe independently observed backend `whole-machine-worker`,
+  `restore: "resume"`, and RPC stats `calls/completed: 3 → 4` with `pending: 0`; the protocol's
+  allow-list and dispatch are at [`web/linux-worker-protocol.js:29-72`](../../web/linux-worker-protocol.js)
+  and [`web/linux-worker-protocol.js:668-718`](../../web/linux-worker-protocol.js).
+- **Stale-writer fence — FAILED (P1).** Prediction: after a writer starts a snapshot save, releases
+  its Web Lock, and a second tab acquires the namespace, the old controller must not perform any
+  further snapshot-store mutation; otherwise it can overwrite or invalidate the takeover owner's
+  snapshot. Fresh bounded raw Playwright attack command (served exact `web/`, URL
+  `?noAutoBoot=1&persist=1&worker=0&testHooks=1`) saved a baseline, advanced the old machine's
+  generation, started `snapshotSave`, waited for the first new chunk put, then released the old
+  controller at `performance.now() = 3298.0599999949336` with `readOnly: true`. The same in-flight
+  save subsequently issued 43 snapshot chunk puts and a commit-marker `meta` put at
+  `3584.210000000894`, then resolved. A new tab acquired the writer role with
+  `readOnly: false` and observed final snapshot decision `stale` (the baseline decision had been
+  `resume`), proving the old operation changed the shared namespace after lease release. The old
+  controller's later JS `snapshotSave`/`snapshotImport` and direct wasm
+  `persistSnapshot`/`importStoredSnapshot` calls all returned `read_only`, so the synchronous fence
+  works but does not cancel or invalidate an operation that passed its check before an `await`.
+  The gap is visible at [`crates/wasm/src/lib.rs:1894-1917`](../../crates/wasm/src/lib.rs):
+  `snapshot_read_only` is checked once, then `SnapshotStore::open`/`save` run asynchronously; the
+  new fence only flips the flag at [`crates/wasm/src/lib.rs:1921-1930`](../../crates/wasm/src/lib.rs)
+  and [`web/loader.js:998-1007`](../../web/loader.js). Demand cancellation/serialization or a
+  lease-generation token revalidated before each transaction and at commit, plus a fresh takeover
+  recording that races an already-started save.
+- **Coverage — INSUFFICIENT for the new failure mode.** The submitted two-tab record exercises
+  post-release stale `snapshotImport` rejection and unchanged takeover decision at
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.json:562-586`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json),
+  but not an already-started `snapshotSave`; the fresh bounded attack above covers that omitted
+  path and refutes it. No runtime implementation was edited by this verifier.
+
+Commands: `git diff --check 46ea6df..bb7d60c`; exact-head `sha256sum` for the requested JSON and
+screenshot; `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test restore_decision`
+(11/11); `cargo test -p wasm-vm-storage snapmeta` (11/11); `cargo test -p wasm-vm-core --test
+snapshot_coherence` (5/5); wasm32 clippy/check; JavaScript syntax checks; independent evidence
+assertions; fresh raw Playwright stale-save/lease-handoff probe; fresh raw Playwright Worker RPC
+probe; fresh current-head truncation/payload-mutation probe. Status returns to `in-progress` for
+runtime rework and a new exact-head recording. No merge or push.
