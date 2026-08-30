@@ -30,9 +30,10 @@ const context = await browser.newContext({
 });
 const page = await context.newPage();
 const rawConsoleErrors = [];
-// Chromium's console text omits the URL for a failed resource. CDP retains the URL, so use a
-// deduplicated status+URL map to bind any tolerated console 404 to the explicitly allowed favicon.
-const cdpHttpErrors = new Map();
+// Chromium's console text omits the URL for a failed resource. CDP retains the URL, so keep one
+// record per response request ID and bind every tolerated console 404 to the explicitly allowed
+// favicon. The page load and the explicit probe are separate legitimate requests to that URL.
+const cdpHttpErrors = [];
 const cdp = await context.newCDPSession(page);
 await cdp.send("Network.enable");
 const isFavicon404 = ({ status, url }) => {
@@ -45,8 +46,11 @@ const isFavicon404 = ({ status, url }) => {
 };
 cdp.on("Network.responseReceived", (event) => {
   if (event.response.status >= 400) {
-    const error = { status: event.response.status, url: event.response.url };
-    cdpHttpErrors.set(`${error.status} ${error.url}`, error);
+    cdpHttpErrors.push({
+      requestId: event.requestId,
+      status: event.response.status,
+      url: event.response.url,
+    });
   }
 });
 page.on("console", (message) => {
@@ -306,7 +310,7 @@ try {
   await waitForExactLine("E3T22D_EXECUTED", 30_000);
 
   await page.screenshot({ path: screenshotPath, fullPage: false });
-  const networkErrors = [...cdpHttpErrors.values()];
+  const networkErrors = cdpHttpErrors;
   const allowedHttpErrors = networkErrors.filter(isFavicon404);
   const faviconUrl = new URL(faviconProbe.url);
   const favicon404Observed = faviconProbe.status === 404 && faviconUrl.pathname.toLowerCase().endsWith("/favicon.ico");
