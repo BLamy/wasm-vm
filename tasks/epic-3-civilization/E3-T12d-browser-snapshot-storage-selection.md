@@ -409,3 +409,35 @@ sequential bounded chunk assembly, adds a direct wasm restore path that avoids t
 both snapshot writes on writer ownership, and extends the browser recording with reload-memory,
 snapshot-write fencing, and a cross-generation metadata-swap attack. The task remains `in-progress`
 until a new exact-head recording is reviewed by a fresh verifier.
+
+### 2026-08-30 — worker — snapshot proof rework — implemented
+
+- Runtime/harness commit: `3d96209f22b24200385d84bb5a17861f3cf27742` (the preceding runtime rework is
+  `db19a1e71e78dc4bf08fe3479eaf1da9b4bf625b`). The wasm loader now reassembles IndexedDB snapshots
+  sequentially into one Rust buffer, restores directly inside wasm before fetching the shipped Alpine
+  RAM fallback, and fences snapshot save/import to the persistent writer tab. The browser harness now
+  records the explicit same-writer export/import round-trip as well as the high-risk storage attacks.
+- Exact-head evidence: `evidence/epic-3-t12d/browser-storage-2026-08-30.json`, SHA-256
+  `731eb9348a285947ba33b219f01e4faa3891729eb8effe3ecd3f20056448c8f4`; screenshot
+  `evidence/epic-3-t12d/browser-storage-2026-08-30.png`, SHA-256
+  `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`.
+- `make verify-E3-T12d` passed at the exact head: the production whole-machine Worker saved
+  60,430,185 bytes and reloaded with `resume`; export/import preserved the identical digest; the
+  main-thread save overhead was 16,811,975 bytes under the 33,554,432-byte bound; the reload load
+  staging overhead was 2,168,093 bytes under the same bound. Clear/chunk/meta interruption selected
+  `corrupt`/`corrupt`/`stale`, quota surfaced `QuotaExceededError`, and every path preserved the
+  overlay. The second tab was `read_only` and both snapshot save/import calls returned `read_only`;
+  the cross-generation metadata swap selected `corrupt`; the modified-overlay reload selected
+  `stale` and read `T12D_RELOAD_FILE` with exit 0. All recorded browser contexts had zero console
+  errors and no disallowed HTTP responses (the missing favicon 404 is explicitly allowed).
+- Supporting gates: `cargo fmt --all -- --check`; wasm32 clippy with `-D warnings`; restore-decision
+  (11/11); snapmeta (11/11); `cargo test -p wasm-vm-storage` (106/106); wasm32 check; and JavaScript
+  syntax checks. This is a worker submission only; a fresh verifier must interrogate this exact
+  recording and set the terminal status.
+
+### 2026-08-30 — worker — deployment attempt
+
+`bash tools/deploy-cloudflare.sh` verified/staged the existing R2 boot objects but Wrangler 4.127.1
+stopped before the Pages publish because this non-interactive environment has no
+`CLOUDFLARE_API_TOKEN`. The live Pages site is not claimed as updated; rerun after authenticating
+Wrangler or supplying that token.
