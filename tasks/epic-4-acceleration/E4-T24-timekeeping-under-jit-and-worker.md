@@ -137,3 +137,22 @@ Gates run + passed (real output):
   recorded.
 - **Browser wiring**: `set_wall_clock` injection + `take_time_jump` surfacing + the `visibilitychange`
   listener belong in `crates/wasm` / the worker JS; they drop onto the verified core API on `dev`.
+
+### 2026-08-29 — worker evidence — local restored Node browser sleep check
+
+Ran the real worker-backed restored `node-alpine` guest in separately installed Google Chrome
+`152.0.7977.65` at `http://127.0.0.1:8131/?guest=node-alpine&profile=1&jit=0|1`, using the exact
+command `time sleep 1` once with the interpreter and once with JIT enabled. Both arms exited 0 and
+printed guest output `real    0m 1.01s`, `user    0m 0.00s`, `sys     0m 0.00s`. The interpreter arm
+completed the browser command in `1881.935 ms`; the JIT arm completed it in `2874.400 ms`. The
+recorded scheduler stats show 24 slices and `11,998,071` retired instructions in each arm; the JIT
+arm executed JIT blocks (`retiredViaJit` increased from `165,459` to `1,056,024`), while the
+interpreter arm did not. The only browser console error was the known `/favicon.ico` 404 from the
+development server. Full raw evidence is
+`evidence/epic-4-t24/node-alpine-browser-sleep-ab-2026-08-29.json`.
+
+This strengthens the implemented deterministic/WFI behavior for a live restored guest and records
+the actual browser/JIT path, but it does not close the unimplemented WallClock mode, the scripted
+10-minute throttle/resume run, the CoreMark timer-latency histogram, or the ICount trace-determinism
+acceptance criterion. Host command elapsed time includes browser/fetch/worker overhead and is not
+substituted for guest wall-clock time.
