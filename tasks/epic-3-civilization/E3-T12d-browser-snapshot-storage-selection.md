@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: verification-debt
+status: refuted
 depends_on: [E3-T12c]
 estimate: S
 risk: high

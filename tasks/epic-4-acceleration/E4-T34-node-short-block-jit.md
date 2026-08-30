@@ -3,7 +3,7 @@ id: E4-T34
 epic: 4
 title: Short-block JIT acceleration for restored Node startup
 priority: 434
-status: in-progress
+status: verification-debt
 depends_on: [E4-T32]
 estimate: S
 risk: high
@@ -90,3 +90,13 @@ compile pause storm, or JIT wall-time loss refutes the change.
   `node --check` for loader and benchmark harness; `bash -n` for serving/deploy scripts;
   `git diff --check`; fresh `make web-dist`. E4-T34 remains `in-progress`: this product win does not
   claim the JIT-specific <=20-second or dispatch-density acceptance criteria.
+
+### 2026-08-30 — maintainer — parked as verification-debt
+
+The historical E4-T34 work is being returned to the parked lane because the task still has no exact-
+head proof for its JIT-specific acceptance criteria. A direct-chain prototype passed focused native
+tests, strict clippy, and the browser parity suite, but the required real restored-Node wall-time
+screen and full adversarial evidence were not completed; the Playwright benchmark runner hung before
+producing a run. No `verified` claim is made. The prototype and generated artifacts are preserved in
+the recoverable stash `WIP E4-T34 direct-chain prototype — narrow gates only; not acceptance evidence`
+for a future fresh worker slice.

@@ -190,7 +190,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `321.932` [E3-T12c2](epic-3-civilization/E3-T12c2-virtqueue-quiesce.md) — Bounded virtqueue quiesce before snapshot *(deps: E3-T12c1, E3-T08)*
 - [x] `321.933` [E3-T12c3](epic-3-civilization/E3-T12c3-overlay-generation-coherence.md) — Overlay-generation snapshot coherence and stale-restore refusal *(deps: E3-T12c1, E3-T10)*
 - [x] `321.934` [E3-T12c4](epic-3-civilization/E3-T12c4-boot-disk-coherence-fsck.md) — Boot-level snapshot disk coherence (sync/snapshot/restore → fsck clean) *(deps: E3-T12c1, E3-T12c2, E3-T12c3)*
-- [d] `321.94` [E3-T12d](epic-3-civilization/E3-T12d-browser-snapshot-storage-selection.md) — Browser snapshot persistence and restore selection *(deps: E3-T12c)*
+- [!] `321.94` [E3-T12d](epic-3-civilization/E3-T12d-browser-snapshot-storage-selection.md) — Browser snapshot persistence and restore selection *(deps: E3-T12c)*
 - [ ] `321.95` [E3-T12e](epic-3-civilization/E3-T12e-docker-tab-instant-resume.md) — Docker-tab instant resume and frozen coherence proof *(deps: E3-T12d, E3.5-T05a)*
 - [-] `322` [E3-T12](epic-3-civilization/E3-T12-machine-snapshot-restore.md) — Full machine snapshot and restore with instant-resume boot *(deps: E3-T08, E3.5-T05a)*
 - [ ] `322` [E3-T22](epic-3-civilization/E3-T22-clipboard-osc52.md) — Clipboard integration - OSC 52 copy, paste injection, bracketed paste *(deps: E2)*
@@ -298,7 +298,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `431` [E4-T31](epic-4-acceleration/E4-T31-bounded-jit-work-retirement.md) — Bounded JIT work and exact retirement accounting *(deps: E4-T30)*
 - [x] `432` [E4-T33](epic-4-acceleration/E4-T33-bulk-jit-state-handoff.md) — Bulk JIT CPU-state handoff and bounded browser handle lifetime *(deps: E4-T31)*
 - [x] `433` [E4-T32](epic-4-acceleration/E4-T32-default-whole-machine-worker.md) — Default whole-machine Web Worker with controller parity *(deps: E4-T33)*
-- [~] `434` [E4-T34](epic-4-acceleration/E4-T34-node-short-block-jit.md) — Short-block JIT acceleration for restored Node startup *(deps: E4-T32)*
+- [d] `434` [E4-T34](epic-4-acceleration/E4-T34-node-short-block-jit.md) — Short-block JIT acceleration for restored Node startup *(deps: E4-T32)*
 - [ ] `435` [E4-T35](epic-4-acceleration/E4-T35-edge-local-static-links.md) — Edge-local static links for memory-aware traces *(deps: E4-T34)*
 - [ ] `436` [E4-T36](epic-4-acceleration/E4-T36-guarded-cross-page-links.md) — Guarded cross-page direct links *(deps: E4-T35)*
 - [ ] `437` [E4-T37](epic-4-acceleration/E4-T37-jalr-return-pic.md) — Bounded multi-target JALR return PIC *(deps: E4-T35)*
