@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: refuted
+status: in-progress
 depends_on: [E3-T12c]
 estimate: S
 risk: high
@@ -124,3 +124,10 @@ while the guest was booting; that result is recorded but no root cause is assign
 
 This is a verifier refutation requiring implementation rework and a fresh recording; no verified
 status is claimed.
+
+### 2026-08-30 — worker — rework started
+
+The task is back in the active lane to repair the independently identified import-integrity gap.
+The implementation slice will bind imported data to the already-persisted valid snapshot when one
+exists, surface a typed `corrupt` decision on mismatch, preserve the live overlay, and add a
+deterministic regression before a fresh browser recording.
