@@ -1,0 +1,62 @@
+{
+  "schema": "e3.6-t05-local-browser-node-ab-v1",
+  "capturedOn": "2026-08-29 America/New_York",
+  "gitHead": "37265f5b8f5c4758b9a62c66411ed155250e4fe8",
+  "server": "bash tools/serve-dev.sh 8130",
+  "browser": {
+    "engine": "Google Chrome",
+    "version": "152.0.7977.65",
+    "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "headless": true
+  },
+  "guest": {
+    "kind": "node-alpine",
+    "nodeVersion": "v20.15.1",
+    "urlQuery": "?guest=node-alpine&profile=1&jit={0|1}",
+    "readyMeans": "restoredFromBootSnapshot() && isGuestReady()",
+    "command": "node -e \"const fs=require('fs');let s=0;for(let i=1;i<=1000;i++)s+=i;fs.writeFileSync('/tmp/node-local.txt',String(s));console.log('ADV_'+fs.readFileSync('/tmp/node-local.txt','utf8'))\"",
+    "expectedMarker": "ADV_500500"
+  },
+  "arms": [
+    {
+      "jit": false,
+      "readyMs": 2196,
+      "commandElapsedMs": 20067.175,
+      "exit": 0,
+      "markerObserved": "ADV_500500",
+      "retiredInstructions": 247989694,
+      "requestedInstructions": 248000000,
+      "jitStats": {
+        "hasExecutor": false,
+        "compiledBlocks": 0,
+        "executedBlocks": 0,
+        "retiredViaJit": 0
+      },
+      "fetchWaits": 2,
+      "fetchRequestedChunks": 3,
+      "fetchWaitTotalMs": 918.835
+    },
+    {
+      "jit": true,
+      "readyMs": 2083,
+      "commandElapsedMs": 20813.24,
+      "exit": 0,
+      "markerObserved": "ADV_500500",
+      "retiredInstructions": 247989694,
+      "requestedInstructions": 248000000,
+      "jitStats": {
+        "hasExecutor": true,
+        "compiledBlocks": 0,
+        "executedBlocks": 4903315,
+        "retiredViaJit": 24518003
+      },
+      "fetchWaits": 2,
+      "fetchRequestedChunks": 3,
+      "fetchWaitTotalMs": 809.015
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found) — favicon only; allowed by the browser gate"
+  ],
+  "interpretation": "Both arms restored the real guest and produced the runtime-computed, file-backed marker with exit 0. JIT was active and retired JIT work, but this same-head sample was 3.718% slower than jit=0 (1.03718x), so it is evidence against claiming a JIT speedup, not acceptance of the speed criterion."
+}
