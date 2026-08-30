@@ -88,7 +88,8 @@ export class WasmLinux {
      * the coherence guard on restore. Framing-corrupt input is replaced by a corrupt marker, and a
      * same-size payload mutation is checked against the digest of the previously published snapshot;
      * both paths make the next decision typed `"corrupt"` rather than falsely `"resume"`. The live
-     * machine and overlay are not mutated. Error `"not_persistent"` off the persistent path.
+     * machine and overlay are not mutated. The write counter keeps lease release behind this full
+     * namespace mutation. Error `"not_persistent"` off the persistent path.
      */
     importStoredSnapshot(blob: Uint8Array): Promise<void>;
     /**
@@ -162,8 +163,9 @@ export class WasmLinux {
     /**
      * Convenience: take a resume snapshot AND durably persist it to the snapshot IndexedDB store in one
      * call. The `RefCell` borrow is scoped to `save_resume` + reading `snapshot_base`; the store I/O
-     * runs after it is dropped, never across the borrow. No-op error `"not_persistent"` off the
-     * persistent path (there is no snapshot store to write to).
+     * runs after it is dropped, never across the borrow. The write counter keeps a lease release
+     * from handing the namespace to another tab until this async operation has committed. No-op
+     * error `"not_persistent"` off the persistent path (there is no snapshot store to write to).
      */
     persistSnapshot(): Promise<void>;
     /**
@@ -185,11 +187,12 @@ export class WasmLinux {
     /**
      * Permanently relinquish this machine's snapshot-writer role. Web Locks releases are dynamic:
      * another tab may acquire the same namespace while this controller is still alive, so the
-     * construction-time read-only bit alone is not a sufficient fence for a stale controller.
-     * There is intentionally no inverse operation; a new machine must acquire the writer lock
-     * before it can save or import snapshots.
+     * construction-time read-only bit alone is not a sufficient fence for a stale controller. New
+     * writes are fenced immediately, while writes that already passed the check are allowed to
+     * finish before this method resolves. There is intentionally no inverse operation; a new
+     * machine must acquire the writer lock before it can save or import snapshots.
      */
-    relinquishSnapshotWriter(): void;
+    relinquishSnapshotWriter(): Promise<void>;
     /**
      * The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
      * against THIS boot's build identity + base binding + `current_generation`. Returns the stable
@@ -489,7 +492,7 @@ export interface InitOutput {
     readonly wasmlinux_persistStats: (a: number) => [number, number, number];
     readonly wasmlinux_pushFileUpload: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
     readonly wasmlinux_readStoredSnapshot: (a: number) => any;
-    readonly wasmlinux_relinquishSnapshotWriter: (a: number) => [number, number];
+    readonly wasmlinux_relinquishSnapshotWriter: (a: number) => any;
     readonly wasmlinux_restoreDecisionCode: (a: number, b: number, c: number, d: number) => [number, number, number, number];
     readonly wasmlinux_restoreStoredSnapshot: (a: number) => any;
     readonly wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
