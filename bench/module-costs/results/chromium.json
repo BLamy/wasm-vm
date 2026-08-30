@@ -42,12 +42,12 @@
     {
       "funcs": 128,
       "bytes": 4924,
-      "ms": 0
+      "ms": 0.09999999776482582
     },
     {
       "funcs": 256,
       "bytes": 10044,
-      "ms": 0.09999999776482582
+      "ms": 0.10000000149011612
     }
   ],
   "instantiate": [
@@ -94,7 +94,7 @@
     {
       "funcs": 256,
       "bytes": 10044,
-      "ms": 0.09999999776482582
+      "ms": 0
     }
   ],
   "cliff": [
@@ -102,24 +102,25 @@
       "target": 1000,
       "live": 1000,
       "failedAt": null,
-      "ms": 35.099999997764826,
+      "ms": 32.599999997764826,
       "usedJSHeapSize": 10000000
     },
     {
       "target": 5000,
       "live": 5000,
       "failedAt": null,
-      "ms": 184.79999999701977,
+      "ms": 161.89999999850988,
       "usedJSHeapSize": 10000000
     },
     {
       "target": 10000,
       "live": 10000,
       "failedAt": null,
-      "ms": 363.80000000074506,
+      "ms": 317.1000000014901,
       "usedJSHeapSize": 10000000
     }
   ],
-  "generatedAt": "2026-08-30T02:55:35.024Z",
-  "project": "chromium"
+  "generatedAt": "2026-08-30T03:10:37.520Z",
+  "project": "chromium",
+  "playwrightBrowserVersion": "151.0.7922.34"
 }

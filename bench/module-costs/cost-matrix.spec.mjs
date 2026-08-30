@@ -2,9 +2,8 @@
 // harness page, runs the full WebAssembly.compile/instantiate/instance-cliff matrix in-page, and
 // writes the result JSON to results/<project>.json. One command (`./run.sh`) runs all three engines.
 //
-// STATUS: the live capture is DEV/reaping debt — this machine (mac) OS-reaps long browser runs, so the
-// committed JSON is generated on the Linux dev box. The harness itself is committed + runnable here;
-// no numbers are fabricated (results/ ships empty until a real dev run populates it).
+// The committed JSON is a real capture from the pinned Playwright engines. An optional
+// `chromium-system` project can be selected by the config for a separately installed browser.
 
 import { test } from "@playwright/test";
 import { fileURLToPath } from "node:url";
@@ -13,7 +12,7 @@ import { writeFileSync, mkdirSync } from "node:fs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-test("wasm module cost matrix", async ({ page }, testInfo) => {
+test("wasm module cost matrix", async ({ page, browser }, testInfo) => {
   // Surface page console into the Playwright log so a dev run is legible.
   page.on("console", (m) => console.log(`[page] ${m.text()}`));
   await page.goto("/harness.html");
@@ -21,6 +20,7 @@ test("wasm module cost matrix", async ({ page }, testInfo) => {
   // The cliff test instantiates up to 10k modules; give it room.
   const result = await page.evaluate(() => window.__runCostMatrix(), null, { timeout: 300_000 });
   result.project = testInfo.project.name;
+  result.playwrightBrowserVersion = browser.version();
   const outDir = join(__dirname, "results");
   mkdirSync(outDir, { recursive: true });
   const out = join(outDir, `${testInfo.project.name}.json`);

@@ -1,7 +1,7 @@
 {
-  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
-  "hardwareConcurrency": 8,
-  "hasPerfMemory": false,
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.7922.34 Safari/537.36",
+  "hardwareConcurrency": 16,
+  "hasPerfMemory": true,
   "reps": 15,
   "compile": [
     {
@@ -42,12 +42,12 @@
     {
       "funcs": 128,
       "bytes": 4924,
-      "ms": 0
+      "ms": 0.09999999776482582
     },
     {
       "funcs": 256,
       "bytes": 10044,
-      "ms": 0
+      "ms": 0.10000000149011612
     }
   ],
   "instantiate": [
@@ -94,7 +94,7 @@
     {
       "funcs": 256,
       "bytes": 10044,
-      "ms": 0
+      "ms": 0.09999999776482582
     }
   ],
   "cliff": [
@@ -102,25 +102,25 @@
       "target": 1000,
       "live": 1000,
       "failedAt": null,
-      "ms": 213,
-      "usedJSHeapSize": null
+      "ms": 35.600000001490116,
+      "usedJSHeapSize": 1870284
     },
     {
       "target": 5000,
       "live": 5000,
       "failedAt": null,
-      "ms": 1048,
-      "usedJSHeapSize": null
+      "ms": 168.30000000074506,
+      "usedJSHeapSize": 3151996
     },
     {
       "target": 10000,
       "live": 10000,
       "failedAt": null,
-      "ms": 2015,
-      "usedJSHeapSize": null
+      "ms": 334,
+      "usedJSHeapSize": 1847492
     }
   ],
-  "generatedAt": "2026-08-30T03:10:42.951Z",
-  "project": "webkit",
-  "playwrightBrowserVersion": "26.5"
+  "generatedAt": "2026-08-30T03:09:58.364Z",
+  "project": "chromium-system",
+  "playwrightBrowserVersion": "152.0.7977.65"
 }

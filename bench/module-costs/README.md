@@ -25,6 +25,19 @@ Installs the Playwright browsers, serves this directory, and runs the matrix on 
   only; `null` elsewhere, documented per row).
 - `cost-matrix.spec.mjs` drives the page in each browser and writes the JSON.
 
+## Optional cross-version screen
+
+The committed three-engine command uses pinned Playwright browser revisions. For a second Chrome
+installation, set `E4_T19_CHROME_EXECUTABLE` and run the added `chromium-system` project:
+
+```
+E4_T19_CHROME_EXECUTABLE='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' \\
+  npx playwright test --project=chromium-system
+```
+
+This writes `results/chromium-system.json`; it is supplemental robustness evidence, not part of the
+clean-checkout three-engine matrix.
+
 ## Status (verification debt)
 
 The **harness is committed and runnable**; the **live capture is dev debt**: this development machine

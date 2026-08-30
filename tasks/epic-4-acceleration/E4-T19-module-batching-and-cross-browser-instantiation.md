@@ -110,7 +110,8 @@ the E4-T06 pause targets on the worst browser.
 
 **Verification debt (browser / dev — this mac OS-reaps long browser runs):**
 - [AC1] Cost-matrix JSON for Chrome/Firefox/Safari-substitute — local three-engine capture is now
-  committed under `bench/module-costs/results/`; the remaining debt is cross-machine robustness.
+  committed under `bench/module-costs/results/`; a separate Chrome 152 screen also exercises the
+  matrix against the pinned Chromium 151. The remaining debt is independent-machine robustness.
 - [AC2] gcc batched-vs-unbatched compile-stall factor — A/B flag wired (`set_batch_size(1)` vs `(64)`);
   the gcc bench row itself is still deferred (Level-3 baseline), so the measured factor is dev debt.
 - [AC4] local run reached 10,000 live instances in each engine without a cliff, putting the 256-module
@@ -136,3 +137,20 @@ It does not claim the remaining AC2 gcc A/B stall measurement, the cross-machine
 or the first-execution pause measurement; those remain verification debt as explicitly listed above.
 The result files are `bench/module-costs/results/{chromium,firefox,webkit}.json`, and the dependency
 lock is `bench/module-costs/package-lock.json`.
+
+### 2026-08-29 — worker evidence — cross-version Chromium robustness screen
+
+Ran the optional supplemental project with
+`E4_T19_CHROME_EXECUTABLE='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' npx playwright test --project=chromium-system`.
+It passed in `1.8s` using the separately installed Google Chrome `152.0.7977.65`, while the
+canonical `bash bench/module-costs/run.sh` immediately before it passed all three pinned projects
+in `6.9s` (Chromium `151.0.7922.34`, Firefox `153.0`, WebKit `26.5`). Both Chromium versions
+reached 1,000, 5,000, and 10,000 live 64-function instances with `failedAt: null`; the 10,000
+instance probe took `324.8 ms` on pinned Chromium and `334.0 ms` on system Chrome. The supplemental
+raw row is `bench/module-costs/results/chromium-system.json` (SHA-256
+`ad9724dfe509b821dec164f958c8b23076e33d3c0daae4e295b639955fc6a97e`).
+
+This is a bounded cross-browser-version robustness result on one machine: it finds no cliff or
+order-of-magnitude change in the chosen 64-function module shape. It does not establish the full
+independent-machine K-selection attack, gcc A/B compile-stall factor, or first-execution pause
+measurement; those remain verification debt.

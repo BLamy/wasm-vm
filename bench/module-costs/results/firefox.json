@@ -42,7 +42,7 @@
     {
       "funcs": 128,
       "bytes": 4924,
-      "ms": 1
+      "ms": 0
     },
     {
       "funcs": 256,
@@ -109,17 +109,18 @@
       "target": 5000,
       "live": 5000,
       "failedAt": null,
-      "ms": 109,
+      "ms": 102,
       "usedJSHeapSize": null
     },
     {
       "target": 10000,
       "live": 10000,
       "failedAt": null,
-      "ms": 209,
+      "ms": 182,
       "usedJSHeapSize": null
     }
   ],
-  "generatedAt": "2026-08-30T02:55:36.462Z",
-  "project": "firefox"
+  "generatedAt": "2026-08-30T03:10:38.902Z",
+  "project": "firefox",
+  "playwrightBrowserVersion": "153.0"
 }
