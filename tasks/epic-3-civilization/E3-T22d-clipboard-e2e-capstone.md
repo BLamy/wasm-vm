@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: in-progress
+status: implemented
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -27,6 +27,40 @@ fast busybox guest per the reaping constraint.
 - [x] Multi-line paste with bracketed paste on executes zero commands until Enter.
 
 ## Verification log
+- 2026-08-30 — **worker — implemented at `4e9a2f425cd617b0a80dd5a3b67261bd1ee4ba8f`.** Reworked the
+  submitted proof in response to verifier `41f885b`: the raw headed-browser harness now parses the
+  actual guest `sha256sum /root/paste.txt` line, asserts the guest-reported byte count via
+  `wc -c`, and records both values separately from the host expectation. It records raw console
+  errors, asserts that all HTTP errors are absent except an explicitly probed `GET /favicon.ico`
+  404, and the unexecuted duplicate Playwright-spec changes were reverted so the submitted diff is
+  covered by the Makefile target.
+
+  **Exact recorded acceptance run:** `make verify-E3-T22d` (23/23 deterministic OSC52+paste tests;
+  `make web-build`; headed Chromium 131.0.6778.33 against
+  `http://127.0.0.1:8123/?noAutoBoot&jit=1`). The run completed in 104.0 seconds with
+  `consoleErrors=[]`, `faviconProbe={"status":404,"url":"http://127.0.0.1:8123/favicon.ico"}`,
+  guest-reported `fileSize=1,000,000`, `highWater=1,000,000`, and parsed guest SHA
+  `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733`, exactly matching the
+  independently computed expected SHA. The same recording observed OSC52 copy/readback `hi`,
+  multiline `alpha`/`bravo`/`charlie`, and DECSET-2004 `heldUntilEnter=true` followed by
+  `executedAfterEnter=true`.
+
+  Evidence: `evidence/e3-t22d/clipboard-browser-2026-08-30.json`
+  (sha256 `df362d8b3eb55ebde17987e8a65e2a1928e6b0e8a598c6f1ffd766166445ede7`) and
+  `evidence/e3-t22d/clipboard-browser-2026-08-30.png`
+  (sha256 `b42a92d854838e3c9dbdcf295f9a7a801d1c998aa6618137dba2a959519467f5`). Supporting checks:
+  `node --check tools/verify/e3-t22d-browser-proof.mjs`, `git diff --check`, and the exact target
+  itself. This rework changes only the verification harness/evidence and removes the unexecuted
+  spec diff; the runtime implementation remains the prior `274bc49` change already under review.
+  The Cloudflare deploy was attempted earlier but remains blocked by missing
+  `CLOUDFLARE_API_TOKEN`.
+
+  **Claim:** At the exact implementation head, the fresh headed Chromium recording exercised the
+  real guest-to-host OSC52 path and host-to-guest terminal queue. Its terminal output is bound to the
+  guest's actual file-size and SHA-256 results, and the recording proves the required clipboard
+  delivery, byte-exact 1 MiB `/root/paste.txt` transfer, and bracketed-paste no-early-execute behavior.
+  Ready for a separate verifier to interrogate the evidence and changed hunks.
+
 - 2026-08-30 — **worker — resumed evidence rework after verifier `41f885b`.** I will preserve the
   acceptance implementation while closing only the identified proof gaps: parse the guest's actual
   `/root/paste.txt` size and `sha256sum` line, permit only favicon 404 filtering, and remove the

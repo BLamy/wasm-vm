@@ -1,14 +1,19 @@
 {
   "schema": "e3-t22d-browser-clipboard-v1",
   "capturedOn": "2026-08-30 America/New_York",
-  "runtimeHead": "274bc49ebeab03ac68fa84c408588b8c91384bc5",
+  "runtimeHead": "4e9a2f425cd617b0a80dd5a3b67261bd1ee4ba8f",
   "recording": {
     "url": "http://127.0.0.1:8123/?noAutoBoot&jit=1",
     "browser": "Playwright Chromium headed",
     "browserVersion": "131.0.6778.33",
     "sequence": "busybox boot → OSC 52 copy → multiline paste → 1 MiB sha256 → DECSET 2004 held/Enter",
-    "durationSeconds": 101.4,
-    "consoleErrors": []
+    "durationSeconds": 104,
+    "consoleErrors": [],
+    "allowedHttpErrors": [],
+    "faviconProbe": {
+      "status": 404,
+      "url": "http://127.0.0.1:8123/favicon.ico"
+    }
   },
   "copy": {
     "copied": "hi",
@@ -26,6 +31,7 @@
   "oneMiB": {
     "path": "/root/paste.txt",
     "payloadBytes": 1000000,
+    "fileSize": 1000000,
     "expectedSha": "630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733",
     "observedSha": "630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733",
     "highWater": 1000000
