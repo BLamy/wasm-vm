@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: implemented
+status: refuted
 depends_on: [E3-T12c]
 estimate: S
 risk: high
@@ -153,3 +153,22 @@ deterministic regression before a fresh browser recording.
 This implementation claim clears the refuted truncation behavior. It does not claim the separate
 production-sized reload, quota/crash, two-tab race, or full export/import digest acceptance until a
 fresh verifier records those paths.
+
+### 2026-08-30 — fresh verifier — VERDICT: refuted
+
+- **Prediction:** A payload-byte mutation that preserves section framing must not be accepted as a
+  resumable snapshot under AC2.
+- **Observed:** The exact-head recording clears the one-byte tail truncation (`corrupt`) and restores
+  the original (`resume`), but `validate_container` only checks section headers, lengths, and tags.
+  A same-length payload mutation can therefore pass `importStoredSnapshot` and reach
+  `RestoreDecision::Resume` without an independent content check.
+- **Finding:** AC2 remains refuted. Add an independent stored content digest or full semantic
+  validation, and record a fresh attack proving the mutated payload returns typed `corrupt` while the
+  original can still be re-imported.
+- **Evidence gaps:** The recording does not prove production-sized save→reload→restore, memory bound,
+  quota/crash, two-tab race, overlay-generation persistence, or export/import digest acceptance.
+- **Provenance gap:** The evidence records runtime head `86afb33`; the evidence commit is `3fb54c0`.
+  Re-record or explicitly bind the final evidence to the exact committed head before claiming
+  verification.
+
+This verdict returns the task to `refuted`; no verified status is claimed.
