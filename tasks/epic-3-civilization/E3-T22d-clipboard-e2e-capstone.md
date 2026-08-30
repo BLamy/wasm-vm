@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: evidence-needed
+status: in-progress
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -27,6 +27,12 @@ fast busybox guest per the reaping constraint.
 - [x] Multi-line paste with bracketed paste on executes zero commands until Enter.
 
 ## Verification log
+- 2026-08-30 — **worker — resumed evidence rework after verifier `701aee1`.** The verifier held
+  AC1–AC3 and the bounded host-hold attack, but found that generic resource-404 console text was
+  filtered based only on the separate favicon probe. I will bind browser network errors to exact
+  response URLs through CDP, require every tolerated error to be the deduplicated `/favicon.ico`
+  response, rerun the exact browser proof, and resubmit.
+
 - 2026-08-30 — **worker — implemented at `a6a5dfe799b9cc18b0bf0e0febb231deb235ad38`.** During the
   adversarial replay of the prior evidence, standalone-output matching exposed a real compatibility
   failure: the fast BusyBox `ash` guest does not consume DECSET-2004 markers, so the earlier harness
