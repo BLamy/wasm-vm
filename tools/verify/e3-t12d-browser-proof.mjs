@@ -30,6 +30,7 @@ if (!process.env.E3_T12D_WEB_BASE && port === 0) {
 const base = (process.env.E3_T12D_WEB_BASE || `http://127.0.0.1:${port}`).replace(/\/$/, "");
 const headless = process.env.E3_T12D_HEADLESS === "1";
 const runFileReload = process.env.E3_T12D_FILE_RELOAD !== "0";
+const fileReloadGuest = process.env.E3_T12D_FILE_RELOAD_GUEST || "alpine";
 const fileReloadTimeout = Number(process.env.E3_T12D_FILE_RELOAD_TIMEOUT_MS || 1_800_000);
 const allowedFaviconUrl = new URL("/favicon.ico", `${base}/`).href;
 const evidencePath = path.join(evidenceDir, "browser-storage-2026-08-30.json");
@@ -518,10 +519,11 @@ async function twoTabRace(allErrors) {
 }
 
 async function postReloadGuestFile(allErrors) {
-  const env = await openContext({ label: "post-reload-file", allErrors });
+  assert.ok(["alpine", "node-alpine"].includes(fileReloadGuest), `unsupported file-reload guest: ${fileReloadGuest}`);
+  const env = await openContext({ label: `post-reload-file-${fileReloadGuest}`, allErrors });
   try {
-    await loadShell(env.page, "guest=node-alpine&noAutoBoot=1&persist=1");
-    await bootFlavor(env.page, "node-alpine");
+    await loadShell(env.page, `guest=${fileReloadGuest}&noAutoBoot=1&persist=1`);
+    await bootFlavor(env.page, fileReloadGuest);
     await pause(env.page);
     assert.equal(await saveSnapshot(env.page), true);
     assert.equal(await env.page.evaluate(() => window.__snapshotDecision()), "resume");
@@ -538,14 +540,14 @@ async function postReloadGuestFile(allErrors) {
     await env.page.reload({ waitUntil: "domcontentloaded", timeout: 120_000 });
     await env.page.waitForFunction(() => window.__ready === true && !!window.wvmDemo, null, { timeout: 120_000 });
     const started = Date.now();
-    await bootFlavor(env.page, "node-alpine", { waitReady: false });
+    await bootFlavor(env.page, fileReloadGuest, { waitReady: false });
     await env.page.waitForFunction(() => window.wvmDemo?.isGuestReady?.(), null, { timeout: fileReloadTimeout });
     const coldBootMs = Date.now() - started;
     const decision = await env.page.evaluate(() => window.__snapshotDecision());
     const read = await env.page.evaluate(() => window.wvmDemo.run("cat /root/t12d-reload-file", 120_000));
     assert.equal(read.exit, 0);
     assert.match(read.stdout, /T12D_RELOAD_FILE/);
-    return { generation, coldBootMs, decision, read };
+    return { guest: fileReloadGuest, generation, coldBootMs, decision, read };
   } finally {
     await closeContext(env);
   }
