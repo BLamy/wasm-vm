@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: in-progress
+status: implemented
 depends_on: [E3-T12c]
 estimate: S
 risk: high
@@ -180,3 +180,25 @@ reassembly, and preserves the expected digest in a corrupt marker so the bad imp
 `corrupt` while a subsequent import of the original snapshot can recover to `resume`. The browser
 recording will be rerun after the final evidence commit with both truncation and same-length payload
 mutation attacks.
+
+### 2026-08-30 — worker — payload-integrity rework — implemented
+
+- Runtime commit: `6d2b1244352e8963a2877f671d10eaf8c561968e`.
+- Evidence: `evidence/epic-3-t12d/node-alpine-snapshot-integrity-2026-08-30.json` (SHA-256
+  `a7e26fe8361e18f64538f0d6c48bf38f885eac5d84dd136e6bce58bb4468e866`; the recording's
+  runtime head is the commit above; this follow-on commit contains only evidence/task metadata and
+  the regenerated queue).
+- Exact production-sized browser recording: a restored `node-alpine` whole-machine worker persisted
+  a 138,252,418-byte snapshot; truncation and a same-length final-payload-byte mutation both produced
+  typed `corrupt`; re-importing the original produced `resume`; export/import SHA-256 was identical;
+  reload produced `resume`; advancing overlay generation produced `stale`; the live guest computed
+  `T12D_LIVE_42` with exit 0; console errors were empty. Screenshot:
+  `/private/tmp/e3-t12d-browser-verification-2026-08-30-digest.png`.
+- Gates: `make verify-E3-T12d`; `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`;
+  `wasm-pack test --node crates/wasm --test resume`; and `make web-dist` — all passed. The repository
+  Playwright spec now carries the same truncation, payload-mutation, round-trip digest, reload, and
+  stale-generation assertions; the direct run used the local Node/Playwright harness because the
+  normal runner's large-artifact path is not available on this checkout.
+- This clears the fresh verifier's payload-integrity refutation. Production-sized reload memory-bound
+  instrumentation, quota/crash interruption, two-tab race, and persisted overlay-generation evidence
+  remain separate verification debt; this worker entry does not claim them verified.

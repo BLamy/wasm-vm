@@ -1,0 +1,56 @@
+{
+  "schema": "e3-t12d-local-node-browser-v3",
+  "capturedOn": "2026-08-30 America/New_York",
+  "runtimeHead": "6d2b1244352e8963a2877f671d10eaf8c561968e",
+  "recording": {
+    "server": "bash tools/serve-dev.sh 8133",
+    "browser": "Playwright Chromium headless 131.0.6778.33",
+    "url": "http://127.0.0.1:8133/?guest=node-alpine&profile=1&jit=0&nosw",
+    "guest": "node-alpine",
+    "restored": true,
+    "backend": "whole-machine-worker",
+    "snapshotSizeBytes": 138252418,
+    "productionSized": true
+  },
+  "snapshot": {
+    "before": "missing",
+    "saveReturned": true,
+    "decisionAfterSave": "resume",
+    "sha256": "b794d33e4d90f0ccd8009f78f3e1b26f49924747aacde6a17fcbce3205de9f4a"
+  },
+  "invalidImportAttacks": {
+    "truncation": {
+      "bytes": 138252417,
+      "decision": "corrupt",
+      "originalReimportDecision": "resume"
+    },
+    "sameLengthPayloadMutation": {
+      "mutation": "flip the final payload byte while preserving all section framing",
+      "decision": "corrupt",
+      "originalReimportDecision": "resume"
+    }
+  },
+  "exportImport": {
+    "originalSha256": "b794d33e4d90f0ccd8009f78f3e1b26f49924747aacde6a17fcbce3205de9f4a",
+    "roundTripSha256": "b794d33e4d90f0ccd8009f78f3e1b26f49924747aacde6a17fcbce3205de9f4a",
+    "identical": true
+  },
+  "reloadAndCoherence": {
+    "decisionAfterReload": "resume",
+    "decisionAfterOverlayGenerationAdvance": "stale"
+  },
+  "liveGuestControl": {
+    "command": "echo T12D_LIVE_$((6*7))",
+    "stdout": "T12D_LIVE_42\n\n",
+    "exit": 0
+  },
+  "consoleErrors": [],
+  "pageScreenshot": "/private/tmp/e3-t12d-browser-verification-2026-08-30-digest.png",
+  "provenance": "The browser run executed against runtimeHead before this evidence-only metadata commit; no runtime source changes follow runtimeHead in this recording.",
+  "supportingGates": [
+    "make verify-E3-T12d",
+    "cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown",
+    "wasm-pack test --node crates/wasm --test resume",
+    "make web-dist"
+  ]
+}
