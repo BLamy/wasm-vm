@@ -31,6 +31,8 @@ and self-hosting.
   `tasks/QUEUE.md` as the global priority queue.
 - **`docs/embedding-guide.md`** — use `VizPlayer`, `VideoEmbed`, and Docstream's
   built-in `ReplayPreview` for explainers, videos, and public Loop QA replays.
+- **`web/agent-packages.html`** — published `@agent-wasm/*` package map, the guest/host
+  wasm-vm boundary, and hosted VizEngine explainers with fallback text.
 - **`docs/product/proofmesh-whitepaper.md`** — product proposal for passkey-owned encrypted
   volumes, verified block delivery, and the builder/critic work market.
 - **`docs/product/proofmesh-api.md`** — future-facing API contract; implementation should target

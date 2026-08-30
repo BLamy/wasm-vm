@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>wasm-vm — Agent WASM packages</title>
+  <meta name="description" content="A factual map of the published agent-wasm packages, the wasm-vm guest/host boundary, and live VizEngine explainers." />
+  <link rel="stylesheet" href="./marketing.css" />
+</head>
+<body>
+  <header class="site-header"><div class="wrap nav">
+    <a class="brand" href="./landing.html"><span class="dot"></span><code>wasm-vm</code></a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="./products.html">Products</a><a href="./work-market.html">Work market</a><a href="./security.html">Security</a><a href="./roadmap.html">Roadmap</a><a href="./docs.html">Docs</a><a href="./agent-packages.html" aria-current="page">Packages</a><a class="nav-cta" href="./index.html">Launch demo →</a>
+    </nav>
+  </div></header>
+
+  <main>
+    <section class="hero"><div class="wrap">
+      <span class="eyebrow">Agent WASM · npm + hosted explainers</span>
+      <h1>Ship the agent layer without confusing it with the <span class="accent">guest.</span></h1>
+      <p class="lede"><strong><code>@agent-wasm/*</code></strong> is the published browser-native Node/agent package line. <strong>wasm-vm</strong> is this repository's RISC-V Linux machine. They can sit in one product, but they are different artifacts, targets, and release streams.</p>
+      <div class="actions"><a class="button" href="https://www.npmjs.com/package/@agent-wasm/core" target="_blank" rel="noopener">Open the npm package →</a><a class="button secondary" href="./docs.html#media">Read the embed guide</a></div>
+    </div></section>
+
+    <section class="section" id="published"><div class="wrap">
+      <span class="kicker">Published browser packages</span>
+      <h2>Start with the runtime, workspace, or UI.</h2>
+      <p class="intro">This is a registry snapshot queried on <code>2026-08-30</code>. These packages are published from the separate <a href="https://github.com/BLamy/agent-wasm" target="_blank" rel="noopener">BLamy/agent-wasm</a> repository, not from this wasm-vm checkout.</p>
+
+      <div class="grid">
+        <article class="card">
+          <span class="status live">Published · 0.4.0</span>
+          <h3><code>@agent-wasm/core</code></h3>
+          <p>Node.js in the browser: a virtual filesystem, runtime/sandbox workers, package manager, dev-server bridges, Electron shims, and container/network helpers.</p>
+          <ul><li>Install: <code>npm install @agent-wasm/core@0.4.0</code></li><li>Root import plus <code>/internal</code>, <code>/vite</code>, and <code>/next</code> exports.</li></ul>
+          <a class="link" href="https://www.npmjs.com/package/@agent-wasm/core" target="_blank" rel="noopener">npm package ↗</a>
+        </article>
+        <article class="card">
+          <span class="status live">Published · 0.1.0</span>
+          <h3><code>@agent-wasm/sdk</code></h3>
+          <p>Workspace and agent-lifecycle APIs over <code>@agent-wasm/core</code>: snapshots, agent sessions, adapters, workspace templates, and plugins.</p>
+          <ul><li>Install with the core runtime.</li><li>Root import plus <code>/auth</code> and <code>/plugins</code> exports.</li></ul>
+          <a class="link" href="https://www.npmjs.com/package/@agent-wasm/sdk" target="_blank" rel="noopener">npm package ↗</a>
+        </article>
+        <article class="card">
+          <span class="status live">Published · 0.1.0</span>
+          <h3><code>@agent-wasm/react</code></h3>
+          <p>React workbench, chat, and UI components for agent-wasm workspaces. It composes with the SDK and the framework-free chat domain package.</p>
+          <ul><li>Install: <code>npm install @agent-wasm/react@0.1.0</code> with the SDK, chat-core, React, and React DOM for the full workbench.</li><li>Import from the root, <code>/workbench</code>, <code>/chat</code>, or <code>/ui</code>.</li></ul>
+          <a class="link" href="https://www.npmjs.com/package/@agent-wasm/react" target="_blank" rel="noopener">npm package ↗</a>
+        </article>
+      </div>
+      <p class="provenance">The npm metadata identifies the listed agent packages as MIT-licensed, except <code>@agent-wasm/tailscale-connect</code>, which is BSD-3-Clause. Re-check the package metadata before redistributing a dependency bundle.</p>
+
+      <div class="panel table-wrap">
+        <table class="data-table">
+          <caption>Other published packages in the namespace</caption>
+          <thead><tr><th scope="col">Package</th><th scope="col">Version</th><th scope="col">What it contains</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/chat-core" target="_blank" rel="noopener"><code>@agent-wasm/chat-core</code></a></td><td><code>0.1.0</code></td><td>Framework-free chat domain types and session registry.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/code" target="_blank" rel="noopener"><code>@agent-wasm/code</code></a></td><td><code>0.1.0</code></td><td>Claude Code transcript parsing and browser IDE bridge helpers.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/vscode" target="_blank" rel="noopener"><code>@agent-wasm/vscode</code></a></td><td><code>0.1.0</code></td><td>VS Code-shaped shell and React integration APIs.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/keychain" target="_blank" rel="noopener"><code>@agent-wasm/keychain</code></a></td><td><code>0.1.0</code></td><td>Browser credential vault, OAuth orchestration, and session persistence.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/codex" target="_blank" rel="noopener"><code>@agent-wasm/codex</code></a></td><td><code>0.1.0</code></td><td>Browser-hosted Codex sessions and WASM worker bridges.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@agent-wasm/tailscale-connect" target="_blank" rel="noopener"><code>@agent-wasm/tailscale-connect</code></a></td><td><code>1.39.98-t02582083d</code></td><td>Tailscale Connect browser SDK fork; npm metadata identifies it as BSD-3-Clause.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div></section>
+
+    <section class="section" id="install"><div class="wrap">
+      <span class="kicker">Install · import · pin</span>
+      <h2>A minimal browser-native agent.</h2>
+      <p class="intro">Use a package manager and bundler for the published agent packages. Pin exact versions in the consuming lockfile; the package pages and repository links below are the provenance trail.</p>
+      <div class="grid two">
+        <div class="panel"><pre>npm install @agent-wasm/core@0.4.0
+
+import { createContainer } from "@agent-wasm/core";
+
+const container = createContainer();
+container.vfs.writeFileSync(
+  "/index.js",
+  "console.log('hello from the browser')",
+);
+await container.run("node index.js");</pre></div>
+        <div class="panel"><pre>npm install @agent-wasm/core@0.4.0 @agent-wasm/sdk@0.1.0
+
+import { createWorkspace } from "@agent-wasm/sdk";
+
+const workspace = createWorkspace();
+workspace.vfs.writeFileSync("/index.html", "&lt;h1&gt;hi&lt;/h1&gt;");
+await workspace.snapshots.save();</pre></div>
+      </div>
+      <p class="provenance"><strong>Release URL:</strong> the verified <a href="https://registry.npmjs.org/@agent-wasm/core/-/core-0.4.0.tgz" target="_blank" rel="noopener"><code>@agent-wasm/core@0.4.0</code> registry tarball</a> is the package artifact. The registry metadata exposes bundler entry points and subpath exports; no direct browser CDN URL is claimed here, so do not turn a guessed CDN URL into a script tag.</p>
+    </div></section>
+
+    <section class="section" id="boundary"><div class="wrap">
+      <span class="kicker">Keep the boundaries honest</span>
+      <h2>Guest agent ≠ host package.</h2>
+      <p class="intro">The agent packages above run on the host side of a browser application. The file-transfer agent below runs inside the RISC-V Linux guest. The wasm-vm host module is a third artifact again.</p>
+      <div class="grid two">
+        <article class="card">
+          <span class="status live">Guest · Cargo · not npm</span>
+          <h3><code>wasm-vm-file-agent</code></h3>
+          <p>The guest-side WVFT v1 service from <code>crates/file-agent</code>. Current Cargo metadata reports version <code>0.0.0</code>; <code>tools/build-file-agent.sh</code> targets <code>riscv64gc-unknown-linux-musl</code> and the rootfs build installs it as <code>/usr/libexec/wasm-vm/wvft-agent</code>.</p>
+          <ul><li>Service endpoint: <code>10.0.2.2:10021</code></li><li>Guest roots: <code>/var/lib/wasm-vm/transfer/inbox</code> and <code>outbox</code></li><li>Helper: <code>/usr/bin/vm-download</code></li></ul>
+          <p class="fallback">There is no published npm package for this guest binary. It is delivered in the guest rootfs, not imported by the host UI.</p>
+        </article>
+        <article class="card">
+          <span class="status live">Host · vendored wasm · not npm</span>
+          <h3><code>wasm-vm-wasm</code></h3>
+          <p>The wasm-bindgen boundary from <code>crates/wasm</code>, version <code>0.0.1</code>. The demo imports <code>WasmMachine</code> and <code>WasmLinux</code> from the locally built module; a registry lookup does not find an npm release.</p>
+          <div class="panel"><pre>import init, { WasmMachine } from "./pkg/wasm_vm_wasm.js";
+
+await init();
+const machine = new WasmMachine(64);
+machine.loadElf(elfBytes);
+const result = machine.run(100_000);</pre></div>
+          <p class="fallback">This import assumes your site has vendored <code>pkg/wasm_vm_wasm.js</code> and its sibling <code>wasm_vm_wasm_bg.wasm</code>, as described in the <a href="./docs.html#host">current embedding guide</a>.</p>
+        </article>
+      </div>
+      <div class="callout"><strong>Roadmap, not a release:</strong> <code>@wasm-vm/sdk</code> appears in the planned <a href="https://github.com/BLamy/wasm-vm/blob/main/tasks/epic-6-transcendence/E6-T19-embedding-sdk-npm-package.md" target="_blank" rel="noopener">E6-T19 package</a> and <a href="https://github.com/BLamy/wasm-vm/blob/main/tasks/epic-6-transcendence/E6-T27-docs-site-release-pipeline.md" target="_blank" rel="noopener">E6-T27 docs</a> work, but no npm package or install URL exists today. Treat snippets that name it as a proposal, not as a current dependency.</div>
+    </div></section>
+
+    <section class="section" id="explainers"><div class="wrap">
+      <span class="kicker">VizEngine · hosted output</span>
+      <h2>Let the docs explain themselves.</h2>
+      <p class="intro">These cards embed the hosted Orly player, which uses the published <code>@brett_lamy/viz-engine</code> / Docstream stack. The fallback copy stays visible and links directly to the same explainer if an iframe, network, or player package is unavailable.</p>
+
+      <div class="grid two">
+        <article class="card explainer">
+          <span class="status live">Hosted explainer</span>
+          <h3>Linux in a Tab</h3>
+          <p>How wasm-vm streams a disk, joins a tailnet, and freezes a machine.</p>
+          <div class="explainer-frame">
+            <iframe src="https://orly.brett-lamy.workers.dev/?bundle=wasm-vm-internals" title="Linux in a Tab — wasm-vm internals explainer" loading="lazy" allow="autoplay" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+          <p class="fallback"><strong>Accessible fallback:</strong> five chapters cover touched blocks, the browser node, freezing and restoring, replay as a stream, and a readable cluster. <a href="https://orly.brett-lamy.workers.dev/?bundle=wasm-vm-internals" target="_blank" rel="noopener">Open Linux in a Tab directly ↗</a></p>
+        </article>
+        <article class="card explainer">
+          <span class="status live">Hosted explainer</span>
+          <h3>The wasm-vm Proof Loop</h3>
+          <p>Why a worker's claim becomes trustworthy only after a critic can replay and attack the evidence.</p>
+          <div class="explainer-frame">
+            <iframe src="https://orly.brett-lamy.workers.dev/?bundle=wasm-vm-loop" title="The wasm-vm Proof Loop — replay and verification explainer" loading="lazy" allow="autoplay" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+          <p class="fallback"><strong>Accessible fallback:</strong> five chapters follow the claim, recorded run, critic attack, refutation/rework loop, and why replayable evidence beats a review summary. <a href="https://orly.brett-lamy.workers.dev/?bundle=wasm-vm-loop" target="_blank" rel="noopener">Open The wasm-vm Proof Loop directly ↗</a></p>
+        </article>
+      </div>
+
+      <h3>Use the same URL in a Docstream document</h3>
+      <p>For a React docs surface, the portable GitBook-style embed remains the integration point:</p>
+      <div class="panel"><pre>npm install @brett_lamy/viz-engine@0.2.1 @brett_lamy/docstream@0.3.7
+
+import { GitbookStreamdown } from "@brett_lamy/docstream";
+
+const markdown = `{% embed url="https://orly.brett-lamy.workers.dev/?bundle=wasm-vm-loop" /%}`;
+&lt;GitbookStreamdown markdown={markdown} /&gt;</pre></div>
+
+      <p class="provenance"><strong>Source and media note:</strong> the bundle names, titles, and hosted URLs come from <a href="https://github.com/BLamy/orly/tree/7a00a5dce8a2d8b5d55a36ab6324ff03e6b5cbf8/public/generated" target="_blank" rel="noopener">BLamy/orly at commit <code>7a00a5d</code></a>; the repository is <a href="https://github.com/BLamy/orly/blob/7a00a5dce8a2d8b5d55a36ab6324ff03e6b5cbf8/LICENSE" target="_blank" rel="noopener">MIT-licensed</a>. Its README/manifests describe generated MP3 narration, but the inspected metadata does not declare a per-file audio license or attribution. This sidecar therefore copies no MP3 and adds no standalone audio element; any narration remains inside the hosted player and its own controls.</p>
+    </div></section>
+  </main>
+
+  <footer><div class="wrap footer-inner"><span><strong>wasm-vm</strong> · published host packages, explicit guest boundary</span><nav class="footer-links"><a href="./landing.html">Home</a><a href="./products.html">Products</a><a href="./docs.html">Docs</a><a href="./agent-packages.html" aria-current="page">Packages</a><a href="https://github.com/BLamy/wasm-vm" target="_blank" rel="noopener">GitHub</a></nav></div></footer>
+</body>
+</html>
