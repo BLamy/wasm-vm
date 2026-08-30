@@ -1,0 +1,100 @@
+{
+  "schema": "e3.6-t05-local-browser-http-v1",
+  "capturedOn": "2026-08-29 America/New_York",
+  "gitHead": "df1e2565e854c0a7d8fe03b46b2f80d5248c549f",
+  "server": "bash tools/serve-dev.sh 8132",
+  "browser": {
+    "engine": "Google Chrome",
+    "version": "152.0.7977.65",
+    "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "headless": true
+  },
+  "guest": {
+    "kind": "node-alpine",
+    "nodeVersion": "v20.15.1",
+    "urlQuery": "?guest=node-alpine&profile=1&jit={0|1}",
+    "readyMeans": "restoredFromBootSnapshot() && isGuestReady()",
+    "command": "node -e 'const http=require(\"http\");const s=http.createServer((q,r)=>r.end(\"E36_HTTP_RESPONSE_5\"));s.on(\"error\",e=>{console.error(\"E36_HTTP_SERVER_ERROR_\"+e.message);process.exit(2)});s.listen(8128,\"127.0.0.1\",()=>{const q=http.get(\"http://127.0.0.1:8128\",r=>{let b=\"\";r.on(\"data\",d=>b+=d);r.on(\"end\",()=>{console.log(b);s.close(()=>process.exit(0));});});q.on(\"error\",e=>{console.error(\"E36_HTTP_CLIENT_ERROR_\"+e.message);process.exit(3)});q.setTimeout(10000,()=>{console.error(\"E36_HTTP_CLIENT_TIMEOUT\");process.exit(4)});});'",
+    "transport": "guest loopback 127.0.0.1:8128",
+    "expectedMarker": "E36_HTTP_RESPONSE_5",
+    "arms": [
+      {
+        "jit": false,
+        "restored": true,
+        "readyMs": 2129.63,
+        "commandElapsedMs": 35281.519,
+        "exit": 0,
+        "markerObserved": 1,
+        "stdoutMarker": "E36_HTTP_RESPONSE_5",
+        "errorMarkersObserved": [],
+        "jitStats": {
+          "hasExecutor": false,
+          "compiledBlocks": 0,
+          "executedBlocks": 0,
+          "retiredViaJit": 0
+        },
+        "scheduler": {
+          "quantum": 500000,
+          "slices": 685,
+          "totalSliceMs": 29357.315,
+          "maxSliceMs": 611.37,
+          "maxStretchGapMs": 1038.47,
+          "requestedInstructions": 342500000,
+          "retiredInstructions": 341285891,
+          "fetchWaits": 18,
+          "fetchRequestedChunks": 23,
+          "fetchWaitTotalMs": 6026.38,
+          "fetchWaitMaxMs": 620.1,
+          "yieldMode": "scheduler.postTask"
+        },
+        "fetch": {
+          "fetches": 23,
+          "bytes": 3014656,
+          "error": null,
+          "evictions": 0
+        }
+      },
+      {
+        "jit": true,
+        "restored": true,
+        "readyMs": 2284.095,
+        "commandElapsedMs": 36119.089,
+        "exit": 0,
+        "markerObserved": 1,
+        "stdoutMarker": "E36_HTTP_RESPONSE_5",
+        "errorMarkersObserved": [],
+        "jitStats": {
+          "hasExecutor": true,
+          "compiledBlocks": 0,
+          "executedBlocks": 5096139,
+          "retiredViaJit": 26021568
+        },
+        "scheduler": {
+          "quantum": 500000,
+          "slices": 685,
+          "totalSliceMs": 30960.84,
+          "maxSliceMs": 551.24,
+          "maxStretchGapMs": 954.92,
+          "requestedInstructions": 342500000,
+          "retiredInstructions": 341285891,
+          "fetchWaits": 18,
+          "fetchRequestedChunks": 23,
+          "fetchWaitTotalMs": 5268.825,
+          "fetchWaitMaxMs": 507.51,
+          "yieldMode": "scheduler.postTask"
+        },
+        "fetch": {
+          "fetches": 23,
+          "bytes": 3014656,
+          "error": null,
+          "evictions": 0
+        }
+      }
+    ]
+  },
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "consoleErrorDisposition": "The development-server log identifies this single error as /favicon.ico, allowed by the browser gate; no pageerror or other browser error was observed.",
+  "interpretation": "Both restored real Node runs started an in-guest HTTP server, made an in-guest loopback request, received the server-computed response body, and exited 0. This closes the E3.6-T05 acceptance alternative for a scripted Node workload that runs to completion and records wall time, while also strengthening the HTTP-server branch. The timings include guest emulation and lazy-fetch work; JIT is active in the second arm but is 2.375% slower here, so this is not evidence of a JIT speedup. It does not by itself close the independent cold-cache/deployed-site restore proof or the separate verifier pass."
+}
