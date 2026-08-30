@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: verification-debt
+status: in-progress
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -27,6 +27,12 @@ fast busybox guest per the reaping constraint.
 - [ ] Multi-line paste with bracketed paste on executes zero commands until Enter.
 
 ## Verification log
+- 2026-08-30 — **worker — started fresh browser proof.** E3-T22a and E3-T22b are verified, so this
+  high-risk capstone is eligible independently of the blocked image-defaults slice. I will exercise
+  the real terminal bridge for OSC 52 copy, byte-exact 1 MiB paste, and bracketed-paste command
+  suppression, then run the bounded hostile-payload/read-gate/permission-denial attacks before a
+  fresh verifier reviews the exact recording.
+
 - 2026-08-03 — **paste E2E GREEN in a real browser; copy + 1 MB skipped as documented environment
   debt.** `web/tests/e3-t22-clipboard.spec.js` drives a live in-page busybox boot and injects through
   the real terminal bridge (`window.__term`).
