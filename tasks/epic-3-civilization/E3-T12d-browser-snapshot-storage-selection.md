@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: refuted
+status: in-progress
 depends_on: [E3-T12c]
 estimate: S
 risk: high
@@ -172,3 +172,11 @@ fresh verifier records those paths.
   verification.
 
 This verdict returns the task to `refuted`; no verified status is claimed.
+
+### 2026-08-30 — worker — payload-integrity rework started
+
+The second rework slice adds a content digest to the durable snapshot metadata, verifies it on
+reassembly, and preserves the expected digest in a corrupt marker so the bad import is reported as
+`corrupt` while a subsequent import of the original snapshot can recover to `resume`. The browser
+recording will be rerun after the final evidence commit with both truncation and same-length payload
+mutation attacks.
