@@ -620,7 +620,50 @@ async function twoTabRace(allErrors) {
       decision: await window.__snapshotDecision(),
     }));
     assert.equal(firstState.readOnly, false);
-    await env.page.evaluate(() => window.__linuxCtl.releaseWriterLock());
+    const inFlightSave = await env.page.evaluate(async () => {
+      let firstChunkAt = null;
+      let metaCommitted = false;
+      let releaseStartedAt = null;
+      let releaseSettledAt = null;
+      let releaseSettledBeforeMeta = null;
+      let releasePromise = null;
+      window.__e3t12dSnapshotProbe = (phase) => {
+        if (phase === "meta-committed") metaCommitted = true;
+        if (phase === "chunk-before-put" && !releasePromise) {
+          firstChunkAt = performance.now();
+          releaseStartedAt = performance.now();
+          releasePromise = Promise.resolve(window.__linuxCtl.releaseWriterLock());
+          releasePromise.then(() => {
+            releaseSettledAt = performance.now();
+            releaseSettledBeforeMeta = !metaCommitted;
+          });
+        }
+      };
+      let saveError = null;
+      try {
+        await window.__snapshotSave();
+      } catch (error) {
+        saveError = String(error?.message || error);
+      }
+      if (!releasePromise) throw new Error("in-flight snapshot save never reached a chunk");
+      await releasePromise;
+      window.__e3t12dSnapshotProbe = null;
+      return {
+        firstChunkAt,
+        metaCommitted,
+        releaseStartedAt,
+        releaseSettledAt,
+        releaseSettledBeforeMeta,
+        saveError,
+      };
+    });
+    assert.equal(inFlightSave.saveError, null);
+    assert.equal(inFlightSave.metaCommitted, true);
+    assert.equal(
+      inFlightSave.releaseSettledBeforeMeta,
+      false,
+      "writer lock release completed before the in-flight snapshot commit marker",
+    );
     assert.equal(await env.page.evaluate(() => window.__linuxCtl.readOnly()), true);
     const takeover = await env.context.newPage();
     await diagnostics(env.context, takeover, "two-tab-takeover", allErrors);
@@ -649,6 +692,7 @@ async function twoTabRace(allErrors) {
       contender: writerState,
       overlayPreserved: true,
       takeoverWriter: true,
+      inFlightSave,
       staleWriter: {
         readOnly: true,
         snapshotImportError: staleWriterError,

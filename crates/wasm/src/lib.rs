@@ -915,6 +915,45 @@ struct LinuxInner {
     /// E3-T12d: the persistent tab's Web Lock ownership. Read-only contenders may inspect the
     /// snapshot store, but must never save or import into the writer's namespace.
     snapshot_read_only: bool,
+    /// E3-T12d: storage writes that passed the ownership check and are still awaiting IndexedDB.
+    /// Lease relinquishment fences new operations, then waits for this counter before releasing
+    /// the Web Lock so an already-started save cannot outlive its writer.
+    snapshot_write_count: std::rc::Rc<std::cell::Cell<u32>>,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+fn finish_snapshot_write(count: &std::rc::Rc<std::cell::Cell<u32>>) {
+    count.set(count.get().saturating_sub(1));
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+async fn wait_for_snapshot_writes(count: std::rc::Rc<std::cell::Cell<u32>>) {
+    use wasm_bindgen::JsCast;
+    use wasm_bindgen_futures::JsFuture;
+
+    while count.get() != 0 {
+        // A timer yield lets the IndexedDB task that owns the in-flight transaction run. A
+        // Promise.resolve loop would remain in the microtask queue and could starve that event.
+        let promise = js_sys::Promise::new(&mut |resolve, _reject| {
+            let global = js_sys::global();
+            let callback = resolve.unchecked_ref::<js_sys::Function>();
+            let scheduled = if let Some(window) = global.dyn_ref::<web_sys::Window>() {
+                window
+                    .set_timeout_with_callback_and_timeout_and_arguments_0(callback, 0)
+                    .is_ok()
+            } else if let Some(scope) = global.dyn_ref::<web_sys::WorkerGlobalScope>() {
+                scope
+                    .set_timeout_with_callback_and_timeout_and_arguments_0(callback, 0)
+                    .is_ok()
+            } else {
+                false
+            };
+            if !scheduled {
+                let _ = resolve.call0(&JsValue::UNDEFINED);
+            }
+        });
+        let _ = JsFuture::from(promise).await;
+    }
 }
 
 /// Which block device (if any) backs the boot: none (initramfs), an in-memory image, or a lazily
@@ -1354,6 +1393,7 @@ impl WasmLinux {
                 file_transfers,
                 snapshot_base,
                 snapshot_read_only,
+                snapshot_write_count: std::rc::Rc::new(std::cell::Cell::new(0)),
             }),
         })
     }
@@ -1888,11 +1928,12 @@ impl WasmLinux {
 
     /// Convenience: take a resume snapshot AND durably persist it to the snapshot IndexedDB store in one
     /// call. The `RefCell` borrow is scoped to `save_resume` + reading `snapshot_base`; the store I/O
-    /// runs after it is dropped, never across the borrow. No-op error `"not_persistent"` off the
-    /// persistent path (there is no snapshot store to write to).
+    /// runs after it is dropped, never across the borrow. The write counter keeps a lease release
+    /// from handing the namespace to another tab until this async operation has committed. No-op
+    /// error `"not_persistent"` off the persistent path (there is no snapshot store to write to).
     #[wasm_bindgen(js_name = persistSnapshot)]
     pub async fn persist_snapshot(&self) -> Result<(), JsError> {
-        let (blob, base) = {
+        let (blob, base, write_count) = {
             let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
             let Some(base) = inner.snapshot_base else {
                 return Err(JsError::new("not_persistent"));
@@ -1906,27 +1947,39 @@ impl WasmLinux {
                 }
                 other => JsError::new(&format!("save_error: {other:?}")),
             })?;
-            (blob, base)
+            let write_count = inner.snapshot_write_count.clone();
+            write_count.set(write_count.get().saturating_add(1));
+            (blob, base, write_count)
         };
-        let store = snapshot_store::SnapshotStore::open(&base)
-            .await
-            .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
-        store
-            .save(&blob, &base)
-            .await
-            .map_err(|e| JsError::new(&format!("snapshot save: {e:?}")))?;
-        Ok(())
+        let result = async {
+            let store = snapshot_store::SnapshotStore::open(&base)
+                .await
+                .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+            store
+                .save(&blob, &base)
+                .await
+                .map_err(|e| JsError::new(&format!("snapshot save: {e:?}")))?;
+            Ok(())
+        }
+        .await;
+        finish_snapshot_write(&write_count);
+        result
     }
 
     /// Permanently relinquish this machine's snapshot-writer role. Web Locks releases are dynamic:
     /// another tab may acquire the same namespace while this controller is still alive, so the
-    /// construction-time read-only bit alone is not a sufficient fence for a stale controller.
-    /// There is intentionally no inverse operation; a new machine must acquire the writer lock
-    /// before it can save or import snapshots.
+    /// construction-time read-only bit alone is not a sufficient fence for a stale controller. New
+    /// writes are fenced immediately, while writes that already passed the check are allowed to
+    /// finish before this method resolves. There is intentionally no inverse operation; a new
+    /// machine must acquire the writer lock before it can save or import snapshots.
     #[wasm_bindgen(js_name = relinquishSnapshotWriter)]
-    pub fn relinquish_snapshot_writer(&self) -> Result<(), JsError> {
-        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        inner.snapshot_read_only = true;
+    pub async fn relinquish_snapshot_writer(&self) -> Result<(), JsError> {
+        let write_count = {
+            let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+            inner.snapshot_read_only = true;
+            inner.snapshot_write_count.clone()
+        };
+        wait_for_snapshot_writes(write_count).await;
         Ok(())
     }
 
@@ -2009,58 +2062,67 @@ impl WasmLinux {
     /// the coherence guard on restore. Framing-corrupt input is replaced by a corrupt marker, and a
     /// same-size payload mutation is checked against the digest of the previously published snapshot;
     /// both paths make the next decision typed `"corrupt"` rather than falsely `"resume"`. The live
-    /// machine and overlay are not mutated. Error `"not_persistent"` off the persistent path.
+    /// machine and overlay are not mutated. The write counter keeps lease release behind this full
+    /// namespace mutation. Error `"not_persistent"` off the persistent path.
     #[wasm_bindgen(js_name = importStoredSnapshot)]
     pub async fn import_stored_snapshot(&self, blob: Vec<u8>) -> Result<(), JsError> {
-        let (base, current_generation) = {
+        let (base, current_generation, write_count) = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
             if inner.snapshot_read_only {
                 return Err(JsError::new("read_only"));
             }
-            match inner.snapshot_base {
-                Some(base) => (base, inner.machine.overlay_generation()),
+            let base = match inner.snapshot_base {
+                Some(base) => base,
                 None => return Err(JsError::new("not_persistent")),
-            }
+            };
+            let write_count = inner.snapshot_write_count.clone();
+            write_count.set(write_count.get().saturating_add(1));
+            (base, inner.machine.overlay_generation(), write_count)
         };
-        let store = snapshot_store::SnapshotStore::open(&base)
-            .await
-            .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
-        let previous = store
-            .read_meta()
-            .await
-            .map_err(|e| JsError::new(&format!("snapshot metadata: {e:?}")))?
-            .and_then(|bytes| wasm_vm_storage::SnapshotMeta::from_bytes(&bytes).ok())
-            .filter(|meta| meta.base_binding == base && meta.total_len > 0);
-        if resume::validate_container(&blob).is_err() {
-            store
-                .mark_corrupt(&base)
+        let result = async {
+            let store = snapshot_store::SnapshotStore::open(&base)
                 .await
-                .map_err(|e| JsError::new(&format!("snapshot corrupt marker: {e:?}")))?;
-            return Ok(());
-        }
-        let imported_digest: [u8; 32] = Sha256::digest(&blob).into();
-        let decision = resume::RestoreDecision::decide(
-            Some(&blob),
-            &build_core_hash(),
-            &base,
-            current_generation,
-        );
-        if decision.is_resume()
-            && previous.is_some_and(|meta| {
-                meta.total_len != blob.len() as u64 || meta.blob_sha256 != imported_digest
-            })
-        {
-            store
-                .mark_corrupt(&base)
+                .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+            let previous = store
+                .read_meta()
                 .await
-                .map_err(|e| JsError::new(&format!("snapshot corrupt marker: {e:?}")))?;
-            return Ok(());
+                .map_err(|e| JsError::new(&format!("snapshot metadata: {e:?}")))?
+                .and_then(|bytes| wasm_vm_storage::SnapshotMeta::from_bytes(&bytes).ok())
+                .filter(|meta| meta.base_binding == base && meta.total_len > 0);
+            if resume::validate_container(&blob).is_err() {
+                store
+                    .mark_corrupt(&base)
+                    .await
+                    .map_err(|e| JsError::new(&format!("snapshot corrupt marker: {e:?}")))?;
+                return Ok(());
+            }
+            let imported_digest: [u8; 32] = Sha256::digest(&blob).into();
+            let decision = resume::RestoreDecision::decide(
+                Some(&blob),
+                &build_core_hash(),
+                &base,
+                current_generation,
+            );
+            if decision.is_resume()
+                && previous.is_some_and(|meta| {
+                    meta.total_len != blob.len() as u64 || meta.blob_sha256 != imported_digest
+                })
+            {
+                store
+                    .mark_corrupt(&base)
+                    .await
+                    .map_err(|e| JsError::new(&format!("snapshot corrupt marker: {e:?}")))?;
+                return Ok(());
+            }
+            store
+                .save(&blob, &base)
+                .await
+                .map_err(|e| JsError::new(&format!("snapshot import: {e:?}")))?;
+            Ok(())
         }
-        store
-            .save(&blob, &base)
-            .await
-            .map_err(|e| JsError::new(&format!("snapshot import: {e:?}")))?;
-        Ok(())
+        .await;
+        finish_snapshot_write(&write_count);
+        result
     }
 
     /// The current overlay commit generation (the snapshot coherence's third binding). `u64` fits
