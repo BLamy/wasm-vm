@@ -912,6 +912,9 @@ struct LinuxInner {
     /// the restore-decision guard needs it as the expected `base_image_hash`. Off the persistent path
     /// there is no snapshot store, so the decision is always `"missing"`.
     snapshot_base: Option<[u8; 32]>,
+    /// E3-T12d: the persistent tab's Web Lock ownership. Read-only contenders may inspect the
+    /// snapshot store, but must never save or import into the writer's namespace.
+    snapshot_read_only: bool,
 }
 
 /// Which block device (if any) backs the boot: none (initramfs), an in-memory image, or a lazily
@@ -1187,6 +1190,7 @@ impl WasmLinux {
         // E3-T12d: the base binding for the durable resume-snapshot store — stamped only on the
         // persistent path (where a snapshot can be taken and restored). `None` elsewhere.
         let mut snapshot_base: Option<[u8; 32]> = None;
+        let mut snapshot_read_only = false;
         match disk {
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
             DiskChoice::Mem(image) => {
@@ -1232,6 +1236,7 @@ impl WasmLinux {
                     generation,
                 );
                 snapshot_base = Some(base_binding);
+                snapshot_read_only = read_only;
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let overlay = wasm_vm_storage::WriteBackOverlay::with_shared_queue(
@@ -1348,6 +1353,7 @@ impl WasmLinux {
                 disk_ro,
                 file_transfers,
                 snapshot_base,
+                snapshot_read_only,
             }),
         })
     }
@@ -1891,6 +1897,9 @@ impl WasmLinux {
             let Some(base) = inner.snapshot_base else {
                 return Err(JsError::new("not_persistent"));
             };
+            if inner.snapshot_read_only {
+                return Err(JsError::new("read_only"));
+            }
             let blob = inner.machine.save_resume().map_err(|e| match e {
                 resume::SnapshotError::NotQuiesced { reason, in_flight } => {
                     JsError::new(&format!("not_quiesced: {reason:?} in_flight={in_flight}"))
@@ -1910,8 +1919,9 @@ impl WasmLinux {
     }
 
     /// Read the persisted snapshot blob back (reassembled), or `null` if none is stored / not on the
-    /// persistent path. Async (IndexedDB). The JS restore-decision hook feeds this into
-    /// [`Self::restore_decision_code`] and, on a `"resume"` verdict, into [`Self::load_snapshot_blob`].
+    /// persistent path. Async (IndexedDB). This is the export/debug surface; production restore uses
+    /// [`Self::restore_stored_snapshot`] so the blob never crosses the wasm/JS boundary as a second
+    /// whole-payload copy.
     #[wasm_bindgen(js_name = readStoredSnapshot)]
     pub async fn read_stored_snapshot(&self) -> Result<JsValue, JsError> {
         let base = {
@@ -1934,6 +1944,54 @@ impl WasmLinux {
         }
     }
 
+    /// Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored
+    /// blob is held by one Rust allocation while the coherence header is checked and the machine is
+    /// restored; unlike `readStoredSnapshot` this path does not create a JS `Uint8Array` boundary copy.
+    /// Returns the same typed decision code as `restoreDecisionCode`, with no machine mutation for a
+    /// missing, corrupt, foreign, or stale snapshot.
+    #[wasm_bindgen(js_name = restoreStoredSnapshot)]
+    pub async fn restore_stored_snapshot(&self) -> Result<String, JsError> {
+        let base = {
+            let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            match inner.snapshot_base {
+                Some(base) => base,
+                None => return Ok("missing".to_string()),
+            }
+        };
+        let store = snapshot_store::SnapshotStore::open(&base)
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+        let Some(blob) = store
+            .load()
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot load: {e:?}")))?
+        else {
+            return Ok("missing".to_string());
+        };
+
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        // The identity is immutable for the lifetime of a machine, but re-check it at the commit
+        // point so an unusual concurrent host callback cannot restore into a different namespace.
+        let Some(current_base) = inner.snapshot_base else {
+            return Ok("missing".to_string());
+        };
+        if current_base != base {
+            return Ok("foreign_image".to_string());
+        }
+        let decision = resume::RestoreDecision::decide(
+            Some(&blob),
+            &build_core_hash(),
+            &base,
+            inner.machine.overlay_generation(),
+        );
+        if decision.is_resume() {
+            inner.machine.load_resume(&blob).map_err(|e| {
+                JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code())
+            })?;
+        }
+        Ok(decision.code().to_string())
+    }
+
     /// Persist an externally supplied snapshot blob (AC3 import) into the snapshot store for THIS boot's
     /// base image. The blob is bound to this base's namespace; a foreign blob imported here still fails
     /// the coherence guard on restore. Framing-corrupt input is replaced by a corrupt marker, and a
@@ -1944,6 +2002,9 @@ impl WasmLinux {
     pub async fn import_stored_snapshot(&self, blob: Vec<u8>) -> Result<(), JsError> {
         let (base, current_generation) = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            if inner.snapshot_read_only {
+                return Err(JsError::new("read_only"));
+            }
             match inner.snapshot_base {
                 Some(base) => (base, inner.machine.overlay_generation()),
                 None => return Err(JsError::new("not_persistent")),

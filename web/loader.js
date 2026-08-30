@@ -246,7 +246,8 @@ export async function startLinuxBoot(opts = {}) {
     const km = manifest.artifacts.kernel;
     // E4 restore-on-load artifacts (busybox: bootSnapshot only; Alpine chunked: bootSnapshot RAM +
     // overlayDelta). Hoisted so both the pre-construction overlay seed and the post-construction RAM
-    // restore can see them. `alpineRamBlob` is the RAM blob to restore once the chunked machine exists.
+    // restore can see them. `alpineRamBlob` is fetched only after a durable user snapshot gets a
+    // chance to restore, so a reload never holds both whole snapshot representations needlessly.
     const bootSnap = manifest.artifacts?.bootSnapshot;
     const overlayDeltaEntry = manifest.artifacts?.overlayDelta;
     // The exact RAM+disk pair identity is also the durable-overlay namespace. This keeps a new
@@ -256,6 +257,7 @@ export async function startLinuxBoot(opts = {}) {
       ? await deriveOverlaySeedIdentity(bootSnap.sha256, overlayDeltaEntry.sha256)
       : null;
     let alpineRamBlob = null;
+    let alpineOverlaySeeded = false;
 
     onState("fetching");
     // The kernel is always fetched whole (small). The rootfs is fetched whole for disk/initramfs
@@ -412,13 +414,11 @@ export async function startLinuxBoot(opts = {}) {
           const dgz = await fetchWithProgress(overlayDeltaEntry.url, (l, t) => onProgress("overlayDelta", l, t));
           if ((await sha256hex(dgz)) !== overlayDeltaEntry.sha256) throw new Error("overlay delta integrity");
           const deltaBytes = await gunzip(dgz);
-          const rgz = await fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t));
-          if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
-          const ramBytes = await gunzip(rgz);
           const seeded = await seedOverlayDelta(imageManifestText, deltaBytes, overlaySeedIdentity);
-          // Arm RAM only when disk equality has already been proven. The post-construction
-          // restoreDecisionCode remains the independent core-hash + base + generation guard.
-          alpineRamBlob = seeded ? ramBytes : null;
+          // Arm the shipped RAM fallback only after the persistent machine has had a chance to
+          // restore a user snapshot directly from IndexedDB. The post-construction coherence guard
+          // remains independent of this disk-equality check.
+          alpineOverlaySeeded = seeded;
           if (!seeded) {
             console.warn(
               "wasm-vm: active warm-release disk has user changes; preserving it and cold booting",
@@ -427,6 +427,7 @@ export async function startLinuxBoot(opts = {}) {
           }
         } catch (e) {
           console.warn("wasm-vm: Alpine overlay-delta seed failed, cold booting:", e?.message || e);
+          alpineOverlaySeeded = false;
           alpineRamBlob = null;
           onState("booting");
         }
@@ -501,6 +502,42 @@ export async function startLinuxBoot(opts = {}) {
     }
     try { window.__machine = machine; } catch { /* worker scope: profiling is still armed above */ }
 
+    // E3-T12d persistent snapshot restore: load the durable user snapshot directly inside wasm before
+    // considering the shipped build-time RAM snapshot. `restoreStoredSnapshot` keeps the large blob
+    // out of JS; a missing, stale, corrupt, or foreign result leaves the freshly constructed machine
+    // untouched and the normal fallback paths below decide what to do.
+    let restoredFromStoredSnapshot = false;
+    if (usePersist && typeof machine.restoreStoredSnapshot === "function") {
+      try {
+        const decision = await machine.restoreStoredSnapshot();
+        if (decision === "resume") {
+          restoredFromStoredSnapshot = true;
+          onState("restored");
+        } else if (decision !== "missing") {
+          console.warn(`wasm-vm: stored snapshot not coherent (${decision}) — cold booting`);
+        }
+      } catch (e) {
+        // A storage read failure is a cold-boot fallback, never a partially restored machine.
+        console.warn("wasm-vm: stored snapshot restore failed, cold booting:", e?.message || e);
+      }
+    }
+
+    // The shipped Alpine RAM image is only a fallback for a fresh/equal warm overlay. Fetch it after
+    // the durable user snapshot attempt so a normal reload does not retain two whole snapshots while
+    // the bounded IndexedDB loader is assembling its one Rust buffer.
+    if (!restoredFromStoredSnapshot && alpineOverlaySeeded && bootSnap && opts.bootSnapshot !== false) {
+      try {
+        onState("restoring");
+        const rgz = await fetchWithProgress(bootSnap.url, (l, t) => onProgress("bootSnapshot", l, t));
+        if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
+        alpineRamBlob = await gunzip(rgz);
+      } catch (e) {
+        console.warn("wasm-vm: Alpine RAM fallback fetch failed, cold booting:", e?.message || e);
+        alpineRamBlob = null;
+        onState("booting");
+      }
+    }
+
     // E4 restore-on-first-load (busybox/initramfs path): instead of executing the ~40 s Linux boot,
     // restore a shipped, build-time boot snapshot into the just-constructed machine and go straight to
     // the run loop. The machine already cold-booted in its constructor (place_and_boot), so ANY failure
@@ -514,13 +551,13 @@ export async function startLinuxBoot(opts = {}) {
     // (crypto.getRandomValues) are LIVE browser-backed sources read on demand, not frozen snapshot
     // state, so wall-clock time and entropy self-reseed after restore; a fresh DHCP lease is a slirp
     // (Alpine) concern, N/A for the offline busybox default.
-    let restoredFromBootSnapshot = false;
+    let restoredFromBootSnapshot = restoredFromStoredSnapshot;
     // E4 Alpine (chunked/persistent) restore: the overlay was already seeded with the post-boot disk
     // delta BEFORE construction; now restore the paired RAM blob. The persistent machine's snapshot
     // identity is already the chunk manifest's base_hash (set in newChunkedDiskPersistent), so
     // restoreDecisionCode enforces the core-hash + base + overlay-generation triple. A foreign/stale
     // RAM blob (or a generation mismatch) is rejected → the machine keeps its fresh chunked cold boot.
-    if (alpineRamBlob) {
+    if (!restoredFromStoredSnapshot && alpineRamBlob) {
       try {
         const decision = machine.restoreDecisionCode(alpineRamBlob, machine.overlayGeneration());
         if (decision === "resume") {
@@ -920,7 +957,10 @@ export async function startLinuxBoot(opts = {}) {
       // Resolves when the store's commit-marker meta transaction completes. No-op off the persistent
       // path (persistSnapshot returns "not_persistent"); swallowed to a rejected Promise the caller
       // handles.
-      snapshotSave: () => machine.persistSnapshot(),
+      snapshotSave: () => {
+        if (lockReadOnly) return Promise.reject(new Error("read_only"));
+        return machine.persistSnapshot();
+      },
       // The reassembled persisted snapshot blob (Uint8Array), or null if none / non-persistent.
       snapshotRead: () => machine.readStoredSnapshot(),
       // The header-level resume-vs-cold-boot verdict for the persisted snapshot against THIS boot's
@@ -940,7 +980,14 @@ export async function startLinuxBoot(opts = {}) {
       // AC3 export/import: raw stored-blob bytes out, and persist an external blob into this base's
       // snapshot store (still coherence-guarded on restore).
       snapshotExport: () => machine.readStoredSnapshot(),
-      snapshotImport: (bytes) => machine.importStoredSnapshot(bytes),
+      snapshotRestore: () => {
+        if (!usePersist || typeof machine.restoreStoredSnapshot !== "function") return Promise.resolve("missing");
+        return machine.restoreStoredSnapshot();
+      },
+      snapshotImport: (bytes) => {
+        if (lockReadOnly) return Promise.reject(new Error("read_only"));
+        return machine.importStoredSnapshot(bytes);
+      },
       // Current {usage, quota} for the storage indicator.
       storageEstimate: () => (navigator.storage?.estimate ? navigator.storage.estimate() : Promise.resolve({})),
       // E3-T10 (critic BUG-4): close the IndexedDB connection so reset-disk's deleteDatabase can

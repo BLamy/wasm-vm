@@ -399,3 +399,13 @@ claimed as updated; rerun the command after authenticating Wrangler or supplying
   coherence (5/5); and `node --check` for the proof, loader, and main scripts. These gates do not
   establish the missing load bound or read-only snapshot fencing. Status returns to `in-progress`
   for runtime rework and a fresh exact-head recording; no merge or push performed.
+
+### 2026-08-30 — worker — rework started after fresh verifier refutation
+
+The verifier's evidence audit identified two runtime proof gaps rather than a generic test failure:
+the browser load path still materialized all chunks plus a second whole-blob reassembly, and a
+read-only persistent tab was not fenced from snapshot save/import. This slice replaces load with
+sequential bounded chunk assembly, adds a direct wasm restore path that avoids the export copy, gates
+both snapshot writes on writer ownership, and extends the browser recording with reload-memory,
+snapshot-write fencing, and a cross-generation metadata-swap attack. The task remains `in-progress`
+until a new exact-head recording is reviewed by a fresh verifier.

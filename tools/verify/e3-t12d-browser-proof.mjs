@@ -114,6 +114,7 @@ async function waitForServer() {
   const server = spawn("bash", ["tools/serve-dev.sh", String(port)], {
     cwd: repo,
     stdio: ["ignore", "pipe", "inherit"],
+    detached: true,
   });
   const deadline = Date.now() + 30_000;
   while (Date.now() < deadline) {
@@ -129,11 +130,26 @@ async function waitForServer() {
 
 async function closeServer(server) {
   if (!server) return;
-  server.kill("SIGTERM");
-  await new Promise((resolve) => {
-    server.once("exit", resolve);
-    setTimeout(resolve, 2_000);
-  });
+  const group = server.pid == null ? null : -server.pid;
+  try {
+    if (group != null) process.kill(group, "SIGTERM");
+    else server.kill("SIGTERM");
+  } catch (error) {
+    if (error?.code !== "ESRCH") throw error;
+  }
+  if (server.exitCode == null && server.signalCode == null) {
+    await Promise.race([
+      new Promise((resolve) => server.once("exit", resolve)),
+      sleep(2_000),
+    ]);
+  }
+  if (server.exitCode == null && server.signalCode == null && group != null) {
+    try {
+      process.kill(group, "SIGKILL");
+    } catch (error) {
+      if (error?.code !== "ESRCH") throw error;
+    }
+  }
 }
 
 async function diagnostics(context, page, label, allErrors) {
@@ -172,7 +188,7 @@ async function openContext({ fault = false, label, allErrors }) {
   const profile = await fs.mkdtemp(path.join(os.tmpdir(), "wasm-vm-e3t12d-"));
   const context = await chromium.launchPersistentContext(profile, {
     headless,
-    args: ["--disable-dev-shm-usage", "--enable-precise-memory-info", "--js-flags=--max-old-space-size=4096"],
+    args: ["--disable-dev-shm-usage", "--enable-precise-memory-info", "--js-flags=--expose-gc --max-old-space-size=4096"],
     viewport: { width: 1600, height: 1000 },
   });
   if (fault) await context.addInitScript({ content: faultScript });
@@ -255,10 +271,62 @@ async function readOverlayState(page) {
   });
 }
 
+async function readSnapshotMeta(page) {
+  return page.evaluate(async () => {
+    const request = (req) => new Promise((resolve, reject) => {
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error || new Error("IndexedDB request failed"));
+    });
+    const open = (name) => new Promise((resolve, reject) => {
+      const req = indexedDB.open(name);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error || new Error("IndexedDB open failed"));
+    });
+    const names = (await indexedDB.databases()).map((entry) => entry.name).filter((name) => name?.startsWith("wvsn-")).sort();
+    if (names.length !== 1) throw new Error(`expected one snapshot database, found ${names.length}`);
+    const db = await open(names[0]);
+    try {
+      const txn = db.transaction("meta");
+      const value = await request(txn.objectStore("meta").get(0));
+      return value == null ? null : Array.from(new Uint8Array(value));
+    } finally {
+      db.close();
+    }
+  });
+}
+
+async function writeSnapshotMeta(page, bytes) {
+  await page.evaluate(async (value) => {
+    const open = (name) => new Promise((resolve, reject) => {
+      const req = indexedDB.open(name);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error || new Error("IndexedDB open failed"));
+    });
+    const names = (await indexedDB.databases()).map((entry) => entry.name).filter((name) => name?.startsWith("wvsn-")).sort();
+    if (names.length !== 1) throw new Error(`expected one snapshot database, found ${names.length}`);
+    const db = await open(names[0]);
+    try {
+      const txn = db.transaction("meta", "readwrite");
+      txn.objectStore("meta").put(new Uint8Array(value), 0);
+      await new Promise((resolve, reject) => {
+        txn.oncomplete = resolve;
+        txn.onerror = () => reject(txn.error || new Error("IndexedDB transaction failed"));
+        txn.onabort = () => reject(txn.error || new Error("IndexedDB transaction aborted"));
+      });
+    } finally {
+      db.close();
+    }
+  }, bytes);
+}
+
 async function installMemoryProbe(page) {
   return page.evaluate(() => {
     window.__e3t12dMemory = [];
     window.__e3t12dSnapshotProbe = (phase, value) => {
+      // IndexedDB returns a structured clone for each chunk. Collect finished request results before
+      // sampling so this evidence measures live staging, not V8's intentionally deferred garbage
+      // collection. The application never depends on this test-only hook.
+      if (phase.startsWith("load-") && typeof globalThis.gc === "function") globalThis.gc();
       const memory = performance.memory;
       window.__e3t12dMemory.push({
         phase,
@@ -493,13 +561,31 @@ async function twoTabRace(allErrors) {
     await diagnostics(env.context, second, "two-tab-contender", allErrors);
     await loadShell(second, "noAutoBoot=1&persist=1&worker=0");
     await startBootWithoutWaiting(second);
-    const writerState = await second.evaluate(async () => ({
-      readOnly: await window.__linuxCtl.readOnly(),
-      persistResult: await window.__persist(),
-      persistStats: await window.__persistStats(),
-    }));
+    const writerState = await second.evaluate(async () => {
+      let snapshotSaveError = null;
+      try {
+        await window.__linuxCtl.snapshotSave();
+      } catch (error) {
+        snapshotSaveError = String(error?.message || error);
+      }
+      let snapshotImportError = null;
+      try {
+        await window.__linuxCtl.snapshotImport(new Uint8Array([1, 2, 3]));
+      } catch (error) {
+        snapshotImportError = String(error?.message || error);
+      }
+      return {
+        readOnly: await window.__linuxCtl.readOnly(),
+        persistResult: await window.__persist(),
+        persistStats: await window.__persistStats(),
+        snapshotSaveError,
+        snapshotImportError,
+      };
+    });
     assert.equal(writerState.readOnly, true, "second tab acquired the writer lock");
     assert.equal(writerState.persistResult, 0);
+    assert.match(writerState.snapshotSaveError || "", /read_only/);
+    assert.match(writerState.snapshotImportError || "", /read_only/);
     await second.close();
     const after = await readOverlayState(env.page);
     assert.deepEqual(after, before, "read-only contender changed the overlay");
@@ -516,6 +602,40 @@ async function twoTabRace(allErrors) {
     assert.equal(await takeover.evaluate(() => window.__linuxCtl.readOnly()), false);
     await takeover.close();
     return { first: firstState, contender: writerState, overlayPreserved: true, takeoverWriter: true };
+  } finally {
+    await closeContext(env);
+  }
+}
+
+async function snapshotSwapScenario(allErrors) {
+  const env = await openContext({ label: "snapshot-meta-swap", allErrors });
+  try {
+    const baseline = await saveBaseline(env);
+    const metaBefore = await readSnapshotMeta(env.page);
+    assert.ok(metaBefore?.length > 0, "baseline snapshot metadata is missing");
+    await env.page.evaluate(() => window.__snapshotAdvanceGen());
+    assert.equal(await saveSnapshot(env.page), true);
+    const metaAfter = await readSnapshotMeta(env.page);
+    assert.ok(metaAfter?.length > 0, "second-generation snapshot metadata is missing");
+    const beforeDigest = sha256(Buffer.from(metaBefore));
+    const afterDigest = sha256(Buffer.from(metaAfter));
+    assert.notEqual(afterDigest, beforeDigest, "snapshot generations did not produce distinct metadata");
+
+    // Replace the complete second-generation commit marker with the first generation's marker while
+    // leaving the second generation's chunks in place. The bounded loader must reject the mixed set.
+    await writeSnapshotMeta(env.page, metaBefore);
+    const decision = await env.page.evaluate(() => window.__snapshotDecision());
+    assert.equal(decision, "corrupt");
+    const overlayAfter = await readOverlayState(env.page);
+    assert.deepEqual(overlayAfter, baseline.overlayBefore, "metadata swap changed durable overlay state");
+    return {
+      attack: "metadata-swap-between-generations",
+      beforeDigest,
+      afterDigest,
+      swappedDigest: beforeDigest,
+      decision,
+      overlayPreserved: true,
+    };
   } finally {
     await closeContext(env);
   }
@@ -543,6 +663,7 @@ async function postReloadGuestFile(allErrors) {
     assert.ok(generation > 0);
     await env.page.reload({ waitUntil: "domcontentloaded", timeout: 120_000 });
     await env.page.waitForFunction(() => window.__ready === true && !!window.wvmDemo, null, { timeout: 120_000 });
+    const reloadBaseline = await installMemoryProbe(env.page);
     await env.page.evaluate(() => {
       window.__e3t12dRawOutput = "";
       window.__e3t12dRawOutputUnsubscribe = window.wvmDemo.onConsole((bytes) => {
@@ -566,6 +687,25 @@ async function postReloadGuestFile(allErrors) {
       throw error;
     }
     const coldBootMs = Date.now() - started;
+    const reloadMemory = await readMemory(env.page);
+    const loadSamples = reloadMemory.samples.filter((sample) => sample.phase.startsWith("load-"));
+    const loadUsed = loadSamples.map((sample) => sample.used).filter((value) => value != null);
+    assert.ok(loadUsed.length > 0, "post-reload snapshot phase probe recorded no JS heap samples");
+    const loadStart = loadSamples.find((sample) => sample.phase === "load-start");
+    const loadPhases = new Set(loadSamples.map((sample) => sample.phase));
+    assert.ok(loadStart?.used != null, "post-reload snapshot load-start heap sample is missing");
+    assert.ok(loadPhases.has("load-chunk"), "post-reload snapshot chunk probe is missing");
+    assert.ok(loadPhases.has("load-complete"), "post-reload snapshot load-complete probe is missing");
+    const loadPeakUsed = Math.max(...loadUsed);
+    const rawLoadOverhead = loadPeakUsed - loadStart.used;
+    // The direct restore necessarily owns exactly one final Rust snapshot buffer. Chromium reports
+    // that wasm allocation through the page heap metric on this host; remove that explicitly known
+    // payload once, so the asserted budget is for staging/duplication rather than the required one
+    // copy. A second whole-payload representation would remain in this residual.
+    const payloadBytes = loadStart.value;
+    const loadOverhead = rawLoadOverhead - payloadBytes;
+    const loadBound = 32 * 1024 * 1024;
+    assert.ok(loadOverhead <= loadBound, `post-reload snapshot staging overhead ${loadOverhead} exceeds ${loadBound}`);
     const decision = await env.page.evaluate(() => window.__snapshotDecision());
     const read = await env.page.evaluate(() => window.wvmDemo.run("cat /root/t12d-reload-file", 120_000));
     assert.equal(read.exit, 0);
@@ -577,6 +717,17 @@ async function postReloadGuestFile(allErrors) {
       generation,
       coldBootMs,
       decision,
+      reloadMemory: {
+        baseline: reloadBaseline,
+        peakUsed: loadPeakUsed,
+        after: reloadMemory.after,
+        rawOverhead: rawLoadOverhead,
+        payloadBytes,
+        overhead: loadOverhead,
+        bound: loadBound,
+        sampleCount: loadSamples.length,
+        phases: loadSamples,
+      },
       read,
     };
   } finally {
@@ -598,6 +749,7 @@ try {
   }
   const quota = onlyFileReload ? null : await quotaScenario(allErrors);
   const race = onlyFileReload ? null : await twoTabRace(allErrors);
+  const swap = onlyFileReload ? null : await snapshotSwapScenario(allErrors);
   const fileReload = runFileReload ? await postReloadGuestFile(allErrors) : { skipped: true };
   const diagnosticsSummary = allErrors.map((record) => ({
     label: record.label,
@@ -623,6 +775,7 @@ try {
     interruption: kill,
     quota,
     twoTab: race,
+    snapshotSwap: swap,
     fileReload,
     diagnostics: diagnosticsSummary,
   };
