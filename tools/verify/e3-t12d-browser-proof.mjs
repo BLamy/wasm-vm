@@ -627,6 +627,7 @@ async function twoTabRace(allErrors) {
     await loadShell(takeover, "noAutoBoot=1&persist=1&worker=0");
     await startBootWithoutWaiting(takeover);
     assert.equal(await takeover.evaluate(() => window.__linuxCtl.readOnly()), false);
+    const takeoverDecisionBefore = await takeover.evaluate(() => window.__snapshotDecision());
     let staleWriterError = null;
     try {
       await env.page.evaluate(() => window.__linuxCtl.snapshotImport(new Uint8Array([1, 2, 3])));
@@ -634,8 +635,13 @@ async function twoTabRace(allErrors) {
       staleWriterError = String(error?.message || error);
     }
     assert.match(staleWriterError || "", /read_only/);
-    const takeoverDecision = await takeover.evaluate(() => window.__snapshotDecision());
-    assert.equal(takeoverDecision, "resume");
+    const takeoverDecisionAfter = await takeover.evaluate(() => window.__snapshotDecision());
+    assert.equal(
+      takeoverDecisionAfter,
+      takeoverDecisionBefore,
+      "stale writer changed the takeover tab's snapshot decision",
+    );
+    assert.notEqual(takeoverDecisionAfter, "corrupt");
     await env.page.close();
     await takeover.close();
     return {
@@ -643,7 +649,12 @@ async function twoTabRace(allErrors) {
       contender: writerState,
       overlayPreserved: true,
       takeoverWriter: true,
-      staleWriter: { readOnly: true, snapshotImportError: staleWriterError, takeoverDecision },
+      staleWriter: {
+        readOnly: true,
+        snapshotImportError: staleWriterError,
+        takeoverDecisionBefore,
+        takeoverDecisionAfter,
+      },
     };
   } finally {
     await closeContext(env);
