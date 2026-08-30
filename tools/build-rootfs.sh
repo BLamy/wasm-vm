@@ -21,7 +21,10 @@ IMG_SIZE="${IMG_SIZE:-512M}"  # override for larger baked-bundle sets (E3.5-T05d
 # gives setuid login/passwd; the rest make it feel like a real system.
 # E3.5-T02: util-linux (real unshare/nsenter/setpriv/pivot_root), iproute2 (ip), e2fsprogs
 # (mkfs.ext4 for loop/overlay) — the container primitives busybox's applets can't fully drive.
-BASE_PKGS="alpine-base busybox-suid openrc util-linux iproute2 e2fsprogs ca-certificates curl nano"
+# E3-T22c: ship the full applications that consume the image's OSC 52 convenience configs. Keep
+# the baseline lean by replacing nano rather than carrying two editors; BusyBox `vi` is not enough
+# because it has no TextYankPost hook, while tmux emits OSC 52 from copy-mode with set-clipboard on.
+BASE_PKGS="alpine-base busybox-suid openrc util-linux iproute2 e2fsprogs ca-certificates curl vim tmux"
 PKGS="$BASE_PKGS ${EXTRA_PKGS:-}"
 
 # Normal builds install the exact transitive package versions in the committed lock. Package-bump
