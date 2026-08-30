@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: in-progress
+status: implemented
 depends_on: [E3-T12c]
 estimate: S
 risk: high
@@ -131,3 +131,25 @@ The task is back in the active lane to repair the independently identified impor
 The implementation slice will bind imported data to the already-persisted valid snapshot when one
 exists, surface a typed `corrupt` decision on mismatch, preserve the live overlay, and add a
 deterministic regression before a fresh browser recording.
+
+### 2026-08-30 — worker — framing-integrity rework — implemented
+
+- Commit: `86afb33373170bd7b91d527ca2eebe44b4e7b0aa`.
+- Changes: `RestoreDecision::decide` now consumes the full section framing before returning `resume`;
+  `importStoredSnapshot` rejects framing-corrupt input into a committed zero-length corrupt marker;
+  the marker keeps the machine and overlay untouched and makes the next decision typed `corrupt`.
+  The native regression covers a final-section truncation.
+- Gates: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test restore_decision`; `cargo test
+  -p wasm-vm-core --lib`; `cargo clippy -p wasm-vm-core -p wasm-vm-wasm --all-targets -- -D warnings`;
+  `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`; `wasm-pack test --node crates/wasm
+  --test resume`; `make web-dist`; and `make verify-E3-T12d` — all passed. The known unrelated
+  `crates/wasm/tests/hart_ctrl.rs` unused-import warning remains outside this diff.
+- Exact-head browser evidence: `evidence/epic-3-t12d/node-alpine-snapshot-corruption-2026-08-30.json`,
+  SHA-256 `8762f8227c370c6aef5a56fb6d61310a06670dad3efdfdd1596d6f6c41b01708`. It records the restored production
+  Node guest at `86afb33`, a 138,279,943-byte snapshot, one-byte truncation → `corrupt`, original
+  re-import → `resume`, live output `T12D_LIVE_42`, and zero console errors. The page screenshot is
+  `/private/tmp/e3-t12d-browser-verification-2026-08-30.png`.
+
+This implementation claim clears the refuted truncation behavior. It does not claim the separate
+production-sized reload, quota/crash, two-tab race, or full export/import digest acceptance until a
+fresh verifier records those paths.
