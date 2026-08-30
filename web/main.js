@@ -717,7 +717,7 @@ async function runLinuxBootOwned(opts, banner, request) {
           const s = new TextDecoder().decode(u8);
           bootProgress.scanOutput(s);
           promptTail = (promptTail + s).slice(-200);
-          if (/[\w][\w.-]*:~#\s*$/.test(promptTail) || /\/ #\s*$/.test(promptTail)) markGuestReady();
+          if (/[\w][\w.-]*:~#\s*$/.test(promptTail) || /[~\/]\s*#\s*$/.test(promptTail)) markGuestReady();
         } catch {}
       },
       onError: (e) => {
