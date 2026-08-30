@@ -100,3 +100,25 @@ screen and full adversarial evidence were not completed; the Playwright benchmar
 producing a run. No `verified` claim is made. The prototype and generated artifacts are preserved in
 the recoverable stash `WIP E4-T34 direct-chain prototype — narrow gates only; not acceptance evidence`
 for a future fresh worker slice.
+
+### 2026-08-30 — worker checkpoint — bounded direct-chain and inline-memory pass
+
+- This exact-head checkpoint advances the implementation, but does not satisfy E4-T34 acceptance;
+  the task remains `in-progress`. The production browser executor now uses bounded direct chaining,
+  dynamic-target linking, inline RAM loads/stores with an explicit raw-store commit log, partial
+  cross-page code invalidation, and a wider but bounded 64 MiB/1024-batch production code working
+  set. The existing E4-T32 per-quantum limits remain unchanged at eight translation attempts and
+  64 staged nominations.
+- The real restored Node foreground command `node -e 'console.log(3)'` produced exact PID-bound
+  byte-framed output and exit 0 in 17,317.110 ms on the worker JIT path. The matched same-head
+  main-thread interpreter completed in 22,773.495 ms, a 1.315x completion speedup rather than the
+  required 3x. The foreground <=25 s criterion held; the <=5 s stretch and 3x criterion did not.
+  JIT deltas were positive (2,209 compiled blocks, 14,523,809 executed blocks, 143,132,801 JIT
+  retired instructions); cache evictions and retranslations were zero in this screen. Full details
+  and hashes are in `evidence/e4-t34/node-optimization-screen-2026-08-30.json`.
+- Gates completed: `cargo fmt --all -- --check`; strict Clippy for the wasm-facing and native JIT
+  crates; full native core/runtime/translator tests; `wasm-pack test --node crates/wasm
+  --test jit_browser_parity` (20 passed, 0 failed, 1 ignored); and `make web-dist`. The direct
+  headed Playwright manual run passed the Node oracle. The repository Playwright test runner was
+  separately attempted against the built page but hung before launching Chromium and was stopped;
+  it is not counted as evidence. No rr host trace is claimed on macOS.

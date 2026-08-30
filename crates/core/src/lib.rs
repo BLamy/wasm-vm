@@ -354,6 +354,11 @@ pub struct Machine {
     /// scope; browser `runChunk` opens it around all of its internal UART/persistence sub-runs.
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     jit_run_scope_active: bool,
+    /// True when the active scope was opened by the browser/host wrapper rather than by an
+    /// unscoped `run` call. Host-owned terminal scopes preserve queued translations for a later
+    /// quantum; an ordinary `run` may flush its final warmed translation before returning.
+    #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
+    jit_run_scope_external: bool,
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
     jit_run_submissions_before: u64,
     #[cfg_attr(feature = "zicsr-stub", allow(dead_code))]
@@ -399,6 +404,10 @@ enum BlockStep {
     /// A `Trap` exit (precise mem-fault / `ecall` / `ebreak`); `retired` body ops committed before
     /// the faulting instruction, which consumes one work slot but does not retire.
     Trapped { trap: Trap, retired: u64 },
+    /// The browser's bounded in-module chain stopped before entering its next successor. The
+    /// committed prefix is returned to the outer loop so it can observe the normal boundary before
+    /// another compiled call begins.
+    Budget { retired: u64 },
 }
 
 /// E4-T31: one bounded JIT dispatch result. `work_used` is the exact number of outer-loop work
@@ -457,6 +466,12 @@ const JIT_PUMP_INTERVAL: u32 = 64;
 #[cfg(not(feature = "zicsr-stub"))]
 const JIT_INSTALL_BUDGET: usize = 64;
 
+/// E4-T34: maximum guest-work fuel handed to one browser in-module chain. This keeps a direct wasm
+/// call chain bounded even when the outer `run` quantum is large, preserving the existing batched
+/// interrupt/device observation window while replacing dozens of JS dispatches with one call.
+#[cfg(not(feature = "zicsr-stub"))]
+const JIT_DIRECT_CHAIN_FUEL: u64 = 128;
+
 /// E4-T19: the static successor PHYSICAL PCs of a decoded block — `[edge0, edge1]` where edge 0 is
 /// the taken / sole / fall-through successor and edge 1 is a conditional branch's not-taken side.
 /// A successor is returned ONLY when it lies on the SAME physical page as the block, so its physical
@@ -506,7 +521,12 @@ fn static_successors(b: &dispatch::DecodedBlock) -> [Option<u64>; 2] {
 /// components of the undirected static-edge graph, then split any component larger than `k` into
 /// chunks of ≤ `k`. A union-find over the block set; edges are the same-page static successors that
 /// land on another drained block. Splitting an oversized component only turns some intra-batch edges
-/// into cross-batch ones (still correct), so `k` is a hard cap on module size.
+/// into cross-batch ones (still correct), so `k` is a hard cap on module size. Once components have
+/// been split to that cap, adjacent disconnected chunks may share a module:
+/// `intra_edges_for_group` only emits calls for real same-batch edges, so coalescing them changes
+/// compilation granularity, not guest control flow. The executors retain unaffected members when a
+/// page-granular SMC invalidation touches only part of such a batch; a batch is dropped atomically
+/// only when all of its members are on the invalidated page.
 #[cfg(not(feature = "zicsr-stub"))]
 fn group_into_batches(
     blocks: &[dispatch::DecodedBlock],
@@ -547,12 +567,25 @@ fn group_into_batches(
         let r = find(&mut parent, i);
         comps.entry(r).or_default().push(i);
     }
-    // Emit components, chunking oversized ones to the batch-size cap.
+    // Emit components, chunking oversized ones to the batch-size cap. Pack consecutive chunks from
+    // disconnected components together where there is room. The old one-component-per-module
+    // policy made a large compile drain create many tiny Wasm instances for code with no static
+    // relationship, which increased instance/LRU churn without adding any direct-call edges.
     let mut out = alloc::vec::Vec::new();
+    let mut current = alloc::vec::Vec::new();
     for (_, members) in comps {
         for chunk in members.chunks(k) {
-            out.push(chunk.to_vec());
+            if !current.is_empty() && current.len() + chunk.len() > k {
+                out.push(core::mem::take(&mut current));
+            }
+            current.extend_from_slice(chunk);
+            if current.len() == k {
+                out.push(core::mem::take(&mut current));
+            }
         }
+    }
+    if !current.is_empty() {
+        out.push(current);
     }
     out
 }
@@ -644,6 +677,7 @@ impl Machine {
             jit_run_attempt_remaining: 0,
             jit_run_staging_remaining: 0,
             jit_run_scope_active: false,
+            jit_run_scope_external: false,
             jit_run_submissions_before: 0,
             jit_run_staged_nominations: 0,
             jit_run_attempted_blocks: 0,
@@ -696,16 +730,41 @@ impl Machine {
         (self.block_entry_hits, self.block_builds)
     }
 
-    /// PMP regions may split a physical page, while decoded/JIT caches are page-keyed. Any
-    /// effective PMP CSR or privilege change therefore invalidates all cached code before another
-    /// block runs; rechecking only the entry parcel would let a denied interior instruction replay
-    /// from a cursor. These changes are rare, so this stays off the steady-state path except for two
-    /// integer comparisons at block/run boundaries.
+    /// PMP regions may split a physical page, while decoded/JIT caches are page-keyed. An effective
+    /// PMP CSR change therefore invalidates all cached code before another block runs. A privilege
+    /// change is cheaper to audit: if every cached instruction has the same execute permission in
+    /// the old and new modes, the physically keyed code remains valid and can be retained. This is
+    /// the common full-grant case used by Linux; a split or mode-sensitive PMP map still takes the
+    /// conservative flush path. The check stays off the steady-state path except at mode changes.
     #[cfg(not(feature = "zicsr-stub"))]
     fn sync_pmp_code_permissions(&mut self) {
         let revision = self.hart.csr.pmp.revision();
         let mode = self.hart.csr.mode;
         if revision == self.pmp_revision_seen && mode == self.pmp_mode_seen {
+            return;
+        }
+        if revision == self.pmp_revision_seen
+            && mode != self.pmp_mode_seen
+            && self.block_cache.live_blocks().all(|block| {
+                let mut pc = block.phys_start;
+                block.ops.iter().all(|op| {
+                    let len = u64::from(op.len);
+                    let old_ok = self.hart.csr.pmp_ok(
+                        pc,
+                        len,
+                        crate::pmp::PmpAccess::Exec,
+                        self.pmp_mode_seen,
+                    );
+                    let new_ok = self
+                        .hart
+                        .csr
+                        .pmp_ok(pc, len, crate::pmp::PmpAccess::Exec, mode);
+                    pc = pc.wrapping_add(len);
+                    old_ok == new_ok
+                })
+            })
+        {
+            self.pmp_mode_seen = mode;
             return;
         }
         self.pmp_revision_seen = revision;
@@ -1046,6 +1105,18 @@ impl Machine {
     /// Size of guest RAM in bytes.
     pub fn ram_len(&self) -> usize {
         self.bus.ram().len()
+    }
+
+    /// Linear-memory address of the guest RAM allocation. This is an integration seam for the
+    /// wasm browser JIT's imported-memory fast path; callers must use the value only while this
+    /// machine owns the allocation (the `Vec` is not resized during execution).
+    pub fn ram_host_ptr(&self) -> usize {
+        self.bus.ram().as_bytes().as_ptr() as usize
+    }
+
+    /// Guest physical base address of the RAM allocation.
+    pub fn ram_base(&self) -> u64 {
+        self.bus.ram().base()
     }
 
     /// E2-T07: attach the ns16550a UART at [`platform::virt::UART0_BASE`], wired to PLIC
@@ -2310,12 +2381,19 @@ impl Machine {
     /// and closes its own scope automatically.
     pub fn begin_cooperative_run(&mut self) {
         #[cfg(not(feature = "zicsr-stub"))]
+        self.begin_cooperative_run_mode(true);
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn begin_cooperative_run_mode(&mut self, external: bool) {
+        #[cfg(not(feature = "zicsr-stub"))]
         {
             assert!(
                 !self.jit_run_scope_active,
                 "cooperative run scopes must not nest"
             );
             self.jit_run_scope_active = true;
+            self.jit_run_scope_external = external;
             self.jit_run_submissions_before = self.prof.jit_pause().total_submitted_blocks;
             self.jit_run_staged_nominations = 0;
             self.jit_run_attempted_blocks = 0;
@@ -2351,12 +2429,18 @@ impl Machine {
                 self.jit_run_scope_active,
                 "no cooperative run scope is active"
             );
-            // Only the host-visible MaxInstrs boundary gets a final pump. Internal UART/persistence
-            // sub-runs do not flush independently, and a terminal trap/exit/reset does not compile
-            // dead backlog. The final pump sits outside run_traced's timer, so explicitly fold its
-            // measured pause into total_ns.
+            // Only host-visible completion boundaries get a final pump. Internal UART/persistence
+            // sub-runs do not flush independently, and a host-owned terminal scope preserves its
+            // backlog for a later quantum. An escaped trap can still be resumed after the host
+            // repairs the faulting state, so publish that warmed translation for the precise-fault
+            // path. An ordinary unscoped run also flushes on a normal exit so short programs can
+            // prove their compiled path before returning. The final pump sits outside run_traced's
+            // timer, so explicitly fold its measured pause into total_ns.
+            let terminal_exit_flush =
+                !self.jit_run_scope_external && matches!(_outcome, RunOutcome::Exited(_));
             if self.jit_enabled
-                && _outcome == RunOutcome::MaxInstrs
+                && (matches!(_outcome, RunOutcome::MaxInstrs | RunOutcome::Trapped(_))
+                    || terminal_exit_flush)
                 && self.jit_run_attempt_remaining > 0
                 && (!self.compile_queue.is_empty()
                     || (self.jit_run_staging_remaining > 0 && self.discovery.queue_len() > 0))
@@ -2388,6 +2472,7 @@ impl Machine {
                 );
             }
             self.jit_run_scope_active = false;
+            self.jit_run_scope_external = false;
             self.jit_run_attempt_remaining = 0;
             self.jit_run_staging_remaining = 0;
         }
@@ -2412,7 +2497,7 @@ impl Machine {
         let owns_cooperative_scope = !self.jit_run_scope_active;
         #[cfg(not(feature = "zicsr-stub"))]
         if owns_cooperative_scope {
-            self.begin_cooperative_run();
+            self.begin_cooperative_run_mode(false);
         }
         let outcome = self.run_traced_inner(max_instrs, sink);
         // One timer read at exit; accumulate the total profiled span. The device+walk time timed on
@@ -2826,6 +2911,7 @@ impl Machine {
         }
         let chaining = self.executor.as_ref()?.chaining();
         let budget = self.executor.as_ref()?.chain_depth_budget().max(1);
+        let (direct_chain_budget, allow_direct_chaining) = self.direct_chain_budget(remaining_work);
         let mut depth: u32 = 0;
         let mut work_used = 0u64;
         let mut ran_any = false;
@@ -2833,7 +2919,12 @@ impl Machine {
         let mut pending_link: Option<(u64, u8)> = None;
         let result = loop {
             let block_budget = remaining_work - work_used;
-            let Some(step) = self.run_one_jit_block(phys, block_budget) else {
+            let Some(step) = self.run_one_jit_block(
+                phys,
+                block_budget,
+                direct_chain_budget.min(block_budget),
+                allow_direct_chaining,
+            ) else {
                 // The first block left the hart untouched, so the caller can interpret it. If a
                 // LATER block refused the short tail or hit a defensive pre-call metadata miss,
                 // prior blocks already committed: return their progress and let the next dispatch
@@ -2850,6 +2941,14 @@ impl Machine {
                 e.link_edge(from, edge, phys);
             }
             match step {
+                BlockStep::Budget { retired } => {
+                    debug_assert!(retired > 0 && retired <= block_budget);
+                    work_used += retired;
+                    break Some(JitProgress {
+                        result: Ok(()),
+                        work_used,
+                    });
+                }
                 BlockStep::Trapped { trap, retired } => {
                     let step_work = retired
                         .checked_add(1)
@@ -2911,7 +3010,8 @@ impl Machine {
                     // Follow the edge only if the successor is itself compiled; otherwise return to
                     // dispatch (which will interpret / compile it).
                     let from = phys;
-                    let next_phys = match self.hart.fetch_phys(&mut self.bus, self.hart.regs.pc) {
+                    let next_virtual = self.hart.regs.pc;
+                    let next_phys = match self.hart.fetch_phys(&mut self.bus, next_virtual) {
                         Ok(p) => p,
                         Err(_) => {
                             break Some(JitProgress {
@@ -2920,11 +3020,21 @@ impl Machine {
                             });
                         }
                     };
-                    if !self
+                    let next_compiled = self
                         .executor
                         .as_ref()
-                        .is_some_and(|e| e.is_compiled(next_phys))
-                    {
+                        .is_some_and(|e| e.is_compiled(next_phys));
+                    if next_compiled {
+                        // A dynamic `jalr` has no static edge to link. Publish the resolved
+                        // virtual→physical target only after the first safe dispatch resolution;
+                        // the browser executor can then use its guarded imported funcref table on
+                        // later hits. Static/fence edges retain the existing slot-link path.
+                        if edge.is_none()
+                            && let Some(e) = self.executor.as_mut()
+                        {
+                            e.link_dynamic_target(next_virtual, next_phys);
+                        }
+                    } else {
                         break Some(JitProgress {
                             result: Ok(()),
                             work_used,
@@ -2944,16 +3054,61 @@ impl Machine {
         result
     }
 
+    /// Compute the fuel for one browser in-module chain. Direct chaining is only enabled with the
+    /// existing Phase-C interrupt batching contract: that contract already permits observation to
+    /// lag by one bounded block, while the fuel keeps a chain from spanning an arbitrary outer run
+    /// quantum. In deterministic ICount mode, trim the fuel so a chain cannot retire past a future
+    /// CLINT/SBI timer deadline; wall-clock mode keeps the conservative dispatch path because time
+    /// can advance independently of guest retirement.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn direct_chain_budget(&self, remaining_work: u64) -> (u64, bool) {
+        let mut budget = remaining_work.clamp(1, JIT_DIRECT_CHAIN_FUEL);
+        if !self.interrupt_batching() || self.wall_time.is_some() {
+            return (remaining_work, false);
+        }
+
+        let mut deadline = None;
+        if let Some(clint) = &self.clint {
+            let state = clint.borrow();
+            if state.mtimecmp != u64::MAX && state.mtimecmp > state.mtime {
+                deadline = Some(state.mtimecmp);
+            }
+            if self.builtin_sbi
+                && self.sbi_state.stimecmp != u64::MAX
+                && self.sbi_state.stimecmp > state.mtime
+            {
+                deadline = Some(
+                    deadline.map_or(self.sbi_state.stimecmp, |d| d.min(self.sbi_state.stimecmp)),
+                );
+            }
+            if let Some(deadline) = deadline {
+                let ticks = u128::from(deadline - state.mtime);
+                let need = ticks
+                    .saturating_mul(u128::from(self.clock_div.max(1)))
+                    .saturating_sub(u128::from(self.tick_accum));
+                budget = budget.min(u64::try_from(need.max(1)).unwrap_or(u64::MAX));
+            }
+        }
+        (budget.max(1), true)
+    }
+
     /// E4-T18: execute exactly ONE compiled block at physical entry `phys` (the former body of
     /// `try_jit_block`), committing its registers / PC / retire clock. Returns:
-    /// * `None` — the block did not run (metadata vanished or it cannot fit in the remaining tail),
-    ///   so the caller may interpret it from entry.
+    /// * `None` — the block did not run (metadata vanished, it cannot fit in the remaining tail,
+    ///   or its first instruction cannot fit in the direct-chain fuel), so the caller may interpret
+    ///   it from entry.
     /// * `Some(BlockStep::Committed { edge, retired })` — a clean exit and its exact retirement
     ///   span; `edge` identifies a static successor for chaining.
     /// * `Some(BlockStep::Trapped { trap, retired })` — a precise trap plus the body prefix that
     ///   committed before the faulting instruction.
     #[cfg(not(feature = "zicsr-stub"))]
-    fn run_one_jit_block(&mut self, phys: u64, remaining_work: u64) -> Option<BlockStep> {
+    fn run_one_jit_block(
+        &mut self,
+        phys: u64,
+        remaining_work: u64,
+        direct_chain_budget: u64,
+        allow_direct_chaining: bool,
+    ) -> Option<BlockStep> {
         // Op count + terminator from the physically-keyed decoded block. A block too large for the
         // remaining host tail is refused BEFORE touching executor/hart state, so the interpreter can
         // consume exactly the remaining instruction attempts without overshoot.
@@ -2970,7 +3125,14 @@ impl Machine {
         let entry_pc = self.hart.regs.pc;
         // Take the executor out so it can borrow hart + bus for the duration of the call.
         let mut exec = self.executor.take().expect("compiled ⇒ executor present");
-        let exit = exec.execute(phys, &mut self.hart, &mut self.bus);
+        let exit = exec.execute_with_budget(
+            phys,
+            &mut self.hart,
+            &mut self.bus,
+            remaining_work,
+            direct_chain_budget,
+            allow_direct_chaining,
+        );
         self.executor = Some(exec);
         // `None` is exclusively a defensive pre-call executor metadata miss; compiled code did not
         // run, so interpreting from entry is replay-safe. Recorded faults return `Some(Trap)`, and
@@ -2982,7 +3144,12 @@ impl Machine {
         match exit.code {
             jit::ExitCode::Fallthrough | jit::ExitCode::BranchTaken => {
                 self.hart.regs.pc = exit.next_pc;
-                self.account_jit_retired(nops);
+                let retired = if exit.retired == 0 {
+                    nops
+                } else {
+                    exit.retired
+                };
+                debug_assert!(retired > 0 && retired <= remaining_work);
                 // E4-T17: a JIT block ending in `fence.i` orders the fetch stream the SAME near-free
                 // way `step_cached` does — the block's own stores were logged and are drained
                 // page-granularly below, so any page this block wrote (incl. its own, the self-write
@@ -2993,10 +3160,26 @@ impl Machine {
                     self.block_cache.note_fence_i();
                 }
                 self.drain_code_writes();
+                self.account_jit_retired(retired);
                 Some(BlockStep::Committed {
-                    edge: chain_edge(terminator, exit.code),
-                    retired: nops,
+                    edge: (retired == nops)
+                        .then(|| chain_edge(terminator, exit.code))
+                        .flatten(),
+                    retired,
                 })
+            }
+            jit::ExitCode::Budget => {
+                let retired = exit.retired;
+                if retired == 0 {
+                    // The first block did not fit the direct-chain fuel. No architectural state
+                    // was changed by the prologue, so the caller can safely interpret it.
+                    return None;
+                }
+                debug_assert!(retired <= remaining_work);
+                self.hart.regs.pc = exit.next_pc;
+                self.account_jit_retired(retired);
+                self.drain_code_writes();
+                Some(BlockStep::Budget { retired })
             }
             jit::ExitCode::Trap => {
                 // E4-T12: a PRECISE mid-block memory fault carries the interpreter-produced `Trap`
@@ -3014,7 +3197,9 @@ impl Machine {
                     // Sv39 aliases account the exact prefix too. The executor writes only a static
                     // per-op PC from this trusted block; an out-of-block value is an internal ABI
                     // violation and must fail closed rather than fabricate architectural counters.
-                    let retired = {
+                    let retired = if exit.retired != 0 {
+                        exit.retired
+                    } else {
                         let block = self
                             .block_cache
                             .get(phys)
@@ -3031,6 +3216,8 @@ impl Machine {
                             .expect("JIT precise-trap PC must name an op in its decoded block")
                             as u64
                     };
+                    debug_assert!(retired < nops || exit.retired != 0);
+                    debug_assert!(retired <= remaining_work);
                     self.account_jit_retired(retired);
                     self.hart.regs.pc = faulting_pc;
                     // A store before the fault may have hit a code page (SMC/DMA-into-code); drain
@@ -3041,25 +3228,28 @@ impl Machine {
                 }
                 // Otherwise: the trapping terminator (`ecall`/`ebreak`) retires NOTHING; only the
                 // `nops-1` body ops did. Advance the clock for those.
-                let retired = nops.saturating_sub(1);
+                let retired = if exit.retired != 0 {
+                    exit.retired
+                } else {
+                    nops.saturating_sub(1)
+                };
+                debug_assert!(retired <= remaining_work);
                 self.account_jit_retired(retired);
                 // Leave PC at the faulting instruction and derive the trap from the CURRENT
                 // privilege mode (the block cannot know it) so the cause matches the interpreter.
                 self.hart.regs.pc = exit.next_pc;
-                let trap = match terminator {
-                    Some(crate::decode::Instr::Ecall) => Trap {
+                let trap = match exit.exit_info as i64 {
+                    3 => Trap {
+                        cause: hart::Exception::Breakpoint,
+                        tval: exit.next_pc,
+                    },
+                    _ => Trap {
                         cause: match self.hart.csr.mode {
                             crate::csr::Priv::U => hart::Exception::EcallFromU,
                             crate::csr::Priv::S => hart::Exception::EcallFromS,
                             crate::csr::Priv::M => hart::Exception::EcallFromM,
                         },
                         tval: 0,
-                    },
-                    _ => Trap {
-                        // `ebreak` (the only other trapping terminator the translator emits):
-                        // Breakpoint with tval = the faulting PC (matches the interpreter).
-                        cause: hart::Exception::Breakpoint,
-                        tval: exit.next_pc,
                     },
                 };
                 Some(BlockStep::Trapped { trap, retired })
@@ -3460,5 +3650,54 @@ mod tests {
     fn machine_tolerates_zero_ram() {
         let m = Machine::new(0);
         assert_eq!(m.ram_len(), 0);
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    #[test]
+    fn group_batches_coalesces_disconnected_chunks() {
+        let blocks: alloc::vec::Vec<_> = (0..5)
+            .map(|i| {
+                dispatch::DecodedBlock::new(
+                    0x8000_0000 + i * 8,
+                    alloc::vec![dispatch::MicroOp {
+                        instr: decode::Instr::Addi {
+                            rd: 1,
+                            rs1: 1,
+                            imm: 1,
+                        },
+                        len: 4,
+                        raw: 0,
+                    }],
+                    4,
+                )
+            })
+            .collect();
+
+        assert_eq!(
+            group_into_batches(&blocks, 2),
+            alloc::vec![alloc::vec![0, 1], alloc::vec![2, 3], alloc::vec![4]]
+        );
+
+        let pages: alloc::vec::Vec<_> = (0..3)
+            .map(|i| {
+                dispatch::DecodedBlock::new(
+                    0x9000_0000 + i * dispatch::PAGE,
+                    alloc::vec![dispatch::MicroOp {
+                        instr: decode::Instr::Addi {
+                            rd: 1,
+                            rs1: 1,
+                            imm: 1,
+                        },
+                        len: 4,
+                        raw: 0,
+                    }],
+                    4,
+                )
+            })
+            .collect();
+        assert_eq!(
+            group_into_batches(&pages, 2),
+            alloc::vec![alloc::vec![0, 1], alloc::vec![2]]
+        );
     }
 }

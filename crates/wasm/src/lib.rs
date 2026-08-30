@@ -523,6 +523,63 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
             set("retiredViaJit", &JsValue::from_f64(0.0));
         }
     }
+    // Keep the original proof counters above stable while exposing the cumulative mechanics that
+    // explain a browser benchmark: how often the outer dispatch loop was re-entered, how many
+    // links a compiled chain actually followed, whether the compiled cache is churning, and how
+    // often the physical predecode cache was reused. These are diagnostics only; none participates
+    // in execution or acceptance decisions.
+    let chain = machine.chain_stats();
+    set(
+        "chainLinksMade",
+        &JsValue::from_f64(chain.links_made as f64),
+    );
+    set("chainLinksCut", &JsValue::from_f64(chain.links_cut as f64));
+    set(
+        "chainDispatchEntries",
+        &JsValue::from_f64(chain.dispatch_entries as f64),
+    );
+    set(
+        "chainMaxDepth",
+        &JsValue::from_f64(chain.max_chain_depth as f64),
+    );
+    set(
+        "chainLinksFollowed",
+        &JsValue::from_f64(chain.total_links_followed() as f64),
+    );
+    let cache = machine.jit_cache_stats();
+    set(
+        "jitCacheInstalls",
+        &JsValue::from_f64(cache.installs as f64),
+    );
+    set(
+        "jitCacheRetranslations",
+        &JsValue::from_f64(cache.retranslations as f64),
+    );
+    set(
+        "jitCacheEvictions",
+        &JsValue::from_f64(cache.evictions as f64),
+    );
+    set("jitCacheBatches", &JsValue::from_f64(cache.batches as f64));
+    set(
+        "jitCacheCodeBytes",
+        &JsValue::from_f64(cache.code_bytes as f64),
+    );
+    let discovery = machine.discovery_stats();
+    set(
+        "decodedBlocksDiscarded",
+        &JsValue::from_f64(discovery.blocks_discarded as f64),
+    );
+    set(
+        "decodedCacheFlushes",
+        &JsValue::from_f64(discovery.cache_flushes as f64),
+    );
+    set(
+        "discoveryGeneration",
+        &JsValue::from_f64(discovery.generation as f64),
+    );
+    let (entry_hits, builds) = machine.block_cache_entry_stats();
+    set("blockEntryHits", &JsValue::from_f64(entry_hits as f64));
+    set("blockBuilds", &JsValue::from_f64(builds as f64));
     obj.into()
 }
 
@@ -607,9 +664,9 @@ impl WasmMachine {
     #[wasm_bindgen(js_name = enableJit)]
     pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        inner
-            .machine
-            .set_executor(Box::new(jit_browser::BrowserExecutor::new()));
+        let executor =
+            jit_browser::BrowserExecutor::new_inline(&inner.machine).map_err(JsError::new)?;
+        inner.machine.set_executor(Box::new(executor));
         inner.machine.set_block_cache(true);
         inner.machine.set_interrupt_batching(true);
         inner.machine.set_hotness_threshold(threshold.max(1));
@@ -1416,9 +1473,9 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = enableJit)]
     pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        inner
-            .machine
-            .set_executor(Box::new(jit_browser::BrowserExecutor::new()));
+        let executor =
+            jit_browser::BrowserExecutor::new_inline(&inner.machine).map_err(JsError::new)?;
+        inner.machine.set_executor(Box::new(executor));
         inner.machine.set_block_cache(true);
         inner.machine.set_interrupt_batching(true);
         inner.machine.set_hotness_threshold(threshold.max(1));

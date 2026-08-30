@@ -28,11 +28,12 @@
 //! 3. **CpuState sync** — one stable `Uint8Array` view per batch bulk-copies the frozen handoff
 //!    region, instead of crossing the JS boundary once per register.
 //!
-//! The memory model is the frozen [`MemModel::SoftmmuImports`](jit_translate::MemModel) — the
-//! integrated path (E4-T11's inline-TLB shared-memory fast path is deferred), identical to the native
-//! executor: each module owns a private one-page `CpuState` memory and reaches guest RAM through the
-//! imports. This is why the executor is faithful to the native reference AND headlessly verifiable in
-//! node against `Hart::exec_oracle`.
+//! The default constructor uses the frozen [`MemModel::SoftmmuImports`](jit_translate::MemModel)
+//! path, identical to the native executor. Production browser instances use
+//! `MemModel::InlineTlb`: the outer wasm memory backs guest RAM and aligned, cacheable loads/stores
+//! can avoid the JS import boundary. Raw stores append a bounded commit record in the handoff; the
+//! executor applies reservation invalidation and SMC/DMA page logging before the next guest boundary.
+//! The parity harness keeps the isolated SoftMMU mode available as a reference.
 
 use alloc::boxed::Box;
 use alloc::format;
@@ -40,9 +41,10 @@ use alloc::vec::Vec;
 use core::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 
-use jit_translate::{Abi, translate_batch};
+use jit_translate::{Abi, MemModel, TlbLayout, translate_batch};
 use js_sys::{Function, Object, Reflect, Uint8Array, WebAssembly};
 use wasm_bindgen::prelude::*;
+use wasm_vm_core::Machine;
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::DecodedBlock;
 use wasm_vm_core::hart::{Hart, Trap};
@@ -54,6 +56,201 @@ use wasm_vm_core::mmio::SystemBus;
 
 extern crate alloc;
 
+const INLINE_TLB_ENTRIES: u32 = 256;
+const INLINE_TLB_ARRAY_BYTES: u32 = INLINE_TLB_ENTRIES * TlbLayout::SLOT;
+const INLINE_TLB_WORDS: usize = (INLINE_TLB_ARRAY_BYTES as usize * 3) / core::mem::size_of::<u64>();
+const DIRECT_CHAIN_FUEL: u64 = 128;
+const DYNAMIC_LINK_ENTRIES: usize = 4096;
+const DYNAMIC_LINK_WORDS: usize = DYNAMIC_LINK_ENTRIES * 2;
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+struct InlineTlbContext {
+    satp: u64,
+    mstatus: u64,
+    mode: u8,
+    flushes: u64,
+    triggers_idle: bool,
+}
+
+/// The browser-only direct-mapped refill cache. The generated module imports the outer wasm
+/// memory, so this allocation and the guest RAM `Vec` are both addressed by the same linear-memory
+/// offsets. Only successful, aligned RAM accesses are published here; the interpreter remains the
+/// authority for the refill and all non-RAM accesses.
+struct InlineTlbCache {
+    words: Box<[u64; INLINE_TLB_WORDS]>,
+    layout: TlbLayout,
+    context: Option<InlineTlbContext>,
+}
+
+impl InlineTlbCache {
+    fn new(ram_host_ptr: usize, ram_len: usize, dram_base: u64) -> Result<Self, &'static str> {
+        let ram_base = u32::try_from(ram_host_ptr).map_err(|_| "guest RAM is outside wasm32")?;
+        let ram_end = ram_host_ptr
+            .checked_add(ram_len)
+            .ok_or("guest RAM linear-memory range overflowed")?;
+        if ram_end > (u32::MAX as usize).saturating_add(1) {
+            return Err("guest RAM does not fit in wasm32 linear memory");
+        }
+
+        let mut words = Box::new([0u64; INLINE_TLB_WORDS]);
+        let base = u32::try_from(words.as_mut_ptr() as usize)
+            .map_err(|_| "inline TLB allocation is outside wasm32")?;
+        let write_base = base
+            .checked_add(INLINE_TLB_ARRAY_BYTES)
+            .ok_or("inline TLB layout overflowed")?;
+        let exec_base = write_base
+            .checked_add(INLINE_TLB_ARRAY_BYTES)
+            .ok_or("inline TLB layout overflowed")?;
+        let layout = TlbLayout {
+            entries: INLINE_TLB_ENTRIES,
+            read_base: base,
+            write_base,
+            exec_base,
+            ram_base,
+            dram_base,
+        };
+        Ok(Self {
+            words,
+            layout,
+            context: None,
+        })
+    }
+
+    fn context(hart: &Hart) -> InlineTlbContext {
+        InlineTlbContext {
+            satp: hart.csr.satp(),
+            mstatus: hart.csr.mstatus,
+            mode: match hart.csr.mode {
+                wasm_vm_core::csr::Priv::U => 0,
+                wasm_vm_core::csr::Priv::S => 1,
+                wasm_vm_core::csr::Priv::M => 3,
+            },
+            flushes: hart.tlb.flush_count(),
+            triggers_idle: hart.csr.triggers_idle(),
+        }
+    }
+
+    fn reset(&mut self) {
+        for word in self.words.iter_mut() {
+            *word = 0;
+        }
+        self.context = None;
+    }
+
+    fn sync_context(&mut self, hart: &Hart) -> bool {
+        let current = Self::context(hart);
+        if self.context != Some(current) {
+            for word in self.words.iter_mut() {
+                *word = 0;
+            }
+            self.context = Some(current);
+            return true;
+        }
+        false
+    }
+
+    fn fill(&mut self, va: u64, pa: u64, write: bool) {
+        let Some(ram_offset) = pa.checked_sub(self.layout.dram_base) else {
+            return;
+        };
+        let Some(target) = u64::from(self.layout.ram_base).checked_add(ram_offset) else {
+            return;
+        };
+        if target > u64::from(u32::MAX) {
+            return;
+        }
+        let slot = ((va >> 12) & u64::from(self.layout.entries - 1)) as usize;
+        let array = if write {
+            INLINE_TLB_ENTRIES as usize * 2
+        } else {
+            0
+        };
+        let index = array + slot * 2;
+        self.words[index] = (va & !0xFFF) | TlbLayout::VALID as u64;
+        self.words[index + 1] = target.wrapping_sub(va);
+    }
+}
+
+/// Browser-only direct-mapped cache for virtual `jalr` targets. Each 16-byte slot stores
+/// `{virtual_pc, table_index_plus_one}` in the outer wasm memory. The generated module compares
+/// both values before `call_indirect`; Rust owns publication and clears the slot before freeing or
+/// remapping a compiled block.
+struct DynamicLinkCache {
+    words: Box<[u64; DYNAMIC_LINK_WORDS]>,
+    slot_keys: Vec<Option<u64>>,
+    virtual_to_phys: HashMap<u64, u64>,
+    base: u32,
+    mask: u32,
+}
+
+impl DynamicLinkCache {
+    fn new() -> Result<Self, &'static str> {
+        let mut words = Box::new([0u64; DYNAMIC_LINK_WORDS]);
+        let base = u32::try_from(words.as_mut_ptr() as usize)
+            .map_err(|_| "dynamic link table is outside wasm32")?;
+        Ok(Self {
+            words,
+            slot_keys: vec![None; DYNAMIC_LINK_ENTRIES],
+            virtual_to_phys: HashMap::new(),
+            base,
+            mask: (DYNAMIC_LINK_ENTRIES - 1) as u32,
+        })
+    }
+
+    fn base(&self) -> u32 {
+        self.base
+    }
+
+    fn mask(&self) -> u32 {
+        self.mask
+    }
+
+    fn slot(&self, virtual_pc: u64) -> usize {
+        (((virtual_pc >> 2) ^ (virtual_pc >> 12) ^ virtual_pc) & u64::from(self.mask)) as usize
+    }
+
+    fn publish(&mut self, virtual_pc: u64, physical_pc: u64, table_index: u32) {
+        let slot = self.slot(virtual_pc);
+        if let Some(old) = self.slot_keys[slot].replace(virtual_pc) {
+            self.virtual_to_phys.remove(&old);
+        }
+        self.words[slot * 2] = virtual_pc.to_le();
+        self.words[slot * 2 + 1] = u64::from(table_index).saturating_add(1).to_le();
+        self.virtual_to_phys.insert(virtual_pc, physical_pc);
+    }
+
+    fn clear_virtual(&mut self, virtual_pc: u64) {
+        let slot = self.slot(virtual_pc);
+        if self.slot_keys[slot] == Some(virtual_pc) {
+            self.words[slot * 2] = 0;
+            self.words[slot * 2 + 1] = 0;
+            self.slot_keys[slot] = None;
+        }
+        self.virtual_to_phys.remove(&virtual_pc);
+    }
+
+    fn clear_physical(&mut self, physical_pc: u64) {
+        let virtuals: Vec<u64> = self
+            .virtual_to_phys
+            .iter()
+            .filter_map(|(&virtual_pc, &physical)| (physical == physical_pc).then_some(virtual_pc))
+            .collect();
+        for virtual_pc in virtuals {
+            self.clear_virtual(virtual_pc);
+        }
+    }
+
+    fn reset(&mut self) {
+        for word in self.words.iter_mut() {
+            *word = 0;
+        }
+        for key in &mut self.slot_keys {
+            *key = None;
+        }
+        self.virtual_to_phys.clear();
+    }
+}
+
 // ── the live-guest bridge for the load/store/AMO/LR/SC imports ───────────────
 //
 // Exactly the native `HostCtx` pattern, but reached through a thread-local because the JS import
@@ -62,6 +259,9 @@ extern crate alloc;
 struct HostCtx {
     hart: *mut Hart,
     bus: *mut SystemBus,
+    inline_tlb: *mut InlineTlbCache,
+    compiled_pages: *const HashMap<u64, usize>,
+    chain_abort: *mut u8,
     /// The precise trap a faulting load/store/AMO produced (cause + `mtval`), recorded before the
     /// import throws. `None` means "no fault this call".
     trap: Option<Trap>,
@@ -71,6 +271,9 @@ thread_local! {
     static HOST: RefCell<HostCtx> = const { RefCell::new(HostCtx {
         hart: core::ptr::null_mut(),
         bus: core::ptr::null_mut(),
+        inline_tlb: core::ptr::null_mut(),
+        compiled_pages: core::ptr::null(),
+        chain_abort: core::ptr::null_mut(),
         trap: None,
     }) };
 }
@@ -80,9 +283,9 @@ export function throwJitMemFault() {
     throw null;
 }
 
-export function invokeJitBlock(run) {
+export function invokeJitBlock(run, stateBase) {
     try {
-        return run(0);
+        return run(stateBase);
     } catch {
         return NaN;
     }
@@ -92,7 +295,7 @@ extern "C" {
     #[wasm_bindgen(js_name = throwJitMemFault)]
     fn throw_jit_mem_fault();
     #[wasm_bindgen(js_name = invokeJitBlock)]
-    fn invoke_jit_block(run: &Function) -> f64;
+    fn invoke_jit_block(run: &Function, state_base: u32) -> f64;
 }
 
 #[cold]
@@ -128,12 +331,84 @@ where
     }
 }
 
-/// The `env.store` variant: same bridge, no return value.
-fn with_ctx_unit<F>(f: F)
-where
-    F: FnOnce(&mut Hart, &mut SystemBus) -> Result<(), Trap>,
-{
-    with_ctx(|h, b| f(h, b).map(|()| 0));
+fn load_width(kind: i32) -> u64 {
+    match kind {
+        0 | 4 => 1,
+        1 | 5 => 2,
+        2 | 6 => 4,
+        3 => 8,
+        _ => 0,
+    }
+}
+
+fn mark_chain_abort() {
+    let flag = HOST.with(|context| context.borrow().chain_abort);
+    if !flag.is_null() {
+        // SAFETY: the pointer is installed only for the duration of one non-reentrant compiled
+        // call and points into the executor-owned, Box-stable chain header.
+        unsafe { *flag = 1 };
+    }
+}
+
+fn publish_inline_tlb(addr: u64, pa: u64, write: bool) {
+    let cache = HOST.with(|context| context.borrow().inline_tlb);
+    if !cache.is_null() {
+        // SAFETY: the pointer is installed only for the duration of one non-reentrant compiled
+        // call, and points at the executor-owned cache that outlives the import closure.
+        unsafe { (*cache).fill(addr, pa, write) };
+    }
+}
+
+fn with_ctx_load(addr: i64, kind: i32) -> i64 {
+    with_ctx(|h, b| {
+        let addr = addr as u64;
+        let value = h.jit_load(b, addr, kind)?;
+        let inline = HOST.with(|context| !context.borrow().inline_tlb.is_null());
+        if inline {
+            if h.csr.triggers_idle() {
+                match h.jit_ram_phys(b, addr, load_width(kind), false) {
+                    Ok(Some(pa)) => publish_inline_tlb(addr, pa, false),
+                    _ => mark_chain_abort(),
+                }
+            } else {
+                mark_chain_abort();
+            }
+        }
+        Ok(value)
+    })
+}
+
+fn with_ctx_store(addr: i64, val: i64, width: i32) {
+    let addr = addr as u64;
+    let barrier = with_ctx(|h, b| {
+        let ram_phys = h.jit_store_with_ram_phys(b, addr, val, width)?;
+        // A slow-path store is the write-TLB refill. Misaligned stores deliberately do not fill:
+        // the generated fast path rejects them and a cross-page misaligned access cannot be
+        // represented by one `{tag, addend}` slot.
+        let aligned = width > 0
+            && (addr & (u64::from(width as u32).saturating_sub(1))) == 0
+            && addr
+                .checked_add(u64::from(width as u32))
+                .is_some_and(|end| (addr >> 12) == ((end - 1) >> 12));
+        if aligned && let Some(pa) = ram_phys {
+            publish_inline_tlb(addr, pa, true);
+        }
+        let touches_compiled_page = ram_phys.is_some_and(|pa| {
+            HOST.with(|context| {
+                let pages = context.borrow().compiled_pages;
+                // SAFETY: the executor installs this pointer only for the duration of a compiled
+                // call. The compiled-page map is not mutated while the call is in flight, so the
+                // read is stable across the synchronous import.
+                !pages.is_null() && unsafe { (*pages).contains_key(&(pa >> 12)) }
+            })
+        });
+        // Non-RAM stores are MMIO or another host-visible boundary. A RAM store only needs to
+        // stop a direct chain when it can invalidate code that is still live in this executor.
+        Ok((ram_phys.is_none() || touches_compiled_page) as i64)
+    });
+    if barrier != 0 {
+        mark_chain_abort();
+    }
 }
 
 // ── registry entries (identical shape to the native executor, engine handle swapped) ──
@@ -155,9 +430,10 @@ struct Batch {
     members: Vec<u64>,
     est_bytes: u64,
     last_tick: u64,
-    /// One exact view of `[abi::XREG_BASE, abi::HANDOFF_END)`. SoftMMU state memories are fixed at
-    /// one page, so their ArrayBuffer can never be detached by `memory.grow`.
-    state: Uint8Array,
+    /// One exact view of `[abi::XREG_BASE, abi::HANDOFF_END)` for the private SoftMMU state
+    /// memory. Inline-TLB batches import the outer memory and use the executor's shared handoff,
+    /// so they have no private state view.
+    state: Option<Uint8Array>,
     /// Kept alive so the instance (and its functions/memory) survive until the batch is retired.
     _instance: WebAssembly::Instance,
 }
@@ -195,9 +471,17 @@ impl BrowserHandoff {
     }
 
     fn copy_into_module(&mut self, state: &Uint8Array, hart: &Hart) {
-        self.image.prepare(hart);
+        self.prepare(hart);
         self.ensure_live_view();
         state.set(self.view.as_ref(), 0);
+    }
+
+    fn prepare(&mut self, hart: &Hart) {
+        self.image.prepare(hart);
+    }
+
+    fn state_base(&mut self) -> u32 {
+        self.image.as_mut_bytes().as_mut_ptr() as u32
     }
 
     fn copy_from_module(&mut self, state: &Uint8Array, hart: &mut Hart) {
@@ -224,6 +508,7 @@ const STUB: u32 = u32::MAX;
 /// The browser (`WebAssembly.compile`/`instantiate`) [`CompiledBlockExecutor`].
 pub struct BrowserExecutor {
     /// The shared `{ env: { load, store, amo, lr, sc } }` import object handed to every instantiate.
+    /// Inline-TLB instances additionally import the outer wasm memory as `env.mem`.
     imports: Object,
     /// The import closures, kept alive for the executor's lifetime (dropping them would invalidate
     /// the JS functions the live instances import).
@@ -235,7 +520,18 @@ pub struct BrowserExecutor {
     /// Box-stable Rust image plus one cached outer-wasm view. The view is part of the executor's
     /// fixed externref floor and is refreshed only if outer memory growth detached it.
     handoff: BrowserHandoff,
+    /// ABI selected for newly translated batches. The default constructor keeps the isolated
+    /// SoftMMU state-memory backend for the native/browser parity harness; production wasm uses the
+    /// imported-memory Inline-TLB backend.
+    abi: Abi,
+    inline_tlb: Option<InlineTlbCache>,
+    dynamic_links: Option<DynamicLinkCache>,
+    funcref_table: Option<WebAssembly::Table>,
     blocks: HashMap<u64, Compiled>,
+    /// Reference counts of physical pages containing live compiled blocks. A successful ordinary
+    /// RAM store can stay inside a chain unless it touches one of these pages; then the pending
+    /// bus write log must be drained before another compiled successor is allowed to run.
+    compiled_pages: HashMap<u64, usize>,
     executed_blocks: u64,
     retired_via_jit: u64,
     // ── E4-T18 chaining state (identical to native) ──
@@ -273,32 +569,107 @@ impl Default for BrowserExecutor {
 }
 
 impl BrowserExecutor {
-    /// Build a fresh executor: one `{ env: { … } }` import object whose closures bridge to the live
-    /// guest through the thread-local [`HOST`] context, shared by every compiled block/batch.
+    /// Build the isolated SoftMMU executor used by the parity harness and as a safe fallback.
     pub fn new() -> Self {
+        Self::new_with_inline_tlb(None, None)
+    }
+
+    /// Build the production executor. Compiled modules import the outer wasm memory so aligned
+    /// RAM accesses can hit the generated inline TLB instead of crossing the JS import boundary.
+    pub fn new_inline(machine: &Machine) -> Result<Self, &'static str> {
+        let cache = InlineTlbCache::new(
+            machine.ram_host_ptr(),
+            machine.ram_len(),
+            machine.ram_base(),
+        )?;
+        let dynamic_links = DynamicLinkCache::new()?;
+        let mut executor = Self::new_with_inline_tlb(Some(cache), Some(dynamic_links));
+        // Production Node startup has a wider working set than the small native/browser parity
+        // harness. Keep the table/metadata caps unchanged, but allow a bounded wider code working
+        // set so the documented 32 MiB default does not evict otherwise-hot short blocks mid-boot.
+        executor.budget.max_batches = 1024;
+        executor.budget.code_bytes = 64 * 1024 * 1024;
+        Ok(executor)
+    }
+
+    fn new_with_inline_tlb(
+        inline_tlb: Option<InlineTlbCache>,
+        dynamic_links: Option<DynamicLinkCache>,
+    ) -> Self {
+        let funcref_table = dynamic_links.as_ref().map(|_| {
+            let descriptor = Object::new();
+            Reflect::set(
+                &descriptor,
+                &JsValue::from_str("element"),
+                &JsValue::from_str("anyfunc"),
+            )
+            .unwrap_throw();
+            Reflect::set(
+                &descriptor,
+                &JsValue::from_str("initial"),
+                &JsValue::from_f64(1.0),
+            )
+            .unwrap_throw();
+            WebAssembly::Table::new(&descriptor).unwrap_throw()
+        });
+        let abi = match (inline_tlb.as_ref(), dynamic_links.as_ref()) {
+            (Some(cache), Some(links)) => Abi {
+                mem: MemModel::InlineTlb,
+                tlb: cache.layout,
+                direct_chain: true,
+                store_log_count: abi::CHAIN_STORE_COUNT,
+                store_log_base: abi::CHAIN_STORE_BASE,
+                store_log_capacity: abi::CHAIN_STORE_CAPACITY,
+                dynamic_map_base: links.base(),
+                dynamic_map_mask: links.mask(),
+                dynamic_chain: true,
+                chain_table: 0,
+                ..Abi::FROZEN
+            },
+            _ => Abi::FROZEN,
+        };
         let load: Closure<dyn FnMut(i64, i32) -> i64> =
-            Closure::new(|addr: i64, kind: i32| with_ctx(|h, b| h.jit_load(b, addr as u64, kind)));
+            Closure::new(|addr: i64, kind: i32| with_ctx_load(addr, kind));
         let store: Closure<dyn FnMut(i64, i64, i32)> =
-            Closure::new(|addr: i64, val: i64, width: i32| {
-                with_ctx_unit(|h, b| h.jit_store(b, addr as u64, val, width))
-            });
+            Closure::new(|addr: i64, val: i64, width: i32| with_ctx_store(addr, val, width));
         let amo: Closure<dyn FnMut(i64, i64, i32, i32) -> i64> =
             Closure::new(|addr: i64, val: i64, op: i32, width: i32| {
-                with_ctx(|h, b| h.jit_amo(b, addr as u64, val, op, width))
+                let value = with_ctx(|h, b| h.jit_amo(b, addr as u64, val, op, width));
+                mark_chain_abort();
+                value
             });
-        let lr: Closure<dyn FnMut(i64, i32) -> i64> =
-            Closure::new(|addr: i64, width: i32| with_ctx(|h, b| h.jit_lr(b, addr as u64, width)));
+        let lr: Closure<dyn FnMut(i64, i32) -> i64> = Closure::new(|addr: i64, width: i32| {
+            let value = with_ctx(|h, b| h.jit_lr(b, addr as u64, width));
+            mark_chain_abort();
+            value
+        });
         let sc: Closure<dyn FnMut(i64, i64, i32) -> i64> =
             Closure::new(|addr: i64, val: i64, width: i32| {
-                with_ctx(|h, b| h.jit_sc(b, addr as u64, val, width))
+                let value = with_ctx(|h, b| h.jit_sc(b, addr as u64, val, width));
+                mark_chain_abort();
+                value
             });
 
         let env = Object::new();
         set_fn(&env, "load", &load);
         set_fn(&env, "store", &store);
+        if inline_tlb.is_some() {
+            // The inline-TLB translator still routes slow/miss paths through the
+            // SoftMMU import ABI. Keep both names available so the same Rust
+            // callbacks serve the fallback and inline memories.
+            set_fn(&env, "softmmu_load", &load);
+            set_fn(&env, "softmmu_store", &store);
+        }
         set_fn(&env, "amo", &amo);
         set_fn(&env, "lr", &lr);
         set_fn(&env, "sc", &sc);
+        if inline_tlb.is_some() {
+            let memory = wasm_bindgen::memory();
+            Reflect::set(&env, &JsValue::from_str("mem"), &memory).unwrap_throw();
+        }
+        if let Some(table) = &funcref_table {
+            Reflect::set(&env, &JsValue::from_str("table"), table.as_ref()).unwrap_throw();
+        }
         let imports = Object::new();
         Reflect::set(&imports, &JsValue::from_str("env"), &env).unwrap_throw();
 
@@ -310,7 +681,12 @@ impl BrowserExecutor {
             _closures_lr: lr,
             _closures_sc: sc,
             handoff: BrowserHandoff::new(),
+            abi,
+            inline_tlb,
+            dynamic_links,
+            funcref_table,
             blocks: HashMap::new(),
+            compiled_pages: HashMap::new(),
             executed_blocks: 0,
             retired_via_jit: 0,
             chaining: true,
@@ -362,14 +738,17 @@ impl BrowserExecutor {
         else {
             return false;
         };
-        let before_len = batch.state.length();
-        let before_buffer = batch.state.buffer();
+        let Some(state) = batch.state.as_ref() else {
+            return false;
+        };
+        let before_len = state.length();
+        let before_buffer = state.buffer();
         let rejected = grow
             .call1(memory.as_ref(), &JsValue::from_f64(1.0))
             .is_err();
-        let after_buffer = batch.state.buffer();
+        let after_buffer = state.buffer();
         rejected
-            && batch.state.length() == before_len
+            && state.length() == before_len
             && Object::is(before_buffer.as_ref(), after_buffer.as_ref())
     }
 
@@ -448,7 +827,9 @@ impl BrowserExecutor {
         }
     }
 
-    /// E4-T19: retire an entire batch (Module/Instance) — the unit of SMC/eviction invalidation.
+    /// E4-T19: retire an entire batch (Module/Instance) when every member is invalidated. A
+    /// cross-page batch can retain unaffected members; page invalidation handles that narrower
+    /// case below without allowing a stale link into a removed function.
     fn retire_batch(&mut self, batch_id: u32) {
         if let Some(batch) = self.batches.remove(&batch_id) {
             for &phys in &batch.members {
@@ -509,7 +890,18 @@ impl BrowserExecutor {
         let Some(c) = self.blocks.remove(&phys) else {
             return;
         };
+        if let Some(count) = self.compiled_pages.get_mut(&c.page_frame) {
+            if *count <= 1 {
+                self.compiled_pages.remove(&c.page_frame);
+            } else {
+                *count -= 1;
+            }
+        }
         let di = c.table_index;
+        self.clear_table_entry(di);
+        if let Some(links) = self.dynamic_links.as_mut() {
+            links.clear_physical(phys);
+        }
         if let Some(incoming) = self.incoming.remove(&di) {
             for s in incoming {
                 if self.slots[s as usize] != STUB {
@@ -539,38 +931,60 @@ impl BrowserExecutor {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn invoke(
         run: &Function,
-        state: &Uint8Array,
+        state: Option<&Uint8Array>,
         handoff: &mut BrowserHandoff,
         hart: &mut Hart,
         bus: &mut SystemBus,
+        inline_tlb: *mut InlineTlbCache,
+        compiled_pages: *const HashMap<u64, usize>,
+        chain_abort: *mut u8,
     ) -> Option<JitExit> {
-        handoff.copy_into_module(state, hart);
+        let state_base = if let Some(state) = state {
+            handoff.copy_into_module(state, hart);
+            0
+        } else {
+            handoff.prepare(hart);
+            handoff.state_base()
+        };
         HOST.with(|context| {
             let mut context = context.borrow_mut();
             context.hart = hart as *mut Hart;
             context.bus = bus as *mut SystemBus;
+            context.inline_tlb = inline_tlb;
+            context.compiled_pages = compiled_pages;
+            context.chain_abort = chain_abort;
             context.trap = None;
         });
         // Keep the exception entirely in JS. Bringing a caught exception back as
         // `Result<JsValue, JsValue>` roots one externref per fault in wasm-bindgen's table.
-        let returned = invoke_jit_block(run);
+        let returned = invoke_jit_block(run, state_base);
         let fault = HOST.with(|context| {
             let mut context = context.borrow_mut();
             context.hart = core::ptr::null_mut();
             context.bus = core::ptr::null_mut();
+            context.inline_tlb = core::ptr::null_mut();
+            context.compiled_pages = core::ptr::null();
+            context.chain_abort = core::ptr::null_mut();
             context.trap.take()
         });
+        Self::commit_raw_stores(handoff, hart, bus);
         let code = (!returned.is_nan()).then_some(returned as i32);
         let Some(code) = code else {
             if let Some(trap) = fault {
-                handoff.copy_from_module(state, hart);
+                if let Some(state) = state {
+                    handoff.copy_from_module(state, hart);
+                } else {
+                    handoff.image.commit_registers(hart);
+                }
                 return Some(JitExit {
                     code: ExitCode::Trap,
                     next_pc: handoff.image.exit_pc(),
                     exit_info: trap.cause as u64,
                     trap: Some(trap),
+                    retired: handoff.image.chain_retired(),
                 });
             }
             // An unrecorded exception may have happened after an imported RAM/MMIO side effect.
@@ -579,14 +993,50 @@ impl BrowserExecutor {
             throw_jit_sentinel();
         };
 
-        handoff.copy_from_module(state, hart);
+        if let Some(state) = state {
+            handoff.copy_from_module(state, hart);
+        } else {
+            handoff.image.commit_registers(hart);
+        }
         debug_assert_eq!(code, handoff.image.exit_reason());
         Some(JitExit {
             code: ExitCode::from_i32(code),
             next_pc: handoff.image.exit_pc(),
             exit_info: handoff.image.exit_info(),
             trap: None,
+            retired: handoff.image.chain_retired(),
         })
+    }
+
+    /// Commit the side effects that raw inline-RAM stores cannot perform inside the generated
+    /// module. The bytes are already in the shared guest RAM; this applies the two host-owned
+    /// effects that the ordinary store path records: LR/SC reservation invalidation and physical
+    /// code-write logging for page-granular JIT invalidation.
+    fn commit_raw_stores(handoff: &mut BrowserHandoff, hart: &mut Hart, bus: &mut SystemBus) {
+        let count = handoff.image.jit_store_count();
+        if count == 0 {
+            return;
+        }
+        if count > u64::from(abi::CHAIN_STORE_CAPACITY) {
+            // Only generated code can write this header. A malformed count would make the host
+            // lose a committed store, so fail closed rather than continue with partial accounting.
+            throw_jit_sentinel();
+        }
+        for index in 0..count {
+            let Some((addr, physical, width)) = handoff.image.jit_store_record(index) else {
+                throw_jit_sentinel();
+            };
+            hart.note_jit_ram_store(addr, width);
+            let Some(last) = physical.checked_add(width.saturating_sub(1)) else {
+                throw_jit_sentinel();
+            };
+            bus.code_write_log_mut().push(physical >> 12);
+            let last_frame = last >> 12;
+            if last_frame != physical >> 12 {
+                bus.code_write_log_mut().push(last_frame);
+            }
+        }
+        handoff.image.clear_jit_store_log();
     }
 }
 
@@ -599,6 +1049,26 @@ fn set_fn<T: ?Sized>(obj: &Object, name: &str, closure: &Closure<T>) {
         closure.as_ref().unchecked_ref::<Function>(),
     )
     .unwrap_throw();
+}
+
+impl BrowserExecutor {
+    fn publish_table_entry(&self, table_index: u32, run: &Function) {
+        let Some(table) = &self.funcref_table else {
+            return;
+        };
+        if table_index >= table.length() {
+            table
+                .grow(table_index.saturating_sub(table.length()).saturating_add(1))
+                .unwrap_throw();
+        }
+        table.set(table_index, run).unwrap_throw();
+    }
+
+    fn clear_table_entry(&self, table_index: u32) {
+        if let Some(table) = &self.funcref_table {
+            table.set_raw(table_index, &JsValue::null()).unwrap_throw();
+        }
+    }
 }
 
 impl CompiledBlockExecutor for BrowserExecutor {
@@ -630,7 +1100,7 @@ impl CompiledBlockExecutor for BrowserExecutor {
             })
             .collect();
 
-        let bytes = match translate_batch(&kept_blocks, &Abi::FROZEN, &kept_intra) {
+        let bytes = match translate_batch(&kept_blocks, &self.abi, &kept_intra) {
             Ok(b) => b,
             Err(_) => {
                 if kept_blocks.len() > 1 {
@@ -656,18 +1126,23 @@ impl CompiledBlockExecutor for BrowserExecutor {
             Err(_) => return,
         };
         let exports = instance.exports();
-        let mem = match Reflect::get(&exports, &JsValue::from_str("mem"))
-            .ok()
-            .and_then(|m| m.dyn_into::<WebAssembly::Memory>().ok())
-        {
-            Some(m) => m,
-            None => return,
+        let state = match self.abi.mem {
+            MemModel::SoftmmuImports => {
+                let mem = match Reflect::get(&exports, &JsValue::from_str("mem"))
+                    .ok()
+                    .and_then(|m| m.dyn_into::<WebAssembly::Memory>().ok())
+                {
+                    Some(m) => m,
+                    None => return,
+                };
+                Some(Uint8Array::new_with_byte_offset_and_length(
+                    &mem.buffer(),
+                    abi::XREG_BASE,
+                    abi::HANDOFF_LEN as u32,
+                ))
+            }
+            MemModel::InlineTlb | MemModel::InlineTlbLoads => None,
         };
-        let state = Uint8Array::new_with_byte_offset_and_length(
-            &mem.buffer(),
-            abi::XREG_BASE,
-            abi::HANDOFF_LEN as u32,
-        );
 
         let batch_id = self.next_batch_id;
         self.next_batch_id = self.next_batch_id.wrapping_add(1);
@@ -687,6 +1162,7 @@ impl CompiledBlockExecutor for BrowserExecutor {
             self.installs += 1;
             let nslots = Self::nslots_for(b);
             let (table_index, slot_base) = self.alloc_block(b.phys_start, nslots);
+            self.publish_table_entry(table_index, &run);
             self.blocks.insert(
                 b.phys_start,
                 Compiled {
@@ -698,6 +1174,7 @@ impl CompiledBlockExecutor for BrowserExecutor {
                     batch_id,
                 },
             );
+            *self.compiled_pages.entry(b.page_frame).or_default() += 1;
             members.push(b.phys_start);
         }
         if members.is_empty() {
@@ -748,6 +1225,41 @@ impl CompiledBlockExecutor for BrowserExecutor {
     }
 
     fn execute(&mut self, phys_pc: u64, hart: &mut Hart, bus: &mut SystemBus) -> Option<JitExit> {
+        self.execute_with_budget(phys_pc, hart, bus, u64::MAX, DIRECT_CHAIN_FUEL, true)
+    }
+
+    fn execute_with_budget(
+        &mut self,
+        phys_pc: u64,
+        hart: &mut Hart,
+        bus: &mut SystemBus,
+        remaining_work: u64,
+        chain_budget: u64,
+        allow_chaining: bool,
+    ) -> Option<JitExit> {
+        let context_changed = self
+            .inline_tlb
+            .as_mut()
+            .is_some_and(|cache| cache.sync_context(hart));
+        if context_changed && let Some(links) = self.dynamic_links.as_mut() {
+            links.reset();
+        }
+        let inline_tlb = self
+            .inline_tlb
+            .as_mut()
+            .map_or(core::ptr::null_mut(), |cache| cache as *mut InlineTlbCache);
+        let compiled_pages = &self.compiled_pages as *const HashMap<u64, usize>;
+        let direct_chaining = self.abi.direct_chain && self.chaining && allow_chaining;
+        if self.abi.direct_chain {
+            self.handoff
+                .image
+                .begin_chain(direct_chaining, chain_budget.min(remaining_work).max(1));
+        }
+        let chain_abort = if self.abi.direct_chain {
+            self.handoff.image.chain_abort_ptr()
+        } else {
+            core::ptr::null_mut()
+        };
         let exit = {
             let compiled = self.blocks.get(&phys_pc)?;
             let batch = self.batches.get_mut(&compiled.batch_id)?;
@@ -755,7 +1267,16 @@ impl CompiledBlockExecutor for BrowserExecutor {
             // block and its owning batch were found and a compiled call will actually be attempted.
             self.clock = self.clock.wrapping_add(1);
             batch.last_tick = self.clock;
-            Self::invoke(&compiled.run, &batch.state, &mut self.handoff, hart, bus)
+            Self::invoke(
+                &compiled.run,
+                batch.state.as_ref(),
+                &mut self.handoff,
+                hart,
+                bus,
+                inline_tlb,
+                compiled_pages,
+                chain_abort,
+            )
         };
         if exit.is_some() {
             self.executed_blocks += 1;
@@ -766,7 +1287,10 @@ impl CompiledBlockExecutor for BrowserExecutor {
     fn invalidate_all(&mut self) {
         let live_links = self.slots.iter().filter(|&&s| s != STUB).count() as u64;
         self.stats.links_cut += live_links;
-        self.blocks.clear();
+        let live_blocks: Vec<u64> = self.blocks.keys().copied().collect();
+        for phys in live_blocks {
+            self.remove_block(phys);
+        }
         self.slots.clear();
         self.table.clear();
         self.phys_to_index.clear();
@@ -775,11 +1299,40 @@ impl CompiledBlockExecutor for BrowserExecutor {
         self.free_slots1.clear();
         self.free_slots2.clear();
         self.batches.clear();
+        if let Some(cache) = self.inline_tlb.as_mut() {
+            cache.reset();
+        }
+        if let Some(links) = self.dynamic_links.as_mut() {
+            links.reset();
+        }
         self.generation = self.generation.wrapping_add(1);
         self.evicted_phys.clear();
     }
 
+    fn link_dynamic_target(&mut self, virtual_pc: u64, phys_pc: u64) {
+        let Some(table_index) = self
+            .blocks
+            .get(&phys_pc)
+            .map(|compiled| compiled.table_index)
+        else {
+            if let Some(links) = self.dynamic_links.as_mut() {
+                links.clear_virtual(virtual_pc);
+            }
+            return;
+        };
+        if let Some(links) = self.dynamic_links.as_mut() {
+            links.publish(virtual_pc, phys_pc, table_index);
+        }
+    }
+
     fn invalidate_page(&mut self, frame: u64) {
+        // E4-T19: a page-granular SMC store retires every member on the dirty page. If a compile
+        // batch also contains disconnected members from other pages, retain those members and the
+        // shared Module/Instance: `intra_edges_for_group` only creates direct calls for static edges
+        // on the same page, so no surviving function can directly call a removed function. The
+        // batch is dropped atomically when all of its members are on the invalidated page. In both
+        // cases `remove_block` restores incoming links and clears dynamic targets before any table
+        // entry is freed.
         let dead_batches: Vec<u32> = {
             let mut ids: Vec<u32> = self
                 .blocks
@@ -792,7 +1345,30 @@ impl CompiledBlockExecutor for BrowserExecutor {
             ids
         };
         for bid in dead_batches {
-            self.retire_batch(bid);
+            let all_members_dead = self
+                .blocks
+                .values()
+                .filter(|c| c.batch_id == bid)
+                .all(|c| c.page_frame == frame);
+            if all_members_dead {
+                self.retire_batch(bid);
+                continue;
+            }
+
+            let dead_members: Vec<u64> = self
+                .blocks
+                .iter()
+                .filter(|(_, c)| c.batch_id == bid && c.page_frame == frame)
+                .map(|(&phys, _)| phys)
+                .collect();
+            for phys in &dead_members {
+                self.remove_block(*phys);
+            }
+            if let Some(batch) = self.batches.get_mut(&bid) {
+                batch
+                    .members
+                    .retain(|phys| !dead_members.iter().any(|dead| dead == phys));
+            }
         }
     }
 

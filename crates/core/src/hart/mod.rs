@@ -550,7 +550,7 @@ fn misaligned_store(
     a: u64,
     len: u64,
     v: u64,
-) -> Result<(), Trap> {
+) -> Result<u64, Trap> {
     let pa0 = misaligned_ram_base(csr, tlb, bus, a, len, Access::Store, PmpAccess::Write)?.ok_or(
         Trap {
             cause: Exception::StoreAccessFault,
@@ -563,7 +563,7 @@ fn misaligned_store(
         bus.store8(pa0 + i, (v >> (8 * i)) as u8)
             .map_err(|f| store_fault(f, a))?;
     }
-    Ok(())
+    Ok(pa0)
 }
 
 macro_rules! checked_load {
@@ -591,7 +591,7 @@ macro_rules! checked_load {
     };
 }
 macro_rules! checked_store {
-    ($name:ident, $busfn:ident, $ty:ty, $len:expr) => {
+    ($name:ident, $with_phys:ident, $busfn:ident, $ty:ty, $len:expr) => {
         #[inline]
         fn $name(
             csr: &Csrs,
@@ -600,6 +600,17 @@ macro_rules! checked_store {
             a: u64,
             v: $ty,
         ) -> Result<(), Trap> {
+            $with_phys(csr, tlb, bus, a, v).map(|_| ())
+        }
+
+        #[inline]
+        fn $with_phys(
+            csr: &Csrs,
+            tlb: &mut Tlb,
+            bus: &mut impl Bus,
+            a: u64,
+            v: $ty,
+        ) -> Result<Option<u64>, Trap> {
             // E1-T29: a store (data-address) trigger set on `a` fires a Breakpoint before the store.
             if !csr.triggers_idle() && csr.trigger_fires(a, crate::csr::TrigKind::Store) {
                 return Err(Trap {
@@ -609,10 +620,11 @@ macro_rules! checked_store {
             }
             // `is_multiple_of` avoids the `& 0` mask for the byte case (`$len == 1`).
             if !a.is_multiple_of($len) {
-                return misaligned_store(csr, tlb, bus, a, $len, v as u64);
+                return misaligned_store(csr, tlb, bus, a, $len, v as u64).map(Some);
             }
             let pa = xlate_store(csr, tlb, bus, a, $len)?;
-            bus.$busfn(pa, v).map_err(|f| store_fault(f, a))
+            bus.$busfn(pa, v).map_err(|f| store_fault(f, a))?;
+            Ok(bus.ram_contains(pa, $len).then_some(pa))
         }
     };
 }
@@ -634,10 +646,10 @@ fn camoload64(csr: &Csrs, tlb: &mut Tlb, bus: &mut impl Bus, a: u64) -> Result<u
     bus.load64(pa).map_err(|f| store_fault(f, a))
 }
 // Stores (incl. SC and the write half of an AMO): translated as Store.
-checked_store!(cstore8, store8, u8, 1);
-checked_store!(cstore16, store16, u16, 2);
-checked_store!(cstore32, store32, u32, 4);
-checked_store!(cstore64, store64, u64, 8);
+checked_store!(cstore8, cstore8_with_phys, store8, u8, 1);
+checked_store!(cstore16, cstore16_with_phys, store16, u16, 2);
+checked_store!(cstore32, cstore32_with_phys, store32, u32, 4);
+checked_store!(cstore64, cstore64_with_phys, store64, u64, 8);
 
 /// Translate + PMP-check a 2-byte instruction FETCH at virtual address `va` (TRUE current mode —
 /// MPRV never affects fetches). Returns the physical address; a translation-rule violation is an
@@ -957,18 +969,34 @@ impl Hart {
         val: i64,
         width: i32,
     ) -> Result<(), Trap> {
-        match width {
-            1 => cstore8(&self.csr, &mut self.tlb, bus, addr, val as u8)?,
-            2 => cstore16(&self.csr, &mut self.tlb, bus, addr, val as u16)?,
-            4 => cstore32(&self.csr, &mut self.tlb, bus, addr, val as u32)?,
-            8 => cstore64(&self.csr, &mut self.tlb, bus, addr, val as u64)?,
+        self.jit_store_with_ram_phys(bus, addr, val, width)
+            .map(|_| ())
+    }
+
+    /// E4-T34: the exact JIT store path plus the physical RAM address when the successful store
+    /// reached ordinary RAM. The browser uses this observation to keep a compiled chain alive
+    /// across data stores while still returning before a store can execute a stale compiled code
+    /// page. All validation, MMIO routing, write logging, and LR/SC reservation invalidation stay
+    /// in the same path as [`Self::jit_store`].
+    pub fn jit_store_with_ram_phys(
+        &mut self,
+        bus: &mut impl Bus,
+        addr: u64,
+        val: i64,
+        width: i32,
+    ) -> Result<Option<u64>, Trap> {
+        let ram_phys = match width {
+            1 => cstore8_with_phys(&self.csr, &mut self.tlb, bus, addr, val as u8)?,
+            2 => cstore16_with_phys(&self.csr, &mut self.tlb, bus, addr, val as u16)?,
+            4 => cstore32_with_phys(&self.csr, &mut self.tlb, bus, addr, val as u32)?,
+            8 => cstore64_with_phys(&self.csr, &mut self.tlb, bus, addr, val as u64)?,
             _ => {
                 return Err(Trap {
                     cause: Exception::IllegalInstruction,
                     tval: 0,
                 });
             }
-        }
+        };
         // A-extension reservation invalidation (E1-T04, mirrored for the JIT store path): a
         // successful plain store that overlaps the reservation granule clears it. In the
         // interpreter this lives in the retire tail of `execute`; the JIT store import bypasses
@@ -976,12 +1004,44 @@ impl Hart {
         // interpreter-SC sequence would let a stale reservation survive (tier-switch incoherence).
         // Runs only after a successful (non-faulting) store, matching the interpreter (a faulting
         // store never invalidates).
+        self.note_jit_ram_store(addr, u64::from(width as u32));
+        Ok(ram_phys)
+    }
+
+    /// Apply the reservation side effect of a successful raw inline-RAM JIT store. The store
+    /// already committed its bytes in the shared wasm memory, so this helper deliberately performs
+    /// no translation or bus access; it only mirrors the interpreter's successful-store reservation
+    /// invalidation.
+    pub fn note_jit_ram_store(&mut self, addr: u64, width: u64) {
         if let Some((ra, rw)) = self.resv
-            && overlaps(addr, u64::from(width as u32), ra, u64::from(rw))
+            && overlaps(addr, width, ra, u64::from(rw))
         {
             self.resv = None;
         }
-        Ok(())
+    }
+
+    /// Return the physical address of an aligned JIT memory access when the translated range is
+    /// ordinary guest RAM. This is the refill half of the browser inline-TLB path: the access
+    /// itself still goes through [`Self::jit_load`] / [`Self::jit_store`], and this query only
+    /// publishes a successful RAM translation to the generated code. Device windows, faults,
+    /// misaligned accesses, and ranges outside RAM return `None` so they stay on the exact host
+    /// slow path.
+    pub fn jit_ram_phys(
+        &mut self,
+        bus: &mut impl Bus,
+        addr: u64,
+        width: u64,
+        write: bool,
+    ) -> Result<Option<u64>, Trap> {
+        if width == 0 || addr & (width - 1) != 0 {
+            return Ok(None);
+        }
+        let pa = if write {
+            xlate_store(&self.csr, &mut self.tlb, bus, addr, width)?
+        } else {
+            xlate_load(&self.csr, &mut self.tlb, bus, addr, width)?
+        };
+        Ok(bus.ram_contains(pa, width).then_some(pa))
     }
 
     /// E4-T14: perform a JIT-emitted LR (load-reserved) — the `env.lr(addr, width)` host import.

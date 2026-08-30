@@ -37,7 +37,8 @@ extern crate alloc;
 
 use alloc::vec::Vec;
 use wasm_emit::{
-    BlockType, ExportKind, FuncBuilder, FuncType, Limits, MemType, ModuleBuilder, ValType,
+    BlockType, ExportKind, FuncBuilder, FuncType, Limits, MemType, ModuleBuilder, RefType,
+    TableType, ValType,
 };
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::{DecodedBlock, is_terminator};
@@ -161,6 +162,35 @@ pub struct Abi {
     /// no dispatch bounce), tail-returning its exit code. The direct call is emitted unconditionally
     /// into the bytes (AC3), gated at runtime by this flag.
     pub chain_enabled: u32,
+    /// E4-T34: shared accumulator for the exact number of guest instructions retired by a direct
+    /// in-module chain.
+    pub chain_retired: u32,
+    /// E4-T34: shared guest-work fuel consumed at each compiled-function entry. A successor that
+    /// cannot fit returns [`ExitCode::Budget`] without executing an instruction.
+    pub chain_budget: u32,
+    /// E4-T34: byte-sized side-effect barrier set by host imports that require a Rust boundary
+    /// before another compiled successor can run.
+    pub chain_abort: u32,
+    /// E4-T34: count of raw inline-RAM stores waiting for host-side commit.
+    pub store_log_count: u32,
+    /// E4-T34: base of the raw inline-RAM store log in the shared state image.
+    pub store_log_base: u32,
+    /// E4-T34: capacity of the raw inline-RAM store log. Zero keeps the standalone inline-TLB
+    /// translator in its historical raw-store mode without claiming host-side commit semantics.
+    pub store_log_capacity: u32,
+    /// Whether this ABI emits the bounded chain-fuel and retirement protocol. The frozen native
+    /// ABI keeps it false; the browser imported-memory ABI opts in explicitly.
+    pub direct_chain: bool,
+    /// E4-T34: base of the browser's direct-mapped virtual-target cache. A matching entry contains
+    /// the target virtual PC and a one-based imported funcref-table index. Zero means no guarded
+    /// dynamic successor is currently published.
+    pub dynamic_map_base: u32,
+    /// E4-T34: `dynamic_map_base` slot mask; the map has power-of-two entries and 16-byte slots.
+    pub dynamic_map_mask: u32,
+    /// E4-T34: whether translated `jalr` exits may use the guarded dynamic table path.
+    pub dynamic_chain: bool,
+    /// E4-T34: imported funcref table index used by guarded dynamic calls.
+    pub chain_table: u32,
     /// How generated loads/stores reach guest memory (E4-T11).
     pub mem: MemModel,
     /// E4-T11 inline-TLB layout (only consulted when `mem == InlineTlb`). Byte offsets into the ONE
@@ -181,6 +211,11 @@ pub enum MemModel {
     /// tag mismatch / misaligned-or-straddling) it calls `env.softmmu_load` / `env.softmmu_store`,
     /// which runs the interpreter's exact `cload*`/`cstore*` path, fills the TLB, and returns.
     InlineTlb,
+    /// Browser integration variant: loads use the inline-TLB probe, while stores always call the
+    /// ordinary `env.store` import so the bus records SMC/DMA page writes and the hart applies
+    /// LR/SC reservation invalidation. A runtime may promote stores to [`Self::InlineTlb`] only
+    /// after providing an equivalent post-store commit log.
+    InlineTlbLoads,
 }
 
 /// Fixed byte layout of the inline-TLB arrays + guest-RAM window inside the shared linear memory
@@ -240,6 +275,17 @@ impl Abi {
         exit_info: 0x228,
         entry_pc: 0x230,
         chain_enabled: 0x250,
+        chain_retired: 0x238,
+        chain_budget: 0x240,
+        chain_abort: 0x248,
+        store_log_count: 0,
+        store_log_base: 0,
+        store_log_capacity: 0,
+        direct_chain: false,
+        dynamic_map_base: 0,
+        dynamic_map_mask: 0,
+        dynamic_chain: false,
+        chain_table: 0,
         mem: MemModel::SoftmmuImports,
         tlb: TlbLayout::FROZEN,
     };
@@ -252,6 +298,17 @@ impl Abi {
         exit_info: 0x228,
         entry_pc: 0x230,
         chain_enabled: 0x250,
+        chain_retired: 0x238,
+        chain_budget: 0x240,
+        chain_abort: 0x248,
+        store_log_count: 0,
+        store_log_base: 0,
+        store_log_capacity: 0,
+        direct_chain: false,
+        dynamic_map_base: 0,
+        dynamic_map_mask: 0,
+        dynamic_chain: false,
+        chain_table: 0,
         mem: MemModel::InlineTlb,
         tlb: TlbLayout::FROZEN,
     };
@@ -343,15 +400,20 @@ struct Regs {
     /// The WASM local (i64) holding the runtime-supplied entry virtual PC (loaded from
     /// `abi.entry_pc` at the function prologue).
     entry_local: u32,
+    /// E4-T34: the chain-retired value observed at this function's entry. Potentially trapping
+    /// imports publish a precise prefix from this stable base; a clean exit publishes the full
+    /// block span.
+    chain_start: Option<u32>,
 }
 
 impl Regs {
-    fn new(base_pc: u64, entry_local: u32) -> Self {
+    fn new(base_pc: u64, entry_local: u32, chain_start: Option<u32>) -> Self {
         Regs {
             local: [None; 32],
             dirty: [false; 32],
             base_pc,
             entry_local,
+            chain_start,
         }
     }
 }
@@ -367,6 +429,43 @@ fn push_pc_rel(f: &mut FuncBuilder, regs: &Regs, abs: u64) {
         f.i64_const(delta);
         f.i64_add();
     }
+}
+
+/// Publish the exact retirement prefix for a potentially trapping operation. On a successful
+/// operation the block's clean exit overwrites this with the full span; on an import exception the
+/// runtime reads this value after the wasm stack unwinds.
+fn record_chain_retired(f: &mut FuncBuilder, regs: &Regs, abi: &Abi, retired: u64) {
+    let Some(chain_start) = regs.chain_start else {
+        return;
+    };
+    f.local_get(STATE_BASE);
+    f.local_get(chain_start);
+    f.i64_const(retired as i64);
+    f.i64_add();
+    f.i64_store(ALIGN8, abi.chain_retired);
+}
+
+/// Enter the E4-T34 direct-chain protocol. The first block is checked by the core before dispatch,
+/// but direct successors must repeat this guard so a chained call never consumes more guest work
+/// than the enclosing `Machine::run` budget.
+fn emit_chain_prologue(f: &mut FuncBuilder, abi: &Abi, entry_local: u32, nops: u64) {
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.chain_budget);
+    f.i64_const(nops as i64);
+    f.i64_lt_u();
+    f.if_(BlockType::Empty);
+    write_pc_local(f, abi, entry_local);
+    write_reason(f, abi, ExitCode::Budget);
+    f.i32_const(ExitCode::Budget as i32);
+    f.return_();
+    f.else_();
+    f.local_get(STATE_BASE);
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.chain_budget);
+    f.i64_const(nops as i64);
+    f.i64_sub();
+    f.i64_store(ALIGN8, abi.chain_budget);
+    f.end();
 }
 
 /// Translate one RV64I [`DecodedBlock`] into a complete WASM module (bytes). The module exports:
@@ -395,6 +494,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     let (load_name, store_name) = match abi.mem {
         MemModel::SoftmmuImports => ("load", "store"),
         MemModel::InlineTlb => ("softmmu_load", "softmmu_store"),
+        MemModel::InlineTlbLoads => ("softmmu_load", "store"),
     };
     let _l = m.import_func("env", load_name, load_ty);
     let _s = m.import_func("env", store_name, store_ty);
@@ -432,7 +532,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
             });
             m.export("mem", ExportKind::Memory, 0);
         }
-        MemModel::InlineTlb => {
+        MemModel::InlineTlb | MemModel::InlineTlbLoads => {
             // The block accesses guest RAM directly, so it IMPORTS the one shared linear memory the
             // runtime lays out (CpuState + TLB arrays + guest RAM at the frozen offsets). Min 1 page;
             // the host supplies a memory large enough for `ram_base + ram_bytes`.
@@ -448,7 +548,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     m.export("run", ExportKind::Func, run_idx);
 
     let mut f = FuncBuilder::new(&[ValType::I32]); // param 0 = state_base
-    emit_body(&mut f, block, abi, [None, None])?;
+    emit_body(&mut f, block, abi, [None, None], run_ty)?;
     m.add_code(f.finish());
     Ok(m.finish())
 }
@@ -499,6 +599,7 @@ pub fn translate_batch(
     let (load_name, store_name) = match abi.mem {
         MemModel::SoftmmuImports => ("load", "store"),
         MemModel::InlineTlb => ("softmmu_load", "softmmu_store"),
+        MemModel::InlineTlbLoads => ("softmmu_load", "store"),
     };
     m.import_func("env", load_name, load_ty);
     m.import_func("env", store_name, store_ty);
@@ -519,6 +620,17 @@ pub fn translate_batch(
     m.import_func("env", "sc", sc_ty);
 
     let run_ty = m.add_type(FuncType::new(&[ValType::I32], &[ValType::I32]));
+    if abi.direct_chain && abi.dynamic_chain {
+        let table = m.import_table(
+            "env",
+            "table",
+            TableType {
+                elem: RefType::FuncRef,
+                limits: Limits::new(1),
+            },
+        );
+        debug_assert_eq!(table, abi.chain_table);
+    }
     // One defined function per block; capture their indices (they are RUN_FUNC_BASE + i).
     for i in 0..blocks.len() {
         let idx = m.add_function(run_ty);
@@ -533,7 +645,7 @@ pub fn translate_batch(
             });
             m.export("mem", ExportKind::Memory, 0);
         }
-        MemModel::InlineTlb => {
+        MemModel::InlineTlb | MemModel::InlineTlbLoads => {
             m.import_memory(
                 "env",
                 "mem",
@@ -554,14 +666,22 @@ pub fn translate_batch(
     // Emit each block body, resolving its intra-group successors to concrete wasm func indices.
     for (i, block) in blocks.iter().enumerate() {
         let resolved = [
-            intra[i][0].map(|l| RUN_FUNC_BASE + l as u32),
-            intra[i][1].map(|l| RUN_FUNC_BASE + l as u32),
+            intra[i][0]
+                .filter(|&l| !abi.direct_chain || !ends_with_fence_i(&blocks[l]))
+                .map(|l| RUN_FUNC_BASE + l as u32),
+            intra[i][1]
+                .filter(|&l| !abi.direct_chain || !ends_with_fence_i(&blocks[l]))
+                .map(|l| RUN_FUNC_BASE + l as u32),
         ];
         let mut f = FuncBuilder::new(&[ValType::I32]);
-        emit_body(&mut f, block, abi, resolved)?;
+        emit_body(&mut f, block, abi, resolved, run_ty)?;
         m.add_code(f.finish());
     }
     Ok(m.finish())
+}
+
+fn ends_with_fence_i(block: &DecodedBlock) -> bool {
+    matches!(block.ops.last().map(|op| op.instr), Some(Instr::FenceI))
 }
 
 /// Emit the function body for `block` into `f`. `intra[e]` is the wasm function index of the
@@ -572,6 +692,7 @@ fn emit_body(
     block: &DecodedBlock,
     abi: &Abi,
     intra: [Option<u32>; 2],
+    run_ty: u32,
 ) -> Result<(), TranslateError> {
     // Pre-flight: reject any out-of-scope op before emitting a single byte, so a partially-emitted
     // module can never escape (the caller gets a clean Unsupported and keeps interpreting).
@@ -590,7 +711,17 @@ fn emit_body(
     f.local_get(STATE_BASE);
     f.i64_load(ALIGN8, abi.entry_pc);
     f.local_set(entry_local);
-    let mut regs = Regs::new(base_pc, entry_local);
+    let chain_start = if abi.direct_chain {
+        let local = f.local(ValType::I64);
+        f.local_get(STATE_BASE);
+        f.i64_load(ALIGN8, abi.chain_retired);
+        f.local_set(local);
+        emit_chain_prologue(f, abi, entry_local, block.ops.len() as u64);
+        Some(local)
+    } else {
+        None
+    };
+    let mut regs = Regs::new(base_pc, entry_local, chain_start);
     let mut pc = base_pc;
     let n = block.ops.len();
     let mut terminated = false;
@@ -603,10 +734,12 @@ fn emit_body(
             if !last {
                 return Err(TranslateError::Malformed);
             }
-            emit_terminator(f, &mut regs, abi, op.instr, pc, pc_next, intra);
+            emit_terminator(
+                f, &mut regs, abi, op.instr, pc, pc_next, intra, n as u64, run_ty,
+            );
             terminated = true;
         } else {
-            emit_alu(f, &mut regs, abi, op.instr, pc, pc_next);
+            emit_alu(f, &mut regs, abi, op.instr, pc, pc_next, i as u64);
         }
         pc = pc_next;
     }
@@ -622,6 +755,8 @@ fn emit_body(
             ExitCode::Fallthrough,
             PcSrc::Const(end_pc),
             intra[0],
+            n as u64,
+            run_ty,
         );
     }
 
@@ -641,6 +776,7 @@ enum PcSrc {
 /// DIRECT `call` to that successor, tail-returning its exit code. The direct `call` (opcode `0x10`)
 /// is always present in the emitted bytes; `chain_enabled == 0` (native) simply takes the plain
 /// return arm, so behavior is byte-identical to E4-T18 per-block execution.
+#[allow(clippy::too_many_arguments)]
 fn emit_exit(
     f: &mut FuncBuilder,
     regs: &Regs,
@@ -648,6 +784,8 @@ fn emit_exit(
     code: ExitCode,
     pc: PcSrc,
     intra: Option<u32>,
+    retired: u64,
+    run_ty: u32,
 ) {
     writeback(f, regs, abi);
     match pc {
@@ -655,15 +793,24 @@ fn emit_exit(
         PcSrc::Local(l) => write_pc_local(f, abi, l),
     }
     write_reason(f, abi, code);
-    match intra {
-        None => {
+    record_chain_retired(f, regs, abi, retired);
+    match (intra, pc) {
+        (None, PcSrc::Local(target)) if abi.direct_chain && abi.dynamic_chain => {
+            emit_dynamic_exit(f, abi, target, code, run_ty);
+        }
+        (None, _) => {
             f.i32_const(code as i32);
             f.return_();
         }
-        Some(func_index) => {
-            // if (chain_enabled) { entry_pc := exit_pc; return call run{succ} } else { return code }
+        (Some(func_index), _) => {
+            // if (chain_enabled && !chain_abort) { entry_pc := exit_pc; return call run{succ} }
+            // else { return code }
             f.local_get(STATE_BASE);
             f.i32_load8_u(0, abi.chain_enabled);
+            f.local_get(STATE_BASE);
+            f.i32_load8_u(0, abi.chain_abort);
+            f.i32_eqz();
+            f.i32_and();
             f.if_(BlockType::Value(ValType::I32));
             // The successor reads its entry virtual PC from `entry_pc`; hand it this exit_pc.
             f.local_get(STATE_BASE);
@@ -678,6 +825,73 @@ fn emit_exit(
             f.return_();
         }
     }
+}
+
+/// Emit the guarded dynamic-target half of E4-T34. The target is a virtual `jalr` result. A
+/// runtime-installed direct-mapped entry pairs that exact virtual PC with a live table index; a
+/// miss, collision, disabled chain, or import-side effect takes the ordinary host exit. This keeps
+/// the fast path speculative but makes it self-invalidating: the browser executor clears the entry
+/// before freeing or remapping its compiled target.
+fn emit_dynamic_exit(f: &mut FuncBuilder, abi: &Abi, target: u32, code: ExitCode, run_ty: u32) {
+    let slot = f.local(ValType::I32);
+    let table_index = f.local(ValType::I32);
+    // slot = dynamic_map_base + (((target >> 2) ^ (target >> 12) ^ target) & mask) * 16.
+    f.local_get(target);
+    f.i64_const(2);
+    f.i64_shr_u();
+    f.local_get(target);
+    f.i64_const(12);
+    f.i64_shr_u();
+    f.i64_xor();
+    f.local_get(target);
+    f.i64_xor();
+    f.i64_const(i64::from(abi.dynamic_map_mask));
+    f.i64_and();
+    f.i64_const(16);
+    f.i64_mul();
+    f.i32_wrap_i64();
+    f.i32_const(abi.dynamic_map_base as i32);
+    f.i32_add();
+    f.local_set(slot);
+
+    // Guard: chain is enabled, no host-side barrier was raised, and both the key and one-based
+    // table index match the publication. The table-index load is repeated below only on the taken
+    // arm, keeping the miss path to two byte loads and three integer comparisons.
+    f.local_get(STATE_BASE);
+    f.i32_load8_u(0, abi.chain_enabled);
+    f.local_get(STATE_BASE);
+    f.i32_load8_u(0, abi.chain_abort);
+    f.i32_eqz();
+    f.i32_and();
+    f.local_get(slot);
+    f.i64_load(ALIGN8, 0);
+    f.local_get(target);
+    f.i64_eq();
+    f.i32_and();
+    f.local_get(slot);
+    f.i64_load(ALIGN8, 8);
+    f.i64_eqz();
+    f.i32_eqz();
+    f.i32_and();
+    f.if_(BlockType::Value(ValType::I32));
+    f.local_get(slot);
+    f.i64_load(ALIGN8, 8);
+    f.i64_const(1);
+    f.i64_sub();
+    f.i32_wrap_i64();
+    f.local_set(table_index);
+    // The caller already wrote `exit_pc = target`; make it the callee's virtual entry PC.
+    f.local_get(STATE_BASE);
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.exit_pc);
+    f.i64_store(ALIGN8, abi.entry_pc);
+    f.local_get(STATE_BASE);
+    f.local_get(table_index);
+    f.call_indirect(run_ty, abi.chain_table);
+    f.else_();
+    f.i32_const(code as i32);
+    f.end();
+    f.return_();
 }
 
 /// Whether an instruction is inside E4-T09's RV64I base scope.
@@ -850,7 +1064,15 @@ fn write_info_const(f: &mut FuncBuilder, abi: &Abi, v: i64) {
 
 // ── ALU / load / store (non-terminator) lowering ────────────────────────────
 
-fn emit_alu(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, instr: Instr, pc: u64, _pc_next: u64) {
+fn emit_alu(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    instr: Instr,
+    pc: u64,
+    _pc_next: u64,
+    retired_before: u64,
+) {
     use Instr::*;
     match instr {
         // ── U-type ──
@@ -1060,8 +1282,28 @@ fn emit_alu(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, instr: Instr, pc: u
             }
         }
         // ── loads (side-exit to env.load) ──
-        Lb { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LB, pc),
-        Lh { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LH, pc),
+        Lb { rd, rs1, imm } => emit_load(
+            f,
+            regs,
+            abi,
+            rd,
+            rs1,
+            imm,
+            load_kind::LB,
+            pc,
+            retired_before,
+        ),
+        Lh { rd, rs1, imm } => emit_load(
+            f,
+            regs,
+            abi,
+            rd,
+            rs1,
+            imm,
+            load_kind::LH,
+            pc,
+            retired_before,
+        ),
         Lw { rd, rs1, imm } => {
             // BUG (E4-T25 injected): lower LW with the zero-extending LWU kind (dropped sign-ext).
             let kind = if mutation_is(mut_hooks::LW_DROP_SEXT) {
@@ -1069,17 +1311,57 @@ fn emit_alu(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, instr: Instr, pc: u
             } else {
                 load_kind::LW
             };
-            emit_load(f, regs, abi, rd, rs1, imm, kind, pc)
+            emit_load(f, regs, abi, rd, rs1, imm, kind, pc, retired_before)
         }
-        Ld { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LD, pc),
-        Lbu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LBU, pc),
-        Lhu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LHU, pc),
-        Lwu { rd, rs1, imm } => emit_load(f, regs, abi, rd, rs1, imm, load_kind::LWU, pc),
+        Ld { rd, rs1, imm } => emit_load(
+            f,
+            regs,
+            abi,
+            rd,
+            rs1,
+            imm,
+            load_kind::LD,
+            pc,
+            retired_before,
+        ),
+        Lbu { rd, rs1, imm } => emit_load(
+            f,
+            regs,
+            abi,
+            rd,
+            rs1,
+            imm,
+            load_kind::LBU,
+            pc,
+            retired_before,
+        ),
+        Lhu { rd, rs1, imm } => emit_load(
+            f,
+            regs,
+            abi,
+            rd,
+            rs1,
+            imm,
+            load_kind::LHU,
+            pc,
+            retired_before,
+        ),
+        Lwu { rd, rs1, imm } => emit_load(
+            f,
+            regs,
+            abi,
+            rd,
+            rs1,
+            imm,
+            load_kind::LWU,
+            pc,
+            retired_before,
+        ),
         // ── stores (side-exit to env.store) ──
-        Sb { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 1, pc),
-        Sh { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 2, pc),
-        Sw { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 4, pc),
-        Sd { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 8, pc),
+        Sb { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 1, pc, retired_before),
+        Sh { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 2, pc, retired_before),
+        Sw { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 4, pc, retired_before),
+        Sd { rs1, rs2, imm } => emit_store(f, regs, abi, rs1, rs2, imm, 8, pc, retired_before),
         // ── M extension: multiply (E4-T13) ──
         Mul { rd, rs1, rs2 } => {
             // Low 64 bits of the product; signedness is irrelevant for the low half.
@@ -1109,16 +1391,38 @@ fn emit_alu(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, instr: Instr, pc: u
         Remw { rd, rs1, rs2 } => emit_div_rem32(f, regs, abi, rd, rs1, rs2, DivKind::Rem),
         Remuw { rd, rs1, rs2 } => emit_div_rem32(f, regs, abi, rd, rs1, rs2, DivKind::Remu),
         // ── A extension (E4-T14): route to the runtime imports (interpreter's own atomic code) ──
-        LrW { rd, rs1, .. } => emit_lr(f, regs, abi, rd, rs1, 4, pc),
-        LrD { rd, rs1, .. } => emit_lr(f, regs, abi, rd, rs1, 8, pc),
-        ScW { rd, rs1, rs2, .. } => emit_sc(f, regs, abi, rd, rs1, rs2, 4, pc),
-        ScD { rd, rs1, rs2, .. } => emit_sc(f, regs, abi, rd, rs1, rs2, 8, pc),
+        LrW { rd, rs1, .. } => emit_lr(f, regs, abi, rd, rs1, 4, pc, retired_before),
+        LrD { rd, rs1, .. } => emit_lr(f, regs, abi, rd, rs1, 8, pc, retired_before),
+        ScW { rd, rs1, rs2, .. } => emit_sc(f, regs, abi, rd, rs1, rs2, 4, pc, retired_before),
+        ScD { rd, rs1, rs2, .. } => emit_sc(f, regs, abi, rd, rs1, rs2, 8, pc, retired_before),
         AmoW {
             op, rd, rs1, rs2, ..
-        } => emit_amo(f, regs, abi, rd, rs1, rs2, amo_op_code(op), 4, pc),
+        } => emit_amo(
+            f,
+            regs,
+            abi,
+            rd,
+            rs1,
+            rs2,
+            amo_op_code(op),
+            4,
+            pc,
+            retired_before,
+        ),
         AmoD {
             op, rd, rs1, rs2, ..
-        } => emit_amo(f, regs, abi, rd, rs1, rs2, amo_op_code(op), 8, pc),
+        } => emit_amo(
+            f,
+            regs,
+            abi,
+            rd,
+            rs1,
+            rs2,
+            amo_op_code(op),
+            8,
+            pc,
+            retired_before,
+        ),
         // FENCE retires as a no-op mid-block only if it were non-terminating; but FENCE/FENCE.I are
         // terminators handled elsewhere. Anything else was rejected by `supported`.
         _ => unreachable!("emit_alu called on a non-RV64I / terminator op"),
@@ -1141,11 +1445,13 @@ fn emit_load(
     imm: i64,
     kind: i32,
     pc: u64,
+    retired_before: u64,
 ) {
-    writeback(f, regs, abi);
-    write_pc_const(f, regs, abi, pc);
     match abi.mem {
         MemModel::SoftmmuImports => {
+            writeback(f, regs, abi);
+            write_pc_const(f, regs, abi, pc);
+            record_chain_retired(f, regs, abi, retired_before);
             // effective address = rs1 + imm (wrapping u64)
             push_reg(f, regs, abi, rs1);
             f.i64_const(imm);
@@ -1154,7 +1460,9 @@ fn emit_load(
             f.call(LOAD_IMPORT);
             set_reg(f, regs, rd);
         }
-        MemModel::InlineTlb => emit_load_tlb(f, regs, abi, rd, rs1, imm, kind),
+        MemModel::InlineTlb | MemModel::InlineTlbLoads => {
+            emit_load_tlb(f, regs, abi, rd, rs1, imm, kind, pc, retired_before)
+        }
     }
 }
 
@@ -1171,11 +1479,13 @@ fn emit_store(
     imm: i64,
     width: i32,
     pc: u64,
+    retired_before: u64,
 ) {
-    writeback(f, regs, abi);
-    write_pc_const(f, regs, abi, pc);
     match abi.mem {
         MemModel::SoftmmuImports => {
+            writeback(f, regs, abi);
+            write_pc_const(f, regs, abi, pc);
+            record_chain_retired(f, regs, abi, retired_before);
             push_reg(f, regs, abi, rs1);
             f.i64_const(imm);
             f.i64_add();
@@ -1183,7 +1493,20 @@ fn emit_store(
             f.i32_const(width);
             f.call(STORE_IMPORT);
         }
-        MemModel::InlineTlb => emit_store_tlb(f, regs, abi, rs1, rs2, imm, width),
+        MemModel::InlineTlb => {
+            emit_store_tlb(f, regs, abi, rs1, rs2, imm, width, pc, retired_before)
+        }
+        MemModel::InlineTlbLoads => {
+            writeback(f, regs, abi);
+            write_pc_const(f, regs, abi, pc);
+            record_chain_retired(f, regs, abi, retired_before);
+            push_reg(f, regs, abi, rs1);
+            f.i64_const(imm);
+            f.i64_add();
+            push_reg(f, regs, abi, rs2);
+            f.i32_const(width);
+            f.call(STORE_IMPORT);
+        }
     }
 }
 
@@ -1198,9 +1521,20 @@ fn emit_store(
 // of the block from entry, which would replay any earlier committing store).
 
 /// `rd = sext(LR.width(mem[rs1]))`, setting the reservation. → `env.lr(addr, width) -> i64`.
-fn emit_lr(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, rd: u8, rs1: u8, width: i32, pc: u64) {
+#[allow(clippy::too_many_arguments)]
+fn emit_lr(
+    f: &mut FuncBuilder,
+    regs: &mut Regs,
+    abi: &Abi,
+    rd: u8,
+    rs1: u8,
+    width: i32,
+    pc: u64,
+    retired_before: u64,
+) {
     writeback(f, regs, abi);
     write_pc_const(f, regs, abi, pc);
+    record_chain_retired(f, regs, abi, retired_before);
     push_reg(f, regs, abi, rs1);
     f.i32_const(width);
     f.call(LR_IMPORT);
@@ -1218,9 +1552,11 @@ fn emit_sc(
     rs2: u8,
     width: i32,
     pc: u64,
+    retired_before: u64,
 ) {
     writeback(f, regs, abi);
     write_pc_const(f, regs, abi, pc);
+    record_chain_retired(f, regs, abi, retired_before);
     push_reg(f, regs, abi, rs1);
     push_reg(f, regs, abi, rs2);
     f.i32_const(width);
@@ -1240,9 +1576,11 @@ fn emit_amo(
     op: i32,
     width: i32,
     pc: u64,
+    retired_before: u64,
 ) {
     writeback(f, regs, abi);
     write_pc_const(f, regs, abi, pc);
+    record_chain_retired(f, regs, abi, retired_before);
     push_reg(f, regs, abi, rs1);
     push_reg(f, regs, abi, rs2);
     f.i32_const(op);
@@ -1316,6 +1654,7 @@ fn emit_hit_host_addr(f: &mut FuncBuilder, va_local: u32, eaddr: u32) {
     f.i32_wrap_i64();
 }
 
+#[allow(clippy::too_many_arguments)]
 fn emit_load_tlb(
     f: &mut FuncBuilder,
     regs: &mut Regs,
@@ -1324,6 +1663,8 @@ fn emit_load_tlb(
     rs1: u8,
     imm: i64,
     kind: i32,
+    pc: u64,
+    retired_before: u64,
 ) {
     let tlb = &abi.tlb;
     let width = load_kind_width(kind);
@@ -1351,6 +1692,9 @@ fn emit_load_tlb(
     }
     f.else_();
     // MISS: the softmmu does the whole access (translate + PMP + RAM/MMIO) and fills the TLB.
+    writeback(f, regs, abi);
+    write_pc_const(f, regs, abi, pc);
+    record_chain_retired(f, regs, abi, retired_before);
     f.local_get(va);
     f.i32_const(kind);
     f.call(LOAD_IMPORT);
@@ -1358,6 +1702,7 @@ fn emit_load_tlb(
     set_reg(f, regs, rd);
 }
 
+#[allow(clippy::too_many_arguments)]
 fn emit_store_tlb(
     f: &mut FuncBuilder,
     regs: &mut Regs,
@@ -1366,6 +1711,8 @@ fn emit_store_tlb(
     rs2: u8,
     imm: i64,
     width: i32,
+    pc: u64,
+    retired_before: u64,
 ) {
     let tlb = &abi.tlb;
     let w = i64::from(width);
@@ -1386,23 +1733,113 @@ fn emit_store_tlb(
     emit_slot_addr(f, tlb, va, tlb.write_base, eaddr);
     emit_hit_predicate(f, va, eaddr, w);
     f.if_(BlockType::Empty);
-    // HIT: raw store [host_addr, value]. Address must be pushed before the value.
-    emit_hit_host_addr(f, va, eaddr);
-    f.local_get(sval);
-    match width {
-        1 => f.i64_store8(0, 0),
-        2 => f.i64_store16(0, 0),
-        4 => f.i64_store32(0, 0),
-        8 => f.i64_store(0, 0),
-        _ => unreachable!("bad store width"),
+    if abi.store_log_capacity == 0 {
+        // HIT: raw store [host_addr, value]. The standalone translator ABI deliberately keeps
+        // this historical mode available for the focused inline-TLB differential harness.
+        emit_hit_host_addr(f, va, eaddr);
+        f.local_get(sval);
+        match width {
+            1 => f.i64_store8(0, 0),
+            2 => f.i64_store16(0, 0),
+            4 => f.i64_store32(0, 0),
+            8 => f.i64_store(0, 0),
+            _ => unreachable!("bad store width"),
+        }
+    } else {
+        // The integrated browser ABI cannot let a raw store disappear from the host's reservation
+        // and code-write accounting. Keep a bounded commit record beside the chain header; when it
+        // fills, use the exact imported path for that store instead of risking an unlogged effect.
+        let count = f.local(ValType::I64);
+        let host_addr = f.local(ValType::I32);
+        let record = f.local(ValType::I32);
+        f.local_get(STATE_BASE);
+        f.i64_load(ALIGN8, abi.store_log_count);
+        f.local_tee(count);
+        f.i64_const(i64::from(abi.store_log_capacity));
+        f.i64_lt_u();
+        f.if_(BlockType::Empty);
+        emit_hit_host_addr(f, va, eaddr);
+        f.local_set(host_addr);
+        f.local_get(host_addr);
+        f.local_get(sval);
+        match width {
+            1 => f.i64_store8(0, 0),
+            2 => f.i64_store16(0, 0),
+            4 => f.i64_store32(0, 0),
+            8 => f.i64_store(0, 0),
+            _ => unreachable!("bad store width"),
+        }
+
+        // record = state_base + store_log_base + count * entry_bytes.
+        f.local_get(STATE_BASE);
+        f.i32_const(abi.store_log_base as i32);
+        f.i32_add();
+        f.local_get(count);
+        f.i64_const(i64::from(wasm_vm_core::jit::abi::CHAIN_STORE_ENTRY_BYTES));
+        f.i64_mul();
+        f.i32_wrap_i64();
+        f.i32_add();
+        f.local_set(record);
+        f.local_get(record);
+        f.local_get(va);
+        f.i64_store(ALIGN8, 0);
+        f.local_get(record);
+        f.local_get(host_addr);
+        f.i64_extend_i32_u();
+        f.i64_const(i64::from(abi.tlb.ram_base));
+        f.i64_sub();
+        f.i64_const(abi.tlb.dram_base as i64);
+        f.i64_add();
+        f.i64_store(ALIGN8, 8);
+        f.local_get(record);
+        f.i64_const(i64::from(width));
+        f.i64_store(ALIGN8, 16);
+
+        // Publish the record only after the raw store has committed. The host sees the count after
+        // the module returns and therefore never processes a speculative/faulting store.
+        f.local_get(STATE_BASE);
+        f.local_get(count);
+        f.i64_const(1);
+        f.i64_add();
+        f.i64_store(ALIGN8, abi.store_log_count);
+        if abi.direct_chain {
+            f.local_get(STATE_BASE);
+            f.i32_const(1);
+            f.i32_store8(0, abi.chain_abort);
+        }
+        f.else_();
+        // A full log takes the exact slow path, which also applies reservation invalidation and
+        // code-write logging before the current block returns.
+        emit_store_import(f, regs, abi, va, sval, width, pc, retired_before);
+        f.end();
     }
     f.else_();
     // MISS: softmmu performs the access + fills the TLB.
+    emit_store_import(f, regs, abi, va, sval, width, pc, retired_before);
+    f.end();
+}
+
+/// Emit the exact imported store slow path, including the precise-state preamble. Inline-TLB hits
+/// are non-trapping raw RAM operations and skip this writeback; only a miss or a full commit log
+/// needs to expose the current locals before crossing into Rust.
+#[allow(clippy::too_many_arguments)]
+fn emit_store_import(
+    f: &mut FuncBuilder,
+    regs: &Regs,
+    abi: &Abi,
+    va: u32,
+    sval: u32,
+    width: i32,
+    pc: u64,
+    retired_before: u64,
+) {
+    writeback(f, regs, abi);
+    write_pc_const(f, regs, abi, pc);
+    record_chain_retired(f, regs, abi, retired_before);
     f.local_get(va);
     f.local_get(sval);
     f.i32_const(width);
     f.call(STORE_IMPORT);
-    f.end();
 }
 
 // ── M extension: multiply-high and guarded divide/remainder (E4-T13) ─────────
@@ -1701,6 +2138,7 @@ fn emit_div_rem32(
 
 // ── terminator lowering ─────────────────────────────────────────────────────
 
+#[allow(clippy::too_many_arguments)]
 fn emit_terminator(
     f: &mut FuncBuilder,
     regs: &mut Regs,
@@ -1709,27 +2147,95 @@ fn emit_terminator(
     pc: u64,
     pc_next: u64,
     intra: [Option<u32>; 2],
+    retired: u64,
+    run_ty: u32,
 ) {
     use Instr::*;
     match instr {
-        Beq { rs1, rs2, imm } => {
-            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Eq, intra)
-        }
-        Bne { rs1, rs2, imm } => {
-            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ne, intra)
-        }
-        Blt { rs1, rs2, imm } => {
-            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Lt, intra)
-        }
-        Bge { rs1, rs2, imm } => {
-            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ge, intra)
-        }
-        Bltu { rs1, rs2, imm } => {
-            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Ltu, intra)
-        }
-        Bgeu { rs1, rs2, imm } => {
-            emit_branch(f, regs, abi, rs1, rs2, imm, pc, pc_next, Cmp::Geu, intra)
-        }
+        Beq { rs1, rs2, imm } => emit_branch(
+            f,
+            regs,
+            abi,
+            rs1,
+            rs2,
+            imm,
+            pc,
+            pc_next,
+            Cmp::Eq,
+            intra,
+            retired,
+            run_ty,
+        ),
+        Bne { rs1, rs2, imm } => emit_branch(
+            f,
+            regs,
+            abi,
+            rs1,
+            rs2,
+            imm,
+            pc,
+            pc_next,
+            Cmp::Ne,
+            intra,
+            retired,
+            run_ty,
+        ),
+        Blt { rs1, rs2, imm } => emit_branch(
+            f,
+            regs,
+            abi,
+            rs1,
+            rs2,
+            imm,
+            pc,
+            pc_next,
+            Cmp::Lt,
+            intra,
+            retired,
+            run_ty,
+        ),
+        Bge { rs1, rs2, imm } => emit_branch(
+            f,
+            regs,
+            abi,
+            rs1,
+            rs2,
+            imm,
+            pc,
+            pc_next,
+            Cmp::Ge,
+            intra,
+            retired,
+            run_ty,
+        ),
+        Bltu { rs1, rs2, imm } => emit_branch(
+            f,
+            regs,
+            abi,
+            rs1,
+            rs2,
+            imm,
+            pc,
+            pc_next,
+            Cmp::Ltu,
+            intra,
+            retired,
+            run_ty,
+        ),
+        Bgeu { rs1, rs2, imm } => emit_branch(
+            f,
+            regs,
+            abi,
+            rs1,
+            rs2,
+            imm,
+            pc,
+            pc_next,
+            Cmp::Geu,
+            intra,
+            retired,
+            run_ty,
+        ),
         Jal { rd, imm } => {
             // link = pc + insn_len; target = pc + imm (both PC-relative → virtual, E4-T16)
             if rd != 0 {
@@ -1743,6 +2249,8 @@ fn emit_terminator(
                 ExitCode::BranchTaken,
                 PcSrc::Const(pc.wrapping_add(imm as u64)),
                 intra[0],
+                retired,
+                run_ty,
             );
         }
         Jalr { rd, rs1, imm } => {
@@ -1772,10 +2280,12 @@ fn emit_terminator(
                 ExitCode::BranchTaken,
                 PcSrc::Local(scratch),
                 None,
+                retired,
+                run_ty,
             );
         }
-        Ecall => emit_trap(f, regs, abi, pc, 11), // EcallFromM (default oracle mode = M), tval 0
-        Ebreak => emit_trap(f, regs, abi, pc, 3), // Breakpoint, tval = pc
+        Ecall => emit_trap(f, regs, abi, pc, 11, retired - 1),
+        Ebreak => emit_trap(f, regs, abi, pc, 3, retired - 1),
         // FENCE / FENCE.I retire as a no-op in the single-thread model; resume at the next PC (edge 0).
         Fence { .. } | FenceI => {
             emit_exit(
@@ -1784,7 +2294,9 @@ fn emit_terminator(
                 abi,
                 ExitCode::Fallthrough,
                 PcSrc::Const(pc_next),
-                intra[0],
+                if abi.direct_chain { None } else { intra[0] },
+                retired,
+                run_ty,
             );
         }
         _ => unreachable!("emit_terminator on a non-terminator / out-of-scope op"),
@@ -1813,6 +2325,8 @@ fn emit_branch(
     pc_next: u64,
     cmp: Cmp,
     intra: [Option<u32>; 2],
+    retired: u64,
+    run_ty: u32,
 ) {
     push_reg(f, regs, abi, rs1);
     push_reg(f, regs, abi, rs2);
@@ -1832,6 +2346,7 @@ fn emit_branch(
         let target = pc.wrapping_add(imm as u64);
         write_pc_const(f, regs, abi, target);
         write_reason(f, abi, ExitCode::BranchTaken);
+        record_chain_retired(f, regs, abi, retired);
         f.i32_const(ExitCode::BranchTaken as i32);
         f.return_();
     } else {
@@ -1842,6 +2357,8 @@ fn emit_branch(
             ExitCode::BranchTaken,
             PcSrc::Const(pc.wrapping_add(imm as u64)),
             intra[0],
+            retired,
+            run_ty,
         );
     }
     f.end();
@@ -1854,12 +2371,15 @@ fn emit_branch(
         ExitCode::Fallthrough,
         PcSrc::Const(pc_next),
         intra[1],
+        retired,
+        run_ty,
     );
 }
 
-fn emit_trap(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, pc: u64, cause: i64) {
+fn emit_trap(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, pc: u64, cause: i64, retired: u64) {
     writeback(f, regs, abi);
     write_pc_const(f, regs, abi, pc); // trap leaves PC at the faulting instruction
+    record_chain_retired(f, regs, abi, retired);
     write_info_const(f, abi, cause);
     write_reason(f, abi, ExitCode::Trap);
     f.i32_const(ExitCode::Trap as i32);

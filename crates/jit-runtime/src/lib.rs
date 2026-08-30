@@ -861,6 +861,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                     next_pc: faulting_pc,
                     exit_info: trap.cause as u64,
                     trap: Some(trap),
+                    retired: 0,
                 });
             }
         };
@@ -879,6 +880,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             next_pc,
             exit_info,
             trap: None,
+            retired: 0,
         })
     }
 
@@ -903,12 +905,13 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
     }
 
     fn invalidate_page(&mut self, frame: u64) {
-        // E4-T19: whole-batch retirement. A page-granular SMC store that hits ANY block in a batch
-        // retires the ENTIRE batch (Module/Instance) — because intra-batch edges are DIRECT calls
-        // baked into one module, a partial kill could leave a live block direct-calling dead bytes;
-        // dropping the whole module atomically makes that impossible. The surviving members fall back
-        // to T1 and recompile (into fresh batches) on re-execution. `remove_block` (E4-T18) restores
-        // every incoming link-slot from surviving predecessors on OTHER pages to the dispatch stub.
+        // E4-T19: a page-granular SMC store retires every member on the dirty page. If a compile
+        // batch also contains disconnected members from other pages, retain those members and the
+        // shared Module/Instance: `intra_edges_for_group` only creates direct calls for static edges
+        // on the same page, so no surviving function can directly call a removed function. The
+        // batch is dropped atomically when all of its members are on the invalidated page. In both
+        // cases `remove_block` restores incoming links and clears dynamic targets before any table
+        // entry is freed.
         let dead_batches: Vec<u32> = {
             let mut ids: Vec<u32> = self
                 .blocks
@@ -921,7 +924,30 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             ids
         };
         for bid in dead_batches {
-            self.retire_batch(bid);
+            let all_members_dead = self
+                .blocks
+                .values()
+                .filter(|c| c.batch_id == bid)
+                .all(|c| c.page_frame == frame);
+            if all_members_dead {
+                self.retire_batch(bid);
+                continue;
+            }
+
+            let dead_members: Vec<u64> = self
+                .blocks
+                .iter()
+                .filter(|(_, c)| c.batch_id == bid && c.page_frame == frame)
+                .map(|(&phys, _)| phys)
+                .collect();
+            for phys in &dead_members {
+                self.remove_block(*phys);
+            }
+            if let Some(batch) = self.batches.get_mut(&bid) {
+                batch
+                    .members
+                    .retain(|phys| !dead_members.iter().any(|dead| dead == phys));
+            }
         }
     }
 

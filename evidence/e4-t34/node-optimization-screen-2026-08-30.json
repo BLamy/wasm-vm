@@ -1,0 +1,64 @@
+{
+  "schema": "e4-t34-worker-checkpoint-v1",
+  "task": "E4-T34",
+  "recorded_at": "2026-08-30",
+  "claim_scope": "Bounded browser-JIT implementation checkpoint; this is not acceptance evidence and does not claim the task is implemented or verified.",
+  "source_head_before_commit": "b0fa3e805f87d60a3618724fb3dc58af39d107ec",
+  "artifact": {
+    "build_command": "make web-dist",
+    "wasm_sha256": "844b8a0a3f18184ba9f8c94aa7b1927c8da6e02bb3a961ad2012420dd7b3b2cd",
+    "service_worker_sha256": "538ccd402adf0dbc09c1b9b1be0bb55f419248ea75597efdef31e0cb35c1db1f"
+  },
+  "run": {
+    "harness": "headed Playwright manual-node-run.mjs",
+    "command": "node -e 'console.log(3)'",
+    "guest": "restored Node ELF and snapshot served from the local E4-T32 asset bundle",
+    "oracle": "fresh PID-bound byte-framed output, exit 0, output line 3",
+    "favicon_404": "allowed and excluded from the browser-error count"
+  },
+  "worker_jit": {
+    "first_output_ms": 15396.929999992251,
+    "complete_ms": 17317.109999999404,
+    "node_pid": 913,
+    "exit": 0,
+    "output_line": "3",
+    "terminal_frame_sha256": "3db33212702ee95f679d74ad1aa48c22828a4aae62108f0e1c7238aa30e70b29",
+    "compiled_blocks": 2209,
+    "executed_blocks": 14523809,
+    "retired_via_jit": 143132801,
+    "chain_links_followed": 14366175,
+    "cache_code_bytes": 34277110,
+    "cache_batches": 502,
+    "cache_evictions": 0,
+    "cache_retranslations": 0,
+    "max_scheduler_slice_ms": 77.19499999284744,
+    "max_attempted_blocks_per_run": 8,
+    "max_submitted_blocks_per_run": 8,
+    "max_staged_nominations_per_run": 64
+  },
+  "same_head_main_thread_interpreter": {
+    "first_output_ms": 20017.064999997616,
+    "complete_ms": 22773.49500000477,
+    "node_pid": 913,
+    "exit": 0,
+    "output_line": "3",
+    "terminal_frame_sha256": "a0a1b1bc1f9f8f4e516ca5f08561bd3c0adf76751cad6c139fb0b57492cbec98"
+  },
+  "comparison": {
+    "completion_speedup": 1.3150863510138557,
+    "jit_completion_over_main": 0.7604063407920382,
+    "foreground_complete_le_25s": true,
+    "three_x_main_thread_speedup": false,
+    "stretch_le_5s": false
+  },
+  "raw_result_sha256": {
+    "/tmp/e4t34-jit-safe-budget64-20260830.json": "421d1b20f6dc6eddf37614ab4f932c0748f7640e460d7580758dae5652e8511e",
+    "/tmp/e4t34-main-interp-final-20260830.json": "630ac5957c813ec102f171cc1ef13215763c066a42084511f259595083d3ace4"
+  },
+  "limitations": [
+    "The required 3x criterion is not met; E4-T34 must remain in-progress.",
+    "The repository Playwright test runner hung before launching a Chromium child on this host and was stopped without a result.",
+    "No rr host-layer trace was recorded on macOS; ssh dev was unavailable in this session.",
+    "The manual result is a worker checkpoint, not fresh verifier evidence."
+  ]
+}
