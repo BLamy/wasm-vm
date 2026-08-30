@@ -6628,7 +6628,7 @@
       "epicKey": "3",
       "title": "Browser snapshot persistence and restore selection",
       "priority": null,
-      "status": "implemented",
+      "status": "in-progress",
       "depends_on": [
         "E3-T12c1",
         "E3-T12c2",
@@ -6679,18 +6679,18 @@
         },
         {
           "date": "2026-08-30",
-          "commits": 13,
+          "commits": 15,
           "labels": [
+            "tasks: record T12d deployment blocker",
+            "tasks: submit E3-T12d verification evidence",
             "tasks: resume E3-T12d verification debt",
-            "tasks: park T12d pending proof artifacts",
-            "verify: record T12d generation evidence gaps",
-            "tasks: submit T12d generation evidence"
+            "tasks: park T12d pending proof artifacts"
           ]
         }
       ],
       "firstActivity": "2026-08-04",
       "lastActivity": "2026-08-30",
-      "commitCount": 20
+      "commitCount": 22
     },
     {
       "id": "E3-T12e",

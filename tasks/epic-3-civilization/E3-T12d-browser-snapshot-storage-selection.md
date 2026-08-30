@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: implemented
+status: in-progress
 depends_on: [E3-T12c1, E3-T12c2, E3-T12c3, E3-T12c4]
 estimate: S
 risk: high
@@ -341,3 +341,61 @@ terminal `verified` status.
 small boot artifacts, but Wrangler 4.127.1 stopped before the Pages publish because this
 non-interactive environment has no `CLOUDFLARE_API_TOKEN`. The live Pages site is therefore not
 claimed as updated; rerun the command after authenticating Wrangler or supplying that token.
+
+### 2026-08-30 — fresh verifier — VERDICT: refuted
+
+- **Provenance — HELD.** Prediction: the supplied recording must name the worker's exact runtime
+  commit, have the claimed SHA-256, and include the screenshot. Observed `runtimeHead` is
+  `e9664e557eb0b368887b852a8b991c1a4a10a88f` at
+  `evidence/epic-3-t12d/browser-storage-2026-08-30.json:3`; its SHA-256 is
+  `9baf83a964200bea93e0fbf107fab4f287bb3296dba01fc695ac19418270a852`, the screenshot exists and
+  hashes to `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`, and `e9664e5` is
+  an ancestor of current `HEAD` `8d12ef886b02e663235875bddba574c0775afeee`. The post-runtime diff
+  contains evidence/task metadata and generated `web/dist` outputs, not a later runtime source edit.
+- **AC1 / whole-blob load — FAILED.** Prediction: production-sized reload/restore must stay within
+  the `33,554,432`-byte bound and must not hold a second whole snapshot allocation. The supplied
+  memory record samples only the main-thread save callbacks (`...browser-storage-2026-08-30.json:18-33`),
+  while `SnapshotStore::load` obtains all IndexedDB values and copies every chunk into a Rust map
+  (`crates/wasm/src/snapshot_store.rs:279-290`), then `reassemble` allocates a full `total_len` output
+  while that map still owns the chunk payloads (`crates/storage/src/snapmeta.rs:174-190`), followed by
+  another JS `Uint8Array` copy at `crates/wasm/src/lib.rs:1927-1933`. For the recorded ~60 MB blob,
+  this is a whole-payload map plus a whole-payload reassembly (and boundary copy), directly
+  contradicting the deliverable's no-whole-blob-duplication requirement. The clean decision calls
+  exercise `load`, but no load/reload memory sample exists in the harness (`tools/verify/e3-t12d-browser-proof.mjs:305-350`). Rework the load path to a genuinely bounded representation or record a design that proves the bound for the actual load/restore path.
+- **Two-tab snapshot fencing — FAILED / INSUFFICIENT.** Prediction: a read-only contender must be
+  unable to save or import a snapshot while another tab owns the persistent writer lease. The
+  persistent constructor sets `snapshot_base` for read-only and writer tabs alike
+  (`crates/wasm/src/lib.rs:1223-1234`), while `persist_snapshot` checks only that optional base and
+  calls `store.save` without checking read-only ownership (`crates/wasm/src/lib.rs:1888-1908`); the
+  import path can likewise write the store (`crates/wasm/src/lib.rs:1943-1989`). The recorded
+  contender only calls overlay `__persist`, yielding `persistResult: 0`, and never races
+  `snapshotSave`/`snapshotImport` (`...browser-storage-2026-08-30.json:551-567`,
+  `tools/verify/e3-t12d-browser-proof.mjs:485-518`). Gate snapshot writes on the same ownership
+  state and record a two-tab snapshot-store race.
+- **AC2 attacks — PARTIALLY HELD, object-swap proof missing.** Prediction: killing clear/chunk/meta
+  or exhausting quota must never select a half-published snapshot and must preserve the overlay. The
+  recording observes clear/chunk/meta kills selecting `corrupt`/`stale` with `overlayPreserved: true`
+  (`...browser-storage-2026-08-30.json:499-535`) and a typed `QuotaExceededError`, preserved overlay,
+  and live guest marker (`:537-549`). The exact-head payload evidence independently holds truncation
+  and same-length mutation as typed `corrupt`, original re-import as `resume`, and identical export /
+  import digest (`evidence/epic-3-t12d/node-alpine-snapshot-integrity-2026-08-30.json:21-40`; its
+  SHA-256 is unchanged and its runtime head is an ancestor). No recorded attack swaps complete
+  snapshot objects/chunks or metadata between generations/bases, so that explicit high-risk angle
+  remains `NEEDS EVIDENCE`.
+- **Durable-generation and post-reload file — HELD within their stated scope.** Prediction: a durable
+  overlay write must advance the generation, reconstruct it after reload, select `stale` for the old
+  RAM snapshot, and preserve readable changed bytes. The prior exact-head generation record observes
+  `0 → 16`, reconstructed generation `16`, and `stale` (`evidence/epic-3-t12d/node-alpine-overlay-generation-2026-08-30.json:21-32`); the current continuation observes
+  `stale` and reads `T12D_RELOAD_FILE` with exit 0 (`...browser-storage-2026-08-30.json:569-579`).
+  The Alpine `jit=1`, `init=/bin/sh`, single-user continuation is sufficient for this narrow
+  changed-overlay IndexedDB/file-read assertion because it uses the same persistent chunked path; it
+  is not evidence of a production OpenRC boot. The clean save/reload leg is correctly recorded as
+  `whole-machine-worker` (`...browser-storage-2026-08-30.json:7-16`), but its `resume` decision does
+  not repair the failed load-memory proof above.
+- **Coverage and gates.** The current post-runtime hunks are either the evidence record, task/queue
+  metadata, or generated deployment artifacts; `git diff --check` passed. Narrow checks passed:
+  `cargo fmt --check -p wasm-vm-core -p wasm-vm-storage -p wasm-vm-wasm`; wasm32 clippy with
+  `-D warnings`; restore-decision (11/11); snapmeta (11/11); storage lib (106/106); snapshot
+  coherence (5/5); and `node --check` for the proof, loader, and main scripts. These gates do not
+  establish the missing load bound or read-only snapshot fencing. Status returns to `in-progress`
+  for runtime rework and a fresh exact-head recording; no merge or push performed.
