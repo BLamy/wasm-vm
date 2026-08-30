@@ -78,6 +78,20 @@ const waitForText = async (needle, timeout = 120_000) => {
     { timeout },
   );
 };
+const waitForExactLine = async (needle, timeout = 120_000) => {
+  await page.waitForFunction(
+    (value) => {
+      const buffer = window.__term?.term?.buffer?.active;
+      if (!buffer) return false;
+      for (let index = 0; index < buffer.length; index += 1) {
+        if ((buffer.getLine(index)?.translateToString(true) || "").trim() === value) return true;
+      }
+      return false;
+    },
+    needle,
+    { timeout },
+  );
+};
 const waitForGuestSha = async (filePath, timeout = 360_000) => {
   const handle = await page.waitForFunction(
     (path) => {
@@ -241,7 +255,7 @@ try {
   // the input queue and guest file, not a million-character xterm repaint; restore it in the same
   // shell command that prints the digest.
   await send("stty -echo; echo E3T22D_ECHO_OFF\r");
-  await waitForText("E3T22D_ECHO_OFF", 30_000);
+  await waitForExactLine("E3T22D_ECHO_OFF", 30_000);
   await send("cat > /root/paste.txt\r");
   await sleep(300);
   await page.evaluate((value) => window.__term.pasteText(value), payload);
@@ -257,13 +271,13 @@ try {
   );
   // The interpreted guest may take more than 30 seconds to drain a million-byte tty paste before
   // the shell resumes. Keep the synchronization bound aligned with the digest wait below.
-  await waitForText("E3T22D_CAT_DONE", guestDrainTimeout);
+  await waitForExactLine("E3T22D_CAT_DONE", guestDrainTimeout);
   const observedFileSize = await waitForGuestFileSize(guestDrainTimeout);
   assert.equal(observedFileSize, payload.length, `guest file size ${observedFileSize} != payload ${payload.length}`);
-  await waitForText("E3T22D_SIZE_OK", guestDrainTimeout);
+  await waitForExactLine("E3T22D_SIZE_OK", guestDrainTimeout);
   const observedSha = await waitForGuestSha("/root/paste.txt");
   assert.equal(observedSha, expectedSha, `guest SHA ${observedSha} != host SHA ${expectedSha}`);
-  await waitForText("E3T22D_ECHO_RESTORED", 30_000);
+  await waitForExactLine("E3T22D_ECHO_RESTORED", 30_000);
 
   // AC3: make the real guest enable DECSET 2004, then prove a pasted command is held until an
   // explicit Enter. Ctrl-C cancels the first held paste so the pre-Enter file check cannot be merged
@@ -278,12 +292,12 @@ try {
   await sleep(1_000);
   await send("\x03");
   await send("test -e /tmp/e3t22d-bracketed && echo E3T22D_EARLY || echo E3T22D_HELD\r");
-  await waitForText("E3T22D_HELD", 30_000);
+  await waitForExactLine("E3T22D_HELD", 30_000);
   await page.evaluate((value) => window.__term.pasteText(value), bracketedCommand);
   await sleep(500);
   await send("\r");
   await send("test -e /tmp/e3t22d-bracketed && echo E3T22D_EXECUTED || echo E3T22D_MISSING\r");
-  await waitForText("E3T22D_EXECUTED", 30_000);
+  await waitForExactLine("E3T22D_EXECUTED", 30_000);
 
   await page.screenshot({ path: screenshotPath, fullPage: false });
   const allowedHttpErrors = httpErrors.filter((error) =>
