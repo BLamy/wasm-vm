@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: implemented
+status: evidence-needed
 depends_on: [E3-T12c]
 estimate: S
 risk: high
@@ -202,3 +202,28 @@ mutation attacks.
 - This clears the fresh verifier's payload-integrity refutation. Production-sized reload memory-bound
   instrumentation, quota/crash interruption, two-tab race, and persisted overlay-generation evidence
   remain separate verification debt; this worker entry does not claim them verified.
+
+### 2026-08-30 — fresh verifier — VERDICT: needs-evidence
+
+- **Payload-integrity slice — HELD.** The exact recording shows one-byte truncation and a same-length
+  payload mutation returning typed `corrupt`, while re-importing the original returns `resume`; the
+  content digest is independently equal before and after export/import. No refutation found in the
+  repaired runtime path (`crates/wasm/src/snapshot_store.rs` and `crates/wasm/src/lib.rs`).
+- **AC1 — NEEDS EVIDENCE.** The 138,252,418-byte recording proves production-sized save/reload/
+  decision behavior, but does not measure peak memory against the documented bound. Record memory
+  instrumentation during save and reload, not just the blob size.
+- **High-risk adversarial coverage — NEEDS EVIDENCE.** The recording does not cover tab termination
+  during clear/chunk/meta phases, quota exhaustion, object swapping, or two-tab races, nor does it
+  assert that the live overlay remains intact after each attack. Record bounded independent attacks
+  for the omitted phases before verification.
+- **Overlay-generation persistence — NEEDS EVIDENCE.** The current spec proves only in-memory
+  `advanceOverlayGeneration()` → `stale`; it does not prove a reload after a durable overlay write
+  reconstructs the generation and refuses the old snapshot.
+- **Provenance/coverage — HELD with a portability gap.** The evidence SHA matches the committed
+  evidence file, `runtimeHead` is an ancestor of `HEAD`, and no runtime files changed afterward.
+  The repository Playwright spec remains skipped on this checkout because the chunked-Alpine manifest
+  is absent; the referenced screenshot is not a guest-terminal view. Preserve a portable browser
+  recording bundle or rerun the spec on the artifact-bearing verifier host.
+- Commands checked: `make verify-E3-T12d` (fmt, wasm32 clippy, 11 restore-decision tests, 11 snapmeta
+  tests). Verdict: the payload-integrity refutation is cleared, but the task is not verified until the
+  listed acceptance and adversarial evidence exists.
