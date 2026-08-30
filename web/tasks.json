@@ -6628,9 +6628,12 @@
       "epicKey": "3",
       "title": "Browser snapshot persistence and restore selection",
       "priority": null,
-      "status": "verification-debt",
+      "status": "in-progress",
       "depends_on": [
-        "E3-T12c"
+        "E3-T12c1",
+        "E3-T12c2",
+        "E3-T12c3",
+        "E3-T12c4"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -8567,18 +8570,18 @@
         },
         {
           "date": "2026-08-30",
-          "commits": 15,
+          "commits": 16,
           "labels": [
+            "verify: mark E3-T22d verified",
             "verify: resubmit E3-T22d coverage evidence",
             "tasks: resume E3-T22d coverage rework",
-            "verify: keep E3-T22d evidence-needed",
-            "verify: resubmit E3-T22d evidence"
+            "verify: keep E3-T22d evidence-needed"
           ]
         }
       ],
       "firstActivity": "2026-08-02",
       "lastActivity": "2026-08-30",
-      "commitCount": 16
+      "commitCount": 17
     },
     {
       "id": "E3-T23",

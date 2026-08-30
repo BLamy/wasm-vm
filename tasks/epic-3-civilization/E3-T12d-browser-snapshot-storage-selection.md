@@ -3,8 +3,8 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: verification-debt
-depends_on: [E3-T12c]
+status: in-progress
+depends_on: [E3-T12c1, E3-T12c2, E3-T12c3, E3-T12c4]
 estimate: S
 risk: high
 capstone: false
@@ -298,3 +298,11 @@ interruption/quota/two-tab attacks, a portable artifact-bearing browser run, and
 read that proves changed block bytes and metadata survive together. T12d is therefore leaving the
 active lane with the verifier report preserved; it must return only when those named proof artifacts
 can be recorded.
+
+### 2026-08-30 — worker — resumed verification-debt clearance
+
+The decomposed E3-T12c prerequisites (T12c1–T12c4) are all verified, so the stale parent
+dependency was replaced with the verified leaves and T12d returned to the active lane. This
+slice will record the missing browser proof: peak-memory instrumentation, bounded interruption
+and quota attacks with overlay-preservation checks, a two-tab race, and the post-reload guest
+file read. No implementation claim is made until the fresh recording covers those paths.
