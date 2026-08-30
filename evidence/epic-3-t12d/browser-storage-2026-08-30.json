@@ -1,12 +1,12 @@
 {
   "task": "E3-T12d",
-  "runtimeHead": "9213b821b2655bf559da548ca7c6748e2b6b0219",
-  "base": "http://127.0.0.1:63649",
+  "runtimeHead": "4c4d7ee30e2b9a6b91f6271bb1df9db226edb94b",
+  "base": "http://127.0.0.1:61244",
   "browser": "131.0.6778.33",
-  "elapsedMs": 176399,
+  "elapsedMs": 95632,
   "clean": {
-    "bootMs": 1957,
-    "reloadMs": 381,
+    "bootMs": 1009,
+    "reloadMs": 377,
     "backend": "whole-machine-worker",
     "saved": {
       "bytes": 60430185,
@@ -29,16 +29,16 @@
   "memory": {
     "backend": "main-thread",
     "baseline": {
-      "used": 1337428211,
-      "total": 1344197155,
+      "used": 1337192249,
+      "total": 1345243825,
       "limit": 4294705152
     },
-    "peakUsed": 1354240186,
+    "peakUsed": 1354004196,
     "after": {
-      "used": 1242388448,
-      "total": 1251009624
+      "used": 1242262138,
+      "total": 1252187330
     },
-    "overhead": 16811975,
+    "overhead": 16811947,
     "bound": 33554432,
     "snapshotBytes": 60435397,
     "sampleCount": 66,
@@ -46,464 +46,464 @@
       {
         "phase": "save-start",
         "value": 60435397,
-        "used": 1337443214,
-        "total": 1344197234,
-        "at": 2571.5349999964237
+        "used": 1337207268,
+        "total": 1345243904,
+        "at": 1666.140000000596
       },
       {
         "phase": "clear-committed",
         "value": 60435397,
-        "used": 1337448946,
-        "total": 1344197270,
-        "at": 2571.859999999404
+        "used": 1337212956,
+        "total": 1345243940,
+        "at": 1666.4700000062585
       },
       {
         "phase": "chunk-before-put",
         "value": 0,
-        "used": 1338499302,
-        "total": 1345245862,
-        "at": 2571.954999998212
+        "used": 1338263312,
+        "total": 1346292532,
+        "at": 1666.5600000023842
       },
       {
         "phase": "chunk-before-put",
         "value": 1,
-        "used": 1339548614,
-        "total": 1346294438,
-        "at": 2573.344999998808
+        "used": 1339312624,
+        "total": 1347341108,
+        "at": 1667.9950000047684
       },
       {
         "phase": "chunk-before-put",
         "value": 2,
-        "used": 1340597926,
-        "total": 1347343014,
-        "at": 2574.7549999952316
+        "used": 1340361936,
+        "total": 1348389684,
+        "at": 1669.4150000065565
       },
       {
         "phase": "chunk-before-put",
         "value": 3,
-        "used": 1341647238,
-        "total": 1348391590,
-        "at": 2576.3399999961257
+        "used": 1341411248,
+        "total": 1349438260,
+        "at": 1670.8800000026822
       },
       {
         "phase": "chunk-before-put",
         "value": 4,
-        "used": 1342696550,
-        "total": 1349440166,
-        "at": 2577.8899999931455
+        "used": 1342460560,
+        "total": 1350486836,
+        "at": 1672.5500000044703
       },
       {
         "phase": "chunk-before-put",
         "value": 5,
-        "used": 1343745862,
-        "total": 1350488742,
-        "at": 2579.3899999931455
+        "used": 1343509872,
+        "total": 1351535412,
+        "at": 1674.1300000026822
       },
       {
         "phase": "chunk-before-put",
         "value": 6,
-        "used": 1344795174,
-        "total": 1351537318,
-        "at": 2580.869999997318
+        "used": 1344559184,
+        "total": 1352583988,
+        "at": 1675.7600000053644
       },
       {
         "phase": "chunk-before-put",
         "value": 7,
-        "used": 1345845282,
-        "total": 1352585894,
-        "at": 2582.384999997914
+        "used": 1345609292,
+        "total": 1353632564,
+        "at": 1677.3500000014901
       },
       {
         "phase": "chunk-before-put",
         "value": 8,
-        "used": 1346894850,
-        "total": 1353634470,
-        "at": 2583.9349999949336
+        "used": 1346658860,
+        "total": 1354681140,
+        "at": 1678.905000001192
       },
       {
         "phase": "chunk-before-put",
         "value": 9,
-        "used": 1347944266,
-        "total": 1354683046,
-        "at": 2585.4049999937415
+        "used": 1347708276,
+        "total": 1355729716,
+        "at": 1680.445000000298
       },
       {
         "phase": "chunk-before-put",
         "value": 10,
-        "used": 1348993586,
-        "total": 1355731622,
-        "at": 2586.6599999964237
+        "used": 1348757596,
+        "total": 1356778292,
+        "at": 1681.710000000894
       },
       {
         "phase": "chunk-before-put",
         "value": 11,
-        "used": 1350042906,
-        "total": 1356780198,
-        "at": 2588.1449999958277
+        "used": 1349806916,
+        "total": 1357826868,
+        "at": 1683.2950000017881
       },
       {
         "phase": "chunk-before-put",
         "value": 12,
-        "used": 1351092226,
-        "total": 1357828774,
-        "at": 2589.6549999937415
+        "used": 1350856236,
+        "total": 1358875444,
+        "at": 1684.8450000062585
       },
       {
         "phase": "chunk-before-put",
         "value": 13,
-        "used": 1352141546,
-        "total": 1358877350,
-        "at": 2591.2149999961257
+        "used": 1351905556,
+        "total": 1359924020,
+        "at": 1686.3850000053644
       },
       {
         "phase": "chunk-before-put",
         "value": 14,
-        "used": 1353190866,
-        "total": 1359925926,
-        "at": 2592.7949999943376
+        "used": 1352954876,
+        "total": 1360972596,
+        "at": 1687.8950000032783
       },
       {
         "phase": "chunk-before-put",
         "value": 15,
-        "used": 1354240186,
-        "total": 1360974502,
-        "at": 2594.25
+        "used": 1354004196,
+        "total": 1362021172,
+        "at": 1689.390000000596
       },
       {
         "phase": "chunk-committed",
         "value": 15,
-        "used": 1352150006,
-        "total": 1360793818,
-        "at": 2672.1699999943376
+        "used": 1351862292,
+        "total": 1361840488,
+        "at": 1761.265000000596
       },
       {
         "phase": "chunk-before-put",
         "value": 16,
-        "used": 1233312810,
-        "total": 1241954330,
-        "at": 2672.2849999964237
+        "used": 1233156124,
+        "total": 1243132036,
+        "at": 1761.3700000047684
       },
       {
         "phase": "chunk-before-put",
         "value": 17,
-        "used": 1234362130,
-        "total": 1243002906,
-        "at": 2673.9449999928474
+        "used": 1234205444,
+        "total": 1244180612,
+        "at": 1762.890000000596
       },
       {
         "phase": "chunk-before-put",
         "value": 18,
-        "used": 1235411450,
-        "total": 1244051482,
-        "at": 2675.4899999946356
+        "used": 1235254764,
+        "total": 1245229188,
+        "at": 1764.3400000035763
       },
       {
         "phase": "chunk-before-put",
         "value": 19,
-        "used": 1236460770,
-        "total": 1245100058,
-        "at": 2677.039999999106
+        "used": 1236304084,
+        "total": 1246277764,
+        "at": 1765.6650000065565
       },
       {
         "phase": "chunk-before-put",
         "value": 20,
-        "used": 1237510090,
-        "total": 1246148634,
-        "at": 2678.6399999931455
+        "used": 1237353404,
+        "total": 1247326340,
+        "at": 1767
       },
       {
         "phase": "chunk-before-put",
         "value": 21,
-        "used": 1238559410,
-        "total": 1247197210,
-        "at": 2679.9899999946356
+        "used": 1238402712,
+        "total": 1248374916,
+        "at": 1768.265000000596
       },
       {
         "phase": "chunk-before-put",
         "value": 22,
-        "used": 1239608730,
-        "total": 1248245786,
-        "at": 2681.5349999964237
+        "used": 1239452032,
+        "total": 1249423492,
+        "at": 1769.6800000071526
       },
       {
         "phase": "chunk-before-put",
         "value": 23,
-        "used": 1240658050,
-        "total": 1249294362,
-        "at": 2682.9049999937415
+        "used": 1240501352,
+        "total": 1250472068,
+        "at": 1770.9650000035763
       },
       {
         "phase": "chunk-before-put",
         "value": 24,
-        "used": 1241707370,
-        "total": 1250342938,
-        "at": 2684
+        "used": 1241550672,
+        "total": 1251520644,
+        "at": 1772.0250000059605
       },
       {
         "phase": "chunk-before-put",
         "value": 25,
-        "used": 1242756678,
-        "total": 1251391514,
-        "at": 2685.164999999106
+        "used": 1242599992,
+        "total": 1252569220,
+        "at": 1773.1650000065565
       },
       {
         "phase": "chunk-before-put",
         "value": 26,
-        "used": 1243805998,
-        "total": 1252440090,
-        "at": 2686.3499999940395
+        "used": 1243649312,
+        "total": 1253617796,
+        "at": 1774.3800000026822
       },
       {
         "phase": "chunk-before-put",
         "value": 27,
-        "used": 1244855318,
-        "total": 1253488666,
-        "at": 2687.5749999955297
+        "used": 1244698632,
+        "total": 1254666372,
+        "at": 1775.695000000298
       },
       {
         "phase": "chunk-before-put",
         "value": 28,
-        "used": 1245904638,
-        "total": 1254537242,
-        "at": 2688.734999999404
+        "used": 1245747952,
+        "total": 1255714948,
+        "at": 1776.8000000044703
       },
       {
         "phase": "chunk-before-put",
         "value": 29,
-        "used": 1246953958,
-        "total": 1255585818,
-        "at": 2689.7849999964237
+        "used": 1246797272,
+        "total": 1256763524,
+        "at": 1777.8800000026822
       },
       {
         "phase": "chunk-before-put",
         "value": 30,
-        "used": 1248003278,
-        "total": 1256634394,
-        "at": 2690.7799999937415
+        "used": 1247846592,
+        "total": 1257812100,
+        "at": 1778.9100000038743
       },
       {
         "phase": "chunk-before-put",
         "value": 31,
-        "used": 1249052598,
-        "total": 1257682970,
-        "at": 2691.8649999946356
+        "used": 1248895912,
+        "total": 1258860676,
+        "at": 1779.9900000020862
       },
       {
         "phase": "chunk-committed",
         "value": 31,
-        "used": 1249054746,
-        "total": 1257682970,
-        "at": 2758.884999997914
+        "used": 1248898060,
+        "total": 1258860676,
+        "at": 1854.2250000014901
       },
       {
         "phase": "chunk-before-put",
         "value": 32,
-        "used": 1250120810,
-        "total": 1258731546,
-        "at": 2759.1599999964237
+        "used": 1249965624,
+        "total": 1259909252,
+        "at": 1854.4750000014901
       },
       {
         "phase": "chunk-before-put",
         "value": 33,
-        "used": 1234392914,
-        "total": 1243002906,
-        "at": 2760.814999997616
+        "used": 1234237728,
+        "total": 1244180612,
+        "at": 1855.8450000062585
       },
       {
         "phase": "chunk-before-put",
         "value": 34,
-        "used": 1235442234,
-        "total": 1244051482,
-        "at": 2762.1149999946356
+        "used": 1235287048,
+        "total": 1245229188,
+        "at": 1856.9400000050664
       },
       {
         "phase": "chunk-before-put",
         "value": 35,
-        "used": 1236491554,
-        "total": 1245100058,
-        "at": 2763.579999998212
+        "used": 1236336368,
+        "total": 1246277764,
+        "at": 1858.265000000596
       },
       {
         "phase": "chunk-before-put",
         "value": 36,
-        "used": 1237540874,
-        "total": 1246148634,
-        "at": 2764.994999997318
+        "used": 1237385688,
+        "total": 1247326340,
+        "at": 1859.3950000032783
       },
       {
         "phase": "chunk-before-put",
         "value": 37,
-        "used": 1238590194,
-        "total": 1247197210,
-        "at": 2766.3649999946356
+        "used": 1238435008,
+        "total": 1248374916,
+        "at": 1860.4250000044703
       },
       {
         "phase": "chunk-before-put",
         "value": 38,
-        "used": 1239639514,
-        "total": 1248245786,
-        "at": 2767.5449999943376
+        "used": 1239484328,
+        "total": 1249423492,
+        "at": 1861.4700000062585
       },
       {
         "phase": "chunk-before-put",
         "value": 39,
-        "used": 1240688834,
-        "total": 1249294362,
-        "at": 2768.7149999961257
+        "used": 1240533648,
+        "total": 1250472068,
+        "at": 1862.5250000059605
       },
       {
         "phase": "chunk-before-put",
         "value": 40,
-        "used": 1241738490,
-        "total": 1250342938,
-        "at": 2769.8349999934435
+        "used": 1241583304,
+        "total": 1251520644,
+        "at": 1863.5500000044703
       },
       {
         "phase": "chunk-before-put",
         "value": 41,
-        "used": 1242787810,
-        "total": 1251391514,
-        "at": 2770.954999998212
+        "used": 1242632624,
+        "total": 1252569220,
+        "at": 1864.6100000068545
       },
       {
         "phase": "chunk-before-put",
         "value": 42,
-        "used": 1243837130,
-        "total": 1252440090,
-        "at": 2772.164999999106
+        "used": 1243681944,
+        "total": 1253617796,
+        "at": 1865.7250000014901
       },
       {
         "phase": "chunk-before-put",
         "value": 43,
-        "used": 1244886450,
-        "total": 1253488666,
-        "at": 2773.329999998212
+        "used": 1244731264,
+        "total": 1254666372,
+        "at": 1866.8450000062585
       },
       {
         "phase": "chunk-before-put",
         "value": 44,
-        "used": 1245935770,
-        "total": 1254537242,
-        "at": 2774.4099999964237
+        "used": 1245780584,
+        "total": 1255714948,
+        "at": 1867.8300000056624
       },
       {
         "phase": "chunk-before-put",
         "value": 45,
-        "used": 1246985090,
-        "total": 1255585818,
-        "at": 2775.539999999106
+        "used": 1246829904,
+        "total": 1256763524,
+        "at": 1868.8450000062585
       },
       {
         "phase": "chunk-before-put",
         "value": 46,
-        "used": 1248034410,
-        "total": 1256634394,
-        "at": 2776.625
+        "used": 1247879224,
+        "total": 1257812100,
+        "at": 1869.8250000029802
       },
       {
         "phase": "chunk-before-put",
         "value": 47,
-        "used": 1249083730,
-        "total": 1257682970,
-        "at": 2777.64999999851
+        "used": 1248928544,
+        "total": 1258860676,
+        "at": 1870.8050000071526
       },
       {
         "phase": "chunk-committed",
         "value": 47,
-        "used": 1249085878,
-        "total": 1257682970,
-        "at": 2824.689999997616
+        "used": 1248930692,
+        "total": 1258860676,
+        "at": 1931.2550000026822
       },
       {
         "phase": "chunk-before-put",
         "value": 48,
-        "used": 1250092074,
-        "total": 1258731546,
-        "at": 2824.9499999955297
+        "used": 1249966080,
+        "total": 1259909252,
+        "at": 1931.460000000894
       },
       {
         "phase": "chunk-before-put",
         "value": 49,
-        "used": 1234364178,
-        "total": 1243002906,
-        "at": 2826.1949999928474
+        "used": 1234238184,
+        "total": 1244180612,
+        "at": 1932.5350000038743
       },
       {
         "phase": "chunk-before-put",
         "value": 50,
-        "used": 1235413498,
-        "total": 1244051482,
-        "at": 2827.4899999946356
+        "used": 1235287504,
+        "total": 1245229188,
+        "at": 1933.6800000071526
       },
       {
         "phase": "chunk-before-put",
         "value": 51,
-        "used": 1236462818,
-        "total": 1245100058,
-        "at": 2828.7649999931455
+        "used": 1236336824,
+        "total": 1246277764,
+        "at": 1934.765000000596
       },
       {
         "phase": "chunk-before-put",
         "value": 52,
-        "used": 1237512138,
-        "total": 1246148634,
-        "at": 2830.619999997318
+        "used": 1237386144,
+        "total": 1247326340,
+        "at": 1936.1750000044703
       },
       {
         "phase": "chunk-before-put",
         "value": 53,
-        "used": 1238561458,
-        "total": 1247197210,
-        "at": 2832.0049999952316
+        "used": 1238435464,
+        "total": 1248374916,
+        "at": 1937.2050000056624
       },
       {
         "phase": "chunk-before-put",
         "value": 54,
-        "used": 1239610778,
-        "total": 1248245786,
-        "at": 2833.009999997914
+        "used": 1239484784,
+        "total": 1249423492,
+        "at": 1938.0050000026822
       },
       {
         "phase": "chunk-before-put",
         "value": 55,
-        "used": 1240660098,
-        "total": 1249294362,
-        "at": 2834.0149999931455
+        "used": 1240534104,
+        "total": 1250472068,
+        "at": 1938.9350000023842
       },
       {
         "phase": "chunk-before-put",
         "value": 56,
-        "used": 1241709418,
-        "total": 1250342938,
-        "at": 2834.9749999940395
+        "used": 1241583424,
+        "total": 1251520644,
+        "at": 1939.8150000050664
       },
       {
         "phase": "chunk-before-put",
         "value": 57,
-        "used": 1242376727,
-        "total": 1251009503,
-        "at": 2836.2699999958277
+        "used": 1242250733,
+        "total": 1252187209,
+        "at": 1940.9950000047684
       },
       {
         "phase": "chunk-committed",
         "value": 57,
-        "used": 1242378875,
-        "total": 1251009503,
-        "at": 2885.9199999943376
+        "used": 1242252881,
+        "total": 1252187209,
+        "at": 1992.375
       },
       {
         "phase": "meta-before",
         "value": 60435397,
-        "used": 1242379418,
-        "total": 1251009514,
-        "at": 2885.929999999702
+        "used": 1242253424,
+        "total": 1252187220,
+        "at": 1992.3850000053644
       },
       {
         "phase": "meta-committed",
         "value": 60435397,
-        "used": 1242384168,
-        "total": 1251009624,
-        "at": 2891.064999997616
+        "used": 1242258174,
+        "total": 1252187330,
+        "at": 2000.0200000032783
       }
     ]
   },
@@ -513,7 +513,7 @@
       "observed": {
         "phase": "clear",
         "value": 0,
-        "at": 4460.409999996424
+        "at": 2520
       },
       "decision": "corrupt",
       "generation": 0,
@@ -525,7 +525,7 @@
       "observed": {
         "phase": "chunk",
         "value": 0,
-        "at": 3231.704999998212
+        "at": 2644.14999999851
       },
       "decision": "corrupt",
       "generation": 0,
@@ -537,7 +537,7 @@
       "observed": {
         "phase": "meta",
         "value": 0,
-        "at": 4070.3400000035763
+        "at": 2950.554999999702
       },
       "decision": "stale",
       "generation": 0,
@@ -549,9 +549,9 @@
     "observed": {
       "phase": "quota",
       "value": 0,
-      "at": 3348.335000000894
+      "at": 2639.1049999967217
     },
-    "failure": "Error: page.evaluate: Error: snapshot save: JsValue(QuotaExceededError: E3-T12d deterministic snapshot quota\nundefined)\n    at __wbg_Error_92b29b0548f8b746 (http://127.0.0.1:63649/pkg/wasm_vm_wasm.js:1180:25)\n    at http://127.0.0.1:63649/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1553]:0x102c24\n    at http://127.0.0.1:63649/pkg/wasm_vm_wasm_bg.wasm:wasm-function[233]:0x614fc\n    at http://127.0.0.1:63649/pkg/wasm_vm_wasm_bg.wasm:wasm-function[596]:0xbe9d7\n    at http://127.0.0.1:63649/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1299]:0x10076e\n    at http://127.0.0.1:63649/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1067]:0xe4f41\n    at http://127.0.0.1:63649/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1256]:0xf9ac1\n    at wasm_bindgen__convert__closures_____invoke__h1dbcf2b5dd15a422 (http://127.0.0.1:63649/pkg/wasm_vm_wasm.js:1917:22)\n    at real (http://127.0.0.1:63649/pkg/wasm_vm_wasm.js:2098:20)",
+    "failure": "Error: page.evaluate: Error: snapshot save: JsValue(QuotaExceededError: E3-T12d deterministic snapshot quota\nundefined)\n    at __wbg_Error_92b29b0548f8b746 (http://127.0.0.1:61244/pkg/wasm_vm_wasm.js:1182:25)\n    at http://127.0.0.1:61244/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1564]:0x1037a2\n    at http://127.0.0.1:61244/pkg/wasm_vm_wasm_bg.wasm:wasm-function[216]:0x59c4e\n    at http://127.0.0.1:61244/pkg/wasm_vm_wasm_bg.wasm:wasm-function[599]:0xbf244\n    at http://127.0.0.1:61244/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1308]:0x1012a0\n    at http://127.0.0.1:61244/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1077]:0xe5b79\n    at http://127.0.0.1:61244/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1266]:0xfa6fc\n    at wasm_bindgen__convert__closures_____invoke__h1dbcf2b5dd15a422 (http://127.0.0.1:61244/pkg/wasm_vm_wasm.js:1919:22)\n    at real (http://127.0.0.1:61244/pkg/wasm_vm_wasm.js:2100:20)",
     "decision": "corrupt",
     "live": {
       "stdout": "T12D_QUOTA_LIVE\n\n",
@@ -578,18 +578,26 @@
     },
     "overlayPreserved": true,
     "takeoverWriter": true,
+    "inFlightSave": {
+      "firstChunkAt": 3326.52499999851,
+      "metaCommitted": true,
+      "releaseStartedAt": 3326.52499999851,
+      "releaseSettledAt": 3760.435000002384,
+      "releaseSettledBeforeMeta": false,
+      "saveError": null
+    },
     "staleWriter": {
       "readOnly": true,
-      "snapshotImportError": "page.evaluate: Error: read_only\n    at Object.snapshotImport (http://127.0.0.1:63649/loader.js:988:49)\n    at eval (eval at evaluate (:234:30), <anonymous>:1:25)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+      "snapshotImportError": "page.evaluate: Error: read_only\n    at Object.snapshotImport (http://127.0.0.1:61244/loader.js:988:49)\n    at eval (eval at evaluate (:234:30), <anonymous>:1:25)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
       "takeoverDecisionBefore": "stale",
       "takeoverDecisionAfter": "stale"
     }
   },
   "snapshotSwap": {
     "attack": "metadata-swap-between-generations",
-    "beforeDigest": "86b1370321dd841f2ac1cfcb79f5a05bc369fc8a6b3566be6344487d0146925b",
-    "afterDigest": "dc13040ff8b2a1b7aecff0ce86af063cd410b6191fc53915c184a4dcecd3c91d",
-    "swappedDigest": "86b1370321dd841f2ac1cfcb79f5a05bc369fc8a6b3566be6344487d0146925b",
+    "beforeDigest": "dfaa599f7c52582f93eda2a550345c06ee6787a5c378348b964bda19b7b6df70",
+    "afterDigest": "7ba426784957254296b7d0cf8e26221b30458e74e72f7c193defe4032f861142",
+    "swappedDigest": "dfaa599f7c52582f93eda2a550345c06ee6787a5c378348b964bda19b7b6df70",
     "decision": "corrupt",
     "overlayPreserved": true
   },
@@ -598,449 +606,449 @@
     "jit": true,
     "singleUser": true,
     "generation": 70,
-    "coldBootMs": 84844,
+    "coldBootMs": 39411,
     "decision": "stale",
     "reloadMemory": {
       "baseline": {
-        "used": 1305577125,
-        "total": 1311859849,
+        "used": 1305396604,
+        "total": 1311327004,
         "limit": 4294705152
       },
-      "peakUsed": 1656533072,
+      "peakUsed": 428557674,
       "after": {
-        "used": 401210553,
-        "total": 401798741
+        "used": 399987851,
+        "total": 402630359
       },
-      "rawOverhead": 62604754,
+      "rawOverhead": 62603182,
       "payloadBytes": 60435397,
-      "overhead": 2169357,
+      "overhead": 2167785,
       "bound": 33554432,
       "sampleCount": 60,
       "phases": [
         {
           "phase": "load-start",
           "value": 60435397,
-          "used": 1593928318,
-          "total": 1605897374,
-          "at": 197.5650000050664
+          "used": 365954492,
+          "total": 378014864,
+          "at": 196.3449999988079
         },
         {
           "phase": "load-chunk",
           "value": 0,
-          "used": 1655471128,
-          "total": 1667435504,
-          "at": 205.6600000038743
+          "used": 427497190,
+          "total": 439553086,
+          "at": 203.89999999850988
         },
         {
           "phase": "load-chunk",
           "value": 1,
-          "used": 1656524028,
-          "total": 1668484080,
-          "at": 212.0050000026822
+          "used": 428549974,
+          "total": 440863714,
+          "at": 209.36500000208616
         },
         {
           "phase": "load-chunk",
           "value": 2,
-          "used": 1656526416,
-          "total": 1668484080,
-          "at": 219.10000000149012
+          "used": 428552338,
+          "total": 440863714,
+          "at": 215.01500000059605
         },
         {
           "phase": "load-chunk",
           "value": 3,
-          "used": 1656526484,
-          "total": 1668484080,
-          "at": 225.51000000536442
+          "used": 428552382,
+          "total": 440863714,
+          "at": 220.79500000178814
         },
         {
           "phase": "load-chunk",
           "value": 4,
-          "used": 1656526552,
-          "total": 1668484080,
-          "at": 231.70500000566244
+          "used": 428552426,
+          "total": 440863714,
+          "at": 226.27499999850988
         },
         {
           "phase": "load-chunk",
           "value": 5,
-          "used": 1656526620,
-          "total": 1668484080,
-          "at": 238.10500000417233
+          "used": 428552470,
+          "total": 440863714,
+          "at": 231.9050000011921
         },
         {
           "phase": "load-chunk",
           "value": 6,
-          "used": 1656526688,
-          "total": 1668484080,
-          "at": 244.7800000011921
+          "used": 428552514,
+          "total": 440863714,
+          "at": 237.83500000089407
         },
         {
           "phase": "load-chunk",
           "value": 7,
-          "used": 1656527516,
-          "total": 1668484080,
-          "at": 251.15000000596046
+          "used": 428553318,
+          "total": 440863714,
+          "at": 243.36500000208616
         },
         {
           "phase": "load-chunk",
           "value": 8,
-          "used": 1656528432,
-          "total": 1668484080,
-          "at": 257.29500000178814
+          "used": 428554210,
+          "total": 440863714,
+          "at": 249.02000000327826
         },
         {
           "phase": "load-chunk",
           "value": 9,
-          "used": 1656528020,
-          "total": 1668484080,
-          "at": 263.6550000011921
+          "used": 428553774,
+          "total": 440863714,
+          "at": 254.67999999970198
         },
         {
           "phase": "load-chunk",
           "value": 10,
-          "used": 1656528184,
-          "total": 1668484080,
-          "at": 269.74000000208616
+          "used": 428553890,
+          "total": 440863714,
+          "at": 260.2149999961257
         },
         {
           "phase": "load-chunk",
           "value": 11,
-          "used": 1656529244,
-          "total": 1668484080,
-          "at": 275.64500000327826
+          "used": 428554926,
+          "total": 440863714,
+          "at": 265.9099999964237
         },
         {
           "phase": "load-chunk",
           "value": 12,
-          "used": 1656529312,
-          "total": 1668484080,
-          "at": 281.9750000014901
+          "used": 428554970,
+          "total": 440863714,
+          "at": 271.54500000178814
         },
         {
           "phase": "load-chunk",
           "value": 13,
-          "used": 1656529888,
-          "total": 1668484080,
-          "at": 288.32500000298023
+          "used": 428555522,
+          "total": 440863714,
+          "at": 277.1899999976158
         },
         {
           "phase": "load-chunk",
           "value": 14,
-          "used": 1656529956,
-          "total": 1668484080,
-          "at": 295.1550000011921
+          "used": 428555566,
+          "total": 440863714,
+          "at": 282.75
         },
         {
           "phase": "load-chunk",
           "value": 15,
-          "used": 1656530024,
-          "total": 1668484080,
-          "at": 301.52500000596046
+          "used": 428555610,
+          "total": 440863714,
+          "at": 288.3399999961257
         },
         {
           "phase": "load-chunk",
           "value": 16,
-          "used": 1656530092,
-          "total": 1668484080,
-          "at": 307.52000000327826
+          "used": 428555654,
+          "total": 440863714,
+          "at": 293.67000000178814
         },
         {
           "phase": "load-chunk",
           "value": 17,
-          "used": 1656530264,
-          "total": 1668484080,
-          "at": 313.6300000026822
+          "used": 428555802,
+          "total": 440863714,
+          "at": 298.929999999702
         },
         {
           "phase": "load-chunk",
           "value": 18,
-          "used": 1656530332,
-          "total": 1668484080,
-          "at": 319.76500000059605
+          "used": 428555846,
+          "total": 440863714,
+          "at": 304.50999999791384
         },
         {
           "phase": "load-chunk",
           "value": 19,
-          "used": 1656530400,
-          "total": 1668484080,
-          "at": 326.2250000014901
+          "used": 428555890,
+          "total": 440863714,
+          "at": 309.8399999961257
         },
         {
           "phase": "load-chunk",
           "value": 20,
-          "used": 1656530468,
-          "total": 1668484080,
-          "at": 332.7300000041723
+          "used": 428555934,
+          "total": 440863714,
+          "at": 315.570000000298
         },
         {
           "phase": "load-chunk",
           "value": 21,
-          "used": 1656530536,
-          "total": 1668484080,
-          "at": 338.9350000023842
+          "used": 428555978,
+          "total": 440863714,
+          "at": 321.3399999961257
         },
         {
           "phase": "load-chunk",
           "value": 22,
-          "used": 1656530604,
-          "total": 1668484080,
-          "at": 344.96000000089407
+          "used": 428556022,
+          "total": 440863714,
+          "at": 326.5349999964237
         },
         {
           "phase": "load-chunk",
           "value": 23,
-          "used": 1656530672,
-          "total": 1668484080,
-          "at": 351.6050000041723
+          "used": 428556066,
+          "total": 440863714,
+          "at": 332.0349999964237
         },
         {
           "phase": "load-chunk",
           "value": 24,
-          "used": 1656530740,
-          "total": 1668484080,
-          "at": 357.5600000023842
+          "used": 428556110,
+          "total": 440863714,
+          "at": 337.5300000011921
         },
         {
           "phase": "load-chunk",
           "value": 25,
-          "used": 1656530808,
-          "total": 1668484080,
-          "at": 364.0950000062585
+          "used": 428556154,
+          "total": 440863714,
+          "at": 343.070000000298
         },
         {
           "phase": "load-chunk",
           "value": 26,
-          "used": 1656530876,
-          "total": 1668484080,
-          "at": 370.73499999940395
+          "used": 428556198,
+          "total": 440863714,
+          "at": 348.7449999973178
         },
         {
           "phase": "load-chunk",
           "value": 27,
-          "used": 1656530944,
-          "total": 1668484080,
-          "at": 377.3800000026822
+          "used": 428556242,
+          "total": 440863714,
+          "at": 354.25999999791384
         },
         {
           "phase": "load-chunk",
           "value": 28,
-          "used": 1656531012,
-          "total": 1668484080,
-          "at": 383.3850000053644
+          "used": 428556286,
+          "total": 440863714,
+          "at": 359.27000000327826
         },
         {
           "phase": "load-chunk",
           "value": 29,
-          "used": 1656531080,
-          "total": 1668484080,
-          "at": 389.92000000178814
+          "used": 428556330,
+          "total": 440863714,
+          "at": 364.58500000089407
         },
         {
           "phase": "load-chunk",
           "value": 30,
-          "used": 1656531148,
-          "total": 1668484080,
-          "at": 396.20500000566244
+          "used": 428556374,
+          "total": 440863714,
+          "at": 370.25999999791384
         },
         {
           "phase": "load-chunk",
           "value": 31,
-          "used": 1656531216,
-          "total": 1668484080,
-          "at": 402.52000000327826
+          "used": 428556418,
+          "total": 440863714,
+          "at": 376.00999999791384
         },
         {
           "phase": "load-chunk",
           "value": 32,
-          "used": 1656531284,
-          "total": 1668484080,
-          "at": 409.08500000089407
+          "used": 428556462,
+          "total": 440863714,
+          "at": 381.77000000327826
         },
         {
           "phase": "load-chunk",
           "value": 33,
-          "used": 1656531352,
-          "total": 1668484080,
-          "at": 415.23499999940395
+          "used": 428556506,
+          "total": 440863714,
+          "at": 387.23499999940395
         },
         {
           "phase": "load-chunk",
           "value": 34,
-          "used": 1656531420,
-          "total": 1668484080,
-          "at": 421.71000000089407
+          "used": 428556550,
+          "total": 440863714,
+          "at": 392.79999999701977
         },
         {
           "phase": "load-chunk",
           "value": 35,
-          "used": 1656531488,
-          "total": 1668484080,
-          "at": 428.33000000566244
+          "used": 428556594,
+          "total": 440863714,
+          "at": 398.38499999791384
         },
         {
           "phase": "load-chunk",
           "value": 36,
-          "used": 1656531556,
-          "total": 1668484080,
-          "at": 434.07500000298023
+          "used": 428556638,
+          "total": 440863714,
+          "at": 404.2250000014901
         },
         {
           "phase": "load-chunk",
           "value": 37,
-          "used": 1656531624,
-          "total": 1668484080,
-          "at": 440.64500000327826
+          "used": 428556682,
+          "total": 440863714,
+          "at": 409.8999999985099
         },
         {
           "phase": "load-chunk",
           "value": 38,
-          "used": 1656531692,
-          "total": 1668484080,
-          "at": 447.0400000065565
+          "used": 428556726,
+          "total": 440863714,
+          "at": 415.6300000026822
         },
         {
           "phase": "load-chunk",
           "value": 39,
-          "used": 1656531760,
-          "total": 1668484080,
-          "at": 453.6600000038743
+          "used": 428556770,
+          "total": 440863714,
+          "at": 421.3999999985099
         },
         {
           "phase": "load-chunk",
           "value": 40,
-          "used": 1656531828,
-          "total": 1668484080,
-          "at": 460.08000000566244
+          "used": 428556814,
+          "total": 440863714,
+          "at": 427
         },
         {
           "phase": "load-chunk",
           "value": 41,
-          "used": 1656531896,
-          "total": 1668484080,
-          "at": 465.9700000062585
+          "used": 428556858,
+          "total": 440863714,
+          "at": 432.57999999821186
         },
         {
           "phase": "load-chunk",
           "value": 42,
-          "used": 1656531964,
-          "total": 1668484080,
-          "at": 472.625
+          "used": 428556902,
+          "total": 440863714,
+          "at": 438.0600000023842
         },
         {
           "phase": "load-chunk",
           "value": 43,
-          "used": 1656532188,
-          "total": 1668484080,
-          "at": 479.17000000178814
+          "used": 428557102,
+          "total": 440863714,
+          "at": 443.679999999702
         },
         {
           "phase": "load-chunk",
           "value": 44,
-          "used": 1656532256,
-          "total": 1668484080,
-          "at": 485.67500000447035
+          "used": 428557146,
+          "total": 440863714,
+          "at": 449.3500000014901
         },
         {
           "phase": "load-chunk",
           "value": 45,
-          "used": 1656532324,
-          "total": 1668484080,
-          "at": 491.85999999940395
+          "used": 428557190,
+          "total": 440863714,
+          "at": 455.0349999964237
         },
         {
           "phase": "load-chunk",
           "value": 46,
-          "used": 1656532392,
-          "total": 1668484080,
-          "at": 498.5050000026822
+          "used": 428557234,
+          "total": 440863714,
+          "at": 460.98499999940395
         },
         {
           "phase": "load-chunk",
           "value": 47,
-          "used": 1656532460,
-          "total": 1668484080,
-          "at": 504.82500000298023
+          "used": 428557278,
+          "total": 440863714,
+          "at": 466.16499999910593
         },
         {
           "phase": "load-chunk",
           "value": 48,
-          "used": 1656532528,
-          "total": 1668484080,
-          "at": 511.33000000566244
+          "used": 428557322,
+          "total": 440863714,
+          "at": 471.804999999702
         },
         {
           "phase": "load-chunk",
           "value": 49,
-          "used": 1656532596,
-          "total": 1668484080,
-          "at": 517.9050000011921
+          "used": 428557366,
+          "total": 440863714,
+          "at": 477.875
         },
         {
           "phase": "load-chunk",
           "value": 50,
-          "used": 1656532664,
-          "total": 1668484080,
-          "at": 524.1550000011921
+          "used": 428557410,
+          "total": 440863714,
+          "at": 483.1550000011921
         },
         {
           "phase": "load-chunk",
           "value": 51,
-          "used": 1656532732,
-          "total": 1668484080,
-          "at": 530.1500000059605
+          "used": 428557454,
+          "total": 440863714,
+          "at": 488.6550000011921
         },
         {
           "phase": "load-chunk",
           "value": 52,
-          "used": 1656532800,
-          "total": 1668484080,
-          "at": 536.3000000044703
+          "used": 428557498,
+          "total": 440863714,
+          "at": 494.195000000298
         },
         {
           "phase": "load-chunk",
           "value": 53,
-          "used": 1656532868,
-          "total": 1668484080,
-          "at": 542.8400000035763
+          "used": 428557542,
+          "total": 440863714,
+          "at": 499.875
         },
         {
           "phase": "load-chunk",
           "value": 54,
-          "used": 1656532936,
-          "total": 1668484080,
-          "at": 549.125
+          "used": 428557586,
+          "total": 440863714,
+          "at": 505.429999999702
         },
         {
           "phase": "load-chunk",
           "value": 55,
-          "used": 1656533004,
-          "total": 1668484080,
-          "at": 555.5500000044703
+          "used": 428557630,
+          "total": 440863714,
+          "at": 511.3500000014901
         },
         {
           "phase": "load-chunk",
           "value": 56,
-          "used": 1656533072,
-          "total": 1668484080,
-          "at": 562.0950000062585
+          "used": 428557674,
+          "total": 440863714,
+          "at": 516.8500000014901
         },
         {
           "phase": "load-chunk",
           "value": 57,
-          "used": 1656151129,
-          "total": 1668102069,
-          "at": 567.4000000059605
+          "used": 428175707,
+          "total": 440481703,
+          "at": 521.6550000011921
         },
         {
           "phase": "load-complete",
           "value": 60435397,
-          "used": 1655102654,
-          "total": 1667053506,
-          "at": 570.765000000596
+          "used": 427127240,
+          "total": 439433140,
+          "at": 523.9399999976158
         }
       ]
     },
     "read": {
-      "stdout": "T12D_RELOAD_FILE\n",
+      "stdout": "~ # cat /root/t12d-reload-file; printf '\\n__WVEND_mtg4kvaf1_%s\\n' \"$?\"\nT12D_RELOAD_FILE\n",
       "exit": 0
     }
   },

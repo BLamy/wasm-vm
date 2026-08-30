@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: in-progress
+status: implemented
 depends_on: [E3-T12c1, E3-T12c2, E3-T12c3, E3-T12c4]
 estimate: S
 risk: high
@@ -618,3 +618,30 @@ snapshot_coherence` (5/5); wasm32 clippy/check; JavaScript syntax checks; indepe
 assertions; fresh raw Playwright stale-save/lease-handoff probe; fresh raw Playwright Worker RPC
 probe; fresh current-head truncation/payload-mutation probe. Status returns to `in-progress` for
 runtime rework and a new exact-head recording. No merge or push.
+
+### 2026-08-30 — worker — rework resubmitted after in-flight-save refutation
+
+- Runtime fix commit: `7956aae70b4e57e61ec02f75cf284dac3884096f` serializes snapshot-writer
+  relinquishment with active IndexedDB snapshot writes. `releaseWriterLock()` first fences the
+  wasm controller read-only, then waits for active snapshot writes to drain before releasing the
+  Web Lock. The race harness now starts a save, releases at the first chunk, and asserts release
+  cannot settle before `meta-committed`; the save completed without error and the takeover decision
+  stayed `stale` before and after the old controller's rejected import.
+- Tracked browser bundle commit: `4c4d7ee30e2b9a6b91f6271bb1df9db226edb94b`. The final exact-head
+  recording was run with `E3_T12D_HEADLESS=1 make verify-E3-T12d`, which passed all format,
+  wasm32 clippy, native restore/snapmeta tests, browser build, and Playwright assertions.
+- Evidence: `evidence/epic-3-t12d/browser-storage-2026-08-30.json`, SHA-256
+  `a8083c2d4eb3bc9e12515d7f947ea5a3c409edbeb590abb8101f4467beeab08b`; screenshot SHA-256
+  `5058e36cc3776e1a5c7635c0c2fc9d8c9e825d6066c75efd41579a4be36fee64`.
+- The production whole-machine Worker saved/reloaded `60,430,185` bytes with identical digest
+  `27f2f7a954763682fa18b206ba8503cf08f37917cffcbc683cb9f2ab233f67cc`; the explicit Worker
+  restore RPC returned `resume`. Main-thread save overhead was `16,811,947 <= 33,554,432` bytes,
+  and reload staging overhead was `2,167,785 <= 33,554,432`. Clear/chunk/meta interruption
+  selected `corrupt`/`corrupt`/`stale`, quota raised typed `QuotaExceededError`, and metadata swap
+  selected `corrupt`; every case preserved the overlay. All browser contexts had zero console
+  errors and no disallowed HTTP responses. The modified-overlay reload read `T12D_RELOAD_FILE`
+  with exit 0. This is a worker submission; a fresh verifier must interrogate this exact head and
+  set the terminal status.
+
+Commands: `E3_T12D_HEADLESS=1 make verify-E3-T12d`; `shasum -a 256` for the evidence JSON and
+screenshot. No merge or push.
