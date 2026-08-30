@@ -29,16 +29,28 @@ const context = await browser.newContext({
   permissions: ["clipboard-read", "clipboard-write"],
 });
 const page = await context.newPage();
-const consoleErrors = [];
-const isAllowedFavicon404 = (text) => /favicon\.ico/i.test(text) && /(?:404|not found)/i.test(text);
-page.on("console", (message) => {
-  const text = message.text();
-  // The acceptance gate permits only the site's favicon 404; every other console error is evidence.
-  if (message.type() === "error" && !isAllowedFavicon404(text)) {
-    consoleErrors.push(text);
+const rawConsoleErrors = [];
+const httpErrors = [];
+const isFavicon404 = (response) => {
+  if (response.status() !== 404) return false;
+  try {
+    return new URL(response.url()).pathname.toLowerCase().endsWith("/favicon.ico");
+  } catch {
+    return false;
+  }
+};
+page.on("response", (response) => {
+  if (response.status() >= 400) {
+    httpErrors.push({ status: response.status(), url: response.url() });
   }
 });
-page.on("pageerror", (error) => consoleErrors.push(`pageerror: ${error.message}`));
+page.on("console", (message) => {
+  const text = message.text();
+  if (message.type() === "error") {
+    rawConsoleErrors.push(text);
+  }
+});
+page.on("pageerror", (error) => rawConsoleErrors.push(`pageerror: ${error.message}`));
 
 const terminalBuffer = () => page.evaluate(() => {
   const buffer = window.__term.term.buffer.active;
@@ -246,6 +258,21 @@ try {
   await waitForText("E3T22D_EXECUTED", 30_000);
 
   await page.screenshot({ path: screenshotPath, fullPage: false });
+  const allowedHttpErrors = httpErrors.filter((error) =>
+    error.status === 404 && new URL(error.url).pathname.toLowerCase().endsWith("/favicon.ico"));
+  const unexpectedHttpErrors = httpErrors.filter((error) => !isFavicon404({
+    status: () => error.status,
+    url: () => error.url,
+  }));
+  // Chromium's console text omits the URL for a failed resource. Correlate its lone 404 with the
+  // response URL so the exception is exactly the site's favicon, while every other console error is
+  // retained as evidence.
+  const consoleErrors = rawConsoleErrors.filter((text) => {
+    const isNetwork404 = /failed to load resource.*404|404.*not found/i.test(text);
+    return !(isNetwork404 && allowedHttpErrors.length === 1);
+  });
+  assert.deepEqual(unexpectedHttpErrors, [], `unexpected HTTP errors: ${JSON.stringify(unexpectedHttpErrors)}`);
+  assert.deepEqual(consoleErrors, [], `unexpected console errors: ${JSON.stringify(consoleErrors)}`);
   browserEvidence = {
     schema: "e3-t22d-browser-clipboard-v1",
     capturedOn: "2026-08-30 America/New_York",
@@ -257,6 +284,7 @@ try {
       sequence: "busybox boot → OSC 52 copy → multiline paste → 1 MiB sha256 → DECSET 2004 held/Enter",
       durationSeconds: Number(((Date.now() - startedAt) / 1000).toFixed(1)),
       consoleErrors,
+      allowedHttpErrors,
     },
     copy: copyObservation,
     multiline: { expectedLines: ["alpha", "bravo", "charlie"], observed: true },
