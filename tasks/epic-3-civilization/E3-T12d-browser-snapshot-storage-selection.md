@@ -87,3 +87,23 @@ loss, whole-RAM duplicate allocation, or ambiguous fallback refutes.
    make the guard LIVE in-browser the persist pump must advance the generation on each durable commit AND
    persist it (e.g. in `OverlayMeta`) so a reopen reconstructs the true generation. Tracked as the next
    increment; the decision/store layer is coherent independent of it.
+
+### 2026-08-29 — worker diagnostic — truncated import accepted as resume
+
+Ran the persistent snapshot hooks against the locally served restored `node-alpine` guest in Google
+Chrome `152.0.7977.65` at `?guest=node-alpine&profile=1&jit=0`. The first boot restored the shipped
+snapshot in `1,687.660ms`; before saving, `__snapshotDecision()` returned `missing`. A successful
+`__snapshotSave()` took `1,751.800ms`, and the exported snapshot was `138,257,790` bytes with SHA-256
+`238214f0e8976cf94d2e021cdbd231fa01530152661d1af7f4da54dd20dad73c`; its decision was `resume`.
+
+For the adversarial truncation check, imported a copy with exactly one final byte removed
+(`138,257,789` bytes). `__snapshotDecision()` still returned `resume`; the expected typed result is
+`corrupt`. Re-importing the original returned `resume`, and the live guest control check
+`echo T12D_LIVE_$((6*7))` produced `T12D_LIVE_42` with exit 0. Raw evidence is
+`evidence/epic-3-t12d/node-alpine-snapshot-corruption-2026-08-29.json`.
+
+This is a concrete acceptance failure, not a verification claim: the import path appears to describe
+the supplied blob as its own complete snapshot, leaving the restore decision without an independent
+expected-length or integrity check. The task remains verification-debt and needs implementation work
+before a fresh verifier can sign off. The same exploratory run's reload probe timed out at 180 seconds
+while the guest was booting; that result is recorded but no root cause is assigned here.
