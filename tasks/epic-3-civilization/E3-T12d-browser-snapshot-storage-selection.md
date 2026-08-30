@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: in-progress
+status: implemented
 depends_on: [E3-T12c1, E3-T12c2, E3-T12c3, E3-T12c4]
 estimate: S
 risk: high
@@ -306,3 +306,31 @@ dependency was replaced with the verified leaves and T12d returned to the active
 slice will record the missing browser proof: peak-memory instrumentation, bounded interruption
 and quota attacks with overlay-preservation checks, a two-tab race, and the post-reload guest
 file read. No implementation claim is made until the fresh recording covers those paths.
+
+### 2026-08-30 — worker — browser verification-debt recording — implemented
+
+- Runtime/evidence head: `e9664e557eb0b368887b852a8b991c1a4a10a88f`.
+- Exact command: `make verify-E3-T12d` — fmt check, wasm32 clippy, 11 restore-decision tests,
+  11 snapmeta tests, `make web-build`, and the headed raw-Playwright browser proof; all passed in
+  `80,537ms`.
+- Evidence: [`evidence/epic-3-t12d/browser-storage-2026-08-30.json`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.json),
+  SHA-256 `9baf83a964200bea93e0fbf107fab4f287bb3296dba01fc695ac19418270a852`; screenshot
+  [`evidence/epic-3-t12d/browser-storage-2026-08-30.png`](../../evidence/epic-3-t12d/browser-storage-2026-08-30.png),
+  SHA-256 `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`.
+- The production whole-machine Worker saved a `60,430,185`-byte snapshot and reloaded it with
+  `missing → resume`. The main-thread memory leg measured `15,822,259` bytes overhead against the
+  `33,554,432`-byte bound across 66 samples and observed `save-start`, clear, chunk, and meta
+  commit callbacks. Fresh disposable contexts killed the tab during clear, chunk, and meta phases;
+  each left the overlay intact and selected a safe `corrupt`/`stale` result. The quota attack
+  raised a typed `QuotaExceededError`, left the overlay intact, and a live guest still returned
+  `T12D_QUOTA_LIVE`. The two-tab race fenced the contender read-only (`persistResult: 0`), preserved
+  the overlay, and allowed writer takeover after the first tab closed.
+- After a real guest write, the modified overlay selected `stale` on reload; a proof-only Alpine
+  main-thread JIT boot into `/bin/sh` then read `/root/t12d-reload-file` as
+  `T12D_RELOAD_FILE` with exit 0. The clean save/restore leg remained the production Worker path;
+  the fast-init override only avoids the unrelated local OpenRC startup cost for the changed-block
+  read. All recorded browser contexts had zero console errors and no bad HTTP responses (the local
+  server's absent favicon is the explicitly allowed 404).
+
+This is a worker submission only; a fresh verifier must interrogate this exact recording and set the
+terminal `verified` status.

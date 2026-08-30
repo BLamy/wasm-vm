@@ -1,0 +1,648 @@
+{
+  "task": "E3-T12d",
+  "runtimeHead": "e9664e557eb0b368887b852a8b991c1a4a10a88f",
+  "base": "http://127.0.0.1:58364",
+  "browser": "131.0.6778.33",
+  "elapsedMs": 80537,
+  "clean": {
+    "bootMs": 951,
+    "reloadMs": 347,
+    "backend": "whole-machine-worker",
+    "saved": {
+      "bytes": 60430185,
+      "digest": "27f2f7a954763682fa18b206ba8503cf08f37917cffcbc683cb9f2ab233f67cc"
+    },
+    "before": "missing",
+    "afterReload": "resume"
+  },
+  "memory": {
+    "backend": "main-thread",
+    "baseline": {
+      "used": 1338195709,
+      "total": 1344057537,
+      "limit": 4294705152
+    },
+    "peakUsed": 1354017968,
+    "after": {
+      "used": 1242318725,
+      "total": 1250476797
+    },
+    "overhead": 15822259,
+    "bound": 33554432,
+    "snapshotBytes": 60435397,
+    "sampleCount": 66,
+    "phases": [
+      {
+        "phase": "save-start",
+        "value": 60435397,
+        "used": 1337221570,
+        "total": 1344057626,
+        "at": 1747.75
+      },
+      {
+        "phase": "clear-committed",
+        "value": 60435397,
+        "used": 1337226788,
+        "total": 1344057656,
+        "at": 1748.0199999958277
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 0,
+        "used": 1338277144,
+        "total": 1345106248,
+        "at": 1748.109999999404
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 1,
+        "used": 1339326456,
+        "total": 1346154824,
+        "at": 1749.655000001192
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 2,
+        "used": 1340375768,
+        "total": 1347203400,
+        "at": 1751.1000000014901
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 3,
+        "used": 1341425080,
+        "total": 1348251976,
+        "at": 1752.5249999985099
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 4,
+        "used": 1342474392,
+        "total": 1349300552,
+        "at": 1754.054999999702
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 5,
+        "used": 1343523704,
+        "total": 1350349128,
+        "at": 1755.5450000017881
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 6,
+        "used": 1344573016,
+        "total": 1351397704,
+        "at": 1757.1499999985099
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 7,
+        "used": 1345623064,
+        "total": 1352446280,
+        "at": 1758.820000000298
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 8,
+        "used": 1346672632,
+        "total": 1353494856,
+        "at": 1760.3949999958277
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 9,
+        "used": 1347722048,
+        "total": 1354543432,
+        "at": 1762.0049999952316
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 10,
+        "used": 1348771368,
+        "total": 1355592008,
+        "at": 1763.25
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 11,
+        "used": 1349820688,
+        "total": 1356640584,
+        "at": 1764.7599999979138
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 12,
+        "used": 1350870008,
+        "total": 1357689160,
+        "at": 1766.3849999979138
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 13,
+        "used": 1351919328,
+        "total": 1358737736,
+        "at": 1768.0499999970198
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 14,
+        "used": 1352968648,
+        "total": 1359786312,
+        "at": 1769.539999999106
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 15,
+        "used": 1354017968,
+        "total": 1360834888,
+        "at": 1771
+      },
+      {
+        "phase": "chunk-committed",
+        "value": 15,
+        "used": 1351918031,
+        "total": 1360129919,
+        "at": 1841.1850000023842
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 16,
+        "used": 1233211907,
+        "total": 1241421503,
+        "at": 1841.3149999976158
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 17,
+        "used": 1234261227,
+        "total": 1242470079,
+        "at": 1843.0049999952316
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 18,
+        "used": 1235310547,
+        "total": 1243518655,
+        "at": 1844.609999999404
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 19,
+        "used": 1236359867,
+        "total": 1244567231,
+        "at": 1846.0349999964237
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 20,
+        "used": 1237409187,
+        "total": 1245615807,
+        "at": 1847.429999999702
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 21,
+        "used": 1238458507,
+        "total": 1246664383,
+        "at": 1848.8299999982119
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 22,
+        "used": 1239507827,
+        "total": 1247712959,
+        "at": 1850.429999999702
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 23,
+        "used": 1240557147,
+        "total": 1248761535,
+        "at": 1851.8699999973178
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 24,
+        "used": 1241606467,
+        "total": 1249810111,
+        "at": 1853.015000000596
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 25,
+        "used": 1242655787,
+        "total": 1250858687,
+        "at": 1854.210000000894
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 26,
+        "used": 1243705107,
+        "total": 1251907263,
+        "at": 1855.4649999961257
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 27,
+        "used": 1244754427,
+        "total": 1252955839,
+        "at": 1856.75
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 28,
+        "used": 1245803747,
+        "total": 1254004415,
+        "at": 1858.0349999964237
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 29,
+        "used": 1246853067,
+        "total": 1255052991,
+        "at": 1859.1999999955297
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 30,
+        "used": 1247902387,
+        "total": 1256101567,
+        "at": 1860.2400000020862
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 31,
+        "used": 1248951707,
+        "total": 1257150143,
+        "at": 1861.3299999982119
+      },
+      {
+        "phase": "chunk-committed",
+        "value": 31,
+        "used": 1248953763,
+        "total": 1257150143,
+        "at": 1936.0199999958277
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 32,
+        "used": 1250019783,
+        "total": 1258198719,
+        "at": 1936.2849999964237
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 33,
+        "used": 1234291887,
+        "total": 1242470079,
+        "at": 1937.875
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 34,
+        "used": 1235341207,
+        "total": 1243518655,
+        "at": 1939.1449999958277
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 35,
+        "used": 1236390527,
+        "total": 1244567231,
+        "at": 1940.6449999958277
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 36,
+        "used": 1237439847,
+        "total": 1245615807,
+        "at": 1941.8949999958277
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 37,
+        "used": 1238489167,
+        "total": 1246664383,
+        "at": 1943.085000000894
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 38,
+        "used": 1239538487,
+        "total": 1247712959,
+        "at": 1944.304999999702
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 39,
+        "used": 1240587807,
+        "total": 1248761535,
+        "at": 1945.4799999967217
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 40,
+        "used": 1241637463,
+        "total": 1249810111,
+        "at": 1946.6000000014901
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 41,
+        "used": 1242686783,
+        "total": 1250858687,
+        "at": 1947.8249999955297
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 42,
+        "used": 1243736103,
+        "total": 1251907263,
+        "at": 1949.054999999702
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 43,
+        "used": 1244785423,
+        "total": 1252955839,
+        "at": 1950.3149999976158
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 44,
+        "used": 1245834743,
+        "total": 1254004415,
+        "at": 1951.4799999967217
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 45,
+        "used": 1246884063,
+        "total": 1255052991,
+        "at": 1952.5499999970198
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 46,
+        "used": 1247933383,
+        "total": 1256101567,
+        "at": 1953.6499999985099
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 47,
+        "used": 1248982703,
+        "total": 1257150143,
+        "at": 1954.664999999106
+      },
+      {
+        "phase": "chunk-committed",
+        "value": 47,
+        "used": 1248984759,
+        "total": 1257150143,
+        "at": 2011.1499999985099
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 48,
+        "used": 1250021859,
+        "total": 1258198719,
+        "at": 2011.4549999982119
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 49,
+        "used": 1234293963,
+        "total": 1242470079,
+        "at": 2012.7400000020862
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 50,
+        "used": 1235343283,
+        "total": 1243518655,
+        "at": 2014.1299999952316
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 51,
+        "used": 1236392603,
+        "total": 1244567231,
+        "at": 2015.4549999982119
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 52,
+        "used": 1237441923,
+        "total": 1245615807,
+        "at": 2017.280000001192
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 53,
+        "used": 1238491243,
+        "total": 1246664383,
+        "at": 2018.5799999982119
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 54,
+        "used": 1239540563,
+        "total": 1247712959,
+        "at": 2019.5649999976158
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 55,
+        "used": 1240589883,
+        "total": 1248761535,
+        "at": 2020.6199999973178
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 56,
+        "used": 1241639203,
+        "total": 1249810111,
+        "at": 2021.6899999976158
+      },
+      {
+        "phase": "chunk-before-put",
+        "value": 57,
+        "used": 1242306512,
+        "total": 1250476676,
+        "at": 2023.070000000298
+      },
+      {
+        "phase": "chunk-committed",
+        "value": 57,
+        "used": 1242308568,
+        "total": 1250476676,
+        "at": 2064.954999998212
+      },
+      {
+        "phase": "meta-before",
+        "value": 60435397,
+        "used": 1242309111,
+        "total": 1250476687,
+        "at": 2064.9649999961257
+      },
+      {
+        "phase": "meta-committed",
+        "value": 60435397,
+        "used": 1242314817,
+        "total": 1250476797,
+        "at": 2069.070000000298
+      }
+    ]
+  },
+  "interruption": {
+    "clear": {
+      "phase": "clear",
+      "observed": {
+        "phase": "clear",
+        "value": 0,
+        "at": 2626.9100000038743
+      },
+      "decision": "corrupt",
+      "generation": 0,
+      "overlayPreserved": true,
+      "safeSelection": "corrupt"
+    },
+    "chunk": {
+      "phase": "chunk",
+      "observed": {
+        "phase": "chunk",
+        "value": 0,
+        "at": 2732.865000002086
+      },
+      "decision": "corrupt",
+      "generation": 0,
+      "overlayPreserved": true,
+      "safeSelection": "corrupt"
+    },
+    "meta": {
+      "phase": "meta",
+      "observed": {
+        "phase": "meta",
+        "value": 0,
+        "at": 2940.3949999958277
+      },
+      "decision": "stale",
+      "generation": 0,
+      "overlayPreserved": true,
+      "safeSelection": "stale"
+    }
+  },
+  "quota": {
+    "observed": {
+      "phase": "quota",
+      "value": 0,
+      "at": 2817.7999999970198
+    },
+    "failure": "Error: page.evaluate: Error: snapshot save: JsValue(QuotaExceededError: E3-T12d deterministic snapshot quota\nundefined)\n    at __wbg_Error_92b29b0548f8b746 (http://127.0.0.1:58364/pkg/wasm_vm_wasm.js:1154:25)\n    at http://127.0.0.1:58364/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1530]:0x103109\n    at http://127.0.0.1:58364/pkg/wasm_vm_wasm_bg.wasm:wasm-function[230]:0x5e920\n    at http://127.0.0.1:58364/pkg/wasm_vm_wasm_bg.wasm:wasm-function[593]:0xbc73f\n    at http://127.0.0.1:58364/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1279]:0x100cdd\n    at http://127.0.0.1:58364/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1052]:0xe2308\n    at http://127.0.0.1:58364/pkg/wasm_vm_wasm_bg.wasm:wasm-function[1237]:0xf6d8d\n    at wasm_bindgen__convert__closures_____invoke__h1dbcf2b5dd15a422 (http://127.0.0.1:58364/pkg/wasm_vm_wasm.js:1887:22)\n    at real (http://127.0.0.1:58364/pkg/wasm_vm_wasm.js:2068:20)",
+    "decision": "corrupt",
+    "live": {
+      "stdout": "T12D_QUOTA_LIVE\n\n",
+      "exit": 0
+    },
+    "overlayPreserved": true
+  },
+  "twoTab": {
+    "first": {
+      "readOnly": false,
+      "decision": "missing"
+    },
+    "contender": {
+      "readOnly": true,
+      "persistResult": 0,
+      "persistStats": {
+        "pendingBlocks": 0,
+        "pendingBytes": 0,
+        "flushWaiting": false,
+        "writeWaiting": false
+      }
+    },
+    "overlayPreserved": true,
+    "takeoverWriter": true
+  },
+  "fileReload": {
+    "guest": "alpine",
+    "jit": true,
+    "singleUser": true,
+    "generation": 70,
+    "coldBootMs": 44892,
+    "decision": "stale",
+    "read": {
+      "stdout": "T12D_RELOAD_FILE\n",
+      "exit": 0
+    }
+  },
+  "diagnostics": [
+    {
+      "label": "clean-worker",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "memory-main-thread",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "kill-clear",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "after-clear",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "kill-chunk",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "after-chunk",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "kill-meta",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "after-meta",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "quota",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "two-tab-writer",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "two-tab-contender",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "two-tab-takeover",
+      "consoleErrors": [],
+      "badHttp": []
+    },
+    {
+      "label": "post-reload-file-alpine",
+      "consoleErrors": [],
+      "badHttp": []
+    }
+  ]
+}

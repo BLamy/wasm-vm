@@ -717,7 +717,11 @@ async function runLinuxBootOwned(opts, banner, request) {
           const s = new TextDecoder().decode(u8);
           bootProgress.scanOutput(s);
           promptTail = (promptTail + s).slice(-200);
-          if (/[\w][\w.-]*:~#\s*$/.test(promptTail) || /\/ #\s*$/.test(promptTail)) markGuestReady();
+          // xterm answers the guest's cursor-position query with a CSI sequence (for example
+          // ESC[6n) immediately after the prompt. Strip terminal control sequences before matching
+          // the visible shell suffix so that a usable prompt cannot be masked by its own reply.
+          const promptText = promptTail.replace(/\x1b(?:\[[0-?]*[ -/]*[@-~]|[ -/]*[@-~])/g, "");
+          if (/[^\w][\w.-]*:~#\s*$/.test(promptText) || /[~\/]\s*#\s*$/.test(promptText)) markGuestReady();
         } catch {}
       },
       onError: (e) => {
@@ -1115,16 +1119,24 @@ function resetGuestReady() {
 // (which names the RAM snapshot + overlay-delta to restore) and the guest chip differ.
 async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfileUrl) {
   const _imgManifest = imageManifestUrl || (R2_ASSETS + "/chunked-alpine/manifest.json");
+  // The deployed R2 Alpine release ships its matching ordered first-touch profile. Pass an explicit
+  // value for each caller: Node-Alpine has no restore-bound profile yet, so it intentionally remains
+  // on demand + sequential readahead.
+  const _bootProfile = bootProfileUrl ?? null;
   // Return-visit fast-restore is handled in loader.js: the RAM restore is armed whenever a coherent,
   // unmodified overlay is present (not only on a fresh seed), so reloads restore instead of cold-booting;
   // a MODIFIED overlay is rejected by restoreDecisionCode → cold boot. `?keep`/`?persist=1`/`?noSnapshot`
   // are honored in the loader.
+  const _bootArgs = new URLSearchParams(location.search).has("e3t12dSingleUser")
+    ? "root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh"
+    : undefined;
   const boot = await runLinuxBoot(
     {
       manifestUrl,
       mode: "chunked",
       imageManifestUrl: _imgManifest,
-      bootProfileUrl,
+      bootProfileUrl: _bootProfile,
+      bootargs: _bootArgs,
       cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
       // The restore needs the persistent (IndexedDB overlay) path: the seeded post-boot disk delta
       // lives in that overlay. Default ON so the shipped RAM snapshot + delta restore in ~1s;
@@ -1195,7 +1207,12 @@ window.wvmDemo = {
   // { ok:true, already:true } if already up, or { ok:false, error } if the boot refused/failed. Needs
   // the Alpine artifacts to be deployed (artifacts-alpine.json + releases/chunked-alpine/).
   async bootAlpine() {
-    return bootAlpineFlavor("./artifacts-alpine.json", "alpine");
+    return bootAlpineFlavor(
+      "./artifacts-alpine.json",
+      "alpine",
+      undefined,
+      R2_ASSETS + "/chunked-alpine/boot-profile.json",
+    );
   },
   // E3.6-T05: boot the NODE-preinstalled Alpine guest — same chunked base + restore machinery, but the
   // shipped RAM snapshot + overlay-delta land at a shell with `node` already on PATH (no boot, no apk
