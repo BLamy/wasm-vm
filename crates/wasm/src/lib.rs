@@ -24,6 +24,8 @@ use wasm_vm_core::trace::{TraceRecord, TraceSink, fmt_canonical};
 use wasm_vm_core::{Machine, RunOutcome};
 // E3-T12d: the resume-snapshot format + coherence/restore-decision types (browser persistence glue).
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+use sha2::{Digest, Sha256};
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 use wasm_vm_core::resume;
 
 // E3-net: browser-only (the boot site that consumes these is wasm+non-zicsr-gated), so gate the whole
@@ -1901,22 +1903,47 @@ impl WasmLinux {
 
     /// Persist an externally supplied snapshot blob (AC3 import) into the snapshot store for THIS boot's
     /// base image. The blob is bound to this base's namespace; a foreign blob imported here still fails
-    /// the coherence guard on restore. Framing-corrupt input is replaced by a zero-length corrupt
-    /// marker so the next decision is typed `"corrupt"` rather than falsely `"resume"`; the live
+    /// the coherence guard on restore. Framing-corrupt input is replaced by a corrupt marker, and a
+    /// same-size payload mutation is checked against the digest of the previously published snapshot;
+    /// both paths make the next decision typed `"corrupt"` rather than falsely `"resume"`. The live
     /// machine and overlay are not mutated. Error `"not_persistent"` off the persistent path.
     #[wasm_bindgen(js_name = importStoredSnapshot)]
     pub async fn import_stored_snapshot(&self, blob: Vec<u8>) -> Result<(), JsError> {
-        let base = {
+        let (base, current_generation) = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
             match inner.snapshot_base {
-                Some(base) => base,
+                Some(base) => (base, inner.machine.overlay_generation()),
                 None => return Err(JsError::new("not_persistent")),
             }
         };
         let store = snapshot_store::SnapshotStore::open(&base)
             .await
             .map_err(|e| JsError::new(&format!("snapshot open: {e:?}")))?;
+        let previous = store
+            .read_meta()
+            .await
+            .map_err(|e| JsError::new(&format!("snapshot metadata: {e:?}")))?
+            .and_then(|bytes| wasm_vm_storage::SnapshotMeta::from_bytes(&bytes).ok())
+            .filter(|meta| meta.base_binding == base && meta.total_len > 0);
         if resume::validate_container(&blob).is_err() {
+            store
+                .mark_corrupt(&base)
+                .await
+                .map_err(|e| JsError::new(&format!("snapshot corrupt marker: {e:?}")))?;
+            return Ok(());
+        }
+        let imported_digest: [u8; 32] = Sha256::digest(&blob).into();
+        let decision = resume::RestoreDecision::decide(
+            Some(&blob),
+            &build_core_hash(),
+            &base,
+            current_generation,
+        );
+        if decision.is_resume()
+            && previous.is_some_and(|meta| {
+                meta.total_len != blob.len() as u64 || meta.blob_sha256 != imported_digest
+            })
+        {
             store
                 .mark_corrupt(&base)
                 .await

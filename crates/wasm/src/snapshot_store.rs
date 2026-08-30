@@ -10,10 +10,13 @@
 //! so f64 is exact) and `meta` (the single [`SnapshotMeta`] record under key 0).
 //!
 //! **Commit contract.** `meta` is written LAST, after every chunk's strict transaction has committed,
-//! so `meta present ⇒ all chunks present`. A tab that dies mid-save leaves chunks but no meta; the load
-//! side reads no meta and cold-boots (never resumes a half-published store). Before writing the new
-//! chunk set, `save` CLEARS the old chunks so a smaller new snapshot can't leave stale trailing chunks
-//! from a larger prior one that would fail reassembly's exact-length check.
+//! so a normally published meta record means all chunks are present and match its digest. A tab that
+//! dies mid-save leaves chunks but no new meta; the load side either reads no meta or detects the old
+//! meta's missing/mismatched chunks and cold-boots (never resumes a half-published store). The corrupt
+//! marker path may deliberately preserve an old meta digest while clearing chunks; load treats that
+//! state as an explicit corrupt marker, and a later import must match the preserved digest to recover.
+//! Before writing the new chunk set, `save` CLEARS the old chunks so a smaller new snapshot can't leave
+//! stale trailing chunks from a larger prior one that would fail reassembly's exact-length check.
 //!
 //! Mirrors [`crate::idb_store`] deliberately — same `await_request`/`await_transaction` helpers, same
 //! `rw_strict` durability, same global-scope factory lookup and versionchange auto-close.
@@ -24,6 +27,7 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{IdbDatabase, IdbObjectStore, IdbRequest, IdbTransaction};
 
+use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 
 use wasm_vm_storage::{
@@ -42,6 +46,7 @@ const CHUNKS_PER_TXN: usize = 16;
 #[derive(Clone)]
 pub struct SnapshotStore {
     db: IdbDatabase,
+    base_binding: [u8; 32],
 }
 
 impl SnapshotStore {
@@ -95,7 +100,10 @@ impl SnapshotStore {
         });
         db.set_onversionchange(Some(on_vc.as_ref().unchecked_ref()));
         on_vc.forget();
-        Ok(SnapshotStore { db })
+        Ok(SnapshotStore {
+            db,
+            base_binding: *base_binding,
+        })
     }
 
     /// The stored meta record bytes (`None` if no snapshot is persisted / a brand-new DB).
@@ -128,6 +136,15 @@ impl SnapshotStore {
         js_sys::Reflect::apply(&txn_fn, &self.db, &args)?.dyn_into::<IdbTransaction>()
     }
 
+    /// Clear the chunk object store while leaving the meta commit marker untouched. `mark_corrupt`
+    /// uses this to invalidate the currently published chunks without throwing away the digest of a
+    /// previously valid snapshot, so a later re-import can prove it is restoring that exact payload.
+    async fn clear_chunks(&self) -> Result<(), JsValue> {
+        let txn = self.rw_strict(CHUNKS)?;
+        txn.object_store(CHUNKS)?.clear()?;
+        await_transaction(&txn).await
+    }
+
     /// Persist `blob` as the resume snapshot for `base_binding`. Order matters for crash safety:
     /// 1. CLEAR the old chunks (strict txn) so a smaller new snapshot leaves no stale trailing chunk.
     /// 2. Write the chunks in batched strict `readwrite` transactions (`CHUNKS_PER_TXN` per txn).
@@ -136,16 +153,15 @@ impl SnapshotStore {
     /// Only chunk slices of `blob` are copied into JS (via `Uint8Array::from`); no second whole-blob
     /// copy is ever held. On a `QuotaExceededError` the underlying transaction rejects with that name.
     pub async fn save(&self, blob: &[u8], base_binding: &[u8; 32]) -> Result<(), JsValue> {
-        let meta = SnapshotMeta::new(blob.len() as u64, *base_binding);
+        if *base_binding != self.base_binding {
+            return Err(JsValue::from_str("foreign_image"));
+        }
+        let digest: [u8; 32] = Sha256::digest(blob).into();
+        let meta = SnapshotMeta::new(blob.len() as u64, *base_binding, digest);
 
         // 1. Drop any prior chunk set first — a shorter new snapshot must not inherit stale trailing
         //    chunks that reassembly's exact-count/length check would then trip on.
-        {
-            let txn = self.rw_strict(CHUNKS)?;
-            let store = txn.object_store(CHUNKS)?;
-            store.clear()?;
-            await_transaction(&txn).await?;
-        }
+        self.clear_chunks().await?;
 
         // 2. Stream the blob as 1 MiB chunks, batching CHUNKS_PER_TXN puts per strict transaction so a
         //    single txn is bounded rather than the whole blob.
@@ -181,13 +197,27 @@ impl SnapshotStore {
         self.write_meta(&meta.to_bytes()).await
     }
 
-    /// Replace the stored snapshot with a committed zero-length marker. The marker is deliberately
-    /// not a valid resume container; the restore decision therefore reports `corrupt` while the
-    /// machine's live overlay remains untouched. This lets an invalid external import surface a
-    /// typed cold-boot reason without retaining attacker-controlled bytes or falsely retaining an
-    /// older valid snapshot.
+    /// Invalidate the stored snapshot after an externally supplied blob fails framing or content
+    /// validation. If a previously valid snapshot exists, preserve its length + digest in `meta` but
+    /// clear its chunks; the next load then returns a typed corrupt marker, while a later import can
+    /// restore the old snapshot only if its complete payload matches that digest. With no usable prior
+    /// record, write a zero-length marker. The live machine and overlay are never mutated.
     pub async fn mark_corrupt(&self, base_binding: &[u8; 32]) -> Result<(), JsValue> {
-        self.save(&[], base_binding).await
+        if *base_binding != self.base_binding {
+            return Err(JsValue::from_str("foreign_image"));
+        }
+        let prior = self
+            .read_meta()
+            .await?
+            .and_then(|bytes| SnapshotMeta::from_bytes(&bytes).ok())
+            .filter(|meta| meta.base_binding == self.base_binding && meta.total_len > 0);
+        self.clear_chunks().await?;
+        if prior.is_none() {
+            let empty_digest: [u8; 32] = Sha256::digest([]).into();
+            self.write_meta(&SnapshotMeta::new(0, self.base_binding, empty_digest).to_bytes())
+                .await?;
+        }
+        Ok(())
     }
 
     /// Write (or replace) the meta record (strict durability). The snapshot's commit marker.
@@ -200,15 +230,20 @@ impl SnapshotStore {
     }
 
     /// Reassemble the persisted snapshot blob, or `Ok(None)` if none is stored (no meta record). A
-    /// malformed meta or a torn/half-published chunk set is surfaced as a JsValue string carrying the
-    /// reason (`"corrupt"` / the storage-integrity fault) so the JS boundary maps it to a cold boot.
-    /// Produces exactly one `Vec` of `total_len` bytes — the chunk map is consumed as it is copied out.
+    /// malformed meta, a torn/half-published chunk set, a base mismatch, or a payload digest mismatch
+    /// is returned as `Some(Vec::new())`: an explicit corrupt marker that the JS boundary maps to a
+    /// typed cold boot instead of treating a storage fault as an API error. Produces exactly one
+    /// `Vec` of `total_len` bytes — the chunk map is consumed as it is copied out.
     pub async fn load(&self) -> Result<Option<Vec<u8>>, JsValue> {
         let Some(meta_bytes) = self.read_meta().await? else {
             return Ok(None);
         };
-        let meta =
-            SnapshotMeta::from_bytes(&meta_bytes).map_err(|_| JsValue::from_str("corrupt"))?;
+        let Ok(meta) = SnapshotMeta::from_bytes(&meta_bytes) else {
+            return Ok(Some(Vec::new()));
+        };
+        if meta.base_binding != self.base_binding {
+            return Ok(Some(Vec::new()));
+        }
 
         let txn = self.db.transaction_with_str(CHUNKS)?;
         let store = txn.object_store(CHUNKS)?;
@@ -222,9 +257,15 @@ impl SnapshotStore {
             }
             map.insert(k as u64, Uint8Array::new(&vals.get(i)).to_vec());
         }
-        // A torn/short/missing chunk is a storage-integrity fault → cold boot. Surface the debug
-        // reason so JS can log it; it maps every store fault to "corrupt".
-        let blob = reassemble(&meta, map).map_err(|e| JsValue::from_str(&format!("{e:?}")))?;
+        // A torn/short/missing chunk is a storage-integrity fault → cold boot. Return an explicit
+        // empty marker so the restore decision sees `corrupt` and no caller can accidentally resume.
+        let Ok(blob) = reassemble(&meta, map) else {
+            return Ok(Some(Vec::new()));
+        };
+        let digest: [u8; 32] = Sha256::digest(&blob).into();
+        if digest != meta.blob_sha256 {
+            return Ok(Some(Vec::new()));
+        }
         Ok(Some(blob))
     }
 
@@ -232,9 +273,7 @@ impl SnapshotStore {
     /// (The discard-on-foreign/stale UI wiring is a follow-up; present now as the store primitive.)
     #[allow(dead_code)]
     pub async fn clear(&self) -> Result<(), JsValue> {
-        let txn = self.rw_strict(CHUNKS)?;
-        txn.object_store(CHUNKS)?.clear()?;
-        await_transaction(&txn).await?;
+        self.clear_chunks().await?;
         let txn = self.rw_strict(META)?;
         txn.object_store(META)?.clear()?;
         await_transaction(&txn).await

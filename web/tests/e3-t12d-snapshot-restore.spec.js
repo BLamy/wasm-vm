@@ -62,6 +62,47 @@ test.describe("E3-T12d: browser resume-snapshot persistence + restore selection"
     expect(await page.evaluate(() => window.__snapshotSave())).toBe(true);
     expect(await page.evaluate(() => window.__snapshotDecision())).toBe("resume");
 
+    // AC2/AC3: exercise the import boundary without sending the production-sized bytes through
+    // Playwright's protocol. The `slice()` copies below are deliberately test-only attack fixtures;
+    // the production store still hashes and streams the supplied Uint8Array in bounded chunks.
+    const integrity = await page.evaluate(async () => {
+      const digest = async (bytes) => {
+        const hash = await crypto.subtle.digest("SHA-256", bytes);
+        return [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, "0")).join("");
+      };
+      const original = await window.__snapshotExport();
+      if (!original) throw new Error("snapshot export missing after save");
+      const originalDigest = await digest(original);
+
+      const truncated = original.slice(0, original.byteLength - 1);
+      await window.__snapshotImport(truncated);
+      const truncatedDecision = await window.__snapshotDecision();
+
+      await window.__snapshotImport(original);
+      const afterTruncationRestore = await window.__snapshotDecision();
+
+      const mutated = original.slice();
+      mutated[mutated.byteLength - 1] ^= 1;
+      await window.__snapshotImport(mutated);
+      const mutatedDecision = await window.__snapshotDecision();
+
+      await window.__snapshotImport(original);
+      const roundTripped = await window.__snapshotExport();
+      return {
+        originalBytes: original.byteLength,
+        originalDigest,
+        truncatedDecision,
+        afterTruncationRestore,
+        mutatedDecision,
+        roundTripDigest: await digest(roundTripped),
+      };
+    });
+    expect(integrity.truncatedDecision).toBe("corrupt");
+    expect(integrity.afterTruncationRestore).toBe("resume");
+    expect(integrity.mutatedDecision).toBe("corrupt");
+    expect(integrity.roundTripDigest).toBe(integrity.originalDigest);
+    expect(integrity.originalBytes).toBeGreaterThan(1_000_000);
+
     // ── Reload the tab (IndexedDB survives a same-origin reload) ────────────────────────────────
     // A fresh boot starts at overlay generation 0, the same generation the snapshot was taken at, so
     // the persisted blob is coherent with THIS same build + base image + generation → "resume".
