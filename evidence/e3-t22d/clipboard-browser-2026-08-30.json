@@ -1,13 +1,13 @@
 {
   "schema": "e3-t22d-browser-clipboard-v1",
   "capturedOn": "2026-08-30 America/New_York",
-  "runtimeHead": "a6a5dfe799b9cc18b0bf0e0febb231deb235ad38",
+  "runtimeHead": "279507c82f74fa0172cb32f6aa6064f50be69b4e",
   "recording": {
     "url": "http://127.0.0.1:8123/?noAutoBoot&jit=1",
     "browser": "Playwright Chromium headed",
     "browserVersion": "131.0.6778.33",
     "sequence": "busybox boot → OSC 52 copy → multiline paste → 1 MiB sha256 → DECSET 2004 held/Enter",
-    "durationSeconds": 104.3,
+    "durationSeconds": 104.8,
     "consoleErrors": [],
     "allowedHttpErrors": [],
     "faviconProbe": {

@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: implemented
+status: evidence-needed
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -290,3 +290,56 @@ web/tests/e3-t22-clipboard.spec.js`.
 Commands: deterministic node gates, syntax checks, `git diff --check 41f885b..HEAD`, independent
 payload SHA recomputation, evidence/PNG SHA checks, runtime-head and spec-baseline diff checks, and
 `python3 tools/check_task_policy.py`.
+
+### 2026-08-30 — fresh verifier — VERDICT: needs-evidence
+
+- **AC1 — HELD.** Prediction: the guest-built OSC52 sequence would produce `hi` in the browser path and
+  `navigator.clipboard.readText()` would read back `hi`. The fresh headed run observed `copied="hi"`,
+  `blocked=null`, and `clipboard="hi"` in `evidence/e3-t22d/clipboard-browser-2026-08-30.json:18-21`;
+  the guest command and callback/readback assertions are at `tools/verify/e3-t22d-browser-proof.mjs:190-230`.
+- **AC2 — HELD.** Prediction: the guest, not the host, would report the numeric size and the actual
+  `sha256sum /root/paste.txt` line, with both equal to the independently computed 1,000,000-byte
+  payload digest. The fresh run parsed `fileSize=1000000` and `guestFileSize=1000000`, and parsed the
+  guest line for `/root/paste.txt`; `observedSha` and `expectedSha` both equal
+  `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733` in
+  `evidence/e3-t22d/clipboard-browser-2026-08-30.json:31-38`. The guest command, numeric parser, and
+  independent equality assertions are at `tools/verify/e3-t22d-browser-proof.mjs:246-281`.
+- **AC3 — HELD.** Prediction: the first bracketed multi-line paste would leave no file and no guest
+  marker before Enter, Ctrl-C would cancel it, and a second paste would create the file and print the
+  marker only after an explicit Enter. The fresh evidence records `modeEnabled=true`,
+  `heldUntilEnter=true`, and `executedAfterEnter=true` at `evidence/e3-t22d/clipboard-browser-2026-08-30.json:40-43`;
+  the screenshot shows standalone `E3T22D_HELD`, then the post-Enter `touch`/`printf` commands and
+  `E3T22D_SECOND` output at `evidence/e3-t22d/clipboard-browser-2026-08-30.png`. The exact sequence and
+  standalone-marker waits are at `tools/verify/e3-t22d-browser-proof.mjs:283-301`, and the host hold/
+  Ctrl-C/Enter implementation is at `web/terminal.js:97-128,162-177` (mirrored byte-for-byte in
+  `web/dist/terminal.js:97-128,162-177`). This independently addresses the prior command-echo false
+  positive.
+- **BROWSER ERROR GATE — NEEDS EVIDENCE.** Prediction: only the explicitly probed `/favicon.ico` 404
+  could be tolerated. The fresh run recorded the correct probe (`404`, `/favicon.ico`) and no HTTP error
+  survived, but the harness serializes only filtered `consoleErrors` at
+  `tools/verify/e3-t22d-browser-proof.mjs:321-334`. Its filter at `:314-317` removes any console text
+  matching a generic 404 pattern whenever the favicon probe is 404, without a URL. A bounded attack
+  supplying `Failed to load resource ... 404 ... /evil.js` therefore becomes `consoleErrors=[]`, so a
+  non-favicon console error is accepted as if it were the favicon. Preserve raw console events and
+  classify only the explicitly probed favicon (or otherwise make the console exception URL-specific),
+  then re-record.
+- **FRESHNESS — HELD.** The fresh target `make verify-E3-T22d` completed in 104.8 seconds at exact
+  `HEAD=279507c82f74fa0172cb32f6aa6064f50be69b4e`; the evidence binds the same `runtimeHead` at
+  `evidence/e3-t22d/clipboard-browser-2026-08-30.json:2-4`. Current artifact digests are JSON
+  `e6bf5a48cbe707af49fe84feb91def4a4309aede3fb57c7fe2d34c401e578291` and PNG
+  `73df8d5383b607af49fe84feb91def7c423aa29da56aae289174cccfb190e2d4`. The runtime fix is present in
+  `41b2c5d`, the final standalone-marker harness in `a6a5dfe`, and the generated dist terminal is
+  identical to `web/terminal.js`; the old committed hashes in earlier worker entries are superseded by
+  this fresh exact-head recording.
+- **COVERAGE / SUITE.** `node --test tests/osc52.test.mjs tests/paste.test.mjs` passed 23/23, all four
+  syntax checks, `python3 tools/check_task_policy.py`, and `git diff --check 41f885b..HEAD` passed. The
+  current `web/tests/e3-t22-clipboard.spec.js` matches the task baseline `97b88d4` and is not part of
+  the submitted runtime diff; `Makefile:455-477` deliberately runs the raw headed harness, so the
+  deleted/skipped legacy spec paths are not an unexecuted changed hunk. The bounded novel host-hold
+  attack passed: embedded `ESC[201~` was sanitized, Ctrl-C released only `^C`, and Enter released the
+  ordered body. No promoted suite artifact is added while the strict console-evidence gap remains.
+
+Commands: `make verify-E3-T22d`; `node --check web/terminal.js`; `node --check web/dist/terminal.js`;
+`node --check tools/verify/e3-t22d-browser-proof.mjs`; `node --check web/tests/e3-t22-clipboard.spec.js`;
+`python3 tools/check_task_policy.py`; `git diff --check 41f885b..HEAD`; source/dist comparison; exact
+artifact SHA checks; and bounded novel host-hold plus console-filter attacks.
