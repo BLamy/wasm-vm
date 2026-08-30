@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: in-progress
+status: evidence-needed
 depends_on: [E3-T12c]
 estimate: S
 risk: high
@@ -254,3 +254,38 @@ flush, reconstructs the machine from that metadata on reopen, and adds a reload-
 The worker claim is limited to the generation-persistence slice. The task remains subject to fresh
 verifier review and the previously listed memory-bound, crash/quota, two-tab, and portability proof
 gaps.
+
+### 2026-08-30 — fresh verifier — VERDICT: needs-evidence
+
+- **Durable generation atomicity — HELD for implementation, NEEDS EVIDENCE for failure behavior.**
+  Prediction: a successful overlay flush must write changed blocks and the next generation in one
+  strict transaction, and advance the in-memory generation only after that transaction completes.
+  The diff satisfies this at `crates/wasm/src/idb_store.rs:128-138,188-216` and
+  `crates/wasm/src/lib.rs:1814-1859`; the narrow gate and focused metadata test passed. The supplied
+  recording shows the successful path (`evidence/epic-3-t12d/node-alpine-overlay-generation-2026-08-30.json:21-27`),
+  but has no abort, quota, or tab-kill observation, so atomicity under interruption remains unproven.
+- **Reopen generation reconstruction — HELD.** Prediction: after a durable write, reopening must
+  read the stored metadata generation before snapshot coherence is evaluated. The code does so at
+  `crates/wasm/src/lib.rs:1090-1116,1223-1241`; the recording observes `0 → 16`, then generation `16`
+  and `stale` after reload (`evidence/...overlay-generation-2026-08-30.json:21-32`). This proves the
+  generation path, but not that the changed block bytes were also reconstructed: the record explicitly
+  disclaims the post-reload shell/file read (`evidence/...overlay-generation-2026-08-30.json:34`).
+- **AC1 and adversarial coverage — NEEDS EVIDENCE.** Peak memory versus the documented bound,
+  interruption during clear/chunk/meta phases, quota exhaustion, two-tab races, and preservation of
+  the live overlay are absent. Portability is also open: `make verify-E3-T12d` does not run the browser
+  leg (`Makefile:544-550`), and the artifact-gated repository spec's post-reload file assertion at
+  `web/tests/e3-t12d-snapshot-restore.spec.js:140-149` is not represented in this recording. Record
+  bounded independent attacks and a portable artifact-bearing browser run, including the post-reload
+  file read and memory instrumentation.
+- **Payload integrity — HELD and carried forward.** The prior verifier's exact-head truncation,
+  same-length mutation, typed `corrupt`, original re-import, and export/import digest results are not
+  re-litigated.
+- **Provenance/coverage — HELD with proof gaps.** The evidence SHA-256 is exactly
+  `c90bd19314794f36965eb8ba7bd7c70cb6664c1b60b76985f0bf78e9c4c635d1`, `runtimeHead` is
+  `33fc2308a2516f19191c255e4a1e6fec3831022c`, and only evidence/task files changed after that runtime
+  commit. The changed Rust success path is exercised indirectly by the generation transition; the
+  unrecorded post-reload file-read hunk and all fault/race paths remain unproven.
+
+Commands: `make verify-E3-T12d`; `cargo test -p wasm-vm-storage meta_round_trips_a_durable_generation_and_reads_legacy_as_zero`;
+`git diff --check 6d2b1244352e8963a2877f671d10eaf8c561968e 33fc2308a2516f19191c255e4a1e6fec3831022c`;
+`shasum -a 256 evidence/epic-3-t12d/node-alpine-overlay-generation-2026-08-30.json`.
