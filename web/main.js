@@ -1123,12 +1123,16 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfile
   // unmodified overlay is present (not only on a fresh seed), so reloads restore instead of cold-booting;
   // a MODIFIED overlay is rejected by restoreDecisionCode → cold boot. `?keep`/`?persist=1`/`?noSnapshot`
   // are honored in the loader.
+  const _bootArgs = new URLSearchParams(location.search).has("e3t12dSingleUser")
+    ? "root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh"
+    : undefined;
   const boot = await runLinuxBoot(
     {
       manifestUrl,
       mode: "chunked",
       imageManifestUrl: _imgManifest,
       bootProfileUrl: _bootProfile,
+      bootargs: _bootArgs,
       cacheBudgetMib: Number(new URLSearchParams(location.search).get("cacheBudgetMib")) || 0,
       // The restore needs the persistent (IndexedDB overlay) path: the seeded post-boot disk delta
       // lives in that overlay. Default ON so the shipped RAM snapshot + delta restore in ~1s;

@@ -33,6 +33,7 @@ const runFileReload = process.env.E3_T12D_FILE_RELOAD !== "0";
 const fileReloadGuest = process.env.E3_T12D_FILE_RELOAD_GUEST || "alpine";
 const fileReloadTimeout = Number(process.env.E3_T12D_FILE_RELOAD_TIMEOUT_MS || 1_800_000);
 const fileReloadJit = process.env.E3_T12D_FILE_RELOAD_JIT === "1";
+const fileReloadSingleUser = process.env.E3_T12D_FILE_RELOAD_SINGLE_USER === "1";
 const onlyFileReload = process.env.E3_T12D_ONLY_FILE_RELOAD === "1";
 const allowedFaviconUrl = new URL("/favicon.ico", `${base}/`).href;
 const evidencePath = path.join(evidenceDir, "browser-storage-2026-08-30.json");
@@ -524,7 +525,7 @@ async function postReloadGuestFile(allErrors) {
   assert.ok(["alpine", "node-alpine"].includes(fileReloadGuest), `unsupported file-reload guest: ${fileReloadGuest}`);
   const env = await openContext({ label: `post-reload-file-${fileReloadGuest}`, allErrors });
   try {
-    const query = `guest=${fileReloadGuest}&noAutoBoot=1&persist=1&testHooks=1${fileReloadJit ? "&jit=1&worker=0" : ""}`;
+    const query = `guest=${fileReloadGuest}&noAutoBoot=1&persist=1&testHooks=1${fileReloadJit ? "&jit=1&worker=0" : ""}${fileReloadSingleUser ? "&e3t12dSingleUser=1" : ""}`;
     await loadShell(env.page, query);
     await bootFlavor(env.page, fileReloadGuest);
     await pause(env.page);
@@ -561,7 +562,15 @@ async function postReloadGuestFile(allErrors) {
     const read = await env.page.evaluate(() => window.wvmDemo.run("cat /root/t12d-reload-file", 120_000));
     assert.equal(read.exit, 0);
     assert.match(read.stdout, /T12D_RELOAD_FILE/);
-    return { guest: fileReloadGuest, jit: fileReloadJit, generation, coldBootMs, decision, read };
+    return {
+      guest: fileReloadGuest,
+      jit: fileReloadJit,
+      singleUser: fileReloadSingleUser,
+      generation,
+      coldBootMs,
+      decision,
+      read,
+    };
   } finally {
     await closeContext(env);
   }
