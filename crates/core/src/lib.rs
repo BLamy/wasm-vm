@@ -956,8 +956,25 @@ impl Machine {
     /// `save_resume` stamps these into the header and `load_resume` refuses a snapshot whose header
     /// disagrees — a resume onto a different image or a stale build is rejected before any mutation.
     pub fn set_snapshot_identity(&mut self, core_hash: [u8; 32], base_image_hash: [u8; 32]) {
+        self.set_snapshot_identity_with_generation(
+            core_hash,
+            base_image_hash,
+            self.coherence.generation,
+        );
+    }
+
+    /// E3-T12d: bind this machine to a base disk image, emulator build, and generation recovered
+    /// from the durable overlay metadata. The persistent browser boot uses this on reopen so the
+    /// resume guard sees the same generation that was committed with the loaded blocks.
+    pub fn set_snapshot_identity_with_generation(
+        &mut self,
+        core_hash: [u8; 32],
+        base_image_hash: [u8; 32],
+        generation: u64,
+    ) {
         self.coherence.core_hash = core_hash;
         self.coherence.base_image_hash = base_image_hash;
+        self.coherence.generation = generation;
     }
 
     /// E3-T12c3: the current overlay-commit generation the next `save_resume` will bind.

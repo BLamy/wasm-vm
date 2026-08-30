@@ -893,8 +893,13 @@ struct LinuxInner {
     /// an `Rc` so `fetchPending` can clone it out and `await` without keeping the inner borrow.
     fetch: Option<std::rc::Rc<http_fetch::FetchState>>,
     /// E3-T05 durable-persistence state, present only for a `newChunkedDiskPersistent` boot: the
-    /// IndexedDB store (`Clone`) + the shared persist queue the overlay records writes into.
-    persist: Option<(idb_store::IdbStore, wasm_vm_storage::SharedPersistQueue)>,
+    /// IndexedDB store (`Clone`), the shared persist queue the overlay records writes into, and the
+    /// immutable metadata identity used to stamp the next durable generation.
+    persist: Option<(
+        idb_store::IdbStore,
+        wasm_vm_storage::SharedPersistQueue,
+        wasm_vm_storage::OverlayMeta,
+    )>,
     /// E3-T10: the chunked backend's shared read-only flag, so `setDiskReadOnly` can flip the
     /// disk live (the "continue read-only" choice after a storage-quota hit). `None` off the
     /// persistent path.
@@ -934,6 +939,8 @@ enum DiskChoice {
         loaded: alloc_map::BlockMap,
         idb: idb_store::IdbStore,
         queue: wasm_vm_storage::SharedPersistQueue,
+        /// Generation read from the durable overlay metadata on reopen.
+        generation: u64,
         /// E3-T09: another tab holds the writer Web Lock — reject writes at the backend seam,
         /// advertise VIRTIO_BLK_F_RO, and register NO persist pump.
         read_only: bool,
@@ -1080,7 +1087,7 @@ impl WasmLinux {
         let idb = idb_store::IdbStore::open(&base_binding, seed_identity.as_ref())
             .await
             .map_err(|e| JsError::new(&format!("IndexedDB open: {e:?}")))?;
-        match idb
+        let overlay_generation = match idb
             .read_meta()
             .await
             .map_err(|e| JsError::new(&format!("IndexedDB read meta: {e:?}")))?
@@ -1090,6 +1097,7 @@ impl WasmLinux {
                     .map_err(|e| JsError::new(&format!("overlay meta: {e:?}")))?;
                 meta.check(&manifest)
                     .map_err(|e| JsError::new(&format!("overlay/base mismatch: {e:?}")))?;
+                meta.generation
             }
             None => {
                 // E3-T09: an RO tab must not write ANYTHING — not even the meta record of a
@@ -1099,8 +1107,9 @@ impl WasmLinux {
                         .await
                         .map_err(|e| JsError::new(&format!("IndexedDB write meta: {e:?}")))?;
                 }
+                0
             }
-        }
+        };
         let loaded = idb
             .load_blocks()
             .await
@@ -1143,6 +1152,7 @@ impl WasmLinux {
                 loaded,
                 idb,
                 queue,
+                generation: overlay_generation,
                 read_only,
             },
             &args,
@@ -1207,15 +1217,20 @@ impl WasmLinux {
                 loaded,
                 idb,
                 queue,
+                generation,
                 read_only,
             } => {
                 // E3-T12d: bind the resume snapshot to this base image + stamp the machine's coherence
                 // header, so a snapshot taken here fails the guard if reloaded against a foreign build
                 // or a foreign base image. `base_hash()` is the same binding the snapshot store is
-                // namespaced by. Overlay generation starts at the machine default (0) and advances only
-                // on an explicit commit.
+                // namespaced by. Reconstruct the generation committed with the durable blocks so a
+                // resume snapshot cannot silently ride over writes made before this boot.
                 let base_binding = manifest.base_hash();
-                machine.set_snapshot_identity(build_core_hash(), base_binding);
+                machine.set_snapshot_identity_with_generation(
+                    build_core_hash(),
+                    base_binding,
+                    generation,
+                );
                 snapshot_base = Some(base_binding);
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
@@ -1226,6 +1241,7 @@ impl WasmLinux {
                 );
                 let disk = wasm_vm_storage::OverlayDisk::attach(overlay, &manifest)
                     .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
+                let overlay_meta = wasm_vm_storage::OverlayMeta::new(&manifest);
                 let mut backend =
                     chunked::ChunkedBackend::from_persistent_disk(disk, store.clone());
                 if read_only {
@@ -1246,7 +1262,7 @@ impl WasmLinux {
                     manifest, base_url, store, profile,
                 )));
                 if !read_only {
-                    persist = Some((idb, queue));
+                    persist = Some((idb, queue, overlay_meta));
                 }
             }
             // Busybox initramfs: the 8 empty virtio slots the DTB advertises.
@@ -1432,7 +1448,7 @@ impl WasmLinux {
                     && (inner.machine.blk_write_waiting()
                         || persist_max_dirty_bytes.is_some_and(|limit| {
                             limit > 0
-                                && inner.persist.as_ref().is_some_and(|(_, queue)| {
+                                && inner.persist.as_ref().is_some_and(|(_, queue, _)| {
                                     queue
                                         .borrow()
                                         .unpersisted_count()
@@ -1795,10 +1811,15 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = persistPending)]
     pub async fn persist_pending(&self) -> Result<u32, JsError> {
         // Clone the store handle + shared queue out under a brief borrow; never hold it across await.
-        let (idb, queue) = {
+        let (idb, queue, overlay_meta, current_generation) = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
             match &inner.persist {
-                Some((idb, q)) => (idb.clone(), q.clone()),
+                Some((idb, q, meta)) => (
+                    idb.clone(),
+                    q.clone(),
+                    *meta,
+                    inner.machine.overlay_generation(),
+                ),
                 None => return Ok(0),
             }
         };
@@ -1808,7 +1829,12 @@ impl WasmLinux {
         }
         let blocks: Vec<(u64, [u8; wasm_vm_storage::OVERLAY_BLOCK])> =
             batch.iter().map(|(b, _, bytes)| (*b, *bytes)).collect();
-        if let Err(e) = idb.persist(&blocks).await {
+        let next_generation = current_generation.saturating_add(1);
+        let next_meta = overlay_meta.with_generation(next_generation);
+        if let Err(e) = idb
+            .persist_overlay_batch(&blocks, &next_meta.to_bytes())
+            .await
+        {
             // E3-T10: classify the failure. On QuotaExceeded we DELIBERATELY do NOT
             // mark_persisted — the dirty blocks stay pending and the persistent virtio WRITE that
             // produced them remains outside the used ring. Freeing space + retry may complete it;
@@ -1824,6 +1850,13 @@ impl WasmLinux {
         // Mark exactly what was flushed (generation-guarded) — a mid-flush re-write stays pending.
         let pairs: Vec<(u64, u64)> = batch.iter().map(|(b, g, _)| (*b, *g)).collect();
         queue.borrow_mut().mark_persisted(&pairs);
+        // The IndexedDB transaction committed both the blocks and this generation. Advance the
+        // machine only after that strict durability barrier; a reload can therefore never observe
+        // a newer in-memory generation whose disk bytes did not commit.
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.overlay_generation() == current_generation {
+            inner.machine.advance_overlay_generation();
+        }
         Ok(batch.len() as u32)
     }
 
@@ -2042,7 +2075,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = closeStorage)]
     pub fn close_storage(&self) -> Result<(), JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
-        if let Some((idb, _)) = &inner.persist {
+        if let Some((idb, _, _)) = &inner.persist {
             idb.close();
         }
         Ok(())
@@ -2073,7 +2106,7 @@ impl WasmLinux {
         Ok(inner
             .persist
             .as_ref()
-            .is_some_and(|(_, q)| !q.borrow().is_empty()))
+            .is_some_and(|(_, q, _)| !q.borrow().is_empty()))
     }
 
     /// E3-T08/E3-T10 persistence pressure —
@@ -2086,7 +2119,7 @@ impl WasmLinux {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
         let obj = js_sys::Object::new();
         let (blocks, flush_waiting, write_waiting) = match &inner.persist {
-            Some((_, q)) => {
+            Some((_, q, _)) => {
                 let n = q.borrow().unpersisted_count();
                 (
                     n,

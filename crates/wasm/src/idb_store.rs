@@ -8,7 +8,9 @@
 //! `overlay_seed_store_name(base_hash, seed_identity)` so a new exact delta never collides with an
 //! older user overlay. Both use version `OVERLAY_DB_VERSION`.
 //! Object stores: `blocks` (key = block index as a number — block indices are far below 2^53 for any
-//! real image, so f64 is exact) and `meta` (the single [`OverlayMeta`] record under key 0).
+//! real image, so f64 is exact) and `meta` (the single [`OverlayMeta`] record under key 0). A
+//! successful write-back flush updates both stores in one strict transaction so the durable overlay
+//! generation and its blocks advance together.
 
 use js_sys::{Array, Uint8Array};
 use wasm_bindgen::JsCast;
@@ -123,6 +125,19 @@ impl IdbStore {
         js_sys::Reflect::apply(&txn_fn, &self.db, &args)?.dyn_into::<IdbTransaction>()
     }
 
+    /// A strict-durability transaction spanning the blocks and metadata stores. IndexedDB accepts
+    /// an array of store names for one atomic transaction; reflection keeps the same
+    /// `durability:"strict"` option used by the single-store helper.
+    fn rw_strict_overlay(&self) -> Result<IdbTransaction, JsValue> {
+        let opts = js_sys::Object::new();
+        js_sys::Reflect::set(&opts, &"durability".into(), &JsValue::from_str("strict"))?;
+        let txn_fn = js_sys::Reflect::get(&self.db, &"transaction".into())?
+            .dyn_into::<js_sys::Function>()?;
+        let stores = js_sys::Array::of2(&JsValue::from_str(BLOCKS), &JsValue::from_str(META));
+        let args = js_sys::Array::of3(&stores, &JsValue::from_str("readwrite"), &opts);
+        js_sys::Reflect::apply(&txn_fn, &self.db, &args)?.dyn_into::<IdbTransaction>()
+    }
+
     /// Write (or replace) the meta record (strict durability).
     pub async fn write_meta(&self, bytes: &[u8]) -> Result<(), JsValue> {
         let txn = self.rw_strict(META)?;
@@ -168,6 +183,29 @@ impl IdbStore {
             let arr = Uint8Array::from(&bytes[..]);
             store.put_with_key(&arr, &JsValue::from_f64(*block as f64))?;
         }
+        await_transaction(&txn).await
+    }
+
+    /// Persist one overlay batch and its next [`OverlayMeta::generation`] atomically. The caller
+    /// advances the in-memory machine generation only after this transaction's strict `complete`
+    /// event, so a reopened machine cannot observe durable blocks paired with an older generation.
+    pub async fn persist_overlay_batch(
+        &self,
+        batch: &[(u64, [u8; OVERLAY_BLOCK])],
+        meta_bytes: &[u8],
+    ) -> Result<(), JsValue> {
+        if batch.is_empty() {
+            return Ok(());
+        }
+        let txn = self.rw_strict_overlay()?;
+        let blocks: IdbObjectStore = txn.object_store(BLOCKS)?;
+        for (block, bytes) in batch {
+            let arr = Uint8Array::from(&bytes[..]);
+            blocks.put_with_key(&arr, &JsValue::from_f64(*block as f64))?;
+        }
+        let meta = Uint8Array::from(meta_bytes);
+        txn.object_store(META)?
+            .put_with_key(&meta, &JsValue::from_f64(META_KEY))?;
         await_transaction(&txn).await
     }
 }

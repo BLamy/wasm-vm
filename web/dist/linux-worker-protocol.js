@@ -54,6 +54,7 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "snapshotRead",
   "snapshotDecision",
   "snapshotAdvanceGen",
+  "snapshotGeneration",
   "snapshotExport",
   "snapshotImport",
   "storageEstimate",

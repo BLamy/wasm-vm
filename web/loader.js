@@ -933,6 +933,10 @@ export async function startLinuxBoot(opts = {}) {
       // Advance the overlay commit generation — a durable-commit event that invalidates (→ "stale")
       // any snapshot taken before it. Returns the new generation.
       snapshotAdvanceGen: () => machine.advanceOverlayGeneration(),
+      // Current durable-overlay generation reconstructed by the persistent boot. This is a test
+      // and evidence hook so a reload-after-write can distinguish persisted advancement from the
+      // in-memory-only advance hook above.
+      snapshotGeneration: () => machine.overlayGeneration(),
       // AC3 export/import: raw stored-blob bytes out, and persist an external blob into this base's
       // snapshot store (still coherence-guarded on restore).
       snapshotExport: () => machine.readStoredSnapshot(),

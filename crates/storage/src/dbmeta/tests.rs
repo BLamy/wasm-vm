@@ -16,11 +16,27 @@ fn meta_round_trips_and_binds_to_the_base() {
     assert_eq!(meta.base_binding, m.base_hash());
     assert_eq!(meta.image_len, 10_000);
     assert_eq!(meta.block_size, OVERLAY_BLOCK as u32);
+    assert_eq!(meta.generation, 0);
     // Serialize → parse is faithful.
     let parsed = OverlayMeta::from_bytes(&meta.to_bytes()).unwrap();
     assert_eq!(parsed, meta);
     // And it checks OK against its own manifest.
     assert_eq!(meta.check(&m), Ok(()));
+}
+
+#[test]
+fn meta_round_trips_a_durable_generation_and_reads_legacy_as_zero() {
+    let m = manifest(&vec![9u8; 4096]);
+    let meta = OverlayMeta::new_with_generation(&m, 17);
+    let parsed = OverlayMeta::from_bytes(&meta.to_bytes()).unwrap();
+    assert_eq!(parsed.generation, 17);
+    assert_eq!(parsed, meta);
+
+    let legacy = &meta.to_bytes()[..52];
+    let migrated = OverlayMeta::from_bytes(legacy).unwrap();
+    assert_eq!(migrated.generation, 0);
+    assert_eq!(migrated.base_binding, meta.base_binding);
+    assert_eq!(migrated.image_len, meta.image_len);
 }
 
 #[test]

@@ -3,8 +3,9 @@
 //! the wasm layer serializes this record into its `meta` store and derives its DB/file name from it.
 //!
 //! The meta record binds a persisted write layer to an EXACT base image (by [`ImageManifest::base_hash`])
-//! and to a format version. On reopen the backend loads the record and [`OverlayMeta::check`]s it against
-//! the manifest it is about to attach — a version mismatch or a wrong base is a typed error, NEVER a
+//! and to a format version. It also records the monotonic durable-commit generation used by resume
+//! snapshots. On reopen the backend loads the record and [`OverlayMeta::check`]s it against the
+//! manifest it is about to attach — a version mismatch or a wrong base is a typed error, NEVER a
 //! silent reuse (the block indices would map to the wrong offsets under a different geometry).
 
 use crate::{ImageManifest, OVERLAY_BLOCK, OVERLAY_FORMAT_VERSION, OverlayError};
@@ -16,8 +17,12 @@ use alloc::vec::Vec;
 pub const OVERLAY_DB_VERSION: u32 = 1;
 
 const META_MAGIC: &[u8; 4] = b"wvov";
-/// Serialized [`OverlayMeta`] length: magic(4) + format(4) + block_size(4) + image_len(8) + binding(32).
-const META_LEN: usize = 4 + 4 + 4 + 8 + 32;
+/// Serialized [`OverlayMeta`] length: magic(4) + format(4) + block_size(4) + image_len(8) +
+/// binding(32) + generation(8).
+const META_LEN: usize = 4 + 4 + 4 + 8 + 32 + 8;
+/// Metadata written before E3-T12d added the durable commit generation. It remains readable as
+/// generation 0 so existing user overlays migrate on their first successful durable flush.
+const LEGACY_META_LEN: usize = META_LEN - 8;
 
 /// The persisted overlay's identity record (stored in the durable backend's `meta` store).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -30,17 +35,31 @@ pub struct OverlayMeta {
     pub image_len: u64,
     /// The base image binding ([`ImageManifest::base_hash`]).
     pub base_binding: [u8; 32],
+    /// Monotonic durable overlay-commit generation. Resume snapshots are coherent only when their
+    /// stamped generation equals this value after a reopen.
+    pub generation: u64,
 }
 
 impl OverlayMeta {
     /// The meta for a fresh overlay over `manifest`'s base (current format/block size).
     pub fn new(manifest: &ImageManifest) -> OverlayMeta {
+        Self::new_with_generation(manifest, 0)
+    }
+
+    /// The meta for `manifest` at a known durable overlay-commit generation.
+    pub fn new_with_generation(manifest: &ImageManifest, generation: u64) -> OverlayMeta {
         OverlayMeta {
             format_version: OVERLAY_FORMAT_VERSION,
             block_size: OVERLAY_BLOCK as u32,
             image_len: manifest.image_len,
             base_binding: manifest.base_hash(),
+            generation,
         }
+    }
+
+    /// Return the same identity record with a replacement durable commit generation.
+    pub fn with_generation(self, generation: u64) -> OverlayMeta {
+        OverlayMeta { generation, ..self }
     }
 
     /// Fixed-layout serialization for the durable `meta` store (little-endian scalars).
@@ -51,13 +70,16 @@ impl OverlayMeta {
         b.extend_from_slice(&self.block_size.to_le_bytes());
         b.extend_from_slice(&self.image_len.to_le_bytes());
         b.extend_from_slice(&self.base_binding);
+        b.extend_from_slice(&self.generation.to_le_bytes());
         b
     }
 
     /// Parse a meta record. Bad magic / wrong length is [`OverlayError::BadMeta`]; an unknown format
-    /// version is [`OverlayError::UnsupportedFormat`] (refuse, never reinterpret).
+    /// version is [`OverlayError::UnsupportedFormat`] (refuse, never reinterpret). The pre-generation
+    /// record is accepted as generation 0 for an in-place migration.
     pub fn from_bytes(bytes: &[u8]) -> Result<OverlayMeta, OverlayError> {
-        if bytes.len() != META_LEN || &bytes[0..4] != META_MAGIC {
+        if (bytes.len() != META_LEN && bytes.len() != LEGACY_META_LEN) || &bytes[0..4] != META_MAGIC
+        {
             return Err(OverlayError::BadMeta);
         }
         let format_version = u32::from_le_bytes(bytes[4..8].try_into().unwrap());
@@ -70,11 +92,17 @@ impl OverlayMeta {
         let image_len = u64::from_le_bytes(bytes[12..20].try_into().unwrap());
         let mut base_binding = [0u8; 32];
         base_binding.copy_from_slice(&bytes[20..52]);
+        let generation = if bytes.len() == META_LEN {
+            u64::from_le_bytes(bytes[52..60].try_into().unwrap())
+        } else {
+            0
+        };
         Ok(OverlayMeta {
             format_version,
             block_size,
             image_len,
             base_binding,
+            generation,
         })
     }
 

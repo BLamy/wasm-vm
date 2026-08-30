@@ -1347,6 +1347,8 @@ window.__snapshotSave = async () => {
 window.__snapshotDecision = async () => linuxCtl?.snapshotDecision?.() ?? "missing";
 // Advance the overlay commit generation (invalidates a prior snapshot → "stale"). Returns new gen.
 window.__snapshotAdvanceGen = async () => await linuxCtl?.snapshotAdvanceGen?.() ?? 0;
+// Current overlay generation, including the value reconstructed from durable metadata on reopen.
+window.__snapshotGeneration = async () => await linuxCtl?.snapshotGeneration?.() ?? 0;
 // AC3 export/import: raw persisted-blob bytes out, and persist an external blob into this base's store.
 window.__snapshotExport = async () => linuxCtl?.snapshotExport?.() ?? null;
 window.__snapshotImport = async (bytes) => {

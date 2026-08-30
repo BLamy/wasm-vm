@@ -28,7 +28,7 @@ const have =
 test.describe("E3-T12d: browser resume-snapshot persistence + restore selection", () => {
   test.skip(!have, "needs releases/chunked-alpine + web/artifacts-alpine.json (persistent boot shape)");
 
-  test("save → reload → decision resumes; then advance generation → decision goes stale", async ({ page }) => {
+  test("save → reload → durable overlay write survives and makes the snapshot stale", async ({ page }) => {
     test.setTimeout(1_800_000); // ~30 min: two full persistent boots
 
     const errs = [];
@@ -51,16 +51,25 @@ test.describe("E3-T12d: browser resume-snapshot persistence + restore selection"
       throw new Error("did not reach login:");
     };
 
-    // ── Boot 1: take + persist a whole-machine snapshot at the fresh-boot generation (0) ─────────
+    // ── Boot 1: quiesce, then take + persist a whole-machine snapshot at a stable generation ─────
     await page.goto("/?persist=1&noAutoBoot=1");
     await bootToLogin();
+
+    // The production guest may still be completing boot-time journal writes after the shell appears.
+    // Pause the real worker and drain those writes first; otherwise the long snapshot chunk upload can
+    // race a durable overlay commit and correctly turn the just-saved snapshot stale mid-recording.
+    await page.evaluate(() => window.__linuxCtl.pause());
+    await page.evaluate(() => window.__persist());
+    const savedGeneration = await page.evaluate(() => window.__snapshotGeneration());
 
     // Before any snapshot the store is empty → the header-level decision is "missing".
     expect(await page.evaluate(() => window.__snapshotDecision())).toBe("missing");
 
     // Persist a resume snapshot; it is now coherent with the live machine identity → "resume".
     expect(await page.evaluate(() => window.__snapshotSave())).toBe(true);
+    expect(await page.evaluate(() => window.__snapshotGeneration())).toBe(savedGeneration);
     expect(await page.evaluate(() => window.__snapshotDecision())).toBe("resume");
+    await page.evaluate(() => window.__linuxCtl.resume());
 
     // AC2/AC3: exercise the import boundary without sending the production-sized bytes through
     // Playwright's protocol. The `slice()` copies below are deliberately test-only attack fixtures;
@@ -104,17 +113,40 @@ test.describe("E3-T12d: browser resume-snapshot persistence + restore selection"
     expect(integrity.originalBytes).toBeGreaterThan(1_000_000);
 
     // ── Reload the tab (IndexedDB survives a same-origin reload) ────────────────────────────────
-    // A fresh boot starts at overlay generation 0, the same generation the snapshot was taken at, so
-    // the persisted blob is coherent with THIS same build + base image + generation → "resume".
+    // A fresh boot reconstructs the saved generation from the overlay metadata, so the snapshot is
+    // coherent → "resume".
     await page.reload();
     await bootToLogin();
+    await page.evaluate(() => window.__linuxCtl.pause());
+    expect(await page.evaluate(() => window.__snapshotGeneration())).toBe(savedGeneration);
     expect(await page.evaluate(() => window.__snapshotDecision())).toBe("resume");
 
-    // Advancing the overlay commit generation invalidates that persisted snapshot: its frozen CPU/RAM
-    // state no longer matches the (now newer) disk generation → the coherence guard says "stale". This
-    // is the silent-corruption guard — a stale snapshot must never be resumed over a newer disk.
-    await page.evaluate(() => window.__snapshotAdvanceGen());
+    // A real guest write reaches the write-back overlay and the awaited persist hook is the strict
+    // IndexedDB durability barrier. The write is intentionally after the snapshot, so the old CPU/RAM
+    // state must no longer be resumable over the newer disk generation.
+    await page.evaluate(() => window.__linuxCtl.resume());
+    const beforeWriteGeneration = await page.evaluate(() => window.__snapshotGeneration());
+    const write = await page.evaluate(() => window.wvmDemo.run(
+      "printf T12D_GENERATION_LIVE > /root/t12d-generation && sync",
+      120000,
+    ));
+    expect(write.exit).toBe(0);
+    await page.evaluate(() => window.__linuxCtl.pause());
+    await page.evaluate(() => window.__persist());
+    const afterWriteGeneration = await page.evaluate(() => window.__snapshotGeneration());
+    expect(afterWriteGeneration).toBeGreaterThan(beforeWriteGeneration);
     expect(await page.evaluate(() => window.__snapshotDecision())).toBe("stale");
+
+    // Reload again: both the generation and the guest's durable overlay write must survive together.
+    await page.reload();
+    await bootToLogin();
+    expect(await page.evaluate(() => window.__linuxCtl.pause())).toBeUndefined();
+    expect(await page.evaluate(() => window.__snapshotGeneration())).toBe(afterWriteGeneration);
+    expect(await page.evaluate(() => window.__snapshotDecision())).toBe("stale");
+    await page.evaluate(() => window.__linuxCtl.resume());
+    const persisted = await page.evaluate(() => window.wvmDemo.run("cat /root/t12d-generation", 120000));
+    expect(persisted.exit).toBe(0);
+    expect(persisted.stdout).toContain("T12D_GENERATION_LIVE");
 
     expect(errs, `console errors: ${errs.join("; ")}`).toEqual([]);
   });
