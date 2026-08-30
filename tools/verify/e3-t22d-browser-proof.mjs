@@ -30,18 +30,23 @@ const context = await browser.newContext({
 });
 const page = await context.newPage();
 const rawConsoleErrors = [];
-const httpErrors = [];
-const isFavicon404 = (response) => {
-  if (response.status() !== 404) return false;
+// Chromium's console text omits the URL for a failed resource. CDP retains the URL, so use a
+// deduplicated status+URL map to bind any tolerated console 404 to the explicitly allowed favicon.
+const cdpHttpErrors = new Map();
+const cdp = await context.newCDPSession(page);
+await cdp.send("Network.enable");
+const isFavicon404 = ({ status, url }) => {
+  if (status !== 404) return false;
   try {
-    return new URL(response.url()).pathname.toLowerCase().endsWith("/favicon.ico");
+    return new URL(url).pathname.toLowerCase().endsWith("/favicon.ico");
   } catch {
     return false;
   }
 };
-context.on("response", (response) => {
-  if (response.status() >= 400) {
-    httpErrors.push({ status: response.status(), url: response.url() });
+cdp.on("Network.responseReceived", (event) => {
+  if (event.response.status >= 400) {
+    const error = { status: event.response.status, url: event.response.url };
+    cdpHttpErrors.set(`${error.status} ${error.url}`, error);
   }
 });
 page.on("console", (message) => {
@@ -301,22 +306,22 @@ try {
   await waitForExactLine("E3T22D_EXECUTED", 30_000);
 
   await page.screenshot({ path: screenshotPath, fullPage: false });
-  const allowedHttpErrors = httpErrors.filter((error) =>
-    error.status === 404 && new URL(error.url).pathname.toLowerCase().endsWith("/favicon.ico"));
+  const networkErrors = [...cdpHttpErrors.values()];
+  const allowedHttpErrors = networkErrors.filter(isFavicon404);
   const faviconUrl = new URL(faviconProbe.url);
   const favicon404Observed = faviconProbe.status === 404 && faviconUrl.pathname.toLowerCase().endsWith("/favicon.ico");
-  const unexpectedHttpErrors = httpErrors.filter((error) => !isFavicon404({
-    status: () => error.status,
-    url: () => error.url,
-  }));
-  // Chromium's console text omits the URL for a failed resource. Verify the favicon endpoint directly
-  // so the exception is exactly the site's favicon, while every other console error is retained.
-  const consoleErrors = rawConsoleErrors.filter((text) => {
-    const isNetwork404 = /failed to load resource.*404|404.*not found/i.test(text);
-    return !(isNetwork404 && favicon404Observed);
-  });
+  const unexpectedHttpErrors = networkErrors.filter((error) => !isFavicon404(error));
+  const resource404ConsoleErrors = rawConsoleErrors.filter((text) =>
+    /failed to load resource.*404|404.*not found/i.test(text));
+  const consoleErrors = rawConsoleErrors.filter((text) =>
+    !/failed to load resource.*404|404.*not found/i.test(text));
   assert.equal(favicon404Observed, true, `favicon probe was not the allowed 404: ${JSON.stringify(faviconProbe)}`);
   assert.deepEqual(unexpectedHttpErrors, [], `unexpected HTTP errors: ${JSON.stringify(unexpectedHttpErrors)}`);
+  assert.equal(
+    resource404ConsoleErrors.length,
+    allowedHttpErrors.length,
+    `unattributed resource 404 console events: ${JSON.stringify({ resource404ConsoleErrors, allowedHttpErrors })}`,
+  );
   assert.deepEqual(consoleErrors, [], `unexpected console errors: ${JSON.stringify(consoleErrors)}`);
   browserEvidence = {
     schema: "e3-t22d-browser-clipboard-v1",
@@ -329,6 +334,9 @@ try {
       sequence: "busybox boot → OSC 52 copy → multiline paste → 1 MiB sha256 → DECSET 2004 held/Enter",
       durationSeconds: Number(((Date.now() - startedAt) / 1000).toFixed(1)),
       consoleErrors,
+      rawConsoleErrors,
+      resource404ConsoleErrors,
+      networkErrors,
       allowedHttpErrors,
       faviconProbe,
     },
