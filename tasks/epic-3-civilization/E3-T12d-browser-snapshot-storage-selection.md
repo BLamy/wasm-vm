@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: implemented
+status: verified
 depends_on: [E3-T12c1, E3-T12c2, E3-T12c3, E3-T12c4]
 estimate: S
 risk: high
@@ -645,3 +645,53 @@ runtime rework and a new exact-head recording. No merge or push.
 
 Commands: `E3_T12D_HEADLESS=1 make verify-E3-T12d`; `shasum -a 256` for the evidence JSON and
 screenshot. No merge or push.
+
+### 2026-08-30 — fresh verifier — VERDICT: verified
+
+- **Provenance — HELD.** Prediction: the submitted recording must bind to runtime/dist head
+  `4c4d7ee30e2b9a6b91f6271bb1df9db226edb94b`, match both claimed digests, and contain no runtime
+  edits after that head. The committed evidence reports that runtime head at lines 1–3; its
+  SHA-256 is `a8083c2d4eb3bc9e12515d7f947ea5a3c409edbeb590abb8101f4467beeab08b`, and the screenshot
+  SHA-256 is `5058e36cc3776e1a5c7635c0c2fc9d8c9e825d6066c75efd41579a4be36fee64`. `4c4d7ee` is an
+  ancestor of submission `66f51f7`; the reviewed runtime/harness diff is the post-refutation
+  change from `bf75360^` through `4c4d7ee`.
+- **AC1 — HELD.** Prediction: a production-sized snapshot must save, reload, restore, and remain
+  within the documented 32 MiB staging bound. The record shows a 60,430,185-byte whole-machine
+  Worker snapshot, identical export/import digest, reload `resume`, and Worker restore `resume`
+  (lines 7–27). Save overhead is 16,811,947 <= 33,554,432 over 66 samples, including clear,
+  chunk, and meta phases (lines 28–502); reload staging overhead is 2,167,785 <= 33,554,432
+  with sequential load chunks and completion (lines 604–1050).
+- **AC2 and high-risk attacks — HELD.** Prediction: every invalid or interrupted publication,
+  quota failure, mixed-generation object set, or competing-tab write must select a typed safe
+  result and preserve the overlay. Clear/chunk/meta interruption yields `corrupt`/`corrupt`/`stale`
+  with `overlayPreserved: true` (lines 511–545); quota surfaces `QuotaExceededError`, yields the
+  live marker with exit 0, and preserves the overlay (lines 547–560); metadata swap yields
+  `corrupt` with the overlay preserved (lines 597–602). The two-tab record shows read-only save
+  and import rejection, takeover, and unchanged stale decision (lines 565–602). Crucially, the
+  in-flight save starts release at the first chunk, completes with no error, records
+  `metaCommitted: true`, and records `releaseSettledBeforeMeta: false` (lines 581–588).
+  The implementation increments the shared write counter before asynchronous IndexedDB work and
+  decrements it on completion (`crates/wasm/src/lib.rs:1935-1966,2067-2119`); relinquishment fences
+  new writes and waits with timer-yielding until the counter drains before releasing Web Lock
+  (`crates/wasm/src/lib.rs:1975-1983`, `web/loader.js:1000-1008`). The harness assertion is
+  explicit at `tools/verify/e3-t12d-browser-proof.mjs:623-666`, so the prior stale-save window is
+  exercised rather than merely inferred.
+- **AC3 and overlay restore — HELD.** Prediction: export/import preserves the exact container
+  bytes and digest, while a durable overlay modification survives reload and makes the old
+  snapshot stale. Equal 60,430,185-byte digests and `workerRestore: resume` are recorded at
+  lines 11–27; the modified-overlay reload selects `stale` and reads `T12D_RELOAD_FILE` with exit
+  0 at lines 604–1055.
+- **Coverage/gates — HELD.** The changed runtime/harness paths are covered by the exact recording,
+  including clear/chunk/meta/quota/truncation/payload-integrity (carried-forward exact-head
+  evidence), metadata swap, two-tab ownership and in-flight save release, Worker restore, bounded
+  save/load memory, and post-reload overlay file read. The committed JSON diagnostics contain 14
+  browser contexts with empty console-error arrays. Bounded checks passed: `node --check
+  tools/verify/e3-t12d-browser-proof.mjs`; `cargo test -p wasm-vm-core --test restore_decision`
+  (11/11); `cargo test -p wasm-vm-storage snapmeta` (11/11); and `cargo check -p wasm-vm-wasm
+  --target wasm32-unknown-unknown`. No headed make run, Alpine wait, runtime edit, merge, or push
+  was performed by this verifier.
+
+Commands: `sha256sum evidence/epic-3-t12d/browser-storage-2026-08-30.json evidence/epic-3-t12d/browser-storage-2026-08-30.png`;
+`git diff --check bf75360^..4c4d7ee -- crates/wasm/src/lib.rs web/loader.js tools/verify/e3-t12d-browser-proof.mjs`;
+`node --check tools/verify/e3-t12d-browser-proof.mjs`; `cargo test -p wasm-vm-core --test restore_decision`;
+`cargo test -p wasm-vm-storage snapmeta`; `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`.
