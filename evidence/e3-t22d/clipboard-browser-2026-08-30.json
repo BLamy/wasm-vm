@@ -1,15 +1,46 @@
 {
   "schema": "e3-t22d-browser-clipboard-v1",
   "capturedOn": "2026-08-30 America/New_York",
-  "runtimeHead": "279507c82f74fa0172cb32f6aa6064f50be69b4e",
+  "runtimeHead": "a1fd96dd84db861f33d0ea43b82389b00e818538",
   "recording": {
     "url": "http://127.0.0.1:8123/?noAutoBoot&jit=1",
     "browser": "Playwright Chromium headed",
     "browserVersion": "131.0.6778.33",
     "sequence": "busybox boot → OSC 52 copy → multiline paste → 1 MiB sha256 → DECSET 2004 held/Enter",
-    "durationSeconds": 104.8,
+    "durationSeconds": 103.4,
     "consoleErrors": [],
-    "allowedHttpErrors": [],
+    "rawConsoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "resource404ConsoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "networkErrors": [
+      {
+        "requestId": "37579.37",
+        "status": 404,
+        "url": "http://127.0.0.1:8123/favicon.ico"
+      },
+      {
+        "requestId": "37579.38",
+        "status": 404,
+        "url": "http://127.0.0.1:8123/favicon.ico"
+      }
+    ],
+    "allowedHttpErrors": [
+      {
+        "requestId": "37579.37",
+        "status": 404,
+        "url": "http://127.0.0.1:8123/favicon.ico"
+      },
+      {
+        "requestId": "37579.38",
+        "status": 404,
+        "url": "http://127.0.0.1:8123/favicon.ico"
+      }
+    ],
     "faviconProbe": {
       "status": 404,
       "url": "http://127.0.0.1:8123/favicon.ico"

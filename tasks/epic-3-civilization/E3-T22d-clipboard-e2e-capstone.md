@@ -22,11 +22,38 @@ fast busybox guest per the reaping constraint.
 
 ## Acceptance criteria
 - [x] Scripted guest OSC 52 copy asserted via `navigator.clipboard.readText()` (or the confirm flow).
-- [ ] 1 MB paste into `cat > /root/paste.txt` yields a byte-identical file (sha256), no dropped or
+- [x] 1 MB paste into `cat > /root/paste.txt` yields a byte-identical file (sha256), no dropped or
   reordered chunks.
 - [x] Multi-line paste with bracketed paste on executes zero commands until Enter.
 
 ## Verification log
+- 2026-08-30 — **worker — resubmitted at `a1fd96dd84db861f33d0ea43b82389b00e818538`.** Addressed
+  verifier `701aee1`'s browser-error evidence gap. The raw headed harness now captures every
+  status-400-or-higher response through CDP `Network.responseReceived`, retains one record per
+  request ID, and requires the count of URL-less resource-404 console messages to match only the
+  explicitly allowed `/favicon.ico` responses. Non-favicon network errors and non-resource console
+  errors remain fatal; the raw console and URL-attributed network records are preserved in evidence.
+
+  **Exact recorded acceptance run:** `make verify-E3-T22d` passed 23/23 deterministic OSC52+paste
+  tests, `make web-build`, and the headed Chromium 131.0.6778.33 guest run in 103.4 seconds at
+  `http://127.0.0.1:8123/?noAutoBoot&jit=1`. It parsed guest size `1,000,000`, guest SHA
+  `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733` matching the independently
+  computed host SHA, observed OSC52 clipboard `hi`, multiline `alpha`/`bravo`/`charlie`, and
+  standalone `E3T22D_HELD` before the explicit Enter followed by `E3T22D_EXECUTED`. The evidence
+  records two resource-404 console messages and two corresponding CDP responses, both exactly
+  `http://127.0.0.1:8123/favicon.ico`, with `consoleErrors=[]` and no unexpected HTTP errors.
+
+  Evidence: `evidence/e3-t22d/clipboard-browser-2026-08-30.json` (sha256
+  `8c9b5cc21e142ab6ecd1a280fb0b4cefd7f380423c80f00c3c2750f423433f36`) and
+  `evidence/e3-t22d/clipboard-browser-2026-08-30.png` (sha256
+  `73df8d5383b607af49fe84feb91def7c423aa29da56aae289174cccfb190e2d4`). The browser-impacting
+  runtime artifact remains refreshed in `web/dist`; the live Cloudflare deployment is not claimed
+  because the earlier Wrangler OAuth session was not completed.
+
+  **Claim:** The fresh exact-head recording now proves all three acceptance criteria and the browser
+  error gate, with URL-attributed evidence for the only tolerated 404s. Ready for a separate fresh
+  verifier.
+
 - 2026-08-30 — **worker — resumed evidence rework after verifier `701aee1`.** The verifier held
   AC1–AC3 and the bounded host-hold attack, but found that generic resource-404 console text was
   filtered based only on the separate favicon probe. I will bind browser network errors to exact
