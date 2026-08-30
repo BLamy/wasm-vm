@@ -79,14 +79,12 @@ loss, whole-RAM duplicate allocation, or ambiguous fallback refutes.
    chunked-Alpine persistent boot (busybox is initramfs-only, no persistence), which is the ~37-min
    OS-reaping Alpine browser boot. Run the spec on `dev`: `make web-build && (cd web && npx playwright
    test tests/e3-t12d-snapshot-restore.spec.js)` — same host constraint as E3-T19.
-2. **Overlay-generation cross-reload liveness (real correctness gap, not just testing).** The live
-   `overlay_generation` resets to 0 on every fresh boot and is NOT persisted with the overlay, so after a
-   reload a snapshot taken at gen 0 validates as `resume` even if the guest persisted newer writes in
-   between — the stale guard (AC2's silent-corruption case) does not actually fire across a real reload.
-   The mechanism is proven (the in-memory `advanceOverlayGeneration → "stale"` path is exercised), but to
-   make the guard LIVE in-browser the persist pump must advance the generation on each durable commit AND
-   persist it (e.g. in `OverlayMeta`) so a reopen reconstructs the true generation. Tracked as the next
-   increment; the decision/store layer is coherent independent of it.
+2. **Overlay-generation cross-reload liveness — reworked in `33fc230`.** The durable overlay metadata
+   now carries the commit generation; block writes and the next metadata generation commit in one
+   strict IndexedDB transaction; and a reopened machine reconstructs that value before the snapshot
+   coherence guard runs. The exact-head controller-ready recording is
+   `evidence/epic-3-t12d/node-alpine-overlay-generation-2026-08-30.json`; the full cold-userland file
+   read remains unrecorded on this Mac because the modified-overlay boot exceeded the local watchdog.
 
 ### 2026-08-29 — worker diagnostic — truncated import accepted as resume
 
@@ -234,3 +232,25 @@ The fresh verifier identified a live correctness gap: a durable guest overlay wr
 the snapshot coherence generation, and a reopened machine therefore reset to generation 0. This
 slice adds the generation to the persisted overlay metadata, commits it with each successful block
 flush, reconstructs the machine from that metadata on reopen, and adds a reload-after-write proof.
+
+### 2026-08-30 — worker — overlay-generation persistence — implemented
+
+- Runtime commit: `33fc2308a2516f19191c255e4a1e6fec3831022c`.
+- Changes: `OverlayMeta` now serializes a durable generation (while reading legacy generation-less
+  metadata as generation 0); a persistent flush writes blocks and the next generation in one strict
+  IndexedDB transaction; persistent reopen stamps the machine with the stored generation; and the
+  worker protocol exposes the generation for evidence. The browser spec pauses/drains before taking
+  a snapshot, then exercises a real guest write, stale selection, and post-reload reconstruction.
+- Exact-head evidence: `evidence/epic-3-t12d/node-alpine-overlay-generation-2026-08-30.json`,
+  SHA-256 `c90bd19314794f36965eb8ba7bd7c70cb6664c1b60b76985f0bf78e9c4c635d1`. It records generation
+  `0` at snapshot time, `0 → 16` after the durable guest write, `stale` before reload, and generation
+  `16` plus `stale` at persistent-controller readiness after reload, with zero console errors.
+- Gates: `make verify-E3-T12d`; `cargo test -p wasm-vm-storage --lib` (106/106); `cargo test -p
+  wasm-vm-core --test snapshot_coherence` (5/5); `cargo check -p wasm-vm-wasm --target
+  wasm32-unknown-unknown`; and `make web-dist` — all passed. The repository Playwright spec remains
+  artifact-gated on this checkout; the full cold-userland file-read continuation exceeded the local
+  1,800,000 ms watchdog and is not claimed here.
+
+The worker claim is limited to the generation-persistence slice. The task remains subject to fresh
+verifier review and the previously listed memory-bound, crash/quota, two-tab, and portability proof
+gaps.

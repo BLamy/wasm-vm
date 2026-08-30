@@ -1,0 +1,42 @@
+{
+  "schema": "e3-t12d-local-node-browser-generation-v1",
+  "capturedOn": "2026-08-30 America/New_York",
+  "runtimeHead": "33fc2308a2516f19191c255e4a1e6fec3831022c",
+  "recording": {
+    "server": "bash tools/serve-dev.sh 8133",
+    "browser": "Playwright Chromium headless 131.0.6778.33",
+    "url": "http://127.0.0.1:8133/?guest=node-alpine&profile=1&jit=0&nosw&noAutoBoot=1",
+    "guest": "node-alpine",
+    "backend": "whole-machine-worker",
+    "sequence": "boot → pause and drain → snapshot → resume → real guest write + sync → pause and drain → reload → persistent controller ready",
+    "consoleErrors": []
+  },
+  "snapshot": {
+    "generationBeforeSave": 0,
+    "decisionBeforeSave": "missing",
+    "saveReturned": true,
+    "generationAfterSave": 0,
+    "decisionAfterSave": "resume"
+  },
+  "durableOverlayWrite": {
+    "command": "printf T12D_GENERATION_LIVE > /root/t12d-generation && sync",
+    "exit": 0,
+    "generationBeforeWrite": 0,
+    "generationAfterWrite": 16,
+    "decisionAfterWrite": "stale",
+    "persistHookAfterPauseReturned": 0
+  },
+  "reload": {
+    "controllerReady": true,
+    "reconstructedGeneration": 16,
+    "decisionAgainstOldSnapshot": "stale"
+  },
+  "provenance": "The recording ran against the exact committed runtimeHead. The second boot was observed at persistent-controller readiness; a separate attempt to wait for the cold userland shell exceeded the 1,800,000 ms local watchdog, so this record does not claim post-reload shell/file-read evidence.",
+  "supportingGates": [
+    "make verify-E3-T12d",
+    "cargo test -p wasm-vm-storage --lib",
+    "cargo test -p wasm-vm-core --test snapshot_coherence",
+    "cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown",
+    "make web-dist"
+  ]
+}
