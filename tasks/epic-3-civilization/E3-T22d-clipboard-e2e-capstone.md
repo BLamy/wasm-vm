@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: evidence-needed
+status: in-progress
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -27,6 +27,12 @@ fast busybox guest per the reaping constraint.
 - [x] Multi-line paste with bracketed paste on executes zero commands until Enter.
 
 ## Verification log
+- 2026-08-30 — **worker — resumed evidence rework after verifier `c01d6d8f`.** The verifier held the
+  parsed guest SHA and all other criteria but correctly rejected `fileSize` because the evidence
+  field was still assigned from host `payload.length`; the guest had only emitted a boolean size
+  marker. I will parse and assert the numeric guest `wc -c` result, rerun the exact browser capture,
+  and resubmit without changing runtime behavior.
+
 - 2026-08-30 — **worker — implemented at `4e9a2f425cd617b0a80dd5a3b67261bd1ee4ba8f`.** Reworked the
   submitted proof in response to verifier `41f885b`: the raw headed-browser harness now parses the
   actual guest `sha256sum /root/paste.txt` line, asserts the guest-reported byte count via
