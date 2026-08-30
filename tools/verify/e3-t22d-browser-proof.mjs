@@ -30,13 +30,11 @@ const context = await browser.newContext({
 });
 const page = await context.newPage();
 const consoleErrors = [];
+const isAllowedFavicon404 = (text) => /favicon\.ico/i.test(text) && /(?:404|not found)/i.test(text);
 page.on("console", (message) => {
   const text = message.text();
-  if (
-    message.type() === "error" &&
-    !text.includes("favicon.ico") &&
-    !/Failed to load resource.*404/.test(text)
-  ) {
+  // The acceptance gate permits only the site's favicon 404; every other console error is evidence.
+  if (message.type() === "error" && !isAllowedFavicon404(text)) {
     consoleErrors.push(text);
   }
 });
@@ -67,6 +65,27 @@ const waitForText = async (needle, timeout = 120_000) => {
     needle,
     { timeout },
   );
+};
+const waitForGuestSha = async (filePath, timeout = 360_000) => {
+  const handle = await page.waitForFunction(
+    (path) => {
+      const buffer = window.__term?.term?.buffer?.active;
+      if (!buffer) return false;
+      for (let index = 0; index < buffer.length; index += 1) {
+        const line = (buffer.getLine(index)?.translateToString(true) || "").trim();
+        const match = line.match(/^([0-9a-f]{64})\s+(.+)$/);
+        if (match && match[2] === path) return match[1];
+      }
+      return false;
+    },
+    filePath,
+    { timeout },
+  );
+  try {
+    return await handle.jsonValue();
+  } finally {
+    await handle.dispose();
+  }
 };
 const sleep = (milliseconds) => page.waitForTimeout(milliseconds);
 
@@ -191,32 +210,16 @@ try {
   const highWater = await page.evaluate(() => window.__term.highWater());
   assert.ok(highWater >= payload.length, `high-water ${highWater} < payload ${payload.length}`);
   await send("\x04");
-  await send("echo E3T22D_CAT_DONE; ls -l /root/paste.txt; sha256sum /root/paste.txt; stty echo; echo E3T22D_ECHO_RESTORED\r");
-  const hashProgress = setInterval(async () => {
-    try {
-      const stats = await page.evaluate(async () => ({
-        tail: (() => {
-          const buffer = window.__term?.term?.buffer?.active;
-          if (!buffer) return "";
-          const lines = [];
-          for (let index = 0; index < buffer.length; index += 1) {
-            lines.push(buffer.getLine(index)?.translateToString(true) || "");
-          }
-          return lines.join("\n").slice(-300);
-        })(),
-        scheduler: await window.__schedulerStats?.(),
-        worker: await window.__workerRpcStats?.(),
-      }));
-      console.log(`[browser] hash progress=${JSON.stringify(stats)}`);
-    } catch (error) {
-      console.log(`[browser] hash progress unavailable=${error?.message || error}`);
-    }
-  }, 30_000);
-  try {
-    await waitForText(expectedSha, 360_000);
-  } finally {
-    clearInterval(hashProgress);
-  }
+  await send(
+    `echo E3T22D_CAT_DONE; ls -l /root/paste.txt; ` +
+      `test "$(wc -c < /root/paste.txt)" -eq ${payload.length} && ` +
+      `echo E3T22D_SIZE_OK || echo E3T22D_SIZE_BAD; ` +
+      `sha256sum /root/paste.txt; stty echo; echo E3T22D_ECHO_RESTORED\r`,
+  );
+  await waitForText("E3T22D_CAT_DONE", 30_000);
+  await waitForText("E3T22D_SIZE_OK", 30_000);
+  const observedSha = await waitForGuestSha("/root/paste.txt");
+  assert.equal(observedSha, expectedSha, `guest SHA ${observedSha} != host SHA ${expectedSha}`);
   await waitForText("E3T22D_ECHO_RESTORED", 30_000);
 
   // AC3: make the real guest enable DECSET 2004, then prove a pasted command is held until an
@@ -257,8 +260,9 @@ try {
     oneMiB: {
       path: "/root/paste.txt",
       payloadBytes: payload.length,
+      fileSize: payload.length,
       expectedSha,
-      observedSha: expectedSha,
+      observedSha,
       highWater,
     },
     bracketedPaste: { modeEnabled: bracketedEnabled, heldUntilEnter: true, executedAfterEnter: true },
