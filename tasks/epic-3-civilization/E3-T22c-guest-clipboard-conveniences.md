@@ -3,7 +3,7 @@ id: E3-T22c
 epic: 3
 title: Guest image clipboard conveniences — vim OSC52 yank, tmux set-clipboard
 priority: 322.3
-status: verification-debt
+status: in-progress
 depends_on: [E3-T22a]
 estimate: S
 risk: low
@@ -28,6 +28,12 @@ clipboard. Image/rootfs work (coordinates with the E3-T11 image pipeline).
 - [ ] tmux copy-mode yank routes through OSC 52.
 
 ## Verification log
+- 2026-08-30 — **worker — started image-defaults rework.** T22a is verified, so this low-risk slice
+  is eligible. The prior proof established the helper and inert configs only; the acceptance gap is
+  that the served image does not yet install `vim` and `tmux`. I will replace the baseline `nano`
+  package with `vim`, add `tmux`, rebuild the locked riscv64 rootfs, and record guest/browser evidence
+  for both real applications before submitting the task to a fresh verifier.
+
 - 2026-08-03 — **helper deterministically verified + wired into the image; the vim/tmux-in-image AC is
   boot-gated debt.** Delivered the ticket's "yank-to-OSC52 helper" branch with NO new packages (busybox
   base64+printf), so it works in the default image:
