@@ -84,7 +84,8 @@ const waitForExactLine = async (needle, timeout = 120_000) => {
       const buffer = window.__term?.term?.buffer?.active;
       if (!buffer) return false;
       for (let index = 0; index < buffer.length; index += 1) {
-        if ((buffer.getLine(index)?.translateToString(true) || "").trim() === value) return true;
+        const line = (buffer.getLine(index)?.translateToString(true) || "").trim();
+        if (line === value || line === `~ # ${value}`) return true;
       }
       return false;
     },
@@ -120,7 +121,7 @@ const waitForGuestFileSize = async (timeout = 360_000) => {
       if (!buffer) return false;
       for (let index = 0; index < buffer.length; index += 1) {
         const line = (buffer.getLine(index)?.translateToString(true) || "").trim();
-        const match = line.match(/^E3T22D_GUEST_SIZE=(\d+)$/);
+        const match = line.match(/^(?:~ # )?E3T22D_GUEST_SIZE=(\d+)$/);
         if (match) return Number(match[1]);
       }
       return false;
