@@ -154,3 +154,16 @@ This is a bounded cross-browser-version robustness result on one machine: it fin
 order-of-magnitude change in the chosen 64-function module shape. It does not establish the full
 independent-machine K-selection attack, gcc A/B compile-stall factor, or first-execution pause
 measurement; those remain verification debt.
+
+### 2026-08-29 — fresh verifier — VERDICT: needs-evidence
+
+- **HELD:** The committed Chromium 151, Firefox 153, and WebKit 26.5 matrix rows contain the compile/
+  instantiate curves and 1,000/5,000/10,000 live-instance probes; every probe reached its target with
+  `failedAt: null` (`bench/module-costs/results/{chromium,firefox,webkit}.json`). The supplemental
+  Chrome 152 row is also represented with its captured version and project metadata.
+- **NEEDS EVIDENCE:** AC2 remains unmeasured: no gcc batched-versus-unbatched compile-stall factor is
+  recorded. The 10,000-instance probes establish a lower bound, not each browser's practical cliff,
+  because the harness stops at 10,000 and releases instances. Independent-machine robustness and the
+  first-execution pause target remain absent.
+
+The verifier classified the item as `needs-evidence`; no verified status is claimed.

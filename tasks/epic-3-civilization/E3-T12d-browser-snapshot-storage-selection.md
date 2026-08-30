@@ -107,3 +107,20 @@ the supplied blob as its own complete snapshot, leaving the restore decision wit
 expected-length or integrity check. The task remains verification-debt and needs implementation work
 before a fresh verifier can sign off. The same exploratory run's reload probe timed out at 180 seconds
 while the guest was booting; that result is recorded but no root cause is assigned here.
+
+### 2026-08-29 — fresh verifier — VERDICT: refuted
+
+- **Prediction:** Importing a snapshot with exactly one final byte removed must yield typed decision
+  `corrupt` under AC2.
+- **Observed:** The original snapshot was `138257790` bytes; the imported truncation was `138257789`
+  bytes; `decisionAfterTruncatedImport` was `resume`, not `corrupt`, in
+  `evidence/epic-3-t12d/node-alpine-snapshot-corruption-2026-08-29.json`.
+- **Finding:** This violates the requirement that every invalid snapshot falls back to cold boot with
+  a typed reason. The exercised path is `importStoredSnapshot` (`crates/wasm/src/lib.rs`), and the
+  store creates metadata from the supplied blob length (`crates/wasm/src/snapshot_store.rs`), so the
+  decision lacks an independent expected-length or integrity check.
+- **Additional gap:** The same exploratory reload probe timed out after 180 seconds, so end-to-end
+  reload evidence remains incomplete.
+
+This is a verifier refutation requiring implementation rework and a fresh recording; no verified
+status is claimed.

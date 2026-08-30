@@ -156,3 +156,13 @@ the actual browser/JIT path, but it does not close the unimplemented WallClock m
 10-minute throttle/resume run, the CoreMark timer-latency histogram, or the ICount trace-determinism
 acceptance criterion. Host command elapsed time includes browser/fetch/worker overhead and is not
 substituted for guest wall-clock time.
+
+### 2026-08-29 — fresh verifier — VERDICT: needs-evidence
+
+- **HELD:** The worker-backed JIT arm exits 0, reports guest `real 0m 1.01s`, and retires JIT work in
+  `evidence/epic-4-t24/node-alpine-browser-sleep-ab-2026-08-29.json`.
+- **NEEDS EVIDENCE:** That bounded run does not establish foreground WallClock mode, the scripted
+  10-minute throttle/resume behavior, the CoreMark timer-delivery p99 histogram, or byte-identical
+  ICount traces. The task's browser debt therefore remains open.
+
+The verifier classified the item as `needs-evidence`; no verified status is claimed.
