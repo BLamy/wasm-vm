@@ -99,6 +99,27 @@ const waitForGuestSha = async (filePath, timeout = 360_000) => {
     await handle.dispose();
   }
 };
+const waitForGuestFileSize = async (timeout = 360_000) => {
+  const handle = await page.waitForFunction(
+    () => {
+      const buffer = window.__term?.term?.buffer?.active;
+      if (!buffer) return false;
+      for (let index = 0; index < buffer.length; index += 1) {
+        const line = (buffer.getLine(index)?.translateToString(true) || "").trim();
+        const match = line.match(/^E3T22D_GUEST_SIZE=(\d+)$/);
+        if (match) return Number(match[1]);
+      }
+      return false;
+    },
+    null,
+    { timeout },
+  );
+  try {
+    return await handle.jsonValue();
+  } finally {
+    await handle.dispose();
+  }
+};
 const sleep = (milliseconds) => page.waitForTimeout(milliseconds);
 const guestDrainTimeout = 360_000;
 
@@ -229,13 +250,16 @@ try {
   await send("\x04");
   await send(
     `echo E3T22D_CAT_DONE; ls -l /root/paste.txt; ` +
-      `test "$(wc -c < /root/paste.txt)" -eq ${payload.length} && ` +
+      `guest_size="$(wc -c < /root/paste.txt)"; echo E3T22D_GUEST_SIZE=$guest_size; ` +
+      `test "$guest_size" -eq ${payload.length} && ` +
       `echo E3T22D_SIZE_OK || echo E3T22D_SIZE_BAD; ` +
       `sha256sum /root/paste.txt; stty echo; echo E3T22D_ECHO_RESTORED\r`,
   );
   // The interpreted guest may take more than 30 seconds to drain a million-byte tty paste before
   // the shell resumes. Keep the synchronization bound aligned with the digest wait below.
   await waitForText("E3T22D_CAT_DONE", guestDrainTimeout);
+  const observedFileSize = await waitForGuestFileSize(guestDrainTimeout);
+  assert.equal(observedFileSize, payload.length, `guest file size ${observedFileSize} != payload ${payload.length}`);
   await waitForText("E3T22D_SIZE_OK", guestDrainTimeout);
   const observedSha = await waitForGuestSha("/root/paste.txt");
   assert.equal(observedSha, expectedSha, `guest SHA ${observedSha} != host SHA ${expectedSha}`);
@@ -298,7 +322,8 @@ try {
     oneMiB: {
       path: "/root/paste.txt",
       payloadBytes: payload.length,
-      fileSize: payload.length,
+      fileSize: observedFileSize,
+      guestFileSize: observedFileSize,
       expectedSha,
       observedSha,
       highWater,
