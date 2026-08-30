@@ -197,7 +197,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `322.1` [E3-T22a](epic-3-civilization/E3-T22a-osc52-copy.md) — OSC 52 copy handler — decode, size cap, permission-failure UX, read-query gated off *(deps: E2-T22)*
 - [x] `322.2` [E3-T22b](epic-3-civilization/E3-T22b-paste-pipeline.md) — Paste pipeline — bracketed-paste framing, newline normalization, chunked injection *(deps: E2-T22)*
 - [b] `322.3` [E3-T22c](epic-3-civilization/E3-T22c-guest-clipboard-conveniences.md) — Guest image clipboard conveniences — vim OSC52 yank, tmux set-clipboard *(deps: E3-T22a)*
-- [?] `322.4` [E3-T22d](epic-3-civilization/E3-T22d-clipboard-e2e-capstone.md) — Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256 *(deps: E3-T22a, E3-T22b)*
+- [~] `322.4` [E3-T22d](epic-3-civilization/E3-T22d-clipboard-e2e-capstone.md) — Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256 *(deps: E3-T22a, E3-T22b)*
 - [ ] `323` [E3-T23](epic-3-civilization/E3-T23-terminal-polish.md) — Terminal polish - SIGWINCH resize, truecolor, scrollback, font *(deps: E3-T22)*
 - [-] `324` [E3-T24](epic-3-civilization/E3-T24-boot-ux-progress-offline.md) — Loading and boot UX - progress, snapshot fast path, offline assets *(deps: E3-T03, E3-T12)*
 - [x] `324.1` [E3-T24a](epic-3-civilization/E3-T24a-honest-boot-progress.md) — Typed honest boot-progress surface *(deps: E3-T03)*

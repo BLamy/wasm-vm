@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: evidence-needed
+status: in-progress
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -27,6 +27,12 @@ fast busybox guest per the reaping constraint.
 - [x] Multi-line paste with bracketed paste on executes zero commands until Enter.
 
 ## Verification log
+- 2026-08-30 — **worker — resumed evidence rework after verifier `41f885b`.** I will preserve the
+  acceptance implementation while closing only the identified proof gaps: parse the guest's actual
+  `/root/paste.txt` size and `sha256sum` line, permit only favicon 404 filtering, and remove the
+  unexecuted duplicate Playwright-spec diff from the submitted surface. Then I will rerun the exact
+  headed browser capture and resubmit it to a fresh verifier.
+
 VERDICT: needs-evidence
 
 ### 2026-08-30 — fresh verifier — needs-evidence
