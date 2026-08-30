@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: in-progress
+status: evidence-needed
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -376,3 +376,74 @@ Commands: `make verify-E3-T22d`; `node --check web/terminal.js`; `node --check w
 `node --check tools/verify/e3-t22d-browser-proof.mjs`; `node --check web/tests/e3-t22-clipboard.spec.js`;
 `python3 tools/check_task_policy.py`; `git diff --check 41f885b..HEAD`; source/dist comparison; exact
 artifact SHA checks; and bounded novel host-hold plus console-filter attacks.
+
+### 2026-08-30 — fresh verifier — VERDICT: needs-evidence
+
+- **AC1 — HELD.** Prediction: the recorded guest OSC52 command would reach the host clipboard and
+  `navigator.clipboard.readText()` would return `hi` (or the blocked-write confirmation would preserve
+  `hi`). The exact artifact records `copy.copied="hi"`, `copy.blocked=null`, and `copy.clipboard="hi"`
+  (`evidence/e3-t22d/clipboard-browser-2026-08-30.json:49-53`); the guest command, parser callback,
+  and readback assertion are exercised at `tools/verify/e3-t22d-browser-proof.mjs:199-240`.
+- **AC2 — HELD.** Prediction: the guest would report the numeric `/root/paste.txt` size and the actual
+  `sha256sum /root/paste.txt` result separately from the host-computed expectation. The artifact records
+  `payloadBytes=1000000`, `fileSize=1000000`, and `guestFileSize=1000000`, with both observed and expected
+  SHA-256 values equal to `630b37ed2c6f33ea1a06e69d792ed0b6b9d74f74759457ed3a3c44ce5ffea733`
+  (`...json:62-69`). An independent recomputation from the harness payload formula produced exactly
+  1,000,000 UTF-8 bytes and the same SHA; the guest size/hash parsers and equality assertions are at
+  `tools/verify/e3-t22d-browser-proof.mjs:105-145,269-290`. The screenshot visibly contains the guest
+  size marker and the hash/path (`...png`, digest `73df8d...`).
+- **AC3 — HELD.** Prediction: after real guest DECSET-2004, the first host-held paste would not create
+  its file before Enter, Ctrl-C would cancel it, and the second ordered paste would create the file only
+  after Enter. The artifact records `modeEnabled=true`, `heldUntilEnter=true`, and
+  `executedAfterEnter=true` (`...json:71-75`); the standalone-marker sequence and checks are at
+  `tools/verify/e3-t22d-browser-proof.mjs:292-310`, and the screenshot shows `E3T22D_HELD` before the
+  later `E3T22D_EXECUTED`.
+- **HOST-HOLD / FRAME — HELD.** The bounded source-level runtime probe exercised the actual
+  `web/terminal.js` with a fake xterm sink: a bracketed paste stayed unsent, embedded `ESC[201~` was
+  removed, ordinary bytes plus a mixed `Y\rZ` input were released FIFO at the first control boundary,
+  and Ctrl-C forwarded only `^C` while canceling the held body. The acceptance browser run also exercises
+  the bracketed `pasteText` path, release, cancellation, unbracketed path, `framePaste`, and live parser
+  OSC registration. `web/dist/terminal.js` is an exact byte-for-byte generated mirror of the exercised
+  source and is waived as an unexecuted duplicate; the older terminal-level OSC fallback is a compatibility
+  waiver.
+- **BROWSER ERROR GATE — NEEDS EVIDENCE.** Prediction: only exact `/favicon.ico` 404 response instances
+  would be tolerated, a non-favicon 404 could not be hidden, and an unattributed console error would fail.
+  The recorded raw console events and CDP `networkErrors` are internally consistent: two raw resource-404
+  events correspond to two CDP 404 responses whose URL is exactly `http://127.0.0.1:8123/favicon.ico`
+  (`...json:11-47`), while the ordinary non-404 console-error case remains fatal. However, the current
+  gate at `tools/verify/e3-t22d-browser-proof.mjs:39-55,313-329` only compares the count of generic
+  resource-404 console messages with the count of `isFavicon404` network responses. A bounded attack with
+  one generic `Failed to load resource ... 404` console event and one favicon response returns
+  `consoleErrors=[]` and passes; this event has no URL and could be `/evil.js`. A second bounded attack
+  also passes `/assets/favicon.ico` because `isFavicon404` uses `pathname.endsWith("/favicon.ico")`, not
+  exact pathname equality. CDP-attributed `/evil.js` is correctly rejected, but the unattributed-console
+  false pass violates the required non-favicon and un-attributed error gate. Preserve URL-attributed
+  response/console correlation (or fail closed for unmatched console 404s), require exact pathname
+  `/favicon.ico`, deduplicate by request ID as claimed, and re-record.
+- **FRESHNESS / PROVENANCE — HELD WITH A METADATA-ONLY DELTA.** The exact current `HEAD` is
+  `c783e991f358ea5faf25a2fcbf347327d4a5a832`, while the evidence binds `runtimeHead` to
+  `a1fd96dd84db861f33d0ea43b82389b00e818538` (`...json:1-4`). The intervening commit changes only the
+  evidence JSON, task log, and generated roadmap metadata; `git diff a1fd96d..HEAD` contains no runtime or
+  proof-harness changes. Thus the recording is exact for the exercised runtime/harness head, and the JSON
+  and PNG digests match the current files (`8c9b5c...` and `73df8d...`); the verifier’s own metadata commit
+  is not treated as a runtime freshness failure.
+- **COVERAGE — NEEDS EVIDENCE.** The raw harness injects all scripted keyboard bytes through
+  `window.__term.typeBytes` (`tools/verify/e3-t22d-browser-proof.mjs:72-75`), so the changed
+  `term.onData((str) => typeBytes(enc.encode(str)))` adapter at `web/terminal.js:131` is not exercised by
+  the submitted browser run. While a paste is held, the run sends Ctrl-C or Enter as the first byte, so
+  the changed `boundary < 0` and `boundary > 0` typed-byte ordering branches at `web/terminal.js:114-128`
+  are also not covered by the acceptance recording; the isolated source probe covered them but is not a
+  durable recorded browser artifact. Record a real xterm keyboard/DOM path plus a durable mixed-input
+  hold case, or explicitly remove/dead-code those claims. The `try/catch` diagnostics and older API
+  fallback are waived as non-load-bearing diagnostics/compatibility paths.
+- **SUPPORTING GATES — HELD.** `node --test web/tests/osc52.test.mjs web/tests/paste.test.mjs` passed
+  23/23; `node --check` passed for the proof harness and source/dist terminal; `git diff --check
+  97b88d4..HEAD` passed; `python3 tools/check_task_policy.py` passed; source and generated terminal files
+  compare equal; and the legacy `web/tests/e3-t22-clipboard.spec.js` has no net task diff. No implementation,
+  harness, fixture, or evidence file was changed during this verification.
+
+Commands: `node --test web/tests/osc52.test.mjs web/tests/paste.test.mjs`; three bounded browser-gate
+classification attacks; bounded source-level host-hold attack with marker injection, mixed ordering, and
+Ctrl-C cancellation; independent 1 MiB UTF-8/SHA recomputation; `node --check` for proof/source/dist;
+`git diff --check 97b88d4..HEAD`; source/dist comparison; exact artifact SHA checks; and
+`python3 tools/check_task_policy.py`.
