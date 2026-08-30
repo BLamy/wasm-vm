@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: evidence-needed
+status: in-progress
 depends_on: [E3-T12c]
 estimate: S
 risk: high
@@ -227,3 +227,10 @@ mutation attacks.
 - Commands checked: `make verify-E3-T12d` (fmt, wasm32 clippy, 11 restore-decision tests, 11 snapmeta
   tests). Verdict: the payload-integrity refutation is cleared, but the task is not verified until the
   listed acceptance and adversarial evidence exists.
+
+### 2026-08-30 — worker — overlay-generation persistence rework started
+
+The fresh verifier identified a live correctness gap: a durable guest overlay write did not advance
+the snapshot coherence generation, and a reopened machine therefore reset to generation 0. This
+slice adds the generation to the persisted overlay metadata, commits it with each successful block
+flush, reconstructs the machine from that metadata on reopen, and adds a reload-after-write proof.
