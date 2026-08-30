@@ -3,7 +3,7 @@ id: E3-T22d
 epic: 3
 title: Clipboard browser E2E capstone — scripted copy via clipboard read, 1 MB paste sha256
 priority: 322.4
-status: evidence-needed
+status: in-progress
 depends_on: [E3-T22a, E3-T22b]
 estimate: S
 risk: high
@@ -27,6 +27,13 @@ fast busybox guest per the reaping constraint.
 - [x] Multi-line paste with bracketed paste on executes zero commands until Enter.
 
 ## Verification log
+- 2026-08-30 — **worker — resumed evidence rework after verifier `304144b`.** AC1–AC3 and the
+  host-hold attack held, but the verifier correctly found two proof gaps: the favicon matcher accepted
+  suffix paths such as `/assets/favicon.ico`, and the browser recording injected keyboard bytes through
+  the test-only `typeBytes` controller instead of exercising xterm's real `onData` path and its mixed
+  ordinary-byte/control-boundary branches. I will make the favicon URL exact, drive keyboard input via
+  the focused xterm DOM path, add a durable mixed-input hold case, rerun, and resubmit.
+
 - 2026-08-30 — **worker — resubmitted at `a1fd96dd84db861f33d0ea43b82389b00e818538`.** Addressed
   verifier `701aee1`'s browser-error evidence gap. The raw headed harness now captures every
   status-400-or-higher response through CDP `Network.responseReceived`, retains one record per
