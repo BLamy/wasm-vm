@@ -334,3 +334,10 @@ file read. No implementation claim is made until the fresh recording covers thos
 
 This is a worker submission only; a fresh verifier must interrogate this exact recording and set the
 terminal `verified` status.
+
+### 2026-08-30 — worker — deployment attempt
+
+`bash tools/deploy-cloudflare.sh` successfully verified the existing R2 objects and staged the
+small boot artifacts, but Wrangler 4.127.1 stopped before the Pages publish because this
+non-interactive environment has no `CLOUDFLARE_API_TOKEN`. The live Pages site is therefore not
+claimed as updated; rerun the command after authenticating Wrangler or supplying that token.
