@@ -370,6 +370,23 @@ async function snapshotDigest(page) {
   });
 }
 
+async function snapshotRoundTrip(page) {
+  return page.evaluate(async () => {
+    const digest = async (bytes) => {
+      const out = await crypto.subtle.digest("SHA-256", bytes);
+      return [...new Uint8Array(out)].map((b) => b.toString(16).padStart(2, "0")).join("");
+    };
+    const exported = await window.__snapshotExport();
+    if (!exported) throw new Error("snapshot export returned no bytes");
+    const before = { bytes: exported.byteLength, digest: await digest(exported) };
+    await window.__snapshotImport(exported);
+    const imported = await window.__snapshotExport();
+    if (!imported) throw new Error("snapshot re-export returned no bytes");
+    const after = { bytes: imported.byteLength, digest: await digest(imported) };
+    return { before, after };
+  });
+}
+
 async function cleanWorkerProof(allErrors) {
   const env = await openContext({ label: "clean-worker", allErrors });
   try {
@@ -384,6 +401,9 @@ async function cleanWorkerProof(allErrors) {
     const saved = await snapshotDigest(env.page);
     assert.ok(saved?.bytes > 1_000_000);
     assert.equal(await env.page.evaluate(() => window.__snapshotDecision()), "resume");
+    const roundTrip = await snapshotRoundTrip(env.page);
+    assert.deepEqual(roundTrip.before, saved, "export digest differs from the persisted snapshot");
+    assert.deepEqual(roundTrip.after, saved, "export/import changed the snapshot container");
     await env.page.screenshot({ path: screenshotPath, fullPage: false });
 
     await env.page.reload({ waitUntil: "domcontentloaded", timeout: 120_000 });
@@ -398,6 +418,7 @@ async function cleanWorkerProof(allErrors) {
       reloadMs,
       backend: await env.page.evaluate(() => document.documentElement.dataset.linuxBackend),
       saved,
+      roundTrip,
       before,
       afterReload: await env.page.evaluate(() => window.__snapshotDecision()),
     };
