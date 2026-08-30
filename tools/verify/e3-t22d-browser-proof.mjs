@@ -11,6 +11,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const base = (process.env.E3_T22D_WEB_BASE || "http://127.0.0.1:8123").replace(/\/$/, "");
+const allowedFaviconUrl = new URL("/favicon.ico", `${base}/`).href;
 const query = process.env.E3_T22D_QUERY || "noAutoBoot";
 const runUrl = `${base}/?${query}`;
 const out = path.join(repo, "evidence/e3-t22d");
@@ -37,9 +38,9 @@ const cdpHttpErrors = [];
 const cdp = await context.newCDPSession(page);
 await cdp.send("Network.enable");
 const isFavicon404 = ({ status, url }) => {
-  if (status !== 404) return false;
+  if (status !== 404 || url !== allowedFaviconUrl) return false;
   try {
-    return new URL(url).pathname.toLowerCase().endsWith("/favicon.ico");
+    return new URL(url).pathname === "/favicon.ico";
   } catch {
     return false;
   }
@@ -56,10 +57,10 @@ cdp.on("Network.responseReceived", (event) => {
 page.on("console", (message) => {
   const text = message.text();
   if (message.type() === "error") {
-    rawConsoleErrors.push(text);
+    rawConsoleErrors.push({ text, location: message.location() });
   }
 });
-page.on("pageerror", (error) => rawConsoleErrors.push(`pageerror: ${error.message}`));
+page.on("pageerror", (error) => rawConsoleErrors.push({ text: `pageerror: ${error.message}`, location: null }));
 
 const terminalBuffer = () => page.evaluate(() => {
   const buffer = window.__term.term.buffer.active;
@@ -73,6 +74,32 @@ const send = (value) => page.evaluate(
   (text) => window.__term.typeBytes(new TextEncoder().encode(text)),
   value,
 );
+// Small command/control traffic uses the real focused xterm textarea so the recording exercises
+// Terminal.onData. The bulk payload remains on the explicit queue hook to keep the proof bounded.
+const sendKeyboard = async (value) => {
+  let text = "";
+  const flushText = async () => {
+    if (text) {
+      await page.keyboard.type(text);
+      text = "";
+    }
+  };
+  for (const char of value) {
+    if (char === "\r" || char === "\n") {
+      await flushText();
+      await page.keyboard.press("Enter");
+    } else if (char === "\x03") {
+      await flushText();
+      await page.keyboard.press("Control+C");
+    } else if (char === "\x04") {
+      await flushText();
+      await page.keyboard.press("Control+D");
+    } else {
+      text += char;
+    }
+  }
+  await flushText();
+};
 const waitForText = async (needle, timeout = 120_000) => {
   await page.waitForFunction(
     (value) => {
@@ -184,9 +211,19 @@ try {
   }
   await page.evaluate(() => window.__term.focus());
   await page.locator("#term").click();
+  await page.evaluate(() => {
+    window.__e3t22dKeyboardData = [];
+    window.__e3t22dKeyboardPhase = "setup";
+    window.__term.term.onData((value) => {
+      window.__e3t22dKeyboardData.push({
+        phase: window.__e3t22dKeyboardPhase,
+        bytes: Array.from(new TextEncoder().encode(value)),
+      });
+    });
+  });
   let promptReady = false;
   for (let attempt = 0; attempt < 18 && !promptReady; attempt += 1) {
-    await send("\r");
+    await sendKeyboard("\r");
     try {
       await waitForText("~ #", 5_000);
       promptReady = true;
@@ -205,7 +242,7 @@ try {
     window.__term.onClipboardCopyBlocked((text) => { window.__e3t22dBlocked = text; });
   });
   const oscCopy = String.raw`printf '\033]52;c;%s\a' "$(printf hi | base64)"`;
-  await send(`${oscCopy}; echo E3T22D_COPY_SENT\r`);
+  await sendKeyboard(`${oscCopy}; echo E3T22D_COPY_SENT\r`);
   try {
     await page.waitForFunction(
       () => window.__e3t22dCopied === "hi" || window.__e3t22dBlocked === "hi",
@@ -242,12 +279,12 @@ try {
   // AC2: multi-line paste through the same public terminal bridge. The trailing newline is
   // intentional: in canonical tty mode it leaves the line buffer empty, so the following Ctrl-D
   // is EOF rather than merely returning a partial final line to cat.
-  await send("cat > /tmp/e3t22d-multi\r");
+  await sendKeyboard("cat > /tmp/e3t22d-multi\r");
   await sleep(300);
   await page.evaluate(() => window.__term.pasteText("alpha\nbravo\ncharlie\n"));
   await sleep(500);
-  await send("\x04");
-  await send("cat /tmp/e3t22d-multi\r");
+  await sendKeyboard("\x04");
+  await sendKeyboard("cat /tmp/e3t22d-multi\r");
   await waitForText("alpha", 30_000);
   await waitForText("bravo", 30_000);
   await waitForText("charlie", 30_000);
@@ -264,15 +301,15 @@ try {
   // Busybox cat echoes every byte on a tty. Disable echo for the bulk transfer so the proof measures
   // the input queue and guest file, not a million-character xterm repaint; restore it in the same
   // shell command that prints the digest.
-  await send("stty -echo; echo E3T22D_ECHO_OFF\r");
+  await sendKeyboard("stty -echo; echo E3T22D_ECHO_OFF\r");
   await waitForExactLine("E3T22D_ECHO_OFF", 30_000);
-  await send("cat > /root/paste.txt\r");
+  await sendKeyboard("cat > /root/paste.txt\r");
   await sleep(300);
   await page.evaluate((value) => window.__term.pasteText(value), payload);
   const highWater = await page.evaluate(() => window.__term.highWater());
   assert.ok(highWater >= payload.length, `high-water ${highWater} < payload ${payload.length}`);
-  await send("\x04");
-  await send(
+  await sendKeyboard("\x04");
+  await sendKeyboard(
     `echo E3T22D_CAT_DONE; ls -l /root/paste.txt; ` +
       `guest_size="$(wc -c < /root/paste.txt)"; echo E3T22D_GUEST_SIZE=$guest_size; ` +
       `test "$guest_size" -eq ${payload.length} && ` +
@@ -293,38 +330,63 @@ try {
   // explicit Enter. Ctrl-C cancels the first held paste so the pre-Enter file check cannot be merged
   // into it; the second paste is committed by Enter and checked afterward.
   const enableBracketed = String.raw`printf '\033[?2004h'`;
-  await send(`${enableBracketed}\r`);
+  await sendKeyboard(`${enableBracketed}\r`);
   await sleep(500);
   const bracketedEnabled = await page.evaluate(() => window.__term.bracketedPasteEnabled());
   assert.equal(bracketedEnabled, true, "guest DECSET 2004 did not reach xterm mode state");
   const bracketedCommand = "touch /tmp/e3t22d-bracketed\nprintf E3T22D_SECOND\n";
   await page.evaluate((value) => window.__term.pasteText(value), bracketedCommand);
+  await page.evaluate(() => { window.__e3t22dKeyboardPhase = "held-cancel"; });
+  await page.keyboard.type("CANCELLED");
   await sleep(1_000);
-  await send("\x03");
-  await send("test -e /tmp/e3t22d-bracketed && echo E3T22D_EARLY || echo E3T22D_HELD\r");
+  await sendKeyboard("\x03");
+  await sendKeyboard("test -e /tmp/e3t22d-bracketed && echo E3T22D_EARLY || echo E3T22D_HELD\r");
   await waitForExactLine("E3T22D_HELD", 30_000);
   await page.evaluate((value) => window.__term.pasteText(value), bracketedCommand);
   await sleep(500);
-  await send("\r");
-  await send("test -e /tmp/e3t22d-bracketed && echo E3T22D_EXECUTED || echo E3T22D_MISSING\r");
+  await page.evaluate(() => { window.__e3t22dKeyboardPhase = "held-release"; });
+  // insertText is the xterm textarea path and deliberately delivers ordinary bytes plus CR in one
+  // onData event, exercising the host-hold boundary>0 FIFO release branch.
+  await page.keyboard.insertText("true\r");
+  await sendKeyboard("test -e /tmp/e3t22d-bracketed && echo E3T22D_EXECUTED || echo E3T22D_MISSING\r");
   await waitForExactLine("E3T22D_EXECUTED", 30_000);
+
+  const keyboardData = await page.evaluate(() => window.__e3t22dKeyboardData);
+  const heldCancelData = keyboardData.filter(({ phase }) => phase === "held-cancel");
+  const heldReleaseData = keyboardData.filter(({ phase }) => phase === "held-release");
+  assert(
+    heldCancelData.some(({ bytes }) => bytes.length > 0 && bytes.every((byte) => byte !== 0x03 && byte !== 0x0a && byte !== 0x0d)) &&
+      heldCancelData.some(({ bytes }) => bytes.includes(0x03)),
+    `focused xterm cancel path did not record ordinary bytes plus Ctrl-C: ${JSON.stringify(heldCancelData)}`,
+  );
+  assert(
+    heldReleaseData.some(({ bytes }) => bytes.length === 5 && bytes.slice(0, 4).join(",") === "116,114,117,101" && bytes[4] === 0x0d),
+    `focused xterm mixed ordinary-byte/Enter event was not recorded: ${JSON.stringify(heldReleaseData)}`,
+  );
 
   await page.screenshot({ path: screenshotPath, fullPage: false });
   const networkErrors = cdpHttpErrors;
   const allowedHttpErrors = networkErrors.filter(isFavicon404);
   const faviconUrl = new URL(faviconProbe.url);
-  const favicon404Observed = faviconProbe.status === 404 && faviconUrl.pathname.toLowerCase().endsWith("/favicon.ico");
+  const favicon404Observed = faviconProbe.status === 404 && faviconUrl.href === allowedFaviconUrl;
   const unexpectedHttpErrors = networkErrors.filter((error) => !isFavicon404(error));
-  const resource404ConsoleErrors = rawConsoleErrors.filter((text) =>
-    /failed to load resource.*404|404.*not found/i.test(text));
-  const consoleErrors = rawConsoleErrors.filter((text) =>
-    !/failed to load resource.*404|404.*not found/i.test(text));
+  const isResource404ConsoleError = ({ text }) => /failed to load resource.*404|404.*not found/i.test(text);
+  const isFaviconConsole404 = (entry) =>
+    isResource404ConsoleError(entry) && entry.location?.url === allowedFaviconUrl;
+  const resource404ConsoleErrors = rawConsoleErrors.filter(isResource404ConsoleError);
+  const allowedConsole404s = resource404ConsoleErrors.filter(isFaviconConsole404);
+  const consoleErrors = rawConsoleErrors.filter((entry) => !isFaviconConsole404(entry));
   assert.equal(favicon404Observed, true, `favicon probe was not the allowed 404: ${JSON.stringify(faviconProbe)}`);
   assert.deepEqual(unexpectedHttpErrors, [], `unexpected HTTP errors: ${JSON.stringify(unexpectedHttpErrors)}`);
   assert.equal(
     resource404ConsoleErrors.length,
+    allowedConsole404s.length,
+    `unattributed resource 404 console events: ${JSON.stringify({ resource404ConsoleErrors, allowedConsole404s })}`,
+  );
+  assert.equal(
+    resource404ConsoleErrors.length,
     allowedHttpErrors.length,
-    `unattributed resource 404 console events: ${JSON.stringify({ resource404ConsoleErrors, allowedHttpErrors })}`,
+    `console/network 404 response mismatch: ${JSON.stringify({ resource404ConsoleErrors, allowedHttpErrors })}`,
   );
   assert.deepEqual(consoleErrors, [], `unexpected console errors: ${JSON.stringify(consoleErrors)}`);
   browserEvidence = {
@@ -340,9 +402,11 @@ try {
       consoleErrors,
       rawConsoleErrors,
       resource404ConsoleErrors,
+      allowedConsole404s,
       networkErrors,
       allowedHttpErrors,
       faviconProbe,
+      keyboardData,
     },
     copy: copyObservation,
     multiline: { expectedLines: ["alpha", "bravo", "charlie"], observed: true },
