@@ -3,7 +3,7 @@ id: E3-T12d
 epic: 3
 title: Browser snapshot persistence and restore selection
 priority: 321.94
-status: in-progress
+status: implemented
 depends_on: [E3-T12c1, E3-T12c2, E3-T12c3, E3-T12c4]
 estimate: S
 risk: high
@@ -509,3 +509,38 @@ Commands: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test resto
 `cargo test -p wasm-vm-core --test snapshot_coherence` (`5/5`);
 `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`; JavaScript syntax checks; fresh
 raw-Playwright replay and bounded whole-machine-Worker lease/object probes. No merge or push.
+
+### 2026-08-30 — worker — rework resubmitted after lease-fencing refutation
+
+- Runtime and harness commits: `3238913` fences a released controller in both JS and wasm before
+  relinquishing the Web Lock; `9025134` seeds a baseline snapshot before the takeover race;
+  `75aec71` asserts that a rejected stale-writer import leaves the takeover decision unchanged;
+  `9213b82` refreshes the tracked `web/dist` bundle. The exact recorded runtime head is
+  `9213b821b2655bf559da548ca7c6748e2b6b0219`.
+- Exact-head evidence: `evidence/epic-3-t12d/browser-storage-2026-08-30.json`, SHA-256
+  `7b98c136a06c1353c894405dc9a80ec843bf6b9297b022c5ce4a75990dfccb8d`; screenshot SHA-256
+  `ea8b95a72685157cd11fab7f7a3163bd26643660aa3dc22f9bf157a100af7e7c`.
+- `make verify-E3-T12d` passed at that exact head: the production whole-machine Worker saved and
+  reloaded `60,430,185` bytes with digest
+  `27f2f7a954763682fa18b206ba8503cf08f37917cffcbc683cb9f2ab233f67cc`; the same-writer
+  export/import round trip preserved the byte count and digest; the main-thread save overhead was
+  `16,811,975 <= 33,554,432` bytes and the reload staging overhead was `2,169,357 <= 33,554,432`.
+  The explicit Worker `snapshotRestore` RPC returned `resume` after reload.
+- The recorded interruption cases selected `corrupt`/`corrupt`/`stale` for clear/chunk/meta;
+  quota surfaced `QuotaExceededError` and preserved the overlay; metadata swapping between
+  generations selected `corrupt` and preserved the overlay. The contender tab was `read_only`,
+  and both snapshot save/import calls were rejected with `read_only`. After lease handoff, the old
+  controller's import was rejected and the takeover decision remained `stale` before and after the
+  attempted write. The modified-overlay Alpine reload selected `stale` and read
+  `T12D_RELOAD_FILE` with exit 0. All recorded browser contexts had zero console errors and no
+  disallowed HTTP responses (the favicon 404 is allowed by the gate).
+- Supporting gates passed: wasm32 clippy with `-D warnings`, restore-decision (`11/11`), snapmeta
+  (`11/11`), JavaScript/browser syntax checks, and the browser build. This is a worker submission;
+  a fresh verifier must interrogate this exact recording and set the terminal status.
+
+### 2026-08-30 — worker — deployment attempt
+
+`bash tools/deploy-cloudflare.sh` confirmed/staged the R2 boot artifacts, then Wrangler attempted
+OAuth because this environment has no `CLOUDFLARE_API_TOKEN`. The login was stopped before the
+Cloudflare Pages publish; the live Pages site is not claimed as updated. The R2 manifest URL
+changes made by the staging step were reverted locally.
