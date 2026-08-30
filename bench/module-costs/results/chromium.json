@@ -1,0 +1,125 @@
+{
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.7922.34 Safari/537.36",
+  "hardwareConcurrency": 16,
+  "hasPerfMemory": true,
+  "reps": 15,
+  "compile": [
+    {
+      "funcs": 1,
+      "bytes": 73,
+      "ms": 0
+    },
+    {
+      "funcs": 2,
+      "bytes": 110,
+      "ms": 0
+    },
+    {
+      "funcs": 4,
+      "bytes": 184,
+      "ms": 0
+    },
+    {
+      "funcs": 8,
+      "bytes": 333,
+      "ms": 0
+    },
+    {
+      "funcs": 16,
+      "bytes": 635,
+      "ms": 0
+    },
+    {
+      "funcs": 32,
+      "bytes": 1244,
+      "ms": 0
+    },
+    {
+      "funcs": 64,
+      "bytes": 2460,
+      "ms": 0
+    },
+    {
+      "funcs": 128,
+      "bytes": 4924,
+      "ms": 0
+    },
+    {
+      "funcs": 256,
+      "bytes": 10044,
+      "ms": 0.09999999776482582
+    }
+  ],
+  "instantiate": [
+    {
+      "funcs": 1,
+      "bytes": 73,
+      "ms": 0
+    },
+    {
+      "funcs": 2,
+      "bytes": 110,
+      "ms": 0
+    },
+    {
+      "funcs": 4,
+      "bytes": 184,
+      "ms": 0
+    },
+    {
+      "funcs": 8,
+      "bytes": 333,
+      "ms": 0
+    },
+    {
+      "funcs": 16,
+      "bytes": 635,
+      "ms": 0
+    },
+    {
+      "funcs": 32,
+      "bytes": 1244,
+      "ms": 0
+    },
+    {
+      "funcs": 64,
+      "bytes": 2460,
+      "ms": 0
+    },
+    {
+      "funcs": 128,
+      "bytes": 4924,
+      "ms": 0
+    },
+    {
+      "funcs": 256,
+      "bytes": 10044,
+      "ms": 0.09999999776482582
+    }
+  ],
+  "cliff": [
+    {
+      "target": 1000,
+      "live": 1000,
+      "failedAt": null,
+      "ms": 35.099999997764826,
+      "usedJSHeapSize": 10000000
+    },
+    {
+      "target": 5000,
+      "live": 5000,
+      "failedAt": null,
+      "ms": 184.79999999701977,
+      "usedJSHeapSize": 10000000
+    },
+    {
+      "target": 10000,
+      "live": 10000,
+      "failedAt": null,
+      "ms": 363.80000000074506,
+      "usedJSHeapSize": 10000000
+    }
+  ],
+  "generatedAt": "2026-08-30T02:55:35.024Z",
+  "project": "chromium"
+}

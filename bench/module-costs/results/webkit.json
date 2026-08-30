@@ -1,0 +1,125 @@
+{
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+  "hardwareConcurrency": 8,
+  "hasPerfMemory": false,
+  "reps": 15,
+  "compile": [
+    {
+      "funcs": 1,
+      "bytes": 73,
+      "ms": 0
+    },
+    {
+      "funcs": 2,
+      "bytes": 110,
+      "ms": 0
+    },
+    {
+      "funcs": 4,
+      "bytes": 184,
+      "ms": 0
+    },
+    {
+      "funcs": 8,
+      "bytes": 333,
+      "ms": 0
+    },
+    {
+      "funcs": 16,
+      "bytes": 635,
+      "ms": 0
+    },
+    {
+      "funcs": 32,
+      "bytes": 1244,
+      "ms": 0
+    },
+    {
+      "funcs": 64,
+      "bytes": 2460,
+      "ms": 0
+    },
+    {
+      "funcs": 128,
+      "bytes": 4924,
+      "ms": 0
+    },
+    {
+      "funcs": 256,
+      "bytes": 10044,
+      "ms": 0
+    }
+  ],
+  "instantiate": [
+    {
+      "funcs": 1,
+      "bytes": 73,
+      "ms": 0
+    },
+    {
+      "funcs": 2,
+      "bytes": 110,
+      "ms": 0
+    },
+    {
+      "funcs": 4,
+      "bytes": 184,
+      "ms": 0
+    },
+    {
+      "funcs": 8,
+      "bytes": 333,
+      "ms": 0
+    },
+    {
+      "funcs": 16,
+      "bytes": 635,
+      "ms": 0
+    },
+    {
+      "funcs": 32,
+      "bytes": 1244,
+      "ms": 0
+    },
+    {
+      "funcs": 64,
+      "bytes": 2460,
+      "ms": 0
+    },
+    {
+      "funcs": 128,
+      "bytes": 4924,
+      "ms": 0
+    },
+    {
+      "funcs": 256,
+      "bytes": 10044,
+      "ms": 0
+    }
+  ],
+  "cliff": [
+    {
+      "target": 1000,
+      "live": 1000,
+      "failedAt": null,
+      "ms": 216,
+      "usedJSHeapSize": null
+    },
+    {
+      "target": 5000,
+      "live": 5000,
+      "failedAt": null,
+      "ms": 1069,
+      "usedJSHeapSize": null
+    },
+    {
+      "target": 10000,
+      "live": 10000,
+      "failedAt": null,
+      "ms": 2160,
+      "usedJSHeapSize": null
+    }
+  ],
+  "generatedAt": "2026-08-30T02:55:40.740Z",
+  "project": "webkit"
+}

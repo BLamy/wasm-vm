@@ -1,0 +1,125 @@
+{
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0",
+  "hardwareConcurrency": 16,
+  "hasPerfMemory": false,
+  "reps": 15,
+  "compile": [
+    {
+      "funcs": 1,
+      "bytes": 73,
+      "ms": 0
+    },
+    {
+      "funcs": 2,
+      "bytes": 110,
+      "ms": 0
+    },
+    {
+      "funcs": 4,
+      "bytes": 184,
+      "ms": 0
+    },
+    {
+      "funcs": 8,
+      "bytes": 333,
+      "ms": 0
+    },
+    {
+      "funcs": 16,
+      "bytes": 635,
+      "ms": 0
+    },
+    {
+      "funcs": 32,
+      "bytes": 1244,
+      "ms": 0
+    },
+    {
+      "funcs": 64,
+      "bytes": 2460,
+      "ms": 0
+    },
+    {
+      "funcs": 128,
+      "bytes": 4924,
+      "ms": 1
+    },
+    {
+      "funcs": 256,
+      "bytes": 10044,
+      "ms": 1
+    }
+  ],
+  "instantiate": [
+    {
+      "funcs": 1,
+      "bytes": 73,
+      "ms": 0
+    },
+    {
+      "funcs": 2,
+      "bytes": 110,
+      "ms": 0
+    },
+    {
+      "funcs": 4,
+      "bytes": 184,
+      "ms": 0
+    },
+    {
+      "funcs": 8,
+      "bytes": 333,
+      "ms": 0
+    },
+    {
+      "funcs": 16,
+      "bytes": 635,
+      "ms": 0
+    },
+    {
+      "funcs": 32,
+      "bytes": 1244,
+      "ms": 0
+    },
+    {
+      "funcs": 64,
+      "bytes": 2460,
+      "ms": 0
+    },
+    {
+      "funcs": 128,
+      "bytes": 4924,
+      "ms": 0
+    },
+    {
+      "funcs": 256,
+      "bytes": 10044,
+      "ms": 0
+    }
+  ],
+  "cliff": [
+    {
+      "target": 1000,
+      "live": 1000,
+      "failedAt": null,
+      "ms": 23,
+      "usedJSHeapSize": null
+    },
+    {
+      "target": 5000,
+      "live": 5000,
+      "failedAt": null,
+      "ms": 109,
+      "usedJSHeapSize": null
+    },
+    {
+      "target": 10000,
+      "live": 10000,
+      "failedAt": null,
+      "ms": 209,
+      "usedJSHeapSize": null
+    }
+  ],
+  "generatedAt": "2026-08-30T02:55:36.462Z",
+  "project": "firefox"
+}

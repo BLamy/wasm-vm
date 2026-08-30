@@ -109,12 +109,30 @@ the E4-T06 pause targets on the worst browser.
   build GREEN; fmt clean.
 
 **Verification debt (browser / dev — this mac OS-reaps long browser runs):**
-- [AC1] Cost-matrix JSON for Chrome/Firefox/Safari-substitute — harness committed + runnable
-  (`bench/module-costs/`, one command `./run.sh`); `results/` ships EMPTY (no fabricated numbers).
-  Live capture on the Linux dev box.
+- [AC1] Cost-matrix JSON for Chrome/Firefox/Safari-substitute — local three-engine capture is now
+  committed under `bench/module-costs/results/`; the remaining debt is cross-machine robustness.
 - [AC2] gcc batched-vs-unbatched compile-stall factor — A/B flag wired (`set_batch_size(1)` vs `(64)`);
   the gcc bench row itself is still deferred (Level-3 baseline), so the measured factor is dev debt.
-- [AC4] instance-count cliff limits + the ≥4× budget margin — measured by the committed harness on dev.
+- [AC4] local run reached 10,000 live instances in each engine without a cliff, putting the 256-module
+  budget at least 39.1x below the observed lower bound; a larger-limit/cross-run confirmation remains.
 - Adversarial #1 (K robustness across machines/versions) and #4 (first-execution warm-up vs the E4-T06
   pause target) — both browser-measurement, dev debt.
 - The in-wasm `chain_enabled=1` chaining path's determinism — deferred to the E4-T25 differential harness.
+
+### 2026-08-29 — worker evidence — local cross-browser cost matrix captured
+
+Ran the exact clean-checkout entrypoint `bench/module-costs/run.sh` after installing the pinned
+`package-lock.json` dependencies and Playwright browser revisions. The complete run passed:
+`3 passed (7.3s)` across Chromium 151.0.7922.34, Firefox 153.0, and WebKit 26.5 (the documented
+Safari substitute). The committed JSON rows contain the generated module-size/compile/instantiate
+curves and the live-instance probe at 1,000/5,000/10,000 instances; all three targets reached
+their requested live count with `failedAt: null`. The machine reported 16 logical CPUs to Chromium
+and Firefox and 8 to WebKit's Safari device emulation. Chromium reported `performance.memory`;
+Firefox and WebKit correctly reported it unavailable.
+
+This closes the local evidence gap for AC1's three-engine matrix and AC4's ≥4x budget-margin
+lower-bound check: 10,000 observed live instances / 256 configured live modules = 39.0625x.
+It does not claim the remaining AC2 gcc A/B stall measurement, the cross-machine robustness attack,
+or the first-execution pause measurement; those remain verification debt as explicitly listed above.
+The result files are `bench/module-costs/results/{chromium,firefox,webkit}.json`, and the dependency
+lock is `bench/module-costs/package-lock.json`.
