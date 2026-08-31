@@ -226,3 +226,27 @@ for a future fresh worker slice.
   counters, but does not meet the required 3x speedup or <=5-second stretch target: E4-T34 remains
   `in-progress`. No rr host trace is claimed on macOS, and no full `make ci` claim is made because
   the known macOS `wasm-vm-wvseccomp` libc API errors still block that workspace gate.
+
+### 2026-08-31 — worker checkpoint — publish bounded JIT as the isolated-worker default
+
+- Release commit: `375154c`. The browser page and loader now enable the bounded JIT by default on the
+  cross-origin-isolated whole-machine Worker; `?jit=0` remains the explicit interpreter rollback/A-B,
+  and non-isolated pages continue to fall back to the interpreter. The focused default-worker test
+  expectation was updated, and the architecture note plus roadmap now describe the shipped policy.
+- `make web-build` and `make web-dist` completed at this head. Cloudflare Pages published the complete
+  `web/dist` as preview `https://d5623124.wasm-vm.pages.dev` and production `https://wasm-vm.pages.dev`.
+  The live `main.js` SHA-256 is
+  `b0ec2f912af9ff38c762f94609d51f732a73f8c09c06b638bc53fc20e0b164a9`, exactly matching local
+  `web/dist/main.js`; the live `loader.js` SHA-256 is
+  `3f928bab885e04df1a220fb081b86c32ed17195b395c6dc9c57b3df5c63b8a23`, exactly matching local dist.
+- A fresh production browser smoke at `/app.html?guest=busybox&nosw&testHooks=1&diagnosticStats=1`
+  restored the whole-machine Worker, displayed `JIT enabled, threshold 512`, accepted the real
+  terminal command `printf PROD_DEFAULT_JIT_OK`, and returned the marker. Diagnostic stats recorded
+  `hasExecutor=true`, 1,898 compiled blocks, 11,147,103 executed blocks, and 121,547,462
+  instructions retired through JIT, with zero retranslations and zero evictions. Full structured
+  evidence is in `evidence/e4-t34/production-default-jit-2026-08-31.json` (SHA-256
+  `7b234115e70d21b71b3778445e3422778c3b7d8941a5ebdc742380197e52f556`).
+- This is a shipped product-default correction, not an E4-T34 acceptance claim. The matched local
+  restored-Node characterization was 12,686 ms with JIT versus 18,542 ms for the fast interpreter
+  (1.461x), while the required 3x / <=20-second target and <=5-second stretch remain unclaimed.
+  E4-T34 stays `in-progress`; no rr host trace is claimed on macOS.
