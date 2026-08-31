@@ -63,8 +63,13 @@ pub mod abi {
     /// E4-T34: count of raw inline-RAM stores waiting for the host-side reservation and code-write
     /// commit. Stored as an i64 so generated code can update it without widening/narrowing.
     pub const CHAIN_STORE_COUNT: u32 = CHAIN_ENABLED + 8;
+    /// E4-T34: remaining compiled-block entries allowed in the current direct chain. The browser
+    /// executor initializes this from `CompiledBlockExecutor::chain_depth_budget` and decrements it
+    /// at each generated-function entry, so the in-module call stack observes the same bound as the
+    /// native dispatch loop.
+    pub const CHAIN_DEPTH: u32 = CHAIN_STORE_COUNT + 8;
     /// E4-T34: first `{virtual address, physical address, width}` raw-store record.
-    pub const CHAIN_STORE_BASE: u32 = CHAIN_STORE_COUNT + 8;
+    pub const CHAIN_STORE_BASE: u32 = CHAIN_DEPTH + 8;
     /// E4-T34: byte size of one raw-store record.
     pub const CHAIN_STORE_ENTRY_BYTES: u32 = 24;
     /// E4-T34: bounded number of raw stores a direct-chain call can record. The direct-chain fuel is
@@ -188,10 +193,11 @@ impl CpuStateHandoff {
     /// Initialize the browser-only bounded direct-chain header before one compiled invocation.
     /// The frozen register/exit handoff remains unchanged and is still the only state copied into
     /// private SoftMMU memories.
-    pub fn begin_chain(&mut self, enabled: bool, budget: u64) {
+    pub fn begin_chain(&mut self, enabled: bool, budget: u64, depth: u64) {
         self.put_chain_u64(abi::CHAIN_RETIRED, 0);
         self.put_chain_u64(abi::CHAIN_BUDGET, budget);
         self.put_chain_u64(abi::CHAIN_ABORT, 0);
+        self.put_chain_u64(abi::CHAIN_DEPTH, depth);
         self.put_chain_u64(abi::CHAIN_ENABLED, enabled as u64);
         self.put_chain_u64(abi::CHAIN_STORE_COUNT, 0);
     }
@@ -676,6 +682,8 @@ mod tests {
         assert_eq!(abi::HANDOFF_END, 0x238);
         assert_eq!(abi::HANDOFF_LEN, 568);
         const { assert!(abi::HANDOFF_END < abi::CHAIN_ENABLED) };
+        assert_eq!(abi::CHAIN_DEPTH, 0x260);
+        assert_eq!(abi::CHAIN_STORE_BASE, 0x268);
 
         let mut hart = Hart::default();
         hart.regs.pc = 0x0123_4567_89ab_cdef;

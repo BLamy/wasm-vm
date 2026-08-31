@@ -1316,9 +1316,11 @@ impl CompiledBlockExecutor for BrowserExecutor {
         let compiled_pages = &self.compiled_pages as *const HashMap<u64, usize>;
         let direct_chaining = self.abi.direct_chain && self.chaining && allow_chaining;
         if self.abi.direct_chain {
-            self.handoff
-                .image
-                .begin_chain(direct_chaining, chain_budget.min(remaining_work).max(1));
+            self.handoff.image.begin_chain(
+                direct_chaining,
+                chain_budget.min(remaining_work).max(1),
+                u64::from(self.chain_depth_budget),
+            );
         }
         let chain_abort = if self.abi.direct_chain {
             self.handoff.image.chain_abort_ptr()

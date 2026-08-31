@@ -168,6 +168,8 @@ pub struct Abi {
     /// E4-T34: shared guest-work fuel consumed at each compiled-function entry. A successor that
     /// cannot fit returns [`ExitCode::Budget`] without executing an instruction.
     pub chain_budget: u32,
+    /// E4-T34: remaining compiled-function entries allowed in the current in-module chain.
+    pub chain_depth: u32,
     /// E4-T34: byte-sized side-effect barrier set by host imports that require a Rust boundary
     /// before another compiled successor can run.
     pub chain_abort: u32,
@@ -281,6 +283,7 @@ impl Abi {
         chain_enabled: 0x250,
         chain_retired: 0x238,
         chain_budget: 0x240,
+        chain_depth: 0x260,
         chain_abort: 0x248,
         store_log_count: 0,
         store_log_base: 0,
@@ -305,6 +308,7 @@ impl Abi {
         chain_enabled: 0x250,
         chain_retired: 0x238,
         chain_budget: 0x240,
+        chain_depth: 0x260,
         chain_abort: 0x248,
         store_log_count: 0,
         store_log_base: 0,
@@ -459,6 +463,10 @@ fn emit_chain_prologue(f: &mut FuncBuilder, abi: &Abi, entry_local: u32, nops: u
     f.i64_load(ALIGN8, abi.chain_budget);
     f.i64_const(nops as i64);
     f.i64_lt_u();
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.chain_depth);
+    f.i64_eqz();
+    f.i32_or();
     f.if_(BlockType::Empty);
     write_pc_local(f, abi, entry_local);
     write_reason(f, abi, ExitCode::Budget);
@@ -471,6 +479,12 @@ fn emit_chain_prologue(f: &mut FuncBuilder, abi: &Abi, entry_local: u32, nops: u
     f.i64_const(nops as i64);
     f.i64_sub();
     f.i64_store(ALIGN8, abi.chain_budget);
+    f.local_get(STATE_BASE);
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.chain_depth);
+    f.i64_const(1);
+    f.i64_sub();
+    f.i64_store(ALIGN8, abi.chain_depth);
     f.end();
 }
 
@@ -906,6 +920,11 @@ fn emit_exit(
             f.i32_load8_u(0, abi.chain_abort);
             f.i32_eqz();
             f.i32_and();
+            f.local_get(STATE_BASE);
+            f.i64_load(ALIGN8, abi.chain_depth);
+            f.i64_eqz();
+            f.i32_eqz();
+            f.i32_and();
             f.if_(BlockType::Value(ValType::I32));
             // The successor reads its entry virtual PC from `entry_pc`; hand it this exit_pc.
             f.local_get(STATE_BASE);
@@ -956,6 +975,11 @@ fn emit_dynamic_exit(f: &mut FuncBuilder, abi: &Abi, target: u32, code: ExitCode
     f.i32_load8_u(0, abi.chain_enabled);
     f.local_get(STATE_BASE);
     f.i32_load8_u(0, abi.chain_abort);
+    f.i32_eqz();
+    f.i32_and();
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.chain_depth);
+    f.i64_eqz();
     f.i32_eqz();
     f.i32_and();
     f.local_get(slot);

@@ -794,6 +794,65 @@ fn browser_inline_direct_chain_reports_bounded_retirement() {
 }
 
 #[wasm_bindgen_test]
+fn browser_inline_direct_chain_honors_depth_budget() {
+    const FIRST: u64 = DRAM_BASE;
+    const SECOND: u64 = DRAM_BASE + 0x1000;
+    let first = block(
+        FIRST,
+        &[
+            Instr::Addi {
+                rd: 1,
+                rs1: 1,
+                imm: 1,
+            },
+            Instr::Jal {
+                rd: 0,
+                imm: (SECOND - (FIRST + 4)) as i64,
+            },
+        ],
+    );
+    let second = block(
+        SECOND,
+        &[
+            Instr::Addi {
+                rd: 2,
+                rs1: 2,
+                imm: 1,
+            },
+            Instr::Jal {
+                rd: 0,
+                imm: FIRST as i64 - (SECOND as i64 + 4),
+            },
+        ],
+    );
+    let mut machine = Machine::new(8 * 1024 * 1024);
+    machine.hart_mut().regs.pc = FIRST;
+    let mut executor = BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+    executor.install_batch(&[first, second], &[[Some(1), None], [Some(0), None]]);
+    executor.set_chain_depth_budget(2);
+
+    let machine_ptr: *mut Machine = &mut machine;
+    let exit = unsafe {
+        executor
+            .execute_with_budget(
+                FIRST,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                64,
+                64,
+                true,
+            )
+            .expect("depth-bounded direct chain returns cleanly")
+    };
+
+    assert_eq!(exit.code, ExitCode::BranchTaken);
+    assert_eq!(exit.retired, 4);
+    assert_eq!(exit.next_pc, FIRST);
+    assert_eq!(machine.hart().regs.read(1), 1);
+    assert_eq!(machine.hart().regs.read(2), 1);
+}
+
+#[wasm_bindgen_test]
 fn browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks() {
     let first = block(
         DRAM_BASE,
