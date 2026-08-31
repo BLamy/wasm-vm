@@ -31,7 +31,7 @@ use wasm_bindgen_test::*;
 use wasm_vm_core::Machine;
 use wasm_vm_core::bus::mmap::DRAM_BASE;
 use wasm_vm_core::bus::{Bus, BusFault};
-use wasm_vm_core::decode::Instr;
+use wasm_vm_core::decode::{AmoOp, Instr};
 use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
 use wasm_vm_core::hart::{Exception, Hart, Trap};
 use wasm_vm_core::jit::{CompiledBlockExecutor, EvictPolicy, ExitCode, JitCacheBudget};
@@ -390,6 +390,239 @@ fn browser_inline_raw_store_commits_reservation_and_code_log() {
 }
 
 #[wasm_bindgen_test]
+fn browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit() {
+    const CODE: u64 = DRAM_BASE;
+    const TARGET: u64 = DRAM_BASE + 0x1000;
+    const DATA: u64 = DRAM_BASE + 0x4000;
+    const VALUE: u64 = 10;
+
+    let caller = block(
+        CODE,
+        &[
+            Instr::Sd {
+                rs1: 6,
+                rs2: 5,
+                imm: 0,
+            },
+            Instr::Jal {
+                rd: 0,
+                imm: (TARGET - (CODE + 4)) as i64,
+            },
+        ],
+    );
+    let data_target = block(
+        TARGET,
+        &[
+            Instr::Addi {
+                rd: 2,
+                rs1: 2,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: 4 },
+        ],
+    );
+    let mut machine = Machine::new(8 * 1024 * 1024);
+    machine.hart_mut().regs.write(5, VALUE);
+    machine.hart_mut().regs.write(6, DATA);
+    machine.hart_mut().regs.pc = CODE;
+    let mut executor = BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+    executor.install_batch(
+        &[caller.clone(), data_target],
+        &[[Some(1), None], [None, None]],
+    );
+    let machine_ptr: *mut Machine = &mut machine;
+
+    // The cold store uses the imported path to fill the write TLB. It already has the correct
+    // host-side commit semantics and therefore reaches the same-batch successor.
+    unsafe {
+        let first = executor
+            .execute_with_budget(
+                CODE,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                true,
+            )
+            .expect("cold store chain returns cleanly");
+        assert_eq!(first.retired, 4);
+    }
+    machine.hart_mut().regs.write(2, 0);
+    machine.hart_mut().regs.pc = CODE;
+    let warm = unsafe {
+        executor
+            .execute_with_budget(
+                CODE,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                true,
+            )
+            .expect("warm data store chain returns cleanly")
+    };
+    assert_eq!(warm.code, ExitCode::BranchTaken);
+    assert_eq!(
+        warm.retired, 4,
+        "raw data store must not abort its clean successor"
+    );
+    assert_eq!(machine.hart().regs.read(2), 1);
+    assert_eq!(machine.bus_mut().load64(DATA), Ok(VALUE));
+
+    let atomic_target = block(
+        TARGET,
+        &[
+            Instr::AmoW {
+                op: AmoOp::Add,
+                rd: 2,
+                rs1: 6,
+                rs2: 5,
+                aq: false,
+                rl: false,
+            },
+            Instr::Jal { rd: 0, imm: 4 },
+        ],
+    );
+    let mut atomic_machine = Machine::new(8 * 1024 * 1024);
+    atomic_machine.hart_mut().regs.write(5, 7);
+    atomic_machine.hart_mut().regs.write(6, DATA);
+    atomic_machine.hart_mut().regs.pc = CODE;
+    let mut atomic_executor =
+        BrowserExecutor::new_inline(&atomic_machine).expect("inline TLB fits wasm memory");
+    atomic_executor.install_batch(&[caller, atomic_target], &[[Some(1), None], [None, None]]);
+    let atomic_machine_ptr: *mut Machine = &mut atomic_machine;
+
+    // Warm the write TLB and let the cold imported store reach the atomic successor. The AMO's
+    // import aborts the chain itself, so this call also establishes the baseline for the warm hit.
+    unsafe {
+        atomic_executor
+            .execute_with_budget(
+                CODE,
+                (*atomic_machine_ptr).hart_mut(),
+                (*atomic_machine_ptr).bus_mut(),
+                16,
+                16,
+                true,
+            )
+            .expect("cold store plus atomic successor returns cleanly");
+    }
+    atomic_machine.bus_mut().store32(DATA, 0).unwrap();
+    atomic_machine.hart_mut().regs.write(2, 0);
+    atomic_machine.hart_mut().regs.pc = CODE;
+    let stopped = unsafe {
+        atomic_executor
+            .execute_with_budget(
+                CODE,
+                (*atomic_machine_ptr).hart_mut(),
+                (*atomic_machine_ptr).bus_mut(),
+                16,
+                16,
+                true,
+            )
+            .expect("pending raw store stops before atomic successor")
+    };
+    assert_eq!(stopped.code, ExitCode::Budget);
+    assert_eq!(
+        stopped.retired, 2,
+        "caller prefix commits before the atomic barrier"
+    );
+    assert_eq!(stopped.next_pc, TARGET);
+    assert_eq!(atomic_machine.bus_mut().load32(DATA), Ok(7));
+    assert_eq!(
+        atomic_machine.hart().regs.read(2),
+        0,
+        "AMO must not run before host commit"
+    );
+}
+
+#[wasm_bindgen_test]
+fn browser_inline_raw_store_to_compiled_page_aborts_before_successor() {
+    const CODE: u64 = DRAM_BASE;
+    const TARGET: u64 = DRAM_BASE + 0x1000;
+    const CODE_DATA: u64 = CODE + 0x200;
+
+    let caller = block(
+        CODE,
+        &[
+            Instr::Sd {
+                rs1: 6,
+                rs2: 5,
+                imm: 0,
+            },
+            Instr::Jal {
+                rd: 0,
+                imm: (TARGET - (CODE + 4)) as i64,
+            },
+        ],
+    );
+    let target = block(
+        TARGET,
+        &[
+            Instr::Addi {
+                rd: 2,
+                rs1: 2,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: 4 },
+        ],
+    );
+    let mut machine = Machine::new(8 * 1024 * 1024);
+    machine.hart_mut().regs.write(5, 0x55);
+    machine.hart_mut().regs.write(6, CODE_DATA);
+    machine.hart_mut().regs.pc = CODE;
+    let mut executor = BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+    executor.install_batch(&[caller, target], &[[Some(1), None], [None, None]]);
+    let machine_ptr: *mut Machine = &mut machine;
+
+    // The imported cold store sees the compiled page through the host authority check and must
+    // return before the target. This also warms the write-TLB slot for the raw-store assertion.
+    unsafe {
+        let cold = executor
+            .execute_with_budget(
+                CODE,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                true,
+            )
+            .expect("cold code-page store returns through the host barrier");
+        assert_eq!(cold.retired, 2);
+    }
+    machine.bus_mut().code_write_log_mut().clear();
+    machine.hart_mut().regs.write(2, 0);
+    machine.hart_mut().regs.pc = CODE;
+    let warm = unsafe {
+        executor
+            .execute_with_budget(
+                CODE,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                true,
+            )
+            .expect("raw code-page store returns before stale successor")
+    };
+    assert_eq!(warm.code, ExitCode::BranchTaken);
+    assert_eq!(
+        warm.retired, 2,
+        "compiled-page bitmap must abort the raw-store chain"
+    );
+    assert_eq!(warm.next_pc, TARGET);
+    assert_eq!(
+        machine.hart().regs.read(2),
+        0,
+        "successor code must not run before invalidation"
+    );
+    assert_eq!(
+        machine.bus_mut().code_write_log_mut().as_slice(),
+        &[CODE >> 12],
+        "raw store records the page that the core must invalidate"
+    );
+}
+
+#[wasm_bindgen_test]
 fn browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs() {
     const BLOCKS: usize = 40;
     const INTERNAL_RUNS: usize = 31;
@@ -558,6 +791,85 @@ fn browser_inline_direct_chain_reports_bounded_retirement() {
     assert_eq!(exit.retired, 16);
     assert_eq!(machine.hart().regs.read(1), 8);
     assert_eq!(machine.hart().regs.pc, DRAM_BASE);
+}
+
+#[wasm_bindgen_test]
+fn browser_inline_static_cross_batch_link_executes_and_misses_safely() {
+    // A static JAL target that is deliberately supplied as `None` in the batch graph exercises
+    // E4-T34's guarded cross-batch path. The first call is a host-return miss; publishing the
+    // resolved virtual target must make the second call enter the target function directly.
+    const CALLER: u64 = DRAM_BASE;
+    const TARGET: u64 = DRAM_BASE + 0x1000;
+    let caller = block(
+        CALLER,
+        &[
+            Instr::Addi {
+                rd: 1,
+                rs1: 1,
+                imm: 1,
+            },
+            Instr::Jal {
+                rd: 0,
+                imm: (TARGET - (CALLER + 4)) as i64,
+            },
+        ],
+    );
+    let target = block(
+        TARGET,
+        &[
+            Instr::Addi {
+                rd: 2,
+                rs1: 2,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: 4 },
+        ],
+    );
+    let mut machine = Machine::new(8 * 1024 * 1024);
+    let mut executor = BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+    executor.install_batch(&[caller, target], &[[None, None], [None, None]]);
+
+    machine.hart_mut().regs.pc = CALLER;
+    let machine_ptr: *mut Machine = &mut machine;
+    let miss = unsafe {
+        executor
+            .execute_with_budget(
+                CALLER,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                false,
+            )
+            .expect("static target miss returns the caller exit")
+    };
+    assert_eq!(miss.code, ExitCode::BranchTaken);
+    assert_eq!(miss.retired, 2);
+    assert_eq!(miss.next_pc, TARGET);
+    assert_eq!(machine.hart().regs.read(1), 1);
+    assert_eq!(machine.hart().regs.read(2), 0);
+
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(2, 0);
+    machine.hart_mut().regs.pc = CALLER;
+    executor.link_dynamic_target(TARGET, TARGET);
+    let hit = unsafe {
+        executor
+            .execute_with_budget(
+                CALLER,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                true,
+            )
+            .expect("published static target executes through the guarded table")
+    };
+    assert_eq!(hit.code, ExitCode::BranchTaken);
+    assert_eq!(hit.retired, 4, "caller and static target must both retire");
+    assert_eq!(hit.next_pc, TARGET + 8);
+    assert_eq!(machine.hart().regs.read(1), 1);
+    assert_eq!(machine.hart().regs.read(2), 1);
 }
 
 #[wasm_bindgen_test]

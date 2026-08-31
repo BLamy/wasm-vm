@@ -3025,13 +3025,11 @@ impl Machine {
                         .as_ref()
                         .is_some_and(|e| e.is_compiled(next_phys));
                     if next_compiled {
-                        // A dynamic `jalr` has no static edge to link. Publish the resolved
-                        // virtual→physical target only after the first safe dispatch resolution;
-                        // the browser executor can then use its guarded imported funcref table on
-                        // later hits. Static/fence edges retain the existing slot-link path.
-                        if edge.is_none()
-                            && let Some(e) = self.executor.as_mut()
-                        {
+                        // Publish every resolved successor, not just dynamic `jalr` targets. The
+                        // browser inline executor uses the same guarded virtual→funcref table for
+                        // static edges that leave a batch, eliminating the Rust dispatch bounce on
+                        // later hits. Static slot linking still handles the native/same-batch path.
+                        if let Some(e) = self.executor.as_mut() {
                             e.link_dynamic_target(next_virtual, next_phys);
                         }
                     } else {

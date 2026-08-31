@@ -52,9 +52,9 @@ pub mod abi {
     /// returns [`super::ExitCode::Budget`] without executing an instruction.
     pub const CHAIN_BUDGET: u32 = CHAIN_RETIRED + 8;
     /// E4-T34: import-side side-effect barrier. A load that resolves to MMIO/misaligned memory,
-    /// or any store/atomic import (including a raw inline-RAM store whose commit log is pending),
-    /// sets this byte so the current block returns to Rust before a successor can be called
-    /// directly.
+    /// a host-visible store/atomic import, or a raw inline-RAM store that targets a live compiled
+    /// page sets this byte so the current block returns to Rust before a successor can be called
+    /// directly. Pending raw data-page stores are guarded separately before LR/SC/AMO operations.
     pub const CHAIN_ABORT: u32 = CHAIN_BUDGET + 8;
     /// E4-T19/E4-T34 intra-module chaining flag. It is deliberately outside [`HANDOFF_END`]: the
     /// native executor leaves it zero, while the browser inline-memory executor enables it only for

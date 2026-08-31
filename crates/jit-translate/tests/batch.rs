@@ -153,6 +153,62 @@ fn intra_batch_edge_is_direct_call_not_call_indirect() {
 }
 
 #[test]
+fn static_cross_batch_edge_uses_guarded_funcref_call_when_enabled() {
+    // These blocks deliberately have no intra-batch edge. In the browser ABI, a resolved static
+    // target is published into the shared virtual-target map and the emitted edge may then use the
+    // same guarded call_indirect path as a `jalr` target.
+    let b0 = block(0x8000_0000, &[Instr::Jal { rd: 0, imm: 8 }]);
+    let b1 = block(0x8000_0008, &[Instr::Jal { rd: 0, imm: -8 }]);
+    let mut abi = Abi::INLINE_TLB;
+    abi.direct_chain = true;
+    abi.dynamic_chain = true;
+    abi.dynamic_map_base = 0x10000;
+    abi.dynamic_map_mask = 0xff;
+
+    let bytes = translate_batch(&[b0, b1], &abi, &[[None, None], [None, None]])
+        .expect("cross-batch browser batch translates");
+    wasmparser::Validator::new_with_features(wasmparser::WasmFeatures::all())
+        .validate_all(&bytes)
+        .expect("cross-batch browser module must validate");
+
+    let funcs = functions_ops(&bytes);
+    assert_eq!(funcs.len(), 2);
+    let indirect_calls = funcs
+        .iter()
+        .flat_map(|ops| ops.iter())
+        .filter(|op| matches!(op, Operator::CallIndirect { .. }))
+        .count();
+    assert_eq!(
+        indirect_calls, 2,
+        "both static cross-batch exits use the guarded funcref call"
+    );
+}
+
+#[test]
+fn fence_i_successor_keeps_static_edge_on_host_return_path() {
+    let b0 = block(0x8000_0000, &[Instr::Jal { rd: 0, imm: 8 }]);
+    let b1 = block(0x8000_0008, &[Instr::FenceI]);
+    let mut abi = Abi::INLINE_TLB;
+    abi.direct_chain = true;
+    abi.dynamic_chain = true;
+    abi.dynamic_map_base = 0x10000;
+    abi.dynamic_map_mask = 0xff;
+
+    let bytes = translate_batch(&[b0, b1], &abi, &[[Some(1), None], [None, None]])
+        .expect("fence.i browser batch translates");
+    let funcs = functions_ops(&bytes);
+    let indirect_calls = funcs
+        .iter()
+        .flat_map(|ops| ops.iter())
+        .filter(|op| matches!(op, Operator::CallIndirect { .. }))
+        .count();
+    assert_eq!(
+        indirect_calls, 0,
+        "a fence.i successor must not be entered through a guarded chain"
+    );
+}
+
+#[test]
 fn single_block_batch_matches_translate_block_shape() {
     // A batch of one block with no intra edges: valid module, exactly one function, no calls beyond
     // the memory imports (which are not `call` ops), and no call_indirect.

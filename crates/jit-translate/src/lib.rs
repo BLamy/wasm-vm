@@ -191,6 +191,10 @@ pub struct Abi {
     pub dynamic_chain: bool,
     /// E4-T34: imported funcref table index used by guarded dynamic calls.
     pub chain_table: u32,
+    /// E4-T34: base of the browser's one-byte-per-RAM-page compiled-code hazard bitmap. A raw
+    /// inline-RAM store only aborts a chain when the physical page currently contains compiled
+    /// code; zero disables the browser-only store-chain refinement.
+    pub code_pages_base: u32,
     /// How generated loads/stores reach guest memory (E4-T11).
     pub mem: MemModel,
     /// E4-T11 inline-TLB layout (only consulted when `mem == InlineTlb`). Byte offsets into the ONE
@@ -286,6 +290,7 @@ impl Abi {
         dynamic_map_mask: 0,
         dynamic_chain: false,
         chain_table: 0,
+        code_pages_base: 0,
         mem: MemModel::SoftmmuImports,
         tlb: TlbLayout::FROZEN,
     };
@@ -309,6 +314,7 @@ impl Abi {
         dynamic_map_mask: 0,
         dynamic_chain: false,
         chain_table: 0,
+        code_pages_base: 0,
         mem: MemModel::InlineTlb,
         tlb: TlbLayout::FROZEN,
     };
@@ -468,6 +474,54 @@ fn emit_chain_prologue(f: &mut FuncBuilder, abi: &Abi, entry_local: u32, nops: u
     f.end();
 }
 
+/// Stop a direct chain at a block whose first operation is atomic when a previous compiled block
+/// left raw inline-RAM stores in the deferred host commit log. The bytes are already visible to the
+/// next load, but reservation invalidation is host-owned; entering LR/SC/AMO before the commit would
+/// let the atomic observe stale reservation state. The caller resumes at this block after the
+/// executor commits the pending records.
+fn emit_pending_store_entry_barrier(f: &mut FuncBuilder, abi: &Abi, entry_local: u32) {
+    if !(abi.direct_chain && abi.store_log_capacity > 0) {
+        return;
+    }
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.store_log_count);
+    f.i64_eqz();
+    f.i32_eqz();
+    f.if_(BlockType::Empty);
+    write_pc_local(f, abi, entry_local);
+    write_reason(f, abi, ExitCode::Budget);
+    f.i32_const(ExitCode::Budget as i32);
+    f.return_();
+    f.end();
+}
+
+/// In the middle of a block, stop before an atomic if an earlier raw store still needs its host
+/// commit. `retired_before` is the exact prefix that has already executed in this function, so the
+/// normal JIT exit accounting can resume at the atomic PC without replaying that prefix.
+fn emit_pending_store_atomic_barrier(
+    f: &mut FuncBuilder,
+    regs: &Regs,
+    abi: &Abi,
+    pc: u64,
+    retired_before: u64,
+) {
+    if !(abi.direct_chain && abi.store_log_capacity > 0) {
+        return;
+    }
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.store_log_count);
+    f.i64_eqz();
+    f.i32_eqz();
+    f.if_(BlockType::Empty);
+    writeback(f, regs, abi);
+    write_pc_const(f, regs, abi, pc);
+    write_reason(f, abi, ExitCode::Budget);
+    record_chain_retired(f, regs, abi, retired_before);
+    f.i32_const(ExitCode::Budget as i32);
+    f.return_();
+    f.end();
+}
+
 /// Translate one RV64I [`DecodedBlock`] into a complete WASM module (bytes). The module exports:
 /// * memory `"mem"` (the CpuState + register-file region — the harness fills it before the call),
 /// * function `"run"` with signature `(i32) -> i32` (the block; arg = `state_base`, ret = exit code).
@@ -548,7 +602,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     m.export("run", ExportKind::Func, run_idx);
 
     let mut f = FuncBuilder::new(&[ValType::I32]); // param 0 = state_base
-    emit_body(&mut f, block, abi, [None, None], run_ty)?;
+    emit_body(&mut f, block, abi, [None, None], [false, false], run_ty)?;
     m.add_code(f.finish());
     Ok(m.finish())
 }
@@ -567,8 +621,11 @@ const RUN_FUNC_BASE: u32 = 5;
 /// `intra[i][e]` is `Some(local)` iff block `i`'s outgoing edge `e` (0 = taken / sole / fall-through,
 /// 1 = a conditional branch's not-taken side) targets another block `local` IN THIS SAME group — in
 /// which case that edge is lowered to a DIRECT `call run{local}` (opcode `0x10`, NOT `call_indirect`
-/// `0x11`), gated by the `chain_enabled` header flag (§ABI). Cross-batch / dynamic edges are `None`
-/// and return to the dispatch loop, where E4-T18's funcref-table link-slots take over.
+/// `0x11`), gated by the `chain_enabled` header flag (§ABI). Cross-batch / dynamic edges are
+/// `None`; browser inline batches may use the guarded shared funcref table for static cross-batch
+/// edges once the core has published the resolved virtual target. `static_dynamic[e]` records
+/// whether a `None` static edge may take that guarded path; it is false for a `FENCE.I` successor,
+/// which must return to the host before any post-fence code executes.
 ///
 /// Returns `Unsupported` if ANY block contains an out-of-scope op (the caller falls back to
 /// installing the supported blocks singly), so a partly-untranslatable group never yields a
@@ -673,8 +730,12 @@ pub fn translate_batch(
                 .filter(|&l| !abi.direct_chain || !ends_with_fence_i(&blocks[l]))
                 .map(|l| RUN_FUNC_BASE + l as u32),
         ];
+        let static_dynamic = [
+            intra[i][0].is_none() || intra[i][0].is_some_and(|l| !ends_with_fence_i(&blocks[l])),
+            intra[i][1].is_none() || intra[i][1].is_some_and(|l| !ends_with_fence_i(&blocks[l])),
+        ];
         let mut f = FuncBuilder::new(&[ValType::I32]);
-        emit_body(&mut f, block, abi, resolved, run_ty)?;
+        emit_body(&mut f, block, abi, resolved, static_dynamic, run_ty)?;
         m.add_code(f.finish());
     }
     Ok(m.finish())
@@ -686,12 +747,14 @@ fn ends_with_fence_i(block: &DecodedBlock) -> bool {
 
 /// Emit the function body for `block` into `f`. `intra[e]` is the wasm function index of the
 /// same-module successor for edge `e` (0 = taken/sole/fall-through, 1 = branch not-taken), or `None`
-/// when the edge leaves the batch / is dynamic (a `jalr` target).
+/// when the edge leaves the batch / is dynamic (a `jalr` target). `static_dynamic[e]` allows a
+/// statically-known `None` edge to use the browser's guarded cross-batch table path.
 fn emit_body(
     f: &mut FuncBuilder,
     block: &DecodedBlock,
     abi: &Abi,
     intra: [Option<u32>; 2],
+    static_dynamic: [bool; 2],
     run_ty: u32,
 ) -> Result<(), TranslateError> {
     // Pre-flight: reject any out-of-scope op before emitting a single byte, so a partially-emitted
@@ -716,7 +779,6 @@ fn emit_body(
         f.local_get(STATE_BASE);
         f.i64_load(ALIGN8, abi.chain_retired);
         f.local_set(local);
-        emit_chain_prologue(f, abi, entry_local, block.ops.len() as u64);
         Some(local)
     } else {
         None
@@ -724,6 +786,12 @@ fn emit_body(
     let mut regs = Regs::new(base_pc, entry_local, chain_start);
     let mut pc = base_pc;
     let n = block.ops.len();
+    if block.ops.iter().any(|op| is_atomic(&op.instr)) {
+        emit_pending_store_entry_barrier(f, abi, entry_local);
+    }
+    if abi.direct_chain {
+        emit_chain_prologue(f, abi, entry_local, n as u64);
+    }
     let mut terminated = false;
 
     for (i, op) in block.ops.iter().enumerate() {
@@ -735,7 +803,16 @@ fn emit_body(
                 return Err(TranslateError::Malformed);
             }
             emit_terminator(
-                f, &mut regs, abi, op.instr, pc, pc_next, intra, n as u64, run_ty,
+                f,
+                &mut regs,
+                abi,
+                op.instr,
+                pc,
+                pc_next,
+                intra,
+                static_dynamic,
+                n as u64,
+                run_ty,
             );
             terminated = true;
         } else {
@@ -755,6 +832,7 @@ fn emit_body(
             ExitCode::Fallthrough,
             PcSrc::Const(end_pc),
             intra[0],
+            static_dynamic[0],
             n as u64,
             run_ty,
         );
@@ -770,12 +848,10 @@ enum PcSrc {
     Local(u32),
 }
 
-/// E4-T19: the shared exit epilogue. Writes back dirty registers, sets `exit_pc` + `exit_reason`,
-/// then EITHER returns the exit code (the deterministic native path, and every cross-batch / dynamic
-/// edge) OR — for a statically-known intra-batch successor `intra` — emits a `chain_enabled`-gated
-/// DIRECT `call` to that successor, tail-returning its exit code. The direct `call` (opcode `0x10`)
-/// is always present in the emitted bytes; `chain_enabled == 0` (native) simply takes the plain
-/// return arm, so behavior is byte-identical to E4-T18 per-block execution.
+/// E4-T19/E4-T34: the shared exit epilogue. Writes back dirty registers, sets `exit_pc` +
+/// `exit_reason`, then either returns the exit code, calls a statically-known intra-batch successor,
+/// or (for browser inline batches) uses the guarded shared funcref table for a published static
+/// cross-batch or dynamic successor. The native ABI keeps both chain paths disabled.
 #[allow(clippy::too_many_arguments)]
 fn emit_exit(
     f: &mut FuncBuilder,
@@ -784,18 +860,31 @@ fn emit_exit(
     code: ExitCode,
     pc: PcSrc,
     intra: Option<u32>,
+    allow_static_dynamic: bool,
     retired: u64,
     run_ty: u32,
 ) {
     writeback(f, regs, abi);
-    match pc {
-        PcSrc::Const(v) => write_pc_const(f, regs, abi, v),
-        PcSrc::Local(l) => write_pc_local(f, abi, l),
+    match &pc {
+        PcSrc::Const(v) => write_pc_const(f, regs, abi, *v),
+        PcSrc::Local(l) => write_pc_local(f, abi, *l),
     }
     write_reason(f, abi, code);
     record_chain_retired(f, regs, abi, retired);
     match (intra, pc) {
         (None, PcSrc::Local(target)) if abi.direct_chain && abi.dynamic_chain => {
+            emit_dynamic_exit(f, abi, target, code, run_ty);
+        }
+        (None, PcSrc::Const(_))
+            if allow_static_dynamic && abi.direct_chain && abi.dynamic_chain =>
+        {
+            // `exit_pc` already contains the exact PC-relative result. Reusing that value avoids
+            // duplicating the branch/JAL/fall-through target arithmetic and follows the same
+            // virtual-PC mapping contract as the ordinary host exit.
+            let target = f.local(ValType::I64);
+            f.local_get(STATE_BASE);
+            f.i64_load(ALIGN8, abi.exit_pc);
+            f.local_set(target);
             emit_dynamic_exit(f, abi, target, code, run_ty);
         }
         (None, _) => {
@@ -973,6 +1062,16 @@ fn supported(instr: &Instr) -> bool {
             | Ebreak
             | Fence { .. }
             | FenceI
+    )
+}
+
+/// Atomic memory operations are the only translated operations that consume reservation state
+/// owned by the host. A pending raw-store log must be committed before any of these execute.
+fn is_atomic(instr: &Instr) -> bool {
+    use Instr::*;
+    matches!(
+        instr,
+        LrW { .. } | LrD { .. } | ScW { .. } | ScD { .. } | AmoW { .. } | AmoD { .. }
     )
 }
 
@@ -1391,38 +1490,56 @@ fn emit_alu(
         Remw { rd, rs1, rs2 } => emit_div_rem32(f, regs, abi, rd, rs1, rs2, DivKind::Rem),
         Remuw { rd, rs1, rs2 } => emit_div_rem32(f, regs, abi, rd, rs1, rs2, DivKind::Remu),
         // ── A extension (E4-T14): route to the runtime imports (interpreter's own atomic code) ──
-        LrW { rd, rs1, .. } => emit_lr(f, regs, abi, rd, rs1, 4, pc, retired_before),
-        LrD { rd, rs1, .. } => emit_lr(f, regs, abi, rd, rs1, 8, pc, retired_before),
-        ScW { rd, rs1, rs2, .. } => emit_sc(f, regs, abi, rd, rs1, rs2, 4, pc, retired_before),
-        ScD { rd, rs1, rs2, .. } => emit_sc(f, regs, abi, rd, rs1, rs2, 8, pc, retired_before),
+        LrW { rd, rs1, .. } => {
+            emit_pending_store_atomic_barrier(f, regs, abi, pc, retired_before);
+            emit_lr(f, regs, abi, rd, rs1, 4, pc, retired_before)
+        }
+        LrD { rd, rs1, .. } => {
+            emit_pending_store_atomic_barrier(f, regs, abi, pc, retired_before);
+            emit_lr(f, regs, abi, rd, rs1, 8, pc, retired_before)
+        }
+        ScW { rd, rs1, rs2, .. } => {
+            emit_pending_store_atomic_barrier(f, regs, abi, pc, retired_before);
+            emit_sc(f, regs, abi, rd, rs1, rs2, 4, pc, retired_before)
+        }
+        ScD { rd, rs1, rs2, .. } => {
+            emit_pending_store_atomic_barrier(f, regs, abi, pc, retired_before);
+            emit_sc(f, regs, abi, rd, rs1, rs2, 8, pc, retired_before)
+        }
         AmoW {
             op, rd, rs1, rs2, ..
-        } => emit_amo(
-            f,
-            regs,
-            abi,
-            rd,
-            rs1,
-            rs2,
-            amo_op_code(op),
-            4,
-            pc,
-            retired_before,
-        ),
+        } => {
+            emit_pending_store_atomic_barrier(f, regs, abi, pc, retired_before);
+            emit_amo(
+                f,
+                regs,
+                abi,
+                rd,
+                rs1,
+                rs2,
+                amo_op_code(op),
+                4,
+                pc,
+                retired_before,
+            )
+        }
         AmoD {
             op, rd, rs1, rs2, ..
-        } => emit_amo(
-            f,
-            regs,
-            abi,
-            rd,
-            rs1,
-            rs2,
-            amo_op_code(op),
-            8,
-            pc,
-            retired_before,
-        ),
+        } => {
+            emit_pending_store_atomic_barrier(f, regs, abi, pc, retired_before);
+            emit_amo(
+                f,
+                regs,
+                abi,
+                rd,
+                rs1,
+                rs2,
+                amo_op_code(op),
+                8,
+                pc,
+                retired_before,
+            )
+        }
         // FENCE retires as a no-op mid-block only if it were non-terminating; but FENCE/FENCE.I are
         // terminators handled elsewhere. Anything else was rejected by `supported`.
         _ => unreachable!("emit_alu called on a non-RV64I / terminator op"),
@@ -1802,10 +1919,24 @@ fn emit_store_tlb(
         f.i64_const(1);
         f.i64_add();
         f.i64_store(ALIGN8, abi.store_log_count);
-        if abi.direct_chain {
+        if abi.direct_chain && abi.code_pages_base != 0 {
+            // The raw bytes are visible immediately, but page invalidation is host-owned. Keep the
+            // chain fused for ordinary data pages; a one-byte bitmap marks any physical RAM page
+            // that currently has live compiled code and forces the host commit before that code can
+            // be entered again.
+            f.local_get(host_addr);
+            f.i32_const(tlb.ram_base as i32);
+            f.i32_sub();
+            f.i32_const(12);
+            f.i32_shr_u();
+            f.i32_const(abi.code_pages_base as i32);
+            f.i32_add();
+            f.i32_load8_u(0, 0);
+            f.if_(BlockType::Empty);
             f.local_get(STATE_BASE);
             f.i32_const(1);
             f.i32_store8(0, abi.chain_abort);
+            f.end();
         }
         f.else_();
         // A full log takes the exact slow path, which also applies reservation invalidation and
@@ -2147,6 +2278,7 @@ fn emit_terminator(
     pc: u64,
     pc_next: u64,
     intra: [Option<u32>; 2],
+    static_dynamic: [bool; 2],
     retired: u64,
     run_ty: u32,
 ) {
@@ -2163,6 +2295,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Eq,
             intra,
+            static_dynamic,
             retired,
             run_ty,
         ),
@@ -2177,6 +2310,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Ne,
             intra,
+            static_dynamic,
             retired,
             run_ty,
         ),
@@ -2191,6 +2325,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Lt,
             intra,
+            static_dynamic,
             retired,
             run_ty,
         ),
@@ -2205,6 +2340,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Ge,
             intra,
+            static_dynamic,
             retired,
             run_ty,
         ),
@@ -2219,6 +2355,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Ltu,
             intra,
+            static_dynamic,
             retired,
             run_ty,
         ),
@@ -2233,6 +2370,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Geu,
             intra,
+            static_dynamic,
             retired,
             run_ty,
         ),
@@ -2249,6 +2387,7 @@ fn emit_terminator(
                 ExitCode::BranchTaken,
                 PcSrc::Const(pc.wrapping_add(imm as u64)),
                 intra[0],
+                static_dynamic[0],
                 retired,
                 run_ty,
             );
@@ -2280,6 +2419,7 @@ fn emit_terminator(
                 ExitCode::BranchTaken,
                 PcSrc::Local(scratch),
                 None,
+                false,
                 retired,
                 run_ty,
             );
@@ -2295,6 +2435,7 @@ fn emit_terminator(
                 ExitCode::Fallthrough,
                 PcSrc::Const(pc_next),
                 if abi.direct_chain { None } else { intra[0] },
+                false,
                 retired,
                 run_ty,
             );
@@ -2325,6 +2466,7 @@ fn emit_branch(
     pc_next: u64,
     cmp: Cmp,
     intra: [Option<u32>; 2],
+    static_dynamic: [bool; 2],
     retired: u64,
     run_ty: u32,
 ) {
@@ -2357,6 +2499,7 @@ fn emit_branch(
             ExitCode::BranchTaken,
             PcSrc::Const(pc.wrapping_add(imm as u64)),
             intra[0],
+            static_dynamic[0],
             retired,
             run_ty,
         );
@@ -2371,6 +2514,7 @@ fn emit_branch(
         ExitCode::Fallthrough,
         PcSrc::Const(pc_next),
         intra[1],
+        static_dynamic[1],
         retired,
         run_ty,
     );

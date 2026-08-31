@@ -171,6 +171,49 @@ impl InlineTlbCache {
     }
 }
 
+/// Browser-only one-byte-per-guest-RAM-page hazard map. Inline stores can remain in a compiled
+/// chain while their deferred host commit is pending unless the store targets a page containing
+/// live compiled code. Keeping this bitmap in the outer wasm memory lets generated code make that
+/// decision without another JS/Rust boundary crossing.
+struct CompiledPageBitmap {
+    bytes: Box<[u8]>,
+    base: u32,
+    dram_page: u64,
+}
+
+impl CompiledPageBitmap {
+    fn new(ram_len: usize, dram_base: u64) -> Result<Self, &'static str> {
+        let page_count = ram_len
+            .checked_add(4095)
+            .ok_or("compiled-page bitmap size overflowed")?
+            / 4096;
+        let mut bytes = vec![0u8; page_count].into_boxed_slice();
+        let base = u32::try_from(bytes.as_mut_ptr() as usize)
+            .map_err(|_| "compiled-page bitmap is outside wasm32")?;
+        Ok(Self {
+            bytes,
+            base,
+            dram_page: dram_base >> 12,
+        })
+    }
+
+    fn base(&self) -> u32 {
+        self.base
+    }
+
+    fn set(&mut self, page_frame: u64, live: bool) {
+        let Some(index) = page_frame
+            .checked_sub(self.dram_page)
+            .and_then(|index| usize::try_from(index).ok())
+        else {
+            return;
+        };
+        if let Some(byte) = self.bytes.get_mut(index) {
+            *byte = live as u8;
+        }
+    }
+}
+
 /// Browser-only direct-mapped cache for virtual `jalr` targets. Each 16-byte slot stores
 /// `{virtual_pc, table_index_plus_one}` in the outer wasm memory. The generated module compares
 /// both values before `call_indirect`; Rust owns publication and clears the slot before freeing or
@@ -526,6 +569,7 @@ pub struct BrowserExecutor {
     abi: Abi,
     inline_tlb: Option<InlineTlbCache>,
     dynamic_links: Option<DynamicLinkCache>,
+    compiled_page_bitmap: Option<CompiledPageBitmap>,
     funcref_table: Option<WebAssembly::Table>,
     blocks: HashMap<u64, Compiled>,
     /// Reference counts of physical pages containing live compiled blocks. A successful ordinary
@@ -571,7 +615,7 @@ impl Default for BrowserExecutor {
 impl BrowserExecutor {
     /// Build the isolated SoftMMU executor used by the parity harness and as a safe fallback.
     pub fn new() -> Self {
-        Self::new_with_inline_tlb(None, None)
+        Self::new_with_inline_tlb(None, None, None)
     }
 
     /// Build the production executor. Compiled modules import the outer wasm memory so aligned
@@ -583,7 +627,9 @@ impl BrowserExecutor {
             machine.ram_base(),
         )?;
         let dynamic_links = DynamicLinkCache::new()?;
-        let mut executor = Self::new_with_inline_tlb(Some(cache), Some(dynamic_links));
+        let compiled_page_bitmap = CompiledPageBitmap::new(machine.ram_len(), machine.ram_base())?;
+        let mut executor =
+            Self::new_with_inline_tlb(Some(cache), Some(dynamic_links), Some(compiled_page_bitmap));
         // Production Node startup has a wider working set than the small native/browser parity
         // harness. Keep the table/metadata caps unchanged, but allow a bounded wider code working
         // set so the documented 32 MiB default does not evict otherwise-hot short blocks mid-boot.
@@ -595,6 +641,7 @@ impl BrowserExecutor {
     fn new_with_inline_tlb(
         inline_tlb: Option<InlineTlbCache>,
         dynamic_links: Option<DynamicLinkCache>,
+        compiled_page_bitmap: Option<CompiledPageBitmap>,
     ) -> Self {
         let funcref_table = dynamic_links.as_ref().map(|_| {
             let descriptor = Object::new();
@@ -624,6 +671,9 @@ impl BrowserExecutor {
                 dynamic_map_mask: links.mask(),
                 dynamic_chain: true,
                 chain_table: 0,
+                code_pages_base: compiled_page_bitmap
+                    .as_ref()
+                    .map_or(0, CompiledPageBitmap::base),
                 ..Abi::FROZEN
             },
             _ => Abi::FROZEN,
@@ -684,6 +734,7 @@ impl BrowserExecutor {
             abi,
             inline_tlb,
             dynamic_links,
+            compiled_page_bitmap,
             funcref_table,
             blocks: HashMap::new(),
             compiled_pages: HashMap::new(),
@@ -890,12 +941,17 @@ impl BrowserExecutor {
         let Some(c) = self.blocks.remove(&phys) else {
             return;
         };
+        let mut page_became_empty = false;
         if let Some(count) = self.compiled_pages.get_mut(&c.page_frame) {
             if *count <= 1 {
                 self.compiled_pages.remove(&c.page_frame);
+                page_became_empty = true;
             } else {
                 *count -= 1;
             }
+        }
+        if page_became_empty && let Some(bitmap) = self.compiled_page_bitmap.as_mut() {
+            bitmap.set(c.page_frame, false);
         }
         let di = c.table_index;
         self.clear_table_entry(di);
@@ -1174,7 +1230,11 @@ impl CompiledBlockExecutor for BrowserExecutor {
                     batch_id,
                 },
             );
+            let page_was_empty = self.compiled_pages.get(&b.page_frame).is_none();
             *self.compiled_pages.entry(b.page_frame).or_default() += 1;
+            if page_was_empty && let Some(bitmap) = self.compiled_page_bitmap.as_mut() {
+                bitmap.set(b.page_frame, true);
+            }
             members.push(b.phys_start);
         }
         if members.is_empty() {
