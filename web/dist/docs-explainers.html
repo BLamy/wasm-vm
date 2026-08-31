@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Explainers and media · wasm-vm</title>
+  <meta name="description" content="Embed VizEngine and Docstream explainers alongside wasm-vm documentation." />
+  <link rel="stylesheet" href="./docs.css" />
+</head>
+<body>
+  <header class="docs-header">
+    <div class="docs-header-inner">
+      <a class="docs-brand" href="./docs.html">wasm-vm <span>documentation</span></a>
+      <nav class="docs-top-nav" aria-label="Documentation navigation">
+        <a href="./docs.html">Overview</a>
+        <a href="./docs-embedding.html">Embed</a>
+        <a href="./docs-guest.html">Guest</a>
+        <a href="./docs-containers.html">Containers</a>
+        <a href="./docs-verification.html">Verification</a>
+        <a href="./docs-explainers.html" aria-current="page">Explainers</a>
+        <a class="launch" href="./app.html">Launch demo →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="docs-shell">
+    <div class="breadcrumbs"><a href="./docs.html">Docs</a> / Explainers</div>
+    <div class="doc-layout">
+      <aside class="doc-rail">
+        <p class="rail-title">On this site</p>
+        <ul class="rail-links">
+          <li><a href="./docs.html">Overview</a></li>
+          <li><a href="./docs-embedding.html">Embed</a></li>
+          <li><a href="./docs-guest.html">Guest</a></li>
+          <li><a href="./docs-containers.html">Containers</a></li>
+          <li><a href="./docs-verification.html">Verification</a></li>
+          <li><a href="./docs-explainers.html" aria-current="page">Explainers</a></li>
+        </ul>
+        <div class="rail-source">
+          Source:
+          <a href="https://github.com/BLamy/wasm-vm/blob/main/docs/embedding-guide.md" target="_blank" rel="noopener">embedding guide</a>
+        </div>
+      </aside>
+
+      <article class="doc-content">
+        <span class="eyebrow">Narrated, portable, inspectable</span>
+        <h1>Explain the machine with the right layer.</h1>
+        <p class="lede">
+          VizEngine owns authored SVG timelines and synchronized narration. Docstream owns
+          GitBook-style markdown rendering and embeds. The two hosted frames below are live Orly
+          bundles with direct links, so a missing iframe never hides the source.
+        </p>
+        <div class="page-meta">
+          <span class="badge live">two hosted explainers</span>
+          <span class="badge separate">presentation packages are separate</span>
+          <span class="badge caution">fallback links are intentional</span>
+        </div>
+
+        <h2>Published presentation packages</h2>
+        <p>
+          The current registry snapshot checked on 2026-08-30 reports these versions. The
+          packages are not part of the wasm-vm npm namespace.
+        </p>
+        <table class="data-table">
+          <thead><tr><th>Package</th><th>Version</th><th>Documented role</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://www.npmjs.com/package/@brett_lamy/viz-engine" target="_blank" rel="noopener"><code>@brett_lamy/viz-engine</code></a></td><td class="version">0.2.1</td><td>Declarative, audio-synchronized SVG timeline engine. README-backed surfaces include <code>Camera</code>, <code>Player</code>, <code>Timeline</code>, <code>VizPlayer</code>, and <code>VideoEmbed</code>.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@brett_lamy/docstream" target="_blank" rel="noopener"><code>@brett_lamy/docstream</code></a></td><td class="version">0.3.7</td><td>GitBook-aware markdown renderer and AI stream renderer. README-backed surfaces include <code>GitbookStreamdown</code>, parsing/serialization, source preview, Vite source clients, and <code>VizEmbed</code>.</td></tr>
+            <tr><td><a href="https://www.npmjs.com/package/@brett_lamy/docstream-editor" target="_blank" rel="noopener"><code>@brett_lamy/docstream-editor</code></a></td><td class="version">0.3.6</td><td>TipTap editor for Docstream GitBook-style markdown, including <code>GitbookEditor</code>, source editing, and AST conversion helpers.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>npm install @brett_lamy/viz-engine@0.2.1 @brett_lamy/docstream@0.3.7 @brett_lamy/docstream-editor@0.3.6</code></pre>
+
+        <h2>Author a timeline scene</h2>
+        <p>
+          A VizEngine scene is a timeline plus a renderer. Keep the scene independent from the
+          guest clock; the player is a presentation surface, not a second emulator scheduler.
+        </p>
+        <pre><code>import { Timeline, VizPlayer } from "@brett_lamy/viz-engine";
+import "@brett_lamy/viz-engine/styles.css";
+
+const timeline = new Timeline();
+const opacity = timeline.channel("opacity", 0);
+timeline.tween(opacity, 1, { at: 0, dur: 0.5 });
+
+export function BootExplainer() {
+  return (
+    &lt;VizPlayer
+      scene={{
+        timeline,
+        render: (state) =&gt; (
+          &lt;circle cx="640" cy="360" r="80" opacity={state.get(opacity)} /&gt;
+        ),
+      }}
+      loop
+    /&gt;
+  );
+}</code></pre>
+
+        <h2>Render portable markdown</h2>
+        <p>
+          Docstream's GitBook syntax keeps a document portable. Use its current renderer/editor
+          APIs in a React application, and use the <code>viz</code> subpath for the documented
+          visualization embed boundary.
+        </p>
+        <pre><code>import { GitbookStreamdown } from "@brett_lamy/docstream";
+import { VizEmbed } from "@brett_lamy/docstream/viz";
+import { GitbookEditor } from "@brett_lamy/docstream-editor";
+import "@brett_lamy/docstream/styles.css";
+import "@brett_lamy/docstream-editor/styles.css";
+
+const markdown = [
+  "# Boot trace",
+  "",
+  "{% embed url=\"https://orly.brett-lamy.workers.dev/?bundle=wasm-vm-internals\" /%}",
+].join("\n");
+
+export function ReadOnlyDoc() {
+  return &lt;GitbookStreamdown markdown={markdown} /&gt;;
+}</code></pre>
+
+        <h2>Live explainer: Linux in a Tab</h2>
+        <p>
+          This frame is hosted by Orly and is separate from the wasm-vm runtime. If embedding is
+          blocked by a browser policy, open the bundle directly.
+        </p>
+        <iframe class="explainer-frame" title="Linux in a Tab" loading="lazy" src="https://orly.brett-lamy.workers.dev/?bundle=wasm-vm-internals" referrerpolicy="no-referrer"></iframe>
+        <p class="frame-fallback"><a href="https://orly.brett-lamy.workers.dev/?bundle=wasm-vm-internals" target="_blank" rel="noopener">Open Linux in a Tab directly →</a></p>
+
+        <h2>Live explainer: The wasm-vm Proof Loop</h2>
+        <p>
+          This frame explains the worker/critic/evidence loop used by the repository. It is a
+          hosted presentation, not a verification artifact; the evidence records remain in the
+          repository.
+        </p>
+        <iframe class="explainer-frame" title="The wasm-vm Proof Loop" loading="lazy" src="https://orly.brett-lamy.workers.dev/?bundle=wasm-vm-loop" referrerpolicy="no-referrer"></iframe>
+        <p class="frame-fallback"><a href="https://orly.brett-lamy.workers.dev/?bundle=wasm-vm-loop" target="_blank" rel="noopener">Open the Proof Loop directly →</a></p>
+
+        <div class="note warn">
+          <p><strong>Audio and provenance.</strong> The Orly repository is MIT-licensed, but the
+          inspected generated MP3 metadata did not declare per-file attribution. This project
+          embeds the hosted explainers and does not copy or redistribute those MP3 files as local
+          assets.</p>
+        </div>
+
+        <h2>Source and ownership</h2>
+        <ul class="source-list">
+          <li><a href="https://github.com/BLamy/viz-engine" target="_blank" rel="noopener"><code>BLamy/viz-engine</code></a> — timeline and media package source.</li>
+          <li><a href="https://github.com/BLamy/docstream" target="_blank" rel="noopener"><code>BLamy/docstream</code></a> — markdown renderer and embed source.</li>
+          <li><a href="https://github.com/BLamy/orly/tree/7a00a5dce8a2d8b5d55a36ab6324ff03e6b5cbf/public/generated" target="_blank" rel="noopener">Orly generated bundles at the pinned commit</a> — hosted explainer provenance.</li>
+          <li><a href="https://github.com/BLamy/wasm-vm/blob/main/docs/embedding-guide.md" target="_blank" rel="noopener"><code>docs/embedding-guide.md</code></a> — source-side integration notes.</li>
+        </ul>
+      </article>
+    </div>
+  </main>
+
+  <footer class="docs-footer">
+    <div class="docs-footer-inner">
+      <span><strong>wasm-vm</strong> · explainer boundary</span>
+      <nav aria-label="Footer navigation">
+        <a href="./docs.html">Docs overview</a>
+        <a href="./docs-embedding.html">Embed</a>
+        <a href="./app.html">Demo</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

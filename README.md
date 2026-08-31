@@ -29,10 +29,10 @@ and self-hosting.
   evidence (rr traces + guest instruction traces), and the verifier charter.
 - **`tasks/`** — the full work breakdown: one folder per epic, one file per task,
   `tasks/QUEUE.md` as the global priority queue.
-- **`docs/embedding-guide.md`** — use `VizPlayer`, `VideoEmbed`, and Docstream's
-  built-in `ReplayPreview` for explainers, videos, and public Loop QA replays.
-- **`web/docs.html#packages`** — published `@agent-wasm/*` package map, the guest/host
-  wasm-vm boundary, and hosted VizEngine explainers with fallback text.
+- **`docs/embedding-guide.md`** — source-side notes for the browser loader and the separate
+  presentation packages.
+- **`web/docs.html`** — documentation hub. Focused pages cover embedding, guest boot/storage,
+  containers, verification, and explainers; there is no separate packages page.
 - **`docs/product/proofmesh-whitepaper.md`** — product proposal for passkey-owned encrypted
   volumes, verified block delivery, and the builder/critic work market.
 - **`docs/product/proofmesh-api.md`** — future-facing API contract; implementation should target

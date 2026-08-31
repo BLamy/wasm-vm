@@ -33,13 +33,14 @@ resize, and full ANSI apps arrive with the real UART in Epic 2.
 
 ## Docs and media embeds
 
-The in-app **Docs** tab loads [`docs.html`](./docs.html), which is the authoritative
-package and embedding guide. Its `#packages` section maps the published `@agent-wasm/*`
-packages to the guest-side file agent and the vendored wasm-vm host module; its `#media`
-section embeds hosted VizEngine explainers with a readable fallback. The source guide is
-[`docs/embedding-guide.md`](../docs/embedding-guide.md). The former
-[`agent-packages.html`](./agent-packages.html) URL is retained as a redirect to
-`docs.html#packages`.
+The in-app **Docs** tab loads [`docs.html`](./docs.html), a short documentation hub with
+separate pages for the host boundary, guest boot/storage, containers, verification, and
+explainers. The published `@agent-wasm/*__ libraries are documented on
+[`docs-embedding.html`](./docs-embedding.html) as a separate host-side project; they are not
+the wasm-vm guest. Hosted VizEngine/Orly frames and their fallback links live on
+[`docs-explainers.html`](./docs-explainers.html). The source-side guide is
+[`docs/embedding-guide.md`](../docs/embedding-guide.md). There is no standalone packages
+route.
 
 The public product pages are static and dependency-free:
 
@@ -52,8 +53,9 @@ The public product pages are static and dependency-free:
 - [`roadmap.html`](./roadmap.html) — the public-facing ProofMesh delivery roadmap.
 
 Use `VizPlayer` for authored timeline scenes, `VideoEmbed` for direct or hosted
-video, and Docstream's built-in `ReplayPreview` for public Loop QA task,
-exploration, journey, or test-run URLs. The markdown remains portable:
+video, and Docstream's documented GitBook-style embed boundary for portable markdown. The
+renderer/editor package APIs and hosted examples are maintained on the focused explainer page:
+[`docs-explainers.html`](./docs-explainers.html).
 
 ```md
 {% embed url="https://loop-qa.replay.io/projects/project-id/journeys/journey-id" /%}

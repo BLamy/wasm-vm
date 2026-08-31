@@ -91,7 +91,7 @@ if [ -e "$DIST/landing.html" ] && [ -e "$DIST/index.html" ]; then
       "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
   # Other pages that link to the app or marketing landing by their dev names must point at the
   # deploy-time locations too. Keep the source tree's simple relative links for local serving.
-  for f in docs.html products.html work-market.html security.html roadmap.html; do
+  for f in docs.html docs-embedding.html docs-guest.html docs-containers.html docs-verification.html docs-explainers.html products.html work-market.html security.html roadmap.html; do
     [ -e "$DIST/$f" ] && sed -e 's#\./index\.html#./app.html#g' -e 's#\./landing\.html#./#g' "$DIST/$f" > "$DIST/$f.tmp" && mv "$DIST/$f.tmp" "$DIST/$f"
   done
   echo "[web-dist] deploy root: / = landing, /app.html = app"
