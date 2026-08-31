@@ -124,3 +124,31 @@ for a future fresh worker slice.
   headed Playwright manual run passed the Node oracle. The repository Playwright test runner was
   separately attempted against the built page but hung before launching Chromium and was stopped;
   it is not counted as evidence. No rr host trace is claimed on macOS.
+
+### 2026-08-31 — worker checkpoint — guarded cross-batch and safe inline-store pass
+
+- Implementation commit: `2b14a3c5d5d32a99d6bbaf2dc5de3ec1b4b2ee42`. This is a bounded worker
+  checkpoint, not a verification claim; E4-T34 remains `in-progress` because the required 3x
+  restored-Node speedup and exact-head adversarial evidence are still outstanding.
+- The browser inline-TLB ABI now publishes static cross-batch successors through the guarded
+  virtual-PC funcref map after resolution, while retaining the host-return path for `fence.i`
+  successors. Raw aligned RAM stores stay inside a chain for ordinary data pages through a bounded
+  host commit log. A one-byte-per-RAM-page compiled-code bitmap raises the existing chain barrier
+  before a raw store can re-enter stale code; pending raw stores also stop before LR/SC/AMO imports
+  so host-owned reservation invalidation is committed before an atomic observes it. The focused
+  translator and browser parity tests exercise each path.
+- Exact-head gates completed: `cargo fmt --all -- --check`; `cargo check -p wasm-vm-wasm
+  --target wasm32-unknown-unknown`; `cargo test -p wasm-vm-core --lib` (173 passed); all-target
+  translator tests (batch, inline-TLB, and differential suites green); all-target runtime tests
+  (including chaining, invalidation, lockstep, precise-trap, timekeeping, and JIT matrix suites
+  green); `wasm-pack test --node crates/wasm --test jit_browser_parity` (23 passed, 1 ignored);
+  targeted strict Clippy for `wasm-vm-core`, `wasm-vm-jit-translate`, and `wasm-vm-jit-runtime`;
+  and `make web-build`.
+- The full `make ci` gauntlet remains environment-blocked at the pre-existing macOS
+  `wasm-vm-wvseccomp` libc API errors. A full-workspace all-features Clippy fallback excluding
+  that crate also stops on pre-existing `live_blocks` and `fetch_phys` dead-code diagnostics.
+  These unrelated platform/configuration failures were not changed in this slice.
+- The repository Playwright runner was retried with a unique diagnostic environment and again
+  blocked in Node before starting its web server; the exact restored-Node screen therefore remains
+  characterization only. The prior same-head screen measured 1.315x completion speedup, not the
+  required 3x. No fresh six-slot ledger, deployed claim, or rr host trace is asserted here.
