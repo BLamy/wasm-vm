@@ -73,28 +73,27 @@
 
         <h2>Author a timeline scene</h2>
         <p>
-          A VizEngine scene is a timeline plus a renderer. Keep the scene independent from the
-          guest clock; the player is a presentation surface, not a second emulator scheduler.
+          VizEngine provides the timeline/player primitives and the React-facing
+          <code>VizPlayer</code> and <code>VideoEmbed</code> surfaces. Keep an explainer's
+          presentation clock independent from the guest clock; the player is a presentation
+          surface, not a second emulator scheduler.
         </p>
-        <pre><code>import { Timeline, VizPlayer } from "@brett_lamy/viz-engine";
+        <pre><code>import {
+  Camera,
+  Player,
+  Timeline,
+  VideoEmbed,
+  VizPlayer,
+} from "@brett_lamy/viz-engine";
 import "@brett_lamy/viz-engine/styles.css";
 
-const timeline = new Timeline();
-const opacity = timeline.channel("opacity", 0);
-timeline.tween(opacity, 1, { at: 0, dur: 0.5 });
+// Build a scene with the current VizEngine scene contract, then render it:
+export function BootExplainer({ scene }) {
+  return &lt;VizPlayer scene={scene} loop /&gt;;
+}
 
-export function BootExplainer() {
-  return (
-    &lt;VizPlayer
-      scene={{
-        timeline,
-        render: (state) =&gt; (
-          &lt;circle cx="640" cy="360" r="80" opacity={state.get(opacity)} /&gt;
-        ),
-      }}
-      loop
-    /&gt;
-  );
+export function BootRecording({ src }) {
+  return &lt;VideoEmbed src={src} title="wasm-vm boot" /&gt;;
 }</code></pre>
 
         <h2>Render portable markdown</h2>
