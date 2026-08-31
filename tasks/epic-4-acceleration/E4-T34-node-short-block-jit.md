@@ -201,3 +201,28 @@ for a future fresh worker slice.
   screen remains 1.315x; the later local smoke was 39,877 ms under renderer contention and was not a
   matched ledger. E4-T34 remains `in-progress`; the <=20-second / 3x result, six-slot ledger,
   adversarial proof, and rr/rr-soft host trace remain outstanding.
+
+### 2026-08-31 — worker checkpoint — retain live register handoff seam
+
+- Implementation commit: `7323fbb`. The browser direct-chain ABI now keeps the integer register
+  image, chain budget/depth, and enabled flag in per-module globals across same-module calls. Root
+  and cross-module entries reload only the statically required source/destination registers;
+  host-boundary writeback uses the generated dirty mask, and the Rust handoff skips unchanged
+  register marshaling using a non-architectural mutation stamp. The legacy ABI remains unchanged.
+  Added deterministic core tests for masked commit/x0 preservation and equality ignoring the stamp,
+  plus direct-chain ledger assertions in the browser parity suite. `web/dist` was regenerated.
+- Exact-head gates: `cargo fmt --all -- --check`; strict Clippy for native JIT crates and the
+  wasm target; `cargo test -p wasm-vm-core --lib` (175 passed); translator all-target tests (10
+  passed, 2 ignored) and inline-TLB tests (7 passed); runtime all-target tests (20 JIT/config,
+  3 lockstep, 5 precise-trap, 3 timekeeping, plus the other non-ignored tests passed);
+  `wasm-pack test --node crates/wasm --test jit_browser_parity` (25 passed, 0 failed, 1 ignored);
+  and `make web-dist`.
+- Evidence: `evidence/e4-t34/register-handoff-screen-2026-08-31.json`. A fresh restored Node
+  worker screen at threshold 2048 emitted exact `node -e 'console.log(3)'` output with no browser
+  console errors in 12,686 ms; the matched main-thread fast-interpreter screen completed in
+  18,542 ms, a 1.461x speedup. The diagnostic worker screen recorded positive deltas of 3,662,853
+  executed blocks and 128,040,640 JIT-retired instructions, 23,993,000 generated direct-chain
+  entries, zero retranslations, and zero cache evictions. This proves the handoff seam and safety
+  counters, but does not meet the required 3x speedup or <=5-second stretch target: E4-T34 remains
+  `in-progress`. No rr host trace is claimed on macOS, and no full `make ci` claim is made because
+  the known macOS `wasm-vm-wvseccomp` libc API errors still block that workspace gate.
