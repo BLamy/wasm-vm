@@ -41,7 +41,7 @@ use alloc::vec::Vec;
 use core::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 
-use jit_translate::{Abi, MemModel, TlbLayout, translate_batch};
+use jit_translate::{Abi, MemModel, TlbLayout, is_translatable, translate_batch};
 use js_sys::{Function, Object, Reflect, Uint8Array, WebAssembly};
 use wasm_bindgen::prelude::*;
 use wasm_vm_core::Machine;
@@ -1137,15 +1137,20 @@ impl CompiledBlockExecutor for BrowserExecutor {
         let keep: Vec<usize> = (0..blocks.len())
             .filter(|&i| !self.blocks.contains_key(&blocks[i].phys_start))
             .collect();
-        if keep.is_empty() {
+        let translatable: Vec<usize> = keep
+            .into_iter()
+            .filter(|&i| is_translatable(&blocks[i]))
+            .collect();
+        if translatable.is_empty() {
             return;
         }
         let mut new_local = alloc::vec![None; blocks.len()];
-        for (nl, &oi) in keep.iter().enumerate() {
+        for (nl, &oi) in translatable.iter().enumerate() {
             new_local[oi] = Some(nl);
         }
-        let kept_blocks: Vec<DecodedBlock> = keep.iter().map(|&i| blocks[i].clone()).collect();
-        let kept_intra: Vec<[Option<usize>; 2]> = keep
+        let kept_blocks: Vec<DecodedBlock> =
+            translatable.iter().map(|&i| blocks[i].clone()).collect();
+        let kept_intra: Vec<[Option<usize>; 2]> = translatable
             .iter()
             .map(|&i| {
                 let mut e = [None, None];
@@ -1230,7 +1235,7 @@ impl CompiledBlockExecutor for BrowserExecutor {
                     batch_id,
                 },
             );
-            let page_was_empty = self.compiled_pages.get(&b.page_frame).is_none();
+            let page_was_empty = !self.compiled_pages.contains_key(&b.page_frame);
             *self.compiled_pages.entry(b.page_frame).or_default() += 1;
             if page_was_empty && let Some(bitmap) = self.compiled_page_bitmap.as_mut() {
                 bitmap.set(b.page_frame, true);

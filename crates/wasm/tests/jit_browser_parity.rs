@@ -794,6 +794,44 @@ fn browser_inline_direct_chain_reports_bounded_retirement() {
 }
 
 #[wasm_bindgen_test]
+fn browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks() {
+    let first = block(
+        DRAM_BASE,
+        &[Instr::Addi {
+            rd: 5,
+            rs1: 5,
+            imm: 1,
+        }],
+    );
+    let unsupported = block(
+        DRAM_BASE + 0x100,
+        &[Instr::Csrrw {
+            rd: 1,
+            rs1: 2,
+            csr: 0x300,
+        }],
+    );
+    let last = block(
+        DRAM_BASE + 0x200,
+        &[Instr::Addi {
+            rd: 6,
+            rs1: 6,
+            imm: 1,
+        }],
+    );
+    let mut executor = BrowserExecutor::new();
+    executor.install_batch(
+        &[first, unsupported.clone(), last],
+        &[[None, None], [None, None], [None, None]],
+    );
+
+    assert_eq!(executor.compiled_count(), 2);
+    assert_eq!(executor.module_count(), 1);
+    assert_eq!(executor.jit_cache_stats().installs, 2);
+    assert!(!executor.is_compiled(unsupported.phys_start));
+}
+
+#[wasm_bindgen_test]
 fn browser_inline_static_cross_batch_link_executes_and_misses_safely() {
     // A static JAL target that is deliberately supplied as `None` in the batch graph exercises
     // E4-T34's guarded cross-batch path. The first call is a host-return miss; publishing the

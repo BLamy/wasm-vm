@@ -638,10 +638,8 @@ pub fn translate_batch(
     debug_assert_eq!(blocks.len(), intra.len());
     // Pre-flight the WHOLE group first: one out-of-scope op fails the batch cleanly.
     for block in blocks {
-        for op in &block.ops {
-            if !supported(&op.instr) {
-                return Err(TranslateError::Unsupported);
-            }
+        if !is_translatable(block) {
+            return Err(TranslateError::Unsupported);
         }
     }
     let mut m = ModuleBuilder::new();
@@ -741,6 +739,16 @@ pub fn translate_batch(
     Ok(m.finish())
 }
 
+/// Whether every operation in `block` is in the browser translator's supported set.
+///
+/// The browser batch installer uses this probe before assembling a module. Keeping an
+/// unsupported nomination out of an otherwise-valid group preserves the group's fixed-cost
+/// amortization; the unsupported block remains on the interpreter path and is never published as
+/// a compiled target.
+pub fn is_translatable(block: &DecodedBlock) -> bool {
+    block.ops.iter().all(|op| supported(&op.instr))
+}
+
 fn ends_with_fence_i(block: &DecodedBlock) -> bool {
     matches!(block.ops.last().map(|op| op.instr), Some(Instr::FenceI))
 }
@@ -759,10 +767,8 @@ fn emit_body(
 ) -> Result<(), TranslateError> {
     // Pre-flight: reject any out-of-scope op before emitting a single byte, so a partially-emitted
     // module can never escape (the caller gets a clean Unsupported and keeps interpreting).
-    for op in &block.ops {
-        if !supported(&op.instr) {
-            return Err(TranslateError::Unsupported);
-        }
+    if !is_translatable(block) {
+        return Err(TranslateError::Unsupported);
     }
 
     let base_pc = block.phys_start;
