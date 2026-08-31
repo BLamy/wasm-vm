@@ -3,9 +3,9 @@ export function throwJitMemFault() {
     throw null;
 }
 
-export function invokeJitBlock(run, stateBase) {
+export function invokeJitBlock(run, stateBase, directChain) {
     try {
-        return run(stateBase);
+        return directChain ? run(stateBase, 1) : run(stateBase);
     } catch {
         return NaN;
     }

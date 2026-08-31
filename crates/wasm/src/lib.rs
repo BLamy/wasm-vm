@@ -515,12 +515,22 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
                 "retiredViaJit",
                 &JsValue::from_f64(e.retired_via_jit() as f64),
             );
+            set(
+                "directChainEntries",
+                &JsValue::from_f64(e.direct_chain_entries() as f64),
+            );
+            set(
+                "directChainLinks",
+                &JsValue::from_f64(e.direct_chain_links() as f64),
+            );
         }
         None => {
             set("hasExecutor", &JsValue::from_bool(false));
             set("compiledBlocks", &JsValue::from_f64(0.0));
             set("executedBlocks", &JsValue::from_f64(0.0));
             set("retiredViaJit", &JsValue::from_f64(0.0));
+            set("directChainEntries", &JsValue::from_f64(0.0));
+            set("directChainLinks", &JsValue::from_f64(0.0));
         }
     }
     // Keep the original proof counters above stable while exposing the cumulative mechanics that

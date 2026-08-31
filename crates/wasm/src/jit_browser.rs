@@ -60,6 +60,11 @@ const INLINE_TLB_ENTRIES: u32 = 256;
 const INLINE_TLB_ARRAY_BYTES: u32 = INLINE_TLB_ENTRIES * TlbLayout::SLOT;
 const INLINE_TLB_WORDS: usize = (INLINE_TLB_ARRAY_BYTES as usize * 3) / core::mem::size_of::<u64>();
 const DIRECT_CHAIN_FUEL: u64 = 128;
+// Production chains still consume at most DIRECT_CHAIN_FUEL guest instructions. A wider entry
+// budget lets short one-op blocks use that existing fuel instead of returning at the historical
+// 32-function stack bound; the fuel, interrupt sampling, and host-side barrier remain the hard
+// safety limits.
+const PRODUCTION_CHAIN_DEPTH_BUDGET: u32 = 128;
 const DYNAMIC_LINK_ENTRIES: usize = 4096;
 const DYNAMIC_LINK_WORDS: usize = DYNAMIC_LINK_ENTRIES * 2;
 
@@ -326,9 +331,9 @@ export function throwJitMemFault() {
     throw null;
 }
 
-export function invokeJitBlock(run, stateBase) {
+export function invokeJitBlock(run, stateBase, directChain) {
     try {
-        return run(stateBase);
+        return directChain ? run(stateBase, 1) : run(stateBase);
     } catch {
         return NaN;
     }
@@ -338,7 +343,7 @@ extern "C" {
     #[wasm_bindgen(js_name = throwJitMemFault)]
     fn throw_jit_mem_fault();
     #[wasm_bindgen(js_name = invokeJitBlock)]
-    fn invoke_jit_block(run: &Function, state_base: u32) -> f64;
+    fn invoke_jit_block(run: &Function, state_base: u32, direct_chain: u32) -> f64;
 }
 
 #[cold]
@@ -488,13 +493,20 @@ struct BrowserHandoff {
     // Drop the JS alias before releasing its Box-backed Rust allocation.
     view: Uint8Array,
     image: Box<CpuStateHandoff>,
+    /// Register-file version represented by `image`. The first call uses the sentinel; subsequent
+    /// adjacent JIT calls normally reuse the committed image without copying 32 words from Hart.
+    register_version: u64,
 }
 
 impl BrowserHandoff {
     fn new() -> Self {
         let mut image = Box::new(CpuStateHandoff::default());
         let view = Self::view_for(image.as_mut());
-        Self { view, image }
+        Self {
+            view,
+            image,
+            register_version: u64::MAX,
+        }
     }
 
     fn view_for(image: &mut CpuStateHandoff) -> Uint8Array {
@@ -520,21 +532,37 @@ impl BrowserHandoff {
     }
 
     fn prepare(&mut self, hart: &Hart) {
-        self.image.prepare(hart);
+        let version = hart.regs.jit_version();
+        if self.register_version != version {
+            self.image.prepare_registers(hart);
+            self.register_version = version;
+        }
+        self.image.set_entry_pc(hart.regs.pc);
     }
 
     fn state_base(&mut self) -> u32 {
         self.image.as_mut_bytes().as_mut_ptr() as u32
     }
 
-    fn copy_from_module(&mut self, state: &Uint8Array, hart: &mut Hart) {
+    fn copy_from_module(&mut self, state: &Uint8Array, hart: &mut Hart, direct_chain: bool) {
         // Imported guest accesses run in the outer wasm module and may grow its linear memory. Check
         // again after the compiled call before copying into the cached Rust-side transport image.
         self.ensure_live_view();
         // SAFETY INVARIANT: `image` is Box-stable and never replaced; typed-array `set` is
         // synchronous, and no Rust reference into `image` remains live across this JS mutation.
         self.view.set(state.as_ref(), 0);
-        self.image.commit_registers(hart);
+        self.commit_registers(hart, direct_chain);
+        self.register_version = hart.regs.jit_version();
+    }
+
+    fn commit_registers(&mut self, hart: &mut Hart, direct_chain: bool) {
+        if direct_chain {
+            self.image
+                .commit_registers_mask(hart, self.image.chain_reg_dirty());
+        } else {
+            self.image.commit_registers(hart);
+        }
+        self.register_version = hart.regs.jit_version();
     }
 }
 
@@ -578,6 +606,11 @@ pub struct BrowserExecutor {
     compiled_pages: HashMap<u64, usize>,
     executed_blocks: u64,
     retired_via_jit: u64,
+    /// Diagnostic ledger: generated-function entries made inside host-side browser invocations.
+    /// This is distinct from `ChainStats`, whose depth histogram describes the outer Rust
+    /// dispatch loop and therefore cannot measure in-module direct calls.
+    direct_chain_entries: u64,
+    direct_chain_links: u64,
     // ── E4-T18 chaining state (identical to native) ──
     chaining: bool,
     chain_depth_budget: u32,
@@ -635,6 +668,7 @@ impl BrowserExecutor {
         // set so the documented 32 MiB default does not evict otherwise-hot short blocks mid-boot.
         executor.budget.max_batches = 1024;
         executor.budget.code_bytes = 64 * 1024 * 1024;
+        executor.chain_depth_budget = PRODUCTION_CHAIN_DEPTH_BUDGET;
         Ok(executor)
     }
 
@@ -740,6 +774,8 @@ impl BrowserExecutor {
             compiled_pages: HashMap::new(),
             executed_blocks: 0,
             retired_via_jit: 0,
+            direct_chain_entries: 0,
+            direct_chain_links: 0,
             chaining: true,
             chain_depth_budget: CHAIN_DEPTH_BUDGET_DEFAULT,
             slots: Vec::new(),
@@ -997,6 +1033,7 @@ impl BrowserExecutor {
         inline_tlb: *mut InlineTlbCache,
         compiled_pages: *const HashMap<u64, usize>,
         chain_abort: *mut u8,
+        direct_chain: bool,
     ) -> Option<JitExit> {
         let state_base = if let Some(state) = state {
             handoff.copy_into_module(state, hart);
@@ -1016,7 +1053,7 @@ impl BrowserExecutor {
         });
         // Keep the exception entirely in JS. Bringing a caught exception back as
         // `Result<JsValue, JsValue>` roots one externref per fault in wasm-bindgen's table.
-        let returned = invoke_jit_block(run, state_base);
+        let returned = invoke_jit_block(run, state_base, u32::from(direct_chain));
         let fault = HOST.with(|context| {
             let mut context = context.borrow_mut();
             context.hart = core::ptr::null_mut();
@@ -1031,9 +1068,9 @@ impl BrowserExecutor {
         let Some(code) = code else {
             if let Some(trap) = fault {
                 if let Some(state) = state {
-                    handoff.copy_from_module(state, hart);
+                    handoff.copy_from_module(state, hart, direct_chain);
                 } else {
-                    handoff.image.commit_registers(hart);
+                    handoff.commit_registers(hart, direct_chain);
                 }
                 return Some(JitExit {
                     code: ExitCode::Trap,
@@ -1050,9 +1087,9 @@ impl BrowserExecutor {
         };
 
         if let Some(state) = state {
-            handoff.copy_from_module(state, hart);
+            handoff.copy_from_module(state, hart, direct_chain);
         } else {
-            handoff.image.commit_registers(hart);
+            handoff.commit_registers(hart, direct_chain);
         }
         debug_assert_eq!(code, handoff.image.exit_reason());
         Some(JitExit {
@@ -1343,12 +1380,20 @@ impl CompiledBlockExecutor for BrowserExecutor {
                 inline_tlb,
                 compiled_pages,
                 chain_abort,
+                self.abi.direct_chain,
             )
         };
-        if exit.is_some() {
-            self.executed_blocks += 1;
+        let exit = exit?;
+        self.executed_blocks += 1;
+        if direct_chaining {
+            let entries = u64::from(self.chain_depth_budget)
+                .saturating_sub(self.handoff.image.chain_depth_remaining());
+            self.direct_chain_entries = self.direct_chain_entries.saturating_add(entries);
+            self.direct_chain_links = self
+                .direct_chain_links
+                .saturating_add(entries.saturating_sub(1));
         }
-        exit
+        Some(exit)
     }
 
     fn invalidate_all(&mut self) {
@@ -1449,6 +1494,14 @@ impl CompiledBlockExecutor for BrowserExecutor {
 
     fn retired_via_jit(&self) -> u64 {
         self.retired_via_jit
+    }
+
+    fn direct_chain_entries(&self) -> u64 {
+        self.direct_chain_entries
+    }
+
+    fn direct_chain_links(&self) -> u64 {
+        self.direct_chain_links
     }
 
     fn note_jit_retired(&mut self, retired: u64) {

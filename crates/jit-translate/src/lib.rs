@@ -37,8 +37,8 @@ extern crate alloc;
 
 use alloc::vec::Vec;
 use wasm_emit::{
-    BlockType, ExportKind, FuncBuilder, FuncType, Limits, MemType, ModuleBuilder, RefType,
-    TableType, ValType,
+    BlockType, ExportKind, FuncBuilder, FuncType, GlobalType, Limits, MemType, ModuleBuilder,
+    Mutability, RefType, TableType, ValType,
 };
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::{DecodedBlock, is_terminator};
@@ -173,6 +173,9 @@ pub struct Abi {
     /// E4-T34: byte-sized side-effect barrier set by host imports that require a Rust boundary
     /// before another compiled successor can run.
     pub chain_abort: u32,
+    /// E4-T34: generated direct-chain register write mask, stored beside the abort byte so the
+    /// host can commit only registers that the executed chain may have changed.
+    pub chain_reg_dirty: u32,
     /// E4-T34: count of raw inline-RAM stores waiting for host-side commit.
     pub store_log_count: u32,
     /// E4-T34: base of the raw inline-RAM store log in the shared state image.
@@ -285,6 +288,7 @@ impl Abi {
         chain_budget: 0x240,
         chain_depth: 0x260,
         chain_abort: 0x248,
+        chain_reg_dirty: 0x24c,
         store_log_count: 0,
         store_log_base: 0,
         store_log_capacity: 0,
@@ -310,6 +314,7 @@ impl Abi {
         chain_budget: 0x240,
         chain_depth: 0x260,
         chain_abort: 0x248,
+        chain_reg_dirty: 0x24c,
         store_log_count: 0,
         store_log_base: 0,
         store_log_capacity: 0,
@@ -396,9 +401,40 @@ mod load_kind {
 }
 
 /// Per-register allocation state for one block translation.
+#[derive(Clone, Copy)]
+struct GlobalInfo {
+    registers: [u32; 32],
+    entry_mask: u32,
+    writeback_mask: u32,
+    chain_budget: u32,
+    chain_depth: u32,
+    chain_enabled: u32,
+    dirty: u32,
+}
+
 struct Regs {
     /// Local index holding guest register `r`, once materialized (loaded or written).
     local: [Option<u32>; 32],
+    /// Optional per-module register globals used by browser direct-chain batches. A direct call
+    /// keeps these values live across generated functions; host/cross-module exits materialize
+    /// them back into the frozen state image before returning.
+    globals: Option<[u32; 32]>,
+    /// The second function parameter in a global-register batch: nonzero means this is a host or
+    /// cross-module entry and must load the globals from `state_base` first.
+    root_local: Option<u32>,
+    /// Registers a host/root entry must initialize from the shared state image. This is the union
+    /// of source and destination registers in the batch so every value a later direct successor
+    /// may read or write is valid without a 31-register prologue sweep.
+    entry_mask: u32,
+    /// Registers that may have been written by any block in the batch. Host/cross-module exits
+    /// materialize exactly this static set; direct successors keep their globals live.
+    writeback_mask: u32,
+    /// Optional direct-chain protocol globals. Budget/depth/enabled stay live across same-module
+    /// calls; `chain_abort` remains in shared memory because host imports set it asynchronously.
+    chain_budget_global: Option<u32>,
+    chain_depth_global: Option<u32>,
+    chain_enabled_global: Option<u32>,
+    dirty_global: Option<u32>,
     /// Whether guest register `r` was modified and must be written back at exits.
     dirty: [bool; 32],
     /// E4-T16: the block's entry PC the compile-time PC constants are relative to (`phys_start`).
@@ -417,9 +453,43 @@ struct Regs {
 }
 
 impl Regs {
-    fn new(base_pc: u64, entry_local: u32, chain_start: Option<u32>) -> Self {
+    fn new(
+        base_pc: u64,
+        entry_local: u32,
+        chain_start: Option<u32>,
+        global_info: Option<GlobalInfo>,
+        root_local: Option<u32>,
+    ) -> Self {
+        let (
+            globals,
+            entry_mask,
+            writeback_mask,
+            chain_budget_global,
+            chain_depth_global,
+            chain_enabled_global,
+            dirty_global,
+        ) = match global_info {
+            Some(info) => (
+                Some(info.registers),
+                info.entry_mask,
+                info.writeback_mask,
+                Some(info.chain_budget),
+                Some(info.chain_depth),
+                Some(info.chain_enabled),
+                Some(info.dirty),
+            ),
+            None => (None, 0, 0, None, None, None, None),
+        };
         Regs {
             local: [None; 32],
+            globals,
+            root_local,
+            entry_mask,
+            writeback_mask,
+            chain_budget_global,
+            chain_depth_global,
+            chain_enabled_global,
+            dirty_global,
             dirty: [false; 32],
             base_pc,
             entry_local,
@@ -458,33 +528,28 @@ fn record_chain_retired(f: &mut FuncBuilder, regs: &Regs, abi: &Abi, retired: u6
 /// Enter the E4-T34 direct-chain protocol. The first block is checked by the core before dispatch,
 /// but direct successors must repeat this guard so a chained call never consumes more guest work
 /// than the enclosing `Machine::run` budget.
-fn emit_chain_prologue(f: &mut FuncBuilder, abi: &Abi, entry_local: u32, nops: u64) {
-    f.local_get(STATE_BASE);
-    f.i64_load(ALIGN8, abi.chain_budget);
+fn emit_chain_prologue(f: &mut FuncBuilder, regs: &Regs, abi: &Abi, nops: u64) {
+    emit_chain_budget_get(f, regs, abi);
     f.i64_const(nops as i64);
     f.i64_lt_u();
-    f.local_get(STATE_BASE);
-    f.i64_load(ALIGN8, abi.chain_depth);
+    emit_chain_depth_get(f, regs, abi);
     f.i64_eqz();
     f.i32_or();
     f.if_(BlockType::Empty);
-    write_pc_local(f, abi, entry_local);
+    writeback(f, regs, abi);
+    write_pc_local(f, abi, regs.entry_local);
     write_reason(f, abi, ExitCode::Budget);
     f.i32_const(ExitCode::Budget as i32);
     f.return_();
     f.else_();
-    f.local_get(STATE_BASE);
-    f.local_get(STATE_BASE);
-    f.i64_load(ALIGN8, abi.chain_budget);
+    emit_chain_budget_get(f, regs, abi);
     f.i64_const(nops as i64);
     f.i64_sub();
-    f.i64_store(ALIGN8, abi.chain_budget);
-    f.local_get(STATE_BASE);
-    f.local_get(STATE_BASE);
-    f.i64_load(ALIGN8, abi.chain_depth);
+    emit_chain_budget_set(f, regs, abi);
+    emit_chain_depth_get(f, regs, abi);
     f.i64_const(1);
     f.i64_sub();
-    f.i64_store(ALIGN8, abi.chain_depth);
+    emit_chain_depth_set(f, regs, abi);
     f.end();
 }
 
@@ -493,7 +558,7 @@ fn emit_chain_prologue(f: &mut FuncBuilder, abi: &Abi, entry_local: u32, nops: u
 /// next load, but reservation invalidation is host-owned; entering LR/SC/AMO before the commit would
 /// let the atomic observe stale reservation state. The caller resumes at this block after the
 /// executor commits the pending records.
-fn emit_pending_store_entry_barrier(f: &mut FuncBuilder, abi: &Abi, entry_local: u32) {
+fn emit_pending_store_entry_barrier(f: &mut FuncBuilder, regs: &Regs, abi: &Abi) {
     if !(abi.direct_chain && abi.store_log_capacity > 0) {
         return;
     }
@@ -502,7 +567,8 @@ fn emit_pending_store_entry_barrier(f: &mut FuncBuilder, abi: &Abi, entry_local:
     f.i64_eqz();
     f.i32_eqz();
     f.if_(BlockType::Empty);
-    write_pc_local(f, abi, entry_local);
+    writeback(f, regs, abi);
+    write_pc_local(f, abi, regs.entry_local);
     write_reason(f, abi, ExitCode::Budget);
     f.i32_const(ExitCode::Budget as i32);
     f.return_();
@@ -588,7 +654,20 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
     debug_assert_eq!(_lr, LR_IMPORT);
     debug_assert_eq!(_sc, SC_IMPORT);
 
-    let run_ty = m.add_type(FuncType::new(&[ValType::I32], &[ValType::I32]));
+    let (reads, writes) = block_register_masks(block);
+    let global_info = if abi.direct_chain {
+        Some(add_register_globals(&mut m, reads | writes, writes))
+    } else {
+        None
+    };
+    let legacy_params = [ValType::I32];
+    let direct_params = [ValType::I32, ValType::I32];
+    let run_params: &[ValType] = if global_info.is_some() {
+        &direct_params
+    } else {
+        &legacy_params
+    };
+    let run_ty = m.add_type(FuncType::new(run_params, &[ValType::I32]));
     let run_idx = m.add_function(run_ty);
     match abi.mem {
         MemModel::SoftmmuImports => {
@@ -613,10 +692,31 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
             );
         }
     }
+    if abi.direct_chain && abi.dynamic_chain {
+        let table = m.import_table(
+            "env",
+            "table",
+            TableType {
+                elem: RefType::FuncRef,
+                limits: Limits::new(1),
+            },
+        );
+        debug_assert_eq!(table, abi.chain_table);
+    }
     m.export("run", ExportKind::Func, run_idx);
 
-    let mut f = FuncBuilder::new(&[ValType::I32]); // param 0 = state_base
-    emit_body(&mut f, block, abi, [None, None], [false, false], run_ty)?;
+    let mut f = FuncBuilder::new(run_params); // param 0 = state_base; direct batches add root flag
+    emit_body(
+        &mut f,
+        block,
+        abi,
+        [None, None],
+        [abi.dynamic_chain, abi.dynamic_chain],
+        run_ty,
+        global_info,
+        global_info.map(|_| 1),
+        writes,
+    )?;
     m.add_code(f.finish());
     Ok(m.finish())
 }
@@ -626,6 +726,281 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
 /// In `InlineTlb` mode the shared memory is imported too, but that lives in a separate index space
 /// and does not shift function indices.
 const RUN_FUNC_BASE: u32 = 5;
+
+fn add_register_mask(mask: &mut u32, register: u8) {
+    if register != 0 {
+        *mask |= 1_u32 << u32::from(register);
+    }
+}
+
+/// Return the source and destination register masks for the translated portion of a block. The
+/// masks are also used at batch scope: a root entry initializes the union of both masks, and a
+/// host/cross-module exit writes the destination union back to the shared state image.
+fn block_register_masks(block: &DecodedBlock) -> (u32, u32) {
+    use Instr::*;
+    let mut reads = 0;
+    let mut writes = 0;
+    for op in &block.ops {
+        match op.instr {
+            Lui { rd, .. } | Auipc { rd, .. } | Jal { rd, .. } => {
+                add_register_mask(&mut writes, rd);
+            }
+            Jalr { rd, rs1, .. } => {
+                add_register_mask(&mut reads, rs1);
+                add_register_mask(&mut writes, rd);
+            }
+            Beq { rs1, rs2, .. }
+            | Bne { rs1, rs2, .. }
+            | Blt { rs1, rs2, .. }
+            | Bge { rs1, rs2, .. }
+            | Bltu { rs1, rs2, .. }
+            | Bgeu { rs1, rs2, .. }
+            | Sb { rs1, rs2, .. }
+            | Sh { rs1, rs2, .. }
+            | Sw { rs1, rs2, .. }
+            | Sd { rs1, rs2, .. } => {
+                add_register_mask(&mut reads, rs1);
+                add_register_mask(&mut reads, rs2);
+            }
+            Lb { rd, rs1, .. }
+            | Lh { rd, rs1, .. }
+            | Lw { rd, rs1, .. }
+            | Ld { rd, rs1, .. }
+            | Lbu { rd, rs1, .. }
+            | Lhu { rd, rs1, .. }
+            | Lwu { rd, rs1, .. }
+            | Addi { rd, rs1, .. }
+            | Slti { rd, rs1, .. }
+            | Sltiu { rd, rs1, .. }
+            | Xori { rd, rs1, .. }
+            | Ori { rd, rs1, .. }
+            | Andi { rd, rs1, .. }
+            | Slli { rd, rs1, .. }
+            | Srli { rd, rs1, .. }
+            | Srai { rd, rs1, .. }
+            | Addiw { rd, rs1, .. }
+            | Slliw { rd, rs1, .. }
+            | Srliw { rd, rs1, .. }
+            | Sraiw { rd, rs1, .. } => {
+                add_register_mask(&mut reads, rs1);
+                add_register_mask(&mut writes, rd);
+            }
+            Add { rd, rs1, rs2 }
+            | Sub { rd, rs1, rs2 }
+            | Sll { rd, rs1, rs2 }
+            | Slt { rd, rs1, rs2 }
+            | Sltu { rd, rs1, rs2 }
+            | Xor { rd, rs1, rs2 }
+            | Srl { rd, rs1, rs2 }
+            | Sra { rd, rs1, rs2 }
+            | Or { rd, rs1, rs2 }
+            | And { rd, rs1, rs2 }
+            | Addw { rd, rs1, rs2 }
+            | Subw { rd, rs1, rs2 }
+            | Sllw { rd, rs1, rs2 }
+            | Srlw { rd, rs1, rs2 }
+            | Sraw { rd, rs1, rs2 }
+            | Mul { rd, rs1, rs2 }
+            | Mulh { rd, rs1, rs2 }
+            | Mulhsu { rd, rs1, rs2 }
+            | Mulhu { rd, rs1, rs2 }
+            | Div { rd, rs1, rs2 }
+            | Divu { rd, rs1, rs2 }
+            | Rem { rd, rs1, rs2 }
+            | Remu { rd, rs1, rs2 }
+            | Mulw { rd, rs1, rs2 }
+            | Divw { rd, rs1, rs2 }
+            | Divuw { rd, rs1, rs2 }
+            | Remw { rd, rs1, rs2 }
+            | Remuw { rd, rs1, rs2 }
+            | ScW { rd, rs1, rs2, .. }
+            | ScD { rd, rs1, rs2, .. }
+            | AmoW { rd, rs1, rs2, .. }
+            | AmoD { rd, rs1, rs2, .. } => {
+                add_register_mask(&mut reads, rs1);
+                add_register_mask(&mut reads, rs2);
+                add_register_mask(&mut writes, rd);
+            }
+            LrW { rd, rs1, .. } | LrD { rd, rs1, .. } => {
+                add_register_mask(&mut reads, rs1);
+                add_register_mask(&mut writes, rd);
+            }
+            _ => {}
+        }
+    }
+    (reads, writes)
+}
+
+/// Add one mutable i64 global for each guest register used by a direct-chain batch. x0 remains the
+/// architectural constant zero; globals are initialized to zero and loaded from `CpuState` by a
+/// host/root entry before the first instruction executes.
+fn add_register_globals(m: &mut ModuleBuilder, entry_mask: u32, writeback_mask: u32) -> GlobalInfo {
+    let mut globals = [0; 32];
+    for slot in globals.iter_mut().skip(1) {
+        *slot = m.add_global(
+            GlobalType {
+                val: ValType::I64,
+                mutability: Mutability::Var,
+            },
+            alloc::vec![0x42, 0x00], // i64.const 0
+        );
+    }
+    let chain_budget = m.add_global(
+        GlobalType {
+            val: ValType::I64,
+            mutability: Mutability::Var,
+        },
+        alloc::vec![0x42, 0x00], // i64.const 0
+    );
+    let chain_depth = m.add_global(
+        GlobalType {
+            val: ValType::I64,
+            mutability: Mutability::Var,
+        },
+        alloc::vec![0x42, 0x00], // i64.const 0
+    );
+    let chain_enabled = m.add_global(
+        GlobalType {
+            val: ValType::I32,
+            mutability: Mutability::Var,
+        },
+        alloc::vec![0x41, 0x00], // i32.const 0
+    );
+    let dirty = m.add_global(
+        GlobalType {
+            val: ValType::I32,
+            mutability: Mutability::Var,
+        },
+        alloc::vec![0x41, 0x00], // i32.const 0
+    );
+    GlobalInfo {
+        registers: globals,
+        entry_mask,
+        writeback_mask,
+        chain_budget,
+        chain_depth,
+        chain_enabled,
+        dirty,
+    }
+}
+
+/// Load the frozen register image only for a host/cross-module entry. A direct in-module successor
+/// receives `root_local == 0` and continues using the globals left live by its caller.
+fn emit_load_globals_if_root(f: &mut FuncBuilder, regs: &Regs, abi: &Abi) {
+    let (Some(globals), Some(root_local)) = (regs.globals, regs.root_local) else {
+        return;
+    };
+    f.local_get(root_local);
+    f.i32_eqz();
+    f.i32_eqz();
+    f.if_(BlockType::Empty);
+    if let Some(chain_budget_global) = regs.chain_budget_global {
+        f.local_get(STATE_BASE);
+        f.i64_load(ALIGN8, abi.chain_budget);
+        f.global_set(chain_budget_global);
+        f.local_get(STATE_BASE);
+        f.i64_load(ALIGN8, abi.chain_depth);
+        f.global_set(
+            regs.chain_depth_global
+                .expect("direct globals include depth"),
+        );
+        f.local_get(STATE_BASE);
+        f.i32_load8_u(0, abi.chain_enabled);
+        f.global_set(
+            regs.chain_enabled_global
+                .expect("direct globals include enabled flag"),
+        );
+        // Preserve writes already materialized by a caller in another module. A fresh host entry
+        // starts with zero because `begin_chain` clears this word; a cross-module table call must
+        // union its own destinations with the caller's mask before the final host commit.
+        f.local_get(STATE_BASE);
+        f.i32_load(0, abi.chain_reg_dirty);
+        f.global_set(regs.dirty_global.expect("direct globals include dirty"));
+    }
+    for r in 1..32u8 {
+        if regs.entry_mask & (1_u32 << u32::from(r)) != 0 {
+            f.local_get(STATE_BASE);
+            f.i64_load(ALIGN8, abi.xreg_base + u32::from(r) * 8);
+            f.global_set(globals[r as usize]);
+        }
+    }
+    f.end();
+}
+
+fn emit_chain_budget_get(f: &mut FuncBuilder, regs: &Regs, abi: &Abi) {
+    if let Some(global) = regs.chain_budget_global {
+        f.global_get(global);
+    } else {
+        f.local_get(STATE_BASE);
+        f.i64_load(ALIGN8, abi.chain_budget);
+    }
+}
+
+fn emit_chain_budget_set(f: &mut FuncBuilder, regs: &Regs, abi: &Abi) {
+    if let Some(global) = regs.chain_budget_global {
+        f.global_set(global);
+    } else {
+        f.local_get(STATE_BASE);
+        f.i64_store(ALIGN8, abi.chain_budget);
+    }
+}
+
+fn emit_chain_depth_get(f: &mut FuncBuilder, regs: &Regs, abi: &Abi) {
+    if let Some(global) = regs.chain_depth_global {
+        f.global_get(global);
+    } else {
+        f.local_get(STATE_BASE);
+        f.i64_load(ALIGN8, abi.chain_depth);
+    }
+}
+
+fn emit_chain_depth_set(f: &mut FuncBuilder, regs: &Regs, abi: &Abi) {
+    if let Some(global) = regs.chain_depth_global {
+        f.global_set(global);
+    } else {
+        f.local_get(STATE_BASE);
+        f.i64_store(ALIGN8, abi.chain_depth);
+    }
+}
+
+fn emit_chain_enabled_get(f: &mut FuncBuilder, regs: &Regs, abi: &Abi) {
+    if let Some(global) = regs.chain_enabled_global {
+        f.global_get(global);
+    } else {
+        f.local_get(STATE_BASE);
+        f.i32_load8_u(0, abi.chain_enabled);
+    }
+}
+
+/// Keep the generated chain budget/depth observable to the Rust executor before a host or
+/// cross-module boundary. Same-module direct calls intentionally leave these values in globals.
+fn emit_chain_state_writeback(f: &mut FuncBuilder, regs: &Regs, abi: &Abi) {
+    let Some(chain_budget_global) = regs.chain_budget_global else {
+        return;
+    };
+    f.local_get(STATE_BASE);
+    f.global_get(chain_budget_global);
+    f.i64_store(ALIGN8, abi.chain_budget);
+    f.local_get(STATE_BASE);
+    f.global_get(
+        regs.chain_depth_global
+            .expect("direct globals include depth"),
+    );
+    f.i64_store(ALIGN8, abi.chain_depth);
+}
+
+/// Accumulate the statically known destination registers of one generated function. This runs once
+/// per function entry, not once per guest instruction; the host uses the resulting mask to avoid
+/// copying untouched register words back into `Hart` at every browser boundary.
+fn emit_mark_block_writes(f: &mut FuncBuilder, regs: &Regs, write_mask: u32) {
+    let Some(dirty) = regs.dirty_global else {
+        return;
+    };
+    f.global_get(dirty);
+    f.i32_const(write_mask as i32);
+    f.i32_or();
+    f.global_set(dirty);
+}
 
 /// E4-T19: translate a GROUP of blocks (a connected component of the observed-edge graph) into ONE
 /// WASM module exporting one function per block (`run0`, `run1`, …) plus the shared memory `mem`.
@@ -688,7 +1063,23 @@ pub fn translate_batch(
     m.import_func("env", "lr", lr_ty);
     m.import_func("env", "sc", sc_ty);
 
-    let run_ty = m.add_type(FuncType::new(&[ValType::I32], &[ValType::I32]));
+    let (entry_mask, writeback_mask) = blocks.iter().fold((0, 0), |(entry, writeback), block| {
+        let (reads, writes) = block_register_masks(block);
+        (entry | reads | writes, writeback | writes)
+    });
+    let global_info = if abi.direct_chain {
+        Some(add_register_globals(&mut m, entry_mask, writeback_mask))
+    } else {
+        None
+    };
+    let legacy_params = [ValType::I32];
+    let direct_params = [ValType::I32, ValType::I32];
+    let run_params: &[ValType] = if global_info.is_some() {
+        &direct_params
+    } else {
+        &legacy_params
+    };
+    let run_ty = m.add_type(FuncType::new(run_params, &[ValType::I32]));
     if abi.direct_chain && abi.dynamic_chain {
         let table = m.import_table(
             "env",
@@ -746,8 +1137,19 @@ pub fn translate_batch(
             intra[i][0].is_none() || intra[i][0].is_some_and(|l| !ends_with_fence_i(&blocks[l])),
             intra[i][1].is_none() || intra[i][1].is_some_and(|l| !ends_with_fence_i(&blocks[l])),
         ];
-        let mut f = FuncBuilder::new(&[ValType::I32]);
-        emit_body(&mut f, block, abi, resolved, static_dynamic, run_ty)?;
+        let (_, writes) = block_register_masks(block);
+        let mut f = FuncBuilder::new(run_params);
+        emit_body(
+            &mut f,
+            block,
+            abi,
+            resolved,
+            static_dynamic,
+            run_ty,
+            global_info,
+            global_info.map(|_| 1),
+            writes,
+        )?;
         m.add_code(f.finish());
     }
     Ok(m.finish())
@@ -771,6 +1173,7 @@ fn ends_with_fence_i(block: &DecodedBlock) -> bool {
 /// same-module successor for edge `e` (0 = taken/sole/fall-through, 1 = branch not-taken), or `None`
 /// when the edge leaves the batch / is dynamic (a `jalr` target). `static_dynamic[e]` allows a
 /// statically-known `None` edge to use the browser's guarded cross-batch table path.
+#[allow(clippy::too_many_arguments)]
 fn emit_body(
     f: &mut FuncBuilder,
     block: &DecodedBlock,
@@ -778,6 +1181,9 @@ fn emit_body(
     intra: [Option<u32>; 2],
     static_dynamic: [bool; 2],
     run_ty: u32,
+    global_info: Option<GlobalInfo>,
+    root_local: Option<u32>,
+    block_write_mask: u32,
 ) -> Result<(), TranslateError> {
     // Pre-flight: reject any out-of-scope op before emitting a single byte, so a partially-emitted
     // module can never escape (the caller gets a clean Unsupported and keeps interpreting).
@@ -803,14 +1209,16 @@ fn emit_body(
     } else {
         None
     };
-    let mut regs = Regs::new(base_pc, entry_local, chain_start);
+    let mut regs = Regs::new(base_pc, entry_local, chain_start, global_info, root_local);
+    emit_load_globals_if_root(f, &regs, abi);
     let mut pc = base_pc;
     let n = block.ops.len();
     if block.ops.iter().any(|op| is_atomic(&op.instr)) {
-        emit_pending_store_entry_barrier(f, abi, entry_local);
+        emit_pending_store_entry_barrier(f, &regs, abi);
     }
     if abi.direct_chain {
-        emit_chain_prologue(f, abi, entry_local, n as u64);
+        emit_chain_prologue(f, &regs, abi, n as u64);
+        emit_mark_block_writes(f, &regs, block_write_mask);
     }
     let mut terminated = false;
 
@@ -884,7 +1292,6 @@ fn emit_exit(
     retired: u64,
     run_ty: u32,
 ) {
-    writeback(f, regs, abi);
     match &pc {
         PcSrc::Const(v) => write_pc_const(f, regs, abi, *v),
         PcSrc::Local(l) => write_pc_local(f, abi, *l),
@@ -893,7 +1300,8 @@ fn emit_exit(
     record_chain_retired(f, regs, abi, retired);
     match (intra, pc) {
         (None, PcSrc::Local(target)) if abi.direct_chain && abi.dynamic_chain => {
-            emit_dynamic_exit(f, abi, target, code, run_ty);
+            writeback(f, regs, abi);
+            emit_dynamic_exit(f, regs, abi, target, code, run_ty);
         }
         (None, PcSrc::Const(_))
             if allow_static_dynamic && abi.direct_chain && abi.dynamic_chain =>
@@ -905,23 +1313,23 @@ fn emit_exit(
             f.local_get(STATE_BASE);
             f.i64_load(ALIGN8, abi.exit_pc);
             f.local_set(target);
-            emit_dynamic_exit(f, abi, target, code, run_ty);
+            writeback(f, regs, abi);
+            emit_dynamic_exit(f, regs, abi, target, code, run_ty);
         }
         (None, _) => {
+            writeback(f, regs, abi);
             f.i32_const(code as i32);
             f.return_();
         }
         (Some(func_index), _) => {
             // if (chain_enabled && !chain_abort) { entry_pc := exit_pc; return call run{succ} }
             // else { return code }
-            f.local_get(STATE_BASE);
-            f.i32_load8_u(0, abi.chain_enabled);
+            emit_chain_enabled_get(f, regs, abi);
             f.local_get(STATE_BASE);
             f.i32_load8_u(0, abi.chain_abort);
             f.i32_eqz();
             f.i32_and();
-            f.local_get(STATE_BASE);
-            f.i64_load(ALIGN8, abi.chain_depth);
+            emit_chain_depth_get(f, regs, abi);
             f.i64_eqz();
             f.i32_eqz();
             f.i32_and();
@@ -932,8 +1340,16 @@ fn emit_exit(
             f.i64_load(ALIGN8, abi.exit_pc);
             f.i64_store(ALIGN8, abi.entry_pc);
             f.local_get(STATE_BASE);
+            if regs.globals.is_some() {
+                // Same-module direct calls keep the register globals live across the function
+                // boundary. The callee receives root=0 and therefore skips the memory reload.
+                f.i32_const(0);
+            }
             f.call(func_index);
             f.else_();
+            // The direct-chain guard failed (budget, depth, or host abort), so this is the host
+            // boundary. Materialize the live globals before returning to the executor.
+            writeback(f, regs, abi);
             f.i32_const(code as i32);
             f.end();
             f.return_();
@@ -946,7 +1362,14 @@ fn emit_exit(
 /// miss, collision, disabled chain, or import-side effect takes the ordinary host exit. This keeps
 /// the fast path speculative but makes it self-invalidating: the browser executor clears the entry
 /// before freeing or remapping its compiled target.
-fn emit_dynamic_exit(f: &mut FuncBuilder, abi: &Abi, target: u32, code: ExitCode, run_ty: u32) {
+fn emit_dynamic_exit(
+    f: &mut FuncBuilder,
+    regs: &Regs,
+    abi: &Abi,
+    target: u32,
+    code: ExitCode,
+    run_ty: u32,
+) {
     let slot = f.local(ValType::I32);
     let table_index = f.local(ValType::I32);
     // slot = dynamic_map_base + (((target >> 2) ^ (target >> 12) ^ target) & mask) * 16.
@@ -971,14 +1394,12 @@ fn emit_dynamic_exit(f: &mut FuncBuilder, abi: &Abi, target: u32, code: ExitCode
     // Guard: chain is enabled, no host-side barrier was raised, and both the key and one-based
     // table index match the publication. The table-index load is repeated below only on the taken
     // arm, keeping the miss path to two byte loads and three integer comparisons.
-    f.local_get(STATE_BASE);
-    f.i32_load8_u(0, abi.chain_enabled);
+    emit_chain_enabled_get(f, regs, abi);
     f.local_get(STATE_BASE);
     f.i32_load8_u(0, abi.chain_abort);
     f.i32_eqz();
     f.i32_and();
-    f.local_get(STATE_BASE);
-    f.i64_load(ALIGN8, abi.chain_depth);
+    emit_chain_depth_get(f, regs, abi);
     f.i64_eqz();
     f.i32_eqz();
     f.i32_and();
@@ -1005,6 +1426,11 @@ fn emit_dynamic_exit(f: &mut FuncBuilder, abi: &Abi, target: u32, code: ExitCode
     f.i64_load(ALIGN8, abi.exit_pc);
     f.i64_store(ALIGN8, abi.entry_pc);
     f.local_get(STATE_BASE);
+    if abi.direct_chain {
+        // A table target is a host/cross-module entry: the caller has materialized its globals and
+        // the callee must reload them from the shared state image.
+        f.i32_const(1);
+    }
     f.local_get(table_index);
     f.call_indirect(run_ty, abi.chain_table);
     f.else_();
@@ -1114,6 +1540,10 @@ fn push_reg(f: &mut FuncBuilder, regs: &mut Regs, abi: &Abi, r: u8) {
         f.i64_const(0);
         return;
     }
+    if let Some(globals) = regs.globals {
+        f.global_get(globals[r as usize]);
+        return;
+    }
     let local = match regs.local[r as usize] {
         Some(l) => l,
         None => {
@@ -1141,6 +1571,10 @@ fn set_reg(f: &mut FuncBuilder, regs: &mut Regs, rd: u8) {
         f.drop();
         return;
     }
+    if let Some(globals) = regs.globals {
+        f.global_set(globals[rd as usize]);
+        return;
+    }
     let local = match regs.local[rd as usize] {
         Some(l) => l,
         None => {
@@ -1157,6 +1591,30 @@ fn set_reg(f: &mut FuncBuilder, regs: &mut Regs, rd: u8) {
 /// Write every dirty register back to the `x[]` array in linear memory. Called at every exit point,
 /// before the block returns (the eager-writeback discipline). `x0` is never written back.
 fn writeback(f: &mut FuncBuilder, regs: &Regs, abi: &Abi) {
+    if let Some(globals) = regs.globals {
+        for r in 1..32u8 {
+            if regs.writeback_mask & (1_u32 << u32::from(r)) != 0 {
+                // The batch-level writeback mask says which registers can be written anywhere in
+                // the module; the live dirty mask narrows that to the functions that actually ran
+                // on this chain. This keeps the precise import/cross-module state boundary while
+                // avoiding a 31-word sweep for a one-register short block.
+                f.global_get(regs.dirty_global.expect("direct globals include dirty"));
+                f.i32_const(1_i32 << u32::from(r));
+                f.i32_and();
+                f.if_(BlockType::Empty);
+                f.local_get(STATE_BASE);
+                f.global_get(globals[r as usize]);
+                f.i64_store(ALIGN8, abi.xreg_base + u32::from(r) * 8);
+                f.end();
+            }
+        }
+        let dirty = regs.dirty_global.expect("direct globals include dirty");
+        f.local_get(STATE_BASE);
+        f.global_get(dirty);
+        f.i32_store(0, abi.chain_reg_dirty);
+        emit_chain_state_writeback(f, regs, abi);
+        return;
+    }
     for r in 1..32u8 {
         if regs.dirty[r as usize] {
             let l = regs.local[r as usize].expect("dirty register must have a local");

@@ -56,6 +56,10 @@ pub mod abi {
     /// page sets this byte so the current block returns to Rust before a successor can be called
     /// directly. Pending raw data-page stores are guarded separately before LR/SC/AMO operations.
     pub const CHAIN_ABORT: u32 = CHAIN_BUDGET + 8;
+    /// E4-T34: exact guest-register write mask accumulated by generated direct-chain functions.
+    /// It occupies the upper half of the abort word so the existing byte-sized abort flag and all
+    /// later auxiliary offsets remain frozen.
+    pub const CHAIN_REG_DIRTY: u32 = CHAIN_ABORT + 4;
     /// E4-T19/E4-T34 intra-module chaining flag. It is deliberately outside [`HANDOFF_END`]: the
     /// native executor leaves it zero, while the browser inline-memory executor enables it only for
     /// a bounded, interrupt-safe chain.
@@ -110,6 +114,14 @@ impl CpuStateHandoff {
     /// Marshal the live integer registers and virtual entry PC. Reserved gaps and the prior exit
     /// header need not be initialized because generated code never consumes them on entry.
     pub fn prepare(&mut self, hart: &Hart) {
+        self.prepare_registers(hart);
+        self.set_entry_pc(hart.regs.pc);
+    }
+
+    /// Marshal only the live integer-register image. The browser executor uses this separately so
+    /// it can skip the 32-word copy when the hart still has the version it committed on the prior
+    /// compiled call; the entry PC is independent and is refreshed for every invocation.
+    pub fn prepare_registers(&mut self, hart: &Hart) {
         #[cfg(target_endian = "little")]
         self.words[..32].copy_from_slice(hart.regs.jit_words());
         #[cfg(target_endian = "big")]
@@ -119,7 +131,11 @@ impl CpuStateHandoff {
                 hart.regs.read(register),
             );
         }
-        self.put_u64(abi::ENTRY_PC, hart.regs.pc);
+    }
+
+    /// Refresh the guest virtual PC consumed by the next generated block entry.
+    pub fn set_entry_pc(&mut self, pc: u64) {
+        self.put_u64(abi::ENTRY_PC, pc);
     }
 
     /// Commit the compiled module's integer-register image. `x0` is intentionally skipped so the
@@ -133,6 +149,23 @@ impl CpuStateHandoff {
                 register,
                 self.get_u64(abi::XREG_BASE + u32::from(register) * 8),
             );
+        }
+    }
+
+    /// Commit only registers named by a generated direct-chain write mask. This is an optimization
+    /// of the browser handoff; the full [`Self::commit_registers`] path remains the compatibility
+    /// fallback for the frozen non-chaining ABI.
+    pub fn commit_registers_mask(&self, hart: &mut Hart, mask: u32) {
+        #[cfg(target_endian = "little")]
+        hart.regs.jit_commit_words_mask(&self.words[..32], mask);
+        #[cfg(target_endian = "big")]
+        for register in 1..32u8 {
+            if mask & (1_u32 << u32::from(register)) != 0 {
+                hart.regs.write(
+                    register,
+                    self.get_u64(abi::XREG_BASE + u32::from(register) * 8),
+                );
+            }
         }
     }
 
@@ -205,6 +238,20 @@ impl CpuStateHandoff {
     /// Total retired instructions recorded by the current direct chain.
     pub fn chain_retired(&self) -> u64 {
         self.chain_u64(abi::CHAIN_RETIRED)
+    }
+
+    /// Remaining generated-function entries allowed in the current browser direct chain.
+    ///
+    /// The browser executor uses this diagnostic to distinguish one host-side engine entry from
+    /// the number of compiled functions that actually ran before the chain returned. It is kept
+    /// outside the frozen handoff and has no architectural effect.
+    pub fn chain_depth_remaining(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_DEPTH)
+    }
+
+    /// Registers written by the current generated direct chain, as a bit mask over x0..x31.
+    pub fn chain_reg_dirty(&self) -> u32 {
+        (self.chain_u64(abi::CHAIN_ABORT) >> 32) as u32
     }
 
     /// Pointer to the byte-sized import-side abort flag in the auxiliary chain header.
@@ -515,6 +562,20 @@ pub trait CompiledBlockExecutor {
     /// Count of guest instructions retired inside JIT-executed blocks (numerator of the
     /// translated-instruction ratio).
     fn retired_via_jit(&self) -> u64;
+
+    /// Number of generated compiled-function entries made inside browser direct-chain calls.
+    /// Native and non-chaining executors use the default zero; the browser implementation uses
+    /// this to expose the actual logical-blocks-per-host-entry ledger.
+    fn direct_chain_entries(&self) -> u64 {
+        0
+    }
+
+    /// Number of in-module successor calls made by browser direct chaining. This is the function
+    /// entry count minus the outer host-side entries, exposed separately so a verifier can check
+    /// the boundary reduction without inferring it from unrelated dispatch statistics.
+    fn direct_chain_links(&self) -> u64 {
+        0
+    }
 
     /// E4-T31: record the exact retirement count the core committed for a compiled exit. The core,
     /// not the executor, owns this count because it can distinguish a clean block from a precise

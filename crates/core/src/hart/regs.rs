@@ -21,13 +21,25 @@ pub const ABI_NAMES: [&str; 32] = [
 /// decode can never produce an out-of-range index. Passing `r >= 32` anyway is a caller
 /// bug: `debug_assert!` fires in debug builds, and the array bounds check aborts in
 /// release builds too — it can never silently alias another register.
-#[derive(Clone, Default, PartialEq, Eq)]
+#[derive(Clone, Default)]
 pub struct XRegs {
     /// `regs[0]` is never written; the x0 invariant lives in [`Self::write`] alone.
     regs: [u64; 32],
     /// The program counter.
     pub pc: u64,
+    /// Monotonic mutation stamp for compiled-state handoff elision. This is not architectural
+    /// state: equality deliberately ignores it, and snapshots continue to serialize only `pc` and
+    /// the register words.
+    jit_version: u64,
 }
+
+impl PartialEq for XRegs {
+    fn eq(&self, other: &Self) -> bool {
+        self.regs == other.regs && self.pc == other.pc
+    }
+}
+
+impl Eq for XRegs {}
 
 impl XRegs {
     /// Read register `r`. `read(0)` is always 0.
@@ -44,6 +56,7 @@ impl XRegs {
         debug_assert!(r < 32, "register index {r} out of range");
         if r != 0 {
             self.regs[r as usize] = v;
+            self.jit_version = self.jit_version.wrapping_add(1);
         }
     }
 
@@ -53,10 +66,34 @@ impl XRegs {
         &self.regs
     }
 
+    /// Return the non-architectural mutation stamp used to avoid remarshal of an unchanged
+    /// register image between adjacent compiled calls.
+    pub fn jit_version(&self) -> u64 {
+        self.jit_version
+    }
+
     /// Commit a bulk compiled register image while preserving the hardwired x0 word.
     pub(crate) fn jit_commit_words(&mut self, words: &[u64]) {
         debug_assert!(words.len() >= 32);
         self.regs[1..].copy_from_slice(&words[1..32]);
+        self.jit_version = self.jit_version.wrapping_add(1);
+    }
+
+    /// Commit only the architectural registers named by a generated direct-chain write mask.
+    /// `x0` is deliberately ignored even if a malformed mask includes it.
+    pub(crate) fn jit_commit_words_mask(&mut self, words: &[u64], mask: u32) {
+        debug_assert!(words.len() >= 32);
+        let mut changed = false;
+        for (offset, word) in words[1..32].iter().copied().enumerate() {
+            let register = offset + 1;
+            if mask & (1_u32 << register) != 0 {
+                self.regs[register] = word;
+                changed = true;
+            }
+        }
+        if changed {
+            self.jit_version = self.jit_version.wrapping_add(1);
+        }
     }
 }
 
@@ -116,6 +153,35 @@ mod tests {
             );
         }
         assert_eq!(r.read(0), 0);
+    }
+
+    #[test]
+    fn compiled_register_mask_commit_preserves_unmasked_words_and_x0() {
+        let mut r = XRegs::default();
+        r.write(1, 0x11);
+        r.write(2, 0x22);
+        let before = r.jit_version();
+        let mut words = [0_u64; 32];
+        words[0] = 0xDEAD;
+        words[1] = 0x101;
+        words[2] = 0x202;
+        words[3] = 0x303;
+        r.jit_commit_words_mask(&words, (1_u32 << 0) | (1_u32 << 2));
+
+        assert_eq!(r.read(0), 0, "a malformed x0 bit must remain harmless");
+        assert_eq!(r.read(1), 0x11, "unmasked x1 was overwritten");
+        assert_eq!(r.read(2), 0x202, "masked x2 was not committed");
+        assert_eq!(r.jit_version(), before + 1);
+    }
+
+    #[test]
+    fn jit_version_is_not_architectural_equality() {
+        let mut changed = XRegs::default();
+        let same_words = changed.jit_words().to_owned();
+        changed.jit_commit_words(&same_words);
+
+        assert!(changed == XRegs::default());
+        assert_ne!(changed.jit_version(), XRegs::default().jit_version());
     }
 
     #[test]

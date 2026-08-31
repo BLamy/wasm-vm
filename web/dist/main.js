@@ -293,6 +293,7 @@ let linuxBootPromise = null;
 let linuxBootRequest = null;
 let linuxActiveRequest = null;
 let linuxBootGeneration = 0;
+let diagnosticJitStatsTimer = null;
 const linuxControllerTeardowns = new WeakMap();
 const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineFullBtn];
 
@@ -313,6 +314,10 @@ function teardownLinuxController(controller, { natural = false } = {}) {
 function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   ui.detachSink();
   fileTransferUI.attachController(null);
+  if (diagnosticJitStatsTimer !== null) {
+    clearInterval(diagnosticJitStatsTimer);
+    diagnosticJitStatsTimer = null;
+  }
   // Quota/read-only controls are controller capabilities, not ordinary page chrome. Destroy their
   // children and generation marker when the owner retires so a visible or retained old button can
   // never act on whichever controller happens to occupy the global slot next.
@@ -325,7 +330,9 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
     if (id === "quota-dialog") delete control.dataset.hits;
   }
   try { window.__linuxOwnerUiForTest = null; } catch { /* page-only diagnostic */ }
-  for (const key of ["linuxManifest", "linuxBackend", "jitPolicy", "jitThreshold", "interpreter"]) {
+  for (const key of [
+    "linuxManifest", "linuxBackend", "jitPolicy", "jitThreshold", "interpreter", "jitStats",
+  ]) {
     delete document.documentElement.dataset[key];
   }
   try {
@@ -843,6 +850,22 @@ async function runLinuxBootOwned(opts, banner, request) {
     window.__jitStats = async () => await linuxCtl?.jitStats?.() ?? null;
     window.__schedulerStats = async () => await linuxCtl?.schedulerStats?.() ?? null;
     window.__workerRpcStats = async () => await linuxCtl?.workerRpcStats?.() ?? null;
+    // Test-only bridge for the worker's existing stats RPC. The browser automation surface runs
+    // in an isolated world and cannot read page-owned expando functions such as __jitStats, so a
+    // diagnostic run may mirror the same returned object into a DOM data attribute. This is inert
+    // unless both query flags are present and never participates in execution or UI policy.
+    if (query.has("testHooks") && query.has("diagnosticStats")) {
+      document.documentElement.dataset.jitStats = JSON.stringify(initialJit ?? {});
+      const publishDiagnosticJitStats = async () => {
+        if (linuxCtl !== ctlForRelease) return;
+        try {
+          const stats = await ctlForRelease.jitStats?.();
+          if (stats) document.documentElement.dataset.jitStats = JSON.stringify(stats);
+        } catch { /* a diagnostic mirror must never affect the guest */ }
+      };
+      void publishDiagnosticJitStats();
+      diagnosticJitStatsTimer = setInterval(() => void publishDiagnosticJitStats(), 500);
+    }
     // A visibilitychange may have happened while _bootLinux was still awaiting READY, when linuxCtl
     // was null and the event handler had nothing to pause. Reconcile once before advertising ready.
     if (document.hidden) {

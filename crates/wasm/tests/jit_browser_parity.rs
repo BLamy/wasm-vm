@@ -791,6 +791,8 @@ fn browser_inline_direct_chain_reports_bounded_retirement() {
     assert_eq!(exit.retired, 16);
     assert_eq!(machine.hart().regs.read(1), 8);
     assert_eq!(machine.hart().regs.pc, DRAM_BASE);
+    assert_eq!(executor.direct_chain_entries(), 8);
+    assert_eq!(executor.direct_chain_links(), 7);
 }
 
 #[wasm_bindgen_test]
@@ -850,6 +852,8 @@ fn browser_inline_direct_chain_honors_depth_budget() {
     assert_eq!(exit.next_pc, FIRST);
     assert_eq!(machine.hart().regs.read(1), 1);
     assert_eq!(machine.hart().regs.read(2), 1);
+    assert_eq!(executor.direct_chain_entries(), 2);
+    assert_eq!(executor.direct_chain_links(), 1);
 }
 
 #[wasm_bindgen_test]
