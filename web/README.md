@@ -33,13 +33,13 @@ resize, and full ANSI apps arrive with the real UART in Epic 2.
 
 ## Docs and media embeds
 
-The in-app **Docs** tab loads [`docs.html`](./docs.html), which includes the
-package integration guide for `@brett_lamy/viz-engine`, `@brett_lamy/docstream`,
-and `@brett_lamy/docstream-editor`. The source guide is
-[`docs/embedding-guide.md`](../docs/embedding-guide.md). The standalone
-[`agent-packages.html`](./agent-packages.html) maps the published `@agent-wasm/*`
-packages to the guest-side file agent and the vendored wasm-vm host module, and embeds
-hosted VizEngine explainers with a readable fallback.
+The in-app **Docs** tab loads [`docs.html`](./docs.html), which is the authoritative
+package and embedding guide. Its `#packages` section maps the published `@agent-wasm/*`
+packages to the guest-side file agent and the vendored wasm-vm host module; its `#media`
+section embeds hosted VizEngine explainers with a readable fallback. The source guide is
+[`docs/embedding-guide.md`](../docs/embedding-guide.md). The former
+[`agent-packages.html`](./agent-packages.html) URL is retained as a redirect to
+`docs.html#packages`.
 
 The public product pages are static and dependency-free:
 

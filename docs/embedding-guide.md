@@ -21,9 +21,9 @@ on 2026-08-30:
 The namespace also publishes `@agent-wasm/chat-core@0.1.0`, `@agent-wasm/code@0.1.0`,
 `@agent-wasm/vscode@0.1.0`, `@agent-wasm/keychain@0.1.0`,
 `@agent-wasm/codex@0.1.0`, and
-`@agent-wasm/tailscale-connect@1.39.98-t02582083d`. Use the
-[agent package sidecar](../web/agent-packages.html) for their package pages, subpath
-exports, exact registry artifact URL, and the current provenance/media note.
+`@agent-wasm/tailscale-connect@1.39.98-t02582083d`. The live browser docs put their
+package pages, subpath exports, exact registry artifact URL, and provenance/media note
+in the [Published agent packages](../web/docs.html#packages) section.
 
 For a minimal host-side agent, the published README-backed shape is:
 
@@ -191,8 +191,8 @@ In a Docstream document, either can be embedded with the existing portable synta
 {% embed url="https://orly.brett-lamy.workers.dev/?bundle=wasm-vm-internals" /%}
 ```
 
-The browser-side [package sidecar](../web/agent-packages.html#explainers) embeds both
-with readable fallback text and direct links. Orly's repository is MIT-licensed, but its
+The browser-side [embedding guide](../web/docs.html#media) embeds both with readable
+fallback text and direct links. Orly's repository is MIT-licensed, but its
 inspected metadata does not declare a per-file license/attribution for generated MP3
 narration, so this repository copies no audio and does not claim a standalone audio asset.
 
@@ -208,5 +208,5 @@ narration, so this repository copies no audio and does not claim a standalone au
 
 The live version of this guide is also included in the browser docs page at
 [`web/docs.html`](../web/docs.html).
-The focused package map and hosted explainer cards live at
-[`web/agent-packages.html`](../web/agent-packages.html).
+The package map and hosted explainer cards live in the authoritative browser docs at
+[`web/docs.html`](../web/docs.html), under `#packages` and `#media`.
