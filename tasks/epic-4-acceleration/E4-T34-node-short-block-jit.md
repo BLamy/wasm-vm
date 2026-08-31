@@ -127,7 +127,7 @@ for a future fresh worker slice.
 
 ### 2026-08-31 — worker checkpoint — guarded cross-batch and safe inline-store pass
 
-- Implementation commit: `2b14a3c5d5d32a99d6bbaf2dc5de3ec1b4b2ee42`. This is a bounded worker
+- Implementation commit: `2b14a3cc6641e232ec94869dc90e8b2cdb7526d1`. This is a bounded worker
   checkpoint, not a verification claim; E4-T34 remains `in-progress` because the required 3x
   restored-Node speedup and exact-head adversarial evidence are still outstanding.
 - The browser inline-TLB ABI now publishes static cross-batch successors through the guarded
