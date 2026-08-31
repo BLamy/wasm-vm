@@ -178,3 +178,26 @@ for a future fresh worker slice.
   ledger, so it is characterization only. E4-T34 remains `in-progress`: the required <=20-second
   / 3x restored-Node result, <=5-second stretch, six-slot ledger, adversarial evidence, and rr
   trace are still outstanding.
+
+### 2026-08-31 — worker checkpoint — bound direct-chain depth
+
+- Source/test commit: `2adc78caea70043b4f964df9e82445a88a8f192f`. The browser-only auxiliary ABI now
+  reserves `chain_depth` at `0x260`, after the existing chain header and before the raw-store log;
+  the store-log base moves to `0x268` and the frozen register handoff remains unchanged. Each
+  generated compiled-block entry rejects a zero remaining depth before executing guest code,
+  decrements the depth on entry, and requires a nonzero remainder before making either a static or
+  dynamic direct successor call. `BrowserExecutor` initializes the field from its configured depth
+  budget, and `browser_inline_direct_chain_honors_depth_budget` proves two linked blocks execute
+  exactly four instructions and return at the boundary rather than recursing indefinitely.
+- Deployable artifact commit: `3395bb4ad8580cdeb60355e4a2d6135b48fe01c5`; `make web-build` and
+  `make web-dist` regenerated the browser Wasm and service-worker cache version. No deployment or
+  acceptance claim is made from this checkpoint.
+- Exact-head focused gates completed: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core
+  --lib` (173 passed); all-target translator tests; `cargo test -p wasm-vm-jit-runtime --all-targets`
+  (all non-ignored tests passed); strict Clippy for `wasm-vm-core`, `wasm-vm-jit-translate`, and
+  `wasm-vm-jit-runtime`; wasm-target Clippy for `wasm-vm-wasm`; `wasm-pack test --node crates/wasm
+  --test jit_browser_parity` (25 passed, 0 failed, 1 ignored); `make web-build`; and `make web-dist`.
+- This slice closes a boundedness/proof gap, not the performance debt. The prior matched restored-Node
+  screen remains 1.315x; the later local smoke was 39,877 ms under renderer contention and was not a
+  matched ledger. E4-T34 remains `in-progress`; the <=20-second / 3x result, six-slot ledger,
+  adversarial proof, and rr/rr-soft host trace remain outstanding.
