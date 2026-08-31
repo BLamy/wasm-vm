@@ -583,7 +583,7 @@ async function runLinuxBootOwned(opts, banner, request) {
     ? false
     : jitQuery === "1"
       ? true
-      : (opts.jit ?? false);
+      : (opts.jit ?? true);
   const thresholdCandidate = query.has("jitThreshold")
     ? Number(query.get("jitThreshold"))
     : Number(opts.jitThreshold ?? 512);
@@ -655,9 +655,9 @@ async function runLinuxBootOwned(opts, banner, request) {
       // instruction-at-a-time A/B path. Pass it as DATA so the whole-machine worker sees the page's
       // choice instead of trying to read the worker script URL.
       fastInterpreter: selectedFastInterpreter,
-      // E4-T33 bounded compiled handles make JIT safe to request, but the measured cold Node process
-      // is still faster in the interpreter even at threshold 512. Keep the fastest measured policy
-      // as the default; `?jit=1` opts into a truthful JIT experiment and `?jit=0` is an explicit A/B.
+      // E4-T33 bounded compiled handles make JIT safe to request, and the restored-Node screen is
+      // faster with JIT at the shipping threshold. Keep it on for the isolated production path;
+      // `?jit=0` remains the explicit interpreter A/B and rollback switch.
       jit: selectedJit,
       jitThreshold: selectedJitThreshold,
       profile: selectedProfile,
@@ -815,7 +815,7 @@ async function runLinuxBootOwned(opts, banner, request) {
     }
     const initialJit = await linuxCtl.jitStats?.() ?? null;
     const jitPolicy = !selectedJit
-      ? (query.get("jit") === "0" ? "forced-off" : "interpreter-faster-for-cold-start")
+      ? (query.get("jit") === "0" ? "forced-off" : "disabled-by-caller")
       : initialJit?.hasExecutor
         ? "enabled"
         : globalThis.crossOriginIsolated ? "unavailable-no-executor" : "unavailable-no-isolation";
@@ -845,7 +845,7 @@ async function runLinuxBootOwned(opts, banner, request) {
           ? (jitPolicy === "unavailable-no-isolation"
               ? "JIT requested but unavailable without cross-origin isolation"
               : "JIT requested but this machine exposes no compiled executor")
-          : "JIT off: measured fast interpreter wins cold process startup";
+          : "JIT disabled by caller";
     term.writeln(`\x1b[90m[execution: ${backend}; ${interpreter} interpreter; ${jitLabel}; quantum ${selectedQuantum}]\x1b[0m`);
     window.__jitStats = async () => await linuxCtl?.jitStats?.() ?? null;
     window.__schedulerStats = async () => await linuxCtl?.schedulerStats?.() ?? null;

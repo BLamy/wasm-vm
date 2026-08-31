@@ -522,9 +522,11 @@ budget arithmetic. Review comments + resolutions are appended here on completion
 ## 12. Runtime integration (E4-T29) — attaching the executor to the runnable VM
 
 Sections 1–11 prove the JIT correct as a *component*; this section is how it is *attached* so a real
-booted guest runs translated blocks. The contract is **default = interpreter oracle**: the executor is
-opt-in and, when absent, the run loop's `try_jit_block` hook is a no-op, so every determinism /
-differential / boot-anchor gate is byte-identical to a no-JIT build.
+booted guest runs translated blocks. The interpreter remains the oracle and the clean fallback. Native
+CLI runs keep the executor opt-in, while the production browser path enables the bounded executor by
+default only on a cross-origin-isolated whole-machine worker; `?jit=0` forces the interpreter. When the
+executor is absent, the run loop's `try_jit_block` hook is a no-op, so every determinism / differential /
+boot-anchor gate remains byte-identical to a no-JIT build.
 
 ### 12.1 Native (Phase 1 — landed)
 

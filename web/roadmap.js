@@ -100,7 +100,7 @@ export const ROADMAP = [
     epic: "E4",
     title: "Acceleration",
     status: "in-progress",
-    blurb: "Fast interpreter and bounded JIT paths are proven; the whole-machine worker is the remaining demo-default boundary.",
+    blurb: "Fast interpreter and bounded JIT paths are proven; the whole-machine worker is the demo default, with JIT enabled on isolated pages. Strict restored-Node acceleration remains E4-T34 work.",
     caps: [
       { name: "Fast predecoded interpreter", status: "verified", evidence: "E4-T30: exact-entry hit path, differential corpus, and live busybox proof" },
       { name: "Exact bounded JIT work + retirement", status: "verified", evidence: "E4-T31: budgets, traps, counters, trace gating, CLI, and Wasm wrapper" },

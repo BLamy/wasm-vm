@@ -463,7 +463,8 @@ export async function startLinuxBoot(opts = {}) {
     // WasmLinux directly (not the cpu-worker), so the JIT is dark unless enabled HERE. Gate on
     // cross-origin isolation (runtime WebAssembly codegen is only sound/allowed there) exactly like
     // web/cpu-isolation.js selectJitBackend; `?jit=0` forces interpreter-only for an A/B. The
-    // interpreter stays the oracle — enableJit only arms tier-up of hot blocks.
+    // interpreter stays the oracle for fallback and differential checks — enableJit only arms
+    // tier-up of hot blocks.
     try {
       // `?jit=0` forces interpreter-only; `?jitThreshold=N` tunes the hotness count before a block is
       // nominated for compilation (default 512). Lower = compile more aggressively at the cost of
@@ -474,10 +475,10 @@ export async function startLinuxBoot(opts = {}) {
       const _jitQ = jit ?? (_q.get("jit") === "1" ? true : _q.get("jit") === "0" ? false : undefined);
       const _thrRaw = jitThreshold ?? _q.get("jitThreshold");
       const _threshold = Math.max(1, Number(_thrRaw) || 512);
-      // E4-T33 proved bounded browser handles and repaired the bulk handoff. Cold Node startup still
-      // measures faster in the fast interpreter, so JIT is an explicit experiment until the runtime
-      // work in E4-T34 changes that result.
-      const _wantJit = (_jitQ ?? false) && globalThis.crossOriginIsolated === true;
+      // E4-T33 proved bounded browser handles and repaired the bulk handoff. The restored-Node screen
+      // is faster with JIT at the shipping threshold, so isolated browser workers opt in by default;
+      // `?jit=0` remains the explicit interpreter rollback/A-B.
+      const _wantJit = (_jitQ ?? true) && globalThis.crossOriginIsolated === true;
       if (_wantJit && typeof machine.enableJit === "function") {
         machine.enableJit(_threshold);
         try { window.__jit = { enabled: true, threshold: _threshold }; } catch { /* worker scope */ }
