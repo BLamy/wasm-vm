@@ -152,3 +152,29 @@ for a future fresh worker slice.
   blocked in Node before starting its web server; the exact restored-Node screen therefore remains
   characterization only. The prior same-head screen measured 1.315x completion speedup, not the
   required 3x. No fresh six-slot ledger, deployed claim, or rr host trace is asserted here.
+
+### 2026-08-31 — worker checkpoint — preserve valid browser compile batches
+
+- Source/test commit: `15b4b746e5c799d0eb04a6e93a60fac74e32df28`. The browser installer now probes
+  each nominated block before translation, removes unsupported members from the module candidate,
+  and remaps intra-batch edges only across the remaining translatable members. Unsupported blocks
+  stay on the interpreter path instead of forcing every valid neighbor into one-block WASM modules.
+  The new `browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks` parity test
+  proves two supported blocks share one module around an unsupported CSR block and that the CSR
+  block is not registered. The mechanically equivalent `contains_key` cleanup is included so the
+  affected wasm-target lint gate is clean.
+- Deployable artifact commit: `d7a90a5be64fc7601afdad37224a3fbc14d63622`; `make web-dist` refreshed
+  the generated browser JS/Wasm and service-worker cache version. No Cloudflare deployment or
+  acceptance claim is made from this checkpoint.
+- Exact-head focused gates completed: `cargo fmt --all -- --check`; `cargo clippy -p wasm-vm-wasm
+  --target wasm32-unknown-unknown --lib -- -D warnings`; strict Clippy for
+  `wasm-vm-core`, `wasm-vm-jit-translate`, and `wasm-vm-jit-runtime`; translator all-target tests;
+  `wasm-pack test --node crates/wasm --test jit_browser_parity` (24 passed, 0 failed, 1 ignored);
+  `make web-build`; and `make web-dist`.
+- A fresh local built-page smoke used `tools/serve-dev.sh 8141` with the Node asset bundle and the
+  exact PID-bound `node -e 'console.log(3)'` oracle. It reached a real root prompt, emitted the
+  completion marker with exit 0, and produced no browser console errors; completion elapsed was
+  `39,877 ms`. The renderer was visibly host-contended and this was not a matched JIT/interpreter
+  ledger, so it is characterization only. E4-T34 remains `in-progress`: the required <=20-second
+  / 3x restored-Node result, <=5-second stretch, six-slot ledger, adversarial evidence, and rr
+  trace are still outstanding.
