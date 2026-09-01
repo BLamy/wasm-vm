@@ -298,3 +298,35 @@ for a future fresh worker slice.
   with production verification at `https://wasm-vm.pages.dev/?verify=ccec954`. The proxy/Tailscale
   fallback was not available from this host (`ssh dev` did not resolve and no local Tailscale
   binary was present), and WebVM remains explicitly unmeasured; E4-T34 stays `in-progress`.
+
+### 2026-09-01 — worker checkpoint — separate steady-state compute from boundary workloads
+
+- Benchmark commits: `bff0154` and `d05be4c`. `web/bench-runtime-compute.mjs` defines the portable
+  `node-steady-state-compute-benchmark-v1` campaign with fixed `integer-mix`, `branch-mix`, and
+  `memory-mix` workloads. Process startup, module loading, and typed-array preparation are outside
+  the timed region; every warmup and measured sample checks an independent fixed checksum. The
+  browser adapter is `tools/run-runtime-compute-browser.mjs`, with the matching
+  `bench-runtime-compute-browser` Make target.
+- Native exact-head evidence is
+  `evidence/e4-t34/steady-state-compute-native-2026-09-01.json`, SHA-256 recorded by the file
+  contents. Seven measured samples and two warmups passed `21/21` checksum checks on Node
+  `v24.20.0`/`darwin-arm64`: integer mix median `10.146 ms`, branch mix median `3.275 ms`, and
+  memory mix median `2.506 ms`. The existing release differential remains the complementary
+  boundary screen: six-op JIT `97.403 MIPS` vs interpreter `77.018 MIPS` (`1.265x`), while the
+  64-op hot loop is `725.329` vs `107.125 MIPS` (`6.771x`).
+- The bounded direct-call optimization passes the virtual successor PC as the third direct-chain
+  argument, lets the caller debit successor fuel/depth once, and skips the callee's duplicate
+  handoff/prologue work; budget exhaustion still writebacks and returns `Budget`. Exact-head gates
+  passed: `cargo fmt --all -- --check`; strict translator and wasm-target Clippy; translator
+  all-target tests; `wasm-pack test --node crates/wasm --test jit_browser_parity` (`25 passed,
+  0 failed, 1 ignored`); `node --test web/tests/runtime-compute.test.mjs`; `make web-build`; and
+  `make web-dist`.
+- The new artifact is published to `https://wasm-vm.pages.dev/` (preview
+  `https://77c48a08.wasm-vm.pages.dev`). Live `bench-runtime-compute.mjs` SHA-256 is
+  `378e4841d50b8165fdee7d15ffe8daf0d2e6a40145982e8525b161696342d8d7`, matching
+  `web/dist/bench-runtime-compute.mjs`; live `main.js` SHA-256 is
+  `b0ec2f912af9ff38c762f94609d51f732a73f8c09c06b638bc53fc20e0b164a9`, matching local dist.
+  The fresh deployed Node tab had not reached a shell during bounded checks (cold boot stopped at
+  OpenRC hardware scan), so no browser compute timing or JIT speedup is claimed here. E4-T34
+  remains `in-progress`; the required restored-Node `3x` result, `<=5s` stretch target,
+  fourfold boundary-rate improvement, full adversarial evidence, and rr/rr-soft trace remain open.
