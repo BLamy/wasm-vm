@@ -3,7 +3,7 @@ id: E4-T34
 epic: 4
 title: Short-block JIT acceleration for restored Node startup
 priority: 434
-status: in-progress
+status: verification-debt
 depends_on: [E4-T32]
 estimate: S
 risk: high
@@ -377,3 +377,21 @@ for a future fresh worker slice.
   load at `https://wasm-vm.pages.dev/?verify=jit-capture-20260901-v3#benchmarks` rendered the JIT
   and worker-interpreter rows, the explicit rejected main-thread control, and the diagnostic ratios
   with zero console errors; the published compute screenshot was captured from that view.
+
+### 2026-09-01 — maintainer — parked as verification-debt (status made consistent)
+
+- Brett's direction: the active lane has been pinned to this task for ~3 days across 13
+  below-bar measurements (best 1.46x vs the 3x criterion; latest valid production capture
+  shows integer/branch parity and a 2.47x memory-mix regression). The measured root cause —
+  host-boundary/engine-entry rate (~2.45 logical blocks per engine call, see
+  `docs/perf/e4-t34-jit-retrospective.md`) — is architectural and is owned by the pending
+  fusion tasks E4-T35/E4-T36/E4-T37, not by further tuning inside this task's seam.
+- Status flipped `in-progress` → `verification-debt` to match the 2026-08-30 maintainer
+  parking entry; the frontmatter had drifted. The 3x/host-boundary-4x acceptance criteria
+  and the adversarial sweep remain owed and re-open after E4-T35/E4-T36 land.
+- Environment note: verification no longer targets `ssh dev` (host retired). Local machine
+  is now an M4 Max / 16 cores / 128 GB; long in-browser captures previously reaped on the
+  old Mac are expected to hold here and Linux-only tooling runs in a local Docker (colima)
+  container. rr/rr-soft host-layer traces are waived by maintainer direction 2026-09-01
+  (see AGENTS.md); guest-layer traces, deterministic tests, and Playwright captures are the
+  evidence of record.

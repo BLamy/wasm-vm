@@ -195,6 +195,18 @@ where behavior contradicts the task, and for any changed line your run never exe
 
 ## Evidence: two layers of time travel
 
+> **Policy update — 2026-09-01 (Brett).** The host layer (rr / rr-soft) is **waived**: `ssh dev`
+> is retired and no rr trace is required for any task, including concurrency-touching ones. The
+> evidence of record is the **guest layer** (instruction traces, state digests, Spike/QEMU
+> differentials), deterministic native/wasm tests, and recorded Playwright browser captures.
+> Concurrency claims substitute repeated chaos/stress runs of the deterministic harnesses (varied
+> seeds/schedules) for rr chaos recordings. Verifier sections below that demand rr events should be
+> read as demanding the equivalent guest-trace or deterministic-test citation instead.
+> All proving happens **on this machine** (Apple M4 Max, 16 cores, 128 GB — long in-browser boots
+> are no longer OS-reaped) plus a local **Docker (colima)** container for Linux-only tooling
+> (rootfs builds, gcc overlay images, apk/mke2fs, Sail/RISCOF, seccomp tests). Do not target
+> `ssh dev`; treat any remaining `dev`/rr instructions in this file and task files as historical.
+
 | Layer | Records | Tooling | Runs where |
 |---|---|---|---|
 | **Guest** (the machine we emulate) | every retired guest instruction, architectural state digests, diffs vs Spike/QEMU | trace infra (E0-T16), snapshot digests (E0-T17), differential harness (E0-T20) | everywhere — native, wasm, including this Mac |
