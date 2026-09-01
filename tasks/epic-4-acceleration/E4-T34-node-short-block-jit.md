@@ -250,3 +250,32 @@ for a future fresh worker slice.
   restored-Node characterization was 12,686 ms with JIT versus 18,542 ms for the fast interpreter
   (1.461x), while the required 3x / <=20-second target and <=5-second stretch remain unclaimed.
   E4-T34 stays `in-progress`; no rr host trace is claimed on macOS.
+
+### 2026-09-01 — worker checkpoint — publish the unified external Node workload comparison
+
+- Benchmark commits: `8bb138c` and `1bc60f0`. The legacy five-mechanism Node benchmark and its
+  `bench-node-runtimes` target, source JSON, runner, and deploy copies were removed. The single
+  portable `web/bench-runtime-workloads.mjs` contract now drives the landing-page matrix and keeps
+  raw samples, fixture/policy digests, runtime identity, and verification results in
+  `web/runtime-benchmarks.json`.
+- Exact fixture/policy: runner SHA-256
+  `094dd31c872b6fdf080d022add317f40dde128c219342db33d7ba3504add69fb`, 1 MiB payload, 64 KiB
+  stream chunks, 64 KiB HTTP body, seven measured samples, two warmups, and eight sequential HTTP
+  requests. Native Node, all three wasm-vm modes, and WebContainers completed all six workloads;
+  WebContainers used `@webcontainer/api 1.6.4` and measured file read 2.650 ms, file write
+  0.670 ms, stream read 20.065 ms, stream copy 10.015 ms, server lifecycle 19.735 ms, and HTTP
+  round trip 16.975 ms median. almostnode (`@agent-wasm/core 0.4.0`) measured file read 12.960 ms,
+  file write 1.405 ms, and server lifecycle 0.015 ms; its stream and HTTP cells retain explicit
+  unsupported reasons rather than timings. WebVM is listed in `notRun`: the exact 1 MiB run hit a
+  loopback `EADDRINUSE`, and a fresh 1 KiB file-read retry exceeded the four-minute bound.
+- Evidence: `/tmp/webcontainers-runtime-workloads.json` (42/42 measured samples verified),
+  `/tmp/almostnode-runtime-workloads.json` (partial with explicit unsupported cells), and the
+  committed public JSON. `node --test web/tests/runtime-workloads.test.mjs` passed; `make web-dist`
+  passed; the rebuilt local page rendered 7 rows with zero browser errors/warnings; after fixing
+  shell cache invalidation, the production page at `https://wasm-vm.pages.dev/` rendered the same
+  7 rows with zero browser errors/warnings, and the live JSON was byte-identical to
+  `web/dist/runtime-benchmarks.json` (SHA-256 `a455f3d0c4793f8771d0c049f9ddb0058ca8609e0ae5b41385314ba8e59b2185`).
+- This publishes measurable cross-runtime evidence but does not claim E4-T34's JIT acceptance:
+  the JIT remains only marginally ahead of the worker interpreter on this workload, WebVM still
+  needs a completed exact run, and the task remains `in-progress`. No rr host trace is claimed on
+  macOS.
