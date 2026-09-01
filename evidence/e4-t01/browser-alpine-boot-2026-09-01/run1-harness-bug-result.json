@@ -1,0 +1,9 @@
+{
+  "outcome": "failed",
+  "error": "page.evaluate: Target crashed ",
+  "elapsed_ms": 2970527,
+  "died_at": "2026-09-01T18:07:31.704Z",
+  "console_errors": [
+    "[2026-09-01T18:07:17.807Z] PAGE CRASHED"
+  ]
+}

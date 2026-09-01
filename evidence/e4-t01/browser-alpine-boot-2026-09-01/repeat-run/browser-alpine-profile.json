@@ -1,0 +1,128 @@
+{
+  "totalNs": 270047165117,
+  "sampleCount": 653365,
+  "walkCount": 44512044,
+  "collisions": 218681,
+  "regions": [
+    {
+      "pc": "0xffffffff80560200",
+      "samples": 5468,
+      "pct": 0.8368982115662761
+    },
+    {
+      "pc": "0xffffffff8099db00",
+      "samples": 5330,
+      "pct": 0.815776786329234
+    },
+    {
+      "pc": "0xffffffff805601c0",
+      "samples": 3757,
+      "pct": 0.5750231493881675
+    },
+    {
+      "pc": "0xffffffff8099db80",
+      "samples": 3581,
+      "pct": 0.5480856795206355
+    },
+    {
+      "pc": "0xffffffff8099dac0",
+      "samples": 3359,
+      "pct": 0.5141077345740895
+    },
+    {
+      "pc": "0xffffffff80562f40",
+      "samples": 2321,
+      "pct": 0.3552378838780773
+    },
+    {
+      "pc": "0xffffffff8004dac0",
+      "samples": 2230,
+      "pct": 0.3413099875261148
+    },
+    {
+      "pc": "0xffffffff801ae4c0",
+      "samples": 2135,
+      "pct": 0.3267698759498902
+    },
+    {
+      "pc": "0xffffffff8099db40",
+      "samples": 2071,
+      "pct": 0.31697443236169676
+    },
+    {
+      "pc": "0xffffffff809845c0",
+      "samples": 1956,
+      "pct": 0.29937324466416165
+    }
+  ],
+  "subsystems": [
+    {
+      "name": "cpu_interp",
+      "ns": 266934376787
+    },
+    {
+      "name": "mmu_walk",
+      "ns": 3110523360
+    },
+    {
+      "name": "clint",
+      "ns": 0
+    },
+    {
+      "name": "plic",
+      "ns": 549979
+    },
+    {
+      "name": "uart",
+      "ns": 660002
+    },
+    {
+      "name": "virtio_blk",
+      "ns": 769988
+    },
+    {
+      "name": "virtio_net",
+      "ns": 120004
+    },
+    {
+      "name": "virtio_rng",
+      "ns": 64997
+    },
+    {
+      "name": "rtc",
+      "ns": 100000
+    },
+    {
+      "name": "syscon",
+      "ns": 0
+    },
+    {
+      "name": "other",
+      "ns": 0
+    }
+  ],
+  "jitPause": {
+    "count": 6859,
+    "maxNs": 424945001,
+    "sumNs": 14130420083,
+    "overTarget": 30,
+    "maxAttemptedBlocks": 8,
+    "totalAttemptedBlocks": 45542,
+    "maxSubmittedBlocks": 8,
+    "maxSubmittedBytes": 3298,
+    "totalSubmittedBlocks": 20753,
+    "runCount": 6311,
+    "lastRunAttemptedBlocks": 8,
+    "maxRunAttemptedBlocks": 8,
+    "lastRunSubmittedBlocks": 2,
+    "maxRunSubmittedBlocks": 8,
+    "lastRunStagedNominations": 3,
+    "maxRunStagedNominations": 64,
+    "lastFinalPumps": 0,
+    "maxFinalPumps": 1,
+    "lastFinalAttemptedBlocks": 0,
+    "maxFinalAttemptedBlocks": 1,
+    "lastFinalSubmittedBlocks": 0,
+    "maxFinalSubmittedBlocks": 1
+  }
+}

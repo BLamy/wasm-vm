@@ -1,0 +1,349 @@
+boot pid 13392
+=== 2026-09-01T17:18:00Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.0   1200 410178464 RN     00:00 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+=== 2026-09-01T17:19:00Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  96144 436336320 SN     01:00 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99024 SNs    01:00
+13403   0.0  0.1  76192 SN     00:59
+13404   0.0  0.1  68288 SN     00:59
+13407 100.5  0.7 984016 RN     00:59
+=== 2026-09-01T17:20:00Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  86400 436320448 SN     02:00 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99056 SNs    02:00
+13403   0.0  0.1  76224 SN     01:59
+13404   0.0  0.1  69392 SN     01:59
+13407 100.5  1.0 1319680 RN     01:59
+=== 2026-09-01T17:21:00Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87296 436321472 SN     03:00 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99344 SNs    03:00
+13403   0.0  0.1  76912 SN     02:59
+13404   0.0  0.1  69536 SN     02:59
+13407 100.3  1.1 1483456 RN     02:59
+=== 2026-09-01T17:22:00Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  86496 436321216 SN     04:00 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99360 SNs    04:01
+13403   0.0  0.1  76912 SN     04:00
+13404   0.0  0.1  70560 SN     04:00
+13407 101.6  1.2 1621456 RN     04:00
+=== 2026-09-01T17:23:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87248 436321472 SN     05:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99472 SNs    05:01
+13403   0.0  0.1  76912 SN     05:00
+13404   0.0  0.1  72928 SN     05:00
+13407 104.1  1.3 1764448 RN     05:00
+=== 2026-09-01T17:24:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87248 436321472 SN     06:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99520 SNs    06:01
+13403   0.0  0.1  76912 SN     06:00
+13404   0.0  0.1  72912 SN     06:00
+13407  99.6  1.3 1778784 RN     06:00
+=== 2026-09-01T17:25:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87344 436321728 SN     07:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99584 SNs    07:01
+13403   0.0  0.1  76912 SN     07:00
+13404   0.0  0.1  72912 SN     07:00
+13407  99.1  1.3 1804688 RN     07:00
+=== 2026-09-01T17:26:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87344 436321728 SN     08:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99584 SNs    08:01
+13403   0.0  0.1  76912 SN     08:00
+13404   0.0  0.1  72912 SN     08:00
+13407  99.0  1.4 1829216 RN     08:00
+=== 2026-09-01T17:27:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87392 436321728 SN     09:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99584 SNs    09:01
+13403   0.0  0.1  76912 SN     09:00
+13404   0.0  0.1  72912 SN     09:00
+13407 100.0  1.4 1829600 RN     09:00
+=== 2026-09-01T17:28:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87424 436321728 SN     10:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99568 SNs    10:01
+13403   0.0  0.1  76912 SN     10:00
+13404   0.0  0.1  72960 SN     10:00
+13407  98.8  1.4 1844608 RN     10:00
+=== 2026-09-01T17:29:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87440 436321728 SN     11:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99584 SNs    11:01
+13403   0.0  0.1  76912 SN     11:00
+13404   0.0  0.1  72960 SN     11:00
+13407  98.5  1.4 1863056 RN     11:00
+=== 2026-09-01T17:30:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87440 436321728 SN     12:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99584 SNs    12:01
+13403   0.0  0.1  76912 SN     12:00
+13404   0.0  0.1  72992 SN     12:00
+13407 100.0  1.4 1877568 RN     12:00
+=== 2026-09-01T17:31:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87456 436321728 SN     13:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99584 SNs    13:01
+13403   0.0  0.1  76912 SN     13:00
+13404   0.0  0.1  73008 SN     13:00
+13407 100.0  1.4 1890400 RN     13:00
+=== 2026-09-01T17:32:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87536 436321728 SN     14:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99584 SNs    14:01
+13403   0.0  0.1  76912 SN     14:00
+13404   0.0  0.1  73008 SN     14:00
+13407  99.1  1.4 1914944 RN     14:00
+=== 2026-09-01T17:33:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87552 436321728 SN     15:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99600 SNs    15:01
+13403   0.0  0.1  76912 SN     15:00
+13404   0.0  0.1  73008 SN     15:00
+13407  99.1  1.4 1935072 RN     15:00
+=== 2026-09-01T17:34:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87552 436321728 SN     16:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    16:01
+13403   0.0  0.1  76912 SN     16:00
+13404   0.0  0.1  73008 SN     16:00
+13407 100.0  1.5 1948912 RN     16:00
+=== 2026-09-01T17:35:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87552 436321728 SN     17:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99616 SNs    17:01
+13403   0.0  0.1  76912 SN     17:00
+13404   0.0  0.1  73008 SN     17:00
+13407  99.0  1.5 1971536 RN     17:00
+=== 2026-09-01T17:36:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87552 436321728 SN     18:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    18:01
+13403   0.0  0.1  76912 SN     18:00
+13404   0.0  0.1  73008 SN     18:00
+13407  99.0  1.5 1986064 RN     18:00
+=== 2026-09-01T17:37:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87552 436321728 SN     19:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    19:01
+13403   0.0  0.1  76912 SN     19:00
+13404   0.0  0.1  73008 SN     19:00
+13407 100.0  1.5 1998736 RN     19:00
+=== 2026-09-01T17:38:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87552 436321728 SN     20:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.1  0.1  99680 SNs    20:01
+13403   0.0  0.1  76912 SN     20:00
+13404   0.0  0.1  73008 SN     20:00
+13407 100.0  1.5 2016080 RN     20:00
+=== 2026-09-01T17:39:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87552 436321728 SN     21:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    21:01
+13403   0.0  0.1  76912 SN     21:00
+13404   0.0  0.1  73008 SN     21:00
+13407 100.1  1.5 2044128 RN     21:00
+=== 2026-09-01T17:40:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87552 436321728 SN     22:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    22:01
+13403   0.0  0.1  76912 SN     22:00
+13404   0.0  0.1  73008 SN     22:00
+13407  99.1  1.5 2059856 RN     22:00
+=== 2026-09-01T17:41:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87552 436321728 SN     23:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    23:01
+13403   0.0  0.1  76912 SN     23:00
+13404   0.0  0.1  73008 SN     23:00
+13407  99.1  1.6 2084336 RN     23:00
+=== 2026-09-01T17:42:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87568 436321728 SN     24:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99616 SNs    24:01
+13403   0.0  0.1  76912 SN     24:00
+13404   0.0  0.1  73008 SN     24:00
+13407  97.8  1.6 2105984 RN     24:00
+=== 2026-09-01T17:43:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87568 436321728 SN     25:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    25:01
+13403   0.0  0.1  76912 SN     25:00
+13404   0.0  0.1  73008 SN     25:00
+13407 100.0  1.6 2124464 RN     25:00
+=== 2026-09-01T17:44:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87568 436321728 SN     26:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    26:01
+13403   0.0  0.1  76912 SN     26:00
+13404   0.0  0.1  73008 SN     26:00
+13407 100.0  1.6 2135760 RN     26:00
+=== 2026-09-01T17:45:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87568 436321728 SN     27:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    27:01
+13403   0.0  0.1  76912 SN     27:00
+13404   0.0  0.1  73008 SN     27:00
+13407 100.0  1.6 2154352 RN     27:00
+=== 2026-09-01T17:46:01Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87568 436321728 SN     28:01 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    28:01
+13403   0.0  0.1  76912 SN     28:00
+13404   0.0  0.1  73008 SN     28:00
+13407  99.0  1.6 2181712 RN     28:00
+=== 2026-09-01T17:47:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87568 436321728 SN     29:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    29:02
+13403   0.0  0.1  76912 SN     29:01
+13404   0.0  0.1  73008 SN     29:01
+13407 100.0  1.6 2197040 RN     29:01
+=== 2026-09-01T17:48:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87584 436321728 SN     30:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    30:02
+13403   0.0  0.1  76912 SN     30:01
+13404   0.0  0.1  73008 SN     30:01
+13407 100.2  1.7 2216640 RN     30:01
+=== 2026-09-01T17:49:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.1  0.1  87584 436321728 SN     31:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    31:02
+13403   0.0  0.1  76912 SN     31:01
+13404   0.0  0.1  73008 SN     31:01
+13407  99.2  1.7 2236768 RN     31:01
+=== 2026-09-01T17:50:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87584 436321728 SN     32:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    32:02
+13403   0.0  0.1  76912 SN     32:01
+13404   0.0  0.1  73008 SN     32:01
+13407  99.1  1.7 2255168 RN     32:01
+=== 2026-09-01T17:51:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87584 436321728 SN     33:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    33:02
+13403   0.0  0.1  76912 SN     33:01
+13404   0.0  0.1  73008 SN     33:01
+13407  99.6  1.7 2273936 RN     33:01
+=== 2026-09-01T17:52:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87616 436321728 SN     34:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    34:02
+13403   0.0  0.1  76912 SN     34:01
+13404   0.0  0.1  73008 SN     34:01
+13407  99.1  1.7 2297232 RN     34:01
+=== 2026-09-01T17:53:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87616 436321728 SN     35:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99712 SNs    35:02
+13403   0.0  0.1  76912 SN     35:01
+13404   0.0  0.1  73008 SN     35:01
+13407 100.0  1.7 2310096 RN     35:01
+=== 2026-09-01T17:54:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87616 436321728 SN     36:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    36:02
+13403   0.0  0.1  76912 SN     36:01
+13404   0.0  0.1  73008 SN     36:01
+13407  98.4  1.7 2317792 RN     36:01
+=== 2026-09-01T17:55:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87632 436321728 SN     37:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    37:02
+13403   0.0  0.1  76912 SN     37:01
+13404   0.0  0.1  73008 SN     37:01
+13407  99.0  1.7 2341648 RN     37:01
+=== 2026-09-01T17:56:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87632 436321728 SN     38:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    38:02
+13403   0.0  0.1  76912 SN     38:01
+13404   0.0  0.1  73008 SN     38:01
+13407 100.0  1.8 2363248 RN     38:01
+=== 2026-09-01T17:57:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87648 436321728 SN     39:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    39:02
+13403   0.0  0.1  76912 SN     39:01
+13404   0.0  0.1  73008 SN     39:01
+13407 100.0  1.8 2383760 RN     39:01
+=== 2026-09-01T17:58:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87648 436321728 SN     40:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99664 SNs    40:02
+13403   0.0  0.1  76912 SN     40:01
+13404   0.0  0.1  73008 SN     40:01
+13407  98.5  1.8 2407616 RN     40:01
+=== 2026-09-01T17:59:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87664 436321728 SN     41:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    41:02
+13403   0.0  0.1  76912 SN     41:01
+13404   0.0  0.1  73072 SN     41:01
+13407 100.0  1.8 2429424 RN     41:01
+=== 2026-09-01T18:00:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87664 436321728 SN     42:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    42:02
+13403   0.0  0.1  76912 SN     42:01
+13404   0.0  0.1  73072 SN     42:01
+13407  99.0  1.8 2443104 RN     42:01
+=== 2026-09-01T18:01:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87664 436321728 SN     43:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99616 SNs    43:02
+13403   0.0  0.1  76912 SN     43:01
+13404   0.0  0.1  73072 SN     43:01
+13407 100.0  1.8 2472848 RN     43:01
+=== 2026-09-01T18:02:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87664 436321728 SN     44:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    44:02
+13403   0.0  0.1  76912 SN     44:01
+13404   0.0  0.1  73072 SN     44:01
+13407  99.9  1.9 2498832 RN     44:01
+=== 2026-09-01T18:03:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87680 436321728 SN     45:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    45:02
+13403   0.0  0.1  76912 SN     45:01
+13404   0.0  0.1  73088 SN     45:01
+13407  99.0  1.9 2518320 RN     45:01
+=== 2026-09-01T18:04:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87680 436321728 SN     46:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    46:02
+13403   0.0  0.1  76912 SN     46:01
+13404   0.0  0.1  73072 SN     46:01
+13407 132.6  1.9 2523072 RN     46:01
+=== 2026-09-01T18:05:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87680 436321728 SN     47:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99616 SNs    47:02
+13403   0.0  0.1  76912 SN     47:01
+13404   0.0  0.1  73104 SN     47:01
+13407  99.8  1.9 2546736 RN     47:01
+=== 2026-09-01T18:06:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87680 436321728 SN     48:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    48:02
+13403   0.0  0.1  76912 SN     48:01
+13404   0.0  0.1  73104 SN     48:01
+13407 100.0  1.9 2564944 RN     48:01
+=== 2026-09-01T18:07:02Z
+  PID  PPID  %CPU %MEM    RSS      VSZ STAT ELAPSED COMMAND
+13392 13390   0.0  0.1  87696 436321728 SN     49:02 node evidence/e4-t01/browser-alpine-boot-2026-09-01/run-boot.mjs http://localhost:8123 evidence/e4-t01/browser-alpine-boot-2026-09-01
+13401   0.0  0.1  99632 SNs    49:02
+13403   0.0  0.1  76912 SN     49:01
+13404   0.0  0.1  73088 SN     49:01
+13407  99.0  1.9 2583584 RN     49:01
+=== boot process exited at 2026-09-01T18:08:02Z
+exit code 1

@@ -1,0 +1,75 @@
+{
+  "outcome": "login-reached",
+  "machine": "Apple M4 Max, 16 cores, 128 GB (2026-09-01)",
+  "url": "http://localhost:8123/?guest=alpine&noSnapshot&persist=0&profile=1#ide",
+  "boot_mode": "full cold chunked Alpine boot — noSnapshot & persist=0 (no snapshot restore); default whole-machine worker + browser JIT",
+  "started_at": "2026-09-01T18:22:44.970Z",
+  "finished_at": "2026-09-01T18:27:30.406Z",
+  "wall_ms_to_login": 275256,
+  "wall_min_to_login": 4.59,
+  "marker_times_s": {
+    "Linux version": 5.1,
+    "OpenRC": 20.1,
+    "login:": 275.3,
+    "~#": 280.3,
+    "COLD_BOOT_42_OK": 285.3,
+    "riscv64": 285.3
+  },
+  "lazy_chunk_fetches": 179,
+  "console_bytes": 13873,
+  "console_errors": [],
+  "profile_source": "__linuxCtl.profileStats() (worker-mode proxy of getProfile)",
+  "profile_summary": {
+    "totalNs": 270047165117,
+    "sampleCount": 653365,
+    "walkCount": 44512044,
+    "collisions": 218681,
+    "regions": 10,
+    "subsystems": [
+      {
+        "name": "cpu_interp",
+        "ns": 266934376787
+      },
+      {
+        "name": "mmu_walk",
+        "ns": 3110523360
+      },
+      {
+        "name": "clint",
+        "ns": 0
+      },
+      {
+        "name": "plic",
+        "ns": 549979
+      },
+      {
+        "name": "uart",
+        "ns": 660002
+      },
+      {
+        "name": "virtio_blk",
+        "ns": 769988
+      },
+      {
+        "name": "virtio_net",
+        "ns": 120004
+      },
+      {
+        "name": "virtio_rng",
+        "ns": 64997
+      },
+      {
+        "name": "rtc",
+        "ns": 100000
+      },
+      {
+        "name": "syscon",
+        "ns": 0
+      },
+      {
+        "name": "other",
+        "ns": 0
+      }
+    ]
+  }
+}
