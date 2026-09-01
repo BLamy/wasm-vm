@@ -115,6 +115,10 @@ async function main() {
       environment,
       runner: capture.runner,
       policy: capture.policy,
+      // Browser captures carry the exact production execution policy and source tab.
+      // Preserve it so the public comparison distinguishes measured guest modes from
+      // a generic Linux row and remains auditable without publishing host secrets.
+      browser: capture.browser ?? null,
       workloads: capture.workloads,
       fixture: capture.fixture,
     });
