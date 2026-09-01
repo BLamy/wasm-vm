@@ -358,9 +358,9 @@
         <div class="wrap">
           <div class="bench-head reveal">
             <div>
-              <span class="kicker">Node mechanism matrix</span>
-              <h2 class="h2">One checksum fixture, five runtime mechanisms.</h2>
-              <p class="sub">Every published row requires seven raw-backed command and readiness samples. Command timing uses submit → checksum marker; responsive readiness uses each runtime’s own fresh-launch → first-response path.</p>
+              <span class="kicker">Historical Node mechanism matrix</span>
+              <h2 class="h2">One checksum fixture, four measured mechanisms.</h2>
+              <p class="sub">This is a separate historical campaign for command and launch readiness. The complete system workload matrix below is the current source of truth for wasm-vm file, stream, server, and HTTP measurements.</p>
             </div>
             <div class="bench-meta">Captured <code id="bench-updated">loading…</code></div>
           </div>
@@ -377,9 +377,10 @@
             checksum marker; wasm-vm uses the first genuine Node command in each fresh restored VM. Responsive
             readiness is reported separately, stops at the first exact probe response, and
             displays the runtime-specific launch mechanism—including snapshot restore versus process launch.
-            Each row preserves its own capture revision, timestamp, browser mode, source, and collector; the
-            comparison does not pretend they came from one campaign. It is a mechanism comparison, not a
-            normalized cold-boot or isolation-equivalence claim.
+            The historical wasm-vm candidate is intentionally omitted from this fixture because it has no
+            matching fresh-launch evidence. Current wasm-vm measurements appear in the complete matrix below.
+            Each row preserves its own capture revision, timestamp, browser mode, source, and collector; this
+            comparison does not pretend the mechanisms provide identical isolation or cold-boot paths.
             <a href="./benchmarks.json">Raw samples and provenance →</a>
           </p>
 
@@ -923,9 +924,9 @@ hello from a container
           return tr;
         });
         if (data.publicationStatus === "competitor-candidate") {
-          const pending = document.createElement("tr");
-          pending.innerHTML = '<td class="runtime">wasm-vm</td><td class="model" colspan="4">Seven fresh wasm-vm samples are being re-run; no timing is shown until the raw-backed publication gate passes.</td><td class="number">pending</td>';
-          renderedRows.push(pending);
+          const candidateNotice = document.createElement("tr");
+          candidateNotice.innerHTML = '<td class="model" colspan="6">Historical wasm-vm candidate omitted from this separate fixture; see the complete system workload matrix below for current measurements.</td>';
+          renderedRows.push(candidateNotice);
         }
         benchmarkRows.replaceChildren(...renderedRows);
       };
