@@ -10,8 +10,10 @@ workload, build profile, and environment is noise, so all three are fixed here.
 - **Metric:** each iteration reloads the ELF (a clean reset — segments + bss-zero +
   `pc=entry` + HTIF re-armed) and runs it to HTIF exit; criterion reports
   `Throughput::Elements(48)` as instructions/second.
-- **Regenerate the native rows:** `make bench`. Node row: `node web/bench-node.mjs`.
-  Browser row: the **Bench** button on the E0-T23 demo page.
+- **Regenerate the native rows:** `make bench`. The current browser-facing Node system measurements
+  live in [`web/runtime-benchmarks.json`](../web/runtime-benchmarks.json) and are regenerated from
+  [`web/bench-runtime-workloads.mjs`](../web/bench-runtime-workloads.mjs). The historical MIPS rows
+  below remain as E0-T24 evidence and are not mixed into that workload comparison.
 
 ## Measurement — 2026-07-03
 
@@ -47,7 +49,7 @@ workload, build profile, and environment is noise, so all three are fixed here.
 
 | Environment | Run 1 | Run 2 | Run 3 | native ÷ wasm |
 |-------------|------:|------:|------:|--------------:|
-| node-wasm (`bench-node.mjs`) | 37.5 | 34.8 | 38.2 | **≈ 1.9×** |
+| node-wasm (historical browser MIPS capture) | 37.5 | 34.8 | 38.2 | **≈ 1.9×** |
 | browser (Chrome 150, steady) | 17.9 | 18.1 | — | **≈ 3.9×** |
 
 - Each `bench()` call retires **10,000,032** instructions (≥ 10⁷ — keeps JS↔wasm boundary

@@ -1,11 +1,11 @@
 {
   "schema": 1,
   "kind": "node-system-workload-comparison-v1",
-  "publicationStatus": "complete",
-  "generatedAt": "2026-09-01T02:24:02.812Z",
+  "publicationStatus": "partial",
+  "generatedAt": "2026-09-01T04:04:39.798Z",
   "campaign": {
     "id": "runtime-workloads-v1",
-    "scope": "native Node and wasm-vm execution modes",
+    "scope": "native Node, wasm-vm, WebContainers, almostnode, and WebVM execution modes",
     "method": "same portable Node script, deterministic fixture, warmups, repeated verified samples",
     "workloadIds": [
       "file-read",
@@ -2038,7 +2038,819 @@
         "httpBodyBytes": 65536,
         "httpBodySha256": "b70bd0bab85407b37d84b9d8d0d0f26f901355bd6ab9004d5bb35a95d241e9f7"
       }
+    },
+    {
+      "id": "webcontainers",
+      "label": "webcontainers",
+      "status": "measured",
+      "environment": {
+        "id": "webcontainers",
+        "nodeVersion": "v22.22.3",
+        "versions": {
+          "node": "22.22.3",
+          "acorn": "8.16.0",
+          "ada": "2.9.2",
+          "amaro": "1.1.8",
+          "ares": "1.34.6",
+          "brotli": "1.1.0",
+          "cjs_module_lexer": "2.2.0",
+          "cldr": "48.0",
+          "icu": "78.2",
+          "llhttp": "9.3.1",
+          "modules": "127",
+          "napi": "10",
+          "nbytes": "0.1.3",
+          "ncrypto": "0.0.1",
+          "nghttp2": "1.64.0",
+          "openssl": "3.5.6",
+          "simdjson": "4.5.0",
+          "simdutf": "6.4.2",
+          "sqlite": "3.51.3",
+          "tz": "2026a",
+          "undici": "6.24.1",
+          "unicode": "17.0",
+          "uv": "1.51.0",
+          "uvwasi": "0.0.23",
+          "v8": "12.4.254.21-node.56",
+          "zlib": "1.3.1-470d3a2",
+          "zstd": "1.5.7",
+          "webcontainer": "017acfb7"
+        },
+        "platform": "linux",
+        "arch": "x64",
+        "osRelease": "5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "execPath": "node",
+        "logicalCpus": 8
+      },
+      "runner": {
+        "source": "web/bench-runtime-workloads.mjs",
+        "scriptSha256": "094dd31c872b6fdf080d022add317f40dde128c219342db33d7ba3504add69fb",
+        "collection": "one exact runner invocation per workload; combined without changing samples",
+        "command": [
+          "node",
+          "web/bench-runtime-workloads.mjs",
+          "--environment=webcontainers",
+          "--samples=7",
+          "--warmups=2",
+          "--payload-kib=1024",
+          "--stream-chunk-kib=64",
+          "--http-requests=8",
+          "--only=file-read",
+          "--output=runtime-workloads-file-read.json"
+        ]
+      },
+      "policy": {
+        "samples": 7,
+        "warmups": 2,
+        "httpRequests": 8
+      },
+      "browser": {
+        "adapter": "temporary-webcontainers-workload-harness",
+        "source": "https://webcontainers.io/",
+        "packageVersion": "@webcontainer/api 1.6.4",
+        "url": "http://127.0.0.1:4180/benchmark-webcontainers.html?v=14&run=16",
+        "variant": "webcontainer-api"
+      },
+      "workloads": [
+        {
+          "id": "file-read",
+          "label": "File read",
+          "operation": "fs.promises.readFile + SHA-256 verification",
+          "status": "measured",
+          "samples": [
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 2.65,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 2.875,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 2.75,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 2.63,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 2.555,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 2.58,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 2.875,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 2.555,
+            "maxMs": 2.875,
+            "meanMs": 2.702,
+            "medianMs": 2.65,
+            "p95Ms": 2.875,
+            "stdevMs": 0.123,
+            "bytes": 1048576,
+            "throughputMiBPerSec": 377.358
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "file-write",
+          "label": "File write",
+          "operation": "fs.promises.writeFile + stat + SHA-256 verification",
+          "status": "measured",
+          "samples": [
+            {
+              "bytes": 1048576,
+              "elapsedMs": 0.67,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 0.71,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 0.68,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 0.74,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 0.62,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 0.56,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 0.615,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 0.56,
+            "maxMs": 0.74,
+            "meanMs": 0.656,
+            "medianMs": 0.67,
+            "p95Ms": 0.74,
+            "stdevMs": 0.057,
+            "bytes": 1048576,
+            "throughputMiBPerSec": 1492.537
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "stream-read",
+          "label": "Stream read",
+          "operation": "fs.createReadStream + incremental SHA-256",
+          "status": "measured",
+          "samples": [
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 20.675,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 19.965,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 20.065,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 19.555,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 20.465,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 18.825,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 20.81,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 18.825,
+            "maxMs": 20.81,
+            "meanMs": 20.051,
+            "medianMs": 20.065,
+            "p95Ms": 20.81,
+            "stdevMs": 0.643,
+            "bytes": 1048576,
+            "throughputMiBPerSec": 49.838
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "stream-copy",
+          "label": "Stream copy",
+          "operation": "pipeline(readable, Transform, writable)",
+          "status": "measured",
+          "samples": [
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 10.175,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 9.57,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 11.84,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 8.875,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 10.015,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 9.965,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 10.17,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 8.875,
+            "maxMs": 11.84,
+            "meanMs": 10.087,
+            "medianMs": 10.015,
+            "p95Ms": 11.84,
+            "stdevMs": 0.832,
+            "bytes": 1048576,
+            "throughputMiBPerSec": 99.85
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "server-lifecycle",
+          "label": "Server lifecycle",
+          "operation": "http.createServer + listen + close",
+          "status": "measured",
+          "samples": [
+            {
+              "listenMs": 11.58,
+              "closeMs": 9.085,
+              "bytes": 0,
+              "elapsedMs": 20.67,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 10.535,
+              "closeMs": 8.565,
+              "bytes": 0,
+              "elapsedMs": 19.115,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 10.065,
+              "closeMs": 9.66,
+              "bytes": 0,
+              "elapsedMs": 19.735,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 12.345,
+              "closeMs": 7.73,
+              "bytes": 0,
+              "elapsedMs": 20.08,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 11.79,
+              "closeMs": 9.065,
+              "bytes": 0,
+              "elapsedMs": 20.855,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 10.3,
+              "closeMs": 8.88,
+              "bytes": 0,
+              "elapsedMs": 19.185,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 11.98,
+              "closeMs": 7.66,
+              "bytes": 0,
+              "elapsedMs": 19.64,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 19.115,
+            "maxMs": 20.855,
+            "meanMs": 19.897,
+            "medianMs": 19.735,
+            "p95Ms": 20.855,
+            "stdevMs": 0.628,
+            "bytes": 0,
+            "throughputMiBPerSec": null
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "http-roundtrip",
+          "label": "HTTP round trip",
+          "operation": "local HTTP server + sequential requests + close",
+          "status": "measured",
+          "samples": [
+            {
+              "bytes": 524288,
+              "requests": 8,
+              "responseBytes": 524288,
+              "listenMs": 0.18,
+              "requestMs": 18.475,
+              "closeMs": 0.045,
+              "elapsedMs": 18.705,
+              "verification": "passed"
+            },
+            {
+              "bytes": 524288,
+              "requests": 8,
+              "responseBytes": 524288,
+              "listenMs": 4.76,
+              "requestMs": 21.645,
+              "closeMs": 0.04,
+              "elapsedMs": 26.455,
+              "verification": "passed"
+            },
+            {
+              "bytes": 524288,
+              "requests": 8,
+              "responseBytes": 524288,
+              "listenMs": 0.175,
+              "requestMs": 11.85,
+              "closeMs": 0.07,
+              "elapsedMs": 12.095,
+              "verification": "passed"
+            },
+            {
+              "bytes": 524288,
+              "requests": 8,
+              "responseBytes": 524288,
+              "listenMs": 0.28,
+              "requestMs": 13.97,
+              "closeMs": 0.055,
+              "elapsedMs": 14.31,
+              "verification": "passed"
+            },
+            {
+              "bytes": 524288,
+              "requests": 8,
+              "responseBytes": 524288,
+              "listenMs": 0.26,
+              "requestMs": 19.04,
+              "closeMs": 0.055,
+              "elapsedMs": 19.36,
+              "verification": "passed"
+            },
+            {
+              "bytes": 524288,
+              "requests": 8,
+              "responseBytes": 524288,
+              "listenMs": 0.585,
+              "requestMs": 15.605,
+              "closeMs": 0.045,
+              "elapsedMs": 16.24,
+              "verification": "passed"
+            },
+            {
+              "bytes": 524288,
+              "requests": 8,
+              "responseBytes": 524288,
+              "listenMs": 0.4,
+              "requestMs": 16.355,
+              "closeMs": 0.175,
+              "elapsedMs": 16.975,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 12.095,
+            "maxMs": 26.455,
+            "meanMs": 17.734,
+            "medianMs": 16.975,
+            "p95Ms": 26.455,
+            "stdevMs": 4.242,
+            "bytes": 524288,
+            "throughputMiBPerSec": 29.455
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        }
+      ],
+      "fixture": {
+        "id": "runtime-workloads-v1",
+        "payloadBytes": 1048576,
+        "payloadSha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+        "streamChunkBytes": 65536,
+        "httpBodyBytes": 65536,
+        "httpBodySha256": "b70bd0bab85407b37d84b9d8d0d0f26f901355bd6ab9004d5bb35a95d241e9f7"
+      }
+    },
+    {
+      "id": "almostnode",
+      "label": "almostnode",
+      "status": "partial",
+      "environment": {
+        "id": "almostnode",
+        "nodeVersion": "v20.0.0",
+        "versions": {
+          "node": "20.0.0",
+          "v8": "11.3.244.8",
+          "uv": "1.44.2"
+        },
+        "platform": "linux",
+        "arch": "x64",
+        "osRelease": "5.10.0",
+        "execPath": "node",
+        "logicalCpus": 2
+      },
+      "runner": {
+        "source": "web/bench-runtime-workloads.mjs",
+        "scriptSha256": "094dd31c872b6fdf080d022add317f40dde128c219342db33d7ba3504add69fb",
+        "collection": "one exact runner invocation per workload; combined without changing samples",
+        "command": [
+          "node",
+          "web/bench-runtime-workloads.mjs",
+          "--environment=almostnode",
+          "--samples=7",
+          "--warmups=2",
+          "--payload-kib=1024",
+          "--stream-chunk-kib=64",
+          "--http-requests=8",
+          "--only=file-read",
+          "--output=/runtime-workloads-file-read.json"
+        ]
+      },
+      "policy": {
+        "samples": 7,
+        "warmups": 2,
+        "httpRequests": 8
+      },
+      "browser": {
+        "adapter": "temporary-almostnode-workload-harness",
+        "source": "https://github.com/BLamy/almostnode",
+        "packageVersion": "@agent-wasm/core 0.4.0",
+        "url": "http://127.0.0.1:4179/benchmark.html?run=7",
+        "variant": "package-source"
+      },
+      "workloads": [
+        {
+          "id": "file-read",
+          "label": "File read",
+          "operation": "fs.promises.readFile + SHA-256 verification",
+          "status": "measured",
+          "samples": [
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 12.97,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 12.855,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 12.96,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 12.92,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 13,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 13.015,
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "elapsedMs": 12.95,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 12.855,
+            "maxMs": 13.015,
+            "meanMs": 12.953,
+            "medianMs": 12.96,
+            "p95Ms": 13.015,
+            "stdevMs": 0.049,
+            "bytes": 1048576,
+            "throughputMiBPerSec": 77.16
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "file-write",
+          "label": "File write",
+          "operation": "fs.promises.writeFile + stat + SHA-256 verification",
+          "status": "measured",
+          "samples": [
+            {
+              "bytes": 1048576,
+              "elapsedMs": 1.455,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 1.4,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 1.405,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 1.415,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 1.615,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 1.355,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            },
+            {
+              "bytes": 1048576,
+              "elapsedMs": 1.33,
+              "sha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 1.33,
+            "maxMs": 1.615,
+            "meanMs": 1.425,
+            "medianMs": 1.405,
+            "p95Ms": 1.615,
+            "stdevMs": 0.086,
+            "bytes": 1048576,
+            "throughputMiBPerSec": 711.744
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "stream-read",
+          "label": "stream-read",
+          "operation": "shared Node system workload",
+          "status": "unsupported",
+          "reason": "Error: stream-read: stream is not async iterable\n    at runBenchmark (http://127.0.0.1:4179/__modules__/r/almostnode-runtime-4/esm/0/25fkrv?id=%2Fbench-runtime-workloads.mjs:553:17)\n    at async main (http://127.0.0.1:4179/__modules__/r/almostnode-runtime-4/esm/0/25fkrv?id=%2Fbench-runtime-workloads.mjs:605:18)",
+          "samples": [],
+          "summary": null,
+          "verification": {
+            "sampleCount": 0,
+            "passed": false
+          }
+        },
+        {
+          "id": "stream-copy",
+          "label": "stream-copy",
+          "operation": "shared Node system workload",
+          "status": "unsupported",
+          "reason": "Error: ENOENT: no such file or directory, open '/runtime-workloads-stream-copy.json'\n    at createNodeError (http://127.0.0.1:4179/packages/almostnode/src/virtual-fs.ts:78:15)\n    at VirtualFS.readFileSync (http://127.0.0.1:4179/packages/almostnode/src/virtual-fs.ts:358:13)\n    at http://127.0.0.1:4179/benchmark.js?t=1788232193001:23:71",
+          "samples": [],
+          "summary": null,
+          "verification": {
+            "sampleCount": 0,
+            "passed": false
+          }
+        },
+        {
+          "id": "server-lifecycle",
+          "label": "Server lifecycle",
+          "operation": "http.createServer + listen + close",
+          "status": "measured",
+          "samples": [
+            {
+              "listenMs": 0.015,
+              "closeMs": 0.005,
+              "bytes": 0,
+              "elapsedMs": 0.02,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 0.005,
+              "closeMs": 0.01,
+              "bytes": 0,
+              "elapsedMs": 0.02,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 0.01,
+              "closeMs": 0.005,
+              "bytes": 0,
+              "elapsedMs": 0.02,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 0.01,
+              "closeMs": 0,
+              "bytes": 0,
+              "elapsedMs": 0.015,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 0.005,
+              "closeMs": 0,
+              "bytes": 0,
+              "elapsedMs": 0.01,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 0.005,
+              "closeMs": 0,
+              "bytes": 0,
+              "elapsedMs": 0.005,
+              "verification": "passed"
+            },
+            {
+              "listenMs": 0.005,
+              "closeMs": 0.005,
+              "bytes": 0,
+              "elapsedMs": 0.01,
+              "verification": "passed"
+            }
+          ],
+          "summary": {
+            "sampleCount": 7,
+            "minMs": 0.005,
+            "maxMs": 0.02,
+            "meanMs": 0.014,
+            "medianMs": 0.015,
+            "p95Ms": 0.02,
+            "stdevMs": 0.006,
+            "bytes": 0,
+            "throughputMiBPerSec": null
+          },
+          "verification": {
+            "sampleCount": 7,
+            "passed": true
+          }
+        },
+        {
+          "id": "http-roundtrip",
+          "label": "http-roundtrip",
+          "operation": "shared Node system workload",
+          "status": "unsupported",
+          "reason": "Error: http-roundtrip: HTTP response status 403\n    at runBenchmark (http://127.0.0.1:4179/__modules__/r/almostnode-runtime-7/esm/0/25fkrv?id=%2Fbench-runtime-workloads.mjs:553:17)\n    at async main (http://127.0.0.1:4179/__modules__/r/almostnode-runtime-7/esm/0/25fkrv?id=%2Fbench-runtime-workloads.mjs:605:18)",
+          "samples": [],
+          "summary": null,
+          "verification": {
+            "sampleCount": 0,
+            "passed": false
+          }
+        }
+      ],
+      "fixture": {
+        "id": "runtime-workloads-v1",
+        "payloadBytes": 1048576,
+        "payloadSha256": "6078837668115dc3f7b2b24c8a8978ec534583fadd5c80b77c95a00d0cf51433",
+        "streamChunkBytes": 65536,
+        "httpBodyBytes": 65536,
+        "httpBodySha256": "b70bd0bab85407b37d84b9d8d0d0f26f901355bd6ab9004d5bb35a95d241e9f7"
+      }
     }
   ],
-  "notRun": []
+  "notRun": [
+    {
+      "id": "webvm",
+      "reason": "exact 1 MiB suite hit EADDRINUSE on the ephemeral loopback listener; a fresh 1 KiB file-read retry also exceeded the four-minute bounded run"
+    }
+  ]
 }

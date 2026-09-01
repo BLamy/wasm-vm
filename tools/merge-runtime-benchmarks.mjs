@@ -73,7 +73,9 @@ function validateCapture(capture, id) {
   if (capture?.schema !== SCHEMA || capture.kind !== "node-system-workload-benchmark-v1") {
     throw new Error(`${id}: capture schema or kind is invalid`);
   }
-  if (capture.status !== "measured") throw new Error(`${id}: capture is not fully measured`);
+  if (capture.status !== "measured" && capture.status !== "partial") {
+    throw new Error(`${id}: capture status must be measured or partial`);
+  }
   if (capture.environment?.id !== id) {
     throw new Error(`${id}: capture environment ID is ${capture.environment?.id ?? "missing"}`);
   }
@@ -81,11 +83,20 @@ function validateCapture(capture, id) {
     throw new Error(`${id}: workload IDs/order do not match the canonical suite`);
   }
   for (const workload of capture.workloads) {
-    if (workload.status !== "measured" || workload.verification?.passed !== true) {
-      throw new Error(`${id}: ${workload.id} is not verified`);
-    }
-    if (!Array.isArray(workload.samples) || workload.samples.length !== capture.policy.samples) {
-      throw new Error(`${id}: ${workload.id} sample count does not match policy`);
+    if (workload.status === "measured") {
+      if (workload.verification?.passed !== true) throw new Error(`${id}: ${workload.id} is not verified`);
+      if (!Array.isArray(workload.samples) || workload.samples.length !== capture.policy.samples) {
+        throw new Error(`${id}: ${workload.id} sample count does not match policy`);
+      }
+    } else if (workload.status === "unsupported") {
+      if (typeof workload.reason !== "string" || workload.reason.trim() === "") {
+        throw new Error(`${id}: ${workload.id} unsupported result needs a reason`);
+      }
+      if (!Array.isArray(workload.samples) || workload.samples.length !== 0 || workload.summary !== null) {
+        throw new Error(`${id}: ${workload.id} unsupported result must not contain timings`);
+      }
+    } else {
+      throw new Error(`${id}: ${workload.id} has invalid status ${workload.status}`);
     }
   }
 }
@@ -111,7 +122,7 @@ async function main() {
     captures.push({
       id: input.id,
       label: input.id,
-      status: "measured",
+      status: capture.status,
       environment,
       runner: capture.runner,
       policy: capture.policy,
@@ -139,11 +150,12 @@ async function main() {
   const comparison = {
     schema: SCHEMA,
     kind: KIND,
-    publicationStatus: options.notRun.length === 0 ? "complete" : "partial",
+    publicationStatus: options.notRun.length === 0 && captures.every((capture) => capture.status === "measured")
+      ? "complete" : "partial",
     generatedAt: new Date().toISOString(),
     campaign: {
       id: "runtime-workloads-v1",
-      scope: "native Node and wasm-vm execution modes",
+      scope: "native Node, wasm-vm, WebContainers, almostnode, and WebVM execution modes",
       method: "same portable Node script, deterministic fixture, warmups, repeated verified samples",
       workloadIds: REQUIRED_WORKLOAD_IDS,
       source: "./bench-runtime-workloads.mjs",

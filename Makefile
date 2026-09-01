@@ -175,15 +175,9 @@ hooks:
 	git config core.hooksPath tools/git-hooks
 	@echo "hooks installed: core.hooksPath = tools/git-hooks (pre-commit rebuilds web/dist)"
 
-# Interpreter MIPS baseline (E0-T24). Regenerates the native rows of docs/baselines.md;
-# the node/browser rows come from web/bench-node.mjs and the demo page's Bench button.
+# Interpreter MIPS baseline (E0-T24).
 bench:
 	cargo bench -p wasm-vm-cli --bench interp
-
-# Refresh the homepage's native-host-relative Node baseline. Browser-only rows remain explicitly
-# pending until their adapter captures the same fixture; this avoids publishing incomparable values.
-bench-node-runtimes:
-	node tools/run-node-benchmarks.mjs --output web/benchmarks.json
 
 # Portable Node system workload suite. Override the script flags when collecting
 # a slower guest run; the output keeps every sample and verification digest.
