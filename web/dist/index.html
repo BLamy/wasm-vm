@@ -227,15 +227,15 @@
       .bench-note a { color: var(--cyan); }
       .workload-bench { margin-top: 46px; padding-top: 40px; border-top: 1px solid var(--line); }
       .workload-bench h3 { margin: 8px 0 0; font-size: clamp(1.55rem, 3vw, 2.2rem); letter-spacing: -.025em; }
-      .workload-table { min-width: 1120px; }
+      .workload-table { min-width: 1120px; table-layout: fixed; }
       .workload-table th, .workload-table td { padding: 12px 13px; }
-      .workload-table .workload-runtime { min-width: 175px; }
+      .workload-table .workload-runtime { width: 175px; min-width: 175px; }
       .workload-table .workload-runtime strong { display: block; color: var(--ink); }
       .workload-table .workload-runtime span { display: block; color: var(--muted); font: 10px/1.45 var(--mono); margin-top: 5px; }
-      .workload-table .workload-cell { font-family: var(--mono); white-space: nowrap; }
-      .workload-table .workload-cell .workload-p95 { display: block; color: var(--muted); font-size: 10px; margin-top: 4px; }
+      .workload-table .workload-cell { font-family: var(--mono); white-space: normal; overflow-wrap: anywhere; }
+      .workload-table .workload-cell .workload-p95 { display: block; color: var(--muted); font-size: 10px; line-height: 1.45; margin-top: 4px; white-space: normal; overflow-wrap: anywhere; }
       .workload-table .workload-cell .workload-throughput { display: block; color: var(--mint); font-size: 10px; margin-top: 4px; }
-      .workload-table .workload-pending { color: var(--muted); font-family: var(--mono); font-size: .82rem; }
+      .workload-table .workload-pending { color: var(--muted); font-family: var(--mono); font-size: .82rem; line-height: 1.45; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
 
       /* ── Boot stack (architecture) ── */
       .stack { display: flex; flex-direction: column; gap: 12px; margin-top: 44px; max-width: 760px; }
@@ -601,9 +601,22 @@ hello from a container
         requireBenchmark(Array.isArray(data.notRun), "workload notRun list is invalid");
         return data;
       };
+      const compactWorkloadReason = (reason) => {
+        const firstLine = String(reason ?? "capture unavailable").split(/\r?\n/, 1)[0].replace(/^Error:\s*/i, "");
+        if (firstLine.includes("EADDRINUSE")) return "loopback listener collision; bounded retry timed out";
+        if (firstLine.includes("stream is not async iterable")) return "stream API is not async iterable";
+        if (firstLine.includes("HTTP response status 403")) return "HTTP response returned 403";
+        if (firstLine.includes("ENOENT")) return "output capture file unavailable (ENOENT)";
+        return firstLine.length > 96 ? `${firstLine.slice(0, 93)}…` : firstLine;
+      };
       const formatWorkloadMetric = (workload) => {
         if (workload.status !== "measured" || !workload.summary) {
-          return { text: "not measured", detail: workload.reason ?? "capture unavailable", throughput: null };
+          return {
+            text: "not measured",
+            detail: `unsupported — ${compactWorkloadReason(workload.reason)}`,
+            reason: workload.reason ?? "capture unavailable",
+            throughput: null,
+          };
         }
         const summary = workload.summary;
         return {
@@ -635,6 +648,10 @@ hello from a container
             cell.className = "workload-cell";
             cell.setAttribute("data-workload", workloadShortLabels[workloadId]);
             cell.textContent = metric.text;
+            if (metric.reason) {
+              cell.classList.add("workload-unavailable");
+              cell.title = metric.reason;
+            }
             const p95 = document.createElement("span");
             p95.className = "workload-p95";
             p95.textContent = metric.detail;
@@ -657,9 +674,10 @@ hello from a container
           title.textContent = workloadRuntimeLabels[unavailable.id] ?? unavailable.id;
           runtime.append(title);
           const reason = document.createElement("td");
-          reason.className = "workload-pending";
+          reason.className = "workload-pending workload-unavailable-summary";
           reason.colSpan = workloadIds.length;
-          reason.textContent = `not measured — ${unavailable.reason}`;
+          reason.title = unavailable.reason;
+          reason.textContent = `not measured — ${compactWorkloadReason(unavailable.reason)}`;
           tr.append(runtime, reason);
           renderedRows.push(tr);
         });

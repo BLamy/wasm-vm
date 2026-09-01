@@ -27,6 +27,11 @@ test("homepage shows the unified Node system workload matrix", async ({ page }) 
   await expect(page.locator("#runtime-workloads")).toContainText("p95");
   await expect(page.locator("#workload-rows")).toContainText("not measured");
   await expect(page.locator("#workload-rows")).not.toContainText("pending");
+  await expect(page.locator("#workload-rows")).not.toContainText("Error:");
+  await expect(page.locator("#workload-rows")).not.toContainText("http://127.0.0.1:4179");
+  const visibleDiagnostics = await page.locator("#workload-rows .workload-pending").allTextContents();
+  expect(visibleDiagnostics.every((diagnostic) => diagnostic.length <= 140),
+    "unsupported diagnostics should be compact: " + visibleDiagnostics.join(" | ")).toBe(true);
   await expect(page.locator("body")).not.toContainText("benchmarks.json");
   expect(errors, "browser errors: " + errors.join("; ")).toEqual([]);
 });
