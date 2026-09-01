@@ -330,3 +330,22 @@ for a future fresh worker slice.
   OpenRC hardware scan), so no browser compute timing or JIT speedup is claimed here. E4-T34
   remains `in-progress`; the required restored-Node `3x` result, `<=5s` stretch target,
   fourfold boundary-rate improvement, full adversarial evidence, and rr/rr-soft trace remain open.
+
+### 2026-09-01 — worker checkpoint — publish compute results on the landing page
+
+- UI/publication commit: `933e828`. The landing page now renders the separate steady-state compute
+  campaign from `runtime-compute-benchmarks.json`, with native median/p95/rate cells and the
+  separate native JIT handoff diagnostic. The displayed native medians are integer mix `10.15 ms`,
+  branch mix `3.27 ms`, and memory mix `2.51 ms`; the diagnostic displays `1.265x` for the six-op
+  boundary loop and `6.771x` for the 64-op hot loop. Browser rows remain visibly `not measured`
+  until an exact restored-Node capture completes.
+- Evidence: `evidence/e4-t34/landing-compute-production-2026-09-01.json`. The local and live
+  compute JSON are byte-identical at SHA-256
+  `5bc6cc5a96429b7acea6e5d15601f0ee9e3fcebb8cf000ed451c1e4a912b4915`. A fresh production browser
+  load at `https://wasm-vm.pages.dev/?verify=compute-ui-2` rendered four compute rows, the native
+  medians, both diagnostic ratios, and zero browser console/page errors.
+- Gates: `git diff --check`; `node --test web/tests/runtime-compute.test.mjs web/tests/runtime-workloads.test.mjs`;
+  `bash -n tools/build-web-dist.sh`; `make web-dist`; direct production browser verification; and
+  `bash tools/deploy-cloudflare.sh` (preview `https://8f507961.wasm-vm.pages.dev`). This is a
+  publication/UI correction only, not an E4-T34 acceptance claim; the restored-Node browser
+  timings, JIT speedup, adversarial proof, and rr/rr-soft trace remain open.
