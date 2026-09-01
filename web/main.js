@@ -1793,6 +1793,11 @@ async function runRiscvTest(name) {
     }
     const elf = new Uint8Array(await res.arrayBuffer());
     machine = new WasmMachine(TEST_RAM_MIB);
+    // Keep the live browser suite on the same predecoded/block-cache path as
+    // the Linux demo so it exercises E4-T05's fast interpreter capability.
+    if (typeof machine.setFastInterpreter === "function") {
+      machine.setFastInterpreter(true);
+    }
     machine.loadElf(elf);
     updateSuiteDot(name, { status: "running", retired: null, detail: "running" });
     await yieldToPaint();

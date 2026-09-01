@@ -1,0 +1,75 @@
+{
+  "date": "2026-09-01",
+  "commit": "2d092b4b22761fc416914ddb37ad5e281a7b6c12",
+  "machine": {
+    "cpu": "Apple M4 Max",
+    "cores": 16,
+    "ram_bytes": 137438953472,
+    "os": "macOS 26.6.2 (25G83)",
+    "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)"
+  },
+  "note": "guest CoreMark score is instruction-count-derived (identical across configs); the emulator uplift is the HOST wall-clock ratio of the benchmark region, median of 5 alternating back-to-back samples per config on an idle machine.",
+  "chain_off": {
+    "host_elapsed_samples_s": [
+      108.8,
+      106.212,
+      106.851,
+      108.108,
+      107.839
+    ],
+    "median_host_s": 107.839,
+    "guest_elapsed_s": [
+      22.93,
+      22.923,
+      22.923,
+      22.923,
+      22.923
+    ],
+    "scores": [
+      261.666,
+      261.746,
+      261.746,
+      261.746,
+      261.746
+    ],
+    "files": [
+      "evidence/e4-t18/ab-2026-09-01/coremark-jit-chainoff-s1.json",
+      "evidence/e4-t18/ab-2026-09-01/coremark-jit-chainoff-s2.json",
+      "evidence/e4-t18/ab-2026-09-01/coremark-jit-chainoff-s3.json",
+      "evidence/e4-t18/ab-2026-09-01/coremark-jit-chainoff-s4.json",
+      "evidence/e4-t18/ab-2026-09-01/coremark-jit-chainoff-s5.json"
+    ]
+  },
+  "chain_on": {
+    "host_elapsed_samples_s": [
+      105.952,
+      106.425,
+      106.951,
+      107.881,
+      106.761
+    ],
+    "median_host_s": 106.761,
+    "guest_elapsed_s": [
+      22.923,
+      22.923,
+      22.923,
+      22.923,
+      22.924
+    ],
+    "scores": [
+      261.746,
+      261.746,
+      261.746,
+      261.746,
+      261.734
+    ],
+    "files": [
+      "evidence/e4-t18/ab-2026-09-01/coremark-jit-chainon-s1.json",
+      "evidence/e4-t18/ab-2026-09-01/coremark-jit-chainon-s2.json",
+      "evidence/e4-t18/ab-2026-09-01/coremark-jit-chainon-s3.json",
+      "evidence/e4-t18/ab-2026-09-01/coremark-jit-chainon-s4.json",
+      "evidence/e4-t18/ab-2026-09-01/coremark-jit-chainon-s5.json"
+    ]
+  },
+  "uplift_host_wall": 1.0101
+}

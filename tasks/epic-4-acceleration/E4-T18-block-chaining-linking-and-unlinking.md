@@ -120,3 +120,28 @@ enforced and tested, and remains the load-bearing bound for the browser form.)
 (`Machine::set_chaining`) and the links/dispatch-entries stats are wired for it, but no number is
 recorded here. The differential gates above prove the mechanism (link + unlink completeness + interrupt
 budget + depth bound); the perf uplift is the open item.
+
+### 2026-09-01 — fresh verifier — VERDICT: refuted
+
+- **AC #1 performance — FAILED.** Prediction: with the same cold native JIT workload and binary,
+  chaining ON should be at least `1.4x` the chaining-OFF host-wall result. Observed median host wall
+  time **107.839s OFF vs 106.761s ON**, ratio **1.0101x**, below the required 1.4x. The guest score
+  stayed instruction-derived and effectively identical. Exact samples and provenance are in
+  `evidence/e4-t18/ab-2026-09-01/summary-cold.json` and the ten raw JSON captures. Fix the measured
+  uplift or revise the acceptance threshold before verification.
+- **A/B control reachability — HELD.** The temporary additive CLI flag is exercised: the 300M-
+  instruction sanity run reports `links_made=0` and `dispatch_entries=26388714` with
+  `--jit --no-chain`, versus `links_made=13288`, `links_followed=26539439`, and
+  `dispatch_entries=2343896` with chaining ON. The exact test-hook patch is preserved in
+  `evidence/e4-t18/ab-2026-09-01/no-chain-flag.diff`; both branches of the flag were run.
+- **Coverage — NEEDS EVIDENCE.** The browser funcref-table executor form (E4-T19) and the literal
+  browser CoreMark A/B were not exercised by this native recording. The native mechanism tests
+  remain held from the prior differential evidence, but they cannot close the missing browser
+  performance path.
+- **SUITE:** keep the raw A/B captures and the control-reachability transcript as permanent
+  evidence of the refutation. This historical task remains parked as `verification-debt`; it is
+  not promoted to `verified` on a 1.0101x result.
+
+Commands: `cargo test -p wasm-vm-jit-runtime --test chaining`; `cargo test -p wasm-vm-jit-runtime`;
+`wasm-pack test --node crates/wasm`; native `tools/bench.py run coremark --engine native --runs 1 --jit`
+median-of-5 A/B; 300M-instruction `wasm-vm boot` control run.
