@@ -236,6 +236,12 @@
       .workload-table .workload-cell .workload-p95 { display: block; color: var(--muted); font-size: 10px; line-height: 1.45; margin-top: 4px; white-space: normal; overflow-wrap: anywhere; }
       .workload-table .workload-cell .workload-throughput { display: block; color: var(--mint); font-size: 10px; margin-top: 4px; }
       .workload-table .workload-pending { color: var(--muted); font-family: var(--mono); font-size: .82rem; line-height: 1.45; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+      .compute-bench .workload-table { min-width: 900px; }
+      .compute-diagnostic { margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--line); }
+      .compute-diagnostic h4 { margin: 8px 0 0; font-size: 1.15rem; }
+      .compute-diagnostic .bench-note { margin-top: 12px; }
+      .compute-diagnostic-table { min-width: 680px; }
+      .compute-diagnostic-table .ratio { color: var(--mint); font-family: var(--mono); font-weight: 650; }
 
       /* ── Boot stack (architecture) ── */
       .stack { display: flex; flex-direction: column; gap: 12px; margin-top: 44px; max-width: 760px; }
@@ -395,6 +401,52 @@
               environments provide identical storage or network isolation. <a href="./bench-runtime-workloads.mjs">Runner</a>
               · <a href="./runtime-benchmarks.json">Raw comparison →</a>
             </p>
+          </div>
+
+          <div class="workload-bench compute-bench reveal d2" id="runtime-compute">
+            <div class="bench-head">
+              <div>
+                <span class="kicker">Measured, steady-state compute</span>
+                <h3>Where a JIT can actually amortize.</h3>
+                <p class="sub">This is a separate campaign from filesystem, stream, and HTTP boundaries. It keeps one process alive and times only deterministic arithmetic, branching, and typed-array loops.</p>
+              </div>
+              <div class="bench-meta">Captured <code id="compute-updated">loading…</code></div>
+            </div>
+            <div class="bench-wrap">
+              <table class="bench-table workload-table" aria-describedby="compute-note">
+                <thead>
+                  <tr>
+                    <th>Environment</th>
+                    <th>Integer mix</th>
+                    <th>Branch mix</th>
+                    <th>Memory mix</th>
+                  </tr>
+                </thead>
+                <tbody id="compute-rows"><tr><td colspan="4" class="workload-pending">Loading steady-state compute evidence…</td></tr></tbody>
+              </table>
+            </div>
+            <p class="bench-note" id="compute-note">
+              Each measured cell shows median time, p95, and verified work rate. The fixture uses fixed checksums;
+              process startup and memory preparation are excluded from timing. Browser rows stay explicitly unmeasured
+              until the same deployed Node guest run completes. <a href="./bench-runtime-compute.mjs">Runner</a>
+              · <a href="./runtime-compute-benchmarks.json">Raw compute comparison →</a>
+            </p>
+            <div class="compute-diagnostic" id="compute-diagnostic">
+              <span class="kicker">Separate native JIT diagnostic</span>
+              <h4>Hot blocks win; boundary blocks barely do.</h4>
+              <div class="bench-wrap">
+                <table class="bench-table compute-diagnostic-table" aria-describedby="compute-diagnostic-note">
+                  <thead>
+                    <tr><th>Workload</th><th>Interpreter</th><th>JIT</th><th>JIT / interpreter</th></tr>
+                  </thead>
+                  <tbody id="compute-diagnostic-rows"><tr><td colspan="4" class="workload-pending">Loading JIT diagnostic…</td></tr></tbody>
+                </table>
+              </div>
+              <p class="bench-note" id="compute-diagnostic-note">
+                This release-only handoff diagnostic is not substituted into the comparable browser table:
+                six-op measures dispatch-bound behavior, while 64-op measures hot-block amortization.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -691,6 +743,179 @@ hello from a container
         workloadDate.textContent = "unavailable";
         workloadRows.innerHTML = `<tr><td colspan="7" class="workload-pending">Runtime workload evidence unavailable.</td></tr>`;
         console.error("runtime workload table failed:", error);
+      });
+
+      // Steady-state compute is a separate campaign. Keep its comparable rows and the native
+      // handoff diagnostic explicit so a hot-loop win cannot be mistaken for an I/O win.
+      const computeRows = document.getElementById("compute-rows");
+      const computeDate = document.getElementById("compute-updated");
+      const computeDiagnosticRows = document.getElementById("compute-diagnostic-rows");
+      const computeWorkloadIds = ["integer-mix", "branch-mix", "memory-mix"];
+      const computeWorkloadLabels = {
+        "integer-mix": "Integer mix",
+        "branch-mix": "Branch mix",
+        "memory-mix": "Memory mix",
+      };
+      const validateRuntimeCompute = (data) => {
+        requireBenchmark(data?.schema === 1, "compute schema must be 1");
+        requireBenchmark(data.kind === "node-steady-state-compute-comparison-v1", "compute kind is invalid");
+        requireBenchmark(data.publicationStatus === "complete" || data.publicationStatus === "partial",
+          "compute publication status is invalid");
+        requireBenchmark(Number.isFinite(Date.parse(data.generatedAt)), "compute generatedAt is invalid");
+        requireBenchmark(data.campaign?.id === "runtime-compute-v1"
+          && data.campaign?.source === "./bench-runtime-compute.mjs"
+          && sha256Pattern.test(data.campaign?.scriptSha256), "compute runner provenance is invalid");
+        requireBenchmark(Array.isArray(data.campaign?.workloadIds)
+          && sameJson(data.campaign.workloadIds, computeWorkloadIds), "compute workload IDs drifted");
+        requireBenchmark(data.fixture?.id === "runtime-compute-v1"
+          && data.fixture.iterations === 1_000_000
+          && data.fixture.memoryWords === 16_384
+          && data.fixture.memoryPasses === 32
+          && Object.keys(data.fixture.expectedChecksums ?? {}).length === computeWorkloadIds.length,
+        "compute fixture is invalid");
+        requireBenchmark(Number.isInteger(data.policy?.samples) && data.policy.samples > 0
+          && Number.isInteger(data.policy?.warmups) && data.policy.warmups > 0,
+        "compute sampling policy is invalid");
+        requireBenchmark(Array.isArray(data.environments) && data.environments.length > 0,
+          "compute environments are missing");
+        const ids = data.environments.map((environment) => environment?.id);
+        requireBenchmark(ids.every(nonEmpty) && new Set(ids).size === ids.length,
+          "compute environment IDs must be unique");
+        data.environments.forEach((environment) => {
+          requireBenchmark(environment.status === "measured" || environment.status === "notRun",
+            `${environment.id} compute capture status is invalid`);
+          requireBenchmark(nonEmpty(environment.label), `${environment.id} compute label is missing`);
+          if (environment.status === "notRun") {
+            requireBenchmark(nonEmpty(environment.reason)
+              && Array.isArray(environment.workloads) && environment.workloads.length === 0,
+            `${environment.id} compute pending result is invalid`);
+            return;
+          }
+          requireBenchmark(environment.runner?.scriptSha256 === data.campaign.scriptSha256,
+            `${environment.id} compute runner digest differs`);
+          requireBenchmark(Array.isArray(environment.workloads)
+            && sameJson(environment.workloads.map((workload) => workload.id), computeWorkloadIds),
+          `${environment.id} compute workload IDs/order are incomplete`);
+          environment.workloads.forEach((workload) => {
+            requireBenchmark(workload.status === "measured" && nonEmpty(workload.unitLabel),
+              `${environment.id}/${workload.id} compute result is invalid`);
+            requireBenchmark(Number.isInteger(workload.expectedChecksum),
+              `${environment.id}/${workload.id} checksum is invalid`);
+            requireBenchmark(Array.isArray(workload.samples)
+              && workload.samples.length === data.policy.samples
+              && workload.samples.every((sample) => sample.verification === "passed"
+                && sample.checksum === workload.expectedChecksum
+                && Number.isFinite(sample.elapsedMs) && sample.elapsedMs >= 0),
+            `${environment.id}/${workload.id} sample verification is invalid`);
+            requireBenchmark(Number.isFinite(workload.summary?.medianMs)
+              && Number.isFinite(workload.summary?.p95Ms)
+              && workload.summary.p95Ms >= workload.summary.medianMs
+              && Number.isFinite(workload.summary?.workUnitsPerSec)
+              && workload.summary.workUnitsPerSec > 0
+              && workload.summary.sampleCount === data.policy.samples,
+            `${environment.id}/${workload.id} compute summary is invalid`);
+            requireBenchmark(data.fixture.expectedChecksums[workload.id] === workload.expectedChecksum,
+              `${environment.id}/${workload.id} checksum differs from fixture`);
+          });
+        });
+        requireBenchmark(data.diagnostics?.status === "measured"
+          && Array.isArray(data.diagnostics.workloads)
+          && data.diagnostics.workloads.length === 2,
+        "native JIT diagnostic is missing");
+        data.diagnostics.workloads.forEach((workload) => {
+          requireBenchmark(nonEmpty(workload.label)
+            && Number.isFinite(workload.interpreterMips)
+            && Number.isFinite(workload.jitMips)
+            && Number.isFinite(workload.ratio),
+          `diagnostic ${workload.id} is invalid`);
+        });
+        return data;
+      };
+      const formatComputeRate = (workload) => {
+        const rate = workload.summary.workUnitsPerSec;
+        const compact = rate >= 1_000_000
+          ? `${(rate / 1_000_000).toFixed(1)}M`
+          : rate >= 1_000 ? `${(rate / 1_000).toFixed(1)}K` : rate.toFixed(1);
+        return `${compact} ${workload.unitLabel}/s`;
+      };
+      const formatComputeMetric = (workload) => ({
+        text: `${workload.summary.medianMs.toFixed(2)} ms`,
+        detail: `p95 ${workload.summary.p95Ms.toFixed(2)} ms`,
+        throughput: formatComputeRate(workload),
+      });
+      const renderRuntimeCompute = (data) => {
+        validateRuntimeCompute(data);
+        computeDate.textContent = new Date(data.generatedAt).toLocaleString(undefined, {
+          year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+        });
+        const renderedRows = data.environments.map((environment) => {
+          const tr = document.createElement("tr");
+          const runtime = document.createElement("td");
+          runtime.className = "workload-runtime";
+          const title = document.createElement("strong");
+          title.textContent = environment.label;
+          const identity = document.createElement("span");
+          identity.textContent = environment.status === "measured"
+            ? `${environment.environment?.nodeVersion ?? "Node-compatible"} · ${environment.environment?.platform ?? "unknown"}/${environment.environment?.arch ?? "unknown"}`
+            : "not measured";
+          runtime.append(title, identity);
+          tr.append(runtime);
+          if (environment.status === "notRun") {
+            const reason = document.createElement("td");
+            reason.className = "workload-pending workload-unavailable-summary";
+            reason.colSpan = computeWorkloadIds.length;
+            reason.title = environment.reason;
+            reason.textContent = `not measured — ${compactWorkloadReason(environment.reason)}`;
+            tr.append(reason);
+            return tr;
+          }
+          for (const workloadId of computeWorkloadIds) {
+            const workload = environment.workloads.find((item) => item.id === workloadId);
+            const metric = formatComputeMetric(workload);
+            const cell = document.createElement("td");
+            cell.className = "workload-cell";
+            cell.setAttribute("data-workload", computeWorkloadLabels[workloadId]);
+            cell.textContent = metric.text;
+            const p95 = document.createElement("span");
+            p95.className = "workload-p95";
+            p95.textContent = metric.detail;
+            cell.append(p95);
+            const throughput = document.createElement("span");
+            throughput.className = "workload-throughput";
+            throughput.textContent = metric.throughput;
+            cell.append(throughput);
+            tr.append(cell);
+          }
+          return tr;
+        });
+        computeRows.replaceChildren(...renderedRows);
+        const diagnostics = data.diagnostics.workloads.map((workload) => {
+          const tr = document.createElement("tr");
+          const label = document.createElement("td");
+          label.textContent = workload.label;
+          const interpreter = document.createElement("td");
+          interpreter.className = "number";
+          interpreter.textContent = `${workload.interpreterMips.toFixed(3)} MIPS`;
+          const jit = document.createElement("td");
+          jit.className = "number";
+          jit.textContent = `${workload.jitMips.toFixed(3)} MIPS`;
+          const ratio = document.createElement("td");
+          ratio.className = "ratio";
+          ratio.textContent = `${workload.ratio.toFixed(3)}×`;
+          tr.append(label, interpreter, jit, ratio);
+          return tr;
+        });
+        computeDiagnosticRows.replaceChildren(...diagnostics);
+      };
+      const computeBenchmarkRevision = "5bc6cc5a9642";
+      fetch(`./runtime-compute-benchmarks.json?rev=${computeBenchmarkRevision}`, { cache: "no-store" }).then((response) => {
+        if (!response.ok) throw new Error(`runtime compute data HTTP ${response.status}`);
+        return response.json();
+      }).then(renderRuntimeCompute).catch((error) => {
+        computeDate.textContent = "unavailable";
+        computeRows.innerHTML = `<tr><td colspan="4" class="workload-pending">Steady-state compute evidence unavailable.</td></tr>`;
+        computeDiagnosticRows.innerHTML = `<tr><td colspan="4" class="workload-pending">JIT diagnostic unavailable.</td></tr>`;
+        console.error("runtime compute table failed:", error);
       });
 
       // Live boot: lazily swap the mock terminal for a REAL chrome-free busybox boot (the app in

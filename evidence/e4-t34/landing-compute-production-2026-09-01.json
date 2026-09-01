@@ -1,0 +1,30 @@
+{
+  "capturedAt": "2026-09-01T05:57:37.300Z",
+  "url": "https://wasm-vm.pages.dev/?verify=compute-ui-2",
+  "previewUrl": "https://8f507961.wasm-vm.pages.dev",
+  "artifact": "web/runtime-compute-benchmarks.json",
+  "artifactSha256": "5bc6cc5a96429b7acea6e5d15601f0ee9e3fcebb8cf000ed451c1e4a912b4915",
+  "liveArtifactSha256": "5bc6cc5a96429b7acea6e5d15601f0ee9e3fcebb8cf000ed451c1e4a912b4915",
+  "publicationStatus": "partial",
+  "browserErrors": [],
+  "pageAssertions": {
+    "computeSectionPresent": true,
+    "updatedLabel": "Sep 1, 2026, 01:26 AM",
+    "computeRowCount": 4,
+    "nativeMedianMs": {
+      "integer-mix": 10.15,
+      "branch-mix": 3.27,
+      "memory-mix": 2.51
+    },
+    "diagnosticRatios": {
+      "six-op": 1.265,
+      "64-op": 6.771
+    },
+    "browserRowsRemainExplicitlyUnmeasured": true
+  },
+  "verification": {
+    "liveJsonHashMatchesLocal": true,
+    "liveDomRead": true,
+    "cacheBustedRevisionStamped": true
+  }
+}

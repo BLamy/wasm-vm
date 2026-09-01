@@ -104,6 +104,11 @@ if [ -e "$DIST/runtime-benchmarks.json" ] && [ -e "$DIST/index.html" ]; then
   sed -e "s/__RUNTIME_BENCHMARK_VERSION__/${workload_ver}/g" "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
 fi
 
+if [ -e "$DIST/runtime-compute-benchmarks.json" ] && [ -e "$DIST/index.html" ]; then
+  compute_ver=$(shasum -a 256 "$DIST/runtime-compute-benchmarks.json" | cut -c1-12)
+  sed -e "s/__RUNTIME_COMPUTE_BENCHMARK_VERSION__/${compute_ver}/g" "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
+fi
+
 # artifacts.json (relative ./releases/… URLs; poor-mans-ci fills web/dist/releases at deploy).
 [ -e web/artifacts.json ] && cp web/artifacts.json "$DIST/"
 

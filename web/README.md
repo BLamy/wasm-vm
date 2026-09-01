@@ -156,6 +156,8 @@ node web/bench-runtime-compute.mjs \
 ```
 
 The result kind is `node-steady-state-compute-benchmark-v1`. Use the same script, constants, and
-sampling policy for wasm-vm JIT/interpreter, WebContainers, almostnode, and WebVM. Publish the
-compute campaign beside the system matrix with separate headings and raw JSON; a fast compute
-result must not be used to imply that filesystem or networking boundaries are fast.
+sampling policy for wasm-vm JIT/interpreter, WebContainers, almostnode, and WebVM. The published
+campaign is [`runtime-compute-benchmarks.json`](./runtime-compute-benchmarks.json); it is rendered
+under a separate heading on the landing page alongside the native JIT handoff diagnostic. A fast
+compute result must not be used to imply that filesystem or networking boundaries are fast, and
+unmeasured environments remain explicitly unmeasured until the exact fixture completes.

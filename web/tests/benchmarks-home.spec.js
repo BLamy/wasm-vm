@@ -32,6 +32,14 @@ test("homepage shows the unified Node system workload matrix", async ({ page }) 
   const visibleDiagnostics = await page.locator("#workload-rows .workload-pending").allTextContents();
   expect(visibleDiagnostics.every((diagnostic) => diagnostic.length <= 140),
     "unsupported diagnostics should be compact: " + visibleDiagnostics.join(" | ")).toBe(true);
+
+  await expect(page.locator("#compute-updated")).not.toHaveText("loading…");
+  await expect(page.locator("#compute-rows tr")).toHaveCount(4);
+  await expect(page.locator("#runtime-compute")).toContainText("Integer mix");
+  await expect(page.locator("#compute-rows")).toContainText("10.15 ms");
+  await expect(page.locator("#compute-rows")).toContainText("wasm-vm · worker + JIT");
+  await expect(page.locator("#compute-rows")).toContainText("not measured");
+  await expect(page.locator("#compute-diagnostic")).toContainText("6.771×");
   await expect(page.locator("body")).not.toContainText("benchmarks.json");
   expect(errors, "browser errors: " + errors.join("; ")).toEqual([]);
 });
