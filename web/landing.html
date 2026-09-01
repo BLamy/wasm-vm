@@ -225,6 +225,17 @@
       .bench-table .ready-def { display: block; color: var(--muted); font: 10px/1.45 var(--mono); margin-top: 6px; max-width: 230px; white-space: normal; }
       .bench-note { color: var(--muted); font-size: .85rem; line-height: 1.6; margin: 16px 0 0; max-width: 900px; }
       .bench-note a { color: var(--cyan); }
+      .workload-bench { margin-top: 46px; padding-top: 40px; border-top: 1px solid var(--line); }
+      .workload-bench h3 { margin: 8px 0 0; font-size: clamp(1.55rem, 3vw, 2.2rem); letter-spacing: -.025em; }
+      .workload-table { min-width: 1120px; }
+      .workload-table th, .workload-table td { padding: 12px 13px; }
+      .workload-table .workload-runtime { min-width: 175px; }
+      .workload-table .workload-runtime strong { display: block; color: var(--ink); }
+      .workload-table .workload-runtime span { display: block; color: var(--muted); font: 10px/1.45 var(--mono); margin-top: 5px; }
+      .workload-table .workload-cell { font-family: var(--mono); white-space: nowrap; }
+      .workload-table .workload-cell .workload-p95 { display: block; color: var(--muted); font-size: 10px; margin-top: 4px; }
+      .workload-table .workload-cell .workload-throughput { display: block; color: var(--mint); font-size: 10px; margin-top: 4px; }
+      .workload-table .workload-pending { color: var(--muted); font-family: var(--mono); font-size: .82rem; }
 
       /* ── Boot stack (architecture) ── */
       .stack { display: flex; flex-direction: column; gap: 12px; margin-top: 44px; max-width: 760px; }
@@ -371,6 +382,40 @@
             normalized cold-boot or isolation-equivalence claim.
             <a href="./benchmarks.json">Raw samples and provenance →</a>
           </p>
+
+          <div class="workload-bench reveal d2" id="runtime-workloads">
+            <div class="bench-head">
+              <div>
+                <span class="kicker">System workload matrix</span>
+                <h3>What the Node surface actually costs.</h3>
+                <p class="sub">One portable script measures verified file reads/writes, streaming, server startup, and local HTTP request/response behavior across the native host and wasm-vm execution modes.</p>
+              </div>
+              <div class="bench-meta">Captured <code id="workload-updated">loading…</code></div>
+            </div>
+            <div class="bench-wrap">
+              <table class="bench-table workload-table" aria-describedby="workload-note">
+                <thead>
+                  <tr>
+                    <th>Environment</th>
+                    <th>File read</th>
+                    <th>File write</th>
+                    <th>Stream read</th>
+                    <th>Stream copy</th>
+                    <th>Server lifecycle</th>
+                    <th>HTTP round trip</th>
+                  </tr>
+                </thead>
+                <tbody id="workload-rows"><tr><td colspan="7" class="workload-pending">Loading raw workload evidence…</td></tr></tbody>
+              </table>
+            </div>
+            <p class="bench-note" id="workload-note">
+              Each cell shows median time, p95, and throughput where bytes were transferred. The fixture is deterministic,
+              every measured sample checks its output digest, and the raw JSON keeps the individual timings, runtime identity,
+              script digest, sampling policy, and verification results. This is a workload measurement, not a claim that the
+              environments provide identical storage or network isolation. <a href="./bench-runtime-workloads.mjs">Runner</a>
+              · <a href="./runtime-benchmarks.json">Raw comparison →</a>
+            </p>
+          </div>
         </div>
       </section>
 
@@ -891,6 +936,148 @@ hello from a container
         benchmarkDate.textContent = "unavailable";
         benchmarkRows.innerHTML = `<tr><td colspan="6" class="model">Benchmark evidence unavailable.</td></tr>`;
         console.error("benchmark table failed:", error);
+      });
+
+      // The system-workload matrix is a separate contract from the historical mechanism
+      // matrix above: it is produced by one portable Node script and keeps raw samples per
+      // environment. Invalid or partial captures render as unavailable instead of plausible data.
+      const workloadRows = document.getElementById("workload-rows");
+      const workloadDate = document.getElementById("workload-updated");
+      const workloadRuntimeLabels = {
+        "native-node": "Native Node",
+        "wasm-vm-worker-jit": "wasm-vm · worker + JIT",
+        "wasm-vm-worker-interpreter": "wasm-vm · worker interpreter",
+        "wasm-vm-main-interpreter": "wasm-vm · main interpreter",
+      };
+      const workloadIds = ["file-read", "file-write", "stream-read", "stream-copy", "server-lifecycle", "http-roundtrip"];
+      const workloadShortLabels = {
+        "file-read": "File read",
+        "file-write": "File write",
+        "stream-read": "Stream read",
+        "stream-copy": "Stream copy",
+        "server-lifecycle": "Server lifecycle",
+        "http-roundtrip": "HTTP round trip",
+      };
+      const validateRuntimeWorkloads = (data) => {
+        requireBenchmark(data?.schema === 1, "workload schema must be 1");
+        requireBenchmark(data.kind === "node-system-workload-comparison-v1", "workload kind is invalid");
+        requireBenchmark(data.publicationStatus === "complete" || data.publicationStatus === "partial",
+          "workload publication status is invalid");
+        requireBenchmark(Number.isFinite(Date.parse(data.generatedAt)), "workload generatedAt is invalid");
+        requireBenchmark(data.campaign?.id === "runtime-workloads-v1", "workload campaign ID drifted");
+        requireBenchmark(data.campaign?.source === "./bench-runtime-workloads.mjs"
+          && sha256Pattern.test(data.campaign?.scriptSha256), "workload runner provenance is invalid");
+        requireBenchmark(data.fixture?.id === "runtime-workloads-v1"
+          && Number.isInteger(data.fixture.payloadBytes) && data.fixture.payloadBytes > 0
+          && sha256Pattern.test(data.fixture.payloadSha256)
+          && Number.isInteger(data.fixture.httpBodyBytes) && data.fixture.httpBodyBytes > 0
+          && sha256Pattern.test(data.fixture.httpBodySha256), "workload fixture is invalid");
+        requireBenchmark(Number.isInteger(data.policy?.samples) && data.policy.samples > 0
+          && Number.isInteger(data.policy?.warmups) && data.policy.warmups > 0
+          && Number.isInteger(data.policy?.httpRequests) && data.policy.httpRequests > 0,
+        "workload sampling policy is invalid");
+        requireBenchmark(Array.isArray(data.environments) && data.environments.length > 0,
+          "workload environments are missing");
+        const ids = data.environments.map((environment) => environment?.id);
+        requireBenchmark(ids.every(nonEmpty) && new Set(ids).size === ids.length,
+          "workload environment IDs must be unique");
+        data.environments.forEach((environment) => {
+          requireBenchmark(environment.status === "measured", `${environment.id} workload capture is not measured`);
+          requireBenchmark(environment.runner?.scriptSha256 === data.campaign.scriptSha256,
+            `${environment.id} runner digest differs`);
+          requireBenchmark(Array.isArray(environment.workloads)
+            && sameJson(environment.workloads.map((workload) => workload.id), workloadIds),
+          `${environment.id} workload IDs/order are incomplete`);
+          environment.workloads.forEach((workload) => {
+            requireBenchmark(workload.status === "measured" && workload.verification?.passed === true,
+              `${environment.id}/${workload.id} is not verified`);
+            requireBenchmark(Array.isArray(workload.samples)
+              && workload.samples.length === data.policy.samples,
+            `${environment.id}/${workload.id} sample count is invalid`);
+            requireBenchmark(workload.samples.every((sample) => sample.verification === "passed"
+              && Number.isFinite(sample.elapsedMs) && sample.elapsedMs >= 0),
+            `${environment.id}/${workload.id} sample verification is invalid`);
+            requireBenchmark(Number.isFinite(workload.summary?.medianMs)
+              && Number.isFinite(workload.summary?.p95Ms)
+              && workload.summary.p95Ms >= workload.summary.medianMs
+              && workload.summary.sampleCount === data.policy.samples,
+            `${environment.id}/${workload.id} summary is invalid`);
+          });
+        });
+        requireBenchmark(Array.isArray(data.notRun), "workload notRun list is invalid");
+        return data;
+      };
+      const formatWorkloadMetric = (workload) => {
+        if (workload.status !== "measured" || !workload.summary) {
+          return { text: "not measured", detail: workload.reason ?? "capture unavailable", throughput: null };
+        }
+        const summary = workload.summary;
+        return {
+          text: `${summary.medianMs.toFixed(1)} ms`,
+          detail: `p95 ${summary.p95Ms.toFixed(1)} ms`,
+          throughput: summary.throughputMiBPerSec == null
+            ? null : `${summary.throughputMiBPerSec.toFixed(1)} MiB/s`,
+        };
+      };
+      const renderRuntimeWorkloads = (data) => {
+        validateRuntimeWorkloads(data);
+        workloadDate.textContent = new Date(data.generatedAt).toLocaleString(undefined, {
+          year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+        });
+        const renderedRows = data.environments.map((environment) => {
+          const tr = document.createElement("tr");
+          const runtime = document.createElement("td");
+          runtime.className = "workload-runtime";
+          const title = document.createElement("strong");
+          title.textContent = workloadRuntimeLabels[environment.id] ?? environment.id;
+          const identity = document.createElement("span");
+          identity.textContent = `${environment.environment?.nodeVersion ?? "Node-compatible"} · ${environment.environment?.platform ?? "unknown"}/${environment.environment?.arch ?? "unknown"}`;
+          runtime.append(title, identity);
+          tr.append(runtime);
+          for (const workloadId of workloadIds) {
+            const workload = environment.workloads.find((item) => item.id === workloadId);
+            const metric = formatWorkloadMetric(workload);
+            const cell = document.createElement("td");
+            cell.className = "workload-cell";
+            cell.setAttribute("data-workload", workloadShortLabels[workloadId]);
+            cell.textContent = metric.text;
+            const p95 = document.createElement("span");
+            p95.className = "workload-p95";
+            p95.textContent = metric.detail;
+            cell.append(p95);
+            if (metric.throughput) {
+              const throughput = document.createElement("span");
+              throughput.className = "workload-throughput";
+              throughput.textContent = metric.throughput;
+              cell.append(throughput);
+            }
+            tr.append(cell);
+          }
+          return tr;
+        });
+        data.notRun.forEach((unavailable) => {
+          const tr = document.createElement("tr");
+          const runtime = document.createElement("td");
+          runtime.className = "workload-runtime";
+          const title = document.createElement("strong");
+          title.textContent = workloadRuntimeLabels[unavailable.id] ?? unavailable.id;
+          runtime.append(title);
+          const reason = document.createElement("td");
+          reason.className = "workload-pending";
+          reason.colSpan = workloadIds.length;
+          reason.textContent = `not measured — ${unavailable.reason}`;
+          tr.append(runtime, reason);
+          renderedRows.push(tr);
+        });
+        workloadRows.replaceChildren(...renderedRows);
+      };
+      fetch("./runtime-benchmarks.json", { cache: "no-store" }).then((response) => {
+        if (!response.ok) throw new Error(`runtime workload data HTTP ${response.status}`);
+        return response.json();
+      }).then(renderRuntimeWorkloads).catch((error) => {
+        workloadDate.textContent = "unavailable";
+        workloadRows.innerHTML = `<tr><td colspan="7" class="workload-pending">Runtime workload evidence unavailable.</td></tr>`;
+        console.error("runtime workload table failed:", error);
       });
 
       // Live boot: lazily swap the mock terminal for a REAL chrome-free busybox boot (the app in

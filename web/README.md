@@ -110,3 +110,46 @@ node tools/run-node-benchmarks.mjs \
 
 Only use values produced by the shared fixture and keep the browser's version/source metadata in
 the JSON so the next run remains auditable.
+
+## Node system workload benchmark
+
+[`bench-runtime-workloads.mjs`](./bench-runtime-workloads.mjs) is the portable workload runner for
+the Node surface. It runs the same deterministic fixture in native Node or inside the Node-alpine
+guest, and records raw samples for:
+
+- `file-read` — `fs.promises.readFile` plus a SHA-256 check;
+- `file-write` — `fs.promises.writeFile`, `stat`, and a SHA-256 check (the timed region does not
+  include an `fsync`);
+- `stream-read` — `createReadStream` with incremental hashing;
+- `stream-copy` — `pipeline(readable, Transform, writable)` with size and hash checks;
+- `server-lifecycle` — TCP server listen and close, with both sub-timings;
+- `http-roundtrip` — a local server and sequential verified requests, with listen, request, and
+  close sub-timings.
+
+The defaults are seven measured samples, two warmups, a 1 MiB payload, a 64 KiB stream chunk, and
+eight requests per HTTP sample. Use smaller values for a quick check:
+
+```sh
+node web/bench-runtime-workloads.mjs \
+  --environment=native-node \
+  --samples=7 --warmups=2 --payload-kib=1024 --http-requests=8 \
+  --output=/tmp/native-runtime-workloads.json
+```
+
+Each output is schema `node-system-workload-benchmark-v1`. It includes runtime identity, the
+fixture and its digests, the exact sampling policy, every sample, summary statistics, and the
+verification result. A capture is not publishable unless every workload sample is marked measured
+and passed. Merge captures only when their fixture and policy match:
+
+```sh
+node tools/merge-runtime-benchmarks.mjs \
+  --input=native-node=/tmp/native-runtime-workloads.json \
+  --input=wasm-vm-worker-jit=/tmp/wasm-vm-worker-jit.json \
+  --output=web/runtime-benchmarks.json
+```
+
+The homepage's **System workload matrix** reads that raw comparison directly. It intentionally does
+not turn the older five-mechanism CPU fixture into I/O numbers, and it does not fill unavailable
+adapters with guesses. To run the same capture in a guest, place this script in the guest and use
+the corresponding `--environment` label for the execution mode (`wasm-vm-worker-jit`,
+`wasm-vm-worker-interpreter`, or `wasm-vm-main-interpreter`).

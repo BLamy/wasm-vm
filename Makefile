@@ -4,7 +4,7 @@
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
-        bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc
+        bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-workloads-browser
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -184,6 +184,14 @@ bench:
 # pending until their adapter captures the same fixture; this avoids publishing incomparable values.
 bench-node-runtimes:
 	node tools/run-node-benchmarks.mjs --output web/benchmarks.json
+
+# Portable Node system workload suite. Override the script flags when collecting
+# a slower guest run; the output keeps every sample and verification digest.
+bench-runtime-workloads:
+	node web/bench-runtime-workloads.mjs --environment=native-node --output /tmp/wasm-vm-runtime-workloads.json
+
+bench-runtime-workloads-browser:
+	node tools/run-runtime-workload-browser.mjs --variant=$(RUNTIME_BENCH_VARIANT) --output /tmp/wasm-vm-runtime-$(RUNTIME_BENCH_VARIANT).json
 
 # E4-T03: in-guest CoreMark/Dhrystone harness. `bench-guest-build` rebuilds the pinned riscv64
 # ELFs + the ext4 overlay inside the pinned Docker toolchain (needs Docker); the run targets boot
