@@ -349,3 +349,31 @@ for a future fresh worker slice.
   `bash tools/deploy-cloudflare.sh` (preview `https://8f507961.wasm-vm.pages.dev`). This is a
   publication/UI correction only, not an E4-T34 acceptance claim; the restored-Node browser
   timings, JIT speedup, adversarial proof, and rr/rr-soft trace remain open.
+
+### 2026-09-01 — worker checkpoint — valid deployed browser compute captures
+
+- Fresh production captures used the exact checked-in runner `web/bench-runtime-compute.mjs`
+  (12,030 bytes, SHA-256
+  `378e4841d50b8165fdee7d15ffe8daf0d2e6a40145982e8525b161696342d8d7`) inside the deployed
+  `node-alpine` image. Both clean runs reached `guest ready` with the whole-machine Worker, used
+  `persist=0` plus the explicit single-user `/bin/sh` init, and produced seven measured samples per
+  workload with every fixed checksum passing and zero browser console errors.
+- Worker + JIT medians were integer 262.859 ms, branch 267.866 ms, and memory 734.393 ms.
+  The matched worker interpreter medians were integer 262.895 ms, branch 267.875 ms, and memory
+  296.868 ms. JIT/interpreter median ratios were 0.999863x, 0.999966x, and 2.473803x respectively:
+  this valid capture shows no integer/branch gain and a memory-mix regression, so it does not satisfy
+  the JIT speedup acceptance criterion.
+- A main-thread control produced checksum-valid samples but was rejected as browser evidence after
+  one real `main.js` console error (`dropped a terminal input chunk: re-entrant call into
+  WasmMachine`). It remains unmeasured in the public comparison rather than being presented as clean.
+- Evidence: `evidence/e4-t34/browser-compute-captures-2026-09-01.json`; the public artifact now
+  contains the two clean captures and the explicit rejected-control reason. E4-T34 remains
+  `in-progress`; this is steady-state compute evidence, not default restored-startup timing, and no
+  rr host trace is claimed on macOS.
+- Publication proof: `make web-dist` followed by `bash tools/deploy-cloudflare.sh` completed with
+  preview `https://45f696b2.wasm-vm.pages.dev`. The local, `web/dist`, and live
+  `runtime-compute-benchmarks.json` files are byte-identical at SHA-256
+  `3a2070175a1b2abdc454476af5c2650ea565399a4a6beb1404bdc7b6bfe4f2ae`. A fresh production browser
+  load at `https://wasm-vm.pages.dev/?verify=jit-capture-20260901-v3#benchmarks` rendered the JIT
+  and worker-interpreter rows, the explicit rejected main-thread control, and the diagnostic ratios
+  with zero console errors; the published compute screenshot was captured from that view.

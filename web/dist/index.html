@@ -427,8 +427,8 @@
             </div>
             <p class="bench-note" id="compute-note">
               Each measured cell shows median time, p95, and verified work rate. The fixture uses fixed checksums;
-              process startup and memory preparation are excluded from timing. Browser rows stay explicitly unmeasured
-              until the same deployed Node guest run completes. <a href="./bench-runtime-compute.mjs">Runner</a>
+              process startup and memory preparation are excluded from timing. Measured browser rows come from the
+              deployed Node guest; any remaining unmeasured row includes its reason. <a href="./bench-runtime-compute.mjs">Runner</a>
               · <a href="./runtime-compute-benchmarks.json">Raw compute comparison →</a>
             </p>
             <div class="compute-diagnostic" id="compute-diagnostic">
@@ -907,7 +907,7 @@ hello from a container
         });
         computeDiagnosticRows.replaceChildren(...diagnostics);
       };
-      const computeBenchmarkRevision = "5bc6cc5a9642";
+      const computeBenchmarkRevision = "3a2070175a1b";
       fetch(`./runtime-compute-benchmarks.json?rev=${computeBenchmarkRevision}`, { cache: "no-store" }).then((response) => {
         if (!response.ok) throw new Error(`runtime compute data HTTP ${response.status}`);
         return response.json();

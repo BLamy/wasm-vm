@@ -1,0 +1,170 @@
+{
+  "capturedAt": "2026-09-01T06:53:29Z",
+  "site": "https://wasm-vm.pages.dev",
+  "deployment": {
+    "previewUrl": "https://45f696b2.wasm-vm.pages.dev",
+    "artifact": "web/runtime-compute-benchmarks.json",
+    "localArtifactSha256": "3a2070175a1b2abdc454476af5c2650ea565399a4a6beb1404bdc7b6bfe4f2ae",
+    "distArtifactSha256": "3a2070175a1b2abdc454476af5c2650ea565399a4a6beb1404bdc7b6bfe4f2ae",
+    "liveArtifactSha256": "3a2070175a1b2abdc454476af5c2650ea565399a4a6beb1404bdc7b6bfe4f2ae"
+  },
+  "captureMode": {
+    "runner": "web/bench-runtime-compute.mjs",
+    "runnerSha256": "378e4841d50b8165fdee7d15ffe8daf0d2e6a40145982e8525b161696342d8d7",
+    "guest": "node-alpine",
+    "boot": "explicit single-user /bin/sh init",
+    "persist": false,
+    "samples": 7,
+    "warmups": 2,
+    "timedRegion": "steady-state loop only; process startup and memory preparation excluded",
+    "note": "This is a valid deployed-image compute capture, not default restored-startup timing."
+  },
+  "fixture": {
+    "id": "runtime-compute-v1",
+    "iterations": 1000000,
+    "memoryWords": 16384,
+    "memoryPasses": 32,
+    "expectedChecksums": {
+      "integer-mix": 1986867034,
+      "branch-mix": 2619934272,
+      "memory-mix": 2070041300
+    }
+  },
+  "captures": [
+    {
+      "id": "wasm-vm-worker-jit",
+      "status": "valid",
+      "generatedAt": "2026-09-01T16:00:27.922Z",
+      "url": "https://wasm-vm.pages.dev/app?guest=node-alpine&nosw=&persist=0&diagnosticStats=1&worker=1&jit=1&e3t12dSingleUser=1&capture=jit-single-user-1788243590933#ide",
+      "browser": {
+        "backend": "whole-machine-worker",
+        "guestReady": true,
+        "jitPolicy": "enabled",
+        "jitThreshold": 512,
+        "interpreter": "fast",
+        "manifest": "./artifacts-node-alpine.json",
+        "consoleErrors": []
+      },
+      "environment": {
+        "id": "wasm-vm-worker-jit",
+        "nodeVersion": "v20.15.1",
+        "platform": "linux",
+        "arch": "riscv64",
+        "osRelease": "6.6.63",
+        "execPath": "node",
+        "logicalCpus": null
+      },
+      "workloads": {
+        "integer-mix": {
+          "samplesMs": [262.847, 262.859, 263.004, 262.724, 262.851, 263.144, 262.878],
+          "checksum": 1986867034,
+          "medianMs": 262.859,
+          "p95Ms": 263.144,
+          "meanMs": 262.901,
+          "stdevMs": 0.125,
+          "workUnitsPerSec": 3804320.948
+        },
+        "branch-mix": {
+          "samplesMs": [267.77, 267.964, 268.059, 267.772, 267.866, 267.855, 268.118],
+          "checksum": 2619934272,
+          "medianMs": 267.866,
+          "p95Ms": 268.118,
+          "meanMs": 267.915,
+          "stdevMs": 0.126,
+          "workUnitsPerSec": 3733209.889
+        },
+        "memory-mix": {
+          "samplesMs": [774.176, 734.382, 734.393, 734.644, 734.221, 734.391, 734.468],
+          "checksum": 2070041300,
+          "medianMs": 734.393,
+          "p95Ms": 774.176,
+          "meanMs": 740.096,
+          "stdevMs": 13.913,
+          "workUnitsPerSec": 713906.587
+        }
+      }
+    },
+    {
+      "id": "wasm-vm-worker-interpreter",
+      "status": "valid",
+      "generatedAt": "2026-09-01T14:54:01.434Z",
+      "url": "https://wasm-vm.pages.dev/app?guest=node-alpine&nosw=&persist=0&diagnosticStats=1&worker=1&jit=0&e3t12dSingleUser=1&capture=worker-interpreter-single-user-1788278442000#ide",
+      "browser": {
+        "backend": "whole-machine-worker",
+        "guestReady": true,
+        "jitPolicy": "forced-off",
+        "jitThreshold": 512,
+        "interpreter": "fast",
+        "manifest": "./artifacts-node-alpine.json",
+        "consoleErrors": []
+      },
+      "environment": {
+        "id": "wasm-vm-worker-interpreter",
+        "nodeVersion": "v20.15.1",
+        "platform": "linux",
+        "arch": "riscv64",
+        "osRelease": "6.6.63",
+        "execPath": "node",
+        "logicalCpus": null
+      },
+      "workloads": {
+        "integer-mix": {
+          "samplesMs": [262.895, 262.834, 262.988, 262.765, 263.02, 262.999, 262.816],
+          "checksum": 1986867034,
+          "medianMs": 262.895,
+          "p95Ms": 263.02,
+          "meanMs": 262.902,
+          "stdevMs": 0.094,
+          "workUnitsPerSec": 3803799.996
+        },
+        "branch-mix": {
+          "samplesMs": [267.874, 267.911, 267.942, 267.863, 267.946, 267.875, 267.869],
+          "checksum": 2619934272,
+          "medianMs": 267.875,
+          "p95Ms": 267.946,
+          "meanMs": 267.897,
+          "stdevMs": 0.033,
+          "workUnitsPerSec": 3733084.461
+        },
+        "memory-mix": {
+          "samplesMs": [296.971, 296.807, 296.868, 296.882, 296.776, 296.912, 296.824],
+          "checksum": 2070041300,
+          "medianMs": 296.868,
+          "p95Ms": 296.971,
+          "meanMs": 296.863,
+          "stdevMs": 0.062,
+          "workUnitsPerSec": 1766064.379
+        }
+      }
+    }
+  ],
+  "rejectedControl": {
+    "id": "wasm-vm-main-interpreter",
+    "reason": "One browser console error occurred during the main-thread terminal interaction: dropped a terminal input chunk: re-entrant call into WasmMachine (a console callback cannot drive the machine).",
+    "samplesWereChecksumVerified": true,
+    "sampleMediansMs": {
+      "integer-mix": 262.857,
+      "branch-mix": 268.006,
+      "memory-mix": 296.916
+    },
+    "notPublishedAsValid": true
+  },
+  "conclusion": {
+    "jitVsWorkerInterpreterMedianRatio": {
+      "integer-mix": 0.999863,
+      "branch-mix": 0.999966,
+      "memory-mix": 2.473803
+    },
+    "jitGainObserved": false,
+    "summary": "The deployed JIT capture is valid, but this fixture shows no integer/branch speedup and a 2.474x memory-mix slowdown versus the matched worker interpreter.",
+    "productionUi": {
+      "url": "https://wasm-vm.pages.dev/?verify=jit-capture-20260901-v3#benchmarks",
+      "computeRows": 4,
+      "jitRowVisible": true,
+      "workerInterpreterRowVisible": true,
+      "mainControlExplained": true,
+      "diagnosticRatiosVisible": [1.265, 6.771],
+      "consoleErrors": []
+    }
+  }
+}
