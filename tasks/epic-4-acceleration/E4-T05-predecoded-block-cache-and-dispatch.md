@@ -101,6 +101,10 @@ A/B and any remaining acceptance evidence._
     `evidence/e4-t05/browser-suite-2026-09-01.json` plus the screenshot
     `evidence/e4-t05/browser-suite-2026-09-01.png`. The run exercised `web/main.js:1796-1800`
     (the fast-interpreter call) and the test-mode panel reveal in `web/tabs.js`.
+  - **Published-bundle replay — HELD.** The production deployment
+    `https://wasm-vm.pages.dev/app` passed the same **126/126, 0 failed** suite in `31.9s`, with
+    `100%` progress and no console errors. The route normalized from `/app.html` to `/app`; the
+    complete capture is `evidence/e4-t05/browser-suite-production-2026-09-01.json`.
   - **AC #1 literal browser CoreMark — NEEDS EVIDENCE.** Prediction: a browser-engine CoreMark
     result and ledger entry must meet the ticket's ≥1.3x bar. No browser CoreMark result exists;
     the recorded 2.3934x result is explicitly native host wall-clock evidence, and
