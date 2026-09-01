@@ -1,0 +1,37 @@
+{
+  "kind": "browser-ui-verification",
+  "capturedAt": "2026-09-01T00:31:45-04:00",
+  "commit": "ccec954",
+  "productionUrl": "https://wasm-vm.pages.dev/?verify=ccec954",
+  "previewUrl": "https://d7da14a2.wasm-vm.pages.dev",
+  "local": {
+    "url": "http://127.0.0.1:8080/landing.html?verify=wrapped-diagnostics",
+    "rows": 7,
+    "tableWidthPx": 1120,
+    "wrapperWidthPx": 1122,
+    "documentClientWidthPx": 1265,
+    "documentScrollWidthPx": 1265,
+    "browserErrors": [],
+    "visibleDiagnostics": [
+      "not measured — loopback listener collision; bounded retry timed out"
+    ]
+  },
+  "production": {
+    "rows": 7,
+    "tableWidthPx": 1120,
+    "wrapperWidthPx": 1122,
+    "documentClientWidthPx": 1245,
+    "documentScrollWidthPx": 1245,
+    "browserErrors": [],
+    "visibleDiagnostics": [
+      "not measured — loopback listener collision; bounded retry timed out"
+    ],
+    "rawBenchmarkSha256": "a455f3d0c4793f8771d0c049f9ddb0058ca8609e0ae5b41385314ba8e59b2185"
+  },
+  "assertions": [
+    "all six workload columns are visible",
+    "unsupported cells do not render raw Error: stack traces or local harness URLs",
+    "full unsupported reasons remain available in the cell title and raw JSON",
+    "WebVM remains notRun because the exact runner could not complete"
+  ]
+}

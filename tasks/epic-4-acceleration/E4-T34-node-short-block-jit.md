@@ -279,3 +279,22 @@ for a future fresh worker slice.
   the JIT remains only marginally ahead of the worker interpreter on this workload, WebVM still
   needs a completed exact run, and the task remains `in-progress`. No rr host trace is claimed on
   macOS.
+
+### 2026-09-01 — worker checkpoint — wrap unavailable workload diagnostics
+
+- UI correction commit: `ccec954`. Unsupported workload cells now use a bounded, wrapped summary
+  (`stream API is not async iterable`, `output capture file unavailable (ENOENT)`, and `HTTP
+  response returned 403`); the WebVM `notRun` row uses the same treatment. The complete raw reason
+  remains in the cell title and `web/runtime-benchmarks.json`, so the display no longer turns a
+  stack trace into horizontal overflow or hides the remaining workload columns.
+- Evidence: `evidence/e4-t34/runtime-workload-diagnostics-ui-2026-09-01.json`. The local and
+  production browser checks each rendered 7 rows, all six workload columns, zero console
+  errors/warnings, no raw `Error:` or local harness URL, and no document horizontal overflow
+  (`1120px` table inside a `1245px` production document). The production JSON was byte-identical
+  to the committed capture (`a455f3d0c4793f8771d0c049f9ddb0058ca8609e0ae5b41385314ba8e59b2185`).
+- Gates: `git diff --check`; `node --check` for the benchmark and merge scripts;
+  `node --test web/tests/runtime-workloads.test.mjs`; `make web-dist`; direct in-app browser
+  verification of the built page; and Cloudflare Pages deployment `https://d7da14a2.wasm-vm.pages.dev`
+  with production verification at `https://wasm-vm.pages.dev/?verify=ccec954`. The proxy/Tailscale
+  fallback was not available from this host (`ssh dev` did not resolve and no local Tailscale
+  binary was present), and WebVM remains explicitly unmeasured; E4-T34 stays `in-progress`.
