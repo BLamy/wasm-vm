@@ -665,7 +665,8 @@ hello from a container
         });
         workloadRows.replaceChildren(...renderedRows);
       };
-      fetch("./runtime-benchmarks.json", { cache: "no-store" }).then((response) => {
+      const runtimeBenchmarkRevision = "a455f3d0c479";
+      fetch(`./runtime-benchmarks.json?rev=${runtimeBenchmarkRevision}`, { cache: "no-store" }).then((response) => {
         if (!response.ok) throw new Error(`runtime workload data HTTP ${response.status}`);
         return response.json();
       }).then(renderRuntimeWorkloads).catch((error) => {
