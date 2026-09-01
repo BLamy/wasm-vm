@@ -4,7 +4,7 @@
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
-        bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-workloads-browser
+        bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -184,8 +184,16 @@ bench:
 bench-runtime-workloads:
 	node web/bench-runtime-workloads.mjs --environment=native-node --output /tmp/wasm-vm-runtime-workloads.json
 
+# Portable steady-state Node compute suite. This is a separate campaign from the system/I/O
+# workload matrix so translation and dispatch amortization are visible without hiding boundary cost.
+bench-runtime-compute:
+	node web/bench-runtime-compute.mjs --environment=native-node --output /tmp/wasm-vm-runtime-compute.json
+
 bench-runtime-workloads-browser:
 	node tools/run-runtime-workload-browser.mjs --variant=$(RUNTIME_BENCH_VARIANT) --output /tmp/wasm-vm-runtime-$(RUNTIME_BENCH_VARIANT).json
+
+bench-runtime-compute-browser:
+	node tools/run-runtime-compute-browser.mjs --variant=$(RUNTIME_BENCH_VARIANT) --output /tmp/wasm-vm-runtime-compute-$(RUNTIME_BENCH_VARIANT).json
 
 # E4-T03: in-guest CoreMark/Dhrystone harness. `bench-guest-build` rebuilds the pinned riscv64
 # ELFs + the ext4 overlay inside the pinned Docker toolchain (needs Docker); the run targets boot

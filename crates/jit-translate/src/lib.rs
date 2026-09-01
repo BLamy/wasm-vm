@@ -2,7 +2,8 @@
 //!
 //! The heart of the WASM JIT (`docs/jit-architecture.md` §3–§4). [`translate_block`] turns exactly
 //! one predecoded [`DecodedBlock`] (RV64I only) into one WASM *module* exporting a single function
-//! `run(state_base: i32) -> i32` that implements the frozen E4-T06 ABI:
+//! `run(state_base: i32) -> i32` (or the browser direct-chain form
+//! `run(state_base: i32, root: i32, entry_pc: i64) -> i32`) that implements the frozen E4-T06 ABI:
 //!
 //! * **Register mapping — lazy load, eager writeback.** Guest x1..x31 live in WASM `i64` locals. A
 //!   register is loaded from the `CpuState` region of linear memory (`state_base + 8*r`) on first
@@ -553,6 +554,29 @@ fn emit_chain_prologue(f: &mut FuncBuilder, regs: &Regs, abi: &Abi, nops: u64) {
     f.end();
 }
 
+/// Emit the chain debit only for a host/cross-module entry. A same-module direct caller has
+/// already checked and debited this successor before the call, so repeating the prologue would
+/// add work to every generated-function entry without adding a safety check.
+fn emit_chain_prologue_for_entry(
+    f: &mut FuncBuilder,
+    regs: &Regs,
+    abi: &Abi,
+    nops: u64,
+    root_local: Option<u32>,
+) {
+    let Some(root_local) = root_local else {
+        emit_chain_prologue(f, regs, abi, nops);
+        return;
+    };
+    f.local_get(root_local);
+    f.i32_eqz();
+    f.if_(BlockType::Empty);
+    // root == 0: the direct caller owns this block's fuel/depth debit.
+    f.else_();
+    emit_chain_prologue(f, regs, abi, nops);
+    f.end();
+}
+
 /// Stop a direct chain at a block whose first operation is atomic when a previous compiled block
 /// left raw inline-RAM stores in the deferred host commit log. The bytes are already visible to the
 /// next load, but reservation invalidation is host-owned; entering LR/SC/AMO before the commit would
@@ -661,7 +685,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
         None
     };
     let legacy_params = [ValType::I32];
-    let direct_params = [ValType::I32, ValType::I32];
+    let direct_params = [ValType::I32, ValType::I32, ValType::I64];
     let run_params: &[ValType] = if global_info.is_some() {
         &direct_params
     } else {
@@ -711,6 +735,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
         block,
         abi,
         [None, None],
+        [None, None],
         [abi.dynamic_chain, abi.dynamic_chain],
         run_ty,
         global_info,
@@ -726,6 +751,10 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
 /// In `InlineTlb` mode the shared memory is imported too, but that lives in a separate index space
 /// and does not shift function indices.
 const RUN_FUNC_BASE: u32 = 5;
+/// The third parameter in the browser direct-chain function signature. Host and cross-module
+/// entries pass zero here and load the virtual entry PC from the shared handoff; same-module direct
+/// callers pass their already-computed successor PC and avoid a state-memory round trip.
+const DIRECT_ENTRY_PC_PARAM: u32 = 2;
 
 fn add_register_mask(mask: &mut u32, register: u8) {
     if register != 0 {
@@ -1073,7 +1102,7 @@ pub fn translate_batch(
         None
     };
     let legacy_params = [ValType::I32];
-    let direct_params = [ValType::I32, ValType::I32];
+    let direct_params = [ValType::I32, ValType::I32, ValType::I64];
     let run_params: &[ValType] = if global_info.is_some() {
         &direct_params
     } else {
@@ -1144,6 +1173,14 @@ pub fn translate_batch(
             block,
             abi,
             resolved,
+            [
+                intra[i][0]
+                    .filter(|&l| !abi.direct_chain || !ends_with_fence_i(&blocks[l]))
+                    .map(|l| blocks[l].ops.len() as u64),
+                intra[i][1]
+                    .filter(|&l| !abi.direct_chain || !ends_with_fence_i(&blocks[l]))
+                    .map(|l| blocks[l].ops.len() as u64),
+            ],
             static_dynamic,
             run_ty,
             global_info,
@@ -1179,6 +1216,7 @@ fn emit_body(
     block: &DecodedBlock,
     abi: &Abi,
     intra: [Option<u32>; 2],
+    intra_nops: [Option<u64>; 2],
     static_dynamic: [bool; 2],
     run_ty: u32,
     global_info: Option<GlobalInfo>,
@@ -1197,8 +1235,22 @@ fn emit_body(
     // under paging (guest virtual PC != physical block key) AND when reused from a new virtual
     // mapping. Emitted first, so it is always initialized before any branch.
     let entry_local = f.local(ValType::I64);
-    f.local_get(STATE_BASE);
-    f.i64_load(ALIGN8, abi.entry_pc);
+    if let Some(root_local) = root_local {
+        // Same-module direct successors receive the already-computed virtual PC as an argument.
+        // Root/host and cross-module entries pass root=1 and continue to use the shared handoff,
+        // preserving the physical-keyed/virtual-PC reuse contract at every external boundary.
+        f.local_get(root_local);
+        f.i32_eqz();
+        f.if_(BlockType::Value(ValType::I64));
+        f.local_get(DIRECT_ENTRY_PC_PARAM);
+        f.else_();
+        f.local_get(STATE_BASE);
+        f.i64_load(ALIGN8, abi.entry_pc);
+        f.end();
+    } else {
+        f.local_get(STATE_BASE);
+        f.i64_load(ALIGN8, abi.entry_pc);
+    }
     f.local_set(entry_local);
     let chain_start = if abi.direct_chain {
         let local = f.local(ValType::I64);
@@ -1217,7 +1269,7 @@ fn emit_body(
         emit_pending_store_entry_barrier(f, &regs, abi);
     }
     if abi.direct_chain {
-        emit_chain_prologue(f, &regs, abi, n as u64);
+        emit_chain_prologue_for_entry(f, &regs, abi, n as u64, root_local);
         emit_mark_block_writes(f, &regs, block_write_mask);
     }
     let mut terminated = false;
@@ -1238,6 +1290,7 @@ fn emit_body(
                 pc,
                 pc_next,
                 intra,
+                intra_nops,
                 static_dynamic,
                 n as u64,
                 run_ty,
@@ -1260,6 +1313,7 @@ fn emit_body(
             ExitCode::Fallthrough,
             PcSrc::Const(end_pc),
             intra[0],
+            intra_nops[0],
             static_dynamic[0],
             n as u64,
             run_ty,
@@ -1288,6 +1342,7 @@ fn emit_exit(
     code: ExitCode,
     pc: PcSrc,
     intra: Option<u32>,
+    successor_nops: Option<u64>,
     allow_static_dynamic: bool,
     retired: u64,
     run_ty: u32,
@@ -1322,8 +1377,9 @@ fn emit_exit(
             f.return_();
         }
         (Some(func_index), _) => {
-            // if (chain_enabled && !chain_abort) { entry_pc := exit_pc; return call run{succ} }
-            // else { return code }
+            // For a same-module direct edge the caller owns the successor's fuel/depth debit and
+            // passes exit_pc as an argument. The callee can therefore skip its entry prologue and
+            // shared entry_pc store/load. Host/cross-module calls retain the state-backed path.
             emit_chain_enabled_get(f, regs, abi);
             f.local_get(STATE_BASE);
             f.i32_load8_u(0, abi.chain_abort);
@@ -1334,18 +1390,46 @@ fn emit_exit(
             f.i32_eqz();
             f.i32_and();
             f.if_(BlockType::Value(ValType::I32));
-            // The successor reads its entry virtual PC from `entry_pc`; hand it this exit_pc.
-            f.local_get(STATE_BASE);
-            f.local_get(STATE_BASE);
-            f.i64_load(ALIGN8, abi.exit_pc);
-            f.i64_store(ALIGN8, abi.entry_pc);
-            f.local_get(STATE_BASE);
             if regs.globals.is_some() {
                 // Same-module direct calls keep the register globals live across the function
-                // boundary. The callee receives root=0 and therefore skips the memory reload.
+                // boundary. Debit the callee before entering it; its root=0 path skips the
+                // duplicate budget/depth prologue and receives the virtual entry PC directly.
+                let successor_nops = successor_nops.expect("direct edge must carry successor size");
+                // A failed fuel check must return Budget, matching the old callee prologue. The
+                // current block has already retired and exit_pc already names the unentered
+                // successor, so no architectural state needs to be replayed.
+                emit_chain_budget_get(f, regs, abi);
+                f.i64_const(successor_nops as i64);
+                f.i64_ge_u();
+                f.if_(BlockType::Value(ValType::I32));
+                emit_chain_budget_get(f, regs, abi);
+                f.i64_const(successor_nops as i64);
+                f.i64_sub();
+                emit_chain_budget_set(f, regs, abi);
+                emit_chain_depth_get(f, regs, abi);
+                f.i64_const(1);
+                f.i64_sub();
+                emit_chain_depth_set(f, regs, abi);
+                f.local_get(STATE_BASE);
                 f.i32_const(0);
+                f.local_get(STATE_BASE);
+                f.i64_load(ALIGN8, abi.exit_pc);
+                f.call(func_index);
+                f.else_();
+                writeback(f, regs, abi);
+                write_reason(f, abi, ExitCode::Budget);
+                f.i32_const(ExitCode::Budget as i32);
+                f.end();
+            } else {
+                // The legacy path stores the successor PC in the frozen handoff and calls the
+                // one-parameter function, exactly as before.
+                f.local_get(STATE_BASE);
+                f.local_get(STATE_BASE);
+                f.i64_load(ALIGN8, abi.exit_pc);
+                f.i64_store(ALIGN8, abi.entry_pc);
+                f.local_get(STATE_BASE);
+                f.call(func_index);
             }
-            f.call(func_index);
             f.else_();
             // The direct-chain guard failed (budget, depth, or host abort), so this is the host
             // boundary. Materialize the live globals before returning to the executor.
@@ -1430,6 +1514,9 @@ fn emit_dynamic_exit(
         // A table target is a host/cross-module entry: the caller has materialized its globals and
         // the callee must reload them from the shared state image.
         f.i32_const(1);
+        // Root=1 makes the callee load entry_pc from the handoff; this argument is intentionally
+        // ignored but keeps the function type identical to same-module direct calls.
+        f.i64_const(0);
     }
     f.local_get(table_index);
     f.call_indirect(run_ty, abi.chain_table);
@@ -2766,6 +2853,7 @@ fn emit_terminator(
     pc: u64,
     pc_next: u64,
     intra: [Option<u32>; 2],
+    intra_nops: [Option<u64>; 2],
     static_dynamic: [bool; 2],
     retired: u64,
     run_ty: u32,
@@ -2783,6 +2871,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Eq,
             intra,
+            intra_nops,
             static_dynamic,
             retired,
             run_ty,
@@ -2798,6 +2887,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Ne,
             intra,
+            intra_nops,
             static_dynamic,
             retired,
             run_ty,
@@ -2813,6 +2903,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Lt,
             intra,
+            intra_nops,
             static_dynamic,
             retired,
             run_ty,
@@ -2828,6 +2919,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Ge,
             intra,
+            intra_nops,
             static_dynamic,
             retired,
             run_ty,
@@ -2843,6 +2935,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Ltu,
             intra,
+            intra_nops,
             static_dynamic,
             retired,
             run_ty,
@@ -2858,6 +2951,7 @@ fn emit_terminator(
             pc_next,
             Cmp::Geu,
             intra,
+            intra_nops,
             static_dynamic,
             retired,
             run_ty,
@@ -2875,6 +2969,7 @@ fn emit_terminator(
                 ExitCode::BranchTaken,
                 PcSrc::Const(pc.wrapping_add(imm as u64)),
                 intra[0],
+                intra_nops[0],
                 static_dynamic[0],
                 retired,
                 run_ty,
@@ -2907,6 +3002,7 @@ fn emit_terminator(
                 ExitCode::BranchTaken,
                 PcSrc::Local(scratch),
                 None,
+                None,
                 false,
                 retired,
                 run_ty,
@@ -2923,6 +3019,7 @@ fn emit_terminator(
                 ExitCode::Fallthrough,
                 PcSrc::Const(pc_next),
                 if abi.direct_chain { None } else { intra[0] },
+                None,
                 false,
                 retired,
                 run_ty,
@@ -2954,6 +3051,7 @@ fn emit_branch(
     pc_next: u64,
     cmp: Cmp,
     intra: [Option<u32>; 2],
+    intra_nops: [Option<u64>; 2],
     static_dynamic: [bool; 2],
     retired: u64,
     run_ty: u32,
@@ -2987,6 +3085,7 @@ fn emit_branch(
             ExitCode::BranchTaken,
             PcSrc::Const(pc.wrapping_add(imm as u64)),
             intra[0],
+            intra_nops[0],
             static_dynamic[0],
             retired,
             run_ty,
@@ -3002,6 +3101,7 @@ fn emit_branch(
         ExitCode::Fallthrough,
         PcSrc::Const(pc_next),
         intra[1],
+        intra_nops[1],
         static_dynamic[1],
         retired,
         run_ty,

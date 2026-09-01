@@ -132,3 +132,30 @@ verified file read, file write, and server lifecycle timings; its stream and HTT
 published as unsupported with the observed reasons. WebVM is published as `notRun` because the
 exact 1 MiB run hit a loopback port collision and a fresh bounded retry did not finish. This keeps
 the result honest while making the missing proof visible.
+
+## Node steady-state compute benchmark
+
+[`bench-runtime-compute.mjs`](./bench-runtime-compute.mjs) is a separate campaign for measuring
+the part of the Node surface where a JIT can amortize translation and dispatch. It keeps one
+long-lived process alive and times only deterministic compute loops, so process startup, module
+loading, and typed-array reset are outside the timed region. It does not replace or average into
+the system workload matrix above; the two suites answer different questions:
+
+- `integer-mix` — dependency-heavy 32-bit arithmetic and `Math.imul` operations;
+- `branch-mix` — deterministic data-dependent branches and rotates;
+- `memory-mix` — indexed `Uint32Array` read/modify/write operations.
+
+Every warmup and measured sample must produce a fixed checksum. The JSON retains each sample,
+median, p95, standard deviation, work-unit rate, runtime identity, runner digest, and the exact
+fixture constants. Run the native baseline with:
+
+```sh
+node web/bench-runtime-compute.mjs \
+  --environment=native-node --samples=7 --warmups=2 \
+  --output=/tmp/native-runtime-compute.json
+```
+
+The result kind is `node-steady-state-compute-benchmark-v1`. Use the same script, constants, and
+sampling policy for wasm-vm JIT/interpreter, WebContainers, almostnode, and WebVM. Publish the
+compute campaign beside the system matrix with separate headings and raw JSON; a fast compute
+result must not be used to imply that filesystem or networking boundaries are fast.
