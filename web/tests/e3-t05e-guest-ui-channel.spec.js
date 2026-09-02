@@ -17,9 +17,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const haveAlpine =
+const haveLocalAlpine =
   fs.existsSync(path.join(WEB, "artifacts-alpine.json")) &&
   fs.existsSync(path.join(WEB, "../releases/chunked-alpine/manifest.json"));
+// The interpreted Alpine boot is intentionally opt-in. When local artifacts are present, the
+// worker must also name their served asset base; otherwise the page would silently test the stale
+// public R2 build instead of the local runtime-bearing image.
+const alpineAssetBase = process.env.E3_T05E_ASSET_BASE || "";
+const haveAlpine = process.env.E3_T05E_ALPINE === "1" && (haveLocalAlpine || alpineAssetBase);
 
 const type = (page, s) =>
   page.evaluate((v) => window.wvmDemo.sendInput(new TextEncoder().encode(v)), s);
@@ -126,16 +131,28 @@ test("E3.5-T05e: hasContainerRuntime() true + wvrun ps over the channel (Alpine)
   test.skip(!haveAlpine, "needs the local Alpine chunk image (artifacts-alpine.json + chunked-alpine/)");
   test.setTimeout(3_600_000); // interpreted Alpine boot alone can take ~20-40 min
 
-  await page.goto("/?testHooks=1&noAutoBoot=1");
+  const alpineParams = new URLSearchParams({ testHooks: "1", noAutoBoot: "1" });
+  if (alpineAssetBase) {
+    alpineParams.set("assetBase", alpineAssetBase);
+    alpineParams.set("persist", "0");
+    alpineParams.set("noSnapshot", "1");
+  }
+  await page.goto(`/?${alpineParams}`);
   await page.waitForFunction(() => window.wvmDemo && typeof window.wvmDemo.bootAlpine === "function");
   await tapConsole(page);
 
-  // bootAlpine() is the programmatic entry (the DOM boot buttons were removed). Poll the real console
-  // for OpenRC → login, failing loudly with the tail on panic/timeout. 2700s matches the native gate.
-  await page.evaluate(() => window.wvmDemo.bootAlpine());
+  // bootAlpine() is the programmatic entry (the DOM boot buttons were removed). A coherent shipped
+  // snapshot resumes silently at a usable shell; a cold boot still emits OpenRC → login and needs
+  // the real root keystroke. Cover both paths without treating a UI-only banner as readiness.
+  const boot = await page.evaluate(() => window.wvmDemo.bootAlpine());
+  expect(boot).toMatchObject({ ok: true });
   let sawOpenRC = false;
   let loggedIn = false;
   for (let i = 0; i < 2700; i += 1) {
+    if (await page.evaluate(() => window.wvmDemo.isGuestReady?.() === true)) {
+      loggedIn = true;
+      break;
+    }
     const t = await page.evaluate(() => window.__t05e).catch(() => "");
     if (/Kernel panic|Unable to mount root/.test(t)) throw new Error(`Alpine boot failed: ${t.slice(-2_000)}`);
     if (t.includes("OpenRC")) sawOpenRC = true;
@@ -149,21 +166,45 @@ test("E3.5-T05e: hasContainerRuntime() true + wvrun ps over the channel (Alpine)
     const t = await page.evaluate(() => window.__t05e).catch(() => "");
     throw new Error(`never reached login (sawOpenRC=${sawOpenRC}); console tail:\n${t.slice(-2_000)}`);
   }
-  await type(page, "root\r");
-  await page.waitForTimeout(3_000);
-  await type(page, "\r");
-  await page.waitForTimeout(2_000);
+  if (sawOpenRC) {
+    await type(page, "root\r");
+    await page.waitForTimeout(3_000);
+    await type(page, "\r");
+    await page.waitForFunction(() => window.wvmDemo.isGuestReady?.() === true, undefined, { timeout: 300_000 });
+  }
 
   // (AC1) A guest-computed RPC works, the runtime is present, and `wvrun ps` is parseable, exit 0.
   const rpc = await page.evaluate(() => window.wvmDemo.run("echo RPC_$((6*7))"));
   expect(rpc.stdout).toContain("RPC_42");
   expect(rpc.exit).toBe(0);
   expect(await page.evaluate(() => window.wvmDemo.hasContainerRuntime())).toBe(true);
-  const ps = await page.evaluate(() => window.wvmDemo.run("wvrun ps"));
-  expect(ps.exit).toBe(0);
+  let started;
+  try {
+    started = await page.evaluate(() =>
+      window.wvmDemo.run("wvrun run -d --name t05e3 /opt/containers/busybox -- sh -c 'sleep 30'"),
+    );
+    expect(started.exit).toBe(0);
+    expect(started.stdout.trim()).not.toBe("");
+
+    const ps = await page.evaluate(() => window.wvmDemo.run("wvrun ps"));
+    expect(ps.exit).toBe(0);
+    const rows = ps.stdout
+      .split(/\n+/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map((line) => JSON.parse(line));
+    expect(rows).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "t05e3", status: "running" }),
+      ]),
+    );
+  } finally {
+    const cleaned = await page.evaluate(() => window.wvmDemo.run("wvrun stop t05e3; wvrun rm -f t05e3"));
+    expect(cleaned.exit).toBe(0);
+  }
 
   await page.screenshot({
-    path: path.join(WEB, "../tasks/epic-3.5-oci-workloads/e3-t05e-guest-ui-channel.png"),
+    path: path.join(WEB, "../tasks/epic-3.5-oci-workloads/e3-t05e3-alpine-browser.png"),
     fullPage: false,
   });
 });

@@ -313,6 +313,8 @@ function teardownLinuxController(controller, { natural = false } = {}) {
 }
 
 function clearLinuxOwnerUi({ clearBootError = true } = {}) {
+  cancelActiveStream?.();
+  rejectPendingGuestExecs();
   ui.detachSink();
   fileTransferUI.attachController(null);
   if (diagnosticJitStatsTimer !== null) {
@@ -1074,31 +1076,62 @@ let execSeq = 0;
 // The barrier resolves only after a private no-op fence has run after Ctrl-C; queued RPCs await it.
 let streamBarrier = Promise.resolve();
 let activeStream = false;
+let cancelActiveStream = null;
 let quietGuestExec = false;
+const pendingGuestExecs = new Set();
+class GuestBridgeError extends Error {
+  constructor(code, message) {
+    super(message);
+    this.name = "GuestBridgeError";
+    this.code = code;
+  }
+}
+function rejectPendingGuestExecs() {
+  const error = new GuestBridgeError("GUEST_STOPPED", "guest stopped while an RPC was pending");
+  for (const pending of [...pendingGuestExecs]) pending.reject(error);
+}
 function guestExec(cmd, timeoutMs = 60000, sendBytes = null, options = {}) {
   const task = async () => {
     const streamStopError = await streamBarrier;
     if (streamStopError) throw streamStopError;
     return new Promise((resolve, reject) => {
-      if (!linuxCtl) return reject(new Error("guest not up"));
+      if (!linuxCtl) return reject(new GuestBridgeError("GUEST_UNAVAILABLE", "guest not up"));
       const quiet = options?.quiet === true;
       if (quiet) quietGuestExec = true;
       const rid = `${Date.now().toString(36)}${execSeq++}`;
       const parser = createFencedRpc(rid);
-      const onc = (u8) => {
-        const result = parser.feed(u8);
-        if (!result) return;
-        cleanup();
-        resolve(result);
-      };
+      let timer = null;
+      let sendTimer = null;
+      let settled = false;
+      let entry = null;
+      let onc;
       const cleanup = () => {
-        clearTimeout(timer);
-        consoleSubscribers.delete(onc);
+        if (timer !== null) clearTimeout(timer);
+        if (sendTimer !== null) clearTimeout(sendTimer);
+        if (onc) consoleSubscribers.delete(onc);
+        if (entry) pendingGuestExecs.delete(entry);
         if (quiet) quietGuestExec = false;
       };
+      const finish = (settler) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        settler();
+      };
+      entry = { reject: (error) => finish(() => reject(error)) };
+      pendingGuestExecs.add(entry);
+      onc = (u8) => {
+        const result = parser.feed(u8);
+        if (!result) return;
+        finish(() => resolve(result));
+      };
       consoleSubscribers.add(onc);
-      const timer = setTimeout(() => { cleanup(); reject(new Error("guest command timed out")); }, timeoutMs);
-      setTimeout(() => {
+      timer = setTimeout(
+        () => finish(() => reject(new GuestBridgeError("GUEST_TIMEOUT", "guest command timed out"))),
+        timeoutMs,
+      );
+      sendTimer = setTimeout(() => {
+        sendTimer = null;
         const bytes = new TextEncoder().encode(formatRpcCommand(cmd, rid));
         // Boot-time cache priming runs before the terminal input sink is attached. It still uses
         // the real controller input bridge, but accepts a direct sender for that one serialized
@@ -1275,15 +1308,23 @@ window.wvmDemo = {
   // The public busybox build has neither, so this fails closed there (no pretense of a runtime).
   async hasContainerRuntime() {
     if (!linuxCtl) return false;
-    try {
-      const r = await guestExec(
-        "test -x /usr/local/bin/wvrun && test -f /opt/containers/index.json && echo WVRUN_OK",
-        15000,
-      );
-      return r.exit === 0 && r.stdout.includes("WVRUN_OK");
-    } catch {
-      return false;
+    // The Alpine snapshot resumes before its runtime files' chunks are necessarily resident. The
+    // first probe can therefore observe a guest-side EIO while the demand fetch is being scheduled;
+    // retry the same real in-guest predicate a bounded number of times so callers do not mistake
+    // that transient cache miss for the busybox-only image. A genuinely absent runtime still fails
+    // closed after the bounded attempts.
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        const r = await guestExec(
+          "test -x /usr/local/bin/wvrun && test -f /opt/containers/index.json && echo WVRUN_OK",
+          15000,
+        );
+        if (r.exit === 0 && r.stdout.includes("WVRUN_OK")) return true;
+      } catch {
+        return false;
+      }
     }
+    return false;
   },
   // E3.5-T05e: a long-lived STREAMING channel over the same console for `wvrun logs -f <id>` and
   // interactive `exec -it`. Unlike run()/exec() (fenced request/response), this stays open: it taps
@@ -1306,12 +1347,14 @@ window.wvmDemo = {
         if (drainOnc) consoleSubscribers.delete(drainOnc);
         if (stopTimer) clearTimeout(stopTimer);
         activeStream = false;
+        cancelActiveStream = null;
         // Let later callers proceed even when the stop handshake failed; the error is delivered to
         // the RPC that was waiting on this barrier, and a fresh caller can make its own decision.
         streamBarrier = Promise.resolve();
         resolve(error);
       };
     });
+    cancelActiveStream = () => finishStop(new GuestBridgeError("GUEST_STOPPED", "guest stopped during a live stream"));
     streamBarrier = stoppedAt;
     let drainOnc = null;
     let stopTimer = null;
