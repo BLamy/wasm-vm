@@ -10862,10 +10862,18 @@
       "verificationLog": "_pending_",
       "adversarial": "Use a fresh Chromium context with busybox assets and a context with Alpine assets. Remove or corrupt the\nruntime metadata before probing: the UI must fail closed. Trigger boot failure and reload while the boot\nis pending: no stale enabled controls or unhandled console error may remain.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f1-docker-guest-bootstrap.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 1,
+          "labels": [
+            "tasks: start Docker guest bootstrap slice"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 1
     },
     {
       "id": "E3.5-T05f2",
