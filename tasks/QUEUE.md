@@ -142,7 +142,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `312.49` [E3.5-T05e](epic-3.5-oci-workloads/E3.5-T05e-guest-ui-rpc-bridge.md) — "Sub-capstone: structured guest⇄UI channel + Alpine boot bridge" *(deps: E3.5-T05b, E3.5-T05d)*
 - [x] `312.491` [E3.5-T05e1](epic-3.5-oci-workloads/E3.5-T05e1-rpc-framing-core.md) — Structured guest RPC framing and parser core *(deps: E3.5-T05b)*
 - [x] `312.492` [E3.5-T05e2](epic-3.5-oci-workloads/E3.5-T05e2-busybox-bridge.md) — Busybox browser bridge — serialized RPC, streaming, and fail-closed runtime *(deps: E3.5-T05e1, E3.5-T05b)*
-- [~] `312.493` [E3.5-T05e3](epic-3.5-oci-workloads/E3.5-T05e3-alpine-runtime-proof.md) — Alpine boot bridge and container-runtime browser proof *(deps: E3.5-T05e2, E3.5-T05d)*
+- [?] `312.493` [E3.5-T05e3](epic-3.5-oci-workloads/E3.5-T05e3-alpine-runtime-proof.md) — Alpine boot bridge and container-runtime browser proof *(deps: E3.5-T05e2, E3.5-T05d)*
 - [ ] `312.495` [E3.5-T05f](epic-3.5-oci-workloads/E3.5-T05f-docker-tab-lifecycle-ui.md) — "Sub-capstone: Docker-tab lifecycle UI — images, run, containers, logs, exec" *(deps: E3.5-T05c, E3.5-T05e3)*
 - [ ] `312.5` [E3.5-T05](epic-3.5-oci-workloads/E3.5-T05-container-capstone.md) — "Capstone: pull and run an OCI container in a fresh browser profile, twice — second run from cache" **[CAPSTONE]** *(deps: E3.5-T05f, E3.5-T04h)*
 
