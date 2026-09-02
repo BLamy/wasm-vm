@@ -433,3 +433,51 @@ Commands: `cargo fmt --all -- --check`; `cargo clippy -p wasm-vm-cli --all-targe
 crates/wasm`; the exact `bash bench/module-costs/run.sh` A/B commands in the evidence README;
 the temporary Chrome/Firefox Playwright rerun above; `git diff --check`; and independent SHA-256
 audits of all cited JSON and screenshot artifacts.
+
+### 2026-09-02 — fresh adversarial verifier, owner-scoped rerun — VERDICT: verified
+
+- **AC1 / Chrome+Firefox cost matrix — HELD.** Predicted nine compile points, nine instantiate
+  points, recorded browser versions, cliff outcomes, and first-execution samples. The committed
+  Chromium 151 and Firefox 153 rows satisfy that prediction; their SHA-256 digests are
+  `5ca954fd7aebbcf7544727e4ffff5c07a5b9225a9971075a484e53305d6f3b6d` and
+  `184bb7a6ae40587b91465dbd2a8712762b093ad41344173e2787360689a392cf`. An independent rerun of
+  the Chrome and Firefox projects to `/tmp/e4t19-verifier-matrix.IaF0nh/{chromium,firefox}.json`
+  passed 2/2 with the same assertions. The corrected WebKit lower bound and supplemental Linux
+  rows remain committed evidence, not a request to extend the waived WebKit failure-point check.
+- **AC2 native exact-head K=64 versus K=1 gcc A/B — HELD.** Predicted both arms would reach
+  `GCC_RESULT`, emit the same deterministic object, and report JIT compile/install stall telemetry.
+  `evidence/e4-t19/ab-2026-09-01/gcc-k64-d2497e3.json` (SHA-256
+  `f6b962118d68d8df480aea08ea7aca317829a92b011601ec6147fae33cadf2b7`) records 607.910136 s;
+  `gcc-k1-d2497e3.json` (SHA-256
+  `5ab71aa13484eed271e0a69b891da8734871b46da833453a11430ca49aaa2e66`) records 942.132398 s.
+  Both use commit `d2497e36ccdea05db79b2d4665864a987e0c3079` and the same 302,904-byte object
+  SHA-256 `97198b27557042fb84de54881c5fb577505b4ee77c41bc056612be6173e5faca`; the measured ratio
+  is 1.549789x and K=64 reduces stall by 35.475%. The exact commands are the two
+  `WASM_VM_BOOT_EXTRA=... python3 tools/bench.py run gcc ...` commands in the evidence README.
+- **AC3 direct-call codegen — HELD.** Predicted a within-batch edge would emit `Operator::Call`
+  to the successor and no `CallIndirect`; `cargo test -p wasm-vm-jit-translate --test batch`
+  passed 5/5, including `intra_batch_edge_is_direct_call_not_call_indirect`.
+- **Invalidation and registry — HELD.** Predicted SMC of one member would retire the whole batch,
+  preventing stale direct-call execution, and K=1 registry counts would match compiled modules and
+  clear on flush; `cargo test -p wasm-vm-jit-runtime --test batching` passed 3/3, including both
+  `partial_batch_invalidation_retires_whole_batch` and `registry_accounting_is_accurate_at_k1`.
+- **AC4 first execution and production cap — HELD.** The committed 31-sample corrected probes
+  have maxima of 0.101 ms Chromium, 1 ms Firefox/WebKit, and 0.101 ms Chrome 152 against the 5 ms
+  target. `wasm-pack test --node crates/wasm` passed 26 tests plus
+  `production_browser_budget_stays_below_measured_instance_cliff`; `BROWSER_MAX_BATCHES` is 24,
+  so the conservative Chromium margin is `122 / 24 = 5.083x`.
+- **AC5 126/126 browser compliance — HELD.** The exact-head built-page capture recorded zero
+  console/page/request errors and 126 passed, 0 failed; the evidence image
+  `web/test-results/e4-t19-roadmap-suite.png` has SHA-256
+  `0e66faa1df33bafe06ec46a504bfa5ab70997601cc112c55c2ce210b58c59d78`. The captured page ran via
+  `bash tools/serve-dev.sh 8123` and the single `?noAutoBoot=1&testHooks` Playwright pass.
+- **WAIVERS / SCOPE.** Per the owner's explicit instruction, the independent-machine K-selection
+  robustness check and WebKit's exact failure-point follow-up are waived. No remaining local
+  criterion is unsupported; status remains `verified` and all five acceptance criteria remain
+  checked.
+
+Commands: `cargo test -p wasm-vm-jit-translate --test batch`; `cargo test -p wasm-vm-jit-runtime
+--test batching`; `wasm-pack test --node crates/wasm`; `E4_T19_RESULTS_DIR=<tmp> npx playwright
+test --config playwright.config.mjs --project=chromium --project=firefox`; `sha256sum` over all
+cited JSON/screenshot artifacts; source/test inspection of the production cap and codegen assertions;
+and `git diff --check`.
