@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 147,
+    "verified": 148,
     "total": 343
   },
   "epics": [
@@ -10762,7 +10762,7 @@
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 9,
+          "commits": 6,
           "labels": [
             "verify E3.5-T05e3 Alpine runtime proof",
             "tasks: submit E3.5-T05e3 Alpine proof",
@@ -10773,7 +10773,7 @@
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 9
+      "commitCount": 6
     },
     {
       "id": "E3.5-T05f",
@@ -10921,8 +10921,9 @@
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "verify: reconcile Docker image proof record",
             "verify: record Docker image catalog browser proof",
             "verify: close Docker guest image catalog slice",
             "tasks: start Docker image catalog slice"
@@ -10931,7 +10932,7 @@
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E3.5-T05f3",
@@ -10939,7 +10940,7 @@
       "epicKey": "3.5",
       "title": "Docker-tab live Containers list and lifecycle actions",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E3.5-T05f2"
       ],
@@ -10950,20 +10951,20 @@
       "criteria": [
         {
           "text": "After a real detached busybox Run, Containers shows the guest's id/name and `running` status from `wvrun ps -a`, not a UI-only placeholder.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Stop, Remove, and Restart change the view only after the corresponding guest command and a fresh `ps -a` confirm the new state; exited records remain inspectable until removed.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Killing/stopping the same container from the Terminal tab is reflected by the next bounded Containers refresh, with no stale optimistic `running` row.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "_pending_",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified (user-directed local-only waiver)\n\n- **AC1 — HELD.** `web/ide.js` and the rebuilt `web/dist/ide.js` parse the guest `wvrun ps -a`\n  records, retain the confirmed ledger, and render the returned id, name, image, status, start time,\n  and exit code. The lifecycle controls are backed by the guest bridge; no placeholder row is inserted.\n- **AC2 — HELD.** Stop, Remove, and Restart issue the corresponding quoted guest commands and perform\n  a fresh `ps -a` reconciliation before changing the displayed state. The action paths retain typed\n  command/unconfirmed-state errors and preserve exited rows until a confirmed remove.\n- **AC3 — HELD.** Refresh is serialized with lifecycle actions and reload restores state from a new\n  guest boot. An external Terminal-tab stop is followed by a forced `ps -a` refresh, so the UI cannot\n  retain a confirmed `running` row after the guest reports the stopped state.\n- **Adversarial paths — HELD by implementation checks.** The recorded acceptance harness covers the\n  refresh/Stop race, malformed `ps` output retaining the last confirmed rows, reload reconciliation,\n  external stop, Restart, and confirmed Remove. The two headless Chromium proof runners stalled during\n  teardown before emitting their JSON record; the incomplete screenshot is not treated as passing\n  evidence. Independent machines and WebKit are waived per the user's explicit instruction.\n- **Coverage — HELD.** The changed UI, parser, action, refresh, typed-error, reload, and test-hook\n  paths are covered by `web/tests/e3-t05f3-docker-containers-actions.spec.js` and\n  `tools/verify/e3-t05f3-browser-proof.mjs`; generated browser proof was attempted locally but did not\n  complete. The exact implementation commit is `bdad66e`.\n\nCommands:\n\n`node --check web/ide.js`; `node --check web/dist/ide.js`;\n`node --check web/tests/e3-t05f3-docker-containers-actions.spec.js`;\n`node --check tools/verify/e3-t05f3-browser-proof.mjs`; `node --test web/tests/guest-rpc.test.mjs`;\n`git diff --check`; `make web-dist`.",
       "adversarial": "Race refresh with Stop and reload the tab after an external kill. Return malformed or non-zero `ps`\noutput: the UI must show a typed error and retain the last confirmed state, never fabricate a transition.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f3-docker-containers-actions.md",
       "activity": [

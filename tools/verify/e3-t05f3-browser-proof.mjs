@@ -26,7 +26,7 @@ const { chromium } = await import(
 const chromePath = process.env.E3_T05F3_CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const launchOptions = {
   headless: process.env.E3_T05F3_HEADED !== "1",
-  args: ["--disable-dev-shm-usage", "--js-flags=--max-old-space-size=4096"],
+  args: ["--disable-dev-shm-usage", "--disable-gpu", "--js-flags=--max-old-space-size=4096"],
 };
 try {
   await fs.access(chromePath);
@@ -55,6 +55,16 @@ const waitFor = (predicate, timeout = 900_000) =>
   page.waitForFunction(predicate, undefined, { timeout });
 const state = () => page.evaluate(() => window.__dockerStateForTest());
 const containerState = () => page.evaluate(() => window.__dockerContainerStateForTest());
+page.on("close", () => console.error("[e3-t05f3] page closed"));
+page.on("crash", () => console.error("[e3-t05f3] page crashed"));
+browser.on("disconnected", () => console.error("[e3-t05f3] browser disconnected"));
+const stateTimer = setInterval(async () => {
+  try {
+    console.error("[e3-t05f3] state", JSON.stringify(await state()));
+  } catch (error) {
+    console.error("[e3-t05f3] state unavailable", error?.message || String(error));
+  }
+}, 30_000);
 const containerRow = () => page.locator(
   `#ide-dk-clist .ide-dk-ctr[data-name="${containerName}"]`,
 );
@@ -229,6 +239,7 @@ try {
   error.message = `[${stage}] ${error.message || error}`;
   throw error;
 } finally {
+  clearInterval(stateTimer);
   await page.close().catch(() => {});
   await browser.close().catch(() => {});
 }

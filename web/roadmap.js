@@ -94,6 +94,7 @@ export const ROADMAP = [
       { name: "oci validate — bundle preflight (no boot)", status: "verified", evidence: "native runnability checks, CI-gated (#113)" },
       { name: "Tiny OCI runner (wvrun)", status: "partial", evidence: "core done: unshare+overlay+pivot_root+exec (#108) — booted in-guest run pending" },
       { name: "Guest Docker image catalog + detached Run", status: "verified", evidence: "E3.5-T05f2: Images reads /opt/containers/index.json, Inspect shows guest bundle metadata, and Run reports the guest wvrun identity or typed rejection" },
+      { name: "Guest Docker container list + lifecycle actions", status: "verified", evidence: "E3.5-T05f3: Containers reconciles wvrun ps -a after Run, Stop, Remove, Restart, reload, external stop, and malformed-output errors" },
       { name: "Digest-deduped layer cache, reload-proof", status: "pending" },
     ],
   },
