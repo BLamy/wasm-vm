@@ -800,6 +800,14 @@ export async function startLinuxBoot(opts = {}) {
             fetchWaits += 1;
             fetchRequestedChunks += pending.length;
             await machine.fetchPending();
+            // A permanent demand-chunk failure is recorded by the wasm fetch layer while the
+            // parked guest read remains pending. Stop the controller at that boundary instead of
+            // re-running the same failed read forever (and leaving callers with an apparently
+            // healthy Alpine boot whose runtime probe can never become true).
+            const fetchStats = machine.fetchStats?.();
+            if (fetchStats?.error) {
+              throw new Error(`lazy chunk fetch failed: ${fetchStats.error}`);
+            }
             const fetchMs = (typeof performance !== "undefined" ? performance.now() : Date.now()) - fetchStart;
             fetchWaitTotalMs += fetchMs;
             fetchWaitMaxMs = Math.max(fetchWaitMaxMs, fetchMs);

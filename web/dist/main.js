@@ -672,7 +672,9 @@ async function runLinuxBootOwned(opts, banner, request) {
         ? (worker) => { window.__linuxWorkerForTest = worker; }
         : undefined,
       workerHeartbeatIntervalMs: query.has("testHooks") ? 50 : undefined,
-      workerHeartbeatTimeoutMs: query.has("testHooks") ? 300 : undefined,
+      workerHeartbeatTimeoutMs: query.has("workerHeartbeatTimeoutMs")
+        ? Math.max(1, Number(query.get("workerHeartbeatTimeoutMs")) || 1)
+        : query.has("testHooks") ? 300 : undefined,
       workerBootTimeoutMs: query.has("workerBootTimeoutMs")
         ? Math.max(1, Number(query.get("workerBootTimeoutMs")) || 1)
         : undefined,
