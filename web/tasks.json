@@ -10915,21 +10915,23 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 3,
-      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified\n\n- Guest catalog — HELD. `web/ide.js` now loads `/opt/containers/index.json` through the guest bridge,\n  normalizes only the returned records, probes each returned bundle's real `rootfs` and `config/argv`,\n  and renders one row per guest entry. Inspect uses text-only DOM fields and includes the raw returned\n  record, exact bundle path, config/argv, entrypoint, and guest-published size fields.\n- Detached Run — HELD. The Run action constructs a quoted `wvrun run -d --name … <guest bundle>` command,\n  shows `starting` while the command is pending, accepts only a 12-hex identity printed by the guest,\n  and refreshes `wvrun ps -a` after acceptance; no container row is inserted optimistically.\n- Rejection paths — HELD. Non-zero guest output is preserved with typed duplicate-name,\n  missing-bundle, missing-entrypoint, and generic rejection codes; the failed path only updates the\n  run diagnostic and does not add a container.\n- Local browser capture — attempted with the exact proof command and Chromium 1148. The host/browser\n  closed the page during the long Alpine boot before catalog assertions; this is recorded in\n  `evidence/e3-t05f2/docker-images-run-browser-attempt.json` and is not treated as a semantic failure.\n  The user explicitly waived independent-machine and WebKit variants and directed this slice to be\n  marked verified and closed.\n\nCommands:\n\n`node --check web/ide.js`; `node --check web/dist/ide.js`;\n`node --check web/tests/e3-t05f2-docker-images-run.spec.js`;\n`node --check tools/verify/e3-t05f2-browser-proof.mjs`; `node --test web/tests/guest-rpc.test.mjs`;\n`git diff --check`; `python3 tools/check_task_policy.py`; `make web-dist`.\n\nRelated guest proof: `E3.5-T05e3`'s verified Alpine Chromium capture exercises the same real\n`wvrun` bridge, `/opt/containers/index.json`, and baked container runtime.",
+      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified\n\n- Guest catalog — HELD. `web/ide.js` now loads `/opt/containers/index.json` through the guest bridge,\n  normalizes only the returned records, probes each returned bundle's real `rootfs` and `config/argv`,\n  and renders one row per guest entry. Inspect uses text-only DOM fields and includes the raw returned\n  record, exact bundle path, config/argv, entrypoint, and guest-published size fields.\n- Detached Run — HELD. The Run action constructs a quoted `wvrun run -d --name … <guest bundle>` command,\n  shows `starting` while the command is pending, accepts only a 12-hex identity printed by the guest,\n  and refreshes `wvrun ps -a` after acceptance; no container row is inserted optimistically.\n- Rejection paths — HELD. Non-zero guest output is preserved with typed duplicate-name,\n  missing-bundle, missing-entrypoint, and generic rejection codes; the failed path only updates the\n  run diagnostic and does not add a container.\n- Local browser capture — HELD. `node tools/verify/e3-t05f2-browser-proof.mjs` completed against the\n  local page in Chromium 152.0.7977.75. The capture records six guest catalog rows, a real detached\n  busybox identity (`73035703aaff`), a typed duplicate-name rejection, and a typed missing-bundle\n  rejection with no fabricated container. `consoleErrors` and `failedRequests` are empty. Evidence:\n  `evidence/e3-t05f2/docker-images-run-browser.json` and\n  `evidence/e3-t05f2/docker-images-run-browser.png`.\n\nCommands:\n\n`node tools/verify/e3-t05f2-browser-proof.mjs`; `node --check web/ide.js`; `node --check web/dist/ide.js`;\n`node --check web/tests/e3-t05f2-docker-images-run.spec.js`;\n`node --check tools/verify/e3-t05f2-browser-proof.mjs`; `node --test web/tests/guest-rpc.test.mjs`;\n`git diff --check`; `python3 tools/check_task_policy.py`; `make web-dist`.\n\nRelated guest proof: `E3.5-T05e3`'s verified Alpine Chromium capture exercises the same real\n`wvrun` bridge, `/opt/containers/index.json`, and baked container runtime.\n\n### 2026-09-02 — verifier re-run — VERDICT: verified\n\n- Exact local Chromium proof completed at `2026-09-02T22:54:32.717Z` against\n  `http://127.0.0.1:8123` with Chromium `152.0.7977.75`. The guest reached `ready=true`,\n  `runtime=available`, and `catalogStatus=available`; the six rows and their names/refs matched\n  the guest catalog, and Inspect showed guest-returned bytes, bundle paths, and config/argv.\n- The real busybox detached run returned guest id `73035703aaff`; the duplicate invocation returned\n  exit `2` with typed `DUPLICATE_NAME`; the tampered Alpine bundle returned exit `2` with typed\n  `BUNDLE_NOT_RUNNABLE`; no fake missing-bundle container appeared in `wvrun ps -a`.\n- Evidence: `evidence/e3-t05f2/docker-images-run-browser.json` SHA-256\n  `3e276e7a760c547c3170714cb5086828cc493c9f499b910a11dc845930bb237e`; screenshot\n  `evidence/e3-t05f2/docker-images-run-browser.png` SHA-256\n  `d364434d4b4887c4ee4f7569c63ecea59782a2d92f0d4f4725f3de482b4708c3`. Console errors and\n  failed requests were both empty.",
       "adversarial": "Tamper with one catalog field and force a failed `wvrun run`; the UI must display the guest response and\nnot fall back to a hardcoded image or canned success. Repeat Run with a duplicate name and verify the\ntyped duplicate-name failure is preserved.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f2-docker-images-run.md",
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 1,
+          "commits": 3,
           "labels": [
+            "verify: record Docker image catalog browser proof",
+            "verify: close Docker guest image catalog slice",
             "tasks: start Docker image catalog slice"
           ]
         }
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 1
+      "commitCount": 3
     },
     {
       "id": "E3.5-T05f3",
@@ -10937,7 +10939,7 @@
       "epicKey": "3.5",
       "title": "Docker-tab live Containers list and lifecycle actions",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E3.5-T05f2"
       ],
@@ -10964,10 +10966,18 @@
       "verificationLog": "_pending_",
       "adversarial": "Race refresh with Stop and reload the tab after an external kill. Return malformed or non-zero `ps`\noutput: the UI must show a typed error and retain the last confirmed state, never fabricate a transition.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f3-docker-containers-actions.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 1,
+          "labels": [
+            "tasks: start Docker container actions slice"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 1
     },
     {
       "id": "E3.5-T05f4",
