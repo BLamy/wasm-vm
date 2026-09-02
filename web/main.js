@@ -24,6 +24,7 @@ const _bootLinux = _useCpuWorker ? startLinuxBootWorker : startLinuxBoot;
 import { createLinuxTerminal } from "./terminal.js";
 import { createFileTransferUI } from "./file-transfer.js";
 import { createBootProgressSurface } from "./boot-progress.js";
+import { createFencedRpc, formatRpcCommand } from "./guest-rpc.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -1063,9 +1064,8 @@ function emitConsole(u8) {
 }
 // Shared, serialized fenced RPC into the guest — the Docker tab AND the IDE tab use this to run shell
 // commands (`wvrun ps`, `ls`, `cat`, writing files, …) and read their output. Sends `<cmd>; printf
-// '\n__WVEND_<id>_%s\n' $?` and captures stdout between the echoed command and the END marker (matched
-// with a trailing DIGIT so the echoed marker text — ending in `%s` — never false-matches). Requires the
-// guest at a shell (see isGuestReady). Serialized via a promise chain so callers don't interleave.
+// '\n__WVEND_<id>_%s\n' $?` and delegates complete-marker parsing to guest-rpc.js. Requires the guest at
+// a shell (see isGuestReady). Serialized via a promise chain so callers don't interleave.
 let execChain = Promise.resolve();
 let execSeq = 0;
 let quietGuestExec = false;
@@ -1076,20 +1076,12 @@ function guestExec(cmd, timeoutMs = 60000, sendBytes = null, options = {}) {
       const quiet = options?.quiet === true;
       if (quiet) quietGuestExec = true;
       const rid = `${Date.now().toString(36)}${execSeq++}`;
-      const endRe = new RegExp(`__WVEND_${rid}_(\\d+)`);
-      const dec = new TextDecoder();
-      let buf = "";
+      const parser = createFencedRpc(rid);
       const onc = (u8) => {
-        buf += dec.decode(u8, { stream: true }).replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, "").replace(/\r/g, "");
-        const m = buf.match(endRe);
-        if (m) {
-          const exit = parseInt(m[1], 10);
-          let out = buf.slice(0, m.index);
-          const nl = out.indexOf("\n");
-          if (nl !== -1) out = out.slice(nl + 1);
-          cleanup();
-          resolve({ stdout: out, exit });
-        }
+        const result = parser.feed(u8);
+        if (!result) return;
+        cleanup();
+        resolve(result);
       };
       const cleanup = () => {
         clearTimeout(timer);
@@ -1099,7 +1091,7 @@ function guestExec(cmd, timeoutMs = 60000, sendBytes = null, options = {}) {
       consoleSubscribers.add(onc);
       const timer = setTimeout(() => { cleanup(); reject(new Error("guest command timed out")); }, timeoutMs);
       setTimeout(() => {
-        const bytes = new TextEncoder().encode(`${cmd}; printf '\\n__WVEND_${rid}_%s\\n' "$?"\r`);
+        const bytes = new TextEncoder().encode(formatRpcCommand(cmd, rid));
         // Boot-time cache priming runs before the terminal input sink is attached. It still uses
         // the real controller input bridge, but accepts a direct sender for that one serialized
         // command; normal callers continue through the terminal backpressure queue.

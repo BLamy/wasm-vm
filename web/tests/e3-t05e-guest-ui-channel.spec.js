@@ -33,9 +33,6 @@ async function tapConsole(page) {
     });
   });
 }
-const seen = (page, needle, secs) =>
-  page.waitForFunction((n) => window.__t05e.includes(n), needle, { timeout: secs * 1000 });
-
 // ── The channel MECHANISM, proven on the fast busybox userland (ACs 2,3,4 + spoof + AC5) ──────────
 test("E3.5-T05e: fenced RPC, serialization, streaming & fail-closed runtime (busybox)", async ({
   page,
@@ -50,7 +47,10 @@ test("E3.5-T05e: fenced RPC, serialization, streaming & fail-closed runtime (bus
   await page.waitForFunction(() => window.wvmDemo && typeof window.wvmDemo.run === "function");
   await tapConsole(page);
   await page.evaluate(() => window.wvmDemo.runBusybox());
-  await seen(page, "busybox userland up", 300);
+  // A cold boot emits "busybox userland up", while a coherent build-time snapshot resumes silently
+  // at the same shell. The public readiness hook covers both paths and means the first RPC always
+  // exercises a usable real guest rather than relying on a UI-only boot banner.
+  await page.waitForFunction(() => window.wvmDemo.isGuestReady?.() === true, undefined, { timeout: 300_000 });
   // Land at a usable shell (the initramfs drops straight to `#`); confirm with a fenced RPC.
   await page.waitForTimeout(2_000);
 

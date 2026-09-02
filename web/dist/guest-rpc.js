@@ -2,9 +2,9 @@
 // node-testable module. The browser Docker tab drives `wvrun ps/logs/run/exec` over ONE serial console
 // and must parse STRUCTURED results, not scrape free-form text — so each RPC is fenced with a unique
 // request id and an END marker that embeds the guest-computed exit code. This file is the parser +
-// command formatter that logic; `web/main.js`'s `guestExec` implements the same protocol inline (the
-// wiring leaf adopts this module). Keeping it pure lets the adversarial cases — marker-spoof,
-// stream-split, echo-strip — be proven deterministically without a browser boot.
+// command formatter that logic; `web/main.js`'s `guestExec` consumes this module for the live bridge.
+// Keeping it pure lets the adversarial cases — marker-spoof, stream-split, echo-strip — be proven
+// deterministically without a browser boot.
 //
 // Protocol: to run `<cmd>` under request id `<rid>`, send
 //   <cmd>; printf '\n__WVEND_<rid>_%s\n' "$?"\r
