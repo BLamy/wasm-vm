@@ -11180,7 +11180,7 @@
       "status": "pending",
       "depends_on": [
         "E3.6-T02",
-        "E3.5-T05f"
+        "E3.5-T05f6"
       ],
       "decomposed_into": [],
       "estimate": "M",

@@ -69,6 +69,11 @@ const css = `
 .ide-mini.run { border-color: #287555; background: #143c31; color: #d6ffe6; }
 .ide-mini:disabled { opacity: .4; cursor: not-allowed; }
 .ide-dk-note { padding: 12px; color: #7d8ba0; line-height: 1.55; font-size: 12px; }
+.ide-dk-runtime { padding: 8px 0 10px; border-bottom: 1px solid var(--line, #232a35); }
+.ide-dk-runtime-status { padding: 4px 12px 8px; color: #cdd6f4; line-height: 1.45; font-size: 12px; }
+.ide-dk-runtime-status[data-state="available"] { color: #9ad29a; }
+.ide-dk-runtime-status[data-state="unavailable"], .ide-dk-runtime-status[data-state="error"] { color: #f0c6a0; }
+.ide-dk-runtime > .ide-mini { margin: 0 12px 4px; }
 
 /* Editor area */
 .ide-editor-area { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0; background: #0b0f15; }
@@ -210,6 +215,21 @@ function parsePs(stdout) {
   return out;
 }
 
+// Docker owns an explicit capability state instead of treating a ready shell as a container runtime.
+// A public busybox boot is guest-ready but has neither wvrun nor the baked catalog, so conflating the
+// two would enable controls that can only fail. Generation invalidates a probe from an older guest.
+const dockerRuntime = {
+  status: "unknown", // unknown | booting | checking | available | unavailable | error
+  error: "",
+  code: "",
+  probe: null,
+  booting: false,
+  pullNotice: "",
+  alpineStatus: "unknown", // unknown | checking | present | absent
+  alpineProbe: null,
+  generation: 0,
+};
+
 // ── DOM assembly ─────────────────────────────────────────────────────────────
 const root = document.getElementById("ide-root");
 if (root) {
@@ -291,6 +311,250 @@ if (root) {
   // Explorer/Docker RPCs are control-plane work. Keep their fenced shell echo and marker out of
   // the user's foreground terminal; the returned stdout is rendered in the owning pane instead.
   const bgExec = (cmd, timeoutMs) => api().exec(cmd, timeoutMs, { quiet: true });
+
+  function selectedProvider() {
+    const value = document.getElementById("network-provider")?.value;
+    return value || "offline";
+  }
+
+  function guestUp() {
+    return !!(api()?.isGuestUp && api().isGuestUp());
+  }
+
+  function alpineAssetsPresent() {
+    return dockerRuntime.alpineStatus === "present" ||
+      !!(api()?.alpineArtifactsPresent && api().alpineArtifactsPresent());
+  }
+
+  function setDockerError(code, message) {
+    dockerRuntime.status = "error";
+    dockerRuntime.code = code;
+    dockerRuntime.error = message;
+  }
+
+  // main.js has its own load-time probe, but the Docker view needs a tri-state result. A false
+  // value before that probe settles would otherwise disable the only in-tab Alpine button during
+  // the short window in which a real local manifest is still being fetched. This independent
+  // manifest check is still fail-closed: only a valid artifacts object counts as present.
+  function probeAlpineAssets() {
+    if (dockerRuntime.alpineStatus === "present") return Promise.resolve(true);
+    if (dockerRuntime.alpineStatus === "absent") return Promise.resolve(false);
+    if (dockerRuntime.alpineProbe) return dockerRuntime.alpineProbe;
+    dockerRuntime.alpineStatus = "checking";
+    const probe = fetch("./artifacts-alpine.json", { cache: "no-store" })
+      .then(async (response) => {
+        const text = await response.text();
+        if (!response.ok || text.trimStart().startsWith("<")) return false;
+        try {
+          const manifest = JSON.parse(text);
+          return Boolean(manifest?.artifacts?.kernel && manifest?.artifacts?.rootfs);
+        } catch {
+          return false;
+        }
+      })
+      .catch(() => false);
+    dockerRuntime.alpineProbe = probe;
+    void probe.then((present) => {
+      dockerRuntime.alpineProbe = null;
+      dockerRuntime.alpineStatus = present ? "present" : "absent";
+      if (sideView === "docker") renderDocker();
+    });
+    return probe;
+  }
+
+  function runtimeReady() {
+    return ready() && dockerRuntime.status === "available";
+  }
+
+  function resetDockerRuntime(status = "unknown") {
+    // The main boot path emits wvm:guest-booting synchronously after the Docker button has
+    // claimed an Alpine boot. Preserve that claim so the event cannot re-enable the button or
+    // invalidate the promise that will report the typed boot result.
+    const bootInProgress = dockerRuntime.booting;
+    if (!bootInProgress) dockerRuntime.generation += 1;
+    dockerRuntime.status = bootInProgress ? "booting" : status;
+    dockerRuntime.error = "";
+    dockerRuntime.code = "";
+    dockerRuntime.probe = null;
+    dockerRuntime.booting = bootInProgress;
+    dockerRuntime.pullNotice = "";
+  }
+
+  function probeDockerRuntime() {
+    const current = api();
+    if (!current || typeof current.hasContainerRuntime !== "function") {
+      setDockerError("DOCKER_BRIDGE_UNAVAILABLE", "The guest bridge is still loading; container capability is unknown.");
+      return Promise.resolve(false);
+    }
+    if (!ready()) {
+      dockerRuntime.status = guestUp() ? "booting" : "unknown";
+      return Promise.resolve(false);
+    }
+    if (dockerRuntime.probe) return dockerRuntime.probe;
+    if (dockerRuntime.status === "available") return Promise.resolve(true);
+
+    const generation = dockerRuntime.generation;
+    dockerRuntime.status = "checking";
+    dockerRuntime.error = "";
+    dockerRuntime.code = "";
+    const probe = Promise.resolve()
+      .then(() => current.hasContainerRuntime())
+      .then((present) => {
+        if (generation !== dockerRuntime.generation) return false;
+        dockerRuntime.status = present ? "available" : "unavailable";
+        dockerRuntime.code = present ? "" : "RUNTIME_ABSENT";
+        dockerRuntime.error = present
+          ? ""
+          : "The booted guest has no executable /usr/local/bin/wvrun and no /opt/containers/index.json.";
+        return present;
+      })
+      .catch((error) => {
+        if (generation === dockerRuntime.generation) {
+          setDockerError("RUNTIME_PROBE_FAILED", error?.message || String(error));
+        }
+        return false;
+      });
+    dockerRuntime.probe = probe;
+    void probe.then(() => {
+      if (generation !== dockerRuntime.generation) return;
+      dockerRuntime.probe = null;
+      if (sideView === "docker") {
+        renderDocker();
+        if (runtimeReady()) startPsPoll();
+        else stopPsPoll();
+      }
+    });
+    return probe;
+  }
+
+  function bootAlpineFromDocker() {
+    const current = api();
+    if (dockerRuntime.booting) return;
+    if (!current || typeof current.bootAlpine !== "function") {
+      setDockerError("ALPINE_BRIDGE_UNAVAILABLE", "The Alpine boot bridge is still loading.");
+      renderDocker();
+      return;
+    }
+
+    const generation = ++dockerRuntime.generation;
+    dockerRuntime.status = "booting";
+    dockerRuntime.error = "";
+    dockerRuntime.code = "";
+    dockerRuntime.booting = true;
+    dockerRuntime.probe = null;
+    renderDocker();
+    void Promise.resolve()
+      .then(() => probeAlpineAssets())
+      .then((present) => {
+        if (generation !== dockerRuntime.generation) return null;
+        if (!present) {
+          setDockerError(
+            "ALPINE_ARTIFACTS_UNAVAILABLE",
+            "Alpine artifacts are not deployed here; the public build exposes the catalog only. Clone the repo and run: bash tools/serve-dev.sh",
+          );
+          dockerRuntime.booting = false;
+          renderDocker();
+          return null;
+        }
+        return current.bootAlpine();
+      })
+      .then((outcome) => {
+        if (outcome === null) return;
+        if (generation !== dockerRuntime.generation) return;
+        dockerRuntime.booting = false;
+        if (!outcome?.ok) {
+          setDockerError(
+            outcome?.conflict ? "GUEST_CONFLICT" : "ALPINE_BOOT_FAILED",
+            outcome?.error || "Alpine boot was refused.",
+          );
+        } else if (ready()) {
+          dockerRuntime.status = "unknown";
+          dockerRuntime.code = "";
+          void probeDockerRuntime();
+        } else {
+          // bootAlpine() owns setup before the shell prompt; the ready event will trigger the probe.
+          dockerRuntime.status = "booting";
+        }
+        renderDocker();
+      })
+      .catch((error) => {
+        if (generation !== dockerRuntime.generation) return;
+        dockerRuntime.booting = false;
+        setDockerError("ALPINE_BOOT_FAILED", error?.message || String(error));
+        renderDocker();
+      });
+  }
+
+  function renderDockerRuntimeState() {
+    const box = mk("div", "ide-dk-runtime");
+    box.id = "ide-dk-runtime";
+    const title = mk("div", "ide-dk-h", "Guest runtime");
+    box.appendChild(title);
+    const status = mk("div", "ide-dk-runtime-status");
+    status.id = "ide-dk-runtime-status";
+    status.setAttribute("role", "status");
+    status.setAttribute("aria-live", "polite");
+    status.dataset.state = dockerRuntime.status;
+    if (dockerRuntime.code) status.dataset.code = dockerRuntime.code;
+    const current = api();
+    const hasGuest = guestUp();
+    const hasAlpine = dockerRuntime.alpineStatus === "present";
+    if (!current) {
+      status.textContent = "Loading the guest bridge…";
+    } else if (dockerRuntime.status === "error") {
+      status.textContent = `Container bootstrap failed${dockerRuntime.code ? ` (${dockerRuntime.code})` : ""}: ${dockerRuntime.error}`;
+    } else if (!hasGuest && dockerRuntime.alpineStatus === "absent") {
+      status.textContent = "Alpine runtime unavailable on this host; public busybox build is catalog-only.";
+    } else if (!hasGuest && dockerRuntime.alpineStatus === "checking") {
+      status.textContent = "Checking for the local Alpine runtime artifacts…";
+    } else if (!hasGuest) {
+      status.textContent = "Guest offline — boot Alpine here to enable real container controls.";
+    } else if (!ready() || dockerRuntime.status === "booting") {
+      status.textContent = "Booting the real Alpine guest… container controls stay locked until the shell is ready.";
+    } else if (dockerRuntime.status === "checking") {
+      status.textContent = "Checking /usr/local/bin/wvrun and /opt/containers/index.json in the guest…";
+    } else if (dockerRuntime.status === "available") {
+      status.textContent = "Container runtime ready — controls are backed by the booted guest.";
+    } else {
+      status.textContent = "Runtime absent in this guest — the catalog remains available, but lifecycle controls are disabled.";
+    }
+    box.appendChild(status);
+
+    if (dockerRuntime.error) box.appendChild(mk("div", "ide-dk-note", dockerRuntime.error));
+
+    if (!runtimeReady()) {
+      const boot = mk("button", "ide-mini run", dockerRuntime.booting ? "Booting Alpine…" : "Boot Alpine guest");
+      boot.id = "ide-dk-boot-alpine";
+      boot.dataset.action = "boot-alpine";
+      boot.disabled = dockerRuntime.booting || dockerRuntime.status === "booting" ||
+        dockerRuntime.alpineStatus === "checking" || dockerRuntime.alpineStatus === "absent" || !current?.bootAlpine;
+      boot.title = dockerRuntime.alpineStatus === "absent"
+        ? "Alpine artifacts are not deployed on this host"
+        : hasGuest && ready() && dockerRuntime.status === "unavailable"
+          ? "The current guest is ready but has no container runtime; reload with ?guest=alpine to switch guests"
+          : "Start the real chunked Alpine guest; no fallback shell is used";
+      boot.addEventListener("click", bootAlpineFromDocker);
+      box.appendChild(boot);
+    }
+
+    const provider = selectedProvider();
+    const pull = mk("button", "ide-mini", "Pull");
+    pull.id = "ide-dk-pull";
+    pull.dataset.action = "pull";
+    pull.dataset.progress = "none";
+    pull.addEventListener("click", () => {
+      dockerRuntime.pullNotice = provider === "offline"
+        ? "Live pull is unavailable while Network is offline. The rows below are the baked guest set; configure a relay/tailscale provider before requesting a registry pull."
+        : `Network provider ${provider} is selected, but live registry pull is not part of this bootstrap slice; no pull was attempted.`;
+      renderDocker();
+    });
+    box.appendChild(pull);
+    const pullState = dockerRuntime.pullNotice || (provider === "offline"
+      ? "Live pull is unavailable while Network is offline. The baked guest set is available; configure a relay/tailscale provider before requesting a registry pull. No download progress or layers are shown because no pull is running."
+      : `Network provider ${provider} is selected, but live registry pull is not part of this bootstrap slice; no pull was attempted and no progress is shown.`);
+    box.appendChild(mk("div", "ide-dk-note", pullState));
+    return box;
+  }
 
   // ── Activity bar / sidebar ──────────────────────────────────────────────────
   const sideEl = q("#ide-side");
@@ -636,12 +900,16 @@ if (root) {
   function stopPsPoll() { clearInterval(psPoll); psPoll = null; }
   function startPsPoll() {
     stopPsPoll();
+    if (!runtimeReady()) return;
     refreshContainers();
     psPoll = setInterval(refreshContainers, 6000);
   }
 
   function renderDocker() {
     dkEl.replaceChildren();
+    void probeAlpineAssets();
+    if (ready() && dockerRuntime.status === "unknown") probeDockerRuntime();
+    dkEl.appendChild(renderDockerRuntimeState());
     // Images section
     const imgSec = document.createElement("div"); imgSec.className = "ide-dk-sec";
     imgSec.appendChild(mk("div", "ide-dk-h", "Images"));
@@ -653,9 +921,11 @@ if (root) {
       row.appendChild(nm);
       if (img.runnable) {
         const b = mk("button", "ide-mini run", "▶ Run");
-        b.disabled = !ready();
-        b.title = ready() ? "Start as a detached wvrun container" : "Guest still booting";
-        b.addEventListener("click", () => runImage(img, b));
+        b.dataset.action = "run-image";
+        b.dataset.image = img.repo;
+        b.disabled = !runtimeReady();
+        b.title = runtimeReady() ? "Start as a detached wvrun container" : "Container runtime is not confirmed in the guest";
+        if (runtimeReady()) b.addEventListener("click", () => runImage(img, b));
         row.appendChild(b);
       } else {
         row.appendChild(mk("span", "sub", "pull natively"));
@@ -667,18 +937,18 @@ if (root) {
     const cSec = document.createElement("div"); cSec.className = "ide-dk-sec";
     cSec.appendChild(mk("div", "ide-dk-h", "Containers"));
     const list = document.createElement("div"); list.id = "ide-dk-clist";
-    if (!ready()) {
-      list.appendChild(mk("div", "ide-dk-note", "Alpine is booting in the background. Container controls (run / ps / logs / exec) light up when the guest shell is ready."));
+    if (!runtimeReady()) {
+      list.appendChild(mk("div", "ide-dk-note", "Container rows stay locked until the guest probe confirms wvrun and the baked catalog."));
     } else {
       list.appendChild(mk("div", "ide-dk-note", "loading (wvrun ps -a)…"));
     }
     cSec.appendChild(list);
     dkEl.appendChild(cSec);
-    if (ready()) refreshContainers();
+    if (runtimeReady()) refreshContainers();
   }
 
   async function runImage(img, btn) {
-    if (!ready()) return;
+    if (!runtimeReady()) return;
     btn.disabled = true; btn.textContent = "…";
     try {
       const { cmd } = wvrunRunCmd(img);
@@ -689,7 +959,7 @@ if (root) {
   }
 
   async function refreshContainers() {
-    if (sideView !== "docker" || !ready() || psInFlight) return;
+    if (sideView !== "docker" || !runtimeReady() || psInFlight) return;
     const list = document.getElementById("ide-dk-clist");
     if (!list) return;
     psInFlight = true;
@@ -778,7 +1048,10 @@ if (root) {
   }
 
   // ── ready / not-ready state ────────────────────────────────────────────────
-  function showBooting() {
+  function showBooting(event = null) {
+    // The initial noAutoBoot render is offline, not an in-flight boot. Only the real lifecycle
+    // event (or a Docker-tab boot already claimed by this UI) should lock the Alpine affordance.
+    resetDockerRuntime(event?.type === "wvm:guest-booting" || dockerRuntime.booting ? "booting" : "unknown");
     explorerEl.innerHTML =
       `<div class="ide-explorer-ph"><span class="ide-spin">◠</span> Booting the Linux guest…<br>` +
       `the file explorer loads the guest filesystem when the shell is ready.</div>`;
@@ -787,6 +1060,7 @@ if (root) {
     if (sideView === "docker") renderDocker();
   }
   function showReady() {
+    resetDockerRuntime("unknown");
     loadTree();
     if (!tabs.length) showNoTab();
     refreshGuestStatus();
@@ -795,6 +1069,25 @@ if (root) {
 
   window.addEventListener("wvm:guest-ready", showReady);
   window.addEventListener("wvm:guest-booting", showBooting);
+
+  document.getElementById("network-provider")?.addEventListener("change", () => {
+    dockerRuntime.pullNotice = "";
+    if (sideView === "docker") renderDocker();
+  });
+
+  if (new URLSearchParams(location.search).has("testHooks")) {
+    window.__dockerStateForTest = () => ({
+      runtime: dockerRuntime.status,
+      error: dockerRuntime.error,
+      code: dockerRuntime.code,
+      booting: dockerRuntime.booting,
+      provider: selectedProvider(),
+      ready: ready(),
+      guestUp: guestUp(),
+      alpineAssets: alpineAssetsPresent(),
+      alpineStatus: dockerRuntime.alpineStatus,
+    });
+  }
 
   if (ready()) showReady(); else showBooting();
 }

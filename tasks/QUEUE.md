@@ -160,7 +160,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 - [ ] `313.1` [E3.6-T01](epic-3.6-live-pull/E3.6-T01-guest-oci-pull-tool.md) — "Guest-side OCI pull — a static riscv64 tool that pulls+verifies+unpacks in the guest" *(deps: E3.5-T05, E3-T16)*
 - [ ] `313.2` [E3.6-T02](epic-3.6-live-pull/E3.6-T02-live-pull-over-provider.md) — "Live in-guest pull over a network provider — busybox from Docker Hub, in the browser" *(deps: E3.6-T01, E3-T19a)*
-- [ ] `313.3` [E3.6-T03](epic-3.6-live-pull/E3.6-T03-docker-tab-live-pull-ui.md) — "Docker-tab live Pull — real in-guest pull with progress, verify, and catalog update" *(deps: E3.6-T02, E3.5-T05f)*
+- [ ] `313.3` [E3.6-T03](epic-3.6-live-pull/E3.6-T03-docker-tab-live-pull-ui.md) — "Docker-tab live Pull — real in-guest pull with progress, verify, and catalog update" *(deps: E3.6-T02, E3.5-T05f6)*
 - [ ] `313.4` [E3.6-T04](epic-3.6-live-pull/E3.6-T04-live-pull-capstone.md) — "Capstone: pull a real image LIVE in the browser, run it, then re-run from cache after reload" **[CAPSTONE]** *(deps: E3.6-T03)*
 
 ## Epic 3 — `epic-3-civilization`
