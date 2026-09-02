@@ -95,6 +95,7 @@ export const ROADMAP = [
       { name: "Tiny OCI runner (wvrun)", status: "partial", evidence: "core done: unshare+overlay+pivot_root+exec (#108) — booted in-guest run pending" },
       { name: "Guest Docker image catalog + detached Run", status: "verified", evidence: "E3.5-T05f2: Images reads /opt/containers/index.json, Inspect shows guest bundle metadata, and Run reports the guest wvrun identity or typed rejection" },
       { name: "Guest Docker container list + lifecycle actions", status: "verified", evidence: "E3.5-T05f3: Containers reconciles wvrun ps -a after Run, Stop, Remove, Restart, reload, external stop, and malformed-output errors" },
+      { name: "Guest Docker logs streaming + cancellation", status: "verified", evidence: "E3.5-T05f4: Logs follows guest wvrun logs -f, cancels cleanly on close/navigation/Stop, and releases the shared RPC tty without duplicate lines" },
       { name: "Digest-deduped layer cache, reload-proof", status: "pending" },
     ],
   },
