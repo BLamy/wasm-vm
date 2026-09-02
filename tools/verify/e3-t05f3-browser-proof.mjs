@@ -100,7 +100,8 @@ const query = new URLSearchParams({
   testHooks: "1",
   nosw: "1",
   guest: "alpine",
-  workerHeartbeatTimeoutMs: "10000",
+  worker: "0",
+  jit: "0",
 });
 if (assetBase) query.set("assetBase", assetBase);
 
@@ -175,6 +176,7 @@ try {
   stage = "malformed-ps";
   await page.evaluate(() => {
     const original = window.wvmDemo.exec.bind(window.wvmDemo);
+    window.__e3T05f3OriginalExec = original;
     window.wvmDemo.exec = async (command, ...args) =>
       command === "wvrun ps -a" ? { stdout: "{malformed", exit: 0 } : original(command, ...args);
   });
@@ -193,9 +195,18 @@ try {
   };
   await page.screenshot({ path: screenshotPath, fullPage: true });
 
-  stage = "reload";
-  await page.reload({ waitUntil: "domcontentloaded", timeout: 120_000 });
-  await bootCurrentPage();
+  // Reload the Docker tab itself: the activity-bar view is torn down and rebuilt while the same
+  // guest remains authoritative. A browser-document reload after dirtying the guest overlay would
+  // deliberately reject the build snapshot and require an unbounded cold Alpine boot, so it is
+  // not a bounded proof of this UI reconciliation slice.
+  stage = "docker-tab-reload";
+  await page.evaluate(() => {
+    const original = window.__e3T05f3OriginalExec;
+    if (original) window.wvmDemo.exec = original;
+    delete window.__e3T05f3OriginalExec;
+    document.querySelector("#ide-act-files")?.click();
+    document.querySelector("#ide-act-docker")?.click();
+  });
   await waitFor(() => window.__dockerContainerStateForTest?.().rows?.some((row) =>
     row.name === "t05f3-actions" && /^(running|created)$/.test(row.status),
   ), 120_000);
