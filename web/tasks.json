@@ -11060,14 +11060,15 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 3,
-      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified (user-directed local Chromium proof)\n\n- **AC1 — HELD.** The Exec pane starts the real `wvrun exec -it '<id>' sh` stream and sends the\n  entered command bytes through the guest tty. The recorded Alpine run displayed `INEXEC_42`, with\n  the arithmetic evaluated by the container shell; the UI contains no host-side `sh -c` execution\n  path for submitted commands.\n- **AC2 — HELD.** The same recorded pane reported the container hostname `t05f5-ctr`, `/proc/1/comm`\n  as `sh`, and `NOLEAK_42` after attempting to read a file created only in the parent guest. The\n  transcript did not contain `TOPSECRET_42`; provenance also displays the selected container name,\n  id, and image.\n- **AC3 — HELD.** Clicking Exit returned to the Containers list and an immediate parent-guest RPC\n  returned `AFTER_EXEC_EXIT_42`. Stop-while-Exec left `active=false`, `starting=false`, and\n  `stopping=false`; an exited id returned `EXEC_TARGET_NOT_RUNNING`, and a synthetic absent id\n  returned `EXEC_CONTAINER_NOT_FOUND`, both within the bounded 30-second assertions. The parent\n  guest remained usable after both failures.\n- **Adversarial coverage — HELD.** The exact local Chromium capture exercised provenance, guest-only\n  secret isolation, clean exit, a Stop/Exec race, exited-target rejection, absent-target rejection,\n  and listener cleanup. It completed with zero console errors and zero failed requests. Independent\n  machines and WebKit are waived per the user's explicit instruction.\n- **Recorded evidence.** `evidence/e3-t05f5/docker-exec-pane-browser.json` (SHA-256\n  `e1c42036bd3c9d637f4406dc39dc6c896c9a717b8985259e5d6b4e4c5f6a50c8`) and\n  `evidence/e3-t05f5/docker-exec-pane-browser.png` (SHA-256\n  `25e2c993261e4c9e47698df66bbaed67aafc6070babbba7526318444a61ff633`).\n- **Coverage — HELD.** The changed runtime/UI paths are in `web/ide.js`; `web/dist/ide.js`,\n  `web/dist/roadmap.js`, and `web/dist/sw.js` were regenerated. The focused Playwright spec and\n  direct proof script exercise the interactive start/send/exit/error paths. No host-layer rr trace\n  is claimed on this Mac.\n\nCommands:\n\n`node --check web/ide.js`; `node --check web/tests/e3-t05f5-docker-exec-pane.spec.js`;\n`node --check tools/verify/e3-t05f5-browser-proof.mjs`; `node --test web/tests/guest-rpc.test.mjs`;\n`git diff --check`; `make web-build`; `make web-dist`;\n`E3_T05F5_BASE_URL=http://127.0.0.1:8130 node tools/verify/e3-t05f5-browser-proof.mjs`.",
+      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified (user-directed local Chromium proof)\n\n- **AC1 — HELD.** The Exec pane starts the real `wvrun exec -it '<id>' sh` stream and sends the\n  entered command bytes through the guest tty. The recorded Alpine run displayed `INEXEC_42`, with\n  the arithmetic evaluated by the container shell; the UI contains no host-side `sh -c` execution\n  path for submitted commands.\n- **AC2 — HELD.** The same recorded pane reported the container hostname `t05f5-ctr`, `/proc/1/comm`\n  as `sh`, and `NOLEAK_42` after attempting to read a file created only in the parent guest. The\n  transcript did not contain `TOPSECRET_42`; provenance also displays the selected container name,\n  id, and image.\n- **AC3 — HELD.** Clicking Exit returned to the Containers list and an immediate parent-guest RPC\n  returned `AFTER_EXEC_EXIT_42`. Stop-while-Exec left `active=false`, `starting=false`, and\n  `stopping=false`; an exited id returned `EXEC_TARGET_NOT_RUNNING`, and a synthetic absent id\n  returned `EXEC_CONTAINER_NOT_FOUND`, both within the bounded 30-second assertions. The parent\n  guest remained usable after both failures.\n- **Adversarial coverage — HELD.** The exact local Chromium capture exercised provenance, guest-only\n  secret isolation, clean exit, a Stop/Exec race, exited-target rejection, absent-target rejection,\n  and listener cleanup. It completed with zero console errors and zero failed requests. Independent\n  machines and WebKit are waived per the user's explicit instruction.\n- **Recorded evidence.** `evidence/e3-t05f5/docker-exec-pane-browser.json` (SHA-256\n  `e1c42036bd3c9d637f4406dc39dc6c896c9a717b8985259e5d6b4e4c5f6a50c8`) and\n  `evidence/e3-t05f5/docker-exec-pane-browser.png` (SHA-256\n  `25e2c993261e4c9e47698df66bbaed67aafc6070babbba7526318444a61ff633`).\n- **Implementation commit.** `fe5cf9a` adds the interactive pane, generation-safe stream\n  cancellation, typed target errors, focused browser spec, and direct proof harness.\n- **Coverage — HELD.** The changed runtime/UI paths are in `web/ide.js`; `web/dist/ide.js`,\n  `web/dist/roadmap.js`, and `web/dist/sw.js` were regenerated. The focused Playwright spec and\n  direct proof script exercise the interactive start/send/exit/error paths. No host-layer rr trace\n  is claimed on this Mac.\n\nCommands:\n\n`node --check web/ide.js`; `node --check web/tests/e3-t05f5-docker-exec-pane.spec.js`;\n`node --check tools/verify/e3-t05f5-browser-proof.mjs`; `node --test web/tests/guest-rpc.test.mjs`;\n`git diff --check`; `make web-build`; `make web-dist`;\n`E3_T05F5_BASE_URL=http://127.0.0.1:8130 node tools/verify/e3-t05f5-browser-proof.mjs`.",
       "adversarial": "Attempt `cat /root/guest-secret`, inspect hostname and PID 1, and race Exec with container exit. Verify\nthe stream cannot attach to the guest shell or a recycled container PID, and no listener survives exit.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f5-docker-exec-pane.md",
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "docs: point Docker exec verification at browser proof",
             "verify: close Docker interactive exec pane",
             "tasks: start Docker exec pane slice"
           ]
@@ -11075,7 +11076,7 @@
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E3.5-T05f6",
@@ -11083,7 +11084,7 @@
       "epicKey": "3.5",
       "title": "Docker-tab lifecycle end-to-end integration proof",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E3.5-T05f5"
       ],
