@@ -26,8 +26,19 @@
         return ts[ts.length >> 1];
       }
 
-      // The whole matrix — exposed to Playwright via window.__runCostMatrix().
-      async function runCostMatrix() {
+      const DEFAULT_CLIFF_TARGETS = [1000, 5000, 10000];
+      const FIRST_EXECUTION_REPS = 31;
+      const FIRST_EXECUTION_TARGET_MS = 5;
+
+      // The whole matrix — exposed to Playwright via window.__runCostMatrix(). The optional
+      // target override is used by bounded follow-up probes; the canonical matrix remains the
+      // short 1k/5k/10k run above.
+      async function runCostMatrix({ cliffTargets = DEFAULT_CLIFF_TARGETS } = {}) {
+        if (!Array.isArray(cliffTargets) || cliffTargets.length === 0 || cliffTargets.some(
+          (target) => !Number.isSafeInteger(target) || target < 1,
+        )) {
+          throw new Error(`invalid cliff target list: ${JSON.stringify(cliffTargets)}`);
+        }
         const sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256];
         const reps = 15;
         const compile = [];
@@ -50,22 +61,59 @@
         // instantiation starts throwing (the browser's practical live-instance cap).
         const cliffBytes = genModule(64, 8);
         const cliffMod = await WebAssembly.compile(cliffBytes);
+        // Fresh-batch warm-up: instantiate a new 64-function batch and call its first export. This
+        // keeps compile separate (the module is already compiled) while still measuring any lazy
+        // baseline-code setup at instantiation/first execution. The first-call result is checked so
+        // the timing probe cannot silently become a dead call.
+        const firstExecution = [];
+        for (let i = 0; i < FIRST_EXECUTION_REPS; i++) {
+          const t0 = performance.now();
+          const instance = await WebAssembly.instantiate(cliffMod);
+          const t1 = performance.now();
+          if (!(instance instanceof WebAssembly.Instance)) {
+            throw new Error("WebAssembly.instantiate(Module) did not return an Instance");
+          }
+          const result = instance.exports.run0(0);
+          const t2 = performance.now();
+          if (result !== 8) throw new Error(`first-execution result mismatch: ${result}`);
+          firstExecution.push({
+            instantiateMs: t1 - t0,
+            executeMs: t2 - t1,
+            totalMs: t2 - t0,
+          });
+        }
+        const firstExecutionMaxMs = Math.max(...firstExecution.map(({ totalMs }) => totalMs));
+        if (firstExecutionMaxMs >= FIRST_EXECUTION_TARGET_MS) {
+          throw new Error(
+            `first-execution pause target exceeded: ${firstExecutionMaxMs.toFixed(3)}ms ` +
+            `>= ${FIRST_EXECUTION_TARGET_MS}ms`,
+          );
+        }
+        log(`first-execution reps=${FIRST_EXECUTION_REPS} max=${firstExecutionMaxMs.toFixed(3)}ms`);
         const cliff = [];
-        for (const target of [1000, 5000, 10000]) {
+        for (const target of cliffTargets) {
           const held = [];
           let failedAt = null;
+          let error = null;
           const t0 = performance.now();
           try {
             for (let i = 0; i < target; i++) {
-              const { instance } = await WebAssembly.instantiate(cliffMod);
+              const instance = await WebAssembly.instantiate(cliffMod);
+              if (!(instance instanceof WebAssembly.Instance)) {
+                throw new Error("WebAssembly.instantiate(Module) did not return an Instance");
+              }
               held.push(instance);
             }
           } catch (e) {
             failedAt = held.length;
+            error = {
+              name: e?.name || typeof e,
+              message: e?.message || String(e),
+            };
           }
           const ms = performance.now() - t0;
           const mem = performance.memory ? performance.memory.usedJSHeapSize : null;
-          cliff.push({ target, live: held.length, failedAt, ms, usedJSHeapSize: mem });
+          cliff.push({ target, live: held.length, failedAt, error, ms, usedJSHeapSize: mem });
           log(`cliff target=${target} live=${held.length} failedAt=${failedAt} ms=${ms.toFixed(1)}`);
           // release before the next tier
           held.length = 0;
@@ -77,6 +125,13 @@
           // performance.memory is Chromium-only; null elsewhere (documented per-browser).
           hasPerfMemory: !!performance.memory,
           reps,
+          cliffTargets,
+          firstExecution: {
+            reps: FIRST_EXECUTION_REPS,
+            targetMs: FIRST_EXECUTION_TARGET_MS,
+            samples: firstExecution,
+            maxMs: firstExecutionMaxMs,
+          },
           compile,
           instantiate,
           cliff,

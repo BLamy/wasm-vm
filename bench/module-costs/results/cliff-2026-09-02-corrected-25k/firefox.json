@@ -1,12 +1,11 @@
 {
-  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
-  "hardwareConcurrency": 8,
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0",
+  "hardwareConcurrency": 16,
   "hasPerfMemory": false,
   "reps": 15,
   "cliffTargets": [
-    1000,
-    5000,
-    10000
+    10000,
+    25000
   ],
   "firstExecution": {
     "reps": 31,
@@ -23,6 +22,101 @@
         "totalMs": 0
       },
       {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
         "instantiateMs": 1,
         "executeMs": 0,
         "totalMs": 1
@@ -48,11 +142,6 @@
         "totalMs": 0
       },
       {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
-      },
-      {
         "instantiateMs": 0,
         "executeMs": 0,
         "totalMs": 0
@@ -61,96 +150,6 @@
         "instantiateMs": 0,
         "executeMs": 0,
         "totalMs": 0
-      },
-      {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
       },
       {
         "instantiateMs": 0,
@@ -209,12 +208,12 @@
     {
       "funcs": 128,
       "bytes": 4924,
-      "ms": 0
+      "ms": 1
     },
     {
       "funcs": 256,
       "bytes": 10044,
-      "ms": 0
+      "ms": 1
     }
   ],
   "instantiate": [
@@ -266,31 +265,29 @@
   ],
   "cliff": [
     {
-      "target": 1000,
-      "live": 1000,
-      "failedAt": null,
-      "error": null,
-      "ms": 816,
-      "usedJSHeapSize": null
-    },
-    {
-      "target": 5000,
-      "live": 5000,
-      "failedAt": null,
-      "error": null,
-      "ms": 8193,
-      "usedJSHeapSize": null
-    },
-    {
       "target": 10000,
-      "live": 10000,
-      "failedAt": null,
-      "error": null,
-      "ms": 29028,
+      "live": 999,
+      "failedAt": 999,
+      "error": {
+        "name": "string",
+        "message": "out of memory"
+      },
+      "ms": 212,
+      "usedJSHeapSize": null
+    },
+    {
+      "target": 25000,
+      "live": 999,
+      "failedAt": 999,
+      "error": {
+        "name": "string",
+        "message": "out of memory"
+      },
+      "ms": 194,
       "usedJSHeapSize": null
     }
   ],
-  "generatedAt": "2026-09-02T11:36:43.933Z",
-  "project": "webkit",
-  "playwrightBrowserVersion": "26.5"
+  "generatedAt": "2026-09-02T11:25:17.367Z",
+  "project": "firefox",
+  "playwrightBrowserVersion": "153.0"
 }

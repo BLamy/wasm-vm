@@ -98,6 +98,13 @@ the E4-T06 pause targets on the worst browser.
 
 ## Verification log
 
+**Evidence correction — 2026-09-02.** The earlier matrix rows referenced below were invalid for the
+live-instance claim: the harness destructured `WebAssembly.instantiate(compiledModule)` as
+`{ instance }`, but the compiled-Module overload returns the `WebAssembly.Instance` directly. Those
+rows held `undefined` placeholders and are replaced by the corrected captures in the current
+`bench/module-costs/results/` tree. The harness now asserts the returned value is an actual
+`WebAssembly.Instance` and records any allocation error.
+
 **Verified here (native, headless — full output pasted in the PR):**
 - AC3 intra-batch direct-call codegen — `jit-translate/tests/batch.rs` (2/2): a within-batch edge is
   `Operator::Call` to the successor func index; ZERO `call_indirect` in the module. GREEN.
@@ -111,19 +118,23 @@ the E4-T06 pause targets on the worst browser.
 - `jit-translate` differential (100k) GREEN; `predecode_diff` byte-identical GREEN; wasm32 no_std core
   build GREEN; fmt clean.
 
-**Verification debt (browser / dev — this mac OS-reaps long browser runs):**
-- [AC1] Cost-matrix JSON for Chrome/Firefox/Safari-substitute — local three-engine capture is now
-  committed under `bench/module-costs/results/`; a separate Chrome 152 screen also exercises the
-  matrix against the pinned Chromium 151. The remaining debt is independent-machine robustness.
+**Verification debt (browser / dev):**
+- [AC1] Cost-matrix JSON for Chrome/Firefox/Safari-substitute — the corrected local three-engine
+  capture is committed under `bench/module-costs/results/`; a separate Chrome 152 screen also
+  exercises the matrix against the pinned Chromium 151. The remaining debt is independent-machine
+  robustness.
 - [AC2] gcc batched-vs-unbatched compile-stall factor — the exact-head A/B now exercises both CLI
   arms after the per-batch Store lifetime fix. With `--profile` JIT pause telemetry, K=64 records
   607.910136 s and K=1 records 942.132398 s of compile/install stall: a 1.549789x reduction
   (35.475%) for K=64. The remaining debt is independent-machine/browser robustness, not a missing
   native denominator.
-- [AC4] local run reached 10,000 live instances in each engine without a cliff, putting the 256-module
-  budget at least 39.1x below the observed lower bound; a larger-limit/cross-run confirmation remains.
-- Adversarial #1 (K robustness across machines/versions) and #4 (first-execution warm-up vs the E4-T06
-  pause target) — both browser-measurement, dev debt.
+- [AC4] corrected probes found Chromium's cliff at 122–123 and Firefox's at 999, while WebKit
+  exceeded 25,000. The production browser cap is now 24 batches, giving at least `122 / 24 = 5.083x`
+  headroom below the smallest observed cliff; the actual WebKit failure point remains open.
+- Adversarial #1 (K robustness across machines/versions) has pinned Chromium 151 plus supplemental
+  Chrome 152 coverage on this host; the independent-machine portion remains browser-measurement debt.
+- Adversarial #4 (first-execution warm-up vs the E4-T06 pause target) is held locally: the 31-sample
+  maximum was 0.101 ms in Chromium and 1 ms in Firefox/WebKit/Chrome 152, below 5 ms.
 - The in-wasm `chain_enabled=1` chaining path's determinism — deferred to the E4-T25 differential harness.
 
 ### 2026-08-29 — worker evidence — local cross-browser cost matrix captured
@@ -244,3 +255,56 @@ Commands: `cargo fmt --all -- --check`; `cargo clippy -p wasm-vm-cli --all-targe
 `cargo build --release -p wasm-vm-cli`; `cargo test -p wasm-vm-cli`; `cargo test -p wasm-vm-jit-runtime`;
 `python3 -m py_compile tools/bench.py`; `git diff --check`; and the two exact commands in the
 evidence README.
+
+### 2026-09-02 — worker continuation — corrected browser evidence and budget
+
+The first extended run was invalidated before submission: the harness held `undefined` from the
+wrong `WebAssembly.instantiate(Module)` return destructuring. The corrected harness now asserts an
+actual `WebAssembly.Instance`, records allocation errors, and measures a 31-sample fresh-instance
+first execution against the 5 ms E4-T06 target.
+
+The corrected canonical command passed all three pinned engines:
+
+```sh
+E4_T19_RESULTS_DIR='results' \
+  npx playwright test --config playwright.config.mjs \
+  --project=chromium --project=firefox --project=webkit
+```
+
+The corrected follow-up used:
+
+```sh
+E4_T19_CLIFF_TARGETS='10000,25000' \
+  E4_T19_RESULTS_DIR='results/cliff-2026-09-02-corrected-25k' \
+  npx playwright test --config playwright.config.mjs \
+  --project=chromium --project=firefox --project=webkit
+```
+
+- **HELD:** The exact `run.sh` command completed `3 passed (41.5s)`. Chromium 151 reached 122 live
+  instances before `RangeError: ... Cannot allocate Wasm memory for new instance`; Firefox 153
+  reached 999 before `out of memory`; WebKit 26.5 reached 10,000. The follow-up reproduced the
+  Chromium limit at 122 and Firefox limit at 999, while WebKit reached 25,000 in 193,618 ms.
+- **HELD:** The supplemental Chrome 152 canonical row failed at 124, and its corrected follow-up
+  failed at 123. The two browser versions therefore agree on the same approximately 122–124
+  one-page-memory cliff on this host.
+- **HELD:** The first-execution maximum was 0.101 ms in Chromium/Chrome 152 and 1 ms in
+  Firefox/WebKit, below the 5 ms target in every tested engine/version. The first-call result was
+  asserted as `8`, so the timing probe executed the generated export.
+- **HELD:** Production `BrowserExecutor` now uses `BROWSER_MAX_BATCHES = 24`; against the
+  conservative 122-instance Chromium result, the margin is `122 / 24 = 5.083x`, satisfying the
+  4x requirement for every observed cliff. Native parity retains its 256-batch default.
+- **NEEDS EVIDENCE:** WebKit's actual failure point remains above 25,000, and the independent-
+  machine K-selection attack remains open. The earlier placeholder rows are not evidence and are
+  superseded by the corrected JSON files below; no verified status is claimed.
+
+Canonical artifacts: `bench/module-costs/results/{chromium,firefox,webkit,chromium-system}.json`.
+SHA-256: `5ca954fd7aebbcf7544727e4ffff5c07a5b9225a9971075a484e53305d6f3b6d`,
+`184bb7a6ae40587b91465dbd2a8712762b093ad41344173e2787360689a392cf`,
+`786301cf49d11dc536af43e43f149ef1507952ba9ae65eeed3a23c5147f1183e`, and
+`e44b8349fba7dc6ed930572bec873f3410590686c2a09fa0ebc91cc866dfcd9d`.
+
+Corrected follow-up artifacts: `bench/module-costs/results/cliff-2026-09-02-corrected-25k/`.
+SHA-256: Chromium `f1171adda4c4831923e5ea805d5b471c42830c9c1b3991893ef1d205f69e0f4d`, Firefox
+`fa13eda34ec83801bbf7789338e7c1360bfba39fd923ed28ac434399eca5af56`, WebKit
+`dabdee9d7490abcc61825045fd8f69930fb90d945cda78047f0420a63069204a`, and supplemental Chrome 152
+`b12849292fe3472b1a9fb260193175a08e4ad47e2a9eaa0ac0d164117eab95d7`.

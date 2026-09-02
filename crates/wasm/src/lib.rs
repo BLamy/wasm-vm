@@ -17,7 +17,7 @@ use core::sync::atomic::{AtomicBool, Ordering};
 use wasm_bindgen::prelude::*;
 // E4-T29 Phase 2: the in-wasm (browser) compiled-block executor.
 mod jit_browser;
-pub use jit_browser::BrowserExecutor;
+pub use jit_browser::{BROWSER_MAX_BATCHES, BrowserExecutor};
 use wasm_vm_core::bus::mmap::{UART0_BASE, UART0_LEN};
 use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
 use wasm_vm_core::trace::{TraceRecord, TraceSink, fmt_canonical};

@@ -575,6 +575,11 @@ const INSTANCE_OVERHEAD_BYTES: u64 = 64 * 1024;
 /// E4-T19 default batching K (`docs/jit-architecture.md` §7). Matches the native default.
 pub const DEFAULT_BATCH_SIZE: usize = 64;
 
+/// Conservative production-browser live-batch cap from the E4-T19 instance-cliff probe. The
+/// generated one-page-memory batch shape failed at 122 instances in Chromium 151; 24 leaves more
+/// than a 4x safety margin while still allowing 1,536 hot blocks at the default K=64.
+pub const BROWSER_MAX_BATCHES: usize = 24;
+
 /// E4-T18 dispatch-stub sentinel a link-slot holds when NOT linked (return to dispatch).
 const STUB: u32 = u32::MAX;
 
@@ -665,10 +670,10 @@ impl BrowserExecutor {
         let compiled_page_bitmap = CompiledPageBitmap::new(machine.ram_len(), machine.ram_base())?;
         let mut executor =
             Self::new_with_inline_tlb(Some(cache), Some(dynamic_links), Some(compiled_page_bitmap));
-        // Production Node startup has a wider working set than the small native/browser parity
-        // harness. Keep the table/metadata caps unchanged, but allow a bounded wider code working
-        // set so the documented 32 MiB default does not evict otherwise-hot short blocks mid-boot.
-        executor.budget.max_batches = 1024;
+        // Production browser startup has a wider working set than the small parity harness, but
+        // the instance-count cap must stay below the measured Chromium/Firefox cliff. Keep the
+        // table/metadata caps unchanged and raise only the code-byte ceiling; the conservative
+        // batch cap is shared by both constructors.
         executor.budget.code_bytes = 64 * 1024 * 1024;
         executor.chain_depth_budget = PRODUCTION_CHAIN_DEPTH_BUDGET;
         Ok(executor)
@@ -791,7 +796,10 @@ impl BrowserExecutor {
             batch_size: DEFAULT_BATCH_SIZE,
             batches: HashMap::new(),
             next_batch_id: 0,
-            budget: JitCacheBudget::DEFAULT,
+            budget: JitCacheBudget {
+                max_batches: BROWSER_MAX_BATCHES,
+                ..JitCacheBudget::DEFAULT
+            },
             policy: EvictPolicy::default(),
             clock: 0,
             generation: 0,

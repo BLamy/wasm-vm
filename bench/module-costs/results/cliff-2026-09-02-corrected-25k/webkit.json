@@ -4,9 +4,8 @@
   "hasPerfMemory": false,
   "reps": 15,
   "cliffTargets": [
-    1000,
-    5000,
-    10000
+    10000,
+    25000
   ],
   "firstExecution": {
     "reps": 31,
@@ -23,11 +22,6 @@
         "totalMs": 0
       },
       {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
-      },
-      {
         "instantiateMs": 0,
         "executeMs": 0,
         "totalMs": 0
@@ -36,36 +30,6 @@
         "instantiateMs": 0,
         "executeMs": 0,
         "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
       },
       {
         "instantiateMs": 0,
@@ -128,6 +92,26 @@
         "totalMs": 0
       },
       {
+        "instantiateMs": 1,
+        "executeMs": 0,
+        "totalMs": 1
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
         "instantiateMs": 0,
         "executeMs": 0,
         "totalMs": 0
@@ -148,9 +132,24 @@
         "totalMs": 0
       },
       {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
         "instantiateMs": 1,
         "executeMs": 0,
         "totalMs": 1
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
       },
       {
         "instantiateMs": 0,
@@ -266,31 +265,23 @@
   ],
   "cliff": [
     {
-      "target": 1000,
-      "live": 1000,
-      "failedAt": null,
-      "error": null,
-      "ms": 816,
-      "usedJSHeapSize": null
-    },
-    {
-      "target": 5000,
-      "live": 5000,
-      "failedAt": null,
-      "error": null,
-      "ms": 8193,
-      "usedJSHeapSize": null
-    },
-    {
       "target": 10000,
       "live": 10000,
       "failedAt": null,
       "error": null,
-      "ms": 29028,
+      "ms": 28477,
+      "usedJSHeapSize": null
+    },
+    {
+      "target": 25000,
+      "live": 25000,
+      "failedAt": null,
+      "error": null,
+      "ms": 193618,
       "usedJSHeapSize": null
     }
   ],
-  "generatedAt": "2026-09-02T11:36:43.933Z",
+  "generatedAt": "2026-09-02T11:29:00.391Z",
   "project": "webkit",
   "playwrightBrowserVersion": "26.5"
 }

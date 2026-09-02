@@ -1,12 +1,11 @@
 {
-  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
-  "hardwareConcurrency": 8,
-  "hasPerfMemory": false,
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.7922.34 Safari/537.36",
+  "hardwareConcurrency": 16,
+  "hasPerfMemory": true,
   "reps": 15,
   "cliffTargets": [
-    1000,
-    5000,
-    10000
+    10000,
+    25000
   ],
   "firstExecution": {
     "reps": 31,
@@ -14,18 +13,8 @@
     "samples": [
       {
         "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
+        "executeMs": 0.09999999403953552,
+        "totalMs": 0.09999999403953552
       },
       {
         "instantiateMs": 0,
@@ -43,29 +32,9 @@
         "totalMs": 0
       },
       {
-        "instantiateMs": 0,
+        "instantiateMs": 0.09999999403953552,
         "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
+        "totalMs": 0.09999999403953552
       },
       {
         "instantiateMs": 0,
@@ -88,9 +57,24 @@
         "totalMs": 0
       },
       {
-        "instantiateMs": 1,
+        "instantiateMs": 0,
         "executeMs": 0,
-        "totalMs": 1
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.09999999403953552,
+        "executeMs": 0,
+        "totalMs": 0.09999999403953552
       },
       {
         "instantiateMs": 0,
@@ -113,9 +97,19 @@
         "totalMs": 0
       },
       {
-        "instantiateMs": 1,
+        "instantiateMs": 0,
         "executeMs": 0,
-        "totalMs": 1
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.10000002384185791,
+        "executeMs": 0,
+        "totalMs": 0.10000002384185791
       },
       {
         "instantiateMs": 0,
@@ -133,24 +127,9 @@
         "totalMs": 0
       },
       {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
-      },
-      {
         "instantiateMs": 0,
         "executeMs": 0,
         "totalMs": 0
-      },
-      {
-        "instantiateMs": 0,
-        "executeMs": 0,
-        "totalMs": 0
-      },
-      {
-        "instantiateMs": 1,
-        "executeMs": 0,
-        "totalMs": 1
       },
       {
         "instantiateMs": 0,
@@ -166,9 +145,29 @@
         "instantiateMs": 0,
         "executeMs": 0,
         "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.09999999403953552,
+        "executeMs": 0,
+        "totalMs": 0.09999999403953552
       }
     ],
-    "maxMs": 1
+    "maxMs": 0.10000002384185791
   },
   "compile": [
     {
@@ -209,12 +208,12 @@
     {
       "funcs": 128,
       "bytes": 4924,
-      "ms": 0
+      "ms": 0.09999999403953552
     },
     {
       "funcs": 256,
       "bytes": 10044,
-      "ms": 0
+      "ms": 0.09999999403953552
     }
   ],
   "instantiate": [
@@ -266,31 +265,29 @@
   ],
   "cliff": [
     {
-      "target": 1000,
-      "live": 1000,
-      "failedAt": null,
-      "error": null,
-      "ms": 816,
-      "usedJSHeapSize": null
-    },
-    {
-      "target": 5000,
-      "live": 5000,
-      "failedAt": null,
-      "error": null,
-      "ms": 8193,
-      "usedJSHeapSize": null
-    },
-    {
       "target": 10000,
-      "live": 10000,
-      "failedAt": null,
-      "error": null,
-      "ms": 29028,
-      "usedJSHeapSize": null
+      "live": 123,
+      "failedAt": 123,
+      "error": {
+        "name": "RangeError",
+        "message": "WebAssembly.instantiate(): Out of memory: Cannot allocate Wasm memory for new instance"
+      },
+      "ms": 7,
+      "usedJSHeapSize": 2988050
+    },
+    {
+      "target": 25000,
+      "live": 123,
+      "failedAt": 123,
+      "error": {
+        "name": "RangeError",
+        "message": "WebAssembly.instantiate(): Out of memory: Cannot allocate Wasm memory for new instance"
+      },
+      "ms": 9,
+      "usedJSHeapSize": 2988050
     }
   ],
-  "generatedAt": "2026-09-02T11:36:43.933Z",
-  "project": "webkit",
-  "playwrightBrowserVersion": "26.5"
+  "generatedAt": "2026-09-02T11:32:47.340Z",
+  "project": "chromium-system",
+  "playwrightBrowserVersion": "152.0.7977.75"
 }

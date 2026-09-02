@@ -37,7 +37,7 @@ use wasm_vm_core::hart::{Exception, Hart, Trap};
 use wasm_vm_core::jit::{CompiledBlockExecutor, EvictPolicy, ExitCode, JitCacheBudget};
 use wasm_vm_core::mmio::{MmioDevice, SystemBus, Width};
 use wasm_vm_core::ram::Ram;
-use wasm_vm_wasm::BrowserExecutor;
+use wasm_vm_wasm::{BROWSER_MAX_BATCHES, BrowserExecutor};
 
 #[wasm_bindgen::prelude::wasm_bindgen(inline_js = r#"
 let originalUint8Subarray;
@@ -336,6 +336,16 @@ fn browser_inline_tlb_matches_interpreter_for_ram_loop() {
         ram_window(&mut oracle, scratch, 1)
     );
     assert!(inline.executor().unwrap().executed_blocks() > 0);
+}
+
+#[wasm_bindgen_test]
+fn production_browser_budget_stays_below_measured_instance_cliff() {
+    let machine = Machine::new(8 * 1024 * 1024);
+    let executor = BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+    let budget = executor.jit_cache_stats().budget;
+
+    assert_eq!(budget.max_batches, BROWSER_MAX_BATCHES);
+    assert_eq!(BROWSER_MAX_BATCHES, 24);
 }
 
 #[wasm_bindgen_test]

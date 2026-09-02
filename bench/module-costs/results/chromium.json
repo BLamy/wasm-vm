@@ -3,6 +3,173 @@
   "hardwareConcurrency": 16,
   "hasPerfMemory": true,
   "reps": 15,
+  "cliffTargets": [
+    1000,
+    5000,
+    10000
+  ],
+  "firstExecution": {
+    "reps": 31,
+    "targetMs": 5,
+    "samples": [
+      {
+        "instantiateMs": 0.09999999403953552,
+        "executeMs": 0,
+        "totalMs": 0.09999999403953552
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.10000002384185791,
+        "executeMs": 0,
+        "totalMs": 0.10000002384185791
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.09999999403953552,
+        "executeMs": 0,
+        "totalMs": 0.09999999403953552
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.09999999403953552,
+        "executeMs": 0,
+        "totalMs": 0.09999999403953552
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      },
+      {
+        "instantiateMs": 0.09999999403953552,
+        "executeMs": 0,
+        "totalMs": 0.09999999403953552
+      },
+      {
+        "instantiateMs": 0,
+        "executeMs": 0,
+        "totalMs": 0
+      }
+    ],
+    "maxMs": 0.10000002384185791
+  },
   "compile": [
     {
       "funcs": 1,
@@ -42,12 +209,12 @@
     {
       "funcs": 128,
       "bytes": 4924,
-      "ms": 0.09999999776482582
+      "ms": 0
     },
     {
       "funcs": 256,
       "bytes": 10044,
-      "ms": 0.10000000149011612
+      "ms": 0.09999999403953552
     }
   ],
   "instantiate": [
@@ -94,33 +261,45 @@
     {
       "funcs": 256,
       "bytes": 10044,
-      "ms": 0
+      "ms": 0.09999999403953552
     }
   ],
   "cliff": [
     {
       "target": 1000,
-      "live": 1000,
-      "failedAt": null,
-      "ms": 32.599999997764826,
+      "live": 122,
+      "failedAt": 122,
+      "error": {
+        "name": "RangeError",
+        "message": "WebAssembly.instantiate(): Out of memory: Cannot allocate Wasm memory for new instance"
+      },
+      "ms": 6.300000011920929,
       "usedJSHeapSize": 10000000
     },
     {
       "target": 5000,
-      "live": 5000,
-      "failedAt": null,
-      "ms": 161.89999999850988,
+      "live": 122,
+      "failedAt": 122,
+      "error": {
+        "name": "RangeError",
+        "message": "WebAssembly.instantiate(): Out of memory: Cannot allocate Wasm memory for new instance"
+      },
+      "ms": 9.300000011920929,
       "usedJSHeapSize": 10000000
     },
     {
       "target": 10000,
-      "live": 10000,
-      "failedAt": null,
-      "ms": 317.1000000014901,
+      "live": 122,
+      "failedAt": 122,
+      "error": {
+        "name": "RangeError",
+        "message": "WebAssembly.instantiate(): Out of memory: Cannot allocate Wasm memory for new instance"
+      },
+      "ms": 8.299999982118607,
       "usedJSHeapSize": 10000000
     }
   ],
-  "generatedAt": "2026-08-30T03:10:37.520Z",
+  "generatedAt": "2026-09-02T11:36:03.456Z",
   "project": "chromium",
   "playwrightBrowserVersion": "151.0.7922.34"
 }
