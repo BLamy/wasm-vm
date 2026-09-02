@@ -132,6 +132,9 @@ test("E3.5-T05e: hasContainerRuntime() true + wvrun ps over the channel (Alpine)
   test.setTimeout(3_600_000); // interpreted Alpine boot alone can take ~20-40 min
 
   const alpineParams = new URLSearchParams({ testHooks: "1", noAutoBoot: "1" });
+  // A cold Alpine slice can legitimately occupy the worker for longer than the strict
+  // 300 ms test watchdog used by the small busybox protocol tests.
+  alpineParams.set("workerHeartbeatTimeoutMs", "10000");
   if (alpineAssetBase) {
     alpineParams.set("assetBase", alpineAssetBase);
     alpineParams.set("persist", "0");
