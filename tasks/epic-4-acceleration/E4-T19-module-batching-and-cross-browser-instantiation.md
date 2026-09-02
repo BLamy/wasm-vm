@@ -92,6 +92,9 @@ the E4-T06 pause targets on the worst browser.
   via `Machine::jit_registry()`.
 - **K knob + A/B flag.** `set_batch_size(k)` (default 64, UA-probed in the browser) is also the
   batched-vs-unbatched A/B switch (`k=1` = one-block-per-module).
+- **Native batch lifetime.** Each native batch owns its Wasmtime `Store`, so evicting a batch drops
+  its `Instance`/memory immediately. A process-wide Store retained evicted instances and made the
+  K=1 gcc control fail inside macOS malloc before it could produce a result.
 
 ## Verification log
 
@@ -113,8 +116,10 @@ the E4-T06 pause targets on the worst browser.
   committed under `bench/module-costs/results/`; a separate Chrome 152 screen also exercises the
   matrix against the pinned Chromium 151. The remaining debt is independent-machine robustness.
 - [AC2] gcc batched-vs-unbatched compile-stall factor — the exact-head A/B now exercises both CLI
-  arms. K=64 completes, but the K=1 control terminates with SIGTRAP before `GCC_RESULT`, so no
-  speedup factor is valid and the control-path failure remains verification debt.
+  arms after the per-batch Store lifetime fix. With `--profile` JIT pause telemetry, K=64 records
+  607.910136 s and K=1 records 942.132398 s of compile/install stall: a 1.549789x reduction
+  (35.475%) for K=64. The remaining debt is independent-machine/browser robustness, not a missing
+  native denominator.
 - [AC4] local run reached 10,000 live instances in each engine without a cliff, putting the 256-module
   budget at least 39.1x below the observed lower bound; a larger-limit/cross-run confirmation remains.
 - Adversarial #1 (K robustness across machines/versions) and #4 (first-execution warm-up vs the E4-T06
@@ -198,3 +203,44 @@ Commands: `cargo fmt --all -- --check`; `cargo clippy -p wasm-vm-cli --all-targe
 `cargo build --release -p wasm-vm-cli`; `cargo test -p wasm-vm-cli`; `cargo test -p wasm-vm-jit-runtime --test batching`;
 `python3 -m py_compile tools/bench.py`; `bash bench/mk-gcc-image.sh` twice; the two commands in
 `evidence/e4-t19/ab-2026-09-01/README.md`.
+
+### 2026-09-02 — worker continuation — native AC2 re-recorded
+
+The refuted K=1 control was fixed in `3c97664d3ce539c5b8f2d2fb095b120e3be63bd0` by moving
+Wasmtime ownership from the executor-wide Store into each `Batch`; the telemetry/harness recording
+was then committed at exact head `d2497e36ccdea05db79b2d4665864a987e0c3079`. This makes E4-T20
+eviction release the instances that the registry accounts for, rather than retaining them until
+executor destruction.
+
+Ran the two commands in `evidence/e4-t19/ab-2026-09-01/README.md` with the same pinned kernel,
+rootfs, read-only gcc overlay, `--ram-mib 768`, `--max-instrs 300000000000`, `--jit`, and one
+changed variable (`--jit-batch-size 64` versus `1`). `--profile` arms the existing monotonic timer;
+`print_jit_stats` emits its `JitPauseStats` through `JIT_STATS_JSON`, and `tools/bench.py` records
+the sum as `timing_check.jit_compile_stall_s`.
+
+- **HELD:** K=64 reached `GCC_RESULT`: 163.96 guest seconds, 1,633.807 host seconds, 607.910136
+  seconds of compile/install stall, and 302,904-byte object SHA-256
+  `97198b27557042fb84de54881c5fb577505b4ee77c41bc056612be6173e5faca`. JSON SHA-256:
+  `f6b962118d68d8df480aea08ea7aca317829a92b011601ec6147fae33cadf2b7`.
+- **HELD:** K=1 reached `GCC_RESULT`: 164.00 guest seconds, 1,853.322 host seconds, 942.132398
+  seconds of compile/install stall, and the identical object size/SHA-256. JSON SHA-256:
+  `5ab71aa13484eed271e0a69b891da8734871b46da833453a11430ca49aaa2e66`.
+- **HELD:** The observed stall ratio is `942.132398 / 607.910136 = 1.549789x`; K=64 removes
+  334.222262 seconds, or 35.475%, of the recorded JIT-attributable stall. The prior SIGTRAP is
+  not reproduced, and both exact-head controls now have deterministic output artifacts.
+- **NEEDS EVIDENCE:** AC1/AC4 cross-machine/practical-cliff coverage and adversarial #1/#4 remain
+  open as described above; this continuation does not claim `verified`.
+
+Artifacts: `evidence/e4-t19/ab-2026-09-01/gcc-k1-d2497e3.json` and
+`evidence/e4-t19/ab-2026-09-01/gcc-k64-d2497e3.json`.
+
+Browser proof after syncing the task log into the demo: a direct Playwright Chromium load of
+`web/` with `?noAutoBoot=1` reported zero console/page/request errors, found E4-T19 at
+`verification-debt` with the new head and factor, and ran the full in-browser suite to `126 passed,
+0 failed`. Screenshots were captured at `web/test-results/e4-t19-roadmap.png` and
+`web/test-results/e4-t19-roadmap-suite.png`.
+
+Commands: `cargo fmt --all -- --check`; `cargo clippy -p wasm-vm-cli --all-targets -- -D warnings`;
+`cargo build --release -p wasm-vm-cli`; `cargo test -p wasm-vm-cli`; `cargo test -p wasm-vm-jit-runtime`;
+`python3 -m py_compile tools/bench.py`; `git diff --check`; and the two exact commands in the
+evidence README.

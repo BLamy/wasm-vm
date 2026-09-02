@@ -40,8 +40,10 @@ clean-checkout three-engine matrix.
 
 ## Status (verification debt)
 
-The **harness is committed and runnable**; the **live capture is dev debt**: this development machine
-(mac) OS-reaps long browser runs, so the committed `results/*.json` are produced on the Linux dev box.
-`results/` ships **empty** — no fabricated numbers (see the E4-T19 ticket Verification log). Deferred
-per the ticket: the committed cost-matrix JSON [AC1], the instance-count-cliff limits [AC4], and the
-first-execution warm-up vs the E4-T06 pause target [adversarial #4].
+The harness and live capture are committed. The canonical `./run.sh` capture was produced on this
+macOS host with pinned Chromium 151, Firefox 153, and WebKit 26.5 (the documented Safari
+substitute); the optional Chrome 152 screen is recorded separately. Every engine reached 10,000
+held instances without an exception, so 10,000 is an observed lower bound and the configured
+256-module budget is at least 39.1x below it. The practical cliff beyond that bound, independent-
+machine K robustness, and first-execution warm-up versus the E4-T06 pause target remain verification
+debt.
