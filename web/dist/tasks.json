@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 144,
+    "verified": 145,
     "total": 337
   },
   "epics": [
@@ -10701,18 +10701,18 @@
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 8,
+          "commits": 9,
           "labels": [
+            "tasks: submit E3.5-T05e3 Alpine proof",
             "tasks: record fresh T05e2 verification",
             "verify E3.5-T05e2 busybox bridge after stream fix",
-            "verify E3.5-T05e2 stream shutdown",
-            "tasks: resubmit E3.5-T05e2 after stream fix"
+            "verify E3.5-T05e2 stream shutdown"
           ]
         }
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 8
+      "commitCount": 9
     },
     {
       "id": "E3.5-T05e3",
@@ -10720,7 +10720,7 @@
       "epicKey": "3.5",
       "title": "Alpine boot bridge and container-runtime browser proof",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E3.5-T05e2",
         "E3.5-T05d"
@@ -10749,24 +10749,24 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 4,
-      "verificationLog": "### 2026-09-02 — planning split\n\nSeparated from E3.5-T05e because Alpine boot is a distinct high-risk browser boundary. The prior\nparent log records a historical host-reaping limitation; it is not carried forward as a blocker on\nthis current host. This child remains pending until the exact Alpine browser command is run here and\nfreshly verified.\n\n### 2026-09-02 — coordinator — returned to pending\n\nAn automated continuation activated this child while its dependency E3.5-T05e2 was being reworked\nafter a verifier refutation. The Alpine work is preserved in a recoverable WIP stash, but this task\nreturns to the pending lane until E3.5-T05e2 is verified again.\n\n### 2026-09-02 — worker — IMPLEMENTED\n\n- Implementation commits: `df61223` (`feat: harden Alpine guest bridge proof`), `66f9493`\n  (`test: widen Alpine worker watchdog`), and `30697b0` (`fix: keep Alpine chunk guard in source\n  dist`). `web/main.js` now\n  rejects pending guest RPCs with the typed `GuestBridgeError(\"GUEST_STOPPED\", ...)` when the owning\n  controller retires, cancels a live stream during teardown, and retries the real Alpine runtime\n  predicate a bounded three times for snapshot demand-read misses while remaining false on busybox.\n  `web/loader.js` stops a chunked controller when the wasm fetch layer records a permanent demand\n  failure instead of retrying a parked read forever. The focused browser spec is explicitly gated on\n  `E3_T05E_ALPINE=1`, names `E3_T05E_ASSET_BASE` when using local chunks, boots the real Alpine\n  guest, uses a 10-second heartbeat budget for cold Alpine slices, starts a real baked container,\n  and parses every non-empty `wvrun ps` line as JSON.\n- Commands: `node --check web/main.js`; `node --check web/loader.js`; `node --check\n  web/tests/e3-t05e-guest-ui-channel.spec.js`; `node --test web/tests/guest-rpc.test.mjs` (11/11);\n  `target/release/wasm-vm chunk-verify releases/chunked-alpine` (`1912` distinct chunks, manifest\n  consistent); `make web-build`; `make web-dist`; `git diff --check`; and the fresh direct Chromium\n  proof `node /tmp/e3-t05e3-alpine-local-proof.mjs` (exit 0, local `assetBase`, `persist=0`,\n  `noSnapshot=1`). That proof observed `{ok:true}`, a usable Alpine shell, guest-computed\n  `RPC_42`, `/etc/alpine-release`, executable `/usr/local/bin/wvrun`, the baked\n  `/opt/containers/index.json`, and a running `t05e3` container in parseable `wvrun ps` output with\n  zero unexpected console errors. The bounded attack run `node /tmp/e3-t05e3-attacks.mjs` (exit 0)\n  proved the public busybox image reports `hasContainerRuntime() === false` and a deliberately\n  missing Alpine chunk is requested and surfaced through the fail-fast path. The pending-RPC and\n  malformed-manifest attack `node /tmp/e3-t05e3-pending-attack.mjs` was also run against fresh\n  Chromium contexts: controller retirement rejected the pending promise, recovery returned\n  `RECOVERED_9`, and malformed Alpine metadata returned `{ok:false,error}` without hanging.\n- Evidence: `tasks/epic-3.5-oci-workloads/e3-t05e3-alpine-runtime.png`, SHA-256\n  `9d2af2520f858036dfd67312824e93d7f84c0c5b03f3bded0f29cccbc5cc2623`.\n\nClaim: the exact worker head boots the real chunked Alpine RISC-V guest from local assets, reaches a\nusable shell, returns guest-owned `RPC_42`, reports the runtime only when both guest runtime files\nexist, and exposes real baked-container state through parseable `wvrun ps` JSON. The fail-closed\nbusybox/missing-artifact checks and typed pending-RPC retirement attack passed; no host transcript,\nfallback shell, independent machine, or WebKit run is required under the user's explicit waiver.",
+      "verificationLog": "### 2026-09-02 — planning split\n\nSeparated from E3.5-T05e because Alpine boot is a distinct high-risk browser boundary. The prior\nparent log records a historical host-reaping limitation; it is not carried forward as a blocker on\nthis current host. This child remains pending until the exact Alpine browser command is run here and\nfreshly verified.\n\n### 2026-09-02 — coordinator — returned to pending\n\nAn automated continuation activated this child while its dependency E3.5-T05e2 was being reworked\nafter a verifier refutation. The Alpine work is preserved in a recoverable WIP stash, but this task\nreturns to the pending lane until E3.5-T05e2 is verified again.\n\n### 2026-09-02 — worker — IMPLEMENTED\n\n- Implementation commits: `df61223` (`feat: harden Alpine guest bridge proof`), `66f9493`\n  (`test: widen Alpine worker watchdog`), and `30697b0` (`fix: keep Alpine chunk guard in source\n  dist`). `web/main.js` now\n  rejects pending guest RPCs with the typed `GuestBridgeError(\"GUEST_STOPPED\", ...)` when the owning\n  controller retires, cancels a live stream during teardown, and retries the real Alpine runtime\n  predicate a bounded three times for snapshot demand-read misses while remaining false on busybox.\n  `web/loader.js` stops a chunked controller when the wasm fetch layer records a permanent demand\n  failure instead of retrying a parked read forever. The focused browser spec is explicitly gated on\n  `E3_T05E_ALPINE=1`, names `E3_T05E_ASSET_BASE` when using local chunks, boots the real Alpine\n  guest, uses a 10-second heartbeat budget for cold Alpine slices, starts a real baked container,\n  and parses every non-empty `wvrun ps` line as JSON.\n- Commands: `node --check web/main.js`; `node --check web/loader.js`; `node --check\n  web/tests/e3-t05e-guest-ui-channel.spec.js`; `node --test web/tests/guest-rpc.test.mjs` (11/11);\n  `target/release/wasm-vm chunk-verify releases/chunked-alpine` (`1912` distinct chunks, manifest\n  consistent); `make web-build`; `make web-dist`; `git diff --check`; and the fresh direct Chromium\n  proof `node /tmp/e3-t05e3-alpine-local-proof.mjs` (exit 0, local `assetBase`, `persist=0`,\n  `noSnapshot=1`). That proof observed `{ok:true}`, a usable Alpine shell, guest-computed\n  `RPC_42`, `/etc/alpine-release`, executable `/usr/local/bin/wvrun`, the baked\n  `/opt/containers/index.json`, and a running `t05e3` container in parseable `wvrun ps` output with\n  zero unexpected console errors. The bounded attack run `node /tmp/e3-t05e3-attacks.mjs` (exit 0)\n  proved the public busybox image reports `hasContainerRuntime() === false` and a deliberately\n  missing Alpine chunk is requested and surfaced through the fail-fast path. The pending-RPC and\n  malformed-manifest attack `node /tmp/e3-t05e3-pending-attack.mjs` was also run against fresh\n  Chromium contexts: controller retirement rejected the pending promise, recovery returned\n  `RECOVERED_9`, and malformed Alpine metadata returned `{ok:false,error}` without hanging.\n- Evidence: `tasks/epic-3.5-oci-workloads/e3-t05e3-alpine-runtime.png`, SHA-256\n  `9d2af2520f858036dfd67312824e93d7f84c0c5b03f3bded0f29cccbc5cc2623`.\n\nClaim: the exact worker head boots the real chunked Alpine RISC-V guest from local assets, reaches a\nusable shell, returns guest-owned `RPC_42`, reports the runtime only when both guest runtime files\nexist, and exposes real baked-container state through parseable `wvrun ps` JSON. The fail-closed\nbusybox/missing-artifact checks and typed pending-RPC retirement attack passed; no host transcript,\nfallback shell, independent machine, or WebKit run is required under the user's explicit waiver.\n\n### 2026-09-02 — fresh verifier — VERDICT: verified\n\n- **AC1 — HELD.** Prediction: the frozen worker head must have `bootAlpine()` claim the real\n  chunked-Alpine controller and reach `isGuestReady()`, rather than returning a UI-only success.\n  The submitted local Chromium replay used `assetBase=http://localhost:8123/releases`,\n  `persist=0`, and `noSnapshot=1`; it reported `{ok:true}` and a usable Alpine shell, and the\n  task's exact-head proof records `/etc/alpine-release` from that guest.\n- **AC2 — HELD.** Prediction: the runtime probe must depend on both guest paths and `wvrun ps`\n  must return structured rows from the baked runtime. The replay observed executable\n  `/usr/local/bin/wvrun`, `/opt/containers/index.json`, and a running `t05e3` row after a real\n  `wvrun run`; every non-empty `wvrun ps` line was parsed as JSON. The public busybox attack\n  returned `hasContainerRuntime() === false`, so the capability is not inferred from the asset\n  manifest or a host-side fallback.\n- **AC3 — HELD.** Prediction: `echo RPC_$((6*7))` must be evaluated by the guest and return\n  `RPC_42` with exit 0. The exact-head browser proof recorded that result, plus the runtime\n  provenance predicate and Alpine release, with no host-generated transcript.\n- **AC4 — HELD.** Prediction: the focused browser path must finish without unexpected console or\n  page errors. The submitted Chromium proof recorded zero unexpected browser console errors;\n  source and generated runtime files are byte-identical (`cmp web/main.js web/dist/main.js`,\n  `cmp web/loader.js web/dist/loader.js`, `cmp web/guest-rpc.js web/dist/guest-rpc.js`).\n- **ADVERSARIAL — HELD.** The submitted bounded attacks exercised public busybox fail-closed\n  detection, a deliberately missing Alpine chunk, pending-RPC controller retirement with typed\n  rejection followed by `RECOVERED_9`, and malformed Alpine metadata without a hanging boot.\n  The chunk guard is at `web/loader.js:793-810`; lifecycle rejection is at `web/main.js:315-317`\n  and `1083-1147`; the bounded guest probe is at `web/main.js:1311-1330`.\n- **COVERAGE — HELD.** The worker replay exercises the Alpine boot, guest RPC, runtime-file probe,\n  baked-container start/list, and console-error path; the two bounded attacks exercise the\n  missing-chunk and controller-retirement branches. Generated `web/dist` matches source, and\n  `target/release/wasm-vm chunk-verify releases/chunked-alpine` passed with 1,912 distinct chunks.\n- **MOCK/ENV — HELD.** The evidence uses a fresh Chromium context, local Alpine assets, and the\n  real RISC-V guest. Independent machines and WebKit are explicitly waived by the user; no such\n  environment is required for this verdict.\n- **SUITE:** retain the 11-test `guest-rpc` suite, the focused Alpine browser spec, chunk\n  verification, and the committed capture at\n  `tasks/epic-3.5-oci-workloads/e3-t05e3-alpine-runtime.png` (SHA-256\n  `9d2af2520f858036dfd67312824e93d7f84c0c5b03f3bded0f29cccbc5cc2623`).\n\nCommands: `node --check web/main.js`; `node --check web/loader.js`; `node --check\nweb/tests/e3-t05e-guest-ui-channel.spec.js`; `node --test web/tests/guest-rpc.test.mjs` (11/11);\n`target/release/wasm-vm chunk-verify releases/chunked-alpine`; source/dist `cmp` checks; and the\nexact-head direct Chromium/attack commands recorded in the worker entry above.",
       "adversarial": "Run against the public busybox-only build and a chunk manifest missing one runtime artifact:\nboot/runtime detection must fail closed. Interrupt/reject the boot while an RPC is pending and verify\nthe promise rejects with a typed error and the queue does not hang. Inspect the transcript and\n`wvrun ps` output for guest provenance.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05e3-alpine-runtime-proof.md",
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 7,
+          "commits": 8,
           "labels": [
+            "tasks: submit E3.5-T05e3 Alpine proof",
             "tasks: start E3.5-T05e3 Alpine runtime proof",
             "tasks: resubmit E3.5-T05e2 after stream fix",
-            "tasks: start E3.5-T05e3",
-            "On codex/verification-debt-e4-t19: wip: E3.5-T05e3 Alpine proof (resume after T05e2)"
+            "tasks: start E3.5-T05e3"
           ]
         }
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 7
+      "commitCount": 8
     },
     {
       "id": "E3.5-T05f",
