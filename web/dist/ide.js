@@ -511,6 +511,27 @@ if (root) {
     return { configArgv, entry: configArgv };
   }
 
+  // The fenced RPC parser removes the first echoed command line, but a long command can wrap in the
+  // terminal before that newline. Catalog JSON is still authoritative; discard only those echoed
+  // fragments by parsing the first complete JSON root emitted by `cat`, never by falling back to a
+  // browser-owned image list.
+  function parseGuestJson(stdout) {
+    const text = String(stdout || "");
+    const roots = [
+      ["[", "]"],
+      ["{", "}"],
+    ]
+      .map(([open, close]) => ({ open, close, start: text.indexOf(open) }))
+      .filter(({ start }) => start !== -1)
+      .sort((a, b) => a.start - b.start);
+    for (const { open, close, start } of roots) {
+      const end = text.lastIndexOf(close);
+      if (end < start) continue;
+      try { return JSON.parse(text.slice(start, end + 1)); } catch { /* try the other root */ }
+    }
+    throw new Error("guest catalog did not contain a complete JSON value");
+  }
+
   async function loadGuestBundleMetadata(entries, generation) {
     for (const image of entries) {
       if (generation !== dockerRuntime.generation) return false;
@@ -540,6 +561,7 @@ if (root) {
   function loadDockerCatalog() {
     if (!runtimeReady()) return Promise.resolve(false);
     if (dockerCatalog.status === "available") return Promise.resolve(true);
+    if (dockerCatalog.status === "error") return Promise.resolve(false);
     if (dockerCatalog.promise) return dockerCatalog.promise;
     const generation = dockerRuntime.generation;
     dockerCatalog.status = "loading";
@@ -550,12 +572,7 @@ if (root) {
       .then(async (res) => {
         if (generation !== dockerRuntime.generation) return false;
         if (res.exit !== 0) throw new Error(res.stdout?.trim() || `cat exited ${res.exit}`);
-        let raw;
-        try {
-          raw = JSON.parse(res.stdout);
-        } catch (error) {
-          throw new Error(`invalid guest catalog JSON: ${error.message || error}`);
-        }
+        const raw = parseGuestJson(res.stdout);
         const entries = normalizeCatalog(raw);
         if (!entries.length) throw new Error("guest catalog contains no image entries");
         if (!(await loadGuestBundleMetadata(entries, generation))) return false;
