@@ -19,7 +19,6 @@ async function bootDockerRuntime(page) {
     guest: "alpine",
     worker: "0",
     jit: "0",
-    workerHeartbeatTimeoutMs: "10000",
   });
   if (assetBase) query.set("assetBase", assetBase);
   await page.goto(`/?${query}#ide`);

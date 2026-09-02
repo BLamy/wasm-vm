@@ -1,0 +1,279 @@
+{
+  "generatedAt": "2026-09-02T23:30:42.115Z",
+  "base": "http://127.0.0.1:8123",
+  "assetBase": "page default release base",
+  "browser": {
+    "name": "chromium",
+    "version": "152.0.7977.75"
+  },
+  "containerName": "t05f4-logs",
+  "stages": {
+    "detachedRun": {
+      "command": "wvrun run -d --name 't05f4-logs' '/opt/containers/busybox' /bin/sh -c 'echo CONTAINED_$((6*7)); while :; do sleep 1; done'",
+      "result": {
+        "stdout": " /bin/sh -c 'echo CONTAINED_$((6*7)); while :; do sleep 1; done'; printf '\\n__WV\nEND_mtkq9afd12_%s\\n' \"$?\"\n6912d9099b16\n\n",
+        "exit": 0
+      },
+      "id": "6912d9099b16"
+    },
+    "follow": {
+      "streamActive": true,
+      "streamGeneration": 2,
+      "markerCount": 1
+    },
+    "rerender": {
+      "streamActive": true,
+      "markerCount": 1
+    },
+    "close": {
+      "rpc": {
+        "stdout": "AFTER_CLOSE_42\n\n",
+        "exit": 0
+      },
+      "ps": {
+        "stdout": "{\"id\":\"6912d9099b16\",\"name\":\"t05f4-logs\",\"image\":\"busybox\",\"status\":\"running\",\"started\":\"1786066131\",\"exit\":\"\"}\n\n",
+        "exit": 0
+      }
+    },
+    "reattach": {
+      "streamActive": true,
+      "markerCount": 1
+    },
+    "stop": {
+      "row": "exited",
+      "rpc": {
+        "stdout": "AFTER_STOP_42\n\n",
+        "exit": 0
+      }
+    }
+  },
+  "state": {
+    "runtime": "available",
+    "error": "",
+    "code": "",
+    "booting": false,
+    "provider": "offline",
+    "ready": true,
+    "guestUp": true,
+    "alpineAssets": true,
+    "alpineStatus": "present",
+    "generation": 2,
+    "catalogStatus": "available",
+    "catalogGeneration": 2,
+    "catalogLoading": false,
+    "catalogError": "",
+    "catalog": [
+      {
+        "key": "alpine:alpine:0",
+        "name": "alpine",
+        "repo": "alpine",
+        "tag": "latest",
+        "ref": "alpine",
+        "arch": "riscv64",
+        "libc": "musl",
+        "manifestDigest": "",
+        "rootfsBytes": 7132998,
+        "rootfsEntries": 514,
+        "entry": "/bin/sh",
+        "configArgv": "/bin/sh",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/alpine",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "alpine",
+          "ref": "alpine",
+          "arch": "riscv64",
+          "libc": "musl",
+          "rootfsBytes": 7132998,
+          "rootfsEntries": 514
+        }
+      },
+      {
+        "key": "busybox:busybox (alpine musl):1",
+        "name": "busybox",
+        "repo": "busybox",
+        "tag": "latest",
+        "ref": "busybox (alpine musl)",
+        "arch": "riscv64",
+        "libc": "musl",
+        "manifestDigest": "",
+        "rootfsBytes": 1438112,
+        "rootfsEntries": 16,
+        "entry": "sh",
+        "configArgv": "sh",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/busybox",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "busybox",
+          "ref": "busybox (alpine musl)",
+          "arch": "riscv64",
+          "libc": "musl",
+          "rootfsBytes": 1438112,
+          "rootfsEntries": 16
+        }
+      },
+      {
+        "key": "redis:redis:alpine:2",
+        "name": "redis",
+        "repo": "redis",
+        "tag": "alpine",
+        "ref": "redis:alpine",
+        "arch": "riscv64",
+        "libc": "musl",
+        "manifestDigest": "",
+        "rootfsBytes": 125124534,
+        "rootfsEntries": 1157,
+        "entry": "docker-entrypoint.sh\nredis-server",
+        "configArgv": "docker-entrypoint.sh\nredis-server",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/redis",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "redis",
+          "ref": "redis:alpine",
+          "arch": "riscv64",
+          "libc": "musl",
+          "rootfsBytes": 125124534,
+          "rootfsEntries": 1157
+        }
+      },
+      {
+        "key": "memcached:memcached:alpine:3",
+        "name": "memcached",
+        "repo": "memcached",
+        "tag": "alpine",
+        "ref": "memcached:alpine",
+        "arch": "riscv64",
+        "libc": "musl",
+        "manifestDigest": "",
+        "rootfsBytes": 11694583,
+        "rootfsEntries": 558,
+        "entry": "docker-entrypoint.sh\nmemcached",
+        "configArgv": "docker-entrypoint.sh\nmemcached",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/memcached",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "memcached",
+          "ref": "memcached:alpine",
+          "arch": "riscv64",
+          "libc": "musl",
+          "rootfsBytes": 11694583,
+          "rootfsEntries": 558
+        }
+      },
+      {
+        "key": "debian:debian:trixie-slim:4",
+        "name": "debian",
+        "repo": "debian",
+        "tag": "trixie-slim",
+        "ref": "debian:trixie-slim",
+        "arch": "riscv64",
+        "libc": "glibc",
+        "manifestDigest": "",
+        "rootfsBytes": 70742016,
+        "rootfsEntries": 3245,
+        "entry": "bash",
+        "configArgv": "bash",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/debian",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "debian",
+          "ref": "debian:trixie-slim",
+          "arch": "riscv64",
+          "libc": "glibc",
+          "rootfsBytes": 70742016,
+          "rootfsEntries": 3245
+        }
+      },
+      {
+        "key": "busybox-glibc:busybox:latest (glibc):5",
+        "name": "busybox-glibc",
+        "repo": "busybox-glibc",
+        "tag": "latest (glibc)",
+        "ref": "busybox:latest (glibc)",
+        "arch": "riscv64",
+        "libc": "glibc",
+        "manifestDigest": "",
+        "rootfsBytes": 3334144,
+        "rootfsEntries": 448,
+        "entry": "sh",
+        "configArgv": "sh",
+        "bundlePresent": true,
+        "bundleError": "",
+        "entryElf": "",
+        "bundlePath": "/opt/containers/busybox-glibc",
+        "smokeCommand": "",
+        "runStatus": "",
+        "runnable": true,
+        "desc": "Guest catalog entry",
+        "raw": {
+          "name": "busybox-glibc",
+          "ref": "busybox:latest (glibc)",
+          "arch": "riscv64",
+          "libc": "glibc",
+          "rootfsBytes": 3334144,
+          "rootfsEntries": 448
+        }
+      }
+    ],
+    "lastRun": null,
+    "containersStatus": "ready",
+    "containersError": "",
+    "containersCode": "",
+    "containers": [
+      {
+        "id": "6912d9099b16",
+        "name": "t05f4-logs",
+        "image": "busybox",
+        "status": "exited",
+        "started": "1786066131",
+        "exit": "137"
+      }
+    ],
+    "containerAction": null,
+    "containerLastCommand": "wvrun ps -a"
+  },
+  "logs": [
+    {
+      "id": "6912d9099b16",
+      "follow": false,
+      "streamActive": false,
+      "streamStarting": false,
+      "streamStopping": false,
+      "streamGeneration": 3,
+      "logsText": "CONTAINED_42\n",
+      "logsError": ""
+    }
+  ],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "screenshot": "evidence/e3-t05f4/docker-logs-stream-browser.png"
+}
