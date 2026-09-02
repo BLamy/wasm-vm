@@ -308,3 +308,21 @@ SHA-256: Chromium `f1171adda4c4831923e5ea805d5b471c42830c9c1b3991893ef1d205f69e0
 `fa13eda34ec83801bbf7789338e7c1360bfba39fd923ed28ac434399eca5af56`, WebKit
 `dabdee9d7490abcc61825045fd8f69930fb90d945cda78047f0420a63069204a`, and supplemental Chrome 152
 `b12849292fe3472b1a9fb260193175a08e4ad47e2a9eaa0ac0d164117eab95d7`.
+
+### 2026-09-02 — worker continuation — exact-head final gates
+
+Frozen implementation head: `22886cb` (`fix: align browser JIT budget with measured instance cliff`).
+At that head, `cargo fmt --all -- --check`, `cargo clippy -p wasm-vm-cli --all-targets -- -D warnings`,
+`cargo test -p wasm-vm-cli`, and `cargo test -p wasm-vm-jit-runtime` passed. The native CLI suites
+reported 53 unit, 7 relay, 22 runner, 3 websocket, 5 relay-token, and all other enabled tests green;
+the JIT runtime suites reported 6 unit, 3 batching, 6 chaining, 3 eviction, 13 invalidation, 20
+execution, 3 lockstep-fuzz, 5 precise-trap, and 3 timekeeping tests green. `wasm-pack test --node
+crates/wasm` passed 26 browser-parity tests plus the new production-budget assertion (one existing
+long-churn test remains ignored by design). The only output warning is the pre-existing unused
+`Exception` import in `crates/wasm/tests/hart_ctrl.rs`.
+
+The local built-page proof at the same source head used `bash tools/serve-dev.sh 8123` and
+`http://127.0.0.1:8123/?noAutoBoot=1&testHooks`: zero console/page/request errors, the rebuilt
+E4-T19 detail showed `verification debt` and the corrected evidence, and the page-triggered
+compliance suite completed `126 passed, 0 failed` in 6.5 seconds. This entry does not promote the
+task: WebKit's failure point and the independent-machine K-selection attack remain open.
