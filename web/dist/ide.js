@@ -134,6 +134,10 @@ const css = `
 .ide-ctr-head label { display: flex; align-items: center; gap: 5px; color: #8fa3bf; font-size: 12px; }
 .ide-ctr-logs { flex: 1 1 auto; overflow: auto; margin: 0; padding: 10px 12px; white-space: pre-wrap;
   word-break: break-word; color: #cdd6f4; background: #0b0e14; font-size: 12px; line-height: 1.5; }
+.ide-ctr-stream-state { color: #8fa3bf; font-size: 11px; }
+.ide-ctr-stream-state[data-state="following"] { color: #9ad29a; }
+.ide-ctr-stream-state[data-state="stopping"] { color: #f2c94c; }
+.ide-ctr-stream-state[data-state="error"] { color: #f0a0a0; }
 .ide-ctr-exec { flex: 0 0 auto; display: flex; gap: 6px; padding: 8px 12px; border-top: 1px solid var(--line, #232a35); }
 .ide-ctr-exec .p { color: var(--green, #2ea043); align-self: center; }
 .ide-ctr-exec input { flex: 1 1 auto; background: #0b0f15; color: #d6deeb; border: 1px solid var(--line, #232a35);
@@ -960,7 +964,7 @@ if (root) {
   // ── Editor: multi-tab model ─────────────────────────────────────────────────
   // tab: { key, type:'file'|'container', title, ... }
   //   file:      { path, savedText, value, scrollTop, loaded }
-  //   container: { id, name, image, panelEl, logsEl, follow, poll }
+  //   container: { id, name, image, panelEl, logsEl, follow, stream, stopPromise, … }
   const tabs = [];
   let activeKey = null;
   const tabByKey = (k) => tabs.find((t) => t.key === k);
@@ -1015,7 +1019,11 @@ if (root) {
     if (idx === -1) return;
     const t = tabs[idx];
     if (isDirty(t) && !confirm("Discard unsaved changes to " + t.path + "?")) return;
-    if (t.type === "container") { clearInterval(t.poll); t.panelEl?.remove(); }
+    if (t.type === "container") {
+      clearInterval(t.poll);
+      void stopLogStream(t, "close");
+      t.panelEl?.remove();
+    }
     tabs.splice(idx, 1);
     if (activeKey === key) {
       const next = tabs[idx] || tabs[idx - 1] || null;
@@ -1045,6 +1053,7 @@ if (root) {
     // stash outgoing file editor state
     const prev = activeTab();
     if (prev && prev.type === "file") { prev.value = taEl.value; prev.scrollTop = taEl.scrollTop; }
+    if (prev && prev.type === "container" && prev.key !== key) void stopLogStream(prev, "navigation");
     activeKey = key;
     editorPh.style.display = "none";
     for (const p of editorBody.querySelectorAll(".ide-ctr-panel")) p.classList.remove("active");
@@ -1261,6 +1270,195 @@ if (root) {
     if (list) renderContainerList(list);
   }
 
+  function renderContainerLogs(t) {
+    if (!t?.logsEl) return;
+    if (t.logsText) {
+      t.logsEl.textContent = t.logsText;
+    } else if (t.logsLoading) {
+      t.logsEl.textContent = "loading logs…";
+    } else if (t.logsError) {
+      t.logsEl.textContent = `wvrun logs failed (${t.logsCode || "LOGS_FAILED"}): ${t.logsError}`;
+    } else {
+      t.logsEl.textContent = "(no output yet)";
+    }
+    t.logsEl.scrollTop = t.logsEl.scrollHeight;
+    if (t.streamStateEl) {
+      const state = t.streamStopping
+        ? "stopping"
+        : t.streamStarting
+          ? "starting"
+          : t.stream
+            ? "following"
+            : t.logsError
+              ? "error"
+              : "idle";
+      t.streamStateEl.dataset.state = state;
+      t.streamStateEl.textContent = t.streamStopping
+        ? "cancelling guest log stream…"
+        : t.streamStarting
+          ? "starting guest log stream…"
+          : t.stream
+            ? "following guest logs"
+            : t.logsError
+              ? `${t.logsCode || "LOGS_FAILED"}: ${t.logsError}`
+              : t.lastStreamExit == null
+                ? "snapshot"
+                : `guest log stream ended · exit ${t.lastStreamExit}`;
+    }
+    if (t.followEl) t.followEl.disabled = Boolean(t.streamStopping || t.streamStarting);
+  }
+
+  function replaceContainerLogs(t, text) {
+    t.logsText = String(text || "").replace(/\r/g, "");
+    t.logsLoading = false;
+    t.logsError = "";
+    t.logsCode = "";
+    t.lastStreamExit = null;
+    renderContainerLogs(t);
+  }
+
+  function appendContainerLogLine(t, line) {
+    const value = String(line ?? "");
+    t.logsText += (t.logsText && !t.logsText.endsWith("\n") ? "\n" : "") + value + "\n";
+    renderContainerLogs(t);
+  }
+
+  async function stopLogStream(t, reason = "close") {
+    if (!t || t.type !== "container") return;
+    if (t.stopPromise) await t.stopPromise;
+    const handle = t.stream;
+    t.streamGeneration += 1;
+    t.stream = null;
+    t.streamStarting = false;
+    t.follow = false;
+    if (t.followEl) t.followEl.checked = false;
+    if (!handle) {
+      renderContainerLogs(t);
+      return;
+    }
+    t.streamStopping = true;
+    renderContainerLogs(t);
+    const stopping = (async () => {
+      try {
+        const error = await handle.stop();
+        if (error && reason !== "close" && reason !== "navigation") {
+          t.logsCode = error.code || "STREAM_STOP_FAILED";
+          t.logsError = error.message || String(error);
+        }
+      } catch (error) {
+        if (reason !== "close" && reason !== "navigation") {
+          t.logsCode = error?.code || "STREAM_STOP_FAILED";
+          t.logsError = error?.message || String(error);
+        }
+      } finally {
+        t.streamStopping = false;
+        renderContainerLogs(t);
+      }
+    })();
+    t.stopPromise = stopping;
+    try { await stopping; } finally {
+      if (t.stopPromise === stopping) t.stopPromise = null;
+    }
+  }
+
+  async function stopContainerLogStreams(id) {
+    for (const t of tabs) {
+      if (t.type === "container" && t.id === id && (t.stream || t.stopPromise)) {
+        await stopLogStream(t, "container-action");
+      }
+    }
+  }
+
+  async function stopAllLogStreams(reason = "boot") {
+    for (const t of tabs) {
+      if (t.type === "container" && (t.stream || t.stopPromise)) await stopLogStream(t, reason);
+    }
+  }
+
+  async function startLogStream(t) {
+    if (!t || t.type !== "container" || !t.follow || t.stream || t.streamStarting) return;
+    if (t.logRefreshPromise) await t.logRefreshPromise;
+    if (t.stopPromise) await t.stopPromise;
+    if (!t.follow || t.stream) return;
+    const generation = ++t.streamGeneration;
+    const command = `wvrun logs -f ${shq(t.id)}`;
+    t.streamStarting = true;
+    t.logsError = "";
+    t.logsCode = "";
+    t.lastStreamExit = null;
+    // The guest follow command replays the log file from byte zero. Start a fresh projection so a
+    // snapshot or an earlier attachment is never concatenated with the same guest lines twice.
+    t.logsText = "";
+    renderContainerLogs(t);
+    let handle = null;
+    try {
+      handle = api().stream(command, (line) => {
+        if (t.streamGeneration !== generation || !t.follow) return;
+        appendContainerLogLine(t, line);
+      }, {
+        onEnd: ({ error, exit, natural }) => {
+          if (t.streamGeneration !== generation) return;
+          if (t.stream === handle) t.stream = null;
+          t.streamStarting = false;
+          t.streamStopping = false;
+          t.follow = false;
+          if (t.followEl) t.followEl.checked = false;
+          t.lastStreamExit = Number.isFinite(exit) ? exit : null;
+          if (error && error.code !== "GUEST_STOPPED") {
+            t.logsCode = error.code || "STREAM_FAILED";
+            t.logsError = error.message || String(error);
+          }
+          renderContainerLogs(t);
+          // A natural `wvrun logs -f` completion means the container changed state outside this
+          // pane (for example, the Terminal tab stopped it). Reconcile the sidebar after the
+          // private stream fence has released the shared tty.
+          if (natural) void refreshContainers({ force: true });
+        },
+      });
+      if (t.streamGeneration !== generation || !t.follow) {
+        await handle.stop();
+        return;
+      }
+      t.stream = handle;
+    } catch (error) {
+      t.logsCode = error?.code || "STREAM_START_FAILED";
+      t.logsError = error?.message || String(error);
+      t.follow = false;
+      if (t.followEl) t.followEl.checked = false;
+    } finally {
+      t.streamStarting = false;
+      renderContainerLogs(t);
+    }
+  }
+
+  async function refreshContainerLogs(t) {
+    if (!t || t.type !== "container") return;
+    if (t.logRefreshPromise) return t.logRefreshPromise;
+    const request = (async () => {
+      await stopLogStream(t, "refresh");
+      const command = `wvrun logs ${shq(t.id)}`;
+      t.logsLoading = true;
+      t.logsError = "";
+      t.logsCode = "";
+      t.lastStreamExit = null;
+      renderContainerLogs(t);
+      try {
+        const res = await bgExec(command, 30000);
+        if (!res || Number(res.exit) !== 0) throw guestCommandFailure(command, res, "LOGS_FAILED");
+        replaceContainerLogs(t, res.stdout);
+      } catch (error) {
+        t.logsLoading = false;
+        t.logsCode = error?.code || "LOGS_FAILED";
+        t.logsError = error?.message || String(error);
+        renderContainerLogs(t);
+      }
+    })();
+    t.logRefreshPromise = request;
+    try { await request; } finally {
+      if (t.logRefreshPromise === request) t.logRefreshPromise = null;
+    }
+  }
+
   function confirmContainerRows(rows, predicate, code, message) {
     if (!rows) {
       const failure = new Error(containerLedger.error || "fresh guest ps -a confirmation failed");
@@ -1315,6 +1513,7 @@ if (root) {
     try {
       // A polling refresh may have started just before the click. Join it before issuing a
       // mutating command so the subsequent forced refresh cannot accidentally reuse a pre-action ps.
+      await stopContainerLogStreams(confirmed.id);
       if (containerRefreshPromise) await containerRefreshPromise;
       confirmed = containerLedger.rows.find((item) => item.id === row.id);
       if (!confirmed) {
@@ -1712,9 +1911,10 @@ if (root) {
     const panel = document.createElement("div"); panel.className = "ide-ctr-panel";
     panel.innerHTML = `
       <div class="ide-ctr-head">
-        <span class="id">${c.image || ""} · ${c.id}</span>
+        <span class="id" data-a="identity"></span>
         <span style="flex:1 1 auto"></span>
         <button class="ide-mini" data-a="refresh">↻ Logs</button>
+        <span class="ide-ctr-stream-state" data-a="stream-status">snapshot</span>
         <label><input type="checkbox" data-a="follow"> Follow</label>
       </div>
       <pre class="ide-ctr-logs">loading logs…</pre>
@@ -1722,21 +1922,25 @@ if (root) {
         <span class="p">$</span>
         <input type="text" placeholder="exec a command in the container (e.g. ls -la /) — runs via wvrun exec" autocomplete="off" spellcheck="false" />
       </form>`;
+    panel.querySelector('[data-a="identity"]').textContent = `${c.image || ""} · ${c.id}`;
+    const logsEl = panel.querySelector(".ide-ctr-logs");
+    const followEl = panel.querySelector('[data-a="follow"]');
     editorBody.appendChild(panel);
     const t = { key, type: "container", title: c.name || c.id, id: c.id, name: c.name || c.id,
-      image: c.image || "", panelEl: panel, logsEl: panel.querySelector(".ide-ctr-logs"), poll: null };
+      image: c.image || "", panelEl: panel, logsEl, followEl,
+      streamStateEl: panel.querySelector('[data-a="stream-status"]'), follow: false,
+      stream: null, stopPromise: null, streamGeneration: 0, streamStarting: false,
+      streamStopping: false, logsText: "", logsLoading: true, logsError: "", logsCode: "",
+      lastStreamExit: null, logRefreshPromise: null };
     tabs.push(t);
 
-    const refreshLogs = async () => {
-      try {
-        const res = await bgExec("wvrun logs " + shq(t.id), 30000);
-        t.logsEl.textContent = res.stdout.trim() || "(no output yet)";
-      } catch (e) { t.logsEl.textContent = "wvrun logs failed: " + (e.message || e); }
-    };
-    panel.querySelector('[data-a="refresh"]').addEventListener("click", refreshLogs);
-    panel.querySelector('[data-a="follow"]').addEventListener("change", (e) => {
-      clearInterval(t.poll); t.poll = null;
-      if (e.target.checked) { refreshLogs(); t.poll = setInterval(refreshLogs, 2000); }
+    panel.querySelector('[data-a="refresh"]').addEventListener("click", () => {
+      void refreshContainerLogs(t);
+    });
+    followEl.addEventListener("change", (e) => {
+      t.follow = e.target.checked;
+      if (t.follow) void startLogStream(t);
+      else void stopLogStream(t, "toggle");
     });
     const execForm = panel.querySelector(".ide-ctr-exec");
     const execInput = execForm.querySelector("input");
@@ -1744,18 +1948,25 @@ if (root) {
       e.preventDefault();
       const cmd = execInput.value.trim();
       if (!cmd) return;
-      t.logsEl.textContent += `\n$ ${cmd}\n`;
       execInput.value = "";
       try {
+        await stopLogStream(t, "exec");
+        t.logsText += (t.logsText && !t.logsText.endsWith("\n") ? "\n" : "") + `$ ${cmd}\n`;
+        renderContainerLogs(t);
         const res = await bgExec("wvrun exec " + shq(t.id) + " sh -c " + shq(cmd), 45000);
-        t.logsEl.textContent += (res.stdout || "") + (res.exit ? `[exit ${res.exit}]\n` : "");
-      } catch (err) { t.logsEl.textContent += "exec failed: " + (err.message || err) + "\n"; }
-      t.logsEl.scrollTop = t.logsEl.scrollHeight;
+        t.logsText += String(res.stdout || "").replace(/\r/g, "") + (res.exit ? `[exit ${res.exit}]\n` : "");
+        renderContainerLogs(t);
+      } catch (err) {
+        t.logsCode = err?.code || "EXEC_FAILED";
+        t.logsError = err?.message || String(err);
+        renderContainerLogs(t);
+      }
     });
 
     activateTab(key);
     renderTabs();
-    refreshLogs();
+    renderContainerLogs(t);
+    void refreshContainerLogs(t);
   }
 
   function mk(tag, cls, text) {
@@ -1769,6 +1980,7 @@ if (root) {
   function showBooting(event = null) {
     // The initial noAutoBoot render is offline, not an in-flight boot. Only the real lifecycle
     // event (or a Docker-tab boot already claimed by this UI) should lock the Alpine affordance.
+    void stopAllLogStreams("boot");
     resetDockerRuntime(event?.type === "wvm:guest-booting" || dockerRuntime.booting ? "booting" : "unknown");
     explorerEl.innerHTML =
       `<div class="ide-explorer-ph"><span class="ide-spin">◠</span> Booting the Linux guest…<br>` +
@@ -1846,6 +2058,18 @@ if (root) {
       action: containerLedger.action,
       lastCommand: containerLedger.lastCommand,
     });
+    window.__dockerLogStateForTest = () => tabs
+      .filter((tab) => tab.type === "container")
+      .map((tab) => ({
+        id: tab.id,
+        follow: tab.follow,
+        streamActive: Boolean(tab.stream),
+        streamStarting: tab.streamStarting,
+        streamStopping: tab.streamStopping,
+        streamGeneration: tab.streamGeneration,
+        logsText: tab.logsText,
+        logsError: tab.logsError,
+      }));
   }
 
   if (ready()) showReady(); else showBooting();

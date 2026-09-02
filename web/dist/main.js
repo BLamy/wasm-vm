@@ -1333,8 +1333,9 @@ window.wvmDemo = {
   // the real console stream, splits on newlines (ANSI/CR stripped like exec), and calls onLine(line)
   // for each. The returned handle's stop() sends Ctrl-C to end the follow/interactive command WITHOUT
   // killing the guest shell, and send(bytes) feeds the interactive side (-it). A stream monopolizes
-  // the one console until stop() — that is the honest single-tty multiplexing this task requires.
-  stream(cmd, onLine) {
+  // the one console until stop() or the command's private completion fence — that is the honest
+  // single-tty multiplexing this task requires. `options.onEnd` receives { exit, error, natural }.
+  stream(cmd, onLine, options = {}) {
     if (!linuxCtl) throw new Error("guest not up");
     if (activeStream) throw new Error("a guest stream is already active");
     activeStream = true;
@@ -1342,9 +1343,16 @@ window.wvmDemo = {
     let buf = "";
     let stopped = false;
     let sawEcho = false;
-    let finishStop;
+    let finished = false;
+    let stopRequested = false;
+    let finishStream;
+    const streamRid = `${Date.now().toString(36)}${execSeq++}`;
+    const streamMarker = `__WVEND_${streamRid}_`;
     const stoppedAt = new Promise((resolve) => {
-      finishStop = (error = null) => {
+      finishStream = (error = null, exit = null, natural = false) => {
+        if (finished) return;
+        finished = true;
+        stopped = true;
         consoleSubscribers.delete(onc);
         if (drainOnc) consoleSubscribers.delete(drainOnc);
         if (stopTimer) clearTimeout(stopTimer);
@@ -1353,10 +1361,11 @@ window.wvmDemo = {
         // Let later callers proceed even when the stop handshake failed; the error is delivered to
         // the RPC that was waiting on this barrier, and a fresh caller can make its own decision.
         streamBarrier = Promise.resolve();
+        try { options?.onEnd?.({ error, exit, natural, stopped: stopRequested }); } catch { /* consumer cleanup is best effort */ }
         resolve(error);
       };
     });
-    cancelActiveStream = () => finishStop(new GuestBridgeError("GUEST_STOPPED", "guest stopped during a live stream"));
+    cancelActiveStream = () => finishStream(new GuestBridgeError("GUEST_STOPPED", "guest stopped during a live stream"));
     streamBarrier = stoppedAt;
     let drainOnc = null;
     let stopTimer = null;
@@ -1371,20 +1380,28 @@ window.wvmDemo = {
           sawEcho = true;
           continue;
         }
+        if (line.startsWith(streamMarker)) {
+          const exitText = line.slice(streamMarker.length);
+          if (/^\d+$/.test(exitText)) {
+            finishStream(null, Number(exitText), true);
+            continue;
+          }
+        }
         if (!stopped) {
           try { onLine(line); } catch { /* a broken consumer must not break the stream */ }
         }
       }
     };
     consoleSubscribers.add(onc);
-    setTimeout(() => ui.typeBytes(new TextEncoder().encode(`${cmd}\r`)), 0);
+    setTimeout(() => ui.typeBytes(new TextEncoder().encode(formatRpcCommand(cmd, streamRid))), 0);
     return {
       // Interactive input for `exec -it`. Deferred via setTimeout(0) because a consumer may call
       // this from inside onLine (which runs in the console-emit loop); driving the machine
       // synchronously from there trips the re-entrancy guard and the bytes get dropped.
-      send: (bytes) => { if (!stopped) setTimeout(() => ui.typeBytes(bytes), 0); },
+      send: (bytes) => { if (!finished) setTimeout(() => ui.typeBytes(bytes), 0); },
       stop: () => {
-        if (stopped) return stoppedAt;
+        if (finished) return stoppedAt;
+        stopRequested = true;
         stopped = true;
         buf = "";
         // Keep the stream subscriber attached while the foreground command drains. It is muted by
@@ -1392,11 +1409,11 @@ window.wvmDemo = {
         const stopRid = `${Date.now().toString(36)}${execSeq++}`;
         const drainParser = createFencedRpc(stopRid);
         drainOnc = (u8) => {
-          if (drainParser.feed(u8)) finishStop();
+          if (drainParser.feed(u8)) finishStream();
         };
         consoleSubscribers.add(drainOnc);
         stopTimer = setTimeout(
-          () => finishStop(new Error("guest stream stop timed out")),
+          () => finishStream(new Error("guest stream stop timed out")),
           10000,
         );
         // Ctrl-C ends the follow/interactive command. Deferred for the same re-entrancy reason:
@@ -1409,11 +1426,11 @@ window.wvmDemo = {
               try {
                 ui.typeBytes(new TextEncoder().encode(formatRpcCommand(":", stopRid)));
               } catch (error) {
-                finishStop(error);
+                finishStream(error);
               }
             }, 0);
           } catch (error) {
-            finishStop(error);
+            finishStream(error);
           }
         }, 0);
         return stoppedAt;
