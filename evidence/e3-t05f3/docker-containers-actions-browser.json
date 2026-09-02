@@ -1,0 +1,66 @@
+{
+  "generatedAt": "2026-09-02T23:25:33.076Z",
+  "base": "http://127.0.0.1:8123",
+  "assetBase": "page default release base",
+  "browser": {
+    "name": "chromium",
+    "version": "152.0.7977.75"
+  },
+  "containerName": "t05f3-actions",
+  "stages": {
+    "initial": {
+      "id": "6912d9099b16",
+      "name": "t05f3-actions",
+      "status": "running",
+      "text": "t05f3-actions\nrunning · 6912d9099b16\nbusybox · up 645h\nStop\nRestart\nRemove"
+    },
+    "afterStop": {
+      "id": "6912d9099b16",
+      "name": "t05f3-actions",
+      "status": "exited",
+      "text": "t05f3-actions\nexited · 6912d9099b16\nbusybox · started 645h ago\nexit 0\nStop\nRestart\nRemove"
+    },
+    "afterRestart": {
+      "id": "4b4360e5a61e",
+      "name": "t05f3-actions",
+      "status": "running",
+      "text": "t05f3-actions\nrunning · 4b4360e5a61e\nbusybox · up 645h\nStop\nRestart\nRemove"
+    },
+    "malformedPs": {
+      "code": "PS_MALFORMED",
+      "error": "wvrun ps returned malformed JSON on line 1",
+      "retainedId": "4b4360e5a61e",
+      "retainedStatus": "running"
+    },
+    "afterReload": {
+      "id": "4b4360e5a61e",
+      "name": "t05f3-actions",
+      "status": "running",
+      "text": "t05f3-actions\nrunning · 4b4360e5a61e\nbusybox · up 645h\nStop\nRestart\nRemove"
+    },
+    "externalTerminalStop": {
+      "command": "wvrun stop 4b4360e5a61e",
+      "result": {
+        "stdout": "4b4360e5a61e\n\n",
+        "exit": 0
+      },
+      "row": {
+        "id": "4b4360e5a61e",
+        "name": "t05f3-actions",
+        "status": "exited",
+        "text": "t05f3-actions\nexited · 4b4360e5a61e\nbusybox · started 645h ago\nexit 0\nStop\nRestart\nRemove"
+      }
+    },
+    "afterRemove": {
+      "status": "ready",
+      "error": "",
+      "code": "",
+      "rows": [],
+      "action": null,
+      "lastCommand": "wvrun ps -a"
+    }
+  },
+  "consoleErrors": [],
+  "failedRequests": [],
+  "screenshot": "evidence/e3-t05f3/docker-containers-actions-browser.png"
+}
