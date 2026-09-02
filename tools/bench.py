@@ -69,10 +69,13 @@ DHRYSTONE_ITERS = 30_000_000
 # bench/mk-gcc-image.sh). The overlay is gitignored; its integrity is pinned by the sha256 recorded
 # in gcc-MANIFEST.txt (adversarial #4 — a deleted/tampered overlay fails loudly).
 GCC_SOURCE_DATE_EPOCH = 1704067200
-GCC_RUN_TIMEOUT = 5400.0   # a full miniz -O2 compile on the interpreter is ~1 h on a slow 2-core box
+GCC_RUN_TIMEOUT = float(os.environ.get("WASM_VM_GCC_RUN_TIMEOUT", "5400"))
+# A K=1 JIT run can retire more guest instructions before gcc reaches its sentinel than the
+# normal compile budget. Keep the historical default, but make the stress-run extension explicit
+# and record it in the result rather than silently changing the benchmark contract.
 # gcc -O2 of a ~9 kLoC TU retires FAR more guest instructions than a boot; give the whole
 # boot+compile a generous instruction ceiling so a slow compile is never truncated mid-run.
-GCC_MAX_INSTRS = 300_000_000_000
+GCC_MAX_INSTRS = int(os.environ.get("WASM_VM_GCC_MAX_INSTRS", "300000000000"))
 # gcc -O2 needs a real working set; with only 256 MiB the guest THRASHES the read-only overlay's
 # page cache (endless reclaim/re-fault → billions of wasted kernel instructions, an unrealistic
 # "compile time"). Give the gcc guest a comfortable RAM budget so the number reflects the compiler,
@@ -526,7 +529,7 @@ def verify_gcc_overlay():
     return want
 
 
-def run_gcc_once(echo=False):
+def run_gcc_once(echo=False, jit=False):
     """Boot, mount the gcc overlay read-only, compile miniz.c at -O2 in-guest, and return
     {score(guest seconds), host_elapsed, guest_elapsed, o_size, o_sha256, cmdline, rc}.
 
@@ -550,6 +553,11 @@ def run_gcc_once(echo=False):
         "--max-instrs", str(GCC_MAX_INSTRS),
     ]
     cmd += shlex.split(os.environ.get("WASM_VM_BOOT_EXTRA", ""))
+    # E4-T29/E4-T19: keep the gcc workload's JIT switch explicit, just like the other macro
+    # benches. The batch-size A/B override travels through WASM_VM_BOOT_EXTRA so the exact arm is
+    # visible in the recorded result without changing the frozen default command.
+    if jit:
+        cmd.append("--jit")
     proc = subprocess.Popen(
         cmd, cwd=REPO, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
@@ -582,7 +590,14 @@ def run_gcc_once(echo=False):
         host_t0 = time.monotonic()
         con.send(compile_cmd)
         con.send(end_typed)
-        con.expect(end_re, GCC_RUN_TIMEOUT)
+        try:
+            con.expect(end_re, GCC_RUN_TIMEOUT)
+        except TimeoutError as exc:
+            # EOF is reported by Console.expect with the same exception as a real wall timeout.
+            # Include the child status and console tail so an incomplete guest run is actionable
+            # evidence instead of an ambiguous Python traceback.
+            tail = (con.before + con.buf)[-1000:]
+            fail(f"gcc bench: {exc}; emulator_rc={proc.poll()}; console_tail={tail!r}")
         host_elapsed = time.monotonic() - host_t0
         run_text = con.before
         con.send("poweroff -f")
@@ -626,7 +641,7 @@ def cmd_run_gcc(args):
     results = []
     for i in range(args.runs):
         print(f"bench: gcc native run {i + 1}/{args.runs}…", file=sys.stderr)
-        results.append(run_gcc_once(echo=args.verbose))
+        results.append(run_gcc_once(echo=args.verbose, jit=args.jit))
 
     scores = [r["score"] for r in results]
     median = statistics.median(scores)
@@ -665,6 +680,10 @@ def cmd_run_gcc(args):
             "gcc_ext4_sha256": overlay_sha,
             "vm_build": "release",
             "ram_mib": GCC_RAM_MIB,
+            "max_instrs": GCC_MAX_INSTRS,
+            "run_timeout_s": GCC_RUN_TIMEOUT,
+            "jit": args.jit,
+            "boot_extra": os.environ.get("WASM_VM_BOOT_EXTRA", "").strip(),
         },
         "date": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "timing_check": {

@@ -9,7 +9,7 @@ gcc_package:        gcc-13.2.1_git20240309-r1
 fs_uuid:            9ccc0000-0000-4004-a000-9cc000000004
 source_date_epoch:  1704067200
 img_size:           512M
-gcc_ext4_sha256:    167ff7a91ab6d4625bc4d68108595b2b693f1345f4ba1386df24e7ea6541d630
+gcc_ext4_sha256:    f53445f65b5e32b9fe3c47e0f84c52c850da2c747edae0abca60e9592a758c4a
 
 # Fully-resolved installed package set (name-version-rN), sorted:
   binutils-2.42-r1

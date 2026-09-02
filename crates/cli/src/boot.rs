@@ -153,6 +153,11 @@ pub struct BootArgs {
     /// so `--jit` vs `--jit --no-chain` measures the chaining uplift on the same binary.
     #[arg(long, requires = "jit")]
     pub no_chain: bool,
+    /// E4-T19 A/B: cap the number of translated blocks packed into one JIT module. `1` forces
+    /// one-block-per-module (unbatched); the default executor value is 64. Only meaningful with
+    /// `--jit`.
+    #[arg(long, requires = "jit", value_parser = parse_positive_usize)]
+    pub jit_batch_size: Option<usize>,
     /// E2-T25: emit a boot phase-timing table (wall ms, retired, MIPS per phase) + per-device
     /// MMIO access counts, as pretty text + JSON, when the boot reaches userland (or at exit).
     #[arg(long)]
@@ -232,6 +237,16 @@ pub struct BootArgs {
 
 /// Decode exactly 32 bytes from a 64-char lowercase/uppercase hex string (the snapshot identity
 /// stamp). Returns a clear message on any malformed input.
+fn parse_positive_usize(value: &str) -> Result<usize, String> {
+    let parsed = value
+        .parse::<usize>()
+        .map_err(|e| format!("expected a positive integer: {e}"))?;
+    if parsed == 0 {
+        return Err("expected a positive integer, got 0".to_string());
+    }
+    Ok(parsed)
+}
+
 fn parse_id32(hex: &str) -> Result<[u8; 32], String> {
     let hex = hex.trim();
     if hex.len() != 64 {
@@ -777,6 +792,9 @@ fn assemble(
     // byte-identical to the interpreter oracle.
     if a.jit {
         m.set_executor(Box::new(jit_runtime::WasmtimeExecutor::new()));
+        if let Some(k) = a.jit_batch_size {
+            m.set_batch_size(k); // E4-T19 A/B: k=1 is the unbatched control
+        }
         if let Some(t) = a.jit_threshold {
             m.set_hotness_threshold(t);
         }
