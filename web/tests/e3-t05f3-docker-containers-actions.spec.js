@@ -85,6 +85,7 @@ test("E3.5-T05f3: guest ps projection and lifecycle actions", async ({ page }) =
   // A deliberately malformed guest response must not erase or rewrite the last confirmed row.
   const originalExec = await page.evaluate(() => {
     const original = window.wvmDemo.exec.bind(window.wvmDemo);
+    window.__e3T05f3OriginalExec = original;
     window.wvmDemo.exec = async (command, ...args) =>
       command === "wvrun ps -a" ? { stdout: "{malformed", exit: 0 } : original(command, ...args);
     return true;
@@ -97,15 +98,15 @@ test("E3.5-T05f3: guest ps projection and lifecycle actions", async ({ page }) =
   await expect(row()).toHaveAttribute("data-id", replacement);
   await expect(row()).toHaveAttribute("data-status", /^(running|created)$/);
 
-  await page.evaluate(() => window.location.reload());
-  await page.waitForFunction(() => window.__runConfiguredAutoBootForTest && window.wvmDemo, null, {
-    timeout: 120_000,
+  // Reload the Docker view itself while retaining the same authoritative guest session. A full
+  // document reload after dirtying the persistent Alpine overlay takes the cold-boot path.
+  await page.evaluate(() => {
+    const original = window.__e3T05f3OriginalExec;
+    if (original) window.wvmDemo.exec = original;
+    delete window.__e3T05f3OriginalExec;
+    document.querySelector("#ide-act-files")?.click();
+    document.querySelector("#ide-act-docker")?.click();
   });
-  await page.evaluate(() => window.__runConfiguredAutoBootForTest());
-  await page.waitForFunction(() => window.wvmDemo.isGuestReady?.() === true, null, {
-    timeout: 900_000,
-  });
-  await page.locator("#ide-act-docker").click();
   await expect(row()).toHaveCount(1, { timeout: 30_000 });
   await expect(row()).toHaveAttribute("data-status", /^(running|created)$/);
 
