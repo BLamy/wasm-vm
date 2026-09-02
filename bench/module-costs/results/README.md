@@ -36,3 +36,40 @@ Corrected extended SHA-256: Chromium `f1171adda4c4831923e5ea805d5b471c42830c9c1b
 Firefox `fa13eda34ec83801bbf7789338e7c1360bfba39fd923ed28ac434399eca5af56`, WebKit
 `dabdee9d7490abcc61825045fd8f69930fb90d945cda78047f0420a63069204a`, and supplemental Chrome
 152 `b12849292fe3472b1a9fb260193175a08e4ad47e2a9eaa0ac0d164117eab95d7`.
+
+## Supplemental Linux container screen
+
+On 2026-09-02, the Chromium and Firefox projects were rerun in the arm64 Linux image
+`mcr.microsoft.com/playwright:v1.62.1-noble` (image digest
+`sha256:dcc5531e97840b9b5e794f2814476b21571c5124a3fca2267d73041f56e7580e`) with the benchmark
+sources copied from exact source head `073b0cfde65b7c03115ef67a71de2029165b722c` and the locked
+Node dependencies installed inside the container. The captured rows are
+`cliff-2026-09-02-linux/{chromium,firefox}.json`.
+
+The command was:
+
+```sh
+repo_dir="$PWD"
+docker run --rm --init --ipc=host \
+  -v "$repo_dir/bench/module-costs:/src:ro" \
+  -v "$repo_dir/bench/module-costs/results/cliff-2026-09-02-linux:/out" \
+  -w /work \
+  mcr.microsoft.com/playwright:v1.62.1-noble \
+  bash -lc 'set -e
+    mkdir -p /work
+    cp /src/harness.html /src/gen-module.mjs /src/cost-matrix.spec.mjs /src/playwright.config.mjs /src/package.json /src/package-lock.json /work/
+    npm ci --no-audit --no-fund
+    E4_T19_RESULTS_DIR=/out npx playwright test --config playwright.config.mjs --project=chromium --project=firefox
+  '
+```
+
+Both projects passed. Chromium 151 held 123 instances before the next allocation returned
+`RangeError`, and Firefox 153 held 999 before `out of memory`; their first-execution maxima were
+0.101 ms and 0 ms respectively. These results reproduce the local practical-cliff range and keep
+the 24-batch production cap below the observed minimum. This is a separate Linux browser/OS
+environment but still runs on the same Apple host, so it strengthens rather than closes the
+independent-machine robustness debt. Chromium emitted a non-fatal low-virtual-memory warning in
+the container; the JSON rows and Playwright assertions still completed successfully.
+
+SHA-256: Chromium `4c96e23ff94db29790213e5b879ee7555cb9e62258741cbdf7046fd9ee4e3228`, Firefox
+`5e1e64ada8232b74b70c794d007e945d964f2f9fe0ccc0c429e25071f2f16a87`.

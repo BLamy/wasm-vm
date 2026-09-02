@@ -326,3 +326,44 @@ The local built-page proof at the same source head used `bash tools/serve-dev.sh
 E4-T19 detail showed `verification debt` and the corrected evidence, and the page-triggered
 compliance suite completed `126 passed, 0 failed` in 6.5 seconds. This entry does not promote the
 task: WebKit's failure point and the independent-machine K-selection attack remain open.
+
+### 2026-09-02 — worker continuation — supplemental Linux browser screen
+
+The bounded corrected WebKit extension to 50,000 instances timed out after 600 seconds without
+writing a JSON row. It is not treated as a cliff or as a browser failure. The next bounded check
+used an arm64 Linux Playwright container on this host, with benchmark source copied from exact
+head `073b0cfde65b7c03115ef67a71de2029165b722c` and `npm ci` run from the committed lockfile:
+
+```sh
+repo_dir="$PWD"
+docker run --rm --init --ipc=host \
+  -v "$repo_dir/bench/module-costs:/src:ro" \
+  -v "$repo_dir/bench/module-costs/results/cliff-2026-09-02-linux:/out" \
+  -w /work \
+  mcr.microsoft.com/playwright:v1.62.1-noble \
+  bash -lc 'set -e
+    mkdir -p /work
+    cp /src/harness.html /src/gen-module.mjs /src/cost-matrix.spec.mjs /src/playwright.config.mjs /src/package.json /src/package-lock.json /work/
+    npm ci --no-audit --no-fund
+    E4_T19_RESULTS_DIR=/out npx playwright test --config playwright.config.mjs --project=chromium --project=firefox
+  '
+```
+
+- **HELD:** Both container projects passed. Chromium 151 held 123 instances before its next
+  allocation returned `RangeError: ... Cannot allocate Wasm memory for new instance`; Firefox 153
+  held 999 before `out of memory`. The first-execution maxima were 0.101 ms and 0 ms, respectively.
+  This agrees with the local corrected 122–124 Chromium and 999 Firefox range and does not lower
+  the 24-batch production budget.
+- **HELD:** The output rows are committed at
+  `bench/module-costs/results/cliff-2026-09-02-linux/{chromium,firefox}.json`, with SHA-256
+  `4c96e23ff94db29790213e5b879ee7555cb9e62258741cbdf7046fd9ee4e3228` and
+  `5e1e64ada8232b74b70c794d007e945d964f2f9fe0ccc0c429e25071f2f16a87`. The exact Playwright
+  image is arm64 Linux digest `sha256:dcc5531e97840b9b5e794f2814476b21571c5124a3fca2267d73041f56e7580e`.
+- **SCOPE:** This is a separate browser/OS environment on the same Apple host, so it strengthens
+  the browser-version/OS screen but does not close the independent-machine K-selection attack.
+  Chromium also emitted a non-fatal low-virtual-memory warning under the container runtime; the
+  test assertions and JSON writes completed successfully. The task remains `verification-debt`.
+
+Commands: the Docker command above; `docker info --format '{{.ServerVersion}} {{.Architecture}}'`;
+`docker image inspect mcr.microsoft.com/playwright:v1.62.1-noble --format '{{.Id}} {{.Architecture}} {{.Os}} {{index .RepoDigests 0}}'`;
+`sha256sum bench/module-costs/results/cliff-2026-09-02-linux/*.json`.

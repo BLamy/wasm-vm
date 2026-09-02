@@ -60,3 +60,27 @@ fails at 124. Production `BrowserExecutor` now caps live batches at 24, which is
 the conservative 122-instance Chromium result. The true WebKit cliff beyond 25,000 and
 independent-machine K robustness remain verification debt; the first-execution probe is recorded
 and stays below the 5 ms E4-T06 target on every tested engine/version.
+
+## Supplemental Linux screen
+
+For a separate browser/OS environment on the same host, the corrected matrix can be run in the
+arm64 Linux Playwright image used by the committed supplemental rows:
+
+```
+repo_dir="$PWD"
+docker run --rm --init --ipc=host \
+  -v "$repo_dir/bench/module-costs:/src:ro" \
+  -v "$repo_dir/bench/module-costs/results/cliff-2026-09-02-linux:/out" \
+  -w /work \
+  mcr.microsoft.com/playwright:v1.62.1-noble \
+  bash -lc 'set -e
+    mkdir -p /work
+    cp /src/harness.html /src/gen-module.mjs /src/cost-matrix.spec.mjs /src/playwright.config.mjs /src/package.json /src/package-lock.json /work/
+    npm ci --no-audit --no-fund
+    E4_T19_RESULTS_DIR=/out npx playwright test --config playwright.config.mjs --project=chromium --project=firefox
+  '
+```
+
+The output directory is intentionally separate from the canonical clean-checkout matrix. Docker
+reports the image as arm64 Linux; this is supplemental same-host evidence, not an independent
+physical-machine result.
