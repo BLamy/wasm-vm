@@ -112,8 +112,9 @@ the E4-T06 pause targets on the worst browser.
 - [AC1] Cost-matrix JSON for Chrome/Firefox/Safari-substitute — local three-engine capture is now
   committed under `bench/module-costs/results/`; a separate Chrome 152 screen also exercises the
   matrix against the pinned Chromium 151. The remaining debt is independent-machine robustness.
-- [AC2] gcc batched-vs-unbatched compile-stall factor — A/B flag wired (`set_batch_size(1)` vs `(64)`);
-  the gcc bench row itself is still deferred (Level-3 baseline), so the measured factor is dev debt.
+- [AC2] gcc batched-vs-unbatched compile-stall factor — the exact-head A/B now exercises both CLI
+  arms. K=64 completes, but the K=1 control terminates with SIGTRAP before `GCC_RESULT`, so no
+  speedup factor is valid and the control-path failure remains verification debt.
 - [AC4] local run reached 10,000 live instances in each engine without a cliff, putting the 256-module
   budget at least 39.1x below the observed lower bound; a larger-limit/cross-run confirmation remains.
 - Adversarial #1 (K robustness across machines/versions) and #4 (first-execution warm-up vs the E4-T06
@@ -167,3 +168,33 @@ measurement; those remain verification debt.
   first-execution pause target remain absent.
 
 The verifier classified the item as `needs-evidence`; no verified status is claimed.
+
+### 2026-09-02 — fresh verifier — VERDICT: refuted
+
+- **HELD:** The existing AC1 three-engine cost matrix, the Chrome 152 supplemental row, AC3 direct
+  call/no `call_indirect` codegen, AC5 verdict-identical runtime tests, and the partial-batch
+  invalidation/registry tests remain unchanged and green.
+- **HELD:** The exact-head K=64 gcc arm completed with `GCC_RESULT` and a deterministic 302,904-byte
+  object (`evidence/e4-t19/ab-2026-09-01/gcc-k64-ba01dfd.json`, SHA-256
+  `0b3233d6b91633b4cef0789cc759ea3757fd03c3fb67564d6565119239f92e43`). The result records commit
+  `ba01dfd4c02aa173388747e89ba38f356236e8f2`, `--jit-batch-size 64`, 164.0 guest seconds, and
+  object SHA-256 `97198b27557042fb84de54881c5fb577505b4ee77c41bc056612be6173e5faca`.
+- **FAILED:** Predicted K=1 would run the same pinned gcc `-O2` compile to `GCC_RESULT` and provide
+  the unbatched denominator. It instead terminated twice at the same gcc pragma point with
+  `emulator_rc=-5` (SIGTRAP), before any result JSON or compile timing. The exact-head failure is
+  recorded in `evidence/e4-t19/ab-2026-09-01/gcc-k1-ba01dfd-failure.md`; the harness now includes
+  child status and console tail for this EOF-shaped failure.
+- **COVERAGE:** The new `--jit-batch-size` CLI path and benchmark passthrough were exercised for
+  both K values. K=64 covers the batched implementation; K=1 does not complete, so AC2 and the
+  K=1 instance-stress attack remain unproven/refuted rather than silently treated as a datapoint.
+- **SUITE:** Promoted the exact-head K=64 JSON, the reproducible-overlay recipe/pin, and the
+  K=1 failure record. No speedup factor is promoted because the denominator crashed.
+
+The verifier verdict is `refuted`; no verified status is claimed. Demand: fix the native K=1
+cross-batch/JIT failure (or otherwise make the unbatched gcc control complete cleanly), then rerun
+the exact A/B and the remaining independent-machine/practical-cliff/first-execution checks.
+
+Commands: `cargo fmt --all -- --check`; `cargo clippy -p wasm-vm-cli --all-targets -- -D warnings`;
+`cargo build --release -p wasm-vm-cli`; `cargo test -p wasm-vm-cli`; `cargo test -p wasm-vm-jit-runtime --test batching`;
+`python3 -m py_compile tools/bench.py`; `bash bench/mk-gcc-image.sh` twice; the two commands in
+`evidence/e4-t19/ab-2026-09-01/README.md`.
