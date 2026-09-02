@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E3.5-T05f2** — Docker-tab guest image catalog and detached Run
 1. **E3-T19a** — Composed-stack node lifecycle and reload-restore
 1. **E3-T12e** — Docker-tab instant resume and frozen coherence proof
 1. **E3-T22** — Clipboard integration - OSC 52 copy, paste injection, bracketed paste **[DECOMPOSE BEFORE START]**
@@ -146,7 +145,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `312.493` [E3.5-T05e3](epic-3.5-oci-workloads/E3.5-T05e3-alpine-runtime-proof.md) — Alpine boot bridge and container-runtime browser proof *(deps: E3.5-T05e2, E3.5-T05d)*
 - [-] `312.495` [E3.5-T05f](epic-3.5-oci-workloads/E3.5-T05f-docker-tab-lifecycle-ui.md) — "Sub-capstone: Docker-tab lifecycle UI — images, run, containers, logs, exec" *(deps: E3.5-T05c, E3.5-T05e3)*
 - [x] `312.4951` [E3.5-T05f1](epic-3.5-oci-workloads/E3.5-T05f1-docker-guest-bootstrap.md) — Docker-tab guest bootstrap and honest capability state *(deps: E3.5-T05c, E3.5-T05e3)*
-- [ ] `312.4952` [E3.5-T05f2](epic-3.5-oci-workloads/E3.5-T05f2-docker-images-run.md) — Docker-tab guest image catalog and detached Run *(deps: E3.5-T05f1)*
+- [~] `312.4952` [E3.5-T05f2](epic-3.5-oci-workloads/E3.5-T05f2-docker-images-run.md) — Docker-tab guest image catalog and detached Run *(deps: E3.5-T05f1)*
 - [ ] `312.4953` [E3.5-T05f3](epic-3.5-oci-workloads/E3.5-T05f3-docker-containers-actions.md) — Docker-tab live Containers list and lifecycle actions *(deps: E3.5-T05f2)*
 - [ ] `312.4954` [E3.5-T05f4](epic-3.5-oci-workloads/E3.5-T05f4-docker-logs-stream.md) — Docker-tab guest logs streaming lifecycle *(deps: E3.5-T05f3)*
 - [ ] `312.4955` [E3.5-T05f5](epic-3.5-oci-workloads/E3.5-T05f5-docker-exec-pane.md) — Docker-tab interactive container Exec pane *(deps: E3.5-T05f4)*

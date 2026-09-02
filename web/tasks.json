@@ -10872,8 +10872,9 @@
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "tasks: verify Docker bootstrap slice",
             "tasks: submit Docker bootstrap evidence",
             "feat: gate Docker controls on guest runtime",
             "tasks: start Docker guest bootstrap slice"
@@ -10882,7 +10883,7 @@
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E3.5-T05f2",
@@ -10890,7 +10891,7 @@
       "epicKey": "3.5",
       "title": "Docker-tab guest image catalog and detached Run",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E3.5-T05f1"
       ],
