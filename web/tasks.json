@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 145,
-    "total": 337
+    "total": 343
   },
   "epics": [
     {
@@ -10222,7 +10222,7 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E3.5-T05f",
+        "E3.5-T05f6",
         "E3.5-T04h"
       ],
       "decomposed_into": [],
@@ -10774,12 +10774,19 @@
       "epicKey": "3.5",
       "title": "Sub-capstone: Docker-tab lifecycle UI — images, run, containers, logs, exec",
       "priority": null,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E3.5-T05c",
         "E3.5-T05e3"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E3.5-T05f1",
+        "E3.5-T05f2",
+        "E3.5-T05f3",
+        "E3.5-T05f4",
+        "E3.5-T05f5",
+        "E3.5-T05f6"
+      ],
       "estimate": "L",
       "capstone": false,
       "goal": "Rebuild the Docker tab (`web/docker.js`) into a real Docker-Desktop-style surface driven by the guest\nruntime: browse baked images, PULL (honest: real in-guest pull when a network provider is configured,\nelse the baked set), RUN a container, see it in a Containers list with live status, VIEW its logs\nstreaming, and EXEC an interactive shell inside it — all through the real Alpine guest + `wvrun`, never\na simulated shell or canned output.",
@@ -10807,9 +10814,244 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "_pending_",
+      "verificationLog": "### 2026-09-02 — coordinator — decomposed\n\nSplit the lifecycle UI into one-boundary S tasks so each browser/runtime trust boundary gets an exact\nacceptance command and a fresh verification pass:\n\n- **E3.5-T05f1** — guest session/bootstrap, capability gating, and honest provider/degraded state.\n- **E3.5-T05f2** — guest-backed image catalog/inspect and real detached Run initiation.\n- **E3.5-T05f3** — live `wvrun ps -a` Containers view and state-reflecting actions.\n- **E3.5-T05f4** — real `wvrun logs -f` streaming, cancellation, and re-render ownership.\n- **E3.5-T05f5** — real interactive `wvrun exec -it` and container provenance.\n- **E3.5-T05f6** — end-to-end acceptance, static anti-fakery audit, and cross-slice adversarial replay.\n\nThe integration capstone E3.5-T05 now depends on E3.5-T05f6 instead of this cancelled planning\ncontainer.",
       "adversarial": "Attempt to make the UI show state the guest doesn't have: kill a container from the terminal tab\n(same guest) and confirm the Docker tab's next `ps` reflects it (no stale optimistic row). A Run that\nfails in-guest surfaces the guest's real error, not a generic UI message. The Exec pane cannot leak the\nguest shell (it must be `wvrun exec` into the container, verified by the container hostname/root, not a\nbare guest shell). Re-render during a live logs stream does not double-attach or fabricate lines.\nCross-check with the E3.5-T05a spec that the anti-fakery guarantees still hold verbatim.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f-docker-tab-lifecycle-ui.md",
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 0
+    },
+    {
+      "id": "E3.5-T05f1",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Docker-tab guest bootstrap and honest capability state",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3.5-T05c",
+        "E3.5-T05e3"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Give the Docker tab one honest guest session boundary: boot the container-capable Alpine guest in-tab,\ndetect the runtime from guest files, and make provider/degraded states explicit before any lifecycle\naction is offered.",
+      "criteria": [
+        {
+          "text": "A fresh local Chromium visit to the Docker tab can start the real Alpine boot in-tab; success and failure are rendered from the bridge result, and a failed boot exposes a typed error without pretending a container runtime is available.",
+          "checked": false
+        },
+        {
+          "text": "Runtime controls are enabled only after the guest probe returns true; the public busybox build reports runtime absent and shows an honest degraded banner rather than a broken lifecycle UI.",
+          "checked": false
+        },
+        {
+          "text": "With no network provider configured, Pull renders the baked-set/provider explanation and does not emit fabricated download progress or layer state.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "_pending_",
+      "adversarial": "Use a fresh Chromium context with busybox assets and a context with Alpine assets. Remove or corrupt the\nruntime metadata before probing: the UI must fail closed. Trigger boot failure and reload while the boot\nis pending: no stale enabled controls or unhandled console error may remain.",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f1-docker-guest-bootstrap.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E3.5-T05f2",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Docker-tab guest image catalog and detached Run",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3.5-T05f1"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Replace the Docker tab's image constants and Run wiring with a thin client over the booted guest:\nload the baked catalog from `/opt/containers/index.json`, inspect real metadata, and start a real\ndetached `wvrun run` without inventing a container row or transcript.",
+      "criteria": [
+        {
+          "text": "In a local Alpine Chromium run, Images rows equal the guest catalog returned from `/opt/containers/index.json`; Inspect shows the returned metadata, not duplicated fake values.",
+          "checked": false
+        },
+        {
+          "text": "Running the baked busybox image issues real detached `wvrun run -d`, returns the guest-created container identity, and does not mark the UI running until the guest accepts the command.",
+          "checked": false
+        },
+        {
+          "text": "A deliberately failed Run displays the guest's non-zero/error result and leaves no optimistic container state behind.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "_pending_",
+      "adversarial": "Tamper with one catalog field and force a failed `wvrun run`; the UI must display the guest response and\nnot fall back to a hardcoded image or canned success. Repeat Run with a duplicate name and verify the\ntyped duplicate-name failure is preserved.",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f2-docker-images-run.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E3.5-T05f3",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Docker-tab live Containers list and lifecycle actions",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3.5-T05f2"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Build the Containers view as a real projection of `wvrun ps -a`, with Stop, Remove, Restart, and\nrefresh actions whose displayed state is reconciled from the guest rather than updated optimistically.",
+      "criteria": [
+        {
+          "text": "After a real detached busybox Run, Containers shows the guest's id/name and `running` status from `wvrun ps -a`, not a UI-only placeholder.",
+          "checked": false
+        },
+        {
+          "text": "Stop, Remove, and Restart change the view only after the corresponding guest command and a fresh `ps -a` confirm the new state; exited records remain inspectable until removed.",
+          "checked": false
+        },
+        {
+          "text": "Killing/stopping the same container from the Terminal tab is reflected by the next bounded Containers refresh, with no stale optimistic `running` row.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "_pending_",
+      "adversarial": "Race refresh with Stop and reload the tab after an external kill. Return malformed or non-zero `ps`\noutput: the UI must show a typed error and retain the last confirmed state, never fabricate a transition.",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f3-docker-containers-actions.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E3.5-T05f4",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Docker-tab guest logs streaming lifecycle",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3.5-T05f3"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Wire the Logs pane to the real `wvrun logs -f <id>` stream, preserving stream ownership across\nnavigation and re-render while making close/stop cancel the stream without stopping the container.",
+      "criteria": [
+        {
+          "text": "A real detached busybox run produces `CONTAINED_42` in Logs via `wvrun logs -f <id>`; the marker is computed in the container and the stream reaches the UI from guest bytes.",
+          "checked": false
+        },
+        {
+          "text": "Closing the Logs pane ends the stream while a fresh `ps -a` still reports the container running; stopping the container separately ends the follow stream with the confirmed exit state.",
+          "checked": false
+        },
+        {
+          "text": "Re-rendering the live Logs pane does not double-attach, duplicate lines, or mix the stream tail into the next RPC.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "_pending_",
+      "adversarial": "Navigate away and back repeatedly during a burst, stop the container while following, and issue a new\nRPC immediately after cancellation. Count marker lines and inspect console errors for any duplicate,\nstale, or re-entrant output.",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f4-docker-logs-stream.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E3.5-T05f5",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Docker-tab interactive container Exec pane",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3.5-T05f4"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Expose a real interactive `wvrun exec -it <id> sh` pane whose input and output remain inside the\nselected container, with clean exit and typed absent/exited-container failures.",
+      "criteria": [
+        {
+          "text": "In a real local Alpine run, Exec sends `echo INEXEC_$((6*7))` into the selected container and displays guest/container-computed `INEXEC_42` with no host-side shell interpreter.",
+          "checked": false
+        },
+        {
+          "text": "The pane proves it is inside the container by showing the container hostname and `/proc/1/comm` or root listing, while a guest-only file remains unreadable.",
+          "checked": false
+        },
+        {
+          "text": "Exiting returns to the list; exec into an absent or exited container produces a bounded typed error and never hangs or opens a bare guest shell.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "_pending_",
+      "adversarial": "Attempt `cat /root/guest-secret`, inspect hostname and PID 1, and race Exec with container exit. Verify\nthe stream cannot attach to the guest shell or a recycled container PID, and no listener survives exit.",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f5-docker-exec-pane.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E3.5-T05f6",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Docker-tab lifecycle end-to-end integration proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3.5-T05f5"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove the complete Docker-tab lifecycle composes over the real Alpine guest: boot, guest catalog,\nRun, live Containers, Logs, Exec, Stop, and honest degraded behavior, with the anti-fakery contract\nchecked against the complete source and generated demo.",
+      "criteria": [
+        {
+          "text": "Fresh local Alpine assets: open Docker → boot → guest-backed Images → Run busybox → running Containers → Logs `CONTAINED_42` → Exec `INEXEC_42` → Stop → `exited`, with every value traced to guest output and zero unexpected browser errors.",
+          "checked": false
+        },
+        {
+          "text": "The existing Docker static anti-fakery test and a source/dist parity check pass: no JS shell, canned transcript, fake digest, or host-literal replacement for `$((6*7))`.",
+          "checked": false
+        },
+        {
+          "text": "Public busybox/no-provider surfaces remain honest in the same focused proof; all Containers actions are confirmed by guest `ps`, and the checked-in screenshot/digest matches the exact head.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "_pending_",
+      "adversarial": "Kill the container from the Terminal tab, reload Docker, and verify `ps` reflects the external state.\nForce Run and Exec failures, re-render Logs during a burst, and cross-check the E3.5-T05a anti-fakery\nspec. Run the complete focused command in a fresh Chromium profile; independent machines and WebKit\nare not part of this acceptance scope.",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f6-docker-tab-integration.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
