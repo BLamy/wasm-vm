@@ -114,6 +114,8 @@ test("E3.5-T05e: fenced RPC, serialization, streaming & fail-closed runtime (bus
   // The guest survived stop() — a fresh fenced RPC still works after the stream ended.
   const after = await page.evaluate(() => window.wvmDemo.run("echo ALIVE_$((5+5))"));
   expect(after.stdout).toContain("ALIVE_10");
+  expect(after.stdout).not.toMatch(/STREAM_/);
+  expect(after.stdout).not.toContain("^C");
   expect(after.exit).toBe(0);
 
   expect(errors, `unexpected console errors: ${errors.join("; ")}`).toEqual([]);

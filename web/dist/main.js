@@ -1068,10 +1068,18 @@ function emitConsole(u8) {
 // a shell (see isGuestReady). Serialized via a promise chain so callers don't interleave.
 let execChain = Promise.resolve();
 let execSeq = 0;
+// A live stream owns the one tty until stop() has proved that the shell is back at a command
+// boundary. Merely queueing Ctrl-C is not enough: a foreground command can still flush output after
+// the callback that requested stop() returns, and the next fenced RPC would then ingest that tail.
+// The barrier resolves only after a private no-op fence has run after Ctrl-C; queued RPCs await it.
+let streamBarrier = Promise.resolve();
+let activeStream = false;
 let quietGuestExec = false;
 function guestExec(cmd, timeoutMs = 60000, sendBytes = null, options = {}) {
-  const task = () =>
-    new Promise((resolve, reject) => {
+  const task = async () => {
+    const streamStopError = await streamBarrier;
+    if (streamStopError) throw streamStopError;
+    return new Promise((resolve, reject) => {
       if (!linuxCtl) return reject(new Error("guest not up"));
       const quiet = options?.quiet === true;
       if (quiet) quietGuestExec = true;
@@ -1099,6 +1107,7 @@ function guestExec(cmd, timeoutMs = 60000, sendBytes = null, options = {}) {
         else ui.typeBytes(bytes);
       }, 0);
     });
+  };
   execChain = execChain.then(task, task);
   return execChain;
 }
@@ -1284,10 +1293,28 @@ window.wvmDemo = {
   // the one console until stop() — that is the honest single-tty multiplexing this task requires.
   stream(cmd, onLine) {
     if (!linuxCtl) throw new Error("guest not up");
+    if (activeStream) throw new Error("a guest stream is already active");
+    activeStream = true;
     const dec = new TextDecoder();
     let buf = "";
     let stopped = false;
     let sawEcho = false;
+    let finishStop;
+    const stoppedAt = new Promise((resolve) => {
+      finishStop = (error = null) => {
+        consoleSubscribers.delete(onc);
+        if (drainOnc) consoleSubscribers.delete(drainOnc);
+        if (stopTimer) clearTimeout(stopTimer);
+        activeStream = false;
+        // Let later callers proceed even when the stop handshake failed; the error is delivered to
+        // the RPC that was waiting on this barrier, and a fresh caller can make its own decision.
+        streamBarrier = Promise.resolve();
+        resolve(error);
+      };
+    });
+    streamBarrier = stoppedAt;
+    let drainOnc = null;
+    let stopTimer = null;
     const onc = (u8) => {
       buf += dec.decode(u8, { stream: true }).replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, "").replace(/\r/g, "");
       let nl;
@@ -1312,12 +1339,39 @@ window.wvmDemo = {
       // synchronously from there trips the re-entrancy guard and the bytes get dropped.
       send: (bytes) => { if (!stopped) setTimeout(() => ui.typeBytes(bytes), 0); },
       stop: () => {
-        if (stopped) return;
+        if (stopped) return stoppedAt;
         stopped = true;
-        consoleSubscribers.delete(onc);
+        buf = "";
+        // Keep the stream subscriber attached while the foreground command drains. It is muted by
+        // `stopped`, but retaining it prevents those bytes from becoming the next RPC's input.
+        const stopRid = `${Date.now().toString(36)}${execSeq++}`;
+        const drainParser = createFencedRpc(stopRid);
+        drainOnc = (u8) => {
+          if (drainParser.feed(u8)) finishStop();
+        };
+        consoleSubscribers.add(drainOnc);
+        stopTimer = setTimeout(
+          () => finishStop(new Error("guest stream stop timed out")),
+          10000,
+        );
         // Ctrl-C ends the follow/interactive command. Deferred for the same re-entrancy reason:
-        // stop() is typically called from within onLine (a console callback).
-        setTimeout(() => { try { ui.typeBytes(new Uint8Array([0x03])); } catch { /* best-effort */ } }, 0);
+        // stop() is typically called from within onLine (a console callback). The private fence is
+        // queued after Ctrl-C and can complete only once the shell has accepted the interrupt.
+        setTimeout(() => {
+          try {
+            ui.typeBytes(new Uint8Array([0x03]));
+            setTimeout(() => {
+              try {
+                ui.typeBytes(new TextEncoder().encode(formatRpcCommand(":", stopRid)));
+              } catch (error) {
+                finishStop(error);
+              }
+            }, 0);
+          } catch (error) {
+            finishStop(error);
+          }
+        }, 0);
+        return stoppedAt;
       },
     };
   },
