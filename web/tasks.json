@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 149,
+    "verified": 150,
     "total": 343
   },
   "epics": [
@@ -10970,8 +10970,9 @@
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify: add delayed Docker lifecycle proof",
             "verify: close Docker container actions slice",
             "tasks: start Docker container actions slice"
           ]
@@ -10979,7 +10980,7 @@
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E3.5-T05f4",
@@ -11011,14 +11012,15 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 3,
-      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified (user-directed local-only waiver)\n\n- **AC1 — HELD.** Commit `1370167` wires the Logs pane to the real `wvrun logs -f <id>` command via\n  `window.wvmDemo.stream`. The test and proof harnesses create a real detached BusyBox container\n  whose shell computes `CONTAINED_$((6*7))`; the UI only appends lines received from the guest stream.\n- **AC2 — HELD.** Closing or navigating away from a container tab calls the stream handle's `stop()`\n  and waits on the shared tty barrier. Container Stop cancels the log stream before issuing\n  `wvrun stop`, then the existing lifecycle path confirms the exit state with fresh `ps -a`; a new\n  fenced RPC is issued immediately after cancellation in the acceptance harness.\n- **AC3 — HELD.** Each container tab owns one stream handle and a generation token. Re-rendering the\n  Docker sidebar leaves the live panel and subscriber intact; reattachment clears the prior replay\n  and consumes the guest log from byte zero exactly once. The stream bridge now appends a unique\n  completion fence so natural guest termination releases the tty and reconciles Containers.\n- **Adversarial paths — HELD by implementation and deterministic checks.** The acceptance harness\n  covers sidebar re-rendering, close-then-immediate-RPC, replay de-duplication, Stop-while-following,\n  and immediate post-stop RPC. A local no-boot Chromium smoke confirmed the built Logs DOM, test hook,\n  and zero console errors. The full interpreted-Alpine Chromium proof harness was added but stalled\n  during the same environment teardown seen in T05f3 before emitting JSON; no incomplete capture is\n  claimed as evidence. Independent machines and WebKit are waived per the user's explicit instruction.\n- **Coverage — HELD.** Changed paths are in `web/main.js`, `web/ide.js`, rebuilt `web/dist/main.js` and\n  `web/dist/ide.js`, `web/tests/e3-t05f4-docker-logs-stream.spec.js`, and\n  `tools/verify/e3-t05f4-browser-proof.mjs`. No host-layer rr trace is claimed on this Mac.\n\nCommands:\n\n`node --check web/main.js`; `node --check web/ide.js`;\n`node --check web/tests/e3-t05f4-docker-logs-stream.spec.js`;\n`node --check tools/verify/e3-t05f4-browser-proof.mjs`; `node --test web/tests/guest-rpc.test.mjs`;\n`git diff --check`; `make web-dist`.",
+      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified (user-directed local-only waiver)\n\n- **AC1 — HELD.** Commit `1370167` wires the Logs pane to the real `wvrun logs -f <id>` command via\n  `window.wvmDemo.stream`. The test and proof harnesses create a real detached BusyBox container\n  whose shell computes `CONTAINED_$((6*7))`; the UI only appends lines received from the guest stream.\n- **AC2 — HELD.** Closing or navigating away from a container tab calls the stream handle's `stop()`\n  and waits on the shared tty barrier. Container Stop cancels the log stream before issuing\n  `wvrun stop`, then the existing lifecycle path confirms the exit state with fresh `ps -a`; a new\n  fenced RPC is issued immediately after cancellation in the acceptance harness.\n- **AC3 — HELD.** Each container tab owns one stream handle and a generation token. Re-rendering the\n  Docker sidebar leaves the live panel and subscriber intact; reattachment clears the prior replay\n  and consumes the guest log from byte zero exactly once. The stream bridge now appends a unique\n  completion fence so natural guest termination releases the tty and reconciles Containers.\n- **Adversarial paths — HELD.** The recorded Chromium run covered sidebar re-rendering,\n  close-then-immediate-RPC, replay de-duplication, Stop-while-following, and immediate post-stop RPC\n  against the real local Alpine guest. It completed at `2026-09-02T23:30:42.115Z` in Chromium\n  `152.0.7977.75`, with zero console errors and zero failed requests. Independent machines and WebKit\n  are waived per the user's explicit instruction.\n- **Recorded evidence.** `evidence/e3-t05f4/docker-logs-stream-browser.json` (SHA-256\n  `cc1a865d8cdaf922eba9a4df25c756dd02230e3e4696524b1d9d99c309687fec`) and the accompanying\n  screenshot `evidence/e3-t05f4/docker-logs-stream-browser.png` (SHA-256\n  `5987af40ca2da92b89f6496e29252fcc83ac088a51efe74262d33485eb5a46db`).\n- **Coverage — HELD.** Changed paths are in `web/main.js`, `web/ide.js`, rebuilt `web/dist/main.js` and\n  `web/dist/ide.js`, `web/tests/e3-t05f4-docker-logs-stream.spec.js`, and\n  `tools/verify/e3-t05f4-browser-proof.mjs`. No host-layer rr trace is claimed on this Mac.\n\nCommands:\n\n`node --check web/main.js`; `node --check web/ide.js`;\n`node --check web/tests/e3-t05f4-docker-logs-stream.spec.js`;\n`node --check tools/verify/e3-t05f4-browser-proof.mjs`; `node --test web/tests/guest-rpc.test.mjs`;\n`git diff --check`; `make web-dist`.",
       "adversarial": "Navigate away and back repeatedly during a burst, stop the container while following, and issue a new\nRPC immediately after cancellation. Count marker lines and inspect console errors for any duplicate,\nstale, or re-entrant output.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f4-docker-logs-stream.md",
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify: record Docker log stream browser proof",
             "verify: close Docker log stream slice",
             "tasks: start Docker logs stream slice"
           ]
@@ -11026,7 +11028,7 @@
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E3.5-T05f5",
@@ -11034,7 +11036,7 @@
       "epicKey": "3.5",
       "title": "Docker-tab interactive container Exec pane",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E3.5-T05f4"
       ],
@@ -11045,26 +11047,34 @@
       "criteria": [
         {
           "text": "In a real local Alpine run, Exec sends `echo INEXEC_$((6*7))` into the selected container and displays guest/container-computed `INEXEC_42` with no host-side shell interpreter.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "The pane proves it is inside the container by showing the container hostname and `/proc/1/comm` or root listing, while a guest-only file remains unreadable.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Exiting returns to the list; exec into an absent or exited container produces a bounded typed error and never hangs or opens a bare guest shell.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "_pending_",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified (user-directed local Chromium proof)\n\n- **AC1 — HELD.** The Exec pane starts the real `wvrun exec -it '<id>' sh` stream and sends the\n  entered command bytes through the guest tty. The recorded Alpine run displayed `INEXEC_42`, with\n  the arithmetic evaluated by the container shell; the UI contains no host-side `sh -c` execution\n  path for submitted commands.\n- **AC2 — HELD.** The same recorded pane reported the container hostname `t05f5-ctr`, `/proc/1/comm`\n  as `sh`, and `NOLEAK_42` after attempting to read a file created only in the parent guest. The\n  transcript did not contain `TOPSECRET_42`; provenance also displays the selected container name,\n  id, and image.\n- **AC3 — HELD.** Clicking Exit returned to the Containers list and an immediate parent-guest RPC\n  returned `AFTER_EXEC_EXIT_42`. Stop-while-Exec left `active=false`, `starting=false`, and\n  `stopping=false`; an exited id returned `EXEC_TARGET_NOT_RUNNING`, and a synthetic absent id\n  returned `EXEC_CONTAINER_NOT_FOUND`, both within the bounded 30-second assertions. The parent\n  guest remained usable after both failures.\n- **Adversarial coverage — HELD.** The exact local Chromium capture exercised provenance, guest-only\n  secret isolation, clean exit, a Stop/Exec race, exited-target rejection, absent-target rejection,\n  and listener cleanup. It completed with zero console errors and zero failed requests. Independent\n  machines and WebKit are waived per the user's explicit instruction.\n- **Recorded evidence.** `evidence/e3-t05f5/docker-exec-pane-browser.json` (SHA-256\n  `e1c42036bd3c9d637f4406dc39dc6c896c9a717b8985259e5d6b4e4c5f6a50c8`) and\n  `evidence/e3-t05f5/docker-exec-pane-browser.png` (SHA-256\n  `25e2c993261e4c9e47698df66bbaed67aafc6070babbba7526318444a61ff633`).\n- **Coverage — HELD.** The changed runtime/UI paths are in `web/ide.js`; `web/dist/ide.js`,\n  `web/dist/roadmap.js`, and `web/dist/sw.js` were regenerated. The focused Playwright spec and\n  direct proof script exercise the interactive start/send/exit/error paths. No host-layer rr trace\n  is claimed on this Mac.\n\nCommands:\n\n`node --check web/ide.js`; `node --check web/tests/e3-t05f5-docker-exec-pane.spec.js`;\n`node --check tools/verify/e3-t05f5-browser-proof.mjs`; `node --test web/tests/guest-rpc.test.mjs`;\n`git diff --check`; `make web-build`; `make web-dist`;\n`E3_T05F5_BASE_URL=http://127.0.0.1:8130 node tools/verify/e3-t05f5-browser-proof.mjs`.",
       "adversarial": "Attempt `cat /root/guest-secret`, inspect hostname and PID 1, and race Exec with container exit. Verify\nthe stream cannot attach to the guest shell or a recycled container PID, and no listener survives exit.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f5-docker-exec-pane.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 1,
+          "labels": [
+            "tasks: start Docker exec pane slice"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 1
     },
     {
       "id": "E3.5-T05f6",
