@@ -426,6 +426,7 @@ pub fn print_jit_stats(m: &Machine) {
     let d = m.discovery_stats();
     let chain = m.chain_stats();
     let cache = m.jit_cache_stats();
+    let pause = m.prof_report(0, 0).jit_pause;
     let (modules, est_bytes) = m.jit_registry();
     let (executed, retired_via_jit) = m
         .executor()
@@ -462,9 +463,13 @@ pub fn print_jit_stats(m: &Machine) {
         cache.flushes,
         cache.generation,
     );
+    eprintln!(
+        "jit_pause: samples={} sum_ns={} max_ns={} over_target={}",
+        pause.count, pause.sum_ns, pause.max_ns, pause.over_target,
+    );
     // Machine-readable one-liner for the bench harness / CI to scrape.
     eprintln!(
-        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{}}}",
+        "JIT_STATS_JSON {{\"blocks_compiled\":{},\"blocks_executed\":{},\"retired_via_jit\":{},\"links_made\":{},\"dispatch_entries\":{},\"installs\":{},\"evictions\":{},\"jit_pause_count\":{},\"jit_pause_sum_ns\":{},\"jit_pause_max_ns\":{},\"jit_pause_over_target\":{}}}",
         compiled,
         executed,
         retired_via_jit,
@@ -472,6 +477,10 @@ pub fn print_jit_stats(m: &Machine) {
         chain.dispatch_entries,
         cache.installs,
         cache.evictions,
+        pause.count,
+        pause.sum_ns,
+        pause.max_ns,
+        pause.over_target,
     );
 }
 

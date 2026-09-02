@@ -531,11 +531,13 @@ def verify_gcc_overlay():
 
 def run_gcc_once(echo=False, jit=False):
     """Boot, mount the gcc overlay read-only, compile miniz.c at -O2 in-guest, and return
-    {score(guest seconds), host_elapsed, guest_elapsed, o_size, o_sha256, cmdline, rc}.
+    {score(guest seconds), host_elapsed, guest_elapsed, o_size, o_sha256, cmdline, rc, jit_stats}.
 
     Determinism of the emitted .o: SOURCE_DATE_EPOCH + -frandom-seed. Guest seconds come from
     /proc/uptime (instruction-count-derived guest clock), the host-independent duration metric;
     host_elapsed is captured for the honest host/guest ratio note (same framing as the micro-benches).
+    When --jit is active, jit_stats is scraped from the emulator's machine-readable stderr line;
+    its pause sum is populated only when --profile is included in WASM_VM_BOOT_EXTRA.
     """
     nonce = "%08x" % random.randrange(1 << 32)
     start_typed = f'echo BENCH""START{nonce}'
@@ -560,9 +562,10 @@ def run_gcc_once(echo=False, jit=False):
         cmd.append("--jit")
     proc = subprocess.Popen(
         cmd, cwd=REPO, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,
+        stderr=subprocess.PIPE,
     )
     con = Console(proc, echo=echo)
+    stderr_text = ""
     try:
         con.expect(r"login:", BOOT_TIMEOUT)
         con.send("root")
@@ -605,9 +608,13 @@ def run_gcc_once(echo=False, jit=False):
             proc.wait(timeout=60)
         except subprocess.TimeoutExpired:
             proc.kill()
+            proc.wait(timeout=60)
+        if proc.stderr is not None:
+            stderr_text = proc.stderr.read().decode("utf-8", "replace")
     finally:
         if proc.poll() is None:
             proc.kill()
+            proc.wait(timeout=60)
 
     cmdline_m = re.search(r"(?m)^GCC_CMDLINE:\s*(.+?)\s*$", run_text)
     res_m = re.search(
@@ -626,8 +633,19 @@ def run_gcc_once(echo=False, jit=False):
     cmdline = cmdline_m.group(1) if cmdline_m else None
     if not cmdline or "-O2" not in cmdline:
         fail(f"gcc bench: resolved command line missing -O2 (got: {cmdline!r})")
+    jit_stats = None
+    if jit:
+        stats_m = re.search(r"(?m)^JIT_STATS_JSON (\{.*\})\s*$", stderr_text)
+        if not stats_m:
+            fail("gcc bench: no JIT_STATS_JSON line (JIT telemetry was not emitted). "
+                 "stderr tail:\n" + stderr_text[-1200:])
+        try:
+            jit_stats = json.loads(stats_m.group(1))
+        except json.JSONDecodeError as exc:
+            fail(f"gcc bench: invalid JIT_STATS_JSON: {exc}")
     return {"score": guest_secs, "guest_elapsed": guest_secs, "host_elapsed": host_elapsed,
-            "o_size": o_size, "o_sha256": o_sha, "cmdline": cmdline, "rc": rc}
+            "o_size": o_size, "o_sha256": o_sha, "cmdline": cmdline, "rc": rc,
+            "jit_stats": jit_stats}
 
 
 def cmd_run_gcc(args):
@@ -651,6 +669,9 @@ def cmd_run_gcc(args):
     med_idx = scores.index(sorted(scores)[len(scores) // 2])
     med = results[med_idx]
     ratio = med["host_elapsed"] / med["guest_elapsed"] if med["guest_elapsed"] else None
+    jit_pause_ns = None
+    if med.get("jit_stats") is not None:
+        jit_pause_ns = med["jit_stats"].get("jit_pause_sum_ns")
 
     # The emitted .o must be byte-stable across runs (SOURCE_DATE_EPOCH + -frandom-seed); a moving
     # sha256 would signal nondeterministic codegen. Assert all runs agree.
@@ -684,6 +705,9 @@ def cmd_run_gcc(args):
             "run_timeout_s": GCC_RUN_TIMEOUT,
             "jit": args.jit,
             "boot_extra": os.environ.get("WASM_VM_BOOT_EXTRA", "").strip(),
+            "jit_pause_timed": "--profile" in shlex.split(
+                os.environ.get("WASM_VM_BOOT_EXTRA", "")
+            ),
         },
         "date": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "timing_check": {
@@ -694,7 +718,11 @@ def cmd_run_gcc(args):
             "guest_elapsed_s": round(med["guest_elapsed"], 3),
             "host_elapsed_s": round(med["host_elapsed"], 3),
             "ratio": round(ratio, 3) if ratio else None,
+            "jit_compile_stall_ns": jit_pause_ns,
+            "jit_compile_stall_s": round(jit_pause_ns / 1e9, 6)
+            if jit_pause_ns is not None else None,
         },
+        "jit_stats": med.get("jit_stats"),
     }
     text = json.dumps(out, indent=2)
     print(text)
