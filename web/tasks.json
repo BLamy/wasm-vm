@@ -10617,7 +10617,7 @@
       "epicKey": "3.5",
       "title": "Structured guest RPC framing and parser core",
       "priority": null,
-      "status": "implemented",
+      "status": "in-progress",
       "depends_on": [
         "E3.5-T05b"
       ],
@@ -10641,21 +10641,22 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-02 — planning split\n\nSeparated from E3.5-T05e so the byte-stream trust boundary can be verified with a bounded node test\nwithout waiting for Alpine boot. Existing parent evidence is context only; this child remains pending\nuntil an exact-head worker run and a fresh verifier.\n\n### 2026-09-02 — worker — implemented\n\nExact-head commit `4cbf42c` contains the extracted pure parser and its deterministic adversarial\nsuite. `cd web && node --test tests/guest-rpc.test.mjs` passed **10/10**: formatter fencing,\nbasic stdout/exit parsing, non-zero exit, split markers, wrong-ID marker spoofing, echoed `%s`\nrejection, a 100,000-line burst, regex-special request IDs, and ANSI-wrapped markers. `node --check\nguest-rpc.js` and `git diff --check` also passed. This child changes no guest or browser runtime\nbehavior, so no guest trace or Playwright capture is applicable; the node transcript is the direct\ndeterministic evidence. A fresh verifier must inspect the diff and rerun the exact command before\ngranting `verified`.",
+      "verificationLog": "### 2026-09-02 — planning split\n\nSeparated from E3.5-T05e so the byte-stream trust boundary can be verified with a bounded node test\nwithout waiting for Alpine boot. Existing parent evidence is context only; this child remains pending\nuntil an exact-head worker run and a fresh verifier.\n\n### 2026-09-02 — worker — implemented\n\nExact-head commit `4cbf42c` contains the extracted pure parser and its deterministic adversarial\nsuite. `cd web && node --test tests/guest-rpc.test.mjs` passed **10/10**: formatter fencing,\nbasic stdout/exit parsing, non-zero exit, split markers, wrong-ID marker spoofing, echoed `%s`\nrejection, a 100,000-line burst, regex-special request IDs, and ANSI-wrapped markers. `node --check\nguest-rpc.js` and `git diff --check` also passed. This child changes no guest or browser runtime\nbehavior, so no guest trace or Playwright capture is applicable; the node transcript is the direct\ndeterministic evidence. A fresh verifier must inspect the diff and rerun the exact command before\ngranting `verified`.\n\n### 2026-09-02 — fresh adversarial verifier — VERDICT: refuted\n\n- **HELD — exact-id, wrong-id, truncation, regex-special, echo, burst, and ordinary non-zero cases.**\n  Predicted that a wrong request marker, a truncated marker, a regex-special near miss, the echoed\n  `%s` formatter, and a 100,000-line burst would not settle the wrong request or lose output, and that\n  exit 1 would be surfaced. The committed suite passed 10/10 via `cd web && node --test\n  tests/guest-rpc.test.mjs`; a fresh verifier-only probe independently passed\n  `wrong-id/truncated/split/regex-special/echo/burst/non-zero` (the burst used exactly 100,000 lines).\n- **FAILED — arbitrary marker split with a multi-digit exit.** Predicted that feeding the valid marker\n  in arbitrary chunks, including between the digits of exit `17`, would remain pending until the\n  complete marker and then return `{stdout:\"\", exit:17}`. At exact head `cf392ab`, the verifier command\n  `node --input-type=module` importing `web/guest-rpc.js` fed `cmd\\\\n__WVEND_multi_1`; it observed\n  `{\"stdout\":\"\",\"exit\":1}` with `settled=true`, and the subsequent `7\\\\n` was ignored. The\n  failure is at `web/guest-rpc.js:26-47`: `/(\\\\d+)/` matches the currently buffered digit run without\n  requiring the marker's terminating newline, so a byte-stream split inside a valid multi-digit guest\n  exit corrupts the structured result. This contradicts the task's arbitrary-chunk / non-zero-exit\n  framing requirement. Fix the parser to wait for the complete marker record, add a committed\n  multi-digit split regression, and rerun the exact suite.\n- **COVERAGE — insufficient for the claimed 100,000-line case.** The committed test named “100k-line\n  burst” feeds 1,000 lines of 100 characters each, not 100,000 lines (`web/tests/guest-rpc.test.mjs:67-77`).\n  The fresh verifier probe did exercise exactly 100,000 lines and passed, so this is not a second\n  runtime refutation; the committed suite's claim is not independently sufficient for that exact\n  case until the regression test is corrected.\n- **HELD — module independence.** `web/guest-rpc.js` has no DOM, `WasmMachine`, `window`, or browser\n  imports; the source diff from implementation commit `c73b54f` is limited to the pure parser and\n  Node test module, with task metadata submitted at `cf392ab`.\n\nCommands: `cd web && node --test tests/guest-rpc.test.mjs`; `cd web && node --check guest-rpc.js`;\nthe verifier-only Node probe for wrong-id/truncated/split/regex-special/echo/burst/non-zero; the\nfailing verifier-only Node probe for a split `__WVEND_multi_17` marker; `git diff --check`; and\n`rg`/source inspection for DOM and WasmMachine dependencies. No implementation or test files were\nmodified. Status returns to `in-progress` pending the multi-digit split fix and a corrected exact\n100,000-line regression.",
       "adversarial": "Feed wrong-id, truncated, split, regex-special, and command-echo lines in arbitrary chunks. Mutate\nthe parser to accept any `__WVEND_` line or to use a host-computed exit code; the deterministic suite\nmust fail. Confirm the module has no DOM or WasmMachine dependency.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05e1-rpc-framing-core.md",
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "tasks: submit E3.5-T05e1",
             "tasks: start E3.5-T05e1"
           ]
         }
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E3.5-T05e2",
