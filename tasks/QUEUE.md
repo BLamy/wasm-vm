@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E3.5-T05f5** — Docker-tab interactive container Exec pane
 1. **E3-T19a** — Composed-stack node lifecycle and reload-restore
 1. **E3-T12e** — Docker-tab instant resume and frozen coherence proof
 1. **E3-T22** — Clipboard integration - OSC 52 copy, paste injection, bracketed paste **[DECOMPOSE BEFORE START]**
@@ -149,7 +148,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `312.4952` [E3.5-T05f2](epic-3.5-oci-workloads/E3.5-T05f2-docker-images-run.md) — Docker-tab guest image catalog and detached Run *(deps: E3.5-T05f1)*
 - [x] `312.4953` [E3.5-T05f3](epic-3.5-oci-workloads/E3.5-T05f3-docker-containers-actions.md) — Docker-tab live Containers list and lifecycle actions *(deps: E3.5-T05f2)*
 - [x] `312.4954` [E3.5-T05f4](epic-3.5-oci-workloads/E3.5-T05f4-docker-logs-stream.md) — Docker-tab guest logs streaming lifecycle *(deps: E3.5-T05f3)*
-- [ ] `312.4955` [E3.5-T05f5](epic-3.5-oci-workloads/E3.5-T05f5-docker-exec-pane.md) — Docker-tab interactive container Exec pane *(deps: E3.5-T05f4)*
+- [~] `312.4955` [E3.5-T05f5](epic-3.5-oci-workloads/E3.5-T05f5-docker-exec-pane.md) — Docker-tab interactive container Exec pane *(deps: E3.5-T05f4)*
 - [ ] `312.4956` [E3.5-T05f6](epic-3.5-oci-workloads/E3.5-T05f6-docker-tab-integration.md) — Docker-tab lifecycle end-to-end integration proof *(deps: E3.5-T05f5)*
 - [ ] `312.5` [E3.5-T05](epic-3.5-oci-workloads/E3.5-T05-container-capstone.md) — "Capstone: pull and run an OCI container in a fresh browser profile, twice — second run from cache" **[CAPSTONE]** *(deps: E3.5-T05f6, E3.5-T04h)*
 
