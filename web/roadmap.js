@@ -93,6 +93,7 @@ export const ROADMAP = [
       { name: "Container matrix — pipeline is image-generic", capstone: true, status: "verified", evidence: "9/9 riscv64 images incl. postgres:18 (8483-entry bundle, RISC-V ELFs) (#110)" },
       { name: "oci validate — bundle preflight (no boot)", status: "verified", evidence: "native runnability checks, CI-gated (#113)" },
       { name: "Tiny OCI runner (wvrun)", status: "partial", evidence: "core done: unshare+overlay+pivot_root+exec (#108) — booted in-guest run pending" },
+      { name: "Guest Docker image catalog + detached Run", status: "verified", evidence: "E3.5-T05f2: Images reads /opt/containers/index.json, Inspect shows guest bundle metadata, and Run reports the guest wvrun identity or typed rejection" },
       { name: "Digest-deduped layer cache, reload-proof", status: "pending" },
     ],
   },

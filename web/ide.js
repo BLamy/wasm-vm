@@ -74,6 +74,16 @@ const css = `
 .ide-dk-runtime-status[data-state="available"] { color: #9ad29a; }
 .ide-dk-runtime-status[data-state="unavailable"], .ide-dk-runtime-status[data-state="error"] { color: #f0c6a0; }
 .ide-dk-runtime > .ide-mini { margin: 0 12px 4px; }
+.ide-dk-image-detail { margin: -2px 12px 8px; padding: 8px; border: 1px solid var(--line, #232a35);
+  border-radius: 6px; background: #0b0f15; font-size: 11px; line-height: 1.45; }
+.ide-dk-image-detail .title { color: #d6deeb; font-weight: 600; margin-bottom: 5px; }
+.ide-dk-image-detail dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 8px; margin: 0; }
+.ide-dk-image-detail dt { color: #6f8097; }
+.ide-dk-image-detail dd { min-width: 0; margin: 0; color: #cdd6f4; overflow-wrap: anywhere; }
+.ide-dk-inspect-raw { max-height: 180px; overflow: auto; margin: 7px 0 0; color: #8fa3bf; white-space: pre-wrap; }
+.ide-dk-run-state { padding: 5px 12px 7px; color: #9ad29a; font-size: 11px; line-height: 1.4; }
+.ide-dk-run-state[data-state="starting"] { color: #f2c94c; }
+.ide-dk-run-state[data-state="failed"] { color: #f0a0a0; }
 
 /* Editor area */
 .ide-editor-area { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0; background: #0b0f15; }
@@ -181,28 +191,30 @@ style.textContent = css;
 document.head.appendChild(style);
 
 // ── Docker image catalog + command builders (folded in from docker.js) ───────
-const IMAGES = [
-  { repo: "busybox", tag: "latest", runnable: true, bundlePath: "/opt/containers/busybox",
-    demo: "echo CONTAINED_$((6*7)); echo pid1=$(cat /proc/1/comm); echo host=$(hostname); echo root:; ls /",
-    desc: "BusyBox — digest-verified OCI bundle" },
-  { repo: "alpine", tag: "latest", runnable: true, bundlePath: "/opt/containers/alpine",
-    demo: "echo CONTAINED_$((6*7)); echo alpine $(cat /etc/alpine-release 2>/dev/null); echo pid1=$(cat /proc/1/comm); echo host=$(hostname)",
-    desc: "Alpine Linux — isolated OCI container" },
-  { repo: "memcached", tag: "latest", runnable: true, bundlePath: "/opt/containers/memcached",
-    demo: null, desc: "memcached — real long-lived server" },
-  { repo: "postgres", tag: "latest", runnable: false, desc: "PostgreSQL — riscv64 exists, pull natively" },
-  { repo: "nginx", tag: "latest", runnable: false, desc: "nginx — riscv64 exists, pull natively" },
-  { repo: "redis", tag: "latest", runnable: false, desc: "Redis — riscv64 exists, pull natively" },
+// These labels are used only while the current guest is unavailable. Once the real Alpine guest
+// reports its catalog, renderDocker() uses only the objects returned by /opt/containers/index.json.
+// Keeping the degraded view useful preserves T05f1's fail-closed busybox proof without making a
+// public busybox boot look like it has a container catalog that it does not actually contain.
+const DEGRADED_IMAGES = [
+  { repo: "busybox", tag: "latest", runnable: true, bundlePath: "/opt/containers/busybox", desc: "BusyBox — guest catalog unavailable" },
+  { repo: "alpine", tag: "latest", runnable: true, bundlePath: "/opt/containers/alpine", desc: "Alpine — available in the local runtime guest" },
+  { repo: "memcached", tag: "latest", runnable: true, bundlePath: "/opt/containers/memcached", desc: "memcached — available in the local runtime guest" },
+  { repo: "postgres", tag: "latest", runnable: false, desc: "PostgreSQL — pull natively" },
+  { repo: "nginx", tag: "latest", runnable: false, desc: "nginx — pull natively" },
+  { repo: "redis", tag: "latest", runnable: false, desc: "Redis — pull natively" },
 ];
 
-// Detached-run command for an image (see docker.js): override argv with the isolation-proof demo +
-// a sleep so the container stays "running", or run the real long-lived server entrypoint.
+// Detached runs deliberately use the guest bundle's own config/argv. The browser does not rewrite
+// image metadata or inject a canned transcript; the only success signal is the identity printed by
+// the guest's real wvrun process.
 function wvrunRunCmd(img) {
-  const name = `${img.repo}-${Math.floor(1000 + Math.random() * 9000)}`;
-  const setArgv = img.demo
-    ? `printf '/bin/sh\\n-c\\n${img.demo}; echo; echo [container still alive — sleeping]; sleep 240\\n' > ${img.bundlePath}/config/argv; `
-    : "";
-  return { name, cmd: `${setArgv}wvrun run -d --name ${name} ${img.bundlePath}` };
+  const name = dockerCatalog.runNameOverride ||
+    `${img.repo || img.name || "image"}-${Date.now().toString(36)}-${++dockerCatalog.runSeq}`;
+  return { name, cmd: `wvrun run -d --name ${dockerShq(name)} ${dockerShq(img.bundlePath)}` };
+}
+
+function dockerShq(value) {
+  return "'" + String(value).replace(/'/g, "'\\''") + "'";
 }
 
 function parsePs(stdout) {
@@ -228,6 +240,23 @@ const dockerRuntime = {
   alpineStatus: "unknown", // unknown | checking | present | absent
   alpineProbe: null,
   generation: 0,
+};
+
+// The catalog is intentionally independent from the runtime probe. A guest can be ready while its
+// userland is still the busybox initramfs, so a successful shell probe is not permission to render
+// image rows or claim that a detached run exists.
+const dockerCatalog = {
+  status: "unknown", // unknown | loading | available | error
+  error: "",
+  code: "",
+  raw: null,
+  entries: [],
+  promise: null,
+  generation: 0,
+  selected: null,
+  lastRun: null,
+  runSeq: 0,
+  runNameOverride: "",
 };
 
 // ── DOM assembly ─────────────────────────────────────────────────────────────
@@ -366,6 +395,193 @@ if (root) {
     return ready() && dockerRuntime.status === "available";
   }
 
+  function resetDockerCatalog() {
+    dockerCatalog.status = "unknown";
+    dockerCatalog.error = "";
+    dockerCatalog.code = "";
+    dockerCatalog.raw = null;
+    dockerCatalog.entries = [];
+    dockerCatalog.promise = null;
+    dockerCatalog.generation = dockerRuntime.generation;
+    dockerCatalog.selected = null;
+    dockerCatalog.lastRun = null;
+    dockerCatalog.runNameOverride = "";
+  }
+
+  function catalogItems(raw) {
+    if (Array.isArray(raw)) return raw.map((item) => ({ item, key: "" }));
+    if (!raw || typeof raw !== "object") return [];
+    for (const key of ["images", "entries", "catalog", "items"]) {
+      if (Array.isArray(raw[key])) return raw[key].map((item) => ({ item, key: "" }));
+    }
+    if (raw.repo || raw.repository || raw.ref || raw.name || raw.bundlePath || raw.bundle) {
+      return [{ item: raw, key: "" }];
+    }
+    return Object.entries(raw)
+      .filter(([, item]) => item && typeof item === "object" && !Array.isArray(item))
+      .map(([key, item]) => ({ item, key }));
+  }
+
+  function splitImageRef(value, fallbackName) {
+    const ref = String(value || fallbackName || "").trim();
+    if (!ref) return { repo: "image", tag: "latest" };
+    const at = ref.indexOf("@");
+    const withoutDigest = at === -1 ? ref : ref.slice(0, at);
+    const colon = withoutDigest.lastIndexOf(":");
+    if (colon > withoutDigest.lastIndexOf("/")) {
+      return { repo: withoutDigest.slice(0, colon), tag: withoutDigest.slice(colon + 1) || "latest" };
+    }
+    return { repo: withoutDigest, tag: "latest" };
+  }
+
+  function validCatalogName(value) {
+    return typeof value === "string" && /^[A-Za-z0-9._-]{1,128}$/.test(value);
+  }
+
+  function normalizeCatalog(raw) {
+    return catalogItems(raw).map(({ item, key }, index) => {
+      if (!item || typeof item !== "object" || Array.isArray(item)) {
+        throw new Error(`invalid guest catalog entry at index ${index}`);
+      }
+      const source = { ...item };
+      const refValue = source.ref || source.image || source.reference || "";
+      const parsed = splitImageRef(refValue, source.repo || source.repository || source.name || key);
+      const name = String(source.name || source.id || "").trim();
+      if (!validCatalogName(name)) throw new Error(`invalid guest image name at index ${index}`);
+      const repo = String(source.repo || source.repository || name || parsed.repo || key);
+      const tag = String(source.tag || parsed.tag || "latest");
+      const bundleValue = source.bundlePath || source.bundle || source.bundle_dir || source.path || "";
+      const bundlePath = bundleValue
+        ? String(bundleValue).startsWith("/")
+          ? String(bundleValue)
+          : `/opt/containers/${String(bundleValue).replace(/^\.\//, "")}`
+        : `/opt/containers/${name}`;
+      if (!/^\/opt\/containers\/[A-Za-z0-9._-]{1,128}$/.test(bundlePath)) {
+        throw new Error(`invalid guest bundle path for ${name}`);
+      }
+      const rootfsBytes = source.rootfsBytes ?? source.rootfs_bytes ?? source.sizeBytes ?? null;
+      const rootfsEntries = source.rootfsEntries ?? source.rootfs_entries ?? source.entries ?? null;
+      const manifestDigest = source.manifestDigest ?? source.manifest_digest ?? source.digest ?? "";
+      const smokeCommand = source.smokeCommand ?? source["smoke-command"] ?? source.smoke ?? "";
+      const runStatus = source.runStatus ?? source["run-status"] ?? source.status ?? "";
+      return {
+        key: `${name}:${String(source.ref || `${repo}:${tag}`)}:${index}`,
+        name,
+        repo,
+        tag,
+        ref: String(source.ref || `${repo}:${tag}`),
+        arch: source.arch == null && source.architecture == null
+          ? ""
+          : String(source.arch ?? source.architecture),
+        libc: source.libc == null ? "" : String(source.libc),
+        manifestDigest: manifestDigest ? String(manifestDigest) : "",
+        rootfsBytes,
+        rootfsEntries,
+        entry: "",
+        configArgv: "",
+        bundlePresent: null,
+        bundleError: "",
+        entryElf: String(source.entryElf || source.entry_elf || ""),
+        bundlePath,
+        smokeCommand: String(smokeCommand),
+        runStatus: String(runStatus),
+        runnable: source.runnable !== false && !/^(skip|failed)$/i.test(String(runStatus)),
+        desc: String(source.desc || source.description || "Guest catalog entry"),
+        raw: source,
+      };
+    });
+  }
+
+  function bundleMetadataCommand(bundlePath) {
+    const bundle = dockerShq(bundlePath);
+    return `bundle=${bundle}; if test -d "$bundle/rootfs" && test -f "$bundle/config/argv"; then ` +
+      `printf '%s\\n' __WVIMG_BUNDLE_OK__; printf '%s\\n' __WVIMG_ARGV_BEGIN__; ` +
+      `cat "$bundle/config/argv"; printf '%s\\n' __WVIMG_ARGV_END__; ` +
+      `else printf '%s\\n' __WVIMG_BUNDLE_MISSING__; false; fi`;
+  }
+
+  function parseBundleMetadata(stdout) {
+    const lines = String(stdout || "").split("\n").map((line) => line.replace(/\r$/, ""));
+    const begin = lines.indexOf("__WVIMG_ARGV_BEGIN__");
+    const end = lines.indexOf("__WVIMG_ARGV_END__", begin + 1);
+    if (!lines.includes("__WVIMG_BUNDLE_OK__") || begin === -1 || end === -1 || end < begin) {
+      return null;
+    }
+    const configArgv = lines.slice(begin + 1, end).join("\n").trim();
+    return { configArgv, entry: configArgv };
+  }
+
+  async function loadGuestBundleMetadata(entries, generation) {
+    for (const image of entries) {
+      if (generation !== dockerRuntime.generation) return false;
+      try {
+        const res = await bgExec(bundleMetadataCommand(image.bundlePath), 30000);
+        const metadata = res.exit === 0 ? parseBundleMetadata(res.stdout) : null;
+        if (metadata) {
+          image.bundlePresent = true;
+          image.bundleError = "";
+          image.configArgv = metadata.configArgv;
+          image.entry = metadata.entry;
+        } else {
+          image.bundlePresent = false;
+          image.runnable = false;
+          image.bundleError = String(res.stdout || "bundle metadata is unavailable").trim() ||
+            `guest exited ${res.exit}`;
+        }
+      } catch (error) {
+        image.bundlePresent = false;
+        image.runnable = false;
+        image.bundleError = error?.message || String(error);
+      }
+    }
+    return true;
+  }
+
+  function loadDockerCatalog() {
+    if (!runtimeReady()) return Promise.resolve(false);
+    if (dockerCatalog.status === "available") return Promise.resolve(true);
+    if (dockerCatalog.promise) return dockerCatalog.promise;
+    const generation = dockerRuntime.generation;
+    dockerCatalog.status = "loading";
+    dockerCatalog.error = "";
+    dockerCatalog.code = "";
+    const request = Promise.resolve()
+      .then(() => bgExec("cat /opt/containers/index.json", 30000))
+      .then(async (res) => {
+        if (generation !== dockerRuntime.generation) return false;
+        if (res.exit !== 0) throw new Error(res.stdout?.trim() || `cat exited ${res.exit}`);
+        let raw;
+        try {
+          raw = JSON.parse(res.stdout);
+        } catch (error) {
+          throw new Error(`invalid guest catalog JSON: ${error.message || error}`);
+        }
+        const entries = normalizeCatalog(raw);
+        if (!entries.length) throw new Error("guest catalog contains no image entries");
+        if (!(await loadGuestBundleMetadata(entries, generation))) return false;
+        dockerCatalog.raw = raw;
+        dockerCatalog.entries = entries;
+        dockerCatalog.generation = generation;
+        dockerCatalog.status = "available";
+        return true;
+      })
+      .catch((error) => {
+        if (generation === dockerRuntime.generation) {
+          dockerCatalog.status = "error";
+          dockerCatalog.code = "CATALOG_LOAD_FAILED";
+          dockerCatalog.error = error?.message || String(error);
+        }
+        return false;
+      });
+    dockerCatalog.promise = request;
+    void request.then(() => {
+      if (generation !== dockerRuntime.generation) return;
+      dockerCatalog.promise = null;
+      if (sideView === "docker") renderDocker();
+    });
+    return request;
+  }
+
   function resetDockerRuntime(status = "unknown") {
     // The main boot path emits wvm:guest-booting synchronously after the Docker button has
     // claimed an Alpine boot. Preserve that claim so the event cannot re-enable the button or
@@ -378,6 +594,7 @@ if (root) {
     dockerRuntime.probe = null;
     dockerRuntime.booting = bootInProgress;
     dockerRuntime.pullNotice = "";
+    resetDockerCatalog();
   }
 
   function probeDockerRuntime() {
@@ -905,32 +1122,143 @@ if (root) {
     psPoll = setInterval(refreshContainers, 6000);
   }
 
+  function formatBytes(value) {
+    if (typeof value !== "number" || !Number.isFinite(value)) return String(value ?? "unknown");
+    if (value < 1024 * 1024) return `${value} bytes`;
+    return `${value} bytes (${(value / (1024 * 1024)).toFixed(1)} MiB)`;
+  }
+
+  function imageRunState(img) {
+    const run = dockerCatalog.lastRun;
+    if (!run || run.imageKey !== img.key) return null;
+    const state = mk("div", "ide-dk-run-state");
+    state.dataset.state = run.status;
+    if (run.status === "starting") {
+      state.textContent = `guest: wvrun run -d is accepting ${run.name}…`;
+    } else if (run.status === "accepted") {
+      state.textContent = `guest accepted detached run · id ${run.id}`;
+    } else {
+      state.textContent = `guest rejected detached run${run.code ? ` (${run.code})` : ""}` +
+        `${run.exit != null ? ` · exit ${run.exit}` : ""}: ${run.error}`;
+    }
+    return state;
+  }
+
+  function renderImageInspect(img) {
+    const detail = document.createElement("div");
+    detail.className = "ide-dk-image-detail";
+    detail.id = "ide-dk-inspect";
+    detail.dataset.image = img.name || img.repo;
+    detail.appendChild(mk("div", "title", `Inspect ${img.ref}`));
+    const dl = document.createElement("dl");
+    const fields = [
+      ["Source", "/opt/containers/index.json (guest)"],
+      ["Reference", img.ref],
+      ["Architecture", img.arch || "not published by guest catalog"],
+      ["libc", img.libc || "not published by guest catalog"],
+      ["Manifest digest", img.manifestDigest || "not published by guest catalog"],
+      ["Bundle", img.bundlePath],
+      ["Bundle state", img.bundlePresent === true ? "verified in guest" : "unavailable in guest"],
+      ["Entrypoint", img.entry || "no guest config/argv"],
+      ["Rootfs", formatBytes(img.rootfsBytes)],
+      ["Rootfs entries", img.rootfsEntries ?? "not published by guest catalog"],
+    ];
+    if (img.configArgv) fields.push(["Exact config/argv", img.configArgv.replace(/\n/g, " · ")]);
+    if (img.entryElf) fields.push(["Entry ELF", img.entryElf]);
+    if (img.smokeCommand) fields.push(["Smoke command", img.smokeCommand]);
+    if (img.runStatus) fields.push(["Bake run status", img.runStatus]);
+    fields.push(["Run command", `wvrun run -d --name <generated-name> ${img.bundlePath}`]);
+    fields.push(["Provenance", "guest catalog + guest bundle config/argv"]);
+    if (img.bundleError) fields.push(["Bundle error", img.bundleError]);
+    const lastRun = dockerCatalog.lastRun?.imageKey === img.key ? dockerCatalog.lastRun : null;
+    if (lastRun?.command) fields.push(["Last guest command", lastRun.command]);
+    if (lastRun?.id) fields.push(["Guest identity", lastRun.id]);
+    for (const [label, value] of fields) {
+      const dt = mk("dt", null, label);
+      const dd = mk("dd", null, value);
+      dd.dataset.field = label.toLowerCase().replaceAll(" ", "-");
+      dl.append(dt, dd);
+    }
+    detail.appendChild(dl);
+    detail.appendChild(mk("pre", "ide-dk-inspect-raw", JSON.stringify(img.raw, null, 2)));
+    return detail;
+  }
+
+  function catalogRows() {
+    if (dockerCatalog.status === "available") return dockerCatalog.entries;
+    if (!runtimeReady()) return DEGRADED_IMAGES;
+    return [];
+  }
+
   function renderDocker() {
     dkEl.replaceChildren();
     void probeAlpineAssets();
     if (ready() && dockerRuntime.status === "unknown") probeDockerRuntime();
+    if (runtimeReady()) void loadDockerCatalog();
     dkEl.appendChild(renderDockerRuntimeState());
     // Images section
     const imgSec = document.createElement("div"); imgSec.className = "ide-dk-sec";
     imgSec.appendChild(mk("div", "ide-dk-h", "Images"));
-    for (const img of IMAGES) {
+    if (runtimeReady() && dockerCatalog.status !== "available") {
+      if (dockerCatalog.status === "error") {
+        const note = mk("div", "ide-dk-note", `Guest image catalog unavailable (${dockerCatalog.code}): ${dockerCatalog.error}`);
+        const retry = mk("button", "ide-mini", "Retry catalog");
+        retry.dataset.action = "retry-catalog";
+        retry.addEventListener("click", () => {
+          dockerCatalog.status = "unknown";
+          renderDocker();
+        });
+        note.appendChild(document.createTextNode(" "));
+        note.appendChild(retry);
+        imgSec.appendChild(note);
+      } else {
+        imgSec.appendChild(mk("div", "ide-dk-note", "Loading the guest image catalog from /opt/containers/index.json…"));
+      }
+    } else if (!runtimeReady()) {
+      imgSec.appendChild(mk("div", "ide-dk-note", "Guest catalog is unavailable; these are labels only until Alpine reports the real catalog."));
+    }
+    const rows = catalogRows();
+    for (const img of rows) {
       const row = document.createElement("div"); row.className = "ide-dk-row";
+      row.dataset.image = img.name || img.repo;
+      row.dataset.ref = img.ref || "";
       const nm = document.createElement("div"); nm.className = "nm";
-      nm.innerHTML = `${img.repo}<span class="sub"> :${img.tag}</span>`;
+      nm.append(mk("span", null, img.name || img.repo), mk("span", "sub", ` ${img.ref || `${img.repo}:${img.tag}`}`));
       nm.title = img.desc;
       row.appendChild(nm);
-      if (img.runnable) {
+      if (dockerCatalog.status === "available") {
+        const inspect = mk("button", "ide-mini", dockerCatalog.selected === img.key ? "Close" : "Inspect");
+        inspect.dataset.action = "inspect-image";
+        inspect.dataset.image = img.name || img.repo;
+        inspect.title = "Show the exact metadata returned by the guest catalog";
+        inspect.addEventListener("click", () => {
+          dockerCatalog.selected = dockerCatalog.selected === img.key ? null : img.key;
+          renderDocker();
+        });
+        row.appendChild(inspect);
+      }
+      if (img.runnable && img.bundlePath && img.bundlePresent !== false) {
         const b = mk("button", "ide-mini run", "▶ Run");
         b.dataset.action = "run-image";
-        b.dataset.image = img.repo;
-        b.disabled = !runtimeReady();
-        b.title = runtimeReady() ? "Start as a detached wvrun container" : "Container runtime is not confirmed in the guest";
-        if (runtimeReady()) b.addEventListener("click", () => runImage(img, b));
+        b.dataset.image = img.name || img.repo;
+        b.dataset.bundle = img.bundlePath;
+        const runInFlight = dockerCatalog.lastRun?.imageKey === img.key &&
+          dockerCatalog.lastRun?.status === "starting";
+        b.disabled = !runtimeReady() || runInFlight;
+        b.title = runInFlight
+          ? "Waiting for the guest to accept the detached run"
+          : runtimeReady()
+            ? "Start as a detached wvrun container"
+            : "Container runtime is not confirmed in the guest";
+        if (runtimeReady()) b.addEventListener("click", () => runImage(img));
         row.appendChild(b);
       } else {
-        row.appendChild(mk("span", "sub", "pull natively"));
+        row.appendChild(mk("span", "sub", img.bundleError ? "bundle unavailable" : "pull natively"));
       }
       imgSec.appendChild(row);
+      const runState = imageRunState(img);
+      if (runState) imgSec.appendChild(runState);
+      if (dockerCatalog.selected === img.key) imgSec.appendChild(renderImageInspect(img));
     }
     dkEl.appendChild(imgSec);
     // Containers section
@@ -947,15 +1275,57 @@ if (root) {
     if (runtimeReady()) refreshContainers();
   }
 
-  async function runImage(img, btn) {
-    if (!runtimeReady()) return;
-    btn.disabled = true; btn.textContent = "…";
+  async function runImage(img) {
+    if (!runtimeReady() || dockerCatalog.status !== "available" || !img.bundlePath ||
+      img.bundlePresent === false || dockerCatalog.lastRun?.status === "starting") return;
+    const { name, cmd } = wvrunRunCmd(img);
+    dockerCatalog.lastRun = {
+      imageKey: img.key, image: img.repo, name, command: cmd, status: "starting",
+      id: "", exit: null, code: "", error: "", stdout: "",
+    };
+    renderDocker();
     try {
-      const { cmd } = wvrunRunCmd(img);
-      await bgExec(cmd, 60000);
+      const res = await bgExec(cmd, 60000);
+      const exit = Number(res?.exit);
+      if (!Number.isFinite(exit) || exit !== 0) {
+        const raw = String(res?.stdout || "").trim();
+        const detail = raw.replace(/\s+/g, " ");
+        const error = new Error(detail || `wvrun exited ${res?.exit ?? "unknown"}`);
+        error.code = /already in use/i.test(raw)
+          ? "DUPLICATE_NAME"
+          : /no rootfs|no such file|not found/i.test(raw)
+            ? "BUNDLE_NOT_RUNNABLE"
+            : /no entrypoint|no.*argv/i.test(raw)
+              ? "ENTRYPOINT_MISSING"
+              : "WVRUN_REJECTED";
+        error.exit = res?.exit;
+        error.stdout = raw;
+        throw error;
+      }
+      const output = String(res?.stdout || "").trim();
+      const identity = output.split(/\s+/).filter(Boolean).pop() || "";
+      if (!/^[0-9a-f]{12}$/i.test(identity)) {
+        const error = new Error(identity
+          ? `wvrun returned an invalid container identity: ${identity}`
+          : "wvrun returned success without a container identity");
+        error.code = "RUN_PROTOCOL_FAILED";
+        error.exit = exit;
+        error.stdout = output;
+        throw error;
+      }
+      dockerCatalog.lastRun = {
+        ...dockerCatalog.lastRun, status: "accepted", id: identity, exit,
+        stdout: output, error: "",
+      };
+      renderDocker();
       await refreshContainers();
-    } catch (e) { /* surfaced via container list refresh */ }
-    finally { btn.disabled = false; btn.textContent = "▶ Run"; }
+    } catch (error) {
+      dockerCatalog.lastRun = {
+        ...dockerCatalog.lastRun, status: "failed", code: error?.code || "RUN_FAILED",
+        exit: error?.exit ?? null, error: error?.message || String(error), stdout: error?.stdout || "",
+      };
+      renderDocker();
+    }
   }
 
   async function refreshContainers() {
@@ -1086,7 +1456,31 @@ if (root) {
       guestUp: guestUp(),
       alpineAssets: alpineAssetsPresent(),
       alpineStatus: dockerRuntime.alpineStatus,
+      catalogStatus: dockerCatalog.status,
+      catalogError: dockerCatalog.error,
+      catalog: dockerCatalog.entries.map((entry) => ({ ...entry, raw: entry.raw })),
+      lastRun: dockerCatalog.lastRun,
     });
+    window.__dockerCatalogForTest = () => ({
+      status: dockerCatalog.status,
+      error: dockerCatalog.error,
+      code: dockerCatalog.code,
+      raw: dockerCatalog.raw,
+      entries: dockerCatalog.entries.map((entry) => ({ ...entry, raw: entry.raw })),
+      lastRun: dockerCatalog.lastRun,
+    });
+    window.__dockerSetImageForTest = (repo, patch = {}) => {
+      const image = dockerCatalog.entries.find((entry) => entry.repo === repo || entry.name === repo);
+      if (!image || !patch || typeof patch !== "object") return false;
+      Object.assign(image, patch);
+      if (image.raw && typeof image.raw === "object") Object.assign(image.raw, patch);
+      renderDocker();
+      return true;
+    };
+    window.__dockerSetRunNameForTest = (name) => {
+      dockerCatalog.runNameOverride = name == null ? "" : String(name);
+      return dockerCatalog.runNameOverride;
+    };
   }
 
   if (ready()) showReady(); else showBooting();

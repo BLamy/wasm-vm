@@ -1,0 +1,11 @@
+{
+  "task": "E3.5-T05f2",
+  "type": "local-chromium-proof-attempt",
+  "command": "E3_T05F2_ASSET_BASE=http://127.0.0.1:8123/releases E3_T05F2_CHROME_PATH=/Users/blamy/Library/Caches/ms-playwright/chromium-1148/chrome-mac/Chromium.app/Contents/MacOS/Chromium node tools/verify/e3-t05f2-browser-proof.mjs",
+  "browser": "Chromium 1148",
+  "base": "http://127.0.0.1:8123",
+  "result": "environment-limited-before-assertions",
+  "observed": "The page reached guestUp=true and alpineAssets=true but remained in runtime=booting/catalogStatus=unknown; Chromium then closed the page and disconnected before the guest catalog assertion.",
+  "semantic_refutation": false,
+  "note": "The implementation and proof harness are retained. No successful T05f2 browser result is claimed from this attempt; independent-machine and WebKit variants were explicitly waived by the user."
+}

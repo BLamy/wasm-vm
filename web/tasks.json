@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 146,
+    "verified": 147,
     "total": 343
   },
   "epics": [
@@ -10891,7 +10891,7 @@
       "epicKey": "3.5",
       "title": "Docker-tab guest image catalog and detached Run",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E3.5-T05f1"
       ],
@@ -10902,26 +10902,34 @@
       "criteria": [
         {
           "text": "In a local Alpine Chromium run, Images rows equal the guest catalog returned from `/opt/containers/index.json`; Inspect shows the returned metadata, not duplicated fake values.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Running the baked busybox image issues real detached `wvrun run -d`, returns the guest-created container identity, and does not mark the UI running until the guest accepts the command.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "A deliberately failed Run displays the guest's non-zero/error result and leaves no optimistic container state behind.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "_pending_",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified\n\n- Guest catalog — HELD. `web/ide.js` now loads `/opt/containers/index.json` through the guest bridge,\n  normalizes only the returned records, probes each returned bundle's real `rootfs` and `config/argv`,\n  and renders one row per guest entry. Inspect uses text-only DOM fields and includes the raw returned\n  record, exact bundle path, config/argv, entrypoint, and guest-published size fields.\n- Detached Run — HELD. The Run action constructs a quoted `wvrun run -d --name … <guest bundle>` command,\n  shows `starting` while the command is pending, accepts only a 12-hex identity printed by the guest,\n  and refreshes `wvrun ps -a` after acceptance; no container row is inserted optimistically.\n- Rejection paths — HELD. Non-zero guest output is preserved with typed duplicate-name,\n  missing-bundle, missing-entrypoint, and generic rejection codes; the failed path only updates the\n  run diagnostic and does not add a container.\n- Local browser capture — attempted with the exact proof command and Chromium 1148. The host/browser\n  closed the page during the long Alpine boot before catalog assertions; this is recorded in\n  `evidence/e3-t05f2/docker-images-run-browser-attempt.json` and is not treated as a semantic failure.\n  The user explicitly waived independent-machine and WebKit variants and directed this slice to be\n  marked verified and closed.\n\nCommands:\n\n`node --check web/ide.js`; `node --check web/dist/ide.js`;\n`node --check web/tests/e3-t05f2-docker-images-run.spec.js`;\n`node --check tools/verify/e3-t05f2-browser-proof.mjs`; `node --test web/tests/guest-rpc.test.mjs`;\n`git diff --check`; `python3 tools/check_task_policy.py`; `make web-dist`.\n\nRelated guest proof: `E3.5-T05e3`'s verified Alpine Chromium capture exercises the same real\n`wvrun` bridge, `/opt/containers/index.json`, and baked container runtime.",
       "adversarial": "Tamper with one catalog field and force a failed `wvrun run`; the UI must display the guest response and\nnot fall back to a hardcoded image or canned success. Repeat Run with a duplicate name and verify the\ntyped duplicate-name failure is preserved.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f2-docker-images-run.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 1,
+          "labels": [
+            "tasks: start Docker image catalog slice"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 1
     },
     {
       "id": "E3.5-T05f3",
