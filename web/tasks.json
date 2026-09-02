@@ -10274,11 +10274,18 @@
             "E3.5-T05 (pass 2): de-fake the Docker tab — remove the mock shell + fabricated data (#131)",
             "E3.5-T05 (pass 1): oci unpack preserves hardlinks (busybox 412MB→3.2MB) + bundle tool (#130)"
           ]
+        },
+        {
+          "date": "2026-09-02",
+          "commits": 1,
+          "labels": [
+            "feat: gate Docker controls on guest runtime"
+          ]
         }
       ],
       "firstActivity": "2026-07-07",
-      "lastActivity": "2026-07-09",
-      "commitCount": 6
+      "lastActivity": "2026-09-02",
+      "commitCount": 7
     },
     {
       "id": "E3.5-T05a",
@@ -10834,7 +10841,7 @@
       "epicKey": "3.5",
       "title": "Docker-tab guest bootstrap and honest capability state",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E3.5-T05c",
         "E3.5-T05e3"
@@ -10859,21 +10866,22 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "_pending_",
+      "verificationLog": "### 2026-09-02 — worker — submission (commit `2838bc7`)\n\n- Commands: `node --check web/ide.js`; `node --check web/dist/ide.js`; `node --check web/tests/e3-t05f1-docker-bootstrap.spec.js`; `node --check tools/verify/e3-t05f1-browser-proof.mjs`; `python3 tools/check_task_policy.py`; `make tasks-json`; `make web-dist`; `git diff --check`.\n- Recorded acceptance: `node tools/verify/e3-t05f1-browser-proof.mjs` passed in Chromium `152.0.7977.75` against `http://127.0.0.1:8123`.\n- Evidence: `evidence/e3-t05f1/docker-bootstrap-browser.json` (SHA-256 `ba74ad2d3424479a072cd02a07018fca601755d2fec21596b32559f9d4f1bfd1`) and `evidence/e3-t05f1/docker-bootstrap-browser.png` (SHA-256 `2a9a1697b0d461d368317eb845185128c488ed2aac82f0c17408780c39615a47`).\n- The recording proves a real in-tab Alpine boot reaches `ready: true`, `guestUp: true`, and `runtime: available`; a real busybox boot remains `runtime: unavailable` with `RUNTIME_ABSENT`, disabled Run controls, and locked Containers; a busybox-to-Alpine switch returns typed `GUEST_CONFLICT`; the offline Pull path reports the baked guest set without progress; the provider re-render path was exercised; and a mocked missing Alpine manifest leaves the public build catalog-only with the Alpine button disabled. The public mock's two expected manifest 404 messages are recorded separately; all other scenarios have zero console errors and failed requests.",
       "adversarial": "Use a fresh Chromium context with busybox assets and a context with Alpine assets. Remove or corrupt the\nruntime metadata before probing: the UI must fail closed. Trigger boot failure and reload while the boot\nis pending: no stale enabled controls or unhandled console error may remain.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f1-docker-guest-bootstrap.md",
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "feat: gate Docker controls on guest runtime",
             "tasks: start Docker guest bootstrap slice"
           ]
         }
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E3.5-T05f2",
@@ -11216,11 +11224,18 @@
           "labels": [
             "docs(tasks): decompose the container capstone + add Epic 3.6 (live pull)"
           ]
+        },
+        {
+          "date": "2026-09-02",
+          "commits": 1,
+          "labels": [
+            "feat: gate Docker controls on guest runtime"
+          ]
         }
       ],
       "firstActivity": "2026-07-30",
-      "lastActivity": "2026-07-30",
-      "commitCount": 1
+      "lastActivity": "2026-09-02",
+      "commitCount": 2
     },
     {
       "id": "E3.6-T04",
