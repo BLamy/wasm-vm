@@ -138,11 +138,24 @@ const css = `
 .ide-ctr-stream-state[data-state="following"] { color: #9ad29a; }
 .ide-ctr-stream-state[data-state="stopping"] { color: #f2c94c; }
 .ide-ctr-stream-state[data-state="error"] { color: #f0a0a0; }
-.ide-ctr-exec { flex: 0 0 auto; display: flex; gap: 6px; padding: 8px 12px; border-top: 1px solid var(--line, #232a35); }
+.ide-ctr-exec { flex: 0 0 auto; display: flex; flex-direction: column; gap: 6px; padding: 8px 12px;
+  border-top: 1px solid var(--line, #232a35); background: #0d1117; }
+.ide-ctr-exec-head, .ide-ctr-exec-form { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.ide-ctr-exec-head strong { color: #d6deeb; font-size: 12px; }
+.ide-ctr-exec-head .sp { flex: 1 1 auto; }
+.ide-ctr-exec-status { color: #8fa3bf; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ide-ctr-exec-status[data-state="active"] { color: #9ad29a; }
+.ide-ctr-exec-status[data-state="starting"], .ide-ctr-exec-status[data-state="stopping"] { color: #f2c94c; }
+.ide-ctr-exec-status[data-state="error"] { color: #f0a0a0; }
+.ide-ctr-exec-provenance { color: #8fa3bf; font-size: 10.5px; overflow-wrap: anywhere; }
+.ide-ctr-exec-output { max-height: 180px; overflow: auto; margin: 0; padding: 6px 8px; white-space: pre-wrap;
+  word-break: break-word; color: #cdd6f4; background: #0b0e14; border: 1px solid var(--line, #232a35);
+  font-size: 11.5px; line-height: 1.45; }
 .ide-ctr-exec .p { color: var(--green, #2ea043); align-self: center; }
-.ide-ctr-exec input { flex: 1 1 auto; background: #0b0f15; color: #d6deeb; border: 1px solid var(--line, #232a35);
-  border-radius: 6px; padding: 5px 9px; font: inherit; outline: none; }
+.ide-ctr-exec input { flex: 1 1 auto; min-width: 0; background: #0b0f15; color: #d6deeb;
+  border: 1px solid var(--line, #232a35); border-radius: 6px; padding: 5px 9px; font: inherit; outline: none; }
 .ide-ctr-exec input:focus { border-color: var(--cyan, #53d4ff); }
+.ide-ctr-exec input:disabled { color: #5a6b82; }
 
 .ide-editor-ph { margin: auto; padding: 22px 18px; color: #7d8ba0; line-height: 1.6; font-size: 12.5px; text-align: center; max-width: 380px; }
 .ide-explorer-ph { padding: 22px 18px; color: #7d8ba0; line-height: 1.6; font-size: 12.5px; }
@@ -1022,6 +1035,7 @@ if (root) {
     if (t.type === "container") {
       clearInterval(t.poll);
       void stopLogStream(t, "close");
+      void stopExecStream(t, "close");
       t.panelEl?.remove();
     }
     tabs.splice(idx, 1);
@@ -1053,7 +1067,10 @@ if (root) {
     // stash outgoing file editor state
     const prev = activeTab();
     if (prev && prev.type === "file") { prev.value = taEl.value; prev.scrollTop = taEl.scrollTop; }
-    if (prev && prev.type === "container" && prev.key !== key) void stopLogStream(prev, "navigation");
+    if (prev && prev.type === "container" && prev.key !== key) {
+      void stopLogStream(prev, "navigation");
+      void stopExecStream(prev, "navigation");
+    }
     activeKey = key;
     editorPh.style.display = "none";
     for (const p of editorBody.querySelectorAll(".ide-ctr-panel")) p.classList.remove("active");
@@ -1265,6 +1282,21 @@ if (root) {
     return failure;
   }
 
+  function execCommandFailure(command, output, exit, fallbackCode = "EXEC_FAILED") {
+    const raw = String(output || "").trim();
+    const detail = raw.replace(/\s+/g, " ");
+    const failure = new Error(detail || `wvrun exec exited ${exit ?? "unknown"}`);
+    failure.code = /no such container|unknown container|does not exist/i.test(raw)
+      ? "EXEC_CONTAINER_NOT_FOUND"
+      : /not running|is not running|exited|stopped|dead|no live process|pid reuse/i.test(raw)
+        ? "EXEC_TARGET_NOT_RUNNING"
+        : fallbackCode;
+    failure.exit = exit ?? null;
+    failure.stdout = raw;
+    failure.command = command;
+    return failure;
+  }
+
   function repaintContainerList() {
     const list = document.getElementById("ide-dk-clist");
     if (list) renderContainerList(list);
@@ -1306,6 +1338,65 @@ if (root) {
                 : `guest log stream ended · exit ${t.lastStreamExit}`;
     }
     if (t.followEl) t.followEl.disabled = Boolean(t.streamStopping || t.streamStarting);
+    renderExec(t);
+  }
+
+  function renderExec(t) {
+    if (!t || !t.execOutputEl) return;
+    const state = t.execStopping
+      ? "stopping"
+      : t.execStarting
+        ? "starting"
+        : t.execStream
+          ? "active"
+          : t.execError
+            ? "error"
+            : t.execStatus || "idle";
+    if (t.execStateEl) {
+      t.execStateEl.dataset.state = state;
+      t.execStateEl.textContent = t.execStopping
+        ? "cancelling interactive exec…"
+        : t.execStarting
+          ? "starting interactive exec…"
+          : t.execStream
+            ? "interactive container shell"
+            : t.execError
+              ? `${t.execCode || "EXEC_FAILED"}: ${t.execError}`
+              : state === "exited"
+                ? "exec shell exited"
+                : "exec idle";
+    }
+    if (t.execProvenanceEl) {
+      t.execProvenanceEl.textContent = `container ${t.name} · id ${t.id} · image ${t.image || "unknown"}`;
+    }
+    if (t.execOutputEl) {
+      t.execOutputEl.textContent = t.execOutput || (t.execError
+        ? `${t.execCode || "EXEC_FAILED"}: ${t.execError}`
+        : state === "exited"
+          ? "interactive exec exited; start a new container shell"
+          : "Exec is idle. Start a shell with wvrun exec -it.");
+      t.execOutputEl.scrollTop = t.execOutputEl.scrollHeight;
+    }
+    if (t.execStartEl) {
+      t.execStartEl.disabled = Boolean(t.execStream || t.execStarting || t.execStopping);
+      t.execStartEl.textContent = t.execStream ? "Running" : "Start Exec";
+    }
+    if (t.execExitEl) t.execExitEl.disabled = !t.execStream || t.execStopping;
+    if (t.execInput) t.execInput.disabled = !t.execStream || t.execStarting || t.execStopping;
+    if (t.execForm) t.execForm.dataset.state = state;
+  }
+
+  function appendExecOutput(t, line) {
+    const value = String(line ?? "").replace(/\r/g, "");
+    if (t.execOutput && !t.execOutput.endsWith("\n")) t.execOutput += "\n";
+    t.execOutput += value + "\n";
+    renderExec(t);
+  }
+
+  function appendExecInput(t, command) {
+    if (t.execOutput && !t.execOutput.endsWith("\n")) t.execOutput += "\n";
+    t.execOutput += `$ ${command}\n`;
+    renderExec(t);
   }
 
   function replaceContainerLogs(t, text) {
@@ -1361,17 +1452,160 @@ if (root) {
     }
   }
 
-  async function stopContainerLogStreams(id) {
+  async function stopExecStream(t, reason = "close") {
+    if (!t || t.type !== "container") return;
+    if (t.execStopPromise) await t.execStopPromise;
+    t.execStopping = true;
+    t.execGeneration += 1;
+    const starting = t.execStartPromise;
+    if (starting) {
+      try { await starting; } catch { /* start failure is rendered by the start path */ }
+    }
+    const handle = t.execStream;
+    t.execGeneration += 1;
+    t.execStream = null;
+    t.execStarting = false;
+    if (!handle) {
+      t.execStopping = false;
+      if (reason === "close" || reason === "navigation" || reason === "user" || reason === "container-action") {
+        t.execError = "";
+        t.execCode = "";
+        t.execStatus = "exited";
+      }
+      renderContainerLogs(t);
+      return;
+    }
+    renderContainerLogs(t);
+    const stopping = (async () => {
+      try {
+        await handle.stop();
+      } catch (error) {
+        if (reason !== "close" && reason !== "navigation") {
+          t.execCode = error?.code || "EXEC_STOP_FAILED";
+          t.execError = error?.message || String(error);
+          t.execStatus = "error";
+        }
+      } finally {
+        t.execStopping = false;
+        if (reason === "close" || reason === "navigation" || reason === "user" || reason === "container-action") {
+          t.execError = "";
+          t.execCode = "";
+          t.execStatus = "exited";
+        }
+        renderContainerLogs(t);
+      }
+    })();
+    t.execStopPromise = stopping;
+    try { await stopping; } finally {
+      if (t.execStopPromise === stopping) t.execStopPromise = null;
+    }
+  }
+
+  async function stopContainerStreams(id) {
     for (const t of tabs) {
-      if (t.type === "container" && t.id === id && (t.stream || t.stopPromise)) {
-        await stopLogStream(t, "container-action");
+      if (t.type !== "container" || t.id !== id) continue;
+      if (t.stream || t.stopPromise) await stopLogStream(t, "container-action");
+      if (t.execStream || t.execStopPromise || t.execStartPromise) {
+        await stopExecStream(t, "container-action");
       }
     }
   }
 
   async function stopAllLogStreams(reason = "boot") {
     for (const t of tabs) {
-      if (t.type === "container" && (t.stream || t.stopPromise)) await stopLogStream(t, reason);
+      if (t.type !== "container") continue;
+      if (t.stream || t.stopPromise) await stopLogStream(t, reason);
+      if (t.execStream || t.execStopPromise || t.execStartPromise) await stopExecStream(t, reason);
+    }
+  }
+
+  async function startExecStream(t) {
+    if (!t || t.type !== "container") return null;
+    if (t.execStream) return t.execStream;
+    if (t.execStartPromise) return t.execStartPromise;
+    if (t.execStopPromise) await t.execStopPromise;
+    if (t.execStream) return t.execStream;
+    const generation = ++t.execGeneration;
+    const command = `wvrun exec -it ${shq(t.id)} sh`;
+    t.execStarting = true;
+    t.execStatus = "starting";
+    t.execError = "";
+    t.execCode = "";
+    t.execOutput = "";
+    t.execCommand = command;
+    renderContainerLogs(t);
+    let handle = null;
+    const request = (async () => {
+      try {
+        if (t.logRefreshPromise) await t.logRefreshPromise;
+        await stopLogStream(t, "exec");
+        if (t.stopPromise) await t.stopPromise;
+        if (t.execGeneration !== generation || t.execStopping) return null;
+        handle = api().stream(command, (line) => {
+          if (t.execGeneration !== generation || !t.execStream) return;
+          appendExecOutput(t, line);
+        }, {
+          onEnd: ({ error, exit, natural }) => {
+            if (t.execGeneration !== generation) return;
+            if (t.execStream === handle) t.execStream = null;
+            t.execStarting = false;
+            t.execStopping = false;
+            if (error && error.code !== "GUEST_STOPPED") {
+              const failure = execCommandFailure(command, t.execOutput, exit, error.code || "EXEC_STREAM_FAILED");
+              t.execCode = failure.code;
+              t.execError = failure.message;
+              t.execStatus = "error";
+            } else if (!error && exit != null && exit !== 0) {
+              const failure = execCommandFailure(command, t.execOutput, exit);
+              t.execCode = failure.code;
+              t.execError = failure.message;
+              t.execStatus = "error";
+            } else if (error?.code === "GUEST_STOPPED") {
+              t.execCode = "EXEC_GUEST_STOPPED";
+              t.execError = error.message || "guest stopped during interactive exec";
+              t.execStatus = "error";
+            } else {
+              t.execCode = "";
+              t.execError = "";
+              t.execStatus = "exited";
+            }
+            renderContainerLogs(t);
+            void refreshContainers({ force: true });
+            if (natural) selectSideView("docker");
+            if (natural && !error && exit === 0) {
+              setTimeout(() => {
+                if (tabByKey(t.key)) closeTab(t.key);
+              }, 0);
+            }
+          },
+        });
+        if (t.execGeneration !== generation || t.execStopping) {
+          await handle.stop();
+          return null;
+        }
+        t.execStream = handle;
+        t.execStatus = "active";
+        return handle;
+      } catch (error) {
+        if (t.execGeneration === generation) {
+          const failure = error?.code?.startsWith?.("EXEC_")
+            ? error
+            : execCommandFailure(command, t.execOutput, error?.exit, "EXEC_START_FAILED");
+          t.execCode = failure.code || "EXEC_START_FAILED";
+          t.execError = failure.message || String(failure);
+          t.execStatus = "error";
+        }
+        return null;
+      } finally {
+        if (t.execGeneration === generation) {
+          t.execStarting = false;
+          renderContainerLogs(t);
+        }
+      }
+    })();
+    t.execStartPromise = request;
+    try { return await request; } finally {
+      if (t.execStartPromise === request) t.execStartPromise = null;
     }
   }
 
@@ -1513,7 +1747,7 @@ if (root) {
     try {
       // A polling refresh may have started just before the click. Join it before issuing a
       // mutating command so the subsequent forced refresh cannot accidentally reuse a pre-action ps.
-      await stopContainerLogStreams(confirmed.id);
+      await stopContainerStreams(confirmed.id);
       if (containerRefreshPromise) await containerRefreshPromise;
       confirmed = containerLedger.rows.find((item) => item.id === row.id);
       if (!confirmed) {
@@ -1918,20 +2152,43 @@ if (root) {
         <label><input type="checkbox" data-a="follow"> Follow</label>
       </div>
       <pre class="ide-ctr-logs">loading logs…</pre>
-      <form class="ide-ctr-exec">
-        <span class="p">$</span>
-        <input type="text" placeholder="exec a command in the container (e.g. ls -la /) — runs via wvrun exec" autocomplete="off" spellcheck="false" />
-      </form>`;
+      <section class="ide-ctr-exec" data-a="exec-pane">
+        <div class="ide-ctr-exec-head">
+          <strong>Exec</strong>
+          <span class="sp"></span>
+          <span class="ide-ctr-exec-status" data-a="exec-status">exec idle</span>
+          <button class="ide-mini" type="button" data-a="exec-start">Start Exec</button>
+          <button class="ide-mini" type="button" data-a="exec-exit" disabled>Exit Exec</button>
+        </div>
+        <div class="ide-ctr-exec-provenance" data-a="exec-provenance"></div>
+        <pre class="ide-ctr-exec-output" data-a="exec-output">Exec is idle. Start a shell with wvrun exec -it.</pre>
+        <form class="ide-ctr-exec-form" data-a="exec-form">
+          <span class="p">$</span>
+          <input type="text" data-a="exec-input" placeholder="type a command in the interactive container (e.g. ls -la /)" autocomplete="off" spellcheck="false" />
+          <button class="ide-mini" type="submit" data-a="exec-send">Send</button>
+        </form>
+      </section>`;
     panel.querySelector('[data-a="identity"]').textContent = `${c.image || ""} · ${c.id}`;
     const logsEl = panel.querySelector(".ide-ctr-logs");
     const followEl = panel.querySelector('[data-a="follow"]');
+    const execForm = panel.querySelector('[data-a="exec-form"]');
+    const execInput = panel.querySelector('[data-a="exec-input"]');
+    const execOutputEl = panel.querySelector('[data-a="exec-output"]');
+    const execStartEl = panel.querySelector('[data-a="exec-start"]');
+    const execExitEl = panel.querySelector('[data-a="exec-exit"]');
     editorBody.appendChild(panel);
     const t = { key, type: "container", title: c.name || c.id, id: c.id, name: c.name || c.id,
       image: c.image || "", panelEl: panel, logsEl, followEl,
       streamStateEl: panel.querySelector('[data-a="stream-status"]'), follow: false,
       stream: null, stopPromise: null, streamGeneration: 0, streamStarting: false,
       streamStopping: false, logsText: "", logsLoading: true, logsError: "", logsCode: "",
-      lastStreamExit: null, logRefreshPromise: null };
+      lastStreamExit: null, logRefreshPromise: null,
+      execForm, execInput, execOutputEl, execStartEl, execExitEl,
+      execStateEl: panel.querySelector('[data-a="exec-status"]'),
+      execProvenanceEl: panel.querySelector('[data-a="exec-provenance"]'),
+      execStream: null, execStopPromise: null, execStartPromise: null, execGeneration: 0,
+      execStarting: false, execStopping: false, execError: "", execCode: "",
+      execStatus: "idle", execOutput: "", execCommand: "" };
     tabs.push(t);
 
     panel.querySelector('[data-a="refresh"]').addEventListener("click", () => {
@@ -1942,30 +2199,47 @@ if (root) {
       if (t.follow) void startLogStream(t);
       else void stopLogStream(t, "toggle");
     });
-    const execForm = panel.querySelector(".ide-ctr-exec");
-    const execInput = execForm.querySelector("input");
     execForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const cmd = execInput.value.trim();
       if (!cmd) return;
       execInput.value = "";
       try {
-        await stopLogStream(t, "exec");
-        t.logsText += (t.logsText && !t.logsText.endsWith("\n") ? "\n" : "") + `$ ${cmd}\n`;
-        renderContainerLogs(t);
-        const res = await bgExec("wvrun exec " + shq(t.id) + " sh -c " + shq(cmd), 45000);
-        t.logsText += String(res.stdout || "").replace(/\r/g, "") + (res.exit ? `[exit ${res.exit}]\n` : "");
-        renderContainerLogs(t);
+        const stream = t.execStream || await startExecStream(t);
+        if (!stream) throw Object.assign(new Error(t.execError || "interactive exec did not start"), {
+          code: t.execCode || "EXEC_START_FAILED",
+        });
+        appendExecInput(t, cmd);
+        stream.send(new TextEncoder().encode(`${cmd}\r`));
       } catch (err) {
-        t.logsCode = err?.code || "EXEC_FAILED";
-        t.logsError = err?.message || String(err);
-        renderContainerLogs(t);
+        t.execCode = err?.code || "EXEC_FAILED";
+        t.execError = err?.message || String(err);
+        t.execStatus = "error";
+        renderExec(t);
+      }
+    });
+    execStartEl.addEventListener("click", () => {
+      void startExecStream(t).then((stream) => {
+        if (stream) execInput.focus();
+      });
+    });
+    execExitEl.addEventListener("click", () => {
+      if (t.execStream) {
+        appendExecInput(t, "exit");
+        t.execStream.send(new TextEncoder().encode("exit\r"));
+      }
+    });
+    execInput.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && t.execStream) {
+        event.preventDefault();
+        void stopExecStream(t, "user");
       }
     });
 
     activateTab(key);
     renderTabs();
     renderContainerLogs(t);
+    renderExec(t);
     void refreshContainerLogs(t);
   }
 
@@ -2069,7 +2343,42 @@ if (root) {
         streamGeneration: tab.streamGeneration,
         logsText: tab.logsText,
         logsError: tab.logsError,
+        execActive: Boolean(tab.execStream),
+        execStarting: tab.execStarting,
+        execStopping: tab.execStopping,
+        execGeneration: tab.execGeneration,
+        execCode: tab.execCode,
+        execError: tab.execError,
+        execStatus: tab.execStatus,
+        execOutput: tab.execOutput,
       }));
+    window.__dockerExecStateForTest = () => tabs
+      .filter((tab) => tab.type === "container")
+      .map((tab) => ({
+        id: tab.id,
+        name: tab.name,
+        image: tab.image,
+        command: tab.execCommand,
+        active: Boolean(tab.execStream),
+        starting: tab.execStarting,
+        stopping: tab.execStopping,
+        generation: tab.execGeneration,
+        status: tab.execStatus,
+        code: tab.execCode,
+        error: tab.execError,
+        output: tab.execOutput,
+      }));
+    window.__dockerOpenContainerForTest = (row) => {
+      if (!row || row.id == null || String(row.id).length === 0) return false;
+      openContainer({
+        id: String(row.id),
+        name: String(row.name || row.id),
+        image: String(row.image || "unknown"),
+        status: String(row.status || "unknown"),
+        exit: row.exit == null ? "" : String(row.exit),
+      });
+      return true;
+    };
   }
 
   if (ready()) showReady(); else showBooting();
