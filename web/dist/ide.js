@@ -60,7 +60,16 @@ const css = `
 .ide-dk-row:hover { background: var(--panel-2, #151a22); }
 .ide-dk-row .nm { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ide-dk-row .sub { color: #6f8097; font-size: 11px; }
-.ide-dk-ctr { cursor: pointer; }
+.ide-dk-ctr { cursor: pointer; align-items: flex-start; }
+.ide-dk-ctr .nm { min-width: 0; white-space: normal; line-height: 1.35; }
+.ide-dk-ctr .nm .sub { display: block; overflow-wrap: anywhere; }
+.ide-dk-section-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ide-dk-section-head .ide-dk-h { flex: 1 1 auto; }
+.ide-dk-ctr-actions { display: flex; flex: 0 0 auto; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.ide-dk-ctr-meta { display: block; color: #8fa3bf; font-size: 10.5px; overflow-wrap: anywhere; }
+.ide-dk-ctr-error { margin: 0 12px 6px; padding: 6px 8px; border: 1px solid #6e3b3b;
+  border-radius: 5px; color: #f0b0b0; background: #251719; font-size: 11px; line-height: 1.4; }
+.ide-dk-ctr-action { color: #f2c94c; font-size: 10.5px; }
 .ide-dk-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; background: #5a6b82; }
 .ide-dk-dot.running { background: var(--green, #2ea043); box-shadow: 0 0 0 3px rgba(46,160,67,.2); }
 .ide-mini { background: #234; color: #cfe3ff; border: 1px solid #2b5278; border-radius: 6px;
@@ -219,10 +228,49 @@ function dockerShq(value) {
 
 function parsePs(stdout) {
   const out = [];
-  for (const line of (stdout || "").split("\n")) {
+  for (const [index, line] of String(stdout || "").split("\n").entries()) {
     const s = line.trim();
-    if (s[0] !== "{") continue;
-    try { out.push(JSON.parse(s)); } catch { /* echoed/partial line */ }
+    if (!s) continue;
+    let value;
+    try {
+      value = JSON.parse(s);
+    } catch (error) {
+      const failure = new Error(`wvrun ps returned malformed JSON on line ${index + 1}`);
+      failure.code = "PS_MALFORMED";
+      failure.cause = error;
+      throw failure;
+    }
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      const failure = new Error(`wvrun ps returned a non-object record on line ${index + 1}`);
+      failure.code = "PS_MALFORMED";
+      throw failure;
+    }
+    for (const field of ["id", "name", "image", "status", "started", "exit"]) {
+      if (!(field in value)) {
+        const failure = new Error(`wvrun ps record is missing ${field}`);
+        failure.code = "PS_MALFORMED";
+        throw failure;
+      }
+    }
+    if (typeof value.id !== "string" || !value.id || typeof value.name !== "string" ||
+      typeof value.image !== "string" || typeof value.status !== "string") {
+      const failure = new Error(`wvrun ps record has invalid field types on line ${index + 1}`);
+      failure.code = "PS_MALFORMED";
+      throw failure;
+    }
+    if (!/^(created|running|exited|stopped|dead)$/.test(value.status)) {
+      const failure = new Error(`wvrun ps returned unknown status ${value.status}`);
+      failure.code = "PS_MALFORMED";
+      throw failure;
+    }
+    out.push({
+      id: value.id,
+      name: value.name,
+      image: value.image,
+      status: value.status,
+      started: String(value.started ?? ""),
+      exit: String(value.exit ?? ""),
+    });
   }
   return out;
 }
@@ -257,6 +305,17 @@ const dockerCatalog = {
   lastRun: null,
   runSeq: 0,
   runNameOverride: "",
+};
+
+// Containers are a confirmed guest projection. Keep the last successful ps -a result across
+// re-renders so a command error cannot turn a known row into a guessed transition or an empty list.
+const containerLedger = {
+  status: "unknown", // unknown | loading | ready | error
+  code: "",
+  error: "",
+  rows: [],
+  lastCommand: "",
+  action: null, // { id, name, kind, command }
 };
 
 // ── DOM assembly ─────────────────────────────────────────────────────────────
@@ -406,6 +465,15 @@ if (root) {
     dockerCatalog.selected = null;
     dockerCatalog.lastRun = null;
     dockerCatalog.runNameOverride = "";
+  }
+
+  function resetContainerLedger() {
+    containerLedger.status = "unknown";
+    containerLedger.code = "";
+    containerLedger.error = "";
+    containerLedger.rows = [];
+    containerLedger.lastCommand = "";
+    containerLedger.action = null;
   }
 
   function catalogItems(raw) {
@@ -612,6 +680,7 @@ if (root) {
     dockerRuntime.booting = bootInProgress;
     dockerRuntime.pullNotice = "";
     resetDockerCatalog();
+    resetContainerLedger();
   }
 
   function probeDockerRuntime() {
@@ -1131,6 +1200,7 @@ if (root) {
   // ── Docker sidebar view ─────────────────────────────────────────────────────
   let psPoll = null;
   let psInFlight = false;
+  let containerRefreshPromise = null;
   function stopPsPoll() { clearInterval(psPoll); psPoll = null; }
   function startPsPoll() {
     stopPsPoll();
@@ -1159,6 +1229,186 @@ if (root) {
         `${run.exit != null ? ` · exit ${run.exit}` : ""}: ${run.error}`;
     }
     return state;
+  }
+
+  function containerAge(row) {
+    const started = Number(row.started);
+    if (!Number.isFinite(started) || started <= 0) return `started ${row.started || "unknown"}`;
+    const seconds = Math.max(0, Math.floor(Date.now() / 1000) - Math.floor(started));
+    if (row.status === "running" || row.status === "created") {
+      if (seconds < 60) return `up ${seconds}s`;
+      if (seconds < 3600) return `up ${Math.floor(seconds / 60)}m`;
+      return `up ${Math.floor(seconds / 3600)}h`;
+    }
+    if (seconds < 60) return `started ${seconds}s ago`;
+    if (seconds < 3600) return `started ${Math.floor(seconds / 60)}m ago`;
+    return `started ${Math.floor(seconds / 3600)}h ago`;
+  }
+
+  function guestCommandFailure(command, result, fallbackCode = "GUEST_COMMAND_FAILED") {
+    const raw = String(result?.stdout || "").trim();
+    const detail = raw.replace(/\s+/g, " ");
+    const failure = new Error(detail || `guest command exited ${result?.exit ?? "unknown"}`);
+    failure.code = /no such container|not found/i.test(raw) ? "CONTAINER_NOT_FOUND" : fallbackCode;
+    failure.exit = result?.exit ?? null;
+    failure.stdout = raw;
+    failure.command = command;
+    return failure;
+  }
+
+  function repaintContainerList() {
+    const list = document.getElementById("ide-dk-clist");
+    if (list) renderContainerList(list);
+  }
+
+  function confirmContainerRows(rows, predicate, code, message) {
+    if (!rows) {
+      const failure = new Error(containerLedger.error || "fresh guest ps -a confirmation failed");
+      failure.code = containerLedger.code || "PS_FAILED";
+      throw failure;
+    }
+    const matched = rows.find(predicate);
+    if (!matched) {
+      const failure = new Error(message);
+      failure.code = code;
+      throw failure;
+    }
+    return matched;
+  }
+
+  function requireFreshContainerRows(rows) {
+    if (rows) return rows;
+    const failure = new Error(containerLedger.error || "fresh guest ps -a confirmation failed");
+    failure.code = containerLedger.code || "PS_FAILED";
+    throw failure;
+  }
+
+  function findContainerImage(row) {
+    return dockerCatalog.entries.find((entry) =>
+      entry.name === row.image || entry.repo === row.image || entry.ref === row.image ||
+      entry.bundlePath === `/opt/containers/${row.image}`,
+    ) || null;
+  }
+
+  async function runGuestContainerCommand(command, fallbackCode = "GUEST_COMMAND_FAILED") {
+    containerLedger.lastCommand = command;
+    const result = await bgExec(command, 60000);
+    if (!result || Number(result.exit) !== 0) throw guestCommandFailure(command, result, fallbackCode);
+    return result;
+  }
+
+  function setContainerActionCommand(command) {
+    if (containerLedger.action) containerLedger.action.command = command;
+    containerLedger.lastCommand = command;
+    repaintContainerList();
+  }
+
+  async function runContainerAction(row, kind) {
+    if (!runtimeReady() || containerLedger.action) return;
+    let confirmed = containerLedger.rows.find((item) => item.id === row.id);
+    if (!confirmed) return;
+    const name = confirmed.name || confirmed.id;
+    containerLedger.action = { id: confirmed.id, name, kind, command: "" };
+    containerLedger.error = "";
+    containerLedger.code = "";
+    repaintContainerList();
+    try {
+      // A polling refresh may have started just before the click. Join it before issuing a
+      // mutating command so the subsequent forced refresh cannot accidentally reuse a pre-action ps.
+      if (containerRefreshPromise) await containerRefreshPromise;
+      confirmed = containerLedger.rows.find((item) => item.id === row.id);
+      if (!confirmed) {
+        const failure = new Error("container disappeared before the guest action began");
+        failure.code = "CONTAINER_NOT_FOUND";
+        throw failure;
+      }
+      if (kind === "stop") {
+        const command = `wvrun stop ${shq(confirmed.id)}`;
+        setContainerActionCommand(command);
+        await runGuestContainerCommand(command, "STOP_REJECTED");
+        const rows = requireFreshContainerRows(await refreshContainers({ force: true }));
+        const current = rows?.find((item) => item.id === confirmed.id);
+        if (current && /^(running|created)$/.test(current.status)) {
+          const failure = new Error("guest stop returned, but fresh ps -a still reports the container active");
+          failure.code = "STOP_UNCONFIRMED";
+          throw failure;
+        }
+      } else if (kind === "remove") {
+        const command = `wvrun rm ${shq(confirmed.id)}`;
+        setContainerActionCommand(command);
+        await runGuestContainerCommand(command, "REMOVE_REJECTED");
+        const rows = requireFreshContainerRows(await refreshContainers({ force: true }));
+        if (rows.some((item) => item.id === confirmed.id)) {
+          const failure = new Error("guest remove returned, but fresh ps -a still reports the container");
+          failure.code = "REMOVE_UNCONFIRMED";
+          throw failure;
+        }
+      } else if (kind === "restart") {
+        const image = findContainerImage(confirmed);
+        if (!image?.bundlePath) {
+          const failure = new Error(`no guest catalog bundle is available for image ${confirmed.image || "unknown"}`);
+          failure.code = "RESTART_IMAGE_UNAVAILABLE";
+          throw failure;
+        }
+        if (/^(running|created)$/.test(confirmed.status)) {
+          const stop = `wvrun stop ${shq(confirmed.id)}`;
+          setContainerActionCommand(stop);
+          await runGuestContainerCommand(stop, "RESTART_STOP_REJECTED");
+          const stopped = requireFreshContainerRows(await refreshContainers({ force: true }));
+          const current = stopped?.find((item) => item.id === confirmed.id);
+          if (current && /^(running|created)$/.test(current.status)) {
+            const failure = new Error("guest restart stop was not confirmed by fresh ps -a");
+            failure.code = "RESTART_STOP_UNCONFIRMED";
+            throw failure;
+          }
+        }
+        const remove = `wvrun rm ${shq(confirmed.id)}`;
+        setContainerActionCommand(remove);
+        await runGuestContainerCommand(remove, "RESTART_REMOVE_REJECTED");
+        const removed = requireFreshContainerRows(await refreshContainers({ force: true }));
+        if (removed.some((item) => item.id === confirmed.id)) {
+          const failure = new Error("guest restart remove was not confirmed by fresh ps -a");
+          failure.code = "RESTART_REMOVE_UNCONFIRMED";
+          throw failure;
+        }
+        const restart = `wvrun run -d --name ${shq(name)} ${dockerShq(image.bundlePath)}`;
+        setContainerActionCommand(restart);
+        const result = await runGuestContainerCommand(restart, "RESTART_REJECTED");
+        const identity = String(result.stdout || "").trim().split(/\s+/).filter(Boolean).pop() || "";
+        if (!/^[0-9a-f]{12}$/i.test(identity)) {
+          const failure = new Error(identity
+            ? `guest restart returned an invalid container identity: ${identity}`
+            : "guest restart returned success without a container identity");
+          failure.code = "RESTART_PROTOCOL_FAILED";
+          failure.exit = result.exit;
+          failure.stdout = String(result.stdout || "").trim();
+          throw failure;
+        }
+        const restarted = await refreshContainers({ force: true });
+        const replacement = confirmContainerRows(
+          restarted,
+          (item) => item.id === identity && item.name === name,
+          "RESTART_UNCONFIRMED",
+          "guest restart identity was not present in fresh ps -a",
+        );
+        if (!/^(running|created)$/.test(replacement.status)) {
+          const failure = new Error(`guest restart identity is ${replacement.status}, not active`);
+          failure.code = "RESTART_UNCONFIRMED";
+          throw failure;
+        }
+      } else {
+        const failure = new Error(`unknown container action ${kind}`);
+        failure.code = "ACTION_UNKNOWN";
+        throw failure;
+      }
+    } catch (error) {
+      containerLedger.code = error?.code || "ACTION_FAILED";
+      containerLedger.error = error?.message || String(error);
+      if (error?.command) containerLedger.lastCommand = error.command;
+    } finally {
+      containerLedger.action = null;
+      repaintContainerList();
+    }
   }
 
   function renderImageInspect(img) {
@@ -1280,16 +1530,24 @@ if (root) {
     dkEl.appendChild(imgSec);
     // Containers section
     const cSec = document.createElement("div"); cSec.className = "ide-dk-sec";
-    cSec.appendChild(mk("div", "ide-dk-h", "Containers"));
+    const cHead = document.createElement("div"); cHead.className = "ide-dk-section-head";
+    cHead.appendChild(mk("div", "ide-dk-h", "Containers"));
+    const refresh = mk("button", "ide-mini", "↻ Refresh");
+    refresh.dataset.action = "refresh-containers";
+    refresh.disabled = Boolean(containerLedger.action);
+    refresh.title = "Refresh from the guest's wvrun ps -a";
+    refresh.addEventListener("click", () => { void refreshContainers({ force: true }); });
+    cHead.appendChild(refresh);
+    cSec.appendChild(cHead);
     const list = document.createElement("div"); list.id = "ide-dk-clist";
     if (!runtimeReady()) {
       list.appendChild(mk("div", "ide-dk-note", "Container rows stay locked until the guest probe confirms wvrun and the baked catalog."));
     } else {
-      list.appendChild(mk("div", "ide-dk-note", "loading (wvrun ps -a)…"));
+      renderContainerList(list);
     }
     cSec.appendChild(list);
     dkEl.appendChild(cSec);
-    if (runtimeReady()) refreshContainers();
+    if (runtimeReady() && containerLedger.status === "unknown") void refreshContainers();
   }
 
   async function runImage(img) {
@@ -1345,31 +1603,104 @@ if (root) {
     }
   }
 
-  async function refreshContainers() {
-    if (sideView !== "docker" || !runtimeReady() || psInFlight) return;
+  async function refreshContainers({ force = false } = {}) {
+    if (sideView !== "docker" || !runtimeReady()) return null;
+    if (containerLedger.action && !force) return null;
+    if (containerRefreshPromise) return containerRefreshPromise;
     const list = document.getElementById("ide-dk-clist");
-    if (!list) return;
-    psInFlight = true;
-    try {
-      const res = await bgExec("wvrun ps -a", 30000);
-      renderContainerList(list, parsePs(res.stdout));
-    } catch (e) {
-      list.replaceChildren(mk("div", "ide-dk-note", "wvrun ps failed: " + (e.message || e)));
-    } finally { psInFlight = false; }
+    containerLedger.status = "loading";
+    containerLedger.error = "";
+    containerLedger.code = "";
+    containerLedger.lastCommand = "wvrun ps -a";
+    if (list) renderContainerList(list);
+    const request = (async () => {
+      try {
+        const res = await bgExec("wvrun ps -a", 30000);
+        if (!res || Number(res.exit) !== 0) throw guestCommandFailure("wvrun ps -a", res, "PS_FAILED");
+        const rows = parsePs(res.stdout);
+        containerLedger.rows = rows;
+        containerLedger.status = "ready";
+        containerLedger.error = "";
+        containerLedger.code = "";
+        return rows;
+      } catch (error) {
+        containerLedger.status = "error";
+        containerLedger.code = error?.code || "PS_FAILED";
+        containerLedger.error = error?.message || String(error);
+        return null;
+      } finally {
+        containerRefreshPromise = null;
+        repaintContainerList();
+      }
+    })();
+    containerRefreshPromise = request;
+    return request;
   }
 
-  function renderContainerList(list, rows) {
+  function renderContainerList(list) {
+    if (!list) return;
     list.replaceChildren();
-    if (!rows.length) { list.appendChild(mk("div", "ide-dk-note", "No containers. Run an image above.")); return; }
-    for (const c of rows) {
+    if (containerLedger.status === "loading") {
+      list.appendChild(mk("div", "ide-dk-note", containerLedger.rows.length
+        ? "Refreshing the confirmed guest state…"
+        : "loading (wvrun ps -a)…"));
+    }
+    if (containerLedger.error) {
+      const error = mk("div", "ide-dk-ctr-error",
+        `Guest state not updated (${containerLedger.code || "PS_FAILED"}): ${containerLedger.error}`);
+      if (containerLedger.lastCommand) error.appendChild(mk("div", "ide-dk-ctr-meta", `command: ${containerLedger.lastCommand}`));
+      list.appendChild(error);
+    }
+    if (containerLedger.action) {
+      const action = containerLedger.action;
+      list.appendChild(mk("div", "ide-dk-ctr-action",
+        `guest: ${action.kind} ${action.name}…${action.command ? ` (${action.command})` : ""}`));
+    }
+    if (!containerLedger.rows.length) {
+      list.appendChild(mk("div", "ide-dk-note", containerLedger.status === "ready"
+        ? "No containers. Run an image above."
+        : "No confirmed container rows yet."));
+      return;
+    }
+    for (const c of containerLedger.rows) {
       const row = document.createElement("div"); row.className = "ide-dk-row ide-dk-ctr";
+      row.dataset.id = c.id;
+      row.dataset.name = c.name;
+      row.dataset.status = c.status;
       const dot = document.createElement("span");
       dot.className = "ide-dk-dot" + (c.status === "running" ? " running" : "");
       const nm = document.createElement("div"); nm.className = "nm";
-      nm.innerHTML = `${c.name || c.id}<span class="sub"> ${c.status || ""}${c.exit ? " (" + c.exit + ")" : ""}</span>`;
-      nm.title = (c.image || "") + " · " + c.id;
-      row.append(dot, nm);
-      row.addEventListener("click", () => openContainer(c));
+      nm.append(
+        mk("span", null, c.name || c.id),
+        mk("span", "sub", `${c.status} · ${c.id}`),
+        mk("span", "ide-dk-ctr-meta", `${c.image || "image unknown"} · ${containerAge(c)}`),
+      );
+      if (c.exit !== "") nm.appendChild(mk("span", "ide-dk-ctr-meta", `exit ${c.exit}`));
+      nm.title = `${c.image || ""} · ${c.id}`;
+      const actions = document.createElement("div"); actions.className = "ide-dk-ctr-actions";
+      const busy = Boolean(containerLedger.action);
+      for (const [kind, label, allowed] of [
+        ["stop", "Stop", /^(running|created)$/.test(c.status)],
+        ["restart", "Restart", true],
+        ["remove", "Remove", true],
+      ]) {
+        const button = mk("button", "ide-mini", label);
+        button.dataset.action = `${kind}-container`;
+        button.dataset.id = c.id;
+        button.disabled = busy || !allowed;
+        button.title = busy
+          ? "Waiting for the guest command and a confirming ps -a"
+          : allowed ? `${label} this guest container` : "The guest reports this container is not active";
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          void runContainerAction(c, kind);
+        });
+        actions.appendChild(button);
+      }
+      row.append(dot, nm, actions);
+      row.addEventListener("click", (event) => {
+        if (!event.target.closest("button")) openContainer(c);
+      });
       list.appendChild(row);
     }
   }
@@ -1473,10 +1804,19 @@ if (root) {
       guestUp: guestUp(),
       alpineAssets: alpineAssetsPresent(),
       alpineStatus: dockerRuntime.alpineStatus,
+      generation: dockerRuntime.generation,
       catalogStatus: dockerCatalog.status,
+      catalogGeneration: dockerCatalog.generation,
+      catalogLoading: Boolean(dockerCatalog.promise),
       catalogError: dockerCatalog.error,
       catalog: dockerCatalog.entries.map((entry) => ({ ...entry, raw: entry.raw })),
       lastRun: dockerCatalog.lastRun,
+      containersStatus: containerLedger.status,
+      containersError: containerLedger.error,
+      containersCode: containerLedger.code,
+      containers: containerLedger.rows,
+      containerAction: containerLedger.action,
+      containerLastCommand: containerLedger.lastCommand,
     });
     window.__dockerCatalogForTest = () => ({
       status: dockerCatalog.status,
@@ -1498,6 +1838,14 @@ if (root) {
       dockerCatalog.runNameOverride = name == null ? "" : String(name);
       return dockerCatalog.runNameOverride;
     };
+    window.__dockerContainerStateForTest = () => ({
+      status: containerLedger.status,
+      error: containerLedger.error,
+      code: containerLedger.code,
+      rows: containerLedger.rows,
+      action: containerLedger.action,
+      lastCommand: containerLedger.lastCommand,
+    });
   }
 
   if (ready()) showReady(); else showBooting();
