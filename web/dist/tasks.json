@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 142,
-    "total": 334
+    "total": 337
   },
   "epics": [
     {
@@ -9664,12 +9664,16 @@
       "epicKey": "3.5",
       "title": "Registry/layer persistence — digest-deduped layer cache in browser storage",
       "priority": null,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E3.5-T01",
         "E3-T05"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E3.5-T04f",
+        "E3.5-T04g",
+        "E3.5-T04h"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "Pulled OCI layers persist in the browser: a content-addressed layer cache in IndexedDB (or\nthe OPFS backend when E3-T06 lands) keyed by digest, deduped across images, surviving a tab\nreload — so the second `pull` of anything already cached transfers zero bytes.",
@@ -10219,7 +10223,7 @@
       "status": "pending",
       "depends_on": [
         "E3.5-T05f",
-        "E3.5-T04"
+        "E3.5-T04h"
       ],
       "decomposed_into": [],
       "estimate": "M",
@@ -10541,12 +10545,16 @@
       "epicKey": "3.5",
       "title": "Sub-capstone: structured guest⇄UI channel + Alpine boot bridge",
       "priority": null,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E3.5-T05b",
         "E3.5-T05d"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E3.5-T05e1",
+        "E3.5-T05e2",
+        "E3.5-T05e3"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "The plumbing between the browser Docker tab and the container-capable guest: (1) a `wvmDemo` method\nthat boots the ALPINE guest (which ships `wvrun` + baked bundles), and (2) a fenced request/response\nprotocol over the single ttyS0 console so the UI drives `wvrun ps/logs/run/exec` and parses STRUCTURED\nresults instead of scraping free-form text — plus one long-lived streaming channel for `logs -f` /\ninteractive `exec`.",
@@ -10604,6 +10612,152 @@
       "commitCount": 3
     },
     {
+      "id": "E3.5-T05e1",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Structured guest RPC framing and parser core",
+      "priority": null,
+      "status": "implemented",
+      "depends_on": [
+        "E3.5-T05b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make the guest/UI request fence deterministic and independently testable before it is wired to a\nslow browser boot: unique request IDs, guest-computed end markers, echo stripping, byte-stream\nparsing, and structured exit results.",
+      "criteria": [
+        {
+          "text": "The exact-id marker is required; a wrong-id marker and the echoed `%s` formatter cannot settle a request.",
+          "checked": false
+        },
+        {
+          "text": "Markers split across feeds, ANSI/CR noise, a 100,000-line burst, and non-zero guest exits are handled without dropped output or a hang.",
+          "checked": false
+        },
+        {
+          "text": "`cd web && node --test tests/guest-rpc.test.mjs` passes with the adversarial cases above.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-02 — planning split\n\nSeparated from E3.5-T05e so the byte-stream trust boundary can be verified with a bounded node test\nwithout waiting for Alpine boot. Existing parent evidence is context only; this child remains pending\nuntil an exact-head worker run and a fresh verifier.\n\n### 2026-09-02 — worker — implemented\n\nExact-head commit `4cbf42c` contains the extracted pure parser and its deterministic adversarial\nsuite. `cd web && node --test tests/guest-rpc.test.mjs` passed **10/10**: formatter fencing,\nbasic stdout/exit parsing, non-zero exit, split markers, wrong-ID marker spoofing, echoed `%s`\nrejection, a 100,000-line burst, regex-special request IDs, and ANSI-wrapped markers. `node --check\nguest-rpc.js` and `git diff --check` also passed. This child changes no guest or browser runtime\nbehavior, so no guest trace or Playwright capture is applicable; the node transcript is the direct\ndeterministic evidence. A fresh verifier must inspect the diff and rerun the exact command before\ngranting `verified`.",
+      "adversarial": "Feed wrong-id, truncated, split, regex-special, and command-echo lines in arbitrary chunks. Mutate\nthe parser to accept any `__WVEND_` line or to use a host-computed exit code; the deterministic suite\nmust fail. Confirm the module has no DOM or WasmMachine dependency.",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T05e1-rpc-framing-core.md",
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 3,
+          "labels": [
+            "refute E3.5-T05e1 RPC split framing",
+            "tasks: submit E3.5-T05e1",
+            "tasks: start E3.5-T05e1"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 3
+    },
+    {
+      "id": "E3.5-T05e2",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Busybox browser bridge — serialized RPC, streaming, and fail-closed runtime",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3.5-T05e1",
+        "E3.5-T05b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Wire the tested framing core to the real busybox browser console so `wvmDemo.run`, `wvmDemo.stream`,\nand `wvmDemo.hasContainerRuntime` are honest over the existing ttyS0/input path, including\nre-entrancy-safe stream stopping and a truthful runtime-absent result.",
+      "criteria": [
+        {
+          "text": "The real busybox guest returns guest-computed `RPC_42`, separate `A_2`/`B_4` results, and exit 1 for `false`.",
+          "checked": false
+        },
+        {
+          "text": "A live stream delivers successive guest lines; stopping it leaves the guest usable for a fresh RPC, with no re-entrant WasmMachine error.",
+          "checked": false
+        },
+        {
+          "text": "A wrong-id `__WVEND_` line cannot end a request, and `hasContainerRuntime()` is false on the public busybox build.",
+          "checked": false
+        },
+        {
+          "text": "The focused Playwright run passes with zero unexpected browser console errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-02 — planning split\n\nSeparated from E3.5-T05e so the fast real-browser mechanism proof can be completed independently of\nthe Alpine runtime proof. Existing parent evidence is context only; this child remains pending until\nan exact-head worker run and a fresh verifier.",
+      "adversarial": "Issue two requests in the same microtask, print a forged marker, stop from inside `onLine`, emit a\nlarge burst, and call the runtime probe on a guest without `wvrun`. Any interleave, dropped fence,\nre-entrancy error, optimistic runtime result, or unhandled console error refutes the bridge.",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T05e2-busybox-bridge.md",
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 0
+    },
+    {
+      "id": "E3.5-T05e3",
+      "epic": "3.5",
+      "epicKey": "3.5",
+      "title": "Alpine boot bridge and container-runtime browser proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E3.5-T05e2",
+        "E3.5-T05d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove the same structured bridge against the chunked Alpine image that actually ships `wvrun` and\nthe baked OCI catalog: programmatic boot reaches a shell, the runtime probe is true, and structured\nguest commands work without falling back to busybox or a host-side simulation.",
+      "criteria": [
+        {
+          "text": "`wvmDemo.bootAlpine()` reaches a shell on local Alpine assets and returns `{ok:true}`.",
+          "checked": false
+        },
+        {
+          "text": "The guest probe returns true only with `/usr/local/bin/wvrun` and `/opt/containers/index.json`; `wvmDemo.run('wvrun ps')` exits 0 with parseable JSON lines.",
+          "checked": false
+        },
+        {
+          "text": "`wvmDemo.run('echo RPC_$((6*7))')` returns guest-computed `RPC_42` with exit 0, and no busybox fallback or host-generated transcript is used.",
+          "checked": false
+        },
+        {
+          "text": "The focused Alpine Playwright run has zero unexpected browser console errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-02 — planning split\n\nSeparated from E3.5-T05e because Alpine boot is a distinct high-risk browser boundary. The prior\nparent log records a historical host-reaping limitation; it is not carried forward as a blocker on\nthis current host. This child remains pending until the exact Alpine browser command is run here and\nfreshly verified.",
+      "adversarial": "Run against the public busybox-only build and a chunk manifest missing one runtime artifact:\nboot/runtime detection must fail closed. Interrupt/reject the boot while an RPC is pending and verify\nthe promise rejects with a typed error and the queue does not hang. Inspect the transcript and\n`wvrun ps` output for guest provenance.",
+      "file": "tasks/epic-3.5-oci-workloads/E3.5-T05e3-alpine-runtime-proof.md",
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 0
+    },
+    {
       "id": "E3.5-T05f",
       "epic": "3.5",
       "epicKey": "3.5",
@@ -10612,7 +10766,7 @@
       "status": "pending",
       "depends_on": [
         "E3.5-T05c",
-        "E3.5-T05e"
+        "E3.5-T05e3"
       ],
       "decomposed_into": [],
       "estimate": "L",
@@ -13577,18 +13731,18 @@
         },
         {
           "date": "2026-09-02",
-          "commits": 6,
+          "commits": 7,
           "labels": [
+            "verify E4-T19 batching evidence",
             "evidence: add Linux browser screen for E4-T19",
             "docs: record E4-T19 exact-head verification",
-            "fix: align browser JIT budget with measured instance cliff",
-            "evidence: close E4-T19 native A/B proof"
+            "fix: align browser JIT budget with measured instance cliff"
           ]
         }
       ],
       "firstActivity": "2026-08-06",
       "lastActivity": "2026-09-02",
-      "commitCount": 10
+      "commitCount": 11
     },
     {
       "id": "E4-T20",

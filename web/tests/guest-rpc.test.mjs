@@ -46,6 +46,14 @@ test("marker split across feeds still matches (byte-stream robust)", () => {
   assert.deepEqual(r, { stdout: "out\n", exit: 7 });
 });
 
+test("multi-digit exit marker split between digits stays pending", () => {
+  const rid = "r3multi";
+  const p = createFencedRpc(rid);
+  assert.equal(p.feed(`cmd\n__WVEND_${rid}_1`), null);
+  const r = p.feed("7\n");
+  assert.deepEqual(r, { stdout: "", exit: 17 });
+});
+
 test("marker-spoof: a DIFFERENT rid's marker printed as output does not settle this RPC", () => {
   const rid = "mine";
   const p = createFencedRpc(rid);
@@ -62,20 +70,21 @@ test("the echoed printf format (%s, no digit) can never satisfy the marker", () 
   const re = endMarkerRegex(rid);
   assert.equal(re.test(`__WVEND_${rid}_%s`), false, "%s is not a digit run");
   assert.equal(re.test(`__WVEND_${rid}_`), false, "no digit at all");
-  assert.equal(re.test(`__WVEND_${rid}_12`), true);
+  assert.equal(re.test(`__WVEND_${rid}_12`), false, "a partial marker record must not match");
+  assert.equal(re.test(`__WVEND_${rid}_12\n`), true);
 });
 
 test("a large burst before the marker does not lose the END (not line-count bounded)", () => {
   const rid = "r5";
   const p = createFencedRpc(rid);
-  // 100k lines of output fed in chunks, then the marker.
+  // Exactly 100k lines of output fed in chunks, then the marker.
   p.feed("echo-line\n"); // the echoed command line (stripped from stdout)
   let res = null;
-  for (let i = 0; i < 1000; i++) res = p.feed("x".repeat(100) + "\n"); // 1000 × 101 bytes of output
+  for (let i = 0; i < 100; i++) res = p.feed("x\n".repeat(1000));
   assert.equal(res, null, "no premature settle across a large burst");
   const r = p.feed(`__WVEND_${rid}_0\n`);
   assert.equal(r.exit, 0);
-  assert.equal(r.stdout.length, 1000 * 101, "every output byte preserved, echo line stripped");
+  assert.equal(r.stdout.length, 100_000 * 2, "every output byte preserved, echo line stripped");
 });
 
 test("rid with regex-special characters is escaped (no accidental wildcard match)", () => {

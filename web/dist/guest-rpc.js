@@ -10,19 +10,21 @@
 //   <cmd>; printf '\n__WVEND_<rid>_%s\n' "$?"\r
 // The guest echoes the command line, prints the command's stdout, then the printf emits
 //   __WVEND_<rid>_<exit>
-// The parser accumulates the console byte stream (ANSI escapes + CR stripped), waits for the END
-// marker bound to THIS rid followed by a DIGIT run (so the literal `%s` in the echoed printf can never
-// false-match), then returns { stdout, exit } with the leading echoed-command line removed.
+// The parser accumulates the console byte stream (ANSI escapes + CR stripped), waits for the complete
+// END-marker record bound to THIS rid (the digit run must be newline-terminated, so a split multi-digit
+// exit cannot settle early and the literal `%s` in the echoed printf can never false-match), then
+// returns { stdout, exit } with the leading echoed-command line removed.
 
 // Strip xterm/ANSI control sequences and carriage returns, matching what main.js does before parsing.
 export function stripConsole(text) {
   return text.replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, "").replace(/\r/g, "");
 }
 
-// The END-marker matcher for a given request id. The trailing `(\d+)` is load-bearing: the command's
-// own echoed `printf '…__WVEND_<rid>_%s\n'` ends in `%s`, NOT a digit, so it can never satisfy this.
+// The END-marker matcher for a given request id. The trailing `(\d+)\n` is load-bearing: the command's
+// own echoed `printf '…__WVEND_<rid>_%s\n'` ends in `%s`, NOT a digit, and a partial digit run cannot
+// satisfy this before the guest has emitted the complete record.
 export function endMarkerRegex(rid) {
-  return new RegExp(`__WVEND_${escapeRegExp(rid)}_(\\d+)`);
+  return new RegExp(`__WVEND_${escapeRegExp(rid)}_(\\d+)\\n`);
 }
 
 // The exact bytes to send for one fenced RPC (command + fenced END printf + CR). `\r` (CR) is the
