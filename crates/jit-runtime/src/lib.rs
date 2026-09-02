@@ -180,6 +180,10 @@ struct Batch {
     /// E4-T20: coarse tick of the most recent execution of ANY member — the batch-LRU key. Stamped
     /// at each dispatch entry into a member (`execute`); chained execution updates it lazily.
     last_tick: u64,
+    /// The Wasmtime store owns the instances and memories for this batch. Keeping one store per
+    /// batch makes the registry's eviction unit real on native: dropping a batch releases its
+    /// instances instead of leaving every evicted module resident in one process-long store.
+    store: Store<HostCtx>,
 }
 
 /// E4-T19 registry estimate: fixed per-Instance overhead beyond the emitted code bytes — dominated by
@@ -201,7 +205,6 @@ const STUB: u32 = u32::MAX;
 pub struct WasmtimeExecutor {
     engine: Engine,
     linker: Linker<HostCtx>,
-    store: Store<HostCtx>,
     /// Reused transport buffer spanning `[abi::XREG_BASE, abi::HANDOFF_END)`, transferred with one
     /// direct fixed-memory slice copy in each direction per committed compiled exit.
     handoff: CpuStateHandoff,
@@ -405,12 +408,10 @@ impl WasmtimeExecutor {
                 },
             )
             .expect("register env.sc");
-        let store = Store::new(&engine, HostCtx::EMPTY);
         let registry_hasher = JitBuildHasher::default();
         WasmtimeExecutor {
             engine,
             linker,
-            store,
             handoff: CpuStateHandoff::default(),
             blocks: JitMap::with_hasher(registry_hasher.clone()),
             executed_blocks: 0,
@@ -726,11 +727,15 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
             Ok(m) => m,
             Err(_) => return,
         };
-        let instance: Instance = match self.linker.instantiate(&mut self.store, &module) {
+        // Each batch owns a separate Store so dropping the batch actually drops its instances and
+        // memories. A single executor-wide Store would retain every evicted instance until the JIT
+        // itself was destroyed, defeating E4-T20's live-module budget under K=1.
+        let mut store = Store::new(&self.engine, HostCtx::EMPTY);
+        let instance: Instance = match self.linker.instantiate(&mut store, &module) {
             Ok(i) => i,
             Err(_) => return,
         };
-        let mem = match instance.get_memory(&mut self.store, "mem") {
+        let mem = match instance.get_memory(&mut store, "mem") {
             Some(m) => m,
             None => return,
         };
@@ -739,7 +744,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
         let mut members = Vec::with_capacity(kept_blocks.len());
         for (nl, b) in kept_blocks.iter().enumerate() {
             let name = format!("run{nl}");
-            let run = match instance.get_typed_func::<i32, i32>(&mut self.store, &name) {
+            let run = match instance.get_typed_func::<i32, i32>(&mut store, &name) {
                 Ok(f) => f,
                 Err(_) => continue,
             };
@@ -775,6 +780,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                 members,
                 est_bytes,
                 last_tick: self.clock,
+                store,
             },
         );
     }
@@ -801,7 +807,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 
     fn execute(&mut self, phys_pc: u64, hart: &mut Hart, bus: &mut SystemBus) -> Option<JitExit> {
         let compiled = self.blocks.get(&phys_pc)?;
-        let run = &compiled.run;
+        let run = compiled.run.clone();
         let mem = compiled.mem;
         let batch_id = compiled.batch_id;
         // E4-T20: stamp the batch-LRU clock at this dispatch entry (chained execution updates the
@@ -814,20 +820,21 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
         // entry PC. Under paging `phys_pc` differs from this virtual PC; generated code derives every
         // guest-visible address from the value in the handoff.
         self.handoff.prepare(hart);
-        mem.data_mut(&mut self.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize]
+        let batch = self.batches.get_mut(&batch_id)?;
+        mem.data_mut(&mut batch.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize]
             .copy_from_slice(self.handoff.as_bytes());
         // Present the live guest to the load/store imports for the duration of the call.
         {
-            let ctx = self.store.data_mut();
+            let ctx = batch.store.data_mut();
             ctx.hart = hart as *mut Hart;
             ctx.bus = bus as *mut SystemBus;
             ctx.trap = None;
         }
-        let call = run.call(&mut self.store, 0);
+        let call = run.call(&mut batch.store, 0);
         // Clear the pointers before doing anything else (they must never outlive the borrows), and
         // take the precise trap (if a load/store faulted) out of the context.
         let fault = {
-            let ctx = self.store.data_mut();
+            let ctx = batch.store.data_mut();
             ctx.hart = std::ptr::null_mut();
             ctx.bus = std::ptr::null_mut();
             ctx.trap.take()
@@ -851,7 +858,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
                     panic!("unexpected compiled-block engine trap after dispatch: {error}");
                 };
                 self.handoff.as_mut_bytes().copy_from_slice(
-                    &mem.data(&self.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize],
+                    &mem.data(&batch.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize],
                 );
                 self.handoff.commit_registers(hart);
                 let faulting_pc = self.handoff.exit_pc();
@@ -867,7 +874,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
         };
         // One direct fixed-memory slice copy returns dirty registers and the frozen exit header.
         self.handoff.as_mut_bytes().copy_from_slice(
-            &mem.data(&self.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize],
+            &mem.data(&batch.store)[abi::XREG_BASE as usize..abi::HANDOFF_END as usize],
         );
         self.handoff.commit_registers(hart);
         let next_pc = self.handoff.exit_pc();
@@ -1094,7 +1101,7 @@ impl CompiledBlockExecutor for WasmtimeExecutor {
 #[cfg(test)]
 mod tests {
     use super::{
-        Batch, Compiled, INSTANCE_OVERHEAD_BYTES, JitBuildHasher, JitKeyHasher, JitMap,
+        Batch, Compiled, HostCtx, INSTANCE_OVERHEAD_BYTES, JitBuildHasher, JitKeyHasher, JitMap,
         WasmtimeExecutor,
     };
     use std::hash::{BuildHasher, Hash, Hasher};
@@ -1108,7 +1115,7 @@ mod tests {
     use wasm_vm_core::jit::{CompiledBlockExecutor, ExitCode, abi};
     use wasm_vm_core::mmio::{RecordingDevice, SystemBus, Width};
     use wasm_vm_core::ram::Ram;
-    use wasmtime::Module;
+    use wasmtime::{Module, Store};
 
     static EQUALITY_PROBES: AtomicUsize = AtomicUsize::new(0);
 
@@ -1365,15 +1372,16 @@ mod tests {
 
     fn inject_test_module(executor: &mut WasmtimeExecutor, phys: u64, bytes: &[u8]) {
         let module = Module::new(&executor.engine, bytes).expect("compile malicious test module");
+        let mut store = Store::new(&executor.engine, HostCtx::EMPTY);
         let instance = executor
             .linker
-            .instantiate(&mut executor.store, &module)
+            .instantiate(&mut store, &module)
             .expect("instantiate malicious test module");
         let mem = instance
-            .get_memory(&mut executor.store, "mem")
+            .get_memory(&mut store, "mem")
             .expect("test module memory");
         let run = instance
-            .get_typed_func::<i32, i32>(&mut executor.store, "run")
+            .get_typed_func::<i32, i32>(&mut store, "run")
             .expect("test module run");
         let batch_id = executor.next_batch_id;
         executor.next_batch_id = executor.next_batch_id.wrapping_add(1);
@@ -1396,8 +1404,17 @@ mod tests {
                 members: vec![phys],
                 est_bytes: bytes.len() as u64 + INSTANCE_OVERHEAD_BYTES,
                 last_tick: executor.clock,
+                store,
             },
         );
+    }
+
+    fn assert_batch_host_contexts_clear(executor: &WasmtimeExecutor) {
+        for batch in executor.batches.values() {
+            assert!(batch.store.data().hart.is_null());
+            assert!(batch.store.data().bus.is_null());
+            assert_eq!(batch.store.data().trap, None);
+        }
     }
 
     #[test]
@@ -1437,9 +1454,7 @@ mod tests {
         assert_eq!(hart.regs.read(5), X5_INITIAL, "module x5 was committed");
         assert_eq!(hart.regs.pc, VIRTUAL_PC, "module PC was committed");
         assert_eq!(executor.executed_blocks, 0);
-        assert!(executor.store.data().hart.is_null());
-        assert!(executor.store.data().bus.is_null());
-        assert_eq!(executor.store.data().trap, None);
+        assert_batch_host_contexts_clear(&executor);
 
         // Catching the deliberate test panic must not leave HostCtx poisoned: a separate ordinary
         // translated block can still dispatch through the same Store and executor.
@@ -1464,8 +1479,6 @@ mod tests {
         assert_eq!(exit.code, ExitCode::Fallthrough);
         assert_eq!(hart.regs.read(5), X5_INITIAL.wrapping_add(1));
         assert_eq!(log.borrow().writes.len(), 1, "clean block replayed MMIO");
-        assert!(executor.store.data().hart.is_null());
-        assert!(executor.store.data().bus.is_null());
-        assert_eq!(executor.store.data().trap, None);
+        assert_batch_host_contexts_clear(&executor);
     }
 }
