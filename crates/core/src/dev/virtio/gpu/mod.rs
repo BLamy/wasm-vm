@@ -152,40 +152,65 @@ impl VirtioDevice for VirtioGpu {
     }
 }
 
+/// Sum readable descriptor lengths without narrowing a hostile `u32` segment length.
+fn readable_len(chain: &DescriptorChain) -> Option<u64> {
+    let mut total = 0u64;
+    for segment in chain.readable() {
+        total = total.checked_add(u64::from(segment.len))?;
+    }
+    Some(total)
+}
+
+/// Read a small fixed-size window at a byte offset in the readable descriptor stream. This keeps
+/// split headers/entries independent of descriptor boundaries and never allocates based on guest
+/// supplied lengths.
+fn read_readable_at<const N: usize>(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    start: u64,
+) -> Option<[u8; N]> {
+    let end = start.checked_add(N as u64)?;
+    if end > readable_len(chain)? {
+        return None;
+    }
+
+    let mut skip = start;
+    let mut copied = 0usize;
+    let mut bytes = [0u8; N];
+    for segment in chain.readable() {
+        let segment_len = u64::from(segment.len);
+        if skip >= segment_len {
+            skip -= segment_len;
+            continue;
+        }
+        let available = segment_len - skip;
+        let take = available.min((N - copied) as u64);
+        for offset in 0..take {
+            let guest_addr = segment.addr.checked_add(skip.checked_add(offset)?)?;
+            bytes[copied] = bus.load8(guest_addr).ok()?;
+            copied += 1;
+        }
+        skip = 0;
+        if copied == N {
+            return Some(bytes);
+        }
+    }
+    None
+}
+
 /// Read exactly the first control header from a chain's readable descriptors. This bounded read
 /// supports headers split at any byte boundary without allocating based on a hostile descriptor
 /// length; payload commands are owned by later GPU slices.
 fn read_header(chain: &DescriptorChain, bus: &mut SystemBus) -> Option<protocol::CtrlHeader> {
-    let mut bytes = [0u8; protocol::CTRL_HDR_SIZE];
-    let mut used = 0usize;
-    for segment in chain.readable() {
-        for offset in 0..segment.len as usize {
-            if used == bytes.len() {
-                return protocol::CtrlHeader::from_bytes(&bytes);
-            }
-            bytes[used] = bus.load8(segment.addr + offset as u64).ok()?;
-            used += 1;
-        }
-    }
-    (used == bytes.len()).then(|| protocol::CtrlHeader::from_bytes(&bytes))?
+    read_readable_at::<{ protocol::CTRL_HDR_SIZE }>(chain, bus, 0)
+        .and_then(|bytes| protocol::CtrlHeader::from_bytes(&bytes))
 }
 
 /// Read a bounded request prefix from readable descriptors. Queue validation has already
 /// checked each segment's address/range; this helper additionally bounds the amount copied so a
 /// hostile descriptor cannot turn a malformed command into an unbounded host allocation.
 fn read_request<const N: usize>(chain: &DescriptorChain, bus: &mut SystemBus) -> Option<[u8; N]> {
-    let mut bytes = [0u8; N];
-    let mut used = 0usize;
-    for segment in chain.readable() {
-        for offset in 0..segment.len as usize {
-            if used == bytes.len() {
-                return Some(bytes);
-            }
-            bytes[used] = bus.load8(segment.addr + offset as u64).ok()?;
-            used += 1;
-        }
-    }
-    (used == bytes.len()).then_some(bytes)
+    read_readable_at::<N>(chain, bus, 0)
 }
 
 /// Write a response prefix across all device-writable descriptors. A short tail is truncated at
@@ -226,6 +251,87 @@ fn create_error_response(error: resources::CreateError) -> u32 {
         resources::CreateError::InvalidParameter => protocol::RESP_ERR_INVALID_PARAMETER,
         resources::CreateError::OutOfMemory => protocol::RESP_ERR_OUT_OF_MEMORY,
     }
+}
+
+fn backing_error_response(error: resources::BackingError) -> u32 {
+    match error {
+        resources::BackingError::InvalidResourceId => protocol::RESP_ERR_INVALID_RESOURCE_ID,
+        resources::BackingError::InvalidParameter => protocol::RESP_ERR_INVALID_PARAMETER,
+        resources::BackingError::OutOfMemory => protocol::RESP_ERR_OUT_OF_MEMORY,
+    }
+}
+
+/// Decode and validate an attach request before publishing any part of its backing list.
+fn attach_backing(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    state: &Rc<RefCell<GpuState>>,
+) -> Result<(), resources::BackingError> {
+    let header = read_request::<{ protocol::RESOURCE_ATTACH_BACKING_HEADER_SIZE }>(chain, bus)
+        .and_then(|bytes| protocol::ResourceAttachBacking::from_bytes(&bytes))
+        .ok_or(resources::BackingError::InvalidParameter)?;
+    if state.borrow().resources.get(header.resource_id).is_none() {
+        return Err(resources::BackingError::InvalidResourceId);
+    }
+
+    let nents = u64::from(header.nents);
+    if header.nents > resources::MAX_BACKING_ENTRIES {
+        return Err(resources::BackingError::InvalidParameter);
+    }
+    let entries_bytes = nents
+        .checked_mul(protocol::RESOURCE_MEM_ENTRY_SIZE as u64)
+        .ok_or(resources::BackingError::InvalidParameter)?;
+    let request_bytes = (protocol::RESOURCE_ATTACH_BACKING_HEADER_SIZE as u64)
+        .checked_add(entries_bytes)
+        .ok_or(resources::BackingError::InvalidParameter)?;
+    if request_bytes > readable_len(chain).ok_or(resources::BackingError::InvalidParameter)? {
+        return Err(resources::BackingError::InvalidParameter);
+    }
+    let entry_count = usize::try_from(nents).map_err(|_| resources::BackingError::OutOfMemory)?;
+
+    // Decode into private storage. The resource is only mutated after every entry passes its
+    // non-zero/range checks, so a late bad entry cannot leave a partial backing list behind.
+    let mut backing = alloc::vec::Vec::new();
+    backing
+        .try_reserve_exact(entry_count)
+        .map_err(|_| resources::BackingError::OutOfMemory)?;
+    for index in 0..entry_count {
+        let offset = (protocol::RESOURCE_ATTACH_BACKING_HEADER_SIZE as u64)
+            .checked_add(
+                (index as u64)
+                    .checked_mul(protocol::RESOURCE_MEM_ENTRY_SIZE as u64)
+                    .ok_or(resources::BackingError::InvalidParameter)?,
+            )
+            .ok_or(resources::BackingError::InvalidParameter)?;
+        let bytes = read_readable_at::<{ protocol::RESOURCE_MEM_ENTRY_SIZE }>(chain, bus, offset)
+            .ok_or(resources::BackingError::InvalidParameter)?;
+        let entry = protocol::ResourceMemEntry::from_bytes(&bytes)
+            .ok_or(resources::BackingError::InvalidParameter)?;
+        if entry.length == 0 || !bus.ram().ram_contains(entry.addr, u64::from(entry.length)) {
+            return Err(resources::BackingError::InvalidParameter);
+        }
+        backing.push((entry.addr, entry.length));
+    }
+    state
+        .borrow_mut()
+        .resources
+        .attach_backing(header.resource_id, backing)
+        .map_err(|_| resources::BackingError::InvalidResourceId)
+}
+
+fn detach_backing(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    state: &Rc<RefCell<GpuState>>,
+) -> Result<(), resources::BackingError> {
+    let request = read_request::<{ protocol::RESOURCE_DETACH_BACKING_SIZE }>(chain, bus)
+        .and_then(|bytes| protocol::ResourceDetachBacking::from_bytes(&bytes))
+        .ok_or(resources::BackingError::InvalidParameter)?;
+    state
+        .borrow_mut()
+        .resources
+        .detach_backing(request.resource_id)
+        .map_err(|_| resources::BackingError::InvalidResourceId)
 }
 
 /// Service the virtio-gpu control queue after a deferred QueueNotify kick.
@@ -313,6 +419,36 @@ pub fn service(
                         },
                         None => protocol::RESP_ERR_INVALID_PARAMETER,
                     };
+                let response = response_header(request, response_type).to_bytes();
+                match write_prefix(&chain, bus, &response) {
+                    Ok(written) => written,
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
+            Some(request) if request.ty == protocol::CMD_RESOURCE_ATTACH_BACKING => {
+                let response_type = match attach_backing(&chain, bus, state) {
+                    Ok(()) => protocol::RESP_OK_NODATA,
+                    Err(error) => backing_error_response(error),
+                };
+                let response = response_header(request, response_type).to_bytes();
+                match write_prefix(&chain, bus, &response) {
+                    Ok(written) => written,
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
+            Some(request) if request.ty == protocol::CMD_RESOURCE_DETACH_BACKING => {
+                let response_type = match detach_backing(&chain, bus, state) {
+                    Ok(()) => protocol::RESP_OK_NODATA,
+                    Err(error) => backing_error_response(error),
+                };
                 let response = response_header(request, response_type).to_bytes();
                 match write_prefix(&chain, bus, &response) {
                     Ok(written) => written,
@@ -705,6 +841,285 @@ mod tests {
         assert_eq!(resource.host_pixels.len(), 12);
         assert!(resource.backing.is_empty());
         assert_eq!(state.resources.accounted_bytes(), 48);
+    }
+
+    #[test]
+    fn gpu_resources_backing_controlq_validates_entries_atomically() {
+        fn attach_bytes(
+            header: protocol::ResourceAttachBacking,
+            entries: &[protocol::ResourceMemEntry],
+        ) -> alloc::vec::Vec<u8> {
+            let mut bytes = alloc::vec::Vec::new();
+            bytes.extend_from_slice(&header.to_bytes());
+            for entry in entries {
+                bytes.extend_from_slice(&entry.to_bytes());
+            }
+            bytes
+        }
+
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let valid_entries = [
+            protocol::ResourceMemEntry {
+                addr: DRAM_BASE + 0x80_000,
+                length: 16,
+                padding: 0,
+            },
+            protocol::ResourceMemEntry {
+                addr: DRAM_BASE + 0x90_000,
+                length: 32,
+                padding: 0,
+            },
+        ];
+        let valid_request = attach_bytes(
+            protocol::ResourceAttachBacking {
+                header: CtrlHeader {
+                    ty: protocol::CMD_RESOURCE_ATTACH_BACKING,
+                    flags: protocol::FLAG_FENCE,
+                    fence_id: 0x55AA,
+                    ..CtrlHeader::default()
+                },
+                resource_id: 1,
+                nents: valid_entries.len() as u32,
+            },
+            &valid_entries,
+        );
+        let invalid_request = attach_bytes(
+            protocol::ResourceAttachBacking {
+                header: CtrlHeader {
+                    ty: protocol::CMD_RESOURCE_ATTACH_BACKING,
+                    ..CtrlHeader::default()
+                },
+                resource_id: 2,
+                nents: 1,
+            },
+            &[protocol::ResourceMemEntry {
+                addr: DRAM_BASE + (1 << 20) as u64 - 8,
+                length: 16,
+                padding: 0,
+            }],
+        );
+        let zero_request = attach_bytes(
+            protocol::ResourceAttachBacking {
+                header: CtrlHeader {
+                    ty: protocol::CMD_RESOURCE_ATTACH_BACKING,
+                    ..CtrlHeader::default()
+                },
+                resource_id: 2,
+                nents: 0,
+            },
+            &[],
+        );
+        let huge_request = attach_bytes(
+            protocol::ResourceAttachBacking {
+                header: CtrlHeader {
+                    ty: protocol::CMD_RESOURCE_ATTACH_BACKING,
+                    ..CtrlHeader::default()
+                },
+                resource_id: 2,
+                nents: 0x1000_0000,
+            },
+            &[],
+        );
+        write_bytes(&mut bus, REQUEST, &valid_request);
+        write_bytes(&mut bus, REQUEST + 0x100, &invalid_request);
+        write_bytes(&mut bus, REQUEST + 0x200, &zero_request);
+        write_bytes(&mut bus, REQUEST + 0x300, &huge_request);
+        let descriptors = [
+            (REQUEST, valid_request.len() as u32, 1, 1),
+            (RESPONSE, 24, 2, 0),
+            (REQUEST + 0x100, invalid_request.len() as u32, 1, 3),
+            (RESPONSE + 0x100, 24, 2, 0),
+            (REQUEST + 0x200, zero_request.len() as u32, 1, 5),
+            (RESPONSE + 0x200, 24, 2, 0),
+            (REQUEST + 0x300, huge_request.len() as u32, 1, 7),
+            (RESPONSE + 0x300, 24, 2, 0),
+        ];
+        let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
+        state
+            .borrow_mut()
+            .resources
+            .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 2, 2)
+            .unwrap();
+        state
+            .borrow_mut()
+            .resources
+            .create(2, protocol::FORMAT_B8G8R8X8_UNORM, 2, 2)
+            .unwrap();
+        set_avail_heads(&mut bus, &[0, 2, 4, 6]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 4);
+        for (index, response) in [
+            RESPONSE,
+            RESPONSE + 0x100,
+            RESPONSE + 0x200,
+            RESPONSE + 0x300,
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            assert_eq!(
+                bus.load32(response).unwrap(),
+                match index {
+                    0 | 2 => protocol::RESP_OK_NODATA,
+                    _ => protocol::RESP_ERR_INVALID_PARAMETER,
+                }
+            );
+            assert_eq!(bus.load32(USED + 8 + 8 * index as u64).unwrap(), 24);
+        }
+        let state = state.borrow();
+        assert_eq!(
+            state.resources.get(1).unwrap().backing,
+            [(DRAM_BASE + 0x80_000, 16), (DRAM_BASE + 0x90_000, 32),]
+        );
+        assert!(state.resources.get(2).unwrap().backing.is_empty());
+    }
+
+    #[test]
+    fn gpu_resources_backing_rejects_address_overflow_and_truncated_sglists() {
+        fn attach_bytes(
+            header: protocol::ResourceAttachBacking,
+            entries: &[protocol::ResourceMemEntry],
+        ) -> alloc::vec::Vec<u8> {
+            let mut bytes = alloc::vec::Vec::new();
+            bytes.extend_from_slice(&header.to_bytes());
+            for entry in entries {
+                bytes.extend_from_slice(&entry.to_bytes());
+            }
+            bytes
+        }
+
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let overflow_request = attach_bytes(
+            protocol::ResourceAttachBacking {
+                header: CtrlHeader {
+                    ty: protocol::CMD_RESOURCE_ATTACH_BACKING,
+                    ..CtrlHeader::default()
+                },
+                resource_id: 1,
+                nents: 1,
+            },
+            &[protocol::ResourceMemEntry {
+                addr: u64::MAX,
+                length: 1,
+                padding: 0,
+            }],
+        );
+        let truncated_request = attach_bytes(
+            protocol::ResourceAttachBacking {
+                header: CtrlHeader {
+                    ty: protocol::CMD_RESOURCE_ATTACH_BACKING,
+                    ..CtrlHeader::default()
+                },
+                resource_id: 2,
+                nents: 2,
+            },
+            &[protocol::ResourceMemEntry {
+                addr: DRAM_BASE,
+                length: 1,
+                padding: 0,
+            }],
+        );
+        write_bytes(&mut bus, REQUEST, &overflow_request);
+        write_bytes(&mut bus, REQUEST + 0x100, &truncated_request);
+        let descriptors = [
+            (REQUEST, overflow_request.len() as u32, 1, 1),
+            (RESPONSE, 24, 2, 0),
+            (REQUEST + 0x100, truncated_request.len() as u32, 1, 3),
+            (RESPONSE + 0x100, 24, 2, 0),
+        ];
+        let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
+        state
+            .borrow_mut()
+            .resources
+            .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 2, 2)
+            .unwrap();
+        state
+            .borrow_mut()
+            .resources
+            .create(2, protocol::FORMAT_B8G8R8X8_UNORM, 2, 2)
+            .unwrap();
+        set_avail_heads(&mut bus, &[0, 2]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 2);
+        assert_eq!(
+            bus.load32(RESPONSE).unwrap(),
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+        assert_eq!(
+            bus.load32(RESPONSE + 0x100).unwrap(),
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+        let state = state.borrow();
+        assert!(state.resources.get(1).unwrap().backing.is_empty());
+        assert!(state.resources.get(2).unwrap().backing.is_empty());
+    }
+
+    #[test]
+    fn gpu_resources_backing_split_attach_then_detach_controlq() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let attach = {
+            let header = protocol::ResourceAttachBacking {
+                header: CtrlHeader {
+                    ty: protocol::CMD_RESOURCE_ATTACH_BACKING,
+                    ..CtrlHeader::default()
+                },
+                resource_id: 1,
+                nents: 1,
+            };
+            let mut bytes = alloc::vec::Vec::new();
+            bytes.extend_from_slice(&header.to_bytes());
+            bytes.extend_from_slice(
+                &protocol::ResourceMemEntry {
+                    addr: DRAM_BASE + 0xA0_000,
+                    length: 64,
+                    padding: 0,
+                }
+                .to_bytes(),
+            );
+            bytes
+        };
+        let detach = protocol::ResourceDetachBacking {
+            header: CtrlHeader {
+                ty: protocol::CMD_RESOURCE_DETACH_BACKING,
+                ..CtrlHeader::default()
+            },
+            resource_id: 1,
+            padding: 0,
+        }
+        .to_bytes();
+        write_bytes(&mut bus, REQUEST, &attach);
+        write_bytes(&mut bus, REQUEST + 0x100, &detach);
+        let descriptors = [
+            (REQUEST, 32, 1, 1),
+            (REQUEST + 32, 16, 1, 2),
+            (RESPONSE, 24, 2, 0),
+            (REQUEST + 0x100, 32, 1, 4),
+            (RESPONSE + 0x100, 24, 2, 0),
+        ];
+        let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
+        state
+            .borrow_mut()
+            .resources
+            .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 2, 2)
+            .unwrap();
+        set_avail_heads(&mut bus, &[0, 3]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 2);
+        assert_eq!(bus.load32(RESPONSE).unwrap(), protocol::RESP_OK_NODATA);
+        assert_eq!(
+            bus.load32(RESPONSE + 0x100).unwrap(),
+            protocol::RESP_OK_NODATA
+        );
+        assert!(state.borrow().resources.get(1).unwrap().backing.is_empty());
     }
 
     #[test]

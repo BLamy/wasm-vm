@@ -7,6 +7,10 @@
 pub const CMD_GET_DISPLAY_INFO: u32 = 0x0100;
 /// `VIRTIO_GPU_CMD_RESOURCE_CREATE_2D`.
 pub const CMD_RESOURCE_CREATE_2D: u32 = 0x0101;
+/// `VIRTIO_GPU_CMD_RESOURCE_ATTACH_BACKING`.
+pub const CMD_RESOURCE_ATTACH_BACKING: u32 = 0x0102;
+/// `VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING`.
+pub const CMD_RESOURCE_DETACH_BACKING: u32 = 0x0103;
 /// Successful `GET_DISPLAY_INFO` response.
 pub const RESP_OK_DISPLAY_INFO: u32 = 0x1101;
 /// Successful command with no response payload.
@@ -47,6 +51,12 @@ pub const DISPLAY_MODE_COUNT: usize = 16;
 pub const CTRL_HDR_SIZE: usize = 24;
 /// Wire size of `virtio_gpu_resource_create_2d`.
 pub const RESOURCE_CREATE_2D_SIZE: usize = CTRL_HDR_SIZE + 16;
+/// Wire size of the fixed part of `virtio_gpu_resource_attach_backing`.
+pub const RESOURCE_ATTACH_BACKING_HEADER_SIZE: usize = CTRL_HDR_SIZE + 8;
+/// Wire size of `virtio_gpu_resource_detach_backing`.
+pub const RESOURCE_DETACH_BACKING_SIZE: usize = CTRL_HDR_SIZE + 8;
+/// Wire size of one `virtio_gpu_mem_entry`.
+pub const RESOURCE_MEM_ENTRY_SIZE: usize = 16;
 /// Wire size of one `virtio_gpu_display_one`.
 pub const DISPLAY_MODE_SIZE: usize = 24;
 /// Wire size of `virtio_gpu_resp_display_info`.
@@ -126,6 +136,99 @@ impl ResourceCreate2d {
         out[28..32].copy_from_slice(&self.format.to_le_bytes());
         out[32..36].copy_from_slice(&self.width.to_le_bytes());
         out[36..40].copy_from_slice(&self.height.to_le_bytes());
+        out
+    }
+}
+
+/// Fixed header of `virtio_gpu_resource_attach_backing`; entries follow immediately afterward.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ResourceAttachBacking {
+    pub header: CtrlHeader,
+    pub resource_id: u32,
+    pub nents: u32,
+}
+
+impl ResourceAttachBacking {
+    /// Decode the fixed 32-byte attach header.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < RESOURCE_ATTACH_BACKING_HEADER_SIZE {
+            return None;
+        }
+        Some(Self {
+            header: CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?,
+            resource_id: u32::from_le_bytes(bytes[24..28].try_into().ok()?),
+            nents: u32::from_le_bytes(bytes[28..32].try_into().ok()?),
+        })
+    }
+
+    /// Encode the fixed attach header.
+    pub fn to_bytes(self) -> [u8; RESOURCE_ATTACH_BACKING_HEADER_SIZE] {
+        let mut out = [0u8; RESOURCE_ATTACH_BACKING_HEADER_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[24..28].copy_from_slice(&self.resource_id.to_le_bytes());
+        out[28..32].copy_from_slice(&self.nents.to_le_bytes());
+        out
+    }
+}
+
+/// One guest-physical scatter-gather entry following an attach header.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ResourceMemEntry {
+    pub addr: u64,
+    pub length: u32,
+    pub padding: u32,
+}
+
+impl ResourceMemEntry {
+    /// Decode one complete little-endian memory entry.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < RESOURCE_MEM_ENTRY_SIZE {
+            return None;
+        }
+        Some(Self {
+            addr: u64::from_le_bytes(bytes[0..8].try_into().ok()?),
+            length: u32::from_le_bytes(bytes[8..12].try_into().ok()?),
+            padding: u32::from_le_bytes(bytes[12..16].try_into().ok()?),
+        })
+    }
+
+    /// Encode one memory entry without relying on host struct layout.
+    pub fn to_bytes(self) -> [u8; RESOURCE_MEM_ENTRY_SIZE] {
+        let mut out = [0u8; RESOURCE_MEM_ENTRY_SIZE];
+        out[0..8].copy_from_slice(&self.addr.to_le_bytes());
+        out[8..12].copy_from_slice(&self.length.to_le_bytes());
+        out[12..16].copy_from_slice(&self.padding.to_le_bytes());
+        out
+    }
+}
+
+/// `virtio_gpu_resource_detach_backing`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ResourceDetachBacking {
+    pub header: CtrlHeader,
+    pub resource_id: u32,
+    pub padding: u32,
+}
+
+impl ResourceDetachBacking {
+    /// Decode the complete 32-byte detach request.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < RESOURCE_DETACH_BACKING_SIZE {
+            return None;
+        }
+        Some(Self {
+            header: CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?,
+            resource_id: u32::from_le_bytes(bytes[24..28].try_into().ok()?),
+            padding: u32::from_le_bytes(bytes[28..32].try_into().ok()?),
+        })
+    }
+
+    /// Encode the complete detach request.
+    pub fn to_bytes(self) -> [u8; RESOURCE_DETACH_BACKING_SIZE] {
+        let mut out = [0u8; RESOURCE_DETACH_BACKING_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[24..28].copy_from_slice(&self.resource_id.to_le_bytes());
+        out[28..32].copy_from_slice(&self.padding.to_le_bytes());
         out
     }
 }
