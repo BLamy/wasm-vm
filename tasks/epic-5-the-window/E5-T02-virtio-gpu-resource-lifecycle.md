@@ -3,10 +3,12 @@ id: E5-T02
 epic: 5
 title: virtio-gpu 2D resource lifecycle (CREATE_2D, ATTACH_BACKING, DETACH, UNREF)
 priority: 502
-status: pending
+status: cancelled
 depends_on: [E5-T01c]
 estimate: M
+risk: high
 capstone: false
+decomposed_into: [E5-T02a, E5-T02b, E5-T02c]
 ---
 
 ## Goal
@@ -56,4 +58,12 @@ overflow probes: width=0x10000, height=0x10000 (w*h*4 overflows u32), nents=0x10
 Any panic, unbounded allocation, or wrong-size accounting refutes.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — decomposed
+
+This M-sized resource-lifecycle container is cancelled before implementation as required by
+task policy. The work is split into ordered S tickets: E5-T02a owns resource creation and
+budget accounting, E5-T02b owns guest-backing attach/detach and range validation, and E5-T02c
+owns unref/scanout consistency plus lifecycle leak coverage. The replacements keep each hostile
+input boundary independently testable while preserving the original GPU resource acceptance
+criteria.

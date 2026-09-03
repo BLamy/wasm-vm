@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 201,
-    "total": 362
+    "total": 365
   },
   "epics": [
     {
@@ -15935,11 +15935,15 @@
       "epicKey": "5",
       "title": "virtio-gpu 2D resource lifecycle (CREATE_2D, ATTACH_BACKING, DETACH, UNREF)",
       "priority": 502,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T01c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T02a",
+        "E5-T02b",
+        "E5-T02c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "The device owns a correct 2D resource store: guests can create host resources with\n`RESOURCE_CREATE_2D`, attach guest-physical scatter-gather backing with\n`RESOURCE_ATTACH_BACKING`, detach, and destroy with `RESOURCE_UNREF` — with strict\nvalidation so a hostile guest cannot exhaust host memory or dangle references.",
@@ -15967,9 +15971,141 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized resource-lifecycle container is cancelled before implementation as required by\ntask policy. The work is split into ordered S tickets: E5-T02a owns resource creation and\nbudget accounting, E5-T02b owns guest-backing attach/detach and range validation, and E5-T02c\nowns unref/scanout consistency plus lifecycle leak coverage. The replacements keep each hostile\ninput boundary independently testable while preserving the original GPU resource acceptance\ncriteria.",
       "adversarial": "Refute by resource-exhaustion and aliasing attacks: (1) script 1e5 CREATE_2D calls with\nunique ids at 4096x4096 and prove host memory (native RSS / wasm memory.grow count) stays\nbounded by the budget; (2) attach the same guest pages to two resources and unref one —\nprove the other still transfers correctly (no shared-ownership corruption); (3) attach a\n0-entry sglist, then TRANSFER (from T03) — must error, not read address 0; (4) integer\noverflow probes: width=0x10000, height=0x10000 (w*h*4 overflows u32), nents=0x10000000.\nAny panic, unbounded allocation, or wrong-size accounting refutes.",
       "file": "tasks/epic-5-the-window/E5-T02-virtio-gpu-resource-lifecycle.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T02a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu resource creation and budget accounting",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T01c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Add the host-side 2D resource store and a strict `RESOURCE_CREATE_2D` handler. Valid\nresources receive an owned linear pixel buffer, while malformed or over-budget requests\nreturn the specified virtio-gpu error without attempting an allocation.",
+      "criteria": [
+        {
+          "text": "A valid create inserts exactly one resource and increases accounted bytes by `width * height * 4`; its backing list is empty.",
+          "checked": false
+        },
+        {
+          "text": "Existing id, id 0, width 0, height 0, and unsupported format 99 each return the spec'd error and leave the map and accounted bytes unchanged.",
+          "checked": false
+        },
+        {
+          "text": "16384x16384 with the default 512 MiB total budget returns `ERR_OUT_OF_MEMORY` without allocating a pixel buffer; a request exceeding 256 MiB is rejected likewise.",
+          "checked": false
+        },
+        {
+          "text": "`cargo test -p wasm-vm-core --lib gpu_resources_create` passes with exact error and accounting assertions.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Probe width/height `0x10000`, multiplication near `u32::MAX`, and 100,000 unique 4096x4096\ncreates. The map must never panic or grow beyond its configured byte budget, and rejected\nrequests must not change the resource count or accounting total. Flip each supported format\nindependently to catch a decoder that validates only one enum value.",
+      "file": "tasks/epic-5-the-window/E5-T02a-virtio-gpu-resource-create.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T02b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu resource backing attach and detach validation",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T02a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Implement `RESOURCE_ATTACH_BACKING` and `RESOURCE_DETACH_BACKING` for the resource store,\nincluding checked scatter-gather decoding and guest-RAM range validation. A failed attach is\natomic: the resource remains alive and backing-less (or retains its previous valid backing).",
+      "criteria": [
+        {
+          "text": "A valid attach publishes the exact `(GuestAddr, u32)` entries and returns OK; detach clears them and returns OK.",
+          "checked": false
+        },
+        {
+          "text": "Any entry that extends past guest RAM, overflows its address range, or has an invalid sglist location returns `ERR_INVALID_PARAMETER` with no partial backing mutation.",
+          "checked": false
+        },
+        {
+          "text": "An attach to an unknown resource returns `ERR_INVALID_RESOURCE_ID`; an oversized `nents` value is rejected before host allocation or unbounded parsing.",
+          "checked": false
+        },
+        {
+          "text": "`cargo test -p wasm-vm-core --lib gpu_resources_backing` passes, including the shared guest-page alias case.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Use `nents=0x10000000`, a truncated sglist, address `u64::MAX`, and a final entry whose end\noverflows or lands one byte past RAM. Attach identical guest pages to two resources, detach\none, and confirm the other retains its independent entries. A zero-entry attach must leave the\nresource explicitly backing-less so a later transfer can reject it rather than dereference 0.",
+      "file": "tasks/epic-5-the-window/E5-T02b-virtio-gpu-resource-backing.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T02c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu resource unref and scanout lifecycle",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T02b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Complete the resource lifecycle with `RESOURCE_UNREF`, scanout-bound cleanup, and deterministic\nleak coverage. Destroying a resource releases its host pixels and backing metadata exactly once\nand leaves scanout state unable to reference the removed id.",
+      "criteria": [
+        {
+          "text": "Create→attach→detach→unref returns OK at each step, leaves no resource, and restores accounted bytes to the pre-create baseline.",
+          "checked": false
+        },
+        {
+          "text": "Unref of a scanout-bound resource clears the binding and cannot leave a dangling id; subsequent scanout/transfer lookup reports the resource as absent.",
+          "checked": false
+        },
+        {
+          "text": "10,000 create/unref cycles show zero net growth in accounted bytes and resource count.",
+          "checked": false
+        },
+        {
+          "text": "`cargo test -p wasm-vm-core --lib gpu_resources_lifecycle` passes with exact cleanup assertions.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Unref an unknown id, unref twice, unref while backing is attached, and unref one of two\nresources sharing the same guest pages. The surviving resource must remain usable and the\nscanout must never point at freed host pixels. Run the lifecycle loop with varying valid\nformats and dimensions to catch format- or size-specific leaks.",
+      "file": "tasks/epic-5-the-window/E5-T02c-virtio-gpu-resource-lifecycle.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
