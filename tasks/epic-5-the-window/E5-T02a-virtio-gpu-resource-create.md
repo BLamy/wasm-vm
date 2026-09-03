@@ -3,7 +3,7 @@ id: E5-T02a
 epic: 5
 title: virtio-gpu resource creation and budget accounting
 priority: 502.1
-status: implemented
+status: verified
 depends_on: [E5-T01c]
 estimate: S
 risk: high
@@ -83,3 +83,19 @@ wasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test 
 `wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,
 and host-layer rr runs were excluded per the user's direction and current repository evidence
 policy.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Acceptance — HELD.** The recorded focused suite covers the valid six-format create path,
+  exact pixel-byte accounting, id/format/dimension validation, per-resource and aggregate
+  budgets, the 16384x16384 no-allocation rejection, and 100,000 hostile ids. The control-queue
+  test additionally exercises the typed 40-byte request and fenced OK/error responses.
+- **Coverage — HELD.** `resources.rs` validation/allocation/accounting, protocol decoding, and
+  CREATE_2D dispatch are all exercised by the focused run; the full core and virtio regressions
+  remain green. No unexecuted runtime hunk requires follow-up in this slice.
+- **Evidence integrity — HELD.** Evidence digest
+  `c52caaed753e093e56180c38637ea7f19cc0dce64e064d7c1fb27711a676b640` matches the checked-in
+  artifact for implementation commit `923e9f2`.
+
+The user explicitly directed this slice to be marked verified; backing and lifecycle behavior
+remain gated behind E5-T02b and E5-T02c.
