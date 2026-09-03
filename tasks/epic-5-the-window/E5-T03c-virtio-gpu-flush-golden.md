@@ -3,7 +3,7 @@ id: E5-T03c
 epic: 5
 title: virtio-gpu resource flush and golden presentation integration
 priority: 503.3
-status: in-progress
+status: verified
 depends_on: [E5-T03b]
 estimate: S
 risk: high
@@ -48,4 +48,53 @@ than a mutable alias of guest backing, and that no BGRA/RGBA swizzle appears in 
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — implemented
+
+- **Flush protocol and sink seam — HELD.** Added the fixed little-endian `RESOURCE_FLUSH`
+  request, widened damage validation, bounded error responses, the headless-safe `NullSink`, and
+  `TestSink` records containing scanout binding, exact damage rectangle, resource dimensions, and
+  a deterministic resource-sized CRC-32.
+- **Lifecycle and adversarial coverage — HELD.** Native tests cover flush before binding, after
+  `SET_SCANOUT(resource_id = 0)`, after `RESOURCE_UNREF`, unknown resources, short requests,
+  outside-edge and overflowing rectangles, and the no-event guarantee on rejected requests.
+- **Golden integration — HELD.** Five checked-in patterns drive guest writes through
+  `CREATE_2D` → multi-entry `ATTACH_BACKING` → `SET_SCANOUT` → `TRANSFER_TO_HOST_2D` →
+  `RESOURCE_FLUSH`; an independent branch-based reference produces the hard-coded CRC fixtures.
+  The test mutates a fixture and proves comparison failure, then mutates guest backing after the
+  flush and proves the host shadow and owned record remain unchanged.
+
+Implementation commit: `3f2b36a`.
+
+Evidence: `evidence/e5-t03c/flush-golden-2026-09-03.json` (SHA-256
+`4849ac9eb91d78e0707a41aeb29d353be9295d0c49ac5c7568f2b43210e7b1ce`).
+
+Commands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib
+gpu_flush --quiet` (7 passed); `cargo test -p wasm-vm-core --lib --quiet` (219 passed);
+`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core
+--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target
+wasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core
+--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed);
+`cargo clippy -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test
+virtio_net_critic -- -D warnings`; and `wasm-pack test --node crates/wasm --test gpu_protocol`
+(3 passed). Independent-machine, WebKit, and host-layer rr runs were excluded per the user's
+direction and the repository's current evidence policy.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Acceptance — HELD.** The native recording proves all five full/partial/odd-x/multi-entry/
+  edge-touching patterns produce the exact independent CRC fixtures and damage rectangles, while
+  the wasm32 runner reproduces the same five CRCs.
+- **Lifecycle — HELD.** Legal unbound and post-disable flushes are forwarded with dimensions,
+  post-UNREF flushes are rejected, and the default null sink completes a headless command without
+  retaining pixels.
+- **Adversarial/error handling — HELD.** Unknown, truncated, outside-edge, and overflowing
+  requests return bounded protocol errors without sink events; fixture mutation fails the
+  independent comparison and guest-backing mutation cannot alter the copied/owned evidence.
+- **Coverage — HELD.** The changed protocol type/constants, sink implementations, CRC path,
+  validation/dispatch arm, wasm mirror, and all lifecycle branches execute in the focused suite,
+  full core regression, or wasm Node runner.
+- **Evidence integrity — HELD.** Evidence digest
+  `4849ac9eb91d78e0707a41aeb29d353be9295d0c49ac5c7568f2b43210e7b1ce` matches the checked-in
+  artifact for implementation commit `3f2b36a`.
+
+E5-T03c is verified; the next queue item is now eligible for selection.

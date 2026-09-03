@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 206,
+    "verified": 207,
     "total": 368
   },
   "epics": [
@@ -16281,7 +16281,7 @@
       "epicKey": "5",
       "title": "virtio-gpu resource flush and golden presentation integration",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T03b"
       ],
@@ -16292,21 +16292,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Flush protocol and sink seam — HELD.** Added the fixed little-endian `RESOURCE_FLUSH`\n  request, widened damage validation, bounded error responses, the headless-safe `NullSink`, and\n  `TestSink` records containing scanout binding, exact damage rectangle, resource dimensions, and\n  a deterministic resource-sized CRC-32.\n- **Lifecycle and adversarial coverage — HELD.** Native tests cover flush before binding, after\n  `SET_SCANOUT(resource_id = 0)`, after `RESOURCE_UNREF`, unknown resources, short requests,\n  outside-edge and overflowing rectangles, and the no-event guarantee on rejected requests.\n- **Golden integration — HELD.** Five checked-in patterns drive guest writes through\n  `CREATE_2D` → multi-entry `ATTACH_BACKING` → `SET_SCANOUT` → `TRANSFER_TO_HOST_2D` →\n  `RESOURCE_FLUSH`; an independent branch-based reference produces the hard-coded CRC fixtures.\n  The test mutates a fixture and proves comparison failure, then mutates guest backing after the\n  flush and proves the host shadow and owned record remain unchanged.\n\nImplementation commit: `3f2b36a`.\n\nEvidence: `evidence/e5-t03c/flush-golden-2026-09-03.json` (SHA-256\n`4849ac9eb91d78e0707a41aeb29d353be9295d0c49ac5c7568f2b43210e7b1ce`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_flush --quiet` (7 passed); `cargo test -p wasm-vm-core --lib --quiet` (219 passed);\n`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core\n--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed);\n`cargo clippy -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test\nvirtio_net_critic -- -D warnings`; and `wasm-pack test --node crates/wasm --test gpu_protocol`\n(3 passed). Independent-machine, WebKit, and host-layer rr runs were excluded per the user's\ndirection and the repository's current evidence policy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The native recording proves all five full/partial/odd-x/multi-entry/\n  edge-touching patterns produce the exact independent CRC fixtures and damage rectangles, while\n  the wasm32 runner reproduces the same five CRCs.\n- **Lifecycle — HELD.** Legal unbound and post-disable flushes are forwarded with dimensions,\n  post-UNREF flushes are rejected, and the default null sink completes a headless command without\n  retaining pixels.\n- **Adversarial/error handling — HELD.** Unknown, truncated, outside-edge, and overflowing\n  requests return bounded protocol errors without sink events; fixture mutation fails the\n  independent comparison and guest-backing mutation cannot alter the copied/owned evidence.\n- **Coverage — HELD.** The changed protocol type/constants, sink implementations, CRC path,\n  validation/dispatch arm, wasm mirror, and all lifecycle branches execute in the focused suite,\n  full core regression, or wasm Node runner.\n- **Evidence integrity — HELD.** Evidence digest\n  `4849ac9eb91d78e0707a41aeb29d353be9295d0c49ac5c7568f2b43210e7b1ce` matches the checked-in\n  artifact for implementation commit `3f2b36a`.\n\nE5-T03c is verified; the next queue item is now eligible for selection.",
       "adversarial": "Replay flushes before binding, after unbinding, after `UNREF`, and with every boundary edge\njust outside the resource. Mutate the golden fixture and prove the independent reference\ncomparison fails, then restore it. Confirm the sink receives a copied/owned pixel view rather\nthan a mutable alias of guest backing, and that no BGRA/RGBA swizzle appears in the core.",
       "file": "tasks/epic-5-the-window/E5-T03c-virtio-gpu-flush-golden.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t03c): start flush slice",
             "chore(e5-t03): decompose scanout pipeline"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T04",

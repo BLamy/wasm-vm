@@ -1,0 +1,77 @@
+{
+  "schema": "e5-t03c-virtio-gpu-flush-golden-v1",
+  "task": "E5-T03c",
+  "status": "pass",
+  "implementation_commit": "3f2b36a",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib gpu_flush --quiet",
+    "acceptance_result": "7 passed, 0 failed",
+    "coverage": [
+      "The 48-byte little-endian RESOURCE_FLUSH fixture round-trips every field and rejects a truncated request.",
+      "The control-queue path records an exact damage rectangle, dimensions, fence response, and CRC-32 from a TestSink; the default NullSink accepts the same headless path.",
+      "Unbound flushes are forwarded, SET_SCANOUT(resource_id = 0) leaves an old live resource flushable without a scanout binding, and a flush after RESOURCE_UNREF returns INVALID_RESOURCE_ID without a sink event.",
+      "Unknown resources, short requests, outside-edge rectangles, and overflowing coordinates return INVALID_RESOURCE_ID or INVALID_PARAMETER without a sink event.",
+      "The five-pattern integration test drives guest writes through CREATE_2D, multi-entry ATTACH_BACKING, SET_SCANOUT, TRANSFER_TO_HOST_2D, and RESOURCE_FLUSH; full-frame, partial, odd-x, multi-entry, and edge-touching cases match hard-coded CRC fixtures from an independent branch-based reference.",
+      "The golden test mutates a checked fixture and asserts the independent comparison fails, then verifies guest backing mutation after transfer cannot change the host shadow or recorded CRC."
+    ],
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib --quiet",
+      "result": "219 passed, 0 failed"
+    },
+    "virtio_regression": {
+      "command": "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet",
+      "result": "22 passed, 0 failed"
+    },
+    "clippy": {
+      "commands": [
+        "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+        "cargo clippy -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic -- -D warnings"
+      ],
+      "result": "pass"
+    },
+    "format": {
+      "commands": [
+        "cargo fmt --all -- --check",
+        "git diff --check"
+      ],
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    },
+    "gpu_runner": {
+      "command": "wasm-pack test --node crates/wasm --test gpu_protocol",
+      "result": "3 passed, 0 failed",
+      "coverage": "The wasm32 runner executes the same five CRC fixtures through TestSink, including exact rectangles and resource dimensions."
+    }
+  },
+  "golden": {
+    "rectangles": [
+      "full-frame 7x5",
+      "partial x=2 y=1 width=3 height=2",
+      "odd-x x=1 y=0 width=5 height=3",
+      "multi-entry x=0 y=2 width=7 height=2",
+      "edge-touching x=4 y=3 width=3 height=2"
+    ],
+    "crc32": [
+      "0x2d068e19",
+      "0x80e3df97",
+      "0xcafeb5cb",
+      "0x74f3ca70",
+      "0x4b09d24f"
+    ]
+  },
+  "claim": "At commit 3f2b36a, RESOURCE_FLUSH validates fixed little-endian requests and widened damage rectangles, forwards legal flushes through a headless-safe FrameSink boundary, records deterministic resource-sized CRCs in TestSink, and proves the complete resource-to-presentation flow against five independent golden patterns on native and wasm32.",
+  "scope_notes": [
+    "No independent-machine, WebKit, or host-layer rr run was used, per the user's direction and the repository's current evidence policy.",
+    "No browser presentation code is part of this core-only slice."
+  ]
+}
