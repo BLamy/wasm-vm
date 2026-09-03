@@ -3,7 +3,7 @@ id: E5-T13c
 epic: 5
 title: browser focus hardening and keyboard recovery proof
 priority: 513.3
-status: implemented
+status: verified
 depends_on: [E5-T13b]
 estimate: S
 risk: medium
@@ -77,3 +77,34 @@ Evidence: `evidence/e5-t13c/focus-hardening-2026-09-03.json`, SHA-256
 `048c92d22f51e543581d2e7e1875491a82fdec49ec57b99a5525b7fee53210cb`; screenshot SHA-256
 `cf89b0e905d4f6327d5de7209353f17c96ef1287e7c1a844f6503d326a36eb4b`. The JSON binds the run to
 the exact implementation commit above.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Lifecycle release — HELD.** Predicted that a held Alt chord would be cleared in dependent-key-
+  first order at a blur boundary, and that the queued F1/Alt keyups would not reintroduce a
+  modifier. The frozen Chromium evidence records `F1 up`, `AltLeft up`, an empty held set, and a
+  lone `KeyA down/up` afterward.
+- **Visibility reconciliation — HELD.** Predicted that hidden visibility would clear Ctrl, then
+  re-press it before F3 only while Chromium still reported Control down; after the physical Control
+  release, F5 would have no synthetic Control make. The evidence records both exact sequences and
+  one modifier repair; the false branch is exactly `F5 down/up`.
+- **Panic/restart/stress — HELD.** Predicted that the visible panic control and a repeated release
+  would be idempotent, controller retirement would reset stale keys without post-stop RPCs, and 500
+  deterministic blur/pointer-lock/view-toggle flaps would finish neutral. The recording observes
+  the panic release, empty post-retirement ledger, `iterations: 500`, and final held `[]`; the
+  post-restart guest reaches `E5_T13C_RECOVER_42`.
+- **UI/docs/deploy coverage — HELD.** Predicted that the debug surface would expose held keys and
+  repair counts, the docs would name the same focus/lock policy, and the generated deploy shell
+  would load every no-bundler input module. Static parity covers source/dist main, loader, protocol,
+  and all input modules; the browser requested all four new runtime modules with zero failed
+  requests, and the final UI reads `Held: none · repairs: 0`.
+- **Integrity and gates — HELD.** Recomputed the JSON digest
+  `048c92d22f51e543581d2e7e1875491a82fdec49ec57b99a5525b7fee53210cb`, matched its exact
+  implementation head `5655c3c3edb06cbd14b3dc1257cb53966e7e9ee4`, and confirmed it is an ancestor of
+  verifier head `5f096553424daa7aeafefb60206721c403932c3d`. The 53-test keyboard/protocol matrix,
+  default targeted clippy, keyboard core tests (2/2), wasm32 build, fmt, syntax, and diff checks
+  passed. The broader all-features clippy command reached unrelated pre-existing `dead_code`
+  errors in `crates/core/src/dispatch.rs` and `crates/core/src/hart/mod.rs`; the T13c diff does not
+  touch those lines, so this is not a task finding.
+- **SUITE — HELD.** Retain the deterministic Chromium harness, exact-head JSON/screenshot, the
+  existing 53 unit/protocol tests, and the bounded 500-flap attack as permanent proof artifacts.

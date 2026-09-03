@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 218,
+    "verified": 219,
     "total": 380
   },
   "epics": [
@@ -17384,7 +17384,7 @@
       "epicKey": "5",
       "title": "browser focus hardening and keyboard recovery proof",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T13b"
       ],
@@ -17412,21 +17412,22 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `5655c3c3edb06cbd14b3dc1257cb53966e7e9ee4` wires the T13a held-key lifecycle\nledger and T13b reconciler into the live demo. Blur, hidden visibility, pointer-lock loss, and\nreserved view-toggle events share an idempotent release path; queued late keyups are suppressed\nuntil the next real keydown so recovery cannot immediately re-press a still-down host modifier.\nThe terminal bar now exposes currently-held physical codes, modifier/lock repair counts, and a\nvisible **Release keys** panic control. Worker/main-thread controllers expose guest LED feedback,\nrestart teardown resets the bridge without post-stop RPCs, and `docs/input.md` documents the policy.\nThe deploy assembler now includes the no-bundler `web/src` tree required by the generated shell.\n\nThe frozen-head Chromium recording ran `node tools/verify/e5-t13c-focus-hardening-proof.mjs` after\n`make web-dist`. It booted the real busybox guest, proved Alt release on blur, Ctrl visibility\nreconciliation on both host-state branches, panic release plus late-keyup no-op, worker restart\nreset, 500 deterministic lifecycle flaps, and post-recovery shell typing reaching\n`E5_T13C_RECOVER_42`. The debug surface ended `Held: none · repairs: 0`; page, console, and request\nerror lists were all empty. Static source/dist parity covered `main.js`, `ide.js`, `loader.js`,\nthe worker protocol, and all shipped input modules.\n\nNarrow gates also passed: 53 keyboard/protocol tests, JS syntax checks, `cargo fmt --all --\n--check`, `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`, and `git diff --check`.\nHost rr, independent machines, and WebKit are waived for this browser-only local proof per the\ncurrent verification policy and user direction.\n\nEvidence: `evidence/e5-t13c/focus-hardening-2026-09-03.json`, SHA-256\n`048c92d22f51e543581d2e7e1875491a82fdec49ec57b99a5525b7fee53210cb`; screenshot SHA-256\n`cf89b0e905d4f6327d5de7209353f17c96ef1287e7c1a844f6503d326a36eb4b`. The JSON binds the run to\nthe exact implementation commit above.",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `5655c3c3edb06cbd14b3dc1257cb53966e7e9ee4` wires the T13a held-key lifecycle\nledger and T13b reconciler into the live demo. Blur, hidden visibility, pointer-lock loss, and\nreserved view-toggle events share an idempotent release path; queued late keyups are suppressed\nuntil the next real keydown so recovery cannot immediately re-press a still-down host modifier.\nThe terminal bar now exposes currently-held physical codes, modifier/lock repair counts, and a\nvisible **Release keys** panic control. Worker/main-thread controllers expose guest LED feedback,\nrestart teardown resets the bridge without post-stop RPCs, and `docs/input.md` documents the policy.\nThe deploy assembler now includes the no-bundler `web/src` tree required by the generated shell.\n\nThe frozen-head Chromium recording ran `node tools/verify/e5-t13c-focus-hardening-proof.mjs` after\n`make web-dist`. It booted the real busybox guest, proved Alt release on blur, Ctrl visibility\nreconciliation on both host-state branches, panic release plus late-keyup no-op, worker restart\nreset, 500 deterministic lifecycle flaps, and post-recovery shell typing reaching\n`E5_T13C_RECOVER_42`. The debug surface ended `Held: none · repairs: 0`; page, console, and request\nerror lists were all empty. Static source/dist parity covered `main.js`, `ide.js`, `loader.js`,\nthe worker protocol, and all shipped input modules.\n\nNarrow gates also passed: 53 keyboard/protocol tests, JS syntax checks, `cargo fmt --all --\n--check`, `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`, and `git diff --check`.\nHost rr, independent machines, and WebKit are waived for this browser-only local proof per the\ncurrent verification policy and user direction.\n\nEvidence: `evidence/e5-t13c/focus-hardening-2026-09-03.json`, SHA-256\n`048c92d22f51e543581d2e7e1875491a82fdec49ec57b99a5525b7fee53210cb`; screenshot SHA-256\n`cf89b0e905d4f6327d5de7209353f17c96ef1287e7c1a844f6503d326a36eb4b`. The JSON binds the run to\nthe exact implementation commit above.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Lifecycle release — HELD.** Predicted that a held Alt chord would be cleared in dependent-key-\n  first order at a blur boundary, and that the queued F1/Alt keyups would not reintroduce a\n  modifier. The frozen Chromium evidence records `F1 up`, `AltLeft up`, an empty held set, and a\n  lone `KeyA down/up` afterward.\n- **Visibility reconciliation — HELD.** Predicted that hidden visibility would clear Ctrl, then\n  re-press it before F3 only while Chromium still reported Control down; after the physical Control\n  release, F5 would have no synthetic Control make. The evidence records both exact sequences and\n  one modifier repair; the false branch is exactly `F5 down/up`.\n- **Panic/restart/stress — HELD.** Predicted that the visible panic control and a repeated release\n  would be idempotent, controller retirement would reset stale keys without post-stop RPCs, and 500\n  deterministic blur/pointer-lock/view-toggle flaps would finish neutral. The recording observes\n  the panic release, empty post-retirement ledger, `iterations: 500`, and final held `[]`; the\n  post-restart guest reaches `E5_T13C_RECOVER_42`.\n- **UI/docs/deploy coverage — HELD.** Predicted that the debug surface would expose held keys and\n  repair counts, the docs would name the same focus/lock policy, and the generated deploy shell\n  would load every no-bundler input module. Static parity covers source/dist main, loader, protocol,\n  and all input modules; the browser requested all four new runtime modules with zero failed\n  requests, and the final UI reads `Held: none · repairs: 0`.\n- **Integrity and gates — HELD.** Recomputed the JSON digest\n  `048c92d22f51e543581d2e7e1875491a82fdec49ec57b99a5525b7fee53210cb`, matched its exact\n  implementation head `5655c3c3edb06cbd14b3dc1257cb53966e7e9ee4`, and confirmed it is an ancestor of\n  verifier head `5f096553424daa7aeafefb60206721c403932c3d`. The 53-test keyboard/protocol matrix,\n  default targeted clippy, keyboard core tests (2/2), wasm32 build, fmt, syntax, and diff checks\n  passed. The broader all-features clippy command reached unrelated pre-existing `dead_code`\n  errors in `crates/core/src/dispatch.rs` and `crates/core/src/hart/mod.rs`; the T13c diff does not\n  touch those lines, so this is not a task finding.\n- **SUITE — HELD.** Retain the deterministic Chromium harness, exact-head JSON/screenshot, the\n  existing 53 unit/protocol tests, and the bounded 500-flap attack as permanent proof artifacts.",
       "adversarial": "Use the local browser harness to steal focus during Alt+Tab-like chords, fire a JS alert while a\nmodifier is held, exit pointer lock with Escape, toggle views, and restart the worker. After each\nattack type `a` at the guest getty and assert no phantom modifier. Invoke the panic button during\na held physical key and require the later physical keyup to be a no-op. Run 500 randomized focus\nflaps interleaved with chords and require an empty final held set.",
       "file": "tasks/epic-5-the-window/E5-T13c-focus-hardening-e2e.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t13c): record focus hardening proof",
             "chore(e5-t13c): start focus hardening proof"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T14",
