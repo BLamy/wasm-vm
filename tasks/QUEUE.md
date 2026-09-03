@@ -333,7 +333,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `501.2` [E5-T01b](epic-5-the-window/E5-T01b-virtio-gpu-display-info-queue.md) — virtio-gpu control queue and GET_DISPLAY_INFO *(deps: E5-T01a)*
 - [x] `501.3` [E5-T01c](epic-5-the-window/E5-T01c-virtio-gpu-malformed-queue-hardening.md) — virtio-gpu malformed commands and descriptor-chain hardening *(deps: E5-T01b)*
 - [-] `502` [E5-T02](epic-5-the-window/E5-T02-virtio-gpu-resource-lifecycle.md) — virtio-gpu 2D resource lifecycle (CREATE_2D, ATTACH_BACKING, DETACH, UNREF) *(deps: E5-T01c)*
-- [~] `502.1` [E5-T02a](epic-5-the-window/E5-T02a-virtio-gpu-resource-create.md) — virtio-gpu resource creation and budget accounting *(deps: E5-T01c)*
+- [?] `502.1` [E5-T02a](epic-5-the-window/E5-T02a-virtio-gpu-resource-create.md) — virtio-gpu resource creation and budget accounting *(deps: E5-T01c)*
 - [ ] `502.2` [E5-T02b](epic-5-the-window/E5-T02b-virtio-gpu-resource-backing.md) — virtio-gpu resource backing attach and detach validation *(deps: E5-T02a)*
 - [ ] `502.3` [E5-T02c](epic-5-the-window/E5-T02c-virtio-gpu-resource-lifecycle.md) — virtio-gpu resource unref and scanout lifecycle *(deps: E5-T02b)*
 - [ ] `503` [E5-T03](epic-5-the-window/E5-T03-virtio-gpu-scanout-transfer-flush.md) — Scanout pipeline — SET_SCANOUT, TRANSFER_TO_HOST_2D, RESOURCE_FLUSH *(deps: E5-T02)*

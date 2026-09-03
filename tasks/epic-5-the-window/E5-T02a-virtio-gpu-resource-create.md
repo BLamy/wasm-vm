@@ -3,7 +3,7 @@ id: E5-T02a
 epic: 5
 title: virtio-gpu resource creation and budget accounting
 priority: 502.1
-status: in-progress
+status: implemented
 depends_on: [E5-T01c]
 estimate: S
 risk: high
@@ -54,4 +54,32 @@ independently to catch a decoder that validates only one enum value.
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — implemented
+
+- **Creation and accounting — HELD.** `ResourceMap` is keyed by non-zero resource id and creates
+  a zeroed `Box<[u32]>` with an empty backing list. The six supported formats and exact
+  `width * height * 4` byte accounting are covered by native assertions.
+- **Validation before allocation — HELD.** Duplicate/id-zero, zero dimensions, format 0/99,
+  `0x10000` dimensions, the 16384x16384 1 GiB request, and aggregate/per-resource budget
+  failures leave resource count and accounted bytes unchanged. The 100,000-request hostile loop
+  stops at exactly eight 4096x4096 resources under the default 512 MiB budget.
+- **Control-queue boundary — HELD.** A split readable/writable descriptor chain decodes the
+  40-byte little-endian `RESOURCE_CREATE_2D` request, returns `RESP_OK_NODATA` with the requested
+  fence echo for a valid resource, and returns `RESP_ERR_INVALID_PARAMETER` without insertion for
+  an unsupported format.
+- **Scope — HELD.** Backing attach/detach and unref/scanout cleanup remain in E5-T02b/T02c.
+
+Implementation commit: `923e9f2`.
+
+Evidence: `evidence/e5-t02a/resource-create-2026-09-03.json` (SHA-256
+`c52caaed753e093e56180c38637ea7f19cc0dce64e064d7c1fb27711a676b640`).
+
+Commands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib
+gpu_resources_create` (7 passed); `cargo test -p wasm-vm-core --lib` (191 passed); `cargo clippy
+-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features
+--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target
+wasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core
+--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and
+`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,
+and host-layer rr runs were excluded per the user's direction and current repository evidence
+policy.

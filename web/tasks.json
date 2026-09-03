@@ -15993,7 +15993,7 @@
       "epicKey": "5",
       "title": "virtio-gpu resource creation and budget accounting",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T01c"
       ],
@@ -16021,21 +16021,22 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Creation and accounting — HELD.** `ResourceMap` is keyed by non-zero resource id and creates\n  a zeroed `Box<[u32]>` with an empty backing list. The six supported formats and exact\n  `width * height * 4` byte accounting are covered by native assertions.\n- **Validation before allocation — HELD.** Duplicate/id-zero, zero dimensions, format 0/99,\n  `0x10000` dimensions, the 16384x16384 1 GiB request, and aggregate/per-resource budget\n  failures leave resource count and accounted bytes unchanged. The 100,000-request hostile loop\n  stops at exactly eight 4096x4096 resources under the default 512 MiB budget.\n- **Control-queue boundary — HELD.** A split readable/writable descriptor chain decodes the\n  40-byte little-endian `RESOURCE_CREATE_2D` request, returns `RESP_OK_NODATA` with the requested\n  fence echo for a valid resource, and returns `RESP_ERR_INVALID_PARAMETER` without insertion for\n  an unsupported format.\n- **Scope — HELD.** Backing attach/detach and unref/scanout cleanup remain in E5-T02b/T02c.\n\nImplementation commit: `923e9f2`.\n\nEvidence: `evidence/e5-t02a/resource-create-2026-09-03.json` (SHA-256\n`c52caaed753e093e56180c38637ea7f19cc0dce64e064d7c1fb27711a676b640`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_resources_create` (7 passed); `cargo test -p wasm-vm-core --lib` (191 passed); `cargo clippy\n-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features\n--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and\n`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,\nand host-layer rr runs were excluded per the user's direction and current repository evidence\npolicy.",
       "adversarial": "Probe width/height `0x10000`, multiplication near `u32::MAX`, and 100,000 unique 4096x4096\ncreates. The map must never panic or grow beyond its configured byte budget, and rejected\nrequests must not change the resource count or accounting total. Flip each supported format\nindependently to catch a decoder that validates only one enum value.",
       "file": "tasks/epic-5-the-window/E5-T02a-virtio-gpu-resource-create.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t02a): activate resource creation slice",
             "chore(e5-t02): decompose GPU resource lifecycle"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T02b",
