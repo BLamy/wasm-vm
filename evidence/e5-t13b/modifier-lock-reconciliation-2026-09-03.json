@@ -1,0 +1,38 @@
+{
+  "task": "E5-T13b",
+  "gitHead": "f352030e01e966ea39e03e336a55b176ca1ff207",
+  "recordedAt": "2026-09-03",
+  "commands": [
+    "npm run test:keyboard-reconciliation --prefix web",
+    "node --check web/src/input/reconciliation.js",
+    "node --check web/src/input/keyboard.js",
+    "cmp -s web/src/input/reconciliation.ts web/src/input/reconciliation.js",
+    "cmp -s web/src/input/keyboard.ts web/src/input/keyboard.js",
+    "git diff --check f352030^ f352030"
+  ],
+  "result": {
+    "tests": 23,
+    "passed": 23,
+    "failed": 0,
+    "cancelled": 0,
+    "durationMs": 39.710917
+  },
+  "predicates": {
+    "modifierDownBeforeDependent": [[1, 29, 1], [1, 30, 1]],
+    "modifierUpBeforeDependent": [[1, 29, 0], [1, 30, 0]],
+    "forcedReleaseWithDependentHeld": [[1, 29, 1], [1, 30, 1], [1, 29, 0], [1, 48, 1]],
+    "altGrRepair": [[1, 29, 1], [1, 56, 1], [1, 16, 1]],
+    "lockPairCodes": { "CapsLock": 58, "NumLock": 69 },
+    "repeatedStaleLockObservations": 50,
+    "repeatedStaleLockRepairs": 1,
+    "projectionIdentity": true
+  },
+  "sha256": {
+    "web/src/input/reconciliation.ts": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d",
+    "web/src/input/reconciliation.js": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d",
+    "web/src/input/keyboard.ts": "53a664fed275830498b04d02f6a118ce33702589744e170a1a5749c2f1fa4a67",
+    "web/src/input/keyboard.js": "53a664fed275830498b04d02f6a118ce33702589744e170a1a5749c2f1fa4a67",
+    "web/tests/modifier-lock-reconciliation.test.mjs": "94f7329b6d25dc6a8e770a62f56762b6ae52bf269859ac279253c26d46e0e1af",
+    "web/package.json": "283c19b077b14cdd7ec34b59ed7c7098d8356fb7c471736913e129a6aff0ce50"
+  }
+}

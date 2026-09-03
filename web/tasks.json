@@ -17336,7 +17336,7 @@
       "epicKey": "5",
       "title": "modifier and lock-key reconciliation",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T13a"
       ],
@@ -17360,13 +17360,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `f352030` adds `createKeyboardReconciler` as a synchronous wrapper around\nthe T12b bridge. It repairs missing or stranded Control/Alt/Shift/Meta before the triggering\nevent, permits an explicit reconciliation break to precede a dependent key, and tracks bounded\nrepair statistics. CapsLock and NumLock compare host `getModifierState()` or an explicit host\nsnapshot with the latest T11 LED snapshot; each divergence emits one down/up pair and stays\nsuppressed until feedback catches up. The TypeScript/browser projections are byte-identical.\n\nThe frozen-head recording ran `npm run test:keyboard-reconciliation --prefix web`: 23 tests passed,\n0 failed, including both modifier visibility branches, own-edge no-self-repair, stranded-modifier\nrelease with a dependent key held, AltGr-shaped Control+AltRight ordering, exact CapsLock/NumLock\npairs, per-event lock observation, and 50 repeated stale LED observations with one repair. The\nexisting 38-test keyboard/protocol matrix also passed, along with syntax, projection identity,\nand `git diff --check f352030^ f352030`.\n\nEvidence: `evidence/e5-t13b/modifier-lock-reconciliation-2026-09-03.json`, SHA-256\n`e7fbf43737f77f7de0fe97a0c5f2d666fd9d8a4b87ee132f7e84cb3b507eda19`.",
       "adversarial": "Toggle CapsLock and NumLock 50 times while feeding a slow-drain event sink, then replay the same\nobservations. The repair count and emitted frames must remain bounded and deterministic, with no\noscillation once host and guest state agree. Interleave Ctrl+AltRight and a missing modifier-up;\nthe resulting sequence must preserve the documented AltGr representation.",
       "file": "tasks/epic-5-the-window/E5-T13b-modifier-lock-reconciliation.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t13b): start modifier reconciliation"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T13c",
