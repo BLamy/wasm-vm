@@ -17492,7 +17492,7 @@
       "epicKey": "5",
       "title": "pointer device specs and guest stream wiring",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T10c"
       ],

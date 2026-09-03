@@ -3,7 +3,7 @@ id: E5-T14a
 epic: 5
 title: pointer device specs and guest stream wiring
 priority: 514.1
-status: pending
+status: in-progress
 depends_on: [E5-T10c]
 estimate: S
 risk: medium

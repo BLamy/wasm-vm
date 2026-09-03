@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T14a** — pointer device specs and guest stream wiring
 1. **E5-T19** — virtio-snd device — control plane and PCM playback stream machine **[DECOMPOSE BEFORE START]**
 1. **E5-T23** — virtio-console agent channel and static Rust guest agent **[DECOMPOSE BEFORE START]**
 
@@ -366,7 +365,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `513.2` [E5-T13b](epic-5-the-window/E5-T13b-modifier-lock-reconciliation.md) — modifier and lock-key reconciliation *(deps: E5-T13a)*
 - [x] `513.3` [E5-T13c](epic-5-the-window/E5-T13c-focus-hardening-e2e.md) — browser focus hardening and keyboard recovery proof *(deps: E5-T13b)*
 - [-] `514` [E5-T14](epic-5-the-window/E5-T14-virtio-input-pointer.md) — Pointer devices — absolute tablet, relative mouse with Pointer Lock, wheel *(deps: E5-T10c)*
-- [ ] `514.1` [E5-T14a](epic-5-the-window/E5-T14a-pointer-device-specs.md) — pointer device specs and guest stream wiring *(deps: E5-T10c)*
+- [~] `514.1` [E5-T14a](epic-5-the-window/E5-T14a-pointer-device-specs.md) — pointer device specs and guest stream wiring *(deps: E5-T10c)*
 - [ ] `514.2` [E5-T14b](epic-5-the-window/E5-T14b-pointer-mode-routing.md) — pointer mode state machine and coordinate/button routing *(deps: E5-T14a)*
 - [ ] `514.3` [E5-T14c](epic-5-the-window/E5-T14c-pointer-wheel-browser-proof.md) — pointer wheel capture and browser proof *(deps: E5-T14b, E5-T13c)*
 - [ ] `515` [E5-T15](epic-5-the-window/E5-T15-virtio-gpu-cursor-plane.md) — Hardware cursor plane — cursorq UPDATE/MOVE_CURSOR with DOM-overlay presentation *(deps: E5-T03, E5-T14c)*
