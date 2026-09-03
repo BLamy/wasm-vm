@@ -4,7 +4,7 @@ epic: 5
 title: AudioWorklet playback — SAB ring buffer, underrun accounting, autoplay unlock
 priority: 520
 status: pending
-depends_on: [E5-T19d]
+depends_on: [E5-T19]
 estimate: M
 capstone: false
 ---

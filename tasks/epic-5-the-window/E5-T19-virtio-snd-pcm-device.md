@@ -3,12 +3,10 @@ id: E5-T19
 epic: 5
 title: virtio-snd device — control plane and PCM playback stream machine
 priority: 519
-status: cancelled
+status: pending
 depends_on: [E5-T05c]
 estimate: L
-risk: medium
 capstone: false
-decomposed_into: [E5-T19a, E5-T19b, E5-T19c, E5-T19d]
 ---
 
 ## Goal
@@ -30,13 +28,6 @@ at the *pacing of the audio clock* and completes each with `virtio_snd_pcm_statu
 guest mixer. In native tests the clock is a mock; the sink gets
 `push(frames: &[i16], rate)`. State machine strictness matters: Linux issues
 SET_PARAMS in RELEASED only; wrong-state requests get `VIRTIO_SND_S_BAD_MSG`.
-
-> **DECOMPOSED 2026-09-03.** This L-sized audio container is cancelled before implementation as
-> required by task policy and replaced by four ordered S slices. E5-T19a owns the control-plane
-> protocol and exhaustive stream transition oracle; E5-T19b owns paced playback, the injectable
-> clock, and native sinks; E5-T19c owns event/XRUN delivery and malformed-queue hardening; and
-> E5-T19d owns the real Linux guest integration, QEMU-shaped captures, and final playback proof.
-> E5-T20 is rewired to E5-T19d.
 
 ## Deliverables
 - `crates/vm-core/src/devices/snd/mod.rs`: control-plane dispatch + per-stream state
@@ -73,11 +64,4 @@ descriptor leak (queue depth monotonically shrinking) refutes. Malformed txq buf
 stall the queue.
 
 ## Verification log
-
-### 2026-09-03 — coordinator — decomposed
-
-This L-sized virtio-snd planning container is cancelled before implementation and replaced by four
-ordered S tasks with one boundary and one deterministic acceptance command each. The children split
-the protocol/state contract, clock-paced PCM data path, queue/event hardening, and guest-facing
-sign-off so no single active task has to own the entire audio stack. E5-T20 now depends on E5-T19d,
-the final guest-proof slice.
+(empty)
