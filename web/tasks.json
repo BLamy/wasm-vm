@@ -14410,15 +14410,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify: close E4-T22a shared memory build",
             "tasks: start E4-T22a shared memory build"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T22b",
@@ -14426,7 +14427,7 @@
       "epicKey": "4",
       "title": "COOP/COEP isolation gate and static-host fallback",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T22a"
       ],

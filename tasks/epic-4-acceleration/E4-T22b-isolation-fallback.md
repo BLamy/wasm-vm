@@ -3,7 +3,7 @@ id: E4-T22b
 epic: 4
 title: COOP/COEP isolation gate and static-host fallback
 priority: 422.2
-status: pending
+status: in-progress
 depends_on: [E4-T22a]
 estimate: S
 risk: high
