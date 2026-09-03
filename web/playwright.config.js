@@ -5,7 +5,7 @@
 //   1. web/pkg/  — `wasm-pack build crates/wasm --target web` then `cp -r crates/wasm/pkg web/pkg`
 //   2. releases/kernel/6.6.63/Image and releases/initramfs/initramfs.cpio.gz (Epic 2 artifacts)
 //   3. web/artifacts.json — `bash tools/gen-web-manifest.sh`
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 
 const PORT = Number(process.env.PLAYWRIGHT_PORT || "8123");
 const nodeBenchmark = process.env.E4T32_NODE_BENCH === "1";
@@ -26,6 +26,12 @@ export default defineConfig({
     // to a real headed window so a default-headless invocation cannot share its resumable ledger.
     ...(nodeBenchmark ? { headless: false } : {}),
   },
+  // Keep the named project available for task-local acceptance commands. The default suite still
+  // runs one browser; callers that need the historical Chrome/Firefox matrix use the dedicated
+  // playwright.e4-t22.config.js instead.
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+  ],
   webServer: {
     command: `bash ../tools/serve-dev.sh ${PORT}`,
     url: `http://localhost:${PORT}/artifacts.json`,

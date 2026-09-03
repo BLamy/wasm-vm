@@ -11,11 +11,14 @@ import { startLinuxBootWorker, stopLinuxController } from "./linux-worker-host.j
 import { resolveOverlayResetSeedIdentity } from "./overlay-reset-target.js";
 
 // E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
-// `?worker=0` is the explicit main-thread differential/fallback. If Worker is genuinely unavailable,
-// fall back once with a visible warning; a worker boot failure itself never starts a second machine.
-const _workerQuery = new URLSearchParams(location.search).get("worker");
+// `?worker=0` and the older `?singlethread=1` spelling are explicit main-thread
+// differential/fallback switches. If Worker is genuinely unavailable, fall back once with a visible
+// warning; a worker boot failure itself never starts a second machine.
+const _startupQuery = new URLSearchParams(location.search);
+const _workerQuery = _startupQuery.get("worker");
+const _singleThreadForced = _workerQuery === "0" || _startupQuery.get("singlethread") === "1";
 const _workerAvailable = typeof globalThis.Worker === "function";
-const _workerRequested = _workerQuery !== "0";
+const _workerRequested = !_singleThreadForced;
 const _useCpuWorker = _workerRequested && _workerAvailable;
 if (_workerRequested && !_workerAvailable) {
   console.warn("wasm-vm: whole-machine Worker unavailable; using the main-thread fallback");
