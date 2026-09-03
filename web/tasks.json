@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 194,
+    "verified": 195,
     "total": 356
   },
   "epics": [
@@ -15237,7 +15237,7 @@
       "epicKey": "4",
       "title": "Level-4 same-head cold-start capstone sign-off",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4-T28a",
         "E4-T28b",
@@ -15255,13 +15255,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified (user-directed verification-debt closure)\n\n- The final runner is implemented at `be5d340` and the exact report command was exercised with\n  the narrow deploy-local residue exception:\n  `CAPSTONE_E4_ALLOW_DEPLOY_DIRTY=1 bash tools/capstone_e4.sh --final --output evidence/e4-t28/capstone-2026-09-03.json`.\n  The report is `evidence/e4-t28/capstone-2026-09-03.json`, SHA-256\n  `73b2bca916ab40fdb376a120b2a9a73e9c6fae824afaf4b2b0317932b6b43c62`.\n- The capstone report validates the E4-T28a identity envelope, exact baseline rows, release build\n  controls, required headers, served/deploy artifact identities, all four child-result schemas and\n  hashes, Bun's unavailable non-gating result, and a `capstone: level4` aggregate ledger entry.\n  `CAPSTONE_E4_STRICT=1` remains available to make any recorded gap fail closed.\n- The report intentionally carries the inherited gaps instead of manufacturing a sign-off: Node\n  echo p95 held at `34.33 ms`, but HTTP uplift was `1.08x`; CoreMark has no JIT score and no immutable\n  browser denominator; cold boot was `917.888625 s` from one sample and observed read-only\n  persistence; GCC's pinned overlay fetched but `/dev/vdb` mount timed out at both 180 s and 900 s;\n  E4-T26 RISCOF/browser cells and E4-T25 500M Alpine/browser legs remain deferred. Child evidence\n  commits are listed and the same-head check is `gap` because the historical child records predate\n  this final report.\n- `docs/demos/level-4.md` documents the fresh-clone, fresh-context Chromium procedure and the\n  opt-in full child replay (`CAPSTONE_E4_RUN_CHILDREN=1`). WebKit, independent machines, and host\n  rr are excluded or waived by the user's direction and repository policy.\n- Per explicit owner direction, promote the capstone debt item to `verified` and leave the exact\n  gaps in the signed report for a future performance/portability follow-up. No merge or auto-merge\n  was performed.",
       "adversarial": "Follow only `docs/demos/level-4.md` from a new clone/profile. Recompute the Level-3 denominator,\nclear all site data, run the three-sample median, cross-check guest and host clocks, type throughout\ngcc, poison a cache/artifact, and confirm a same-commit mismatch fails the orchestration. Run the\nfinal browser path offline only where the documented workload permits it and disclose any configured\nFirefox result. A best-of-three, warmed cache, split build, omitted Bun gap, or uncited claim refutes\nthe capstone.",
       "file": "tasks/epic-4-acceleration/E4-T28f-level4-capstone-signoff.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: start E4-T28f level4 capstone signoff"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E4-T29",
