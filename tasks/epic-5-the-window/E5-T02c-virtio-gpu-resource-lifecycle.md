@@ -3,7 +3,7 @@ id: E5-T02c
 epic: 5
 title: virtio-gpu resource unref and scanout lifecycle
 priority: 502.3
-status: implemented
+status: verified
 depends_on: [E5-T02b]
 estimate: S
 risk: high
@@ -78,3 +78,18 @@ wasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test 
 `wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,
 and host-layer rr runs were excluded per the user's direction and current repository evidence
 policy.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Acceptance — HELD.** The focused recording proves backed-resource unref, exact accounting
+  return to baseline, scanout clearing, idempotent unknown-id rejection, malformed-request
+  handling, reset cleanup, and 10,000 create/unref cycles.
+- **Coverage — HELD.** The changed unref wire type, resource removal/accounting path, scanout
+  binding, reset path, and control-queue arm are all exercised by the focused lifecycle tests;
+  the full core and virtio regressions remain green.
+- **Evidence integrity — HELD.** Evidence digest
+  `93e326641a0425a4004563484614870e05e7a4e27eb27d0c4c4261b9f0366e1c` matches the checked-in
+  artifact for implementation commit `ecf0922`.
+
+The user explicitly directed this slice to be marked verified. E5-T03 is the next presentation
+slice, after its dependency is rewired from the cancelled E5-T02 container to E5-T02c.
