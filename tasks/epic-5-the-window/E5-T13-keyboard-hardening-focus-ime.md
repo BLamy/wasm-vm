@@ -4,7 +4,7 @@ epic: 5
 title: Keyboard hardening — focus loss, stuck modifiers, lock-key reconciliation
 priority: 513
 status: pending
-depends_on: [E5-T12]
+depends_on: [E5-T12c]
 estimate: M
 capstone: false
 ---

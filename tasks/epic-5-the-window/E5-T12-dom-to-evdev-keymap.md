@@ -3,10 +3,12 @@ id: E5-T12
 epic: 5
 title: DOM KeyboardEvent.code → evdev translation with capture policy
 priority: 512
-status: pending
+status: cancelled
 depends_on: [E5-T11c]
 estimate: M
+risk: medium
 capstone: false
+decomposed_into: [E5-T12a, E5-T12b, E5-T12c]
 ---
 
 ## Goal
@@ -65,4 +67,11 @@ NumLock-dependent Numpad codes both states. Any browser-default action firing wh
 captured (e.g. `/` opening quick-find in Firefox) refutes the preventDefault policy.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — decomposed
+
+This M-sized browser keyboard container is cancelled before implementation as required by task
+policy and replaced by three ordered S slices. E5-T12a owns the generated physical-code table and
+coverage oracle; E5-T12b owns DOM event normalization, modifier/frame state, repeat suppression, and
+the wasm injection bridge; and E5-T12c owns capture/preventDefault policy, documentation, and the
+end-to-end browser/getty proof. E5-T13 is rewired to the final E5-T12c boundary.

@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 213,
-    "total": 374
+    "total": 377
   },
   "epics": [
     {
@@ -17014,8 +17014,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t11c): verify keyboard guest proof",
             "chore(e5-t11c): record keyboard guest proof",
             "chore(e5-t11c): start keyboard guest proof"
           ]
@@ -17023,7 +17024,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T12",
@@ -17031,11 +17032,15 @@
       "epicKey": "5",
       "title": "DOM KeyboardEvent.code → evdev translation with capture policy",
       "priority": 512,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T11c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T12a",
+        "E5-T12b",
+        "E5-T12c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "Real keystrokes flow: a translation layer maps `KeyboardEvent.code` (physical key\nidentity) to evdev codes for the T11 keyboard, tracks modifier state, suppresses browser\nautorepeat, and enforces an explicit preventDefault/capture policy — so typing in the\ncanvas types in the guest, layout handled by the guest's own keymap.",
@@ -17063,9 +17068,129 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized browser keyboard container is cancelled before implementation as required by task\npolicy and replaced by three ordered S slices. E5-T12a owns the generated physical-code table and\ncoverage oracle; E5-T12b owns DOM event normalization, modifier/frame state, repeat suppression, and\nthe wasm injection bridge; and E5-T12c owns capture/preventDefault policy, documentation, and the\nend-to-end browser/getty proof. E5-T13 is rewired to the final E5-T12c boundary.",
       "adversarial": "Attack ordering and state: script rapid interleaved chords (Shift down, A down, Shift\nup, A up; Ctrl+Shift+T with passthrough off) via Playwright and diff the guest-side\nevtest stream against the expected sequence — any reorder or loss refutes. Attack the\ntable: property-test that every `KeyboardEvent.code` the browser can emit for a PC-105\nkeyboard (fixture list from the W3C UI Events code spec) maps or is explicitly listed\nunmapped; an unmapped mainstream key (e.g. \"ContextMenu\") refutes. AltGr on Windows\nChrome emits Ctrl+AltRight — verify the doc's stated handling matches behavior. Try\nNumLock-dependent Numpad codes both states. Any browser-default action firing while\ncaptured (e.g. `/` opening quick-find in Firefox) refutes the preventDefault policy.",
       "file": "tasks/epic-5-the-window/E5-T12-dom-to-evdev-keymap.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T12a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "generated physical keyboard code table and coverage oracle",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T11c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Create the single generated mapping from W3C `KeyboardEvent.code` physical identities to the\nT11 keyboard's Linux evdev codes, with a checked-in source table and an exhaustive PC-105 coverage\noracle. Layout remains in the guest keymap; this slice only defines physical identity.",
+      "criteria": [
+        {
+          "text": "Every PC-105 code in the checked-in W3C fixture is mapped or explicitly listed as unmapped; no mainstream code silently falls through.",
+          "checked": false
+        },
+        {
+          "text": "`KeyA` maps to evdev `KEY_A` (30), `KeyY` maps to `KEY_Y`, and the punctuation, modifier, function, navigation, and numpad edge entries match the Linux input-code fixture.",
+          "checked": false
+        },
+        {
+          "text": "The table test is deterministic and passes from a clean checkout with no generated output hidden outside the repository.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Delete one mapping and add a duplicate code in a scratch copy; the oracle must fail with the\nmissing/duplicate identity named. Exercise `ContextMenu`, `IntlBackslash`, `NumpadEnter`, and\n`F24`; any mainstream code that is neither mapped nor explicitly documented is a finding.",
+      "file": "tasks/epic-5-the-window/E5-T12a-keymap-table.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T12b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "DOM keyboard event normalization and evdev bridge",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T12a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Translate normalized DOM keydown/keyup events into framed T11 evdev events through the\n`WasmLinux` keyboard bridge. Track modifiers and held keys, suppress browser autorepeat and IME\nevents according to the written v1 policy, and preserve make/break ordering.",
+      "criteria": [
+        {
+          "text": "A physical `KeyA` down/up produces exactly one KEY_A make frame and one break frame, each terminated by SYN_REPORT; DOM repeat keydowns add no frames.",
+          "checked": false
+        },
+        {
+          "text": "Shift/Ctrl/Alt/Meta modifiers are emitted before the dependent key and released after it; `Ctrl+C` and shifted punctuation have the expected evdev sequence.",
+          "checked": false
+        },
+        {
+          "text": "Composing events and keyCode 229 produce no guest events, while a dead key still maps by its physical `code` when not composing.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Feed rapid `ShiftLeft` down, `KeyA` down, `ShiftLeft` up, `KeyA` up and a held key with 100 repeat\ncallbacks; assert exact sequence and no duplicate down. Feed Windows-style Ctrl+AltRight AltGr\nordering and verify the documented representation. Inject an unmapped code and require an explicit\ndiagnostic/no-op rather than an arbitrary evdev code.",
+      "file": "tasks/epic-5-the-window/E5-T12b-dom-keyboard-bridge.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T12c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "keyboard capture policy and browser getty proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T12b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Finish the browser-facing keyboard path with an explicit capture toggle and preventDefault policy,\ndocument passthrough and uncapturable chords, and prove that real browser key events reach the\nbooted guest getty.",
+      "criteria": [
+        {
+          "text": "Capture-on typing `ls -la | grep 'x' && echo \"hi~\"` reaches the guest and executes with correct shift, quote, pipe, and tilde behavior.",
+          "checked": false
+        },
+        {
+          "text": "Capture-off canvas keystrokes do not call preventDefault and remain available to the browser; captured mode prevents ordinary canvas key defaults while preserving the documented chord.",
+          "checked": false
+        },
+        {
+          "text": "The browser proof also covers Ctrl+C interrupt ordering and reports the capture state in the UI; all intended changes are exercised by the recorded run.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Attack capture ordering with rapid chords and the T08 reserved chord, open browser quick-find in a\ncaptured Firefox-like fixture, and try Ctrl+W/T/N, Cmd+Q/Tab, and F11. Verify the documented\npassthrough/uncapturable behavior rather than silently promising impossible interception.",
+      "file": "tasks/epic-5-the-window/E5-T12c-capture-policy-e2e.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -17079,7 +17204,7 @@
       "priority": 513,
       "status": "pending",
       "depends_on": [
-        "E5-T12"
+        "E5-T12c"
       ],
       "decomposed_into": [],
       "estimate": "M",
