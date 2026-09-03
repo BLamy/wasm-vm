@@ -3,7 +3,7 @@ id: E5-T14b
 epic: 5
 title: pointer mode state machine and coordinate/button routing
 priority: 514.2
-status: implemented
+status: verified
 depends_on: [E5-T14a]
 estimate: S
 risk: medium
@@ -72,3 +72,33 @@ Evidence: `evidence/e5-t14b/pointer-mode-2026-09-03.json`, SHA-256
 `067ad449abe8c5fc366ed25339593c139666a6f370df73f56a86b43375501605`; screenshot
 `evidence/e5-t14b/pointer-mode-browser-2026-09-03.png`, SHA-256
 `74e34310eb098b1663a76aa7e3070d0bee456fc86e2fb1236cf78079dd789261`.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Absolute routing — HELD.** Predicted the live bridge would use the current CSS rect, ignore
+  backing pixels/DPR, clamp each axis, and emit tablet `EV_ABS` frames; the exact-head Chromium
+  recording observed the four corners as `(0,0)`, `(32767,0)`, `(0,32767)`, `(32767,32767)` and
+  the center as `(16384,16384)`, while the 9-test fixture covers the same contract independently.
+- **Relative routing and lock recovery — HELD.** Predicted relative frames would contain only
+  `EV_REL/REL_X` and `EV_REL/REL_Y`, and a denied lock would return the UI and bridge to absolute;
+  recording frame 8 contains only `(REL_X,11)` and `(REL_Y,-5)`, the diagnostic is
+  `pointerlock-denied`, and the final state is absolute with `pointerLockElement` clear.
+- **Button balance and mapping — HELD.** Predicted the documented side/back/forward mappings would
+  preserve balanced make/break pairs through transitions; the browser recording observes the
+  side code `275` pair, the fixture covers all five codes plus lock loss/cancel, and the bounded
+  verifier attack completed 100 duplicate-down/cancel/mode-churn cycles with no held buttons.
+- **Demo wiring and coverage — HELD.** Predicted the new wasm bindings, direct/worker controller
+  allow-list, visible mode/debug controls, lifecycle reset, and deploy projection would agree;
+  native pointer integration (2/2), worker protocol (22/22), source/dist byte parity, the exact
+  evidence and screenshot SHA-256 checks, and the real busybox Chromium boot all held with empty
+  console/page/request error lists. Every runtime hunk is exercised by the native fixture, worker
+  protocol matrix, or live browser frame recording; generated deploy files are parity artifacts.
+- **Policy/scope — HELD.** Host rr, WebKit, and independent-machine checks are waived by the
+  repository policy and user direction; the local guest/native/Chromium evidence is the authority.
+- **SUITE — HELD.** Retain `web/tests/pointer.test.mjs`, the native pointer fixture, the worker
+  protocol coverage, the reproducible Chromium harness, and the exact evidence JSON/screenshot.
+
+Commands: `npm run test:pointer`; `node --test tests/e4-t32-worker-protocol.test.mjs`; `cargo
+test -p wasm-vm-core --test virtio_pointer --quiet`; `cargo clippy -p wasm-vm-wasm
+--target wasm32-unknown-unknown -- -D warnings`; source/dist `cmp` plus evidence SHA-256 checks;
+and the bounded 100-cycle duplicate-down/cancel/mode-churn probe.
