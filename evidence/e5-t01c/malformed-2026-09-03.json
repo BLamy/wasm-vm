@@ -1,0 +1,55 @@
+{
+  "schema": "e5-t01c-virtio-gpu-malformed-v1",
+  "task": "E5-T01c",
+  "status": "pass",
+  "implementation_commit": "0d85128",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib virtio_gpu_malformed",
+    "acceptance_result": "2 passed, 0 failed",
+    "malformed_cases": [
+      "0xdead returns RESP_ERR_UNSPEC, then one-byte and no-writable chains advance, and a later GET_DISPLAY_INFO returns the enabled 1280x800 mode",
+      "a response descriptor straddling the end of guest RAM is rejected with NEEDS_RESET, no queue view retained, no guest write, and no stale used entry"
+    ],
+    "gpu_regression": {
+      "command": "cargo test -p wasm-vm-core --lib gpu::",
+      "result": "9 passed, 0 failed"
+    },
+    "core_regression": {
+      "command": "cargo test -p wasm-vm-core --lib",
+      "result": "184 passed, 0 failed"
+    },
+    "virtio_integration": {
+      "commands": [
+        "cargo test -p wasm-vm-core --test virtio_mmio_slots",
+        "cargo test -p wasm-vm-core --test virtio_blk",
+        "cargo test -p wasm-vm-core --test virtio_net_critic"
+      ],
+      "result": "2 + 12 + 8 passed, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "protocol_runner": {
+      "command": "wasm-pack test --node crates/wasm --test gpu_protocol",
+      "result": "2 passed, 0 failed"
+    }
+  },
+  "coverage": [
+    "Unsupported commands now receive a bounded 24-byte error response and do not block later chains.",
+    "Short headers are bounded to 24 bytes and consumed with used.len=0; zero-writable valid requests also publish used progress without writing.",
+    "All response writes are limited to validated writable descriptors, with used.len bounded by response bytes and descriptor capacity.",
+    "Malformed guest addresses are rejected by the existing virtqueue validator before GPU response writes."
+  ],
+  "scope_notes": [
+    "Resource lifecycle and pixel transfer commands remain later E5 tickets.",
+    "No independent-machine or WebKit run was used, per the user's direction."
+  ]
+}
