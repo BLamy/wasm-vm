@@ -236,12 +236,20 @@ export class WasmLinux {
      */
     sendInput(bytes: Uint8Array): void;
     /**
+     * E4-T39: toggle static region chaining without rebuilding the generated modules.
+     */
+    setChaining(on: boolean): void;
+    /**
      * E3-T10: flip the disk to read-only at runtime — the "continue read-only" choice after a
      * storage-quota hit. Subsequent guest writes get EIO (VIRTIO_BLK_F_RO / BlockError::ReadOnly)
      * so the guest sees an honest I/O error instead of a silently-undurable write. No-op off the
      * persistent path. Returns true if a disk flag was flipped.
      */
     setDiskReadOnly(): boolean;
+    /**
+     * E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
+     */
+    setDynamicChaining(on: boolean): void;
     /**
      * E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
      * physical-entry predecode reuse with the proven <=128-retire interrupt/device batching. The
@@ -340,9 +348,17 @@ export class WasmMachine {
      */
     run(max_instrs: number): any;
     /**
+     * E4-T39: toggle static region chaining without rebuilding the generated modules.
+     */
+    setChaining(on: boolean): void;
+    /**
      * Install (or replace) the per-byte console callback: `fn(byte: number)`.
      */
     setConsole(cb: Function): void;
+    /**
+     * E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
+     */
+    setDynamicChaining(on: boolean): void;
     /**
      * Enable or disable canonical instruction tracing (appended to an internal buffer;
      * drain it with `takeTrace`).
@@ -512,7 +528,9 @@ export interface InitOutput {
     readonly wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_saveSnapshot: (a: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
+    readonly wasmlinux_setChaining: (a: number, b: number) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
+    readonly wasmlinux_setDynamicChaining: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFastInterpreter: (a: number, b: number) => [number, number];
     readonly wasmlinux_setFileDownloadReady: (a: number, b: number) => [number, number];
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
@@ -528,7 +546,9 @@ export interface InitOutput {
     readonly wasmmachine_ramLen: (a: number) => [number, number, number];
     readonly wasmmachine_registers: (a: number) => [number, number, number];
     readonly wasmmachine_run: (a: number, b: number) => [number, number, number];
+    readonly wasmmachine_setChaining: (a: number, b: number) => [number, number];
     readonly wasmmachine_setConsole: (a: number, b: any) => [number, number];
+    readonly wasmmachine_setDynamicChaining: (a: number, b: number) => [number, number];
     readonly wasmmachine_setTrace: (a: number, b: number) => [number, number];
     readonly wasmmachine_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmmachine_step: (a: number, b: number) => [number, number, number];

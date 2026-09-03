@@ -334,7 +334,7 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   }
   try { window.__linuxOwnerUiForTest = null; } catch { /* page-only diagnostic */ }
   for (const key of [
-    "linuxManifest", "linuxBackend", "jitPolicy", "jitResidency", "jitThreshold", "interpreter", "jitStats",
+    "linuxManifest", "linuxBackend", "jitPolicy", "jitResidency", "jitThreshold", "jitJalr", "jitRegion", "interpreter", "jitStats",
   ]) {
     delete document.documentElement.dataset[key];
   }
@@ -596,6 +596,12 @@ async function runLinuxBootOwned(opts, banner, request) {
     ? Math.floor(thresholdCandidate)
     : 512;
   const selectedJitResidency = query.get("jitResidency") ?? opts.jitResidency ?? "repack-off";
+  const selectedJitJalr = query.has("jalr")
+    ? query.get("jalr") !== "0"
+    : (opts.jitJalr ?? true);
+  const selectedJitRegion = query.has("region")
+    ? query.get("region") !== "0"
+    : (opts.jitRegion ?? true);
   const selectedProfile = query.has("profile")
     ? query.get("profile") === "1"
     : Boolean(opts.profile);
@@ -665,6 +671,8 @@ async function runLinuxBootOwned(opts, banner, request) {
       jit: selectedJit,
       jitThreshold: selectedJitThreshold,
       jitResidency: selectedJitResidency,
+      jitJalr: selectedJitJalr,
+      jitRegion: selectedJitRegion,
       profile: selectedProfile,
       quantum: selectedQuantum,
       startPaused: query.has("testHooks") && query.has("startPaused"),
@@ -832,6 +840,8 @@ async function runLinuxBootOwned(opts, banner, request) {
     document.documentElement.dataset.jitResidency = initialJit?.jitResidencyPolicy
       ?? selectedJitResidency;
     document.documentElement.dataset.jitThreshold = String(selectedJitThreshold);
+    document.documentElement.dataset.jitJalr = String(selectedJitJalr);
+    document.documentElement.dataset.jitRegion = String(selectedJitRegion);
     document.documentElement.dataset.interpreter = interpreter;
     window.__jit = {
       enabled: Boolean(initialJit?.hasExecutor),
@@ -845,6 +855,8 @@ async function runLinuxBootOwned(opts, banner, request) {
       jit: jitPolicy,
       jitResidency: document.documentElement.dataset.jitResidency,
       jitThreshold: selectedJitThreshold,
+      jitJalr: selectedJitJalr,
+      jitRegion: selectedJitRegion,
       quantum: selectedQuantum,
     };
     const jitLabel = jitPolicy === "enabled"

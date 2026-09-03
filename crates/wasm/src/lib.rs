@@ -613,6 +613,40 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
             set("dynamicLinkInstalls", &JsValue::from_f64(0.0));
         }
     }
+    let entry_cost = machine
+        .executor()
+        .map(|e| e.entry_cost_stats())
+        .unwrap_or_default();
+    let entry_cost_obj = js_sys::Object::new();
+    let set_entry_cost = |k: &str, v: u64| {
+        let _ = js_sys::Reflect::set(
+            &entry_cost_obj,
+            &JsValue::from_str(k),
+            &JsValue::from_f64(v as f64),
+        );
+    };
+    set_entry_cost("hostEntries", entry_cost.host_entries);
+    set_entry_cost("stateCopyCalls", entry_cost.state_copy_calls);
+    set_entry_cost("stateCopyBytes", entry_cost.state_copy_bytes);
+    set_entry_cost("stateCopyNs", entry_cost.state_copy_ns);
+    set_entry_cost("engineEntryNs", entry_cost.engine_entry_ns);
+    set_entry_cost(
+        "indirectTableDispatches",
+        entry_cost.indirect_table_dispatches,
+    );
+    set_entry_cost("authorityChecks", entry_cost.authority_checks);
+    set_entry_cost("memorySplitExits", entry_cost.memory_split_exits);
+    set_entry_cost("deviceBoundaries", entry_cost.device_boundaries);
+    set_entry_cost("deviceBoundaryNs", entry_cost.device_boundary_ns);
+    set("entryCost", &entry_cost_obj.into());
+    set(
+        "jitRegionChaining",
+        &JsValue::from_bool(machine.executor().is_some_and(|e| e.chaining())),
+    );
+    set(
+        "jitDynamicChaining",
+        &JsValue::from_bool(machine.executor().is_some_and(|e| e.dynamic_chaining())),
+    );
     let logical_blocks_per_engine_call = if !has_executor || executed_blocks == 0 {
         0.0
     } else if direct_chain_entries == 0 {
@@ -815,6 +849,22 @@ impl WasmMachine {
     ) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         enable_browser_jit(&mut inner.machine, threshold, &residency_policy)
+    }
+
+    /// E4-T39: toggle static region chaining without rebuilding the generated modules.
+    #[wasm_bindgen(js_name = setChaining)]
+    pub fn set_chaining(&self, on: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_chaining(on);
+        Ok(())
+    }
+
+    /// E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
+    #[wasm_bindgen(js_name = setDynamicChaining)]
+    pub fn set_dynamic_chaining(&self, on: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_dynamic_chaining(on);
+        Ok(())
     }
 
     /// Enable or disable canonical instruction tracing (appended to an internal buffer;
@@ -1028,7 +1078,7 @@ pub struct JsHostTimer {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 impl JsHostTimer {
     /// `None` if no global exposes a `performance` object (then profiling can't be armed here).
-    fn new() -> Option<JsHostTimer> {
+    pub(crate) fn new() -> Option<JsHostTimer> {
         use wasm_bindgen::JsCast;
         let global = js_sys::global();
         let perf = if let Some(w) = global.dyn_ref::<web_sys::Window>() {
@@ -1629,6 +1679,22 @@ impl WasmLinux {
     ) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         enable_browser_jit(&mut inner.machine, threshold, &residency_policy)
+    }
+
+    /// E4-T39: toggle static region chaining without rebuilding the generated modules.
+    #[wasm_bindgen(js_name = setChaining)]
+    pub fn set_chaining(&self, on: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_chaining(on);
+        Ok(())
+    }
+
+    /// E4-T39: toggle generated dynamic-return (`jalr`) chaining independently of static regions.
+    #[wasm_bindgen(js_name = setDynamicChaining)]
+    pub fn set_dynamic_chaining(&self, on: bool) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.machine.set_dynamic_chaining(on);
+        Ok(())
     }
 
     /// E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns

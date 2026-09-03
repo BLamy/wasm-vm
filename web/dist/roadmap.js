@@ -116,6 +116,7 @@ export const ROADMAP = [
       { name: "Default whole-machine Web Worker", status: "verified", evidence: "E4-T32: fresh verifier held exact raw-frame Node matrix plus unchanged browser/rr proof" },
       { name: "Bounded multi-target JALR return PIC", status: "verified", evidence: "E4-T37: four-way same-set Node parity, hysteretic replacement, generated EXEC-TLB authority, fuel, invalidation, and telemetry proof" },
       { name: "JIT residency policy ledger", status: "verified", evidence: "E4-T38: identical Node fixture compared repack-off, cap-256, and cap-1024 with pause, churn, residency, fusion, and retirement-share metrics" },
+      { name: "Compiled entry-path cost ledger", status: "verified", evidence: "E4-T39: exact restored-Node controls separate state-copy, table-dispatch, authority, memory-split, and device-boundary terms" },
     ],
   },
   {

@@ -51,7 +51,7 @@ use wasm_vm_core::hart::{Hart, Trap};
 use wasm_vm_core::jit::{
     CHAIN_DEPTH_BUDGET_DEFAULT, CHAIN_DEPTH_HIST_LEN, ChainStats, CompiledBlockExecutor,
     CpuStateHandoff, DynamicLinkStats, EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats,
-    JitExit, abi,
+    JitEntryCostStats, JitExit, abi,
 };
 use wasm_vm_core::mmio::SystemBus;
 
@@ -75,6 +75,44 @@ const DYNAMIC_LINK_HYSTERESIS: u8 = 2;
 /// E4-T35: two `u32` link words per live compiled block. The production batch cap is 24 × 64;
 /// this leaves room for transient retranslation and keeps a failed reservation a safe fallback.
 const STATIC_LINK_ENTRIES: usize = 4096;
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+type EntryTimer = crate::JsHostTimer;
+#[cfg(any(not(target_arch = "wasm32"), feature = "zicsr-stub"))]
+type EntryTimer = ();
+
+fn new_entry_timer() -> Option<EntryTimer> {
+    #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+    {
+        crate::JsHostTimer::new()
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "zicsr-stub"))]
+    {
+        None
+    }
+}
+
+fn timer_now(timer: *const EntryTimer) -> u64 {
+    #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+    {
+        if timer.is_null() {
+            0
+        } else {
+            use wasm_vm_core::prof::HostTimer;
+            // SAFETY: the pointer is borrowed from the executor for one synchronous compiled call.
+            unsafe { (&*timer).now_ns() }
+        }
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "zicsr-stub"))]
+    {
+        let _ = timer;
+        0
+    }
+}
+
+fn timer_delta(timer: *const EntryTimer, start: u64) -> u64 {
+    timer_now(timer).saturating_sub(start)
+}
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 struct InlineTlbContext {
@@ -591,6 +629,8 @@ struct HostCtx {
     inline_tlb: *mut InlineTlbCache,
     compiled_pages: *const HashMap<u64, usize>,
     chain_abort: *mut u8,
+    entry_cost: *mut JitEntryCostStats,
+    timer: *const EntryTimer,
     /// The precise trap a faulting load/store/AMO produced (cause + `mtval`), recorded before the
     /// import throws. `None` means "no fault this call".
     trap: Option<Trap>,
@@ -603,6 +643,8 @@ thread_local! {
         inline_tlb: core::ptr::null_mut(),
         compiled_pages: core::ptr::null(),
         chain_abort: core::ptr::null_mut(),
+        entry_cost: core::ptr::null_mut(),
+        timer: core::ptr::null(),
         trap: None,
     }) };
 }
@@ -681,6 +723,24 @@ fn mark_chain_abort() {
     }
 }
 
+fn note_device_boundary(start_ns: u64) {
+    let (entry_cost, timer) = HOST.with(|context| {
+        let context = context.borrow();
+        (context.entry_cost, context.timer)
+    });
+    if entry_cost.is_null() {
+        return;
+    }
+    // SAFETY: the executor-owned ledger is live and exclusively borrowed for the enclosing
+    // non-reentrant compiled call.
+    unsafe {
+        (*entry_cost).device_boundaries = (*entry_cost).device_boundaries.saturating_add(1);
+        (*entry_cost).device_boundary_ns = (*entry_cost)
+            .device_boundary_ns
+            .saturating_add(timer_delta(timer, start_ns));
+    }
+}
+
 fn publish_inline_tlb(addr: u64, pa: u64, write: bool) {
     let cache = HOST.with(|context| context.borrow().inline_tlb);
     if !cache.is_null() {
@@ -693,13 +753,18 @@ fn publish_inline_tlb(addr: u64, pa: u64, write: bool) {
 fn with_ctx_load(addr: i64, kind: i32) -> i64 {
     with_ctx(|h, b| {
         let addr = addr as u64;
+        let started = HOST.with(|context| timer_now(context.borrow().timer));
         let value = h.jit_load(b, addr, kind)?;
         let inline = HOST.with(|context| !context.borrow().inline_tlb.is_null());
         if inline {
             if h.csr.triggers_idle() {
                 match h.jit_ram_phys(b, addr, load_width(kind), false) {
                     Ok(Some(pa)) => publish_inline_tlb(addr, pa, false),
-                    _ => mark_chain_abort(),
+                    Ok(None) => {
+                        note_device_boundary(started);
+                        mark_chain_abort();
+                    }
+                    Err(_) => mark_chain_abort(),
                 }
             } else {
                 mark_chain_abort();
@@ -711,6 +776,7 @@ fn with_ctx_load(addr: i64, kind: i32) -> i64 {
 
 fn with_ctx_store(addr: i64, val: i64, width: i32) {
     let addr = addr as u64;
+    let started = HOST.with(|context| timer_now(context.borrow().timer));
     let barrier = with_ctx(|h, b| {
         let ram_phys = h.jit_store_with_ram_phys(b, addr, val, width)?;
         // A slow-path store is the write-TLB refill. Misaligned stores deliberately do not fill:
@@ -735,6 +801,9 @@ fn with_ctx_store(addr: i64, val: i64, width: i32) {
         });
         // Non-RAM stores are MMIO or another host-visible boundary. A RAM store only needs to
         // stop a direct chain when it can invalidate code that is still live in this executor.
+        if ram_phys.is_none() {
+            note_device_boundary(started);
+        }
         Ok((ram_phys.is_none() || touches_compiled_page) as i64)
     });
     if barrier != 0 {
@@ -809,37 +878,47 @@ impl BrowserHandoff {
         }
     }
 
-    fn copy_into_module(&mut self, state: &Uint8Array, hart: &Hart) {
+    fn copy_into_module(&mut self, state: &Uint8Array, hart: &Hart) -> u64 {
         self.prepare(hart);
         self.ensure_live_view();
         state.set(self.view.as_ref(), 0);
+        abi::HANDOFF_LEN as u64
     }
 
-    fn prepare(&mut self, hart: &Hart) {
+    fn prepare(&mut self, hart: &Hart) -> u64 {
         let version = hart.regs.jit_version();
+        let mut bytes = core::mem::size_of::<u64>() as u64;
         if self.register_version != version {
             self.image.prepare_registers(hart);
             self.register_version = version;
+            bytes = bytes.saturating_add(32 * core::mem::size_of::<u64>() as u64);
         }
         self.image.set_entry_pc(hart.regs.pc);
+        bytes
     }
 
     fn state_base(&mut self) -> u32 {
         self.image.as_mut_bytes().as_mut_ptr() as u32
     }
 
-    fn copy_from_module(&mut self, state: &Uint8Array, hart: &mut Hart, direct_chain: bool) {
+    fn copy_from_module(&mut self, state: &Uint8Array, hart: &mut Hart, direct_chain: bool) -> u64 {
         // Imported guest accesses run in the outer wasm module and may grow its linear memory. Check
         // again after the compiled call before copying into the cached Rust-side transport image.
         self.ensure_live_view();
         // SAFETY INVARIANT: `image` is Box-stable and never replaced; typed-array `set` is
         // synchronous, and no Rust reference into `image` remains live across this JS mutation.
         self.view.set(state.as_ref(), 0);
-        self.commit_registers(hart, direct_chain);
-        self.register_version = hart.regs.jit_version();
+        let commit_bytes = self.commit_registers(hart, direct_chain);
+        (abi::HANDOFF_LEN as u64).saturating_add(commit_bytes)
     }
 
-    fn commit_registers(&mut self, hart: &mut Hart, direct_chain: bool) {
+    fn commit_registers(&mut self, hart: &mut Hart, direct_chain: bool) -> u64 {
+        let bytes = if direct_chain {
+            u64::from(self.image.chain_reg_dirty().count_ones())
+                .saturating_mul(core::mem::size_of::<u64>() as u64)
+        } else {
+            31 * core::mem::size_of::<u64>() as u64
+        };
         if direct_chain {
             self.image
                 .commit_registers_mask(hart, self.image.chain_reg_dirty());
@@ -847,6 +926,7 @@ impl BrowserHandoff {
             self.image.commit_registers(hart);
         }
         self.register_version = hart.regs.jit_version();
+        bytes
     }
 }
 
@@ -904,8 +984,12 @@ pub struct BrowserExecutor {
     dynamic_attempts: u64,
     dynamic_hits: u64,
     dynamic_refusals: u64,
+    /// E4-T39: bounded structural/timer ledger for one compiled entry path.
+    entry_cost: JitEntryCostStats,
+    entry_timer: Option<EntryTimer>,
     // ── E4-T18 chaining state (identical to native) ──
     chaining: bool,
+    dynamic_chaining: bool,
     chain_depth_budget: u32,
     slots: Vec<u32>,
     table: Vec<Option<u64>>,
@@ -1011,6 +1095,9 @@ impl BrowserExecutor {
                 dynamic_attempts: abi::CHAIN_DYNAMIC_ATTEMPTS,
                 dynamic_hits: abi::CHAIN_DYNAMIC_HITS,
                 dynamic_refusals: abi::CHAIN_DYNAMIC_REFUSALS,
+                dynamic_enabled: abi::CHAIN_DYNAMIC_ENABLED,
+                indirect_dispatches: abi::CHAIN_INDIRECT_DISPATCHES,
+                authority_checks: abi::CHAIN_AUTHORITY_CHECKS,
                 dynamic_chain: true,
                 chain_table: 0,
                 static_map_base: static_links.base(),
@@ -1091,7 +1178,10 @@ impl BrowserExecutor {
             dynamic_attempts: 0,
             dynamic_hits: 0,
             dynamic_refusals: 0,
+            entry_cost: JitEntryCostStats::default(),
+            entry_timer: new_entry_timer(),
             chaining: true,
+            dynamic_chaining: true,
             chain_depth_budget: CHAIN_DEPTH_BUDGET_DEFAULT,
             slots: Vec::new(),
             table: Vec::new(),
@@ -1372,12 +1462,40 @@ impl BrowserExecutor {
         compiled_pages: *const HashMap<u64, usize>,
         chain_abort: *mut u8,
         direct_chain: bool,
+        entry_cost: *mut JitEntryCostStats,
+        timer: *const EntryTimer,
     ) -> Option<JitExit> {
         let state_base = if let Some(state) = state {
-            handoff.copy_into_module(state, hart);
+            let started = timer_now(timer);
+            let bytes = handoff.copy_into_module(state, hart);
+            if !entry_cost.is_null() {
+                // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
+                unsafe {
+                    (*entry_cost).state_copy_calls =
+                        (*entry_cost).state_copy_calls.saturating_add(1);
+                    (*entry_cost).state_copy_bytes =
+                        (*entry_cost).state_copy_bytes.saturating_add(bytes);
+                    (*entry_cost).state_copy_ns = (*entry_cost)
+                        .state_copy_ns
+                        .saturating_add(timer_delta(timer, started));
+                }
+            }
             0
         } else {
-            handoff.prepare(hart);
+            let started = timer_now(timer);
+            let bytes = handoff.prepare(hart);
+            if !entry_cost.is_null() {
+                // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
+                unsafe {
+                    (*entry_cost).state_copy_calls =
+                        (*entry_cost).state_copy_calls.saturating_add(1);
+                    (*entry_cost).state_copy_bytes =
+                        (*entry_cost).state_copy_bytes.saturating_add(bytes);
+                    (*entry_cost).state_copy_ns = (*entry_cost)
+                        .state_copy_ns
+                        .saturating_add(timer_delta(timer, started));
+                }
+            }
             handoff.state_base()
         };
         HOST.with(|context| {
@@ -1387,6 +1505,8 @@ impl BrowserExecutor {
             context.inline_tlb = inline_tlb;
             context.compiled_pages = compiled_pages;
             context.chain_abort = chain_abort;
+            context.entry_cost = entry_cost;
+            context.timer = timer;
             context.trap = None;
         });
         // Keep the exception entirely in JS. Bringing a caught exception back as
@@ -1399,6 +1519,8 @@ impl BrowserExecutor {
             context.inline_tlb = core::ptr::null_mut();
             context.compiled_pages = core::ptr::null();
             context.chain_abort = core::ptr::null_mut();
+            context.entry_cost = core::ptr::null_mut();
+            context.timer = core::ptr::null();
             context.trap.take()
         });
         Self::commit_raw_stores(handoff, hart, bus);
@@ -1406,9 +1528,35 @@ impl BrowserExecutor {
         let Some(code) = code else {
             if let Some(trap) = fault {
                 if let Some(state) = state {
-                    handoff.copy_from_module(state, hart, direct_chain);
+                    let started = timer_now(timer);
+                    let bytes = handoff.copy_from_module(state, hart, direct_chain);
+                    if !entry_cost.is_null() {
+                        // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
+                        unsafe {
+                            (*entry_cost).state_copy_calls =
+                                (*entry_cost).state_copy_calls.saturating_add(1);
+                            (*entry_cost).state_copy_bytes =
+                                (*entry_cost).state_copy_bytes.saturating_add(bytes);
+                            (*entry_cost).state_copy_ns = (*entry_cost)
+                                .state_copy_ns
+                                .saturating_add(timer_delta(timer, started));
+                        }
+                    }
                 } else {
-                    handoff.commit_registers(hart, direct_chain);
+                    let started = timer_now(timer);
+                    let bytes = handoff.commit_registers(hart, direct_chain);
+                    if !entry_cost.is_null() {
+                        // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
+                        unsafe {
+                            (*entry_cost).state_copy_calls =
+                                (*entry_cost).state_copy_calls.saturating_add(1);
+                            (*entry_cost).state_copy_bytes =
+                                (*entry_cost).state_copy_bytes.saturating_add(bytes);
+                            (*entry_cost).state_copy_ns = (*entry_cost)
+                                .state_copy_ns
+                                .saturating_add(timer_delta(timer, started));
+                        }
+                    }
                 }
                 return Some(JitExit {
                     code: ExitCode::Trap,
@@ -1425,9 +1573,35 @@ impl BrowserExecutor {
         };
 
         if let Some(state) = state {
-            handoff.copy_from_module(state, hart, direct_chain);
+            let started = timer_now(timer);
+            let bytes = handoff.copy_from_module(state, hart, direct_chain);
+            if !entry_cost.is_null() {
+                // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
+                unsafe {
+                    (*entry_cost).state_copy_calls =
+                        (*entry_cost).state_copy_calls.saturating_add(1);
+                    (*entry_cost).state_copy_bytes =
+                        (*entry_cost).state_copy_bytes.saturating_add(bytes);
+                    (*entry_cost).state_copy_ns = (*entry_cost)
+                        .state_copy_ns
+                        .saturating_add(timer_delta(timer, started));
+                }
+            }
         } else {
-            handoff.commit_registers(hart, direct_chain);
+            let started = timer_now(timer);
+            let bytes = handoff.commit_registers(hart, direct_chain);
+            if !entry_cost.is_null() {
+                // SAFETY: the caller gives us the executor-owned ledger for this synchronous call.
+                unsafe {
+                    (*entry_cost).state_copy_calls =
+                        (*entry_cost).state_copy_calls.saturating_add(1);
+                    (*entry_cost).state_copy_bytes =
+                        (*entry_cost).state_copy_bytes.saturating_add(bytes);
+                    (*entry_cost).state_copy_ns = (*entry_cost)
+                        .state_copy_ns
+                        .saturating_add(timer_delta(timer, started));
+                }
+            }
         }
         debug_assert_eq!(code, handoff.image.exit_reason());
         Some(JitExit {
@@ -1753,12 +1927,19 @@ impl CompiledBlockExecutor for BrowserExecutor {
             .map_or(core::ptr::null_mut(), |cache| cache as *mut InlineTlbCache);
         let compiled_pages = &self.compiled_pages as *const HashMap<u64, usize>;
         let direct_chaining = self.abi.direct_chain && self.chaining && allow_chaining;
+        let entry_timer = self
+            .entry_timer
+            .as_ref()
+            .map_or(core::ptr::null(), |timer| timer as *const EntryTimer);
         if self.abi.direct_chain {
             self.handoff.image.begin_chain(
                 direct_chaining,
                 chain_budget.min(remaining_work).max(1),
                 u64::from(self.chain_depth_budget),
             );
+            self.handoff
+                .image
+                .set_dynamic_chain_enabled(self.dynamic_chaining);
         }
         let chain_abort = if self.abi.direct_chain {
             self.handoff.image.chain_abort_ptr()
@@ -1772,7 +1953,9 @@ impl CompiledBlockExecutor for BrowserExecutor {
             // block and its owning batch were found and a compiled call will actually be attempted.
             self.clock = self.clock.wrapping_add(1);
             batch.last_tick = self.clock;
-            Self::invoke(
+            self.entry_cost.host_entries = self.entry_cost.host_entries.saturating_add(1);
+            let started = timer_now(entry_timer);
+            let exit = Self::invoke(
                 &compiled.run,
                 batch.state.as_ref(),
                 &mut self.handoff,
@@ -1782,7 +1965,14 @@ impl CompiledBlockExecutor for BrowserExecutor {
                 compiled_pages,
                 chain_abort,
                 self.abi.direct_chain,
-            )
+                &mut self.entry_cost,
+                entry_timer,
+            );
+            self.entry_cost.engine_entry_ns = self
+                .entry_cost
+                .engine_entry_ns
+                .saturating_add(timer_delta(entry_timer, started));
+            exit
         };
         // The generated module keeps per-invocation probe counters in the shared chain header.
         // Account them before the next host entry's `begin_chain` clears the header; publication
@@ -1796,6 +1986,18 @@ impl CompiledBlockExecutor for BrowserExecutor {
         self.dynamic_refusals = self
             .dynamic_refusals
             .saturating_add(self.handoff.image.dynamic_link_refusals());
+        self.entry_cost.indirect_table_dispatches = self
+            .entry_cost
+            .indirect_table_dispatches
+            .saturating_add(self.handoff.image.indirect_dispatches());
+        self.entry_cost.authority_checks = self
+            .entry_cost
+            .authority_checks
+            .saturating_add(self.handoff.image.authority_checks());
+        if self.handoff.image.chain_was_aborted() {
+            self.entry_cost.memory_split_exits =
+                self.entry_cost.memory_split_exits.saturating_add(1);
+        }
         let exit = exit?;
         self.executed_blocks += 1;
         if direct_chaining {
@@ -1961,6 +2163,10 @@ impl CompiledBlockExecutor for BrowserExecutor {
         }
     }
 
+    fn entry_cost_stats(&self) -> JitEntryCostStats {
+        self.entry_cost
+    }
+
     fn note_jit_retired(&mut self, retired: u64) {
         self.retired_via_jit = self.retired_via_jit.wrapping_add(retired);
     }
@@ -1972,6 +2178,14 @@ impl CompiledBlockExecutor for BrowserExecutor {
 
     fn chaining(&self) -> bool {
         self.chaining
+    }
+
+    fn set_dynamic_chaining(&mut self, on: bool) {
+        self.dynamic_chaining = on;
+    }
+
+    fn dynamic_chaining(&self) -> bool {
+        self.dynamic_chaining
     }
 
     fn set_chain_depth_budget(&mut self, n: u32) {

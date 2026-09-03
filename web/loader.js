@@ -216,6 +216,10 @@ export async function startLinuxBoot(opts = {}) {
     // preserves direct-loader compatibility; the page makes the production default explicit.
     jit = undefined,
     jitThreshold = undefined,
+    // E4-T39: independent entry-path controls. `jitJalr=false` disables generated dynamic-return
+    // probes; `jitRegion=false` returns after each compiled block while retaining JIT translation.
+    jitJalr = undefined,
+    jitRegion = undefined,
     // E4-T38: one explicit live-module screen per boot. `repack-off` is the current conservative
     // single-pass batcher; the cap variants change only the live batch budget.
     jitResidency = undefined,
@@ -479,6 +483,10 @@ export async function startLinuxBoot(opts = {}) {
       const _thrRaw = jitThreshold ?? _q.get("jitThreshold");
       const _threshold = Math.max(1, Number(_thrRaw) || 512);
       const _residency = jitResidency ?? _q.get("jitResidency") ?? "repack-off";
+      const _jalrQ = jitJalr ?? (_q.get("jalr") === "1" ? true : _q.get("jalr") === "0" ? false : undefined);
+      const _regionQ = jitRegion ?? (_q.get("region") === "1" ? true : _q.get("region") === "0" ? false : undefined);
+      const _jalr = _jalrQ ?? true;
+      const _region = _regionQ ?? true;
       // E4-T33 proved bounded browser handles and repaired the bulk handoff. The restored-Node screen
       // is faster with JIT at the shipping threshold, so isolated browser workers opt in by default;
       // `?jit=0` remains the explicit interpreter rollback/A-B.
@@ -489,16 +497,30 @@ export async function startLinuxBoot(opts = {}) {
         } else {
           machine.enableJit(_threshold);
         }
+        if (typeof machine.setDynamicChaining === "function") {
+          machine.setDynamicChaining(_jalr);
+        }
+        if (typeof machine.setChaining === "function") {
+          machine.setChaining(_region);
+        }
         try {
-          window.__jit = { enabled: true, threshold: _threshold, residency: _residency };
+          window.__jit = {
+            enabled: true,
+            threshold: _threshold,
+            residency: _residency,
+            jalr: _jalr,
+            region: _region,
+          };
         } catch { /* worker scope */ }
         console.info(
           "wasm-vm: browser JIT enabled (crossOriginIsolated, threshold=" + _threshold +
-          ", residency=" + _residency + ")",
+          ", residency=" + _residency + ", jalr=" + _jalr + ", region=" + _region + ")",
         );
       } else {
         const reason = _jitQ === false ? "forced-off" : (globalThis.crossOriginIsolated ? "no-enableJit" : "not-cross-origin-isolated");
-        try { window.__jit = { enabled: false, reason }; } catch { /* worker scope */ }
+        try {
+          window.__jit = { enabled: false, reason, jalr: _jalr, region: _region };
+        } catch { /* worker scope */ }
         console.info("wasm-vm: browser JIT NOT enabled —", reason);
       }
     } catch (e) {

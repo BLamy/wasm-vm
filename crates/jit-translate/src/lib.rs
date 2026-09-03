@@ -203,6 +203,11 @@ pub struct Abi {
     pub dynamic_attempts: u32,
     pub dynamic_hits: u32,
     pub dynamic_refusals: u32,
+    /// E4-T39: shared entry-path counters incremented by generated table calls and authority
+    /// predicates. Zero keeps the standalone/native ABI free of diagnostic stores.
+    pub dynamic_enabled: u32,
+    pub indirect_dispatches: u32,
+    pub authority_checks: u32,
     /// E4-T34: whether translated `jalr` exits may use the guarded dynamic table path.
     pub dynamic_chain: bool,
     /// E4-T34: imported funcref table index used by guarded dynamic calls.
@@ -323,6 +328,9 @@ impl Abi {
         dynamic_attempts: 0,
         dynamic_hits: 0,
         dynamic_refusals: 0,
+        dynamic_enabled: 0,
+        indirect_dispatches: 0,
+        authority_checks: 0,
         dynamic_chain: false,
         chain_table: 0,
         static_map_base: 0,
@@ -357,6 +365,9 @@ impl Abi {
         dynamic_attempts: 0,
         dynamic_hits: 0,
         dynamic_refusals: 0,
+        dynamic_enabled: 0,
+        indirect_dispatches: 0,
+        authority_checks: 0,
         dynamic_chain: false,
         chain_table: 0,
         static_map_base: 0,
@@ -1662,6 +1673,7 @@ fn emit_static_exit(
     f.local_get(table_index);
     f.i32_const(1);
     f.i32_sub();
+    emit_chain_counter_inc(f, abi.indirect_dispatches);
     f.call_indirect(run_ty, abi.chain_table);
     f.else_();
     f.i32_const(code as i32);
@@ -1680,6 +1692,7 @@ fn emit_exec_target_predicate(
     target: u32,
     expected_host_page: u32,
 ) {
+    emit_chain_counter_inc(f, abi.authority_checks);
     let eaddr = f.local(ValType::I32);
     emit_slot_addr(f, &abi.tlb, target, abi.tlb.exec_base, eaddr);
     // A fetch entry has the same `{tag,addend}` shape as the load/store entries. The addend maps
@@ -1711,6 +1724,19 @@ fn emit_dynamic_exit(
     let found = f.local(ValType::I32);
     let table_index = f.local(ValType::I32);
     let expected_host_page = (abi.dynamic_authority_base != 0).then(|| f.local(ValType::I32));
+
+    // The browser can turn the dynamic JALR path off for a cost-control run while retaining the
+    // same compiled modules. The caller has already written back dirty globals before reaching this
+    // helper, so a disabled probe can return through the ordinary dispatcher immediately.
+    if abi.dynamic_enabled != 0 {
+        f.local_get(STATE_BASE);
+        f.i32_load8_u(0, abi.dynamic_enabled);
+        f.i32_eqz();
+        f.if_(BlockType::Empty);
+        f.i32_const(code as i32);
+        f.return_();
+        f.end();
+    }
 
     emit_chain_counter_inc(f, abi.dynamic_attempts);
 
@@ -1822,6 +1848,7 @@ fn emit_dynamic_exit(
         f.i64_const(0);
     }
     f.local_get(table_index);
+    emit_chain_counter_inc(f, abi.indirect_dispatches);
     f.call_indirect(run_ty, abi.chain_table);
     f.else_();
     emit_chain_counter_inc(f, abi.dynamic_refusals);

@@ -87,8 +87,15 @@ pub mod abi {
     pub const CHAIN_DYNAMIC_HITS: u32 = CHAIN_DYNAMIC_ATTEMPTS + 8;
     /// E4-T37: number of dynamic-return probes refused by the generated guards.
     pub const CHAIN_DYNAMIC_REFUSALS: u32 = CHAIN_DYNAMIC_HITS + 8;
+    /// E4-T39: runtime switch for generated dynamic-return probes. The browser writes this before
+    /// each entry so the same compiled module can provide a JALR-off control without recompiling.
+    pub const CHAIN_DYNAMIC_ENABLED: u32 = CHAIN_DYNAMIC_REFUSALS + 8;
+    /// E4-T39: generated indirect table calls (static and dynamic) in the current direct chain.
+    pub const CHAIN_INDIRECT_DISPATCHES: u32 = CHAIN_DYNAMIC_ENABLED + 8;
+    /// E4-T39: generated EXEC-TLB/authority predicates evaluated in the current direct chain.
+    pub const CHAIN_AUTHORITY_CHECKS: u32 = CHAIN_INDIRECT_DISPATCHES + 8;
     /// Exclusive end of the auxiliary chain state retained beside the frozen handoff.
-    pub const CHAIN_STATE_END: u32 = CHAIN_DYNAMIC_REFUSALS + 8;
+    pub const CHAIN_STATE_END: u32 = CHAIN_AUTHORITY_CHECKS + 8;
 }
 
 /// Reusable transport buffer spanning the compiled module's frozen handoff byte range.
@@ -243,6 +250,14 @@ impl CpuStateHandoff {
         self.put_chain_u64(abi::CHAIN_DYNAMIC_ATTEMPTS, 0);
         self.put_chain_u64(abi::CHAIN_DYNAMIC_HITS, 0);
         self.put_chain_u64(abi::CHAIN_DYNAMIC_REFUSALS, 0);
+        self.put_chain_u64(abi::CHAIN_DYNAMIC_ENABLED, 1);
+        self.put_chain_u64(abi::CHAIN_INDIRECT_DISPATCHES, 0);
+        self.put_chain_u64(abi::CHAIN_AUTHORITY_CHECKS, 0);
+    }
+
+    /// Enable or disable generated dynamic-return probes for the next direct-chain call.
+    pub fn set_dynamic_chain_enabled(&mut self, enabled: bool) {
+        self.put_chain_u64(abi::CHAIN_DYNAMIC_ENABLED, enabled as u64);
     }
 
     /// Total retired instructions recorded by the current direct chain.
@@ -272,6 +287,22 @@ impl CpuStateHandoff {
     /// Number of generated dynamic-return probes refused by the cache or authority guard.
     pub fn dynamic_link_refusals(&self) -> u64 {
         self.chain_u64(abi::CHAIN_DYNAMIC_REFUSALS)
+    }
+
+    /// Number of generated static/dynamic calls through the imported funcref table in the current
+    /// direct chain.
+    pub fn indirect_dispatches(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_INDIRECT_DISPATCHES)
+    }
+
+    /// Number of generated EXEC-TLB/authority predicates evaluated in the current direct chain.
+    pub fn authority_checks(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_AUTHORITY_CHECKS)
+    }
+
+    /// Whether an import-side barrier stopped the current direct chain.
+    pub fn chain_was_aborted(&self) -> bool {
+        self.chain_u64(abi::CHAIN_ABORT) & 1 != 0
     }
 
     /// Registers written by the current generated direct chain, as a bit mask over x0..x31.
@@ -481,6 +512,35 @@ pub struct DynamicLinkStats {
     pub installs: u64,
 }
 
+/// E4-T39: bounded entry-path cost ledger exported by a compiled-block executor.
+///
+/// The counters are deterministic guest-path observations. The nanosecond fields are optional
+/// browser-side samples (zero for executors without a host timer), so the ledger can separate
+/// structural work from the wall-clock controls without putting a host clock in `no_std` core.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct JitEntryCostStats {
+    /// Host-side compiled-engine entries.
+    pub host_entries: u64,
+    /// State/register synchronization operations at those entries.
+    pub state_copy_calls: u64,
+    /// Bytes moved by state/register synchronization operations.
+    pub state_copy_bytes: u64,
+    /// Monotonic time spent in state/register synchronization, when sampled.
+    pub state_copy_ns: u64,
+    /// Monotonic time spent inside compiled engine entries, when sampled.
+    pub engine_entry_ns: u64,
+    /// Generated static/dynamic calls through the imported funcref table.
+    pub indirect_table_dispatches: u64,
+    /// Generated EXEC-TLB/authority predicates.
+    pub authority_checks: u64,
+    /// Host entries whose direct chain was stopped by an imported memory/device boundary.
+    pub memory_split_exits: u64,
+    /// Imported accesses resolved outside the inline guest-RAM fast path.
+    pub device_boundaries: u64,
+    /// Monotonic time spent in those device-boundary imports, when sampled.
+    pub device_boundary_ns: u64,
+}
+
 impl JitCacheStats {
     /// Re-translation rate = retranslations / installs (the thrash signal). `0.0` before any install.
     pub fn retranslation_rate(&self) -> f64 {
@@ -637,6 +697,12 @@ pub trait CompiledBlockExecutor {
         DynamicLinkStats::default()
     }
 
+    /// E4-T39: snapshot of the compiled entry-path cost ledger. Native and simple executors retain
+    /// the zero default; the browser executor reports bounded counters and optional timer samples.
+    fn entry_cost_stats(&self) -> JitEntryCostStats {
+        JitEntryCostStats::default()
+    }
+
     /// E4-T31: record the exact retirement count the core committed for a compiled exit. The core,
     /// not the executor, owns this count because it can distinguish a clean block from a precise
     /// mid-block trap. Default no-op keeps simple/mock executors source-compatible.
@@ -689,6 +755,15 @@ pub trait CompiledBlockExecutor {
 
     /// Whether chaining is currently enabled.
     fn chaining(&self) -> bool {
+        false
+    }
+
+    /// E4-T39: enable/disable generated dynamic-return (`jalr`) chaining independently from static
+    /// region chaining. The default is a no-op for executors without a generated PIC.
+    fn set_dynamic_chaining(&mut self, _on: bool) {}
+
+    /// Whether generated dynamic-return chaining is enabled.
+    fn dynamic_chaining(&self) -> bool {
         false
     }
 

@@ -895,6 +895,14 @@ impl Machine {
         }
     }
 
+    /// E4-T39: independently enable or disable generated dynamic-return (`jalr`) chaining. This
+    /// keeps the static region-chain control available for a separate entry-path comparison.
+    pub fn set_dynamic_chaining(&mut self, on: bool) {
+        if let Some(e) = self.executor.as_mut() {
+            e.set_dynamic_chaining(on);
+        }
+    }
+
     /// E4-T18: set the chain-depth budget (max links per chain before a mandatory dispatch return;
     /// clamped to ≥ 1, where 1 is the degenerate "no chaining past one link" mode). No-op without an
     /// executor.
