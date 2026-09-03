@@ -1,0 +1,246 @@
+{
+  "artifacts": {
+    "deploy": {
+      "artifacts": {
+        "bootSnapshot": {
+          "sha256": "ba3168696638db573173b4d266f5234acd01fb2fabe452cc5a1dfde483a61d33",
+          "size": 10983666,
+          "url": "releases/boot-snapshot/busybox-ready.snap.gz",
+          "verification": "local-bytes"
+        },
+        "initramfs": {
+          "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563",
+          "size": 1151596,
+          "url": "releases/initramfs/initramfs.cpio.gz",
+          "verification": "local-bytes"
+        },
+        "kernel": {
+          "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58",
+          "size": 22097408,
+          "url": "releases/kernel/6.6.63/Image",
+          "verification": "local-bytes"
+        }
+      },
+      "path": "web/dist/artifacts.json",
+      "sha256": "46b0201e3565d5c391f53eb4b8bc467f167ddeae735dcb5b4005f346b3c3a223"
+    },
+    "served": {
+      "artifacts": {
+        "bootSnapshot": {
+          "sha256": "ba3168696638db573173b4d266f5234acd01fb2fabe452cc5a1dfde483a61d33",
+          "size": 10983666,
+          "url": "releases/boot-snapshot/busybox-ready.snap.gz",
+          "verification": "local-bytes"
+        },
+        "initramfs": {
+          "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563",
+          "size": 1151596,
+          "url": "releases/initramfs/initramfs.cpio.gz",
+          "verification": "local-bytes"
+        },
+        "kernel": {
+          "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58",
+          "size": 22097408,
+          "url": "releases/kernel/6.6.63/Image",
+          "verification": "local-bytes"
+        }
+      },
+      "path": "web/artifacts.json",
+      "sha256": "46b0201e3565d5c391f53eb4b8bc467f167ddeae735dcb5b4005f346b3c3a223"
+    }
+  },
+  "baseline": {
+    "contract": {
+      "path": "bench/capstone-baselines.json",
+      "sha256": "4fc45cbb02b235dbf5c62243c2abcdb24a87e906abc8b423fd729c55abf7a60a"
+    },
+    "label": "level3-interpreter",
+    "ledger": {
+      "path": "bench/ledger.json",
+      "schema_version": 1,
+      "sha256": "e99f8d9915449eb8a4c41eca27d4075c2b60ef6dbb818b6b94e727180ffa523d"
+    },
+    "name": "e4-level4-baseline-contract-v1",
+    "rows": [
+      {
+        "bench": "boot",
+        "commit": "e7d3f6214f38ce89781b991ef154b2ff8a5f3587",
+        "config": {
+          "append": "root=/dev/vda rw console=ttyS0 earlycon=sbi",
+          "kernel": "releases/kernel/6.6.63/Image",
+          "ram_mib": 256,
+          "rootfs": "releases/rootfs/alpine-rootfs.ext4",
+          "vm_build": "release"
+        },
+        "config_sha256": "9f4f91fa3ccc2197f0ef081a3b6b4142decde7cb26076ee90c7fca042c9e0bdd",
+        "higher_is_better": false,
+        "ledger_entry": 2,
+        "row_sha256": "452775c27413b79e35674e5bba6e9e02b4c361d4bf0c683a6f797c57757cda75",
+        "score": 375.386,
+        "unit": "seconds"
+      },
+      {
+        "bench": "coremark",
+        "commit": "05bb0fe90e4666fcd2bd07f999e614d0be4d58f3",
+        "config": {
+          "binary_sha256": "4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937",
+          "flags": "-static -O2 -g0 -march=rv64gc -mabi=lp64d",
+          "gcc": "gcc-13-riscv64-linux-gnu 13.3.0",
+          "iterations": 6000,
+          "ram_mib": 256,
+          "vm_build": "release"
+        },
+        "config_sha256": "abbe20b1c3594a2c6cd65675619c5df8a6f726b2ac6903ebca41188bed643a28",
+        "higher_is_better": true,
+        "ledger_entry": 1,
+        "row_sha256": "f4a5ec63383de67a6eb3b204213f0a07b40b0b642140b0e18895bde03fe021de",
+        "score": 261.734,
+        "unit": "iterations/sec"
+      },
+      {
+        "bench": "dhrystone",
+        "commit": "010446f009677070f47a16f842b5c219b0158907",
+        "config": {
+          "binary_sha256": "eb21029f56d9774e9fa621ad8ef29b5f1fc8a2d5f7875d7c3eb5714fff5427d3",
+          "flags": "-static -O2 -g0 -march=rv64gc -mabi=lp64d",
+          "gcc": "gcc-13-riscv64-linux-gnu 13.3.0",
+          "iterations": 30000000,
+          "ram_mib": 256,
+          "vm_build": "release"
+        },
+        "config_sha256": "456d9450e5b37665d71db0a9395a1a4d47219f804dcbb4c7e885a10b974c844f",
+        "higher_is_better": true,
+        "ledger_entry": 0,
+        "row_sha256": "cb8fd2650205dbee0c5a5c39804b790596a9fcf92c1ccd6b41e120bd022b7de0",
+        "score": 189.717,
+        "unit": "DMIPS"
+      },
+      {
+        "bench": "gcc",
+        "commit": "unknown",
+        "config": {
+          "compile_cmd": "/mnt/usr/bin/gcc --sysroot=/mnt -B/mnt/usr/bin -O2 -frandom-seed=miniz -c /mnt/src/miniz.c -o /tmp/miniz.o",
+          "gcc_ext4_sha256": "167ff7a91ab6d4625bc4d68108595b2b693f1345f4ba1386df24e7ea6541d630",
+          "gcc_package": "gcc-13.2.1_git20240309-r1",
+          "o_sha256": "97198b27557042fb84de54881c5fb577505b4ee77c41bc056612be6173e5faca",
+          "o_size_bytes": 302904,
+          "o_sizes_all": [
+            302904
+          ],
+          "ram_mib": 768,
+          "source_date_epoch": 1704067200,
+          "vm_build": "release",
+          "workload": "miniz-3.0.2 miniz.c (amalgamated, ~9.3 kLoC)"
+        },
+        "config_sha256": "eca13f05615cec20c0a02548e4aec4f4bd4f032081283180542fbd85b8d4b2b3",
+        "higher_is_better": false,
+        "ledger_entry": 3,
+        "row_sha256": "5f7e56a8b0d00cb69153ec0ab922550a3770ec44236cde2e6ad9b2087c0265b5",
+        "score": 163.98,
+        "unit": "seconds"
+      }
+    ]
+  },
+  "build": {
+    "commands": [
+      "make web-build",
+      "make web-dist"
+    ],
+    "flags": {
+      "environment": "RUSTFLAGS/RUSTDOCFLAGS/RUST_LOG/CARGO_*/WASM_VM_* unset",
+      "guest": "-static -O2 -g0 -march=rv64gc -mabi=lp64d",
+      "native": "cargo build --release -p wasm-vm-cli",
+      "wasm": "wasm-pack build crates/wasm --target web"
+    },
+    "profile": "release"
+  },
+  "candidate": {
+    "commit": "2bfe75d804986a3096394c92cc0a8a58686c0986",
+    "working_tree": "clean"
+  },
+  "controls": {
+    "browser": {
+      "cross_origin_isolated": true,
+      "project": "chromium",
+      "runner": "Playwright",
+      "worker": "whole-machine worker"
+    },
+    "interpreter": {
+      "enabled": false,
+      "jalr": true,
+      "query": "?jit=0",
+      "region": true,
+      "residency": null,
+      "threshold": null
+    },
+    "jit": {
+      "enabled": true,
+      "jalr": true,
+      "query": "?jit=1&jitThreshold=512&jitResidency=repack-off&jalr=1&region=1",
+      "region": true,
+      "residency": "repack-off",
+      "threshold": 512
+    }
+  },
+  "fresh_profile": {
+    "context": "new Playwright browser context per sample",
+    "origin_data": "clear cookies, storage, IndexedDB, OPFS, and Cache Storage per sample",
+    "persistent_profile": false,
+    "required": true,
+    "sample_policy": "record every sample and report the median; never select the best run",
+    "translation_cache": "new machine/worker per sample; no warmup",
+    "warmup": false
+  },
+  "headers": {
+    "path": "web/_headers",
+    "required": {
+      "Cross-Origin-Embedder-Policy": "credentialless",
+      "Cross-Origin-Opener-Policy": "same-origin"
+    },
+    "sha256": "cacb06e044da4b8b80636c2d6355f2c7bbc45b2a5a04901c99ba76cc5e31ff6c"
+  },
+  "mode": "self-test",
+  "schema": "e4-level4-capstone-result-v1",
+  "schema_version": 1,
+  "self_test": {
+    "checks": [
+      {
+        "name": "schema and live inputs",
+        "status": "accepted"
+      },
+      {
+        "name": "uncommitted candidate",
+        "status": "rejected"
+      },
+      {
+        "name": "baseline score tamper",
+        "status": "rejected"
+      },
+      {
+        "name": "baseline commit tamper",
+        "status": "rejected"
+      },
+      {
+        "name": "baseline build-flag tamper",
+        "status": "rejected"
+      },
+      {
+        "name": "missing baseline row",
+        "status": "rejected"
+      },
+      {
+        "name": "deploy manifest bad digest",
+        "status": "rejected"
+      },
+      {
+        "name": "artifact byte tamper",
+        "status": "rejected"
+      },
+      {
+        "name": "warmed browser profile",
+        "status": "rejected"
+      }
+    ],
+    "note": "All rejection cases are temporary fixtures; no benchmark result is claimed."
+  }
+}
