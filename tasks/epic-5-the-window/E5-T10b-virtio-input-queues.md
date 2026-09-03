@@ -3,7 +3,7 @@ id: E5-T10b
 epic: 5
 title: virtio-input eventq and statusq transport
 priority: 510.2
-status: in-progress
+status: implemented
 depends_on: [E5-T10a]
 estimate: S
 risk: high
@@ -39,4 +39,39 @@ for malformed input.
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — implemented
+
+- **Eventq transport — HELD.** Added the fixed eight-byte `InputEvent` wire type and deferred
+  eventq service. A complete event is written across split writable descriptors and published with
+  `used.len = 8`; undersized or wrongly-directed buffers publish `used.len = 0` without partial
+  bytes or consuming the pending event.
+- **Statusq transport — HELD.** Added split readable-descriptor decoding and an
+  `InputStatusSink` callback seam. Short and wrongly-directed chains advance the ring without
+  invoking the callback; a complete status event reaches the host with the original type, code,
+  and value.
+- **Hostile transport behavior — HELD.** QueueNotify is deferred outside the guest MMIO borrow,
+  non-power-of-two queue shapes take the existing bounded NEEDS_RESET path, reset drops cached
+  queue state, and a hostile used index cannot redirect the device-owned completion shadow.
+- **Cross-target coverage — HELD.** Native queue tests and the wasm32 event wire-layout mirror
+  exercise positive and negative values with identical bytes.
+
+Implementation commit: `b6c840f`.
+
+Evidence: `evidence/e5-t10b/input-queues-2026-09-03.json` (SHA-256 to be recorded by the
+verifier).
+
+Commands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib
+dev::virtio::input` (8 passed); `cargo test -p wasm-vm-core --lib --quiet` (227 passed);
+`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core
+--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target
+wasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core
+--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed);
+`wasm-pack test --node crates/wasm --test input_config` (1 passed); and `wasm-pack test --node
+crates/wasm --test input_queues` (1 passed). The existing wasm-pack warning in
+`crates/wasm/tests/hart_ctrl.rs` is unrelated.
+
+The recorded run demonstrates exact event wire parity, complete split-descriptor event delivery,
+short-buffer recovery without partial writes, callback-free malformed status handling, bounded
+queue-shape rejection, and preservation of the existing virtio regression suite. Independent-
+machine, WebKit, and host-layer rr runs were excluded per the user's direction and the repository's
+current evidence policy.
