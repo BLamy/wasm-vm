@@ -69,6 +69,8 @@ E4-T16 guest-JIT loop 100k times with bitmaps on.
 ## Verification log
 ### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
 
+Commit: `069c4ee`.
+
 User directed this verification-debt sweep to accept the existing implementation and historical
 verification record and move on. Independent-machine, WebKit, and other environment-specific
 follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
