@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 183,
+    "verified": 184,
     "total": 350
   },
   "epics": [
@@ -14427,7 +14427,7 @@
       "epicKey": "4",
       "title": "COOP/COEP isolation gate and static-host fallback",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4-T22a"
       ],
@@ -14438,13 +14438,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified\n\n- **Isolation ordering — HELD.** Predicted the served HTML would establish the isolation decision\n  before `main.js` evaluated backend or wasm imports. The local COOP/COEP response carried\n  `same-origin` and `require-corp`; Chromium observed `crossOriginIsolated=true`,\n  `__cpuBackendSelection.backend=\"worker-shared\"`, `wasmVariant=\"shared\"`, and the matching\n  document dataset. The page produced zero non-favicon console errors.\n- **Fail-closed fallback — HELD.** Predicted a headerless page without a usable shim would not hang\n  or partially initialize. The first adversarial run exposed an unsettled\n  `navigator.serviceWorker.ready` promise; the 5-second bounded wait was added, and the final\n  headerless run with service workers blocked selected `single-thread`/`fallback` in `5.3s` with\n  no console errors.\n- **Static-host shim — HELD.** Predicted a headerless page with the shim enabled would reload once,\n  become controlled, and then select `worker-shared`. The final Chromium leg observed\n  `crossOriginIsolated=true`, an active service-worker controller, and the shared backend on the\n  second load. The three-leg spec passed `3/3`; the pure selector suite passed `16/16`.\n- **Coverage — HELD.** The changed registration timeout, HTML bootstrap ordering, fallback decision,\n  browser spec, generated `app.html`/service-worker bundle, and diagnostics all executed in the\n  focused browser run or are generated/declarative wiring. The committed screenshot records the\n  headerful selection surface.\n- **SUITE:** promoted `web/tests/e4-t22b-isolation-fallback.spec.js`, the existing pure selector\n  tests, and the JSON/screenshot capture as the repeatable isolation proof. WebKit and\n  independent-machine legs were not used per the user's explicit direction.\n\nImplementation commit: `177039e`.\n\nEvidence: `evidence/e4-t22b/isolation-fallback-2026-09-03.json` (SHA-256\n`454dd386b70e6fc1c3776630cfed90bf96dc1d1558e8f422c69507c4853f6035`) and\n`evidence/e4-t22b/isolation-selection.png` (SHA-256\n`f634226c16ef61fc25c6625ce65ddf949f630c33ed4e6956a56a11b56f2a8340`).\n\nCommands: `node --test web/tests/cpu-isolation.test.mjs` (`16 passed`); the exact three-leg\nChromium command recorded in the JSON (`3 passed`); `node --check` on the changed JavaScript;\n`make web-dist`; `python3 tools/check_task_policy.py`; and `python3 tools/build_queue.py`. The broad\nworkspace all-features clippy wall remains outside this slice and retains the pre-existing macOS\n`wvseccomp` libc API failure.",
       "adversarial": "Strip both headers, remove `SharedArrayBuffer`, remove `Atomics`, remove `Worker`, and force a\nsecond-load service-worker path. Any white screen, late fallback after partial initialization, or\nsilent JIT admission is a refutation.",
       "file": "tasks/epic-4-acceleration/E4-T22b-isolation-fallback.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: start E4-T22b isolation fallback"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E4-T22c",
