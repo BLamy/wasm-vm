@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 154,
+    "verified": 155,
     "total": 343
   },
   "epics": [
@@ -9209,7 +9209,7 @@
       "epicKey": "3",
       "title": "Online and offline cross-origin isolation",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E3-T24d"
       ],
@@ -9220,26 +9220,35 @@
       "criteria": [
         {
           "text": "`make verify-E3-T26a` proves isolation and SAB availability on cold load, soft navigation, and service-worker offline reload.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Every loaded subresource satisfies the declared CORP/CORS contract with zero COEP blocks.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Removing one required header or serving one bad mock-CDN chunk fails the regression.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified\n\nCommit: `33eb43d`.\n\nUser directed closure; independent machines and WebKit are out of scope. Existing local evidence\nfrom the versioned service-worker offline-shell proof and the COOP/COEP CPU-worker/SAB coverage\nestablishes the shipped isolation contract: cached same-origin responses retain headers, the\nisolated path exposes `SharedArrayBuffer`, and the header-less path fails closed to the supported\nfallback. The task is marked verified per that direction; no new T26a-specific full browser matrix\nis claimed.\n\nCommands: `cargo fmt --all --check`; `node --test web/tests/boot-path.test.mjs`;\n`node --check web/main.js`; `node --check web/roadmap.js`; `node --check web/sw.js`;\n`git diff --check`. Independent-machine and WebKit runs omitted by direction.",
       "adversarial": "Strip each header in turn, add an off-origin asset without CORP, serve stale cached HTML, and test\nold/new tabs across deployment. Any false-isolated state, silent resource block, offline header loss,\nor environment-specific relaxation refutes.",
       "file": "tasks/epic-3-civilization/E3-T26a-cross-origin-isolation.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 2,
+          "labels": [
+            "verify: close cross-origin isolation proof",
+            "tasks: start cross-origin isolation proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 2
     },
     {
       "id": "E3-T26b",

@@ -33,6 +33,8 @@ or environment-specific relaxation refutes.
 ## Verification log
 ### 2026-09-02 — verifier — VERDICT: verified
 
+Commit: `33eb43d`.
+
 User directed closure; independent machines and WebKit are out of scope. Existing local evidence
 from the versioned service-worker offline-shell proof and the COOP/COEP CPU-worker/SAB coverage
 establishes the shipped isolation contract: cached same-origin responses retain headers, the
