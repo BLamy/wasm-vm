@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 217,
+    "verified": 218,
     "total": 380
   },
   "epics": [
@@ -17336,7 +17336,7 @@
       "epicKey": "5",
       "title": "modifier and lock-key reconciliation",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T13a"
       ],
@@ -17360,21 +17360,22 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `f352030` adds `createKeyboardReconciler` as a synchronous wrapper around\nthe T12b bridge. It repairs missing or stranded Control/Alt/Shift/Meta before the triggering\nevent, permits an explicit reconciliation break to precede a dependent key, and tracks bounded\nrepair statistics. CapsLock and NumLock compare host `getModifierState()` or an explicit host\nsnapshot with the latest T11 LED snapshot; each divergence emits one down/up pair and stays\nsuppressed until feedback catches up. The TypeScript/browser projections are byte-identical.\n\nThe frozen-head recording ran `npm run test:keyboard-reconciliation --prefix web`: 23 tests passed,\n0 failed, including both modifier visibility branches, own-edge no-self-repair, stranded-modifier\nrelease with a dependent key held, AltGr-shaped Control+AltRight ordering, exact CapsLock/NumLock\npairs, per-event lock observation, and 50 repeated stale LED observations with one repair. The\nexisting 38-test keyboard/protocol matrix also passed, along with syntax, projection identity,\nand `git diff --check f352030^ f352030`.\n\nEvidence: `evidence/e5-t13b/modifier-lock-reconciliation-2026-09-03.json`, SHA-256\n`e7fbf43737f77f7de0fe97a0c5f2d666fd9d8a4b87ee132f7e84cb3b507eda19`.",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `f352030` adds `createKeyboardReconciler` as a synchronous wrapper around\nthe T12b bridge. It repairs missing or stranded Control/Alt/Shift/Meta before the triggering\nevent, permits an explicit reconciliation break to precede a dependent key, and tracks bounded\nrepair statistics. CapsLock and NumLock compare host `getModifierState()` or an explicit host\nsnapshot with the latest T11 LED snapshot; each divergence emits one down/up pair and stays\nsuppressed until feedback catches up. The TypeScript/browser projections are byte-identical.\n\nThe frozen-head recording ran `npm run test:keyboard-reconciliation --prefix web`: 23 tests passed,\n0 failed, including both modifier visibility branches, own-edge no-self-repair, stranded-modifier\nrelease with a dependent key held, AltGr-shaped Control+AltRight ordering, exact CapsLock/NumLock\npairs, per-event lock observation, and 50 repeated stale LED observations with one repair. The\nexisting 38-test keyboard/protocol matrix also passed, along with syntax, projection identity,\nand `git diff --check f352030^ f352030`.\n\nEvidence: `evidence/e5-t13b/modifier-lock-reconciliation-2026-09-03.json`, SHA-256\n`e7fbf43737f77f7de0fe97a0c5f2d666fd9d8a4b87ee132f7e84cb3b507eda19`.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Modifier state — HELD.** Predicted a missing modifier would be repaired before a dependent\n  event and a stranded modifier would be released before the next event; the exact fixtures\n  observe Control down before `KeyA`, Control up before `KeyA` break, and the forced-release path\n  preserves a still-held `KeyA` without deferring the corrective break.\n- **Own edges and AltGr — HELD.** Predicted a modifier's own make/break would not self-repair and\n  Windows-style Control+AltRight would produce two bounded prefixes; the 23-test run observes no\n  extra Shift frames and the exact `29, 56, 16` sequence.\n- **LED reconciliation — HELD.** Predicted each CapsLock/NumLock divergence would emit exactly one\n  down/up pair and remain quiet until T11 feedback agrees; the run observes codes 58/69 as exact\n  pairs, pending repair clearing after the LED snapshot catches up, and one repair for 50 repeated\n  stale observations. A separate 1,000-observation stale-LED attack also observes two CapsLock\n  events and one repair.\n- **Coverage and integrity — HELD.** Recomputed evidence SHA-256\n  `e7fbf43737f77f7de0fe97a0c5f2d666fd9d8a4b87ee132f7e84cb3b507eda19`, matched the recorded\n  implementation head `f352030`, reran the 23-test reconciliation command, the inherited 38-test\n  keyboard/protocol matrix, syntax checks, projection identity, and `git diff --check`. Every\n  changed runtime/test/package hunk is exercised or is the required source projection; no\n  browser, WebKit, or independent-machine run is applicable to this deterministic layer.\n- **SUITE — HELD.** The exact-head JSON evidence, deterministic reconciliation/bridge tests, and\n  bounded stale-LED attack are retained as permanent proof artifacts.\n\nCommands: `npm run test:keyboard-reconciliation --prefix web`; `npm run test:keyboard --prefix\nweb`; `node --check web/src/input/reconciliation.js`; `cmp -s web/src/input/reconciliation.ts\nweb/src/input/reconciliation.js`; `git diff --check f352030^ f352030`; 1,000-observation stale-\nLED attack via `node --input-type=module`.",
       "adversarial": "Toggle CapsLock and NumLock 50 times while feeding a slow-drain event sink, then replay the same\nobservations. The repair count and emitted frames must remain bounded and deterministic, with no\noscillation once host and guest state agree. Interleave Ctrl+AltRight and a missing modifier-up;\nthe resulting sequence must preserve the documented AltGr representation.",
       "file": "tasks/epic-5-the-window/E5-T13b-modifier-lock-reconciliation.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t13b): record reconciliation proof",
             "chore(e5-t13b): start modifier reconciliation"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T13c",

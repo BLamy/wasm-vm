@@ -3,7 +3,7 @@ id: E5-T13b
 epic: 5
 title: modifier and lock-key reconciliation
 priority: 513.2
-status: implemented
+status: verified
 depends_on: [E5-T13a]
 estimate: S
 risk: medium
@@ -64,3 +64,31 @@ and `git diff --check f352030^ f352030`.
 
 Evidence: `evidence/e5-t13b/modifier-lock-reconciliation-2026-09-03.json`, SHA-256
 `e7fbf43737f77f7de0fe97a0c5f2d666fd9d8a4b87ee132f7e84cb3b507eda19`.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Modifier state — HELD.** Predicted a missing modifier would be repaired before a dependent
+  event and a stranded modifier would be released before the next event; the exact fixtures
+  observe Control down before `KeyA`, Control up before `KeyA` break, and the forced-release path
+  preserves a still-held `KeyA` without deferring the corrective break.
+- **Own edges and AltGr — HELD.** Predicted a modifier's own make/break would not self-repair and
+  Windows-style Control+AltRight would produce two bounded prefixes; the 23-test run observes no
+  extra Shift frames and the exact `29, 56, 16` sequence.
+- **LED reconciliation — HELD.** Predicted each CapsLock/NumLock divergence would emit exactly one
+  down/up pair and remain quiet until T11 feedback agrees; the run observes codes 58/69 as exact
+  pairs, pending repair clearing after the LED snapshot catches up, and one repair for 50 repeated
+  stale observations. A separate 1,000-observation stale-LED attack also observes two CapsLock
+  events and one repair.
+- **Coverage and integrity — HELD.** Recomputed evidence SHA-256
+  `e7fbf43737f77f7de0fe97a0c5f2d666fd9d8a4b87ee132f7e84cb3b507eda19`, matched the recorded
+  implementation head `f352030`, reran the 23-test reconciliation command, the inherited 38-test
+  keyboard/protocol matrix, syntax checks, projection identity, and `git diff --check`. Every
+  changed runtime/test/package hunk is exercised or is the required source projection; no
+  browser, WebKit, or independent-machine run is applicable to this deterministic layer.
+- **SUITE — HELD.** The exact-head JSON evidence, deterministic reconciliation/bridge tests, and
+  bounded stale-LED attack are retained as permanent proof artifacts.
+
+Commands: `npm run test:keyboard-reconciliation --prefix web`; `npm run test:keyboard --prefix
+web`; `node --check web/src/input/reconciliation.js`; `cmp -s web/src/input/reconciliation.ts
+web/src/input/reconciliation.js`; `git diff --check f352030^ f352030`; 1,000-observation stale-
+LED attack via `node --input-type=module`.
