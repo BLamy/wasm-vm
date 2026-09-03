@@ -1,0 +1,2 @@
+wasm-vm: booting kernel=24208896 bytes @ 0x80200000 (footprint_end=0x8199e000), initrd=0 bytes @ none, dtb=2774 bytes @ 0x8fffb528, 256 MiB RAM
+wasm-vm: reached --max-instrs 500000000

@@ -1,0 +1,105 @@
+{
+  "task": "E5-T05c",
+  "recorded_at": "2026-09-03",
+  "comparison": {
+    "baseline_kernel": {
+      "path": "target/e5-t05c/e4-baseline-Image",
+      "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58",
+      "bytes": 22097408
+    },
+    "rebuilt_kernel": {
+      "path": "releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "bytes": 24208896
+    },
+    "same_command_line": "root=/dev/vda rw console=ttyS0 earlycon=sbi",
+    "same_disposable_rootfs": true,
+    "normal_profile": {
+      "baseline_total_ms": 323462,
+      "rebuilt_total_ms": 326709,
+      "delta_ms": 3247,
+      "delta_percent": 1.003,
+      "baseline_retired": 2973374117,
+      "rebuilt_retired": 2987773083,
+      "retired_delta": 14398966,
+      "retired_delta_percent": 0.484
+    },
+    "historical_e4_t04_reference": {
+      "total_ms": 375386,
+      "retired": 2971174099,
+      "rebuilt_wall_delta_percent": -12.967,
+      "rebuilt_retired_delta_percent": 0.559,
+      "interpretation": "The same-host old-vs-new replay is the comparable timing baseline; the historical ledger stopwatch is retained for context because host wall time is explicitly host-dependent."
+    }
+  },
+  "normalized_console_diff": {
+    "method": "Strip the leading kernel printk timestamp and compare the complete normal serial console transcript.",
+    "expected_deltas": [
+      "percpu layout sizes changed with the larger built-in image",
+      "modules virtual range changed with the larger built-in image",
+      "Memory available/kernel code/rwdata/init/bss/reserved totals changed with the larger built-in image",
+      "Advanced Linux Sound Architecture Driver Initialized.",
+      "ALSA device list:",
+      "No soundcards found.",
+      "goldfish RTC wall-clock timestamp differs between the two runs"
+    ],
+    "unexpected_deltas": [],
+    "new_driver_probe_errors": [],
+    "drm_or_gpu_error_matches": [],
+    "input_or_virtio_snd_error_matches": []
+  },
+  "allowlist": [
+    {
+      "text": "syscon-poweroff: probe of poweroff failed with error -16",
+      "reason": "Existing SBI poweroff owner conflict; present in both baseline and rebuilt logs."
+    },
+    {
+      "text": "modprobe: can't change directory to '/lib/modules': No such file or directory",
+      "reason": "Expected because CONFIG_MODULES=n and the rootfs has no module directory; present in both logs."
+    },
+    {
+      "text": "hwclock: select() to /dev/rtc0 to wait for clock tick timed out / Failed to set the system clock",
+      "reason": "Existing goldfish-RTC timing behavior; present in both logs."
+    },
+    {
+      "text": "Cannot find device eth0 / udhcpc ... No such device / ifup: failed ... eth0",
+      "reason": "Intentional no-network boot (no --net device attached); present in both logs."
+    }
+  ],
+  "normal_boot": {
+    "console_log": "evidence/e5-t05c/serial-console.log",
+    "profile_log": "evidence/e5-t05c/serial-profile.log",
+    "outcome": "rc=0; profile stopped at getty login marker",
+    "login_marker": true,
+    "serial_console_intact": true,
+    "hard_health_matches": [],
+    "guest_evidence": "evidence/e5-t05c/serial-guest-evidence.txt",
+    "guest_trace_fnv64": "bf0bcd7ece663955",
+    "guest_retired": 2987773083,
+    "guest_state_sha256": "33c49504dd55cd77312d02ec529d12cd41ce2bff51f8bac623686579f52698c2"
+  },
+  "console_tty0_attack": {
+    "command_line": "root=/dev/vda rw console=tty0",
+    "console_bytes": 0,
+    "outcome": "rc=102 at explicit 500000000-instruction bound",
+    "wall_ms": 54688,
+    "guest_evidence": "evidence/e5-t05c/tty0-guest-evidence.txt",
+    "guest_trace_fnv64": "fd04148a9aeb2787",
+    "guest_retired": 499982897,
+    "guest_state_sha256": "0467a414fbcc82fa203d4154a6a2dc0d2eae515b879bc1710febe79001560877",
+    "interpretation": "No UART output was expected with console=tty0; the guest retired nearly the full bound and exited by the explicit budget, demonstrating progress rather than a pre-fbcon hang."
+  },
+  "provenance": {
+    "config_sha256": "18da28e0c47eebda7950564df60df7a13b56b1ffa37ee6b0463924b81f95595d",
+    "manifest_sha256": {
+      "web/artifacts.json": "9e28ead1264e08a806ef7fd3159813163ca26d4caf85071923b20467f3fa35dc",
+      "web/artifacts-alpine.json": "547c147ccfc57a1d5a3b6818c5c1cc74b3673de2e7dbc13300256d1a5725ff5d",
+      "web/artifacts-node-alpine.json": "86cd0e8049ca1943848bfe3215d36e53e705cdb986b61d37a6aa2e92d5c27543"
+    },
+    "size_delta_bytes": 2111488,
+    "size_delta_mib": 2.013672,
+    "size_budget_mib": 4,
+    "source_rootfs_sha256_at_run": "6ce14d44f4bf6f6ef8c28303da431342608310c620664779946f20fdadc8a51c"
+  },
+  "claim": "The rebuilt Epic 5 kernel reaches the existing Alpine serial login path, remains within the same-host E4 baseline timing envelope, introduces only the expected built-in sound initialization and image-size changes, and makes measurable progress when serial output is intentionally disabled. The booted kernel, config, manifests, and size delta are bound to the T05b artifact proof."
+}
