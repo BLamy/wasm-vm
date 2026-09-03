@@ -3,7 +3,7 @@ id: E5-T05c
 epic: 5
 title: Epic 5 kernel headless boot and provenance regression
 priority: 505.3
-status: pending
+status: in-progress
 depends_on: [E5-T05b]
 estimate: S
 risk: high

@@ -16183,8 +16183,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t05b): record kernel artifact proof",
             "chore(e5-t05b): activate kernel artifact rebuild",
             "tasks: decompose E5-T05 kernel graphics config"
           ]
@@ -16192,7 +16193,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T05c",
@@ -16200,7 +16201,7 @@
       "epicKey": "5",
       "title": "Epic 5 kernel headless boot and provenance regression",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T05b"
       ],

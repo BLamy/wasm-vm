@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T05c** — Epic 5 kernel headless boot and provenance regression
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -336,7 +335,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `505` [E5-T05](epic-5-the-window/E5-T05-kernel-graphics-stack-config.md) — Kernel rebuild with the graphics/input/sound/console driver stack *(deps: E4)*
 - [x] `505.1` [E5-T05a](epic-5-the-window/E5-T05a-kernel-epic5-config-fragment.md) — Epic 5 built-in kernel driver config fragment *(deps: E4)*
 - [x] `505.2` [E5-T05b](epic-5-the-window/E5-T05b-kernel-artifact-rebuild.md) — Rebuild and publish the Epic 5 kernel artifact *(deps: E5-T05a)*
-- [ ] `505.3` [E5-T05c](epic-5-the-window/E5-T05c-kernel-headless-boot-regression.md) — Epic 5 kernel headless boot and provenance regression *(deps: E5-T05b)*
+- [~] `505.3` [E5-T05c](epic-5-the-window/E5-T05c-kernel-headless-boot-regression.md) — Epic 5 kernel headless boot and provenance regression *(deps: E5-T05b)*
 - [ ] `506` [E5-T06](epic-5-the-window/E5-T06-presentation-path-benchmark.md) — Canvas presentation path — measure putImageData vs WebGL upload, pick by data *(deps: E5-T03)*
 - [ ] `507` [E5-T07](epic-5-the-window/E5-T07-fbcon-drm-first-light.md) — First light — kernel fbcon text console rendered on the canvas *(deps: E5-T03, E5-T05, E5-T06)*
 - [ ] `508` [E5-T08](epic-5-the-window/E5-T08-console-toggle-and-capture.md) — Host chrome — serial console toggle beside the display, screenshot and recording *(deps: E5-T07)*
