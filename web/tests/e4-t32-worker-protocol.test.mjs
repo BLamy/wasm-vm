@@ -43,6 +43,8 @@ function fakeController(events, done) {
     whenDone: done,
     restoredFromBootSnapshot: () => true,
     sendInput(bytes) { events.push(["input", [...bytes]]); },
+    sendKeyboardEvent: (eventType, code, value) => events.push(["keyboard", eventType, code, value]),
+    syncKeyboard: () => events.push("keyboard-sync"),
     pause: () => events.push("pause"),
     resume: () => events.push("resume"),
     isPaused: () => false,
@@ -71,7 +73,9 @@ function fakeController(events, done) {
     snapshotRead: () => Uint8Array.of(1, 2),
     snapshotDecision: () => "resume",
     snapshotAdvanceGen: () => 2,
+    snapshotGeneration: () => 2,
     snapshotExport: () => Uint8Array.of(3, 4),
+    snapshotRestore: () => "resume",
     snapshotImport: (bytes) => { events.push(["snapshot", [...bytes]]); return true; },
     storageEstimate: () => ({ usage: 1, quota: 2 }),
     jitStats: () => ({ compiledBlocks: 2, executedBlocks: 3, retiredViaJit: 4 }),
@@ -202,6 +206,8 @@ test("every explicit controller method crosses the runtime and no-provider Tails
   invoked.length = 0;
   try {
     const args = {
+      sendKeyboardEvent: [1, 30, 1],
+      syncKeyboard: [],
       fileTransferReady: [0],
       setFileDownloadReady: [true],
       beginFileUpload: [0, "all-methods.bin", 3, "sha256"],
@@ -220,6 +226,7 @@ test("every explicit controller method crosses the runtime and no-provider Tails
       results.set(method, await controller[method](...(args[method] ?? [])));
     }
     assert.deepEqual([...invoked], LINUX_CONTROLLER_METHODS);
+    assert.deepEqual(events.slice(0, 2), [["keyboard", 1, 30, 1], "keyboard-sync"]);
     assert.equal(results.get("tailscaleCommand"), false);
     assert.deepEqual([...results.get("takeFileDownloadChunk")], [9, 10]);
     assert.deepEqual([...results.get("snapshotRead")], [1, 2]);

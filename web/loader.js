@@ -929,6 +929,19 @@ export async function startLinuxBoot(opts = {}) {
           machine.sendInput(bytes);
         }
       },
+      // E5-T12b: the DOM keyboard bridge publishes physical evdev frames through the same
+      // controller on both the direct and whole-machine-worker paths. Worker RPC ordering keeps
+      // sendKeyboardEvent immediately ahead of its matching syncKeyboard frame.
+      sendKeyboardEvent: (eventType, code, value) => {
+        if (stopped) return false;
+        machine.sendKeyboardEvent(eventType, code, value);
+        return true;
+      },
+      syncKeyboard: () => {
+        if (stopped) return false;
+        machine.syncKeyboard();
+        return true;
+      },
       stop: async () => {
         finish("stopped");
         await taskQuiescence.stop();
