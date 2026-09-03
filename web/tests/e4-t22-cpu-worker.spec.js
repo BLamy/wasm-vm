@@ -1,6 +1,6 @@
 // E4-T22f: the live browser acceptance boundary for the production whole-machine worker. This
-// deliberately drives the restored Alpine guest through the same terminal bridge used by the demo,
-// while measuring responsiveness from the browser's host event loop.
+// deliberately drives the restored Alpine guest through the demo's terminal bridge, while measuring
+// worker dispatch and responsiveness from the browser's host event loop.
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -225,7 +225,7 @@ async function runBusyWithBudgets(page) {
         rafId = requestAnimationFrame(frame);
       });
       const inputStartedAt = performance.now();
-      window.__linuxCtl.sendInput(new TextEncoder().encode(input + "\n"));
+      window.wvmDemo.sendInput(new TextEncoder().encode(input + "\n"));
       const inputDispatch = await withTimeout(
         window.__linuxCtl.schedulerStats(),
         "worker input dispatch",
