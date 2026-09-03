@@ -25,6 +25,11 @@ pub const KEYBOARD_DEVIDS: InputDevids = InputDevids {
 /// Stable virtio-mmio slot used by the keyboard when the standard slots are attached.
 pub const KEYBOARD_VIRTIO_SLOT: usize = 3;
 
+/// Linux input-event-codes.h: the canonical `KEY_A` make/break code.
+pub const KEY_A: u16 = 30;
+/// Linux input-event-codes.h: an edge code used by keyboard-map adversarial fixtures.
+pub const KEY_F24: u16 = 194;
+
 /// The PC-105 evdev key range used by the instance.  The range starts at KEY_ESC (1) and extends
 /// through the physical/media-key portion Linux accepts for a full keyboard device.
 pub const PC105_KEY_RANGE: core::ops::RangeInclusive<u16> = 1..=248;

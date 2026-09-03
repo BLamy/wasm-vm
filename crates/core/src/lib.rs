@@ -1379,6 +1379,19 @@ impl Machine {
         self.keyboard_leds.as_ref().map(alloc::rc::Rc::clone)
     }
 
+    /// Host/UI handle for injecting framed keyboard events into the guest-facing eventq. The
+    /// caller appends one or more events with
+    /// [`dev::virtio::input::InputState::inject_event`] and closes the frame with
+    /// [`dev::virtio::input::InputState::sync`], matching the transport contract used by the
+    /// browser keymap.
+    pub fn keyboard_input(
+        &self,
+    ) -> Option<alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>> {
+        self.keyboard
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state))
+    }
+
     /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,
     /// with `clock` as its wall-clock source (`SystemTime` in the CLI, `Date.now()` in wasm, a
     /// mock in tests). Matches the `google,goldfish-rtc` node the DTB advertises — without it

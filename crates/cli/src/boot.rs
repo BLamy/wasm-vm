@@ -97,8 +97,9 @@ pub struct BootArgs {
     #[arg(long, default_value = "console=ttyS0 earlycon=sbi")]
     pub append: String,
     /// Attach a virtio-blk drive: `file=IMG` or `file=IMG,ro` (mmap-backed). The first `--drive`
-    /// claims slot 0 (`/dev/vda`); repeat the flag to attach further drives into the next empty
-    /// slots (`/dev/vdb`, …) — the E4-T03 bench harness attaches its read-only overlay this way.
+    /// claims slot 0 (`/dev/vda`); repeat the flag to attach further drives after the reserved
+    /// net/rng/keyboard slots (`/dev/vdb`, …) — the E4-T03 bench harness attaches its read-only
+    /// overlay this way.
     #[arg(long)]
     pub drive: Vec<String>,
     /// Guest RAM size in MiB (DTB places itself near the top of DRAM).
@@ -113,6 +114,10 @@ pub struct BootArgs {
     /// Do not read host stdin (headless boot: prove the dmesg parade, don't drive the shell).
     #[arg(long)]
     pub no_input: bool,
+    /// E5-T11c: arm the deterministic serial evdev proof hook. When the guest prints the
+    /// echo-proof `WVM_KB_INJECT` marker, inject one KEY_A make frame followed by one break frame.
+    #[arg(long)]
+    pub keyboard_proof: bool,
     /// On a guest reboot, exit (QEMU `-no-reboot` style) instead of re-booting a fresh machine.
     #[arg(long)]
     pub no_reboot: bool,
@@ -525,6 +530,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
         (Some(out), Some(trigger)) => Some(SnapshotOnMarker::new(trigger.clone(), out.clone())),
         _ => None,
     };
+    let mut keyboard_proof = a.keyboard_proof.then(KeyboardProof::new);
 
     let mut boot_num = 0u32;
     loop {
@@ -602,6 +608,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 &mut pending,
                 profiler.as_mut().filter(|_| boot_num == 1),
                 snap.as_mut(),
+                keyboard_proof.as_mut(),
                 &mut fp,
             );
             let pct = if fp.total == 0 {
@@ -624,6 +631,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 &mut pending,
                 profiler.as_mut().filter(|_| boot_num == 1),
                 snap.as_mut(),
+                keyboard_proof.as_mut(),
                 &mut hash,
             )
         } else {
@@ -637,6 +645,7 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 &mut pending,
                 profiler.as_mut().filter(|_| boot_num == 1),
                 snap.as_mut(),
+                keyboard_proof.as_mut(),
                 &mut null,
             )
         };
@@ -703,6 +712,11 @@ pub fn boot(a: BootArgs) -> ExitCode {
                 );
                 return ExitCode::from(74);
             }
+        }
+
+        if a.keyboard_proof && keyboard_proof.as_ref().is_some_and(|proof| !proof.injected) {
+            eprintln!("wasm-vm: keyboard proof ended before the WVM_KB_INJECT marker was observed");
+            return ExitCode::from(1);
         }
 
         match outcome {
@@ -824,19 +838,20 @@ fn assemble(
     m.enable_syscon(); // E2-T17: poweroff/reboot finisher at TEST_BASE
     let uart = m.enable_uart16550();
     // virtio: a real blk device if --drive was given, else the 8 empty mmio slots the DTB
-    // advertises (the kernel probes each address; an unbacked window would fault).
+    // advertises (the kernel probes each address; an unbacked window would fault). Slots 1–3 are
+    // reserved for net, rng, and the E5-T11 keyboard, so additional disks begin at slot 4. Linux
+    // still enumerates the block devices in probe order as /dev/vda, /dev/vdb, … despite the
+    // unused virtio-mmio windows between them.
     if a.drive.is_empty() {
         let _ = m.enable_virtio_slots(None);
     } else {
-        // First drive claims slot 0 (/dev/vda); each subsequent --drive installs into the next
-        // empty slot (/dev/vdb, …). E4-T03 attaches the read-only bench overlay as a 2nd drive.
-        for (i, spec) in a.drive.iter().enumerate() {
+        // First drive claims slot 0 (/dev/vda). E4-T03's extra drive and any later drives use the
+        // first slots after the keyboard reservation.
+        let first = open_drive_backend(&a.drive[0])?;
+        let _ = m.enable_virtio_blk(first);
+        for (slot, spec) in (4..).zip(a.drive.iter().skip(1)) {
             let backend = open_drive_backend(spec)?;
-            if i == 0 {
-                let _ = m.enable_virtio_blk(backend);
-            } else {
-                let _ = m.enable_virtio_blk_at(i, backend);
-            }
+            let _ = m.enable_virtio_blk_at(slot, backend);
         }
         if a.blk_log {
             m.enable_blk_log(); // E2-T19: trace requests to stderr
@@ -871,6 +886,9 @@ fn assemble(
         // virtio-rng in slot 2, backed by the OS CSPRNG — seeds the guest CRNG promptly.
         let _ = m.enable_virtio_rng(Box::new(crate::os_entropy::OsEntropy));
     }
+    // E5-T11c: the concrete keyboard is present on every native Linux boot, so the rebuilt guest
+    // can bind /dev/input/event0 before the host's first key injection.
+    let _ = m.enable_virtio_keyboard();
 
     // Built-in SBI firmware + its console channel (earlycon=sbi / legacy putchar).
     m.enable_builtin_sbi();
@@ -1062,6 +1080,71 @@ impl BootProfiler {
     }
 }
 
+/// E5-T11c: deterministic host hook for the serial evdev proof. The guest-side command prints
+/// the marker only after it has opened `/dev/input/event0`; the next machine boundary then carries
+/// one make frame and one break frame through the real virtio-input eventq.
+struct KeyboardProof {
+    tail: String,
+    injected: bool,
+    last_pending_events: Option<usize>,
+}
+
+impl KeyboardProof {
+    const MARKER: &'static str = "WVM_KB_INJECT";
+
+    fn new() -> Self {
+        Self {
+            tail: String::new(),
+            injected: false,
+            last_pending_events: None,
+        }
+    }
+
+    fn feed(&mut self, out: &[u8], machine: &mut Machine) {
+        if self.injected || out.is_empty() {
+            return;
+        }
+        self.tail.push_str(&String::from_utf8_lossy(out));
+        if self.tail.contains(Self::MARKER) {
+            let Some(state) = machine.keyboard_input() else {
+                eprintln!("wasm-vm: keyboard proof marker observed without a keyboard device");
+                self.injected = true;
+                return;
+            };
+            let mut state = state.borrow_mut();
+            use wasm_vm_core::dev::virtio::input::EV_KEY;
+            use wasm_vm_core::dev::virtio::input::keyboard::KEY_A;
+            state.inject_event(EV_KEY, KEY_A, 1);
+            state.sync();
+            state.inject_event(EV_KEY, KEY_A, 0);
+            state.sync();
+            self.injected = true;
+            eprintln!("wasm-vm: keyboard proof injected KEY_A make/break frames");
+        }
+        if self.tail.len() > 512 {
+            let mut cut = self.tail.len() - 256;
+            while cut < self.tail.len() && !self.tail.is_char_boundary(cut) {
+                cut += 1;
+            }
+            self.tail = self.tail.split_off(cut);
+        }
+    }
+
+    fn observe(&mut self, machine: &Machine) {
+        if !self.injected {
+            return;
+        }
+        let Some(state) = machine.keyboard_input() else {
+            return;
+        };
+        let pending = state.borrow().pending_events();
+        if self.last_pending_events != Some(pending) {
+            eprintln!("wasm-vm: keyboard proof pending events={pending}");
+            self.last_pending_events = Some(pending);
+        }
+    }
+}
+
 // These references are the long-lived boot-loop state; bundling them into a one-use context solely
 // to satisfy the argument-count style lint would obscure their ownership and widen unrelated churn.
 #[allow(clippy::too_many_arguments)]
@@ -1074,6 +1157,7 @@ fn run_machine<T: TraceSink>(
     pending: &mut std::collections::VecDeque<u8>,
     profiler: Option<&mut BootProfiler>,
     mut snap: Option<&mut SnapshotOnMarker>,
+    mut keyboard_proof: Option<&mut KeyboardProof>,
     sink: &mut T,
 ) -> RunOutcome {
     let mut profiler = profiler;
@@ -1087,6 +1171,10 @@ fn run_machine<T: TraceSink>(
         // Drain UART output → stdout every quantum so the boot log streams live.
         let out = uart.borrow_mut().take_output();
         console.write_bytes(&out);
+        if let Some(proof) = keyboard_proof.as_deref_mut() {
+            proof.feed(&out, m);
+            proof.observe(m);
+        }
         // E2-T25: feed the console stream + retired count to the profiler so it can stamp the
         // wall time + retired count at each guest phase marker's first sighting.
         if let Some(p) = profiler.as_deref_mut() {

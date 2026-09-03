@@ -1221,9 +1221,9 @@ enum DiskChoice {
         profile: Vec<usize>,
     },
     /// E4-T28e: a lazy Alpine root disk plus a read-only, fully resident secondary virtio-blk
-    /// drive. The browser proof uses this for the pinned GCC overlay; it lives in slot 3 so the
-    /// normal net/rng devices retain their stable slots 1/2, while Linux still enumerates the
-    /// only two block devices as `/dev/vda` and `/dev/vdb`.
+    /// drive. The browser proof uses this for the pinned GCC overlay; it lives in slot 4 because
+    /// the normal net/rng/keyboard devices retain their stable slots 1/2/3, while Linux still
+    /// enumerates the only two block devices as `/dev/vda` and `/dev/vdb`.
     ChunkedWithExtra {
         manifest: wasm_vm_storage::ImageManifest,
         base_url: String,
@@ -1364,8 +1364,9 @@ impl WasmLinux {
 
     /// E4-T28e: boot the normal lazy Alpine root disk with one additional read-only virtio-blk
     /// image. The extra image is passed by value so the fetched overlay becomes one resident Rust
-    /// buffer; it is never compiled or transformed on the host. Slot 3 is used because browser
-    /// Linux reserves slots 1/2 for virtio-net/rng, leaving `/dev/vdb` as the second block device.
+    /// buffer; it is never compiled or transformed on the host. Slot 4 is used because browser
+    /// Linux reserves slots 1/2 for virtio-net/rng and slot 3 for the keyboard, leaving `/dev/vdb`
+    /// as the second block device.
     #[wasm_bindgen(js_name = newChunkedDiskWithExtra)]
     #[allow(clippy::too_many_arguments)]
     pub fn new_chunked_disk_with_extra(
@@ -1570,10 +1571,11 @@ impl WasmLinux {
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let backend = chunked::ChunkedBackend::new(&manifest, store.clone());
                 machine.enable_virtio_blk(Box::new(backend));
-                // Keep slots 1/2 available for the browser's net/rng devices. Linux's block-major
-                // enumeration still names this second block device `/dev/vdb`.
+                // Keep slots 1/2 available for the browser's net/rng devices and slot 3 for the
+                // keyboard. Linux's block-major enumeration still names this second block device
+                // `/dev/vdb`.
                 machine.enable_virtio_blk_at(
-                    3,
+                    4,
                     Box::new(wasm_vm_core::block::MemBackend::new_read_only(extra_disk)),
                 );
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
@@ -1703,6 +1705,9 @@ impl WasmLinux {
         // scavenges entropy from interrupt jitter for many seconds, long enough that the first TLS
         // ClientHello's `RAND_bytes` stalls or fails (the E3-T19 guest-HTTPS flakiness).
         let _ = machine.enable_virtio_rng(Box::new(crypto_entropy::CryptoEntropy));
+        // E5-T11c: attach the guest-visible keyboard on every browser boot. The host keymap can
+        // inject make/break frames through WasmLinux::sendKeyboardEvent/syncKeyboard.
+        let _ = machine.enable_virtio_keyboard();
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));
@@ -2024,6 +2029,37 @@ impl WasmLinux {
     pub fn send_input(&self, bytes: &[u8]) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         inner.pending.extend(bytes.iter().copied());
+        Ok(())
+    }
+
+    /// Queue one guest-visible evdev keyboard event. Call `syncKeyboard` after the host's
+    /// keydown/keyup event (or after a batch of related events) to publish the frame with its
+    /// `SYN_REPORT`; browser repeat events must not call this method as key-downs.
+    #[wasm_bindgen(js_name = sendKeyboardEvent)]
+    pub fn send_keyboard_event(
+        &self,
+        event_type: u16,
+        code: u16,
+        value: i32,
+    ) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .keyboard_input()
+            .ok_or_else(|| JsError::new("keyboard input is not attached"))?;
+        state.borrow_mut().inject_event(event_type, code, value);
+        Ok(())
+    }
+
+    /// Publish the current host keyboard frame by appending `EV_SYN/SYN_REPORT`.
+    #[wasm_bindgen(js_name = syncKeyboard)]
+    pub fn sync_keyboard(&self) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .keyboard_input()
+            .ok_or_else(|| JsError::new("keyboard input is not attached"))?;
+        state.borrow_mut().sync();
         Ok(())
     }
 
