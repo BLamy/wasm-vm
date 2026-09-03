@@ -3,7 +3,7 @@ id: E4-T22c
 epic: 4
 title: Atomic WFI wake and interim MMIO control block
 priority: 422.3
-status: pending
+status: in-progress
 depends_on: [E4-T22b]
 estimate: S
 risk: high

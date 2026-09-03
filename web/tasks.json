@@ -14444,15 +14444,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify: close E4-T22b isolation fallback",
             "tasks: start E4-T22b isolation fallback"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T22c",
@@ -14460,7 +14461,7 @@
       "epicKey": "4",
       "title": "Atomic WFI wake and interim MMIO control block",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T22b"
       ],
