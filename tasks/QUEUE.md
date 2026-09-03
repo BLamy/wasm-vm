@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E3-T19a** — Composed-stack node lifecycle and reload-restore
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -169,7 +168,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `317` [E3-T17](epic-3-civilization/E3-T17-browser-tailscale-transport.md) — Browser Tailscale transport — IPN worker, TCP/UDP streams, MagicDNS, and exit nodes *(deps: E3-T15, E3-T16)*
 - [x] `318` [E3-T18](epic-3-civilization/E3-T18-http-fast-path-evaluation.md) — Optional browser HTTP fast-path evaluation after Tailscale *(deps: E3-T17)*
 - [-] `319` [E3-T19](epic-3-civilization/E3-T19-network-provider-hardening.md) — Tailscale/Headscale lifecycle and public-relay fallback hardening *(deps: E3-T16, E3-T17)*
-- [ ] `319.1` [E3-T19a](epic-3-civilization/E3-T19a-node-lifecycle-reload-restore.md) — Composed-stack node lifecycle and reload-restore *(deps: E3-T16, E3-T17)*
+- [b] `319.1` [E3-T19a](epic-3-civilization/E3-T19a-node-lifecycle-reload-restore.md) — Composed-stack node lifecycle and reload-restore *(deps: E3-T16, E3-T17)*
 - [ ] `319.2` [E3-T19b](epic-3-civilization/E3-T19b-acl-exit-node.md) — ACL enforcement and exit-node routing *(deps: E3-T19a)*
 - [x] `319.3` [E3-T19c](epic-3-civilization/E3-T19c-relay-token-rejection.md) — Relay token rejection (deterministic, no live tailnet) *(deps: E3-T16, E3-T17)*
 - [ ] `319.4` [E3-T19d](epic-3-civilization/E3-T19d-browser-vm-https-identity-isolation.md) — Browser-VM HTTPS through provider and identity isolation *(deps: E3-T19a)*

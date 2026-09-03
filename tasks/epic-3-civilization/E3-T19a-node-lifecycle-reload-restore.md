@@ -3,7 +3,7 @@ id: E3-T19a
 epic: 3
 title: Composed-stack node lifecycle and reload-restore
 priority: 319.1
-status: pending
+status: blocked
 depends_on: [E3-T16, E3-T17]
 blocked_on: [E4-T13]
 estimate: S
@@ -34,6 +34,12 @@ between a relay-only lazy-connect protocol change and the E4-T13 JIT; deferred d
 deterministic security slice + live AC2/AC3 are DONE (below).
 
 ## Verification log
+- 2026-09-02 — **Status normalized to blocked.** The declared `blocked_on: [E4-T13]` remains
+  active: `tools/verify/e3-t19-live-proof.sh` reproduces `E3T19_GUEST_HTTPS_FAIL` for both the
+  Tailscale and relay providers after the Alpine guest reaches a shell, with the relay recording
+  only the outbound ClientHello (`bytes_accounted:322`). Resume when E4-T13 changes the relevant
+  worker/data-path dependency.
+
 - 2026-08-03 — **Deterministic security slice landed (persist/restore validation); the live tailnet
   proof stays `blocked_on: E4-T13`.** The identity-persistence machinery already exists from E3-T17
   (`main.js` `loadTailscaleState`/`storageUpdate` → localStorage; `tailscale-runtime.js` restores from
