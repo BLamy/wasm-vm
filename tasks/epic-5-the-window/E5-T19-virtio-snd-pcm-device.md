@@ -4,7 +4,7 @@ epic: 5
 title: virtio-snd device — control plane and PCM playback stream machine
 priority: 519
 status: pending
-depends_on: [E5-T05]
+depends_on: [E5-T05c]
 estimate: L
 capstone: false
 ---

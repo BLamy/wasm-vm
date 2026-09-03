@@ -4,7 +4,7 @@ epic: 5
 title: virtio-console agent channel and static Rust guest agent
 priority: 523
 status: pending
-depends_on: [E5-T05]
+depends_on: [E5-T05c]
 estimate: M
 capstone: false
 ---

@@ -4,7 +4,7 @@ epic: 5
 title: virtio-input device core — config space, eventq/statusq, event injection API
 priority: 510
 status: pending
-depends_on: [E5-T05]
+depends_on: [E5-T05c]
 estimate: M
 capstone: false
 ---

@@ -8,6 +8,10 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
+1. **E5-T02** — virtio-gpu 2D resource lifecycle (CREATE_2D, ATTACH_BACKING, DETACH, UNREF) **[DECOMPOSE BEFORE START]**
+1. **E5-T10** — virtio-input device core — config space, eventq/statusq, event injection API **[DECOMPOSE BEFORE START]**
+1. **E5-T19** — virtio-snd device — control plane and PCM playback stream machine **[DECOMPOSE BEFORE START]**
+1. **E5-T23** — virtio-console agent channel and static Rust guest agent **[DECOMPOSE BEFORE START]**
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -329,7 +333,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `501.1` [E5-T01a](epic-5-the-window/E5-T01a-virtio-gpu-protocol-device.md) — virtio-gpu device identity, config space, and protocol types *(deps: E4)*
 - [x] `501.2` [E5-T01b](epic-5-the-window/E5-T01b-virtio-gpu-display-info-queue.md) — virtio-gpu control queue and GET_DISPLAY_INFO *(deps: E5-T01a)*
 - [x] `501.3` [E5-T01c](epic-5-the-window/E5-T01c-virtio-gpu-malformed-queue-hardening.md) — virtio-gpu malformed commands and descriptor-chain hardening *(deps: E5-T01b)*
-- [ ] `502` [E5-T02](epic-5-the-window/E5-T02-virtio-gpu-resource-lifecycle.md) — virtio-gpu 2D resource lifecycle (CREATE_2D, ATTACH_BACKING, DETACH, UNREF) *(deps: E5-T01)*
+- [ ] `502` [E5-T02](epic-5-the-window/E5-T02-virtio-gpu-resource-lifecycle.md) — virtio-gpu 2D resource lifecycle (CREATE_2D, ATTACH_BACKING, DETACH, UNREF) *(deps: E5-T01c)*
 - [ ] `503` [E5-T03](epic-5-the-window/E5-T03-virtio-gpu-scanout-transfer-flush.md) — Scanout pipeline — SET_SCANOUT, TRANSFER_TO_HOST_2D, RESOURCE_FLUSH *(deps: E5-T02)*
 - [ ] `504` [E5-T04](epic-5-the-window/E5-T04-virtio-gpu-edid-display-info.md) — EDID blocks and display-info config events (hotplug plumbing) *(deps: E5-T03)*
 - [-] `505` [E5-T05](epic-5-the-window/E5-T05-kernel-graphics-stack-config.md) — Kernel rebuild with the graphics/input/sound/console driver stack *(deps: E4)*
@@ -337,10 +341,10 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `505.2` [E5-T05b](epic-5-the-window/E5-T05b-kernel-artifact-rebuild.md) — Rebuild and publish the Epic 5 kernel artifact *(deps: E5-T05a)*
 - [x] `505.3` [E5-T05c](epic-5-the-window/E5-T05c-kernel-headless-boot-regression.md) — Epic 5 kernel headless boot and provenance regression *(deps: E5-T05b)*
 - [ ] `506` [E5-T06](epic-5-the-window/E5-T06-presentation-path-benchmark.md) — Canvas presentation path — measure putImageData vs WebGL upload, pick by data *(deps: E5-T03)*
-- [ ] `507` [E5-T07](epic-5-the-window/E5-T07-fbcon-drm-first-light.md) — First light — kernel fbcon text console rendered on the canvas *(deps: E5-T03, E5-T05, E5-T06)*
+- [ ] `507` [E5-T07](epic-5-the-window/E5-T07-fbcon-drm-first-light.md) — First light — kernel fbcon text console rendered on the canvas *(deps: E5-T03, E5-T05c, E5-T06)*
 - [ ] `508` [E5-T08](epic-5-the-window/E5-T08-console-toggle-and-capture.md) — Host chrome — serial console toggle beside the display, screenshot and recording *(deps: E5-T07)*
 - [ ] `509` [E5-T09](epic-5-the-window/E5-T09-damage-tracking-frame-pacing.md) — Damage-rect coalescing, dirty tiling, and rAF-paced presentation *(deps: E5-T06, E5-T07)*
-- [ ] `510` [E5-T10](epic-5-the-window/E5-T10-virtio-input-device-core.md) — virtio-input device core — config space, eventq/statusq, event injection API *(deps: E5-T05)*
+- [ ] `510` [E5-T10](epic-5-the-window/E5-T10-virtio-input-device-core.md) — virtio-input device core — config space, eventq/statusq, event injection API *(deps: E5-T05c)*
 - [ ] `511` [E5-T11](epic-5-the-window/E5-T11-virtio-input-keyboard.md) — virtio-input keyboard device — EV_KEY map, EV_LED statusq, repeat policy *(deps: E5-T10)*
 - [ ] `512` [E5-T12](epic-5-the-window/E5-T12-dom-to-evdev-keymap.md) — DOM KeyboardEvent.code → evdev translation with capture policy *(deps: E5-T11)*
 - [ ] `513` [E5-T13](epic-5-the-window/E5-T13-keyboard-hardening-focus-ime.md) — Keyboard hardening — focus loss, stuck modifiers, lock-key reconciliation *(deps: E5-T12)*
@@ -349,11 +353,11 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [ ] `516` [E5-T16](epic-5-the-window/E5-T16-display-server-decision.md) — Display server decision — Wayland (labwc/weston) vs X11 under emulation, measured *(deps: E5-T07, E5-T13, E5-T14)*
 - [ ] `517` [E5-T17](epic-5-the-window/E5-T17-alpine-desktop-image.md) — Alpine riscv64 desktop disk image — reproducible build within size budget *(deps: E5-T16)*
 - [ ] `518` [E5-T18](epic-5-the-window/E5-T18-boot-to-desktop-bringup.md) — Boot-to-desktop bring-up — seat/udev/permissions debugged, playbook written *(deps: E5-T08, E5-T15, E5-T17)*
-- [ ] `519` [E5-T19](epic-5-the-window/E5-T19-virtio-snd-pcm-device.md) — virtio-snd device — control plane and PCM playback stream machine *(deps: E5-T05)*
+- [ ] `519` [E5-T19](epic-5-the-window/E5-T19-virtio-snd-pcm-device.md) — virtio-snd device — control plane and PCM playback stream machine *(deps: E5-T05c)*
 - [ ] `520` [E5-T20](epic-5-the-window/E5-T20-audioworklet-output.md) — AudioWorklet playback — SAB ring buffer, underrun accounting, autoplay unlock *(deps: E5-T19)*
 - [ ] `521` [E5-T21](epic-5-the-window/E5-T21-virtio-snd-capture-stretch.md) — Microphone capture stream (stretch) — rxq, getUserMedia, permission UX *(deps: E5-T20)*
 - [ ] `522` [E5-T22](epic-5-the-window/E5-T22-display-resize-end-to-end.md) — Display resize end-to-end — canvas size to guest mode change and back *(deps: E5-T04, E5-T18)*
-- [ ] `523` [E5-T23](epic-5-the-window/E5-T23-guest-agent-channel.md) — virtio-console agent channel and static Rust guest agent *(deps: E5-T05)*
+- [ ] `523` [E5-T23](epic-5-the-window/E5-T23-guest-agent-channel.md) — virtio-console agent channel and static Rust guest agent *(deps: E5-T05c)*
 - [ ] `524` [E5-T24](epic-5-the-window/E5-T24-clipboard-sync.md) — Bidirectional clipboard sync through the guest agent *(deps: E5-T18, E5-T23)*
 - [ ] `525` [E5-T25](epic-5-the-window/E5-T25-perf-fps-latency-harness.md) — Performance harness — window-drag FPS and input-to-photon latency, measured *(deps: E5-T09, E5-T18)*
 - [ ] `526` [E5-T26](epic-5-the-window/E5-T26-snapshot-gpu-display-state.md) — Desktop-aware snapshots — GPU, input, and sound state across suspend/resume *(deps: E5-T18, E5-T20)*

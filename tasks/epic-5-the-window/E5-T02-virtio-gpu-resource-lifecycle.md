@@ -4,7 +4,7 @@ epic: 5
 title: virtio-gpu 2D resource lifecycle (CREATE_2D, ATTACH_BACKING, DETACH, UNREF)
 priority: 502
 status: pending
-depends_on: [E5-T01]
+depends_on: [E5-T01c]
 estimate: M
 capstone: false
 ---

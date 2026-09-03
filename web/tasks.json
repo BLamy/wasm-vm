@@ -15937,7 +15937,7 @@
       "priority": 502,
       "status": "pending",
       "depends_on": [
-        "E5-T01"
+        "E5-T01c"
       ],
       "decomposed_into": [],
       "estimate": "M",
@@ -16218,8 +16218,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t05c): record headless boot regression proof",
             "chore(e5-t05c): activate kernel boot regression",
             "tasks: decompose E5-T05 kernel graphics config"
           ]
@@ -16227,7 +16228,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T06",
@@ -16284,7 +16285,7 @@
       "status": "pending",
       "depends_on": [
         "E5-T03",
-        "E5-T05",
+        "E5-T05c",
         "E5-T06"
       ],
       "decomposed_into": [],
@@ -16424,7 +16425,7 @@
       "priority": 510,
       "status": "pending",
       "depends_on": [
-        "E5-T05"
+        "E5-T05c"
       ],
       "decomposed_into": [],
       "estimate": "M",
@@ -16843,7 +16844,7 @@
       "priority": 519,
       "status": "pending",
       "depends_on": [
-        "E5-T05"
+        "E5-T05c"
       ],
       "decomposed_into": [],
       "estimate": "L",
@@ -17028,7 +17029,7 @@
       "priority": 523,
       "status": "pending",
       "depends_on": [
-        "E5-T05"
+        "E5-T05c"
       ],
       "decomposed_into": [],
       "estimate": "M",
