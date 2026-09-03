@@ -16115,13 +16115,15 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E5-T05 kernel graphics config"
+          ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E5-T05a",
@@ -16129,7 +16131,7 @@
       "epicKey": "5",
       "title": "Epic 5 built-in kernel driver config fragment",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4"
       ],
@@ -16143,10 +16145,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Flip each new symbol to `=m` or `=n`, duplicate it with a conflicting value, and remove one\ndependency symbol. The audit must fail with the symbol named and must not silently accept a partial\nfragment.",
       "file": "tasks/epic-5-the-window/E5-T05a-kernel-epic5-config-fragment.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E5-T05 kernel graphics config"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T05b",
@@ -16168,10 +16178,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Delete the build volume and rebuild from the pinned tarball; compare the fresh Image hash and the\nmanifest against the recorded result. Tamper with one generated artifact and prove the checksum\ngate fails before any manifest is accepted.",
       "file": "tasks/epic-5-the-window/E5-T05b-kernel-artifact-rebuild.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E5-T05 kernel graphics config"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T05c",
@@ -16193,10 +16211,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Boot once with `console=tty0` only and once with the normal serial arguments; distinguish silent\nalive from a pre-fbcon hang by instruction progress. Diff full dmesg against the E4 baseline and\nrerun the checksum/config gates from a clean build output.",
       "file": "tasks/epic-5-the-window/E5-T05c-kernel-headless-boot-regression.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E5-T05 kernel graphics config"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T06",

@@ -3,7 +3,7 @@ id: E5-T05a
 epic: 5
 title: Epic 5 built-in kernel driver config fragment
 priority: 505.1
-status: pending
+status: in-progress
 depends_on: [E4]
 estimate: S
 risk: high
