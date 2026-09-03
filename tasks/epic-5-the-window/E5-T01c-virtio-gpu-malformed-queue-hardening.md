@@ -3,7 +3,7 @@ id: E5-T01c
 epic: 5
 title: virtio-gpu malformed commands and descriptor-chain hardening
 priority: 501.3
-status: pending
+status: in-progress
 depends_on: [E5-T01b]
 estimate: S
 risk: high

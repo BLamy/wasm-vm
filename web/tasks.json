@@ -15882,8 +15882,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t01b): record display info queue proof",
             "tasks: activate E5-T01b virtio-gpu display info",
             "tasks: decompose E5-T01 virtio-gpu foundation"
           ]
@@ -15891,7 +15892,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T01c",
@@ -15899,7 +15900,7 @@
       "epicKey": "5",
       "title": "virtio-gpu malformed commands and descriptor-chain hardening",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T01b"
       ],

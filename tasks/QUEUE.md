@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T01c** — virtio-gpu malformed commands and descriptor-chain hardening
 1. **E5-T05** — Kernel rebuild with the graphics/input/sound/console driver stack **[DECOMPOSE BEFORE START]**
 
 
@@ -330,7 +329,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `501` [E5-T01](epic-5-the-window/E5-T01-virtio-gpu-control-queue.md) — virtio-gpu device skeleton, control queue, and GET_DISPLAY_INFO *(deps: E4)*
 - [x] `501.1` [E5-T01a](epic-5-the-window/E5-T01a-virtio-gpu-protocol-device.md) — virtio-gpu device identity, config space, and protocol types *(deps: E4)*
 - [x] `501.2` [E5-T01b](epic-5-the-window/E5-T01b-virtio-gpu-display-info-queue.md) — virtio-gpu control queue and GET_DISPLAY_INFO *(deps: E5-T01a)*
-- [ ] `501.3` [E5-T01c](epic-5-the-window/E5-T01c-virtio-gpu-malformed-queue-hardening.md) — virtio-gpu malformed commands and descriptor-chain hardening *(deps: E5-T01b)*
+- [~] `501.3` [E5-T01c](epic-5-the-window/E5-T01c-virtio-gpu-malformed-queue-hardening.md) — virtio-gpu malformed commands and descriptor-chain hardening *(deps: E5-T01b)*
 - [ ] `502` [E5-T02](epic-5-the-window/E5-T02-virtio-gpu-resource-lifecycle.md) — virtio-gpu 2D resource lifecycle (CREATE_2D, ATTACH_BACKING, DETACH, UNREF) *(deps: E5-T01)*
 - [ ] `503` [E5-T03](epic-5-the-window/E5-T03-virtio-gpu-scanout-transfer-flush.md) — Scanout pipeline — SET_SCANOUT, TRANSFER_TO_HOST_2D, RESOURCE_FLUSH *(deps: E5-T02)*
 - [ ] `504` [E5-T04](epic-5-the-window/E5-T04-virtio-gpu-edid-display-info.md) — EDID blocks and display-info config events (hotplug plumbing) *(deps: E5-T03)*
