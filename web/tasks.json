@@ -14512,8 +14512,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e4-t22d): accept cpu worker bootstrap",
             "feat(e4-t22d): bootstrap shared cpu worker",
             "tasks: start E4-T22d worker bootstrap"
           ]
@@ -14521,7 +14522,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E4-T22e",
@@ -14529,7 +14530,7 @@
       "epicKey": "4",
       "title": "Threaded demo integration with controller and JIT fallback parity",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T22d",
         "E4-T23"

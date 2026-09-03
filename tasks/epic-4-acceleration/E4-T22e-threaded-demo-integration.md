@@ -3,7 +3,7 @@ id: E4-T22e
 epic: 4
 title: Threaded demo integration with controller and JIT fallback parity
 priority: 422.5
-status: pending
+status: in-progress
 depends_on: [E4-T22d, E4-T23]
 estimate: S
 risk: high

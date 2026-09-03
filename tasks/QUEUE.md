@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E4-T22e** — Threaded demo integration with controller and JIT fallback parity
 1. **E4-T28** — "Capstone: interactive/fast Node.js (Bun stretch), 10x CoreMark, sub-5s boot, zero regressions" **[DECOMPOSE BEFORE START]**
 
 
@@ -298,7 +297,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `422.2` [E4-T22b](epic-4-acceleration/E4-T22b-isolation-fallback.md) — COOP/COEP isolation gate and static-host fallback *(deps: E4-T22a)*
 - [x] `422.3` [E4-T22c](epic-4-acceleration/E4-T22c-control-block.md) — Atomic WFI wake and interim MMIO control block *(deps: E4-T22b)*
 - [x] `422.4` [E4-T22d](epic-4-acceleration/E4-T22d-cpu-worker-bootstrap.md) — Imported-memory CPU worker bootstrap and sliced dispatch *(deps: E4-T22c)*
-- [ ] `422.5` [E4-T22e](epic-4-acceleration/E4-T22e-threaded-demo-integration.md) — Threaded demo integration with controller and JIT fallback parity *(deps: E4-T22d, E4-T23)*
+- [~] `422.5` [E4-T22e](epic-4-acceleration/E4-T22e-threaded-demo-integration.md) — Threaded demo integration with controller and JIT fallback parity *(deps: E4-T22d, E4-T23)*
 - [ ] `422.6` [E4-T22f](epic-4-acceleration/E4-T22f-threaded-browser-budgets.md) — Live threaded Alpine boot and responsiveness budgets *(deps: E4-T22e, E4-T24)*
 - [ ] `422.7` [E4-T22g](epic-4-acceleration/E4-T22g-threaded-worker-hardening.md) — Threaded worker fallback and lifecycle adversarial hardening *(deps: E4-T22f)*
 - [x] `423` [E4-T23](epic-4-acceleration/E4-T23-worker-device-proxying-mmio-interrupts.md) — Main-thread and worker device proxying — MMIO round trips and interrupt injection *(deps: E4-T22)*
