@@ -3,7 +3,7 @@ id: E5-T13a
 epic: 5
 title: held-key ledger and release-all safety
 priority: 513.1
-status: implemented
+status: verified
 depends_on: [E5-T12c]
 estimate: S
 risk: medium
@@ -60,3 +60,35 @@ the projection identity check, and `git diff --check c62254f^ c62254f` also pass
 
 Evidence: `evidence/e5-t13a/held-key-safety-2026-09-03.json`, SHA-256
 `1217cf2ca5da034414464a1b40aaec56892ef8790d2d10380a6fc5a483da4d94`.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Ledger safety — HELD.** Predicted duplicate physical makes and orphan breaks would never
+  create extra guest transitions or a negative held count; the frozen 14-test run observes named
+  duplicate/orphan diagnostics and an empty ledger after release.
+- **Release-all ordering — HELD.** Predicted a mixed held set would release dependent keys before
+  modifiers in reverse make order, and that the ledger would be empty before any callback could
+  re-enter it. The unit fixture observes `KeyB, KeyA, ShiftLeft`, with empty snapshots inside each
+  callback; the independent re-entrancy attack observes three records, zero duplicates, and a
+  second release-all of zero records.
+- **Lifecycle boundaries — HELD.** Predicted blur, hidden visibility, pointer-lock loss, and the
+  reserved view-toggle event would all invoke the same callback, while visible/locked transitions
+  would not. The synthetic-target fixture observes exactly the four required reasons and detach
+  removes all listeners.
+- **Bridge coverage — HELD.** Predicted the T12b bridge would retain its exact EV_KEY/SYN behavior
+  while using the shared ledger, and reset would clear stale state without emitting breaks. The
+  bridge integration fixture observes the expected Alt+A release frames and a silent reset of
+  `KeyB`; all changed source, projection, test, and package lines are exercised or are the
+  byte-identity/proof metadata itself.
+- **Integrity and scope — HELD.** Recomputed evidence SHA-256
+  `1217cf2ca5da034414464a1b40aaec56892ef8790d2d10380a6fc5a483da4d94`, matched its recorded
+  implementation head `c62254f`, reran the 14-test acceptance command, syntax checks, projection
+  identity check, and `git diff --check`. This is a deterministic host/input layer; no browser,
+  WebKit, or independent-machine run is applicable.
+- **SUITE — HELD.** The isolated ledger tests, bridge regression tests, exact-head JSON evidence,
+  and bounded re-entrancy attack are retained as permanent proof artifacts.
+
+Commands: `npm run test:keyboard-hardening --prefix web`; `node --check
+web/src/input/held-keys.js`; `node --check web/src/input/keyboard.js`; `cmp -s
+web/src/input/held-keys.ts web/src/input/held-keys.js`; `git diff --check c62254f^ c62254f`;
+re-entrant `releaseAll` attack via `node --input-type=module`.
