@@ -16148,8 +16148,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t05a): record kernel config fragment proof",
             "tasks: activate E5-T05a kernel config",
             "tasks: decompose E5-T05 kernel graphics config"
           ]
@@ -16157,7 +16158,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T05b",
@@ -16165,7 +16166,7 @@
       "epicKey": "5",
       "title": "Rebuild and publish the Epic 5 kernel artifact",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T05a"
       ],

@@ -3,7 +3,7 @@ id: E5-T05b
 epic: 5
 title: Rebuild and publish the Epic 5 kernel artifact
 priority: 505.2
-status: pending
+status: in-progress
 depends_on: [E5-T05a]
 estimate: S
 risk: high
