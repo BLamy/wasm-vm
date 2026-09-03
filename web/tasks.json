@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 195,
-    "total": 356
+    "total": 359
   },
   "epics": [
     {
@@ -15261,15 +15261,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e4-t28f): record level4 capstone gaps",
             "tasks: start E4-T28f level4 capstone signoff"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T29",
@@ -15767,11 +15768,15 @@
       "epicKey": "5",
       "title": "virtio-gpu device skeleton, control queue, and GET_DISPLAY_INFO",
       "priority": 501,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E4"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T01a",
+        "E5-T01b",
+        "E5-T01c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "A virtio-gpu device (virtio device ID 16) on the existing virtio-mmio transport that\nnegotiates features, exposes controlq (queue 0) and cursorq (queue 1), parses the\n`virtio_gpu_ctrl_hdr` protocol, and answers `VIRTIO_GPU_CMD_GET_DISPLAY_INFO` with one\nenabled 1280x800 scanout — the foundation every later GPU command builds on.",
@@ -15803,9 +15808,90 @@
       ],
       "criteriaTotal": 6,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized planning container is cancelled before implementation as required by the task policy.\nThe work is split into three ordered S tickets, each with one protocol boundary and one native\nacceptance command: E5-T01a owns the device/config/protocol types, E5-T01b owns the display-info\ncontrol queue and fence path, and E5-T01c owns malformed-chain hardening and the final device\nregression. The replacements preserve the original virtio-gpu acceptance criteria without putting\nthe whole GPU device in one active lane.",
       "adversarial": "Refute by protocol malformation: submit chains with (1) a device-writable buffer shorter\nthan the response (must truncate or error, not overflow guest memory), (2) zero\ndevice-writable descriptors (must consume the chain without writing), (3) a 1-byte\nrequest. Boot the E4 Linux kernel with its stock (non-graphics) config and confirm the\nextra device does not perturb existing boot (dmesg diff vs E4 baseline). Endianness: run\nthe byte-layout fixture test under wasm32 and native and diff outputs. Any host panic,\nguest-memory write outside the provided descriptors, or fixture mismatch is a refutation.",
       "file": "tasks/epic-5-the-window/E5-T01-virtio-gpu-control-queue.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T01a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu device identity, config space, and protocol types",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Add the virtio-gpu device skeleton and typed wire-format helpers without dispatching a guest\ncommand: device ID 16, VERSION_1 negotiation, the six-byte configuration surface, and exact\nlittle-endian control/response header and display-mode representations.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Flip every multi-byte field independently and compare the fixture bytes against the virtio-gpu\nwire layout. Run the same protocol tests under the wasm32 test target. Attempt an unsupported\nfeature bit and confirm negotiation rejects it without mutating the configuration surface.",
+      "file": "tasks/epic-5-the-window/E5-T01a-virtio-gpu-protocol-device.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T01b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu control queue and GET_DISPLAY_INFO",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T01a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Drain virtio-gpu control-queue descriptor chains and answer `VIRTIO_GPU_CMD_GET_DISPLAY_INFO`\nwith one enabled 1280x800 scanout, including exact fence echo semantics and request headers split\nacross descriptors.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Submit a response buffer shorter than 408 bytes and inspect guest memory for writes outside the\nprovided range. Use a zero-length readable segment and a chain with no writable tail; both must be\nconsumed or rejected without a host panic or stale used-ring entry.",
+      "file": "tasks/epic-5-the-window/E5-T01b-virtio-gpu-display-info-queue.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T01c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu malformed commands and descriptor-chain hardening",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T01b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Close the virtio-gpu skeleton's malformed-input boundary: unsupported commands return\n`VIRTIO_GPU_RESP_ERR_UNSPEC`, short or missing request data never panics, and the device continues\nserving a valid display-info request after each rejected chain.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Sabotage each descriptor length and physical address independently, including a response tail that\nstraddles the end of guest RAM. Confirm the error response is truncated safely, the used length is\nbounded by the writable capacity, and a following valid request cannot observe stale bytes from the\nrejected chain.",
+      "file": "tasks/epic-5-the-window/E5-T01c-virtio-gpu-malformed-queue-hardening.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
