@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 198,
-    "total": 359
+    "total": 362
   },
   "epics": [
     {
@@ -15917,8 +15917,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t01c): record GPU malformed input proof",
             "tasks: activate E5-T01c GPU hardening",
             "tasks: decompose E5-T01 virtio-gpu foundation"
           ]
@@ -15926,7 +15927,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T02",
@@ -16072,11 +16073,15 @@
       "epicKey": "5",
       "title": "Kernel rebuild with the graphics/input/sound/console driver stack",
       "priority": 505,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E4"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T05a",
+        "E5-T05b",
+        "E5-T05c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "A rebuilt riscv64 kernel artifact whose config enables every guest-side driver Epic 5\nneeds — virtio-gpu DRM/KMS with fbdev emulation and fbcon, virtio-input evdev, virtio-snd\nALSA, virtio-console multiport — while still booting the Epic 3/4 images unchanged when\nno display device is present.",
@@ -16104,9 +16109,90 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized kernel/config container is cancelled before implementation as required by task policy.\nThe work is split into ordered S tickets: E5-T05a owns the reviewed Epic 5 config fragment,\nE5-T05b owns the reproducible kernel artifact/manifest rebuild, and E5-T05c owns the headless boot\nand final config/provenance regression. The replacements preserve the deferred T07/T11/T19 device\nchecks without putting config editing, cross-compilation, and boot proof in one active lane.",
       "adversarial": "Refute by regression: diff full dmesg (headless boot, new vs old kernel) and flag any new\nwarning/error not in the allowlist. Boot with `console=tty0` only (no serial arg) — the\nkernel must not hang pre-fbcon (it will be blind until T07; hang vs. silent-alive is\ndistinguishable via the E4 trace/instruction-counter tooling — a livelocked idle loop vs\nprogressing PID 1). Verify the config fragment actually produces the shipped artifact:\nrebuild from a clean tree and compare the kernel's build-id/hash to the manifest — a\nmismatch (hand-patched artifact) is a refutation. Confirm compliance suite still passes\nunder JIT with the new kernel image in the boot-bench harness.",
       "file": "tasks/epic-5-the-window/E5-T05-kernel-graphics-stack-config.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T05a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Epic 5 built-in kernel driver config fragment",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Extend the reviewed kernel config fragment with the built-in graphics, framebuffer, input, sound,\nvirtio-console, and VT symbols required by Epic 5, while retaining the existing E3/E4 headless\nconfiguration and `CONFIG_MODULES=n` policy.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Flip each new symbol to `=m` or `=n`, duplicate it with a conflicting value, and remove one\ndependency symbol. The audit must fail with the symbol named and must not silently accept a partial\nfragment.",
+      "file": "tasks/epic-5-the-window/E5-T05a-kernel-epic5-config-fragment.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T05b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Rebuild and publish the Epic 5 kernel artifact",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T05a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Merge the Epic 5 fragment through the pinned Docker kernel pipeline and publish a matching Image,\nSystem.map, config, SHA256SUMS, and loader manifests without hand-editing generated artifacts.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Delete the build volume and rebuild from the pinned tarball; compare the fresh Image hash and the\nmanifest against the recorded result. Tamper with one generated artifact and prove the checksum\ngate fails before any manifest is accepted.",
+      "file": "tasks/epic-5-the-window/E5-T05b-kernel-artifact-rebuild.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T05c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Epic 5 kernel headless boot and provenance regression",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T05b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove the rebuilt kernel still boots the existing E3/E4 headless image to its serial login path\nwithout a virtio-gpu device, while preserving the old boot/error profile and exact artifact\nprovenance.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Boot once with `console=tty0` only and once with the normal serial arguments; distinguish silent\nalive from a pre-fbcon hang by instruction progress. Diff full dmesg against the E4 baseline and\nrerun the checksum/config gates from a clean build output.",
+      "file": "tasks/epic-5-the-window/E5-T05c-kernel-headless-boot-regression.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
