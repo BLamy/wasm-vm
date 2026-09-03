@@ -3,7 +3,7 @@ id: E5-T14c
 epic: 5
 title: pointer wheel capture and browser proof
 priority: 514.3
-status: pending
+status: in-progress
 depends_on: [E5-T14b, E5-T13c]
 estimate: S
 risk: medium

@@ -17570,8 +17570,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t14b): mark pointer routing verified",
             "test(e5-t14b): record pointer mode evidence",
             "chore(e5-t14b): activate pointer mode routing"
           ]
@@ -17579,7 +17580,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T14c",
@@ -17587,7 +17588,7 @@
       "epicKey": "5",
       "title": "pointer wheel capture and browser proof",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T14b",
         "E5-T13c"

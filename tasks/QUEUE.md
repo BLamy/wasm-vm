@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T14c** — pointer wheel capture and browser proof
 1. **E5-T19a** — virtio-snd control protocol and PCM state machine
 1. **E5-T23** — virtio-console agent channel and static Rust guest agent **[DECOMPOSE BEFORE START]**
 
@@ -368,7 +367,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `514` [E5-T14](epic-5-the-window/E5-T14-virtio-input-pointer.md) — Pointer devices — absolute tablet, relative mouse with Pointer Lock, wheel *(deps: E5-T10c)*
 - [x] `514.1` [E5-T14a](epic-5-the-window/E5-T14a-pointer-device-specs.md) — pointer device specs and guest stream wiring *(deps: E5-T10c)*
 - [x] `514.2` [E5-T14b](epic-5-the-window/E5-T14b-pointer-mode-routing.md) — pointer mode state machine and coordinate/button routing *(deps: E5-T14a)*
-- [ ] `514.3` [E5-T14c](epic-5-the-window/E5-T14c-pointer-wheel-browser-proof.md) — pointer wheel capture and browser proof *(deps: E5-T14b, E5-T13c)*
+- [~] `514.3` [E5-T14c](epic-5-the-window/E5-T14c-pointer-wheel-browser-proof.md) — pointer wheel capture and browser proof *(deps: E5-T14b, E5-T13c)*
 - [ ] `515` [E5-T15](epic-5-the-window/E5-T15-virtio-gpu-cursor-plane.md) — Hardware cursor plane — cursorq UPDATE/MOVE_CURSOR with DOM-overlay presentation *(deps: E5-T03, E5-T14c)*
 - [ ] `516` [E5-T16](epic-5-the-window/E5-T16-display-server-decision.md) — Display server decision — Wayland (labwc/weston) vs X11 under emulation, measured *(deps: E5-T07, E5-T13c, E5-T14c)*
 - [ ] `517` [E5-T17](epic-5-the-window/E5-T17-alpine-desktop-image.md) — Alpine riscv64 desktop disk image — reproducible build within size budget *(deps: E5-T16)*
