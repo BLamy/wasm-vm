@@ -3,7 +3,7 @@ id: E4-T39
 epic: 4
 title: Compiled entry-path cost ledger
 priority: 439
-status: pending
+status: in-progress
 depends_on: [E4-T35]
 estimate: S
 risk: high

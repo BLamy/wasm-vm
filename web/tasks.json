@@ -15211,15 +15211,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify: close E4-T38 residency policy",
             "tasks: start E4-T38 residency policy"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T39",
@@ -15227,7 +15228,7 @@
       "epicKey": "4",
       "title": "Compiled entry-path cost ledger",
       "priority": 439,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T35"
       ],
