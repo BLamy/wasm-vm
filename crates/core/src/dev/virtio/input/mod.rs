@@ -6,6 +6,8 @@
 //! from the previous query.  Event queues and host injection are added by the following input
 //! slices.
 
+pub mod keyboard;
+
 use alloc::boxed::Box;
 use alloc::collections::{BTreeSet, VecDeque};
 use alloc::rc::Rc;
