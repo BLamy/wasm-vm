@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 182,
+    "verified": 183,
     "total": 350
   },
   "epics": [
@@ -14393,7 +14393,7 @@
       "epicKey": "4",
       "title": "Shared-memory wasm build and fallback artifact contract",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4-T11"
       ],
@@ -14404,13 +14404,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified\n\n- **Shared artifact — HELD.** Predicted the nightly build would emit a bounded shared memory\n  imported from `env.memory`, not merely a module compiled with atomics enabled. The exact build\n  printed `memory[0] pages: initial=19 max=32768 shared <- env.memory` and preserved the raw module\n  at `crates/wasm/pkg-shared/wasm_vm_wasm.wasm`.\n- **Fallback artifact — HELD.** Predicted the stable build would remain an internally-owned,\n  non-shared memory after the shared build. `wasm-objdump` reported `memory[0] pages: initial=19`\n  for `target/wasm32-unknown-unknown/release/wasm_vm_wasm.wasm`, and its import section contained\n  no shared `env.memory` import.\n- **Determinism and attack surface — HELD.** Predicted a repeat from a scrubbed shell would retain\n  the shared artifact identity and the build recipe would fail closed if its inspection tool could\n  not prove the import. The repeat assertion held SHA-256\n  `b49488580899e9e6a4d8f6e84c67a0734cc330e46fb1a3ea878ff8dde28d9947`; the initial missing\n  `rust-src`/`wasm-objdump` attempts failed before acceptance and were resolved by installing only\n  the documented local prerequisites. The build then passed with no source-local `RUSTFLAGS` relied\n  upon by the script.\n- **Coverage — HELD.** The changed build recipe, output preservation, and ignore rule all executed\n  in the exact two-variant run; the raw shared and stable wasm identities are recorded separately.\n- **SUITE:** promoted the repeatable artifact inspection JSON as the durable proof.\n\nImplementation commit: `8fbffd5`.\n\nEvidence: `evidence/e4-t22a/shared-memory-build-2026-09-03.json` (SHA-256\n`2d0d5f726fb2ea1a603ef963284c979c65d263270a6403e5b4e8e40cde67a8e2`).\n\nCommands: `bash -lc 'bash tools/build-web-shared.sh && cargo build -p wasm-vm-wasm --release\n--target wasm32-unknown-unknown'`; `wasm-objdump -x -j Import` and `wasm-objdump -x -j Memory`\ninspection; the same build repeated with a SHA-256 equality assertion; `python3\ntools/check_task_policy.py`; and `python3 tools/build_queue.py`. The shared recipe's optional\nversion-matched wasm-bindgen glue was not generated because the 0.2.126 CLI is absent; the raw\nshared-memory artifact and import proof are complete.",
       "adversarial": "Unset `RUSTFLAGS`, set an unrelated target-feature value, and run the recipe from a fresh shell.\nA successful-looking module with internal memory, an unbounded maximum, or an accidental shared\nfallback is a failure.",
       "file": "tasks/epic-4-acceleration/E4-T22a-shared-memory-build.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: start E4-T22a shared memory build"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E4-T22b",
