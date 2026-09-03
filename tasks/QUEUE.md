@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E4-T28e** — In-guest gcc compile and continuous interactive echo budget
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -311,7 +310,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `429.2` [E4-T28b](epic-4-acceleration/E4-T28b-interactive-node-browser.md) — Interactive Node.js and V8 JIT browser workload *(deps: E4-T28a, E4-T34)*
 - [x] `429.3` [E4-T28c](epic-4-acceleration/E4-T28c-coremark-browser-uplift.md) — Browser CoreMark uplift and guest/host clock honesty *(deps: E4-T28a, E4-T04, E4-T05, E4-T27)*
 - [x] `429.4` [E4-T28d](epic-4-acceleration/E4-T28d-cold-boot-login.md) — Cold browser boot-to-login timing gate *(deps: E4-T28a, E4-T32, E4-T34)*
-- [ ] `429.5` [E4-T28e](epic-4-acceleration/E4-T28e-gcc-interactive-budget.md) — In-guest gcc compile and continuous interactive echo budget *(deps: E4-T28a, E4-T32, E4-T34)*
+- [~] `429.5` [E4-T28e](epic-4-acceleration/E4-T28e-gcc-interactive-budget.md) — In-guest gcc compile and continuous interactive echo budget *(deps: E4-T28a, E4-T32, E4-T34)*
 - [ ] `429.6` [E4-T28f](epic-4-acceleration/E4-T28f-level4-capstone-signoff.md) — Level-4 same-head cold-start capstone sign-off **[CAPSTONE]** *(deps: E4-T28a, E4-T28b, E4-T28c, E4-T28d, E4-T28e, E4-T25, E4-T26, E4-T27)*
 - [x] `430` [E4-T30](epic-4-acceleration/E4-T30-predecode-entry-hit-fast-interpreter.md) — Predecode entry-hit reuse and production fast-interpreter mode *(deps: E1)*
 - [x] `431` [E4-T31](epic-4-acceleration/E4-T31-bounded-jit-work-retirement.md) — Bounded JIT work and exact retirement accounting *(deps: E4-T30)*

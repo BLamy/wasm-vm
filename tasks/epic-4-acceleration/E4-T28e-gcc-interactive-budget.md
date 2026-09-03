@@ -3,7 +3,7 @@ id: E4-T28e
 epic: 4
 title: In-guest gcc compile and continuous interactive echo budget
 priority: 429.5
-status: pending
+status: in-progress
 depends_on: [E4-T28a, E4-T32, E4-T34]
 estimate: S
 risk: high
