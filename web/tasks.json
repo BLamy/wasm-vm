@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 220,
-    "total": 383
+    "total": 387
   },
   "epics": [
     {
@@ -17522,8 +17522,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t14a): mark pointer devices verified",
             "test(e5-t14a): record pointer evidence",
             "chore(e5-t14a): activate pointer device specs"
           ]
@@ -17531,7 +17532,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T14b",
@@ -17805,11 +17806,16 @@
       "epicKey": "5",
       "title": "virtio-snd device — control plane and PCM playback stream machine",
       "priority": 519,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T05c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T19a",
+        "E5-T19b",
+        "E5-T19c",
+        "E5-T19d"
+      ],
       "estimate": "L",
       "capstone": false,
       "goal": "A virtio-snd device (virtio ID 25) with a spec-correct control plane and one playback\nPCM stream whose full state machine (SET_PARAMS → PREPARE → START → STOP → RELEASE)\nworks against the Linux `snd_virtio` driver, delivering PCM frames to a host `AudioSink`\ntrait — natively testable by dumping WAV files, before any WebAudio exists.",
@@ -17837,9 +17843,167 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis L-sized virtio-snd planning container is cancelled before implementation and replaced by four\nordered S tasks with one boundary and one deterministic acceptance command each. The children split\nthe protocol/state contract, clock-paced PCM data path, queue/event hardening, and guest-facing\nsign-off so no single active task has to own the entire audio stack. E5-T20 now depends on E5-T19d,\nthe final guest-proof slice.",
       "adversarial": "Refute pacing: drive the mock clock at 0.5x and 2x real-time — guest-side `aplay`\nmust correspondingly stretch/compress wall time; a device that completes txq buffers on\narrival regardless of clock refutes. Refute frame integrity: play a bit-exact ramp\npattern wav and compare the WavSink output sample-for-sample — any dropped/duplicated\nperiod at STOP/START/RELEASE boundaries refutes. Attack the state machine from the real\nguest: `kill -9` an `aplay` mid-stream (ALSA sends STOP+RELEASE) then immediately start\na new one, 50x in a loop — any BAD_MSG to a legal sequence, stuck stream, or txq\ndescriptor leak (queue depth monotonically shrinking) refutes. Malformed txq buffer\n(header only, zero PCM bytes; wrong stream_id) must complete with error status, not\nstall the queue.",
       "file": "tasks/epic-5-the-window/E5-T19-virtio-snd-pcm-device.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T19a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-snd control protocol and PCM state machine",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T05c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Define the guest-visible virtio-snd control contract and make one playback stream's legal\ntransitions explicit before any host audio timing or browser sink exists.",
+      "criteria": [
+        {
+          "text": "The exhaustive native oracle covers all six control requests across all five stream states and matches the documented OK/BAD_MSG table exactly.",
+          "checked": false
+        },
+        {
+          "text": "Config responses advertise one output jack, FL/FR, S16, stereo, and only 44.1 kHz/48 kHz; unsupported selectors and malformed requests return deterministic errors.",
+          "checked": false
+        },
+        {
+          "text": "`SET_PARAMS` at 96 kHz returns `VIRTIO_SND_S_BAD_MSG` while a subsequent legal setup remains usable.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Permute control requests and selectors, repeat SET_PARAMS with boundary-sized buffers, and inject\nunknown stream IDs or truncated payloads. The oracle must show no illegal transition, panic, or\nstate mutation after a rejected request.",
+      "file": "tasks/epic-5-the-window/E5-T19a-snd-control-state.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T19b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-snd paced playback and native audio sinks",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T19a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Consume one playback txq period at the pace of an injectable audio clock and expose the samples\nthrough a native-testable sink without draining the queue in a burst.",
+      "criteria": [
+        {
+          "text": "Mock-clock runs at 0.5x, 1x, and 2x real time complete the same PCM at the corresponding wall-clock rate; arrival alone never completes an unripe period.",
+          "checked": false
+        },
+        {
+          "text": "A bit-exact ramp reaches `WavSink` sample-for-sample, with no dropped or duplicated period at normal playback or a STOP/START boundary.",
+          "checked": false
+        },
+        {
+          "text": "The native sine fixture captures eight seconds at 48 kHz with the expected FFT peak and no period-join discontinuity beyond 1 LSB; every completion reports bounded latency bytes.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Hold the mock clock still while posting multiple txq descriptors, then advance it one period at a\ntime and inspect sink samples and used-ring order. Stop after a partial period, restart, and compare\nthe output against the reference ramp for duplicate or skipped samples.",
+      "file": "tasks/epic-5-the-window/E5-T19b-snd-playback-pacing.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T19c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-snd queue errors, XRUN events, and reset hardening",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T19b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make the playback queues total and recoverable: malformed descriptors complete with errors, audio\nunderruns become bounded eventq notifications, and reset/re-setup cannot leak or strand buffers.",
+      "criteria": [
+        {
+          "text": "Each malformed or wrong-stream txq descriptor completes with the specified error status and the queue continues to accept a later valid period.",
+          "checked": false
+        },
+        {
+          "text": "A forced mock-clock underrun emits one bounded XRUN event per missed period without unbounded event or sample buffering.",
+          "checked": false
+        },
+        {
+          "text": "Fifty STOP/RELEASE/reset/re-setup cycles return every descriptor and preserve the sink and stream state; queue depth does not monotonically shrink.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Byte-dribble and truncate txq headers, mix invalid stream IDs with valid periods, fill the eventq\nwhile the guest is not polling, and reset between kicks. Verify used-ring progress, error status,\nevent count, and a clean subsequent playback period.",
+      "file": "tasks/epic-5-the-window/E5-T19c-snd-queue-xrun-hardening.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T19d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-snd Linux guest integration and playback proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T19c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Wire the completed virtio-snd device into the booted guest and freeze the end-to-end playback\ncontract that E5-T20 will consume.",
+      "criteria": [
+        {
+          "text": "The booted guest's `aplay -l` lists the card and `speaker-test -c2 -tsine -l1 -r48000` completes; the native WavSink capture contains the clean reference sine.",
+          "checked": false
+        },
+        {
+          "text": "`aplay short.wav` under the real-time mock clock completes within ±10% of the file duration and is not a burst drain.",
+          "checked": false
+        },
+        {
+          "text": "The exact-head validator proves the QEMU-shaped control responses, malformed-buffer recovery, and STOP/START playback resumption with zero unexpected guest or host errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Kill the guest playback process mid-stream and immediately restart it 50 times, checking legal\nSTOP+RELEASE sequences, stable queue depth, and no repeated periods. Run the reference ramp through\nthe guest path and compare the sink output sample-for-sample; vary the mock clock at 0.5x and 2x.",
+      "file": "tasks/epic-5-the-window/E5-T19d-snd-guest-playback-proof.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -17853,7 +18017,7 @@
       "priority": 520,
       "status": "pending",
       "depends_on": [
-        "E5-T19"
+        "E5-T19d"
       ],
       "decomposed_into": [],
       "estimate": "M",
