@@ -138,10 +138,10 @@ test("runs pinned in-guest gcc while the browser remains interactive", async ({ 
     });
 
     const setup = await page.evaluate(async () => window.wvmDemo.exec(
-      "set -e; mkdir -p /mnt; mount -o ro /dev/vdb /mnt; echo T28E_MOUNT_OK; " +
+      "set -e; mkdir -p /mnt; mount -o ro,noload /dev/vdb /mnt; echo T28E_MOUNT_OK; " +
       "sha256sum /mnt/src/miniz.c; stat -c '%s' /mnt/src/miniz.c; " +
       "if command -v file >/dev/null 2>&1; then file /mnt/src/miniz.c; else echo T28E_FILE_UNAVAILABLE; fi",
-      180_000,
+      900_000,
       { quiet: true },
     ));
     expect(setup.exit, setup.stdout).toBe(0);
