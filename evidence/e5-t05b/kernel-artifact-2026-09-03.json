@@ -1,0 +1,71 @@
+{
+  "task": "E5-T05b",
+  "status": "pass",
+  "recorded_at": "2026-09-03",
+  "implementation_commit": "7309032",
+  "inputs": {
+    "kernel_version": "6.6.63",
+    "linux_tarball_sha256": "d1054ab4803413efe2850f50f1a84349c091631ec50a1cf9e891d1b1f9061835",
+    "kernel_dockerfile_sha256": "17519ec106610d6351bf3bfe02c6a680306284da5b6f2b0a5e0fe65a2c492bf3",
+    "config_fragment_sha256": "52e31f126083809c1c4ba46552814b1d431ac84403dd94b67d591029fa4186d9",
+    "docker_image_id": "sha256:e8d02030be71b3eada014b615269d0a9e8eb93ace68fb2a8f9097c9467c109e1",
+    "build_volume": "wasm-vm-kbuild-6.6.63",
+    "clean_volume_rebuild": true
+  },
+  "commands": [
+    {
+      "command": "docker volume rm wasm-vm-kbuild-6.6.63 && bash tools/build-kernel.sh",
+      "result": "pass",
+      "notes": "The named build volume was deleted, recreated by the build script, and the pinned tarball was rebuilt from scratch. The clean rebuild reproduced the prior Image, System.map, and config hashes."
+    },
+    {
+      "command": "bash tools/check-kernel-config.sh 6.6.63",
+      "result": "pass",
+      "output": "kernel 6.6.63 config: fragment honored, no modules"
+    },
+    {
+      "command": "(cd releases/kernel/6.6.63 && shasum -c SHA256SUMS)",
+      "result": "pass",
+      "output": "Image: OK; System.map: OK; config: OK"
+    },
+    {
+      "command": "python3 manifest kernel-field assertion",
+      "result": "pass",
+      "output": "web/artifacts.json, web/artifacts-alpine.json, and web/artifacts-node-alpine.json each match the rebuilt Image URL, SHA-256, and byte size"
+    },
+    {
+      "command": "temporary generated-artifact copy with appended bytes, then shasum -c SHA256SUMS",
+      "result": "pass",
+      "output": "Image: FAILED; System.map: OK; config: OK; checksum gate rejected the tampered artifact"
+    },
+    {
+      "command": "bash -n tools/build-kernel.sh && git diff --check",
+      "result": "pass"
+    }
+  ],
+  "baseline": {
+    "image_sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58",
+    "image_bytes": 22097408
+  },
+  "artifacts": {
+    "Image": {
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "bytes": 24208896
+    },
+    "System.map": {
+      "sha256": "902e3241fbf86bad7f1b45b62cdfbaf2777dd1c53097296f5bdbd0124ec03290",
+      "bytes": 2416519
+    },
+    "config": {
+      "sha256": "18da28e0c47eebda7950564df60df7a13b56b1ffa37ee6b0463924b81f95595d",
+      "bytes": 113911
+    }
+  },
+  "size_delta": {
+    "bytes": 2111488,
+    "mib": 2.013672,
+    "budget_mib": 4,
+    "within_budget": true
+  },
+  "claim": "The pinned Docker pipeline rebuilt and published the Epic 5 kernel artifacts. The clean-volume rebuild is byte-identical to the recorded result, the emitted checksums and fragment/config gates pass, all shipped source manifests bind to the rebuilt Image exactly, and Image growth is within the 4 MiB budget."
+}
