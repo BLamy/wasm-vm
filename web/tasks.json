@@ -15847,8 +15847,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t01a): record virtio-gpu protocol proof",
             "tasks: activate E5-T01a virtio-gpu protocol",
             "tasks: decompose E5-T01 virtio-gpu foundation"
           ]
@@ -15856,7 +15857,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T01b",
@@ -15864,7 +15865,7 @@
       "epicKey": "5",
       "title": "virtio-gpu control queue and GET_DISPLAY_INFO",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T01a"
       ],

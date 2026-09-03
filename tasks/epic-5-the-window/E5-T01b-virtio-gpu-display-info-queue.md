@@ -3,7 +3,7 @@ id: E5-T01b
 epic: 5
 title: virtio-gpu control queue and GET_DISPLAY_INFO
 priority: 501.2
-status: pending
+status: in-progress
 depends_on: [E5-T01a]
 estimate: S
 risk: high
