@@ -8320,7 +8320,7 @@
       "epicKey": "3",
       "title": "Clipboard integration - OSC 52 copy, paste injection, bracketed paste",
       "priority": 322,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E2"
       ],
@@ -9239,8 +9239,9 @@
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "tasks: bind isolation proof commit",
             "verify: close cross-origin isolation proof",
             "tasks: start cross-origin isolation proof"
           ]
@@ -9248,7 +9249,7 @@
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E3-T26b",

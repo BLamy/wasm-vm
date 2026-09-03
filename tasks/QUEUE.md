@@ -9,7 +9,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 ## Next up (deps satisfied, in priority order)
 
 1. **E3-T19a** — Composed-stack node lifecycle and reload-restore
-1. **E3-T22** — Clipboard integration - OSC 52 copy, paste injection, bracketed paste **[DECOMPOSE BEFORE START]**
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -200,7 +199,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `321.94` [E3-T12d](epic-3-civilization/E3-T12d-browser-snapshot-storage-selection.md) — Browser snapshot persistence and restore selection *(deps: E3-T12c1, E3-T12c2, E3-T12c3, E3-T12c4)*
 - [x] `321.95` [E3-T12e](epic-3-civilization/E3-T12e-docker-tab-instant-resume.md) — Docker-tab instant resume and frozen coherence proof *(deps: E3-T12d, E3.5-T05a)*
 - [-] `322` [E3-T12](epic-3-civilization/E3-T12-machine-snapshot-restore.md) — Full machine snapshot and restore with instant-resume boot *(deps: E3-T08, E3.5-T05a)*
-- [ ] `322` [E3-T22](epic-3-civilization/E3-T22-clipboard-osc52.md) — Clipboard integration - OSC 52 copy, paste injection, bracketed paste *(deps: E2)*
+- [-] `322` [E3-T22](epic-3-civilization/E3-T22-clipboard-osc52.md) — Clipboard integration - OSC 52 copy, paste injection, bracketed paste *(deps: E2)*
 - [x] `322.1` [E3-T22a](epic-3-civilization/E3-T22a-osc52-copy.md) — OSC 52 copy handler — decode, size cap, permission-failure UX, read-query gated off *(deps: E2-T22)*
 - [x] `322.2` [E3-T22b](epic-3-civilization/E3-T22b-paste-pipeline.md) — Paste pipeline — bracketed-paste framing, newline normalization, chunked injection *(deps: E2-T22)*
 - [b] `322.3` [E3-T22c](epic-3-civilization/E3-T22c-guest-clipboard-conveniences.md) — Guest image clipboard conveniences — vim OSC52 yank, tmux set-clipboard *(deps: E3-T22a)*

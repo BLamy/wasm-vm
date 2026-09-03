@@ -3,12 +3,15 @@ id: E3-T22
 epic: 3
 title: Clipboard integration - OSC 52 copy, paste injection, bracketed paste
 priority: 322
-status: pending
+status: cancelled
 depends_on: [E2]
 estimate: M
 capstone: false
 decomposed_into: [E3-T22a, E3-T22b, E3-T22c, E3-T22d]
 ---
+
+This planning container is cancelled after seam decomposition; implementation and verification
+continue in the replacement child tickets listed above.
 
 > **Decomposed 2026-08-03** into independent boundaries so the deterministic parse/framing logic is
 > node-unit-testable apart from the flaky browser-clipboard E2E:
