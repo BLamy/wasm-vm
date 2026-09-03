@@ -6698,7 +6698,7 @@
       "epicKey": "3",
       "title": "Docker-tab instant resume and frozen coherence proof",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E3-T12d",
         "E3.5-T05a"
@@ -11115,15 +11115,16 @@
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify: close Docker lifecycle integration proof",
             "tasks: start Docker lifecycle integration proof"
           ]
         }
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E3.6-T01",

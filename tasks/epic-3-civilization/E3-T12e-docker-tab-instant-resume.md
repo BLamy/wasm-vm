@@ -3,7 +3,7 @@ id: E3-T12e
 epic: 3
 title: Docker-tab instant resume and frozen coherence proof
 priority: 321.95
-status: pending
+status: in-progress
 depends_on: [E3-T12d, E3.5-T05a]
 estimate: S
 risk: high
