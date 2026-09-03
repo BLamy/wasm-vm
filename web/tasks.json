@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 204,
-    "total": 365
+    "total": 368
   },
   "epics": [
     {
@@ -16152,11 +16152,15 @@
       "epicKey": "5",
       "title": "Scanout pipeline — SET_SCANOUT, TRANSFER_TO_HOST_2D, RESOURCE_FLUSH",
       "priority": 503,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T02c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T03a",
+        "E5-T03b",
+        "E5-T03c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "The device implements the three commands that actually move pixels: `TRANSFER_TO_HOST_2D`\ncopies a rect from guest backing pages into the host shadow buffer, `SET_SCANOUT` binds a\nresource to scanout 0, and `RESOURCE_FLUSH` hands a damage rect to a host-side `FrameSink`\ntrait — testable natively with zero browser code.",
@@ -16184,9 +16188,92 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized presentation container is cancelled before implementation as required by task\npolicy. The work is split into ordered S tickets: E5-T03a owns the SET_SCANOUT state boundary\nand the core-to-presenter `FrameSink` contract, E5-T03b owns checked transfer arithmetic and\nscatter-gather copying, and E5-T03c owns RESOURCE_FLUSH, golden-pattern integration, and\nnative/wasm parity. The replacements keep each guest-memory or presentation boundary\nindependently testable while preserving the original scanout-pipeline acceptance criteria.",
       "adversarial": "Refute via boundary arithmetic: fuzz 10k random (rect, offset) pairs against a\nmodel-based oracle (naive nested loop copy) and diff shadow CRCs — any divergence\nrefutes. Attack the sg walk: craft a backing whose entries are 1 byte each and transfer a\n64x64 rect; craft offset = backing_len - 1 with a 2-byte span (must error). Prove no\nguest-memory *write* ever occurs on this path (transfers are read-only from guest;\ninstrument the bus). Time a 1280x800 full-frame transfer natively; > 5 ms indicates a\nper-pixel sg lookup (algorithmic refutation — must be per-run, not per-pixel).",
       "file": "tasks/epic-5-the-window/E5-T03-virtio-gpu-scanout-transfer-flush.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t03): rewire resource dependency"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
+    },
+    {
+      "id": "E5-T03a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu scanout binding and FrameSink contract",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T02c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Implement the `SET_SCANOUT` control command for scanout 0 and establish the core-only\n`FrameSink` boundary that later flushes use to publish pixels without importing browser APIs\ninto the emulator.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Probe scanout ids at `num_scanouts - 1`, `num_scanouts`, and `u32::MAX`; use resource id 0,\nan unknown id, and a resource removed by `UNREF`; and test rectangles whose right or bottom\nedge overflows `u32`. Every rejected command must leave the prior binding unchanged and must\nnot panic or write outside its response descriptor.",
+      "file": "tasks/epic-5-the-window/E5-T03a-virtio-gpu-scanout-binding.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T03b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu checked transfer and scatter-gather copy",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T03a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Implement `TRANSFER_TO_HOST_2D` as a read-only, checked copy from a resource's guest backing\nsglist into its host shadow buffer. Treat the entries as one linear byte stream and make the\nwalk efficient across arbitrary entry boundaries.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run 10,000 independently seeded `(rect, offset)` cases against the naive nested-loop oracle,\nincluding zero-sized and edge-touching rectangles. Time a native 1280x800 full-frame transfer;\nthe implementation must stay within the task's 5 ms budget and must not regress into a\nper-pixel sg lookup. Add a bus read/write counter and fail if any transfer performs a guest\nwrite.",
+      "file": "tasks/epic-5-the-window/E5-T03b-virtio-gpu-transfer.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T03c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu resource flush and golden presentation integration",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T03b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Implement `RESOURCE_FLUSH` and finish the core presentation seam: a test sink records damage\nrects and pixel CRCs, a null sink supports headless boots, and an independent reference path\nproves the complete create → backing → scanout → transfer → flush flow.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Replay flushes before binding, after unbinding, after `UNREF`, and with every boundary edge\njust outside the resource. Mutate the golden fixture and prove the independent reference\ncomparison fails, then restore it. Confirm the sink receives a copied/owned pixel view rather\nthan a mutable alias of guest backing, and that no BGRA/RGBA swizzle appears in the core.",
+      "file": "tasks/epic-5-the-window/E5-T03c-virtio-gpu-flush-golden.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,

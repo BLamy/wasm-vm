@@ -3,10 +3,12 @@ id: E5-T03
 epic: 5
 title: Scanout pipeline — SET_SCANOUT, TRANSFER_TO_HOST_2D, RESOURCE_FLUSH
 priority: 503
-status: pending
+status: cancelled
 depends_on: [E5-T02c]
 estimate: M
+risk: high
 capstone: false
+decomposed_into: [E5-T03a, E5-T03b, E5-T03c]
 ---
 
 ## Goal
@@ -58,4 +60,12 @@ instrument the bus). Time a 1280x800 full-frame transfer natively; > 5 ms indica
 per-pixel sg lookup (algorithmic refutation — must be per-run, not per-pixel).
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — decomposed
+
+This M-sized presentation container is cancelled before implementation as required by task
+policy. The work is split into ordered S tickets: E5-T03a owns the SET_SCANOUT state boundary
+and the core-to-presenter `FrameSink` contract, E5-T03b owns checked transfer arithmetic and
+scatter-gather copying, and E5-T03c owns RESOURCE_FLUSH, golden-pattern integration, and
+native/wasm parity. The replacements keep each guest-memory or presentation boundary
+independently testable while preserving the original scanout-pipeline acceptance criteria.
