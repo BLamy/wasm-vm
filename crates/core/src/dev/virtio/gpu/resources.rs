@@ -746,6 +746,42 @@ mod tests {
         assert_eq!(resource.host_pixels.len(), 4096);
     }
 
+    #[cfg(feature = "std")]
+    #[test]
+    fn gpu_transfer_full_frame_native_budget() {
+        let mut bus = SystemBus::new(Ram::new(8 * 1024 * 1024).unwrap());
+        let width = 1280;
+        let height = 800;
+        let source = source_bytes(width, height);
+        let source_addr = DRAM_BASE + 0x10_000;
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+
+        let mut map = ResourceMap::new();
+        map.create(1, FORMATS[0], width, height).unwrap();
+        map.attach_backing(1, alloc::vec![(source_addr, source.len() as u32)])
+            .unwrap();
+        let started = std::time::Instant::now();
+        map.transfer_to_host_2d(
+            1,
+            protocol::Rect {
+                x: 0,
+                y: 0,
+                width,
+                height,
+            },
+            0,
+            &bus,
+        )
+        .unwrap();
+        let elapsed = started.elapsed();
+        eprintln!("1280x800 transfer: {elapsed:?}");
+        #[cfg(not(debug_assertions))]
+        assert!(
+            elapsed < std::time::Duration::from_millis(5),
+            "full-frame transfer exceeded 5 ms: {elapsed:?}"
+        );
+    }
+
     #[test]
     fn gpu_transfer_rejects_detached_bounds_and_offset_without_shadow_mutation() {
         let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
@@ -839,73 +875,76 @@ mod tests {
         )
         .unwrap();
 
-        let mut seed = 0xC0DE_CAFE_u64;
-        for _case in 0..10_000 {
-            seed = seed
-                .wrapping_mul(6_364_136_223_846_793_005)
-                .wrapping_add(1_442_695_040_888_963_407);
-            let x = (seed as u32) % 10;
-            seed = seed.rotate_left(17);
-            let y = (seed as u32) % 10;
-            seed = seed.rotate_left(17);
-            let rect_width = (seed as u32) % 10;
-            seed = seed.rotate_left(17);
-            let rect_height = (seed as u32) % 10;
-            seed = seed.rotate_left(17);
-            let offset = seed % (source.len() as u64 + 9);
-            let rect = protocol::Rect {
-                x,
-                y,
-                width: rect_width,
-                height: rect_height,
-            };
+        for initial_seed in [0xC0DE_CAFE_u64, 0xBADC_0FFEu64, 0x5EED_1234_u64] {
+            let mut seed = initial_seed;
+            for _case in 0..10_000 {
+                seed = seed
+                    .wrapping_mul(6_364_136_223_846_793_005)
+                    .wrapping_add(1_442_695_040_888_963_407);
+                let x = (seed as u32) % 10;
+                seed = seed.rotate_left(17);
+                let y = (seed as u32) % 10;
+                seed = seed.rotate_left(17);
+                let rect_width = (seed as u32) % 10;
+                seed = seed.rotate_left(17);
+                let rect_height = (seed as u32) % 10;
+                seed = seed.rotate_left(17);
+                let offset = seed % (source.len() as u64 + 9);
+                let rect = protocol::Rect {
+                    x,
+                    y,
+                    width: rect_width,
+                    height: rect_height,
+                };
 
-            for pixel in &mut map.get_mut(1).unwrap().host_pixels {
-                *pixel = 0xDEAD_BEEF;
-            }
-            let baseline = map.get(1).unwrap().host_pixels.to_vec();
-            let in_bounds = u64::from(x) + u64::from(rect_width) <= u64::from(width)
-                && u64::from(y) + u64::from(rect_height) <= u64::from(height)
-                && offset <= source.len() as u64
-                && (rect_width == 0
-                    || rect_height == 0
-                    || offset
-                        + u64::from(y) * u64::from(width) * 4
-                        + u64::from(x) * 4
-                        + u64::from(rect_height.saturating_sub(1)) * u64::from(width) * 4
-                        + u64::from(rect_width) * 4
-                        <= source.len() as u64);
+                for pixel in &mut map.get_mut(1).unwrap().host_pixels {
+                    *pixel = 0xDEAD_BEEF;
+                }
+                let baseline = map.get(1).unwrap().host_pixels.to_vec();
+                let in_bounds = u64::from(x) + u64::from(rect_width) <= u64::from(width)
+                    && u64::from(y) + u64::from(rect_height) <= u64::from(height)
+                    && offset <= source.len() as u64
+                    && (rect_width == 0
+                        || rect_height == 0
+                        || offset
+                            + u64::from(y) * u64::from(width) * 4
+                            + u64::from(x) * 4
+                            + u64::from(rect_height.saturating_sub(1)) * u64::from(width) * 4
+                            + u64::from(rect_width) * 4
+                            <= source.len() as u64);
 
-            let result = map.transfer_to_host_2d(1, rect, offset, &bus);
-            if !in_bounds {
-                assert_eq!(result, Err(TransferError::InvalidParameter));
-                assert_eq!(
-                    map.get(1).unwrap().host_pixels.as_ref(),
-                    baseline.as_slice()
-                );
-                continue;
-            }
+                let result = map.transfer_to_host_2d(1, rect, offset, &bus);
+                if !in_bounds {
+                    assert_eq!(result, Err(TransferError::InvalidParameter));
+                    assert_eq!(
+                        map.get(1).unwrap().host_pixels.as_ref(),
+                        baseline.as_slice()
+                    );
+                    continue;
+                }
 
-            assert_eq!(result, Ok(()));
-            let mut expected = baseline;
-            if rect_width != 0 && rect_height != 0 {
-                let first = offset + u64::from(y) * u64::from(width) * 4 + u64::from(x) * 4;
-                for row in 0..rect_height {
-                    for column in 0..rect_width {
-                        let source_offset =
-                            (first + u64::from(row) * u64::from(width) * 4 + u64::from(column) * 4)
+                assert_eq!(result, Ok(()));
+                let mut expected = baseline;
+                if rect_width != 0 && rect_height != 0 {
+                    let first = offset + u64::from(y) * u64::from(width) * 4 + u64::from(x) * 4;
+                    for row in 0..rect_height {
+                        for column in 0..rect_width {
+                            let source_offset = (first
+                                + u64::from(row) * u64::from(width) * 4
+                                + u64::from(column) * 4)
                                 as usize;
-                        let pixel = u32::from_le_bytes(
-                            source[source_offset..source_offset + 4].try_into().unwrap(),
-                        );
-                        expected[((y + row) * width + x + column) as usize] = pixel;
+                            let pixel = u32::from_le_bytes(
+                                source[source_offset..source_offset + 4].try_into().unwrap(),
+                            );
+                            expected[((y + row) * width + x + column) as usize] = pixel;
+                        }
                     }
                 }
+                assert_eq!(
+                    map.get(1).unwrap().host_pixels.as_ref(),
+                    expected.as_slice()
+                );
             }
-            assert_eq!(
-                map.get(1).unwrap().host_pixels.as_ref(),
-                expected.as_slice()
-            );
         }
     }
 }
