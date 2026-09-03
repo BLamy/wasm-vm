@@ -1,0 +1,73 @@
+{
+  "schema": "e5-t12a-keymap-proof-v1",
+  "task": "E5-T12a",
+  "status": "pass",
+  "implementation_commit": "f177fa1",
+  "recorded_at": "2026-09-03",
+  "fixture": {
+    "path": "web/src/input/w3c-pc105-codes.json",
+    "codes": 119,
+    "sha256": "6a17d7494bfc7c27f181294dc1893176236531ad5320fe9e75e4d93e40cd243b"
+  },
+  "source": {
+    "path": "web/src/input/keymap-source.json",
+    "entries": 119,
+    "mapped": 119,
+    "explicitly_unmapped": 0,
+    "sha256": "73312315ec4741b7914cf5a21ef638938684f5bc8fb23076bc702686c7fdcc73"
+  },
+  "generated": [
+    {
+      "path": "web/src/input/keymap.ts",
+      "sha256": "e6a3e893fadd7d288b6eabd4d59c01930498cee7923a682e9ae5d614ec939ada"
+    },
+    {
+      "path": "web/src/input/keymap.js",
+      "sha256": "e6a3e893fadd7d288b6eabd4d59c01930498cee7923a682e9ae5d614ec939ada"
+    }
+  ],
+  "generator": {
+    "path": "tools/gen-keymap.mjs",
+    "sha256": "effba94d74057642f719e7991d6c2da2739640bb578c1194daa3f3354dc827a5",
+    "command": "node tools/gen-keymap.mjs --check",
+    "result": "pass"
+  },
+  "happy_run": {
+    "commands": [
+      "node tools/gen-keymap.mjs --check",
+      "node --test web/tests/keymap.test.mjs",
+      "npm run test:keymap --prefix web"
+    ],
+    "result": "10 tests passed, 0 failed across the direct and package-script runs",
+    "output_sha256": "1c5f34216a3bd40334cb5a2bcaf538eb732be78ab8c297740377bd08ef7a4d12"
+  },
+  "adversarial": [
+    {
+      "mutation": "delete ContextMenu row",
+      "result": "rejected",
+      "diagnostic": "missing PC-105 code(s): ContextMenu"
+    },
+    {
+      "mutation": "append a second KeyA row",
+      "result": "rejected",
+      "diagnostic": "duplicate code identity: KeyA"
+    },
+    {
+      "mutation": "assign KeyA the existing KeyY evdev code 21",
+      "result": "rejected",
+      "diagnostic": "duplicate evdev assignment: 21 (KeyY and KeyA)"
+    }
+  ],
+  "edge_assertions": {
+    "KeyA": 30,
+    "KeyY": 21,
+    "Backquote": 41,
+    "IntlBackslash": 86,
+    "AltRight": 100,
+    "MetaLeft": 125,
+    "NumpadEnter": 96,
+    "ContextMenu": 127,
+    "F24": 194
+  },
+  "claim": "At commit f177fa1, the checked-in W3C physical-code fixture and keymap source contain one row for all 119 accepted PC-105 identities. The generator validates total coverage, explicit unmapped-row policy, and bijective evdev assignments, then emits byte-identical keymap.ts and browser keymap.js projections. The deterministic tests cover the complete table, all punctuation/modifier/function/navigation/numpad categories, the named edge identities, unknown-code null behavior, and scratch deletions/duplicate identity/duplicate evdev attacks."
+}

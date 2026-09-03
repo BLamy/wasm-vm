@@ -3,7 +3,7 @@ id: E5-T12a
 epic: 5
 title: generated physical keyboard code table and coverage oracle
 priority: 512.1
-status: in-progress
+status: implemented
 depends_on: [E5-T11c]
 estimate: S
 risk: medium
@@ -42,4 +42,22 @@ missing/duplicate identity named. Exercise `ContextMenu`, `IntlBackslash`, `Nump
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — IMPLEMENTED
+
+Implementation commit `f177fa1` adds the checked-in W3C PC-105 physical-code fixture,
+the JSON evdev source table, and `tools/gen-keymap.mjs`. The generator validates duplicate
+physical identities, duplicate evdev assignments, missing/extra fixture rows, and explicit
+reasons for any future unmapped row before emitting byte-identical `web/src/input/keymap.ts`
+and the no-bundler browser projection `web/src/input/keymap.js`. The module exports the lookup,
+coverage oracle, and named edge fixtures.
+
+The frozen-head recording ran `node tools/gen-keymap.mjs --check`,
+`node --test web/tests/keymap.test.mjs`, and `npm run test:keymap --prefix web`: 10 tests passed,
+0 failed. The same recording ran the scratch-copy attacks: deleting `ContextMenu`, appending a
+duplicate `KeyA` identity, and assigning `KeyA` the existing `KeyY` evdev code; each was rejected
+with the named diagnostic. Output SHA-256 is
+`1c5f34216a3bd40334cb5a2bcaf538eb732be78ab8c297740377bd08ef7a4d12`.
+
+Evidence: `evidence/e5-t12a/keymap-2026-09-03.json`, including the fixture/source/generated
+digests and exact edge-code assertions. This slice is a non-wired table/tooling layer; DOM event
+normalization and browser capture proof remain owned by E5-T12b and E5-T12c.

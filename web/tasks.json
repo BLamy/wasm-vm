@@ -17088,7 +17088,7 @@
       "epicKey": "5",
       "title": "generated physical keyboard code table and coverage oracle",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T11c"
       ],
@@ -17112,13 +17112,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `f177fa1` adds the checked-in W3C PC-105 physical-code fixture,\nthe JSON evdev source table, and `tools/gen-keymap.mjs`. The generator validates duplicate\nphysical identities, duplicate evdev assignments, missing/extra fixture rows, and explicit\nreasons for any future unmapped row before emitting byte-identical `web/src/input/keymap.ts`\nand the no-bundler browser projection `web/src/input/keymap.js`. The module exports the lookup,\ncoverage oracle, and named edge fixtures.\n\nThe frozen-head recording ran `node tools/gen-keymap.mjs --check`,\n`node --test web/tests/keymap.test.mjs`, and `npm run test:keymap --prefix web`: 10 tests passed,\n0 failed. The same recording ran the scratch-copy attacks: deleting `ContextMenu`, appending a\nduplicate `KeyA` identity, and assigning `KeyA` the existing `KeyY` evdev code; each was rejected\nwith the named diagnostic. Output SHA-256 is\n`1c5f34216a3bd40334cb5a2bcaf538eb732be78ab8c297740377bd08ef7a4d12`.\n\nEvidence: `evidence/e5-t12a/keymap-2026-09-03.json`, including the fixture/source/generated\ndigests and exact edge-code assertions. This slice is a non-wired table/tooling layer; DOM event\nnormalization and browser capture proof remain owned by E5-T12b and E5-T12c.",
       "adversarial": "Delete one mapping and add a duplicate code in a scratch copy; the oracle must fail with the\nmissing/duplicate identity named. Exercise `ContextMenu`, `IntlBackslash`, `NumpadEnter`, and\n`F24`; any mainstream code that is neither mapped nor explicitly documented is a finding.",
       "file": "tasks/epic-5-the-window/E5-T12a-keymap-table.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t12a): start keyboard code table"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T12b",
