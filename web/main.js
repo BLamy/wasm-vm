@@ -1055,6 +1055,27 @@ window.__bootAlpineChunked = () =>
     "E4 browser profiling boot (chunked Alpine, lazy fetch)",
     { requestKey: "alpine", onClaim: () => setGuestChip("alpine") },
   );
+// E4-T28e test-only hook: attach the locally pinned GCC overlay as a real second virtio-blk drive
+// while booting the real Alpine guest. It is deliberately absent from the production UI and only
+// exists when the verifier opts into `?testHooks=1`.
+if (new URLSearchParams(location.search).has("testHooks")) {
+  window.__bootGccInteractive = () =>
+    runLinuxBoot(
+      {
+        manifestUrl: "./artifacts-alpine.json",
+        mode: "chunked",
+        imageManifestUrl: "./releases/chunked-alpine/manifest.json",
+        bootProfileUrl: null,
+        persist: false,
+        bootSnapshot: false,
+        ramMib: 256,
+        extraDiskUrl: "./gcc-overlay/gcc.ext4",
+        extraDiskSha256: "f53445f65b5e32b9fe3c47e0f84c52c850da2c747edae0abca60e9592a758c4a",
+      },
+      "E4-T28e GCC interactive browser proof",
+      { requestKey: "gcc", onClaim: () => setGuestChip("alpine") },
+    );
+}
 // ── Docker tab ⇄ real boot bridge ─────────────────────────────────────────────
 // The Docker "Run" button drives the SAME real boot machinery as this Terminal tab — it never
 // simulates a shell. For busybox we boot the real busybox userland on RISC-V Linux (the initramfs

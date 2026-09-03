@@ -1220,6 +1220,17 @@ enum DiskChoice {
         /// E3-T03 boot profile: ordered chunks to prefetch (empty if none).
         profile: Vec<usize>,
     },
+    /// E4-T28e: a lazy Alpine root disk plus a read-only, fully resident secondary virtio-blk
+    /// drive. The browser proof uses this for the pinned GCC overlay; it lives in slot 3 so the
+    /// normal net/rng devices retain their stable slots 1/2, while Linux still enumerates the
+    /// only two block devices as `/dev/vda` and `/dev/vdb`.
+    ChunkedWithExtra {
+        manifest: wasm_vm_storage::ImageManifest,
+        base_url: String,
+        budget: u64,
+        profile: Vec<usize>,
+        extra_disk: Vec<u8>,
+    },
     /// E3-T05: like `Chunked`, but the overlay is a `WriteBackOverlay` (loaded from IndexedDB, sharing
     /// a persist queue) so guest writes survive a reload.
     ChunkedPersistent {
@@ -1345,6 +1356,54 @@ impl WasmLinux {
                 base_url,
                 budget,
                 profile,
+            },
+            &args,
+            output,
+        )
+    }
+
+    /// E4-T28e: boot the normal lazy Alpine root disk with one additional read-only virtio-blk
+    /// image. The extra image is passed by value so the fetched overlay becomes one resident Rust
+    /// buffer; it is never compiled or transformed on the host. Slot 3 is used because browser
+    /// Linux reserves slots 1/2 for virtio-net/rng, leaving `/dev/vdb` as the second block device.
+    #[wasm_bindgen(js_name = newChunkedDiskWithExtra)]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new_chunked_disk_with_extra(
+        ram_mib: u32,
+        kernel: &[u8],
+        manifest_json: &str,
+        base_url: String,
+        cache_budget_mib: u32,
+        boot_profile: Vec<u32>,
+        extra_disk: Vec<u8>,
+        bootargs: String,
+        output: js_sys::Function,
+    ) -> Result<WasmLinux, JsError> {
+        let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
+            .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
+        let args = if bootargs.is_empty() {
+            "root=/dev/vda rw console=ttyS0 earlycon=sbi".to_string()
+        } else {
+            bootargs
+        };
+        let budget = if cache_budget_mib == 0 {
+            256
+        } else {
+            cache_budget_mib
+        } as u64
+            * 1024
+            * 1024;
+        let profile: Vec<usize> = boot_profile.into_iter().map(|c| c as usize).collect();
+        Self::assemble(
+            ram_mib,
+            kernel,
+            None,
+            DiskChoice::ChunkedWithExtra {
+                manifest,
+                base_url,
+                budget,
+                profile,
+                extra_disk,
             },
             &args,
             output,
@@ -1496,6 +1555,27 @@ impl WasmLinux {
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let backend = chunked::ChunkedBackend::new(&manifest, store.clone());
                 machine.enable_virtio_blk(Box::new(backend));
+                fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
+                    manifest, base_url, store, profile,
+                )));
+            }
+            DiskChoice::ChunkedWithExtra {
+                manifest,
+                base_url,
+                budget,
+                profile,
+                extra_disk,
+            } => {
+                let store =
+                    std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
+                let backend = chunked::ChunkedBackend::new(&manifest, store.clone());
+                machine.enable_virtio_blk(Box::new(backend));
+                // Keep slots 1/2 available for the browser's net/rng devices. Linux's block-major
+                // enumeration still names this second block device `/dev/vdb`.
+                machine.enable_virtio_blk_at(
+                    3,
+                    Box::new(wasm_vm_core::block::MemBackend::new_read_only(extra_disk)),
+                );
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
                 )));

@@ -26,6 +26,7 @@ if WARM_ASSET_ROOT:
     for name in ("candidate.snap.gz", "candidate.overlay-delta.bin.gz"):
         if not os.path.isfile(os.path.join(WARM_ASSET_ROOT, name)):
             raise SystemExit(f"E4T34_WARM_ASSET_DIR has no {name}: {WARM_ASSET_ROOT}")
+GCC_OVERLAY = os.path.realpath(os.path.join(ROOT, "bench", "guest", "gcc.ext4"))
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
@@ -55,6 +56,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             if rel in ("candidate.snap.gz", "candidate.overlay-delta.bin.gz"):
                 return os.path.join(WARM_ASSET_ROOT, rel)
             return os.path.join(WARM_ASSET_ROOT, ".not-found")
+        if p == "/gcc-overlay/gcc.ext4":
+            # E4-T28e only: this is a local, gitignored benchmark input. A fresh checkout that has
+            # not run bench/mk-gcc-image.sh gets a normal 404; it must never silently substitute a
+            # different toolchain image.
+            return GCC_OVERLAY if os.path.isfile(GCC_OVERLAY) else os.path.join(ROOT, "web", ".not-found")
         if p.startswith("/releases/"):
             return os.path.join(ROOT, p.lstrip("/"))
         return os.path.join(ROOT, "web", p.lstrip("/"))
