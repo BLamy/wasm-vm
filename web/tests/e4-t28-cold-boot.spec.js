@@ -303,7 +303,7 @@ test.describe("E4-T28d cold Alpine boot timing", () => {
       evidencePath: "evidence/e4-t28d/cold-boot-2026-09-03.json",
       candidate,
       requestedRuns,
-      bootTimesMs,
+      bootTimes,
       medianBootMs,
       budgetSatisfied: evidence.timing.budgetSatisfied,
     })}`);
