@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 188,
+    "verified": 189,
     "total": 350
   },
   "epics": [
@@ -14600,7 +14600,7 @@
       "epicKey": "4",
       "title": "Threaded worker fallback and lifecycle adversarial hardening",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4-T22f"
       ],
@@ -14611,13 +14611,26 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified\n\n- P1 headerless fallback and shim — HELD. Prediction: a headerless origin with the isolation shim\n  blocked selects `single-thread` before wasm initialization, while the explicit `?worker=0` path\n  remains usable; with the shim allowed, its second-load document becomes isolated and reaches the\n  shared worker. Observed the blocked test pass with `crossOriginIsolated=false`, selection\n  `single-thread`, `wasmVariant=fallback`, `main-thread` backend, exact computed\n  `E4T22G_NOHEADERS_42`, and the allowed test pass with a service-worker controller,\n  `worker-shared` selection, `whole-machine-worker` backend, and a restored BusyBox command\n  returning `E4T22G_SHIM_42`.\n- P2 ordered input and wake delivery — HELD. Prediction: 100 chunks of 100 bytes at 10 ms\n  intervals plus a newline produce exactly the expected 10,000-byte SHA-256 and exit 0, without\n  the partial-read truncation that the adversarial raw-tty case would expose. Observed\n  `4c207598af7a20db0e3334dd044399a40e467cb81b37f7ba05a4f76dcbd8fd59`, 10,000 bytes, exit 0,\n  input duration 1,182.815 ms, and measured rate 8,454.407 bytes/s; no leftover payload appeared\n  at the next shell prompt.\n- P3 background, foreground, and reload lifecycle — HELD. Prediction: hiding the document pauses\n  the scheduler without advancing slices or retired instructions, visibility restore resumes the\n  guest, and reloading during an in-flight `sleep` RPC restores a usable worker with no pending RPC\n  or overlay bytes. Observed identical paused scheduler counters before and after the 500 ms hidden\n  interval, exact `E4T22G_BEFORE_42`/`E4T22G_AFTER_42`/`E4T22G_RELOAD_42` results, restored\n  `whole-machine-worker`, `rpc.pending=0`, and `persist.pendingBytes=0`.\n- P4 worker termination and fallback — HELD. Prediction: terminating the live worker rejects both\n  pending `stateDigest`/`whenDone` promises, rejects future calls after the heartbeat deadline,\n  marks the guest down, and leaves the explicit fallback usable without constructing a worker.\n  Observed two rejected settlements, `Linux worker heartbeat timed out after 324ms`, `guestUp=false`,\n  two worker terminations, and exact `E4T22G_FALLBACK_42` from the `main-thread` fallback with zero\n  fallback worker constructions.\n- P5 evidence and diagnostics — HELD. The exact-head result records runtime digest\n  `e0b1980799c77ece81f2ddb97b493d5223c1212d1b25f1e1bc94d10f74aafbf3`, the first-command\n  boundary, controls, exact checksum, browser/version, and generated deploy artifact identities;\n  console errors, page errors, failed requests, and non-favicon HTTP errors were all empty.\n- COVERAGE — HELD. The changed fallback spec executes both headerless branches; the new hardening\n  spec executes the normal worker boot, computed terminal command, 10 KB/s input path, visibility\n  pause/resume, reload during MMIO/RPC activity, worker termination, and explicit main-thread\n  fallback. The current production whole-machine worker is postMessage-scheduled and does not use a\n  shared guest-memory control block; the raw shared-buffer/WFI proof remains in E4-T22d.\n- SUITE — retained `web/tests/e4-t22-fallback-no-headers.spec.js`,\n  `web/tests/e4-t22-worker-hardening.spec.js`, the JSON result, and the screenshot.\n\nCommands:\n\n`PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t22-fallback-no-headers.spec.js tests/e4-t22-worker-hardening.spec.js --project=chromium`\n\nResult: 3 passed in 36.5s at exact implementation head\n`84ff4841b35e3f6a705ed8864493f09e0bed5b87`.\n\nEvidence: `evidence/e4-t22g/worker-hardening-2026-09-03.json`, SHA-256\n`e9cc09c874a85da7fa51fbb362594689a517843a9649aa028378b744adaab260`; screenshot\n`evidence/e4-t22g/worker-hardening-2026-09-03.png`, SHA-256\n`f89cafccb685e290eadc6ddaff2570d4486657844f94d627ba4405a846d77b7c`.\n\nWebKit and independent-machine execution are waived per user direction. Host rr/`ssh dev` is\nwaived by the repository's 2026-09-01 evidence policy.",
       "adversarial": "Deliberately strip COOP/COEP, race ten thousand IRQ/input events with WFI, write a device buffer\nimmediately before notifying, background for five minutes, reload during MMIO, and terminate the\nworker from DevTools. Any white screen, lost byte, stale read, guest time warp, or uncited optimistic\nstate is a refutation.",
       "file": "tasks/epic-4-acceleration/E4-T22g-threaded-worker-hardening.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-01",
+          "commits": 0,
+          "labels": []
+        },
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: start E4-T22g worker hardening"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-01",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E4-T23",
