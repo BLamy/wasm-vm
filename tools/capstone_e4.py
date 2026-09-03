@@ -930,8 +930,6 @@ def _run_final_children(repo: Path) -> list[dict[str, object]]:
     })
     completed: list[dict[str, object]] = []
     for child_id, spec in FINAL_CHILDREN.items():
-        test_path = str(spec["path"]).split("/", 2)[1]
-        command = ["npx", "playwright", "test", f"tests/{test_path.split('-', 2)[-1]}", "--project=chromium"]
         # The file stem is less ambiguous than trying to reconstruct it from the evidence path.
         command = {
             "e4-t28b": ["npx", "playwright", "test", "tests/e4-t28-node-interactive.spec.js", "--project=chromium"],
@@ -1083,6 +1081,12 @@ def _build_final_report(repo: Path, dirty: list[str], replayed: list[dict[str, o
             "path": "bench/ledger.json",
             "sha256": _file_sha256(repo / LEDGER_REL),
             "entryStatus": report_status,
+            "entry": {
+                "tag": "capstone: level4",
+                "candidateCommit": head,
+                "status": report_status,
+                "childEvidence": sorted(child_refs),
+            },
             "note": "Aggregate status row; child workload numbers remain in their evidence files.",
         },
         "demo": {
