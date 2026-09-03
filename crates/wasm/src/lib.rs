@@ -1221,9 +1221,9 @@ enum DiskChoice {
         profile: Vec<usize>,
     },
     /// E4-T28e: a lazy Alpine root disk plus a read-only, fully resident secondary virtio-blk
-    /// drive. The browser proof uses this for the pinned GCC overlay; it lives in slot 4 because
-    /// the normal net/rng/keyboard devices retain their stable slots 1/2/3, while Linux still
-    /// enumerates the only two block devices as `/dev/vda` and `/dev/vdb`.
+    /// drive. The browser proof uses this for the pinned GCC overlay; it lives after the stable
+    /// net/rng/keyboard/tablet/mouse slots, while Linux still enumerates the only two block devices
+    /// as `/dev/vda` and `/dev/vdb`.
     ChunkedWithExtra {
         manifest: wasm_vm_storage::ImageManifest,
         base_url: String,
@@ -1364,9 +1364,9 @@ impl WasmLinux {
 
     /// E4-T28e: boot the normal lazy Alpine root disk with one additional read-only virtio-blk
     /// image. The extra image is passed by value so the fetched overlay becomes one resident Rust
-    /// buffer; it is never compiled or transformed on the host. Slot 4 is used because browser
-    /// Linux reserves slots 1/2 for virtio-net/rng and slot 3 for the keyboard, leaving `/dev/vdb`
-    /// as the second block device.
+    /// buffer; it is never compiled or transformed on the host. The first free slot after browser
+    /// Linux's net/rng/keyboard/tablet/mouse reservation is used, leaving `/dev/vdb` as the second
+    /// block device.
     #[wasm_bindgen(js_name = newChunkedDiskWithExtra)]
     #[allow(clippy::too_many_arguments)]
     pub fn new_chunked_disk_with_extra(
@@ -1571,11 +1571,11 @@ impl WasmLinux {
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let backend = chunked::ChunkedBackend::new(&manifest, store.clone());
                 machine.enable_virtio_blk(Box::new(backend));
-                // Keep slots 1/2 available for the browser's net/rng devices and slot 3 for the
-                // keyboard. Linux's block-major enumeration still names this second block device
-                // `/dev/vdb`.
+                // Keep slots 1/2 available for net/rng, slot 3 for the keyboard, and slots 4/5 for
+                // the tablet/mouse pair. Linux's block-major enumeration still names this second
+                // block device `/dev/vdb`.
                 machine.enable_virtio_blk_at(
-                    4,
+                    wasm_vm_core::dev::virtio::input::pointer::FIRST_FREE_VIRTIO_SLOT,
                     Box::new(wasm_vm_core::block::MemBackend::new_read_only(extra_disk)),
                 );
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
@@ -1708,6 +1708,9 @@ impl WasmLinux {
         // E5-T11c: attach the guest-visible keyboard on every browser boot. The host keymap can
         // inject make/break frames through WasmLinux::sendKeyboardEvent/syncKeyboard.
         let _ = machine.enable_virtio_keyboard();
+        // E5-T14a: keep both pointer devices guest-visible on every browser boot. T14b selects
+        // which state receives DOM frames; the tablet and relative mouse remain stable peers.
+        let _ = machine.enable_virtio_pointer();
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));

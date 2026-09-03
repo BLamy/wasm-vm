@@ -139,9 +139,9 @@ export class WasmLinux {
     /**
      * E4-T28e: boot the normal lazy Alpine root disk with one additional read-only virtio-blk
      * image. The extra image is passed by value so the fetched overlay becomes one resident Rust
-     * buffer; it is never compiled or transformed on the host. Slot 4 is used because browser
-     * Linux reserves slots 1/2 for virtio-net/rng and slot 3 for the keyboard, leaving `/dev/vdb`
-     * as the second block device.
+     * buffer; it is never compiled or transformed on the host. The first free slot after browser
+     * Linux's net/rng/keyboard/tablet/mouse reservation is used, leaving `/dev/vdb` as the second
+     * block device.
      */
     static newChunkedDiskWithExtra(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, extra_disk: Uint8Array, bootargs: string, output: Function): WasmLinux;
     /**

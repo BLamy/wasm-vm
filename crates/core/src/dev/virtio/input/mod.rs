@@ -7,6 +7,7 @@
 //! slices.
 
 pub mod keyboard;
+pub mod pointer;
 
 use alloc::boxed::Box;
 use alloc::collections::{BTreeSet, VecDeque};
@@ -127,6 +128,10 @@ impl PendingFrame {
 /// Shared state between the transport-facing input device and the queue service.
 pub struct InputState {
     status_sink: Box<dyn InputStatusSink>,
+    /// Optional host-injection contract copied from the device declaration. Raw `enqueue_event`
+    /// remains available to transport fixtures, while the public host frame API refuses events
+    /// the selected device did not advertise.
+    capabilities: Option<InputDeviceSpec>,
     kicked: [bool; 2],
     reset_pending: bool,
     pending_frames: VecDeque<PendingFrame>,
@@ -144,12 +149,18 @@ pub struct InputState {
     pub dropped_events: u64,
     /// Number of well-formed status events delivered to the host callback.
     pub status_events_served: u64,
+    /// Number of host-injected events rejected by the device capability/value contract.
+    pub rejected_events: u64,
 }
 
 impl InputState {
-    fn new(status_sink: Box<dyn InputStatusSink>) -> Self {
+    fn new_with_capabilities(
+        status_sink: Box<dyn InputStatusSink>,
+        capabilities: Option<InputDeviceSpec>,
+    ) -> Self {
         Self {
             status_sink,
+            capabilities,
             kicked: [false; 2],
             reset_pending: false,
             pending_frames: VecDeque::new(),
@@ -162,6 +173,7 @@ impl InputState {
             dropped_frames: 0,
             dropped_events: 0,
             status_events_served: 0,
+            rejected_events: 0,
         }
     }
 
@@ -179,16 +191,28 @@ impl InputState {
     /// Append one event to the current host-side frame.  It is non-blocking: once the bounded
     /// staging budget is full, later events are counted as part of the eventual whole-frame drop
     /// rather than growing an unbounded allocation.
-    pub fn inject_event(&mut self, event_type: u16, code: u16, value: i32) {
+    pub fn inject_event(&mut self, event_type: u16, code: u16, value: i32) -> bool {
+        let event = InputEvent::new(event_type, code, value);
+        if !self.accepts_host_event(event) {
+            self.rejected_events = self.rejected_events.saturating_add(1);
+            return false;
+        }
         self.staged_event_count = self.staged_event_count.saturating_add(1);
         if self.staged_frame.len() < self.pending_event_budget {
-            self.staged_frame
-                .push(InputEvent::new(event_type, code, value));
+            self.staged_frame.push(event);
         }
+        true
     }
 
     /// Finish the current frame with `EV_SYN/SYN_REPORT` and enqueue it atomically.
     pub fn sync(&mut self) {
+        if self.staged_event_count == 0 {
+            // A rejected-only host frame must not turn into a stray SYN_REPORT. This also keeps
+            // the stream contract exact: every emitted frame has at least one accepted payload
+            // event and exactly one terminator appended here.
+            self.staged_frame.clear();
+            return;
+        }
         let event_count = self.staged_event_count.saturating_add(1);
         let mut events = core::mem::take(&mut self.staged_frame);
         self.staged_event_count = 0;
@@ -208,6 +232,35 @@ impl InputState {
         self.pending_frames.push_back(frame);
         self.enforce_pending_budget();
         self.kicked[EVENT_QUEUE as usize] = true;
+    }
+
+    fn accepts_host_event(&self, event: InputEvent) -> bool {
+        let Some(spec) = &self.capabilities else {
+            return true;
+        };
+
+        // `sync` owns SYN_REPORT insertion. Accepting a caller-supplied SYN would make the frame
+        // boundary ambiguous and could produce two terminators in one host frame.
+        if event.event_type == EV_SYN {
+            return false;
+        }
+        let Some(bitmap) = spec.event_bitmap(event.event_type) else {
+            return false;
+        };
+        let code = usize::from(event.code);
+        if code >= MAX_EVENT_CODES || bitmap[code / 8] & (1 << (code % 8)) == 0 {
+            return false;
+        }
+
+        match event.event_type {
+            EV_KEY => matches!(event.value, 0 | 1),
+            EV_ABS => spec
+                .abs_info
+                .get(code)
+                .and_then(Option::as_ref)
+                .is_some_and(|info| (info.min..=info.max).contains(&event.value)),
+            _ => true,
+        }
     }
 
     /// Change the pending-event budget for deterministic stress fixtures.  Lowering it immediately
@@ -621,7 +674,10 @@ impl VirtioInput {
         spec: InputDeviceSpec,
         status_sink: Box<dyn InputStatusSink>,
     ) -> (Self, Rc<RefCell<InputState>>) {
-        let state = Rc::new(RefCell::new(InputState::new(status_sink)));
+        let state = Rc::new(RefCell::new(InputState::new_with_capabilities(
+            status_sink,
+            Some(spec.clone()),
+        )));
         let device = Self {
             spec,
             select: VIRTIO_INPUT_CFG_UNSET,
@@ -1379,7 +1435,7 @@ mod tests {
         );
 
         for value in 0..1000 {
-            state.borrow_mut().inject_event(EV_REL, 0, value);
+            state.borrow_mut().inject_event(EV_ABS, 0, value);
             state.borrow_mut().sync();
         }
 
@@ -1409,7 +1465,7 @@ mod tests {
 
         // The third frame makes the queue overflow.  Dropping the oldest key-down also removes
         // its queued key-up frame, so no stray release can reach the guest.
-        state.borrow_mut().inject_event(EV_REL, 0, 1);
+        state.borrow_mut().inject_event(EV_ABS, 0, 1);
         state.borrow_mut().sync();
         let state = state.borrow();
         assert_eq!(state.pending_frames(), 1);
@@ -1419,7 +1475,7 @@ mod tests {
         assert_eq!(
             state.pending_frames.front().unwrap().events,
             vec![
-                InputEvent::new(EV_REL, 0, 1),
+                InputEvent::new(EV_ABS, 0, 1),
                 InputEvent::new(EV_SYN, SYN_REPORT, 0)
             ]
         );

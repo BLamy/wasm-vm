@@ -286,6 +286,20 @@ pub struct Machine {
     )>,
     /// E5-T11b: retained handle for the host/UI's NumLock/CapsLock/ScrollLock indicator state.
     keyboard_leds: Option<dev::virtio::input::keyboard::KeyboardLedHandle>,
+    /// E5-T14a: absolute tablet queue state, installed in slot 4 alongside the keyboard.
+    #[allow(clippy::type_complexity)]
+    tablet: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+    )>,
+    /// E5-T14a: relative mouse queue state, installed in slot 5 alongside the tablet.
+    #[allow(clippy::type_complexity)]
+    mouse: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+    )>,
     /// E3-T12c3: the snapshot coherence binding — the base disk image this machine is running against
     /// (`base_image_hash`), the emulator build (`core_hash`), and the monotonic overlay-commit
     /// generation. `save_resume` stamps all three into the blob header; `load_resume` validates them
@@ -670,6 +684,8 @@ impl Machine {
             rng: None,
             keyboard: None,
             keyboard_leds: None,
+            tablet: None,
+            mouse: None,
             coherence: SnapshotCoherence::default(),
             // E4-T05: default the toggle to the `predecode` feature (OFF in the normal build);
             // the differential harness flips it at runtime via `set_block_cache`.
@@ -1388,6 +1404,78 @@ impl Machine {
         &self,
     ) -> Option<alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>> {
         self.keyboard
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state))
+    }
+
+    /// E5-T14a: attach the absolute tablet in slot 4 and relative mouse in slot 5. The standard
+    /// eight slots must already exist; both queue states stay independent so the host can route a
+    /// selected pointer mode without changing the keyboard's slot or pending frames. Returns
+    /// `(tablet_slot, tablet_state, mouse_slot, mouse_state)`.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_pointer(
+        &mut self,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+    ) {
+        let tablet_slot = dev::virtio::input::pointer::TABLET_VIRTIO_SLOT;
+        let mouse_slot = dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT;
+        assert!(
+            self.virtio.len() > mouse_slot,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_pointer"
+        );
+
+        let (tablet, tablet_state) = dev::virtio::input::VirtioInput::new_with_state(
+            dev::virtio::input::pointer::tablet_spec(),
+        );
+        assert!(
+            self.virtio[tablet_slot]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(tablet))
+                .is_ok(),
+            "virtio slot {tablet_slot} already has a device"
+        );
+        self.tablet = Some((alloc::rc::Rc::clone(&tablet_state), None, None));
+
+        let (mouse, mouse_state) = dev::virtio::input::VirtioInput::new_with_state(
+            dev::virtio::input::pointer::mouse_spec(),
+        );
+        assert!(
+            self.virtio[mouse_slot]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(mouse))
+                .is_ok(),
+            "virtio slot {mouse_slot} already has a device"
+        );
+        self.mouse = Some((alloc::rc::Rc::clone(&mouse_state), None, None));
+
+        (
+            alloc::rc::Rc::clone(&self.virtio[tablet_slot].0),
+            tablet_state,
+            alloc::rc::Rc::clone(&self.virtio[mouse_slot].0),
+            mouse_state,
+        )
+    }
+
+    /// Host/UI handle for injecting framed absolute tablet events.
+    pub fn tablet_input(
+        &self,
+    ) -> Option<alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>> {
+        self.tablet
+            .as_ref()
+            .map(|(state, _, _)| alloc::rc::Rc::clone(state))
+    }
+
+    /// Host/UI handle for injecting framed relative mouse events.
+    pub fn mouse_input(
+        &self,
+    ) -> Option<alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>> {
+        self.mouse
             .as_ref()
             .map(|(state, _, _)| alloc::rc::Rc::clone(state))
     }
@@ -3456,6 +3544,21 @@ impl Machine {
                 if let Some((state, eventq, statusq)) = &mut self.keyboard {
                     let slot = alloc::rc::Rc::clone(
                         &self.virtio[dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT].0,
+                    );
+                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
+                }
+                // E5-T14a: service the absolute tablet and relative mouse independently. The
+                // browser may select either host route, but both guest-visible devices remain
+                // present and their bounded frames cannot consume one another's queues.
+                if let Some((state, eventq, statusq)) = &mut self.tablet {
+                    let slot = alloc::rc::Rc::clone(
+                        &self.virtio[dev::virtio::input::pointer::TABLET_VIRTIO_SLOT].0,
+                    );
+                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
+                }
+                if let Some((state, eventq, statusq)) = &mut self.mouse {
+                    let slot = alloc::rc::Rc::clone(
+                        &self.virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT].0,
                     );
                     dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
                 }
