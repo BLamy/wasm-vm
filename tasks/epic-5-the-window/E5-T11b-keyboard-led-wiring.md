@@ -3,7 +3,7 @@ id: E5-T11b
 epic: 5
 title: keyboard device registration and LED status wiring
 priority: 511.2
-status: pending
+status: in-progress
 depends_on: [E5-T11a]
 estimate: S
 risk: medium

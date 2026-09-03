@@ -16944,8 +16944,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t11a): verify keyboard spec",
             "chore(e5-t11a): record keyboard spec evidence",
             "chore(e5-t11a): start keyboard spec"
           ]
@@ -16953,7 +16954,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T11b",
@@ -16961,7 +16962,7 @@
       "epicKey": "5",
       "title": "keyboard device registration and LED status wiring",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T11a"
       ],
