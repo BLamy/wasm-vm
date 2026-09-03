@@ -7,8 +7,9 @@
 //! slices.
 
 use alloc::boxed::Box;
-use alloc::collections::VecDeque;
+use alloc::collections::{BTreeSet, VecDeque};
 use alloc::rc::Rc;
+use alloc::vec::Vec;
 use core::cell::RefCell;
 
 use super::VirtioDevice;
@@ -25,6 +26,8 @@ pub const STATUS_QUEUE: u32 = 1;
 
 /// The fixed wire size of one `virtio_input_event`.
 pub const INPUT_EVENT_SIZE: usize = 8;
+/// The default number of not-yet-delivered events retained by the host-side buffer.
+pub const DEFAULT_PENDING_EVENT_BUDGET: usize = 256;
 
 /// One virtio-input event, encoded as `{ le16 type, le16 code, le32 value }`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -85,12 +88,58 @@ impl InputStatusSink for NullStatusSink {
     fn on_status_event(&mut self, _event: InputEvent) {}
 }
 
+#[derive(Debug)]
+struct PendingFrame {
+    events: Vec<InputEvent>,
+    /// Number of events already handed to the guest.  A frame with `next != 0` is protected from
+    /// dropping so a slow eventq can never expose only the first half of a key transition.
+    next: usize,
+}
+
+impl PendingFrame {
+    fn new(events: Vec<InputEvent>) -> Self {
+        Self { events, next: 0 }
+    }
+
+    fn remaining(&self) -> usize {
+        self.events.len().saturating_sub(self.next)
+    }
+
+    fn next_event(&self) -> Option<InputEvent> {
+        self.events.get(self.next).copied()
+    }
+
+    fn has_key_down(&self, code: u16) -> bool {
+        self.events
+            .iter()
+            .any(|event| event.event_type == EV_KEY && event.code == code && event.value != 0)
+    }
+
+    fn has_key_up(&self, code: u16) -> bool {
+        self.events
+            .iter()
+            .any(|event| event.event_type == EV_KEY && event.code == code && event.value == 0)
+    }
+}
+
 /// Shared state between the transport-facing input device and the queue service.
 pub struct InputState {
     status_sink: Box<dyn InputStatusSink>,
     kicked: [bool; 2],
     reset_pending: bool,
-    pending_events: VecDeque<InputEvent>,
+    pending_frames: VecDeque<PendingFrame>,
+    pending_event_count: usize,
+    staged_frame: Vec<InputEvent>,
+    staged_event_count: usize,
+    pending_event_budget: usize,
+    /// Keys whose down event has reached the guest and whose up event has not.
+    delivered_keys: BTreeSet<u16>,
+    /// Keys whose down frame was dropped; their matching up frame is dropped as a whole too.
+    suppressed_keys: BTreeSet<u16>,
+    /// Number of complete frames discarded by the bounded host buffer.
+    pub dropped_frames: u64,
+    /// Number of individual events in those discarded frames, including each SYN_REPORT.
+    pub dropped_events: u64,
     /// Number of well-formed status events delivered to the host callback.
     pub status_events_served: u64,
 }
@@ -101,25 +150,250 @@ impl InputState {
             status_sink,
             kicked: [false; 2],
             reset_pending: false,
-            pending_events: VecDeque::new(),
+            pending_frames: VecDeque::new(),
+            pending_event_count: 0,
+            staged_frame: Vec::new(),
+            staged_event_count: 0,
+            pending_event_budget: DEFAULT_PENDING_EVENT_BUDGET,
+            delivered_keys: BTreeSet::new(),
+            suppressed_keys: BTreeSet::new(),
+            dropped_frames: 0,
+            dropped_events: 0,
             status_events_served: 0,
         }
     }
 
-    /// Queue one event for eventq delivery and request service at the next free bus boundary.
-    /// This is the transport primitive used by the injection API in E5-T10c.
+    /// Queue one already-framed transport event for the eventq.  `inject_event`/`sync` below are
+    /// the host-facing API; this primitive keeps the T10b queue fixture useful without requiring a
+    /// synthetic SYN_REPORT.
     pub fn enqueue_event(&mut self, event: InputEvent) {
-        self.pending_events.push_back(event);
+        let events = alloc::vec![event];
+        self.pending_event_count = self.pending_event_count.saturating_add(1);
+        self.pending_frames.push_back(PendingFrame::new(events));
+        self.enforce_pending_budget();
         self.kicked[EVENT_QUEUE as usize] = true;
     }
 
-    /// Number of events waiting for a guest eventq buffer.
+    /// Append one event to the current host-side frame.  It is non-blocking: once the bounded
+    /// staging budget is full, later events are counted as part of the eventual whole-frame drop
+    /// rather than growing an unbounded allocation.
+    pub fn inject_event(&mut self, event_type: u16, code: u16, value: i32) {
+        self.staged_event_count = self.staged_event_count.saturating_add(1);
+        if self.staged_frame.len() < self.pending_event_budget {
+            self.staged_frame
+                .push(InputEvent::new(event_type, code, value));
+        }
+    }
+
+    /// Finish the current frame with `EV_SYN/SYN_REPORT` and enqueue it atomically.
+    pub fn sync(&mut self) {
+        let event_count = self.staged_event_count.saturating_add(1);
+        let mut events = core::mem::take(&mut self.staged_frame);
+        self.staged_event_count = 0;
+        events.push(InputEvent::new(EV_SYN, SYN_REPORT, 0));
+
+        if event_count > self.pending_event_budget || events.len() != event_count {
+            self.note_dropped_events(&events, event_count);
+            return;
+        }
+
+        let frame = PendingFrame::new(events);
+        if self.frame_should_drop(&frame) {
+            self.note_dropped_frame(&frame);
+            return;
+        }
+        self.pending_event_count = self.pending_event_count.saturating_add(frame.remaining());
+        self.pending_frames.push_back(frame);
+        self.enforce_pending_budget();
+        self.kicked[EVENT_QUEUE as usize] = true;
+    }
+
+    /// Change the pending-event budget for deterministic stress fixtures.  Lowering it immediately
+    /// applies the same whole-frame policy used when a new frame arrives.
+    pub fn set_pending_event_budget(&mut self, budget: usize) {
+        self.pending_event_budget = budget;
+        self.enforce_pending_budget();
+    }
+
+    /// Current pending-event budget.
+    pub fn pending_event_budget(&self) -> usize {
+        self.pending_event_budget
+    }
+
+    /// Number of events waiting for a guest eventq buffer, excluding already-delivered prefixes.
     pub fn pending_events(&self) -> usize {
-        self.pending_events.len()
+        self.pending_event_count
+    }
+
+    /// Number of complete frames waiting for eventq buffers.
+    pub fn pending_frames(&self) -> usize {
+        self.pending_frames.len()
     }
 
     fn has_pending_event(&self) -> bool {
-        !self.pending_events.is_empty()
+        self.pending_event_count != 0
+    }
+
+    fn next_pending_event(&self) -> Option<InputEvent> {
+        self.pending_frames
+            .front()
+            .and_then(PendingFrame::next_event)
+    }
+
+    fn complete_pending_event(&mut self, event: InputEvent) {
+        let finished = {
+            let Some(frame) = self.pending_frames.front_mut() else {
+                return;
+            };
+            // The service only calls this after the exact event bytes were written.  If a future
+            // caller violates that sequencing, refusing to advance is safer than losing a frame.
+            if frame.next_event() != Some(event) {
+                return;
+            }
+            frame.next += 1;
+            frame.next == frame.events.len()
+        };
+        self.pending_event_count = self.pending_event_count.saturating_sub(1);
+        self.note_delivered_event(event);
+        if finished {
+            self.pending_frames.pop_front();
+        }
+    }
+
+    fn note_delivered_event(&mut self, event: InputEvent) {
+        if event.event_type != EV_KEY {
+            return;
+        }
+        if event.value == 0 {
+            self.delivered_keys.remove(&event.code);
+            self.suppressed_keys.remove(&event.code);
+        } else {
+            self.delivered_keys.insert(event.code);
+        }
+    }
+
+    fn has_pending_down_before(&self, index: usize, code: u16) -> bool {
+        self.pending_frames
+            .iter()
+            .take(index)
+            .any(|frame| frame.has_key_down(code))
+    }
+
+    fn frame_should_drop(&self, frame: &PendingFrame) -> bool {
+        for event in &frame.events {
+            if event.event_type != EV_KEY {
+                continue;
+            }
+            if event.value == 0 {
+                if self.suppressed_keys.contains(&event.code)
+                    || (!frame.has_key_down(event.code)
+                        && !self.delivered_keys.contains(&event.code)
+                        && !self
+                            .pending_frames
+                            .iter()
+                            .any(|pending| pending.has_key_down(event.code)))
+                {
+                    return true;
+                }
+            } else if self.suppressed_keys.contains(&event.code) && !frame.has_key_up(event.code) {
+                return true;
+            }
+        }
+        false
+    }
+
+    fn can_drop_frame(&self, index: usize) -> bool {
+        let Some(frame) = self.pending_frames.get(index) else {
+            return false;
+        };
+        if frame.next != 0 {
+            return false;
+        }
+        for event in &frame.events {
+            if event.event_type == EV_KEY
+                && event.value == 0
+                && (self.delivered_keys.contains(&event.code)
+                    || self.has_pending_down_before(index, event.code))
+            {
+                return false;
+            }
+        }
+        true
+    }
+
+    fn enforce_pending_budget(&mut self) {
+        while self.pending_event_count > self.pending_event_budget {
+            let Some(index) =
+                (0..self.pending_frames.len()).find(|&index| self.can_drop_frame(index))
+            else {
+                // A partially delivered frame or a release for a key already seen by the guest is
+                // retained even if it temporarily consumes the whole budget; dropping it would
+                // create a stuck key, which is more damaging than bounded backpressure here.
+                break;
+            };
+            let Some(frame) = self.pending_frames.remove(index) else {
+                break;
+            };
+            self.pending_event_count = self.pending_event_count.saturating_sub(frame.remaining());
+            self.note_dropped_frame(&frame);
+        }
+    }
+
+    fn note_dropped_frame(&mut self, frame: &PendingFrame) {
+        self.note_dropped_count(frame.remaining());
+        self.note_dropped_key_transitions(&frame.events);
+    }
+
+    fn note_dropped_events(&mut self, events: &[InputEvent], count: usize) {
+        self.note_dropped_count(count);
+        self.note_dropped_key_transitions(events);
+    }
+
+    fn note_dropped_count(&mut self, count: usize) {
+        self.dropped_frames = self.dropped_frames.saturating_add(1);
+        self.dropped_events = self.dropped_events.saturating_add(count as u64);
+    }
+
+    fn note_dropped_key_transitions(&mut self, events: &[InputEvent]) {
+        let mut newly_suppressed = Vec::new();
+        // A too-large staging frame is kept only up to the budget.  Process the retained prefix
+        // for key suppression; the frame is still accounted for at its full injected size.
+        for event in events {
+            if event.event_type != EV_KEY {
+                continue;
+            }
+            if event.value == 0 {
+                self.suppressed_keys.remove(&event.code);
+            } else if !events.iter().any(|other| {
+                other.event_type == EV_KEY && other.code == event.code && other.value == 0
+            }) && !self.delivered_keys.contains(&event.code)
+                && self.suppressed_keys.insert(event.code)
+            {
+                newly_suppressed.push(event.code);
+            }
+        }
+        for code in newly_suppressed {
+            self.drop_pending_keyups(code);
+        }
+    }
+
+    fn drop_pending_keyups(&mut self, code: u16) {
+        let mut index = 0;
+        while index < self.pending_frames.len() {
+            let drop = self
+                .pending_frames
+                .get(index)
+                .is_some_and(|frame| frame.next == 0 && frame.has_key_up(code));
+            if !drop {
+                index += 1;
+                continue;
+            }
+            let Some(frame) = self.pending_frames.remove(index) else {
+                break;
+            };
+            self.pending_event_count = self.pending_event_count.saturating_sub(frame.remaining());
+            self.note_dropped_frame(&frame);
+        }
     }
 
     fn queue_kicked(&self, queue: u32) -> bool {
@@ -136,6 +410,17 @@ impl InputState {
         if let Some(kicked) = self.kicked.get_mut(queue as usize) {
             *kicked = true;
         }
+    }
+
+    fn reset_queues(&mut self) {
+        self.kicked = [false; 2];
+        self.reset_pending = true;
+        self.pending_frames.clear();
+        self.pending_event_count = 0;
+        self.staged_frame.clear();
+        self.staged_event_count = 0;
+        self.delivered_keys.clear();
+        self.suppressed_keys.clear();
     }
 }
 
@@ -168,6 +453,8 @@ pub const EV_SW: u16 = 0x05;
 pub const EV_LED: u16 = 0x11;
 pub const EV_SND: u16 = 0x12;
 pub const EV_REP: u16 = 0x14;
+/// `SYN_REPORT` terminates one coherent input frame.
+pub const SYN_REPORT: u16 = 0;
 
 /// evdev's virtual-bus identifier.
 pub const BUS_VIRTUAL: u16 = 0x06;
@@ -352,6 +639,18 @@ impl VirtioInput {
         Rc::clone(&self.state)
     }
 
+    /// Append one host event to the current frame.  Call [`Self::sync`] to publish its frame.
+    pub fn inject_event(&self, event_type: u16, code: u16, value: i32) {
+        self.state
+            .borrow_mut()
+            .inject_event(event_type, code, value);
+    }
+
+    /// Terminate and enqueue the current host frame with `EV_SYN/SYN_REPORT`.
+    pub fn sync(&self) {
+        self.state.borrow_mut().sync();
+    }
+
     /// Current query selector pair, useful for a transport test and later queue slices.
     pub fn selected(&self) -> (u8, u8) {
         (self.select, self.subsel)
@@ -457,10 +756,7 @@ impl VirtioDevice for VirtioInput {
     fn reset(&mut self) {
         self.select = VIRTIO_INPUT_CFG_UNSET;
         self.subsel = 0;
-        let mut state = self.state.borrow_mut();
-        state.kicked = [false; 2];
-        state.reset_pending = true;
-        state.pending_events.clear();
+        self.state.borrow_mut().reset_queues();
     }
 }
 
@@ -574,7 +870,7 @@ fn service_eventq(
     let queue = vq.as_mut().expect("eventq was prepared");
     let mut completed = false;
     loop {
-        let Some(event) = state.borrow().pending_events.front().copied() else {
+        let Some(event) = state.borrow().next_pending_event() else {
             break;
         };
         let chain = match queue.pop(bus) {
@@ -595,9 +891,10 @@ fn service_eventq(
             }
         };
         if written == INPUT_EVENT_SIZE as u32 {
-            // Remove the event only after the entire eight-byte payload was written.  An
-            // undersized or wrongly-directed buffer remains recoverable on the next kick.
-            state.borrow_mut().pending_events.pop_front();
+            // Advance only after the entire eight-byte payload was written.  An undersized or
+            // wrongly-directed buffer remains recoverable on the next kick and cannot strand a
+            // partially delivered frame.
+            state.borrow_mut().complete_pending_event(event);
         }
         if queue.push_used(bus, chain.head, written).is_err() {
             slot.borrow_mut().protocol_violation();
@@ -1068,5 +1365,123 @@ mod tests {
         assert_eq!(slot.borrow_mut().read(0x070, Width::B4).unwrap(), 64);
         assert!(eventq.is_none());
         assert_eq!(state.borrow().pending_events(), 1);
+    }
+
+    #[test]
+    fn inject_and_sync_retain_bounded_complete_frames_with_exact_drop_count() {
+        let (device, state) = VirtioInput::new_with_state(fixture_spec());
+        let _ = device;
+        assert_eq!(
+            state.borrow().pending_event_budget(),
+            DEFAULT_PENDING_EVENT_BUDGET
+        );
+
+        for value in 0..1000 {
+            state.borrow_mut().inject_event(EV_REL, 0, value);
+            state.borrow_mut().sync();
+        }
+
+        let state = state.borrow();
+        // Each one-event frame contains two eight-byte events (payload + SYN_REPORT), so the
+        // default 256-event budget retains 128 complete frames and drops the other 872 whole.
+        assert_eq!(state.pending_events(), DEFAULT_PENDING_EVENT_BUDGET);
+        assert_eq!(state.pending_frames(), 128);
+        assert_eq!(state.dropped_frames, 872);
+        assert_eq!(state.dropped_events, 1744);
+        assert!(state.pending_frames.iter().all(|frame| {
+            frame.next == 0 && frame.events.last() == Some(&InputEvent::new(EV_SYN, SYN_REPORT, 0))
+        }));
+    }
+
+    #[test]
+    fn key_transition_drop_removes_both_separate_frames() {
+        let (device, state) = VirtioInput::new_with_state(fixture_spec());
+        let _ = device;
+        state.borrow_mut().set_pending_event_budget(4);
+
+        state.borrow_mut().inject_event(EV_KEY, 30, 1);
+        state.borrow_mut().sync();
+        state.borrow_mut().inject_event(EV_KEY, 30, 0);
+        state.borrow_mut().sync();
+        assert_eq!(state.borrow().pending_frames(), 2);
+
+        // The third frame makes the queue overflow.  Dropping the oldest key-down also removes
+        // its queued key-up frame, so no stray release can reach the guest.
+        state.borrow_mut().inject_event(EV_REL, 0, 1);
+        state.borrow_mut().sync();
+        let state = state.borrow();
+        assert_eq!(state.pending_frames(), 1);
+        assert_eq!(state.pending_events(), 2);
+        assert_eq!(state.dropped_frames, 2);
+        assert_eq!(state.dropped_events, 4);
+        assert_eq!(
+            state.pending_frames.front().unwrap().events,
+            vec![
+                InputEvent::new(EV_REL, 0, 1),
+                InputEvent::new(EV_SYN, SYN_REPORT, 0)
+            ]
+        );
+    }
+
+    #[test]
+    fn injected_frames_cross_eventq_without_boundary_loss() {
+        let mut bus = crate::mmio::SystemBus::new(crate::ram::Ram::new(1 << 20).unwrap());
+        let (device, state) = VirtioInput::new_with_state(fixture_spec());
+        let slot = Rc::new(RefCell::new(VirtioMmio::new(Box::new(device))));
+        setup_queue(
+            &mut bus,
+            &slot,
+            EVENT_QUEUE as usize,
+            EVENT_DESC,
+            EVENT_AVAIL,
+            EVENT_USED,
+        );
+        for index in 0..3u64 {
+            write_desc(
+                &mut bus,
+                EVENT_DESC,
+                index,
+                EVENT_BUF + index * INPUT_EVENT_SIZE as u64,
+                INPUT_EVENT_SIZE as u32,
+                2,
+                0,
+            );
+        }
+        for index in 0..3u16 {
+            bus.store16(EVENT_AVAIL + 4 + 2 * u64::from(index), index)
+                .unwrap();
+        }
+        bus.store16(EVENT_AVAIL + 2, 3).unwrap();
+
+        state.borrow_mut().inject_event(EV_KEY, 30, 1);
+        state.borrow_mut().inject_event(EV_KEY, 30, 0);
+        state.borrow_mut().sync();
+        let mut eventq = None;
+        let mut statusq = None;
+        service(&slot, &mut eventq, &mut statusq, &state, &mut bus);
+
+        let expected = [
+            InputEvent::new(EV_KEY, 30, 1),
+            InputEvent::new(EV_KEY, 30, 0),
+            InputEvent::new(EV_SYN, SYN_REPORT, 0),
+        ];
+        for (index, event) in expected.iter().copied().enumerate() {
+            let addr = EVENT_BUF + index as u64 * INPUT_EVENT_SIZE as u64;
+            let mut bytes = [0u8; INPUT_EVENT_SIZE];
+            for (offset, byte) in bytes.iter_mut().enumerate() {
+                *byte = bus.load8(addr + offset as u64).unwrap();
+            }
+            assert_eq!(InputEvent::from_bytes(&bytes), event);
+            assert_eq!(
+                bus.load32(EVENT_USED + 4 + 8 * index as u64).unwrap(),
+                index as u32
+            );
+            assert_eq!(
+                bus.load32(EVENT_USED + 8 + 8 * index as u64).unwrap(),
+                INPUT_EVENT_SIZE as u32
+            );
+        }
+        assert_eq!(state.borrow().pending_events(), 0);
+        assert!(state.borrow().delivered_keys.is_empty());
     }
 }
