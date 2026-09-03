@@ -15106,15 +15106,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e4-t28b): accept interactive node browser evidence",
             "tasks: start E4-T28b Node browser workload"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T28c",
@@ -15122,7 +15123,7 @@
       "epicKey": "4",
       "title": "Browser CoreMark uplift and guest/host clock honesty",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T28a",
         "E4-T04",

@@ -3,7 +3,7 @@ id: E4-T28c
 epic: 4
 title: Browser CoreMark uplift and guest/host clock honesty
 priority: 429.3
-status: pending
+status: in-progress
 depends_on: [E4-T28a, E4-T04, E4-T05, E4-T27]
 estimate: S
 risk: high
