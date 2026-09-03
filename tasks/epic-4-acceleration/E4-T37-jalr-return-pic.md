@@ -3,7 +3,7 @@ id: E4-T37
 epic: 4
 title: Bounded multi-target JALR return PIC
 priority: 437
-status: pending
+status: in-progress
 depends_on: [E4-T35]
 estimate: S
 risk: high
