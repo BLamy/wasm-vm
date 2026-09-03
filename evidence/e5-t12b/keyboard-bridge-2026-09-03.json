@@ -1,0 +1,78 @@
+{
+  "schema": "e5-t12b-keyboard-bridge-proof-v1",
+  "task": "E5-T12b",
+  "status": "pass",
+  "implementation_commit": "baf1d20",
+  "recorded_at": "2026-09-03",
+  "bridge": {
+    "typescript": {
+      "path": "web/src/input/keyboard.ts",
+      "sha256": "ab3928cada0fb39fd27f98b6bf159d5fbde81025d9e5beeb7b5a837bcc816036"
+    },
+    "browser_projection": {
+      "path": "web/src/input/keyboard.js",
+      "sha256": "ab3928cada0fb39fd27f98b6bf159d5fbde81025d9e5beeb7b5a837bcc816036"
+    },
+    "controller_methods": ["sendKeyboardEvent", "syncKeyboard"],
+    "worker_protocol_allowlist": "Both methods are explicit LINUX_CONTROLLER_METHODS entries; the protocol test exercises them through the page/worker FIFO."
+  },
+  "behavior": {
+    "key_a": [
+      [1, 30, 1],
+      [1, 30, 0]
+    ],
+    "key_a_sync_frames": 2,
+    "rapid_shift_a": [
+      [1, 42, 1],
+      [1, 30, 1],
+      [1, 30, 0],
+      [1, 42, 0]
+    ],
+    "ctrl_c": [
+      [1, 29, 1],
+      [1, 46, 1],
+      [1, 46, 0],
+      [1, 29, 0]
+    ],
+    "altgr": [
+      [1, 29, 1],
+      [1, 100, 1],
+      [1, 16, 1],
+      [1, 16, 0],
+      [1, 100, 0],
+      [1, 29, 0]
+    ],
+    "repeat_policy": "100 DOM repeat keydowns produce zero additional EV_KEY frames",
+    "ime_policy": "isComposing and keyCode/which 229 produce zero guest events",
+    "dead_key_policy": "key=Dead with code=Backquote still emits physical evdev 41",
+    "unmapped_policy": "Unidentified and orphan keyup are no-op diagnostics; no arbitrary evdev code is emitted"
+  },
+  "happy_run": {
+    "commands": [
+      "node --test web/tests/keymap.test.mjs web/tests/keyboard-bridge.test.mjs web/tests/e4-t32-worker-protocol.test.mjs",
+      "npm run test:keyboard --prefix web",
+      "node --check web/src/input/keyboard.js",
+      "node --check web/linux-worker-protocol.js",
+      "node --check web/loader.js",
+      "git diff --check",
+      "cargo check -p wasm-vm-wasm"
+    ],
+    "result": "35 direct Node tests passed, 0 failed; 30 package-script tests passed, 0 failed; syntax checks, diff check, and wasm crate check passed",
+    "output_sha256": "0fbd11d2e8fbf5b6c31236aecd336c329882e03faed2a7a86608c926c7f9db31"
+  },
+  "coverage": {
+    "test": "web/tests/keyboard-bridge.test.mjs",
+    "cases": [
+      "byte-identical TypeScript/browser projection",
+      "KeyA make/break and 100 repeat callbacks",
+      "rapid ShiftLeft/KeyA interleaving with deferred modifier release",
+      "Ctrl+C and shifted punctuation",
+      "ControlLeft + AltRight AltGr ordering",
+      "composing/keyCode-229 suppression and non-composing dead key",
+      "unmapped/orphan diagnostics and Wasm adapter call sequence",
+      "listener attach/detach"
+    ],
+    "protocol": "e4-t32-worker-protocol.test.mjs exercises both new controller calls through the versioned allow-list and preserves send-before-sync FIFO order"
+  },
+  "claim": "At commit baf1d20, DOM keydown/keyup events are translated by physical KeyboardEvent.code into T11 EV_KEY frames through direct or whole-machine-worker WasmLinux adapters. Each accepted transition calls sendKeyboardEvent followed by syncKeyboard; repeat and IME events are suppressed, dead keys remain physical, unknown/orphan events are explicit diagnostics/no-ops, and modifier releases are deferred until dependent keys break. The deterministic bridge and worker-protocol suite cover the acceptance and adversarial cases."
+}
