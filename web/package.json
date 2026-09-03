@@ -5,7 +5,8 @@
   "description": "Browser demo: WasmMachine wired to an xterm.js console (E0-T23)",
   "type": "module",
   "scripts": {
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:keymap": "node --test tests/keymap.test.mjs"
   },
   "dependencies": {
     "@xterm/addon-fit": "0.10.0",
