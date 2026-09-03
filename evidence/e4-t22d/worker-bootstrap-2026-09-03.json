@@ -1,0 +1,74 @@
+{
+  "kind": "e4-t22d-worker-bootstrap",
+  "recordedAt": "2026-09-03T08:17:18Z",
+  "sourceHead": "2b3ed27",
+  "commands": [
+    "make web-test-cpu-worker",
+    "node --check web/cpu-worker.js web/cpu-worker-host.js web/tests/e4-t22d-worker-bootstrap.spec.js",
+    "PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8139 PLAYWRIGHT_REUSE_SERVER=0 ./node_modules/.bin/playwright test tests/e4-t22d-worker-bootstrap.spec.js --workers=1"
+  ],
+  "suite": {
+    "nodeTests": 33,
+    "nodePassed": 33,
+    "nodeFailed": 0,
+    "placementAudit": "OK",
+    "chromiumTests": 5,
+    "chromiumPassed": 5,
+    "chromiumFailed": 0,
+    "consoleErrors": 0
+  },
+  "sequence": {
+    "ready": {
+      "protocol": 1,
+      "dispatchExport": "run_slice",
+      "memoryShared": true,
+      "memoryInitialPages": 1,
+      "jit": false
+    },
+    "markerReadThroughReadySab": "0x00000022",
+    "parkedForWfi": true,
+    "spuriousWakeCount": 1,
+    "reparkedAfterSpuriousWake": true,
+    "wakeCount": 0,
+    "halted": true,
+    "terminalState": "BOOT",
+    "events": ["ready", "halted"]
+  },
+  "adversarial": {
+    "missingDispatch": {
+      "events": ["ready", "fatal"],
+      "terminalState": "FATAL",
+      "errorContains": "no run_slice dispatch export"
+    },
+    "malformedBoot": "fatal",
+    "nonShareableMemory": {
+      "event": "fatal",
+      "terminalState": "FATAL"
+    },
+    "invalidMemoryLimits": {
+      "event": "fatal",
+      "terminalState": "FATAL"
+    },
+    "duplicateBoot": {
+      "events": ["ready", "fatal"],
+      "fatalCount": 1,
+      "terminalState": "FATAL",
+      "errorContains": "duplicate CPU worker boot"
+    },
+    "killedBeforeReady": {
+      "resolved": false,
+      "fatalContains": "did not become ready within 100 ms"
+    }
+  },
+  "sourceHashes": {
+    "web/cpu-worker.js": "e5bab04710a9bce6194e426e84b3ee417496c892f7097d49ed158b061afc7035",
+    "web/cpu-worker-host.js": "b6c6e254c36d666c209afc5a82555b3be26ef2ab5ab40669889ac737d4e89b96",
+    "web/dist/cpu-worker.js": "e5bab04710a9bce6194e426e84b3ee417496c892f7097d49ed158b061afc7035",
+    "web/dist/cpu-worker-host.js": "b6c6e254c36d666c209afc5a82555b3be26ef2ab5ab40669889ac737d4e89b96"
+  },
+  "screenshot": {
+    "path": "evidence/e4-t22d/worker-bootstrap-2026-09-03.png",
+    "sha256": "51d1cfa5bae5476da69433b0e8131685a7de001119d28036d593b34fc6328397"
+  },
+  "coverage": "The worker validation, descriptor-to-imported-memory construction, ready SAB publication, dispatch-export lookup and status normalization, WFI parking/wake including a spurious notify and re-park, halt path, fatal path, host ready timeout, and deployable dist copies all executed in the exact-head gate; WAT sources define the deterministic wasm fixtures."
+}
