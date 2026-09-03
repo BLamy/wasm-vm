@@ -3,6 +3,7 @@
 // byte-identical keyboard.js projection. Capture/preventDefault policy is owned by E5-T12c.
 
 import { evdevForCode } from "./keymap.js";
+import { createHeldKeyLedger } from "./held-keys.js";
 
 export const EV_SYN = 0;
 export const SYN_REPORT = 0;
@@ -57,11 +58,6 @@ export function createKeyboardBridge(adapter, { onDiagnostic = () => {}, onFrame
     throw new TypeError("keyboard bridge requires syncKeyboard");
   }
 
-  // Map preserves physical press order. Modifier releases can therefore be deferred until every
-  // dependent key is released, even when the browser/OS reports a rapid interleaved chord as
-  // ShiftDown, ADown, ShiftUp, AUp.
-  const held = new Map();
-
   function diagnostic(reason, event) {
     try {
       onDiagnostic({
@@ -74,6 +70,13 @@ export function createKeyboardBridge(adapter, { onDiagnostic = () => {}, onFrame
     }
   }
 
+  // The reusable T13a ledger is the source of truth for what the guest believes is physically
+  // down. Modifier metadata remains mutable so a deferred break can be cancelled by a later
+  // duplicate make from a browser recovery path.
+  const held = createHeldKeyLedger({
+    onDiagnostic: ({ reason, code }) => diagnostic(reason, { type: "ledger", code }),
+  });
+
   function publish(code, evdev, value) {
     adapter.sendKeyboardEvent(EV_KEY, evdev, value);
     adapter.syncKeyboard();
@@ -83,7 +86,7 @@ export function createKeyboardBridge(adapter, { onDiagnostic = () => {}, onFrame
   }
 
   function hasDependentKey() {
-    for (const state of held.values()) {
+    for (const [, state] of held.entries()) {
       if (!state.modifier) return true;
     }
     return false;
@@ -92,12 +95,12 @@ export function createKeyboardBridge(adapter, { onDiagnostic = () => {}, onFrame
   function flushDeferredModifiers() {
     if (hasDependentKey()) return [];
     const flushed = [];
-    const pending = [...held.entries()]
+    const pending = held.entries()
       .filter(([, state]) => state.modifier && state.pendingRelease)
       .reverse();
     for (const [code, state] of pending) {
       flushed.push(publish(code, state.evdev, 0));
-      held.delete(code);
+      held.release(code);
     }
     return flushed;
   }
@@ -135,7 +138,7 @@ export function createKeyboardBridge(adapter, { onDiagnostic = () => {}, onFrame
         return result(code, "duplicate-keydown", { evdev });
       }
       const forwarded = publish(code, evdev, 1);
-      held.set(code, { evdev, modifier, pendingRelease: false });
+      held.press(code, { evdev, modifier, pendingRelease: false });
       return forwarded;
     }
 
@@ -150,23 +153,14 @@ export function createKeyboardBridge(adapter, { onDiagnostic = () => {}, onFrame
     }
 
     const forwarded = publish(code, evdev, 0);
-    held.delete(code);
+    held.release(code);
     if (!prior.modifier) flushDeferredModifiers();
     return forwarded;
   }
 
   function releaseAll() {
     const releases = [];
-    const order = [...held.entries()];
-    // Release dependent keys before modifiers so a focus-loss cleanup cannot strand a modifier
-    // state in the guest. Reverse each group to mirror physical stack unwinding.
-    for (const modifier of [false, true]) {
-      for (const [code, state] of [...order].reverse()) {
-        if (state.modifier !== modifier || !held.has(code)) continue;
-        releases.push(publish(code, state.evdev, 0));
-        held.delete(code);
-      }
-    }
+    held.releaseAll((code, state) => releases.push(publish(code, state.evdev, 0)));
     return releases;
   }
 
@@ -175,7 +169,9 @@ export function createKeyboardBridge(adapter, { onDiagnostic = () => {}, onFrame
     keydown: (event) => handleKeyEvent({ ...event, type: "keydown" }),
     keyup: (event) => handleKeyEvent({ ...event, type: "keyup" }),
     releaseAll,
-    heldCodes: () => [...held.keys()],
+    heldCodes: held.codes,
+    heldSnapshot: held.snapshot,
+    resetHeld: held.reset,
     isHeld: (code) => held.has(code),
     pendingModifierCodes: () => [...held.entries()]
       .filter(([, state]) => state.modifier && state.pendingRelease)
