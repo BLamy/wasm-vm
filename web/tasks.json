@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 208,
+    "verified": 209,
     "total": 371
   },
   "epics": [
@@ -16801,7 +16801,7 @@
       "epicKey": "5",
       "title": "virtio-input eventq and statusq transport",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T10a"
       ],
@@ -16812,21 +16812,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Eventq transport — HELD.** Added the fixed eight-byte `InputEvent` wire type and deferred\n  eventq service. A complete event is written across split writable descriptors and published with\n  `used.len = 8`; undersized or wrongly-directed buffers publish `used.len = 0` without partial\n  bytes or consuming the pending event.\n- **Statusq transport — HELD.** Added split readable-descriptor decoding and an\n  `InputStatusSink` callback seam. Short and wrongly-directed chains advance the ring without\n  invoking the callback; a complete status event reaches the host with the original type, code,\n  and value.\n- **Hostile transport behavior — HELD.** QueueNotify is deferred outside the guest MMIO borrow,\n  non-power-of-two queue shapes take the existing bounded NEEDS_RESET path, reset drops cached\n  queue state, and a hostile used index cannot redirect the device-owned completion shadow.\n- **Cross-target coverage — HELD.** Native queue tests and the wasm32 event wire-layout mirror\n  exercise positive and negative values with identical bytes.\n\nImplementation commit: `b6c840f`.\n\nEvidence: `evidence/e5-t10b/input-queues-2026-09-03.json` (SHA-256 to be recorded by the\nverifier).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ndev::virtio::input` (8 passed); `cargo test -p wasm-vm-core --lib --quiet` (227 passed);\n`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core\n--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed);\n`wasm-pack test --node crates/wasm --test input_config` (1 passed); and `wasm-pack test --node\ncrates/wasm --test input_queues` (1 passed). The existing wasm-pack warning in\n`crates/wasm/tests/hart_ctrl.rs` is unrelated.\n\nThe recorded run demonstrates exact event wire parity, complete split-descriptor event delivery,\nshort-buffer recovery without partial writes, callback-free malformed status handling, bounded\nqueue-shape rejection, and preservation of the existing virtio regression suite. Independent-\nmachine, WebKit, and host-layer rr runs were excluded per the user's direction and the repository's\ncurrent evidence policy.",
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Eventq transport — HELD.** Added the fixed eight-byte `InputEvent` wire type and deferred\n  eventq service. A complete event is written across split writable descriptors and published with\n  `used.len = 8`; undersized or wrongly-directed buffers publish `used.len = 0` without partial\n  bytes or consuming the pending event.\n- **Statusq transport — HELD.** Added split readable-descriptor decoding and an\n  `InputStatusSink` callback seam. Short and wrongly-directed chains advance the ring without\n  invoking the callback; a complete status event reaches the host with the original type, code,\n  and value.\n- **Hostile transport behavior — HELD.** QueueNotify is deferred outside the guest MMIO borrow,\n  non-power-of-two queue shapes take the existing bounded NEEDS_RESET path, reset drops cached\n  queue state, and a hostile used index cannot redirect the device-owned completion shadow.\n- **Cross-target coverage — HELD.** Native queue tests and the wasm32 event wire-layout mirror\n  exercise positive and negative values with identical bytes.\n\nImplementation commit: `b6c840f`.\n\nEvidence: `evidence/e5-t10b/input-queues-2026-09-03.json` (SHA-256\n`09de312319c92b96d6619cee901d987e108fa0ecfc0185e736f0807e7a0d1108`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ndev::virtio::input` (8 passed); `cargo test -p wasm-vm-core --lib --quiet` (227 passed);\n`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core\n--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed);\n`wasm-pack test --node crates/wasm --test input_config` (1 passed); and `wasm-pack test --node\ncrates/wasm --test input_queues` (1 passed). The existing wasm-pack warning in\n`crates/wasm/tests/hart_ctrl.rs` is unrelated.\n\nThe recorded run demonstrates exact event wire parity, complete split-descriptor event delivery,\nshort-buffer recovery without partial writes, callback-free malformed status handling, bounded\nqueue-shape rejection, and preservation of the existing virtio regression suite. Independent-\nmachine, WebKit, and host-layer rr runs were excluded per the user's direction and the repository's\ncurrent evidence policy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The recorded native run proves one complete event crosses split eventq\n  descriptors with `used.len = 8`; short buffers preserve their bytes and later ring progress; and\n  valid split statusq descriptors deliver the original event fields to the host callback.\n- **Malformed-input safety — HELD.** Short and wrongly-directed status chains complete with no\n  callback, non-power-of-two queue configuration takes the bounded NEEDS_RESET path, and the\n  hostile used index does not redirect completion publication.\n- **Coverage — HELD.** The changed event type, shared state, deferred QueueNotify path, reset\n  handling, queue preparation, split read/write helpers, status callback, and both queue services\n  execute in the focused native tests; the wasm32 runner covers the same wire bytes.\n- **Evidence integrity — HELD.** Evidence digest\n  `09de312319c92b96d6619cee901d987e108fa0ecfc0185e736f0807e7a0d1108` matches the checked-in\n  artifact for implementation commit `b6c840f`.\n\nE5-T10b is verified; E5-T10c is the next active eligible slice.",
       "adversarial": "Exercise split event/status descriptors, empty and undersized buffers, alternating queue kicks,\nand a hostile used-ring index. Prove no event is partially written and no status callback runs\nfor malformed input.",
       "file": "tasks/epic-5-the-window/E5-T10b-virtio-input-queues.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t10b): record input queue evidence",
             "chore(e5-t10b): start input queue transport"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T10c",

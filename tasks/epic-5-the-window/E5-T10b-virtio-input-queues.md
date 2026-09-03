@@ -3,7 +3,7 @@ id: E5-T10b
 epic: 5
 title: virtio-input eventq and statusq transport
 priority: 510.2
-status: implemented
+status: verified
 depends_on: [E5-T10a]
 estimate: S
 risk: high
@@ -57,8 +57,8 @@ for malformed input.
 
 Implementation commit: `b6c840f`.
 
-Evidence: `evidence/e5-t10b/input-queues-2026-09-03.json` (SHA-256 to be recorded by the
-verifier).
+Evidence: `evidence/e5-t10b/input-queues-2026-09-03.json` (SHA-256
+`09de312319c92b96d6619cee901d987e108fa0ecfc0185e736f0807e7a0d1108`).
 
 Commands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib
 dev::virtio::input` (8 passed); `cargo test -p wasm-vm-core --lib --quiet` (227 passed);
@@ -75,3 +75,20 @@ short-buffer recovery without partial writes, callback-free malformed status han
 queue-shape rejection, and preservation of the existing virtio regression suite. Independent-
 machine, WebKit, and host-layer rr runs were excluded per the user's direction and the repository's
 current evidence policy.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Acceptance — HELD.** The recorded native run proves one complete event crosses split eventq
+  descriptors with `used.len = 8`; short buffers preserve their bytes and later ring progress; and
+  valid split statusq descriptors deliver the original event fields to the host callback.
+- **Malformed-input safety — HELD.** Short and wrongly-directed status chains complete with no
+  callback, non-power-of-two queue configuration takes the bounded NEEDS_RESET path, and the
+  hostile used index does not redirect completion publication.
+- **Coverage — HELD.** The changed event type, shared state, deferred QueueNotify path, reset
+  handling, queue preparation, split read/write helpers, status callback, and both queue services
+  execute in the focused native tests; the wasm32 runner covers the same wire bytes.
+- **Evidence integrity — HELD.** Evidence digest
+  `09de312319c92b96d6619cee901d987e108fa0ecfc0185e736f0807e7a0d1108` matches the checked-in
+  artifact for implementation commit `b6c840f`.
+
+E5-T10b is verified; E5-T10c is the next active eligible slice.
