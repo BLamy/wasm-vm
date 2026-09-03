@@ -3,7 +3,7 @@ id: E5-T02a
 epic: 5
 title: virtio-gpu resource creation and budget accounting
 priority: 502.1
-status: pending
+status: in-progress
 depends_on: [E5-T01c]
 estimate: S
 risk: high

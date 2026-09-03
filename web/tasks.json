@@ -15977,13 +15977,15 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "chore(e5-t02): decompose GPU resource lifecycle"
+          ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E5-T02a",
@@ -15991,7 +15993,7 @@
       "epicKey": "5",
       "title": "virtio-gpu resource creation and budget accounting",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T01c"
       ],
@@ -16022,10 +16024,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Probe width/height `0x10000`, multiplication near `u32::MAX`, and 100,000 unique 4096x4096\ncreates. The map must never panic or grow beyond its configured byte budget, and rejected\nrequests must not change the resource count or accounting total. Flip each supported format\nindependently to catch a decoder that validates only one enum value.",
       "file": "tasks/epic-5-the-window/E5-T02a-virtio-gpu-resource-create.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t02): decompose GPU resource lifecycle"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T02b",
@@ -16064,10 +16074,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Use `nents=0x10000000`, a truncated sglist, address `u64::MAX`, and a final entry whose end\noverflows or lands one byte past RAM. Attach identical guest pages to two resources, detach\none, and confirm the other retains its independent entries. A zero-entry attach must leave the\nresource explicitly backing-less so a later transfer can reject it rather than dereference 0.",
       "file": "tasks/epic-5-the-window/E5-T02b-virtio-gpu-resource-backing.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t02): decompose GPU resource lifecycle"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T02c",
@@ -16106,10 +16124,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Unref an unknown id, unref twice, unref while backing is attached, and unref one of two\nresources sharing the same guest pages. The surviving resource must remain usable and the\nscanout must never point at freed host pixels. Run the lifecycle loop with varying valid\nformats and dimensions to catch format- or size-specific leaks.",
       "file": "tasks/epic-5-the-window/E5-T02c-virtio-gpu-resource-lifecycle.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t02): decompose GPU resource lifecycle"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T03",
