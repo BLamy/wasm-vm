@@ -5,11 +5,13 @@
 use wasm_bindgen_test::wasm_bindgen_test;
 use wasm_vm_core::Machine;
 use wasm_vm_core::bus::Bus;
+use wasm_vm_core::dev::virtio::gpu::Rect;
 use wasm_vm_core::dev::virtio::gpu::VirtioGpu;
 use wasm_vm_core::dev::virtio::gpu::protocol::{
     CTRL_HDR_SIZE, CtrlHeader, DISPLAY_INFO_RESPONSE_SIZE, DISPLAY_MODE_COUNT, DISPLAY_MODE_SIZE,
     DisplayInfoResponse, RESP_OK_DISPLAY_INFO,
 };
+use wasm_vm_core::dev::virtio::gpu::{FlushRecord, FrameSink, TestSink};
 use wasm_vm_core::platform::Platform;
 
 #[wasm_bindgen_test]
@@ -51,4 +53,115 @@ fn gpu_mmio_identity_and_config_on_wasm32() {
     assert_eq!(machine.bus_mut().load32(base + 0x08).unwrap(), 16);
     assert_eq!(machine.bus_mut().load32(base + 0x108).unwrap(), 1);
     assert_eq!(machine.bus_mut().load32(base + 0x10c).unwrap(), 0);
+}
+
+fn reference_crc32(pixels: &[u32]) -> u32 {
+    let mut crc = 0xffff_ffff;
+    for pixel in pixels {
+        for byte in pixel.to_le_bytes() {
+            crc ^= u32::from(byte);
+            for _ in 0..8 {
+                crc = if crc & 1 == 0 {
+                    crc >> 1
+                } else {
+                    (crc >> 1) ^ 0xedb8_8320
+                };
+            }
+        }
+    }
+    !crc
+}
+
+#[wasm_bindgen_test]
+fn gpu_flush_golden_crc_fixtures_on_wasm32() {
+    const WIDTH: u32 = 7;
+    const HEIGHT: u32 = 5;
+    const RECTS: [Rect; 5] = [
+        Rect {
+            x: 0,
+            y: 0,
+            width: 7,
+            height: 5,
+        },
+        Rect {
+            x: 2,
+            y: 1,
+            width: 3,
+            height: 2,
+        },
+        Rect {
+            x: 1,
+            y: 0,
+            width: 5,
+            height: 3,
+        },
+        Rect {
+            x: 0,
+            y: 2,
+            width: 7,
+            height: 2,
+        },
+        Rect {
+            x: 4,
+            y: 3,
+            width: 3,
+            height: 2,
+        },
+    ];
+    const CRC32: [u32; 5] = [
+        0x2d06_8e19,
+        0x80e3_df97,
+        0xcafe_b5cb,
+        0x74f3_ca70,
+        0x4b09_d24f,
+    ];
+
+    let sink = TestSink::new();
+    for (index, &rect) in RECTS.iter().enumerate() {
+        let mut pattern = Vec::with_capacity((WIDTH * HEIGHT) as usize);
+        for y in 0..HEIGHT {
+            for x in 0..WIDTH {
+                pattern.push(match index {
+                    0 => 0x1122_3344,
+                    1 => {
+                        if (x + y) % 2 == 0 {
+                            0xff00_00ff
+                        } else {
+                            0xff00_ff00
+                        }
+                    }
+                    2 => 0x1000_0000 | ((x * 0x19) << 16) | ((y * 0x27) << 8) | (x + y),
+                    3 => {
+                        if x == y || x + y + 1 == WIDTH {
+                            0xffff_ff00
+                        } else {
+                            0x0012_3456
+                        }
+                    }
+                    _ => 0x5500_0000 | ((x * 0x31) ^ (y * 0x17)),
+                });
+            }
+        }
+        let mut expected = vec![0u32; pattern.len()];
+        for row in rect.y..rect.y + rect.height {
+            for column in rect.x..rect.x + rect.width {
+                let pixel = (row * WIDTH + column) as usize;
+                expected[pixel] = pattern[pixel];
+            }
+        }
+        assert_eq!(reference_crc32(&expected), CRC32[index]);
+        let mut handle = sink.clone();
+        handle.flush(Some(0), rect, WIDTH, HEIGHT, &expected);
+        assert_eq!(
+            sink.records().last().copied(),
+            Some(FlushRecord {
+                scanout: Some(0),
+                rect,
+                resource_width: WIDTH,
+                resource_height: HEIGHT,
+                crc32: CRC32[index],
+            })
+        );
+    }
+    assert_eq!(sink.len(), 5);
 }

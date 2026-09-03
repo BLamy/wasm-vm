@@ -9,6 +9,7 @@ pub mod resources;
 
 use alloc::boxed::Box;
 use alloc::rc::Rc;
+use alloc::vec::Vec;
 use core::cell::RefCell;
 
 use super::VirtioDevice;
@@ -18,6 +19,78 @@ use crate::bus::Bus;
 use crate::mmio::SystemBus;
 
 pub use protocol::Rect;
+
+/// One presentation event captured by [`TestSink`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct FlushRecord {
+    pub scanout: Option<u32>,
+    pub rect: Rect,
+    pub resource_width: u32,
+    pub resource_height: u32,
+    pub crc32: u32,
+}
+
+/// In-memory presentation sink for deterministic native and wasm tests.
+#[derive(Clone, Default)]
+pub struct TestSink {
+    records: Rc<RefCell<Vec<FlushRecord>>>,
+}
+
+impl TestSink {
+    /// Construct an empty recording sink.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Return an owned snapshot so callers cannot mutate the sink's records through an alias.
+    pub fn records(&self) -> Vec<FlushRecord> {
+        self.records.borrow().clone()
+    }
+
+    /// Number of flushes recorded so far.
+    pub fn len(&self) -> usize {
+        self.records.borrow().len()
+    }
+
+    /// Whether no flushes have been recorded yet.
+    pub fn is_empty(&self) -> bool {
+        self.records.borrow().is_empty()
+    }
+}
+
+impl FrameSink for TestSink {
+    fn flush(
+        &mut self,
+        scanout: Option<u32>,
+        rect: Rect,
+        resource_width: u32,
+        resource_height: u32,
+        pixels: &[u32],
+    ) {
+        self.records.borrow_mut().push(FlushRecord {
+            scanout,
+            rect,
+            resource_width,
+            resource_height,
+            crc32: crc32_pixels(pixels),
+        });
+    }
+}
+
+/// CRC-32/IEEE of a resource-sized pixel view in deterministic little-endian byte order.
+fn crc32_pixels(pixels: &[u32]) -> u32 {
+    let mut crc = 0xffff_ffff;
+    for pixel in pixels {
+        for byte in pixel.to_le_bytes() {
+            crc ^= u32::from(byte);
+            for _ in 0..8 {
+                let mask = 0u32.wrapping_sub(crc & 1);
+                crc = (crc >> 1) ^ (0xedb8_8320 & mask);
+            }
+        }
+    }
+    !crc
+}
 
 /// Core-to-host presentation boundary for a flushed resource rectangle.
 ///
@@ -352,6 +425,20 @@ fn transfer_error_response(error: resources::TransferError) -> u32 {
     }
 }
 
+/// Why a RESOURCE_FLUSH request was rejected.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum FlushError {
+    InvalidResourceId,
+    InvalidParameter,
+}
+
+fn flush_error_response(error: FlushError) -> u32 {
+    match error {
+        FlushError::InvalidResourceId => protocol::RESP_ERR_INVALID_RESOURCE_ID,
+        FlushError::InvalidParameter => protocol::RESP_ERR_INVALID_PARAMETER,
+    }
+}
+
 /// Check a rectangle with widened arithmetic so an overflowing guest coordinate cannot wrap into
 /// the resource. Zero-sized rectangles are valid at an edge; the command still binds the resource.
 fn rect_within(rect: Rect, resource_width: u32, resource_height: u32) -> bool {
@@ -409,6 +496,39 @@ fn transfer_to_host_2d(
         request.offset,
         bus,
     )
+}
+
+/// Validate a damage rectangle and publish the resource-sized host shadow through the sink.
+fn resource_flush(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    state: &Rc<RefCell<GpuState>>,
+) -> Result<(), FlushError> {
+    let request = read_request::<{ protocol::RESOURCE_FLUSH_SIZE }>(chain, bus)
+        .and_then(|bytes| protocol::ResourceFlush::from_bytes(&bytes))
+        .ok_or(FlushError::InvalidParameter)?;
+    let mut state_ref = state.borrow_mut();
+    let GpuState {
+        resources,
+        scanout_resource,
+        frame_sink,
+        ..
+    } = &mut *state_ref;
+    let scanout = (*scanout_resource == Some(request.resource_id)).then_some(0);
+    let resource = resources
+        .get(request.resource_id)
+        .ok_or(FlushError::InvalidResourceId)?;
+    if !rect_within(request.rect, resource.width, resource.height) {
+        return Err(FlushError::InvalidParameter);
+    }
+    frame_sink.flush(
+        scanout,
+        request.rect,
+        resource.width,
+        resource.height,
+        &resource.host_pixels,
+    );
+    Ok(())
 }
 
 /// Decode and validate an attach request before publishing any part of its backing list.
@@ -676,6 +796,21 @@ pub fn service(
                     }
                 }
             }
+            Some(request) if request.ty == protocol::CMD_RESOURCE_FLUSH => {
+                let response_type = match resource_flush(&chain, bus, state) {
+                    Ok(()) => protocol::RESP_OK_NODATA,
+                    Err(error) => flush_error_response(error),
+                };
+                let response = response_header(request, response_type).to_bytes();
+                match write_prefix(&chain, bus, &response) {
+                    Ok(written) => written,
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
             Some(request) => {
                 let response = response_header(request, protocol::RESP_ERR_UNSPEC).to_bytes();
                 match write_prefix(&chain, bus, &response) {
@@ -715,10 +850,10 @@ mod tests {
     use crate::platform::virt::DRAM_BASE;
     use crate::ram::Ram;
     use protocol::{
-        CMD_SET_SCANOUT, CMD_TRANSFER_TO_HOST_2D, CTRL_HDR_SIZE, CtrlHeader,
+        CMD_RESOURCE_FLUSH, CMD_SET_SCANOUT, CMD_TRANSFER_TO_HOST_2D, CTRL_HDR_SIZE, CtrlHeader,
         DISPLAY_INFO_RESPONSE_SIZE, DISPLAY_MODE_COUNT, DISPLAY_MODE_SIZE, DisplayInfoResponse,
-        DisplayMode, RESP_OK_DISPLAY_INFO, Rect, SET_SCANOUT_SIZE, SetScanout,
-        TRANSFER_TO_HOST_2D_SIZE, TransferToHost2d,
+        DisplayMode, RESOURCE_FLUSH_SIZE, RESP_OK_DISPLAY_INFO, Rect, ResourceFlush,
+        SET_SCANOUT_SIZE, SetScanout, TRANSFER_TO_HOST_2D_SIZE, TransferToHost2d,
     };
 
     const CONFIG_SPACE: u64 = 0x100;
@@ -768,6 +903,19 @@ mod tests {
         .to_bytes()
     }
 
+    fn flush_request(resource_id: u32, rect: Rect) -> [u8; RESOURCE_FLUSH_SIZE] {
+        ResourceFlush {
+            header: CtrlHeader {
+                ty: CMD_RESOURCE_FLUSH,
+                ..CtrlHeader::default()
+            },
+            rect,
+            resource_id,
+            padding: 0,
+        }
+        .to_bytes()
+    }
+
     fn queue_for_test(
         bus: &mut SystemBus,
         descriptors: &[(u64, u32, u16, u16)],
@@ -784,11 +932,12 @@ mod tests {
         bus.store16(AVAIL + 4, 0).unwrap();
         bus.store16(USED, 0).unwrap();
         let (device, state) = VirtioGpu::new_with_state();
+        let queue_size = descriptors.len().max(8).next_power_of_two();
         let slot = Rc::new(RefCell::new(VirtioMmio::new(Box::new(device))));
         slot.borrow_mut().set_queue_for_test(
             0,
             QueueState {
-                num: 8,
+                num: queue_size as u32,
                 ready: true,
                 desc: DESC,
                 driver: AVAIL,
@@ -804,6 +953,107 @@ mod tests {
             bus.store16(AVAIL + 4 + 2 * index as u64, head).unwrap();
         }
     }
+
+    fn response_type(bus: &mut SystemBus, addr: u64) -> u32 {
+        bus.load32(addr).unwrap()
+    }
+
+    /// Independent test-only CRC-32/IEEE reference, intentionally written with a branch rather
+    /// than reusing the production sink's branchless implementation.
+    fn reference_crc32(pixels: &[u32]) -> u32 {
+        let mut crc = 0xffff_ffff;
+        for pixel in pixels {
+            for byte in pixel.to_le_bytes() {
+                crc ^= u32::from(byte);
+                for _ in 0..8 {
+                    crc = if crc & 1 == 0 {
+                        crc >> 1
+                    } else {
+                        (crc >> 1) ^ 0xedb8_8320
+                    };
+                }
+            }
+        }
+        !crc
+    }
+
+    fn golden_pattern(index: usize, width: u32, height: u32) -> alloc::vec::Vec<u32> {
+        let mut pixels = alloc::vec::Vec::with_capacity((width * height) as usize);
+        for y in 0..height {
+            for x in 0..width {
+                let pixel = match index {
+                    0 => 0x1122_3344,
+                    1 => {
+                        if (x + y) % 2 == 0 {
+                            0xff00_00ff
+                        } else {
+                            0xff00_ff00
+                        }
+                    }
+                    2 => 0x1000_0000 | ((x * 0x19) << 16) | ((y * 0x27) << 8) | (x + y),
+                    3 => {
+                        if x == y || x + y + 1 == width {
+                            0xffff_ff00
+                        } else {
+                            0x0012_3456
+                        }
+                    }
+                    _ => 0x5500_0000 | ((x * 0x31) ^ (y * 0x17)),
+                };
+                pixels.push(pixel);
+            }
+        }
+        pixels
+    }
+
+    const GOLDEN_RECTS: [Rect; 5] = [
+        Rect {
+            x: 0,
+            y: 0,
+            width: 7,
+            height: 5,
+        },
+        Rect {
+            x: 2,
+            y: 1,
+            width: 3,
+            height: 2,
+        },
+        Rect {
+            x: 1,
+            y: 0,
+            width: 5,
+            height: 3,
+        },
+        Rect {
+            x: 0,
+            y: 2,
+            width: 7,
+            height: 2,
+        },
+        Rect {
+            x: 4,
+            y: 3,
+            width: 3,
+            height: 2,
+        },
+    ];
+
+    const GOLDEN_CRC32: [u32; 5] = [
+        0x2d06_8e19,
+        0x80e3_df97,
+        0xcafe_b5cb,
+        0x74f3_ca70,
+        0x4b09_d24f,
+    ];
+
+    const GOLDEN_BACKING_LENGTHS: [&[u32]; 5] = [
+        &[140],
+        &[17, 123],
+        &[7, 13, 29, 91],
+        &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20],
+        &[64, 76],
+    ];
 
     fn read32(slot: &mut VirtioMmio, offset: u64) -> u32 {
         slot.read(offset, Width::B4).unwrap() as u32
@@ -1865,6 +2115,44 @@ mod tests {
     }
 
     #[test]
+    fn gpu_flush_wire_fixture_is_little_endian() {
+        let request = ResourceFlush {
+            header: CtrlHeader {
+                ty: CMD_RESOURCE_FLUSH,
+                flags: 0x1122_3344,
+                fence_id: 0x0102_0304_0506_0708,
+                ctx_id: 0xA1B2_C3D4,
+                ring_idx: 9,
+                padding: [0x0A, 0x0B, 0x0C],
+            },
+            rect: Rect {
+                x: 0x1020_3040,
+                y: 0x5060_7080,
+                width: 0x90A0_B0C0,
+                height: 0xD0E0_F000,
+            },
+            resource_id: 0x1122_3344,
+            padding: 0xAABB_CCDD,
+        };
+        let expected = [
+            0x07, 0x01, 0x00, 0x00, // type
+            0x44, 0x33, 0x22, 0x11, // flags
+            0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // fence_id
+            0xD4, 0xC3, 0xB2, 0xA1, // ctx_id
+            0x09, 0x0A, 0x0B, 0x0C, // ring_idx + padding
+            0x40, 0x30, 0x20, 0x10, // rect.x
+            0x80, 0x70, 0x60, 0x50, // rect.y
+            0xC0, 0xB0, 0xA0, 0x90, // rect.width
+            0x00, 0xF0, 0xE0, 0xD0, // rect.height
+            0x44, 0x33, 0x22, 0x11, // resource_id
+            0xDD, 0xCC, 0xBB, 0xAA, // padding
+        ];
+        assert_eq!(request.to_bytes(), expected);
+        assert_eq!(ResourceFlush::from_bytes(&expected), Some(request));
+        assert_eq!(ResourceFlush::from_bytes(&expected[..47]), None);
+    }
+
+    #[test]
     fn gpu_transfer_wire_fixture_is_little_endian() {
         let request = TransferToHost2d {
             header: CtrlHeader {
@@ -1970,5 +2258,469 @@ mod tests {
         assert_eq!(pixels[3], 0);
         assert_eq!(pixels[4], 0);
         assert_eq!(pixels[7], 0);
+    }
+
+    #[test]
+    fn gpu_flush_controlq_calls_test_sink_with_resource_crc() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let rect = Rect {
+            x: 1,
+            y: 0,
+            width: 1,
+            height: 2,
+        };
+        let request = ResourceFlush {
+            header: CtrlHeader {
+                ty: CMD_RESOURCE_FLUSH,
+                flags: protocol::FLAG_FENCE,
+                fence_id: 0x0123_4567_89AB_CDEF,
+                ctx_id: 7,
+                ring_idx: 2,
+                ..CtrlHeader::default()
+            },
+            rect,
+            resource_id: 1,
+            padding: 0,
+        }
+        .to_bytes();
+        write_bytes(&mut bus, REQUEST, &request);
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, RESOURCE_FLUSH_SIZE as u32, 1, 1),
+                (RESPONSE, 24, 2, 0),
+            ],
+        );
+        let sink = TestSink::new();
+        {
+            let mut state_ref = state.borrow_mut();
+            let resource = state_ref
+                .resources
+                .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 2, 2)
+                .unwrap();
+            resource.host_pixels.copy_from_slice(&[
+                0x0102_0304,
+                0xAABB_CCDD,
+                0x1122_3344,
+                0x5566_7788,
+            ]);
+            state_ref.frame_sink = Box::new(sink.clone());
+        }
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        let mut response_bytes = [0u8; CTRL_HDR_SIZE];
+        for (offset, byte) in response_bytes.iter_mut().enumerate() {
+            *byte = bus.load8(RESPONSE + offset as u64).unwrap();
+        }
+        let response = CtrlHeader::from_bytes(&response_bytes).unwrap();
+        assert_eq!(response.ty, protocol::RESP_OK_NODATA);
+        assert_eq!(response.flags, protocol::FLAG_FENCE);
+        assert_eq!(response.fence_id, 0x0123_4567_89AB_CDEF);
+        assert_eq!(response.ctx_id, 7);
+        assert_eq!(response.ring_idx, 2);
+        assert_eq!(response_type(&mut bus, RESPONSE), protocol::RESP_OK_NODATA);
+        assert_eq!(sink.len(), 1);
+        assert_eq!(
+            sink.records(),
+            [FlushRecord {
+                scanout: None,
+                rect,
+                resource_width: 2,
+                resource_height: 2,
+                crc32: reference_crc32(&[0x0102_0304, 0xAABB_CCDD, 0x1122_3344, 0x5566_7788,]),
+            }]
+        );
+    }
+
+    #[test]
+    fn gpu_flush_default_null_sink_accepts_headless_path() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let request = flush_request(
+            1,
+            Rect {
+                x: 0,
+                y: 0,
+                width: 2,
+                height: 2,
+            },
+        );
+        write_bytes(&mut bus, REQUEST, &request);
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, RESOURCE_FLUSH_SIZE as u32, 1, 1),
+                (RESPONSE, 24, 2, 0),
+            ],
+        );
+        state
+            .borrow_mut()
+            .resources
+            .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 2, 2)
+            .unwrap();
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(response_type(&mut bus, RESPONSE), protocol::RESP_OK_NODATA);
+    }
+
+    #[test]
+    fn gpu_flush_after_scanout_disable_forwards_old_resource_without_binding() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let disable = scanout_request(
+            0,
+            0,
+            Rect {
+                x: u32::MAX,
+                y: u32::MAX,
+                width: u32::MAX,
+                height: u32::MAX,
+            },
+        );
+        let rect = Rect {
+            x: 0,
+            y: 1,
+            width: 2,
+            height: 1,
+        };
+        let flush = flush_request(1, rect);
+        write_bytes(&mut bus, REQUEST, &disable);
+        write_bytes(&mut bus, REQUEST + 0x100, &flush);
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, SET_SCANOUT_SIZE as u32, 1, 1),
+                (RESPONSE, 24, 2, 0),
+                (REQUEST + 0x100, RESOURCE_FLUSH_SIZE as u32, 1, 3),
+                (RESPONSE + 0x100, 24, 2, 0),
+            ],
+        );
+        let sink = TestSink::new();
+        {
+            let mut state_ref = state.borrow_mut();
+            state_ref
+                .resources
+                .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 2, 2)
+                .unwrap();
+            state_ref.scanout_resource = Some(1);
+            state_ref.frame_sink = Box::new(sink.clone());
+        }
+        set_avail_heads(&mut bus, &[0, 2]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(response_type(&mut bus, RESPONSE), protocol::RESP_OK_NODATA);
+        assert_eq!(
+            response_type(&mut bus, RESPONSE + 0x100),
+            protocol::RESP_OK_NODATA
+        );
+        assert_eq!(state.borrow().scanout_resource, None);
+        assert_eq!(
+            sink.records(),
+            alloc::vec![FlushRecord {
+                scanout: None,
+                rect,
+                resource_width: 2,
+                resource_height: 2,
+                crc32: reference_crc32(&[0, 0, 0, 0]),
+            }]
+        );
+    }
+
+    #[test]
+    fn gpu_flush_rejects_unknown_short_and_out_of_bounds_requests_without_sink_event() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let unknown = flush_request(
+            99,
+            Rect {
+                x: 0,
+                y: 0,
+                width: 1,
+                height: 1,
+            },
+        );
+        let outside = flush_request(
+            1,
+            Rect {
+                x: 2,
+                y: 0,
+                width: 1,
+                height: 1,
+            },
+        );
+        let overflow = flush_request(
+            1,
+            Rect {
+                x: u32::MAX,
+                y: u32::MAX,
+                width: 1,
+                height: 1,
+            },
+        );
+        let short = flush_request(
+            1,
+            Rect {
+                x: 0,
+                y: 0,
+                width: 1,
+                height: 1,
+            },
+        );
+        write_bytes(&mut bus, REQUEST, &unknown);
+        write_bytes(&mut bus, REQUEST + 0x100, &outside);
+        write_bytes(&mut bus, REQUEST + 0x200, &overflow);
+        write_bytes(&mut bus, REQUEST + 0x300, &short);
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, RESOURCE_FLUSH_SIZE as u32, 1, 1),
+                (RESPONSE, 24, 2, 0),
+                (REQUEST + 0x100, RESOURCE_FLUSH_SIZE as u32, 1, 3),
+                (RESPONSE + 0x100, 24, 2, 0),
+                (REQUEST + 0x200, RESOURCE_FLUSH_SIZE as u32, 1, 5),
+                (RESPONSE + 0x200, 24, 2, 0),
+                (REQUEST + 0x300, (RESOURCE_FLUSH_SIZE - 1) as u32, 1, 7),
+                (RESPONSE + 0x300, 24, 2, 0),
+            ],
+        );
+        let sink = TestSink::new();
+        {
+            let mut state_ref = state.borrow_mut();
+            state_ref
+                .resources
+                .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 2, 2)
+                .unwrap();
+            state_ref.frame_sink = Box::new(sink.clone());
+        }
+        set_avail_heads(&mut bus, &[0, 2, 4, 6]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(
+            response_type(&mut bus, RESPONSE),
+            protocol::RESP_ERR_INVALID_RESOURCE_ID
+        );
+        for offset in [0x100, 0x200, 0x300] {
+            assert_eq!(
+                response_type(&mut bus, RESPONSE + offset),
+                protocol::RESP_ERR_INVALID_PARAMETER
+            );
+        }
+        assert_eq!(sink.len(), 0);
+    }
+
+    #[test]
+    fn gpu_flush_after_unref_rejects_old_resource_without_sink_event() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let unref = protocol::ResourceUnref {
+            header: CtrlHeader {
+                ty: protocol::CMD_RESOURCE_UNREF,
+                ..CtrlHeader::default()
+            },
+            resource_id: 1,
+            padding: 0,
+        }
+        .to_bytes();
+        let flush = flush_request(
+            1,
+            Rect {
+                x: 0,
+                y: 0,
+                width: 1,
+                height: 1,
+            },
+        );
+        write_bytes(&mut bus, REQUEST, &unref);
+        write_bytes(&mut bus, REQUEST + 0x100, &flush);
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, protocol::RESOURCE_UNREF_SIZE as u32, 1, 1),
+                (RESPONSE, 24, 2, 0),
+                (REQUEST + 0x100, RESOURCE_FLUSH_SIZE as u32, 1, 3),
+                (RESPONSE + 0x100, 24, 2, 0),
+            ],
+        );
+        let sink = TestSink::new();
+        {
+            let mut state_ref = state.borrow_mut();
+            state_ref
+                .resources
+                .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 2, 2)
+                .unwrap();
+            state_ref.scanout_resource = Some(1);
+            state_ref.frame_sink = Box::new(sink.clone());
+        }
+        set_avail_heads(&mut bus, &[0, 2]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(response_type(&mut bus, RESPONSE), protocol::RESP_OK_NODATA);
+        assert_eq!(
+            response_type(&mut bus, RESPONSE + 0x100),
+            protocol::RESP_ERR_INVALID_RESOURCE_ID
+        );
+        assert_eq!(state.borrow().scanout_resource, None);
+        assert_eq!(sink.len(), 0);
+    }
+
+    #[test]
+    fn gpu_flush_golden_five_patterns_match_independent_reference() {
+        const WIDTH: u32 = 7;
+        const HEIGHT: u32 = 5;
+        let full_rect = Rect {
+            x: 0,
+            y: 0,
+            width: WIDTH,
+            height: HEIGHT,
+        };
+
+        for (index, &damage) in GOLDEN_RECTS.iter().enumerate() {
+            let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+            let source_addr = DRAM_BASE + 0x60_000;
+            let pattern = golden_pattern(index, WIDTH, HEIGHT);
+            let source: alloc::vec::Vec<u8> = pattern
+                .iter()
+                .flat_map(|pixel| pixel.to_le_bytes())
+                .collect();
+            bus.ram_mut().write_slice(source_addr, &source).unwrap();
+
+            let lengths = GOLDEN_BACKING_LENGTHS[index];
+            let mut entries = alloc::vec::Vec::new();
+            let mut source_offset = 0usize;
+            for &length in lengths {
+                entries.push(protocol::ResourceMemEntry {
+                    addr: source_addr + source_offset as u64,
+                    length,
+                    padding: 0,
+                });
+                source_offset += length as usize;
+            }
+            assert_eq!(source_offset, source.len(), "pattern {index} backing");
+
+            let create = protocol::ResourceCreate2d {
+                header: CtrlHeader {
+                    ty: protocol::CMD_RESOURCE_CREATE_2D,
+                    ..CtrlHeader::default()
+                },
+                resource_id: 1,
+                format: protocol::FORMAT_B8G8R8A8_UNORM,
+                width: WIDTH,
+                height: HEIGHT,
+            }
+            .to_bytes()
+            .to_vec();
+            let mut attach = protocol::ResourceAttachBacking {
+                header: CtrlHeader {
+                    ty: protocol::CMD_RESOURCE_ATTACH_BACKING,
+                    ..CtrlHeader::default()
+                },
+                resource_id: 1,
+                nents: entries.len() as u32,
+            }
+            .to_bytes()
+            .to_vec();
+            for entry in entries {
+                attach.extend_from_slice(&entry.to_bytes());
+            }
+            let scanout = scanout_request(1, 0, full_rect).to_vec();
+            let transfer = TransferToHost2d {
+                header: CtrlHeader {
+                    ty: CMD_TRANSFER_TO_HOST_2D,
+                    ..CtrlHeader::default()
+                },
+                rect: damage,
+                offset: 0,
+                resource_id: 1,
+                padding: 0,
+            }
+            .to_bytes()
+            .to_vec();
+            let flush = flush_request(1, damage).to_vec();
+            let requests = alloc::vec![create, attach, scanout, transfer, flush];
+
+            let mut descriptors = alloc::vec::Vec::new();
+            for (command, request) in requests.iter().enumerate() {
+                let offset = command as u64 * 0x200;
+                let request_addr = REQUEST + offset;
+                let response_addr = RESPONSE + offset;
+                write_bytes(&mut bus, request_addr, request);
+                descriptors.push((
+                    request_addr,
+                    request.len() as u32,
+                    1,
+                    (command * 2 + 1) as u16,
+                ));
+                descriptors.push((response_addr, 24, 2, 0));
+            }
+            let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
+            let sink = TestSink::new();
+            state.borrow_mut().frame_sink = Box::new(sink.clone());
+            set_avail_heads(&mut bus, &[0, 2, 4, 6, 8]);
+            slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+            service(&slot, &mut vq, &state, &mut bus);
+
+            for command in 0..requests.len() {
+                assert_eq!(
+                    response_type(&mut bus, RESPONSE + command as u64 * 0x200),
+                    protocol::RESP_OK_NODATA,
+                    "pattern {index} command {command}"
+                );
+            }
+            assert_eq!(state.borrow().scanout_resource, Some(1));
+
+            let mut expected = alloc::vec![0u32; pattern.len()];
+            for row in damage.y..damage.y + damage.height {
+                for column in damage.x..damage.x + damage.width {
+                    let pixel = (row * WIDTH + column) as usize;
+                    expected[pixel] = pattern[pixel];
+                }
+            }
+            assert_eq!(
+                reference_crc32(&expected),
+                GOLDEN_CRC32[index],
+                "reference fixture {index}"
+            );
+            let mut mutated = expected.clone();
+            mutated[(damage.y * WIDTH + damage.x) as usize] ^= 1;
+            assert_ne!(
+                reference_crc32(&mutated),
+                GOLDEN_CRC32[index],
+                "mutated fixture {index} must fail"
+            );
+            assert_eq!(
+                sink.records(),
+                alloc::vec![FlushRecord {
+                    scanout: Some(0),
+                    rect: damage,
+                    resource_width: WIDTH,
+                    resource_height: HEIGHT,
+                    crc32: GOLDEN_CRC32[index],
+                }],
+                "sink record {index}"
+            );
+
+            // Guest backing is not the sink's pixel view: mutating the source after TRANSFER and
+            // FLUSH cannot alter either the host shadow or the already-owned record.
+            let original = bus.load8(source_addr).unwrap();
+            bus.store8(source_addr, original ^ 0xff).unwrap();
+            assert_eq!(sink.records()[0].crc32, GOLDEN_CRC32[index]);
+            assert_eq!(
+                state
+                    .borrow()
+                    .resources
+                    .get(1)
+                    .unwrap()
+                    .host_pixels
+                    .as_ref(),
+                expected.as_slice()
+            );
+        }
     }
 }
