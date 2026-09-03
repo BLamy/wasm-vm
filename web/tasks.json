@@ -16836,7 +16836,7 @@
       "epicKey": "5",
       "title": "virtio-input injection and frame-integrity buffering",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T10b"
       ],
@@ -16847,13 +16847,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Framing API — HELD.** Added non-blocking `inject_event(type, code, value)` staging and\n  `sync()` publication with one `EV_SYN/SYN_REPORT` terminator per complete frame. The eventq\n  service advances a frame only after each exact eight-byte event is written.\n- **Bounded buffering — HELD.** Added the default 256-event pending budget, complete-frame\n  admission, whole-frame drop counters, and bounded staging for oversized frames. A 1000-frame\n  native stress fixture retains 128 complete two-event frames and reports 872 dropped frames / 1744\n  dropped events exactly.\n- **Key transition integrity — HELD.** Dropping an unstarted key-down frame suppresses and removes\n  its queued matching key-up frame; already-started frames and releases for keys seen by the guest\n  are protected from dropping. Native three-buffer delivery proves key-down, key-up, and\n  SYN_REPORT remain an intact stream.\n- **Cross-target coverage — HELD.** The wasm32 runner drives the real virtio-mmio eventq with\n  `inject_event` + `sync` and compares the same eight-byte stream as native.\n\nImplementation commit: `85f5c4e`.\n\nEvidence: `evidence/e5-t10c/input-injection-2026-09-03.json` (SHA-256 to be recorded by the\nverifier).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ndev::virtio::input` (11 passed); `cargo test -p wasm-vm-core --lib --quiet` (230 passed);\n`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core\n--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed);\n`wasm-pack test --node crates/wasm --test input_config` (1 passed); and `wasm-pack test --node\ncrates/wasm --test input_queues` (2 passed). The existing wasm-pack warning in\n`crates/wasm/tests/hart_ctrl.rs` is unrelated.\n\nThe recorded run demonstrates atomic SYN_REPORT framing, bounded non-blocking retention and exact\nwhole-frame accounting under 1000 frames, paired key-transition drops, three-buffer eventq\ndelivery, and native/wasm32 stream parity. Independent-machine, WebKit, and host-layer rr runs\nwere excluded per the user's direction and the repository's current evidence policy.",
       "adversarial": "Force the drop path with a three-buffer eventq, alternate key-down/up bursts, drain after each\nwrap, and machine-check the stream invariant that every key frame terminates in SYN_REPORT and\nno delivered key-down lacks its eventual up or a whole-frame drop. Vary the buffer budget and\nconfirm the VM loop remains non-blocking.",
       "file": "tasks/epic-5-the-window/E5-T10c-virtio-input-injection.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t10c): start input injection"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T11",

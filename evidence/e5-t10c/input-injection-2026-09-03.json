@@ -1,0 +1,61 @@
+{
+  "schema": "e5-t10c-virtio-input-injection-v1",
+  "task": "E5-T10c",
+  "status": "pass",
+  "implementation_commit": "85f5c4e",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib dev::virtio::input",
+    "acceptance_result": "11 passed, 0 failed",
+    "coverage": [
+      "inject_event stages host events and sync appends exactly one EV_SYN/SYN_REPORT terminator before atomic frame admission.",
+      "1000 one-event frames retain exactly 256 pending events as 128 complete frames; 872 complete frames and 1744 events are accounted as dropped.",
+      "When a key-down frame is dropped under a four-event budget, its separate pending key-up frame is removed too, so no stray release survives the drop.",
+      "A three-buffer eventq receives a key-down, key-up, and SYN_REPORT as three complete eight-byte events with exact used lengths and no held key state.",
+      "The earlier split event/status queue, short-buffer recovery, malformed queue-shape, hostile used-index, and callback tests remain green."
+    ],
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib --quiet",
+      "result": "230 passed, 0 failed"
+    },
+    "virtio_regression": {
+      "command": "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet",
+      "result": "22 passed, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    },
+    "format": {
+      "commands": [
+        "cargo fmt --all -- --check",
+        "git diff --check"
+      ],
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    },
+    "config_runner": {
+      "command": "wasm-pack test --node crates/wasm --test input_config",
+      "result": "1 passed, 0 failed"
+    },
+    "queue_runner": {
+      "command": "wasm-pack test --node crates/wasm --test input_queues",
+      "result": "2 passed, 0 failed",
+      "coverage": "The wasm32 runner verifies event bytes and drives the real virtio-mmio/eventq path with inject_event + sync, including key-down, key-up, and SYN_REPORT framing."
+    }
+  },
+  "claim": "At commit 85f5c4e, VirtioInput exposes non-blocking inject_event(type, code, value) and sync() framing over the T10b eventq transport, retains at most the default 256 pending events as complete SYN_REPORT-terminated frames, counts whole-frame drops accurately, and drops both sides of a queued key transition together while preserving native/wasm32 event streams.",
+  "scope_notes": [
+    "Machine-level input device registration and keyboard/pointer instances remain separate tasks; this slice proves the shared chassis API and queue recovery boundary.",
+    "No independent-machine, WebKit, or host-layer rr run was used, per the user's direction and the repository's current evidence policy."
+  ]
+}

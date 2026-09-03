@@ -3,7 +3,7 @@ id: E5-T10c
 epic: 5
 title: virtio-input injection and frame-integrity buffering
 priority: 510.3
-status: in-progress
+status: implemented
 depends_on: [E5-T10b]
 estimate: S
 risk: high
@@ -41,4 +41,38 @@ confirm the VM loop remains non-blocking.
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — implemented
+
+- **Framing API — HELD.** Added non-blocking `inject_event(type, code, value)` staging and
+  `sync()` publication with one `EV_SYN/SYN_REPORT` terminator per complete frame. The eventq
+  service advances a frame only after each exact eight-byte event is written.
+- **Bounded buffering — HELD.** Added the default 256-event pending budget, complete-frame
+  admission, whole-frame drop counters, and bounded staging for oversized frames. A 1000-frame
+  native stress fixture retains 128 complete two-event frames and reports 872 dropped frames / 1744
+  dropped events exactly.
+- **Key transition integrity — HELD.** Dropping an unstarted key-down frame suppresses and removes
+  its queued matching key-up frame; already-started frames and releases for keys seen by the guest
+  are protected from dropping. Native three-buffer delivery proves key-down, key-up, and
+  SYN_REPORT remain an intact stream.
+- **Cross-target coverage — HELD.** The wasm32 runner drives the real virtio-mmio eventq with
+  `inject_event` + `sync` and compares the same eight-byte stream as native.
+
+Implementation commit: `85f5c4e`.
+
+Evidence: `evidence/e5-t10c/input-injection-2026-09-03.json` (SHA-256 to be recorded by the
+verifier).
+
+Commands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib
+dev::virtio::input` (11 passed); `cargo test -p wasm-vm-core --lib --quiet` (230 passed);
+`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core
+--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target
+wasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core
+--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed);
+`wasm-pack test --node crates/wasm --test input_config` (1 passed); and `wasm-pack test --node
+crates/wasm --test input_queues` (2 passed). The existing wasm-pack warning in
+`crates/wasm/tests/hart_ctrl.rs` is unrelated.
+
+The recorded run demonstrates atomic SYN_REPORT framing, bounded non-blocking retention and exact
+whole-frame accounting under 1000 frames, paired key-transition drops, three-buffer eventq
+delivery, and native/wasm32 stream parity. Independent-machine, WebKit, and host-layer rr runs
+were excluded per the user's direction and the repository's current evidence policy.
