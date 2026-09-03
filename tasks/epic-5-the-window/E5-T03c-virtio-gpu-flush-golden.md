@@ -3,7 +3,7 @@ id: E5-T03c
 epic: 5
 title: virtio-gpu resource flush and golden presentation integration
 priority: 503.3
-status: pending
+status: in-progress
 depends_on: [E5-T03b]
 estimate: S
 risk: high

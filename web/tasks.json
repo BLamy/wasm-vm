@@ -16263,8 +16263,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t03b): record transfer proof",
             "chore(e5-t03b): start transfer slice",
             "chore(e5-t03): decompose scanout pipeline"
           ]
@@ -16272,7 +16273,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T03c",
@@ -16280,7 +16281,7 @@
       "epicKey": "5",
       "title": "virtio-gpu resource flush and golden presentation integration",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T03b"
       ],
