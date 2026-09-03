@@ -3,7 +3,7 @@ id: E5-T13a
 epic: 5
 title: held-key ledger and release-all safety
 priority: 513.1
-status: pending
+status: in-progress
 depends_on: [E5-T12c]
 estimate: S
 risk: medium

@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T13a** — held-key ledger and release-all safety
 1. **E5-T14** — Pointer devices — absolute tablet, relative mouse with Pointer Lock, wheel **[DECOMPOSE BEFORE START]**
 1. **E5-T19** — virtio-snd device — control plane and PCM playback stream machine **[DECOMPOSE BEFORE START]**
 1. **E5-T23** — virtio-console agent channel and static Rust guest agent **[DECOMPOSE BEFORE START]**
@@ -363,7 +362,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `512.2` [E5-T12b](epic-5-the-window/E5-T12b-dom-keyboard-bridge.md) — DOM keyboard event normalization and evdev bridge *(deps: E5-T12a)*
 - [x] `512.3` [E5-T12c](epic-5-the-window/E5-T12c-capture-policy-e2e.md) — keyboard capture policy and browser getty proof *(deps: E5-T12b)*
 - [-] `513` [E5-T13](epic-5-the-window/E5-T13-keyboard-hardening-focus-ime.md) — Keyboard hardening — focus loss, stuck modifiers, lock-key reconciliation *(deps: E5-T12c)*
-- [ ] `513.1` [E5-T13a](epic-5-the-window/E5-T13a-held-key-release-safety.md) — held-key ledger and release-all safety *(deps: E5-T12c)*
+- [~] `513.1` [E5-T13a](epic-5-the-window/E5-T13a-held-key-release-safety.md) — held-key ledger and release-all safety *(deps: E5-T12c)*
 - [ ] `513.2` [E5-T13b](epic-5-the-window/E5-T13b-modifier-lock-reconciliation.md) — modifier and lock-key reconciliation *(deps: E5-T13a)*
 - [ ] `513.3` [E5-T13c](epic-5-the-window/E5-T13c-focus-hardening-e2e.md) — browser focus hardening and keyboard recovery proof *(deps: E5-T13b)*
 - [ ] `514` [E5-T14](epic-5-the-window/E5-T14-virtio-input-pointer.md) — Pointer devices — absolute tablet, relative mouse with Pointer Lock, wheel *(deps: E5-T10c)*

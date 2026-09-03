@@ -17288,7 +17288,7 @@
       "epicKey": "5",
       "title": "held-key ledger and release-all safety",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T12c"
       ],
