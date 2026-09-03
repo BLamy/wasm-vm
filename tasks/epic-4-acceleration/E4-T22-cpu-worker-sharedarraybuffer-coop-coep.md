@@ -3,11 +3,18 @@ id: E4-T22
 epic: 4
 title: CPU execution on a dedicated Web Worker with SharedArrayBuffer guest RAM
 priority: 422
-status: pending
+status: cancelled
+decomposed_into: [E4-T22a, E4-T22b, E4-T22c, E4-T22d, E4-T22e, E4-T22f, E4-T22g]
 depends_on: [E4-T11]
 estimate: L
+risk: high
 capstone: false
 ---
+
+> **DECOMPOSED 2026-09-03.** This L-sized planning container is cancelled and replaced by seven
+> ordered S tasks. The children own the shared build, isolation/fallback policy, signalling
+> protocol, worker bootstrap, demo integration, live performance proof, and adversarial hardening
+> boundaries. The final child is the end-to-end threaded-worker sign-off.
 
 ## Goal
 The CPU loop (interpreter + JIT) runs on a dedicated Web Worker against a shared wasm
@@ -69,9 +76,8 @@ resume without guest time explosion (full fix is E4-T24; here, no crash/deadlock
 (5) kill the worker via DevTools and confirm the page surfaces a fatal-but-clean error.
 
 ## Status
-partially-verified (2026-08-06) — all headlessly-verifiable gates green; the live browser
-worker-boot legs are tracked as verification debt below (they OS-reap on this macOS host; run on the
-Linux `dev` box).
+cancelled — the landed implementation and historical verification notes below are retained as
+context; the decomposed child tasks are authoritative for remaining work and proof.
 
 ## Deliverables landed (this pass)
 - Shared-memory build: `tools/build-web-shared.sh` — nightly + `-Z build-std`,
@@ -93,6 +99,24 @@ Linux `dev` box).
   `web/tests/e4-t22-cpu-worker.spec.js` and `web/tests/e4-t22-fallback-no-headers.spec.js`.
 
 ## Verification log
+
+### 2026-09-03 — coordinator — decomposed
+
+Split the L-sized planning container into one-boundary S tasks:
+
+- **E4-T22a** — reproducible shared-memory and single-threaded wasm build variants.
+- **E4-T22b** — COOP/COEP detection, service-worker/static-host fallback, and fail-closed backend
+  selection.
+- **E4-T22c** — shared IRQ/WFI and interim MMIO control-block protocol with atomic ordering.
+- **E4-T22d** — raw CPU-worker bootstrap, imported shared memory, handshake, and sliced dispatch.
+- **E4-T22e** — demo wiring, controller parity, and interpreter/JIT selection across the threaded
+  and fallback paths.
+- **E4-T22f** — live browser Alpine worker boot, rAF/input responsiveness, and WFI wake budgets.
+- **E4-T22g** — headerless fallback plus wake-storm, memory-ordering, lifecycle, and fatal-error
+  adversarial replay; final end-to-end sign-off.
+
+The original acceptance criteria and historical evidence remain above for traceability. No child is
+activated by this decomposition commit.
 - 2026-08-06 — SHARED core builds clean: `bash tools/build-web-shared.sh` →
   `- memory[0] pages: initial=19 max=32768 shared <- env.memory` (wasm-objdump on the built
   `wasm_vm_wasm.wasm`). Nightly + build-std, `+atomics,+bulk-memory,+mutable-globals`.
