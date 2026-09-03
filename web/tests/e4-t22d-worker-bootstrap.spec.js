@@ -4,7 +4,7 @@
 import { test, expect } from "@playwright/test";
 
 const SEQUENCE_MODULE =
-  "AGFzbQEAAAABBQFgAAF/AhABA2VudgZtZW1vcnkCAwECAwIBAAYGAX8BQQALBw0BCXJ1bl9zbGljZQAACisBKQAjAEEBaiQAIwBBAUYEQEEAQSI2AgBBAA8LIwBBAkYEQEHoBw8LQX8L";
+  "AGFzbQEAAAABBQFgAAF/AhABA2VudgZtZW1vcnkCAwECAwIBAAYGAX8BQQALBw0BCXJ1bl9zbGljZQAACjcBNQAjAEEBaiQAIwBBAUYEQEEAQSI2AgBBAA8LIwBBAkYEQEHoBw8LIwBBA0YEQEHoBw8LQX8L";
 const NO_DISPATCH_MODULE = "AGFzbQEAAAACEAEDZW52Bm1lbW9yeQIDAQI=";
 const RUNNING_MODULE =
   "AGFzbQEAAAABBQFgAAF/AhABA2VudgZtZW1vcnkCAwECAwIBAAcNAQlydW5fc2xpY2UAAAoGAQQAQQAL";
@@ -68,6 +68,12 @@ test.describe("E4-T22d imported-memory CPU worker bootstrap", () => {
       }
       if (Atomics.load(cells, 0) !== 2) throw new Error("worker did not enter WFI parked state");
       const markerBeforeWake = new Uint32Array(ready.memoryBuffer)[0];
+      const spuriousWakeCount = Atomics.notify(cells, 1, 1);
+      const reparkDeadline = performance.now() + 5_000;
+      while (Atomics.load(cells, 0) !== 2 && performance.now() < reparkDeadline) {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
+      const reparkedAfterSpuriousWake = Atomics.load(cells, 0) === 2;
       Atomics.add(cells, 1, 1);
       const wakeCount = Atomics.notify(cells, 1);
       const halted = await waitFor("halted");
@@ -77,6 +83,8 @@ test.describe("E4-T22d imported-memory CPU worker bootstrap", () => {
         ready,
         halted,
         markerBeforeWake,
+        spuriousWakeCount,
+        reparkedAfterSpuriousWake,
         wakeCount,
         state,
         eventTypes: events.map((event) => event.type),
@@ -170,12 +178,35 @@ test.describe("E4-T22d imported-memory CPU worker bootstrap", () => {
         controlSab: nonShareableControl,
         bootParams: {},
       });
-      const state = Atomics.load(new Int32Array(nonShareableControl), 0);
+      const nonShareableState = Atomics.load(new Int32Array(nonShareableControl), 0);
       nonShareableWorker.terminate();
-      return { malformed: malformed.type, nonShareable: nonShareable.type, state };
+      const invalidLimitsWorker = new Worker("/cpu-worker.js", { type: "module" });
+      const invalidLimitsControl = new SharedArrayBuffer(64);
+      const invalidLimits = await waitForFatal(invalidLimitsWorker, {
+        type: "boot",
+        wasmModule,
+        sharedMemory: { initial: 2, maximum: 1, shared: true },
+        controlSab: invalidLimitsControl,
+        bootParams: {},
+      });
+      const invalidLimitsState = Atomics.load(new Int32Array(invalidLimitsControl), 0);
+      invalidLimitsWorker.terminate();
+      return {
+        malformed: malformed.type,
+        nonShareable: nonShareable.type,
+        nonShareableState,
+        invalidLimits: invalidLimits.type,
+        invalidLimitsState,
+      };
     }, SEQUENCE_MODULE);
 
-    expect(result).toEqual({ malformed: "fatal", nonShareable: "fatal", state: 3 });
+    expect(result).toEqual({
+      malformed: "fatal",
+      nonShareable: "fatal",
+      nonShareableState: 3,
+      invalidLimits: "fatal",
+      invalidLimitsState: 3,
+    });
     expect(errors).toEqual([]);
   });
 

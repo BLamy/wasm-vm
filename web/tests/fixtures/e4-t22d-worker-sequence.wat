@@ -35,6 +35,16 @@
       )
     )
 
+    (global.get $phase)
+    (i32.const 3)
+    (i32.eq)
+    (if
+      (then
+        (i32.const 1000)
+        (return)
+      )
+    )
+
     (i32.const -1)
   )
 )
