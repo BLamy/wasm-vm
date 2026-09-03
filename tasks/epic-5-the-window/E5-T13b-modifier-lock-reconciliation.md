@@ -3,7 +3,7 @@ id: E5-T13b
 epic: 5
 title: modifier and lock-key reconciliation
 priority: 513.2
-status: pending
+status: in-progress
 depends_on: [E5-T13a]
 estimate: S
 risk: medium

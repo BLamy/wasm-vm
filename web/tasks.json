@@ -17318,8 +17318,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t13a): verify held-key release safety",
             "chore(e5-t13a): record held-key proof",
             "chore(e5-t13a): start held-key safety"
           ]
@@ -17327,7 +17328,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T13b",
@@ -17335,7 +17336,7 @@
       "epicKey": "5",
       "title": "modifier and lock-key reconciliation",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T13a"
       ],
