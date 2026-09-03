@@ -3,7 +3,7 @@ id: E5-T14b
 epic: 5
 title: pointer mode state machine and coordinate/button routing
 priority: 514.2
-status: pending
+status: in-progress
 depends_on: [E5-T14a]
 estimate: S
 risk: medium
