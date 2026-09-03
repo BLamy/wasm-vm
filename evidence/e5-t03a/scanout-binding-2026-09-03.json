@@ -1,0 +1,57 @@
+{
+  "schema": "e5-t03a-virtio-gpu-scanout-binding-v1",
+  "task": "E5-T03a",
+  "status": "pass",
+  "implementation_commit": "c8ea5b0",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib gpu_scanout_binding",
+    "acceptance_result": "6 passed, 0 failed",
+    "coverage": [
+      "The little-endian SET_SCANOUT wire fixture round-trips the header, rectangle, scanout id, and resource id.",
+      "A valid control-queue request binds resource 1 to scanout 0; a split 16+32-byte readable request is decoded across descriptors.",
+      "Resource id 0 disables scanout 0, including when its ignored rectangle contains extreme coordinates.",
+      "Short requests return ERR_INVALID_PARAMETER without changing the binding or queue progress.",
+      "The bounded attack matrix rejects scanout id 1, scanout id u32::MAX, unknown resource id u32::MAX, and overflowing rectangle coordinates while preserving the prior binding.",
+      "The default NullSink is constructed for headless devices and the FrameSink trait is kept in the core crate without browser dependencies."
+    ],
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib",
+      "result": "205 passed, 0 failed"
+    },
+    "virtio_regression": {
+      "command": "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic",
+      "result": "22 passed, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    },
+    "format": {
+      "commands": [
+        "cargo fmt --all -- --check",
+        "git diff --check"
+      ],
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    },
+    "existing_gpu_runner": {
+      "command": "wasm-pack test --node crates/wasm --test gpu_protocol",
+      "result": "2 passed, 0 failed"
+    }
+  },
+  "claim": "At commit c8ea5b0, SET_SCANOUT binds only an existing resource to the single valid scanout after checked rectangle validation, resource id 0 safely disables it, rejected requests preserve the prior binding, and the core exposes a browser-independent FrameSink boundary with a headless NullSink.",
+  "scope_notes": [
+    "TRANSFER_TO_HOST_2D and RESOURCE_FLUSH behavior remain owned by E5-T03b and E5-T03c.",
+    "No independent-machine, WebKit, or host-layer rr run was used, per the user's direction and current repository evidence policy."
+  ]
+}

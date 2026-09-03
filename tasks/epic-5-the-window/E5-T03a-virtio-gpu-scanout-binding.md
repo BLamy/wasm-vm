@@ -3,7 +3,7 @@ id: E5-T03a
 epic: 5
 title: virtio-gpu scanout binding and FrameSink contract
 priority: 503.1
-status: in-progress
+status: verified
 depends_on: [E5-T02c]
 estimate: S
 risk: high
@@ -46,4 +46,45 @@ not panic or write outside its response descriptor.
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — implemented
+
+- **Scanout binding — HELD.** The control queue decodes a fixed little-endian SET_SCANOUT
+  request, validates the single scanout, live resource, and rectangle with widened arithmetic,
+  binds a valid resource, and treats resource id 0 as an explicit disable.
+- **Failure atomicity — HELD.** Short requests, invalid scanout ids, unknown resources, and
+  overflowing/out-of-bounds rectangles return bounded errors without changing an existing
+  binding. A split readable descriptor chain is covered.
+- **Presentation seam — HELD.** `FrameSink` is a browser-independent core trait and the
+  default `NullSink` keeps headless devices usable; transfer and flush remain in T03b/T03c.
+
+Implementation commit: `c8ea5b0`.
+
+Evidence: `evidence/e5-t03a/scanout-binding-2026-09-03.json` (SHA-256
+`8ada9397674e6096165f4377a4f2b46264c53d6476c9d7f15b1cab55251722d9`).
+
+Commands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib
+gpu_scanout_binding` (6 passed); `cargo test -p wasm-vm-core --lib` (205 passed); `cargo clippy
+-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features
+--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target
+wasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core
+--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and
+`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,
+and host-layer rr runs were excluded per the user's direction and current repository evidence
+policy.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Acceptance — HELD.** The focused recording proves valid binding, explicit disable, split
+  request decoding, exact little-endian wire layout, bounded short-request handling, and
+  prior-binding preservation for invalid scanout/resource/rectangle inputs.
+- **Coverage — HELD.** The changed protocol type, FrameSink/NullSink boundary, constructor
+  wiring, rectangle arithmetic, SET_SCANOUT handler, and response mapping are exercised by the
+  focused and full-core runs; the wasm core build and GPU protocol runner remain green.
+- **Adversarial matrix — HELD.** `num_scanouts`, `u32::MAX`, unknown resource id, and
+  extreme-coordinate rectangle attacks all return errors without mutating scanout state.
+- **Evidence integrity — HELD.** Evidence digest
+  `8ada9397674e6096165f4377a4f2b46264c53d6476c9d7f15b1cab55251722d9` matches the checked-in
+  artifact for implementation commit `c8ea5b0`.
+
+The user explicitly directed this slice to be marked verified. E5-T03b is now the next active
+eligible slice.

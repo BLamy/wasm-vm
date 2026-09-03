@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 204,
+    "verified": 205,
     "total": 368
   },
   "epics": [
@@ -16211,7 +16211,7 @@
       "epicKey": "5",
       "title": "virtio-gpu scanout binding and FrameSink contract",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T02c"
       ],
@@ -16222,21 +16222,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Scanout binding — HELD.** The control queue decodes a fixed little-endian SET_SCANOUT\n  request, validates the single scanout, live resource, and rectangle with widened arithmetic,\n  binds a valid resource, and treats resource id 0 as an explicit disable.\n- **Failure atomicity — HELD.** Short requests, invalid scanout ids, unknown resources, and\n  overflowing/out-of-bounds rectangles return bounded errors without changing an existing\n  binding. A split readable descriptor chain is covered.\n- **Presentation seam — HELD.** `FrameSink` is a browser-independent core trait and the\n  default `NullSink` keeps headless devices usable; transfer and flush remain in T03b/T03c.\n\nImplementation commit: `c8ea5b0`.\n\nEvidence: `evidence/e5-t03a/scanout-binding-2026-09-03.json` (SHA-256\n`8ada9397674e6096165f4377a4f2b46264c53d6476c9d7f15b1cab55251722d9`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_scanout_binding` (6 passed); `cargo test -p wasm-vm-core --lib` (205 passed); `cargo clippy\n-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features\n--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and\n`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,\nand host-layer rr runs were excluded per the user's direction and current repository evidence\npolicy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The focused recording proves valid binding, explicit disable, split\n  request decoding, exact little-endian wire layout, bounded short-request handling, and\n  prior-binding preservation for invalid scanout/resource/rectangle inputs.\n- **Coverage — HELD.** The changed protocol type, FrameSink/NullSink boundary, constructor\n  wiring, rectangle arithmetic, SET_SCANOUT handler, and response mapping are exercised by the\n  focused and full-core runs; the wasm core build and GPU protocol runner remain green.\n- **Adversarial matrix — HELD.** `num_scanouts`, `u32::MAX`, unknown resource id, and\n  extreme-coordinate rectangle attacks all return errors without mutating scanout state.\n- **Evidence integrity — HELD.** Evidence digest\n  `8ada9397674e6096165f4377a4f2b46264c53d6476c9d7f15b1cab55251722d9` matches the checked-in\n  artifact for implementation commit `c8ea5b0`.\n\nThe user explicitly directed this slice to be marked verified. E5-T03b is now the next active\neligible slice.",
       "adversarial": "Probe scanout ids at `num_scanouts - 1`, `num_scanouts`, and `u32::MAX`; use resource id 0,\nan unknown id, and a resource removed by `UNREF`; and test rectangles whose right or bottom\nedge overflows `u32`. Every rejected command must leave the prior binding unchanged and must\nnot panic or write outside its response descriptor.",
       "file": "tasks/epic-5-the-window/E5-T03a-virtio-gpu-scanout-binding.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t03a): start scanout binding",
             "chore(e5-t03): decompose scanout pipeline"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T03b",
