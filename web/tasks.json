@@ -14583,15 +14583,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e4-t22f): accept Alpine worker budgets",
             "tasks: start E4-T22f browser budgets"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T22g",
@@ -14599,7 +14600,7 @@
       "epicKey": "4",
       "title": "Threaded worker fallback and lifecycle adversarial hardening",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T22f"
       ],

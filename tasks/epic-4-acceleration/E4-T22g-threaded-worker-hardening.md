@@ -3,7 +3,7 @@ id: E4-T22g
 epic: 4
 title: Threaded worker fallback and lifecycle adversarial hardening
 priority: 422.7
-status: pending
+status: in-progress
 depends_on: [E4-T22f]
 estimate: S
 risk: high
