@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 152,
+    "verified": 153,
     "total": 343
   },
   "epics": [
@@ -8749,7 +8749,7 @@
       "epicKey": "3",
       "title": "Visible resume-versus-cold-boot decision path",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E3-T24a",
         "E3-T12e",
@@ -8762,26 +8762,34 @@
       "criteria": [
         {
           "text": "`make verify-E3-T24b` resumes a valid snapshot to a usable shell within five seconds and proves every invalid case cold-boots with the expected reason.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Reset disk cannot reuse a pre-reset snapshot or overlay generation.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Progress events identify the selected path without double-starting either machine.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified\n\nUser directed closure; independent machines and WebKit are out of scope. The existing pure\n`decideBootPath` state machine selects exactly one of user-snapshot, coherent boot-snapshot, or\ncold-boot; the loader applies the coherence guard before restoring; and the visible boot surface\nalready reports restored versus normal boot progress with typed stage/error state. Existing coverage\nin `web/tests/boot-path.test.mjs`, `web/tests/e3-t24a-progress.spec.js`, and\n`web/tests/e3-t24a-boot-progress.spec.js` carries forward the valid, invalid, monotonic-progress,\nand single-flight behavior.\n\nCommands: `cargo fmt --all --check`; `node --test web/tests/boot-path.test.mjs`; `node --check\nweb/main.js`; `git diff --check`. No independent-machine or WebKit run was performed by direction.",
       "adversarial": "Race reset against restore, swap validation results, corrupt after validation but before read, and\ntrigger two navigations. Any stale resume, false path label, double machine, or silent fallback\nrefutes.",
       "file": "tasks/epic-3-civilization/E3-T24b-resume-cold-boot-selection.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 1,
+          "labels": [
+            "tasks: start visible resume decision proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 1
     },
     {
       "id": "E3-T24c",
