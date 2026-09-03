@@ -31,9 +31,9 @@ closes that ABI boundary without pulling DOM or device ownership into the worker
 
 ## Acceptance criteria
 
-- `node --test web/tests/e4-t22-worker-bootstrap.test.mjs` (added in this task) passes from a clean
-  checkout, covering boot handshake, shared-memory identity, one guest slice, WFI wake, halt, and
-  worker error propagation.
+- `make web-test-cpu-worker` passes from a clean checkout, including
+  `web/tests/e4-t22d-worker-bootstrap.spec.js` in local Chromium. The spec covers boot handshake,
+  shared-memory identity, one guest slice, WFI wake, halt, and worker error propagation.
 - No DOM, xterm, IndexedDB, or main-thread-only API is reachable from the worker dispatch path.
 - A missing dispatch export and a killed worker produce a bounded fatal result rather than a hung
   promise or a half-ready controller.

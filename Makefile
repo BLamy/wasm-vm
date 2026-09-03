@@ -4,7 +4,8 @@
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
-        bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser
+        bench-guest-build bench-coremark bench-dhrystone bench-gcc-build bench-gcc bench-runtime-workloads bench-runtime-compute bench-runtime-workloads-browser bench-runtime-compute-browser \
+        web-test-cpu-worker
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
@@ -37,12 +38,14 @@ wasm:
 wasm-shared:
 	bash tools/build-web-shared.sh
 
-# E4-T22: node unit tests for the CPU-backend isolation probe + shared control-block signalling
-# (headless; the browser worker-boot leg is Playwright web/tests/e4-t22-*.spec.js, run on dev).
+# E4-T22: node unit tests for the CPU-backend isolation probe + shared control-block signalling,
+# worker-side placement audit, and the local Chromium worker-boot leg.
 web-test-cpu-worker:
 	node --test web/tests/cpu-isolation.test.mjs web/tests/cpu-control-block.test.mjs web/tests/device-proxy.test.mjs
 	# E4-T23 adversarial #5: worker-side device code must not reach a main-thread-only API.
 	node tools/worker-device-audit.mjs
+	cd web && PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8139 PLAYWRIGHT_REUSE_SERVER=0 \
+		./node_modules/.bin/playwright test tests/e4-t22d-worker-bootstrap.spec.js --workers=1
 
 # Explicit {std,trace} powerset natively + the two no_std combos on wasm32 (E0-T15),
 # mirroring ci.yml's `features` + `features-wasm` jobs.

@@ -14509,10 +14509,18 @@
       "verificationLog": "",
       "adversarial": "Send a malformed boot message, a non-shareable memory, a duplicate boot, a spurious wake, and a\nworker termination during a slice. Verify that the host observes one terminal state and never\ncontinues using a stale instance.",
       "file": "tasks/epic-4-acceleration/E4-T22d-cpu-worker-bootstrap.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: start E4-T22d worker bootstrap"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E4-T22e",
