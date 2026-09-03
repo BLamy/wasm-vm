@@ -3,7 +3,7 @@ id: E5-T12a
 epic: 5
 title: generated physical keyboard code table and coverage oracle
 priority: 512.1
-status: implemented
+status: verified
 depends_on: [E5-T11c]
 estimate: S
 risk: medium
@@ -61,3 +61,30 @@ with the named diagnostic. Output SHA-256 is
 Evidence: `evidence/e5-t12a/keymap-2026-09-03.json`, including the fixture/source/generated
 digests and exact edge-code assertions. This slice is a non-wired table/tooling layer; DOM event
 normalization and browser capture proof remain owned by E5-T12b and E5-T12c.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Coverage — HELD.** Predicted every code in the checked-in W3C fixture would have exactly one
+  source row; the oracle observes 119 fixture codes and 119 source rows, with no missing or extra
+  identities. Evidence: `evidence/e5-t12a/keymap-2026-09-03.json`, fixture SHA-256
+  `6a17d7494bfc7c27f181294dc1893176236531ad5320fe9e75e4d93e40cd243b` and source SHA-256
+  `73312315ec4741b7914cf5a21ef638938684f5bc8fb23076bc702686c7fdcc73`.
+- **Physical evdev identity — HELD.** Predicted the table would preserve the named letter,
+  punctuation, modifier, function, navigation, and numpad identities; direct lookups observe
+  `KeyA=30`, `KeyY=21`, `Backquote=41`, `IntlBackslash=86`, `AltRight=100`, `MetaLeft=125`,
+  `NumpadEnter=96`, `ContextMenu=127`, and `F24=194`. The generated module digests match byte-for-
+  byte for `keymap.ts` and `keymap.js` (`e6a3e893fadd7d288b6eabd4d59c01930498cee7923a682e9ae5d614ec939ada`).
+- **Adversarial oracle — HELD.** Predicted a deleted `ContextMenu` row, appended duplicate `KeyA`
+  identity, and duplicate evdev code 21 would each be rejected with the affected identity named;
+  the scratch-copy run rejects all three. The permanent test also rejects an undocumented unmapped
+  row. Evidence output SHA-256:
+  `1c5f34216a3bd40334cb5a2bcaf538eb732be78ab8c297740377bd08ef7a4d12`.
+- **Diff coverage and integrity — HELD.** The verifier reran the generator check and five-test
+  suite at the post-evidence head; every changed source, generator, generated projection, fixture,
+  and test path is read or executed, and `git diff --check` passes. This non-wired table slice has
+  no browser or deployment claim, so no WebKit/independent-machine run is applicable.
+- **SUITE — HELD.** The checked-in JSON source, W3C fixture, generator, generated projections, and
+  deterministic Node test are the permanent proof artifacts.
+
+Commands: `node tools/gen-keymap.mjs --check`; `node --test web/tests/keymap.test.mjs`;
+`npm run test:keymap --prefix web`; `git diff --check`.
