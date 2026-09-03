@@ -3,7 +3,7 @@ id: E5-T10c
 epic: 5
 title: virtio-input injection and frame-integrity buffering
 priority: 510.3
-status: pending
+status: in-progress
 depends_on: [E5-T10b]
 estimate: S
 risk: high

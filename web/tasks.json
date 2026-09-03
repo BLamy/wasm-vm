@@ -16818,8 +16818,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t10b): mark input queues verified",
             "verify(e5-t10b): record input queue evidence",
             "chore(e5-t10b): start input queue transport"
           ]
@@ -16827,7 +16828,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T10c",
@@ -16835,7 +16836,7 @@
       "epicKey": "5",
       "title": "virtio-input injection and frame-integrity buffering",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T10b"
       ],

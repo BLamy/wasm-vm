@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T10c** — virtio-input injection and frame-integrity buffering
 1. **E5-T19** — virtio-snd device — control plane and PCM playback stream machine **[DECOMPOSE BEFORE START]**
 1. **E5-T23** — virtio-console agent channel and static Rust guest agent **[DECOMPOSE BEFORE START]**
 
@@ -352,7 +351,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `510` [E5-T10](epic-5-the-window/E5-T10-virtio-input-device-core.md) — virtio-input device core — config space, eventq/statusq, event injection API *(deps: E5-T05c)*
 - [x] `510.1` [E5-T10a](epic-5-the-window/E5-T10a-virtio-input-config.md) — virtio-input config protocol and declarative device spec *(deps: E5-T05c)*
 - [x] `510.2` [E5-T10b](epic-5-the-window/E5-T10b-virtio-input-queues.md) — virtio-input eventq and statusq transport *(deps: E5-T10a)*
-- [ ] `510.3` [E5-T10c](epic-5-the-window/E5-T10c-virtio-input-injection.md) — virtio-input injection and frame-integrity buffering *(deps: E5-T10b)*
+- [~] `510.3` [E5-T10c](epic-5-the-window/E5-T10c-virtio-input-injection.md) — virtio-input injection and frame-integrity buffering *(deps: E5-T10b)*
 - [ ] `511` [E5-T11](epic-5-the-window/E5-T11-virtio-input-keyboard.md) — virtio-input keyboard device — EV_KEY map, EV_LED statusq, repeat policy *(deps: E5-T10c)*
 - [ ] `512` [E5-T12](epic-5-the-window/E5-T12-dom-to-evdev-keymap.md) — DOM KeyboardEvent.code → evdev translation with capture policy *(deps: E5-T11)*
 - [ ] `513` [E5-T13](epic-5-the-window/E5-T13-keyboard-hardening-focus-ime.md) — Keyboard hardening — focus loss, stuck modifiers, lock-key reconciliation *(deps: E5-T12)*
