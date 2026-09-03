@@ -3,7 +3,7 @@ id: E4-T22d
 epic: 4
 title: Imported-memory CPU worker bootstrap and sliced dispatch
 priority: 422.4
-status: pending
+status: in-progress
 depends_on: [E4-T22c]
 estimate: S
 risk: high

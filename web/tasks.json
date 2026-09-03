@@ -14478,15 +14478,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify: close E4-T22c control block",
             "tasks: start E4-T22c control block"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T22d",
@@ -14494,7 +14495,7 @@
       "epicKey": "4",
       "title": "Imported-memory CPU worker bootstrap and sliced dispatch",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T22c"
       ],
