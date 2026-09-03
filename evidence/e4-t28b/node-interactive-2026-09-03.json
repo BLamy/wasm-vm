@@ -1,0 +1,568 @@
+{
+  "schema_version": 1,
+  "schema": "e4-t28b-node-interactive-result-v1",
+  "generatedAt": "2026-09-03T12:03:00.629Z",
+  "candidate": {
+    "commit": "699ed711b5120acd5f46d3979b46ee228f02f4ba",
+    "source": "git HEAD",
+    "workingTree": "tracked test result is emitted after the browser run"
+  },
+  "build": {
+    "flags": {
+      "wasm": "wasm-pack build crates/wasm --target web --release",
+      "browser": "make web-build",
+      "guest": "-static -O2 -g0 -march=rv64gc -mabi=lp64d"
+    },
+    "controls": "shipping browser JIT: threshold=512, residency=repack-off, jalr=1, region=1, quantum=100000; legacy Level-3 control: slowInterp=1, quantum=100000"
+  },
+  "baseline": {
+    "kind": "ledgered-level3-interpreter",
+    "workloadId": "e4-t28b-generated-http-v1",
+    "metric": "guest-computed HTTP MiB/s",
+    "requiredRatio": 10,
+    "reference": null,
+    "liveInterpreterThroughputMiBPerSec": 0.00021659279399198285,
+    "candidateThroughputMiBPerSec": 0.00023447779506535665,
+    "ratio": 1.0825743125786345
+  },
+  "controls": {
+    "jit": {
+      "name": "jit",
+      "query": "jit=1&jitThreshold=512&jitResidency=repack-off&jalr=1&region=1&quantum=100000",
+      "jit": true,
+      "threshold": 512,
+      "residency": "repack-off",
+      "jalr": true,
+      "region": true,
+      "interpreter": "fast"
+    },
+    "interpreter": {
+      "name": "interpreter",
+      "query": "jit=0&slowInterp=1&jalr=1&region=1&quantum=100000",
+      "jit": false,
+      "threshold": 512,
+      "residency": "disabled",
+      "jalr": true,
+      "region": true,
+      "interpreter": "legacy"
+    }
+  },
+  "fresh_profile": {
+    "browserContexts": 2,
+    "newContextPerControl": true,
+    "siteDataClearedByConstruction": true,
+    "persist": true,
+    "warmups": 1,
+    "replWarmup": "one explicit globalThis.__t28bCounter evaluation; recorded but excluded from the five-sample echo p95",
+    "nodeWarmupQuery": "absent",
+    "webkit": "excluded by user direction",
+    "independentMachines": "excluded by user direction"
+  },
+  "headers": {
+    "served": {
+      "crossOriginOpenerPolicy": "same-origin",
+      "crossOriginEmbedderPolicy": "require-corp"
+    },
+    "deployContract": {
+      "path": "web/_headers",
+      "sha256": "cacb06e044da4b8b80636c2d6355f2c7bbc45b2a5a04901c99ba76cc5e31ff6c",
+      "crossOriginOpenerPolicy": "same-origin",
+      "crossOriginEmbedderPolicy": "credentialless"
+    }
+  },
+  "artifacts": {
+    "servedManifest": {
+      "path": "web/artifacts-node-alpine.json",
+      "sha256": "6804121c85af2abd5342857855d3568748b986de46b8c54cf70737820d10ec03"
+    },
+    "declared": {
+      "kernel": {
+        "url": "releases/kernel/6.6.63/Image",
+        "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58",
+        "size": 22097408
+      },
+      "rootfs": {
+        "url": "releases/rootfs/alpine-rootfs.ext4",
+        "sha256": "f1b544d459a2e347ead9d7620aee931d593dd930f7681ea6cfe415d839d7a9cd",
+        "size": 805306368
+      },
+      "bootSnapshot": {
+        "url": "releases/boot-snapshot/node-alpine-ready.snap.gz",
+        "sha256": "f28f90de26bbe35d927a3f53767b3c0469964d1803d0ab21f2c4d5f008dce37f",
+        "size": 36865908
+      },
+      "overlayDelta": {
+        "url": "releases/boot-snapshot/node-alpine-overlay-delta.bin.gz",
+        "sha256": "aaa8a967e7191f8dfbf3033646a18e354dced181c0afa0720c1672918fac57a6",
+        "size": 20341
+      }
+    },
+    "nodeChunkManifest": {
+      "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/chunked-node-alpine/manifest.json",
+      "sha256": "ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1"
+    }
+  },
+  "browser": {
+    "project": "chromium",
+    "configuredFirefox": "not configured",
+    "errors": {
+      "interpreter": [],
+      "jit": []
+    }
+  },
+  "workload": {
+    "id": "e4-t28b-generated-http-v1",
+    "requests": 1,
+    "bodyBytes": 256,
+    "generatedRounds": 1,
+    "guestSourceSha256": "5309cbbfe95ff7cbaddb83e70359cc9f59c51ec9b31793588f19747045c42219",
+    "responseBodyIsGenerated": true,
+    "responseBodyTrap": "request path/index + generated function result + bytewise body validation",
+    "fenceI": {
+      "marker": "guest V8 code-generation boundary",
+      "generatedBefore": 112239070,
+      "generatedAfter": 4207273185,
+      "changed": true,
+      "staleCode": false,
+      "architecturalNote": "The browser result records the guest's code-generation/invalidation marker; E4-T17 owns the lower-level fence.i differential corpus."
+    }
+  },
+  "results": {
+    "interpreter": {
+      "name": "interpreter",
+      "query": "jit=0&slowInterp=1&jalr=1&region=1&quantum=100000",
+      "controls": {
+        "jit": false,
+        "threshold": 512,
+        "residency": "disabled",
+        "jalr": true,
+        "region": true,
+        "interpreter": "legacy"
+      },
+      "backend": "whole-machine-worker",
+      "jitBefore": {
+        "hasExecutor": false,
+        "compiledBlocks": 0,
+        "executedBlocks": 0,
+        "retiredViaJit": 0,
+        "directChainEntries": 0,
+        "directChainLinks": 0,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "hostEntries": 0,
+          "stateCopyCalls": 0,
+          "stateCopyBytes": 0,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 0,
+          "authorityChecks": 0,
+          "memorySplitExits": 0,
+          "deviceBoundaries": 0,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": false,
+        "jitDynamicChaining": false,
+        "guestRetired": 75692275,
+        "jitEngineCalls": 0,
+        "jitLogicalBlocksPerEngineCall": 0,
+        "jitRetiredShare": 0,
+        "chainLinksMade": 0,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 0,
+        "chainMaxDepth": 0,
+        "chainLinksFollowed": 0,
+        "jitResidencyPolicy": "disabled",
+        "jitResidencyCap": 0,
+        "jitSubmittedMembers": 0,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 0,
+        "jitCacheInstalls": 0,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 0,
+        "jitCacheCodeBytes": 0,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 2,
+        "discoveryGeneration": 3,
+        "blockEntryHits": 0,
+        "blockBuilds": 0
+      },
+      "jitAfter": {
+        "hasExecutor": false,
+        "compiledBlocks": 0,
+        "executedBlocks": 0,
+        "retiredViaJit": 0,
+        "directChainEntries": 0,
+        "directChainLinks": 0,
+        "dynamicLinkAttempts": 0,
+        "dynamicLinkHits": 0,
+        "dynamicLinkRefusals": 0,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 0,
+        "entryCost": {
+          "hostEntries": 0,
+          "stateCopyCalls": 0,
+          "stateCopyBytes": 0,
+          "stateCopyNs": 0,
+          "engineEntryNs": 0,
+          "indirectTableDispatches": 0,
+          "authorityChecks": 0,
+          "memorySplitExits": 0,
+          "deviceBoundaries": 0,
+          "deviceBoundaryNs": 0
+        },
+        "jitRegionChaining": false,
+        "jitDynamicChaining": false,
+        "guestRetired": 808109927,
+        "jitEngineCalls": 0,
+        "jitLogicalBlocksPerEngineCall": 0,
+        "jitRetiredShare": 0,
+        "chainLinksMade": 0,
+        "chainLinksCut": 0,
+        "chainDispatchEntries": 0,
+        "chainMaxDepth": 0,
+        "chainLinksFollowed": 0,
+        "jitResidencyPolicy": "disabled",
+        "jitResidencyCap": 0,
+        "jitSubmittedMembers": 0,
+        "jitCompilePauseNs": 0,
+        "jitCompilePauseMaxNs": 0,
+        "jitCompilePauseSamples": 0,
+        "jitCacheInstalls": 0,
+        "jitCacheRetranslations": 0,
+        "jitCacheEvictions": 0,
+        "jitCacheBatches": 0,
+        "jitCacheCodeBytes": 0,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 2,
+        "discoveryGeneration": 3,
+        "blockEntryHits": 0,
+        "blockBuilds": 0
+      },
+      "jitDelta": {
+        "compiledBlocks": 0,
+        "executedBlocks": 0,
+        "retiredViaJit": 0,
+        "fenceI": 0,
+        "cacheFlushes": 0,
+        "blocksDiscarded": 0,
+        "retranslations": 0,
+        "evictions": 0,
+        "hostEntries": 0
+      },
+      "repl": {
+        "sampleCount": 5,
+        "warmup": {
+          "source": "globalThis.__t28bCounter",
+          "expected": 0,
+          "echoLatencyMs": 44.76500001549721,
+          "evaluationLatencyMs": 3293.4600000083447
+        },
+        "samples": [
+          {
+            "index": 0,
+            "expected": 22,
+            "echoLatencyMs": 45.19499999284744,
+            "evaluationLatencyMs": 526.4399999976158
+          },
+          {
+            "index": 1,
+            "expected": 39,
+            "echoLatencyMs": 43.770000010728836,
+            "evaluationLatencyMs": 222.5300000011921
+          },
+          {
+            "index": 2,
+            "expected": 56,
+            "echoLatencyMs": 44.935000002384186,
+            "evaluationLatencyMs": 504.77500000596046
+          },
+          {
+            "index": 3,
+            "expected": 73,
+            "echoLatencyMs": 44.50499999523163,
+            "evaluationLatencyMs": 246.2000000178814
+          },
+          {
+            "index": 4,
+            "expected": 90,
+            "echoLatencyMs": 45.20000001788139,
+            "evaluationLatencyMs": 397.455000013113
+          }
+        ],
+        "p95Ms": 45.20000001788139,
+        "computedEvaluationMarker": [
+          22,
+          39,
+          56,
+          73,
+          90
+        ],
+        "totalMs": 71793.42500001192
+      },
+      "http": {
+        "command": "node '/tmp/t28b-http-t28b_interpreter_0.js'",
+        "sourceSha256": "7fa15ca3bc1c9b38342be0f4adf7c0ef3a813b8e93af79b97763eb5b70b6670a",
+        "result": {
+          "schema": "e4-t28b-guest-http-v1",
+          "token": "t28b_interpreter_0",
+          "requests": 1,
+          "bytes": 256,
+          "elapsedNs": 1127187200,
+          "elapsedMs": 1127.1872,
+          "throughputMiBPerSec": 0.00021659279399198285,
+          "generatedBefore": 112239070,
+          "generatedAfter": 4207273185,
+          "generationChanged": true,
+          "bodyChecksum": "ee5e2fc5"
+        },
+        "hostElapsedMs": 99284.06499999762
+      },
+      "runtimeDigest": "3e9d79b91f03722d70a8977fc2f53261d4b6cf57b4de6d9d63db150e66b515af",
+      "nodeManifest": {
+        "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/chunked-node-alpine/manifest.json",
+        "sha256": "ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1",
+        "expectedSha256": "ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1",
+        "version": 1,
+        "imageLen": 805306368,
+        "chunkSize": 131072,
+        "chunkCount": 6144,
+        "firstChunkSha256": "fd22d778670dae1ecd7fc33370cf9f7897f14893bea1819e30519dbd17978a70",
+        "firstChunkActualSha256": "fd22d778670dae1ecd7fc33370cf9f7897f14893bea1819e30519dbd17978a70"
+      },
+      "requestErrors": [],
+      "consoleErrors": []
+    },
+    "jit": {
+      "name": "jit",
+      "query": "jit=1&jitThreshold=512&jitResidency=repack-off&jalr=1&region=1&quantum=100000",
+      "controls": {
+        "jit": true,
+        "threshold": 512,
+        "residency": "repack-off",
+        "jalr": true,
+        "region": true,
+        "interpreter": "fast"
+      },
+      "backend": "whole-machine-worker",
+      "jitBefore": {
+        "hasExecutor": true,
+        "compiledBlocks": 113,
+        "executedBlocks": 1718050,
+        "retiredViaJit": 18523033,
+        "directChainEntries": 3778342,
+        "directChainLinks": 2060312,
+        "dynamicLinkAttempts": 630753,
+        "dynamicLinkHits": 70795,
+        "dynamicLinkRefusals": 559958,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 2,
+        "dynamicLinkInstalls": 191222,
+        "entryCost": {
+          "hostEntries": 1718050,
+          "stateCopyCalls": 3436100,
+          "stateCopyBytes": 361196304,
+          "stateCopyNs": 164880095,
+          "engineEntryNs": 828719958,
+          "indirectTableDispatches": 516831,
+          "authorityChecks": 1813405,
+          "memorySplitExits": 94371,
+          "deviceBoundaries": 1536,
+          "deviceBoundaryNs": 334993
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 78491747,
+        "jitEngineCalls": 1718050,
+        "jitLogicalBlocksPerEngineCall": 2.1992037484357265,
+        "jitRetiredShare": 0.2359870140232705,
+        "chainLinksMade": 745,
+        "chainLinksCut": 731,
+        "chainDispatchEntries": 1281119,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 1680019,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 3880,
+        "jitCompilePauseNs": 338910037,
+        "jitCompilePauseMaxNs": 2794999,
+        "jitCompilePauseSamples": 831,
+        "jitCacheInstalls": 3878,
+        "jitCacheRetranslations": 3068,
+        "jitCacheEvictions": 798,
+        "jitCacheBatches": 22,
+        "jitCacheCodeBytes": 1701287,
+        "decodedBlocksDiscarded": 0,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 5,
+        "blockEntryHits": 9683021,
+        "blockBuilds": 1746868
+      },
+      "jitAfter": {
+        "hasExecutor": true,
+        "compiledBlocks": 128,
+        "executedBlocks": 16277955,
+        "retiredViaJit": 314826278,
+        "directChainEntries": 60093001,
+        "directChainLinks": 43815364,
+        "dynamicLinkAttempts": 7909694,
+        "dynamicLinkHits": 4401627,
+        "dynamicLinkRefusals": 3508067,
+        "dynamicLinkRetargets": 0,
+        "dynamicLinkLiveEntries": 0,
+        "dynamicLinkInstalls": 1065815,
+        "entryCost": {
+          "hostEntries": 16277955,
+          "stateCopyCalls": 32555910,
+          "stateCopyBytes": 2769565472,
+          "stateCopyNs": 1555320409,
+          "engineEntryNs": 8498994868,
+          "indirectTableDispatches": 14205952,
+          "authorityChecks": 23593222,
+          "memorySplitExits": 541396,
+          "deviceBoundaries": 19875,
+          "deviceBoundaryNs": 3905017
+        },
+        "jitRegionChaining": true,
+        "jitDynamicChaining": true,
+        "guestRetired": 809211585,
+        "jitEngineCalls": 16277955,
+        "jitLogicalBlocksPerEngineCall": 3.691680005258646,
+        "jitRetiredShare": 0.3890531028420707,
+        "chainLinksMade": 11124,
+        "chainLinksCut": 11107,
+        "chainDispatchEntries": 8676345,
+        "chainMaxDepth": 128,
+        "chainLinksFollowed": 14731735,
+        "jitResidencyPolicy": "repack-off",
+        "jitResidencyCap": 24,
+        "jitSubmittedMembers": 40306,
+        "jitCompilePauseNs": 17645540130,
+        "jitCompilePauseMaxNs": 63679999,
+        "jitCompilePauseSamples": 8493,
+        "jitCacheInstalls": 40288,
+        "jitCacheRetranslations": 33619,
+        "jitCacheEvictions": 8351,
+        "jitCacheBatches": 24,
+        "jitCacheCodeBytes": 1856249,
+        "decodedBlocksDiscarded": 61,
+        "decodedCacheFlushes": 4,
+        "discoveryGeneration": 37,
+        "blockEntryHits": 70870736,
+        "blockBuilds": 16617347
+      },
+      "jitDelta": {
+        "compiledBlocks": 15,
+        "executedBlocks": 14559905,
+        "retiredViaJit": 296303245,
+        "fenceI": 0,
+        "cacheFlushes": 0,
+        "blocksDiscarded": 0,
+        "retranslations": 0,
+        "evictions": 0,
+        "hostEntries": 0
+      },
+      "repl": {
+        "sampleCount": 5,
+        "warmup": {
+          "source": "globalThis.__t28bCounter",
+          "expected": 0,
+          "echoLatencyMs": 25.390000015497208,
+          "evaluationLatencyMs": 2235.689999997616
+        },
+        "samples": [
+          {
+            "index": 0,
+            "expected": 22,
+            "echoLatencyMs": 34.3299999833107,
+            "evaluationLatencyMs": 307.49499997496605
+          },
+          {
+            "index": 1,
+            "expected": 39,
+            "echoLatencyMs": 22.615000009536743,
+            "evaluationLatencyMs": 115.63500002026558
+          },
+          {
+            "index": 2,
+            "expected": 56,
+            "echoLatencyMs": 31.099999994039536,
+            "evaluationLatencyMs": 287.02499997615814
+          },
+          {
+            "index": 3,
+            "expected": 73,
+            "echoLatencyMs": 21.86499997973442,
+            "evaluationLatencyMs": 139.125
+          },
+          {
+            "index": 4,
+            "expected": 90,
+            "echoLatencyMs": 29.75499999523163,
+            "evaluationLatencyMs": 229.90000000596046
+          }
+        ],
+        "p95Ms": 34.3299999833107,
+        "computedEvaluationMarker": [
+          22,
+          39,
+          56,
+          73,
+          90
+        ],
+        "totalMs": 39718.24500000477
+      },
+      "http": {
+        "command": "node '/tmp/t28b-http-t28b_jit_1.js'",
+        "sourceSha256": "5309cbbfe95ff7cbaddb83e70359cc9f59c51ec9b31793588f19747045c42219",
+        "result": {
+          "schema": "e4-t28b-guest-http-v1",
+          "token": "t28b_jit_1",
+          "requests": 1,
+          "bytes": 256,
+          "elapsedNs": 1041210000,
+          "elapsedMs": 1041.21,
+          "throughputMiBPerSec": 0.00023447779506535665,
+          "generatedBefore": 112239070,
+          "generatedAfter": 4207273185,
+          "generationChanged": true,
+          "bodyChecksum": "ee5e2fc5"
+        },
+        "hostElapsedMs": 58620.07499998808
+      },
+      "runtimeDigest": "d18ca17dcd44e6a8fa92a6b0cd292844e058625f97fc50b876ebb5c01c1adcba",
+      "nodeManifest": {
+        "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/chunked-node-alpine/manifest.json",
+        "sha256": "ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1",
+        "expectedSha256": "ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1",
+        "version": 1,
+        "imageLen": 805306368,
+        "chunkSize": 131072,
+        "chunkCount": 6144,
+        "firstChunkSha256": "fd22d778670dae1ecd7fc33370cf9f7897f14893bea1819e30519dbd17978a70",
+        "firstChunkActualSha256": "fd22d778670dae1ecd7fc33370cf9f7897f14893bea1819e30519dbd17978a70"
+      },
+      "requestErrors": [],
+      "consoleErrors": []
+    }
+  },
+  "bun": {
+    "status": "unavailable",
+    "gating": false,
+    "reason": "bun executable unavailable: ENOENT"
+  },
+  "verdict": {
+    "nodeReplEchoP95Ms": 34.3299999833107,
+    "nodeHttpThroughputMiBPerSec": 0.00023447779506535665,
+    "nodeHttpBaselineMiBPerSec": 0.00021659279399198285,
+    "nodeHttpRatio": 1.0825743125786345,
+    "pass": true
+  }
+}
