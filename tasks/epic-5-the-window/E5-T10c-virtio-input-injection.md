@@ -3,7 +3,7 @@ id: E5-T10c
 epic: 5
 title: virtio-input injection and frame-integrity buffering
 priority: 510.3
-status: implemented
+status: verified
 depends_on: [E5-T10b]
 estimate: S
 risk: high
@@ -59,8 +59,8 @@ confirm the VM loop remains non-blocking.
 
 Implementation commit: `85f5c4e`.
 
-Evidence: `evidence/e5-t10c/input-injection-2026-09-03.json` (SHA-256 to be recorded by the
-verifier).
+Evidence: `evidence/e5-t10c/input-injection-2026-09-03.json` (SHA-256
+`6036c7384940401321f41e157b1ffd6004bd85fc1b5105e5e30f2388982dc3ac`).
 
 Commands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib
 dev::virtio::input` (11 passed); `cargo test -p wasm-vm-core --lib --quiet` (230 passed);
@@ -76,3 +76,22 @@ The recorded run demonstrates atomic SYN_REPORT framing, bounded non-blocking re
 whole-frame accounting under 1000 frames, paired key-transition drops, three-buffer eventq
 delivery, and native/wasm32 stream parity. Independent-machine, WebKit, and host-layer rr runs
 were excluded per the user's direction and the repository's current evidence policy.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Framing and boundedness — HELD.** The native stress fixture predicts 1000 one-event frames
+  become 2000 events; observed retention is exactly 256 events in 128 complete SYN_REPORT frames,
+  with 872 frames and 1744 events counted as dropped.
+- **Key integrity — HELD.** Under the four-event budget, the recorded drop removes the queued
+  key-down and its separate key-up frame together; the three-buffer delivery records key-down,
+  key-up, and SYN_REPORT in order with no held key remaining.
+- **Cross-target transport — HELD.** The wasm32 runner drives the real virtio-mmio/eventq path and
+  observes the same eight-byte stream for both key transitions and SYN_REPORT.
+- **Coverage — HELD.** The changed staging, sync framing, budget enforcement, suppression/drop
+  accounting, delivery protection, reset state, and existing T10b queue paths execute in the
+  focused/native and wasm32 runs.
+- **Evidence integrity — HELD.** Evidence digest
+  `6036c7384940401321f41e157b1ffd6004bd85fc1b5105e5e30f2388982dc3ac` matches the checked-in
+  artifact for implementation commit `85f5c4e`.
+
+E5-T10c is verified; the next queue items must be decomposed before activation.
