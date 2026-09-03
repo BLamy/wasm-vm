@@ -48,6 +48,13 @@ else
   exit 1
 fi
 
+# Preserve the raw module before any subsequent stable build can overwrite the shared target. The
+# worker bootstrap can consume this artifact directly, and keeping it even when the version-matched
+# wasm-bindgen CLI is unavailable makes the shared-memory proof durable rather than terminal output.
+mkdir -p "$OUT_DIR"
+cp "$WASM" "$OUT_DIR/wasm_vm_wasm.wasm"
+echo "   raw shared module copied to $OUT_DIR/wasm_vm_wasm.wasm"
+
 echo "==> [3/3] wasm-bindgen glue"
 BINDGEN_VER="$(wasm-bindgen --version 2>/dev/null | awk '{print $2}' || true)"
 if [ "$BINDGEN_VER" = "$BINDGEN_CRATE_VER" ]; then
