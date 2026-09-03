@@ -3,7 +3,7 @@ id: E5-T11a
 epic: 5
 title: virtio-input keyboard capability specification
 priority: 511.1
-status: implemented
+status: verified
 depends_on: [E5-T10c]
 estimate: S
 risk: medium
@@ -47,9 +47,28 @@ cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test vir
 wasm-pack test --node crates/wasm --test keyboard_spec (1 passed), input_config (1 passed), and
 input_queues (2 passed). The evidence is
 evidence/e5-t11a/keyboard-spec-2026-09-03.json, SHA-256
-eae7d2fb09092d7b50ddcac2084ca3e029efd7cd18fcfef9e0a9e4da8d1d8961.
+e841e5b828c681840822aea5e27c60412d12e96f2be93b4769683eab5905d10c.
 
 The recording demonstrates that the keyboard spec emits exactly PC-105 codes 1..=248, the
 three declared LED bits, optional MSC_SCAN, and SYN_REPORT, while EV_REP remains empty. Native
 and wasm32 VirtioMmio reads assert the stable name and devids plus byte-identical, zero-padded
 capability payloads, including the final advertised key and the first undeclared edge.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- EV_KEY range — HELD. Predicted the native and wasm32 payloads would contain every code from
+  1 through 248, with no code 0 or 249..1023; the focused native assertions and the full
+  zero-padded wasm32 fixture observe exactly fe, thirty bytes of ff, then 01. Evidence:
+  the native keyboard tests and keyboard_spec wasm test in
+  evidence/e5-t11a/keyboard-spec-2026-09-03.json.
+- EV_LED/MSC/EV_REP — HELD. Predicted LED byte 07, MSC byte 10, SYN byte 01, and a zero-length
+  repeat bitmap; both config paths observe those values and the native map test rejects
+  non-declared tail bits. Evidence: the same evidence digest
+  e841e5b828c681840822aea5e27c60412d12e96f2be93b4769683eab5905d10c.
+- Identity and coverage — HELD. Predicted the stable keyboard name and BUS_VIRTUAL devid tuple
+  would round-trip through VirtioMmio and every changed implementation hunk would execute;
+  the native and wasm32 fixtures read both identity fields, while the 233-test core sweep,
+  22-test virtio regression sweep, and focused 14-test input suite remain green. No changed
+  runtime or fixture hunk is unexercised.
+- SUITE — HELD. The deterministic native and wasm32 fixtures are the permanent proof artifact;
+  no additional golden trace is needed for this declarative, non-concurrent slice.

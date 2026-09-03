@@ -6,15 +6,16 @@
   "recorded_at": "2026-09-03",
   "native": {
     "acceptance_command": "cargo test -p wasm-vm-core --lib dev::virtio::input",
-    "acceptance_result": "13 passed, 0 failed",
+    "acceptance_result": "14 passed, 0 failed",
     "coverage": [
       "keyboard_spec() declares EV_KEY codes 1..=248 and the native fixture rejects KEY_RESERVED, every code above 248, and any changed edge byte.",
+      "The native keyboard_config_fixture reads the keyboard name, devids, and every declared event bitmap through VirtioMmio configuration space.",
       "The native fixture fixes the complete EV_LED bitmap to LED_NUML, LED_CAPSL, and LED_SCROLLL only, and fixes MSC_SCAN in EV_MSC.",
       "The native fixture asserts the empty EV_REP bitmap and the stable keyboard name, BUS_VIRTUAL device IDs, and SYN_REPORT capability."
     ],
     "regression": {
       "command": "cargo test -p wasm-vm-core --lib",
-      "result": "232 passed, 0 failed"
+      "result": "233 passed, 0 failed"
     },
     "virtio_regression": {
       "command": "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet",
