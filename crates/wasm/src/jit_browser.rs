@@ -50,7 +50,8 @@ use wasm_vm_core::dispatch::DecodedBlock;
 use wasm_vm_core::hart::{Hart, Trap};
 use wasm_vm_core::jit::{
     CHAIN_DEPTH_BUDGET_DEFAULT, CHAIN_DEPTH_HIST_LEN, ChainStats, CompiledBlockExecutor,
-    CpuStateHandoff, EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats, JitExit, abi,
+    CpuStateHandoff, DynamicLinkStats, EvictPolicy, ExitCode, JitCacheBudget, JitCacheStats,
+    JitExit, abi,
 };
 use wasm_vm_core::mmio::SystemBus;
 
@@ -66,8 +67,11 @@ const DIRECT_CHAIN_FUEL: u64 = 128;
 // 32-function stack bound; the fuel, interrupt sampling, and host-side barrier remain the hard
 // safety limits.
 const PRODUCTION_CHAIN_DEPTH_BUDGET: u32 = 128;
-const DYNAMIC_LINK_ENTRIES: usize = 4096;
+const DYNAMIC_LINK_WAYS: usize = 4;
+const DYNAMIC_LINK_SETS: usize = 1024;
+const DYNAMIC_LINK_ENTRIES: usize = DYNAMIC_LINK_WAYS * DYNAMIC_LINK_SETS;
 const DYNAMIC_LINK_WORDS: usize = DYNAMIC_LINK_ENTRIES * 2;
+const DYNAMIC_LINK_HYSTERESIS: u8 = 2;
 /// E4-T35: two `u32` link words per live compiled block. The production batch cap is 24 × 64;
 /// this leaves room for transient retranslation and keeps a failed reservation a safe fallback.
 const STATIC_LINK_ENTRIES: usize = 4096;
@@ -235,16 +239,33 @@ impl CompiledPageBitmap {
     }
 }
 
-/// Browser-only direct-mapped cache for virtual `jalr` targets. Each 16-byte slot stores
-/// `{virtual_pc, table_index_plus_one}` in the outer wasm memory. The generated module compares
-/// both values before `call_indirect`; Rust owns publication and clears the slot before freeing or
-/// remapping a compiled block.
+/// One live target in the browser's bounded dynamic-return PIC.
+#[derive(Clone, Copy)]
+struct DynamicLinkEntry {
+    virtual_pc: u64,
+    physical_pc: u64,
+    table_index: u32,
+    age: u64,
+}
+
+/// Browser-only bounded four-way set-associative cache for virtual `jalr` targets. Each 16-byte
+/// entry stores `{virtual_pc, table_index_plus_one}` in the outer wasm memory, while a parallel
+/// `u32` array stores the expected shared-memory host page. The generated module compares the key,
+/// table word, and current EXEC-TLB authority before `call_indirect`; Rust owns publication,
+/// hysteretic replacement, and clearing entries before freeing or remapping a compiled block.
 struct DynamicLinkCache {
     words: Box<[u64; DYNAMIC_LINK_WORDS]>,
-    slot_keys: Vec<Option<u64>>,
-    virtual_to_phys: HashMap<u64, u64>,
+    authority: Box<[u32; DYNAMIC_LINK_ENTRIES]>,
+    entries: Vec<Option<DynamicLinkEntry>>,
+    virtual_to_slot: HashMap<u64, usize>,
+    pending: HashMap<(u64, u64), u8>,
     base: u32,
+    authority_base: u32,
     mask: u32,
+    ways: u32,
+    clock: u64,
+    retargets: u64,
+    installs: u64,
 }
 
 impl DynamicLinkCache {
@@ -252,12 +273,22 @@ impl DynamicLinkCache {
         let mut words = Box::new([0u64; DYNAMIC_LINK_WORDS]);
         let base = u32::try_from(words.as_mut_ptr() as usize)
             .map_err(|_| "dynamic link table is outside wasm32")?;
+        let mut authority = Box::new([0u32; DYNAMIC_LINK_ENTRIES]);
+        let authority_base = u32::try_from(authority.as_mut_ptr() as usize)
+            .map_err(|_| "dynamic authority table is outside wasm32")?;
         Ok(Self {
             words,
-            slot_keys: vec![None; DYNAMIC_LINK_ENTRIES],
-            virtual_to_phys: HashMap::new(),
+            authority,
+            entries: vec![None; DYNAMIC_LINK_ENTRIES],
+            virtual_to_slot: HashMap::new(),
+            pending: HashMap::new(),
             base,
-            mask: (DYNAMIC_LINK_ENTRIES - 1) as u32,
+            authority_base,
+            mask: (DYNAMIC_LINK_SETS - 1) as u32,
+            ways: DYNAMIC_LINK_WAYS as u32,
+            clock: 0,
+            retargets: 0,
+            installs: 0,
         })
     }
 
@@ -269,35 +300,156 @@ impl DynamicLinkCache {
         self.mask
     }
 
-    fn slot(&self, virtual_pc: u64) -> usize {
+    fn authority_base(&self) -> u32 {
+        self.authority_base
+    }
+
+    fn ways(&self) -> u32 {
+        self.ways
+    }
+
+    fn set(&self, virtual_pc: u64) -> usize {
         (((virtual_pc >> 2) ^ (virtual_pc >> 12) ^ virtual_pc) & u64::from(self.mask)) as usize
     }
 
-    fn publish(&mut self, virtual_pc: u64, physical_pc: u64, table_index: u32) {
-        let slot = self.slot(virtual_pc);
-        if let Some(old) = self.slot_keys[slot].replace(virtual_pc) {
-            self.virtual_to_phys.remove(&old);
+    fn clear_entry(&mut self, index: usize) {
+        if let Some(old) = self.entries[index].take() {
+            self.virtual_to_slot.remove(&old.virtual_pc);
         }
-        self.words[slot * 2] = virtual_pc.to_le();
-        self.words[slot * 2 + 1] = u64::from(table_index).saturating_add(1).to_le();
-        self.virtual_to_phys.insert(virtual_pc, physical_pc);
+        let word = index * 2;
+        self.words[word] = 0;
+        self.words[word + 1] = 0;
+        self.authority[index] = 0;
+    }
+
+    fn clear_pending_virtual(&mut self, virtual_pc: u64) {
+        self.pending
+            .retain(|&(pending_virtual, _), _| pending_virtual != virtual_pc);
+    }
+
+    fn observe_pending(&mut self, virtual_pc: u64, physical_pc: u64) -> u8 {
+        let observations = self.pending.entry((virtual_pc, physical_pc)).or_insert(0);
+        *observations = observations.saturating_add(1);
+        *observations
+    }
+
+    fn install_at(
+        &mut self,
+        index: usize,
+        virtual_pc: u64,
+        physical_pc: u64,
+        table_index: u32,
+        expected_host_page: u32,
+        replacing: bool,
+    ) {
+        self.clear_entry(index);
+        self.clock = self.clock.wrapping_add(1);
+        self.entries[index] = Some(DynamicLinkEntry {
+            virtual_pc,
+            physical_pc,
+            table_index,
+            age: self.clock,
+        });
+        self.virtual_to_slot.insert(virtual_pc, index);
+        let word = index * 2;
+        self.words[word] = virtual_pc.to_le();
+        self.words[word + 1] = u64::from(table_index).saturating_add(1).to_le();
+        self.authority[index] = expected_host_page.to_le();
+        self.installs = self.installs.saturating_add(1);
+        if replacing {
+            self.retargets = self.retargets.saturating_add(1);
+        }
+    }
+
+    fn publish(
+        &mut self,
+        virtual_pc: u64,
+        physical_pc: u64,
+        table_index: u32,
+        expected_host_page: u32,
+    ) {
+        if let Some(&index) = self.virtual_to_slot.get(&virtual_pc) {
+            let same_target = self.entries[index].is_some_and(|entry| {
+                entry.physical_pc == physical_pc && entry.table_index == table_index
+            });
+            if same_target {
+                self.clock = self.clock.wrapping_add(1);
+                if let Some(entry) = self.entries[index].as_mut() {
+                    entry.age = self.clock;
+                }
+                self.clear_pending_virtual(virtual_pc);
+                return;
+            }
+            if self.observe_pending(virtual_pc, physical_pc) < DYNAMIC_LINK_HYSTERESIS {
+                return;
+            }
+            self.clear_pending_virtual(virtual_pc);
+            self.install_at(
+                index,
+                virtual_pc,
+                physical_pc,
+                table_index,
+                expected_host_page,
+                true,
+            );
+            return;
+        }
+
+        let set_start = self.set(virtual_pc) * self.ways as usize;
+        if let Some(index) = (0..self.ways as usize)
+            .map(|way| set_start + way)
+            .find(|&index| self.entries[index].is_none())
+        {
+            self.clear_pending_virtual(virtual_pc);
+            self.install_at(
+                index,
+                virtual_pc,
+                physical_pc,
+                table_index,
+                expected_host_page,
+                false,
+            );
+            return;
+        }
+
+        if self.observe_pending(virtual_pc, physical_pc) < DYNAMIC_LINK_HYSTERESIS {
+            return;
+        }
+        self.clear_pending_virtual(virtual_pc);
+        let victim = (0..self.ways as usize)
+            .map(|way| set_start + way)
+            .min_by_key(|&index| self.entries[index].map_or(0, |entry| entry.age))
+            .expect("a full dynamic PIC set has a replacement way");
+        self.install_at(
+            victim,
+            virtual_pc,
+            physical_pc,
+            table_index,
+            expected_host_page,
+            true,
+        );
     }
 
     fn clear_virtual(&mut self, virtual_pc: u64) {
-        let slot = self.slot(virtual_pc);
-        if self.slot_keys[slot] == Some(virtual_pc) {
-            self.words[slot * 2] = 0;
-            self.words[slot * 2 + 1] = 0;
-            self.slot_keys[slot] = None;
+        if let Some(index) = self.virtual_to_slot.remove(&virtual_pc) {
+            self.entries[index] = None;
+            let word = index * 2;
+            self.words[word] = 0;
+            self.words[word + 1] = 0;
+            self.authority[index] = 0;
         }
-        self.virtual_to_phys.remove(&virtual_pc);
+        self.clear_pending_virtual(virtual_pc);
     }
 
     fn clear_physical(&mut self, physical_pc: u64) {
         let virtuals: Vec<u64> = self
-            .virtual_to_phys
+            .entries
             .iter()
-            .filter_map(|(&virtual_pc, &physical)| (physical == physical_pc).then_some(virtual_pc))
+            .filter_map(|entry| {
+                entry
+                    .filter(|entry| entry.physical_pc == physical_pc)
+                    .map(|entry| entry.virtual_pc)
+            })
             .collect();
         for virtual_pc in virtuals {
             self.clear_virtual(virtual_pc);
@@ -308,10 +460,27 @@ impl DynamicLinkCache {
         for word in self.words.iter_mut() {
             *word = 0;
         }
-        for key in &mut self.slot_keys {
-            *key = None;
+        for word in self.authority.iter_mut() {
+            *word = 0;
         }
-        self.virtual_to_phys.clear();
+        for entry in &mut self.entries {
+            *entry = None;
+        }
+        self.virtual_to_slot.clear();
+        self.pending.clear();
+        self.clock = 0;
+    }
+
+    fn live_entries(&self) -> u64 {
+        self.virtual_to_slot.len() as u64
+    }
+
+    fn retargets(&self) -> u64 {
+        self.retargets
+    }
+
+    fn installs(&self) -> u64 {
+        self.installs
     }
 }
 
@@ -732,6 +901,9 @@ pub struct BrowserExecutor {
     /// dispatch loop and therefore cannot measure in-module direct calls.
     direct_chain_entries: u64,
     direct_chain_links: u64,
+    dynamic_attempts: u64,
+    dynamic_hits: u64,
+    dynamic_refusals: u64,
     // ── E4-T18 chaining state (identical to native) ──
     chaining: bool,
     chain_depth_budget: u32,
@@ -834,6 +1006,11 @@ impl BrowserExecutor {
                 store_log_capacity: abi::CHAIN_STORE_CAPACITY,
                 dynamic_map_base: links.base(),
                 dynamic_map_mask: links.mask(),
+                dynamic_map_ways: links.ways(),
+                dynamic_authority_base: links.authority_base(),
+                dynamic_attempts: abi::CHAIN_DYNAMIC_ATTEMPTS,
+                dynamic_hits: abi::CHAIN_DYNAMIC_HITS,
+                dynamic_refusals: abi::CHAIN_DYNAMIC_REFUSALS,
                 dynamic_chain: true,
                 chain_table: 0,
                 static_map_base: static_links.base(),
@@ -911,6 +1088,9 @@ impl BrowserExecutor {
             retired_via_jit: 0,
             direct_chain_entries: 0,
             direct_chain_links: 0,
+            dynamic_attempts: 0,
+            dynamic_hits: 0,
+            dynamic_refusals: 0,
             chaining: true,
             chain_depth_budget: CHAIN_DEPTH_BUDGET_DEFAULT,
             slots: Vec::new(),
@@ -1320,6 +1500,25 @@ impl BrowserExecutor {
             table.set_raw(table_index, &JsValue::null()).unwrap_throw();
         }
     }
+
+    /// Directed verifier hook: corrupt only a live dynamic-link authority word while leaving its
+    /// key and table index intact. This makes the generated EXEC-TLB/PA guard independently
+    /// falsifiable instead of reducing the attack to an ordinary cache miss.
+    #[doc(hidden)]
+    pub fn set_dynamic_link_authority_for_test(
+        &mut self,
+        virtual_pc: u64,
+        expected_host_page: u32,
+    ) -> bool {
+        let Some(links) = self.dynamic_links.as_mut() else {
+            return false;
+        };
+        let Some(&index) = links.virtual_to_slot.get(&virtual_pc) else {
+            return false;
+        };
+        links.authority[index] = expected_host_page.to_le();
+        true
+    }
 }
 
 impl CompiledBlockExecutor for BrowserExecutor {
@@ -1585,6 +1784,18 @@ impl CompiledBlockExecutor for BrowserExecutor {
                 self.abi.direct_chain,
             )
         };
+        // The generated module keeps per-invocation probe counters in the shared chain header.
+        // Account them before the next host entry's `begin_chain` clears the header; publication
+        // counters remain in the Rust-owned PIC and therefore survive cache/context resets.
+        self.dynamic_attempts = self
+            .dynamic_attempts
+            .saturating_add(self.handoff.image.dynamic_link_attempts());
+        self.dynamic_hits = self
+            .dynamic_hits
+            .saturating_add(self.handoff.image.dynamic_link_hits());
+        self.dynamic_refusals = self
+            .dynamic_refusals
+            .saturating_add(self.handoff.image.dynamic_link_refusals());
         let exit = exit?;
         self.executed_blocks += 1;
         if direct_chaining {
@@ -1637,8 +1848,29 @@ impl CompiledBlockExecutor for BrowserExecutor {
             }
             return;
         };
+        let needs_authority = self
+            .dynamic_links
+            .as_ref()
+            .is_some_and(|links| links.authority_base() != 0);
+        if needs_authority && let Some(cache) = self.inline_tlb.as_mut() {
+            // The core's successful target resolution is the authority observation. Refresh the
+            // generated EXEC-TLB entry before publishing the PIC word so a matching key can never
+            // bypass the current virtual-to-physical check.
+            cache.fill_exec(virtual_pc, phys_pc);
+        }
+        let expected_host_page = if needs_authority {
+            self.inline_tlb
+                .as_ref()
+                .and_then(|cache| cache.host_page(phys_pc))
+        } else {
+            Some(0)
+        };
         if let Some(links) = self.dynamic_links.as_mut() {
-            links.publish(virtual_pc, phys_pc, table_index);
+            if let Some(expected_host_page) = expected_host_page {
+                links.publish(virtual_pc, phys_pc, table_index, expected_host_page);
+            } else {
+                links.clear_virtual(virtual_pc);
+            }
         }
     }
 
@@ -1707,6 +1939,26 @@ impl CompiledBlockExecutor for BrowserExecutor {
 
     fn direct_chain_links(&self) -> u64 {
         self.direct_chain_links
+    }
+
+    fn dynamic_link_stats(&self) -> DynamicLinkStats {
+        DynamicLinkStats {
+            attempts: self.dynamic_attempts,
+            hits: self.dynamic_hits,
+            refusals: self.dynamic_refusals,
+            retargets: self
+                .dynamic_links
+                .as_ref()
+                .map_or(0, DynamicLinkCache::retargets),
+            live_entries: self
+                .dynamic_links
+                .as_ref()
+                .map_or(0, DynamicLinkCache::live_entries),
+            installs: self
+                .dynamic_links
+                .as_ref()
+                .map_or(0, DynamicLinkCache::installs),
+        }
     }
 
     fn note_jit_retired(&mut self, retired: u64) {

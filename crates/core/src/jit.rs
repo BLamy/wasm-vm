@@ -79,9 +79,16 @@ pub mod abi {
     /// E4-T34: bounded number of raw stores a direct-chain call can record. The direct-chain fuel is
     /// currently no larger than this, so a full log always takes the exact imported slow path.
     pub const CHAIN_STORE_CAPACITY: u32 = 128;
-    /// Exclusive end of the auxiliary chain state retained beside the frozen handoff.
-    pub const CHAIN_STATE_END: u32 =
+    /// E4-T37: number of generated dynamic-return probes in the current direct chain.
+    pub const CHAIN_DYNAMIC_ATTEMPTS: u32 =
         CHAIN_STORE_BASE + CHAIN_STORE_ENTRY_BYTES * CHAIN_STORE_CAPACITY;
+    /// E4-T37: number of dynamic-return probes that passed every generated guard and entered a
+    /// cached target.
+    pub const CHAIN_DYNAMIC_HITS: u32 = CHAIN_DYNAMIC_ATTEMPTS + 8;
+    /// E4-T37: number of dynamic-return probes refused by the generated guards.
+    pub const CHAIN_DYNAMIC_REFUSALS: u32 = CHAIN_DYNAMIC_HITS + 8;
+    /// Exclusive end of the auxiliary chain state retained beside the frozen handoff.
+    pub const CHAIN_STATE_END: u32 = CHAIN_DYNAMIC_REFUSALS + 8;
 }
 
 /// Reusable transport buffer spanning the compiled module's frozen handoff byte range.
@@ -233,6 +240,9 @@ impl CpuStateHandoff {
         self.put_chain_u64(abi::CHAIN_DEPTH, depth);
         self.put_chain_u64(abi::CHAIN_ENABLED, enabled as u64);
         self.put_chain_u64(abi::CHAIN_STORE_COUNT, 0);
+        self.put_chain_u64(abi::CHAIN_DYNAMIC_ATTEMPTS, 0);
+        self.put_chain_u64(abi::CHAIN_DYNAMIC_HITS, 0);
+        self.put_chain_u64(abi::CHAIN_DYNAMIC_REFUSALS, 0);
     }
 
     /// Total retired instructions recorded by the current direct chain.
@@ -247,6 +257,21 @@ impl CpuStateHandoff {
     /// outside the frozen handoff and has no architectural effect.
     pub fn chain_depth_remaining(&self) -> u64 {
         self.chain_u64(abi::CHAIN_DEPTH)
+    }
+
+    /// Number of generated dynamic-return probes in the current direct chain.
+    pub fn dynamic_link_attempts(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_DYNAMIC_ATTEMPTS)
+    }
+
+    /// Number of generated dynamic-return probes that entered a cached target.
+    pub fn dynamic_link_hits(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_DYNAMIC_HITS)
+    }
+
+    /// Number of generated dynamic-return probes refused by the cache or authority guard.
+    pub fn dynamic_link_refusals(&self) -> u64 {
+        self.chain_u64(abi::CHAIN_DYNAMIC_REFUSALS)
     }
 
     /// Registers written by the current generated direct chain, as a bit mask over x0..x31.
@@ -436,6 +461,26 @@ pub struct JitCacheStats {
     pub generation: u64,
 }
 
+/// E4-T37: cumulative browser dynamic-return PIC telemetry plus its bounded live state.
+///
+/// The default is deliberately zero so native and mock executors remain source-compatible; the
+/// browser executor reports generated probe outcomes and its Rust-owned publication ledger.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct DynamicLinkStats {
+    /// Generated dynamic-return probes.
+    pub attempts: u64,
+    /// Probes that passed the cache, chain, and EXEC-TLB authority guards.
+    pub hits: u64,
+    /// Probes that returned to the dispatcher instead of calling an indirect target.
+    pub refusals: u64,
+    /// Actual replacement of an existing live PIC entry after hysteresis was satisfied.
+    pub retargets: u64,
+    /// Current number of live virtual-target entries in the bounded PIC.
+    pub live_entries: u64,
+    /// Actual PIC entry publications, including replacements.
+    pub installs: u64,
+}
+
 impl JitCacheStats {
     /// Re-translation rate = retranslations / installs (the thrash signal). `0.0` before any install.
     pub fn retranslation_rate(&self) -> f64 {
@@ -584,6 +629,12 @@ pub trait CompiledBlockExecutor {
     /// the boundary reduction without inferring it from unrelated dispatch statistics.
     fn direct_chain_links(&self) -> u64 {
         0
+    }
+
+    /// E4-T37: dynamic-return PIC telemetry. Native and non-browser executors do not publish a
+    /// browser funcref cache and therefore retain the zero default.
+    fn dynamic_link_stats(&self) -> DynamicLinkStats {
+        DynamicLinkStats::default()
     }
 
     /// E4-T31: record the exact retirement count the core committed for a compiled exit. The core,

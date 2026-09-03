@@ -187,12 +187,22 @@ pub struct Abi {
     /// Whether this ABI emits the bounded chain-fuel and retirement protocol. The frozen native
     /// ABI keeps it false; the browser imported-memory ABI opts in explicitly.
     pub direct_chain: bool,
-    /// E4-T34: base of the browser's direct-mapped virtual-target cache. A matching entry contains
-    /// the target virtual PC and a one-based imported funcref-table index. Zero means no guarded
-    /// dynamic successor is currently published.
+    /// E4-T34/E4-T37: base of the browser's bounded virtual-target PIC. Each entry contains the
+    /// target virtual PC and a one-based imported funcref-table index. Zero means no guarded dynamic
+    /// successor is currently published.
     pub dynamic_map_base: u32,
-    /// E4-T34: `dynamic_map_base` slot mask; the map has power-of-two entries and 16-byte slots.
+    /// E4-T34: `dynamic_map_base` set mask; the map has power-of-two sets and 16-byte entries.
     pub dynamic_map_mask: u32,
+    /// E4-T37: number of ways in each bounded dynamic-return PIC set. One preserves the original
+    /// monomorphic layout; production uses four.
+    pub dynamic_map_ways: u32,
+    /// E4-T37: byte base of the per-entry expected host-page authority words. Zero disables the
+    /// generated EXEC-TLB authority check for standalone translator harnesses.
+    pub dynamic_authority_base: u32,
+    /// E4-T37: shared counters incremented by generated dynamic-return probes.
+    pub dynamic_attempts: u32,
+    pub dynamic_hits: u32,
+    pub dynamic_refusals: u32,
     /// E4-T34: whether translated `jalr` exits may use the guarded dynamic table path.
     pub dynamic_chain: bool,
     /// E4-T34: imported funcref table index used by guarded dynamic calls.
@@ -308,6 +318,11 @@ impl Abi {
         direct_chain: false,
         dynamic_map_base: 0,
         dynamic_map_mask: 0,
+        dynamic_map_ways: 0,
+        dynamic_authority_base: 0,
+        dynamic_attempts: 0,
+        dynamic_hits: 0,
+        dynamic_refusals: 0,
         dynamic_chain: false,
         chain_table: 0,
         static_map_base: 0,
@@ -337,6 +352,11 @@ impl Abi {
         direct_chain: false,
         dynamic_map_base: 0,
         dynamic_map_mask: 0,
+        dynamic_map_ways: 0,
+        dynamic_authority_base: 0,
+        dynamic_attempts: 0,
+        dynamic_hits: 0,
+        dynamic_refusals: 0,
         dynamic_chain: false,
         chain_table: 0,
         static_map_base: 0,
@@ -542,6 +562,20 @@ fn record_chain_retired(f: &mut FuncBuilder, regs: &Regs, abi: &Abi, retired: u6
     f.i64_const(retired as i64);
     f.i64_add();
     f.i64_store(ALIGN8, abi.chain_retired);
+}
+
+/// Increment one generated direct-chain telemetry counter. A zero offset keeps the frozen/native
+/// ABI byte-compatible and omits the counter operation entirely.
+fn emit_chain_counter_inc(f: &mut FuncBuilder, offset: u32) {
+    if offset == 0 {
+        return;
+    }
+    f.local_get(STATE_BASE);
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, offset);
+    f.i64_const(1);
+    f.i64_add();
+    f.i64_store(ALIGN8, offset);
 }
 
 /// Enter the E4-T34 direct-chain protocol. The first block is checked by the core before dispatch,
@@ -1603,7 +1637,11 @@ fn emit_static_exit(
         f.i32_const(source_host_page as i32);
         f.i32_ne();
         f.if_(BlockType::Value(ValType::I32));
-        emit_exec_target_predicate(f, regs, abi, expected_host_page);
+        let target = f.local(ValType::I64);
+        f.local_get(STATE_BASE);
+        f.i64_load(ALIGN8, abi.exit_pc);
+        f.local_set(target);
+        emit_exec_target_predicate(f, abi, target, expected_host_page);
         f.else_();
         // The target is on the same physical page as the source. The already-authoritative
         // physical block identity is enough; no second virtual-page probe is needed on this edge.
@@ -1638,15 +1676,11 @@ fn emit_static_exit(
 /// host-visible exit path.
 fn emit_exec_target_predicate(
     f: &mut FuncBuilder,
-    _regs: &Regs,
     abi: &Abi,
+    target: u32,
     expected_host_page: u32,
 ) {
-    let target = f.local(ValType::I64);
     let eaddr = f.local(ValType::I32);
-    f.local_get(STATE_BASE);
-    f.i64_load(ALIGN8, abi.exit_pc);
-    f.local_set(target);
     emit_slot_addr(f, &abi.tlb, target, abi.tlb.exec_base, eaddr);
     // A fetch entry has the same `{tag,addend}` shape as the load/store entries. The addend maps
     // the current target VA to the shared wasm-memory address of its observed physical page.
@@ -1659,11 +1693,11 @@ fn emit_exec_target_predicate(
     f.i32_and();
 }
 
-/// Emit the guarded dynamic-target half of E4-T34. The target is a virtual `jalr` result. A
-/// runtime-installed direct-mapped entry pairs that exact virtual PC with a live table index; a
-/// miss, collision, disabled chain, or import-side effect takes the ordinary host exit. This keeps
-/// the fast path speculative but makes it self-invalidating: the browser executor clears the entry
-/// before freeing or remapping its compiled target.
+/// Emit the guarded dynamic-target half of E4-T34/E4-T37. The target is a virtual `jalr` result. A
+/// runtime-installed bounded set-associative PIC pairs that exact virtual PC with a live table
+/// index and an optional expected host page; a miss, collision, disabled chain, import-side effect,
+/// or stale EXEC-TLB authority takes the ordinary host exit. Rust owns publication and clears the
+/// entry before freeing or remapping its compiled target.
 fn emit_dynamic_exit(
     f: &mut FuncBuilder,
     regs: &Regs,
@@ -1672,9 +1706,17 @@ fn emit_dynamic_exit(
     code: ExitCode,
     run_ty: u32,
 ) {
-    let slot = f.local(ValType::I32);
+    let set = f.local(ValType::I32);
+    let candidate = f.local(ValType::I32);
+    let found = f.local(ValType::I32);
     let table_index = f.local(ValType::I32);
-    // slot = dynamic_map_base + (((target >> 2) ^ (target >> 12) ^ target) & mask) * 16.
+    let expected_host_page = (abi.dynamic_authority_base != 0).then(|| f.local(ValType::I32));
+
+    emit_chain_counter_inc(f, abi.dynamic_attempts);
+
+    // set = dynamic_map_base + (((target >> 2) ^ (target >> 12) ^ target) & mask) *
+    // (16 * ways). The browser ABI uses four ways; a one-way ABI remains available to focused
+    // translator tests and preserves the original monomorphic layout.
     f.local_get(target);
     f.i64_const(2);
     f.i64_shr_u();
@@ -1686,16 +1728,68 @@ fn emit_dynamic_exit(
     f.i64_xor();
     f.i64_const(i64::from(abi.dynamic_map_mask));
     f.i64_and();
-    f.i64_const(16);
+    f.i64_const(i64::from(
+        16_u32.saturating_mul(abi.dynamic_map_ways.max(1)),
+    ));
     f.i64_mul();
     f.i32_wrap_i64();
     f.i32_const(abi.dynamic_map_base as i32);
     f.i32_add();
-    f.local_set(slot);
+    f.local_set(set);
 
-    // Guard: chain is enabled, no host-side barrier was raised, and both the key and one-based
-    // table index match the publication. The table-index load is repeated below only on the taken
-    // arm, keeping the miss path to two byte loads and three integer comparisons.
+    f.i32_const(0);
+    f.local_set(found);
+    let ways = abi.dynamic_map_ways.max(1);
+    for way in 0..ways {
+        // candidate = set + way * 16.
+        f.local_get(set);
+        f.i32_const((way * 16) as i32);
+        f.i32_add();
+        f.local_set(candidate);
+
+        // Only the first matching way is selected. A zero table word is never a valid target, so
+        // a partially published/cleared slot cannot turn into a stale call_indirect.
+        f.local_get(found);
+        f.i32_eqz();
+        f.local_get(candidate);
+        f.i64_load(ALIGN8, 0);
+        f.local_get(target);
+        f.i64_eq();
+        f.i32_and();
+        f.local_get(candidate);
+        f.i64_load(ALIGN8, 8);
+        f.i64_eqz();
+        f.i32_eqz();
+        f.i32_and();
+        f.if_(BlockType::Empty);
+        f.local_get(candidate);
+        f.i64_load(ALIGN8, 8);
+        f.i64_const(1);
+        f.i64_sub();
+        f.i32_wrap_i64();
+        f.local_set(table_index);
+        if let Some(expected_host_page) = expected_host_page {
+            // The authority table is indexed by the 16-byte PIC entry, not by the set. This
+            // mirrors the Rust cache's `{tag, table-index, expected-host-page}` metadata while
+            // keeping the hot key/index probe compact.
+            f.local_get(candidate);
+            f.i32_const(abi.dynamic_map_base as i32);
+            f.i32_sub();
+            f.i32_const(2);
+            f.i32_shr_u();
+            f.i32_const(abi.dynamic_authority_base as i32);
+            f.i32_add();
+            f.i32_load(2, 0);
+            f.local_set(expected_host_page);
+        }
+        f.i32_const(1);
+        f.local_set(found);
+        f.end();
+    }
+
+    // Guard: chain is enabled, no host-side barrier was raised, and one PIC way matched. When the
+    // browser supplies authority words, the selected target must also match the generated EXEC-TLB
+    // entry for the physical page observed by Rust before publication.
     emit_chain_enabled_get(f, regs, abi);
     f.local_get(STATE_BASE);
     f.i32_load8_u(0, abi.chain_abort);
@@ -1705,23 +1799,14 @@ fn emit_dynamic_exit(
     f.i64_eqz();
     f.i32_eqz();
     f.i32_and();
-    f.local_get(slot);
-    f.i64_load(ALIGN8, 0);
-    f.local_get(target);
-    f.i64_eq();
+    f.local_get(found);
     f.i32_and();
-    f.local_get(slot);
-    f.i64_load(ALIGN8, 8);
-    f.i64_eqz();
-    f.i32_eqz();
-    f.i32_and();
+    if let Some(expected_host_page) = expected_host_page {
+        emit_exec_target_predicate(f, abi, target, expected_host_page);
+        f.i32_and();
+    }
     f.if_(BlockType::Value(ValType::I32));
-    f.local_get(slot);
-    f.i64_load(ALIGN8, 8);
-    f.i64_const(1);
-    f.i64_sub();
-    f.i32_wrap_i64();
-    f.local_set(table_index);
+    emit_chain_counter_inc(f, abi.dynamic_hits);
     // The caller already wrote `exit_pc = target`; make it the callee's virtual entry PC.
     f.local_get(STATE_BASE);
     f.local_get(STATE_BASE);
@@ -1739,6 +1824,7 @@ fn emit_dynamic_exit(
     f.local_get(table_index);
     f.call_indirect(run_ty, abi.chain_table);
     f.else_();
+    emit_chain_counter_inc(f, abi.dynamic_refusals);
     f.i32_const(code as i32);
     f.end();
     f.return_();

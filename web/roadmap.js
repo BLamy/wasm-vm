@@ -114,6 +114,7 @@ export const ROADMAP = [
       { name: "Exact bounded JIT work + retirement", status: "verified", evidence: "E4-T31: budgets, traps, counters, trace gating, CLI, and Wasm wrapper" },
       { name: "Bulk JIT state handoff + bounded browser handles", status: "verified", evidence: "E4-T33: one 568-byte transfer each way; exact fault state; 4,096-cycle externref/eviction stress" },
       { name: "Default whole-machine Web Worker", status: "verified", evidence: "E4-T32: fresh verifier held exact raw-frame Node matrix plus unchanged browser/rr proof" },
+      { name: "Bounded multi-target JALR return PIC", status: "verified", evidence: "E4-T37: four-way same-set Node parity, hysteretic replacement, generated EXEC-TLB authority, fuel, invalidation, and telemetry proof" },
     ],
   },
   {

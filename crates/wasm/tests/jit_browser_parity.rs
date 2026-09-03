@@ -1775,13 +1775,18 @@ fn browser_inline_static_link_unlinks_and_rearms_after_target_reinstall() {
 
 #[wasm_bindgen_test]
 fn browser_inline_dynamic_jalr_links_switch_and_unlinks() {
-    // E4-T34: a computed virtual target is published only after its compiled physical block is
-    // live, can switch to a second target without confusing the direct-mapped guard, and is cleared
-    // before the target is invalidated. The final call must take the ordinary BranchTaken exit and
-    // leave the invalidated target's architectural increment untouched.
+    // E4-T37: four computed targets deliberately hash to one PIC set. The first four occupy the
+    // bounded ways; a fifth target needs two observations before it can replace the LRU entry.
+    // Every generated hit still has to pass the EXEC-TLB authority check before call_indirect.
     const CALLER: u64 = DRAM_BASE;
-    const TARGET_A: u64 = DRAM_BASE + 0x1000;
-    const TARGET_B: u64 = DRAM_BASE + 0x2000;
+    // These offsets all produce dynamic-set zero for the cache hash and are separated far enough
+    // apart that each two-instruction block has its own physical page.
+    const TARGET_A: u64 = DRAM_BASE + 0x1554;
+    const TARGET_B: u64 = DRAM_BASE + 0x2aa8;
+    const TARGET_C: u64 = DRAM_BASE + 0x4550;
+    const TARGET_D: u64 = DRAM_BASE + 0x5004;
+    const TARGET_E: u64 = DRAM_BASE + 0x6ff8;
+    const TARGETS: [u64; 5] = [TARGET_A, TARGET_B, TARGET_C, TARGET_D, TARGET_E];
     let caller = block(
         CALLER,
         &[
@@ -1819,52 +1824,87 @@ fn browser_inline_dynamic_jalr_links_switch_and_unlinks() {
             Instr::Jal { rd: 0, imm: 4 },
         ],
     );
+    let target_c = block(
+        TARGET_C,
+        &[
+            Instr::Addi {
+                rd: 4,
+                rs1: 4,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: 4 },
+        ],
+    );
+    let target_d = block(
+        TARGET_D,
+        &[
+            Instr::Addi {
+                rd: 5,
+                rs1: 5,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: 4 },
+        ],
+    );
+    let target_e = block(
+        TARGET_E,
+        &[
+            Instr::Addi {
+                rd: 7,
+                rs1: 7,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: 4 },
+        ],
+    );
     let mut machine = Machine::new(8 * 1024 * 1024);
     let mut executor = BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
-    // Put the caller and both targets in one batch even though they occupy different pages. There
-    // are no cross-page static edges in this group, so page invalidation must remove only target A
-    // and retain the caller + target B functions and their shared instance.
-    executor.install_batch(
-        &[caller, target_a, target_b],
-        &[[None, None], [None, None], [None, None]],
-    );
+    // Put all candidates in one batch. There are no static edges in this group, so the dynamic PIC
+    // is the only possible direct successor path and invalidating one target can retain the others.
+    let blocks = [caller, target_a, target_b, target_c, target_d, target_e];
+    executor.install_batch(&blocks, &[[None, None]; 6]);
 
-    machine.hart_mut().regs.write(6, TARGET_A);
     machine.hart_mut().regs.pc = CALLER;
     let machine_ptr: *mut Machine = &mut machine;
+    let run_target = |executor: &mut BrowserExecutor, target: u64, budget: u64, chain: bool| unsafe {
+        (*machine_ptr).hart_mut().regs.write(6, target);
+        (*machine_ptr).hart_mut().regs.pc = CALLER;
+        executor
+            .execute_with_budget(
+                CALLER,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                budget,
+                chain,
+            )
+            .expect("compiled dynamic caller returns an exit")
+    };
+
     // The first inline-TLB call establishes the address-translation context and intentionally
     // clears speculative dynamic links. Production publishes the resolved target after this miss,
     // so mirror that ordering before asserting the fast path.
-    let warmup = unsafe {
-        executor
-            .execute_with_budget(
-                CALLER,
-                (*machine_ptr).hart_mut(),
-                (*machine_ptr).bus_mut(),
-                16,
-                16,
-                false,
-            )
-            .expect("initial dynamic-target lookup returns to dispatch")
-    };
+    let warmup = run_target(&mut executor, TARGET_A, 16, false);
     assert_eq!(warmup.retired, 2);
-    for register in 1..=3 {
-        machine.hart_mut().regs.write(register, 0);
-    }
-    machine.hart_mut().regs.pc = CALLER;
+    assert_eq!(executor.dynamic_link_stats().attempts, 1);
+    assert_eq!(executor.dynamic_link_stats().hits, 0);
+    assert_eq!(executor.dynamic_link_stats().refusals, 1);
+    assert_eq!(executor.dynamic_link_stats().live_entries, 0);
+    assert_eq!(executor.dynamic_link_stats().installs, 0);
+
+    // A target-side fuel refusal still enters the cached target, but does not execute its first
+    // instruction. This exercises the bounded callee prologue without weakening PIC telemetry.
     executor.link_dynamic_target(TARGET_A, TARGET_A);
-    let exit = unsafe {
-        executor
-            .execute_with_budget(
-                CALLER,
-                (*machine_ptr).hart_mut(),
-                (*machine_ptr).bus_mut(),
-                16,
-                16,
-                true,
-            )
-            .expect("compiled caller returns through the dynamic target")
-    };
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(2, 0);
+    let fuel = run_target(&mut executor, TARGET_A, 3, true);
+    assert_eq!(fuel.code, ExitCode::Budget);
+    assert_eq!(fuel.retired, 2);
+    assert_eq!(machine.hart().regs.read(2), 0);
+
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(2, 0);
+    let exit = run_target(&mut executor, TARGET_A, 16, true);
     assert_eq!(exit.code, ExitCode::BranchTaken);
     assert_eq!(exit.retired, 4, "caller + target A must retire exactly");
     assert_eq!(exit.next_pc, TARGET_A + 8);
@@ -1872,54 +1912,122 @@ fn browser_inline_dynamic_jalr_links_switch_and_unlinks() {
     assert_eq!(machine.hart().regs.read(2), 1);
     assert_eq!(machine.hart().regs.read(3), 0);
 
-    machine.hart_mut().regs.write(6, TARGET_B);
-    machine.hart_mut().regs.pc = CALLER;
-    executor.link_dynamic_target(TARGET_B, TARGET_B);
-    let exit = unsafe {
-        executor
-            .execute_with_budget(
-                CALLER,
-                (*machine_ptr).hart_mut(),
-                (*machine_ptr).bus_mut(),
-                16,
-                16,
-                true,
-            )
-            .expect("compiled caller switches to the second dynamic target")
-    };
-    assert_eq!(exit.code, ExitCode::BranchTaken);
-    assert_eq!(exit.retired, 4);
-    assert_eq!(exit.next_pc, TARGET_B + 8);
-    assert_eq!(machine.hart().regs.read(1), 2);
-    assert_eq!(machine.hart().regs.read(2), 1);
-    assert_eq!(machine.hart().regs.read(3), 1);
+    // Fill the other three ways. All four links execute through one compiled module, and no
+    // repeated publication is needed to keep a stable target live.
+    for (index, target) in TARGETS[..4].iter().copied().enumerate().skip(1) {
+        executor.link_dynamic_target(target, target);
+        machine.hart_mut().regs.write(1, 0);
+        machine.hart_mut().regs.write((2 + index) as u8, 0);
+        let exit = run_target(&mut executor, target, 16, true);
+        assert_eq!(exit.code, ExitCode::BranchTaken);
+        assert_eq!(exit.retired, 4);
+        assert_eq!(exit.next_pc, target + 8);
+        assert_eq!(machine.hart().regs.read((2 + index) as u8), 1);
+    }
 
-    executor.invalidate_page(TARGET_A >> 12);
-    assert!(!executor.is_compiled(TARGET_A));
-    assert!(executor.is_compiled(TARGET_B));
-    machine.hart_mut().regs.write(6, TARGET_A);
-    machine.hart_mut().regs.pc = CALLER;
-    let exit = unsafe {
-        executor
-            .execute_with_budget(
-                CALLER,
-                (*machine_ptr).hart_mut(),
-                (*machine_ptr).bus_mut(),
-                16,
-                16,
-                true,
-            )
-            .expect("compiled caller still returns on a dynamic-cache miss")
-    };
-    assert_eq!(exit.code, ExitCode::BranchTaken);
+    let filled = executor.dynamic_link_stats();
+    assert_eq!(filled.attempts, 6, "warmup + fuel + four hot probes");
     assert_eq!(
-        exit.retired, 2,
-        "a stale target must not be called indirectly"
+        filled.hits, 5,
+        "fuel refusal still entered the cached target"
     );
-    assert_eq!(exit.next_pc, TARGET_A);
-    assert_eq!(machine.hart().regs.read(1), 3);
-    assert_eq!(machine.hart().regs.read(2), 1);
-    assert_eq!(machine.hart().regs.read(3), 1);
+    assert_eq!(filled.refusals, 1);
+    assert_eq!(
+        filled.live_entries, 4,
+        "the PIC is bounded at four live targets"
+    );
+    assert_eq!(filled.installs, 4);
+    assert_eq!(filled.retargets, 0);
+    let compiled_installs = executor.jit_cache_stats().installs;
+    let module_count = executor.module_count();
+
+    // One observation of a fifth same-set target is only a pending retarget. The cache remains
+    // live and the dispatcher/module registry does not churn.
+    executor.link_dynamic_target(TARGET_E, TARGET_E);
+    let pending = executor.dynamic_link_stats();
+    assert_eq!(pending.live_entries, 4);
+    assert_eq!(pending.installs, 4);
+    assert_eq!(pending.retargets, 0);
+    assert_eq!(executor.jit_cache_stats().installs, compiled_installs);
+    assert_eq!(executor.module_count(), module_count);
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(7, 0);
+    let pending_exit = run_target(&mut executor, TARGET_E, 16, true);
+    assert_eq!(pending_exit.retired, 2);
+    assert_eq!(machine.hart().regs.read(7), 0);
+
+    // The second observation arms exactly one replacement, evicting the oldest target (A).
+    executor.link_dynamic_target(TARGET_E, TARGET_E);
+    let replaced = executor.dynamic_link_stats();
+    assert_eq!(replaced.live_entries, 4);
+    assert_eq!(replaced.installs, 5);
+    assert_eq!(replaced.retargets, 1);
+    assert_eq!(executor.jit_cache_stats().installs, compiled_installs);
+    assert_eq!(executor.module_count(), module_count);
+
+    // Target fuel is exhausted before E's first instruction, then a normal call succeeds. This
+    // also confirms that replacement does not tear down the containing dispatcher/module.
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(7, 0);
+    let fuel = run_target(&mut executor, TARGET_E, 3, true);
+    assert_eq!(fuel.code, ExitCode::Budget);
+    assert_eq!(fuel.retired, 2);
+    assert_eq!(machine.hart().regs.read(7), 0);
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(7, 0);
+    let exit = run_target(&mut executor, TARGET_E, 16, true);
+    assert_eq!(exit.retired, 4);
+    assert_eq!(machine.hart().regs.read(7), 1);
+
+    // Stable re-publication after a retarget burst must not arm more replacements or grow the
+    // live set. The counters are the direct proof that the dispatcher stayed bounded.
+    for _ in 0..32 {
+        executor.link_dynamic_target(TARGET_E, TARGET_E);
+    }
+    let stable = executor.dynamic_link_stats();
+    assert_eq!(stable.live_entries, 4);
+    assert_eq!(stable.installs, 5);
+    assert_eq!(stable.retargets, 1);
+    assert_eq!(executor.jit_cache_stats().installs, compiled_installs);
+    assert_eq!(executor.module_count(), module_count);
+
+    // Invalidate B while C remains hot. Removing one physical target clears only its PIC way.
+    executor.invalidate_page(TARGET_B >> 12);
+    assert!(!executor.is_compiled(TARGET_B));
+    assert!(executor.is_compiled(TARGET_C));
+    assert_eq!(executor.dynamic_link_stats().live_entries, 3);
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(4, 0);
+    let hot = run_target(&mut executor, TARGET_C, 16, true);
+    assert_eq!(hot.retired, 4);
+    assert_eq!(machine.hart().regs.read(4), 1);
+
+    // Sabotage only C's published authority word. The key and table index remain live, so this is
+    // a generated EXEC-TLB/PA mismatch attack rather than a cache miss; no stale target may run.
+    assert!(executor.set_dynamic_link_authority_for_test(TARGET_C, u32::MAX));
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(4, 0);
+    let refused = run_target(&mut executor, TARGET_C, 16, true);
+    assert_eq!(refused.code, ExitCode::BranchTaken);
+    assert_eq!(refused.retired, 2);
+    assert_eq!(refused.next_pc, TARGET_C);
+    assert_eq!(machine.hart().regs.read(4), 0);
+
+    // A was the LRU victim, so its old table index/key cannot be reached indirectly.
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(2, 0);
+    let stale = run_target(&mut executor, TARGET_A, 16, true);
+    assert_eq!(stale.code, ExitCode::BranchTaken);
+    assert_eq!(stale.retired, 2);
+    assert_eq!(stale.next_pc, TARGET_A);
+    assert_eq!(machine.hart().regs.read(2), 0);
+
+    executor.invalidate_all();
+    assert_eq!(
+        executor.dynamic_link_stats().live_entries,
+        0,
+        "whole-cache reset clears every live PIC entry"
+    );
 }
 
 #[wasm_bindgen_test]

@@ -523,6 +523,28 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
                 "directChainLinks",
                 &JsValue::from_f64(e.direct_chain_links() as f64),
             );
+            let dynamic = e.dynamic_link_stats();
+            set(
+                "dynamicLinkAttempts",
+                &JsValue::from_f64(dynamic.attempts as f64),
+            );
+            set("dynamicLinkHits", &JsValue::from_f64(dynamic.hits as f64));
+            set(
+                "dynamicLinkRefusals",
+                &JsValue::from_f64(dynamic.refusals as f64),
+            );
+            set(
+                "dynamicLinkRetargets",
+                &JsValue::from_f64(dynamic.retargets as f64),
+            );
+            set(
+                "dynamicLinkLiveEntries",
+                &JsValue::from_f64(dynamic.live_entries as f64),
+            );
+            set(
+                "dynamicLinkInstalls",
+                &JsValue::from_f64(dynamic.installs as f64),
+            );
         }
         None => {
             set("hasExecutor", &JsValue::from_bool(false));
@@ -531,6 +553,12 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
             set("retiredViaJit", &JsValue::from_f64(0.0));
             set("directChainEntries", &JsValue::from_f64(0.0));
             set("directChainLinks", &JsValue::from_f64(0.0));
+            set("dynamicLinkAttempts", &JsValue::from_f64(0.0));
+            set("dynamicLinkHits", &JsValue::from_f64(0.0));
+            set("dynamicLinkRefusals", &JsValue::from_f64(0.0));
+            set("dynamicLinkRetargets", &JsValue::from_f64(0.0));
+            set("dynamicLinkLiveEntries", &JsValue::from_f64(0.0));
+            set("dynamicLinkInstalls", &JsValue::from_f64(0.0));
         }
     }
     // Keep the original proof counters above stable while exposing the cumulative mechanics that

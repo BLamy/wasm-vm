@@ -87,6 +87,19 @@ fn jit_hot_loop_step_and_trace_report_exact_retirements() {
     let jit_before_trace = m.jit_stats().unwrap();
     let executed_before_trace = get_num(&jit_before_trace, "executedBlocks").unwrap();
     let retired_jit_before_trace = get_num(&jit_before_trace, "retiredViaJit").unwrap();
+    for key in [
+        "dynamicLinkAttempts",
+        "dynamicLinkHits",
+        "dynamicLinkRefusals",
+        "dynamicLinkRetargets",
+        "dynamicLinkLiveEntries",
+        "dynamicLinkInstalls",
+    ] {
+        assert!(
+            get_num(&jit_before_trace, key).is_some(),
+            "jitStats must expose {key}"
+        );
+    }
     assert!(
         executed_before_trace > 0.0,
         "trace-off step must use the JIT"

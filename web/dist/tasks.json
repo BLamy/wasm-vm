@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 178,
+    "verified": 179,
     "total": 343
   },
   "epics": [
@@ -15126,7 +15126,7 @@
       "epicKey": "4",
       "title": "Guarded cross-page direct links",
       "priority": 436,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4-T35"
       ],
@@ -15137,13 +15137,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified\n\n- EXEC-TLB authority guard — HELD. Predicted a published cross-page edge would call its target only\n  when the target VA tag and generated addend still resolve to the recorded host page. The Node\n  parity run observed the guarded edge refusing after a competing VA-to-PA observation changed the\n  EXEC-TLB addend, then rearming and executing after the authoritative mapping was restored\n  (`browser_inline_static_guard_rejects_remapped_target_page`).\n- Invalidation, permission, and budget boundaries — HELD. Predicted target-page invalidation,\n  revoked execute permission, and a target tail that exceeds remaining fuel would each return once\n  at the caller boundary without entering stale target code. The Node run observed exact caller-only\n  retirement and unchanged target registers in\n  `browser_inline_static_link_unlinks_and_rearms_after_target_reinstall`,\n  `browser_inline_static_link_refuses_after_execute_permission_change`, and\n  `browser_inline_static_cross_page_tail_refuses_before_target_entry`.\n- Acceptance throughput and parity — HELD. Predicted the fresh Node chain fixture would preserve\n  architectural results while reaching at least 7.3 logical blocks per engine call. The warm\n  eight-block fixture retired all 16 instructions with `direct_chain_entries >= 8` and\n  `direct_chain_links >= 7`; the same run also covered load/store, precise-fault, timer/device\n  boundary, and SMC paths.\n- Diff coverage — HELD. The changed translator, core publication, PMP revision, browser cache, and\n  parity-test paths are exercised by the recorded Node run and the native/wasm target gates listed\n  in `evidence/e4-t36/README.md`.\n- SUITE: promoted the deterministic Node parity cases and the exact-head evidence record at\n  `evidence/e4-t36/README.md`.\n\nCommit: `61a3654`\n\nEvidence: `evidence/e4-t36/README.md`\n\nCommands: `cargo fmt --all --check`; `cargo clippy -p wasm-vm-core -p wasm-vm-jit-translate -- -D warnings`; `cargo clippy --target wasm32-unknown-unknown -p wasm-vm-wasm --lib -- -D warnings`; `cargo check -p wasm-vm-core -p wasm-vm-jit-translate`; `cargo check --target wasm32-unknown-unknown -p wasm-vm-wasm --lib`; `cargo test -p wasm-vm-core`; `cargo test -p wasm-vm-jit-translate`; `wasm-pack test --node crates/wasm --test jit_browser_parity`; `bash tools/build-web-dist.sh`",
       "adversarial": "Change the target mapping after publication, invalidate the target page, deny execute permission,\nand force a remaining-budget tail at the link boundary. Every refusal must fall back exactly once.",
       "file": "tasks/epic-4-acceleration/E4-T36-guarded-cross-page-links.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 2,
+          "labels": [
+            "verify: close guarded cross-page links",
+            "tasks: start guarded cross-page links"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 2
     },
     {
       "id": "E4-T37",
@@ -15151,7 +15160,7 @@
       "epicKey": "4",
       "title": "Bounded multi-target JALR return PIC",
       "priority": 437,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T35"
       ],
