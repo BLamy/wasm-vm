@@ -16979,8 +16979,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t11b): verify keyboard LED wiring",
             "chore(e5-t11b): record keyboard LED evidence",
             "chore(e5-t11b): start keyboard LED wiring"
           ]
@@ -16988,7 +16989,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T11c",
@@ -16996,7 +16997,7 @@
       "epicKey": "5",
       "title": "keyboard evdev stream and repeat-policy proof",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T11b"
       ],

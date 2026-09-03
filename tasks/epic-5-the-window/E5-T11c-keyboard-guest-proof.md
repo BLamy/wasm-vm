@@ -3,7 +3,7 @@ id: E5-T11c
 epic: 5
 title: keyboard evdev stream and repeat-policy proof
 priority: 511.3
-status: pending
+status: in-progress
 depends_on: [E5-T11b]
 estimate: S
 risk: medium
