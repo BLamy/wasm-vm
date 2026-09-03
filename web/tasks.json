@@ -16927,7 +16927,7 @@
       "epicKey": "5",
       "title": "virtio-input keyboard capability specification",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T10c"
       ],
@@ -16938,13 +16938,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit 916ee8f4b0616ac96a23be7b6807ec16338c1e5e adds the reusable keyboard\ncapability module and native/wasm32 configuration fixtures. The exact-head checks were:\ncargo fmt --all -- --check, git diff --check, cargo test -p wasm-vm-core --lib dev::virtio::input\n(13 passed), cargo test -p wasm-vm-core --lib (232 passed),\ncargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic\n--quiet (22 passed), native and wasm32 cargo clippy with -D warnings, the wasm32 core build, and\nwasm-pack test --node crates/wasm --test keyboard_spec (1 passed), input_config (1 passed), and\ninput_queues (2 passed). The evidence is\nevidence/e5-t11a/keyboard-spec-2026-09-03.json, SHA-256\neae7d2fb09092d7b50ddcac2084ca3e029efd7cd18fcfef9e0a9e4da8d1d8961.\n\nThe recording demonstrates that the keyboard spec emits exactly PC-105 codes 1..=248, the\nthree declared LED bits, optional MSC_SCAN, and SYN_REPORT, while EV_REP remains empty. Native\nand wasm32 VirtioMmio reads assert the stable name and devids plus byte-identical, zero-padded\ncapability payloads, including the final advertised key and the first undeclared edge.",
       "adversarial": "Compare the complete bitmap against the checked-in QEMU-shaped fixture and probe edge codes near\nthe declared range, including F24 and the highest advertised code.",
       "file": "tasks/epic-5-the-window/E5-T11a-keyboard-spec.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t11a): start keyboard spec"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T11b",
