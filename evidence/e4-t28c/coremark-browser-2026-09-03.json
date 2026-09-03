@@ -1,0 +1,666 @@
+{
+  "schema_version": 1,
+  "schema": "e4-t28c-coremark-browser-result-v1",
+  "generatedAt": "2026-09-03T12:49:56.993Z",
+  "candidate": {
+    "commit": "b4de2bf9021185750c164c4103707d7eecb54c3c",
+    "source": "git HEAD",
+    "workingTree": "tracked test result is emitted after the browser run"
+  },
+  "build": {
+    "flags": {
+      "wasm": "wasm-pack build crates/wasm --target web --release",
+      "browser": "make web-build",
+      "guest": "-static -O2 -g0 -march=rv64gc -mabi=lp64d"
+    },
+    "coremarkBinary": "bench/guest/coremark.rv64",
+    "coremarkBinarySha256": "4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937",
+    "coremarkIterations": 6000
+  },
+  "baseline": {
+    "kind": "ledgered-level3-browser-interpreter",
+    "workloadId": "e4-t28c-coremark-browser-v1",
+    "metric": "CoreMark iterations/sec",
+    "requiredRatio": 10,
+    "reference": null,
+    "liveInterpreterMedianIterationsPerSec": 271.419524,
+    "candidateMedianIterationsPerSec": null,
+    "ratio": null,
+    "speedGateEvaluated": false,
+    "speedGateSatisfied": false
+  },
+  "controls": [
+    {
+      "name": "interpreter",
+      "query": "jit=0&slowInterp=1&jalr=1&region=1&quantum=100000",
+      "jit": false,
+      "threshold": 512,
+      "residency": "disabled",
+      "jalr": true,
+      "region": true,
+      "interpreter": "legacy"
+    }
+  ],
+  "fresh_profile": {
+    "requestedSamples": 1,
+    "actualSamples": {
+      "interpreter": 1
+    },
+    "newContextPerSample": true,
+    "persist": true,
+    "siteDataClearedByConstruction": true,
+    "nodeWarmupQuery": "absent",
+    "warmups": 0,
+    "webkit": "excluded by user direction",
+    "independentMachines": "excluded by user direction"
+  },
+  "headers": {
+    "served": {
+      "crossOriginOpenerPolicy": "same-origin",
+      "crossOriginEmbedderPolicy": "require-corp"
+    },
+    "deployContract": {
+      "path": "web/_headers",
+      "sha256": "cacb06e044da4b8b80636c2d6355f2c7bbc45b2a5a04901c99ba76cc5e31ff6c",
+      "crossOriginOpenerPolicy": "same-origin",
+      "crossOriginEmbedderPolicy": "credentialless"
+    }
+  },
+  "artifacts": {
+    "servedManifest": {
+      "path": "web/artifacts-node-alpine.json",
+      "sha256": "6804121c85af2abd5342857855d3568748b986de46b8c54cf70737820d10ec03"
+    },
+    "nodeChunkManifest": {
+      "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/chunked-node-alpine/manifest.json",
+      "sha256": "ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1"
+    }
+  },
+  "browser": {
+    "project": "chromium",
+    "configuredFirefox": "not configured",
+    "errors": {
+      "interpreter": []
+    }
+  },
+  "workload": {
+    "id": "e4-t28c-coremark-browser-v1",
+    "binary": "bench/guest/coremark.rv64",
+    "binarySha256": "4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937",
+    "expectedIterations": 6000,
+    "expectedSeedCrc": "0xe9f5",
+    "validationLine": "Correct operation validated. See README.md for run and reporting rules.",
+    "response": "real uploaded Linux ELF executed in the guest; no host-side score"
+  },
+  "results": {
+    "interpreter": [
+      {
+        "name": "interpreter",
+        "sample": 0,
+        "query": "jit=0&slowInterp=1&jalr=1&region=1&quantum=100000",
+        "controls": {
+          "jit": false,
+          "threshold": 512,
+          "residency": "disabled",
+          "jalr": true,
+          "region": true,
+          "interpreter": "legacy"
+        },
+        "backend": "whole-machine-worker",
+        "coldProfile": {
+          "persist": true,
+          "newContext": true,
+          "nodeWarmupQuery": "absent",
+          "nodeWarmupState": "disabled",
+          "beforeUpload": {
+            "jit": {
+              "hasExecutor": false,
+              "compiledBlocks": 0,
+              "executedBlocks": 0,
+              "retiredViaJit": 0,
+              "directChainEntries": 0,
+              "directChainLinks": 0,
+              "dynamicLinkAttempts": 0,
+              "dynamicLinkHits": 0,
+              "dynamicLinkRefusals": 0,
+              "dynamicLinkRetargets": 0,
+              "dynamicLinkLiveEntries": 0,
+              "dynamicLinkInstalls": 0,
+              "entryCost": {
+                "hostEntries": 0,
+                "stateCopyCalls": 0,
+                "stateCopyBytes": 0,
+                "stateCopyNs": 0,
+                "engineEntryNs": 0,
+                "indirectTableDispatches": 0,
+                "authorityChecks": 0,
+                "memorySplitExits": 0,
+                "deviceBoundaries": 0,
+                "deviceBoundaryNs": 0
+              },
+              "jitRegionChaining": false,
+              "jitDynamicChaining": false,
+              "guestRetired": 5199010,
+              "jitEngineCalls": 0,
+              "jitLogicalBlocksPerEngineCall": 0,
+              "jitRetiredShare": 0,
+              "chainLinksMade": 0,
+              "chainLinksCut": 0,
+              "chainDispatchEntries": 0,
+              "chainMaxDepth": 0,
+              "chainLinksFollowed": 0,
+              "jitResidencyPolicy": "disabled",
+              "jitResidencyCap": 0,
+              "jitSubmittedMembers": 0,
+              "jitCompilePauseNs": 0,
+              "jitCompilePauseMaxNs": 0,
+              "jitCompilePauseSamples": 0,
+              "jitCacheInstalls": 0,
+              "jitCacheRetranslations": 0,
+              "jitCacheEvictions": 0,
+              "jitCacheBatches": 0,
+              "jitCacheCodeBytes": 0,
+              "decodedBlocksDiscarded": 0,
+              "decodedCacheFlushes": 2,
+              "discoveryGeneration": 3,
+              "blockEntryHits": 0,
+              "blockBuilds": 0
+            },
+            "profile": {
+              "totalNs": 1160390002,
+              "sampleCount": 4794,
+              "walkCount": 175753,
+              "collisions": 34,
+              "regions": [
+                {
+                  "pc": "0x00007fffa87af680",
+                  "samples": 690,
+                  "pct": 14.392991239048811
+                },
+                {
+                  "pc": "0xffffffff80075200",
+                  "samples": 119,
+                  "pct": 2.4822695035460995
+                },
+                {
+                  "pc": "0xffffffff800751c0",
+                  "samples": 110,
+                  "pct": 2.29453483521068
+                },
+                {
+                  "pc": "0xffffffff800750c0",
+                  "samples": 84,
+                  "pct": 1.7521902377972465
+                },
+                {
+                  "pc": "0xffffffff80075080",
+                  "samples": 67,
+                  "pct": 1.3975803087192322
+                },
+                {
+                  "pc": "0x00007fff8bee5200",
+                  "samples": 52,
+                  "pct": 1.0846891948268669
+                },
+                {
+                  "pc": "0x00007fff8bee56c0",
+                  "samples": 49,
+                  "pct": 1.0221109720483939
+                },
+                {
+                  "pc": "0xffffffff80075040",
+                  "samples": 39,
+                  "pct": 0.8135168961201502
+                },
+                {
+                  "pc": "0xffffffff80075180",
+                  "samples": 38,
+                  "pct": 0.7926574885273258
+                },
+                {
+                  "pc": "0xffffffff8099d640",
+                  "samples": 37,
+                  "pct": 0.7717980809345015
+                }
+              ],
+              "subsystems": [
+                {
+                  "name": "cpu_interp",
+                  "ns": 1146729974
+                },
+                {
+                  "name": "mmu_walk",
+                  "ns": 13430029
+                },
+                {
+                  "name": "clint",
+                  "ns": 0
+                },
+                {
+                  "name": "plic",
+                  "ns": 84998
+                },
+                {
+                  "name": "uart",
+                  "ns": 145001
+                },
+                {
+                  "name": "virtio_blk",
+                  "ns": 0
+                },
+                {
+                  "name": "virtio_net",
+                  "ns": 0
+                },
+                {
+                  "name": "virtio_rng",
+                  "ns": 0
+                },
+                {
+                  "name": "rtc",
+                  "ns": 0
+                },
+                {
+                  "name": "syscon",
+                  "ns": 0
+                },
+                {
+                  "name": "other",
+                  "ns": 0
+                }
+              ],
+              "jitPause": {
+                "count": 0,
+                "maxNs": 0,
+                "sumNs": 0,
+                "overTarget": 0,
+                "maxAttemptedBlocks": 0,
+                "totalAttemptedBlocks": 0,
+                "maxSubmittedBlocks": 0,
+                "maxSubmittedBytes": 0,
+                "totalSubmittedBlocks": 0,
+                "runCount": 0,
+                "lastRunAttemptedBlocks": 0,
+                "maxRunAttemptedBlocks": 0,
+                "lastRunSubmittedBlocks": 0,
+                "maxRunSubmittedBlocks": 0,
+                "lastRunStagedNominations": 0,
+                "maxRunStagedNominations": 0,
+                "lastFinalPumps": 0,
+                "maxFinalPumps": 0,
+                "lastFinalAttemptedBlocks": 0,
+                "maxFinalAttemptedBlocks": 0,
+                "lastFinalSubmittedBlocks": 0,
+                "maxFinalSubmittedBlocks": 0
+              }
+            },
+            "scheduler": {
+              "quantum": 100000,
+              "maxQuantum": 100000,
+              "slices": 52,
+              "totalSliceMs": 1162.5200000703335,
+              "averageSliceMs": 22.356153847506413,
+              "maxSliceMs": 27.21500000357628,
+              "sliceHistogram": [
+                {
+                  "leMs": 4,
+                  "count": 0
+                },
+                {
+                  "leMs": 8,
+                  "count": 0
+                },
+                {
+                  "leMs": 16,
+                  "count": 0
+                },
+                {
+                  "leMs": 32,
+                  "count": 52
+                },
+                {
+                  "leMs": 64,
+                  "count": 0
+                },
+                {
+                  "leMs": 128,
+                  "count": 0
+                },
+                {
+                  "leMs": 256,
+                  "count": 0
+                },
+                {
+                  "leMs": 512,
+                  "count": 0
+                },
+                {
+                  "leMs": 1000,
+                  "count": 0
+                },
+                {
+                  "leMs": null,
+                  "count": 0
+                }
+              ],
+              "maxStretchGapMs": 27.525000005960464,
+              "requestedInstructions": 5200000,
+              "retiredInstructions": 5199010,
+              "fetchWaits": 0,
+              "fetchRequestedChunks": 0,
+              "fetchWaitTotalMs": 0,
+              "fetchWaitMaxMs": 0,
+              "outputCalls": 23,
+              "outputBytes": 422,
+              "inputCalls": 4,
+              "inputBytes": 108,
+              "yieldMode": "scheduler.postTask",
+              "schedulerYields": 53,
+              "timerYields": 0,
+              "mainThreadYields": 0
+            }
+          }
+        },
+        "upload": {
+          "name": "coremark-t28c-interpreter-0.rv64",
+          "total": 487336,
+          "sent": 487336,
+          "guestPath": "/var/lib/wasm-vm/transfer/inbox/coremark-t28c-interpreter-0.rv64",
+          "hostSha256": "4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937",
+          "guestSha256": "4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937",
+          "hashOutput": "-0.rv64' && sha256sum '/var/lib/wasm-vm/transfer/inbox/coremark-t28c-interpreter\n-0.rv64'; printf '\\n__WVEND_mtlilei12_%s\\n' \"$?\"\n4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937  /var/lib/wasm-vm/transfer/inbox/coremark-t28c-interpreter-0.rv64"
+        },
+        "jitBefore": {
+          "hasExecutor": false,
+          "compiledBlocks": 0,
+          "executedBlocks": 0,
+          "retiredViaJit": 0,
+          "directChainEntries": 0,
+          "directChainLinks": 0,
+          "dynamicLinkAttempts": 0,
+          "dynamicLinkHits": 0,
+          "dynamicLinkRefusals": 0,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 0,
+          "dynamicLinkInstalls": 0,
+          "entryCost": {
+            "hostEntries": 0,
+            "stateCopyCalls": 0,
+            "stateCopyBytes": 0,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 0,
+            "authorityChecks": 0,
+            "memorySplitExits": 0,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": false,
+          "jitDynamicChaining": false,
+          "guestRetired": 184541064,
+          "jitEngineCalls": 0,
+          "jitLogicalBlocksPerEngineCall": 0,
+          "jitRetiredShare": 0,
+          "chainLinksMade": 0,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 0,
+          "chainMaxDepth": 0,
+          "chainLinksFollowed": 0,
+          "jitResidencyPolicy": "disabled",
+          "jitResidencyCap": 0,
+          "jitSubmittedMembers": 0,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 0,
+          "jitCacheInstalls": 0,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitCacheBatches": 0,
+          "jitCacheCodeBytes": 0,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 2,
+          "discoveryGeneration": 3,
+          "blockEntryHits": 0,
+          "blockBuilds": 0
+        },
+        "jitAfter": {
+          "hasExecutor": false,
+          "compiledBlocks": 0,
+          "executedBlocks": 0,
+          "retiredViaJit": 0,
+          "directChainEntries": 0,
+          "directChainLinks": 0,
+          "dynamicLinkAttempts": 0,
+          "dynamicLinkHits": 0,
+          "dynamicLinkRefusals": 0,
+          "dynamicLinkRetargets": 0,
+          "dynamicLinkLiveEntries": 0,
+          "dynamicLinkInstalls": 0,
+          "entryCost": {
+            "hostEntries": 0,
+            "stateCopyCalls": 0,
+            "stateCopyBytes": 0,
+            "stateCopyNs": 0,
+            "engineEntryNs": 0,
+            "indirectTableDispatches": 0,
+            "authorityChecks": 0,
+            "memorySplitExits": 0,
+            "deviceBoundaries": 0,
+            "deviceBoundaryNs": 0
+          },
+          "jitRegionChaining": false,
+          "jitDynamicChaining": false,
+          "guestRetired": 2405820102,
+          "jitEngineCalls": 0,
+          "jitLogicalBlocksPerEngineCall": 0,
+          "jitRetiredShare": 0,
+          "chainLinksMade": 0,
+          "chainLinksCut": 0,
+          "chainDispatchEntries": 0,
+          "chainMaxDepth": 0,
+          "chainLinksFollowed": 0,
+          "jitResidencyPolicy": "disabled",
+          "jitResidencyCap": 0,
+          "jitSubmittedMembers": 0,
+          "jitCompilePauseNs": 0,
+          "jitCompilePauseMaxNs": 0,
+          "jitCompilePauseSamples": 0,
+          "jitCacheInstalls": 0,
+          "jitCacheRetranslations": 0,
+          "jitCacheEvictions": 0,
+          "jitCacheBatches": 0,
+          "jitCacheCodeBytes": 0,
+          "decodedBlocksDiscarded": 0,
+          "decodedCacheFlushes": 2,
+          "discoveryGeneration": 3,
+          "blockEntryHits": 0,
+          "blockBuilds": 0
+        },
+        "schedulerBefore": {
+          "quantum": 100000,
+          "maxQuantum": 100000,
+          "slices": 2069,
+          "totalSliceMs": 60963.09499976039,
+          "averageSliceMs": 29.46500483313697,
+          "maxSliceMs": 229.11500000953674,
+          "sliceHistogram": [
+            {
+              "leMs": 4,
+              "count": 0
+            },
+            {
+              "leMs": 8,
+              "count": 0
+            },
+            {
+              "leMs": 16,
+              "count": 0
+            },
+            {
+              "leMs": 32,
+              "count": 1797
+            },
+            {
+              "leMs": 64,
+              "count": 6
+            },
+            {
+              "leMs": 128,
+              "count": 258
+            },
+            {
+              "leMs": 256,
+              "count": 8
+            },
+            {
+              "leMs": 512,
+              "count": 0
+            },
+            {
+              "leMs": 1000,
+              "count": 0
+            },
+            {
+              "leMs": null,
+              "count": 0
+            }
+          ],
+          "maxStretchGapMs": 341.11500000953674,
+          "requestedInstructions": 206900000,
+          "retiredInstructions": 184541064,
+          "fetchWaits": 5,
+          "fetchRequestedChunks": 6,
+          "fetchWaitTotalMs": 521.370000064373,
+          "fetchWaitMaxMs": 169.4800000190735,
+          "outputCalls": 54,
+          "outputBytes": 797,
+          "inputCalls": 5,
+          "inputBytes": 306,
+          "yieldMode": "scheduler.postTask",
+          "schedulerYields": 2070,
+          "timerYields": 0,
+          "mainThreadYields": 0
+        },
+        "schedulerAfter": {
+          "quantum": 100000,
+          "maxQuantum": 100000,
+          "slices": 24291,
+          "totalSliceMs": 526004.7449990809,
+          "averageSliceMs": 21.654305915733435,
+          "maxSliceMs": 229.11500000953674,
+          "sliceHistogram": [
+            {
+              "leMs": 4,
+              "count": 0
+            },
+            {
+              "leMs": 8,
+              "count": 0
+            },
+            {
+              "leMs": 16,
+              "count": 0
+            },
+            {
+              "leMs": 32,
+              "count": 24007
+            },
+            {
+              "leMs": 64,
+              "count": 7
+            },
+            {
+              "leMs": 128,
+              "count": 269
+            },
+            {
+              "leMs": 256,
+              "count": 8
+            },
+            {
+              "leMs": 512,
+              "count": 0
+            },
+            {
+              "leMs": 1000,
+              "count": 0
+            },
+            {
+              "leMs": null,
+              "count": 0
+            }
+          ],
+          "maxStretchGapMs": 341.11500000953674,
+          "requestedInstructions": 2429100000,
+          "retiredInstructions": 2405820102,
+          "fetchWaits": 5,
+          "fetchRequestedChunks": 6,
+          "fetchWaitTotalMs": 521.370000064373,
+          "fetchWaitMaxMs": 169.4800000190735,
+          "outputCalls": 104,
+          "outputBytes": 2098,
+          "inputCalls": 7,
+          "inputBytes": 629,
+          "yieldMode": "scheduler.postTask",
+          "schedulerYields": 24292,
+          "timerYields": 0,
+          "mainThreadYields": 0
+        },
+        "coremark": {
+          "command": "'/var/lib/wasm-vm/transfer/inbox/coremark-t28c-interpreter-0.rv64'",
+          "result": {
+            "token": "t28c_interpreter_0",
+            "validation": true,
+            "seedCrc": 59893,
+            "size": 666,
+            "totalTimeSecs": 22.106,
+            "iterationsPerSec": 271.419524,
+            "iterations": 6000,
+            "rawTail": "nsfer/inbox/coremark-t28c-interpreter-0.rv64' >'/tmp/t28c_interpreter_0.out' 2>&\n1; rc=$?; printf 'T28C_COREMARK_RC_t28c_interpreter_0_%s\\n' \"$rc\"; cat '/tmp/t28\nc_interpreter_0.out'; rm -f '/tmp/t28c_interpreter_0.out'; printf '\\n__WVEND_mtl\nilmib3_%s\\n' \"$?\"\nT28C_COREMARK_RC_t28c_interpreter_0_0\n2K performance run parameters for coremark.\nCoreMark Size    : 666\nTotal ticks      : 22106\nTotal time (secs): 22.106000\nIterations/Sec   : 271.419524\nIterations       : 6000\nCompiler version : GCC13.3.0\nCompiler flags   : -static -O2 -g0 -march=rv64gc -mabi=lp64d -ffile-prefix-map=/Users/brettlamy/Dev/wasm-vm=. -ffile-prefix-map=/work=. -DPERFORMANCE_RUN=1 -DITERATIONS=6000\nMemory location  : Please put data memory location here\n\t\t\t(e.g. code in flash, data on heap etc)\nseedcrc          : 0xe9f5\n[0]crclist       : 0xe714\n[0]crcmatrix     : 0x1fd7\n[0]crcstate      : 0x8e3a\n[0]crcfinal      : 0xa14c\nCorrect operation validated. See README.md for run and reporting rules.\nCoreMark 1.0 : 271.419524 / GCC13.3.0 -static -O2 -g0 -march=rv64gc -mabi=lp64d -ffile-prefix-map=/Users/brettlamy/Dev/wasm-vm=. -ffile-prefix-map=/work=. -DPERFORMANCE_RUN=1 -DITERATIONS=6000 / Heap\n\n"
+          },
+          "hostElapsedMs": 466471.3449999988
+        },
+        "guestElapsedMs": 22106,
+        "hostElapsedMs": 466471.3449999988,
+        "clockCrossCheck": {
+          "boundary": "after fresh restore and ELF upload; before CoreMark command through RPC completion",
+          "guestElapsedMs": 22106,
+          "hostElapsedMs": 466471.3449999988,
+          "hostToGuestRatio": 21.101571745227485,
+          "relativeDifference": 20.101571745227485,
+          "withinTwoPercent": false
+        },
+        "runtimeDigest": "736a932144717261443f0f7f57df659a8b838b87ff535477fb86f59339bc8f87",
+        "nodeManifest": {
+          "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/chunked-node-alpine/manifest.json",
+          "sha256": "ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1",
+          "expectedSha256": "ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1",
+          "version": 1,
+          "imageLen": 805306368,
+          "chunkSize": 131072,
+          "chunkCount": 6144,
+          "firstChunkSha256": "fd22d778670dae1ecd7fc33370cf9f7897f14893bea1819e30519dbd17978a70",
+          "firstChunkActualSha256": "fd22d778670dae1ecd7fc33370cf9f7897f14893bea1819e30519dbd17978a70"
+        },
+        "requestErrors": [],
+        "consoleErrors": []
+      }
+    ]
+  },
+  "bun": {
+    "status": "unavailable",
+    "gating": false,
+    "reason": "bun executable unavailable: ENOENT"
+  },
+  "verdict": {
+    "harnessPass": true,
+    "coremarkValidation": true,
+    "candidateMedianIterationsPerSec": null,
+    "interpreterMedianIterationsPerSec": 271.419524,
+    "ratio": null,
+    "speedGateEvaluated": false,
+    "speedGateSatisfied": false,
+    "guestHostWithinTwoPercent": false,
+    "note": "No exact ledgered browser Level-3 CoreMark row exists; the live interpreter median is recorded as a non-immutable control and the 10x gate remains a typed evidence gap."
+  }
+}

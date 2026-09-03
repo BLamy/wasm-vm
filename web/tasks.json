@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 191,
+    "verified": 192,
     "total": 356
   },
   "epics": [
@@ -15123,7 +15123,7 @@
       "epicKey": "4",
       "title": "Browser CoreMark uplift and guest/host clock honesty",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4-T28a",
         "E4-T04",
@@ -15137,13 +15137,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified (user-directed debt closure)\n\nImplementation commit: `b4de2bf9021185750c164c4103707d7eecb54c3c`.\n\nThe exact-head Chromium interpreter control passed in `8.9m` with a fresh persistent profile,\nthe pinned CoreMark ELF uploaded through the guest file-transfer path, zero request/console errors,\nand the guest validation line intact. The guest reported `Iterations: 6000`, seed CRC\n`0xe9f5`, `Total time (secs): 22.106`, and `Iterations/Sec: 271.419524`. The host elapsed\n`466471.345ms` against `22106ms` guest time, a host/guest ratio of `21.1015717452x`, so the\ntwo-percent clock gate is not satisfied.\n\nEvidence: `evidence/e4-t28c/coremark-browser-2026-09-03.json`, SHA-256\n`cea325b2fc1023a800713eb83c6e02c27863f772c07e2a21780b905409cbc3de`.\nExact frozen-head control command:\n`PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 E4T28C_SAMPLES=1 E4T28C_CONTROLS=interpreter npx playwright test tests/e4-t28-coremark.spec.js --project=chromium`.\nThe source ELF hash is `4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937`;\nthe served Node chunk manifest matched `ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1`.\nNo immutable browser Level-3 CoreMark row exists in `bench/ledger.json`, so the required 10x\nratio is not evaluated and no misleading ledger baseline was appended.\n\nThe exact-head JIT attempt using\n`PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 E4T28C_SAMPLES=1 npx playwright test tests/e4-t28-coremark.spec.js --project=chromium`\nstopped the guest while the CoreMark RPC was pending after `11.6m`; no JIT score is claimed.\nPer the user's explicit instruction to close the verification debt, the ticket is promoted with\nthe missing browser baseline, failed JIT attempt, and guest/host clock gap recorded. WebKit,\nindependent machines, and host-layer rr evidence are excluded by user direction.",
       "adversarial": "Recompute the denominator from its recorded commit and binary hash, mutate the guest checksum, and\nreplace the timer with a deliberately slow/fast clock in the harness. Run three cold contexts and\nreport the median, not the best, while checking host and guest clocks. Poison any JIT cache or\nartifact and confirm the run fails closed. A score without a guest validation line, source commit,\nor baseline identity is evidence-incomplete.",
       "file": "tasks/epic-4-acceleration/E4-T28c-coremark-browser-uplift.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: start E4-T28c browser CoreMark uplift"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E4-T28d",
