@@ -7,6 +7,7 @@
 pub mod protocol;
 pub mod resources;
 
+use alloc::boxed::Box;
 use alloc::rc::Rc;
 use core::cell::RefCell;
 
@@ -15,6 +16,42 @@ use super::mmio::VirtioMmio;
 use super::queue::{DescriptorChain, Virtqueue};
 use crate::bus::Bus;
 use crate::mmio::SystemBus;
+
+pub use protocol::Rect;
+
+/// Core-to-host presentation boundary for a flushed resource rectangle.
+///
+/// The core passes native-endian host shadow pixels only after all guest-memory validation and
+/// transfer work has completed. `scanout` is `Some(id)` when the resource is currently bound to
+/// that scanout and `None` for a legal flush of an unbound resource. Browser-specific color
+/// conversion and presentation scheduling belong to the sink implementation, not this trait.
+pub trait FrameSink {
+    /// Publish one validated damage rectangle and its resource-sized pixel view.
+    fn flush(
+        &mut self,
+        scanout: Option<u32>,
+        rect: Rect,
+        resource_width: u32,
+        resource_height: u32,
+        pixels: &[u32],
+    );
+}
+
+/// Headless sink used by default and by native boot paths that do not present a window.
+#[derive(Debug, Default)]
+pub struct NullSink;
+
+impl FrameSink for NullSink {
+    fn flush(
+        &mut self,
+        _scanout: Option<u32>,
+        _rect: Rect,
+        _resource_width: u32,
+        _resource_height: u32,
+        _pixels: &[u32],
+    ) {
+    }
+}
 
 /// Virtio device type assigned to a GPU (virtio spec 1.2 §5.7).
 pub const VIRTIO_GPU_DEVICE_ID: u32 = 16;
@@ -35,6 +72,9 @@ pub struct GpuState {
     /// Resource currently bound to scanout 0, if any. SET_SCANOUT is owned by E5-T03;
     /// RESOURCE_UNREF clears this before dropping a bound resource.
     pub scanout_resource: Option<u32>,
+    /// Core-to-host presentation boundary. The default is [`NullSink`], so a headless device
+    /// never allocates or calls into browser-specific code.
+    pub frame_sink: Box<dyn FrameSink>,
     /// Number of valid GET_DISPLAY_INFO requests completed by the service.
     pub commands_served: u64,
 }
@@ -53,12 +93,23 @@ impl VirtioGpu {
 
     /// Construct the transport device and the run-loop handle that services its queues.
     pub fn new_with_state() -> (Self, Rc<RefCell<GpuState>>) {
+        Self::new_with_sink_state(Box::new(NullSink))
+    }
+
+    /// Construct a device using an injected core presentation sink.
+    pub fn new_with_sink(sink: Box<dyn FrameSink>) -> Self {
+        Self::new_with_sink_state(sink).0
+    }
+
+    /// Construct a device and shared state using an injected core presentation sink.
+    pub fn new_with_sink_state(sink: Box<dyn FrameSink>) -> (Self, Rc<RefCell<GpuState>>) {
         let state = Rc::new(RefCell::new(GpuState {
             events_read: 0,
             kicked: false,
             reset_pending: false,
             resources: resources::ResourceMap::new(),
             scanout_resource: None,
+            frame_sink: sink,
             commands_served: 0,
         }));
         (
@@ -67,6 +118,11 @@ impl VirtioGpu {
             },
             state,
         )
+    }
+
+    /// Replace the presentation sink while retaining the device's shared state.
+    pub fn set_frame_sink(&mut self, sink: Box<dyn FrameSink>) {
+        self.state.borrow_mut().frame_sink = sink;
     }
 
     /// Current display event bits, exposed for the later hotplug slice and tests.
@@ -272,6 +328,62 @@ fn unref_error_response(error: resources::UnrefError) -> u32 {
         resources::UnrefError::InvalidResourceId => protocol::RESP_ERR_INVALID_RESOURCE_ID,
         resources::UnrefError::InvalidParameter => protocol::RESP_ERR_INVALID_PARAMETER,
     }
+}
+
+/// Why a SET_SCANOUT request was rejected.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ScanoutError {
+    InvalidResourceId,
+    InvalidParameter,
+}
+
+fn scanout_error_response(error: ScanoutError) -> u32 {
+    match error {
+        ScanoutError::InvalidResourceId => protocol::RESP_ERR_INVALID_RESOURCE_ID,
+        ScanoutError::InvalidParameter => protocol::RESP_ERR_INVALID_PARAMETER,
+    }
+}
+
+/// Check a rectangle with widened arithmetic so an overflowing guest coordinate cannot wrap into
+/// the resource. Zero-sized rectangles are valid at an edge; the command still binds the resource.
+fn rect_within(rect: Rect, resource_width: u32, resource_height: u32) -> bool {
+    u64::from(rect.x) + u64::from(rect.width) <= u64::from(resource_width)
+        && u64::from(rect.y) + u64::from(rect.height) <= u64::from(resource_height)
+}
+
+/// Bind or disable a scanout without mutating the previous binding on a rejected request.
+fn set_scanout(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    state: &Rc<RefCell<GpuState>>,
+) -> Result<(), ScanoutError> {
+    let request = read_request::<{ protocol::SET_SCANOUT_SIZE }>(chain, bus)
+        .and_then(|bytes| protocol::SetScanout::from_bytes(&bytes))
+        .ok_or(ScanoutError::InvalidParameter)?;
+    if request.scanout_id >= DEFAULT_NUM_SCANOUTS {
+        return Err(ScanoutError::InvalidParameter);
+    }
+
+    // Virtio uses resource id 0 to disable output. Its rectangle is ignored because there is no
+    // resource against which to validate it; this also accepts the driver's usual zero rectangle.
+    if request.resource_id == 0 {
+        state.borrow_mut().scanout_resource = None;
+        return Ok(());
+    }
+
+    {
+        let state_ref = state.borrow();
+        let resource = state_ref
+            .resources
+            .get(request.resource_id)
+            .ok_or(ScanoutError::InvalidResourceId)?;
+        if !rect_within(request.rect, resource.width, resource.height) {
+            return Err(ScanoutError::InvalidParameter);
+        }
+    }
+
+    state.borrow_mut().scanout_resource = Some(request.resource_id);
+    Ok(())
 }
 
 /// Decode and validate an attach request before publishing any part of its backing list.
@@ -509,6 +621,21 @@ pub fn service(
                     }
                 }
             }
+            Some(request) if request.ty == protocol::CMD_SET_SCANOUT => {
+                let response_type = match set_scanout(&chain, bus, state) {
+                    Ok(()) => protocol::RESP_OK_NODATA,
+                    Err(error) => scanout_error_response(error),
+                };
+                let response = response_header(request, response_type).to_bytes();
+                match write_prefix(&chain, bus, &response) {
+                    Ok(written) => written,
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
             Some(request) => {
                 let response = response_header(request, protocol::RESP_ERR_UNSPEC).to_bytes();
                 match write_prefix(&chain, bus, &response) {
@@ -548,8 +675,9 @@ mod tests {
     use crate::platform::virt::DRAM_BASE;
     use crate::ram::Ram;
     use protocol::{
-        CTRL_HDR_SIZE, CtrlHeader, DISPLAY_INFO_RESPONSE_SIZE, DISPLAY_MODE_COUNT,
-        DISPLAY_MODE_SIZE, DisplayInfoResponse, DisplayMode, RESP_OK_DISPLAY_INFO,
+        CMD_SET_SCANOUT, CTRL_HDR_SIZE, CtrlHeader, DISPLAY_INFO_RESPONSE_SIZE, DISPLAY_MODE_COUNT,
+        DISPLAY_MODE_SIZE, DisplayInfoResponse, DisplayMode, RESP_OK_DISPLAY_INFO, Rect,
+        SET_SCANOUT_SIZE, SetScanout,
     };
 
     const CONFIG_SPACE: u64 = 0x100;
@@ -584,6 +712,19 @@ mod tests {
         for (offset, byte) in bytes.iter().copied().enumerate() {
             bus.store8(addr + offset as u64, byte).unwrap();
         }
+    }
+
+    fn scanout_request(resource_id: u32, scanout_id: u32, rect: Rect) -> [u8; SET_SCANOUT_SIZE] {
+        SetScanout {
+            header: CtrlHeader {
+                ty: CMD_SET_SCANOUT,
+                ..CtrlHeader::default()
+            },
+            rect,
+            scanout_id,
+            resource_id,
+        }
+        .to_bytes()
     }
 
     fn queue_for_test(
@@ -1429,5 +1570,256 @@ mod tests {
         );
         assert_eq!(state.borrow().commands_served, 0);
         assert_eq!(bus.load16(USED + 2).unwrap(), 0, "no stale used entry");
+    }
+
+    #[test]
+    fn gpu_scanout_binding_wire_fixture_is_little_endian() {
+        let request = SetScanout {
+            header: CtrlHeader {
+                ty: CMD_SET_SCANOUT,
+                flags: 0x1122_3344,
+                fence_id: 0x0102_0304_0506_0708,
+                ctx_id: 0xA1B2_C3D4,
+                ring_idx: 9,
+                padding: [0x0A, 0x0B, 0x0C],
+            },
+            rect: Rect {
+                x: 0x1020_3040,
+                y: 0x5060_7080,
+                width: 0x90A0_B0C0,
+                height: 0xD0E0_F000,
+            },
+            scanout_id: 2,
+            resource_id: 0x1122_3344,
+        };
+        let expected = [
+            0x05, 0x01, 0x00, 0x00, // type
+            0x44, 0x33, 0x22, 0x11, // flags
+            0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // fence_id
+            0xD4, 0xC3, 0xB2, 0xA1, // ctx_id
+            0x09, 0x0A, 0x0B, 0x0C, // ring_idx + padding
+            0x40, 0x30, 0x20, 0x10, // rect.x
+            0x80, 0x70, 0x60, 0x50, // rect.y
+            0xC0, 0xB0, 0xA0, 0x90, // rect.width
+            0x00, 0xF0, 0xE0, 0xD0, // rect.height
+            0x02, 0x00, 0x00, 0x00, // scanout_id
+            0x44, 0x33, 0x22, 0x11, // resource_id
+        ];
+        assert_eq!(request.to_bytes(), expected);
+        assert_eq!(SetScanout::from_bytes(&expected), Some(request));
+    }
+
+    #[test]
+    fn gpu_scanout_binding_controlq_binds_existing_resource() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let request = scanout_request(
+            1,
+            0,
+            Rect {
+                x: 0,
+                y: 0,
+                width: 4,
+                height: 3,
+            },
+        );
+        write_bytes(&mut bus, REQUEST, &request);
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, SET_SCANOUT_SIZE as u32, 1, 1),
+                (RESPONSE, 24, 2, 0),
+            ],
+        );
+        state
+            .borrow_mut()
+            .resources
+            .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 4, 3)
+            .unwrap();
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 1);
+        assert_eq!(bus.load32(RESPONSE).unwrap(), protocol::RESP_OK_NODATA);
+        assert_eq!(state.borrow().scanout_resource, Some(1));
+    }
+
+    #[test]
+    fn gpu_scanout_binding_split_request_is_parsed_across_descriptors() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let request = scanout_request(
+            1,
+            0,
+            Rect {
+                x: 1,
+                y: 1,
+                width: 2,
+                height: 2,
+            },
+        );
+        write_bytes(&mut bus, REQUEST, &request);
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, 16, 1, 1),
+                (REQUEST + 16, (SET_SCANOUT_SIZE - 16) as u32, 1, 2),
+                (RESPONSE, 24, 2, 0),
+            ],
+        );
+        state
+            .borrow_mut()
+            .resources
+            .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 4, 4)
+            .unwrap();
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 1);
+        assert_eq!(bus.load32(RESPONSE).unwrap(), protocol::RESP_OK_NODATA);
+        assert_eq!(state.borrow().scanout_resource, Some(1));
+    }
+
+    #[test]
+    fn gpu_scanout_binding_zero_resource_disables_scanout() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let request = scanout_request(
+            0,
+            0,
+            Rect {
+                x: u32::MAX,
+                y: u32::MAX,
+                width: u32::MAX,
+                height: u32::MAX,
+            },
+        );
+        write_bytes(&mut bus, REQUEST, &request);
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, SET_SCANOUT_SIZE as u32, 1, 1),
+                (RESPONSE, 24, 2, 0),
+            ],
+        );
+        state.borrow_mut().scanout_resource = Some(7);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load32(RESPONSE).unwrap(), protocol::RESP_OK_NODATA);
+        assert_eq!(state.borrow().scanout_resource, None);
+    }
+
+    #[test]
+    fn gpu_scanout_binding_short_request_is_bounded() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let request = CtrlHeader {
+            ty: CMD_SET_SCANOUT,
+            ..CtrlHeader::default()
+        };
+        write_bytes(&mut bus, REQUEST, &request.to_bytes());
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[(REQUEST, CTRL_HDR_SIZE as u32, 1, 1), (RESPONSE, 24, 2, 0)],
+        );
+        state.borrow_mut().scanout_resource = Some(9);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(
+            bus.load32(RESPONSE).unwrap(),
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+        assert_eq!(state.borrow().scanout_resource, Some(9));
+    }
+
+    #[test]
+    fn gpu_scanout_binding_rejects_bad_scanout_and_rect_without_mutation() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let bad_scanout = scanout_request(
+            1,
+            DEFAULT_NUM_SCANOUTS,
+            Rect {
+                x: 0,
+                y: 0,
+                width: 4,
+                height: 3,
+            },
+        );
+        let extreme_scanout = scanout_request(
+            1,
+            u32::MAX,
+            Rect {
+                x: 0,
+                y: 0,
+                width: 4,
+                height: 3,
+            },
+        );
+        let unknown_resource = scanout_request(
+            u32::MAX,
+            0,
+            Rect {
+                x: 0,
+                y: 0,
+                width: 4,
+                height: 3,
+            },
+        );
+        let bad_rect = scanout_request(
+            1,
+            0,
+            Rect {
+                x: u32::MAX,
+                y: u32::MAX,
+                width: u32::MAX,
+                height: u32::MAX,
+            },
+        );
+        write_bytes(&mut bus, REQUEST, &bad_scanout);
+        write_bytes(&mut bus, REQUEST + 0x100, &extreme_scanout);
+        write_bytes(&mut bus, REQUEST + 0x200, &unknown_resource);
+        write_bytes(&mut bus, REQUEST + 0x300, &bad_rect);
+        let descriptors = [
+            (REQUEST, SET_SCANOUT_SIZE as u32, 1, 1),
+            (RESPONSE, 24, 2, 0),
+            (REQUEST + 0x100, SET_SCANOUT_SIZE as u32, 1, 3),
+            (RESPONSE + 0x100, 24, 2, 0),
+            (REQUEST + 0x200, SET_SCANOUT_SIZE as u32, 1, 5),
+            (RESPONSE + 0x200, 24, 2, 0),
+            (REQUEST + 0x300, SET_SCANOUT_SIZE as u32, 1, 7),
+            (RESPONSE + 0x300, 24, 2, 0),
+        ];
+        let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
+        state
+            .borrow_mut()
+            .resources
+            .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 4, 3)
+            .unwrap();
+        state.borrow_mut().scanout_resource = Some(1);
+        set_avail_heads(&mut bus, &[0, 2, 4, 6]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 4);
+        assert_eq!(
+            bus.load32(RESPONSE).unwrap(),
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+        assert_eq!(
+            bus.load32(RESPONSE + 0x100).unwrap(),
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+        assert_eq!(
+            bus.load32(RESPONSE + 0x200).unwrap(),
+            protocol::RESP_ERR_INVALID_RESOURCE_ID
+        );
+        assert_eq!(
+            bus.load32(RESPONSE + 0x300).unwrap(),
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+        assert_eq!(state.borrow().scanout_resource, Some(1));
     }
 }

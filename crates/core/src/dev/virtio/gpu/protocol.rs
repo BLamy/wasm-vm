@@ -13,6 +13,8 @@ pub const CMD_RESOURCE_ATTACH_BACKING: u32 = 0x0102;
 pub const CMD_RESOURCE_DETACH_BACKING: u32 = 0x0103;
 /// `VIRTIO_GPU_CMD_RESOURCE_UNREF`.
 pub const CMD_RESOURCE_UNREF: u32 = 0x0104;
+/// `VIRTIO_GPU_CMD_SET_SCANOUT` in the device's GPU command table.
+pub const CMD_SET_SCANOUT: u32 = 0x0105;
 /// Successful `GET_DISPLAY_INFO` response.
 pub const RESP_OK_DISPLAY_INFO: u32 = 0x1101;
 /// Successful command with no response payload.
@@ -59,6 +61,10 @@ pub const RESOURCE_ATTACH_BACKING_HEADER_SIZE: usize = CTRL_HDR_SIZE + 8;
 pub const RESOURCE_DETACH_BACKING_SIZE: usize = CTRL_HDR_SIZE + 8;
 /// Wire size of `virtio_gpu_resource_unref`.
 pub const RESOURCE_UNREF_SIZE: usize = CTRL_HDR_SIZE + 8;
+/// Wire size of `virtio_gpu_rect`.
+pub const RECT_SIZE: usize = 16;
+/// Wire size of `virtio_gpu_set_scanout`.
+pub const SET_SCANOUT_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 8;
 /// Wire size of one `virtio_gpu_mem_entry`.
 pub const RESOURCE_MEM_ENTRY_SIZE: usize = 16;
 /// Wire size of one `virtio_gpu_display_one`.
@@ -104,6 +110,74 @@ impl CtrlHeader {
             ring_idx: bytes[20],
             padding: [bytes[21], bytes[22], bytes[23]],
         })
+    }
+}
+
+/// `virtio_gpu_rect`, encoded as four little-endian 32-bit fields.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Rect {
+    pub x: u32,
+    pub y: u32,
+    pub width: u32,
+    pub height: u32,
+}
+
+impl Rect {
+    /// Decode a complete 16-byte rectangle.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < RECT_SIZE {
+            return None;
+        }
+        Some(Self {
+            x: u32::from_le_bytes(bytes[0..4].try_into().ok()?),
+            y: u32::from_le_bytes(bytes[4..8].try_into().ok()?),
+            width: u32::from_le_bytes(bytes[8..12].try_into().ok()?),
+            height: u32::from_le_bytes(bytes[12..16].try_into().ok()?),
+        })
+    }
+
+    /// Encode the exact little-endian wire representation.
+    pub fn to_bytes(self) -> [u8; RECT_SIZE] {
+        let mut out = [0u8; RECT_SIZE];
+        out[0..4].copy_from_slice(&self.x.to_le_bytes());
+        out[4..8].copy_from_slice(&self.y.to_le_bytes());
+        out[8..12].copy_from_slice(&self.width.to_le_bytes());
+        out[12..16].copy_from_slice(&self.height.to_le_bytes());
+        out
+    }
+}
+
+/// `virtio_gpu_set_scanout`, with its rectangle between the control header and ids.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SetScanout {
+    pub header: CtrlHeader,
+    pub rect: Rect,
+    pub scanout_id: u32,
+    pub resource_id: u32,
+}
+
+impl SetScanout {
+    /// Decode a complete SET_SCANOUT request.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < SET_SCANOUT_SIZE {
+            return None;
+        }
+        Some(Self {
+            header: CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?,
+            rect: Rect::from_bytes(&bytes[CTRL_HDR_SIZE..CTRL_HDR_SIZE + RECT_SIZE])?,
+            scanout_id: u32::from_le_bytes(bytes[40..44].try_into().ok()?),
+            resource_id: u32::from_le_bytes(bytes[44..48].try_into().ok()?),
+        })
+    }
+
+    /// Encode the exact 48-byte SET_SCANOUT request layout.
+    pub fn to_bytes(self) -> [u8; SET_SCANOUT_SIZE] {
+        let mut out = [0u8; SET_SCANOUT_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[CTRL_HDR_SIZE..CTRL_HDR_SIZE + RECT_SIZE].copy_from_slice(&self.rect.to_bytes());
+        out[40..44].copy_from_slice(&self.scanout_id.to_le_bytes());
+        out[44..48].copy_from_slice(&self.resource_id.to_le_bytes());
+        out
     }
 }
 
