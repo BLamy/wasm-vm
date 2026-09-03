@@ -3,7 +3,7 @@ id: E4-T28b
 epic: 4
 title: Interactive Node.js and V8 JIT browser workload
 priority: 429.2
-status: pending
+status: in-progress
 depends_on: [E4-T28a, E4-T34]
 estimate: S
 risk: high
