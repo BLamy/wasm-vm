@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 193,
+    "verified": 194,
     "total": 356
   },
   "epics": [
@@ -15196,7 +15196,7 @@
       "epicKey": "4",
       "title": "In-guest gcc compile and continuous interactive echo budget",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4-T28a",
         "E4-T32",
@@ -15209,13 +15209,26 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified (user-directed verification-debt closure)\n\n- Exact-head candidate: `6af49f25e22a5a9e9f6ad91c9713bc0ba8484ac8` (implementation commits\n  `b4a0d05` and `6af49f2`).\n- Acceptance command, run twice in fresh Chromium contexts:\n  `PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t28-gcc-interactive.spec.js --project=chromium`.\n  Both runs fetched `/gcc-overlay/gcc.ext4` with HTTP 200, verified the pinned overlay and\n  local chunked-Alpine artifacts, and produced no browser request or console errors. The first\n  setup RPC timed out at 180 seconds; after changing the read-only mount to `mount -o ro,noload`\n  and extending the bound, the second setup RPC still timed out at 900 seconds while mounting\n  `/dev/vdb`. No compile, object, echo-p95, or final runtime-digest claim is made from these\n  browser attempts; the gap is recorded explicitly in\n  `evidence/e4-t28e/gcc-interactive-2026-09-03.json`.\n- The pinned source/overlay identity was exercised before the gap: overlay\n  `f53445f65b5e32b9fe3c47e0f84c52c850da2c747edae0abca60e9592a758c4a`, source\n  `0fcdc9888cb3a29ca8f176bac087e5fe6c7258a6ab06b1c271c1e109a11d3740`, 322,549 source bytes.\n  Historical native exact-overlay evidence remains at\n  `evidence/e4-t19/ab-2026-09-01/gcc-k64-d2497e3.json` (guest compile 163.96 seconds and\n  object SHA `97198b27557042fb84de54881c5fb577505b4ee77c41bc056612be6173e5faca`), but it is\n  not substituted for the missing browser proof.\n- Per explicit owner direction, promote the debt item to `verified` and carry the bounded\n  browser-mount gap into the Level-4 capstone/follow-up. Independent machines, WebKit, and host\n  rr are outside this directed proof.",
       "adversarial": "Cross-check the object with `file`/hash inside the guest, replace `miniz.c` with a same-sized no-op,\nand confirm the checksum/compile work changes. Inject probes at the start, middle, and end of the\ncompile, including while JIT compilation is active; kill/reload during an in-flight probe and make\nsure the result is rejected rather than spliced together. Compare guest and host timing to expose\nclock skew.",
       "file": "tasks/epic-4-acceleration/E4-T28e-gcc-interactive-budget.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-01",
+          "commits": 0,
+          "labels": []
+        },
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: start E4-T28e gcc interactive budget"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-01",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E4-T28f",
