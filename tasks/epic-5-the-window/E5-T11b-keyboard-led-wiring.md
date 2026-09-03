@@ -3,7 +3,7 @@ id: E5-T11b
 epic: 5
 title: keyboard device registration and LED status wiring
 priority: 511.2
-status: implemented
+status: verified
 depends_on: [E5-T11a]
 estimate: S
 risk: medium
@@ -54,3 +54,21 @@ existing GPU/headless slot layout, and that the normal Machine run-loop statusq 
 ordered NumLock/CapsLock/ScrollLock updates to the host-owned indicator. A transport reset and
 queue re-setup retain the callback sink and deliver the next LED update, while the wasm32 fixture
 confirms the same registration and T11a config payload.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- Registration — HELD. Predicted DeviceID 18 would occupy only reserved slot 3, leaving the GPU
+  in slot 0 and slots 1 and 2 empty; the native and wasm32 registration fixtures observe exactly
+  that layout. Evidence: keyboard-led-wiring-2026-09-03.json.
+- LED ordering and reset — HELD. Predicted each of 100 alternating EV_LED status events would
+  update the corresponding host field before the next Machine boundary, and that reset plus
+  queue re-setup would preserve the sink; the native test observes every intermediate state,
+  status_events_served = 101 after the post-reset event, and the final CapsLock update.
+- Coverage — HELD. The changed keyboard sink, Machine fields/constructor, slot installer,
+  accessor, and run-loop service branch all execute in the focused unit, native Machine, or
+  wasm32 registration tests. No changed runtime hunk is unexercised.
+- Evidence integrity — HELD. Evidence digest
+  b37434c5c997b4bab4b3aedcf155442bfe4e75d10fa805dd99e7c0e92c52e6bf matches the checked-in
+  artifact for implementation commit 95fd672.
+- SUITE — HELD. The deterministic native status-queue test and wasm32 registration/config fixture
+  are the permanent proof artifacts for this isolated registration slice.
