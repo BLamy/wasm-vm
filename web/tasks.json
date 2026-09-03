@@ -15031,13 +15031,15 @@
         },
         {
           "date": "2026-09-03",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E4-T28 level-4 capstone"
+          ]
         }
       ],
       "firstActivity": "2026-07-27",
       "lastActivity": "2026-09-03",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E4-T28a",
@@ -15045,7 +15047,7 @@
       "epicKey": "4",
       "title": "Capstone harness, baseline provenance, and deploy-artifact contract",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T24",
         "E4-T26",

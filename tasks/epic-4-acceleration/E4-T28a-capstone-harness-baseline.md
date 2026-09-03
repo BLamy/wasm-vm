@@ -3,7 +3,7 @@ id: E4-T28a
 epic: 4
 title: Capstone harness, baseline provenance, and deploy-artifact contract
 priority: 429.1
-status: pending
+status: in-progress
 depends_on: [E4-T24, E4-T26, E4-T27, E4-T29, E4-T30, E4-T31, E4-T32, E4-T33]
 estimate: S
 risk: high
