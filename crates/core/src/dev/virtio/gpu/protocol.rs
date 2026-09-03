@@ -15,6 +15,8 @@ pub const CMD_RESOURCE_DETACH_BACKING: u32 = 0x0103;
 pub const CMD_RESOURCE_UNREF: u32 = 0x0104;
 /// `VIRTIO_GPU_CMD_SET_SCANOUT` in the device's GPU command table.
 pub const CMD_SET_SCANOUT: u32 = 0x0105;
+/// `VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D` in the device's GPU command table.
+pub const CMD_TRANSFER_TO_HOST_2D: u32 = 0x0106;
 /// Successful `GET_DISPLAY_INFO` response.
 pub const RESP_OK_DISPLAY_INFO: u32 = 0x1101;
 /// Successful command with no response payload.
@@ -65,6 +67,8 @@ pub const RESOURCE_UNREF_SIZE: usize = CTRL_HDR_SIZE + 8;
 pub const RECT_SIZE: usize = 16;
 /// Wire size of `virtio_gpu_set_scanout`.
 pub const SET_SCANOUT_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 8;
+/// Wire size of `virtio_gpu_transfer_to_host_2d`.
+pub const TRANSFER_TO_HOST_2D_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 16;
 /// Wire size of one `virtio_gpu_mem_entry`.
 pub const RESOURCE_MEM_ENTRY_SIZE: usize = 16;
 /// Wire size of one `virtio_gpu_display_one`.
@@ -177,6 +181,43 @@ impl SetScanout {
         out[CTRL_HDR_SIZE..CTRL_HDR_SIZE + RECT_SIZE].copy_from_slice(&self.rect.to_bytes());
         out[40..44].copy_from_slice(&self.scanout_id.to_le_bytes());
         out[44..48].copy_from_slice(&self.resource_id.to_le_bytes());
+        out
+    }
+}
+
+/// `virtio_gpu_transfer_to_host_2d`, with a byte offset into the linear backing stream.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct TransferToHost2d {
+    pub header: CtrlHeader,
+    pub rect: Rect,
+    pub offset: u64,
+    pub resource_id: u32,
+    pub padding: u32,
+}
+
+impl TransferToHost2d {
+    /// Decode a complete 56-byte TRANSFER_TO_HOST_2D request.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < TRANSFER_TO_HOST_2D_SIZE {
+            return None;
+        }
+        Some(Self {
+            header: CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?,
+            rect: Rect::from_bytes(&bytes[CTRL_HDR_SIZE..CTRL_HDR_SIZE + RECT_SIZE])?,
+            offset: u64::from_le_bytes(bytes[40..48].try_into().ok()?),
+            resource_id: u32::from_le_bytes(bytes[48..52].try_into().ok()?),
+            padding: u32::from_le_bytes(bytes[52..56].try_into().ok()?),
+        })
+    }
+
+    /// Encode the exact little-endian transfer request layout.
+    pub fn to_bytes(self) -> [u8; TRANSFER_TO_HOST_2D_SIZE] {
+        let mut out = [0u8; TRANSFER_TO_HOST_2D_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[CTRL_HDR_SIZE..CTRL_HDR_SIZE + RECT_SIZE].copy_from_slice(&self.rect.to_bytes());
+        out[40..48].copy_from_slice(&self.offset.to_le_bytes());
+        out[48..52].copy_from_slice(&self.resource_id.to_le_bytes());
+        out[52..56].copy_from_slice(&self.padding.to_le_bytes());
         out
     }
 }

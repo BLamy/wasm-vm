@@ -10,6 +10,8 @@ use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 
 use super::protocol;
+use crate::bus::Bus;
+use crate::mmio::SystemBus;
 
 /// Guest physical address used by later backing entries.
 pub type GuestAddr = u64;
@@ -74,6 +76,112 @@ pub enum UnrefError {
     InvalidResourceId,
     /// The unref request did not contain its fixed wire payload.
     InvalidParameter,
+}
+
+/// Why a TRANSFER_TO_HOST_2D request was rejected.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TransferError {
+    /// No live resource owns the requested id.
+    InvalidResourceId,
+    /// The rectangle, offset, backing, or guest-memory range is invalid.
+    InvalidParameter,
+    /// A bounded host-side row buffer could not be reserved.
+    OutOfMemory,
+}
+
+/// Cursor over a resource's backing entries viewed as one linear byte stream.
+///
+/// The cursor advances by whole contiguous spans, so a row that crosses SG boundaries performs
+/// one guest slice read per entry rather than one lookup per pixel.
+struct BackingReader<'a> {
+    entries: &'a [(GuestAddr, u32)],
+    index: usize,
+    offset: u64,
+}
+
+impl<'a> BackingReader<'a> {
+    fn new(entries: &'a [(GuestAddr, u32)]) -> Self {
+        Self {
+            entries,
+            index: 0,
+            offset: 0,
+        }
+    }
+
+    fn seek(&mut self, logical_offset: u64) -> Result<(), TransferError> {
+        self.index = 0;
+        self.offset = 0;
+        let mut skip = logical_offset;
+        for (index, &(_, length)) in self.entries.iter().enumerate() {
+            let length = u64::from(length);
+            if length == 0 {
+                return Err(TransferError::InvalidParameter);
+            }
+            if skip < length {
+                self.index = index;
+                self.offset = skip;
+                return Ok(());
+            }
+            skip -= length;
+        }
+        if skip == 0 {
+            self.index = self.entries.len();
+            Ok(())
+        } else {
+            Err(TransferError::InvalidParameter)
+        }
+    }
+
+    fn read_exact(&mut self, bus: &SystemBus, output: &mut [u8]) -> Result<(), TransferError> {
+        let mut copied = 0usize;
+        while copied < output.len() {
+            let (addr, length) = *self
+                .entries
+                .get(self.index)
+                .ok_or(TransferError::InvalidParameter)?;
+            let length = u64::from(length);
+            if self.offset >= length {
+                return Err(TransferError::InvalidParameter);
+            }
+            let available = length - self.offset;
+            let take = available.min((output.len() - copied) as u64) as usize;
+            let guest_addr = addr
+                .checked_add(self.offset)
+                .ok_or(TransferError::InvalidParameter)?;
+            bus.ram()
+                .read_slice(guest_addr, &mut output[copied..copied + take])
+                .map_err(|_| TransferError::InvalidParameter)?;
+            copied += take;
+            self.offset += take as u64;
+            if self.offset == length {
+                self.index += 1;
+                self.offset = 0;
+            }
+        }
+        Ok(())
+    }
+
+    /// Advance over a row gap without touching guest memory.
+    fn skip(&mut self, mut bytes: u64) -> Result<(), TransferError> {
+        while bytes != 0 {
+            let &(_, length) = self
+                .entries
+                .get(self.index)
+                .ok_or(TransferError::InvalidParameter)?;
+            let length = u64::from(length);
+            if self.offset >= length {
+                return Err(TransferError::InvalidParameter);
+            }
+            let take = (length - self.offset).min(bytes);
+            self.offset += take;
+            bytes -= take;
+            if self.offset == length {
+                self.index += 1;
+                self.offset = 0;
+            }
+        }
+        Ok(())
+    }
 }
 
 /// Deterministic resource store with explicit pixel-byte accounting.
@@ -190,6 +298,110 @@ impl ResourceMap {
         Ok(resource)
     }
 
+    /// Copy one checked rectangle from guest backing into the host shadow buffer.
+    ///
+    /// Every arithmetic and backing range is validated before the first shadow write. The guest
+    /// source is read through `Ram::read_slice`, which has no write side effect, and the SG cursor
+    /// remains linear while it consumes each row.
+    pub fn transfer_to_host_2d(
+        &mut self,
+        resource_id: u32,
+        rect: protocol::Rect,
+        offset: u64,
+        bus: &SystemBus,
+    ) -> Result<(), TransferError> {
+        let resource = self
+            .resources
+            .get_mut(&resource_id)
+            .ok_or(TransferError::InvalidResourceId)?;
+        if u64::from(rect.x) + u64::from(rect.width) > u64::from(resource.width)
+            || u64::from(rect.y) + u64::from(rect.height) > u64::from(resource.height)
+        {
+            return Err(TransferError::InvalidParameter);
+        }
+        if resource.backing.is_empty() {
+            return Err(TransferError::InvalidParameter);
+        }
+
+        let mut backing_len = 0u64;
+        for &(addr, length) in &resource.backing {
+            if length == 0 || !bus.ram().ram_contains(addr, u64::from(length)) {
+                return Err(TransferError::InvalidParameter);
+            }
+            backing_len = backing_len
+                .checked_add(u64::from(length))
+                .ok_or(TransferError::InvalidParameter)?;
+        }
+        if offset > backing_len {
+            return Err(TransferError::InvalidParameter);
+        }
+        if rect.width == 0 || rect.height == 0 {
+            return Ok(());
+        }
+
+        let stride = u64::from(resource.width)
+            .checked_mul(core::mem::size_of::<u32>() as u64)
+            .ok_or(TransferError::InvalidParameter)?;
+        let row_bytes = u64::from(rect.width)
+            .checked_mul(core::mem::size_of::<u32>() as u64)
+            .ok_or(TransferError::InvalidParameter)?;
+        let first_row = offset
+            .checked_add(
+                u64::from(rect.y)
+                    .checked_mul(stride)
+                    .ok_or(TransferError::InvalidParameter)?,
+            )
+            .and_then(|start| {
+                start
+                    .checked_add(u64::from(rect.x).checked_mul(core::mem::size_of::<u32>() as u64)?)
+            })
+            .ok_or(TransferError::InvalidParameter)?;
+        let last_row_advance = u64::from(rect.height.saturating_sub(1))
+            .checked_mul(stride)
+            .ok_or(TransferError::InvalidParameter)?;
+        let span = last_row_advance
+            .checked_add(row_bytes)
+            .ok_or(TransferError::InvalidParameter)?;
+        let end = first_row
+            .checked_add(span)
+            .ok_or(TransferError::InvalidParameter)?;
+        if end > backing_len {
+            return Err(TransferError::InvalidParameter);
+        }
+
+        let row_len = usize::try_from(row_bytes).map_err(|_| TransferError::OutOfMemory)?;
+        let mut row = Vec::new();
+        row.try_reserve_exact(row_len)
+            .map_err(|_| TransferError::OutOfMemory)?;
+        row.resize(row_len, 0);
+
+        let backing = resource.backing.as_slice();
+        let mut reader = BackingReader::new(backing);
+        reader.seek(first_row)?;
+        for row_index in 0..rect.height {
+            reader.read_exact(bus, &mut row)?;
+            let destination = u64::from(rect.y + row_index)
+                .checked_mul(u64::from(resource.width))
+                .and_then(|start| start.checked_add(u64::from(rect.x)))
+                .and_then(|start| usize::try_from(start).ok())
+                .ok_or(TransferError::InvalidParameter)?;
+            for (pixel, bytes) in row.chunks_exact(core::mem::size_of::<u32>()).enumerate() {
+                let index = destination
+                    .checked_add(pixel)
+                    .ok_or(TransferError::InvalidParameter)?;
+                resource.host_pixels[index] = u32::from_le_bytes(
+                    bytes
+                        .try_into()
+                        .map_err(|_| TransferError::InvalidParameter)?,
+                );
+            }
+            if row_index + 1 < rect.height {
+                reader.skip(stride - row_bytes)?;
+            }
+        }
+        Ok(())
+    }
+
     /// Create a detached host shadow buffer after validating every guest-controlled field.
     ///
     /// The validation order is intentional: no `Box`/`Vec` allocation occurs for id, format,
@@ -254,6 +466,9 @@ impl ResourceMap {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::mmio::SystemBus;
+    use crate::platform::virt::DRAM_BASE;
+    use crate::ram::Ram;
 
     const FORMATS: [u32; 6] = [
         protocol::FORMAT_B8G8R8A8_UNORM,
@@ -420,5 +635,277 @@ mod tests {
         }
         assert_eq!(map.len(), 0);
         assert_eq!(map.accounted_bytes(), baseline);
+    }
+
+    fn source_bytes(width: u32, height: u32) -> alloc::vec::Vec<u8> {
+        let mut bytes = alloc::vec::Vec::new();
+        for pixel in 0..(width * height) {
+            bytes.extend_from_slice(&(0xA500_0000u32 | pixel).to_le_bytes());
+        }
+        bytes
+    }
+
+    fn split_backing(
+        base: u64,
+        total: usize,
+        lengths: &[u32],
+    ) -> alloc::vec::Vec<(GuestAddr, u32)> {
+        let mut offset = 0usize;
+        let mut entries = alloc::vec::Vec::new();
+        for &length in lengths {
+            assert!(offset + length as usize <= total);
+            entries.push((base + offset as u64, length));
+            offset += length as usize;
+        }
+        assert_eq!(offset, total);
+        entries
+    }
+
+    #[test]
+    fn gpu_transfer_scatter_gather_copies_partial_odd_x_rows() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let width = 5;
+        let height = 4;
+        let source = source_bytes(width, height);
+        let source_addr = DRAM_BASE + 0x10_000;
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+
+        let mut map = ResourceMap::new();
+        map.create(1, FORMATS[0], width, height).unwrap();
+        map.attach_backing(
+            1,
+            split_backing(source_addr, source.len(), &[7, 13, 29, 31]),
+        )
+        .unwrap();
+        let before = bus.ram().as_bytes().to_vec();
+        map.transfer_to_host_2d(
+            1,
+            protocol::Rect {
+                x: 1,
+                y: 1,
+                width: 3,
+                height: 2,
+            },
+            0,
+            &bus,
+        )
+        .unwrap();
+
+        let resource = map.get(1).unwrap();
+        for row in 0..height {
+            for column in 0..width {
+                let expected = if (1..3).contains(&row) && (1..4).contains(&column) {
+                    0xA500_0000 | (row * width + column)
+                } else {
+                    0
+                };
+                assert_eq!(
+                    resource.host_pixels[(row * width + column) as usize],
+                    expected
+                );
+            }
+        }
+        assert_eq!(
+            bus.ram().as_bytes(),
+            before.as_slice(),
+            "transfer is guest-read-only"
+        );
+    }
+
+    #[test]
+    fn gpu_transfer_one_byte_entries_copy_a_full_frame() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let width = 64;
+        let height = 64;
+        let source = source_bytes(width, height);
+        let source_addr = DRAM_BASE + 0x20_000;
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+        let entries = (0..source.len())
+            .map(|offset| (source_addr + offset as u64, 1))
+            .collect();
+
+        let mut map = ResourceMap::new();
+        map.create(1, FORMATS[0], width, height).unwrap();
+        map.attach_backing(1, entries).unwrap();
+        map.transfer_to_host_2d(
+            1,
+            protocol::Rect {
+                x: 0,
+                y: 0,
+                width,
+                height,
+            },
+            0,
+            &bus,
+        )
+        .unwrap();
+
+        let resource = map.get(1).unwrap();
+        assert_eq!(resource.host_pixels[0], 0xA500_0000);
+        assert_eq!(resource.host_pixels[4095], 0xA500_0FFF);
+        assert_eq!(resource.host_pixels.len(), 4096);
+    }
+
+    #[test]
+    fn gpu_transfer_rejects_detached_bounds_and_offset_without_shadow_mutation() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let source_addr = DRAM_BASE + 0x30_000;
+        let source = source_bytes(4, 4);
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+
+        let mut map = ResourceMap::new();
+        map.create(1, FORMATS[0], 4, 4).unwrap();
+        map.attach_backing(1, alloc::vec![(source_addr, source.len() as u32)])
+            .unwrap();
+        for pixel in &mut map.get_mut(1).unwrap().host_pixels {
+            *pixel = 0xDEAD_BEEF;
+        }
+        let baseline = map.get(1).unwrap().host_pixels.to_vec();
+
+        for (rect, offset) in [
+            (
+                protocol::Rect {
+                    x: 3,
+                    y: 0,
+                    width: 2,
+                    height: 1,
+                },
+                0,
+            ),
+            (
+                protocol::Rect {
+                    x: 0,
+                    y: 0,
+                    width: 1,
+                    height: 1,
+                },
+                source.len() as u64 - 1,
+            ),
+            (
+                protocol::Rect {
+                    x: 0,
+                    y: 0,
+                    width: 1,
+                    height: 1,
+                },
+                u64::MAX,
+            ),
+        ] {
+            assert_eq!(
+                map.transfer_to_host_2d(1, rect, offset, &bus),
+                Err(TransferError::InvalidParameter)
+            );
+            assert_eq!(
+                map.get(1).unwrap().host_pixels.as_ref(),
+                baseline.as_slice()
+            );
+        }
+
+        map.detach_backing(1).unwrap();
+        assert_eq!(
+            map.transfer_to_host_2d(
+                1,
+                protocol::Rect {
+                    x: 0,
+                    y: 0,
+                    width: 1,
+                    height: 1,
+                },
+                0,
+                &bus,
+            ),
+            Err(TransferError::InvalidParameter)
+        );
+        assert_eq!(
+            map.get(1).unwrap().host_pixels.as_ref(),
+            baseline.as_slice()
+        );
+    }
+
+    #[test]
+    fn gpu_transfer_random_rect_model_oracle_10k_cases() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let width = 8u32;
+        let height = 8u32;
+        let source = source_bytes(width, height);
+        let source_addr = DRAM_BASE + 0x40_000;
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+
+        let mut map = ResourceMap::new();
+        map.create(1, FORMATS[0], width, height).unwrap();
+        map.attach_backing(
+            1,
+            split_backing(source_addr, source.len(), &[3, 7, 11, 29, 41, 37, 128]),
+        )
+        .unwrap();
+
+        let mut seed = 0xC0DE_CAFE_u64;
+        for _case in 0..10_000 {
+            seed = seed
+                .wrapping_mul(6_364_136_223_846_793_005)
+                .wrapping_add(1_442_695_040_888_963_407);
+            let x = (seed as u32) % 10;
+            seed = seed.rotate_left(17);
+            let y = (seed as u32) % 10;
+            seed = seed.rotate_left(17);
+            let rect_width = (seed as u32) % 10;
+            seed = seed.rotate_left(17);
+            let rect_height = (seed as u32) % 10;
+            seed = seed.rotate_left(17);
+            let offset = seed % (source.len() as u64 + 9);
+            let rect = protocol::Rect {
+                x,
+                y,
+                width: rect_width,
+                height: rect_height,
+            };
+
+            for pixel in &mut map.get_mut(1).unwrap().host_pixels {
+                *pixel = 0xDEAD_BEEF;
+            }
+            let baseline = map.get(1).unwrap().host_pixels.to_vec();
+            let in_bounds = u64::from(x) + u64::from(rect_width) <= u64::from(width)
+                && u64::from(y) + u64::from(rect_height) <= u64::from(height)
+                && offset <= source.len() as u64
+                && (rect_width == 0
+                    || rect_height == 0
+                    || offset
+                        + u64::from(y) * u64::from(width) * 4
+                        + u64::from(x) * 4
+                        + u64::from(rect_height.saturating_sub(1)) * u64::from(width) * 4
+                        + u64::from(rect_width) * 4
+                        <= source.len() as u64);
+
+            let result = map.transfer_to_host_2d(1, rect, offset, &bus);
+            if !in_bounds {
+                assert_eq!(result, Err(TransferError::InvalidParameter));
+                assert_eq!(
+                    map.get(1).unwrap().host_pixels.as_ref(),
+                    baseline.as_slice()
+                );
+                continue;
+            }
+
+            assert_eq!(result, Ok(()));
+            let mut expected = baseline;
+            if rect_width != 0 && rect_height != 0 {
+                let first = offset + u64::from(y) * u64::from(width) * 4 + u64::from(x) * 4;
+                for row in 0..rect_height {
+                    for column in 0..rect_width {
+                        let source_offset =
+                            (first + u64::from(row) * u64::from(width) * 4 + u64::from(column) * 4)
+                                as usize;
+                        let pixel = u32::from_le_bytes(
+                            source[source_offset..source_offset + 4].try_into().unwrap(),
+                        );
+                        expected[((y + row) * width + x + column) as usize] = pixel;
+                    }
+                }
+            }
+            assert_eq!(
+                map.get(1).unwrap().host_pixels.as_ref(),
+                expected.as_slice()
+            );
+        }
     }
 }

@@ -344,6 +344,14 @@ fn scanout_error_response(error: ScanoutError) -> u32 {
     }
 }
 
+fn transfer_error_response(error: resources::TransferError) -> u32 {
+    match error {
+        resources::TransferError::InvalidResourceId => protocol::RESP_ERR_INVALID_RESOURCE_ID,
+        resources::TransferError::InvalidParameter => protocol::RESP_ERR_INVALID_PARAMETER,
+        resources::TransferError::OutOfMemory => protocol::RESP_ERR_OUT_OF_MEMORY,
+    }
+}
+
 /// Check a rectangle with widened arithmetic so an overflowing guest coordinate cannot wrap into
 /// the resource. Zero-sized rectangles are valid at an edge; the command still binds the resource.
 fn rect_within(rect: Rect, resource_width: u32, resource_height: u32) -> bool {
@@ -384,6 +392,23 @@ fn set_scanout(
 
     state.borrow_mut().scanout_resource = Some(request.resource_id);
     Ok(())
+}
+
+/// Decode a transfer request and copy its rectangle through the resource's checked SG reader.
+fn transfer_to_host_2d(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    state: &Rc<RefCell<GpuState>>,
+) -> Result<(), resources::TransferError> {
+    let request = read_request::<{ protocol::TRANSFER_TO_HOST_2D_SIZE }>(chain, bus)
+        .and_then(|bytes| protocol::TransferToHost2d::from_bytes(&bytes))
+        .ok_or(resources::TransferError::InvalidParameter)?;
+    state.borrow_mut().resources.transfer_to_host_2d(
+        request.resource_id,
+        request.rect,
+        request.offset,
+        bus,
+    )
 }
 
 /// Decode and validate an attach request before publishing any part of its backing list.
@@ -636,6 +661,21 @@ pub fn service(
                     }
                 }
             }
+            Some(request) if request.ty == protocol::CMD_TRANSFER_TO_HOST_2D => {
+                let response_type = match transfer_to_host_2d(&chain, bus, state) {
+                    Ok(()) => protocol::RESP_OK_NODATA,
+                    Err(error) => transfer_error_response(error),
+                };
+                let response = response_header(request, response_type).to_bytes();
+                match write_prefix(&chain, bus, &response) {
+                    Ok(written) => written,
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
             Some(request) => {
                 let response = response_header(request, protocol::RESP_ERR_UNSPEC).to_bytes();
                 match write_prefix(&chain, bus, &response) {
@@ -675,9 +715,10 @@ mod tests {
     use crate::platform::virt::DRAM_BASE;
     use crate::ram::Ram;
     use protocol::{
-        CMD_SET_SCANOUT, CTRL_HDR_SIZE, CtrlHeader, DISPLAY_INFO_RESPONSE_SIZE, DISPLAY_MODE_COUNT,
-        DISPLAY_MODE_SIZE, DisplayInfoResponse, DisplayMode, RESP_OK_DISPLAY_INFO, Rect,
-        SET_SCANOUT_SIZE, SetScanout,
+        CMD_SET_SCANOUT, CMD_TRANSFER_TO_HOST_2D, CTRL_HDR_SIZE, CtrlHeader,
+        DISPLAY_INFO_RESPONSE_SIZE, DISPLAY_MODE_COUNT, DISPLAY_MODE_SIZE, DisplayInfoResponse,
+        DisplayMode, RESP_OK_DISPLAY_INFO, Rect, SET_SCANOUT_SIZE, SetScanout,
+        TRANSFER_TO_HOST_2D_SIZE, TransferToHost2d,
     };
 
     const CONFIG_SPACE: u64 = 0x100;
@@ -1821,5 +1862,113 @@ mod tests {
             protocol::RESP_ERR_INVALID_PARAMETER
         );
         assert_eq!(state.borrow().scanout_resource, Some(1));
+    }
+
+    #[test]
+    fn gpu_transfer_wire_fixture_is_little_endian() {
+        let request = TransferToHost2d {
+            header: CtrlHeader {
+                ty: CMD_TRANSFER_TO_HOST_2D,
+                flags: 0x1122_3344,
+                fence_id: 0x0102_0304_0506_0708,
+                ctx_id: 0xA1B2_C3D4,
+                ring_idx: 9,
+                padding: [0x0A, 0x0B, 0x0C],
+            },
+            rect: Rect {
+                x: 1,
+                y: 2,
+                width: 3,
+                height: 4,
+            },
+            offset: 0x0102_0304_0506_0708,
+            resource_id: 0x1122_3344,
+            padding: 0xAABB_CCDD,
+        };
+        let expected = [
+            0x06, 0x01, 0x00, 0x00, // type
+            0x44, 0x33, 0x22, 0x11, // flags
+            0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // fence_id
+            0xD4, 0xC3, 0xB2, 0xA1, // ctx_id
+            0x09, 0x0A, 0x0B, 0x0C, // ring_idx + padding
+            0x01, 0x00, 0x00, 0x00, // rect.x
+            0x02, 0x00, 0x00, 0x00, // rect.y
+            0x03, 0x00, 0x00, 0x00, // rect.width
+            0x04, 0x00, 0x00, 0x00, // rect.height
+            0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // offset
+            0x44, 0x33, 0x22, 0x11, // resource_id
+            0xDD, 0xCC, 0xBB, 0xAA, // padding
+        ];
+        assert_eq!(request.to_bytes(), expected);
+        assert_eq!(TransferToHost2d::from_bytes(&expected), Some(request));
+    }
+
+    #[test]
+    fn gpu_transfer_controlq_copies_sg_rows_and_echoes_fence() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let source_addr = DRAM_BASE + 0x60_000;
+        let source: alloc::vec::Vec<u8> = (0..8u32)
+            .flat_map(|pixel| (0xCAFE_0000 | pixel).to_le_bytes())
+            .collect();
+        bus.ram_mut().write_slice(source_addr, &source).unwrap();
+        let request = TransferToHost2d {
+            header: CtrlHeader {
+                ty: CMD_TRANSFER_TO_HOST_2D,
+                flags: protocol::FLAG_FENCE,
+                fence_id: 0x0123_4567_89AB_CDEF,
+                ..CtrlHeader::default()
+            },
+            rect: Rect {
+                x: 1,
+                y: 0,
+                width: 2,
+                height: 2,
+            },
+            offset: 0,
+            resource_id: 1,
+            padding: 0,
+        }
+        .to_bytes();
+        write_bytes(&mut bus, REQUEST, &request);
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, TRANSFER_TO_HOST_2D_SIZE as u32, 1, 1),
+                (RESPONSE, 24, 2, 0),
+            ],
+        );
+        state
+            .borrow_mut()
+            .resources
+            .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 4, 2)
+            .unwrap();
+        state
+            .borrow_mut()
+            .resources
+            .attach_backing(1, alloc::vec![(source_addr, 7), (source_addr + 7, 25)])
+            .unwrap();
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        let mut response = [0u8; CTRL_HDR_SIZE];
+        for (offset, byte) in response.iter_mut().enumerate() {
+            *byte = bus.load8(RESPONSE + offset as u64).unwrap();
+        }
+        let response = CtrlHeader::from_bytes(&response).unwrap();
+        assert_eq!(response.ty, protocol::RESP_OK_NODATA);
+        assert_eq!(response.flags, protocol::FLAG_FENCE);
+        assert_eq!(response.fence_id, 0x0123_4567_89AB_CDEF);
+        assert_eq!(bus.load16(USED + 2).unwrap(), 1);
+        let state = state.borrow();
+        let pixels = &state.resources.get(1).unwrap().host_pixels;
+        assert_eq!(pixels[1], 0xCAFE_0001);
+        assert_eq!(pixels[2], 0xCAFE_0002);
+        assert_eq!(pixels[5], 0xCAFE_0005);
+        assert_eq!(pixels[6], 0xCAFE_0006);
+        assert_eq!(pixels[0], 0);
+        assert_eq!(pixels[3], 0);
+        assert_eq!(pixels[4], 0);
+        assert_eq!(pixels[7], 0);
     }
 }
