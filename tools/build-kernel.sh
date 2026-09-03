@@ -58,7 +58,7 @@ docker run --rm \
     # clean-volume build and a re-link, breaking byte-reproducibility (critic round-1).
     echo 1 > .version
     make -j\$(nproc) KBUILD_BUILD_VERSION=1 Image
-    # `cat >` avoids cp's fallocate/deallocate dance, which errors on Docker Desktop's
+    # The cat-to-file copies below avoid cp's fallocate/deallocate dance, which errors on Docker Desktop's
     # virtiofs output mount even though the bytes copy fine.
     cat arch/riscv/boot/Image  > /out/Image
     cat System.map             > /out/System.map
