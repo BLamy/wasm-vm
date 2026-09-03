@@ -3,7 +3,7 @@ id: E4-T26
 epic: 4
 title: Full riscv-tests and RISCOF compliance rerun under JIT — the correctness gate
 priority: 426
-status: verification-debt
+status: verified
 depends_on: [E4-T16, E4-T17, E4-T25]
 estimate: M
 capstone: false
@@ -60,6 +60,14 @@ on a cold clone (no cached translations/artifacts) — cache-dependent green ref
 a churn cell that never evicts is testing nothing and refutes that row's claim.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T26.
+
 
 ### 2026-08-06 — native riscv-tests matrix landed + verified (headless)
 

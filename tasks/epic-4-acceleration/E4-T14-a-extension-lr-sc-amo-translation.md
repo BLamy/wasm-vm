@@ -3,7 +3,7 @@ id: E4-T14
 epic: 4
 title: A extension in translated code — LR/SC reservations and AMOs
 priority: 414
-status: verification-debt
+status: verified
 depends_on: [E4-T12]
 estimate: M
 capstone: false
@@ -66,5 +66,13 @@ encodings execute in Chrome AND Firefox on a SharedArrayBuffer-backed memory (fo
 compatibility claim for E4-T22).
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T14.
+
 - 2026-08-05 — **Single-hart A-extension correctness COMPLETE + verified (commit `1c6e27a`); status partially-verified (futex-soak / browser / inline-atomic deferred).** **Approach:** AMO/LR/SC route through runtime imports `env.amo`/`env.lr`/`env.sc` → new `Hart::jit_amo`/`jit_lr`/`jit_sc` that call the interpreter's OWN atomic + reservation code, sharing the SAME `Hart::resv` field — so an interp-LR / JIT-SC (or vice-versa) tier switch is coherent, and it works in the live executor (inline wasm-atomic-RMW is deferred to E4-T22, pending E4-T11's linear-memory integration — same reason). **AMO:** `jit_amo` mirrors the `AmoW`/`AmoD` arms exactly — natural-alignment pre-check (misaligned→StoreAddrMisaligned c6), `camoload`/`amo_w`/`amo_d`/`cstore`, returns ORIGINAL value sign-extended for `.w`, signed min/max vs unsigned minu/maxu, and clears an overlapping reservation. **LR/SC:** `jit_lr` sets `resv=(addr,width)`; `jit_sc` succeeds IFF `resv==(addr,width)` (addr AND width — LR.W/SC.D fails), consumes it either way, stores+rd=0 on success / rd=1 no-store on fail; alignment pre-checks match. **Bug fixed:** `jit_store` now also clears an overlapping reservation (the interp did this in its retire tail; the JIT store bypassed it) — closed a latent interp-LR / JIT-store / interp-SC incoherence. Translator emits all three with the E4-T12 precise-trap discipline. **Gates (independently re-ran):** `riscv_tests_verdict_identical_with_jit` — all 19 rv64ua ELFs incl. `rv64ua-p-lrsc` verdict-identical + the JIT-tier gate requires rv64ua blocks COMPILE (compiled_count>0); AMO differential (every op × `.w`/`.d` × 7×7 corner operands — original+memory identical); LR/SC differential (8 directed: success / intervening-store-fail / no-LR-fail / width-mismatch / latest-LR / wrong-addr / AMO-clears-resv, + a **2000-iter randomized** LR/SC/AMO/store interleaving) — all byte-identical. All E4-T09..T13 + determinism + SMC green; clippy(-D)/fmt/wasm32 no_std clean. NO divergence. **Deferred debt:** the inline wasm-atomic-RMW form (E4-T22), the 1-hour Alpine futex soak AC, and the browser SharedArrayBuffer forward-compat check — guest/browser soak items outside this automated single-hart correctness pass (the native differential + rv64ua gates fully cover single-hart correctness).
 (empty)

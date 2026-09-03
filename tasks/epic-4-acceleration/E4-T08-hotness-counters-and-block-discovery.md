@@ -3,7 +3,7 @@ id: E4-T08
 epic: 4
 title: Hotness counters and translation-candidate block discovery
 priority: 408
-status: verification-debt
+status: verified
 depends_on: [E4-T05, E4-T06]
 estimate: S
 capstone: false
@@ -58,5 +58,13 @@ unique block count) and watch the queue/stats for unbounded growth or dedup-map 
 count < threshold is ever nominated (off-by-one at the saturation boundary included).
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T08.
+
 - 2026-08-05 — **Mechanism VERIFIED, committed `b886492`; status partially-verified (only the CoreMark overhead/correlation measurement is deferred).** New `BlockDiscovery` front-end in `dispatch.rs` owned by `Machine`: per-block phys-PC-keyed execution counter → at the tunable `HOT_THRESHOLD` (64, per E4-T06) the block transitions ONCE to `Queued` (push a `TranslationRequest{phys_pc, code_bytes snapshot, op_lens, terminator, generation}`) or `Excluded` (CSR/wfi — never JITted per the doc), then dedups. Invalidation (fence.i / SMC page-flush / whole-flush / toggle / restore) bumps a discovery `generation` + clears counts/state → re-decoded hot blocks re-nominate afresh; the STALE-request choke point is `install_check` (drop on generation OR byte mismatch). Bounded (queue cap 4096, counter-map cap 65536 → no leak under a gcc-flood). Counters surfaced through `prof::ProfReport.discovery` (text+json). Discovery is OBSERVATION-ONLY (one probe per block entry on the slow path). **Validated (independently re-ran):** `predecode_diff` byte-identical (2/2 — execution untouched); `hotness_discovery` (3/3 — real nomination + ProfStats + the ADVERSARIAL self-modifying-block-never-installs-stale-bytes end-to-end: guest `sw`-patches its own hot code → generation bumps → drained old request fails `install_check` vs zeroed live bytes → `dropped_stale=1`); 10 `dispatch::tests` (fires-exactly-once: 1000×→nominated=1/deduped=936; dedup; overflow-graceful; counter-map-bounded; request shape). Full `--features predecode` suite green; clippy(-D)/fmt/wasm32 clean. **Deferred debt:** the CoreMark overhead-within-2% + top-nominated ⊆ top-histogram correlation ACs need a benchmark run (the threshold is exposed as `set_hotness_threshold` ready for that sweep); overhead is negligible by construction (one map probe per ~128-op block entry). NOT implemented: the translator/codegen (later tasks) — the queue is produced, only a test drain consumes it.
 (empty)

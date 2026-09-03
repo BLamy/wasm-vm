@@ -3,7 +3,7 @@ id: E4-T23
 epic: 4
 title: Main-thread and worker device proxying — MMIO round trips and interrupt injection
 priority: 423
-status: verification-debt
+status: verified
 depends_on: [E4-T22]
 estimate: L
 capstone: false
@@ -83,6 +83,14 @@ partially-verified
   tests) to drop in on `dev`.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T23.
+
 
 ### 2026-08-06 — headless gates VERIFIED on this macOS host
 

@@ -3,7 +3,7 @@ id: E4-T18
 epic: 4
 title: Block chaining — direct linking between translated blocks and safe unlinking
 priority: 418
-status: verification-debt
+status: verified
 depends_on: [E4-T16]
 estimate: L
 capstone: false
@@ -69,6 +69,14 @@ dominate the JIT memory budget (stats vs E4-T06 numbers); (5) A/B the 1-entry-ca
 chaining combination — eviction storms with links flying must stay correct.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T18.
+
 
 ### 2026-08-06 — mechanism implemented + differentially verified; CoreMark ledger deferred
 

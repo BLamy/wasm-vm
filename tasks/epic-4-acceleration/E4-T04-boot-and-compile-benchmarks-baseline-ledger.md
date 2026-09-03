@@ -3,7 +3,7 @@ id: E4-T04
 epic: 4
 title: Macro benchmarks and the interpreter baseline ledger
 priority: 404
-status: verification-debt
+status: verified
 depends_on: [E4-T03]
 estimate: M
 capstone: false
@@ -59,6 +59,14 @@ _Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
 - **In-guest `gcc -O2` bench** (phases 2-3) — needs `apk.static`/`mke2fs` Linux tooling absent on macOS; build the ~300MB gcc overlay + run the compile on `dev`. Plus **browser-engine baselines** (reaping-deferred). Boot bench + ledger are native-verified.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T04.
+
 - 2026-08-05 — **gcc bench DEBT CLEARED on `dev` — real number.** The in-guest `gcc -O2 -c miniz.c` compile ran to completion: **163.98 guest-seconds**, `.o` = **302,904 bytes** (nonzero — genuine compilation), ~88 min host wall on dev's 2 cores (`evidence/e4-t04/gcc-native.json`; ledger entry added). All FOUR native benches (dhrystone 189.7 DMIPS, coremark 261.7 it/s, boot 375s, **gcc 163.98s**) now recorded at the `level3-interpreter` baseline. Remaining debt: the browser-engine entries only (reaping).
 - 2026-08-05 — **gcc-bench TOOLING cleared on `dev` (the Linux-tooling debt); the NUMBER is still compiling.** `bench/mk-gcc-image.sh` builds a real pinned Alpine riscv64 toolchain overlay (gcc 13.2.1_git20240309-r1 / musl-dev 1.2.5-r3 / binutils 2.42-r1, 130 MiB, sha256 `167ff7a9…`, gitignored) via `apk.static`; vendored miniz 3.0.2 + PROVENANCE + `gcc-MANIFEST.txt`; `tools/bench.py gcc` runs `gcc -O2 -c miniz.c`, asserts nonzero `.o` + captures the `-O2` command line + `.o` sha256. **No number yet (no fabrication):** the `-O2` compile runs the interpreter at ~1-2 MIPS (gcc's memory/branch-heavy code hammers the translate + device-sync path) → 80+ min on dev's 2 cores; left running (`ssh dev 'cat /tmp/gcc-1run.json'`). Remaining debt: the gcc guest-seconds + a ledger entry once it finishes (it will — cc1 runs correctly, no OOM). commit `710089a`.
 - 2026-08-05 — **Phases 1/4/5 landed + validated (commits `4d19194`, `50343e3`); status

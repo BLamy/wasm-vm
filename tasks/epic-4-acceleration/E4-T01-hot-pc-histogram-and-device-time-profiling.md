@@ -3,7 +3,7 @@ id: E4-T01
 epic: 4
 title: Profiling infrastructure — hot-PC histograms and per-device time accounting
 priority: 401
-status: verification-debt
+status: verified
 depends_on: [E3]
 estimate: M
 capstone: false
@@ -61,6 +61,14 @@ _Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
 - **Phase-6 browser evidence** (AC1 Alpine-symbol leg + AC4 native-vs-wasm profile diff) — the Alpine-in-browser boot OS-reaps on this mac. Run on `dev` via `getProfile()` against a live Alpine boot; diff native vs wasm reports.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T01.
+
 - 2026-08-05 — **Browser profiling INFRA ready on `dev`; the live capture is still debt.** Wired `web/loader.js` `?profile=1` (arms `setProfiling` from instruction 0 + exposes `window.__machine`), `web/main.js` boot hooks, `tools/e4-browser-profile.mjs` (pulls `getProfile()` post-login); the symbolize pipeline is verified against `System.map` (native hot PCs → memset / raid6 / memmap_init). Fixed a real driver bug (waiting on xterm's `.xterm-rows` viewport misses scrolled-off boot lines → now polls `window.__consoleBytes`). BUT the in-browser boot didn't reach `login:` in the window (~35 min uncontended, and it was sharing the 2-core box with the gcc compile) → `getProfile` NOT captured. Remaining debt: a SOLO in-browser boot on dev to grab the report + native-vs-wasm diff. commit `710089a`.
 - 2026-08-04 — **Design + phased plan (opens Epic 4's measurement backbone).** Precedents to mirror:
   `crates/core/src/diag/irqstats.rs` (always-on no_std fixed-array counters + `dump()`), `trace.rs` (the

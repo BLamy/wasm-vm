@@ -3,7 +3,7 @@ id: E4-T03
 epic: 4
 title: Automated in-guest CoreMark and Dhrystone benchmark harness
 priority: 403
-status: verification-debt
+status: verified
 depends_on: [E3]
 estimate: M
 capstone: false
@@ -60,6 +60,14 @@ _Tracked as debt (the ticket is `partially-verified`); clear on `dev`._
 - **Browser engine leg** (AC1 `--engine browser`: in-browser CoreMark/Dhrystone) — reaping-deferred; the Playwright spec + endpoints are engine-identical, so a `dev` browser run drops in. Native engine is fully verified.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T03.
+
 - 2026-08-05 — **Browser leg is BLOCKED beyond reaping — a real finding (not just a slow boot).** Two concrete blockers: (1) there is no in-browser path to attach the `bench.ext4` SECOND virtio-blk drive (the native `--drive Vec` has no browser equivalent); (2) the CoreMark/Dhrystone ELFs are Linux-USERSPACE binaries needing the booted kernel — they can't use the bare-metal `loadElf` path. So `--engine browser` needs NEW plumbing (multi-drive-in-browser OR file-transfer injection of the ELF into the booted guest), not merely a machine that sustains the boot. Updated debt: this browser leg depends on in-browser multi-drive/file-transfer support, tracked separately. Native engine remains fully verified. commit `710089a`.
 - 2026-08-04 — **Design + phased plan.** Findings that reshape the premises:
   - **Docker is the repo's canonical reproducible-build path** (`tools/toolchain/`, `tools/build-rootfs.sh`

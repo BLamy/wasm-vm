@@ -3,7 +3,7 @@ id: E4-T13
 epic: 4
 title: M (multiply/divide) and C (compressed) extensions in translated code
 priority: 413
-status: verification-debt
+status: verified
 depends_on: [E4-T12]
 estimate: M
 capstone: false
@@ -59,5 +59,13 @@ the *last two bytes* of a cached mixed-width block and check invalidation catche
 (pairs with E4-T17 but a length bug is visible now via the conservative flush path).
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T13.
+
 - 2026-08-05 — **M+C translation correctness-COMPLETE + verified (commit `8e8e85d`); status partially-verified (only the workload-level ledger/ratio ACs deferred).** **M div/rem (no escaped wasm trap):** `emit_div_rem64/32` guard `b==0` (unsigned) / `b==0 | (a==MIN & b==-1)` (signed), `select`-sanitize the divisor to 1 when the guard fires (the wasm div/rem is now total → never traps), then a final `select` substitutes RISC-V's result (`div/0→-1`, `divu/0→all-ones`, `rem/0→dividend`; overflow needs no extra select — a/1==INT_MIN, a%1==0). `*W` on i32 boundaries then `extend_i32_s`. **MULH\*:** unsigned high-64 from 4 schoolbook 32-bit partials; signed via two's-complement identity `MULH=high_u-(b<0?a:0)-(a<0?b:0)`, **MULHSU=high_u-(a<0?b:0)** (asymmetric — rs1 signed, rs2 unsigned). **C:** the E4-T05 predecoder already expands to 32-bit `Instr` with per-op `len`, and the translator was already length-driven (fall-through = base+total_len, JAL/JALR link = pc+2 for compressed) → verification-only, no code fix. **Gates (independently re-ran):** M corner cross-product 13 ops × 14 × 14 = **2548 cases, zero divergences, zero wasm traps** (run under wasmtime); directed mines (div/0, divw INT32_MIN/-1, rem INT64_MIN/-1, mixed-sign MULHSU) all match; C PC gate (compressed-only block → `c.bnez` target pc+2·k, mixed 2/4-byte, c.jal/c.jalr link=pc+2 — PCs+regs match every exit); **100k randomized** with M ops + random 2/4-byte mixes zero divergences; `riscv_tests_verdict_identical_with_jit` incl. all 13 rv64um + rv64uc ELFs; `m_and_c_suites_execute_in_jit_tier` (compiled_count>0 per ELF — no longer excluded, rv64uc-p-rvc compiles 47 blocks); `hot_m_loop_executes_in_jit` (906 JIT blocks byte-identical). All E4-T09/10/11/12 + determinism + SMC green; clippy(-D)/fmt/wasm32 no_std clean. **Deferred debt (workload-level — need a boot/bench run):** the ledger Dhrystone/CoreMark rerun with M+C, and the Alpine ≥80%-translated-instruction-ratio AC — these are boot-harness measurements outside the translator+gate scope (reaping/slow), tracked as remaining debt.
 (empty)

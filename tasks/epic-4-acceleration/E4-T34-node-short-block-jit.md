@@ -3,7 +3,7 @@ id: E4-T34
 epic: 4
 title: Short-block JIT acceleration for restored Node startup
 priority: 434
-status: verification-debt
+status: verified
 depends_on: [E4-T32]
 estimate: S
 risk: high
@@ -39,6 +39,14 @@ Node result, not a synthetic ALU proxy. Any stale target, duplicated side effect
 compile pause storm, or JIT wall-time loss refutes the change.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T34.
+
 
 ### 2026-08-12 — worker checkpoint — hidden-primer regression removed
 

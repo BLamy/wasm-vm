@@ -3,7 +3,7 @@ id: E4-T05
 epic: 4
 title: Interpreter pre-optimization — predecoded basic-block cache and dispatch tuning
 priority: 405
-status: verification-debt
+status: verified
 depends_on: [E4-T01, E4-T04]
 estimate: L
 capstone: false
@@ -69,6 +69,14 @@ A/B and any remaining acceptance evidence._
   (byte-identical cache, verdict-identical/deterministic/≤128-latency batching) is already verified.
 
 ## Verification log
+### 2026-09-02 — verifier — VERDICT: verified (user-directed debt closure)
+
+User directed this verification-debt sweep to accept the existing implementation and historical
+verification record and move on. Independent-machine, WebKit, and other environment-specific
+follow-up legs are out of scope by direction. This administrative promotion adds no new runtime
+claim or evidence artifact; the prior log remains the record of implementation and caveats for
+E4-T05.
+
 - 2026-09-01 — **worker checkpoint (verification-debt payoff): AC1 CoreMark host-wall uplift
   re-measured locally — 2.39x, bar ≥1.3x MET.** Per the 2026-09-01 policy update (rr waived, `dev`
   retired, all proving on this Mac — Apple M4 Max, 16 cores, 128 GB, macOS 26.6.2, rustc 1.96.0),
