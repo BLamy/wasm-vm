@@ -32,6 +32,12 @@ import { createKeyboardBridge, createWasmKeyboardAdapter } from "./src/input/key
 import { attachKeyboardCapture, createKeyboardCapturePolicy } from "./src/input/capture.js";
 import { attachHeldKeyLifecycle } from "./src/input/held-keys.js";
 import { createKeyboardReconciler } from "./src/input/reconciliation.js";
+import {
+  attachPointerBridge,
+  createPointerBridge,
+  createWasmPointerAdapter,
+  POINTER_MODES,
+} from "./src/input/pointer.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -477,6 +483,82 @@ let diagnosticJitStatsTimer = null;
 const linuxControllerTeardowns = new WeakMap();
 const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineFullBtn];
 
+// E5-T14b: route the terminal/desktop pointer surface to the two guest-visible T14a devices. The
+// adapter is deliberately dynamic because the controller is replaced on every boot and may be a
+// direct WasmLinux object or a whole-machine Worker proxy. Pointer frames remain no-ops before a
+// guest is live, while the mode/Pointer Lock state remains inspectable for UI and tests.
+const pointerHost = document.getElementById("term");
+const pointerStateEl = document.getElementById("ide-pointer-state");
+const pointerToggle = document.getElementById("ide-pointer-toggle");
+const pointerDebugEl = document.getElementById("ide-pointer-debug");
+const pointerDiagnostics = [];
+const pointerFrames = [];
+const pointerControllerProxy = {
+  sendTabletEvent: (...args) => linuxCtl?.sendTabletEvent?.(...args),
+  syncTablet: () => linuxCtl?.syncTablet?.(),
+  sendMouseEvent: (...args) => linuxCtl?.sendMouseEvent?.(...args),
+  syncMouse: () => linuxCtl?.syncMouse?.(),
+};
+
+function updatePointerIndicator(snapshot = pointerBridge?.state?.()) {
+  if (!snapshot) return;
+  const relative = snapshot.mode === POINTER_MODES.RELATIVE;
+  if (pointerStateEl) {
+    pointerStateEl.textContent = `Pointer: ${relative ? "relative" : "absolute"}`;
+    pointerStateEl.dataset.mode = snapshot.mode;
+    pointerStateEl.dataset.locked = String(snapshot.pointerLocked);
+  }
+  if (pointerToggle) {
+    pointerToggle.textContent = relative ? "Pointer: relative" : "Pointer: absolute";
+    pointerToggle.setAttribute("aria-pressed", String(relative));
+    pointerToggle.disabled = !linuxCtl;
+  }
+  if (pointerDebugEl) {
+    pointerDebugEl.textContent = `Buttons: ${snapshot.heldButtons.length || "none"} · frames: ${pointerFrames.length}`;
+    pointerDebugEl.dataset.heldCount = String(snapshot.heldButtons.length);
+    pointerDebugEl.dataset.frameCount = String(pointerFrames.length);
+    pointerDebugEl.dataset.locked = String(snapshot.pointerLocked);
+  }
+  document.documentElement.dataset.pointerMode = snapshot.mode;
+}
+
+const pointerBridge = createPointerBridge(createWasmPointerAdapter(pointerControllerProxy), {
+  target: pointerHost,
+  documentTarget: document,
+  isReady: () => Boolean(linuxCtl),
+  getRect: () => pointerHost?.getBoundingClientRect?.() ?? null,
+  onDiagnostic: (entry) => {
+    pointerDiagnostics.push(entry);
+    if (pointerDiagnostics.length > 256) pointerDiagnostics.shift();
+  },
+  onFrame: (frame) => {
+    pointerFrames.push(frame);
+    if (pointerFrames.length > 512) pointerFrames.shift();
+    updatePointerIndicator();
+  },
+  onStateChange: updatePointerIndicator,
+});
+const detachPointerBridge = pointerHost
+  ? attachPointerBridge(pointerHost, pointerBridge, { documentTarget: document })
+  : () => {};
+pointerToggle?.addEventListener("click", () => {
+  if (linuxCtl) pointerBridge.toggleMode();
+});
+try {
+  window.__pointer = {
+    mode: () => pointerBridge.mode(),
+    state: () => pointerBridge.state(),
+    setMode: (mode, options) => pointerBridge.setMode(mode, options),
+    toggle: () => pointerBridge.toggleMode(),
+    requestRelative: () => pointerBridge.requestRelative(),
+    exitRelative: () => pointerBridge.exitRelative(),
+    heldButtons: () => pointerBridge.heldButtons(),
+    diagnostics: () => [...pointerDiagnostics],
+    frames: () => [...pointerFrames],
+  };
+} catch { /* page-only diagnostics */ }
+updatePointerIndicator();
+
 function teardownLinuxController(controller, { natural = false } = {}) {
   if (!controller) return Promise.resolve();
   const prior = linuxControllerTeardowns.get(controller);
@@ -506,6 +588,8 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   keyboardSuppressLateKeyups = false;
   keyboardLastReleaseReason = "controller-retired";
   updateKeyboardDebug();
+  try { pointerBridge?.reset?.({ emit: false, exitLock: true }); } catch { /* pointer lock may already be gone */ }
+  updatePointerIndicator();
   ui.detachSink();
   fileTransferUI.attachController(null);
   if (diagnosticJitStatsTimer !== null) {
@@ -970,6 +1054,7 @@ async function runLinuxBootOwned(opts, banner, request) {
       onWriterStatus: ownerUi.onWriterStatus,
     });
     linuxCtl = bootController;
+    updatePointerIndicator();
     const ctlForRelease = bootController;
     keyboardBridge = createKeyboardBridge(createWasmKeyboardAdapter(linuxCtl), {
       onDiagnostic: (entry) => {

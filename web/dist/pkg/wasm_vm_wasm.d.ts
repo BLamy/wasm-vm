@@ -255,6 +255,16 @@ export class WasmLinux {
      */
     sendKeyboardEvent(event_type: number, code: number, value: number): void;
     /**
+     * Queue one guest-visible relative-mouse event. Call `syncMouse` after the complete DOM
+     * pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+     */
+    sendMouseEvent(event_type: number, code: number, value: number): void;
+    /**
+     * Queue one guest-visible absolute-tablet event. Call `syncTablet` after the complete DOM
+     * pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+     */
+    sendTabletEvent(event_type: number, code: number, value: number): void;
+    /**
      * E4-T39: toggle static region chaining without rebuilding the generated modules.
      */
     setChaining(on: boolean): void;
@@ -305,6 +315,14 @@ export class WasmLinux {
      * Publish the current host keyboard frame by appending `EV_SYN/SYN_REPORT`.
      */
     syncKeyboard(): void;
+    /**
+     * Publish the current host relative-mouse frame with `EV_SYN/SYN_REPORT`.
+     */
+    syncMouse(): void;
+    /**
+     * Publish the current host absolute-tablet frame with `EV_SYN/SYN_REPORT`.
+     */
+    syncTablet(): void;
     takeFileDownloadChunk(id: number): Uint8Array;
 }
 
@@ -554,6 +572,8 @@ export interface InitOutput {
     readonly wasmlinux_saveSnapshot: (a: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_sendKeyboardEvent: (a: number, b: number, c: number, d: number) => [number, number];
+    readonly wasmlinux_sendMouseEvent: (a: number, b: number, c: number, d: number) => [number, number];
+    readonly wasmlinux_sendTabletEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_setChaining: (a: number, b: number) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
     readonly wasmlinux_setDynamicChaining: (a: number, b: number) => [number, number];
@@ -563,6 +583,8 @@ export interface InitOutput {
     readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmlinux_syncKeyboard: (a: number) => [number, number];
+    readonly wasmlinux_syncMouse: (a: number) => [number, number];
+    readonly wasmlinux_syncTablet: (a: number) => [number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_enableJit: (a: number, b: number) => [number, number];
     readonly wasmmachine_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];

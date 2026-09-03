@@ -738,6 +738,32 @@ export class WasmLinux {
         }
     }
     /**
+     * Queue one guest-visible relative-mouse event. Call `syncMouse` after the complete DOM
+     * pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+     * @param {number} event_type
+     * @param {number} code
+     * @param {number} value
+     */
+    sendMouseEvent(event_type, code, value) {
+        const ret = wasm.wasmlinux_sendMouseEvent(this.__wbg_ptr, event_type, code, value);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Queue one guest-visible absolute-tablet event. Call `syncTablet` after the complete DOM
+     * pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+     * @param {number} event_type
+     * @param {number} code
+     * @param {number} value
+     */
+    sendTabletEvent(event_type, code, value) {
+        const ret = wasm.wasmlinux_sendTabletEvent(this.__wbg_ptr, event_type, code, value);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E4-T39: toggle static region chaining without rebuilding the generated modules.
      * @param {boolean} on
      */
@@ -856,6 +882,24 @@ export class WasmLinux {
      */
     syncKeyboard() {
         const ret = wasm.wasmlinux_syncKeyboard(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Publish the current host relative-mouse frame with `EV_SYN/SYN_REPORT`.
+     */
+    syncMouse() {
+        const ret = wasm.wasmlinux_syncMouse(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Publish the current host absolute-tablet frame with `EV_SYN/SYN_REPORT`.
+     */
+    syncTablet() {
+        const ret = wasm.wasmlinux_syncTablet(this.__wbg_ptr);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }

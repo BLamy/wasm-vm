@@ -29,6 +29,10 @@ const LONG_RPC_GRACE_MS = Object.freeze({
 export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "sendKeyboardEvent",
   "syncKeyboard",
+  "sendTabletEvent",
+  "syncTablet",
+  "sendMouseEvent",
+  "syncMouse",
   "keyboardLedState",
   "pause",
   "resume",

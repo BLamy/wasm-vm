@@ -125,6 +125,7 @@ export const ROADMAP = [
     status: "pending",
     blurb: "virtio-gpu — control queue, resource lifecycle, scanout, EDID — pixels on screen.",
     caps: [
+      { name: "Virtio input pointer routing", status: "partial", evidence: "E5-T14a/b: deterministic tablet/mouse devices with browser mode routing" },
       { name: "virtio-gpu control + resource queues", status: "pending" },
       { name: "Scanout transfer + flush", status: "pending" },
       { name: "EDID / display info", status: "pending" },

@@ -2096,6 +2096,56 @@ impl WasmLinux {
         Ok(())
     }
 
+    /// Queue one guest-visible absolute-tablet event. Call `syncTablet` after the complete DOM
+    /// pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+    #[wasm_bindgen(js_name = sendTabletEvent)]
+    pub fn send_tablet_event(&self, event_type: u16, code: u16, value: i32) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .tablet_input()
+            .ok_or_else(|| JsError::new("tablet input is not attached"))?;
+        state.borrow_mut().inject_event(event_type, code, value);
+        Ok(())
+    }
+
+    /// Publish the current host absolute-tablet frame with `EV_SYN/SYN_REPORT`.
+    #[wasm_bindgen(js_name = syncTablet)]
+    pub fn sync_tablet(&self) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .tablet_input()
+            .ok_or_else(|| JsError::new("tablet input is not attached"))?;
+        state.borrow_mut().sync();
+        Ok(())
+    }
+
+    /// Queue one guest-visible relative-mouse event. Call `syncMouse` after the complete DOM
+    /// pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
+    #[wasm_bindgen(js_name = sendMouseEvent)]
+    pub fn send_mouse_event(&self, event_type: u16, code: u16, value: i32) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .mouse_input()
+            .ok_or_else(|| JsError::new("mouse input is not attached"))?;
+        state.borrow_mut().inject_event(event_type, code, value);
+        Ok(())
+    }
+
+    /// Publish the current host relative-mouse frame with `EV_SYN/SYN_REPORT`.
+    #[wasm_bindgen(js_name = syncMouse)]
+    pub fn sync_mouse(&self) -> Result<(), JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let state = inner
+            .machine
+            .mouse_input()
+            .ok_or_else(|| JsError::new("mouse input is not attached"))?;
+        state.borrow_mut().sync();
+        Ok(())
+    }
+
     #[wasm_bindgen(js_name = fileTransferReady)]
     pub fn file_transfer_ready(&self, slot: u32) -> Result<bool, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;

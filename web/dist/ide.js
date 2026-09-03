@@ -196,6 +196,12 @@ const css = `
 .ide-keyboard-debug { color: #aab7c4; border: 1px solid rgba(139, 148, 158, 0.35); border-radius: 4px;
   padding: 1px 7px; font-size: 10.5px; white-space: nowrap; max-width: 34vw; overflow: hidden;
   text-overflow: ellipsis; }
+.ide-pointer-state { color: #9ad29a; border: 1px solid rgba(63, 185, 80, 0.35); border-radius: 4px;
+  padding: 1px 7px; font-size: 10.5px; white-space: nowrap; }
+.ide-pointer-state[data-mode="relative"] { color: #9fc8ff; border-color: rgba(83, 212, 255, 0.4); }
+.ide-pointer-debug { color: #aab7c4; border: 1px solid rgba(139, 148, 158, 0.35); border-radius: 4px;
+  padding: 1px 7px; font-size: 10.5px; white-space: nowrap; max-width: 22vw; overflow: hidden;
+  text-overflow: ellipsis; }
 /* The terminal pane is a single scroll: this wrapper does NOT scroll (overflow:hidden); the xterm
    viewport inside #term is the only scrollbar. #term flexes to fill so the fit addon sizes it. */
 .ide-term-scroll { flex: 1 1 auto; overflow: hidden; min-height: 0; }
@@ -404,6 +410,9 @@ if (root) {
         <span class="ide-keyboard-debug" id="ide-keyboard-debug" role="status" aria-live="polite">Held: none · repairs: 0</span>
         <button class="ide-mini" id="ide-keyboard-toggle" type="button" aria-pressed="true">Capture: on</button>
         <button class="ide-mini" id="ide-keyboard-release" type="button">Release keys</button>
+        <span class="ide-pointer-state" id="ide-pointer-state" role="status" aria-live="polite">Pointer: absolute</span>
+        <span class="ide-pointer-debug" id="ide-pointer-debug" role="status" aria-live="polite">Buttons: none · frames: 0</span>
+        <button class="ide-mini" id="ide-pointer-toggle" type="button" aria-pressed="false" disabled>Pointer: absolute</button>
         <button class="ide-mini" id="ide-term-clear">Clear</button>
       </div>
       <div class="ide-term-scroll" id="ide-term-scroll"></div>

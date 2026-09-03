@@ -942,6 +942,28 @@ export async function startLinuxBoot(opts = {}) {
         machine.syncKeyboard();
         return true;
       },
+      // E5-T14b: the DOM pointer bridge keeps tablet and mouse frames on separate controller
+      // methods, preserving T14a's independent slot/queue contract in both boot backends.
+      sendTabletEvent: (eventType, code, value) => {
+        if (stopped) return false;
+        machine.sendTabletEvent(eventType, code, value);
+        return true;
+      },
+      syncTablet: () => {
+        if (stopped) return false;
+        machine.syncTablet();
+        return true;
+      },
+      sendMouseEvent: (eventType, code, value) => {
+        if (stopped) return false;
+        machine.sendMouseEvent(eventType, code, value);
+        return true;
+      },
+      syncMouse: () => {
+        if (stopped) return false;
+        machine.syncMouse();
+        return true;
+      },
       // E5-T13c: expose the guest's host-owned LED feedback so the page can reconcile lock keys
       // after focus recovery without reading or mutating guest state through an ad-hoc path.
       keyboardLedState: () => (
