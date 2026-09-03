@@ -3,7 +3,7 @@ id: E5-T11c
 epic: 5
 title: keyboard evdev stream and repeat-policy proof
 priority: 511.3
-status: implemented
+status: verified
 depends_on: [E5-T11b]
 estimate: S
 risk: medium
@@ -62,3 +62,32 @@ Evidence: `evidence/e5-t11c/keyboard-evdev-2026-09-03.json`, SHA-256
 `8145c0a6c5f7b80b90645b050b5acbb5098ad2407bb5b08964aa51806d5e16d6`; serial fixture
 `evidence/e5-t11c/keyboard-evdev-serial.txt`, SHA-256
 `1f6e85bac3d506eeede576457177c87288be65da96c18f503393095ef7665429`.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- Guest identity and capabilities — HELD. Predicted the rebuilt Alpine guest would register the
+  slot-3 device as `/dev/input/event0` with the T11a identity and `EV=20013`, `LED=7`, and
+  `MSC=10`, without `EV_REP`; the serial capture observes those exact values. Evidence:
+  `evidence/e5-t11c/keyboard-evdev-2026-09-03.json` and the checked-in serial fixture.
+- Make/break framing — HELD. Predicted the host hook's KEY_A down/up pair would produce exactly
+  `EV_KEY KEY_A 1`, `EV_SYN SYN_REPORT 0`, `EV_KEY KEY_A 0`, and `EV_SYN SYN_REPORT 0`; the real
+  guest raw-record capture and native/wasm32 eventq tests observe that sequence with no pending
+  events left behind.
+- Repeat policy — HELD. Predicted one injected down frame would yield one guest KEY_A event after
+  repeated service boundaries; the native and wasm32 no-repeat fixtures observe one down plus one
+  SYN_REPORT and zero additional events, while the spec's EV_REP bitmap is all zero.
+- Coverage — HELD. The changed native/wasm assembly, slot-4 extra-drive relocation, host injection
+  seam, eventq path, serial validator, and fixture are exercised by the final boot proof or the
+  focused native/wasm tests. The existing T11b LED/reset findings carry forward unchanged; the
+  lean Alpine image has no tty1 getty, so the parent task's tty1 `ls` probe is not an applicable
+  acceptance path for this serial evdev slice. Undeclared DOM-code filtering remains scoped to
+  E5-T12's keymap layer; T11c does not claim that the generic T10c transport API filters arbitrary
+  host-supplied event codes.
+- Evidence integrity — HELD. The evidence JSON digest and serial-fixture digest in the worker
+  entry match the checked-in artifacts for implementation commit `ba49df3` plus evidence commit
+  `0efb0f3`.
+- SUITE — HELD. The deterministic native guest stream test, wasm32 mirror, and real Alpine serial
+  validator are the permanent proof artifacts for this slice.
+
+Commands: `tools/verify/e5-t11c-keyboard-evdev.sh`; `cargo test -p wasm-vm-core --test
+virtio_keyboard_guest_stream`; `wasm-pack test --node crates/wasm --test keyboard_guest_stream`.
