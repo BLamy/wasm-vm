@@ -1,12 +1,19 @@
 //! The virtio-gpu identity/configuration boundary (Epic 5, E5-T01a).
 //!
-//! This slice deliberately stops before queue servicing.  It makes the device enumerable,
-//! exposes the fixed virtio-gpu configuration registers, and keeps the protocol wire formats in
-//! [`protocol`].  E5-T01b owns control-queue dispatch and display-info command completion.
+//! The device is enumerable through virtio-mmio, exposes the fixed virtio-gpu configuration
+//! registers, and keeps the protocol wire formats in [`protocol`]. E5-T01b adds the first
+//! control-queue command, while later slices add resources and presentation.
 
 pub mod protocol;
 
+use alloc::rc::Rc;
+use core::cell::RefCell;
+
 use super::VirtioDevice;
+use super::mmio::VirtioMmio;
+use super::queue::{DescriptorChain, Virtqueue};
+use crate::bus::Bus;
+use crate::mmio::SystemBus;
 
 /// Virtio device type assigned to a GPU (virtio spec 1.2 §5.7).
 pub const VIRTIO_GPU_DEVICE_ID: u32 = 16;
@@ -17,32 +24,56 @@ pub const DEFAULT_NUM_CAPSETS: u32 = 0;
 
 const CONFIG_LEN: usize = 16;
 
-/// A minimal virtio-gpu device.  It owns only the configuration surface in this slice; queue
-/// state remains owned by the generic virtio-mmio transport until E5-T01b adds servicing.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct VirtioGpu {
+/// Shared state between the transport-facing device and the run-loop service.
+pub struct GpuState {
     events_read: u32,
+    kicked: bool,
+    reset_pending: bool,
+    /// Number of valid GET_DISPLAY_INFO requests completed by the service.
+    pub commands_served: u64,
+}
+
+/// A minimal virtio-gpu device.  Queue state remains owned by the generic virtio-mmio transport;
+/// [`service`] owns the deferred guest-memory work at a free bus boundary.
+pub struct VirtioGpu {
+    state: Rc<RefCell<GpuState>>,
 }
 
 impl VirtioGpu {
     /// Construct the default single-scanout, no-capset device.
-    pub const fn new() -> Self {
-        Self { events_read: 0 }
+    pub fn new() -> Self {
+        Self::new_with_state().0
+    }
+
+    /// Construct the transport device and the run-loop handle that services its queues.
+    pub fn new_with_state() -> (Self, Rc<RefCell<GpuState>>) {
+        let state = Rc::new(RefCell::new(GpuState {
+            events_read: 0,
+            kicked: false,
+            reset_pending: false,
+            commands_served: 0,
+        }));
+        (
+            Self {
+                state: Rc::clone(&state),
+            },
+            state,
+        )
     }
 
     /// Current display event bits, exposed for the later hotplug slice and tests.
-    pub const fn events_read(&self) -> u32 {
-        self.events_read
+    pub fn events_read(&self) -> u32 {
+        self.state.borrow().events_read
     }
 
     /// Raise display event bits without exposing host pointers to the transport.
     pub fn raise_event(&mut self, bits: u32) {
-        self.events_read |= bits;
+        self.state.borrow_mut().events_read |= bits;
     }
 
     fn config_bytes(&self) -> [u8; CONFIG_LEN] {
         let mut out = [0u8; CONFIG_LEN];
-        out[0..4].copy_from_slice(&self.events_read.to_le_bytes());
+        out[0..4].copy_from_slice(&self.events_read().to_le_bytes());
         // `events_clear` is a write-one-to-clear register.  It has no latched read value.
         out[8..12].copy_from_slice(&DEFAULT_NUM_SCANOUTS.to_le_bytes());
         out[12..16].copy_from_slice(&DEFAULT_NUM_CAPSETS.to_le_bytes());
@@ -64,6 +95,13 @@ impl VirtioDevice for VirtioGpu {
     fn num_queues(&self) -> u32 {
         // controlq (queue 0) and cursorq (queue 1); cursor commands are added by E5-T15.
         2
+    }
+
+    fn queue_notify(&mut self, queue: u32) {
+        let _ = queue;
+        // Bus is borrowed while the MMIO write is being handled.  Defer queue walking until the
+        // run-loop boundary, when guest RAM can be borrowed safely.
+        self.state.borrow_mut().kicked = true;
     }
 
     fn config_read(&mut self, offset: u64, width: u8) -> u64 {
@@ -99,22 +137,159 @@ impl VirtioDevice for VirtioGpu {
                 clear |= (((value >> shift) & 0xff) as u32) << ((index as usize - 4) * 8);
             }
         }
-        self.events_read &= !clear;
+        self.state.borrow_mut().events_read &= !clear;
     }
 
     fn reset(&mut self) {
-        self.events_read = 0;
+        let mut state = self.state.borrow_mut();
+        state.events_read = 0;
+        state.kicked = false;
+        state.reset_pending = true;
+    }
+}
+
+/// Read exactly the first control header from a chain's readable descriptors. This bounded read
+/// supports headers split at any byte boundary without allocating based on a hostile descriptor
+/// length; payload commands are owned by later GPU slices.
+fn read_header(chain: &DescriptorChain, bus: &mut SystemBus) -> Option<protocol::CtrlHeader> {
+    let mut bytes = [0u8; protocol::CTRL_HDR_SIZE];
+    let mut used = 0usize;
+    for segment in chain.readable() {
+        for offset in 0..segment.len as usize {
+            if used == bytes.len() {
+                return protocol::CtrlHeader::from_bytes(&bytes);
+            }
+            bytes[used] = bus.load8(segment.addr + offset as u64).ok()?;
+            used += 1;
+        }
+    }
+    (used == bytes.len()).then(|| protocol::CtrlHeader::from_bytes(&bytes))?
+}
+
+/// Write a response prefix across all device-writable descriptors. A short tail is truncated at
+/// its validated capacity; no byte beyond the provided descriptors is ever addressed.
+fn write_prefix(chain: &DescriptorChain, bus: &mut SystemBus, response: &[u8]) -> Result<u32, ()> {
+    let mut written = 0usize;
+    for segment in chain.writable() {
+        for offset in 0..segment.len as usize {
+            if written == response.len() {
+                return Ok(written as u32);
+            }
+            bus.store8(segment.addr + offset as u64, response[written])
+                .map_err(|_| ())?;
+            written += 1;
+        }
+    }
+    Ok(written as u32)
+}
+
+/// Service the virtio-gpu control queue after a deferred QueueNotify kick.
+///
+/// E5-T01b handles only `GET_DISPLAY_INFO`; an absent/short header is consumed with a zero-length
+/// used entry and unsupported commands remain for E5-T01c's explicit error-response slice.
+pub fn service(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<GpuState>>,
+    bus: &mut SystemBus,
+) {
+    {
+        let mut state = state.borrow_mut();
+        if state.reset_pending {
+            state.reset_pending = false;
+            *vq = None;
+        }
+        if !state.kicked {
+            return;
+        }
+        state.kicked = false;
+    }
+
+    let queue_state = *slot.borrow().queue(0);
+    if !queue_state.ready {
+        *vq = None;
+        return;
+    }
+    if vq.is_none() {
+        match Virtqueue::new(&queue_state, 256) {
+            Ok(queue) => *vq = Some(queue),
+            Err(_) => {
+                slot.borrow_mut().protocol_violation();
+                return;
+            }
+        }
+    }
+
+    let queue = vq.as_mut().expect("queue was constructed above");
+    let mut delivered_work = false;
+    loop {
+        let chain = match queue.pop(bus) {
+            Ok(Some(chain)) => chain,
+            Ok(None) => break,
+            Err(_) => {
+                slot.borrow_mut().protocol_violation();
+                *vq = None;
+                return;
+            }
+        };
+
+        let written = match read_header(&chain, bus) {
+            Some(request) if request.ty == protocol::CMD_GET_DISPLAY_INFO => {
+                let response_header = protocol::CtrlHeader {
+                    ty: protocol::RESP_OK_DISPLAY_INFO,
+                    flags: request.flags & protocol::FLAG_FENCE,
+                    fence_id: if request.flags & protocol::FLAG_FENCE != 0 {
+                        request.fence_id
+                    } else {
+                        0
+                    },
+                    ctx_id: request.ctx_id,
+                    ring_idx: request.ring_idx,
+                    padding: [0; 3],
+                };
+                let response = protocol::DisplayInfoResponse::new(response_header).to_bytes();
+                match write_prefix(&chain, bus, &response) {
+                    Ok(written) => {
+                        state.borrow_mut().commands_served += 1;
+                        written
+                    }
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
+            _ => 0,
+        };
+
+        if queue.push_used(bus, chain.head, written).is_err() {
+            slot.borrow_mut().protocol_violation();
+            *vq = None;
+            return;
+        }
+        delivered_work = true;
+    }
+
+    if delivered_work && queue.interrupt_needed(bus) {
+        slot.borrow_mut().raise_used_irq();
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use alloc::rc::Rc;
+    use core::cell::RefCell;
+
     use super::*;
-    use crate::dev::virtio::mmio::VirtioMmio;
-    use crate::mmio::{MmioDevice, Width};
+    use crate::bus::Bus;
+    use crate::dev::virtio::mmio::{QueueState, VirtioMmio};
+    use crate::mmio::{MmioDevice, SystemBus, Width};
+    use crate::platform::virt::DRAM_BASE;
+    use crate::ram::Ram;
     use protocol::{
         CTRL_HDR_SIZE, CtrlHeader, DISPLAY_INFO_RESPONSE_SIZE, DISPLAY_MODE_COUNT,
-        DISPLAY_MODE_SIZE, DisplayInfoResponse, RESP_OK_DISPLAY_INFO,
+        DISPLAY_MODE_SIZE, DisplayInfoResponse, DisplayMode, RESP_OK_DISPLAY_INFO,
     };
 
     const CONFIG_SPACE: u64 = 0x100;
@@ -129,6 +304,56 @@ mod tests {
     const STATUS_ACKNOWLEDGE: u32 = 1;
     const STATUS_DRIVER: u32 = 2;
     const STATUS_FEATURES_OK: u32 = 8;
+
+    const DESC: u64 = DRAM_BASE + 0x1000;
+    const AVAIL: u64 = DRAM_BASE + 0x2000;
+    const USED: u64 = DRAM_BASE + 0x3000;
+    const REQUEST: u64 = DRAM_BASE + 0x4000;
+    const RESPONSE: u64 = DRAM_BASE + 0x5000;
+
+    fn write_desc(bus: &mut SystemBus, index: u64, addr: u64, len: u32, flags: u16, next: u16) {
+        let base = DESC + 16 * index;
+        bus.store64(base, addr).unwrap();
+        bus.store32(base + 8, len).unwrap();
+        bus.store16(base + 12, flags).unwrap();
+        bus.store16(base + 14, next).unwrap();
+    }
+
+    fn write_bytes(bus: &mut SystemBus, addr: u64, bytes: &[u8]) {
+        for (offset, byte) in bytes.iter().copied().enumerate() {
+            bus.store8(addr + offset as u64, byte).unwrap();
+        }
+    }
+
+    fn queue_for_test(
+        bus: &mut SystemBus,
+        descriptors: &[(u64, u32, u16, u16)],
+    ) -> (
+        Rc<RefCell<VirtioMmio>>,
+        Rc<RefCell<GpuState>>,
+        Option<Virtqueue>,
+    ) {
+        for (index, &(addr, len, flags, next)) in descriptors.iter().enumerate() {
+            write_desc(bus, index as u64, addr, len, flags, next);
+        }
+        bus.store16(AVAIL, 0).unwrap();
+        bus.store16(AVAIL + 2, 1).unwrap();
+        bus.store16(AVAIL + 4, 0).unwrap();
+        bus.store16(USED, 0).unwrap();
+        let (device, state) = VirtioGpu::new_with_state();
+        let slot = Rc::new(RefCell::new(VirtioMmio::new(Box::new(device))));
+        slot.borrow_mut().set_queue_for_test(
+            0,
+            QueueState {
+                num: 8,
+                ready: true,
+                desc: DESC,
+                driver: AVAIL,
+                device: USED,
+            },
+        );
+        (slot, state, None)
+    }
 
     fn read32(slot: &mut VirtioMmio, offset: u64) -> u32 {
         slot.read(offset, Width::B4).unwrap() as u32
@@ -248,5 +473,120 @@ mod tests {
         assert_eq!(gpu.events_read(), 0b1011);
         gpu.config_write(4, 1, 0b0001);
         assert_eq!(gpu.events_read(), 0b1010);
+    }
+
+    #[test]
+    fn virtio_gpu_display_info_contiguous_fenced() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let request = CtrlHeader {
+            ty: protocol::CMD_GET_DISPLAY_INFO,
+            flags: protocol::FLAG_FENCE,
+            fence_id: 0xCAFE_BABE_1122_3344,
+            ctx_id: 0x1020_3040,
+            ring_idx: 3,
+            padding: [0xAA, 0xBB, 0xCC],
+        };
+        write_bytes(&mut bus, REQUEST, &request.to_bytes());
+        let (slot, state, mut vq) =
+            queue_for_test(&mut bus, &[(REQUEST, 24, 1, 1), (RESPONSE, 408, 2, 0)]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 1, "used ring published");
+        assert_eq!(bus.load32(USED + 4).unwrap(), 0, "head returned");
+        assert_eq!(bus.load32(USED + 8).unwrap(), 408, "full response written");
+        let mut bytes = [0u8; DISPLAY_INFO_RESPONSE_SIZE];
+        for (offset, byte) in bytes.iter_mut().enumerate() {
+            *byte = bus.load8(RESPONSE + offset as u64).unwrap();
+        }
+        let response = DisplayInfoResponse::from_bytes(&bytes).unwrap();
+        assert_eq!(response.header.ty, protocol::RESP_OK_DISPLAY_INFO);
+        assert_eq!(response.header.flags, protocol::FLAG_FENCE);
+        assert_eq!(response.header.fence_id, request.fence_id);
+        assert_eq!(response.header.ctx_id, request.ctx_id);
+        assert_eq!(response.header.ring_idx, request.ring_idx);
+        assert_eq!(response.header.padding, [0; 3]);
+        assert_eq!(response.modes[0].width, 1280);
+        assert_eq!(response.modes[0].height, 800);
+        assert_eq!(response.modes[0].enabled, 1);
+        assert!(
+            response.modes[1..]
+                .iter()
+                .all(|mode| *mode == DisplayMode::default())
+        );
+        assert_eq!(state.borrow().commands_served, 1);
+        assert!(slot.borrow().irq_level(), "used-ring interrupt raised");
+    }
+
+    #[test]
+    fn virtio_gpu_display_info_split_header_unfenced() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let request = CtrlHeader {
+            ty: protocol::CMD_GET_DISPLAY_INFO,
+            flags: 0,
+            fence_id: 0xDEAD_BEEF,
+            ctx_id: 7,
+            ring_idx: 1,
+            padding: [9, 8, 7],
+        };
+        write_bytes(&mut bus, REQUEST, &request.to_bytes());
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, 12, 1, 1),
+                (REQUEST + 12, 12, 1, 2),
+                (RESPONSE, 408, 2, 0),
+            ],
+        );
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 1);
+        assert_eq!(bus.load32(USED + 8).unwrap(), 408);
+        let mut bytes = [0u8; DISPLAY_INFO_RESPONSE_SIZE];
+        for (offset, byte) in bytes.iter_mut().enumerate() {
+            *byte = bus.load8(RESPONSE + offset as u64).unwrap();
+        }
+        let response = DisplayInfoResponse::from_bytes(&bytes).unwrap();
+        assert_eq!(
+            response.header.flags, 0,
+            "unfenced response has no fence flag"
+        );
+        assert_eq!(
+            response.header.fence_id, 0,
+            "unfenced response has no fence id"
+        );
+        assert_eq!(response.header.ctx_id, request.ctx_id);
+        assert_eq!(state.borrow().commands_served, 1);
+    }
+
+    #[test]
+    fn virtio_gpu_display_info_short_tail_is_bounded() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let request = CtrlHeader {
+            ty: protocol::CMD_GET_DISPLAY_INFO,
+            ..CtrlHeader::default()
+        };
+        write_bytes(&mut bus, REQUEST, &request.to_bytes());
+        for offset in 0..64u64 {
+            bus.store8(RESPONSE + 32 + offset, 0xA5).unwrap();
+        }
+        let (slot, state, mut vq) =
+            queue_for_test(&mut bus, &[(REQUEST, 24, 1, 1), (RESPONSE, 32, 2, 0)]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 1);
+        assert_eq!(bus.load32(USED + 8).unwrap(), 32, "tail truncates safely");
+        for offset in 0..64u64 {
+            assert_eq!(
+                bus.load8(RESPONSE + 32 + offset).unwrap(),
+                0xA5,
+                "write escaped short tail at byte {offset}"
+            );
+        }
     }
 }
