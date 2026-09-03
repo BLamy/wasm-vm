@@ -1227,7 +1227,18 @@
     <script type="module" src="./tabs.js"></script>
     <script type="module" src="./ide.js"></script>
     <script type="module" src="./docs-mount.js"></script>
-    <script type="module" src="./main.js"></script>
+    <!-- E4-T22b: establish isolation/fallback before main.js evaluates any backend or wasm imports.
+         The shim may reload once on a headerless static host; if it cannot establish isolation,
+         chooseCpuBackend records the clean single-thread decision and main.js still loads normally. -->
+    <script type="module">
+      import { ensureCrossOriginIsolated } from "./coi-serviceworker-register.js";
+      import { chooseCpuBackend } from "./cpu-isolation.js";
+      await ensureCrossOriginIsolated();
+      const selection = chooseCpuBackend(globalThis);
+      globalThis.__cpuBackendSelection = selection;
+      document.documentElement.dataset.cpuBackend = selection.backend;
+      await import("./main.js");
+    </script>
     <!-- Embed mode (?embed): used by the landing page's live-boot iframe. Strips the chrome (see the
          html.embed CSS), forces the IDE/terminal view, and boots the fast busybox userland. Pair with
          &noAutoBoot so the background Alpine auto-boot doesn't grab the single guest slot first. -->
