@@ -1,0 +1,50 @@
+{
+  "schema": "e5-t01a-virtio-gpu-protocol-v1",
+  "task": "E5-T01a",
+  "status": "pass",
+  "implementation_commit": "b4d0735",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib gpu_protocol",
+    "acceptance_result": "1 passed, 0 failed",
+    "device_tests": {
+      "command": "cargo test -p wasm-vm-core --lib gpu::",
+      "result": "4 passed, 0 failed"
+    },
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib",
+      "result": "179 passed, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "wire_and_mmio_command": "wasm-pack test --node crates/wasm --test gpu_protocol",
+    "result": "2 passed, 0 failed",
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    }
+  },
+  "fixtures": {
+    "control_header_bytes": "24-byte explicit little-endian fixture with independent nonzero type, flags, fence_id, ctx_id, ring_idx, and padding fields",
+    "display_info_bytes": "408-byte response fixture: header plus 16 24-byte modes; mode 0 is enabled at 1280x800 and modes 1-15 are zero",
+    "config_bytes": "virtio-mmio config offsets 0x108 and 0x10c read as num_scanouts=1 and num_capsets=0"
+  },
+  "coverage": [
+    "VirtioGpu is exported through the existing virtio module and reports device ID 16.",
+    "The transport offers VERSION_1, exposes controlq and cursorq as two queues, and rejects an unsupported feature without changing config values.",
+    "Protocol encoding and decoding use explicit byte copies, so no host struct layout is part of the wire format.",
+    "No queue command dispatch is implemented in this slice; E5-T01b owns GET_DISPLAY_INFO servicing."
+  ],
+  "scope_notes": [
+    "No independent-machine or WebKit run was used, per the user's direction.",
+    "Host-layer rr evidence is waived by the repository's current evidence policy."
+  ]
+}

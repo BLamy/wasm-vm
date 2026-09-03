@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 195,
+    "verified": 196,
     "total": 359
   },
   "epics": [
@@ -15830,7 +15830,7 @@
       "epicKey": "5",
       "title": "virtio-gpu device identity, config space, and protocol types",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4"
       ],
@@ -15841,21 +15841,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — VERDICT: verified (user-directed)\n\n- **Protocol wire layout — HELD.** `gpu_protocol_wire_fixtures` asserts the exact 24-byte\n  little-endian control header with independent nonzero values in every multi-byte field, then\n  asserts every one of the 16 24-byte display modes in the 408-byte response: scanout 0 is the\n  only enabled mode at 1280x800 and modes 1–15 are zero. The typed decoder round-trips the same\n  bytes.\n- **Device identity/config — HELD.** `gpu_mmio_identity_features_and_config` drives the existing\n  virtio-mmio register file, observes DeviceID 16, VERSION_1 in feature bank 1, two queue slots,\n  `num_scanouts=1`, and `num_capsets=0`. `unsupported_feature_does_not_mutate_config` confirms\n  FEATURES_OK stays clear and the config values remain unchanged after an unoffered bit.\n- **Wasm/native parity — HELD.** The dedicated wasm32 Node runner exercises the same wire fixture\n  and a real virtio-mmio Machine attachment: 2 tests passed. The no-default-features core wasm32\n  build and clippy checks also pass.\n- **Scope — HELD.** This slice only adds the identity/configuration and typed protocol boundary;\n  it does not claim queue command completion. E5-T01b owns controlq dispatch.\n\nImplementation commit: `b4d0735`.\n\nEvidence: `evidence/e5-t01a/gpu-protocol-2026-09-03.json` (SHA-256\n`b3dcab3a3ad407a6673ebf46028efc04b7296dcd15de3246ccab307498584783`).\n\nCommands: `cargo fmt --all`; `cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo test\n-p wasm-vm-core --lib gpu_protocol` (1 passed); `cargo test -p wasm-vm-core --lib gpu::` (4\npassed); `cargo test -p wasm-vm-core --lib` (179 passed); `cargo build -p wasm-vm-core\n--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; and `wasm-pack test --node\ncrates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit, and host-layer rr runs\nwere not used per the user's direction and current repository evidence policy.",
       "adversarial": "Flip every multi-byte field independently and compare the fixture bytes against the virtio-gpu\nwire layout. Run the same protocol tests under the wasm32 test target. Attempt an unsupported\nfeature bit and confirm negotiation rejects it without mutating the configuration surface.",
       "file": "tasks/epic-5-the-window/E5-T01a-virtio-gpu-protocol-device.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "tasks: activate E5-T01a virtio-gpu protocol",
             "tasks: decompose E5-T01 virtio-gpu foundation"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T01b",
