@@ -3,7 +3,7 @@ id: E5-T12c
 epic: 5
 title: keyboard capture policy and browser getty proof
 priority: 512.3
-status: implemented
+status: verified
 depends_on: [E5-T12b]
 estimate: S
 risk: medium
@@ -71,3 +71,34 @@ Evidence: `evidence/e5-t12c/keyboard-capture-2026-09-03.json`, SHA-256
 `82d4f9bbb92f553e6d91fce7b85d132a6148875513a16b022f634e235abf36bb`; screenshot
 `evidence/e5-t12c/keyboard-capture-2026-09-03.png`, SHA-256
 `b76aa73eb420afc9ddcae8f982fed5e2d18f250954da73e95fd21afe7c5ab1c6`.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Getty command — HELD.** Predicted the exact browser-keyboard string
+  `ls -la | grep 'x' && echo "hi~"` would reach the live guest shell with spaces, shifted quote,
+  pipe, and tilde intact; the exact-head Chromium evidence records the command and the guest
+  result `hi~`. The same recording then predicts a still-live shell after `Ctrl+C`; the observed
+  marker is `E5_T12C_CTRL_C_42`.
+- **Capture state — HELD.** Predicted the terminal chrome would report captured mode at the end,
+  capture-off would leave `F1` with `defaultPrevented=false`, and capture-on would prevent an
+  ordinary `F2`; the recording observes `Keyboard: captured`, `Capture: on`, the two exact probe
+  values, and `document.documentElement.dataset.keyboardCapture=on`.
+- **Chord ownership — HELD.** Predicted `Ctrl+Alt+Backquote` would notify the host without guest
+  frames and leave no held keys; the recording observes one reserved toggle, an unchanged frame
+  count across the chord, and an empty held-key set. The deterministic attack matrix also holds
+  for both edges of `Ctrl+W/T/N`, `Cmd+Q/Tab`, `F11`, Firefox-style Slash quick-find, IME events,
+  rapid modifier ordering, and a synthetic reserved trigger with no physical prefix.
+- **Coverage and integrity — HELD.** The verifier matched the evidence JSON's `gitHead` to
+  implementation commit `fbdfc53`, recomputed its SHA-256 as
+  `82d4f9bbb92f553e6d91fce7b85d132a6148875513a16b022f634e235abf36bb`, and reran
+  `npm run test:keyboard --prefix web` with 38 passing tests, JavaScript syntax checks, the
+  TypeScript/JavaScript byte-identity check, and `git diff --check`. The browser recording
+  exercised the changed UI, capture policy, xterm compatibility boundary, worker bridge, and
+  generated distribution parity; docs and the standalone proof harness are directly inspected
+  artifacts. No independent-machine or WebKit run is applicable under the user's waiver.
+- **SUITE — HELD.** The 38-test deterministic matrix, exact-head Chromium recording, screenshot,
+  and `tools/verify/e5-t12c-browser-proof.mjs` are retained as the permanent proof artifacts.
+
+Commands: `npm run test:keyboard --prefix web`; `node --check
+tools/verify/e5-t12c-browser-proof.mjs`; `node --check web/src/input/capture.js`; `cmp -s
+web/src/input/capture.ts web/src/input/capture.js`; `git diff --check fbdfc539^ fbdfc539`.
