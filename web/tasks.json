@@ -16228,8 +16228,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t03a): record scanout binding proof",
             "chore(e5-t03a): start scanout binding",
             "chore(e5-t03): decompose scanout pipeline"
           ]
@@ -16237,7 +16238,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T03b",
@@ -16245,7 +16246,7 @@
       "epicKey": "5",
       "title": "virtio-gpu checked transfer and scatter-gather copy",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T03a"
       ],

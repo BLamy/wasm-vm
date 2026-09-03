@@ -3,7 +3,7 @@ id: E5-T03b
 epic: 5
 title: virtio-gpu checked transfer and scatter-gather copy
 priority: 503.2
-status: pending
+status: in-progress
 depends_on: [E5-T03a]
 estimate: S
 risk: high
