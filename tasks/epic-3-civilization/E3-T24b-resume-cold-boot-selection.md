@@ -3,7 +3,7 @@ id: E3-T24b
 epic: 3
 title: Visible resume-versus-cold-boot decision path
 priority: 324.2
-status: pending
+status: in-progress
 depends_on: [E3-T24a, E3-T12e, E3-T10]
 estimate: S
 risk: high

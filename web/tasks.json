@@ -6729,8 +6729,9 @@
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "tasks: bind Docker resume verification commit",
             "verify: close Docker instant resume proof",
             "tasks: start Docker instant resume proof"
           ]
@@ -6738,7 +6739,7 @@
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E3-T13",
@@ -8748,7 +8749,7 @@
       "epicKey": "3",
       "title": "Visible resume-versus-cold-boot decision path",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E3-T24a",
         "E3-T12e",
