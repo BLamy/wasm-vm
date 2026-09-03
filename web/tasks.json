@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 205,
+    "verified": 206,
     "total": 368
   },
   "epics": [
@@ -16246,7 +16246,7 @@
       "epicKey": "5",
       "title": "virtio-gpu checked transfer and scatter-gather copy",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T03a"
       ],
@@ -16257,21 +16257,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Transfer path — HELD.** The control queue decodes a fixed little-endian\n  `TRANSFER_TO_HOST_2D` request and copies each validated row from the resource's guest\n  scatter-gather backing into its host shadow using a linear cursor with explicit row-gap skips.\n- **Arithmetic and failure atomicity — HELD.** Widened rectangle, stride, offset, span, backing,\n  and guest-RAM checks reject detached backing, out-of-bounds rectangles, overflow, and truncated\n  source ranges before the first shadow write.\n- **Adversarial/performance coverage — HELD.** Native tests cover odd-x SG crossings, one-byte\n  entries, source immutability, three-seed 30,000-case model comparison, and the release\n  1280x800 budget at 418.584 microseconds.\n\nImplementation commit: `d4f1326`.\n\nEvidence: `evidence/e5-t03b/transfer-2026-09-03.json` (SHA-256\n`20a68a67dec0b9f4781c29bb3530d41bceba646c757a17d504d55891970ff1e7`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_transfer` (7 passed); `cargo test -p wasm-vm-core --lib` (212 passed); `cargo clippy\n-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features\n--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed);\n`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed); and `cargo test\n-p wasm-vm-core --release --lib gpu_transfer_full_frame_native_budget -- --nocapture`\n(418.584 microseconds, under 5 ms). Independent-machine, WebKit, and host-layer rr runs were\nexcluded per the user's direction and current repository evidence policy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The focused recording proves full and partial rectangle copies against\n  a reference, odd-x and one-byte SG boundary handling, bounded invalid transfers with unchanged\n  shadow state, detached-backing refusal, and fenced control-queue progress.\n- **Coverage — HELD.** The changed transfer protocol type, error mapping, control-queue arm,\n  SG reader, row-gap handling, guest-range validation, and host-pixel writes are exercised by\n  the focused suite and the 212-test core regression.\n- **Adversarial/performance — HELD.** Three independent deterministic seeds cover 30,000\n  model-oracle cases, and the release benchmark records 418.584 microseconds for 1280x800,\n  below the 5 ms budget.\n- **Evidence integrity — HELD.** Evidence digest\n  `20a68a67dec0b9f4781c29bb3530d41bceba646c757a17d504d55891970ff1e7` matches the checked-in\n  artifact for implementation commit `d4f1326`.\n\nThe user explicitly directed this slice to be marked verified. E5-T03c is now the next active\neligible slice.",
       "adversarial": "Run 10,000 independently seeded `(rect, offset)` cases against the naive nested-loop oracle,\nincluding zero-sized and edge-touching rectangles. Time a native 1280x800 full-frame transfer;\nthe implementation must stay within the task's 5 ms budget and must not regress into a\nper-pixel sg lookup. Add a bus read/write counter and fail if any transfer performs a guest\nwrite.",
       "file": "tasks/epic-5-the-window/E5-T03b-virtio-gpu-transfer.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t03b): start transfer slice",
             "chore(e5-t03): decompose scanout pipeline"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T03c",
