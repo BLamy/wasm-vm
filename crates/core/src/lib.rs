@@ -2916,7 +2916,7 @@ impl Machine {
         let mut work_used = 0u64;
         let mut ran_any = false;
         // The edge just traversed to reach `phys` (from_phys, edge) — linked lazily on arrival.
-        let mut pending_link: Option<(u64, u8)> = None;
+        let mut pending_link: Option<(u64, u8, u64)> = None;
         let result = loop {
             let block_budget = remaining_work - work_used;
             let Some(step) = self.run_one_jit_block(
@@ -2935,11 +2935,6 @@ impl Machine {
                 });
             };
             ran_any = true;
-            // Link only after the successor really ran. A short-tail refusal or defensive pre-call
-            // cache miss must not publish an edge as though it executed.
-            if let (Some((from, edge)), Some(e)) = (pending_link.take(), self.executor.as_mut()) {
-                e.link_edge(from, edge, phys);
-            }
             match step {
                 BlockStep::Budget { retired } => {
                     debug_assert!(retired > 0 && retired <= block_budget);
@@ -2961,6 +2956,13 @@ impl Machine {
                     });
                 }
                 BlockStep::Committed { edge, retired } => {
+                    // Link only after the successor really ran. A short-tail refusal or defensive
+                    // pre-call cache miss must not publish an edge as though it executed.
+                    if let (Some((from, edge, to_virtual)), Some(e)) =
+                        (pending_link.take(), self.executor.as_mut())
+                    {
+                        e.link_edge_authorized(from, edge, to_virtual, phys);
+                    }
                     debug_assert!(retired > 0 && retired <= block_budget);
                     work_used += retired;
                     // The block ran clean; PC now sits at its successor's entry.
@@ -3041,7 +3043,7 @@ impl Machine {
                     }
                     // Record the edge to link on arrival (only static edges carry an `edge`; a
                     // dynamic `jalr` target has `edge == None` — followed but never linked).
-                    pending_link = edge.map(|e| (from, e));
+                    pending_link = edge.map(|e| (from, e, next_virtual));
                     phys = next_phys;
                 }
             }

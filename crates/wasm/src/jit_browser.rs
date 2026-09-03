@@ -58,6 +58,7 @@ extern crate alloc;
 
 const INLINE_TLB_ENTRIES: u32 = 256;
 const INLINE_TLB_ARRAY_BYTES: u32 = INLINE_TLB_ENTRIES * TlbLayout::SLOT;
+const INLINE_TLB_ARRAY_WORDS: usize = INLINE_TLB_ENTRIES as usize * 2;
 const INLINE_TLB_WORDS: usize = (INLINE_TLB_ARRAY_BYTES as usize * 3) / core::mem::size_of::<u64>();
 const DIRECT_CHAIN_FUEL: u64 = 128;
 // Production chains still consume at most DIRECT_CHAIN_FUEL guest instructions. A wider entry
@@ -76,6 +77,7 @@ struct InlineTlbContext {
     satp: u64,
     mstatus: u64,
     mode: u8,
+    pmp_revision: u64,
     flushes: u64,
     triggers_idle: bool,
 }
@@ -133,6 +135,7 @@ impl InlineTlbCache {
                 wasm_vm_core::csr::Priv::S => 1,
                 wasm_vm_core::csr::Priv::M => 3,
             },
+            pmp_revision: hart.csr.pmp.revision(),
             flushes: hart.tlb.flush_count(),
             triggers_idle: hart.csr.triggers_idle(),
         }
@@ -158,24 +161,34 @@ impl InlineTlbCache {
     }
 
     fn fill(&mut self, va: u64, pa: u64, write: bool) {
-        let Some(ram_offset) = pa.checked_sub(self.layout.dram_base) else {
+        let Some(target) = self.host_addr(pa) else {
             return;
         };
-        let Some(target) = u64::from(self.layout.ram_base).checked_add(ram_offset) else {
-            return;
-        };
-        if target > u64::from(u32::MAX) {
-            return;
-        }
         let slot = ((va >> 12) & u64::from(self.layout.entries - 1)) as usize;
-        let array = if write {
-            INLINE_TLB_ENTRIES as usize * 2
-        } else {
-            0
-        };
+        let array = if write { INLINE_TLB_ARRAY_WORDS } else { 0 };
         let index = array + slot * 2;
         self.words[index] = (va & !0xFFF) | TlbLayout::VALID as u64;
         self.words[index + 1] = target.wrapping_sub(va);
+    }
+
+    fn fill_exec(&mut self, va: u64, pa: u64) {
+        let Some(target) = self.host_addr(pa) else {
+            return;
+        };
+        let slot = ((va >> 12) & u64::from(self.layout.entries - 1)) as usize;
+        let index = INLINE_TLB_ARRAY_WORDS * 2 + slot * 2;
+        self.words[index] = (va & !0xFFF) | TlbLayout::VALID as u64;
+        self.words[index + 1] = target.wrapping_sub(va);
+    }
+
+    fn host_addr(&self, pa: u64) -> Option<u64> {
+        let ram_offset = pa.checked_sub(self.layout.dram_base)?;
+        let target = u64::from(self.layout.ram_base).checked_add(ram_offset)?;
+        (target <= u64::from(u32::MAX)).then_some(target)
+    }
+
+    fn host_page(&self, pa: u64) -> Option<u32> {
+        u32::try_from(self.host_addr(pa)? >> 12).ok()
     }
 }
 
@@ -304,12 +317,16 @@ impl DynamicLinkCache {
 
 /// Browser-only edge-local cache for statically-known successors. Each reserved slot owns two
 /// little-endian one-based funcref-table indices (edge 0 = taken/sole/fall-through, edge 1 = branch
-/// not-taken). Unlike [`DynamicLinkCache`], this has no key or hash: the generated caller already
-/// identifies the source block and edge by the address baked into its code.
+/// not-taken) plus two physical-authority page words. Unlike [`DynamicLinkCache`], this has no key
+/// or hash: the generated caller already identifies the source block and edge by the address baked
+/// into its code. The authority words are populated only after the core has observed the target's
+/// virtual-to-physical fetch successfully.
 struct StaticLinkCache {
     words: Box<[u32]>,
+    authority: Box<[u32]>,
     free: Vec<u32>,
     base: u32,
+    authority_base: u32,
 }
 
 impl StaticLinkCache {
@@ -317,12 +334,25 @@ impl StaticLinkCache {
         let mut words = alloc::vec![0u32; STATIC_LINK_ENTRIES * 2].into_boxed_slice();
         let base = u32::try_from(words.as_mut_ptr() as usize)
             .map_err(|_| "static link table is outside wasm32")?;
+        let mut authority = alloc::vec![0u32; STATIC_LINK_ENTRIES * 2].into_boxed_slice();
+        let authority_base = u32::try_from(authority.as_mut_ptr() as usize)
+            .map_err(|_| "static authority table is outside wasm32")?;
         let free = (0..STATIC_LINK_ENTRIES as u32).rev().collect();
-        Ok(Self { words, free, base })
+        Ok(Self {
+            words,
+            authority,
+            free,
+            base,
+            authority_base,
+        })
     }
 
     fn base(&self) -> u32 {
         self.base
+    }
+
+    fn authority_base(&self) -> u32 {
+        self.authority_base
     }
 
     fn reserve_many(&mut self, count: usize) -> Option<Vec<u32>> {
@@ -340,19 +370,24 @@ impl StaticLinkCache {
         slot as usize * 2 + usize::from(edge)
     }
 
-    fn publish(&mut self, slot: u32, edge: u8, table_index: u32) {
-        self.words[Self::word_index(slot, edge)] = table_index.saturating_add(1).to_le();
+    fn publish(&mut self, slot: u32, edge: u8, table_index: u32, expected_host_page: u32) {
+        let index = Self::word_index(slot, edge);
+        self.words[index] = table_index.saturating_add(1).to_le();
+        self.authority[index] = expected_host_page.to_le();
     }
 
     fn clear(&mut self, slot: u32, edge: u8) {
-        self.words[Self::word_index(slot, edge)] = 0;
+        let index = Self::word_index(slot, edge);
+        self.words[index] = 0;
+        self.authority[index] = 0;
     }
 
     fn clear_table_index(&mut self, table_index: u32) {
         let encoded = table_index.saturating_add(1).to_le();
-        for word in &mut self.words {
+        for (index, word) in self.words.iter_mut().enumerate() {
             if *word == encoded {
                 *word = 0;
+                self.authority[index] = 0;
             }
         }
     }
@@ -365,12 +400,14 @@ impl StaticLinkCache {
 
     fn reset(&mut self) {
         self.words.fill(0);
+        self.authority.fill(0);
         self.free.clear();
         self.free.extend((0..STATIC_LINK_ENTRIES as u32).rev());
     }
 
     fn clear_words(&mut self) {
         self.words.fill(0);
+        self.authority.fill(0);
     }
 }
 
@@ -800,6 +837,7 @@ impl BrowserExecutor {
                 dynamic_chain: true,
                 chain_table: 0,
                 static_map_base: static_links.base(),
+                static_authority_base: static_links.authority_base(),
                 static_chain: true,
                 code_pages_base: compiled_page_bitmap
                     .as_ref()
@@ -1693,6 +1731,10 @@ impl CompiledBlockExecutor for BrowserExecutor {
     }
 
     fn link_edge(&mut self, from_phys: u64, edge: u8, to_phys: u64) {
+        self.link_edge_authorized(from_phys, edge, to_phys, to_phys);
+    }
+
+    fn link_edge_authorized(&mut self, from_phys: u64, edge: u8, to_virtual: u64, to_phys: u64) {
         if !self.chaining {
             return;
         }
@@ -1710,7 +1752,18 @@ impl CompiledBlockExecutor for BrowserExecutor {
         let cur = self.slots[slot as usize];
         if cur == ti {
             if let (Some(links), Some(static_slot)) = (self.static_links.as_mut(), static_slot) {
-                links.publish(static_slot, edge, ti);
+                if let Some(expected_host_page) = self
+                    .inline_tlb
+                    .as_ref()
+                    .and_then(|cache| cache.host_page(to_phys))
+                {
+                    links.publish(static_slot, edge, ti, expected_host_page);
+                } else {
+                    links.clear(static_slot, edge);
+                }
+            }
+            if let Some(cache) = self.inline_tlb.as_mut() {
+                cache.fill_exec(to_virtual, to_phys);
             }
             return;
         }
@@ -1722,7 +1775,18 @@ impl CompiledBlockExecutor for BrowserExecutor {
         self.slots[slot as usize] = ti;
         self.incoming.entry(ti).or_default().push(slot);
         if let (Some(links), Some(static_slot)) = (self.static_links.as_mut(), static_slot) {
-            links.publish(static_slot, edge, ti);
+            if let Some(expected_host_page) = self
+                .inline_tlb
+                .as_ref()
+                .and_then(|cache| cache.host_page(to_phys))
+            {
+                links.publish(static_slot, edge, ti, expected_host_page);
+            } else {
+                links.clear(static_slot, edge);
+            }
+        }
+        if let Some(cache) = self.inline_tlb.as_mut() {
+            cache.fill_exec(to_virtual, to_phys);
         }
         self.stats.links_made += 1;
     }

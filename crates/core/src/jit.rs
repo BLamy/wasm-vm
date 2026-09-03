@@ -550,6 +550,15 @@ pub trait CompiledBlockExecutor {
     /// memory executor may use the publication to call a matching funcref directly on a later hit.
     fn link_dynamic_target(&mut self, _virtual_pc: u64, _phys_pc: u64) {}
 
+    /// Publish a statically-known edge together with the virtual-to-physical fetch observation that
+    /// authorized it. The default preserves the historical three-argument link API for executors
+    /// that do not need a generated EXEC-TLB guard; the browser executor overrides this to retain
+    /// the exact virtual target alongside its physical page.
+    fn link_edge_authorized(&mut self, from_phys: u64, edge: u8, to_virtual: u64, to_phys: u64) {
+        let _ = to_virtual;
+        self.link_edge(from_phys, edge, to_phys);
+    }
+
     /// Drop every compiled block whose physical page frame is `frame` (SMC / DMA-into-code).
     fn invalidate_page(&mut self, frame: u64);
 

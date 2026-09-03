@@ -84,7 +84,7 @@ impl Pmp {
     }
 
     /// Monotonic microarchitectural revision, bumped only when effective PMP state changes.
-    pub(crate) fn revision(&self) -> u64 {
+    pub fn revision(&self) -> u64 {
         self.revision
     }
 

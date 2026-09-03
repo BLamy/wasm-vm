@@ -991,11 +991,138 @@ fn browser_inline_static_cross_batch_link_executes_and_misses_safely() {
 }
 
 #[wasm_bindgen_test]
+fn browser_inline_static_guard_rejects_remapped_target_page() {
+    // Keep the caller's published edge pointed at TARGET, then publish a second observed
+    // VA=TARGET mapping to a different physical page through another source edge. The generated
+    // tag still matches, but its EXEC-TLB addend now resolves to the wrong host page, so the caller
+    // must return once to the host instead of entering TARGET.
+    const CALLER: u64 = DRAM_BASE;
+    const TARGET: u64 = DRAM_BASE + 0x1000;
+    const REMAP_SOURCE: u64 = DRAM_BASE + 0x2000;
+    const REMAPPED: u64 = DRAM_BASE + 0x3000;
+    let caller = block(
+        CALLER,
+        &[
+            Instr::Addi {
+                rd: 1,
+                rs1: 1,
+                imm: 1,
+            },
+            Instr::Jal {
+                rd: 0,
+                imm: (TARGET - (CALLER + 4)) as i64,
+            },
+        ],
+    );
+    let target = block(
+        TARGET,
+        &[
+            Instr::Addi {
+                rd: 2,
+                rs1: 2,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: 4 },
+        ],
+    );
+    let remap_source = block(
+        REMAP_SOURCE,
+        &[
+            Instr::Addi {
+                rd: 3,
+                rs1: 3,
+                imm: 1,
+            },
+            Instr::Jal {
+                rd: 0,
+                imm: (REMAPPED - (REMAP_SOURCE + 4)) as i64,
+            },
+        ],
+    );
+    let remapped = block(
+        REMAPPED,
+        &[
+            Instr::Addi {
+                rd: 4,
+                rs1: 4,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: 4 },
+        ],
+    );
+    let mut machine = Machine::new(8 * 1024 * 1024);
+    machine.hart_mut().regs.pc = CALLER;
+    let mut executor = BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+    for decoded in [&caller, &target, &remap_source, &remapped] {
+        executor.install(decoded);
+    }
+    let machine_ptr: *mut Machine = &mut machine;
+    unsafe {
+        executor
+            .execute_with_budget(
+                CALLER,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                false,
+            )
+            .expect("cold caller establishes the inline context");
+    }
+    executor.link_edge_authorized(CALLER, 0, TARGET, TARGET);
+    executor.link_edge_authorized(REMAP_SOURCE, 0, TARGET, REMAPPED);
+
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(2, 0);
+    machine.hart_mut().regs.pc = CALLER;
+    let entries_before = executor.direct_chain_entries();
+    let links_before = executor.direct_chain_links();
+    let refused = unsafe {
+        executor
+            .execute_with_budget(
+                CALLER,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                true,
+            )
+            .expect("a stale target mapping returns a clean host-visible exit")
+    };
+    assert_eq!(refused.code, ExitCode::BranchTaken);
+    assert_eq!(refused.retired, 2);
+    assert_eq!(refused.next_pc, TARGET);
+    assert_eq!(machine.hart().regs.read(2), 0);
+    assert_eq!(executor.direct_chain_entries() - entries_before, 1);
+    assert_eq!(executor.direct_chain_links() - links_before, 0);
+
+    executor.link_edge_authorized(CALLER, 0, TARGET, TARGET);
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(2, 0);
+    machine.hart_mut().regs.pc = CALLER;
+    let rearmed = unsafe {
+        executor
+            .execute_with_budget(
+                CALLER,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                true,
+            )
+            .expect("the authoritative mapping can re-arm the static edge")
+    };
+    assert_eq!(rearmed.retired, 4);
+    assert_eq!(rearmed.next_pc, TARGET + 8);
+    assert_eq!(machine.hart().regs.read(2), 1);
+}
+
+#[wasm_bindgen_test]
 fn browser_inline_static_chain_reaches_five_blocks_in_one_engine_call() {
-    // Six separately-installed blocks make five cross-module static edges. The first call only
+    // Eight separately-installed blocks make seven cross-module static edges. The first call only
     // establishes the inline-TLB context; the second is the measured warm call and must traverse
-    // all six logical blocks without returning to the host between them.
-    const BLOCKS: usize = 6;
+    // all eight logical blocks without returning to the host between them (>=7.3 blocks/entry).
+    const BLOCKS: usize = 8;
     const PAGE: u64 = 0x1000;
     let blocks: Vec<DecodedBlock> = (0..BLOCKS)
         .map(|index| {
@@ -1072,10 +1199,178 @@ fn browser_inline_static_chain_reaches_five_blocks_in_one_engine_call() {
     assert_eq!(warm.next_pc, DRAM_BASE + (BLOCKS as u64 - 1) * PAGE + 8);
     assert_eq!(machine.hart().regs.read(1), BLOCKS as u64);
     assert!(
-        executor.direct_chain_entries() >= 5,
-        "warm call must enter at least five logical blocks"
+        executor.direct_chain_entries() >= 8,
+        "warm call must enter at least 7.3 logical blocks"
     );
-    assert!(executor.direct_chain_links() >= 5);
+    assert!(executor.direct_chain_links() >= 7);
+}
+
+#[wasm_bindgen_test]
+fn browser_inline_static_cross_page_tail_refuses_before_target_entry() {
+    const CALLER: u64 = DRAM_BASE;
+    const TARGET: u64 = DRAM_BASE + 0x1000;
+    let caller = block(
+        CALLER,
+        &[
+            Instr::Addi {
+                rd: 1,
+                rs1: 1,
+                imm: 1,
+            },
+            Instr::Jal {
+                rd: 0,
+                imm: (TARGET - (CALLER + 4)) as i64,
+            },
+        ],
+    );
+    let target = block(
+        TARGET,
+        &[
+            Instr::Addi {
+                rd: 2,
+                rs1: 2,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: 4 },
+        ],
+    );
+    let mut machine = Machine::new(8 * 1024 * 1024);
+    machine.hart_mut().regs.pc = CALLER;
+    let mut executor = BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+    executor.install(&caller);
+    executor.install(&target);
+    let machine_ptr: *mut Machine = &mut machine;
+    unsafe {
+        executor
+            .execute_with_budget(
+                CALLER,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                false,
+            )
+            .expect("cold caller establishes the inline context");
+    }
+    executor.link_edge_authorized(CALLER, 0, TARGET, TARGET);
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(2, 0);
+    machine.hart_mut().regs.pc = CALLER;
+    let links_before = executor.direct_chain_links();
+    let tail = unsafe {
+        executor
+            .execute_with_budget(
+                CALLER,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                3,
+                3,
+                true,
+            )
+            .expect("the caller prefix fits and the target tail is refused")
+    };
+    assert_eq!(tail.code, ExitCode::Budget);
+    assert_eq!(tail.retired, 2);
+    assert_eq!(tail.next_pc, TARGET);
+    assert_eq!(machine.hart().regs.read(1), 1);
+    assert_eq!(machine.hart().regs.read(2), 0);
+    assert_eq!(executor.direct_chain_links(), links_before);
+
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(2, 0);
+    machine.hart_mut().regs.pc = CALLER;
+    let full = unsafe {
+        executor
+            .execute_with_budget(
+                CALLER,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                true,
+            )
+            .expect("the same edge executes once the target fits")
+    };
+    assert_eq!(full.retired, 4);
+    assert_eq!(full.next_pc, TARGET + 8);
+    assert_eq!(machine.hart().regs.read(2), 1);
+}
+
+#[wasm_bindgen_test]
+fn browser_inline_static_link_refuses_after_execute_permission_change() {
+    const CALLER: u64 = DRAM_BASE;
+    const TARGET: u64 = DRAM_BASE + 0x1000;
+    let caller = block(
+        CALLER,
+        &[
+            Instr::Addi {
+                rd: 1,
+                rs1: 1,
+                imm: 1,
+            },
+            Instr::Jal {
+                rd: 0,
+                imm: (TARGET - (CALLER + 4)) as i64,
+            },
+        ],
+    );
+    let target = block(
+        TARGET,
+        &[
+            Instr::Addi {
+                rd: 2,
+                rs1: 2,
+                imm: 1,
+            },
+            Instr::Jal { rd: 0, imm: 4 },
+        ],
+    );
+    let mut machine = Machine::new(8 * 1024 * 1024);
+    machine.hart_mut().regs.pc = CALLER;
+    let mut executor = BrowserExecutor::new_inline(&machine).expect("inline TLB fits wasm memory");
+    executor.install(&caller);
+    executor.install(&target);
+    let machine_ptr: *mut Machine = &mut machine;
+    unsafe {
+        executor
+            .execute_with_budget(
+                CALLER,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                false,
+            )
+            .expect("cold caller establishes the inline context");
+    }
+    executor.link_edge_authorized(CALLER, 0, TARGET, TARGET);
+
+    // Locked TOR entry 0 grants the caller page R/W/X; entry 1 covers TARGET and removes X. The
+    // PMP revision is part of the inline-TLB context, so the executor must clear the speculative
+    // static edge before the next generated call and let the architectural fetch reject TARGET.
+    let pmp = &mut machine.hart_mut().csr.pmp;
+    pmp.write_addr(0, TARGET >> 2);
+    pmp.write_addr(1, (TARGET + 0x1000) >> 2);
+    pmp.write_cfg(0, 0x8f | (0x8b_u64 << 8));
+    machine.hart_mut().regs.write(1, 0);
+    machine.hart_mut().regs.write(2, 0);
+    machine.hart_mut().regs.pc = CALLER;
+    let refused = unsafe {
+        executor
+            .execute_with_budget(
+                CALLER,
+                (*machine_ptr).hart_mut(),
+                (*machine_ptr).bus_mut(),
+                16,
+                16,
+                true,
+            )
+            .expect("execute-permission change falls back before the target call")
+    };
+    assert_eq!(refused.code, ExitCode::BranchTaken);
+    assert_eq!(refused.retired, 2);
+    assert_eq!(refused.next_pc, TARGET);
+    assert_eq!(machine.hart().regs.read(2), 0);
 }
 
 #[wasm_bindgen_test]

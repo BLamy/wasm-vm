@@ -202,6 +202,11 @@ pub struct Abi {
     /// little-endian `u32` table entries at `static_map_base + slot * 8`. Zero disables the
     /// edge-local path and preserves the E4-T34 virtual-target fallback.
     pub static_map_base: u32,
+    /// E4-T36: byte base of the two per-edge physical-authority words paired with
+    /// `static_map_base`. A nonzero word is the host-linear page frame observed when the target
+    /// was resolved; cross-page static exits validate the generated EXEC-TLB entry against it.
+    /// Zero disables the authority predicate, preserving the standalone E4-T35 translator ABI.
+    pub static_authority_base: u32,
     /// E4-T35: whether statically-known cross-module edges may use the edge-local slot table.
     pub static_chain: bool,
     /// E4-T34: base of the browser's one-byte-per-RAM-page compiled-code hazard bitmap. A raw
@@ -306,6 +311,7 @@ impl Abi {
         dynamic_chain: false,
         chain_table: 0,
         static_map_base: 0,
+        static_authority_base: 0,
         static_chain: false,
         code_pages_base: 0,
         mem: MemModel::SoftmmuImports,
@@ -334,6 +340,7 @@ impl Abi {
         dynamic_chain: false,
         chain_table: 0,
         static_map_base: 0,
+        static_authority_base: 0,
         static_chain: false,
         code_pages_base: 0,
         mem: MemModel::InlineTlb,
@@ -749,6 +756,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
         [None, None],
         [None, None],
         [abi.dynamic_chain, abi.dynamic_chain],
+        physical_host_page(abi, block.page_frame).unwrap_or(u32::MAX),
         run_ty,
         global_info,
         global_info.map(|_| 1),
@@ -1201,16 +1209,34 @@ pub fn translate_batch_with_static_slots(
             .and_then(|slots| slots.get(i).copied())
             .filter(|_| abi.direct_chain && abi.static_chain && abi.static_map_base != 0)
             .map(|slot| {
-                let base = abi
+                let table_base = abi
                     .static_map_base
                     .checked_add(
                         slot.checked_mul(8)
                             .expect("static link slot offset overflow"),
                     )
                     .expect("static link address overflow");
-                [Some(base), Some(base + 4)]
+                let authority_base = (abi.static_authority_base != 0).then(|| {
+                    abi.static_authority_base
+                        .checked_add(
+                            slot.checked_mul(8)
+                                .expect("static authority slot offset overflow"),
+                        )
+                        .expect("static authority address overflow")
+                });
+                [
+                    Some(StaticLink {
+                        table: table_base,
+                        authority: authority_base,
+                    }),
+                    Some(StaticLink {
+                        table: table_base + 4,
+                        authority: authority_base.map(|base| base + 4),
+                    }),
+                ]
             })
             .unwrap_or([None, None]);
+        let source_host_page = physical_host_page(abi, block.page_frame).unwrap_or(u32::MAX);
         let (_, writes) = block_register_masks(block);
         let mut f = FuncBuilder::new(run_params);
         emit_body(
@@ -1228,6 +1254,7 @@ pub fn translate_batch_with_static_slots(
             ],
             static_links,
             static_dynamic,
+            source_host_page,
             run_ty,
             global_info,
             global_info.map(|_| 1),
@@ -1257,7 +1284,8 @@ fn ends_with_fence_i(block: &DecodedBlock) -> bool {
 /// when the edge leaves the batch / is dynamic (a `jalr` target). `static_links[e]` is the reserved
 /// shared-memory word for a statically-known cross-batch edge, while `static_dynamic[e]` allows that
 /// edge to take the edge-local chain path. Computed `jalr` edges continue to use the dynamic virtual
-/// target cache.
+/// target cache. `source_host_page` is the physical page containing this block in the shared wasm
+/// memory; it lets E4-T36 keep same-page links on the E4-T35 path and guard only cross-page links.
 #[allow(clippy::too_many_arguments)]
 fn emit_body(
     f: &mut FuncBuilder,
@@ -1265,8 +1293,9 @@ fn emit_body(
     abi: &Abi,
     intra: [Option<u32>; 2],
     intra_nops: [Option<u64>; 2],
-    static_links: [Option<u32>; 2],
+    static_links: [Option<StaticLink>; 2],
     static_dynamic: [bool; 2],
+    source_host_page: u32,
     run_ty: u32,
     global_info: Option<GlobalInfo>,
     root_local: Option<u32>,
@@ -1342,6 +1371,7 @@ fn emit_body(
                 intra_nops,
                 static_links,
                 static_dynamic,
+                source_host_page,
                 n as u64,
                 run_ty,
             );
@@ -1366,6 +1396,7 @@ fn emit_body(
             intra_nops[0],
             static_links[0],
             static_dynamic[0],
+            source_host_page,
             n as u64,
             run_ty,
         );
@@ -1379,6 +1410,22 @@ fn emit_body(
 enum PcSrc {
     Const(u64),
     Local(u32),
+}
+
+/// One reserved edge-local table word and its optional E4-T36 authority word. The authority is
+/// deliberately optional so the frozen translator and its native differential harness retain the
+/// exact E4-T35 ABI when no executor-owned EXEC-TLB map is supplied.
+#[derive(Clone, Copy)]
+struct StaticLink {
+    table: u32,
+    authority: Option<u32>,
+}
+
+fn physical_host_page(abi: &Abi, page_frame: u64) -> Option<u32> {
+    let phys = page_frame.checked_shl(12)?;
+    let offset = phys.checked_sub(abi.tlb.dram_base)?;
+    let host = u64::from(abi.tlb.ram_base).checked_add(offset)?;
+    u32::try_from(host >> 12).ok()
 }
 
 /// E4-T19/E4-T34/E4-T35: the shared exit epilogue. Writes back dirty registers, sets `exit_pc` +
@@ -1395,8 +1442,9 @@ fn emit_exit(
     pc: PcSrc,
     intra: Option<u32>,
     successor_nops: Option<u64>,
-    static_link: Option<u32>,
+    static_link: Option<StaticLink>,
     allow_static_dynamic: bool,
+    source_host_page: u32,
     retired: u64,
     run_ty: u32,
 ) {
@@ -1427,6 +1475,7 @@ fn emit_exit(
                 regs,
                 abi,
                 static_link.expect("static edge guard checked the slot"),
+                source_host_page,
                 code,
                 run_ty,
             );
@@ -1514,15 +1563,19 @@ fn emit_exit(
     }
 }
 
-/// Emit the E4-T35 edge-local static successor path. `static_link` points at one little-endian
-/// `u32` word in the browser executor's shared wasm memory; zero means the edge is not linked and
-/// any nonzero value is a one-based index into the imported funcref table. Unlike the E4-T34 dynamic
-/// path this has no virtual-PC hash/key probe: the source block and edge identify the slot.
+/// Emit the E4-T35/E4-T36 edge-local static successor path. `static_link.table` points at one
+/// little-endian `u32` word in the browser executor's shared wasm memory; zero means the edge is not
+/// linked and any nonzero value is a one-based index into the imported funcref table. When an
+/// authority word is present, a physical page different from `source_host_page` takes the generated
+/// EXEC-TLB predicate before the table call. This keeps page-local links on the E4-T35 fast path
+/// while making a cross-page call prove both the current virtual-page tag and the observed PA-backed
+/// host page.
 fn emit_static_exit(
     f: &mut FuncBuilder,
     regs: &Regs,
     abi: &Abi,
-    static_link: u32,
+    static_link: StaticLink,
+    source_host_page: u32,
     code: ExitCode,
     run_ty: u32,
 ) {
@@ -1536,12 +1589,28 @@ fn emit_static_exit(
     f.i64_eqz();
     f.i32_eqz();
     f.i32_and();
-    f.i32_const(static_link as i32);
+    f.i32_const(static_link.table as i32);
     f.i32_load(2, 0);
     f.local_tee(table_index);
     f.i32_eqz();
     f.i32_eqz();
     f.i32_and();
+    if let Some(authority) = static_link.authority {
+        let expected_host_page = f.local(ValType::I32);
+        f.i32_const(authority as i32);
+        f.i32_load(2, 0);
+        f.local_tee(expected_host_page);
+        f.i32_const(source_host_page as i32);
+        f.i32_ne();
+        f.if_(BlockType::Value(ValType::I32));
+        emit_exec_target_predicate(f, regs, abi, expected_host_page);
+        f.else_();
+        // The target is on the same physical page as the source. The already-authoritative
+        // physical block identity is enough; no second virtual-page probe is needed on this edge.
+        f.i32_const(1);
+        f.end();
+        f.i32_and();
+    }
     f.if_(BlockType::Value(ValType::I32));
     f.local_get(STATE_BASE);
     f.local_get(STATE_BASE);
@@ -1560,6 +1629,34 @@ fn emit_static_exit(
     f.i32_const(code as i32);
     f.end();
     f.return_();
+}
+
+/// Push the generated E4-T36 EXEC-TLB predicate for the virtual target in `exit_pc`. The host
+/// publishes the entry only after `Hart::fetch_phys` has succeeded, and the paired authority word
+/// stores the target's shared-memory page. A stale tag, a missing execute refill, or a mapping that
+/// now resolves to a different physical page therefore turns the static call into the ordinary
+/// host-visible exit path.
+fn emit_exec_target_predicate(
+    f: &mut FuncBuilder,
+    _regs: &Regs,
+    abi: &Abi,
+    expected_host_page: u32,
+) {
+    let target = f.local(ValType::I64);
+    let eaddr = f.local(ValType::I32);
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.exit_pc);
+    f.local_set(target);
+    emit_slot_addr(f, &abi.tlb, target, abi.tlb.exec_base, eaddr);
+    // A fetch entry has the same `{tag,addend}` shape as the load/store entries. The addend maps
+    // the current target VA to the shared wasm-memory address of its observed physical page.
+    emit_hit_predicate(f, target, eaddr, 1);
+    emit_hit_host_addr(f, target, eaddr);
+    f.i32_const(12);
+    f.i32_shr_u();
+    f.local_get(expected_host_page);
+    f.i32_eq();
+    f.i32_and();
 }
 
 /// Emit the guarded dynamic-target half of E4-T34. The target is a virtual `jalr` result. A
@@ -2975,8 +3072,9 @@ fn emit_terminator(
     pc_next: u64,
     intra: [Option<u32>; 2],
     intra_nops: [Option<u64>; 2],
-    static_links: [Option<u32>; 2],
+    static_links: [Option<StaticLink>; 2],
     static_dynamic: [bool; 2],
+    source_host_page: u32,
     retired: u64,
     run_ty: u32,
 ) {
@@ -2996,6 +3094,7 @@ fn emit_terminator(
             intra_nops,
             static_links,
             static_dynamic,
+            source_host_page,
             retired,
             run_ty,
         ),
@@ -3013,6 +3112,7 @@ fn emit_terminator(
             intra_nops,
             static_links,
             static_dynamic,
+            source_host_page,
             retired,
             run_ty,
         ),
@@ -3030,6 +3130,7 @@ fn emit_terminator(
             intra_nops,
             static_links,
             static_dynamic,
+            source_host_page,
             retired,
             run_ty,
         ),
@@ -3047,6 +3148,7 @@ fn emit_terminator(
             intra_nops,
             static_links,
             static_dynamic,
+            source_host_page,
             retired,
             run_ty,
         ),
@@ -3064,6 +3166,7 @@ fn emit_terminator(
             intra_nops,
             static_links,
             static_dynamic,
+            source_host_page,
             retired,
             run_ty,
         ),
@@ -3081,6 +3184,7 @@ fn emit_terminator(
             intra_nops,
             static_links,
             static_dynamic,
+            source_host_page,
             retired,
             run_ty,
         ),
@@ -3100,6 +3204,7 @@ fn emit_terminator(
                 intra_nops[0],
                 static_links[0],
                 static_dynamic[0],
+                source_host_page,
                 retired,
                 run_ty,
             );
@@ -3134,6 +3239,7 @@ fn emit_terminator(
                 None,
                 None,
                 false,
+                source_host_page,
                 retired,
                 run_ty,
             );
@@ -3152,6 +3258,7 @@ fn emit_terminator(
                 None,
                 None,
                 false,
+                source_host_page,
                 retired,
                 run_ty,
             );
@@ -3183,8 +3290,9 @@ fn emit_branch(
     cmp: Cmp,
     intra: [Option<u32>; 2],
     intra_nops: [Option<u64>; 2],
-    static_links: [Option<u32>; 2],
+    static_links: [Option<StaticLink>; 2],
     static_dynamic: [bool; 2],
+    source_host_page: u32,
     retired: u64,
     run_ty: u32,
 ) {
@@ -3220,6 +3328,7 @@ fn emit_branch(
             intra_nops[0],
             static_links[0],
             static_dynamic[0],
+            source_host_page,
             retired,
             run_ty,
         );
@@ -3237,6 +3346,7 @@ fn emit_branch(
         intra_nops[1],
         static_links[1],
         static_dynamic[1],
+        source_host_page,
         retired,
         run_ty,
     );
