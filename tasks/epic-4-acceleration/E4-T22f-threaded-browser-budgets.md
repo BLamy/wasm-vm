@@ -3,7 +3,7 @@ id: E4-T22f
 epic: 4
 title: Live threaded Alpine boot and responsiveness budgets
 priority: 422.6
-status: pending
+status: in-progress
 depends_on: [E4-T22e, E4-T24]
 estimate: S
 risk: high

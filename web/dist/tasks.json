@@ -14548,15 +14548,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e4-t22e): accept threaded demo integration",
             "tasks: start E4-T22e demo integration"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T22f",
@@ -14564,7 +14565,7 @@
       "epicKey": "4",
       "title": "Live threaded Alpine boot and responsiveness budgets",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T22e",
         "E4-T24"
