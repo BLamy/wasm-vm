@@ -17118,8 +17118,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t12a): verify keymap coverage",
             "chore(e5-t12a): record keymap proof",
             "chore(e5-t12a): start keyboard code table"
           ]
@@ -17127,7 +17128,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T12b",
@@ -17135,7 +17136,7 @@
       "epicKey": "5",
       "title": "DOM keyboard event normalization and evdev bridge",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T12a"
       ],

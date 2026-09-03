@@ -3,7 +3,7 @@ id: E5-T12b
 epic: 5
 title: DOM keyboard event normalization and evdev bridge
 priority: 512.2
-status: pending
+status: in-progress
 depends_on: [E5-T12a]
 estimate: S
 risk: medium
