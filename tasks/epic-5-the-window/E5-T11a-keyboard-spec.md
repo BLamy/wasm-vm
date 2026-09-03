@@ -3,7 +3,7 @@ id: E5-T11a
 epic: 5
 title: virtio-input keyboard capability specification
 priority: 511.1
-status: pending
+status: in-progress
 depends_on: [E5-T10c]
 estimate: S
 risk: medium
