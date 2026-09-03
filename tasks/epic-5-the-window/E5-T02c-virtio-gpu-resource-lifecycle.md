@@ -3,7 +3,7 @@ id: E5-T02c
 epic: 5
 title: virtio-gpu resource unref and scanout lifecycle
 priority: 502.3
-status: in-progress
+status: implemented
 depends_on: [E5-T02b]
 estimate: S
 risk: high
@@ -52,4 +52,29 @@ formats and dimensions to catch format- or size-specific leaks.
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — implemented
+
+- **UNREF cleanup — HELD.** `RESOURCE_UNREF` parses the fixed request, rejects unknown ids,
+  clears scanout 0 before removing the resource, drops host pixels/backing metadata, and
+  decrements exact accounted bytes. A repeated unref and truncated request both return bounded
+  errors while the queue continues publishing used entries.
+- **Lifecycle accounting — HELD.** Native tests cover create→attach→detach→unref, a bound
+  scanout resource, device reset, and 10,000 create/unref cycles across all supported formats;
+  every cycle returns to zero accounted bytes and zero live resources.
+- **Scope — HELD.** SET_SCANOUT and pixel presentation remain owned by E5-T03; this slice only
+  owns the dangling-reference cleanup boundary.
+
+Implementation commit: `ecf0922`.
+
+Evidence: `evidence/e5-t02c/resource-lifecycle-2026-09-03.json` (SHA-256
+`93e326641a0425a4004563484614870e05e7a4e27eb27d0c4c4261b9f0366e1c`).
+
+Commands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib
+gpu_resources_lifecycle` (4 passed); `cargo test -p wasm-vm-core --lib` (199 passed); `cargo clippy
+-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features
+--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target
+wasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core
+--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and
+`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,
+and host-layer rr runs were excluded per the user's direction and current repository evidence
+policy.

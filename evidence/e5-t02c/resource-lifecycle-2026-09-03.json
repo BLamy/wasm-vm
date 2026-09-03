@@ -1,0 +1,58 @@
+{
+  "schema": "e5-t02c-virtio-gpu-resource-lifecycle-v1",
+  "task": "E5-T02c",
+  "status": "pass",
+  "implementation_commit": "ecf0922",
+  "recorded_at": "2026-09-03",
+  "native": {
+    "acceptance_command": "cargo test -p wasm-vm-core --lib gpu_resources_lifecycle",
+    "acceptance_result": "4 passed, 0 failed",
+    "coverage": [
+      "A backed resource is unref'd through the control queue; the response is RESP_OK_NODATA, host accounting returns to zero, and scanout_resource is cleared before destruction.",
+      "A second unref of the same id returns RESP_ERR_INVALID_RESOURCE_ID, while a truncated unref request returns RESP_ERR_INVALID_PARAMETER and both publish used entries.",
+      "The resource-map lifecycle test covers create→attach→detach→remove and confirms the returned resource has no backing and accounting returns to baseline.",
+      "10,000 create/unref cycles across all six formats leave resource count and accounted bytes at baseline.",
+      "Device reset releases all resource and scanout state."
+    ],
+    "regression": {
+      "command": "cargo test -p wasm-vm-core --lib",
+      "result": "199 passed, 0 failed"
+    },
+    "virtio_regression": {
+      "commands": [
+        "cargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic"
+      ],
+      "result": "22 passed, 0 failed"
+    },
+    "clippy": {
+      "command": "cargo clippy -p wasm-vm-core --lib -- -D warnings",
+      "result": "pass"
+    },
+    "format": {
+      "commands": [
+        "cargo fmt --all -- --check",
+        "git diff --check"
+      ],
+      "result": "pass"
+    }
+  },
+  "wasm32": {
+    "core_build": {
+      "command": "cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown",
+      "result": "pass"
+    },
+    "core_clippy": {
+      "command": "cargo clippy -p wasm-vm-core --target wasm32-unknown-unknown --no-default-features --lib -- -D warnings",
+      "result": "pass"
+    },
+    "existing_gpu_runner": {
+      "command": "wasm-pack test --node crates/wasm --test gpu_protocol",
+      "result": "2 passed, 0 failed"
+    }
+  },
+  "claim": "At commit ecf0922, RESOURCE_UNREF removes only live resources, decrements exact host-pixel accounting, drops attached backing metadata, and clears scanout 0 before the resource can be freed. Unknown and malformed requests return bounded errors, reset tears down the same state, and 10,000 repeated lifecycles have zero net accounted-byte growth.",
+  "scope_notes": [
+    "SET_SCANOUT and transfer/flush presentation remain owned by E5-T03; this slice proves the scanout binding cannot dangle when unref'd.",
+    "No independent-machine, WebKit, or host-layer rr run was used, per the user's direction and current repository evidence policy."
+  ]
+}

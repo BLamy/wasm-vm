@@ -16099,7 +16099,7 @@
       "epicKey": "5",
       "title": "virtio-gpu resource unref and scanout lifecycle",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T02b"
       ],
@@ -16127,21 +16127,22 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **UNREF cleanup — HELD.** `RESOURCE_UNREF` parses the fixed request, rejects unknown ids,\n  clears scanout 0 before removing the resource, drops host pixels/backing metadata, and\n  decrements exact accounted bytes. A repeated unref and truncated request both return bounded\n  errors while the queue continues publishing used entries.\n- **Lifecycle accounting — HELD.** Native tests cover create→attach→detach→unref, a bound\n  scanout resource, device reset, and 10,000 create/unref cycles across all supported formats;\n  every cycle returns to zero accounted bytes and zero live resources.\n- **Scope — HELD.** SET_SCANOUT and pixel presentation remain owned by E5-T03; this slice only\n  owns the dangling-reference cleanup boundary.\n\nImplementation commit: `ecf0922`.\n\nEvidence: `evidence/e5-t02c/resource-lifecycle-2026-09-03.json` (SHA-256\n`93e326641a0425a4004563484614870e05e7a4e27eb27d0c4c4261b9f0366e1c`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_resources_lifecycle` (4 passed); `cargo test -p wasm-vm-core --lib` (199 passed); `cargo clippy\n-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features\n--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and\n`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,\nand host-layer rr runs were excluded per the user's direction and current repository evidence\npolicy.",
       "adversarial": "Unref an unknown id, unref twice, unref while backing is attached, and unref one of two\nresources sharing the same guest pages. The surviving resource must remain usable and the\nscanout must never point at freed host pixels. Run the lifecycle loop with varying valid\nformats and dimensions to catch format- or size-specific leaks.",
       "file": "tasks/epic-5-the-window/E5-T02c-virtio-gpu-resource-lifecycle.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t02c): activate resource lifecycle slice",
             "chore(e5-t02): decompose GPU resource lifecycle"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T03",
