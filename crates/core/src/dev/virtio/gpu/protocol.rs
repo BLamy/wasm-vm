@@ -5,17 +5,48 @@
 
 /// `VIRTIO_GPU_CMD_GET_DISPLAY_INFO`.
 pub const CMD_GET_DISPLAY_INFO: u32 = 0x0100;
+/// `VIRTIO_GPU_CMD_RESOURCE_CREATE_2D`.
+pub const CMD_RESOURCE_CREATE_2D: u32 = 0x0101;
 /// Successful `GET_DISPLAY_INFO` response.
 pub const RESP_OK_DISPLAY_INFO: u32 = 0x1101;
+/// Successful command with no response payload.
+pub const RESP_OK_NODATA: u32 = 0x1100;
 /// Generic unsupported/malformed-command response (used by E5-T01c).
 pub const RESP_ERR_UNSPEC: u32 = 0x1200;
+/// Resource command errors (virtio-gpu spec §5.7.6.4).
+pub const RESP_ERR_OUT_OF_MEMORY: u32 = 0x1201;
+pub const RESP_ERR_INVALID_RESOURCE_ID: u32 = 0x1203;
+pub const RESP_ERR_INVALID_PARAMETER: u32 = 0x1205;
 /// Request/response fence flag.
 pub const FLAG_FENCE: u32 = 1 << 0;
+
+/// Virtio-gpu 2D resource formats supported by the host shadow store.
+pub const FORMAT_B8G8R8A8_UNORM: u32 = 1;
+pub const FORMAT_B8G8R8X8_UNORM: u32 = 2;
+pub const FORMAT_A8R8G8B8_UNORM: u32 = 3;
+pub const FORMAT_X8R8G8B8_UNORM: u32 = 4;
+pub const FORMAT_R8G8B8A8_UNORM: u32 = 67;
+pub const FORMAT_R8G8B8X8_UNORM: u32 = 68;
+
+/// Whether a format is one of the six 32-bit formats accepted for 2D resources.
+pub const fn is_supported_format(format: u32) -> bool {
+    matches!(
+        format,
+        FORMAT_B8G8R8A8_UNORM
+            | FORMAT_B8G8R8X8_UNORM
+            | FORMAT_A8R8G8B8_UNORM
+            | FORMAT_X8R8G8B8_UNORM
+            | FORMAT_R8G8B8A8_UNORM
+            | FORMAT_R8G8B8X8_UNORM
+    )
+}
 
 /// Number of display modes carried by `virtio_gpu_resp_display_info`.
 pub const DISPLAY_MODE_COUNT: usize = 16;
 /// Wire size of `virtio_gpu_ctrl_hdr`.
 pub const CTRL_HDR_SIZE: usize = 24;
+/// Wire size of `virtio_gpu_resource_create_2d`.
+pub const RESOURCE_CREATE_2D_SIZE: usize = CTRL_HDR_SIZE + 16;
 /// Wire size of one `virtio_gpu_display_one`.
 pub const DISPLAY_MODE_SIZE: usize = 24;
 /// Wire size of `virtio_gpu_resp_display_info`.
@@ -59,6 +90,43 @@ impl CtrlHeader {
             ring_idx: bytes[20],
             padding: [bytes[21], bytes[22], bytes[23]],
         })
+    }
+}
+
+/// `virtio_gpu_resource_create_2d`, encoded with an explicit little-endian layout.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ResourceCreate2d {
+    pub header: CtrlHeader,
+    pub resource_id: u32,
+    pub format: u32,
+    pub width: u32,
+    pub height: u32,
+}
+
+impl ResourceCreate2d {
+    /// Decode a complete CREATE_2D request; short input is rejected before any field access.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < RESOURCE_CREATE_2D_SIZE {
+            return None;
+        }
+        Some(Self {
+            header: CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?,
+            resource_id: u32::from_le_bytes(bytes[24..28].try_into().ok()?),
+            format: u32::from_le_bytes(bytes[28..32].try_into().ok()?),
+            width: u32::from_le_bytes(bytes[32..36].try_into().ok()?),
+            height: u32::from_le_bytes(bytes[36..40].try_into().ok()?),
+        })
+    }
+
+    /// Encode the exact 40-byte request layout.
+    pub fn to_bytes(self) -> [u8; RESOURCE_CREATE_2D_SIZE] {
+        let mut out = [0u8; RESOURCE_CREATE_2D_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[24..28].copy_from_slice(&self.resource_id.to_le_bytes());
+        out[28..32].copy_from_slice(&self.format.to_le_bytes());
+        out[32..36].copy_from_slice(&self.width.to_le_bytes());
+        out[36..40].copy_from_slice(&self.height.to_le_bytes());
+        out
     }
 }
 

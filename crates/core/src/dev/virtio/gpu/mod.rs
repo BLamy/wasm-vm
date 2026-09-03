@@ -1,10 +1,11 @@
 //! The virtio-gpu identity/configuration boundary (Epic 5, E5-T01a).
 //!
 //! The device is enumerable through virtio-mmio, exposes the fixed virtio-gpu configuration
-//! registers, and keeps the protocol wire formats in [`protocol`]. E5-T01b adds the first
-//! control-queue command, while later slices add resources and presentation.
+//! registers, and keeps the protocol wire formats in [`protocol`]. E5-T02a adds the first
+//! host-owned resource store and CREATE_2D command; later slices add backing and presentation.
 
 pub mod protocol;
+pub mod resources;
 
 use alloc::rc::Rc;
 use core::cell::RefCell;
@@ -29,6 +30,8 @@ pub struct GpuState {
     events_read: u32,
     kicked: bool,
     reset_pending: bool,
+    /// Host-owned 2D resource store. Backing entries are added by E5-T02b.
+    pub resources: resources::ResourceMap,
     /// Number of valid GET_DISPLAY_INFO requests completed by the service.
     pub commands_served: u64,
 }
@@ -51,6 +54,7 @@ impl VirtioGpu {
             events_read: 0,
             kicked: false,
             reset_pending: false,
+            resources: resources::ResourceMap::new(),
             commands_served: 0,
         }));
         (
@@ -166,6 +170,24 @@ fn read_header(chain: &DescriptorChain, bus: &mut SystemBus) -> Option<protocol:
     (used == bytes.len()).then(|| protocol::CtrlHeader::from_bytes(&bytes))?
 }
 
+/// Read a bounded request prefix from readable descriptors. Queue validation has already
+/// checked each segment's address/range; this helper additionally bounds the amount copied so a
+/// hostile descriptor cannot turn a malformed command into an unbounded host allocation.
+fn read_request<const N: usize>(chain: &DescriptorChain, bus: &mut SystemBus) -> Option<[u8; N]> {
+    let mut bytes = [0u8; N];
+    let mut used = 0usize;
+    for segment in chain.readable() {
+        for offset in 0..segment.len as usize {
+            if used == bytes.len() {
+                return Some(bytes);
+            }
+            bytes[used] = bus.load8(segment.addr + offset as u64).ok()?;
+            used += 1;
+        }
+    }
+    (used == bytes.len()).then_some(bytes)
+}
+
 /// Write a response prefix across all device-writable descriptors. A short tail is truncated at
 /// its validated capacity; no byte beyond the provided descriptors is ever addressed.
 fn write_prefix(chain: &DescriptorChain, bus: &mut SystemBus, response: &[u8]) -> Result<u32, ()> {
@@ -195,6 +217,14 @@ fn response_header(request: protocol::CtrlHeader, ty: u32) -> protocol::CtrlHead
         ctx_id: request.ctx_id,
         ring_idx: request.ring_idx,
         padding: [0; 3],
+    }
+}
+
+fn create_error_response(error: resources::CreateError) -> u32 {
+    match error {
+        resources::CreateError::InvalidResourceId => protocol::RESP_ERR_INVALID_RESOURCE_ID,
+        resources::CreateError::InvalidParameter => protocol::RESP_ERR_INVALID_PARAMETER,
+        resources::CreateError::OutOfMemory => protocol::RESP_ERR_OUT_OF_MEMORY,
     }
 }
 
@@ -260,6 +290,32 @@ pub fn service(
                         state.borrow_mut().commands_served += 1;
                         written
                     }
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
+            Some(request) if request.ty == protocol::CMD_RESOURCE_CREATE_2D => {
+                let response_type =
+                    match read_request::<{ protocol::RESOURCE_CREATE_2D_SIZE }>(&chain, bus)
+                        .and_then(|bytes| protocol::ResourceCreate2d::from_bytes(&bytes))
+                    {
+                        Some(create) => match state.borrow_mut().resources.create(
+                            create.resource_id,
+                            create.format,
+                            create.width,
+                            create.height,
+                        ) {
+                            Ok(_) => protocol::RESP_OK_NODATA,
+                            Err(error) => create_error_response(error),
+                        },
+                        None => protocol::RESP_ERR_INVALID_PARAMETER,
+                    };
+                let response = response_header(request, response_type).to_bytes();
+                match write_prefix(&chain, bus, &response) {
+                    Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
                         *vq = None;
@@ -543,6 +599,112 @@ mod tests {
         );
         assert_eq!(state.borrow().commands_served, 1);
         assert!(slot.borrow().irq_level(), "used-ring interrupt raised");
+    }
+
+    #[test]
+    fn gpu_resources_create_wire_fixture_is_little_endian() {
+        let request = protocol::ResourceCreate2d {
+            header: CtrlHeader {
+                ty: protocol::CMD_RESOURCE_CREATE_2D,
+                flags: 0x1122_3344,
+                fence_id: 0x0102_0304_0506_0708,
+                ctx_id: 0xA1B2_C3D4,
+                ring_idx: 5,
+                padding: [6, 7, 8],
+            },
+            resource_id: 0x1020_3040,
+            format: protocol::FORMAT_R8G8B8X8_UNORM,
+            width: 0x5060_7080,
+            height: 0x90A0_B0C0,
+        };
+        let expected = [
+            0x01, 0x01, 0x00, 0x00, // type
+            0x44, 0x33, 0x22, 0x11, // flags
+            0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, // fence_id
+            0xD4, 0xC3, 0xB2, 0xA1, // ctx_id
+            0x05, 0x06, 0x07, 0x08, // ring_idx + padding
+            0x40, 0x30, 0x20, 0x10, // resource_id
+            0x44, 0x00, 0x00, 0x00, // format 68
+            0x80, 0x70, 0x60, 0x50, // width
+            0xC0, 0xB0, 0xA0, 0x90, // height
+        ];
+        assert_eq!(request.to_bytes(), expected);
+        assert_eq!(
+            protocol::ResourceCreate2d::from_bytes(&expected),
+            Some(request)
+        );
+    }
+
+    #[test]
+    fn gpu_resources_create_controlq_dispatches_and_returns_spec_errors() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let valid = protocol::ResourceCreate2d {
+            header: CtrlHeader {
+                ty: protocol::CMD_RESOURCE_CREATE_2D,
+                flags: protocol::FLAG_FENCE,
+                fence_id: 0x0102_0304_0506_0708,
+                ctx_id: 9,
+                ring_idx: 2,
+                padding: [0xA, 0xB, 0xC],
+            },
+            resource_id: 41,
+            format: protocol::FORMAT_B8G8R8X8_UNORM,
+            width: 4,
+            height: 3,
+        };
+        let invalid = protocol::ResourceCreate2d {
+            header: CtrlHeader {
+                ty: protocol::CMD_RESOURCE_CREATE_2D,
+                ..CtrlHeader::default()
+            },
+            resource_id: 42,
+            format: 99,
+            width: 4,
+            height: 3,
+        };
+        write_bytes(&mut bus, REQUEST, &valid.to_bytes());
+        write_bytes(&mut bus, REQUEST + 0x100, &invalid.to_bytes());
+        let (slot, state, mut vq) = queue_for_test(
+            &mut bus,
+            &[
+                (REQUEST, 40, 1, 1),
+                (RESPONSE, 24, 2, 0),
+                (REQUEST + 0x100, 40, 1, 3),
+                (RESPONSE + 0x100, 24, 2, 0),
+            ],
+        );
+        set_avail_heads(&mut bus, &[0, 2]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 2);
+        assert_eq!(bus.load32(USED + 8).unwrap(), 24);
+        assert_eq!(bus.load32(USED + 16).unwrap(), 24);
+        let mut valid_response = [0u8; CTRL_HDR_SIZE];
+        for (offset, byte) in valid_response.iter_mut().enumerate() {
+            *byte = bus.load8(RESPONSE + offset as u64).unwrap();
+        }
+        let valid_header = CtrlHeader::from_bytes(&valid_response).unwrap();
+        assert_eq!(valid_header.ty, protocol::RESP_OK_NODATA);
+        assert_eq!(valid_header.flags, protocol::FLAG_FENCE);
+        assert_eq!(valid_header.fence_id, valid.header.fence_id);
+
+        let mut invalid_response = [0u8; CTRL_HDR_SIZE];
+        for (offset, byte) in invalid_response.iter_mut().enumerate() {
+            *byte = bus.load8(RESPONSE + 0x100 + offset as u64).unwrap();
+        }
+        assert_eq!(
+            CtrlHeader::from_bytes(&invalid_response).unwrap().ty,
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+        let state = state.borrow();
+        assert_eq!(state.resources.len(), 1);
+        let resource = state.resources.get(41).unwrap();
+        assert_eq!(resource.format, valid.format);
+        assert_eq!(resource.host_pixels.len(), 12);
+        assert!(resource.backing.is_empty());
+        assert_eq!(state.resources.accounted_bytes(), 48);
     }
 
     #[test]
