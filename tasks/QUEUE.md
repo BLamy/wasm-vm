@@ -10,7 +10,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 1. **E4-T22** — CPU execution on a dedicated Web Worker with SharedArrayBuffer guest RAM **[DECOMPOSE BEFORE START]**
 1. **E4-T28** — "Capstone: interactive/fast Node.js (Bun stretch), 10x CoreMark, sub-5s boot, zero regressions" **[DECOMPOSE BEFORE START]**
-1. **E4-T35** — Edge-local static links for memory-aware traces
 1. **E4-T38** — JIT residency and repack policy
 
 
@@ -308,7 +307,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `432` [E4-T33](epic-4-acceleration/E4-T33-bulk-jit-state-handoff.md) — Bulk JIT CPU-state handoff and bounded browser handle lifetime *(deps: E4-T31)*
 - [x] `433` [E4-T32](epic-4-acceleration/E4-T32-default-whole-machine-worker.md) — Default whole-machine Web Worker with controller parity *(deps: E4-T33)*
 - [x] `434` [E4-T34](epic-4-acceleration/E4-T34-node-short-block-jit.md) — Short-block JIT acceleration for restored Node startup *(deps: E4-T32)*
-- [ ] `435` [E4-T35](epic-4-acceleration/E4-T35-edge-local-static-links.md) — Edge-local static links for memory-aware traces *(deps: E4-T34)*
+- [~] `435` [E4-T35](epic-4-acceleration/E4-T35-edge-local-static-links.md) — Edge-local static links for memory-aware traces *(deps: E4-T34)*
 - [ ] `436` [E4-T36](epic-4-acceleration/E4-T36-guarded-cross-page-links.md) — Guarded cross-page direct links *(deps: E4-T35)*
 - [ ] `437` [E4-T37](epic-4-acceleration/E4-T37-jalr-return-pic.md) — Bounded multi-target JALR return PIC *(deps: E4-T35)*
 - [ ] `438` [E4-T38](epic-4-acceleration/E4-T38-residency-repack-policy.md) — JIT residency and repack policy *(deps: E4-T34)*

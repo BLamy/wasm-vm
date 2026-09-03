@@ -3,7 +3,7 @@ id: E4-T35
 epic: 4
 title: Edge-local static links for memory-aware traces
 priority: 435
-status: pending
+status: in-progress
 depends_on: [E4-T34]
 estimate: S
 risk: high
