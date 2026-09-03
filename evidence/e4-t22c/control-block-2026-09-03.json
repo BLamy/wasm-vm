@@ -1,0 +1,37 @@
+{
+  "kind": "e4-t22c-control-block",
+  "recordedAt": "2026-09-03T07:59:51Z",
+  "sourceHead": "d029615",
+  "commands": [
+    "make web-test-cpu-worker",
+    "node --test web/tests/cpu-control-block.test.mjs",
+    "node --check web/tests/cpu-control-block.test.mjs web/tests/helpers/e4-t22c-control-block-worker.mjs"
+  ],
+  "suite": {
+    "tests": 33,
+    "passed": 33,
+    "failed": 0,
+    "skipped": 0,
+    "placementAudit": "OK"
+  },
+  "controlBlock": {
+    "irq": "monotonic counter with Atomics.add/notify",
+    "wfi": {
+      "workerWake": "passed",
+      "preWakeData": "0x12345678",
+      "spuriousNotifyRecheck": "passed",
+      "postWakeData": "0x55667788",
+      "wakeupsAfterSpurious": 2
+    },
+    "mmio": {
+      "requests": [
+        { "req": 1, "addr": "0x100000004", "width": 8, "write": false },
+        { "req": 2, "addr": "0x100000010", "width": 4, "write": true, "value": "0xaabbccdd" }
+      ],
+      "response": "0xdeadbeef00000042",
+      "ordered": true,
+      "pendingAfterCompletion": false
+    }
+  },
+  "coverage": "Worker-side blocking waits, atomic visibility, spurious wake handling, sequential request tags, 64-bit response encoding, and existing ring/device isolation tests all executed."
+}

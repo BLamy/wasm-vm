@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 184,
+    "verified": 185,
     "total": 350
   },
   "epics": [
@@ -14461,7 +14461,7 @@
       "epicKey": "4",
       "title": "Atomic WFI wake and interim MMIO control block",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4-T22b"
       ],
@@ -14472,13 +14472,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified\n\n- **WFI wake and ordering — HELD.** Predicted a worker blocked in `Atomics.wait` would observe a\n  value written before `raiseIrq`, and would not lose a notification at the park boundary. The\n  worker-thread test woke with IRQ `1` and observed `0x12345678`; a deliberate notify without an\n  IRQ increment was ignored by the recheck loop, then the real wake completed after exactly two\n  wakeups with `0x55667788`.\n- **MMIO protocol — HELD.** Predicted sequential worker requests would retain their request tags,\n  address/width/write fields, and a full-width response. The worker issued request `1` at\n  `0x100000004` (8-byte load) and request `2` at `0x100000010` (4-byte store); the main-thread\n  responder returned `0xdeadbeef00000042`, and no request remained pending.\n- **Adversarial suite — HELD.** Predicted the existing device/ring isolation checks would remain\n  green alongside the blocking worker cases. `make web-test-cpu-worker` passed `33/33`, including\n  ring overflow/backpressure, interleaved UART/block correlation, zero CLINT crossings, interrupt\n  injection, placement audit, the new visibility/spurious-wake tests, and the MMIO round trip.\n- **Coverage — HELD.** The new worker helper and control-block tests execute the blocking waits,\n  atomic visibility, spurious-wake loop, sequential request matching, and 64-bit encoding paths;\n  no production source was changed in this slice.\n- **SUITE:** promoted the worker-thread test cases and the deterministic control-block JSON as the\n  durable proof. rr, independent machines, and WebKit were not used per the user's explicit\n  direction/current evidence policy.\n\nImplementation commit: `d029615`.\n\nEvidence: `evidence/e4-t22c/control-block-2026-09-03.json` (SHA-256\n`8a3ebc6941671824177098fe013dfe9eea6f6536c1804ddc6fa75fba118afbd3`).\n\nCommands: `make web-test-cpu-worker` (`33 passed`); `node --test\nweb/tests/cpu-control-block.test.mjs` (`8 passed`); `node --check` on the helper/test modules;\n`python3 tools/check_task_policy.py`; and `python3 tools/build_queue.py`.",
       "adversarial": "Race `raiseIrq` against the park boundary, inject spurious wakeups, wrap the request counter, and\nflood a request with the largest supported width. A missed wake, torn value, or stale response is a\nfailure.",
       "file": "tasks/epic-4-acceleration/E4-T22c-control-block.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: start E4-T22c control block"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E4-T22d",
