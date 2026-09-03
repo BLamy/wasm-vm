@@ -1,0 +1,35 @@
+{
+  "task": "E5-T13a",
+  "gitHead": "c62254fc90cdeb7991c40b88c4045099f5f6fbe1",
+  "recordedAt": "2026-09-03",
+  "commands": [
+    "npm run test:keyboard-hardening --prefix web",
+    "node --check web/src/input/held-keys.js",
+    "node --check web/src/input/keyboard.js",
+    "cmp -s web/src/input/held-keys.ts web/src/input/held-keys.js",
+    "git diff --check c62254f^ c62254f"
+  ],
+  "result": {
+    "tests": 14,
+    "passed": 14,
+    "failed": 0,
+    "cancelled": 0,
+    "durationMs": 40.570333
+  },
+  "predicates": {
+    "duplicateAndOrphanBreaks": "held-key ledger reports both and never underflows",
+    "releaseAllOrder": ["KeyB", "KeyA", "ShiftLeft"],
+    "releaseAllReentrancy": "ledger is empty before callbacks and a second release emits no records",
+    "lifecycleReasons": ["blur", "visibility-hidden", "pointerlock-lost", "view-toggle"],
+    "lifecycleFlapIterations": 500,
+    "bridgeReset": "resetHeld clears stale state without emitting guest breaks"
+  },
+  "sha256": {
+    "web/src/input/held-keys.ts": "9f652d8fd99b75a8a0eaa10401030af0110e6da9d38172ed32c560975f531f0a",
+    "web/src/input/held-keys.js": "9f652d8fd99b75a8a0eaa10401030af0110e6da9d38172ed32c560975f531f0a",
+    "web/src/input/keyboard.ts": "0c94cdf93922eb9beb2c5005a5de961f03343293d591f4c29815941f5a294f1c",
+    "web/src/input/keyboard.js": "0c94cdf93922eb9beb2c5005a5de961f03343293d591f4c29815941f5a294f1c",
+    "web/tests/held-keys.test.mjs": "9a393198e0d694078e4c3390cd70a975ca03fdff9d793b0382d66c11034b0740",
+    "web/package.json": "c8c1a8bf608e03792ae7949b70d9e8072cac3365bd0a80414bca2d27ca98942d"
+  }
+}

@@ -17288,7 +17288,7 @@
       "epicKey": "5",
       "title": "held-key ledger and release-all safety",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T12c"
       ],
@@ -17312,13 +17312,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `c62254f` adds the reusable `createHeldKeyLedger` with idempotent\npress/release, deterministic dependent-before-modifier release-all ordering, re-entrancy-safe\nclearing, reset, snapshots, and diagnostics. The T12b keyboard bridge now uses this ledger and\nexposes `heldSnapshot`/`resetHeld`; `attachHeldKeyLifecycle` covers blur, hidden visibility,\npointer-lock loss, and the T08 reserved view-toggle boundary. The exact TypeScript and browser\nprojections remain byte-identical.\n\nThe frozen-head recording ran `npm run test:keyboard-hardening --prefix web`: 14 tests passed,\n0 failed, including duplicate/orphan no-op behavior, reverse release ordering, empty-before-\ncallback re-entrancy, 500 repeated lifecycle-style releases, all four lifecycle reasons, bridge\nrelease-all integration, and stale-state reset without guest breaks. JavaScript syntax checks,\nthe projection identity check, and `git diff --check c62254f^ c62254f` also passed.\n\nEvidence: `evidence/e5-t13a/held-key-safety-2026-09-03.json`, SHA-256\n`1217cf2ca5da034414464a1b40aaec56892ef8790d2d10380a6fc5a483da4d94`.",
       "adversarial": "Feed 500 alternating lifecycle flaps and duplicate keyups through the isolated adapter, with\nrandomized held-key order. The final snapshot must be empty and every emitted break must have a\nmatching prior make. Call release-all twice during a held modifier chord; the second call must\nemit no guest events.",
       "file": "tasks/epic-5-the-window/E5-T13a-held-key-release-safety.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t13a): start held-key safety"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T13b",

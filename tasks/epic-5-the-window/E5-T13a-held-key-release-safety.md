@@ -3,7 +3,7 @@ id: E5-T13a
 epic: 5
 title: held-key ledger and release-all safety
 priority: 513.1
-status: in-progress
+status: implemented
 depends_on: [E5-T12c]
 estimate: S
 risk: medium
@@ -43,4 +43,20 @@ emit no guest events.
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — IMPLEMENTED
+
+Implementation commit `c62254f` adds the reusable `createHeldKeyLedger` with idempotent
+press/release, deterministic dependent-before-modifier release-all ordering, re-entrancy-safe
+clearing, reset, snapshots, and diagnostics. The T12b keyboard bridge now uses this ledger and
+exposes `heldSnapshot`/`resetHeld`; `attachHeldKeyLifecycle` covers blur, hidden visibility,
+pointer-lock loss, and the T08 reserved view-toggle boundary. The exact TypeScript and browser
+projections remain byte-identical.
+
+The frozen-head recording ran `npm run test:keyboard-hardening --prefix web`: 14 tests passed,
+0 failed, including duplicate/orphan no-op behavior, reverse release ordering, empty-before-
+callback re-entrancy, 500 repeated lifecycle-style releases, all four lifecycle reasons, bridge
+release-all integration, and stale-state reset without guest breaks. JavaScript syntax checks,
+the projection identity check, and `git diff --check c62254f^ c62254f` also passed.
+
+Evidence: `evidence/e5-t13a/held-key-safety-2026-09-03.json`, SHA-256
+`1217cf2ca5da034414464a1b40aaec56892ef8790d2d10380a6fc5a483da4d94`.
