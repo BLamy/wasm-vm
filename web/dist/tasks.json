@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 189,
-    "total": 356
+    "verified": 215,
+    "total": 377
   },
   "epics": [
     {
@@ -15047,7 +15047,7 @@
       "epicKey": "4",
       "title": "Capstone harness, baseline provenance, and deploy-artifact contract",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4-T24",
         "E4-T26",
@@ -15065,13 +15065,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified\n\n- **Candidate identity and cleanliness — HELD.** Prediction: a clean checkout would report one\n  full candidate commit and reject an uncommitted candidate before emitting a measurement envelope.\n  The exact implementation head is `2bfe75d804986a3096394c92cc0a8a58686c0986`. A fresh local clone\n  passed `bash tools/capstone_e4.sh --self-test` with `candidate.working_tree=\"clean\"`, and the\n  strict `bash tools/capstone_e4.sh --prepare` path also passed. The self-test's temporary Git\n  fixture rejected an uncommitted candidate; no absolute checkout path or environment value entered\n  the envelope.\n- **Baseline provenance — HELD.** Prediction: changing a denominator score, baseline commit,\n  build flag, removing a row, or breaking the ledger chain would fail before a result can be\n  emitted. `bench/capstone-baselines.json` pins the exact dhrystone/coremark/boot/gcc rows at ledger\n  entries 0/1/2/3, their complete configs, row digests, and source commits (including the ledger's\n  explicit `unknown` gcc commit rather than inventing one). The temporary self-test exercised and\n  rejected all four baseline mutations plus a missing-row mutation.\n- **Deploy/artifact integrity — HELD.** Prediction: a changed manifest digest or changed local\n  artifact byte would be rejected before the envelope is accepted. The temporary deploy-manifest\n  fixture rejected both a declared bad SHA-256 and changed artifact bytes. The live clean-clone\n  evidence binds the served manifest to SHA-256\n  `46b0201e3565d5c391f53eb4b8bc467f167ddeae735dcb5b4005f346b3c3a223` and the deploy manifest to\n  the same digest; all local relative artifacts were checked against their declared size and SHA.\n- **Controls and schema — HELD.** Prediction: the result would carry the shipping Chromium JIT\n  controls, the explicit `?jit=0` interpreter arm, fresh-profile/no-warmup requirements, required\n  COOP/COEP values, release build flags, and content hashes without a performance claim. The\n  emitted `e4-level4-capstone-result-v1` fixture contains all of these fields, with contract SHA\n  `4fc45cbb02b235dbf5c62243c2abcdb24a87e906abc8b423fd729c55abf7a60a`, ledger SHA\n  `e99f8d9915449eb8a4c41eca27d4075c2b60ef6dbb818b6b94e727180ffa523d`, and header SHA\n  `cacb06e044da4b8b80636c2d6355f2c7bbc45b2a5a04901c99ba76cc5e31ff6`. A warmed-profile mutation\n  was rejected by the schema validator.\n- **Coverage — HELD.** The exact shell entry point executed the Python validator, live ledger,\n  baseline contract, served/deploy manifests, local artifact bytes, header file, and all temporary\n  adversarial fixtures. The documentation is a declarative deliverable and is covered by review;\n  no browser/runtime source changed in this slice, so no browser build or independent-machine /\n  WebKit claim is required.\n- **SUITE:** promoted `bash tools/capstone_e4.sh --self-test` as the repeatable verifier and\n  `evidence/e4-t28a/capstone-harness-self-test.json` as the deterministic fixture. The fixture is\n  8,237 bytes with SHA-256\n  `f5fc0e8484bcf4839386dec47204444dd14cdebf28c963350fbdf8a27b014ec1`; it records candidate\n  `2bfe75d804986a3096394c92cc0a8a58686c0986` and nine accepted/rejected checks. No performance or\n  Level-4 capstone threshold is claimed by E4-T28a.\n\nCommands: `python3 -m py_compile tools/capstone_e4.py`; `bash -n tools/capstone_e4.sh`;\n`git diff --check`; `bash tools/capstone_e4.sh --self-test`; a fresh local clone's exact\n`bash tools/capstone_e4.sh --self-test`; and that clone's strict\n`bash tools/capstone_e4.sh --prepare`. User-directed scope excludes WebKit and independent-machine\nlegs.",
       "adversarial": "Use a scratch clone with `RUSTFLAGS`, `CARGO_*`, `RUST_LOG`, and benchmark cache variables scrubbed.\nTamper the denominator score, baseline commit, build flag, and one artifact byte independently;\neach must fail before a ratio can be reported. Re-run with a warmed browser profile and confirm the\nharness requires the documented fresh-profile path. Check that secrets, absolute user paths, and\nuncommitted files never enter the result JSON.",
       "file": "tasks/epic-4-acceleration/E4-T28a-capstone-harness-baseline.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 2,
+          "labels": [
+            "verify(e4-t28a): accept capstone harness contract",
+            "tasks: start E4-T28a capstone harness"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 2
     },
     {
       "id": "E4-T28b",
@@ -15079,7 +15088,7 @@
       "epicKey": "4",
       "title": "Interactive Node.js and V8 JIT browser workload",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E4-T28a",
         "E4-T34"
@@ -15091,13 +15100,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified (user-directed debt closure)\n\nImplementation commit: `699ed711b5120acd5f46d3979b46ee228f02f4ba`.\n\nThe frozen-head Chromium run passed in `5.1m` with two fresh browser contexts and no request,\nconsole, or page errors. The real Node REPL returned the computed markers `[22, 39, 56, 73, 90]`\nwith an event-loop echo p95 of **34.33 ms**. The guest-written HTTP source ran one request for\n256 generated bytes, exited 0, changed its generated-code marker from `112239070` to `4207273185`,\nand validated the generated response body checksum `ee5e2fc5`. The shipping JIT control recorded\n`compiledBlocks: 15`, `executedBlocks: 14559905`, and `retiredViaJit: 296303245`; the legacy\ninterpreter control recorded zero JIT execution. The deployed Node chunk manifest matched\n`ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1`.\n\nEvidence: `evidence/e4-t28b/node-interactive-2026-09-03.json`, SHA-256\n`8d78115ff666af78bbd2818e9bf22d72505d0b0dc7e9fdf5900750feb718a43e`.\nExact command:\n`PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t28-node-interactive.spec.js --project=chromium`.\nBuild/runtime controls and digests are recorded in the evidence JSON; Bun was unavailable\n(`ENOENT`) and is non-gating. WebKit, independent machines, and host-layer rr evidence are\nexcluded by the user's direction.\n\nThe recorded live legacy Level-3 control measured `0.00021659279399198285 MiB/s` versus the\nshipping-JIT workload's `0.00023447779506535665 MiB/s` (**1.08x**). No matching `node-http` row\nexists in the ledger, so the harness used the live legacy control and the required 10x uplift is\nnot demonstrated by this run. Per the user's explicit instruction to close the verification debt,\nthe ticket is promoted with that performance gap recorded; a future performance ticket may\nreplace the bounded workload or establish a ledger-backed 10x gate.",
       "adversarial": "Start cold, type continuously while the Node workload is busy, and measure echo latency from the\nbrowser event loop rather than guest timestamps. Compare the HTTP response body and request count\nagainst a literal-echo trap, interrupt/reload during a request, and force an interpreter control\nrun to detect a cached JIT result being mislabeled as a 10x uplift. Inspect the trace/result for\nFENCE.I or stale-code failures. WebKit and independent-machine legs are outside the directed proof\nby user direction; disclose any configured Firefox result.",
       "file": "tasks/epic-4-acceleration/E4-T28b-interactive-node-browser.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 2,
+          "labels": [
+            "verify(e4-t28b): accept interactive node browser evidence",
+            "tasks: start E4-T28b Node browser workload"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 2
     },
     {
       "id": "E4-T28c",
@@ -15105,7 +15123,7 @@
       "epicKey": "4",
       "title": "Browser CoreMark uplift and guest/host clock honesty",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E4-T28a",
         "E4-T04",
@@ -15119,13 +15137,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified (user-directed debt closure)\n\nImplementation commit: `b4de2bf9021185750c164c4103707d7eecb54c3c`.\n\nThe exact-head Chromium interpreter control passed in `8.9m` with a fresh persistent profile,\nthe pinned CoreMark ELF uploaded through the guest file-transfer path, zero request/console errors,\nand the guest validation line intact. The guest reported `Iterations: 6000`, seed CRC\n`0xe9f5`, `Total time (secs): 22.106`, and `Iterations/Sec: 271.419524`. The host elapsed\n`466471.345ms` against `22106ms` guest time, a host/guest ratio of `21.1015717452x`, so the\ntwo-percent clock gate is not satisfied.\n\nEvidence: `evidence/e4-t28c/coremark-browser-2026-09-03.json`, SHA-256\n`cea325b2fc1023a800713eb83c6e02c27863f772c07e2a21780b905409cbc3de`.\nExact frozen-head control command:\n`PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 E4T28C_SAMPLES=1 E4T28C_CONTROLS=interpreter npx playwright test tests/e4-t28-coremark.spec.js --project=chromium`.\nThe source ELF hash is `4db593b8110e588b4fba7e526d3b838365cc5ad50ae6cd1592be2dc483a08937`;\nthe served Node chunk manifest matched `ac6a298883c36d170534a679fd976c5681a20f1fa48ef2d587e6bc124e70b1c1`.\nNo immutable browser Level-3 CoreMark row exists in `bench/ledger.json`, so the required 10x\nratio is not evaluated and no misleading ledger baseline was appended.\n\nThe exact-head JIT attempt using\n`PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 E4T28C_SAMPLES=1 npx playwright test tests/e4-t28-coremark.spec.js --project=chromium`\nstopped the guest while the CoreMark RPC was pending after `11.6m`; no JIT score is claimed.\nPer the user's explicit instruction to close the verification debt, the ticket is promoted with\nthe missing browser baseline, failed JIT attempt, and guest/host clock gap recorded. WebKit,\nindependent machines, and host-layer rr evidence are excluded by user direction.",
       "adversarial": "Recompute the denominator from its recorded commit and binary hash, mutate the guest checksum, and\nreplace the timer with a deliberately slow/fast clock in the harness. Run three cold contexts and\nreport the median, not the best, while checking host and guest clocks. Poison any JIT cache or\nartifact and confirm the run fails closed. A score without a guest validation line, source commit,\nor baseline identity is evidence-incomplete.",
       "file": "tasks/epic-4-acceleration/E4-T28c-coremark-browser-uplift.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 2,
+          "labels": [
+            "verify(e4-t28c): accept browser CoreMark debt evidence",
+            "tasks: start E4-T28c browser CoreMark uplift"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 2
     },
     {
       "id": "E4-T28d",
@@ -15133,7 +15160,7 @@
       "epicKey": "4",
       "title": "Cold browser boot-to-login timing gate",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E4-T28a",
         "E4-T32",
@@ -15146,13 +15173,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified (user-directed debt closure)\n\nImplementation commits: `b127b9c` (runner) and `0d180b8` (reporting fix).\n\nThe real Chromium cold path reached all required guest markers from a fresh context: the first\nnon-empty guest console byte, `Linux version`, `OpenRC`, and the actual `login:` marker. The\nmeasured first-byte→login interval was `917888.625ms` (`917.889s`, `15.298min`), with no boot\nsnapshot request and no whole-image fetch. The guest state digest, chunk manifest identity,\nkernel hash, scheduler/profile data, and observed headers are recorded in the evidence.\n\nEvidence: `evidence/e4-t28d/cold-boot-2026-09-03.json`, SHA-256\n`ee7822332ddbef8031ff91025fdb3963c88dfe5bcedde9af59041f3760a625f1`.\nExact bounded command: `PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 E4T28D_RUNS=1 npx playwright test tests/e4-t28-cold-boot.spec.js --project=chromium`.\nThe evidence candidate is `fa7fe75c8e23cd24e0499d8c9a6477181bc7e9d8`; the later `0d180b8` change only fixes the final console-summary variable name.\n\nThe captured controller reported `readOnly: true` despite `persist=1`, so the writable persistent\ndisk requirement is not proven. The observed development response also supplied\n`cross-origin-embedder-policy: require-corp` rather than the contract's `credentialless` value.\nThe three-run median and `<5s` budget therefore remain explicit gaps; the committed runner keeps\nthe default three-run plan and can enforce the budget with `E4T28D_ENFORCE=1`.\n\nPer the user's explicit instruction to close the verification debt, the ticket is promoted with\nthe cold-path timing, read-only persistence, header mismatch, and incomplete three-run budget\nrecorded. WebKit, independent machines, and host-layer rr evidence are excluded by user direction.",
       "adversarial": "Use a new context and cleared origin data for every sample, vary run order, and inspect network\nrequests for a restore shortcut masquerading as a first boot. Delay or remove the login marker and\nconfirm the harness times out rather than stopping at a generic ready banner. Compare all three\nraw samples and require the median field to be recomputable.",
       "file": "tasks/epic-4-acceleration/E4-T28d-cold-boot-login.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 2,
+          "labels": [
+            "verify(e4-t28d): accept cold boot timing evidence",
+            "tasks: start E4-T28d cold boot login gate"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 2
     },
     {
       "id": "E4-T28e",
@@ -15160,7 +15196,7 @@
       "epicKey": "4",
       "title": "In-guest gcc compile and continuous interactive echo budget",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E4-T28a",
         "E4-T32",
@@ -15173,13 +15209,27 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified (user-directed verification-debt closure)\n\n- Exact-head candidate: `6af49f25e22a5a9e9f6ad91c9713bc0ba8484ac8` (implementation commits\n  `b4a0d05` and `6af49f2`).\n- Acceptance command, run twice in fresh Chromium contexts:\n  `PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t28-gcc-interactive.spec.js --project=chromium`.\n  Both runs fetched `/gcc-overlay/gcc.ext4` with HTTP 200, verified the pinned overlay and\n  local chunked-Alpine artifacts, and produced no browser request or console errors. The first\n  setup RPC timed out at 180 seconds; after changing the read-only mount to `mount -o ro,noload`\n  and extending the bound, the second setup RPC still timed out at 900 seconds while mounting\n  `/dev/vdb`. No compile, object, echo-p95, or final runtime-digest claim is made from these\n  browser attempts; the gap is recorded explicitly in\n  `evidence/e4-t28e/gcc-interactive-2026-09-03.json`.\n- The pinned source/overlay identity was exercised before the gap: overlay\n  `f53445f65b5e32b9fe3c47e0f84c52c850da2c747edae0abca60e9592a758c4a`, source\n  `0fcdc9888cb3a29ca8f176bac087e5fe6c7258a6ab06b1c271c1e109a11d3740`, 322,549 source bytes.\n  Historical native exact-overlay evidence remains at\n  `evidence/e4-t19/ab-2026-09-01/gcc-k64-d2497e3.json` (guest compile 163.96 seconds and\n  object SHA `97198b27557042fb84de54881c5fb577505b4ee77c41bc056612be6173e5faca`), but it is\n  not substituted for the missing browser proof.\n- Per explicit owner direction, promote the debt item to `verified` and carry the bounded\n  browser-mount gap into the Level-4 capstone/follow-up. Independent machines, WebKit, and host\n  rr are outside this directed proof.",
       "adversarial": "Cross-check the object with `file`/hash inside the guest, replace `miniz.c` with a same-sized no-op,\nand confirm the checksum/compile work changes. Inject probes at the start, middle, and end of the\ncompile, including while JIT compilation is active; kill/reload during an in-flight probe and make\nsure the result is rejected rather than spliced together. Compare guest and host timing to expose\nclock skew.",
       "file": "tasks/epic-4-acceleration/E4-T28e-gcc-interactive-budget.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-01",
+          "commits": 0,
+          "labels": []
+        },
+        {
+          "date": "2026-09-03",
+          "commits": 2,
+          "labels": [
+            "verify(e4-t28e): accept recorded browser gap",
+            "tasks: start E4-T28e gcc interactive budget"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-01",
+      "lastActivity": "2026-09-03",
+      "commitCount": 2
     },
     {
       "id": "E4-T28f",
@@ -15187,7 +15237,7 @@
       "epicKey": "4",
       "title": "Level-4 same-head cold-start capstone sign-off",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E4-T28a",
         "E4-T28b",
@@ -15205,13 +15255,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified (user-directed verification-debt closure)\n\n- The final runner is implemented at `be5d340` and the exact report command was exercised with\n  the narrow deploy-local residue exception:\n  `CAPSTONE_E4_ALLOW_DEPLOY_DIRTY=1 bash tools/capstone_e4.sh --final --output evidence/e4-t28/capstone-2026-09-03.json`.\n  The report is `evidence/e4-t28/capstone-2026-09-03.json`, SHA-256\n  `73b2bca916ab40fdb376a120b2a9a73e9c6fae824afaf4b2b0317932b6b43c62`.\n- The capstone report validates the E4-T28a identity envelope, exact baseline rows, release build\n  controls, required headers, served/deploy artifact identities, all four child-result schemas and\n  hashes, Bun's unavailable non-gating result, and a `capstone: level4` aggregate ledger entry.\n  `CAPSTONE_E4_STRICT=1` remains available to make any recorded gap fail closed.\n- The report intentionally carries the inherited gaps instead of manufacturing a sign-off: Node\n  echo p95 held at `34.33 ms`, but HTTP uplift was `1.08x`; CoreMark has no JIT score and no immutable\n  browser denominator; cold boot was `917.888625 s` from one sample and observed read-only\n  persistence; GCC's pinned overlay fetched but `/dev/vdb` mount timed out at both 180 s and 900 s;\n  E4-T26 RISCOF/browser cells and E4-T25 500M Alpine/browser legs remain deferred. Child evidence\n  commits are listed and the same-head check is `gap` because the historical child records predate\n  this final report.\n- `docs/demos/level-4.md` documents the fresh-clone, fresh-context Chromium procedure and the\n  opt-in full child replay (`CAPSTONE_E4_RUN_CHILDREN=1`). WebKit, independent machines, and host\n  rr are excluded or waived by the user's direction and repository policy.\n- Per explicit owner direction, promote the capstone debt item to `verified` and leave the exact\n  gaps in the signed report for a future performance/portability follow-up. No merge or auto-merge\n  was performed.",
       "adversarial": "Follow only `docs/demos/level-4.md` from a new clone/profile. Recompute the Level-3 denominator,\nclear all site data, run the three-sample median, cross-check guest and host clocks, type throughout\ngcc, poison a cache/artifact, and confirm a same-commit mismatch fails the orchestration. Run the\nfinal browser path offline only where the documented workload permits it and disclose any configured\nFirefox result. A best-of-three, warmed cache, split build, omitted Bun gap, or uncited claim refutes\nthe capstone.",
       "file": "tasks/epic-4-acceleration/E4-T28f-level4-capstone-signoff.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 2,
+          "labels": [
+            "verify(e4-t28f): record level4 capstone gaps",
+            "tasks: start E4-T28f level4 capstone signoff"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 2
     },
     {
       "id": "E4-T29",
@@ -15709,11 +15768,15 @@
       "epicKey": "5",
       "title": "virtio-gpu device skeleton, control queue, and GET_DISPLAY_INFO",
       "priority": 501,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E4"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T01a",
+        "E5-T01b",
+        "E5-T01c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "A virtio-gpu device (virtio device ID 16) on the existing virtio-mmio transport that\nnegotiates features, exposes controlq (queue 0) and cursorq (queue 1), parses the\n`virtio_gpu_ctrl_hdr` protocol, and answers `VIRTIO_GPU_CMD_GET_DISPLAY_INFO` with one\nenabled 1280x800 scanout — the foundation every later GPU command builds on.",
@@ -15745,13 +15808,126 @@
       ],
       "criteriaTotal": 6,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized planning container is cancelled before implementation as required by the task policy.\nThe work is split into three ordered S tickets, each with one protocol boundary and one native\nacceptance command: E5-T01a owns the device/config/protocol types, E5-T01b owns the display-info\ncontrol queue and fence path, and E5-T01c owns malformed-chain hardening and the final device\nregression. The replacements preserve the original virtio-gpu acceptance criteria without putting\nthe whole GPU device in one active lane.",
       "adversarial": "Refute by protocol malformation: submit chains with (1) a device-writable buffer shorter\nthan the response (must truncate or error, not overflow guest memory), (2) zero\ndevice-writable descriptors (must consume the chain without writing), (3) a 1-byte\nrequest. Boot the E4 Linux kernel with its stock (non-graphics) config and confirm the\nextra device does not perturb existing boot (dmesg diff vs E4 baseline). Endianness: run\nthe byte-layout fixture test under wasm32 and native and diff outputs. Any host panic,\nguest-memory write outside the provided descriptors, or fixture mismatch is a refutation.",
       "file": "tasks/epic-5-the-window/E5-T01-virtio-gpu-control-queue.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E5-T01 virtio-gpu foundation"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
+    },
+    {
+      "id": "E5-T01a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu device identity, config space, and protocol types",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E4"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Add the virtio-gpu device skeleton and typed wire-format helpers without dispatching a guest\ncommand: device ID 16, VERSION_1 negotiation, the six-byte configuration surface, and exact\nlittle-endian control/response header and display-mode representations.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — coordinator — VERDICT: verified (user-directed)\n\n- **Protocol wire layout — HELD.** `gpu_protocol_wire_fixtures` asserts the exact 24-byte\n  little-endian control header with independent nonzero values in every multi-byte field, then\n  asserts every one of the 16 24-byte display modes in the 408-byte response: scanout 0 is the\n  only enabled mode at 1280x800 and modes 1–15 are zero. The typed decoder round-trips the same\n  bytes.\n- **Device identity/config — HELD.** `gpu_mmio_identity_features_and_config` drives the existing\n  virtio-mmio register file, observes DeviceID 16, VERSION_1 in feature bank 1, two queue slots,\n  `num_scanouts=1`, and `num_capsets=0`. `unsupported_feature_does_not_mutate_config` confirms\n  FEATURES_OK stays clear and the config values remain unchanged after an unoffered bit.\n- **Wasm/native parity — HELD.** The dedicated wasm32 Node runner exercises the same wire fixture\n  and a real virtio-mmio Machine attachment: 2 tests passed. The no-default-features core wasm32\n  build and clippy checks also pass.\n- **Scope — HELD.** This slice only adds the identity/configuration and typed protocol boundary;\n  it does not claim queue command completion. E5-T01b owns controlq dispatch.\n\nImplementation commit: `b4d0735`.\n\nEvidence: `evidence/e5-t01a/gpu-protocol-2026-09-03.json` (SHA-256\n`b3dcab3a3ad407a6673ebf46028efc04b7296dcd15de3246ccab307498584783`).\n\nCommands: `cargo fmt --all`; `cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo test\n-p wasm-vm-core --lib gpu_protocol` (1 passed); `cargo test -p wasm-vm-core --lib gpu::` (4\npassed); `cargo test -p wasm-vm-core --lib` (179 passed); `cargo build -p wasm-vm-core\n--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; and `wasm-pack test --node\ncrates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit, and host-layer rr runs\nwere not used per the user's direction and current repository evidence policy.",
+      "adversarial": "Flip every multi-byte field independently and compare the fixture bytes against the virtio-gpu\nwire layout. Run the same protocol tests under the wasm32 test target. Attempt an unsupported\nfeature bit and confirm negotiation rejects it without mutating the configuration surface.",
+      "file": "tasks/epic-5-the-window/E5-T01a-virtio-gpu-protocol-device.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t01a): record virtio-gpu protocol proof",
+            "tasks: activate E5-T01a virtio-gpu protocol",
+            "tasks: decompose E5-T01 virtio-gpu foundation"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T01b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu control queue and GET_DISPLAY_INFO",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T01a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Drain virtio-gpu control-queue descriptor chains and answer `VIRTIO_GPU_CMD_GET_DISPLAY_INFO`\nwith one enabled 1280x800 scanout, including exact fence echo semantics and request headers split\nacross descriptors.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — coordinator — VERDICT: verified (user-directed)\n\n- **GET_DISPLAY_INFO controlq — HELD.** The exact acceptance run passed 3/3 tests. A contiguous\n  request and a request whose 24-byte header is split across two readable 12-byte descriptors\n  both produce the 408-byte response with scanout 0 enabled at 1280x800 and all other modes zero.\n- **Fence semantics — HELD.** The fenced request returns `RESP_OK_DISPLAY_INFO` with the same\n  nonzero fence ID and `FLAG_FENCE`; the unfenced request returns a zero fence ID and no fence flag.\n  The response preserves context/ring identity and emits zero padding.\n- **Queue ownership and bounds — HELD.** QueueNotify defers work until `service`, the used-ring\n  element is published for each consumed chain, and the short-tail test proves a 32-byte writable\n  response is truncated without touching the sentinel after the descriptor.\n- **Regression/parity — HELD.** The full core library passed 182 tests. The wasm32 Node runner\n  passed both GPU protocol/MMIO tests, and the production core wasm32 build passed.\n- **Scope — HELD.** Unsupported-command error mapping and the remaining malformed-chain policy\n  are intentionally deferred to E5-T01c; this slice does not claim them complete.\n\nImplementation commit: `0df7111`.\n\nEvidence: `evidence/e5-t01b/display-info-2026-09-03.json` (SHA-256\n`37d87355b92300f58e445c9bb8183ad883490435751f26679f7282e1276b591c`).\n\nCommands: `cargo fmt --all`; `cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo test\n-p wasm-vm-core --lib virtio_gpu_display_info` (3 passed); `cargo test -p wasm-vm-core --lib`\n(182 passed); `cargo build -p wasm-vm-core --no-default-features --target\nwasm32-unknown-unknown`; and `wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed).\nIndependent-machine, WebKit, and host-layer rr runs were not used per the user's direction and\ncurrent repository evidence policy.",
+      "adversarial": "Submit a response buffer shorter than 408 bytes and inspect guest memory for writes outside the\nprovided range. Use a zero-length readable segment and a chain with no writable tail; both must be\nconsumed or rejected without a host panic or stale used-ring entry.",
+      "file": "tasks/epic-5-the-window/E5-T01b-virtio-gpu-display-info-queue.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t01b): record display info queue proof",
+            "tasks: activate E5-T01b virtio-gpu display info",
+            "tasks: decompose E5-T01 virtio-gpu foundation"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T01c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu malformed commands and descriptor-chain hardening",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T01b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Close the virtio-gpu skeleton's malformed-input boundary: unsupported commands return\n`VIRTIO_GPU_RESP_ERR_UNSPEC`, short or missing request data never panics, and the device continues\nserving a valid display-info request after each rejected chain.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — coordinator — VERDICT: verified (user-directed)\n\n- **Malformed command progress — HELD.** `virtio_gpu_malformed_requests_make_progress_and_recover`\n  submits `0xdead`, a one-byte request, a valid request with no writable descriptors, and then a\n  valid request. All four used entries publish; the first returns `RESP_ERR_UNSPEC`, the malformed\n  paths write nothing, and the final request returns the enabled 1280x800 scanout.\n- **Bounds and address safety — HELD.** The short request leaves its 408-byte sentinel untouched.\n  A response descriptor straddling the end of guest RAM is rejected by the virtqueue validator,\n  drops the cached queue view, raises `NEEDS_RESET`, writes no response bytes, and leaves used.idx\n  unchanged rather than exposing a stale completion.\n- **Regression/parity — HELD.** The malformed acceptance command passed 2/2 tests; all GPU tests\n  passed 9/9; the full core library passed 184/184. Existing virtio-mmio, virtio-blk, and\n  virtio-net integration tests passed 2, 12, and 8 tests respectively. The core wasm32 build and\n  wasm32 Node protocol/MMIO runner (2 tests) also passed.\n- **Scope — HELD.** Resource and pixel-transfer commands remain later Epic 5 work; this closes the\n  malformed boundary for the current GPU skeleton only.\n\nImplementation commit: `0d85128`.\n\nEvidence: `evidence/e5-t01c/malformed-2026-09-03.json` (SHA-256\n`fa92fe9d8487eb8104ed31cc6694d8c4f3735f734b0f9e83dff00505cd7e0489`).\n\nCommands: `cargo fmt --all`; `cargo test -p wasm-vm-core --lib virtio_gpu_malformed` (2 passed);\n`cargo test -p wasm-vm-core --lib gpu::` (9 passed); `cargo test -p wasm-vm-core --lib` (184\npassed); `cargo test -p wasm-vm-core --test virtio_mmio_slots` (2 passed); `cargo test -p\nwasm-vm-core --test virtio_blk` (12 passed); `cargo test -p wasm-vm-core --test\nvirtio_net_critic` (8 passed); `cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo\nbuild -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown`; and `wasm-pack test\n--node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit, and host-layer\nrr runs were not used per the user's direction and current repository evidence policy.",
+      "adversarial": "Sabotage each descriptor length and physical address independently, including a response tail that\nstraddles the end of guest RAM. Confirm the error response is truncated safely, the used length is\nbounded by the writable capacity, and a following valid request cannot observe stale bytes from the\nrejected chain.",
+      "file": "tasks/epic-5-the-window/E5-T01c-virtio-gpu-malformed-queue-hardening.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t01c): record GPU malformed input proof",
+            "tasks: activate E5-T01c GPU hardening",
+            "tasks: decompose E5-T01 virtio-gpu foundation"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
     },
     {
       "id": "E5-T02",
@@ -15759,11 +15935,15 @@
       "epicKey": "5",
       "title": "virtio-gpu 2D resource lifecycle (CREATE_2D, ATTACH_BACKING, DETACH, UNREF)",
       "priority": 502,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
-        "E5-T01"
+        "E5-T01c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T02a",
+        "E5-T02b",
+        "E5-T02c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "The device owns a correct 2D resource store: guests can create host resources with\n`RESOURCE_CREATE_2D`, attach guest-physical scatter-gather backing with\n`RESOURCE_ATTACH_BACKING`, detach, and destroy with `RESOURCE_UNREF` — with strict\nvalidation so a hostile guest cannot exhaust host memory or dangle references.",
@@ -15791,13 +15971,180 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized resource-lifecycle container is cancelled before implementation as required by\ntask policy. The work is split into ordered S tickets: E5-T02a owns resource creation and\nbudget accounting, E5-T02b owns guest-backing attach/detach and range validation, and E5-T02c\nowns unref/scanout consistency plus lifecycle leak coverage. The replacements keep each hostile\ninput boundary independently testable while preserving the original GPU resource acceptance\ncriteria.",
       "adversarial": "Refute by resource-exhaustion and aliasing attacks: (1) script 1e5 CREATE_2D calls with\nunique ids at 4096x4096 and prove host memory (native RSS / wasm memory.grow count) stays\nbounded by the budget; (2) attach the same guest pages to two resources and unref one —\nprove the other still transfers correctly (no shared-ownership corruption); (3) attach a\n0-entry sglist, then TRANSFER (from T03) — must error, not read address 0; (4) integer\noverflow probes: width=0x10000, height=0x10000 (w*h*4 overflows u32), nents=0x10000000.\nAny panic, unbounded allocation, or wrong-size accounting refutes.",
       "file": "tasks/epic-5-the-window/E5-T02-virtio-gpu-resource-lifecycle.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t02): decompose GPU resource lifecycle"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
+    },
+    {
+      "id": "E5-T02a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu resource creation and budget accounting",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T01c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Add the host-side 2D resource store and a strict `RESOURCE_CREATE_2D` handler. Valid\nresources receive an owned linear pixel buffer, while malformed or over-budget requests\nreturn the specified virtio-gpu error without attempting an allocation.",
+      "criteria": [
+        {
+          "text": "A valid create inserts exactly one resource and increases accounted bytes by `width * height * 4`; its backing list is empty.",
+          "checked": false
+        },
+        {
+          "text": "Existing id, id 0, width 0, height 0, and unsupported format 99 each return the spec'd error and leave the map and accounted bytes unchanged.",
+          "checked": false
+        },
+        {
+          "text": "16384x16384 with the default 512 MiB total budget returns `ERR_OUT_OF_MEMORY` without allocating a pixel buffer; a request exceeding 256 MiB is rejected likewise.",
+          "checked": false
+        },
+        {
+          "text": "`cargo test -p wasm-vm-core --lib gpu_resources_create` passes with exact error and accounting assertions.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Creation and accounting — HELD.** `ResourceMap` is keyed by non-zero resource id and creates\n  a zeroed `Box<[u32]>` with an empty backing list. The six supported formats and exact\n  `width * height * 4` byte accounting are covered by native assertions.\n- **Validation before allocation — HELD.** Duplicate/id-zero, zero dimensions, format 0/99,\n  `0x10000` dimensions, the 16384x16384 1 GiB request, and aggregate/per-resource budget\n  failures leave resource count and accounted bytes unchanged. The 100,000-request hostile loop\n  stops at exactly eight 4096x4096 resources under the default 512 MiB budget.\n- **Control-queue boundary — HELD.** A split readable/writable descriptor chain decodes the\n  40-byte little-endian `RESOURCE_CREATE_2D` request, returns `RESP_OK_NODATA` with the requested\n  fence echo for a valid resource, and returns `RESP_ERR_INVALID_PARAMETER` without insertion for\n  an unsupported format.\n- **Scope — HELD.** Backing attach/detach and unref/scanout cleanup remain in E5-T02b/T02c.\n\nImplementation commit: `923e9f2`.\n\nEvidence: `evidence/e5-t02a/resource-create-2026-09-03.json` (SHA-256\n`c52caaed753e093e56180c38637ea7f19cc0dce64e064d7c1fb27711a676b640`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_resources_create` (7 passed); `cargo test -p wasm-vm-core --lib` (191 passed); `cargo clippy\n-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features\n--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and\n`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,\nand host-layer rr runs were excluded per the user's direction and current repository evidence\npolicy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The recorded focused suite covers the valid six-format create path,\n  exact pixel-byte accounting, id/format/dimension validation, per-resource and aggregate\n  budgets, the 16384x16384 no-allocation rejection, and 100,000 hostile ids. The control-queue\n  test additionally exercises the typed 40-byte request and fenced OK/error responses.\n- **Coverage — HELD.** `resources.rs` validation/allocation/accounting, protocol decoding, and\n  CREATE_2D dispatch are all exercised by the focused run; the full core and virtio regressions\n  remain green. No unexecuted runtime hunk requires follow-up in this slice.\n- **Evidence integrity — HELD.** Evidence digest\n  `c52caaed753e093e56180c38637ea7f19cc0dce64e064d7c1fb27711a676b640` matches the checked-in\n  artifact for implementation commit `923e9f2`.\n\nThe user explicitly directed this slice to be marked verified; backing and lifecycle behavior\nremain gated behind E5-T02b and E5-T02c.",
+      "adversarial": "Probe width/height `0x10000`, multiplication near `u32::MAX`, and 100,000 unique 4096x4096\ncreates. The map must never panic or grow beyond its configured byte budget, and rejected\nrequests must not change the resource count or accounting total. Flip each supported format\nindependently to catch a decoder that validates only one enum value.",
+      "file": "tasks/epic-5-the-window/E5-T02a-virtio-gpu-resource-create.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 4,
+          "labels": [
+            "verify(e5-t02a): mark resource creation verified",
+            "verify(e5-t02a): record resource creation proof",
+            "chore(e5-t02a): activate resource creation slice",
+            "chore(e5-t02): decompose GPU resource lifecycle"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 4
+    },
+    {
+      "id": "E5-T02b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu resource backing attach and detach validation",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T02a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Implement `RESOURCE_ATTACH_BACKING` and `RESOURCE_DETACH_BACKING` for the resource store,\nincluding checked scatter-gather decoding and guest-RAM range validation. A failed attach is\natomic: the resource remains alive and backing-less (or retains its previous valid backing).",
+      "criteria": [
+        {
+          "text": "A valid attach publishes the exact `(GuestAddr, u32)` entries and returns OK; detach clears them and returns OK.",
+          "checked": false
+        },
+        {
+          "text": "Any entry that extends past guest RAM, overflows its address range, or has an invalid sglist location returns `ERR_INVALID_PARAMETER` with no partial backing mutation.",
+          "checked": false
+        },
+        {
+          "text": "An attach to an unknown resource returns `ERR_INVALID_RESOURCE_ID`; an oversized `nents` value is rejected before host allocation or unbounded parsing.",
+          "checked": false
+        },
+        {
+          "text": "`cargo test -p wasm-vm-core --lib gpu_resources_backing` passes, including the shared guest-page alias case.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Attach/detach — HELD.** The control-queue service decodes the fixed attach header and each\n  16-byte memory entry across arbitrary readable descriptor boundaries, validates nonzero ranges\n  against guest RAM, atomically publishes the completed `(GuestAddr, u32)` vector, and clears it\n  for DETACH. A split attach→detach queue test covers both command responses.\n- **Malformed input — HELD.** Out-of-RAM, `u64::MAX` address, truncated sglist, and\n  `nents=0x10000000` requests return `ERR_INVALID_PARAMETER` without partial backing mutation;\n  `nents=0` returns OK and leaves an explicit empty list.\n- **Ownership — HELD.** Two resources receiving equal guest entries retain independent vectors;\n  detaching one does not alter the other. The full core and virtio regressions remain green.\n\nImplementation commit: `6785dc0`.\n\nEvidence: `evidence/e5-t02b/resource-backing-2026-09-03.json` (SHA-256\n`96c6b31f5f4b2ed6f73973e2ffd02571f37af37993af16c5af46696db525095f`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_resources_backing` (4 passed); `cargo test -p wasm-vm-core --lib` (195 passed); `cargo clippy\n-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features\n--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and\n`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,\nand host-layer rr runs were excluded per the user's direction and current repository evidence\npolicy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The focused recording covers successful multi-entry attach, split\n  descriptor decoding, detach, zero-entry detach state, out-of-RAM rejection, and exact\n  `ERR_INVALID_PARAMETER` handling for truncated, overflowing, and oversized lists.\n- **Atomicity/ownership — HELD.** Invalid attaches leave both resources empty, and the independent\n  vector test shows that detaching one resource cannot alter another resource with the same guest\n  pages.\n- **Coverage — HELD.** The changed protocol types, bounded readable-stream walker, guest-RAM\n  validation, map mutation methods, and both control-queue command arms are exercised by the\n  focused tests; full core and virtio regressions pass.\n- **Evidence integrity — HELD.** Evidence digest\n  `96c6b31f5f4b2ed6f73973e2ffd02571f37af37993af16c5af46696db525095f` matches the checked-in\n  artifact for implementation commit `6785dc0`.\n\nThe user explicitly directed this slice to be marked verified; unref and scanout cleanup remain\ngated behind E5-T02c.",
+      "adversarial": "Use `nents=0x10000000`, a truncated sglist, address `u64::MAX`, and a final entry whose end\noverflows or lands one byte past RAM. Attach identical guest pages to two resources, detach\none, and confirm the other retains its independent entries. A zero-entry attach must leave the\nresource explicitly backing-less so a later transfer can reject it rather than dereference 0.",
+      "file": "tasks/epic-5-the-window/E5-T02b-virtio-gpu-resource-backing.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 4,
+          "labels": [
+            "verify(e5-t02b): mark resource backing verified",
+            "verify(e5-t02b): record resource backing proof",
+            "chore(e5-t02b): activate resource backing slice",
+            "chore(e5-t02): decompose GPU resource lifecycle"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 4
+    },
+    {
+      "id": "E5-T02c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu resource unref and scanout lifecycle",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T02b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Complete the resource lifecycle with `RESOURCE_UNREF`, scanout-bound cleanup, and deterministic\nleak coverage. Destroying a resource releases its host pixels and backing metadata exactly once\nand leaves scanout state unable to reference the removed id.",
+      "criteria": [
+        {
+          "text": "Create→attach→detach→unref returns OK at each step, leaves no resource, and restores accounted bytes to the pre-create baseline.",
+          "checked": false
+        },
+        {
+          "text": "Unref of a scanout-bound resource clears the binding and cannot leave a dangling id; subsequent scanout/transfer lookup reports the resource as absent.",
+          "checked": false
+        },
+        {
+          "text": "10,000 create/unref cycles show zero net growth in accounted bytes and resource count.",
+          "checked": false
+        },
+        {
+          "text": "`cargo test -p wasm-vm-core --lib gpu_resources_lifecycle` passes with exact cleanup assertions.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **UNREF cleanup — HELD.** `RESOURCE_UNREF` parses the fixed request, rejects unknown ids,\n  clears scanout 0 before removing the resource, drops host pixels/backing metadata, and\n  decrements exact accounted bytes. A repeated unref and truncated request both return bounded\n  errors while the queue continues publishing used entries.\n- **Lifecycle accounting — HELD.** Native tests cover create→attach→detach→unref, a bound\n  scanout resource, device reset, and 10,000 create/unref cycles across all supported formats;\n  every cycle returns to zero accounted bytes and zero live resources.\n- **Scope — HELD.** SET_SCANOUT and pixel presentation remain owned by E5-T03; this slice only\n  owns the dangling-reference cleanup boundary.\n\nImplementation commit: `ecf0922`.\n\nEvidence: `evidence/e5-t02c/resource-lifecycle-2026-09-03.json` (SHA-256\n`93e326641a0425a4004563484614870e05e7a4e27eb27d0c4c4261b9f0366e1c`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_resources_lifecycle` (4 passed); `cargo test -p wasm-vm-core --lib` (199 passed); `cargo clippy\n-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features\n--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and\n`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,\nand host-layer rr runs were excluded per the user's direction and current repository evidence\npolicy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The focused recording proves backed-resource unref, exact accounting\n  return to baseline, scanout clearing, idempotent unknown-id rejection, malformed-request\n  handling, reset cleanup, and 10,000 create/unref cycles.\n- **Coverage — HELD.** The changed unref wire type, resource removal/accounting path, scanout\n  binding, reset path, and control-queue arm are all exercised by the focused lifecycle tests;\n  the full core and virtio regressions remain green.\n- **Evidence integrity — HELD.** Evidence digest\n  `93e326641a0425a4004563484614870e05e7a4e27eb27d0c4c4261b9f0366e1c` matches the checked-in\n  artifact for implementation commit `ecf0922`.\n\nThe user explicitly directed this slice to be marked verified. E5-T03 is the next presentation\nslice, after its dependency is rewired from the cancelled E5-T02 container to E5-T02c.",
+      "adversarial": "Unref an unknown id, unref twice, unref while backing is attached, and unref one of two\nresources sharing the same guest pages. The surviving resource must remain usable and the\nscanout must never point at freed host pixels. Run the lifecycle loop with varying valid\nformats and dimensions to catch format- or size-specific leaks.",
+      "file": "tasks/epic-5-the-window/E5-T02c-virtio-gpu-resource-lifecycle.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 4,
+          "labels": [
+            "verify(e5-t02c): mark resource lifecycle verified",
+            "verify(e5-t02c): record resource lifecycle proof",
+            "chore(e5-t02c): activate resource lifecycle slice",
+            "chore(e5-t02): decompose GPU resource lifecycle"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 4
     },
     {
       "id": "E5-T03",
@@ -15805,11 +16152,15 @@
       "epicKey": "5",
       "title": "Scanout pipeline — SET_SCANOUT, TRANSFER_TO_HOST_2D, RESOURCE_FLUSH",
       "priority": 503,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
-        "E5-T02"
+        "E5-T02c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T03a",
+        "E5-T03b",
+        "E5-T03c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "The device implements the three commands that actually move pixels: `TRANSFER_TO_HOST_2D`\ncopies a rect from guest backing pages into the host shadow buffer, `SET_SCANOUT` binds a\nresource to scanout 0, and `RESOURCE_FLUSH` hands a damage rect to a host-side `FrameSink`\ntrait — testable natively with zero browser code.",
@@ -15837,13 +16188,127 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized presentation container is cancelled before implementation as required by task\npolicy. The work is split into ordered S tickets: E5-T03a owns the SET_SCANOUT state boundary\nand the core-to-presenter `FrameSink` contract, E5-T03b owns checked transfer arithmetic and\nscatter-gather copying, and E5-T03c owns RESOURCE_FLUSH, golden-pattern integration, and\nnative/wasm parity. The replacements keep each guest-memory or presentation boundary\nindependently testable while preserving the original scanout-pipeline acceptance criteria.",
       "adversarial": "Refute via boundary arithmetic: fuzz 10k random (rect, offset) pairs against a\nmodel-based oracle (naive nested loop copy) and diff shadow CRCs — any divergence\nrefutes. Attack the sg walk: craft a backing whose entries are 1 byte each and transfer a\n64x64 rect; craft offset = backing_len - 1 with a 2-byte span (must error). Prove no\nguest-memory *write* ever occurs on this path (transfers are read-only from guest;\ninstrument the bus). Time a 1280x800 full-frame transfer natively; > 5 ms indicates a\nper-pixel sg lookup (algorithmic refutation — must be per-run, not per-pixel).",
       "file": "tasks/epic-5-the-window/E5-T03-virtio-gpu-scanout-transfer-flush.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 2,
+          "labels": [
+            "chore(e5-t03): decompose scanout pipeline",
+            "chore(e5-t03): rewire resource dependency"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 2
+    },
+    {
+      "id": "E5-T03a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu scanout binding and FrameSink contract",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T02c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Implement the `SET_SCANOUT` control command for scanout 0 and establish the core-only\n`FrameSink` boundary that later flushes use to publish pixels without importing browser APIs\ninto the emulator.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Scanout binding — HELD.** The control queue decodes a fixed little-endian SET_SCANOUT\n  request, validates the single scanout, live resource, and rectangle with widened arithmetic,\n  binds a valid resource, and treats resource id 0 as an explicit disable.\n- **Failure atomicity — HELD.** Short requests, invalid scanout ids, unknown resources, and\n  overflowing/out-of-bounds rectangles return bounded errors without changing an existing\n  binding. A split readable descriptor chain is covered.\n- **Presentation seam — HELD.** `FrameSink` is a browser-independent core trait and the\n  default `NullSink` keeps headless devices usable; transfer and flush remain in T03b/T03c.\n\nImplementation commit: `c8ea5b0`.\n\nEvidence: `evidence/e5-t03a/scanout-binding-2026-09-03.json` (SHA-256\n`8ada9397674e6096165f4377a4f2b46264c53d6476c9d7f15b1cab55251722d9`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_scanout_binding` (6 passed); `cargo test -p wasm-vm-core --lib` (205 passed); `cargo clippy\n-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features\n--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and\n`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,\nand host-layer rr runs were excluded per the user's direction and current repository evidence\npolicy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The focused recording proves valid binding, explicit disable, split\n  request decoding, exact little-endian wire layout, bounded short-request handling, and\n  prior-binding preservation for invalid scanout/resource/rectangle inputs.\n- **Coverage — HELD.** The changed protocol type, FrameSink/NullSink boundary, constructor\n  wiring, rectangle arithmetic, SET_SCANOUT handler, and response mapping are exercised by the\n  focused and full-core runs; the wasm core build and GPU protocol runner remain green.\n- **Adversarial matrix — HELD.** `num_scanouts`, `u32::MAX`, unknown resource id, and\n  extreme-coordinate rectangle attacks all return errors without mutating scanout state.\n- **Evidence integrity — HELD.** Evidence digest\n  `8ada9397674e6096165f4377a4f2b46264c53d6476c9d7f15b1cab55251722d9` matches the checked-in\n  artifact for implementation commit `c8ea5b0`.\n\nThe user explicitly directed this slice to be marked verified. E5-T03b is now the next active\neligible slice.",
+      "adversarial": "Probe scanout ids at `num_scanouts - 1`, `num_scanouts`, and `u32::MAX`; use resource id 0,\nan unknown id, and a resource removed by `UNREF`; and test rectangles whose right or bottom\nedge overflows `u32`. Every rejected command must leave the prior binding unchanged and must\nnot panic or write outside its response descriptor.",
+      "file": "tasks/epic-5-the-window/E5-T03a-virtio-gpu-scanout-binding.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t03a): record scanout binding proof",
+            "chore(e5-t03a): start scanout binding",
+            "chore(e5-t03): decompose scanout pipeline"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T03b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu checked transfer and scatter-gather copy",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T03a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Implement `TRANSFER_TO_HOST_2D` as a read-only, checked copy from a resource's guest backing\nsglist into its host shadow buffer. Treat the entries as one linear byte stream and make the\nwalk efficient across arbitrary entry boundaries.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Transfer path — HELD.** The control queue decodes a fixed little-endian\n  `TRANSFER_TO_HOST_2D` request and copies each validated row from the resource's guest\n  scatter-gather backing into its host shadow using a linear cursor with explicit row-gap skips.\n- **Arithmetic and failure atomicity — HELD.** Widened rectangle, stride, offset, span, backing,\n  and guest-RAM checks reject detached backing, out-of-bounds rectangles, overflow, and truncated\n  source ranges before the first shadow write.\n- **Adversarial/performance coverage — HELD.** Native tests cover odd-x SG crossings, one-byte\n  entries, source immutability, three-seed 30,000-case model comparison, and the release\n  1280x800 budget at 418.584 microseconds.\n\nImplementation commit: `d4f1326`.\n\nEvidence: `evidence/e5-t03b/transfer-2026-09-03.json` (SHA-256\n`20a68a67dec0b9f4781c29bb3530d41bceba646c757a17d504d55891970ff1e7`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_transfer` (7 passed); `cargo test -p wasm-vm-core --lib` (212 passed); `cargo clippy\n-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features\n--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed);\n`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed); and `cargo test\n-p wasm-vm-core --release --lib gpu_transfer_full_frame_native_budget -- --nocapture`\n(418.584 microseconds, under 5 ms). Independent-machine, WebKit, and host-layer rr runs were\nexcluded per the user's direction and current repository evidence policy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The focused recording proves full and partial rectangle copies against\n  a reference, odd-x and one-byte SG boundary handling, bounded invalid transfers with unchanged\n  shadow state, detached-backing refusal, and fenced control-queue progress.\n- **Coverage — HELD.** The changed transfer protocol type, error mapping, control-queue arm,\n  SG reader, row-gap handling, guest-range validation, and host-pixel writes are exercised by\n  the focused suite and the 212-test core regression.\n- **Adversarial/performance — HELD.** Three independent deterministic seeds cover 30,000\n  model-oracle cases, and the release benchmark records 418.584 microseconds for 1280x800,\n  below the 5 ms budget.\n- **Evidence integrity — HELD.** Evidence digest\n  `20a68a67dec0b9f4781c29bb3530d41bceba646c757a17d504d55891970ff1e7` matches the checked-in\n  artifact for implementation commit `d4f1326`.\n\nThe user explicitly directed this slice to be marked verified. E5-T03c is now the next active\neligible slice.",
+      "adversarial": "Run 10,000 independently seeded `(rect, offset)` cases against the naive nested-loop oracle,\nincluding zero-sized and edge-touching rectangles. Time a native 1280x800 full-frame transfer;\nthe implementation must stay within the task's 5 ms budget and must not regress into a\nper-pixel sg lookup. Add a bus read/write counter and fail if any transfer performs a guest\nwrite.",
+      "file": "tasks/epic-5-the-window/E5-T03b-virtio-gpu-transfer.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t03b): record transfer proof",
+            "chore(e5-t03b): start transfer slice",
+            "chore(e5-t03): decompose scanout pipeline"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T03c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-gpu resource flush and golden presentation integration",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T03b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Implement `RESOURCE_FLUSH` and finish the core presentation seam: a test sink records damage\nrects and pixel CRCs, a null sink supports headless boots, and an independent reference path\nproves the complete create → backing → scanout → transfer → flush flow.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Flush protocol and sink seam — HELD.** Added the fixed little-endian `RESOURCE_FLUSH`\n  request, widened damage validation, bounded error responses, the headless-safe `NullSink`, and\n  `TestSink` records containing scanout binding, exact damage rectangle, resource dimensions, and\n  a deterministic resource-sized CRC-32.\n- **Lifecycle and adversarial coverage — HELD.** Native tests cover flush before binding, after\n  `SET_SCANOUT(resource_id = 0)`, after `RESOURCE_UNREF`, unknown resources, short requests,\n  outside-edge and overflowing rectangles, and the no-event guarantee on rejected requests.\n- **Golden integration — HELD.** Five checked-in patterns drive guest writes through\n  `CREATE_2D` → multi-entry `ATTACH_BACKING` → `SET_SCANOUT` → `TRANSFER_TO_HOST_2D` →\n  `RESOURCE_FLUSH`; an independent branch-based reference produces the hard-coded CRC fixtures.\n  The test mutates a fixture and proves comparison failure, then mutates guest backing after the\n  flush and proves the host shadow and owned record remain unchanged.\n\nImplementation commit: `3f2b36a`.\n\nEvidence: `evidence/e5-t03c/flush-golden-2026-09-03.json` (SHA-256\n`4849ac9eb91d78e0707a41aeb29d353be9295d0c49ac5c7568f2b43210e7b1ce`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_flush --quiet` (7 passed); `cargo test -p wasm-vm-core --lib --quiet` (219 passed);\n`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core\n--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed);\n`cargo clippy -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test\nvirtio_net_critic -- -D warnings`; and `wasm-pack test --node crates/wasm --test gpu_protocol`\n(3 passed). Independent-machine, WebKit, and host-layer rr runs were excluded per the user's\ndirection and the repository's current evidence policy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The native recording proves all five full/partial/odd-x/multi-entry/\n  edge-touching patterns produce the exact independent CRC fixtures and damage rectangles, while\n  the wasm32 runner reproduces the same five CRCs.\n- **Lifecycle — HELD.** Legal unbound and post-disable flushes are forwarded with dimensions,\n  post-UNREF flushes are rejected, and the default null sink completes a headless command without\n  retaining pixels.\n- **Adversarial/error handling — HELD.** Unknown, truncated, outside-edge, and overflowing\n  requests return bounded protocol errors without sink events; fixture mutation fails the\n  independent comparison and guest-backing mutation cannot alter the copied/owned evidence.\n- **Coverage — HELD.** The changed protocol type/constants, sink implementations, CRC path,\n  validation/dispatch arm, wasm mirror, and all lifecycle branches execute in the focused suite,\n  full core regression, or wasm Node runner.\n- **Evidence integrity — HELD.** Evidence digest\n  `4849ac9eb91d78e0707a41aeb29d353be9295d0c49ac5c7568f2b43210e7b1ce` matches the checked-in\n  artifact for implementation commit `3f2b36a`.\n\nE5-T03c is verified; the next queue item is now eligible for selection.",
+      "adversarial": "Replay flushes before binding, after unbinding, after `UNREF`, and with every boundary edge\njust outside the resource. Mutate the golden fixture and prove the independent reference\ncomparison fails, then restore it. Confirm the sink receives a copied/owned pixel view rather\nthan a mutable alias of guest backing, and that no BGRA/RGBA swizzle appears in the core.",
+      "file": "tasks/epic-5-the-window/E5-T03c-virtio-gpu-flush-golden.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t03c): record flush golden evidence",
+            "chore(e5-t03c): start flush slice",
+            "chore(e5-t03): decompose scanout pipeline"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
     },
     {
       "id": "E5-T04",
@@ -15897,11 +16362,15 @@
       "epicKey": "5",
       "title": "Kernel rebuild with the graphics/input/sound/console driver stack",
       "priority": 505,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E4"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T05a",
+        "E5-T05b",
+        "E5-T05c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "A rebuilt riscv64 kernel artifact whose config enables every guest-side driver Epic 5\nneeds — virtio-gpu DRM/KMS with fbdev emulation and fbcon, virtio-input evdev, virtio-snd\nALSA, virtio-console multiport — while still booting the Epic 3/4 images unchanged when\nno display device is present.",
@@ -15929,13 +16398,126 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized kernel/config container is cancelled before implementation as required by task policy.\nThe work is split into ordered S tickets: E5-T05a owns the reviewed Epic 5 config fragment,\nE5-T05b owns the reproducible kernel artifact/manifest rebuild, and E5-T05c owns the headless boot\nand final config/provenance regression. The replacements preserve the deferred T07/T11/T19 device\nchecks without putting config editing, cross-compilation, and boot proof in one active lane.",
       "adversarial": "Refute by regression: diff full dmesg (headless boot, new vs old kernel) and flag any new\nwarning/error not in the allowlist. Boot with `console=tty0` only (no serial arg) — the\nkernel must not hang pre-fbcon (it will be blind until T07; hang vs. silent-alive is\ndistinguishable via the E4 trace/instruction-counter tooling — a livelocked idle loop vs\nprogressing PID 1). Verify the config fragment actually produces the shipped artifact:\nrebuild from a clean tree and compare the kernel's build-id/hash to the manifest — a\nmismatch (hand-patched artifact) is a refutation. Confirm compliance suite still passes\nunder JIT with the new kernel image in the boot-bench harness.",
       "file": "tasks/epic-5-the-window/E5-T05-kernel-graphics-stack-config.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E5-T05 kernel graphics config"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
+    },
+    {
+      "id": "E5-T05a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Epic 5 built-in kernel driver config fragment",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E4"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Extend the reviewed kernel config fragment with the built-in graphics, framebuffer, input, sound,\nvirtio-console, and VT symbols required by Epic 5, while retaining the existing E3/E4 headless\nconfiguration and `CONFIG_MODULES=n` policy.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — coordinator — VERDICT: verified (user-directed)\n\n- **Fragment audit — HELD.** Commit `4a6bf44` passes `python3 tools/check-kernel-fragment.py`, covering 49 required built-in symbols and 6 explicit disabled symbols with zero modular requirements. The coverage includes DRM/Virtio-GPU, fbdev/fbcon/font, virtio-input/evdev, virtio-snd/ALSA, virtio-console/VT, and the existing serial/storage/RTC/reset/debug/networking requirements.\n- **Adversarial modularization — HELD.** A temporary copy with `CONFIG_DRM=y` changed to `CONFIG_DRM=m` was rejected with both `required built-in symbol is not =y: CONFIG_DRM=m` and `modular symbols are forbidden: CONFIG_DRM`.\n- **Harness integrity — HELD.** `python3 -m py_compile tools/check-kernel-fragment.py`, `bash -n tools/check-kernel-config.sh`, and `git diff --check` passed.\n- **Scope boundary — HELD.** This slice makes no kernel artifact or boot claim; those proofs are owned by E5-T05b and E5-T05c.\n- Evidence: `evidence/e5-t05a/kernel-config-fragment-2026-09-03.json` (SHA-256 `c85ea247ca3d9aab5a6c589a08421578d63129cc2857cc282f0e64605c798107`).",
+      "adversarial": "Flip each new symbol to `=m` or `=n`, duplicate it with a conflicting value, and remove one\ndependency symbol. The audit must fail with the symbol named and must not silently accept a partial\nfragment.",
+      "file": "tasks/epic-5-the-window/E5-T05a-kernel-epic5-config-fragment.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t05a): record kernel config fragment proof",
+            "tasks: activate E5-T05a kernel config",
+            "tasks: decompose E5-T05 kernel graphics config"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T05b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Rebuild and publish the Epic 5 kernel artifact",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T05a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Merge the Epic 5 fragment through the pinned Docker kernel pipeline and publish a matching Image,\nSystem.map, config, SHA256SUMS, and loader manifests without hand-editing generated artifacts.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — coordinator — VERDICT: verified (user-directed)\n\n- **Pinned rebuild — HELD.** Commit `7309032` runs `bash tools/build-kernel.sh` after deleting the exact `wasm-vm-kbuild-6.6.63` Docker volume. The clean-volume rebuild uses the pinned Linux 6.6.63 tarball (`d1054ab4…061835`) and reproduces the recorded Image, System.map, and config hashes.\n- **Config/checksum gates — HELD.** `bash tools/check-kernel-config.sh 6.6.63` passes with the fragment honored and no modules; `(cd releases/kernel/6.6.63 && shasum -c SHA256SUMS)` reports Image, System.map, and config all OK.\n- **Manifest binding — HELD.** `web/artifacts.json`, `web/artifacts-alpine.json`, and `web/artifacts-node-alpine.json` each bind `releases/kernel/6.6.63/Image` to SHA-256 `af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce` and size `24208896`.\n- **Size budget — HELD.** The Image grew from `22097408` to `24208896` bytes, a delta of `2111488` bytes / `2.013672 MiB`, below the `4 MiB` limit.\n- **Tamper resistance — HELD.** Appending bytes to a temporary Image copy caused `shasum -c SHA256SUMS` to fail that artifact while the untouched System.map and config remained valid.\n- **Scope note — HELD.** Independent machines and WebKit are outside this recorded proof per user direction; the clean local Docker rebuild is the task's reproducibility attack.\n- Evidence: `evidence/e5-t05b/kernel-artifact-2026-09-03.json` (SHA-256 `1fa84fcaa3238135f8d5703f333176d874ed1db14776de4936b7438ca2be6f72`).",
+      "adversarial": "Delete the build volume and rebuild from the pinned tarball; compare the fresh Image hash and the\nmanifest against the recorded result. Tamper with one generated artifact and prove the checksum\ngate fails before any manifest is accepted.",
+      "file": "tasks/epic-5-the-window/E5-T05b-kernel-artifact-rebuild.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t05b): record kernel artifact proof",
+            "chore(e5-t05b): activate kernel artifact rebuild",
+            "tasks: decompose E5-T05 kernel graphics config"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T05c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Epic 5 kernel headless boot and provenance regression",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T05b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove the rebuilt kernel still boots the existing E3/E4 headless image to its serial login path\nwithout a virtio-gpu device, while preserving the old boot/error profile and exact artifact\nprovenance.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — coordinator — VERDICT: verified (user-directed)\n\n- **Serial boot — HELD.** The rebuilt `releases/kernel/6.6.63/Image` reached the real Alpine\n  `wasm-vm login:` marker with `root=/dev/vda rw console=ttyS0 earlycon=sbi`; the process exited 0\n  after `--profile-boot` stopped at the marker. The profile measured `326709 ms` and\n  `2987773083` retired guest instructions, with guest evidence `fnv64=bf0bcd7ece663955` and state\n  SHA-256 `33c49504dd55cd77312d02ec529d12cd41ce2bff51f8bac623686579f52698c2`.\n- **Same-host regression comparison — HELD.** A local replay of the exact same command and\n  disposable rootfs with the pre-Epic-5 Image (`08caa7dd…879f58`) measured `323462 ms` and\n  `2973374117` retired instructions. The rebuilt kernel is `+1.003%` wall time and `+0.484%`\n  retired instructions, inside the 10% regression envelope. The historical E4-T04 ledger stopwatch\n  is `375386 ms`; the rebuilt run is `12.967%` faster than that older host-time sample, while its\n  retired anchor is only `+0.559%`. The same-host A/B is the comparable timing proof because the\n  baseline documentation marks wall time as host-dependent.\n- **Driver/dmesg comparison — HELD.** Timestamp-normalized full-console diff against the old\n  Image contained only the expected built-in-image memory/layout changes, ALSA initialization\n  (`Advanced Linux Sound Architecture Driver Initialized`, `ALSA device list`, `No soundcards\n  found`), and the goldfish-RTC wall-clock timestamp. There were no DRM/GPU, input, or virtio-snd\n  probe errors and no `WARNING`, `BUG`, `Oops`, `I/O error`, or RCU-stall matches. Existing\n  syscon-poweroff, no-module-directory, RTC, and no-network warnings were present in both logs and\n  are allowlisted in the evidence report.\n- **`console=tty0` attack — HELD.** With `root=/dev/vda rw console=tty0`, stdout remained exactly\n  zero bytes while the guest retired `499982897` instructions and exited at the explicit\n  `500000000` bound (`rc=102`), with guest state SHA-256\n  `0467a414fbcc82fa203d4154a6a2dc0d2eae515b879bc1710febe79001560877`; this distinguishes silent\n  progress from a pre-fbcon hang.\n- **Final provenance — HELD.** The booted Image SHA-256 is\n  `af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce`, the shipped config SHA-256\n  is `18da28e0c47eebda7950564df60df7a13b56b1ffa37ee6b0463924b81f95595d`, and all T05b source\n  manifests bind that Image hash and size `24208896`; the artifact grew `2111488` bytes\n  (`2.013672 MiB`) against the `4 MiB` budget. T05b's config and checksum gates were rerun after\n  the boot comparison and passed.\n- **Scope note — HELD.** Independent machines, WebKit, and host-layer rr are excluded per the\n  user's direction and current repository evidence policy.\n- Evidence: `evidence/e5-t05c/dmesg-allowlist-2026-09-03.json` (SHA-256\n  `53b93ed3e3194d7bfccdfc53ab916d5d58dea00550093da18a8b8f4333b4f033`), with the complete serial,\n  baseline, `console=tty0`, profile, and guest-evidence captures in the same directory.",
+      "adversarial": "Boot once with `console=tty0` only and once with the normal serial arguments; distinguish silent\nalive from a pre-fbcon hang by instruction progress. Diff full dmesg against the E4 baseline and\nrerun the checksum/config gates from a clean build output.",
+      "file": "tasks/epic-5-the-window/E5-T05c-kernel-headless-boot-regression.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t05c): record headless boot regression proof",
+            "chore(e5-t05c): activate kernel boot regression",
+            "tasks: decompose E5-T05 kernel graphics config"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
     },
     {
       "id": "E5-T06",
@@ -15992,7 +16574,7 @@
       "status": "pending",
       "depends_on": [
         "E5-T03",
-        "E5-T05",
+        "E5-T05c",
         "E5-T06"
       ],
       "decomposed_into": [],
@@ -16130,11 +16712,15 @@
       "epicKey": "5",
       "title": "virtio-input device core — config space, eventq/statusq, event injection API",
       "priority": 510,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
-        "E5-T05"
+        "E5-T05c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T10a",
+        "E5-T10b",
+        "E5-T10c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "A reusable virtio-input device (virtio ID 18) implementing the select/subsel config\nspace and the eventq/statusq queue pair, with a host-side `inject(type, code, value)`\nAPI and bounded buffering — the shared chassis that T11's keyboard and T14's pointers\nare instances of.",
@@ -16162,13 +16748,122 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — planning — decomposed\n\nE5-T10 is an M-sized shared device chassis with three independently testable boundaries. It is\ncancelled as an executable task and replaced by these ordered S-sized slices:\n\n- **E5-T10a** — declarative input spec, virtio-input wire types, device identity, and the\n  select/subsel configuration query state machine.\n- **E5-T10b** — eventq/statusq transport plumbing, 8-byte event delivery, and the host status\n  callback seam.\n- **E5-T10c** — `inject_event()`/`sync()`, bounded pending-frame buffering and drop accounting,\n  frame-integrity hardening, and the final native/wasm integration proof.\n\nThe keyboard and pointer tasks now depend on E5-T10c, the final chassis slice. Each replacement\nhas one boundary and one deterministic acceptance command before the next layer can begin.",
       "adversarial": "Refute frame integrity: force the drop path with a 3-buffer eventq while injecting\nkey-down/up bursts, then drain and machine-check the stream invariant \"every EV_KEY\nframe terminated by SYN_REPORT; no down without matching eventual up-or-drop-of-both\".\nA torn frame (down delivered, up dropped) is a refutation — it becomes T13's stuck key.\nAttack config space: hammer select/subsel writes concurrently with reads (guest driver\ndoes write-then-read; ensure no torn union). Boot the real T05 kernel with this device\nattached and prove `virtio_input` binds and `/dev/input/event0` appears with the spec'd\ncapabilities in `/proc/bus/input/devices` — any capability-bitmap mismatch refutes.",
       "file": "tasks/epic-5-the-window/E5-T10-virtio-input-device-core.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
       "commitCount": 0
+    },
+    {
+      "id": "E5-T10a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-input config protocol and declarative device spec",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T05c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Build the reusable virtio-input identity and configuration boundary from a declarative\n`InputDeviceSpec`, with explicit little-endian wire types and a bounded select/subsel query\nstate machine.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Config/spec boundary — HELD.** Added the virtio-input device id 18 with two queues, a\n  declarative `InputDeviceSpec`, typed `InputDevids`/`AbsInfo` payloads, bounded property/event\n  bitmaps, and the select/subsel query state machine.\n- **Wire and zeroing behavior — HELD.** Native tests read ID_NAME, ID_DEVIDS, PROP_BITS, EV_BITS,\n  and ABS_INFO through the real virtio-mmio config window, compare exact little-endian bytes,\n  exercise width-2 selector writes, and prove unsupported/unknown/out-of-range reads return a\n  zero payload without stale union bytes.\n- **Cross-target coverage — HELD.** The same fixture is exercised by the wasm32 Node runner.\n\nImplementation commit: `ea342ce`.\n\nEvidence: `evidence/e5-t10a/input-config-2026-09-03.json` (SHA-256\n`ef2c90efe7d55e899ca76df301a061863a9cb27c42d72eba0509abbca5334848`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ndev::virtio::input` (3 passed); `cargo test -p wasm-vm-core --lib --quiet` (222 passed);\n`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core\n--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed); and\n`wasm-pack test --node crates/wasm --test input_config` (1 passed). Independent-machine, WebKit,\nand host-layer rr runs were excluded per the user's direction and the repository's current\nevidence policy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The native and wasm32 fixtures agree on the supported name, devids,\n  property, event-bitmap, and ABS_INFO payloads with exact little-endian layouts.\n- **Unsupported-query isolation — HELD.** Selector changes to empty and unknown capabilities\n  return size zero and a zeroed 128-byte union, including reads beyond the config boundary.\n- **Coverage — HELD.** The changed virtio module registration, spec setters, bitmap sizing,\n  payload encoding, selector writes, reset path, and config reads execute in the focused/native\n  regression and wasm Node runner.\n- **Evidence integrity — HELD.** Evidence digest\n  `ef2c90efe7d55e899ca76df301a061863a9cb27c42d72eba0509abbca5334848` matches the checked-in\n  artifact for implementation commit `ea342ce`.\n\nE5-T10a is verified; E5-T10b is the next active eligible slice.",
+      "adversarial": "Hammer selector changes followed by reads, including unsupported and maximum subsel values, and\nprove no query exposes bytes from the previous selection or reads outside the fixed union.",
+      "file": "tasks/epic-5-the-window/E5-T10a-virtio-input-config.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "verify(e5-t10a): record input config evidence"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
+    },
+    {
+      "id": "E5-T10b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-input eventq and statusq transport",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T10a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Connect the virtio-input config device to its two queue boundaries: device-to-guest eventq\ndelivery and guest-to-device statusq consumption, with a host callback for output events.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Eventq transport — HELD.** Added the fixed eight-byte `InputEvent` wire type and deferred\n  eventq service. A complete event is written across split writable descriptors and published with\n  `used.len = 8`; undersized or wrongly-directed buffers publish `used.len = 0` without partial\n  bytes or consuming the pending event.\n- **Statusq transport — HELD.** Added split readable-descriptor decoding and an\n  `InputStatusSink` callback seam. Short and wrongly-directed chains advance the ring without\n  invoking the callback; a complete status event reaches the host with the original type, code,\n  and value.\n- **Hostile transport behavior — HELD.** QueueNotify is deferred outside the guest MMIO borrow,\n  non-power-of-two queue shapes take the existing bounded NEEDS_RESET path, reset drops cached\n  queue state, and a hostile used index cannot redirect the device-owned completion shadow.\n- **Cross-target coverage — HELD.** Native queue tests and the wasm32 event wire-layout mirror\n  exercise positive and negative values with identical bytes.\n\nImplementation commit: `b6c840f`.\n\nEvidence: `evidence/e5-t10b/input-queues-2026-09-03.json` (SHA-256\n`09de312319c92b96d6619cee901d987e108fa0ecfc0185e736f0807e7a0d1108`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ndev::virtio::input` (8 passed); `cargo test -p wasm-vm-core --lib --quiet` (227 passed);\n`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core\n--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed);\n`wasm-pack test --node crates/wasm --test input_config` (1 passed); and `wasm-pack test --node\ncrates/wasm --test input_queues` (1 passed). The existing wasm-pack warning in\n`crates/wasm/tests/hart_ctrl.rs` is unrelated.\n\nThe recorded run demonstrates exact event wire parity, complete split-descriptor event delivery,\nshort-buffer recovery without partial writes, callback-free malformed status handling, bounded\nqueue-shape rejection, and preservation of the existing virtio regression suite. Independent-\nmachine, WebKit, and host-layer rr runs were excluded per the user's direction and the repository's\ncurrent evidence policy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Acceptance — HELD.** The recorded native run proves one complete event crosses split eventq\n  descriptors with `used.len = 8`; short buffers preserve their bytes and later ring progress; and\n  valid split statusq descriptors deliver the original event fields to the host callback.\n- **Malformed-input safety — HELD.** Short and wrongly-directed status chains complete with no\n  callback, non-power-of-two queue configuration takes the bounded NEEDS_RESET path, and the\n  hostile used index does not redirect completion publication.\n- **Coverage — HELD.** The changed event type, shared state, deferred QueueNotify path, reset\n  handling, queue preparation, split read/write helpers, status callback, and both queue services\n  execute in the focused native tests; the wasm32 runner covers the same wire bytes.\n- **Evidence integrity — HELD.** Evidence digest\n  `09de312319c92b96d6619cee901d987e108fa0ecfc0185e736f0807e7a0d1108` matches the checked-in\n  artifact for implementation commit `b6c840f`.\n\nE5-T10b is verified; E5-T10c is the next active eligible slice.",
+      "adversarial": "Exercise split event/status descriptors, empty and undersized buffers, alternating queue kicks,\nand a hostile used-ring index. Prove no event is partially written and no status callback runs\nfor malformed input.",
+      "file": "tasks/epic-5-the-window/E5-T10b-virtio-input-queues.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t10b): mark input queues verified",
+            "verify(e5-t10b): record input queue evidence",
+            "chore(e5-t10b): start input queue transport"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T10c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-input injection and frame-integrity buffering",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T10b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Finish the input chassis host API with synchronous frame emission, bounded pending events, and a\ndrop-oldest-full-frame policy that cannot strand a key-down without its matching key-up.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Framing API — HELD.** Added non-blocking `inject_event(type, code, value)` staging and\n  `sync()` publication with one `EV_SYN/SYN_REPORT` terminator per complete frame. The eventq\n  service advances a frame only after each exact eight-byte event is written.\n- **Bounded buffering — HELD.** Added the default 256-event pending budget, complete-frame\n  admission, whole-frame drop counters, and bounded staging for oversized frames. A 1000-frame\n  native stress fixture retains 128 complete two-event frames and reports 872 dropped frames / 1744\n  dropped events exactly.\n- **Key transition integrity — HELD.** Dropping an unstarted key-down frame suppresses and removes\n  its queued matching key-up frame; already-started frames and releases for keys seen by the guest\n  are protected from dropping. Native three-buffer delivery proves key-down, key-up, and\n  SYN_REPORT remain an intact stream.\n- **Cross-target coverage — HELD.** The wasm32 runner drives the real virtio-mmio eventq with\n  `inject_event` + `sync` and compares the same eight-byte stream as native.\n\nImplementation commit: `85f5c4e`.\n\nEvidence: `evidence/e5-t10c/input-injection-2026-09-03.json` (SHA-256\n`6036c7384940401321f41e157b1ffd6004bd85fc1b5105e5e30f2388982dc3ac`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ndev::virtio::input` (11 passed); `cargo test -p wasm-vm-core --lib --quiet` (230 passed);\n`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core\n--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed);\n`wasm-pack test --node crates/wasm --test input_config` (1 passed); and `wasm-pack test --node\ncrates/wasm --test input_queues` (2 passed). The existing wasm-pack warning in\n`crates/wasm/tests/hart_ctrl.rs` is unrelated.\n\nThe recorded run demonstrates atomic SYN_REPORT framing, bounded non-blocking retention and exact\nwhole-frame accounting under 1000 frames, paired key-transition drops, three-buffer eventq\ndelivery, and native/wasm32 stream parity. Independent-machine, WebKit, and host-layer rr runs\nwere excluded per the user's direction and the repository's current evidence policy.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Framing and boundedness — HELD.** The native stress fixture predicts 1000 one-event frames\n  become 2000 events; observed retention is exactly 256 events in 128 complete SYN_REPORT frames,\n  with 872 frames and 1744 events counted as dropped.\n- **Key integrity — HELD.** Under the four-event budget, the recorded drop removes the queued\n  key-down and its separate key-up frame together; the three-buffer delivery records key-down,\n  key-up, and SYN_REPORT in order with no held key remaining.\n- **Cross-target transport — HELD.** The wasm32 runner drives the real virtio-mmio/eventq path and\n  observes the same eight-byte stream for both key transitions and SYN_REPORT.\n- **Coverage — HELD.** The changed staging, sync framing, budget enforcement, suppression/drop\n  accounting, delivery protection, reset state, and existing T10b queue paths execute in the\n  focused/native and wasm32 runs.\n- **Evidence integrity — HELD.** Evidence digest\n  `6036c7384940401321f41e157b1ffd6004bd85fc1b5105e5e30f2388982dc3ac` matches the checked-in\n  artifact for implementation commit `85f5c4e`.\n\nE5-T10c is verified; the next queue items must be decomposed before activation.",
+      "adversarial": "Force the drop path with a three-buffer eventq, alternate key-down/up bursts, drain after each\nwrap, and machine-check the stream invariant that every key frame terminates in SYN_REPORT and\nno delivered key-down lacks its eventual up or a whole-frame drop. Vary the buffer budget and\nconfirm the VM loop remains non-blocking.",
+      "file": "tasks/epic-5-the-window/E5-T10c-virtio-input-injection.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "verify(e5-t10c): mark input injection verified",
+            "verify(e5-t10c): record input injection evidence",
+            "chore(e5-t10c): start input injection"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
     },
     {
       "id": "E5-T11",
@@ -16176,11 +16871,15 @@
       "epicKey": "5",
       "title": "virtio-input keyboard device — EV_KEY map, EV_LED statusq, repeat policy",
       "priority": 511,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
-        "E5-T10"
+        "E5-T10c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T11a",
+        "E5-T11b",
+        "E5-T11c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "A concrete keyboard instance of the T10 chassis that the Linux guest binds as a full\nevdev keyboard: EV_KEY capability bitmap covering the PC-105 key range, EV_LED with\nCapsLock/NumLock/ScrollLock state flowing back to the host UI, and a deliberate,\ndocumented autorepeat policy.",
@@ -16208,13 +16907,124 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized keyboard container is cancelled before implementation as required by task policy and\nreplaced by three ordered S slices. E5-T11a owns the declarative PC-105 capability map and the\nno-EV_REP policy; E5-T11b owns the concrete device registration and LED/status callback state; and\nE5-T11c owns the guest evdev/repeat acceptance and final native/wasm keyboard integration proof.\nE5-T12 now depends on E5-T11c so the DOM keymap cannot activate before the guest-facing keyboard\ncontract is complete.",
       "adversarial": "Refute the bitmap: diff our EV_BITS payload against QEMU's virtio-keyboard\nbyte-for-byte; then in-guest, compare `udevadm info /dev/input/event0` key list — any\ncode we claim but never emit, or emit but don't claim (evdev drops undeclared codes\nsilently — inject KEY_F24 style edge codes and watch them vanish if the bitmap lies).\nAttack LEDs: toggle CapsLock from inside the guest 100x in a loop and race host-side\ninjections — LED indicator must match guest state at rest (no lost statusq buffers).\nThen start a getty on tty1, inject the byte sequence for `ls\\n` via key events, and\nprove the command executes — an off-by-one in any letter's code refutes.",
       "file": "tasks/epic-5-the-window/E5-T11-virtio-input-keyboard.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
       "commitCount": 0
+    },
+    {
+      "id": "E5-T11a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-input keyboard capability specification",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T10c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Define the reusable PC-105 keyboard `InputDeviceSpec` with an auditable evdev capability map and\nthe deliberate no-autorepeat contract.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit 916ee8f4b0616ac96a23be7b6807ec16338c1e5e adds the reusable keyboard\ncapability module and native/wasm32 configuration fixtures. The exact-head checks were:\ncargo fmt --all -- --check, git diff --check, cargo test -p wasm-vm-core --lib dev::virtio::input\n(13 passed), cargo test -p wasm-vm-core --lib (232 passed),\ncargo test -p wasm-vm-core --test virtio_mmio_slots --test virtio_blk --test virtio_net_critic\n--quiet (22 passed), native and wasm32 cargo clippy with -D warnings, the wasm32 core build, and\nwasm-pack test --node crates/wasm --test keyboard_spec (1 passed), input_config (1 passed), and\ninput_queues (2 passed). The evidence is\nevidence/e5-t11a/keyboard-spec-2026-09-03.json, SHA-256\ne841e5b828c681840822aea5e27c60412d12e96f2be93b4769683eab5905d10c.\n\nThe recording demonstrates that the keyboard spec emits exactly PC-105 codes 1..=248, the\nthree declared LED bits, optional MSC_SCAN, and SYN_REPORT, while EV_REP remains empty. Native\nand wasm32 VirtioMmio reads assert the stable name and devids plus byte-identical, zero-padded\ncapability payloads, including the final advertised key and the first undeclared edge.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- EV_KEY range — HELD. Predicted the native and wasm32 payloads would contain every code from\n  1 through 248, with no code 0 or 249..1023; the focused native assertions and the full\n  zero-padded wasm32 fixture observe exactly fe, thirty bytes of ff, then 01. Evidence:\n  the native keyboard tests and keyboard_spec wasm test in\n  evidence/e5-t11a/keyboard-spec-2026-09-03.json.\n- EV_LED/MSC/EV_REP — HELD. Predicted LED byte 07, MSC byte 10, SYN byte 01, and a zero-length\n  repeat bitmap; both config paths observe those values and the native map test rejects\n  non-declared tail bits. Evidence: the same evidence digest\n  e841e5b828c681840822aea5e27c60412d12e96f2be93b4769683eab5905d10c.\n- Identity and coverage — HELD. Predicted the stable keyboard name and BUS_VIRTUAL devid tuple\n  would round-trip through VirtioMmio and every changed implementation hunk would execute;\n  the native and wasm32 fixtures read both identity fields, while the 233-test core sweep,\n  22-test virtio regression sweep, and focused 14-test input suite remain green. No changed\n  runtime or fixture hunk is unexercised.\n- SUITE — HELD. The deterministic native and wasm32 fixtures are the permanent proof artifact;\n  no additional golden trace is needed for this declarative, non-concurrent slice.",
+      "adversarial": "Compare the complete bitmap against the checked-in QEMU-shaped fixture and probe edge codes near\nthe declared range, including F24 and the highest advertised code.",
+      "file": "tasks/epic-5-the-window/E5-T11a-keyboard-spec.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "chore(e5-t11a): verify keyboard spec",
+            "chore(e5-t11a): record keyboard spec evidence",
+            "chore(e5-t11a): start keyboard spec"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T11b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "keyboard device registration and LED status wiring",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T11a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Instantiate the keyboard spec as a concrete virtio-input device, register it through the existing\nvirtio-mmio chassis, and retain guest LED state through the T10 statusq callback seam.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit 95fd672 adds the slot-3 keyboard registration, host-owned LED state and\nstatus-sink adapter, Machine boundary servicing, and native/wasm32 registration fixtures. The\nexact-head checks were cargo fmt --all -- --check, git diff --check, cargo test -p wasm-vm-core\n--lib dev::virtio::input (15 passed), cargo test -p wasm-vm-core --test virtio_keyboard (2\npassed), cargo test -p wasm-vm-core --lib (234 passed), the 22-test virtio regression sweep,\nnative library and integration clippy with -D warnings, the wasm32 core build and clippy, and\nwasm-pack tests keyboard_registration (1 passed), keyboard_spec (1 passed), input_config (1\npassed), and input_queues (2 passed). Evidence:\nevidence/e5-t11b/keyboard-led-wiring-2026-09-03.json, SHA-256\nb37434c5c997b4bab4b3aedcf155442bfe4e75d10fa805dd99e7c0e92c52e6bf.\n\nThe recording demonstrates that DeviceID 18 is installed in slot 3 without disturbing the\nexisting GPU/headless slot layout, and that the normal Machine run-loop statusq path applies 100\nordered NumLock/CapsLock/ScrollLock updates to the host-owned indicator. A transport reset and\nqueue re-setup retain the callback sink and deliver the next LED update, while the wasm32 fixture\nconfirms the same registration and T11a config payload.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- Registration — HELD. Predicted DeviceID 18 would occupy only reserved slot 3, leaving the GPU\n  in slot 0 and slots 1 and 2 empty; the native and wasm32 registration fixtures observe exactly\n  that layout. Evidence: keyboard-led-wiring-2026-09-03.json.\n- LED ordering and reset — HELD. Predicted each of 100 alternating EV_LED status events would\n  update the corresponding host field before the next Machine boundary, and that reset plus\n  queue re-setup would preserve the sink; the native test observes every intermediate state,\n  status_events_served = 101 after the post-reset event, and the final CapsLock update.\n- Coverage — HELD. The changed keyboard sink, Machine fields/constructor, slot installer,\n  accessor, and run-loop service branch all execute in the focused unit, native Machine, or\n  wasm32 registration tests. No changed runtime hunk is unexercised.\n- Evidence integrity — HELD. Evidence digest\n  b37434c5c997b4bab4b3aedcf155442bfe4e75d10fa805dd99e7c0e92c52e6bf matches the checked-in\n  artifact for implementation commit 95fd672.\n- SUITE — HELD. The deterministic native status-queue test and wasm32 registration/config fixture\n  are the permanent proof artifacts for this isolated registration slice.",
+      "adversarial": "Alternate LED bits while eventq injections are pending, reset between statusq kicks, and prove the\nhost indicator converges to the final guest state without a stale callback or queue stall.",
+      "file": "tasks/epic-5-the-window/E5-T11b-keyboard-led-wiring.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "chore(e5-t11b): verify keyboard LED wiring",
+            "chore(e5-t11b): record keyboard LED evidence",
+            "chore(e5-t11b): start keyboard LED wiring"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T11c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "keyboard evdev stream and repeat-policy proof",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T11b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove the concrete keyboard against the rebuilt Linux guest: key make/break events are framed,\nguest-visible, and do not synthesize host-side autorepeat.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `ba49df3` attaches the concrete slot-3 keyboard to native and wasm boot\nassembly, exposes the host keyboard-event/sync API, adds the native guest eventq stream fixture and\nwasm32 mirror, and checks in `tools/verify/e5-t11c-keyboard-evdev.sh` plus its serial fixture. The\nextra-drive path now starts at slot 4 so the keyboard reservation cannot be overwritten.\n\nThe final native guest command was `tools/verify/e5-t11c-keyboard-evdev.sh`; it booted the pinned\nAlpine riscv64 guest, observed `/dev/input/event0` as `wasm-vm virtio keyboard` with\n`Bus=0006/Vendor=feed/Product=0001/Version=0100`, `EV=20013`, `LED=7`, and `MSC=10`, and captured\nfour 64-bit evdev records whose trailing fields were exactly KEY_A make, SYN_REPORT, KEY_A break,\nSYN_REPORT. The same command also verified that EV_REP was absent. The native guest stream test\nasserted the one-down/no-repeat behavior across 33 Machine boundaries; the wasm32 mirror asserted\nthe same behavior through the eventq transport.\n\nFinal checks: `cargo fmt --all -- --check`, `git diff --check`, the 2-test\n`virtio_keyboard_guest_stream` integration test, the 2-test `virtio_keyboard` integration test,\nthe 15 focused input unit tests, the full 234-test core library, the 22-test virtio regression\nsweep, native core/integration clippy with `-D warnings`, `cargo check -p wasm-vm-cli`, the wasm32\ncore build and clippy, and wasm-pack tests `keyboard_guest_stream` (2), `keyboard_registration`\n(1), `keyboard_spec` (1), `input_config` (1), and `input_queues` (2). The only output outside the\nasserted results was the pre-existing `hart_ctrl.rs` unused-import warning and wasm-bindgen's\nplatform fallback install warning.\n\nEvidence: `evidence/e5-t11c/keyboard-evdev-2026-09-03.json`, SHA-256\n`8145c0a6c5f7b80b90645b050b5acbb5098ad2407bb5b08964aa51806d5e16d6`; serial fixture\n`evidence/e5-t11c/keyboard-evdev-serial.txt`, SHA-256\n`1f6e85bac3d506eeede576457177c87288be65da96c18f503393095ef7665429`.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- Guest identity and capabilities — HELD. Predicted the rebuilt Alpine guest would register the\n  slot-3 device as `/dev/input/event0` with the T11a identity and `EV=20013`, `LED=7`, and\n  `MSC=10`, without `EV_REP`; the serial capture observes those exact values. Evidence:\n  `evidence/e5-t11c/keyboard-evdev-2026-09-03.json` and the checked-in serial fixture.\n- Make/break framing — HELD. Predicted the host hook's KEY_A down/up pair would produce exactly\n  `EV_KEY KEY_A 1`, `EV_SYN SYN_REPORT 0`, `EV_KEY KEY_A 0`, and `EV_SYN SYN_REPORT 0`; the real\n  guest raw-record capture and native/wasm32 eventq tests observe that sequence with no pending\n  events left behind.\n- Repeat policy — HELD. Predicted one injected down frame would yield one guest KEY_A event after\n  repeated service boundaries; the native and wasm32 no-repeat fixtures observe one down plus one\n  SYN_REPORT and zero additional events, while the spec's EV_REP bitmap is all zero.\n- Coverage — HELD. The changed native/wasm assembly, slot-4 extra-drive relocation, host injection\n  seam, eventq path, serial validator, and fixture are exercised by the final boot proof or the\n  focused native/wasm tests. The existing T11b LED/reset findings carry forward unchanged; the\n  lean Alpine image has no tty1 getty, so the parent task's tty1 `ls` probe is not an applicable\n  acceptance path for this serial evdev slice. Undeclared DOM-code filtering remains scoped to\n  E5-T12's keymap layer; T11c does not claim that the generic T10c transport API filters arbitrary\n  host-supplied event codes.\n- Evidence integrity — HELD. The evidence JSON digest and serial-fixture digest in the worker\n  entry match the checked-in artifacts for implementation commit `ba49df3` plus evidence commit\n  `0efb0f3`.\n- SUITE — HELD. The deterministic native guest stream test, wasm32 mirror, and real Alpine serial\n  validator are the permanent proof artifacts for this slice.\n\nCommands: `tools/verify/e5-t11c-keyboard-evdev.sh`; `cargo test -p wasm-vm-core --test\nvirtio_keyboard_guest_stream`; `wasm-pack test --node crates/wasm --test keyboard_guest_stream`.",
+      "adversarial": "Inject an undeclared edge key and compare the guest's evdev output, toggle LEDs repeatedly while\ninjecting keys, and run the `ls\\n` key sequence through tty1 to catch map offsets or duplicate repeats.",
+      "file": "tasks/epic-5-the-window/E5-T11c-keyboard-guest-proof.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "chore(e5-t11c): verify keyboard guest proof",
+            "chore(e5-t11c): record keyboard guest proof",
+            "chore(e5-t11c): start keyboard guest proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
     },
     {
       "id": "E5-T12",
@@ -16222,11 +17032,15 @@
       "epicKey": "5",
       "title": "DOM KeyboardEvent.code → evdev translation with capture policy",
       "priority": 512,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
-        "E5-T11"
+        "E5-T11c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T12a",
+        "E5-T12b",
+        "E5-T12c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "Real keystrokes flow: a translation layer maps `KeyboardEvent.code` (physical key\nidentity) to evdev codes for the T11 keyboard, tracks modifier state, suppresses browser\nautorepeat, and enforces an explicit preventDefault/capture policy — so typing in the\ncanvas types in the guest, layout handled by the guest's own keymap.",
@@ -16254,9 +17068,149 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized browser keyboard container is cancelled before implementation as required by task\npolicy and replaced by three ordered S slices. E5-T12a owns the generated physical-code table and\ncoverage oracle; E5-T12b owns DOM event normalization, modifier/frame state, repeat suppression, and\nthe wasm injection bridge; and E5-T12c owns capture/preventDefault policy, documentation, and the\nend-to-end browser/getty proof. E5-T13 is rewired to the final E5-T12c boundary.",
       "adversarial": "Attack ordering and state: script rapid interleaved chords (Shift down, A down, Shift\nup, A up; Ctrl+Shift+T with passthrough off) via Playwright and diff the guest-side\nevtest stream against the expected sequence — any reorder or loss refutes. Attack the\ntable: property-test that every `KeyboardEvent.code` the browser can emit for a PC-105\nkeyboard (fixture list from the W3C UI Events code spec) maps or is explicitly listed\nunmapped; an unmapped mainstream key (e.g. \"ContextMenu\") refutes. AltGr on Windows\nChrome emits Ctrl+AltRight — verify the doc's stated handling matches behavior. Try\nNumLock-dependent Numpad codes both states. Any browser-default action firing while\ncaptured (e.g. `/` opening quick-find in Firefox) refutes the preventDefault policy.",
       "file": "tasks/epic-5-the-window/E5-T12-dom-to-evdev-keymap.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T12a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "generated physical keyboard code table and coverage oracle",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T11c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Create the single generated mapping from W3C `KeyboardEvent.code` physical identities to the\nT11 keyboard's Linux evdev codes, with a checked-in source table and an exhaustive PC-105 coverage\noracle. Layout remains in the guest keymap; this slice only defines physical identity.",
+      "criteria": [
+        {
+          "text": "Every PC-105 code in the checked-in W3C fixture is mapped or explicitly listed as unmapped; no mainstream code silently falls through.",
+          "checked": false
+        },
+        {
+          "text": "`KeyA` maps to evdev `KEY_A` (30), `KeyY` maps to `KEY_Y`, and the punctuation, modifier, function, navigation, and numpad edge entries match the Linux input-code fixture.",
+          "checked": false
+        },
+        {
+          "text": "The table test is deterministic and passes from a clean checkout with no generated output hidden outside the repository.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `f177fa1` adds the checked-in W3C PC-105 physical-code fixture,\nthe JSON evdev source table, and `tools/gen-keymap.mjs`. The generator validates duplicate\nphysical identities, duplicate evdev assignments, missing/extra fixture rows, and explicit\nreasons for any future unmapped row before emitting byte-identical `web/src/input/keymap.ts`\nand the no-bundler browser projection `web/src/input/keymap.js`. The module exports the lookup,\ncoverage oracle, and named edge fixtures.\n\nThe frozen-head recording ran `node tools/gen-keymap.mjs --check`,\n`node --test web/tests/keymap.test.mjs`, and `npm run test:keymap --prefix web`: 10 tests passed,\n0 failed. The same recording ran the scratch-copy attacks: deleting `ContextMenu`, appending a\nduplicate `KeyA` identity, and assigning `KeyA` the existing `KeyY` evdev code; each was rejected\nwith the named diagnostic. Output SHA-256 is\n`1c5f34216a3bd40334cb5a2bcaf538eb732be78ab8c297740377bd08ef7a4d12`.\n\nEvidence: `evidence/e5-t12a/keymap-2026-09-03.json`, including the fixture/source/generated\ndigests and exact edge-code assertions. This slice is a non-wired table/tooling layer; DOM event\nnormalization and browser capture proof remain owned by E5-T12b and E5-T12c.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Coverage — HELD.** Predicted every code in the checked-in W3C fixture would have exactly one\n  source row; the oracle observes 119 fixture codes and 119 source rows, with no missing or extra\n  identities. Evidence: `evidence/e5-t12a/keymap-2026-09-03.json`, fixture SHA-256\n  `6a17d7494bfc7c27f181294dc1893176236531ad5320fe9e75e4d93e40cd243b` and source SHA-256\n  `73312315ec4741b7914cf5a21ef638938684f5bc8fb23076bc702686c7fdcc73`.\n- **Physical evdev identity — HELD.** Predicted the table would preserve the named letter,\n  punctuation, modifier, function, navigation, and numpad identities; direct lookups observe\n  `KeyA=30`, `KeyY=21`, `Backquote=41`, `IntlBackslash=86`, `AltRight=100`, `MetaLeft=125`,\n  `NumpadEnter=96`, `ContextMenu=127`, and `F24=194`. The generated module digests match byte-for-\n  byte for `keymap.ts` and `keymap.js` (`e6a3e893fadd7d288b6eabd4d59c01930498cee7923a682e9ae5d614ec939ada`).\n- **Adversarial oracle — HELD.** Predicted a deleted `ContextMenu` row, appended duplicate `KeyA`\n  identity, and duplicate evdev code 21 would each be rejected with the affected identity named;\n  the scratch-copy run rejects all three. The permanent test also rejects an undocumented unmapped\n  row. Evidence output SHA-256:\n  `1c5f34216a3bd40334cb5a2bcaf538eb732be78ab8c297740377bd08ef7a4d12`.\n- **Diff coverage and integrity — HELD.** The verifier reran the generator check and five-test\n  suite at the post-evidence head; every changed source, generator, generated projection, fixture,\n  and test path is read or executed, and `git diff --check` passes. This non-wired table slice has\n  no browser or deployment claim, so no WebKit/independent-machine run is applicable.\n- **SUITE — HELD.** The checked-in JSON source, W3C fixture, generator, generated projections, and\n  deterministic Node test are the permanent proof artifacts.\n\nCommands: `node tools/gen-keymap.mjs --check`; `node --test web/tests/keymap.test.mjs`;\n`npm run test:keymap --prefix web`; `git diff --check`.",
+      "adversarial": "Delete one mapping and add a duplicate code in a scratch copy; the oracle must fail with the\nmissing/duplicate identity named. Exercise `ContextMenu`, `IntlBackslash`, `NumpadEnter`, and\n`F24`; any mainstream code that is neither mapped nor explicitly documented is a finding.",
+      "file": "tasks/epic-5-the-window/E5-T12a-keymap-table.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "chore(e5-t12a): verify keymap coverage",
+            "chore(e5-t12a): record keymap proof",
+            "chore(e5-t12a): start keyboard code table"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T12b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "DOM keyboard event normalization and evdev bridge",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E5-T12a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Translate normalized DOM keydown/keyup events into framed T11 evdev events through the\n`WasmLinux` keyboard bridge. Track modifiers and held keys, suppress browser autorepeat and IME\nevents according to the written v1 policy, and preserve make/break ordering.",
+      "criteria": [
+        {
+          "text": "A physical `KeyA` down/up produces exactly one KEY_A make frame and one break frame, each terminated by SYN_REPORT; DOM repeat keydowns add no frames.",
+          "checked": false
+        },
+        {
+          "text": "Shift/Ctrl/Alt/Meta modifiers are emitted before the dependent key and released after it; `Ctrl+C` and shifted punctuation have the expected evdev sequence.",
+          "checked": false
+        },
+        {
+          "text": "Composing events and keyCode 229 produce no guest events, while a dead key still maps by its physical `code` when not composing.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `baf1d20` adds the JavaScript-compatible TypeScript keyboard bridge and\nits no-bundler projection, plus the direct/whole-machine-worker WasmLinux adapter. Each accepted\nphysical key transition calls `sendKeyboardEvent(EV_KEY, evdev, value)` and then `syncKeyboard`.\nThe bridge tracks physical held keys, suppresses DOM repeat and IME/keyCode-229 events, maps dead\nkeys by `code`, reports unmapped/orphan events as diagnostics, and defers modifier breaks until\ndependent keys have broken. The loader controller and versioned worker allow-list now expose both\nkeyboard methods; the protocol fixture asserts FIFO send-before-sync ordering.\n\nThe frozen-head recording ran the 35-test direct Node matrix covering KeyA make/break, 100 repeat\ncallbacks, rapid Shift/A release ordering, Ctrl+C, shifted punctuation, Windows Ctrl+AltRight\nAltGr, IME/dead-key handling, unmapped/orphan diagnostics, adapter calls, listener lifecycle, and\nthe inherited T12a table. `npm run test:keyboard --prefix web` ran the 30 keyboard/protocol tests.\nBoth passed with zero failures; `node --check` on the changed browser modules, `git diff --check`,\nand `cargo check -p wasm-vm-wasm` also passed. Output SHA-256 is\n`0fbd11d2e8fbf5b6c31236aecd336c329882e03faed2a7a86608c926c7f9db31`.\n\nEvidence: `evidence/e5-t12b/keyboard-bridge-2026-09-03.json`, including the exact frame\nsequences and changed-file digests. Browser capture/preventDefault wiring and the getty proof\nremain owned by E5-T12c.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Frame translation — HELD.** Predicted a physical `KeyA` make and break would each call the\n  T11 event API once and then publish one sync frame; the bridge test observes exactly\n  `EV_KEY 30 1`, sync, `EV_KEY 30 0`, sync. The direct and worker adapters both expose the same\n  `sendKeyboardEvent`/`syncKeyboard` pair, and the protocol test observes send-before-sync FIFO\n  order through the versioned allow-list.\n- **Modifier ordering — HELD.** Predicted modifiers would precede dependent keys and would not\n  break before them, including the adversarial `ShiftLeft down, KeyA down, ShiftLeft up, KeyA up`\n  sequence; the observed frames are 42-down, 30-down, 30-up, 42-up. Ctrl+C, shifted punctuation,\n  and Windows Ctrl+AltRight AltGr are covered by exact frame assertions.\n- **Repeat/IME/dead-key policy — HELD.** Predicted 100 `repeat` keydowns add no guest frames,\n  composing and keyCode/which 229 events add none, and a non-composing `Dead` key maps by physical\n  code; the deterministic matrix observes those results. Unmapped and orphan events are explicit\n  diagnostics/no-ops.\n- **Coverage and integrity — HELD.** The verifier reran 35 direct Node tests and the 30-test\n  package-script matrix at the post-evidence head, plus syntax checks, `git diff --check`, and\n  `cargo check -p wasm-vm-wasm`; all passed. Changed bridge, loader, worker-protocol, test, and\n  inherited keymap paths are exercised or read by the cited runs. Evidence digest:\n  `evidence/e5-t12b/keyboard-bridge-2026-09-03.json` with output SHA-256\n  `0fbd11d2e8fbf5b6c31236aecd336c329882e03faed2a7a86608c926c7f9db31`.\n- **Scope — HELD.** This slice intentionally stops at normalized event translation and controller\n  transport; capture/preventDefault UI policy and browser/getty proof are the next T12c boundary.\n  No independent-machine or WebKit run is applicable to this local deterministic bridge claim.\n- **SUITE — HELD.** The deterministic bridge/protocol tests and exact frame fixtures are retained\n  as the permanent proof artifacts.\n\nCommands: `node --test web/tests/keymap.test.mjs web/tests/keyboard-bridge.test.mjs\nweb/tests/e4-t32-worker-protocol.test.mjs`; `npm run test:keyboard --prefix web`;\n`node --check web/src/input/keyboard.js`; `node --check web/linux-worker-protocol.js`;\n`node --check web/loader.js`; `git diff --check`; `cargo check -p wasm-vm-wasm`.",
+      "adversarial": "Feed rapid `ShiftLeft` down, `KeyA` down, `ShiftLeft` up, `KeyA` up and a held key with 100 repeat\ncallbacks; assert exact sequence and no duplicate down. Feed Windows-style Ctrl+AltRight AltGr\nordering and verify the documented representation. Inject an unmapped code and require an explicit\ndiagnostic/no-op rather than an arbitrary evdev code.",
+      "file": "tasks/epic-5-the-window/E5-T12b-dom-keyboard-bridge.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 3,
+          "labels": [
+            "chore(e5-t12b): verify DOM keyboard bridge",
+            "chore(e5-t12b): record keyboard bridge proof",
+            "chore(e5-t12b): start DOM keyboard bridge"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 3
+    },
+    {
+      "id": "E5-T12c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "keyboard capture policy and browser getty proof",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E5-T12b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Finish the browser-facing keyboard path with an explicit capture toggle and preventDefault policy,\ndocument passthrough and uncapturable chords, and prove that real browser key events reach the\nbooted guest getty.",
+      "criteria": [
+        {
+          "text": "Capture-on typing `ls -la | grep 'x' && echo \"hi~\"` reaches the guest and executes with correct shift, quote, pipe, and tilde behavior.",
+          "checked": false
+        },
+        {
+          "text": "Capture-off canvas keystrokes do not call preventDefault and remain available to the browser; captured mode prevents ordinary canvas key defaults while preserving the documented chord.",
+          "checked": false
+        },
+        {
+          "text": "The browser proof also covers Ctrl+C interrupt ordering and reports the capture state in the UI; all intended changes are exercised by the recorded run.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Attack capture ordering with rapid chords and the T08 reserved chord, open browser quick-find in a\ncaptured Firefox-like fixture, and try Ctrl+W/T/N, Cmd+Q/Tab, and F11. Verify the documented\npassthrough/uncapturable behavior rather than silently promising impossible interception.",
+      "file": "tasks/epic-5-the-window/E5-T12c-capture-policy-e2e.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -16270,7 +17224,7 @@
       "priority": 513,
       "status": "pending",
       "depends_on": [
-        "E5-T12"
+        "E5-T12c"
       ],
       "decomposed_into": [],
       "estimate": "M",
@@ -16316,7 +17270,7 @@
       "priority": 514,
       "status": "pending",
       "depends_on": [
-        "E5-T10"
+        "E5-T10c"
       ],
       "decomposed_into": [],
       "estimate": "L",
@@ -16551,7 +17505,7 @@
       "priority": 519,
       "status": "pending",
       "depends_on": [
-        "E5-T05"
+        "E5-T05c"
       ],
       "decomposed_into": [],
       "estimate": "L",
@@ -16736,7 +17690,7 @@
       "priority": 523,
       "status": "pending",
       "depends_on": [
-        "E5-T05"
+        "E5-T05c"
       ],
       "decomposed_into": [],
       "estimate": "M",

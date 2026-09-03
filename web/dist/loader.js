@@ -186,6 +186,10 @@ export async function startLinuxBoot(opts = {}) {
     bootProfileUrl = "./releases/chunked-alpine/boot-profile.json",
     // E3-T03 block-cache byte budget in MiB (0 → 256 MiB default). Set low to exercise eviction.
     cacheBudgetMib = 0,
+    // E4-T28e: optional fully resident read-only secondary virtio-blk image. Production Alpine
+    // boots leave this unset; the browser GCC proof supplies the pinned local overlay explicitly.
+    extraDiskUrl = null,
+    extraDiskSha256 = null,
     // E3-T05: persist the copy-on-write overlay to IndexedDB (writes survive a tab reload). Only
     // meaningful in "chunked" mode; the driver flushes via machine.persistPending() each tick.
     persist = false,
@@ -301,6 +305,18 @@ export async function startLinuxBoot(opts = {}) {
         const got = await sha256hex(bytes);
         if (got !== want) {
           throw new Error(`integrity check failed for ${name}: expected ${want}, got ${got} — refusing to boot corrupt bytes`);
+        }
+      }
+    }
+    let extraDiskBytes = null;
+    if (extraDiskUrl) {
+      extraDiskBytes = await fetchWithProgress(extraDiskUrl, (l, t) => onProgress("extraDisk", l, t));
+      if (extraDiskSha256) {
+        const got = await sha256hex(extraDiskBytes);
+        if (got !== extraDiskSha256) {
+          throw new Error(
+            `integrity check failed for extra disk: expected ${extraDiskSha256}, got ${got}`,
+          );
         }
       }
     }
@@ -442,7 +458,24 @@ export async function startLinuxBoot(opts = {}) {
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
       machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, lockReadOnly, emitOutput, overlaySeedIdentity);
     } else if (isChunked) {
-      machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, emitOutput);
+      if (extraDiskBytes) {
+        if (typeof WasmLinux.newChunkedDiskWithExtra !== "function") {
+          throw new Error("browser wasm build lacks E4-T28e secondary-drive support");
+        }
+        machine = WasmLinux.newChunkedDiskWithExtra(
+          ramMib,
+          kernel,
+          imageManifestText,
+          baseUrl,
+          cacheBudgetMib,
+          bootProfile,
+          extraDiskBytes,
+          bootargs,
+          emitOutput,
+        );
+      } else {
+        machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, emitOutput);
+      }
     } else if (mode === "disk") {
       machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, emitOutput);
     } else {
@@ -895,6 +928,19 @@ export async function startLinuxBoot(opts = {}) {
           inputBytes += bytes?.byteLength ?? bytes?.length ?? 0;
           machine.sendInput(bytes);
         }
+      },
+      // E5-T12b: the DOM keyboard bridge publishes physical evdev frames through the same
+      // controller on both the direct and whole-machine-worker paths. Worker RPC ordering keeps
+      // sendKeyboardEvent immediately ahead of its matching syncKeyboard frame.
+      sendKeyboardEvent: (eventType, code, value) => {
+        if (stopped) return false;
+        machine.sendKeyboardEvent(eventType, code, value);
+        return true;
+      },
+      syncKeyboard: () => {
+        if (stopped) return false;
+        machine.syncKeyboard();
+        return true;
       },
       stop: async () => {
         finish("stopped");

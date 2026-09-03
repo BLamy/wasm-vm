@@ -7,7 +7,7 @@
   "scripts": {
     "test:e2e": "playwright test",
     "test:keymap": "node --test tests/keymap.test.mjs",
-    "test:keyboard": "node --test tests/keyboard-bridge.test.mjs tests/e4-t32-worker-protocol.test.mjs"
+    "test:keyboard": "node --test tests/keyboard-bridge.test.mjs tests/capture-policy.test.mjs tests/e4-t32-worker-protocol.test.mjs"
   },
   "dependencies": {
     "@xterm/addon-fit": "0.10.0",

@@ -28,6 +28,8 @@ import { createLinuxTerminal } from "./terminal.js";
 import { createFileTransferUI } from "./file-transfer.js";
 import { createBootProgressSurface } from "./boot-progress.js";
 import { createFencedRpc, formatRpcCommand } from "./guest-rpc.js";
+import { createKeyboardBridge, createWasmKeyboardAdapter } from "./src/input/keyboard.js";
+import { attachKeyboardCapture, createKeyboardCapturePolicy } from "./src/input/capture.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -275,6 +277,82 @@ if (new URLSearchParams(location.search).has("testHooks")) {
   globalThis.__wasmVmFileSha256 = FileSha256;
 }
 
+// E5-T12c: the terminal owns a visible keyboard-capture policy. The policy runs on the terminal
+// host in capture phase, ahead of xterm's handlers, while leaving the existing serial onData path
+// intact. Physical transitions additionally flow through the T11 evdev bridge once a guest boots;
+// the serial getty remains the byte-oriented foreground console used by the demo.
+const keyboardHost = document.getElementById("term");
+const keyboardStateEl = document.getElementById("ide-keyboard-state");
+const keyboardToggle = document.getElementById("ide-keyboard-toggle");
+const keyboardDiagnostics = [];
+const keyboardFrames = [];
+let reservedViewToggleCount = 0;
+
+function setKeyboardIndicator(captured) {
+  const mode = captured ? "captured" : "browser";
+  if (keyboardStateEl) {
+    keyboardStateEl.textContent = `Keyboard: ${mode}`;
+    keyboardStateEl.dataset.captured = String(captured);
+  }
+  if (keyboardToggle) {
+    keyboardToggle.textContent = `Capture: ${captured ? "on" : "off"}`;
+    keyboardToggle.setAttribute("aria-pressed", String(captured));
+  }
+  document.documentElement.dataset.keyboardCapture = captured ? "on" : "off";
+}
+
+const keyboardCapture = createKeyboardCapturePolicy({
+  initialCaptured: true,
+  // xterm's printable ASCII path intentionally waits for keypress/input after keydown. Let that
+  // target keep its native sequence for letters and Space; xterm cancels it after converting to
+  // serial bytes. Canvas and other guest surfaces still receive the ordinary capture decision.
+  preserveDefault: (event) => event?.target?.classList?.contains("xterm-helper-textarea") && (
+    event?.code === "Space" || /^[A-Za-z]$/.test(event?.key || "")
+  ),
+  onGuestEvent: (event) => keyboardBridge?.handleKeyEvent(event),
+  onReserved: (event) => {
+    reservedViewToggleCount += 1;
+    try { window.__keyboardReservedToggles = reservedViewToggleCount; } catch { /* page-only hook */ }
+    try {
+      window.dispatchEvent(new CustomEvent("wvm:reserved-view-toggle", {
+        detail: { code: event?.code || "Backquote" },
+      }));
+    } catch { /* the hook is optional in non-browser fixtures */ }
+  },
+  onDiagnostic: (entry) => {
+    keyboardDiagnostics.push(entry);
+    if (keyboardDiagnostics.length > 256) keyboardDiagnostics.shift();
+  },
+  onStateChange: setKeyboardIndicator,
+});
+if (keyboardHost) attachKeyboardCapture(keyboardHost, keyboardCapture, { capture: true });
+
+function releaseKeyboardState() {
+  try { keyboardBridge?.releaseAll?.(); } catch { /* teardown may race a stopped controller */ }
+}
+
+function setKeyboardCaptured(value) {
+  const next = keyboardCapture.setCaptured(value);
+  if (!next) releaseKeyboardState();
+  return next;
+}
+
+keyboardToggle?.addEventListener("click", () => setKeyboardCaptured(!keyboardCapture.isCaptured()));
+try {
+  window.__keyboardCapture = {
+    isCaptured: () => keyboardCapture.isCaptured(),
+    setCaptured: setKeyboardCaptured,
+    toggle: () => setKeyboardCaptured(!keyboardCapture.isCaptured()),
+    heldCodes: () => keyboardBridge?.heldCodes?.() ?? [],
+    pendingModifierCodes: () => keyboardCapture.pendingModifierCodes(),
+    passthroughCodes: () => keyboardCapture.passthroughCodes(),
+    reservedCodes: () => keyboardCapture.reservedCodes(),
+    diagnostics: () => [...keyboardDiagnostics],
+    frames: () => [...keyboardFrames],
+  };
+  window.__keyboardReservedToggles = reservedViewToggleCount;
+} catch { /* page-only diagnostics */ }
+
 const runBtn = document.getElementById("run");
 const resetBtn = document.getElementById("reset");
 const fileInput = document.getElementById("file");
@@ -293,6 +371,7 @@ const bootProgress = createBootProgressSurface({
 const bootAlpineBtn = document.getElementById("boot-alpine");
 const bootAlpineFullBtn = document.getElementById("boot-alpine-full");
 let linuxCtl = null;
+let keyboardBridge = null;
 let linuxBootPromise = null;
 let linuxBootRequest = null;
 let linuxActiveRequest = null;
@@ -318,6 +397,10 @@ function teardownLinuxController(controller, { natural = false } = {}) {
 function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   cancelActiveStream?.();
   rejectPendingGuestExecs();
+  // The controller has already been stopped by the time owner UI is cleared. Drop the bridge
+  // without sending post-termination key-up RPCs; the capture policy resets transient state when
+  // the next boot installs a fresh bridge.
+  keyboardBridge = null;
   ui.detachSink();
   fileTransferUI.attachController(null);
   if (diagnosticJitStatsTimer !== null) {
@@ -782,6 +865,16 @@ async function runLinuxBootOwned(opts, banner, request) {
       onWriterStatus: ownerUi.onWriterStatus,
     });
     linuxCtl = bootController;
+    keyboardBridge = createKeyboardBridge(createWasmKeyboardAdapter(linuxCtl), {
+      onDiagnostic: (entry) => {
+        keyboardDiagnostics.push({ ...entry, source: "evdev-bridge" });
+        if (keyboardDiagnostics.length > 256) keyboardDiagnostics.shift();
+      },
+      onFrame: (frame) => {
+        keyboardFrames.push(frame);
+        if (keyboardFrames.length > 512) keyboardFrames.shift();
+      },
+    });
     linuxActiveRequest = request;
     const ctlForRelease = bootController;
     let settlementHandled = false;
@@ -1055,6 +1148,27 @@ window.__bootAlpineChunked = () =>
     "E4 browser profiling boot (chunked Alpine, lazy fetch)",
     { requestKey: "alpine", onClaim: () => setGuestChip("alpine") },
   );
+// E4-T28e test-only hook: attach the locally pinned GCC overlay as a real second virtio-blk drive
+// while booting the real Alpine guest. It is deliberately absent from the production UI and only
+// exists when the verifier opts into `?testHooks=1`.
+if (new URLSearchParams(location.search).has("testHooks")) {
+  window.__bootGccInteractive = () =>
+    runLinuxBoot(
+      {
+        manifestUrl: "./artifacts-alpine.json",
+        mode: "chunked",
+        imageManifestUrl: "./releases/chunked-alpine/manifest.json",
+        bootProfileUrl: null,
+        persist: false,
+        bootSnapshot: false,
+        ramMib: 256,
+        extraDiskUrl: "./gcc-overlay/gcc.ext4",
+        extraDiskSha256: "f53445f65b5e32b9fe3c47e0f84c52c850da2c747edae0abca60e9592a758c4a",
+      },
+      "E4-T28e GCC interactive browser proof",
+      { requestKey: "gcc", onClaim: () => setGuestChip("alpine") },
+    );
+}
 // ── Docker tab ⇄ real boot bridge ─────────────────────────────────────────────
 // The Docker "Run" button drives the SAME real boot machinery as this Terminal tab — it never
 // simulates a shell. For busybox we boot the real busybox userland on RISC-V Linux (the initramfs

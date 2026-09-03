@@ -132,6 +132,14 @@ export class WasmLinux {
      */
     static newChunkedDiskPersistent(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, read_only: boolean, output: Function, seed_identity?: string | null): Promise<WasmLinux>;
     /**
+     * E4-T28e: boot the normal lazy Alpine root disk with one additional read-only virtio-blk
+     * image. The extra image is passed by value so the fetched overlay becomes one resident Rust
+     * buffer; it is never compiled or transformed on the host. Slot 4 is used because browser
+     * Linux reserves slots 1/2 for virtio-net/rng and slot 3 for the keyboard, leaving `/dev/vdb`
+     * as the second block device.
+     */
+    static newChunkedDiskWithExtra(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, extra_disk: Uint8Array, bootargs: string, output: Function): WasmLinux;
+    /**
      * E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
      * an initramfs. `disk` is MOVED into an in-memory `BlockBackend` (one wasm-side copy — the T21
      * single-copy discipline; a `&[u8]` + `.to_vec()` would double-allocate 512 MB). Default
@@ -236,6 +244,12 @@ export class WasmLinux {
      */
     sendInput(bytes: Uint8Array): void;
     /**
+     * Queue one guest-visible evdev keyboard event. Call `syncKeyboard` after the host's
+     * keydown/keyup event (or after a batch of related events) to publish the frame with its
+     * `SYN_REPORT`; browser repeat events must not call this method as key-downs.
+     */
+    sendKeyboardEvent(event_type: number, code: number, value: number): void;
+    /**
      * E4-T39: toggle static region chaining without rebuilding the generated modules.
      */
     setChaining(on: boolean): void;
@@ -282,6 +296,10 @@ export class WasmLinux {
      * native snapshot contract; registers and device state are intentionally not encoded here.
      */
     stateDigest(): string;
+    /**
+     * Publish the current host keyboard frame by appending `EV_SYN/SYN_REPORT`.
+     */
+    syncKeyboard(): void;
     takeFileDownloadChunk(id: number): Uint8Array;
 }
 
@@ -513,6 +531,7 @@ export interface InitOutput {
     readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];
     readonly wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: any, o: number, p: number) => any;
+    readonly wasmlinux_newChunkedDiskWithExtra: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: any) => [number, number, number];
     readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_noteFileTransferPersist: (a: number) => [number, number];
     readonly wasmlinux_overlayGeneration: (a: number) => [number, number, number];
@@ -528,6 +547,7 @@ export interface InitOutput {
     readonly wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_saveSnapshot: (a: number) => [number, number, number];
     readonly wasmlinux_sendInput: (a: number, b: number, c: number) => [number, number];
+    readonly wasmlinux_sendKeyboardEvent: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_setChaining: (a: number, b: number) => [number, number];
     readonly wasmlinux_setDiskReadOnly: (a: number) => [number, number, number];
     readonly wasmlinux_setDynamicChaining: (a: number, b: number) => [number, number];
@@ -536,6 +556,7 @@ export interface InitOutput {
     readonly wasmlinux_setProfiling: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];
+    readonly wasmlinux_syncKeyboard: (a: number) => [number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_enableJit: (a: number, b: number) => [number, number];
     readonly wasmmachine_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
