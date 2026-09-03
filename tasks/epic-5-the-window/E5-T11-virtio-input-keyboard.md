@@ -4,7 +4,7 @@ epic: 5
 title: virtio-input keyboard device — EV_KEY map, EV_LED statusq, repeat policy
 priority: 511
 status: pending
-depends_on: [E5-T10]
+depends_on: [E5-T10c]
 estimate: M
 capstone: false
 ---

@@ -4,7 +4,7 @@ epic: 5
 title: Pointer devices — absolute tablet, relative mouse with Pointer Lock, wheel
 priority: 514
 status: pending
-depends_on: [E5-T10]
+depends_on: [E5-T10c]
 estimate: L
 capstone: false
 ---
