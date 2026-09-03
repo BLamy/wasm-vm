@@ -1,0 +1,183 @@
+{
+  "task": "E5-T12c",
+  "generatedAt": "2026-09-03T22:12:25.261Z",
+  "gitHead": "fbdfc53954f2b3ad5c356e98bbda29694fbe6b5c",
+  "command": "node tools/verify/e5-t12c-browser-proof.mjs",
+  "base": "http://127.0.0.1:52743",
+  "url": "http://127.0.0.1:52743/?guest=busybox&nosw=1&testHooks=1&noAutoBoot=1&jit=0#ide",
+  "browser": {
+    "name": "chromium",
+    "version": "unknown"
+  },
+  "staticAudit": {
+    "parity": [
+      {
+        "source": "web/main.js",
+        "dist": "web/dist/main.js",
+        "equal": true,
+        "sha256": "b39261d5dd8fa7dbd4ccd06348fa89651117243c78ab250c7b4ee4c8da5278b3"
+      },
+      {
+        "source": "web/ide.js",
+        "dist": "web/dist/ide.js",
+        "equal": true,
+        "sha256": "50f0534f17d1529f6108fa70193d08c575e8707a1db6e6e8fc2dddf6e0290ebd"
+      }
+    ],
+    "generatedSourcesPresent": true
+  },
+  "stages": {
+    "boot": {
+      "ok": true,
+      "elapsedMs": 18526
+    },
+    "shellTyping": {
+      "command": "ls -la | grep 'x' && echo \"hi~\"",
+      "result": "hi~"
+    },
+    "ctrlC": {
+      "ordering": "Control before C",
+      "result": "E5_T12C_CTRL_C_42"
+    },
+    "capture": {
+      "capture": true,
+      "indicator": "Keyboard: captured",
+      "toggle": "Capture: on",
+      "offProbe": {
+        "code": "F1",
+        "defaultPrevented": false
+      },
+      "onProbe": {
+        "code": "F2",
+        "defaultPrevented": true
+      },
+      "reservedToggles": 1,
+      "frameCount": 152,
+      "frameSample": [
+        {
+          "eventType": 1,
+          "code": "Digit9",
+          "evdev": 10,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Digit9",
+          "evdev": 10,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Digit6",
+          "evdev": 7,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Digit6",
+          "evdev": 7,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Digit8",
+          "evdev": 9,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Digit8",
+          "evdev": 9,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Digit7",
+          "evdev": 8,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Digit7",
+          "evdev": 8,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Digit0",
+          "evdev": 11,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Digit0",
+          "evdev": 11,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Digit0",
+          "evdev": 11,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Digit0",
+          "evdev": 11,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "Enter",
+          "evdev": 28,
+          "value": 0,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "F2",
+          "evdev": 60,
+          "value": 1,
+          "sync": 0
+        },
+        {
+          "eventType": 1,
+          "code": "F2",
+          "evdev": 60,
+          "value": 0,
+          "sync": 0
+        }
+      ],
+      "diagnostics": [],
+      "terminalTail": "[fast-boot: restoring host from a build-time snapshot instead of booting Linux][execution: whole-machine-worker; fast interpreter; JIT forced off by ?jit=0; quantum 500000][    0.000000] Linux version 6.6.63 (wasmvm@wasmvm) (riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Thu Nov 14 2024[    0.000000] Machine model: riscv-virtio,qemu[    0.000000] SBI specification v2.0 detected[    0.000000] SBI implementation ID=0x574d Version=0x100[    0.000000] SBI TIME extension detected[    0.000000] SBI IPI extension detected[    0.000000] SBI RFENCE extension detected[    0.000000] SBI SRST extension detected[    0.000000] earlycon: sbi0 at I/O port 0x0 (options '')[    0.000000] printk: bootconsole [sbi0] enabled[    0.000000] efi: UEFI not found.[    0.000000] Zone ranges:[    0.000000]   DMA32    [mem 0x0000000080000000-0x000000008fffffff]"
+    }
+  },
+  "errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "screenshot": {
+    "path": "evidence/e5-t12c/keyboard-capture-2026-09-03.png",
+    "sha256": "b76aa73eb420afc9ddcae8f982fed5e2d18f250954da73e95fd21afe7c5ab1c6"
+  }
+}

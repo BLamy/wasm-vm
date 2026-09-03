@@ -360,7 +360,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `512` [E5-T12](epic-5-the-window/E5-T12-dom-to-evdev-keymap.md) — DOM KeyboardEvent.code → evdev translation with capture policy *(deps: E5-T11c)*
 - [x] `512.1` [E5-T12a](epic-5-the-window/E5-T12a-keymap-table.md) — generated physical keyboard code table and coverage oracle *(deps: E5-T11c)*
 - [x] `512.2` [E5-T12b](epic-5-the-window/E5-T12b-dom-keyboard-bridge.md) — DOM keyboard event normalization and evdev bridge *(deps: E5-T12a)*
-- [~] `512.3` [E5-T12c](epic-5-the-window/E5-T12c-capture-policy-e2e.md) — keyboard capture policy and browser getty proof *(deps: E5-T12b)*
+- [?] `512.3` [E5-T12c](epic-5-the-window/E5-T12c-capture-policy-e2e.md) — keyboard capture policy and browser getty proof *(deps: E5-T12b)*
 - [ ] `513` [E5-T13](epic-5-the-window/E5-T13-keyboard-hardening-focus-ime.md) — Keyboard hardening — focus loss, stuck modifiers, lock-key reconciliation *(deps: E5-T12c)*
 - [ ] `514` [E5-T14](epic-5-the-window/E5-T14-virtio-input-pointer.md) — Pointer devices — absolute tablet, relative mouse with Pointer Lock, wheel *(deps: E5-T10c)*
 - [ ] `515` [E5-T15](epic-5-the-window/E5-T15-virtio-gpu-cursor-plane.md) — Hardware cursor plane — cursorq UPDATE/MOVE_CURSOR with DOM-overlay presentation *(deps: E5-T03, E5-T14)*
