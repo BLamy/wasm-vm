@@ -276,6 +276,16 @@ pub struct Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::rng::RngState>>,
         Option<dev::virtio::queue::Virtqueue>,
     )>,
+    /// E5-T11b: virtio-input keyboard queue state (eventq + statusq), installed in slot 3 with
+    /// a host-owned LED sink. Serviced at every instruction boundary after guest queue kicks.
+    #[allow(clippy::type_complexity)]
+    keyboard: Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+        Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
+    )>,
+    /// E5-T11b: retained handle for the host/UI's NumLock/CapsLock/ScrollLock indicator state.
+    keyboard_leds: Option<dev::virtio::input::keyboard::KeyboardLedHandle>,
     /// E3-T12c3: the snapshot coherence binding — the base disk image this machine is running against
     /// (`base_image_hash`), the emulator build (`core_hash`), and the monotonic overlay-commit
     /// generation. `save_resume` stamps all three into the blob header; `load_resume` validates them
@@ -658,6 +668,8 @@ impl Machine {
             net: None,
             net_backend: None,
             rng: None,
+            keyboard: None,
+            keyboard_leds: None,
             coherence: SnapshotCoherence::default(),
             // E4-T05: default the toggle to the `predecode` feature (OFF in the normal build);
             // the differential harness flips it at runtime via `set_block_cache`.
@@ -1316,6 +1328,55 @@ impl Machine {
         );
         self.rng = Some((alloc::rc::Rc::clone(&state), None));
         (alloc::rc::Rc::clone(&self.virtio[2].0), state)
+    }
+
+    /// E5-T11b: attach the concrete virtio-input keyboard in slot 3. The standard eight slots
+    /// must already exist (`enable_virtio_slots`/`enable_virtio_blk` first); slot 3 is reserved
+    /// for the keyboard so GPU slot 0, net slot 1, and rng slot 2 retain their established shape.
+    /// Returns the slot, event/status queue state, and host-owned LED indicator handle.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_keyboard(
+        &mut self,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::input::InputState>>,
+        dev::virtio::input::keyboard::KeyboardLedHandle,
+    ) {
+        let slot_index = dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT;
+        assert!(
+            self.virtio.len() > slot_index,
+            "enable_virtio_slots/enable_virtio_blk before enable_virtio_keyboard"
+        );
+        let leds = alloc::rc::Rc::new(core::cell::RefCell::new(
+            dev::virtio::input::keyboard::KeyboardLedState::default(),
+        ));
+        let sink = alloc::boxed::Box::new(dev::virtio::input::keyboard::KeyboardLedSink::new(
+            alloc::rc::Rc::clone(&leds),
+        ));
+        let (device, state) = dev::virtio::input::VirtioInput::new_with_status_sink_state(
+            dev::virtio::input::keyboard::keyboard_spec(),
+            sink,
+        );
+        assert!(
+            self.virtio[slot_index]
+                .0
+                .borrow_mut()
+                .install_device(alloc::boxed::Box::new(device))
+                .is_ok(),
+            "virtio slot {slot_index} already has a device"
+        );
+        self.keyboard = Some((alloc::rc::Rc::clone(&state), None, None));
+        self.keyboard_leds = Some(alloc::rc::Rc::clone(&leds));
+        (
+            alloc::rc::Rc::clone(&self.virtio[slot_index].0),
+            state,
+            leds,
+        )
+    }
+
+    /// Current host-side keyboard LED state, if the virtio-input keyboard is attached.
+    pub fn keyboard_leds(&self) -> Option<dev::virtio::input::keyboard::KeyboardLedHandle> {
+        self.keyboard_leds.as_ref().map(alloc::rc::Rc::clone)
     }
 
     /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,
@@ -3376,6 +3437,14 @@ impl Machine {
                 if let Some((state, vq)) = &mut self.rng {
                     let slot = alloc::rc::Rc::clone(&self.virtio[2].0);
                     dev::virtio::rng::service(&slot, vq, state, &mut self.bus);
+                }
+                // E5-T11b: service keyboard eventq/statusq on slot 3. The status sink retains
+                // guest LED changes in the host-owned indicator before the next boundary.
+                if let Some((state, eventq, statusq)) = &mut self.keyboard {
+                    let slot = alloc::rc::Rc::clone(
+                        &self.virtio[dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT].0,
+                    );
+                    dev::virtio::input::service(&slot, eventq, statusq, state, &mut self.bus);
                 }
                 // E2-T08: mirror each virtio slot's InterruptStatus level into the PLIC.
                 for (slot, line) in &self.virtio {
