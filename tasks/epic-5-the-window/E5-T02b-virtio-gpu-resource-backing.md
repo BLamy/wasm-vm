@@ -3,7 +3,7 @@ id: E5-T02b
 epic: 5
 title: virtio-gpu resource backing attach and detach validation
 priority: 502.2
-status: in-progress
+status: implemented
 depends_on: [E5-T02a]
 estimate: S
 risk: high
@@ -55,4 +55,29 @@ resource explicitly backing-less so a later transfer can reject it rather than d
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — implemented
+
+- **Attach/detach — HELD.** The control-queue service decodes the fixed attach header and each
+  16-byte memory entry across arbitrary readable descriptor boundaries, validates nonzero ranges
+  against guest RAM, atomically publishes the completed `(GuestAddr, u32)` vector, and clears it
+  for DETACH. A split attach→detach queue test covers both command responses.
+- **Malformed input — HELD.** Out-of-RAM, `u64::MAX` address, truncated sglist, and
+  `nents=0x10000000` requests return `ERR_INVALID_PARAMETER` without partial backing mutation;
+  `nents=0` returns OK and leaves an explicit empty list.
+- **Ownership — HELD.** Two resources receiving equal guest entries retain independent vectors;
+  detaching one does not alter the other. The full core and virtio regressions remain green.
+
+Implementation commit: `6785dc0`.
+
+Evidence: `evidence/e5-t02b/resource-backing-2026-09-03.json` (SHA-256
+`96c6b31f5f4b2ed6f73973e2ffd02571f37af37993af16c5af46696db525095f`).
+
+Commands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib
+gpu_resources_backing` (4 passed); `cargo test -p wasm-vm-core --lib` (195 passed); `cargo clippy
+-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features
+--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target
+wasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core
+--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and
+`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,
+and host-layer rr runs were excluded per the user's direction and current repository evidence
+policy.

@@ -16046,7 +16046,7 @@
       "epicKey": "5",
       "title": "virtio-gpu resource backing attach and detach validation",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T02a"
       ],
@@ -16074,21 +16074,22 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — implemented\n\n- **Attach/detach — HELD.** The control-queue service decodes the fixed attach header and each\n  16-byte memory entry across arbitrary readable descriptor boundaries, validates nonzero ranges\n  against guest RAM, atomically publishes the completed `(GuestAddr, u32)` vector, and clears it\n  for DETACH. A split attach→detach queue test covers both command responses.\n- **Malformed input — HELD.** Out-of-RAM, `u64::MAX` address, truncated sglist, and\n  `nents=0x10000000` requests return `ERR_INVALID_PARAMETER` without partial backing mutation;\n  `nents=0` returns OK and leaves an explicit empty list.\n- **Ownership — HELD.** Two resources receiving equal guest entries retain independent vectors;\n  detaching one does not alter the other. The full core and virtio regressions remain green.\n\nImplementation commit: `6785dc0`.\n\nEvidence: `evidence/e5-t02b/resource-backing-2026-09-03.json` (SHA-256\n`96c6b31f5f4b2ed6f73973e2ffd02571f37af37993af16c5af46696db525095f`).\n\nCommands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib\ngpu_resources_backing` (4 passed); `cargo test -p wasm-vm-core --lib` (195 passed); `cargo clippy\n-p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core --no-default-features\n--target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target\nwasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core\n--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic` (22 passed); and\n`wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed). Independent-machine, WebKit,\nand host-layer rr runs were excluded per the user's direction and current repository evidence\npolicy.",
       "adversarial": "Use `nents=0x10000000`, a truncated sglist, address `u64::MAX`, and a final entry whose end\noverflows or lands one byte past RAM. Attach identical guest pages to two resources, detach\none, and confirm the other retains its independent entries. A zero-entry attach must leave the\nresource explicitly backing-less so a later transfer can reject it rather than dereference 0.",
       "file": "tasks/epic-5-the-window/E5-T02b-virtio-gpu-resource-backing.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t02b): activate resource backing slice",
             "chore(e5-t02): decompose GPU resource lifecycle"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T02c",
