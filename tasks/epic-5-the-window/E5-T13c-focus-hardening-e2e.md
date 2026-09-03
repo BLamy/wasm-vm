@@ -3,7 +3,7 @@ id: E5-T13c
 epic: 5
 title: browser focus hardening and keyboard recovery proof
 priority: 513.3
-status: pending
+status: in-progress
 depends_on: [E5-T13b]
 estimate: S
 risk: medium
