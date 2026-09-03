@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T02b** — virtio-gpu resource backing attach and detach validation
 1. **E5-T10** — virtio-input device core — config space, eventq/statusq, event injection API **[DECOMPOSE BEFORE START]**
 1. **E5-T19** — virtio-snd device — control plane and PCM playback stream machine **[DECOMPOSE BEFORE START]**
 1. **E5-T23** — virtio-console agent channel and static Rust guest agent **[DECOMPOSE BEFORE START]**
@@ -335,7 +334,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `501.3` [E5-T01c](epic-5-the-window/E5-T01c-virtio-gpu-malformed-queue-hardening.md) — virtio-gpu malformed commands and descriptor-chain hardening *(deps: E5-T01b)*
 - [-] `502` [E5-T02](epic-5-the-window/E5-T02-virtio-gpu-resource-lifecycle.md) — virtio-gpu 2D resource lifecycle (CREATE_2D, ATTACH_BACKING, DETACH, UNREF) *(deps: E5-T01c)*
 - [x] `502.1` [E5-T02a](epic-5-the-window/E5-T02a-virtio-gpu-resource-create.md) — virtio-gpu resource creation and budget accounting *(deps: E5-T01c)*
-- [ ] `502.2` [E5-T02b](epic-5-the-window/E5-T02b-virtio-gpu-resource-backing.md) — virtio-gpu resource backing attach and detach validation *(deps: E5-T02a)*
+- [~] `502.2` [E5-T02b](epic-5-the-window/E5-T02b-virtio-gpu-resource-backing.md) — virtio-gpu resource backing attach and detach validation *(deps: E5-T02a)*
 - [ ] `502.3` [E5-T02c](epic-5-the-window/E5-T02c-virtio-gpu-resource-lifecycle.md) — virtio-gpu resource unref and scanout lifecycle *(deps: E5-T02b)*
 - [ ] `503` [E5-T03](epic-5-the-window/E5-T03-virtio-gpu-scanout-transfer-flush.md) — Scanout pipeline — SET_SCANOUT, TRANSFER_TO_HOST_2D, RESOURCE_FLUSH *(deps: E5-T02)*
 - [ ] `504` [E5-T04](epic-5-the-window/E5-T04-virtio-gpu-edid-display-info.md) — EDID blocks and display-info config events (hotplug plumbing) *(deps: E5-T03)*

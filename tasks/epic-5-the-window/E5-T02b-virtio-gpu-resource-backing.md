@@ -3,7 +3,7 @@ id: E5-T02b
 epic: 5
 title: virtio-gpu resource backing attach and detach validation
 priority: 502.2
-status: pending
+status: in-progress
 depends_on: [E5-T02a]
 estimate: S
 risk: high

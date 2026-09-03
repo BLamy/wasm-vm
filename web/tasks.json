@@ -16027,8 +16027,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "verify(e5-t02a): mark resource creation verified",
             "verify(e5-t02a): record resource creation proof",
             "chore(e5-t02a): activate resource creation slice",
             "chore(e5-t02): decompose GPU resource lifecycle"
@@ -16037,7 +16038,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E5-T02b",
@@ -16045,7 +16046,7 @@
       "epicKey": "5",
       "title": "virtio-gpu resource backing attach and detach validation",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T02a"
       ],
