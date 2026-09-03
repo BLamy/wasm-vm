@@ -3,7 +3,7 @@ id: E5-T02c
 epic: 5
 title: virtio-gpu resource unref and scanout lifecycle
 priority: 502.3
-status: pending
+status: in-progress
 depends_on: [E5-T02b]
 estimate: S
 risk: high

@@ -16080,8 +16080,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "verify(e5-t02b): mark resource backing verified",
             "verify(e5-t02b): record resource backing proof",
             "chore(e5-t02b): activate resource backing slice",
             "chore(e5-t02): decompose GPU resource lifecycle"
@@ -16090,7 +16091,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E5-T02c",
@@ -16098,7 +16099,7 @@
       "epicKey": "5",
       "title": "virtio-gpu resource unref and scanout lifecycle",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T02b"
       ],
