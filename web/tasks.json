@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 196,
+    "verified": 197,
     "total": 359
   },
   "epics": [
@@ -15865,7 +15865,7 @@
       "epicKey": "5",
       "title": "virtio-gpu control queue and GET_DISPLAY_INFO",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T01a"
       ],
@@ -15876,21 +15876,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — VERDICT: verified (user-directed)\n\n- **GET_DISPLAY_INFO controlq — HELD.** The exact acceptance run passed 3/3 tests. A contiguous\n  request and a request whose 24-byte header is split across two readable 12-byte descriptors\n  both produce the 408-byte response with scanout 0 enabled at 1280x800 and all other modes zero.\n- **Fence semantics — HELD.** The fenced request returns `RESP_OK_DISPLAY_INFO` with the same\n  nonzero fence ID and `FLAG_FENCE`; the unfenced request returns a zero fence ID and no fence flag.\n  The response preserves context/ring identity and emits zero padding.\n- **Queue ownership and bounds — HELD.** QueueNotify defers work until `service`, the used-ring\n  element is published for each consumed chain, and the short-tail test proves a 32-byte writable\n  response is truncated without touching the sentinel after the descriptor.\n- **Regression/parity — HELD.** The full core library passed 182 tests. The wasm32 Node runner\n  passed both GPU protocol/MMIO tests, and the production core wasm32 build passed.\n- **Scope — HELD.** Unsupported-command error mapping and the remaining malformed-chain policy\n  are intentionally deferred to E5-T01c; this slice does not claim them complete.\n\nImplementation commit: `0df7111`.\n\nEvidence: `evidence/e5-t01b/display-info-2026-09-03.json` (SHA-256\n`37d87355b92300f58e445c9bb8183ad883490435751f26679f7282e1276b591c`).\n\nCommands: `cargo fmt --all`; `cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo test\n-p wasm-vm-core --lib virtio_gpu_display_info` (3 passed); `cargo test -p wasm-vm-core --lib`\n(182 passed); `cargo build -p wasm-vm-core --no-default-features --target\nwasm32-unknown-unknown`; and `wasm-pack test --node crates/wasm --test gpu_protocol` (2 passed).\nIndependent-machine, WebKit, and host-layer rr runs were not used per the user's direction and\ncurrent repository evidence policy.",
       "adversarial": "Submit a response buffer shorter than 408 bytes and inspect guest memory for writes outside the\nprovided range. Use a zero-length readable segment and a chain with no writable tail; both must be\nconsumed or rejected without a host panic or stale used-ring entry.",
       "file": "tasks/epic-5-the-window/E5-T01b-virtio-gpu-display-info-queue.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "tasks: activate E5-T01b virtio-gpu display info",
             "tasks: decompose E5-T01 virtio-gpu foundation"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T01c",
