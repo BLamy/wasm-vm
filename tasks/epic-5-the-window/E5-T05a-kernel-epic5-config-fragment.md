@@ -3,7 +3,7 @@ id: E5-T05a
 epic: 5
 title: Epic 5 built-in kernel driver config fragment
 priority: 505.1
-status: in-progress
+status: verified
 depends_on: [E4]
 estimate: S
 risk: high
@@ -38,4 +38,11 @@ dependency symbol. The audit must fail with the symbol named and must not silent
 fragment.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — VERDICT: verified (user-directed)
+
+- **Fragment audit — HELD.** Commit `4a6bf44` passes `python3 tools/check-kernel-fragment.py`, covering 49 required built-in symbols and 6 explicit disabled symbols with zero modular requirements. The coverage includes DRM/Virtio-GPU, fbdev/fbcon/font, virtio-input/evdev, virtio-snd/ALSA, virtio-console/VT, and the existing serial/storage/RTC/reset/debug/networking requirements.
+- **Adversarial modularization — HELD.** A temporary copy with `CONFIG_DRM=y` changed to `CONFIG_DRM=m` was rejected with both `required built-in symbol is not =y: CONFIG_DRM=m` and `modular symbols are forbidden: CONFIG_DRM`.
+- **Harness integrity — HELD.** `python3 -m py_compile tools/check-kernel-fragment.py`, `bash -n tools/check-kernel-config.sh`, and `git diff --check` passed.
+- **Scope boundary — HELD.** This slice makes no kernel artifact or boot claim; those proofs are owned by E5-T05b and E5-T05c.
+- Evidence: `evidence/e5-t05a/kernel-config-fragment-2026-09-03.json` (SHA-256 `c85ea247ca3d9aab5a6c589a08421578d63129cc2857cc282f0e64605c798107`).

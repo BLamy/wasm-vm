@@ -1,0 +1,49 @@
+{
+  "task": "E5-T05a",
+  "status": "pass",
+  "recorded_at": "2026-09-03",
+  "implementation_commit": "4a6bf44",
+  "scope": "Reviewed kernel config fragment only; kernel artifact rebuild and boot remain E5-T05b/E5-T05c.",
+  "commands": [
+    {
+      "command": "python3 tools/check-kernel-fragment.py",
+      "result": "pass",
+      "output": "kernel fragment configs/wasm-vm.config: 49 built-in and 6 disabled requirements satisfied; no modules"
+    },
+    {
+      "command": "python3 -m py_compile tools/check-kernel-fragment.py",
+      "result": "pass"
+    },
+    {
+      "command": "bash -n tools/check-kernel-config.sh",
+      "result": "pass"
+    },
+    {
+      "command": "git diff --check",
+      "result": "pass"
+    }
+  ],
+  "coverage": {
+    "built_in_requirements": 49,
+    "disabled_requirements": 6,
+    "modular_symbols": 0,
+    "families": [
+      "DRM/Virtio-GPU",
+      "fbdev/fbcon/font",
+      "virtio-input/evdev",
+      "virtio-snd/ALSA",
+      "virtio-console/VT",
+      "serial/storage/RTC/reset/debug",
+      "virtio-net/networking"
+    ]
+  },
+  "adversarial_check": {
+    "mutation": "temporary copy with CONFIG_DRM=y changed to CONFIG_DRM=m",
+    "result": "pass: audit rejected the mutation",
+    "observed_errors": [
+      "required built-in symbol is not =y: CONFIG_DRM=m",
+      "modular symbols are forbidden: CONFIG_DRM"
+    ]
+  },
+  "claim": "The reviewed fragment now enables the requested Epic 5 graphics, framebuffer, input, sound, virtio-console, VT, and font symbols as built-ins while preserving the existing storage, serial, RTC, networking, and no-module requirements. The deterministic audit rejects modularized requirements before a kernel build is attempted."
+}
