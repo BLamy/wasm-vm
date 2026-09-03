@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 153,
+    "verified": 154,
     "total": 343
   },
   "epics": [
@@ -8845,7 +8845,7 @@
       "epicKey": "3",
       "title": "Frozen offline boot and resume proof",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E3-T24b",
         "E3-T24c"
@@ -8857,26 +8857,35 @@
       "criteria": [
         {
           "text": "`make verify-E3-T24d` primes once, removes all network/dev-server access, reloads, and reaches a usable shell from coherent local state.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Every uncacheable stage fails with a specific recovery surface; no case spins forever.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Offline cached responses preserve cross-origin-isolation headers for E3-T26 verification.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified\n\nCommit: `14a6d47`.\n\nUser directed closure; independent machines and WebKit are out of scope. Existing local evidence\nfor E3-T24c's versioned offline shell, E4's boot-snapshot restore, and the typed boot-path state\nmachine provides the coherent cached-state, fail-closed recovery, and cross-origin-isolation\nfoundations for this proof. The task is marked verified per that direction; no new T24d-specific\nairplane-mode browser run is claimed.\n\nCommands: `cargo fmt --all --check`; `node --test web/tests/boot-path.test.mjs`;\n`node --check web/main.js`; `git diff --check`. Independent-machine and WebKit runs omitted by\ndirection.",
       "adversarial": "Go offline at every phase percentage, independently clear each storage layer, kill mid-restore, and\nrepeat across a service-worker upgrade. Any false offline success, corrupt state, missing failure\nreason, zombie VM, or header regression refutes.",
       "file": "tasks/epic-3-civilization/E3-T24d-offline-boot-resume-proof.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 2,
+          "labels": [
+            "verify: close frozen offline boot resume proof",
+            "tasks: start offline boot resume proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 2
     },
     {
       "id": "E3-T25",

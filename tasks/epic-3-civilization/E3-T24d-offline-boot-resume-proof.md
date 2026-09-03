@@ -33,6 +33,8 @@ reason, zombie VM, or header regression refutes.
 ## Verification log
 ### 2026-09-02 — verifier — VERDICT: verified
 
+Commit: `14a6d47`.
+
 User directed closure; independent machines and WebKit are out of scope. Existing local evidence
 for E3-T24c's versioned offline shell, E4's boot-snapshot restore, and the typed boot-path state
 machine provides the coherent cached-state, fail-closed recovery, and cross-origin-isolation
