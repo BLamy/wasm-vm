@@ -67,6 +67,15 @@ pub enum BackingError {
     OutOfMemory,
 }
 
+/// Why a resource unref was rejected.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum UnrefError {
+    /// No live resource owns the requested id.
+    InvalidResourceId,
+    /// The unref request did not contain its fixed wire payload.
+    InvalidParameter,
+}
+
 /// Deterministic resource store with explicit pixel-byte accounting.
 #[derive(Debug)]
 pub struct ResourceMap {
@@ -166,6 +175,19 @@ impl ResourceMap {
             .ok_or(BackingError::InvalidResourceId)?;
         resource.backing.clear();
         Ok(())
+    }
+
+    /// Remove a live resource and release its host shadow buffer and backing metadata.
+    pub fn remove(&mut self, resource_id: u32) -> Result<Resource, UnrefError> {
+        let resource = self
+            .resources
+            .remove(&resource_id)
+            .ok_or(UnrefError::InvalidResourceId)?;
+        self.accounted_bytes = self
+            .accounted_bytes
+            .checked_sub(resource.accounted_bytes())
+            .expect("resource accounting underflow");
+        Ok(resource)
     }
 
     /// Create a detached host shadow buffer after validating every guest-controlled field.
@@ -366,5 +388,37 @@ mod tests {
             [(0x8000_1000, 4096), (0x8000_2000, 4096)]
         );
         assert_eq!(map.detach_backing(99), Err(BackingError::InvalidResourceId));
+    }
+
+    #[test]
+    fn gpu_resources_lifecycle_unref_returns_accounting_to_baseline() {
+        let mut map = ResourceMap::new();
+        let baseline = map.accounted_bytes();
+        map.create(1, FORMATS[0], 8, 4).unwrap();
+        map.attach_backing(1, alloc::vec![(0x8000_1000, 128)])
+            .unwrap();
+        map.detach_backing(1).unwrap();
+        let removed = map.remove(1).unwrap();
+        assert_eq!(removed.width, 8);
+        assert!(removed.backing.is_empty());
+        assert!(map.is_empty());
+        assert_eq!(map.accounted_bytes(), baseline);
+        assert_eq!(map.remove(1).err(), Some(UnrefError::InvalidResourceId));
+    }
+
+    #[test]
+    fn gpu_resources_lifecycle_10k_create_unref_cycles_have_zero_net_growth() {
+        let mut map = ResourceMap::new();
+        let baseline = map.accounted_bytes();
+        for id in 1..=10_000 {
+            map.create(id, FORMATS[(id as usize - 1) % FORMATS.len()], 8, 8)
+                .unwrap();
+            let removed = map.remove(id).unwrap();
+            assert_eq!(removed.host_pixels.len(), 64);
+            assert_eq!(map.accounted_bytes(), baseline);
+            assert!(map.is_empty());
+        }
+        assert_eq!(map.len(), 0);
+        assert_eq!(map.accounted_bytes(), baseline);
     }
 }

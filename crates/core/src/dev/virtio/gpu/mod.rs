@@ -32,6 +32,9 @@ pub struct GpuState {
     reset_pending: bool,
     /// Host-owned 2D resource store. Backing entries are added by E5-T02b.
     pub resources: resources::ResourceMap,
+    /// Resource currently bound to scanout 0, if any. SET_SCANOUT is owned by E5-T03;
+    /// RESOURCE_UNREF clears this before dropping a bound resource.
+    pub scanout_resource: Option<u32>,
     /// Number of valid GET_DISPLAY_INFO requests completed by the service.
     pub commands_served: u64,
 }
@@ -55,6 +58,7 @@ impl VirtioGpu {
             kicked: false,
             reset_pending: false,
             resources: resources::ResourceMap::new(),
+            scanout_resource: None,
             commands_served: 0,
         }));
         (
@@ -148,6 +152,8 @@ impl VirtioDevice for VirtioGpu {
         let mut state = self.state.borrow_mut();
         state.events_read = 0;
         state.kicked = false;
+        state.resources = resources::ResourceMap::new();
+        state.scanout_resource = None;
         state.reset_pending = true;
     }
 }
@@ -261,6 +267,13 @@ fn backing_error_response(error: resources::BackingError) -> u32 {
     }
 }
 
+fn unref_error_response(error: resources::UnrefError) -> u32 {
+    match error {
+        resources::UnrefError::InvalidResourceId => protocol::RESP_ERR_INVALID_RESOURCE_ID,
+        resources::UnrefError::InvalidParameter => protocol::RESP_ERR_INVALID_PARAMETER,
+    }
+}
+
 /// Decode and validate an attach request before publishing any part of its backing list.
 fn attach_backing(
     chain: &DescriptorChain,
@@ -332,6 +345,28 @@ fn detach_backing(
         .resources
         .detach_backing(request.resource_id)
         .map_err(|_| resources::BackingError::InvalidResourceId)
+}
+
+/// Unref a resource, clearing scanout 0 before releasing its host-owned pixels.
+fn unref_resource(
+    chain: &DescriptorChain,
+    bus: &mut SystemBus,
+    state: &Rc<RefCell<GpuState>>,
+) -> Result<(), resources::UnrefError> {
+    let request = read_request::<{ protocol::RESOURCE_UNREF_SIZE }>(chain, bus)
+        .and_then(|bytes| protocol::ResourceUnref::from_bytes(&bytes))
+        .ok_or(resources::UnrefError::InvalidParameter)?;
+    let mut state = state.borrow_mut();
+    if state.resources.get(request.resource_id).is_none() {
+        return Err(resources::UnrefError::InvalidResourceId);
+    }
+    if state.scanout_resource == Some(request.resource_id) {
+        // Clear the binding first: dropping the returned Resource below must never leave a
+        // scanout id pointing at freed host pixels.
+        state.scanout_resource = None;
+    }
+    let _ = state.resources.remove(request.resource_id)?;
+    Ok(())
 }
 
 /// Service the virtio-gpu control queue after a deferred QueueNotify kick.
@@ -448,6 +483,21 @@ pub fn service(
                 let response_type = match detach_backing(&chain, bus, state) {
                     Ok(()) => protocol::RESP_OK_NODATA,
                     Err(error) => backing_error_response(error),
+                };
+                let response = response_header(request, response_type).to_bytes();
+                match write_prefix(&chain, bus, &response) {
+                    Ok(written) => written,
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
+            Some(request) if request.ty == protocol::CMD_RESOURCE_UNREF => {
+                let response_type = match unref_resource(&chain, bus, state) {
+                    Ok(()) => protocol::RESP_OK_NODATA,
+                    Err(error) => unref_error_response(error),
                 };
                 let response = response_header(request, response_type).to_bytes();
                 match write_prefix(&chain, bus, &response) {
@@ -1120,6 +1170,90 @@ mod tests {
             protocol::RESP_OK_NODATA
         );
         assert!(state.borrow().resources.get(1).unwrap().backing.is_empty());
+    }
+
+    #[test]
+    fn gpu_resources_lifecycle_unref_clears_scanout_and_is_idempotently_rejected() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        let unref = |resource_id| {
+            protocol::ResourceUnref {
+                header: CtrlHeader {
+                    ty: protocol::CMD_RESOURCE_UNREF,
+                    ..CtrlHeader::default()
+                },
+                resource_id,
+                padding: 0,
+            }
+            .to_bytes()
+        };
+        let first = unref(1);
+        let second = unref(1);
+        let malformed = CtrlHeader {
+            ty: protocol::CMD_RESOURCE_UNREF,
+            ..CtrlHeader::default()
+        }
+        .to_bytes();
+        write_bytes(&mut bus, REQUEST, &first);
+        write_bytes(&mut bus, REQUEST + 0x100, &second);
+        write_bytes(&mut bus, REQUEST + 0x200, &malformed);
+        let descriptors = [
+            (REQUEST, 32, 1, 1),
+            (RESPONSE, 24, 2, 0),
+            (REQUEST + 0x100, 32, 1, 3),
+            (RESPONSE + 0x100, 24, 2, 0),
+            (REQUEST + 0x200, 24, 1, 5),
+            (RESPONSE + 0x200, 24, 2, 0),
+        ];
+        let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
+        state
+            .borrow_mut()
+            .resources
+            .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 8, 4)
+            .unwrap();
+        state
+            .borrow_mut()
+            .resources
+            .attach_backing(1, alloc::vec![(DRAM_BASE + 0xB0_000, 128)])
+            .unwrap();
+        state.borrow_mut().scanout_resource = Some(1);
+        assert_eq!(state.borrow().resources.accounted_bytes(), 128);
+        set_avail_heads(&mut bus, &[0, 2, 4]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 3);
+        assert_eq!(bus.load32(RESPONSE).unwrap(), protocol::RESP_OK_NODATA);
+        assert_eq!(
+            bus.load32(RESPONSE + 0x100).unwrap(),
+            protocol::RESP_ERR_INVALID_RESOURCE_ID
+        );
+        assert_eq!(
+            bus.load32(RESPONSE + 0x200).unwrap(),
+            protocol::RESP_ERR_INVALID_PARAMETER
+        );
+        let state = state.borrow();
+        assert!(state.resources.is_empty());
+        assert_eq!(state.resources.accounted_bytes(), 0);
+        assert_eq!(state.scanout_resource, None);
+    }
+
+    #[test]
+    fn gpu_resources_lifecycle_device_reset_releases_resource_state() {
+        let (mut gpu, state) = VirtioGpu::new_with_state();
+        state
+            .borrow_mut()
+            .resources
+            .create(1, protocol::FORMAT_B8G8R8A8_UNORM, 4, 4)
+            .unwrap();
+        state.borrow_mut().scanout_resource = Some(1);
+
+        VirtioDevice::reset(&mut gpu);
+
+        let state = state.borrow();
+        assert!(state.resources.is_empty());
+        assert_eq!(state.resources.accounted_bytes(), 0);
+        assert_eq!(state.scanout_resource, None);
     }
 
     #[test]

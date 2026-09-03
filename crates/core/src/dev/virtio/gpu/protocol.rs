@@ -11,6 +11,8 @@ pub const CMD_RESOURCE_CREATE_2D: u32 = 0x0101;
 pub const CMD_RESOURCE_ATTACH_BACKING: u32 = 0x0102;
 /// `VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING`.
 pub const CMD_RESOURCE_DETACH_BACKING: u32 = 0x0103;
+/// `VIRTIO_GPU_CMD_RESOURCE_UNREF`.
+pub const CMD_RESOURCE_UNREF: u32 = 0x0104;
 /// Successful `GET_DISPLAY_INFO` response.
 pub const RESP_OK_DISPLAY_INFO: u32 = 0x1101;
 /// Successful command with no response payload.
@@ -55,6 +57,8 @@ pub const RESOURCE_CREATE_2D_SIZE: usize = CTRL_HDR_SIZE + 16;
 pub const RESOURCE_ATTACH_BACKING_HEADER_SIZE: usize = CTRL_HDR_SIZE + 8;
 /// Wire size of `virtio_gpu_resource_detach_backing`.
 pub const RESOURCE_DETACH_BACKING_SIZE: usize = CTRL_HDR_SIZE + 8;
+/// Wire size of `virtio_gpu_resource_unref`.
+pub const RESOURCE_UNREF_SIZE: usize = CTRL_HDR_SIZE + 8;
 /// Wire size of one `virtio_gpu_mem_entry`.
 pub const RESOURCE_MEM_ENTRY_SIZE: usize = 16;
 /// Wire size of one `virtio_gpu_display_one`.
@@ -226,6 +230,37 @@ impl ResourceDetachBacking {
     /// Encode the complete detach request.
     pub fn to_bytes(self) -> [u8; RESOURCE_DETACH_BACKING_SIZE] {
         let mut out = [0u8; RESOURCE_DETACH_BACKING_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[24..28].copy_from_slice(&self.resource_id.to_le_bytes());
+        out[28..32].copy_from_slice(&self.padding.to_le_bytes());
+        out
+    }
+}
+
+/// `virtio_gpu_resource_unref`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ResourceUnref {
+    pub header: CtrlHeader,
+    pub resource_id: u32,
+    pub padding: u32,
+}
+
+impl ResourceUnref {
+    /// Decode the complete 32-byte unref request.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < RESOURCE_UNREF_SIZE {
+            return None;
+        }
+        Some(Self {
+            header: CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?,
+            resource_id: u32::from_le_bytes(bytes[24..28].try_into().ok()?),
+            padding: u32::from_le_bytes(bytes[28..32].try_into().ok()?),
+        })
+    }
+
+    /// Encode the complete unref request.
+    pub fn to_bytes(self) -> [u8; RESOURCE_UNREF_SIZE] {
+        let mut out = [0u8; RESOURCE_UNREF_SIZE];
         out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
         out[24..28].copy_from_slice(&self.resource_id.to_le_bytes());
         out[28..32].copy_from_slice(&self.padding.to_le_bytes());
