@@ -3,7 +3,7 @@ id: E5-T01a
 epic: 5
 title: virtio-gpu device identity, config space, and protocol types
 priority: 501.1
-status: pending
+status: in-progress
 depends_on: [E4]
 estimate: S
 risk: high

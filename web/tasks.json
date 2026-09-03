@@ -15814,13 +15814,15 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E5-T01 virtio-gpu foundation"
+          ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E5-T01a",
@@ -15828,7 +15830,7 @@
       "epicKey": "5",
       "title": "virtio-gpu device identity, config space, and protocol types",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4"
       ],
@@ -15842,10 +15844,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Flip every multi-byte field independently and compare the fixture bytes against the virtio-gpu\nwire layout. Run the same protocol tests under the wasm32 test target. Attempt an unsupported\nfeature bit and confirm negotiation rejects it without mutating the configuration surface.",
       "file": "tasks/epic-5-the-window/E5-T01a-virtio-gpu-protocol-device.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E5-T01 virtio-gpu foundation"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T01b",
@@ -15867,10 +15877,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Submit a response buffer shorter than 408 bytes and inspect guest memory for writes outside the\nprovided range. Use a zero-length readable segment and a chain with no writable tail; both must be\nconsumed or rejected without a host panic or stale used-ring entry.",
       "file": "tasks/epic-5-the-window/E5-T01b-virtio-gpu-display-info-queue.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E5-T01 virtio-gpu foundation"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T01c",
@@ -15892,10 +15910,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Sabotage each descriptor length and physical address independently, including a response tail that\nstraddles the end of guest RAM. Confirm the error response is truncated safely, the used length is\nbounded by the writable capacity, and a following valid request cannot observe stale bytes from the\nrejected chain.",
       "file": "tasks/epic-5-the-window/E5-T01c-virtio-gpu-malformed-queue-hardening.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E5-T01 virtio-gpu foundation"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T02",
