@@ -16133,8 +16133,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "verify(e5-t02c): mark resource lifecycle verified",
             "verify(e5-t02c): record resource lifecycle proof",
             "chore(e5-t02c): activate resource lifecycle slice",
             "chore(e5-t02): decompose GPU resource lifecycle"
@@ -16143,7 +16144,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E5-T03",
@@ -16153,7 +16154,7 @@
       "priority": 503,
       "status": "pending",
       "depends_on": [
-        "E5-T02"
+        "E5-T02c"
       ],
       "decomposed_into": [],
       "estimate": "M",

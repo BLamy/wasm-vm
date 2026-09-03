@@ -4,7 +4,7 @@ epic: 5
 title: Scanout pipeline — SET_SCANOUT, TRANSFER_TO_HOST_2D, RESOURCE_FLUSH
 priority: 503
 status: pending
-depends_on: [E5-T02]
+depends_on: [E5-T02c]
 estimate: M
 capstone: false
 ---
