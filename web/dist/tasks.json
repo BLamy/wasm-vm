@@ -17540,7 +17540,7 @@
       "epicKey": "5",
       "title": "pointer mode state machine and coordinate/button routing",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T14a"
       ],
@@ -17564,13 +17564,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation is frozen at `2c8c23713b2f91eab8cc0e64b90d4280305326a3` (runtime at `30bb0b5`,\nthe standalone proof harness cleanup at `87dc9a9`/`2c8c237`). It adds the byte-identical\nTypeScript/browser pointer bridge, CSS-rect absolute tablet scaling, relative mouse routing,\nfive-button evdev mapping, captured context-menu suppression, Pointer Lock request/legacy retry,\ndenial/loss recovery, controller/worker RPC methods, lifecycle reset, and visible mode/debug chrome.\nThe roadmap manifest now exposes the capability as partial until the final wheel/browser slice.\n\nFocused gates passed at the frozen head: `cargo fmt --all -- --check`; `cargo test -p\nwasm-vm-core --test virtio_pointer --quiet` (2/2); `cargo clippy -p wasm-vm-wasm\n--target wasm32-unknown-unknown -- -D warnings`; `cargo build -p wasm-vm-wasm\n--target wasm32-unknown-unknown --release`; `npm run test:pointer` (9/9); `npm run\ntest:keyboard-hardening` (14/14); `node --test tests/e4-t32-worker-protocol.test.mjs` (22/22);\nJS syntax/diff checks; `make web-build`; and `make web-dist`.\n\nThe exact-head local Chromium recording ran `node tools/verify/e5-t14b-pointer-mode-proof.mjs`\nand booted the real busybox guest to `guestReady` before dispatching five CSS-rect corner/center\ntablet moves, a side-button make/break pair, and relative mouse deltas. It then denied Pointer\nLock and observed the bridge return to absolute mode with `pointerLockElement` clear and no held\nbuttons; console, page, and request errors were all empty. The recording demonstrates the\nacceptance behavior on the built demo surface, while the deterministic fixtures cover lock loss,\nlegacy requests, mode-release balance, DPR/backing-pixel independence, and context-menu/capture\nhandling.\n\nEvidence: `evidence/e5-t14b/pointer-mode-2026-09-03.json`, SHA-256\n`067ad449abe8c5fc366ed25339593c139666a6f370df73f56a86b43375501605`; screenshot\n`evidence/e5-t14b/pointer-mode-browser-2026-09-03.png`, SHA-256\n`74e34310eb098b1663a76aa7e3070d0bee456fc86e2fb1236cf78079dd789261`.",
       "adversarial": "Use DPR 1/1.5/2 and CSS zoom 80%/125% at all four corners and the exact center. Deny Pointer Lock,\npress Escape during a held button, and alt-tab during lock; every path must leave the selected mode\nconsistent with `document.pointerLockElement` and no button held.",
       "file": "tasks/epic-5-the-window/E5-T14b-pointer-mode-routing.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t14b): activate pointer mode routing"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T14c",
