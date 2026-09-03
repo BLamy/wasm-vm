@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 214,
+    "verified": 215,
     "total": 377
   },
   "epics": [
@@ -17136,7 +17136,7 @@
       "epicKey": "5",
       "title": "DOM keyboard event normalization and evdev bridge",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T12a"
       ],
@@ -17160,21 +17160,22 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `baf1d20` adds the JavaScript-compatible TypeScript keyboard bridge and\nits no-bundler projection, plus the direct/whole-machine-worker WasmLinux adapter. Each accepted\nphysical key transition calls `sendKeyboardEvent(EV_KEY, evdev, value)` and then `syncKeyboard`.\nThe bridge tracks physical held keys, suppresses DOM repeat and IME/keyCode-229 events, maps dead\nkeys by `code`, reports unmapped/orphan events as diagnostics, and defers modifier breaks until\ndependent keys have broken. The loader controller and versioned worker allow-list now expose both\nkeyboard methods; the protocol fixture asserts FIFO send-before-sync ordering.\n\nThe frozen-head recording ran the 35-test direct Node matrix covering KeyA make/break, 100 repeat\ncallbacks, rapid Shift/A release ordering, Ctrl+C, shifted punctuation, Windows Ctrl+AltRight\nAltGr, IME/dead-key handling, unmapped/orphan diagnostics, adapter calls, listener lifecycle, and\nthe inherited T12a table. `npm run test:keyboard --prefix web` ran the 30 keyboard/protocol tests.\nBoth passed with zero failures; `node --check` on the changed browser modules, `git diff --check`,\nand `cargo check -p wasm-vm-wasm` also passed. Output SHA-256 is\n`0fbd11d2e8fbf5b6c31236aecd336c329882e03faed2a7a86608c926c7f9db31`.\n\nEvidence: `evidence/e5-t12b/keyboard-bridge-2026-09-03.json`, including the exact frame\nsequences and changed-file digests. Browser capture/preventDefault wiring and the getty proof\nremain owned by E5-T12c.",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `baf1d20` adds the JavaScript-compatible TypeScript keyboard bridge and\nits no-bundler projection, plus the direct/whole-machine-worker WasmLinux adapter. Each accepted\nphysical key transition calls `sendKeyboardEvent(EV_KEY, evdev, value)` and then `syncKeyboard`.\nThe bridge tracks physical held keys, suppresses DOM repeat and IME/keyCode-229 events, maps dead\nkeys by `code`, reports unmapped/orphan events as diagnostics, and defers modifier breaks until\ndependent keys have broken. The loader controller and versioned worker allow-list now expose both\nkeyboard methods; the protocol fixture asserts FIFO send-before-sync ordering.\n\nThe frozen-head recording ran the 35-test direct Node matrix covering KeyA make/break, 100 repeat\ncallbacks, rapid Shift/A release ordering, Ctrl+C, shifted punctuation, Windows Ctrl+AltRight\nAltGr, IME/dead-key handling, unmapped/orphan diagnostics, adapter calls, listener lifecycle, and\nthe inherited T12a table. `npm run test:keyboard --prefix web` ran the 30 keyboard/protocol tests.\nBoth passed with zero failures; `node --check` on the changed browser modules, `git diff --check`,\nand `cargo check -p wasm-vm-wasm` also passed. Output SHA-256 is\n`0fbd11d2e8fbf5b6c31236aecd336c329882e03faed2a7a86608c926c7f9db31`.\n\nEvidence: `evidence/e5-t12b/keyboard-bridge-2026-09-03.json`, including the exact frame\nsequences and changed-file digests. Browser capture/preventDefault wiring and the getty proof\nremain owned by E5-T12c.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Frame translation — HELD.** Predicted a physical `KeyA` make and break would each call the\n  T11 event API once and then publish one sync frame; the bridge test observes exactly\n  `EV_KEY 30 1`, sync, `EV_KEY 30 0`, sync. The direct and worker adapters both expose the same\n  `sendKeyboardEvent`/`syncKeyboard` pair, and the protocol test observes send-before-sync FIFO\n  order through the versioned allow-list.\n- **Modifier ordering — HELD.** Predicted modifiers would precede dependent keys and would not\n  break before them, including the adversarial `ShiftLeft down, KeyA down, ShiftLeft up, KeyA up`\n  sequence; the observed frames are 42-down, 30-down, 30-up, 42-up. Ctrl+C, shifted punctuation,\n  and Windows Ctrl+AltRight AltGr are covered by exact frame assertions.\n- **Repeat/IME/dead-key policy — HELD.** Predicted 100 `repeat` keydowns add no guest frames,\n  composing and keyCode/which 229 events add none, and a non-composing `Dead` key maps by physical\n  code; the deterministic matrix observes those results. Unmapped and orphan events are explicit\n  diagnostics/no-ops.\n- **Coverage and integrity — HELD.** The verifier reran 35 direct Node tests and the 30-test\n  package-script matrix at the post-evidence head, plus syntax checks, `git diff --check`, and\n  `cargo check -p wasm-vm-wasm`; all passed. Changed bridge, loader, worker-protocol, test, and\n  inherited keymap paths are exercised or read by the cited runs. Evidence digest:\n  `evidence/e5-t12b/keyboard-bridge-2026-09-03.json` with output SHA-256\n  `0fbd11d2e8fbf5b6c31236aecd336c329882e03faed2a7a86608c926c7f9db31`.\n- **Scope — HELD.** This slice intentionally stops at normalized event translation and controller\n  transport; capture/preventDefault UI policy and browser/getty proof are the next T12c boundary.\n  No independent-machine or WebKit run is applicable to this local deterministic bridge claim.\n- **SUITE — HELD.** The deterministic bridge/protocol tests and exact frame fixtures are retained\n  as the permanent proof artifacts.\n\nCommands: `node --test web/tests/keymap.test.mjs web/tests/keyboard-bridge.test.mjs\nweb/tests/e4-t32-worker-protocol.test.mjs`; `npm run test:keyboard --prefix web`;\n`node --check web/src/input/keyboard.js`; `node --check web/linux-worker-protocol.js`;\n`node --check web/loader.js`; `git diff --check`; `cargo check -p wasm-vm-wasm`.",
       "adversarial": "Feed rapid `ShiftLeft` down, `KeyA` down, `ShiftLeft` up, `KeyA` up and a held key with 100 repeat\ncallbacks; assert exact sequence and no duplicate down. Feed Windows-style Ctrl+AltRight AltGr\nordering and verify the documented representation. Inject an unmapped code and require an explicit\ndiagnostic/no-op rather than an arbitrary evdev code.",
       "file": "tasks/epic-5-the-window/E5-T12b-dom-keyboard-bridge.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t12b): record keyboard bridge proof",
             "chore(e5-t12b): start DOM keyboard bridge"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T12c",

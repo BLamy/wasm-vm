@@ -3,7 +3,7 @@ id: E5-T12b
 epic: 5
 title: DOM keyboard event normalization and evdev bridge
 priority: 512.2
-status: implemented
+status: verified
 depends_on: [E5-T12a]
 estimate: S
 risk: medium
@@ -64,3 +64,35 @@ and `cargo check -p wasm-vm-wasm` also passed. Output SHA-256 is
 Evidence: `evidence/e5-t12b/keyboard-bridge-2026-09-03.json`, including the exact frame
 sequences and changed-file digests. Browser capture/preventDefault wiring and the getty proof
 remain owned by E5-T12c.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Frame translation — HELD.** Predicted a physical `KeyA` make and break would each call the
+  T11 event API once and then publish one sync frame; the bridge test observes exactly
+  `EV_KEY 30 1`, sync, `EV_KEY 30 0`, sync. The direct and worker adapters both expose the same
+  `sendKeyboardEvent`/`syncKeyboard` pair, and the protocol test observes send-before-sync FIFO
+  order through the versioned allow-list.
+- **Modifier ordering — HELD.** Predicted modifiers would precede dependent keys and would not
+  break before them, including the adversarial `ShiftLeft down, KeyA down, ShiftLeft up, KeyA up`
+  sequence; the observed frames are 42-down, 30-down, 30-up, 42-up. Ctrl+C, shifted punctuation,
+  and Windows Ctrl+AltRight AltGr are covered by exact frame assertions.
+- **Repeat/IME/dead-key policy — HELD.** Predicted 100 `repeat` keydowns add no guest frames,
+  composing and keyCode/which 229 events add none, and a non-composing `Dead` key maps by physical
+  code; the deterministic matrix observes those results. Unmapped and orphan events are explicit
+  diagnostics/no-ops.
+- **Coverage and integrity — HELD.** The verifier reran 35 direct Node tests and the 30-test
+  package-script matrix at the post-evidence head, plus syntax checks, `git diff --check`, and
+  `cargo check -p wasm-vm-wasm`; all passed. Changed bridge, loader, worker-protocol, test, and
+  inherited keymap paths are exercised or read by the cited runs. Evidence digest:
+  `evidence/e5-t12b/keyboard-bridge-2026-09-03.json` with output SHA-256
+  `0fbd11d2e8fbf5b6c31236aecd336c329882e03faed2a7a86608c926c7f9db31`.
+- **Scope — HELD.** This slice intentionally stops at normalized event translation and controller
+  transport; capture/preventDefault UI policy and browser/getty proof are the next T12c boundary.
+  No independent-machine or WebKit run is applicable to this local deterministic bridge claim.
+- **SUITE — HELD.** The deterministic bridge/protocol tests and exact frame fixtures are retained
+  as the permanent proof artifacts.
+
+Commands: `node --test web/tests/keymap.test.mjs web/tests/keyboard-bridge.test.mjs
+web/tests/e4-t32-worker-protocol.test.mjs`; `npm run test:keyboard --prefix web`;
+`node --check web/src/input/keyboard.js`; `node --check web/linux-worker-protocol.js`;
+`node --check web/loader.js`; `git diff --check`; `cargo check -p wasm-vm-wasm`.
