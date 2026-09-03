@@ -3,7 +3,7 @@ id: E5-T10b
 epic: 5
 title: virtio-input eventq and statusq transport
 priority: 510.2
-status: pending
+status: in-progress
 depends_on: [E5-T10a]
 estimate: S
 risk: high

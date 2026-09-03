@@ -16785,13 +16785,15 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "verify(e5-t10a): record input config evidence"
+          ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E5-T10b",
@@ -16799,7 +16801,7 @@
       "epicKey": "5",
       "title": "virtio-input eventq and statusq transport",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T10a"
       ],
