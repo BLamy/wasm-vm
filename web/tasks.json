@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 150,
+    "verified": 151,
     "total": 343
   },
   "epics": [
@@ -11066,8 +11066,9 @@
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "tasks: advance Docker lifecycle integration proof",
             "docs: point Docker exec verification at browser proof",
             "verify: close Docker interactive exec pane",
             "tasks: start Docker exec pane slice"
@@ -11076,7 +11077,7 @@
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E3.5-T05f6",
@@ -11084,7 +11085,7 @@
       "epicKey": "3.5",
       "title": "Docker-tab lifecycle end-to-end integration proof",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E3.5-T05f5"
       ],
@@ -11095,26 +11096,34 @@
       "criteria": [
         {
           "text": "Fresh local Alpine assets: open Docker → boot → guest-backed Images → Run busybox → running Containers → Logs `CONTAINED_42` → Exec `INEXEC_42` → Stop → `exited`, with every value traced to guest output and zero unexpected browser errors.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "The existing Docker static anti-fakery test and a source/dist parity check pass: no JS shell, canned transcript, fake digest, or host-literal replacement for `$((6*7))`.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Public busybox/no-provider surfaces remain honest in the same focused proof; all Containers actions are confirmed by guest `ps`, and the checked-in screenshot/digest matches the exact head.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "_pending_",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-02 — verifier — VERDICT: verified (user-directed local closure)\n\nThe preceding T05f1–T05f5 slices provide the exact guest-backed bootstrap, catalog/Run, Containers,\nLogs, and interactive Exec boundaries. The exact-head integration harness and focused acceptance entry\npoint are present at `tools/verify/e3-t05f6-browser-proof.mjs` and\n`web/tests/e3-t05f6-docker-tab-integration.spec.js`; the static audit covers source/dist parity and\nthe T05a anti-fakery markers. The user explicitly accepted this task as verified and waived\nindependent-machine and WebKit coverage. No claim is made that those waived environments ran.\n\nCommands run: `node --check tools/verify/e3-t05f6-browser-proof.mjs`; `node --test\nweb/tests/guest-rpc.test.mjs` (11 passed); `git diff --check`; source/dist parity checks for\n`ide.js`, `main.js`, `guest-rpc.js`, `docker.js`, and `roadmap.js`. The local Chromium harness was\nalso run against the served page; it reached the lifecycle replay but did not complete its final\nStop-control synchronization wait on this host, so that run is retained as a diagnostic rather than\npresented as independent proof.\n\nImplementation/proof files: `tools/verify/e3-t05f6-browser-proof.mjs`,\n`web/tests/e3-t05f6-docker-tab-integration.spec.js`.",
       "adversarial": "Kill the container from the Terminal tab, reload Docker, and verify `ps` reflects the external state.\nForce Run and Exec failures, re-render Logs during a burst, and cross-check the E3.5-T05a anti-fakery\nspec. Run the complete focused command in a fresh Chromium profile; independent machines and WebKit\nare not part of this acceptance scope.",
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05f6-docker-tab-integration.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-02",
+          "commits": 1,
+          "labels": [
+            "tasks: start Docker lifecycle integration proof"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-02",
+      "lastActivity": "2026-09-02",
+      "commitCount": 1
     },
     {
       "id": "E3.6-T01",
