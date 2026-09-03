@@ -3,7 +3,7 @@ id: E4-T36
 epic: 4
 title: Guarded cross-page direct links
 priority: 436
-status: pending
+status: in-progress
 depends_on: [E4-T35]
 estimate: S
 risk: high
