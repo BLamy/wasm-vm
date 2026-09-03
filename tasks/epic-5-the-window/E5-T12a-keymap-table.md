@@ -3,7 +3,7 @@ id: E5-T12a
 epic: 5
 title: generated physical keyboard code table and coverage oracle
 priority: 512.1
-status: pending
+status: in-progress
 depends_on: [E5-T11c]
 estimate: S
 risk: medium

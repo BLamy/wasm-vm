@@ -17088,7 +17088,7 @@
       "epicKey": "5",
       "title": "generated physical keyboard code table and coverage oracle",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T11c"
       ],
