@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""E4-T28a: reproducible Level-4 capstone measurement boundary.
+"""E4-T28a/T28f: reproducible Level-4 capstone measurement boundary.
 
 The capstone children measure different workloads, but they must all identify the same source
 head, denominator rows, browser isolation policy, and deployable boot artifacts. This module is
@@ -8,7 +8,9 @@ identities and controls only; it never reports a performance result or reads ben
 
 The self-test emits a deterministic JSON envelope on stdout. It also exercises the failure
 boundary in temporary fixtures so a harness that silently accepts a changed denominator, dirty
-candidate, or bad artifact digest cannot pass its own test.
+candidate, or bad artifact digest cannot pass its own test. ``--final`` assembles the four child
+browser records plus the compliance/lockstep records into one same-head report. It records gaps as
+gaps; it never turns a missing measurement into a passing number.
 """
 
 from __future__ import annotations
@@ -88,6 +90,33 @@ REQUIRED_LEDGER_KEYS = {
     "date",
     "prev_sha256",
 }
+
+FINAL_CHILDREN = {
+    "e4-t28b": {
+        "path": Path("evidence/e4-t28b/node-interactive-2026-09-03.json"),
+        "schema": "e4-t28b-node-interactive-result-v1",
+        "command": "PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t28-node-interactive.spec.js --project=chromium",
+    },
+    "e4-t28c": {
+        "path": Path("evidence/e4-t28c/coremark-browser-2026-09-03.json"),
+        "schema": "e4-t28c-coremark-browser-result-v1",
+        "command": "PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t28-coremark.spec.js --project=chromium",
+    },
+    "e4-t28d": {
+        "path": Path("evidence/e4-t28d/cold-boot-2026-09-03.json"),
+        "schema": "e4-t28d-cold-boot-result-v1",
+        "command": "PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t28-cold-boot.spec.js --project=chromium",
+    },
+    "e4-t28e": {
+        "path": Path("evidence/e4-t28e/gcc-interactive-2026-09-03.json"),
+        "schema": "e4-t28e-gcc-interactive-v1",
+        "command": "PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t28-gcc-interactive.spec.js --project=chromium",
+    },
+}
+
+COMPLIANCE_EVIDENCE = Path("evidence/e4-t26/README.md")
+LOCKSTEP_EVIDENCE = Path("tasks/epic-4-acceleration/E4-T25-lockstep-differential-verification-and-fuzzing.md")
+FINAL_DEFAULT_OUTPUT = Path("evidence/e4-t28/capstone-2026-09-03.json")
 
 
 class ContractError(RuntimeError):
@@ -704,6 +733,396 @@ def _write_and_validate_bad_manifest(write_manifest, manifest: Path, repo: Path)
     _validate_manifest(manifest, repo)
 
 
+def _load_final_child(repo: Path, child_id: str) -> tuple[dict[str, object], dict[str, object]]:
+    """Load one child result and return a compact reference plus its raw JSON.
+
+    Child evidence deliberately has workload-specific schemas, so the final report does not try
+    to duplicate or reinterpret the entire payload. It does, however, require the exact schema,
+    a full candidate commit, and a tracked relative path before a child can contribute to the
+    aggregate. The compact reference is what gets copied into the final report.
+    """
+    spec = FINAL_CHILDREN[child_id]
+    path = repo / spec["path"]
+    if not path.is_file():
+        _fail(f"missing child evidence for {child_id}: {_relative_path(path, repo)}")
+    data = _read_json(path)
+    if not isinstance(data, dict) or data.get("schema_version") != 1:
+        _fail(f"{_relative_path(path, repo)} is not a schema-version-1 child result")
+    if data.get("schema") != spec["schema"]:
+        _fail(
+            f"{_relative_path(path, repo)} has schema {data.get('schema')!r}; "
+            f"expected {spec['schema']!r}"
+        )
+    candidate = data.get("candidate")
+    commit = candidate.get("commit") if isinstance(candidate, dict) else None
+    if not isinstance(commit, str) or not COMMIT_RE.fullmatch(commit):
+        _fail(f"{_relative_path(path, repo)} has no full candidate commit")
+    reference = {
+        "id": child_id,
+        "path": _relative_path(path, repo),
+        "sha256": _file_sha256(path),
+        "schema": data["schema"],
+        "candidateCommit": commit,
+        "replayCommand": spec["command"],
+    }
+    return reference, data
+
+
+def _as_list(value: object) -> list[dict[str, object]]:
+    if isinstance(value, list):
+        return [item for item in value if isinstance(item, dict)]
+    if isinstance(value, dict):
+        return [value]
+    return []
+
+
+def _node_summary(data: dict[str, object]) -> dict[str, object]:
+    results = data.get("results")
+    arms = results if isinstance(results, dict) else {}
+    jit = arms.get("jit") if isinstance(arms.get("jit"), dict) else {}
+    repl = jit.get("repl") if isinstance(jit.get("repl"), dict) else {}
+    http = jit.get("http") if isinstance(jit.get("http"), dict) else {}
+    http_result = http.get("result") if isinstance(http.get("result"), dict) else {}
+    baseline = data.get("baseline") if isinstance(data.get("baseline"), dict) else {}
+    workload = data.get("workload") if isinstance(data.get("workload"), dict) else {}
+    verdict = data.get("verdict") if isinstance(data.get("verdict"), dict) else {}
+    return {
+        "echoP95Ms": repl.get("p95Ms"),
+        "httpThroughputMiBPerSec": http_result.get("throughputMiBPerSec"),
+        "httpBaselineMiBPerSec": baseline.get("liveInterpreterThroughputMiBPerSec"),
+        "httpRatio": verdict.get("nodeHttpRatio"),
+        "fenceI": workload.get("fenceI"),
+        "jit": {
+            "compiledBlocks": (jit.get("jitAfter") or {}).get("compiledBlocks")
+            if isinstance(jit.get("jitAfter"), dict) else None,
+            "executedBlocks": (jit.get("jitAfter") or {}).get("executedBlocks")
+            if isinstance(jit.get("jitAfter"), dict) else None,
+            "retiredViaJit": (jit.get("jitAfter") or {}).get("retiredViaJit")
+            if isinstance(jit.get("jitAfter"), dict) else None,
+        },
+        "bun": data.get("bun"),
+        "errors": (data.get("browser") or {}).get("errors")
+        if isinstance(data.get("browser"), dict) else None,
+        "status": "held" if verdict.get("pass") is True else "gap",
+    }
+
+
+def _coremark_summary(data: dict[str, object]) -> dict[str, object]:
+    results = data.get("results") if isinstance(data.get("results"), dict) else {}
+    jit_rows = _as_list(results.get("jit"))
+    interpreter_rows = _as_list(results.get("interpreter"))
+    jit_scores: list[float] = []
+    jit_guest_ms: list[float] = []
+    jit_host_ms: list[float] = []
+    for row in jit_rows:
+        coremark = row.get("coremark") if isinstance(row.get("coremark"), dict) else {}
+        parsed = coremark.get("result") if isinstance(coremark.get("result"), dict) else {}
+        if isinstance(parsed.get("iterationsPerSec"), (int, float)):
+            jit_scores.append(float(parsed["iterationsPerSec"]))
+        if isinstance(row.get("guestElapsedMs"), (int, float)):
+            jit_guest_ms.append(float(row["guestElapsedMs"]))
+        if isinstance(row.get("hostElapsedMs"), (int, float)):
+            jit_host_ms.append(float(row["hostElapsedMs"]))
+    interpreter_scores: list[float] = []
+    for row in interpreter_rows:
+        coremark = row.get("coremark") if isinstance(row.get("coremark"), dict) else {}
+        parsed = coremark.get("result") if isinstance(coremark.get("result"), dict) else {}
+        if isinstance(parsed.get("iterationsPerSec"), (int, float)):
+            interpreter_scores.append(float(parsed["iterationsPerSec"]))
+    baseline = data.get("baseline") if isinstance(data.get("baseline"), dict) else {}
+    verdict = data.get("verdict") if isinstance(data.get("verdict"), dict) else {}
+    candidate_score = min(jit_scores) if jit_scores else None
+    interpreter_score = min(interpreter_scores) if interpreter_scores else baseline.get(
+        "liveInterpreterMedianIterationsPerSec"
+    )
+    ratio = None
+    if candidate_score is not None and isinstance(interpreter_score, (int, float)) and interpreter_score:
+        ratio = candidate_score / interpreter_score
+    guest_ms = min(jit_guest_ms) if jit_guest_ms else None
+    host_ms = min(jit_host_ms) if jit_host_ms else None
+    if guest_ms is None and interpreter_rows:
+        guest_ms = interpreter_rows[0].get("guestElapsedMs")
+        host_ms = interpreter_rows[0].get("hostElapsedMs")
+    host_guest_ratio = None
+    if isinstance(guest_ms, (int, float)) and guest_ms:
+        host_guest_ratio = host_ms / guest_ms if isinstance(host_ms, (int, float)) else None
+    return {
+        "candidateIterationsPerSec": candidate_score,
+        "interpreterIterationsPerSec": interpreter_score,
+        "ratio": ratio,
+        "guestElapsedMs": guest_ms,
+        "hostElapsedMs": host_ms,
+        "hostGuestRatio": host_guest_ratio,
+        "validation": bool(verdict.get("coremarkValidation")),
+        "speedGate": "held" if verdict.get("speedGateSatisfied") is True else "gap",
+        "clockGate": "held" if verdict.get("guestHostWithinTwoPercent") is True else "gap",
+    }
+
+
+def _boot_summary(data: dict[str, object]) -> dict[str, object]:
+    timing = data.get("timing") if isinstance(data.get("timing"), dict) else {}
+    samples = timing.get("bootTimesMs") if isinstance(timing.get("bootTimesMs"), list) else []
+    results = data.get("results") if isinstance(data.get("results"), list) else []
+    first = results[0] if results and isinstance(results[0], dict) else {}
+    profile = first.get("profile") if isinstance(first.get("profile"), dict) else {}
+    verdict = data.get("verdict") if isinstance(data.get("verdict"), dict) else {}
+    return {
+        "samplesMs": samples,
+        "sampleCount": len(samples),
+        "medianMs": timing.get("medianBootMs"),
+        "medianSecs": timing.get("medianBootSecs"),
+        "requiredMedianSecs": 5.0,
+        "markers": verdict,
+        "restored": profile.get("restored"),
+        "readOnly": profile.get("readOnly"),
+        "status": "held" if timing.get("budgetSatisfied") is True else "gap",
+    }
+
+
+def _gcc_summary(data: dict[str, object]) -> dict[str, object]:
+    attempts = data.get("attempts") if isinstance(data.get("attempts"), list) else []
+    overlay = data.get("overlay") if isinstance(data.get("overlay"), dict) else {}
+    return {
+        "status": data.get("status", "gap"),
+        "overlay": {
+            "path": overlay.get("path"),
+            "url": overlay.get("url"),
+            "sizeBytes": overlay.get("sizeBytes"),
+            "sha256": overlay.get("sha256"),
+        },
+        "compile": data.get("compile"),
+        "interaction": data.get("interaction"),
+        "attempts": attempts,
+        "guestCompileReached": (data.get("runtime") or {}).get("guestCompileReached")
+        if isinstance(data.get("runtime"), dict) else False,
+    }
+
+
+def _readme_reference(repo: Path, path: Path, role: str) -> dict[str, object]:
+    absolute = repo / path
+    if not absolute.is_file():
+        _fail(f"missing {role} evidence: {_relative_path(absolute, repo)}")
+    return {
+        "path": _relative_path(absolute, repo),
+        "sha256": _file_sha256(absolute),
+    }
+
+
+def _run_final_children(repo: Path) -> list[dict[str, object]]:
+    """Optionally replay the exact Chromium child commands.
+
+    The default final pass is an evidence aggregator because the four historical browser legs are
+    deliberately multi-minute workloads. Set CAPSTONE_E4_RUN_CHILDREN=1 in a clean checkout to
+    rerun them before aggregation; a non-zero child exit is fatal. Keeping this opt-in makes the
+    ordinary report command deterministic and prevents an accidental overnight benchmark from a
+    bookkeeping invocation.
+    """
+    if os.environ.get("CAPSTONE_E4_RUN_CHILDREN") != "1":
+        return []
+    environment = os.environ.copy()
+    for key in list(environment):
+        if key in FORBIDDEN_ENV_EXACT or key.startswith(FORBIDDEN_ENV_PREFIXES):
+            environment.pop(key, None)
+    environment.update({
+        "PW_DISABLE_TS_ESM": "1",
+        "PLAYWRIGHT_PORT": "8133",
+        "PLAYWRIGHT_REUSE_SERVER": "1",
+    })
+    completed: list[dict[str, object]] = []
+    for child_id, spec in FINAL_CHILDREN.items():
+        test_path = str(spec["path"]).split("/", 2)[1]
+        command = ["npx", "playwright", "test", f"tests/{test_path.split('-', 2)[-1]}", "--project=chromium"]
+        # The file stem is less ambiguous than trying to reconstruct it from the evidence path.
+        command = {
+            "e4-t28b": ["npx", "playwright", "test", "tests/e4-t28-node-interactive.spec.js", "--project=chromium"],
+            "e4-t28c": ["npx", "playwright", "test", "tests/e4-t28-coremark.spec.js", "--project=chromium"],
+            "e4-t28d": ["npx", "playwright", "test", "tests/e4-t28-cold-boot.spec.js", "--project=chromium"],
+            "e4-t28e": ["npx", "playwright", "test", "tests/e4-t28-gcc-interactive.spec.js", "--project=chromium"],
+        }[child_id]
+        completed_process = subprocess.run(command, cwd=repo / "web", env=environment)
+        completed.append({"id": child_id, "command": " ".join(command), "exit": completed_process.returncode})
+        if completed_process.returncode != 0:
+            _fail(f"final child replay failed: {child_id} (exit {completed_process.returncode})")
+    return completed
+
+
+def _build_final_report(repo: Path, dirty: list[str], replayed: list[dict[str, object]]) -> dict[str, object]:
+    identity = _build_envelope(repo, "prepare", dirty)
+    child_refs: dict[str, dict[str, object]] = {}
+    child_data: dict[str, dict[str, object]] = {}
+    for child_id in FINAL_CHILDREN:
+        reference, data = _load_final_child(repo, child_id)
+        child_refs[child_id] = reference
+        child_data[child_id] = data
+
+    head = identity["candidate"]["commit"]
+    child_commits = {reference["candidateCommit"] for reference in child_refs.values()}
+    same_head = child_commits == {head}
+    node = _node_summary(child_data["e4-t28b"])
+    coremark = _coremark_summary(child_data["e4-t28c"])
+    boot = _boot_summary(child_data["e4-t28d"])
+    gcc = _gcc_summary(child_data["e4-t28e"])
+    compliance_ref = _readme_reference(repo, COMPLIANCE_EVIDENCE, "compliance")
+    lockstep_ref = _readme_reference(repo, LOCKSTEP_EVIDENCE, "lockstep")
+    compliance = {
+        "status": "partial-gap",
+        "task": "E4-T26",
+        "evidence": compliance_ref,
+        "matrix": {
+            "configs": 4,
+            "elfs": 127,
+            "noWaivers": True,
+            "riscof": "deferred",
+            "browser": "deferred",
+        },
+        "sameHead": False,
+    }
+    lockstep = {
+        "status": "partial-gap",
+        "task": "E4-T25",
+        "evidence": lockstep_ref,
+        "headlessCleanCampaign": "held",
+        "alpine500M": "deferred",
+        "browser50M": "deferred",
+        "sameHead": False,
+    }
+    bun = child_data["e4-t28b"].get("bun")
+    observed_headers = {
+        "contract": identity["headers"],
+        "childEvidence": {
+            child_id: (child_data[child_id].get("headers") or {})
+            for child_id in FINAL_CHILDREN
+        },
+    }
+    gates = [
+        {
+            "id": "node-echo-p95",
+            "requirement": "< 100 ms",
+            "observed": node["echoP95Ms"],
+            "status": "held" if isinstance(node["echoP95Ms"], (int, float)) and node["echoP95Ms"] < 100 else "gap",
+            "evidence": child_refs["e4-t28b"]["path"],
+        },
+        {
+            "id": "node-http-uplift",
+            "requirement": ">= 10x",
+            "observed": node["httpRatio"],
+            "status": "held" if isinstance(node["httpRatio"], (int, float)) and node["httpRatio"] >= 10 else "gap",
+            "evidence": child_refs["e4-t28b"]["path"],
+        },
+        {
+            "id": "coremark-uplift",
+            "requirement": ">= 10x",
+            "observed": coremark["ratio"],
+            "status": "held" if isinstance(coremark["ratio"], (int, float)) and coremark["ratio"] >= 10 else "gap",
+            "evidence": child_refs["e4-t28c"]["path"],
+        },
+        {
+            "id": "cold-boot-median",
+            "requirement": "< 5.0 s",
+            "observed": boot["medianSecs"],
+            "status": "held" if isinstance(boot["medianSecs"], (int, float)) and boot["medianSecs"] < 5 else "gap",
+            "evidence": child_refs["e4-t28d"]["path"],
+        },
+        {
+            "id": "gcc-compile-and-echo",
+            "requirement": "compile <= 20 s; echo p95 < 100 ms",
+            "observed": {"compile": gcc["compile"], "interaction": gcc["interaction"]},
+            "status": "held" if gcc["status"] == "held" else "gap",
+            "evidence": child_refs["e4-t28e"]["path"],
+        },
+        {
+            "id": "compliance",
+            "requirement": "E4-T26 green at the capstone head",
+            "observed": compliance["status"],
+            "status": "held" if compliance["sameHead"] else "gap",
+            "evidence": compliance_ref["path"],
+        },
+        {
+            "id": "lockstep",
+            "requirement": "E4-T25 500M boot run green at the capstone head",
+            "observed": lockstep["status"],
+            "status": "held" if lockstep["sameHead"] else "gap",
+            "evidence": lockstep_ref["path"],
+        },
+        {
+            "id": "same-head",
+            "requirement": "all child/compliance/lockstep evidence shares one exact commit",
+            "observed": {"capstone": head, "children": sorted(child_commits)},
+            "status": "held" if same_head else "gap",
+            "evidence": "candidate commits in child evidence references",
+        },
+    ]
+    report_status = "verified" if all(gate["status"] == "held" for gate in gates) else "gap"
+    report: dict[str, object] = {
+        "schema_version": 1,
+        "schema": "e4-level4-capstone-final-v1",
+        "generatedAt": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
+        "status": report_status,
+        "candidate": {
+            "commit": head,
+            "workingTree": identity["candidate"]["working_tree"],
+            "sameHeadRequired": True,
+            "childCandidateCommits": sorted(child_commits),
+            "childrenMatch": same_head,
+        },
+        "identity": identity,
+        "children": child_refs,
+        "benchmarks": {
+            "node": node,
+            "coremark": coremark,
+            "boot": boot,
+            "gcc": gcc,
+        },
+        "compliance": compliance,
+        "lockstep": lockstep,
+        "bun": bun if isinstance(bun, dict) else {"status": "gap", "gating": False, "reason": "no result"},
+        "headers": observed_headers,
+        "gates": gates,
+        "ledger": {
+            "tag": "capstone: level4",
+            "path": "bench/ledger.json",
+            "sha256": _file_sha256(repo / LEDGER_REL),
+            "entryStatus": report_status,
+            "note": "Aggregate status row; child workload numbers remain in their evidence files.",
+        },
+        "demo": {
+            "procedure": "docs/demos/level-4.md",
+            "screenshots": [
+                "evidence/e4-t32/browser/whole-worker-demo.png",
+                "evidence/e4-t32/browser/e4-t32-compliance-126-of-126.png",
+            ],
+            "freshProfile": True,
+        },
+        "execution": {
+            "mode": "child-evidence-replay",
+            "childrenReplayed": bool(replayed),
+            "replay": replayed,
+            "webkit": "excluded by owner direction",
+            "independentMachines": "excluded by owner direction",
+            "hostRR": "waived by repository policy",
+        },
+    }
+    _validate_string_safety(report)
+    return report
+
+
+def cmd_final(repo: Path, output: str | None) -> int:
+    check_environment()
+    # A real release run is strict. The narrow opt-in exception is useful on this desktop after a
+    # local Pages assembly has left only generated deploy manifests behind; it cannot admit source,
+    # task, evidence, or browser-profile state.
+    allowed = SELF_TEST_ALLOWED_DIRTY if os.environ.get("CAPSTONE_E4_ALLOW_DEPLOY_DIRTY") == "1" else ()
+    dirty = check_clean(repo, allowed)
+    replayed = _run_final_children(repo)
+    report = _build_final_report(repo, dirty, replayed)
+    destination = output or FINAL_DEFAULT_OUTPUT.as_posix()
+    _write_output(repo, destination, report)
+    if os.environ.get("CAPSTONE_E4_STRICT") == "1" and report["status"] != "verified":
+        print("capstone_e4: FINAL GATE: gaps recorded (strict mode)", file=sys.stderr)
+        return 1
+    return 0
+
+
 def _write_output(repo: Path, output: str | None, envelope: dict[str, object]) -> None:
     rendered = json.dumps(envelope, indent=2, sort_keys=True) + "\n"
     if output is None or output == "-":
@@ -752,11 +1171,18 @@ def main(argv: list[str] | None = None) -> int:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--self-test", action="store_true", help="run the deterministic validator self-test")
     group.add_argument("--prepare", action="store_true", help="validate a clean candidate and emit its envelope")
+    group.add_argument(
+        "--final",
+        action="store_true",
+        help="aggregate child browser/compliance/lockstep evidence into the Level-4 report",
+    )
     parser.add_argument("--output", help="also write the JSON envelope to this relative path (or - for stdout)")
     args = parser.parse_args(argv)
     try:
         if args.self_test:
             return cmd_self_test(REPO, args.output)
+        if args.final:
+            return cmd_final(REPO, args.output)
         return cmd_prepare(REPO, args.output)
     except ContractError as exc:
         print(f"capstone_e4: FAIL: {exc}", file=sys.stderr)

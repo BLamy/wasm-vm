@@ -3,6 +3,7 @@
 #
 #   bash tools/capstone_e4.sh --self-test
 #   bash tools/capstone_e4.sh --prepare --output evidence/e4-t28a/capstone-prepare.json
+#   bash tools/capstone_e4.sh --final --output evidence/e4-t28/capstone-2026-09-03.json
 #
 # The capstone contract never inherits caller-controlled build, logging, benchmark, or browser
 # cache knobs. Keep PATH and ordinary shell settings intact, but remove only the named inputs.
