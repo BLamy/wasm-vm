@@ -10,7 +10,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 1. **E4-T22** — CPU execution on a dedicated Web Worker with SharedArrayBuffer guest RAM **[DECOMPOSE BEFORE START]**
 1. **E4-T28** — "Capstone: interactive/fast Node.js (Bun stretch), 10x CoreMark, sub-5s boot, zero regressions" **[DECOMPOSE BEFORE START]**
-1. **E4-T38** — JIT residency and repack policy
 1. **E4-T39** — Compiled entry-path cost ledger
 
 
@@ -311,7 +310,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `435` [E4-T35](epic-4-acceleration/E4-T35-edge-local-static-links.md) — Edge-local static links for memory-aware traces *(deps: E4-T34)*
 - [x] `436` [E4-T36](epic-4-acceleration/E4-T36-guarded-cross-page-links.md) — Guarded cross-page direct links *(deps: E4-T35)*
 - [x] `437` [E4-T37](epic-4-acceleration/E4-T37-jalr-return-pic.md) — Bounded multi-target JALR return PIC *(deps: E4-T35)*
-- [ ] `438` [E4-T38](epic-4-acceleration/E4-T38-residency-repack-policy.md) — JIT residency and repack policy *(deps: E4-T34)*
+- [~] `438` [E4-T38](epic-4-acceleration/E4-T38-residency-repack-policy.md) — JIT residency and repack policy *(deps: E4-T34)*
 - [ ] `439` [E4-T39](epic-4-acceleration/E4-T39-entry-cost-ledger.md) — Compiled entry-path cost ledger *(deps: E4-T35)*
 
 ## Epic 5 — `epic-5-the-window`

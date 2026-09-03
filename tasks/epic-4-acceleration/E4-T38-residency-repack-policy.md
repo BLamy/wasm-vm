@@ -3,7 +3,7 @@ id: E4-T38
 epic: 4
 title: JIT residency and repack policy
 priority: 438
-status: pending
+status: in-progress
 depends_on: [E4-T34]
 estimate: S
 risk: high
