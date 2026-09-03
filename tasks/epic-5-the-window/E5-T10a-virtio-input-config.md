@@ -3,7 +3,7 @@ id: E5-T10a
 epic: 5
 title: virtio-input config protocol and declarative device spec
 priority: 510.1
-status: pending
+status: verified
 depends_on: [E5-T05c]
 estimate: S
 risk: high
@@ -41,4 +41,43 @@ prove no query exposes bytes from the previous selection or reads outside the fi
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — implemented
+
+- **Config/spec boundary — HELD.** Added the virtio-input device id 18 with two queues, a
+  declarative `InputDeviceSpec`, typed `InputDevids`/`AbsInfo` payloads, bounded property/event
+  bitmaps, and the select/subsel query state machine.
+- **Wire and zeroing behavior — HELD.** Native tests read ID_NAME, ID_DEVIDS, PROP_BITS, EV_BITS,
+  and ABS_INFO through the real virtio-mmio config window, compare exact little-endian bytes,
+  exercise width-2 selector writes, and prove unsupported/unknown/out-of-range reads return a
+  zero payload without stale union bytes.
+- **Cross-target coverage — HELD.** The same fixture is exercised by the wasm32 Node runner.
+
+Implementation commit: `ea342ce`.
+
+Evidence: `evidence/e5-t10a/input-config-2026-09-03.json` (SHA-256
+`ef2c90efe7d55e899ca76df301a061863a9cb27c42d72eba0509abbca5334848`).
+
+Commands: `cargo fmt --all -- --check`; `git diff --check`; `cargo test -p wasm-vm-core --lib
+dev::virtio::input` (3 passed); `cargo test -p wasm-vm-core --lib --quiet` (222 passed);
+`cargo clippy -p wasm-vm-core --lib -- -D warnings`; `cargo build -p wasm-vm-core
+--no-default-features --target wasm32-unknown-unknown`; `cargo clippy -p wasm-vm-core --target
+wasm32-unknown-unknown --no-default-features --lib -- -D warnings`; `cargo test -p wasm-vm-core
+--test virtio_mmio_slots --test virtio_blk --test virtio_net_critic --quiet` (22 passed); and
+`wasm-pack test --node crates/wasm --test input_config` (1 passed). Independent-machine, WebKit,
+and host-layer rr runs were excluded per the user's direction and the repository's current
+evidence policy.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Acceptance — HELD.** The native and wasm32 fixtures agree on the supported name, devids,
+  property, event-bitmap, and ABS_INFO payloads with exact little-endian layouts.
+- **Unsupported-query isolation — HELD.** Selector changes to empty and unknown capabilities
+  return size zero and a zeroed 128-byte union, including reads beyond the config boundary.
+- **Coverage — HELD.** The changed virtio module registration, spec setters, bitmap sizing,
+  payload encoding, selector writes, reset path, and config reads execute in the focused/native
+  regression and wasm Node runner.
+- **Evidence integrity — HELD.** Evidence digest
+  `ef2c90efe7d55e899ca76df301a061863a9cb27c42d72eba0509abbca5334848` matches the checked-in
+  artifact for implementation commit `ea342ce`.
+
+E5-T10a is verified; E5-T10b is the next active eligible slice.
