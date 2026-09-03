@@ -8876,8 +8876,9 @@
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "tasks: bind offline proof commit",
             "verify: close frozen offline boot resume proof",
             "tasks: start offline boot resume proof"
           ]
@@ -8885,7 +8886,7 @@
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E3-T25",
@@ -9208,7 +9209,7 @@
       "epicKey": "3",
       "title": "Online and offline cross-origin isolation",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E3-T24d"
       ],

@@ -3,7 +3,7 @@ id: E3-T26a
 epic: 3
 title: Online and offline cross-origin isolation
 priority: 326.1
-status: pending
+status: in-progress
 depends_on: [E3-T24d]
 estimate: S
 risk: high
