@@ -127,6 +127,61 @@ fn jit_hot_loop_step_and_trace_report_exact_retirements() {
 }
 
 #[wasm_bindgen_test]
+fn jit_residency_policies_publish_the_cache_and_execution_ledger() {
+    for (policy, cap) in [
+        ("repack-off", 24.0),
+        ("cap-256", 256.0),
+        ("cap-1024", 1024.0),
+    ] {
+        let m = WasmMachine::new(8).unwrap();
+        m.load_elf(&guest_forge::guest_hot_loop()).unwrap();
+        m.enable_jit_with_policy(1, policy.to_owned()).unwrap();
+
+        let before = m.jit_stats().unwrap();
+        assert_eq!(
+            get_str(&before, "jitResidencyPolicy").as_deref(),
+            Some(policy)
+        );
+        assert_eq!(get_num(&before, "jitResidencyCap"), Some(cap));
+        assert_eq!(get_num(&before, "jitSubmittedMembers"), Some(0.0));
+        assert_eq!(get_num(&before, "jitCompilePauseNs"), Some(0.0));
+        assert_eq!(get_num(&before, "jitLogicalBlocksPerEngineCall"), Some(0.0));
+
+        assert_eq!(m.step(1_000).unwrap(), 1_000);
+        let after = m.jit_stats().unwrap();
+        assert!(get_num(&after, "guestRetired").unwrap() >= 1_000.0);
+        assert!(get_num(&after, "retiredViaJit").unwrap() > 0.0);
+        assert!(get_num(&after, "jitRetiredShare").unwrap() > 0.0);
+        assert!(get_num(&after, "jitLogicalBlocksPerEngineCall").unwrap() >= 1.0);
+        for key in [
+            "jitSubmittedMembers",
+            "jitCompilePauseNs",
+            "jitCompilePauseMaxNs",
+            "jitCompilePauseSamples",
+            "jitCacheBatches",
+            "jitCacheEvictions",
+            "jitCacheRetranslations",
+        ] {
+            assert!(get_num(&after, key).is_some(), "jitStats must expose {key}");
+        }
+    }
+
+    let invalid = WasmMachine::new(1).unwrap();
+    invalid.load_elf(&guest_forge::guest_hot_loop()).unwrap();
+    assert!(
+        invalid
+            .enable_jit_with_policy(1, "unknown-policy".to_owned())
+            .is_err()
+    );
+    let stats = invalid.jit_stats().unwrap();
+    assert_eq!(
+        get_str(&stats, "jitResidencyPolicy").as_deref(),
+        Some("disabled")
+    );
+    assert_eq!(get_num(&stats, "jitResidencyCap"), Some(0.0));
+}
+
+#[wasm_bindgen_test]
 fn malformed_elf_throws_named_error_and_machine_survives() {
     let m = WasmMachine::new(1).unwrap();
     let err: JsValue = m.load_elf(b"not an ELF at all").unwrap_err().into();

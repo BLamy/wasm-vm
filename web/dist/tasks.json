@@ -15177,15 +15177,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify: close E4-T37 bounded return PIC",
             "tasks: start E4-T37 bounded return PIC"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T38",
@@ -15193,7 +15194,7 @@
       "epicKey": "4",
       "title": "JIT residency and repack policy",
       "priority": 438,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T34"
       ],

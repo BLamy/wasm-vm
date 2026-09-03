@@ -216,6 +216,9 @@ export async function startLinuxBoot(opts = {}) {
     // preserves direct-loader compatibility; the page makes the production default explicit.
     jit = undefined,
     jitThreshold = undefined,
+    // E4-T38: one explicit live-module screen per boot. `repack-off` is the current conservative
+    // single-pass batcher; the cap variants change only the live batch budget.
+    jitResidency = undefined,
     profile = undefined,
     // Deterministic parity/test seam: restore the machine but do not execute the first scheduler
     // slice until the owner explicitly resumes it. Production callers leave this false.
@@ -475,14 +478,24 @@ export async function startLinuxBoot(opts = {}) {
       const _jitQ = jit ?? (_q.get("jit") === "1" ? true : _q.get("jit") === "0" ? false : undefined);
       const _thrRaw = jitThreshold ?? _q.get("jitThreshold");
       const _threshold = Math.max(1, Number(_thrRaw) || 512);
+      const _residency = jitResidency ?? _q.get("jitResidency") ?? "repack-off";
       // E4-T33 proved bounded browser handles and repaired the bulk handoff. The restored-Node screen
       // is faster with JIT at the shipping threshold, so isolated browser workers opt in by default;
       // `?jit=0` remains the explicit interpreter rollback/A-B.
       const _wantJit = (_jitQ ?? true) && globalThis.crossOriginIsolated === true;
       if (_wantJit && typeof machine.enableJit === "function") {
-        machine.enableJit(_threshold);
-        try { window.__jit = { enabled: true, threshold: _threshold }; } catch { /* worker scope */ }
-        console.info("wasm-vm: browser JIT enabled (crossOriginIsolated, threshold=" + _threshold + ")");
+        if (typeof machine.enableJitWithPolicy === "function") {
+          machine.enableJitWithPolicy(_threshold, _residency);
+        } else {
+          machine.enableJit(_threshold);
+        }
+        try {
+          window.__jit = { enabled: true, threshold: _threshold, residency: _residency };
+        } catch { /* worker scope */ }
+        console.info(
+          "wasm-vm: browser JIT enabled (crossOriginIsolated, threshold=" + _threshold +
+          ", residency=" + _residency + ")",
+        );
       } else {
         const reason = _jitQ === false ? "forced-off" : (globalThis.crossOriginIsolated ? "no-enableJit" : "not-cross-origin-isolated");
         try { window.__jit = { enabled: false, reason }; } catch { /* worker scope */ }

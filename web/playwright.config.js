@@ -7,8 +7,9 @@
 //   3. web/artifacts.json — `bash tools/gen-web-manifest.sh`
 import { defineConfig } from "@playwright/test";
 
-const PORT = 8123;
+const PORT = Number(process.env.PLAYWRIGHT_PORT || "8123");
 const nodeBenchmark = process.env.E4T32_NODE_BENCH === "1";
+const reuseExistingServer = process.env.PLAYWRIGHT_REUSE_SERVER === "1" || !nodeBenchmark;
 
 export default defineConfig({
   testDir: "./tests",
@@ -30,7 +31,7 @@ export default defineConfig({
     url: `http://localhost:${PORT}/artifacts.json`,
     // Performance evidence must never inherit an unrelated/stale server on :8123 that lacks the
     // verified local Node-asset route. Ordinary functional specs retain the convenient reuse path.
-    reuseExistingServer: !nodeBenchmark,
+    reuseExistingServer,
     timeout: 30_000,
   },
 });

@@ -55,6 +55,11 @@ export class WasmLinux {
      */
     enableJit(threshold: number): void;
     /**
+     * E4-T38: enable the Linux browser JIT under one explicit residency policy. See
+     * [`WasmMachine::enable_jit_with_policy`] for the policy labels and cap semantics.
+     */
+    enableJitWithPolicy(threshold: number, residency_policy: string): void;
+    /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
      * the next `runChunk` completes the parked reads. Resolves to the number of chunks newly made
      * resident. No-op (0) for a non-chunked boot. Must not run concurrently with `runChunk` (both
@@ -289,6 +294,14 @@ export class WasmMachine {
      */
     enableJit(threshold: number): void;
     /**
+     * E4-T38: attach the browser JIT with one explicit residency screen. `repack-off` is the
+     * current single-pass batcher with the conservative 24-module browser cap; `cap-256` and
+     * `cap-1024` retain the same translator and eviction policy while changing only the live-batch
+     * cap. Validate and apply the policy before publishing the executor so a bad benchmark label
+     * cannot leave a partially initialized machine.
+     */
+    enableJitWithPolicy(threshold: number, residency_policy: string): void;
+    /**
      * E2-T20: the interrupt/trap counters + storm/WFI diagnosis as a JS object
      * `{ retired, wfi, exceptions:[16], interrupts:[16], claims:[32], storm:bool, wfiReport:string|null }`.
      * E2-T26's UI surfaces these so a browser boot that death-spirals shows a diagnosis instead
@@ -470,6 +483,7 @@ export interface InitOutput {
     readonly wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_enableJit: (a: number, b: number) => [number, number];
+    readonly wasmlinux_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmlinux_fetchPending: (a: number) => any;
     readonly wasmlinux_fetchStats: (a: number) => [number, number, number];
     readonly wasmlinux_fileTransferReady: (a: number, b: number) => [number, number, number];
@@ -506,6 +520,7 @@ export interface InitOutput {
     readonly wasmlinux_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_enableJit: (a: number, b: number) => [number, number];
+    readonly wasmmachine_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];
     readonly wasmmachine_jitStats: (a: number) => [number, number, number];
     readonly wasmmachine_loadElf: (a: number, b: number, c: number) => [number, number];

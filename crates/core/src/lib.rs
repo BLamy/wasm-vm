@@ -1374,6 +1374,13 @@ impl Machine {
         self.prof_total_ns
     }
 
+    /// E4-T38: the JIT compile-pause ledger without constructing the full ranked profile. Browser
+    /// policy screens poll this alongside cache residency, so keep the read path allocation-free
+    /// and make the pause counters share the profiler's single source of truth.
+    pub fn jit_pause_stats(&self) -> prof::JitPauseStats {
+        self.prof.jit_pause()
+    }
+
     /// E4-T01: the accumulated profile as a ranked [`prof::ProfReport`]. `total_ns` is the profiled
     /// wall span (pass [`Self::prof_total_ns`] for the timer-measured span, or 0 when only the
     /// hot-PC histogram is wanted). CPU-interp time is derived as `total_ns −` the cold device+walk

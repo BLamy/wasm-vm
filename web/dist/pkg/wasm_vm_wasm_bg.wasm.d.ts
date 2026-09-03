@@ -20,6 +20,7 @@ export const wasmlinux_closeStorage: (a: number) => [number, number];
 export const wasmlinux_dismissFileDownload: (a: number, b: number) => [number, number, number];
 export const wasmlinux_dismissFileUpload: (a: number, b: number) => [number, number, number];
 export const wasmlinux_enableJit: (a: number, b: number) => [number, number];
+export const wasmlinux_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
 export const wasmlinux_fetchPending: (a: number) => any;
 export const wasmlinux_fetchStats: (a: number) => [number, number, number];
 export const wasmlinux_fileTransferReady: (a: number, b: number) => [number, number, number];
@@ -56,6 +57,7 @@ export const wasmlinux_stampBootSnapshotIdentity: (a: number, b: number, c: numb
 export const wasmlinux_stateDigest: (a: number) => [number, number, number, number];
 export const wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
 export const wasmmachine_enableJit: (a: number, b: number) => [number, number];
+export const wasmmachine_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
 export const wasmmachine_getStats: (a: number) => [number, number, number];
 export const wasmmachine_jitStats: (a: number) => [number, number, number];
 export const wasmmachine_loadElf: (a: number, b: number, c: number) => [number, number];

@@ -20,6 +20,7 @@ mod jit_browser;
 pub use jit_browser::{BROWSER_MAX_BATCHES, BrowserExecutor};
 use wasm_vm_core::bus::mmap::{UART0_BASE, UART0_LEN};
 use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
+use wasm_vm_core::jit::CompiledBlockExecutor;
 use wasm_vm_core::trace::{TraceRecord, TraceSink, fmt_canonical};
 use wasm_vm_core::{Machine, RunOutcome};
 // E3-T12d: the resume-snapshot format + coherence/restore-decision types (browser persistence glue).
@@ -495,29 +496,80 @@ fn reentrant() -> JsError {
 }
 
 /// Shared JS shape for both bare-metal and Linux wrappers' proof that translated code actually ran.
+const JIT_RESIDENCY_REPACK_OFF: &str = "repack-off";
+const JIT_RESIDENCY_CAP_256: &str = "cap-256";
+const JIT_RESIDENCY_CAP_1024: &str = "cap-1024";
+
+fn jit_residency_cap(policy: &str) -> Result<usize, JsError> {
+    match policy {
+        JIT_RESIDENCY_REPACK_OFF => Ok(jit_browser::BROWSER_MAX_BATCHES),
+        JIT_RESIDENCY_CAP_256 => Ok(256),
+        JIT_RESIDENCY_CAP_1024 => Ok(1024),
+        other => Err(JsError::new(&format!(
+            "unknown JIT residency policy {other:?}; expected repack-off, cap-256, or cap-1024"
+        ))),
+    }
+}
+
+fn jit_residency_label(has_executor: bool, max_batches: usize) -> &'static str {
+    if !has_executor {
+        return "disabled";
+    }
+    match max_batches {
+        jit_browser::BROWSER_MAX_BATCHES => JIT_RESIDENCY_REPACK_OFF,
+        256 => JIT_RESIDENCY_CAP_256,
+        1024 => JIT_RESIDENCY_CAP_1024,
+        _ => "custom",
+    }
+}
+
+/// Attach the production browser executor with one explicit residency policy. The policy is
+/// validated before mutating the machine, then applied before the executor is published, so an
+/// invalid benchmark URL cannot leave a half-configured JIT attached.
+fn enable_browser_jit(
+    machine: &mut Machine,
+    threshold: u32,
+    residency_policy: &str,
+) -> Result<(), JsError> {
+    let max_batches = jit_residency_cap(residency_policy)?;
+    let mut executor = jit_browser::BrowserExecutor::new_inline(machine).map_err(JsError::new)?;
+    let mut budget = executor.jit_cache_stats().budget;
+    budget.max_batches = max_batches;
+    executor.set_jit_budget(budget);
+    machine.set_executor(Box::new(executor));
+    machine.set_block_cache(true);
+    machine.set_interrupt_batching(true);
+    machine.set_hotness_threshold(threshold.max(1));
+    machine.set_jit(true);
+    Ok(())
+}
+
 fn jit_stats_object(machine: &Machine) -> JsValue {
     let obj = js_sys::Object::new();
     let set = |k: &str, v: &JsValue| {
         let _ = js_sys::Reflect::set(&obj, &JsValue::from_str(k), v);
     };
+    let guest_retired = machine.irq_stats().retired;
+    let mut has_executor = false;
+    let mut executed_blocks = 0u64;
+    let mut retired_via_jit = 0u64;
+    let mut direct_chain_entries = 0u64;
     match machine.executor() {
         Some(e) => {
+            has_executor = true;
+            executed_blocks = e.executed_blocks();
+            retired_via_jit = e.retired_via_jit();
+            direct_chain_entries = e.direct_chain_entries();
             set("hasExecutor", &JsValue::from_bool(true));
             set(
                 "compiledBlocks",
                 &JsValue::from_f64(e.compiled_count() as f64),
             );
-            set(
-                "executedBlocks",
-                &JsValue::from_f64(e.executed_blocks() as f64),
-            );
-            set(
-                "retiredViaJit",
-                &JsValue::from_f64(e.retired_via_jit() as f64),
-            );
+            set("executedBlocks", &JsValue::from_f64(executed_blocks as f64));
+            set("retiredViaJit", &JsValue::from_f64(retired_via_jit as f64));
             set(
                 "directChainEntries",
-                &JsValue::from_f64(e.direct_chain_entries() as f64),
+                &JsValue::from_f64(direct_chain_entries as f64),
             );
             set(
                 "directChainLinks",
@@ -561,6 +613,25 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
             set("dynamicLinkInstalls", &JsValue::from_f64(0.0));
         }
     }
+    let logical_blocks_per_engine_call = if !has_executor || executed_blocks == 0 {
+        0.0
+    } else if direct_chain_entries == 0 {
+        1.0
+    } else {
+        direct_chain_entries as f64 / executed_blocks as f64
+    };
+    let jit_retired_share = if guest_retired == 0 {
+        0.0
+    } else {
+        retired_via_jit as f64 / guest_retired as f64
+    };
+    set("guestRetired", &JsValue::from_f64(guest_retired as f64));
+    set("jitEngineCalls", &JsValue::from_f64(executed_blocks as f64));
+    set(
+        "jitLogicalBlocksPerEngineCall",
+        &JsValue::from_f64(logical_blocks_per_engine_call),
+    );
+    set("jitRetiredShare", &JsValue::from_f64(jit_retired_share));
     // Keep the original proof counters above stable while exposing the cumulative mechanics that
     // explain a browser benchmark: how often the outer dispatch loop was re-entered, how many
     // links a compiled chain actually followed, whether the compiled cache is churning, and how
@@ -585,6 +656,32 @@ fn jit_stats_object(machine: &Machine) -> JsValue {
         &JsValue::from_f64(chain.total_links_followed() as f64),
     );
     let cache = machine.jit_cache_stats();
+    let pause = machine.jit_pause_stats();
+    set(
+        "jitResidencyPolicy",
+        &JsValue::from_str(jit_residency_label(has_executor, cache.budget.max_batches)),
+    );
+    set(
+        "jitResidencyCap",
+        &JsValue::from_f64(if has_executor {
+            cache.budget.max_batches as f64
+        } else {
+            0.0
+        }),
+    );
+    set(
+        "jitSubmittedMembers",
+        &JsValue::from_f64(pause.total_submitted_blocks as f64),
+    );
+    set("jitCompilePauseNs", &JsValue::from_f64(pause.sum_ns as f64));
+    set(
+        "jitCompilePauseMaxNs",
+        &JsValue::from_f64(pause.max_ns as f64),
+    );
+    set(
+        "jitCompilePauseSamples",
+        &JsValue::from_f64(pause.count as f64),
+    );
     set(
         "jitCacheInstalls",
         &JsValue::from_f64(cache.installs as f64),
@@ -702,14 +799,22 @@ impl WasmMachine {
     #[wasm_bindgen(js_name = enableJit)]
     pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        let executor =
-            jit_browser::BrowserExecutor::new_inline(&inner.machine).map_err(JsError::new)?;
-        inner.machine.set_executor(Box::new(executor));
-        inner.machine.set_block_cache(true);
-        inner.machine.set_interrupt_batching(true);
-        inner.machine.set_hotness_threshold(threshold.max(1));
-        inner.machine.set_jit(true);
-        Ok(())
+        enable_browser_jit(&mut inner.machine, threshold, JIT_RESIDENCY_REPACK_OFF)
+    }
+
+    /// E4-T38: attach the browser JIT with one explicit residency screen. `repack-off` is the
+    /// current single-pass batcher with the conservative 24-module browser cap; `cap-256` and
+    /// `cap-1024` retain the same translator and eviction policy while changing only the live-batch
+    /// cap. Validate and apply the policy before publishing the executor so a bad benchmark label
+    /// cannot leave a partially initialized machine.
+    #[wasm_bindgen(js_name = enableJitWithPolicy)]
+    pub fn enable_jit_with_policy(
+        &self,
+        threshold: u32,
+        residency_policy: String,
+    ) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        enable_browser_jit(&mut inner.machine, threshold, &residency_policy)
     }
 
     /// Enable or disable canonical instruction tracing (appended to an internal buffer;
@@ -1511,14 +1616,19 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = enableJit)]
     pub fn enable_jit(&self, threshold: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        let executor =
-            jit_browser::BrowserExecutor::new_inline(&inner.machine).map_err(JsError::new)?;
-        inner.machine.set_executor(Box::new(executor));
-        inner.machine.set_block_cache(true);
-        inner.machine.set_interrupt_batching(true);
-        inner.machine.set_hotness_threshold(threshold.max(1));
-        inner.machine.set_jit(true);
-        Ok(())
+        enable_browser_jit(&mut inner.machine, threshold, JIT_RESIDENCY_REPACK_OFF)
+    }
+
+    /// E4-T38: enable the Linux browser JIT under one explicit residency policy. See
+    /// [`WasmMachine::enable_jit_with_policy`] for the policy labels and cap semantics.
+    #[wasm_bindgen(js_name = enableJitWithPolicy)]
+    pub fn enable_jit_with_policy(
+        &self,
+        threshold: u32,
+        residency_policy: String,
+    ) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        enable_browser_jit(&mut inner.machine, threshold, &residency_policy)
     }
 
     /// E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns

@@ -334,7 +334,7 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   }
   try { window.__linuxOwnerUiForTest = null; } catch { /* page-only diagnostic */ }
   for (const key of [
-    "linuxManifest", "linuxBackend", "jitPolicy", "jitThreshold", "interpreter", "jitStats",
+    "linuxManifest", "linuxBackend", "jitPolicy", "jitResidency", "jitThreshold", "interpreter", "jitStats",
   ]) {
     delete document.documentElement.dataset[key];
   }
@@ -595,6 +595,7 @@ async function runLinuxBootOwned(opts, banner, request) {
   const selectedJitThreshold = Number.isFinite(thresholdCandidate) && thresholdCandidate >= 1
     ? Math.floor(thresholdCandidate)
     : 512;
+  const selectedJitResidency = query.get("jitResidency") ?? opts.jitResidency ?? "repack-off";
   const selectedProfile = query.has("profile")
     ? query.get("profile") === "1"
     : Boolean(opts.profile);
@@ -663,6 +664,7 @@ async function runLinuxBootOwned(opts, banner, request) {
       // `?jit=0` remains the explicit interpreter A/B and rollback switch.
       jit: selectedJit,
       jitThreshold: selectedJitThreshold,
+      jitResidency: selectedJitResidency,
       profile: selectedProfile,
       quantum: selectedQuantum,
       startPaused: query.has("testHooks") && query.has("startPaused"),
@@ -827,6 +829,8 @@ async function runLinuxBootOwned(opts, banner, request) {
     const backend = linuxCtl.backend ?? "main-thread";
     const interpreter = selectedFastInterpreter ? "fast" : "legacy";
     document.documentElement.dataset.jitPolicy = jitPolicy;
+    document.documentElement.dataset.jitResidency = initialJit?.jitResidencyPolicy
+      ?? selectedJitResidency;
     document.documentElement.dataset.jitThreshold = String(selectedJitThreshold);
     document.documentElement.dataset.interpreter = interpreter;
     window.__jit = {
@@ -839,6 +843,7 @@ async function runLinuxBootOwned(opts, banner, request) {
       backend,
       interpreter,
       jit: jitPolicy,
+      jitResidency: document.documentElement.dataset.jitResidency,
       jitThreshold: selectedJitThreshold,
       quantum: selectedQuantum,
     };
