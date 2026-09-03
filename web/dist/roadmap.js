@@ -100,6 +100,7 @@ export const ROADMAP = [
       { name: "Guest Docker lifecycle integration", status: "verified", evidence: "E3.5-T05f6: Docker composes guest catalog, Run, Containers, Logs, Exec, Stop, and honest degraded/failure paths" },
       { name: "Docker-tab instant resume", status: "verified", evidence: "E3-T12e: visible Save resume state, durable overlay generation, reload continuation, and stale-snapshot cold-path labeling" },
       { name: "Frozen offline boot + resume", status: "verified", evidence: "E3-T24d: cached app shell, coherent snapshot path, typed recovery states, and isolation-header preservation" },
+      { name: "Online/offline cross-origin isolation", status: "verified", evidence: "E3-T26a: COOP/COEP/CORP/CORS contract, SharedArrayBuffer isolation, and fail-closed header regression coverage" },
       { name: "Digest-deduped layer cache, reload-proof", status: "pending" },
     ],
   },
