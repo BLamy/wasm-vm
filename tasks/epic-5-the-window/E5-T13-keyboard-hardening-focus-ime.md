@@ -3,10 +3,12 @@ id: E5-T13
 epic: 5
 title: Keyboard hardening — focus loss, stuck modifiers, lock-key reconciliation
 priority: 513
-status: pending
+status: cancelled
 depends_on: [E5-T12c]
 estimate: M
+risk: medium
 capstone: false
+decomposed_into: [E5-T13a, E5-T13b, E5-T13c]
 ---
 
 ## Goal
@@ -60,4 +62,12 @@ held set (inject up for a non-held key must be a no-op). Kill the VM worker and 
 (E4 machinery): held-set must reset with it.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — decomposed
+
+This M-sized keyboard-hardening container is cancelled before implementation as required by
+task policy and replaced by three ordered S slices. E5-T13a owns the held-key ledger,
+idempotent release-all behavior, and lifecycle release hooks; E5-T13b owns per-event modifier
+and lock-key reconciliation with LED/state diagnostics; and E5-T13c owns browser/UI wiring,
+the panic control, restart handling, documentation, and the focus-theft end-to-end proof.
+Dependents E5-T16 and E5-T28 are rewired to the final E5-T13c boundary.

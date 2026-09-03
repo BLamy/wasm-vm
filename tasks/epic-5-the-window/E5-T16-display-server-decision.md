@@ -4,7 +4,7 @@ epic: 5
 title: Display server decision — Wayland (labwc/weston) vs X11 under emulation, measured
 priority: 516
 status: pending
-depends_on: [E5-T07, E5-T13, E5-T14]
+depends_on: [E5-T07, E5-T13c, E5-T14]
 estimate: M
 capstone: false
 ---

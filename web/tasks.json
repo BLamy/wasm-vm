@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 216,
-    "total": 377
+    "total": 380
   },
   "epics": [
     {
@@ -17214,8 +17214,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t12c): verify keyboard capture policy",
             "chore(e5-t12c): record keyboard capture proof",
             "chore(e5-t12c): start keyboard capture proof"
           ]
@@ -17223,7 +17224,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T13",
@@ -17231,11 +17232,15 @@
       "epicKey": "5",
       "title": "Keyboard hardening — focus loss, stuck modifiers, lock-key reconciliation",
       "priority": 513,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T12c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T13a",
+        "E5-T13b",
+        "E5-T13c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "The keyboard is unbreakable by window management: focus loss releases every held key,\nOS-swallowed shortcuts can't strand a modifier down in the guest, CapsLock state\ndivergence is detected and reconciled, and a panic \"release all keys\" control exists —\neliminating the classic emulator failure where Alt-Tab leaves Alt stuck forever.",
@@ -17263,9 +17268,133 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized keyboard-hardening container is cancelled before implementation as required by\ntask policy and replaced by three ordered S slices. E5-T13a owns the held-key ledger,\nidempotent release-all behavior, and lifecycle release hooks; E5-T13b owns per-event modifier\nand lock-key reconciliation with LED/state diagnostics; and E5-T13c owns browser/UI wiring,\nthe panic control, restart handling, documentation, and the focus-theft end-to-end proof.\nDependents E5-T16 and E5-T28 are rewired to the final E5-T13c boundary.",
       "adversarial": "Your mission: strand a key. Attack windows: switch OS apps mid-chord, use browser\nmenus, open devtools, trigger a JS alert() during a held chord, drag-select outside the\ncanvas starting from inside. After each, type `a` at the guest getty — anything but a\nlone lowercase 'a' (unless host CapsLock is genuinely on) refutes. Attack reconciliation\nloops: toggle CapsLock rapidly 50x while the guest is under load (slow drain) — prove no\noscillating injection storm (injection count bounded, panel stable). Attack the panic\nbutton during a genuinely held physical key — next physical keyup must not underflow the\nheld set (inject up for a non-held key must be a no-op). Kill the VM worker and restart\n(E4 machinery): held-set must reset with it.",
       "file": "tasks/epic-5-the-window/E5-T13-keyboard-hardening-focus-ime.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T13a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "held-key ledger and release-all safety",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T12c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make the host-side set of keys believed down by the guest explicit, bounded, and\nidempotent. A single release-all operation must turn every held key into an ordered guest\nkey-up frame and leave no stale modifier after focus or lifecycle loss.",
+      "criteria": [
+        {
+          "text": "Pressing physical keys records each key once; releasing a held key emits one break, while duplicate or orphan releases are no-ops and cannot underflow the ledger.",
+          "checked": false
+        },
+        {
+          "text": "`releaseAll` emits exactly one break for every currently held key in deterministic order, terminates the frame with `SYN_REPORT`, and leaves the snapshot empty.",
+          "checked": false
+        },
+        {
+          "text": "Synthetic blur, hidden-visibility, pointer-lock-loss, and view-toggle notifications all invoke the same release-all path, including when notifications repeat.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Feed 500 alternating lifecycle flaps and duplicate keyups through the isolated adapter, with\nrandomized held-key order. The final snapshot must be empty and every emitted break must have a\nmatching prior make. Call release-all twice during a held modifier chord; the second call must\nemit no guest events.",
+      "file": "tasks/epic-5-the-window/E5-T13a-held-key-release-safety.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T13b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "modifier and lock-key reconciliation",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T13a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Repair modifier and lock-key divergence before it reaches the guest. The browser's\n`getModifierState()` and T11 LED feedback are the authorities used to reconcile missing or\nstranded Control/Alt/Shift/Meta, CapsLock, and NumLock transitions without creating duplicate\nevents or an injection storm.",
+      "criteria": [
+        {
+          "text": "For every modifier, a mismatch between the held ledger and `getModifierState()` produces exactly one corrective transition before the dependent key; an already matching state produces none.",
+          "checked": false
+        },
+        {
+          "text": "A host lock-state mismatch produces one lock down/up pair and updates the diagnostic counter; matching LED state and repeated observations produce no additional injection.",
+          "checked": false
+        },
+        {
+          "text": "A Ctrl visibility-loss branch re-presses Ctrl only when the supplied physical modifier state is true, while the false branch remains neutral; both branches pass exact sequence assertions.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Toggle CapsLock and NumLock 50 times while feeding a slow-drain event sink, then replay the same\nobservations. The repair count and emitted frames must remain bounded and deterministic, with no\noscillation once host and guest state agree. Interleave Ctrl+AltRight and a missing modifier-up;\nthe resulting sequence must preserve the documented AltGr representation.",
+      "file": "tasks/epic-5-the-window/E5-T13b-modifier-lock-reconciliation.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T13c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "browser focus hardening and keyboard recovery proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T13b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Wire the hardened keyboard state into the browser demo so focus theft, visibility changes,\npointer-lock exit, view toggles, worker restart, and an intentional panic release are visible,\nrecoverable, and proven against the guest getty.",
+      "criteria": [
+        {
+          "text": "Holding Alt and firing a browser blur or hidden-visibility event releases it within one guest frame; the debug surface reports zero held keys, and typing afterward produces a lone unmodified `a` (unless host CapsLock is on).",
+          "checked": false
+        },
+        {
+          "text": "The proof covers Ctrl held across visibility loss: Ctrl is re-pressed on return only when `getModifierState('Control')` remains true, and both branches leave the guest neutral after key-up.",
+          "checked": false
+        },
+        {
+          "text": "The panic button releases a genuinely held key, repeated release is safe, worker restart clears the ledger, and the browser proof records the recovery state plus zero unexpected console/page/request errors.",
+          "checked": false
+        },
+        {
+          "text": "The debug panel exposes held keys and reconciliation statistics, and the documentation matches the implemented focus and lock-key policy.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 4,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Use the local browser harness to steal focus during Alt+Tab-like chords, fire a JS alert while a\nmodifier is held, exit pointer lock with Escape, toggle views, and restart the worker. After each\nattack type `a` at the guest getty and assert no phantom modifier. Invoke the panic button during\na held physical key and require the later physical keyup to be a no-op. Run 500 randomized focus\nflaps interleaved with chords and require an empty final held set.",
+      "file": "tasks/epic-5-the-window/E5-T13c-focus-hardening-e2e.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -17373,7 +17502,7 @@
       "status": "pending",
       "depends_on": [
         "E5-T07",
-        "E5-T13",
+        "E5-T13c",
         "E5-T14"
       ],
       "decomposed_into": [],
@@ -17932,7 +18061,7 @@
       "priority": 528,
       "status": "pending",
       "depends_on": [
-        "E5-T13",
+        "E5-T13c",
         "E5-T15",
         "E5-T18",
         "E5-T20",

@@ -4,7 +4,7 @@ epic: 5
 title: "Capstone: a browser rendering surface + real GUI apps — type, hear, drag"
 priority: 528
 status: pending
-depends_on: [E5-T13, E5-T15, E5-T18, E5-T20, E5-T24, E5-T25]
+depends_on: [E5-T13c, E5-T15, E5-T18, E5-T20, E5-T24, E5-T25]
 estimate: L
 capstone: true
 ---
