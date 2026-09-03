@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 189,
-    "total": 350
+    "total": 356
   },
   "epics": [
     {
@@ -14611,7 +14611,7 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified\n\n- P1 headerless fallback and shim — HELD. Prediction: a headerless origin with the isolation shim\n  blocked selects `single-thread` before wasm initialization, while the explicit `?worker=0` path\n  remains usable; with the shim allowed, its second-load document becomes isolated and reaches the\n  shared worker. Observed the blocked test pass with `crossOriginIsolated=false`, selection\n  `single-thread`, `wasmVariant=fallback`, `main-thread` backend, exact computed\n  `E4T22G_NOHEADERS_42`, and the allowed test pass with a service-worker controller,\n  `worker-shared` selection, `whole-machine-worker` backend, and a restored BusyBox command\n  returning `E4T22G_SHIM_42`.\n- P2 ordered input and wake delivery — HELD. Prediction: 100 chunks of 100 bytes at 10 ms\n  intervals plus a newline produce exactly the expected 10,000-byte SHA-256 and exit 0, without\n  the partial-read truncation that the adversarial raw-tty case would expose. Observed\n  `4c207598af7a20db0e3334dd044399a40e467cb81b37f7ba05a4f76dcbd8fd59`, 10,000 bytes, exit 0,\n  input duration 1,182.815 ms, and measured rate 8,454.407 bytes/s; no leftover payload appeared\n  at the next shell prompt.\n- P3 background, foreground, and reload lifecycle — HELD. Prediction: hiding the document pauses\n  the scheduler without advancing slices or retired instructions, visibility restore resumes the\n  guest, and reloading during an in-flight `sleep` RPC restores a usable worker with no pending RPC\n  or overlay bytes. Observed identical paused scheduler counters before and after the 500 ms hidden\n  interval, exact `E4T22G_BEFORE_42`/`E4T22G_AFTER_42`/`E4T22G_RELOAD_42` results, restored\n  `whole-machine-worker`, `rpc.pending=0`, and `persist.pendingBytes=0`.\n- P4 worker termination and fallback — HELD. Prediction: terminating the live worker rejects both\n  pending `stateDigest`/`whenDone` promises, rejects future calls after the heartbeat deadline,\n  marks the guest down, and leaves the explicit fallback usable without constructing a worker.\n  Observed two rejected settlements, `Linux worker heartbeat timed out after 324ms`, `guestUp=false`,\n  two worker terminations, and exact `E4T22G_FALLBACK_42` from the `main-thread` fallback with zero\n  fallback worker constructions.\n- P5 evidence and diagnostics — HELD. The exact-head result records runtime digest\n  `e0b1980799c77ece81f2ddb97b493d5223c1212d1b25f1e1bc94d10f74aafbf3`, the first-command\n  boundary, controls, exact checksum, browser/version, and generated deploy artifact identities;\n  console errors, page errors, failed requests, and non-favicon HTTP errors were all empty.\n- COVERAGE — HELD. The changed fallback spec executes both headerless branches; the new hardening\n  spec executes the normal worker boot, computed terminal command, 10 KB/s input path, visibility\n  pause/resume, reload during MMIO/RPC activity, worker termination, and explicit main-thread\n  fallback. The current production whole-machine worker is postMessage-scheduled and does not use a\n  shared guest-memory control block; the raw shared-buffer/WFI proof remains in E4-T22d.\n- SUITE — retained `web/tests/e4-t22-fallback-no-headers.spec.js`,\n  `web/tests/e4-t22-worker-hardening.spec.js`, the JSON result, and the screenshot.\n\nCommands:\n\n`PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t22-fallback-no-headers.spec.js tests/e4-t22-worker-hardening.spec.js --project=chromium`\n\nResult: 3 passed in 36.5s at exact implementation head\n`84ff4841b35e3f6a705ed8864493f09e0bed5b87`.\n\nEvidence: `evidence/e4-t22g/worker-hardening-2026-09-03.json`, SHA-256\n`e9cc09c874a85da7fa51fbb362594689a517843a9649aa028378b744adaab260`; screenshot\n`evidence/e4-t22g/worker-hardening-2026-09-03.png`, SHA-256\n`f89cafccb685e290eadc6ddaff2570d4486657844f94d627ba4405a846d77b7c`.\n\nWebKit and independent-machine execution are waived per user direction. Host rr/`ssh dev` is\nwaived by the repository's 2026-09-01 evidence policy.",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified\n\n- P1 headerless fallback and shim — HELD. Prediction: a headerless origin with the isolation shim\n  blocked selects `single-thread` before wasm initialization, while the explicit `?worker=0` path\n  remains usable; with the shim allowed, its second-load document becomes isolated and reaches the\n  shared worker. Observed the blocked test pass with `crossOriginIsolated=false`, selection\n  `single-thread`, `wasmVariant=fallback`, `main-thread` backend, exact computed\n  `E4T22G_NOHEADERS_42`, and the allowed test pass with a service-worker controller,\n  `worker-shared` selection, `whole-machine-worker` backend, and a restored BusyBox command\n  returning `E4T22G_SHIM_42`.\n- P2 ordered input and wake delivery — HELD. Prediction: 100 chunks of 100 bytes at 10 ms\n  intervals plus a newline produce exactly the expected 10,000-byte SHA-256 and exit 0, without\n  the partial-read truncation that the adversarial raw-tty case would expose. Observed\n  `4c207598af7a20db0e3334dd044399a40e467cb81b37f7ba05a4f76dcbd8fd59`, 10,000 bytes, exit 0,\n  input duration 1,179.145 ms, and measured rate 8,480.721 bytes/s; no leftover payload appeared\n  at the next shell prompt.\n- P3 background, foreground, and reload lifecycle — HELD. Prediction: hiding the document pauses\n  the scheduler without advancing slices or retired instructions, visibility restore resumes the\n  guest, and reloading during an in-flight `sleep` RPC restores a usable worker with no pending RPC\n  or overlay bytes. Observed identical paused scheduler counters before and after the 500 ms hidden\n  interval, exact `E4T22G_BEFORE_42`/`E4T22G_AFTER_42`/`E4T22G_RELOAD_42` results, restored\n  `whole-machine-worker`, `rpc.pending=0`, and `persist.pendingBytes=0`.\n- P4 worker termination and fallback — HELD. Prediction: terminating the live worker rejects both\n  pending `stateDigest`/`whenDone` promises, rejects future calls after the heartbeat deadline,\n  marks the guest down, and leaves the explicit fallback usable without constructing a worker.\n  Observed two rejected settlements, `Linux worker heartbeat timed out after 324ms`, `guestUp=false`,\n  two worker terminations, and exact `E4T22G_FALLBACK_42` from the `main-thread` fallback with zero\n  fallback worker constructions.\n- P5 evidence and diagnostics — HELD. The exact-head result records runtime digest\n  `e0b1980799c77ece81f2ddb97b493d5223c1212d1b25f1e1bc94d10f74aafbf3`, the first-command\n  boundary, controls, exact checksum, browser/version, and generated deploy artifact identities;\n  console errors, page errors, failed requests, and non-favicon HTTP errors were all empty.\n- COVERAGE — HELD. The changed fallback spec executes both headerless branches; the new hardening\n  spec executes the normal worker boot, computed terminal command, 10 KB/s input path, visibility\n  pause/resume, reload during MMIO/RPC activity, worker termination, and explicit main-thread\n  fallback. The current production whole-machine worker is postMessage-scheduled and does not use a\n  shared guest-memory control block; the raw shared-buffer/WFI proof remains in E4-T22d.\n- SUITE — retained `web/tests/e4-t22-fallback-no-headers.spec.js`,\n  `web/tests/e4-t22-worker-hardening.spec.js`, the JSON result, and the screenshot.\n\nCommands:\n\n`PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t22-fallback-no-headers.spec.js tests/e4-t22-worker-hardening.spec.js --project=chromium`\n\nResult: 3 passed in 36.7s at exact implementation head\n`84ff4841b35e3f6a705ed8864493f09e0bed5b87`.\n\nEvidence: `evidence/e4-t22g/worker-hardening-2026-09-03.json`, SHA-256\n`40163bd3995468bde86d3c57632ff2c0829a49b1ea2f57b851eec9a7a300eebf`; screenshot\n`evidence/e4-t22g/worker-hardening-2026-09-03.png`, SHA-256\n`8876827c2aeaeac6192c251e8113fec1351d0a1a1620c665c6b8ea0e909e8af3`.\n\nWebKit and independent-machine execution are waived per user direction. Host rr/`ssh dev` is\nwaived by the repository's 2026-09-01 evidence policy.",
       "adversarial": "Deliberately strip COOP/COEP, race ten thousand IRQ/input events with WFI, write a device buffer\nimmediately before notifying, background for five minutes, reload during MMIO, and terminate the\nworker from DevTools. Any white screen, lost byte, stale read, guest time warp, or uncited optimistic\nstate is a refutation.",
       "file": "tasks/epic-4-acceleration/E4-T22g-threaded-worker-hardening.md",
       "activity": [
@@ -14622,15 +14622,16 @@
         },
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e4-t22g): accept worker hardening evidence",
             "tasks: start E4-T22g worker hardening"
           ]
         }
       ],
       "firstActivity": "2026-09-01",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T23",
@@ -14949,7 +14950,7 @@
       "epicKey": "4",
       "title": "Capstone: interactive/fast Node.js (Bun stretch), 10x CoreMark, sub-5s boot, zero regressions",
       "priority": 429,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E4-T24",
         "E4-T26",
@@ -14960,9 +14961,16 @@
         "E4-T33",
         "E4-T32"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E4-T28a",
+        "E4-T28b",
+        "E4-T28c",
+        "E4-T28d",
+        "E4-T28e",
+        "E4-T28f"
+      ],
       "estimate": "L",
-      "capstone": true,
+      "capstone": false,
       "goal": "The Level 4 threshold demonstrated end-to-end from a cold start. The headline named target\nis **interactive, fast Node.js**: the same runtime that crawled at Level 3 (E3-T28), now\nresponsive — a REPL that echoes and evaluates without perceptible lag, and a real\n`node`-driven workload (e.g. a small HTTP server handling requests, or `npm`-style script\nexecution) that feels usable. Because V8 emits machine code at runtime, this is also the\nproof that **FENCE.I i-cache coherence** (E4-T16) works: the guest's own JIT is writing code\ninto pages we have translated. Supporting gates: in-browser CoreMark ≥ 10x the recorded\nLevel 3 interpreter baseline, unmodified Alpine kernel boot to login under 5 seconds, and the\nfull compliance suite green under JIT. **Bun** is a documented *stretch*: attempt it, but its\nJavaScriptCore backend has a much weaker/immature RISC-V JIT, so a Bun result is recorded as\nbonus/gap data, never a gate. This is the moment the machine crosses from \"toy shell\" to\n\"you can develop software inside it.\"",
       "criteria": [
         {
@@ -14996,7 +15004,7 @@
       ],
       "criteriaTotal": 7,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThe original L-sized task is a planning container, so it is cancelled before implementation as\nrequired by the task policy. The six S children separate harness integrity, Node interactivity,\nCoreMark uplift, cold boot timing, gcc/keypress latency, and final compliance/sign-off. Each child\nhas one primary deterministic acceptance command and the final child depends on every preceding\nmeasurement. No child claims the parent capstone until its own exact-head evidence is recorded.",
       "adversarial": "Refute the headline numbers from a cold start — this is the epic's thesis on trial.\nMandatory: fresh clone, fresh browser profile, follow the docs only. Attack angles:\n(1) baseline integrity: recompute the 10x denominator by checking out the ledgered\nbaseline commit and re-measuring interpreter CoreMark — a drifted or cherry-picked\nbaseline refutes the ratio; (2) clock honesty: cross-check guest-reported CoreMark\nelapsed time against host wall clock (E4-T24's mandatory check) — mtime skew inflating\nthe score refutes; (3) cold-start honesty: clear site data, time boot on *first*\ndocumented-interactive load, run 3x and report median, not best; (4) interactivity: type\ncontinuously during the gcc compile and measure echo latency independently (screen-\nrecording frame analysis, not the VM's self-report) — p95 > 100 ms refutes; (5) same-\ncommit rule: compliance artifacts and benchmark JSON must carry the identical commit hash\nand build flags — a fast-build/correct-build split refutes everything; (6) Firefox: the\ngates are Chrome-based, but a Firefox result below 5x or any Firefox correctness failure\nmust be disclosed in the results JSON — omission refutes the report's completeness.",
       "file": "tasks/epic-4-acceleration/E4-T28-capstone-10x-acceleration.md",
       "activity": [
@@ -15020,11 +15028,188 @@
           "labels": [
             "chore(e4): prioritize bounded JIT accounting"
           ]
+        },
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
         }
       ],
       "firstActivity": "2026-07-27",
-      "lastActivity": "2026-08-09",
+      "lastActivity": "2026-09-03",
       "commitCount": 3
+    },
+    {
+      "id": "E4-T28a",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Capstone harness, baseline provenance, and deploy-artifact contract",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4-T24",
+        "E4-T26",
+        "E4-T27",
+        "E4-T29",
+        "E4-T30",
+        "E4-T31",
+        "E4-T32",
+        "E4-T33"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Create the reproducible measurement boundary shared by the Level-4 capstone slices: pin the\ncandidate commit and build flags, identify the ledgered Level-3 denominators, capture browser and\nheader controls, and emit a schema-validated result envelope with content-hashed deploy artifacts.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Use a scratch clone with `RUSTFLAGS`, `CARGO_*`, `RUST_LOG`, and benchmark cache variables scrubbed.\nTamper the denominator score, baseline commit, build flag, and one artifact byte independently;\neach must fail before a ratio can be reported. Re-run with a warmed browser profile and confirm the\nharness requires the documented fresh-profile path. Check that secrets, absolute user paths, and\nuncommitted files never enter the result JSON.",
+      "file": "tasks/epic-4-acceleration/E4-T28a-capstone-harness-baseline.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T28b",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Interactive Node.js and V8 JIT browser workload",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4-T28a",
+        "E4-T34"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove that the restored Node-Alpine guest is interactive under the browser JIT: a real Node REPL\nechoes and evaluates input below the latency budget, a guest-computed Node HTTP workload reaches\nthe required throughput against its Level-3 interpreter baseline, and V8-generated code remains\ncorrect across `FENCE.I`/self-modifying-code transitions.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Start cold, type continuously while the Node workload is busy, and measure echo latency from the\nbrowser event loop rather than guest timestamps. Compare the HTTP response body and request count\nagainst a literal-echo trap, interrupt/reload during a request, and force an interpreter control\nrun to detect a cached JIT result being mislabeled as a 10x uplift. Inspect the trace/result for\nFENCE.I or stale-code failures. WebKit and independent-machine legs are outside the directed proof\nby user direction; disclose any configured Firefox result.",
+      "file": "tasks/epic-4-acceleration/E4-T28b-interactive-node-browser.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T28c",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Browser CoreMark uplift and guest/host clock honesty",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4-T28a",
+        "E4-T04",
+        "E4-T05",
+        "E4-T27"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Measure the shipping browser CoreMark workload from a cold profile and establish the Level-4\nheadline ratio against the exact ledgered `level3-interpreter` denominator, with an independent\nhost-wall-clock cross-check so guest time cannot inflate the score.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Recompute the denominator from its recorded commit and binary hash, mutate the guest checksum, and\nreplace the timer with a deliberately slow/fast clock in the harness. Run three cold contexts and\nreport the median, not the best, while checking host and guest clocks. Poison any JIT cache or\nartifact and confirm the run fails closed. A score without a guest validation line, source commit,\nor baseline identity is evidence-incomplete.",
+      "file": "tasks/epic-4-acceleration/E4-T28c-coremark-browser-uplift.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T28d",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Cold browser boot-to-login timing gate",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4-T28a",
+        "E4-T32",
+        "E4-T34"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Measure the default persistent-disk browser path from the first OpenSBI byte to the real Alpine\n`login:` prompt in three genuinely fresh browser contexts and enforce the parent capstone's median\nsub-five-second boot gate.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Use a new context and cleared origin data for every sample, vary run order, and inspect network\nrequests for a restore shortcut masquerading as a first boot. Delay or remove the login marker and\nconfirm the harness times out rather than stopping at a generic ready banner. Compare all three\nraw samples and require the median field to be recomputable.",
+      "file": "tasks/epic-4-acceleration/E4-T28d-cold-boot-login.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T28e",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "In-guest gcc compile and continuous interactive echo budget",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4-T28a",
+        "E4-T32",
+        "E4-T34"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Run the pinned in-guest `gcc -O2 -c miniz.c` workload through the real Alpine terminal while\ncontinuously injecting independent keystrokes, proving the compile completes within 20 guest\nseconds and the browser remains interactive with p95 echo latency below 100 ms.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Cross-check the object with `file`/hash inside the guest, replace `miniz.c` with a same-sized no-op,\nand confirm the checksum/compile work changes. Inject probes at the start, middle, and end of the\ncompile, including while JIT compilation is active; kill/reload during an in-flight probe and make\nsure the result is rejected rather than spliced together. Compare guest and host timing to expose\nclock skew.",
+      "file": "tasks/epic-4-acceleration/E4-T28e-gcc-interactive-budget.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E4-T28f",
+      "epic": "4",
+      "epicKey": "4",
+      "title": "Level-4 same-head cold-start capstone sign-off",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E4-T28a",
+        "E4-T28b",
+        "E4-T28c",
+        "E4-T28d",
+        "E4-T28e",
+        "E4-T25",
+        "E4-T26",
+        "E4-T27"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": true,
+      "goal": "Assemble the verified slice results into the one-build Level-4 capstone: a fresh clone and fresh\nbrowser profile reproduce interactive Node, CoreMark uplift, cold boot, gcc interactivity, full\ncompliance, and lockstep evidence under the same exact commit and documented controls.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Follow only `docs/demos/level-4.md` from a new clone/profile. Recompute the Level-3 denominator,\nclear all site data, run the three-sample median, cross-check guest and host clocks, type throughout\ngcc, poison a cache/artifact, and confirm a same-commit mismatch fails the orchestration. Run the\nfinal browser path offline only where the documented workload permits it and disclose any configured\nFirefox result. A best-of-three, warmed cache, split build, omitted Bun gap, or uncited claim refutes\nthe capstone.",
+      "file": "tasks/epic-4-acceleration/E4-T28f-level4-capstone-signoff.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
     },
     {
       "id": "E4-T29",
