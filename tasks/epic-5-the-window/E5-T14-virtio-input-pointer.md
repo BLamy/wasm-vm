@@ -3,10 +3,12 @@ id: E5-T14
 epic: 5
 title: Pointer devices — absolute tablet, relative mouse with Pointer Lock, wheel
 priority: 514
-status: pending
+status: cancelled
 depends_on: [E5-T10c]
 estimate: L
+risk: medium
 capstone: false
+decomposed_into: [E5-T14a, E5-T14b, E5-T14c]
 ---
 
 ## Goal
@@ -65,4 +67,12 @@ release-all) and mode state must match `document.pointerLockElement`. Middle-cli
 paste-chord and right-click must never show the browser context menu while captured.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — decomposed
+
+This L-sized pointer container is cancelled before implementation as required by task policy and
+replaced by three ordered S slices. E5-T14a owns the guest tablet/mouse capability declarations,
+slot wiring, and native stream/config fixtures; E5-T14b owns the browser absolute/relative mode
+state machine, Pointer Lock, coordinate scaling, and button routing; E5-T14c owns wheel
+normalization, drag/pointer-capture behavior, docs, guest evtest fixtures, and the deterministic
+browser proof. Dependents E5-T15 and E5-T16 are rewired to E5-T14c.

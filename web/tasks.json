@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 219,
-    "total": 380
+    "total": 383
   },
   "epics": [
     {
@@ -17418,8 +17418,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t13c): verify focus hardening",
             "chore(e5-t13c): record focus hardening proof",
             "chore(e5-t13c): start focus hardening proof"
           ]
@@ -17427,7 +17428,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T14",
@@ -17435,11 +17436,15 @@
       "epicKey": "5",
       "title": "Pointer devices — absolute tablet, relative mouse with Pointer Lock, wheel",
       "priority": 514,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T10c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T14a",
+        "E5-T14b",
+        "E5-T14c"
+      ],
       "estimate": "L",
       "capstone": false,
       "goal": "Two pointer instances of the T10 chassis — an absolute tablet (the default, giving\npixel-exact host-cursor correspondence with no grab) and a relative mouse (behind\nPointer Lock, for apps that warp/hide the cursor) — with buttons, horizontal/vertical\nwheel, and a clean mode toggle.",
@@ -17467,9 +17472,130 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis L-sized pointer container is cancelled before implementation as required by task policy and\nreplaced by three ordered S slices. E5-T14a owns the guest tablet/mouse capability declarations,\nslot wiring, and native stream/config fixtures; E5-T14b owns the browser absolute/relative mode\nstate machine, Pointer Lock, coordinate scaling, and button routing; E5-T14c owns wheel\nnormalization, drag/pointer-capture behavior, docs, guest evtest fixtures, and the deterministic\nbrowser proof. Dependents E5-T15 and E5-T16 are rewired to E5-T14c.",
       "adversarial": "Refute the coordinate math: with fbcon + `evtest`, script pointer moves to all four\ncanvas corners and the exact center at DPR 1/1.5/2 and CSS zoom 80%/125% — any corner\nnot reaching min/max (0/32767) or center off by >1 unit refutes (this is the classic\ncursor-offset-drift bug; T18's desktop makes it visible as click-misses). Refute wheel\nintegrity: send 1000 wheel events of +3px each; total REL_WHEEL must equal\nround(3000/120)±1 with zero sign flips. Attack the mode machine: request pointer lock,\nhave the browser deny it (permissions policy / iframe), Esc during a held button, and\nalt-tab during lock — after each, buttons held must be released (pairs with T13\nrelease-all) and mode state must match `document.pointerLockElement`. Middle-click\npaste-chord and right-click must never show the browser context menu while captured.",
       "file": "tasks/epic-5-the-window/E5-T14-virtio-input-pointer.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T14a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "pointer device specs and guest stream wiring",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T10c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Add the two guest-visible pointer devices that the browser will drive: an absolute virtio tablet\nand a relative virtio mouse. Keep their capability maps, identity, slot wiring, and event stream\nsemantics deterministic and independently testable before adding DOM behavior.",
+      "criteria": [
+        {
+          "text": "Guest config for the tablet exposes `ABS_X`/`ABS_Y` with `0..32767` ranges and the expected left/right/middle/side/extra button bits; mouse config exposes `REL_X`/`REL_Y` and wheel axes.",
+          "checked": false
+        },
+        {
+          "text": "Both devices appear in deterministic slot order and each injected pointer frame is a complete `EV_*` sequence ending in exactly one `SYN_REPORT`.",
+          "checked": false
+        },
+        {
+          "text": "Native hostile fixtures reject malformed/unsupported pointer events without corrupting the other device or the keyboard queue.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Read every config selector in a permuted order, request unsupported bitmap bytes, and interleave\ntablet/mouse/button frames while the event queue is slow. The verifier must observe isolated\ncapabilities, bounded complete frames, and no keyboard-state changes.",
+      "file": "tasks/epic-5-the-window/E5-T14a-pointer-device-specs.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T14b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "pointer mode state machine and coordinate/button routing",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T14a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Route browser pointer events to the T14a devices with an explicit absolute-tablet versus\nrelative-mouse mode state machine. Absolute mode must remain pixel-exact under CSS scaling and\ndevice-pixel-ratio changes; relative mode must enter and leave Pointer Lock without an absolute\njump.",
+      "criteria": [
+        {
+          "text": "Absolute pointer moves emit tablet coordinates from the current canvas CSS rect, clamped to `0..32767`, with no dependence on the canvas backing-pixel size.",
+          "checked": false
+        },
+        {
+          "text": "Relative mode emits only `movementX`/`movementY` mouse deltas, requests Pointer Lock, and returns to absolute mode when lock is denied, lost, or cancelled.",
+          "checked": false
+        },
+        {
+          "text": "Button down/up pairs remain balanced through mode changes and map aux/back/forward to the documented evdev codes; captured right-click never opens the browser context menu.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Use DPR 1/1.5/2 and CSS zoom 80%/125% at all four corners and the exact center. Deny Pointer Lock,\npress Escape during a held button, and alt-tab during lock; every path must leave the selected mode\nconsistent with `document.pointerLockElement` and no button held.",
+      "file": "tasks/epic-5-the-window/E5-T14b-pointer-mode-routing.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T14c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "pointer wheel capture and browser proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T14b",
+        "E5-T13c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Finish the pointer surface with deterministic wheel normalization, drag-outside pointer capture,\ndocumentation, guest evtest fixtures, and one browser proof that exercises the complete host-to-\nguest path.",
+      "criteria": [
+        {
+          "text": "One PIXEL and one LINE wheel detent each emit exactly one signed `REL_WHEEL` event; 1000 small deltas accumulate deterministically without sign flips or unbounded state.",
+          "checked": false
+        },
+        {
+          "text": "A drag leaving the canvas still delivers movement and its button-up; a relative-mode exit leaves both pointer devices neutral and the next absolute move has no jump.",
+          "checked": false
+        },
+        {
+          "text": "The exact-head browser proof records the guest evtest stream, mode transitions, UI state, and zero unexpected console/page/request errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Send 1000 `+3px` wheel events and compare the total to the accumulator contract. Combine a held\nbutton with Pointer Lock denial, Escape, blur, view toggles, and pointer capture outside the canvas;\nthen type/inspect a guest event stream and require no stuck button or modifier. Re-run the corner,\ncenter, DPR, and CSS-zoom matrix through the built page.",
+      "file": "tasks/epic-5-the-window/E5-T14c-pointer-wheel-browser-proof.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -17484,7 +17610,7 @@
       "status": "pending",
       "depends_on": [
         "E5-T03",
-        "E5-T14"
+        "E5-T14c"
       ],
       "decomposed_into": [],
       "estimate": "M",
@@ -17532,7 +17658,7 @@
       "depends_on": [
         "E5-T07",
         "E5-T13c",
-        "E5-T14"
+        "E5-T14c"
       ],
       "decomposed_into": [],
       "estimate": "M",
