@@ -3,7 +3,7 @@ id: E4-T28f
 epic: 4
 title: Level-4 same-head cold-start capstone sign-off
 priority: 429.6
-status: pending
+status: in-progress
 depends_on: [E4-T28a, E4-T28b, E4-T28c, E4-T28d, E4-T28e, E4-T25, E4-T26, E4-T27]
 estimate: S
 risk: high

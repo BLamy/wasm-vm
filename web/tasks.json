@@ -15220,15 +15220,16 @@
         },
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e4-t28e): accept recorded browser gap",
             "tasks: start E4-T28e gcc interactive budget"
           ]
         }
       ],
       "firstActivity": "2026-09-01",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T28f",
@@ -15236,7 +15237,7 @@
       "epicKey": "4",
       "title": "Level-4 same-head cold-start capstone sign-off",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T28a",
         "E4-T28b",
