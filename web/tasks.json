@@ -16962,7 +16962,7 @@
       "epicKey": "5",
       "title": "keyboard device registration and LED status wiring",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E5-T11a"
       ],
@@ -16973,13 +16973,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit 95fd672 adds the slot-3 keyboard registration, host-owned LED state and\nstatus-sink adapter, Machine boundary servicing, and native/wasm32 registration fixtures. The\nexact-head checks were cargo fmt --all -- --check, git diff --check, cargo test -p wasm-vm-core\n--lib dev::virtio::input (15 passed), cargo test -p wasm-vm-core --test virtio_keyboard (2\npassed), cargo test -p wasm-vm-core --lib (234 passed), the 22-test virtio regression sweep,\nnative library and integration clippy with -D warnings, the wasm32 core build and clippy, and\nwasm-pack tests keyboard_registration (1 passed), keyboard_spec (1 passed), input_config (1\npassed), and input_queues (2 passed). Evidence:\nevidence/e5-t11b/keyboard-led-wiring-2026-09-03.json, SHA-256\nb37434c5c997b4bab4b3aedcf155442bfe4e75d10fa805dd99e7c0e92c52e6bf.\n\nThe recording demonstrates that DeviceID 18 is installed in slot 3 without disturbing the\nexisting GPU/headless slot layout, and that the normal Machine run-loop statusq path applies 100\nordered NumLock/CapsLock/ScrollLock updates to the host-owned indicator. A transport reset and\nqueue re-setup retain the callback sink and deliver the next LED update, while the wasm32 fixture\nconfirms the same registration and T11a config payload.",
       "adversarial": "Alternate LED bits while eventq injections are pending, reset between statusq kicks, and prove the\nhost indicator converges to the final guest state without a stale callback or queue stall.",
       "file": "tasks/epic-5-the-window/E5-T11b-keyboard-led-wiring.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t11b): start keyboard LED wiring"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T11c",
