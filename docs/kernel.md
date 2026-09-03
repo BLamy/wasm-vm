@@ -49,7 +49,24 @@ Verify: run the build on two machines (or two container UIDs) and diff
   the stock virtio_net driver for our slot-1 device. `PACKET` is AF_PACKET (arping/udhcpc/
   tcpdump — the T13/T15 acceptance tools). `ETHERNET` stays **off**: it only gates vendor NIC
   drivers (virtio_net lives in drivers/net under NET_CORE, not drivers/net/ethernet).
-- **`PCI/ETHERNET/USB/SOUND/DRM/FB=n`** — cut boot probing for hardware we don't emulate.
+- **`DRM` + `DRM_VIRTIO_GPU`** — the stock virtio-gpu DRM/KMS driver that will bind when Epic 5
+  exposes the GPU device.
+- **`DRM_FBDEV_EMULATION` + `FB` + `FRAMEBUFFER_CONSOLE` +
+  `FRAMEBUFFER_CONSOLE_DETECT_PRIMARY` + `FONT_8x16`** — fbdev emulation and a built-in 8x16
+  fbcon text console for first light.
+- **`VIRTIO_INPUT` + `INPUT_EVDEV`** — the virtio-input chassis and `/dev/input/event*` ABI used by
+  the keyboard/pointer slices.
+- **`SOUND` + `SND` + `SND_PCM` + `SND_VIRTIO`** — built-in ALSA PCM and virtio-snd support for
+  the later audio device slices.
+- **`VIRTIO_CONSOLE` + `VT` + `VT_CONSOLE`** — virtio-console ports and virtual terminals used
+  alongside the serial console.
+- **`PCI/ETHERNET/USB/WLAN=n`** — cut probing for hardware we do not emulate; `SOUND`, `DRM`, and
+  `FB` are now enabled by the Epic 5 fragment above.
+
+The Epic 5 symbols are intentionally kept in this same reviewed fragment rather than hand-editing
+the generated `releases/kernel/<version>/config`. E5-T05b rebuilds the artifact and records the
+resulting Image-size delta; the four graphics/input/sound/console families add at most the task's
+4 MiB budget.
 
 ## Bumping the version
 
