@@ -147,7 +147,7 @@ export function createKeyboardBridge(adapter, { onDiagnostic = () => {}, onFrame
       diagnostic("orphan-keyup", event);
       return result(code, "orphan-keyup", { evdev });
     }
-    if (prior.modifier && hasDependentKey()) {
+    if (prior.modifier && hasDependentKey() && event?.reconciliation !== true) {
       prior.pendingRelease = true;
       return result(code, "modifier-release-deferred", { evdev });
     }
