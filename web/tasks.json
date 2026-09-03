@@ -15143,15 +15143,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e4-t28c): accept browser CoreMark debt evidence",
             "tasks: start E4-T28c browser CoreMark uplift"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E4-T28d",
@@ -15159,7 +15160,7 @@
       "epicKey": "4",
       "title": "Cold browser boot-to-login timing gate",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T28a",
         "E4-T32",

@@ -3,7 +3,7 @@ id: E4-T28d
 epic: 4
 title: Cold browser boot-to-login timing gate
 priority: 429.4
-status: pending
+status: in-progress
 depends_on: [E4-T28a, E4-T32, E4-T34]
 estimate: S
 risk: high
