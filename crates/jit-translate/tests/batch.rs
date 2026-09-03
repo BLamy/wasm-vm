@@ -6,7 +6,7 @@
 //! walk the generated module with `wasmparser` and assert both intra edges are `Operator::Call` to
 //! the successor's function index and that NO `Operator::CallIndirect` exists anywhere in the batch.
 
-use jit_translate::{Abi, translate_batch, translate_block};
+use jit_translate::{Abi, translate_batch, translate_batch_with_static_slots, translate_block};
 use wasm_vm_core::decode::Instr;
 use wasm_vm_core::dispatch::{DecodedBlock, MicroOp};
 use wasmparser::{Operator, Parser, Payload, TypeRef};
@@ -153,10 +153,10 @@ fn intra_batch_edge_is_direct_call_not_call_indirect() {
 }
 
 #[test]
-fn static_cross_batch_edge_uses_guarded_funcref_call_when_enabled() {
+fn static_cross_batch_edge_uses_edge_local_funcref_call_when_enabled() {
     // These blocks deliberately have no intra-batch edge. In the browser ABI, a resolved static
-    // target is published into the shared virtual-target map and the emitted edge may then use the
-    // same guarded call_indirect path as a `jalr` target.
+    // target is published into the source/edge-local slot and the emitted edge uses the shared
+    // guarded call_indirect path without a virtual-target hash/key probe.
     let b0 = block(0x8000_0000, &[Instr::Jal { rd: 0, imm: 8 }]);
     let b1 = block(0x8000_0008, &[Instr::Jal { rd: 0, imm: -8 }]);
     let mut abi = Abi::INLINE_TLB;
@@ -164,9 +164,16 @@ fn static_cross_batch_edge_uses_guarded_funcref_call_when_enabled() {
     abi.dynamic_chain = true;
     abi.dynamic_map_base = 0x10000;
     abi.dynamic_map_mask = 0xff;
+    abi.static_chain = true;
+    abi.static_map_base = 0x20000;
 
-    let bytes = translate_batch(&[b0, b1], &abi, &[[None, None], [None, None]])
-        .expect("cross-batch browser batch translates");
+    let bytes = translate_batch_with_static_slots(
+        &[b0, b1],
+        &abi,
+        &[[None, None], [None, None]],
+        Some(&[0, 1]),
+    )
+    .expect("cross-batch browser batch translates");
     wasmparser::Validator::new_with_features(wasmparser::WasmFeatures::all())
         .validate_all(&bytes)
         .expect("cross-batch browser module must validate");
@@ -181,6 +188,42 @@ fn static_cross_batch_edge_uses_guarded_funcref_call_when_enabled() {
     assert_eq!(
         indirect_calls, 2,
         "both static cross-batch exits use the guarded funcref call"
+    );
+    let dynamic_probe_ops = funcs
+        .iter()
+        .flat_map(|ops| ops.iter())
+        .filter(|op| matches!(op, Operator::I64ShrU { .. }))
+        .count();
+    assert_eq!(
+        dynamic_probe_ops, 0,
+        "static edges must not emit the dynamic virtual-target hash probe"
+    );
+}
+
+#[test]
+fn flat_memory_abi_rejects_static_edge_slots() {
+    // Static edge slots are an inline/shared-memory optimization only. Supplying reservations to
+    // the frozen SoftMMU ABI must not smuggle a funcref-table dependency into that module.
+    let b0 = block(0x8000_0000, &[Instr::Jal { rd: 0, imm: 8 }]);
+    let b1 = block(0x8000_0008, &[Instr::Jal { rd: 0, imm: -8 }]);
+    let bytes = translate_batch_with_static_slots(
+        &[b0, b1],
+        &Abi::FROZEN,
+        &[[None, None], [None, None]],
+        Some(&[0, 1]),
+    )
+    .expect("frozen ABI still translates with ignored static reservations");
+    wasmparser::Validator::new_with_features(wasmparser::WasmFeatures::all())
+        .validate_all(&bytes)
+        .expect("frozen module must validate");
+    let indirect_calls = functions_ops(&bytes)
+        .iter()
+        .flat_map(|ops| ops.iter())
+        .filter(|op| matches!(op, Operator::CallIndirect { .. }))
+        .count();
+    assert_eq!(
+        indirect_calls, 0,
+        "flat-memory modules never use static links"
     );
 }
 

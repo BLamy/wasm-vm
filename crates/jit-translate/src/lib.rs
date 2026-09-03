@@ -197,6 +197,13 @@ pub struct Abi {
     pub dynamic_chain: bool,
     /// E4-T34: imported funcref table index used by guarded dynamic calls.
     pub chain_table: u32,
+    /// E4-T35: byte base of the browser's per-block static-edge link slots. A block's reserved
+    /// slot index is supplied to [`translate_batch_with_static_slots`]; each block owns two
+    /// little-endian `u32` table entries at `static_map_base + slot * 8`. Zero disables the
+    /// edge-local path and preserves the E4-T34 virtual-target fallback.
+    pub static_map_base: u32,
+    /// E4-T35: whether statically-known cross-module edges may use the edge-local slot table.
+    pub static_chain: bool,
     /// E4-T34: base of the browser's one-byte-per-RAM-page compiled-code hazard bitmap. A raw
     /// inline-RAM store only aborts a chain when the physical page currently contains compiled
     /// code; zero disables the browser-only store-chain refinement.
@@ -298,6 +305,8 @@ impl Abi {
         dynamic_map_mask: 0,
         dynamic_chain: false,
         chain_table: 0,
+        static_map_base: 0,
+        static_chain: false,
         code_pages_base: 0,
         mem: MemModel::SoftmmuImports,
         tlb: TlbLayout::FROZEN,
@@ -324,6 +333,8 @@ impl Abi {
         dynamic_map_mask: 0,
         dynamic_chain: false,
         chain_table: 0,
+        static_map_base: 0,
+        static_chain: false,
         code_pages_base: 0,
         mem: MemModel::InlineTlb,
         tlb: TlbLayout::FROZEN,
@@ -736,6 +747,7 @@ pub fn translate_block(block: &DecodedBlock, abi: &Abi) -> Result<Vec<u8>, Trans
         abi,
         [None, None],
         [None, None],
+        [None, None],
         [abi.dynamic_chain, abi.dynamic_chain],
         run_ty,
         global_info,
@@ -1040,10 +1052,11 @@ fn emit_mark_block_writes(f: &mut FuncBuilder, regs: &Regs, write_mask: u32) {
 /// 1 = a conditional branch's not-taken side) targets another block `local` IN THIS SAME group — in
 /// which case that edge is lowered to a DIRECT `call run{local}` (opcode `0x10`, NOT `call_indirect`
 /// `0x11`), gated by the `chain_enabled` header flag (§ABI). Cross-batch / dynamic edges are
-/// `None`; browser inline batches may use the guarded shared funcref table for static cross-batch
-/// edges once the core has published the resolved virtual target. `static_dynamic[e]` records
-/// whether a `None` static edge may take that guarded path; it is false for a `FENCE.I` successor,
-/// which must return to the host before any post-fence code executes.
+/// `None`; when static edge slots are supplied, a statically-known cross-batch edge loads its
+/// edge-local one-based funcref-table index from the shared map. Computed `jalr` edges retain the
+/// guarded virtual-target cache. `static_dynamic[e]` records whether a static edge may take the
+/// edge-local chain path; it is false for a `FENCE.I` successor, which must return to the host
+/// before any post-fence code executes.
 ///
 /// Returns `Unsupported` if ANY block contains an out-of-scope op (the caller falls back to
 /// installing the supported blocks singly), so a partly-untranslatable group never yields a
@@ -1053,7 +1066,25 @@ pub fn translate_batch(
     abi: &Abi,
     intra: &[[Option<usize>; 2]],
 ) -> Result<Vec<u8>, TranslateError> {
+    translate_batch_with_static_slots(blocks, abi, intra, None)
+}
+
+/// E4-T35: translate a batch with optional executor-owned static-edge slot reservations. When
+/// `static_slots` is present, `static_slots[i]` is the two-edge slot pair reserved for `blocks[i]`;
+/// statically-known exits that leave the batch load their one-based funcref index from that pair and
+/// call the shared table directly after the host has linked the edge. A missing/zero reservation
+/// keeps the E4-T34 virtual-target cache path available, which is useful for standalone translator
+/// callers and preserves the frozen ABI.
+pub fn translate_batch_with_static_slots(
+    blocks: &[DecodedBlock],
+    abi: &Abi,
+    intra: &[[Option<usize>; 2]],
+    static_slots: Option<&[u32]>,
+) -> Result<Vec<u8>, TranslateError> {
     debug_assert_eq!(blocks.len(), intra.len());
+    if let Some(static_slots) = static_slots {
+        debug_assert_eq!(blocks.len(), static_slots.len());
+    }
     // Pre-flight the WHOLE group first: one out-of-scope op fails the batch cleanly.
     for block in blocks {
         if !is_translatable(block) {
@@ -1166,6 +1197,20 @@ pub fn translate_batch(
             intra[i][0].is_none() || intra[i][0].is_some_and(|l| !ends_with_fence_i(&blocks[l])),
             intra[i][1].is_none() || intra[i][1].is_some_and(|l| !ends_with_fence_i(&blocks[l])),
         ];
+        let static_links = static_slots
+            .and_then(|slots| slots.get(i).copied())
+            .filter(|_| abi.direct_chain && abi.static_chain && abi.static_map_base != 0)
+            .map(|slot| {
+                let base = abi
+                    .static_map_base
+                    .checked_add(
+                        slot.checked_mul(8)
+                            .expect("static link slot offset overflow"),
+                    )
+                    .expect("static link address overflow");
+                [Some(base), Some(base + 4)]
+            })
+            .unwrap_or([None, None]);
         let (_, writes) = block_register_masks(block);
         let mut f = FuncBuilder::new(run_params);
         emit_body(
@@ -1181,6 +1226,7 @@ pub fn translate_batch(
                     .filter(|&l| !abi.direct_chain || !ends_with_fence_i(&blocks[l]))
                     .map(|l| blocks[l].ops.len() as u64),
             ],
+            static_links,
             static_dynamic,
             run_ty,
             global_info,
@@ -1208,8 +1254,10 @@ fn ends_with_fence_i(block: &DecodedBlock) -> bool {
 
 /// Emit the function body for `block` into `f`. `intra[e]` is the wasm function index of the
 /// same-module successor for edge `e` (0 = taken/sole/fall-through, 1 = branch not-taken), or `None`
-/// when the edge leaves the batch / is dynamic (a `jalr` target). `static_dynamic[e]` allows a
-/// statically-known `None` edge to use the browser's guarded cross-batch table path.
+/// when the edge leaves the batch / is dynamic (a `jalr` target). `static_links[e]` is the reserved
+/// shared-memory word for a statically-known cross-batch edge, while `static_dynamic[e]` allows that
+/// edge to take the edge-local chain path. Computed `jalr` edges continue to use the dynamic virtual
+/// target cache.
 #[allow(clippy::too_many_arguments)]
 fn emit_body(
     f: &mut FuncBuilder,
@@ -1217,6 +1265,7 @@ fn emit_body(
     abi: &Abi,
     intra: [Option<u32>; 2],
     intra_nops: [Option<u64>; 2],
+    static_links: [Option<u32>; 2],
     static_dynamic: [bool; 2],
     run_ty: u32,
     global_info: Option<GlobalInfo>,
@@ -1291,6 +1340,7 @@ fn emit_body(
                 pc_next,
                 intra,
                 intra_nops,
+                static_links,
                 static_dynamic,
                 n as u64,
                 run_ty,
@@ -1314,6 +1364,7 @@ fn emit_body(
             PcSrc::Const(end_pc),
             intra[0],
             intra_nops[0],
+            static_links[0],
             static_dynamic[0],
             n as u64,
             run_ty,
@@ -1330,10 +1381,11 @@ enum PcSrc {
     Local(u32),
 }
 
-/// E4-T19/E4-T34: the shared exit epilogue. Writes back dirty registers, sets `exit_pc` +
+/// E4-T19/E4-T34/E4-T35: the shared exit epilogue. Writes back dirty registers, sets `exit_pc` +
 /// `exit_reason`, then either returns the exit code, calls a statically-known intra-batch successor,
-/// or (for browser inline batches) uses the guarded shared funcref table for a published static
-/// cross-batch or dynamic successor. The native ABI keeps both chain paths disabled.
+/// or (for browser inline batches) uses an edge-local slot for a published static successor and the
+/// guarded virtual-target table for a dynamic successor. The native ABI keeps all chain paths
+/// disabled.
 #[allow(clippy::too_many_arguments)]
 fn emit_exit(
     f: &mut FuncBuilder,
@@ -1343,6 +1395,7 @@ fn emit_exit(
     pc: PcSrc,
     intra: Option<u32>,
     successor_nops: Option<u64>,
+    static_link: Option<u32>,
     allow_static_dynamic: bool,
     retired: u64,
     run_ty: u32,
@@ -1357,6 +1410,26 @@ fn emit_exit(
         (None, PcSrc::Local(target)) if abi.direct_chain && abi.dynamic_chain => {
             writeback(f, regs, abi);
             emit_dynamic_exit(f, regs, abi, target, code, run_ty);
+        }
+        (None, PcSrc::Const(_))
+            if static_link.is_some()
+                && allow_static_dynamic
+                && abi.direct_chain
+                && abi.dynamic_chain
+                && abi.static_chain =>
+        {
+            // The edge-local word is an executor-owned one-based table index. A zero word is a
+            // cold/unlinked edge and returns the already-recorded exit code without probing the
+            // virtual-target cache.
+            writeback(f, regs, abi);
+            emit_static_exit(
+                f,
+                regs,
+                abi,
+                static_link.expect("static edge guard checked the slot"),
+                code,
+                run_ty,
+            );
         }
         (None, PcSrc::Const(_))
             if allow_static_dynamic && abi.direct_chain && abi.dynamic_chain =>
@@ -1439,6 +1512,54 @@ fn emit_exit(
             f.return_();
         }
     }
+}
+
+/// Emit the E4-T35 edge-local static successor path. `static_link` points at one little-endian
+/// `u32` word in the browser executor's shared wasm memory; zero means the edge is not linked and
+/// any nonzero value is a one-based index into the imported funcref table. Unlike the E4-T34 dynamic
+/// path this has no virtual-PC hash/key probe: the source block and edge identify the slot.
+fn emit_static_exit(
+    f: &mut FuncBuilder,
+    regs: &Regs,
+    abi: &Abi,
+    static_link: u32,
+    code: ExitCode,
+    run_ty: u32,
+) {
+    let table_index = f.local(ValType::I32);
+    emit_chain_enabled_get(f, regs, abi);
+    f.local_get(STATE_BASE);
+    f.i32_load8_u(0, abi.chain_abort);
+    f.i32_eqz();
+    f.i32_and();
+    emit_chain_depth_get(f, regs, abi);
+    f.i64_eqz();
+    f.i32_eqz();
+    f.i32_and();
+    f.i32_const(static_link as i32);
+    f.i32_load(2, 0);
+    f.local_tee(table_index);
+    f.i32_eqz();
+    f.i32_eqz();
+    f.i32_and();
+    f.if_(BlockType::Value(ValType::I32));
+    f.local_get(STATE_BASE);
+    f.local_get(STATE_BASE);
+    f.i64_load(ALIGN8, abi.exit_pc);
+    f.i64_store(ALIGN8, abi.entry_pc);
+    f.local_get(STATE_BASE);
+    // A static cross-module call is a host boundary from the generated module's perspective, so
+    // root=1 makes the callee reload the shared handoff (and keeps the direct-chain function type).
+    f.i32_const(1);
+    f.i64_const(0);
+    f.local_get(table_index);
+    f.i32_const(1);
+    f.i32_sub();
+    f.call_indirect(run_ty, abi.chain_table);
+    f.else_();
+    f.i32_const(code as i32);
+    f.end();
+    f.return_();
 }
 
 /// Emit the guarded dynamic-target half of E4-T34. The target is a virtual `jalr` result. A
@@ -2854,6 +2975,7 @@ fn emit_terminator(
     pc_next: u64,
     intra: [Option<u32>; 2],
     intra_nops: [Option<u64>; 2],
+    static_links: [Option<u32>; 2],
     static_dynamic: [bool; 2],
     retired: u64,
     run_ty: u32,
@@ -2872,6 +2994,7 @@ fn emit_terminator(
             Cmp::Eq,
             intra,
             intra_nops,
+            static_links,
             static_dynamic,
             retired,
             run_ty,
@@ -2888,6 +3011,7 @@ fn emit_terminator(
             Cmp::Ne,
             intra,
             intra_nops,
+            static_links,
             static_dynamic,
             retired,
             run_ty,
@@ -2904,6 +3028,7 @@ fn emit_terminator(
             Cmp::Lt,
             intra,
             intra_nops,
+            static_links,
             static_dynamic,
             retired,
             run_ty,
@@ -2920,6 +3045,7 @@ fn emit_terminator(
             Cmp::Ge,
             intra,
             intra_nops,
+            static_links,
             static_dynamic,
             retired,
             run_ty,
@@ -2936,6 +3062,7 @@ fn emit_terminator(
             Cmp::Ltu,
             intra,
             intra_nops,
+            static_links,
             static_dynamic,
             retired,
             run_ty,
@@ -2952,6 +3079,7 @@ fn emit_terminator(
             Cmp::Geu,
             intra,
             intra_nops,
+            static_links,
             static_dynamic,
             retired,
             run_ty,
@@ -2970,6 +3098,7 @@ fn emit_terminator(
                 PcSrc::Const(pc.wrapping_add(imm as u64)),
                 intra[0],
                 intra_nops[0],
+                static_links[0],
                 static_dynamic[0],
                 retired,
                 run_ty,
@@ -3003,6 +3132,7 @@ fn emit_terminator(
                 PcSrc::Local(scratch),
                 None,
                 None,
+                None,
                 false,
                 retired,
                 run_ty,
@@ -3019,6 +3149,7 @@ fn emit_terminator(
                 ExitCode::Fallthrough,
                 PcSrc::Const(pc_next),
                 if abi.direct_chain { None } else { intra[0] },
+                None,
                 None,
                 false,
                 retired,
@@ -3052,6 +3183,7 @@ fn emit_branch(
     cmp: Cmp,
     intra: [Option<u32>; 2],
     intra_nops: [Option<u64>; 2],
+    static_links: [Option<u32>; 2],
     static_dynamic: [bool; 2],
     retired: u64,
     run_ty: u32,
@@ -3086,6 +3218,7 @@ fn emit_branch(
             PcSrc::Const(pc.wrapping_add(imm as u64)),
             intra[0],
             intra_nops[0],
+            static_links[0],
             static_dynamic[0],
             retired,
             run_ty,
@@ -3102,6 +3235,7 @@ fn emit_branch(
         PcSrc::Const(pc_next),
         intra[1],
         intra_nops[1],
+        static_links[1],
         static_dynamic[1],
         retired,
         run_ty,

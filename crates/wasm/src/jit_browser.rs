@@ -41,7 +41,7 @@ use alloc::vec::Vec;
 use core::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 
-use jit_translate::{Abi, MemModel, TlbLayout, is_translatable, translate_batch};
+use jit_translate::{Abi, MemModel, TlbLayout, is_translatable, translate_batch_with_static_slots};
 use js_sys::{Function, Object, Reflect, Uint8Array, WebAssembly};
 use wasm_bindgen::prelude::*;
 use wasm_vm_core::Machine;
@@ -67,6 +67,9 @@ const DIRECT_CHAIN_FUEL: u64 = 128;
 const PRODUCTION_CHAIN_DEPTH_BUDGET: u32 = 128;
 const DYNAMIC_LINK_ENTRIES: usize = 4096;
 const DYNAMIC_LINK_WORDS: usize = DYNAMIC_LINK_ENTRIES * 2;
+/// E4-T35: two `u32` link words per live compiled block. The production batch cap is 24 × 64;
+/// this leaves room for transient retranslation and keeps a failed reservation a safe fallback.
+const STATIC_LINK_ENTRIES: usize = 4096;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 struct InlineTlbContext {
@@ -299,6 +302,78 @@ impl DynamicLinkCache {
     }
 }
 
+/// Browser-only edge-local cache for statically-known successors. Each reserved slot owns two
+/// little-endian one-based funcref-table indices (edge 0 = taken/sole/fall-through, edge 1 = branch
+/// not-taken). Unlike [`DynamicLinkCache`], this has no key or hash: the generated caller already
+/// identifies the source block and edge by the address baked into its code.
+struct StaticLinkCache {
+    words: Box<[u32]>,
+    free: Vec<u32>,
+    base: u32,
+}
+
+impl StaticLinkCache {
+    fn new() -> Result<Self, &'static str> {
+        let mut words = alloc::vec![0u32; STATIC_LINK_ENTRIES * 2].into_boxed_slice();
+        let base = u32::try_from(words.as_mut_ptr() as usize)
+            .map_err(|_| "static link table is outside wasm32")?;
+        let free = (0..STATIC_LINK_ENTRIES as u32).rev().collect();
+        Ok(Self { words, free, base })
+    }
+
+    fn base(&self) -> u32 {
+        self.base
+    }
+
+    fn reserve_many(&mut self, count: usize) -> Option<Vec<u32>> {
+        if count > self.free.len() {
+            return None;
+        }
+        Some(
+            (0..count)
+                .map(|_| self.free.pop().expect("reservation was sized"))
+                .collect(),
+        )
+    }
+
+    fn word_index(slot: u32, edge: u8) -> usize {
+        slot as usize * 2 + usize::from(edge)
+    }
+
+    fn publish(&mut self, slot: u32, edge: u8, table_index: u32) {
+        self.words[Self::word_index(slot, edge)] = table_index.saturating_add(1).to_le();
+    }
+
+    fn clear(&mut self, slot: u32, edge: u8) {
+        self.words[Self::word_index(slot, edge)] = 0;
+    }
+
+    fn clear_table_index(&mut self, table_index: u32) {
+        let encoded = table_index.saturating_add(1).to_le();
+        for word in &mut self.words {
+            if *word == encoded {
+                *word = 0;
+            }
+        }
+    }
+
+    fn release(&mut self, slot: u32) {
+        self.clear(slot, 0);
+        self.clear(slot, 1);
+        self.free.push(slot);
+    }
+
+    fn reset(&mut self) {
+        self.words.fill(0);
+        self.free.clear();
+        self.free.extend((0..STATIC_LINK_ENTRIES as u32).rev());
+    }
+
+    fn clear_words(&mut self) {
+        self.words.fill(0);
+    }
+}
+
 // ── the live-guest bridge for the load/store/AMO/LR/SC imports ───────────────
 //
 // Exactly the native `HostCtx` pattern, but reached through a thread-local because the JS import
@@ -471,6 +546,7 @@ struct Compiled {
     table_index: u32,
     slot_base: u32,
     nslots: u8,
+    static_slot: Option<u32>,
     batch_id: u32,
 }
 
@@ -604,6 +680,7 @@ pub struct BrowserExecutor {
     abi: Abi,
     inline_tlb: Option<InlineTlbCache>,
     dynamic_links: Option<DynamicLinkCache>,
+    static_links: Option<StaticLinkCache>,
     compiled_page_bitmap: Option<CompiledPageBitmap>,
     funcref_table: Option<WebAssembly::Table>,
     blocks: HashMap<u64, Compiled>,
@@ -655,7 +732,7 @@ impl Default for BrowserExecutor {
 impl BrowserExecutor {
     /// Build the isolated SoftMMU executor used by the parity harness and as a safe fallback.
     pub fn new() -> Self {
-        Self::new_with_inline_tlb(None, None, None)
+        Self::new_with_inline_tlb(None, None, None, None)
     }
 
     /// Build the production executor. Compiled modules import the outer wasm memory so aligned
@@ -667,9 +744,14 @@ impl BrowserExecutor {
             machine.ram_base(),
         )?;
         let dynamic_links = DynamicLinkCache::new()?;
+        let static_links = StaticLinkCache::new()?;
         let compiled_page_bitmap = CompiledPageBitmap::new(machine.ram_len(), machine.ram_base())?;
-        let mut executor =
-            Self::new_with_inline_tlb(Some(cache), Some(dynamic_links), Some(compiled_page_bitmap));
+        let mut executor = Self::new_with_inline_tlb(
+            Some(cache),
+            Some(dynamic_links),
+            Some(static_links),
+            Some(compiled_page_bitmap),
+        );
         // Production browser startup has a wider working set than the small parity harness, but
         // the instance-count cap must stay below the measured Chromium/Firefox cliff. Keep the
         // table/metadata caps unchanged and raise only the code-byte ceiling; the conservative
@@ -682,9 +764,10 @@ impl BrowserExecutor {
     fn new_with_inline_tlb(
         inline_tlb: Option<InlineTlbCache>,
         dynamic_links: Option<DynamicLinkCache>,
+        static_links: Option<StaticLinkCache>,
         compiled_page_bitmap: Option<CompiledPageBitmap>,
     ) -> Self {
-        let funcref_table = dynamic_links.as_ref().map(|_| {
+        let funcref_table = (dynamic_links.is_some() || static_links.is_some()).then(|| {
             let descriptor = Object::new();
             Reflect::set(
                 &descriptor,
@@ -700,8 +783,12 @@ impl BrowserExecutor {
             .unwrap_throw();
             WebAssembly::Table::new(&descriptor).unwrap_throw()
         });
-        let abi = match (inline_tlb.as_ref(), dynamic_links.as_ref()) {
-            (Some(cache), Some(links)) => Abi {
+        let abi = match (
+            inline_tlb.as_ref(),
+            dynamic_links.as_ref(),
+            static_links.as_ref(),
+        ) {
+            (Some(cache), Some(links), Some(static_links)) => Abi {
                 mem: MemModel::InlineTlb,
                 tlb: cache.layout,
                 direct_chain: true,
@@ -712,6 +799,8 @@ impl BrowserExecutor {
                 dynamic_map_mask: links.mask(),
                 dynamic_chain: true,
                 chain_table: 0,
+                static_map_base: static_links.base(),
+                static_chain: true,
                 code_pages_base: compiled_page_bitmap
                     .as_ref()
                     .map_or(0, CompiledPageBitmap::base),
@@ -775,6 +864,7 @@ impl BrowserExecutor {
             abi,
             inline_tlb,
             dynamic_links,
+            static_links,
             compiled_page_bitmap,
             funcref_table,
             blocks: HashMap::new(),
@@ -981,6 +1071,20 @@ impl BrowserExecutor {
         (table_index, slot_base)
     }
 
+    fn release_static_slot(&mut self, slot: Option<u32>) {
+        if let (Some(links), Some(slot)) = (self.static_links.as_mut(), slot) {
+            links.release(slot);
+        }
+    }
+
+    fn release_static_slots(&mut self, slots: &[u32]) {
+        if let Some(links) = self.static_links.as_mut() {
+            for &slot in slots {
+                links.release(slot);
+            }
+        }
+    }
+
     /// E4-T18 unlink core — restore the dispatch stub in every incoming slot AND clear this block's
     /// own outgoing slots, then free its table index + slot range. Identical to the native executor.
     fn remove_block(&mut self, phys: u64) {
@@ -1000,6 +1104,11 @@ impl BrowserExecutor {
             bitmap.set(c.page_frame, false);
         }
         let di = c.table_index;
+        // Clear edge-local entries before the table index can be reused. The host-side incoming
+        // list below remains the authoritative diagnostic mirror and is cut in the same operation.
+        if let Some(links) = self.static_links.as_mut() {
+            links.clear_table_index(di);
+        }
         self.clear_table_entry(di);
         if let Some(links) = self.dynamic_links.as_mut() {
             links.clear_physical(phys);
@@ -1031,6 +1140,7 @@ impl BrowserExecutor {
         } else {
             self.free_slots2.push(c.slot_base);
         }
+        self.release_static_slot(c.static_slot);
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -1208,9 +1318,24 @@ impl CompiledBlockExecutor for BrowserExecutor {
             })
             .collect();
 
-        let bytes = match translate_batch(&kept_blocks, &self.abi, &kept_intra) {
+        // Reserve the source/edge words before translation so every generated static edge has a
+        // stable address for the lifetime of its compiled block. A full reservation safely falls
+        // back to the E4-T34 dynamic path; the normal production working set is below this cap.
+        let static_slots = self
+            .static_links
+            .as_mut()
+            .and_then(|links| links.reserve_many(kept_blocks.len()));
+        let bytes = match translate_batch_with_static_slots(
+            &kept_blocks,
+            &self.abi,
+            &kept_intra,
+            static_slots.as_deref(),
+        ) {
             Ok(b) => b,
             Err(_) => {
+                if let Some(slots) = static_slots.as_deref() {
+                    self.release_static_slots(slots);
+                }
                 if kept_blocks.len() > 1 {
                     for b in &kept_blocks {
                         self.install_batch(core::slice::from_ref(b), &[[None, None]]);
@@ -1227,11 +1352,21 @@ impl CompiledBlockExecutor for BrowserExecutor {
         arr.copy_from(&bytes);
         let module = match WebAssembly::Module::new(arr.as_ref()) {
             Ok(m) => m,
-            Err(_) => return,
+            Err(_) => {
+                if let Some(slots) = static_slots.as_deref() {
+                    self.release_static_slots(slots);
+                }
+                return;
+            }
         };
         let instance = match WebAssembly::Instance::new(&module, &self.imports) {
             Ok(i) => i,
-            Err(_) => return,
+            Err(_) => {
+                if let Some(slots) = static_slots.as_deref() {
+                    self.release_static_slots(slots);
+                }
+                return;
+            }
         };
         let exports = instance.exports();
         let state = match self.abi.mem {
@@ -1241,7 +1376,12 @@ impl CompiledBlockExecutor for BrowserExecutor {
                     .and_then(|m| m.dyn_into::<WebAssembly::Memory>().ok())
                 {
                     Some(m) => m,
-                    None => return,
+                    None => {
+                        if let Some(slots) = static_slots.as_deref() {
+                            self.release_static_slots(slots);
+                        }
+                        return;
+                    }
                 };
                 Some(Uint8Array::new_with_byte_offset_and_length(
                     &mem.buffer(),
@@ -1262,7 +1402,13 @@ impl CompiledBlockExecutor for BrowserExecutor {
                 .and_then(|f| f.dyn_into::<Function>().ok())
             {
                 Some(f) => f,
-                None => continue,
+                None => {
+                    let static_slot = static_slots
+                        .as_ref()
+                        .and_then(|slots| slots.get(nl).copied());
+                    self.release_static_slot(static_slot);
+                    continue;
+                }
             };
             if self.evicted_phys.remove(&b.phys_start) {
                 self.retranslations += 1;
@@ -1279,6 +1425,9 @@ impl CompiledBlockExecutor for BrowserExecutor {
                     table_index,
                     slot_base,
                     nslots,
+                    static_slot: static_slots
+                        .as_ref()
+                        .and_then(|slots| slots.get(nl).copied()),
                     batch_id,
                 },
             );
@@ -1356,6 +1505,11 @@ impl CompiledBlockExecutor for BrowserExecutor {
         if context_changed && let Some(links) = self.dynamic_links.as_mut() {
             links.reset();
         }
+        if context_changed && let Some(links) = self.static_links.as_mut() {
+            // Keep reservations stable while forcing every already-published edge to re-arm after
+            // the new virtual-memory context resolves its next target.
+            links.clear_words();
+        }
         let inline_tlb = self
             .inline_tlb
             .as_mut()
@@ -1425,6 +1579,9 @@ impl CompiledBlockExecutor for BrowserExecutor {
             cache.reset();
         }
         if let Some(links) = self.dynamic_links.as_mut() {
+            links.reset();
+        }
+        if let Some(links) = self.static_links.as_mut() {
             links.reset();
         }
         self.generation = self.generation.wrapping_add(1);
@@ -1542,8 +1699,8 @@ impl CompiledBlockExecutor for BrowserExecutor {
         let Some(&ti) = self.phys_to_index.get(&to_phys) else {
             return;
         };
-        let (slot_base, nslots) = match self.blocks.get(&from_phys) {
-            Some(c) => (c.slot_base, c.nslots),
+        let (slot_base, nslots, static_slot) = match self.blocks.get(&from_phys) {
+            Some(c) => (c.slot_base, c.nslots, c.static_slot),
             None => return,
         };
         if edge >= nslots {
@@ -1552,6 +1709,9 @@ impl CompiledBlockExecutor for BrowserExecutor {
         let slot = slot_base + u32::from(edge);
         let cur = self.slots[slot as usize];
         if cur == ti {
+            if let (Some(links), Some(static_slot)) = (self.static_links.as_mut(), static_slot) {
+                links.publish(static_slot, edge, ti);
+            }
             return;
         }
         if cur != STUB
@@ -1561,6 +1721,9 @@ impl CompiledBlockExecutor for BrowserExecutor {
         }
         self.slots[slot as usize] = ti;
         self.incoming.entry(ti).or_default().push(slot);
+        if let (Some(links), Some(static_slot)) = (self.static_links.as_mut(), static_slot) {
+            links.publish(static_slot, edge, ti);
+        }
         self.stats.links_made += 1;
     }
 
