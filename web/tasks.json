@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 219,
+    "verified": 220,
     "total": 383
   },
   "epics": [
@@ -17492,7 +17492,7 @@
       "epicKey": "5",
       "title": "pointer device specs and guest stream wiring",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T10c"
       ],
@@ -17516,21 +17516,22 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `64ce03f` adds the deterministic absolute tablet and relative mouse\ncapability maps, stable virtual-bus identities, adjacent slots 4/5, independent Machine queue\nservice, and browser assembly wiring. Host frame injection now validates each device's advertised\nevent bitmap, rejects caller-supplied SYNs and invalid values, and preserves bounded whole-frame\ndelivery. The browser-only extra block device moved to slot 6 so the pointer pair is present on\nevery browser Linux boot without changing `/dev/vdb` enumeration.\n\nThe frozen-head recording ran `cargo test -p wasm-vm-core --test virtio_pointer`: 2 tests passed,\n0 failed. It observed the permuted config-selector matrix, exact tablet/mouse bitmaps and ABS\nmetadata, complete event streams with one SYN_REPORT each, malformed/unsupported host events\nrejected in isolation, and 100 interleaved bounded frames with unchanged keyboard state. The\naffected input unit suite passed 19/19; core clippy and fmt passed; the wasm release build,\n`make web-build`, and `make web-dist` passed. A direct Chromium run against the rebuilt page\nbooted the real busybox guest to `guestReady` with zero console, page, or request errors.\n\nEvidence: `evidence/e5-t14a/pointer-devices-2026-09-03.json`, SHA-256\n`6213d0d4bb03f2fbf532deff95214115e688f088c08dc4cdde4357aae61f4a21`; browser screenshot\n`evidence/e5-t14a/pointer-browser-2026-09-03.png`, SHA-256\n`c4150f9e8deac6fb0584be46aed095ddf8e0e8d2e2b777a5b943074a016f0d28`.",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\nImplementation commit `64ce03f` adds the deterministic absolute tablet and relative mouse\ncapability maps, stable virtual-bus identities, adjacent slots 4/5, independent Machine queue\nservice, and browser assembly wiring. Host frame injection now validates each device's advertised\nevent bitmap, rejects caller-supplied SYNs and invalid values, and preserves bounded whole-frame\ndelivery. The browser-only extra block device moved to slot 6 so the pointer pair is present on\nevery browser Linux boot without changing `/dev/vdb` enumeration.\n\nThe frozen-head recording ran `cargo test -p wasm-vm-core --test virtio_pointer`: 2 tests passed,\n0 failed. It observed the permuted config-selector matrix, exact tablet/mouse bitmaps and ABS\nmetadata, complete event streams with one SYN_REPORT each, malformed/unsupported host events\nrejected in isolation, and 100 interleaved bounded frames with unchanged keyboard state. The\naffected input unit suite passed 19/19; core clippy and fmt passed; the wasm release build,\n`make web-build`, and `make web-dist` passed. A direct Chromium run against the rebuilt page\nbooted the real busybox guest to `guestReady` with zero console, page, or request errors.\n\nEvidence: `evidence/e5-t14a/pointer-devices-2026-09-03.json`, SHA-256\n`6213d0d4bb03f2fbf532deff95214115e688f088c08dc4cdde4357aae61f4a21`; browser screenshot\n`evidence/e5-t14a/pointer-browser-2026-09-03.png`, SHA-256\n`c4150f9e8deac6fb0584be46aed095ddf8e0e8d2e2b777a5b943074a016f0d28`.\n\n### 2026-09-03 — verifier — VERDICT: verified (user-directed)\n\n- **Config isolation — HELD.** Predicted every selector/subselector permutation would expose only\n  its selected device's data and unsupported queries would be zero; the native pointer fixture\n  observes exact IDs, names, bitmaps, ABS_INFO, and zero-filled unsupported queries.\n- **Guest stream completeness — HELD.** Predicted tablet, mouse, and keyboard queues would remain\n  isolated and each accepted frame would end in exactly one `SYN_REPORT`; the frozen fixture\n  observes the exact sequences and drains all pending events.\n- **Hostile input and backpressure — HELD.** Predicted invalid codes, caller-supplied SYNs,\n  out-of-range ABS values, invalid button values, and interleaved slow-queue floods would be\n  rejected or dropped as whole bounded frames without changing keyboard state; the fixture\n  observes the rejection counts, bounded queues, drops, and unchanged keyboard pending state.\n- **Browser wiring and coverage — HELD.** Predicted slots 4/5 would be present on the real browser\n  boot and slot 6 would preserve the extra-disk path; direct Chromium boot at the frozen\n  implementation head reaches `guestReady` for busybox with zero console, page, or request errors,\n  and the screenshot digest matches the recorded evidence.\n- **Integrity and scope — HELD.** Recomputed the evidence JSON SHA-256\n  `6213d0d4bb03f2fbf532deff95214115e688f088c08dc4cdde4357aae61f4a21` and screenshot SHA-256\n  `c4150f9e8deac6fb0584be46aed095ddf8e0e8d2e2b777a5b943074a016f0d28`, matched the recorded\n  implementation head `64ce03f`, and reran the two deterministic pointer/input gates. The\n  pre-existing `no_stdout_in_core` failure remains outside this diff; host rr, WebKit, and\n  independent-machine runs are waived by policy and user direction.\n- **SUITE — HELD.** Retain the native pointer fixture, input unit tests, exact evidence JSON, and\n  Chromium smoke screenshot as permanent proof artifacts.\n\nCommands: `cargo test -p wasm-vm-core --test virtio_pointer --quiet`; `cargo test -p\nwasm-vm-core --lib dev::virtio::input --quiet`; evidence SHA-256 checks; `git diff --check\n64ce03f^ 35c9216`.",
       "adversarial": "Read every config selector in a permuted order, request unsupported bitmap bytes, and interleave\ntablet/mouse/button frames while the event queue is slow. The verifier must observe isolated\ncapabilities, bounded complete frames, and no keyboard-state changes.",
       "file": "tasks/epic-5-the-window/E5-T14a-pointer-device-specs.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "test(e5-t14a): record pointer evidence",
             "chore(e5-t14a): activate pointer device specs"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T14b",

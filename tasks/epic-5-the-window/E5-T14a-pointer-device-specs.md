@@ -3,7 +3,7 @@ id: E5-T14a
 epic: 5
 title: pointer device specs and guest stream wiring
 priority: 514.1
-status: implemented
+status: verified
 depends_on: [E5-T10c]
 estimate: S
 risk: medium
@@ -63,3 +63,32 @@ Evidence: `evidence/e5-t14a/pointer-devices-2026-09-03.json`, SHA-256
 `6213d0d4bb03f2fbf532deff95214115e688f088c08dc4cdde4357aae61f4a21`; browser screenshot
 `evidence/e5-t14a/pointer-browser-2026-09-03.png`, SHA-256
 `c4150f9e8deac6fb0584be46aed095ddf8e0e8d2e2b777a5b943074a016f0d28`.
+
+### 2026-09-03 — verifier — VERDICT: verified (user-directed)
+
+- **Config isolation — HELD.** Predicted every selector/subselector permutation would expose only
+  its selected device's data and unsupported queries would be zero; the native pointer fixture
+  observes exact IDs, names, bitmaps, ABS_INFO, and zero-filled unsupported queries.
+- **Guest stream completeness — HELD.** Predicted tablet, mouse, and keyboard queues would remain
+  isolated and each accepted frame would end in exactly one `SYN_REPORT`; the frozen fixture
+  observes the exact sequences and drains all pending events.
+- **Hostile input and backpressure — HELD.** Predicted invalid codes, caller-supplied SYNs,
+  out-of-range ABS values, invalid button values, and interleaved slow-queue floods would be
+  rejected or dropped as whole bounded frames without changing keyboard state; the fixture
+  observes the rejection counts, bounded queues, drops, and unchanged keyboard pending state.
+- **Browser wiring and coverage — HELD.** Predicted slots 4/5 would be present on the real browser
+  boot and slot 6 would preserve the extra-disk path; direct Chromium boot at the frozen
+  implementation head reaches `guestReady` for busybox with zero console, page, or request errors,
+  and the screenshot digest matches the recorded evidence.
+- **Integrity and scope — HELD.** Recomputed the evidence JSON SHA-256
+  `6213d0d4bb03f2fbf532deff95214115e688f088c08dc4cdde4357aae61f4a21` and screenshot SHA-256
+  `c4150f9e8deac6fb0584be46aed095ddf8e0e8d2e2b777a5b943074a016f0d28`, matched the recorded
+  implementation head `64ce03f`, and reran the two deterministic pointer/input gates. The
+  pre-existing `no_stdout_in_core` failure remains outside this diff; host rr, WebKit, and
+  independent-machine runs are waived by policy and user direction.
+- **SUITE — HELD.** Retain the native pointer fixture, input unit tests, exact evidence JSON, and
+  Chromium smoke screenshot as permanent proof artifacts.
+
+Commands: `cargo test -p wasm-vm-core --test virtio_pointer --quiet`; `cargo test -p
+wasm-vm-core --lib dev::virtio::input --quiet`; evidence SHA-256 checks; `git diff --check
+64ce03f^ 35c9216`.
