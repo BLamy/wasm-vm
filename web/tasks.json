@@ -14377,13 +14377,15 @@
         },
         {
           "date": "2026-09-03",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "tasks: decompose E4-T22"
+          ]
         }
       ],
       "firstActivity": "2026-08-06",
       "lastActivity": "2026-09-03",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E4-T22a",
@@ -14391,7 +14393,7 @@
       "epicKey": "4",
       "title": "Shared-memory wasm build and fallback artifact contract",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E4-T11"
       ],

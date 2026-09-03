@@ -3,7 +3,7 @@ id: E4-T22a
 epic: 4
 title: Shared-memory wasm build and fallback artifact contract
 priority: 422.1
-status: pending
+status: in-progress
 depends_on: [E4-T11]
 estimate: S
 risk: high
