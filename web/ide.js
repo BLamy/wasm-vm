@@ -193,6 +193,9 @@ const css = `
 .ide-keyboard-state { color: #9ad29a; border: 1px solid rgba(63, 185, 80, 0.35); border-radius: 4px;
   padding: 1px 7px; font-size: 10.5px; white-space: nowrap; }
 .ide-keyboard-state[data-captured="false"] { color: #f2c94c; border-color: rgba(242, 201, 76, 0.4); }
+.ide-keyboard-debug { color: #aab7c4; border: 1px solid rgba(139, 148, 158, 0.35); border-radius: 4px;
+  padding: 1px 7px; font-size: 10.5px; white-space: nowrap; max-width: 34vw; overflow: hidden;
+  text-overflow: ellipsis; }
 /* The terminal pane is a single scroll: this wrapper does NOT scroll (overflow:hidden); the xterm
    viewport inside #term is the only scrollbar. #term flexes to fill so the fit addon sizes it. */
 .ide-term-scroll { flex: 1 1 auto; overflow: hidden; min-height: 0; }
@@ -398,7 +401,9 @@ if (root) {
         <span class="ide-term-who" id="ide-term-who" hidden></span>
         <span class="sp"></span>
         <span class="ide-keyboard-state" id="ide-keyboard-state" role="status" aria-live="polite">Keyboard: captured</span>
+        <span class="ide-keyboard-debug" id="ide-keyboard-debug" role="status" aria-live="polite">Held: none · repairs: 0</span>
         <button class="ide-mini" id="ide-keyboard-toggle" type="button" aria-pressed="true">Capture: on</button>
+        <button class="ide-mini" id="ide-keyboard-release" type="button">Release keys</button>
         <button class="ide-mini" id="ide-term-clear">Clear</button>
       </div>
       <div class="ide-term-scroll" id="ide-term-scroll"></div>

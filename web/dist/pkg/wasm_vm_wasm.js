@@ -341,6 +341,18 @@ export class WasmLinux {
         return takeFromExternrefTable0(ret[0]);
     }
     /**
+     * Return the latest host-owned LED state reported by the guest keyboard driver. A null
+     * result means that this machine was assembled without the virtio-input keyboard capability.
+     * @returns {any}
+     */
+    keyboardLedState() {
+        const ret = wasm.wasmlinux_keyboardLedState(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
      * FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
      * typed reason (`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`) in the error

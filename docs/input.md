@@ -47,6 +47,27 @@ Capture-off mode applies the same browser-first rule to every terminal-host keys
 prevent defaults and does not forward events to the guest keyboard. The serial terminal can still
 receive input through its normal focused xterm path when the browser supplies it.
 
+## Focus and lock-state recovery
+
+The demo keeps a physical-code ledger for transitions that the guest believes are held. A window
+blur, hidden-document transition, pointer-lock loss, or reserved view toggle releases that ledger
+in dependent-key-first order. The terminal bar's **Release keys** control is an intentional panic
+boundary with the same idempotent behavior; a later physical `keyup` is logged as an orphan and
+does not emit a second guest break. Retiring or restarting the Linux controller clears the page
+ledger without sending RPCs to the stopped controller.
+
+When a key event arrives after recovery, modifier state is reconciled before the event is sent to
+the guest. A modifier is re-pressed only when that event's `getModifierState()` still reports it
+physically down; a stale host release therefore cannot create a phantom Ctrl/Alt/Shift/Meta. The
+guest's CapsLock and NumLock LED feedback is polled from the virtio-input status sink. If it
+differs from the host's lock state, one synthetic down/up pair is sent and held pending until guest
+feedback catches up, preventing repeated lock toggles from oscillating.
+
+The compact debug surface shows currently-held physical codes and modifier/lock repair counts.
+It is diagnostic UI, not a promise that the browser can intercept OS-owned shortcuts. Chrome,
+Edge, macOS, extensions, kiosk shells, and browser UI may consume a shortcut before the page sees
+it; those controls remain covered by the passthrough and browser-limit policy above.
+
 ## Browser and OS limits
 
 Web content cannot guarantee interception of shortcuts consumed before a page event is delivered.

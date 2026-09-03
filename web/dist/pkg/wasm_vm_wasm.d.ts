@@ -105,6 +105,11 @@ export class WasmLinux {
      */
     jitStats(): any;
     /**
+     * Return the latest host-owned LED state reported by the guest keyboard driver. A null
+     * result means that this machine was assembled without the virtio-input keyboard capability.
+     */
+    keyboardLedState(): any;
+    /**
      * Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
      * FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
      * typed reason (`"missing"`/`"corrupt"`/`"foreign_build"`/`"foreign_image"`/`"stale"`) in the error
@@ -527,6 +532,7 @@ export interface InitOutput {
     readonly wasmlinux_hasUnpersisted: (a: number) => [number, number, number];
     readonly wasmlinux_importStoredSnapshot: (a: number, b: number, c: number) => any;
     readonly wasmlinux_jitStats: (a: number) => [number, number, number];
+    readonly wasmlinux_keyboardLedState: (a: number) => [number, number, number];
     readonly wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];
     readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
     readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];

@@ -30,6 +30,8 @@ import { createBootProgressSurface } from "./boot-progress.js";
 import { createFencedRpc, formatRpcCommand } from "./guest-rpc.js";
 import { createKeyboardBridge, createWasmKeyboardAdapter } from "./src/input/keyboard.js";
 import { attachKeyboardCapture, createKeyboardCapturePolicy } from "./src/input/capture.js";
+import { attachHeldKeyLifecycle } from "./src/input/held-keys.js";
+import { createKeyboardReconciler } from "./src/input/reconciliation.js";
 
 const RAM_MIB = 128; // matches the native CLI default, so digests/retired line up.
 const TEST_RAM_MIB = 16; // mirrors the native riscv-tests harness.
@@ -284,9 +286,18 @@ if (new URLSearchParams(location.search).has("testHooks")) {
 const keyboardHost = document.getElementById("term");
 const keyboardStateEl = document.getElementById("ide-keyboard-state");
 const keyboardToggle = document.getElementById("ide-keyboard-toggle");
+const keyboardReleaseButton = document.getElementById("ide-keyboard-release");
+const keyboardDebugEl = document.getElementById("ide-keyboard-debug");
 const keyboardDiagnostics = [];
 const keyboardFrames = [];
 let reservedViewToggleCount = 0;
+let keyboardBridge = null;
+let keyboardReconciler = null;
+let keyboardLedState = { numLock: false, capsLock: false, scrollLock: false };
+let keyboardLedPollTimer = null;
+let keyboardReleaseCount = 0;
+let keyboardLastReleaseReason = null;
+let keyboardSuppressLateKeyups = false;
 
 function setKeyboardIndicator(captured) {
   const mode = captured ? "captured" : "browser";
@@ -301,6 +312,40 @@ function setKeyboardIndicator(captured) {
   document.documentElement.dataset.keyboardCapture = captured ? "on" : "off";
 }
 
+function keyboardDebugSnapshot() {
+  const held = keyboardBridge?.heldCodes?.() ?? [];
+  const stats = keyboardReconciler?.stats?.() ?? {
+    modifierRepairs: 0,
+    lockRepairs: 0,
+    pendingLockRepairs: [],
+  };
+  return {
+    held,
+    modifierRepairs: stats.modifierRepairs ?? 0,
+    lockRepairs: stats.lockRepairs ?? 0,
+    pendingLockRepairs: stats.pendingLockRepairs ?? [],
+    releaseCount: keyboardReleaseCount,
+    lastReleaseReason: keyboardLastReleaseReason,
+    leds: { ...keyboardLedState },
+  };
+}
+
+function updateKeyboardDebug() {
+  const snapshot = keyboardDebugSnapshot();
+  const repairs = snapshot.modifierRepairs + snapshot.lockRepairs;
+  if (keyboardDebugEl) {
+    keyboardDebugEl.textContent = `Held: ${snapshot.held.length ? snapshot.held.join(", ") : "none"} · repairs: ${repairs}`;
+    keyboardDebugEl.dataset.heldCount = String(snapshot.held.length);
+    keyboardDebugEl.dataset.modifierRepairs = String(snapshot.modifierRepairs);
+    keyboardDebugEl.dataset.lockRepairs = String(snapshot.lockRepairs);
+    keyboardDebugEl.dataset.pendingLocks = snapshot.pendingLockRepairs.map((entry) => entry.kind).join(",");
+    keyboardDebugEl.title = snapshot.pendingLockRepairs.length > 0
+      ? `Pending lock feedback: ${snapshot.pendingLockRepairs.map((entry) => entry.kind).join(", ")}`
+      : "No pending lock-key feedback";
+  }
+  try { window.__keyboardDebug = snapshot; } catch { /* page-only diagnostics */ }
+}
+
 const keyboardCapture = createKeyboardCapturePolicy({
   initialCaptured: true,
   // xterm's printable ASCII path intentionally waits for keypress/input after keydown. Let that
@@ -309,7 +354,16 @@ const keyboardCapture = createKeyboardCapturePolicy({
   preserveDefault: (event) => event?.target?.classList?.contains("xterm-helper-textarea") && (
     event?.code === "Space" || /^[A-Za-z]$/.test(event?.key || "")
   ),
-  onGuestEvent: (event) => keyboardBridge?.handleKeyEvent(event),
+  onGuestEvent: (event) => {
+    // A lifecycle release can race the browser's queued keyup for the physical keys that were
+    // just cleared. Ignore that tail until the next real keydown; otherwise reconciliation would
+    // observe a still-down host modifier on the late dependent keyup and immediately re-press it.
+    if (event?.type === "keydown") keyboardSuppressLateKeyups = false;
+    if (event?.type === "keyup" && keyboardSuppressLateKeyups) {
+      return { forwarded: false, reason: "lifecycle-keyup-suppressed" };
+    }
+    return keyboardReconciler?.handleKeyEvent(event) ?? keyboardBridge?.handleKeyEvent(event);
+  },
   onReserved: (event) => {
     reservedViewToggleCount += 1;
     try { window.__keyboardReservedToggles = reservedViewToggleCount; } catch { /* page-only hook */ }
@@ -327,23 +381,66 @@ const keyboardCapture = createKeyboardCapturePolicy({
 });
 if (keyboardHost) attachKeyboardCapture(keyboardHost, keyboardCapture, { capture: true });
 
-function releaseKeyboardState() {
+function stopKeyboardLedPoll() {
+  if (keyboardLedPollTimer !== null) {
+    clearTimeout(keyboardLedPollTimer);
+    keyboardLedPollTimer = null;
+  }
+}
+
+function startKeyboardLedPoll(controller) {
+  stopKeyboardLedPoll();
+  const poll = async () => {
+    if (linuxCtl !== controller || !keyboardReconciler) return;
+    try {
+      const state = await controller.keyboardLedState?.();
+      if (state && typeof state === "object") {
+        keyboardLedState = {
+          numLock: state.numLock === true,
+          capsLock: state.capsLock === true,
+          scrollLock: state.scrollLock === true,
+        };
+        updateKeyboardDebug();
+      }
+    } catch {
+      // LED polling is advisory; the next KeyboardEvent still supplies host modifier state.
+    }
+    if (linuxCtl === controller && keyboardReconciler) {
+      keyboardLedPollTimer = setTimeout(() => void poll(), 250);
+    }
+  };
+  void poll();
+}
+
+function releaseKeyboardState(reason = "manual") {
+  keyboardReleaseCount += 1;
+  keyboardLastReleaseReason = reason;
+  keyboardSuppressLateKeyups = true;
   try { keyboardBridge?.releaseAll?.(); } catch { /* teardown may race a stopped controller */ }
+  keyboardCapture.clearTransientState();
+  updateKeyboardDebug();
 }
 
 function setKeyboardCaptured(value) {
   const next = keyboardCapture.setCaptured(value);
-  if (!next) releaseKeyboardState();
+  if (!next) releaseKeyboardState("capture-off");
+  updateKeyboardDebug();
   return next;
 }
 
 keyboardToggle?.addEventListener("click", () => setKeyboardCaptured(!keyboardCapture.isCaptured()));
+keyboardReleaseButton?.addEventListener("click", () => releaseKeyboardState("panic-button"));
+const detachKeyboardLifecycle = attachHeldKeyLifecycle({ releaseAll: releaseKeyboardState });
 try {
   window.__keyboardCapture = {
     isCaptured: () => keyboardCapture.isCaptured(),
     setCaptured: setKeyboardCaptured,
     toggle: () => setKeyboardCaptured(!keyboardCapture.isCaptured()),
     heldCodes: () => keyboardBridge?.heldCodes?.() ?? [],
+    heldSnapshot: () => keyboardBridge?.heldSnapshot?.() ?? [],
+    releaseAll: () => releaseKeyboardState("manual"),
+    stats: keyboardDebugSnapshot,
+    lastReleaseReason: () => keyboardLastReleaseReason,
     pendingModifierCodes: () => keyboardCapture.pendingModifierCodes(),
     passthroughCodes: () => keyboardCapture.passthroughCodes(),
     reservedCodes: () => keyboardCapture.reservedCodes(),
@@ -352,6 +449,7 @@ try {
   };
   window.__keyboardReservedToggles = reservedViewToggleCount;
 } catch { /* page-only diagnostics */ }
+updateKeyboardDebug();
 
 const runBtn = document.getElementById("run");
 const resetBtn = document.getElementById("reset");
@@ -371,7 +469,6 @@ const bootProgress = createBootProgressSurface({
 const bootAlpineBtn = document.getElementById("boot-alpine");
 const bootAlpineFullBtn = document.getElementById("boot-alpine-full");
 let linuxCtl = null;
-let keyboardBridge = null;
 let linuxBootPromise = null;
 let linuxBootRequest = null;
 let linuxActiveRequest = null;
@@ -400,7 +497,15 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   // The controller has already been stopped by the time owner UI is cleared. Drop the bridge
   // without sending post-termination key-up RPCs; the capture policy resets transient state when
   // the next boot installs a fresh bridge.
+  stopKeyboardLedPoll();
+  try { keyboardBridge?.resetHeld?.(); } catch { /* a failed controller may already be gone */ }
   keyboardBridge = null;
+  keyboardReconciler = null;
+  keyboardLedState = { numLock: false, capsLock: false, scrollLock: false };
+  keyboardCapture.clearTransientState();
+  keyboardSuppressLateKeyups = false;
+  keyboardLastReleaseReason = "controller-retired";
+  updateKeyboardDebug();
   ui.detachSink();
   fileTransferUI.attachController(null);
   if (diagnosticJitStatsTimer !== null) {
@@ -865,18 +970,30 @@ async function runLinuxBootOwned(opts, banner, request) {
       onWriterStatus: ownerUi.onWriterStatus,
     });
     linuxCtl = bootController;
+    const ctlForRelease = bootController;
     keyboardBridge = createKeyboardBridge(createWasmKeyboardAdapter(linuxCtl), {
       onDiagnostic: (entry) => {
         keyboardDiagnostics.push({ ...entry, source: "evdev-bridge" });
         if (keyboardDiagnostics.length > 256) keyboardDiagnostics.shift();
+        updateKeyboardDebug();
       },
       onFrame: (frame) => {
         keyboardFrames.push(frame);
         if (keyboardFrames.length > 512) keyboardFrames.shift();
+        updateKeyboardDebug();
       },
     });
     linuxActiveRequest = request;
-    const ctlForRelease = bootController;
+    keyboardReconciler = createKeyboardReconciler(keyboardBridge, {
+      getGuestLedState: () => keyboardLedState,
+      onDiagnostic: (entry) => {
+        keyboardDiagnostics.push({ ...entry, source: "keyboard-reconciler" });
+        if (keyboardDiagnostics.length > 256) keyboardDiagnostics.shift();
+      },
+      onStatsChange: updateKeyboardDebug,
+    });
+    startKeyboardLedPoll(ctlForRelease);
+    updateKeyboardDebug();
     let settlementHandled = false;
     const finalizeSettlement = async (state, error = null) => {
       if (settlementHandled) return;

@@ -45,6 +45,7 @@ function fakeController(events, done) {
     sendInput(bytes) { events.push(["input", [...bytes]]); },
     sendKeyboardEvent: (eventType, code, value) => events.push(["keyboard", eventType, code, value]),
     syncKeyboard: () => events.push("keyboard-sync"),
+    keyboardLedState: () => ({ numLock: false, capsLock: false, scrollLock: false }),
     pause: () => events.push("pause"),
     resume: () => events.push("resume"),
     isPaused: () => false,
@@ -208,6 +209,7 @@ test("every explicit controller method crosses the runtime and no-provider Tails
     const args = {
       sendKeyboardEvent: [1, 30, 1],
       syncKeyboard: [],
+      keyboardLedState: [],
       fileTransferReady: [0],
       setFileDownloadReady: [true],
       beginFileUpload: [0, "all-methods.bin", 3, "sha256"],

@@ -2051,6 +2051,36 @@ impl WasmLinux {
         Ok(())
     }
 
+    /// Return the latest host-owned LED state reported by the guest keyboard driver. A null
+    /// result means that this machine was assembled without the virtio-input keyboard capability.
+    #[wasm_bindgen(js_name = keyboardLedState)]
+    pub fn keyboard_led_state(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some(leds) = inner.machine.keyboard_leds() else {
+            return Ok(JsValue::NULL);
+        };
+        let state = leds
+            .try_borrow()
+            .map_err(|_| JsError::new("keyboard LED state busy"))?;
+        let object = js_sys::Object::new();
+        let _ = js_sys::Reflect::set(
+            &object,
+            &JsValue::from_str("numLock"),
+            &JsValue::from_bool(state.num_lock),
+        );
+        let _ = js_sys::Reflect::set(
+            &object,
+            &JsValue::from_str("capsLock"),
+            &JsValue::from_bool(state.caps_lock),
+        );
+        let _ = js_sys::Reflect::set(
+            &object,
+            &JsValue::from_str("scrollLock"),
+            &JsValue::from_bool(state.scroll_lock),
+        );
+        Ok(object.into())
+    }
+
     /// Publish the current host keyboard frame by appending `EV_SYN/SYN_REPORT`.
     #[wasm_bindgen(js_name = syncKeyboard)]
     pub fn sync_keyboard(&self) -> Result<(), JsError> {

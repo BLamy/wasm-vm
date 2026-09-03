@@ -942,6 +942,11 @@ export async function startLinuxBoot(opts = {}) {
         machine.syncKeyboard();
         return true;
       },
+      // E5-T13c: expose the guest's host-owned LED feedback so the page can reconcile lock keys
+      // after focus recovery without reading or mutating guest state through an ad-hoc path.
+      keyboardLedState: () => (
+        typeof machine.keyboardLedState === "function" ? machine.keyboardLedState() : null
+      ),
       stop: async () => {
         finish("stopped");
         await taskQuiescence.stop();
