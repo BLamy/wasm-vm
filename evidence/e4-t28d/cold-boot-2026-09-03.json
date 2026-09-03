@@ -1,0 +1,325 @@
+{
+  "schema_version": 1,
+  "schema": "e4-t28d-cold-boot-result-v1",
+  "generatedAt": "2026-09-03T13:29:02.412Z",
+  "candidate": {
+    "commit": "fa7fe75c8e23cd24e0499d8c9a6477181bc7e9d8",
+    "source": "git HEAD",
+    "workingTree": "tracked test result emitted after browser run"
+  },
+  "build": {
+    "kernel": {
+      "sha256": "08caa7dd12aa40efa5a47f028359711eadc6577c91e9fffe5050f4c861879f58"
+    },
+    "artifactManifest": {
+      "path": "web/artifacts-alpine.json",
+      "sha256": "3316ed2bec3b077a3344409d51bdfe5be63b391a05d5f62e5c3743d1da07d26f"
+    },
+    "source": "cold Alpine chunked disk; worker JIT controls"
+  },
+  "controls": {
+    "guest": "alpine",
+    "worker": true,
+    "jit": true,
+    "jitThreshold": 512,
+    "jitResidency": "repack-off",
+    "jalr": true,
+    "region": true,
+    "persist": true,
+    "noSnapshot": true,
+    "noAutoBoot": true
+  },
+  "fresh_profile": {
+    "requestedRuns": 1,
+    "actualRuns": 1,
+    "newContextPerRun": true,
+    "originDataClearedBeforeBoot": true,
+    "storageClearedPerRun": [
+      {
+        "indexedDbNames": [],
+        "cacheNames": []
+      }
+    ],
+    "restoreShortcutRequests": []
+  },
+  "headers": {
+    "path": "web/_headers",
+    "sha256": "cacb06e044da4b8b80636c2d6355f2c7bbc45b2a5a04901c99ba76cc5e31ff6c",
+    "required": {
+      "crossOriginOpenerPolicy": "same-origin",
+      "crossOriginEmbedderPolicy": "credentialless"
+    },
+    "observed": [
+      {
+        "crossOriginOpenerPolicy": "same-origin",
+        "crossOriginEmbedderPolicy": "require-corp"
+      }
+    ]
+  },
+  "browser": {
+    "project": "chromium",
+    "version": "131.0.6778.33"
+  },
+  "results": [
+    {
+      "sample": 0,
+      "url": "/?guest=alpine&noSnapshot&persist=1&noAutoBoot=1&profile=1&testHooks=1&workerHeartbeatTimeoutMs=10000&jit=1&jitThreshold=512&jitResidency=repack-off&jalr=1&region=1&quantum=100000#ide",
+      "firstByteAt": 590.4099999964237,
+      "loginAt": 918479.0349999964,
+      "bootMs": 917888.625,
+      "firstBytesHex": "5b20202020302e3030303030305d204c696e75782076657273696f6e20362e36",
+      "consoleBytes": 13004,
+      "markers": {
+        "linuxVersion": true,
+        "openRc": true,
+        "login": true
+      },
+      "profile": {
+        "storageAtStart": {
+          "indexedDbNames": [],
+          "cacheNames": []
+        },
+        "newContext": true,
+        "persistQuery": true,
+        "noSnapshotQuery": true,
+        "noAutoBootQuery": true,
+        "restored": false,
+        "readOnly": true
+      },
+      "backend": "whole-machine-worker",
+      "stateDigest": "816df5ad22c3dfaedfd0e5dbb904aaaf4a6919cd2f792dbd1e45b06ee39ecdeb",
+      "scheduler": {
+        "quantum": 100000,
+        "maxQuantum": 100000,
+        "slices": 30426,
+        "totalSliceMs": 901478.4649997354,
+        "averageSliceMs": 29.628556662056642,
+        "maxSliceMs": 610.5349999964237,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 1798
+          },
+          {
+            "leMs": 8,
+            "count": 669
+          },
+          {
+            "leMs": 16,
+            "count": 5509
+          },
+          {
+            "leMs": 32,
+            "count": 15399
+          },
+          {
+            "leMs": 64,
+            "count": 4780
+          },
+          {
+            "leMs": 128,
+            "count": 1264
+          },
+          {
+            "leMs": 256,
+            "count": 1001
+          },
+          {
+            "leMs": 512,
+            "count": 3
+          },
+          {
+            "leMs": 1000,
+            "count": 3
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 989.8050000071526,
+        "requestedInstructions": 3042600000,
+        "retiredInstructions": 3026373551,
+        "fetchWaits": 73,
+        "fetchRequestedChunks": 76,
+        "fetchWaitTotalMs": 13096.335000008345,
+        "fetchWaitMaxMs": 969.0400000214577,
+        "outputCalls": 166,
+        "outputBytes": 13004,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 30427,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "guestProfile": {
+        "totalNs": 900847420031,
+        "sampleCount": 1822823,
+        "walkCount": 63758425,
+        "collisions": 657537,
+        "regions": [
+          {
+            "pc": "0xffffffff801d5780",
+            "samples": 9876,
+            "pct": 0.541796981934066
+          },
+          {
+            "pc": "0xffffffff800750c0",
+            "samples": 9380,
+            "pct": 0.5145864409215815
+          },
+          {
+            "pc": "0xffffffff809845c0",
+            "samples": 9271,
+            "pct": 0.5086067050942411
+          },
+          {
+            "pc": "0xffffffff80075200",
+            "samples": 9004,
+            "pct": 0.49395909531534327
+          },
+          {
+            "pc": "0xffffffff80984580",
+            "samples": 8874,
+            "pct": 0.48682730029190985
+          },
+          {
+            "pc": "0xffffffff8004db80",
+            "samples": 8866,
+            "pct": 0.4863884205981601
+          },
+          {
+            "pc": "0xffffffff80074180",
+            "samples": 8599,
+            "pct": 0.47174081081926217
+          },
+          {
+            "pc": "0xffffffff800751c0",
+            "samples": 8490,
+            "pct": 0.46576107499192193
+          },
+          {
+            "pc": "0xffffffff8004dac0",
+            "samples": 8182,
+            "pct": 0.44886420678255645
+          },
+          {
+            "pc": "0xffffffff801d55c0",
+            "samples": 7181,
+            "pct": 0.3939493851021191
+          }
+        ],
+        "subsystems": [
+          {
+            "name": "cpu_interp",
+            "ns": 896391731555
+          },
+          {
+            "name": "mmu_walk",
+            "ns": 4453508484
+          },
+          {
+            "name": "clint",
+            "ns": 0
+          },
+          {
+            "name": "plic",
+            "ns": 634990
+          },
+          {
+            "name": "uart",
+            "ns": 475003
+          },
+          {
+            "name": "virtio_blk",
+            "ns": 809999
+          },
+          {
+            "name": "virtio_net",
+            "ns": 90000
+          },
+          {
+            "name": "virtio_rng",
+            "ns": 85000
+          },
+          {
+            "name": "rtc",
+            "ns": 85000
+          },
+          {
+            "name": "syscon",
+            "ns": 0
+          },
+          {
+            "name": "other",
+            "ns": 0
+          }
+        ],
+        "jitPause": {
+          "count": 29368,
+          "maxNs": 601830001,
+          "sumNs": 547058324996,
+          "overTarget": 19638,
+          "maxAttemptedBlocks": 8,
+          "totalAttemptedBlocks": 229184,
+          "maxSubmittedBlocks": 8,
+          "maxSubmittedBytes": 3352,
+          "totalSubmittedBlocks": 172672,
+          "runCount": 30427,
+          "lastRunAttemptedBlocks": 8,
+          "maxRunAttemptedBlocks": 8,
+          "lastRunSubmittedBlocks": 5,
+          "maxRunSubmittedBlocks": 8,
+          "lastRunStagedNominations": 0,
+          "maxRunStagedNominations": 64,
+          "lastFinalPumps": 0,
+          "maxFinalPumps": 1,
+          "lastFinalAttemptedBlocks": 0,
+          "maxFinalAttemptedBlocks": 2,
+          "lastFinalSubmittedBlocks": 0,
+          "maxFinalSubmittedBlocks": 2
+        }
+      },
+      "chunkStats": {},
+      "chunkManifest": {
+        "url": "https://pub-ee599ce692e44e29868ebfa96dd9c7fd.r2.dev/chunked-alpine/manifest.json",
+        "sha256": "e756558bd4f4046b4830d496c003b6ef0f7b1713bf20de165762f07e544727ba",
+        "expectedSha256": "e756558bd4f4046b4830d496c003b6ef0f7b1713bf20de165762f07e544727ba",
+        "imageLen": 805306368,
+        "chunkSize": 131072,
+        "chunkCount": 6144,
+        "firstChunkSha256": "068703b76738ab8c14c375cc30a3f9dd4d15fd2b893c185a0c3146e4e1656fe2",
+        "firstChunkActualSha256": "068703b76738ab8c14c375cc30a3f9dd4d15fd2b893c185a0c3146e4e1656fe2"
+      },
+      "requestErrors": [],
+      "consoleErrors": [],
+      "restoreRequests": [],
+      "fullImageRequests": [],
+      "headers": {
+        "crossOriginOpenerPolicy": "same-origin",
+        "crossOriginEmbedderPolicy": "require-corp"
+      }
+    }
+  ],
+  "timing": {
+    "endpoint": "first non-empty guest onConsole byte -> first guest console occurrence of login:",
+    "bootTimesMs": [
+      917888.625
+    ],
+    "medianBootMs": 917888.625,
+    "medianBootSecs": 917.888625,
+    "requiredMedianMs": 5000,
+    "budgetEvaluated": false,
+    "budgetSatisfied": false
+  },
+  "verdict": {
+    "harnessPass": true,
+    "firstGuestByte": true,
+    "actualLoginMarker": true,
+    "coldPath": true,
+    "noRestoreShortcut": true,
+    "noWholeImageFetch": true,
+    "note": "The exact three-run budget remains a typed gap for this user-directed handoff; set E4T28D_ENFORCE=1 to enforce it."
+  }
+}

@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 192,
+    "verified": 193,
     "total": 356
   },
   "epics": [
@@ -15160,7 +15160,7 @@
       "epicKey": "4",
       "title": "Cold browser boot-to-login timing gate",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4-T28a",
         "E4-T32",
@@ -15173,13 +15173,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified (user-directed debt closure)\n\nImplementation commits: `b127b9c` (runner) and `0d180b8` (reporting fix).\n\nThe real Chromium cold path reached all required guest markers from a fresh context: the first\nnon-empty guest console byte, `Linux version`, `OpenRC`, and the actual `login:` marker. The\nmeasured first-byte→login interval was `917888.625ms` (`917.889s`, `15.298min`), with no boot\nsnapshot request and no whole-image fetch. The guest state digest, chunk manifest identity,\nkernel hash, scheduler/profile data, and observed headers are recorded in the evidence.\n\nEvidence: `evidence/e4-t28d/cold-boot-2026-09-03.json`, SHA-256\n`ee7822332ddbef8031ff91025fdb3963c88dfe5bcedde9af59041f3760a625f1`.\nExact bounded command: `PW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 E4T28D_RUNS=1 npx playwright test tests/e4-t28-cold-boot.spec.js --project=chromium`.\nThe evidence candidate is `fa7fe75c8e23cd24e0499d8c9a6477181bc7e9d8`; the later `0d180b8` change only fixes the final console-summary variable name.\n\nThe captured controller reported `readOnly: true` despite `persist=1`, so the writable persistent\ndisk requirement is not proven. The observed development response also supplied\n`cross-origin-embedder-policy: require-corp` rather than the contract's `credentialless` value.\nThe three-run median and `<5s` budget therefore remain explicit gaps; the committed runner keeps\nthe default three-run plan and can enforce the budget with `E4T28D_ENFORCE=1`.\n\nPer the user's explicit instruction to close the verification debt, the ticket is promoted with\nthe cold-path timing, read-only persistence, header mismatch, and incomplete three-run budget\nrecorded. WebKit, independent machines, and host-layer rr evidence are excluded by user direction.",
       "adversarial": "Use a new context and cleared origin data for every sample, vary run order, and inspect network\nrequests for a restore shortcut masquerading as a first boot. Delay or remove the login marker and\nconfirm the harness times out rather than stopping at a generic ready banner. Compare all three\nraw samples and require the median field to be recomputable.",
       "file": "tasks/epic-4-acceleration/E4-T28d-cold-boot-login.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: start E4-T28d cold boot login gate"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E4-T28e",
