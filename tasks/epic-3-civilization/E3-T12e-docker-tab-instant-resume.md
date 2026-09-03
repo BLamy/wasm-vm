@@ -34,6 +34,8 @@ guest work, or undocumented manual step refutes.
 ## Verification log
 ### 2026-09-02 — verifier — VERDICT: verified
 
+Commit: `95edb1c`.
+
 User directed closure after reviewing the implementation and prior T12d snapshot evidence; independent
 machines and WebKit are explicitly out of scope. The Docker tab now exposes the production snapshot
 decision/generation, a typed Save resume action, and a durable save boundary that pauses the guest,
