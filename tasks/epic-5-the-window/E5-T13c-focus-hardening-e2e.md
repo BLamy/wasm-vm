@@ -3,7 +3,7 @@ id: E5-T13c
 epic: 5
 title: browser focus hardening and keyboard recovery proof
 priority: 513.3
-status: in-progress
+status: implemented
 depends_on: [E5-T13b]
 estimate: S
 risk: medium
@@ -49,4 +49,31 @@ flaps interleaved with chords and require an empty final held set.
 
 ## Verification log
 
-(empty)
+### 2026-09-03 — worker — IMPLEMENTED
+
+Implementation commit `5655c3c3edb06cbd14b3dc1257cb53966e7e9ee4` wires the T13a held-key lifecycle
+ledger and T13b reconciler into the live demo. Blur, hidden visibility, pointer-lock loss, and
+reserved view-toggle events share an idempotent release path; queued late keyups are suppressed
+until the next real keydown so recovery cannot immediately re-press a still-down host modifier.
+The terminal bar now exposes currently-held physical codes, modifier/lock repair counts, and a
+visible **Release keys** panic control. Worker/main-thread controllers expose guest LED feedback,
+restart teardown resets the bridge without post-stop RPCs, and `docs/input.md` documents the policy.
+The deploy assembler now includes the no-bundler `web/src` tree required by the generated shell.
+
+The frozen-head Chromium recording ran `node tools/verify/e5-t13c-focus-hardening-proof.mjs` after
+`make web-dist`. It booted the real busybox guest, proved Alt release on blur, Ctrl visibility
+reconciliation on both host-state branches, panic release plus late-keyup no-op, worker restart
+reset, 500 deterministic lifecycle flaps, and post-recovery shell typing reaching
+`E5_T13C_RECOVER_42`. The debug surface ended `Held: none · repairs: 0`; page, console, and request
+error lists were all empty. Static source/dist parity covered `main.js`, `ide.js`, `loader.js`,
+the worker protocol, and all shipped input modules.
+
+Narrow gates also passed: 53 keyboard/protocol tests, JS syntax checks, `cargo fmt --all --
+--check`, `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`, and `git diff --check`.
+Host rr, independent machines, and WebKit are waived for this browser-only local proof per the
+current verification policy and user direction.
+
+Evidence: `evidence/e5-t13c/focus-hardening-2026-09-03.json`, SHA-256
+`048c92d22f51e543581d2e7e1875491a82fdec49ec57b99a5525b7fee53210cb`; screenshot SHA-256
+`cf89b0e905d4f6327d5de7209353f17c96ef1287e7c1a844f6503d326a36eb4b`. The JSON binds the run to
+the exact implementation commit above.
