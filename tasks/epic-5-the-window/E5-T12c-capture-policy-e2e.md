@@ -3,7 +3,7 @@ id: E5-T12c
 epic: 5
 title: keyboard capture policy and browser getty proof
 priority: 512.3
-status: pending
+status: in-progress
 depends_on: [E5-T12b]
 estimate: S
 risk: medium
