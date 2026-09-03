@@ -3,10 +3,12 @@ id: E5-T11
 epic: 5
 title: virtio-input keyboard device — EV_KEY map, EV_LED statusq, repeat policy
 priority: 511
-status: pending
+status: cancelled
 depends_on: [E5-T10c]
 estimate: M
+risk: medium
 capstone: false
+decomposed_into: [E5-T11a, E5-T11b, E5-T11c]
 ---
 
 ## Goal
@@ -58,4 +60,12 @@ Then start a getty on tty1, inject the byte sequence for `ls\n` via key events, 
 prove the command executes — an off-by-one in any letter's code refutes.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — decomposed
+
+This M-sized keyboard container is cancelled before implementation as required by task policy and
+replaced by three ordered S slices. E5-T11a owns the declarative PC-105 capability map and the
+no-EV_REP policy; E5-T11b owns the concrete device registration and LED/status callback state; and
+E5-T11c owns the guest evdev/repeat acceptance and final native/wasm keyboard integration proof.
+E5-T12 now depends on E5-T11c so the DOM keymap cannot activate before the guest-facing keyboard
+contract is complete.

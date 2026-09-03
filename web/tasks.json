@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 210,
-    "total": 371
+    "total": 374
   },
   "epics": [
     {
@@ -16853,8 +16853,9 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t10c): mark input injection verified",
             "verify(e5-t10c): record input injection evidence",
             "chore(e5-t10c): start input injection"
           ]
@@ -16862,7 +16863,7 @@
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T11",
@@ -16870,11 +16871,15 @@
       "epicKey": "5",
       "title": "virtio-input keyboard device — EV_KEY map, EV_LED statusq, repeat policy",
       "priority": 511,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T10c"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T11a",
+        "E5-T11b",
+        "E5-T11c"
+      ],
       "estimate": "M",
       "capstone": false,
       "goal": "A concrete keyboard instance of the T10 chassis that the Linux guest binds as a full\nevdev keyboard: EV_KEY capability bitmap covering the PC-105 key range, EV_LED with\nCapsLock/NumLock/ScrollLock state flowing back to the host UI, and a deliberate,\ndocumented autorepeat policy.",
@@ -16902,9 +16907,90 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized keyboard container is cancelled before implementation as required by task policy and\nreplaced by three ordered S slices. E5-T11a owns the declarative PC-105 capability map and the\nno-EV_REP policy; E5-T11b owns the concrete device registration and LED/status callback state; and\nE5-T11c owns the guest evdev/repeat acceptance and final native/wasm keyboard integration proof.\nE5-T12 now depends on E5-T11c so the DOM keymap cannot activate before the guest-facing keyboard\ncontract is complete.",
       "adversarial": "Refute the bitmap: diff our EV_BITS payload against QEMU's virtio-keyboard\nbyte-for-byte; then in-guest, compare `udevadm info /dev/input/event0` key list — any\ncode we claim but never emit, or emit but don't claim (evdev drops undeclared codes\nsilently — inject KEY_F24 style edge codes and watch them vanish if the bitmap lies).\nAttack LEDs: toggle CapsLock from inside the guest 100x in a loop and race host-side\ninjections — LED indicator must match guest state at rest (no lost statusq buffers).\nThen start a getty on tty1, inject the byte sequence for `ls\\n` via key events, and\nprove the command executes — an off-by-one in any letter's code refutes.",
       "file": "tasks/epic-5-the-window/E5-T11-virtio-input-keyboard.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T11a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "virtio-input keyboard capability specification",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T10c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Define the reusable PC-105 keyboard `InputDeviceSpec` with an auditable evdev capability map and\nthe deliberate no-autorepeat contract.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Compare the complete bitmap against the checked-in QEMU-shaped fixture and probe edge codes near\nthe declared range, including F24 and the highest advertised code.",
+      "file": "tasks/epic-5-the-window/E5-T11a-keyboard-spec.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T11b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "keyboard device registration and LED status wiring",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T11a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Instantiate the keyboard spec as a concrete virtio-input device, register it through the existing\nvirtio-mmio chassis, and retain guest LED state through the T10 statusq callback seam.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Alternate LED bits while eventq injections are pending, reset between statusq kicks, and prove the\nhost indicator converges to the final guest state without a stale callback or queue stall.",
+      "file": "tasks/epic-5-the-window/E5-T11b-keyboard-led-wiring.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T11c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "keyboard evdev stream and repeat-policy proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T11b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove the concrete keyboard against the rebuilt Linux guest: key make/break events are framed,\nguest-visible, and do not synthesize host-side autorepeat.",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Inject an undeclared edge key and compare the guest's evdev output, toggle LEDs repeatedly while\ninjecting keys, and run the `ls\\n` key sequence through tty1 to catch map offsets or duplicate repeats.",
+      "file": "tasks/epic-5-the-window/E5-T11c-keyboard-guest-proof.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
@@ -16918,7 +17004,7 @@
       "priority": 512,
       "status": "pending",
       "depends_on": [
-        "E5-T11"
+        "E5-T11c"
       ],
       "decomposed_into": [],
       "estimate": "M",

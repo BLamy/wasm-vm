@@ -4,7 +4,7 @@ epic: 5
 title: DOM KeyboardEvent.code → evdev translation with capture policy
 priority: 512
 status: pending
-depends_on: [E5-T11]
+depends_on: [E5-T11c]
 estimate: M
 capstone: false
 ---
