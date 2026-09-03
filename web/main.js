@@ -1299,6 +1299,83 @@ window.wvmDemo = {
   alpineArtifactsPresent: () => alpineAvailable,
   // True once the booted guest has reached a usable shell prompt (Docker/IDE tabs gate on this).
   isGuestReady: () => guestReady,
+  // E3-T12e: public Docker-tab snapshot surface. The loader already restores a coherent
+  // persistent snapshot before advertising the guest as ready; this wrapper keeps the visible
+  // control on the same real controller and pauses a live guest around the durable save boundary.
+  async snapshotStatus() {
+    const controller = linuxCtl;
+    if (!controller?.snapshotDecision || !controller?.snapshotGeneration) {
+      return { available: false, decision: "missing", generation: null, restored: false };
+    }
+    try {
+      const [decision, generation] = await Promise.all([
+        controller.snapshotDecision(),
+        controller.snapshotGeneration(),
+      ]);
+      return {
+        available: true,
+        decision: String(decision || "missing"),
+        generation: Number(generation),
+        restored: Boolean(controller.restoredFromBootSnapshot?.()),
+      };
+    } catch (error) {
+      return {
+        available: false,
+        decision: "error",
+        generation: null,
+        restored: false,
+        code: "SNAPSHOT_STATUS_FAILED",
+        error: error?.message || String(error),
+      };
+    }
+  },
+  async snapshotSave() {
+    const controller = linuxCtl;
+    if (!controller?.snapshotSave) {
+      return { ok: false, code: "SNAPSHOT_UNAVAILABLE", error: "persistent snapshot support is unavailable" };
+    }
+    const started = performance.now();
+    let wasPaused = false;
+    try { wasPaused = Boolean(await controller.isPaused?.()); } catch {}
+    try {
+      if (!wasPaused) await controller.pause?.();
+      // The snapshot contains RAM/page-cache state while the overlay is the durable disk view.
+      // Flush any guest writes at the same paused boundary first, so the saved generation and the
+      // serialized machine describe one coherent filesystem rather than a RAM-only write.
+      const overlayStable = (stats) => !stats ||
+        (Number(stats.pendingBlocks || 0) === 0 && !stats.flushWaiting && !stats.writeWaiting);
+      if (controller.persist) {
+        for (let attempt = 0; attempt < 20; attempt += 1) {
+          await controller.persist();
+          if (!controller.persistStats) break;
+          const stats = await controller.persistStats();
+          if (overlayStable(stats)) {
+            // A guest WRITE can enqueue its overlay block in the tick that delivered the fenced
+            // command marker. Require a second idle sample after yielding so that late queue work
+            // cannot advance the generation immediately after the snapshot is recorded.
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            if (overlayStable(await controller.persistStats())) break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+      }
+      await controller.snapshotSave();
+      const state = await this.snapshotStatus();
+      return { ok: true, elapsedMs: performance.now() - started, ...state };
+    } catch (error) {
+      const raw = error?.message || String(error);
+      const code = raw === "read_only"
+        ? "SNAPSHOT_READ_ONLY"
+        : raw === "not_persistent"
+          ? "SNAPSHOT_NOT_PERSISTENT"
+          : error?.code || "SNAPSHOT_SAVE_FAILED";
+      return { ok: false, code, error: raw, elapsedMs: performance.now() - started };
+    } finally {
+      if (!wasPaused) {
+        try { await controller.resume?.(); } catch {}
+      }
+    }
+  },
   // Run a shell command in the guest, resolve { stdout, exit } (shared, serialized — see guestExec).
   exec: (cmd, timeoutMs, options) => guestExec(cmd, timeoutMs, null, options),
   // E3.5-T05e canonical name: a fenced request/response RPC over the one console. Serialized so

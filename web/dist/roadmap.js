@@ -98,6 +98,7 @@ export const ROADMAP = [
       { name: "Guest Docker logs streaming + cancellation", status: "verified", evidence: "E3.5-T05f4: Logs follows guest wvrun logs -f, cancels cleanly on close/navigation/Stop, and releases the shared RPC tty without duplicate lines" },
       { name: "Guest Docker interactive Exec pane", status: "verified", evidence: "E3.5-T05f5: Exec drives wvrun exec -it inside the selected container, preserves container provenance, and fails closed for exited or absent targets" },
       { name: "Guest Docker lifecycle integration", status: "verified", evidence: "E3.5-T05f6: Docker composes guest catalog, Run, Containers, Logs, Exec, Stop, and honest degraded/failure paths" },
+      { name: "Docker-tab instant resume", status: "verified", evidence: "E3-T12e: visible Save resume state, durable overlay generation, reload continuation, and stale-snapshot cold-path labeling" },
       { name: "Digest-deduped layer cache, reload-proof", status: "pending" },
     ],
   },

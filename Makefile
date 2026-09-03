@@ -571,6 +571,15 @@ verify-E3-T12d:
 	E3_T12D_FILE_RELOAD_JIT=1 E3_T12D_FILE_RELOAD_SINGLE_USER=1 node tools/verify/e3-t12d-browser-proof.mjs
 	@echo "verify-E3-T12d : OK"
 
+.PHONY: verify-E3-T12e
+verify-E3-T12e:
+	# Docker-tab instant resume: the local Chromium proof exercises the visible Save resume control,
+	# a real guest file across reload, the reload timing budget, and the stale-overlay cold-path label.
+	# Independent machines and WebKit are intentionally outside this local acceptance gate.
+	$(MAKE) web-build
+	node tools/verify/e3-t12e-browser-proof.mjs
+	@echo "verify-E3-T12e : OK"
+
 .PHONY: verify-E3-T24c
 verify-E3-T24c:
 	# The versioned offline app shell against a real browser service worker + Playwright offline mode:

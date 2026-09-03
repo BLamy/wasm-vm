@@ -83,6 +83,12 @@ const css = `
 .ide-dk-runtime-status[data-state="available"] { color: #9ad29a; }
 .ide-dk-runtime-status[data-state="unavailable"], .ide-dk-runtime-status[data-state="error"] { color: #f0c6a0; }
 .ide-dk-runtime > .ide-mini { margin: 0 12px 4px; }
+.ide-dk-resume { padding: 2px 0 10px; border-bottom: 1px solid var(--line, #232a35); }
+.ide-dk-resume-status { padding: 3px 12px 7px; color: #9fb0c7; line-height: 1.45; font-size: 11px; }
+.ide-dk-resume[data-decision="resume"] .ide-dk-resume-status { color: #9ad29a; }
+.ide-dk-resume[data-decision="stale"] .ide-dk-resume-status,
+.ide-dk-resume[data-state="error"] .ide-dk-resume-status { color: #f0c6a0; }
+.ide-dk-resume-actions { display: flex; gap: 6px; padding: 0 12px; }
 .ide-dk-image-detail { margin: -2px 12px 8px; padding: 8px; border: 1px solid var(--line, #232a35);
   border-radius: 6px; background: #0b0f15; font-size: 11px; line-height: 1.45; }
 .ide-dk-image-detail .title { color: #d6deeb; font-weight: 600; margin-bottom: 5px; }
@@ -305,6 +311,15 @@ const dockerRuntime = {
   alpineStatus: "unknown", // unknown | checking | present | absent
   alpineProbe: null,
   generation: 0,
+  snapshot: {
+    status: "unknown", // unknown | checking | ready | saving | unavailable | error
+    decision: "missing",
+    generation: null,
+    restored: false,
+    elapsedMs: null,
+    code: "",
+    error: "",
+  },
 };
 
 // The catalog is intentionally independent from the runtime probe. A guest can be ready while its
@@ -696,8 +711,82 @@ if (root) {
     dockerRuntime.probe = null;
     dockerRuntime.booting = bootInProgress;
     dockerRuntime.pullNotice = "";
+    dockerRuntime.snapshot = {
+      status: "unknown", decision: "missing", generation: null, restored: false,
+      elapsedMs: null, code: "", error: "",
+    };
     resetDockerCatalog();
     resetContainerLedger();
+  }
+
+  async function refreshDockerSnapshot() {
+    const current = api();
+    if (!current || typeof current.snapshotStatus !== "function") {
+      dockerRuntime.snapshot = {
+        ...dockerRuntime.snapshot, status: "unavailable", code: "SNAPSHOT_UNAVAILABLE",
+        error: "This guest does not expose persistent resume snapshots.",
+      };
+      if (sideView === "docker") renderDocker();
+      return false;
+    }
+    const generation = dockerRuntime.generation;
+    dockerRuntime.snapshot = { ...dockerRuntime.snapshot, status: "checking", code: "", error: "" };
+    try {
+      const state = await current.snapshotStatus();
+      if (generation !== dockerRuntime.generation) return false;
+      dockerRuntime.snapshot = {
+        ...dockerRuntime.snapshot,
+        status: state?.available ? "ready" : "unavailable",
+        decision: state?.decision || "missing",
+        generation: Number.isFinite(Number(state?.generation)) ? Number(state.generation) : null,
+        restored: Boolean(state?.restored),
+        code: state?.code || "",
+        error: state?.error || "",
+      };
+      return Boolean(state?.available);
+    } catch (error) {
+      if (generation !== dockerRuntime.generation) return false;
+      dockerRuntime.snapshot = {
+        ...dockerRuntime.snapshot, status: "error", code: "SNAPSHOT_STATUS_FAILED",
+        error: error?.message || String(error),
+      };
+      return false;
+    } finally {
+      if (generation === dockerRuntime.generation && sideView === "docker") renderDocker();
+    }
+  }
+
+  async function saveDockerSnapshot() {
+    const current = api();
+    if (!runtimeReady() || typeof current?.snapshotSave !== "function" || dockerRuntime.snapshot.status === "saving") return;
+    const generation = dockerRuntime.generation;
+    dockerRuntime.snapshot = { ...dockerRuntime.snapshot, status: "saving", code: "", error: "" };
+    renderDocker();
+    try {
+      const saved = await current.snapshotSave();
+      if (generation !== dockerRuntime.generation) return;
+      if (!saved?.ok) {
+        dockerRuntime.snapshot = {
+          ...dockerRuntime.snapshot, status: "error", code: saved?.code || "SNAPSHOT_SAVE_FAILED",
+          error: saved?.error || "the guest refused the persistent snapshot",
+          elapsedMs: saved?.elapsedMs ?? null,
+        };
+        return;
+      }
+      dockerRuntime.snapshot = {
+        ...dockerRuntime.snapshot, status: "ready", decision: saved.decision || "resume",
+        generation: saved.generation ?? null, restored: Boolean(saved.restored),
+        elapsedMs: saved.elapsedMs ?? null, code: "", error: "",
+      };
+    } catch (error) {
+      if (generation !== dockerRuntime.generation) return;
+      dockerRuntime.snapshot = {
+        ...dockerRuntime.snapshot, status: "error", code: "SNAPSHOT_SAVE_FAILED",
+        error: error?.message || String(error),
+      };
+    } finally {
+      if (generation === dockerRuntime.generation && sideView === "docker") renderDocker();
+    }
   }
 
   function probeDockerRuntime() {
@@ -856,6 +945,58 @@ if (root) {
       boot.addEventListener("click", bootAlpineFromDocker);
       box.appendChild(boot);
     }
+
+    const resume = mk("div", "ide-dk-resume");
+    resume.id = "ide-dk-resume";
+    resume.dataset.state = dockerRuntime.snapshot.status;
+    resume.dataset.decision = dockerRuntime.snapshot.decision;
+    if (dockerRuntime.snapshot.generation != null) {
+      resume.dataset.generation = String(dockerRuntime.snapshot.generation);
+    }
+    const resumeTitle = mk("div", "ide-dk-h", "Resume state");
+    const resumeStatus = mk("div", "ide-dk-resume-status");
+    resumeStatus.id = "ide-dk-resume-status";
+    if (!runtimeReady()) {
+      resumeStatus.textContent = "Durable resume is available after the persistent Alpine guest is ready.";
+    } else if (dockerRuntime.snapshot.status === "saving") {
+      resumeStatus.textContent = "Saving a coherent guest snapshot… the guest is paused at the durable boundary.";
+    } else if (dockerRuntime.snapshot.status === "checking") {
+      resumeStatus.textContent = "Checking the saved snapshot against the current disk generation…";
+    } else if (dockerRuntime.snapshot.status === "error") {
+      resumeStatus.textContent = `${dockerRuntime.snapshot.code || "SNAPSHOT_FAILED"}: ${dockerRuntime.snapshot.error}`;
+    } else if (dockerRuntime.snapshot.decision === "resume") {
+      const timing = dockerRuntime.snapshot.elapsedMs == null
+        ? "" : ` · saved in ${(dockerRuntime.snapshot.elapsedMs / 1000).toFixed(2)}s`;
+      resumeStatus.textContent = `Saved snapshot is coherent (generation ${dockerRuntime.snapshot.generation ?? "?"})${dockerRuntime.snapshot.restored ? " · restored" : ""}${timing}.`;
+    } else if (dockerRuntime.snapshot.decision === "stale") {
+      resumeStatus.textContent = "Saved snapshot is stale; the next restore will take the cold path.";
+    } else if (dockerRuntime.snapshot.status === "unavailable") {
+      resumeStatus.textContent = "Persistent resume is unavailable for this guest.";
+    } else {
+      resumeStatus.textContent = "No saved resume snapshot for this guest yet.";
+    }
+    resume.append(resumeTitle, resumeStatus);
+    const resumeActions = mk("div", "ide-dk-resume-actions");
+    const saveResume = mk("button", "ide-mini run", "Save resume");
+    saveResume.id = "ide-dk-save-resume";
+    saveResume.dataset.action = "save-resume";
+    saveResume.disabled = !runtimeReady() || dockerRuntime.snapshot.status === "saving" ||
+      dockerRuntime.snapshot.status === "checking" || typeof current?.snapshotSave !== "function";
+    saveResume.title = saveResume.disabled
+      ? "A persistent Alpine guest is required"
+      : "Pause at a coherent boundary and persist the guest snapshot";
+    saveResume.addEventListener("click", () => { void saveDockerSnapshot(); });
+    resumeActions.appendChild(saveResume);
+    const checkResume = mk("button", "ide-mini", "↻ Check");
+    checkResume.id = "ide-dk-check-resume";
+    checkResume.dataset.action = "check-resume";
+    checkResume.disabled = !runtimeReady() || dockerRuntime.snapshot.status === "saving" ||
+      dockerRuntime.snapshot.status === "checking" || typeof current?.snapshotStatus !== "function";
+    checkResume.addEventListener("click", () => { void refreshDockerSnapshot(); });
+    resumeActions.appendChild(checkResume);
+    resume.appendChild(resumeActions);
+    box.appendChild(resume);
+    if (runtimeReady() && dockerRuntime.snapshot.status === "unknown") void refreshDockerSnapshot();
 
     const provider = selectedProvider();
     const pull = mk("button", "ide-mini", "Pull");
@@ -1478,6 +1619,12 @@ if (root) {
     renderContainerLogs(t);
     const stopping = (async () => {
       try {
+        // `wvrun exec -it` leaves an interactive shell in the foreground. Ctrl-C alone interrupts
+        // that shell but does not return to the parent guest shell, so a following Docker action
+        // would be typed into the container namespace (`wvrun: not found`). Queue a graceful exit
+        // before the stream's Ctrl-C + private fence; the deferred send preserves console
+        // re-entrancy ordering while the fence still proves the shared tty is back at the parent.
+        handle.send(new TextEncoder().encode("exit\r"));
         await handle.stop();
       } catch (error) {
         if (reason !== "close" && reason !== "navigation") {
@@ -2303,6 +2450,7 @@ if (root) {
       containers: containerLedger.rows,
       containerAction: containerLedger.action,
       containerLastCommand: containerLedger.lastCommand,
+      snapshot: { ...dockerRuntime.snapshot },
     });
     window.__dockerCatalogForTest = () => ({
       status: dockerCatalog.status,

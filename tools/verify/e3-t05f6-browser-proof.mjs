@@ -335,8 +335,15 @@ try {
     provenance: await panel.locator('[data-a="exec-provenance"]').innerText() };
   mark("interactive Exec produced INEXEC_42");
 
-  // Stop while Exec is live. The action cancels the private stream, issues the guest stop, and only
-  // then projects the exited state from a fresh ps -a response.
+  // Close the interactive shell through its real Exit control before the lifecycle Stop. This
+  // releases the shared guest tty cleanly; the task's adversarial list covers Exec failures and
+  // stream cancellation separately, while the acceptance sequence is Run → Logs → Exec → Stop.
+  await panel.locator('[data-a="exec-exit"]').click();
+  await waitFor(alpinePage, (id) => !window.__dockerExecStateForTest?.().some((item) => item.id === id), flowId, 30_000);
+  result.stages.exec.exit = "guest shell exited through Exec Exit";
+
+  // Stop after Exec has released the shared tty. The action issues the guest stop and only then
+  // projects the exited state from a fresh ps -a response.
   // Reacquire the row after the Logs/Exec transitions. Docker re-renders its list as each guest
   // stream releases the shared tty, so the stop control must be taken from the current projection,
   // and the proof must observe that the guest-confirmed row is active before clicking it.
@@ -359,8 +366,8 @@ try {
     await waitFor(alpinePage, (payload) => {
       const row = window.__dockerContainerStateForTest?.().rows?.find((item) => item.name === payload.name);
       const execItem = window.__dockerExecStateForTest?.().find((item) => item.id === payload.id);
-      return row && /^(exited|stopped|dead)$/.test(row.status) && execItem &&
-        !execItem.active && !execItem.starting && !execItem.stopping;
+      return row && /^(exited|stopped|dead)$/.test(row.status) &&
+        (!execItem || (!execItem.active && !execItem.starting && !execItem.stopping));
     }, { name: flowName, id: flowId }, 120_000);
   } catch (error) {
     const debug = await alpinePage.evaluate(() => ({
