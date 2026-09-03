@@ -236,3 +236,7 @@ try {
 }
 
 console.log(JSON.stringify(result, null, 2));
+// Undici's short-lived readiness fetch can retain an idle socket on Node 24. This is a standalone
+// evidence command, so terminate after the result is fully written instead of leaving a false
+// hanging process for callers.
+process.exit(0);
