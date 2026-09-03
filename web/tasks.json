@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 187,
+    "verified": 188,
     "total": 350
   },
   "epics": [
@@ -14565,7 +14565,7 @@
       "epicKey": "4",
       "title": "Live threaded Alpine boot and responsiveness budgets",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E4-T22e",
         "E4-T24"
@@ -14577,13 +14577,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-09-03 — verifier — VERDICT: verified\n\n- P1 restored Alpine worker — HELD. The exact-head Chromium run restored the local Alpine\n  snapshot in both fresh browser contexts, exposed \"whole-machine-worker\", reported\n  crossOriginIsolated=true and guestReady=true, and held the paused restore digest at\n  28ace7ecbab3b61829d383bb9ff3e585926d462d23795a23c97881320af9072a in both controls.\n- P2 command and state parity — HELD. Both interpreter and JIT controls returned the computed\n  E4T22F_ORACLE_42 result with exit 0 and SHA-256\n  6eab5c9e1d90a64ddefee006cf0fc9343e334d8ee94868251a2fe6213814538a; the restored runtime\n  digest matched across controls. Post-command digests are retained separately because live\n  RTC/scheduler state advances while the browser measures the workload.\n- P3 responsiveness — HELD. During the sustained Alpine yes workload, 120-frame rAF p99/max\n  was 16.670/16.670 ms in both controls. The public terminal input bridge reached the worker\n  dispatch boundary in 2.845 ms (interpreter) and 3.180 ms (JIT), under the 20 ms budget;\n  the end-to-end shell marker response (46.215/55.965 ms) is retained in the JSON as a\n  diagnostic. The current production whole-machine worker is postMessage-scheduled rather than\n  the legacy raw Atomics.wait worker; the exact parked-WFI proof remains in E4-T22d.\n- P4 execution truthfulness and diagnostics — HELD. Interpreter JIT counters remained zero;\n  the JIT leg reported hasExecutor=true, compiledBlocks=37, executedBlocks=4,173,863, and\n  retiredViaJit=93,741,500. Both runs recorded zero console errors, page errors, failed\n  requests, and non-favicon HTTP errors. Guest date +%s was recorded in both legs; the\n  restored snapshot carries its historical RTC value, so this capture does not claim fresh\n  host-epoch parity.\n- COVERAGE — HELD. The test exercises restored boot, pause/resume, the terminal command path,\n  computed output, public input injection, worker dispatch/RPC ordering, sustained guest work,\n  rAF scheduling, guest time sampling, interpreter policy, JIT policy, and final controller\n  diagnostics. WebKit and independent-machine legs are waived per task scope/user direction;\n  Firefox was not configured/available in the local directed project.\n- SUITE — retained web/tests/e4-t22-cpu-worker.spec.js, the JSON result, and the screenshot as\n  the recurring browser proof artifact.\n\nCommands:\n\nPW_DISABLE_TS_ESM=1 PLAYWRIGHT_PORT=8133 PLAYWRIGHT_REUSE_SERVER=1 npx playwright test tests/e4-t22-cpu-worker.spec.js --project=chromium\n\nResult: 1 passed in 24.9s, exact implementation head\n7929c427ba1aaea703bfaba92165862ca97010cc.\n\nEvidence: evidence/e4-t22f/threaded-browser-budgets-2026-09-03.json, SHA-256\n5321d6a294f4f1894a5cd691c589f66ca4210fd717c1d53fc230057ec8c7ef78; screenshot\nevidence/e4-t22f/threaded-browser-budgets-2026-09-03.png, SHA-256\n59e66a60c19042c53461db66712b180ec11d86f7530dadeb33f9b82ca156679c.",
       "adversarial": "Background and foreground the tab during a busy run, leave it idle past a timer deadline, type during\nthe park transition, and compare host wall time with guest mtime. A missed wake, guest time explosion,\nor main-thread p99 above budget refutes the capture.",
       "file": "tasks/epic-4-acceleration/E4-T22f-threaded-browser-budgets.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "tasks: start E4-T22f browser budgets"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E4-T22g",
