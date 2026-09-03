@@ -183,10 +183,25 @@ fn write_prefix(chain: &DescriptorChain, bus: &mut SystemBus, response: &[u8]) -
     Ok(written as u32)
 }
 
+fn response_header(request: protocol::CtrlHeader, ty: u32) -> protocol::CtrlHeader {
+    protocol::CtrlHeader {
+        ty,
+        flags: request.flags & protocol::FLAG_FENCE,
+        fence_id: if request.flags & protocol::FLAG_FENCE != 0 {
+            request.fence_id
+        } else {
+            0
+        },
+        ctx_id: request.ctx_id,
+        ring_idx: request.ring_idx,
+        padding: [0; 3],
+    }
+}
+
 /// Service the virtio-gpu control queue after a deferred QueueNotify kick.
 ///
-/// E5-T01b handles only `GET_DISPLAY_INFO`; an absent/short header is consumed with a zero-length
-/// used entry and unsupported commands remain for E5-T01c's explicit error-response slice.
+/// A short request is consumed with a zero-length used entry. Unsupported commands receive the
+/// fixed 24-byte `RESP_ERR_UNSPEC` response; both paths preserve ring progress for the next chain.
 pub fn service(
     slot: &Rc<RefCell<VirtioMmio>>,
     vq: &mut Option<Virtqueue>,
@@ -235,24 +250,27 @@ pub fn service(
 
         let written = match read_header(&chain, bus) {
             Some(request) if request.ty == protocol::CMD_GET_DISPLAY_INFO => {
-                let response_header = protocol::CtrlHeader {
-                    ty: protocol::RESP_OK_DISPLAY_INFO,
-                    flags: request.flags & protocol::FLAG_FENCE,
-                    fence_id: if request.flags & protocol::FLAG_FENCE != 0 {
-                        request.fence_id
-                    } else {
-                        0
-                    },
-                    ctx_id: request.ctx_id,
-                    ring_idx: request.ring_idx,
-                    padding: [0; 3],
-                };
-                let response = protocol::DisplayInfoResponse::new(response_header).to_bytes();
+                let response = protocol::DisplayInfoResponse::new(response_header(
+                    request,
+                    protocol::RESP_OK_DISPLAY_INFO,
+                ))
+                .to_bytes();
                 match write_prefix(&chain, bus, &response) {
                     Ok(written) => {
                         state.borrow_mut().commands_served += 1;
                         written
                     }
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
+            Some(request) => {
+                let response = response_header(request, protocol::RESP_ERR_UNSPEC).to_bytes();
+                match write_prefix(&chain, bus, &response) {
+                    Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
                         *vq = None;
@@ -304,6 +322,7 @@ mod tests {
     const STATUS_ACKNOWLEDGE: u32 = 1;
     const STATUS_DRIVER: u32 = 2;
     const STATUS_FEATURES_OK: u32 = 8;
+    const STATUS_NEEDS_RESET: u32 = 64;
 
     const DESC: u64 = DRAM_BASE + 0x1000;
     const AVAIL: u64 = DRAM_BASE + 0x2000;
@@ -353,6 +372,13 @@ mod tests {
             },
         );
         (slot, state, None)
+    }
+
+    fn set_avail_heads(bus: &mut SystemBus, heads: &[u16]) {
+        bus.store16(AVAIL + 2, heads.len() as u16).unwrap();
+        for (index, head) in heads.iter().copied().enumerate() {
+            bus.store16(AVAIL + 4 + 2 * index as u64, head).unwrap();
+        }
     }
 
     fn read32(slot: &mut VirtioMmio, offset: u64) -> u32 {
@@ -588,5 +614,109 @@ mod tests {
                 "write escaped short tail at byte {offset}"
             );
         }
+    }
+
+    #[test]
+    fn virtio_gpu_malformed_requests_make_progress_and_recover() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        const ERROR_RESPONSE: u64 = RESPONSE;
+        const SHORT_RESPONSE: u64 = RESPONSE + 0x400;
+        const VALID_RESPONSE: u64 = RESPONSE + 0x800;
+
+        let unknown = CtrlHeader {
+            ty: 0xDEAD,
+            flags: protocol::FLAG_FENCE,
+            fence_id: 0x1111,
+            ctx_id: 1,
+            ring_idx: 2,
+            padding: [1, 2, 3],
+        };
+        let short = [protocol::CMD_GET_DISPLAY_INFO as u8];
+        let valid = CtrlHeader {
+            ty: protocol::CMD_GET_DISPLAY_INFO,
+            ..CtrlHeader::default()
+        };
+        write_bytes(&mut bus, REQUEST, &unknown.to_bytes());
+        write_bytes(&mut bus, REQUEST + 0x100, &short);
+        write_bytes(&mut bus, REQUEST + 0x200, &valid.to_bytes());
+        for offset in 0..408u64 {
+            bus.store8(SHORT_RESPONSE + offset, 0xCC).unwrap();
+        }
+
+        // Chain 0: unsupported command + writable error response.
+        // Chain 2: one-byte request + writable buffer (must be consumed without writing).
+        // Chain 4: valid request with no writable descriptors (must still advance the ring).
+        // Chain 5: valid request proving the queue remains usable afterward.
+        let descriptors = [
+            (REQUEST, 24, 1, 1),
+            (ERROR_RESPONSE, 24, 2, 0),
+            (REQUEST + 0x100, 1, 1, 3),
+            (SHORT_RESPONSE, 408, 2, 0),
+            (REQUEST + 0x200, 24, 0, 0),
+            (REQUEST + 0x200, 24, 1, 6),
+            (VALID_RESPONSE, 408, 2, 0),
+        ];
+        let (slot, state, mut vq) = queue_for_test(&mut bus, &descriptors);
+        set_avail_heads(&mut bus, &[0, 2, 4, 5]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert_eq!(bus.load16(USED + 2).unwrap(), 4, "all four chains consumed");
+        assert_eq!(bus.load32(USED + 8).unwrap(), 24, "error response length");
+        assert_eq!(bus.load32(USED + 16).unwrap(), 0, "short request length");
+        assert_eq!(bus.load32(USED + 24).unwrap(), 0, "no writable tail length");
+        assert_eq!(bus.load32(USED + 32).unwrap(), 408, "valid response length");
+        let error = [
+            bus.load8(ERROR_RESPONSE).unwrap(),
+            bus.load8(ERROR_RESPONSE + 1).unwrap(),
+            bus.load8(ERROR_RESPONSE + 2).unwrap(),
+            bus.load8(ERROR_RESPONSE + 3).unwrap(),
+        ];
+        assert_eq!(u32::from_le_bytes(error), protocol::RESP_ERR_UNSPEC);
+        for offset in 0..408u64 {
+            assert_eq!(
+                bus.load8(SHORT_RESPONSE + offset).unwrap(),
+                0xCC,
+                "short request wrote at byte {offset}"
+            );
+        }
+        let mut valid_bytes = [0u8; DISPLAY_INFO_RESPONSE_SIZE];
+        for (offset, byte) in valid_bytes.iter_mut().enumerate() {
+            *byte = bus.load8(VALID_RESPONSE + offset as u64).unwrap();
+        }
+        let valid_response = DisplayInfoResponse::from_bytes(&valid_bytes).unwrap();
+        assert_eq!(valid_response.header.ty, protocol::RESP_OK_DISPLAY_INFO);
+        assert_eq!(valid_response.modes[0].enabled, 1);
+        assert_eq!(valid_response.modes[0].width, 1280);
+        assert_eq!(state.borrow().commands_served, 2);
+    }
+
+    #[test]
+    fn virtio_gpu_malformed_guest_address_is_rejected_without_write() {
+        let mut bus = SystemBus::new(Ram::new(1 << 20).unwrap());
+        write_bytes(
+            &mut bus,
+            REQUEST,
+            &CtrlHeader {
+                ty: protocol::CMD_GET_DISPLAY_INFO,
+                ..CtrlHeader::default()
+            }
+            .to_bytes(),
+        );
+        let end_straddling = DRAM_BASE + (1 << 20) as u64 - 8;
+        let (slot, state, mut vq) =
+            queue_for_test(&mut bus, &[(REQUEST, 24, 1, 1), (end_straddling, 24, 2, 0)]);
+        slot.borrow_mut().write(0x050, Width::B4, 0).unwrap();
+
+        service(&slot, &mut vq, &state, &mut bus);
+
+        assert!(vq.is_none(), "bad descriptor drops the cached queue view");
+        assert_ne!(
+            read32(&mut slot.borrow_mut(), STATUS) & STATUS_NEEDS_RESET,
+            0
+        );
+        assert_eq!(state.borrow().commands_served, 0);
+        assert_eq!(bus.load16(USED + 2).unwrap(), 0, "no stale used entry");
     }
 }
