@@ -16194,15 +16194,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "chore(e5-t03): decompose scanout pipeline",
             "chore(e5-t03): rewire resource dependency"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T03a",
@@ -16210,7 +16211,7 @@
       "epicKey": "5",
       "title": "virtio-gpu scanout binding and FrameSink contract",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T02c"
       ],
@@ -16224,10 +16225,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Probe scanout ids at `num_scanouts - 1`, `num_scanouts`, and `u32::MAX`; use resource id 0,\nan unknown id, and a resource removed by `UNREF`; and test rectangles whose right or bottom\nedge overflows `u32`. Every rejected command must leave the prior binding unchanged and must\nnot panic or write outside its response descriptor.",
       "file": "tasks/epic-5-the-window/E5-T03a-virtio-gpu-scanout-binding.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t03): decompose scanout pipeline"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T03b",
@@ -16249,10 +16258,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Run 10,000 independently seeded `(rect, offset)` cases against the naive nested-loop oracle,\nincluding zero-sized and edge-touching rectangles. Time a native 1280x800 full-frame transfer;\nthe implementation must stay within the task's 5 ms budget and must not regress into a\nper-pixel sg lookup. Add a bus read/write counter and fail if any transfer performs a guest\nwrite.",
       "file": "tasks/epic-5-the-window/E5-T03b-virtio-gpu-transfer.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t03): decompose scanout pipeline"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T03c",
@@ -16274,10 +16291,18 @@
       "verificationLog": "(empty)",
       "adversarial": "Replay flushes before binding, after unbinding, after `UNREF`, and with every boundary edge\njust outside the resource. Mutate the golden fixture and prove the independent reference\ncomparison fails, then restore it. Confirm the sink receives a copied/owned pixel view rather\nthan a mutable alias of guest backing, and that no BGRA/RGBA swizzle appears in the core.",
       "file": "tasks/epic-5-the-window/E5-T03c-virtio-gpu-flush-golden.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t03): decompose scanout pipeline"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 1
     },
     {
       "id": "E5-T04",

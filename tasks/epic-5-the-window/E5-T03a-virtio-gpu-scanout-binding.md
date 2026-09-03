@@ -3,7 +3,7 @@ id: E5-T03a
 epic: 5
 title: virtio-gpu scanout binding and FrameSink contract
 priority: 503.1
-status: pending
+status: in-progress
 depends_on: [E5-T02c]
 estimate: S
 risk: high
