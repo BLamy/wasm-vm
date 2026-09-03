@@ -41,7 +41,7 @@ async function startServer() {
   if (port === 0) port = await allocatePort();
   server = spawn("bash", ["tools/serve-dev.sh", String(port)], {
     cwd: repo,
-    stdio: ["ignore", "pipe", "inherit"],
+    stdio: ["ignore", "ignore", "inherit"],
     detached: true,
   });
   const base = `http://127.0.0.1:${port}`;
@@ -58,12 +58,15 @@ async function startServer() {
 
 async function stopServer() {
   if (!server) return;
+  const child = server;
+  server = null;
   try {
-    process.kill(-server.pid, "SIGTERM");
+    process.kill(-child.pid, "SIGTERM");
   } catch (error) {
     if (error?.code !== "ESRCH") throw error;
   }
   await sleep(300);
+  child.unref();
 }
 
 const { chromium } = await import(pathToFileURL(path.join(web, "node_modules", "playwright", "index.mjs")).href);
