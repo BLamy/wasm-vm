@@ -3,7 +3,7 @@ id: E3-T24d
 epic: 3
 title: Frozen offline boot and resume proof
 priority: 324.4
-status: pending
+status: in-progress
 depends_on: [E3-T24b, E3-T24c]
 estimate: S
 risk: high

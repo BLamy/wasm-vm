@@ -10,7 +10,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 1. **E3-T19a** — Composed-stack node lifecycle and reload-restore
 1. **E3-T22** — Clipboard integration - OSC 52 copy, paste injection, bracketed paste **[DECOMPOSE BEFORE START]**
-1. **E3-T24d** — Frozen offline boot and resume proof
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -211,7 +210,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `324.1` [E3-T24a](epic-3-civilization/E3-T24a-honest-boot-progress.md) — Typed honest boot-progress surface *(deps: E3-T03)*
 - [x] `324.2` [E3-T24b](epic-3-civilization/E3-T24b-resume-cold-boot-selection.md) — Visible resume-versus-cold-boot decision path *(deps: E3-T24a, E3-T12e, E3-T10)*
 - [x] `324.3` [E3-T24c](epic-3-civilization/E3-T24c-versioned-offline-app-shell.md) — Versioned offline app shell and chunk-cache ownership *(deps: E3-T24a, E3-T03)*
-- [ ] `324.4` [E3-T24d](epic-3-civilization/E3-T24d-offline-boot-resume-proof.md) — Frozen offline boot and resume proof *(deps: E3-T24b, E3-T24c)*
+- [~] `324.4` [E3-T24d](epic-3-civilization/E3-T24d-offline-boot-resume-proof.md) — Frozen offline boot and resume proof *(deps: E3-T24b, E3-T24c)*
 - [-] `325` [E3-T25](epic-3-civilization/E3-T25-error-recovery-surfacing.md) — Error recovery - network drops and storage failures surfaced sanely *(deps: E3-T10, E3-T20)*
 - [ ] `325.1` [E3-T25a](epic-3-civilization/E3-T25a-error-taxonomy-injection-contract.md) — Typed error taxonomy and fault-injection contract *(deps: E3-T10, E3-T20d)*
 - [ ] `325.2` [E3-T25b](epic-3-civilization/E3-T25b-provider-reconnect-policy.md) — Provider reconnect and fail-fast policy *(deps: E3-T25a, E3-T19a, E3-T20d)*

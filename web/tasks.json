@@ -8781,15 +8781,16 @@
       "activity": [
         {
           "date": "2026-09-02",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify: close visible resume decision proof",
             "tasks: start visible resume decision proof"
           ]
         }
       ],
       "firstActivity": "2026-09-02",
       "lastActivity": "2026-09-02",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E3-T24c",
@@ -8844,7 +8845,7 @@
       "epicKey": "3",
       "title": "Frozen offline boot and resume proof",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E3-T24b",
         "E3-T24c"
