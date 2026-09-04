@@ -141,7 +141,7 @@ export const ROADMAP = [
       { name: "fbcon native parity and stress", status: "verified", evidence: "E5-T07d: native null-sink fixture parity, one-million-byte tty0 write, 100 VT switches, delayed Chromium readback, and reload cleanup" },
       { name: "Display/serial host chrome + PNG/WebM capture", status: "verified", evidence: "E5-T08: Chromium 131 + Firefox 132 live view toggle, reserved hotkey, readback-checked PNG, bounded WebM, and 50-toggle proof" },
       { name: "EDID / display info", status: "verified", evidence: "E5-T04: decoder-checked 128-byte EDID 1.4 blocks, dynamic pmode/EDID regeneration, negotiated GET_EDID, and coalesced display config IRQs" },
-      { name: "Hardware cursor plane mode/lifecycle", status: "partial", evidence: "E5-T15c: CSS/overlay mode policy, transform-only MOVE path, bounded replacement/hide lifecycle" },
+      { name: "Hardware cursor plane mode/lifecycle", status: "verified", evidence: "E5-T15d: independent checkerboard/hotspot, transform-only 500 Hz MOVE, delayed-present coalescing, oversize fallback, hide, and lifecycle proof" },
     ],
   },
   {
