@@ -152,9 +152,12 @@ async function runProfile(browser, base, profile, screenshotPath = null) {
       await backgroundPage.bringToFront();
       await sleep(100);
     }
-    const benchmark = await page.evaluate(({ requestedSamples, requestedWarmups, profileName }) => (
-      window.runPresentBench({ samples: requestedSamples, warmups: requestedWarmups, profile: profileName })
-    ), { requestedSamples: samples, requestedWarmups: warmups, profileName: profile.name });
+    // Exercise the page's public button path as well as the benchmark function it exposes. The
+    // URL profile is read by the page, so this remains the same 300/30 run for every profile.
+    await page.locator("#run").click();
+    await page.waitForFunction(() => window.__presentBenchLast?.kind === "present-path-benchmark-v1",
+      null, { timeout: 120_000 });
+    const benchmark = await page.evaluate(() => window.__presentBenchLast);
     validateBenchmark(benchmark, profile);
     if (screenshotPath) {
       await fs.mkdir(path.dirname(screenshotPath), { recursive: true });
@@ -211,6 +214,11 @@ const result = {
   ranking: null,
   errors: { console: [], page: [], requests: [] },
 };
+
+const sourceBenchmarkPage = await fs.readFile(path.join(web, "bench", "present-bench.html"), "utf8");
+const distBenchmarkPage = await fs.readFile(path.join(web, "dist", "bench", "present-bench.html"), "utf8");
+assert.equal(distBenchmarkPage, sourceBenchmarkPage, "web/dist benchmark page is stale");
+result.distParity = { equal: true, source: "web/bench/present-bench.html", dist: "web/dist/bench/present-bench.html" };
 
 const requestedChrome = process.env.E5_T06C_CHROME_PATH || null;
 const { chromium } = await import(pathToFileURL(path.join(web, "node_modules", "playwright", "index.mjs")).href);

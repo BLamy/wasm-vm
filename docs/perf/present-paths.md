@@ -41,14 +41,14 @@ cell has 300 samples.
 
 | Resolution | Workload | Canvas2D | WebGL2 |
 | --- | --- | ---: | ---: |
-| 1280x800 | full-frame | 1.765 / 2.895 (mean 1.933, σ 0.487) | 0.945 / 1.285 (mean 0.999, σ 0.157) |
-| 1280x800 | damage-64x64 | **0.010 / 0.015 (mean 0.010, σ 0.003)** | 0.060 / 0.070 (mean 0.061, σ 0.006) |
-| 2560x1600 | full-frame | 7.385 / 8.840 (mean 7.581, σ 0.619) | 5.430 / 5.875 (mean 5.395, σ 0.388) |
-| 2560x1600 | damage-64x64 | 0.010 / 0.015 (mean 0.012, σ 0.041) | 0.220 / 0.250 (mean 0.223, σ 0.015) |
+| 1280x800 | full-frame | 1.800 / 2.970 (mean 1.919, σ 0.503) | 1.200 / 1.500 (mean 1.247, σ 0.125) |
+| 1280x800 | damage-64x64 | **0.010 / 0.015 (mean 0.012, σ 0.048)** | 0.060 / 0.070 (mean 0.061, σ 0.006) |
+| 2560x1600 | full-frame | 7.595 / 8.785 (mean 7.741, σ 0.579) | 5.090 / 5.810 (mean 5.150, σ 0.425) |
+| 2560x1600 | damage-64x64 | 0.010 / 0.015 (mean 0.011, σ 0.004) | 0.220 / 0.260 (mean 0.227, σ 0.031) |
 
 For the acceptance workload, 1280x800 damage, Canvas2D is the measured default: p50 is 0.050
 ms lower than WebGL2 (0.010 ms versus 0.060 ms), an 83.333% margin relative to the slower
-path. The p50 standard deviations are 0.003 ms and 0.006 ms respectively. Full-frame work at
+path. The p50 standard deviations are 0.048 ms and 0.006 ms respectively. Full-frame work at
 both resolutions favors WebGL2, so this decision is specifically for the small-damage default
 and must not be generalized to full-frame presentation.
 
@@ -70,9 +70,9 @@ for the 1280x800 damage pair remained Canvas2D in every profile that completed:
 
 | Profile | Observed state | Canvas2D p50 / p95 | WebGL2 p50 / p95 | Ranking |
 | --- | --- | ---: | ---: | --- |
-| DPR 2 | DPR=2, visible | 0.010 / 0.015 | 0.060 / 0.065 | unchanged |
+| DPR 2 | DPR=2, visible | 0.010 / 0.015 | 0.060 / 0.070 | unchanged |
 | Backgrounded tab | requested, but Chromium headless reported `visible` | 0.010 / 0.015 | 0.060 / 0.065 | not a hidden-tab result |
-| CPU throttled | 4x CPU throttle, visible | 0.010 / 0.215 | 0.065 / 0.905 | unchanged |
+| CPU throttled | 4x CPU throttle, visible | 0.010 / 0.110 | 0.065 / 0.890 | unchanged |
 
 The background profile is retained as an honest harness result, but it is not evidence about a
 hidden document: this headless Chromium session kept the benchmark page's

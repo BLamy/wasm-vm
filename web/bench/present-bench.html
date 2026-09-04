@@ -248,7 +248,8 @@
     document.getElementById("run").addEventListener("click", async () => {
       resultsElement.textContent = JSON.stringify({ status: "running" }, null, 2);
       try {
-        await window.runPresentBench();
+        const profile = new URLSearchParams(window.location.search).get("profile") || "manual";
+        await window.runPresentBench({ profile });
       } catch (error) {
         resultsElement.textContent = JSON.stringify({ status: "error", error: String(error) }, null, 2);
         throw error;
