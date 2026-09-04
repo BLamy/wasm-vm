@@ -68,6 +68,30 @@ It is diagnostic UI, not a promise that the browser can intercept OS-owned short
 Edge, macOS, extensions, kiosk shells, and browser UI may consume a shortcut before the page sees
 it; those controls remain covered by the passthrough and browser-limit policy above.
 
+## Pointer mode and wheel input
+
+The terminal surface exposes both guest pointer devices. Absolute mode is the default: each
+`pointermove` is mapped from the element's current CSS `getBoundingClientRect()` to the tablet's
+inclusive `0..32767` `ABS_X`/`ABS_Y` range. Backing-canvas pixels and `devicePixelRatio` are not
+inputs to that calculation, so CSS scaling does not introduce an offset. Primary, secondary,
+auxiliary, back, and forward buttons map to `BTN_LEFT`, `BTN_RIGHT`, `BTN_MIDDLE`, `BTN_SIDE`, and
+`BTN_EXTRA`; the surface captures the pointer and suppresses its context menu while a frame is
+owned by the guest.
+
+The mode control requests Pointer Lock with `unadjustedMovement: true`. Relative mode forwards
+only `movementX`/`movementY` as mouse `REL_X`/`REL_Y` deltas and never synthesizes an absolute
+cursor jump. A denied or lost lock, Escape, blur, hidden-document transition, reserved view
+toggle, pointer cancel, or explicit mode exit releases every held pointer button and returns to
+absolute mode. The visible debug chip reports the mode, lock state, held-button count, frame count,
+and wheel remainders.
+
+Wheel normalization is deterministic and per-axis. A PIXEL event contributes one normalized unit
+per CSS pixel; 120 units emit one detent. A LINE event contributes 40 units per line, so three
+lines emit one detent. A PAGE event is one detent. Vertical browser `deltaY > 0` (down/natural
+scroll) becomes evdev `REL_WHEEL = -1` because evdev positive means up/away; horizontal `deltaX > 0`
+becomes `REL_HWHEEL = +1`. Fractional remainders stay below one detent and each emitted frame has
+exactly one input sync terminator. Oversized host deltas are bounded before accumulation.
+
 ## Browser and OS limits
 
 Web content cannot guarantee interception of shortcuts consumed before a page event is delivered.
@@ -79,3 +103,10 @@ Firefox-style quick-find (commonly `/`) is preventable when its `keydown` reache
 in capture mode, but a browser, extension, kiosk shell, or operating system that consumes the key
 before dispatch cannot be overridden by this page. Use capture-off when browser navigation or
 search should own the keyboard.
+
+Pointer Lock is likewise a browser permission boundary: it requires a user gesture in browsers
+that enforce that policy, and an iframe or permissions policy may deny it. The fallback is
+intentional and safe: the bridge stays in absolute mode, releases any button it owns, and keeps
+the terminal usable without a lock. Pointer capture is scoped to the terminal element and is
+released on button-up/cancel or focus loss; it cannot make events delivered after a browser or OS
+has already terminated the page.

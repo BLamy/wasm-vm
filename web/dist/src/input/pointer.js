@@ -15,6 +15,18 @@ export const ABS_X = 0;
 export const ABS_Y = 1;
 export const REL_X = 0;
 export const REL_Y = 1;
+export const REL_HWHEEL = 6;
+export const REL_WHEEL = 8;
+
+export const WHEEL_DELTA_MODES = Object.freeze({
+  PIXEL: 0,
+  LINE: 1,
+  PAGE: 2,
+});
+// Keep one normalized accumulator unit equal to one CSS pixel. A line is treated as 40 pixels and
+// a page as one detent (120 pixels), matching the browser-independent contract in docs/input.md.
+export const WHEEL_DETENT_UNITS = 120;
+export const WHEEL_MAX_INPUT = 1_000_000;
 
 export const BTN_LEFT = 0x110;
 export const BTN_RIGHT = 0x111;
@@ -145,6 +157,7 @@ export function createPointerBridge(
   let modeChanges = 0;
   let pointerLockChanges = 0;
   const heldButtons = new Map();
+  let wheelRemainders = { horizontal: 0, vertical: 0 };
 
   function diagnostic(reason, extra = {}) {
     safeCallback(onDiagnostic, { reason, mode, ...extra });
@@ -160,6 +173,7 @@ export function createPointerBridge(
       pointerLocked: pointerLocked(),
       pointerLockRequested,
       heldButtons: [...heldButtons.values()].map((entry) => ({ ...entry })),
+      wheelRemainders: { ...wheelRemainders },
       modeChanges,
       pointerLockChanges,
       reason,
@@ -327,6 +341,83 @@ export function createPointerBridge(
     return mode === POINTER_MODES.ABSOLUTE ? "tablet" : "mouse";
   }
 
+  function wheelScale(deltaMode) {
+    switch (deltaMode) {
+      case WHEEL_DELTA_MODES.PIXEL: return 1;
+      case WHEEL_DELTA_MODES.LINE: return 40;
+      case WHEEL_DELTA_MODES.PAGE: return WHEEL_DETENT_UNITS;
+      default: return null;
+    }
+  }
+
+  function wholeWheelDetents(units) {
+    const ratio = units / WHEEL_DETENT_UNITS;
+    // A tiny tolerance makes repeated fractional WheelEvent values deterministic at an exact
+    // detent boundary without ever changing the sign of an emitted event.
+    if (ratio > 0) return Math.floor(ratio + 1e-9);
+    if (ratio < 0) return Math.ceil(ratio - 1e-9);
+    return 0;
+  }
+
+  function handleWheel(event) {
+    const rawMode = event?.deltaMode ?? WHEEL_DELTA_MODES.PIXEL;
+    const deltaMode = finiteNumber(rawMode);
+    const scale = deltaMode !== null && Number.isInteger(deltaMode) ? wheelScale(deltaMode) : null;
+    if (scale === null) {
+      diagnostic("unsupported-wheel-mode", { deltaMode: rawMode });
+      return { forwarded: false, consumed: false, reason: "unsupported-wheel-mode" };
+    }
+
+    const axes = [
+      // Browser deltaX grows to the right; REL_HWHEEL keeps that natural horizontal sign.
+      { name: "horizontal", value: finiteNumber(event?.deltaX ?? 0), code: REL_HWHEEL, direction: 1 },
+      // Browser deltaY grows down; evdev REL_WHEEL +1 means up/away, so invert it.
+      { name: "vertical", value: finiteNumber(event?.deltaY ?? 0), code: REL_WHEEL, direction: -1 },
+    ];
+    if (axes.some((axis) => axis.value === null)) {
+      diagnostic("invalid-wheel-delta", { deltaMode });
+      return { forwarded: false, consumed: false, reason: "invalid-wheel-delta" };
+    }
+
+    const nextRemainders = { ...wheelRemainders };
+    const detents = { horizontal: 0, vertical: 0 };
+    const events = [];
+    let consumed = false;
+    for (const axis of axes) {
+      if (axis.value === 0) continue;
+      consumed = true;
+      const bounded = clamp(axis.value, -WHEEL_MAX_INPUT, WHEEL_MAX_INPUT);
+      if (bounded !== axis.value) diagnostic("wheel-delta-clamped", { axis: axis.name, delta: axis.value });
+      const combined = nextRemainders[axis.name] + bounded * scale * axis.direction;
+      const whole = wholeWheelDetents(combined);
+      nextRemainders[axis.name] = combined - whole * WHEEL_DETENT_UNITS;
+      detents[axis.name] = whole;
+      if (whole !== 0) events.push(eventRecord(EV_REL, axis.code, whole));
+    }
+    if (!consumed) return { forwarded: false, consumed: false, reason: "zero-wheel" };
+
+    // Commit the bounded remainder even when the guest is not ready. There is no guest frame to
+    // replay in that state, and retaining only the fractional detent avoids an unbounded pre-boot
+    // accumulator while keeping the next live wheel event deterministic.
+    wheelRemainders = nextRemainders;
+    if (events.length === 0) {
+      notify("wheel-accumulating");
+      return { forwarded: false, consumed: true, reason: "wheel-accumulating", detents, remainders: { ...wheelRemainders } };
+    }
+    const frame = publish("mouse", events, { source: "wheel", deltaMode, detents });
+    if (!frame) {
+      notify("wheel-dropped");
+      return { forwarded: false, consumed: true, reason: "not-forwarded", detents, remainders: { ...wheelRemainders } };
+    }
+    return { forwarded: true, consumed: true, frame, detents, remainders: { ...wheelRemainders } };
+  }
+
+  function handleFocusLoss(reason = "focus-loss") {
+    const released = heldButtons.size;
+    makeAbsolute(reason);
+    return { mode, released, pointerLocked: pointerLocked(), heldButtons: snapshot(reason).heldButtons };
+  }
+
   function handlePointerMove(event) {
     if (mode === POINTER_MODES.RELATIVE) {
       const movementX = finiteNumber(event?.movementX);
@@ -404,7 +495,12 @@ export function createPointerBridge(
 
   function handlePointerCancel(event) {
     const frames = releaseAll("pointercancel");
-    return { forwarded: frames.length > 0, frames };
+    if (mode === POINTER_MODES.RELATIVE || pointerLockRequested) {
+      makeAbsolute("pointercancel");
+    } else {
+      notify("pointercancel");
+    }
+    return { forwarded: frames.length > 0, frames, mode };
   }
 
   function handleContextMenu(event) {
@@ -419,6 +515,7 @@ export function createPointerBridge(
     else heldButtons.clear();
     pointerLockRequested = false;
     mode = POINTER_MODES.ABSOLUTE;
+    wheelRemainders = { horizontal: 0, vertical: 0 };
     if (exitLock && pointerLocked()) exitPointerLock();
     notify("reset");
   }
@@ -436,10 +533,13 @@ export function createPointerBridge(
     handlePointerLockChange,
     handlePointerLockError,
     handlePointerMove,
+    handleWheel,
     handlePointerDown,
     handlePointerUp,
     handlePointerCancel,
+    handleFocusLoss,
     handleContextMenu,
+    wheelRemainders: () => ({ ...wheelRemainders }),
     releaseAll,
     reset,
     heldButtons: () => [...heldButtons.values()].map((entry) => ({ ...entry })),
@@ -450,7 +550,12 @@ export function createPointerBridge(
 export function attachPointerBridge(
   target,
   bridge,
-  { documentTarget = globalThis.document, capture = true, preventDefault = true } = {},
+  {
+    documentTarget = globalThis.document,
+    windowTarget = globalThis.window,
+    capture = true,
+    preventDefault = true,
+  } = {},
 ) {
   if (!target || typeof target.addEventListener !== "function") {
     throw new TypeError("pointer bridge target must support addEventListener");
@@ -464,6 +569,10 @@ export function attachPointerBridge(
   const onMove = (event) => {
     const result = bridge.handlePointerMove(event);
     if (preventDefault && result?.forwarded) event.preventDefault?.();
+  };
+  const onWheel = (event) => {
+    const result = bridge.handleWheel?.(event);
+    if (preventDefault && result?.consumed) event.preventDefault?.();
   };
   const onDown = (event) => {
     const result = bridge.handlePointerDown(event);
@@ -484,21 +593,37 @@ export function attachPointerBridge(
   const onContextMenu = (event) => bridge.handleContextMenu(event);
   const onLockChange = () => bridge.handlePointerLockChange();
   const onLockError = (event) => bridge.handlePointerLockError(event);
+  const onBlur = () => bridge.handleFocusLoss?.("blur");
+  const onVisibilityChange = () => {
+    if (documentTarget?.hidden === true || documentTarget?.visibilityState === "hidden") {
+      bridge.handleFocusLoss?.("visibility-hidden");
+    }
+  };
+  const viewTarget = windowTarget ?? documentTarget;
+  const onViewToggle = () => bridge.handleFocusLoss?.("view-toggle");
   target.addEventListener("pointermove", onMove, options);
+  target.addEventListener("wheel", onWheel, options);
   target.addEventListener("pointerdown", onDown, options);
   target.addEventListener("pointerup", onUp, options);
   target.addEventListener("pointercancel", onCancel, options);
   target.addEventListener("contextmenu", onContextMenu, options);
   documentTarget?.addEventListener?.("pointerlockchange", onLockChange, options);
   documentTarget?.addEventListener?.("pointerlockerror", onLockError, options);
+  windowTarget?.addEventListener?.("blur", onBlur, options);
+  documentTarget?.addEventListener?.("visibilitychange", onVisibilityChange, options);
+  viewTarget?.addEventListener?.("wvm:reserved-view-toggle", onViewToggle, options);
   return () => {
     target.removeEventListener?.("pointermove", onMove, options);
+    target.removeEventListener?.("wheel", onWheel, options);
     target.removeEventListener?.("pointerdown", onDown, options);
     target.removeEventListener?.("pointerup", onUp, options);
     target.removeEventListener?.("pointercancel", onCancel, options);
     target.removeEventListener?.("contextmenu", onContextMenu, options);
     documentTarget?.removeEventListener?.("pointerlockchange", onLockChange, options);
     documentTarget?.removeEventListener?.("pointerlockerror", onLockError, options);
+    windowTarget?.removeEventListener?.("blur", onBlur, options);
+    documentTarget?.removeEventListener?.("visibilitychange", onVisibilityChange, options);
+    viewTarget?.removeEventListener?.("wvm:reserved-view-toggle", onViewToggle, options);
     bridge.reset?.({ emit: false, exitLock: true });
   };
 }

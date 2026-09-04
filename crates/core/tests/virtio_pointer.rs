@@ -12,7 +12,7 @@ use wasm_vm_core::bus::Bus;
 use wasm_vm_core::dev::virtio::gpu::VirtioGpu;
 use wasm_vm_core::dev::virtio::input::keyboard::{KEY_A, KEYBOARD_VIRTIO_SLOT};
 use wasm_vm_core::dev::virtio::input::pointer::{
-    ABS_X, ABS_Y, BTN_LEFT, BTN_RIGHT, FIRST_FREE_VIRTIO_SLOT, MOUSE_DEVIDS, MOUSE_NAME,
+    ABS_X, ABS_Y, BTN_LEFT, BTN_RIGHT, BTN_SIDE, FIRST_FREE_VIRTIO_SLOT, MOUSE_DEVIDS, MOUSE_NAME,
     MOUSE_VIRTIO_SLOT, REL_HWHEEL, REL_WHEEL, REL_X, REL_Y, TABLET_DEVIDS, TABLET_NAME,
     TABLET_VIRTIO_SLOT, tablet_spec,
 };
@@ -389,4 +389,54 @@ fn hostile_pointer_injection_is_rejected_without_cross_device_state_changes() {
     assert!(mouse.borrow().dropped_frames > 0);
     assert_eq!(keyboard.borrow().pending_events(), keyboard_pending);
     assert_eq!(keyboard.borrow().rejected_events, 0);
+}
+
+#[test]
+fn pointer_wheel_evtest_fixture_has_signed_detents_and_balanced_buttons() {
+    let mut machine = Machine::new(RAM);
+    machine.enable_plic();
+    let _slots = machine.enable_virtio_slots(None);
+    let (_keyboard_slot, keyboard, _leds) = machine.enable_virtio_keyboard();
+    let (_tablet_slot, tablet, _mouse_slot, mouse) = machine.enable_virtio_pointer();
+
+    let mouse_base = Platform::virtio_base(MOUSE_VIRTIO_SLOT as u64);
+    configure_eventq(
+        &mut machine,
+        mouse_base,
+        MOUSE_DESC,
+        MOUSE_AVAIL,
+        MOUSE_USED,
+        MOUSE_BUF,
+        8,
+    );
+    machine
+        .bus_mut()
+        .store32(virt::KERNEL_BASE, 0x0000_006f)
+        .unwrap();
+    machine.hart_mut().regs.pc = virt::KERNEL_BASE;
+
+    // This is the stable guest-side transcript consumed by the browser proof: horizontal right,
+    // vertical up, a side-button make, then its matching break. The queue adds one SYN per frame.
+    assert!(mouse.borrow_mut().inject_event(EV_REL, REL_HWHEEL, 1));
+    assert!(mouse.borrow_mut().inject_event(EV_REL, REL_WHEEL, -1));
+    assert!(mouse.borrow_mut().inject_event(EV_KEY, BTN_SIDE, 1));
+    mouse.borrow_mut().sync();
+    assert!(mouse.borrow_mut().inject_event(EV_KEY, BTN_SIDE, 0));
+    mouse.borrow_mut().sync();
+    run_one_boundary(&mut machine);
+
+    assert_eq!(
+        read_events(&mut machine, MOUSE_USED, MOUSE_BUF),
+        vec![
+            InputEvent::new(EV_REL, REL_HWHEEL, 1),
+            InputEvent::new(EV_REL, REL_WHEEL, -1),
+            InputEvent::new(EV_KEY, BTN_SIDE, 1),
+            InputEvent::new(EV_SYN, SYN_REPORT, 0),
+            InputEvent::new(EV_KEY, BTN_SIDE, 0),
+            InputEvent::new(EV_SYN, SYN_REPORT, 0),
+        ]
+    );
+    assert_eq!(mouse.borrow().pending_events(), 0);
+    assert_eq!(tablet.borrow().pending_events(), 0);
+    assert_eq!(keyboard.borrow().pending_events(), 0);
 }

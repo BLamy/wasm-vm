@@ -514,9 +514,12 @@ function updatePointerIndicator(snapshot = pointerBridge?.state?.()) {
     pointerToggle.disabled = !linuxCtl;
   }
   if (pointerDebugEl) {
-    pointerDebugEl.textContent = `Buttons: ${snapshot.heldButtons.length || "none"} · frames: ${pointerFrames.length}`;
+    const wheel = snapshot.wheelRemainders || { horizontal: 0, vertical: 0 };
+    pointerDebugEl.textContent = `Buttons: ${snapshot.heldButtons.length || "none"} · frames: ${pointerFrames.length} · wheel: ${wheel.horizontal}/${wheel.vertical}`;
     pointerDebugEl.dataset.heldCount = String(snapshot.heldButtons.length);
     pointerDebugEl.dataset.frameCount = String(pointerFrames.length);
+    pointerDebugEl.dataset.wheelHorizontal = String(wheel.horizontal);
+    pointerDebugEl.dataset.wheelVertical = String(wheel.vertical);
     pointerDebugEl.dataset.locked = String(snapshot.pointerLocked);
   }
   document.documentElement.dataset.pointerMode = snapshot.mode;
@@ -539,7 +542,7 @@ const pointerBridge = createPointerBridge(createWasmPointerAdapter(pointerContro
   onStateChange: updatePointerIndicator,
 });
 const detachPointerBridge = pointerHost
-  ? attachPointerBridge(pointerHost, pointerBridge, { documentTarget: document })
+  ? attachPointerBridge(pointerHost, pointerBridge, { documentTarget: document, windowTarget: window })
   : () => {};
 pointerToggle?.addEventListener("click", () => {
   if (linuxCtl) pointerBridge.toggleMode();
@@ -552,7 +555,10 @@ try {
     toggle: () => pointerBridge.toggleMode(),
     requestRelative: () => pointerBridge.requestRelative(),
     exitRelative: () => pointerBridge.exitRelative(),
+    handleWheel: (event) => pointerBridge.handleWheel(event),
+    handleFocusLoss: (reason) => pointerBridge.handleFocusLoss(reason),
     heldButtons: () => pointerBridge.heldButtons(),
+    wheelRemainders: () => pointerBridge.wheelRemainders(),
     diagnostics: () => [...pointerDiagnostics],
     frames: () => [...pointerFrames],
   };

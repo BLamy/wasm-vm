@@ -19,8 +19,12 @@ import {
   EV_KEY,
   EV_REL,
   POINTER_MODES,
+  REL_HWHEEL,
+  REL_WHEEL,
   REL_X,
   REL_Y,
+  WHEEL_DELTA_MODES,
+  WHEEL_DETENT_UNITS,
   absoluteCoordinatesFromEvent,
   attachPointerBridge,
   createPointerBridge,
@@ -128,6 +132,54 @@ test("mode changes release old-device buttons before routing the next button pai
   ]);
 });
 
+test("pixel and line wheel detents use signed per-axis accumulators", () => {
+  const io = recorder();
+  const bridge = createPointerBridge(io);
+  const pixel = bridge.handleWheel({ deltaMode: WHEEL_DELTA_MODES.PIXEL, deltaY: 120 });
+  assert.equal(pixel.forwarded, true);
+  assert.deepEqual(io.calls.slice(-2), [
+    ["mouse", "event", EV_REL, REL_WHEEL, -1],
+    ["mouse", "sync"],
+  ]);
+  const line = bridge.handleWheel({ deltaMode: WHEEL_DELTA_MODES.LINE, deltaY: 3 });
+  assert.equal(line.forwarded, true);
+  assert.deepEqual(io.calls.slice(-2), [
+    ["mouse", "event", EV_REL, REL_WHEEL, -1],
+    ["mouse", "sync"],
+  ]);
+  const horizontal = bridge.handleWheel({ deltaMode: WHEEL_DELTA_MODES.LINE, deltaX: 3, deltaY: 0 });
+  assert.equal(horizontal.forwarded, true);
+  assert.deepEqual(io.calls.slice(-2), [
+    ["mouse", "event", EV_REL, REL_HWHEEL, 1],
+    ["mouse", "sync"],
+  ]);
+});
+
+test("1000 small pixel wheel deltas stay bounded and never change emitted sign", () => {
+  const io = recorder();
+  const frames = [];
+  const bridge = createPointerBridge(io, { onFrame: (frame) => frames.push(frame) });
+  for (let index = 0; index < 1000; index += 1) {
+    const result = bridge.handleWheel({ deltaMode: WHEEL_DELTA_MODES.PIXEL, deltaY: 3 });
+    assert.equal(result.consumed, true);
+  }
+  assert.equal(frames.length, 25);
+  assert.deepEqual(frames.flatMap((frame) => frame.events.map((event) => event.value)), Array(25).fill(-1));
+  assert.equal(bridge.wheelRemainders().vertical, 0);
+  assert.ok(Math.abs(bridge.wheelRemainders().horizontal) < WHEEL_DETENT_UNITS);
+  assert.equal(frames.reduce((total, frame) => total + frame.events[0].value, 0), -25);
+});
+
+test("wheel accumulators cancel across direction changes and reject invalid modes", () => {
+  const bridge = createPointerBridge(recorder());
+  assert.equal(bridge.handleWheel({ deltaMode: WHEEL_DELTA_MODES.PIXEL, deltaY: 60 }).forwarded, false);
+  assert.equal(bridge.handleWheel({ deltaMode: WHEEL_DELTA_MODES.PIXEL, deltaY: -60 }).forwarded, false);
+  assert.deepEqual(bridge.wheelRemainders(), { horizontal: 0, vertical: 0 });
+  assert.equal(bridge.handleWheel({ deltaMode: 99, deltaY: 120 }).consumed, false);
+  assert.equal(bridge.handleWheel({ deltaMode: WHEEL_DELTA_MODES.PIXEL, deltaY: Infinity }).consumed, false);
+  assert.ok(Math.abs(bridge.handleWheel({ deltaMode: WHEEL_DELTA_MODES.PIXEL, deltaY: 1e30 }).remainders.vertical) < WHEEL_DETENT_UNITS);
+});
+
 test("Pointer Lock success is accepted and denial/loss returns to neutral absolute mode", async () => {
   const io = recorder();
   const diagnostics = [];
@@ -188,6 +240,7 @@ test("legacy Pointer Lock retries without options and explicit errors fail close
 test("attached surface captures buttons and suppresses the browser context menu", () => {
   const listeners = new Map();
   const documentListeners = new Map();
+  const windowListeners = new Map();
   const captures = [];
   const target = {
     addEventListener(type, listener, options) { listeners.set(type, { listener, options }); },
@@ -200,21 +253,46 @@ test("attached surface captures buttons and suppresses the browser context menu"
     addEventListener(type, listener) { documentListeners.set(type, listener); },
     removeEventListener(type) { documentListeners.delete(type); },
     pointerLockElement: null,
+    hidden: false,
+  };
+  const windowTarget = {
+    addEventListener(type, listener) { windowListeners.set(type, listener); },
+    removeEventListener(type) { windowListeners.delete(type); },
   };
   const io = recorder();
   const bridge = createPointerBridge(io, { getRect: rect });
-  const detach = attachPointerBridge(target, bridge, { documentTarget });
+  const detach = attachPointerBridge(target, bridge, { documentTarget, windowTarget });
   let prevented = 0;
   listeners.get("pointerdown").listener({ type: "pointerdown", button: 0, pointerId: 9, preventDefault: () => { prevented += 1; } });
+  const dragMove = listeners.get("pointermove").listener({ type: "pointermove", clientX: -100, clientY: 999, preventDefault: () => { prevented += 1; } });
+  assert.equal(dragMove, undefined);
   listeners.get("pointerup").listener({ type: "pointerup", button: 0, pointerId: 9, preventDefault: () => { prevented += 1; } });
+  listeners.get("wheel").listener({ deltaMode: WHEEL_DELTA_MODES.PIXEL, deltaY: 120, preventDefault: () => { prevented += 1; } });
   const context = { preventDefault: () => { prevented += 1; } };
   listeners.get("contextmenu").listener(context);
   assert.deepEqual(captures, [["set", 9], ["release", 9]]);
-  assert.equal(prevented, 3);
-  assert.deepEqual([...documentListeners.keys()].sort(), ["pointerlockchange", "pointerlockerror"]);
+  assert.equal(prevented, 5);
+  assert.deepEqual([...documentListeners.keys()].sort(), ["pointerlockchange", "pointerlockerror", "visibilitychange"]);
+  assert.deepEqual([...windowListeners.keys()].sort(), ["blur", "wvm:reserved-view-toggle"]);
+
+  bridge.handlePointerDown({ type: "pointerdown", button: 0, pointerId: 10 });
+  windowListeners.get("blur")();
+  assert.deepEqual(bridge.heldButtons(), []);
+  bridge.setMode(POINTER_MODES.RELATIVE, { requestLock: false });
+  bridge.handlePointerDown({ type: "pointerdown", button: 4, pointerId: 11 });
+  windowListeners.get("wvm:reserved-view-toggle")();
+  assert.equal(bridge.mode(), POINTER_MODES.ABSOLUTE);
+  assert.deepEqual(bridge.heldButtons(), []);
+  bridge.setMode(POINTER_MODES.RELATIVE, { requestLock: false });
+  bridge.handlePointerDown({ type: "pointerdown", button: 1, pointerId: 12 });
+  documentTarget.hidden = true;
+  documentListeners.get("visibilitychange")();
+  assert.equal(bridge.mode(), POINTER_MODES.ABSOLUTE);
+  assert.deepEqual(bridge.heldButtons(), []);
   detach();
   assert.equal(listeners.size, 0);
   assert.equal(documentListeners.size, 0);
+  assert.equal(windowListeners.size, 0);
 });
 
 test("Wasm pointer adapter requires the complete four-method transport surface", () => {
