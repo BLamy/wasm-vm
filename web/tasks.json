@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 239,
+    "verified": 240,
     "total": 402
   },
   "epics": [
@@ -18915,7 +18915,7 @@
       "epicKey": "5",
       "title": "Host agent Channel API and reconnect lifecycle",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T23c"
       ],
@@ -18926,26 +18926,34 @@
       "criteria": [
         {
           "text": "A Channel reaches ready only after HELLO intersection and exposes negotiated capabilities; PING round trips correlate correctly even when replies arrive out of order.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Agent termination rejects every in-flight send exactly once, reconnects, and re-negotiates HELLO without duplicate listeners or stale subscriptions.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Ten thousand bounded PING attempts cannot grow pending memory without backpressure, and a send during the gap returns a documented disconnected error.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-09-04 — worker — implemented\n\n- Implementation commits: `4691d06` (host Channel and deterministic transport fixtures), `dbae7bc`\n  (verification target), and `24fa64a` (retry/timeout coverage).\n- Exact evidence is retained at `evidence/e5-t23d/agent-channel-2026-09-04.txt`.\n\nClaim: `web/agent-channel.js` provides a worker-safe, transport-agnostic Channel. It stays in\nhandshaking until the shared HELLO version/capability intersection is valid, correlates PING/PONG\nby a u64 nonce, routes typed subscriptions, NAKs unknown frames, bounds in-flight requests, and\nreturns `DisconnectedError` for sends during a restart gap. Generation guards and listener cleanup\nmake agent termination and reconnect/re-negotiation recoverable without stale callbacks.\n\n### 2026-09-04 — verifier — VERDICT: verified\n\n- **HELLO and capability gate — HELD.** The exact-head suite kept the channel non-ready before\n  HELLO, negotiated host version 2 with a peer version 1 down to version 1, intersected capability\n  bits, and correlated reverse-order PONGs by their own nonces.\n- **Reconnect and settlement — HELD.** Transport termination rejected every in-flight PING once,\n  returned an explicit `DisconnectedError` for a gap send, removed the old transport listener,\n  preserved one user subscription, ignored late old-generation data, and re-negotiated on the fresh\n  transport. A transport killed during HELLO followed the same recovery path.\n- **Bounds and attacks — HELD.** Ten thousand PING attempts stopped at a pending bound of 64;\n  9,936 returned `BackpressureError` and the 64 live requests were settled as disconnected on\n  close. The suite also held unknown-type NAK, malformed PING, stale HELLO, no-common-version,\n  connector retry, timeout, byte-dribble/coalescing, and 100-cycle listener cardinality checks.\n- **Worker-safe routing — HELD.** A real Node `MessageChannel` used the endpoint adapter for HELLO\n  and PING/PONG without a Window or DOM dependency. The module is intentionally not wired to the\n  demo in this slice; E5-T23e owns the real virtio-console boot/browser proof.\n- **COVERAGE — SUFFICIENT.** Every changed runtime behavior is exercised by the 11-test acceptance\n  suite or is a bounded validation/cleanup branch exercised by its malformed-input, close, retry,\n  timeout, and endpoint tests. No browser, host-rr, independent-machine, or WebKit leg is claimed\n  under current policy and user direction.\n- **SUITE:** retain `make verify-E5-T23d`, `web/tests/agent-channel.test.mjs`, and the exact-head\n  evidence transcript.\n\nCommands:\n\n- `env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS node --test web/tests/agent-channel.test.mjs`\n- the same scrubbed command repeated 25 consecutive times\n- `node --check web/agent-channel.js`\n- `git diff --check`\n- `python3 tools/check_task_policy.py`",
       "adversarial": "Inject version skew, kill the transport during each handshake phase, replay a stale HELLO, and\ndeliver replies in reverse order. Inspect pending counts and listener cardinality after 100 restart\ncycles; any silent send loss or duplicate callback is a finding.",
       "file": "tasks/epic-5-the-window/E5-T23d-host-channel-reconnect.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t23d): activate host channel task"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T23e",

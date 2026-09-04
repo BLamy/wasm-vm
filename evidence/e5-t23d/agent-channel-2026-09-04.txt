@@ -1,0 +1,68 @@
+E5-T23d final exact-head evidence
+Date: 2026-09-04
+Implementation/verifier head: 24fa64a919d76f328b4b1dd09532a8fc2dcde7ac
+
+Focused acceptance
+-------------------
+- `env -u RUSTFLAGS -u RUSTDOCFLAGS -u RUST_LOG -u CARGO_TARGET_DIR
+  -u CARGO_BUILD_RUSTFLAGS -u CARGO_ENCODED_RUSTFLAGS node --test
+  web/tests/agent-channel.test.mjs` — 11 passed, 0 failed.
+- The same scrubbed command was repeated 25 consecutive times — 275 tests passed, 0 failed.
+- `node --check web/agent-channel.js` — passed.
+- `git diff --check` — passed.
+- `python3 tools/check_task_policy.py` — `task-policy: OK (active=E5-T23d)`.
+- `make verify-E5-T23d` — 11 passed, 0 failed, target returned OK.
+
+Source digests
+--------------
+- `web/agent-channel.js` SHA-256:
+  `68e244304f024cb5d2edd79484139312a0e9e046b329d4963d991e0db084e2b9`.
+- `web/tests/agent-channel.test.mjs` SHA-256:
+  `6e62e84c16d58e72b04ea0271bafb47b9466bba21824606f452e2b5519464a80`.
+- `Makefile` SHA-256:
+  `16ea8ab2e7acb59e31aa0091496fec673e816d174ee30234537b2afed2212f5f`.
+
+Verifier predictions and observations
+--------------------------------------
+- **HELLO gate and capabilities — HELD.** Predicted that the channel would remain in `handshaking`
+  with no negotiated state until a peer HELLO, then choose the lower common version and bitwise
+  capability intersection. A host version 2 / peer version 1 exchange produced version 1 and only
+  `CAP_PING`; PING was rejected during the gap and `supports(CAP_CLIPBOARD)` was false. Two PINGs
+  with nonces `0x0102` and `0x0304` were answered in reverse order and each Promise resolved with
+  its own nonce. Covered by test line 128 and implementation lines 147-203, 510-530, 618-681,
+  and 827-864.
+- **Typed routing and unknown-type policy — HELD.** Predicted a subscribed extension type would
+  receive one owned payload, while an unrecognized type would produce a four-byte little-endian
+  NAK without disconnecting the session. The exact rejected type `0x0901` and code `1` were observed,
+  then a typed send and subscription both remained usable. Covered by test line 168 and
+  implementation lines 532-615 and 768-825.
+- **Termination and reconnect — HELD.** Predicted that transport termination would reject two
+  in-flight requests once with `DisconnectedError`, reject a send attempted in the gap without
+  queuing it, remove the old transport listener, preserve one user subscription, and install one
+  listener on the next generation. All held; late data from the dead generation was ignored. A
+  transport killed before HELLO also caused a fresh generation to renegotiate. Covered by tests
+  lines 193 and 235, and implementation lines 684-757 and 924-982.
+- **Bounded pending state — HELD.** Predicted 10,000 unique PING attempts could not exceed the
+  configured bound of 64. Exactly 64 remained pending until close; 9,936 attempts returned
+  `BackpressureError`, and the 64 live requests returned `DisconnectedError` on close. Covered by
+  test line 256 and implementation lines 643-681, 878-907.
+- **Adversarial lifecycle — HELD.** Predicted connector failure would retry, a single unanswered
+  PING would time out without taking down a ready channel, a changed post-ready HELLO would fail
+  closed as `STALE_HELLO`, malformed PING payloads would produce `PING_LENGTH`, and 100 restart
+  cycles would keep one transport listener and one user subscription. All held by tests lines
+  279, 305, 326, and 381.
+- **Worker-safe endpoint — HELD.** Predicted the adapter would use only endpoint messaging and
+  transferable byte copies, with no Window/DOM dependency. A Node `MessageChannel` round trip
+  completed HELLO and PING/PONG using `createMessageTransport`; test line 393 and implementation
+  lines 340-414 provide the direct coverage.
+
+Coverage and scope
+------------------
+The changed runtime paths are exercised by the exact acceptance suite: frame encoding/decoding,
+HELLO negotiation, capability checks, typed send/subscribe, PING timeout/correlation, NAK handling,
+generation guards, transport cleanup, reconnect/backoff, endpoint adaptation, and close settlement.
+Defensive validation branches are covered by the invalid type/capability, oversized, malformed,
+truncated, no-common-version, stale-HELLO, connector-failure, and closed-gap assertions. The
+implementation is not imported by the demo yet; E5-T23e owns wiring this Channel to the real
+virtio-console boot and browser proof, so no browser build or deployment is claimed here. Host rr,
+independent-machine, and WebKit runs are waived by current policy and user direction.
