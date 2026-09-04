@@ -3,7 +3,7 @@ id: E5-T15c
 epic: 5
 title: Cursor mode wiring and lifecycle
 priority: 515.3
-status: pending
+status: in-progress
 depends_on: [E5-T15b, E5-T14c]
 estimate: S
 risk: medium

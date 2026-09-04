@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5-T15c** — Cursor mode wiring and lifecycle
 
 
 ## Epic 0 — `epic-0-ignition`
@@ -383,7 +382,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [-] `515` [E5-T15](epic-5-the-window/E5-T15-virtio-gpu-cursor-plane.md) — Hardware cursor plane — cursorq UPDATE/MOVE_CURSOR with DOM-overlay presentation *(deps: E5-T03c, E5-T14c)*
 - [x] `515.1` [E5-T15a](epic-5-the-window/E5-T15a-cursorq-core.md) — Cursorq core state and command handling *(deps: E5-T03c)*
 - [x] `515.2` [E5-T15b](epic-5-the-window/E5-T15b-cursor-resource-sink.md) — Cursor-resource RGBA conversion and CSS/overlay sink *(deps: E5-T15a)*
-- [ ] `515.3` [E5-T15c](epic-5-the-window/E5-T15c-cursor-mode-wiring.md) — Cursor mode wiring and lifecycle *(deps: E5-T15b, E5-T14c)*
+- [~] `515.3` [E5-T15c](epic-5-the-window/E5-T15c-cursor-mode-wiring.md) — Cursor mode wiring and lifecycle *(deps: E5-T15b, E5-T14c)*
 - [ ] `515.4` [E5-T15d](epic-5-the-window/E5-T15d-cursor-integration-proof.md) — Cursor plane integration and transform-only proof *(deps: E5-T15c)*
 - [ ] `516` [E5-T16](epic-5-the-window/E5-T16-display-server-decision.md) — Display server decision — Wayland (labwc/weston) vs X11 under emulation, measured *(deps: E5-T07, E5-T13c, E5-T14c)*
 - [ ] `517` [E5-T17](epic-5-the-window/E5-T17-alpine-desktop-image.md) — Alpine riscv64 desktop disk image — reproducible build within size budget *(deps: E5-T16)*

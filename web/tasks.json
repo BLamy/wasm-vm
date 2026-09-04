@@ -18312,8 +18312,9 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "chore(e5-t15b): verify cursor resource sink",
             "chore(e5-t15b): record cursor sink evidence",
             "chore(e5-t15b): activate cursor resource sink"
           ]
@@ -18321,7 +18322,7 @@
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T15c",
@@ -18329,7 +18330,7 @@
       "epicKey": "5",
       "title": "Cursor mode wiring and lifecycle",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T15b",
         "E5-T14c"
