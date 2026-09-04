@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 249,
+    "verified": 250,
     "total": 410
   },
   "epics": [
@@ -16745,7 +16745,7 @@
       "epicKey": "5",
       "title": "Presentation selection, context-loss fallback, and VM integration",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T06c"
       ],
@@ -16756,30 +16756,38 @@
       "criteria": [
         {
           "text": "The selected default matches the committed E5-T06c decision and falls back when the feature is unavailable.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Simulated WebGL context loss causes at most one dropped frame and leaves later presents pixel-correct through Canvas2D.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Full and partial presents reach the visible canvas with no guest queue stall or duplicate frame callback.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "The built demo's browser proof records the backend, final frame, and zero console errors.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 4,
-      "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "criteriaDone": 4,
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified\n\n- Default/fallback — HELD. The exact-head Chromium capture selected Canvas2D as the E5-T06c\n  default and selected Canvas2D after a WebGL2 feature-disable shim, with one recorded fallback.\n- Context-loss replay — HELD. `WEBGL_lose_context.loseContext()` during a partial update produced\n  one context loss, one full-resource replay, zero dropped frames, and pixel-correct Canvas2D\n  readback; the replacement canvas retained two listeners and the old canvas retained none.\n- Queue and delivery — HELD. The native Machine test configured a real controlq descriptor chain,\n  kicked it through the MMIO notify path, and observed the `GET_DISPLAY_INFO` response and used\n  index at the production run boundary. The worker protocol test independently confirmed copied\n  FrameSink pixels cross the worker without retaining the source view.\n- Adversarial rapid/resize path — HELD. The browser capture resized during the recovered path and\n  delivered 1,000 rapid presents with the last frame visible, zero dropped frames, no listener\n  growth, and no duplicate callback.\n- Coverage — HELD. Runtime Rust paths are exercised by `virtio_gpu_machine`; worker changes by the\n  E4-T32 protocol suite; controller behavior by the focused Node tests and real Chromium capture;\n  generated `web/dist` modules match their source counterparts byte-for-byte.\n\nCommit: `4d49c888934d0afea8e4f07011e6b65978c312e8`.\n\nCommands: `cargo fmt --check`; `cargo check -p wasm-vm-wasm --target wasm32-unknown-unknown`;\n`cargo clippy -p wasm-vm-core --lib --tests -- -D warnings`; `cargo clippy -p wasm-vm-wasm\n--target wasm32-unknown-unknown -- -D warnings`; `cargo test -p wasm-vm-core --lib` (249 passed);\n`make verify-E5-T06d` (27 browser/worker tests, 2 machine tests, and the prescribed Chromium\nproof).\n\nEvidence: [presentation-integration.json](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t06d/presentation-integration.json)\n(SHA-256 `a19bdb332defde0224bf1a622ef8d4e70a6a0ca4c2940ca929ec7043c6bb17f2`) and\n[presentation-integration.png](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t06d/presentation-integration.png)\n(SHA-256 `cc7990bf5c139b148a3b3fac73d61e0fd672af280ae10dd614b272b622b8041f`). The JSON records\nChromium 131, source/dist parity, Canvas2D default, WebGL2-unavailable fallback, the partial-loss\nrecovery, resize, 1,003 total frames, 0 dropped frames, and empty console/page/request errors.",
       "adversarial": "Disable WebGL2, lose the context during a partial update, resize during recovery, and send 1,000\nrapid presents. Assert the last frame wins, at most one frame is dropped, no promise/listener\nleaks accumulate, and a guest-visible queue remains live.",
       "file": "tasks/epic-5-the-window/E5-T06d-presentation-integration.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t06d): activate presentation integration"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T07",
