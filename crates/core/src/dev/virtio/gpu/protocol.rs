@@ -25,6 +25,10 @@ pub const CMD_GET_CAPSET_INFO: u32 = 0x0108;
 pub const CMD_GET_CAPSET: u32 = 0x0109;
 /// `VIRTIO_GPU_CMD_GET_EDID`.
 pub const CMD_GET_EDID: u32 = 0x010a;
+/// `VIRTIO_GPU_CMD_UPDATE_CURSOR`.
+pub const CMD_UPDATE_CURSOR: u32 = 0x0300;
+/// `VIRTIO_GPU_CMD_MOVE_CURSOR`.
+pub const CMD_MOVE_CURSOR: u32 = 0x0301;
 /// Successful `GET_DISPLAY_INFO` response.
 pub const RESP_OK_DISPLAY_INFO: u32 = 0x1101;
 /// Successful command with no response payload.
@@ -89,6 +93,12 @@ pub const TRANSFER_TO_HOST_2D_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 16;
 pub const RESOURCE_FLUSH_SIZE: usize = CTRL_HDR_SIZE + RECT_SIZE + 8;
 /// Wire size of `virtio_gpu_cmd_get_edid` (scanout plus required padding).
 pub const GET_EDID_REQUEST_SIZE: usize = CTRL_HDR_SIZE + 8;
+/// Wire size of `virtio_gpu_cursor_pos`.
+pub const CURSOR_POS_SIZE: usize = 16;
+/// Wire size of `virtio_gpu_update_cursor`.
+pub const UPDATE_CURSOR_SIZE: usize = CTRL_HDR_SIZE + CURSOR_POS_SIZE + 16;
+/// Wire size of `virtio_gpu_move_cursor`.
+pub const MOVE_CURSOR_SIZE: usize = CTRL_HDR_SIZE + CURSOR_POS_SIZE;
 /// Wire size of one `virtio_gpu_mem_entry`.
 pub const RESOURCE_MEM_ENTRY_SIZE: usize = 16;
 /// Wire size of one `virtio_gpu_display_one`.
@@ -163,6 +173,108 @@ impl GetEdid {
         let mut out = [0u8; GET_EDID_REQUEST_SIZE];
         out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
         out[24..28].copy_from_slice(&self.scanout_id.to_le_bytes());
+        out
+    }
+}
+
+/// `virtio_gpu_cursor_pos`, shared by UPDATE_CURSOR and MOVE_CURSOR.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct CursorPos {
+    pub scanout_id: u32,
+    pub x: u32,
+    pub y: u32,
+    pub padding: u32,
+}
+
+impl CursorPos {
+    /// Decode a complete cursor position.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < CURSOR_POS_SIZE {
+            return None;
+        }
+        Some(Self {
+            scanout_id: u32::from_le_bytes(bytes[0..4].try_into().ok()?),
+            x: u32::from_le_bytes(bytes[4..8].try_into().ok()?),
+            y: u32::from_le_bytes(bytes[8..12].try_into().ok()?),
+            padding: u32::from_le_bytes(bytes[12..16].try_into().ok()?),
+        })
+    }
+
+    /// Encode the exact little-endian cursor-position layout.
+    pub fn to_bytes(self) -> [u8; CURSOR_POS_SIZE] {
+        let mut out = [0u8; CURSOR_POS_SIZE];
+        out[0..4].copy_from_slice(&self.scanout_id.to_le_bytes());
+        out[4..8].copy_from_slice(&self.x.to_le_bytes());
+        out[8..12].copy_from_slice(&self.y.to_le_bytes());
+        out[12..16].copy_from_slice(&self.padding.to_le_bytes());
+        out
+    }
+}
+
+/// `virtio_gpu_update_cursor`, with the cursor image resource and hotspot.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct UpdateCursor {
+    pub header: CtrlHeader,
+    pub pos: CursorPos,
+    pub resource_id: u32,
+    pub hot_x: u32,
+    pub hot_y: u32,
+    pub padding: u32,
+}
+
+impl UpdateCursor {
+    /// Decode a complete UPDATE_CURSOR request.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < UPDATE_CURSOR_SIZE {
+            return None;
+        }
+        Some(Self {
+            header: CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?,
+            pos: CursorPos::from_bytes(&bytes[CTRL_HDR_SIZE..CTRL_HDR_SIZE + CURSOR_POS_SIZE])?,
+            resource_id: u32::from_le_bytes(bytes[40..44].try_into().ok()?),
+            hot_x: u32::from_le_bytes(bytes[44..48].try_into().ok()?),
+            hot_y: u32::from_le_bytes(bytes[48..52].try_into().ok()?),
+            padding: u32::from_le_bytes(bytes[52..56].try_into().ok()?),
+        })
+    }
+
+    /// Encode the exact 56-byte UPDATE_CURSOR request layout.
+    pub fn to_bytes(self) -> [u8; UPDATE_CURSOR_SIZE] {
+        let mut out = [0u8; UPDATE_CURSOR_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[CTRL_HDR_SIZE..CTRL_HDR_SIZE + CURSOR_POS_SIZE].copy_from_slice(&self.pos.to_bytes());
+        out[40..44].copy_from_slice(&self.resource_id.to_le_bytes());
+        out[44..48].copy_from_slice(&self.hot_x.to_le_bytes());
+        out[48..52].copy_from_slice(&self.hot_y.to_le_bytes());
+        out[52..56].copy_from_slice(&self.padding.to_le_bytes());
+        out
+    }
+}
+
+/// `virtio_gpu_move_cursor`, containing only the new position.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct MoveCursor {
+    pub header: CtrlHeader,
+    pub pos: CursorPos,
+}
+
+impl MoveCursor {
+    /// Decode a complete MOVE_CURSOR request.
+    pub fn from_bytes(bytes: &[u8]) -> Option<Self> {
+        if bytes.len() < MOVE_CURSOR_SIZE {
+            return None;
+        }
+        Some(Self {
+            header: CtrlHeader::from_bytes(&bytes[..CTRL_HDR_SIZE])?,
+            pos: CursorPos::from_bytes(&bytes[CTRL_HDR_SIZE..CTRL_HDR_SIZE + CURSOR_POS_SIZE])?,
+        })
+    }
+
+    /// Encode the exact 40-byte MOVE_CURSOR request layout.
+    pub fn to_bytes(self) -> [u8; MOVE_CURSOR_SIZE] {
+        let mut out = [0u8; MOVE_CURSOR_SIZE];
+        out[..CTRL_HDR_SIZE].copy_from_slice(&self.header.to_bytes());
+        out[CTRL_HDR_SIZE..CTRL_HDR_SIZE + CURSOR_POS_SIZE].copy_from_slice(&self.pos.to_bytes());
         out
     }
 }

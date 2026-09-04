@@ -634,6 +634,19 @@ verify-E5-T09e:
 	node tools/verify/e5-t09e-present-integration.mjs --output evidence/e5-t09e/present-integration.json
 	@echo "verify-E5-T09e (damage/frame-pacing integration): OK"
 
+.PHONY: verify-E5-T15a
+verify-E5-T15a:
+	# Native and wasm32 cursorq proof: exact wire decoding, bounded invalid-command handling,
+	# reset/hide lifetime, and the same eight-command machine-boundary sequence on both targets.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests -- -D warnings
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+	wasm-pack test --node crates/wasm --test gpu_protocol
+	@echo "verify-E5-T15a (bounded cursorq core state and command handling): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
