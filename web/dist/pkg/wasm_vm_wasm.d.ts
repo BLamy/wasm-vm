@@ -133,14 +133,14 @@ export class WasmLinux {
      * Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
      * `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
      */
-    constructor(ram_mib: number, kernel: Uint8Array, initrd: Uint8Array, bootargs: string, output: Function);
+    constructor(ram_mib: number, kernel: Uint8Array, initrd: Uint8Array, bootargs: string, output: Function, enable_mic: boolean);
     /**
      * E3-T02: boot from a CHUNKED image fetched lazily over HTTP. Instead of a full disk `Vec`, take
      * the image `manifest` JSON and the `base_url` its chunks live under (must end in `/`). A guest
      * disk read of an absent chunk parks (deferred virtio-blk completion) until `fetchPending`
      * retrieves and hash-verifies that chunk. No full-image download ever happens.
      */
-    static newChunkedDisk(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, output: Function): WasmLinux;
+    static newChunkedDisk(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, output: Function, enable_mic: boolean): WasmLinux;
     /**
      * E3-T05: like [`Self::new_chunked_disk`], but the copy-on-write overlay is persisted to
      * IndexedDB — guest writes survive a tab reload. Async: opens the image-namespaced DB (checking
@@ -148,7 +148,7 @@ export class WasmLinux {
      * silent reuse), loads any previously persisted blocks, and boots over them. Call `persistPending`
      * to flush new writes durably (its Promise resolves on the IndexedDB transaction `complete`).
      */
-    static newChunkedDiskPersistent(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, read_only: boolean, output: Function, seed_identity?: string | null): Promise<WasmLinux>;
+    static newChunkedDiskPersistent(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, bootargs: string, read_only: boolean, output: Function, seed_identity: string | null | undefined, enable_mic: boolean): Promise<WasmLinux>;
     /**
      * E4-T28e: boot the normal lazy Alpine root disk with one additional read-only virtio-blk
      * image. The extra image is passed by value so the fetched overlay becomes one resident Rust
@@ -156,14 +156,14 @@ export class WasmLinux {
      * Linux's net/rng/keyboard/tablet/mouse reservation is used, leaving `/dev/vdb` as the second
      * block device.
      */
-    static newChunkedDiskWithExtra(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, extra_disk: Uint8Array, bootargs: string, output: Function): WasmLinux;
+    static newChunkedDiskWithExtra(ram_mib: number, kernel: Uint8Array, manifest_json: string, base_url: string, cache_budget_mib: number, boot_profile: Uint32Array, extra_disk: Uint8Array, bootargs: string, output: Function, enable_mic: boolean): WasmLinux;
     /**
      * E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
      * an initramfs. `disk` is MOVED into an in-memory `BlockBackend` (one wasm-side copy — the T21
      * single-copy discipline; a `&[u8]` + `.to_vec()` would double-allocate 512 MB). Default
      * bootargs mount `/dev/vda` as root.
      */
-    static newDisk(ram_mib: number, kernel: Uint8Array, disk: Uint8Array, bootargs: string, output: Function): WasmLinux;
+    static newDisk(ram_mib: number, kernel: Uint8Array, disk: Uint8Array, bootargs: string, output: Function, enable_mic: boolean): WasmLinux;
     /**
      * E3-T21d: the persistent driver calls this right after `persistPending` so a durable IndexedDB
      * flush pause — during which the guest is frozen and cannot ACK or heartbeat an in-flight file
@@ -337,6 +337,12 @@ export class WasmLinux {
      */
     syncTablet(): void;
     takeFileDownloadChunk(id: number): Uint8Array;
+    /**
+     * E5-T21b: expose the assembled sound configuration for browser diagnostics. This is a
+     * read-only construction proof; the input stream metadata comes from the same core state that
+     * answers guest PCM_INFO, and no host capture handle is created by reading it.
+     */
+    virtioSndConfig(): any;
 }
 
 /**
@@ -567,11 +573,11 @@ export interface InitOutput {
     readonly wasmlinux_jitStats: (a: number) => [number, number, number];
     readonly wasmlinux_keyboardLedState: (a: number) => [number, number, number];
     readonly wasmlinux_loadSnapshotBlob: (a: number, b: number, c: number) => [number, number];
-    readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
-    readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any) => [number, number, number];
-    readonly wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: any, o: number, p: number) => any;
-    readonly wasmlinux_newChunkedDiskWithExtra: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: any) => [number, number, number];
-    readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number, number];
+    readonly wasmlinux_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: number) => [number, number, number];
+    readonly wasmlinux_newChunkedDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: any, n: number) => [number, number, number];
+    readonly wasmlinux_newChunkedDiskPersistent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: any, o: number, p: number, q: number) => any;
+    readonly wasmlinux_newChunkedDiskWithExtra: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: any, p: number) => [number, number, number];
+    readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: number) => [number, number, number];
     readonly wasmlinux_noteFileTransferPersist: (a: number) => [number, number];
     readonly wasmlinux_overlayGeneration: (a: number) => [number, number, number];
     readonly wasmlinux_pendingChunks: (a: number) => [number, number, number, number];
@@ -601,6 +607,7 @@ export interface InitOutput {
     readonly wasmlinux_syncMouse: (a: number) => [number, number];
     readonly wasmlinux_syncTablet: (a: number) => [number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_virtioSndConfig: (a: number) => [number, number, number];
     readonly wasmmachine_enableJit: (a: number, b: number) => [number, number];
     readonly wasmmachine_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmmachine_getStats: (a: number) => [number, number, number];

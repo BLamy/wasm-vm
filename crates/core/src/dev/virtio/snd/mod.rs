@@ -106,6 +106,11 @@ pub const VIRTIO_SND_PCM_RATE_96000: u8 = 10;
 pub const SUPPORTED_PCM_RATE_MASK: u64 =
     (1u64 << VIRTIO_SND_PCM_RATE_44100) | (1u64 << VIRTIO_SND_PCM_RATE_48000);
 
+/// The capture stream is intentionally fixed at 48 kHz until a host capture adapter can provide
+/// an explicit resampling policy. Keeping this separate from the output mask prevents a playback
+/// backend narrowed to 44.1 kHz from advertising an input rate the capture path cannot honor.
+pub const SUPPORTED_CAPTURE_PCM_RATE_MASK: u64 = 1u64 << VIRTIO_SND_PCM_RATE_48000;
+
 /// Standard stereo channel positions from virtio-snd §5.14.6.9.
 pub const VIRTIO_SND_CHMAP_FL: u8 = 3;
 pub const VIRTIO_SND_CHMAP_FR: u8 = 4;
@@ -512,9 +517,10 @@ impl PcmInfo {
         }
     }
 
-    /// The optional input capability before a host capture backend narrows the rate.
+    /// The deterministic input capability exposed by the configuration gate: S16 mono/stereo at
+    /// 48 kHz. Host capture and permission policy are owned by later slices.
     pub const fn input() -> Self {
-        Self::input_with_rates(SUPPORTED_PCM_RATE_MASK)
+        Self::input_with_rates(SUPPORTED_CAPTURE_PCM_RATE_MASK)
     }
 
     /// Encode the exact 32-byte `virtio_snd_pcm_info` layout with zero padding.
@@ -1321,7 +1327,7 @@ impl SndState {
         let mut payload = Vec::with_capacity(query.count as usize * PCM_INFO_SIZE);
         for stream_id in query.start_id..query.start_id + query.count {
             let info = if stream_id == CAPTURE_STREAM_ID {
-                PcmInfo::input_with_rates(self.pcm_rate_mask)
+                PcmInfo::input()
             } else {
                 PcmInfo::output_with_rates(self.pcm_rate_mask)
             };
@@ -1358,9 +1364,15 @@ impl SndState {
         }
         let status = if capture {
             match (control, params) {
-                (PcmControl::SetParams, Some(params)) => self
-                    .capture_stream
-                    .set_params_with_profile(params, self.pcm_rate_mask, CAPTURE_STREAM_ID, 1, 2),
+                (PcmControl::SetParams, Some(params)) => {
+                    self.capture_stream.set_params_with_profile(
+                        params,
+                        SUPPORTED_CAPTURE_PCM_RATE_MASK,
+                        CAPTURE_STREAM_ID,
+                        1,
+                        2,
+                    )
+                }
                 (PcmControl::SetParams, None) => SndStatus::BadMsg,
                 (_, Some(_)) => SndStatus::BadMsg,
                 (control, None) => self.capture_stream.apply(control),
@@ -1997,6 +2009,15 @@ impl VirtioSnd {
             },
             state,
         )
+    }
+
+    /// Construct the transport device with the optional input stream selected before it is
+    /// installed in a machine. This changes only guest-visible configuration; it does not open a
+    /// host capture device or request permission.
+    pub fn new_with_capture(capture_enabled: bool) -> (Self, Rc<RefCell<SndState>>) {
+        let (device, state) = Self::new_with_state();
+        state.borrow_mut().set_capture_enabled(capture_enabled);
+        (device, state)
     }
 
     /// Shared state handle for the ordered playback/event slices.

@@ -284,6 +284,9 @@ const term = ui.term;
 // this layer owns only the visible autoplay state and the one gesture → resume transition.
 const audioAutoplayBadge = document.getElementById("audio-autoplay-badge");
 const audioCaptureEnabled = new URLSearchParams(location.search).has("audioCapture");
+// E5-T21b: the query opt-in only changes the guest device's creation-time PCM advertisement. It
+// does not request microphone permission or start a host capture pipeline.
+const micEnabled = new URLSearchParams(location.search).has("enableMic");
 const audioRateQuery = Number(new URLSearchParams(location.search).get("audioRate"));
 const audioRequestedSampleRateHz = [44_100, 48_000].includes(audioRateQuery)
   ? audioRateQuery
@@ -1103,6 +1106,7 @@ async function runLinuxBootOwned(opts, banner, request) {
       audioClockBuffer: audioBootEnabled ? audioSink.clockBuffer : null,
       audioCapacityFrames: audioBootEnabled ? audioSink.ring.capacityFrames : 0,
       audioSampleRateHz: audioBootEnabled ? audioSink.sampleRateHz : 0,
+      enableMic: opts.enableMic ?? micEnabled,
       onState: (s) => {
         // E4 restore-on-first-load: a visible stopwatch instead of the "booting" progress bar when
         // the shipped boot snapshot is being restored.

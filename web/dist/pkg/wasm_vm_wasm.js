@@ -404,15 +404,16 @@ export class WasmLinux {
      * @param {Uint8Array} initrd
      * @param {string} bootargs
      * @param {Function} output
+     * @param {boolean} enable_mic
      */
-    constructor(ram_mib, kernel, initrd, bootargs, output) {
+    constructor(ram_mib, kernel, initrd, bootargs, output, enable_mic) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passArray8ToWasm0(initrd, wasm.__wbindgen_malloc);
         const len1 = WASM_VECTOR_LEN;
         const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len2 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_new(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, output);
+        const ret = wasm.wasmlinux_new(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, output, enable_mic);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -433,9 +434,10 @@ export class WasmLinux {
      * @param {Uint32Array} boot_profile
      * @param {string} bootargs
      * @param {Function} output
+     * @param {boolean} enable_mic
      * @returns {WasmLinux}
      */
-    static newChunkedDisk(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, bootargs, output) {
+    static newChunkedDisk(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, bootargs, output, enable_mic) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -446,7 +448,7 @@ export class WasmLinux {
         const len3 = WASM_VECTOR_LEN;
         const ptr4 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len4 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_newChunkedDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, output);
+        const ret = wasm.wasmlinux_newChunkedDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, output, enable_mic);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -467,10 +469,11 @@ export class WasmLinux {
      * @param {string} bootargs
      * @param {boolean} read_only
      * @param {Function} output
-     * @param {string | null} [seed_identity]
+     * @param {string | null | undefined} seed_identity
+     * @param {boolean} enable_mic
      * @returns {Promise<WasmLinux>}
      */
-    static newChunkedDiskPersistent(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, bootargs, read_only, output, seed_identity) {
+    static newChunkedDiskPersistent(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, bootargs, read_only, output, seed_identity, enable_mic) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -483,7 +486,7 @@ export class WasmLinux {
         const len4 = WASM_VECTOR_LEN;
         var ptr5 = isLikeNone(seed_identity) ? 0 : passStringToWasm0(seed_identity, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len5 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_newChunkedDiskPersistent(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, read_only, output, ptr5, len5);
+        const ret = wasm.wasmlinux_newChunkedDiskPersistent(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, read_only, output, ptr5, len5, enable_mic);
         return ret;
     }
     /**
@@ -501,9 +504,10 @@ export class WasmLinux {
      * @param {Uint8Array} extra_disk
      * @param {string} bootargs
      * @param {Function} output
+     * @param {boolean} enable_mic
      * @returns {WasmLinux}
      */
-    static newChunkedDiskWithExtra(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, extra_disk, bootargs, output) {
+    static newChunkedDiskWithExtra(ram_mib, kernel, manifest_json, base_url, cache_budget_mib, boot_profile, extra_disk, bootargs, output, enable_mic) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -516,7 +520,7 @@ export class WasmLinux {
         const len4 = WASM_VECTOR_LEN;
         const ptr5 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len5 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_newChunkedDiskWithExtra(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, ptr5, len5, output);
+        const ret = wasm.wasmlinux_newChunkedDiskWithExtra(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, cache_budget_mib, ptr3, len3, ptr4, len4, ptr5, len5, output, enable_mic);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -532,16 +536,17 @@ export class WasmLinux {
      * @param {Uint8Array} disk
      * @param {string} bootargs
      * @param {Function} output
+     * @param {boolean} enable_mic
      * @returns {WasmLinux}
      */
-    static newDisk(ram_mib, kernel, disk, bootargs, output) {
+    static newDisk(ram_mib, kernel, disk, bootargs, output, enable_mic) {
         const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passArray8ToWasm0(disk, wasm.__wbindgen_malloc);
         const len1 = WASM_VECTOR_LEN;
         const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len2 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmlinux_newDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, output);
+        const ret = wasm.wasmlinux_newDisk(ram_mib, ptr0, len0, ptr1, len1, ptr2, len2, output, enable_mic);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -939,6 +944,19 @@ export class WasmLinux {
      */
     takeFileDownloadChunk(id) {
         const ret = wasm.wasmlinux_takeFileDownloadChunk(this.__wbg_ptr, id);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * E5-T21b: expose the assembled sound configuration for browser diagnostics. This is a
+     * read-only construction proof; the input stream metadata comes from the same core state that
+     * answers guest PCM_INFO, and no host capture handle is created by reading it.
+     * @returns {any}
+     */
+    virtioSndConfig() {
+        const ret = wasm.wasmlinux_virtioSndConfig(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }

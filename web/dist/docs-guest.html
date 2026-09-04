@@ -90,10 +90,10 @@
         <table class="data-table">
           <thead><tr><th>Path</th><th>Construction</th><th>What is actually downloaded</th></tr></thead>
           <tbody>
-            <tr><td><code>initramfs</code></td><td><code>new WasmLinux(ram, kernel, initrd, bootargs, output)</code></td><td>Kernel and initramfs.</td></tr>
-            <tr><td><code>disk</code></td><td><code>WasmLinux.newDisk(...)</code></td><td>Kernel and the complete rootfs image before construction.</td></tr>
-            <tr><td><code>chunked</code></td><td><code>WasmLinux.newChunkedDisk(...)</code></td><td>Kernel first; disk chunks are fetched only when guest reads park on them.</td></tr>
-            <tr><td><code>chunked + persist</code></td><td><code>newChunkedDiskPersistent(...)</code></td><td>Chunked base plus an IndexedDB copy-on-write overlay.</td></tr>
+            <tr><td><code>initramfs</code></td><td><code>new WasmLinux(ram, kernel, initrd, bootargs, output, enableMic)</code></td><td>Kernel and initramfs; <code>enableMic</code> opts into the guest input stream without requesting permission.</td></tr>
+            <tr><td><code>disk</code></td><td><code>WasmLinux.newDisk(..., enableMic)</code></td><td>Kernel and the complete rootfs image before construction.</td></tr>
+            <tr><td><code>chunked</code></td><td><code>WasmLinux.newChunkedDisk(..., enableMic)</code></td><td>Kernel first; disk chunks are fetched only when guest reads park on them.</td></tr>
+            <tr><td><code>chunked + persist</code></td><td><code>newChunkedDiskPersistent(..., enableMic)</code></td><td>Chunked base plus an IndexedDB copy-on-write overlay.</td></tr>
           </tbody>
         </table>
         <div class="note warn">

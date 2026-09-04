@@ -1506,9 +1506,29 @@ impl Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
     ) {
         let clock = alloc::rc::Rc::new(dev::virtio::snd::ManualAudioClock::new());
-        self.enable_virtio_snd_with_audio(
+        self.enable_virtio_snd_with_audio_and_capture(
             clock,
             alloc::boxed::Box::new(dev::virtio::snd::NullSink::new()),
+            false,
+        )
+    }
+
+    /// Attach the deterministic headless sound device with an explicit microphone advertisement
+    /// gate. `enable_mic` changes only the guest-visible PCM configuration; it never opens a host
+    /// device or requests permission.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_snd_with_capture(
+        &mut self,
+        enable_mic: bool,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+    ) {
+        let clock = alloc::rc::Rc::new(dev::virtio::snd::ManualAudioClock::new());
+        self.enable_virtio_snd_with_audio_and_capture(
+            clock,
+            alloc::boxed::Box::new(dev::virtio::snd::NullSink::new()),
+            enable_mic,
         )
     }
 
@@ -1524,6 +1544,22 @@ impl Machine {
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
         alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
     ) {
+        self.enable_virtio_snd_with_audio_and_capture(clock, sink, false)
+    }
+
+    /// Attach virtio-snd with host-provided playback timing and an explicit microphone
+    /// advertisement gate. The gate is applied while the device is created, before it is
+    /// installed into a virtio-mmio slot, and does not create a host capture handle.
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_snd_with_audio_and_capture(
+        &mut self,
+        clock: alloc::rc::Rc<dyn dev::virtio::snd::AudioClock>,
+        sink: alloc::boxed::Box<dyn dev::virtio::snd::AudioSink>,
+        enable_mic: bool,
+    ) -> (
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::snd::SndState>>,
+    ) {
         assert!(
             self.virtio.len() > dev::virtio::snd::VIRTIO_SND_SLOT,
             "enable_virtio_slots/enable_virtio_blk before enable_virtio_snd"
@@ -1532,7 +1568,7 @@ impl Machine {
         let slot_index = (dev::virtio::snd::VIRTIO_SND_SLOT..self.virtio.len())
             .find(|&index| self.virtio[index].0.borrow().device_id() == 0)
             .expect("no free virtio slot for virtio-snd");
-        let (device, state) = dev::virtio::snd::new();
+        let (device, state) = dev::virtio::snd::VirtioSnd::new_with_capture(enable_mic);
         assert!(
             self.virtio[slot_index]
                 .0

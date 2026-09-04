@@ -240,6 +240,9 @@ export async function startLinuxBoot(opts = {}) {
     audioClockBuffer = null,
     audioCapacityFrames = 0,
     audioSampleRateHz = 0,
+    // E5-T21b: opt into the guest-visible input PCM stream at VM creation time. This flag only
+    // changes device configuration; permission and host capture belong to later slices.
+    enableMic = false,
   } = opts;
   let outputCalls = 0;
   let outputBytes = 0;
@@ -462,7 +465,7 @@ export async function startLinuxBoot(opts = {}) {
         }
       }
       // Async: opens IndexedDB, reconciles the base binding, loads any previously persisted blocks.
-      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, lockReadOnly, emitOutput, overlaySeedIdentity);
+      machine = await WasmLinux.newChunkedDiskPersistent(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, lockReadOnly, emitOutput, overlaySeedIdentity, enableMic);
     } else if (isChunked) {
       if (extraDiskBytes) {
         if (typeof WasmLinux.newChunkedDiskWithExtra !== "function") {
@@ -478,14 +481,15 @@ export async function startLinuxBoot(opts = {}) {
           extraDiskBytes,
           bootargs,
           emitOutput,
+          enableMic,
         );
       } else {
-        machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, emitOutput);
+        machine = WasmLinux.newChunkedDisk(ramMib, kernel, imageManifestText, baseUrl, cacheBudgetMib, bootProfile, bootargs, emitOutput, enableMic);
       }
     } else if (mode === "disk") {
-      machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, emitOutput);
+      machine = WasmLinux.newDisk(ramMib, kernel, secondaryBytes, bootargs, emitOutput, enableMic);
     } else {
-      machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, emitOutput);
+      machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, emitOutput, enableMic);
     }
 
     // E5-T20e: swap the assembly's default NullSink for the page-owned AudioWorklet producer only

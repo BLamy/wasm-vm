@@ -114,6 +114,10 @@ pub struct BootArgs {
     /// Do not read host stdin (headless boot: prove the dmesg parade, don't drive the shell).
     #[arg(long)]
     pub no_input: bool,
+    /// E5-T21b: advertise the deterministic virtio-snd input stream. This selects guest-visible
+    /// PCM configuration only; host microphone capture and permission handling are separate.
+    #[arg(long)]
+    pub enable_mic: bool,
     /// E5-T11c: arm the deterministic serial evdev proof hook. When the guest prints the
     /// echo-proof `WVM_KB_INJECT` marker, inject one KEY_A make frame followed by one break frame.
     #[arg(long)]
@@ -901,9 +905,10 @@ fn assemble(
     // E5-T19d: reserve a free post-input virtio slot for the guest's four-queue sound device. The
     // native default is headless, but it is still paced by a monotonic clock so `aplay` exercises
     // the same non-bursting completion path as the later capture sink.
-    let _ = m.enable_virtio_snd_with_audio(
+    let _ = m.enable_virtio_snd_with_audio_and_capture(
         Rc::new(MonotonicTimer::new()),
         Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
+        a.enable_mic,
     );
 
     // Built-in SBI firmware + its console channel (earlycon=sbi / legacy putchar).

@@ -1515,6 +1515,7 @@ impl WasmLinux {
         initrd: &[u8],
         bootargs: String,
         output: js_sys::Function,
+        enable_mic: bool,
     ) -> Result<WasmLinux, JsError> {
         let initrd_opt = if initrd.is_empty() {
             None
@@ -1526,7 +1527,15 @@ impl WasmLinux {
         } else {
             bootargs
         };
-        Self::assemble(ram_mib, kernel, initrd_opt, DiskChoice::None, &args, output)
+        Self::assemble(
+            ram_mib,
+            kernel,
+            initrd_opt,
+            DiskChoice::None,
+            &args,
+            output,
+            enable_mic,
+        )
     }
 
     /// E2-T26 capstone: boot from a virtio-blk DISK image (e.g. the Alpine ext4 rootfs) instead of
@@ -1540,13 +1549,22 @@ impl WasmLinux {
         disk: Vec<u8>,
         bootargs: String,
         output: js_sys::Function,
+        enable_mic: bool,
     ) -> Result<WasmLinux, JsError> {
         let args = if bootargs.is_empty() {
             "root=/dev/vda rw console=ttyS0 earlycon=sbi".to_string()
         } else {
             bootargs
         };
-        Self::assemble(ram_mib, kernel, None, DiskChoice::Mem(disk), &args, output)
+        Self::assemble(
+            ram_mib,
+            kernel,
+            None,
+            DiskChoice::Mem(disk),
+            &args,
+            output,
+            enable_mic,
+        )
     }
 
     /// E3-T02: boot from a CHUNKED image fetched lazily over HTTP. Instead of a full disk `Vec`, take
@@ -1564,6 +1582,7 @@ impl WasmLinux {
         boot_profile: Vec<u32>,
         bootargs: String,
         output: js_sys::Function,
+        enable_mic: bool,
     ) -> Result<WasmLinux, JsError> {
         let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
             .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
@@ -1594,6 +1613,7 @@ impl WasmLinux {
             },
             &args,
             output,
+            enable_mic,
         )
     }
 
@@ -1614,6 +1634,7 @@ impl WasmLinux {
         extra_disk: Vec<u8>,
         bootargs: String,
         output: js_sys::Function,
+        enable_mic: bool,
     ) -> Result<WasmLinux, JsError> {
         let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
             .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
@@ -1643,6 +1664,7 @@ impl WasmLinux {
             },
             &args,
             output,
+            enable_mic,
         )
     }
 
@@ -1664,6 +1686,7 @@ impl WasmLinux {
         read_only: bool,
         output: js_sys::Function,
         seed_identity: Option<String>,
+        enable_mic: bool,
     ) -> Result<WasmLinux, JsError> {
         let manifest = wasm_vm_storage::ImageManifest::from_json(&manifest_json)
             .map_err(|e| JsError::new(&format!("bad image manifest: {e:?}")))?;
@@ -1744,6 +1767,7 @@ impl WasmLinux {
             },
             &args,
             output,
+            enable_mic,
         )
     }
 
@@ -1756,6 +1780,7 @@ impl WasmLinux {
         disk: DiskChoice,
         bootargs: &str,
         output: js_sys::Function,
+        enable_mic: bool,
     ) -> Result<WasmLinux, JsError> {
         init_diagnostics();
         let bytes = (ram_mib as usize).saturating_mul(1024 * 1024);
@@ -1958,9 +1983,10 @@ impl WasmLinux {
                 std::rc::Rc::new(wasm_vm_core::dev::virtio::snd::ManualAudioClock::new())
                     as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
             });
-        let _ = machine.enable_virtio_snd_with_audio(
+        let _ = machine.enable_virtio_snd_with_audio_and_capture(
             audio_clock,
             Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
+            enable_mic,
         );
         machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
@@ -2022,6 +2048,47 @@ impl WasmLinux {
     pub fn audio_output_ready(&self) -> Result<bool, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
         Ok(inner.audio_attached)
+    }
+
+    /// E5-T21b: expose the assembled sound configuration for browser diagnostics. This is a
+    /// read-only construction proof; the input stream metadata comes from the same core state that
+    /// answers guest PCM_INFO, and no host capture handle is created by reading it.
+    #[wasm_bindgen(js_name = virtioSndConfig)]
+    pub fn virtio_snd_config(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some((slot, state)) = inner.machine.virtio_snd() else {
+            return Err(JsError::new("virtio-snd is not assembled"));
+        };
+        let state = state.borrow();
+        let config = js_sys::Object::new();
+        let set = |key: &str, value: &JsValue| {
+            let _ = js_sys::Reflect::set(&config, &JsValue::from_str(key), value);
+        };
+        set("slot", &JsValue::from_f64(slot as f64));
+        set(
+            "captureEnabled",
+            &JsValue::from_bool(state.capture_enabled()),
+        );
+        set(
+            "streamCount",
+            &JsValue::from_f64(state.pcm_stream_count() as f64),
+        );
+        if state.capture_enabled() {
+            let input = js_sys::Object::new();
+            let set_input = |key: &str, value: &JsValue| {
+                let _ = js_sys::Reflect::set(&input, &JsValue::from_str(key), value);
+            };
+            let info = wasm_vm_core::dev::virtio::snd::PcmInfo::input();
+            set_input("direction", &JsValue::from_f64(info.direction as f64));
+            set_input("formats", &JsValue::from_f64(info.formats as f64));
+            set_input("rates", &JsValue::from_f64(info.rates as f64));
+            set_input("channelsMin", &JsValue::from_f64(info.channels_min as f64));
+            set_input("channelsMax", &JsValue::from_f64(info.channels_max as f64));
+            set("input", &input.into());
+        } else {
+            set("input", &JsValue::NULL);
+        }
+        Ok(config.into())
     }
 
     /// E4-T30: select the production interpreter fast path for a browser Linux guest. It combines
