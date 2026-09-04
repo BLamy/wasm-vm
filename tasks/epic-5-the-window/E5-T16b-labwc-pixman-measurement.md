@@ -3,7 +3,7 @@ id: E5-T16b
 epic: 5
 title: Measure labwc with the pixman renderer inside the emulator
 priority: 516.2
-status: in-progress
+status: implemented
 depends_on: [E5-T16a]
 estimate: S
 risk: medium
@@ -71,7 +71,7 @@ being visible is a refutation.
   [`evidence/e5-t16b/labwc-run.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t16b/labwc-run.json),
   SHA-256 `4874fa730377e73d8513cb1c1821bb6fb38010673290ad267b1a35cc54c3e81d`; verifier result
   [`evidence/e5-t16b/labwc-verification.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t16b/labwc-verification.json),
-  SHA-256 `4a9bdb0ffc93d979edf49b91b995fc6fa6b9cd153765afb89a625a8f92f9f589`.
+  SHA-256 `eee185e7ccfd76ea56597a9361da7974f9bda80cce6987eccba5903c578f62fb`.
 - The exact input image was bound before boot as `fd5e1a4d93458ded651d4fc243318d754f1911960e1bd3796a7cfdfa4e43661a`,
   with package manifest SHA-256 `21e2f121ae14deecc6efcfd50a843f04f355d148bc3fdfea80a0da090c6f0383`
   and file manifest SHA-256 `de0762c635675db5c00fbc5281fb73c594b1d94b4d66ec4814e71cc20c3a0b40`.
@@ -139,3 +139,19 @@ Commands: `make verify-E5-T16b`; `make verify-E5-T16a` in `/tmp/e5-t16b-verifier
 0a7455ce68e7780adc421647f6ca483344417b6f a5112cc68883f17c4dc3e8fe8276e0495169bd4a`.
 No implementation code, harnesses, fixtures, or repository evidence remain modified by
 verification; only this log/status and its generated metadata are to be committed.
+
+### 2026-09-04 — worker — REWORK SUBMITTED
+
+- Rework commit: `0c2c83fd2ce73ff6f17d36904aff2a6ef6a6dee4`. The verifier now rejects any idle
+  instruction ratio above the task's 2% budget unless a future task-specific justification is
+  added, and `--self-test` mutates a valid capture to a 3% idle ratio and requires rejection.
+- Corrected the previous worker metadata typo from `4a9bdb0ffc93d979edf49b91b995fc6fa6b9cd153765afb89a625a8f92f9f589`
+  to the actual committed verifier artifact SHA-256 `eee185e7ccfd76ea56597a9361da7974f9bda80cce6987eccba5903c578f62fb`.
+  The runtime implementation and recorded guest evidence are unchanged by this verifier-only fix.
+- Incremental commands: `node --check tools/verify/e5-t16b-labwc-pixman.mjs`; `node
+  tools/verify/e5-t16b-labwc-pixman.mjs --capture evidence/e5-t16b/labwc-capture.json`; and the
+  same command with `--self-test`. The fresh critic's native `make verify-E5-T16b` happy path
+  already passed on the unchanged runtime/evidence head.
+- Claim: the committed labwc/pixman capture still proves all six native riscv64 workload phases,
+  and the verifier now enforces the idle budget that the critic's bounded mutant exposed. No
+  independent-machine, WebKit, or host-rr leg is included, per scope.
