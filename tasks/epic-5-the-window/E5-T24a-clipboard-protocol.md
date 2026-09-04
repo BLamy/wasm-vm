@@ -3,7 +3,7 @@ id: E5-T24a
 epic: 5
 title: Freeze bounded clipboard protocol types and UTF-8 policy
 priority: 524.1
-status: pending
+status: in-progress
 depends_on: [E5-T23e]
 estimate: S
 risk: high

@@ -19057,7 +19057,7 @@
       "epicKey": "5",
       "title": "Freeze bounded clipboard protocol types and UTF-8 policy",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T23e"
       ],
