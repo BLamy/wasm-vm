@@ -3,7 +3,7 @@ id: E5-T20a
 epic: 5
 title: Audio SAB ring buffer protocol and deterministic indices
 priority: 520.1
-status: pending
+status: in-progress
 depends_on: [E5-T19d]
 estimate: S
 risk: high
