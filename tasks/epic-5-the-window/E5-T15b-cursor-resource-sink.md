@@ -3,7 +3,7 @@ id: E5-T15b
 epic: 5
 title: Cursor-resource RGBA conversion and CSS/overlay sink
 priority: 515.2
-status: in-progress
+status: implemented
 depends_on: [E5-T15a]
 estimate: S
 risk: medium
@@ -45,4 +45,10 @@ grows without bound.
 
 ## Verification log
 
-(empty)
+### 2026-09-04 — worker — IMPLEMENTED
+
+- Implementation commit: `9f171ab`.
+- Exact-head checks: `node --check web/src/sink/cursor.js`; `node --test web/tests/e5-t15b-cursor-sink.test.mjs` — 5 passed, 0 failed; `make verify-E5-T15b` — passed.
+- Evidence: [`evidence/e5-t15b/cursor-sink.json`](/Users/blamy/Documents/Codex/wasm-vm/evidence/e5-t15b/cursor-sink.json), SHA-256 `f086be4ac81af06e05f77ed7c90c20f86613429e2d8c9a69fa47352e3ccd8e9a`.
+- Claim: the exact-head proof copies checked virtio-gpu words into alpha-correct RGBA, round-trips a transparent/opaque 64×64 checkerboard through a deterministic PNG byte-for-byte, emits the exact `(10,3)` CSS hotspot descriptor, selects the bounded overlay path at 256×256, rejects malformed dimensions/hotspots/pixels/formats, and keeps only one bounded current descriptor across 1,001 updates.
+- Scope notes: DOM mode/lifecycle wiring is downstream in E5-T15c. Per user direction, independent-machine and WebKit proof were not run; host rr is waived by repository policy.
