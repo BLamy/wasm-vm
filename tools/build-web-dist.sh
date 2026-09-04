@@ -36,6 +36,9 @@ done
 
 # App subdirectories that are real source (worker, tailscale connect assets).
 [ -d web/tailscale-connect ] && cp -R web/tailscale-connect "$DIST/tailscale-connect"
+# The presentation benchmark is a deployable browser page rather than app-shell source. Keep it
+# beside the source tree so the recorded matrix can be rerun from the published bundle too.
+[ -d web/bench ] && cp -R web/bench "$DIST/bench"
 # The app shell imports the no-bundler input modules from ./src/. Keep that source tree in the
 # deployable bundle; omitting it leaves the generated main.js with a production-only 404.
 [ -d web/src ] && cp -R web/src "$DIST/src"

@@ -496,6 +496,12 @@ verify-E5-T06b:
 	node --test web/tests/e5-t06b-webgl.test.mjs
 	@echo "verify-E5-T06b (WebGL2 presentation backend): OK"
 
+.PHONY: verify-E5-T06c
+verify-E5-T06c:
+	node --check tools/verify/e5-t06c-present-bench.mjs
+	node tools/verify/e5-t06c-present-bench.mjs
+	@echo "verify-E5-T06c (measured Canvas2D/WebGL2 presentation benchmark): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
