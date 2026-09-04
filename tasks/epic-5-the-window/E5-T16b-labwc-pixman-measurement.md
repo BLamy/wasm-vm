@@ -3,7 +3,7 @@ id: E5-T16b
 epic: 5
 title: Measure labwc with the pixman renderer inside the emulator
 priority: 516.2
-status: implemented
+status: verified
 depends_on: [E5-T16a]
 estimate: S
 risk: medium
@@ -155,3 +155,60 @@ verification; only this log/status and its generated metadata are to be committe
 - Claim: the committed labwc/pixman capture still proves all six native riscv64 workload phases,
   and the verifier now enforces the idle budget that the critic's bounded mutant exposed. No
   independent-machine, WebKit, or host-rr leg is included, per scope.
+
+### 2026-09-04 — verifier — VERDICT: verified
+
+- P1 renderer provenance — HELD. Predicted that the unchanged committed guest evidence would
+  still show an explicit DRM launch with `WLR_RENDERER=pixman`, pixman diagnostics, and no GL
+  fallback. The prior fresh native `make verify-E5-T16b` result remains applicable: the runtime and
+  evidence boundary is unchanged, confirmed by an empty `git diff --quiet
+  0a7455ce68e7780adc421647f6ca483344417b6f 010539884613afb92a5e3c41623c45b0d019018e -- src
+  crates tools/display-server-workload.mjs evidence target`; the committed console proof is at
+  `evidence/e5-t16b/labwc-console.log:309-332` and the verifier enforces it at
+  `tools/verify/e5-t16b-labwc-pixman.mjs:86-92`.
+- P2 workload and metric acceptance — HELD. Predicted that all six ordered T16a phases, terminal
+  and compositor exits, power-down, explicit metric fields, 100 accepted characters/200 keyboard
+  frames, and 300 px/30-step drag would remain valid. The prior fresh native gate held this claim;
+  the unchanged capture records the phase points at
+  `evidence/e5-t16b/labwc-capture.json:79-243`, and the current verifier passed against a temporary
+  mirror of that exact capture with `node tools/verify/e5-t16b-labwc-pixman.mjs --capture ...`.
+- P3 cursorq capability accounting — HELD. Predicted zero cursorq traffic would remain an explicit
+  capability gap rather than an inferred success. The unchanged capture has
+  `cursorqEvents: 0` and `cursorqStatus: capability-gap: ...` at
+  `evidence/e5-t16b/labwc-capture.json:216-227`; the current guard remains at
+  `tools/verify/e5-t16b-labwc-pixman.mjs:96-100`.
+- P4 corrected worker digest — HELD. Predicted the corrected metadata would equal the committed
+  verifier artifact. `shasum -a 256 evidence/e5-t16b/labwc-verification.json` returned
+  `eee185e7ccfd76ea56597a9361da7974f9bda80cce6987eccba5903c578f62fb`, matching the claim at
+  `tasks/epic-5-the-window/E5-T16b-labwc-pixman-measurement.md:72-74`.
+- P5 idle-budget guard and regression self-test — HELD. Predicted the valid capture’s ratio would
+  be accepted below 2%, while a 3% mutant would be rejected. In temporary mirror
+  `/tmp/e5-t16b-current-verifier.7Unot0`, the normal command passed with ratio
+  `0.0045681757501264825`; `--self-test` passed with
+  `E5T16B_SELF_TEST=idle-budget-rejected`. The guard and self-test are exercised at
+  `tools/verify/e5-t16b-labwc-pixman.mjs:17,46-67,154-167`, and the committed output records
+  the same ratio and `budget: "<=2% unless charter justification"` at
+  `evidence/e5-t16b/labwc-verification.json:19-24`.
+- Bounded novel artifact-binding attack — HELD. Predicted tampering the recorded run’s capture
+  image digest would be rejected. After changing only the temporary mirror’s
+  `evidence/e5-t16b/labwc-run.json:capture.image.sha256` to all zeroes, the current verifier exited
+  status 1 with `run summary capture digest disagrees with the harness` at
+  `/tmp/e5-t16b-current-verifier.7Unot0/tools/verify/e5-t16b-labwc-pixman.mjs:104`.
+- COVERAGE — HELD. The prior native happy path and T16a schema evidence carry forward because
+  runtime/evidence hashes and dependency boundaries are unchanged. The new budget branch and
+  self-test branch were directly executed in the temporary mirror; the added Makefile line is
+  declarative wiring for that exact self-test command and was inspected at `Makefile:723-724`.
+  No acceptance-bearing changed hunk remains unexecuted or unexplained.
+- SUITE — HELD. The committed `--self-test` mutant is a permanent regression check for the prior
+  verifier gap; no implementation code, harness, fixture, or repository evidence was modified by
+  this verification.
+
+Commands: `git rev-parse HEAD`; `git diff --name-status` and the runtime/evidence boundary check
+above; `shasum -a 256 evidence/e5-t16b/labwc-verification.json evidence/e5-t16b/labwc-capture.json
+evidence/e5-t16b/labwc-run.json target/e5-t16b/labwc-image/MANIFEST.txt
+target/e5-t16b/labwc-image/FILE-MANIFEST.txt`; `node --check
+tools/verify/e5-t16b-labwc-pixman.mjs`; normal and `--self-test` verifier runs in
+`/tmp/e5-t16b-current-verifier.7Unot0`; the temporary artifact-binding mutation and verifier run
+there; and static inspection of `0c2c83f`/`0105398` plus `git diff --stat
+0a7455ce68e7780adc421647f6ca483344417b6f 010539884613afb92a5e3c41623c45b0d019018e`. Per the
+explicit session waiver, no independent machine, WebKit, rr, or `ssh dev` run was performed.
