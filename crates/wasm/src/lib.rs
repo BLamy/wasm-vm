@@ -1296,6 +1296,116 @@ impl wasm_vm_core::dev::virtio::snd::AudioSink for SharedAudioSink {
     }
 }
 
+/// E5-T21d: consumer-side adapter for the reversed microphone ring. The AudioWorklet publishes
+/// stereo f32 frames; the guest-facing virtio-snd contract consumes bounded interleaved S16 frames.
+/// This adapter performs the conversion in the wasm run loop without calling back into JavaScript,
+/// and a short ring read is deliberately reported as a paced XRUN so the core zero-fills the rest.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+struct SharedAudioCapture {
+    header: js_sys::Int32Array,
+    samples: js_sys::Float32Array,
+    capacity_frames: u32,
+    sample_rate_hz: u32,
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl SharedAudioCapture {
+    fn new(
+        shared_buffer: js_sys::SharedArrayBuffer,
+        capacity_frames: u32,
+        sample_rate_hz: u32,
+    ) -> Result<Self, JsError> {
+        // Reuse the production ring validator, then move its typed views into the reversed-role
+        // adapter. Both playback and capture therefore reject the same malformed SAB header.
+        let ring = SharedAudioSink::new(shared_buffer, capacity_frames, sample_rate_hz)?;
+        Ok(Self {
+            header: ring.header,
+            samples: ring.samples,
+            capacity_frames: ring.capacity_frames,
+            sample_rate_hz: ring.sample_rate_hz,
+        })
+    }
+
+    fn sample_to_s16(sample: f32) -> i16 {
+        if !sample.is_finite() {
+            return 0;
+        }
+        (sample.clamp(-1.0, 0.999_969_5) * 32_768.0).round() as i16
+    }
+}
+
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+impl wasm_vm_core::dev::virtio::snd::AudioCaptureSource for SharedAudioCapture {
+    fn pull(
+        &mut self,
+        frames: &mut [i16],
+        sample_rate_hz: u32,
+        channels: u8,
+    ) -> Result<usize, wasm_vm_core::dev::virtio::snd::AudioCaptureError> {
+        use wasm_vm_core::dev::virtio::snd::AudioCaptureError;
+
+        if sample_rate_hz != self.sample_rate_hz
+            || !matches!(channels, 1 | 2)
+            || !frames.len().is_multiple_of(usize::from(channels))
+        {
+            return Err(AudioCaptureError::Failed);
+        }
+        let requested_frames = frames.len() / usize::from(channels);
+        if requested_frames == 0 {
+            return Ok(0);
+        }
+        let Ok(fill) = js_sys::Atomics::load(&self.header, SharedAudioSink::FILL_FRAMES) else {
+            return Err(AudioCaptureError::Failed);
+        };
+        if fill < 0 || fill as u32 > self.capacity_frames {
+            return Err(AudioCaptureError::Failed);
+        }
+        let count = requested_frames.min(fill as usize);
+        if count == 0 {
+            return Ok(0);
+        }
+        let Ok(mut read_slot) = js_sys::Atomics::load(&self.header, SharedAudioSink::READ_SLOT)
+        else {
+            return Err(AudioCaptureError::Failed);
+        };
+        if read_slot < 0 || read_slot as u32 >= self.capacity_frames {
+            return Err(AudioCaptureError::Failed);
+        }
+        let Ok(read_index) = js_sys::Atomics::load(&self.header, SharedAudioSink::READ_INDEX)
+        else {
+            return Err(AudioCaptureError::Failed);
+        };
+        for frame in 0..count {
+            let sample_index = read_slot as u32 * SharedAudioSink::CHANNELS;
+            let left = Self::sample_to_s16(self.samples.get_index(sample_index));
+            if channels == 1 {
+                frames[frame] = left;
+            } else {
+                frames[frame * 2] = left;
+                frames[frame * 2 + 1] =
+                    Self::sample_to_s16(self.samples.get_index(sample_index + 1));
+            }
+            read_slot += 1;
+            if read_slot as u32 == self.capacity_frames {
+                read_slot = 0;
+            }
+        }
+        if js_sys::Atomics::store(&self.header, SharedAudioSink::READ_SLOT, read_slot).is_err()
+            || js_sys::Atomics::store(
+                &self.header,
+                SharedAudioSink::READ_INDEX,
+                read_index.wrapping_add(count as i32),
+            )
+            .is_err()
+            || js_sys::Atomics::sub(&self.header, SharedAudioSink::FILL_FRAMES, count as i32)
+                .is_err()
+        {
+            return Err(AudioCaptureError::Failed);
+        }
+        Ok(count)
+    }
+}
+
 /// E5-T20e: a render-clock view shared by the guest pacing service and the AudioWorklet. The
 /// worklet advances the frame cell after each render quantum; using the delta from attachment
 /// avoids treating the shared uint32 counter as an absolute wall-clock value.
@@ -1369,6 +1479,7 @@ fn build_core_hash() -> [u8; 32] {
 struct LinuxInner {
     machine: Machine,
     audio_attached: bool,
+    capture_attached: bool,
     uart: std::rc::Rc<RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
     out: std::rc::Rc<RefCell<Vec<u8>>>,
     output: js_sys::Function,
@@ -1998,6 +2109,7 @@ impl WasmLinux {
             inner: RefCell::new(LinuxInner {
                 machine,
                 audio_attached: false,
+                capture_attached: false,
                 uart,
                 out,
                 output,
@@ -2048,6 +2160,99 @@ impl WasmLinux {
     pub fn audio_output_ready(&self) -> Result<bool, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
         Ok(inner.audio_attached)
+    }
+
+    /// E5-T21d: attach the page-owned microphone ring as the guest's capture source. The ring is
+    /// allocated before boot but contains no host media handle; permission remains lazy until the
+    /// guest emits its first successful capture PCM_START edge.
+    #[wasm_bindgen(js_name = attachAudioCapture)]
+    pub fn attach_audio_capture(
+        &self,
+        shared_buffer: js_sys::SharedArrayBuffer,
+        capacity_frames: u32,
+        sample_rate_hz: u32,
+    ) -> Result<(), JsError> {
+        let source = SharedAudioCapture::new(shared_buffer, capacity_frames, sample_rate_hz)?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.replace_virtio_snd_capture(Box::new(source)) {
+            inner.capture_attached = true;
+            Ok(())
+        } else {
+            Err(JsError::new("virtio-snd capture is not assembled"))
+        }
+    }
+
+    /// E5-T21d: report whether this guest owns the page-provided capture ring.
+    #[wasm_bindgen(js_name = audioCaptureReady)]
+    pub fn audio_capture_ready(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        Ok(inner.capture_attached)
+    }
+
+    /// E5-T21d: expose the input PCM lifecycle edge to the page. `startCount` increments only for
+    /// successful guest PCM_START requests; the page uses it to make getUserMedia lazy and to
+    /// re-request after a later guest retry without polling host media state speculatively.
+    #[wasm_bindgen(js_name = virtioSndCaptureState)]
+    pub fn virtio_snd_capture_state(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let Some((_, state)) = inner.machine.virtio_snd() else {
+            return Ok(JsValue::NULL);
+        };
+        let state = state.borrow();
+        let state_name = match state.capture_stream_state() {
+            wasm_vm_core::dev::virtio::snd::PcmState::Released => "released",
+            wasm_vm_core::dev::virtio::snd::PcmState::SetParams => "set-params",
+            wasm_vm_core::dev::virtio::snd::PcmState::Prepared => "prepared",
+            wasm_vm_core::dev::virtio::snd::PcmState::Running => "running",
+            wasm_vm_core::dev::virtio::snd::PcmState::Stopped => "stopped",
+        };
+        let snapshot = js_sys::Object::new();
+        let set = |key: &str, value: &JsValue| {
+            let _ = js_sys::Reflect::set(&snapshot, &JsValue::from_str(key), value);
+        };
+        set("enabled", &JsValue::from_bool(state.capture_enabled()));
+        set("state", &JsValue::from_str(state_name));
+        set(
+            "startCount",
+            &JsValue::from_f64(state.capture_start_count() as f64),
+        );
+        set(
+            "lifecycleEpoch",
+            &JsValue::from_f64(state.capture_lifecycle_epoch() as f64),
+        );
+        set(
+            "pendingBuffers",
+            &JsValue::from_f64(state.capture_pending_count() as f64),
+        );
+        set(
+            "pendingEvents",
+            &JsValue::from_f64(state.pending_event_count() as f64),
+        );
+        set(
+            "captureAttached",
+            &JsValue::from_bool(inner.capture_attached),
+        );
+        Ok(snapshot.into())
+    }
+
+    /// E5-T21d: turn a host capture lifecycle failure into the existing bounded virtio-snd input
+    /// XRUN event. The event is delivered through the guest's eventq at the next run boundary;
+    /// PCM rxq buffers continue to complete with zero-filled, clock-paced data.
+    #[wasm_bindgen(js_name = notifyCaptureEvent)]
+    pub fn notify_capture_event(&self, event: String) -> Result<bool, JsError> {
+        if !matches!(event.as_str(), "denied" | "revoked" | "muted") {
+            return Err(JsError::new("unsupported capture lifecycle event"));
+        }
+        let inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let Some((_, state)) = inner.machine.virtio_snd() else {
+            return Ok(false);
+        };
+        let mut state = state.borrow_mut();
+        if !state.capture_enabled() {
+            return Ok(false);
+        }
+        state.notify_capture_xrun();
+        Ok(true)
     }
 
     /// E5-T21b: expose the assembled sound configuration for browser diagnostics. This is a

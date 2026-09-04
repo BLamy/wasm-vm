@@ -303,7 +303,9 @@ pub struct Machine {
     /// E5-T19d: guest-facing virtio-snd state. The control/event/playback ring views are kept
     /// across instruction boundaries just like the other virtio devices; the injected clock and
     /// sink keep pacing deterministic while allowing native WavSink and browser sinks to share
-    /// the same Machine assembly seam.
+    /// the same Machine assembly seam. The capture source is the corresponding host-owned rxq
+    /// adapter; the default is deterministic silence until a browser permission session replaces
+    /// it with a shared-ring consumer.
     #[allow(clippy::type_complexity)]
     snd: Option<(
         usize,
@@ -311,8 +313,10 @@ pub struct Machine {
         Option<dev::virtio::queue::Virtqueue>,
         Option<dev::virtio::queue::Virtqueue>,
         Option<dev::virtio::queue::Virtqueue>,
+        Option<dev::virtio::queue::Virtqueue>,
         alloc::rc::Rc<dyn dev::virtio::snd::AudioClock>,
         alloc::boxed::Box<dyn dev::virtio::snd::AudioSink>,
+        alloc::boxed::Box<dyn dev::virtio::snd::AudioCaptureSource>,
     )>,
     /// E3-T12c3: the snapshot coherence binding — the base disk image this machine is running against
     /// (`base_image_hash`), the emulator build (`core_hash`), and the monotonic overlay-commit
@@ -1583,8 +1587,10 @@ impl Machine {
             None,
             None,
             None,
+            None,
             clock,
             sink,
+            alloc::boxed::Box::new(dev::virtio::snd::NullCaptureSource),
         ));
         (alloc::rc::Rc::clone(&self.virtio[slot_index].0), state)
     }
@@ -1599,7 +1605,7 @@ impl Machine {
         sink: alloc::boxed::Box<dyn dev::virtio::snd::AudioSink>,
         sample_rate_hz: u32,
     ) -> bool {
-        let Some((_, state, _, _, _, current_clock, current_sink)) = self.snd.as_mut() else {
+        let Some((_, state, _, _, _, _, current_clock, current_sink, _)) = self.snd.as_mut() else {
             return false;
         };
         if !state.borrow_mut().set_output_sample_rate(sample_rate_hz) {
@@ -1607,6 +1613,20 @@ impl Machine {
         }
         *current_clock = clock;
         *current_sink = sink;
+        true
+    }
+
+    /// Replace the host-side sound capture source after the platform has been assembled. The
+    /// default source is deterministic silence; a browser installs its shared SAB consumer only
+    /// after the guest has successfully issued input PCM_START and the page has a media stream.
+    pub fn replace_virtio_snd_capture(
+        &mut self,
+        source: alloc::boxed::Box<dyn dev::virtio::snd::AudioCaptureSource>,
+    ) -> bool {
+        let Some((_, _, _, _, _, _, _, _, current_source)) = self.snd.as_mut() else {
+            return false;
+        };
+        *current_source = source;
         true
     }
 
@@ -1620,7 +1640,7 @@ impl Machine {
     )> {
         self.snd
             .as_ref()
-            .map(|(slot, state, _, _, _, _, _)| (*slot, alloc::rc::Rc::clone(state)))
+            .map(|(slot, state, _, _, _, _, _, _, _)| (*slot, alloc::rc::Rc::clone(state)))
     }
 
     /// E2-T16: attach the goldfish RTC at [`platform::virt::RTC_BASE`], wired to PLIC IRQ 11,
@@ -3709,13 +3729,16 @@ impl Machine {
                 // receives its QEMU-shaped responses at the same guest-visible boundary that it
                 // kicks the queue. Playback then uses the injected host clock/sink without changing
                 // any of the established blk/net/input slots.
-                if let Some((slot_index, state, controlq, eventq, txq, clock, sink)) = &mut self.snd
+                if let Some((slot_index, state, controlq, eventq, rxq, txq, clock, sink, source)) =
+                    &mut self.snd
                 {
                     let slot = alloc::rc::Rc::clone(&self.virtio[*slot_index].0);
-                    dev::virtio::snd::service_with_control_eventq(
+                    dev::virtio::snd::service_with_control_eventq_and_capture(
                         &slot,
                         controlq,
                         eventq,
+                        Some(rxq),
+                        Some(source.as_mut()),
                         txq,
                         state,
                         clock.as_ref(),

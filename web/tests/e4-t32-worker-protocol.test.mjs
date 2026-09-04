@@ -71,6 +71,10 @@ function fakeController(events, done) {
     persistStats: () => ({ pendingBytes: 0 }),
     readOnly: () => false,
     overlaySeedIdentity: () => "d".repeat(64),
+    audioOutputReady: () => true,
+    audioCaptureReady: () => true,
+    captureState: () => ({ enabled: true, state: "running", startCount: 1 }),
+    notifyCaptureEvent: (event) => { events.push(["capture", event]); return true; },
     resumeAfterQuota: () => true,
     continueReadOnly: () => true,
     hasUnpersisted: () => false,
@@ -229,6 +233,7 @@ test("every explicit controller method crosses the runtime and no-provider Tails
       takeFileDownloadChunk: [9],
       dismissFileDownload: [9],
       snapshotImport: [Uint8Array.of(4, 5)],
+      notifyCaptureEvent: ["muted"],
       tailscaleCommand: ["status"],
     };
     const results = new Map();
@@ -246,6 +251,28 @@ test("every explicit controller method crosses the runtime and no-provider Tails
     resolveDone("stopped");
     await controller.whenDone;
   }
+});
+
+test("capture PCM_START lifecycle notification crosses the worker boundary", async () => {
+  const events = [];
+  const { page, worker } = endpointPair(events);
+  let resolveDone;
+  const done = new Promise((resolve) => { resolveDone = resolve; });
+  let resolveCapture;
+  const capture = new Promise((resolve) => { resolveCapture = resolve; });
+  createLinuxWorkerRuntime(worker, {
+    startBoot: async (opts) => {
+      opts.onCaptureStart({ enabled: true, state: "running", startCount: 3 });
+      return fakeController(events, done);
+    },
+  });
+  const client = createLinuxWorkerClient(page, {
+    onCaptureStart: (info) => resolveCapture(info),
+  });
+  const controller = await client.boot({});
+  assert.deepEqual(await capture, { enabled: true, state: "running", startCount: 3 });
+  resolveDone("stopped");
+  await controller.whenDone;
 });
 
 test("RPC ids correlate out-of-order results and arbitrary methods are not exposed", async () => {

@@ -202,6 +202,12 @@ const css = `
 .ide-pointer-debug { color: #aab7c4; border: 1px solid rgba(139, 148, 158, 0.35); border-radius: 4px;
   padding: 1px 7px; font-size: 10.5px; white-space: nowrap; max-width: 22vw; overflow: hidden;
   text-overflow: ellipsis; }
+.ide-microphone-state { color: #cdd6f4; border: 1px solid rgba(139, 148, 158, 0.35); border-radius: 4px;
+  padding: 1px 7px; font-size: 10.5px; white-space: nowrap; }
+.ide-microphone-state[data-state="live"] { color: #9ad29a; border-color: rgba(63, 185, 80, 0.45); }
+.ide-microphone-state[data-state="denied"], .ide-microphone-state[data-state="revoked"] {
+  color: #f0c6a0; border-color: rgba(242, 201, 76, 0.45); }
+.ide-microphone-state[data-pending="true"] { color: #f2c94c; border-color: rgba(242, 201, 76, 0.45); }
 /* The terminal pane is a single scroll: this wrapper does NOT scroll (overflow:hidden); the xterm
    viewport inside #term is the only scrollbar. #term flexes to fill so the fit addon sizes it. */
 .ide-term-scroll { flex: 1 1 auto; overflow: hidden; min-height: 0; }
@@ -413,6 +419,7 @@ if (root) {
         <span class="ide-pointer-state" id="ide-pointer-state" role="status" aria-live="polite">Pointer: absolute</span>
         <span class="ide-pointer-debug" id="ide-pointer-debug" role="status" aria-live="polite">Buttons: none · frames: 0</span>
         <button class="ide-mini" id="ide-pointer-toggle" type="button" aria-pressed="false" disabled>Pointer: absolute</button>
+        <span class="ide-microphone-state" id="ide-microphone-state" role="status" aria-live="polite">Microphone: off</span>
         <button class="ide-mini" id="ide-term-clear">Clear</button>
       </div>
       <div class="ide-term-scroll" id="ide-term-scroll"></div>

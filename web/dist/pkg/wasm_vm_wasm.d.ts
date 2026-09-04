@@ -32,12 +32,22 @@ export class WasmLinux {
      */
     advanceOverlayGeneration(): number;
     /**
+     * E5-T21d: attach the page-owned microphone ring as the guest's capture source. The ring is
+     * allocated before boot but contains no host media handle; permission remains lazy until the
+     * guest emits its first successful capture PCM_START edge.
+     */
+    attachAudioCapture(shared_buffer: SharedArrayBuffer, capacity_frames: number, sample_rate_hz: number): void;
+    /**
      * E5-T20e: connect this assembled guest to the page-owned AudioWorklet ring and render clock.
      * The buffers are validated against the T20a header before ownership crosses into the core;
      * an invalid or missing sound device is a hard boot-configuration error rather than silent
      * playback loss.
      */
     attachAudioOutput(shared_buffer: SharedArrayBuffer, clock_buffer: SharedArrayBuffer, capacity_frames: number, sample_rate_hz: number): void;
+    /**
+     * E5-T21d: report whether this guest owns the page-provided capture ring.
+     */
+    audioCaptureReady(): boolean;
     /**
      * E5-T20e: report whether this guest owns the page-provided ring sink. Kept separate from
      * `AudioWorkletSink.stats()` so a browser proof can distinguish an attached guest bridge from
@@ -171,6 +181,12 @@ export class WasmLinux {
      * transferring or off the slirp path.
      */
     noteFileTransferPersist(): void;
+    /**
+     * E5-T21d: turn a host capture lifecycle failure into the existing bounded virtio-snd input
+     * XRUN event. The event is delivered through the guest's eventq at the next run boundary;
+     * PCM rxq buffers continue to complete with zero-filled, clock-paced data.
+     */
+    notifyCaptureEvent(event: string): boolean;
     /**
      * The current overlay commit generation (the snapshot coherence's third binding). `u64` fits
      * exactly in an `f64` for every realistic generation count.
@@ -337,6 +353,12 @@ export class WasmLinux {
      */
     syncTablet(): void;
     takeFileDownloadChunk(id: number): Uint8Array;
+    /**
+     * E5-T21d: expose the input PCM lifecycle edge to the page. `startCount` increments only for
+     * successful guest PCM_START requests; the page uses it to make getUserMedia lazy and to
+     * re-request after a later guest retry without polling host media state speculatively.
+     */
+    virtioSndCaptureState(): any;
     /**
      * E5-T21b: expose the assembled sound configuration for browser diagnostics. This is a
      * read-only construction proof; the input stream metadata comes from the same core state that
@@ -551,7 +573,9 @@ export interface InitOutput {
     readonly seedOverlayDelta: (a: number, b: number, c: number, d: number, e: number, f: number) => any;
     readonly version: () => [number, number];
     readonly wasmlinux_advanceOverlayGeneration: (a: number) => [number, number, number];
+    readonly wasmlinux_attachAudioCapture: (a: number, b: any, c: number, d: number) => [number, number];
     readonly wasmlinux_attachAudioOutput: (a: number, b: any, c: any, d: number, e: number) => [number, number];
+    readonly wasmlinux_audioCaptureReady: (a: number) => [number, number, number];
     readonly wasmlinux_audioOutputReady: (a: number) => [number, number, number];
     readonly wasmlinux_beginFileUpload: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number];
     readonly wasmlinux_bootProfile: (a: number) => [number, number, number, number];
@@ -579,6 +603,7 @@ export interface InitOutput {
     readonly wasmlinux_newChunkedDiskWithExtra: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: any, p: number) => [number, number, number];
     readonly wasmlinux_newDisk: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: number) => [number, number, number];
     readonly wasmlinux_noteFileTransferPersist: (a: number) => [number, number];
+    readonly wasmlinux_notifyCaptureEvent: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_overlayGeneration: (a: number) => [number, number, number];
     readonly wasmlinux_pendingChunks: (a: number) => [number, number, number, number];
     readonly wasmlinux_persistPending: (a: number) => any;
@@ -607,6 +632,7 @@ export interface InitOutput {
     readonly wasmlinux_syncMouse: (a: number) => [number, number];
     readonly wasmlinux_syncTablet: (a: number) => [number, number];
     readonly wasmlinux_takeFileDownloadChunk: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_virtioSndCaptureState: (a: number) => [number, number, number];
     readonly wasmlinux_virtioSndConfig: (a: number) => [number, number, number];
     readonly wasmmachine_enableJit: (a: number, b: number) => [number, number];
     readonly wasmmachine_enableJitWithPolicy: (a: number, b: number, c: number, d: number) => [number, number];

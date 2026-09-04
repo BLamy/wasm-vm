@@ -473,6 +473,24 @@ fn capture_transitions_are_stream_local_and_release_flushes_pending_rxq() {
 }
 
 #[test]
+fn capture_start_edges_are_monotonic_and_resettable_for_lazy_host_permission() {
+    let mut rig = Rig::new(false);
+    assert_eq!(rig.state.borrow().capture_start_count(), 0);
+
+    rig.start(params(16, 1));
+    assert_eq!(rig.state.borrow().capture_start_count(), 1);
+    assert_eq!(rig.command(VIRTIO_SND_R_PCM_STOP), VIRTIO_SND_S_OK);
+    assert_eq!(rig.command(VIRTIO_SND_R_PCM_START), VIRTIO_SND_S_OK);
+    assert_eq!(rig.state.borrow().capture_start_count(), 2);
+
+    rig.state.borrow_mut().notify_capture_xrun();
+    assert_eq!(rig.state.borrow().pending_event_count(), 1);
+    rig.state.borrow_mut().reset();
+    assert_eq!(rig.state.borrow().capture_start_count(), 0);
+    assert_eq!(rig.state.borrow().pending_event_count(), 0);
+}
+
+#[test]
 fn short_capture_source_zero_fills_and_delivers_input_xrun_event() {
     let mut rig = Rig::new(true);
     rig.start(params(16, 1));

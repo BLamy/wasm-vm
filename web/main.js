@@ -34,6 +34,8 @@ import { attachHeldKeyLifecycle } from "./src/input/held-keys.js";
 import { createKeyboardReconciler } from "./src/input/reconciliation.js";
 import { createAutoplayPolicy } from "./src/audio/autoplay.js";
 import { AudioSink } from "./src/audio/sink.js";
+import { AudioCaptureRingBuffer } from "./src/audio/capture-ring.js";
+import { createMicrophonePermissionController } from "./src/audio/microphone.js";
 import {
   attachPointerBridge,
   createPointerBridge,
@@ -296,6 +298,13 @@ let audioSink = null;
 let audioAutoplayPolicy = null;
 let audioReady = Promise.resolve(false);
 let audioPipelineReady = false;
+const microphoneSampleRateHz = 48_000;
+let microphoneRing = null;
+if (micEnabled && typeof globalThis.SharedArrayBuffer === "function") {
+  try {
+    microphoneRing = AudioCaptureRingBuffer.allocate({ capacityFrames: 16_384 });
+  } catch { /* the UI remains honest: a missing SAB path cannot claim live capture */ }
+}
 
 function showAudioAutoplayUnavailable() {
   if (!audioAutoplayBadge) return;
@@ -308,6 +317,7 @@ function publishAudioGlobals() {
   window.__audioAutoplayPolicy = audioAutoplayPolicy;
   window.__audioSink = audioSink;
   window.__audioCapture = audioCaptureBlocks;
+  window.__audioCaptureRing = microphoneRing;
 }
 
 function installContextOnlyAudioPolicy(context = null) {
@@ -595,6 +605,66 @@ let linuxBootGeneration = 0;
 let diagnosticJitStatsTimer = null;
 const linuxControllerTeardowns = new WeakMap();
 const bootBtns = [bootLinuxBtn, bootAlpineBtn, bootAlpineFullBtn];
+const microphoneStateEl = document.getElementById("ide-microphone-state");
+const pendingMicrophoneEvents = [];
+
+function updateMicrophoneIndicator(snapshot = microphoneCapture?.snapshot?.()) {
+  if (!snapshot) return;
+  const state = snapshot.state || "off";
+  const text = state === "live"
+    ? "Microphone: live"
+    : state === "denied"
+      ? "Microphone: denied — retry capture"
+      : state === "revoked"
+        ? "Microphone: revoked — retry capture"
+        : snapshot.pending
+          ? "Microphone: off — permission pending"
+          : "Microphone: off";
+  if (microphoneStateEl) {
+    microphoneStateEl.textContent = text;
+    microphoneStateEl.dataset.state = state;
+    microphoneStateEl.dataset.pending = String(Boolean(snapshot.pending));
+  }
+  document.documentElement.dataset.microphoneState = state;
+  document.documentElement.dataset.microphonePending = String(Boolean(snapshot.pending));
+}
+
+function notifyMicrophoneGuest(event) {
+  const controller = linuxCtl;
+  if (!controller) {
+    pendingMicrophoneEvents.push(event);
+    return null;
+  }
+  try { return controller.notifyCaptureEvent?.(event); } catch { return null; }
+}
+
+function flushMicrophoneGuestEvents(controller) {
+  if (!controller || pendingMicrophoneEvents.length === 0) return;
+  const events = pendingMicrophoneEvents.splice(0);
+  for (const event of events) {
+    try {
+      const result = controller.notifyCaptureEvent?.(event);
+      result?.catch?.(() => {});
+    } catch { /* an owner replacement can retire the guest during notification */ }
+  }
+}
+
+const microphoneCapture = createMicrophonePermissionController({
+  enabled: micEnabled,
+  ring: microphoneRing,
+  sampleRateHz: microphoneSampleRateHz,
+  notifyGuest: notifyMicrophoneGuest,
+  onStateChange: updateMicrophoneIndicator,
+});
+updateMicrophoneIndicator();
+try {
+  window.__microphone = {
+    state: () => microphoneCapture.snapshot(),
+    onPcmStart: (info) => microphoneCapture.onPcmStart(info),
+    retry: () => microphoneCapture.retry(),
+    reset: () => microphoneCapture.reset(),
+  };
+} catch { /* page-only diagnostics */ }
 
 // E5-T14b: route the terminal/desktop pointer surface to the two guest-visible T14a devices. The
 // adapter is deliberately dynamic because the controller is replaced on every boot and may be a
@@ -707,6 +777,9 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   keyboardSuppressLateKeyups = false;
   keyboardLastReleaseReason = "controller-retired";
   updateKeyboardDebug();
+  pendingMicrophoneEvents.length = 0;
+  microphoneCapture.reset();
+  updateMicrophoneIndicator();
   try { pointerBridge?.reset?.({ emit: false, exitLock: true }); } catch { /* pointer lock may already be gone */ }
   updatePointerIndicator();
   ui.detachSink();
@@ -1106,7 +1179,13 @@ async function runLinuxBootOwned(opts, banner, request) {
       audioClockBuffer: audioBootEnabled ? audioSink.clockBuffer : null,
       audioCapacityFrames: audioBootEnabled ? audioSink.ring.capacityFrames : 0,
       audioSampleRateHz: audioBootEnabled ? audioSink.sampleRateHz : 0,
+      captureSharedBuffer: microphoneRing?.sharedBuffer ?? null,
+      captureCapacityFrames: microphoneRing?.capacityFrames ?? 0,
+      captureSampleRateHz: microphoneRing ? microphoneSampleRateHz : 0,
       enableMic: opts.enableMic ?? micEnabled,
+      onCaptureStart: (info) => {
+        void microphoneCapture.onPcmStart(info);
+      },
       onState: (s) => {
         // E4 restore-on-first-load: a visible stopwatch instead of the "booting" progress bar when
         // the shipped boot snapshot is being restored.
@@ -1184,6 +1263,7 @@ async function runLinuxBootOwned(opts, banner, request) {
       onWriterStatus: ownerUi.onWriterStatus,
     });
     linuxCtl = bootController;
+    flushMicrophoneGuestEvents(linuxCtl);
     updatePointerIndicator();
     const ctlForRelease = bootController;
     keyboardBridge = createKeyboardBridge(createWasmKeyboardAdapter(linuxCtl), {
@@ -1699,8 +1779,17 @@ window.wvmDemo = {
   audioSink: () => audioSink,
   audioReady: () => audioReady,
   audioPipelineReady: () => audioPipelineReady,
+  microphone: () => microphoneCapture.snapshot(),
+  microphoneStart: (info) => microphoneCapture.onPcmStart(info),
+  microphoneRetry: () => microphoneCapture.retry(),
   async audioOutputReady() {
     return Boolean(await linuxCtl?.audioOutputReady?.());
+  },
+  async audioCaptureReady() {
+    return Boolean(await linuxCtl?.audioCaptureReady?.());
+  },
+  async captureState() {
+    return await linuxCtl?.captureState?.() ?? null;
   },
   // Subscribe to the real guest console stream (Uint8Array chunks). Returns an unsubscribe fn.
   onConsole(fn) { consoleSubscribers.add(fn); return () => consoleSubscribers.delete(fn); },

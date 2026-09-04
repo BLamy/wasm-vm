@@ -1146,6 +1146,7 @@ pub struct SndState {
     pub stream: PcmStream,
     capture_stream: PcmStream,
     capture_enabled: bool,
+    capture_start_count: u64,
     pcm_rate_mask: u64,
     kicked: [bool; NUM_QUEUES as usize],
     reset_pending: bool,
@@ -1162,6 +1163,7 @@ impl Default for SndState {
             stream: PcmStream::default(),
             capture_stream: PcmStream::default(),
             capture_enabled: false,
+            capture_start_count: 0,
             pcm_rate_mask: SUPPORTED_PCM_RATE_MASK,
             kicked: [false; NUM_QUEUES as usize],
             reset_pending: false,
@@ -1189,6 +1191,7 @@ impl SndState {
         }
         self.capture_enabled = enabled;
         self.capture_stream.reset();
+        self.capture_start_count = 0;
         self.capture = CaptureQueue::default();
         self.capture_lifecycle_epoch = self.capture_lifecycle_epoch.wrapping_add(1);
     }
@@ -1220,6 +1223,25 @@ impl SndState {
     /// Number of input buffers held for clock-paced completion.
     pub fn capture_pending_count(&self) -> usize {
         self.capture.pending.len()
+    }
+
+    /// Monotonic count of successful input PCM_START requests in this device lifetime. The wasm
+    /// host uses this edge to request permission lazily, after (and only after) the guest starts
+    /// capture. A reset starts a fresh device lifetime and clears the count.
+    pub const fn capture_start_count(&self) -> u64 {
+        self.capture_start_count
+    }
+
+    /// Monotonic lifecycle epoch for the optional input stream.
+    pub const fn capture_lifecycle_epoch(&self) -> u64 {
+        self.capture_lifecycle_epoch
+    }
+
+    /// Queue one bounded input XRUN notification for a host lifecycle failure. The next eventq
+    /// service delivers it to the guest; no host exception or stream teardown is required.
+    pub fn notify_capture_xrun(&mut self) {
+        let mut emitted = 0;
+        self.enqueue_xrun_event(CAPTURE_STREAM_ID, &mut emitted);
     }
 
     /// Restrict the guest-visible output capability to the rate provided by the host sink. The
@@ -1389,6 +1411,9 @@ impl SndState {
         };
         if status == SndStatus::Ok && control != PcmControl::Info {
             if capture {
+                if control == PcmControl::Start {
+                    self.capture_start_count = self.capture_start_count.wrapping_add(1);
+                }
                 self.capture_lifecycle_epoch = self.capture_lifecycle_epoch.wrapping_add(1);
                 if control == PcmControl::Release {
                     self.capture.release_pending = true;
@@ -1980,6 +2005,7 @@ impl SndState {
         self.reset_pending = true;
         self.lifecycle_epoch = 0;
         self.capture_lifecycle_epoch = 0;
+        self.capture_start_count = 0;
         self.playback = PlaybackQueue::default();
         self.capture = CaptureQueue::default();
         self.events = EventState::default();
@@ -2114,7 +2140,7 @@ pub fn service(
     sink: &mut dyn AudioSink,
     bus: &mut SystemBus,
 ) -> PlaybackReport {
-    service_internal(slot, None, None, tx_vq, state, clock, sink, bus)
+    service_internal(slot, None, None, None, None, tx_vq, state, clock, sink, bus)
 }
 
 /// Run-loop service for the capture rxq without eventq delivery. The injected source keeps this
@@ -2234,10 +2260,33 @@ pub fn service_with_control_eventq(
     sink: &mut dyn AudioSink,
     bus: &mut SystemBus,
 ) -> PlaybackReport {
+    service_with_control_eventq_and_capture(
+        slot, controlq, eventq, None, None, tx_vq, state, clock, sink, bus,
+    )
+}
+
+/// Run-loop service for all sound queues, including the optional capture rxq. The capture source
+/// is injected by the host and is consumed only at the same instruction boundary as playback,
+/// control, and eventq work, preserving one ordered guest-visible audio clock.
+#[allow(clippy::too_many_arguments)]
+pub fn service_with_control_eventq_and_capture(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    controlq: &mut Option<Virtqueue>,
+    eventq: &mut Option<Virtqueue>,
+    rx_vq: Option<&mut Option<Virtqueue>>,
+    source: Option<&mut dyn AudioCaptureSource>,
+    tx_vq: &mut Option<Virtqueue>,
+    state: &Rc<RefCell<SndState>>,
+    clock: &dyn AudioClock,
+    sink: &mut dyn AudioSink,
+    bus: &mut SystemBus,
+) -> PlaybackReport {
     service_internal(
         slot,
         Some(controlq),
         Some(eventq),
+        rx_vq,
+        source,
         tx_vq,
         state,
         clock,
@@ -2485,7 +2534,18 @@ pub fn service_with_eventq(
     sink: &mut dyn AudioSink,
     bus: &mut SystemBus,
 ) -> PlaybackReport {
-    service_internal(slot, None, Some(eventq), tx_vq, state, clock, sink, bus)
+    service_internal(
+        slot,
+        None,
+        Some(eventq),
+        None,
+        None,
+        tx_vq,
+        state,
+        clock,
+        sink,
+        bus,
+    )
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -2493,28 +2553,52 @@ fn service_internal(
     slot: &Rc<RefCell<VirtioMmio>>,
     mut controlq: Option<&mut Option<Virtqueue>>,
     mut eventq: Option<&mut Option<Virtqueue>>,
+    mut rx_vq: Option<&mut Option<Virtqueue>>,
+    source: Option<&mut dyn AudioCaptureSource>,
     tx_vq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<SndState>>,
     clock: &dyn AudioClock,
     sink: &mut dyn AudioSink,
     bus: &mut SystemBus,
 ) -> PlaybackReport {
-    let (reset, control_kicked, tx_kicked, event_kicked, active_audio, active_events) = {
+    let (
+        reset,
+        control_kicked,
+        tx_kicked,
+        rx_kicked,
+        event_kicked,
+        active_audio,
+        active_capture,
+        active_events,
+    ) = {
         let mut state = state.borrow_mut();
         let reset = state.take_reset_pending();
         let control_kicked = state.take_queue_kick(CONTROL_QUEUE);
         let tx_kicked = state.take_queue_kick(TX_QUEUE);
+        let rx_kicked = if rx_vq.is_some() && source.is_some() {
+            state.take_queue_kick(RX_QUEUE)
+        } else {
+            false
+        };
         let event_kicked = state.take_queue_kick(EVENT_QUEUE);
         let active_audio = state.stream.state() == PcmState::Running
             || !state.playback.pending.is_empty()
             || state.playback.release_pending;
+        let active_capture = rx_vq.is_some()
+            && source.is_some()
+            && state.capture_enabled
+            && (state.capture_stream.state() == PcmState::Running
+                || !state.capture.pending.is_empty()
+                || state.capture.release_pending);
         let active_events = !state.events.pending.is_empty();
         (
             reset,
             control_kicked,
             tx_kicked,
+            rx_kicked,
             event_kicked,
             active_audio,
+            active_capture,
             active_events,
         )
     };
@@ -2523,11 +2607,21 @@ fn service_internal(
             *controlq = None;
         }
         *tx_vq = None;
+        if let Some(rx_vq) = rx_vq.as_deref_mut() {
+            *rx_vq = None;
+        }
         if let Some(eventq) = eventq.as_deref_mut() {
             *eventq = None;
         }
     }
-    if !control_kicked && !tx_kicked && !event_kicked && !active_audio && !active_events {
+    if !control_kicked
+        && !tx_kicked
+        && !rx_kicked
+        && !event_kicked
+        && !active_audio
+        && !active_capture
+        && !active_events
+    {
         return PlaybackReport::default();
     }
 
@@ -2557,6 +2651,32 @@ fn service_internal(
         report = playback;
         if report.completed != 0
             && tx_vq
+                .as_ref()
+                .is_some_and(|queue| queue.interrupt_needed(bus))
+        {
+            slot.borrow_mut().raise_used_irq();
+        }
+    }
+    if let (Some(rx_vq), Some(source)) = (rx_vq, source)
+        && (rx_kicked || active_capture)
+        && matches!(
+            prepare_queue(slot, rx_vq, RX_QUEUE),
+            QueuePreparation::Ready
+        )
+    {
+        let result = state.borrow_mut().service_capture(
+            rx_vq.as_mut().expect("rxq was prepared"),
+            bus,
+            clock,
+            source,
+        );
+        let Ok(capture) = result else {
+            slot.borrow_mut().protocol_violation();
+            *rx_vq = None;
+            return PlaybackReport::default();
+        };
+        if capture.completed != 0
+            && rx_vq
                 .as_ref()
                 .is_some_and(|queue| queue.interrupt_needed(bus))
         {

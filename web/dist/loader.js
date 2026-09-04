@@ -208,6 +208,9 @@ export async function startLinuxBoot(opts = {}) {
     // is PAUSED before returning; the UI shows the dialog and calls the returned controller's
     // resumeAfterQuota()/continueReadOnly()/resetDisk() to act.
     onQuota = () => {},
+    // E5-T21d: emitted once per successful guest capture PCM_START edge. The page owns the
+    // permission adapter; this callback is only a lifecycle notification and never opens media.
+    onCaptureStart = () => {},
     // Instructions per synchronous run slice. Kept modest so a slice is only a few ms of main-thread
     // time — short enough that the browser paints/handles input between slices (smooth page/animation).
     // Combined with the no-clamp MessageChannel yield (see yieldToMain), throughput stays high. A larger
@@ -240,6 +243,11 @@ export async function startLinuxBoot(opts = {}) {
     audioClockBuffer = null,
     audioCapacityFrames = 0,
     audioSampleRateHz = 0,
+    // E5-T21d: the reversed capture SAB is attached before the first guest run slice. It carries
+    // PCM only; getUserMedia remains page-owned and is requested lazily from onCaptureStart.
+    captureSharedBuffer = null,
+    captureCapacityFrames = 0,
+    captureSampleRateHz = 0,
     // E5-T21b: opt into the guest-visible input PCM stream at VM creation time. This flag only
     // changes device configuration; permission and host capture belong to later slices.
     enableMic = false,
@@ -512,6 +520,21 @@ export async function startLinuxBoot(opts = {}) {
         audioSampleRateHz,
       );
     }
+    const captureRequested = captureSharedBuffer !== null
+      || captureCapacityFrames > 0
+      || captureSampleRateHz > 0;
+    if (captureRequested) {
+      if (captureSharedBuffer === null || captureCapacityFrames < 1
+        || captureSampleRateHz < 1
+        || typeof machine.attachAudioCapture !== "function") {
+        throw new Error("browser wasm build lacks a complete audio capture bridge");
+      }
+      machine.attachAudioCapture(
+        captureSharedBuffer,
+        captureCapacityFrames,
+        captureSampleRateHz,
+      );
+    }
 
     // E4-T30: remove the old browser default that left the proven 2.24x block-boundary batching win
     // dark. This call is deliberately before enableJit: cold/untranslatable code keeps using the fast
@@ -722,6 +745,17 @@ export async function startLinuxBoot(opts = {}) {
 
     let stopped = false;
     let paused = Boolean(startPaused);
+    let observedCaptureStartCount = 0;
+    const observeCaptureStart = () => {
+      if (typeof machine.virtioSndCaptureState !== "function") return;
+      let snapshot;
+      try { snapshot = machine.virtioSndCaptureState(); } catch { return; }
+      if (!snapshot || snapshot.enabled !== true) return;
+      const startCount = Number(snapshot.startCount);
+      if (!Number.isSafeInteger(startCount) || startCount <= observedCaptureStartCount) return;
+      observedCaptureStartCount = startCount;
+      try { onCaptureStart({ ...snapshot }); } catch (error) { onError(error); }
+    };
     // E4-T32: a worker is still one JS event loop. A 20M-instruction slice made every input/RPC and
     // output flush wait behind seconds of synchronous runChunk work. Keep the page-selected slice at
     // <=500k. Do not shrink from one slow JIT compilation: that work is not proportional to the retire
@@ -862,6 +896,7 @@ export async function startLinuxBoot(opts = {}) {
         if (lastSliceStart) stretchMaxMs = Math.max(stretchMaxMs, sliceStart - lastSliceStart);
         lastSliceStart = sliceStart;
         res = machine.runChunk(runQuantum, usePersist ? maxDirtyBytes : undefined);
+        observeCaptureStart();
         const sliceMs = (typeof performance !== "undefined" ? performance.now() : Date.now()) - sliceStart;
         sliceCount += 1;
         sliceTotalMs += sliceMs;
@@ -1026,6 +1061,19 @@ export async function startLinuxBoot(opts = {}) {
       overlaySeedIdentity: () => overlaySeedIdentity,
       audioOutputReady: () => (
         typeof machine.audioOutputReady === "function" ? machine.audioOutputReady() : false
+      ),
+      audioCaptureReady: () => (
+        typeof machine.audioCaptureReady === "function" ? machine.audioCaptureReady() : false
+      ),
+      captureState: () => (
+        typeof machine.virtioSndCaptureState === "function"
+          ? machine.virtioSndCaptureState()
+          : null
+      ),
+      notifyCaptureEvent: (event) => (
+        typeof machine.notifyCaptureEvent === "function"
+          ? machine.notifyCaptureEvent(event)
+          : false
       ),
       stateDigest: () => machine.stateDigest(),
       jitStats: () => (typeof machine.jitStats === "function" ? machine.jitStats() : null),

@@ -56,6 +56,9 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "readOnly",
   "overlaySeedIdentity",
   "audioOutputReady",
+  "audioCaptureReady",
+  "captureState",
+  "notifyCaptureEvent",
   "resumeAfterQuota",
   "continueReadOnly",
   "hasUnpersisted",
@@ -263,6 +266,7 @@ export function createLinuxWorkerClient(endpoint, callbacks = {}) {
       case "storage": callbacks.onStorage?.(message.info); break;
       case "writer": callbacks.onWriterStatus?.(message.info); break;
       case "quota": callbacks.onQuota?.(message.info); break;
+      case "capture-start": callbacks.onCaptureStart?.(message.info); break;
       case "tailscale-event":
         // Tailscale status persistence is ancillary UI work. localStorage/security failures must not
         // terminate the emulated machine or poison the controller protocol.
@@ -646,6 +650,7 @@ export function createLinuxWorkerRuntime(endpoint, {
     onStorage: (info) => send({ type: "storage", info }),
     onWriterStatus: (info) => send({ type: "writer", info }),
     onQuota: (info) => send({ type: "quota", info }),
+    onCaptureStart: (info) => send({ type: "capture-start", info }),
   };
 
   const handleBoot = async (message) => {
