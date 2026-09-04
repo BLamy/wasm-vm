@@ -162,6 +162,36 @@ test("capacity metadata is immutable and cannot silently desynchronize endpoints
   );
 });
 
+test("malformed headers and caller ranges fail closed before touching the payload", () => {
+  assert.throws(
+    () => AudioRingBuffer.fromSharedBuffer(new ArrayBuffer(HEADER_WORDS * Int32Array.BYTES_PER_ELEMENT)),
+    /SharedArrayBuffer/,
+  );
+  assert.throws(() => AudioRingBuffer.fromSharedBuffer(new SharedArrayBuffer(HEADER_WORDS * 4 - 4)), /smaller/);
+  assert.throws(() => AudioRingBuffer.allocate({ capacityFrames: 0 }), /capacity/);
+  assert.throws(() => AudioRingBuffer.allocate({ initialWriteIndex: 1 }), /counters/);
+
+  const malformed = (cell, value, message) => {
+    const ring = AudioRingBuffer.allocate({ capacityFrames: 4 });
+    const header = new Int32Array(ring.sharedBuffer, 0, HEADER_WORDS);
+    Atomics.store(header, cell, value);
+    assert.throws(() => AudioRingBuffer.fromSharedBuffer(ring.sharedBuffer), message);
+  };
+  malformed(HEADER.MAGIC, 0, /magic/);
+  malformed(HEADER.VERSION, 0, /version/);
+  malformed(HEADER.CHANNELS, 1, /channel/);
+  malformed(HEADER.CAPACITY_FRAMES, 0, /capacity/);
+
+  const ring = AudioRingBuffer.allocate({ capacityFrames: 4 });
+  const producer = ring.producer();
+  const consumer = ring.consumer();
+  assert.throws(() => producer.write(new Int32Array(2)), /Float32Array/);
+  assert.throws(() => producer.write(new Float32Array(2), 2), /frame range/);
+  assert.throws(() => consumer.readInto(new Int32Array(2)), /Float32Array/);
+  assert.throws(() => consumer.readInto(new Float32Array(2), 2), /frame range/);
+  assert.equal(ring.fillFrames, 0);
+});
+
 test("concurrent worker producer and consumer never lose or duplicate an index", async () => {
   const capacityFrames = 257;
   const totalFrames = 30_000;
