@@ -1,0 +1,168 @@
+{
+  "schema": "e5-t24d-clipboard-proof-v1",
+  "capturedOn": "2026-09-04 America/New_York",
+  "runtimeHead": "92b44ec6ed88e211385d0282b54e1dfff0fa2037",
+  "recording": {
+    "browser": "Playwright Chromium headless",
+    "browserVersion": "131.0.6778.33",
+    "fixture": "local HTTP page importing web/clipboard-service.js and web/agent-channel.js",
+    "urlPath": "/clipboard-proof-fixture.html",
+    "consoleErrors": [],
+    "independentMachines": "waived by user",
+    "webkit": "waived by user"
+  },
+  "browser": {
+    "browser": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/131.0.6778.33 Safari/537.36",
+      "clipboardPermissionContext": true,
+      "consoleErrors": []
+    },
+    "guestRoundTrips": [
+      {
+        "name": "three-byte",
+        "bytes": 3,
+        "exact": true
+      },
+      {
+        "name": "crlf",
+        "bytes": 12,
+        "exact": true
+      },
+      {
+        "name": "utf8",
+        "bytes": 12,
+        "exact": true
+      },
+      {
+        "name": "exact-256-kib",
+        "bytes": 262144,
+        "exact": true
+      }
+    ],
+    "hostRoundTrips": [
+      {
+        "name": "first-try",
+        "bytes": 9,
+        "exact": true
+      },
+      {
+        "name": "three-byte",
+        "bytes": 3,
+        "exact": true
+      },
+      {
+        "name": "crlf",
+        "bytes": 12,
+        "exact": true
+      },
+      {
+        "name": "utf8",
+        "bytes": 12,
+        "exact": true
+      },
+      {
+        "name": "exact-256-kib",
+        "bytes": 262144,
+        "exact": true
+      }
+    ],
+    "firstPasteOrdering": {
+      "order": [
+        "channel-send",
+        "key-ready",
+        "channel-send",
+        "key-ready",
+        "channel-send",
+        "key-ready",
+        "channel-send",
+        "key-ready",
+        "channel-send",
+        "key-ready"
+      ],
+      "exactFirstBytes": true,
+      "noStaleFirstPaste": true
+    },
+    "echoAttack": {
+      "immediateCopies": 100,
+      "emittedFrames": 101,
+      "suppressedEchoes": 101,
+      "identicalDirectionChangeAccepted": true,
+      "reconnectInvalidatedHistory": true
+    },
+    "permission": {
+      "deniedState": "denied",
+      "stagedBytes": 11,
+      "attemptsBeforeGesture": 1,
+      "attemptsAfterGesture": 2,
+      "recovered": true
+    },
+    "privacy": {
+      "focused": false,
+      "clipboardDataReads": 0,
+      "sentFrames": 0
+    },
+    "invalid": {
+      "oversizedBytes": 262145,
+      "oversizedReason": "invalid",
+      "malformedReason": "invalid",
+      "writeNeverReached": true
+    },
+    "listenerAttach": {
+      "counts": {
+        "paste": 1,
+        "pointerdown": 1,
+        "keydown": 1
+      },
+      "idempotent": true
+    },
+    "status": {
+      "state": "synced",
+      "text": "Clipboard: synced"
+    },
+    "browserWrites": 4,
+    "secondTab": {
+      "tab": 2,
+      "listenerCounts": {
+        "paste": 1,
+        "pointerdown": 1,
+        "keydown": 1
+      },
+      "sentFrames": 1,
+      "pending": false,
+      "clipboardReads": 0,
+      "suppressedEchoes": 1,
+      "isolated": true
+    }
+  },
+  "native": {
+    "protocol": {
+      "command": "cargo test -p wasm-vm-agent-protocol",
+      "exitCode": 0
+    },
+    "guest": {
+      "command": "cargo test -p wasm-vm-guest-agent -- --nocapture",
+      "exitCode": 0,
+      "requiredTests": [
+        "clipboard_bridge_emits_changes_applies_host_values_and_answers_get",
+        "clipboard_bridge_retries_missing_display_and_child_death_with_bounded_state",
+        "clipboard_bridge_retains_host_set_across_helper_failures_and_reports_fallback",
+        "clipboard_payload_errors_are_naked_without_touching_the_serial_session",
+        "helper_children_are_reaped_and_io_is_bounded_without_a_shell",
+        "reset_terminates_an_inflight_frame_and_backoff_is_bounded"
+      ],
+      "childRecovery": true,
+      "queueIsolation": true
+    }
+  },
+  "sourceDistHashes": {
+    "agent-channel.js": {
+      "source": "1b527f025e92b725ea088168ea4b889c70a6e198efa8a438a50f70a4b06292c3",
+      "dist": "1b527f025e92b725ea088168ea4b889c70a6e198efa8a438a50f70a4b06292c3"
+    },
+    "clipboard-service.js": {
+      "source": "8e564d1f1696e7f0362878d056adabd44262040b253e96b0b1bbbb3126e815d6",
+      "dist": "8e564d1f1696e7f0362878d056adabd44262040b253e96b0b1bbbb3126e815d6"
+    }
+  },
+  "screenshot": "evidence/e5-t24d/clipboard-proof-browser.png"
+}
