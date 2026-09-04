@@ -10,7 +10,7 @@ use wasm_vm_core::dev::virtio::snd::{
     VIRTIO_SND_R_JACK_INFO, VIRTIO_SND_R_JACK_REMAP, VIRTIO_SND_R_PCM_INFO,
     VIRTIO_SND_R_PCM_PREPARE, VIRTIO_SND_R_PCM_RELEASE, VIRTIO_SND_R_PCM_START,
     VIRTIO_SND_R_PCM_STOP, VIRTIO_SND_S_BAD_MSG, VIRTIO_SND_S_NOT_SUPP, VIRTIO_SND_S_OK, VirtioSnd,
-    transition,
+    new, transition,
 };
 
 const EXPECTED_JACK_INFO: [u8; JACK_INFO_SIZE] = [
@@ -136,7 +136,7 @@ fn exhaustive_six_request_five_state_oracle_is_stable() {
 
 #[test]
 fn device_identity_config_and_queue_markers_are_spec_shaped() {
-    let mut device = VirtioSnd::new();
+    let (mut device, state) = new();
     assert_eq!(device.device_id(), 25);
     assert_eq!(device.num_queues(), 4);
     assert_eq!(device.config_read(0, 4), 1);
@@ -144,7 +144,6 @@ fn device_identity_config_and_queue_markers_are_spec_shaped() {
     assert_eq!(device.config_read(8, 4), 1);
     assert_eq!(device.config_read(12, 8), 0);
 
-    let state = device.state_handle();
     device.queue_notify(0);
     device.queue_notify(3);
     assert!(state.borrow_mut().take_queue_kick(0));
