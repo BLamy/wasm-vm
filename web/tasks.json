@@ -16316,9 +16316,9 @@
       "epicKey": "5",
       "title": "EDID blocks and display-info config events (hotplug plumbing)",
       "priority": 504,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
-        "E5-T03"
+        "E5-T03c"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -19234,8 +19234,9 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "verify(e5-t24d): mark clipboard proof verified",
             "evidence(e5-t24d): submit clipboard proof",
             "chore(e5-t24d): activate clipboard proof task"
           ]
@@ -19243,7 +19244,7 @@
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E5-T25",

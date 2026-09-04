@@ -3,9 +3,10 @@ id: E5-T04
 epic: 5
 title: EDID blocks and display-info config events (hotplug plumbing)
 priority: 504
-status: pending
-depends_on: [E5-T03]
+status: in-progress
+depends_on: [E5-T03c]
 estimate: S
+risk: high
 capstone: false
 ---
 
