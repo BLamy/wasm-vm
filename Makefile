@@ -482,6 +482,13 @@ verify-E5-T04:
 	wasm-pack test --node crates/wasm --test gpu_protocol
 	@echo "verify-E5-T04 (EDID, display info, and hotplug events): OK"
 
+.PHONY: verify-E5-T06a
+verify-E5-T06a:
+	node --check web/src/sink/present-backend.js
+	node --check web/src/sink/canvas2d.js
+	node --test web/tests/e5-t06a-canvas2d.test.mjs
+	@echo "verify-E5-T06a (Canvas2D presentation backend and contract): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
