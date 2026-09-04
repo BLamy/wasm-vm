@@ -559,6 +559,25 @@ verify-E5-T07c:
 	node tools/verify/e5-t07c-tty0-damage.mjs --output evidence/e5-t07c/tty0-damage.json
 	@echo "verify-E5-T07c (Chromium tty0 damage rectangles): OK"
 
+.PHONY: verify-E5-T07d
+verify-E5-T07d:
+	# Native null-sink parity plus Chromium-only cold stress/reload proof. Independent machines,
+	# WebKit, and host rr are outside this task's acceptance boundary.
+	cargo fmt --check -p wasm-vm-core -p wasm-vm-cli -p wasm-vm-wasm
+	cargo clippy -p wasm-vm-core --lib --tests --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-cli --bin wasm-vm --features gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown -- -D warnings
+	cargo test -p wasm-vm-core --lib
+	cargo test -p wasm-vm-core --test virtio_gpu_machine
+	cargo test -p wasm-vm-cli --bin wasm-vm
+	node --test web/tests/e5-t06d-presentation.test.mjs
+	$(MAKE) web-build
+	cargo build --release -p wasm-vm-cli --features gpu-trace
+	node --check web/tty0-stress.js
+	node --check tools/verify/e5-t07d-native-parity-stress.mjs
+	node tools/verify/e5-t07d-native-parity-stress.mjs --output evidence/e5-t07d/native-parity-stress.json
+	@echo "verify-E5-T07d (native parity and tty0 stress): OK"
+
 .PHONY: verify-E3-T12a
 verify-E3-T12a:
 	# Scoped to the snapshot foundation this task freezes (the core crate's library, where resume.rs
