@@ -3,13 +3,22 @@ id: E5-T21
 epic: 5
 title: Microphone capture stream (stretch) — rxq, getUserMedia, permission UX
 priority: 521
-status: pending
+status: cancelled
 depends_on: [E5-T20e]
 estimate: M
+risk: high
 capstone: false
+decomposed_into: [E5-T21a, E5-T21b, E5-T21c, E5-T21d, E5-T21e]
 ---
 
 ## Goal
+
+> **DECOMPOSED 2026-09-03.** This M-sized stretch container is cancelled before
+> implementation and replaced by five ordered S slices. E5-T21a owns the guest capture
+> protocol and rxq state machine, E5-T21b owns the `enable_mic` advertisement/config gate,
+> E5-T21c owns the reversed shared ring and capture worklet, E5-T21d owns lazy permission and
+> silence/revocation UX, and E5-T21e owns the end-to-end `arecord` proof and documentation.
+
 Config-gated microphone input: the virtio-snd device grows a capture PCM stream fed
 from `getUserMedia` through a capture AudioWorklet and a second SAB ring, so `arecord`
 in the guest records the real mic — off by default, honest about permission state, and
@@ -65,4 +74,12 @@ the browser chrome. Simultaneous full-duplex (aplay + arecord) for 60 s: both ri
 stable, no cross-corruption.
 
 ## Verification log
-(empty)
+
+### 2026-09-03 — coordinator — decomposed
+
+This M-sized stretch container is cancelled before implementation as required by task policy and
+replaced by five ordered S tasks with one boundary and one deterministic acceptance command each:
+guest rxq protocol, device-time feature gating, capture ring/worklet, permission lifecycle, and
+the final guest/browser proof. The children preserve the parent dependency on E5-T20e and gate
+the next slice in order so no microphone permission or host-media code lands before the guest
+contract is deterministic.

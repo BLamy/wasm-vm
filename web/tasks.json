@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 231,
-    "total": 392
+    "total": 397
   },
   "epics": [
     {
@@ -18353,15 +18353,16 @@
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t20e): record Chromium audio proof",
             "chore(e5-t20e): activate audio browser proof"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T21",
@@ -18369,14 +18370,20 @@
       "epicKey": "5",
       "title": "Microphone capture stream (stretch) — rxq, getUserMedia, permission UX",
       "priority": 521,
-      "status": "pending",
+      "status": "cancelled",
       "depends_on": [
         "E5-T20e"
       ],
-      "decomposed_into": [],
+      "decomposed_into": [
+        "E5-T21a",
+        "E5-T21b",
+        "E5-T21c",
+        "E5-T21d",
+        "E5-T21e"
+      ],
       "estimate": "M",
       "capstone": false,
-      "goal": "Config-gated microphone input: the virtio-snd device grows a capture PCM stream fed\nfrom `getUserMedia` through a capture AudioWorklet and a second SAB ring, so `arecord`\nin the guest records the real mic — off by default, honest about permission state, and\nsilent (not broken) when denied.",
+      "goal": "> **DECOMPOSED 2026-09-03.** This M-sized stretch container is cancelled before\n> implementation and replaced by five ordered S slices. E5-T21a owns the guest capture\n> protocol and rxq state machine, E5-T21b owns the `enable_mic` advertisement/config gate,\n> E5-T21c owns the reversed shared ring and capture worklet, E5-T21d owns lazy permission and\n> silence/revocation UX, and E5-T21e owns the end-to-end `arecord` proof and documentation.\n\nConfig-gated microphone input: the virtio-snd device grows a capture PCM stream fed\nfrom `getUserMedia` through a capture AudioWorklet and a second SAB ring, so `arecord`\nin the guest records the real mic — off by default, honest about permission state, and\nsilent (not broken) when denied.",
       "criteria": [
         {
           "text": "Flag off: guest `arecord -l` shows no capture device; PCM_INFO fixture confirms one stream advertised.",
@@ -18401,9 +18408,205 @@
       ],
       "criteriaTotal": 5,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-03 — coordinator — decomposed\n\nThis M-sized stretch container is cancelled before implementation as required by task policy and\nreplaced by five ordered S tasks with one boundary and one deterministic acceptance command each:\nguest rxq protocol, device-time feature gating, capture ring/worklet, permission lifecycle, and\nthe final guest/browser proof. The children preserve the parent dependency on E5-T20e and gate\nthe next slice in order so no microphone permission or host-media code lands before the guest\ncontract is deterministic.",
       "adversarial": "Attack the rate path: mic hardware at 44.1k while guest asks 48k — captured wav must be\nduration-correct (resample or reject per the documented policy; a 10% fast/slow\nrecording refutes). Attack buffer accounting: arecord with absurd period sizes (16\nbytes; 1 MB) — rxq completions must report actual lengths, never overrun the posted\nbuffer (guest memory canary around the buffer). Race permission: trigger PCM_START,\nanswer the permission prompt after 30 s — frames before grant must be silence, stream\ntimeline unbroken. Privacy refutation: run a full desktop session (T18) with flag on\nbut no guest recording and prove zero getUserMedia invocations and no mic indicator in\nthe browser chrome. Simultaneous full-duplex (aplay + arecord) for 60 s: both rings\nstable, no cross-corruption.",
       "file": "tasks/epic-5-the-window/E5-T21-virtio-snd-capture-stretch.md",
+      "activity": [
+        {
+          "date": "2026-09-03",
+          "commits": 0,
+          "labels": []
+        }
+      ],
+      "firstActivity": "2026-09-03",
+      "lastActivity": "2026-09-03",
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T21a",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Virtio-snd capture stream and rxq state machine",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T20e"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Add the guest-facing capture PCM stream and receive-queue (`rxq`) protocol to virtio-snd without\nopening a host microphone or changing the existing playback stream.",
+      "criteria": [
+        {
+          "text": "A legal posted capture buffer completes with the requested channel/sample format, actual byte length, and success status without modifying bytes outside the posted guest range.",
+          "checked": false
+        },
+        {
+          "text": "Malformed headers, 16-byte periods, 1 MiB periods, short descriptors, and guest-memory canaries fail closed or complete with a bounded status; no rxq request poisons the next request.",
+          "checked": false
+        },
+        {
+          "text": "PCM_START/STOP/PREPARE/RELEASE transitions are deterministic and playback behavior is unchanged.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Permute descriptor lengths and offsets, place canaries on both sides of every receive buffer, submit\nzero-length and absurd periods, and interleave capture STOP/START with playback transfers. Inspect\nevery used-ring length and status for boundedness and deterministic recovery.",
+      "file": "tasks/epic-5-the-window/E5-T21a-virtio-snd-capture-rxq.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T21b",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Config-gated virtio-snd capture advertisement",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T21a"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make microphone capture an explicit VM-creation feature: `enable_mic=false` is playback-only and\n`enable_mic=true` advertises exactly one deterministic input PCM stream.",
+      "criteria": [
+        {
+          "text": "With the flag off, PCM_INFO exposes no capture stream while the existing playback stream and stream numbering remain unchanged.",
+          "checked": false
+        },
+        {
+          "text": "With the flag on, PCM_INFO exposes one INPUT stream with exact format/channel/rate metadata; unsupported rates and malformed selectors remain non-mutating.",
+          "checked": false
+        },
+        {
+          "text": "Reset and repeated device creation preserve the selected gate without opening a host device.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Query stream IDs and selectors in every order, toggle the flag across fresh machine construction and\nreset, request unsupported rate/channel combinations, and assert that playback descriptors and\nguest-visible slot ordering never change.",
+      "file": "tasks/epic-5-the-window/E5-T21b-virtio-snd-capture-config.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T21c",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Capture SAB ring and AudioWorklet producer",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T21b"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Implement the browser-side capture half of the microphone pipeline: a capture AudioWorklet writes\ninterleaved f32 frames into a second shared ring for the VM worker to consume.",
+      "criteria": [
+        {
+          "text": "Every committed capture frame is ordered exactly once across repeated non-power-of-two wraps; the consumer never reads unpublished data and the producer never overwrites unread data.",
+          "checked": false
+        },
+        {
+          "text": "Mono input is expanded deterministically to the advertised guest channels; missing input is zero-filled and overflow increments a bounded counter without blocking the audio thread.",
+          "checked": false
+        },
+        {
+          "text": "The worklet process path contains no promise, timer, blocking primitive, or per-quantum allocation helper and remains correct at both supported rates.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Run seeded producer/consumer schedules through counter wrap, starve and flood the consumer, switch\nbetween mono and stereo, force 44.1 kHz, and inspect every frame/counter plus the process source guard.",
+      "file": "tasks/epic-5-the-window/E5-T21c-audio-capture-ring-worklet.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T21d",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Lazy microphone permission and silence fallback",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T21c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Connect capture PCM_START to a lazy `getUserMedia` request and make denied, missing, muted, or\nrevoked tracks behave as a correctly paced digital-silence source with honest UI state.",
+      "criteria": [
+        {
+          "text": "A session that never starts capture makes zero `getUserMedia` calls and shows the microphone as off; playback remains unaffected.",
+          "checked": false
+        },
+        {
+          "text": "Denial or no-device returns paced zero frames, a completed capture stream, and a denied state; revocation/mute switches to silence, notifies the guest, and permits a later retry.",
+          "checked": false
+        },
+        {
+          "text": "A permission response delayed by 30 seconds leaves the capture timeline continuous with silence before grant and no duplicate streams or listeners after re-grant.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Spy on every `getUserMedia` call before PCM_START, delay the permission response, deny twice, revoke\nmid-stream, and re-grant without reload. Check wall-clock frame counts, UI state, eventq records, and\nlistener cardinality after each transition.",
+      "file": "tasks/epic-5-the-window/E5-T21d-microphone-permission-lifecycle.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E5-T21e",
+      "epic": "5",
+      "epicKey": "5",
+      "title": "Guest microphone capture and browser proof",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E5-T21d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove the complete opt-in microphone path: guest `arecord` receives real or deterministic loopback\naudio through rxq, and denied/revoked permission remains a paced, recoverable silence stream.",
+      "criteria": [
+        {
+          "text": "Flag-off guest enumeration has no capture device and the browser records zero media requests.",
+          "checked": false
+        },
+        {
+          "text": "Granted capture runs for five seconds with exact WAV duration and a loopback tone FFT peak; denied capture completes in the same wall-clock time as digital silence.",
+          "checked": false
+        },
+        {
+          "text": "Mid-record revocation emits notification/silence, re-grant works without reload, and the final Chromium run has zero unexpected console/page/request errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(empty)",
+      "adversarial": "Force 44.1 kHz hardware, post 16-byte and 1 MiB periods with canaries, delay permission 30 seconds,\nrun two tabs and 60 seconds of full-duplex playback/capture, and require exact duration, bounded\ncompletion lengths, no cross-ring corruption, and zero pre-START media calls.",
+      "file": "tasks/epic-5-the-window/E5-T21e-microphone-capture-proof.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,
