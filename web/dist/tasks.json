@@ -18804,15 +18804,16 @@
       "activity": [
         {
           "date": "2026-09-04",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "verify(e5-t23a): record protocol framing evidence",
             "chore(e5-t23a): activate protocol framing task"
           ]
         }
       ],
       "firstActivity": "2026-09-04",
       "lastActivity": "2026-09-04",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T23b",
@@ -18820,7 +18821,7 @@
       "epicKey": "5",
       "title": "Virtio-console multiport agent transport",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E5-T23a"
       ],

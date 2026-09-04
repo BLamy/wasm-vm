@@ -3,7 +3,7 @@ id: E5-T23b
 epic: 5
 title: Virtio-console multiport agent transport
 priority: 523.2
-status: pending
+status: in-progress
 depends_on: [E5-T23a]
 estimate: S
 risk: high
