@@ -1,0 +1,42 @@
+E5-T19d verifier attack transcript
+tested_head=c41dd53892b62d9759965efb0ed0c0c10ba97323
+worker_head=ad55ed0b73c3d001fe7212b0050a80a4761ab1d3
+
+predictions:
+  The real Machine controlq will reclaim malformed, oversized, and short-response descriptors
+  without poisoning the next valid query; a held tx period will complete once after the deadline;
+  STOP/START will preserve samples and used-ring order; and slot selection will not replace an
+  existing virtio device.
+
+commands:
+  cargo test -p wasm-vm-core --release --test virtio_snd_machine --test virtio_snd --test virtio_snd_playback --test virtio_snd_queue --no-fail-fast -- --nocapture
+  for n in $(seq 1 25); do cargo test -p wasm-vm-core --test virtio_snd_machine --quiet || exit 1; done
+  cargo clippy -p wasm-vm-core --all-targets -- -D warnings
+  cargo fmt --all --check
+  git diff --check
+  fresh Chromium against web/dist/app.html, then construct WasmLinux with a deterministic 4 KiB
+    kernel buffer and empty initrd to execute the browser assembly path
+
+observed:
+  optimized sound suites: virtio_snd 6/6, virtio_snd_machine 4/4, virtio_snd_playback 7/7,
+    virtio_snd_queue 5/5; no failures
+  repeated Machine attack: 25 consecutive invocations, 4/4 passed in every invocation
+  novel control-ring attack: a 25-byte request returned BAD_MSG, a 3-byte response buffer was
+    reclaimed with used.len=0, and the following full PCM_INFO query returned OK with the exact
+    zero-padded payload; queue used index advanced to 3
+  slot attack: an occupied slot 6 preserved its block device and sound selected slot 7
+  playback: arrival left the four-frame period pending, one clock deadline completed it once,
+    and STOP/START resumed the exact ramp without duplicate samples
+  browser assembly: ready=true, WasmLinux construction assembled=true, capability class=
+    cap-pip verified, unexpected console errors=0, unexpected HTTP errors=0
+  expected ignored browser probes: favicon.ico 404 and local-only artifacts-alpine.json 404
+  clippy, fmt, and diff checks: passed
+
+coverage:
+  The new boundary test executes the worker's bounded-copy and atomic-response branches that the
+  original recording did not reach. The existing dependent T19b/T19c proofs are carried forward
+  unchanged for WavSink/sine integrity, mock-clock 0.5x/1x/2x pacing, malformed txq recovery,
+  XRUN bounds, and fifty STOP/RELEASE/reset/re-setup cycles. The fresh browser constructor executes
+  the wasm Linux assembly branch and verifies the shipped capability marker.
+
+findings: none

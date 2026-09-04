@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 225,
+    "verified": 226,
     "total": 387
   },
   "epics": [
@@ -18027,7 +18027,7 @@
       "epicKey": "5",
       "title": "virtio-snd Linux guest integration and playback proof",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T19c"
       ],
@@ -18051,21 +18051,22 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\n- Commit: `ad55ed0b73c3d001fe7212b0050a80a4761ab1d3`.\n- Commands: `cargo fmt --all --check`; the focused native sound suites (`virtio_snd_machine` 3/3,\n  `virtio_snd` 6/6, `virtio_snd_playback` 7/7, `virtio_snd_queue` 5/5); `cargo test -p\n  wasm-vm-core --lib --quiet` (238/238); targeted core/CLI clippy; wasm library clippy;\n  `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release`; no-default-features\n  core check; native hello assembly; `make web-build`; `make web-dist`; and `git diff --check`.\n- Results: all listed native suites, 238 core tests, targeted clippy, no-default-features, release\n  wasm, native assembly, deployable web build, and diff checks passed. The local Chromium smoke\n  against `web/dist/app.html` reached `__ready=true`, showed the T19d capability as `verified`,\n  and had zero unexpected console or HTTP errors; only the expected favicon and local-only Alpine\n  manifest 404 probes were ignored.\n- Evidence: [`snd-guest-native-2026-09-03.txt`](../../evidence/e5-t19d/snd-guest-native-2026-09-03.txt),\n  SHA-256 `b7999723a16ebeece67fa8aeb260b4195c875ae1eb886b52e739e930d41eacd3`.\n- Screenshot: [`browser-assembly-2026-09-03.png`](../../evidence/e5-t19d/browser-assembly-2026-09-03.png),\n  SHA-256 `9aaf5fa313c79c268722b80aa43a7efe6dd31882be301578ee7767fa8b32efd1`.\n\nThe assembled Machine fixture drives the guest-facing controlq and txq through real virtio-mmio\nQueueNotify writes, preserves the existing blk/net/input slots, compares the exact zero-padded\n`PCM_INFO` payload, reclaims malformed control traffic, holds a four-frame ramp until its 48 kHz\ndeadline, and resumes it exactly once across STOP/START. The dependent T19b WavSink/sine fixture\nprovides the native capture proof, while T19c provides malformed-transfer recovery and fifty reset /\nre-setup cycles. The browser assembly uses the same seam with a monotonic clock and headless\n`NullSink` pending T20's AudioWorklet sink. Independent machines and WebKit are waived by user\ndirection.",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\n- Commit: `ad55ed0b73c3d001fe7212b0050a80a4761ab1d3`.\n- Commands: `cargo fmt --all --check`; the focused native sound suites (`virtio_snd_machine` 3/3,\n  `virtio_snd` 6/6, `virtio_snd_playback` 7/7, `virtio_snd_queue` 5/5); `cargo test -p\n  wasm-vm-core --lib --quiet` (238/238); targeted core/CLI clippy; wasm library clippy;\n  `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release`; no-default-features\n  core check; native hello assembly; `make web-build`; `make web-dist`; and `git diff --check`.\n- Results: all listed native suites, 238 core tests, targeted clippy, no-default-features, release\n  wasm, native assembly, deployable web build, and diff checks passed. The local Chromium smoke\n  against `web/dist/app.html` reached `__ready=true`, showed the T19d capability as `verified`,\n  and had zero unexpected console or HTTP errors; only the expected favicon and local-only Alpine\n  manifest 404 probes were ignored.\n- Evidence: [`snd-guest-native-2026-09-03.txt`](../../evidence/e5-t19d/snd-guest-native-2026-09-03.txt),\n  SHA-256 `b7999723a16ebeece67fa8aeb260b4195c875ae1eb886b52e739e930d41eacd3`.\n- Screenshot: [`browser-assembly-2026-09-03.png`](../../evidence/e5-t19d/browser-assembly-2026-09-03.png),\n  SHA-256 `9aaf5fa313c79c268722b80aa43a7efe6dd31882be301578ee7767fa8b32efd1`.\n\nThe assembled Machine fixture drives the guest-facing controlq and txq through real virtio-mmio\nQueueNotify writes, preserves the existing blk/net/input slots, compares the exact zero-padded\n`PCM_INFO` payload, reclaims malformed control traffic, holds a four-frame ramp until its 48 kHz\ndeadline, and resumes it exactly once across STOP/START. The dependent T19b WavSink/sine fixture\nprovides the native capture proof, while T19c provides malformed-transfer recovery and fifty reset /\nre-setup cycles. The browser assembly uses the same seam with a monotonic clock and headless\n`NullSink` pending T20's AudioWorklet sink. Independent machines and WebKit are waived by user\ndirection.\n\n### 2026-09-03 — verifier — VERDICT: verified\n\n- **Control transport — HELD.** Predicted that the assembled Machine would reclaim malformed,\n  oversized, and short-response control descriptors without poisoning a following valid query.\n  The optimized suite passed 4/4, including the promoted boundary test: the 25-byte request returned\n  `BAD_MSG`, the 3-byte response buffer completed with `used.len=0`, and the next full `PCM_INFO`\n  query returned the exact zero-padded payload.\n- **Playback and slot preservation — HELD.** Predicted that an arriving period would remain pending\n  until its mock-clock deadline, STOP/START would resume the exact ramp once, and an occupied slot 6\n  would remain intact while sound selected slot 7. All predictions held in the Machine fixture; the\n  dependent T19b/T19c verifier results carry forward unchanged for WavSink/sine integrity,\n  0.5x/1x/2x pacing, malformed txq recovery, XRUN bounds, and fifty reset/re-setup cycles.\n- **Browser assembly — HELD.** Fresh Chromium against `web/dist/app.html` reached `__ready=true`,\n  constructed `WasmLinux` successfully with a deterministic 4 KiB kernel buffer, showed the T19d\n  capability as `cap-pip verified`, and recorded zero unexpected console or HTTP errors. WebKit and\n  independent-machine legs are waived by user direction.\n- **Stability and coverage — HELD.** Twenty-five consecutive debug Machine-suite invocations passed\n  4/4 each; targeted clippy, formatting, and diff checks passed. The promoted boundary test covers\n  the bounded-copy and atomic-response branches that were absent from the worker recording.\n- Evidence: [`snd-guest-verifier-2026-09-03.txt`](../../evidence/e5-t19d/snd-guest-verifier-2026-09-03.txt),\n  SHA-256 `6102dd22f3548ee0a1ab2c60a2de4b202ca681938450a3ac2ed4780a973efcde`.\n- Screenshot: [`browser-assembly-guest-2026-09-03.png`](../../evidence/e5-t19d/browser-assembly-guest-2026-09-03.png),\n  SHA-256 `83ce4637ca18e47f7ebda768f15c683bfdae4a1a790d8d78a6d3c0de6f55e9bf`.\n- Findings: none. The task is verified.",
       "adversarial": "Kill the guest playback process mid-stream and immediately restart it 50 times, checking legal\nSTOP+RELEASE sequences, stable queue depth, and no repeated periods. Run the reference ramp through\nthe guest path and compare the sink output sample-for-sample; vary the mock clock at 0.5x and 2x.",
       "file": "tasks/epic-5-the-window/E5-T19d-snd-guest-playback-proof.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "test(e5-t19d): record assembled sound proof",
             "chore(e5-t19d): activate snd guest playback proof"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T20",

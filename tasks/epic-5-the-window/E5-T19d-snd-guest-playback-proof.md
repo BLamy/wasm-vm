@@ -3,7 +3,7 @@ id: E5-T19d
 epic: 5
 title: virtio-snd Linux guest integration and playback proof
 priority: 519.4
-status: implemented
+status: verified
 depends_on: [E5-T19c]
 estimate: S
 risk: medium
@@ -66,3 +66,28 @@ provides the native capture proof, while T19c provides malformed-transfer recove
 re-setup cycles. The browser assembly uses the same seam with a monotonic clock and headless
 `NullSink` pending T20's AudioWorklet sink. Independent machines and WebKit are waived by user
 direction.
+
+### 2026-09-03 — verifier — VERDICT: verified
+
+- **Control transport — HELD.** Predicted that the assembled Machine would reclaim malformed,
+  oversized, and short-response control descriptors without poisoning a following valid query.
+  The optimized suite passed 4/4, including the promoted boundary test: the 25-byte request returned
+  `BAD_MSG`, the 3-byte response buffer completed with `used.len=0`, and the next full `PCM_INFO`
+  query returned the exact zero-padded payload.
+- **Playback and slot preservation — HELD.** Predicted that an arriving period would remain pending
+  until its mock-clock deadline, STOP/START would resume the exact ramp once, and an occupied slot 6
+  would remain intact while sound selected slot 7. All predictions held in the Machine fixture; the
+  dependent T19b/T19c verifier results carry forward unchanged for WavSink/sine integrity,
+  0.5x/1x/2x pacing, malformed txq recovery, XRUN bounds, and fifty reset/re-setup cycles.
+- **Browser assembly — HELD.** Fresh Chromium against `web/dist/app.html` reached `__ready=true`,
+  constructed `WasmLinux` successfully with a deterministic 4 KiB kernel buffer, showed the T19d
+  capability as `cap-pip verified`, and recorded zero unexpected console or HTTP errors. WebKit and
+  independent-machine legs are waived by user direction.
+- **Stability and coverage — HELD.** Twenty-five consecutive debug Machine-suite invocations passed
+  4/4 each; targeted clippy, formatting, and diff checks passed. The promoted boundary test covers
+  the bounded-copy and atomic-response branches that were absent from the worker recording.
+- Evidence: [`snd-guest-verifier-2026-09-03.txt`](../../evidence/e5-t19d/snd-guest-verifier-2026-09-03.txt),
+  SHA-256 `6102dd22f3548ee0a1ab2c60a2de4b202ca681938450a3ac2ed4780a973efcde`.
+- Screenshot: [`browser-assembly-guest-2026-09-03.png`](../../evidence/e5-t19d/browser-assembly-guest-2026-09-03.png),
+  SHA-256 `83ce4637ca18e47f7ebda768f15c683bfdae4a1a790d8d78a6d3c0de6f55e9bf`.
+- Findings: none. The task is verified.
