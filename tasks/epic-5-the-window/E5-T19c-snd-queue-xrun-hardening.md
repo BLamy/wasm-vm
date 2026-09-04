@@ -3,7 +3,7 @@ id: E5-T19c
 epic: 5
 title: virtio-snd queue errors, XRUN events, and reset hardening
 priority: 519.3
-status: implemented
+status: verified
 depends_on: [E5-T19b]
 estimate: S
 risk: medium
@@ -57,3 +57,17 @@ The final native run covers exact event serialization, truncated/header-only/zer
 undersized status, wrong-stream recovery, later valid playback, three missed-period XRUN delivery,
 a 256-event bounded backlog with overflow accounting, short and wrongly-directed eventq buffers,
 and fifty STOP/RELEASE/reset/re-setup cycles.
+
+### 2026-09-03 — verifier — VERDICT: verified
+
+- Predictions: malformed txq records are reclaimed in FIFO order without blocking a later valid
+  period; missed periods create one bounded XRUN record each; eventq short/directedness failures do
+  not consume the event; and reset/re-setup clears stale queue views without retaining buffers.
+- Observed: the optimized queue suite passed 5/5, followed by 25 consecutive debug invocations
+  passing 5/5 each. Used-ring order, `IO_ERR`/zero-length completion behavior, the 256-record cap,
+  event retention, and all fifty lifecycle cycles held. The novel tx-only compatibility attack also
+  left the eventq buffer untouched and delivered its event exactly once through the event-aware
+  entry point.
+- Evidence: [`snd-queue-verifier-2026-09-03.txt`](../../evidence/e5-t19c/snd-queue-verifier-2026-09-03.txt),
+  SHA-256 `e0b33d10a68bd144c85064193ca90be05e6c3e2b3e496ce1d9fb6d0747c18ca6`.
+- Findings: none. The task is verified.

@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 224,
+    "verified": 225,
     "total": 387
   },
   "epics": [
@@ -17979,7 +17979,7 @@
       "epicKey": "5",
       "title": "virtio-snd queue errors, XRUN events, and reset hardening",
       "priority": null,
-      "status": "implemented",
+      "status": "verified",
       "depends_on": [
         "E5-T19b"
       ],
@@ -18003,21 +18003,22 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\n- Commit: `70f45cfb7c6244a5a40ceb272d324b568a6805e3`.\n- Commands: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test virtio_snd --quiet`;\n  `cargo test -p wasm-vm-core --test virtio_snd_playback --quiet`; `cargo test -p wasm-vm-core --test virtio_snd_queue --quiet`;\n  `cargo test -p wasm-vm-core --lib --quiet`; `cargo clippy -p wasm-vm-core --all-targets -- -D warnings`;\n  `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release`; `cargo check -p wasm-vm-core --no-default-features`;\n  `git diff --check`.\n- Results: `virtio_snd` 6/6, `virtio_snd_playback` 7/7, `virtio_snd_queue` 4/4, and the core\n  library 238/238 passed; clippy, the release wasm build, the no-default-features check, and the\n  diff check passed.\n- Evidence: [`snd-queue-native-2026-09-03.txt`](../../evidence/e5-t19c/snd-queue-native-2026-09-03.txt),\n  SHA-256 `03cbd620f83c152370507602139b5c46658d3f98f6a9ce3152d9d5a443bcc5db`.\n\nThe final native run covers exact event serialization, truncated/header-only/zero-PCM transfers,\nundersized status, wrong-stream recovery, later valid playback, three missed-period XRUN delivery,\na 256-event bounded backlog with overflow accounting, short and wrongly-directed eventq buffers,\nand fifty STOP/RELEASE/reset/re-setup cycles.",
+      "verificationLog": "### 2026-09-03 — worker — IMPLEMENTED\n\n- Commit: `70f45cfb7c6244a5a40ceb272d324b568a6805e3`.\n- Commands: `cargo fmt --all -- --check`; `cargo test -p wasm-vm-core --test virtio_snd --quiet`;\n  `cargo test -p wasm-vm-core --test virtio_snd_playback --quiet`; `cargo test -p wasm-vm-core --test virtio_snd_queue --quiet`;\n  `cargo test -p wasm-vm-core --lib --quiet`; `cargo clippy -p wasm-vm-core --all-targets -- -D warnings`;\n  `cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown --release`; `cargo check -p wasm-vm-core --no-default-features`;\n  `git diff --check`.\n- Results: `virtio_snd` 6/6, `virtio_snd_playback` 7/7, `virtio_snd_queue` 4/4, and the core\n  library 238/238 passed; clippy, the release wasm build, the no-default-features check, and the\n  diff check passed.\n- Evidence: [`snd-queue-native-2026-09-03.txt`](../../evidence/e5-t19c/snd-queue-native-2026-09-03.txt),\n  SHA-256 `03cbd620f83c152370507602139b5c46658d3f98f6a9ce3152d9d5a443bcc5db`.\n\nThe final native run covers exact event serialization, truncated/header-only/zero-PCM transfers,\nundersized status, wrong-stream recovery, later valid playback, three missed-period XRUN delivery,\na 256-event bounded backlog with overflow accounting, short and wrongly-directed eventq buffers,\nand fifty STOP/RELEASE/reset/re-setup cycles.\n\n### 2026-09-03 — verifier — VERDICT: verified\n\n- Predictions: malformed txq records are reclaimed in FIFO order without blocking a later valid\n  period; missed periods create one bounded XRUN record each; eventq short/directedness failures do\n  not consume the event; and reset/re-setup clears stale queue views without retaining buffers.\n- Observed: the optimized queue suite passed 5/5, followed by 25 consecutive debug invocations\n  passing 5/5 each. Used-ring order, `IO_ERR`/zero-length completion behavior, the 256-record cap,\n  event retention, and all fifty lifecycle cycles held. The novel tx-only compatibility attack also\n  left the eventq buffer untouched and delivered its event exactly once through the event-aware\n  entry point.\n- Evidence: [`snd-queue-verifier-2026-09-03.txt`](../../evidence/e5-t19c/snd-queue-verifier-2026-09-03.txt),\n  SHA-256 `e0b33d10a68bd144c85064193ca90be05e6c3e2b3e496ce1d9fb6d0747c18ca6`.\n- Findings: none. The task is verified.",
       "adversarial": "Byte-dribble and truncate txq headers, mix invalid stream IDs with valid periods, fill the eventq\nwhile the guest is not polling, and reset between kicks. Verify used-ring progress, error status,\nevent count, and a clean subsequent playback period.",
       "file": "tasks/epic-5-the-window/E5-T19c-snd-queue-xrun-hardening.md",
       "activity": [
         {
           "date": "2026-09-03",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "test(e5-t19c): record queue recovery evidence",
             "chore(e5-t19c): activate snd queue xrun hardening"
           ]
         }
       ],
       "firstActivity": "2026-09-03",
       "lastActivity": "2026-09-03",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E5-T19d",
