@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 250,
+    "verified": 251,
     "total": 414
   },
   "epics": [
@@ -16855,7 +16855,7 @@
       "epicKey": "5",
       "title": "Guest virtio-gpu fbcon probe and command trace",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T03c",
         "E5-T05c",
@@ -16868,13 +16868,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "(empty)",
+      "verificationLog": "### 2026-09-04 — verifier — VERDICT: verified\n\n- **Linux control-queue protocol — HELD.** Predicted that the native guest would complete the\n  Linux virtio-gpu probe without resource-id errors once the wire enum and EDID response layout\n  matched the virtio-gpu specification. The final trace records `GET_EDID`, `GET_DISPLAY_INFO`,\n  `RESOURCE_CREATE_2D`, `RESOURCE_ATTACH_BACKING`, `SET_SCANOUT`, `TRANSFER_TO_HOST_2D`, and\n  `RESOURCE_FLUSH` with the corrected command values (`0x10a`, `0x100`, `0x101`, `0x106`, `0x103`,\n  `0x105`, `0x104`), a 1056-byte EDID response, and successful response values. The earlier\n  invalid-resource loop and EDID warning are absent from the final console.\n- **Framebuffer first light — HELD.** Predicted a live fbcon path would expose the display mode,\n  create and attach resource 2 at `1280x800`, bind scanout 0, transfer pixels, and flush at least\n  once. The 15-record trace contains that complete path, with transfer and flush returning\n  `RESP_OK_NODATA`; the native console contains both `fb0: virtio_gpudrmfb frame buffer device`\n  and `busybox userland up`.\n- **Queue progress and trace integrity — HELD.** Predicted every recorded completion would be\n  published before tracing, with no dropped records, duplicate completion, stall, or reset. The\n  trace reports `records=15 dropped=0`; sequence numbers are contiguous 0–14 and every record has\n  `used == avail` at the corresponding one-based index. The process exited 0 at the profiler's\n  `userland up` marker.\n- **Malformed/unsupported traffic — HELD.** The feature-gated malformed-request regression and\n  the complete `wasm-vm-core` feature suite passed; `virtio_gpu_malformed_requests_make_progress_and_recover`\n  confirms an unsupported request and short/malformed traffic still publish completions and recover.\n- **Coverage — SUFFICIENT.** The exact native run exercised the corrected wire constants, feature\n  gate, trace metadata, used-ring publication boundary, display/EDID/resource/scanout/transfer/\n  flush handlers, CLI recorder, checked-in fixture, and null-sink boot path. No changed behavioral\n  hunk is dead or unproved. Independent machines, WebKit, and host-layer rr are excluded per the\n  user's direction and the repository evidence policy.\n- **SUITE:** retain `make verify-E5-T07a` and `tests/fixtures/gpu-probe.log` as the recurring proof.\n\nCommands: `make verify-E5-T07a`; `cargo test -p wasm-vm-core --lib`; `cargo test -p wasm-vm-core\n--test virtio_gpu_machine`; `cargo test -p wasm-vm-cli --bin wasm-vm`; `git diff --check`.\n\nImplementation commits: `5ada0faa4b235fed3cd7c34ec56e1ea31c266088`,\n`bd1d81f575c8dacc8527183c5b33222ae3b0030a`.\nEvidence: `evidence/e5-t07a/gpu-probe.log` and `tests/fixtures/gpu-probe.log` SHA-256\n`06eff203f10b1583a4c4450a6e20ff56792a25b70402a22ebeaf03f62d5f4e0b`; `guest-evidence.txt` SHA-256\n`9f867cc341862e94c6edd047096c75af9150821127d1ec7ce113ef3f0630e2c9`; `native-console.log` SHA-256\n`bcc49cd35bef178d02042dfebf13c3c6d768ecab788a402c853630e2fd03a8e4`; `native-stderr.log` SHA-256\n`4c269be1a992ef5f106eec7f8e36e634dddce41df4f08c924959f5e0b098adb6`.",
       "adversarial": "Run the probe with the control queue delayed at each command boundary and with one malformed\ndescriptor in each request class. The guest must continue making progress or report the specified\nerror, and the trace must never claim a flush that did not publish a used-ring entry.",
       "file": "tasks/epic-5-the-window/E5-T07a-fbcon-probe-trace.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-09-04",
+          "commits": 1,
+          "labels": [
+            "chore(e5-t07a): activate guest probe trace"
+          ]
+        }
+      ],
+      "firstActivity": "2026-09-04",
+      "lastActivity": "2026-09-04",
+      "commitCount": 1
     },
     {
       "id": "E5-T07b",
