@@ -575,7 +575,7 @@ async function runProofScenario() {
   if (!proofMode || proofStarted || !controller) return;
   proofStarted = true;
   try {
-    await waitUntil(() => frameCount >= 8, "initial display frames", 120_000);
+    await waitUntil(() => frameCount >= 8, "initial display frames", BOOT_TIMEOUT_MS);
     const bootBefore = { frameCount, serialBytes, view: viewController.activeView() };
     setView("serial", "proof-boot-toggle");
     await waitUntil(() => serialText.includes(PROMPT), "BusyBox prompt while display is hidden", BOOT_TIMEOUT_MS);
